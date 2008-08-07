@@ -528,7 +528,7 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
     Pixel_2 pix_1, pix_2;
     
     Gfx_OUT("lower: " << CGAL::to_double(lower) << "; upper: " <<
-         CGAL::to_double(upper) << "; y_lower: " << NiX::to_double(y_lower) <<
+         CGAL::to_double(upper) << "; y_lower: " << CGAL::to_double(y_lower) <<
          "; y_upper: " << CGAL::to_double(y_upper) << "\n");
 
     get_pixel_coords(lower, y_lower, pix_1);  
@@ -637,9 +637,7 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
 
         Gfx_OUT("NO clip points\n");
         mid = (lower + upper)/2;
-//         NiX::simplify(mid);
         pt = engine.x_min_r + (pix_1.x*2+5)*engine.pixel_w_r/2;
-//         NiX::simplify(pt);
         // segment is almost vertical - start from a middle point
         //if(pt > mid) 
             pt = mid; 
@@ -708,7 +706,6 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
             Gfx_OUT("starting point is near the left end-point\n");
             //pt = engine.x_min_r + (pix_1.x*2+5)*engine.pixel_w_r/2;
             pt = (lower + l)/2;
-//             NiX::simplify(pt);
             if(pt <= lower) {
                 refine_alg_point(l, r, *ppoly, lower, 1);
                 pt = l; 
@@ -727,7 +724,6 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
                 CGAL::to_double(r) << ": pixel_w_r: " <<
                     CGAL::to_double(engine.pixel_w_r) << "\n");
             
-//             NiX::simplify(pt);
             if(pt >= upper) {
                 // ensure that clip-point interval is sufficiently small
                 refine_alg_point(l, r, *ppoly, upper, 1);
@@ -1184,8 +1180,8 @@ bool get_seed_point(const Rational& seed, Pixel_2& start, int *dir,
     current_level = 0;
     
     //Gfx_OUT("refining starting pixel: " << start << std::endl);
-//     Gfx_OUT("x/y seed: (" << NiX::to_double(x_seed) << "; " <<
-//         NiX::to_double(y_seed) << ")" << std::endl);
+//     Gfx_OUT("x/y seed: (" << CGAL::to_double(x_seed) << "; " <<
+//         CGAL::to_double(y_seed) << ")" << std::endl);
     b_taken[0] = b_taken[1] = -1;
     b_coincide = false;
     
@@ -1263,23 +1259,7 @@ bool get_seed_point(const Rational& seed, Pixel_2& start, int *dir,
                   vx = -engine.substitute_xy(*(engine.rational_fy), x_s, y_s),
                   vy = engine.substitute_xy(*(engine.rational_fx), x_s, y_s);
                 
-  /*              typename Renderer_traits::Convert_poly convert_poly;
-                Poly_2 ffx, ffy;
-                ffx = convert_poly(*(engine.rational_fx));
-                ffy = convert_poly(*(engine.rational_fy));
-    
-                typename CGAL::Coercion_traits<Rational, Coeff>::Cast
-                castr; 
-
-                Coeff xx1 = castr(x_s), yy1 = castr(y_s);
-                Coeff vvx = NiX::substitute_xy(ffy, xx1, yy1);
-                Coeff vvy = NiX::substitute_xy(ffx, xx1, yy1); */           
-    
-                //typename CGAL::Coercion_traits<Rat_coercion_type, Coeff>::Cast
-                //cast; 
-
                 NT vvx = rat2float(vx), vvy = rat2float(vy);
-                //Coeff vvx = cast(vx), vvy = cast(vy);
                 if(vvy < 0) {
                     vvx = -vvx;
                 }                
@@ -1590,7 +1570,6 @@ void horizontal_clip()
     
     int n_roots = isolator_btm.number_of_real_roots(), i;
     Rational criteria = engine.pixel_w_r/CGAL_REFINE_CLIP_POINTS;
-//     NiX::simplify(criteria);
     
     for(i = 0; i < n_roots; i++) {
         l = isolator_btm.left_boundary(i);

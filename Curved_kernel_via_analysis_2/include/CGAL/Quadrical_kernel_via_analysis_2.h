@@ -215,22 +215,17 @@ public:
     
         typedef Curve_renderer_facade< typename Base::Projected_kernel_2 >
              Facade;
-        typename Facade::Coord_2 cc;
+        std::pair< double, double > cc;
 
         if(!Facade::instance().draw(this->projected_point(), cc))
             return false; // bad luck
          
-        CGAL::Bbox_2 bbox;
-        int res_w, res_h;
-        Facade::instance().get_resolution(res_w, res_h);
-        Facade::instance().get_window(bbox);
-        // gotcha !!           
-        double lx = bbox.xmax() - bbox.xmin(), ly = bbox.ymax() - bbox.ymin();
-        double x0 = bbox.xmin() + (double)cc.x * lx / res_w,
-               y0 = bbox.ymin() + (double)cc.y * ly / res_h;
+        double *ptr = (double *)&cc;
+        typename CGAL::Polynomial_traits_d< Poly_double_3 >::Substitute subst;
 
-        Poly_double_1 ppt = NiX::substitute_xy(base_poly_approx(), x0, y0);   
-        result = Approximation_3(x0, y0, compute_z(ppt, this->sheet()));
+        Poly_double_1 ppt = subst(base_poly_approx(), ptr, ptr+2);   
+        result = Approximation_3(ptr[0], ptr[1], 
+                compute_z(ppt, this->sheet()));
         return true;
     }
 #endif // CGAL_CKVA_COMPILE_RENDERER   
@@ -242,16 +237,14 @@ public:
             this->curve().status_line_at_exact_x(this->x()).
             algebraic_real_2(this->arcno()).to_double();
         
+        typename CGAL::Polynomial_traits_d< Poly_double_3 >::Substitute subst;
+        double *ptr = (double *)&xy;
+
         Poly_double_1 ppt = 
-            NiX::substitute_xy(
-                    base_poly_approx(CGAL::to_double(this->surface().f())),
-                    xy.first, xy.second
-            );   
-        return Approximation_3(
-                xy.first, 
-                xy.second, 
-                compute_z(ppt, this->sheet())
-        );
+            subst(base_poly_approx(CGAL::to_double(this->surface().f())),
+                ptr, ptr+2);       
+
+        return Approximation_3(ptr[0], ptr[1], compute_z(ppt, this->sheet()));
     }
 
 private:
@@ -621,43 +614,34 @@ public:
 
         typedef Curve_renderer_facade< typename Base::Projected_kernel_2 >
              Facade;
-        typedef typename Facade::Coord_vec_2 Coord_vec_2;
-        typedef typename Facade::Coord_2 Coord_2;
+        
+        typedef std::pair< double, double > Coord_2;
+        typedef std::vector< Coord_2 > Coord_vec_2;
 
         std::list<Coord_vec_2> points;
-        std::pair<Coord_2, Coord_2> end_points;
-
-        Facade::instance().draw(this->projected_arc(), points, end_points);
+        
+        Facade::instance().draw(this->projected_arc(), points);
         if(points.empty()) 
             return oi;        
     
-        CGAL::Bbox_2 bbox;
-        int res_w, res_h;
-        Facade::instance().get_resolution(res_w, res_h);
-        Facade::instance().get_window(bbox);
-
-        double pixw = (bbox.xmax() - bbox.xmin()) / res_w, 
-               pixh = (bbox.ymax() - bbox.ymin()) / res_h;
+        typename CGAL::Polynomial_traits_d< Poly_double_3 >::Substitute subst;
         typename std::list<Coord_vec_2>::const_iterator lit = points.begin();  
         while(lit != points.end()) {
             
             const Coord_vec_2& tmp = *lit++;
             typename Coord_vec_2::const_iterator cit;
-            int xprev = -1, yprev = -1;
+
+            double xprev = -1, yprev = -1;
             for(cit = tmp.begin(); cit != tmp.end(); cit++) {
     
-                if(xprev == cit->x && yprev == cit->y) 
+                if(xprev == cit->first && yprev == cit->second) 
                     continue; // don't push duplicate points
-                xprev = cit->x, yprev = cit->y;
-                double x0 = bbox.xmin() + (double)xprev * pixw,
-                       y0 = bbox.ymin() + (double)yprev * pixh;
-
-//                 std::cerr << "x = " << cit->x << "; y = " << cit->y << 
-//                     "; x0 = " << x0 << "; y0 = " << y0 << std::endl;
-                //! @todo is there any way to get rid of substitute_xy ???
-                Poly_double_1 ppt = NiX::substitute_xy(
-                    Quadric_point_2::base_poly_approx(), x0, y0);    
-                *oi++ = Approximation_3(x0, y0, 
+                xprev = cit->first, yprev = cit->second;
+                
+                double *ptr = (double *)&(*cit);
+                Poly_double_1 ppt = subst(Quadric_point_2::base_poly_approx(),
+                     ptr, ptr+2);    
+                *oi++ = Approximation_3(ptr[0], ptr[1], 
                     Quadric_point_2::compute_z(ppt, this->sheet()));
             }
         }

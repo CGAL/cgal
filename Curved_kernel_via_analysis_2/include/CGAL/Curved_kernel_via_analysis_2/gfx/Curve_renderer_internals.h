@@ -234,13 +234,13 @@ private:
     //! modular traits for bivariate polynomial
     typedef CGAL::Modular_traits<Rational_poly_2> MT_poly_2;
     //! a modular image of a bivariate polynomial
-    typedef typename MT_poly_2::Modular_NT Modular_poly_2;
+    typedef typename MT_poly_2::Residue_type Modular_poly_2;
     //! a modular image of a univariate polynomial 
     typedef typename Modular_poly_2::NT Modular_poly_1;
     //! modular traits for rationals
     typedef CGAL::Modular_traits<Rational> MT_rational;
     //! a modular image for rationals
-    typedef typename MT_rational::Modular_NT Modular_rat;
+    typedef typename MT_rational::Residue_type Modular_rat;
     //! a modular converter for rationals
     typename MT_rational::Modular_image image_rat;
 
@@ -828,9 +828,9 @@ int evaluate_generic(int var, const NT& c, const NT& key, const Poly_1& poly)
 
         if(error_bounds_) {
             //Gfx_OUT("error_bounds_\n");
-            sign = evaluate_modular(var, c, key);
-            if(sign != 0) 
-                sign = evaluate_rational(var, c, key);
+            //sign = evaluate_modular(var, c, key);
+            //if(sign != 0) 
+            sign = evaluate_rational(var, c, key);
         } else
             sign = CGAL_SGN(res);
         if(not_cached)
@@ -855,22 +855,24 @@ int evaluate_generic(int var, const NT& c, const NT& key, const Poly_1& poly)
 int evaluate_modular(int var, const NT& c, const NT& key)
 {
 #if !AcX_SQRT_EXTENSION
-    Modular_poly_1 poly;
     Rational c_r = float2rat(c), key_r = float2rat(key);
-    c_r = (var == CGAL_X_RANGE) ? (x_min_r + c_r*pixel_w_r) :
-        (y_min_r + c_r*pixel_h_r);
-
+    
     Modular_poly_2 *mod = modular_x;
     if(var == CGAL_Y_RANGE) {
         mod = modular_y;
         key_r = x_min_r + key_r*pixel_w_r;
-    } else
+        c_r = y_min_r + c_r*pixel_h_r;
+    } else {
+        c_r = x_min_r + c_r*pixel_w_r;
         key_r = y_min_r + key_r*pixel_h_r;
+    }
 
-    //!@todo: get rid of NiX::substitute_x !!!
-    poly = NiX::substitute_x(*mod, image_rat(key_r));
-    Modular_rat res = poly.evaluate(image_rat(c_r));
+    typename CGAL::Polynomial_traits_d< Modular_poly_2 >::Substitute subst;
+    Modular_rat ccs[2] = {image_rat(key_r), image_rat(c_r)};
+
+    Modular_rat res = subst(*mod, ccs, ccs+2);
     return CGAL_SGN(res.x());
+
 #else //!@todo: decide by Algebraic_structure_traits<Coeff>::Field_with_sqrt
     return -1; // modular arithmetic is disabled with sqrt extension
 #endif    
@@ -898,7 +900,7 @@ int evaluate_rational(int var, const NT& c, const NT& key)
 //! precomputes polynomials and derivative coefficients
 void precompute(const Polynomial_2& in) {
 
-    typedef typename Polynomial_traits_2::Inntermost_coefficient_type Coeff_src;
+    typedef typename Polynomial_traits_2::Innermost_coefficient_type Coeff_src;
     
     Max_coeff<Coeff_src> max_coeff;
     Coeff_src max_c = max_coeff(in);

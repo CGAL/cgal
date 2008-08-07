@@ -18,7 +18,7 @@
 
 #ifndef CGAL_CKVA_SUBDIVISION_2_H
 #define CGAL_CKVA_SUBDIVISION_2_H 1
-#warning "this file is considered obsolete"
+#warning this file is considered obsolete
 
 #include <vector>
 #include <CGAL/Polynomial.h>
@@ -82,8 +82,7 @@ public:
 private:	
 	//! \name private typedefs 
     //@{ 
-	//! conversion from the basic number type to doubles
-	typename NiX::NT_traits<NT>::To_double to_double;
+		
 	//! conversion from the basic number type to integers
 	typename SoX::Curve_renderer_traits<NT>::To_integer to_integer;
 	//! conversion from \c Integer type to built-in integer
@@ -262,8 +261,8 @@ void Subdivision_2<NT_, Algebraic_curve_2_>::quad_tree(const NT& x_low,
 		return;
 	if(x_high - x_low <= pixel_w&&y_high - y_low <= pixel_h) {
 		NT x = (x_low), y = (y_low);
-		int pix_x = static_cast<int>(NiX::to_double((x - x_min) / pixel_w)),
-		    pix_y = static_cast<int>(NiX::to_double((y - y_min) / pixel_h));
+		int pix_x = static_cast<int>(CGAL::to_double((x - x_min) / pixel_w)),
+		    pix_y = static_cast<int>(CGAL::to_double((y - y_min) / pixel_h));
 		painter->drawPoint(pix_x, res_h - pix_y);
 		//painter->drawEllipse(pix_x-2,res_h-pix_y-2,4,4);
 	}
@@ -292,7 +291,7 @@ void Subdivision_2<NT_, Algebraic_curve_2_>::get_range_RT_2(
 	//std::cout << "range for [" << x_low << "; " << y_low << "]x[" << 
 	//x_high <<
 		//"; " << y_high << "]: (" << low << "; " << high << ")" << std::endl;
-	typename std::vector<Poly_2>::const_iterator der_it = 
+	/*typename std::vector<Poly_2>::const_iterator der_it = 
 		mixed_derivatives.begin() + index;
 	if((*der_it).degree()==0) {
 		NT c = (*der_it).lcoeff().lcoeff();
@@ -364,7 +363,7 @@ void Subdivision_2<NT_, Algebraic_curve_2_>::get_range_RT_2(
 		get_range_RT_2(x_low, x_high, y_low, y_high, depth+2, idx+2, fyy);
 		res = res + ((x1*x1/2*zero1)*fxx) + ((y1*y1/2*zero2)*fyy) +
 			((x1*y1*one3)*fxy);
-	} 
+	} */
 		
 	//res.convert(lower, upper);
 	//std::cout << "range for depth = " << depth << " index = " << index << 

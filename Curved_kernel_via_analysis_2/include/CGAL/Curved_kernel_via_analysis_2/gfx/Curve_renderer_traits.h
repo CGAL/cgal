@@ -109,7 +109,7 @@ struct Transform {
     }
 
     OutputPoly_2 operator()(
-        const typename Inntermost_coefficient_type<InputPoly_2>::Type& x, Op op)
+        const typename Innermost_coefficient_type<InputPoly_2>::Type& x, Op op)
         const {
             
         return static_cast<OutputPoly_2>(op(x));

@@ -120,7 +120,7 @@ private:
     typedef CGAL::Polynomial<Poly_1> Poly_2;
             
     //! conversion from the basic number type to doubles
-    typename NiX::NT_traits<NT>::To_double to_double;
+    typename CGAL::Real_embeddable_traits<NT>::To_double to_double;
     //! conversion from the basic number type to integers
     typename Renderer_traits::To_integer to_integer;
     //! conversion from \c Integer type to built-in integer

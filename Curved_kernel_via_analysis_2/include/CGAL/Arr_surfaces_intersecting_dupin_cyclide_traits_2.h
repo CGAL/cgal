@@ -1042,13 +1042,13 @@ public:
             return oi; // bad luck
 
         const Poly_double_2* params = param_surface();
-        double x0 = NiX::substitute_xy(params[0], cc.first, cc.second), 
-               y0 = NiX::substitute_xy(params[1], cc.first, cc.second),
-               z0 = NiX::substitute_xy(params[2], cc.first, cc.second);
-        invw = 1.0 / NiX::substitute_xy(params[3], cc.first, cc.second);
-        *oi++ = x0*invw;
-        *oi++ = y0*invw;
-        *oi++ = z0*invw;
+        typename CGAL::Polynomial_traits_d< Poly_double_2 >::Substitute subst;
+        
+        double *ptr = (double *)&cc;
+        invw = 1.0 / subst(params[3], ptr, ptr+2);
+        *oi++ = subst(params[0], ptr, ptr+2) * invw; 
+        *oi++ = subst(params[1], ptr, ptr+2) * invw;
+        *oi++ = subst(params[2], ptr, ptr+2) * invw;
         return oi;
     }
 #endif // CGAL_CKVA_COMPILE_RENDERER
