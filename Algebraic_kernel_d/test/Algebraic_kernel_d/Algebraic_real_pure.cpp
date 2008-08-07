@@ -19,38 +19,20 @@
 */
 
 #include <CGAL/basic.h>
+
 #include <cassert>
+
+#include <CGAL/Arithmetic_kernel.h>
 
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_pure.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep_bfi.h>
+#include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Sqrt_extension.h>
-#include <CGAL/leda_real.h>
-#include <CGAL/leda_integer.h>
-//#include <NiX/basic.h>
-//#include <NiX/Algebraic_real_pure.h>
-// for NiX::IS_RATIONAL
-//#include <NiX/NT_traits.h>
-//#include <NiX/Polynomial.h>
 
 #include <CGAL/_test_real_comparable.h>
 
-#include <cstdlib>
-
-/*#ifdef CGAL_USE_LEDA
-#include <NiX/LEDA/integer.h>
-#include <NiX/LEDA/rational.h>
-#include <NiX/LEDA/real.h>
-#endif
-
-#ifdef CGAL_USE_CORE
-#include <NiX/CORE/BigInt.h>
-#include <NiX/CORE/BigRat.h>
-#include <NiX/CORE/Expr.h>
-#endif // CGAL_USE_CORE
-
-#include <NiX/Sqrt_extension.h>*/
 #include <cstdlib>
 
 /*
@@ -59,7 +41,7 @@ REAL  a FieldWithSqrt
 RATIONAL a numbertype representing the rational numbers
 Z a numbertype representing Z (needed for Descartes)
 */
-template <class COEFF,class REAL,class RATIONAL,class Z, class RepClass>
+template <class COEFF, class REAL, class RATIONAL, class Z, class RepClass>
 void algebraic_number_test()
 {
     typedef COEFF Coeff_NT;
@@ -406,59 +388,80 @@ void algebraic_number_test()
     }
 }
 
+template<class AT> 
+void algebraic_number_test_at(){
+  typedef typename AT::Integer Integer;
+  typedef typename AT::Rational Rational;
+  typedef typename AT::Field_with_sqrt Real;
+  typedef typename CGAL::Sqrt_extension<Integer,Integer> Ext_int_int;
+  typedef typename CGAL::Sqrt_extension<Rational,Integer> Ext_rat_int;
+  typedef typename CGAL::Sqrt_extension<Rational,Rational> Ext_rat_rat;
+
+/*
+  COEFF Coefficient type of Polynomial
+  REAL  a FieldWithSqrt
+  RATIONAL a numbertype representing the rational numbers
+  Z a numbertype representing Z (needed for Descartes)
+  template< class COEFF, class REAL, class RATIONAL, class Z>
+  algebraic_number_test()
+  algebraic_number_test< class COEFF, class REAL, class RATIONAL, class Z>()
+*/ 
+
+  typedef CGAL::CGALi::Algebraic_real_rep< Integer,     Rational>  Rep_int;
+  typedef CGAL::CGALi::Algebraic_real_rep< Rational,    Rational > Rep_rat;
+  typedef CGAL::CGALi::Algebraic_real_rep< Ext_int_int, Rational > Rep_ext_int_int;
+  typedef CGAL::CGALi::Algebraic_real_rep< Ext_rat_int, Rational > Rep_ext_rat_int;
+  typedef CGAL::CGALi::Algebraic_real_rep< Ext_rat_rat, Rational > Rep_ext_rat_rat;
+  
+
+  algebraic_number_test<Integer, Real, Rational, Integer,     Rep_int>();
+  algebraic_number_test<Rational, Real, Rational, Integer,    Rep_rat>();
+  algebraic_number_test<Ext_int_int, Real, Rational, Integer, Rep_ext_int_int>();
+  algebraic_number_test<Ext_rat_int, Real, Rational, Integer, Rep_ext_rat_int>();
+  algebraic_number_test<Ext_rat_rat, Real, Rational, Integer, Rep_ext_rat_rat>();
+
+
+  typedef CGAL::CGALi::Algebraic_real_rep_bfi< Integer,     Rational>  Rep_bfi_int;
+  typedef CGAL::CGALi::Algebraic_real_rep_bfi< Rational,    Rational > Rep_bfi_rat;
+  typedef CGAL::CGALi::Algebraic_real_rep_bfi< Ext_int_int, Rational > Rep_bfi_ext_int_int;
+  typedef CGAL::CGALi::Algebraic_real_rep_bfi< Ext_rat_int, Rational > Rep_bfi_ext_rat_int;
+  typedef CGAL::CGALi::Algebraic_real_rep_bfi< Ext_rat_rat, Rational > Rep_bfi_ext_rat_rat;
+
+  algebraic_number_test<Integer, Real, Rational, Integer,     Rep_bfi_int>();
+  algebraic_number_test<Rational, Real, Rational, Integer,    Rep_bfi_rat>();
+  algebraic_number_test<Ext_int_int, Real, Rational, Integer, Rep_bfi_ext_int_int>();
+  algebraic_number_test<Ext_rat_int, Real, Rational, Integer, Rep_bfi_ext_rat_int>();
+  algebraic_number_test<Ext_rat_rat, Real, Rational, Integer, Rep_bfi_ext_rat_rat>();
+
+
+//  Algebraic_real_quadratic_refinement_rep_bfi
+  typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi< Integer,     Rational>  Rep_qr_bfi_int;
+  typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi< Rational,    Rational > Rep_qr_bfi_rat;
+  typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi< Ext_int_int, Rational > Rep_qr_bfi_ext_int_int;
+  typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi< Ext_rat_int, Rational > Rep_qr_bfi_ext_rat_int;
+  typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi< Ext_rat_rat, Rational > Rep_qr_bfi_ext_rat_rat;
+
+  algebraic_number_test<Integer, Real, Rational, Integer,     Rep_qr_bfi_int>();
+  algebraic_number_test<Rational, Real, Rational, Integer,    Rep_qr_bfi_rat>();
+  algebraic_number_test<Ext_int_int, Real, Rational, Integer, Rep_qr_bfi_ext_int_int>();
+  algebraic_number_test<Ext_rat_int, Real, Rational, Integer, Rep_qr_bfi_ext_rat_int>();
+  algebraic_number_test<Ext_rat_rat, Real, Rational, Integer, Rep_qr_bfi_ext_rat_rat>();
+
+}
 
 int main()
 { 
- 
-/*
-COEFF Coefficient type of Polynomial
-REAL  a FieldWithSqrt
-RATIONAL a numbertype representing the rational numbers
-Z a numbertype representing Z (needed for Descartes)
-template< class COEFF, class REAL, class RATIONAL, class Z>
-algebraic_number_test()
-*/ 
-//                       < class COEFF, class REAL, class RATIONAL, class Z>
+  typedef CGAL::Arithmetic_kernel AK; 
+  algebraic_number_test_at<AK>();
+  
 #ifdef CGAL_USE_LEDA
-    algebraic_number_test<leda_integer , leda_real, leda_rational,  
-        leda_integer, CGAL::CGALi::Algebraic_real_rep< leda_integer, leda_rational > >();
-    algebraic_number_test<leda_rational, leda_real, leda_rational,  
-        leda_integer, CGAL::CGALi::Algebraic_real_rep< leda_rational, leda_rational > >();    
-      {
-          typedef leda_rational TESTT;
-          typedef CGAL::Sqrt_extension<TESTT,TESTT > EXT;
-          algebraic_number_test<EXT, leda_real, leda_rational,  
-              leda_integer, CGAL::CGALi::Algebraic_real_rep< EXT, leda_rational > >();
-      }  
-
-    // TEST with Algebraic_real_rep_bfi
-    algebraic_number_test<leda_integer , leda_real, leda_rational,  
-        leda_integer, CGAL::CGALi::Algebraic_real_rep_bfi< leda_integer, leda_rational > >();
-    algebraic_number_test<leda_rational, leda_real, leda_rational,  
-        leda_integer, CGAL::CGALi::Algebraic_real_rep_bfi< leda_rational, leda_rational > >();    
-      {
-          typedef leda_rational TESTT;
-          typedef CGAL::Sqrt_extension<TESTT,TESTT > EXT;
-          algebraic_number_test<EXT, leda_real, leda_rational,  
-              leda_integer, CGAL::CGALi::Algebraic_real_rep_bfi< EXT, leda_rational > >();
-      }  
-
+  typedef CGAL::LEDA_arithmetic_kernel LEDA_AK; 
+  algebraic_number_test_at<LEDA_AK>();
 #endif // CGAL_USE_LEDA
 
 #ifdef CGAL_USE_CORE
-    algebraic_number_test< ::CORE::BigInt, ::CORE::Expr, ::CORE::BigRat,  
-        ::CORE::BigInt, CGAL::CGALi::Algebraic_real_rep< CORE::BigInt, CORE::BigRat > >();
-    algebraic_number_test< ::CORE::BigRat, ::CORE::Expr, ::CORE::BigRat, 
-        ::CORE::BigInt, CGAL::CGALi::Algebraic_real_rep< CORE::BigRat, CORE::BigRat > >();
-
-    // TEST with Algebraic_real_rep_bfi
-    algebraic_number_test< ::CORE::BigInt, ::CORE::Expr, ::CORE::BigRat,  
-        ::CORE::BigInt, CGAL::CGALi::Algebraic_real_rep_bfi< CORE::BigInt, CORE::BigRat > >();
-    algebraic_number_test< ::CORE::BigRat, ::CORE::Expr, ::CORE::BigRat, 
-        ::CORE::BigInt, CGAL::CGALi::Algebraic_real_rep_bfi< CORE::BigRat, CORE::BigRat > >();
-
+  typedef CGAL::CORE_arithmetic_kernel CORE_AK; 
+  algebraic_number_test_at<CORE_AK>();
 #endif // CGAL_USE_CORE
-
-
 }
 //EOF
