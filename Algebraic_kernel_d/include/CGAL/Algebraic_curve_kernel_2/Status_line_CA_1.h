@@ -73,7 +73,7 @@ class Status_line_CA_1_rep {
     // Traits class for local isolator
     typedef CGAL::CGALi::Bitstream_descartes_rndl_tree_traits 
         < CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha
-              < typename Polynomial_traits_d<Polynomial_2>::Coefficient,
+              < typename Polynomial_traits_d<Polynomial_2>::Coefficient_type,
                 Algebraic_real_1 
               >
         > 

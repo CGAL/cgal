@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
     typedef typename Algebraic_kernel_1::Solve_1 Solve_1;       \
     typedef CGAL::CGALi::Bitstream_descartes_rndl_tree_traits \
         < CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha \
-              < typename Polynomial_traits_d<Polynomial_2>::Coefficient, \
+              < typename Polynomial_traits_d<Polynomial_2>::Coefficient_type, \
                 Algebraic_real_1 \
               > \
         > \
