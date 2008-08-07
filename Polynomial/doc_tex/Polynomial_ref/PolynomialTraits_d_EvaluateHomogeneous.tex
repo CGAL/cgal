@@ -14,19 +14,19 @@ $p(u,v) = u^3 + uv^2$ and evaluated as such.
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
 \ccCreationVariable{evaluate_homogeneous}
-\ccTypedef{typedef PolynomialTraits_d::Coefficient              result_type;}{}
+\ccTypedef{typedef PolynomialTraits_d::Coefficient_type              result_type;}{}
 
 \ccOperations
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
-                                 PolynomialTraits_d::Coefficient   u,
-                                 PolynomialTraits_d::Coefficient   v);}
+                                 PolynomialTraits_d::Coefficient_type   u,
+                                 PolynomialTraits_d::Coefficient_type   v);}
          { return $p(u,v)$, with respect to the outermost variable. \\
            The homogeneous degree is considered as equal to the degree of $p$.  }
 
 
 \ccMethod{result_type operator()( PolynomialTraits_d::Polynomial_d  p,
-                                  PolynomialTraits_d::Coefficient   u,
-                                  PolynomialTraits_d::Coefficient   v,
+                                  PolynomialTraits_d::Coefficient_type   u,
+                                  PolynomialTraits_d::Coefficient_type   v,
                                   int i);}
           { return $p(u,v)$, with respect to the variable $x_i$. \\
             The homogeneous degree is considered as equal to the $degree(p,i)$.

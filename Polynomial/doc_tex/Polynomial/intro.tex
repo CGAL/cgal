@@ -34,9 +34,9 @@ considers the polynomials as an element of $R [x_0,\dots,x_{d-1}]$.
 According to these two different views the traits class provides two 
 different coefficients types:
 \begin{itemize}
-\item \ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Coefficient} 
+\item \ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Coefficient_type} 
 representing $R[x_0,\dots,x_{d-2}]$.
-\item \ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient} 
+\item \ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type} 
 representing the base ring $R$.
 \end{itemize}
 
@@ -61,12 +61,12 @@ In general a polynomial is constructed using the functor
 \ccc{PolynomialTraits_d::ConstructPolynomial}.  Basically there are two options:
 \begin{itemize}
 \item The polynomial is constructed from an iterator range with value type 
-\ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Coefficient}, 
+\ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Coefficient_type}, 
 where the $begin$ iterator refers to the constant term 
 (constant with respect to the outermost variable). 
 \item The polynomial is constructed from an iterator range with value type 
 \ccc{std::pair< CGAL::Exponent_vector, 
-CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient>},
+CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type>},
 where each pair defines the coefficient for the monomial defined by 
 the exponent vector. 
 \end{itemize}

@@ -6,7 +6,7 @@ This \ccc{AdaptableUnaryFunction} computes the content of a
 \ccc{PolynomialTraits_d::Polynomial_d} with respect to the symmetric 
 view on the polynomial, that is, it computes the gcd of all innermost coefficients. 
 
-This functor is well defined if \ccc{PolynomialTraits_d::Innermost_coefficients} is a 
+This functor is well defined if \ccc{PolynomialTraits_d::Innermost_coefficient_type} is a 
 \ccc{Field} or a \ccc{UniqueFactorizationDomain}. 
 
 \ccRefines 
@@ -16,7 +16,7 @@ This functor is well defined if \ccc{PolynomialTraits_d::Innermost_coefficients}
 
 \ccCreationVariable{multivariate_content}
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxx}{xxx}{}
-\ccTypedef{typedef PolynomialTraits_d::Innermost_coefficient   result_type;}{}
+\ccTypedef{typedef PolynomialTraits_d::Innermost_coefficient_type   result_type;}{}
 \ccGlue
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d          argument_type;}{}
 

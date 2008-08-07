@@ -36,18 +36,18 @@ is possible to select a certain variable.
 \ccTypes
 
 \ccNestedType{Polynomial_d}{ Type representing $R[x_0,\dots,x_{d-1}]$.}\ccGlue
-\ccNestedType{Coefficient }{ Type representing $R[x_0,\dots,x_{d-2}]$.}\ccGlue
-\ccNestedType{Innermost_coefficient}{ Type representing the base ring $R$.}
+\ccNestedType{Coefficient_type }{ Type representing $R[x_0,\dots,x_{d-2}]$.}\ccGlue
+\ccNestedType{Innermost_coefficient_type}{ Type representing the base ring $R$.}
 
 \ccNestedType{template <typename T, int d> struct Rebind}
 {This nested template class has to define a type \ccc{Other} which is a model 
 of the concept \ccc{PolynomialTraits_d}, where \ccc{d} is the number of 
-variables and \ccc{T} the \ccc{Innermost_coefficient}.}
+variables and \ccc{T} the \ccc{Innermost_coefficient_type}.}
 
 \ccHeading{Functors}
 
 In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
-%,e.g., \ccc{Sign_at} if \ccc{Innermost_coefficient} is not \ccc{RealEmbeddable}. 
+%,e.g., \ccc{Sign_at} if \ccc{Innermost_coefficient_type} is not \ccc{RealEmbeddable}. 
 \ccSetTwoColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
 
 \ccNestedType{Construct_polynomial}
@@ -99,25 +99,25 @@ In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
 
 \ccNestedType{Sign_at}{
         A model of \ccc{PolynomialTraits_d::SignAt}.\\
-        In case \ccc{Innermost_coefficient} is not \ccc{RealEmbeddable} this 
+        In case \ccc{Innermost_coefficient_type} is not \ccc{RealEmbeddable} this 
         is \ccc{CGAL::Null_functor}.}
 \ccNestedType{Sign_at_homogeneous}{ 
         A model of \ccc{PolynomialTraits_d::SignAtHomogeneous}.\\
-        In case \ccc{Innermost_coefficient} is not \ccc{RealEmbeddable} this 
+        In case \ccc{Innermost_coefficient_type} is not \ccc{RealEmbeddable} this 
         is \ccc{CGAL::Null_functor}.}
 
 \ccNestedType{Compare}{ 
         A model of \ccc{PolynomialTraits_d::Compare}. \\
-        In case \ccc{Innermost_coefficient} is not \ccc{RealEmbeddable} this 
+        In case \ccc{Innermost_coefficient_type} is not \ccc{RealEmbeddable} this 
         is \ccc{CGAL::Null_functor}.}
  
 \ccNestedType{Univariate_content}{ 
-        In case \ccc{PolynomialTraits_d::Coefficient} is {\bf not} a model of 
+        In case \ccc{PolynomialTraits_d::Coefficient_type} is {\bf not} a model of 
         \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_type}, otherwise this is 
         a model of \ccc{PolynomialTraits_d::UnivariateContent}.}
 %\begin{ccAdvanced}
 \ccNestedType{Multivariate_content}{ 
-        In case \ccc{PolynomialTraits_d::Innermost_coefficient} is {\bf not} 
+        In case \ccc{PolynomialTraits_d::Innermost_coefficient_type} is {\bf not} 
         a model of \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_type}, 
         otherwise this is a model of 
         \ccc{PolynomialTraits_d::MultivariateContent}.}

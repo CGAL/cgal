@@ -9,7 +9,7 @@ The polynomial is interpreted as a homogeneous polynomial in all variables. \\
 For instance the polynomial $p(x_0,x_1) = x_0^2x_1^3+x_1^4$ is interpreted as the homogeneous
 polynomial  $p(x_0,x_1,w) = x_0^2x_1^3+x_1^4w^1$.
 
-This functor is well defined if \ccc{PolynomialTraits_d::Innermost_coefficient} is 
+This functor is well defined if \ccc{PolynomialTraits_d::Innermost_coefficient_type} is 
 \ccc{RealEmbeddable}. 
 
 \ccRefines 
@@ -29,7 +29,7 @@ template <class InputIterator>
 Returns the sign of $p$ at the given homogeneous point, where $begin$ is 
 referring to the innermost variable.
 \ccPrecond{\ccc{std::iterator_traits< InputIterator >::value_type} is  
-  \ccc{PolynomialTraits_d::Innermost_coefficient}.}
+  \ccc{PolynomialTraits_d::Innermost_coefficient_type}.}
 \ccPrecond (end-begin == \ccc{PolynomialTraits_d::d} + 1)  
 }
 %\ccHasModels

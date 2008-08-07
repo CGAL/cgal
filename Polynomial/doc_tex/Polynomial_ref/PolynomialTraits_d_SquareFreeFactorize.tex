@@ -30,7 +30,7 @@ DefaultConstructible\\
 \ccMethod{template<class OutputIterator>
 OutputIterator operator()(PolynomialTraits_d::Polynomial_d  p,
                           OutputIterator                    it,
-                          PolynomialTraits_d::Innermost_coefficient& a);}
+                          PolynomialTraits_d::Innermost_coefficient_type& a);}
 { computes square-free factorization of $p$.\\
   The \ccc{OutputIterator} must allow the value type  
    \ccc{std::pair<PolynomialTraits_d::Polynomial_d,int>}.
@@ -39,7 +39,7 @@ OutputIterator operator()(PolynomialTraits_d::Polynomial_d  p,
 \ccMethod{template<class OutputIterator>
 OutputIterator operator()(PolynomialTraits_d::Polynomial_d  p,
                           OutputIterator                   it,
-                          PolynomialTraits_d::Innermost_coefficient& a);}
+                          PolynomialTraits_d::Innermost_coefficient_type& a);}
 { As the first operator, just not computing the factor $a$. }
 
 %\ccHasModels

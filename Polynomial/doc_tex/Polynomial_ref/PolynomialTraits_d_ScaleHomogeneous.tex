@@ -7,7 +7,7 @@ This \ccc{AdaptableFunctor} scale a
 Note that this functor operates on the polynomial in the univariate view, that is, 
 the polynomial is considered as a univariate polynomial in one specific variable. 
 Moreover, the polynomial is considered as a homogeneous polynomial in that variable.
-Note that $a$ and $b$ are of type \ccc{PolynomialTraits_d::Coefficient}.
+Note that $a$ and $b$ are of type \ccc{PolynomialTraits_d::Coefficient_type}.
 
 
 \ccRefines 
@@ -21,12 +21,12 @@ Note that $a$ and $b$ are of type \ccc{PolynomialTraits_d::Coefficient}.
 
 \ccOperations
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
-                                 PolynomialTraits_d::Coefficient   a,
-                                 PolynomialTraits_d::Coefficient   b);}
+                                 PolynomialTraits_d::Coefficient_type   a,
+                                 PolynomialTraits_d::Coefficient_type   b);}
          { return $b^{degree}\cdot p(a/b\cdot x)$, with respect to the outermost variable. }
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
-                                 PolynomialTraits_d::Coefficient   a,
-                                 PolynomialTraits_d::Coefficient   b,
+                                 PolynomialTraits_d::Coefficient_type   a,
+                                 PolynomialTraits_d::Coefficient_type   b,
                                  int i);}
          { Same as first operator but for variable $x_i$. 
 \ccPrecond $0 \leq i  < d$

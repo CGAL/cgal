@@ -16,16 +16,16 @@ it is arbitrary but fixed for a certain model of this concept.
 \ccHeading{Functors}
 
 In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
-%,e.g., \ccc{Sign_at} if \ccc{Innermost_coefficient} is not \ccc{RealEmbeddable}. 
+%,e.g., \ccc{Sign_at} if \ccc{Innermost_coefficient_type} is not \ccc{RealEmbeddable}. 
 \ccSetTwoColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
 
 \ccNestedType{Univariate_content}{ 
-        In case \ccc{PolynomialTraits_d::Coefficient} is {\bf not} a model of 
+        In case \ccc{PolynomialTraits_d::Coefficient_type} is {\bf not} a model of 
         \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_type}, otherwise this is 
         a model of \ccc{PolynomialTraits_d::UnivariateContent}.}
 %\begin{ccAdvanced}
 \ccNestedType{Multivariate_content}{ 
-        In case \ccc{PolynomialTraits_d::Innermost_coefficient} is {\bf not} 
+        In case \ccc{PolynomialTraits_d::Innermost_coefficient_type} is {\bf not} 
         a model of \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_type}, 
         otherwise this is a model of 
         \ccc{PolynomialTraits_d::MultivariateContent}.}
