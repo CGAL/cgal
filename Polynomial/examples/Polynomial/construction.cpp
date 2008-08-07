@@ -10,8 +10,8 @@ int main(){
   typedef CGAL::Polynomial_type_generator<CGAL::Gmpz,2>::Type Poly_2;
 
   typedef CGAL::Polynomial_traits_d<Poly_2>                   PT_2;
-  typedef PT_2::Coefficient                                   Poly_1;
-  typedef PT_2::Innermost_coefficient                         Integer; 
+  typedef PT_2::Coefficient_type                                   Poly_1;
+  typedef PT_2::Innermost_coefficient_type                         Integer; 
    
   PT_2::Construct_polynomial construct_polynomial;
   

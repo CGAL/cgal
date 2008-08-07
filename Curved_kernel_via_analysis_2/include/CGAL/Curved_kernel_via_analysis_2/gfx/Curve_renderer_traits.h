@@ -89,8 +89,8 @@ struct Reduce_by {
  * \c OutputPoly_2 by recursively applying operation \c Op to all of its
  * coefficients
  *
- * <tt>Op: InputPoly_2::Innermost_coefficient ->
- *             OutputPoly_2::Innermost_coefficient</tt>
+ * <tt>Op: InputPoly_2::Inntermost_coefficient_type ->
+ *             OutputPoly_2::Inntermost_coefficient_type</tt>
  */
 template <class OutputPoly_2, class InputPoly_2, class Op>
 struct Transform {
@@ -109,7 +109,7 @@ struct Transform {
     }
 
     OutputPoly_2 operator()(
-        const typename Innermost_coefficient<InputPoly_2>::Type& x, Op op)
+        const typename Inntermost_coefficient_type<InputPoly_2>::Type& x, Op op)
         const {
             
         return static_cast<OutputPoly_2>(op(x));

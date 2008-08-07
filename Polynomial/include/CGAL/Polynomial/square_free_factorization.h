@@ -156,7 +156,7 @@ inline int square_free_factorization_for_regular_polynomial_
 
     typedef Polynomial<Coeff> POLY;
     typedef Polynomial_traits_d<POLY> PT;
-    typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
+    typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient_type IC;
     typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
     //typename Polynomial_traits_d<POLY>::Innermost_coefficient_to_polynomial ictp;
     typename Polynomial_traits_d<POLY>::Innermost_coefficient_begin begin;

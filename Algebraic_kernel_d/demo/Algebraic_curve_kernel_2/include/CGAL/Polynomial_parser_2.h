@@ -49,7 +49,7 @@ template <class Poly2>
 struct _Default_checker {
 
     // coefficient type
-    typedef typename CGAL::Polynomial_traits_d<Poly2>::Innermost_coefficient NT;
+    typedef typename CGAL::Polynomial_traits_d<Poly2>::Innermost_coefficient_type NT;
 
     bool operator()(const NT& x) const {
         return true;

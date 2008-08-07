@@ -898,7 +898,7 @@ int evaluate_rational(int var, const NT& c, const NT& key)
 //! precomputes polynomials and derivative coefficients
 void precompute(const Polynomial_2& in) {
 
-    typedef typename Polynomial_traits_2::Innermost_coefficient Coeff_src;
+    typedef typename Polynomial_traits_2::Inntermost_coefficient_type Coeff_src;
     
     Max_coeff<Coeff_src> max_coeff;
     Coeff_src max_c = max_coeff(in);

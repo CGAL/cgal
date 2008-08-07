@@ -30,7 +30,7 @@ static CGAL::Random my_rnd(346); // some seed
 template<class Polynomial_d> 
 void test_resultant(){
   typedef typename CGAL::Polynomial_traits_d<Polynomial_d> PT;
-  typedef typename PT::Coefficient Coeff; 
+  typedef typename PT::Coefficient_type Coeff; 
   typename PT::Resultant resultant;
    
   {

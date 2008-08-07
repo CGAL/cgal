@@ -7,20 +7,20 @@
 namespace CGAL{
 namespace CGALi{
 
-// template meta function Innermost_coefficient
+// template meta function Innermost_coefficient_type
 // returns the tpye of the innermost coefficient 
-template <class T> struct Innermost_coefficient{ typedef T Type; };
-template <class Coefficient> 
-struct Innermost_coefficient<Polynomial<Coefficient> >{
-    typedef typename Innermost_coefficient<Coefficient>::Type Type; 
+template <class T> struct Innermost_coefficient_type{ typedef T Type; };
+template <class Coefficient_type> 
+struct Innermost_coefficient_type<Polynomial<Coefficient_type> >{
+    typedef typename Innermost_coefficient_type<Coefficient_type>::Type Type; 
 };
 
 // template meta function Dimension
 // returns the number of variables 
 template <class T> struct Dimension{ static const int value = 0;};
-template <class Coefficient> 
-struct Dimension<Polynomial<Coefficient> > {
-    static const int value = Dimension<Coefficient>::value + 1 ; 
+template <class Coefficient_type> 
+struct Dimension<Polynomial<Coefficient_type> > {
+    static const int value = Dimension<Coefficient_type>::value + 1 ; 
 };
 
 } // namespace CGALi

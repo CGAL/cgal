@@ -26,10 +26,10 @@
 #define CGAL_POLYNOMIAL_CGALi_TYPE_H
 
 #define CGAL_icoeff(T) typename CGAL::First_if_different<       \
-typename CGAL::CGALi::Innermost_coefficient<T>::Type, T, 1>::Type  
+typename CGAL::CGALi::Innermost_coefficient_type<T>::Type, T, 1>::Type  
 
 #define CGAL_int(T) typename CGAL::First_if_different< int,   \
-typename CGAL::CGALi::Innermost_coefficient<T>::Type , 2>::Type 
+typename CGAL::CGALi::Innermost_coefficient_type<T>::Type , 2>::Type 
 
 
 #include <CGAL/ipower.h>
@@ -189,7 +189,7 @@ class Polynomial
            boost::ordered_field_operators2< Polynomial<NT_> , CGAL_icoeff(NT_),
            boost::ordered_field_operators2< Polynomial<NT_> , CGAL_int(NT_)  > > > > 
 {
-  typedef typename CGALi::Innermost_coefficient<NT_>::Type Innermost_coefficient; 
+  typedef typename CGALi::Innermost_coefficient_type<NT_>::Type Innermost_coefficient_type; 
 public: 
 
   //! \name Typedefs 
@@ -1341,9 +1341,9 @@ void Polynomial<NT>::output_ascii(std::ostream &os) const {
 
 template <class NT>
 void Polynomial<NT>::output_benchmark(std::ostream &os) const {
-  typedef typename Polynomial_traits_d< Polynomial<NT> >::Innermost_coefficient 
-    Innermost_coefficient;
-  typedef std::pair< Exponent_vector, Innermost_coefficient >
+  typedef typename Polynomial_traits_d< Polynomial<NT> >::Innermost_coefficient_type 
+    Innermost_coefficient_type;
+  typedef std::pair< Exponent_vector, Innermost_coefficient_type >
     Exponents_coeff_pair;
   typedef typename Polynomial_traits_d< Polynomial<NT> >::Get_monom_representation Gmr;
     

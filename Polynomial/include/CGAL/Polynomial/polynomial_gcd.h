@@ -96,7 +96,7 @@ Polynomial<NT> gcd_(
 { 
 	typedef Polynomial<NT> POLY;
     typedef Polynomial_traits_d<POLY> PT;  
-    typedef typename PT::Innermost_coefficient IC; 
+    typedef typename PT::Innermost_coefficient_type IC; 
         
     typename PT::Multivariate_content mcont; 
     IC mcont_p1 = mcont(p1);
@@ -116,13 +116,13 @@ Polynomial<NT> gcd_(
  *  \relates CGAL::Polynomial
  *  \brief return the greatest common divisor of \c p1 and \c p2
  *
- *  \pre Requires \c Innermost_coefficient to be a \c Field or a \c UFDomain.
+ *  \pre Requires \c Innermost_coefficient_type to be a \c Field or a \c UFDomain.
  */
 template <class NT> 
 inline
 Polynomial<NT> gcd(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
 { 
-    typedef typename CGALi::Innermost_coefficient<Polynomial<NT> >::Type IC;
+    typedef typename CGALi::Innermost_coefficient_type<Polynomial<NT> >::Type IC;
     typedef typename Algebraic_structure_traits<IC>::Algebraic_category Algebraic_category;
 
     // Filter for zero-polynomials

@@ -18,8 +18,8 @@ static CGAL::Random my_rnd(346); // some seed
 template<class Polynomial_d> 
 void test_interpolator(){
     typedef typename CGAL::Polynomial_traits_d<Polynomial_d> PT;
-    typedef typename PT::Innermost_coefficient IC; 
-    typedef typename PT::Coefficient Coeff; 
+    typedef typename PT::Innermost_coefficient_type IC; 
+    typedef typename PT::Coefficient_type Coeff; 
     
     for(int k = 0 ; k < 5; k++){
       // gen some polynomial

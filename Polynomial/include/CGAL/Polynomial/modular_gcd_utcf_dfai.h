@@ -76,7 +76,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
     Poly FF2 = FF2_;
 
     typedef Polynomial_traits_d<Poly> PT;
-    typedef typename PT::Innermost_coefficient IC;
+    typedef typename PT::Innermost_coefficient_type IC;
 
     typename Coercion_traits<Poly,IC>::Cast ictp;
     typename PT::Innermost_coefficient_begin begin;

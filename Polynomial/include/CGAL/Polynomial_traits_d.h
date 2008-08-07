@@ -29,25 +29,25 @@
 #include <CGAL/extended_euclidean_algorithm.h>
 
 #define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                          \
-  typedef Polynomial_traits_d< Polynomial< Coefficient_ > > PT;         \
-  typedef Polynomial_traits_d< Coefficient_ > PTC;                      \
+  typedef Polynomial_traits_d< Polynomial< Coefficient_type_ > > PT;         \
+  typedef Polynomial_traits_d< Coefficient_type_ > PTC;                      \
                                                                         \
   public:                                                               \
-  typedef Polynomial<Coefficient_>                  Polynomial_d;       \
-  typedef Coefficient_                              Coefficient;        \
+  typedef Polynomial<Coefficient_type_>                  Polynomial_d;       \
+  typedef Coefficient_type_                              Coefficient_type;        \
                                                                         \
-  typedef typename Innermost_coefficient<Polynomial_d>::Type            \
-  Innermost_coefficient;                                                \
+  typedef typename Innermost_coefficient_type<Polynomial_d>::Type            \
+  Innermost_coefficient_type;                                                \
   static const int d = Dimension<Polynomial_d>::value;                  \
                                                                         \
                                                                         \
   private:                                                              \
-  typedef std::pair< Exponent_vector, Innermost_coefficient >           \
+  typedef std::pair< Exponent_vector, Innermost_coefficient_type >           \
   Exponents_coeff_pair;                                                 \
   typedef std::vector< Exponents_coeff_pair > Monom_rep;                \
                                                                         \
   typedef CGAL::Recursive_const_flattening< d-1,                        \
-    typename CGAL::Polynomial<Coefficient>::const_iterator >            \
+    typename CGAL::Polynomial<Coefficient_type>::const_iterator >            \
   Coefficient_flattening;                                               \
                                                                         \
   public:                                                               \
@@ -63,7 +63,7 @@ namespace CGALi {
 
 // Base class for functors depending on the algebraic category of the
 // innermost coefficient
-template< class Coefficient_, class ICoeffAlgebraicCategory >
+template< class Coefficient_type_, class ICoeffAlgebraicCategory >
 class Polynomial_traits_d_base_icoeff_algebraic_category {    
 public:    
   typedef Null_functor    Multivariate_content;
@@ -73,34 +73,34 @@ public:
 };
 
 // Specializations
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_icoeff_algebraic_category< 
-            Polynomial< Coefficient_ >, Integral_domain_without_division_tag > 
+            Polynomial< Coefficient_type_ >, Integral_domain_without_division_tag > 
   : public Polynomial_traits_d_base_icoeff_algebraic_category< 
-                Polynomial< Coefficient_ >, Null_tag > {};
+                Polynomial< Coefficient_type_ >, Null_tag > {};
 
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_icoeff_algebraic_category< 
-       Polynomial< Coefficient_ >, Integral_domain_tag >
+       Polynomial< Coefficient_type_ >, Integral_domain_tag >
   : public Polynomial_traits_d_base_icoeff_algebraic_category< 
-       Polynomial< Coefficient_ >, Integral_domain_without_division_tag > {}; 
+       Polynomial< Coefficient_type_ >, Integral_domain_without_division_tag > {}; 
 
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_icoeff_algebraic_category< 
-            Polynomial< Coefficient_ >, Unique_factorization_domain_tag >
+            Polynomial< Coefficient_type_ >, Unique_factorization_domain_tag >
   : public Polynomial_traits_d_base_icoeff_algebraic_category< 
-                Polynomial< Coefficient_ >, Integral_domain_tag > {
+                Polynomial< Coefficient_type_ >, Integral_domain_tag > {
   CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
     
 public:    
 
  
  struct Multivariate_content
-    : public std::unary_function< Polynomial_d , Innermost_coefficient >{
-    Innermost_coefficient 
+    : public std::unary_function< Polynomial_d , Innermost_coefficient_type >{
+    Innermost_coefficient_type 
     operator()(const Polynomial_d& p) const {
       typedef Innermost_coefficient_iterator IT;
-      Innermost_coefficient content(0);
+      Innermost_coefficient_type content(0);
       for (IT it = typename PT::Innermost_coefficient_begin()(p);
            it != typename PT::Innermost_coefficient_end()(p);
            it++){
@@ -112,36 +112,36 @@ public:
   };
 }; 
 
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_icoeff_algebraic_category< 
-            Polynomial< Coefficient_ >, Euclidean_ring_tag >
+            Polynomial< Coefficient_type_ >, Euclidean_ring_tag >
   : public Polynomial_traits_d_base_icoeff_algebraic_category< 
-                Polynomial< Coefficient_ >, Unique_factorization_domain_tag >
+                Polynomial< Coefficient_type_ >, Unique_factorization_domain_tag >
 {}; 
 
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_icoeff_algebraic_category< 
-            Polynomial< Coefficient_ >, Field_tag >
+            Polynomial< Coefficient_type_ >, Field_tag >
   : public Polynomial_traits_d_base_icoeff_algebraic_category< 
-                Polynomial< Coefficient_ >, Integral_domain_tag > {
+                Polynomial< Coefficient_type_ >, Integral_domain_tag > {
   CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
 
 public:
     
   //       Multivariate_content;
   struct Multivariate_content
-    : public std::unary_function< Polynomial_d , Innermost_coefficient >{
-    Innermost_coefficient operator()(const Polynomial_d& p) const {
+    : public std::unary_function< Polynomial_d , Innermost_coefficient_type >{
+    Innermost_coefficient_type operator()(const Polynomial_d& p) const {
       if( CGAL::is_zero(p) )
-        return Innermost_coefficient(0);
+        return Innermost_coefficient_type(0);
       else
-        return Innermost_coefficient(1);
+        return Innermost_coefficient_type(1);
     }
   };
   
 //  // Disabled for release
 //  struct Interpolate{
-//     typedef Polynomial<Innermost_coefficient> Polynomial_1; 
+//     typedef Polynomial<Innermost_coefficient_type> Polynomial_1; 
         
 //     void operator() (
 //         const Polynomial_1& m1, const Polynomial_d& u1,
@@ -190,27 +190,27 @@ public:
 //   };
 };
 
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_icoeff_algebraic_category< 
-            Polynomial< Coefficient_ >, Field_with_sqrt_tag >
+            Polynomial< Coefficient_type_ >, Field_with_sqrt_tag >
   : public Polynomial_traits_d_base_icoeff_algebraic_category< 
-                Polynomial< Coefficient_ >, Field_tag > {}; 
+                Polynomial< Coefficient_type_ >, Field_tag > {}; 
 
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_icoeff_algebraic_category< 
-            Polynomial< Coefficient_ >, Field_with_kth_root_tag >
+            Polynomial< Coefficient_type_ >, Field_with_kth_root_tag >
   : public Polynomial_traits_d_base_icoeff_algebraic_category< 
-                Polynomial< Coefficient_ >, Field_with_sqrt_tag > {}; 
+                Polynomial< Coefficient_type_ >, Field_with_sqrt_tag > {}; 
  
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_icoeff_algebraic_category< 
-            Polynomial< Coefficient_ >, Field_with_root_of_tag >
+            Polynomial< Coefficient_type_ >, Field_with_root_of_tag >
   : public Polynomial_traits_d_base_icoeff_algebraic_category< 
-                Polynomial< Coefficient_ >, Field_with_kth_root_tag > {}; 
+                Polynomial< Coefficient_type_ >, Field_with_kth_root_tag > {}; 
 
 // Base class for functors depending on the algebraic category of the
 // Polynomial type
-template< class Coefficient_, class PolynomialAlgebraicCategory >
+template< class Coefficient_type_, class PolynomialAlgebraicCategory >
 class Polynomial_traits_d_base_polynomial_algebraic_category {        
 public:
   typedef Null_functor    Univariate_content;
@@ -218,34 +218,34 @@ public:
 };
 
 // Specializations
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_polynomial_algebraic_category<
-            Polynomial< Coefficient_ >, Integral_domain_without_division_tag >
+            Polynomial< Coefficient_type_ >, Integral_domain_without_division_tag >
   : public Polynomial_traits_d_base_polynomial_algebraic_category<
-                Polynomial< Coefficient_ >, Null_tag > {};
+                Polynomial< Coefficient_type_ >, Null_tag > {};
 
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_polynomial_algebraic_category<
-            Polynomial< Coefficient_ >, Integral_domain_tag >
+            Polynomial< Coefficient_type_ >, Integral_domain_tag >
   : public Polynomial_traits_d_base_polynomial_algebraic_category<
-          Polynomial< Coefficient_ >, Integral_domain_without_division_tag > {};
+          Polynomial< Coefficient_type_ >, Integral_domain_without_division_tag > {};
 
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_polynomial_algebraic_category<
-            Polynomial< Coefficient_ >, Unique_factorization_domain_tag >
+            Polynomial< Coefficient_type_ >, Unique_factorization_domain_tag >
   : public Polynomial_traits_d_base_polynomial_algebraic_category<
-                Polynomial< Coefficient_ >, Integral_domain_tag > {
+                Polynomial< Coefficient_type_ >, Integral_domain_tag > {
   CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
 
 public:
     
   //       Univariate_content
   struct Univariate_content
-    : public std::unary_function< Polynomial_d , Coefficient>{
-    Coefficient operator()(const Polynomial_d& p) const {
+    : public std::unary_function< Polynomial_d , Coefficient_type>{
+    Coefficient_type operator()(const Polynomial_d& p) const {
       return p.content();
     }
-    Coefficient operator()(Polynomial_d p, int i) const {
+    Coefficient_type operator()(Polynomial_d p, int i) const {
       return typename PT::Swap()(p,i,PT::d-1).content();
     }
   };
@@ -273,10 +273,10 @@ public:
     OutputIterator operator()( 
         const Polynomial_d&    p , 
         OutputIterator         oi, 
-        Innermost_coefficient& a ) {
+        Innermost_coefficient_type& a ) {
       
       if( CGAL::is_zero(p) ) {
-        a = Innermost_coefficient(0);
+        a = Innermost_coefficient_type(0);
         return oi;
       }
 
@@ -290,11 +290,11 @@ public:
   };   
 };
 
-template< class Coefficient_ >
+template< class Coefficient_type_ >
 class Polynomial_traits_d_base_polynomial_algebraic_category<
-            Polynomial< Coefficient_ >, Euclidean_ring_tag >
+            Polynomial< Coefficient_type_ >, Euclidean_ring_tag >
   : public Polynomial_traits_d_base_polynomial_algebraic_category<
-                Polynomial< Coefficient_ >, Unique_factorization_domain_tag > {};
+                Polynomial< Coefficient_type_ >, Unique_factorization_domain_tag > {};
 
 
 // Polynomial_traits_d_base class connecting the two base classes which depend
@@ -302,16 +302,16 @@ class Polynomial_traits_d_base_polynomial_algebraic_category<
 //  nomial type.
 
 // First the general base class for the innermost coefficient
-template< class InnermostCoefficient, 
+template< class InnermostCoefficient_type, 
           class ICoeffAlgebraicCategory, class PolynomialAlgebraicCategory >
 class Polynomial_traits_d_base {
-  typedef InnermostCoefficient ICoeff;
+  typedef InnermostCoefficient_type ICoeff;
 public:
   static const int d = 0;
     
   typedef ICoeff Polynomial_d;
-  typedef ICoeff Coefficient;
-  typedef ICoeff Innermost_coefficient;
+  typedef ICoeff Coefficient_type;
+  typedef ICoeff Innermost_coefficient_type;
     
   struct Degree 
     : public std::unary_function< ICoeff , int > {
@@ -387,9 +387,9 @@ public:
     
   struct Degree_vector{
     typedef Exponent_vector         result_type;
-    typedef Coefficient             argument_type;
+    typedef Coefficient_type             argument_type;
     // returns the exponent vector of inner_most_lcoeff. 
-    result_type operator()(const Coefficient&){
+    result_type operator()(const Coefficient_type&){
       return Exponent_vector();
     }
   };
@@ -411,15 +411,15 @@ public:
     typename 
     CGAL::Coercion_traits<
         typename std::iterator_traits<Input_iterator>::value_type,
-                                   Innermost_coefficient>::Type
+                                   Innermost_coefficient_type>::Type
     operator()(
-        const Innermost_coefficient& p, 
+        const Innermost_coefficient_type& p, 
         Input_iterator begin, 
         Input_iterator end){ 
       CGAL_precondition(end == begin);
       typedef typename std::iterator_traits<Input_iterator>::value_type 
         value_type;
-      typedef CGAL::Coercion_traits<Innermost_coefficient,value_type> CT;
+      typedef CGAL::Coercion_traits<Innermost_coefficient_type,value_type> CT;
       return typename CT::Cast()(p);
     }
   };
@@ -433,16 +433,16 @@ public:
     typename 
     CGAL::Coercion_traits<
         typename std::iterator_traits<Input_iterator>::value_type,
-                                   Innermost_coefficient>::Type
+                                   Innermost_coefficient_type>::Type
     operator()(
-        const Innermost_coefficient& p, 
+        const Innermost_coefficient_type& p, 
         Input_iterator begin, 
         Input_iterator end,
         int hdegree){ 
       
       typedef typename std::iterator_traits<Input_iterator>::value_type 
         value_type;
-      typedef CGAL::Coercion_traits<Innermost_coefficient,value_type> CT;
+      typedef CGAL::Coercion_traits<Innermost_coefficient_type,value_type> CT;
       typename CT::Type result =   
         typename CT::Cast()(CGAL::ipower(*begin++,hdegree)) 
         * typename CT::Cast()(p);
@@ -457,14 +457,14 @@ public:
 
 // Now the version for the polynomials with all functors provided by all 
 // polynomials
-template< class Coefficient_,
+template< class Coefficient_type_,
           class ICoeffAlgebraicCategory, class PolynomialAlgebraicCategory >
-class Polynomial_traits_d_base< Polynomial< Coefficient_ >,
+class Polynomial_traits_d_base< Polynomial< Coefficient_type_ >,
           ICoeffAlgebraicCategory, PolynomialAlgebraicCategory >
   : public Polynomial_traits_d_base_icoeff_algebraic_category< 
-        Polynomial< Coefficient_ >, ICoeffAlgebraicCategory >,
+        Polynomial< Coefficient_type_ >, ICoeffAlgebraicCategory >,
     public Polynomial_traits_d_base_polynomial_algebraic_category<
-        Polynomial< Coefficient_ >, PolynomialAlgebraicCategory > {
+        Polynomial< Coefficient_type_ >, PolynomialAlgebraicCategory > {
 
   CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
 
@@ -475,13 +475,13 @@ class Polynomial_traits_d_base< Polynomial< Coefficient_ >,
 private:
   struct Compare_exponents_coeff_pair 
     : public std::binary_function< 
-       std::pair< Exponent_vector, Innermost_coefficient >,
-       std::pair< Exponent_vector, Innermost_coefficient >,
+       std::pair< Exponent_vector, Innermost_coefficient_type >,
+       std::pair< Exponent_vector, Innermost_coefficient_type >,
        bool > 
   {
     bool operator()( 
-        const std::pair< Exponent_vector, Innermost_coefficient >& p1,
-        const std::pair< Exponent_vector, Innermost_coefficient >& p2 ) const {
+        const std::pair< Exponent_vector, Innermost_coefficient_type >& p1,
+        const std::pair< Exponent_vector, Innermost_coefficient_type >& p2 ) const {
       // TODO: Precondition leads to an error within test_translate in 
       // Polynomial_traits_d test
       // CGAL_precondition( p1.first != p2.first );
@@ -511,63 +511,63 @@ public:
     }
         
     //! construct the constant polynomial a0
-    Polynomial_d operator() (const Coefficient& a0) const
+    Polynomial_d operator() (const Coefficient_type& a0) const
     {return Polynomial_d(a0);}
         
     //! construct the polynomial a0 + a1*x
     Polynomial_d operator() (
-        const Coefficient& a0, const Coefficient& a1) const
+        const Coefficient_type& a0, const Coefficient_type& a1) const
     {return Polynomial_d(a0,a1);}
         
     //! construct the polynomial a0 + a1*x + a2*x^2
     Polynomial_d operator() (
-        const Coefficient& a0, const Coefficient& a1,
-        const Coefficient& a2) const
+        const Coefficient_type& a0, const Coefficient_type& a1,
+        const Coefficient_type& a2) const
     {return Polynomial_d(a0,a1,a2);}
         
     //! construct the polynomial a0 + a1*x + ... + a3*x^3
     Polynomial_d operator() (
-        const Coefficient& a0, const Coefficient& a1,
-        const Coefficient& a2, const Coefficient& a3) const
+        const Coefficient_type& a0, const Coefficient_type& a1,
+        const Coefficient_type& a2, const Coefficient_type& a3) const
     {return Polynomial_d(a0,a1,a2,a3);}
         
     //! construct the polynomial a0 + a1*x + ... + a4*x^4
     Polynomial_d operator() (
-        const Coefficient& a0, const Coefficient& a1,
-        const Coefficient& a2, const Coefficient& a3,
-        const Coefficient& a4) const
+        const Coefficient_type& a0, const Coefficient_type& a1,
+        const Coefficient_type& a2, const Coefficient_type& a3,
+        const Coefficient_type& a4) const
     {return Polynomial_d(a0,a1,a2,a3,a4);}
         
     //! construct the polynomial a0 + a1*x + ... + a5*x^5
     Polynomial_d operator() (
-        const Coefficient& a0, const Coefficient& a1,
-        const Coefficient& a2, const Coefficient& a3,
-        const Coefficient& a4, const Coefficient& a5) const
+        const Coefficient_type& a0, const Coefficient_type& a1,
+        const Coefficient_type& a2, const Coefficient_type& a3,
+        const Coefficient_type& a4, const Coefficient_type& a5) const
     {return Polynomial_d(a0,a1,a2,a3,a4,a5);}
         
     //! construct the polynomial a0 + a1*x + ... + a6*x^6
     Polynomial_d operator() (
-        const Coefficient& a0, const Coefficient& a1,
-        const Coefficient& a2, const Coefficient& a3,
-        const Coefficient& a4, const Coefficient& a5, 
-        const Coefficient& a6) const
+        const Coefficient_type& a0, const Coefficient_type& a1,
+        const Coefficient_type& a2, const Coefficient_type& a3,
+        const Coefficient_type& a4, const Coefficient_type& a5, 
+        const Coefficient_type& a6) const
     {return Polynomial_d(a0,a1,a2,a3,a4,a5,a6);}
         
     //! construct the polynomial a0 + a1*x + ... + a7*x^7
     Polynomial_d operator() (
-        const Coefficient& a0, const Coefficient& a1,
-        const Coefficient& a2, const Coefficient& a3,
-        const Coefficient& a4, const Coefficient& a5, 
-        const Coefficient& a6, const Coefficient& a7) const
+        const Coefficient_type& a0, const Coefficient_type& a1,
+        const Coefficient_type& a2, const Coefficient_type& a3,
+        const Coefficient_type& a4, const Coefficient_type& a5, 
+        const Coefficient_type& a6, const Coefficient_type& a7) const
     {return Polynomial_d(a0,a1,a2,a3,a4,a5,a6,a7);}
         
     //! construct the polynomial a0 + a1*x + ... + a8*x^8
     Polynomial_d operator() (
-        const Coefficient& a0, const Coefficient& a1,
-        const Coefficient& a2, const Coefficient& a3,
-        const Coefficient& a4, const Coefficient& a5, 
-        const Coefficient& a6, const Coefficient& a7,
-        const Coefficient& a8) const 
+        const Coefficient_type& a0, const Coefficient_type& a1,
+        const Coefficient_type& a2, const Coefficient_type& a3,
+        const Coefficient_type& a4, const Coefficient_type& a5, 
+        const Coefficient_type& a6, const Coefficient_type& a7,
+        const Coefficient_type& a8) const 
     {return Polynomial_d(a0,a1,a2,a3,a4,a5,a6,a7,a8);}
         
 
@@ -588,7 +588,7 @@ public:
         Input_iterator end , 
         Tag_false) const {
       std::sort(begin,end,Compare_exponents_coeff_pair()); 
-      return Create_polynomial_from_monom_rep< Coefficient >()( begin, end ); 
+      return Create_polynomial_from_monom_rep< Coefficient_type >()( begin, end ); 
     }
         
     template< class Input_iterator >
@@ -596,7 +596,7 @@ public:
     operator()( Input_iterator begin, Input_iterator end ) const {
       if(begin == end ) return Polynomial_d(0);
       typedef typename Input_iterator::value_type value_type;
-      typedef Boolean_tag<boost::is_same<value_type,Coefficient>::value> 
+      typedef Boolean_tag<boost::is_same<value_type,Coefficient_type>::value> 
         Is_coeff;
       std::vector<value_type> vec(begin,end);
       return construct(vec.begin(),vec.end(),Is_coeff());
@@ -607,7 +607,7 @@ public:
     Polynomial_d 
     operator()( Input_iterator begin, Input_iterator end , bool is_sorted) const {
       if(is_sorted) 
-        return Create_polynomial_from_monom_rep< Coefficient >()( begin, end );
+        return Create_polynomial_from_monom_rep< Coefficient_type >()( begin, end );
       else
         return (*this)(begin,end);
     }
@@ -622,10 +622,10 @@ public:
           Monom_rep_iterator begin,
           Monom_rep_iterator end) const {
                 
-        std::vector< Innermost_coefficient > coefficients;
+        std::vector< Innermost_coefficient_type > coefficients;
         for(Monom_rep_iterator it = begin; it != end; it++){
           while( it->first[0] > (int) coefficients.size() ){
-            coefficients.push_back(Innermost_coefficient(0));
+            coefficients.push_back(Innermost_coefficient_type(0));
           }
           coefficients.push_back(it->second);
         }
@@ -640,18 +640,18 @@ public:
           Monom_rep_iterator begin,
           Monom_rep_iterator end) const {
                 
-        typedef Polynomial_traits_d<Coefficient> PT;
+        typedef Polynomial_traits_d<Coefficient_type> PT;
         typename PT::Construct_polynomial construct;
                 
-        BOOST_STATIC_ASSERT(PT::d != 0); // Coefficient is a Polynomial
-        std::vector<Coefficient> coefficients;
+        BOOST_STATIC_ASSERT(PT::d != 0); // Coefficient_type is a Polynomial
+        std::vector<Coefficient_type> coefficients;
                 
         Monom_rep_iterator it = begin; 
         while(it != end){
           int current_exp = it->first[PT::d];
           // fill up with zeros until current exp is reached
           while( (int) coefficients.size() < current_exp){
-            coefficients.push_back(Coefficient(0));
+            coefficients.push_back(Coefficient_type(0));
           }
           // collect all coeffs for this exp
           Monom_rep monoms; 
@@ -671,17 +671,17 @@ public:
 
   //       Get_coefficient;
   struct Get_coefficient 
-    : public std::binary_function<Polynomial_d, int, Coefficient > {
+    : public std::binary_function<Polynomial_d, int, Coefficient_type > {
         
-    Coefficient operator()( const Polynomial_d& p, int i) const {
+    Coefficient_type operator()( const Polynomial_d& p, int i) const {
       CGAL_precondition( i >= 0 );
       typename PT::Degree degree;
       if( i >  degree(p) )
-        return Coefficient(0);
+        return Coefficient_type(0);
       return p[i];
     }
     
-    Coefficient operator()( const Polynomial_d& p, int i, int index) const {
+    Coefficient_type operator()( const Polynomial_d& p, int i, int index) const {
       CGAL_precondition(0 <= index && index < d);
       return (*this)(Swap()(p,index,d-1),i);
     }       
@@ -690,10 +690,10 @@ public:
   //     Get_innermost_coefficient;
   struct Get_innermost_coefficient
     : public 
-    std::binary_function< Polynomial_d, Exponent_vector, Innermost_coefficient >
+    std::binary_function< Polynomial_d, Exponent_vector, Innermost_coefficient_type >
   {
         
-    Innermost_coefficient 
+    Innermost_coefficient_type 
     operator()( const Polynomial_d& p, Exponent_vector ev ) const {
       CGAL_precondition( !ev.empty() );
       typename PTC::Get_innermost_coefficient gic;
@@ -716,12 +716,12 @@ public:
     Polynomial_d operator()(const Polynomial_d& p, int i, int j ) const {
       CGAL_precondition(0 <= i && i < d);
       CGAL_precondition(0 <= j && j < d);
-      typedef std::pair< Exponent_vector, Innermost_coefficient >
+      typedef std::pair< Exponent_vector, Innermost_coefficient_type >
         Exponents_coeff_pair;
       typedef std::vector< Exponents_coeff_pair > Monom_rep; 
       Get_monom_representation gmr;
       typename Construct_polynomial
-        ::template Create_polynomial_from_monom_rep< Coefficient > construct;
+        ::template Create_polynomial_from_monom_rep< Coefficient_type > construct;
       Monom_rep mon_rep;
       gmr( p, std::back_inserter( mon_rep ) );
       for( typename Monom_rep::iterator it = mon_rep.begin(); 
@@ -750,7 +750,7 @@ public:
     operator()(const Polynomial_d& p, int i, int j = (d-1) ) const {
       CGAL_precondition(0 <= i && i < d);
       CGAL_precondition(0 <= j && j < d);
-      typedef std::pair< Exponent_vector, Innermost_coefficient >
+      typedef std::pair< Exponent_vector, Innermost_coefficient_type >
         Exponents_coeff_pair;
       typedef std::vector< Exponents_coeff_pair > Monom_rep; 
       Get_monom_representation gmr;
@@ -786,7 +786,7 @@ public:
   //       Total_degree;
   struct Total_degree : public std::unary_function< Polynomial_d , int >{
     int operator()(const Polynomial_d& p) const {
-      typedef Polynomial_traits_d<Coefficient> COEFF_POLY_TRAITS;
+      typedef Polynomial_traits_d<Coefficient_type> COEFF_POLY_TRAITS;
       typename COEFF_POLY_TRAITS::Total_degree total_degree;
       Degree degree;
       CGAL_precondition( degree(p) >= 0);
@@ -802,19 +802,19 @@ public:
 
   //       Leading_coefficient;
   struct Leading_coefficient 
-    : public std::unary_function< Polynomial_d , Coefficient>{
-    Coefficient operator()(const Polynomial_d& p) const {
+    : public std::unary_function< Polynomial_d , Coefficient_type>{
+    Coefficient_type operator()(const Polynomial_d& p) const {
       return p.lcoeff();
     }
-    Coefficient operator()(Polynomial_d p, int i) const {
+    Coefficient_type operator()(Polynomial_d p, int i) const {
       return Swap()(p,i,PT::d-1).lcoeff();
     }
   };
     
   //       Innermost_leading_coefficient;
   struct Innermost_leading_coefficient 
-    : public std::unary_function< Polynomial_d , Innermost_coefficient>{
-    Innermost_coefficient 
+    : public std::unary_function< Polynomial_d , Innermost_coefficient_type>{
+    Innermost_coefficient_type 
     operator()(const Polynomial_d& p) const {
       typename PTC::Innermost_leading_coefficient ilcoeff;
       typename PT::Leading_coefficient lcoeff;
@@ -850,23 +850,23 @@ public:
 
   // Evaluate;
   struct Evaluate
-    :public std::unary_function<Polynomial_d,Coefficient>{
+    :public std::unary_function<Polynomial_d,Coefficient_type>{
     // Evaluate with respect to one variable 
-    Coefficient
-    operator()(const Polynomial_d& p, Coefficient x) const {
+    Coefficient_type
+    operator()(const Polynomial_d& p, Coefficient_type x) const {
       return p.evaluate(x);
     }
-    Coefficient 
-    operator()(const Polynomial_d& p, Coefficient x, int i ) const {
+    Coefficient_type 
+    operator()(const Polynomial_d& p, Coefficient_type x, int i ) const {
       return Move()(p,i).evaluate(x);
     } 
-#define ICOEFF typename First_if_different<Innermost_coefficient, Coefficient>::Type 
-    Coefficient operator()
+#define ICOEFF typename First_if_different<Innermost_coefficient_type, Coefficient_type>::Type 
+    Coefficient_type operator()
       ( const Polynomial_d& p, const ICOEFF& x) const 
     {
       return p.evaluate(x);
     }
-    Coefficient operator()
+    Coefficient_type operator()
       (const Polynomial_d& p, const ICOEFF& x, int i) const 
     {
       return Move()(p,i,PT::d-1).evaluate(x);
@@ -876,29 +876,29 @@ public:
   
   // Evaluate_homogeneous;
   struct Evaluate_homogeneous{
-    typedef Coefficient           result_type;  
+    typedef Coefficient_type           result_type;  
     typedef Polynomial_d          first_argument_type;
-    typedef Coefficient           second_argument_type;
-    typedef Coefficient           third_argument_type;
+    typedef Coefficient_type           second_argument_type;
+    typedef Coefficient_type           third_argument_type;
        
-    Coefficient operator()(
-        const Polynomial_d& p, Coefficient a, Coefficient b) const 
+    Coefficient_type operator()(
+        const Polynomial_d& p, Coefficient_type a, Coefficient_type b) const 
     {
       return p.evaluate_homogeneous(a,b);
     }
-    Coefficient operator()(
-        const Polynomial_d& p, Coefficient a, Coefficient b, int i) const 
+    Coefficient_type operator()(
+        const Polynomial_d& p, Coefficient_type a, Coefficient_type b, int i) const 
     {
       return Move()(p,i,PT::d-1).evaluate_homogeneous(a,b);
     }
 
-#define ICOEFF typename First_if_different<Innermost_coefficient, Coefficient>::Type 
-    Coefficient operator()
+#define ICOEFF typename First_if_different<Innermost_coefficient_type, Coefficient_type>::Type 
+    Coefficient_type operator()
       ( const Polynomial_d& p, const ICOEFF& a, const ICOEFF& b) const 
     {
       return p.evaluate_homogeneous(a,b);
     }
-    Coefficient operator()
+    Coefficient_type operator()
       (const Polynomial_d& p, const ICOEFF& a, const ICOEFF& b, int i) const 
     {
       return Move()(p,i,PT::d-1).evaluate_homogeneous(a,b);
@@ -910,7 +910,7 @@ public:
   // Is_zero_at;
   struct Is_zero_at {
   private:
-    typedef Algebraic_structure_traits<Innermost_coefficient> AST;
+    typedef Algebraic_structure_traits<Innermost_coefficient_type> AST;
     typedef typename AST::Is_zero::result_type BOOL;
   public:
     typedef BOOL result_type;
@@ -928,7 +928,7 @@ public:
   //  Is_zero_at_homogeneous;
   struct Is_zero_at_homogeneous {
  private:
-    typedef Algebraic_structure_traits<Innermost_coefficient> AST;
+    typedef Algebraic_structure_traits<Innermost_coefficient_type> AST;
     typedef typename AST::Is_zero::result_type BOOL;
   public:
     typedef BOOL result_type;
@@ -948,7 +948,7 @@ public:
 private:
   struct Sign_at_ {
   private:
-    typedef Real_embeddable_traits<Innermost_coefficient> RT;
+    typedef Real_embeddable_traits<Innermost_coefficient_type> RT;
     typedef typename RT::Sign::result_type SIGN;
   public:
     typedef SIGN result_type;
@@ -965,7 +965,7 @@ private:
   };
   
   struct Sign_at_homogeneous_ {
-    typedef Real_embeddable_traits<Innermost_coefficient> RT;
+    typedef Real_embeddable_traits<Innermost_coefficient_type> RT;
     typedef typename RT::Sign::result_type SIGN;
   public:
     typedef SIGN result_type;
@@ -989,7 +989,7 @@ private:
     }
   };
  
-  typedef Real_embeddable_traits<Innermost_coefficient> RET_IC;
+  typedef Real_embeddable_traits<Innermost_coefficient_type> RET_IC;
   typedef typename RET_IC::Is_real_embeddable IC_is_real_embeddable;
 public:
   typedef typename ::boost::mpl::if_<IC_is_real_embeddable,Sign_at_,Null_functor>::type Sign_at; 
@@ -1036,7 +1036,7 @@ public:
       Integral_division_up_to_constant_factor  idiv_utcf;
       Derivative diff;
             
-      Coefficient content = ucontent_utcf( p );
+      Coefficient_type content = ucontent_utcf( p );
       typename PTC::Is_square_free isf;
             
       if( !isf( content ) )
@@ -1060,7 +1060,7 @@ public:
       Derivative diff;
       typename PTC::Make_square_free msf;
             
-      Coefficient content = ucontent_utcf(p);
+      Coefficient_type content = ucontent_utcf(p);
       Polynomial_d result = Polynomial_d(msf(content));
             
       Polynomial_d regular_part = idiv_utcf(p,Polynomial_d(content));
@@ -1079,7 +1079,7 @@ public:
     void
     operator()(
         const Polynomial_d& f, const Polynomial_d& g,
-        Polynomial_d& q, Polynomial_d& r, Coefficient& D) const {
+        Polynomial_d& q, Polynomial_d& r, Coefficient_type& D) const {
       Polynomial_d::pseudo_division(f,g,q,r,D);
     }
   };
@@ -1090,7 +1090,7 @@ public:
     Polynomial_d
     operator()(const Polynomial_d& f, const Polynomial_d& g) const {
       Polynomial_d q,r;
-      Coefficient D;
+      Coefficient_type D;
       Polynomial_d::pseudo_division(f,g,q,r,D);
       return q;
     }
@@ -1102,7 +1102,7 @@ public:
     Polynomial_d
     operator()(const Polynomial_d& f, const Polynomial_d& g) const {
       Polynomial_d q,r;
-      Coefficient D;
+      Coefficient_type D;
       Polynomial_d::pseudo_division(f,g,q,r,D);
       return r;
     }
@@ -1122,13 +1122,13 @@ public:
     :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
     Polynomial_d
     operator()(const Polynomial_d& p, const Polynomial_d& q) const {
-      typedef Innermost_coefficient IC;
+      typedef Innermost_coefficient_type IC;
 
       typename PT::Construct_polynomial construct;
       typename PT::Innermost_leading_coefficient ilcoeff;
       typename PT::Innermost_coefficient_begin begin;
       typename PT::Innermost_coefficient_end end;
-      typedef Algebraic_extension_traits<Innermost_coefficient> AET;
+      typedef Algebraic_extension_traits<Innermost_coefficient_type> AET;
       typename AET::Denominator_for_algebraic_integers dfai;
       typename AET::Normalization_factor nfac;
 
@@ -1146,15 +1146,15 @@ public:
   };
     
   struct Univariate_content_up_to_constant_factor
-    :public std::unary_function<Polynomial_d, Coefficient> {
-    Coefficient
+    :public std::unary_function<Polynomial_d, Coefficient_type> {
+    Coefficient_type
     operator()(const Polynomial_d& p) const {
       typename PTC::Gcd_up_to_constant_factor gcd_utcf;
             
-      if(CGAL::is_zero(p)) return Coefficient(0);
-      if(PT::d == 1) return Coefficient(1);
+      if(CGAL::is_zero(p)) return Coefficient_type(0);
+      if(PT::d == 1) return Coefficient_type(1);
 
-      Coefficient result(0);
+      Coefficient_type result(0);
       for(typename Polynomial_d::const_iterator it = p.begin();
           it != p.end();
           it++){
@@ -1167,8 +1167,8 @@ public:
 
   struct Square_free_factorization_up_to_constant_factor {
   private:
-    typedef Coefficient Coeff;
-    typedef Innermost_coefficient ICoeff;
+    typedef Coefficient_type Coeff;
+    typedef Innermost_coefficient_type ICoeff;
         
     // rsqff_utcf computes the sqff recursively for Coeff  
     // end of recursion: ICoeff
@@ -1184,7 +1184,7 @@ public:
         OutputIterator                                 oi) const {
       
       typename PTC::Square_free_factorization_up_to_constant_factor sqff;
-      std::vector<std::pair<Coefficient,int> > fac_mul_pairs;
+      std::vector<std::pair<Coefficient_type,int> > fac_mul_pairs;
       sqff(c,std::back_inserter(fac_mul_pairs));
       
       for(unsigned int i = 0; i < fac_mul_pairs.size(); i++){
@@ -1203,7 +1203,7 @@ public:
 
       Univariate_content_up_to_constant_factor ucontent_utcf;
       Integral_division_up_to_constant_factor idiv_utcf;
-      Coefficient c = ucontent_utcf(p);
+      Coefficient_type c = ucontent_utcf(p);
       
       p = idiv_utcf( p , Polynomial_d(c));
       std::vector<Polynomial_d> factors;
@@ -1272,19 +1272,19 @@ public:
 
   struct Translate
     : public std::binary_function< Polynomial_d , Polynomial_d, 
-                                  Innermost_coefficient >{
+                                  Innermost_coefficient_type >{
     Polynomial_d
     operator()(
         Polynomial_d p, 
-        const Innermost_coefficient& c, 
+        const Innermost_coefficient_type& c, 
         int i = (d-1)) 
       const {
       if (i == (d-1) ){
-        p.translate(Coefficient(c)); 
+        p.translate(Coefficient_type(c)); 
       }else{
         Swap swap;
         p = swap(p,i,d-1);
-        p.translate(Coefficient(c));
+        p.translate(Coefficient_type(c));
         p = swap(p,i,d-1); 
       }
       return p;
@@ -1294,20 +1294,20 @@ public:
   struct Translate_homogeneous{
     typedef Polynomial_d result_type;
     typedef Polynomial_d first_argument_type;
-    typedef Innermost_coefficient second_argument_type;
-    typedef Innermost_coefficient third_argument_type;
+    typedef Innermost_coefficient_type second_argument_type;
+    typedef Innermost_coefficient_type third_argument_type;
         
     Polynomial_d
     operator()(Polynomial_d p, 
-        const Innermost_coefficient& a, 
-        const Innermost_coefficient& b,
+        const Innermost_coefficient_type& a, 
+        const Innermost_coefficient_type& b,
         int i = (d-1) ) const {
       if (i == (d-1) ){
-        p.translate(Coefficient(a), Coefficient(b) );  
+        p.translate(Coefficient_type(a), Coefficient_type(b) );  
       }else{
         Swap swap;
         p = swap(p,i,d-1);
-        p.translate(Coefficient(a), Coefficient(b));
+        p.translate(Coefficient_type(a), Coefficient_type(b));
         p = swap(p,i,d-1);
       }
       return p;
@@ -1316,12 +1316,12 @@ public:
 
   struct Scale 
     : public 
-    std::binary_function< Polynomial_d, Innermost_coefficient, Polynomial_d > {
+    std::binary_function< Polynomial_d, Innermost_coefficient_type, Polynomial_d > {
         
-    Polynomial_d operator()( Polynomial_d p, const Innermost_coefficient& c,
+    Polynomial_d operator()( Polynomial_d p, const Innermost_coefficient_type& c,
         int i = (PT::d-1) ) {
       typename PT::Scale_homogeneous scale_homogeneous;          
-      return scale_homogeneous( p, c, Innermost_coefficient(1), i );
+      return scale_homogeneous( p, c, Innermost_coefficient_type(1), i );
     }
         
   };
@@ -1329,26 +1329,26 @@ public:
   struct Scale_homogeneous{
     typedef Polynomial_d result_type;
     typedef Polynomial_d first_argument_type;
-    typedef Innermost_coefficient second_argument_type;
-    typedef Innermost_coefficient third_argument_type;
+    typedef Innermost_coefficient_type second_argument_type;
+    typedef Innermost_coefficient_type third_argument_type;
         
     Polynomial_d
     operator()(
         Polynomial_d p, 
-        const Innermost_coefficient& a, 
-        const Innermost_coefficient& b,
+        const Innermost_coefficient_type& a, 
+        const Innermost_coefficient_type& b,
         int i = (d-1) ) const {
       CGAL_precondition( ! CGAL::is_zero(b) );
             
       if (i == (d-1) ) p = Swap()(p,i,d-1);
           
       if(CGAL::is_one(b)) 
-        p.scale_up(Coefficient(a));
+        p.scale_up(Coefficient_type(a));
       else 
         if(CGAL::is_one(a)) 
-          p.scale_down(Coefficient(b));
+          p.scale_down(Coefficient_type(b));
         else 
-          p.scale(Coefficient(a), Coefficient(b) );  
+          p.scale(Coefficient_type(a), Coefficient_type(b) );  
           
       if (i == (d-1) ) p = Swap()(p,i,d-1);
           
@@ -1357,9 +1357,9 @@ public:
   };
 
   struct Resultant
-    : public std::binary_function<Polynomial_d, Polynomial_d, Coefficient>{
+    : public std::binary_function<Polynomial_d, Polynomial_d, Coefficient_type>{
         
-    Coefficient
+    Coefficient_type
     operator()(
         const Polynomial_d& p, 
         const Polynomial_d& q,
@@ -1469,7 +1469,7 @@ public:
   //
 
   struct Get_monom_representation {      
-    typedef std::pair< Exponent_vector, Innermost_coefficient >
+    typedef std::pair< Exponent_vector, Innermost_coefficient_type >
     Exponents_coeff_pair;
     typedef std::vector< Exponents_coeff_pair > Monom_rep; 
         
@@ -1486,7 +1486,7 @@ public:
     create_monom_representation 
     ( const Polynomial_d& p, OutputIterator oit, Tag_true ) const{
       for( int exponent = 0; exponent <= p.degree(); ++exponent ) {
-        if ( p[exponent] != Coefficient(0) ){
+        if ( p[exponent] != Coefficient_type(0) ){
           Exponent_vector exp_vec;
           exp_vec.push_back( exponent );
           *oit = Exponents_coeff_pair( exp_vec, p[exponent] ); 
@@ -1499,7 +1499,7 @@ public:
     ( const Polynomial_d& p, OutputIterator oit, Tag_false ) const { 
       for( int exponent = 0; exponent <= p.degree(); ++exponent ) {
         Monom_rep monom_rep;
-        typedef Polynomial_traits_d< Coefficient > PT;
+        typedef Polynomial_traits_d< Coefficient_type > PT;
         typename PT::Get_monom_representation gmr;
         gmr( p[exponent], std::back_inserter( monom_rep ) );
         for( typename Monom_rep::iterator it = monom_rep.begin();
@@ -1532,7 +1532,7 @@ public:
     template <class Input_iterator>
     typename CGAL::Coercion_traits<
          typename std::iterator_traits<Input_iterator>::value_type, 
-         Innermost_coefficient
+         Innermost_coefficient_type
     >::Type
     operator()(
         const Polynomial_d& p, 
@@ -1546,7 +1546,7 @@ public:
     template <class Input_iterator>
     typename CGAL::Coercion_traits< 
          typename std::iterator_traits<Input_iterator>::value_type, 
-         Innermost_coefficient
+         Innermost_coefficient_type
     >::Type
     operator()(
         const Polynomial_d& p, 
@@ -1562,7 +1562,7 @@ public:
     typename 
     CGAL::Coercion_traits
     <typename std::iterator_traits<Input_iterator>::value_type, 
-         Innermost_coefficient>::Type
+         Innermost_coefficient_type>::Type
     operator()(
         const Polynomial_d& p, 
         Input_iterator begin, 
@@ -1571,7 +1571,7 @@ public:
             
       typedef typename std::iterator_traits<Input_iterator>::value_type 
         value_type;
-      typedef CGAL::Coercion_traits<Innermost_coefficient,value_type> CT;
+      typedef CGAL::Coercion_traits<Innermost_coefficient_type,value_type> CT;
       typename PTC::Substitute subs; 
 
       typename CT::Type x = typename CT::Cast()(*(--end));  
@@ -1597,7 +1597,7 @@ public:
     struct Result_type{
       typedef std::iterator_traits<Input_iterator> ITT;
       typedef typename ITT::value_type value_type;
-      typedef Coercion_traits<value_type, Innermost_coefficient> CT; 
+      typedef Coercion_traits<value_type, Innermost_coefficient_type> CT; 
       typedef typename CT::Type Type; 
     };
     
@@ -1633,7 +1633,7 @@ public:
       
       typedef std::iterator_traits<Input_iterator> ITT;
       typedef typename ITT::value_type value_type;
-      typedef Coercion_traits<value_type, Innermost_coefficient> CT; 
+      typedef Coercion_traits<value_type, Innermost_coefficient_type> CT; 
       typedef typename CT::Type Type; 
       
       typename PTC::Substitute_homogeneous subsh; 
@@ -1665,7 +1665,7 @@ template< class Polynomial >
 class Polynomial_traits_d
   : public CGALi::Polynomial_traits_d_base< Polynomial,  
     typename Algebraic_structure_traits<
-typename CGALi::Innermost_coefficient<Polynomial>::Type >::Algebraic_category,
+typename CGALi::Innermost_coefficient_type<Polynomial>::Type >::Algebraic_category,
     typename Algebraic_structure_traits< Polynomial >::Algebraic_category > ,
   public Algebraic_structure_traits<Polynomial>{
 

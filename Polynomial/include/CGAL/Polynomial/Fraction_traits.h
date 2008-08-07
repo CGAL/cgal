@@ -47,7 +47,7 @@ public:
 template <class NT_>
 class Poly_Ftr_base< Polynomial<NT_>, CGAL::Tag_true > {
     typedef Polynomial<NT_> Poly;
-    typedef NT_ Coefficient;
+    typedef NT_ Coefficient_type;
 public:
     typedef Polynomial<NT_> Type;
     typedef CGAL::Tag_true Is_fraction;
@@ -68,7 +68,7 @@ public:
             typedef Numerator_type INTPOLY;
             typedef Denominator_type DENOM;
             
-            typedef Fraction_traits<Coefficient> CFTRAITS;
+            typedef Fraction_traits<Coefficient_type> CFTRAITS;
             typedef typename CFTRAITS::Numerator_type INTCOEFF;
 
             const int d = p.degree();

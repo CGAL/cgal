@@ -89,7 +89,7 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
     
     typename WT_POLY::Wang wang; 
     
-    typedef typename PT::Innermost_coefficient IC;
+    typedef typename PT::Innermost_coefficient_type IC;
 
     typename CGAL::Coercion_traits<Poly,IC>::Cast ictp;
     typename PT::Innermost_leading_coefficient ilcoeff;

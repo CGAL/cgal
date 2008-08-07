@@ -1019,12 +1019,12 @@ void test_interoperable_with(){
 template<class Polynomial_d>
 void test_interoperable_poly(){
   typedef CGAL::Polynomial_traits_d<Polynomial_d> PT;
-  typedef typename PT::Coefficient                Coefficient;
-  typedef typename PT::Innermost_coefficient      Innermost_coefficient;
+  typedef typename PT::Coefficient_type                Coefficient_type;
+  typedef typename PT::Innermost_coefficient_type Innermost_coefficient_type;
 
   test_interoperable_with<Polynomial_d,int>();
-  test_interoperable_with<Polynomial_d,Innermost_coefficient>();
-  test_interoperable_with<Polynomial_d,Coefficient>();
+  test_interoperable_with<Polynomial_d,Innermost_coefficient_type>();
+  test_interoperable_with<Polynomial_d,Coefficient_type>();
   test_interoperable_with<Polynomial_d,Polynomial_d>();
   
   
@@ -1035,8 +1035,8 @@ void test_interoperable_at(){
   typedef typename AT::Integer Integer;
   typedef CGAL::Sqrt_extension<Integer,Integer> EXT; 
   {
-    typedef int Coefficient;
-    typedef CGAL::Polynomial<Coefficient>    Poly_1;
+    typedef int Coefficient_type;
+    typedef CGAL::Polynomial<Coefficient_type>    Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
     typedef CGAL::Polynomial<Poly_2> Poly_3;
     typedef CGAL::Polynomial<Poly_3> Poly_4;
@@ -1045,8 +1045,8 @@ void test_interoperable_at(){
     // test_interoperable_poly<Poly_3>();
     // test_interoperable_poly<Poly_4>();
   }{
-    typedef Integer Coefficient;
-    typedef CGAL::Polynomial<Coefficient>    Poly_1;
+    typedef Integer Coefficient_type;
+    typedef CGAL::Polynomial<Coefficient_type>    Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
     typedef CGAL::Polynomial<Poly_2> Poly_3;
     typedef CGAL::Polynomial<Poly_3> Poly_4;
@@ -1055,8 +1055,8 @@ void test_interoperable_at(){
     // test_interoperable_poly<Poly_3>();
     // test_interoperable_poly<Poly_4>();
   }{
-    typedef EXT Coefficient;
-    typedef CGAL::Polynomial<Coefficient>    Poly_1;
+    typedef EXT Coefficient_type;
+    typedef CGAL::Polynomial<Coefficient_type>    Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
     typedef CGAL::Polynomial<Poly_2> Poly_3;
     typedef CGAL::Polynomial<Poly_3> Poly_4;

@@ -14,8 +14,8 @@ class Interpolator{
     
 public:
   typedef typename PT::Polynomial_d Polynomial_d; 
-  typedef typename PT::Coefficient Coeff; 
-  typedef typename PT::Innermost_coefficient IC;
+  typedef typename PT::Coefficient_type Coeff; 
+  typedef typename PT::Innermost_coefficient_type IC;
 
 private: 
   typedef typename CGAL::Coercion_traits<Coeff,IC>::Cast IC2Coeff;

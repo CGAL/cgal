@@ -64,7 +64,7 @@ namespace CGALi {
     Polynomial<NT> canonicalize_polynomial_(Polynomial<NT> p, CGAL::Tag_true)
     {
         typedef Polynomial<NT> POLY;
-        typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
+        typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient_type IC;
         typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
         typename Algebraic_extension_traits<IC>::Normalization_factor nfac;
       
@@ -110,7 +110,7 @@ namespace CGALi {
       Polynomial<NT> canonicalize_polynomial(const Polynomial<NT>& p)
     {
         typedef Polynomial<NT> POLY;
-        typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
+        typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient_type IC;
         typedef typename Algebraic_extension_traits<IC>::Is_extended Is_extended;
     
         if (p.is_zero()) return p;

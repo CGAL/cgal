@@ -8,8 +8,8 @@ int main(){
   CGAL::set_pretty_mode(std::cout);
   typedef CGAL::Polynomial_type_generator<CGAL::Gmpz,2>::Type Poly_2;
   typedef CGAL::Polynomial_traits_d<Poly_2>                   PT_2;
-  typedef PT_2::Coefficient                                   Poly_1;
-  typedef PT_2::Innermost_coefficient                         Integer; 
+  typedef PT_2::Coefficient_type                                   Poly_1;
+  typedef PT_2::Innermost_coefficient_type                         Integer; 
   
   //construction using shift 
   Poly_2 x = PT_2::Shift()(Poly_2(1),1,0); // x_0^1

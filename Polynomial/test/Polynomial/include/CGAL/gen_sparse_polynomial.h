@@ -13,7 +13,7 @@ Polynomial_d_
 generate_sparse_random_polynomial(CGAL::Random random, int max_degree = 6){
 
     typedef CGAL::Polynomial_traits_d<Polynomial_d_> PT;
-    typedef typename PT::Innermost_coefficient IC;
+    typedef typename PT::Innermost_coefficient_type IC;
     typedef typename PT::Polynomial_d Polynomial_d;
     typename PT::Construct_polynomial construct; 
 
@@ -64,7 +64,7 @@ Polynomial_d
 generate_polynomial_degree_each(CGAL::Random random, int max_degree = 6, int bits = 5){
 
     typedef CGAL::Polynomial_traits_d<Polynomial_d> PT;
-    typedef typename PT::Innermost_coefficient IC;
+    typedef typename PT::Innermost_coefficient_type IC;
     typename PT::Construct_polynomial construct; 
 
     typedef CGAL::Exponent_vector Exponent_vector;

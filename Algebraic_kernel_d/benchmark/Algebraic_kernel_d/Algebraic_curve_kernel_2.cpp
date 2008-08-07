@@ -284,7 +284,7 @@ Benchmark_result do_benchmark(std::string filename, int n_samples = 5)
     typedef typename AK_2::Internal_polynomial_2 Internal_polynomial_2;
     
     typedef typename NiX::Polynomial_traits<Internal_polynomial_2>::
-        Innermost_coefficient Integer;
+        Innermost_coefficient_type Integer;
     
     typedef Bench_solve_2<AK_2> Bench_solve_ak_2;
     typedef typename Bench_solve_ak_2::Curve_vector Curve_vector;

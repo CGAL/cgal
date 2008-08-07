@@ -141,7 +141,7 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
     typedef CGAL::Polynomial<Coeff_2> Coeff_1;
     typedef CGAL::Polynomial<Coeff_1> POLY;
     typedef CGAL::Polynomial_traits_d<POLY> PT;
-    typedef typename PT::Innermost_coefficient IC; 
+    typedef typename PT::Innermost_coefficient_type IC; 
 
     CGAL_precondition(PT::d >= 2);
     
@@ -227,7 +227,7 @@ Coeff resultant_modularize(
     
     typedef Polynomial_traits_d<CGAL::Polynomial<Coeff> > PT;
     typedef typename PT::Polynomial_d Polynomial;
-    typedef typename PT::Innermost_coefficient IC;
+    typedef typename PT::Innermost_coefficient_type IC;
     
     
     typedef Chinese_remainder_traits<Coeff> CRT;
