@@ -915,9 +915,9 @@ void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x,
         } 
 
         CGAL_CKVA_STORE_COORDS(ppoints, pix);
+#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT 
         bool bb1 = (direction_taken == 0 && pix.x <= pix_1.x),
              bb2 = (direction_taken == 1 && pix.x <= pix_2.x);
-#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT 
         if((bb1 || bb2)) {
             //Gfx_OUT("STOP: reached end-point x-coordinate\n");
             branches_coincide = false;
