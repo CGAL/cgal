@@ -207,10 +207,10 @@ public:
   };
             
 
-  struct Square_free_factorization_1 {
+  struct Square_free_factorize_1 {
     template< class OutputIterator>
     OutputIterator operator()( const Polynomial_1& p, OutputIterator it) const {
-      typename PT_1::Square_free_factorization_up_to_constant_factor sqff;
+      typename PT_1::Square_free_factorize_up_to_constant_factor sqff;
       return sqff(p,it);
     } 
   };
@@ -227,8 +227,8 @@ public:
       construct_is_square_free_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Make_square_free_1,
       construct_make_square_free_1_object);
-  CGAL_ALGEBRAIC_KERNEL_1_PRED(Square_free_factorization_1,
-      construct_square_free_factorization_1_object);
+  CGAL_ALGEBRAIC_KERNEL_1_PRED(Square_free_factorize_1,
+      construct_square_free_factorize_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Is_coprime_1,
       construct_is_coprime_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Make_coprime_1,

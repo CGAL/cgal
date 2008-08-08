@@ -516,7 +516,7 @@ void test_sqff_utcf_(const POLY& poly, int n){
     std::back_insert_iterator<std::vector<int>  > mul_bi(mul);
     
     assert(n == 
-            CGAL::CGALi::square_free_factorization_utcf(poly, fac_bi, mul_bi));
+            CGAL::CGALi::square_free_factorize_utcf(poly, fac_bi, mul_bi));
 
     assert((int) mul.size() == n);
     assert((int) fac.size() == n);
@@ -650,7 +650,7 @@ void sqff() {
     std::back_insert_iterator<IVEC> mul_bi(mul);
     unsigned n;
     NT alpha;
-    n = CGAL::CGALi::square_free_factorization(p, fac_bi, mul_bi );
+    n = CGAL::CGALi::square_free_factorize(p, fac_bi, mul_bi );
 
 //    assert(alpha == 3);
     assert(n == 3);
@@ -666,7 +666,7 @@ void sqff() {
     mul.clear();
     fac_bi = std::back_insert_iterator<PVEC>(fac);
     mul_bi = std::back_insert_iterator<IVEC>(mul);
-    std::cerr << CGAL::CGALi::square_free_factorization( p, fac_bi, mul_bi ) << std::endl;
+    std::cerr << CGAL::CGALi::square_free_factorize( p, fac_bi, mul_bi ) << std::endl;
     std::cerr << fac[0] << std::endl;*/
     //std::cerr << fac[1] << std::endl;
     
@@ -681,7 +681,7 @@ void sqff() {
     mul.clear();
     std::back_insert_iterator< BPVEC > bfac_bi( bfac );
     mul_bi = std::back_insert_iterator<IVEC>(mul);
-//    std::cerr << CGAL::POLYNOMIAL::square_free_factorization( bp, bfac_bi, mul_bi ) << std::endl;
+//    std::cerr << CGAL::POLYNOMIAL::square_free_factorize( bp, bfac_bi, mul_bi ) << std::endl;
 //    std::cerr << bfac[0] << std::endl;
     
 }

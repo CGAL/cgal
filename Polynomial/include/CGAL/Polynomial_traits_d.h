@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/resultant.h>
 #include <CGAL/Polynomial/subresultants.h>
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>
-#include <CGAL/Polynomial/square_free_factorization.h>
+#include <CGAL/Polynomial/square_free_factorize.h>
 #include <CGAL/Polynomial/modular_filter.h>
 #include <CGAL/extended_euclidean_algorithm.h>
 
@@ -214,7 +214,7 @@ template< class Coefficient_type_, class PolynomialAlgebraicCategory >
 class Polynomial_traits_d_base_polynomial_algebraic_category {        
 public:
   typedef Null_functor    Univariate_content;
-  typedef Null_functor    Square_free_factorization;
+  typedef Null_functor    Square_free_factorize;
 };
 
 // Specializations
@@ -250,15 +250,15 @@ public:
     }
   };
     
-  //       Square_free_factorization;
-  struct Square_free_factorization{
+  //       Square_free_factorize;
+  struct Square_free_factorize{
     
     template < class OutputIterator >
     OutputIterator operator()( const Polynomial_d& p, OutputIterator oi) const {
       std::vector<Polynomial_d> factors;
       std::vector<int> mults; 
       
-      square_free_factorization
+      square_free_factorize
         ( p, std::back_inserter(factors), std::back_inserter(mults) );
       
       CGAL_postcondition( factors.size() == mults.size() );
@@ -350,7 +350,7 @@ public:
     }
   };
         
-  typedef Null_functor  Square_free_factorization;
+  typedef Null_functor  Square_free_factorize;
   typedef Null_functor  Pseudo_division;
   typedef Null_functor  Pseudo_division_remainder;
   typedef Null_functor  Pseudo_division_quotient;
@@ -375,7 +375,7 @@ public:
     }
   };
 
-  typedef Null_functor  Square_free_factorization_up_to_constant_factor;
+  typedef Null_functor  Square_free_factorize_up_to_constant_factor;
   typedef Null_functor  Resultant;
   typedef Null_functor  Canonicalize;
   typedef Null_functor  Evaluate_homogeneous;
@@ -1165,7 +1165,7 @@ public:
     }
   };
 
-  struct Square_free_factorization_up_to_constant_factor {
+  struct Square_free_factorize_up_to_constant_factor {
   private:
     typedef Coefficient_type Coeff;
     typedef Innermost_coefficient_type ICoeff;
@@ -1183,7 +1183,7 @@ public:
         typename First_if_different<Coeff,ICoeff>::Type c,
         OutputIterator                                 oi) const {
       
-      typename PTC::Square_free_factorization_up_to_constant_factor sqff;
+      typename PTC::Square_free_factorize_up_to_constant_factor sqff;
       std::vector<std::pair<Coefficient_type,int> > fac_mul_pairs;
       sqff(c,std::back_inserter(fac_mul_pairs));
       
@@ -1208,7 +1208,7 @@ public:
       p = idiv_utcf( p , Polynomial_d(c));
       std::vector<Polynomial_d> factors;
       std::vector<int> mults;
-      square_free_factorization_utcf(
+      square_free_factorize_utcf(
           p, std::back_inserter(factors), std::back_inserter(mults));
       for(unsigned int i = 0; i < factors.size() ; i++){
          *oi++=std::make_pair(factors[i],mults[i]);

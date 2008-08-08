@@ -726,7 +726,7 @@ public:
                      OutputIterator1 fit, OutputIterator2 mit ) const {
                         
             typename Polynomial_traits_2::
-                Square_free_factorization_up_to_constant_factor factorize;
+                Square_free_factorize_up_to_constant_factor factorize;
             std::vector<Polynomial_2> factors;
             
             int n_factors = factorize(ca.polynomial_2(),
@@ -863,7 +863,7 @@ public:
     typedef Decompose_2 Make_square_free_2;
 
     //! Algebraic name
-    typedef Decompose_2 Square_free_factorization;
+    typedef Decompose_2 Square_free_factorize;
 
     //! Algebraic name
     typedef Decompose_2 Make_coprime_2;

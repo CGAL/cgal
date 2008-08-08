@@ -56,19 +56,19 @@ template <class NT> inline Polynomial<NT> gcd_utcf_modularizable_algebra_( const
 template <class NT> inline NT content_utcf_(const Polynomial<NT>&);
 
 template <class NT, class OutputIterator1, class OutputIterator2> 
-inline int filtered_square_free_factorization( Polynomial<NT>, OutputIterator1, OutputIterator2);
+inline int filtered_square_free_factorize( Polynomial<NT>, OutputIterator1, OutputIterator2);
 template <class NT,  class OutputIterator1, class OutputIterator2> 
-inline int filtered_square_free_factorization_utcf( const Polynomial<NT>&, OutputIterator1, OutputIterator2);
+inline int filtered_square_free_factorize_utcf( const Polynomial<NT>&, OutputIterator1, OutputIterator2);
 
 template <class Coeff,  class OutputIterator1, class OutputIterator2>
-inline int square_free_factorization_utcf(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2);
+inline int square_free_factorize_utcf(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2);
 template <class Coeff,  class OutputIterator1, class OutputIterator2>
-inline int square_free_factorization_utcf_for_regular_polynomial(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2);
+inline int square_free_factorize_utcf_for_regular_polynomial(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2);
 
 template <class Coeff,  class OutputIterator1, class OutputIterator2>
-inline int square_free_factorization(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2);
+inline int square_free_factorize(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2);
 template <class Coeff,  class OutputIterator1, class OutputIterator2>
-inline int square_free_factorization_for_regular_polynomial(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2);
+inline int square_free_factorize_for_regular_polynomial(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2);
 
 template <class NT> inline bool may_have_multiple_factor( const Polynomial<NT>&);
 template <class NT> inline bool may_have_common_factor(const Polynomial<NT>&,const Polynomial<NT>&);

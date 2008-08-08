@@ -737,14 +737,14 @@ void test_make_square_free(const Polynomial_traits_d&){
 }
 
 
-// //       Square_free_factorization;
+// //       Square_free_factorize;
 template <class Polynomial_traits_d>
-void test_square_free_factorization(const Polynomial_traits_d&){
-  std::cerr << "start test_square_free_factorization "; std::cerr.flush(); 
+void test_square_free_factorize(const Polynomial_traits_d&){
+  std::cerr << "start test_square_free_factorize "; std::cerr.flush(); 
   CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
   typedef CGAL::Algebraic_structure_traits<Polynomial_d> AST;
   typename AST::Integral_division idiv;
-  typename PT::Square_free_factorization sqff;
+  typename PT::Square_free_factorize sqff;
   typename PT::Canonicalize canonicalize;
   (void) idiv;
   (void) sqff;
@@ -949,14 +949,14 @@ void test_univariate_content_up_to_constant_factor(const Polynomial_traits_d&){
 }
 
 
-// //       Square_free_factorization_up_to_constant_factor;
+// //       Square_free_factorize_up_to_constant_factor;
 template <class Polynomial_traits_d>
-void test_square_free_factorization_up_to_constant_factor(const Polynomial_traits_d&){
-  std::cerr << "start test_square_free_factorization_up_to_constant_factor "; 
+void test_square_free_factorize_up_to_constant_factor(const Polynomial_traits_d&){
+  std::cerr << "start test_square_free_factorize_up_to_constant_factor "; 
   std::cerr.flush(); 
   CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
   typename PT::Integral_division_up_to_constant_factor idiv_utcf;
-  typename PT::Square_free_factorization_up_to_constant_factor sqff_utcf;
+  typename PT::Square_free_factorize_up_to_constant_factor sqff_utcf;
   typename PT::Canonicalize canonicalize;
   
   (void) idiv_utcf;
@@ -1424,7 +1424,7 @@ void test_fundamental_functors(const PT& traits){
   test_gcd_up_to_constant_factor(traits);
   test_integral_division_up_to_constant_factor(traits);
   test_univariate_content_up_to_constant_factor(traits);
-  test_square_free_factorization_up_to_constant_factor(traits);
+  test_square_free_factorize_up_to_constant_factor(traits);
   
   // resultant
   test_resultant(traits);
@@ -1472,13 +1472,13 @@ void test_ac_icoeff_functors(const PT& traits, CGAL::Field_tag){
 template< class PT >
 void test_ac_poly_functors(const PT&, CGAL::Integral_domain_without_division_tag){
   ASSERT_IS_NULL_FUNCTOR(typename PT::Univariate_content); 
-  ASSERT_IS_NULL_FUNCTOR(typename PT::Square_free_factorization); 
+  ASSERT_IS_NULL_FUNCTOR(typename PT::Square_free_factorize); 
 }
 
 template< class PT >
 void test_ac_poly_functors(const PT& traits, CGAL::Unique_factorization_domain_tag){
   test_univariate_content(traits);  
-  test_square_free_factorization(traits);
+  test_square_free_factorize(traits);
 }
 
 

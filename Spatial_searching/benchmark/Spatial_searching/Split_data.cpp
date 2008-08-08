@@ -1,5 +1,5 @@
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Random.h>

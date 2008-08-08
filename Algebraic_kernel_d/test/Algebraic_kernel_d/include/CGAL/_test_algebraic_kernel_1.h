@@ -133,12 +133,12 @@ void test_algebraic_kernel_1() {
     Polynomial_1 g, q1, q2;
     make_coprime_1( poly1, poly2, g, q1, q2 );
     
-    // Test AK::Square_free_factorization_1...
-    typename AK::Square_free_factorization_1 square_free_factorization_1 
-      = AK().construct_square_free_factorization_1_object();
+    // Test AK::Square_free_factorize_1...
+    typename AK::Square_free_factorize_1 square_free_factorize_1 
+      = AK().construct_square_free_factorize_1_object();
     
     std::vector<std::pair<Polynomial_1,int> > fac_mult_pairs;
-    square_free_factorization_1( poly1, std::back_inserter(fac_mult_pairs) );
+    square_free_factorize_1( poly1, std::back_inserter(fac_mult_pairs) );
         
     ////////////////////////////////////////////////////////////////////////////
     

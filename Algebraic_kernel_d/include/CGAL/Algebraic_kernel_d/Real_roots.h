@@ -156,7 +156,7 @@ int operator()(const Polynomial&           poly,
     std::list<Polynomial>       sqffac;
     std::list<int>              facmul;
     
-    filtered_square_free_factorization_utcf(poly,
+    filtered_square_free_factorize_utcf(poly,
 					    std::back_inserter(sqffac), 
 					    std::back_inserter(facmul));
     
@@ -266,7 +266,7 @@ int operator()( const Polynomial&           poly,
     std::list<Polynomial>       sqffac;
     std::list<int>              facmul;
     
-    filtered_square_free_factorization_utcf(poly,
+    filtered_square_free_factorize_utcf(poly,
 					    std::back_inserter(sqffac),
 					    std::back_inserter(facmul));
     

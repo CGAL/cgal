@@ -1302,7 +1302,7 @@ public:
     typedef Has_finite_number_of_intersections_2 Is_coprime_2;
 
     typedef Decompose_2 Make_square_free_2;
-    typedef Decompose_2 Square_free_factorization;
+    typedef Decompose_2 Square_free_factorize;
     typedef Decompose_2 Make_coprime_2;
     
     //! \brief computes the derivative w.r.t. the first (innermost) variable
