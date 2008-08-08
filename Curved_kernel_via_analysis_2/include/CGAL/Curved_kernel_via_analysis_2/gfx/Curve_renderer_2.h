@@ -72,7 +72,8 @@ CGAL_BEGIN_NAMESPACE
 #warning approximation hangs for CORE::BigFloat !!
 
     #define CGAL_CKVA_STORE_COORDS(container, pixel) \
-        container.push_back(Coord_2(pixel.xv, pixel.yv));
+        if(!isnan(pixel.xv)) \
+           container.push_back(Coord_2(pixel.xv, pixel.yv)); 
 #else
     #define CGAL_CKVA_STORE_COORDS(container, pixel) \
         container.push_back(Coord_2(pixel.x, pixel.y));
@@ -523,7 +524,7 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
     }
     if(x_outside_window)
         return;
-#endif        
+#endif // CGAL_CKVA_RENDER_WITH_REFINEMENT
 
     Pixel_2 pix_1, pix_2;
     
@@ -870,7 +871,6 @@ void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x,
     }
 
     Gfx_OUT("draw_lump: pix_1 = " << pix_1 << "; pix_2 = " << pix_2 << "\n");
-
     std::vector< Coord_2 > points;
     // reserve a list of point coordinates
     points.reserve(CGAL_ABS(pix_2.x - pix_1.x));
@@ -915,17 +915,17 @@ void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x,
         } 
 
         CGAL_CKVA_STORE_COORDS(ppoints, pix);
-
-#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT      
-        if((direction_taken == 0 && pix.x <= pix_1.x) ||
-                (direction_taken == 1 && pix.x >= pix_2.x)) {
+        bool bb1 = (direction_taken == 0 && pix.x <= pix_1.x),
+             bb2 = (direction_taken == 1 && pix.x <= pix_2.x);
+#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT 
+        if((bb1 || bb2)) {
             //Gfx_OUT("STOP: reached end-point x-coordinate\n");
             branches_coincide = false;
             is_exit = true;
             break;
         }
-#endif // !CGAL_CKVA_RENDER_WITH_REFINEMENT
-        
+#endif
+
         bool set_ready = false;
         if(CGAL_ABS(pix.x - pix_1.x) <= 1 && CGAL_ABS(pix.y - pix_1.y) <= 1) {
             if(!overstep || ready) {
@@ -1076,14 +1076,22 @@ Lexit:
     
     }  // while(!s_stack.empty())
 
-    std::reverse(rev_points.begin(), rev_points.end());
+/*    std::cerr << "points:\n ";
+    for(unsigned iii = 0; iii < points.size(); iii++) {
+        std::cerr << points[iii].first << "; " << points[iii].second << "\n";
+    }
 
+    std::cerr << "rev_points:\n ";
+    for(unsigned iii = 0; iii < rev_points.size(); iii++) {
+        std::cerr << rev_points[iii].first << "; " << rev_points[iii].second << "\n";
+    }*/
+    
+    std::reverse(rev_points.begin(), rev_points.end());
     // resize rev_points to accomodate the size of points vector
     unsigned rsize = rev_points.size();
     rev_points.resize(rsize + points.size());
     std::copy(points.begin(), points.end(), rev_points.begin() + rsize);
 }
-
 
 
 //! recursively subdivides pixel into 4 subpixels, returns a new tracking
@@ -2032,16 +2040,24 @@ bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
     if(set_coincide) {
         branches_coincide = true;
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-        NT seed = (var == CGAL_X_RANGE ? lower + inv/2 : box[ibox].key[ikey]);
-        seed = engine.x_min + seed*engine.pixel_w;
 
-        Gfx_DETAILED_OUT("approximating in coincide mode: " << seed << "\n");
-        Xy_coordinate_2 xy(X_coordinate_1(Rational(seed)), *support, arcno);
-        refine_xy(xy, CGAL_REFINE_DOUBLE_APPROX);
-        Rational yseed = ubound_y(xy);
-        
-        pix.xv = CGAL::to_double(seed);
-        pix.yv = CGAL::to_double(yseed);
+        if(var == CGAL_X_RANGE) {
+            Gfx_OUT("WARNING: unable to approximate point \
+                 in vertical coincide mode!\n");
+            pix.xv = NAN; // mark this point as invalid (to be further skipped)
+            pix.yv = NAN;            
+        } else {
+            NT seed = box[ibox].key[ikey];
+            seed = engine.x_min + seed*engine.pixel_w;
+
+          Gfx_DETAILED_OUT("approximating in coincide mode: " << seed << "\n");
+            Xy_coordinate_2 xy(X_coordinate_1(Rational(seed)), *support,
+                 arcno);
+            refine_xy(xy, CGAL_REFINE_DOUBLE_APPROX);
+            Rational yseed = ubound_y(xy);
+            pix.xv = CGAL::to_double(seed); 
+            pix.yv = CGAL::to_double(yseed);   
+        }
 #endif
     } 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
@@ -2057,7 +2073,7 @@ bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
 }
 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-void compute_double_approx(int var, const NT& l_, const NT& r_, 
+bool compute_double_approx(int var, const NT& l_, const NT& r_, 
     const NT& key, const Poly_1& poly, Pixel_2& pix) {
 
     NT l(l_), r(r_);
@@ -2066,6 +2082,7 @@ void compute_double_approx(int var, const NT& l_, const NT& r_,
         r = l_;
     }
     
+    bool ret = true;
     int eval1, eval2, mid_eval;
     NT threshold(CGAL_REFINE_DOUBLE_APPROX);
     eval1 = engine.evaluate_generic(var, l, key, poly);
@@ -2082,7 +2099,8 @@ void compute_double_approx(int var, const NT& l_, const NT& r_,
         std::cerr << "ERROR: no sign change in compute_double_approx: " <<
             eval1 << " and " << eval2 << "\n";
         l = (l+r)/NT(2);
-        make_exact(l);  
+        make_exact(l);
+        ret = false;  
         goto Lexit;
     }
    
@@ -2109,6 +2127,7 @@ Lexit:
     }
     pix.xv = CGAL::to_double(engine.x_min + x*engine.pixel_w);
     pix.yv = CGAL::to_double(engine.y_min + y*engine.pixel_h);
+    return ret;
 }
 #endif // CGAL_CKVA_RENDER_WITH_REFINEMENT
 
