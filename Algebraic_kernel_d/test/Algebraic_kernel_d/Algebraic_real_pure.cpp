@@ -146,8 +146,8 @@ void algebraic_number_test()
     // tmp IS_GENERAL = sqrt 2
     tmp = ALGNUM(P_s2*P_3,rat_NT(1),rat_NT(2));
     tmp.refine();
-    assert(tmp.low()==rat_NT(1));
-    assert(tmp.high()==rat_NT(3)/2);   
+    assert(tmp.low()  >= rat_NT(1)); 
+    assert(tmp.high() <= rat_NT(3)/2);   
     
     // strong_refine
     // tmp IS_GENERAL == 2;  
