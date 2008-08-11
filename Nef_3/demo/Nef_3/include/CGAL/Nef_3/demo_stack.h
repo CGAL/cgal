@@ -54,14 +54,15 @@ using std::exit;
 
 CGAL_BEGIN_NAMESPACE
 
-template<typename Kernel, typename Items = CGAL::SNC_items>
+template<typename Kernel>
 class demo_stack {
 
   typedef typename Kernel::RT                    NT;
   typedef CGAL::Polyhedron_3<Kernel>             Polyhedron;
-  typedef CGAL::Nef_polyhedron_3<Kernel, Items>  Nef_polyhedron;
+  typedef CGAL::Nef_polyhedron_3<Kernel>         Nef_polyhedron;
   typedef std::vector< Nef_polyhedron>           Nef_vector;
   typedef typename Nef_vector::iterator          Iterator;
+  typedef typename Nef_polyhedron::Items         Items;
 
   Nef_vector nef;  // contains stack of Nef_polyhedron
 

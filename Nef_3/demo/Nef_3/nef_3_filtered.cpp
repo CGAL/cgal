@@ -23,13 +23,12 @@
 // ============================================================================
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Nef_3/demo_stack.h>
-#include <CGAL/Nef_3/SNC_indexed_items.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 
 int main(  int argc, char* argv[]) {    
  
-  CGAL::demo_stack<Kernel, CGAL::SNC_indexed_items> ds;
+  CGAL::demo_stack<Kernel> ds;
   if ( argc < 2
        || strcmp( argv[1], "-h") == 0
        || strcmp( argv[1], "-help") == 0 )

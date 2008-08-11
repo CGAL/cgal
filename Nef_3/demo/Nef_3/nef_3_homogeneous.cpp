@@ -32,6 +32,7 @@
 #endif
 
 #include <CGAL/Homogeneous.h>
+
 typedef CGAL::Homogeneous<NT> Kernel;
 
 #include <CGAL/Nef_3/demo_stack.h>
