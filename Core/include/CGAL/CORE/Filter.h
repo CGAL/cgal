@@ -39,8 +39,11 @@
 
 #include <CGAL/CORE/Real.h>
 #include <math.h>
+#include <cmath>
 
-#if defined (_MSC_VER) || defined (__MINGW32__) // add support for MinGW
+#if !defined CGAL_CFG_NO_CPP0X_ISFINITE
+  #define finite(x)	std::isfinite(x)
+#elif defined (_MSC_VER) || defined (__MINGW32__) // add support for MinGW
   #define finite(x)	_finite(x)
   #define ilogb(x)	(int)_logb(x)
 #endif
