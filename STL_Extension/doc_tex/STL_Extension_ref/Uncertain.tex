@@ -281,13 +281,13 @@ Another option is :
 \begin{ccExampleCode}
   // Logical AND
   Uncertain<bool> tmp = (p.x() == 0);
-  Uncertain<bool> res = certainly(!tmp) ? false : tmp & (p.y() == 0);
+  Uncertain<bool> res = certainly(!tmp) ? make_uncertain(false) : tmp & (p.y() == 0);
 
   ... // Use res
 
   // Logical OR
   Uncertain<bool> tmp = (q.x() == 0);
-  Uncertain<bool> res = certainly(tmp) ? true : tmp | (q.y() == 0);
+  Uncertain<bool> res = certainly(tmp) ? make_uncertain(true) : tmp | (q.y() == 0);
 
   ... // Use res
 \end{ccExampleCode}
