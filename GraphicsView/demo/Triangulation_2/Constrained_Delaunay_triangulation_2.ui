@@ -14,19 +14,9 @@
    <string>CGAL Constrained Delaunay Triangulation</string>
   </property>
   <property name="windowIcon" >
-   <iconset>
-    <normaloff/>
-   </iconset>
+   <iconset/>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>66</y>
-     <width>400</width>
-     <height>209</height>
-    </rect>
-   </property>
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <widget class="QGraphicsView" name="graphicsView" >
@@ -46,25 +36,8 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>275</y>
-     <width>400</width>
-     <height>25</height>
-    </rect>
-   </property>
-  </widget>
+  <widget class="QStatusBar" name="statusbar" />
   <widget class="QToolBar" name="fileToolBar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>29</y>
-     <width>116</width>
-     <height>37</height>
-    </rect>
-   </property>
    <property name="windowTitle" >
     <string>File Tools</string>
    </property>
@@ -79,14 +52,6 @@
    <addaction name="actionSaveConstraints" />
   </widget>
   <widget class="QToolBar" name="toolBar" >
-   <property name="geometry" >
-    <rect>
-     <x>116</x>
-     <y>29</y>
-     <width>284</width>
-     <height>37</height>
-    </rect>
-   </property>
    <property name="windowTitle" >
     <string>Visualization Tools</string>
    </property>
@@ -108,7 +73,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>29</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
@@ -140,6 +105,7 @@
     <addaction name="actionMakeGabrielConform" />
     <addaction name="actionMakeDelaunayConform" />
     <addaction name="actionMakeDelaunayMesh" />
+    <addaction name="actionMakeLipschitzDelaunayMesh" />
    </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
@@ -179,8 +145,7 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../icons/Input.qrc" >
-     <normaloff>:/cgal/Input/inputPolyline.png</normaloff>:/cgal/Input/inputPolyline.png</iconset>
+    <iconset resource="../icons/Input.qrc" >:/cgal/Input/inputPolyline.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Insert Polyline</string>
@@ -194,8 +159,7 @@
   </action>
   <action name="actionClear" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >
-     <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
+    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileNew.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Clear</string>
@@ -212,8 +176,7 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../icons/Triangulation_2.qrc" >
-     <normaloff>:/cgal/Triangulation_2/Voronoi_diagram_2.png</normaloff>:/cgal/Triangulation_2/Voronoi_diagram_2.png</iconset>
+    <iconset resource="../icons/Triangulation_2.qrc" >:/cgal/Triangulation_2/Voronoi_diagram_2.png</iconset>
    </property>
    <property name="text" >
     <string>Show &amp;Voronoi Diagram</string>
@@ -230,8 +193,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../icons/Triangulation_2.qrc" >
-     <normaloff>:/cgal/Triangulation_2/Delaunay_triangulation_2.png</normaloff>:/cgal/Triangulation_2/Delaunay_triangulation_2.png</iconset>
+    <iconset resource="../icons/Triangulation_2.qrc" >:/cgal/Triangulation_2/Delaunay_triangulation_2.png</iconset>
    </property>
    <property name="text" >
     <string>Show &amp;Delaunay Triangulation</string>
@@ -242,8 +204,7 @@
   </action>
   <action name="actionLoadConstraints" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >
-     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileOpen.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Load Constraints...</string>
@@ -254,8 +215,7 @@
   </action>
   <action name="actionSaveConstraints" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >
-     <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
+    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileSave.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Save Constraints...</string>
@@ -269,8 +229,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="Constrained_Delaunay_triangulation_2.qrc" >
-     <normaloff>:/cgal/Actions/icons/circumcenter.png</normaloff>:/cgal/Actions/icons/circumcenter.png</iconset>
+    <iconset resource="Constrained_Delaunay_triangulation_2.qrc" >:/cgal/Actions/icons/circumcenter.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Circumcenter</string>
@@ -281,8 +240,7 @@
   </action>
   <action name="actionRecenter" >
    <property name="icon" >
-    <iconset resource="../icons/Input.qrc" >
-     <normaloff>:/cgal/Input/zoom-best-fit</normaloff>:/cgal/Input/zoom-best-fit</iconset>
+    <iconset resource="../icons/Input.qrc" >:/cgal/Input/zoom-best-fit</iconset>
    </property>
    <property name="text" >
     <string>Re&amp;center the viewport</string>
@@ -304,6 +262,11 @@
   <action name="actionMakeDelaunayMesh" >
    <property name="text" >
     <string>Make Delaunay mesh</string>
+   </property>
+  </action>
+  <action name="actionMakeLipschitzDelaunayMesh" >
+   <property name="text" >
+    <string>Make Lipschitz Delaunay mesh</string>
    </property>
   </action>
  </widget>

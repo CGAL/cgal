@@ -7,6 +7,8 @@
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
+#include <CGAL/Lipschitz_sizing_field_2.h>
+#include <CGAL/Lipschitz_sizing_field_criteria_2.h>
 #include <CGAL/Triangulation_conformer_2.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/point_generators_2.h>
@@ -25,7 +27,8 @@
 #include "TriangulationCircumcircle.h"
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
-  
+#include <CGAL/Qt/PointContainerGraphicsItem.h>
+
 // the two base classes
 #include "ui_Constrained_Delaunay_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -41,6 +44,9 @@ typedef CGAL::Exact_predicates_tag              Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
 typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
 
+typedef CGAL::Lipschitz_sizing_field_2<K> Lipschitz_sizing_field;
+typedef CGAL::Lipschitz_sizing_field_criteria_2<CDT, Lipschitz_sizing_field> Lipschitz_criteria;
+typedef CGAL::Delaunay_mesher_2<CDT, Lipschitz_criteria> Lipschitz_mesher;
 
 typedef std::pair<std::vector<Point_2>*, int> Point_iterator;
 
@@ -108,9 +114,11 @@ class MainWindow :
   
 private:  
   CDT cdt; 
-  QGraphicsScene scene;  
+  QGraphicsScene scene;
+  std::list<Point_2> seeds;
 
   CGAL::Qt::ConstrainedTriangulationGraphicsItem<CDT> * dgi;
+  CGAL::Qt::PointContainerGraphicsItem<std::list<Point_2> > * sgi;
 
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
   CGAL::Qt::TriangulationCircumcircle<CDT> *tcc;
@@ -176,6 +184,8 @@ public slots:
   void on_actionMakeDelaunayConform_triggered();
 
   void on_actionMakeDelaunayMesh_triggered();
+
+  void on_actionMakeLipschitzDelaunayMesh_triggered();
 
   void on_actionInsertRandomPoints_triggered();
 
@@ -387,6 +397,8 @@ MainWindow::loadPolyConstraints(QString fileName)
 void
 MainWindow::loadEdgConstraints(QString fileName)
 {
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Timer tim;
   tim.start();
   std::ifstream ifs(qPrintable(fileName));
@@ -474,6 +486,8 @@ MainWindow::loadEdgConstraints(QString fileName)
 #endif
   tim.stop();
   statusBar()->showMessage(QString("Insertion took %1 seconds").arg(tim.time()), 2000);
+  // default cursor
+  QApplication::setOverrideCursor(Qt::ArrowCursor);
   emit(changed());
   actionRecenter->trigger();
 }
@@ -513,10 +527,14 @@ MainWindow::saveConstraints(QString fileName)
 void
 MainWindow::on_actionMakeGabrielConform_triggered()
 {
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   int nv = cdt.number_of_vertices();
   CGAL::make_conforming_Gabriel_2(cdt);
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
+  // default cursor
+  QApplication::setOverrideCursor(Qt::ArrowCursor);
   emit(changed());
 }
 
@@ -524,10 +542,14 @@ MainWindow::on_actionMakeGabrielConform_triggered()
 void
 MainWindow::on_actionMakeDelaunayConform_triggered()
 {
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   int nv = cdt.number_of_vertices();
   CGAL::make_conforming_Delaunay_2(cdt);
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
+   // default cursor
+  QApplication::setOverrideCursor(Qt::ArrowCursor);
   emit(changed());
 }
 
@@ -535,6 +557,8 @@ MainWindow::on_actionMakeDelaunayConform_triggered()
 void
 MainWindow::on_actionMakeDelaunayMesh_triggered()
 {
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   double len = 0;
   int cc = 0;
   for(CDT::Finite_edges_iterator it = cdt.finite_edges_begin();
@@ -548,16 +572,50 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   double al = len/cc;
   al /= 2.0;
   int nv = cdt.number_of_vertices();
-  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, al));
+  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.0));
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
+  // default cursor
+  QApplication::setOverrideCursor(Qt::ArrowCursor);
   emit(changed());
+
 }
 
+void
+MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
+{
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  std::set<Point_2> points;
+  for(CDT::Finite_edges_iterator it = cdt.finite_edges_begin();
+      it != cdt.finite_edges_end();
+      ++it){
+    if(cdt.is_constrained(*it)){
+      Segment_2 s = cdt.segment(*it);
+      points.insert(s.source());
+      points.insert(s.target());
+    }
+  }
+
+  int nv = cdt.number_of_vertices();
+  Lipschitz_sizing_field field(points.begin(), points.end(), 0.7 ); // k-lipschitz with k=1
+  Lipschitz_criteria criteria(0.125, &field);
+  Lipschitz_mesher mesher(cdt);
+  mesher.set_criteria(criteria);
+  //  mesher.set_seeds(m_seeds.begin(),m_seeds.end(),false);
+  mesher.refine_mesh();
+  nv = cdt.number_of_vertices() - nv;
+  statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
+  // default cursor
+  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  emit(changed());
+}
 
 void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   typedef CGAL::Creator_uniform_2<double,Point_2>  Creator;
   CGAL::Random_points_in_disc_2<Point_2,Creator> g( 100.0);
   
@@ -572,6 +630,8 @@ MainWindow::on_actionInsertRandomPoints_triggered()
     points.push_back(*g++);
   }
   cdt.insert(points.begin(), points.end());
+  // default cursor
+  QApplication::setOverrideCursor(Qt::ArrowCursor);
   emit(changed());
 }
 
