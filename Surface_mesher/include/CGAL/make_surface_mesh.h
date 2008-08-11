@@ -161,6 +161,7 @@ void make_surface_mesh(C2T3& c2t3,
     Tag>::Mesher_base Mesher_base;
 
 #ifdef CGAL_SURFACE_MESHER_VERBOSE
+#error
   typedef Surface_mesher::Surface_mesher<
     Mesher_base,
     typename Surface_mesher::details::Facet_generator<Mesher_base>::type,
