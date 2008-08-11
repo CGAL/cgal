@@ -2,13 +2,11 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Nef_polyhedron_3.h>
-#include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
-typedef CGAL::SNC_indexed_items Items;
-typedef CGAL::Nef_polyhedron_3<Kernel, Items>  Nef_polyhedron;
+typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
 
 int main() {
 
