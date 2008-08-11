@@ -50,10 +50,10 @@ public:
 
     /// Normal vector is (0,0,0) by default.
     /// Normal is oriented by default.
-    Oriented_normal_3(Null_vector = NULL_VECTOR)
+    Oriented_normal_3(Null_vector = NULL_VECTOR, bool oriented = true)
     {
       m_pNormal = NULL;
-      m_oriented = true;
+      m_oriented = oriented;
     }
     Oriented_normal_3(const Vector& vector, bool oriented = true)
     {
@@ -88,7 +88,7 @@ public:
     /// Destructor
     ~Oriented_normal_3()
     {
-      delete m_pNormal;
+      delete m_pNormal; m_pNormal = NULL;
     }
 
     /// Get normal vector. 
@@ -97,27 +97,32 @@ public:
       if(m_pNormal != NULL)
         return *m_pNormal;
       else
-        return CGAL::NULL_VECTOR;
+        return NULL_VECTOR;
     }
 
     /// Get normal orientation. 
     bool is_oriented() const { return m_oriented; }
 
     /// Set normal (vector + orientation). 
+    void set(Null_vector, bool oriented = true)
+    {
+      delete m_pNormal; m_pNormal = NULL;
+      m_oriented = oriented;
+    }
     void set(const Vector& vector, bool oriented = true)
     {
       if(m_pNormal == NULL)
         m_pNormal = new Vector(vector);
       else
         *m_pNormal = vector;
+        
       m_oriented = oriented;
     }
 
 // Data
 private:
 
-    // PA: why is normal optional here? to save memory?
-    Vector *m_pNormal;    // normal vector (optional)
+    Vector *m_pNormal;    // normal vector (optional to save memory)
     bool    m_oriented;
 };
 

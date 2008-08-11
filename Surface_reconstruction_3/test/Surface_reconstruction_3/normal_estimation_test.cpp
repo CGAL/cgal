@@ -1,5 +1,6 @@
 // normal_estimation_test.cpp
 
+
 // ----------------------------------------------------------------------------
 // USAGE EXAMPLES
 // ----------------------------------------------------------------------------
@@ -20,6 +21,7 @@
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
+#include <CGAL/Memory_sizer.h>
 #include <CGAL/boost/graph/properties.h>
 
 // This package
@@ -57,18 +59,30 @@ void test_pca(const std::vector<Point>& points, // input point set
               std::vector<Normal>& normals, // computed normals
               unsigned int k) // number of neighbors
 {
-  std::cerr << "  Estimate normals using KNN and point-based PCA...";
+  std::cerr << "Estimate normals using KNN and point-based PCA..." << std::endl;
+  CGAL::Timer task_timer; task_timer.start();
+
   CGAL::estimate_normals_pca_3(points.begin(),points.end(),std::back_inserter(normals),k);
-  std::cerr << "ok" << std::endl;
+  
+  long memory = CGAL::Memory_sizer().virtual_size();
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
+                      << (memory>>20) << " Mb allocated"
+                      << std::endl;
 }
 
 void test_jet_fitting(const std::vector<Point>& points, // input point set
-              std::vector<Normal>& normals, // computed normals
-              unsigned int k) // number of neighbors)
+                      std::vector<Normal>& normals, // computed normals
+                      unsigned int k) // number of neighbors)
 {
-  std::cerr << "  Estimate normals using KNN and jet fitting...";
+  std::cerr << "Estimate normals using KNN and jet fitting..." << std::endl;
+  CGAL::Timer task_timer; task_timer.start();
+
   CGAL::estimate_normals_jet_fitting_3(points.begin(),points.end(),std::back_inserter(normals),k);
-  std::cerr << "ok" << std::endl;
+  
+  long memory = CGAL::Memory_sizer().virtual_size();
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
+                      << (memory>>20) << " Mb allocated"
+                      << std::endl;
 }
 
 void test_orient_normals_MST(
@@ -76,7 +90,8 @@ void test_orient_normals_MST(
               std::vector<Normal>& normals, // normals to orient
               unsigned int k) // number of neighbors
 {
-  std::cerr << "  Orient normals using a minimum spanning tree...";
+  std::cerr << "Orient normals using a minimum spanning tree..." << std::endl;
+  CGAL::Timer task_timer; task_timer.start();
 
   // orient_normals_minimum_spanning_tree_3() requires an iterator over points
   // + property maps to access each point's index, position and normal.
@@ -89,7 +104,11 @@ void test_orient_normals_MST(
          boost::make_iterator_property_map(normals.begin(), index_id), // index -> normal prop. map
          k);
 
-  std::cerr << "ok" << std::endl;
+  
+  long memory = CGAL::Memory_sizer().virtual_size();
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
+                      << (memory>>20) << " Mb allocated"
+                      << std::endl;
 }
 
 
@@ -101,9 +120,11 @@ int main(int argc, char * argv[])
 {
   std::cerr << "Normal estimation test" << std::endl;
   std::cerr << "No output" << std::endl;
+  
+char* leak1 = new char[100];
 
   // decode parameters
-  if(argc < 2)
+  if (argc-1 == 0)
   {
     std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz ..." << std::endl;
     return EXIT_FAILURE;
@@ -119,9 +140,11 @@ int main(int argc, char * argv[])
   {
     std::cerr << std::endl;
 
+char* leak2 = new char[20];
+
     // Load point set
     std::vector<Point> points;
-    std::cerr << "  Open " << argv[i] << " for reading...";
+    std::cerr << "Open " << argv[i] << " for reading..." << std::endl;
     if(CGAL::surface_reconstruction_read_xyz(argv[i], 
                                              std::back_inserter(points), 
                                              false /*skip normals*/))
@@ -135,7 +158,7 @@ int main(int argc, char * argv[])
     }
     else
     {
-      std::cerr << "  FATAL ERROR: cannot read file " << argv[i] << std::endl;
+      std::cerr << "FATAL ERROR: cannot read file " << argv[i] << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
     }
   } // for each input file

@@ -57,10 +57,11 @@ compute_avg_knn_sq_distance_3(
     typedef typename Neighbor_search::iterator Search_iterator;
 
     // Gather set of (KNN+1) neighboring points.
-    // Perform KNN + 1 queries (if in point set, the query point is
+    // Perform KNN+1 queries (if in point set, the query point is
     // output first). Search may be aborted when KNN is greater
     // than number of input points.
     std::vector<Point> points;
+    points.reserve(KNN+1);
     Neighbor_search search(tree,query,KNN+1);
     Search_iterator search_iterator = search.begin();
     unsigned int i;

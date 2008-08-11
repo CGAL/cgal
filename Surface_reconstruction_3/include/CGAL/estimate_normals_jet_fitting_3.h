@@ -25,11 +25,22 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/Oriented_normal_3.h>
+#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/Memory_sizer.h>
 
 #include <iterator>
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
+
+
+// Traces?
+//#define CGAL_TRACE  printf
+
+#ifndef CGAL_TRACE
+  #define CGAL_TRACE  if (false) printf
+#endif
+
 
 /// Estimate normal direction using jet fitting
 /// on the K nearest neighbors.
@@ -66,12 +77,11 @@ estimate_normal_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D poi
   typedef typename CGAL::Monge_via_jet_fitting<Kernel> Monge_jet_fitting;
   typedef typename Monge_jet_fitting::Monge_form Monge_form;
 
-  // gather set of (KNN+1) neighboring points
+  // Gather set of (KNN+1) neighboring points.
+  // Perform KNN+1 queries (as in point set, the query point is
+  // output first). Search may be aborted when KNN is greater
+  // than number of input points.
   std::vector<Point> points;
-
-  // performs KNN + 1 queries (if unique the query point is
-  // output first). search may be aborted when KNN is greater
-  // than number of input points
   Neighbor_search search(tree,query,KNN+1);
   Search_iterator search_iterator = search.begin();
   unsigned int i;
@@ -120,6 +130,8 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
                                const Kernel& /*kernel*/,
                                const unsigned int degre_fitting = 2)
 {
+  CGAL_TRACE("Call estimate_normals_jet_fitting_3()\n");
+
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   typedef typename value_type_traits<OutputIterator>::type Normal;
 
@@ -127,7 +139,6 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
@@ -137,8 +148,14 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
   // precondition: at least 2 nearest neighbors
   CGAL_surface_reconstruction_precondition(KNN >= 2);
 
+  long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+  CGAL_TRACE("  Create KD-tree\n");
+
   // instanciate a KD-tree search
   Tree tree(first,beyond);
+
+  /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+  CGAL_TRACE("  Compute normals\n");
 
   // iterate over input points, compute and output normal
   // vectors (already normalized)
@@ -148,6 +165,10 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
     *normals = estimate_normal_jet_fitting_3<Kernel,Tree,Normal>(*it,tree,KNN,degre_fitting);
     normals++;
   }
+
+  /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+  CGAL_TRACE("End of estimate_normals_jet_fitting_3()\n");
+
   return normals;
 }
 
@@ -177,6 +198,9 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
   return estimate_normals_jet_fitting_3(first,beyond,normals,KNN,Kernel(),degre_fitting);
 }
 
+
+// Avoid clash with other header
+#undef CGAL_TRACE
 
 CGAL_END_NAMESPACE
 

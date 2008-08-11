@@ -16,7 +16,6 @@
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Timer.h>
 #include <CGAL/boost/graph/properties.h>
 
 // This package

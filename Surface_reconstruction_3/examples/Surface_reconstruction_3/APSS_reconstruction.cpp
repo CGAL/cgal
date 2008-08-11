@@ -18,6 +18,7 @@
 #include <CGAL/basic.h> // include basic.h before testing #defines
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
+#include <CGAL/Memory_sizer.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 // Surface mesher
@@ -66,42 +67,17 @@ typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function&> Surface_3;
 
 
 // ----------------------------------------------------------------------------
-// Private functions
-// ----------------------------------------------------------------------------
-
-//// Scale point set to [-1,1]^3
-//void reshape(PointList& pwns)
-//{
-//    Point cmin = pwns[0];
-//    Point cmax = pwns[0];
-//    for (unsigned int i=1 ; i<pwns.size() ; ++i)
-//    {
-//        cmin = CGAL::min(cmin,pwns[i]);
-//        cmax = CGAL::max(cmax,pwns[i]);
-//    }
-//
-//    Point mid = midpoint(cmax,cmin);
-//    Vector diag = cmax-cmin;
-//    FT s = 2./(diag.x()>diag.y() ? (diag.x()>diag.z() ? diag.x() : diag.z()) : (diag.y()>diag.z() ? diag.y() : diag.z()));
-//    for (unsigned int i=0 ; i<pwns.size() ; ++i)
-//    {
-//        pwns[i] = CGAL::ORIGIN + s * (pwns[i] - mid);
-//    }
-//}
-
-
-// ----------------------------------------------------------------------------
 // main()
 // ----------------------------------------------------------------------------
 
 int main(int argc, char * argv[])
 {
-  std::cerr << "RECONSTRUCTION" << std::endl;
-  std::cerr << "APSS reconstruction method." << std::endl;
+    std::cerr << "RECONSTRUCTION" << std::endl;
+    std::cerr << "APSS reconstruction method." << std::endl;
 
-  //***************************************
-  // decode parameters
-  //***************************************
+    //***************************************
+    // decode parameters
+    //***************************************
 
     if (argc<3)
     {
@@ -109,12 +85,12 @@ int main(int argc, char * argv[])
         std::cerr << "Input file formats are .off and .xyz.\n";
         std::cerr << "Output file format is .off.\n";
         std::cerr << "Options:\n";
-        std::cerr << "    -sm_radius <float>        Radius upper bound (default = 0.1 * point set radius)\n";
-        std::cerr << "    -sm_distance <float>      Distance upper bound (default = 0.005 * point set radius)\n";
-        std::cerr << "    -k <int>                  Number of neighbors (default = 7)\n";
-        std::cerr << "                                - should be greater than 7,\n";
-        std::cerr << "                                - high numbers lead to smoother surfaces.\n";
-        return(EXIT_FAILURE);
+        std::cerr << "  -sm_radius <float>     Radius upper bound (default=0.1 * point set radius)\n";
+        std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.005 * point set radius)\n";
+        std::cerr << "  -k <int>               Number of neighbors (default=7)\n";
+        std::cerr << "                           - should be greater than 7,\n";
+        std::cerr << "                           - high numbers lead to smoother surfaces.\n";
+        return EXIT_FAILURE;
     }
 
     // Default APSS options
@@ -221,21 +197,30 @@ int main(int argc, char * argv[])
     }
 
     //***************************************
-    // Create implicit function
+    // Compute implicit function
     //***************************************
+
+    std::cerr << "Compute implicit function...\n";
 
     CGAL::Timer task_timer; task_timer.start();
 
-    //reshape(pwns); // Scale point set to [-1,1]^3
-
     // Create implicit function
+    std::cerr << "  APSS_implicit_function(knn="<<number_of_neighbours << ")\n";
     APSS_implicit_function apss_function(pwns.begin(), pwns.end(),
                                          number_of_neighbours);
+
+    // Print status
+    long memory = CGAL::Memory_sizer().virtual_size();
+    std::cerr << "Compute implicit function: " << task_timer.time() << " seconds, "
+                                               << (memory>>20) << " Mb allocated"
+                                               << std::endl;
+    task_timer.reset();
 
     //***************************************
     // Surface mesh generation
     //***************************************
 
+    std::cerr << "Surface meshing...\n";
     STr tr;           // 3D-Delaunay triangulation
     C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
@@ -264,19 +249,23 @@ int main(int argc, char * argv[])
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // lower bound of facets angles (degrees)
                                                         sm_radius*size,  // upper bound of Delaunay balls radii
                                                         sm_distance*size); // upper bound of distance to surface
-
-std::cerr << "APSS_implicit_function(knn="<<number_of_neighbours << ")\n";
-std::cerr << "Implicit_surface_3(dichotomy error="<<sm_error_bound*size << ")\n";
-std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
-          << "                  criteria={angle="<<sm_angle << ", radius="<<sm_radius*size << ", distance="<<sm_distance*size << "},\n"
-          << "                  Non_manifold_tag())...\n";
+    
+    std::cerr << "  make_surface_mesh(dichotomy error="<<sm_error_bound<<" * point set radius,\n"
+              << "                    sphere center=("<<sm_sphere_center << "),\n"
+              << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
+              << "                    angle="<<sm_angle << " degrees,\n"
+              << "                    radius="<<sm_radius<<" * p.s.r.,\n"
+              << "                    distance="<<sm_distance<<" * p.s.r.,\n"
+              << "                    Non_manifold_tag)\n";
 
     // meshing surface
     CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
     // Print status
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
-                                     << tr.number_of_vertices() << " vertices"
+                                     << tr.number_of_vertices() << " output vertices, "
+                                     << (memory>>20) << " Mb allocated"
                                      << std::endl;
     task_timer.reset();
 
@@ -287,6 +276,6 @@ std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radiu
     // Print status
     std::cerr << "Write file " << argv[2] << std::endl << std::endl;
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 

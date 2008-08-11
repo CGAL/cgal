@@ -20,6 +20,7 @@
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Timer.h>
+#include <CGAL/Memory_sizer.h>
 
 // This package
 #include <CGAL/IO/surface_reconstruction_read_off_point_cloud.h>
@@ -326,7 +327,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   m_points.invalidate_bounding_box();
   m_edit_mode = POINT_SET;
 
-  status_message("Load point set...done (%lf s)", task_timer.time());
+  status_message("Load point set...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   return TRUE;
@@ -477,8 +478,12 @@ void CPoissonDoc::update_status()
     CString selected_points;
     selected_points.Format("%d selected",m_points.nb_selected_points());
 
+    long memory = CGAL::Memory_sizer().virtual_size();
+
     // write message to cerr
-    std::cerr << "=> " << points << " (" << selected_points << ")" << std::endl;
+    std::cerr << "=> " << points << " (" << selected_points << "), " 
+                       << (memory>>20) << " Mb allocated"
+                       << std::endl;
 
     // Update status bar
     pStatus->SetPaneText(1,points);
@@ -495,8 +500,12 @@ void CPoissonDoc::update_status()
     CString tets;
     tets.Format("%d tets",m_poisson_dt->number_of_cells());
 
+    long memory = CGAL::Memory_sizer().virtual_size();
+    
     // write message to cerr
-    std::cerr << "=> " << vertices << " and " << tets << std::endl;
+    std::cerr << "=> " << vertices << ", " << tets << ", "
+                       << (memory>>20) << " Mb allocated"
+                       << std::endl;
 
     // Update status bar
     pStatus->SetPaneText(1,vertices);
@@ -597,7 +606,7 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
                                m_points.normals_begin(),
                                m_number_of_neighbours);
 
-  status_message("Estimate Normals Direction by PCA...done (%lf s)", task_timer.time());
+  status_message("Estimate Normals Direction by PCA...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -619,7 +628,7 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
                                        m_points.normals_begin(),
                                        m_number_of_neighbours);
 
-  status_message("Estimate Normals Direction by Jet Fitting...done (%lf s)", task_timer.time());
+  status_message("Estimate Normals Direction by Jet Fitting...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -649,7 +658,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
     if ( ! m_points[i].normal().is_oriented() )
       m_points.select(&m_points[i]);
 
-  status_message("Orient Normals with MST...done (%lf s)", task_timer.time());
+  status_message("Orient Normals with MST...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -684,7 +693,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
     if (m_points[i].normal().get_vector() * normals_copy[i].get_vector() < 0)
       m_points.select(&m_points[i]);
 
-  status_message("Orient Normals wrt Cameras...done (%lf s)", task_timer.time());
+  status_message("Orient Normals wrt Cameras...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -720,7 +729,7 @@ void CPoissonDoc::OnCreatePoissonTriangulation()
   m_triangulation_refined = false; // Need to apply Delaunay refinement
   m_poisson_solved = false; // Need to solve Poisson equation
 
-  status_message("Create Poisson Triangulation...done (%lf s)", task_timer.time());
+  status_message("Create Poisson Triangulation...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -752,7 +761,8 @@ void CPoissonDoc::OnReconstructionDelaunayRefinement()
   unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement(quality,max_vertices,enlarge_ratio,50000);
   m_triangulation_refined = true;
 
-  status_message("Delaunay refinement...done (%lf s, %d vertices inserted)", task_timer.time(),nb_vertices_added);
+  status_message("Delaunay refinement...done (%.2lf s, %d vertices inserted)", 
+                 task_timer.time(), nb_vertices_added);
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -779,7 +789,8 @@ void CPoissonDoc::OnAlgorithmsRefineInShell()
   unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement_shell(m_dr_shell_size,m_dr_sizing,m_dr_max_vertices);
   m_triangulation_refined = true;
 
-  status_message("Delaunay refinement in surface shell...done (%lf s, %d vertices inserted)", task_timer.time(),nb_vertices_added);
+  status_message("Delaunay refinement in surface shell...done (%.2lf s, %d vertices inserted)", 
+                 task_timer.time(), nb_vertices_added);
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -803,7 +814,7 @@ void CPoissonDoc::OnAlgorithmsExtrapolatenormals()
 
   m_poisson_function->extrapolate_normals();
 
-  status_message("Extrapolate the normals field...done (%lf s)", task_timer.time());
+  status_message("Extrapolate the normals field...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -835,11 +846,10 @@ void CPoissonDoc::OnReconstructionPoisson()
   m_poisson_function->set_contouring_value(m_poisson_function->median_value_at_input_vertices());
   m_contouring_value = 0.0;
 
-  double total_duration = task_timer.time();
   if (!m_poisson_solved)
       status_message("Solve Poisson equation...solver failed");
   else
-      status_message("Solve Poisson equation...done (%lf s)", total_duration);
+      status_message("Solve Poisson equation...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -865,11 +875,10 @@ void CPoissonDoc::OnReconstructionPoissonNormalized()
   m_poisson_function->set_contouring_value(m_poisson_function->median_value_at_input_vertices());
   m_contouring_value = 0.0;
 
-  double total_duration = task_timer.time();
   if (!m_poisson_solved)
       status_message("Solve Poisson equation...solver failed");
   else
-      status_message("Solve Poisson equation...done (%lf s)", total_duration);
+      status_message("Solve Poisson equation...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -926,10 +935,13 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
                                                         m_sm_radius*size,  // upper bound of Delaunay balls radii
                                                         m_sm_distance_poisson*size); // upper bound of distance to surface
 
-std::cerr << "Implicit_surface_3(dichotomy error="<<m_sm_error_bound*size << ")\n";
-std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
-          << "                  criteria={angle="<<m_sm_angle << ", radius="<<m_sm_radius*size << ", distance="<<m_sm_distance_poisson*size << "},\n"
-          << "                  Non_manifold_tag())...\n";
+    std::cerr << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound<<" * point set radius,\n"
+              << "                    sphere center=("<<sm_sphere_center << "),\n"
+              << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
+              << "                    angle="<<m_sm_angle << " degrees,\n"
+              << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
+              << "                    distance="<<m_sm_distance_poisson<<" * p.s.r.,\n"
+              << "                    Non_manifold_tag)\n";
 
     // meshing surface
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
@@ -943,7 +955,7 @@ std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radiu
     m_poisson_function->set_contouring_value(0.0);
 
     // Print status
-    status_message("Surface meshing...done (%d vertices, %lf s)",
+    status_message("Surface meshing...done (%d output vertices, %.2lf s)",
                    m_surface_mesher_dt.number_of_vertices(), task_timer.time());
     update_status();
     UpdateAllViews(NULL);
@@ -972,7 +984,8 @@ void CPoissonDoc::OnAlgorithmsMarchingTetContouring()
   int nb = m_poisson_dt->marching_tet(std::back_inserter(triangles), m_contouring_value);
   m_contour.insert(m_contour.end(), triangles.begin(), triangles.end());
 
-  status_message("Marching tet contouring...done (%d triangles, %lf s)",nb, task_timer.time());
+  status_message("Marching tet contouring...done (%d triangles, %.2lf s)", 
+                 nb, task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1027,7 +1040,7 @@ void CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting()
       m_points[i].set_position(output[i]);
   m_points.invalidate_bounding_box();
 
-  status_message("Smooth Point Set...done (%lf s)", task_timer.time());
+  status_message("Smooth Point Set...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1103,7 +1116,7 @@ void CPoissonDoc::OnOneStepPoissonReconstruction()
   OnReconstructionPoisson();
   OnReconstructionPoissonSurfaceMeshing();
 
-  status_message("1-step Poisson reconstruction...done (%lf s)", task_timer.time());
+  status_message("1-step Poisson reconstruction...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1127,7 +1140,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   OnReconstructionPoissonNormalized();
   OnReconstructionPoissonSurfaceMeshing();
 
-  status_message("1-step Poisson reconstruction with normalized divergence...done (%lf s)", task_timer.time());
+  status_message("1-step Poisson reconstruction with normalized divergence...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1147,7 +1160,7 @@ void CPoissonDoc::OnAlgorithmsOutliersRemovalWrtCamerasConeAngle()
             m_min_cameras_cone_angle*M_PI/180.0);
   m_points.select(first_iterator_to_remove, m_points.end(), true);
 
-  status_message("Remove outliers / cameras cone's angle is low...done (%lf s)", task_timer.time());
+  status_message("Remove outliers / cameras cone's angle is low...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1177,7 +1190,7 @@ void CPoissonDoc::OnOutliersRemovalWrtAvgKnnSqDist()
             m_threshold_percent_avg_knn_sq_dst);
   m_points.select(first_iterator_to_remove, m_points.end(), true);
 
-  status_message("Remove outliers wrt average squared distance to knn...done (%lf s)", task_timer.time());
+  status_message("Remove outliers wrt average squared distance to knn...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1223,6 +1236,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     m_surface.clear();
 
     // Create implicit function
+    std::cerr << "  APSS_implicit_function(knn="<<m_number_of_neighbours << ")\n";
     m_apss_function = new APSS_implicit_function(m_points.begin(), m_points.end(), 
                                                  m_number_of_neighbours);
 
@@ -1253,11 +1267,13 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
                                                         m_sm_radius*size,  // upper bound of Delaunay balls radii
                                                         m_sm_distance_apss*size); // upper bound of distance to surface
 
-std::cerr << "APSS_implicit_function(knn="<<m_number_of_neighbours << ")\n";
-std::cerr << "Implicit_surface_3(dichotomy error="<<m_sm_error_bound*size << ")\n";
-std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
-          << "                  criteria={angle="<<m_sm_angle << ", radius="<<m_sm_radius*size << ", distance="<<m_sm_distance_apss*size << "},\n"
-          << "                  Non_manifold_tag())...\n";
+    std::cerr << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound<<" * point set radius,\n"
+              << "                    sphere center=("<<sm_sphere_center << "),\n"
+              << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
+              << "                    angle="<<m_sm_angle << " degrees,\n"
+              << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
+              << "                    distance="<<m_sm_distance_apss<<" * p.s.r.,\n"
+              << "                    Non_manifold_tag)\n";
 
     // meshing surface
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
@@ -1271,7 +1287,7 @@ std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radiu
     m_edit_mode = APSS;
 
     // Print status
-    status_message("APSS reconstruction...done (%d vertices, %lf s)",
+    status_message("APSS reconstruction...done (%d vertices, %.2lf s)", 
                    m_surface_mesher_dt.number_of_vertices(), task_timer.time());
     update_status();
     UpdateAllViews(NULL);
@@ -1387,7 +1403,7 @@ void CPoissonDoc::OnPointCloudSimplificationByClustering()
             m_clustering_step*size);
   m_points.select(first_iterator_to_remove, m_points.end(), true);
 
-  status_message("Point cloud simplification by clustering...done (%lf s)", task_timer.time());
+  status_message("Point cloud simplification by clustering...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1411,7 +1427,7 @@ void CPoissonDoc::OnPointCloudSimplificationRandom()
             m_random_simplification_percentage);
   m_points.select(first_iterator_to_remove, m_points.end(), true);
 
-  status_message("Random point cloud simplification...done (%lf s)", task_timer.time());
+  status_message("Random point cloud simplification...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();

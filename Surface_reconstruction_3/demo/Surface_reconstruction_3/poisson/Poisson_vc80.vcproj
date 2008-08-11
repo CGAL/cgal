@@ -44,12 +44,13 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\Spatial_searching\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
+				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\Spatial_searching\include;..\..\..\..\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_RECONSTRUCTION_CHECK_EXPENSIVE;CGAL_USE_TAUCS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
+				ProgramDataBaseFileName="$(IntDir)\$(ProjectName).pdb"
 				BrowseInformation="1"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="true"
@@ -69,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib Psapi.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;"
@@ -133,12 +134,12 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="2"
-				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\Spatial_searching\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
+				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\Spatial_searching\include;..\..\..\..\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;NDEBUG;CGAL_USE_TAUCS"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
-				BrowseInformation="0"
+				ProgramDataBaseFileName="$(IntDir)\$(ProjectName).pdb"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="0"
@@ -157,7 +158,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib Psapi.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;"
@@ -314,10 +315,6 @@
 			</File>
 			<File
 				RelativePath=".\include\RedirectIOToConsole.h"
-				>
-			</File>
-			<File
-				RelativePath=".\RedirectIOToConsole.h"
 				>
 			</File>
 			<File

@@ -19,7 +19,6 @@
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Timer.h>
 
 // This package
 #include <CGAL/smooth_jet_fitting_3.h>

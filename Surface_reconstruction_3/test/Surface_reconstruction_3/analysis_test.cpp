@@ -16,7 +16,6 @@
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Timer.h>
 
 // This package
 #include <CGAL/average_spacing_3.h>
