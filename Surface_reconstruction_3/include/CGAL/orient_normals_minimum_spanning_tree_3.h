@@ -24,6 +24,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_vertex_handle_3.h>
 #include <CGAL/Oriented_normal_3.h>
+#include <CGAL/Memory_sizer.h>
 
 #include <iterator>
 #include <list>
@@ -179,15 +180,15 @@ struct propagate_normal
         
         double dot = vec1 * vec2;
 
-        CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): dot=%1.3lf\n", 
-                   (int)vtx1, vec1.x(),vec1.y(),vec1.z(), 
-                   (int)vtx2, vec2.x(),vec2.y(),vec2.z(),
-                   dot);
+        //CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): dot=%1.3lf\n", 
+        //           (int)vtx1, vec1.x(),vec1.y(),vec1.z(), 
+        //           (int)vtx2, vec2.x(),vec2.y(),vec2.z(),
+        //           dot);
 
         //           ->                 ->
         // Orient normal2 parallel to normal1
         if (dot < 0) {
-            CGAL_TRACE("    flip %d\n", (int)vtx2);
+            //CGAL_TRACE("    flip %d\n", (int)vtx2);
             vec2 = -vec2;
         }
         
@@ -222,7 +223,8 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
                                        VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
                                        unsigned int KNN) ///< number of neighbors
 {
-CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
+    CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
+
     // Input mesh's types
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
@@ -269,17 +271,20 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     //
     // Orient its normal towards +Z axis
     const Vector Z(0, 0, 1);
-    //const Vector Z(0, 0, -1); // TEST: force flipping of properly oriented normals
     Normal& normal = vertex_normal_map[source_vertex];
     Vector vec = normal.get_vector();
     if (Z * vec < 0) {
-        CGAL_TRACE("  Flip source vertex %d\n", (int)source_vertex_index);
+        //CGAL_TRACE("  Flip source vertex %d\n", (int)source_vertex_index);
         vec = -vec;
     }
     normal = Normal(vec, true /* oriented */);
 
+    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  Create KD-tree\n");
+
     // Instanciate a KD-tree search.
-    // We have to wrap each input vertex by a Point_vertex_handle_3.
+    // Notes: We have to wrap each input vertex by a Point_vertex_handle_3.
+    //        The KD-tree is allocated dynamically to recover RAM as soon as possible.
     std::vector<Point_vertex_handle_3> kd_tree_points;
     for (VertexIterator it = first; it != beyond; it++)
     {
@@ -287,14 +292,19 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
         kd_tree_points.push_back(point_wrapper);
     }
-    Tree tree(kd_tree_points.begin(), kd_tree_points.end());
+    std::auto_ptr<Tree> tree( new Tree(kd_tree_points.begin(), kd_tree_points.end()) );
+    
+    // Recover RAM
+    kd_tree_points.clear();
+
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  Create Riemannian Graph\n");
 
     // Iterate over input points and create Riemannian Graph:
     // - vertices are numbered like the input vertices' index.
     // - vertices are empty.
     // - we add the edge (i, j) if either vertex i is in the KNN-neighborhood of vertex j,
     //   or vertex j is in the KNN-neighborhood of vertex i.
-    CGAL_TRACE("  Create Riemannian Graph\n");
     Riemannian_graph riemannian_graph(num_input_vertices);
     Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
     //
@@ -304,12 +314,13 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
         unsigned int it_index = get(vertex_index_map,it);
         Vector it_normal_vector = vertex_normal_map[it].get_vector();
 
-        // Gather set of (KNN+1) neighboring points:
-        // Performs KNN + 1 queries (if unique the p point is output first).
-        // Search may be aborted when KNN is greater than number of input points.
+        // Gather set of (KNN+1) neighboring points.
+        // Perform KNN+1 queries (as in point set, the query point is
+        // output first). Search may be aborted when KNN is greater
+        // than number of input points.
         Point point = get(vertex_point_map, it);
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
-        Neighbor_search search(tree, point_wrapper, KNN+1);
+        Neighbor_search search(*tree, point_wrapper, KNN+1);
         Search_iterator search_iterator = search.begin();
         for(unsigned int i=0;i<(KNN+1);i++)
         {
@@ -335,10 +346,10 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
                 double weight = 1.0 - std::abs(it_normal_vector * neighbour_normal_vector);
                 if (weight < 0)
                     weight = 0; // safety check
-                CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): weight=%1.3lf\n", 
-                           (int)it_index, it_normal_vector.x(),it_normal_vector.y(),it_normal_vector.z(), 
-                           (int)neighbour_index, neighbour_normal_vector.x(),neighbour_normal_vector.y(),neighbour_normal_vector.z(),
-                           weight);
+                //CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): weight=%1.3lf\n", 
+                //           (int)it_index, it_normal_vector.x(),it_normal_vector.y(),it_normal_vector.z(), 
+                //           (int)neighbour_index, neighbour_normal_vector.x(),neighbour_normal_vector.y(),neighbour_normal_vector.z(),
+                //           weight);
                 riemannian_graph_weight_map[e] = (float)weight;
             }
 
@@ -346,19 +357,29 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
         }
     }
 
+    // Recover RAM
+    tree.reset();
+
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  Call boost::prim_minimum_spanning_tree()\n");
+
     // Compute Minimum Spanning Tree.
     typedef std::vector<Riemannian_graph::vertex_descriptor> PredecessorMap;
-    PredecessorMap pm(num_input_vertices);
-    CGAL_TRACE("  Call boost::prim_minimum_spanning_tree()\n");
-    boost::prim_minimum_spanning_tree(riemannian_graph, &pm[0],
+    PredecessorMap predecessor(num_input_vertices);
+    boost::prim_minimum_spanning_tree(riemannian_graph, &predecessor[0],
                                       weight_map( riemannian_graph_weight_map )
                                      .root_vertex( boost::vertex(source_vertex_index, riemannian_graph) ));
+    
+    // Recover RAM
+    riemannian_graph.clear();
 
-    // Convert predecessor map to a MST graph
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  Create MST Graph\n");
+
+    // Convert predecessor map to a MST graph:
     // - vertices are numbered like the input vertices' index.
     // - vertices contain the corresponding input vertex handle.
-    // - we add the edge (pm[i], i) for each element of the predecessor map pm.
-    CGAL_TRACE("  Create MST Graph\n");
+    // - we add the edge (predecessor[i], i) for each element of the predecessor map.
     MST_graph mst_graph(vertex_normal_map);
     //
     // add vertices
@@ -370,29 +391,36 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
         mst_graph[v].vertex = it;
     }
     // add edges
-    for (unsigned int i=0; i < pm.size(); i++) // add edges
+    for (unsigned int i=0; i < predecessor.size(); i++) // add edges
     {
-        if (i != pm[i])
+        if (i != predecessor[i])
         {
             // check that bi-directed graph is useless
-            CGAL_surface_reconstruction_assertion(pm[pm[i]] != i);
+            CGAL_surface_reconstruction_assertion(predecessor[predecessor[i]] != i);
 
-            boost::add_edge(boost::vertex(pm[i], mst_graph),
+            boost::add_edge(boost::vertex(predecessor[i], mst_graph),
                             boost::vertex(i,     mst_graph),
                             mst_graph);
         }
     }
+    
+    // Recover RAM
+    predecessor.clear();
+
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  Call boost::breadth_first_search()\n");
 
     // Orient normals
-    CGAL_TRACE("  Call boost::breadth_first_search()\n");
     boost::breadth_first_search(mst_graph,
                                 boost::vertex(source_vertex_index, mst_graph), // source
                                 visitor(boost::make_bfs_visitor(propagate_normal<VertexIterator, VertexNormalMap>())));
+
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("End of orient_normals_minimum_spanning_tree_3()\n");
 }
 
 
-// Safety
+// Avoid clash with other header
 #undef CGAL_TRACE
 
 CGAL_END_NAMESPACE
