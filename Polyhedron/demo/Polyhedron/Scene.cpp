@@ -273,7 +273,10 @@ Scene::draw(bool with_names)
         ::glDisable(GL_LIGHTING);
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         if(index == selected_item)
-          CGALglcolor(entry.color.lighter(70));
+	{
+          //CGALglcolor(entry.color.lighter(70));
+	  CGALglcolor(Qt::black);
+	}
         else
           CGALglcolor(entry.color.lighter(50));
 

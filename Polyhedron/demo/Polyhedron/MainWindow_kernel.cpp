@@ -34,11 +34,11 @@ void MainWindow::on_actionKernel_triggered()
     Polyhedron_kernel kernel;
     if(!kernel.solve(triangles.begin(),triangles.end()))
     {
-      std::cout << "empty kernel" << std::endl;
+      std::cout << "done (empty kernel)" << std::endl;
       QApplication::restoreOverrideCursor();
       return;
     }
-    std::cout << "ok" << std::endl;
+    std::cout << "done" << std::endl;
 
     // add kernel as new polyhedron
     Polyhedron *pKernel = new Polyhedron;

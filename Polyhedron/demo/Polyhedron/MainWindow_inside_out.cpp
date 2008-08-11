@@ -13,8 +13,8 @@ void MainWindow::on_actionInsideOut_triggered()
     int index = getSelectedPolygonIndex();
     Polyhedron* pMesh = scene->polyhedron(index);
 
-		// inside out
-		pMesh->inside_out();
+    // inside out
+    pMesh->inside_out();
 
     // update scene
     scene->polyhedronChanged(index);
