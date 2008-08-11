@@ -60,11 +60,15 @@ class Lapack_vector{
   FT* m_vector;
   size_t nb_elts;
  public:
-  //contructor
+  // constructor
   // initializes all the elements of the vector to zero.
   Lapack_vector(size_t n) { 
     m_vector = (FT*) std::calloc (n, sizeof(FT)); 
     nb_elts = n;
+  }
+  
+  ~Lapack_vector() { 
+    free(m_vector);
   }
   
   size_t size() {return nb_elts;}
@@ -74,6 +78,10 @@ class Lapack_vector{
 
   FT operator()(size_t i) {return m_vector[i];}
   void set(size_t i, const FT value) { m_vector[i] = value; }
+private:
+  /// Copy constructor and operator =() are not implemented.
+  Lapack_vector(const Lapack_vector& toCopy);
+  Lapack_vector& operator =(const Lapack_vector& toCopy);
 }; 
 
 
@@ -88,12 +96,16 @@ protected:
   size_t nb_rows;
   size_t nb_columns;
 public:
-  //contructor
+  // constructor
   // initializes all the elements of the matrix to zero.
   Lapack_matrix(size_t n1, size_t n2) { 
     m_matrix = (FT*) std::calloc (n1*n2, sizeof(FT)); 
     nb_rows = n1;
     nb_columns = n2;
+  }
+  
+  ~Lapack_matrix() { 
+    free(m_matrix);
   }
   
   size_t number_of_rows() {return nb_rows;}
@@ -105,6 +117,10 @@ public:
 
   void set(size_t i, size_t j, const FT value) { m_matrix[j*nb_rows+i] = value; }
   FT operator()(size_t i, size_t j) { return m_matrix[j*nb_rows+i]; }
+private:
+  /// Copy constructor and operator =() are not implemented.
+  Lapack_matrix(const Lapack_matrix& toCopy);
+  Lapack_matrix& operator =(const Lapack_matrix& toCopy);
 }; 
 
 ////////////////////////class Lapack_svd/////////////////////
