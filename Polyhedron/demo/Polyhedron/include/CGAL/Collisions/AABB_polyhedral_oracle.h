@@ -28,6 +28,7 @@ public:
   typedef AABB_tree<AABBTree_kernel,typename Polyhedron::Facet_handle,Polyhedron> Tree;
   typedef typename Tree::Point_with_input Point_with_facet_handle;
   typedef CGAL::Cartesian_converter<Kernel,AABBTree_kernel> Converter;
+  typedef CGAL::Cartesian_converter<AABBTree_kernel,Kernel> BConverter;
   Tree *m_pTree;
 
 public:
@@ -61,9 +62,10 @@ public:
     Object operator()(const Surface_3& surface, const Segment_3& segment) const
     {
       Converter convert;
+      BConverter bconvert;
       Point_with_facet_handle pwh;
       if(surface.tree()->first_intersection(convert(segment),pwh))
-	return make_object(pwh.first);
+	return make_object(bconvert(pwh.first));
       else
 	return Object();
     }
@@ -71,9 +73,10 @@ public:
     Object operator()(const Surface_3& surface, const Ray_3& ray) const
     {
       Converter convert;
+      BConverter bconvert;
       Point_with_facet_handle pwh;
       if(surface.tree()->first_intersection(convert(ray),pwh))
-	return make_object(pwh.first);
+	return make_object(bconvert(pwh.first));
       else
 	return Object();
     }
@@ -81,9 +84,10 @@ public:
     Object operator()(const Surface_3& surface, const Line_3& line) const
     {
       Converter convert;
+      BConverter bconvert;
       Point_with_facet_handle pwh;
       if(surface.tree()->first_intersection(convert(line),pwh))
-	return make_object(pwh.first);
+	return make_object(bconvert(pwh.first));
       else
 	return Object();
     }

@@ -12,7 +12,7 @@ endif(COMMAND cmake_policy)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-foreach(INCDIR ./include ../../../GraphicsView/include ../../../Surface_mesher/include ../../../Nef_3/include)
+foreach(INCDIR ./include ../../../GraphicsView/include ../../../Surface_mesher/include )
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
     include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
   endif()

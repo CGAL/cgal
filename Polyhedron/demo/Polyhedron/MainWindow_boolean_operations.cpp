@@ -182,7 +182,7 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
   
   if(n1->is_simple())
   {
-    std::cout << "Convert result back to simple polyhedron...";
+    std::cout << "Convert result back to polyhedron...";
     time.restart();
     // save the exact resulting mesh
     Exact_polyhedron exact_result;
@@ -200,7 +200,7 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
   else {
     scene->addNefPolyhedron(n1,
       name.arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
-      Qt::magenta,
+      Qt::green,
       true,
       scene->polyhedronRenderingMode(indexA));
   }

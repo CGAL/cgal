@@ -35,6 +35,7 @@ void MainWindow::on_actionKernel_triggered()
     if(!kernel.solve(triangles.begin(),triangles.end()))
     {
       std::cout << "empty kernel" << std::endl;
+      QApplication::restoreOverrideCursor();
       return;
     }
     std::cout << "ok" << std::endl;

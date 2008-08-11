@@ -27,6 +27,3 @@ void MainWindow::on_actionSqrt3_triggered()
   CGAL::Subdivision_method_3::Sqrt3_subdivision(*poly, 1);
   scene->polyhedronChanged(poly);
 }
-
-
-

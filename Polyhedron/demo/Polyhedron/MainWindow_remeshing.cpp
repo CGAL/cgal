@@ -1,3 +1,6 @@
+#define CGAL_SURFACE_MESHER_VERBOSE 0
+#undef CGAL_SURFACE_MESHER_VERBOSE
+
 #include <QApplication>
 
 #include <CGAL/Collisions/AABB_polyhedral_oracle.h>
@@ -8,9 +11,8 @@
 #include "Polyhedron_type.h"
 #include <fstream>
 
-#define CGAL_SURFACE_MESHER_VERBOSE 1
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/Complex_2_in_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
@@ -21,6 +23,8 @@
 
 #include <QTime>
 #include <QInputDialog>
+
+
 
 void MainWindow::on_actionRemeshing_triggered()
 {
@@ -88,14 +92,14 @@ void MainWindow::on_actionRemeshing_triggered()
     QTime time;
     time.start();
     std::cout << "Build AABB tree...";
-    typedef CGAL::Cartesian<double> Cartesian_kernel; 
-    typedef CGAL::AABB_tree<GT,Polyhedron::Facet_handle,Polyhedron> Tree;
+    typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel; 
+    typedef CGAL::AABB_tree<Simple_cartesian_kernel,Polyhedron::Facet_handle,Polyhedron> Tree;
     Tree tree;
     tree.build_faces(*pMesh);
     std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
     // input surface
-    typedef CGAL::AABB_polyhedral_oracle<Polyhedron,GT,GT> Input_surface;
+    typedef CGAL::AABB_polyhedral_oracle<Polyhedron,GT,Simple_cartesian_kernel> Input_surface;
     Input_surface input(&tree);
 
     // initial point set
