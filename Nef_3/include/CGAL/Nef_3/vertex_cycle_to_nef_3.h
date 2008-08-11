@@ -35,6 +35,101 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*
+template<typename Items>
+class Index_assigner {
+  Index_assigner() {}
+  template<typename Handle>
+    void assign_index(Handle& ) const {}
+  template<typename Handle>
+    void assign_first_index() const {}
+  template<typename Handle>
+    void assign_new_index() {} 
+};
+
+template<> class Index_assigner<CGAL::SNC_indexed_items> {
+  int first;
+  int index;
+ public:
+ Index_assigner() : 
+  first(Index_generator::get_unique_index()), index(first) {}
+  
+  template<typename Handle>
+    void assign_index(Handle& h) const 
+    { h->set_index(index); }
+  template<typename Handle>
+    void assign_first_index(Handle& h) const 
+    { h->set_index(first); }
+  template<typename Handle>
+    void assign_new_index(Handle& h)
+    { h->set_index(); index = h->get_index(); } 
+};
+*/
+
+//template<typename Items> class Index_matcher;
+
+template<typename Vertex>
+class Compare_cpte {
+
+  typedef typename std::pair<Vertex*, Vertex*> VV;
+
+ public:
+  Compare_cpte() {}
+
+  bool operator()(const VV p0, const VV p1) {
+    if(p0.first != p1.first)
+      return p0.first < p1.first;
+    else
+      return p0.second < p1.second;
+  }  
+};
+
+class Compare_face {
+
+ public:
+  Compare_face() {}
+
+  template<typename Face>  
+    bool operator()(const Face* f0, const Face* f1) {
+    return f0 < f1;
+  }
+};
+
+
+template<typename Items,
+  typename Edge, typename CompareEdges> class Index_matcher {
+ public:
+  Index_matcher() {}
+  template<typename Handle> 
+    void set_index(Handle h, Edge e) {}
+};
+
+template<typename Edge, typename CompareEdges> 
+  class Index_matcher<CGAL::SNC_indexed_items, Edge, CompareEdges> 
+{
+
+  bool plusTwin;
+  std::map<Edge, int, CompareEdges> edge2int;
+  typedef typename std::map<Edge, int, CompareEdges>::iterator e2i_iterator;
+
+ public:
+ Index_matcher(bool withTwin) : plusTwin(withTwin) {}
+
+  template<typename Handle> void set_index(Handle h, Edge e) {
+    e2i_iterator ei = edge2int.find(e);
+    if(ei != edge2int.end()) {
+      h->set_index(ei->second);
+      if(plusTwin) h->twin()->set_index(h->get_index()+1);
+    } else {
+      int new_index = Index_generator::get_unique_index();
+      edge2int.insert(std::make_pair(e,new_index));
+      h->set_index(new_index);
+      if(plusTwin)
+	h->twin()->set_index();
+    }
+  }
+};
+
 // return value reports success ("true" means nef contains result)
 // note: facets are considered to be compact
 // CTP - Constrained_triangulation_plus
@@ -58,6 +153,11 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
    typedef typename SNC_structure::SHalfedge_handle   SHalfedge_handle;
    typedef typename SNC_structure::SFace_handle       SFace_handle;
 
+   typedef typename SNC_structure::Kernel Kernel;
+   typedef typename SNC_structure::Point_3 Point_3;
+   typedef typename std::pair<CTP_vertex*, CTP_vertex*> Point_pair;
+   typedef Compare_cpte<CTP_vertex> Compare_edge;
+
    typedef CGAL::SNC_point_locator_by_spatial_subdivision
            <CGAL::SNC_decorator<SNC_structure> >    Point_locator;
 
@@ -71,6 +171,9 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
    CTP_size_type nov;
 
    snc.clear();
+
+   Index_matcher<Items, Point_pair, Compare_edge> im_edge(false);
+   Index_matcher<Items, CTP_face*, Compare_face> im_sedge(true);
 
    for (nov=0, v_it=v_first; v_it!=v_last; ++v_it)
    {  if ( *v_it != (ctp.insert (*v_it))->point() )
@@ -115,7 +218,7 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
    // determine initial positions for the walk-around
    CTP_vertex_handle t_vh, t_vh_0;
    CTP_face_handle t_fh;
-   CTP_face_circulator t_fc, t_fc_0;
+   CTP_face_circulator t_fc, t_fc_0, t_fc_1;
    int idx(0);
    {  // search a constrained edge from "outside"
       t_fh = ctp.infinite_face ();
@@ -155,9 +258,14 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
          (t_target_vh->point() - t_vh->point()) ), dir_0 = dir;
       SVertex_handle p_svh (p_dec.new_svertex (dir)), p_svh_pred=p_svh;
       p_svh->mark() = true;
+      if(&*t_target_vh < &*t_vh)
+	im_edge.set_index(p_svh, std::make_pair(&*t_target_vh, &*t_vh));
+      else
+	im_edge.set_index(p_svh, std::make_pair(&*t_vh, &*t_target_vh));
 
       // consider triangles (implicit edges) that are incident to *t_vh
-      t_fc = t_fc_0 = ctp.incident_faces(t_vh, t_fh);
+      t_fc = t_fc_0 = t_fc_1 = ctp.incident_faces(t_vh, t_fh);
+      ++t_fc_1;
       do
       {  idx = t_fc->index(t_vh);
 	 t_target_vh = t_fc->vertex(ctp.ccw(idx));
@@ -179,7 +287,11 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
 	 }
 	 p_svh = SVertex_handle (p_dec.new_svertex(dir));
 	 p_svh->mark() = true;
-
+	 if(&*t_target_vh < &*t_vh)
+	   im_edge.set_index(p_svh, std::make_pair(&*t_target_vh, &*t_vh));
+	 else
+	   im_edge.set_index(p_svh, std::make_pair(&*t_vh, &*t_target_vh));
+	 
 	 // create new sphere edges in SM
          SHalfedge_handle p_seh =
 	    p_dec.new_shalfedge_pair (p_svh_pred, p_svh);
@@ -188,6 +300,7 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
          p_seh->circle() = p_scirc;
          p_seh->twin()->circle() = p_scirc.opposite();
          p_seh->mark() = p_seh->twin()->mark() = true;
+	 im_sedge.set_index(p_seh, &*t_fc);
 
 	 // constrained edge detected?
 	 if ((cond = t_fc->is_constrained(ctp.cw(idx))))
