@@ -36,10 +36,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<typename Kernel, typename Items>
+template<typename Kernel>
 class test_Nef_3 {
 
-  typedef CGAL::Nef_polyhedron_3<Kernel, Items>             Nef_polyhedron;
+  typedef CGAL::Nef_polyhedron_3<Kernel>                    Nef_polyhedron;
+  typedef typename Nef_polyhedron::Items                    Items;
   typedef typename Nef_polyhedron::Mark                     Mark;
   typedef typename Kernel::RT                               RT;
   typedef typename Kernel::FT                               FT;
@@ -177,7 +178,7 @@ private:
       Nef_polyhedron N = load_off("data/cube.off");
       CGAL_assertion(N.is_valid(0,0));
       CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
-      
+
       N = load_off("data/wrongly_oriented_cube.off");
       CGAL_assertion(N.is_valid(0,0));
       CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
@@ -220,7 +221,7 @@ private:
   void loadSave() {
 
     test_cubes();
-
+    return;
     Polyhedron P;
     Nef_polyhedron N = load_off("data/cube.off");
     N.convert_to_Polyhedron(P);
@@ -1212,8 +1213,8 @@ public:
 
 };
 
-template<typename Kernel, typename Items>
-const char* test_Nef_3<Kernel, Items>::datadir="data/";
+template<typename Kernel>
+const char* test_Nef_3<Kernel>::datadir="data/";
 
 CGAL_END_NAMESPACE
 #endif // CGAL_TEST_NEF_3

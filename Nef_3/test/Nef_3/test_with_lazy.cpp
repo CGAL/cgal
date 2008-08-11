@@ -28,7 +28,6 @@
 typedef CGAL::Gmpq NT;
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Lazy_kernel.h>
-#include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Timer.h>
 #include <CGAL/test_Nef_3.h>
 
@@ -39,7 +38,7 @@ int main() {
   std::locale::global(std::locale("C")); 
 #endif
 
-  CGAL::test_Nef_3<LC_kernel, CGAL::SNC_indexed_items>  test_LC;
+  CGAL::test_Nef_3<LC_kernel>  test_LC;
 
   CGAL::Timer t;
   t.start();

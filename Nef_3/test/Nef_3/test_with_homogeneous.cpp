@@ -32,7 +32,6 @@ typedef leda_integer NT;
 typedef CGAL::Gmpz NT;
 #endif
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Timer.h>
 #include <CGAL/test_Nef_3.h>
 
@@ -43,7 +42,7 @@ int main() {
   std::locale::global(std::locale("C")); 
 #endif
 
-  CGAL::test_Nef_3<H_kernel, CGAL::SNC_indexed_items>  test_H;
+  CGAL::test_Nef_3<H_kernel>  test_H;
 
   CGAL::Timer t;
   t.start();
