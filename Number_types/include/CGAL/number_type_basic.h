@@ -22,8 +22,8 @@
 // Author(s)     : Stefan Schirra, Michael Hemmer
 
 
-#ifndef CGAL_NUMBER_Type_BASIC_H
-#define CGAL_NUMBER_Type_BASIC_H
+#ifndef CGAL_NUMBER_TYPE_BASIC_H
+#define CGAL_NUMBER_TYPE_BASIC_H
 
 #define CGAL_PI 3.14159265358979323846
 
@@ -91,4 +91,4 @@
 #endif // CGAL_USE_GMPXX
 #endif // CGAL_USE_GMP
 
-#endif // CGAL_NUMBER_Type_BASIC_H
+#endif // CGAL_NUMBER_TYPE_BASIC_H
