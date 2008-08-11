@@ -70,7 +70,7 @@ CGAL_BEGIN_NAMESPACE
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
 //!@note: points are drawn in any case even if they are outside the window
 #warning approximation hangs for CORE::BigFloat !!
-
+ 
     #define CGAL_CKVA_STORE_COORDS(container, pixel) \
         if(!isnan(pixel.xv)) \
            container.push_back(Coord_2(pixel.xv, pixel.yv)); 
@@ -2044,8 +2044,12 @@ bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
         if(var == CGAL_X_RANGE) {
             Gfx_OUT("WARNING: unable to approximate point \
                  in vertical coincide mode!\n");
+//             NT xx = lower+inv/2, yy = box[ibox].key[ikey];
+//             xx = engine.x_min + xx*engine.pixel_w;
+//             yy = engine.y_min + yy*engine.pixel_h;
+
             pix.xv = NAN; // mark this point as invalid (to be further skipped)
-            pix.yv = NAN;            
+            pix.yv = NAN;
         } else {
             NT seed = box[ibox].key[ikey];
             seed = engine.x_min + seed*engine.pixel_w;
