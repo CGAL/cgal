@@ -6,6 +6,10 @@
 #include <CGAL/enum.h>
 #include <CGAL/exceptions.h>
 
+// The assert() macro, e.g. on Leopard, requires an int (due to the use of builtin_expect()).
+// So I cast to bool manually (needed when the automatic conversion is switched off).
+#define bool_assert(X) assert(bool(X))
+
 // "unused variable" warning killer
 template <typename T>
 void use(T) {}
@@ -35,51 +39,59 @@ void test()
 	t = u.inf();
 	t = u.sup();
 
-	assert(! u.is_certain());
-	assert( uu.is_certain());
-	assert(  v.is_certain());
-	assert(t0 == v.make_certain());
+	bool_assert(! u.is_certain());
+	bool_assert( uu.is_certain());
+	bool_assert(  v.is_certain());
+	bool_assert(t0 == v.make_certain());
 
+#ifndef CGAL_NO_UNCERTAIN_CONVERSION_OPERATOR
 	T conv = v;
-	assert(conv == t0);
+	bool_assert(conv == t0);
+#endif
 
 	U indet = U::indeterminate();
 
 	t = CGAL::inf(u);
 	t = CGAL::sup(u);
 
-	assert(! CGAL::is_certain(u));
-	assert(  CGAL::is_certain(v));
-	assert(  CGAL::is_certain(t0));
-	assert(  CGAL::is_indeterminate(u));
-	assert(! CGAL::is_indeterminate(v));
-	assert(! CGAL::is_indeterminate(t0));
-	assert(t0 == CGAL::get_certain(t0));
-	assert(t0 == CGAL::get_certain(v));
-	assert(t0 == CGAL::make_certain(t0));
-	assert(t0 == CGAL::make_certain(v));
+	bool_assert(! CGAL::is_certain(u));
+	bool_assert(  CGAL::is_certain(v));
+	bool_assert(  CGAL::is_certain(t0));
+	bool_assert(  CGAL::is_indeterminate(u));
+	bool_assert(! CGAL::is_indeterminate(v));
+	bool_assert(! CGAL::is_indeterminate(t0));
+	bool_assert(t0 == CGAL::get_certain(t0));
+	bool_assert(t0 == CGAL::get_certain(v));
+	bool_assert(t0 == CGAL::make_certain(t0));
+	bool_assert(t0 == CGAL::make_certain(v));
 
 	// Exceptions
 	bool ok = true;
 	CGAL_assertion_code( ok = false );
 	try { CGAL::get_certain(u); }
 	catch (CGAL::Assertion_exception) { ok = true; }
-	assert(ok);
+	bool_assert(ok);
 	ok = false;
-	try { CGAL::make_certain(u); T t = u; use(t); }
+	try {
+	  CGAL::make_certain(u);
+#ifndef CGAL_NO_UNCERTAIN_CONVERSION_OPERATOR
+	  T t = u;
+	  use(t);
+#endif
+	}
 	catch (CGAL::Uncertain_conversion_exception) { ok = true; }
-	assert(ok);
+	bool_assert(ok);
 
 	U u2 = CGAL::make_uncertain(u);
 	U u3 = CGAL::make_uncertain(T());
 
 	// Operators
-	assert( v == v );
-	assert( v == t0 );
-	assert( t0 == v );
-	assert( ! (v != v) );
-	assert( ! (v != t0) );
-	assert( ! (t0 != v) );
+	bool_assert( v == v );
+	bool_assert( v == t0 );
+	bool_assert( t0 == v );
+	bool_assert( ! (v != v) );
+	bool_assert( ! (v != t0) );
+	bool_assert( ! (t0 != v) );
 
 	use(t);
 }
@@ -102,41 +114,41 @@ void test_enum()
 	U indet = U::indeterminate();
 
 	// <, <=, >, >=
-	assert(U(n) < U(z));
-	assert(U(z) < U(p));
-	assert(U(n) < z);
-	assert(n < U(z));
-	assert(! CGAL::is_certain(indet < z));
+	bool_assert(U(n) < U(z));
+	bool_assert(U(z) < U(p));
+	bool_assert(U(n) < z);
+	bool_assert(n < U(z));
+	bool_assert(! CGAL::is_certain(indet < z));
 
-	assert(U(n) <= U(z));
-	assert(U(z) <= U(p));
-	assert(U(z) <= U(z));
-	assert(U(n) <= z);
-	assert(U(n) <= n);
-	assert(n <= U(z));
-	assert(z <= U(z));
-	assert(! CGAL::is_certain(indet <= z));
-	assert(! CGAL::is_certain(indet <= indet));
+	bool_assert(U(n) <= U(z));
+	bool_assert(U(z) <= U(p));
+	bool_assert(U(z) <= U(z));
+	bool_assert(U(n) <= z);
+	bool_assert(U(n) <= n);
+	bool_assert(n <= U(z));
+	bool_assert(z <= U(z));
+	bool_assert(! CGAL::is_certain(indet <= z));
+	bool_assert(! CGAL::is_certain(indet <= indet));
 
-	assert(U(z) > U(n));
-	assert(U(p) > U(z));
-	assert(U(z) > n);
-	assert(z > U(n));
-	assert(! CGAL::is_certain(z > indet));
+	bool_assert(U(z) > U(n));
+	bool_assert(U(p) > U(z));
+	bool_assert(U(z) > n);
+	bool_assert(z > U(n));
+	bool_assert(! CGAL::is_certain(z > indet));
 
-	assert(U(z) >= U(n));
-	assert(U(p) >= U(z));
-	assert(U(z) >= U(z));
-	assert(U(z) >= n);
-	assert(U(n) >= n);
-	assert(z >= U(n));
-	assert(z >= U(z));
-	assert(! CGAL::is_certain(z >= indet));
-	assert(! CGAL::is_certain(indet >= indet));
+	bool_assert(U(z) >= U(n));
+	bool_assert(U(p) >= U(z));
+	bool_assert(U(z) >= U(z));
+	bool_assert(U(z) >= n);
+	bool_assert(U(n) >= n);
+	bool_assert(z >= U(n));
+	bool_assert(z >= U(z));
+	bool_assert(! CGAL::is_certain(z >= indet));
+	bool_assert(! CGAL::is_certain(indet >= indet));
 
-	assert(-p == n);
-	assert(-n == p);
-	assert(-z == z);
+	bool_assert(-p == n);
+	bool_assert(-n == p);
+	bool_assert(-z == z);
 }
 
 // test only for enums with multiplication operator
@@ -155,19 +167,25 @@ void test_mult_enum()
 
 	U indet = U::indeterminate();
 
-	assert(n*z == z);
-	assert(z*n == z);
-	assert(z*z == z);
-	assert(p*z == z);
-	assert(z*p == z);
-	assert(n*n == p);
-	assert(p*p == p);
-	assert(n*p == n);
-	assert(indet*z == z);
-	assert(z*indet == z);
-	assert(CGAL::is_indeterminate(p*indet));
-	assert(CGAL::is_indeterminate(n*indet));
+	bool_assert(n*z == z);
+	bool_assert(z*n == z);
+	bool_assert(z*z == z);
+	bool_assert(p*z == z);
+	bool_assert(z*p == z);
+	bool_assert(n*n == p);
+	bool_assert(p*p == p);
+	bool_assert(n*p == n);
+	bool_assert(indet*z == z);
+	bool_assert(z*indet == z);
+	bool_assert(CGAL::is_indeterminate(p*indet));
+	bool_assert(CGAL::is_indeterminate(n*indet));
 }
+
+
+template <typename T>
+void error_on_bool(T) {}
+
+void error_on_bool(bool) { abort(); }
 
 
 // test only for bool
@@ -183,65 +201,69 @@ void test_bool()
 	U ufalse = false;
 	U indet = U::indeterminate();
 
-	assert(utrue);
-	assert(!ufalse);
-	assert(ufalse == !utrue);
-	assert(utrue != !utrue);
-	assert(false == !utrue);
-	assert(true != !utrue);
+	bool_assert(utrue);
+	bool_assert(!ufalse);
+	bool_assert(ufalse == !utrue);
+	bool_assert(utrue != !utrue);
+	bool_assert(false == !utrue);
+	bool_assert(true != !utrue);
 
-	assert(utrue | utrue);
-	assert(utrue | ufalse);
-	assert(ufalse | utrue);
-	assert(! (ufalse | ufalse));
-	assert(utrue | true);
-	assert(utrue | false);
-	assert(ufalse | true);
-	assert(! (ufalse | false));
-	assert(true | utrue);
-	assert(true | ufalse);
-	assert(false | utrue);
-	assert(! (false | ufalse));
+	bool_assert(utrue | utrue);
+	bool_assert(utrue | ufalse);
+	bool_assert(ufalse | utrue);
+	bool_assert(! (ufalse | ufalse));
+	bool_assert(utrue | true);
+	bool_assert(utrue | false);
+	bool_assert(ufalse | true);
+	bool_assert(! (ufalse | false));
+	bool_assert(true | utrue);
+	bool_assert(true | ufalse);
+	bool_assert(false | utrue);
+	bool_assert(! (false | ufalse));
 
-	assert(utrue & utrue);
-	assert(! (utrue & ufalse));
-	assert(! (ufalse & utrue));
-	assert(! (ufalse & ufalse));
-	assert(utrue & true);
-	assert(! (utrue & false));
-	assert(! (ufalse & true));
-	assert(! (ufalse & false));
-	assert(true & utrue);
-	assert(! (true & ufalse));
-	assert(! (false & utrue));
-	assert(! (false & ufalse));
+	bool_assert(utrue & utrue);
+	bool_assert(! (utrue & ufalse));
+	bool_assert(! (ufalse & utrue));
+	bool_assert(! (ufalse & ufalse));
+	bool_assert(utrue & true);
+	bool_assert(! (utrue & false));
+	bool_assert(! (ufalse & true));
+	bool_assert(! (ufalse & false));
+	bool_assert(true & utrue);
+	bool_assert(! (true & ufalse));
+	bool_assert(! (false & utrue));
+	bool_assert(! (false & ufalse));
 
 	// Test exceptions
 	bool ok = false;
 	try { bool b = indet; use(b); }
 	catch (CGAL::Uncertain_conversion_exception) { ok = true; }
-	assert(ok);
+	bool_assert(ok);
 	// The following must throw.
 	ok = false;
 	try { U u = indet && utrue; u = indet || ufalse; }
 	catch (CGAL::Uncertain_conversion_exception) { ok = true; }
-	assert(ok);
+	bool_assert(ok);
 	// The following must not throw.
 	try { bool b = utrue; b = ufalse; }
-	catch (CGAL::Uncertain_conversion_exception) { assert(false); }
+	catch (CGAL::Uncertain_conversion_exception) { bool_assert(false); }
 
 	// certainly, possibly
-	assert(CGAL::certainly(true));
-	assert(CGAL::certainly(utrue));
-	assert(!CGAL::certainly(indet));
-	assert(!CGAL::certainly(false));
-	assert(!CGAL::certainly(ufalse));
+	bool_assert(CGAL::certainly(true));
+	bool_assert(CGAL::certainly(utrue));
+	bool_assert(!CGAL::certainly(indet));
+	bool_assert(!CGAL::certainly(false));
+	bool_assert(!CGAL::certainly(ufalse));
 
-	assert(CGAL::possibly(true));
-	assert(CGAL::possibly(utrue));
-	assert(CGAL::possibly(indet));
-	assert(!CGAL::possibly(false));
-	assert(!CGAL::possibly(ufalse));
+	bool_assert(CGAL::possibly(true));
+	bool_assert(CGAL::possibly(utrue));
+	bool_assert(CGAL::possibly(indet));
+	bool_assert(!CGAL::possibly(false));
+	bool_assert(!CGAL::possibly(ufalse));
+
+	// conversion
+	error_on_bool(0 ? CGAL::make_uncertain(true) : indet);
+	// error_on_bool(0 ? true : indet); // fails due to the 2 possible conversions
 }
 
 void test_enum_cast()

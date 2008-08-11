@@ -123,7 +123,7 @@ public:
                   "Undecidable conversion of CGAL::Uncertain<T>");
   }
 
-#if 1 // Comment out in order to spot some unwanted conversions.
+#ifndef CGAL_NO_UNCERTAIN_CONVERSION_OPERATOR
   // NB : the general conversion to bool might be too risky.
   //      boost::tribool uses a more restricted conversion (see below).
   operator T() const
