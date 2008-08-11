@@ -30,14 +30,14 @@ struct Default_items {
   typedef CGAL::SNC_indexed_items Items;
 };
 
-template<> template<typename Kernel>
-struct Default_items<CGAL::Extended_homogeneous<Kernel> > {
-  typedef CGAL::SNC_indexed_items Items;
+template<> template<typename NT>
+struct Default_items<CGAL::Extended_homogeneous<NT> > {
+  typedef CGAL::SNC_items Items;
 };
 
-template<> template<typename Kernel>
-struct Default_items<CGAL::Extended_cartesian<Kernel> > {
-  typedef CGAL::SNC_indexed_items Items;
+template<> template<typename NT>
+struct Default_items<CGAL::Extended_cartesian<NT> > {
+  typedef CGAL::SNC_items Items;
 };
 
 CGAL_END_NAMESPACE
