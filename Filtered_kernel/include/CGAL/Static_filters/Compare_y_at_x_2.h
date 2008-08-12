@@ -22,6 +22,7 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Static_filter_error.h>
+#include <CGAL/algorithm.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,8 +48,7 @@ public:
     typename Kernel::Less_y_2 less_y = Kernel().less_y_2_object();
     typename Kernel::Orientation_2 orientation = Kernel().orientation_2_object();
 
-    CGAL_kernel_precondition( ! ( (less_x(p, s.source()) && less_x(p, s.target())) ||
-		                  (less_x(s.source(), p) && less_x(s.target(), p)) ) );
+    CGAL_kernel_precondition( are_ordered(s.source(), p, s.target(), less_x) );
     
     if( less_x( s.source(), s.target() ) )
       return orientation(p, s.source(), s.target());
