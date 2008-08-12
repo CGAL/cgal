@@ -28,6 +28,25 @@
 
 #include <CGAL/Coercion_traits.h>
 
+// Workaround to solve namepsace-problems for boost when applying the minimum
+// of Sqrt_extension
+
+CGAL_BEGIN_NAMESPACE
+
+template<typename A,typename B>
+CGAL::Sqrt_extension<A,B> min(CGAL::Sqrt_extension<A,B> x, 
+                              CGAL::Sqrt_extension<A,B> y) {
+    return CGAL::min(x,y);
+}
+template<typename A,typename B>
+CGAL::Sqrt_extension<A,B> max(CGAL::Sqrt_extension<A,B> x, 
+                              CGAL::Sqrt_extension<A,B> y) {
+    return CGAL::max(x,y);
+}
+
+CGAL_END_NAMESPACE
+
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {

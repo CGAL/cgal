@@ -25,7 +25,7 @@
 #include <CGAL/Arr_enums.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/alg_real_utils.h>
-#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_bfs.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_coefficient_kernel_at_alpha.h>
 

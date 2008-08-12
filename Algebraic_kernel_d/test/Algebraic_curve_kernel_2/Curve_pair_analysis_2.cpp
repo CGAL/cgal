@@ -32,6 +32,8 @@
 #include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_coefficient_kernel.h>
 
 #include <CGAL/Algebraic_curve_kernel_2.h>
 
@@ -55,8 +57,12 @@ void test_routine() {
     
     typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi
         < Coefficient, Rational > Rep_class;
-    typedef CGAL::CGALi::Bitstream_descartes< CGAL::Polynomial< Coefficient >, 
-        Rational > Isolator;
+    typedef CGAL::CGALi::Bitstream_descartes
+        < CGAL::CGALi::Bitstream_descartes_rndl_tree_traits
+            < CGAL::CGALi::Bitstream_coefficient_kernel<Coefficient> 
+            > 
+        > 
+        Isolator;
     
     typedef CGAL::Algebraic_kernel_1<Coefficient,Rational,Rep_class, Isolator> 
         Algebraic_kernel_1;

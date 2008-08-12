@@ -110,6 +110,7 @@ void test_real_root_isolator() {
     
     
     // special cases: 
+    /*
     {
         // default constructor: 
         // as from zero Polynomial
@@ -121,7 +122,9 @@ void test_real_root_isolator() {
         Isolator isolator(P_00);
         assert(isolator.number_of_real_roots() == -1);
         assert(isolator.polynomial() == P_00); 
-    }{
+    }
+    */
+    {
         // from constant polynomial = 1 
         Polynomial poly(P_01);
         Isolator isolator(poly);

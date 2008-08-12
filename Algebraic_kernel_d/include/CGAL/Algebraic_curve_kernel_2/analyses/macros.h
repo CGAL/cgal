@@ -38,7 +38,7 @@ CGAL_BEGIN_NAMESPACE
               > \
         > \
         Bitstream_traits; \
-    typedef CGAL::CGALi::Bitstream_descartes_bfs<Bitstream_traits>     \
+    typedef CGAL::CGALi::Bitstream_descartes<Bitstream_traits>     \
         Bitstream_descartes;                                           \
     typedef CGAL::CGALi::Status_line_CA_1< Curve_analysis_2 > Status_line_1; \
 
