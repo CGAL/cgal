@@ -160,7 +160,7 @@ struct propagate_normal
 {
     typedef CGAL::MST_graph<VertexIterator, VertexNormalMap> MST_graph;
     typedef boost::on_examine_edge event_filter;
-    
+
     template <class Edge>
     void operator()(const Edge& edge, const MST_graph& graph)
     {
@@ -177,11 +177,11 @@ struct propagate_normal
         vertex_descriptor vtx2 = boost::target(edge, graph);
         Normal& normal2 = get(get(boost::vertex_normal, graph), vtx2);
         Vector vec2 = normal2.get_vector();
-        
+
         double dot = vec1 * vec2;
 
-        //CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): dot=%1.3lf\n", 
-        //           (int)vtx1, vec1.x(),vec1.y(),vec1.z(), 
+        //CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): dot=%1.3lf\n",
+        //           (int)vtx1, vec1.x(),vec1.y(),vec1.z(),
         //           (int)vtx2, vec2.x(),vec2.y(),vec2.z(),
         //           dot);
 
@@ -191,11 +191,11 @@ struct propagate_normal
             //CGAL_TRACE("    flip %d\n", (int)vtx2);
             vec2 = -vec2;
         }
-        
+
         // Is orientation robust?
         //normal2 = Normal(vec2, true /* oriented */);
         bool oriented = normal1.is_oriented() &&
-                        (std::abs(dot) > 1.0/std::sqrt(2.0)); // oriented iff angle < 45°
+                        (std::abs(dot) > 1.0/std::sqrt(2.0)); // oriented iff angle < 45ï¿½
         normal2 = Normal(vec2, oriented);
     }
 };
@@ -293,7 +293,7 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
         kd_tree_points.push_back(point_wrapper);
     }
     std::auto_ptr<Tree> tree( new Tree(kd_tree_points.begin(), kd_tree_points.end()) );
-    
+
     // Recover RAM
     kd_tree_points.clear();
 
@@ -346,8 +346,8 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
                 double weight = 1.0 - std::abs(it_normal_vector * neighbour_normal_vector);
                 if (weight < 0)
                     weight = 0; // safety check
-                //CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): weight=%1.3lf\n", 
-                //           (int)it_index, it_normal_vector.x(),it_normal_vector.y(),it_normal_vector.z(), 
+                //CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): weight=%1.3lf\n",
+                //           (int)it_index, it_normal_vector.x(),it_normal_vector.y(),it_normal_vector.z(),
                 //           (int)neighbour_index, neighbour_normal_vector.x(),neighbour_normal_vector.y(),neighbour_normal_vector.z(),
                 //           weight);
                 riemannian_graph_weight_map[e] = (float)weight;
@@ -369,7 +369,7 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
     boost::prim_minimum_spanning_tree(riemannian_graph, &predecessor[0],
                                       weight_map( riemannian_graph_weight_map )
                                      .root_vertex( boost::vertex(source_vertex_index, riemannian_graph) ));
-    
+
     // Recover RAM
     riemannian_graph.clear();
 
@@ -385,9 +385,8 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
     // add vertices
     for (VertexIterator it = first; it != beyond; it++)
     {
-        unsigned int it_index = get(vertex_index_map,it);
         typename MST_graph::vertex_descriptor v = add_vertex(mst_graph);
-        CGAL_surface_reconstruction_assertion(v == it_index);
+        CGAL_surface_reconstruction_assertion(v == get(vertex_index_map,it));
         mst_graph[v].vertex = it;
     }
     // add edges
@@ -403,7 +402,7 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
                             mst_graph);
         }
     }
-    
+
     // Recover RAM
     predecessor.clear();
 

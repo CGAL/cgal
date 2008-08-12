@@ -63,7 +63,7 @@ void test_pca(const std::vector<Point>& points, // input point set
   CGAL::Timer task_timer; task_timer.start();
 
   CGAL::estimate_normals_pca_3(points.begin(),points.end(),std::back_inserter(normals),k);
-  
+
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
                       << (memory>>20) << " Mb allocated"
@@ -78,7 +78,7 @@ void test_jet_fitting(const std::vector<Point>& points, // input point set
   CGAL::Timer task_timer; task_timer.start();
 
   CGAL::estimate_normals_jet_fitting_3(points.begin(),points.end(),std::back_inserter(normals),k);
-  
+
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
                       << (memory>>20) << " Mb allocated"
@@ -104,7 +104,7 @@ void test_orient_normals_MST(
          boost::make_iterator_property_map(normals.begin(), index_id), // index -> normal prop. map
          k);
 
-  
+
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
                       << (memory>>20) << " Mb allocated"
@@ -120,8 +120,6 @@ int main(int argc, char * argv[])
 {
   std::cerr << "Normal estimation test" << std::endl;
   std::cerr << "No output" << std::endl;
-  
-char* leak1 = new char[100];
 
   // decode parameters
   if (argc-1 == 0)
@@ -140,17 +138,15 @@ char* leak1 = new char[100];
   {
     std::cerr << std::endl;
 
-char* leak2 = new char[20];
-
     // Load point set
     std::vector<Point> points;
     std::cerr << "Open " << argv[i] << " for reading..." << std::endl;
-    if(CGAL::surface_reconstruction_read_xyz(argv[i], 
-                                             std::back_inserter(points), 
+    if(CGAL::surface_reconstruction_read_xyz(argv[i],
+                                             std::back_inserter(points),
                                              false /*skip normals*/))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
-      
+
       std::vector<Normal> normals_pca, normals_jet_fitting;
       test_pca(points, normals_pca, k);
       test_jet_fitting(points, normals_jet_fitting, k);
