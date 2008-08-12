@@ -319,11 +319,16 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 #else
 #  define CGAL_AND(X, Y) \
        ({ CGAL::Uncertain<bool> CGAL_TMP = (X); \
-          CGAL::certainly_not(CGAL_TMP) ? CGAL::make_uncertain(false) : CGAL_TMP & (Y); })
+          CGAL::certainly_not(CGAL_TMP) ? CGAL::make_uncertain(false) \
+                                        : CGAL_TMP & CGAL::make_uncertain((Y)); })
 #  define CGAL_OR(X, Y) \
        ({ CGAL::Uncertain<bool> CGAL_TMP = (X); \
-          CGAL::certainly(CGAL_TMP) ? CGAL::make_uncertain(true) : CGAL_TMP | (Y); })
+          CGAL::certainly(CGAL_TMP) ? CGAL::make_uncertain(true) \
+                                    : CGAL_TMP | CGAL::make_uncertain((Y)); })
 #endif
+
+#define CGAL_AND_3(X, Y, Z)  CGAL_AND(X, CGAL_AND(Y, Z))
+#define CGAL_OR_3(X, Y, Z)   CGAL_OR(X, CGAL_OR(Y, Z))
 
 
 // Equality operators

@@ -243,6 +243,9 @@ void test_bool()
         bool_assert(CGAL_AND(utrue, utrue));
         bool_assert(!CGAL_AND(ufalse, ufalse));
 
+        bool_assert(CGAL_AND_3(true, true, true));
+        bool_assert(!CGAL_AND_3(true, false, true));
+
         bool_assert(CGAL_OR(true, false));
         bool_assert(CGAL_OR(false, true));
         bool_assert(CGAL_OR(true, true));
@@ -251,6 +254,9 @@ void test_bool()
         bool_assert(CGAL_OR(ufalse, utrue));
         bool_assert(CGAL_OR(utrue, utrue));
         bool_assert(!CGAL_OR(ufalse, ufalse));
+
+        bool_assert(CGAL_OR_3(false, false, true));
+        bool_assert(!CGAL_OR_3(false, false, false));
 
         try {
           bool_assert( CGAL_AND(utrue, utrue));
