@@ -57,7 +57,7 @@ Uncertain<bool> certified_collinear_are_ordered_along_lineC2( Point_2<K> const& 
   if ( CGAL_NTS certainly(p.y() < q.y()) ) return !(r.y() < q.y());
   if ( CGAL_NTS certainly(q.y() < p.y()) ) return !(q.y() < r.y());
   
-  if ( CGAL_NTS certainly(p.x() == q.x()) && CGAL_NTS certainly(p.y() == q.y())  ) return make_uncertain(true);
+  if ( CGAL_NTS certainly(p.x() == q.x()) && CGAL_NTS certainly(p.y() == q.y())  ) return true;
   
   return Uncertain<bool>::indeterminate();
 }
@@ -92,7 +92,7 @@ template<class K>
 inline
 Uncertain<bool> are_parallel_edges_equally_orientedC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
-  return CGAL_NTS certified_sign( (e0.target() - e0.source()) * (e1.target() - e1.source()) ) == make_uncertain(POSITIVE);
+  return CGAL_NTS certified_sign( (e0.target() - e0.source()) * (e1.target() - e1.source()) ) == POSITIVE;
 }
 
 
@@ -127,8 +127,6 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
                                                                      , Segment_2<K> const& e2
                                                                      )
 {
-  Uncertain<Trisegment_collinearity> rR = Uncertain<Trisegment_collinearity>::indeterminate();
-  
   Uncertain<bool> is_01 = are_edges_orderly_collinearC2(e0,e1);
   if ( is_certain(is_01) )
   {
@@ -139,20 +137,20 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
       if ( is_certain(is_12) )
       {
         if ( CGAL_NTS logical_and(is_01 , !is_02 , !is_12 ) )
-          rR = make_uncertain(TRISEGMENT_COLLINEARITY_01);
+          return TRISEGMENT_COLLINEARITY_01;
         else if ( CGAL_NTS logical_and(is_02 , !is_01 , !is_12 ) )
-          rR = make_uncertain(TRISEGMENT_COLLINEARITY_02);
+          return TRISEGMENT_COLLINEARITY_02;
         else if ( CGAL_NTS logical_and(is_12 , !is_01 , !is_02 ) )
-          rR = make_uncertain(TRISEGMENT_COLLINEARITY_12);
+          return TRISEGMENT_COLLINEARITY_12;
         else if ( CGAL_NTS logical_and(!is_01 , !is_02, !is_12  ) )
-          rR = make_uncertain(TRISEGMENT_COLLINEARITY_NONE);
+          return TRISEGMENT_COLLINEARITY_NONE;
         else 
-          rR = make_uncertain(TRISEGMENT_COLLINEARITY_ALL);
+          return TRISEGMENT_COLLINEARITY_ALL;
       }
     }
   }
 
-  return rR ;
+  return Uncertain<Trisegment_collinearity>::indeterminate();
 }
 
 
