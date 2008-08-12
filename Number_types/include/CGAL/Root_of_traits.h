@@ -158,7 +158,7 @@ struct Root_of_traits<Interval_nt<B> >{
         if (CGAL::possibly(a==0))
           return Interval_nt<B>::largest();
         Interval_nt<B> discriminant = CGAL_NTS square(b) - a*c*4;
-        CGAL_assertion(!CGAL::certainly(discriminant <0));
+        CGAL_assertion(discriminant >= 0);
         Interval_nt<B> d = CGAL_NTS sqrt(discriminant);
         if ((smaller && a>0) || (!smaller && a<0))
             d = -d;
