@@ -29,26 +29,7 @@
 
 #ifndef CGAL_COPY_N_H
 #define CGAL_COPY_N_H 1
-#include <cstddef>
 
-// copy_n is usually in the STL as well, but not in the official
-// standard. We provide our own copy_n.
+#include <CGAL/algorithm.h>
 
-CGAL_BEGIN_NAMESPACE
-
-template <class InputIterator, class Size, class OutputIterator>
-OutputIterator copy_n( InputIterator first,
-                       Size n,
-                       OutputIterator result) {
-  // copies the first `n' items from `first' to `result'. Returns
-  // the value of `result' after inserting the `n' items.
-  while( n--) {
-    *result = *first;
-    first++;
-    result++;
-  }
-  return result;
-}
-
-CGAL_END_NAMESPACE
-#endif // CGAL_COPY_N_H //
+#endif // CGAL_COPY_N_H

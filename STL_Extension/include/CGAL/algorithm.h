@@ -24,14 +24,32 @@
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 
 #ifndef CGAL_ALGORITHM_H
-#define CGAL_ALGORITHM_H 1
+#define CGAL_ALGORITHM_H
 
 #include <CGAL/basic.h>
-#include <CGAL/copy_n.h>
 #include <algorithm>
 #include <iosfwd>
 
 CGAL_BEGIN_NAMESPACE
+
+// copy_n is usually in the STL as well, but not in the official
+// standard. We provide our own copy_n.  It is planned for C++0x.
+
+template <class InputIterator, class Size, class OutputIterator>
+OutputIterator copy_n( InputIterator first,
+                       Size n,
+                       OutputIterator result)
+{
+  // copies the first `n' items from `first' to `result'. Returns
+  // the value of `result' after inserting the `n' items.
+  while( n--) {
+    *result = *first;
+    first++;
+    result++;
+  }
+  return result;
+}
+
 
 // Not documented
 template <class T> inline
@@ -249,9 +267,6 @@ output_range(std::ostream& os,
     return os;
 }
 
-
-
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ALGORITHM_H //
-// EOF //
+#endif // CGAL_ALGORITHM_H
