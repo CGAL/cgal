@@ -38,7 +38,6 @@
 #define _CORE_FILTER_H_
 
 #include <CGAL/CORE/Real.h>
-#include <math.h>
 #include <cmath>
 
 #if !defined CGAL_CFG_NO_CPP0X_ISFINITE
