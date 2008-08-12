@@ -29,10 +29,48 @@
 #include <CGAL/basic.h>
 #include <CGAL/copy_n.h>
 #include <algorithm>
-
 #include <iosfwd>
 
 CGAL_BEGIN_NAMESPACE
+
+// Not documented
+template <class T> inline
+bool
+are_sorted(const T & a, const T & b, const T & c)
+{
+  return a <= b && b <= c;
+}
+
+// Not documented
+template <class T> inline
+bool
+are_strictly_sorted(const T & a, const T & b, const T & c)
+{
+  return a < b && b < c;
+}
+
+// Not documented
+// Checks that b is in the interval [min(a, c) , max(a, c)].
+template <class T> inline
+bool
+are_ordered(const T & a, const T & b, const T & c)
+{
+  const T& min = (CGAL::min)(a, c);
+  const T& max = (CGAL::max)(a, c);
+  return min <= b && b <= max;
+}
+
+// Not documented
+// Checks that b is in the interval ]min(a, c) , max(a, c)[.
+template <class T> inline
+bool
+are_strictly_ordered(const T & a, const T & b, const T & c)
+{
+  const T& min = (CGAL::min)(a, c);
+  const T& max = (CGAL::max)(a, c);
+  return min < b && b < max;
+}
+
 
 template <class ForwardIterator>
 inline

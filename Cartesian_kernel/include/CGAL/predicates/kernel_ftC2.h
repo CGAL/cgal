@@ -25,6 +25,7 @@
 #ifndef CGAL_PREDICATES_KERNEL_FTC2_H
 #define CGAL_PREDICATES_KERNEL_FTC2_H
 
+#include <CGAL/algorithm.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <CGAL/constructions/kernel_ftC2.h>
@@ -195,7 +196,7 @@ compare_y_at_xC2(const FT &px, const FT &py,
     // compares the y-coordinates of p and the vertical projection of p on s.
     // Precondition : p is in the x-range of s.
 
-    CGAL_kernel_precondition(px >= (CGAL::min)(ssx, stx) && px <= (CGAL::max)(ssx, stx));
+    CGAL_kernel_precondition(are_ordered(ssx, px, stx));
 
     if (ssx < stx)
 	return orientationC2(px, py, ssx, ssy, stx, sty);
@@ -225,8 +226,8 @@ compare_y_at_x_segment_C2(const FT &px,
     //   - if the segments intersect, return EQUAL
     //   - if not, return the obvious SMALLER/LARGER.
 
-    CGAL_kernel_precondition(px >= (CGAL::min)(s1sx, s1tx) && px <= (CGAL::max)(s1sx, s1tx));
-    CGAL_kernel_precondition(px >= (CGAL::min)(s2sx, s2tx) && px <= (CGAL::max)(s2sx, s2tx));
+    CGAL_kernel_precondition(are_ordered(s1sx, px, s1tx));
+    CGAL_kernel_precondition(are_ordered(s2sx, px, s2tx));
 
     if (s1sx != s1tx && s2sx != s2tx) {
 	FT s1stx = s1sx-s1tx;
