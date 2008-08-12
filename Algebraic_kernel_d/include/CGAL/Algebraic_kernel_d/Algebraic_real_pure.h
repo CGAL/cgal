@@ -459,6 +459,15 @@ convert_to_bfi(const CGALi::Algebraic_real_pure< COEFF, RAT, POLICY, REPCLASS >&
     return bfi; 
 }
 
+ 
+template <class Coefficient,class Rational,class Handle_policy,class Rep_class>
+struct Get_arithmetic_kernel<CGAL::CGALi::Algebraic_real_pure<Coefficient,Rational,Handle_policy,Rep_class> >{
+
+    typedef typename Get_arithmetic_kernel<Coefficient>::Arithmetic_kernel 
+        Arithmetic_kernel;
+
+};
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_REAL_PURE_H
