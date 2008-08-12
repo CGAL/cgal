@@ -261,6 +261,18 @@ void test_bool()
 	bool_assert(!CGAL::possibly(false));
 	bool_assert(!CGAL::possibly(ufalse));
 
+	bool_assert(!CGAL::certainly_not(true));
+	bool_assert(!CGAL::certainly_not(utrue));
+	bool_assert(!CGAL::certainly_not(indet));
+	bool_assert(CGAL::certainly_not(false));
+	bool_assert(CGAL::certainly_not(ufalse));
+
+	bool_assert(!CGAL::possibly_not(true));
+	bool_assert(!CGAL::possibly_not(utrue));
+	bool_assert(CGAL::possibly_not(indet));
+	bool_assert(CGAL::possibly_not(false));
+	bool_assert(CGAL::possibly_not(ufalse));
+
 	// conversion
 	error_on_bool(0 ? CGAL::make_uncertain(true) : indet);
 	// error_on_bool(0 ? true : indet); // fails due to the 2 possible conversions

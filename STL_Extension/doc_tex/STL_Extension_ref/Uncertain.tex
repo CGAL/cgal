@@ -384,6 +384,20 @@ Another option is :
   \ccFunction{bool possibly(bool u);}
   {returns \ccc{u}.}
 
+  \ccFunction{bool certainly_not(Uncertain<bool> u);}
+  {returns \ccc{true} iff \ccVar.\ccc{is_certain()}, and the \ccVar.\ccc{make_certain}()
+   returns \ccc{false}.}
+
+  \ccFunction{bool certainly_not(bool u);}
+  {returns \ccc{!u}.}
+
+  \ccFunction{bool possibly_not(Uncertain<bool> u);}
+  {returns \ccc{true} iff \ccVar.\ccc{is_certain()} returns \ccc{false}, or if
+   \ccVar.\ccc{make_certain}() returns \ccc{false}.}
+
+  \ccFunction{bool possibly_not(bool u);}
+  {returns \ccc{!u}.}
+
 
 \ccSeeAlso
 \ccc{CGAL::Interval_nt<bool>}

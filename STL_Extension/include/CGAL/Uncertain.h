@@ -233,20 +233,31 @@ bool is_indeterminate(Uncertain<T> a)
 inline bool certainly(bool b) { return b; }
 inline bool possibly(bool b) { return b; }
 
+inline bool certainly_not(bool b) { return !b; }
+inline bool possibly_not(bool b) { return !b; }
+
 inline
 bool certainly(Uncertain<bool> c)
 {
-  if (is_certain(c))
-    return get_certain(c);
-  return false;
+  return is_certain(c) && get_certain(c);
 }
 
 inline
 bool possibly(Uncertain<bool> c)
 {
-  if (is_certain(c))
-    return get_certain(c);
-  return true;
+  return !is_certain(c) || get_certain(c);
+}
+
+inline
+bool certainly_not(Uncertain<bool> c)
+{
+  return is_certain(c) && !get_certain(c);
+}
+
+inline
+bool possibly_not(Uncertain<bool> c)
+{
+  return !is_certain(c) || !get_certain(c);
 }
 
 
