@@ -284,6 +284,7 @@ Scene::draw(bool with_names)
 	  draw(entry);
 	}
 	else {
+	  CGALglcolor(Qt::black);
 	  gl_render_nef_edges(boost::get<Nef_polyhedron*>(entry.polyhedron_ptr));
 	}
       }
@@ -326,8 +327,12 @@ void Scene::gl_render_facets(Polyhedron_ptr ptr)
   else
   {
     Nef_polyhedron* p = boost::get<Nef_polyhedron*>(ptr);
+    glEnable(GL_LIGHTING);
     gl_render_nef_facets(p);
+    glDisable(GL_LIGHTING);
+    CGALglcolor(Qt::black);
     gl_render_nef_vertices(p);
+    glEnable(GL_LIGHTING);
  }
 }
 

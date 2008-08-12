@@ -131,7 +131,7 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
   else {
     QTime time;
     time.start();
-    std::cout << "Convert polyhedron A to nef polyhedra...";
+    std::cout << "Convert polyhedron A to nef polyhedron...";
     Exact_polyhedron exact_polyA; 
     to_exact(*polyA,exact_polyA);
     n1 = new Nef_polyhedron(exact_polyA); 
@@ -144,7 +144,7 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
   else {
     QTime time;
     time.start();
-    std::cout << "Convert polyhedron B to nef polyhedra...";
+    std::cout << "Convert polyhedron B to nef polyhedron...";
     Exact_polyhedron exact_polyB; 
     to_exact(*polyB, exact_polyB);
     n2 = new Nef_polyhedron(exact_polyB); 
