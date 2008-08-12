@@ -488,7 +488,7 @@ private:
 
                     CGAL::Sign left_sign 
                         = CGAL::CGALi::estimate_sign_at
-                            (left_y,left_sh_der_sh_pol,Boundary(0));
+                            (left_y,left_sh_der_sh_pol,0);
 
                     Algebraic_real_1 right_y(right_pol,
                                            right.lower_boundary(right_id),
@@ -496,7 +496,7 @@ private:
 
                     CGAL::Sign right_sign 
                         = CGAL::CGALi::estimate_sign_at
-                            (right_y,right_sh_der_sh_pol,Boundary(0));
+                            (right_y,right_sh_der_sh_pol,0);
 
                     if(left_sign!=right_sign) {
 /*
@@ -520,7 +520,7 @@ private:
 
                     CGAL::Sign left_sign_1 
                         = CGAL::CGALi::estimate_sign_at
-                            (left_y_1,left_sh_der_sh_pol,Boundary(0));
+                            (left_y_1,left_sh_der_sh_pol,0);
 
                     left_id++;
                     Algebraic_real_1 left_y_2(left_pol,
@@ -528,7 +528,7 @@ private:
                                           left.upper_boundary(left_id));
                     CGAL::Sign left_sign_2 
                         =CGAL::CGALi::estimate_sign_at
-                            (left_y_2,left_sh_der_sh_pol,Boundary(0));
+                            (left_y_2,left_sh_der_sh_pol,0);
                     if(left_sign_1!=left_sign_2) {
 /*
 #if CGAL_ACK_DEBUG_FLAG
@@ -550,14 +550,14 @@ private:
 
                     CGAL::Sign right_sign_1 
                         = CGAL::CGALi::estimate_sign_at
-                            (right_y_1,right_sh_der_sh_pol,Boundary(0));
+                            (right_y_1,right_sh_der_sh_pol,0);
                     right_id++;
                     Algebraic_real_1 right_y_2(right_pol,
                                                right.lower_boundary(right_id),
                                                right.upper_boundary(right_id));
                     CGAL::Sign right_sign_2 
                         = CGAL::CGALi::estimate_sign_at
-                            (right_y_2,right_sh_der_sh_pol,Boundary(0));
+                            (right_y_2,right_sh_der_sh_pol,0);
                     if(right_sign_1!=right_sign_2) {
 /*
 #if CGAL_ACK_DEBUG_FLAG

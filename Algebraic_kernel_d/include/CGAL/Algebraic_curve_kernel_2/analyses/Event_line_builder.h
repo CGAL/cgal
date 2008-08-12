@@ -31,7 +31,7 @@
 #include <utility>
 
 // Constant for the interval test in \c compute_mk
-#define CGAL_ACK_COMPUTE_MK_PRECISION 10000
+#define CGAL_ACK_COMPUTE_MK_PRECISION 512
 
 CGAL_BEGIN_NAMESPACE
 
@@ -223,9 +223,9 @@ public:
                 CGAL_assertion(! alpha.is_root_of(polynomial[n-1]));
                 CGAL::Sign asym_sign 
                     = CGAL::CGALi::estimate_sign_at
-                        (alpha,polynomial[n-1],Boundary(0))*
+                        (alpha,polynomial[n-1],0)*
                     CGAL::CGALi::estimate_sign_at
-                        (alpha,CGAL::diff(polynomial[n]),Boundary(0));
+                        (alpha,CGAL::diff(polynomial[n]),0);
                 if(asym_sign==CGAL::SMALLER) {
                     vl._set_number_of_branches_approaching_infinity
                         (std::make_pair(1,0),std::make_pair(0,1));
@@ -356,8 +356,9 @@ protected:
 #endif
 */
             CGAL::Sign ia_try
-                =estimate_sign_at(alpha_ref,*seq_it,
-                                  Boundary(1,CGAL_ACK_COMPUTE_MK_PRECISION));
+                =estimate_sign_at(alpha_ref,
+                                  *seq_it,
+                                  CGAL_ACK_COMPUTE_MK_PRECISION);
 	
             //CGAL::Sign ia_try=CGAL::ZERO;
 
@@ -423,7 +424,7 @@ protected:
 #endif
 */
                 VT beta
-                    =estimate_sign_at(alpha_ref,*seq_it,Boundary(0));
+                    =estimate_sign_at(alpha_ref,*seq_it,0);
                 
 /*          
 #if CGAL_ACK_DEBUG_FLAG

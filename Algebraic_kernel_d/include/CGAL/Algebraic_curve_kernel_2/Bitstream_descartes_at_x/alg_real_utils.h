@@ -25,6 +25,7 @@
 #include <CGAL/convert_to_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 #include <CGAL/Polynomial/polynomial_gcd.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_coefficient_kernel.h>
 
 #include <CGAL/Coercion_traits.h>
 
@@ -448,44 +449,34 @@ simple_rational_right_of(AlgebraicReal ar) {
  * infinite loop, if <tt>f(alpha)=0</tt>
  *
  */
-template<typename AlgebraicReal,typename Poly_1_,typename Boundary_>
-CGAL::Sign estimate_sign_at(AlgebraicReal alpha,
-                            const Poly_1_& f,
-                            const Boundary_ eps
-                            =Boundary_(0)) {
-    typedef Boundary_ Boundary;
-    typedef Poly_1_ Poly_1;
-    typedef AlgebraicReal Algebraic_real;
-    typedef typename CGAL::Coercion_traits<
-        typename Poly_1::NT,
-        Boundary>::Type Interval_boundary;
-    typename CGAL::Coercion_traits<typename Poly_1::NT,
-                                   Boundary>::Cast boundary_cast;
-    typedef boost::numeric::interval<Interval_boundary> Interval;
-    Interval ev;
+template<typename NT,typename Polynomial_1>
+CGAL::Sign estimate_sign_at(NT alpha,
+                            const Polynomial_1& f,
+                            long max_precision=0) {
+    typedef CGAL::CGALi::Bitstream_coefficient_kernel<NT> 
+        Bitstream_coefficient_kernel;
+    typedef typename Bitstream_coefficient_kernel::Bigfloat_interval BFI;
+    long old_prec = CGAL::get_precision(BFI());
+    long prec = 16;
+
+    typename Bitstream_coefficient_kernel::Convert_to_bfi convert_to_bfi;
+
     CGAL::Sign sign=CGAL::ZERO;
 
-    typedef CGAL::CGALi::Approximate_arithmetic_controller
-        <Poly_1,Algebraic_real> Approximate_controller;
-
-    Approximate_controller approx_controller(f,alpha);
-    
-    while(sign==CGAL::ZERO) {
-        ev = approx_controller.interval_approximation();
-
-        if(! boost::numeric::in_zero(ev)) {
-            sign=CGAL::compare(ev.lower(),0);
+    while(max_precision==0 || prec<=max_precision) {
+        CGAL::set_precision(BFI(),prec);
+        std::cout << "Increased prec to " << prec << std::endl;
+        BFI eval = f.evaluate(convert_to_bfi(alpha));
+        if(! CGAL::in_zero(eval)) {
+            sign=CGAL::sign(eval);
             CGAL_assertion(sign!=CGAL::ZERO);
-        }
-        else {
-            if(CGAL::compare(alpha.high()-alpha.low(),
-                             boundary_cast(eps))==CGAL::SMALLER) {
-                break;
-            }
-            approx_controller.refine_value();
-
+            break;
+        } else {
+            prec*=2;
         }
     }
+    CGAL::set_precision(BFI(),old_prec);
+    std::cout << "done" << std::endl;
     return sign;
 }
      
