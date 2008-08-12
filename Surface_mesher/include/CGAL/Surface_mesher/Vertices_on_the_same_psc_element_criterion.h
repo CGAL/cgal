@@ -58,11 +58,14 @@ public:
       surface.vertices_not_on_same_surface_patch(v1, v2, v3);
 
     q = (is_bad ? Quality(0) : Quality(1));
-    if(is_bad)
+    if(is_bad){
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
       CGAL_MESHES_OUTPUT_STREAM << "f("
                                 << v1->point().element_index() << ","
                                 << v2->point().element_index() << ","
                                 << v3->point().element_index() << ")";
+#endif
+    }
     return is_bad;
   }
 }; // end Vertices_on_the_same_psc_element_criterion
