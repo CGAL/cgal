@@ -111,27 +111,19 @@ template <> class Real_embeddable_traits< float >
   : public INTERN_RET::Real_embeddable_traits_base< float , CGAL::Tag_true> {
 public:
 // Is_finite depends on platform
-#ifdef CGAL_CFG_IEEE_754_BUG
-
     class Is_finite
       : public std::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
+#ifdef CGAL_CFG_IEEE_754_BUG
           Type f = x;
           IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
           return is_finite_by_mask_float( p->c );
-        }
-    };
 #else
-    class Is_finite
-      : public std::unary_function< Type, bool > {
-      public:
-        bool operator()( const Type& x ) const {
           return (x == x) && (is_valid(x-x));
+#endif
         }
     };
-
-#endif
 
 };
 

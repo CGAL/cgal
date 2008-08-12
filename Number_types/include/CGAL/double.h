@@ -77,29 +77,18 @@ class Is_valid< double >
 
 #else
 
+template<>
+class Is_valid< double >
+  : public std::unary_function< double, bool > {
+  public :
+    bool operator()( const double& x ) const {
 #ifdef _MSC_VER
-
-template<>
-class Is_valid< double >
-  : public std::unary_function< double, bool > {
-  public :
-    bool operator()( const double& x ) const {
       return ! _isnan(x);
-    }
-};
-
 #else
-
-template<>
-class Is_valid< double >
-  : public std::unary_function< double, bool > {
-  public :
-    bool operator()( const double& x ) const {
       return (x == x);
+#endif
     }
 };
-
-#endif
 
 #endif
 
@@ -146,35 +135,23 @@ template <> class Real_embeddable_traits< double >
 #endif
 
 // Is_finite depends on platform
-#ifdef CGAL_CFG_IEEE_754_BUG
     class Is_finite
       : public std::unary_function< Type, bool > {
       public :
         bool operator()( const Type& x ) const {
+#ifdef CGAL_CFG_IEEE_754_BUG
           Type d = x;
           IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
           return is_finite_by_mask_double( p->c.H );
-        }
-    };
 #elif defined CGAL_CFG_NUMERIC_LIMITS_BUG
-    class Is_finite
-      : public std::unary_function< Type, bool > {
-      public :
-        bool operator()( const Type& x ) const {
-           return (x == x) && (is_valid(x-x));
-        }
-    };
+          return (x == x) && (is_valid(x-x));
 #else
-    class Is_finite
-      : public std::unary_function< Type, bool > {
-      public :
-        bool operator()( const Type& x ) const {
           return (x != std::numeric_limits<Type>::infinity())
               && (-x != std::numeric_limits<Type>::infinity())
               && is_valid(x);
+#endif
       }
     };
-#endif
 };
 
 inline

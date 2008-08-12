@@ -144,25 +144,19 @@ template <> class Real_embeddable_traits< long double >
     };
 
 // Is_finite depends on platform
-#ifdef CGAL_CFG_IEEE_754_BUG
     class Is_finite
       : public std::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
+#ifdef CGAL_CFG_IEEE_754_BUG
           Type d = x;
           IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
           return is_finite_by_mask_long_double( p->c.H );
-        }
-    };
 #else
-    class Is_finite
-      : public std::unary_function< Type, bool > {
-      public:
-        bool operator()( const Type& x ) const {
-         return (x == x) && (is_valid(x-x));
+          return (x == x) && (is_valid(x-x));
+#endif
         }
     };
-#endif
 
 };
 
