@@ -90,12 +90,18 @@ Finally, note that this class has some common points with \ccc{boost::tribool}.
   %% +-----------------------------------+
   \ccHeading{Access Functions}
 
+  The following functions are meant to be used very rarely, they provide ways to inspect
+  the content of an \ccc{Uncertain<T>} object.
+
   % \def\ccTagRmTrailingConst{\ccFalse}
   \ccMethod{T inf() const;}
   {returns the lower bound of the range represented by~\ccVar.}
 
   \ccGlue\ccMethod{T sup() const;}
   {returns the upper bound of the range represented by~\ccVar.}
+
+  \ccGlue\ccMethod{bool is_same(Uncertain u) const;}
+  {returns true whether \ccVar\ and \ccc{u} are the same range (equality as sets).}
 
   %% +-----------------------------------+
   \ccHeading{Uncertainty testing and conversion}
@@ -294,6 +300,26 @@ Another option is :
 
   This ensures that the first expression is not evaluated twice, and that the second is
   evaluated only if needed.
+
+  This behavior can also  be emulated through the use of macros, but only using
+  non-standard features ("statement expressions", such as provided by GCC).  The
+  macros \ccc{CGAL_AND} and \ccc{CGAL_OR} are provided that perform the lazy
+  evaluation of these logical operations.  On compilers that do not support
+  statement expressions, the macros simply expand to the $\&\&$ and $||$
+  operators (which will throw an exception instead of propagating the uncertainty).
+
+\begin{ccExampleCode}
+  // Logical AND
+  Uncertain<bool> res = CGAL_AND( p.x() == 0 , p.y() == 0 );
+
+  ... // Use res
+
+  // Logical OR
+  Uncertain<bool> res = CGAL_OR( q.x() == 0 , q.y() == 0 );
+
+  ... // Use res
+\end{ccExampleCode}
+
 
   %% +-----------------------------------+
   \ccHeading{Overloaded operators and functions for \ccc{Uncertain<enum T>} only}

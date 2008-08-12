@@ -111,6 +111,8 @@ public:
   T inf() const { return _i; }
   T sup() const { return _s; }
 
+  bool is_same(Uncertain u) const { return _i == u._i && _s == u._s; }
+
   bool is_certain() const { return _i == _s; }
 
   T make_certain() const
@@ -305,6 +307,23 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 {
   return Uncertain<bool>(a.inf() & b, a.sup() & b);
 }
+
+// operator&& and operator|| are not provided because, unless their bool counterpart,
+// they lack the "short-circuiting" property.
+// We provide macros CGAL_AND and CGAL_OR, which attempt to emulate their behavior.
+// Key things : do not evaluate expressions twice, and evaluate the right hand side
+// expression only when needed.
+#ifdef CGAL_CFG_NO_STATEMENT_EXPRESSIONS
+#  define CGAL_AND(X, Y)  ((X) && (Y))
+#  define CGAL_OR(X, Y)   ((X) || (Y))
+#else
+#  define CGAL_AND(X, Y) \
+       ({ CGAL::Uncertain<bool> CGAL_TMP = (X); \
+          CGAL::certainly_not(CGAL_TMP) ? CGAL::make_uncertain(false) : CGAL_TMP & (Y); })
+#  define CGAL_OR(X, Y) \
+       ({ CGAL::Uncertain<bool> CGAL_TMP = (X); \
+          CGAL::certainly(CGAL_TMP) ? CGAL::make_uncertain(true) : CGAL_TMP | (Y); })
+#endif
 
 
 // Equality operators
