@@ -60,11 +60,27 @@ are_sorted(const T & a, const T & b, const T & c)
 }
 
 // Not documented
+template <class T, class Compare> inline
+bool
+are_sorted(const T & a, const T & b, const T & c, Compare cmp)
+{
+  return !cmp(b, a) && !cmp(c, b);
+}
+
+// Not documented
 template <class T> inline
 bool
 are_strictly_sorted(const T & a, const T & b, const T & c)
 {
   return a < b && b < c;
+}
+
+// Not documented
+template <class T, class Compare> inline
+bool
+are_strictly_sorted(const T & a, const T & b, const T & c, Compare cmp)
+{
+  return cmp(a, b) && cmp(b, c);
 }
 
 // Not documented
@@ -79,6 +95,17 @@ are_ordered(const T & a, const T & b, const T & c)
 }
 
 // Not documented
+// Checks that b is in the interval [min(a, c) , max(a, c)].
+template <class T, class Compare> inline
+bool
+are_ordered(const T & a, const T & b, const T & c, Compare cmp)
+{
+  const T& min = (std::min)(a, c, cmp);
+  const T& max = (std::max)(a, c, cmp);
+  return !cmp(b, min) && !cmp(max, b);
+}
+
+// Not documented
 // Checks that b is in the interval ]min(a, c) , max(a, c)[.
 template <class T> inline
 bool
@@ -87,6 +114,17 @@ are_strictly_ordered(const T & a, const T & b, const T & c)
   const T& min = (CGAL::min)(a, c);
   const T& max = (CGAL::max)(a, c);
   return min < b && b < max;
+}
+
+// Not documented
+// Checks that b is in the interval ]min(a, c) , max(a, c)[.
+template <class T, class Compare> inline
+bool
+are_strictly_ordered(const T & a, const T & b, const T & c, Compare cmp)
+{
+  const T& min = (std::min)(a, c, cmp);
+  const T& max = (std::max)(a, c, cmp);
+  return cmp(min, b) && cmp(b, max);
 }
 
 
