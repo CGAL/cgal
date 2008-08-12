@@ -6,7 +6,7 @@ project ( ${prj} )
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-set(PACKAGE_ROOT ../../../)
+set(PACKAGE_ROOT ../../..)
 
 
 # Add several CGAL packages to the include and link paths,
@@ -38,7 +38,7 @@ if ( CGAL_FOUND )
   find_package(QGLViewer REQUIRED )
   find_package(OpenGL    REQUIRED )
   find_package(ZLIB      REQUIRED )
-  find_package(VTK       QUIET)
+#  find_package(VTK       QUIET)
 
   find_path(bimap_DIR boost/bimap/bimap.hpp ${Boost_INCLUDE_DIRS} DOC "The directory containing the bimap subdirectory.")
 
@@ -99,7 +99,7 @@ if ( CGAL_FOUND )
       target_link_libraries( ${prj} CGAL CGAL-ImageIO ${CGAL_3RD_PARTY_LIBRARIES})
     endif()
     
-    target_link_libraries( ${prj} CGAL-Qt4 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}  ${PRJ_VTK_LIBS})
+    target_link_libraries( ${prj} CGAL-Qt4 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ) # ${PRJ_VTK_LIBS}
     
   endif()
 endif(CGAL_FOUND)
