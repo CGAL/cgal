@@ -73,7 +73,7 @@ void MP_Float::construct_from_builtin_fp_type(T d)
     if (d == 0)
       return;
 
-    CGAL_assertion(is_finite(d) && is_valid(d));
+    CGAL_assertion(is_finite(d) & is_valid(d));
 
     // This is subtle, because ints are not symetric against 0.
 
@@ -390,7 +390,7 @@ to_interval_exp(const MP_Float &b)
   if (d.is_point())
     CGAL_assertion(MP_Float(d.inf()) == b);
   else
-    CGAL_assertion(MP_Float(d.inf()) <= b && MP_Float(d.sup()) >= b);
+    CGAL_assertion(MP_Float(d.inf()) <= b & MP_Float(d.sup()) >= b);
 #endif
 
   CGAL_assertion_msg(CGAL::abs(exp*log_limb) < (1<<30)*2.0,

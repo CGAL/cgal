@@ -482,7 +482,7 @@ public :
 
   static void set_relative_precision_of_to_double(const double & d)
   {
-      CGAL_assertion(d > 0 && d < 1);
+      CGAL_assertion(0 < d & d < 1);
       relative_precision_of_to_double = d;
   }
 

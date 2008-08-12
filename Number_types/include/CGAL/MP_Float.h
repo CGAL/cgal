@@ -707,7 +707,7 @@ namespace INTERN_MP_FLOAT {
     while (true) {
       x = x % y;
       if (x == 0) {
-        CGAL_postcondition(CGALi::divides(y, a) && CGALi::divides(y, b));
+        CGAL_postcondition(CGALi::divides(y, a) & CGALi::divides(y, b));
         y.gcd_normalize();
         return y;
       }

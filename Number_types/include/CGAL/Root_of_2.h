@@ -259,7 +259,7 @@ public:
   RT operator[](int i) const
   {
     typedef Rational_traits< FT > Rational;
-    CGAL_assertion((i>=0)&&(i<3));
+    CGAL_assertion((i>=0) & (i<3));
     Rational r;
     const RT r1 = r.numerator(alpha());
     const RT d1 = r.denominator(alpha());
@@ -486,7 +486,7 @@ public:
             typedef typename First_if_different<FT, RT>::Type WhatType;
             typedef typename boost::is_same< WhatType, RT > do_not_filter;
 
-            CGAL_assertion(is_valid(a) && is_valid(b));
+            CGAL_assertion(is_valid(a) & is_valid(b));
 
             if (a.is_rational()) return (CGAL_NTS compare(a.alpha(), b));
             if (b.is_rational()) return (CGAL_NTS compare(a, b.alpha()));
@@ -602,7 +602,7 @@ public:
             typedef typename First_if_different<FT, RT>::Type WhatType;
             typedef typename boost::is_same< WhatType, RT > do_not_filter;
 
-            CGAL_assertion(is_valid(a) && is_valid(b));
+            CGAL_assertion(is_valid(a) & is_valid(b));
 
             if (a.is_rational()) return (CGAL_NTS compare (a.alpha(), b));
 
@@ -637,7 +637,7 @@ public:
             typedef typename First_if_different<FT, RT>::Type WhatType;
             typedef typename boost::is_same< WhatType, RT > do_not_filter;
 
-            CGAL_assertion(is_valid(a) && is_valid(b));
+            CGAL_assertion(is_valid(a) & is_valid(b));
 
             if (a.is_rational()) return (CGAL_NTS compare (a.alpha(), b));
 
@@ -1019,7 +1019,7 @@ operator-(const Root_of_2<RT> &a,
   typedef Rational_traits< RootOf_1 >        Rational;
   //RT should be the same as Rational::RT
 
-  CGAL_assertion(is_valid(a) && is_valid(b));
+  CGAL_assertion(is_valid(a) & is_valid(b));
 
   if(a.is_rational()) {
     return Root_of_2<RT>(a.alpha() - b);
@@ -1045,7 +1045,7 @@ operator-(const Root_of_2<RT> &a, const RT& b)
   typedef Rational_traits< RootOf_1 >        Rational;
   //RT should be the same as Rational::RT
 
-  CGAL_assertion(is_valid(a) && is_valid(b));
+  CGAL_assertion(is_valid(a) & is_valid(b));
 
   if(a.is_rational()) {
     return Root_of_2<RT>(a.alpha() - b);
@@ -1119,7 +1119,7 @@ operator*(const Root_of_2<RT> &a,
   typedef Rational_traits< RootOf_1 >        Rational;
   //RT should be the same as Rational::RT
 
-  CGAL_assertion(is_valid(a) && is_valid(b));
+  CGAL_assertion(is_valid(a) & is_valid(b));
 
   if(CGAL_NTS is_zero(b)) return Root_of_2<RT>();
 
@@ -1149,7 +1149,7 @@ operator*(const Root_of_2<RT> &a, const RT& b)
   typedef Rational_traits< RootOf_1 >        Rational;
   //RT should be the same as Rational::RT
 
-  CGAL_assertion(is_valid(a) && is_valid(b));
+  CGAL_assertion(is_valid(a) & is_valid(b));
 
   if(CGAL_NTS is_zero(b)) return Root_of_2<RT>();
 
