@@ -44,7 +44,7 @@
 #include <CGAL/Min_circle_2_traits_2.h>
 
 #include <CGAL/point_generators_2.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <iterator>
 
 // typedefs

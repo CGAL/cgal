@@ -32,7 +32,7 @@
 
 #include <CGAL/segment_intersection_points_2.h>
 #include <CGAL/Join_input_iterator.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Cartesian_converter.h>

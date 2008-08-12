@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <vector>
 #include <algorithm>
 #include <iterator>

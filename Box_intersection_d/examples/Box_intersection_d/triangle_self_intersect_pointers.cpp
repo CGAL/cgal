@@ -5,7 +5,7 @@
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;

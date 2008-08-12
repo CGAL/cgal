@@ -3041,7 +3041,7 @@ SUN Ultra-Enterprise-10000 with an 333 MHz UltraSPARC processors.
 #include <CGAL/basic_constructions_2.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/random_selection.h>
 #include <CGAL/IO/Window_stream.h>
 

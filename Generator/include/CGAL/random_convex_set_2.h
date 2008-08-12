@@ -25,7 +25,7 @@
 #define CGAL_RANDOM_CONVEX_SET_2_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <vector>
 #include <algorithm>
 #include <numeric>

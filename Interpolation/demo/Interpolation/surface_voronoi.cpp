@@ -40,7 +40,7 @@ int main()
 
 #include <CGAL/point_generators_3.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Origin.h>

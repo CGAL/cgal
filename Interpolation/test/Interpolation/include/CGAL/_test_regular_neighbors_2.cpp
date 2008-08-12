@@ -22,7 +22,7 @@
 #include <utility>
 
 #include <CGAL/point_generators_2.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Random.h>
 #include <CGAL/Origin.h>
 

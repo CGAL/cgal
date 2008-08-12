@@ -2,7 +2,7 @@
 
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/point_generators_3.h>
 

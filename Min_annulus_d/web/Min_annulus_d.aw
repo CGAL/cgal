@@ -1604,7 +1604,7 @@ or sphere, respectively.
 
 @macro <Min_annulus_d test: includes and typedefs (2/3D)>(1) many = @begin
     #include <CGAL/point_generators_@1.h>
-    #include <CGAL/copy_n.h>
+    #include <CGAL/algorithm.h>
     #include <iterator>
 @end
 

@@ -25,7 +25,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Origin.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 
 #include <CGAL/natural_neighbor_coordinates_2.h>
 

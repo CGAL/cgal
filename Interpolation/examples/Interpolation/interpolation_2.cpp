@@ -11,7 +11,7 @@
 #include <CGAL/interpolation_functions.h>
 
 #include <CGAL/point_generators_2.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Origin.h>
 
 #include <cassert>

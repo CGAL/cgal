@@ -7,7 +7,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 
 using namespace CGAL;
 

@@ -1,6 +1,6 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/convex_hull_incremental_3.h>
 #include <vector>

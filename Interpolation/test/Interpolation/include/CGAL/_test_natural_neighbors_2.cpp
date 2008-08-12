@@ -21,7 +21,7 @@
 #include <cassert>
 #include <utility>
 
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Random.h>
 #include <CGAL/barycenter.h>
 

@@ -21,7 +21,7 @@
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/predicates_on_points_3.h>

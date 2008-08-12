@@ -20,7 +20,7 @@
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Gmpz.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/random_selection.h>
 #include <CGAL/point_generators_3.h>
 #if CGAL_LEDA_VERSION < 500

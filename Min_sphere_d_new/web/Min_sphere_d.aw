@@ -1387,7 +1387,7 @@ or sphere, respectively.
 @macro <Min_sphere_d test: includes (2/3D)>(1) many = @begin
     
     #include <CGAL/point_generators_@1.h>
-    #include <CGAL/copy_n.h>
+    #include <CGAL/algorithm.h>
     #include <iterator>
 @end
 

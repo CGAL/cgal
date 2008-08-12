@@ -28,7 +28,7 @@
 
 #include <CGAL/point_generators_3.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/function_objects.h>
 
 #include <CGAL/Origin.h>

@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 
 #include <list>
 

@@ -44,7 +44,7 @@
 #include <CGAL/Optimisation_d_traits_3.h>
 
 #include <CGAL/point_generators_3.h>
-#include <CGAL/copy_n.h>
+#include <CGAL/algorithm.h>
 #include <iterator>
 
 // typedefs
