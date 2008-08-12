@@ -121,7 +121,7 @@ Another option is :
   Uncertain<bool> b = ...;
   if (certainly(b))
     ... // b is certainly true
-  else if (certainly(!b))
+  else if (certainly_not(b))
     ... // b is certainly false
   else
     ... // b is indeterminate
@@ -281,7 +281,7 @@ Another option is :
 \begin{ccExampleCode}
   // Logical AND
   Uncertain<bool> tmp = (p.x() == 0);
-  Uncertain<bool> res = certainly(!tmp) ? make_uncertain(false) : tmp & (p.y() == 0);
+  Uncertain<bool> res = certainly_not(tmp) ? make_uncertain(false) : tmp & (p.y() == 0);
 
   ... // Use res
 
