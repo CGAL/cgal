@@ -3426,7 +3426,7 @@ namespace CartesianKernelFunctors {
     result_type
     operator()( const Point_3& p, const Point_3& q) const
     {
-      return p.x() == q.x() && p.y() == q.y();
+      return CGAL_AND( p.x() == q.x() , p.y() == q.y() );
     }
   };
 

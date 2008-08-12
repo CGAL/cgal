@@ -36,9 +36,9 @@ typename Equal_to<FT>::result_type
 parallelC3(const FT &v1x, const FT &v1y, const FT &v1z,
            const FT &v2x, const FT &v2y, const FT &v2z)
 {
-  return sign_of_determinant(v1x, v2x, v1y, v2y) == ZERO
-      && sign_of_determinant(v1x, v2x, v1z, v2z) == ZERO
-      && sign_of_determinant(v1y, v2y, v1z, v2z) == ZERO;
+  return CGAL_AND_3( sign_of_determinant(v1x, v2x, v1y, v2y) == ZERO ,
+                     sign_of_determinant(v1x, v2x, v1z, v2z) == ZERO ,
+                     sign_of_determinant(v1y, v2y, v1z, v2z) == ZERO );
 }
 
 template < class FT >
@@ -79,9 +79,9 @@ typename Equal_to<FT>::result_type
 strict_dominanceC3(const FT &px, const FT &py, const FT &pz,
 		   const FT &qx, const FT &qy, const FT &qz)
 {
-  return CGAL_NTS compare(px, qx) == LARGER &&
-	 CGAL_NTS compare(py, qy) == LARGER &&
-	 CGAL_NTS compare(pz, qz) == LARGER;
+  return CGAL_AND_3( CGAL_NTS compare(px, qx) == LARGER ,
+	             CGAL_NTS compare(py, qy) == LARGER ,
+	             CGAL_NTS compare(pz, qz) == LARGER );
 }
 
 template < class FT >
@@ -90,9 +90,9 @@ typename Equal_to<FT>::result_type
 dominanceC3(const FT &px, const FT &py, const FT &pz,
 	    const FT &qx, const FT &qy, const FT &qz)
 {
-  return CGAL_NTS compare(px, qx) != SMALLER && 
-	 CGAL_NTS compare(py, qy) != SMALLER &&
-	 CGAL_NTS compare(pz, qz) != SMALLER;
+  return CGAL_AND_3( CGAL_NTS compare(px, qx) != SMALLER , 
+	             CGAL_NTS compare(py, qy) != SMALLER ,
+	             CGAL_NTS compare(pz, qz) != SMALLER );
 }
 
 template < class FT >
@@ -110,8 +110,8 @@ collinearC3(const FT &px, const FT &py, const FT &pz,
       return false;
   FT dpz = pz-rz;
   FT dqz = qz-rz;
-  return sign_of_determinant(dpx, dqx, dpz, dqz) == ZERO
-      && sign_of_determinant(dpy, dqy, dpz, dqz) == ZERO;
+  return CGAL_AND( sign_of_determinant(dpx, dqx, dpz, dqz) == ZERO ,
+                   sign_of_determinant(dpy, dqy, dpz, dqz) == ZERO );
 }
 
 template < class FT >
@@ -293,8 +293,8 @@ equal_planeC3(const FT &ha, const FT &hb, const FT &hc, const FT &hd,
 
     Sg s1a = CGAL_NTS sign(ha);
     if (s1a != ZERO)
-        return s1a == CGAL_NTS sign(pa)
-            && sign_of_determinant(pa, pd, ha, hd) == ZERO;
+        return CGAL_AND( s1a == CGAL_NTS sign(pa) ,
+                         sign_of_determinant(pa, pd, ha, hd) == ZERO );
     Sg s1b = CGAL_NTS sign(hb);
     if (s1b != ZERO)
         return s1b == CGAL_NTS sign(pb)

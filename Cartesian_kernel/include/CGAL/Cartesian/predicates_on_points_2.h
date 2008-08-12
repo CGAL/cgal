@@ -34,7 +34,7 @@ inline
 bool
 equal_xy(const PointC2<K> &p, const PointC2<K> &q)
 {
-  return p.x() == q.x() && p.y() == q.y();
+  return CGAL_AND( p.x() == q.x() , p.y() == q.y() );
 }
 
 #if 0
