@@ -52,7 +52,7 @@ public:
   SphereC3(const Point_3 &center, const FT &squared_radius,
            const Orientation &o = COUNTERCLOCKWISE)
   {
-    CGAL_kernel_precondition( (squared_radius >= FT(0)) &&
+    CGAL_kernel_precondition( (squared_radius >= FT(0)) &
                               (o != COLLINEAR) );
 
     base = Rep(center, squared_radius, o);

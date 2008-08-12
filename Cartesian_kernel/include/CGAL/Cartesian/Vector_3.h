@@ -187,7 +187,7 @@ inline
 const typename VectorC3<R>::FT &
 VectorC3<R>::cartesian(int i) const
 {
-  CGAL_kernel_precondition( (i>=0) && (i<3) );
+  CGAL_kernel_precondition( (i>=0) & (i<3) );
   if (i==0) return x();
   if (i==1) return y();
   return z();
