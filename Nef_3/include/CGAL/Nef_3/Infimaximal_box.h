@@ -293,8 +293,6 @@ class Infimaximal_box<Tag_true, Kernel> {
   }
 
   static bool check_point_on_plane(Point_3 p, Plane_3 h) {
-    std::cerr << p << ", " << h << std::endl;
-
     NT x(p.hx().eval_at(100));
     NT y(p.hy().eval_at(100));
     NT z(p.hz().eval_at(100));
