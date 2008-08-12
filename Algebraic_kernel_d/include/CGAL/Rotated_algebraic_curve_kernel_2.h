@@ -24,6 +24,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Algebraic_curve_kernel_2.h>
 
+#include <CGAL/Algebraic_curve_kernel_2/trigonometric_approximation.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace { 
@@ -970,64 +972,125 @@ struct Approximately_rotated_algebraic_curve_kernel_base
     struct Construct_curve_2 {
             
         Curve_analysis_2 operator()(const Polynomial_2& f, 
-                                    int angle,
-                                    double delta) {
+                                    Rational angle,
+                                    long final_prec) {
             
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "angle=" << angle << std::endl;
-            CGAL_ACK_DEBUG_PRINT << "delta=" << delta << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "final_prec=" << final_prec << std::endl;
 #endif            
 
-            bool greater_180 =(angle>180);
-            bool between_90_and_270 = (angle>=90) && (angle<=270);
-            angle %=360;
+            while(abs(angle)>180) {
+                angle>0 ?  angle-=360 : angle+=360;
+            }
+            std::cout << angle << std::endl;
+            bool between_90_and_270 = abs(angle)>=90;
+            bool greater_180 =(angle<0);
+            // Normalize
+            angle=abs(angle);
             if(between_90_and_270) {
                 angle=180-angle;
             }
-            if(angle<0) {
-                angle=-angle;
+            CGAL_assertion(angle>=0 && angle <= 90);
+
+            bool greater_45 = (angle>=45);
+            if(greater_45) {
+                angle=90-angle;
             }
-            if(angle>=270) {
-                angle=360-angle;
-            }
 
-            double exact_sine_approx = sin((double)angle*M_PI/180.); 
-            
-            double x = 1./exact_sine_approx+
-                sqrt(1./(exact_sine_approx*exact_sine_approx)-1);
+            Rational sine, cosine;
 
-            typename CGAL::Fraction_traits<Rational>::Compose compose;
+            // Filter boundary case of 0 degree
+            if(angle==Rational(0) || 
+               Rational(1)/angle>CGAL::ipower(Integer(2),final_prec)) {
+                sine = 0;
+                cosine = 1;
+            } else {
 
-            //Euclidean algo
-            double e0=x, e1=-1.;
-            Integer p0=0, q0=1, p1=1, q1=0;
-            Rational t,sine;
-            while(true) {
-                long r = (long)floor(e0/e1);
-                double olde0=e0;
-                Integer oldp0=p0, oldq0=q0;
-                e0=e1;p0=p1;q0=q1;
-                e1=olde0-r*e1;
-                p1=oldp0-Integer(r)*p1;
-                q1=oldq0-Integer(r)*q1;
-                if(q1!=Integer(0)) {
-                    t = compose(p1,q1);
-                    sine = CGAL::abs(2/(t+1/t));
-                    if(abs(asin(CGAL::to_double(sine))/M_PI*180.-angle)
-                         < delta) {
+                typedef typename 
+                    CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel AT;
+                typedef typename AT::Bigfloat_interval Bigfloat_interval;
+                typedef typename Bigfloat_interval_traits<Bigfloat_interval>
+                    ::Boundary Bigfloat_boundary;
+
+
+                long old_prec = CGAL::get_precision(Bigfloat_interval());
+
+                long prec = 16;
+                Rational t;
+                while(true) {
+                    CGAL::set_precision(Bigfloat_interval(),prec);
+                    Bigfloat_interval pi = CGAL::pi<AT>(prec);
+                    Bigfloat_interval s 
+                        = CGAL::sin<AT>
+                        (CGAL::median(
+                                 pi*CGAL::convert_to_bfi(angle)/
+                                 CGAL::convert_to_bfi(Integer(180))),
+                         prec);
+                    Bigfloat_boundary x 
+                        = CGAL::median(CGAL::convert_to_bfi(Integer(1))/s + 
+                                       CGAL::sqrt
+                                       (CGAL::convert_to_bfi(Integer(1))/(s*s)-CGAL::convert_to_bfi(Integer(1))));
+
+                    int n = 0;
+                    typename CGAL::Fraction_traits<Rational>::Compose compose;
+                    
+                    bool success=false;
+                    
+                    Bigfloat_boundary e0=x, e1=-1, olde0;
+                    Integer p0=0, q0=1, p1=1, q1=0,oldp0,oldq0;
+                    while(true) {
+                        Integer r = CGAL::CGALi::floor(e0/e1);
+                        Integer oldp0=p0, oldq0=q0;
+                        Bigfloat_boundary olde0=e0;
+                        e0=e1;p0=p1;q0=q1;
+                        e1=olde0-r*e1;
+                        p1=oldp0-r*p1;
+                        q1=oldq0-r*q1;
+                        if(q1!=Integer(0)) {
+                            t = compose(p1,q1);
+                            CGAL::simplify(t);
+                            sine = CGAL::abs(2/(t+1/t));
+                            CGAL::simplify(sine);
+                            Bigfloat_interval asin 
+                                = CGAL::arcsin<AT>(sine,prec)
+                                * CGAL::convert_to_bfi(Integer(180))/pi;
+                            long bound = CGAL::CGALi::ceil_log2_abs
+                                (CGAL::abs(asin-CGAL::convert_to_bfi(angle)));
+                            success = (bound <= -final_prec);
+                            typename 
+                                CGAL::Coercion_traits<Rational, 
+                                                      Bigfloat_boundary>::Cast
+                                cast;
+                            if((cast(t)==cast(x)) || success) {
+                                break;
+                            }
+                        }
+                        n++;
+                    }
+                    if(success) {
+                        CGAL::set_precision(Bigfloat_interval(),old_prec);
                         break;
+                    } else {
+                        prec*=2;
                     }
                 }
+                
+                cosine = (t-1/t)/(t+1/t);
+                CGAL::simplify(cosine);
+                
             }
-            Rational cosine = CGAL::abs((t-1/t)/(t+1/t));
-
+            if(greater_45) {
+                std::swap(sine,cosine);
+            }
+            
             if(greater_180) {
                 sine = -sine;
             }
             if(between_90_and_270) {
                 cosine=-cosine;
             }
-
+            
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "sine=" << sine << std::endl;
             CGAL_ACK_DEBUG_PRINT << "cosine=" << cosine << std::endl;
@@ -1035,12 +1098,13 @@ struct Approximately_rotated_algebraic_curve_kernel_base
             
             Poly_rat_2 
                 sub_x(Poly_rat_1(Rational(0), cosine), Poly_rat_1(sine)), 
-                sub_y(Poly_rat_1(Rational(0), -sine), Poly_rat_1(cosine)), 
+                    sub_y(Poly_rat_1(Rational(0), -sine), Poly_rat_1(cosine)), 
                 res;
-
+            
             res = _substitute_xy(f, sub_x, sub_y);
-        
-
+            
+            CGAL::simplify(res);
+            
             // integralize polynomial
             typedef CGAL::Fraction_traits<Poly_rat_2> FT;
             typename FT::Denominator_type dummy;
@@ -1050,65 +1114,9 @@ struct Approximately_rotated_algebraic_curve_kernel_base
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "integralized poly: " << num << std::endl;
 #endif
+
             return Base::curve_cache_2()(num);
-        }
-
-/* This is an alternative, experimental solution
-        Curve_analysis_2 operator()(const Polynomial_2& f, 
-                                    double alpha,
-                                    double delta,
-                                    bool angle_greater_180_degrees=false)
-            const {
-
-
-            // TODO: Catch alpha=0,1
-
-            std::cout << "alpha=" << alpha << std::endl;
-            std::cout << "delta=" << delta << std::endl;
-            
-            bool angle_between_90_and_270_degrees = (alpha<0);
-
-            alpha = abs(alpha);
-            CGAL_precondition(1-alpha-delta>0);
-            long n = (long)ceil(sqrt(1.-alpha)/(2.*delta)*
-                                (sqrt(1-alpha-delta)*
-                                 sqrt(1.+delta-alpha*delta-alpha*alpha)+
-                                 (1.-delta-alpha)*sqrt(1.+alpha)));
-            std::cout << "n=" << n << std::endl;
-            long m = (long)ceil(n*sqrt((1+alpha)/(1-alpha)));
-            std::cout << "m=" << m << std::endl;
-            typename CGAL::Fraction_traits<Rational>::Compose compose;
-            Rational cosine = compose((m*m-n*n),(m*m+n*n));
-            CGAL::simplify(cosine);
-            std::cout << "cosine=" << cosine << std::endl;
-            Rational sine = compose(2*m*n,m*m+n*n);
-            std::cout << "sine=" << cosine << std::endl;
-            if(angle_greater_180_degrees) {
-                sine = -sine;
             }
-            if(angle_between_90_and_270_degrees) {
-                cosine=-cosine;
-            }
-           
-            Poly_rat_2 
-                sub_x(Poly_rat_1(Rational(0), cosine), Poly_rat_1(sine)), 
-                sub_y(Poly_rat_1(Rational(0), -sine), Poly_rat_1(cosine)), 
-                res;
-
-            res = _substitute_xy(f, sub_x, sub_y);
-        
-            std::cout << "rotated poly: " << res << std::endl;
-            // integralize polynomial
-            typedef CGAL::Fraction_traits<Poly_rat_2> FT;
-            typename FT::Denominator_type dummy;
-            Polynomial_2 num;
-            typename FT::Decompose()(res, num, dummy);
-            
-            std::cout << "integralized poly: " << num << "\n\n";
-            return Base::curve_cache_2()(num);
-        }
-    
-*/
 
 
         Curve_analysis_2 operator()(const Polynomial_2& f) const {

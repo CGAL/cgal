@@ -154,6 +154,7 @@ int main(int argc,char** argv) {
     typedef Basic_algebraic_curve_kernel_2::Polynomial_2 Input_polynomial_2;
     typedef Basic_algebraic_curve_kernel_2::Polynomial_1 Input_polynomial_1;
     typedef Basic_algebraic_curve_kernel_2::Boundary Rational;
+    typedef Curve_analysis_2::Integer Integer;
   
 
     std::vector<Input_polynomial_2> curves;
@@ -249,17 +250,25 @@ int main(int argc,char** argv) {
         f = curves[i];
 #endif
 
-        int angle = atoi(argv[3]);
+        double angle_double = atof(argv[3]);
+
+        Integer num,denom(1);
+        while((double)((long)angle_double)!=angle_double) {
+            std::cout << "angle_double=" << angle_double << std::endl;
+            denom*=10;
+            angle_double*=10;
+        }
+        num = Integer((long)angle_double);
+        Rational angle = CGAL::Fraction_traits<Rational>::Compose()(num,denom);
 
 #if CGAL_ACK_USE_APPROXIMATE_ROTATION
-        double prec;
+        int prec;
         if(argc>4) {
-            prec = atof(argv[4]);
+            prec = atoi(argv[4]);
         } else {
-            prec=0.001;
+            prec=1;
         }
-#endif
-
+#endif 
 
 
         overall_timer.start();
