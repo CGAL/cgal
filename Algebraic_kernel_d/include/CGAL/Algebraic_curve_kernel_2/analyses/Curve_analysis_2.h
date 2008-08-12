@@ -28,9 +28,7 @@
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_coefficient_kernel_at_alpha.h>
-
-
-#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Non_generic_position_exception.h>
+#include <CGAL/Algebraic_kernel_d/Non_generic_position_exception.h>
 
 #include <CGAL/Polynomial_traits_d.h>
 
