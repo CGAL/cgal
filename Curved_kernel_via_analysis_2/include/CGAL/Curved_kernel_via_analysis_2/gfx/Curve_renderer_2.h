@@ -39,11 +39,11 @@ using boost::multi_index::multi_index_container;
 using boost::multi_index::get;
 using boost::multi_index::project;
 
+#ifdef CGAL_CKVA_CR_TIMING
 extern CGAL::Timer refine_timer;
+#endif
 
 CGAL_BEGIN_NAMESPACE
-
-
 
 #ifndef CGAL_CURVE_RENDERER_DEFS
 #define CGAL_CURVE_RENDERER_DEFS
@@ -408,7 +408,9 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
           boost::optional< Coord_2 > *end_pt1 = NULL, 
           boost::optional< Coord_2 > *end_pt2 = NULL) {
 
+#ifdef CGAL_CKVA_CR_TIMING
     refine_timer.start();
+#endif
 
     if(!initialized)
         return;
@@ -507,7 +509,9 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
                     engine.y_max_r + height_r);
     }        
 
+#ifdef CGAL_CKVA_CR_TIMING
     refine_timer.stop();
+#endif
 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
     if(end_pt1 != NULL && loc_p1 == CGAL::ARR_INTERIOR && 
