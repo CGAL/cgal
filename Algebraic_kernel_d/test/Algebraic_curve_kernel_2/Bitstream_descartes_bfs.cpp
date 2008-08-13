@@ -21,13 +21,13 @@
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_pure.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_bfs.h>
+#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_bfs.h>
 
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
 
 #include <CGAL/Algebraic_kernel_d/Bitstream_coefficient_kernel.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_coefficient_kernel_at_alpha.h>
+#include <CGAL/Algebraic_curve_kernel_2/Bitstream_coefficient_kernel_at_alpha.h>
 
 // A simple model of the EventRefinement concept: 
 // Uses a vector of Algebraic reals

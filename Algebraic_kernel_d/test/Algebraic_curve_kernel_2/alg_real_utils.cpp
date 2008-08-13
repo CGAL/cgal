@@ -20,7 +20,7 @@
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_1.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/alg_real_utils.h>
+#include <CGAL/Algebraic_curve_kernel_2/alg_real_utils.h>
 
 template<typename ArithmeticKernel>
 void test_routine() {
