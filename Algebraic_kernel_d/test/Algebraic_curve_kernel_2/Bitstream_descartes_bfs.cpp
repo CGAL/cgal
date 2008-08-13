@@ -21,7 +21,7 @@
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_pure.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_bfs.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
 
@@ -64,7 +64,7 @@ void test_routine() {
   typedef CGAL::CGALi::Bitstream_descartes_rndl_tree_traits
       <CGAL::CGALi::Bitstream_coefficient_kernel<Integer> > Traits;
   
-  typedef CGAL::CGALi::Bitstream_descartes_bfs<Traits> Bitstream_descartes;
+  typedef CGAL::CGALi::Bitstream_descartes<Traits> Bitstream_descartes;
 
   Traits traits;
 
@@ -777,7 +777,7 @@ void test_routine() {
         <CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha
             <Poly_int1,Algebraic_real> > Traits_2;
   
-    typedef CGAL::CGALi::Bitstream_descartes_bfs<Traits_2> Bitstream_descartes;
+    typedef CGAL::CGALi::Bitstream_descartes<Traits_2> Bitstream_descartes;
 
     typedef typename Bitstream_descartes::Bitstream_tree Bitstream_tree;
 
@@ -850,7 +850,7 @@ void test_routine() {
         <CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha
             <Poly_int1,Algebraic_real> > Traits_2;
 
-      typedef CGAL::CGALi::Bitstream_descartes_bfs<Traits_2> Bitstream_descartes;
+      typedef CGAL::CGALi::Bitstream_descartes<Traits_2> Bitstream_descartes;
 
       std::stringstream ss("P[5(0,P[6(0,-80)(1,-34)(2,-45)(3,58)(4,72)(5,63)(6,77)])(1,P[5(0,-99)(1,-45)(2,-2)(3,43)(4,-43)(5,-46)])(2,P[4(0,45)(1,-77)(2,-12)(3,8)(4,27)])(3,P[3(0,-38)(1,-62)(2,78)(3,-64)])(4,P[2(0,95)(1,58)(2,-84)])(5,P[1(0,67)(1,-85)])]");
       
@@ -912,7 +912,7 @@ void test_routine() {
         <CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha
             <Poly_int1,Algebraic_real> > Traits_2;
 
-      typedef CGAL::CGALi::Bitstream_descartes_bfs<Traits_2> 
+      typedef CGAL::CGALi::Bitstream_descartes<Traits_2> 
           Bitstream_descartes;
 
       std::stringstream ss("P[6(0,P[7(0,-34)(1,73)(2,-51)(3,46)(4,-46)(5,5)(6,-34)(7,82)])(1,P[6(0,-20)(1,-78)(2,-71)(3,65)(4,86)(5,25)(6,96)])(2,P[5(0,73)(1,13)(2,10)(3,-51)(4,-31)(5,-27)])(3,P[4(0,-94)(1,93)(3,60)(4,84)])(4,P[3(0,99)(1,64)(2,-62)(3,-56)])(5,P[2(0,18)(1,-70)(2,-26)])(6,P[1(0,-17)(1,-71)])]");

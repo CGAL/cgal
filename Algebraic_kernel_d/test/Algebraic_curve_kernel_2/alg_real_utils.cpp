@@ -39,21 +39,14 @@ void test_routine() {
   {
     Poly_int1 p(5,-4,3,-2,-1,1);
     Algebraic_real ar(p,-3,3);
-    Integer i = CGAL::ipower(Integer(2),1000);
-    Rational eps(1,i);
-    assert(CGAL::CGALi::estimate_sign_at(ar,p,eps)==CGAL::ZERO);
+    assert(CGAL::CGALi::estimate_sign_at(ar,p,1000)==CGAL::ZERO);
     Poly_int1 q(1,0,0,-1,1,0,0,1);
     Algebraic_real ar2(q,-2,0);
-    assert((CGAL::CGALi::estimate_sign_at<Algebraic_real,
-                                            Poly_int1,
-                                            Rational>(ar2,p))
+    assert((CGAL::CGALi::estimate_sign_at(ar2,p))
 	       ==CGAL::POSITIVE);
     Poly_int1 r(500001,-400000,300000,-200000,-100000,100000);
     Algebraic_real ar3(r,-5,5);
-    assert((CGAL::CGALi::estimate_sign_at<Algebraic_real,
-                                            Poly_int1,
-                                            Rational>(ar3,p))
-	       ==CGAL::NEGATIVE);
+    assert((CGAL::CGALi::estimate_sign_at(ar3,p))==CGAL::NEGATIVE);
   }
   
   {
