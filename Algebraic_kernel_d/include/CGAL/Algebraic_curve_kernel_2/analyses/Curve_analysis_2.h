@@ -28,7 +28,7 @@
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_coefficient_kernel_at_alpha.h>
-#include <CGAL/Algebraic_kernel_d/Non_generic_position_exception.h>
+#include <CGAL/Algebraic_kernel_d/Exceptions.h>
 
 #include <CGAL/Polynomial_traits_d.h>
 
@@ -38,7 +38,6 @@
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Event_line_builder.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_controller.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_transformation.h>
-#include <CGAL/Algebraic_curve_kernel_2/analyses/Zero_resultant_exception.h>
 #include <CGAL/Algebraic_curve_kernel_2/enums.h>
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>
 
