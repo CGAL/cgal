@@ -40,6 +40,7 @@ elements of type \ccc{CGAL::Object}, in lexicographic order.}
 
 where \ccc{Type_1} and \ccc{Type_2} can both be either
 \begin{itemize}
+\item {} \ccc{CircularKernel::Line_2} or
 \item {} \ccc{CircularKernel::Line_arc_2} or
 \item {} \ccc{CircularKernel::Circle_2} or
 \item {} \ccc{CircularKernel::Circular_arc_2}.
@@ -52,9 +53,11 @@ assigned to
 where the unsigned integer is the multiplicity of the corresponding
 intersection point between \ccc{obj_1} and \ccc{obj_2},
 \item {} \ccc{CircularKernel::Circular_arc_2} in case of an overlap of 
-two circular arcs or
+two circular arcs,
 \item {} \ccc{CircularKernel::Line_arc_2} in case of an overlap of two 
-line segments. 
+line segments or
+\item {} \ccc{CircularKernel::Line_2} or \ccc{CircularKernel::Circle_2} 
+in case of two equal input lines or circles. 
 \end{itemize} 
 
 %\ccMemberFunction{template < class OutputIterator >
