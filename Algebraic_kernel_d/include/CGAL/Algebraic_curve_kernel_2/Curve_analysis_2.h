@@ -30,13 +30,13 @@
 
 #include <CGAL/Algebraic_kernel_d/macros.h>
 #include <CGAL/Algebraic_kernel_d/Exceptions.h>
+#include <CGAL/Algebraic_kernel_d/enums.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/alg_real_utils.h>
 #include <CGAL/Algebraic_curve_kernel_2/Status_line_CA_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/Event_line_builder.h>
 #include <CGAL/Algebraic_curve_kernel_2/Shear_controller.h>
 #include <CGAL/Algebraic_curve_kernel_2/Shear_transformation.h>
-#include <CGAL/Algebraic_curve_kernel_2/enums.h>
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_coefficient_kernel_at_alpha.h>
 #include <CGAL/Algebraic_curve_kernel_2/shear.h>
 
