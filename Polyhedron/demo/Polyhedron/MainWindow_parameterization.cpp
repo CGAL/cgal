@@ -14,18 +14,17 @@ void MainWindow::on_actionMVC_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  int index = getSelectedPolygonIndex();
-
   // get active polyhedron
+  int index = getSelectedPolygonIndex();
   Polyhedron* pMesh = scene->polyhedron(index);
 
   // parameterize
   QTime time;
   time.start();
   typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron> Adaptor;
-  typedef CGAL::Parameterizer_traits_3<Adaptor> Parameterizer;
   Adaptor adaptor(*pMesh);  
-  std::cerr << "Parameterize..." << std::endl;
+  std::cerr << "Parameterize...";
+  typedef CGAL::Parameterizer_traits_3<Adaptor> Parameterizer;
   Parameterizer::Error_code err = CGAL::parameterize(adaptor);
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
