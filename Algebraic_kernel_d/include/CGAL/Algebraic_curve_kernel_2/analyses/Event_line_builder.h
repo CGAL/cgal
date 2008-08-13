@@ -273,17 +273,6 @@ protected:
     Polynomial_2 polynomial;
 
 
-    // Shortcut functions
-    Polynomial_1 stha(int i) const {
-        return curve.principal_sturm_habicht_of_primitive(i);
-    }
-
-    Polynomial_1 costha(int i) const {
-        return curve.coprincipal_sturm_habicht_of_primitive(i);
-    }
-
-
-
     /*! 
      * \brief Exact information about <tt>f<sub>x=alpha</sub></tt>.
      *
@@ -582,21 +571,12 @@ protected:
 #endif
 */;
             // Transform h_0 to integer
-            std::vector<Boundary> rat_coeff;
-            std::vector<Coefficient> int_coeff;
-            std::copy(h_0_rat.begin(),h_0_rat.end(),
-                      std::back_inserter(rat_coeff));
-            Coefficient lcm(1),num,denom;
-            typename CGAL::Fraction_traits<Boundary>::Decompose decompose;
-            for(int i=0;i<static_cast<int>(rat_coeff.size());i++) {
-                decompose(rat_coeff[i],num,denom);
-                lcm=(lcm/CGAL::CGALi::gcd(lcm,denom))*denom;
-            }
-            for(int i=0;i<static_cast<int>(rat_coeff.size());i++) {
-                decompose(rat_coeff[i],num,denom);
-                int_coeff.push_back(num*CGAL::integral_division(lcm,denom));
-            }
-            Polynomial_1 h_0(int_coeff.begin(),int_coeff.end());
+            typename CGAL::Fraction_traits<Poly_rat_1>::Decompose decompose;
+
+            Polynomial_1 h_0;
+            typename CGAL::Fraction_traits<Poly_rat_1>::Denominator_type dummy;
+
+            decompose(h_0_rat,h_0,dummy);
 /*
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "h_0: " << h_0 << std::endl;
@@ -714,7 +694,7 @@ protected:
      * This routine is applied in situations where a potential event point
      * has one incident arc to the left and to the right. To distinguish 
      * singularities from other points, this method checks whether the two
-     * linearly independent partial derivatives \c der_1 and \c der_2 vanish
+     * linearly independent partial derivatives \c der_1 and \c der_2 vansh
      * at the point \c (alpha,beta). Here, \c beta is implicitly defined as
      * \f[\beta=\frac{-costha[k-1]}{k\cdot stha[k]}\f]
      * and it is verified first that \c beta is indeed the y-value that
@@ -743,8 +723,9 @@ protected:
 #endif
 */
       
-        Polynomial_1 p = -costha(k-1);
-        Polynomial_1 q = Coefficient(k)*stha(k);
+        Polynomial_1 p = -curve.coprincipal_sturm_habicht_of_primitive(k);
+        Polynomial_1 q 
+            = Coefficient(k)*curve.principal_sturm_habicht_of_primitive(k);
 /*
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << k << " " << CGAL::to_double(alpha) 
@@ -762,42 +743,48 @@ protected:
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "iv-test..." << std::flush;
 #endif
+
+        typedef typename CGAL::Get_arithmetic_kernel<Algebraic_real_1>
+            ::Arithmetic_kernel::Bigfloat_interval BFI;
       
+        CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha<Polynomial_1,
+            Algebraic_real_1> alpha_kernel(alpha);
+
         int c = this->get_index_of_multiple_root(bit_des);
-        Interval isol_iv(bit_des.left_boundary(c),bit_des.right_boundary(c));
 
-        typedef CGAL::CGALi::Approximate_arithmetic_controller
-            <Polynomial_1,Algebraic_real_1> Approximate_controller;
-      
-        Approximate_controller approx_controller_q(q,alpha);
+        long old_prec = CGAL::get_precision(BFI());
 
-        while(true) {
-            Interval eval_iv = approx_controller_q.interval_approximation();
-            if(! boost::numeric::in_zero(eval_iv)) {
-                break;
-            }
-            else {
-                approx_controller_q.refine_value();
-            }
-        }
-      
-        Approximate_controller approx_controller_p(p,alpha);
+        std::cout << "p=" << p <<  std::endl;
+        std::cout << "q=" << q <<  std::endl;
+        
+        long prec=16;
 
         while(true) {
-            Interval iv(alpha.low(),alpha.high());
-            Interval eval_iv = approx_controller_p.interval_approximation();
-            eval_iv/=approx_controller_q.interval_approximation();
-            if(boost::numeric::subset
-               (eval_iv,isol_iv)) {
-                break;
+            CGAL::set_precision(BFI(),prec);
+            std::cout << "Increased to " << prec << std::endl;
+            BFI isol_iv 
+                = CGAL::hull(CGAL::convert_to_bfi(bit_des.left_boundary(c)),
+                             CGAL::convert_to_bfi(bit_des.right_boundary(c)));
+            BFI q_iv = alpha_kernel.convert_to_bfi_object()(q);
+            if(! CGAL::in_zero(q_iv)) {
+                BFI p_iv = alpha_kernel.convert_to_bfi_object()(p);
+                BFI approx_iv = p_iv/q_iv;
+                std::cout << "p_iv=[" << CGAL::lower(p_iv) << "," << CGAL::upper(p_iv) << "]" << std::endl;
+                std::cout << "q_iv=[" << CGAL::lower(q_iv) << "," << CGAL::upper(q_iv) << "]"  << std::endl;
+                std::cout << "isol_iv=[" << CGAL::lower(isol_iv) << "," << CGAL::upper(isol_iv) << "]" << std::endl;
+                std::cout << "approx_iv=[" << CGAL::lower(approx_iv) << "," << CGAL::upper(approx_iv) << "]"  << std::endl;
+                if(CGAL::subset(approx_iv,isol_iv)) {
+                    break;
+                }
+                if(! CGAL::overlap(approx_iv,isol_iv)) {
+                    throw CGAL::CGALi::Non_generic_position_exception();
+                }
             }
-            if(! boost::numeric::overlap
-               (eval_iv,isol_iv)) {
-                throw CGAL::CGALi::Non_generic_position_exception();
-            }
-            approx_controller_p.refine_value(); // This also refines the value
-            // in approx_controller_q!
+            prec*=2;
         }
+
+        CGAL::set_precision(BFI(),old_prec);
+
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "on f..." << std::flush;
 #endif

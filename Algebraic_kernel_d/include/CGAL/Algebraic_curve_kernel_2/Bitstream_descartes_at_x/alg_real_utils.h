@@ -19,7 +19,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/enums.h>
-#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Approximate_arithmetic_controller.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d/Float_traits.h>
 #include <CGAL/convert_to_bfi.h>
@@ -465,7 +464,6 @@ CGAL::Sign estimate_sign_at(NT alpha,
 
     while(max_precision==0 || prec<=max_precision) {
         CGAL::set_precision(BFI(),prec);
-        std::cout << "Increased prec to " << prec << std::endl;
         BFI eval = f.evaluate(convert_to_bfi(alpha));
         if(! CGAL::in_zero(eval)) {
             sign=CGAL::sign(eval);
@@ -476,7 +474,6 @@ CGAL::Sign estimate_sign_at(NT alpha,
         }
     }
     CGAL::set_precision(BFI(),old_prec);
-    std::cout << "done" << std::endl;
     return sign;
 }
      
