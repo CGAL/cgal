@@ -26,7 +26,7 @@ double prob_2() {
     T o2 = T(p4, p5, p6);
 
     std::vector< CGAL::Object > res;
-		CGAL::intersection(o1, o2, std::back_inserter(res));
+    CGAL::intersection(o1, o2, std::back_inserter(res));
 
     prob += (res.size() != 0) ? 1.0 : 0.0;
   }
