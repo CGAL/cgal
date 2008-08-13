@@ -60,6 +60,40 @@ An object \ccVar\ of this type must provide:
 The computation may be faster when the boolean is set to \ccc{true}.
 
 \end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::DoIntersect_3}
+
+\ccDefinition
+
+Testing whether two curves intersect.
+
+\ccRefines
+
+\ccc{Kernel::DoIntersect_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const Type1 & obj1, const Type2 & obj2);}
+{determines if two geometric objects of type Type1 and Type2 intersect or not.}
+
+for all pairs \ccc{Type1} and \ccc{Type2}, where the types 
+\ccc{Type1} and \ccc{Type2} can be any of the following:
+\begin{itemize}
+\item {} \ccc{SphericalKernel::Plane_3}
+\item {} \ccc{SphericalKernel::Line_3}
+\item {} \ccc{SphericalKernel::Line_arc_3}
+\item {} \ccc{SphericalKernel::Sphere_3}
+\item {} \ccc{SphericalKernel::Circle_3}
+\item {} \ccc{SphericalKernel::Circular_arc_3}
+\end{itemize} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::do_intersect}
+
+\end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::BoundedSide_3}
 
 \ccRefines
