@@ -18,7 +18,7 @@
 
 #include <vector>
 
-#include <CGAL/Algebraic_curve_kernel_2/analyses/macros.h>
+#include <CGAL/Algebraic_kernel_d/macros.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_coefficient_kernel_at_alpha.h>
@@ -41,7 +41,7 @@ public:
 
     typedef typename Curve_analysis_2::Polynomial_traits_2 Polynomial_traits_2;
 
-    CGAL_ACK_SNAP_ALGEBRAIC_CURVE_TYPEDEFS;
+    CGAL_ACK_SNAP_ALGEBRAIC_CURVE_KERNEL_2_TYPEDEFS;
 
     typedef std::pair<Boundary,Boundary> Point;
 

@@ -32,7 +32,7 @@
 
 #include <CGAL/Polynomial_traits_d.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/analyses/macros.h>
+#include <CGAL/Algebraic_kernel_d/macros.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/Status_line_CA_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Event_line_builder.h>
@@ -76,7 +76,7 @@ public:
     
     typedef Handle Curve_analysis_2;
 
-    CGAL_ACK_SNAP_ALGEBRAIC_CURVE_TYPEDEFS;
+    CGAL_ACK_SNAP_ALGEBRAIC_CURVE_KERNEL_2_TYPEDEFS;
 
     typedef std::map< Boundary, Status_line_1 > 
     Vert_line_at_rational_map;
@@ -272,7 +272,7 @@ public:
     //! Indexing type
     typedef typename Rep::size_type size_type;
     
-    CGAL_ACK_SNAP_ALGEBRAIC_CURVE_TYPEDEFS;
+    CGAL_ACK_SNAP_ALGEBRAIC_CURVE_KERNEL_2_TYPEDEFS;
 
     //! Required by the CurveKernel_2 concept
     typedef Algebraic_real_1 X_coordinate_1;
