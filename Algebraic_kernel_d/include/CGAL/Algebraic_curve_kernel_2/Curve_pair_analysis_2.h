@@ -26,8 +26,8 @@
 
 #include <CGAL/Polynomial.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_controller.h>
-#include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_transformation.h>
+#include <CGAL/Algebraic_curve_kernel_2/Shear_controller.h>
+#include <CGAL/Algebraic_curve_kernel_2/Shear_transformation.h>
 #include <CGAL/Algebraic_curve_kernel_2/enums.h>
 #include <CGAL/Algebraic_kernel_d/Exceptions.h>
 
