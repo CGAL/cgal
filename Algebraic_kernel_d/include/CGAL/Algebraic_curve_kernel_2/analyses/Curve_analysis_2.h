@@ -39,7 +39,7 @@
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_controller.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_transformation.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Zero_resultant_exception.h>
-#include <CGAL/Algebraic_curve_kernel_2/analyses/Degeneracy_strategy.h>
+#include <CGAL/Algebraic_curve_kernel_2/enums.h>
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/analyses/shear.h>
