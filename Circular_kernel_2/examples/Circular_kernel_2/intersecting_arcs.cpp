@@ -18,12 +18,16 @@ double prob_2() {
     Point_2 p1, p2, p3, p4, p5, p6;
     p1 = *g++; p2 = *g++; p3 = *g++;
     p4 = *g++; p5 = *g++; p6 = *g++;
+    // the pi's are points inherited from the Cartesian kernel Point_2, so,
+    // the orientation prdicate can be called on them
     if(CGAL::orientation(p1, p2, p3) != CGAL::COUNTERCLOCKWISE) std::swap(p1, p3);
     T o1 = T(p1, p2, p3);
     if(CGAL::orientation(p4, p5, p6) != CGAL::COUNTERCLOCKWISE) std::swap(p4, p6);
     T o2 = T(p4, p5, p6);
+
     std::vector< CGAL::Object > res;
 		CGAL::intersection(o1, o2, std::back_inserter(res));
+
     prob += (res.size() != 0) ? 1.0 : 0.0;
   }
   return prob/10000.0;
