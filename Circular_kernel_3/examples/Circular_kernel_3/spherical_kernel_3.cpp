@@ -9,7 +9,6 @@ typedef CGAL::Exact_spherical_kernel_3                      SK;
 typedef SK::Point_3                                         Point_3;
 typedef SK::Sphere_3                                        Sphere_3;
 typedef SK::Circle_3                                        Circle_3;
-typedef SK::Intersect_3                                     Intersect_3;
 
 int main() {
 
