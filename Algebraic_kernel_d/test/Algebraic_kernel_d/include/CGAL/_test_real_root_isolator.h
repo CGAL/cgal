@@ -90,7 +90,7 @@ void test_real_root_isolator() {
     typedef typename Isolator::Polynomial    Polynomial;
     typedef typename Isolator::Boundary Boundary;
     typedef typename Polynomial::NT          NT;
-    
+ 
     // just some Polynomials (not all are used)
     Polynomial P_00(NT(0));                   // zero polynomial
     Polynomial P_01(NT(1));                   // constant polynomial
@@ -245,6 +245,7 @@ void test_real_root_isolator() {
         int n = CGALi::check_intervals_real_root_isolator<Isolator>(P);
         assert( n == 4);  
     }
+    
 };
 
 } //namespace CGALi

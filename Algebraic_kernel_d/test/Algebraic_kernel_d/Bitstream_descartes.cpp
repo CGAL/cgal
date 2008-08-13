@@ -29,6 +29,7 @@
 #include <CGAL/Polynomial.h>
 
 #include <CGAL/_test_real_root_isolator.h>
+#include <CGAL/_test_bitstream_descartes.h>
 
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_pure.h>
@@ -81,7 +82,7 @@ void test_descartes(){
         assert(r1 < isolator.right_boundary(1));
     
     }
-
+    CGAL::CGALi::test_bitstream_descartes<AT>();
     
 }
     

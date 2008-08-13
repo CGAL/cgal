@@ -29,6 +29,10 @@
 
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_coefficient_kernel_at_alpha.h>
 
+CGAL_BEGIN_NAMESPACE
+
+namespace CGALi {
+
 // A simple model of the EventRefinement concept: 
 // Uses a vector of Algebraic reals
 template <typename AlgReal>
@@ -50,7 +54,7 @@ public:
 };
 
 template<typename ArithmeticKernel>
-void test_routine() {
+void test_bitstream_descartes() {
   
   typedef ArithmeticKernel Arithmetic_kernel;
   typedef typename Arithmetic_kernel::Integer Integer;
@@ -415,26 +419,6 @@ void test_routine() {
   }
 }
 
-int main(int argc,char** argv) {
-  
-#ifndef CGAL_USE_LEDA
-#ifndef LiS_HAVE_CORE
-  std::cerr << "This tests requires LEDA and/or CORE" << std::endl;
-  return 1;
-#endif
-#endif
-#ifdef CGAL_USE_LEDA
-  // LEDA TEST
-  test_routine<CGAL::LEDA_arithmetic_kernel> ();
-#else
-  std::cerr << "LEDA tests skipped" << std::endl;
-#endif
-#ifdef CGAL_USE_CORE
-  // CORE TEST
-  test_routine<CGAL::CORE_arithmetic_kernel> ();
-#else
-  std::cerr << "CORE tests skipped" << std::endl;
-#endif
-  return 0;
-  
-}
+} // namespace CGALi
+
+CGAL_END_NAMESPACE
