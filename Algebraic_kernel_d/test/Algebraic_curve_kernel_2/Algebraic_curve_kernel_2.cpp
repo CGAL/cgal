@@ -43,8 +43,10 @@ void test_algebraic_curve_kernel_2() {
       
     typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi
         < Coefficient, Rational > Rep_class;
-    typedef CGAL::CGALi::Bitstream_descartes< CGAL::Polynomial< Coefficient >, 
-        Rational > Isolator;
+    typedef CGAL::CGALi::Bitstream_descartes< 
+        CGAL::CGALi::Bitstream_descartes_rndl_tree_traits<
+        CGAL::CGALi::Bitstream_coefficient_kernel<Coefficient > > > 
+        Isolator;
     
     typedef CGAL::Algebraic_kernel_1<Coefficient,Rational,Rep_class, Isolator> 
         Algebraic_kernel_1;

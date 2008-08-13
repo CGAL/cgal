@@ -15,7 +15,7 @@
 
 // Switches on/off tests for Sqrt-extension types
 #ifndef DO_SQRT_EXTENSION_TESTS
-#define DO_SQRT_EXTENSION_TESTS 1
+#define DO_SQRT_EXTENSION_TESTS 0
 #endif
 
 #if CGAL_ACK_USE_EXACUS

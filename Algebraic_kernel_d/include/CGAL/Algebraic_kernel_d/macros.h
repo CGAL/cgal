@@ -19,7 +19,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#define CGAL_ACK_SNAP_ALGEBRAIC_CURVE_TYPEDEFS \
+#define CGAL_ACK_SNAP_ALGEBRAIC_CURVE_KERNEL_2_TYPEDEFS \
     typedef typename Algebraic_kernel_2::Algebraic_kernel_1 \
         Algebraic_kernel_1;\
     typedef typename Algebraic_kernel_1::Coefficient Coefficient;\

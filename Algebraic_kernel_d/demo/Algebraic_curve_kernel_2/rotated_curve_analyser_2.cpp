@@ -250,6 +250,7 @@ int main(int argc,char** argv) {
         f = curves[i];
 #endif
 
+#if CGAL_ACK_USE_APPROXIMATE_ROTATION
         double angle_double = atof(argv[3]);
 
         Integer num,denom(1);
@@ -259,7 +260,11 @@ int main(int argc,char** argv) {
             angle_double*=10;
         }
         num = Integer((long)angle_double);
+
         Rational angle = CGAL::Fraction_traits<Rational>::Compose()(num,denom);
+#else
+        int angle = atoi(argv[3]);
+#endif
 
 #if CGAL_ACK_USE_APPROXIMATE_ROTATION
         int prec;

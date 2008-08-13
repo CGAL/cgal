@@ -27,6 +27,8 @@ namespace CGALi {
 
   };
 
+} // namespace CGALi
+
 /*!
  * \brief Represents different strategies how to handle 
  * degenerate cases during the analysis
@@ -40,9 +42,6 @@ enum Degeneracy_strategy {
     EXCEPTION_STRATEGY = 1,
     SHEAR_ONLY_AT_IRRATIONAL_STRATEGY = 2
 };
-
-
-} // namespace CGALi
 
 CGAL_END_NAMESPACE
 
