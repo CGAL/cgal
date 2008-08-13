@@ -183,12 +183,19 @@
      <addaction name="actionIntersection" />
      <addaction name="actionDifference" />
     </widget>
+    <widget class="QMenu" name="menuParameterization" >
+     <property name="title" >
+      <string>Parameterization</string>
+     </property>
+     <addaction name="actionMVC" />
+    </widget>
     <addaction name="actionConvexHull" />
     <addaction name="actionKernel" />
     <addaction name="menuSubdivision" />
     <addaction name="actionSimplify" />
     <addaction name="actionRemeshing" />
     <addaction name="menu_Boolean_operations" />
+    <addaction name="menuParameterization" />
     <addaction name="actionInsideOut" />
    </widget>
    <widget class="QMenu" name="menuView" >
@@ -521,6 +528,11 @@
   <action name="actionRemeshing" >
    <property name="text" >
     <string>Remeshing</string>
+   </property>
+  </action>
+  <action name="actionMVC" >
+   <property name="text" >
+    <string>Mean value coordinates</string>
    </property>
   </action>
  </widget>
