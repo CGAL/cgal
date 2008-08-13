@@ -39,18 +39,18 @@ Qt_widget& operator << (Qt_widget& ws, const CGALi::Arc_2< CKvA_2 >& arc) {
     boost::optional < Coord_2 > p1, p2;
     std::list<Coord_vec_2> points;
    
-Facade::setup(CGAL::Bbox_2(-100, -100, 10, -10),
-            330, 270);
+    //Facade::setup(CGAL::Bbox_2(-100, -100, 10, -10),
+      //      330, 270);
 
-//     Facade::setup(CGAL::Bbox_2(ws.x_min(), ws.y_min(), ws.x_max(), ws.y_max()),
-//             ws.width(), ws.height());
+    Facade::setup(CGAL::Bbox_2(ws.x_min(), ws.y_min(), ws.x_max(), ws.y_max()),
+               ws.width(), ws.height());
 
     Facade::instance().draw(arc, points, &p1, &p2);
     if(points.empty()) 
         return ws;
         
     QPainter *ppnt = &ws.get_painter();
-    int height = 270;// ws.height();
+    int height = ws.height();
 
    // std::cerr << ws.width() << " and " <<  ws.height() << "\n";
     typename std::list<Coord_vec_2>::const_iterator lit = points.begin();
