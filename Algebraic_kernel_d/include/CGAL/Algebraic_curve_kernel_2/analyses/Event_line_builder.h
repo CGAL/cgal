@@ -18,7 +18,7 @@
 
 #include <CGAL/Algebraic_structure_traits.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/alg_real_utils.h>
+#include <CGAL/Algebraic_curve_kernel_2/alg_real_utils.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Non_generic_position_exception.h>
 
