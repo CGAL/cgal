@@ -31,11 +31,11 @@
 #include <CGAL/Algebraic_curve_kernel_2/Algebraic_real_traits.h>
 
 #if CGAL_ACK_USE_EXACUS
+#include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2_exacus.h>
+#include <CGAL/Algebraic_curve_kernel_2/Curve_pair_analysis_2_exacus.h>
+#else
 #include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_analysis_2.h>
-#else
-#include <CGAL/Algebraic_curve_kernel_2/analyses/Curve_analysis_2.h>
-#include <CGAL/Algebraic_curve_kernel_2/analyses/Curve_pair_analysis_2.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
