@@ -39,7 +39,11 @@ using boost::multi_index::multi_index_container;
 using boost::multi_index::get;
 using boost::multi_index::project;
 
+extern CGAL::Timer refine_timer;
+
 CGAL_BEGIN_NAMESPACE
+
+
 
 #ifndef CGAL_CURVE_RENDERER_DEFS
 #define CGAL_CURVE_RENDERER_DEFS
@@ -404,6 +408,8 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
           boost::optional< Coord_2 > *end_pt1 = NULL, 
           boost::optional< Coord_2 > *end_pt2 = NULL) {
 
+    refine_timer.start();
+
     if(!initialized)
         return;
     select_cache_entry(arc); // lookup for appropriate cache instance 
@@ -500,6 +506,8 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
             y_upper = (arc.is_vertical() ? engine.y_max_r :
                     engine.y_max_r + height_r);
     }        
+
+    refine_timer.stop();
 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
     if(end_pt1 != NULL && loc_p1 == CGAL::ARR_INTERIOR && 
@@ -917,7 +925,7 @@ void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x,
         CGAL_CKVA_STORE_COORDS(ppoints, pix);
 #ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT 
         bool bb1 = (direction_taken == 0 && pix.x <= pix_1.x),
-             bb2 = (direction_taken == 1 && pix.x <= pix_2.x);
+             bb2 = (direction_taken == 1 && pix.x >= pix_2.x);
         if((bb1 || bb2)) {
             //Gfx_OUT("STOP: reached end-point x-coordinate\n");
             branches_coincide = false;
