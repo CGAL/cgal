@@ -1,95 +1,18 @@
-\begin{ccRefFunction}{compare_x}
+\begin{ccRefFunction}{intersection}
 
-\ccDefinition
+\ccFunction{template < class OutputIterator >
+    	OutputIterator 
+	intersection(Type1<CircularKernel> obj1, Type2<CircularKernel> obj2,
+			OutputIterator result);}
+{Calls the operator() of \ccc{CircularKernel::Intersect_2.}
 
-\ccFunction{template < class CircularKernel > 
-	Comparison_result compare_x
-	(const Circular_arc_point_2<CircularKernel> &p,
-	const Circular_arc_point_2<CircularKernel> &q);}
-        {Calls the operator() of \ccc{CircularKernel::CompareX_2}.}
-
-\ccSeeAlso
-
-\ccRefConceptPage{CircularKernel::CompareX_2}
 \end{ccRefFunction}
-\begin{ccRefFunction}{compare_y}
+\begin{ccRefFunction}{do_intersect}
 
-\ccDefinition
+\ccFunction{template < class OutputIterator >
+    	OutputIterator 
+	do_intersect(Type1<CircularKernel> obj1, Type2<CircularKernel> obj2,
+			OutputIterator result);}
+{Calls the operator() of \ccc{CircularKernel::DoIntersect_2.}
 
-\ccFunction{template < class CircularKernel > 
-	Comparison_result compare_y
-	(const Circular_arc_point_2<CircularKernel> &p,
-	const Circular_arc_point_2<CircularKernel> &q);}
-        {Calls the operator() of \ccc{CircularKernel::CompareY_2}.}
-
-\ccSeeAlso
-
-\ccRefConceptPage{CircularKernel::CompareY_2}
-\end{ccRefFunction}
-\begin{ccRefFunction}{compare_xy}
-
-\ccDefinition
-
-\ccFunction{template < class CircularKernel > 
-	Comparison_result compare_xy
-	(const Circular_arc_point_2<CircularKernel> &p,
-	const Circular_arc_point_2<CircularKernel> &q);}
-        {Calls the operator() of \ccc{CircularKernel::CompareXY_2}.}
-
-\ccSeeAlso
-
-\ccRefConceptPage{CircularKernel::CompareXY_2}
-\end{ccRefFunction}
-%\begin{ccRefFunction}{make_x_monotone}
-
-%\ccDefinition
-
-%\ccFunction{template < class CircularKernel, class OutputIterator >
-%    OutputIterator make_x_monotone
-%	(const Circular_arc_2<CircularKernel> &ca,
-%	OutputIterator res);}
-%        {Calls the operator() of \ccc{CircularKernel::MakeXMonotone_2}.}
-
-%\ccSeeAlso
-
-%\ccRefConceptPage{CircularKernel::MakeXMonotone_2}
-%\end{ccRefFunction}
-%\begin{ccRefFunction}{intersect}
-
-%\ccDefinition
-
-%\ccFunction{template < class CircularKernel, class OutputIterator >
-%    OutputIterator intersect
-%	(const Circle_2<CircularKernel> &ca1,
-%	const Circle_2<CircularKernel> &ca2, 
-%	OutputIterator res);}
-%        {Calls the operator() of \ccc{CircularKernel::Intersect_2}.}
-
-%\ccFunction{template < class CircularKernel, class OutputIterator >
-%    OutputIterator intersect
-%	(const Circular_arc_2<CircularKernel> &ca1,
-%	const Circular_arc_2<CircularKernel> &ca2, 
-%	OutputIterator res);}
-%        {Calls the operator() of \ccc{CircularKernel::Intersect_2}.}
-
-%\ccSeeAlso
-
-%\ccRefConceptPage{CircularKernel::Intersect_2}
-%\end{ccRefFunction}
-
-\begin{ccRefFunction}{get_equation}
-
-\ccFunction{template < class CircularKernel >
-	CircularKernel::Polynomial_1_2
-	get_equation(const Line_2<CircularKernel> & c);}
-	{Calls the operator() of \ccc{CircularKernel::GetEquation}.}
-
-\ccFunction{template < class CircularKernel >
-	CircularKernel::Polynomial_for_circles_2_2
-	get_equation(const Circle_2<CircularKernel> & c);}
-	{Calls the operator() of \ccc{CircularKernel::GetEquation}.}
-
-\ccSeeAlso
-
-\ccRefConceptPage{CircularKernel::GetEquation}
 \end{ccRefFunction}

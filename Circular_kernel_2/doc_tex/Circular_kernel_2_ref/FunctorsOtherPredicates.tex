@@ -58,6 +58,34 @@ An object \ccVar\ of this type must provide:
 {For two circular arcs.}
 
 \end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::DoIntersect_2}
+
+\ccDefinition
+
+Testing whether two curves intersect.
+
+\ccRefines
+
+\ccc{Kernel::DoIntersect_2}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const Type1 & obj1, const Type2 & obj2);}
+{determines if two geometric objects of type Type1 and Type2 intersect or not.}
+
+for all pairs \ccc{Type1} and \ccc{Type2}, where the types 
+\ccc{Type1} and \ccc{Type2} can be any of the following:
+\begin{itemize}
+\item {} \ccc{CircularKernel::Line_2}
+\item {} \ccc{CircularKernel::Line_arc_2}
+\item {} \ccc{CircularKernel::Circle_2}
+\item {} \ccc{CircularKernel::Circular_arc_2}
+\end{itemize} 
+
+\end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{CircularKernel::BoundedSide_2}
 
 \ccRefines
