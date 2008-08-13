@@ -7,15 +7,11 @@
 # to be run in the CGAL/test directory or a local test directory.
 # CGAL_TESTER, CGAL_TESTER_NAME, CGAL_TESTER_ADDRESS are environment variables.
 
-if [ -z "${CGAL_TEST_HOST}" ]; then
-  CGAL_TEST_HOST='localhost'
-  echo "CGAL_TEST_HOST not in the enviroment, setting it to ${CGAL_TEST_HOST}"
-fi
 
 if [ -z "${CGAL_TEST_PLATFORM}" ]; then
    
   CGAL_TEST_PLATFORM=`dirname $PWD` 
-  echo "CGAL_TEST_PLATFORM not in the enviroment, setting it to ${CGAL_TEST_PLATFORM}"
+  echo "CGAL_TEST_PLATFORM not in the enviromet, setting it to ${CGAL_TEST_PLATFORM}"
 fi
 
 if [ -z "$1" ] ; then
@@ -24,8 +20,8 @@ else
   TEST_DIRECTORIES="$*"
 fi
 
-BUILD_LOGFILE=''
-HOST_BUILD_LOGFILE=''
+GENERAL_BUILD_LOGFILE=''
+PLATFORM_BUILD_LOGFILE=''
 TEST_REPORT=''
 RESULT_FILE=''
 shared_or_static=''
@@ -62,9 +58,9 @@ print_testresult()
 
 parse_shared_or_static()
 {
-  if [ -f "${HOST_BUILD_LOGFILE}" ] ; then
+  if [ -f "${PLATFORM_BUILD_LOGFILE}" ] ; then
   
-    if grep "Building shared libraries"  ${HOST_BUILD_LOGFILE}; then
+    if grep "Building shared libraries"  ${PLATFORM_BUILD_LOGFILE}; then
       shared_or_static='shared'  
     else
       shared_or_static='static'  
@@ -77,7 +73,7 @@ parse_shared_or_static()
 
 parse_flags_and_third_party_choices()
 {
-  grep -e "^-- USING " ${HOST_BUILD_LOGFILE} >> $RESULT_FILE 
+  grep -e "^-- USING " ${PLATFORM_BUILD_LOGFILE} >> $RESULT_FILE 
   echo "------------" >> $RESULT_FILE
 }
 
@@ -94,20 +90,20 @@ parse_lib_building_results()
 
   configured=''
   
-  if [ -f "${HOST_BUILD_LOGFILE}" ]; then
+  if [ -f "${PLATFORM_BUILD_LOGFILE}" ]; then
   
-    if grep -q "Built target ${target}" ${HOST_BUILD_LOGFILE} ; then
+    if grep -q "Built target ${target}" ${PLATFORM_BUILD_LOGFILE} ; then
       y_or_no='y'
     fi
      
-    marker_beg=`grep -e "${target}.dir/depend$" ${HOST_BUILD_LOGFILE}`
+    marker_beg=`grep -e "${target}.dir/depend$" ${PLATFORM_BUILD_LOGFILE}`
     
     if [ -n "${marker_beg}" ]; then
   
       configured='y'
       
       if [ ! "$target" = "CGAL" ]; then  
-        cat ${HOST_BUILD_LOGFILE} | sed -n "\|${marker_beg}|,\|depend$| p" >> ${libname}_${shared_or_static}/$TEST_REPORT
+        cat ${PLATFORM_BUILD_LOGFILE} | sed -n "\|${marker_beg}|,\|depend$| p" >> ${libname}_${shared_or_static}/$TEST_REPORT
       fi
       
       # Test if there is a warning in the build log.
@@ -134,21 +130,21 @@ output_main_logs()
   INSTALLATION_TEST_REPORT="Installation/$TEST_REPORT"
  
   echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
-  echo "                    ${BUILD_LOGFILE}"                            >> $INSTALLATION_TEST_REPORT
+  echo "                    General Build Log                          " >> $INSTALLATION_TEST_REPORT
   echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
   echo ""                                                                >> $INSTALLATION_TEST_REPORT
-  if [ -f "${BUILD_LOGFILE}" ] ; then
-    cat "${BUILD_LOGFILE}" >> $INSTALLATION_TEST_REPORT
+  if [ -f "${GENERAL_BUILD_LOGFILE}" ] ; then
+    cat "${GENERAL_BUILD_LOGFILE}" >> $INSTALLATION_TEST_REPORT
   else
     echo "Not found!" >> $INSTALLATION_TEST_REPORT 
   fi
   
-  echo "---------------------------------------------------------------" >>  $INSTALLATION_TEST_REPORT
-  echo "                ${HOST_BUILD_LOGFILE}"                           >> $INSTALLATION_TEST_REPORT
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo "                Platform-specific Build Log                    " >> $INSTALLATION_TEST_REPORT
   echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
   echo ""                                                                >> $INSTALLATION_TEST_REPORT
-  if [ -f "${HOST_BUILD_LOGFILE}" ] ; then
-    cat "${HOST_BUILD_LOGFILE}" >> $INSTALLATION_TEST_REPORT
+  if [ -f "${PLATFORM_BUILD_LOGFILE}" ] ; then
+    cat "${PLATFORM_BUILD_LOGFILE}" >> $INSTALLATION_TEST_REPORT
   else
     echo "Not found!" >> $INSTALLATION_TEST_REPORT 
   fi
@@ -238,8 +234,8 @@ TESTER_ADDRESS="${CGAL_TESTER_ADDRESS:-${TESTER}}"
 TEST_REPORT="TestReport_${TESTER}_${CGAL_TEST_PLATFORM}"
 RESULT_FILE=$CURRENT_DIR/results_${TESTER}_${CGAL_TEST_PLATFORM}.txt
 CGAL_DIR=../../../..
-BUILD_LOGFILE="../../installation.log"
-HOST_BUILD_LOGFILE="../installation.log.${CGAL_TEST_HOST}"
+GENERAL_BUILD_LOGFILE="../../installation.log"
+PLATFORM_BUILD_LOGFILE="../installation.log"
 rm -f $RESULT_FILE
 touch $RESULT_FILE
 sed -n '/CGAL_VERSION /s/#define //p' < $CGAL_DIR/include/CGAL/version.h >> $RESULT_FILE
@@ -247,8 +243,8 @@ echo "TESTER ${TESTER}" >> $RESULT_FILE
 echo "TESTER_NAME ${TESTER_NAME}" >> $RESULT_FILE
 echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> $RESULT_FILE
 echo "CGAL_TEST_PLATFORM ${CGAL_TEST_PLATFORM}" >> $RESULT_FILE
-echo "General installation log file: ${BUILD_LOGFILE}"  >> $RESULT_FILE
-echo "Host-specific installation log file: ${HOST_BUILD_LOGFILE}"  >> $RESULT_FILE
+echo "General installation log file: ${GENERAL_BUILD_LOGFILE}"  >> $RESULT_FILE
+echo "Host-specific installation log file: ${PLATFORM_BUILD_LOGFILE}"  >> $RESULT_FILE
 
 parse_shared_or_static
 
