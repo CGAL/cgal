@@ -188,6 +188,7 @@
       <string>Parameterization</string>
      </property>
      <addaction name="actionMVC" />
+     <addaction name="on_actionDCP_triggered" />
     </widget>
     <addaction name="actionConvexHull" />
     <addaction name="actionKernel" />
@@ -533,6 +534,11 @@
   <action name="actionMVC" >
    <property name="text" >
     <string>Mean value coordinates</string>
+   </property>
+  </action>
+  <action name="on_actionDCP_triggered" >
+   <property name="text" >
+    <string>Discrete conformal maps</string>
    </property>
   </action>
  </widget>

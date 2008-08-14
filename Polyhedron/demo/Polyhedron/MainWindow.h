@@ -48,7 +48,9 @@ protected slots:
   void on_actionSetPolyhedronA_triggered();
   void on_actionSetPolyhedronB_triggered();
   void on_actionInsideOut_triggered();
+
   void on_actionMVC_triggered();
+  void on_actionDCP_triggered();
 
   // save
   // TODO: save all, save current (do we store the current file name?)
@@ -88,12 +90,19 @@ protected slots:
   // remeshing, in MainWindow_remeshing.cpp
   void on_actionRemeshing_triggered();
 
+
+
 protected:
   enum  Boolean_operation { BOOLEAN_UNION,
                             BOOLEAN_INTERSECTION,
                             BOOLEAN_DIFFERENCE };
-  // define in MainWindow_boolean_operations.cpp
+  enum  Parameterization_method  { PARAM_MVC,
+                                   PARAM_DCP};
+  // defined in MainWindow_boolean_operations.cpp
   void boolean_operation(const Boolean_operation operation);
+
+  // defined in MainWindow_parameterization.cpp
+  void parameterize(const Parameterization_method method);
 
   void dragEnterEvent(QDragEnterEvent *event);
   void dropEvent(QDropEvent *event);
