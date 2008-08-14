@@ -1585,7 +1585,12 @@ void horizontal_clip()
     decompose(engine.y_max_r, num, denom);
     top_poly = msf(support->polynomial_2().evaluate_homogeneous(num, denom));
 
-    CGAL::CGALi::Bitstream_descartes<Poly_dst_1, Rational>
+    CGAL::CGALi::Bitstream_descartes<
+        CGAL::CGALi::Bitstream_descartes_rndl_tree_traits
+        < CGAL::CGALi::Bitstream_coefficient_kernel
+            <typename Poly_dst_1::NT>
+        >
+    >
             isolator_btm(btm_poly), isolator_top(top_poly);
     
     int n_roots = isolator_btm.number_of_real_roots(), i;
