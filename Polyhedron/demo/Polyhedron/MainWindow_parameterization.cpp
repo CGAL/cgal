@@ -40,7 +40,7 @@ void MainWindow::parameterize(const Parameterization_method method)
     case PARAM_DCP:
     {
       std::cerr << "Parameterize (DCP)...";
-      typedef CGAL::Discrete_conformal_map_parameterizer_3<Adaptor,CGAL::Two_vertices_parameterizer_3<Adaptor> > Parameterizer;
+      typedef CGAL::Discrete_conformal_map_parameterizer_3<Adaptor> Parameterizer;
       Parameterizer::Error_code err = CGAL::parameterize(adaptor,Parameterizer());
       success = err == Parameterizer::OK;
     }
@@ -86,5 +86,6 @@ void MainWindow::on_actionMVC_triggered()
 
 void MainWindow::on_actionDCP_triggered()
 {
+  std::cerr << "DCP...";
   parameterize(PARAM_DCP);
 }
