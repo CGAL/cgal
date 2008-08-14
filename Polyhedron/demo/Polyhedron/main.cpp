@@ -55,4 +55,5 @@ int main(int argc, char **argv)
 #  include "MainWindow_simplify.cpp"
 #  include "MainWindow_subdivision_methods.cpp"
 #  include "MainWindow_parameterization.cpp"
+#  include "texture.cpp"
 #endif

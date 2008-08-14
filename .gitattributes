@@ -2835,6 +2835,7 @@ Polyhedron/demo/Polyhedron/resources/kernel.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/minus.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/plus.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/simplification.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron/texture.h -text
 Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/euler_center.ips -text svneol=unset#application/postscript

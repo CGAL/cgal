@@ -33,6 +33,8 @@ Scene::Scene(QObject* parent)
     item_B(-1),
     viewEdges(true)
 {
+  // generate checkboard
+  texture.GenerateCheckerBoard(1024,1024,512,0,0,0,255,255,255);
 }
 
 Scene::~Scene()
@@ -298,9 +300,8 @@ Scene::draw(bool with_names)
 void
 Scene::draw(Polyhedron_entry& entry)
 {
-	this->gl_render_facets(entry.polyhedron_ptr);
+	// this->gl_render_facets(entry.polyhedron_ptr);
 
-	/*
   if(!entry.display_list_built)
   {
     entry.display_list = ::glGenLists(1);
@@ -318,7 +319,6 @@ Scene::draw(Polyhedron_entry& entry)
   }
 
   ::glCallList(entry.display_list);
-	*/
 }
 
 void Scene::gl_render_facets(Polyhedron_ptr ptr)

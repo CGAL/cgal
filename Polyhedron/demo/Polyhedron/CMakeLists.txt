@@ -80,6 +80,7 @@ if(ENABLE_FORWARD_DECL)
                                  MainWindow_moc.cpp
                                  Scene_moc.cpp
                                  Viewer_moc.cpp
+				 texture.cpp
 
                                ${UI_FILES} ${RESOURCE_FILES} )
 else(ENABLE_FORWARD_DECL)

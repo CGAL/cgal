@@ -1,0 +1,10 @@
+#ifndef TEXTURED_POLYHEDRON_TYPE_H
+#define TEXTURED_POLYHEDRON_TYPE_H
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Textured_polyhedron.h>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef Textured_polyhedron<Kernel,Textured_items> Tex_polyhedron;
+
+#endif // TEXTURED_POLYHEDRON_TYPE_H

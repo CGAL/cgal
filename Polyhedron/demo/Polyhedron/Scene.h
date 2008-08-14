@@ -12,10 +12,13 @@
 
 #include "Polyhedron_type_fwd.h" // declares Polyhedron
 #include "Nef_type_fwd.h" // declares Nef_polyhedron
+#include "Textured_polyhedron_type.h" // declares Nef_polyhedron
 
 #include <iostream>
 #include <cmath>
 #include <boost/variant.hpp>
+
+#include "texture.h"
 
 class QEvent;
 class QMouseEvent;
@@ -71,7 +74,9 @@ public:
   Polyhedron* polyhedron(int i) const;
   Nef_polyhedron* nefPolyhedron(int i) const;
   
-  enum Entry_type { POLYHEDRON_ENTRY = 0, NEF_ENTRY = 1};
+  enum Entry_type { POLYHEDRON_ENTRY = 0,
+                    NEF_ENTRY = 1,
+		    TEX_POLYHEDRON_ENTRY = 2};
   Entry_type polyhedronType(int) const;
 
   QColor polyhedronColor(int) const;
@@ -171,7 +176,7 @@ private:
 private:
   static const QColor defaultColor; // defined in Scene.cpp
 
-  typedef boost::variant<Polyhedron*, Nef_polyhedron*> Polyhedron_ptr;
+  typedef boost::variant<Polyhedron*, Nef_polyhedron*, Tex_polyhedron*> Polyhedron_ptr;
 
   struct Polyhedron_entry {
     Polyhedron_entry()
@@ -210,6 +215,7 @@ private:
   int item_A;
   int item_B;
   bool viewEdges;
+  Texture texture;
 }; // end class Scene
 
 class SceneDelegate : public QItemDelegate
