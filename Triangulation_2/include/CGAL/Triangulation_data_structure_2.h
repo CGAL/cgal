@@ -828,8 +828,10 @@ insert_dim_up(Vertex_handle w,  bool orient)
   set_dimension( dimension() + 1);
   Face_handle f1;
   Face_handle f2;
+
+  const int dim = dimension(); //it is the resulting dimension
     
-  switch (dimension()) { //it is the resulting dimension
+  switch (dim) { 
   case -1:
     f1 = create_face(v,Vertex_handle(),Vertex_handle());
     v->set_face(f1);
@@ -853,29 +855,28 @@ insert_dim_up(Vertex_handle w,  bool orient)
       
       std::list<Face_handle>  to_delete;
       typename std::list<Face_handle>::iterator lfit = faces_list.begin();
-      int i = dimension(); // maximun non NULL index in faces 
       Face_handle f, g;
 
       for ( ; lfit != faces_list.end() ; ++lfit) {
 	f = * lfit;
 	g = create_face(f); //calls copy constructor of face
-	f->set_vertex(i,v); f->set_neighbor(i,g);
-	g->set_vertex(i,w); g->set_neighbor(i,f);
+	f->set_vertex(dim,v); f->set_neighbor(dim,g);
+	g->set_vertex(dim,w); g->set_neighbor(dim,f);
 	if (f->has_vertex(w)) to_delete.push_back(g); // flat face to delete
       }
 
       lfit = faces_list.begin();
       for ( ; lfit != faces_list.end() ; ++lfit) {
 	f = * lfit;
-	g = f->neighbor(i);
-	for(int j = 0; j < i ; ++j) {
-	  g->set_neighbor(j, f->neighbor(j)->neighbor(i));
+	g = f->neighbor(dim);
+	for(int j = 0; j < dim ; ++j) {
+	  g->set_neighbor(j, f->neighbor(j)->neighbor(dim));
 	}
       }
 
       // couldn't unify the code for reorientation mater
       lfit = faces_list.begin() ; 
-      if (dimension() == 1){
+      if (dim == 1){
 	if (orient) {
 	  (*lfit)->reorient(); ++lfit ;  (*lfit)->neighbor(1)->reorient();
 	}
@@ -897,7 +898,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
 	int j ;
 	if (f->vertex(0) == w) {j=0;}
 	else {j=1;}
-	f1= f->neighbor(i); i1= mirror_index(f,i); //f1->index(f);
+	f1= f->neighbor(dim); i1= mirror_index(f,dim); //f1->index(f);
 	f2= f->neighbor(j); i2= mirror_index(f,j); //f2->index(f);
 	f1->set_neighbor(i1,f2);
 	f2->set_neighbor(i2,f1);
