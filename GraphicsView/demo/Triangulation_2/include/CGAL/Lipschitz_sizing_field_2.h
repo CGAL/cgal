@@ -23,7 +23,7 @@ namespace CGAL
 
 template <typename Kernel>
 class Lipschitz_sizing_field_2 
-	: public virtual Sizing_field_2<typename Kernel>
+	: public virtual Sizing_field_2<Kernel>
   {
   public:
     typedef Point_2<Kernel> Point;
@@ -77,7 +77,7 @@ class Lipschitz_sizing_field_2
 														 const double k = 1.0)
       : K(k)
     {
-			points = std::list<typename Point>(first, beyond);
+			points = std::list<Point>(first, beyond);
 			generate_delaunay();
 			extract_poles();
 			generate_sites();
@@ -217,7 +217,7 @@ class Lipschitz_sizing_field_2
 
 					// compute distance to nearest input point
 					Neighbor_search search_points(tree_points, *pi, 2); // notice 2
-					Neighbor_search::iterator it = search_points.begin();
+					typename Neighbor_search::iterator it = search_points.begin();
 					it++; // the first one is...itself
 					double d = std::sqrt(it->second);
 					
