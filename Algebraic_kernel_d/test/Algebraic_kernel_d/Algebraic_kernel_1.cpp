@@ -17,66 +17,66 @@
 #include <CGAL/basic.h>
 #include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep_bfi.h>
+#include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
+#include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
+#include <CGAL/Algebraic_kernel_d/Descartes.h>
 #include <CGAL/_test_algebraic_kernel_1.h>
 
 #include <CGAL/Arithmetic_kernel.h>
 
 
 template< class Coefficient_, class Boundary_, class RepClass >
-void test_algebraic_kernel_intern() {
-    typedef Coefficient_ Coefficient;
-    typedef Boundary_    Boundary;
-    typedef RepClass     Rep_class;
+void test_algebraic_kernel_coeff_boundary_rep() {
+  typedef Coefficient_ Coefficient;
+  typedef Boundary_    Boundary;
+  typedef RepClass     Rep_class;
+  
+  typedef CGAL::Polynomial< Coefficient >                            Polynomial_1;
+  typedef CGAL::CGALi::Algebraic_real_pure
+    < Coefficient, Boundary, CGAL::Handle_policy_no_union, Rep_class > Algebraic_real_1;
+  
+  typedef CGAL::CGALi::Descartes< Polynomial_1, Boundary >           Descartes;
+  typedef CGAL::CGALi::Bitstream_descartes< Polynomial_1, Boundary > BDescartes;
+  
+  typedef CGAL::Algebraic_kernel_1< Coefficient, Boundary, Rep_class , Descartes>
+    Kernel_Descartes;
+  typedef CGAL::Algebraic_kernel_1< Coefficient, Boundary, Rep_class , BDescartes>
+    Kernel_BDescartes;
+  
+  CGAL::CGALi::test_algebraic_kernel_1< 
+    Kernel_Descartes, Algebraic_real_1, Descartes, Coefficient, Polynomial_1, Boundary >();   
+  CGAL::CGALi::test_algebraic_kernel_1< 
+    Kernel_BDescartes, Algebraic_real_1, BDescartes, Coefficient, Polynomial_1, Boundary >();    
 
-    typedef CGAL::Algebraic_kernel_1< Coefficient, Boundary, Rep_class > 
-                                                                Kernel;
-    typedef CGAL::CGALi::Algebraic_real_pure< 
-             Coefficient, 
-             Boundary,
-            ::CGAL::Handle_policy_no_union,     
-            Rep_class >                                         Algebraic_real_1;
-    typedef CGAL::Polynomial< Coefficient >                     Polynomial_1;
-    typedef CGAL::CGALi::Descartes< Polynomial_1, Boundary >    Isolator;
-
-    CGAL::CGALi::test_algebraic_kernel_1< 
-        Kernel, Algebraic_real_1, Isolator, Coefficient, Polynomial_1, Boundary >();    
 }
+
+
+template< class Coeff, class Boundary >
+void test_algebraic_kernel_coeff_boundary() {
+  test_algebraic_kernel_coeff_boundary_rep<Coeff,Boundary,
+    CGAL::CGALi::Algebraic_real_rep< Coeff, Boundary > > ();
+  test_algebraic_kernel_coeff_boundary_rep<Coeff,Boundary,
+    CGAL::CGALi::Algebraic_real_rep_bfi< Coeff, Boundary > > ();
+  test_algebraic_kernel_coeff_boundary_rep<Coeff,Boundary,
+    CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi< Coeff, Boundary > > ();
+}
+
 
 template< class ArithmeticKernel >
 void test_algebraic_kernel() {
     typedef ArithmeticKernel AK;
     typedef typename AK::Integer Integer;
     typedef typename AK::Rational Rational; 
-    typedef CGAL::Sqrt_extension< Integer, Integer> EXT;
 
-    // Test with integer
-    test_algebraic_kernel_intern< Integer,
-                                  Rational,
-                                  CGAL::CGALi::Algebraic_real_rep< Integer,
-                                                                   Rational > >();
-   // Test with integer and bfi
-    test_algebraic_kernel_intern< Integer,
-                                  Rational,
-                                  CGAL::CGALi::Algebraic_real_rep_bfi< Integer,
-                                                                       Rational > >();
-                                                                       
-    // Test with rational
-    test_algebraic_kernel_intern< Rational,
-                                  Rational,
-                                  CGAL::CGALi::Algebraic_real_rep< Rational,
-                                                                   Rational > >();
-
-    // Test with rational and bfi
-    test_algebraic_kernel_intern< Rational,
-                                  Rational,
-                                  CGAL::CGALi::Algebraic_real_rep_bfi< Rational,
-                                                                       Rational > >();
-                                                                       
-    // Test with Sqrt_extension
-    test_algebraic_kernel_intern< EXT,
-                                  Rational,
-                                  CGAL::CGALi::Algebraic_real_rep< EXT, Rational > >();
-
+    test_algebraic_kernel_coeff_boundary<Integer, Rational>();
+    test_algebraic_kernel_coeff_boundary<Rational, Rational>();
+    test_algebraic_kernel_coeff_boundary
+      <CGAL::Sqrt_extension< Integer, Integer>, Rational>();
+    test_algebraic_kernel_coeff_boundary
+      <CGAL::Sqrt_extension< Rational, Integer>, Rational>();
+    test_algebraic_kernel_coeff_boundary
+      <CGAL::Sqrt_extension< Rational, Rational>, Rational>();
 }
 
 int main() {
