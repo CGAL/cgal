@@ -1048,6 +1048,14 @@ bool Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::is_in_face // open
     CGAL_precondition (v == NULL || ! v->has_null_point());
     CGAL_precondition (v == NULL || 
                        _m_traits->equal_2_object()(p, v->point()));
+
+    std::cerr << "is_in_face not (yet) supported." << std::endl;
+
+    CGAL_error();
+    
+    return false;
+    
+#if 0
     
     // In case the face is unbounded and has no outer ccbs, this is the single
     // (un)bounded face of an arrangement of bounded curves. 
@@ -1171,8 +1179,6 @@ bool Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::is_in_face // open
         return (closest->direction() == CGAL::ARR_RIGHT_TO_LEFT);
         
     }
-
-
 
     // Keep two counter that store how many segments are smaller/larger than
     // p, i.e. intersecting the rays shootet in vertical direction from p
@@ -1325,6 +1331,8 @@ bool Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::is_in_face // open
     std::cout << "is_in_face: " << ((seg_smaller % 2) != 0) << std::endl;
     std::cout << "IS_IN_FACE: " << ((seg_smaller % 2) != 0) << std::endl;
     return ((seg_smaller % 2) != 0);
+#endif
+
 }
 
 //-----------------------------------------------------------------------------
