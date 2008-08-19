@@ -967,7 +967,7 @@ is_on_new_perimetric_face_boundary
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
         std::cout << "Path2 (containing prev2): " << std::endl;
 #endif
-        CGAL::Sign sgn = sign_of_path(prev1->next(), prev2, cv);
+        sgn = sign_of_path(prev1->next(), prev2, cv);
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
         std::cout << "sign2: " << sgn << std::endl;
 #endif
