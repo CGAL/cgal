@@ -30,6 +30,14 @@
 #include <cassert>
 //#include <iostream> // commented to speed up compilation.
 
+// This test should be re-evaluated for further GCC releases.
+// It is annoying that the test passes in non-std=c++0x mode, hence
+// triggering warnings all over the place.
+#if defined __GNUC__ && (__GNUC__ == 4) && (__GNUC_MINOR__ == 4) \
+    && !defined __GXX_EXPERIMENTAL_CXX0X__
+#  error GCC needs -std=c++0x to enable variadic templates without warnings
+#endif
+
 double total = 0.0;
 
 // increment
