@@ -30,26 +30,6 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 /*! \ingroup NiX_bivariate_polynomial_hacks
- *  \brief substitute numbers for both variables
- *
- *  The bivariate polynomial \e p(x,y) is evaluated at the given point
- *  \e (x,y). This is done efficiently without construction of intermediate
- *  polynomials.
- *  The substituted numbers may have a more general number type
- *  NTX than the coefficient type NT, provided there is an explicit
- *  conversion NTX(NT).
- */
-template <class NT, class NTX>
-NTX _substitute_xy(
-        CGAL::Polynomial< CGAL::Polynomial<NT> > p, const NTX& x, const NTX& y
-) {
-    int i = p.degree();
-    NTX r = p[i--].evaluate(x);
-    while (i >= 0) { r *= y; r += p[i--].evaluate(x); }
-    return r;
-}
-
-/*! \ingroup NiX_bivariate_polynomial_hacks
  *  \brief Computes the polynomial f(x+sy,y)
  */ 
 template<class NT>
@@ -64,16 +44,12 @@ shear(const CGAL::Polynomial<CGAL::Polynomial<NT> >& f,NT s) {
     Poly_2 for_x(x,Poly_1(NT(s)));
     Poly_2 for_y(zero,one);
 
-
-    /* That does not work because of type mismatch    
     std::vector<Poly_2> coeffs;
     coeffs.push_back(for_x);
     coeffs.push_back(for_y);
 
-    return typename CGAL::Polynomial_traits<Poly_2>::Evaluate()
+    return typename CGAL::Polynomial_traits_d<Poly_2>::Substitute()
         (f,coeffs.begin(), coeffs.end());
-    */
-    return CGAL::CGALi::_substitute_xy(f,for_x,for_y);
     
 }
 

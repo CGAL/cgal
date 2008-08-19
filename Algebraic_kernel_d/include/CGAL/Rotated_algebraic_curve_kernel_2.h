@@ -784,17 +784,6 @@ public:
     //!@}
 };
 
-template<typename Poly_int_2, typename Poly_ext_2>
-Poly_ext_2 _substitute_xy(const Poly_int_2& p, 
-                          const Poly_ext_2& x, const Poly_ext_2& y) {
-    
-    typename Poly_int_2::const_iterator rit = p.end()-1;
-    Poly_ext_2 r = rit->evaluate(x);
-    while((rit--) != p.begin())
-        r = r * y + rit->evaluate(x);
-    return r;
-}    
-
 /*!\brief
  * defines coefficient number types and polynomial rotation functions for a
  * set of fixed angles
@@ -892,7 +881,12 @@ public:
         Poly_sqrt_2 sub_x(Poly_sqrt_1(ezero, ecosine), Poly_sqrt_1(esine)), 
             sub_y(Poly_sqrt_1(ezero, -esine), Poly_sqrt_1(ecosine)), res;
 
-        res = _substitute_xy(poly_int, sub_x, sub_y);
+        std::vector<Poly_sqrt_2> subs;
+        subs.push_back(sub_x);
+        subs.push_back(sub_y);
+        
+        res = typename CGAL::Polynomial_traits_d<Poly_int_2>
+            ::Substitute() (poly_int, subs.begin(), subs.end());
         
         //std::cout << "rotated poly: " << res << std::endl;
         // integralize polynomial
@@ -1022,6 +1016,8 @@ struct Approximately_rotated_algebraic_curve_kernel_base
                 Rational t;
                 while(true) {
                     CGAL::set_precision(Bigfloat_interval(),prec);
+                    std::cout << "increased prec to " << (prec) 
+                              << std::endl; 
                     Bigfloat_interval pi = CGAL::pi<AT>(prec);
                     Bigfloat_interval s 
                         = CGAL::sin<AT>
@@ -1103,8 +1099,13 @@ struct Approximately_rotated_algebraic_curve_kernel_base
                     sub_y(Poly_rat_1(Rational(0), -sine), Poly_rat_1(cosine)), 
                 res;
             
-            res = _substitute_xy(f, sub_x, sub_y);
+            std::vector<Poly_rat_2> subs;
+            subs.push_back(sub_x);
+            subs.push_back(sub_y);
             
+            res = typename CGAL::Polynomial_traits_d<Polynomial_2>
+                ::Substitute() (f, subs.begin(), subs.end());
+
             CGAL::simplify(res);
             
             // integralize polynomial
