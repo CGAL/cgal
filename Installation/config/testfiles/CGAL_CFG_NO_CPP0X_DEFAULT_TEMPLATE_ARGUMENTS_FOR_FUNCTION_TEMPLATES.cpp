@@ -24,7 +24,7 @@
 // ---------------------------------------------------------------------
 
 //| If a compiler does not support default template arguments for function templates
-//| (from C++0x) CGAL_CFG_NO_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES is set. 
+//| (from C++0x) CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES is set. 
 
 template <typename Obj>
 struct Kernel_traits
