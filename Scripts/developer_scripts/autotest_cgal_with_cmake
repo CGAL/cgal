@@ -256,7 +256,7 @@ unzip_cgal()
   fi
   
   log "${ACTUAL_LOGFILE}" "untarring CGAL"
-  ${DECOMPRESSOR} -c "${CGAL_ZIPFILE}" | ${TAR} xvf - >> "${ACTUAL_LOGFILE}" 2>&1
+  ${DECOMPRESSOR} -c "${CGAL_ZIPFILE}" | ${TAR} xf - >> "${ACTUAL_LOGFILE}" 2>&1
   if [ ${?} != 0 ]; then
     error "Could not untar CGAL"
   fi
