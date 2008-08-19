@@ -39,11 +39,15 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
-                Nef_3_problematic_construction$(EXE_EXT) \
-                test_with_extended_homogeneous$(EXE_EXT) \
-                test_with_homogeneous$(EXE_EXT) \
-                test_with_lazy$(EXE_EXT) 
+all: \
+        nary$(EXE_EXT) \
+        Nef_3_problematic_construction$(EXE_EXT) \
+        test_with_extended_homogeneous$(EXE_EXT) \
+        test_with_homogeneous$(EXE_EXT) \
+        test_with_lazy$(EXE_EXT) 
+
+nary$(EXE_EXT): nary$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nary nary$(OBJ_EXT) $(LDFLAGS)
 
 Nef_3_problematic_construction$(EXE_EXT): Nef_3_problematic_construction$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_3_problematic_construction Nef_3_problematic_construction$(OBJ_EXT) $(LDFLAGS)
@@ -58,10 +62,11 @@ test_with_lazy$(EXE_EXT): test_with_lazy$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_with_lazy test_with_lazy$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   Nef_3_problematic_construction.clean \
-                   test_with_extended_homogeneous.clean \
-                   test_with_homogeneous.clean \
-                   test_with_lazy.clean 
+        nary.clean \
+        Nef_3_problematic_construction.clean \
+        test_with_extended_homogeneous.clean \
+        test_with_homogeneous.clean \
+        test_with_lazy.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
