@@ -26,8 +26,9 @@
 //| If a compiler does not support std::isfinite() (from C++0x)
 //| CGAL_CFG_NO_CPP0X_ISFINITE is set. 
 
-#include <cmath>
+#undef NDEBUG
 #include <cassert>
+#include <cmath>
 
 template < typename T >
 void use(T) {}

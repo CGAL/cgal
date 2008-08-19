@@ -26,6 +26,7 @@
 //| If a compiler does not support decltype() (from C++0x)
 //| CGAL_CFG_NO_CPP0X_DECLTYPE is set. 
 
+#undef NDEBUG
 #include <cassert>
 
 // It also tests if const refs are properly found.

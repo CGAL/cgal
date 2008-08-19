@@ -26,6 +26,7 @@
 //| If a compiler does not support statement expressions (a GCC extension)
 //| CGAL_CFG_NO_STATEMENT_EXPRESSIONS is set. 
 
+#undef NDEBUG
 #include <cassert>
 
 int main()
