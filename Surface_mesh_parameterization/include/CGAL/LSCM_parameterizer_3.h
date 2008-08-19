@@ -355,30 +355,26 @@ check_parameterize_preconditions(Adaptor& mesh)
                                             Mesh_feature_extractor;
     Mesh_feature_extractor feature_extractor(mesh);
 
-    // Allways check that mesh is not empty
+    // Check that mesh is not empty
     if (mesh.mesh_vertices_begin() == mesh.mesh_vertices_end())
         status = Base::ERROR_EMPTY_MESH;
     if (status != Base::OK)
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
-    CGAL_surface_mesh_parameterization_expensive_precondition_code(             \
-        status = mesh.is_mesh_triangular() ? Base::OK                         \
-                                            : Base::ERROR_NON_TRIANGULAR_MESH; \
-    );
+    status = mesh.is_mesh_triangular() ? Base::OK                         
+                                       : Base::ERROR_NON_TRIANGULAR_MESH; 
     if (status != Base::OK)
         return status;
 
     // The whole package is restricted to surfaces: genus = 0,
     // one connected component and at least one border
-    CGAL_surface_mesh_parameterization_expensive_precondition_code(         \
-        int genus = feature_extractor.get_genus();                          \
-        int nb_borders = feature_extractor.get_nb_borders();                \
-        int nb_components = feature_extractor.get_nb_connex_components();   \
-        status = (genus == 0 && nb_borders >= 1 && nb_components == 1)      \
-               ? Base::OK                                                   \
-               : Base::ERROR_NO_SURFACE_MESH;                               \
-    );
+    int genus = feature_extractor.get_genus();                          
+    int nb_borders = feature_extractor.get_nb_borders();                
+    int nb_components = feature_extractor.get_nb_connex_components();   
+    status = (genus == 0 && nb_borders >= 1 && nb_components == 1)      
+           ? Base::OK                                                   
+           : Base::ERROR_NO_SURFACE_MESH;                               
     if (status != Base::OK)
         return status;
 
@@ -595,11 +591,9 @@ check_parameterize_postconditions(const Adaptor& mesh,
     Error_code status = Base::OK;
 
     // Check if 3D -> 2D mapping is one-to-one
-    CGAL_surface_mesh_parameterization_postcondition_code(  \
-        status = is_one_to_one_mapping(mesh, solver) 	    \
-               ? Base::OK                                   \
-               : Base::ERROR_NO_1_TO_1_MAPPING;             \
-    );
+    status = is_one_to_one_mapping(mesh, solver) 	    
+           ? Base::OK                                   
+           : Base::ERROR_NO_1_TO_1_MAPPING;             
     if (status != Base::OK)
         return status;
 

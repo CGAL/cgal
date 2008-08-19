@@ -184,10 +184,7 @@ public:
         set_mesh_seaming(first_seam_vertex, end_seam_vertex);
 
         // Check that the cut mesh is 2-manifold
-        m_is_valid = true;
-        CGAL_surface_mesh_parameterization_expensive_precondition_code( \
-            m_is_valid = mesh.is_valid() && check_seam(first_seam_vertex, end_seam_vertex); \
-        );
+        m_is_valid = mesh.is_valid() && check_seam(first_seam_vertex, end_seam_vertex); 
 
         // Construct the list of all exported vertices, i.e. INNER and BORDER vertices
         //

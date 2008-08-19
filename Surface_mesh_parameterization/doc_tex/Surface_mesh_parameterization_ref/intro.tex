@@ -200,19 +200,17 @@ sparse linear solvers:
 \ccRefIdfierPage{CGAL::Parameterization_mesh_feature_extractor<ParameterizationMesh_3>}  \\
 
 
-\ccHeading{Assertions}
+\ccHeading{Checks and Assertions}
 
-The assertion flags for the package
-use \ccc{SURFACE_MESH_PARAMETERIZATION} in their names (\textit{e.g.},
-\ccc{CGAL_SURFACE_MESH_PARAMETERIZATION_NO_ASSERTIONS}).
+The package performs the next checks:
 
 For \emph{fixed} border parameterizations:
 \begin{itemize}
 \item Preconditions:
     \begin{itemize}
     \item check that the border is mapped onto a convex polygon.
-    \item check that the input mesh is triangular (expensive check).
-    \item check that the input mesh is a surface with one connected component (expensive check).
+    \item check that the input mesh is triangular.
+    \item check that the input mesh is a surface with one connected component.
     \end{itemize}
 \item Postconditions:
     \begin{itemize}
@@ -224,8 +222,8 @@ For \emph{free} border parameterizations:
 \begin{itemize}
 \item Preconditions:
     \begin{itemize}
-    \item check that the input mesh is triangular (expensive check).
-    \item check that the input mesh is a surface with one connected component (expensive check).
+    \item check that the input mesh is triangular.
+    \item check that the input mesh is a surface with one connected component.
     \end{itemize}
 \item Postconditions:
     \begin{itemize}
@@ -233,7 +231,9 @@ For \emph{free} border parameterizations:
     \end{itemize}
 \end{itemize}
 
-Expensive checking is off by default. It can be enabled by
-defining \ccc{CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE}.
+Assertions are optional checks. The assertion flags for the package
+use \ccc{SURFACE_MESH_PARAMETERIZATION} in their names (\textit{e.g.},
+\ccc{CGAL_SURFACE_MESH_PARAMETERIZATION_NO_ASSERTIONS}).
+
 
 

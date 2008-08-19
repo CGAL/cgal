@@ -354,6 +354,7 @@ public:
             if (cir->opposite()->vertex() == source)
                 return cir;
 
+        // we should not get here
         CGAL_error();
         return NULL;
     }
