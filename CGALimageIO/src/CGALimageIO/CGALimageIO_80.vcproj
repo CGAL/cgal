@@ -307,46 +307,72 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
-				RelativePath=".\analyze.cpp">
+				RelativePath=".\analyze.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\bmp.cpp">
+				RelativePath=".\bmp.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\bmpendian.cpp">
+				RelativePath=".\bmpendian.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\bmpread.cpp">
+				RelativePath=".\bmpread.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\convert.cpp">
+				RelativePath=".\convert.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\gif.cpp">
+				RelativePath=".\fgetns.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\gis.cpp">
+				RelativePath=".\gif.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\ImageIO.cpp">
+				RelativePath=".\gis.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\inr.cpp">
+				RelativePath=".\Image_3.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\iris.cpp">
+				RelativePath=".\ImageIO.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\pnm.cpp">
+				RelativePath=".\inr.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\recbuffer.cpp">
+				RelativePath=".\iris.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\recline.cpp">
+				RelativePath=".\mincio.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\reech4x4.cpp">
+				RelativePath=".\pnm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\recbuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\recline.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\reech4x4.cpp"
+				>
 			</File>
 		</Filter>
 	</Files>

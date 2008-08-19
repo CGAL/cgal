@@ -99,7 +99,7 @@ namespace CGAL {
   {
     T operator()(const T& a, const T& b) const
     {
-      return std::min(a, b);
+      return (std::min)(a, b);
     }
   };
 
