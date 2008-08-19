@@ -982,8 +982,8 @@ is_on_new_perimetric_face_boundary
          _m_right == CGAL::ARR_UNBOUNDED)) {
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
         std::cout << "reference point: top right" << std::endl;
-        return (sgn == CGAL::POSITIVE);
 #endif
+        return (sgn == CGAL::POSITIVE);
     }
     // else 
     CGAL_assertion(_m_quadric.is_elliptic_paraboloid());
