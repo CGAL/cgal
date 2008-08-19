@@ -1,11 +1,10 @@
- 
 INSTALL
 -------------------------------------------------------------------------------
 This file describes how to install CGAL.
 
-The documentation of CGAL is available in various formats (HTML,
-PostScript, PDF). It is not bundled with the software but can be
-downloaded separately at <http://www.cgal.org/Manual>.
+The documentation of CGAL is available in PDF and HTML format.
+It is not bundled with the software but can be downloaded separately
+at <http://www.cgal.org/Manual>.
 
 For more information about CGAL, see the <http://www.cgal.org/>.
 
@@ -21,16 +20,18 @@ To install CGAL, you should:
      
    * install the Boost libraries (www.boost.org)
      Boost is required to build CGAL.
+     Compiled parts of Boost are mostly optional, except Boost.Threads.
+     Another recommended compiled part is Boost.ProgramOptions.
      
    * install optional additional libraries:
-        
-       - qt3 (trolltech.com/products/qt)
+
+       - qt3 (http://trolltech.com/products/qt)
        
            Used by most Demos
            
-       - gmp   (gmplib.org)
-       - mpfr  (www.mpfr.org)
-       - leda  (www.algorithmic-solutions.com/leda/index.htm)
+       - gmp   (http://gmplib.org/)
+       - mpfr  (http://www.mpfr.org/)
+       - leda  (http://www.algorithmic-solutions.com/leda/index.htm) (commercial)
        
            Used for exact arithmetic
 
