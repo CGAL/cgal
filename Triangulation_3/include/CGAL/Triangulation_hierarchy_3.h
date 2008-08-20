@@ -321,14 +321,12 @@ Triangulation_hierarchy_3<Tr>::
 remove(Vertex_handle v)
 {
   CGAL_triangulation_precondition(v != Vertex_handle());
-  Vertex_handle u = v->up();
-  int l = 0;
-  while (1) {
-    hierarchy[l++]->remove(v);
-    if (u == Vertex_handle() || l > maxlevel)
+  for (int l = 0; l < maxlevel; ++l) {
+    Vertex_handle u = v->up();
+    hierarchy[l]->remove(v);
+    if (u == Vertex_handle())
 	break;
     v = u;
-    u = v->up();
   }
   return true;
 }
@@ -339,23 +337,24 @@ Triangulation_hierarchy_3<Tr>::
 move_point(Vertex_handle v, const Point & p)
 {
   CGAL_triangulation_precondition(v != Vertex_handle());
-  Vertex_handle u = v->up();
   Vertex_handle old, ret;
-  int l = 0;
-  while (1) {
-    Vertex_handle w = hierarchy[l++]->move_point(v, p);
-    if (l == 1)
+
+  for (int l = 0; l < maxlevel; ++l) {
+    Vertex_handle u = v->up();
+    Vertex_handle w = hierarchy[l]->move_point(v, p);
+    if (l == 0) {
 	ret = w;
-    if (l > 1) {
+    }
+    else {
 	old->set_up(w);
 	w->set_down(old);
     }
-    old = w;
-    if (u == Vertex_handle() || l > maxlevel)
+    if (u == Vertex_handle())
 	break;
+    old = w;
     v = u;
-    u = v->up();
   }
+
   return ret;
 }
  
@@ -440,11 +439,8 @@ Triangulation_hierarchy_3<Tr>::
 random_level()
 {
   int l = 0;
-  while ( ! random(ratio) )
+  while ( ! random(ratio) && l < maxlevel-1 )
     ++l;
-
-  if (l >= maxlevel)
-    l = maxlevel - 1;
 
   return l;
 }
