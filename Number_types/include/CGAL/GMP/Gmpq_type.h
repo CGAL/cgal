@@ -22,8 +22,8 @@
 // Author(s)     : Andreas Fabri, Sylvain Pion
 
 
-#ifndef CGAL_GMPQ_Type_H
-#define CGAL_GMPQ_Type_H
+#ifndef CGAL_GMPQ_TYPE_H
+#define CGAL_GMPQ_TYPE_H
 
 #include <CGAL/basic.h>
 #include <CGAL/GMP/Gmpz_type.h>
@@ -421,4 +421,4 @@ operator>>(std::istream& is, Gmpq &z)
 CGAL_END_NAMESPACE
 
 
-#endif // CGAL_GMPQ_Type_H
+#endif // CGAL_GMPQ_TYPE_H

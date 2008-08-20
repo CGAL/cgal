@@ -894,4 +894,4 @@ void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {
   
 CGAL_END_NAMESPACE
 
-#endif // CGAL_TEST_NUMBER_Type_H
+#endif // CGAL_TEST_ALGEBRAIC_STRUCTURE_H

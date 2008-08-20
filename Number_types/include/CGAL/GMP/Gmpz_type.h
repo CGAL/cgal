@@ -22,8 +22,8 @@
 // Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion
 
 
-#ifndef CGAL_GMPZ_Type_H
-#define CGAL_GMPZ_Type_H
+#ifndef CGAL_GMPZ_TYPE_H
+#define CGAL_GMPZ_TYPE_H
 
 #include <CGAL/basic.h>
 #include <gmp.h>
@@ -458,4 +458,4 @@ struct Split_double<Gmpz>
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_GMPZ_Type_H
+#endif // CGAL_GMPZ_TYPE_H

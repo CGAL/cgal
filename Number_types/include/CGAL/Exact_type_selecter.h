@@ -21,8 +21,8 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_EXACT_Type_SELECTER_H
-#define CGAL_EXACT_Type_SELECTER_H
+#ifndef CGAL_EXACT_TYPE_SELECTER_H
+#define CGAL_EXACT_TYPE_SELECTER_H
 
 // This is an undocumented private helper for Filtered_kernel.
 
@@ -113,4 +113,4 @@ struct Exact_type_selecter<Lazy_exact_nt<ET> >
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_EXACT_Type_SELECTER_H
+#endif // CGAL_EXACT_TYPE_SELECTER_H

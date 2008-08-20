@@ -18,8 +18,8 @@
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
 
-#ifndef CGAL_GMPZF_Type_H
-#define CGAL_GMPZF_Type_H
+#ifndef CGAL_GMPZF_TYPE_H
+#define CGAL_GMPZF_TYPE_H
 
 // includes
 #include <CGAL/basic.h>
@@ -575,6 +575,4 @@ bool operator>(const Gmpzf &a, int b)
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_GMPZF_Type_H
-
-// ===== EOF ==================================================================
+#endif // CGAL_GMPZF_TYPE_H

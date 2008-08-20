@@ -21,8 +21,8 @@
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer
 
-#ifndef CGAL_NUMBER_Type_CHECKER_H
-#define CGAL_NUMBER_Type_CHECKER_H
+#ifndef CGAL_NUMBER_TYPE_CHECKER_H
+#define CGAL_NUMBER_TYPE_CHECKER_H
 
 #include <CGAL/number_type_basic.h>
 
@@ -941,4 +941,4 @@ operator>> (std::istream & is, Number_type_checker<NT1, NT2, Cmp> &b)
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_NUMBER_Type_CHECKER_H
+#endif // CGAL_NUMBER_TYPE_CHECKER_H
