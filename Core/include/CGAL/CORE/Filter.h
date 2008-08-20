@@ -37,6 +37,7 @@
 #ifndef _CORE_FILTER_H_
 #define _CORE_FILTER_H_
 
+#include <CGAL/config.h>
 #include <CGAL/CORE/Real.h>
 #include <cmath>
 
