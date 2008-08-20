@@ -40,32 +40,8 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 template <class K>
-class Segment_2_Segment_2_pair {
-public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
-    Segment_2_Segment_2_pair() ;
-    Segment_2_Segment_2_pair(typename K::Segment_2 const *seg1,
-                            typename K::Segment_2 const *seg2);
-    ~Segment_2_Segment_2_pair() {}
-
-    Intersection_results intersection_type() const;
-
-    bool                intersection(typename K::Point_2 &result) const;
-    bool                intersection(typename K::Segment_2 &result) const;
-protected:
-    typename K::Segment_2 const*   _seg1;
-    typename K::Segment_2 const *  _seg2;
-    mutable bool                       _known;
-    mutable Intersection_results       _result;
-    mutable typename K::Point_2            _intersection_point, _other_point;
-};
-
-template <class K>
 inline bool
 do_intersect(const typename K::Segment_2 &seg1, const typename K::Segment_2 &seg2);
-
-
-
 
 
 
@@ -301,21 +277,24 @@ do_intersect(const typename K::Segment_2 &seg1,
 
 
 template <class K>
-Segment_2_Segment_2_pair<K>::Segment_2_Segment_2_pair()
-{
-    _seg1 = 0;
-    _seg2 = 0;
-    _known = false;
-}
+class Segment_2_Segment_2_pair {
+public:
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
+    Segment_2_Segment_2_pair(typename K::Segment_2 const *seg1,
+                            typename K::Segment_2 const *seg2)
+	    : _seg1(seg1), _seg2(seg2), _known(false) {}
 
-template <class K>
-Segment_2_Segment_2_pair<K>::Segment_2_Segment_2_pair(
-    typename K::Segment_2 const *seg1, typename K::Segment_2 const *seg2)
-{
-    _seg1 = seg1;
-    _seg2 = seg2;
-    _known = false;
-}
+    Intersection_results intersection_type() const;
+
+    typename K::Point_2    intersection_point() const;
+    typename K::Segment_2  intersection_segment() const;
+protected:
+    typename K::Segment_2 const*   _seg1;
+    typename K::Segment_2 const *  _seg2;
+    mutable bool                       _known;
+    mutable Intersection_results       _result;
+    mutable typename K::Point_2            _intersection_point, _other_point;
+};
 
 template <class K>
 typename Segment_2_Segment_2_pair<K>::Intersection_results
@@ -430,28 +409,24 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
 
 
 template <class K>
-bool
-Segment_2_Segment_2_pair<K>::intersection(typename K::Point_2 &result) const
+typename K::Point_2
+Segment_2_Segment_2_pair<K>::intersection_point() const
 {
     if (!_known)
         intersection_type();
-    if (_result != POINT)
-        return false;
-    result = _intersection_point;
-    return true;
+    CGAL_kernel_assertion(_result == POINT);
+    return _intersection_point;
 }
 
 template <class K>
-bool
-Segment_2_Segment_2_pair<K>::intersection(typename K::Segment_2 &result) const
+typename K::Segment_2
+Segment_2_Segment_2_pair<K>::intersection_segment() const
 {
   typedef typename K::Segment_2 Segment_2;
     if (!_known)
         intersection_type();
-    if (_result != SEGMENT)
-        return false;
-    result = Segment_2(_intersection_point, _other_point);
-    return true;
+    CGAL_kernel_assertion(_result == SEGMENT);
+    return Segment_2(_intersection_point, _other_point);
 }
 
 
@@ -469,16 +444,10 @@ intersection(const typename K::Segment_2 &seg1,
     case is_t::NO_INTERSECTION:
     default:
         return Object();
-    case is_t::POINT: {
-        typename K::Point_2 pt;
-        ispair.intersection(pt);
-        return make_object(pt);
-    }
-    case is_t::SEGMENT: {
-        typename K::Segment_2 iseg;
-        ispair.intersection(iseg);
-        return make_object(iseg);
-    }
+    case is_t::POINT:
+        return make_object(ispair.intersection_point());
+    case is_t::SEGMENT:
+        return make_object(ispair.intersection_segment());
     }
 }
 
