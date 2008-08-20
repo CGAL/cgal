@@ -423,8 +423,8 @@ remove(Vertex_handle v )
   int l = 0 ;
   while(1){
     hierarchy[l++]->remove(v);
-    if (u ==  Vertex_handle()) break; 
-    if(l>Triangulation_hierarchy_2__maxlevel) break;
+    if (u == Vertex_handle()) break; 
+    if (l >= Triangulation_hierarchy_2__maxlevel) break;
     v=u; u=v->up();
   }
 }
