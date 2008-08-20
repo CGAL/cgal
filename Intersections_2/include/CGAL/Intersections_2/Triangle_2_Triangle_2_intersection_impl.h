@@ -49,42 +49,6 @@ struct Pointlist_2_ {
     ~Pointlist_2_() ;
 };
 
-template <class K>
-class Triangle_2_Triangle_2_pair {
-public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, TRIANGLE, POLYGON};
-                        Triangle_2_Triangle_2_pair() ;
-                        Triangle_2_Triangle_2_pair(
-                                typename K::Triangle_2 const *trian1,
-                                typename K::Triangle_2 const *trian2) ;
-    ~Triangle_2_Triangle_2_pair() {}
-
-    Intersection_results intersection_type() const;
-
-    bool                intersection(typename K::Point_2 &result) const;
-    bool                intersection(typename K::Segment_2 &result) const;
-    bool                intersection(typename K::Triangle_2 &result) const;
-    bool                intersection(/*Polygon_2<R> &result*/) const;
-    int                 vertex_count() const;
-    typename K::Point_2     vertex(int i) const;
-protected:
-    typename K::Triangle_2 const*   _trian1;
-    typename K::Triangle_2 const *  _trian2;
-    mutable bool                    _known;
-    mutable Intersection_results    _result;
-    mutable Pointlist_2_<K>    _pointlist;
-};
-
-
-// template <class R>
-// inline bool do_intersect(
-//     const Triangle_2<R> &p1,
-//     const Triangle_2<R> &p2)
-// {
-//     typedef Triangle_2_Triangle_2_pair<R> pair_t;
-//     pair_t pair(&p1, &p2);
-//     return pair.intersection_type() != pair_t::NO_INTERSECTION;
-// }
 
 
 template <class K>
@@ -191,24 +155,30 @@ void _cut_off(Pointlist_2_<K> &list,
     list.size += add;
 }
 
-template <class K>
-Triangle_2_Triangle_2_pair<K>::
-Triangle_2_Triangle_2_pair()
-{
-    _trian1 = 0;
-    _trian2 = 0;
-    _known = false;
-}
 
 template <class K>
-Triangle_2_Triangle_2_pair<K>::
-Triangle_2_Triangle_2_pair(typename K::Triangle_2 const *trian1,
-			   typename K::Triangle_2 const *trian2)
-{
-    _trian1 = trian1;
-    _trian2 = trian2;
-    _known = false;
-}
+class Triangle_2_Triangle_2_pair {
+public:
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, TRIANGLE, POLYGON};
+    Triangle_2_Triangle_2_pair(typename K::Triangle_2 const *trian1,
+                               typename K::Triangle_2 const *trian2)
+	: _trian1(trian1), _trian2(trian2), _known(false) {}
+
+    Intersection_results intersection_type() const;
+
+    typename K::Point_2     intersection_point() const;
+    typename K::Segment_2   intersection_segment() const;
+    typename K::Triangle_2  intersection_triangle() const;
+    bool                    intersection(/*Polygon_2<R> &result*/) const;
+    int                     vertex_count() const;
+    typename K::Point_2     vertex(int i) const;
+protected:
+    typename K::Triangle_2 const*   _trian1;
+    typename K::Triangle_2 const *  _trian2;
+    mutable bool                    _known;
+    mutable Intersection_results    _result;
+    mutable Pointlist_2_<K>    _pointlist;
+};
 
 template <class K>
 typename Triangle_2_Triangle_2_pair<K>::Intersection_results
@@ -310,47 +280,38 @@ Triangle_2_Triangle_2_pair<K>::vertex(int n) const
 }
 
 template <class K>
-bool
-Triangle_2_Triangle_2_pair<K>::intersection(
-        typename K::Triangle_2 &result) const
+typename K::Triangle_2
+Triangle_2_Triangle_2_pair<K>::intersection_triangle() const
 {
   typedef typename K::Triangle_2 Triangle_2;
     if (!_known)
         intersection_type();
-    if (_result != TRIANGLE)
-        return false;
-    result = Triangle_2(_pointlist.first->point,
-			_pointlist.first->next->point,
-			_pointlist.first->next->next->point);
-    return true;
+    CGAL_kernel_assertion(_result == TRIANGLE);
+    return Triangle_2(_pointlist.first->point,
+		      _pointlist.first->next->point,
+		      _pointlist.first->next->next->point);
 }
 
 template <class K>
-bool
-Triangle_2_Triangle_2_pair<K>::intersection(
-        typename K::Segment_2 &seg) const
+typename K::Segment_2
+Triangle_2_Triangle_2_pair<K>::intersection_segment() const
 {
   typedef typename K::Segment_2 Segment_2;
     if (!_known)
         intersection_type();
-    if (_result != SEGMENT)
-        return false;
-    seg = Segment_2(_pointlist.first->point,
-		    _pointlist.first->next->point);
-    return true;
+    CGAL_kernel_assertion(_result == SEGMENT);
+    return Segment_2(_pointlist.first->point,
+		     _pointlist.first->next->point);
 }
 
 template <class K>
-bool
-Triangle_2_Triangle_2_pair<K>::intersection(
-        typename K::Point_2 &pt) const
+typename K::Point_2
+Triangle_2_Triangle_2_pair<K>::intersection_point() const
 {
     if (!_known)
         intersection_type();
-    if (_result != POINT)
-        return false;
-    pt = _pointlist.first->point;
-    return true;
+    CGAL_kernel_assertion(_result == POINT);
+    return _pointlist.first->point;
 }
 
 
@@ -367,21 +328,12 @@ intersection(const typename K::Triangle_2 &tr1,
     case is_t::NO_INTERSECTION:
     default:
         return Object();
-    case is_t::POINT: {
-        typename K::Point_2 pt;
-        ispair.intersection(pt);
-        return make_object(pt);
-    }
-    case is_t::SEGMENT: {
-        typename K::Segment_2 iseg;
-        ispair.intersection(iseg);
-        return make_object(iseg);
-    }
-    case is_t::TRIANGLE: {
-        typename K::Triangle_2 itr;
-        ispair.intersection(itr);
-        return make_object(itr);
-    }
+    case is_t::POINT:
+        return make_object(ispair.intersection_point());
+    case is_t::SEGMENT:
+        return make_object(ispair.intersection_segment());
+    case is_t::TRIANGLE:
+        return make_object(ispair.intersection_triangle());
     case is_t::POLYGON: {
         typedef std::vector<typename K::Point_2> Container;
         Container points(ispair.vertex_count());

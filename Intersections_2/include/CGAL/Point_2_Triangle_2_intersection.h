@@ -41,21 +41,20 @@ template <class K>
 class Point_2_Triangle_2_pair {
 public:
     enum Intersection_results {NO_INTERSECTION, POINT};
-    Point_2_Triangle_2_pair() ;
     Point_2_Triangle_2_pair(typename K::Point_2 const *pt,
-                            typename K::Triangle_2 const *trian);
-    ~Point_2_Triangle_2_pair() {}
+                            typename K::Triangle_2 const *trian)
+	    : _pt(pt), _trian(trian), _known(false) {}
 
     Intersection_results intersection_type() const;
 
-    bool                intersection(typename K::Point_2 &result) const;
+    typename K::Point_2  intersection_point() const;
 protected:
     typename K::Point_2 const *    _pt;
     typename K::Triangle_2 const * _trian;
-    mutable bool                       _known;
-    mutable Intersection_results       _result;
-    mutable typename K::Point_2           _intersection_point;
-    mutable typename K::Point_2            _other_point;
+    mutable bool                   _known;
+    mutable Intersection_results   _result;
+    mutable typename K::Point_2    _intersection_point;
+    mutable typename K::Point_2    _other_point;
 };
 
 template <class K>
@@ -67,6 +66,7 @@ inline bool do_intersect(const typename K::Point_2 &p1,
   pair_t pair(&p1, &p2);
   return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
+
 template <class K>
 inline bool do_intersect(const typename K::Triangle_2 &p2,
 			 const typename K::Point_2 &p1,
@@ -75,25 +75,6 @@ inline bool do_intersect(const typename K::Triangle_2 &p2,
   return CGALi::do_intersect(p1, p2, k);
 }
 
-
-template <class K>
-Point_2_Triangle_2_pair<K>::
-Point_2_Triangle_2_pair()
-{
-    _known = false;
-    _pt = 0;
-    _trian = 0;
-}
-
-template <class K>
-Point_2_Triangle_2_pair<K>::
-Point_2_Triangle_2_pair(typename K::Point_2 const *pt,
-			typename K::Triangle_2 const *trian)
-{
-    _known = false;
-    _pt = pt;
-    _trian = trian;
-}
 
 template <class K>
 typename Point_2_Triangle_2_pair<K>::Intersection_results
@@ -134,16 +115,14 @@ Point_2_Triangle_2_pair<K>::intersection_type() const
 
 
 template <class K>
-bool
+typename K::Point_2
 Point_2_Triangle_2_pair<K>::
-intersection(typename K::Point_2 &result) const
+intersection_point() const
 {
     if (!_known)
         intersection_type();
-    if (_result != POINT)
-        return false;
-    result = *_pt;
-    return true;
+    CGAL_kernel_assertion(_result == POINT);
+    return *_pt;
 }
 
 
@@ -160,9 +139,8 @@ intersection(const typename K::Point_2 &pt,
     case is_t::NO_INTERSECTION:
     default:
         return Object();
-    case is_t::POINT: {
+    case is_t::POINT:
         return make_object(pt);
-    }
     }
 }
 
@@ -175,17 +153,6 @@ intersection(const typename K::Triangle_2 &tr,
 {
   return CGALi::intersection(pt, tr, k);
 }
-
-
-template <class K>
-class Triangle_2_Point_2_pair
-: public Point_2_Triangle_2_pair<K> {
-public:
-    Triangle_2_Point_2_pair(
-            typename K::Triangle_2 const *trian,
-            typename K::Point_2 const *pt) :
-                        Point_2_Triangle_2_pair<K>(pt, trian) {}
-};
 
 } // namespace CGALi
 
@@ -223,6 +190,7 @@ intersection(const Point_2<K> &pt, const Triangle_2<K> &tr)
   typedef typename K::Intersect_2 Intersect;
   return Intersect()(pt, tr);
 }
+
 CGAL_END_NAMESPACE
 
 #endif

@@ -42,15 +42,14 @@ template <class K>
 class Ray_2_Segment_2_pair {
 public:
     enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
-    Ray_2_Segment_2_pair() ;
     Ray_2_Segment_2_pair(typename K::Ray_2 const *ray,
-			 typename K::Segment_2 const *line);
-    ~Ray_2_Segment_2_pair() {}
+			 typename K::Segment_2 const *seg)
+	    : _ray(ray), _seg(seg), _known(false) {}
 
     Intersection_results intersection_type() const;
 
-    bool                intersection(typename K::Point_2 &result) const;
-    bool                intersection(typename K::Segment_2 &result) const;
+    typename K::Point_2    intersection_point() const;
+    typename K::Segment_2  intersection_segment() const;
 protected:
     typename K::Ray_2 const *   _ray;
     typename K::Segment_2 const *  _seg;
@@ -75,23 +74,6 @@ inline bool do_intersect(const typename K::Segment_2 &p2,
 			 const K& k)
 {
   return CGALi::do_intersect(p1, p2, k);
-}
-
-template <class K>
-Ray_2_Segment_2_pair<K>::Ray_2_Segment_2_pair()
-{
-    _ray = 0;
-    _seg = 0;
-    _known = false;
-}
-
-template <class K>
-Ray_2_Segment_2_pair<K>::Ray_2_Segment_2_pair(
-    typename K::Ray_2 const *ray, typename K::Segment_2 const *seg)
-{
-    _ray = ray;
-    _seg = seg;
-    _known = false;
 }
 
 template <class K>
@@ -230,28 +212,24 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
 }
 
 template <class K>
-bool
-Ray_2_Segment_2_pair<K>::intersection(typename K::Point_2 &result) const
+typename K::Point_2
+Ray_2_Segment_2_pair<K>::intersection_point() const
 {
     if (!_known)
         intersection_type();
-    if (_result != POINT)
-        return false;
-    result = _intersection_point;
-    return true;
+    CGAL_kernel_assertion(_result == POINT);
+    return _intersection_point;
 }
 
 template <class K>
-bool
-Ray_2_Segment_2_pair<K>::intersection(typename K::Segment_2 &result) const
+typename K::Segment_2
+Ray_2_Segment_2_pair<K>::intersection_segment() const
 {
   typedef typename K::Segment_2 Segment_2;
     if (!_known)
         intersection_type();
-    if (_result != SEGMENT)
-        return false;
-    result = Segment_2(_intersection_point, _other_point);
-    return true;
+    CGAL_kernel_assertion(_result == SEGMENT);
+    return Segment_2(_intersection_point, _other_point);
 }
 
 
@@ -268,16 +246,10 @@ intersection(const typename K::Ray_2 &ray,
     case is_t::NO_INTERSECTION:
     default:
         return Object();
-    case is_t::POINT: {
-        typename K::Point_2 pt;
-        ispair.intersection(pt);
-        return make_object(pt);
-    }
-    case is_t::SEGMENT: {
-        typename K::Segment_2 iseg;
-        ispair.intersection(iseg);
-        return make_object(iseg);
-    }
+    case is_t::POINT:
+        return make_object(ispair.intersection_point());
+    case is_t::SEGMENT:
+        return make_object(ispair.intersection_segment());
     }
 }
 
@@ -290,17 +262,6 @@ intersection(const typename K::Segment_2 &seg,
 {
   return CGALi::intersection(ray, seg, k);
 }
-
-
-template <class K>
-class Segment_2_Ray_2_pair: public Ray_2_Segment_2_pair<K> {
-public:
-    Segment_2_Ray_2_pair(
-            typename K::Segment_2 const *seg,
-            typename K::Ray_2 const *ray) :
-                                Ray_2_Segment_2_pair<K>(ray, seg) {}
-};
-
 
 } // namespace CGALi
 
@@ -337,6 +298,7 @@ intersection(const Ray_2<K> &ray, const Segment_2<K> &seg)
   typedef typename K::Intersect_2 Intersect;
   return Intersect()(ray, seg);
 }
+
 CGAL_END_NAMESPACE
 
 #endif

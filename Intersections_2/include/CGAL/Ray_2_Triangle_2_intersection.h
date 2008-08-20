@@ -46,15 +46,14 @@ template <class K>
 class Ray_2_Triangle_2_pair {
 public:
     enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
-    Ray_2_Triangle_2_pair() ;
     Ray_2_Triangle_2_pair(typename K::Ray_2 const *ray,
-			  typename K::Triangle_2 const *trian);
-    ~Ray_2_Triangle_2_pair() {}
+			  typename K::Triangle_2 const *trian)
+	    : _ray(ray), _trian(trian), _known(false) {}
 
     Intersection_results intersection_type() const;
 
-    bool                intersection(typename K::Point_2 &result) const;
-    bool                intersection(typename K::Segment_2 &result) const;
+    typename K::Point_2    intersection_point() const;
+    typename K::Segment_2  intersection_segment() const;
 protected:
     typename K::Ray_2 const* _ray;
     typename K::Triangle_2 const *  _trian;
@@ -65,29 +64,6 @@ protected:
 };
 
 
-
-
-
-
-
-template <class K>
-Ray_2_Triangle_2_pair<K>::
-Ray_2_Triangle_2_pair()
-{
-    _known = false;
-    _ray = 0;
-    _trian = 0;
-}
-
-template <class K>
-Ray_2_Triangle_2_pair<K>::
-Ray_2_Triangle_2_pair(typename K::Ray_2 const *ray,
-                            typename K::Triangle_2 const *trian)
-{
-    _known = false;
-    _ray = ray;
-    _trian = trian;
-}
 
 template <class K>
 typename Ray_2_Triangle_2_pair<K>::Intersection_results
@@ -142,30 +118,26 @@ if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
 
 
 template <class K>
-bool
+typename K::Point_2
 Ray_2_Triangle_2_pair<K>::
-intersection(typename K::Point_2 &result) const
+intersection_point() const
 {
     if (!_known)
         intersection_type();
-    if (_result != POINT)
-        return false;
-    result = _intersection_point;
-    return true;
+    CGAL_kernel_assertion(_result == POINT);
+    return _intersection_point;
 }
 
 template <class K>
-bool
+typename K::Segment_2
 Ray_2_Triangle_2_pair<K>::
-intersection(typename K::Segment_2 &result) const
+intersection_segment() const
 {
   typedef typename K::Segment_2 Segment_2;
     if (!_known)
         intersection_type();
-    if (_result != SEGMENT)
-        return false;
-    result = Segment_2(_intersection_point, _other_point);
-    return true;
+    CGAL_kernel_assertion(_result == SEGMENT);
+    return Segment_2(_intersection_point, _other_point);
 }
 
 
@@ -184,16 +156,10 @@ intersection(const typename K::Ray_2 &ray,
     case is_t::NO_INTERSECTION:
     default:
         return Object();
-    case is_t::POINT: {
-        typename K::Point_2 pt;
-        ispair.intersection(pt);
-        return make_object(pt);
-    }
-    case is_t::SEGMENT: {
-        typename K::Segment_2 iseg;
-        ispair.intersection(iseg);
-        return make_object(iseg);
-    }
+    case is_t::POINT:
+        return make_object(ispair.intersection_segment());
+    case is_t::SEGMENT:
+        return make_object(ispair.intersection_segment());
     }
 }
 
@@ -207,15 +173,6 @@ intersection(const typename K::Triangle_2&tr,
 }
 
 
-template <class K>
-class Triangle_2_Ray_2_pair
-: public Ray_2_Triangle_2_pair<K> {
-public:
-    Triangle_2_Ray_2_pair(
-            typename K::Triangle_2 const *trian,
-            typename K::Ray_2 const *ray) :
-                        Ray_2_Triangle_2_pair<K>(ray, trian) {}
-};
 
 template <class K>
 inline bool do_intersect(
@@ -235,8 +192,8 @@ inline bool do_intersect(
     const typename K::Ray_2 &p2,
     const K&)
 {
-    typedef Triangle_2_Ray_2_pair<K> pair_t;
-    pair_t pair(&p1, &p2);
+    typedef Ray_2_Triangle_2_pair<K> pair_t;
+    pair_t pair(&p2, &p1);
     return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
@@ -266,6 +223,7 @@ intersection(const Ray_2<K> &ray, const Triangle_2<K> &tr)
   typedef typename K::Intersect_2 Intersect;
   return Intersect()(ray, tr);
 }
+
 template <class K>
 inline Object
 intersection(const Triangle_2<K> &tr, const Ray_2<K> &ray)
@@ -273,6 +231,7 @@ intersection(const Triangle_2<K> &tr, const Ray_2<K> &ray)
   typedef typename K::Intersect_2 Intersect;
   return Intersect()(ray, tr);
 }
+
 CGAL_END_NAMESPACE
 
 #endif

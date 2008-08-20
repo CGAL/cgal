@@ -56,7 +56,6 @@ public:
                             Straight_2_(typename K::Ray_2 const &ray) ;
                             Straight_2_(typename K::Ray_2 const &ray,bool cooriented) ;
                             Straight_2_(typename K::Segment_2 const &seg) ;
-                            ~Straight_2_() {}
     void                    cut_right_off(typename K::Line_2 const & cutter) ;
     int                     collinear_order(typename K::Point_2 const & p1,
                                             typename K::Point_2 const &p2) const ;

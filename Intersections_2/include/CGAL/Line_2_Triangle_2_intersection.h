@@ -42,15 +42,14 @@ template <class K>
 class Line_2_Triangle_2_pair {
 public:
     enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
-    Line_2_Triangle_2_pair() ;
     Line_2_Triangle_2_pair(typename K::Line_2 const *line,
-			   typename K::Triangle_2 const *trian);
-    ~Line_2_Triangle_2_pair() {}
+			   typename K::Triangle_2 const *trian)
+        : _line(line), _trian(trian), _known(false) {}
 
     Intersection_results intersection_type() const;
 
-    bool                intersection(typename K::Point_2 &result) const;
-    bool                intersection(typename K::Segment_2 &result) const;
+    typename K::Point_2    intersection_point() const;
+    typename K::Segment_2  intersection_segment() const;
 protected:
     typename K::Line_2 const*_line;
     typename K::Triangle_2 const *  _trian;
@@ -80,25 +79,6 @@ do_intersect(const typename K::Triangle_2 &p2,
 	     const K& k)
 {
   return CGALi::do_intersect(p1, p2, k);
-}
-
-template <class K>
-Line_2_Triangle_2_pair<K>::
-Line_2_Triangle_2_pair()
-{
-    _known = false;
-    _line = 0;
-    _trian = 0;
-}
-
-template <class K>
-Line_2_Triangle_2_pair<K>::
-Line_2_Triangle_2_pair(typename K::Line_2 const *line,
-		       typename K::Triangle_2 const *trian)
-{
-    _known = false;
-    _line = line;
-    _trian = trian;
 }
 
 template <class K>
@@ -154,30 +134,26 @@ if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
 
 
 template <class K>
-bool
+typename K::Point_2
 Line_2_Triangle_2_pair<K>::
-intersection(typename K::Point_2 &result) const
+intersection_point() const
 {
     if (!_known)
         intersection_type();
-    if (_result != POINT)
-        return false;
-    result = _intersection_point;
-    return true;
+    CGAL_kernel_assertion(_result == POINT);
+    return _intersection_point;
 }
 
 template <class K>
-bool
+typename K::Segment_2
 Line_2_Triangle_2_pair<K>::
-intersection(typename K::Segment_2 &result) const
+intersection_segment() const
 {
   typedef typename K::Segment_2 Segment_2;
     if (!_known)
         intersection_type();
-    if (_result != SEGMENT)
-        return false;
-    result = Segment_2(_intersection_point, _other_point);
-    return true;
+    CGAL_kernel_assertion(_result == SEGMENT);
+    return Segment_2(_intersection_point, _other_point);
 }
 
 
@@ -195,16 +171,10 @@ intersection(const typename K::Line_2 &line,
     case is_t::NO_INTERSECTION:
     default:
         return Object();
-    case is_t::POINT: {
-        typename K::Point_2 pt;
-        ispair.intersection(pt);
-        return make_object(pt);
-    }
-    case is_t::SEGMENT: {
-        typename K::Segment_2 iseg;
-        ispair.intersection(iseg);
-        return make_object(iseg);
-    }
+    case is_t::POINT:
+        return make_object(ispair.intersection_point());
+    case is_t::SEGMENT:
+        return make_object(ispair.intersection_segment());
     }
 }
 
@@ -218,17 +188,6 @@ intersection(const typename K::Triangle_2 &tr,
 {
   return intersection(line, tr, k);
 }
-
-
-template <class K>
-class Triangle_2_Line_2_pair
-: public Line_2_Triangle_2_pair<K> {
-public:
-    Triangle_2_Line_2_pair(
-            typename K::Triangle_2 const *trian,
-            typename K::Line_2 const *line) :
-                        Line_2_Triangle_2_pair<K>(line, trian) {}
-};
 
 } // namespace CGALi
 

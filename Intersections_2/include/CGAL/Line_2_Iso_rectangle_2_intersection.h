@@ -40,15 +40,18 @@ template <class K>
 class Line_2_Iso_rectangle_2_pair {
 public:
     enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
-    Line_2_Iso_rectangle_2_pair() ;
-    Line_2_Iso_rectangle_2_pair(typename K::Line_2 const *pt,
-                            typename K::Iso_rectangle_2 const *iso);
-    ~Line_2_Iso_rectangle_2_pair() {}
+    Line_2_Iso_rectangle_2_pair(typename K::Line_2 const *line,
+                            typename K::Iso_rectangle_2 const *iso)
+      : _known(false),
+        _ref_point(line->point()),
+        _dir(line->direction().to_vector()),
+        _isomin((iso->min)()),
+        _isomax((iso->max)()) {}
 
-  Intersection_results intersection_type() const;
+    Intersection_results intersection_type() const;
 
-    bool                intersection(typename K::Point_2 &result) const;
-    bool                intersection(typename K::Segment_2 &result) const;
+    typename K::Point_2    intersection_point() const;
+    typename K::Segment_2  intersection_segment() const;
 protected:
     mutable bool                        _known;
     mutable Intersection_results        _result;
@@ -77,24 +80,6 @@ inline bool do_intersect(const typename K::Iso_rectangle_2 &p2,
   return CGALi::do_intersect(p1, p2, k);
 }
 
-
-template <class K>
-Line_2_Iso_rectangle_2_pair<K>::
-Line_2_Iso_rectangle_2_pair()
-{
-    _known = false;
-}
-
-template <class K>
-Line_2_Iso_rectangle_2_pair<K>::
-Line_2_Iso_rectangle_2_pair(typename K::Line_2 const *line,
-                            typename K::Iso_rectangle_2 const *iso)
-  : _known(false),
-    _ref_point(line->point()),
-    _dir(line->direction().to_vector()),
-    _isomin((iso->min)()),
-    _isomax((iso->max)())
-{}
 
 
 template <class K>
@@ -167,36 +152,32 @@ Line_2_Iso_rectangle_2_pair<K>::intersection_type() const
 
 
 template <class K>
-bool
+typename K::Point_2
 Line_2_Iso_rectangle_2_pair<K>::
-intersection(typename K::Point_2 &result) const
+intersection_point() const
 {
   typename K::Construct_translated_point_2 translated_point;
   typename K::Construct_scaled_vector_2 construct_scaled_vector;
 
     if (!_known)
         intersection_type();
-    if (_result != POINT)
-        return false;
-    result = translated_point(_ref_point, construct_scaled_vector(_dir, _min));
-    return true;
+    CGAL_kernel_assertion(_result == POINT);
+    return translated_point(_ref_point, construct_scaled_vector(_dir, _min));
 }
 
 template <class K>
-bool
+typename K::Segment_2
 Line_2_Iso_rectangle_2_pair<K>::
-intersection(typename K::Segment_2 &result) const
+intersection_segment() const
 {
   typename K::Construct_segment_2 construct_segment_2;
   typename K::Construct_translated_point_2 translated_point;
   typename K::Construct_scaled_vector_2 construct_scaled_vector;
     if (!_known)
         intersection_type();
-    if (_result != SEGMENT)
-        return false;
-    result = construct_segment_2(translated_point(_ref_point, construct_scaled_vector(_dir,_min)), 
-				 translated_point(_ref_point, construct_scaled_vector(_dir,_max)));
-    return true;
+    CGAL_kernel_assertion(_result == SEGMENT);
+    return construct_segment_2(translated_point(_ref_point, construct_scaled_vector(_dir,_min)), 
+			       translated_point(_ref_point, construct_scaled_vector(_dir,_max)));
 }
 
 
@@ -214,16 +195,10 @@ intersection(const typename K::Line_2 &line,
     case is_t::NO_INTERSECTION:
     default:
         return Object();
-    case is_t::POINT: {
-        typename K::Point_2 ipt;
-        ispair.intersection(ipt);
-        return construct_object(ipt);
-    }
-    case is_t::SEGMENT: {
-        typename K::Segment_2 iseg;
-        ispair.intersection(iseg);
-        return construct_object(iseg);
-    }
+    case is_t::POINT:
+        return construct_object(ispair.intersection_point());
+    case is_t::SEGMENT:
+        return construct_object(ispair.intersection_segment());
     }
 }
 
@@ -237,19 +212,7 @@ intersection(const typename K::Iso_rectangle_2 &iso,
   return CGALi::intersection(line, iso, k);
 }
 
-template <class K>
-class Iso_rectangle_2_Line_2_pair
-: public Line_2_Iso_rectangle_2_pair<K> {
-public:
-    Iso_rectangle_2_Line_2_pair(
-            typename K::Iso_rectangle_2 const *iso,
-            typename K::Line_2 const *line) :
-                        Line_2_Iso_rectangle_2_pair<K>(line, iso) {}
-};
-
 } // namespace CGALi
-
-
 
 
 template <class K>
