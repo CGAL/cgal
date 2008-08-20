@@ -3817,7 +3817,7 @@ _is_inside_new_face (const DHalfedge *prev1,
   bool                          is_perimetric;
   std::pair<const DVertex*, const DHalfedge*>   find_res =
     _find_leftmost_vertex_on_open_loop (prev2, he_last, cv, is_perimetric);
-  std::cout << "is_inside_new_face: " << std::endl;
+
   if (is_perimetric)
   {
       std::cout << "perimetric" << std::endl;
