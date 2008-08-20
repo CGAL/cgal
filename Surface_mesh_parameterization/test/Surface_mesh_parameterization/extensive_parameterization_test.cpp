@@ -184,8 +184,7 @@ int main(int argc, char * argv[])
     // Parameterize each input file and accumulate errors
     for (int arg_index = 1; arg_index <= argc-1; arg_index++)
     {
-        std::cerr << std::endl;
-        std::cerr << std::endl;
+        std::cerr << std::endl << std::endl;
 
         // File name is:
         const char* input_filename  = argv[arg_index];
@@ -203,7 +202,7 @@ int main(int argc, char * argv[])
         stream >> mesh;
         if(!stream || !mesh.is_valid() || mesh.empty())
         {
-            std::cerr << "FATAL ERROR: cannot read OFF file " << input_filename << std::endl;
+            std::cerr << "Error: cannot read OFF file " << input_filename << std::endl;
             accumulated_fatal_err = EXIT_FAILURE;
             continue;
         }
@@ -228,7 +227,8 @@ int main(int argc, char * argv[])
         Seam seam = cut_mesh(mesh_adaptor);
         if (seam.empty())
         {
-            std::cerr << "Minor Error: an unexpected error occurred while cutting the shape" << std::endl;
+            std::cerr << "Input mesh not supported: the example cutting algorithm is too simple to cut this shape" << std::endl;
+            // this is not a bug => do not set accumulated_fatal_err
             continue;
         }
         //
@@ -236,12 +236,12 @@ int main(int argc, char * argv[])
         Mesh_patch_polyhedron   mesh_patch(mesh_adaptor, seam.begin(), seam.end());
         if (!mesh_patch.is_valid())
         {
-            std::cerr << "Minor error: non manifold shape or invalid cutting" << std::endl;
+            std::cerr << "Input mesh not supported: non manifold shape or invalid cutting" << std::endl;
+            // this is not a bug => do not set accumulated_fatal_err
             continue;
         }
 
-        std::cerr << "Mesh cutting: " << task_timer.time() << " seconds." << std::endl;
-        std::cerr << std::endl;
+        std::cerr << "Mesh cutting: " << task_timer.time() << " seconds." << std::endl << std::endl;
         task_timer.reset();
 
         //***************************************
@@ -263,11 +263,23 @@ int main(int argc, char * argv[])
                 CGAL::Square_border_uniform_parameterizer_3<Mesh_patch_polyhedron>,
                 OpenNL::DefaultLinearSolverTraits<double>
             >());
-        if (err != Parameterizer::OK)
-            std::cerr << "Minor Error: " << Parameterizer::get_error_message(err) << std::endl;
+        switch(err) {
+        case Parameterizer::OK: // Success
+            break;
+        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+            // this is not a bug => do not set accumulated_fatal_err
+            break;
+        default: // Error
+            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+            accumulated_fatal_err = EXIT_FAILURE;
+            break;
+        };
 
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
-        std::cerr << std::endl;
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
         task_timer.reset();
 
         //***************************************
@@ -287,11 +299,23 @@ int main(int argc, char * argv[])
                 CGAL::Circular_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
                 OpenNL::DefaultLinearSolverTraits<double>
             >());
-        if (err != Parameterizer::OK)
-            std::cerr << "Minor Error: " << Parameterizer::get_error_message(err) << std::endl;
+        switch(err) {
+        case Parameterizer::OK: // Success
+            break;
+        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+            // this is not a bug => do not set accumulated_fatal_err
+            break;
+        default: // Error
+            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+            accumulated_fatal_err = EXIT_FAILURE;
+            break;
+        };
 
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
-        std::cerr << std::endl;
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
         task_timer.reset();
 
         //***************************************
@@ -309,11 +333,23 @@ int main(int argc, char * argv[])
                 CGAL::Two_vertices_parameterizer_3<Mesh_patch_polyhedron>,
                 OpenNL::SymmetricLinearSolverTraits<double>
             >());
-        if (err != Parameterizer::OK)
-            std::cerr << "Minor Error: " << Parameterizer::get_error_message(err) << std::endl;
+        switch(err) {
+        case Parameterizer::OK: // Success
+            break;
+        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+            // this is not a bug => do not set accumulated_fatal_err
+            break;
+        default: // Error
+            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+            accumulated_fatal_err = EXIT_FAILURE;
+            break;
+        };
 
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
-        std::cerr << std::endl;
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
         task_timer.reset();
 
 #ifdef CGAL_USE_TAUCS
@@ -335,11 +371,23 @@ int main(int argc, char * argv[])
                 CGAL::Circular_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
                 CGAL::Taucs_solver_traits<double>
             >());
-        if (err != Parameterizer::OK)
-            std::cerr << "Minor Error: " << Parameterizer::get_error_message(err) << std::endl;
+        switch(err) {
+        case Parameterizer::OK: // Success
+            break;
+        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+            // this is not a bug => do not set accumulated_fatal_err
+            break;
+        default: // Error
+            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+            accumulated_fatal_err = EXIT_FAILURE;
+            break;
+        };
 
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
-        std::cerr << std::endl;
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
         task_timer.reset();
 
         //***************************************
@@ -359,11 +407,23 @@ int main(int argc, char * argv[])
                 CGAL::Square_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
                 CGAL::Taucs_solver_traits<double>
             >());
-        if (err != Parameterizer::OK)
-            std::cerr << "Minor Error: " << Parameterizer::get_error_message(err) << std::endl;
+        switch(err) {
+        case Parameterizer::OK: // Success
+            break;
+        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+            // this is not a bug => do not set accumulated_fatal_err
+            break;
+        default: // Error
+            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+            accumulated_fatal_err = EXIT_FAILURE;
+            break;
+        };
 
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
-        std::cerr << std::endl;
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
         task_timer.reset();
 
         //***************************************
@@ -381,17 +441,29 @@ int main(int argc, char * argv[])
                 CGAL::Two_vertices_parameterizer_3<Mesh_patch_polyhedron>,
                 CGAL::Taucs_symmetric_solver_traits<double>
             >());
-        if (err != Parameterizer::OK)
-            std::cerr << "Minor Error: " << Parameterizer::get_error_message(err) << std::endl;
+        switch(err) {
+        case Parameterizer::OK: // Success
+            break;
+        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+            // this is not a bug => do not set accumulated_fatal_err
+            break;
+        default: // Error
+            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+            accumulated_fatal_err = EXIT_FAILURE;
+            break;
+        };
 
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl;
-        std::cerr << std::endl;
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
         task_timer.reset();
         
 #else
 
-        std::cerr << "Skip TAUCS tests as TAUCS is not installed" << std::endl;
-        std::cerr << std::endl;
+        std::cerr << "Skip TAUCS tests as TAUCS is not installed" << std::endl << std::endl;
+        // this is not a bug => do not set accumulated_fatal_err
         
 #endif // CGAL_USE_TAUCS
 

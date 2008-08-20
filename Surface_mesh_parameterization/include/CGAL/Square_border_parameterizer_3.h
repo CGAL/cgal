@@ -172,12 +172,12 @@ Square_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 
     // Nothing to do if no border
     if (mesh.mesh_main_border_vertices_begin() == mesh.mesh_main_border_vertices_end())
-        return Parameterizer_traits_3<Adaptor>::ERROR_INVALID_BORDER;
+        return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // Compute the total border length
     double total_len = compute_border_length(mesh);
     if (total_len == 0)
-        return Parameterizer_traits_3<Adaptor>::ERROR_INVALID_BORDER;
+        return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // map to [0,4[
     double len = 0.0;           // current position on square in [0, total_len[
@@ -212,7 +212,7 @@ Square_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     //
     // We may get into trouble if the border is too short
     if (it0 == it1 || it1 == it2 || it2 == it3 || it3 == it0)
-        return Parameterizer_traits_3<Adaptor>::ERROR_INVALID_BORDER;
+        return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
     //
     // Snap these vertices to corners
     offset[mesh.get_vertex_index(it0)] = 0.0;

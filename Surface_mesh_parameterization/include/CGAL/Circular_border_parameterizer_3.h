@@ -160,12 +160,12 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 
     // Nothing to do if no border
     if (mesh.mesh_main_border_vertices_begin() == mesh.mesh_main_border_vertices_end())
-        return Parameterizer_traits_3<Adaptor>::ERROR_INVALID_BORDER;
+        return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // Compute the total border length
     double total_len = compute_border_length(mesh);
     if (total_len == 0)
-        return Parameterizer_traits_3<Adaptor>::ERROR_INVALID_BORDER;
+        return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     const double PI = 3.14159265359;
     const double tmp = 2*PI/total_len;

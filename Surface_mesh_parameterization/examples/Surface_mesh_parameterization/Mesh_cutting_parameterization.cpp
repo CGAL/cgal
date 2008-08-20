@@ -119,7 +119,7 @@ int main(int argc, char * argv[])
     stream >> mesh;
     if(!stream || !mesh.is_valid() || mesh.empty())
     {
-        std::cerr << "FATAL ERROR: cannot read OFF file " << input_filename << std::endl;
+        std::cerr << "Error: cannot read OFF file " << input_filename << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -139,7 +139,7 @@ int main(int argc, char * argv[])
     Seam seam = cut_mesh(mesh_adaptor);
     if (seam.empty())
     {
-        std::cerr << "FATAL ERROR: an unexpected error occurred while cutting the shape" << std::endl;
+        std::cerr << "Input mesh not supported: the example cutting algorithm is too simple to cut this shape" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -149,7 +149,7 @@ int main(int argc, char * argv[])
     Mesh_patch_polyhedron   mesh_patch(mesh_adaptor, seam.begin(), seam.end());
     if (!mesh_patch.is_valid())
     {
-        std::cerr << "FATAL ERROR: non manifold shape or invalid cutting" << std::endl;
+        std::cerr << "Input mesh not supported: non manifold shape or invalid cutting" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -157,32 +157,41 @@ int main(int argc, char * argv[])
     // Floater Mean Value Coordinates parameterization
     //***************************************
 
-    // Type that defines the error codes
     typedef CGAL::Parameterizer_traits_3<Mesh_patch_polyhedron>
-                                            Parameterizer;
+                                            Parameterizer; // Type that defines the error codes
 
     Parameterizer::Error_code err = CGAL::parameterize(mesh_patch);
-    if (err != Parameterizer::OK)
-        std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
+    switch(err) {
+    case Parameterizer::OK: // Success
+        break;
+    case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+    case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
+    case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
+    case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+        std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+        return EXIT_FAILURE;
+        break;
+    default: // Error
+        std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+        return EXIT_FAILURE;
+        break;
+    };
 
     //***************************************
     // Output
     //***************************************
 
-    if (err == Parameterizer::OK)
+    // Raw output: dump (u,v) pairs
+    Polyhedron::Vertex_const_iterator pVertex;
+    for (pVertex = mesh.vertices_begin();
+        pVertex != mesh.vertices_end();
+        pVertex++)
     {
-        // Raw output: dump (u,v) pairs
-        Polyhedron::Vertex_const_iterator pVertex;
-        for (pVertex = mesh.vertices_begin();
-            pVertex != mesh.vertices_end();
-            pVertex++)
-        {
-            // (u,v) pair is stored in any halfedge
-            double u = mesh_adaptor.info(pVertex->halfedge())->uv().x();
-            double v = mesh_adaptor.info(pVertex->halfedge())->uv().y();
-            std::cout << "(u,v) = (" << u << "," << v << ")" << std::endl;
-        }
+        // (u,v) pair is stored in any halfedge
+        double u = mesh_adaptor.info(pVertex->halfedge())->uv().x();
+        double v = mesh_adaptor.info(pVertex->halfedge())->uv().y();
+        std::cout << "(u,v) = (" << u << "," << v << ")" << std::endl;
     }
 
-    return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }

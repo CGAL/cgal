@@ -142,7 +142,7 @@ public:
 // Protected operations
 protected:
     /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
-  virtual NT compute_w_ij(const Adaptor& /* mesh */,
+    virtual NT compute_w_ij(const Adaptor& /* mesh */,
 			  Vertex_const_handle /* main_vertex_v_i */,
 			  Vertex_around_vertex_const_circulator /* neighbor_vertex_v_j */ )
     {
@@ -152,7 +152,7 @@ protected:
     }
 
     /// Check if 3D -> 2D mapping is one-to-one.
-  virtual bool  is_one_to_one_mapping (const Adaptor& /* mesh */,
+    virtual bool  is_one_to_one_mapping (const Adaptor& /* mesh */,
 				       const Matrix& /* A */,
 				       const Vector& /* Bu */,
 				       const Vector& /* Bv */)

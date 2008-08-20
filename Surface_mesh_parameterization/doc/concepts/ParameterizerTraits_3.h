@@ -33,14 +33,15 @@ public:
     /// List of errors detected by this package
     enum Error_code {
     OK,                             ///< Success
-    ERROR_EMPTY_MESH,               ///< Error: input mesh is empty
-    ERROR_NON_TRIANGULAR_MESH,      ///< Error: input mesh is not triangular
-    ERROR_NO_SURFACE_MESH,          ///< Error: input mesh is not a surface
-    ERROR_INVALID_BORDER,           ///< Error: parameterization requires a convex border
-    ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< Error: cannot solve linear system
-    ERROR_NO_1_TO_1_MAPPING,        ///< Error: parameterization does not ensure a one-to-one mapping
-    ERROR_OUT_OF_MEMORY,            ///< Error: not enough memory
-    ERROR_WRONG_PARAMETER           ///< Error: a method received an unexpected parameter
+    ERROR_EMPTY_MESH,               ///< Input mesh is empty
+    ERROR_NON_TRIANGULAR_MESH,      ///< Input mesh is not triangular
+    ERROR_NO_TOPOLOGICAL_DISC,      ///< Input mesh is not a topological disc
+    ERROR_BORDER_TOO_SHORT,         ///< This border parameterization requires a longer border
+    ERROR_NON_CONVEX_BORDER,        ///< This parameterization method requires a convex border
+    ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< Cannot solve linear system
+    ERROR_NO_1_TO_1_MAPPING,        ///< Parameterization failed: no one-to-one mapping
+    ERROR_OUT_OF_MEMORY,            ///< Not enough memory
+    ERROR_WRONG_PARAMETER           ///< A method received an unexpected parameter
     };
 
     /// Export the type of mesh to parameterize

@@ -374,7 +374,7 @@ check_parameterize_preconditions(Adaptor& mesh)
     int nb_components = feature_extractor.get_nb_connex_components();   
     status = (genus == 0 && nb_borders >= 1 && nb_components == 1)      
            ? Base::OK                                                   
-           : Base::ERROR_NO_SURFACE_MESH;                               
+           : Base::ERROR_NO_TOPOLOGICAL_DISC;                               
     if (status != Base::OK)
         return status;
 

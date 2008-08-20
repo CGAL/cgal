@@ -51,7 +51,7 @@ int main(int argc, char * argv[])
     stream >> mesh;
     if(!stream || !mesh.is_valid() || mesh.empty())
     {
-        std::cerr << "FATAL ERROR: cannot read OFF file " << input_filename << std::endl;
+        std::cerr << "Error: cannot read OFF file " << input_filename << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -80,27 +80,37 @@ int main(int argc, char * argv[])
                                                         Parameterizer;
 
     Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer());
-    if (err != Parameterizer::OK)
-        std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
+    switch(err) {
+    case Parameterizer::OK: // Success
+        break;
+    case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+    case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
+    case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
+    case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+        std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+        return EXIT_FAILURE;
+        break;
+    default: // Error
+        std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+        return EXIT_FAILURE;
+        break;
+    };
 
     //***************************************
     // Output
     //***************************************
 
-    if (err == Parameterizer::OK)
+    // Raw output: dump (u,v) pairs
+    Polyhedron::Vertex_const_iterator pVertex;
+    for (pVertex = mesh.vertices_begin();
+        pVertex != mesh.vertices_end();
+        pVertex++)
     {
-        // Raw output: dump (u,v) pairs
-        Polyhedron::Vertex_const_iterator pVertex;
-        for (pVertex = mesh.vertices_begin();
-            pVertex != mesh.vertices_end();
-            pVertex++)
-        {
-            // (u,v) pair is stored in any halfedge
-            double u = mesh_adaptor.info(pVertex->halfedge())->uv().x();
-            double v = mesh_adaptor.info(pVertex->halfedge())->uv().y();
-            std::cout << "(u,v) = (" << u << "," << v << ")" << std::endl;
-        }
+        // (u,v) pair is stored in any halfedge
+        double u = mesh_adaptor.info(pVertex->halfedge())->uv().x();
+        double v = mesh_adaptor.info(pVertex->halfedge())->uv().y();
+        std::cout << "(u,v) = (" << u << "," << v << ")" << std::endl;
     }
 
-    return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }

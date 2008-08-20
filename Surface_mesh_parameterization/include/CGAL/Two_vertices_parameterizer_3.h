@@ -120,7 +120,7 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 
     // Nothing to do if no border
     if (mesh.mesh_main_border_vertices_begin() == mesh.mesh_main_border_vertices_end())
-        return Parameterizer_traits_3<Adaptor>::ERROR_INVALID_BORDER;
+        return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // Get mesh's bounding box
     double xmin =  1e30 ;

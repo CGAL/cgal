@@ -211,7 +211,7 @@ int main(int argc, char * argv[])
     stream >> mesh;
     if(!stream || !mesh.is_valid() || mesh.empty())
     {
-        std::cerr << "FATAL ERROR: cannot read OFF file " << input_filename << std::endl;
+        std::cerr << "Error: cannot read OFF file " << input_filename << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -231,7 +231,7 @@ int main(int argc, char * argv[])
     Seam seam = cut_mesh(mesh_adaptor);
     if (seam.empty())
     {
-        std::cerr << "FATAL ERROR: an unexpected error occurred while cutting the shape" << std::endl;
+        std::cerr << "Input mesh not supported: the example cutting algorithm is too simple to cut this shape" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -241,7 +241,7 @@ int main(int argc, char * argv[])
     Mesh_patch_polyhedron   mesh_patch(mesh_adaptor, seam.begin(), seam.end());
     if (!mesh_patch.is_valid())
     {
-        std::cerr << "FATAL ERROR: non manifold shape or invalid cutting" << std::endl;
+        std::cerr << "Input mesh not supported: non manifold shape or invalid cutting" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -263,24 +263,34 @@ int main(int argc, char * argv[])
                                                     Solver> Parameterizer;
 
     Parameterizer::Error_code err = CGAL::parameterize(mesh_patch, Parameterizer());
-    if (err != Parameterizer::OK)
-        std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
+    switch(err) {
+    case Parameterizer::OK: // Success
+        break;
+    case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+    case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
+    case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
+    case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+        std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+        return EXIT_FAILURE;
+        break;
+    default: // Error
+        std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+        return EXIT_FAILURE;
+        break;
+    };
 
     //***************************************
     // Output
     //***************************************
 
     // Write Postscript file
-    if (err == Parameterizer::OK)
+    if ( ! write_file_eps(mesh_adaptor, output_filename) )
     {
-        if ( ! write_file_eps(mesh_adaptor, output_filename) )
-        {
-            std::cerr << "FATAL ERROR: cannot write file " << output_filename << std::endl;
-            return EXIT_FAILURE;
-        }
+        std::cerr << "Error: cannot write file " << output_filename << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return (err == Parameterizer::OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }
 
 

@@ -57,7 +57,7 @@ Export the type of mesh to parameterize.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccConstants)
 
-\ccEnum{enum Error_code { OK, ERROR_EMPTY_MESH, ERROR_NON_TRIANGULAR_MESH, ERROR_NO_SURFACE_MESH,  ERROR_INVALID_BORDER, ERROR_CANNOT_SOLVE_LINEAR_SYSTEM, ERROR_NO_1_TO_1_MAPPING, ERROR_OUT_OF_MEMORY,  ERROR_WRONG_PARAMETER  };}
+\ccEnum{enum Error_code { OK, ERROR_EMPTY_MESH, ERROR_NON_TRIANGULAR_MESH, ERROR_NO_TOPOLOGICAL_DISC,  ERROR_INVALID_BORDER, ERROR_CANNOT_SOLVE_LINEAR_SYSTEM, ERROR_NO_1_TO_1_MAPPING, ERROR_OUT_OF_MEMORY,  ERROR_WRONG_PARAMETER  };}
 {
 List of errors detected by this package.
 }
@@ -68,7 +68,7 @@ List of errors detected by this package.
 \item[OK
 ]Success. \item[\ccc{ERROR_EMPTY_MESH}
 ]Error: input mesh is empty. \item[\ccc{ERROR_NON_TRIANGULAR_MESH}
-]Error: input mesh is not triangular. \item[\ccc{ERROR_NO_SURFACE_MESH}
+]Error: input mesh is not triangular. \item[\ccc{ERROR_NO_TOPOLOGICAL_DISC}
 ]Error: input mesh is not a surface. \item[\ccc{ERROR_INVALID_BORDER}
 ]Error: parameterization requires a convex border. \item[\ccc{ERROR_CANNOT_SOLVE_LINEAR_SYSTEM}
 ]Error: cannot solve linear system. \item[\ccc{ERROR_NO_1_TO_1_MAPPING}
