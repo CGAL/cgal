@@ -71,12 +71,12 @@ void Model::process_hetatom(const char *line) {
  
 }
 
-void Model::add_hetatom(int numscan, int snum, char name[], char alt, 
+void Model::add_hetatom(int numscan, int snum, char name[], char /* alt */, 
                         char resname[], char chain, int resnum,
-                        char insertion_residue_code, 
+                        char /* insertion_residue_code */, 
                         float x, float y, float z,
                         float occupancy, float tempFactor,
-                        char segID[], char element[], char charge[]) {
+                        char segID[], char element[], char /* charge */ []) {
   Atom::Index sindex(snum);
   Atom a;
   //a.set_label(Residue::atom_label(al));

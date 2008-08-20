@@ -77,7 +77,7 @@ void Heterogen::swap_with(Heterogen &o) {
 
 
 
-void Heterogen::dump(std::ostream &out) const {
+void Heterogen::dump(std::ostream & /* out */ ) const {
   
 }
 
