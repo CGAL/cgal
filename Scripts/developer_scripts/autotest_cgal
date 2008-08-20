@@ -291,7 +291,7 @@ EOF
 	${TAR} cf test_results-${1}.tar "results_"$CGAL_TESTER"_"${2}".tar.gz" "results_"$CGAL_TESTER"_"${2}".txt"
 	${COMPRESSOR} -9f test_results-${1}.tar
 	COMPILER=`echo $2 | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
-	FILENAME=${CGAL_RELEASE_ID}-test`datestr`-${COMPILER}.tar.gz
+	FILENAME="${CGAL_RELEASE_ID}_${CGAL_TESTER}-test`datestr`-${COMPILER}.tar.gz"
 	LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${1}.gz"
 	${COMPRESSOR} -9f ${ACTUAL_LOGFILE}.${1}
 	mv ${ACTUAL_LOGFILE}.${1}.gz ${LOGS_DIR}/${LOGFILENAME}
@@ -299,7 +299,7 @@ EOF
         if [ -z "${DO_NOT_UPLOAD}" ]; then
 	    put_on_web \
 	        test_results-${1}.tar.gz \
-	        ${FILENAME}
+	        "${FILENAME}"
         fi
 
     #
