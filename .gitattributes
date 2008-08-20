@@ -3695,6 +3695,7 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -text svneol=unset#application/octet-stream
+Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/pyramid.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_parameterization_test.cmd eol=lf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_parameterization_test_vc80.sln eol=crlf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/test_all.bat eol=crlf
