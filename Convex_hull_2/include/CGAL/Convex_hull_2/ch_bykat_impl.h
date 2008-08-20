@@ -52,9 +52,8 @@ ch_bykat(InputIterator first, InputIterator last,
 
   if (first == last) return result;
 
-  std::vector< Point_2 >       P;      // Points in subsets
+  std::vector< Point_2 >       P (first, last);      // Points in subsets
   std::vector< Point_2 >       H;      // right endpoints of subproblems
-  P.reserve(16);
   H.reserve(16);
   
   typedef typename std::vector< Point_2 >::iterator   PointIterator;
@@ -65,7 +64,6 @@ ch_bykat(InputIterator first, InputIterator last,
   PointIterator           l;
   PointIterator           r;
   
-  std::copy(first,last,std::back_inserter(P));
   ch_we_point(P.begin(), P.end(), l, r, ch_traits);
   Point_2 a = *l;
   Point_2 b = *r;

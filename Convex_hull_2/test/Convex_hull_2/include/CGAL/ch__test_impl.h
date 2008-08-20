@@ -32,9 +32,8 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits)
   ch_Algorithm    alg         = ch_ALL;
   ch_Check_status check_level = ch_CHECK_ALL;
   typedef typename Traits::Point_2   Point_2;
-  std::vector< Point_2 >     VI;
+  std::vector< Point_2 >     VI (first, last);
   std::vector< Point_2 >     VO;
-  std::copy( first, last, std::back_inserter( VI ) );
   typedef typename std::vector< Point_2 >::iterator  V_iter;
   V_iter VIfirst = VI.begin();
   V_iter VIlast  = VI.end();
@@ -120,9 +119,8 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
 {
   ch_Check_status check_level = ch_CHECK_ALL;
   typedef typename Traits::Point_2   Point_2;
-  std::vector< Point_2 >     VI;
+  std::vector< Point_2 >     VI (first, last);
   std::vector< Point_2 >     VO;
-  std::copy( first, last, std::back_inserter( VI ) );
   typedef typename std::vector< Point_2 >::iterator  V_iter;
   V_iter VIfirst = VI.begin();
   V_iter VIlast  = VI.end();
@@ -207,9 +205,8 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
               ch_Algorithm alg, ch_Check_status check_level)
 {
   typedef typename Traits::Point_2   Point_2;
-  std::vector< Point_2 >     VI;
+  std::vector< Point_2 >     VI (first, last);
   std::vector< Point_2 >     VO;
-  std::copy( first, last, std::back_inserter( VI ) );
   typedef typename std::vector< Point_2 >::iterator  V_iter;
   V_iter VIfirst = VI.begin();
   V_iter VIlast  = VI.end();

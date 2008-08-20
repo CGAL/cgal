@@ -91,8 +91,7 @@ ch_eddy(InputIterator first, InputIterator last,
   Equal_2     equal_points = ch_traits.equal_2_object();   
 
   if (first == last) return result;
-  std::list< Point_2 >   L;
-  std::copy( first, last, std::back_inserter(L) );
+  std::list< Point_2 >   L (first, last);
 
   typedef typename std::list< Point_2 >::iterator  list_iterator;
   list_iterator   w, e;

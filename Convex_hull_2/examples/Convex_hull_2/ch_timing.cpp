@@ -28,9 +28,8 @@ int main( int argc, char* argv[] )
   std::istream_iterator< Point_2>  in_start( F );
   std::istream_iterator< Point_2>  in_end;
 
-  std::vector< Point_2 > V, VE;
-  std::copy( in_start, in_end , std::back_inserter(V) );
-  std::copy( V.begin(), V.end(), std::back_inserter(VE) );
+  std::vector< Point_2 > V (in_start, in_end);
+  std::vector< Point_2 > VE = V;
 
   int iterations = (argc == 3) ? std::atoi( argv[2] ) : 10;
 

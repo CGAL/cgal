@@ -15,13 +15,12 @@ ch_graham_anderson( InputIterator  first, InputIterator  beyond,
 {
   using namespace boost;
 
-  typedef typename Traits::Less_xy_2          Less_xy_2;
   typedef typename Traits::Point_2            Point_2;
+  typedef typename Traits::Less_xy_2          Less_xy_2;
   typedef typename Traits::Less_rotate_ccw_2  Less_rotate_ccw_2;
 
   if (first == beyond) return result;
-  std::vector< Point_2 >  V;
-  std::copy( first, beyond, std::back_inserter(V) );
+  std::vector< Point_2 >  V (first, beyond);
   typename std::vector< Point_2 >::iterator it =
                std::min_element(V.begin(), V.end(), Less_xy_2());
   std::sort( V.begin(), V.end(), bind(Less_rotate_ccw_2(), *it, _1, _2) );

@@ -209,12 +209,11 @@ ch_graham_andrew( InputIterator  first,
   Equal_2      equal_points = ch_traits.equal_2_object();  
 
   if (first == last) return result;
-  std::vector< Point_2 >  V;
-  std::copy( first, last, std::back_inserter(V) );
+  std::vector< Point_2 >  V (first, last);
   std::sort( V.begin(), V.end(), ch_traits.less_xy_2_object() );
   if (equal_points( *(V.begin()), *(V.rbegin())) )
   {
-      *result = *(V.begin());  ++result;
+      *result++ = *(V.begin());
       return result;
   }
 
@@ -241,8 +240,6 @@ ch_graham_andrew( InputIterator  first,
   #else
   return res.to_output_iterator();
   #endif // no postconditions ...
-
-
 }
 
 template <class InputIterator, class OutputIterator, class Traits>
@@ -260,12 +257,11 @@ ch_lower_hull_scan( InputIterator  first,
   Equal_2      equal_points = ch_traits.equal_2_object();    
 
   if (first == last) return result;
-  std::vector< Point_2 >  V;
-  std::copy( first, last, std::back_inserter(V) );
+  std::vector< Point_2 >  V (first, last);
   std::sort( V.begin(), V.end(), ch_traits.less_xy_2_object() );
   if (equal_points( *(V.begin()), *(V.rbegin())) )
   {
-      *result = *(V.begin());  ++result;
+      *result++ = *(V.begin());
       return result;
   }
 
@@ -298,8 +294,7 @@ ch_upper_hull_scan( InputIterator  first,
   Equal_2      equal_points = ch_traits.equal_2_object();     
 
   if (first == last) return result;
-  std::vector< Point_2 >  V;
-  std::copy( first, last, std::back_inserter(V) );
+  std::vector< Point_2 >  V (first, last);
   std::sort( V.begin(), V.end(), ch_traits.less_xy_2_object() );
   if (equal_points( *(V.begin()), *(V.rbegin())) )
   { return result; }
