@@ -232,8 +232,7 @@ operator==(const Number_type_checker<NT1, NT2, Cmp> &a,
            const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = a.n1() == b.n1();
-   bool b2 = a.n2() == b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() == b.n2() ) );
    return b1;
 }
 
@@ -243,8 +242,7 @@ operator!=(const Number_type_checker<NT1, NT2, Cmp> &a,
            const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = a.n1() != b.n1();
-   bool b2 = a.n2() != b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() != b.n2() ) );
    return b1;
 }
 
@@ -254,8 +252,7 @@ operator<(const Number_type_checker<NT1, NT2, Cmp> &a,
           const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = a.n1() < b.n1();
-   bool b2 = a.n2() < b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() < b.n2() ) );
    return b1;
 }
 
@@ -265,8 +262,7 @@ operator>(const Number_type_checker<NT1, NT2, Cmp> &a,
           const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = a.n1() > b.n1();
-   bool b2 = a.n2() > b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() > b.n2() ) );
    return b1;
 }
 
@@ -276,8 +272,7 @@ operator<=(const Number_type_checker<NT1, NT2, Cmp> &a,
            const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = a.n1() <= b.n1();
-   bool b2 = a.n2() <= b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() <= b.n2() ) );
    return b1;
 }
 
@@ -287,8 +282,7 @@ operator>=(const Number_type_checker<NT1, NT2, Cmp> &a,
            const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = a.n1() >= b.n1();
-   bool b2 = a.n2() >= b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() >= b.n2() ) );
    return b1;
 }
 
@@ -297,8 +291,7 @@ bool
 operator==(const Number_type_checker<NT1, NT2, Cmp> &a, int i)
 {
    bool b1 = a.n1() == i;
-   bool b2 = a.n2() == i;
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() == i ) );
    return b1;
 }
 
@@ -307,8 +300,7 @@ bool
 operator!=(const Number_type_checker<NT1, NT2, Cmp> &a, int i)
 {
    bool b1 = a.n1() != i;
-   bool b2 = a.n2() != i;
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() != i ) );
    return b1;
 }
 
@@ -317,8 +309,7 @@ bool
 operator<(const Number_type_checker<NT1, NT2, Cmp> &a, int i)
 {
    bool b1 = a.n1() < i;
-   bool b2 = a.n2() < i;
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() < i ) );
    return b1;
 }
 
@@ -327,8 +318,7 @@ bool
 operator>(const Number_type_checker<NT1, NT2, Cmp> &a, int i)
 {
    bool b1 = a.n1() > i;
-   bool b2 = a.n2() > i;
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() > i ) );
    return b1;
 }
 
@@ -337,8 +327,7 @@ bool
 operator<=(const Number_type_checker<NT1, NT2, Cmp> &a, int i)
 {
    bool b1 = a.n1() <= i;
-   bool b2 = a.n2() <= i;
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() <= i ) );
    return b1;
 }
 
@@ -347,8 +336,7 @@ bool
 operator>=(const Number_type_checker<NT1, NT2, Cmp> &a, int i)
 {
    bool b1 = a.n1() >= i;
-   bool b2 = a.n2() >= i;
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( a.n2() >= i ) );
    return b1;
 }
 
@@ -357,8 +345,7 @@ bool
 operator==(int i, const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = i == b.n1();
-   bool b2 = i == b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( i == b.n2() ) );
    return b1;
 }
 
@@ -367,8 +354,7 @@ bool
 operator!=(int i, const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = i != b.n1();
-   bool b2 = i != b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( i != b.n2() ) );
    return b1;
 }
 
@@ -377,8 +363,7 @@ bool
 operator<(int i, const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = i < b.n1();
-   bool b2 = i < b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( i < b.n2() ) );
    return b1;
 }
 
@@ -387,8 +372,7 @@ bool
 operator>(int i, const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = i > b.n1();
-   bool b2 = i > b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( i > b.n2() ) );
    return b1;
 }
 
@@ -397,8 +381,7 @@ bool
 operator<=(int i, const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = i <= b.n1();
-   bool b2 = i <= b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( i <= b.n2() ) );
    return b1;
 }
 
@@ -407,8 +390,7 @@ bool
 operator>=(int i, const Number_type_checker<NT1, NT2, Cmp> &b)
 {
    bool b1 = i >= b.n1();
-   bool b2 = i >= b.n2();
-   CGAL_assertion(b1 == b2);
+   CGAL_assertion(b1 == ( i >= b.n2() ) );
    return b1;
 }
 
@@ -421,8 +403,7 @@ class Is_valid< Number_type_checker<NT1, NT2, Cmp> >
 public :
     bool operator()(const  Number_type_checker<NT1, NT2, Cmp>& a ) const {
         bool b1 = is_valid(a.n1());
-        bool b2 = is_valid(a.n2());
-        CGAL_assertion(b1 == b2);
+        CGAL_assertion(b1 == is_valid(a.n2()) );
         // Should we also call a.is_valid() ?
         return b1;
     }
@@ -465,8 +446,7 @@ public:
     public:
         bool operator()(const  Type& a ) const {
             bool b1 = typename AST1::Is_zero()(a.n1());
-            bool b2 = typename AST2::Is_zero()(a.n2());
-            CGAL_assertion(b1 == b2 );
+            CGAL_assertion(b1 == typename AST2::Is_zero()(a.n2()) );
             CGAL_assertion(a.is_valid());
             return b1;
         }
@@ -478,8 +458,7 @@ public:
     public:
         bool operator()(const Type& a) const {
             bool b1 = typename AST1::Is_one()(a.n1());
-            bool b2 = typename AST2::Is_one()(a.n2());
-            CGAL_assertion(b1 == b2 );
+            CGAL_assertion(b1 == typename AST2::Is_one()(a.n2()) );
             CGAL_assertion(a.is_valid());
             return b1;
         }
@@ -742,8 +721,7 @@ public:
         ::CGAL::Sign operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Sign");
             ::CGAL::Sign r1 =  typename RET1::Sign()(a.n1());
-            ::CGAL::Sign r2 =  typename RET2::Sign()(a.n2());
-            CGAL_assertion( r1 == r2 );
+            CGAL_assertion( r1 == typename RET2::Sign()(a.n2()) );
             return r1;
         }
     };
@@ -755,8 +733,7 @@ public:
         bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_finite");
             bool r1 =  typename RET1::Is_finite()(a.n1());
-            bool r2 =  typename RET2::Is_finite()(a.n2());
-            CGAL_assertion( r1 == r2 );
+            CGAL_assertion( r1 == typename RET2::Sign()(a.n2()) );
             return r1;
         }
     };
@@ -768,8 +745,7 @@ public:
         bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_positive");
             bool r1 =  typename RET1::Is_positive()(a.n1());
-            bool r2 =  typename RET2::Is_positive()(a.n2());
-            CGAL_assertion( r1 == r2 );
+            CGAL_assertion( r1 == typename RET2::Is_positive()(a.n2()) );
             return r1;
         }
     };
@@ -781,8 +757,7 @@ public:
         bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_negative");
             bool r1 =  typename RET1::Is_negative()(a.n1());
-            bool r2 =  typename RET2::Is_negative()(a.n2());
-            CGAL_assertion( r1 == r2 );
+            CGAL_assertion( r1 == typename RET2::Is_negative()(a.n2()) );
             return r1;
         }
     };
@@ -794,8 +769,7 @@ public:
         bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_zero");
             bool r1 =  typename RET1::Is_zero()(a.n1());
-            bool r2 =  typename RET2::Is_zero()(a.n2());
-            CGAL_assertion( r1 == r2 );
+            CGAL_assertion( r1 == typename RET2::Is_zero()(a.n2()) );
             return r1;
         }
     };
@@ -807,8 +781,7 @@ public:
         Comparison_result operator()(const Type& a, const Type& b) const {
             CGAL_NT_CHECK_DEBUG("RET::Compare");
             Comparison_result r1 =  typename RET1::Compare()(a.n1(),b.n1());
-            Comparison_result r2 =  typename RET2::Compare()(a.n2(),b.n2());
-            CGAL_assertion( r1 == r2 );
+            CGAL_assertion( r1 == typename RET2::Compare()(a.n2(),b.n2()) );
             return r1;
         }
     };
@@ -820,8 +793,7 @@ public:
         double operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::To_double");
             double r1 =  typename RET1::To_double()(a.n1());
-            double r2 =  typename RET2::To_double()(a.n2());
-            CGAL_assertion( r1 == r2 );
+            CGAL_assertion( r1 == typename RET2::To_double()(a.n2()) );
             return r1;
         }
     };
@@ -833,8 +805,7 @@ public:
         std::pair<double, double> operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::To_interval");
             std::pair<double, double> r1 =  typename RET1::To_interval()(a.n1());
-            std::pair<double, double> r2 =  typename RET2::To_interval()(a.n2());
-            CGAL_assertion( r1 == r2 );
+            CGAL_assertion( r1 == typename RET2::To_interval()(a.n2()) );
             return r1;
         }
     };
