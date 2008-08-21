@@ -13,8 +13,12 @@
 // extensive_parameterization_test mesh1.off mesh2.off...
 
 
+// CGAL
+#include <CGAL/basic.h> // include basic.h before testing #defines
 #include <CGAL/Cartesian.h>
 #include <CGAL/Timer.h>
+
+// This package
 #include <CGAL/parameterize.h>
 #include <CGAL/Parameterization_mesh_patch_3.h>
 #include <CGAL/Circular_border_parameterizer_3.h>
@@ -26,16 +30,17 @@
 #include <CGAL/Mean_value_coordinates_parameterizer_3.h>
 #include <CGAL/LSCM_parameterizer_3.h>
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
-
 #include <CGAL/OpenNL/linear_solver.h>
 #ifdef CGAL_USE_TAUCS
     #include <CGAL/Taucs_solver_traits.h>
 #endif
 
+// This test
 #include "Polyhedron_ex.h"
 #include "Mesh_cutter.h"
 #include "Parameterization_polyhedron_adaptor_ex.h"
 
+// STL stuff
 #include <iostream>
 #include <cstdlib>
 #include <fstream>

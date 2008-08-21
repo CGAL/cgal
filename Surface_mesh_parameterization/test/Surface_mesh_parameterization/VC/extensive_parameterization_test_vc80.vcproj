@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="extensive_parameterization_test"
 	ProjectGUID="{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
+	RootNamespace="extensive_parameterization_test"
 	Keyword="ManagedCProj"
 	>
 	<Platforms>
@@ -125,9 +126,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="2"
-				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\..\..\OpenNL\include;..\..\..\..\Installation\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;CGAL_USE_TAUCS"
+				PreprocessorDefinitions="WIN32;CGAL_NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;CGAL_USE_TAUCS"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"

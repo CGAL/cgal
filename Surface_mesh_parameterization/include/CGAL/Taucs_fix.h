@@ -20,7 +20,7 @@
 #ifndef CGAL_TAUCS_FIX
 #define CGAL_TAUCS_FIX
 
-#include <CGAL/basic.h>
+#include <CGAL/basic.h> // include basic.h before testing #defines
 
 #ifdef CGAL_USE_TAUCS
 

@@ -20,8 +20,6 @@
 #ifndef CGAL_PARAMETERIZATION_MESH_FEATURE_EXTRACTOR_H
 #define CGAL_PARAMETERIZATION_MESH_FEATURE_EXTRACTOR_H
 
-#include <CGAL/basic.h>
-
 #include <list>
 #include <vector>
 

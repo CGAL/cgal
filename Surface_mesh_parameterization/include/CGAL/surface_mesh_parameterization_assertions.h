@@ -30,7 +30,7 @@
 
 
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_assertion(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_assertion_code(CODE)
@@ -45,7 +45,7 @@
 
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_exactness_assertion_code(CODE)
@@ -61,7 +61,7 @@
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_ASSERTIONS) \
   || defined(CGAL_NO_ASSERTIONS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_expensive_assertion(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_assertion_code(CODE)
@@ -77,7 +77,7 @@
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_assertion_code(CODE)
@@ -95,7 +95,7 @@
 // -------------
 
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_precondition(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_precondition_code(CODE)
@@ -110,7 +110,7 @@
 
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_exactness_precondition(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_exactness_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_exactness_precondition_code(CODE)
@@ -125,7 +125,7 @@
 
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_expensive_precondition(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_precondition_code(CODE)
@@ -141,7 +141,7 @@
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_precondition(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_precondition_code(CODE)
@@ -159,7 +159,7 @@
 // --------------
 
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_postcondition_code(CODE)
@@ -174,7 +174,7 @@
 
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_exactness_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_exactness_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_exactness_postcondition_code(CODE)
@@ -189,7 +189,7 @@
 
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_expensive_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_postcondition_code(CODE)
@@ -205,7 +205,7 @@
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_postcondition_code(CODE)
@@ -223,7 +223,7 @@
 // --------
 
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_warning(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_warning_code(CODE)
@@ -238,7 +238,7 @@
 
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_exactness_warning(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_exactness_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_exactness_warning_code(CODE)
@@ -253,7 +253,7 @@
 
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_expensive_warning(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_warning_code(CODE)
@@ -269,7 +269,7 @@
 #if defined(CGAL_SURFACE_MESH_PARAMETERIZATION_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
   || (!defined(CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || defined(CGAL_NDEBUG)
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_warning(EX) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_warning_code(CODE)

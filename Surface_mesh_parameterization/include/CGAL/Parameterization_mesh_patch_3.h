@@ -21,7 +21,6 @@
 #ifndef CGAL_PARAMETERIZATION_MESH_PATCH_3_H
 #define CGAL_PARAMETERIZATION_MESH_PATCH_3_H
 
-#include <CGAL/basic.h>
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Convertible_iterator_project.h>
@@ -235,7 +234,7 @@ public:
             }
         }
 
-#ifndef NDEBUG
+#ifndef CGAL_NDEBUG
         // Index vertices right away to ease debugging
         index_mesh_vertices();
 

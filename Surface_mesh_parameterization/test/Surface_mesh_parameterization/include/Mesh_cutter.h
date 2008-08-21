@@ -21,6 +21,7 @@
 #include "Polyhedron_ex.h"
 
 #include <list>
+#include <cassert>
 
 
 class Mesh_cutter
@@ -134,11 +135,11 @@ inline bool Mesh_cutter::init()
 
     // get closest facet
     m_pSeedFacet = m_pPolyhedron->get_closest_inner_facet(center);
-    CGAL_assertion(m_pSeedFacet != NULL);
+    assert(m_pSeedFacet != NULL);
 
     Polyhedron_ex::Halfedge_handle he = m_pSeedFacet->halfedge();
-    CGAL_assertion(he != NULL);
-    CGAL_assertion(m_pBackbone != NULL);
+    assert(he != NULL);
+    assert(m_pBackbone != NULL);
     m_pBackbone->push_back(he);
     m_pBackbone->push_back(he->next());
     m_pBackbone->push_back(he->next()->next());

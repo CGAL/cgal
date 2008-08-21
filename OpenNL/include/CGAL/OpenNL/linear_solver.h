@@ -102,7 +102,7 @@ public:
             return true;
 
         // On error, solve using BICGSTAB solver without preconditioner
-#ifndef NDEBUG
+#ifndef CGAL_NDEBUG
         std::cerr << "Failure of BICGSTAB solver with Jacobi preconditioner. "
                   << "Trying BICGSTAB." << std::endl;
 #endif
@@ -163,7 +163,7 @@ public:
             return true;
 
         // On error, solve using Conjugate Gradient solver without preconditioner
-#ifndef NDEBUG
+#ifndef CGAL_NDEBUG
         std::cerr << "Failure of Conjugate Gradient solver with Jacobi preconditioner. "
                   << "Trying Conjugate Gradient." << std::endl;
 #endif

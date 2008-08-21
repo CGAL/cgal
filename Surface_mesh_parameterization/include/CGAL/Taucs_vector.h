@@ -21,8 +21,6 @@
 #ifndef CGAL_TAUCS_VECTOR
 #define CGAL_TAUCS_VECTOR
 
-#include <CGAL/basic.h>
-
 CGAL_BEGIN_NAMESPACE
 
 

@@ -21,7 +21,7 @@
 #ifndef CGAL_TAUCS_MATRIX
 #define CGAL_TAUCS_MATRIX
 
-#include <CGAL/basic.h>
+#include <CGAL/basic.h> // include basic.h before testing #defines
 
 #ifdef CGAL_USE_TAUCS
 

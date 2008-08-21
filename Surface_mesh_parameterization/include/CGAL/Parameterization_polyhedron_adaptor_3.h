@@ -21,7 +21,6 @@
 #ifndef CGAL_PARAMETERIZATION_POLYHEDRON_ADAPTOR3_H
 #define CGAL_PARAMETERIZATION_POLYHEDRON_ADAPTOR3_H
 
-#include <CGAL/basic.h>
 #include <CGAL/iterator.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Polyhedron_3.h>
@@ -328,7 +327,7 @@ public:
         // Extract mesh's longest border
         m_main_border = extract_longest_border(mesh);
 
-#ifndef NDEBUG
+#ifndef CGAL_NDEBUG
         // Index vertices right away to ease debugging
         index_mesh_vertices();
 #endif

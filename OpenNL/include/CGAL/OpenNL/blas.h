@@ -35,8 +35,6 @@
 #ifndef __OPENNL_BLAS__
 #define __OPENNL_BLAS__
 
-#include <CGAL/basic.h>
-
 namespace OpenNL {
 
 

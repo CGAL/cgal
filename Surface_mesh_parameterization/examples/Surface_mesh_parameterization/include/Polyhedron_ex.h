@@ -9,6 +9,7 @@
 #include <vector>
 #include <list>
 #include <fstream>
+#include <cassert>
 
 
 // CGAL kernel
@@ -298,7 +299,7 @@ public:
     // compute bounding interval
     double minimum (int coord)
     {
-        CGAL_assertion(size_of_vertices() > 0);
+        assert(size_of_vertices() > 0);
         Vertex_iterator pVertex = vertices_begin();
         double minimum = pVertex->point()[coord];
         for(;pVertex != vertices_end();pVertex++)
@@ -307,7 +308,7 @@ public:
     }
     double maximum (int coord)
     {
-        CGAL_assertion(size_of_vertices() > 0);
+        assert(size_of_vertices() > 0);
         Vertex_iterator pVertex = vertices_begin();
         double maximum = pVertex->point()[coord];
         for(;pVertex != vertices_end();pVertex++)
@@ -317,7 +318,7 @@ public:
     Vertex_handle vertex_min(int coord,
                              double &minimum)
     {
-        CGAL_assertion(size_of_vertices() > 0);
+        assert(size_of_vertices() > 0);
         Vertex_iterator pVertex = vertices_begin();
         Vertex_handle pBest = pVertex;
         minimum = pVertex->point()[coord];
@@ -335,7 +336,7 @@ public:
     Vertex_handle vertex_max(int coord,
                              double &maximum)
     {
-        CGAL_assertion(size_of_vertices() > 0);
+        assert(size_of_vertices() > 0);
         Vertex_iterator pVertex = vertices_begin();
         Vertex_handle pBest = pVertex;
         maximum = pVertex->point()[coord];
@@ -385,7 +386,7 @@ public:
     bool write_file_eps(const char *pFilename,
                         double scale = 500.0)
     {
-        CGAL_assertion(pFilename != NULL);
+        assert(pFilename != NULL);
 
         std::ofstream out(pFilename);
         if(!out)
@@ -477,7 +478,7 @@ public:
     // Implementation note: the UV is meaningless for a NON parameterized halfedge
     bool write_file_obj(const char *pFilename)
     {
-        CGAL_assertion(pFilename != NULL);
+        assert(pFilename != NULL);
 
         std::ofstream out(pFilename);
         if(!out)
