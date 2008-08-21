@@ -1059,11 +1059,11 @@ compile_and_run test_do_intersect
 compile_and_run test_zone
 
 compile_and_run test_observer
+compile_and_run test_do_equal
 
 test_segment_traits_adaptor
 test_linear_traits_adaptor
 test_spherical_arcs_traits_adaptor
-
 
 #if any error occured then appened the the full error description file to error file
 
