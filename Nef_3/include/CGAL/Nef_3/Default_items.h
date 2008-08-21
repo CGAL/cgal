@@ -30,12 +30,12 @@ struct Default_items {
   typedef CGAL::SNC_indexed_items Items;
 };
 
-template<> template<typename NT>
+template<typename NT>
 struct Default_items<CGAL::Extended_homogeneous<NT> > {
   typedef CGAL::SNC_items Items;
 };
 
-template<> template<typename NT>
+template<typename NT>
 struct Default_items<CGAL::Extended_cartesian<NT> > {
   typedef CGAL::SNC_items Items;
 };
