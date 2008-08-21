@@ -15,13 +15,10 @@
 
 
 // CGAL
-#include <CGAL/basic.h> // include basic.h before testing #defines
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-
-// Surface mesher
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
@@ -136,7 +133,7 @@ int main(int argc, char * argv[])
       CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
       if(!stream || !input_mesh.is_valid() || input_mesh.empty())
       {
-        std::cerr << "FATAL ERROR: cannot read file " << input_filename << std::endl;
+        std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
       }
 
@@ -160,14 +157,14 @@ int main(int argc, char * argv[])
       if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
                                                 std::back_inserter(pwns)))
       {
-        std::cerr << "FATAL ERROR: cannot read file " << input_filename << std::endl;
+        std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
       }
 
     }
     else
     {
-      std::cerr << "FATAL ERROR: cannot read file " << input_filename << std::endl;
+      std::cerr << "Error: cannot read file " << input_filename << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -183,16 +180,16 @@ int main(int argc, char * argv[])
 
     if (nb_vertices == 0)
     {
-      std::cerr << "FATAL ERROR: empty file" << std::endl;
+      std::cerr << "Error: empty file" << std::endl;
       return EXIT_FAILURE;
     }
 
-    CGAL_assertion(pwns.begin() != pwns.end());
+    assert(pwns.begin() != pwns.end());
     bool points_have_normals = (pwns.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
     bool normals_are_oriented = pwns.begin()->normal().is_oriented();
     if ( ! (points_have_normals && normals_are_oriented) )
     {
-      std::cerr << "FATAL ERROR: this reconstruction method requires oriented normals" << std::endl;
+      std::cerr << "Error: this reconstruction method requires oriented normals" << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -229,7 +226,7 @@ int main(int argc, char * argv[])
     FT inner_point_value = apss_function(inner_point);
     if(inner_point_value >= 0.0)
     {
-      std::cerr << "FATAL ERROR: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
+      std::cerr << "Error: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
       return EXIT_FAILURE;
     }
 

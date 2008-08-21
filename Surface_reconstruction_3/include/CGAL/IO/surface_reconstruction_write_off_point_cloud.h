@@ -19,7 +19,6 @@
 #ifndef CGAL_SURFACE_RECONSTRUCTION_WRITE_OFF_POINT_CLOUD_H
 #define CGAL_SURFACE_RECONSTRUCTION_WRITE_OFF_POINT_CLOUD_H
 
-#include <CGAL/basic.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
 #include <stdio.h>

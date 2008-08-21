@@ -18,8 +18,6 @@
 #ifndef CGAL_RANDOM_SIMPLIFICATION_POINTS_3_H
 #define CGAL_RANDOM_SIMPLIFICATION_POINTS_3_H
 
-#include <CGAL/basic.h>
-
 #include <iterator>
 #include <set>
 #include <algorithm>

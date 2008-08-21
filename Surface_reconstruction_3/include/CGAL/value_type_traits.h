@@ -19,8 +19,6 @@
 #ifndef CGAL_VALUE_TYPE_TRAITS_H
 #define CGAL_VALUE_TYPE_TRAITS_H
 
-#include <CGAL/basic.h>
-
 #include <iterator>
 
 CGAL_BEGIN_NAMESPACE

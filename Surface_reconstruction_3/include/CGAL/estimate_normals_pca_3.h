@@ -19,7 +19,6 @@
 #ifndef CGAL_ESTIMATE_NORMALS_PCA_3_H
 #define CGAL_ESTIMATE_NORMALS_PCA_3_H
 
-#include <CGAL/basic.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>

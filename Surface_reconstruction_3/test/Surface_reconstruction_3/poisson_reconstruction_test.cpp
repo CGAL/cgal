@@ -23,8 +23,6 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-
-// Surface mesher
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
@@ -126,7 +124,7 @@ int main(int argc, char * argv[])
       CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
       if(!stream || !input_mesh.is_valid() || input_mesh.empty())
       {
-        std::cerr << "FATAL ERROR: cannot read file " << input_filename << std::endl;
+        std::cerr << "Error: cannot read file " << input_filename << std::endl;
         accumulated_fatal_err = EXIT_FAILURE;
         continue;
       }
@@ -154,7 +152,7 @@ int main(int argc, char * argv[])
       if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
                                                 std::back_inserter(pwns)))
       {
-        std::cerr << "FATAL ERROR: cannot read file " << input_filename << std::endl;
+        std::cerr << "Error: cannot read file " << input_filename << std::endl;
         accumulated_fatal_err = EXIT_FAILURE;
         continue;
       }
@@ -164,7 +162,7 @@ int main(int argc, char * argv[])
     }
     else
     {
-      std::cerr << "FATAL ERROR: cannot read file " << input_filename << std::endl;
+      std::cerr << "Error: cannot read file " << input_filename << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
       continue;
     }
@@ -181,17 +179,18 @@ int main(int argc, char * argv[])
 
     if (nb_vertices == 0)
     {
-      std::cerr << "FATAL ERROR: empty file" << std::endl;
-      return EXIT_FAILURE;
+      std::cerr << "Error: empty file" << std::endl;
+      accumulated_fatal_err = EXIT_FAILURE;
+      continue;
     }
 
-    CGAL_assertion(dt.points_begin() != dt.points_end());
+    assert(dt.points_begin() != dt.points_end());
     bool points_have_normals = (dt.points_begin()->normal().get_vector() != CGAL::NULL_VECTOR);
     bool normals_are_oriented = dt.points_begin()->normal().is_oriented();
     if ( ! (points_have_normals && normals_are_oriented) )
     {
-      std::cerr << "FATAL ERROR: this reconstruction method requires oriented normals" << std::endl;
-      accumulated_fatal_err = EXIT_FAILURE;
+      std::cerr << "Input point set not supported: this reconstruction method requires oriented normals" << std::endl;
+      // this is not a bug => do not set accumulated_fatal_err
       continue;
     }
 
@@ -210,7 +209,7 @@ int main(int argc, char * argv[])
     /// at each vertex of the triangulation
     if ( ! poisson_function.compute_implicit_function() )
     {
-      std::cerr << "FATAL ERROR: cannot compute implicit function" << std::endl;
+      std::cerr << "Error: cannot compute implicit function" << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
       continue;
     }
@@ -238,7 +237,7 @@ int main(int argc, char * argv[])
     FT inner_point_value = poisson_function(inner_point);
     if(inner_point_value >= 0.0)
     {
-      std::cerr << "FATAL ERROR: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
+      std::cerr << "Error: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
       continue;
     }

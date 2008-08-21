@@ -3,7 +3,6 @@
 #ifndef REMOVE_OUTLIERS_WRT_CAMERA_CONE_ANGLE_3_H
 #define REMOVE_OUTLIERS_WRT_CAMERA_CONE_ANGLE_3_H
 
-#include <CGAL/basic.h>
 #include "Gyroviz_point_3.h"
 
 #include <iterator>

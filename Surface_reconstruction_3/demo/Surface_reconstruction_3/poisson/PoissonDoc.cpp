@@ -1,7 +1,7 @@
 // PoissonDoc.cpp : implementation of the CPoissonDoc class
 //
 
-// This demo
+// This demo + Gyroviz
 #include "stdafx.h"
 #include "Poisson.h"
 #include "DialogOptions.h"
@@ -18,7 +18,6 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/assertions.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -42,6 +41,7 @@
 // STL
 #include <iostream>
 #include <fstream>
+#include <cassert>
 #include <math.h>
 #ifndef M_PI
   #define M_PI       3.14159265358979323846
@@ -405,7 +405,7 @@ void CPoissonDoc::OnFileSaveAs()
 // Save m_points[] only if it is the form visible on screen
 void CPoissonDoc::OnUpdateFileSaveAs(CCmdUI *pCmdUI)
 {
-  CGAL_assertion(m_points.begin() != m_points.end());
+  assert(m_points.begin() != m_points.end());
   pCmdUI->Enable(m_edit_mode == POINT_SET);
 }
 
@@ -492,8 +492,8 @@ void CPoissonDoc::update_status()
   }
   else if (m_edit_mode == POISSON)
   {
-    CGAL_assertion(m_poisson_dt != NULL);
-    CGAL_assertion(m_poisson_function != NULL);
+    assert(m_poisson_dt != NULL);
+    assert(m_poisson_function != NULL);
 
     CString vertices;
     vertices.Format("%d vertices",m_poisson_dt->number_of_vertices());
@@ -666,7 +666,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
 
 void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWithMST(CCmdUI *pCmdUI)
 {
-  CGAL_assertion(m_points.begin() != m_points.end());
+  assert(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
   pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals);
 }
@@ -682,10 +682,10 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
   // Copy normals to select swapped ones below
   std::vector<Normal> normals_copy(m_points.normals_begin(), m_points.normals_end());
 
-  CGAL::orient_normals_wrt_cameras_3(m_points.begin(), m_points.end(),
-                                     get(CGAL::vertex_point, m_points),
-                                     get(boost::vertex_normal, m_points),
-                                     get(boost::vertex_cameras, m_points));
+  orient_normals_wrt_cameras_3(m_points.begin(), m_points.end(),
+                               get(CGAL::vertex_point, m_points),
+                               get(boost::vertex_normal, m_points),
+                               get(boost::vertex_cameras, m_points));
                                                
   // Select swapped normals
   m_points.select(m_points.begin(), m_points.end(), false);
@@ -701,7 +701,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
 
 void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWrtCameras(CCmdUI *pCmdUI)
 {
-  CGAL_assertion(m_points.begin() != m_points.end());
+  assert(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
   bool points_have_cameras = (m_points.begin()->cameras_begin() != m_points.begin()->cameras_end());
   pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals && points_have_cameras);
@@ -720,8 +720,8 @@ void CPoissonDoc::OnCreatePoissonTriangulation()
   CloseMode();
 
   // Copy points to m_poisson_dt
-  CGAL_assertion(m_poisson_dt == NULL);
-  CGAL_assertion(m_poisson_function == NULL);
+  assert(m_poisson_dt == NULL);
+  assert(m_poisson_function == NULL);
   m_poisson_dt = new Dt3;
   m_poisson_function = new Poisson_implicit_function(*m_poisson_dt, m_points.begin(), m_points.end());
 
@@ -738,7 +738,7 @@ void CPoissonDoc::OnCreatePoissonTriangulation()
 // Enable Reconstruction >> Poisson menu items if normals are computed and oriented.
 void CPoissonDoc::OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI)
 {
-  CGAL_assertion(m_points.begin() != m_points.end());
+  assert(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
   bool normals_are_oriented = m_points.begin()->normal().is_oriented();
   pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == POISSON)
@@ -748,8 +748,8 @@ void CPoissonDoc::OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI)
 // Uniform Delaunay refinement
 void CPoissonDoc::OnReconstructionDelaunayRefinement()
 {
-  CGAL_assertion(m_poisson_dt != NULL);
-  CGAL_assertion(m_poisson_function != NULL);
+  assert(m_poisson_dt != NULL);
+  assert(m_poisson_function != NULL);
 
   BeginWaitCursor();
 
@@ -776,8 +776,8 @@ void CPoissonDoc::OnUpdateReconstructionDelaunayRefinement(CCmdUI *pCmdUI)
 // Delaunay refinement in a surface's shell
 void CPoissonDoc::OnAlgorithmsRefineInShell()
 {
-  CGAL_assertion(m_poisson_dt != NULL);
-  CGAL_assertion(m_poisson_function != NULL);
+  assert(m_poisson_dt != NULL);
+  assert(m_poisson_function != NULL);
 
   BeginWaitCursor();
 
@@ -805,8 +805,8 @@ void CPoissonDoc::OnUpdateAlgorithmsRefineInShell(CCmdUI *pCmdUI)
 // compute null normals by averaging neighbour normals.
 void CPoissonDoc::OnAlgorithmsExtrapolatenormals()
 {
-  CGAL_assertion(m_poisson_dt != NULL);
-  CGAL_assertion(m_poisson_function != NULL);
+  assert(m_poisson_dt != NULL);
+  assert(m_poisson_function != NULL);
 
   BeginWaitCursor();
   status_message("Extrapolate the normals field...");
@@ -828,8 +828,8 @@ void CPoissonDoc::OnUpdateAlgorithmsExtrapolateNormals(CCmdUI *pCmdUI)
 // Solve Poisson equation callback
 void CPoissonDoc::OnReconstructionPoisson()
 {
-  CGAL_assertion(m_poisson_dt != NULL);
-  CGAL_assertion(m_poisson_function != NULL);
+  assert(m_poisson_dt != NULL);
+  assert(m_poisson_function != NULL);
 
   BeginWaitCursor();
   status_message("Solve Poisson equation...");
@@ -857,8 +857,8 @@ void CPoissonDoc::OnReconstructionPoisson()
 
 void CPoissonDoc::OnReconstructionPoissonNormalized()
 {
-  CGAL_assertion(m_poisson_dt != NULL);
-  CGAL_assertion(m_poisson_function != NULL);
+  assert(m_poisson_dt != NULL);
+  assert(m_poisson_function != NULL);
 
   BeginWaitCursor();
   status_message("Solve Poisson equation with normalized divergence...");
@@ -893,8 +893,8 @@ void CPoissonDoc::OnUpdateReconstructionPoisson(CCmdUI *pCmdUI)
 // Reconstruction >> Poisson >> Surface Meshing callback
 void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
 {
-    CGAL_assertion(m_poisson_dt != NULL);
-    CGAL_assertion(m_poisson_function != NULL);
+    assert(m_poisson_dt != NULL);
+    assert(m_poisson_function != NULL);
 
     BeginWaitCursor();
     status_message("Surface meshing...");
@@ -971,8 +971,8 @@ void CPoissonDoc::OnUpdateReconstructionPoissonSurfaceMeshing(CCmdUI *pCmdUI)
 // Marching Tet Contouring callback
 void CPoissonDoc::OnAlgorithmsMarchingTetContouring()
 {
-  CGAL_assertion(m_poisson_dt != NULL);
-  CGAL_assertion(m_poisson_function != NULL);
+  assert(m_poisson_dt != NULL);
+  assert(m_poisson_function != NULL);
 
   BeginWaitCursor();
   status_message("Marching tet contouring (%3.1lf%%)...", m_contouring_value);
@@ -999,8 +999,8 @@ void CPoissonDoc::OnUpdateAlgorithmsMarchingTetContouring(CCmdUI *pCmdUI)
 
 void CPoissonDoc::OnAlgorithmsPoissonStatistics()
 {
-  CGAL_assertion(m_poisson_dt != NULL);
-  CGAL_assertion(m_poisson_function != NULL);
+  assert(m_poisson_dt != NULL);
+  assert(m_poisson_function != NULL);
 
   BeginWaitCursor();
 
@@ -1168,7 +1168,7 @@ void CPoissonDoc::OnAlgorithmsOutliersRemovalWrtCamerasConeAngle()
 
 void CPoissonDoc::OnUpdateAlgorithmsOutliersRemovalWrtCamerasConeAngle(CCmdUI *pCmdUI)
 {
-  CGAL_assertion(m_points.begin() != m_points.end());
+  assert(m_points.begin() != m_points.end());
   bool points_have_cameras = (m_points.begin()->cameras_begin() != m_points.begin()->cameras_end());
   pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_cameras);
 }
@@ -1297,7 +1297,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
 // Enable "Reconstruction >> APSS reconstruction" if normals are computed and oriented.
 void CPoissonDoc::OnUpdateReconstructionApssReconstruction(CCmdUI *pCmdUI)
 {
-  CGAL_assertion(m_points.begin() != m_points.end());
+  assert(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
   bool normals_are_oriented = m_points.begin()->normal().is_oriented();
   pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == APSS)

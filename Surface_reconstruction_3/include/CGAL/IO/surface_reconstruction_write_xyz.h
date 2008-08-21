@@ -19,7 +19,6 @@
 #ifndef CGAL_SURFACE_RECONSTRUCTION_WRITE_XYZ_H
 #define CGAL_SURFACE_RECONSTRUCTION_WRITE_XYZ_H
 
-#include <CGAL/basic.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
 #include <stdio.h>

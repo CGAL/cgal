@@ -19,8 +19,6 @@
 #ifndef CGAL_ESTIMATE_NORMALS_POLES_3_H
 #define CGAL_ESTIMATE_NORMALS_POLES_3_H
 
-#include <CGAL/basic.h>
-
 #include <iterator>
 #include <list>
 

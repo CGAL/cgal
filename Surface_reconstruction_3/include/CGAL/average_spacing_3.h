@@ -19,7 +19,6 @@
 #ifndef CGAL_AVERAGE_SPACING_3_H
 #define CGAL_AVERAGE_SPACING_3_H
 
-#include <CGAL/basic.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 

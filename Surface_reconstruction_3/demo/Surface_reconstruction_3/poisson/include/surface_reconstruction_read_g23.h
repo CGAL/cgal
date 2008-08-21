@@ -1,7 +1,6 @@
 #ifndef SURFACE_RECONSTRUCTION_READ_G23_H
 #define SURFACE_RECONSTRUCTION_READ_G23_H
 
-#include <CGAL/basic.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
@@ -89,7 +88,7 @@ bool surface_reconstruction_read_g23(const char* pFilename,
       if ( (sscanf(pLine,"%s",signature) != 1) || (strcmp(signature, "G23") != 0) )
       {
         // if incorrect file format
-        std::cerr << "Fatal error line " << lineNumber << " of " << pFilename << std::endl;
+        std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
         return false;
       }
     }    
@@ -100,7 +99,7 @@ bool surface_reconstruction_read_g23(const char* pFilename,
       char file_name[512];
       if (sscanf(pLine,"%s",file_name) != 1)
       {
-        std::cerr << "Fatal error line " << lineNumber << " of " << pFilename << std::endl;
+        std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
         return false;
       }
       *movie_file_name = file_name;
@@ -111,7 +110,7 @@ bool surface_reconstruction_read_g23(const char* pFilename,
     {
       if (sscanf(pLine,"%ld %ld %ld",&cameras_count,&positions_3D_count,&positions_2D_count) != 3)
       {
-        std::cerr << "Fatal error line " << lineNumber << " of " << pFilename << std::endl;
+        std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
         return false;
       }
     }       

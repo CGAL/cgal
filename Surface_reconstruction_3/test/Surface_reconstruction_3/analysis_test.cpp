@@ -12,8 +12,6 @@
 // analysis_test points1.xyz points2.xyz...
 
 
-#include <CGAL/basic.h> // include basic.h before testing #defines
-
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 
@@ -92,7 +90,7 @@ int main(int argc, char * argv[])
     }
     else
     {
-      std::cerr << "  FATAL ERROR: cannot read file " << argv[i] << std::endl;
+      std::cerr << "  Error: cannot read file " << argv[i] << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
     }
   } // for each input file

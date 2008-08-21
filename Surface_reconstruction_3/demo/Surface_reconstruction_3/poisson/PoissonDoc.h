@@ -6,7 +6,6 @@
 #pragma once
 
 // CGAL
-#include <CGAL/basic.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh_vertex_base_3.h>
 #include <CGAL/Surface_mesh_cell_base_3.h>

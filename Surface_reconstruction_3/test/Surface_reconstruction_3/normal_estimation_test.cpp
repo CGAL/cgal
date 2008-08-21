@@ -154,7 +154,7 @@ int main(int argc, char * argv[])
     }
     else
     {
-      std::cerr << "FATAL ERROR: cannot read file " << argv[i] << std::endl;
+      std::cerr << "Error: cannot read file " << argv[i] << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
     }
   } // for each input file

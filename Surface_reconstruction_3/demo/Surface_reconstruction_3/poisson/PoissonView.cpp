@@ -3,10 +3,10 @@
 
 #include "stdafx.h"
 #include "Poisson.h"
-
 #include "PoissonDoc.h"
 #include "PoissonView.h"
-#include ".\poissonview.h"
+
+#include <cassert>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -241,7 +241,7 @@ void CPoissonView::OnPaint()
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  CGAL_assertion(pDoc->points()->begin() != pDoc->points()->end());
+  assert(pDoc->points()->begin() != pDoc->points()->end());
 
   // Scene's region of interest (= bounding sphere minus outliers)
   Sphere region_of_interest;

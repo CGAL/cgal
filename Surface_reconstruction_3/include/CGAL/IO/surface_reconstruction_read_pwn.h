@@ -19,7 +19,6 @@
 #ifndef CGAL_SURFACE_RECONSTRUCTION_READ_PWN_H
 #define CGAL_SURFACE_RECONSTRUCTION_READ_PWN_H
 
-#include <CGAL/basic.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 

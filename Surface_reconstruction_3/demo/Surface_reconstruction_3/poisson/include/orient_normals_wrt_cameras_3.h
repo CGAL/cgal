@@ -3,7 +3,6 @@
 #ifndef ORIENT_NORMALS_WRT_CAMERAS_3_H
 #define ORIENT_NORMALS_WRT_CAMERAS_3_H
 
-#include <CGAL/basic.h>
 #include <CGAL/Oriented_normal_3.h>
 
 #include <iterator>

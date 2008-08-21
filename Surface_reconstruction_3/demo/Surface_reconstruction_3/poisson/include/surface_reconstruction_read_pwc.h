@@ -1,7 +1,6 @@
 #ifndef SURFACE_RECONSTRUCTION_READ_PWC_H
 #define SURFACE_RECONSTRUCTION_READ_PWC_H
 
-#include <CGAL/basic.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
