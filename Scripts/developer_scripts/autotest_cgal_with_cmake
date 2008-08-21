@@ -569,7 +569,7 @@ echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
 echo 'COPYING RESULTS';
 cp 'results_${CGAL_TESTER}_${PLATFORM}.tar.gz' 'results_${CGAL_TESTER}_${PLATFORM}.txt' '${CGAL_TEST_DIR}';
-echo 'REMOVING LOCAL_TEST_DIR';
+#echo 'REMOVING LOCAL_TEST_DIR';
 cd ..;
 #rm -rf '${CGAL_BINARY_DIR}/test'
 EOF
