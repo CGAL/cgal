@@ -22,8 +22,8 @@
 
 #include <CGAL/basic.h>
 
-// This has only been implemented for Linux and VC++ for now.
-#if !defined _MSC_VER && !defined __linux__
+// This has only been implemented for MacOSX/Darwin, Linux and VC++ for now.
+#if !defined _MSC_VER && !defined __linux__ && !defined __APPLE__
 
 #include <iostream>
 
@@ -38,7 +38,7 @@ struct Memory_sizer
 
 CGAL_END_NAMESPACE
 
-#else // defined _MSC_VER ||  defined __linux__
+#else // defined _MSC_VER ||  defined __linux__ || defined __APPLE__
 
 #if defined _MSC_VER
 #  include <windows.h>
@@ -47,6 +47,9 @@ CGAL_END_NAMESPACE
 #  include <fstream>
 #  include <cstddef>
 #  include <unistd.h>
+#elif defined __APPLE__
+#include <mach/task.h>
+#include <mach/mach_init.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -83,7 +86,7 @@ private:
     CloseHandle( hProcess );
     return result;
 
-#else
+#elif defined __linux__
     // Extract of "man proc" under Linux :
     //
     //            vsize %u Virtual memory size
@@ -117,6 +120,36 @@ private:
     f >> vsize >> rss;
 
     return virtual_size ? vsize : rss * getpagesize();
+
+#else // __APPLE__ is defined
+
+    // http://miknight.blogspot.com/2005/11/resident-set-size-in-mac-os-x.html
+		// This is highly experimental. But still better than returning 0.
+		// It appears that we might need certain 'rights' to get access to the kernel
+		// task... It works if you have admin rights apparently
+		// (though non-root of course!). I haven't tested with non-admin user.
+    // -- Samuel Hornus
+
+    task_t task = MACH_PORT_NULL;
+    if (task_for_pid(current_task(), getpid(), &task) != KERN_SUCCESS)
+        return 0;
+		// It seems to me that after calling :
+		// task_for_pid(current_task(), getpid(), &task)
+		// we should have (task == current_task())
+		// ==> TODO: Check if this is indeed the case
+      
+    struct task_basic_info t_info;
+    mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
+      
+    task_info(task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count);
+		// TODO: test if the following line works...
+    //task_info(current_task(), TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count);
+#if 0
+    std::cerr << "PAGE SIZE IS " << getpagesize() << std::endl
+    << " RESIDENT SIZE IS " << t_info.resident_size << std::endl
+    << " VIRTUAL SIZE IS " << t_info.virtual_size << std::endl;
+#endif
+    return virtual_size ? t_info.virtual_size : t_info.resident_size;
 #endif
   }
 };
