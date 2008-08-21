@@ -20,6 +20,7 @@
 assert(CGAL_BINARY_DIR)
 
 find_package(ZLIB)
+find_package(OpenGL)
 
 option(WITH_VTK "Add VTK support to the CGAL ImageIO library." OFF)
 
@@ -27,11 +28,12 @@ if(WITH_VTK)
   find_package(VTK QUIET)
 endif(WITH_VTK)
 
-if(ZLIB_FOUND)
+if(ZLIB_FOUND AND OPENGL_FOUND)
 
   include_directories( ${ZLIB_INCLUDE_DIR} )
+  include_directories( ${OPENGL_INCLUDE_DIR} )
   
-  add_library(CGAL_IMAGEIO all_files.cpp Image_3.cpp)
+  add_library(CGAL_IMAGEIO all_files.cpp)
 
   target_link_libraries( CGAL_IMAGEIO ${ZLIB_LIBRARY})
   
@@ -80,6 +82,6 @@ if(ZLIB_FOUND)
   if ( CGAL_INSTALL_LIB_DIR )
     install(TARGETS CGAL_IMAGEIO DESTINATION ${CGAL_INSTALL_LIB_DIR} )
   endif()
-else()
-  message( STATUS "CGAL-ImageIO needs ZLib, cannot be configured.")
-endif()  
+else(ZLIB_FOUND AND OPENGL_FOUND)
+  message( STATUS "CGAL-ImageIO needs ZLib and OpenGL, cannot be configured.")
+endif(ZLIB_FOUND AND OPENGL_FOUND)  
