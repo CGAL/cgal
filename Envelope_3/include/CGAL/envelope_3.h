@@ -32,19 +32,29 @@ CGAL_BEGIN_NAMESPACE
  * Representation of an envelope diagram (a minimization diagram or a
  * maximization diagram).
  */
-template <class Traits_> class Envelope_diagram_2 :
-  public Arrangement_2<Traits_,
-                       Envelope_pm_dcel<Traits_,
-                                        typename Traits_::Xy_monotone_surface_3> >
+template <typename T_Traits,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+          template <class T1, class T2>
+#endif
+          class T_Dcel = Envelope_pm_dcel>
+class Envelope_diagram_2 :
+  public Arrangement_2<T_Traits,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+                       T_Dcel<T_Traits,
+                              typename T_Traits::Xy_monotone_surface_3>
+#else
+                       typename T_Dcel::template Dcel<T_Traits,
+                                                      typename T_Traits::Xy_monotone_surface_3>
+#endif
+                       >
 {
 public:
-  typedef Traits_                                       Traits_3;
+  typedef T_Traits                                      Traits_3;
   typedef typename Traits_3::Xy_monotone_surface_3      Xy_monotone_surface_3;
 
 protected:
-  typedef Envelope_pm_dcel<Traits_3,
-                           Xy_monotone_surface_3>       Env_dcel;
-  typedef Envelope_diagram_2<Traits_3>                  Self;
+  typedef T_Dcel<Traits_3, Xy_monotone_surface_3>       Env_dcel;
+  typedef Envelope_diagram_2<Traits_3, T_Dcel>          Self;
   friend class Arr_accessor<Self>;
 
 public:
@@ -70,18 +80,60 @@ public:
  * \param min_diag Output: The minimization diagram.
  * \pre The value-type of InputIterator is Traits::Surface_3.
  */
-template <class InputIterator, class Traits>
+template <typename InputIterator, typename T_Traits,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+          template <class T1, class T2>
+#endif
+          class T_Dcel>
 void lower_envelope_3 (InputIterator begin, InputIterator end,
-                       Envelope_diagram_2<Traits>& min_diagram)
+                       Envelope_diagram_2<T_Traits, T_Dcel> & min_diagram)
 {
-  typedef Traits                                       Traits_3;
-  typedef typename Envelope_diagram_2<Traits_3>::Base  Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Traits_3,
-                                        Base_arr_2>    Envelope_algorithm;
+  typedef T_Traits                                            Traits_3;
+  typedef typename Envelope_diagram_2<Traits_3, T_Dcel>::Base Base_arr_2;
+  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
   Envelope_algorithm   env_alg (min_diagram.traits(), ENVELOPE_LOWER);
   env_alg.construct_lu_envelope (begin, end, min_diagram);
+}
 
-  return;
+/*!
+ * Construct the lower envelope of a given set of surfaces.
+ * \param begin An iterator for the first surface.
+ * \param end A past-the-end iterator for the surfaces in the range.
+ * \param min_diag Output: The minimization diagram.
+ * \pre The value-type of InputIterator is Traits::Surface_3.
+ */
+template <typename InputIterator, typename T_Traits>
+void lower_envelope_3 (InputIterator begin, InputIterator end,
+                       Envelope_diagram_2<T_Traits> & min_diagram)
+{
+  typedef T_Traits                                            Traits_3;
+  typedef typename Envelope_diagram_2<Traits_3>::Base         Base_arr_2;
+  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
+  Envelope_algorithm   env_alg (min_diagram.traits(), ENVELOPE_LOWER);
+  env_alg.construct_lu_envelope (begin, end, min_diagram);
+}
+
+/*!
+ * Construct the upper envelope of a given set of surfaces.
+ * \param begin An iterator for the first surface.
+ * \param end A past-the-end iterator for the surfaces in the range.
+ * \param max_diag Output: The maximization diagram.
+ * \pre The value-type of InputIterator is Traits::Surface_3.
+ */
+template <class InputIterator, class Traits,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+          template <class T1, class T2>
+#endif
+          class T_Dcel>
+void upper_envelope_3 (InputIterator begin, InputIterator end,
+                       Envelope_diagram_2<Traits, T_Dcel>& max_diagram)
+{
+  typedef Traits                                              Traits_3;
+  typedef typename Envelope_diagram_2<Traits_3, T_Dcel>::Base Base_arr_2;
+  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
+
+  Envelope_algorithm   env_alg (max_diagram.traits(), ENVELOPE_UPPER);
+  env_alg.construct_lu_envelope (begin, end, max_diagram);
 }
 
 /*!
@@ -95,15 +147,36 @@ template <class InputIterator, class Traits>
 void upper_envelope_3 (InputIterator begin, InputIterator end,
                        Envelope_diagram_2<Traits>& max_diagram)
 {
-  typedef Traits                                       Traits_3;
-  typedef typename Envelope_diagram_2<Traits_3>::Base  Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Traits_3,
-                                        Base_arr_2>    Envelope_algorithm;
+  typedef Traits                                        Traits_3;
+  typedef typename Envelope_diagram_2<Traits_3>::Base   Base_arr_2;
+  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2>
+                                                        Envelope_algorithm;
 
   Envelope_algorithm   env_alg (max_diagram.traits(), ENVELOPE_UPPER);
   env_alg.construct_lu_envelope (begin, end, max_diagram);
+}
 
-  return;
+/*!
+ * Construct the lower envelope of a given set of xy_monotone surfaces.
+ * \param begin An iterator for the first xy-monotone surface.
+ * \param end A past-the-end iterator for the xy_monotone surfaces in the range.
+ * \param min_diag Output: The minimization diagram.
+ * \pre The value-type of InputIterator is Traits::Surface_3.
+ */
+template <class InputIterator, class Traits,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+          template <class T1, class T2>
+#endif
+          class T_Dcel>
+void
+lower_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
+                              Envelope_diagram_2<Traits, T_Dcel>& min_diagram)
+{
+  typedef Traits                                              Traits_3;
+  typedef typename Envelope_diagram_2<Traits_3, T_Dcel>::Base Base_arr_2;
+  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
+  Envelope_algorithm   env_alg (min_diagram.traits(), ENVELOPE_LOWER);
+  env_alg.construct_envelope_xy_monotone (begin, end, min_diagram);
 }
 
 /*!
@@ -117,12 +190,35 @@ template <class InputIterator, class Traits>
 void lower_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
                                    Envelope_diagram_2<Traits>& min_diagram)
 {
-  typedef Traits                                       Traits_3;
-  typedef typename Envelope_diagram_2<Traits_3>::Base  Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Traits_3,
-                                        Base_arr_2>    Envelope_algorithm;
+  typedef Traits                                              Traits_3;
+  typedef typename Envelope_diagram_2<Traits_3>::Base         Base_arr_2;
+  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
   Envelope_algorithm   env_alg (min_diagram.traits(), ENVELOPE_LOWER);
   env_alg.construct_envelope_xy_monotone (begin, end, min_diagram);
+}
+
+/*!
+ * Construct the upper envelope of a given set of xy_monotone surfaces.
+ * \param begin An iterator for the first xy_monotone surface.
+ * \param end A past-the-end iterator for the xy_monotone surfaces in the range.
+ * \param max_diag Output: The maximization diagram.
+ * \pre The value-type of InputIterator is Traits::Surface_3.
+ */
+template <class InputIterator, class Traits,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+          template <class T1, class T2>
+#endif
+          class T_Dcel>
+void
+upper_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
+                              Envelope_diagram_2<Traits, T_Dcel>& max_diagram)
+{
+  typedef Traits                                              Traits_3;
+  typedef typename Envelope_diagram_2<Traits_3, T_Dcel>::Base Base_arr_2;
+  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
+
+  Envelope_algorithm   env_alg (max_diagram.traits(), ENVELOPE_UPPER);
+  env_alg.construct_envelope_xy_monotone (begin, end, max_diagram);
 
   return;
 }
