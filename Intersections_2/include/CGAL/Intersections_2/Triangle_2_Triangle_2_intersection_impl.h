@@ -122,7 +122,7 @@ void _cut_off(Pointlist_2_<K> &list,
             typename Line_2_Line_2_pair<K>::Intersection_results isr;
             isr = linepair.intersection_type();
             CGAL_kernel_assertion(isr == Line_2_Line_2_pair<K>::POINT);
-            linepair.intersection(newrec->point);
+            newrec->point = linepair.intersection_point();
         }
         last = cur;
     }

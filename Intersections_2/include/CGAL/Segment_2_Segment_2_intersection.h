@@ -316,7 +316,7 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
         _result = NO_INTERSECTION;
         break;
     case Line_2_Line_2_pair<K>::POINT:
-        linepair.intersection(_intersection_point);
+        _intersection_point = linepair.intersection_point();
         _result = POINT;
         break;
     case Line_2_Line_2_pair<K>::LINE:

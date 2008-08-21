@@ -128,7 +128,7 @@ Ray_2_Line_2_pair<K>::intersection_type() const
         _result = NO_INTERSECTION;
         break;
     case Line_2_Line_2_pair<K>::POINT:
-        linepair.intersection(_intersection_point);
+        _intersection_point = linepair.intersection_point();
         _result = (_ray->collinear_has_on(_intersection_point) ) ?
                 POINT : NO_INTERSECTION;
         break;

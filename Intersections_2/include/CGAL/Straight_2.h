@@ -44,7 +44,7 @@ protected:
     int                     dir_sign_;  // sign of main direction coord.
     unsigned int            bound_state_; // 0, 1, 2, 3, 4.
 public:
-inline unsigned int            bound_state() const {return bound_state_;}
+    unsigned int            bound_state() const {return bound_state_;}
 };
 
 template <class K>
@@ -277,8 +277,6 @@ cut_right_off(typename K::Line_2 const & cutter)
 {
     if (bound_state_ == LINE_EMPTY)
         return;
-    typename K::Point_2 ispoint;
-    bool new_point;
     Line_2_Line_2_pair<K> pair(&support_, &cutter);
     switch (pair.intersection_type()) {
     case Line_2_Line_2_pair<K>::NO_INTERSECTION:
@@ -288,8 +286,8 @@ cut_right_off(typename K::Line_2 const & cutter)
     case Line_2_Line_2_pair<K>::LINE:
         break;
     case Line_2_Line_2_pair<K>::POINT:
-        pair.intersection(ispoint);
-        new_point = false;
+        typename K::Point_2 ispoint = pair.intersection_point();
+        bool new_point = false;
         switch (sign_of_cross(support_.direction(), cutter.direction(), K())) {
         case -1: // new minimum.
             if (bound_state_ & MIN_UNBOUNDED) {
