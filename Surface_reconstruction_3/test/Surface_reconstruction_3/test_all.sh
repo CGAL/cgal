@@ -8,6 +8,7 @@
 ERRORFILE=error.txt
 
 # Find executable name (different on Windows and Unix)
+# ----------------------------------------------------
 find_executable()
 {
     PARAM_APPLICATION=""
@@ -20,6 +21,7 @@ find_executable()
 }
 
 # run 1 test
+# ----------
 run()
 {
     # Find exe
@@ -43,12 +45,17 @@ run()
     echo "------------------------------------------------------------------"
     echo
     if eval $COMMAND 2>&1 ; then
-        echo "   succesful execution   of $1" >> $ERRORFILE
+        echo "   successful execution   of $1" >> $ERRORFILE
     else
         echo "   ERROR:    execution   of $1" >> $ERRORFILE
     fi
     echo
 }
+
+# main
+# ----
+
+(
 
 # remove the previous error file
 rm -f $ERRORFILE
@@ -77,4 +84,5 @@ cat $ERRORFILE
 echo
 rm -f $ERRORFILE
 
+) 2>&1 | tee test_all.log
 
