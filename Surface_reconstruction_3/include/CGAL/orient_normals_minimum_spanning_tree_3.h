@@ -19,7 +19,6 @@
 #ifndef CGAL_ORIENT_NORMALS_MINIMUM_SPANNING_TREE_3_H
 #define CGAL_ORIENT_NORMALS_MINIMUM_SPANNING_TREE_3_H
 
-#include <CGAL/basic.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_vertex_handle_3.h>
@@ -37,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Traces?
-//#define CGAL_TRACE  printf
+#define CGAL_TRACE  printf
 
 #ifndef CGAL_TRACE
   #define CGAL_TRACE  if (false) printf
@@ -286,6 +285,7 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
     // Notes: We have to wrap each input vertex by a Point_vertex_handle_3.
     //        The KD-tree is allocated dynamically to recover RAM as soon as possible.
     std::vector<Point_vertex_handle_3> kd_tree_points;
+    kd_tree_points.reserve(num_input_vertices);
     for (VertexIterator it = first; it != beyond; it++)
     {
         Point point = get(vertex_point_map, it);
