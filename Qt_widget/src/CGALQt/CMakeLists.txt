@@ -18,8 +18,23 @@
 
 assert(CGAL_BINARY_DIR)
 
-if( CGAL_USE_QT )
+find_package(OpenGL)
 
+if(OPENGL_FOUND)
+  get_dependency_version(OPENGL OpenGL)
+  set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR})
+  set(CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES}    ${OPENGL_LIBRARIES})
+endif()
+
+find_package(Qt3)
+
+if( QT_FOUND )
+
+    get_dependency_version(QT)
+    
+    set( CGAL_USE_QT TRUE ) 
+    add_config_flag( CGAL_USE_QT )
+    
     message( STATUS "moc executable: ${QT_MOC_EXECUTABLE}" )
     message( STATUS "uic executable: ${QT_UIC_EXECUTABLE}" )
     

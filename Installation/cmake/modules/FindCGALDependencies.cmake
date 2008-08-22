@@ -15,22 +15,8 @@ if(Boost_FOUND)
   set(CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_3RD_PARTY_LIBRARIES_DIRS} ${Boost_LIBRARY_DIRS})
   
   if ( NOT AUTO_LINK_ENABLED )
-  set(CGAL_3RD_PARTY_LIBRARIES      ${CGAL_3RD_PARTY_LIBRARIES}      ${BOOST_LIBRARIES})
+    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES})
   endif()
-  
-  set(CGAL_USE_BOOST 1)
-  
-  if( Boost_THREAD_FOUND )
-    set(CGAL_USE_BOOST_THREAD 1)
-  endif()
-  
-endif()
-
-find_package(OpenGL)
-if(OPENGL_FOUND)
-  set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR})
-  set(CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES}    ${OPENGL_LIBRARIES})
-  set(CGAL_USE_OPENGL 1)
 endif()
 
 #
@@ -51,17 +37,9 @@ if ( NOT WIN32 )
   find_optional_cgal_dependency(GMPXX)
 endif()
 
-
 macro_optional_find_package(CGAL_CORE)
-if(WITH_CGAL_CORE AND CGAL_CORE_FOUND )
-  set(CGAL_USE_CGAL_CORE 1)
-endif()
-
-find_package(Qt3)
 
 message( STATUS "USING BOOST_VERSION = '${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}'" )
-
-get_dependency_version(OPENGL OpenGL)
 
 get_dependency_version(GMP)
 
@@ -72,5 +50,4 @@ endif()
 get_dependency_version(MPFR)
 get_dependency_version(ZLIB)
 get_dependency_version(TAUCS)
-get_dependency_version(QT)
 

@@ -3,7 +3,7 @@
 # refer to the root source directory of the project as ${CMAKE_SOURCE_DIR} or
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
-project(CGAL)
+project(CGAL CXX)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 
@@ -132,22 +132,11 @@ foreach(config_test_cpp ${all_config_tests})
     
 endforeach()
 
-add_config_flag( CGAL_USE_BOOST )
-add_config_flag( CGAL_USE_BOOST_THREAD )
 add_config_flag( CGAL_USE_GMP )
 add_config_flag( CGAL_USE_MPFR )
 add_config_flag( CGAL_USE_GMPXX )
-add_config_flag( CGAL_USE_CGAL_CORE )
-add_config_flag( CGAL_USE_OPENGL )
 add_config_flag( CGAL_USE_ZLIB )
 add_config_flag( CGAL_USE_TAUCS )
-
-# Called in FindCGALDependencies:
-# find_package(Qt3)
-if(QT_FOUND)
-  set( CGAL_USE_QT TRUE ) 
-  add_config_flag( CGAL_USE_QT )
-endif()
 
 if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
   file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>" )
@@ -159,7 +148,7 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-option(WITH_INSTALL "Create installation rules")
+option(WITH_INSTALL "Create installation rules" ON )
 
 if ( WITH_INSTALL )
 
@@ -333,8 +322,8 @@ set(CGAL_DIR ${CMAKE_BINARY_DIR} )
 
 if ( NOT RUNNING_CGAL_AUTO_TEST )
 
-  optional_add_subdirectory( demo     ON EXCLUDE_FROM_ALL )
-  optional_add_subdirectory( examples ON EXCLUDE_FROM_ALL )
+  optional_add_subdirectory( demo     OFF EXCLUDE_FROM_ALL )
+  optional_add_subdirectory( examples ON  EXCLUDE_FROM_ALL )
   
 endif()
 
