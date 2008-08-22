@@ -14,7 +14,7 @@
 template <typename T>
 void use(T) {}
 
-// generic test , for both enums and bool
+// generic test, for both enums and bool
 template < typename T >
 void test()
 {
@@ -28,7 +28,9 @@ void test()
 
 	// Constructors, assignment.
 	const T t0 = static_cast<T>(0);
+	const T t2 = CGAL::indeterminate<T>();
 	const U u = U::indeterminate();
+	const U uuu = CGAL::indeterminate<U>();
 	const U uu;
 	const U v = t0;
 	U w = U (T(), T());
@@ -58,6 +60,7 @@ void test()
 	bool_assert(  CGAL::is_certain(v));
 	bool_assert(  CGAL::is_certain(t0));
 	bool_assert(  CGAL::is_indeterminate(u));
+	bool_assert(  CGAL::is_indeterminate(uuu));
 	bool_assert(! CGAL::is_indeterminate(v));
 	bool_assert(! CGAL::is_indeterminate(t0));
 	bool_assert(t0 == CGAL::get_certain(t0));
@@ -94,6 +97,7 @@ void test()
 	bool_assert( ! (t0 != v) );
 
 	use(t);
+	use(t2);
 }
 
 

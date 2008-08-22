@@ -214,6 +214,33 @@ Uncertain<T>::indeterminate()
   return Uncertain<T>(CGALi::Minmax_traits<T>::min, CGALi::Minmax_traits<T>::max);
 }
 
+namespace CGALi {
+
+	// helper class
+	template < typename T >
+	struct Indeterminate_helper {
+		typedef T result_type;
+		result_type operator()() const
+		{ return T(); }
+	};
+
+	template < typename T >
+	struct Indeterminate_helper< Uncertain<T> > {
+		typedef Uncertain<T> result_type;
+		result_type operator()() const
+		{ return Uncertain<T>::indeterminate(); }
+	};
+
+} // namespace CGALi
+
+template < typename T >
+inline
+typename CGALi::Indeterminate_helper<T>::result_type
+indeterminate()
+{
+  return CGALi::Indeterminate_helper<T>()();
+}
+
 template < typename T >
 inline
 bool is_indeterminate(T)

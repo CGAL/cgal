@@ -175,6 +175,10 @@ Another option is :
   \ccFunction{template <class T> bool is_certain(Uncertain<T> u);}
   {returns \ccc{u}.\ccc{is_certain}().}
 
+  \ccFunction{template <class U> U indeterminate();}
+  {returns \ccc{U::indeterminate()} if \ccc{U} is \ccc{Uncertain<T>},
+   and \ccc{U()} otherwise.}
+
   \ccFunction{template <class T> bool is_indeterminate(T u);}
   {returns \ccc{false}.}
 
