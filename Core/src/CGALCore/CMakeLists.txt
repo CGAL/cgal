@@ -21,6 +21,8 @@ assert(CGAL_BINARY_DIR)
 
 add_library(CGAL_CORE "all_files.cpp")
 
+set_target_properties(CGAL_CORE PROPERTIES VERSION "${CGAL_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+
 # ${CGAL_CORE_BASENAME} comes defined from FindCGAL_CORE.cmake
 
 if (NOT AUTO_LINK_ENABLED )
