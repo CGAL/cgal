@@ -21,6 +21,8 @@ assert(CGAL_BINARY_DIR)
 
 add_library(CGAL_PDB "all_files.cpp")
 
+add_dependencies( CGAL_PDB CGAL )
+
 set( CGAL_PDB_BASENAME CGAL-PDB )
 
 if (NOT AUTO_LINK_ENABLED )
