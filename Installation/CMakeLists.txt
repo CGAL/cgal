@@ -74,17 +74,17 @@ message( STATUS "CGAL_BUILD_VERSION=${CGAL_BUILD_VERSION}" )
 #
 #--------------------------------------------------------------------------------------------------
 
-set(CGAL_3RD_PARTY_DEFINITIONS)
-set(CGAL_3RD_PARTY_INCLUDE_DIRS)
-set(CGAL_3RD_PARTY_LIBRARIES)
-set(CGAL_3RD_PARTY_LIBRARIES_DIR)
+set(CGAL_3RD_PARTY_DEFINITIONS   "" CACHE INTERNAL "" )
+set(CGAL_3RD_PARTY_INCLUDE_DIRS  "" CACHE INTERNAL "" )
+set(CGAL_3RD_PARTY_LIBRARIES     "" CACHE INTERNAL "" )
+set(CGAL_3RD_PARTY_LIBRARIES_DIR "" CACHE INTERNAL "" ) 
+
 
 # This module finds dependent libraries: Boost, GMP, CORE, etc..
 # Updates CGAL_3RD_PARTY_* accordingly
 # Sets CGAL_USE_* which is stored in compiler_config.h
 # Each dependency can be selected or unselected via the option WITH_*
 include(FindCGALDependencies)
-
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -135,8 +135,6 @@ endforeach()
 add_config_flag( CGAL_USE_GMP )
 add_config_flag( CGAL_USE_MPFR )
 add_config_flag( CGAL_USE_GMPXX )
-add_config_flag( CGAL_USE_ZLIB )
-add_config_flag( CGAL_USE_TAUCS )
 
 if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
   file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>" )
@@ -210,7 +208,7 @@ endif()
 
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
 
-set(CGAL_LIBRARIES CACHE STRING "Selected CGAL Libraries")
+set(CGAL_LIBRARIES "" CACHE STRING "Selected CGAL Libraries")
 hide_variable(CGAL_LIBRARIES)
 
 set(CGAL_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include ${CMAKE_SOURCE_DIR}/include)
@@ -234,6 +232,15 @@ endif()
 include(CGAL_SetupFlags)
 
 add_subdirectory(src)
+
+#
+# load cache values from subdirectories above
+# 
+set(CGAL_3RD_PARTY_DEFINITIONS  )
+set(CGAL_3RD_PARTY_INCLUDE_DIRS )
+set(CGAL_3RD_PARTY_LIBRARIES    )
+set(CGAL_3RD_PARTY_LIBRARIES_DIR) 
+
 
 set( CGAL_LIBRARIES ${CGAL_CORE_LIBRARY} ${CGAL_LIBRARY} ${CGAL_IMAGEIO_LIBRARY} ${CGAL_PDB_LIBRARY} ${CGAL_QT_LIBRARY} )
 
