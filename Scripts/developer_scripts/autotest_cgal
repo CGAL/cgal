@@ -26,7 +26,7 @@ umask 022
 
 SCP="scp"
 WGET="wget"
-WGET_OPTS="--no-check-certificate"
+WGET_OPTS="--no-check-certificate --no-verbose"
 CURL="curl"
 CURL_OPTS="-k --remote-name --silent --location-trusted"
 CGAL_URL="https://cgal.geometryfactory.com/CGAL/Members/Releases"
