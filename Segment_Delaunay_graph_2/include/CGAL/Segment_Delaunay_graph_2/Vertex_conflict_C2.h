@@ -320,7 +320,9 @@ private:
       Point_2 pp = same_points(q, p.source_site()) ? p.target() : p.source();
       o = orientation(pp, q.point(), t.point());
     }
-    return ( o == RIGHT_TURN ) ? NEGATIVE : POSITIVE;
+    if ( CGAL::is_certain(o == RIGHT_TURN) )
+        return CGAL::get_certain( o == RIGHT_TURN ) ? NEGATIVE : POSITIVE;
+    return CGAL::Uncertain<CGAL::Sign>::indeterminate();
   }
 
   //-----------------------------------------------------------------------

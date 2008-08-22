@@ -296,9 +296,7 @@ private:
       r = compare_distances_ss(t1, t2, q);
     }
 
-    if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
-    if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
-    return ON_ORIENTED_BOUNDARY;
+    return -r;
   }
 
 public:

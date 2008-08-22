@@ -60,6 +60,7 @@ private:
   typedef typename Base::Comparison_result   Comparison_result;
   typedef typename Base::Oriented_side       Oriented_side;
   typedef typename Base::Sign                Sign;
+  typedef typename Base::Bool_type           Bool_type;
 
   typedef typename K::Orientation_2          Orientation_2;
 
@@ -284,7 +285,7 @@ private:
   }
 
 
-  bool inside_segment(const Site_2& s, const Site_2& p) const
+  Bool_type inside_segment(const Site_2& s, const Site_2& p) const
   {
     CGAL_precondition( s.is_segment() && p.is_point() );
 
@@ -295,10 +296,11 @@ private:
 
     Oriented_side os =  oriented_side_of_line(l, pp );
 
-    if ( os != ON_ORIENTED_BOUNDARY ) {
+    if (certainly( os != ON_ORIENTED_BOUNDARY ) )
       // the point does not belong to the same line as the segment
       return false;
-    }
+    if (! is_certain( os != ON_ORIENTED_BOUNDARY ) )
+      return indeterminate<Bool_type>();
 
     Line_2 lp1 = compute_perpendicular(l, s.segment().source());
 

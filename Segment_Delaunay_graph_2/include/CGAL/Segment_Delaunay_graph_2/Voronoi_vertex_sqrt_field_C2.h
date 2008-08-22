@@ -289,10 +289,7 @@ private:
     FT y_ = qq.y() - pp.y();
     FT n_ = CGAL::square(x_) + CGAL::square(y_);
 
-
-    Comparison_result res = CGAL::compare( c_, cq_ );
-
-    if ( res == EQUAL ) {
+    if ( c_ == cq_ ) {
       FT e1 = CGAL::square(c_);
       FT J = nl * (a * n_ + FT(4) * c_ * x_) - FT(4) * a * e1;
       FT I = nl * (b * n_ + FT(4) * c_ * y_) - FT(4) * b * e1;
@@ -849,7 +846,9 @@ private:
     } else {
       d1 = incircle_p(t.source_site());
     }
-    if ( d1 == NEGATIVE ) { return NEGATIVE; }
+    //if ( d1 == NEGATIVE ) { return NEGATIVE; }
+    if ( certainly(d1 == NEGATIVE) ) { return NEGATIVE; }
+    if (! is_certain(d1 == NEGATIVE) ) { return indeterminate<Sign>(); }
 
     if (  ( p_.is_point() && same_points(p_, t.target_site()) ) ||
 	  ( q_.is_point() && same_points(q_, t.target_site()) ) ||
@@ -858,12 +857,16 @@ private:
     } else {
       d2 = incircle_p(t.target_site());
     }
-    if ( d2 == NEGATIVE ) { return NEGATIVE; }
+    //if ( d2 == NEGATIVE ) { return NEGATIVE; }
+    if (certainly( d2 == NEGATIVE ) ) { return NEGATIVE; }
+    if (! is_certain( d2 == NEGATIVE ) ) { return indeterminate<Sign>(); }
 
     Line_2 l = compute_supporting_line(t.supporting_site());
     Sign sl = incircle(l);
 
-    if ( sl == POSITIVE ) { return sl; }
+    //if ( sl == POSITIVE ) { return sl; }
+    if (certainly( sl == POSITIVE )) { return sl; }
+    if (! is_certain( sl == POSITIVE )) { return indeterminate<Sign>(); }
 
     if ( sl == ZERO && (d1 == ZERO || d2 == ZERO) ) { return ZERO; }
 
@@ -1117,18 +1120,12 @@ public:
 
   Orientation orientation(const Line_2& l) const 
   {
-    Sign s = CGAL::sign(l.a() * x() + l.b() * y() + l.c());
-
-    if ( s == ZERO ) { return COLLINEAR; }
-    return ( s == POSITIVE ) ? LEFT_TURN : RIGHT_TURN;
+    return CGAL::sign(l.a() * x() + l.b() * y() + l.c());
   }
 
   Oriented_side oriented_side(const Line_2& l) const
   {
-    Orientation o = orientation(l);
-
-    if ( o == COLLINEAR ) { return ON_ORIENTED_BOUNDARY; }
-    return ( o == LEFT_TURN ) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
+    return orientation(l);
   }
 
   //--------------------------------------------------------------------------
@@ -1144,12 +1141,8 @@ private:
   FT ux, uy, uz;
 };
 
-
-
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
-
-
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_VORONOI_VEFTEX_SQRT_FIELD_C2_H

@@ -71,12 +71,12 @@ private:
   //--------------------------------------------------------------------
   //--------------------------------------------------------------------
 
-  bool
+  Bool_type
   is_interior_in_conflict_both(const Site_2& p, const Site_2& q,
 			       const Site_2& r, const Site_2& s,
 			       const Site_2& t, Method_tag tag) const
   {
-    bool in_conflict(false);
+    Bool_type in_conflict(false);
 
     if ( p.is_point() && q.is_point() ) {
       in_conflict = is_interior_in_conflict_both_pp(p, q, r, s, t, tag);
@@ -172,7 +172,7 @@ private:
 
   //--------------------------------------------------------------------
 
-  bool
+  Bool_type
   is_interior_in_conflict_both_ps(const Site_2& p, const Site_2& q,
 				  const Site_2& r, const Site_2& s,
 				  const Site_2& t, Method_tag tag) const
@@ -192,7 +192,7 @@ private:
 
   //--------------------------------------------------------------------
 
-  bool
+  Bool_type
   is_interior_in_conflict_both_ps_p(const Site_2& p, const Site_2& q,
 				    const Site_2& r, const Site_2& s,
 				    const Site_2& t, Method_tag ) const
@@ -205,7 +205,9 @@ private:
     Comparison_result res =
       compare_squared_distances_to_line(lq, p.point(), t.point());
 
-    if ( res != SMALLER ) { return true; }
+    //if ( res != SMALLER ) { return true; }
+    if (certainly( res != SMALLER ) ) { return true; }
+    if (! is_certain( res != SMALLER ) ) { return indeterminate<Bool_type>(); }
 
     Voronoi_vertex_2 vpqr(p, q, r);
     Voronoi_vertex_2 vqps(q, p, s);
@@ -230,7 +232,7 @@ private:
     return t1.is_input();
   }
 
-  bool
+  Bool_type
   is_interior_in_conflict_both_ps_s(const Site_2& sp, const Site_2& sq,
 				    const Site_2& r, const Site_2& s,
 				    const Site_2& st, Method_tag ) const
@@ -256,11 +258,13 @@ private:
       Oriented_side opqr = vpqr.oriented_side(lqperp);
       Oriented_side oqps = vqps.oriented_side(lqperp);
 
-      bool on_different_parabola_arcs =
-	((opqr == ON_NEGATIVE_SIDE && oqps == ON_POSITIVE_SIDE) ||
-	 (opqr == ON_POSITIVE_SIDE && oqps == ON_NEGATIVE_SIDE));
+      Bool_type on_different_parabola_arcs =
+	 ((opqr == ON_NEGATIVE_SIDE) & (oqps == ON_POSITIVE_SIDE)) |
+	 ((opqr == ON_POSITIVE_SIDE) & (oqps == ON_NEGATIVE_SIDE));
 
-      if ( !on_different_parabola_arcs ) { return true; }
+      //if ( !on_different_parabola_arcs ) { return true; }
+      if (certainly( !on_different_parabola_arcs ) ) { return true; }
+      if (! is_certain( !on_different_parabola_arcs ) ) { return indeterminate<Bool_type>(); }
 
       Site_2 t1;
       if ( same_points(sp, st.source_site()) ) {
@@ -325,10 +329,14 @@ private:
 
     Oriented_side o_l_pqr = vpqr.oriented_side(l);
     Oriented_side o_l_qps = vqps.oriented_side(l);
-    if ( o_l_pqr == ON_POSITIVE_SIDE &&
-	 o_l_qps == ON_NEGATIVE_SIDE ) { return false; }
-    if ( o_l_pqr == ON_NEGATIVE_SIDE &&
-	 o_l_qps == ON_POSITIVE_SIDE ) { return true; }
+    if (certainly( (o_l_pqr == ON_POSITIVE_SIDE) &
+	           (o_l_qps == ON_NEGATIVE_SIDE) ) )
+        return false;
+    if (certainly( (o_l_pqr == ON_NEGATIVE_SIDE) &
+	           (o_l_qps == ON_POSITIVE_SIDE) ) )
+	return true;
+    if (! is_certain((o_l_pqr == -o_l_qps) & (o_l_pqr != ZERO)))
+        return indeterminate<Bool_type>();
 
     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     //>>>>>>>>>> HERE I NEED TO CHECK THE BOUNDARY CASES <<<<<<
@@ -338,11 +346,11 @@ private:
     Oriented_side opqr = vpqr.oriented_side(lqperp);
     Oriented_side oqps = vqps.oriented_side(lqperp);
 
-    bool on_different_parabola_arcs =
-      ((opqr == ON_NEGATIVE_SIDE && oqps == ON_POSITIVE_SIDE) ||
-       (opqr == ON_POSITIVE_SIDE && oqps == ON_NEGATIVE_SIDE));
+    Bool_type on_different_parabola_arcs = (opqr == -oqps) & (opqr != ZERO);
 
-    if ( !on_different_parabola_arcs ) { return true; }
+    // if ( !on_different_parabola_arcs ) { return true; }
+    if (certainly( !on_different_parabola_arcs ) ) { return true; }
+    if (! is_certain( !on_different_parabola_arcs ) ) { return indeterminate<Bool_type>(); }
       
     Homogeneous_point_2 pv = projection_on_line(lq, p);
     Homogeneous_point_2 hp(p);
@@ -366,7 +374,7 @@ private:
 
   //--------------------------------------------------------------------
 
-  bool
+  Bool_type
   is_interior_in_conflict_both_sp(const Site_2& p, const Site_2& q,
 				  const Site_2& r, const Site_2& s,
 				  const Site_2& t, Method_tag tag) const
