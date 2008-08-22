@@ -68,6 +68,9 @@ message( STATUS "CGAL_MAJOR_VERSION=${CGAL_MAJOR_VERSION}" )
 message( STATUS "CGAL_MINOR_VERSION=${CGAL_MINOR_VERSION}" )
 message( STATUS "CGAL_BUILD_VERSION=${CGAL_BUILD_VERSION}" )
 
+set( CGAL_SOVERSION "3.0.0" )
+message( STATUS "CGAL_SOVERSION=${CGAL_SOVERSION}" )
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= DEPENDENCIES =-

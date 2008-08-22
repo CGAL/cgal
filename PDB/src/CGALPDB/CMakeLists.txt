@@ -21,6 +21,8 @@ assert(CGAL_BINARY_DIR)
 
 add_library(CGAL_PDB "all_files.cpp")
 
+set_target_properties(CGAL_PDB PROPERTIES VERSION "${CGAL_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+
 add_dependencies( CGAL_PDB CGAL )
 
 set( CGAL_PDB_BASENAME CGAL-PDB )
@@ -29,7 +31,10 @@ if (NOT AUTO_LINK_ENABLED )
 
   set_target_properties( CGAL_PDB PROPERTIES OUTPUT_NAME "${CGAL_PDB_BASENAME}" )
   
-  set(CGAL_PDB_LIBRARY "${CGAL_PDB_BASENAME}" CACHE STRING "The CGAL-PDB library")
+  get_target_property( CGAL_PDB_LIBRARY_FULL_PATH CGAL_PDB LOCATION  )
+  
+  set(CGAL_PDB_LIBRARY "${CGAL_PDB_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-PDB library")
+  
   mark_as_advanced(CGAL_PDB_LIBRARY)
   
 else()

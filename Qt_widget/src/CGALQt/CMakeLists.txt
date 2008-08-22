@@ -94,6 +94,8 @@ if( QT_FOUND )
 
     add_library (CGAL_QT "all_files.cpp")
     
+    set_target_properties(CGAL_QT PROPERTIES VERSION "${CGAL_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+    
     message( STATUS "Qt3 Libraries: ${QT_LIBRARIES}" )
     
     target_link_libraries( CGAL_QT ${QT_LIBRARIES} )
@@ -106,7 +108,10 @@ if( QT_FOUND )
 
       set_target_properties( CGAL_QT PROPERTIES OUTPUT_NAME "${CGAL_QT_BASENAME}" )
       
-      set(CGAL_QT_LIBRARY "${CGAL_QT_BASENAME}" CACHE STRING "The CGAL-Qt library")
+      get_target_property( CGAL_QT_LIBRARY_FULL_PATH CGAL_QT LOCATION  )
+      
+      set(CGAL_QT_LIBRARY "${CGAL_QT_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-Qt library")
+      
       mark_as_advanced(CGAL_QT_LIBRARY)
       
     else()

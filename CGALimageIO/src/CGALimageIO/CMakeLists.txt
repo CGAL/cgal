@@ -51,6 +51,8 @@ if(ZLIB_FOUND AND OPENGL_FOUND)
   add_library(CGAL_IMAGEIO all_files.cpp)
   add_dependencies( CGAL_IMAGEIO CGAL )
 
+  set_target_properties(CGAL_IMAGEIO PROPERTIES VERSION "${CGAL_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+  
   target_link_libraries( CGAL_IMAGEIO ${ZLIB_LIBRARY})
   
   set( CGAL_IMAGEIO_BASENAME CGAL-ImageIO )
@@ -70,7 +72,10 @@ if(ZLIB_FOUND AND OPENGL_FOUND)
   
     set_target_properties( CGAL_IMAGEIO PROPERTIES OUTPUT_NAME "${CGAL_IMAGEIO_BASENAME}" )
     
-    set(CGAL_IMAGEIO_LIBRARY "${CGAL_IMAGEIO_BASENAME}" CACHE STRING "The CGAL-ImageIO library")
+    get_target_property( CGAL_IMAGEIO_LIBRARY_FULL_PATH CGAL_IMAGEIO LOCATION  )
+    
+    set(CGAL_IMAGEIO_LIBRARY "${CGAL_IMAGEIO_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-ImageIO library")
+    
     mark_as_advanced(CGAL_IMAGEIO_LIBRARY)
 
   else()
