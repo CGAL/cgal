@@ -78,6 +78,7 @@ Polyhedron_IO
 Polynomial
 Polytope_distance_d
 Principal_component_analysis
+Profiling_tools
 QP_solver
 Qt_widget
 Random_numbers
@@ -100,7 +101,6 @@ Surface_mesh_parameterization
 Surface_mesh_simplification
 Surface_reconstruction_3
 Testsuite
-Timer
 Trapezoidal_decomposition
 Triangulation_2
 Triangulation_3
