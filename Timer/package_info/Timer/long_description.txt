@@ -1,0 +1,8 @@
+Timer Package
+---------------------------------------------------------------------
+
+    -  CGAL/Timer.h              Timer classes for user-process time.
+    -  CGAL/Real_timer.h         Timer class for real-time.
+    -  test/Timer/test_timer.C   Test program for both timer classes.
+
+Lutz Kettner
