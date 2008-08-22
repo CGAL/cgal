@@ -13,12 +13,13 @@
 OLD_PATH=$PATH
 GREP=grep
 GETCONF=`which getconf`
+OLD_GREP=`which grep`
 if [ -n "$GETCONF" ]; then
   GETCONF_PATH=`getconf PATH`
   if [ -n "$GETCONF_PATH" ]; then
     PATH=$GETCONF_PATH
     NEW_GREP=`which grep`
-    if [ -n "$NEW_GREP" ]; then
+    if [ -n "$NEW_GREP" -a "x$NEW_GREP" != "x$OLD_GREP" ]; then
       printf 'Use %s as POSIX grep.\n' "$NEW_GREP"
       GREP=$NEW_GREP
     fi
@@ -42,11 +43,12 @@ print_testresult()
   if [ ! -f ErrorOutput_$1 ] ; then
     RESULT="?"
   else
-    if $GREP -q ERROR ErrorOutput_$1 ; then
+    if $GREP ERROR ErrorOutput_$1 > /dev/null ; then
       RESULT="n"
     else
       # grep -q means "quiet": no output, the return code is 0 iff the file
       # matches the regular expression.
+      # (LR, 2008/08/22: it seems grep on Solaris still does not understand "-q"!)
       # grep -i means "case insensitive".
       # grep -E means "extended regular expressions".
       # All those three options are in the Single Unix Specification version 3
@@ -54,8 +56,7 @@ print_testresult()
       # string "warning" preceded with a letter that is not a letter or '_' or ','
       # That avoids some false positives such as
       # '-read_only_relocs,warning' or '-D_CRT_SECURE_NO_WARNINGS'
-      if $GREP -i -E -q '[^a-zA-Z_,]warning' CompilerOutput_$1 ErrorOutput_$1
-      then
+      if $GREP -i -E '[^a-zA-Z_,]warning' CompilerOutput_$1 ErrorOutput_$1 > /dev/null ; then
         RESULT="w"
       else
         RESULT="y"
@@ -85,6 +86,7 @@ do_platform()
   echo "TESTER ${TESTER}" >> $RESULT_FILE
   echo "TESTER_NAME ${TESTER_NAME}" >> $RESULT_FILE
   echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> $RESULT_FILE
+  echo "GREP ${GREP}" >> $RESULT_FILE
   echo "PLATFORM ${PLATFORM}" >> $RESULT_FILE
 
   LEDA_INCL_DIR=`cat "${CGAL_DIR}/config/install/${PLATFORM}" |sed -n '/LEDA_INCL_DIR/s/^.*= .\([^ ]*\). .*$/\1/p'`
