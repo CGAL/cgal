@@ -40,10 +40,10 @@ print_platforms()
 #print_testresult <platform> <directory>
 print_testresult()
 {
-  if [ ! -f ErrorOutput_$1 ] ; then
+  if [ ! -f "ErrorOutput_$1" ] ; then
     RESULT="?"
   else
-    if $GREP ERROR ErrorOutput_$1 > /dev/null ; then
+    if $GREP ERROR "ErrorOutput_$1" > /dev/null ; then
       RESULT="n"
     else
       # grep -q means "quiet": no output, the return code is 0 iff the file
@@ -56,7 +56,7 @@ print_testresult()
       # string "warning" preceded with a letter that is not a letter or '_' or ','
       # That avoids some false positives such as
       # '-read_only_relocs,warning' or '-D_CRT_SECURE_NO_WARNINGS'
-      if $GREP -i -E '[^a-zA-Z_,]warning' CompilerOutput_$1 ErrorOutput_$1 > /dev/null ; then
+      if $GREP -i -E '[^a-zA-Z_,]warning' "CompilerOutput_$1" "ErrorOutput_$1" > /dev/null ; then
         RESULT="w"
       else
         RESULT="y"
@@ -80,28 +80,28 @@ do_platform()
   if [ "${CGAL_MAKEFILE}" ]; then
     CGAL_DIR=`dirname $CGAL_MAKEFILE`/..
   fi
-  rm -f $RESULT_FILE
-  touch $RESULT_FILE
-  sed -n '/CGAL_VERSION /s/#define //p' < $CGAL_DIR/include/CGAL/version.h >> $RESULT_FILE
-  echo "TESTER ${TESTER}" >> $RESULT_FILE
-  echo "TESTER_NAME ${TESTER_NAME}" >> $RESULT_FILE
-  echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> $RESULT_FILE
-  echo "GREP ${GREP}" >> $RESULT_FILE
-  echo "PLATFORM ${PLATFORM}" >> $RESULT_FILE
+  rm -f "$RESULT_FILE"
+  touch "$RESULT_FILE"
+  sed -n '/CGAL_VERSION /s/#define //p' < "$CGAL_DIR/include/CGAL/version.h" >> "$RESULT_FILE"
+  echo "TESTER ${TESTER}" >> "$RESULT_FILE"
+  echo "TESTER_NAME ${TESTER_NAME}" >> "$RESULT_FILE"
+  echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> "$RESULT_FILE"
+  echo "GREP ${GREP}" >> "$RESULT_FILE"
+  echo "PLATFORM ${PLATFORM}" >> "$RESULT_FILE"
 
   LEDA_INCL_DIR=`cat "${CGAL_DIR}/config/install/${PLATFORM}" |sed -n '/LEDA_INCL_DIR/s/^.*= .\([^ ]*\). .*$/\1/p'`
-  if [ -r ${LEDA_INCL_DIR}/LEDA/basic.h ]; then
-    sed -n '/__LEDA__/s/^#define __LEDA__/LEDA version/p' < ${LEDA_INCL_DIR}/LEDA/basic.h >>$RESULT_FILE
+  if [ -r "${LEDA_INCL_DIR}/LEDA/basic.h" ]; then
+    sed -n '/__LEDA__/s/^#define __LEDA__/LEDA version/p' < "${LEDA_INCL_DIR}/LEDA/basic.h" >>"$RESULT_FILE"
   fi
 
-  cat "${CGAL_DIR}/config/install/${PLATFORM}" >> $RESULT_FILE
-  echo "------------" >> $RESULT_FILE
+  cat "${CGAL_DIR}/config/install/${PLATFORM}" >> "$RESULT_FILE"
+  echo "------------" >> "$RESULT_FILE"
 
-  if [ -f install.log.${PLATFORM} ] ; then
-    [ -f install.log ] && cat install.log >> Installation/ProgramOutput.install.log.${PLATFORM}
-    cat install.log.${PLATFORM} >> Installation/ProgramOutput.install.log.${PLATFORM}
+  if [ -f "install.log.${PLATFORM}" ] ; then
+    [ -f install.log ] && cat install.log >> "Installation/ProgramOutput.install.log.${PLATFORM}"
+    cat "install.log.${PLATFORM}" >> "Installation/ProgramOutput.install.log.${PLATFORM}"
 
-    grep "Compilation of" install.log.${PLATFORM} \
+    grep "Compilation of" "install.log.${PLATFORM}" \
     | awk '{ print $3 " " $4 " " $6; }' \
     | sed -e 's/succeeded\.$/y/' -e 's/failed\.$/n/' \
     | while read libname shared_or_static y_or_no; do
@@ -111,19 +111,19 @@ do_platform()
       # with the variable _buildlog_marker from the script install_cgal.
       _buildlog_marker="log for ${libname} ${shared_or_static} shown"
 
-      cat install.log.${PLATFORM} \
+      cat "install.log.${PLATFORM}" \
       | sed -n "/${_buildlog_marker} below/,/${_buildlog_marker} above/ p" \
-      > ${libname}_${shared_or_static}/$TEST_REPORT
+      > "${libname}_${shared_or_static}/$TEST_REPORT"
 
       # Test if there is a warning in the build log.
       if [ "$y_or_no" = "y" ]; then
         # See the comment line 31.
-        if $GREP -i -E -q '[^a-zA-Z_,]warning' ${libname}_${shared_or_static}/$TEST_REPORT ; then
+        if $GREP -i -E '[^a-zA-Z_,]warning' "${libname}_${shared_or_static}/$TEST_REPORT" > /dev/null ; then
           y_or_no=w
         fi
       fi
 
-      echo ${libname}_${shared_or_static} $y_or_no >> $RESULT_FILE
+      echo ${libname}_${shared_or_static} $y_or_no >> "$RESULT_FILE"
     done
   fi
 
@@ -132,31 +132,31 @@ do_platform()
       echo "  $DIR ..."
       cd $DIR
 
-      print_testresult $PLATFORM $DIR >> $RESULT_FILE
+      print_testresult $PLATFORM $DIR >> "$RESULT_FILE"
 
-      rm -f ${TEST_REPORT}
-      touch $TEST_REPORT
+      rm -f "${TEST_REPORT}"
+      touch "$TEST_REPORT"
 
-      if [ ! -f ErrorOutput_${PLATFORM} ] ; then
+      if [ ! -f "ErrorOutput_${PLATFORM}" ] ; then
         echo "Error: file $DIR/ErrorOutput_${PLATFORM} does not exist!"
       else
-        cat ErrorOutput_${PLATFORM} >> $TEST_REPORT
+        cat "ErrorOutput_${PLATFORM}" >> "$TEST_REPORT"
       fi
 
       if [ ! -f CompilerOutput_${PLATFORM} ] ; then
         echo "Error: file $DIR/CompilerOutput_${PLATFORM} does not exist!"
       else
-        cat CompilerOutput_${PLATFORM} >> $TEST_REPORT
+        cat CompilerOutput_${PLATFORM} >> "$TEST_REPORT"
       fi
 
       if 2>&1 eval ls ProgramOutput.*.${PLATFORM} > /dev/null ; then
         PROGRAM_OUTPUT=`ls ProgramOutput.*$PLATFORM*`
         for FILE in $PROGRAM_OUTPUT ; do
-          echo >> $TEST_REPORT
-          echo "------------------------------------------------------------------" >> $TEST_REPORT
-          echo "- $FILE" >> $TEST_REPORT
-          echo "------------------------------------------------------------------" >> $TEST_REPORT
-          cat $FILE >> $TEST_REPORT
+          echo >> "$TEST_REPORT"
+          echo "------------------------------------------------------------------" >> "$TEST_REPORT"
+          echo "- $FILE" >> "$TEST_REPORT"
+          echo "------------------------------------------------------------------" >> "$TEST_REPORT"
+          cat "$FILE" >> "$TEST_REPORT"
         done
       fi
 
@@ -165,11 +165,11 @@ do_platform()
   done
 
   OUTPUT_FILE=results_${TESTER}_${PLATFORM}.tar
-  rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
-  tar cf $OUTPUT_FILE results_${TESTER}_${PLATFORM}.txt */$TEST_REPORT
+  rm -f "$OUTPUT_FILE" "$OUTPUT_FILE.gz"
+  tar cf "$OUTPUT_FILE" results_${TESTER}_${PLATFORM}.txt */"$TEST_REPORT"
   echo
   echo "compressing ..."
-  gzip -9f $OUTPUT_FILE
+  gzip -9f "$OUTPUT_FILE"
   echo "results written to file $OUTPUT_FILE.gz"
   echo
 }
