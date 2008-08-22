@@ -33,7 +33,7 @@ namespace CGALi {
 
 template <typename K>
 inline
-Angle
+typename K::Angle
 angle(const typename K::Point_3 &p,
       const typename K::Point_3 &q,
       const typename K::Point_3 &r, const K &k)

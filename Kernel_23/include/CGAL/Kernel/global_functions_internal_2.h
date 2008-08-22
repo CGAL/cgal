@@ -37,7 +37,7 @@ namespace CGALi {
 
 template < class K >
 inline
-Angle
+typename K::Angle
 angle(const typename K::Point_2 &p,
       const typename K::Point_2 &q,
       const typename K::Point_2 &r, const K& k)
@@ -740,7 +740,7 @@ min_vertex(const typename K::Iso_rectangle_2 &ir, const K &k)
 
 template <typename K>
 inline
-Orientation
+typename K::Orientation
 orientation(const typename K::Point_2 &p,
             const typename K::Point_2 &q,
             const typename K::Point_2 &r, const K &k)
@@ -750,7 +750,7 @@ orientation(const typename K::Point_2 &p,
 
 template <typename K>
 inline
-Orientation
+typename K::Orientation
 orientation(const typename K::Vector_2 &u,
             const typename K::Vector_2 &v, const K &k)
 {
@@ -796,7 +796,7 @@ right_turn(const typename K::Point_2 &p,
 
 template <class K>
 inline
-Bounded_side
+typename K::Bounded_side
 side_of_bounded_circle(const typename K::Point_2 &p,
                        const typename K::Point_2 &q,
                        const typename K::Point_2 &r,
@@ -807,7 +807,7 @@ side_of_bounded_circle(const typename K::Point_2 &p,
 
 template <class K>
 inline
-Bounded_side
+typename K::Bounded_side
 side_of_bounded_circle(const typename K::Point_2 &p,
                        const typename K::Point_2 &q,
                        const typename K::Point_2 &r, const K &k)
@@ -817,7 +817,7 @@ side_of_bounded_circle(const typename K::Point_2 &p,
 
 template <class K>
 inline
-Oriented_side
+typename K::Oriented_side
 side_of_oriented_circle(const typename K::Point_2 &p,
                         const typename K::Point_2 &q,
                         const typename K::Point_2 &r,
@@ -836,7 +836,7 @@ squared_radius(const typename K::Point_2 &p,
 }
 
 template < class K >
-CGAL_KERNEL_INLINE
+inline
 typename K::FT
 squared_radius(const typename K::Point_2 &p,
                const typename K::Point_2 &q,
