@@ -34,6 +34,7 @@ if(ZLIB_FOUND AND OPENGL_FOUND)
   include_directories( ${OPENGL_INCLUDE_DIR} )
   
   add_library(CGAL_IMAGEIO all_files.cpp)
+  add_dependencies( CGAL_IMAGEIO CGAL )
 
   target_link_libraries( CGAL_IMAGEIO ${ZLIB_LIBRARY})
   
