@@ -7,7 +7,6 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Modifier_base.h>
-#include <CGAL/Nef_3/SNC_indexed_items.h>
 
 CGAL_BEGIN_NAMESPACE
 
