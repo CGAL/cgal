@@ -54,6 +54,7 @@ all:            \
                 big_and_small$(EXE_EXT) \
                 quadratic$(EXE_EXT) \
                 quadratic2$(EXE_EXT) \
+                create_quadratic2$(EXE_EXT) \
                 convert_to_sat$(EXE_EXT) \
                 tetrahedra_as_sat$(EXE_EXT) \
                 grid_as_sat$(EXE_EXT) \
@@ -83,6 +84,8 @@ quadratic$(EXE_EXT): quadratic$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quadratic quadratic$(OBJ_EXT) $(LDFLAGS)
 quadratic2$(EXE_EXT): quadratic2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quadratic2 quadratic2$(OBJ_EXT) $(LDFLAGS)
+create_quadratic2$(EXE_EXT): create_quadratic2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)create_quadratic2 create_quadratic2$(OBJ_EXT) $(LDFLAGS)
 convert_to_sat$(EXE_EXT): convert_to_sat$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)convert_to_sat convert_to_sat$(OBJ_EXT) $(LDFLAGS)
 tetrahedra_as_sat$(EXE_EXT): tetrahedra_as_sat$(OBJ_EXT)
@@ -120,6 +123,7 @@ clean: \
 	           big_and_small.clean \
 	           quadratic.clean \
 	           quadratic2.clean \
+	           create_quadratic2.clean \
 	           convert_to_sat.clean \
 	           tetrahedra_as_sat.clean \
 	           grid_as_sat.clean \

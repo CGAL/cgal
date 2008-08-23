@@ -192,7 +192,7 @@ public:
 	<< index(v->sfaces_last(),sface_offset) << ", "
 	<< index(SD.shalfloop(),sloop_offset) << " | ";
     }
-    Point_3 p(point(v));
+    Point_3 p(v->point());
     p=p.transform(aff);
     if(reduce) {
       Standard_point sp(Infi_box::standard_point(p));
@@ -201,16 +201,16 @@ public:
     else
       out << p.hx() << " " << p.hy() << " " << p.hz() << " " << p.hw();
 
-    out << " } "  << mark(v) << std::endl;
+    out << " } "  << v->mark() << std::endl;
   }
 
   void print_edge(Halfedge_handle e) const {
     // syntax: index { twin, source, isolated incident_object | spoint } mark
-    SM_decorator D(&*vertex(e));
+    SM_decorator D(&*e->source());
     out << index(e,edge_offset) << " { " 
-	<< index(twin(e),edge_offset) << ", "
-	<< index(source(e),vertex_offset) << ", ";
-    if ( D.is_isolated(e) ) out << "1 " << index(D.face(e),sface_offset);
+	<< index(e->twin(),edge_offset) << ", "
+	<< index(e->source(),vertex_offset) << ", ";
+    if ( D.is_isolated(e) ) out << "1 " << index(e->incident_sface(),sface_offset);
     else out << "0 " << index(D.first_out_edge(e),sedge_offset);
     out << " | ";
     if(reduce) {
@@ -221,13 +221,13 @@ public:
       Vector_3 p(e->vector());
       out << p.hx() << " " << p.hy() << " " << p.hz() << " " << p.hw();
     }
-    out << " } "<< mark(e) << std::endl;
+    out << " } "<< e->mark() << std::endl;
   }
 
   void print_facet(Halffacet_handle f, const Aff_transformation_3& aff) const { 
     // syntax: index { twin, fclist, ivlist, volume | plane } mark
     out << index(f,facet_offset) << " { "; 
-    out << index(twin(f),facet_offset) << ", ";
+    out << index(f->twin(),facet_offset) << ", ";
     Halffacet_cycle_iterator it; 
     CGAL_forall_facet_cycles_of(it,f)
       if ( it.is_shalfedge() ) 
@@ -237,9 +237,9 @@ public:
       if ( it.is_shalfloop() ) 
 	out << index(SHalfloop_handle(it),sloop_offset) << ' ';
     out << ", " 
-	<< (is_zero(volume(f))?"0":index(volume(f),volume_offset))
+	<< (is_zero(f->incident_volume())?"0":index(f->incident_volume(),volume_offset))
 	<< " | ";
-    Plane_3 p(plane(f));
+    Plane_3 p(f->plane());
     p=p.transform(aff);
     if(reduce) {
       Standard_plane sp(Infi_box::standard_plane(p));
@@ -248,7 +248,7 @@ public:
     else {
       out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
     }
-    out << " } " << mark(f) << std::endl;
+    out << " } " << f->mark() << std::endl;
   }
 
   void print_outer_volume(int n) const {
@@ -262,7 +262,7 @@ public:
       }
       offset+=SFL.size();
     }
-    out << "} " << mark(c) << std::endl;
+    out << "} " << c->mark() << std::endl;
   }
 
   void print_volume(Volume_handle c) const {
@@ -270,53 +270,53 @@ public:
     out << index(c,volume_offset) << " { "; 
     Shell_entry_iterator it;
     CGAL_forall_shells_of(it,c) 
-      if(!reduce || Infi_box::is_standard(point(vertex(SFace_handle(it))))) {
+      if(!reduce || Infi_box::is_standard(SFace_handle(it)->center_vertex()->point())) {
 	out << index(SFace_handle(it),sface_offset) << ' ';
       }
-    out << "} " << mark(c) << std::endl;
+    out << "} " << c->mark() << std::endl;
   }
 
   void print_sedge(SHalfedge_handle e) const { 
     //index { twin, sprev, snext, source, sface, prev, next, facet | circle } mark
-    SM_decorator D(&*vertex(e));
+    SM_decorator D(&*e->source()->source());
     out << index(e,sedge_offset) << " { "
-	<< index(D.twin(e),sedge_offset) << ", " 
-	<< index(D.previous(e),sedge_offset) << ", " 
-	<< index(D.next(e),sedge_offset) << ", "
-	<< index(D.source(e),edge_offset) << ", " 
-	<< index(D.face(e),sface_offset) << ", "
-	<< index(previous(e),sedge_offset) << ", " 
-	<< index(next(e),sedge_offset) << ", "
-	<< index(facet(e),facet_offset) 
+	<< index(e->twin(),sedge_offset) << ", " 
+	<< index(e->sprev(),sedge_offset) << ", " 
+	<< index(e->snext(),sedge_offset) << ", "
+	<< index(e->source(),edge_offset) << ", " 
+	<< index(e->incident_sface(),sface_offset) << ", "
+	<< index(e->prev(),sedge_offset) << ", " 
+	<< index(e->next(),sedge_offset) << ", "
+	<< index(e->facet(),facet_offset) 
 	<< " | ";
     if(reduce) {
-      Standard_plane p(Infi_box::standard_plane(circle(e)));
+      Standard_plane p(Infi_box::standard_plane(e->circle()));
       out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
     }
     else {
-      Plane_3 p(circle(e));
+      Plane_3 p(e->circle());
       out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
     }
-    out << " } " << D.mark(e) << "\n";
+    out << " } " << e->mark() << "\n";
   }
   
   void print_sloop(SHalfloop_handle l) const {
     // syntax: index { twin, sface, facet | circle } mark
-    SM_decorator D(&*vertex(l));
+    SM_decorator D(&*l->incident_sface()->center_vertex());
     out << index(l,sloop_offset) << " { "
-	<< index(D.twin(l),sloop_offset) << ", " 
-	<< index(D.face(l),sface_offset) << ", "
-	<< index(facet(l),facet_offset) 
+	<< index(l->twin(),sloop_offset) << ", " 
+	<< index(l->incident_sface(),sface_offset) << ", "
+	<< index(l->facet(),facet_offset) 
 	<< " | ";  
     if(reduce) {
-      Standard_plane p(Infi_box::standard_plane(circle(l)));
+      Standard_plane p(Infi_box::standard_plane(l->circle()));
       out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
     }
     else {
-      Plane_3 p(circle(l));
+      Plane_3 p(l->circle());
       out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
     }
-    out << " } " << D.mark(l) << "\n";
+    out << " } " << l->mark() << "\n";
   }
 
   void print_sface(SFace_handle f) const {
@@ -337,9 +337,9 @@ public:
       if ( it.is_shalfloop() ) 
 	out << index(SHalfloop_handle(it),sloop_offset);
     out << ", "
-	<< (is_zero(volume(f))?"0":index(volume(f),volume_offset)) 
+	<< (is_zero(f->volume())?"0":index(f->volume(),volume_offset)) 
 	<< " } " 
-	<< D.mark(f) <<"\n";
+	<< f->mark() <<"\n";
   }
 
   void print_items(const Aff_transformation_3& aff, bool first) {
@@ -610,7 +610,7 @@ public:
     CGAL_forall_vertices(vi, *this->sncp()) {
       VL.push_back(vi);
       if(sorted) {
-	point(vi) = normalized(point(vi));
+	vi->point() = normalized(vi->point());
 	if(vi->has_shalfloop() && 
 	   sort_sloops<SNC_structure>(*this->sncp())(vi->shalfloop()->twin(),
 						     vi->shalfloop()))
@@ -635,7 +635,7 @@ public:
       EL.push_back(ei);
       if(sorted) {
 	//      std::cerr << point(ei) << " | " << normalized(point(ei)) << " |";
-	SD.point(ei) = normalized(SD.point(ei));
+	ei->point() = normalized(ei->point());
 	//      std::cerr << point(ei) << std::endl;
 	sort_sedges<SNC_structure> sortSE(*this->sncp());
 	SHalfedge_handle new_outedge = ei->out_sedge();
@@ -660,7 +660,7 @@ public:
     Halffacet_iterator fi; 
     CGAL_forall_halffacets(fi, *this->sncp()){
       if(sorted) {
-	plane(fi) = normalized(plane(fi));
+	fi->plane() = normalized(fi->plane());
 	fi->boundary_entry_objects().sort(sort_facet_cycle_entries<Base>((Base) *this));
       }
       FL.push_back(fi);
@@ -681,7 +681,7 @@ public:
     CGAL_forall_shalfedges(sei, *this->sncp()) {
       SEL.push_back(sei);
       if(sorted)
-	SD.circle(sei) = normalized(SD.circle(sei));
+	sei->circle() = normalized(sei->circle());
     }
     if(sorted) SEL.sort(sort_sedges<SNC_structure>(*this->sncp()));
     if(reduce)
@@ -697,7 +697,7 @@ public:
     CGAL_forall_shalfloops(sli, *this->sncp()) {
       SLL.push_back(sli);
       if(sorted)
-	SD.circle(sli) = normalized(SD.circle(sli));
+	sli->circle() = normalized(sli->circle());
     }
     if(sorted) SLL.sort(sort_sloops<SNC_structure>(*this->sncp()));
     i = 0;
@@ -714,13 +714,14 @@ public:
 	    SHalfedge_handle se(fc);
 	    SHalfedge_around_sface_circulator cb(se), ce(cb);
 	    CGAL_For_all(cb,ce) {
-	      if(ssource(cb) != ssource(se)) {
-		if(lexicographically_xyz_smaller(point(vertex(twin(ssource(cb)))), 
-						 point(vertex(twin(ssource(se))))))
+	      if(cb->source() != se->source()) {
+		if(lexicographically_xyz_smaller(cb->source()->twin()->source()->point(), 
+						 se->source()->twin()->source()->point())) 
 		  se = cb;
 	      }
 	      else 
-		if(lexicographically_xyz_smaller(point(target(cb)), point(target(se))))
+		if(lexicographically_xyz_smaller(cb->source()->twin()->source()->point(),
+						 se->source()->twin()->source()->point()))
 		  se = cb;
 	    }
 	    *fc = se;
