@@ -301,10 +301,10 @@ public:
           direction $(x,y,z)$.}*/
 
   template<typename Forward_iterator>  
-  void add_outer_sedge_cycle(Vertex_handle v, 
-			     Forward_iterator start,
-			     Forward_iterator end, 
-			     bool orient) {
+  SHalfedge_handle add_outer_sedge_cycle(Vertex_handle v, 
+					 Forward_iterator start,
+					 Forward_iterator end, 
+					 bool orient) {
     
     CGAL_assertion(start!=end);
     
@@ -359,13 +359,15 @@ public:
     se=*se_list.begin();
     SD.link_as_face_cycle(se,sfi);
     SD.link_as_face_cycle(se->twin(),sfa);
+
+    return se;
   }
 
   template<typename Forward_iterator>  
-  void add_inner_sedge_cycle(Vertex_handle v, 
-			     Forward_iterator start,
-			     Forward_iterator end, 
-			     bool orient, bool camera) {
+  SHalfedge_handle add_inner_sedge_cycle(Vertex_handle v, 
+					 Forward_iterator start,
+					 Forward_iterator end, 
+					 bool orient, bool camera) {
     CGAL_assertion(start!=end);
 
     v->mark() = true;
@@ -428,6 +430,8 @@ public:
     se=*se_list.begin();
     SD.link_as_face_cycle(se,sfi);
     SD.link_as_face_cycle(se->twin(),sfa);
+
+    return se;
   }
 
   Vertex_handle create_for_infibox_overlay(Vertex_const_handle vin) const {
