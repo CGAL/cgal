@@ -195,6 +195,39 @@ int main(int argc, char* argv[]) {
 
   CGAL_assertion(is_strongly_convex_3(P));
 
+#ifdef CGAL_TCSP_CENTER_SUITCASE
+
+  CGAL::Bounding_box_3<CGAL::Tag_true, Kernel>  bbp;
+  Polyhedron_3::Vertex_const_iterator pvi;
+  for(pvi = P.vertices_begin();
+      pvi != P.vertices_end(); ++pvi) {
+    bbp.extend(pvi->point());
+  }
+
+  std::cerr << "bbp " << bbp.min_coord(0)
+	    << ", " << bbp.min_coord(1)
+	    << ", " << bbp.min_coord(2)
+	    << " - " << bbp.max_coord(0)
+	    << ", " << bbp.max_coord(1) 
+	    << ", " << bbp.max_coord(2) << std::endl;
+
+  Kernel::Vector_3 vec(bbp.max_coord(0)-bbp.min_coord(0), 
+		       bbp.max_coord(1)-bbp.min_coord(1),
+		       bbp.max_coord(2)-bbp.min_coord(2));
+  vec = vec / Kernel::RT(2);
+  std::cerr << "translate " << vec << std::endl;
+  Kernel::Vector_3 pvec(-bbp.max_coord(0),
+			-bbp.max_coord(1),
+			-bbp.max_coord(2));
+  vec = vec + pvec;
+  std::cerr << "translate " << vec << std::endl;
+  Kernel::Aff_transformation_3 trans(CGAL::TRANSLATION, vec);
+  Nef_polyhedron_3 N(P);
+  N.transform(trans);
+  P.clear();
+  N.convert_to_Polyhedron(P);
+#endif
+
   CGAL::Timer t;
   t.start();
   std::vector<Point_3>::const_iterator 
