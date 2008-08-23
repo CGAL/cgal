@@ -23,29 +23,59 @@
 int main(int, char*){
   std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
 #else
-#include <CGAL/Cartesian.h>
-#include <CGAL/Homogeneous.h>
-#include <CGAL/Gmpz.h>
-#include <CGAL/Quotient.h>
+
+#ifdef CGAL_VSH_FILTERED
+  #include <CGAL/Simple_cartesian.h>
+  #include <CGAL/Lazy_kernel.h>
+  #include <CGAL/Gmpq.h>
+#else
+  #ifdef CGAL_USE_LEDA
+    #include <CGAL/leda_integer.h>
+  #else
+    #include <CGAL/Gmpz.h>
+  #endif
+  #include <CGAL/Cartesian.h>
+  #include <CGAL/Homogeneous.h>
+  #include <CGAL/Quotient.h>
+  #include <CGAL/cartesian_homogeneous_conversion.h>
+#endif
+
 #include <CGAL/Nef_polyhedron_3.h>
-#include <CGAL/cartesian_homogeneous_conversion.h>
 #include <CGAL/Nef_3/visual_hull_creator.h>
+#include <CGAL/Nef_nary_intersection_3.h>
 #include <CGAL/IO/Qt_widget_Nef_3.h>
 #include <qapplication.h>
 #include <fstream>
 #include <list>
 
-typedef CGAL::Gmpz NT;
-typedef CGAL::Quotient<NT> CNT;
-typedef CGAL::Cartesian<CNT> CKernel;
-typedef CGAL::Homogeneous<NT> Kernel;
-typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
+#ifdef CGAL_VSH_FILTERED
+  typedef CGAL::Simple_cartesian<CGAL::Gmpq> EKernel;
+  typedef CGAL::Lazy_kernel<EKernel> Kernel;
+#else
+  #ifdef CGAL_USE_LEDA
+    typedef leda_integer NT;
+  #else
+    typedef CGAL::Gmpz NT;
+  #endif
+  typedef CGAL::Quotient<NT> CNT;
+  typedef CGAL::Cartesian<CNT> CKernel;
+  typedef CGAL::Homogeneous<NT> Kernel;
+  typedef CKernel::FT FT;
+  typedef CKernel::Point_3 CPoint;
+#endif
 
-typedef CKernel::FT FT;
-typedef CKernel::Point_3 CPoint;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Plane_3 Plane_3;
+typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
+typedef CGAL::Nef_nary_intersection_3<Nef_polyhedron> NaryInt;
 
+#ifdef CGAL_VSH_FILTERED
+Point_3 read_point(std::ifstream& in) {
+  Point_3 p;
+  in >> p;
+  return p;
+}
+#else
 Point_3 read_point(std::ifstream& in) {
   double x,y,z;
   in >> x;
@@ -54,6 +84,7 @@ Point_3 read_point(std::ifstream& in) {
   CPoint p(x,y,z);
   return quotient_cartesian_to_homogeneous(p);
 }
+#endif
 
 int main(int argc, char* argv[]) {
   // We've put the typedefs here as VC7 gives us an ICE if they are global typedefs
@@ -67,10 +98,8 @@ int main(int argc, char* argv[]) {
   }
 
   std::ifstream in(argv[1]);
-
-  typedef std::multimap<Nef_polyhedron::Size_type,Nef_polyhedron> PQ;
-  typedef PQ::iterator      PQ_iterator;
-  PQ pq;
+  
+  NaryInt ni;
 
   CGAL::Timer t;
 
@@ -116,28 +145,17 @@ int main(int argc, char* argv[]) {
     }
 
     t.start();
-
     Nef_polyhedron N;
     VHC vhc(room_min, room_max, camera, polygon_list);
     N.delegate(vhc,true);
     CGAL_assertion(N.is_valid());
-    pq.insert(std::make_pair(N.number_of_vertices(),N));
     t.stop();
+    std::cerr << "create view " << t.time() << std::endl;
+    t.reset();
+    ni.add_polyhedron(N);
   }
 
-  t.start();
-  PQ_iterator i1, i2;
-  while(pq.size() > 1) {
-    i1 = i2 = pq.begin();
-    ++i2;
-    Nef_polyhedron Ntmp(i1->second * i2->second);
-    pq.erase(i1);
-    pq.erase(i2);
-    pq.insert(std::make_pair(Ntmp.number_of_vertices(),Ntmp));
-  }
-  t.stop();
-
-  Nef_polyhedron result(pq.begin()->second);
+  Nef_polyhedron result = ni.get_intersection();
 
   QApplication a(argc,argv);
   CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w =
