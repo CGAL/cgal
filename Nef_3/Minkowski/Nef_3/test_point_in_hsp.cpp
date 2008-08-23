@@ -21,26 +21,42 @@ void loadHsp() {
   for(int h=0; h<hulls; ++h) {
     //    std::cerr << "read hull " << h << std::endl;
     Plane_3 pl;
-    Plane_list plist;
 
-    int planes;
-    std::cin >> planes;
-    for(int p=0; p<planes; ++p) {
-      //      std::cerr << "read plane " << p << std::endl;
-      std::cin >> pl;
-      plist.push_back(pl);
+    for(int j=0; j<2; ++j) {
+      Plane_list plist;
+      int planes;
+      std::cin >> planes;
+      for(int p=0; p<planes; ++p) {
+	//      std::cerr << "read plane " << p << std::endl;
+	std::cin >> pl;
+	plist.push_back(pl);
+      }
+      hsp.push_back(plist);
     }
-    hsp.push_back(plist);
   }
 }
 
 bool test_point_in_polyhedron(const Point_3 p, 
-			      const Plane_list& plane_list, 
+			      const Plane_list& bad,
+			      const Plane_list& good,
 			      bool turn) {
 
   bool result = true;
   Plane_list_iterator pli;
-  for(pli = plane_list.begin(); pli != plane_list.end(); ++pli) {
+  for(pli = bad.begin(); pli != bad.end(); ++pli) {
+    CGAL::Oriented_side os = pli->oriented_side(p);
+    if(os == CGAL::ON_ORIENTED_BOUNDARY)
+      std::cerr << "attention: point on boundary " << *pli << std::endl;
+    if(turn) {
+      if(os != CGAL::ON_NEGATIVE_SIDE) continue;
+    } else {
+      if(os != CGAL::ON_POSITIVE_SIDE) continue;
+    }
+    std::cerr << "fail " << *pli << std::endl;
+    result = false;
+  }
+
+  for(pli = good.begin(); pli != good.end(); ++pli) {
     CGAL::Oriented_side os = pli->oriented_side(p);
     if(turn) {
       if(os == CGAL::ON_POSITIVE_SIDE) continue;
@@ -48,12 +64,10 @@ bool test_point_in_polyhedron(const Point_3 p,
       if(os == CGAL::ON_NEGATIVE_SIDE) continue;
     }
     if(os == CGAL::ON_ORIENTED_BOUNDARY)
-      std::cerr << "on boundary " << *pli << std::endl;
-    else {
-      std::cerr << "fail " << *pli << std::endl;
-      result = false;
-    }
-  }
+      std::cerr << "on csp boundary " << std::endl;
+    std::cerr << "fail " << *pli << std::endl;
+    result = false;
+  }  
 
   return result;
 }
@@ -76,18 +90,26 @@ int main(int argc, char* argv[]) {
 
   loadHsp();
 
+  CGAL_assertion((hsp.size()%2) == 0);
+  Plane_list emptyList;
+  
   int problem = 0;
   Hsp_iterator hi;
   int i = 0;
   for(hi = hsp.begin(); hi != hsp.end(); ++hi) {
     std::cerr << "polyhedron " << ++i << std::endl;
+    const Plane_list& bad = *hi;
     if(hi == hsp.begin()) {
-      if(!test_point_in_polyhedron(p, *hi, turn_hull)) {
+      ++hi;
+      CGAL_assertion(hi->size() == 0);
+      if(!test_point_in_polyhedron(p, bad, emptyList, turn_hull)) {
 	++problem;
 	std::cerr << "point not in hull " << std::endl;
       }
     } else {
-      if(test_point_in_polyhedron(p, *hi, turn_obs)) {
+      ++hi;
+      const Plane_list& good = *hi;
+      if(test_point_in_polyhedron(p, bad, good, turn_obs)) {
 	++problem;
 	std::cerr << "point inside obstacle " << std::endl;
       }

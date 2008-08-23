@@ -13,21 +13,16 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-MY_DIR = /KM/usr/hachenb/SVN/CGAL
-POLY = $(MY_DIR)/Polynomial/include
-LOCAL = $(MY_DIR)/local/include
+MY_DIR = /home/phachenb/CGAL
+NEFS2 = $(MY_DIR)/Nef_S2/include
 NEF2 = $(MY_DIR)/Nef_2/include
-NEF3 = $(MY_DIR)/Filtered_Nef/Nef_3/include 
-NEFS2 = $(MY_DIR)/Filtered_Nef/Nef_S2/include
-WALKER = $(HOME)/projects/SNC_walker
-BBOX = $(MY_DIR)/Box_intersection_d/include
+NEF3 = $(MY_DIR)/Nef_3/include
 MINKOWSKI = $(MY_DIR)/Nef_3/Minkowski/include
 
-CUSTOM_CXXFLAGS = -I$(NEF3) -I$(NEFS2) -I$(MINKOWSKI) -I$(BBOX)
-
-CXXFLAGS = -DCGAL_NEF3_NARY_UNION_VIA_QUEUE \
-           -DNDEBUG \
-           -O2 \
+CXXFLAGS = -I$(NEF3) -I$(NEFS2) -I$(NEF2) -I$(MINKOWSKI) \
+           -O2 -DNDEBUG \
+           -DCGAL_TCSP_PRINT_CSP \
+           -DCGAL_TCSP_CENTER_SUITCASE \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
 	   $(DEBUG_OPT) \
@@ -59,7 +54,11 @@ all:            \
                 generate_convex$(EXE_EXT) \
                 minkowski_sum$(EXE_EXT) \
                 top_bottom_test$(EXE_EXT) \
-                trunk_configuration_space$(EXE_EXT)
+                trunk_configuration_space$(EXE_EXT) \
+                csp2hsp$(EXE_EXT) \
+                hsp2csp$(EXE_EXT) \
+                computeDiff$(EXE_EXT) \
+                transform_csp_according_to_uncentered_box$(EXE_EXT)
 
 
 convex$(EXE_EXT): convex$(OBJ_EXT)
@@ -95,6 +94,18 @@ top_bottom_test$(EXE_EXT): top_bottom_test$(OBJ_EXT)
 trunk_configuration_space$(EXE_EXT): trunk_configuration_space$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)trunk_configuration_space trunk_configuration_space$(OBJ_EXT) $(LDFLAGS)
 
+csp2hsp$(EXE_EXT): csp2hsp$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)csp2hsp csp2hsp$(OBJ_EXT) $(LDFLAGS)
+
+hsp2csp$(EXE_EXT): hsp2csp$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)hsp2csp hsp2csp$(OBJ_EXT) $(LDFLAGS)
+
+computeDiff$(EXE_EXT): computeDiff$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)computeDiff computeDiff$(OBJ_EXT) $(LDFLAGS)
+
+transform_csp_according_to_uncentered_box$(EXE_EXT): transform_csp_according_to_uncentered_box$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)transform_csp_according_to_uncentered_box transform_csp_according_to_uncentered_box$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    convex.clean \
                    boundary_offset_test.clean \
@@ -106,7 +117,11 @@ clean: \
 	           generate_convex.clean \
 	           minkowski_sum.clean \
 	           top_bottom_test.clean \
-	           trunk_configuration_space.clean
+	           trunk_configuration_space.clean \
+                   csp2hsp.clean \
+                   hsp2csp.clean \
+                   computeDiff.clean \
+                   transform_csp_according_to_uncentered_box.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -115,3 +130,5 @@ clean: \
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
+.cpp$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<

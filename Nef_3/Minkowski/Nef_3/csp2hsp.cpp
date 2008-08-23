@@ -581,8 +581,7 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
   Nef_polyhedron_3 rediff = nu2.get_union();
   Nef_polyhedron_3 recv2 = NCV - rediff;  
   PVC pvct2(recv2);
-  std::cerr << "volume of approximation " 
-	    << pvct2.get_volume_of_polyhedron() << std::endl;
+  float approx = pvct2.get_volume_of_polyhedron();
   CGAL_assertion((recv2-NCV).is_empty());
   //  CGAL_assertion((DIFF-rediff).is_empty());
 
@@ -601,9 +600,13 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
   CSP.visit_shell_objects(csp_volume->shells_begin(), pv);
   */
 
+  int facet_counter = 0;
+  int obstacle_counter = 0;
   CGAL_forall_volumes(ci, DIFF) {
     if(find(ci, c2c) != ci) continue;
+    ++obstacle_counter;
     Nef_polyhedron_3 ncv = c2N[ci];
+    facet_counter += ncv.number_of_facets();
 
     Nef_polyhedron_3 tmp = CSP.intersection(ncv);
     std::list<Plane_3> goodPlanesL;
@@ -629,6 +632,10 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
     */
     vout.dump();
   }
+
+  std::cout << "approximation: " << approx << std::endl;
+  std::cout << "facets: " << facet_counter << std::endl;
+  std::cout << "obstacles: " << obstacle_counter << std::endl;
 
 }
 

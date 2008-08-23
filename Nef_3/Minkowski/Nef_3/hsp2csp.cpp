@@ -102,10 +102,13 @@ int main(int argc, char* argv[]) {
   for(hi = hsp.begin(); hi != hsp.end(); ++hi) {
     std::cerr << "polyhedron " << ++i << std::endl;
     if(hi == hsp.begin()) {
+      std::cerr << "create 1 " << std::endl;
       result = create_from_halfspaces(*hi, false);
+      std::cerr << "test 1 " << std::endl;
       if(!test_convex_hull(result, *hi, false))
 	std::cerr << "convex hull incorrect" << std::endl;
     } else {
+      std::cerr << "create 2 " << std::endl;
       Nef_polyhedron_3 tmp = create_from_halfspaces(*hi, false);
       std::cerr << "size of obstacle " << tmp.number_of_vertices() << std::endl;
       if(!test_convex_hull(tmp, *hi, false))

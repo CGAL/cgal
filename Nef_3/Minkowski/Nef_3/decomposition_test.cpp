@@ -1,11 +1,14 @@
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
-#include<CGAL/Simple_cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/IO/Qt_widget_Nef_3.h>
 #include <qapplication.h>
 #include <CGAL/Nef_3/convex_decomposition_3.h> 
+#include <CGAL/Nef_3/is_reflex_sedge.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/convexity_check_3.h>
 
 #include <algorithm>
 #include <map>
@@ -45,6 +48,25 @@ int main(int argc, char* argv[]) {
   in >> N;
 
   convex_decomposition_3<Nef_polyhedron_3>(N);
+
+  N.is_valid(0,0);
+
+  Nef_polyhedron_3::SHalfedge_const_iterator cse;
+  CGAL_forall_shalfedges(cse, N)
+    if(cse->incident_sface()->mark())
+      CGAL_assertion(!CGAL::is_reflex_sedge_in_any_direction<Nef_polyhedron_3>(cse));
+
+  Nef_polyhedron_3::Volume_const_iterator ci;
+  CGAL_forall_volumes(ci, N) {
+    if(!ci->mark()) continue;
+    ci != N.volumes_begin();
+    CGAL_assertion(++ci->shells_begin() == ci->shells_end());
+    // TODO: test whether shell is outer shell
+    Nef_polyhedron_3::SFace_const_handle sf(ci->shells_begin());
+    CGAL::Polyhedron_3<Kernel> P;
+    N.convert_inner_shell_to_polyhedron(sf, P);
+    CGAL::is_strongly_convex_3(P);
+  }
 
   QApplication a(argc, argv);
   CGAL::Qt_widget_Nef_3<Nef_polyhedron_3>* w = 
