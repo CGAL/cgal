@@ -21,8 +21,6 @@ int main() {
 		   Point_3(1,1,0), Point_3(0,1,0)};
   polyline poly;
   poly.push_back(point_range(pl,pl+4));
-  Nef_polyhedron N;
-  Polyline_constructor pc(poly.begin(), poly.end());
-  N.delegate(pc,true);
+  Nef_polyhedron N(poly.begin(), poly.end(), Nef_polyhedron::Polylines_tag());
   std::cout << N;
 }
