@@ -2620,9 +2620,12 @@ Nef_3/include/CGAL/Nef_3/SNC_indexed_items.h -text
 Nef_3/include/CGAL/Nef_3/Vertex.h -text
 Nef_3/include/CGAL/Nef_3/Volume.h -text
 Nef_3/include/CGAL/Nef_3/shell_to_nef_3.h -text
+Nef_3/performance/Nef_3/create_quadratic2.cpp -text
 Nef_3/performance/Nef_3/cube.nef3 -text svneol=native#application/octet-stream
 Nef_3/performance/Nef_3/nef3/grid_15_15_15_12345.nef3 -text svneol=native#application/octet-stream
 Nef_3/performance/Nef_3/nef3/tetrahedra_15_15_15_12345.nef3 -text svneol=native#application/octet-stream
+Nef_3/performance/Nef_3/worst_ray_shooting.cpp -text
+Nef_3/performance/Nef_3/worst_ray_shooting2.cpp -text
 Nef_3/test/Nef_3/data/2_cycles_on_halfsphere.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/2_cycles_on_halfsphere2.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/boundary.nef3 -text svneol=native#application/octet-stream
