@@ -17,6 +17,7 @@
 #include <CGAL/Nef_3/bipartite_nary_union_sequential.h> 
 #include <CGAL/Nef_3/bipartite_nary_union_sorted_separately.h> 
 #include <CGAL/Nef_3/bipartite_nary_union_sorted_combined.h> 
+#include <CGAL/Nef_3/bipartite_nary_union_sorted_within_grid.h> 
 
 #define CGAL_NEF3_SPHERE_SWEEP_OPTIMIZATION_OFF
 
@@ -229,6 +230,8 @@ int main(int argc, char* argv[]) {
     CGAL::bipartite_nary_union_sequential(N0, N1);
 #elif defined CGAL_MINKOWSKI_BIPARTITE_NARY_UNION_SORTED_SEPARATELY
     CGAL::bipartite_nary_union_sorted_separately(N0, N1);
+#elif defined CGAL_MINKOWSKI_BIPARTITE_NARY_UNION_SORTED_WITH_GRID
+    CGAL::bipartite_nary_union_sorted_within_grid(N0, N1);
 #else
     CGAL::bipartite_nary_union_sorted_combined(N0, N1);
 #endif
