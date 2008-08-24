@@ -323,7 +323,7 @@ public:
      */
     bool operator()(const Point_2 & p1, const Point_2 & p2) const
     {
-      return m_poly_traits->equal_2_object()(p1, p2);
+      return m_poly_traits->m_seg_traits.equal_2_object()(p1, p2);
     }
 
     /*!
