@@ -25,8 +25,6 @@ Texture::Texture()
   m_WidthByte32 = 0;
   m_Height = 0;
   m_Depth = 0;
-  m_pFileName = new char[MAX_PATH];
-  strcpy(m_pFileName,"");
 }
 
 //********************************************
@@ -35,7 +33,6 @@ Texture::Texture()
 Texture::~Texture()
 {
   Free();
-  delete [] m_pFileName;
 }
 
 
@@ -84,38 +81,6 @@ void Texture::Free()
 }
 
 
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-// FILE READING
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-
-//********************************************
-// ReadFile (dispatch function)
-//********************************************
-int Texture::ReadFile(char *filename, unsigned int width, unsigned int height, unsigned int depth)
-{
-  // Cleanup
-  Free();
-
-  // Storage
-  strcpy(m_pFileName,filename);
-
-  // Extension
-  ////TRACE("Texture::ReadFile : file : %s\n",filename);
-  int len = strlen(filename);
-  char extension[10];
-  strcpy(extension,&(filename[len-4]));
-
-  if(extension == ".bmp")
-    return ReadFileBMP(filename);
-  if(extension == ".raw")
-    return ReadFileRAW(filename,width,height,depth);
-
-  return 0;
-}
-
-
 
 //********************************************
 // UpdateWidthByte32
@@ -144,119 +109,9 @@ unsigned int Texture::WidthByte32(unsigned int width, unsigned int depth)
 void Texture::UpdateHeader()
 {
   UpdateWidthByte32();
-
-  m_Header.biWidth = m_Width;
-  m_Header.biHeight = m_Height;
-  m_Header.biSizeImage = m_WidthByte32 * m_Height;
-
-  m_Header.biSize = 40;
-  m_Header.biPlanes = 1;
-  m_Header.biBitCount = m_Depth;
-  m_Header.biCompression = (WORD)0;
-  m_Header.biXPelsPerMeter = 0;
-  m_Header.biYPelsPerMeter = 0;
-  m_Header.biClrUsed = 0;
-  m_Header.biClrImportant = 0;
 }
 
 
-//********************************************
-// ReadFileRAW (*.raw)
-//********************************************
-// Read raw files
-// Accept only 24 or 32 bits
-// Size : 2^n x 2^m
-//********************************************
-int Texture::ReadFileRAW(char *filename, unsigned int width, unsigned int height, unsigned int depth)
-{
-  // Check for valid file
-  FILE *fp = fopen(filename,"rb");
-
-  // Try to open file
-  if(!fp)
-  {
-    //TRACE("Unable to open file for reading");
-    return 0;
-  }
-
-  // Alloc (does call Free before)
-  if(!Alloc(width,height,depth))
-  {
-    //TRACE("Insufficiant memory");
-    fclose(fp);
-    return 0;
-  }
-
-  fread(m_pData,sizeof(unsigned char),m_Width*m_Height*depth/8,fp);
-
-  // Close file
-  fclose(fp);
-
-  // Success, also set FileName
-  strcpy(m_pFileName,filename);
-
-  return 1;
-}
-
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-// FILE SAVING
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-
-//********************************************
-// SaveFile (dispatch function)
-//********************************************
-int Texture::SaveFile(char *filename)
-{
-  //TRACE("Texture::SaveFile : file : %s\n",filename);
-  int len = strlen(filename);
-  char extension[10];
-  strcpy(extension,&(filename[len-4]));
-
-  if(extension == ".raw")
-    return SaveFileRAW(filename);
-  if(extension == ".bmp")
-    return SaveFileBMP(filename);
-
-  return 0;
-}
-
-
-//********************************************
-// SaveFileRAW
-//********************************************
-int Texture::SaveFileRAW(char *filename)
-{
-  // Check for valid image
-  if((m_Width * m_Height * m_Depth) == 0)
-  {
-    //TRACE("Texture::SaveFileRAW : invalid image");
-    return 0;
-  }
-
-  // Check for valid file
-  FILE *fp = fopen(filename,"wb");
-
-  // Try to open file
-  if(!fp)
-  {
-    //TRACE("Unable to open file for writing");
-    return 0;
-  }
-
-  // Image writing
-  fwrite(m_pData,sizeof(unsigned char),m_Width*m_Height*m_Depth/8,fp);
-
-  // Close file
-  fclose(fp);
-
-  return 1;
-}
-
-
-//********************************************
-// SaveFileBMP (*.bmp)
 
 //////////////////////////////////////////////
 //////////////////////////////////////////////
@@ -274,18 +129,8 @@ int Texture::IsValid()
   success &= (m_Width != 0);
   success &= (m_Height != 0);
   success &= (m_pData != NULL);
-  if(!success)
-  {
-    //TRACE("\n");
-    //TRACE("Invalid texture\n");
-    //TRACE("Width  : %d\n",m_Width);
-    //TRACE("Height : %d\n",m_Height);
-    //TRACE("Depth  : %d\n",m_Depth);
-    //TRACE("Data   : %x\n",m_pData);
-  }
   return success;
 }
-
 
 //********************************************
 // HigherPowerOfTwo
@@ -554,8 +399,8 @@ int Texture::DuplicateRepeatWidth(int left, int top, int right, int bottom)
 // Fill
 //********************************************
 void Texture::Fill(unsigned char r,
-		    unsigned char g,
-		    unsigned char b)
+		   unsigned char g,
+		   unsigned char b)
 {
   if(!IsValid()) return;
   if(m_Depth != 24) return;
@@ -573,9 +418,9 @@ void Texture::Fill(unsigned char r,
 // GreyToColor
 //***************************************
 void Texture::GreyToColor(unsigned char grey,
-			   unsigned char r, 
-			   unsigned char g,
-			   unsigned char b)
+			  unsigned char r, 
+			  unsigned char g,
+			  unsigned char b)
 {
   if(!IsValid()) return;
   if(m_Depth != 24) return;
@@ -595,11 +440,11 @@ void Texture::GreyToColor(unsigned char grey,
 // ColorToColor
 //***************************************
 void Texture::ColorToColor(unsigned char r1,
-			    unsigned char g1,
-			    unsigned char b1,
-			    unsigned char r2, 
-			    unsigned char g2,
-			    unsigned char b2)
+			   unsigned char g1,
+			   unsigned char b1,
+			   unsigned char r2, 
+			   unsigned char g2,
+			   unsigned char b2)
 {
   if(!IsValid()) return;
   if(m_Depth != 24) return;
@@ -727,9 +572,9 @@ int Texture::SetAlphaLayer(Texture *pTexture)
 // ReadBuffer
 //********************************************
 int Texture::ReadBuffer(unsigned char *buffer, 
-			 int width, 
-			 int height, 
-			 int depth)
+			int width, 
+			int height, 
+			int depth)
 {
   if(buffer == NULL)
     return 0;
@@ -753,8 +598,8 @@ int Texture::ReadBuffer(unsigned char *buffer,
 // ReadBufferByte32
 //********************************************
 int Texture::ReadBufferByte32(unsigned char *pData, 
-			       int width, 
-			       int height)
+			      int width, 
+			      int height)
 {
   // alloc 32 bits buffer
   if(!Alloc(width,height,32))
@@ -797,9 +642,9 @@ void Texture::Copy(Texture *pTexture)
 // ReadBuffer
 //********************************************
 int Texture::ReadBuffer(float *buffer, 
-			 int width, 
-			 int height, 
-			 int depth)
+			int width, 
+			int height, 
+			int depth)
 {
   if(buffer == NULL)
     return 0;
@@ -822,9 +667,9 @@ int Texture::ReadBuffer(float *buffer,
 // ReadBuffer
 //********************************************
 int Texture::ReadBuffer(float **ppBuffer, 
-			 int width, 
-			 int height,
-			 float ratio)
+			int width, 
+			int height,
+			float ratio)
 {
   if(ppBuffer == NULL)
     return 0;
@@ -846,8 +691,8 @@ int Texture::ReadBuffer(float **ppBuffer,
 // WriteBuffer
 //********************************************
 int Texture::WriteBuffer(float **ppBuffer, 
-			  int width, 
-			  int height)
+			 int width, 
+			 int height)
 {
   if(ppBuffer == NULL)
     return 0;
@@ -862,8 +707,8 @@ int Texture::WriteBuffer(float **ppBuffer,
 // WriteBuffer32
 //********************************************
 int Texture::WriteBuffer32(float **ppBuffer, 
-			    int width, 
-			    int height)
+			   int width, 
+			   int height)
 {
   if(ppBuffer == NULL)
     return 0;
@@ -889,9 +734,9 @@ int Texture::WriteBuffer32(float **ppBuffer,
 // ReadBuffer
 //********************************************
 int Texture::ReadBuffer(double *buffer, 
-			 int width, 
-			 int height, 
-			 int depth)
+			int width, 
+			int height, 
+			int depth)
 {
   if(buffer == NULL)
     return 0;
@@ -932,7 +777,7 @@ int Texture::Grey(unsigned int x, unsigned int y)
 // Color
 //********************************************
 void Texture::Color(unsigned int x, unsigned int y, 
-		     unsigned char *pRed, unsigned char *pGreen, unsigned char *pBlue)
+		    unsigned char *pRed, unsigned char *pGreen, unsigned char *pBlue)
 {
   int BytePerPixel = m_Depth / 8;
   // Grey scale
@@ -955,13 +800,13 @@ void Texture::Color(unsigned int x, unsigned int y,
 
 
 void Texture::GenerateMirrorV(unsigned int width,
-			       unsigned int height, 
-			       unsigned char r,
-			       unsigned char g,
-			       unsigned char b,
-			       unsigned char rb,
-			       unsigned char gb,
-			       unsigned char bb)
+			      unsigned int height, 
+			      unsigned char r,
+			      unsigned char g,
+			      unsigned char b,
+			      unsigned char rb,
+			      unsigned char gb,
+			      unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -989,13 +834,13 @@ void Texture::GenerateMirrorV(unsigned int width,
 }
 
 void Texture::GenerateMirrorH(unsigned int width,
-			       unsigned int height, 
-			       unsigned char r,
-			       unsigned char g,
-			       unsigned char b,
-			       unsigned char rb,
-			       unsigned char gb,
-			       unsigned char bb)
+			      unsigned int height, 
+			      unsigned char r,
+			      unsigned char g,
+			      unsigned char b,
+			      unsigned char rb,
+			      unsigned char gb,
+			      unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -1024,14 +869,14 @@ void Texture::GenerateMirrorH(unsigned int width,
 
 
 void Texture::GenerateCheckerBoard(unsigned int width,
-				    unsigned int height, 
-				    int size,
-				    unsigned char r,
-				    unsigned char g,
-				    unsigned char b,
-				    unsigned char rb,
-				    unsigned char gb,
-				    unsigned char bb)
+				   unsigned int height, 
+				   int size,
+				   unsigned char r,
+				   unsigned char g,
+				   unsigned char b,
+				   unsigned char rb,
+				   unsigned char gb,
+				   unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -1058,14 +903,14 @@ void Texture::GenerateCheckerBoard(unsigned int width,
 }
 
 void Texture::GenerateVStripes(unsigned int width,
-				unsigned int height, 
-				int size,
-				unsigned char r,
-				unsigned char g,
-				unsigned char b,
-				unsigned char rb,
-				unsigned char gb,
-				unsigned char bb)
+			       unsigned int height, 
+			       int size,
+			       unsigned char r,
+			       unsigned char g,
+			       unsigned char b,
+			       unsigned char rb,
+			       unsigned char gb,
+			       unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -1090,14 +935,14 @@ void Texture::GenerateVStripes(unsigned int width,
 }
 
 void Texture::GenerateHStripes(unsigned int width,
-				unsigned int height, 
-				int size,
-				unsigned char r,
-				unsigned char g,
-				unsigned char b,
-				unsigned char rb,
-				unsigned char gb,
-				unsigned char bb)
+			       unsigned int height, 
+			       int size,
+			       unsigned char r,
+			       unsigned char g,
+			       unsigned char b,
+			       unsigned char rb,
+			       unsigned char gb,
+			       unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -1126,15 +971,15 @@ void Texture::GenerateHStripes(unsigned int width,
 // GenerateGrid
 //***************************************
 void Texture::GenerateGrid(unsigned int width,
-			    unsigned int height, 
-			    int size,
-			    unsigned int thickness,
-			    unsigned char r,
-			    unsigned char g,
-			    unsigned char b,
-			    unsigned char rb,
-			    unsigned char gb,
-			    unsigned char bb)
+			   unsigned int height, 
+			   int size,
+			   unsigned int thickness,
+			   unsigned char r,
+			   unsigned char g,
+			   unsigned char b,
+			   unsigned char rb,
+			   unsigned char gb,
+			   unsigned char bb)
 {
   Alloc(width,height,24);
 
@@ -1170,8 +1015,8 @@ void Texture::GenerateGrid(unsigned int width,
 }
 
 void Texture::GenerateGradientH(unsigned int width,
-				 unsigned int height,
-				 int size)
+				unsigned int height,
+				int size)
 {
   Alloc(width,height,24);
 
@@ -1188,8 +1033,8 @@ void Texture::GenerateGradientH(unsigned int width,
   }
 }
 void Texture::GenerateGradientV(unsigned int width,
-				 unsigned int height,
-				 int size)
+				unsigned int height,
+				int size)
 {
   Alloc(width,height,24);
 
@@ -1210,14 +1055,14 @@ void Texture::GenerateGradientV(unsigned int width,
 // GenerateLines
 //***************************************
 void Texture::GenerateLines(unsigned int width,
-			     unsigned int height, 
-			     int size,
-			     unsigned char r,
-			     unsigned char g,
-			     unsigned char b,
-			     unsigned char rb,
-			     unsigned char gb,
-			     unsigned char bb)
+			    unsigned int height, 
+			    int size,
+			    unsigned char r,
+			    unsigned char g,
+			    unsigned char b,
+			    unsigned char rb,
+			    unsigned char gb,
+			    unsigned char bb)
 {
   Alloc(width,height,24);
 

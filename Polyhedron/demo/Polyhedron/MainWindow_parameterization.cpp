@@ -4,6 +4,7 @@
 #include "MainWindow.h"
 #include "Scene.h"
 #include "Polyhedron_type.h"
+#include "Textured_polyhedron_type.h"
 
 #include <CGAL/Parameterization_polyhedron_adaptor_3.h>
 #include <CGAL/parameterize.h>
@@ -19,6 +20,11 @@ void MainWindow::parameterize(const Parameterization_method method)
   // get active polyhedron
   int index = getSelectedPolygonIndex();
   Polyhedron* pMesh = scene->polyhedron(index);
+  if(pMesh == NULL)
+  {
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    return;
+  }
 
   // parameterize
   QTime time;
@@ -71,6 +77,15 @@ void MainWindow::parameterize(const Parameterization_method method)
   }
 
   scene->addPolyhedron(pParameterization,
+    tr("%1 (parameterization)").arg(scene->polyhedronName(index)),
+    Qt::magenta,
+    scene->isPolyhedronActivated(index),
+    scene->polyhedronRenderingMode(index));
+
+  Tex_polyhedron *pTex_polyhedron = new Tex_polyhedron;
+  pTex_polyhedron->make_tetrahedron();
+  // *pTex_polyhedron = *((Tex_polyhedron*)pMesh); // copy
+  scene->addTexPolyhedron(pTex_polyhedron,
     tr("%1 (parameterization)").arg(scene->polyhedronName(index)),
     Qt::magenta,
     scene->isPolyhedronActivated(index),

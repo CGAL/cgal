@@ -12,36 +12,18 @@ email                : pierre.alliez@sophia.inria.fr
 
 class Texture
 {
-
-  // Member data
 private :
-
   unsigned char *m_pData;         // data
   unsigned int   m_Width;         // width (pixels)
   unsigned int   m_Height;        // height (pixels)
   unsigned int   m_Depth;         // bits per pixel 
-  char          *m_pFileName;     // texture image file name
-
-  BITMAPINFOHEADER m_Header;      // image header (display on device context)
   unsigned int     m_WidthByte32; // width (in bytes, and 32 bits aligned)
 
 public :
 
-  // Construction / destruction
+  // Life cycle
   Texture();
   virtual ~Texture();
-
-  // File reading
-  int ReadFile(char *filename,unsigned int width=-1,
-    unsigned int height=-1,unsigned int depth=-1);
-  int ReadFileBMP(char *filename);
-  int ReadFileRAW(char *filename,unsigned int width,
-    unsigned int height,unsigned int depth);
-
-  // File saving
-  int SaveFile(char *filename);
-  int SaveFileBMP(char *filename);
-  int SaveFileRAW(char *filename);
 
   // Get Data (explicit inline functions)
   unsigned char *GetData()     { return m_pData; }
@@ -49,7 +31,6 @@ public :
   unsigned int   GetWidthByte32()    { return m_WidthByte32; }
   unsigned int   GetHeight()   { return m_Height;}
   unsigned int   GetDepth()    { return m_Depth; }
-  char*          GetFileName() { return m_pFileName; }
 
   // Misc
   int IsValid();
@@ -89,7 +70,6 @@ public :
   int ReadBuffer(float **ppBuffer, int width, int height,float ratio = 1.0f);
   int WriteBuffer(float **ppBuffer,int width,int height);
   int WriteBuffer32(float **ppBuffer,int width,int height);
-  int ReadFromResource(const WORD ResourceId);
 
   // Misc
   void GenerateGrid(unsigned int width,unsigned int height,int size,unsigned int thickness,

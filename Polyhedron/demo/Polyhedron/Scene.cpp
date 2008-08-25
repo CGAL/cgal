@@ -27,11 +27,11 @@ namespace {
 const QColor Scene::defaultColor = QColor(100, 100, 255);
 
 Scene::Scene(QObject* parent)
-  : QAbstractListModel(parent),
-    selected_item(-1),
-    item_A(-1),
-    item_B(-1),
-    viewEdges(true)
+: QAbstractListModel(parent),
+selected_item(-1),
+item_A(-1),
+item_B(-1),
+viewEdges(true)
 {
   // generate checkboard
   texture.GenerateCheckerBoard(1024,1024,512,0,0,0,255,255,255);
@@ -40,9 +40,9 @@ Scene::Scene(QObject* parent)
 Scene::~Scene()
 {
   for(Polyhedra::iterator 
-        poly_it = polyhedra.begin(),
-        poly_end = polyhedra.end();
-      poly_it != poly_end; ++poly_it)
+    poly_it = polyhedra.begin(),
+    poly_end = polyhedra.end();
+  poly_it != poly_end; ++poly_it)
   {
     this->destroyEntry(*poly_it);
   }
@@ -73,17 +73,31 @@ Scene::destroyEntry(Scene::Polyhedron_entry& entry)
 void
 Scene::destroy_entry_ptr(Polyhedron_ptr ptr)
 {
-  Polyhedron** p = boost::get<Polyhedron*>(&ptr);
-  if(p) {
-    this->destroy_polyhedron(*p);
-  }
-  else {
-    Nef_polyhedron** nef_p = boost::get<Nef_polyhedron*>(&ptr);
-    Q_ASSERT(nef_p != NULL);
-    this->destroy_nef_polyhedron(*nef_p);
+  switch(ptr.which())
+  {
+    case POLYHEDRON_ENTRY:
+    {
+      Polyhedron** p = boost::get<Polyhedron*>(&ptr);
+      Q_ASSERT(p != NULL);
+      this->destroy_polyhedron(*p);
+      break;
+    }
+    case TEX_POLYHEDRON_ENTRY:
+    {
+      Tex_polyhedron** p = boost::get<Tex_polyhedron*>(&ptr);
+      Q_ASSERT(p != NULL);
+      this->destroy_tex_polyhedron(*p);
+      break;
+    }
+    case NEF_ENTRY:
+    {
+      Nef_polyhedron** p = boost::get<Nef_polyhedron*>(&ptr);
+      Q_ASSERT(p != NULL);
+      this->destroy_nef_polyhedron(*p);
+      break;
+    }
   }
 }
-
 
 int
 Scene::open(QString filename)
@@ -98,10 +112,10 @@ Scene::open(QString filename)
 
   if(!in || !fileinfo.isFile() || ! fileinfo.isReadable()) {
     QMessageBox::critical(qobject_cast<QWidget*>(QObject::parent()),
-                          tr("Cannot open file"),
-                          tr("File %1 is not a readable file.").arg(filename));
+      tr("Cannot open file"),
+      tr("File %1 is not a readable file.").arg(filename));
     QApplication::restoreOverrideCursor();
-		cerr << QString("\n");
+    cerr << QString("\n");
     return -1;
   }
 
@@ -111,12 +125,12 @@ Scene::open(QString filename)
   if(!in)
   {
     QMessageBox::critical(qobject_cast<QWidget*>(QObject::parent()),
-                          tr("Cannot read file"),
-                          tr("File %1 is not a valid OFF file.").arg(filename));
+      tr("Cannot read file"),
+      tr("File %1 is not a valid OFF file.").arg(filename));
     QApplication::restoreOverrideCursor();
-		cerr << QString("\n");
-		destroy_polyhedron(poly);
-    
+    cerr << QString("\n");
+    destroy_polyhedron(poly);
+
     return -1;
   }
 
@@ -148,10 +162,10 @@ bool Scene::save(int index,
   if(!out || !fileinfo.isFile() || ! fileinfo.isWritable())
   {
     QMessageBox::critical(qobject_cast<QWidget*>(QObject::parent()),
-                          tr("Cannot open file"),
-                          tr("File %1 is not a writable file.").arg(filename));
+      tr("Cannot open file"),
+      tr("File %1 is not a writable file.").arg(filename));
     QApplication::restoreOverrideCursor();
-	  cerr << QString("\n");
+    cerr << QString("\n");
     return false;
   }
 
@@ -184,10 +198,19 @@ void Scene::addEntry(Polyhedron_ptr p,
 }
 
 void Scene::addPolyhedron(Polyhedron* p,
-                          QString name,
-                          QColor color,
-                          bool activated,
-                          RenderingMode mode)
+			  QString name,
+			  QColor color,
+			  bool activated,
+			  RenderingMode mode)
+{
+  addEntry(p, name, color, activated, mode);
+}
+
+void Scene::addTexPolyhedron(Tex_polyhedron* p,
+			     QString name,
+			     QColor color,
+			     bool activated,
+			     RenderingMode mode)
 {
   addEntry(p, name, color, activated, mode);
 }
@@ -225,11 +248,14 @@ Scene::erase(int polyhedron_index)
 Scene::Polyhedron_ptr
 Scene::copy_polyhedron_ptr(Polyhedron_ptr ptr)
 {
-  if(ptr.which() == POLYHEDRON_ENTRY) {
-    return copy_polyhedron(boost::get<Polyhedron*>(ptr));
-  }
-  else {
+  switch(ptr.which())
+  {
+  case NEF_ENTRY:
     return copy_nef_polyhedron(boost::get<Nef_polyhedron*>(ptr));
+  case TEX_POLYHEDRON_ENTRY:
+    return copy_tex_polyhedron(boost::get<Tex_polyhedron*>(ptr));
+  default: // POLYHEDRON_ENTRY
+    return copy_polyhedron(boost::get<Polyhedron*>(ptr));
   }
 }
 
@@ -242,9 +268,9 @@ Scene::duplicate(int polyhedron_index)
   const Polyhedron_entry& entry = polyhedra[polyhedron_index];
   Polyhedron_ptr ptr = copy_polyhedron_ptr(entry.polyhedron_ptr);
   addEntry(ptr,
-	   tr("%1 (copy)").arg(entry.name),
-	   entry.color,
-	   entry.activated);
+    tr("%1 (copy)").arg(entry.name),
+    entry.color,
+    entry.activated);
 
   return polyhedra.size() - 1;
 }
@@ -262,32 +288,32 @@ Scene::draw(bool with_names)
     {
       if(entry.rendering_mode == Fill)
       {
-        ::glEnable(GL_LIGHTING);
-        ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-        if(index == selected_item)
-          CGALglcolor(entry.color.lighter(120));
-        else
-          CGALglcolor(entry.color);
-        draw(entry);
+	::glEnable(GL_LIGHTING);
+	::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+	if(index == selected_item)
+	  CGALglcolor(entry.color.lighter(120));
+	else
+	  CGALglcolor(entry.color);
+	draw(entry);
       }
       if(viewEdges)
       {
-        ::glDisable(GL_LIGHTING);
-        ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-        if(index == selected_item)
-	{
-          //CGALglcolor(entry.color.lighter(70));
+	::glDisable(GL_LIGHTING);
+	::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+	if(index == selected_item)
 	  CGALglcolor(Qt::black);
-	}
-        else
-          CGALglcolor(entry.color.lighter(50));
+	else
+	  CGALglcolor(entry.color.lighter(50));
 
-	if(entry.polyhedron_ptr.which()==POLYHEDRON_ENTRY) {
-	  draw(entry);
-	}
-	else {
+	switch(entry.polyhedron_ptr.which())
+	{
+  	case NEF_ENTRY:
 	  CGALglcolor(Qt::black);
 	  gl_render_nef_edges(boost::get<Nef_polyhedron*>(entry.polyhedron_ptr));
+	  break;
+  	case POLYHEDRON_ENTRY:
+	case TEX_POLYHEDRON_ENTRY:
+	  draw(entry);
 	}
       }
     }
@@ -300,8 +326,6 @@ Scene::draw(bool with_names)
 void
 Scene::draw(Polyhedron_entry& entry)
 {
-	// this->gl_render_facets(entry.polyhedron_ptr);
-
   if(!entry.display_list_built)
   {
     entry.display_list = ::glGenLists(1);
@@ -311,7 +335,7 @@ Scene::draw(Polyhedron_entry& entry)
       return;
     }
 
-    // draw	the mesh in a display list
+    // draw the mesh in a display list
     ::glNewList(entry.display_list,GL_COMPILE_AND_EXECUTE);
     this->gl_render_facets(entry.polyhedron_ptr);
     ::glEndList();
@@ -321,15 +345,14 @@ Scene::draw(Polyhedron_entry& entry)
   ::glCallList(entry.display_list);
 }
 
+
+
 void Scene::gl_render_facets(Polyhedron_ptr ptr)
 {
-  if(ptr.which() == POLYHEDRON_ENTRY)
+  switch(ptr.which())
   {
-    Polyhedron* p = boost::get<Polyhedron*>(ptr);
-    gl_render_polyhedron_facets(p);
-  }
-  else
-  {
+  case NEF_ENTRY:
+    {
     Nef_polyhedron* p = boost::get<Nef_polyhedron*>(ptr);
     glEnable(GL_LIGHTING);
     gl_render_nef_facets(p);
@@ -337,7 +360,20 @@ void Scene::gl_render_facets(Polyhedron_ptr ptr)
     CGALglcolor(Qt::black);
     gl_render_nef_vertices(p);
     glEnable(GL_LIGHTING);
- }
+    break;
+    }
+  case POLYHEDRON_ENTRY:
+    {
+    Polyhedron* p = boost::get<Polyhedron*>(ptr);
+    gl_render_polyhedron_facets(p);
+    break;
+    }
+  case TEX_POLYHEDRON_ENTRY:
+    {
+    Tex_polyhedron* p = boost::get<Tex_polyhedron*>(ptr);
+    gl_render_polyhedron_facets(p);
+    }
+  }
 }
 
 int 
@@ -363,15 +399,21 @@ Scene::data(const QModelIndex &index, int role) const
 {
   if (!index.isValid())
     return QVariant();
-  
+
   if(index.row() < 0 || index.row() >= polyhedra.size())
     return QVariant();
 
-  if(role == ::Qt::ToolTipRole) {
-    if(polyhedra[index.row()].polyhedron_ptr.which() == POLYHEDRON_ENTRY)
+  if(role == ::Qt::ToolTipRole)
+  {
+    switch(polyhedra[index.row()].polyhedron_ptr.which())
+    {
+    case POLYHEDRON_ENTRY:
       return polyhedronToolTip(index.row());
-    else
+    case NEF_ENTRY:
       return nefPolyhedronToolTip(index.row());
+    case TEX_POLYHEDRON_ENTRY:
+      return texPolyhedronToolTip(index.row());
+    }
   }
   switch(index.column())
   {
@@ -385,7 +427,7 @@ Scene::data(const QModelIndex &index, int role) const
     if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
       return polyhedra.value(index.row()).name;
     if(role == ::Qt::FontRole && 
-       polyhedra.value(index.row()).polyhedron_ptr.which() == NEF_ENTRY)
+      polyhedra.value(index.row()).polyhedron_ptr.which() == NEF_ENTRY)
     {
       QFont font;
       font.setItalic(!font.italic());
@@ -395,7 +437,7 @@ Scene::data(const QModelIndex &index, int role) const
   case RenderingModeColumn:
     if(role == ::Qt::DisplayRole) {
       if(polyhedra.value(index.row()).rendering_mode == Scene::Wireframe)
-        return tr("wire");
+	return tr("wire");
       else return tr("fill");
     }
     else if(role == ::Qt::EditRole) {
@@ -408,9 +450,9 @@ Scene::data(const QModelIndex &index, int role) const
   case ABColumn:
     if(role == ::Qt::DisplayRole) {
       if(index.row() == item_A)
-        return "A";
+	return "A";
       if(index.row() == item_B)
-        return "B";
+	return "B";
     }
     else if(role == ::Qt::TextAlignmentRole) {
       return ::Qt::AlignCenter;
@@ -435,29 +477,29 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
       switch(section)
       {
       case NameColumn:
-        return tr("Name");
-        break;
+	return tr("Name");
+	break;
       case ColorColumn:
-        return tr("Color");
-        break;
+	return tr("Color");
+	break;
       case RenderingModeColumn:
-        return tr("Mode");
+	return tr("Mode");
       case ABColumn:
-        return tr("A/B");
-        break;
+	return tr("A/B");
+	break;
       case ActivatedColumn:
-        return tr("View");
-        break;
+	return tr("View");
+	break;
       default:
-        return QVariant();
+	return QVariant();
       }
     }
     else if(role == ::Qt::ToolTipRole) {
       if(section == RenderingModeColumn) {
-        return tr("Rendering mode (fill/fireframe)");
+	return tr("Rendering mode (fill/fireframe)");
       }
       else if(section == ABColumn) {
-        return tr("Selection A/Selection B");
+	return tr("Selection A/Selection B");
       }
     }
   }
@@ -477,8 +519,8 @@ Scene::flags ( const QModelIndex & index ) const
 
 bool 
 Scene::setData(const QModelIndex &index, 
-               const QVariant &value,
-               int role)
+	       const QVariant &value,
+	       int role)
 {
   if( role != ::Qt::EditRole || !index.isValid() )
     return false;
@@ -517,7 +559,7 @@ Scene::setData(const QModelIndex &index,
 Polyhedron* Scene::polyhedron(int index) const
 {
   if( index < 0 || index >= polyhedra.size() )
-    return 0;
+    return NULL;
   else 
   {
     if(polyhedra[index].polyhedron_ptr.which() == POLYHEDRON_ENTRY) {
@@ -528,6 +570,23 @@ Polyhedron* Scene::polyhedron(int index) const
     }
   }
 }
+
+Tex_polyhedron* Scene::texPolyhedron(int index) const
+{
+  if( index < 0 || index >= polyhedra.size() )
+    return NULL;
+  else 
+  {
+    if(polyhedra[index].polyhedron_ptr.which() == TEX_POLYHEDRON_ENTRY) {
+      return boost::get<Tex_polyhedron*>(polyhedra[index].polyhedron_ptr);
+    }
+    else {
+      return NULL;
+    }
+  }
+}
+
+
 
 Nef_polyhedron* Scene::nefPolyhedron(int index) const
 {
@@ -581,7 +640,7 @@ void Scene::setPolyhedronActivated(int index, bool b)
     return;
   polyhedra[index].activated = b;
   emit dataChanged(QAbstractItemModel::createIndex(index, ActivatedColumn),
-                   QAbstractItemModel::createIndex(index, ActivatedColumn));
+    QAbstractItemModel::createIndex(index, ActivatedColumn));
 }
 
 Scene::RenderingMode Scene::polyhedronRenderingMode(int index) const
@@ -603,7 +662,7 @@ int Scene::selectionBindex() const {
 QItemSelection Scene::createSelection(int i)
 {
   return QItemSelection(QAbstractItemModel::createIndex(i, 0),
-                        QAbstractItemModel::createIndex(i, LastColumn));
+    QAbstractItemModel::createIndex(i, LastColumn));
 }
 
 void Scene::polyhedronChanged(int i)
@@ -613,7 +672,7 @@ void Scene::polyhedronChanged(int i)
 
   polyhedra[i].display_list_built = false;
   emit dataChanged(QAbstractItemModel::createIndex(i, 0),
-                   QAbstractItemModel::createIndex(i, LastColumn));
+    QAbstractItemModel::createIndex(i, LastColumn));
 }
 
 void Scene::polyhedronChanged(Polyhedron*)
@@ -622,12 +681,12 @@ void Scene::polyhedronChanged(Polyhedron*)
     polyhedra[i].display_list_built = false;
   }
   emit dataChanged(QAbstractItemModel::createIndex(0, 0),
-                   QAbstractItemModel::createIndex(polyhedra.size() - 1, LastColumn));
+    QAbstractItemModel::createIndex(polyhedra.size() - 1, LastColumn));
 }
 
 bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
-                                const QStyleOptionViewItem &option,
-                                const QModelIndex &index)
+				const QStyleOptionViewItem &option,
+				const QModelIndex &index)
 {
   Scene *scene = static_cast<Scene*>(model);
   Q_ASSERT(scene);
@@ -636,11 +695,11 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     if (event->type() == QEvent::MouseButtonPress) {
       QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
       if(mouseEvent->button() == ::Qt::LeftButton) {
-        int x = mouseEvent->pos().x() - option.rect.x();
-        if(x >= (option.rect.width() - size)/2 && 
-           x <= (option.rect.width() + size)/2) {
-          model->setData(index, ! model->data(index).toBool() );
-        }
+	int x = mouseEvent->pos().x() - option.rect.x();
+	if(x >= (option.rect.width() - size)/2 && 
+	  x <= (option.rect.width() + size)/2) {
+	    model->setData(index, ! model->data(index).toBool() );
+	}
       }
       return false; //so that the selection can change
     }
@@ -650,7 +709,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     if (event->type() == QEvent::MouseButtonPress) {
       QColor color = QColorDialog::getColor(::Qt::green, 0);
       if (color.isValid()) {
-          model->setData(index, color );
+	model->setData(index, color );
       }
     }
     else if(event->type() == QEvent::MouseButtonDblClick) {
@@ -661,11 +720,11 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
   case Scene::RenderingModeColumn:
     if (event->type() == QEvent::MouseButtonPress) {
       Scene::RenderingMode rendering_mode = 
-        static_cast<Scene::RenderingMode>(model->data(index, ::Qt::EditRole).toInt());
+	static_cast<Scene::RenderingMode>(model->data(index, ::Qt::EditRole).toInt());
       if(rendering_mode == Scene::Wireframe)
-        model->setData(index, static_cast<int>(Scene::Fill));
+	model->setData(index, static_cast<int>(Scene::Fill));
       else 
-        model->setData(index, static_cast<int>(Scene::Wireframe));
+	model->setData(index, static_cast<int>(Scene::Wireframe));
     }
     else if(event->type() == QEvent::MouseButtonDblClick) {
       return true; // block double-click
@@ -675,21 +734,21 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
   case Scene::ABColumn:
     if (event->type() == QEvent::MouseButtonPress) {
       if(index.row() == scene->item_B) {
-        scene->item_A = index.row();
-        scene->item_B = -1;
+	scene->item_A = index.row();
+	scene->item_B = -1;
       }
       else if(index.row() == scene->item_A) {
-        scene->item_B = index.row();
-        scene->item_A = -1;
+	scene->item_B = index.row();
+	scene->item_A = -1;
       }
       else if(scene->item_A == -1) {
-        scene->item_A = index.row();
+	scene->item_A = index.row();
       }
       else {
-        scene->item_B = index.row();
+	scene->item_B = index.row();
       }
       scene->dataChanged(scene->createIndex(Scene::ABColumn, 0),
-                         scene->createIndex(Scene::ABColumn, scene->rowCount()));
+	scene->createIndex(Scene::ABColumn, scene->rowCount()));
     }
     return false;
     break;
@@ -699,7 +758,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 }
 
 void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
-                          const QModelIndex &index) const
+			  const QModelIndex &index) const
 {
   if (index.column() != Scene::ActivatedColumn) {
     QItemDelegate::paint(painter, option, index);
@@ -719,13 +778,13 @@ void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     int y = option.rect.y() + (option.rect.height() / 2) - (size / 2);
     if(checked) {
       painter->drawPixmap(x, y, checkOnPixmap.scaled(QSize(size, size),
-                                                     ::Qt::KeepAspectRatio,
-                                                     ::Qt::SmoothTransformation));
+	::Qt::KeepAspectRatio,
+	::Qt::SmoothTransformation));
     }
     else {
       painter->drawPixmap(x, y, checkOffPixmap.scaled(QSize(size, size),
-                                                     ::Qt::KeepAspectRatio,
-                                                     ::Qt::SmoothTransformation));
+	::Qt::KeepAspectRatio,
+	::Qt::SmoothTransformation));
     }
     drawFocus(painter, option, option.rect); // since we draw the grid ourselves
   }
@@ -739,7 +798,7 @@ void Scene::setPolyhedronA(int i)
     item_B = -1;
   }
   emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
-                   QAbstractItemModel::createIndex(polyhedra.size()-1, ABColumn));
+    QAbstractItemModel::createIndex(polyhedra.size()-1, ABColumn));
 }
 
 void Scene::setPolyhedronB(int i)
@@ -751,5 +810,5 @@ void Scene::setPolyhedronB(int i)
   }
   emit updated();
   emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
-                   QAbstractItemModel::createIndex(polyhedra.size()-1, ABColumn));
+    QAbstractItemModel::createIndex(polyhedra.size()-1, ABColumn));
 }

@@ -32,16 +32,11 @@ public:
 template <class Refs, class Tprev, class Tvertex, class Tface, class Norm>
 class Textured_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
-private:
-
-
 public:
-
   // life cycle
   Textured_halfedge()
   {
   }
-
 };
 
 template <class Refs, class T, class P, class Norm>
@@ -55,6 +50,7 @@ class Textured_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
 public:
   // life cycle
   Textured_vertex()  {}
+
   // repeat mandatory constructors
   Textured_vertex(const P& pt)
     : CGAL::HalfedgeDS_vertex_base<Refs, T, P>(pt)
@@ -72,14 +68,6 @@ public:
   double& v() {	return m_v; }
   const double& v() const { return m_v;	}
 };
-
-// A redefined Items class for the Polyhedron_3 
-// with a refined vertex class that contains a 
-// member for the normal vector and a refined
-// facet with a normal vector instead of the 
-// plane equation (this is an alternative 
-// solution instead of using 
-// Polyhedron_traits_with_normals_3).
 
 struct Textured_items : public CGAL::Polyhedron_items_3
 {
@@ -117,8 +105,6 @@ struct Textured_items : public CGAL::Polyhedron_items_3
   };
 };
 
-static const double PI = 3.1415926535897932384626;
-
 // compute facet normal 
 struct Facet_normal // (functor)
 {
@@ -138,10 +124,7 @@ struct Facet_normal // (functor)
     if (sqnorm != 0.0)
       f.normal() = sum / std::sqrt(sqnorm);
     else
-    {
       f.normal() = CGAL::NULL_VECTOR;
-      //      TRACE("degenerate face\n");
-    }
   }
 };
 
@@ -174,8 +157,8 @@ public :
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
-  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
-  typedef CGAL::Polyhedron_3<Kernel,Items> Base;
+  typedef typename CGAL::Polyhedron_3<Kernel,Items> Base;
+  typedef typename CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_3> Basic_polyhedron;
 
   typedef typename Base::Vertex_handle Vertex_handle;
   typedef typename Base::Vertex_iterator Vertex_iterator;
@@ -186,19 +169,18 @@ public :
   typedef typename Base::Edge_iterator Edge_iterator;
   typedef typename Base::Facet_iterator Facet_iterator;
   typedef typename Base::Facet_handle Facet_handle;
-  typedef typename Base::Facet Facet;
 
-  using Base::vertices_begin;
-  using Base::vertices_end;
-  using Base::edges_begin;
-  using Base::edges_end;
-  using Base::halfedges_begin;
-  using Base::halfedges_end;
-  using Base::facets_begin;
-  using Base::facets_end;
-  using Base::size_of_halfedges;
-  using Base::size_of_facets;
-  using Base::size_of_vertices;
+  //using Base::vertices_begin;
+  //using Base::vertices_end;
+  //using Base::edges_begin;
+  //using Base::edges_end;
+  //using Base::halfedges_begin;
+  //using Base::halfedges_end;
+  //using Base::facets_begin;
+  //using Base::facets_end;
+  //using Base::size_of_halfedges;
+  //using Base::size_of_facets;
+  //using Base::size_of_vertices;
 private :
 
 public :
@@ -207,6 +189,7 @@ public :
   Textured_polyhedron() 
   {
   }
+
   virtual ~Textured_polyhedron() 
   {
   }
@@ -270,6 +253,5 @@ public :
     while(++he != f->facet_begin());
   }
 };
-
 
 #endif // _TEXTURED_MESH_

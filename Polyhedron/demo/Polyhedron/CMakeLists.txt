@@ -63,9 +63,11 @@ if(ENABLE_FORWARD_DECL)
                                  Scene.cpp
                                  Scene_nef_polyhedron_operations.cpp
                                  Scene_polyhedron_operations.cpp
-                                 Scene_nef_and_polyhedron_operations.cpp
+				 Scene_tex_polyhedron_operations.cpp
+				 Scene_nef_and_polyhedron_operations.cpp
 				 Scene_rendering.cpp
 				 Scene_nef_rendering.cpp
+                                 DemosMainWindow.cpp
 				 MainWindow_boolean_operations.cpp
 				 MainWindow_convex_hull.cpp
 				 MainWindow_curvature_estimation.cpp

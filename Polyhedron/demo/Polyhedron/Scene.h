@@ -10,9 +10,9 @@
 #include <QPixmap>
 #include <QItemSelection>
 
-#include "Polyhedron_type_fwd.h" // declares Polyhedron
 #include "Nef_type_fwd.h" // declares Nef_polyhedron
-#include "Textured_polyhedron_type.h" // declares Nef_polyhedron
+#include "Polyhedron_type_fwd.h" // declares Polyhedron
+#include "Textured_polyhedron_type.h" // declares textured polyhedron
 
 #include <iostream>
 #include <cmath>
@@ -53,6 +53,12 @@ public:
                      bool activated = true,
                      RenderingMode mode = Fill);
 
+  void addTexPolyhedron(Tex_polyhedron* p,
+                     QString name,
+                     QColor color = defaultColor,
+                     bool activated = true,
+                     RenderingMode mode = Fill);
+
   void addNefPolyhedron(Nef_polyhedron* p,
 			QString name,
 			QColor color = defaultColor,
@@ -73,6 +79,7 @@ public:
   int numberOfPolyhedra() const;
   Polyhedron* polyhedron(int i) const;
   Nef_polyhedron* nefPolyhedron(int i) const;
+  Tex_polyhedron* texPolyhedron(int i) const;
   
   enum Entry_type { POLYHEDRON_ENTRY = 0,
                     NEF_ENTRY = 1,
@@ -172,6 +179,13 @@ private:
   Nef_polyhedron* new_nef_polyhedron();
   Nef_polyhedron* copy_nef_polyhedron(Nef_polyhedron* poly);
   void destroy_nef_polyhedron(Nef_polyhedron*);
+
+  // functions defined in Scene_tex_polyhedron_operations.cpp
+  QString texPolyhedronToolTip(int index) const;
+  Tex_polyhedron* new_tex_polyhedron(); 
+  Tex_polyhedron* copy_tex_polyhedron(Tex_polyhedron* poly);
+  void destroy_tex_polyhedron(Tex_polyhedron* poly);
+
 
 private:
   static const QColor defaultColor; // defined in Scene.cpp
