@@ -1,4 +1,4 @@
-Here is a list of problems I found wrt correct handling of IEEE 754 doubles,
+Here is a list of problems I found wrt the correct handling of IEEE 754 doubles,
 with the rounding modes used in this package.
 
 1/ On Intel platforms (Linux and Windows, any compiler):
@@ -63,22 +63,7 @@ with the rounding modes used in this package.
   These kind of problem could be handled by the wrapper class Double_IEEE,
   but with a speed penalty.
 
-5/ Problems with IRIX / MipsPro:
---------------------------------
-
-  By default the system flushes denormals to zero, so it has to be fixed
-  at the same time the rounding mode is changed.
-
-  Another "problem" is that when you don't parenthesize an expression with
-  doubles, MipsPro believes it can optimize more than it should (reordering
-  computations).  So I had to add additionnal parenthesis...
-  For example, MipsPro compiles "a*-b" to "-(a*b)" instead of "a*(-b)".
-  
-  Solution: adding parenthesis.
-
-  Also, it seems it optimizes "d<=d" to true, even if d is NaN...
-
-6/ ISO C99:
+5/ ISO C99:
 -----------
 
   The new (May'00) C standard specifies compiler and library requirements
