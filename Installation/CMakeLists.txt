@@ -17,6 +17,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 # Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CGAL_CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
+set(ORIGINAL_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} )
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH} )
 
 # This allows else(), endif(), etc... (without repeating the expression)

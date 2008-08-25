@@ -1,0 +1,17 @@
+if ( NOT FIND_OPENGL_WRAPPER )
+
+set ( FIND_OPENGL_WRAPPER 1 )
+
+set(SAVED_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} )
+
+set(CMAKE_MODULE_PATH ${ORIG_CMAKE_MODULE_PATH} )
+
+find_package(OpenGL)
+
+if ( OPENGL_FOUND AND APPLE_LEOPARD )
+  set (CMAKE_SHARED_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib") 
+endif()
+
+set(CMAKE_MODULE_PATH ${SAVED_CMAKE_MODULE_PATH} )
+
+endif()

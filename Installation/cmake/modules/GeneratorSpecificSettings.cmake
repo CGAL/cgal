@@ -29,6 +29,17 @@ set( GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED 1 )
     set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -library=stlport4" )
   endif()
   
+  # From james Bigler, in the cmake users list.
+  IF (APPLE)
+    exec_program(uname ARGS -v  OUTPUT_VARIABLE DARWIN_VERSION)
+    string(REGEX MATCH "[0-9]+" DARWIN_VERSION ${DARWIN_VERSION})
+    message(STATUS "DARWIN_VERSION=${DARWIN_VERSION}")
+    if (DARWIN_VERSION GREATER 8)
+       message(STATUS "Mac Leopard detected")
+      set(APPLE_LEOPARD 1)
+    endif()
+  endif()
+
   if ( CMAKE_BUILD_TYPE )
     
     # If a build type is specified, VC project files contain only a configurartion for that build type
