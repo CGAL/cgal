@@ -193,6 +193,7 @@ SSOR_Preconditioner<T>::SSOR_Preconditioner(
 ) : Preconditioner<T>(A, omega) {
 }
 
+/** y <- M*x */
 template <class T> 
 void mult(const SSOR_Preconditioner<T>& M, const FullVector<T>& x, FullVector<T>& y) {
 

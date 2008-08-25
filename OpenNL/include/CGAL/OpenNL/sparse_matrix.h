@@ -227,7 +227,9 @@ private:
     SparseMatrix& operator=(const SparseMatrix& rhs) ;
 } ;
 
-template <class T> void mult(const SparseMatrix<T>& M, const FullVector<T>& x, FullVector<T>& y) {
+/** y <- M*x */
+template <class T> 
+void mult(const SparseMatrix<T>& M, const FullVector<T>& x, FullVector<T>& y) {
     unsigned int N = M.dimension() ;
     CGAL_assertion(x.dimension() == N) ;
     CGAL_assertion(y.dimension() == N) ;

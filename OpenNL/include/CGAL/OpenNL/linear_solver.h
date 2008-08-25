@@ -102,8 +102,8 @@ public:
             return true;
 
         // On error, solve using BICGSTAB solver without preconditioner
-#ifndef CGAL_NDEBUG
-        std::cerr << "Failure of BICGSTAB solver with Jacobi preconditioner. "
+#ifdef DEBUG_TRACE
+        std::cerr << "  Failure of BICGSTAB solver with Jacobi preconditioner. "
                   << "Trying BICGSTAB." << std::endl;
 #endif
         Solver solver ;
@@ -163,8 +163,8 @@ public:
             return true;
 
         // On error, solve using Conjugate Gradient solver without preconditioner
-#ifndef CGAL_NDEBUG
-        std::cerr << "Failure of Conjugate Gradient solver with Jacobi preconditioner. "
+#ifdef DEBUG_TRACE
+        std::cerr << "  Failure of Conjugate Gradient solver with Jacobi preconditioner. "
                   << "Trying Conjugate Gradient." << std::endl;
 #endif
         Solver solver ;
@@ -434,14 +434,6 @@ protected:
     }
 
     void check_state(State s) {
-            if(state_ != s) {
-                std::cerr << "Wrong state, expected: "
-                     << state_to_string(s)
-                     << " got:"
-                     << state_to_string(state_)
-                     << std::endl ;
-                std::cerr << "exiting ..." << std::endl ;
-            }
             CGAL_assertion(state_ == s) ;
     }
 

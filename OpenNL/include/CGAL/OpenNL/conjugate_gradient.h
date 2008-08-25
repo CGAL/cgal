@@ -29,7 +29,7 @@
  *  Laurent Saboret 2005-2006: Changes for CGAL:
  *      - Added OpenNL namespace
  *      - solve() returns true on success
- *      - test divisions by zero with IsZero() method
+ *      - check divisions by zero
  *      - added comments
  *      - copied Conjugate Gradient algorithm WITH preconditioner from Graphite 1.9 code
  */
@@ -89,6 +89,9 @@ public:
     // Return true on success
     bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) 
     {
+#ifdef DEBUG_TRACE
+        std::cerr << "  Call Conjugate Gradient" << std::endl;
+#endif
         CGAL_assertion(A.dimension() > 0);
         unsigned int n = A.dimension() ;                        // (Square) matrix dimension
 
@@ -104,26 +107,24 @@ public:
         CoeffType t, tau, sig, rho, gam;
         CoeffType bnorm2 = BLAS<Vector>::dot(b,b) ;
         CoeffType err=epsilon_*epsilon_*bnorm2 ;                // Error to reach
-        // Current residue g=b-A*x
+        // residue g=b-A*x
         mult(A,x,g);
         BLAS<Vector>::axpy(-1,b,g);
         BLAS<Vector>::scal(-1,g);
         // Initially, r=g=b-A*x
         BLAS<Vector>::copy(g,r);                                // r = g
 
-        CoeffType gg=BLAS<Vector>::dot(g,g);                    // Current error gg = (g|g)
+        CoeffType gg=BLAS<Vector>::dot(g,g);                    // error gg = (g|g)
         while ( gg>err && its < max_iter) {
             mult(A,r,p);
             rho=BLAS<Vector>::dot(p,p);
             sig=BLAS<Vector>::dot(r,p);
             tau=BLAS<Vector>::dot(g,r);
-            if (IsZero(sig))
-                break;                                          // stop if bad conditioning
+            CGAL_assertion(sig != 0.0);
             t=tau/sig;
             BLAS<Vector>::axpy(t,r,x);
             BLAS<Vector>::axpy(-t,p,g);
-            if (IsZero(tau))
-                break;                                          // stop if bad conditioning
+            CGAL_assertion(tau != 0.0);
             gam=(t*t*rho-tau)/tau;
             BLAS<Vector>::scal(gam,r);
             BLAS<Vector>::axpy(1,g,r);
@@ -133,22 +134,6 @@ public:
 
         bool success = (gg <= err);
         return success;
-    }
-
-private:
-    // Test if a floating point number is (close to) 0.0
-    static bool IsZero(CoeffType a)
-    {
-        return (fabs(a) < 10.0 * (std::numeric_limits<CoeffType>::min)());
-    }
-
-    // Test if 2 floating point numbers are very close
-    static inline bool AreEqual(CoeffType a, CoeffType b)
-    {
-        if (IsZero(a))
-            return IsZero(b);
-        else
-            return IsZero(b/a - 1.0);
     }
 
 private:
@@ -205,6 +190,9 @@ public:
     // Return true on success
     bool solve(const MATRIX &A, const PC_MATRIX &C, const VECTOR& b, VECTOR& x) 
     {
+#ifdef DEBUG_TRACE
+        std::cerr << "  Call Conjugate Gradient with preconditioner" << std::endl;
+#endif
         CGAL_assertion(A.dimension() > 0);
         unsigned int n = A.dimension() ;                        // (Square) matrix dimension
 
@@ -213,7 +201,7 @@ public:
             max_iter = 5 * n ;
         }
 
-        Vector r(n) ;
+        Vector r(n) ;                                           // residue r=Ax-b
         Vector d(n) ;
         Vector h(n) ;
         Vector Ad = h ;
@@ -221,23 +209,21 @@ public:
         CoeffType rh, alpha, beta;
         CoeffType bnorm2 = BLAS<Vector>::dot(b,b) ;
         CoeffType err=epsilon_*epsilon_*bnorm2 ;                // Error to reach
-        // Current residue r=A*x-b
         mult(A,x,r);
         BLAS<Vector>::axpy(-1,b,r);
         mult(C,r,d);
         BLAS<Vector>::copy(d,h);
         rh=BLAS<Vector>::dot(r,h);
 
-        CoeffType rr=BLAS<Vector>::dot(r,r);                    // Current error rr = (r|r)
+        CoeffType rr=BLAS<Vector>::dot(r,r);                    // error rr = (r|r)
         while ( rr>err && its < max_iter) {
             mult(A,d,Ad);
-            CGAL_assertion( ! IsZero( BLAS<Vector>::dot(d,Ad) ) );
+            CGAL_assertion(BLAS<Vector>::dot(d,Ad) != 0.0);
             alpha=rh/BLAS<Vector>::dot(d,Ad);
             BLAS<Vector>::axpy(-alpha,d,x);
             BLAS<Vector>::axpy(-alpha,Ad,r);
             mult(C,r,h);
-            if (IsZero(rh))
-                break;                                          // stop if bad conditioning
+            CGAL_assertion(rh != 0.0);
             beta=1/rh; rh=BLAS<Vector>::dot(r,h); beta*=rh;
             BLAS<Vector>::scal(beta,d);
             BLAS<Vector>::axpy(1,h,d);
@@ -247,22 +233,6 @@ public:
 
         bool success = (rr <= err);
         return success;
-    }
-
-private:
-    // Test if a floating point number is (close to) 0.0
-    static bool IsZero(CoeffType a)
-    {
-        return (fabs(a) < 10.0 * (std::numeric_limits<CoeffType>::min)());
-    }
-
-    // Test if 2 floating point numbers are very close
-    static inline bool AreEqual(CoeffType a, CoeffType b)
-    {
-        if (IsZero(a))
-            return IsZero(b);
-        else
-            return IsZero(b/a - 1.0);
     }
 
 private:

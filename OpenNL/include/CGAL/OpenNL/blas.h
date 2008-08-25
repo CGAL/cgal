@@ -54,7 +54,7 @@ public:
         CGAL_error();
     }
 
-    /** y = x */
+    /** y <- x */
     static void copy(const VectorType& x, VectorType& y) {
         CGAL_error();
     }
