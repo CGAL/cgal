@@ -1642,7 +1642,6 @@ Installation/cmake/modules/FindMPFR.cmake -text
 Installation/cmake/modules/FindPackageHandleStandardArgs.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
 Installation/cmake/modules/FindTAUCS.cmake -text
-Installation/cmake/modules/FindZLIB.cmake -text
 Installation/cmake/modules/GeneratorSpecificSettings.cmake -text
 Installation/cmake/modules/MacroFindOptionalCGALDependency.cmake -text
 Installation/cmake/modules/MacroOptionalFindPackage.cmake -text
