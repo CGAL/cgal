@@ -1,3 +1,12 @@
+# This allows else(), endif(), etc... (without repeating the expression)
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
+if ( "${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" )
+  set( IS_TOP_LEVEL TRUE )
+else()
+  set( IS_TOP_LEVEL FALSE )
+endif()  
+
 # Common settings for CGAL cmake scripts
 if( NOT CGAL_COMMON_FILE_INCLUDED )
   set(CGAL_COMMON_FILE_INCLUDED 1 )
@@ -26,7 +35,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   
   macro( get_dependency_version LIB )
   
-    if ( ${ARGC} GREATER "1" )
+    if ( "${ARGC}" GREATER "1" )
       set( PKG ${ARGV1} )
     else()
       set( PKG ${LIB} )

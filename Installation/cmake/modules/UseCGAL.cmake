@@ -14,9 +14,11 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   set(USE_CGAL_FILE_INCLUDED 1)
 
   include(CGALcommon)
-  include(CGAL_SetupFlags)
-  include(GeneratorSpecificSettings)
   
+  if ( IS_TOP_LEVEL )
+    include(CGAL_SetupFlags)
+    include(GeneratorSpecificSettings)
+  endif()
   include_directories (${CGAL_BINARY_DIR}/include) # Plaform-specific include folder where compiler_config.h is located
   include_directories (${CGAL_INCLUDE_DIRS})             
   include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})  
