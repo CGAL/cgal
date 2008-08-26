@@ -3139,6 +3139,7 @@ QP_solver/include/CGAL/QP_options.h -text
 QP_solver/include/CGAL/QP_solver/QP_solution_impl.h -text
 QP_solver/package_info/QP_solver/maintainer -text
 QP_solver/test/QP_solver/create_test_solver_cin -text
+QP_solver/test/QP_solver/test_bind.cpp -text
 QP_solver/test/QP_solver/test_default_bounds.cpp -text
 QP_solver/test/QP_solver/test_random_qp.cpp -text
 QP_solver/test/QP_solver/test_random_qp2.cpp -text
