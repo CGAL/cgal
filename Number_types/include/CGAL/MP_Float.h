@@ -156,7 +156,7 @@ public:
   static
   void split(limb2 l, limb & high, limb & low)
   {
-    to_signed l2 = {l};
+    to_signed l2 = {static_cast<limb>(l)};
     low = l2.s;
     high = (l - low) >> (8*sizeof(limb));
   }
