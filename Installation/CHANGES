@@ -77,7 +77,7 @@ The following functionality has been added or changed:
     mecanism instead.  The concept AdaptableFunctor has been changed accordingly
     such that only a nested result_type is required.
   - The accessory classes Twotuple, Threetuple, Fourtuple and Sixtuple are also
-    deprecated (use boost::array instead).
+    deprecated (use CGAL::array instead).
   - CGAL::Triple and CGAL::Quadruple are in the process of being replaced by
     boost::tuple.  As a first step, we strongly recommend that you replace
     the direct access to the data members (.first, .second, .third, .fourth),

@@ -43,7 +43,7 @@ class Dxf_reader_doubles {
 
 public:
   typedef double       FT;
-  typedef boost::array<double, 3>  Triplet;
+  typedef CGAL::array<double, 3>  Triplet;
   typedef Triplet Point_2_and_bulge;
   typedef Triplet Circle_2;
 

@@ -29,7 +29,7 @@
 #include <CGAL/basic.h>
 
 // The Triple and Quadruple classes are NOT RECOMMENDED anymore.
-// We recommend that you use boost::tuple or boost::array instead
+// We recommend that you use boost::tuple or CGAL::array instead
 // for new uses.
 
 CGAL_BEGIN_NAMESPACE

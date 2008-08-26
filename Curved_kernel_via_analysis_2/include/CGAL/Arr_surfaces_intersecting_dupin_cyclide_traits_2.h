@@ -874,7 +874,7 @@ public:
     typedef CGAL::Polynomial< double > Poly_double_1;
     typedef CGAL::Polynomial< Poly_double_1 > Poly_double_2;
     
-    typedef boost::array< double, 4 > Point_double_4;
+    typedef CGAL::array< double, 4 > Point_double_4;
     
 
     //!\name replicates all constructors of the base (stupid solution)

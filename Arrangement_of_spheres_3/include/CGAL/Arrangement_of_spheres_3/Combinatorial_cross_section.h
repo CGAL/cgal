@@ -715,7 +715,7 @@ public:
 
  
 
-  //typedef boost::array<Halfedge_handle, 4> Halfedge_quad;
+  //typedef CGAL::array<Halfedge_handle, 4> Halfedge_quad;
 
   /*const Halfedge_handle halfedges(CGAL_AOS3_TYPENAME Curve::Key k) const {
     return halfedges_[k.input_index()];
