@@ -86,6 +86,38 @@ public:
         // Turn on TAUCS trace
         std::cerr.flush();
         taucs_logfile((char*)"stderr");
+
+//         // Print A and B
+//         int n = A.row_dimension();
+//         if (n < 20)	// if small matrix, print it entirely
+//         {
+//           fprintf(stderr, "******************  A:  ******************\n");
+//           for (int i=0; i<n; i++)  {
+//             for (int j=0; j<n; j++)
+//               fprintf(stderr, "%lf\t", (double)A.get_coef(i, j));
+//             fprintf(stderr, "\n");
+//           }
+//           fprintf(stderr, "******************  B:  ******************\n");
+//           for (int j=0; j<n; j++)
+//             fprintf(stderr, "%lf\t", (double)B[j]);
+//           fprintf(stderr, "\n");
+//           fprintf(stderr, "******************************************\n");
+//         }
+//         else		// if large matrix, print only not null elements
+//         {
+//           fprintf(stderr, "******************  A*X=B  ******************\n");
+//           for (int i=0; i<n; i++)  {
+//             for (int j=0; j<n; j++)
+//               if ( ! IsZero(A.get_coef(i, j)) )
+//                 fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i, j));
+//             fprintf(stderr, "\n");
+//           }
+//           for (int j=0; j<n; j++)
+//             if ( ! IsZero(B[j]) )
+//               fprintf(stderr, "B[%d] = %lf\t", j, (double)B[j]);
+//           fprintf(stderr, "\n");
+//           fprintf(stderr, "******************************************\n");
+//         }
 #endif
 
         try
@@ -166,6 +198,38 @@ public:
         // Turn on TAUCS trace
         std::cerr.flush();
         taucs_logfile((char*)"stderr");
+
+//         // Print A and B
+//         int n = A.row_dimension();
+//         if (n < 20)  // if small matrix, print it entirely
+//         {
+//           fprintf(stderr, "******************  A:  ******************\n");
+//           for (int i=0; i<n; i++)  {
+//             for (int j=0; j<n; j++)
+//               fprintf(stderr, "%lf\t", (double)A.get_coef(i, j));
+//             fprintf(stderr, "\n");
+//           }
+//           fprintf(stderr, "******************  B:  ******************\n");
+//           for (int j=0; j<n; j++)
+//             fprintf(stderr, "%lf\t", (double)B[j]);
+//           fprintf(stderr, "\n");
+//           fprintf(stderr, "******************************************\n");
+//         }
+//         else     // if large matrix, print only not null elements
+//         {
+//           fprintf(stderr, "******************  A*X=B  ******************\n");
+//           for (int i=0; i<n; i++)  {
+//             for (int j=0; j<n; j++)
+//               if ( ! IsZero(A.get_coef(i, j)) )
+//                 fprintf(stderr, "A[%d][%d] = %lf\t", i, j, (double)A.get_coef(i, j));
+//             fprintf(stderr, "\n");
+//           }
+//           for (int j=0; j<n; j++)
+//             if ( ! IsZero(B[j]) )
+//               fprintf(stderr, "B[%d] = %lf\t", j, (double)B[j]);
+//           fprintf(stderr, "\n");
+//           fprintf(stderr, "******************************************\n");
+//         }
 #endif
 
         try
