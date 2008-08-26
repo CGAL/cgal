@@ -374,7 +374,7 @@ public:
     typename std::vector<Vertex_handle> vertices;
     vertices.reserve(64);
     tr.incident_vertices(v, std::back_inserter(vertices));
-    int number_of_boundary_incident_edges = 0; //COULD BE a Bool
+    int number_of_boundary_incident_edges = 0; //COULD BE a bool
     for (typename std::vector<Vertex_handle>::iterator vit=vertices.begin();
 	 vit != vertices.end();
 	 vit++ ) 
