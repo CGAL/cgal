@@ -36,7 +36,7 @@ class Iso_rectangleH2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Iso_rectangle_2      Iso_rectangle_2;
 
-  typedef boost::array<Point_2, 2>          Rep;
+  typedef CGAL::array<Point_2, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -49,7 +49,7 @@ public:
   Iso_rectangleH2() {}
 
   Iso_rectangleH2(const Point_2& p, const Point_2& q, int)
-    : base(CGALi::make_array(p, q))
+    : base(CGAL::make_array(p, q))
   {
     // I have to remove the assertions, because of Homogeneous_converter.
     // CGAL_kernel_assertion(p.x()<=q.x());

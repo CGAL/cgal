@@ -39,7 +39,7 @@ class DirectionH3
    typedef typename R_::Line_3               Line_3;
    typedef typename R_::Ray_3                Ray_3;
 
-    typedef boost::array<RT, 4>              Rep;
+    typedef CGAL::array<RT, 4>              Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
  
     Base base;
@@ -68,8 +68,8 @@ public:
   // the fourth argument is not documented.  Should go away ?
   DirectionH3(const RT& x, const RT& y,
               const RT& z, const RT& w = RT(1) )
-    : base( w >= RT(0) ? CGALi::make_array(x, y, z, w)
-                       : CGALi::make_array<RT>(-x, -y, -z, -w) ) {}
+    : base( w >= RT(0) ? CGAL::make_array(x, y, z, w)
+                       : CGAL::make_array<RT>(-x, -y, -z, -w) ) {}
 
   bool  is_degenerate() const;
 

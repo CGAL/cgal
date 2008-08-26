@@ -41,7 +41,7 @@ class LineC2
   typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Line_2               Line_2;
 
-  typedef boost::array<FT, 3>               Rep;
+  typedef CGAL::array<FT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -53,7 +53,7 @@ public:
   LineC2() {}
 
   LineC2(const FT &a, const FT &b, const FT &c)
-    : base(CGALi::make_array(a, b, c)) {}
+    : base(CGAL::make_array(a, b, c)) {}
   
   typename R_::Bool_type operator==(const LineC2 &l) const;
   typename R_::Bool_type operator!=(const LineC2 &l) const;

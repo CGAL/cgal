@@ -39,7 +39,7 @@ class TetrahedronC3
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Tetrahedron_3        Tetrahedron_3;
 
-  typedef boost::array<Point_3, 4>          Rep;
+  typedef CGAL::array<Point_3, 4>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -51,7 +51,7 @@ public:
 
   TetrahedronC3(const Point_3 &p, const Point_3 &q, const Point_3 &r,
                 const Point_3 &s)
-    : base(CGALi::make_array(p, q, r, s)) {}
+    : base(CGAL::make_array(p, q, r, s)) {}
 
   const Point_3 &    vertex(int i) const;
   const Point_3 &    operator[](int i) const;

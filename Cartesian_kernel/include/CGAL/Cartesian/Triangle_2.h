@@ -37,7 +37,7 @@ class TriangleC2
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Triangle_2           Triangle_2;
 
-  typedef boost::array<Point_2, 3>          Rep;
+  typedef CGAL::array<Point_2, 3>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -48,7 +48,7 @@ public:
   TriangleC2() {}
 
   TriangleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
-    : base(CGALi::make_array(p, q, r)) {}
+    : base(CGAL::make_array(p, q, r)) {}
 
 
   const Point_2 &

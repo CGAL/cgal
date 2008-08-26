@@ -41,7 +41,7 @@ class VectorC3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef boost::array<FT, 3>               Rep;
+  typedef CGAL::array<FT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -70,11 +70,11 @@ public:
   { *this = R().construct_vector_3_object()(l); }
 
   VectorC3(const FT &x, const FT &y, const FT &z)
-    : base(CGALi::make_array(x, y, z)) {}
+    : base(CGAL::make_array(x, y, z)) {}
 
   VectorC3(const FT &x, const FT &y, const FT &z, const FT &w)
-    : base( w != FT(1) ? CGALi::make_array(x/w, y/w, z/w)
-                       : CGALi::make_array(x, y, z) ) {}
+    : base( w != FT(1) ? CGAL::make_array(x/w, y/w, z/w)
+                       : CGAL::make_array(x, y, z) ) {}
 
   const FT & x() const
   {

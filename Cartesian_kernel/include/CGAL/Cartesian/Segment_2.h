@@ -34,7 +34,7 @@ class SegmentC2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Segment_2            Segment_2;
 
-  typedef boost::array<Point_2, 2>          Rep;
+  typedef CGAL::array<Point_2, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -46,7 +46,7 @@ public:
   {}
 
   SegmentC2(const Point_2 &sp, const Point_2 &ep)
-    : base(CGALi::make_array(sp, ep))
+    : base(CGAL::make_array(sp, ep))
   {}
 
   const Point_2 &   

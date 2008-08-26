@@ -39,7 +39,7 @@ class Iso_cuboidC3
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
   typedef typename R_::Construct_point_3    Construct_point_3;
 
-  typedef boost::array<Point_3, 2>          Rep;
+  typedef CGAL::array<Point_3, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -50,7 +50,7 @@ public:
   Iso_cuboidC3() {}
 
   Iso_cuboidC3(const Point_3 &p, const Point_3 &q, int)
-    : base(CGALi::make_array(p, q))
+    : base(CGAL::make_array(p, q))
   {
     // I have to remove the assertions, because of Cartesian_converter.
     // CGAL_kernel_assertion(p.x()<=q.x());
@@ -68,14 +68,14 @@ public:
     else               { miny = q.y(); maxy = p.y(); }
     if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
     else               { minz = q.z(); maxz = p.z(); }
-    base = Rep(CGALi::make_array(construct_point_3(minx, miny, minz),
+    base = Rep(CGAL::make_array(construct_point_3(minx, miny, minz),
 	                         construct_point_3(maxx, maxy, maxz)));
   }
 
   Iso_cuboidC3(const Point_3 &left,   const Point_3 &right,
                const Point_3 &bottom, const Point_3 &top,
                const Point_3 &far_,   const Point_3 &close)
-    : base(CGALi::make_array(Construct_point_3()(left.x(),  bottom.y(), far_.z()),
+    : base(CGAL::make_array(Construct_point_3()(left.x(),  bottom.y(), far_.z()),
                              Construct_point_3()(right.x(), top.y(),    close.z())))
   {
     CGAL_kernel_precondition(!less_x(right, left));
@@ -85,7 +85,7 @@ public:
 
   Iso_cuboidC3(const FT& min_x, const FT& min_y, const FT& min_z,
                const FT& max_x, const FT& max_y, const FT& max_z)
-    : base(CGALi::make_array(Construct_point_3()(min_x, min_y, min_z),
+    : base(CGAL::make_array(Construct_point_3()(min_x, min_y, min_z),
 	                     Construct_point_3()(max_x, max_y, max_z)))
   {
     CGAL_kernel_precondition(min_x <= max_x);
@@ -98,10 +98,10 @@ public:
                const FT& hw)
   {
     if (hw == FT(1))
-       base = Rep(CGALi::make_array(Construct_point_3()(min_hx, min_hy, min_hz),
+       base = Rep(CGAL::make_array(Construct_point_3()(min_hx, min_hy, min_hz),
 		                    Construct_point_3()(max_hx, max_hy, max_hz)));
     else
-       base = Rep(CGALi::make_array(Construct_point_3()(min_hx/hw, min_hy/hw, min_hz/hw),
+       base = Rep(CGAL::make_array(Construct_point_3()(min_hx/hw, min_hy/hw, min_hz/hw),
                                     Construct_point_3()(max_hx/hw, max_hy/hw, max_hz/hw)));
   }
 

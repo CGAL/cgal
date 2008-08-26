@@ -40,7 +40,7 @@ class DirectionH2
   typedef typename R_::Ray_2                Ray_2;
   typedef typename R_::Segment_2            Segment_2;
 
-  typedef boost::array<RT, 3>               Rep;
+  typedef CGAL::array<RT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -60,13 +60,13 @@ public:
    DirectionH2() {}
 
    DirectionH2(const RT& x, const RT& y)
-      : base(CGALi::make_array(x, y, RT(1))) {}
+      : base(CGAL::make_array(x, y, RT(1))) {}
 
    // TODO Not documented : should not exist, not used.
    // we should also change array<RT, 3> -> array<RT, 2>
    DirectionH2(const RT& x, const RT& y, const RT& w )
-     : base( w > RT(0) ? CGALi::make_array(x, y, w)
-                       : CGALi::make_array<RT>(-x, -y, -w) ) {}
+     : base( w > RT(0) ? CGAL::make_array(x, y, w)
+                       : CGAL::make_array<RT>(-x, -y, -w) ) {}
 
     bool    operator==( const DirectionH2<R>& d) const;
     bool    operator!=( const DirectionH2<R>& d) const;

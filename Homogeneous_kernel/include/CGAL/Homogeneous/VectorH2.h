@@ -44,7 +44,7 @@ class VectorH2
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Vector_2             Vector_2;
 
-  typedef boost::array<RT, 3>               Rep;
+  typedef CGAL::array<RT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   typedef Rational_traits<FT>               Rat_traits;
@@ -65,10 +65,10 @@ public:
    VectorH2(const Tx & x, const Ty & y,
             typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, RT>,
                                                         boost::is_convertible<Ty, RT> > >::type* = 0)
-      : base(CGALi::make_array<RT>(x, y, RT(1))) {}
+      : base(CGAL::make_array<RT>(x, y, RT(1))) {}
 
    VectorH2(const FT& x, const FT& y)
-      : base(CGALi::make_array<RT>(
+      : base(CGAL::make_array<RT>(
              Rat_traits().numerator(x) * Rat_traits().denominator(y),
              Rat_traits().numerator(y) * Rat_traits().denominator(x),
              Rat_traits().denominator(x) * Rat_traits().denominator(y)))
@@ -77,8 +77,8 @@ public:
    }
 
    VectorH2(const RT& x, const RT& y, const RT& w )
-     : base( w >= RT(0) ? CGALi::make_array( x,  y,  w)
-                        : CGALi::make_array<RT>(-x, -y, -w) ) {}
+     : base( w >= RT(0) ? CGAL::make_array( x,  y,  w)
+                        : CGAL::make_array<RT>(-x, -y, -w) ) {}
 
   const Self&
   rep() const

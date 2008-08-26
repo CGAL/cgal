@@ -42,7 +42,7 @@ class VectorH3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef boost::array<RT, 4>               Rep;
+  typedef CGAL::array<RT, 4>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   typedef Rational_traits<FT>               Rat_traits;
@@ -70,17 +70,17 @@ public:
   { *this = R().construct_vector_3_object()(l); }
 
   VectorH3(const Null_vector&)
-    : base(CGALi::make_array(RT(0), RT(0), RT(0), RT(1))) {}
+    : base(CGAL::make_array(RT(0), RT(0), RT(0), RT(1))) {}
 
   template < typename Tx, typename Ty, typename Tz >
   VectorH3(const Tx & x, const Ty & y, const Tz & z,
            typename boost::enable_if< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
                                                                           boost::is_convertible<Ty, RT> >,
                                                         boost::is_convertible<Tz, RT> > >::type* = 0)
-    : base(CGALi::make_array<RT>(x, y, z, RT(1))) {}
+    : base(CGAL::make_array<RT>(x, y, z, RT(1))) {}
 
   VectorH3(const FT& x, const FT& y, const FT& z)
-    : base(CGALi::make_array<RT>(
+    : base(CGAL::make_array<RT>(
            Rat_traits().numerator(x) * Rat_traits().denominator(y)
                                      * Rat_traits().denominator(z),
            Rat_traits().numerator(y) * Rat_traits().denominator(x)
@@ -94,8 +94,8 @@ public:
   }
 
   VectorH3(const RT& x, const RT& y, const RT& z, const RT& w)
-    : base( w >= RT(0) ? CGALi::make_array(x, y, z, w)
-                       : CGALi::make_array<RT>(-x, -y, -z, -w) ) {}
+    : base( w >= RT(0) ? CGAL::make_array(x, y, z, w)
+                       : CGAL::make_array<RT>(-x, -y, -z, -w) ) {}
 
   const RT & hx() const { return get(base)[0]; }
   const RT & hy() const { return get(base)[1]; }

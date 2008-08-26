@@ -38,7 +38,7 @@ class SegmentC3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Segment_3            Segment_3;
 
-  typedef boost::array<Point_3, 2>          Rep;
+  typedef CGAL::array<Point_3, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -49,7 +49,7 @@ public:
   SegmentC3() {}
 
   SegmentC3(const Point_3 &sp, const Point_3 &ep)
-    : base(CGALi::make_array(sp, ep)) {}
+    : base(CGAL::make_array(sp, ep)) {}
 
   bool        has_on(const Point_3 &p) const;
   bool        collinear_has_on(const Point_3 &p) const;

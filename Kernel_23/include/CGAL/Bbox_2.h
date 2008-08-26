@@ -36,7 +36,7 @@ struct Simple_cartesian;
 
 class Bbox_2
 {
-  typedef boost::array<double, 4>            BBox_rep_2;
+  typedef CGAL::array<double, 4>            BBox_rep_2;
 
   BBox_rep_2 rep;
 
@@ -51,7 +51,7 @@ public:
 
              Bbox_2(double x_min, double y_min,
                     double x_max, double y_max)
-		 : rep(CGALi::make_array(x_min, y_min, x_max, y_max)) {}
+		 : rep(CGAL::make_array(x_min, y_min, x_max, y_max)) {}
 
   inline bool       operator==(const Bbox_2 &b) const;
   inline bool       operator!=(const Bbox_2 &b) const;

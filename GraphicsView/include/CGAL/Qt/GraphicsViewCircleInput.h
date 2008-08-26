@@ -98,7 +98,7 @@ GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
       r = convert(qr);
       typename K::Collinear_2 collinear;
       if(! collinear(p,q,r)){
-	emit generate(CGAL::make_object(CGALi::make_array(p,q,r)));
+	emit generate(CGAL::make_object(CGAL::make_array(p,q,r)));
 	count = 0;
       }
     }

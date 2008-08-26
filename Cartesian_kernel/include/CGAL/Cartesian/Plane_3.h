@@ -45,7 +45,7 @@ class PlaneC3
   typedef typename R_::Construct_point_3    Construct_point_3;
   typedef typename R_::Construct_point_2    Construct_point_2;
 
-  typedef boost::array<FT, 4>               Rep;
+  typedef CGAL::array<FT, 4>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -66,7 +66,7 @@ public:
   { *this = plane_from_point_direction(p, v.direction()); }
 
   PlaneC3(const FT &a, const FT &b, const FT &c, const FT &d)
-    : base(CGALi::make_array(a, b, c, d)) {}
+    : base(CGAL::make_array(a, b, c, d)) {}
 
   PlaneC3(const Line_3 &l, const Point_3 &p)
   { *this = plane_from_points(l.point(),

@@ -35,7 +35,7 @@ class RayC2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Ray_2                Ray_2;
 
-  typedef boost::array<Point_2, 2>          Rep;
+  typedef CGAL::array<Point_2, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -47,7 +47,7 @@ public:
   {}
 
   RayC2(const Point_2 &sp, const Point_2 &secondp)
-    : base(CGALi::make_array(sp, secondp)) 
+    : base(CGAL::make_array(sp, secondp)) 
   {}
 
 

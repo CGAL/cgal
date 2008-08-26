@@ -42,7 +42,7 @@ class VectorC2
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Direction_2          Direction_2;
 
-  typedef boost::array<FT, 2>               Rep;
+  typedef CGAL::array<FT, 2>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -56,11 +56,11 @@ public:
   VectorC2() {}
  
   VectorC2(const FT &x, const FT &y)
-    : base(CGALi::make_array(x, y)) {}
+    : base(CGAL::make_array(x, y)) {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
-    : base( hw != FT(1) ? CGALi::make_array(hx/hw, hy/hw)
-                        : CGALi::make_array(hx, hy) ) {}
+    : base( hw != FT(1) ? CGAL::make_array(hx/hw, hy/hw)
+                        : CGAL::make_array(hx, hy) ) {}
 
   const FT & x() const
   {

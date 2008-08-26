@@ -39,7 +39,7 @@ class DirectionC3
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef boost::array<FT, 3>               Rep;
+  typedef CGAL::array<FT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -51,7 +51,7 @@ public:
   DirectionC3() {}
 
   DirectionC3(const Vector_3 &v)
-    : base(CGALi::make_array(v.x(), v.y(), v.z())) {}
+    : base(CGAL::make_array(v.x(), v.y(), v.z())) {}
   // { *this = v.direction(); }
 
   DirectionC3(const Line_3 &l)
@@ -64,7 +64,7 @@ public:
   { *this = s.direction(); }
 
   DirectionC3(const FT &x, const FT &y, const FT &z)
-    : base(CGALi::make_array(x, y, z)) {}
+    : base(CGAL::make_array(x, y, z)) {}
 
   typename R::Bool_type operator==(const DirectionC3 &d) const;
   typename R::Bool_type operator!=(const DirectionC3 &d) const;

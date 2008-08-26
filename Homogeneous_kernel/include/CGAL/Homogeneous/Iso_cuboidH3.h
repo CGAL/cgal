@@ -36,7 +36,7 @@ class Iso_cuboidH3
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef boost::array<Point_3, 2>          Rep;
+  typedef CGAL::array<Point_3, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -47,7 +47,7 @@ public:
   Iso_cuboidH3() {}
 
   Iso_cuboidH3(const Point_3& p, const Point_3& q, int)
-    : base(CGALi::make_array(p, q))
+    : base(CGAL::make_array(p, q))
   {
     CGAL_kernel_assertion(p.x()<=q.x());
     CGAL_kernel_assertion(p.y()<=q.y());
@@ -145,7 +145,7 @@ Iso_cuboidH3(const typename Iso_cuboidH3<R>::Point_3& p,
       minz = q.hz()*p.hw();
       maxz = p.hz()*q.hw();
   }
-  base = Rep(CGALi::make_array(Point_3(minx, miny, minz, minw),
+  base = Rep(CGAL::make_array(Point_3(minx, miny, minz, minw),
                                Point_3(maxx, maxy, maxz, maxw)));
 }
 
@@ -158,7 +158,7 @@ Iso_cuboidH3(const typename Iso_cuboidH3<R>::Point_3& left,
              const typename Iso_cuboidH3<R>::Point_3& top,
              const typename Iso_cuboidH3<R>::Point_3& far_,
              const typename Iso_cuboidH3<R>::Point_3& close)
-  : base(CGALi::make_array(Point_3(left.hx()   * bottom.hw() * far_.hw(),
+  : base(CGAL::make_array(Point_3(left.hx()   * bottom.hw() * far_.hw(),
                                    bottom.hy() * left.hw()   * far_.hw(),
                                    far_.hz()   * left.hw()   * bottom.hw(),
                                    left.hw()   * bottom.hw() * far_.hw()),
@@ -177,7 +177,7 @@ CGAL_KERNEL_LARGE_INLINE
 Iso_cuboidH3<R>::
 Iso_cuboidH3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
              const RT& max_hx, const RT& max_hy, const RT& max_hz)
-  : base(CGALi::make_array(Point_3(min_hx, min_hy, min_hz, RT(1)),
+  : base(CGAL::make_array(Point_3(min_hx, min_hy, min_hz, RT(1)),
                            Point_3(max_hx, max_hy, max_hz, RT(1))))
 {}
 
@@ -187,7 +187,7 @@ Iso_cuboidH3<R>::
 Iso_cuboidH3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
              const RT& max_hx, const RT& max_hy, const RT& max_hz, 
              const RT& hw)
-  : base(CGALi::make_array(Point_3(min_hx, min_hy, min_hz, hw),
+  : base(CGAL::make_array(Point_3(min_hx, min_hy, min_hz, hw),
                            Point_3(max_hx, max_hy, max_hz, hw)))
 {}
 

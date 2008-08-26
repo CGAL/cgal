@@ -40,7 +40,7 @@ class LineH2
     typedef typename R_::Ray_2                Ray_2;
     typedef typename R_::Line_2               Line_2;
 
-    typedef boost::array<RT, 3>               Rep;
+    typedef CGAL::array<RT, 3>               Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
 
     Base base;
@@ -51,7 +51,7 @@ public:
 
     LineH2() {}
     LineH2(const RT& a, const RT& b, const RT& c)
-      : base(CGALi::make_array(a, b, c)) {}
+      : base(CGAL::make_array(a, b, c)) {}
 
     bool           operator==(const LineH2<R>& l) const;
     bool           operator!=(const LineH2<R>& l) const;

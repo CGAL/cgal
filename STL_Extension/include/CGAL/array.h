@@ -20,15 +20,27 @@
 #ifndef CGAL_ARRAY_H
 #define CGAL_ARRAY_H
 
-#include <CGAL/basic.h>
-#include <boost/array.hpp>
+#include <CGAL/config.h>
+#ifndef CGAL_CFG_NO_CPP0X_ARRAY
+#  include <array>
+#elif !defined CGAL_CFG_NO_TR1_ARRAY
+#  include <tr1/array>
+#else
+#  include <boost/array.hpp>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+#ifndef CGAL_CFG_NO_CPP0X_ARRAY
+using std::array;
+#elif !defined CGAL_CFG_NO_TR1_ARRAY
+using std::tr1::array;
+#else
+using boost::array;
+#endif
 
-// The make_array() function simply constructs a boost::array.
-// It is needed for cases where a boost::array is used as a class data
+// The make_array() function simply constructs an std::array.
+// It is needed for cases where a std::array is used as a class data
 // member and you want to initialize it in the member initializers list.
 // It is also optimized: no spurious copies of the objects are made,
 // provided the compiler does the NRVO.  So this is better than
@@ -45,68 +57,65 @@ namespace CGALi {
 
 template< typename T, typename... Args >
 inline
-boost::array< T, 1 + sizeof...(Args) >
+array< T, 1 + sizeof...(Args) >
 make_array(const T & t, const Args & ... args)
 {
-  boost::array< T, 1 + sizeof...(Args) > a = { { t, args... } };
+  array< T, 1 + sizeof...(Args) > a = { { t, args... } };
   return a;
 }
 
 #else // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 template < typename T > inline
-boost::array<T, 1>
+array<T, 1>
 make_array(const T& b1)
 {
-  boost::array<T, 1> a = { { b1 } };
+  array<T, 1> a = { { b1 } };
   return a;
 }
 
 template < typename T > inline
-boost::array<T, 2>
+array<T, 2>
 make_array(const T& b1, const T& b2)
 {
-  boost::array<T, 2> a = { { b1, b2 } };
+  array<T, 2> a = { { b1, b2 } };
   return a;
 }
 
 template < typename T > inline
-boost::array<T, 3>
+array<T, 3>
 make_array(const T& b1, const T& b2, const T& b3)
 {
-  boost::array<T, 3> a = { { b1, b2, b3 } };
+  array<T, 3> a = { { b1, b2, b3 } };
   return a;
 }
 
 template < typename T > inline
-boost::array<T, 4>
+array<T, 4>
 make_array(const T& b1, const T& b2, const T& b3, const T& b4)
 {
-  boost::array<T, 4> a = { { b1, b2, b3, b4 } };
+  array<T, 4> a = { { b1, b2, b3, b4 } };
   return a;
 }
 
 template < typename T > inline
-boost::array<T, 5>
+array<T, 5>
 make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5)
 {
-  boost::array<T, 5> a = { { b1, b2, b3, b4, b5 } };
+  array<T, 5> a = { { b1, b2, b3, b4, b5 } };
   return a;
 }
 
 template < typename T > inline
-boost::array<T, 6>
+array<T, 6>
 make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
            const T& b6)
 {
-  boost::array<T, 6> a = { { b1, b2, b3, b4, b5, b6 } };
+  array<T, 6> a = { { b1, b2, b3, b4, b5, b6 } };
   return a;
 }
 
-
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-
-} // namespace CGALi
 
 CGAL_END_NAMESPACE
 

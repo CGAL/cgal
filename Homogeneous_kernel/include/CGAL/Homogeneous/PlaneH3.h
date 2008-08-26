@@ -43,7 +43,7 @@ class PlaneH3
    typedef typename R_::Plane_3              Plane_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef boost::array<RT, 4>               Rep;
+   typedef CGAL::array<RT, 4>               Rep;
    typedef typename R_::template Handle<Rep>::type  Base;
 
    Base base;
@@ -118,7 +118,7 @@ protected:
 //      |  q.hx()   q.hy()  q.hz()  q.hw()  |
 //      |  r.hx()   r.hy()  r.hz()  r.hw()  |
 //
-//  boost::array<RT, 4> ( a(), b(), c(), d() )
+//  CGAL::array<RT, 4> ( a(), b(), c(), d() )
 
 template < class R >
 inline
@@ -142,7 +142,7 @@ PlaneH3<R>::new_rep(const typename PlaneH3<R>::Point_3 &p,
   RT rhz = r.hz();
   RT rhw = r.hw();
 
-  base = CGALi::make_array<RT>(
+  base = CGAL::make_array<RT>(
               phy*( qhz*rhw - qhw*rhz )
             - qhy*( phz*rhw - phw*rhz )     // * X
             + rhy*( phz*qhw - phw*qhz ),
@@ -164,7 +164,7 @@ template < class R >
 inline
 void
 PlaneH3<R>::new_rep(const RT &a, const RT &b, const RT &c, const RT &d)
-{ base = CGALi::make_array(a, b, c, d); }
+{ base = CGAL::make_array(a, b, c, d); }
 
 template < class R >
 inline

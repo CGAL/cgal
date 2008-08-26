@@ -42,7 +42,7 @@ class DirectionC2
   typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Direction_2          Direction_2;
 
-  typedef boost::array<FT, 2>               Rep;
+  typedef CGAL::array<FT, 2>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -54,7 +54,7 @@ public:
   DirectionC2() {}
  
   DirectionC2(const FT &x, const FT &y)
-    : base(CGALi::make_array(x, y)) {}
+    : base(CGAL::make_array(x, y)) {}
 
   bool operator==(const DirectionC2 &d) const;
   bool operator!=(const DirectionC2 &d) const;

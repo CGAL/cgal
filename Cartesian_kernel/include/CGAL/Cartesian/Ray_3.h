@@ -39,7 +39,7 @@ class RayC3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Ray_3                Ray_3;
 
-  typedef boost::array<Point_3, 2>          Rep;
+  typedef CGAL::array<Point_3, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -50,16 +50,16 @@ public:
   RayC3() {}
 
   RayC3(const Point_3 &sp, const Point_3 &secondp)
-    : base(CGALi::make_array(sp, secondp)) {}
+    : base(CGAL::make_array(sp, secondp)) {}
 
   RayC3(const Point_3 &sp, const Vector_3 &v)
-    : base(CGALi::make_array(sp, sp + v)) {}
+    : base(CGAL::make_array(sp, sp + v)) {}
 
   RayC3(const Point_3 &sp, const Direction_3 &d)
-    : base(CGALi::make_array(sp, sp + d.to_vector())) {}
+    : base(CGAL::make_array(sp, sp + d.to_vector())) {}
 
   RayC3(const Point_3 &sp, const Line_3 &l)
-    : base(CGALi::make_array(sp, sp + l.to_vector())) {}
+    : base(CGAL::make_array(sp, sp + l.to_vector())) {}
 
   typename R::Bool_type        operator==(const RayC3 &r) const;
   typename R::Bool_type        operator!=(const RayC3 &r) const;

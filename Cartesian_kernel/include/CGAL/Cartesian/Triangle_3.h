@@ -38,7 +38,7 @@ class TriangleC3
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Triangle_3           Triangle_3;
 
-  typedef boost::array<Point_3, 3>          Rep;
+  typedef CGAL::array<Point_3, 3>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -49,7 +49,7 @@ public:
   TriangleC3() {}
 
   TriangleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
-    : base(CGALi::make_array(p, q, r)) {}
+    : base(CGAL::make_array(p, q, r)) {}
 
   bool       operator==(const TriangleC3 &t) const;
   bool       operator!=(const TriangleC3 &t) const;
