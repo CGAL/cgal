@@ -32,7 +32,7 @@ namespace CGALi {
 
 // This code is not optimized:
 template <class K>
-typename K::Bool_type
+typename K::Boolean
 do_intersect(const typename K::Triangle_3 &tr,
              const typename K::Tetrahedron_3 &tet,
              const K & k)
@@ -59,7 +59,7 @@ do_intersect(const typename K::Triangle_3 &tr,
 
 template <class K>
 inline
-typename K::Bool_type
+typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
 	     const typename K::Triangle_3 &tr,
 	     const K & k)

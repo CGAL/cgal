@@ -73,7 +73,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Ray_2           Ray_2;
 
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     result_type
     operator()(const Line_2& l1, const Line_2& l2) const
@@ -105,7 +105,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Plane_3         Plane_3;
 
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     result_type
     operator()(const Line_3& l1, const Line_3& l2) const
@@ -251,7 +251,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2         Point_2;
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
@@ -267,7 +267,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3         Point_3;
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -284,7 +284,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2         Point_2;
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
@@ -300,7 +300,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3         Point_3;
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -319,7 +319,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Ray_2                 Ray_2;
     typedef typename K::Segment_2             Segment_2;
   public:
-    typedef typename K::Bool_type             result_type;
+    typedef typename K::Boolean               result_type;
 
     result_type
     operator()( const Ray_2& r, const Point_2& p) const
@@ -357,7 +357,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Orientation_2  Orientation_2;
     Orientation_2 o;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     Collinear_2() {}
     Collinear_2(const Orientation_2 o_) : o(o_) {}
@@ -372,7 +372,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -3421,7 +3421,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3435,7 +3435,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -3447,7 +3447,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3459,7 +3459,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -3471,7 +3471,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3483,7 +3483,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3504,7 +3504,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Circle_3         Circle_3;
     typedef typename K::Sphere_3         Sphere_3;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Line_3& l, const Point_3& p) const
@@ -3564,7 +3564,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2   Point_2;
   public:
-    typedef typename K::Bool_type result_type;
+    typedef typename K::Boolean   result_type;
 
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
@@ -3580,7 +3580,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3   Point_3;
   public:
-    typedef typename K::Bool_type result_type;
+    typedef typename K::Boolean   result_type;
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -3599,7 +3599,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Line_2    Line_2;
     typedef typename K::Equal_2   Equal_2;
   public:
-    typedef typename K::Bool_type result_type;
+    typedef typename K::Boolean   result_type;
 
     result_type
     operator()(const Point_2& a, const Point_2& b,
@@ -3629,7 +3629,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Plane_3       Plane_3;
     typedef typename K::Collinear_3   Collinear_3;
   public:
-    typedef typename K::Bool_type     result_type;
+    typedef typename K::Boolean       result_type;
 
     result_type
     operator()( const Plane_3& h, const Point_3& p, const Point_3& q) const
@@ -3660,7 +3660,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Compare_xyz_3   Compare_xyz_3;
     Compare_xyz_3 c;
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     Less_xyz_3() {}
     Less_xyz_3(const Compare_xyz_3& c_) : c(c_) {}
@@ -3677,7 +3677,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Compare_xy_2   Compare_xy_2;
     Compare_xy_2 c;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     Less_xy_2() {}
     Less_xy_2(const Compare_xy_2& c_) : c(c_) {}
@@ -3694,7 +3694,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Compare_xy_3   Compare_xy_3;
     Compare_xy_3 c;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     Less_xy_3() {}
     Less_xy_3(const Compare_xy_3& c_) : c(c_) {}
@@ -3709,7 +3709,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2        Point_2;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -3721,7 +3721,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3        Point_3;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3733,7 +3733,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2        Point_2;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -3748,7 +3748,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2        Point_2;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -3760,7 +3760,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3        Point_3;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3772,7 +3772,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3        Point_3;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const

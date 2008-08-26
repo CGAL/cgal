@@ -89,7 +89,7 @@ struct Homogeneous_base
     typedef CGAL::Object                            Object_3;
 
     typedef typename Same_uncertainty_nt<bool, FT>::type
-                                                    Bool_type;
+                                                    Boolean;
     typedef typename Same_uncertainty_nt<CGAL::Sign, FT>::type
                                                     Sign;
     typedef typename Same_uncertainty_nt<CGAL::Comparison_result, FT>::type

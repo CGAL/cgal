@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 equal_direction(const DirectionC2<K> &d1,
                 const DirectionC2<K> &d2)
 {

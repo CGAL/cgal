@@ -43,7 +43,7 @@ angle(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 are_ordered_along_line(const typename K::Point_3 &p,
                        const typename K::Point_3 &q,
                        const typename K::Point_3 &r, const K& k)
@@ -53,7 +53,7 @@ are_ordered_along_line(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 are_strictly_ordered_along_line(const typename K::Point_3 &p,
                                 const typename K::Point_3 &q,
                                 const typename K::Point_3 &r,
@@ -225,7 +225,7 @@ circumcenter(const typename K::Triangle_3 &t, const K& k)
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 collinear(const typename K::Point_3 &p,
           const typename K::Point_3 &q,
           const typename K::Point_3 &r,
@@ -236,7 +236,7 @@ collinear(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 collinear_are_ordered_along_line(
           const typename K::Point_3 &p,
           const typename K::Point_3 &q,
@@ -248,7 +248,7 @@ collinear_are_ordered_along_line(
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 collinear_are_strictly_ordered_along_line(
           const typename K::Point_3 &p,
           const typename K::Point_3 &q,
@@ -398,7 +398,7 @@ compare_xyz(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 coplanar(const typename K::Point_3 &p,
          const typename K::Point_3 &q,
          const typename K::Point_3 &r,
@@ -471,7 +471,7 @@ equidistant_line(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 has_smaller_distance_to_point(const typename K::Point_3 &p,
                               const typename K::Point_3 &q,
                               const typename K::Point_3 &r,
@@ -482,7 +482,7 @@ has_smaller_distance_to_point(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 has_larger_distance_to_point(const typename K::Point_3 &p,
 			     const typename K::Point_3 &q,
 			     const typename K::Point_3 &r,
@@ -493,7 +493,7 @@ has_larger_distance_to_point(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 has_larger_signed_distance_to_plane(const typename K::Plane_3 &h,
 				    const typename K::Point_3 &p,
 				    const typename K::Point_3 &q,
@@ -504,7 +504,7 @@ has_larger_signed_distance_to_plane(const typename K::Plane_3 &h,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 has_larger_signed_distance_to_plane(const typename K::Point_3 &hp,
 				    const typename K::Point_3 &hq,
 				    const typename K::Point_3 &hr,
@@ -517,7 +517,7 @@ has_larger_signed_distance_to_plane(const typename K::Point_3 &hp,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 has_smaller_signed_distance_to_plane(const typename K::Plane_3 &h,
                                      const typename K::Point_3 &p,
                                      const typename K::Point_3 &q,
@@ -528,7 +528,7 @@ has_smaller_signed_distance_to_plane(const typename K::Plane_3 &h,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 has_smaller_signed_distance_to_plane(const typename K::Point_3 &hp,
                                      const typename K::Point_3 &hq,
                                      const typename K::Point_3 &hr,
@@ -541,7 +541,7 @@ has_smaller_signed_distance_to_plane(const typename K::Point_3 &hp,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 less_x(const typename K::Point_3 &p,
        const typename K::Point_3 &q,
        const K &k)
@@ -551,7 +551,7 @@ less_x(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 less_y(const typename K::Point_3 &p,
        const typename K::Point_3 &q,
        const K &k)
@@ -561,7 +561,7 @@ less_y(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 less_z(const typename K::Point_3 &p,
        const typename K::Point_3 &q,
        const K &k)
@@ -571,7 +571,7 @@ less_z(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 lexicographically_xyz_smaller(const typename K::Point_3 &p,
                               const typename K::Point_3 &q,
                               const K &k)
@@ -660,7 +660,7 @@ orthogonal_vector(const typename K::Plane_3 &p, const K &k)
 
 template <typename K>
 inline
-typename K::Bool_type
+typename K::Boolean
 parallel(const typename K::Line_3 &l1,
          const typename K::Line_3 &l2, const K &k)
 {
@@ -669,7 +669,7 @@ parallel(const typename K::Line_3 &l1,
 
 template <typename K>
 inline
-typename K::Bool_type
+typename K::Boolean
 parallel(const typename K::Plane_3 &h1,
          const typename K::Plane_3 &h2, const K &k)
 {
@@ -678,7 +678,7 @@ parallel(const typename K::Plane_3 &h1,
 
 template <typename K>
 inline
-typename K::Bool_type
+typename K::Boolean
 parallel(const typename K::Ray_3 &r1,
          const typename K::Ray_3 &r2, const K &k)
 {
@@ -687,7 +687,7 @@ parallel(const typename K::Ray_3 &r1,
 
 template <typename K>
 inline
-typename K::Bool_type
+typename K::Boolean
 parallel(const typename K::Segment_3 &s1,
          const typename K::Segment_3 &s2, const K &k)
 {
@@ -792,7 +792,7 @@ volume(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 x_equal(const typename K::Point_3 &p,
         const typename K::Point_3 &q, const K &k)
 {
@@ -801,7 +801,7 @@ x_equal(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 y_equal(const typename K::Point_3 &p,
         const typename K::Point_3 &q, const K &k)
 {
@@ -810,7 +810,7 @@ y_equal(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 z_equal(const typename K::Point_3 &p,
         const typename K::Point_3 &q, const K &k)
 {
@@ -822,7 +822,7 @@ z_equal(const typename K::Point_3 &p,
 
 template <typename K>
 inline
-typename K::Bool_type
+typename K::Boolean
 are_negative_oriented(const typename K::Point_3 &p,
                       const typename K::Point_3 &q,
                       const typename K::Point_3 &r,
@@ -833,7 +833,7 @@ are_negative_oriented(const typename K::Point_3 &p,
 
 template <typename K>
 inline
-typename K::Bool_type
+typename K::Boolean
 are_positive_oriented(const typename K::Point_3 &p,
                       const typename K::Point_3 &q,
                       const typename K::Point_3 &r,
@@ -844,7 +844,7 @@ are_positive_oriented(const typename K::Point_3 &p,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 lexicographically_xyz_smaller_or_equal(const typename K::Point_3 &p,
                                        const typename K::Point_3 &q,
                                        const K&k)

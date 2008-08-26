@@ -63,7 +63,7 @@ public:
     return get(base)[1];
   }
 
-  typename R_::Bool_type is_degenerate() const
+  typename R_::Boolean   is_degenerate() const
   {
     return source() == second_point();
   }

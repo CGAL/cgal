@@ -40,7 +40,7 @@ side_of_oriented_plane(const PlaneC3<K> &h,
 
 template < class K >
 inline
-typename K::Bool_type
+typename K::Boolean
 equal_plane(const PlaneC3<K> &h, const PlaneC3<K> &p)
 { 
   return equal_planeC3(h.a(), h.b(), h.c(), h.d(),

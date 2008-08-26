@@ -56,24 +56,24 @@ public:
   const Point_3 &    vertex(int i) const;
   const Point_3 &    operator[](int i) const;
 
-  typename R::Bool_type       operator==(const TetrahedronC3 &t) const;
-  typename R::Bool_type       operator!=(const TetrahedronC3 &t) const;
+  typename R::Boolean         operator==(const TetrahedronC3 &t) const;
+  typename R::Boolean         operator!=(const TetrahedronC3 &t) const;
 
   typename R::Orientation    orientation() const;
   typename R::Oriented_side  oriented_side(const Point_3 &p) const;
   typename R::Bounded_side   bounded_side(const Point_3 &p) const;
 
-  typename R::Bool_type       has_on_boundary(const Point_3 &p) const;
-  typename R::Bool_type       has_on_positive_side(const Point_3 &p) const;
-  typename R::Bool_type       has_on_negative_side(const Point_3 &p) const;
-  typename R::Bool_type       has_on_bounded_side(const Point_3 &p) const;
-  typename R::Bool_type       has_on_unbounded_side(const Point_3 &p) const;
+  typename R::Boolean         has_on_boundary(const Point_3 &p) const;
+  typename R::Boolean         has_on_positive_side(const Point_3 &p) const;
+  typename R::Boolean         has_on_negative_side(const Point_3 &p) const;
+  typename R::Boolean         has_on_bounded_side(const Point_3 &p) const;
+  typename R::Boolean         has_on_unbounded_side(const Point_3 &p) const;
 
-  typename R::Bool_type       is_degenerate() const;
+  typename R::Boolean         is_degenerate() const;
 };
 
 template < class R >
-typename R::Bool_type
+typename R::Boolean
 TetrahedronC3<R>::
 operator==(const TetrahedronC3<R> &t) const
 {
@@ -101,7 +101,7 @@ operator==(const TetrahedronC3<R> &t) const
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 TetrahedronC3<R>::
 operator!=(const TetrahedronC3<R> &t) const
 {
@@ -166,7 +166,7 @@ bounded_side(const typename TetrahedronC3<R>::Point_3 &p) const
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 TetrahedronC3<R>::has_on_boundary
   (const typename TetrahedronC3<R>::Point_3 &p) const
 {
@@ -175,7 +175,7 @@ TetrahedronC3<R>::has_on_boundary
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 TetrahedronC3<R>::has_on_positive_side
   (const typename TetrahedronC3<R>::Point_3 &p) const
 {
@@ -184,7 +184,7 @@ TetrahedronC3<R>::has_on_positive_side
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 TetrahedronC3<R>::has_on_negative_side
   (const typename TetrahedronC3<R>::Point_3 &p) const
 {
@@ -193,7 +193,7 @@ TetrahedronC3<R>::has_on_negative_side
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 TetrahedronC3<R>::has_on_bounded_side
   (const typename TetrahedronC3<R>::Point_3 &p) const
 {
@@ -202,7 +202,7 @@ TetrahedronC3<R>::has_on_bounded_side
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 TetrahedronC3<R>::has_on_unbounded_side
   (const typename TetrahedronC3<R>::Point_3 &p) const
 {
@@ -211,7 +211,7 @@ TetrahedronC3<R>::has_on_unbounded_side
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 TetrahedronC3<R>::is_degenerate() const
 {
   return orientation() == COPLANAR;

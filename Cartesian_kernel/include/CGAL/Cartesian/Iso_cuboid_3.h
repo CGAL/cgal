@@ -105,8 +105,8 @@ public:
                                     Construct_point_3()(max_hx/hw, max_hy/hw, max_hz/hw)));
   }
 
-  typename R::Bool_type operator==(const Iso_cuboidC3& s) const;
-  typename R::Bool_type operator!=(const Iso_cuboidC3& s) const;
+  typename R::Boolean   operator==(const Iso_cuboidC3& s) const;
+  typename R::Boolean   operator!=(const Iso_cuboidC3& s) const;
 
   const Point_3 & min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
@@ -125,11 +125,11 @@ public:
   }
 
   Bounded_side bounded_side(const Point_3& p) const;
-  typename R::Bool_type         has_on(const Point_3& p) const;
-  typename R::Bool_type         has_on_boundary(const Point_3& p) const;
-  typename R::Bool_type         has_on_bounded_side(const Point_3& p) const;
-  typename R::Bool_type         has_on_unbounded_side(const Point_3& p) const;
-  typename R::Bool_type         is_degenerate() const;
+  typename R::Boolean           has_on(const Point_3& p) const;
+  typename R::Boolean           has_on_boundary(const Point_3& p) const;
+  typename R::Boolean           has_on_bounded_side(const Point_3& p) const;
+  typename R::Boolean           has_on_unbounded_side(const Point_3& p) const;
+  typename R::Boolean           is_degenerate() const;
   const FT &   xmin() const;
   const FT &   ymin() const;
   const FT &   zmin() const;
@@ -144,7 +144,7 @@ public:
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::Bool_type
+typename R::Boolean
 Iso_cuboidC3<R>::operator==(const Iso_cuboidC3<R>& r) const
 { // FIXME : predicate
   if (CGAL::identical(base, r.base))
@@ -154,7 +154,7 @@ Iso_cuboidC3<R>::operator==(const Iso_cuboidC3<R>& r) const
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 Iso_cuboidC3<R>::operator!=(const Iso_cuboidC3<R>& r) const
 {
   return !(*this == r);
@@ -287,7 +287,7 @@ bounded_side(const typename Iso_cuboidC3<R>::Point_3& p) const
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 Iso_cuboidC3<R>::
 has_on_boundary(const typename Iso_cuboidC3<R>::Point_3& p) const
 {
@@ -296,7 +296,7 @@ has_on_boundary(const typename Iso_cuboidC3<R>::Point_3& p) const
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 Iso_cuboidC3<R>::
 has_on(const typename Iso_cuboidC3<R>::Point_3& p) const
 {
@@ -305,7 +305,7 @@ has_on(const typename Iso_cuboidC3<R>::Point_3& p) const
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 Iso_cuboidC3<R>::
 has_on_bounded_side(const typename Iso_cuboidC3<R>::Point_3& p) const
 {
@@ -314,7 +314,7 @@ has_on_bounded_side(const typename Iso_cuboidC3<R>::Point_3& p) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::Bool_type
+typename R::Boolean
 Iso_cuboidC3<R>::
 has_on_unbounded_side(const typename Iso_cuboidC3<R>::Point_3& p)
     const
@@ -324,7 +324,7 @@ has_on_unbounded_side(const typename Iso_cuboidC3<R>::Point_3& p)
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::Bool_type
+typename R::Boolean
 Iso_cuboidC3<R>::is_degenerate() const
 { // FIXME : predicate
   return (this->min)().hx() == (this->max)().hx()

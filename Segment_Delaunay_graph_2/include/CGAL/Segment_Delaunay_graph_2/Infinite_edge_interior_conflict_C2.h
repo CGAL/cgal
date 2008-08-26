@@ -37,11 +37,11 @@ class Infinite_edge_interior_conflict_C2
 public:
   typedef typename K::Site_2           Site_2;
   typedef typename K::RT               RT;
-  typedef typename K::Bool_type        Bool_type;
+  typedef typename K::Boolean          Boolean;
   typedef Are_same_points_C2<K>        Are_same_points_2;
   typedef Are_same_segments_C2<K>      Are_same_segments_2;
 
-  typedef Bool_type                    result_type;
+  typedef Boolean                      result_type;
   struct argument_type {};
 
 private:
@@ -49,7 +49,7 @@ private:
   Are_same_segments_2  same_segments;
 
 public:
-  Bool_type operator()(const Site_2& q, const Site_2& s, const Site_2& r,
+  Boolean   operator()(const Site_2& q, const Site_2& s, const Site_2& r,
 		       const Site_2& t, Sign sgn) const
   {
     if ( t.is_segment() ) {

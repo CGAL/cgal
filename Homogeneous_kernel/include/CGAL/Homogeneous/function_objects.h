@@ -241,7 +241,7 @@ namespace HomogeneousKernelFunctors {
     Collinear_2 c;
 #endif // CGAL_kernel_exactness_preconditions
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
 #ifdef CGAL_kernel_exactness_preconditions
     Collinear_are_ordered_along_line_2() {}
@@ -291,7 +291,7 @@ namespace HomogeneousKernelFunctors {
     Collinear_3 c;
 #endif // CGAL_kernel_exactness_preconditions
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
 #ifdef CGAL_kernel_exactness_preconditions
     Collinear_are_ordered_along_line_3() {}
@@ -372,7 +372,7 @@ namespace HomogeneousKernelFunctors {
     Collinear_2 c;
 #endif // CGAL_kernel_exactness_preconditions
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
 #ifdef CGAL_kernel_exactness_preconditions
     Collinear_are_strictly_ordered_along_line_2() {}
@@ -423,7 +423,7 @@ namespace HomogeneousKernelFunctors {
     Collinear_3 c;
 #endif // CGAL_kernel_exactness_preconditions
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
 #ifdef CGAL_kernel_exactness_preconditions
     Collinear_are_strictly_ordered_along_line_3() {}
@@ -457,7 +457,7 @@ namespace HomogeneousKernelFunctors {
     Construct_point_on_2 cp;
     Compare_xy_2 cxy;
   public:
-    typedef typename K::Bool_type             result_type;
+    typedef typename K::Boolean               result_type;
 
     Collinear_has_on_2() {}
     Collinear_has_on_2(const Construct_point_on_2& cp_,
@@ -486,7 +486,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Orientation_2  Orientation_2;
     Orientation_2 o;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     Collinear_2() {}
     Collinear_2(const Orientation_2 o_) : o(o_) {}
@@ -3636,7 +3636,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3651,7 +3651,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -3663,7 +3663,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3675,7 +3675,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -3687,7 +3687,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3699,7 +3699,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3    Point_3;
   public:
-    typedef typename K::Bool_type  result_type;
+    typedef typename K::Boolean    result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3717,7 +3717,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Triangle_3       Triangle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Line_3& l, const Point_3& p) const
@@ -3784,7 +3784,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2   Point_2;
   public:
-    typedef typename K::Bool_type result_type;
+    typedef typename K::Boolean   result_type;
 
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
@@ -3836,7 +3836,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3   Point_3;
   public:
-    typedef typename K::Bool_type result_type;
+    typedef typename K::Boolean   result_type;
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -3874,7 +3874,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2   Point_2;
     typedef typename K::Line_2    Line_2;
   public:
-    typedef typename K::Bool_type result_type;
+    typedef typename K::Boolean   result_type;
 
     result_type
     operator()(const Point_2& p, const Point_2& q,
@@ -3933,7 +3933,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Plane_3            Plane_3;
     typedef typename K::Construct_plane_3  Construct_plane_3;
   public:
-    typedef typename K::Bool_type          result_type;
+    typedef typename K::Boolean            result_type;
 
     result_type
     operator()( const Plane_3& pl, const Point_3& p, const Point_3& q) const
@@ -3974,7 +3974,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Compare_xyz_3  Compare_xyz_3;
     Compare_xyz_3 c;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     Less_xyz_3() {}
     Less_xyz_3(const Compare_xyz_3& c_) : c(c_) {}
@@ -3991,7 +3991,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Compare_xy_2  Compare_xy_2;
     Compare_xy_2 c;
   public:
-    typedef typename K::Bool_type     result_type;
+    typedef typename K::Boolean       result_type;
 
     Less_xy_2() {}
     Less_xy_2(const Compare_xy_2& c_) : c(c_) {}
@@ -4008,7 +4008,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Compare_xy_3  Compare_xy_3;
     Compare_xy_3 c;
   public:
-    typedef typename K::Bool_type     result_type;
+    typedef typename K::Boolean       result_type;
 
     Less_xy_3() {}
     Less_xy_3(const Compare_xy_3& c_) : c(c_) {}
@@ -4023,7 +4023,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2         Point_2;
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -4035,7 +4035,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3         Point_3;
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -4047,7 +4047,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2       Point_2;
   public:
-    typedef typename K::Bool_type     result_type;
+    typedef typename K::Boolean       result_type;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -4082,7 +4082,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2         Point_2;
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -4094,7 +4094,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3         Point_3;
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -4106,7 +4106,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_3         Point_3;
   public:
-    typedef typename K::Bool_type       result_type;
+    typedef typename K::Boolean         result_type;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const

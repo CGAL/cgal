@@ -48,7 +48,7 @@ namespace CommonKernelFunctors {
     Collinear_2 c;
     Collinear_are_ordered_along_line_2 cao;
   public:
-    typedef typename K::Bool_type   result_type;
+    typedef typename K::Boolean     result_type;
 
     Are_ordered_along_line_2() {}
     Are_ordered_along_line_2(const Collinear_2& c_,
@@ -72,7 +72,7 @@ namespace CommonKernelFunctors {
     Collinear_3 c;
     Collinear_are_ordered_along_line_3 cao;
   public:
-    typedef typename K::Bool_type   result_type;
+    typedef typename K::Boolean     result_type;
 
     Are_ordered_along_line_3() {}
     Are_ordered_along_line_3(const Collinear_3& c_,
@@ -96,7 +96,7 @@ namespace CommonKernelFunctors {
     Collinear_2 c;
     Collinear_are_strictly_ordered_along_line_2 cao;
   public:
-    typedef typename K::Bool_type   result_type;
+    typedef typename K::Boolean     result_type;
 
     Are_strictly_ordered_along_line_2() {}
     Are_strictly_ordered_along_line_2(
@@ -121,7 +121,7 @@ namespace CommonKernelFunctors {
     Collinear_3 c;
     Collinear_are_strictly_ordered_along_line_3 cao;
   public:
-    typedef typename K::Bool_type   result_type;
+    typedef typename K::Boolean     result_type;
 
     Are_strictly_ordered_along_line_3() {}
     Are_strictly_ordered_along_line_3(
@@ -140,7 +140,7 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Object_2  Object_2;
   public:
-    //typedef typename K::Bool_type result_type;
+    //typedef typename K::Boolean   result_type;
     typedef bool                  result_type;
 
     template <class T>
@@ -154,7 +154,7 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Object_3        Object_3;
   public:
-    //typedef typename K::Bool_type       result_type;
+    //typedef typename K::Boolean         result_type;
     typedef bool                        result_type;
 
     template <class T>
@@ -1807,7 +1807,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Orientation_3 Orientation_3;
     Orientation_3 o;
   public:
-    typedef typename K::Bool_type     result_type;
+    typedef typename K::Boolean       result_type;
 
     Coplanar_3() {}
     Coplanar_3(const Orientation_3& o_) : o(o_) {}
@@ -1825,7 +1825,7 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Direction_2  Direction_2;
   public:
-    typedef typename K::Bool_type    result_type;
+    typedef typename K::Boolean      result_type;
 
     result_type
     operator()( const Direction_2& p, const Direction_2& q,
@@ -1842,7 +1842,7 @@ namespace CommonKernelFunctors {
   class Do_intersect_2
   {
   public:
-    typedef typename K::Bool_type   result_type;
+    typedef typename K::Boolean     result_type;
 
     // There are 36 combinaisons, so I use a template.
     template <class T1, class T2>
@@ -1855,7 +1855,7 @@ namespace CommonKernelFunctors {
   class Do_intersect_3
   {
   public:
-    typedef typename K::Bool_type   result_type;
+    typedef typename K::Boolean     result_type;
 
     // There are x combinaisons, so I use a template.
     template <class T1, class T2>
@@ -1878,7 +1878,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2      Circle_2;
 
   public:
-    typedef typename K::Bool_type     result_type;
+    typedef typename K::Boolean       result_type;
 
     result_type
     operator()(const Point_2 &p, const Point_2 &q) const
@@ -1966,7 +1966,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_3      Circle_3;
 
   public:
-    typedef typename K::Bool_type     result_type;
+    typedef typename K::Boolean       result_type;
 
     // Point_3 is special case since the global operator== would recurse.
     result_type
@@ -2056,7 +2056,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
@@ -2080,7 +2080,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
     typedef typename K::Plane_3          Plane_3;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Sphere_3& s, const Point_3& p) const
@@ -2104,7 +2104,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
@@ -2128,7 +2128,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
     typedef typename K::Circle_3         Circle_3;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Sphere_3& s, const Point_3& p) const
@@ -2160,7 +2160,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
@@ -2183,7 +2183,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Sphere_3         Sphere_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Sphere_3& s, const Point_3& p) const
@@ -2206,7 +2206,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
@@ -2229,7 +2229,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Sphere_3         Sphere_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Sphere_3& s, const Point_3& p) const
@@ -2252,7 +2252,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
@@ -2279,7 +2279,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_3         Circle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Sphere_3& s, const Point_3& p) const
@@ -2311,7 +2311,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Ray_2            Ray_2;
     typedef typename K::Segment_2        Segment_2;
   public:
-    typedef typename K::Bool_type        result_type;
+    typedef typename K::Boolean          result_type;
 
     result_type
     operator()( const Line_2& l, const Point_2& p) const
@@ -2370,7 +2370,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Triangle_2        Triangle_2;
     typedef typename K::Circle_3          Circle_3;
   public:
-    typedef typename K::Bool_type         result_type;
+    typedef typename K::Boolean           result_type;
 
     result_type
     operator()( const Circle_2& c) const
@@ -2413,7 +2413,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Triangle_3        Triangle_3;
     typedef typename K::Tetrahedron_3     Tetrahedron_3;
   public:
-    typedef typename K::Bool_type         result_type;
+    typedef typename K::Boolean           result_type;
 
     result_type
     operator()( const Iso_cuboid_3& c) const
@@ -2455,7 +2455,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_2 Segment_2;
     typedef typename K::Ray_2     Ray_2;
   public:
-    typedef typename K::Bool_type result_type;
+    typedef typename K::Boolean   result_type;
 
     result_type
     operator()( const Line_2& l) const
@@ -2477,7 +2477,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_2 Segment_2;
     typedef typename K::Ray_2     Ray_2;
   public:
-    typedef typename K::Bool_type result_type;
+    typedef typename K::Boolean   result_type;
 
     result_type
     operator()( const Line_2& l) const
@@ -2499,7 +2499,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Orientation_2  Orientation_2;
     Orientation_2 o;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     Left_turn_2() {}
     Left_turn_2(const Orientation_2& o_) : o(o_) {}
@@ -2519,7 +2519,7 @@ namespace CommonKernelFunctors {
     Orientation_2 o;
     Collinear_are_ordered_along_line_2 co;
   public:
-    typedef typename K::Bool_type      result_type;
+    typedef typename K::Boolean        result_type;
 
     Less_rotate_ccw_2() {}
     Less_rotate_ccw_2(const Orientation_2& o_,

@@ -94,13 +94,13 @@ public:
     return R().oriented_side_2_object()(*this,p);
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   operator==(const Triangle_2 &t) const
   {
     return R().equal_2_object()(*this,t);
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   operator!=(const Triangle_2 &t) const
   {
     return !(*this == t);
@@ -118,37 +118,37 @@ public:
     return vertex(i);
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   has_on_bounded_side(const Point_2 &p) const
   {
     return bounded_side(p) == ON_BOUNDED_SIDE;
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   has_on_unbounded_side(const Point_2 &p) const
   {
     return bounded_side(p) == ON_UNBOUNDED_SIDE;
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   has_on_boundary(const Point_2 &p) const
   {
     return bounded_side(p) == ON_BOUNDARY;
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   has_on_negative_side(const Point_2 &p) const
   {
     return oriented_side(p) == ON_NEGATIVE_SIDE;
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   has_on_positive_side(const Point_2 &p) const
   {
     return oriented_side(p) == ON_POSITIVE_SIDE;
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   is_degenerate() const
   {
     return R().collinear_2_object()(vertex(0), vertex(1), vertex(2));

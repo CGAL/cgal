@@ -126,25 +126,25 @@ public:
     return R().oriented_side_2_object()(*this, p);
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   has_on_boundary(const Point_2 &p) const
   {
     return bounded_side(p) == ON_BOUNDARY;
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   has_on_bounded_side(const Point_2 &p) const
   {
     return bounded_side(p) == ON_BOUNDED_SIDE;
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   has_on_unbounded_side(const Point_2 &p) const
   {
     return bounded_side(p) == ON_UNBOUNDED_SIDE;
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   has_on_negative_side(const Point_2 &p) const
   {
     if (orientation() == COUNTERCLOCKWISE)
@@ -152,7 +152,7 @@ public:
     return has_on_bounded_side(p);
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   has_on_positive_side(const Point_2 &p) const
   {
     if (orientation() == COUNTERCLOCKWISE)
@@ -160,7 +160,7 @@ public:
     return has_on_unbounded_side(p);
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   is_degenerate() const
   {
     return CGAL_NTS is_zero(squared_radius());
@@ -181,13 +181,13 @@ public:
     return R().construct_bbox_2_object()(*this);
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   operator==(const Circle_2 &c) const
   {
     return R().equal_2_object()(*this, c);
   }
 
-  typename R::Bool_type
+  typename R::Boolean
   operator!=(const Circle_2 &c) const
   {
     return !(*this == c);

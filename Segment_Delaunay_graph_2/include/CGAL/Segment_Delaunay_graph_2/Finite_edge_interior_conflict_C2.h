@@ -51,7 +51,7 @@ public:
   typedef typename Base::Sign                 Sign;
   typedef typename Base::Orientation          Orientation;
   typedef typename Base::Oriented_side        Oriented_side;
-  typedef typename Base::Bool_type            Bool_type;
+  typedef typename Base::Boolean              Boolean;
 
   typedef typename Base::Homogeneous_point_2  Homogeneous_point_2;
 
@@ -71,12 +71,12 @@ private:
   //--------------------------------------------------------------------
   //--------------------------------------------------------------------
 
-  Bool_type
+  Boolean
   is_interior_in_conflict_both(const Site_2& p, const Site_2& q,
 			       const Site_2& r, const Site_2& s,
 			       const Site_2& t, Method_tag tag) const
   {
-    Bool_type in_conflict(false);
+    Boolean   in_conflict(false);
 
     if ( p.is_point() && q.is_point() ) {
       in_conflict = is_interior_in_conflict_both_pp(p, q, r, s, t, tag);
@@ -172,7 +172,7 @@ private:
 
   //--------------------------------------------------------------------
 
-  Bool_type
+  Boolean
   is_interior_in_conflict_both_ps(const Site_2& p, const Site_2& q,
 				  const Site_2& r, const Site_2& s,
 				  const Site_2& t, Method_tag tag) const
@@ -192,7 +192,7 @@ private:
 
   //--------------------------------------------------------------------
 
-  Bool_type
+  Boolean
   is_interior_in_conflict_both_ps_p(const Site_2& p, const Site_2& q,
 				    const Site_2& r, const Site_2& s,
 				    const Site_2& t, Method_tag ) const
@@ -207,7 +207,7 @@ private:
 
     //if ( res != SMALLER ) { return true; }
     if (certainly( res != SMALLER ) ) { return true; }
-    if (! is_certain( res != SMALLER ) ) { return indeterminate<Bool_type>(); }
+    if (! is_certain( res != SMALLER ) ) { return indeterminate<Boolean>(); }
 
     Voronoi_vertex_2 vpqr(p, q, r);
     Voronoi_vertex_2 vqps(q, p, s);
@@ -232,7 +232,7 @@ private:
     return t1.is_input();
   }
 
-  Bool_type
+  Boolean
   is_interior_in_conflict_both_ps_s(const Site_2& sp, const Site_2& sq,
 				    const Site_2& r, const Site_2& s,
 				    const Site_2& st, Method_tag ) const
@@ -258,13 +258,13 @@ private:
       Oriented_side opqr = vpqr.oriented_side(lqperp);
       Oriented_side oqps = vqps.oriented_side(lqperp);
 
-      Bool_type on_different_parabola_arcs =
+      Boolean   on_different_parabola_arcs =
 	 ((opqr == ON_NEGATIVE_SIDE) & (oqps == ON_POSITIVE_SIDE)) |
 	 ((opqr == ON_POSITIVE_SIDE) & (oqps == ON_NEGATIVE_SIDE));
 
       //if ( !on_different_parabola_arcs ) { return true; }
       if (certainly( !on_different_parabola_arcs ) ) { return true; }
-      if (! is_certain( !on_different_parabola_arcs ) ) { return indeterminate<Bool_type>(); }
+      if (! is_certain( !on_different_parabola_arcs ) ) { return indeterminate<Boolean>(); }
 
       Site_2 t1;
       if ( same_points(sp, st.source_site()) ) {
@@ -336,7 +336,7 @@ private:
 	           (o_l_qps == ON_POSITIVE_SIDE) ) )
 	return true;
     if (! is_certain((o_l_pqr == -o_l_qps) & (o_l_pqr != ZERO)))
-        return indeterminate<Bool_type>();
+        return indeterminate<Boolean>();
 
     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     //>>>>>>>>>> HERE I NEED TO CHECK THE BOUNDARY CASES <<<<<<
@@ -346,11 +346,11 @@ private:
     Oriented_side opqr = vpqr.oriented_side(lqperp);
     Oriented_side oqps = vqps.oriented_side(lqperp);
 
-    Bool_type on_different_parabola_arcs = (opqr == -oqps) & (opqr != ZERO);
+    Boolean   on_different_parabola_arcs = (opqr == -oqps) & (opqr != ZERO);
 
     // if ( !on_different_parabola_arcs ) { return true; }
     if (certainly( !on_different_parabola_arcs ) ) { return true; }
-    if (! is_certain( !on_different_parabola_arcs ) ) { return indeterminate<Bool_type>(); }
+    if (! is_certain( !on_different_parabola_arcs ) ) { return indeterminate<Boolean>(); }
       
     Homogeneous_point_2 pv = projection_on_line(lq, p);
     Homogeneous_point_2 hp(p);
@@ -374,7 +374,7 @@ private:
 
   //--------------------------------------------------------------------
 
-  Bool_type
+  Boolean
   is_interior_in_conflict_both_sp(const Site_2& p, const Site_2& q,
 				  const Site_2& r, const Site_2& s,
 				  const Site_2& t, Method_tag tag) const
@@ -640,10 +640,10 @@ private:
   //------------------------------------------------------------------------
 
 public:
-  typedef Bool_type         result_type;
+  typedef Boolean           result_type;
   typedef Site_2            argument_type;
 
-  Bool_type operator()(const Site_2& p, const Site_2& q, const Site_2& r,
+  Boolean   operator()(const Site_2& p, const Site_2& q, const Site_2& r,
 		       const Site_2& s, const Site_2& t, Sign sgn) const
   {
     if ( sgn == POSITIVE ) {
@@ -656,7 +656,7 @@ public:
   }
 
 
-  Bool_type operator()(const Site_2& p, const Site_2& q, const Site_2& ,
+  Boolean   operator()(const Site_2& p, const Site_2& q, const Site_2& ,
 		       const Site_2& t, Sign sgn) const
   {
     if ( t.is_point() ) {
@@ -679,7 +679,7 @@ public:
     return ( p_is_endpoint && q_is_endpoint );
   }
 
-  Bool_type operator()(const Site_2& p, const Site_2& q, const Site_2& t,
+  Boolean   operator()(const Site_2& p, const Site_2& q, const Site_2& t,
 		       Sign ) const
   {
     if ( p.is_segment() || q.is_segment()) {

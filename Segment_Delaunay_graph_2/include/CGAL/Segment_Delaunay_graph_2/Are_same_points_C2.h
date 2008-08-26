@@ -36,20 +36,20 @@ private:
   typedef typename K::Site_2      Site_2;
   typedef typename K::Compare_x_2 Compare_x_2;
   typedef typename K::Compare_y_2 Compare_y_2;
-  typedef typename K::Bool_type   Bool_type;
+  typedef typename K::Boolean     Boolean;
 
   typedef typename K::Intersections_tag  ITag;
 
   Compare_x_2 compare_x_2;
   Compare_y_2 compare_y_2;
 
-  Bool_type are_same(const Point_2& p, const Point_2& q) const
+  Boolean   are_same(const Point_2& p, const Point_2& q) const
   {
     return
       compare_x_2(p, q) == EQUAL && compare_y_2(p, q) == EQUAL;
   }
 
-  Bool_type are_same(const Site_2& s, const Site_2& t) const
+  Boolean   are_same(const Site_2& s, const Site_2& t) const
   {
     return
       ( are_same(s.source(), t.source()) &&
@@ -58,12 +58,12 @@ private:
 	are_same(s.target(), t.source()) );
   }
 
-  Bool_type predicate(const Site_2& p, const Site_2& q, const Tag_false&) const
+  Boolean   predicate(const Site_2& p, const Site_2& q, const Tag_false&) const
   {
     return are_same(p.point(), q.point()); 
   }
 
-  Bool_type predicate(const Site_2& p, const Site_2& q, const Tag_true&) const
+  Boolean   predicate(const Site_2& p, const Site_2& q, const Tag_true&) const
   {
     if ( !p.is_input() && !q.is_input() ) {
       Site_2 s[2] = { p.supporting_site(0), p.supporting_site(1) };
@@ -79,10 +79,10 @@ private:
   }
 
 public:
-  typedef Bool_type      result_type;
+  typedef Boolean        result_type;
   typedef Site_2         argument_type;
 
-  Bool_type operator()(const Site_2& p, const Site_2& q) const
+  Boolean   operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_point() && q.is_point() );
 

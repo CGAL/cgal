@@ -61,8 +61,8 @@ public:
   RayC3(const Point_3 &sp, const Line_3 &l)
     : base(CGAL::make_array(sp, sp + l.to_vector())) {}
 
-  typename R::Bool_type        operator==(const RayC3 &r) const;
-  typename R::Bool_type        operator!=(const RayC3 &r) const;
+  typename R::Boolean          operator==(const RayC3 &r) const;
+  typename R::Boolean          operator!=(const RayC3 &r) const;
 
   const Point_3 &   source() const
   {
@@ -79,14 +79,14 @@ public:
   Line_3      supporting_line() const;
   Ray_3       opposite() const;
 
-  typename R::Bool_type        is_degenerate() const;
-  typename R::Bool_type        has_on(const Point_3 &p) const;
-  typename R::Bool_type        collinear_has_on(const Point_3 &p) const;
+  typename R::Boolean          is_degenerate() const;
+  typename R::Boolean          has_on(const Point_3 &p) const;
+  typename R::Boolean          collinear_has_on(const Point_3 &p) const;
 };
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 RayC3<R>::operator==(const RayC3<R> &r) const
 {
     if (CGAL::identical(base, r.base))
@@ -96,7 +96,7 @@ RayC3<R>::operator==(const RayC3<R> &r) const
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 RayC3<R>::operator!=(const RayC3<R> &r) const
 {
   return !(*this == r);
@@ -146,7 +146,7 @@ RayC3<R>::opposite() const
 }
 
 template < class R >
-typename R::Bool_type
+typename R::Boolean
 RayC3<R>::
 has_on(const typename RayC3<R>::Point_3 &p) const
 {
@@ -157,7 +157,7 @@ has_on(const typename RayC3<R>::Point_3 &p) const
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 RayC3<R>::is_degenerate() const
 {
   return source() == second_point();
@@ -165,7 +165,7 @@ RayC3<R>::is_degenerate() const
 
 template < class R >
 inline
-typename R::Bool_type
+typename R::Boolean
 RayC3<R>::
 collinear_has_on(const typename RayC3<R>::Point_3 &p) const
 {

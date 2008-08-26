@@ -686,7 +686,7 @@ class Do_overlap_2
   class Do_intersect_2
   {
   public:
-    typedef typename BK::Bool_type  result_type;
+    typedef typename BK::Boolean    result_type;
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const

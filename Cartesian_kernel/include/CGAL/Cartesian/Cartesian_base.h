@@ -81,11 +81,11 @@ struct Cartesian_base
     typedef CGAL::Object                                Object_2;
     typedef CGAL::Object                                Object_3;
 
-    // Bool_type had originally been Bool. It was renamed to avoid a conflict
+    // Boolean   had originally been Bool. It was renamed to avoid a conflict
     // between a macro defined in Xlib.h poorly chosen to have the same name,
     // that is 'Bool'.
     typedef typename Same_uncertainty_nt<bool, FT>::type
-                                                        Bool_type;
+                                                        Boolean;
     typedef typename Same_uncertainty_nt<CGAL::Sign, FT>::type
                                                         Sign;
     typedef typename Same_uncertainty_nt<CGAL::Comparison_result, FT>::type

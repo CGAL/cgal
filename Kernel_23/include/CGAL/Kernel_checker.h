@@ -251,7 +251,7 @@ class Kernel_checker
 
 public:
 
-    typedef bool                      Bool_type;
+    typedef bool                      Boolean;
     typedef CGAL::Sign                Sign;
     typedef CGAL::Comparison_result   Comparison_result;
     typedef CGAL::Orientation         Orientation;

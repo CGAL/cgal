@@ -194,7 +194,7 @@ bool do_intersect_coplanar(const typename K::Triangle_3 &t1,
 
 
 template <class K>
-typename K::Bool_type
+typename K::Boolean
 do_intersect(const typename K::Triangle_3 &t1, 
 	     const typename K::Triangle_3 &t2,
 	     const K & k) 
@@ -446,7 +446,7 @@ do_intersect(const typename K::Triangle_3 &t1,
 
 
 template <class K>
-inline typename K::Bool_type
+inline typename K::Boolean
 do_intersect(const Triangle_3<K> &t1, 
 	     const Triangle_3<K> &t2) 
 {

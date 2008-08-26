@@ -34,7 +34,7 @@ class Is_degenerate_edge_C2
 {
 public:
   typedef typename K::Site_2      Site_2;
-  typedef typename K::Bool_type   Bool_type;
+  typedef typename K::Boolean     Boolean;
 
 private:
   typedef Voronoi_vertex_C2<K,Method_tag>  Voronoi_vertex_2;
@@ -50,10 +50,10 @@ private:
   }
 
 public:
-  typedef Bool_type     result_type;
+  typedef Boolean       result_type;
   typedef Site_2        argument_type;
 
-  Bool_type operator()(const Site_2& p, const Site_2& q,
+  Boolean   operator()(const Site_2& p, const Site_2& q,
 		       const Site_2& r, const Site_2& s) const
   {
     Voronoi_vertex_2 vpqr(p, q, r);
