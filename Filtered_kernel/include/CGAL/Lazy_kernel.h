@@ -262,10 +262,9 @@ struct Lazy_kernel_without_type_equality
   : public Lazy_kernel_base< Exact_kernel, Approximate_kernel, E2A, Lazy_kernel_without_type_equality<Exact_kernel,Approximate_kernel, E2A> >
 {};
 
-template <class Exact_kernel, class Approximate_kernel = Simple_cartesian<Interval_nt_advanced>,
-                    class E2A = Cartesian_converter<Exact_kernel, Approximate_kernel,
-                                To_interval<typename Exact_kernel::RT> >
-                                /*Approx_converter<Exact_kernel, Approximate_kernel>*/ >
+template <class Exact_kernel,
+	  class Approximate_kernel = Simple_cartesian<Interval_nt_advanced>,
+          class E2A = Cartesian_converter<Exact_kernel, Approximate_kernel> >
 struct Lazy_kernel
   : public Type_equality_wrapper<
              Lazy_kernel_base< Exact_kernel, Approximate_kernel, E2A, Lazy_kernel<Exact_kernel, Approximate_kernel, E2A> >,
