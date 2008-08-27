@@ -71,6 +71,7 @@ message( STATUS "CGAL_MINOR_VERSION=${CGAL_MINOR_VERSION}" )
 message( STATUS "CGAL_BUILD_VERSION=${CGAL_BUILD_VERSION}" )
 
 set( CGAL_SOVERSION "3.0.0" )
+
 message( STATUS "CGAL_SOVERSION=${CGAL_SOVERSION}" )
 
 #--------------------------------------------------------------------------------------------------
@@ -79,10 +80,10 @@ message( STATUS "CGAL_SOVERSION=${CGAL_SOVERSION}" )
 #
 #--------------------------------------------------------------------------------------------------
 
-set(CGAL_3RD_PARTY_DEFINITIONS   "" CACHE INTERNAL "" )
-set(CGAL_3RD_PARTY_INCLUDE_DIRS  "" CACHE INTERNAL "" )
-set(CGAL_3RD_PARTY_LIBRARIES     "" CACHE INTERNAL "" )
-set(CGAL_3RD_PARTY_LIBRARIES_DIR "" CACHE INTERNAL "" ) 
+cache_set(CGAL_3RD_PARTY_DEFINITIONS   "" )
+cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS  "" )
+cache_set(CGAL_3RD_PARTY_LIBRARIES     "" )
+cache_set(CGAL_3RD_PARTY_LIBRARIES_DIR "" ) 
 
 
 # This module finds dependent libraries: Boost, GMP, CORE, etc..
@@ -126,9 +127,9 @@ foreach(config_test_cpp ${all_config_tests})
       CHECK_CXX_FILE_RUNS(${config_test_cpp} ${config_test_name} ${config_test_name})
 
       if ( ${config_test_name} )
-        set ( ${config_test_name} 0 CACHE INTERNAL "" FORCE )
+        cache_set ( ${config_test_name} 0 )
       else()
-        set ( ${config_test_name} 1 CACHE INTERNAL "" FORCE )
+        cache_set ( ${config_test_name} 1 )
       endif()  
       
     endif()
@@ -213,8 +214,7 @@ endif()
 
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
 
-set(CGAL_LIBRARIES "" CACHE STRING "Selected CGAL Libraries")
-hide_variable(CGAL_LIBRARIES)
+cache_set(CGAL_LIBRARIES "" )
 
 set(CGAL_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include ${CMAKE_SOURCE_DIR}/include)
 
@@ -238,13 +238,10 @@ include(CGAL_SetupFlags)
 
 add_subdirectory(src)
 
-#
-# load cache values from subdirectories above
-# 
-set(CGAL_3RD_PARTY_DEFINITIONS  )
-set(CGAL_3RD_PARTY_INCLUDE_DIRS )
-set(CGAL_3RD_PARTY_LIBRARIES    )
-set(CGAL_3RD_PARTY_LIBRARIES_DIR) 
+cache_get(CGAL_3RD_PARTY_DEFINITIONS  )
+cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS )
+cache_get(CGAL_3RD_PARTY_LIBRARIES    )
+cache_get(CGAL_3RD_PARTY_LIBRARIES_DIR) 
 
 
 set( CGAL_LIBRARIES ${CGAL_CORE_LIBRARY} ${CGAL_LIBRARY} ${CGAL_IMAGEIO_LIBRARY} ${CGAL_PDB_LIBRARY} ${CGAL_QT_LIBRARY} )
@@ -328,14 +325,29 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
+macro( add_programs subdir ON_OFF )
+
+  cache_set( CGAL_EXECUTABLES "" )
+  
+  add_custom_target( ${subdir} )
+  
+  optional_add_subdirectory( ${subdir} ${ON_OFF} EXCLUDE_FROM_ALL )
+  
+  cache_get( CGAL_EXECUTABLES )
+  
+  foreach( CGAL_EXECUTABLE in ${CGAL_EXECUTABLES} )
+    add_dependencies( ${subdir} ${CGAL_EXECUTABLE} )
+  endforeach()
+     
+endmacro()
 
 # This allows programs to locate CGALConfig.cmake
 set(CGAL_DIR ${CMAKE_BINARY_DIR} )
 
 if ( NOT RUNNING_CGAL_AUTO_TEST )
 
-  optional_add_subdirectory( demo     OFF EXCLUDE_FROM_ALL )
-  optional_add_subdirectory( examples ON  EXCLUDE_FROM_ALL )
+  add_programs(examples ON  )
+  add_programs(demo     OFF )
   
 endif()
 

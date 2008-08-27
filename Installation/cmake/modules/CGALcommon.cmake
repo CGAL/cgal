@@ -24,6 +24,19 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     set ( ${var} ${${var}} CACHE INTERNAL "Variable hidden from user" FORCE )  
   endmacro()
 
+  macro( cache_set var value )
+    set ( ${var} ${value} CACHE INTERNAL "" FORCE )  
+  endmacro()
+  
+  macro( cache_get var )
+    set ( ${var} )  
+  endmacro()
+  
+  macro( add_to_cached_list listname item )
+    cache_get ( ${listname} )
+    cache_set ( ${listname} "${${listname}};${item}" )
+  endmacro()
+  
   macro( at list idx var )
     list( LENGTH ${list} ${list}_length )
     if ( ${idx} LESS ${${list}_length} )

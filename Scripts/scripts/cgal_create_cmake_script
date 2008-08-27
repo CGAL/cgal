@@ -87,6 +87,8 @@ create_cmake_script()
     
     echo "add_executable  (${exe_name} ${all})"
     echo
+    echo "add_to_cached_list( CGAL_EXECUTABLES ${exe_name} )"
+    echo
       
     echo '# Link the executable to CGAL and third-party libraries'
     echo 'if ( AUTO_LINK_ENABLED )'
