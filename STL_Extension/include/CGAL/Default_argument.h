@@ -23,6 +23,7 @@
 // error messages in place of the default value of template arguments.
 // It could also be used by users to specify default values to arguments which
 // are not at the end of the argument list.
+// It can also be useful to easily break cyclic dependencies in templates.
 // Maybe we should provide a macro to disable it so as to show the arguments?
 // Maybe we could document it?
 
