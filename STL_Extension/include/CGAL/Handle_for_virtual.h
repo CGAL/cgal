@@ -99,6 +99,15 @@ class Handle_for_virtual
       return *this;
     }
 
+#ifndef CGAL_CFP_NO_CPP0X_RVALUE_REFERENCE
+    Handle_for_virtual&
+    operator=( Handle_for_virtual && h)
+    {
+      swap(h);
+      return *this;
+    }
+#endif
+
 // protected:
     typedef RefCounted element_type;
 
@@ -116,6 +125,10 @@ class Handle_for_virtual
     long int
     id() const
     { return reinterpret_cast<long int>(&*ptr); }
+
+    void
+    swap(Handle_for_virtual & h)
+    { std::swap(h.ptr, ptr); }
 
     const RefCounted *
     Ptr() const
@@ -157,8 +170,6 @@ protected:
 	return ptr;
     }
     */
-
-private:
 
     RefCounted * ptr;
 };

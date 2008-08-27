@@ -38,14 +38,18 @@ CGAL_BEGIN_NAMESPACE
 template <class T>
 class Wrapper : public Ref_counted_virtual
 {
+    Wrapper(const Wrapper&); // deleted to make sure we don't make useless copies
   public:
+
     Wrapper(const T& object) : _object(object) {}
 
-    Wrapper() {}
-
-    operator T() const { return _object; }
+#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+    Wrapper(T && object) : _object(std::move(object)) {}
+#endif
 
     ~Wrapper() {}
+
+    const T& get() const { return _object; }
 
     virtual const std::type_info & type() const
     {
@@ -64,7 +68,7 @@ class Wrapper : public Ref_counted_virtual
 class Object
   : public Handle_for_virtual<Ref_counted_virtual>
 {
-    struct empty {};
+    struct Empty {};
     typedef Handle_for_virtual<Ref_counted_virtual> base;
 
   public:
@@ -73,14 +77,25 @@ class Object
 
     Object()
     {
-	initialize_with(Wrapper<empty>());
+	typedef Wrapper<Empty>  Wrap;
+        ptr = new Wrap(Empty());
     }
 
+#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+    template <class T>
+    Object(T && t, private_tag)
+    {
+	typedef Wrapper< typename std::remove_reference< typename std::remove_cv<T>::type >::type >  Wrap;
+        ptr = new Wrap(std::forward<T>(t));
+    }
+#else
     template <class T>
     Object(const T&t, private_tag)
     {
-	initialize_with(Wrapper<T>(t));
+	typedef Wrapper<T>  Wrap;
+        ptr = new Wrap(t);
     }
+#endif
 
     template <class T>
     bool assign(T &t) const
@@ -91,31 +106,48 @@ class Object
         const Wrapper<T> *wp = dynamic_cast<const Wrapper<T> *>(Ptr());
         if (wp == NULL)
             return false;
-        t = *wp;
+        t = wp->get();
 #ifdef _MSC_VER
       }
       catch (...) {
-          CGAL_error_msg( "Your compiler must support  RTTI");
+          CGAL_error_msg("Your compiler must support Run-Time Type Information (RTTI)");
       }
 #endif
       return true;
     }
 
     bool
+    empty() const
+    {
+	Empty E;
+	return assign(E);
+    }
+
+    // is_empty() is kept for backward compatibility.
+    // empty() was introduced for consistency with e.g. std::vector::empty().
+    bool
     is_empty() const
     {
-	empty E;
-	return assign(E);
+	return empty();
     }
 
     const std::type_info & type() const
     {
-        return is_empty() ? typeid(void) : Ptr()->type();
+        return empty() ? typeid(void) : Ptr()->type();
     }
 
 };
 
 
+#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+template <class T>
+inline
+Object
+make_object(T && t)
+{
+    return Object(std::forward<T>(t), Object::private_tag());
+}
+#else
 template <class T>
 inline
 Object
@@ -123,6 +155,7 @@ make_object(const T& t)
 {
     return Object(t, Object::private_tag());
 }
+#endif
 
 template <class T>
 inline
@@ -143,14 +176,6 @@ struct Bad_object_cast
     }
 };
 
-/*
-template <class T>
-inline
-T * object_cast(Object * o)
-{
-    return o && o->type() == typeid(T) ? o->object_ptr() : NULL;
-}
-*/
 
 template <class T>
 inline
@@ -160,9 +185,6 @@ const T * object_cast(const Object * o)
     if (wp == NULL)
         return NULL;
     return static_cast<const T*>(wp->object_ptr());
-//    return o && o->type() == typeid(T)
-//         ? static_cast<const T*>(o->object_ptr())
-//         : NULL;
 }
 
 template <class T>

@@ -55,24 +55,21 @@ public:
         ptr_->count = 1;
     }
 
-    Handle_for(const Handle_for& h)
-      : ptr_(h.ptr_)
-    {
-        ++(ptr_->count);
-    }
-
-    // TODO :
-    // We should also think about providing template constructors in
-    // order to forward the functionality of T to Handle_for<T> without
-    // the need to an intermediate copy.
-    // Currently it's not working, because some places use conversions.
-
     Handle_for(const T& t)
       : ptr_(allocator.allocate(1))
     {
         new (&(ptr_->t)) T(t);
         ptr_->count = 1;
     }
+
+#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+    Handle_for(T && t)
+      : ptr_(allocator.allocate(1))
+    {
+        new (&(ptr_->t)) T(std::move(t));
+        ptr_->count = 1;
+    }
+#endif
 
 /* I comment this one for now, since it's preventing the automatic conversions
    to take place.  We'll see if it's a problem later.
@@ -85,6 +82,15 @@ public:
     }
 */
 
+#if !defined CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES && !defined CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+    template < typename T1, typename T2, typename... Args >
+    Handle_for(T1 && t1, T2 && t2, Args && ... args)
+      : ptr_(allocator.allocate(1))
+    {
+        new (&(ptr_->t)) T(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
+        ptr_->count = 1;
+    }
+#else
     template < typename T1, typename T2 >
     Handle_for(const T1& t1, const T2& t2)
       : ptr_(allocator.allocate(1))
@@ -108,15 +114,12 @@ public:
         new (&(ptr_->t)) T(t1, t2, t3, t4);
         ptr_->count = 1;
     }
+#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
-    ~Handle_for()
+    Handle_for(const Handle_for& h)
+      : ptr_(h.ptr_)
     {
-      if (! is_shared() ) {
-          allocator.destroy( ptr_);
-          allocator.deallocate( ptr_, 1);
-      }
-      else
-	  --(ptr_->count);
+        ++(ptr_->count);
     }
 
     Handle_for&
@@ -136,6 +139,39 @@ public:
             ptr_->t = t;
 
         return *this;
+    }
+
+#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+    // Note : I don't see a way to make a useful move constructor, apart
+    //        from e.g. using NULL as a ptr value, but this is drastic.
+
+    Handle_for&
+    operator=(Handle_for && h)
+    {
+        swap(h);
+        return *this;
+    }
+
+    Handle_for&
+    operator=(T && t)
+    {
+        if (is_shared())
+            *this = Handle_for(std::move(t));
+        else
+            ptr_->t = std::move(t);
+
+        return *this;
+    }
+#endif
+
+    ~Handle_for()
+    {
+      if (! is_shared() ) {
+          allocator.destroy( ptr_);
+          allocator.deallocate( ptr_, 1);
+      }
+      else
+	  --(ptr_->count);
     }
 
     void

@@ -96,9 +96,59 @@ class Quotient
   template <class T>
   Quotient(const Quotient<T>& n) : num(n.numerator()), den(n.denominator()) {}
 
+  Quotient& operator=(const NT & n)
+  {
+    num = n;
+    den = 1;
+    return *this;
+  }
+
+  Quotient& operator=(const CGAL_double(NT) & n)
+  {
+    num = n;
+    den = 1;
+    return *this;
+  }
+
+  Quotient& operator=(const CGAL_int(NT) & n)
+  {
+    num = n;
+    den = 1;
+    return *this;
+  }
+
+#ifdef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+
   template <class T1, class T2>
   Quotient(const T1& n, const T2& d) : num(n), den(d)
   { CGAL_precondition( d != 0 ); }
+
+#else
+  template <class T1, class T2>
+  Quotient(T1 && n, T2 && d)
+     : num(std::forward<T1>(n)), den(std::forward<T2>(d))
+  { CGAL_postcondition( den != 0 ); }
+
+  Quotient(Quotient && q)
+    : num(std::move(q.num)), den(std::move(q.den)) {}
+
+  Quotient(NT && n)
+    : num(std::move(n)), den(1) {}
+
+  Quotient& operator=(NT && n)
+  {
+    num = std::move(n);
+    den = 1;
+    return *this;
+  }
+
+  Quotient& operator=(Quotient && q)
+  {
+    num = std::move(q.num);
+    den = std::move(q.den);
+    return *this;
+  }
+#endif
 
   Quotient<NT>& operator+= (const Quotient<NT>& r);
   Quotient<NT>& operator-= (const Quotient<NT>& r);
