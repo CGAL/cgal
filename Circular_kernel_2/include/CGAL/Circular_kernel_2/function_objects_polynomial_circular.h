@@ -25,7 +25,7 @@
 #ifndef CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
 #define CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
 
-#include <CGAL/Circular_kernel_2/internal_functions_on_intersection_2.h>
+#include <CGAL/Circular_kernel_intersections.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_arc_2.h>
 #include <CGAL/Bbox_2.h>

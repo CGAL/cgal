@@ -1,8 +1,7 @@
-#include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/MP_Float.h>
-#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/Exact_circular_kernel_2.h>
+#include <CGAL/Circular_kernel_intersections.h>
 
 typedef CGAL::Exact_circular_kernel_2                   Circular_k;
 typedef Circular_k::Point_2                             Point_2;
