@@ -45,12 +45,8 @@ public:
 
   typedef Bare_point       result_type;
 
-  typedef Weighted_converter_3<Cartesian_converter<typename K::Kernel,EK2> >
-    To_exact;
-  typedef Weighted_converter_3<Cartesian_converter<EK2,
-						   typename K::Kernel,
-						   To_double<EK::FT> > >
-    Back_from_exact;
+  typedef Weighted_converter_3<Cartesian_converter<typename K::Kernel, EK2> >  To_exact;
+  typedef Weighted_converter_3<Cartesian_converter<EK2, typename K::Kernel> >  Back_from_exact;
   
 
   Bare_point operator() ( const Weighted_point_3 & p,
@@ -104,12 +100,12 @@ class Robust_circumcenter_traits_3
  public:
   typedef CGAL::Robust_construction<EK::Construct_circumcenter_3,
 	                            Cartesian_converter<K, EK>,
-				    Cartesian_converter<EK, K, To_double<EK::FT> >,
+				    Cartesian_converter<EK, K>,
 				    typename K::Point_3 >   Construct_circumcenter_3;
   typedef CGAL::Robust_construction<EK::Compute_squared_radius_3,
 	                            Cartesian_converter<K, EK>,
-				    Cartesian_converter<EK, K, To_double<EK::FT> >,
-				    typename K::FT >   Compute_squared_radius_3;
+				    Cartesian_converter<EK, K>,
+				    typename K::FT >        Compute_squared_radius_3;
 
   Construct_circumcenter_3
   construct_circumcenter_3_object() const
