@@ -20,11 +20,7 @@
 #ifndef CGAL_ROBUST_CONSTRUCTION_H
 #define CGAL_ROBUST_CONSTRUCTION_H
 
-#include <string>
 #include <CGAL/config.h>
-#include <CGAL/Interval_nt.h>
-#include <CGAL/Uncertain.h>
-#include <CGAL/Profile_counter.h>
 
 CGAL_BEGIN_NAMESPACE
 
