@@ -19,22 +19,23 @@
 assert(CGAL_BINARY_DIR)
 
 find_package(OpenGL)
-
-get_dependency_version(OPENGL OpenGL)
-    
-if ( OPENGL_FOUND )  
-
-  if ( NOT OPENGL_ADDED_TO_CGAL_3RD_PARTY )  
-    set(OPENGL_ADDED_TO_CGAL_3RD_PARTY TRUE CACHE INTERNAL "" )
-    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} CACHE INTERNAL "" FORCE )
-    set(CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES}    ${OPENGL_LIBRARIES}   CACHE INTERNAL "" FORCE )
-  endif()
-endif()
-
 find_package(Qt3)
 
-if( QT_FOUND )
+if( QT_FOUND AND OPENGL_FOUND )
 
+    get_dependency_version(OPENGL OpenGL)
+        
+    if ( NOT OPENGL_ADDED_TO_CGAL_3RD_PARTY )  
+    
+      message( STATUS "OpenGL Libraries: ${OPENGL_LIBRARIES}" )
+      
+      cache_set(OPENGL_ADDED_TO_CGAL_3RD_PARTY TRUE )
+      
+      cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} )
+      cache_set(CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES}    ${OPENGL_LIBRARIES}   )
+      
+    endif()
+    
     get_dependency_version(QT)
     
     set( CGAL_USE_QT TRUE ) 
@@ -98,8 +99,8 @@ if( QT_FOUND )
     
     message( STATUS "Qt3 Libraries: ${QT_LIBRARIES}" )
     
-    target_link_libraries( CGAL_QT ${QT_LIBRARIES} )
-    
+    target_link_libraries( CGAL_QT ${QT_LIBRARIES} ${OPENGL_LIBRARIES} )
+        
     add_definitions ( ${QT_DEFINITIONS} )
     
     set( CGAL_QT_BASENAME CGAL-Qt )
