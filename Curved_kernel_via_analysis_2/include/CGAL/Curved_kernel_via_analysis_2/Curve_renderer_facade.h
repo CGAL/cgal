@@ -244,10 +244,12 @@ public:
      * computes optionaly end-point coordinates (even if they lie outside the
      * window)
      */
-    template < class Coord_2, template < class > class Container >
-    inline void draw(const Arc_2& arc, Container< std::vector<Coord_2> >& pts,
-        boost::optional< Coord_2 > *end_pt1 = NULL, 
-        boost::optional< Coord_2 > *end_pt2 = NULL) {
+    template < class Coord_2, template < class, class > class Container,
+        class Allocator >
+    inline void draw(const Arc_2& arc, 
+            Container< std::vector< Coord_2 >, Allocator >& pts,
+            boost::optional< Coord_2 > *end_pt1 = NULL, 
+            boost::optional< Coord_2 > *end_pt2 = NULL) {
 
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         Bbox_2 bbox;
