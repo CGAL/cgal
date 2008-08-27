@@ -99,7 +99,7 @@ class Handle_for_virtual
       return *this;
     }
 
-#ifndef CGAL_CFP_NO_CPP0X_RVALUE_REFERENCE
+#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     Handle_for_virtual&
     operator=( Handle_for_virtual && h)
     {
