@@ -26,145 +26,11 @@
 
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Robust_construction.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 CGAL_BEGIN_NAMESPACE
-
-
-template < class K >
-class Robust_construct_circumcenter_3
-{
-  typedef Exact_predicates_exact_constructions_kernel EK;
-  typedef typename K::Point_3             Point_3;
-  typedef typename K::Triangle_3          Triangle_3;
-  typedef typename K::Tetrahedron_3       Tetrahedron_3;
-  typedef typename K::Construct_vertex_3  Construct_vertex_3;
-
-  typedef Cartesian_converter<K,EK> To_exact;
-  typedef Cartesian_converter<EK,
-			      K,
-			      To_double<EK::FT> > Back_from_exact;
-  
-
-
-public:
-  typedef Point_3          result_type;
-
-  Point_3 operator() (const Point_3 & p,
-		      const Point_3 & q,
-		      const Point_3 & r,
-		      const Point_3 & s) const
-  {
-    To_exact to_exact;
-    Back_from_exact back_from_exact;
-    //Cartesian_converter<EK,K > back_from_exact;
-    EK::Construct_circumcenter_3
-      exact_circumcenter = EK().construct_circumcenter_3_object();
-
-    return back_from_exact(exact_circumcenter( to_exact(p),
-					       to_exact(q),
-					       to_exact(r),
-					       to_exact(s)));
-
-  }
-
-  Point_3 operator() (const Point_3 & p,
-		      const Point_3 & q,
-		      const Point_3 & r) const
-  {
-    To_exact to_exact;
-    Back_from_exact back_from_exact;
-    EK::Construct_circumcenter_3
-      exact_circumcenter = EK().construct_circumcenter_3_object();
-
-    return back_from_exact(exact_circumcenter( to_exact(p),
-					       to_exact(q),
-					       to_exact(r)));
-  }
-
-  Point_3
-  operator()(const Triangle_3& t) const
-  { 
-    Construct_vertex_3 vertex = this->construct_vertex_3_object();
-    return this->operator()(vertex(t, 0), vertex(t, 1), vertex(t, 2));
-  }
-
-  Point_3
-  operator()(const Tetrahedron_3& t) const
-  { 
-    Construct_vertex_3 vertex = this->construct_vertex_3_object();
-    return this->operator()(vertex(t, 0), vertex(t, 1),
-			    vertex(t, 2), vertex(t, 3));
-  }
-};
-
-template <typename K>
-class Robust_squared_radius_3
-{
-  typedef Exact_predicates_exact_constructions_kernel EK;
-  typedef typename K::FT          FT;
-  typedef typename K::Point_3     Point_3;
-  typedef typename K::Sphere_3    Sphere_3;
-
-  typedef Cartesian_converter<K,EK> To_exact;
-  typedef Cartesian_converter<EK,
-			      K,
-			      To_double<EK::FT> > Back_from_exact;
-public:
-  typedef FT               result_type;
-
-  result_type
-  operator()( const Sphere_3& s) const
-  {
-    To_exact to_exact;
-    Back_from_exact back_from_exact;
-    EK::Compute_squared_radius_3
-      exact_sq_radius = EK().compute_squared_radius_3_object(); 
-
-    return back_from_exact(exact_sq_radius( to_exact(s) ));
-  }
-
-  result_type
-  operator()( const Point_3& p, const Point_3& q) const
-  {
-    To_exact to_exact;
-    Back_from_exact back_from_exact;
-    EK::Compute_squared_radius_3
-      exact_sq_radius = EK().compute_squared_radius_3_object(); 
-
-    return back_from_exact(exact_sq_radius( to_exact(p),
-					    to_exact(q) ));
-  }
-
-  result_type
-  operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
-  {
-    To_exact to_exact;
-    Back_from_exact back_from_exact;
-    EK::Compute_squared_radius_3
-      exact_sq_radius = EK().compute_squared_radius_3_object(); 
-
-    return back_from_exact(exact_sq_radius( to_exact(p), 
-					    to_exact(q),
-					    to_exact(r)));
-  }
-
-  result_type
-  operator()( const Point_3& p, const Point_3& q,
-	      const Point_3& r, const Point_3& s) const
-  {
-    To_exact to_exact;
-    Back_from_exact back_from_exact;
-    EK::Compute_squared_radius_3
-      exact_sq_radius = EK().compute_squared_radius_3_object(); 
-
-    return back_from_exact(exact_sq_radius( to_exact(p), 
-					    to_exact(q),
-					    to_exact(r),
-					    to_exact(s)));
-  }
-};
 
 template < typename K >
 class Robust_construct_weighted_circumcenter_3
@@ -234,9 +100,16 @@ template < class K>
 class Robust_circumcenter_traits_3
   : public K
 {
+  typedef Exact_predicates_exact_constructions_kernel EK;
  public:
-  typedef CGAL::Robust_construct_circumcenter_3<K> Construct_circumcenter_3;
-  typedef CGAL::Robust_squared_radius_3<K> Compute_squared_radius_3;
+  typedef CGAL::Robust_construction<EK::Construct_circumcenter_3,
+	                            Cartesian_converter<K, EK>,
+				    Cartesian_converter<EK, K, To_double<EK::FT> >,
+				    typename K::Point_3 >   Construct_circumcenter_3;
+  typedef CGAL::Robust_construction<EK::Compute_squared_radius_3,
+	                            Cartesian_converter<K, EK>,
+				    Cartesian_converter<EK, K, To_double<EK::FT> >,
+				    typename K::FT >   Compute_squared_radius_3;
 
   Construct_circumcenter_3
   construct_circumcenter_3_object() const
