@@ -124,9 +124,10 @@ template < class K>
 class Robust_weighted_circumcenter_traits_3
   : public K
 {
+  typedef Exact_predicates_exact_constructions_kernel EK;
  public:
-  typedef CGAL::Robust_construct_circumcenter_3<typename K::Kernel> Construct_circumcenter_3;
-  typedef CGAL::Robust_squared_radius_3<K> Compute_squared_radius_3;
+  typedef typename Robust_circumcenter_traits_3<typename K::Kernel>::Construct_circumcenter_3 Construct_circumcenter_3;
+  typedef typename Robust_circumcenter_traits_3<K>::Compute_squared_radius_3                  Compute_squared_radius_3;
 
   Construct_circumcenter_3
   construct_circumcenter_3_object() const
