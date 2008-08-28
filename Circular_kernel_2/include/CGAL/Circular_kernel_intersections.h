@@ -29,6 +29,7 @@
 #include <CGAL/Circular_arc_2.h>
 #include <CGAL/Line_arc_2.h>
 #include <CGAL/Line_2.h>
+#include <CGAL/Circular_arc_point_2.h>
 #include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE
