@@ -22,12 +22,16 @@
 /// @file surface_reconstruction_assertions.h
 /// Define checking macros for the Surface_reconstruction_3 package
 
+#include <CGAL/assertions.h>
 
-/// macro definitions
-/// =================
-/// assertions
-/// ----------
+#include <stdio.h>
 
+
+// macro definitions
+// =================
+
+// assertions
+// ----------
 
 #if defined(CGAL_SURFACE_RECONSTRUCTION_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || defined(CGAL_NDEBUG)
@@ -281,5 +285,15 @@
 #  define CGAL_surface_reconstruction_expensive_exactness_warning_code(CODE) CODE
 #  define CGAL_surface_reconstruction_expensive_exactness_warnings 1
 #endif // CGAL_SURFACE_RECONSTRUCTION_NO_WARNINGS
+
+
+// Traces
+// ------
+
+#ifdef DEBUG_TRACE
+  #define CGAL_TRACE  printf
+#else
+  #define CGAL_TRACE  if (false) printf
+#endif
 
 

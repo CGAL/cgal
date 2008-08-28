@@ -55,6 +55,8 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
 
+typedef std::vector<Point_with_normal> PointList;
+
 // Poisson's Delaunay triangulation 3 and implicit function
 typedef CGAL::Implicit_fct_delaunay_triangulation_3<Kernel> Dt3;
 typedef CGAL::Poisson_implicit_function<Kernel, Dt3> Poisson_implicit_function;
@@ -101,6 +103,8 @@ int main(int argc, char * argv[])
 
   for (int arg_index = 1; arg_index <= argc-1; arg_index++)
   {
+    CGAL::Timer task_timer; task_timer.start();
+
     std::cerr << std::endl;
 
     //***************************************
@@ -113,7 +117,7 @@ int main(int argc, char * argv[])
     // get extension
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
 
-    Dt3 dt;
+    PointList pwns;
 
     if (extension == ".off" || extension == ".OFF")
     {
@@ -132,8 +136,7 @@ int main(int argc, char * argv[])
       // Compute vertices' normals from connectivity
       input_mesh.compute_normals();
 
-      // Insert vertices and normals in triangulation
-      std::vector<Point_with_normal> pwns;
+      // Convert vertices and normals to PointList
       Polyhedron::Vertex_iterator v;
       for(v = input_mesh.vertices_begin();
           v != input_mesh.vertices_end();
@@ -143,12 +146,10 @@ int main(int argc, char * argv[])
         const Vector& n = v->normal();
         pwns.push_back(Point_with_normal(p,n));
       }
-      dt.insert(pwns.begin(), pwns.end());
     }
     else if (extension == ".xyz" || extension == ".XYZ")
     {
-      // Read the point set file in a container of Point_with_normal
-      std::list<Point_with_normal> pwns;
+      // Read the point set file in pwns
       if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
                                                 std::back_inserter(pwns)))
       {
@@ -156,9 +157,6 @@ int main(int argc, char * argv[])
         accumulated_fatal_err = EXIT_FAILURE;
         continue;
       }
-
-      // Insert vertices and normals in triangulation
-      dt.insert(pwns.begin(), pwns.end());
     }
     else
     {
@@ -168,10 +166,13 @@ int main(int argc, char * argv[])
     }
 
     // Print status
-    int nb_vertices = dt.number_of_vertices();
-    std::cerr << "Read file " << input_filename << ": "
-              << nb_vertices << " vertices"
-              << std::endl;
+    long memory = CGAL::Memory_sizer().virtual_size();
+    int nb_vertices = pwns.size();
+    std::cerr << "Read file " << input_filename << ": " << nb_vertices << " vertices, "
+                                                        << task_timer.time() << " seconds, "
+                                                        << (memory>>20) << " Mb allocated"
+                                                        << std::endl;
+    task_timer.reset();
 
     //***************************************
     // Check requirements
@@ -184,9 +185,9 @@ int main(int argc, char * argv[])
       continue;
     }
 
-    assert(dt.points_begin() != dt.points_end());
-    bool points_have_normals = (dt.points_begin()->normal().get_vector() != CGAL::NULL_VECTOR);
-    bool normals_are_oriented = dt.points_begin()->normal().is_oriented();
+    assert(pwns.begin() != pwns.end());
+    bool points_have_normals = (pwns.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
+    bool normals_are_oriented = pwns.begin()->normal().is_oriented();
     if ( ! (points_have_normals && normals_are_oriented) )
     {
       std::cerr << "Input point set not supported: this reconstruction method requires oriented normals" << std::endl;
@@ -198,12 +199,21 @@ int main(int argc, char * argv[])
     // Compute implicit function
     //***************************************
 
+    std::cerr << "Create triangulation...\n";
+
+    // Create implicit function and triangulation. 
+    // Insert vertices and normals in triangulation.
+    Dt3 dt;
+    Poisson_implicit_function poisson_function(dt, pwns.begin(), pwns.end());
+
+    // Print status
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size();
+    std::cerr << "Create triangulation: " << task_timer.time() << " seconds, "
+                                          << (memory>>20) << " Mb allocated"
+                                          << std::endl;
+    task_timer.reset();
+    
     std::cerr << "Compute implicit function...\n";
-
-    CGAL::Timer task_timer; task_timer.start();
-
-    // Create implicit function
-    Poisson_implicit_function poisson_function(dt);
 
     /// Compute the Poisson indicator function f()
     /// at each vertex of the triangulation
@@ -215,10 +225,8 @@ int main(int argc, char * argv[])
     }
 
     // Print status
-    long memory = CGAL::Memory_sizer().virtual_size();
-    int nb_vertices2 = dt.number_of_vertices();
-    std::cerr << "Compute implicit function: " << "added " << nb_vertices2-nb_vertices << " Steiner points, "
-                                               << task_timer.time() << " seconds, "
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size();
+    std::cerr << "Compute implicit function: " << task_timer.time() << " seconds, "
                                                << (memory>>20) << " Mb allocated"
                                                << std::endl;
     task_timer.reset();
@@ -259,6 +267,7 @@ int main(int argc, char * argv[])
                                                         sm_radius*size,  // upper bound of Delaunay balls radii
                                                         sm_distance*size); // upper bound of distance to surface
     
+#ifdef DEBUG_TRACE
     std::cerr << "  make_surface_mesh(dichotomy error="<<sm_error_bound<<" * point set radius,\n"
               << "                    sphere center=("<<sm_sphere_center << "),\n"
               << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
@@ -266,6 +275,7 @@ int main(int argc, char * argv[])
               << "                    radius="<<sm_radius<<" * p.s.r.,\n"
               << "                    distance="<<sm_distance<<" * p.s.r.,\n"
               << "                    Non_manifold_tag)\n";
+#endif
 
     // meshing surface
     CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());

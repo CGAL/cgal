@@ -234,30 +234,6 @@
 				>
 			</File>
 		</Filter>
-		<Filter
-			Name="Concepts"
-			>
-			<File
-				RelativePath="..\..\..\doc\concepts\ImplicitFctDelaunayTriangulation_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\doc\concepts\ImplicitFctDelaunayTriangulationCellBase_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\doc\concepts\ImplicitFctDelaunayTriangulationVertexBase_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\doc\concepts\PointWithNormal_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\doc\concepts\ReconstructionImplicitFunction.h"
-				>
-			</File>
-		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

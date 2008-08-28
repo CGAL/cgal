@@ -30,9 +30,6 @@
 
 #include <CGAL/surface_reconstruction_assertions.h>
 
-// Uncomment the next line to see TAUCS traces
-//#define DEBUG_TRACE
-
 CGAL_BEGIN_NAMESPACE
 
 
@@ -52,11 +49,11 @@ public:
   {
     m_io_handle = NULL;
 
-#ifdef DEBUG_TRACE
-    // Turn on TAUCS trace
-    std::cerr.flush();
-    taucs_logfile((char*)"stderr");
-#endif
+//#ifdef DEBUG_TRACE
+//    // Turn on TAUCS trace
+//    std::cerr.flush();
+//    taucs_logfile((char*)"stderr");
+//#endif
   }
 
   ~Taucs_solver()
@@ -99,17 +96,6 @@ public:
       colptr.push_back((int)values.size());
       n_rows = (int)(colptr.size()-1);
     }
-  }
-
-  void finalize_matrix()
-  {
-    // setup ccs matrix
-    A.n        = (int)(colptr.size()-1);
-    A.m        = (int)(colptr.size()-1);
-    A.flags    = (TAUCS_DOUBLE | TAUCS_SYMMETRIC | TAUCS_LOWER);
-    A.colptr   = &colptr[0];
-    A.rowind   = &rowind[0];
-    A.values.d = &values[0];
   }
 
   bool factorize(bool _use_supernodal = true)
@@ -340,6 +326,17 @@ public:
   }
 
 private:
+
+  void finalize_matrix()
+  {
+    // setup ccs matrix
+    A.n        = (int)(colptr.size()-1);
+    A.m        = (int)(colptr.size()-1);
+    A.flags    = (TAUCS_DOUBLE | TAUCS_SYMMETRIC | TAUCS_LOWER);
+    A.colptr   = &colptr[0];
+    A.rowind   = &rowind[0];
+    A.values.d = &values[0];
+  }
 
   void delete_matrices()
   {

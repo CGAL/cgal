@@ -35,6 +35,7 @@
 #include <CGAL/centroid.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 #include <CGAL/remove_outliers_wrt_avg_knn_sq_distance_3.h>
+#include <CGAL/Memory_sizer.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -289,27 +290,62 @@ public:
   /// TODO: add parameters to compute_implicit_function()?
   bool compute_implicit_function()
   {
+#ifdef DEBUG_TRACE
+    CGAL::Timer task_timer; task_timer.start();
+    std::cerr << "Delaunay refinement...\n";
+#endif
+
     // Delaunay refinement
+    int nb_vertices = m_dt.number_of_vertices();
     const FT quality = 2.5;
     const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
     const FT enlarge_ratio = 1.5;
     delaunay_refinement(quality,max_vertices,enlarge_ratio,50000);
 
+#ifdef DEBUG_TRACE
+    // Print status
+    long memory = CGAL::Memory_sizer().virtual_size();
+    int nb_vertices2 = m_dt.number_of_vertices();
+    std::cerr << "Delaunay refinement: " << "added " << nb_vertices2-nb_vertices << " Steiner points, "
+                                         << task_timer.time() << " seconds, "
+                                         << (memory>>20) << " Mb allocated"
+                                         << std::endl;
+    task_timer.reset();
+#endif
+
     // Smooth normals field.
     // Commented out as it shrinks the reconstructed model.
     //extrapolate_normals();
 
-    // Solve Poisson equation
+#ifdef DEBUG_TRACE
+    std::cerr << "Solve Poisson equation...\n";
+#endif
+
+    /// Compute the Poisson indicator function f()
+    /// at each vertex of the triangulation.
     double lambda = 0.1;
     double duration_assembly, duration_factorization, duration_solve;
-    bool success = solve_poisson(lambda, &duration_assembly, &duration_factorization, &duration_solve);
+    if (!solve_poisson(lambda, &duration_assembly, &duration_factorization, &duration_solve))
+    {
+      std::cerr << "Error: cannot solve Poisson equation" << std::endl;
+      return false;
+    }
 
     // Shift and orient f() such that:
     // - f() = 0 on the input points,
     // - f() < 0 inside the surface.
     set_contouring_value(median_value_at_input_vertices());
 
-    return success;
+#ifdef DEBUG_TRACE
+    // Print status
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size();
+    std::cerr << "Solve Poisson equation: " << task_timer.time() << " seconds, "
+                                            << (memory>>20) << " Mb allocated"
+                                            << std::endl;
+    task_timer.reset();
+#endif
+
+    return true;
   }
 
   //Calculate and store average spacing at each input point
@@ -384,19 +420,25 @@ public:
                                    const FT enlarge_ratio,
                                    unsigned int restart_each)
   {
+    CGAL_TRACE("Call delaunay_refinement()\n");
 
     // create enlarged bounding box
     Iso_cuboid enlarged_bbox = enlarged_bounding_box(enlarge_ratio);
 
-    // push all cells to the queue
-    Refinement_pqueue queue;
+    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  Create queue\n");
 
-    // init queue
+    long max_memory = memory; // max memory allocated by this algorithm
+
+    // push bad cells to the queue
+    Refinement_pqueue queue;
     init_queue(queue,threshold,enlarged_bbox);
 
     unsigned int nb = 0;
     while(!queue.empty())
     {
+      memory = CGAL::Memory_sizer().virtual_size(); max_memory = (std::max)(max_memory, memory); 
+
       if(nb%restart_each == 0)
       {
         reset_queue(queue,threshold,enlarged_bbox);
@@ -447,6 +489,12 @@ public:
       }
     }
     m_dt.invalidate_bounding_box();
+
+    CGAL_TRACE("  Max allocation = %ld Mb\n", max_memory>>20);
+
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("End of delaunay_refinement()\n");
+
     return nb;
   }
 
@@ -667,13 +715,19 @@ public:
   bool solve_poisson(double lambda,
                      double* duration_assembly,
                      double* duration_factorization,
-                     double* duration_solve)
+                     double* duration_solve,
+                     bool is_normalized = false)
   {
+    CGAL_TRACE("Call solve_poisson()\n");
+
     double time_init = clock();
 
     *duration_assembly = 0.0;
     *duration_factorization = 0.0;
     *duration_solve = 0.0;
+
+    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  Create matrix\n");
 
     // get #variables
     unsigned int nb_variables = m_dt.index_unconstrained_vertices();
@@ -697,7 +751,8 @@ public:
     {
       if(!v->constrained())
       {
-        B[v->index()] = div(v); // rhs -> divergent
+        B[v->index()] = is_normalized ? div_normalized(v) 
+                                      : div(v); // rhs -> divergent
         assemble_poisson_row(solver,v,B,lambda);
       }
     }
@@ -711,13 +766,19 @@ public:
     *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
     */
 
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  Choleschy factorization\n");
+
     // Choleschy factorization M = L L^T
     time_init = clock();
     if(!solver.factorize_ooc())
       return false;
     *duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
 
-    // direct solve by forward and backward substitution
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  Direct solve by forward and backward substitution\n");
+
+    // Direct solve by forward and backward substitution
     time_init = clock();
     if(!solver.solve_ooc(B,X))
       return false;
@@ -730,7 +791,7 @@ public:
       return false;
     *duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
 
-    // direct solve by forward and backward substitution
+    // Direct solve by forward and backward substitution
     time_init = clock();
     if(!solver.solve(B,X,1))
       return false;
@@ -745,93 +806,12 @@ public:
       if(!v->constrained())
         v->f() = X[index++];
 
-    return true;
-  }
-
-
-	bool solve_poisson_normalized(double lambda,
-	                              double* duration_assembly,
-                                  double* duration_factorization,
-                                  double* duration_solve)
-  {
-    double time_init = clock();
-
-    *duration_assembly = 0.0;
-    *duration_factorization = 0.0;
-    *duration_solve = 0.0;
-
-    // get #variables
-    unsigned int nb_variables = m_dt.index_unconstrained_vertices();
-
-    // at least one vertex must be constrained
-    if(nb_variables == m_dt.number_of_vertices())
-    {
-    //constrain_input_vertex_on_convex_hull();
-      nb_variables = m_dt.index_unconstrained_vertices();
-    }
-
-    // Assemble linear system
-    Taucs_solver solver;
-    std::vector<double> X(nb_variables);
-    std::vector<double> B(nb_variables);
-
-    Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
-        v++)
-    {
-      if(!v->constrained())
-      {
-        B[v->index()] = div_normalized(v); // rhs -> divergent
-        assemble_poisson_row(solver,v,B,lambda);
-      }
-    }
-
-    *duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
-
-    /*
-    time_init = clock();
-    if(!solver.solve_conjugate_gradient(B,X,10000,1e-15))
-      return false;
-    *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
-    */
-
-    // Choleschy factorization M = L L^T
-    time_init = clock();
-    if(!solver.factorize_ooc())
-      return false;
-    *duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
-
-    // direct solve by forward and backward substitution
-    time_init = clock();
-    if(!solver.solve_ooc(B,X))
-      return false;
-    *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
-
-    /*
-    // Choleschy factorization M = L L^T
-    time_init = clock();
-    if(!solver.factorize(true))
-      return false;
-    *duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
-
-    // direct solve by forward and backward substitution
-    time_init = clock();
-    if(!solver.solve(B,X,1))
-      return false;
-    *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
-    */
-
-    // set values to vertices
-    unsigned int index = 0;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
-        v++)
-      if(!v->constrained())
-        v->f() = X[index++];
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("End of solve_poisson()\n");
 
     return true;
   }
+
 
   void SaveAsMeshFile()
   {
@@ -864,8 +844,6 @@ public:
 
     os.close();
   }
-
-
 
 
   /// Shift and orient the implicit function such that:
@@ -1610,10 +1588,11 @@ private:
     while(!queue.empty())
       queue.pop();
 
-    // fill up
+    // push bad cells to the queue
     init_queue(queue,threshold,enlarged_bbox);
   }
 
+  // push bad cells to the queue
   void init_queue(Refinement_pqueue& queue,
                   const FT threshold,
                   Iso_cuboid& enlarged_bbox)

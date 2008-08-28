@@ -24,6 +24,7 @@
 #include <CGAL/Search_traits_vertex_handle_3.h>
 #include <CGAL/Oriented_normal_3.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/surface_reconstruction_assertions.h>
 
 #include <iterator>
 #include <list>
@@ -33,14 +34,6 @@
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
 
 CGAL_BEGIN_NAMESPACE
-
-
-// Traces?
-#define CGAL_TRACE  printf
-
-#ifndef CGAL_TRACE
-  #define CGAL_TRACE  if (false) printf
-#endif
 
 
 /// Helper function: distance_MST().
@@ -418,9 +411,6 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
     CGAL_TRACE("End of orient_normals_minimum_spanning_tree_3()\n");
 }
 
-
-// Avoid clash with other header
-#undef CGAL_TRACE
 
 CGAL_END_NAMESPACE
 

@@ -33,14 +33,6 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// Traces?
-//#define CGAL_TRACE  printf
-
-#ifndef CGAL_TRACE
-  #define CGAL_TRACE  if (false) printf
-#endif
-
-
 /// Estimate normal direction using jet fitting
 /// on the K nearest neighbors.
 ///
@@ -197,9 +189,6 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
   return estimate_normals_jet_fitting_3(first,beyond,normals,KNN,Kernel(),degre_fitting);
 }
 
-
-// Avoid clash with other header
-#undef CGAL_TRACE
 
 CGAL_END_NAMESPACE
 

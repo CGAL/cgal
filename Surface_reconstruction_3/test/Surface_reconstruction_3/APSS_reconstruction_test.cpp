@@ -101,6 +101,8 @@ int main(int argc, char * argv[])
 
   for (int arg_index = 1; arg_index <= argc-1; arg_index++)
   {
+    CGAL::Timer task_timer; task_timer.start();
+
     std::cerr << std::endl;
 
     //***************************************
@@ -153,7 +155,6 @@ int main(int argc, char * argv[])
         accumulated_fatal_err = EXIT_FAILURE;
         continue;
       }
-
     }
     else
     {
@@ -163,10 +164,13 @@ int main(int argc, char * argv[])
     }
 
     // Print status
+    long memory = CGAL::Memory_sizer().virtual_size();
     int nb_vertices = pwns.size();
-    std::cerr << "Read file " << input_filename << ": "
-              << nb_vertices << " vertices"
-              << std::endl;
+    std::cerr << "Read file " << input_filename << ": " << nb_vertices << " vertices, "
+                                                        << task_timer.time() << " seconds, "
+                                                        << (memory>>20) << " Mb allocated"
+                                                        << std::endl;
+    task_timer.reset();
 
     //***************************************
     // Check requirements
@@ -195,15 +199,15 @@ int main(int argc, char * argv[])
 
     std::cerr << "Compute implicit function...\n";
 
-    CGAL::Timer task_timer; task_timer.start();
-
     // Create implicit function
+#ifdef DEBUG_TRACE
     std::cerr << "  APSS_implicit_function(knn="<<number_of_neighbours << ")\n";
+#endif
     APSS_implicit_function apss_function(pwns.begin(), pwns.end(),
                                          number_of_neighbours);
 
     // Print status
-    long memory = CGAL::Memory_sizer().virtual_size();
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Compute implicit function: " << task_timer.time() << " seconds, "
                                                << (memory>>20) << " Mb allocated"
                                                << std::endl;
@@ -245,6 +249,7 @@ int main(int argc, char * argv[])
                                                         sm_radius*size,  // upper bound of Delaunay balls radii
                                                         sm_distance*size); // upper bound of distance to surface
     
+#ifdef DEBUG_TRACE
     std::cerr << "  make_surface_mesh(dichotomy error="<<sm_error_bound<<" * point set radius,\n"
               << "                    sphere center=("<<sm_sphere_center << "),\n"
               << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
@@ -252,6 +257,7 @@ int main(int argc, char * argv[])
               << "                    radius="<<sm_radius<<" * p.s.r.,\n"
               << "                    distance="<<sm_distance<<" * p.s.r.,\n"
               << "                    Non_manifold_tag)\n";
+#endif
 
     // meshing surface
     CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
