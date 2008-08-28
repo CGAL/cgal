@@ -290,10 +290,8 @@ public:
   /// TODO: add parameters to compute_implicit_function()?
   bool compute_implicit_function()
   {
-#ifdef DEBUG_TRACE
     CGAL::Timer task_timer; task_timer.start();
-    std::cerr << "Delaunay refinement...\n";
-#endif
+    CGAL_TRACE_STREAM << "Delaunay refinement...\n";
 
     // Delaunay refinement
     int nb_vertices = m_dt.number_of_vertices();
@@ -302,24 +300,20 @@ public:
     const FT enlarge_ratio = 1.5;
     delaunay_refinement(quality,max_vertices,enlarge_ratio,50000);
 
-#ifdef DEBUG_TRACE
     // Print status
     long memory = CGAL::Memory_sizer().virtual_size();
     int nb_vertices2 = m_dt.number_of_vertices();
-    std::cerr << "Delaunay refinement: " << "added " << nb_vertices2-nb_vertices << " Steiner points, "
-                                         << task_timer.time() << " seconds, "
-                                         << (memory>>20) << " Mb allocated"
-                                         << std::endl;
+    CGAL_TRACE_STREAM << "Delaunay refinement: " << "added " << nb_vertices2-nb_vertices << " Steiner points, "
+                                                 << task_timer.time() << " seconds, "
+                                                 << (memory>>20) << " Mb allocated"
+                                                 << std::endl;
     task_timer.reset();
-#endif
 
     // Smooth normals field.
     // Commented out as it shrinks the reconstructed model.
     //extrapolate_normals();
 
-#ifdef DEBUG_TRACE
-    std::cerr << "Solve Poisson equation...\n";
-#endif
+    CGAL_TRACE_STREAM << "Solve Poisson equation...\n";
 
     /// Compute the Poisson indicator function f()
     /// at each vertex of the triangulation.
@@ -336,14 +330,12 @@ public:
     // - f() < 0 inside the surface.
     set_contouring_value(median_value_at_input_vertices());
 
-#ifdef DEBUG_TRACE
     // Print status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Solve Poisson equation: " << task_timer.time() << " seconds, "
-                                            << (memory>>20) << " Mb allocated"
-                                            << std::endl;
+    CGAL_TRACE_STREAM << "Solve Poisson equation: " << task_timer.time() << " seconds, "
+                                                    << (memory>>20) << " Mb allocated"
+                                                    << std::endl;
     task_timer.reset();
-#endif
 
     return true;
   }

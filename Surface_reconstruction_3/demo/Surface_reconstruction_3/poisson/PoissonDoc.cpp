@@ -37,6 +37,7 @@
 #include <CGAL/average_spacing_3.h>
 #include <CGAL/merge_epsilon_nearest_points_3.h>
 #include <CGAL/random_simplification_points_3.h>
+#include <CGAL/surface_reconstruction_assertions.h>
 
 // STL
 #include <iostream>
@@ -938,15 +939,13 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
                                                         m_sm_radius*size,  // upper bound of Delaunay balls radii
                                                         m_sm_distance_poisson*size); // upper bound of distance to surface
 
-#ifdef DEBUG_TRACE
-    std::cerr << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound<<" * point set radius,\n"
-              << "                    sphere center=("<<sm_sphere_center << "),\n"
-              << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
-              << "                    angle="<<m_sm_angle << " degrees,\n"
-              << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
-              << "                    distance="<<m_sm_distance_poisson<<" * p.s.r.,\n"
-              << "                    Non_manifold_tag)\n";
-#endif
+    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound<<" * point set radius,\n"
+                      << "                    sphere center=("<<sm_sphere_center << "),\n"
+                      << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
+                      << "                    angle="<<m_sm_angle << " degrees,\n"
+                      << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
+                      << "                    distance="<<m_sm_distance_poisson<<" * p.s.r.,\n"
+                      << "                    Non_manifold_tag)\n";
 
     // meshing surface
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
@@ -1241,9 +1240,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     m_surface.clear();
 
     // Create implicit function
-#ifdef DEBUG_TRACE
-    std::cerr << "  APSS_implicit_function(knn="<<m_number_of_neighbours << ")\n";
-#endif
+    CGAL_TRACE_STREAM << "  APSS_implicit_function(knn="<<m_number_of_neighbours << ")\n";
     m_apss_function = new APSS_implicit_function(m_points.begin(), m_points.end(), 
                                                  m_number_of_neighbours);
 
@@ -1274,15 +1271,13 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
                                                         m_sm_radius*size,  // upper bound of Delaunay balls radii
                                                         m_sm_distance_apss*size); // upper bound of distance to surface
 
-#ifdef DEBUG_TRACE
-    std::cerr << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound<<" * point set radius,\n"
-              << "                    sphere center=("<<sm_sphere_center << "),\n"
-              << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
-              << "                    angle="<<m_sm_angle << " degrees,\n"
-              << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
-              << "                    distance="<<m_sm_distance_apss<<" * p.s.r.,\n"
-              << "                    Non_manifold_tag)\n";
-#endif
+    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound<<" * point set radius,\n"
+                      << "                    sphere center=("<<sm_sphere_center << "),\n"
+                      << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
+                      << "                    angle="<<m_sm_angle << " degrees,\n"
+                      << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
+                      << "                    distance="<<m_sm_distance_apss<<" * p.s.r.,\n"
+                      << "                    Non_manifold_tag)\n";
 
     // meshing surface
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());

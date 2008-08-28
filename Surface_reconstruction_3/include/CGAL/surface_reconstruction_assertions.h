@@ -296,4 +296,10 @@
   #define CGAL_TRACE  if (false) printf
 #endif
 
+#ifdef DEBUG_TRACE
+  #define CGAL_TRACE_STREAM  std::cerr
+#else
+  #define CGAL_TRACE_STREAM  if (false) std::cerr
+#endif
+
 

@@ -32,6 +32,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/surface_reconstruction_output.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
+#include <CGAL/surface_reconstruction_assertions.h>
 
 // This test
 #include "enriched_polyhedron.h"
@@ -267,15 +268,13 @@ int main(int argc, char * argv[])
                                                         sm_radius*size,  // upper bound of Delaunay balls radii
                                                         sm_distance*size); // upper bound of distance to surface
     
-#ifdef DEBUG_TRACE
-    std::cerr << "  make_surface_mesh(dichotomy error="<<sm_error_bound<<" * point set radius,\n"
-              << "                    sphere center=("<<sm_sphere_center << "),\n"
-              << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
-              << "                    angle="<<sm_angle << " degrees,\n"
-              << "                    radius="<<sm_radius<<" * p.s.r.,\n"
-              << "                    distance="<<sm_distance<<" * p.s.r.,\n"
-              << "                    Non_manifold_tag)\n";
-#endif
+    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<sm_error_bound<<" * point set radius,\n"
+                      << "                    sphere center=("<<sm_sphere_center << "),\n"
+                      << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
+                      << "                    angle="<<sm_angle << " degrees,\n"
+                      << "                    radius="<<sm_radius<<" * p.s.r.,\n"
+                      << "                    distance="<<sm_distance<<" * p.s.r.,\n"
+                      << "                    Non_manifold_tag)\n";
 
     // meshing surface
     CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
