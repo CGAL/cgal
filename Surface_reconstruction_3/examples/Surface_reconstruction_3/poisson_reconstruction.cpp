@@ -99,7 +99,7 @@ int main(int argc, char * argv[])
     FT sm_distance = 0.002; // AG: was 0.005 (upper bound of distance to surface/Poisson)
     FT sm_error_bound = 1e-3;
 
-    for (unsigned int i=3; i+1<argc ; ++i)
+    for (int i=3; i+1<argc ; ++i)
     {
         if (std::string(argv[i])=="-sm_radius")
             sm_radius = atof(argv[++i]);
@@ -200,7 +200,7 @@ int main(int argc, char * argv[])
 
     std::cerr << "Create triangulation...\n";
 
-    // Create implicit function and triangulation. 
+    // Create implicit function and triangulation.
     // Insert vertices and normals in triangulation.
     Dt3 dt;
     Poisson_implicit_function poisson_function(dt, pwns.begin(), pwns.end());
@@ -211,7 +211,7 @@ int main(int argc, char * argv[])
                                           << (memory>>20) << " Mb allocated"
                                           << std::endl;
     task_timer.reset();
-    
+
     std::cerr << "Compute implicit function...\n";
 
     /// Compute the Poisson indicator function f()
@@ -263,7 +263,7 @@ int main(int argc, char * argv[])
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // lower bound of facets angles (degrees)
                                                         sm_radius*size,  // upper bound of Delaunay balls radii
                                                         sm_distance*size); // upper bound of distance to surface
-    
+
     CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<sm_error_bound<<" * point set radius,\n"
                       << "                    sphere center=("<<sm_sphere_center << "),\n"
                       << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
