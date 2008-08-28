@@ -164,6 +164,8 @@ CPoissonDoc::CPoissonDoc()
 
 CPoissonDoc::~CPoissonDoc()
 {
+  // Clean up current mode
+  CloseMode();
 }
 
 // CPoissonDoc diagnostics
@@ -752,12 +754,12 @@ void CPoissonDoc::OnReconstructionDelaunayRefinement()
   assert(m_poisson_function != NULL);
 
   BeginWaitCursor();
-
   status_message("Delaunay refinement...");
+  CGAL::Timer task_timer; task_timer.start();
+
   const double quality = 2.5;
   const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
   const double enlarge_ratio = 1.5;
-  CGAL::Timer task_timer; task_timer.start();
   unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement(quality,max_vertices,enlarge_ratio,50000);
   m_triangulation_refined = true;
 
@@ -780,12 +782,12 @@ void CPoissonDoc::OnAlgorithmsRefineInShell()
   assert(m_poisson_function != NULL);
 
   BeginWaitCursor();
-
   status_message("Delaunay refinement in surface shell...");
+  CGAL::Timer task_timer; task_timer.start();
+
   const double quality = 2.5;
   const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
   const double enlarge_ratio = 1.5;
-  CGAL::Timer task_timer; task_timer.start();
   unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement_shell(m_dr_shell_size,m_dr_sizing,m_dr_max_vertices);
   m_triangulation_refined = true;
 
@@ -868,10 +870,11 @@ void CPoissonDoc::OnReconstructionPoissonNormalized()
   // - (*m_poisson_function)() = 0 on the input points,
   // - (*m_poisson_function)() < 0 inside the surface.
   double duration_assembly, duration_factorization, duration_solve;
-  m_poisson_solved = m_poisson_function->solve_poisson_normalized(m_lambda,
-                                                                  &duration_assembly,
-                                                                  &duration_factorization,
-                                                                  &duration_solve);
+  m_poisson_solved = m_poisson_function->solve_poisson(m_lambda,
+                                                       &duration_assembly,
+                                                       &duration_factorization,
+                                                       &duration_solve,
+                                                       true /* normalized*/);
   m_poisson_function->set_contouring_value(m_poisson_function->median_value_at_input_vertices());
   m_contouring_value = 0.0;
 
@@ -913,7 +916,7 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     FT inner_point_value = (*m_poisson_function)(inner_point);
     if(inner_point_value >= 0.0)
     {
-      status_message("Unable to seed (%lf at inner_point)",inner_point_value);
+      status_message("Error: unable to seed (%lf at inner_point)",inner_point_value);
       return;
     }
 
@@ -935,6 +938,7 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
                                                         m_sm_radius*size,  // upper bound of Delaunay balls radii
                                                         m_sm_distance_poisson*size); // upper bound of distance to surface
 
+#ifdef DEBUG_TRACE
     std::cerr << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound<<" * point set radius,\n"
               << "                    sphere center=("<<sm_sphere_center << "),\n"
               << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
@@ -942,6 +946,7 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
               << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
               << "                    distance="<<m_sm_distance_poisson<<" * p.s.r.,\n"
               << "                    Non_manifold_tag)\n";
+#endif
 
     // meshing surface
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
@@ -1051,7 +1056,7 @@ void CPoissonDoc::OnUpdateAlgorithmsSmoothUsingJetFitting(CCmdUI *pCmdUI)
   pCmdUI->Enable(m_edit_mode == POINT_SET);
 }
 
-// Clean up previous mode
+// Clean up current mode
 void CPoissonDoc::CloseMode()
 {
   // Nothing to do if m_edit_mode == POINT_SET
@@ -1236,7 +1241,9 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     m_surface.clear();
 
     // Create implicit function
+#ifdef DEBUG_TRACE
     std::cerr << "  APSS_implicit_function(knn="<<m_number_of_neighbours << ")\n";
+#endif
     m_apss_function = new APSS_implicit_function(m_points.begin(), m_points.end(), 
                                                  m_number_of_neighbours);
 
@@ -1245,7 +1252,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     FT inner_point_value = (*m_apss_function)(inner_point);
     if(inner_point_value >= 0.0)
     {
-      status_message("Unable to seed (%lf at inner_point)",inner_point_value);
+      status_message("Error: unable to seed (%lf at inner_point)",inner_point_value);
       return;
     }
 
@@ -1267,6 +1274,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
                                                         m_sm_radius*size,  // upper bound of Delaunay balls radii
                                                         m_sm_distance_apss*size); // upper bound of distance to surface
 
+#ifdef DEBUG_TRACE
     std::cerr << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound<<" * point set radius,\n"
               << "                    sphere center=("<<sm_sphere_center << "),\n"
               << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
@@ -1274,6 +1282,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
               << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
               << "                    distance="<<m_sm_distance_apss<<" * p.s.r.,\n"
               << "                    Non_manifold_tag)\n";
+#endif
 
     // meshing surface
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
