@@ -23,6 +23,13 @@
 #ifndef CGAL_SPHERICAL_KERNEL_INTERNAL_FUNCTIONS_ON_INTERSECTION_3_H
 #define CGAL_SPHERICAL_KERNEL_INTERNAL_FUNCTIONS_ON_INTERSECTION_3_H 
 
+#include <CGAL/Sphere_3.h>
+#include <CGAL/Plane_3.h>
+#include <CGAL/Circle_3.h>
+#include <CGAL/Circular_arc_3.h>
+#include <CGAL/Line_3.h>
+#include <CGAL/Line_arc_3.h>
+#include <CGAL/Circular_arc_point_3.h>
 #include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE
