@@ -85,7 +85,7 @@ class Object
     template <class T>
     Object(T && t, private_tag)
     {
-	typedef Wrapper< typename std::remove_reference< typename std::remove_cv<T>::type >::type >  Wrap;
+	typedef Wrapper< typename std::remove_cv< typename std::remove_reference<T>::type >::type >  Wrap;
         ptr = new Wrap(std::forward<T>(t));
     }
 #else
