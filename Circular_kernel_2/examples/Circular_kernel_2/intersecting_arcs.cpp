@@ -1,13 +1,23 @@
-#include <CGAL/point_generators_2.h>
 #include <CGAL/MP_Float.h>
-#include <CGAL/Exact_circular_kernel_2.h>
+#include <CGAL/Quotient.h>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
+#include <CGAL/Circular_kernel_2.h>
+
 #include <CGAL/Circular_kernel_intersections.h>
 
-typedef CGAL::Exact_circular_kernel_2                   Circular_k;
-typedef Circular_k::Point_2                             Point_2;
-typedef Circular_k::Circle_2                            Circle_2;
-typedef Circular_k::Circular_arc_2                      Circular_arc_2;
-typedef Circular_k::Line_arc_2                          Line_arc_2;
+#include <CGAL/point_generators_2.h>
+
+typedef CGAL::Quotient<CGAL::MP_Float>                 NT;
+typedef CGAL::Cartesian<NT>                            Linear_k;
+typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>     Algebraic_k;
+typedef CGAL::Circular_kernel_2<Linear_k, Algebraic_k> Circular_k;
+
+typedef CGAL::Point_2<Circular_k>                 Point_2;
+typedef CGAL::Circle_2<Circular_k>                Circle_2;
+typedef CGAL::Circular_arc_2<Circular_k>          Circular_arc_2;
+typedef CGAL::Line_arc_2<Circular_k>              Line_arc_2;
 
 template <typename T>
 double prob_2() {
@@ -18,7 +28,7 @@ double prob_2() {
     p1 = *g++; p2 = *g++; p3 = *g++;
     p4 = *g++; p5 = *g++; p6 = *g++;
     // the pi's are points inherited from the Cartesian kernel Point_2, so,
-    // the orientation prdicate can be called on them
+    // the orientation predicate can be called on them
     if(CGAL::orientation(p1, p2, p3) != CGAL::COUNTERCLOCKWISE) std::swap(p1, p3);
     T o1 = T(p1, p2, p3);
     if(CGAL::orientation(p4, p5, p6) != CGAL::COUNTERCLOCKWISE) std::swap(p4, p6);
