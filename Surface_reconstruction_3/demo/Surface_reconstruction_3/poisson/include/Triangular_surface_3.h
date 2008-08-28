@@ -1,8 +1,6 @@
 #ifndef TRIANGULAR_SURFACE_3_H
 #define TRIANGULAR_SURFACE_3_H
 
-#include <CGAL/surface_reconstruction_assertions.h>
-
 #include <algorithm>
 #include <vector>
 #include <GL/gl.h>

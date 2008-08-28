@@ -5,7 +5,6 @@
 #include <CGAL/Vector_index_property_map.h>
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
-#include <CGAL/surface_reconstruction_assertions.h>
 
 #include <Gyroviz_point_3.h>
 

@@ -2,7 +2,6 @@
 #define SURFACE_RECONSTRUCTION_READ_G23_H
 
 #include <CGAL/value_type_traits.h>
-#include <CGAL/surface_reconstruction_assertions.h>
 
 #include <stdio.h>
 #include <vector>
