@@ -30,6 +30,7 @@
 #include <CGAL/min_max_n.h>
 #include <CGAL/Origin.h>
 #include <vector>
+#include <CGAL/Default_argument.h>
 
 #ifdef CGAL_HAS_THREADS
 #  include <boost/thread/tss.hpp>
@@ -1682,7 +1683,7 @@ public:
 //____________________________________________________________
 // The magic functor that has Lazy<Something> as result type
 
-template <typename LK, typename AC, typename EC>
+template <typename LK, typename AC, typename EC, typename E2A_ = Default_argument>
 struct Lazy_construction
 {
   static const bool Protection = true;
@@ -1690,7 +1691,7 @@ struct Lazy_construction
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
   typedef typename EK::FT EFT;
-  typedef typename LK::E2A E2A;
+  typedef typename If_default_argument<E2A_, typename LK::E2A>::type E2A;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy<AT, ET, EFT, E2A> Handle;
