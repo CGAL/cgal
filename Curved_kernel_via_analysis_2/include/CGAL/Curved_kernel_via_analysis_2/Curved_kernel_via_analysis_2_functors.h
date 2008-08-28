@@ -708,6 +708,114 @@ public:
 };
 
 /*!\brief
+ * Functor constructing an interior point of on an arc.
+ */
+template < class CurvedKernelViaAnalysis_2 >
+class Construct_interior_vertex_2 : public 
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
+   
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! the base type
+    typedef 
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2 >
+    Base;
+    
+    CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
+    typedef Point_2 result_type;
+
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
+    Construct_interior_vertex_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
+    }
+
+    /*!\brief
+     * Get an interior point on the arc.
+     *
+     * \param arc The arc.
+     * \return A point on the interior of the arc.
+     */
+    result_type operator()(const Arc_2& arc) const {
+        
+      typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_analysis_2;
+      
+      typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2 
+                                                      Algebraic_curve_kernel_2;
+      typedef typename Algebraic_curve_kernel_2::Boundary       Boundary;
+      typedef typename Algebraic_curve_kernel_2::X_coordinate_1 X_coordinate_1;
+      
+      typedef CGAL::Polynomial<Boundary>                        Poly_rat_1;
+      typedef CGAL::Polynomial< Poly_rat_1 >                    Poly_rat_2;
+      
+      typedef CGAL::Polynomial_traits_d< Poly_rat_1 >                  PT_rat_1;
+      typedef CGAL::Polynomial_traits_d< Poly_rat_2 >                  PT_rat_2;
+      
+      typedef CGAL::Fraction_traits< Poly_rat_2 >                      FT_2;
+
+      if (!arc.is_vertical())
+      {
+        Boundary x_coord = arc.boundary_in_x_range_interior();
+        int arcno = arc.arcno();
+        const Curve_analysis_2& ca = arc.curve();
+        
+        Point_2 p = Curved_kernel_via_analysis_2::instance().
+          construct_point_on_arc_2_object() 
+          (X_coordinate_1(x_coord), ca, arcno, arc);
+        return p;
+      }
+      
+      Boundary y_coord = 0;
+      if (arc.is_finite(ARR_MIN_END))
+      {
+        if (arc.is_finite(ARR_MAX_END))
+        {
+          // We need torefine the interval because there is a chance that
+          // the low of the upper point is below the high of the lower point.
+          y_coord = Curved_kernel_via_analysis_2::instance().kernel().
+            boundary_between_y_2_object() (arc.curve_end(ARR_MIN_END).xy(),
+                                         arc.curve_end(ARR_MAX_END).xy());
+        }
+        else
+        {
+          y_coord = Curved_kernel_via_analysis_2::instance().kernel().
+            upper_boundary_y_2_object() (arc.curve_end(ARR_MIN_END).xy());
+        }
+      }
+      else
+      {
+        if (arc.is_finite(ARR_MAX_END))
+        {
+          y_coord = Curved_kernel_via_analysis_2::instance().kernel().
+            lower_boundary_y_2_object()(arc.curve_end(ARR_MAX_END).xy());
+        }
+      }
+      
+      /*! \todo Try to remove this polynomial stuff */
+      typename PT_rat_1::Construct_polynomial cp1;
+      Poly_rat_2 poly2 = typename PT_rat_2::Construct_polynomial() 
+        (cp1(-y_coord), cp1(Boundary(1)));
+      
+      typename FT_2::Denominator_type dummy;
+      typename FT_2::Numerator_type curve_poly;
+      typename FT_2::Decompose() (poly2, curve_poly, dummy);
+      
+      Curve_analysis_2 curve(curve_poly);
+      Point_2 p =  Curved_kernel_via_analysis_2::instance().
+        construct_point_on_arc_2_object()(arc.x(), curve, 0, arc);
+      return p;
+    }
+};
+
+
+/*!\brief
  * Functor that compares x-coordinates of two interior points
  */
 template < class CurvedKernelViaAnalysis_2 >
@@ -2384,6 +2492,8 @@ public:
                              construct_min_vertex_2_object);
     CGAL_CKvA_2_functor_cons(Construct_max_vertex_2,
                              construct_max_vertex_2_object);
+    CGAL_CKvA_2_functor_cons(Construct_interior_vertex_2,
+                             construct_interior_vertex_2_object);
     CGAL_CKvA_2_functor_pred(Compare_x_near_boundary_2,
                              compare_x_near_boundary_2_object);
     CGAL_CKvA_2_functor_pred(Compare_y_near_boundary_2,
