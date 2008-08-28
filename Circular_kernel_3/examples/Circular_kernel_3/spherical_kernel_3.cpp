@@ -1,14 +1,22 @@
-#include <CGAL/Cartesian.h>
-#include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
-#include <CGAL/Exact_spherical_kernel_3.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
+#include <CGAL/Spherical_kernel_3.h>
+
+#include <CGAL/Spherical_kernel_intersections.h>
+
 #include <CGAL/Random.h>
 
-typedef CGAL::Exact_spherical_kernel_3                      SK;
-typedef SK::Point_3                                         Point_3;
-typedef SK::Sphere_3                                        Sphere_3;
-typedef SK::Circle_3                                        Circle_3;
+typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
+typedef CGAL::Cartesian<NT>                             Linear_k;
+typedef CGAL::Algebraic_kernel_for_spheres_2_3<NT>      Algebraic_k;
+typedef CGAL::Spherical_kernel_3<Linear_k, Algebraic_k> Spherical_k;
+
+typedef CGAL::Point_3<Spherical_k>                       Point_3;
+typedef CGAL::Sphere_3<Spherical_k>                      Sphere_3;
+typedef CGAL::Circle_3<Spherical_k>                      Circle_3;
 
 int main() {
 
@@ -20,6 +28,7 @@ int main() {
   std::cout << "We will calcule the approximate probability that 3 spheres with radius 1 intersect on a 5x5x5 box, it may take some time." << std::endl;
 
   for(int i=0; i<10000; i++) {
+
     double x1 = theRandom.get_double(0.0,5.0);
     double y1 = theRandom.get_double(0.0,5.0);
     double z1 = theRandom.get_double(0.0,5.0);
@@ -30,9 +39,11 @@ int main() {
     double x3 = theRandom.get_double(0.0,5.0);
     double y3 = theRandom.get_double(0.0,5.0);
     double z3 = theRandom.get_double(0.0,5.0);
+
     Sphere_3 s1 = Sphere_3(Point_3(x1,y1,z1), r);
     Sphere_3 s2 = Sphere_3(Point_3(x2,y2,z2), r);
     Sphere_3 s3 = Sphere_3(Point_3(x3,y3,z3), r);
+
     std::vector< CGAL::Object > intersecs;
     CGAL::intersection(s1, s2, s3, std::back_inserter(intersecs));
     if(intersecs.size() > 0) count++;
