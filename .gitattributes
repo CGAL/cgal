@@ -1425,7 +1425,6 @@ Developers_manual/doc_tex/Developers_manual/fig/reference_counting.pdf -text svn
 Developers_manual/doc_tex/Developers_manual/fig/use_real.eps -text svneol=unset#application/postscript
 Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#application/pdf
-Distance_2/test/Distance_2/cgal_test eol=lf
 Distance_3/test/Distance_3/cgal_test eol=lf
 Envelope_2/doc_tex/Envelope_2/fig/Envelope_2.png -text
 Envelope_2/doc_tex/Envelope_2/fig/ex_circle.eps -text svneol=unset#application/postscript
