@@ -111,6 +111,8 @@ struct Test {
   {
 	assert(!CGAL::do_intersect(o1, o2));
 	assert(CGAL::intersection(o1, o2).empty());
+	assert(!CGAL::do_intersect(o2, o1));
+	assert(CGAL::intersection(o2, o1).empty());
   }
 
   template < typename Res, typename O1, typename O2 >
@@ -119,15 +121,22 @@ struct Test {
 	Res tmp;
 	assert(CGAL::do_intersect(o1, o2));
 	assert(CGAL::assign(tmp, CGAL::intersection(o1, o2)));
+	assert(CGAL::do_intersect(o2, o1));
+	assert(CGAL::assign(tmp, CGAL::intersection(o2, o1)));
   }
 
   template < typename Res, typename O1, typename O2 >
-  void check_intersection(const O1& o1, const O2& o2, const Res& result)
+  void check_intersection(const O1& o1, const O2& o2, const Res& result, bool do_opposite=true)
   {
-	assert(CGAL::do_intersect(o1, o2));
 	Res tmp;
+	assert(CGAL::do_intersect(o1, o2));
 	assert(CGAL::assign(tmp, CGAL::intersection(o1, o2)));
 	assert(approx_equal(tmp, result));
+	if (do_opposite) {
+	  assert(CGAL::do_intersect(o2, o1));
+	  assert(CGAL::assign(tmp, CGAL::intersection(o2, o1)));
+	  assert(approx_equal(tmp, result));
+	}
   }
 
 
@@ -204,14 +213,14 @@ struct Test {
     pol0.push_back(P( -5.11111, -0.222222 ));
     pol0.push_back(P( 0, 10 ));
     pol0.push_back(P( 8, 4 ));
-    check_intersection     (T(p(   0, 10), p(-10, -10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol0);
+    check_intersection     (T(p(   0, 10), p(-10, -10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol0, false);
     check_intersection<T>  (T(p( -12,  1), p(  5,   3), p( -7, -15)), T(p(  29,  -2), p(  0, -13), p(1, 21)));
     Pol pol1;
     pol1.push_back(P( 8,  4));
     pol1.push_back(P( 0, 10 ));
     pol1.push_back(P( -5.11111, -0.222222 ));
     pol1.push_back(P(-6, -4));
-    check_intersection     (T(p( -10,-10), p(  0,  10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol1);
+    check_intersection     (T(p( -10,-10), p(  0,  10), p( 20, -5)), T(p(   2,  30), p( -6,  -4), p(15, 8)), pol1, false);
     Pol pol2;
     pol2.push_back(P( 10.2222, 2.33333 ));
     pol2.push_back(P( 1.96923, 8.52308 ));
@@ -219,7 +228,7 @@ struct Test {
     pol2.push_back(P( -5.94872, -1.89744 ));
     pol2.push_back(P( -3.96178, -8.99363 ));
     pol2.push_back(P( 3.5, -7.75 ));
-    check_intersection     (T(p( -10,-10), p(  0,  10), p( 20, -5)), T(p(   -9,   9), p( 14,   8), p(-2, -16)), pol2);
+    check_intersection     (T(p( -10,-10), p(  0,  10), p( 20, -5)), T(p(   -9,   9), p( 14,   8), p(-2, -16)), pol2, false);
     check_no_intersection  (T(p( -10,-10), p(  0,  10), p( 20, -5)), T(p(   90, -10), p(100,  10), p(120, -5)));
   }
 
