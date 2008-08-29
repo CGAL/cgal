@@ -831,7 +831,7 @@ squared_distance(
     const Ray_3<K> & ray,
     const Segment_3<K> & seg)
 {
-    return squared_distance(seg, ray, K());
+    return CGALi::squared_distance(seg, ray, K());
 }
 
 
