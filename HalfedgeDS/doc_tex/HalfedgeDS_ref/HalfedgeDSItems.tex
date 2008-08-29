@@ -19,9 +19,9 @@
 \ccDefinition
   
 The concept \ccRefName\ wraps the four item types -- vertex,
-halfedge, {\XHDS \ccc{halfedge_cycle}}, and face-- for a halfedge data structure.
+halfedge, { \ccc{halfedge_cycle}}, and face-- for a halfedge data structure.
 A \ccRefName\ contains four member class templates named \ccc{Vertex_wrapper},
-\ccc{Halfedge_wrapper}, {\XHDS \ccc{Halfedge_cycle_wrapper}},
+\ccc{Halfedge_wrapper}, { \ccc{Halfedge_cycle_wrapper}},
 and \ccc{Face_wrapper}, each with two template parameters, \ccc{Refs} and \ccc{Traits}.
 \ccc{Refs} requires an
 instantiated halfedge data structure \ccc{HalfedgeDS} as argument,
@@ -29,7 +29,7 @@ instantiated halfedge data structure \ccc{HalfedgeDS} as argument,
 uses the halfedge data structure as internal representation. \ccc{Traits}
 is not used by the halfedge data structure itself. These four member 
 class templates provide a local type named \ccc{Vertex}, \ccc{Halfedge},
-{\XHDS \ccc{Halfedge_cycle}}, and \ccc{Face} respectively.
+{ \ccc{Halfedge_cycle}}, and \ccc{Face} respectively.
 The requirements on these
 types are described on page~\pageref{pageHalfedgeDSItemsVertexRef},
 page~\pageref{pageHalfedgeDSItemsHalfedgeRef}, 
@@ -48,8 +48,8 @@ and page~\pageref{pageHalfedgeDSItemsFaceRef} respectively.
 \ccNestedType{Face_wrapper<Refs,Traits>::Face}
     {model of \ccc{HalfedgeDSFace}.}
 \ccGlue
-\ccNestedType{\XHDS Halfedge_cycle_wrapper<Refs,Traits>::Halfedge_cycle}
-    {\XHDS model of \ccc{HalfedgeDSHalfedgeCycle}.}
+\ccNestedType{ Halfedge_cycle_wrapper<Refs,Traits>::Halfedge_cycle}
+    { model of \ccc{HalfedgeDSHalfedgeCycle}.}
 
 \ccHasModels
 

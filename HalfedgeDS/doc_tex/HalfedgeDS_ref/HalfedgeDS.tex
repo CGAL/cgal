@@ -44,7 +44,7 @@ of these different data structures together with a thorough
 description of the design implemented here can be found
 in~\cite{k-ugpdd-99}.
 
-{\XHDS
+{
 Each edge is decomposed into two halfedges with opposite orientations
 and each cycle of connected halfedges is associated with a single object 
 named halfedge\_cycle.
@@ -113,7 +113,7 @@ dangling handles), it must be called explicitly in advance for a
 Classes built on top of a \ccRefName\ are advised to call the
 \ccc{reserve()} member function before creating new items.
 
-{\XHDS
+{
 While the storage of \ccc{halfedge_cycle} items is organized by the \ccRefName\ , faces contain 
 local sequences of \ccc{Halfedge_cycle_handle} elements, not of \ccc{Halfedge_cycle} elements. Thus,
 a \ccRefName\ defines a \ccc{Halfedge_cycle_iterator} while a face defines a
@@ -167,7 +167,8 @@ allocator.
 \ccGlue
 \ccNestedType{Face}{model of \ccc{HalfedgeDSFace} concept.}
 \ccGlue
-\ccNestedType{\XHDS Halfedge_cycle}{\XHDS model of \ccc{HalfedgeDSHalfedgeCycle} concept.}
+\ccNestedType{Halfedge_cycle}{model of \ccc{HalfedgeDSHalfedgeCycle} concept.}
+%\ccNestedType{ Halfedge_cycle}{ model of \ccc{HalfedgeDSHalfedgeCycle} concept.}
 
 The following handles and iterators have appropriate non-mutable
 counterparts, i.e., \ccc{const_handle} and \ccc{const_iterator}. The
@@ -184,7 +185,7 @@ value. It will be used in analogy to \ccc{NULL} for pointers.
 \ccGlue
 \ccNestedType{Face_handle}{handle to face.}
 \ccGlue
-\ccNestedType{\XHDS Halfedge_cycle_handle}{\XHDS handle to \ccc{halfedge_cycle}.}
+\ccNestedType{ Halfedge_cycle_handle}{ handle to \ccc{halfedge_cycle}.}
 
 \ccNestedType{Vertex_iterator}{iterator over all vertices.}
 \ccGlue
@@ -192,7 +193,7 @@ value. It will be used in analogy to \ccc{NULL} for pointers.
 \ccGlue
 \ccNestedType{Face_iterator}{iterator over all faces.}
 \ccGlue
-\ccNestedType{\XHDS Halfedge_cycle_iterator}{\XHDS iterator over all \ccc{halfedge_cycles}.}
+\ccNestedType{ Halfedge_cycle_iterator}{ iterator over all \ccc{halfedge_cycles}.}
 
 % +-----------------------------------+
 \begin{ccAdvanced}
@@ -213,13 +214,13 @@ supported or not.
 \ccGlue
 \ccNestedType{Supports_halfedge_face}{\ccc{Halfedge::face()}.}
 \ccGlue
-\ccNestedType{\XHDS Supports_halfedge_halfedge_cycle}{\XHDS \ccc{Halfedge::halfedge_cycle()}.}
+\ccNestedType{ Supports_halfedge_halfedge_cycle}{ \ccc{Halfedge::halfedge_cycle()}.}
 \ccGlue
 \ccNestedType{Supports_face_halfedge}{\ccc{Face::halfedge()}.}
 \ccGlue
-\ccNestedType{\XHDS Supports_face_halfedge_cycle}{\XHDS \ccc{Face::outer_halfedge_cycle()}.}
+\ccNestedType{ Supports_face_halfedge_cycle}{ \ccc{Face::outer_halfedge_cycle()}.}
 \ccGlue
-\ccNestedType{\XHDS Supports_halfedge_cycle_face}{\XHDS \ccc{Halfedge_cycle::face()}.}
+\ccNestedType{ Supports_halfedge_cycle_face}{ \ccc{Halfedge_cycle::face()}.}
 \ccGlue
 \ccNestedType{Supports_removal}{removal of individual elements.}
 
@@ -299,9 +300,9 @@ arises.
 \ccFunction{static Face_const_handle 
   HalfedgeDS::face_handle( const Face_base* f);}{}
 
-\ccFunction{\XHDS static Halfedge_cycle_handle HalfedgeDS::halfedge_cycle_handle( Halfedge_cycle_base* f);}{}
+\ccFunction{ static Halfedge_cycle_handle HalfedgeDS::halfedge_cycle_handle( Halfedge_cycle_base* f);}{}
 \ccGlue
-\ccFunction{\XHDS static Halfedge_cycle_const_handle HalfedgeDS::halfedge_cycle_handle( const Halfedge_cycle_base* f);}{}
+\ccFunction{ static Halfedge_cycle_const_handle HalfedgeDS::halfedge_cycle_handle( const Halfedge_cycle_base* f);}{}
 
 \end{ccAdvanced}
 
@@ -345,7 +346,7 @@ arises.
 \ccGlue
 \ccMethod{Size size_of_faces() const;}{number of faces.}
 \ccGlue
-\ccMethod{\XHDS Size size_of_halfedge_cycles() const;}{\XHDS number of \ccc{halfedge_cycles}.}
+\ccMethod{ Size size_of_halfedge_cycles() const;}{ number of \ccc{halfedge_cycles}.}
 \ccGlue
 \ccMethod{Size capacity_of_vertices() const;}{space reserved for vertices.}
 \ccGlue
@@ -353,7 +354,7 @@ arises.
 \ccGlue
 \ccMethod{Size capacity_of_faces() const;}{space reserved for faces.}
 \ccGlue
-\ccMethod{\XHDS Size capacity_of_halfedge_cycles() const;}{\XHDS space reserved for \ccc{halfedge_cycles}.}
+\ccMethod{ Size capacity_of_halfedge_cycles() const;}{ space reserved for \ccc{halfedge_cycles}.}
 \ccGlue
 \ccMethod{size_t bytes() const;}{bytes used for \ccVar.}
 \ccGlue
@@ -376,9 +377,9 @@ The following member functions return the non-mutable iterator if
 \ccGlue
 \ccMethod{Face_iterator     faces_end();}{}
 \ccGlue
-\ccMethod{\XHDS Halfedge_cycle_iterator      halfedge_cycles_begin();}{\XHDS iterator over all \ccc{halfedge_cycles}.}
+\ccMethod{ Halfedge_cycle_iterator      halfedge_cycles_begin();}{ iterator over all \ccc{halfedge_cycles}.}
 \ccGlue
-\ccMethod{\XHDS Halfedge_cycle_iterator      halfedge_cycles_end();}{}
+\ccMethod{ Halfedge_cycle_iterator      halfedge_cycles_end();}{}
 
 % +-----------------------------------+
 \ccHeading{Insertion}
@@ -404,8 +405,8 @@ faces or halfedge\_cycles respectively.
 \ccMethod{Face_handle faces_push_back( const Face& f);}
     {appends a copy of $f$ to \ccc{hds}. Returns a handle of the new face.}
 
-\ccMethod{\XHDS Halfedge_cycle_handle halfedge_cycles_push_back( const Halfedge_cycle& c);}
-    {\XHDS appends a copy of $c$ to \ccc{hds}. Returns a handle of the new cycle.}
+\ccMethod{ Halfedge_cycle_handle halfedge_cycles_push_back( const Halfedge_cycle& c);}
+    { appends a copy of $c$ to \ccc{hds}. Returns a handle of the new cycle.}
 
 
 % +-----------------------------------+
@@ -463,19 +464,19 @@ functions must be provided as null operations.
     removes the range of faces $[\ccc{first},\ccc{last})$ if faces are 
     supported and \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
-\ccMethod{\XHDS void halfedge_cycles_pop_front();}{\XHDS 
+\ccMethod{ void halfedge_cycles_pop_front();}{ 
     removes the first \ccc{halfedge_cycle} if supported and
     \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
-\ccMethod{\XHDS void halfedge_cycles_pop_back();}{\XHDS 
+\ccMethod{ void halfedge_cycles_pop_back();}{ 
     removes the last \ccc{halfedge_cycle}  if supported and
     \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
-\ccMethod{\XHDS void halfedge_cycles_erase( Halfedge_cycle_handle c);}{\XHDS 
+\ccMethod{ void halfedge_cycles_erase( Halfedge_cycle_handle c);}{ 
     removes the \ccc{halfedge_cycle} $c$ if halfedge\_cycles are supported and
     \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
-\ccMethod{\XHDS void halfedge_cycles_erase( Halfedge_cycle_handle first, Halfedge_cycle_handle last);}{\XHDS 
+\ccMethod{ void halfedge_cycles_erase( Halfedge_cycle_handle first, Halfedge_cycle_handle last);}{ 
     removes the range of \ccc{halfedge_cycles} $[\ccc{first},\ccc{last})$ if are 
     supported and \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
@@ -485,7 +486,7 @@ functions must be provided as null operations.
 \ccGlue
 \ccMethod{void faces_clear();}{removes all faces.}
 \ccGlue
-\ccMethod{\XHDS void halfedge_cycles_clear();}{\XHDS removes all \ccc{halfedge_cycles}.}
+\ccMethod{ void halfedge_cycles_clear();}{ removes all \ccc{halfedge_cycles}.}
 
 \ccMethod{void clear();}{removes all elements.}
 

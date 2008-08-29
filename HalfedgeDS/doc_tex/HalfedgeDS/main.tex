@@ -33,10 +33,7 @@
 % +------------------------------------------------------------------------+
 \section{Introduction}
 
-%\newcommand{\XHDS}{\bf\ttfamily}
-\newcommand{\XHDS}{}
-
-{\XHDS A halfedge data structure (abbreviated as \ccc{HalfedgeDS}, or
+{ A halfedge data structure (abbreviated as \ccc{HalfedgeDS}, or
 \ccc{HDS} for template parameters) is an edge-centered data structure
 capable of maintaining incidence information of vertices, edges and
 faces, for example for planar maps, polyhedra, or other orientable,
@@ -125,7 +122,7 @@ Figure~\ccTexHtml{\ref{figureHalfedgeDSDesign}}{}\begin{ccHtmlOnly}
 illustrates the responsibilities of the three layers of the software
 design, with the \ccc{CGAL::Polyhedron_3} as an example for the top
 layer.  
-{\XHDS
+{
 The items provide the space for the information that is
 actually stored, i.e., with member variables and access member
 functions in \ccc{Vertex}, \ccc{Halfedge}, \ccc{Halfedge_cycle} and
@@ -224,7 +221,7 @@ list-based representation. All incidences of the items and a point
 type for vertices are defined. The trivial traits class provides the
 type used for the point. The program creates a loop, consisting
 of two halfedges, one vertex, and two faces, and checks its validity.
-{\XHDS for backward compatibility with 3.3.1, the default items class
+{ for backward compatibility with 3.3.1, the default items class
 \ccc{HalfedgeDS_items_2} does not support halfedge cycles.}
 
 \begin{ccTexOnly}
@@ -249,7 +246,7 @@ of two halfedges, one vertex, and two faces, and checks its validity.
 % +-------------------------------------------------------------+
 \subsection{The Default Halfedge Data Structure with Halfedge Cycles Support}
 
-{\XHDS
+{
 The following example program uses the default halfedge data structure
 with \ccc{HalfedgeDS_items_with_halfedge_cycle_2}, enabling support for
 halfedge cycles and disabling direct mutual references between faces and halfedges
@@ -266,7 +263,7 @@ list-based halfedge data structure. The result is a data structure
 maintaining only halfedges with next and opposite pointers.  No
 vertices or faces are stored. The data structure represents an {\em
   undirected graph}.
-{\XHDS for backward compatibility, 
+{ for backward compatibility, 
 \ccc{CGAL::HalfedgeDS_min_items} does not support halfedge cycles.}
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_graph.cpp}

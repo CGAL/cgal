@@ -33,11 +33,11 @@ along the open region.
 
 A halfedge optionally stores a reference to the
 previous halfedge along the face, a reference to an incident vertex,
-{\XHDS a reference to the halfedge cycle containing it},
+{ a reference to the halfedge cycle containing it},
 and a reference to the incident face.
 Type tags indicate whether the related member functions are supported.
 
-{\XHDS
+{
 
 \input{HalfedgeDS_ref/Ccb_or_dmr.tex}
 
@@ -121,7 +121,7 @@ protection could be bypassed also by an user, but not by accident.)
 \ccGlue
 \ccNestedType{Face}{model of \ccc{HalfedgeDSFace}.}
 \ccGlue
-\ccNestedType{\XHDS Halfedge_cycle}{\XHDS model of \ccc{HalfedgeDSHalfedgeCycle}.}
+\ccNestedType{ Halfedge_cycle}{ model of \ccc{HalfedgeDSHalfedgeCycle}.}
 
 \ccNestedType{Vertex_handle}{handle to vertex.}
 \ccGlue
@@ -129,7 +129,7 @@ protection could be bypassed also by an user, but not by accident.)
 \ccGlue
 \ccNestedType{Face_handle}{handle to face.}
 \ccGlue
-\ccNestedType{\XHDS Halfedge_cycle_handle}{\XHDS handle to \ccc{halfedge_cycle}.}
+\ccNestedType{ Halfedge_cycle_handle}{ handle to \ccc{halfedge_cycle}.}
 \ccGlue
 \ccNestedType{Vertex_const_handle}{}
 \ccGlue
@@ -137,7 +137,7 @@ protection could be bypassed also by an user, but not by accident.)
 \ccGlue
 \ccNestedType{Face_const_handle}{}
 \ccGlue
-\ccNestedType{\XHDS Halfedge_cycle_const_handle}{}
+\ccNestedType{ Halfedge_cycle_const_handle}{}
 
 \ccNestedType{Supports_halfedge_prev}{\ccc{CGAL::Tag_true} or 
   \ccc{CGAL::Tag_false}.}
@@ -146,7 +146,7 @@ protection could be bypassed also by an user, but not by accident.)
 \ccGlue
 \ccNestedType{Supports_halfedge_face}{\~{}}
 \ccGlue
-\ccNestedType{\XHDS Supports_halfedge_halfedge_cycle}{\~{}}
+\ccNestedType{ Supports_halfedge_halfedge_cycle}{\~{}}
 
 
 \ccCreation
@@ -199,12 +199,12 @@ protection could be bypassed also by an user, but not by accident.)
 \ccHeading{Operations available if \ccc{Supports_halfedge_halfedge_cycle} $\equiv$ 
            \ccc{CGAL::Tag_true}}
 
-\ccMethod{\XHDS Halfedge_cycle_handle       halfedge_cycle();}{}
+\ccMethod{ Halfedge_cycle_handle       halfedge_cycle();}{}
 \ccGlue
-\ccMethod{\XHDS Halfedge_cycle_const_handle halfedge_cycle() const;}
-    {\XHDS the \ccc{halfedge_cycle} of \ccVar.}
+\ccMethod{ Halfedge_cycle_const_handle halfedge_cycle() const;}
+    { the \ccc{halfedge_cycle} of \ccVar.}
 \ccGlue
-\ccMethod{\XHDS void set_halfedge_cycle( Halfedge_cycle_handle c);}{\XHDS 
+\ccMethod{ void set_halfedge_cycle( Halfedge_cycle_handle c);}{ 
     sets the \ccc{halfedge_cycle} to $c$.}
 
 \ccHeading{Operations available if \ccc{Supports_halfedge_face} $\equiv$ \ccc{CGAL::Tag_true} 
