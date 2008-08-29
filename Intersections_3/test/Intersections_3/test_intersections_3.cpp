@@ -106,7 +106,7 @@ struct Test {
   template < typename O1, typename O2>
   void check_no_intersection(const O1& o1, const O2& o2)
   {
-	// FIXME : assert(!CGAL::do_intersect(o1, o2)); some are missing...
+	assert(!CGAL::do_intersect(o1, o2));
 	assert(CGAL::intersection(o1, o2).empty());
   }
 
@@ -114,14 +114,14 @@ struct Test {
   void check_intersection(const O1& o1, const O2& o2)
   {
 	Res tmp;
-	// FIXME : assert(CGAL::do_intersect(o1, o2));
+	assert(CGAL::do_intersect(o1, o2));
 	assert(CGAL::assign(tmp, CGAL::intersection(o1, o2)));
   }
 
   template < typename Res, typename O1, typename O2 >
   void check_intersection(const O1& o1, const O2& o2, const Res& result)
   {
-	// FIXME : assert(CGAL::do_intersect(o1, o2));
+	assert(CGAL::do_intersect(o1, o2));
 	Res tmp;
 	assert(CGAL::assign(tmp, CGAL::intersection(o1, o2)));
 	assert(approx_equal(tmp, result));
