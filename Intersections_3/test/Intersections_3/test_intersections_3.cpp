@@ -41,6 +41,8 @@ inline randomint::randomint()
   sequence[10] = 11;
 }
 
+randomint ri;
+
 inline double to_nt(int d)
 {
     return double(d);
@@ -139,7 +141,6 @@ struct Test {
 
   P p(int x, int y, int z)
   {
-    randomint ri;
     int w = ri.next();
     return P(to_nt(x*w), to_nt(y*w), to_nt(z*w), to_nt(w));
   }
