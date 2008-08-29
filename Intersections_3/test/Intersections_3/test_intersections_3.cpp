@@ -147,7 +147,6 @@ struct Test {
 
   Pl pl(int a, int b, int c, int d)
   {
-    randomint ri;
     int w = ri.next();
     return Pl(to_nt(a*w), to_nt(b*w), to_nt(c*w), to_nt(d*w));
   }
