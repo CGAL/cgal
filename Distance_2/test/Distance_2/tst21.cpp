@@ -13,7 +13,7 @@ int main()
 {
     randomint ri;
     int x1, x2, y1, y2, w1, w2;
-    TestR::FT d, d2;
+    TestR::FT d;
     std::cin >> x1 >> y1;
     if (!std::cin)
 	return 1;
@@ -29,8 +29,5 @@ int main()
     segment_t seg(tp3, tp4);
     d = CGAL::squared_distance(pt, seg);
     cout << CGAL::to_double(d) << '\n';
-    d2 = CGAL::Squared_distance_to_segment<TestR>(seg)(pt);
-    if (d2 != d)
-        cout<<"Two methods compute different results: "<<d <<" and "<<d2<<"\n";
-    return (d2 == d) ? 0 : 1;
+    return 0;
 }

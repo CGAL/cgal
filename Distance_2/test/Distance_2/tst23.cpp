@@ -15,7 +15,7 @@ int main()
 {
     randomint ri;
     int x1, x2, y1, y2, w1, w2;
-    TestR::FT d, d2;
+    TestR::FT d;
     std::cin >> x1 >> y1;
     if (!std::cin)
 	return 1;
@@ -31,8 +31,5 @@ int main()
     ray_t ray(tp1, tp2);
     d = CGAL::squared_distance(pt, ray);
     cout << CGAL::to_double(d) << '\n';
-    d2 = CGAL::Squared_distance_to_ray<TestR>(ray)(pt);
-    if (d2 != d)
-        cout << "Methods give different results: "<<d<<" and "<<d2<<"\n";
-    return (d2 == d) ? 0 : 1;
+    return 0;
 }

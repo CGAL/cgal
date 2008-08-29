@@ -648,42 +648,6 @@ squared_distance(const Point_2<K> & pt1, const Point_2<K> & pt2)
   return CGALi::squared_distance(pt1, pt2, K());
 }
 
-template <class K>
-class Squared_distance_to_line {
-  typename K::RT  a, b, c, sqnorm;
-public:
-  Squared_distance_to_line(typename K::Line_2 const &line)
-    : a(line.a()), b(line.b()), c(line.c())
-  {
-    sqnorm = a*a+b*b;
-  }
-
-
-  typename K::FT impl(typename K::Point_2 const &pt, const Homogeneous_tag&) const
-  {
-    typedef typename K::RT RT;
-    typedef typename K::FT FT;
-    const RT & w = pt.hw();
-    RT n = a*pt.hx() + b*pt.hy() + c * w;
-    RT d = sqnorm * CGAL_NTS square(w);
-    return Rational_traits<FT>().make_rational(CGAL_NTS square(n), d);
-  }
-
-  typename K::FT impl(typename K::Point_2 const &pt, const Cartesian_tag&) const
-  {
-    typedef typename K::FT FT;
-    FT n = a*pt.x() + b*pt.y() + c;
-    return (n*n) / sqnorm;
-  }
-
-  typename K::FT operator()(typename K::Point_2 const &pt) const
-  {
-    typedef typename K::Kernel_tag Tag;
-    Tag tag;
-    return impl(pt, tag);
-  }
-};
-
 
 template <class K>
 inline typename K::FT
@@ -700,29 +664,6 @@ squared_distance(const Line_2<K> & line, const Point_2<K> & pt)
     return squared_distance(pt, line);
 }
 
-template <class K>
-class Squared_distance_to_ray {
-    typename K::Vector_2 ray_dir;
-    typename K::Point_2 ray_source;
-    Squared_distance_to_line<K> supline_dist;
-  public:
-    Squared_distance_to_ray(typename K::Ray_2 const &ray)
-    : ray_dir(ray.direction().vector()),
-      ray_source(ray.source()),
-      supline_dist(ray.supporting_line())
-    { }
-    typename K::FT operator()(typename K::Point_2 const &pt) const
-    {
-      typename K::Construct_vector_2 construct_vector;
-      typename K::Compute_squared_length_2 compute_squared_length;
-        typename K::Vector_2 diff = construct_vector(ray_source, pt);
-        if (! CGALi::is_acute_angle(ray_dir,diff, K()) )
-            return (typename K::FT)compute_squared_length(diff);
-        return supline_dist(pt);
-    }
-};
-
-
 
 template <class K>
 inline typename K::FT
@@ -737,40 +678,6 @@ squared_distance(const Ray_2<K> & ray, const Point_2<K> & pt)
 {
     return squared_distance(pt, ray);
 }
-
-
-
-
-template <class K>
-class Squared_distance_to_segment {
-    typename K::Point_2 seg_source, seg_target;
-    Squared_distance_to_line<K> supline_dist;
-    typename K::Vector_2 segvec;
-    typename K::RT e;
-  public:
-    Squared_distance_to_segment(typename K::Segment_2 const &seg)
-    : seg_source(seg.source()), seg_target(seg.target()),
-      supline_dist(seg.supporting_line())
-    {
-        typename K::Construct_vector_2 construct_vector;
-        segvec = construct_vector(seg_source, seg_target);
-        e = CGALi::wdot(segvec,segvec, K());
-    }
-    typename K::FT operator()(typename K::Point_2 const &pt) const
-    {
-        typename K::Construct_vector_2 construct_vector;
-	typename K::Compute_squared_length_2 compute_squared_length;
-        typedef typename K::RT RT;
-        // assert that the segment is valid (non zero length).
-        typename K::Vector_2 diff = construct_vector(seg_source, pt);
-        RT d = CGALi::wdot(diff,segvec, K());
-        if (d <= (RT)0)
-            return (typename K::FT)compute_squared_length(diff);
-        if (wmult((K*)0 ,d, segvec.hw()) > wmult((K*)0, e, diff.hw()))
-            return CGALi::squared_distance(pt, seg_target, K());
-        return supline_dist(pt);
-    }
-};
 
 
 template <class K>
