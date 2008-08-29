@@ -7,6 +7,12 @@ remplacer les std::acos(-1.) par CGAL_PI
 cercle par 3 points
 
 ============
+
+to think about:
+is there a way move do_intersect(Circle3,Circle3) to Intersection package?
+(no use of sqrt?)
+
+============
 nettoyer 
 Solve 
 critical points
