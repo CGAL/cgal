@@ -108,6 +108,8 @@ struct Test {
   {
 	assert(!CGAL::do_intersect(o1, o2));
 	assert(CGAL::intersection(o1, o2).empty());
+	assert(!CGAL::do_intersect(o2, o1));
+	assert(CGAL::intersection(o2, o1).empty());
   }
 
   template < typename Res, typename O1, typename O2 >
@@ -116,15 +118,22 @@ struct Test {
 	Res tmp;
 	assert(CGAL::do_intersect(o1, o2));
 	assert(CGAL::assign(tmp, CGAL::intersection(o1, o2)));
+	assert(CGAL::do_intersect(o2, o1));
+	assert(CGAL::assign(tmp, CGAL::intersection(o2, o1)));
   }
 
   template < typename Res, typename O1, typename O2 >
-  void check_intersection(const O1& o1, const O2& o2, const Res& result)
+  void check_intersection(const O1& o1, const O2& o2, const Res& result, bool do_opposite = true)
   {
-	assert(CGAL::do_intersect(o1, o2));
 	Res tmp;
+	assert(CGAL::do_intersect(o1, o2));
 	assert(CGAL::assign(tmp, CGAL::intersection(o1, o2)));
 	assert(approx_equal(tmp, result));
+	if (do_opposite) {
+	  assert(CGAL::do_intersect(o2, o1));
+	  assert(CGAL::assign(tmp, CGAL::intersection(o2, o1)));
+	  assert(approx_equal(tmp, result));
+	}
   }
 
 
@@ -185,11 +194,13 @@ struct Test {
   void Pl_Pl()
   {
     std::cout << "Plane - Plane\n";
-    check_intersection     (pl(0, 0, 1, 0), pl(0, 1, 0, 0), L(P(0, 0, 0), P(-85, 0, 0)));
+    check_intersection     (pl(0, 0, 1, 0), pl(0, 1, 0, 0), L(P(0, 0, 0), P(-85, 0, 0)), false);
+    check_intersection     (pl(0, 1, 0, 0), pl(0, 0, 1, 0), L(P(-85, 0, 0), P(0, 0, 0)), false);
     check_intersection<Pl> (pl(0, 0, 1, 1), pl(0, 0, 3, 3));
     check_no_intersection  (pl(2, 1, 3, 4), pl(6, 3, 9, 3));
     check_intersection<Pl> (pl(2, 1, 3, 4), pl(6, 3, 9, 12));
-    check_intersection     (pl(2, 3, 7, 5), pl(9, 7, 1, 3), L(P(2,-3, 0), P(-3908, 5182, -1105)));
+    check_intersection     (pl(2, 3, 7, 5), pl(9, 7, 1, 3), L(P(2,-3, 0), P(-3908, 5182, -1105)), false);
+    check_intersection     (pl(9, 7, 1, 3), pl(2, 3, 7, 5), L(P(-3908, 5182, -1105), P(2,-3, 0)), false);
   }
 
   void Pl_Pl_Pl()
