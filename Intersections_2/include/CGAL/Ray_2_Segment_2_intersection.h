@@ -61,7 +61,7 @@ protected:
 template <class K>
 inline bool do_intersect(const typename K::Ray_2 &p1,
 			 const typename K::Segment_2 &p2,
-			 const K& k)
+			 const K&)
 {
     typedef Ray_2_Segment_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
