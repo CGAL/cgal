@@ -31,7 +31,10 @@
 
 #include <vector>
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/or.hpp>
 #include <boost/type_traits.hpp>
+#include <boost/static_assert.hpp>
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -40,26 +43,47 @@ CGAL_BEGIN_NAMESPACE
  * \param arr1 The first arrangement.
  * \param arr2 The second arrangement.
  * \param arr_res Output: The resulting arrangement.
- * \param ovl_tr An overlay-traits class. As arr1, arr2 and res are all
- *               templated with the same arrangement-traits class but with
+ * \param ovl_tr An overlay-traits class. As arr1, arr2 and res can be
+ *               templated with different geometry-traits class and
  *               different DCELs (encapsulated in the various topology-traits
- *               classes), the overlay-traits class defines the various
+ *               classes). The geometry-traits of the result arrangement is 
+ *               used to construct the result arrangement. This means that all
+ *               the types (e.g., Point_2, Curve_2 and X_monotone_2) of both
+ *               arr1 and arr2 have to be convertible to the types
+ *               in the result geometry-traits.
+ *               The overlay-traits class defines the various
  *               overlay operations of pairs of DCEL features from
  *               TopTraitsA and TopTraitsB to the resulting ResDcel.
  */
-template <class GeomTraits,
+template <class GeomTraitsA,
+          class GeomTraitsB,
+          class GeomTraitsRes,
           class TopTraitsA,
           class TopTraitsB,
           class TopTraitsRes,
           class OverlayTraits>
-void overlay (const Arrangement_on_surface_2<GeomTraits, TopTraitsA>& arr1,
-              const Arrangement_on_surface_2<GeomTraits, TopTraitsB>& arr2,
-              Arrangement_on_surface_2<GeomTraits, TopTraitsRes>& arr_res,
+void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
+              const Arrangement_on_surface_2<GeomTraitsB, TopTraitsB>& arr2,
+              Arrangement_on_surface_2<GeomTraitsRes, TopTraitsRes>& arr_res,
               OverlayTraits& ovl_tr)
 {
-  typedef Arrangement_on_surface_2<GeomTraits, TopTraitsA>       ArrA;
-  typedef Arrangement_on_surface_2<GeomTraits, TopTraitsB>       ArrB;
-  typedef Arrangement_on_surface_2<GeomTraits, TopTraitsRes>     ArrRes;
+  typedef Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>       ArrA;
+  typedef Arrangement_on_surface_2<GeomTraitsB, TopTraitsB>       ArrB;
+  typedef Arrangement_on_surface_2<GeomTraitsRes, TopTraitsRes>   ArrRes;
+
+  // some type assertions (not all, but better then nothing).
+  BOOST_STATIC_ASSERT((boost::is_convertible<                         \
+                       typename GeomTraitsA::Point_2,                 \
+                       typename GeomTraitsRes::Point_2 >::value));
+  BOOST_STATIC_ASSERT((boost::is_convertible<                           \
+                       typename GeomTraitsB::Point_2,                   \
+                       typename GeomTraitsRes::Point_2 >::value));
+  BOOST_STATIC_ASSERT((boost::is_convertible<                           \
+                       typename GeomTraitsA::X_monotone_curve_2,        \
+                       typename GeomTraitsRes::X_monotone_curve_2 >::value));
+  BOOST_STATIC_ASSERT((boost::is_convertible<                           \
+                       typename GeomTraitsB::X_monotone_curve_2,        \
+                       typename GeomTraitsRes::X_monotone_curve_2 >::value));
 
   typedef typename TopTraitsRes::template
     Sweep_line_overlay_visitor<ArrA, ArrB, OverlayTraits>
@@ -107,7 +131,7 @@ void overlay (const Arrangement_on_surface_2<GeomTraits, TopTraitsA>& arr1,
   }
 
   // Obtain a extended traits-class object and define the sweep-line visitor.
-  GeomTraits               *geom_traits = arr_res.geometry_traits();
+  GeomTraitsRes               *geom_traits = arr_res.geometry_traits();
 
     /* We would like to avoid copy construction of the geometry traits class.
    * Copy construction is undesired, because it may results with data
@@ -121,7 +145,7 @@ void overlay (const Arrangement_on_surface_2<GeomTraits, TopTraitsA>& arr1,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<GeomTraits, Ovl_traits_2>,
+  typename boost::mpl::if_<boost::is_same<GeomTraitsRes, Ovl_traits_2>,
                            Ovl_traits_2&, Ovl_traits_2>::type
     ex_traits(*geom_traits);
 

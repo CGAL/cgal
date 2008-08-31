@@ -16,11 +16,15 @@ see, e.g.,~\cite{cgal:behhms-cbcab-02}).
 The function \ccc{overlay (arr_a, arr_b, ovl_arr, ovl_traits)} accepts
 two input arrangement instances \ccc{arr_a} and \ccc{arr_b}, and constructs
 their overlay instance \ccc{ovl_arr}. All three arrangements must use the
-same geometric primitives. In other words, their types must be defined 
-using the same geometric traits-class. Let us assume that \ccc{arr_a} is of 
-type \ccc{Arrangement_2<Traits,Dcel_A>}, \ccc{arr_b} is of type
-\ccc{Arrangement_2<Traits,Dcel_B>} and the resulting \ccc{ovl_arr} is of type 
-\ccc{Arrangement_2<Traits,Dcel_R>}. The \ccc{ovl_traits} parameter is
+same geometric primitives. More precisely, let \ccc{arr_a} be of 
+type \ccc{Arrangement_2<Traits_A,Dcel_A>}, \ccc{arr_b} be of type
+\ccc{Arrangement_2<Traits_B,Dcel_B>} and the resulting \ccc{ovl_arr} be of type 
+\ccc{Arrangement_2<Traits_R,Dcel_R>}. All types nested in geometry
+traits \ccc{Traits_A}, e.g., \ccc{Point_2} and
+\ccc{X_monotone_curve_2}, must be convertible to the corresponding 
+types nested in geometry traits \ccc{Traits_R}. The same holds for all
+types nested in geometry traits \ccc{Traits_B}.
+The \ccc{ovl_traits} parameter is
 an instance of an {\em overlay traits-class}, which enables the creation of
 \ccc{Dcel_R} records in the overlaid arrangement from the \dcel\ features
 of \ccc{arr_a} and \ccc{arr_b} that they correspond to.
