@@ -1,4 +1,12 @@
 \begin{ccRefFunction}{intersection}
+
+Depending on which \cgal\ \ccHtmlNoLinksFrom{kernel} is used,
+different versions of this global function are available. This is
+described below.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the basic 2D and 3D Kernel} (see Chapter~\ref{chapter-kernel-23})
+
 \ccInclude{CGAL/intersections.h}
 
 \ccUnchecked{
@@ -329,10 +337,137 @@ There is also an intersection function between 3 planes.
 {returns the intersection of 3 planes, which can be either a point, a line,
 a plane, or empty.}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the 2D Circular Kernel} (see Chapter~\ref{chapter-circular-kernel}) 
+
+\ccInclude{CGAL/Circular_kernel_intersections.h}
+
+If this kernel is used, in addition to the function and the
+combination of 2D types described above, another version of the function
+is provided.
+
+Since both the number of intersections, if any, and their type,
+depend on the arguments, the function returns an output
+iterator on \ccc{Object}'s, as presented below. 
+
+\ccFunction{template < class OutputIterator >
+OutputIterator
+intersection(const  Type1 &obj1, const Type2 &obj2,
+		OutputIterator intersections);}
+{Copies in the output iterator the intersection elements between the
+two objects. \ccc{intersections} iterates on
+elements of type \ccc{CGAL::Object}, in lexicographic order,}
+
+where \ccStyle{Type1} and \ccStyle{Type2} can both be either
+\begin{itemize}
+\item {} \ccStyle{Line_2<CircularKernel>} or
+\item {} \ccStyle{Line_arc_2<CircularKernel>} or
+\item {} \ccStyle{Circle_2<CircularKernel>} or
+\item {} \ccStyle{Circular_arc_2<CircularKernel>}.
+\end{itemize} 
+
+Depending on the types \ccStyle{Type1} and \ccStyle{Type2}, these
+elements can be assigned to
+\begin{itemize}
+\item {} \ccStyle{std::pair<Circular_arc_point_2<CircularKernel>, unsigned>},
+where the unsigned integer is the multiplicity of the corresponding
+intersection point between \ccc{obj1} and \ccc{obj2},
+\item {} \ccStyle{Circular_arc_2<CircularKernel>} in case of an overlap of 
+two circular arcs,
+\item {} \ccStyle{Line_arc_2<CircularKernel>} in case of an overlap of two 
+line segments or
+\item {} \ccStyle{Line_2<CircularKernel>} or 
+\ccStyle{Circle_2<CircularKernel>} in case of two equal input lines or circles.
+\end{itemize} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the 3D Spherical Kernel} (see Chapter~\ref{chapter-spherical-kernel}) 
+
+\ccInclude{CGAL/Spherical_kernel_intersections.h}
+
+If this kernel is used, in addition to the function and the
+combination of 3D types described above, two other versions of the function
+are provided.
+
+Since both the number of intersections, if any, and their type,
+depend on the arguments, the functions return an output
+iterator on \ccStyle{Object}'s, as presented below. 
+
+The \textbf{first function} is:
+
+\ccFunction{template < class OutputIterator >
+OutputIterator
+intersection(const  Type1 &obj1, const Type2 &obj2,
+		OutputIterator intersections);}
+{Copies in the output iterator the intersection elements between the
+two objects. \ccc{intersections} iterates on
+elements of type \ccStyle{CGAL::Object}, in lexicographic order,
+when this ordering is defined on the computed objects,}
+
+where \ccStyle{Type1} and \ccStyle{Type2} can both be either:
+\begin{itemize}
+\item {} \ccStyle{Sphere_3<SphericalKernel>},
+\item {} \ccStyle{Plane_<SphericalKernel>3},
+\item {} \ccStyle{Line_3<SphericalKernel>},
+\item {} \ccStyle{Circle_3<SphericalKernel>},
+\item {} \ccStyle{Line_arc_3<SphericalKernel>} or
+\item {} \ccStyle{Circular_arc_3<SphericalKernel>},
+\end{itemize} 
+
+and depending on the types \ccStyle{Type1} and \ccStyle{Type2}, the computed 
+\ccStyle{CGAL::Object}s can be assigned to 
+\begin{itemize}
+\item {} \ccStyle{std::pair<Circular_arc_point_3<SphericalKernel>, unsigned>},
+where the unsigned integer is the multiplicity of the corresponding
+intersection point between \ccc{obj1} and \ccc{obj2},
+\item {} \ccStyle{Type1}, when \ccStyle{Type1} and \ccStyle{Type2} are equal, 
+and if the two objets \ccc{obj1} and \ccc{obj2} are equal,
+\item {} \ccStyle{Line_3<SphericalKernel>} or 
+\ccStyle{Circle_3<SphericalKernel>} when \ccStyle{Type1} and \ccStyle{Type2} 
+are two-dimensional objets intersecting along a curve (2 planes, or 2
+spheres, or one plane and one sphere),
+\item {} \ccStyle{Circular_arc_3<SphericalKernel>} in case of an overlap of 
+two circular arcs or
+\item {} \ccStyle{Line_arc_3<SphericalKernel>} in case of an overlap of two 
+line segments. 
+\end{itemize} 
+
+The \textbf{second function} is:
+
+\ccFunction{template < class OutputIterator >
+OutputIterator
+intersection(const Type1 &obj1, const Type2 &obj2, const Type3 &obj3,
+	OutputIterator intersections);}
+{Copies in the output iterator the intersection elements between the
+three objects. \ccc{intersections} iterates on
+elements of type \ccStyle{CGAL::Object}, in lexicographic order 
+when this ordering is defined on the computed objects}
+
+where \ccStyle{Type1}, \ccStyle{Type2} and \ccStyle{Type3}
+can be either
+\begin{itemize}
+\item {} \ccStyle{Sphere_3<SphericalKernel>} or
+\item {} \ccStyle{Plane_3<SphericalKernel>}
+\end{itemize}
+
+and depending of these types, the computed \ccStyle{CGAL::Object}s can be 
+assigned to 
+\begin{itemize}
+\item {} \ccStyle{std::pair<Circular_arc_point_3<SphericalKernel>, unsigned>},
+where the unsigned integer is the multiplicity of the corresponding
+intersection point,
+\item {} \ccStyle{Circle_3<SphericalKernel>} or
+\item {} \ccStyle{Type1}, when \ccStyle{Type1}, \ccStyle{Type2} and 
+\ccc{Type3} are equal, and if the three objets \ccc{obj1} and \ccc{obj2} 
+and \ccc{obj3} are equal.
+\end{itemize} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ccExample
 
 The following example demonstrates the most common use of 
-\ccc{intersection} routines.
+\ccc{intersection} routines with the basic 2D and 3D Kernels.
 \begin{verbatim}
 #include <CGAL/intersections.h>
 
@@ -365,6 +500,11 @@ void foo(CGAL::Segment_2<Kernel> seg, CGAL::Line_2<Kernel> line)
 }
 \end{verbatim}%
 \ccHtmlLinksOn%
+
+Examples illustrating the use of this function in the case of the 2D
+Circular Kernel and the 3D Spherical Kernel are presented respectively
+in Chapters~\ref{chapter-circular-kernel}
+and~\ref{chapter-spherical-kernel}.
 
 \ccSeeAlso
 % \ccRefIdfierPage{CGAL::assign} \\
