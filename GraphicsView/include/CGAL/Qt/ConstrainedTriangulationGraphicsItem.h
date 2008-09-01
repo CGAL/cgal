@@ -43,7 +43,7 @@ public:
   void setvisibleConstraints(const bool b)
   {
     visible_constraints = b;
-    update();
+    this->update();
   }
 
 protected:

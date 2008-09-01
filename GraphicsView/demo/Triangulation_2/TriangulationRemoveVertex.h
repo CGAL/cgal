@@ -6,6 +6,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QEvent>
 #include <list>
+#include <CGAL/Qt/Converter.h>
 
 
 
