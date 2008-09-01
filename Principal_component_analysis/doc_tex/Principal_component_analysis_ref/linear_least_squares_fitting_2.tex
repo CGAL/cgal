@@ -34,10 +34,9 @@ to the best fitting line.
 \ccPrecond{first != beyond.} }
 
 
-The class \ccc{K} is the kernel in which the type \ccc{InputIterator::value_type} is defined. It can be omitted and
-deduced automatically from the value type.
+The class \ccc{K} is the kernel in which the type \ccc{InputIterator::value_type} is defined. It can be omitted and deduced automatically from the value type.
 
-The tag \ccc{tag} identifies the dimension of the objects in the object set. For point sets it should be 0. For segment sets it could be 1 or 0 according to whether one wants to fit the entire segment or just the end points. For triangles it can range from 0 to 2 according to whether one wants to fit the end points, the segments or the entire triangle. For triangles it can range from 0 to 2 according to whether one wants to fit the corners, the segments, or the entire rectangle. For circles it can be 1 or 2 according to whether one wants to fit the circle or the entire disc. For triangles it ranges from 0 to 2 according to whether one wants to fit the points, the segments or the entire triangle.
+The tag \ccc{tag} identifies the dimension of the objects in the object set. For point sets it should be 0. For segment sets it could be 1 or 0 according to whether one wants to fit the entire segment or just the end points. For triangles it can range from 0 to 2 according to whether one wants to fit the end points, the segments or the entire triangle. For triangles it can range from 0 to 2 according to whether one wants to fit the corners, the segments, or the entire rectangle. For circles it can be 1 or 2 according to whether one wants to fit the circle or the entire disc. For triangles it ranges from 0 to 2 according to whether one wants to fit the points, the segments or the entire triangles.
 
 
 \ccHeading{Requirements}

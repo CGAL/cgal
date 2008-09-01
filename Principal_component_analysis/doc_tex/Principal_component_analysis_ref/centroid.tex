@@ -13,28 +13,25 @@
 \ccDefinition
   
 The function \ccRefName\ computes the centroid (center of mass) of a set
-of 2D or 3D objects. These include Points, Segments, Triangles, Rectangles and Circles in 2D and in addition, Cuboids, Spheres and Tetrahedrons in 3D.
+of 2D or 3D objects. These include points, segments, triangles, rectangles and circles in 2D and in addition, cuboids, spheres and tetrahedra in 3D.
 
 \ccInclude{CGAL/centroid.h}
 
 There is a set of overloaded \ccc{centroid} functions for 2D and 3D objects.
-The user can also optionally pass an explicit kernel, in case the default,
-based on \ccc{Kernel_traits} is not sufficient.
-The dimension is also deduced automatically. The user also has to pass a \ccc{tag}
-specifying the type of manifold of the objects.
+The user can also optionally pass an explicit kernel, in case the default based on \ccc{Kernel_traits} is not sufficient. The dimension is deduced automatically, although the user can pass a \ccc{tag} specifying the manifold dimension of the objects. For example, the default dimension of tetrahedra is 3, but specifying a dimension 0 fits only the vertices of the tetrahedra, specifying a dimension 1 fits only the edges of the tetrahedra and specifying a dimension 2 fits only the triangle facets of the tetrahedra.
 
 \ccFunction{template < typename InputIterator, typename Tag >
             K::Point_2
             centroid(InputIterator first, InputIterator beyond, const Tag& t);}
 { computes the centroid of a non-empty set of 2D objects having a manifold described by t.
-  \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.  The value type must be \ccc{K::Point_2}.
+  \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.  The value type must be \ccc{K::Point_2}. The tag can range between CGAL::Dimension_tag\<0\> and CGAL::Dimension_tag\<2\>.
 \ccPrecond{first != beyond.} }
 
 \ccFunction{template < typename InputIterator, typename K, typename Tag >
             K::Point_2
             centroid(InputIterator first, InputIterator beyond, const K & k, const Tag& t);}
 { computes the centroid of a non-empty set of 2D objects having a manifold described by t.
-  The value type must be \ccc{K::Point_2}.
+  The value type must be \ccc{K::Point_2}. The tag can range between CGAL::Dimension_tag\<0\> and CGAL::Dimension_tag\<2\>.
 \ccPrecond{first != beyond.} }
 
 \ccFunction{template < typename InputIterator, typename Tag >
@@ -42,16 +39,15 @@ specifying the type of manifold of the objects.
             centroid(InputIterator first, InputIterator beyond, const Tag& t);}
 { computes the centroid of a non-empty set of 3D objects having a manifold described by t.
   \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.
-  The value type must be \ccc{K::Point_3}.
+  The value type must be \ccc{K::Point_3}. The tag can range between CGAL::Dimension_tag\<0\> and CGAL::Dimension_tag\<3\>.
 \ccPrecond{first != beyond.} }
 
 \ccFunction{template < typename InputIterator, typename K, typename Tag >
             K::Point_3
             centroid(InputIterator first, InputIterator beyond, const K & k, const Tag& t);}
 { computes the centroid of a non-empty set of 3D objects having a manifold described by t.
-  The value type must be \ccc{K::Point_3}.
+  The value type must be \ccc{K::Point_3}. The tag can range between CGAL::Dimension_tag\<0\> and CGAL::Dimension_tag\<3\>.
 \ccPrecond{first != beyond.} }
-
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::barycenter}
