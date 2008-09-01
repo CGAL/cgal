@@ -19,21 +19,21 @@ The template parameter of \ccRefName\ must be a
 \ccCreationVariable{tgi}
 
 \ccConstructor{TriangulationGraphicsItem<T>(T* t);}{Constructs a graphics
-  item for triangulation pointed by \ccc{t}.}
+  item for a triangulation pointed by \ccc{t}.}
 
 \ccOperations
 
-\ccMethod{QPen verticesPen()() const;}{Get the pen that is used to draw vertices.}
-\ccMethod{void setVerticesPen()(const QPen& p);}{Set the pen that is used to draw vertices.}
+\ccMethod{QPen verticesPen()() const;}{Returns the pen used to draw vertices.}
+\ccMethod{void setVerticesPen()(const QPen& p);}{Sets the pen used to draw vertices.}
 
-\ccMethod{QPen edgesPen()() const;}{Get the pen that is used to draw edges.}
-\ccMethod{void setEdgesPen()(const QPen& p);}{Set the pen that is used to draw edges.}
+\ccMethod{QPen edgesPen()() const;}{Returns the pen used to draw edges.}
+\ccMethod{void setEdgesPen()(const QPen& p);}{Sets the pen used to draw edges.}
 
-\ccMethod{bool drawVertices();}{Property to switch drawing of vertices on or off.}
-\ccMethod{bool setDrawVertices(bool b);}{Set the property.}
+\ccMethod{bool visibleVertices();}{Returns \ccc{true}, iff vertices are drawn.}
+\ccMethod{void setVisibleVertices(bool b);}{Sets the property.}
 
-\ccMethod{bool drawEdges();}{Property to switch drawing of edges on or off.}
-\ccMethod{bool setDrawEdges(bool b);}{Set the property.}
+\ccMethod{bool visibleEdges();}{Returns \ccc{true}, iff edges are drawn.}
+\ccMethod{void setVisibleEdges(bool b);}{Sets the property.}
 \end{ccRefClass}
 
 

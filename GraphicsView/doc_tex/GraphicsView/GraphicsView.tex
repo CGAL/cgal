@@ -46,8 +46,8 @@ brings them together we adopted the following, hybrid naming conventions.
 \section{Overall Design}
 
 In Figure~\ref{graphicsview:uml} you see four classes depicted in grey,
-that come from the Qt Graphics View Framework. It is the \ccAnchor{http://doc.trolltech.com/4.4/qgraphicsscene.html}{\ccc{QGraphicsScene}},
-which contains \ccAnchor{http://doc.trolltech.com/4.4/qgraphicsitem.html}{\ccc{QGraphicsItem}}s, which get displayed in any number
+that come from the Qt Graphics View Framework. The \ccAnchor{http://doc.trolltech.com/4.4/qgraphicsscene.html}{\ccc{QGraphicsScene}}
+contains \ccAnchor{http://doc.trolltech.com/4.4/qgraphicsitem.html}{\ccc{QGraphicsItem}}s, which get displayed in any number
 of \ccAnchor{http://doc.trolltech.com/4.4/qgraphicsview.html}{\ccc{QGraphicsView}}s. The views are widgets, that is they take screen space
 in an application.
 
@@ -92,10 +92,10 @@ triangulation changes the application emits a signal that can get connected to t
 \subsection{Navigation}
 
 We provide a class \ccc{CGAL::Qt::GraphicsViewNavigation} that can be
-installed as an event filter of a graphics view and its viewport. Like
+installed as an event filter of a graphics view and its viewport. As for
 all Qt widgets, the \ccc{QGraphicsView} is derived from
-\ccc{QObject} and events like mouse clicks, mouse movements, pressed keys and 
-modifier keys are passed to the view which first hands them over to the
+\ccc{QObject}. Events like the  mouse buttons pressed or released, the mouse movemed, keys pressed, 
+are passed to the view which first hands them over to the
 event filter.  The \ccc{CGAL::Qt::GraphicsViewNavigation} event filter allows to zoom, scroll, and recenter.
 Finally, the class emits a signal with the mouse coordinates. This can be used
 to display the current mouse position in the status bar of an application.
@@ -112,8 +112,8 @@ it emits a \ccc{CGAL::Object} wrapping the input.  The emitted input can be conn
 by the application developer to a slot. In the 2D demos of \cgal, which use the 
 Graphics View Framework we connect it to the slot \ccc{MainWindow::processInput(CGAL::Object)}.
 This method unwraps from the \ccc{CGAL::Object} and inserts it in the data structure. 
-It then typically emits a signal \ccc{modelChanged()} which the application developer 
-connects to the graphics item representing the data structure.
+It then typically emits a signal \ccc{modelChanged()} which can be 
+connected to the graphics item representing the data structure.
 
 All input generators we provide use the left mouse button for entering points.
 The right click terminates a sequence of entered points. 'Delete' and 'backspace'

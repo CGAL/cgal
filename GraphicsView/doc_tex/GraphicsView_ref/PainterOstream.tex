@@ -29,13 +29,13 @@ This is typically the visible area of the widget where the unbounded object is d
 
 \ccMethod{PainterOstream<K> operator<<(K::Circle_2);}{Draws a circle.}
 
-\ccMethod{PainterOstream<K> operator<<(std::list<K::Point_2>);}{Draws a polyline.}
+\ccMethod{PainterOstream<K> operator<<(std::list<K::Point_2>);}{Draws a polyline. In order to close it the first and last point must be equal. }
 
 \ccMethod{PainterOstream<K> operator<<(Bbox_2);}{Draws an iso rectangle.}
 
-\ccMethod{PainterOstream<K> operator<<(QPen);}{Sets the pen which is used in the next paint operations.}
+\ccMethod{PainterOstream<K> operator<<(QPen);}{Sets the pen used in the next paint operations.}
 
-\ccMethod{PainterOstream<K> operator<<(QBrush);}{Sets the brush which is used in the next paint operations.}
+\ccMethod{PainterOstream<K> operator<<(QBrush);}{Sets the brush used in the next paint operations.}
 
 \end{ccRefClass}
 

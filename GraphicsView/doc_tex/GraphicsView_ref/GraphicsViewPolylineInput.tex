@@ -10,7 +10,7 @@ or 'Backspace' key if you want to remove your last entered point in the polygon,
 and the 'Esc' key if you want to remove all points.
 
 The tool can serve at the same time for entering a single point,
-a polyline with a given number of points, and for open and closed
+a polyline with a given number of points, and for open as well as closed
 polylines.
 
 \ccInclude{CGAL/Qt/GraphicsViewPolylineInput.h}
@@ -30,11 +30,13 @@ The template parameter of \ccc{GraphicsViewPolylineInput<K>} must be a \cgal\ \c
 
 \ccConstructor{GraphicsViewPolylineInput<T>(QGraphicsScene* s, int n = 0,
   bool closed = true);}
-{\ccc{s} is the scene where we want to draw the polyline. \ccc{n} is the
-  number of points of the polyline to generate. If \ccc{c} is equal to 0,
+{\ccc{s} is the scene where the polyline is generated. \ccc{n} is the
+  number of points of the polyline to be generated. If \ccc{c} is equal to 0,
   the default value, the number of points of the polyline is not
   limited. When \ccc{closed} is \ccc{true} the function displays a
   polygon.}
+
+\ccHeading{Signals}
 
 \ccMethod{void generate(CGAL::Object o);}{The object \ccc{o} contains a \ccc{std:list<K::Point_2>}.}
 
