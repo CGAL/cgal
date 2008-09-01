@@ -52,25 +52,25 @@ public:
     edges_pen = pen;
   }
 
-  bool drawVertices() const
+  bool visibleVertices() const
   {
-    return draw_vertices;
+    return visible_vertices;
   }
 
-  void setDrawVertices(const bool b)
+  void setVisibleVertices(const bool b)
   {
-    draw_vertices = b;
+    visible_vertices = b;
     update();
   }
 
-  bool drawEdges() const
+  bool visibleEdges() const
   {
-    return draw_edges;
+    return visible_edges;
   }
 
-  void setDrawEdges(const bool b)
+  void setVisibleEdges(const bool b)
   {
-    draw_edges = b;
+    visible_edges = b;
     update();
   }
 
@@ -92,15 +92,15 @@ protected:
 
   QPen vertices_pen;
   QPen edges_pen;
-  bool draw_vertices;
-  bool draw_edges;
+  bool visible_vertices;
+  bool visible_edges;
 };
 
 
 template <typename T>
 TriangulationGraphicsItem<T>::TriangulationGraphicsItem(T * t_)
   :  t(t_), bb(0,0,0,0), bb_initialized(false),
-     draw_edges(true), draw_vertices(true),
+     visible_edges(true), visible_vertices(true),
      painterostream(0)
 {
   setVerticesPen(QPen(::Qt::red, 3.));
@@ -123,7 +123,7 @@ template <typename T>
 void 
 TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
-  if(draw_edges) {
+  if(visible_edges) {
     for (int i=0; i<3; i++) {
       if (fh < fh->neighbor(i) || t->is_infinite(fh->neighbor(i))){
         m_painter->setPen(this->edgesPen());
@@ -131,7 +131,7 @@ TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
       }
     }
   }
-  if(draw_vertices) {
+  if(visible_vertices) {
     for (int i=0; i<3; i++) {
       paintOneVertex(fh->vertex(i)->point());
     }
