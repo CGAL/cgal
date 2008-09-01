@@ -482,6 +482,11 @@ sub main()
     print_platform_descriptions();
 
     print OUTPUT << 'EOF';
+ <p style="width: 100%">This page has been created by the test results
+     collection scripts (in <a
+     href="https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Maintenance/test_handling?root=cgal"><tt>trunk/Maintenance/test_handling</tt></a>).
+     <a href="test_results.log">See the log here</a>.</p>
+
  <p>
     <a href="http://validator.w3.org/check?uri=https://cgal.geometryfactory.com<!--#echo var="DOCUMENT_URI" -->"><img
         src="http://www.w3.org/Icons/valid-html401-blue"
