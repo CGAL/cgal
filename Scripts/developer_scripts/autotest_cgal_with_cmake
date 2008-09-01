@@ -63,6 +63,7 @@ PLATFORMS=""
 PLATFORM=""
 USE_REFERENCE_PLATFORMS=""
 SHOW_PROGRESS=""
+LIST_TEST_PACKAGES="${CGAL_ROOT}/list_test_packages"
 
 # ----------------------------------------------------------------------------------------
 # write to logfile 
@@ -428,6 +429,7 @@ build_cgal_on_host()
   
   PLATFORMS="`value_of BUILD_ON_${HOST}`"
 
+  
   if [ -z "${PLATFORMS}" ]; then
     PLATFORMS=`value_of COMPILERS_${HOST}`
   fi
@@ -447,8 +449,8 @@ build_cgal_on_host()
       else
         CGAL_REFERENCE_CACHE_DIR=""
       fi
-
-      log "${ACTUAL_LOGFILE}.${HOST}" "Building cgal libs on host ${HOST} and platform ${PLATFORM}\nUnder ${CGAL_BINARY_DIR}\nUsing reference cache directory ${CGAL_REFERENCE_CACHE_DIR}"
+      
+      log "${ACTUAL_LOGFILE}" "Building cgal libs on host ${HOST} and platform ${PLATFORM}\nUnder ${CGAL_BINARY_DIR}\nUsing reference cache directory ${CGAL_REFERENCE_CACHE_DIR}"
       
       if [ -f "${CGAL_BINARY_DIR}/localbuildscript" ] ; then
         log "${ACTUAL_LOGFILE}" "WARNING! Already built on platform ${PLATFORM}."
@@ -480,7 +482,7 @@ ${MAKE_CMD} -k -fMakefile;
 cd ..;
 EOF
         chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript"
-        remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" >> "${ACTUAL_LOGFILE}.${PLATFORM}" 2>&1
+        remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" > "${ACTUAL_LOGFILE}.${PLATFORM}" 2>&1
                                
         cp "${ACTUAL_LOGFILE}.${PLATFORM}" "${CGAL_BINARY_DIR}/installation.log"
       fi
@@ -539,8 +541,6 @@ run_test_on_host_and_platform()
     else
       rm -f "${CGAL_BINARY_DIR}/localtestscript"
     fi
-
-    
     
     cat >> "${CGAL_BINARY_DIR}/localtestscript" <<EOF
 CGAL_TESTER='${CGAL_TESTER}';
@@ -560,8 +560,33 @@ export CGAL_DIR;
 export CGAL_TEST_HOST CGAL_TEST_PLATFORM;
 export CMAKE_GENERATOR;
 export MAKE_CMD;
+
+LIST_TEST_PACKAGES='${LIST_TEST_PACKAGES}'
+CGAL_ROOT='${CGAL_ROOT}'
+
 rm -rf '${CGAL_BINARY_DIR}/test';
-cp -r '${CGAL_TEST_DIR}' '${CGAL_BINARY_DIR}/test';
+
+if [ -f '${LIST_TEST_PACKAGES}' ]; then
+
+  mkdir '${CGAL_BINARY_DIR}/test'
+  
+  cp '${CGAL_TEST_DIR}/collect_cgal_testresults_from_cmake' '${CGAL_BINARY_DIR}/test'
+  cp '${CGAL_TEST_DIR}/makefile2'                           '${CGAL_BINARY_DIR}/test'
+  cp '${CGAL_TEST_DIR}/run_testsuite_with_cmake'            '${CGAL_BINARY_DIR}/test'
+
+  for PACKAGE in \`source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}'\`; do
+  
+    if [ -d "${CGAL_TEST_DIR}/\${PACKAGE}" ]; then
+      mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
+      cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
+    fi
+    
+  done
+    
+else
+  cp -r '${CGAL_TEST_DIR}' '${CGAL_BINARY_DIR}/test';
+fi
+
 cd '${CGAL_BINARY_DIR}/test';
 [ -n "${ULIMIT_OPTIONS}" ] && ulimit ${ULIMIT_OPTIONS};
 nice ${NICE_OPTIONS} make ${MAKE_OPTS} -k -fmakefile2;
@@ -569,9 +594,9 @@ echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
 echo 'COPYING RESULTS';
 cp 'results_${CGAL_TESTER}_${PLATFORM}.tar.gz' 'results_${CGAL_TESTER}_${PLATFORM}.txt' '${CGAL_TEST_DIR}';
-#echo 'REMOVING LOCAL_TEST_DIR';
+echo 'REMOVING LOCAL_TEST_DIR';
 cd ..;
-#rm -rf '${CGAL_BINARY_DIR}/test'
+rm -rf '${CGAL_BINARY_DIR}/test'
 EOF
 
 
