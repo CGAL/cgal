@@ -11,7 +11,7 @@
 #include <CGAL/Lipschitz_sizing_field_criteria_2.h>
 #include <CGAL/Triangulation_conformer_2.h>
 #include <CGAL/spatial_sort.h>
-#include <CGAL/point_generators_2.h>
+#include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 
 // Qt headers
@@ -315,7 +315,7 @@ MainWindow::on_actionInsertPolyline_toggled(bool checked)
 void
 MainWindow::on_actionShowDelaunay_toggled(bool checked)
 {
-  dgi->setDrawEdges(checked);
+  dgi->setVisibleEdges(checked);
 }
 
 
@@ -559,6 +559,8 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
 {
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
+  double edge_length = 0;
+/*
   double len = 0;
   int cc = 0;
   for(CDT::Finite_edges_iterator it = cdt.finite_edges_begin();
@@ -569,10 +571,10 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
       len+= sqrt(cdt.segment(*it).squared_length());
     }
   }
-  double al = len/cc;
-  al /= 2.0;
+  edge_length = len/cc;
+  */
   int nv = cdt.number_of_vertices();
-  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.0));
+  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, edge_length));
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   // default cursor
@@ -611,23 +613,35 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
   emit(changed());
 }
 
+
+
 void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
-  // wait cursor
-  QApplication::setOverrideCursor(Qt::WaitCursor);
+ QRectF rect;
+  QList<QGraphicsView *>  views = scene.views();
+  for (int i = 0; i < views.size(); ++i) {
+    QGraphicsView *view = views.at(i);
+    QRect vprect = view->viewport()->rect();
+    QPoint tl = vprect.topLeft();
+    QPoint br = vprect.bottomRight();
+    QPointF tlf = view->mapToScene(tl);
+    QPointF brf = view->mapToScene(br);
+    rect |= QRectF(tlf, brf);
+  }
   typedef CGAL::Creator_uniform_2<double,Point_2>  Creator;
-  CGAL::Random_points_in_disc_2<Point_2,Creator> g( 100.0);
-  
+  CGAL::Random xgenerator, ygenerator;
   const int number_of_points = 
     QInputDialog::getInteger(this, 
                              tr("Number of random points"),
-                             tr("Enter number of random points"));
+                             tr("Enter number of random points"), 100, 0);
 
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   std::vector<Point_2> points;
   points.reserve(number_of_points);
   for(int i = 0; i < number_of_points; ++i){
-    points.push_back(*g++);
+    points.push_back(Point_2(xgenerator.get_double(rect.left(), rect.right()), ygenerator.get_double(rect.top(),rect.bottom())));
   }
   cdt.insert(points.begin(), points.end());
   // default cursor

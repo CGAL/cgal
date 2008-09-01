@@ -226,7 +226,7 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
 void
 MainWindow::on_actionShowDelaunay_toggled(bool checked)
 {
-  dgi->setDrawEdges(checked);
+  dgi->setVisibleEdges(checked);
 }
 
 
