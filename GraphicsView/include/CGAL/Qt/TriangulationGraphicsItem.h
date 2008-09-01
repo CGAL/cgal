@@ -143,7 +143,7 @@ void
 TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
   painterostream = PainterOstream<Geom_traits>(painter);
-  if(drawEdges()) {
+  if(visibleEdges()) {
     for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
         eit != t->finite_edges_end();
         ++eit){
@@ -157,7 +157,7 @@ template <typename T>
 void 
 TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 {
-  if(drawVertices()) {
+  if(visibleVertices()) {
     Converter<Geom_traits> convert;
 
     painter->setPen(verticesPen());

@@ -103,7 +103,7 @@ public:
     if(const Segment_2 *s = CGAL::object_cast<Segment_2>(&o)){
       return this->operator()(*s);
     } else if(const Point_2 *p = CGAL::object_cast<Point_2>(&o)){
-      return QLineF(operator()(p), operator()(p));
+      return QLineF(operator()(*p), operator()(*p));
     }
     return QLineF();
   }
