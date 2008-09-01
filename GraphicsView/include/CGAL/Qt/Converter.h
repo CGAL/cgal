@@ -84,12 +84,12 @@ public:
   {
     CGAL_assertion(clippingRectIsInitialized);
     Object o = CGAL::intersection(r, clippingRect);
-    typename K::Segment_2 s;
-    typename K::Point_2 p;
-    if(CGAL::assign(s,o)){
-      return this->operator()(s);
-    } else if(CGAL::assign(p,o)){
-      return QLineF(operator()(p), operator()(p));
+    typedef typename K::Segment_2 Segment_2;
+    typedef typename K::Point_2 Point_2;
+    if(const Segment_2 *s = CGAL::object_cast<Segment_2>(&o)){
+      return this->operator()(*s);
+    } else if(const Point_2 *p = CGAL::object_cast<Point_2>(&o)){
+      return QLineF(operator()(*p), operator()(*p));
     }
     return QLineF();
   }
@@ -98,11 +98,11 @@ public:
   {
     CGAL_assertion(clippingRectIsInitialized);
     Object o = CGAL::intersection(l, clippingRect);
-    typename K::Segment_2 s;
-    typename K::Point_2 p;
-    if(CGAL::assign(s,o)){
-      return this->operator()(s);
-    } else if(CGAL::assign(p,o)){
+    typedef typename K::Segment_2 Segment_2;
+    typedef typename K::Point_2 Point_2;
+    if(const Segment_2 *s = CGAL::object_cast<Segment_2>(&o)){
+      return this->operator()(*s);
+    } else if(const Point_2 *p = CGAL::object_cast<Point_2>(&o)){
       return QLineF(operator()(p), operator()(p));
     }
     return QLineF();
