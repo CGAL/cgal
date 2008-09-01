@@ -31,6 +31,7 @@ Envelope_3
 Filtered_kernel
 Generator
 Geomview
+GraphicsView
 HalfedgeDS
 Hash_map
 Homogeneous_kernel
