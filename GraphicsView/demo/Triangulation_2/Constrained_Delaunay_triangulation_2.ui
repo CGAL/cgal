@@ -14,7 +14,7 @@
    <string>CGAL Constrained Delaunay Triangulation</string>
   </property>
   <property name="windowIcon" >
-   <iconset/>
+   <iconset resource="../resources/CGAL.qrc" >:/cgal/logos/cgal_icon</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
