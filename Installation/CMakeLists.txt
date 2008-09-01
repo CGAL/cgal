@@ -24,7 +24,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH} )
 # This allows else(), endif(), etc... (without repeating the expression)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-if ( ${CGAL_REFERENCE_CACHE_DIR} )
+message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
+
+if ( NOT "${CGAL_REFERENCE_CACHE_DIR}" STREQUAL "" )
   if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR} )
     if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
       message( STATUS "Loading reference cache from ${CGAL_REFERENCE_CACHE_DIR}" )
