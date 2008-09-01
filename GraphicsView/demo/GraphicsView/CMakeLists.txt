@@ -2,9 +2,14 @@
 
 project (GraphicsView)
 
+cmake_minimum_required(VERSION 2.4)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 find_package(CGAL REQUIRED)
+
+include_directories (BEFORE ../../include)
+include_directories (BEFORE ./include)
+link_directories(../../src/CGALQt4)
 
 include(${CGAL_USE_FILE})
 
@@ -22,7 +27,6 @@ link_directories(../../src/CGALQt4)
 #----------------------------------------
 # minimal graphics view executable: min 
 #----------------------------------------
-add_executable  ( min EXCLUDE_FROM_ALL min.cpp )
-qt4_generate_moc( min.cpp min.moc )
-target_link_libraries( min ${QT_LIBRARIES} )
+add_executable  ( min min.cpp )
+target_link_libraries( min ${QT_LIBRARIES} CGAL CGAL-Qt4 )
 
