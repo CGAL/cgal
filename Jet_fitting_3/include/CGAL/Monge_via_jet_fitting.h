@@ -736,9 +736,13 @@ void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
 switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
 			    const Vector_3& v3) 
 {
-  CGAL::Sign orientation = CGAL::sign_of_determinant(v1[0], v2[0], v3[0],
-							v1[1], v2[1], v3[1],
-							v1[2], v2[2], v3[2]);
+  typedef typename CGAL::Linear_algebraCd<FT>::Matrix Matrix;
+  Matrix M(3,3);
+  for (int i=0; i<3; i++) M(i,0) = v1[i];
+  for (int i=0; i<3; i++) M(i,1) = v2[i];
+  for (int i=0; i<3; i++) M(i,2) = v3[i];
+
+  CGAL::Sign orientation = CGAL::Linear_algebraCd<FT>::sign_of_determinant(M);
   if (orientation == CGAL::NEGATIVE) v1 = -v1;
 }
 
