@@ -2,7 +2,6 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
-#include <CGAL/Nef_3/Polyline_constructor.h>
 
 typedef CGAL::Gmpz NT;
 typedef CGAL::Homogeneous<NT> Kernel;
@@ -11,9 +10,6 @@ typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
 typedef Point_3* point_iterator;
 typedef std::pair<point_iterator,point_iterator> point_range;
 typedef std::list<point_range> polyline;
-typedef polyline::const_iterator polyline_iterator;
-typedef CGAL::Polyline_constructor<Nef_polyhedron, polyline_iterator>
-Polyline_constructor;
 
 int main() {
 
