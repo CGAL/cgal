@@ -21,7 +21,8 @@
 // Tests if Boost.Bimap is available.
 
 #include <iostream>
-#include <boost/bimap.hpp>
+#include <boost/bimap/bimap.hpp>
+#include <boost/bimap/set_of.hpp>
 
 using boost::bimap::bimap;
 using boost::bimap::set_of;
