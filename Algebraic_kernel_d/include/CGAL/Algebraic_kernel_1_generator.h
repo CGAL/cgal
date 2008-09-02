@@ -14,8 +14,8 @@
 // This file defines several instances of Algebraic_kernel_1 that are often
 // used in tests and demos. 
 
-#ifndef CGAL_PREFERED_ALGEBRAIC_KERNEL_H
-#define CGAL_PREFERED_ALGEBRAIC_KERNEL_H 1
+#ifndef CGAL_ALGEBRAIC_KERNEL_1_GENERATOR_H
+#define CGAL_ALGEBRAIC_KERNEL_1_GENERATOR_H 1
 
 #include <CGAL/basic.h>
 
@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
  */
 template<typename Coefficient, 
          typename Boundary = typename CGAL::Get_arithmetic_kernel< Coefficient >::Arithmetic_kernel::Rational>
-struct Get_algebraic_kernel_1 {
+struct Algebraic_kernel_1_generator {
 
     typedef CGAL::Algebraic_kernel_1 <Coefficient, Boundary>
         Default_algebraic_kernel_1;

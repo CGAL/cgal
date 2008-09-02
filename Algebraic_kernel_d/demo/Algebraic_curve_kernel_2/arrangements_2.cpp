@@ -43,7 +43,7 @@ CGAL::Timer overall_timer;
 #include <CGAL/Timer.h>
 
 #include <CGAL/Arithmetic_kernel.h>
-#include <CGAL/Preferred_algebraic_curve_kernels_2.h>
+#include <CGAL/Algebraic_curve_kernel_2_generator.h>
 
 #include "include/CGAL/Polynomial_parser_2.h"
 
@@ -125,11 +125,11 @@ int main(int argc, char** argv) {
     typedef CGAL_ACK_COEFFICIENT Coefficient;
 
 #if !CGAL_ACK_USE_FILTERED_CKvA_2
-    typedef CGAL::Get_algebraic_curve_kernel_2<Coefficient>
+    typedef CGAL::Algebraic_curve_kernel_2_generator<Coefficient>
       ::Algebraic_curve_kernel_with_qir_and_bitstream_2
       Algebraic_curve_kernel_2;
 #else
-    typedef CGAL::Get_algebraic_curve_kernel_2<Coefficient>
+    typedef CGAL::Algebraic_curve_kernel_2_generator<Coefficient>
       ::Filtered_algebraic_curve_kernel_with_qir_and_bitstream_2
       Algebraic_curve_kernel_2;
 #endif

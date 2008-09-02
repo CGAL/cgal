@@ -52,7 +52,7 @@ CGAL::Timer overall_timer;
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
-#include <CGAL/Preferred_algebraic_curve_kernels_2.h>
+#include <CGAL/Algebraic_curve_kernel_2_generator.h>
 
 #include <CGAL/Polynomial_parser_2.h>
 
@@ -274,7 +274,7 @@ int main(int argc,char** argv) {
 
     typedef CGAL_ACK_COEFFICIENT Coefficient;
 
-    typedef CGAL::Get_algebraic_curve_kernel_2<Coefficient>
+    typedef CGAL::Algebraic_curve_kernel_2_generator<Coefficient>
         ::Algebraic_curve_kernel_with_qir_and_bitstream_2
         Algebraic_curve_kernel_2;
 
