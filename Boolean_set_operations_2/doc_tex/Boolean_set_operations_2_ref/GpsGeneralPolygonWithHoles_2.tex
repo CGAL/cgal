@@ -1,7 +1,7 @@
 \ccRefPageBegin
  
 \def\ccLongParamLayout{\ccFalse}
-\begin{ccRefConcept}{GeneralPolygonWithHoles_2}
+\begin{ccRefConcept}{Gps::GeneralPolygonWithHoles_2}
 
 \ccTypes
 % ======
@@ -11,7 +11,7 @@
 % \ccNestedType{Size}{number of holes size type.}
 
 \ccNestedType{General_polygon_2}{the general-polygon type used to
-represent the outer boundary and each hole.}
+represent the outer boundary and each hole. Must model the Gps::GeneralPolygon_2 concept.}
 
 \ccNestedType{Hole_const_iterator}{a bidirectional iterator
   over the polygonal holes. Its value type is
@@ -19,10 +19,10 @@ represent the outer boundary and each hole.}
 
 \ccDefinition
 % ===========
-A model of this concept represents a general polygon with holes. The
-concept requires the ability to access the general polygon that
-represents the outer boundary and the general polygons that represent
-the holes.
+A model of this concept represents a general polygon with holes. This is the 
+base concept for polygon with holes, and therefore does not require the ability
+to access its boundary or holes, but only to be default constructable, copy 
+constructable, and assignable.
 
 % \lcTex{\ccwParamIndent=0mm}
 \ccThree{GeneralPolygonWithHoles_2}{polygon.outer_boundary()~~~}{}
@@ -55,16 +55,6 @@ otherwise.}
 
 \ccAccessFunctions
 % ================
-
-\ccMethod{const General_polygon_2 & outer_boundary() const;}
-{returns the general polygon that represents the outer boundary. }
-
-
-\ccMethod{Hole_const_iterator holes_begin() const;}
-{returns the begin iterator of the holes.}
-\ccGlue
-\ccMethod{Hole_const_iterator holes_end() const;}
-{returns the past-the-end iterator of the holes.}
 
 \ccHasModels
 %===========

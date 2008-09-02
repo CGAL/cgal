@@ -42,8 +42,8 @@ typedef Rat_kernel::Point_2                             Rat_point_2;
 typedef Traits_2::Curve_2                               Bezier_curve_2;
 typedef Traits_2::X_monotone_curve_2                    X_monotone_curve_2;
 typedef CGAL::Gps_traits_2<Traits_2>                    Gps_traits_2;
-typedef Gps_traits_2::Polygon_2                         Polygon_2;
-typedef Gps_traits_2::Polygon_with_holes_2              Polygon_with_holes_2;
+typedef Gps_traits_2::General_polygon_2                         Polygon_2;
+typedef Gps_traits_2::General_polygon_with_holes_2              Polygon_with_holes_2;
 typedef std::list<Polygon_with_holes_2>                 Polygon_set;
 
 /*! Read a general polygon with holes, formed by Bezier curves, from the

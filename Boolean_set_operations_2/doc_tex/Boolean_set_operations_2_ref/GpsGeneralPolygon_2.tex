@@ -1,6 +1,6 @@
 \ccRefPageBegin
 
-\begin{ccRefConcept}{GeneralPolygon_2}
+\begin{ccRefConcept}{Gps::GeneralPolygon_2}
 
 \ccTypes
 %=======
@@ -18,7 +18,9 @@ mapping of the polygon edges. Its value type is \ccc{X_monotone_curve_2}.}
 % ===========
 A model of this concept represents a simple general-polygon. The
 geometric mapping of the edges of the polygon must be $x$-monotone curves.
-The concept requires the ability to access these curves. 
+This is the base concept for polygons, and therefore does not require the ability
+to access these curves, but only to be default constructable, copy constructable, 
+and assignable. 
 The general polygon represented must be simple. That is, the
 only points of the plane belonging to two curves are the geometric mapping
 of the polygon vertices. In addition, the vertices of the represented 
@@ -47,18 +49,6 @@ GeneralPolygon_2(InputIterator begin, InputIterator end);}
 \ccAccessFunctions
 %=================
 
-\ccMethod{Curve_iterator curves_begin();} 
-{returns the begin iterator of the curves.}
-\ccGlue
-\ccMethod{Curve_iterator curves_end();} 
-{returns the past-the-end iterator of the curves.}
-
-\ccMethod{Curve_const_iterator curves_begin();} 
-{returns the begin const iterator of the curves.}
-\ccGlue
-\ccMethod{Curve_const_iterator curves_end();} 
-{returns the past-the-end const iterator of the curves.}
-
 \ccModifiers
 % ==========
 
@@ -81,7 +71,7 @@ The value type of \ccc{Iterator} must be \ccc{X_monotone_curve_2}.
 
 \ccHasModels
 % ==========
-\ccc{CGAL::General_polygon_2<ArrTraits>} {CGAL::Polygon_2<PolygonTraits_2, Container>}
+\ccc{CGAL::General_polygon_2<ArrTraits>}
 
 \end{ccRefConcept}
 

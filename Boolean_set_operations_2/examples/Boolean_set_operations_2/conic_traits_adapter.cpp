@@ -40,7 +40,7 @@ struct Conic_traits_2 :
 
 typedef CGAL::General_polygon_2<Conic_traits_2>         Polygon_2;
 typedef CGAL::Gps_traits_2<Conic_traits_2, Polygon_2>   Traits_2;
-typedef Traits_2::Polygon_with_holes_2                  Polygon_with_holes_2;
+typedef Traits_2::General_polygon_with_holes_2          Polygon_with_holes_2;
 typedef Traits_2::Curve_2                               Curve_2;
 typedef Traits_2::X_monotone_curve_2                    X_monotone_curve_2;
 typedef Traits_2::Point_2                               Point_2;

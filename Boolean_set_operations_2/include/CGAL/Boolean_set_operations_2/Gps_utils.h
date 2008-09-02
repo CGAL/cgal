@@ -454,8 +454,6 @@ _insert(PolygonIter p_begin, PolygonIter p_end, Polygon_with_holes_2 & /*pgn*/)
 }
 
 
-
-
  //insert non-sipmle poloygons with holes (non incident edges may have
 // common vertex,  but they dont intersect at their interior
 template <class Traits_, class Dcel_>
@@ -536,10 +534,12 @@ typename General_polygon_set_2<Traits_, Dcel_>::Size
 General_polygon_set_2<Traits_, Dcel_>::
 number_of_polygons_with_holes() const
 {
+ 
   typedef Arr_bfs_scanner<Arrangement_2, Counting_output_iterator>
     Arr_bfs_scanner;
-  std::size_t res;
-  Arr_bfs_scanner scanner(this->m_traits, Counting_output_iterator(&res));
+  //counting_output_operator CTOR reqires a parameter  
+  std::size_t *cc = new size_t();  
+  Arr_bfs_scanner scanner(this->m_traits, Counting_output_iterator(cc));
   scanner.scan(*(this->m_arr));
   return (scanner.output_iterator().current_counter());
 }

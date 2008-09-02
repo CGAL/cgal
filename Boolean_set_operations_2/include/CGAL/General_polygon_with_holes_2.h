@@ -27,14 +27,15 @@ CGAL_BEGIN_NAMESPACE
 template <class Polygon_>
 class General_polygon_with_holes_2
 {
+
 public:
+  typedef General_polygon_with_holes_2<Polygon_> 		Self;
+  typedef Polygon_                                    Polygon_2;
+  typedef typename Self::Polygon_2							General_polygon_2;  
+  typedef std::list<Polygon_>                         Holes_container;
 
-  typedef Polygon_                                     General_polygon_2;
-    
-  typedef std::list<Polygon_>                          Holes_containter;
-
-  typedef typename Holes_containter::iterator          Hole_iterator;
-  typedef typename Holes_containter::const_iterator    Hole_const_iterator;
+  typedef typename Holes_container::iterator          Hole_iterator;
+  typedef typename Holes_container::const_iterator    Hole_const_iterator;
 
   typedef unsigned int                                 Size;
 
@@ -42,7 +43,8 @@ public:
   {}
 
 
-  explicit General_polygon_with_holes_2(const General_polygon_2& pgn_boundary) : m_pgn(pgn_boundary)
+  explicit General_polygon_with_holes_2(const General_polygon_2& pgn_boundary) 
+  : m_pgn(pgn_boundary)
   {}
 
 
@@ -124,7 +126,7 @@ public:
 protected:
 
   General_polygon_2           m_pgn;
-  Holes_containter            m_holes;
+  Holes_container            m_holes;
 };
 
 
