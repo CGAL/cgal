@@ -43,7 +43,6 @@ int main(int argc, char **argv)
 #  include "Scene_nef_rendering.cpp"
 #  include "Viewer.cpp"
 #  include "Viewer_moc.cpp"
-#  include "DemosMainWindow.cpp"
 #  include "MainWindow.cpp"
 #  include "MainWindow_moc.cpp"
 #  include "MainWindow_boolean_operations.cpp"
