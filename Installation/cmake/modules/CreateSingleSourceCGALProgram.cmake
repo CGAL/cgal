@@ -18,7 +18,7 @@ macro(create_single_source_cgal_program first )
     if ( AUTO_LINK_ENABLED )    
       target_link_libraries(${exe_name} ${CGAL_3RD_PARTY_LIBRARIES} )
     else()
-      target_link_libraries(${exe_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+      target_link_libraries(${exe_name} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_LIBRARIES} )
     endif()
   
   endif()

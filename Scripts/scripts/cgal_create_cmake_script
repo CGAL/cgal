@@ -49,11 +49,11 @@ create_cmake_script()
   echo 'set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)'
   echo
 
-  echo 'find_package(CGAL REQUIRED)'
-  echo
   
   if [ -n "$QT" ] ; then
   
+    echo 'find_package(CGAL REQUIRED CGAL_CORE CGAL_QT )'
+    echo
     echo 'find_package(Qt3 REQUIRED)'
     echo
     echo
@@ -92,13 +92,15 @@ create_cmake_script()
       
     echo '# Link the executable to CGAL and third-party libraries'
     echo 'if ( AUTO_LINK_ENABLED )'
-    echo "   target_link_libraries(${exe_name}"' ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} )'
+    echo "   target_link_libraries(${exe_name}"' ${QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}  )'
     echo 'else()'
-    echo "  target_link_libraries(${exe_name}" '${CGAL_LIBRARIES} ${CGAL_QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES})'
+    echo "  target_link_libraries(${exe_name}" ' ${QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_LIBRARIES} )'
     echo 'endif()'
     
   else
   
+    echo 'find_package(CGAL REQUIRED CGAL_CORE )'
+    echo
     echo
     echo 'include( ${CGAL_USE_FILE} )'
     echo 'include( CreateSingleSourceCGALProgram )'

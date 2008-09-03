@@ -19,11 +19,24 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     include(CGAL_SetupFlags)
     include(GeneratorSpecificSettings)
   endif()
+  
   include_directories (${CGAL_BINARY_DIR}/include) # Plaform-specific include folder where compiler_config.h is located
-  include_directories (${CGAL_INCLUDE_DIRS})             
-  include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})  
-
-  add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
+  
+  set( CGAL_LIBRARIES ${CGAL_LIBRARY} )
+  
+  foreach ( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )
+    
+    set( CGAL_LIBRARIES                ${CGAL_LIBRARIES}                ${${CGAL_COMPONENT}_LIBRARY}                  )
+    set( CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_3RD_PARTY_INCLUDE_DIRS}   ${${CGAL_COMPONENT}_3RD_PARTY_INCLUDE_DIRS}   )
+    set( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_3RD_PARTY_DEFINITIONS}    ${${CGAL_COMPONENT}_3RD_PARTY_DEFINITIONS}    )
+    set( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_3RD_PARTY_LIBRARIES_DIRS} ${${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES_DIRS} )
+    set( CGAL_3RD_PARTY_LIBRARIES      ${CGAL_3RD_PARTY_LIBRARIES}      ${${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES}      )
+    
+  endforeach()
+    
+  include_directories (${CGAL_INCLUDE_DIRS} ${CGAL_3RD_PARTY_INCLUDE_DIRS} )     
+          
+  add_definitions(${CGAL_DEFINITIONS} ${CGAL_3RD_PARTY_DEFINITIONS} )
   
   link_directories( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
   

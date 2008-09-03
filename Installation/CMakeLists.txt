@@ -72,9 +72,14 @@ message( STATUS "CGAL_MAJOR_VERSION=${CGAL_MAJOR_VERSION}" )
 message( STATUS "CGAL_MINOR_VERSION=${CGAL_MINOR_VERSION}" )
 message( STATUS "CGAL_BUILD_VERSION=${CGAL_BUILD_VERSION}" )
 
-set( CGAL_SOVERSION "3.0.0" )
+set( CGAL_SONAME_VERSION "${CGAL_MAJOR_VERSION}"     CACHE STRING "soname-version" )
+set( CGAL_SOVERSION      "${CGAL_MAJOR_VERSION}.0.0" CACHE STRING "soversion" )
 
-message( STATUS "CGAL_SOVERSION=${CGAL_SOVERSION}" )
+mark_as_advanced(CGAL_SONAME_VERSION)
+mark_as_advanced(CGAL_SOVERSION)
+
+message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
+message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -82,16 +87,6 @@ message( STATUS "CGAL_SOVERSION=${CGAL_SOVERSION}" )
 #
 #--------------------------------------------------------------------------------------------------
 
-cache_set(CGAL_3RD_PARTY_DEFINITIONS   "" )
-cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS  "" )
-cache_set(CGAL_3RD_PARTY_LIBRARIES     "" )
-cache_set(CGAL_3RD_PARTY_LIBRARIES_DIR "" ) 
-
-
-# This module finds dependent libraries: Boost, GMP, CORE, etc..
-# Updates CGAL_3RD_PARTY_* accordingly
-# Sets CGAL_USE_* which is stored in compiler_config.h
-# Each dependency can be selected or unselected via the option WITH_*
 include(FindCGALDependencies)
 
 #--------------------------------------------------------------------------------------------------
@@ -216,16 +211,11 @@ endif()
 
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
 
-cache_set(CGAL_LIBRARIES "" )
+set(LIBRARY_OUTPUT_PATH ${CGAL_LIBRARIES_DIR})
 
 set(CGAL_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include ${CMAKE_SOURCE_DIR}/include)
 
 include_directories (${CGAL_INCLUDE_DIRS})
-include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
-
-add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
-
-set(LIBRARY_OUTPUT_PATH ${CGAL_LIBRARIES_DIR})
 
 if( MSVC )
   
@@ -240,13 +230,36 @@ include(CGAL_SetupFlags)
 
 add_subdirectory(src)
 
+cache_get(CGAL_LIBRARY)
+cache_get(CGAL_CORE_LIBRARY)
+cache_get(CGAL_IMAGEIO_LIBRARY)
+cache_get(CGAL_PDB_LIBRARY)
+cache_get(CGAL_QT_LIBRARY)
+
 cache_get(CGAL_3RD_PARTY_DEFINITIONS  )
 cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS )
 cache_get(CGAL_3RD_PARTY_LIBRARIES    )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIR) 
 
+cache_get(CGAL_CORE_3RD_PARTY_DEFINITIONS  )
+cache_get(CGAL_CORE_3RD_PARTY_INCLUDE_DIRS )
+cache_get(CGAL_CORE_3RD_PARTY_LIBRARIES    )
+cache_get(CGAL_CORE_3RD_PARTY_LIBRARIES_DIR) 
 
-set( CGAL_LIBRARIES ${CGAL_CORE_LIBRARY} ${CGAL_LIBRARY} ${CGAL_IMAGEIO_LIBRARY} ${CGAL_PDB_LIBRARY} ${CGAL_QT_LIBRARY} )
+cache_get(CGAL_IMAGEIO_3RD_PARTY_DEFINITIONS  )
+cache_get(CGAL_IMAGEIO_3RD_PARTY_INCLUDE_DIRS )
+cache_get(CGAL_IMAGEIO_3RD_PARTY_LIBRARIES    )
+cache_get(CGAL_IMAGEIO_3RD_PARTY_LIBRARIES_DIR) 
+
+cache_get(CGAL_QT_3RD_PARTY_DEFINITIONS  )
+cache_get(CGAL_QT_3RD_PARTY_INCLUDE_DIRS )
+cache_get(CGAL_QT_3RD_PARTY_LIBRARIES    )
+cache_get(CGAL_QT_3RD_PARTY_LIBRARIES_DIR) 
+
+cache_get(CGAL_PDB_3RD_PARTY_DEFINITIONS  )
+cache_get(CGAL_PDB_3RD_PARTY_INCLUDE_DIRS )
+cache_get(CGAL_PDB_3RD_PARTY_LIBRARIES    )
+cache_get(CGAL_PDB_3RD_PARTY_LIBRARIES_DIR) 
 
 hide_variable(EXECUTABLE_OUTPUT_PATH)
 hide_variable(LIBRARY_OUTPUT_PATH)

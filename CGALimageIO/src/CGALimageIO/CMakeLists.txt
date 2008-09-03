@@ -33,42 +33,46 @@ if(ZLIB_FOUND AND OPENGL_FOUND)
   get_dependency_version(ZLIB)
   get_dependency_version(OPENGL OpenGL)
    
-  if ( NOT ZLIB_ADDED_TO_CGAL_3RD_PARTY )  
-    cache_set(ZLIB_ADDED_TO_CGAL_3RD_PARTY TRUE CACHE )
-    cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIR} )
-    cache_set(CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES} ${ZLIB_LIBRARY} )
-  endif()  
-  
-  if ( NOT OPENGL_ADDED_TO_CGAL_3RD_PARTY )  
-    message( STATUS "OpenGL Libraries: ${OPENGL_LIBRARIES}" )
-    cache_set(OPENGL_ADDED_TO_CGAL_3RD_PARTY TRUE )
-    cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} )
-    cache_set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES} )
-  endif()
-    
-  include_directories( ${ZLIB_INCLUDE_DIR} )
-  include_directories( ${OPENGL_INCLUDE_DIR} )
-  
-  add_library(CGAL_IMAGEIO all_files.cpp)
-  add_dependencies( CGAL_IMAGEIO CGAL )
-
-  set_target_properties(CGAL_IMAGEIO PROPERTIES VERSION "${CGAL_VERSION}" SOVERSION "${CGAL_SOVERSION}")
-  
-  target_link_libraries( CGAL_IMAGEIO ${ZLIB_LIBRARY} ${OPENGL_LIBRARIES} )
+  message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
+  message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
+  message( STATUS "OpenGL definitions: ${OPENGL_DEFINITIONS}" )
+  message( STATUS "ZLib   include:     ${ZLIB_INCLUDE_DIR}" )
+  message( STATUS "ZLib   libraries:   ${ZLIB_LIBRARY}" )
   
   set( CGAL_IMAGEIO_BASENAME CGAL-ImageIO )
   
+  cache_set(CGAL_IMAGEIO_3RD_PARTY_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
+  cache_set(CGAL_IMAGEIO_3RD_PARTY_LIBRARIES    ${ZLIB_LIBRARY} ${OPENGL_LIBRARIES} )
+  cache_set(CGAL_IMAGEIO_3RD_PARTY_DEFINITIONS  "" )
+  
   if(WITH_VTK)
+  
     if( VTK_FOUND )
+    
       message(STATUS "VTK-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}.${VTK_BUILD_VERSION} found. Build VTK support in ${CGAL_IMAGEIO_BASENAME}.")
       include( ${VTK_USE_FILE} )
-      add_definitions(-DCGAL_USE_VTK)
-      target_link_libraries( CGAL_IMAGEIO vtkImaging vtkIO )
-    else( VTK_FOUND)
+      cache_set(CGAL_IMAGEIO_3RD_PARTY_DEFINITIONS  ${CGAL_IMAGEIO_3RD_PARTY_DEFINITIONS} -DCGAL_USE_VTK )
+      cache_set(CGAL_IMAGEIO_3RD_PARTY_INCLUDE_DIRS ${CGAL_IMAGEIO_3RD_PARTY_INCLUDE_DIRS} ${VTK_INCLUDE_DIR} )
+      cache_set(CGAL_IMAGEIO_3RD_PARTY_LIBRARIES    ${CGAL_IMAGEIO_3RD_PARTY_LIBRARIES} vtkImaging vtkIO )
+      
+    else()
       message(STATUS "VTK not found.")
-    endif( VTK_FOUND )
-  endif(WITH_VTK)
-
+    endif()
+    
+  endif()
+  
+  include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_IMAGEIO_3RD_PARTY_INCLUDE_DIRS} )
+  
+  add_library(CGAL_IMAGEIO all_files.cpp)
+  
+  add_dependencies( CGAL_IMAGEIO CGAL )
+  
+  add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_IMAGEIO_3RD_PARTY_DEFINITIONS} )
+  
+  set_target_properties(CGAL_IMAGEIO PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+  
+  target_link_libraries( CGAL_IMAGEIO ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_IMAGEIO_3RD_PARTY_LIBRARIES} )
+  
   if (NOT AUTO_LINK_ENABLED )
   
     set_target_properties( CGAL_IMAGEIO PROPERTIES OUTPUT_NAME "${CGAL_IMAGEIO_BASENAME}" )
@@ -104,6 +108,6 @@ if(ZLIB_FOUND AND OPENGL_FOUND)
   if ( CGAL_INSTALL_LIB_DIR )
     install(TARGETS CGAL_IMAGEIO DESTINATION ${CGAL_INSTALL_LIB_DIR} )
   endif()
-else(ZLIB_FOUND AND OPENGL_FOUND)
+else()
   message( STATUS "CGAL-ImageIO needs ZLib and OpenGL, cannot be configured.")
-endif(ZLIB_FOUND AND OPENGL_FOUND)  
+endif() 

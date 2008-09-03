@@ -21,15 +21,15 @@ assert(CGAL_BINARY_DIR)
 
 add_library (CGAL "all_files.cpp" )
 
-target_link_libraries(CGAL ${CGAL_3RD_PARTY_LIBRARIES})
+include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
-if (CGAL_USE_CGAL_CORE)
-  add_dependencies(CGAL CGAL_CORE)
-endif()
+add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
+
+target_link_libraries(CGAL ${CGAL_3RD_PARTY_LIBRARIES})
 
 set( CGAL_BASENAME CGAL )
 
-set_target_properties(CGAL PROPERTIES VERSION "${CGAL_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+set_target_properties(CGAL PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
 
 if (NOT AUTO_LINK_ENABLED )
 

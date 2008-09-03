@@ -24,38 +24,33 @@ find_package(Qt3)
 if( QT_FOUND AND OPENGL_FOUND )
 
     get_dependency_version(OPENGL OpenGL)
-        
-    if ( NOT OPENGL_ADDED_TO_CGAL_3RD_PARTY )  
-    
-      message( STATUS "OpenGL Libraries: ${OPENGL_LIBRARIES}" )
-      
-      cache_set(OPENGL_ADDED_TO_CGAL_3RD_PARTY TRUE )
-      
-      cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} )
-      cache_set(CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES}    ${OPENGL_LIBRARIES}   )
-      
-    endif()
-    
     get_dependency_version(QT)
     
     set( CGAL_USE_QT TRUE ) 
-    
     add_config_flag( CGAL_USE_QT )
+      
+    message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
+    message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
+    message( STATUS "OpenGL definitions: ${OPENGL_DEFINITIONS}" )
+    message( STATUS "Qt3 include:        ${QT_INCLUDE_DIR}" )
+    message( STATUS "Qt3 libraries:      ${QT_LIBRARIES}" )
+    message( STATUS "Qt3 definitions:    ${QT_DEFINITIONS}" )
+    message( STATUS "moc executable:     ${QT_MOC_EXECUTABLE}" )
+    message( STATUS "uic executable:     ${QT_UIC_EXECUTABLE}" )
     
-    message( STATUS "moc executable: ${QT_MOC_EXECUTABLE}" )
-    message( STATUS "uic executable: ${QT_UIC_EXECUTABLE}" )
+    cache_set(CGAL_QT_3RD_PARTY_INCLUDE_DIRS ${QT_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
+    cache_set(CGAL_QT_3RD_PARTY_LIBRARIES    ${QT_LIBRARIES}   ${OPENGL_LIBRARIES}   )
+    cache_set(CGAL_QT_3RD_PARTY_DEFINITIONS  ${QT_DEFINITIONS} ${OPENGL_DEFINITIONS} )
     
     include(Qt3Macros)
-
-    message( STATUS "Qt3 include: ${QT_INCLUDE_DIR}" )
        
-    include_directories( ${QT_INCLUDE_DIR} )
+    include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_QT_3RD_PARTY_INCLUDE_DIRS} )
        
     # Make sure the compiler can find generated .moc files
     include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
     # Make sure QT3_AUTOMOC compiler can find CGALQt include files
-    include_directories (BEFORE ${CGAL_SOURCE_DIR}/include/CGAL/IO)
+    include_directories (BEFORE ${CMAKE_SOURCE_DIR}/include/CGAL/IO)
 
     QT3_AUTOMOC( Qt_widget.cpp
                  Qt_widget_layer.cpp
@@ -66,19 +61,19 @@ if( QT_FOUND AND OPENGL_FOUND )
                  Qt_widget_OpenGL.cpp
                )  
 
-    QT3_GENERATE_MOC(${CGAL_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_core.h
+    QT3_GENERATE_MOC(${CMAKE_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_core.h
                      ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_core.moc
                      )
                           
-    QT3_GENERATE_MOC(${CGAL_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_timer.h
+    QT3_GENERATE_MOC(${CMAKE_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_timer.h
                      ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_timer.moc
                     )
                         
-    QT3_GENERATE_MOC(${CGAL_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_widget_2_core.h
+    QT3_GENERATE_MOC(${CMAKE_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_widget_2_core.h
                      ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_widget_2_core.moc
                     )
                         
-    QT3_GENERATE_MOC(${CGAL_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_window_2.h
+    QT3_GENERATE_MOC(${CMAKE_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_window_2.h
                      ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_window_2.moc
                      )
                     
@@ -95,13 +90,13 @@ if( QT_FOUND AND OPENGL_FOUND )
 
     add_library (CGAL_QT "all_files.cpp")
     
-    set_target_properties(CGAL_QT PROPERTIES VERSION "${CGAL_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+    add_dependencies( CGAL_QT CGAL )
     
-    message( STATUS "Qt3 Libraries: ${QT_LIBRARIES}" )
+    set_target_properties(CGAL_QT PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
     
-    target_link_libraries( CGAL_QT ${QT_LIBRARIES} ${OPENGL_LIBRARIES} )
+    target_link_libraries( CGAL_QT ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_QT_3RD_PARTY_LIBRARIES} )
         
-    add_definitions ( ${QT_DEFINITIONS} )
+    add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_QT_3RD_PARTY_DEFINITIONS} )
     
     set( CGAL_QT_BASENAME CGAL-Qt )
     
@@ -141,7 +136,7 @@ if( QT_FOUND AND OPENGL_FOUND )
       install(TARGETS CGAL_QT DESTINATION ${CGAL_INSTALL_LIB_DIR} )
     endif()
 else()
-  message( STATUS "CGALQt needs Qt3, cannot be configured.")
+  message( STATUS "CGAL-Qt needs Qt3, cannot be configured.")
 endif()
 
    

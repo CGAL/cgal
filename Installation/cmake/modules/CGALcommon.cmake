@@ -24,8 +24,16 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     set ( ${var} ${${var}} CACHE INTERNAL "Variable hidden from user" FORCE )  
   endmacro()
 
-  macro( cache_set var value )
-    set ( ${var} ${value} CACHE INTERNAL "" FORCE )  
+  macro( cache_set var first )
+  
+    set( cache_set_value__ ${first} )
+    
+    foreach( i ${ARGN} )
+      set( cache_set_value__ ${cache_set_value__} ${i} ) 
+    endforeach()
+    
+    set ( ${var} ${cache_set_value__} CACHE INTERNAL "" FORCE )  
+  
   endmacro()
   
   macro( cache_get var )
@@ -34,7 +42,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   
   macro( add_to_cached_list listname item )
     cache_get ( ${listname} )
-    cache_set ( ${listname} "${${listname}};${item}" )
+    cache_set ( ${listname} ${listname} ${item} )
   endmacro()
   
   macro( at list idx var )
@@ -109,6 +117,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   endif()
 
   if ( COMMAND cmake_policy )
+    cmake_policy( SET CMP0002 NEW )  
     cmake_policy( SET CMP0003 NEW )  
   endif()
   
