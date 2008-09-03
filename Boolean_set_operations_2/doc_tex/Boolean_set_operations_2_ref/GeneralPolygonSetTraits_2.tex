@@ -16,14 +16,15 @@ general polygon with holes. It also requires operations that operate on these
 types.
 
 \ccRefines
+% ========
 \ccc{ArrangementDirectionalXMonotoneTraits_2}
 
 \ccTypes
 % ======
 
-\ccNestedType{Polygon_2}{represents a general polygon.}
+\ccNestedType{Polygon_2}{represents a general polygon. Must be a model of the \ccc{GpsTraits::GeneralPolygon_2} concept.}
 \ccGlue
-\ccNestedType{Polygon_with_holes_2}{represents a general polygon with holes.}
+\ccNestedType{Polygon_with_holes_2}{represents a general polygon with holes. Must be a model of the \ccc{GpsTraits::GeneralPolygonWithHoles_2} concept.}
 
 \ccNestedType{Curve_const_iterator}
 {A const iterator of curves. Its value type is const
@@ -48,8 +49,7 @@ $x$-monotone curves. It uses the operator\\
  a given general polygon. It uses the operator\\
  \ccc{std:pair<Curve_const_iterator, Curve_const_iterator>
   operator() (const Polygon_2 & pgn)}.}
-  
-  
+
 \ccNestedType{Is_valid_2}
 {provides the operators~: \\
  \ccc{bool operator() (Polygon_2 & pgn)} \\
@@ -66,6 +66,19 @@ $x$-monotone curves. It uses the operator\\
  boundary, and they are all together pairwise disjoint,
  except perhaps at the vertices.\\
  This functionality is used to verify precondition of some of the operations.}
+
+\ccNestedType{Construct_general_polygon_with_holes_2}{a functor that constructs a general polygon with holes from a general polygon and, optionally, a range of holes. It uses the operator\\
+ \ccc{void operator() (const General_polygon_2& pgn_boundary)} or \\
+\ccc{void operator() (const General_polygon_2& pgn_boundary, HolesInputIterator h_begin, HolesInputIterator h_end)} parameterized by the \ccc{HolesInputIterator} type.}
+
+\ccNestedType{Construct_outer_boundary} {A functor for constructing the outer boundary of a polygon with holes.  It uses the operator\\
+ \ccc{General_polygon_2 operator()(const  General_polygon_with_holes_2& pol_wh)}.}
+
+\ccNestedType{Construct_holes} {A functor for constructing the container of holes of a polygon with holes. It returns the begin/end iterators for the holes It uses the operator\\
+ \ccc{std::pair<Hole_const_iterator, Hole_const_iterator>  operator()(const General_polygon_with_holes_2& pol_wh)}.}
+
+\ccNestedType{Is_unbounded} {A functor for checking if polygon with holes has no outer boundary.  It uses the operator\\
+\ccc{bool operator()(const  General_polygon_with_holes_2& pol_wh)}.}
 
 \ccCreation
 \ccCreationVariable{traits}
@@ -90,6 +103,17 @@ $x$-monotone curves. It uses the operator\\
 
 \ccMethod{Is_valid_2 is_valid_2_object();}
 {returns a functor that checks the validity of a polygon.}
+
+\ccMethod{Construct_general_polygon_with_holes_2 construct_polygon_with_holes_2_object() const;}
+{returns a functor that constructs a polygon with holes.}
+
+\ccMethod{Construct_outer_boundary construct_outer_boundary_object() const;}
+{returns a functor that obtains the outer boundary of a polygon with holes.}
+
+\ccMethod{Construct_general_polygon_with_holes_2 construct_polygon_with_holes_2_object() const;}
+{returns a functor that obtains begin/wend iterators over a container of holes.}
+
+\ccMethod{Is_unbounded construct_is_unbounded_object();} {returns a functor that detemines if the polygon with holes is unbounded}
 
 
 \ccHasModels

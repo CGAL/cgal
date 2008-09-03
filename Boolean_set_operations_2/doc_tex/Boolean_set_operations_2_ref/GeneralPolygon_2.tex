@@ -2,6 +2,10 @@
 
 \begin{ccRefConcept}{GeneralPolygon_2}
 
+\ccRefines
+% ========
+\ccc{GpsTraits::GeneralPloygon_2}
+
 \ccTypes
 %=======
 
@@ -81,7 +85,8 @@ The value type of \ccc{Iterator} must be \ccc{X_monotone_curve_2}.
 
 \ccHasModels
 % ==========
-\ccc{CGAL::General_polygon_2<ArrTraits>} {CGAL::Polygon_2<PolygonTraits_2, Container>}
+\ccc{CGAL::General_polygon_2<ArrTraits>} \\
+\ccc{CGAL::Polygon_2<PolygonTraits_2, Container>}
 
 \end{ccRefConcept}
 

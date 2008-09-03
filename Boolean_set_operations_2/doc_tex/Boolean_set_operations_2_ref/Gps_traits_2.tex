@@ -1,6 +1,6 @@
 \ccRefPageBegin
 
-\begin{ccRefClass}{Gps_traits_2<ArrTraits,GeneralPolygon>}
+\begin{ccRefClass}{Gps_traits_2<ArrTraits,GeneralPolygon_t>}
 
 \ccThree{Gps_traits_2<Kernel>}{stuff()}{}
 \ccThreeToTwo
@@ -12,8 +12,8 @@ The traits class \ccRefName\ models the concept
 type of the template parameter \ccc{ArrTraits}, which must model the 
 concept \ccc{ArrangementDirectionalXMonotoneTraits}, (which in turn refines
 the concept \ccc{ArrangementXMonotoneTraits}). The template parameter
-\ccc{GeneralPolygon} must be instantiated with a model of the concept
-of \ccc{GeneralPolygon_2}. By default, the latter is instantiated by
+\ccc{GeneralPolygon_t} must be instantiated with a model of the concept
+of \ccc{GpsGeneralPolygon_2}. By default, the latter is instantiated by
 \ccc{CGAL::General_polygon_2<ArrTraits>}.
 
 \ccInclude{CGAL/Gps_traits_2.h}

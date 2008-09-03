@@ -3,6 +3,11 @@
 \def\ccLongParamLayout{\ccFalse}
 \begin{ccRefConcept}{GeneralPolygonWithHoles_2}
 
+
+\ccRefines
+% ========
+\ccc{GpsTraits::GeneralPloygonWithHoles_2}
+
 \ccTypes
 % ======
 \ccThree{GeneralPolygonWithHoles}{Hole_const_iterator~}{}
@@ -11,7 +16,7 @@
 % \ccNestedType{Size}{number of holes size type.}
 
 \ccNestedType{General_polygon_2}{the general-polygon type used to
-represent the outer boundary and each hole.}
+represent the outer boundary and each hole. Must Model the \ccc{GeneralPolygon_2} Concept.}
 
 \ccNestedType{Hole_const_iterator}{a bidirectional iterator
   over the polygonal holes. Its value type is
