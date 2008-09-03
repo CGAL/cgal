@@ -2813,6 +2813,7 @@ Polyhedron/demo/Polyhedron/data/knot_2_3.off -text svneol=unset#application/octe
 Polyhedron/demo/Polyhedron/data/lion-head.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/lucy-100kf.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/lucy-25kf.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/man.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/mushroom.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/pinion.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/pipe.off -text svneol=unset#application/octet-stream
