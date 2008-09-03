@@ -24,14 +24,14 @@ The user can also optionally pass an explicit kernel, in case the default based 
             K::Point_2
             centroid(InputIterator first, InputIterator beyond, const Tag& t);}
 { computes the centroid of a non-empty set of 2D objects having a manifold described by t.
-  \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.  The value type must be \ccc{K::Point_2}. The tag can range between CGAL::Dimension_tag\<0\> and CGAL::Dimension_tag\<2\>.
+  \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.  The value type must be \ccc{K::Point_2}. The tag must range between \ccc{CGAL::Dimension_tag<0>} and \ccc{CGAL::Dimension_tag<2>}.
 \ccPrecond{first != beyond.} }
 
 \ccFunction{template < typename InputIterator, typename K, typename Tag >
             K::Point_2
             centroid(InputIterator first, InputIterator beyond, const K & k, const Tag& t);}
 { computes the centroid of a non-empty set of 2D objects having a manifold described by t.
-  The value type must be \ccc{K::Point_2}. The tag can range between CGAL::Dimension_tag\<0\> and CGAL::Dimension_tag\<2\>.
+  The value type must be \ccc{K::Point_2}. The tag must range between \ccc{CGAL::Dimension_tag<0>} and \ccc{CGAL::Dimension_tag<2>}.
 \ccPrecond{first != beyond.} }
 
 \ccFunction{template < typename InputIterator, typename Tag >
@@ -39,14 +39,14 @@ The user can also optionally pass an explicit kernel, in case the default based 
             centroid(InputIterator first, InputIterator beyond, const Tag& t);}
 { computes the centroid of a non-empty set of 3D objects having a manifold described by t.
   \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.
-  The value type must be \ccc{K::Point_3}. The tag can range between CGAL::Dimension_tag\<0\> and CGAL::Dimension_tag\<3\>.
+  The value type must be \ccc{K::Point_3}. The tag must range between \ccc{CGAL::Dimension_tag<0>} and \ccc{CGAL::Dimension_tag<3>}.
 \ccPrecond{first != beyond.} }
 
 \ccFunction{template < typename InputIterator, typename K, typename Tag >
             K::Point_3
             centroid(InputIterator first, InputIterator beyond, const K & k, const Tag& t);}
 { computes the centroid of a non-empty set of 3D objects having a manifold described by t.
-  The value type must be \ccc{K::Point_3}. The tag can range between CGAL::Dimension_tag\<0\> and CGAL::Dimension_tag\<3\>.
+  The value type must be \ccc{K::Point_3}. The tag must range between \ccc{CGAL::Dimension_tag<0>} and \ccc{CGAL::Dimension_tag<3>}.
 \ccPrecond{first != beyond.} }
 
 \ccSeeAlso
