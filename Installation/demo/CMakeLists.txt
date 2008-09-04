@@ -11,8 +11,6 @@ foreach( entry ${list} )
     if ( EXISTS ${entry}/CMakeLists.txt )
       message( STATUS "Configuring  ${entry} demo" )
       add_subdirectory( ${entry} )
-    else()
-      message( STATUS "Skipping ${entry} demo" )
     endif()
     
   endif()
