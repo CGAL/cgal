@@ -25,6 +25,16 @@
  * types compatible with the curve renderer
 */
  
+CGAL_BEGIN_NAMESPACE
+
+// transformation routine
+namespace CGALi {
+
+//! this exception is thrown whenever the precision of used number
+//! type is not sufficient
+class Insufficient_rasterize_precision_exception
+{  };
+
 #ifndef CGAL_MAX_COEFF_TRANSFORM
 #define CGAL_MAX_COEFF_TRANSFORM
 
@@ -35,11 +45,6 @@
 #ifndef CGAL_SGN
 #define CGAL_SGN(x) ((x) > 0 ? 1 : ((x) < 0 ? -1 : 0))
 #endif
-
-CGAL_BEGIN_NAMESPACE
-
-// transformation routine
-namespace CGALi {
 
 template <class NT>
 struct Max_coeff
@@ -295,14 +300,17 @@ struct Curve_renderer_traits<CGAL::Interval_nt<true>, CORE::BigRat > :
         Float operator()(const Coeff& x, 
                     bool *error_bounds = NULL) const { 
             bool err_bnd;
+//             err_bnd = (CGAL_ABS(l) < 1E-15 || CGAL_ABS(u) < 1E-15) ||
+//                 ((l <= 0 && u >= 0));
             Float l = x.inf(), u = x.sup(), mid = (l+u)/2;
-            //err_bnd = ((l <= 0 && u >= 0));
-            err_bnd = (CGAL_ABS(l) < 1E-15 || CGAL_ABS(u) < 1E-15) ||
-                ((l <= 0 && u >= 0));
+            err_bnd = ((l < 0 && u > 0)||(l == 0 && u == 0));
             if(error_bounds != NULL)
                 *error_bounds = err_bnd;
-            if(err_bnd)// && CGAL_ABS(mid) < 1E-15)
+//! ATTENTION!!! if smth is screwed up try to uncomment the line below
+//! this is very crucial for performance & stability
+            if(err_bnd)  // &&  ABS(mid) < 1E-15)
                 return 0; 
+//! ATTENTION!!!
             return mid;
         }
     };
@@ -316,6 +324,8 @@ struct Curve_renderer_traits<CGAL::Interval_nt<true>, CORE::BigRat > :
         bool operator()(const Float& x) const
         { return (CGAL_ABS(x) <= 1e-16); }
     };
+
+    static const unsigned MAX_SUBDIVISION_LEVEL = 6;
 };
 
 //! Specialization for \c CORE::BigFloat
@@ -363,6 +373,8 @@ struct Curve_renderer_traits<CORE::BigFloat, class CORE::BigRat>
         inline void operator()(Float& x) const
         { x.makeExact(); }
     };
+
+    static const unsigned MAX_SUBDIVISION_LEVEL = 6;
 };
 
 //! Specialization for \c CORE::BigRat
@@ -435,14 +447,17 @@ struct Curve_renderer_traits<CGAL::Interval_nt<true>, leda::rational > :
         Float operator()(const Coeff& x, 
                     bool *error_bounds = NULL) const { 
             bool err_bnd;
+//             err_bnd = (CGAL_ABS(l) < 1E-15 || CGAL_ABS(u) < 1E-15) ||
+//                 ((l <= 0 && u >= 0));
             Float l = x.inf(), u = x.sup(), mid = (l+u)/2;
-            //err_bnd = ((l <= 0 && u >= 0));
-            err_bnd = (CGAL_ABS(l) < 1E-15 || CGAL_ABS(u) < 1E-15) ||
-                ((l <= 0 && u >= 0));
+            err_bnd = ((l < 0 && u > 0)||(l == 0 && u == 0));
             if(error_bounds != NULL)
                 *error_bounds = err_bnd;
-            if(err_bnd)// && CGAL_ABS(mid) < 1E-15)
+//! ATTENTION!!! if smth is screwed up try to uncomment the line below
+//! this is very crucial for performance & stability
+            if(err_bnd)  // &&  ABS(mid) < 1E-15)
                 return 0; 
+//! ATTENTION!!!
             return mid;
         }
     };

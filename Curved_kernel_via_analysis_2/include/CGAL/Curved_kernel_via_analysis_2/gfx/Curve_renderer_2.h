@@ -60,7 +60,7 @@ CGAL_BEGIN_NAMESPACE
 #define CGAL_WINDOW_ENLARGE  15 
 
 // refine factor for intervals in x-direction (in pixel size)
-#define CGAL_REFINE_X        100    
+#define CGAL_REFINE_X        100   // was 1000 previously 
 
 // refine factor for intervals in y-direction (in pixel size) 
 #define CGAL_REFINE_Y        100000  
@@ -643,12 +643,12 @@ void draw(const Arc_2& arc,
         }
     /// WARNING: if x-interval is small while y coordinates are far away from
     /// the window, we can get into the troubles..
-        /*if(pix_2.x - pix_1.x <= 1) {// it goes away right here
-            rev_points.push_back(Coord_2(pix_1.x ,pix_1.y));
-            rev_points.push_back(Coord_2(pix_2.x, pix_2.y));
+        if(pix_2.x - pix_1.x <= 1) {// it goes away right here
+            CGAL_CKVA_STORE_COORDS(rev_points, pix_1);  
+            CGAL_CKVA_STORE_COORDS(rev_points, pix_2);
             points.push_back(rev_points);
             return;
-        } */
+        } 
 
         Gfx_OUT("NO clip points\n");
         mid = (lower + upper)/2;
@@ -1326,7 +1326,6 @@ bool test_pixel(const Pixel_2& pix, int *dir, int *b_taken, bool& b_coincide)
     // bottom(2), top(3), left(0), right(1)
     int n_sign = 0, i, j, n_dir = 0, shift, n_local, new_dir;
     get_polynomials(CGAL_Y_RANGE, box[0]);
-    Gfx_DETAILED_OUT("\ncomputing left/right sides " << std::endl);
     
     b_coincide = false;
     int n_corner_dir = 0, corner_dir[] = {-1, -1};
@@ -1401,7 +1400,7 @@ bool test_pixel(const Pixel_2& pix, int *dir, int *b_taken, bool& b_coincide)
             // left side (i = 0) - direction taken = 1
             // right side (i = 1) - direction taken = 0
                 b_taken[n_dir] = 1 - i;
-                Gfx_DETAILED_OUT("new dir found: " << new_dir);
+                Gfx_DETAILED_OUT("new dir found: " << new_dir << "\n");
                 dir[n_dir++] = new_dir;
             }
         n_sign += n_local;
@@ -1730,7 +1729,7 @@ bool recursive_check(int var, const NT& beg_, const NT& end_,
     NT mid = (beg_+end_)/2, key_1, key_2, beg = beg_, end = end_;
     make_exact(mid);
     
-    Gfx_DETAILED_OUT("executing recursive check" << std::endl);
+    Gfx_DETAILED_OUT("executing recursive check; poly = " << poly << std::endl);
     val_1 = engine.evaluate_generic(var, beg, key, poly);
     val_3 = engine.evaluate_generic(var, end, key, poly);
     
@@ -2030,9 +2029,11 @@ bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
     }
     
     // if coincide already set - no need to check the derivative
-    if(!set_coincide && f_der && 
-        (!s_change || !recursive_check(var,lower,lower+inv,
-        box[ibox].key[ikey], box[ibox].poly[ikey]))) {
+//     if(!set_coincide && f_der && 
+//         (!s_change || !recursive_check(var,lower,lower+inv,
+//         box[ibox].key[ikey], box[ibox].poly[ikey]))) {
+    if(!set_coincide && f_der && !recursive_check(var,lower,lower+inv,
+        box[ibox].key[ikey], box[ibox].poly[ikey])) {
         
         if(!branches_coincide &&    
               (current_level < CGAL_COINCIDE_LEVEL))//||direction_taken == -1))
@@ -2164,7 +2165,7 @@ Lexit:
 inline bool get_range_1(int var, const NT& lower, const NT& upper, 
     const NT& key, const Poly_1& poly, int check = 1)
 {
-    bool res = engine.get_range_QF_1(var, lower, upper, key, poly, check);
+    bool res = engine.get_range_AARD_1(var, lower, upper, key, poly, check);
         //engine.get_range_MAA_1(var, lower, upper, key, poly, check);
     return res;
 }
@@ -2466,10 +2467,9 @@ inline bool is_isolated_pixel(const Pixel_2& pix) {
     return false;
 }
 
-#ifdef    Gfx_DEBUG_PRINT
 // DEBUG ONLY
 void dump_neighbourhood(const Pixel_2& pix) {
-
+#ifdef Gfx_USE_DETAILED_OUT
     CGAL::set_mode(std::cerr, CGAL::IO::PRETTY);
     CGAL::set_mode(std::cout, CGAL::IO::PRETTY);
 
@@ -2538,9 +2538,7 @@ void dump_neighbourhood(const Pixel_2& pix) {
     Gfx_OUT("poly bottom: " << box[1].poly[0] << " at (" << val << "; " <<
         bottom << ")\n");
         
-    engine.show_dump = true;        
     a = engine.evaluate_generic(CGAL_X_RANGE, val, bottom, box[1].poly[0]);
-    engine.show_dump = false;
     
     Gfx_OUT("val = " << a << std::endl);
     val += inc;
@@ -2579,10 +2577,7 @@ void dump_neighbourhood(const Pixel_2& pix) {
 
     Gfx_OUT("poly left: " << box[0].poly[0] << " at (" << val << "; " <<
         left << ")\n");
-    engine.show_dump = true;
     a = engine.evaluate_generic(CGAL_Y_RANGE, val, left, box[0].poly[0]);
-    engine.show_dump = false;
-
         
     Gfx_OUT("val = " << a << std::endl);
     val += inc;
@@ -2651,8 +2646,8 @@ void dump_neighbourhood(const Pixel_2& pix) {
     Gfx_OUT("val = " << b << std::endl);
     if(a*b < 0) 
         Gfx_OUT("sign change at segment 2" << std::endl);
-}
 #endif
+}
 
 //!@} 
 }; // class Curve_renderer_2<>

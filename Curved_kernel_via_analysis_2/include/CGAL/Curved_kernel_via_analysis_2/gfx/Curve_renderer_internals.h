@@ -151,11 +151,6 @@ std::ostream& operator <<(std::ostream& os, const Pixel_2_<Integer>& pix)
     return os;
 }
 
-//! this exception is thrown whenever the precision of used number
-//! type is not sufficient
-class Insufficient_rasterize_precision_exception
-{  };
-
 /*! \brief defines class \c Curve_renderer_internals
  *  
  * provides an interface to low-level range analysis and polynomials evaluation
@@ -484,6 +479,156 @@ bool setup(const CGAL::Bbox_2& box_, int res_w_, int res_h_)
     //show_dump = false;
     return true;
 }   
+
+//! \brief computes a range of polynomial values \c f([lower,upper]) using
+//! Affine Arithmetic with Recursive Derivative information
+bool get_range_AARD_1(int var, 
+    const NT& l_, const NT& r_, const NT& key, const Poly_1& poly, int check)
+{
+    Derivative_2 *der = (var == CGAL_X_RANGE ? der_x : der_y);
+    NT l(l_), r(r_), l1, r1, low, up;
+    NT v1, v2;
+    int eval1, eval2;
+    der_iterator_2 der_it_2 = der->end()-1; 
+    der_iterator_1 der_it, der_begin;
+    const_iterator_1 cache_it, begin;
+        
+    first_der = false, sign_change = false;
+    if(poly.degree()==0) {
+        zero_bounds = false;
+        return (poly.lcoeff()==NT(0.0));
+    }
+    
+    if(l_ == r_) {
+        zero_bounds = false;
+        return false;
+    }
+    if(l > r) {
+        l = r_;
+        r = l_;
+    }
+    
+    eval1 = evaluate_generic(var, l, key, poly);
+    eval2 = evaluate_generic(var, r, key, poly);
+    bool sign_change = (eval1*eval2 < 0);
+    zero_bounds = ((eval1&eval2) == 0);
+
+    if((sign_change||zero_bounds)&&check==1)
+        return true;
+    if(var == CGAL_X_RANGE) {
+        l1 = x_min + l*pixel_w;
+        r1 = x_min + r*pixel_w;
+    } else {
+        l1 = y_min + l*pixel_h;
+        r1 = y_min + r*pixel_h;
+    }
+    
+    typename Renderer_traits::Extract_eval extract;
+    unsigned index = CGAL_RECURSIVE_DER_MAX_DEGREE; 
+    if(index >= der->size()) {
+        low = up = extract(poly.lcoeff()) * (*der_it_2).lcoeff();
+    } else {
+        der_it_2 = der->begin()+index;
+        low = 1;
+        up = -1;
+    }
+    
+    NT f_center = (l1 + r1)/2, f_noise = (r1 - l1)/2; 
+    make_exact(f_center);
+    make_exact(f_noise);
+    NT f_noise_abs = CGAL_ABS(f_noise);
+    std::vector<NT> noise(poly.degree(),NT(0)); 
+        
+    while((der_it_2--)!=der->begin()) {
+        // iterate through derivative coefficients
+        der_it = (*der_it_2).end()-1; 
+        der_begin = (*der_it_2).begin();
+        cache_it = poly.end()-1; // iterate through precomputed y-values
+        // if a derivative does not straddle zero we can 
+        // calculate the exact boundaries for f(x)      
+        if(low * up >= 0) {
+            v1 = v2 = extract(*cache_it--)* (*der_it);
+            // calculate the ith derivative at xa and xb
+            while((der_it--)!=der_begin) {
+                NT cc1 = extract(*cache_it--)* (*der_it);
+                v1 = v1 * l1 + cc1;
+                v2 = v2 * r1 + cc1;
+            }
+            low = v1; 
+            up = v2;  
+        } else { // use affine arithmetic to compute bounds
+
+            NT spread, res_center = extract(*cache_it)* (*der_it);
+            unsigned i, n_noise = 0; // number of noise symbols
+                    
+            cache_it--;
+            noise[0] = 0;   
+            while((der_it--)!=der_begin) {
+                spread = CGAL_ABS(noise[0]);
+                noise[0] = f_noise*res_center + noise[0]*f_center;
+                for(i = 1; i < n_noise; i++) {
+                    spread += (noise[i] < 0 ? -noise[i]: noise[i]);
+                    noise[i] *= f_center;
+                }
+                res_center = res_center*f_center + extract(*cache_it) *
+                        (*der_it);
+                cache_it--;
+                if(n_noise == 0) { // no need to add non-affine approx since we
+                    n_noise++;      // multiply by a constant 
+                    continue;
+                }
+                noise[n_noise++]=f_noise_abs*spread;
+            }
+            spread = 0;
+            for(i = 0; i < n_noise; i++)
+                spread += (noise[i] < 0 ? -noise[i]: noise[i]);
+            low = res_center - spread;
+            up = res_center + spread;
+        }
+        if(der_it_2 == der->begin()&&check==3) {
+            first_der = //(eval1*eval2 < 0);//
+                    is_zero(low, up);
+            if(sign_change||zero_bounds) 
+                return true;
+        }
+    }
+    if(low * up < 0) {
+        cache_it = poly.end()-1;
+        begin = poly.begin();
+        
+        NT res_center = extract(*cache_it), spread(0); 
+        unsigned i, n_noise = 0; // number of noise symbols
+        noise[0] = 0;
+        while((cache_it--)!=begin) {
+            spread = CGAL_ABS(noise[0]);
+            noise[0] = f_noise*res_center + noise[0]*f_center;
+            for(i = 1; i < n_noise; i++) {
+                spread += (noise[i] < 0 ? -noise[i]: noise[i]);
+                noise[i] *= f_center;
+            }
+            res_center = res_center*f_center + extract(*cache_it);
+            if(n_noise == 0) { // no need to add non-affine approx since we
+                n_noise++;      // multiply by a constant 
+                continue;
+            }
+            noise[n_noise++] = f_noise_abs * spread;
+        }
+        spread = 0;
+        for(i = 0; i < n_noise; i++)
+            spread += (noise[i] < 0 ? -noise[i]: noise[i]);
+        
+        low = res_center - spread;
+        up = res_center + spread;
+        
+        eval1 = CGAL_SGN(low);
+        eval2 = CGAL_SGN(up);
+    }
+    zero_bounds = ((eval1&eval2) == 0);
+    if(eval1*eval2 < 0) {
+        return true;
+    } 
+    return false;
+}
 
 //! \brief evaluates a univariate polynomial over an interval using
 //! First Quadratic Affine Form
