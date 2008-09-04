@@ -2,7 +2,7 @@
 #define TEXTURED_POLYHEDRON_TYPE_H
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Textured_polyhedron.h>
+#include <CGAL/textured_polyhedron.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Textured_polyhedron<Kernel,Textured_items> Tex_polyhedron;
