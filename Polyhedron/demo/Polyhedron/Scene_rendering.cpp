@@ -10,7 +10,7 @@ void gl_render_polyhedron_facets(Polyhedron *p)
 
 void gl_render_polyhedron_facets(Textured_polyhedron *p)
 {
-  gl_render_facets(*p);
+  //gl_render_facets(*p);
 }
 
 void gl_render_polyhedron_edges(Polyhedron *p)

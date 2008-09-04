@@ -83,12 +83,12 @@ void MainWindow::parameterize(const Parameterization_method method)
     scene->polyhedronRenderingMode(index));
 
   Textured_polyhedron *pTex_polyhedron = new Textured_polyhedron();
-  *((Polyhedron *)pTex_polyhedron) = *pMesh; // copy
-  scene->addTexPolyhedron(pTex_polyhedron,
-    tr("%1 (parameterization)").arg(scene->polyhedronName(index)),
-    Qt::magenta,
-    scene->isPolyhedronActivated(index),
-    scene->polyhedronRenderingMode(index));
+  //*((Polyhedron *)pTex_polyhedron) = *pMesh; // copy -> BUG
+  //scene->addTexPolyhedron(pTex_polyhedron,
+  //  tr("%1 (parameterization)").arg(scene->polyhedronName(index)),
+  //  Qt::magenta,
+  //  scene->isPolyhedronActivated(index),
+  //  scene->polyhedronRenderingMode(index));
 
   QApplication::setOverrideCursor(Qt::ArrowCursor);
 }

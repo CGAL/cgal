@@ -75,21 +75,21 @@ Scene::destroy_entry_ptr(Polyhedron_ptr ptr)
 {
   switch(ptr.which())
   {
-    case POLYHEDRON_ENTRY:
+  case POLYHEDRON_ENTRY:
     {
       Polyhedron** p = boost::get<Polyhedron*>(&ptr);
       Q_ASSERT(p != NULL);
       this->destroy_polyhedron(*p);
       break;
     }
-    case TEX_POLYHEDRON_ENTRY:
+  case TEX_POLYHEDRON_ENTRY:
     {
       Textured_polyhedron** p = boost::get<Textured_polyhedron*>(&ptr);
       Q_ASSERT(p != NULL);
       this->destroy_tex_polyhedron(*p);
       break;
     }
-    case NEF_ENTRY:
+  case NEF_ENTRY:
     {
       Nef_polyhedron** p = boost::get<Nef_polyhedron*>(&ptr);
       Q_ASSERT(p != NULL);
@@ -307,11 +307,11 @@ Scene::draw(bool with_names)
 
 	switch(entry.polyhedron_ptr.which())
 	{
-  	case NEF_ENTRY:
+	case NEF_ENTRY:
 	  CGALglcolor(Qt::black);
 	  gl_render_nef_edges(boost::get<Nef_polyhedron*>(entry.polyhedron_ptr));
 	  break;
-  	case POLYHEDRON_ENTRY:
+	case POLYHEDRON_ENTRY:
 	case TEX_POLYHEDRON_ENTRY:
 	  draw(entry);
 	}
@@ -353,25 +353,25 @@ void Scene::gl_render_facets(Polyhedron_ptr ptr)
   {
   case NEF_ENTRY:
     {
-    Nef_polyhedron* p = boost::get<Nef_polyhedron*>(ptr);
-    glEnable(GL_LIGHTING);
-    gl_render_nef_facets(p);
-    glDisable(GL_LIGHTING);
-    CGALglcolor(Qt::black);
-    gl_render_nef_vertices(p);
-    glEnable(GL_LIGHTING);
-    break;
+      Nef_polyhedron* p = boost::get<Nef_polyhedron*>(ptr);
+      glEnable(GL_LIGHTING);
+      gl_render_nef_facets(p);
+      glDisable(GL_LIGHTING);
+      CGALglcolor(Qt::black);
+      gl_render_nef_vertices(p);
+      glEnable(GL_LIGHTING);
+      break;
     }
   case POLYHEDRON_ENTRY:
     {
-    Polyhedron* p = boost::get<Polyhedron*>(ptr);
-    gl_render_polyhedron_facets(p);
-    break;
+      Polyhedron* p = boost::get<Polyhedron*>(ptr);
+      gl_render_polyhedron_facets(p);
+      break;
     }
   case TEX_POLYHEDRON_ENTRY:
     {
-    Textured_polyhedron* p = boost::get<Textured_polyhedron*>(ptr);
-    gl_render_polyhedron_facets(p);
+      Textured_polyhedron* p = boost::get<Textured_polyhedron*>(ptr);
+      gl_render_polyhedron_facets(p);
     }
   }
 }
