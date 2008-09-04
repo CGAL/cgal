@@ -4,6 +4,8 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 file( GLOB list "*" )
 
+list( SORT list )
+
 foreach( entry ${list} )
   
   if ( IS_DIRECTORY ${entry} )
