@@ -30,12 +30,12 @@
 #endif
 
 #ifndef CGAL_ACK_USE_APPROXIMATE_ROTATION
-#define CGAL_ACK_USE_APPROXIMATE_ROTATION 1
+#define CGAL_ACK_USE_APPROXIMATE_ROTATION 0
 #endif
 
 #if !CGAL_ACK_USE_APPROXIMATE_ROTATION
 #ifndef CGAL_ACK_BASE_ANGLE
-#define CGAL_ACK_BASE_ANGLE 30
+#define CGAL_ACK_BASE_ANGLE 3
 #endif
 #endif
 
@@ -145,8 +145,10 @@ int main(int argc,char** argv) {
         <Basic_algebraic_curve_kernel_2>
         Rotated_algebraic_curve_kernel_2;
 #else
-    typedef CGAL::Rotated_algebraic_curve_kernel_2
-        <Basic_algebraic_curve_kernel_2,CGAL_ACK_BASE_ANGLE>
+    typedef CGAL::Rotation_traits_for_base_angle
+        <Coefficient,CGAL_ACK_BASE_ANGLE> Rotation_traits;
+    
+    typedef CGAL::Rotated_algebraic_curve_kernel_2<Rotation_traits>
         Rotated_algebraic_curve_kernel_2;
 #endif
     typedef Rotated_algebraic_curve_kernel_2::Curve_analysis_2 
