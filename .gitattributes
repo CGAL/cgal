@@ -1275,7 +1275,6 @@ Circular_kernel_2/demo/Circular_kernel_2/help/sweeper.jpeg -text svneol=unset#im
 Circular_kernel_2/demo/Circular_kernel_2/help/trash.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation.png -text
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation_detail.png -text
-Circular_kernel_2/examples/Circular_kernel_2/CMakeLists.txt -text
 Circular_kernel_2/include/CGAL/Circular_kernel_intersections.h -text
 Circular_kernel_2/include/CGAL/Filtered_bbox_circular_kernel_2/bbox_filtered_intersections.h -text
 Circular_kernel_3/demo/Circular_kernel_3/images/button_axis.gif -text svneol=unset#image/gif
@@ -1778,7 +1777,6 @@ Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.gif -text svneol=unset#image/
 Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.pdf -text svneol=unset#application/pdf
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvecthree.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#image/gif
-Kernel_23/examples/Kernel_23/CMakeLists.txt -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/test/Kernel_23/CMakeLists.txt -text
 Kernel_d/include/CGAL/Kernel_d/Cartesian_const_iterator_d.h -text

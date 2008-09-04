@@ -1074,6 +1074,7 @@ int main( int argc, char const* argv[] )
           case 'p' : sAcceptNonSimpleInput = true ; break ;
           case 'n' : sNoOp         = true ; break ;
           case 'g' : sValidateGeometry = true ; break ;
+          case 'L' : sClassifyCases = true ; break ;
           
           case 'r' : 
             if ( arg.length() > 2 ) 
@@ -1335,6 +1336,7 @@ int main( int argc, char const* argv[] )
          << "     -fPATH  Append PATH to each filename" << endl 
          << "     -rMAX   Rotate input vertex sequence by one vertex up to MAX times" << endl
          << "     -mMAX   Ignore polygons with a vertex count greater than MAX" << endl
+         << "     -L      list of OK and failed cases on (separated) text files" << endl 
          << endl 
          << "     --full_skeleton  Create, verify and discard full skeleton even if partial skeleton will be used (for offsetting)." << endl
          << endl
