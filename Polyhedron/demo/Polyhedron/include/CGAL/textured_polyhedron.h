@@ -167,6 +167,7 @@ public :
   typedef typename Base::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
   typedef typename Base::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
   typedef typename Base::Edge_iterator Edge_iterator;
+  typedef typename Base::Facet Facet;
   typedef typename Base::Facet_iterator Facet_iterator;
   typedef typename Base::Facet_handle Facet_handle;
 
@@ -197,11 +198,11 @@ public :
   // normals (per facet, then per vertex)
   void compute_normals_per_facet()
   {
-    std::for_each(facets_begin(),facets_end(),::Facet_normal());
+    std::for_each(this->facets_begin(),this->facets_end(),::Facet_normal());
   }
   void compute_normals_per_vertex()
   {
-    std::for_each(vertices_begin(),vertices_end(),::Vertex_normal());
+    std::for_each(this->vertices_begin(),this->vertices_end(),::Vertex_normal());
   }
   void compute_normals()
   {
@@ -214,8 +215,8 @@ public :
     const double scaling_tex_coordinates)
   {
     ::glBegin(GL_TRIANGLES);
-    Facet_iterator f = facets_begin();
-    for(;f!= facets_end();f++)
+    Facet_iterator f = this->facets_begin();
+    for(;f!= this->facets_end();f++)
       gl_draw_textured_facet(f,smooth_shading,use_normals,scaling_tex_coordinates);
     ::glEnd();
   }
