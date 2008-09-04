@@ -11,6 +11,8 @@
 #include <CGAL/Discrete_conformal_map_parameterizer_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 
+#include <CGAL/Textured_polyhedron_builder.h>
+
 #include <iostream>
 
 void MainWindow::parameterize(const Parameterization_method method)
@@ -37,7 +39,7 @@ void MainWindow::parameterize(const Parameterization_method method)
   {
     case PARAM_MVC:
     {
-      std::cerr << "Parameterize (MVC)...";
+      std::cout << "Parameterize (MVC)...";
       typedef CGAL::Mean_value_coordinates_parameterizer_3<Adaptor> Parameterizer;
       Parameterizer::Error_code err = CGAL::parameterize(adaptor,Parameterizer());
       success = err == Parameterizer::OK;
@@ -45,7 +47,7 @@ void MainWindow::parameterize(const Parameterization_method method)
     }
     case PARAM_DCP:
     {
-      std::cerr << "Parameterize (DCP)...";
+      std::cout << "Parameterize (DCP)...";
       typedef CGAL::Discrete_conformal_map_parameterizer_3<Adaptor> Parameterizer;
       Parameterizer::Error_code err = CGAL::parameterize(adaptor,Parameterizer());
       success = err == Parameterizer::OK;
@@ -84,6 +86,10 @@ void MainWindow::parameterize(const Parameterization_method method)
 
   Textured_polyhedron *pTex_polyhedron = new Textured_polyhedron();
   //*((Polyhedron *)pTex_polyhedron) = *pMesh; // copy -> BUG
+
+  Textured_polyhedron_builder<Polyhedron,Textured_polyhedron,Kernel> builder;
+  builder.run(*pMesh,*pTex_polyhedron);
+
   //scene->addTexPolyhedron(pTex_polyhedron,
   //  tr("%1 (parameterization)").arg(scene->polyhedronName(index)),
   //  Qt::magenta,
