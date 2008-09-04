@@ -117,15 +117,27 @@ public:
 		// get variables
 		Variable_value_iterator X = m_solution.variable_values_begin();
 
+		// Problem: X[0], X[1], ..., X[3] are proxy objects from
+		// boost::facade_iterator. Those proxy objects are of type
+		// operator_brackets_proxy<Variable_value_iterator>, which
+		// is castable to a number type. In CGAL::to_double, the
+		// automatic selection of a Real_embeddable_traits does not
+		// work with such proxy objects (whose type is not
+		// recognized). That is why we need to select the
+		// Real_embeddable_traits manually, and create a functor
+		// to_double manually. 	     -- Laurent Rineau, 2008/09/04
+		typedef CGAL::Real_embeddable_traits<typename Variable_value_iterator::value_type> RE_traits;
+		typename RE_traits::To_double to_double;
+
 		// solution if x4 > 0
-		double x4 = CGAL::to_double(X[3]);
+		double x4 = to_double(X[3]);
 		if(x4 <= 0.0)
 			return false;
 
 		// define inside point as (x1;x2;x3)
-		double x1 = CGAL::to_double(X[0]); 
-		double x2 = CGAL::to_double(X[1]);
-		double x3 = CGAL::to_double(X[2]);
+		double x1 = to_double(X[0]); 
+		double x2 = to_double(X[1]);
+		double x3 = to_double(X[2]);
 		m_inside_point = Point(x1,x2,x3);
 
 		return true;
