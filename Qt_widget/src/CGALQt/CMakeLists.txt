@@ -26,8 +26,8 @@ if( QT_FOUND AND OPENGL_FOUND )
     get_dependency_version(OPENGL OpenGL)
     get_dependency_version(QT)
     
-    set( CGAL_USE_QT TRUE ) 
-    add_config_flag( CGAL_USE_QT )
+    set( CGAL_USE_QT3 TRUE ) 
+    add_config_flag( CGAL_USE_QT3 )
       
     message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
@@ -38,13 +38,13 @@ if( QT_FOUND AND OPENGL_FOUND )
     message( STATUS "moc executable:     ${QT_MOC_EXECUTABLE}" )
     message( STATUS "uic executable:     ${QT_UIC_EXECUTABLE}" )
     
-    cache_set(CGAL_QT_3RD_PARTY_INCLUDE_DIRS ${QT_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
-    cache_set(CGAL_QT_3RD_PARTY_LIBRARIES    ${QT_LIBRARIES}   ${OPENGL_LIBRARIES}   )
-    cache_set(CGAL_QT_3RD_PARTY_DEFINITIONS  ${QT_DEFINITIONS} ${OPENGL_DEFINITIONS} )
+    cache_set(CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS ${QT_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
+    cache_set(CGAL_Qt3_3RD_PARTY_LIBRARIES    ${QT_LIBRARIES}   ${OPENGL_LIBRARIES}   )
+    cache_set(CGAL_Qt3_3RD_PARTY_DEFINITIONS  ${QT_DEFINITIONS} ${OPENGL_DEFINITIONS} )
     
     include(Qt3Macros)
        
-    include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_QT_3RD_PARTY_INCLUDE_DIRS} )
+    include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS} )
        
     # Make sure the compiler can find generated .moc files
     include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
@@ -88,55 +88,55 @@ if( QT_FOUND AND OPENGL_FOUND )
     add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget_history.moc )
     add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget_OpenGL.moc )
 
-    add_library (CGAL_QT "all_files.cpp")
+    add_library (CGAL_Qt3 "all_files.cpp")
     
-    add_dependencies( CGAL_QT CGAL )
+    add_dependencies( CGAL_Qt3 CGAL )
     
-    set_target_properties(CGAL_QT PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+    set_target_properties(CGAL_Qt3 PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
     
-    target_link_libraries( CGAL_QT ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_QT_3RD_PARTY_LIBRARIES} )
+    target_link_libraries( CGAL_Qt3 ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt3_3RD_PARTY_LIBRARIES} )
         
-    add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_QT_3RD_PARTY_DEFINITIONS} )
+    add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt3_3RD_PARTY_DEFINITIONS} )
     
-    set( CGAL_QT_BASENAME CGAL-Qt )
+    set( CGAL_Qt3_BASENAME CGAL-Qt3 )
     
     if (NOT AUTO_LINK_ENABLED )
 
-      set_target_properties( CGAL_QT PROPERTIES OUTPUT_NAME "${CGAL_QT_BASENAME}" )
+      set_target_properties( CGAL_Qt3 PROPERTIES OUTPUT_NAME "${CGAL_Qt3_BASENAME}" )
       
-      get_target_property( CGAL_QT_LIBRARY_FULL_PATH CGAL_QT LOCATION  )
+      get_target_property( CGAL_Qt3_LIBRARY_FULL_PATH CGAL_Qt3 LOCATION  )
       
-      set(CGAL_QT_LIBRARY "${CGAL_QT_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-Qt library")
+      set(CGAL_Qt3_LIBRARY "${CGAL_Qt3_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-Qt3 library")
       
-      mark_as_advanced(CGAL_QT_LIBRARY)
+      mark_as_advanced(CGAL_Qt3_LIBRARY)
       
     else()
 
-      set(CGAL_QT_LIBRARY)
+      set(CGAL_Qt3_LIBRARY)
       
-      set(CGAL_QT_RELEASE_MANGLED_NAME        "${CGAL_QT_BASENAME}-${TOOLSET}-mt" ) 
-      set(CGAL_QT_DEBUG_MANGLED_NAME          "${CGAL_QT_BASENAME}-${TOOLSET}-mt-gd" ) 
-      set(CGAL_QT_MINSIZEREL_MANGLED_NAME     "${CGAL_QT_BASENAME}-${TOOLSET}-mt-o" ) 
-      set(CGAL_QT_RELWITHDEBINFO_MANGLED_NAME "${CGAL_QT_BASENAME}-${TOOLSET}-mt-g" ) 
+      set(CGAL_Qt3_RELEASE_MANGLED_NAME        "${CGAL_Qt3_BASENAME}-${TOOLSET}-mt" ) 
+      set(CGAL_Qt3_DEBUG_MANGLED_NAME          "${CGAL_Qt3_BASENAME}-${TOOLSET}-mt-gd" ) 
+      set(CGAL_Qt3_MINSIZEREL_MANGLED_NAME     "${CGAL_Qt3_BASENAME}-${TOOLSET}-mt-o" ) 
+      set(CGAL_Qt3_RELWITHDEBINFO_MANGLED_NAME "${CGAL_Qt3_BASENAME}-${TOOLSET}-mt-g" ) 
       
-      set_target_properties( CGAL_QT PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_QT_DEBUG_MANGLED_NAME}" 
-                                                RELEASE_OUTPUT_NAME        "${CGAL_QT_RELEASE_MANGLED_NAME}" 
-                                                MINSIZEREL_OUTPUT_NAME     "${CGAL_QT_MINSIZEREL_MANGLED_NAME}" 
-                                                RELWITHDEBINFO_OUTPUT_NAME "${CGAL_QT_RELWITHDEBINFO_MANGLED_NAME}" 
+      set_target_properties( CGAL_Qt3 PROPERTIES DEBUG_OUTPUT_NAME         "${CGAL_Qt3_DEBUG_MANGLED_NAME}" 
+                                                RELEASE_OUTPUT_NAME        "${CGAL_Qt3_RELEASE_MANGLED_NAME}" 
+                                                MINSIZEREL_OUTPUT_NAME     "${CGAL_Qt3_MINSIZEREL_MANGLED_NAME}" 
+                                                RELWITHDEBINFO_OUTPUT_NAME "${CGAL_Qt3_RELWITHDEBINFO_MANGLED_NAME}" 
                            )
 
       if ( HAS_CFG_INTDIR )                      
-        add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND copy /Y "$(TargetPath)" "$(SolutionDir)lib" )
-        add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb" copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)lib" )
+        add_custom_command(TARGET CGAL_Qt3 POST_BUILD COMMAND copy /Y "$(TargetPath)" "$(SolutionDir)lib" )
+        add_custom_command(TARGET CGAL_Qt3 POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb" copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)lib" )
       endif()
       
     endif()
 
     if ( CGAL_INSTALL_LIB_DIR )
-      install(TARGETS CGAL_QT DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+      install(TARGETS CGAL_Qt3 DESTINATION ${CGAL_INSTALL_LIB_DIR} )
     endif()
 else()
-  message( STATUS "CGAL-Qt needs Qt3, cannot be configured.")
+  message( STATUS "CGAL-Qt3 needs Qt3, cannot be configured.")
 endif()
 
    

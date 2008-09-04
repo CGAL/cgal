@@ -234,9 +234,10 @@ add_subdirectory(src)
 
 cache_get(CGAL_LIBRARY)
 cache_get(CGAL_CORE_LIBRARY)
-cache_get(CGAL_IMAGEIO_LIBRARY)
+cache_get(CGAL_ImageIO_LIBRARY)
 cache_get(CGAL_PDB_LIBRARY)
-cache_get(CGAL_QT_LIBRARY)
+cache_get(CGAL_Qt3_LIBRARY)
+cache_get(CGAL_Qt4_LIBRARY)
 
 cache_get(CGAL_3RD_PARTY_DEFINITIONS  )
 cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS )
@@ -248,15 +249,20 @@ cache_get(CGAL_CORE_3RD_PARTY_INCLUDE_DIRS )
 cache_get(CGAL_CORE_3RD_PARTY_LIBRARIES    )
 cache_get(CGAL_CORE_3RD_PARTY_LIBRARIES_DIR) 
 
-cache_get(CGAL_IMAGEIO_3RD_PARTY_DEFINITIONS  )
-cache_get(CGAL_IMAGEIO_3RD_PARTY_INCLUDE_DIRS )
-cache_get(CGAL_IMAGEIO_3RD_PARTY_LIBRARIES    )
-cache_get(CGAL_IMAGEIO_3RD_PARTY_LIBRARIES_DIR) 
+cache_get(CGAL_ImageIO_3RD_PARTY_DEFINITIONS  )
+cache_get(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS )
+cache_get(CGAL_ImageIO_3RD_PARTY_LIBRARIES    )
+cache_get(CGAL_ImageIO_3RD_PARTY_LIBRARIES_DIR) 
 
-cache_get(CGAL_QT_3RD_PARTY_DEFINITIONS  )
-cache_get(CGAL_QT_3RD_PARTY_INCLUDE_DIRS )
-cache_get(CGAL_QT_3RD_PARTY_LIBRARIES    )
-cache_get(CGAL_QT_3RD_PARTY_LIBRARIES_DIR) 
+cache_get(CGAL_Qt3_3RD_PARTY_DEFINITIONS  )
+cache_get(CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS )
+cache_get(CGAL_Qt3_3RD_PARTY_LIBRARIES    )
+cache_get(CGAL_Qt3_3RD_PARTY_LIBRARIES_DIR) 
+
+cache_get(CGAL_Qt4_3RD_PARTY_DEFINITIONS  )
+cache_get(CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS )
+cache_get(CGAL_Qt4_3RD_PARTY_LIBRARIES    )
+cache_get(CGAL_Qt4_3RD_PARTY_LIBRARIES_DIR) 
 
 cache_get(CGAL_PDB_3RD_PARTY_DEFINITIONS  )
 cache_get(CGAL_PDB_3RD_PARTY_INCLUDE_DIRS )
@@ -300,13 +306,13 @@ if ( WITH_INSTALL )
          )
 
 
-  install(DIRECTORY include/CGAL                      DESTINATION ${CGAL_INSTALL_INC_DIR}    )
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/include/CGAL" DESTINATION ${CGAL_INSTALL_INC_DIR}    )
+  install(DIRECTORY include/CGAL                       DESTINATION ${CGAL_INSTALL_INC_DIR} )
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/include/CGAL" DESTINATION ${CGAL_INSTALL_INC_DIR} )
 
-  install(DIRECTORY scripts/                          DESTINATION ${CGAL_INSTALL_BIN_DIR}    )
+  install(DIRECTORY scripts/ DESTINATION ${CGAL_INSTALL_BIN_DIR}    )
 
-  install(DIRECTORY cmake/modules/                        DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
-  install(FILES cmake/modules/UseCGAL.cmake               DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+  install(DIRECTORY cmake/modules/           DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+  install(FILES cmake/modules/UseCGAL.cmake  DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
   if ( GMP_IN_AUXILIARY )
     install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
@@ -326,9 +332,9 @@ if ( WITH_INSTALL )
 
   if ( SOURCE_INSTALL )
     install(FILES ${CMAKE_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-    install(FILES     CMakeLists.txt                        DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-    install(DIRECTORY auxiliary                             DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-    install(DIRECTORY src                                   DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+    install(FILES     CMakeLists.txt                         DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+    install(DIRECTORY auxiliary                              DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+    install(DIRECTORY src                                    DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
   else()
     install(FILES ${CMAKE_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
   endif()
@@ -344,16 +350,16 @@ endif()
 
 macro( add_programs subdir ON_OFF )
 
-  cache_set( CGAL_EXECUTABLES "" )
+  cache_set( CGAL_EXECUTABLE_TARGETS "" )
   
   add_custom_target( ${subdir} )
   
   optional_add_subdirectory( ${subdir} ${ON_OFF} EXCLUDE_FROM_ALL )
   
-  cache_get( CGAL_EXECUTABLES )
+  cache_get( CGAL_EXECUTABLE_TARGETS )
   
-  foreach( CGAL_EXECUTABLE in ${CGAL_EXECUTABLES} )
-    add_dependencies( ${subdir} ${CGAL_EXECUTABLE} )
+  foreach( CGAL_EXECUTABLE_TARGET in ${CGAL_EXECUTABLE_TARGETS} )
+    add_dependencies( ${subdir} ${CGAL_EXECUTABLE_TARGET} )
   endforeach()
      
 endmacro()

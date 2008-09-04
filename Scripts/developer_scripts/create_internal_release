@@ -414,7 +414,7 @@ sub make_testscripts()
 
 sub generate_cmake_scripts
 {
-  my $is_demo = $_[0];
+  my $options = $_[0];
   
   foreach $DIR (glob("*")) 
   {
@@ -425,8 +425,6 @@ sub generate_cmake_scripts
       if ( ! -f 'CMakeLists.txt' ) 
       {
         $_ = $DIR;
-        
-        my $options = /_Demo$/ || $is_demo ? '-q' : '' ;
         
         if ( -f 'cgal_create_cmake_script_options') 
         {
@@ -484,13 +482,13 @@ sub make_testscripts_for_cmake
     generate_cgal_test_with_cmake();
     
     print "Creating cmake scripts in test\n";
-    generate_cmake_scripts('');
+    generate_cmake_scripts('test');
     
     chdir $BASEDIR;
     chdir 'examples';
     
     print "Creating cmake scripts in examples\n";
-    generate_cmake_scripts('');
+    generate_cmake_scripts('example');
 
     chdir $BASEDIR;
     chdir 'demo';

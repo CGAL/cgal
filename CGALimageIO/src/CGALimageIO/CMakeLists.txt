@@ -39,21 +39,21 @@ if(ZLIB_FOUND AND OPENGL_FOUND)
   message( STATUS "ZLib   include:     ${ZLIB_INCLUDE_DIR}" )
   message( STATUS "ZLib   libraries:   ${ZLIB_LIBRARY}" )
   
-  set( CGAL_IMAGEIO_BASENAME CGAL-ImageIO )
+  set( CGAL_ImageIO_BASENAME CGAL-ImageIO )
   
-  cache_set(CGAL_IMAGEIO_3RD_PARTY_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
-  cache_set(CGAL_IMAGEIO_3RD_PARTY_LIBRARIES    ${ZLIB_LIBRARY} ${OPENGL_LIBRARIES} )
-  cache_set(CGAL_IMAGEIO_3RD_PARTY_DEFINITIONS  "" )
+  cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
+  cache_set(CGAL_ImageIO_3RD_PARTY_LIBRARIES    ${ZLIB_LIBRARY} ${OPENGL_LIBRARIES} )
+  cache_set(CGAL_ImageIO_3RD_PARTY_DEFINITIONS  "" )
   
   if(WITH_VTK)
   
     if( VTK_FOUND )
     
-      message(STATUS "VTK-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}.${VTK_BUILD_VERSION} found. Build VTK support in ${CGAL_IMAGEIO_BASENAME}.")
+      message(STATUS "VTK-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}.${VTK_BUILD_VERSION} found. Build VTK support in ${CGAL_ImageIO_BASENAME}.")
       include( ${VTK_USE_FILE} )
-      cache_set(CGAL_IMAGEIO_3RD_PARTY_DEFINITIONS  ${CGAL_IMAGEIO_3RD_PARTY_DEFINITIONS} -DCGAL_USE_VTK )
-      cache_set(CGAL_IMAGEIO_3RD_PARTY_INCLUDE_DIRS ${CGAL_IMAGEIO_3RD_PARTY_INCLUDE_DIRS} ${VTK_INCLUDE_DIR} )
-      cache_set(CGAL_IMAGEIO_3RD_PARTY_LIBRARIES    ${CGAL_IMAGEIO_3RD_PARTY_LIBRARIES} vtkImaging vtkIO )
+      cache_set(CGAL_ImageIO_3RD_PARTY_DEFINITIONS  ${CGAL_ImageIO_3RD_PARTY_DEFINITIONS} -DCGAL_USE_VTK )
+      cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} ${VTK_INCLUDE_DIR} )
+      cache_set(CGAL_ImageIO_3RD_PARTY_LIBRARIES    ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} vtkImaging vtkIO )
       
     else()
       message(STATUS "VTK not found.")
@@ -61,52 +61,52 @@ if(ZLIB_FOUND AND OPENGL_FOUND)
     
   endif()
   
-  include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_IMAGEIO_3RD_PARTY_INCLUDE_DIRS} )
+  include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} )
   
-  add_library(CGAL_IMAGEIO all_files.cpp)
+  add_library(CGAL_ImageIO all_files.cpp)
   
-  add_dependencies( CGAL_IMAGEIO CGAL )
+  add_dependencies( CGAL_ImageIO CGAL )
   
-  add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_IMAGEIO_3RD_PARTY_DEFINITIONS} )
+  add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_ImageIO_3RD_PARTY_DEFINITIONS} )
   
-  set_target_properties(CGAL_IMAGEIO PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+  set_target_properties(CGAL_ImageIO PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
   
-  target_link_libraries( CGAL_IMAGEIO ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_IMAGEIO_3RD_PARTY_LIBRARIES} )
+  target_link_libraries( CGAL_ImageIO ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} )
   
   if (NOT AUTO_LINK_ENABLED )
   
-    set_target_properties( CGAL_IMAGEIO PROPERTIES OUTPUT_NAME "${CGAL_IMAGEIO_BASENAME}" )
+    set_target_properties( CGAL_ImageIO PROPERTIES OUTPUT_NAME "${CGAL_ImageIO_BASENAME}" )
     
-    get_target_property( CGAL_IMAGEIO_LIBRARY_FULL_PATH CGAL_IMAGEIO LOCATION  )
+    get_target_property( CGAL_ImageIO_LIBRARY_FULL_PATH CGAL_ImageIO LOCATION  )
     
-    set(CGAL_IMAGEIO_LIBRARY "${CGAL_IMAGEIO_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-ImageIO library")
+    set(CGAL_ImageIO_LIBRARY "${CGAL_ImageIO_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-ImageIO library")
     
-    mark_as_advanced(CGAL_IMAGEIO_LIBRARY)
+    mark_as_advanced(CGAL_ImageIO_LIBRARY)
 
   else()
   
-    set(CGAL_IMAGEIO_LIBRARY)
+    set(CGAL_ImageIO_LIBRARY)
     
-    set(CGAL_IMAGEIO_RELEASE_MANGLED_NAME        "${CGAL_IMAGEIO_BASENAME}-${TOOLSET}-mt" ) 
-    set(CGAL_IMAGEIO_DEBUG_MANGLED_NAME          "${CGAL_IMAGEIO_BASENAME}-${TOOLSET}-mt-gd" ) 
-    set(CGAL_IMAGEIO_MINSIZEREL_MANGLED_NAME     "${CGAL_IMAGEIO_BASENAME}-${TOOLSET}-mt-o" ) 
-    set(CGAL_IMAGEIO_RELWITHDEBINFO_MANGLED_NAME "${CGAL_IMAGEIO_BASENAME}-${TOOLSET}-mt-g" ) 
+    set(CGAL_ImageIO_RELEASE_MANGLED_NAME        "${CGAL_ImageIO_BASENAME}-${TOOLSET}-mt" ) 
+    set(CGAL_ImageIO_DEBUG_MANGLED_NAME          "${CGAL_ImageIO_BASENAME}-${TOOLSET}-mt-gd" ) 
+    set(CGAL_ImageIO_MINSIZEREL_MANGLED_NAME     "${CGAL_ImageIO_BASENAME}-${TOOLSET}-mt-o" ) 
+    set(CGAL_ImageIO_RELWITHDEBINFO_MANGLED_NAME "${CGAL_ImageIO_BASENAME}-${TOOLSET}-mt-g" ) 
     
-    set_target_properties( CGAL_IMAGEIO PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_IMAGEIO_DEBUG_MANGLED_NAME}" 
-                                                   RELEASE_OUTPUT_NAME        "${CGAL_IMAGEIO_RELEASE_MANGLED_NAME}" 
-                                                   MINSIZEREL_OUTPUT_NAME     "${CGAL_IMAGEIO_MINSIZEREL_MANGLED_NAME}" 
-                                                   RELWITHDEBINFO_OUTPUT_NAME "${CGAL_IMAGEIO_RELWITHDEBINFO_MANGLED_NAME}" 
+    set_target_properties( CGAL_ImageIO PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_ImageIO_DEBUG_MANGLED_NAME}" 
+                                                   RELEASE_OUTPUT_NAME        "${CGAL_ImageIO_RELEASE_MANGLED_NAME}" 
+                                                   MINSIZEREL_OUTPUT_NAME     "${CGAL_ImageIO_MINSIZEREL_MANGLED_NAME}" 
+                                                   RELWITHDEBINFO_OUTPUT_NAME "${CGAL_ImageIO_RELWITHDEBINFO_MANGLED_NAME}" 
                         )
     
     if ( HAS_CFG_INTDIR )                      
-      add_custom_command(TARGET CGAL_IMAGEIO POST_BUILD COMMAND copy /Y "$(TargetPath)" "$(SolutionDir)lib" )
-      add_custom_command(TARGET CGAL_IMAGEIO POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb" copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)lib" )
+      add_custom_command(TARGET CGAL_ImageIO POST_BUILD COMMAND copy /Y "$(TargetPath)" "$(SolutionDir)lib" )
+      add_custom_command(TARGET CGAL_ImageIO POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb" copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)lib" )
     endif()
 
   endif()
 
   if ( CGAL_INSTALL_LIB_DIR )
-    install(TARGETS CGAL_IMAGEIO DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+    install(TARGETS CGAL_ImageIO DESTINATION ${CGAL_INSTALL_LIB_DIR} )
   endif()
 else()
   message( STATUS "CGAL-ImageIO needs ZLib and OpenGL, cannot be configured.")
