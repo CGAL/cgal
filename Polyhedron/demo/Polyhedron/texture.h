@@ -45,8 +45,8 @@ public :
   unsigned int WidthByte32(unsigned int width,unsigned int depth);
 
   // Clipboard
-  HANDLE ExportHandle();
-  int ImportHandle(HANDLE handle);
+//   HANDLE ExportHandle();
+//   int ImportHandle(HANDLE handle);
 
   // Alpha
   int HasAlpha() { return (m_Depth == 32); }

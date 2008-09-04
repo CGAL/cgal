@@ -658,7 +658,7 @@ int Texture::ReadBuffer(float *buffer,
     for(int i=0;i<width;i++)
       for(int k=0;k<BytePerPixel;k++)
 	m_pData[m_WidthByte32*j + i*BytePerPixel+k] = 
-	(BYTE)(255.0f * buffer[(width*j+i)*BytePerPixel+k]);
+	(unsigned char)(255.0f * buffer[(width*j+i)*BytePerPixel+k]);
 
   return 1;
 }
