@@ -44,7 +44,7 @@ public:
   typedef Polygon_2												  General_polygon_2;
   
   //Polygon_with_holes_2 type required by GeneralPolygonSetTraits Concept.
-  typedef General_polygon_with_holes_2<General_polygon_2>      Polygon_with_holes_2;
+  typedef CGAL::General_polygon_with_holes_2<General_polygon_2>      Polygon_with_holes_2;
   //Polygon_with_Holes_2 is a model of the GeneralPolygonWithHoles2 concept.
   typedef Polygon_with_holes_2									General_polygon_with_holes_2;
   
