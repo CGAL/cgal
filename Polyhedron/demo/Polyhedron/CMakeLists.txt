@@ -67,7 +67,6 @@ if(ENABLE_FORWARD_DECL)
 				 Scene_nef_and_polyhedron_operations.cpp
 				 Scene_rendering.cpp
 				 Scene_nef_rendering.cpp
-                                 DemosMainWindow.cpp
 				 MainWindow_boolean_operations.cpp
 				 MainWindow_convex_hull.cpp
 				 MainWindow_curvature_estimation.cpp
@@ -78,7 +77,6 @@ if(ENABLE_FORWARD_DECL)
 				 MainWindow_self_intersection.cpp
 				 MainWindow_simplify.cpp
 				 MainWindow_subdivision_methods.cpp
-
                                  MainWindow_moc.cpp
                                  Scene_moc.cpp
                                  Viewer_moc.cpp
