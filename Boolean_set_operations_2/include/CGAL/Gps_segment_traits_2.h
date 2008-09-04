@@ -152,7 +152,8 @@ public:
 	
 	/*typedef from General_polygon_with_holes_2. Hole_const_iterator nested type is required by
 	GeneralPolygonWithHoles2 concept*/
-	/*A functor for constructing the container of holes of a polygon with holes*/	
+	/*A functor for constructing the container of holes of a polygon with holes. It returns ths
+	begin/end iterators for the holes*/	
 	class Construct_holes {
 		public:
 			std::pair<Hole_const_iterator, Hole_const_iterator>  operator()(const General_polygon_with_holes_2& pol_wh) 
@@ -192,8 +193,8 @@ public:
     return Construct_general_polygon_with_holes_2();
   }
   
-  	//functor returns true if the outer boundary is empty, and false otherwise.
-	class Is_unbounded_pred {
+  	//functor returns true if the outer boundary is unbounded, and false otherwise.
+	class Is_unbounded {
 		public:
 			bool operator()(const  General_polygon_with_holes_2& pol_wh) 
 			{
@@ -201,8 +202,8 @@ public:
 			}	
 	};
 	
-	Is_unbounded_pred construct_is_unbounded_pred_object() {
-		return Is_unbounded_pred();	
+	Is_unbounded construct_is_unbounded_object() {
+		return Is_unbounded();	
 	}	 
 };
 
