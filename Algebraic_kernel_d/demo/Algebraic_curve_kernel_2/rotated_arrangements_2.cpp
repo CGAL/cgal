@@ -33,7 +33,7 @@
 #endif
 
 #ifndef CGAL_ACK_USE_APPROXIMATE_ROTATION
-#define CGAL_ACK_USE_APPROXIMATE_ROTATION 0
+#define CGAL_ACK_USE_APPROXIMATE_ROTATION 1
 #endif
 
 #if !CGAL_ACK_USE_APPROXIMATE_ROTATION
@@ -60,7 +60,10 @@ CGAL::Timer overall_timer;
 
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_curve_kernel_2_generator.h>
+
+#ifndef CGAL_ACK_USE_APPROXIMATE_ROTATION
 #include <CGAL/Rotated_algebraic_curve_kernel_2.h>
+#endif
 
 #include "include/CGAL/Polynomial_parser_2.h"
 
@@ -141,20 +144,20 @@ int main(int argc, char** argv) {
 
     typedef CGAL_ACK_COEFFICIENT Integer;
 
+
+
+#if CGAL_ACK_USE_APPROXIMATE_ROTATION
+
 #if !CGAL_ACK_USE_FILTERED_CKvA_2
     typedef CGAL::Algebraic_curve_kernel_2_generator<Integer>
       ::Algebraic_curve_kernel_with_qir_and_bitstream_2
-      Basic_algebraic_curve_kernel_2;
+        Rotated_algebraic_curve_kernel_2;
 #else
     typedef CGAL::Algebraic_curve_kernel_2_generator<Integer>
       ::Filtered_algebraic_curve_kernel_with_qir_and_bitstream_2
-      Basic_algebraic_curve_kernel_2;
+        Rotated_algebraic_curve_kernel_2;
 #endif
 
-#if CGAL_ACK_USE_APPROXIMATE_ROTATION
-    typedef CGAL::Approximately_rotated_algebraic_curve_kernel_2
-        <Basic_algebraic_curve_kernel_2>
-        Rotated_algebraic_curve_kernel_2;
 #else
     typedef CGAL::Rotation_traits_for_base_angle<Integer,CGAL_ACK_BASE_ANGLE>
         Rotation_traits;

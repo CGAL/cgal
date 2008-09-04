@@ -30,6 +30,10 @@
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Algebraic_real_traits.h>
 
+#include <CGAL/Algebraic_curve_kernel_2/trigonometric_approximation.h>
+
+#include <CGAL/Polynomial_type_generator.h>
+
 #if CGAL_ACK_USE_EXACUS
 #include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2_exacus.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_analysis_2_exacus.h>
@@ -131,10 +135,12 @@ public:
     typedef typename Algebraic_kernel_1::Boundary Boundary;
         
     //! CGAL univariate polynomial type 
-    typedef ::CGAL::Polynomial<Coefficient> Polynomial_1;
+    typedef typename
+        CGAL::Polynomial_type_generator<Coefficient,1>::Type Polynomial_1;
     
     //! new CGAL bivariate polynomial type
-    typedef ::CGAL::Polynomial<Polynomial_1> Polynomial_2;
+    typedef typename 
+        CGAL::Polynomial_type_generator<Coefficient,2>::Type Polynomial_2;
     
     //! bivariate polynomial traits
     typedef ::CGAL::Polynomial_traits_d< Polynomial_2 >
@@ -350,6 +356,169 @@ public:
     struct Construct_curve_2 :
         public std::unary_function< Polynomial_2, Curve_analysis_2 > {
             
+        Curve_analysis_2 operator()(const Polynomial_2& f, 
+                                    Boundary angle,
+                                    long final_prec) {
+            
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "angle=" << angle << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "final_prec=" << final_prec << std::endl;
+#endif            
+            
+            typedef typename CGAL::Get_arithmetic_kernel<Boundary>
+                ::Arithmetic_kernel::Integer Integer;
+
+            while(abs(angle)>180) {
+                angle>0 ?  angle-=360 : angle+=360;
+            }
+            std::cout << angle << std::endl;
+            bool between_90_and_270 = abs(angle)>=90;
+            bool greater_180 =(angle<0);
+            // Normalize
+            angle=abs(angle);
+            if(between_90_and_270) {
+                angle=180-angle;
+            }
+            CGAL_assertion(angle>=0 && angle <= 90);
+
+            bool greater_45 = (angle>=45);
+            if(greater_45) {
+                angle=90-angle;
+            }
+
+            Boundary sine, cosine;
+
+            // Filter boundary case of 0 degree
+            if(angle==Boundary(0) || 
+               Boundary(1)/angle>CGAL::ipower(Integer(2),final_prec)) {
+                sine = 0;
+                cosine = 1;
+            } else {
+
+                typedef typename 
+                    CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel AT;
+                typedef typename AT::Bigfloat_interval Bigfloat_interval;
+                typedef typename Bigfloat_interval_traits<Bigfloat_interval>
+                    ::Boundary Bigfloat_boundary;
+
+
+                long old_prec = CGAL::get_precision(Bigfloat_interval());
+
+                long prec = 16;
+                Boundary t;
+                while(true) {
+                    CGAL::set_precision(Bigfloat_interval(),prec);
+                    std::cout << "increased prec to " << (prec) 
+                              << std::endl; 
+                    Bigfloat_interval pi = CGAL::pi<AT>(prec);
+                    Bigfloat_interval s 
+                        = CGAL::sin<AT>
+                        (CGAL::median(
+                                 pi*CGAL::convert_to_bfi(angle)/
+                                 CGAL::convert_to_bfi(Integer(180))),
+                         prec);
+                    Bigfloat_boundary x 
+                        = CGAL::median(CGAL::convert_to_bfi(Integer(1))/s + 
+                                       CGAL::sqrt
+                                       (CGAL::convert_to_bfi(Integer(1))/(s*s)-CGAL::convert_to_bfi(Integer(1))));
+
+                    int n = 0;
+                    typename CGAL::Fraction_traits<Boundary>::Compose compose;
+                    
+                    bool success=false;
+                    
+                    Bigfloat_boundary e0=x, e1=-1, olde0;
+                    Integer p0=0, q0=1, p1=1, q1=0,oldp0,oldq0;
+                    while(true) {
+                        Integer r = CGAL::CGALi::floor(e0/e1);
+                        Integer oldp0=p0, oldq0=q0;
+                        Bigfloat_boundary olde0=e0;
+                        e0=e1;p0=p1;q0=q1;
+                        e1=olde0-r*e1;
+                        p1=oldp0-r*p1;
+                        q1=oldq0-r*q1;
+                        if(q1!=Integer(0)) {
+                            t = compose(p1,q1);
+                            CGAL::simplify(t);
+                            sine = CGAL::abs(2/(t+1/t));
+                            CGAL::simplify(sine);
+                            Bigfloat_interval asin 
+                                = CGAL::arcsin<AT>(sine,prec)
+                                * CGAL::convert_to_bfi(Integer(180))/pi;
+                            long bound = CGAL::CGALi::ceil_log2_abs
+                                (CGAL::abs(asin-CGAL::convert_to_bfi(angle)));
+                            success = (bound <= -final_prec);
+                            typename 
+                                CGAL::Coercion_traits<Boundary, 
+                                                      Bigfloat_boundary>::Cast
+                                cast;
+                            if((cast(t)==cast(x)) || success) {
+                                break;
+                            }
+                        }
+                        n++;
+                    }
+                    if(success) {
+                        CGAL::set_precision(Bigfloat_interval(),old_prec);
+                        break;
+                    } else {
+                        prec*=2;
+                    }
+                }
+                
+                cosine = (t-1/t)/(t+1/t);
+                CGAL::simplify(cosine);
+                
+            }
+            if(greater_45) {
+                std::swap(sine,cosine);
+            }
+            
+            if(greater_180) {
+                sine = -sine;
+            }
+            if(between_90_and_270) {
+                cosine=-cosine;
+            }
+            
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "sine=" << sine << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "cosine=" << cosine << std::endl;
+#endif
+            
+            typedef typename CGAL::Polynomial_type_generator<Boundary,1>::Type
+                Poly_rat_1;
+
+            typedef typename CGAL::Polynomial_type_generator<Boundary,2>::Type
+                Poly_rat_2;
+
+            Poly_rat_2 
+                sub_x(Poly_rat_1(Boundary(0), cosine), Poly_rat_1(sine)), 
+                    sub_y(Poly_rat_1(Boundary(0), -sine), Poly_rat_1(cosine)), 
+                res;
+            
+            std::vector<Poly_rat_2> subs;
+            subs.push_back(sub_x);
+            subs.push_back(sub_y);
+            
+            res = typename CGAL::Polynomial_traits_d<Polynomial_2>
+                ::Substitute() (f, subs.begin(), subs.end());
+
+            CGAL::simplify(res);
+            
+            // integralize polynomial
+            typedef CGAL::Fraction_traits<Poly_rat_2> FT;
+            typename FT::Denominator_type dummy;
+            Polynomial_2 num;
+            typename FT::Decompose()(res, num, dummy);
+            
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "integralized poly: " << num << std::endl;
+#endif
+
+            return Self::curve_cache_2()(num);
+        }
+
         Curve_analysis_2 operator()
                 (const Polynomial_2& f) const {
             return Self::curve_cache_2()(f);
@@ -1053,14 +1222,16 @@ public:
      */
     struct Sign_at_2 :
         public std::binary_function< Curve_analysis_2, Xy_coordinate_2, Sign > {
-
+        
         typedef typename Xy_coordinate_2::Boundary Boundary;
         typedef typename Xy_coordinate_2::Boundary_interval Boundary_interval;
 
         typedef typename Xy_coordinate_2::Coercion_interval Coercion_interval;
         
-        typedef CGAL::Polynomial<Boundary> Poly_rat_1;
-        typedef CGAL::Polynomial<Poly_rat_1> Poly_rat_2;
+        typedef typename 
+            CGAL::Polynomial_type_generator<Boundary,1>::Type Poly_rat_1;
+        typedef typename
+            CGAL::Polynomial_type_generator<Boundary,2>::Type Poly_rat_2;
         
         Sign operator()(const Polynomial_2& f,
                         const Xy_coordinate_2& r) const {
