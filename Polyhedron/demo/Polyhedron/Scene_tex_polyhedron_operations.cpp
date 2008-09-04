@@ -1,24 +1,24 @@
 #include "Scene.h"
 #include "Textured_polyhedron_type.h"
 
-Tex_polyhedron* Scene::new_tex_polyhedron() 
+Textured_polyhedron* Scene::new_tex_polyhedron() 
 {
-  return new Tex_polyhedron;
+  return new Textured_polyhedron;
 }
 
-Tex_polyhedron* Scene::copy_tex_polyhedron(Tex_polyhedron* poly)
+Textured_polyhedron* Scene::copy_tex_polyhedron(Textured_polyhedron* poly)
 {
-  return new Tex_polyhedron(*poly);
+  return new Textured_polyhedron(*poly);
 }
 
-void Scene::destroy_tex_polyhedron(Tex_polyhedron* poly)
+void Scene::destroy_tex_polyhedron(Textured_polyhedron* poly)
 {
   delete poly;
 }
 
 QString Scene::texPolyhedronToolTip(int index) const
 {
-  Tex_polyhedron* poly = texPolyhedron(index);
+  Textured_polyhedron* poly = texPolyhedron(index);
   if(!poly)
     return QString();
 

@@ -53,7 +53,7 @@ public:
                      bool activated = true,
                      RenderingMode mode = Fill);
 
-  void addTexPolyhedron(Tex_polyhedron* p,
+  void addTexPolyhedron(Textured_polyhedron* p,
                      QString name,
                      QColor color = defaultColor,
                      bool activated = true,
@@ -79,7 +79,7 @@ public:
   int numberOfPolyhedra() const;
   Polyhedron* polyhedron(int i) const;
   Nef_polyhedron* nefPolyhedron(int i) const;
-  Tex_polyhedron* texPolyhedron(int i) const;
+  Textured_polyhedron* texPolyhedron(int i) const;
   
   enum Entry_type { POLYHEDRON_ENTRY = 0,
                     NEF_ENTRY = 1,
@@ -180,17 +180,17 @@ private:
   Nef_polyhedron* copy_nef_polyhedron(Nef_polyhedron* poly);
   void destroy_nef_polyhedron(Nef_polyhedron*);
 
-  // functions defined in Scene_tex_polyhedron_operations.cpp
+  // functions defined in Scene_Textured_polyhedron_operations.cpp
   QString texPolyhedronToolTip(int index) const;
-  Tex_polyhedron* new_tex_polyhedron(); 
-  Tex_polyhedron* copy_tex_polyhedron(Tex_polyhedron* poly);
-  void destroy_tex_polyhedron(Tex_polyhedron* poly);
+  Textured_polyhedron* new_tex_polyhedron(); 
+  Textured_polyhedron* copy_tex_polyhedron(Textured_polyhedron* poly);
+  void destroy_tex_polyhedron(Textured_polyhedron* poly);
 
 
 private:
   static const QColor defaultColor; // defined in Scene.cpp
 
-  typedef boost::variant<Polyhedron*, Nef_polyhedron*, Tex_polyhedron*> Polyhedron_ptr;
+  typedef boost::variant<Polyhedron*, Nef_polyhedron*, Textured_polyhedron*> Polyhedron_ptr;
 
   struct Polyhedron_entry {
     Polyhedron_entry()

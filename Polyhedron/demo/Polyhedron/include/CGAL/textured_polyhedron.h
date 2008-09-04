@@ -7,6 +7,10 @@
 
 #include <GL/gl.h>
 
+namespace CGAL
+
+{
+
 template <class Refs, class T, class P, class Norm>
 class Textured_facet : public CGAL::HalfedgeDS_face_base<Refs, T>
 {
@@ -171,19 +175,6 @@ public :
   typedef typename Base::Facet_iterator Facet_iterator;
   typedef typename Base::Facet_handle Facet_handle;
 
-  //using Base::vertices_begin;
-  //using Base::vertices_end;
-  //using Base::edges_begin;
-  //using Base::edges_end;
-  //using Base::halfedges_begin;
-  //using Base::halfedges_end;
-  //using Base::facets_begin;
-  //using Base::facets_end;
-  //using Base::size_of_halfedges;
-  //using Base::size_of_facets;
-  //using Base::size_of_vertices;
-private :
-
 public :
 
   // life cycle
@@ -253,6 +244,8 @@ public :
     }
     while(++he != f->facet_begin());
   }
-};
+}; // end class Textured_polyhedron
+
+}; // end namespace CGAL
 
 #endif // _TEXTURED_MESH_

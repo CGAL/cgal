@@ -84,7 +84,7 @@ Scene::destroy_entry_ptr(Polyhedron_ptr ptr)
     }
     case TEX_POLYHEDRON_ENTRY:
     {
-      Tex_polyhedron** p = boost::get<Tex_polyhedron*>(&ptr);
+      Textured_polyhedron** p = boost::get<Textured_polyhedron*>(&ptr);
       Q_ASSERT(p != NULL);
       this->destroy_tex_polyhedron(*p);
       break;
@@ -206,7 +206,7 @@ void Scene::addPolyhedron(Polyhedron* p,
   addEntry(p, name, color, activated, mode);
 }
 
-void Scene::addTexPolyhedron(Tex_polyhedron* p,
+void Scene::addTexPolyhedron(Textured_polyhedron* p,
 			     QString name,
 			     QColor color,
 			     bool activated,
@@ -253,7 +253,7 @@ Scene::copy_polyhedron_ptr(Polyhedron_ptr ptr)
   case NEF_ENTRY:
     return copy_nef_polyhedron(boost::get<Nef_polyhedron*>(ptr));
   case TEX_POLYHEDRON_ENTRY:
-    return copy_tex_polyhedron(boost::get<Tex_polyhedron*>(ptr));
+    return copy_tex_polyhedron(boost::get<Textured_polyhedron*>(ptr));
   default: // POLYHEDRON_ENTRY
     return copy_polyhedron(boost::get<Polyhedron*>(ptr));
   }
@@ -370,7 +370,7 @@ void Scene::gl_render_facets(Polyhedron_ptr ptr)
     }
   case TEX_POLYHEDRON_ENTRY:
     {
-    Tex_polyhedron* p = boost::get<Tex_polyhedron*>(ptr);
+    Textured_polyhedron* p = boost::get<Textured_polyhedron*>(ptr);
     gl_render_polyhedron_facets(p);
     }
   }
@@ -571,14 +571,14 @@ Polyhedron* Scene::polyhedron(int index) const
   }
 }
 
-Tex_polyhedron* Scene::texPolyhedron(int index) const
+Textured_polyhedron* Scene::texPolyhedron(int index) const
 {
   if( index < 0 || index >= polyhedra.size() )
     return NULL;
   else 
   {
     if(polyhedra[index].polyhedron_ptr.which() == TEX_POLYHEDRON_ENTRY) {
-      return boost::get<Tex_polyhedron*>(polyhedra[index].polyhedron_ptr);
+      return boost::get<Textured_polyhedron*>(polyhedra[index].polyhedron_ptr);
     }
     else {
       return NULL;

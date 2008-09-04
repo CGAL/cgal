@@ -5,6 +5,6 @@
 #include <CGAL/textured_polyhedron.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Textured_polyhedron<Kernel,Textured_items> Tex_polyhedron;
+typedef CGAL::Textured_polyhedron<Kernel,CGAL::Textured_items> Textured_polyhedron;
 
 #endif // TEXTURED_POLYHEDRON_TYPE_H

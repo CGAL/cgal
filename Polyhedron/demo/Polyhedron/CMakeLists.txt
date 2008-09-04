@@ -34,12 +34,16 @@ set( QT_USE_QTOPENGL  TRUE )
 
 find_package(OpenGL REQUIRED)
 
-find_package(Qt4       REQUIRED)
+find_package(TAUCS REQUIRED)
+include_directories( ${TAUCS_INCLUDE_DIR} )
+link_directories( ${TAUCS_LIBRARIES_DIR} )
+
+find_package(Qt4 REQUIRED)
+
 include(${QT_USE_FILE})
 
 find_package(QGLViewer REQUIRED )
 include_directories( ${QGLVIEWER_INCLUDE_DIR} )
-    
 qt4_wrap_ui( UI_FILES MainWindow.ui )
 
 include(AddFileDependencies)
