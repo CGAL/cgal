@@ -1617,7 +1617,7 @@ EOF
 
 <h1>CGAL-${CgalInternalVersion} Manual Test-Suite Results</h1>
 
-<p><b>Program Test-Suite:</b> [<a href="http://cgal.inria.fr/CGAL/Members/testsuite/">All Releases</a>]<br>
+<p><b>Program Test-Suite:</b> [<a href="https://cgal.geometryfactory.com/CGAL/Members/testsuite/">All Releases</a>]<br>
 <b>Older Manual Tests: </b>
 EOF
     declare -i count=1
