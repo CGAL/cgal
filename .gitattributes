@@ -1241,6 +1241,8 @@ Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/triangles.pdf -tex
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.pdf -text svneol=unset#application/pdf
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2_ref/GpsTraitsGeneralPolygonWithHoles_2.tex -text
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2_ref/GpsTraitsGeneralPolygon_2.tex -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/char_g.dat -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/char_m.dat -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/pgn_holes.dat -text
