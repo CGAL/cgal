@@ -212,6 +212,13 @@ void test_get_monom_representation(const Polynomial_traits_d&){
 
   typename PT::Construct_polynomial construct;
   typename PT::Get_monom_representation gmr;
+
+  Polynomial_d zero(0);
+  Monom_rep monom_rep;
+  gmr(zero,std::back_inserter(monom_rep));
+  assert(monom_rep.size()==1);
+  assert(construct(monom_rep.begin(),monom_rep.end()) == zero);
+ 
         
   for (int i = 0; i < 5 ; i++){
     Polynomial_d p,q;
@@ -237,6 +244,9 @@ void test_swap(const Polynomial_traits_d&){
   int d = PT::d;
   typename Polynomial_traits_d::Swap swap;
     
+  Polynomial_d zero; 
+  assert(swap(zero,0,d-1) == zero);
+  
   //std::cout << "start_test ----------- "<< d << std::endl; 
   for(int i = 0; i < 5; i++){
     int i1 = my_rnd.get_int(0,d);
@@ -319,8 +329,10 @@ void test_degree(const Polynomial_traits_d&){
   Polynomial_d p; 
   p= construct(Coeff(0));
   assert(degree(p) == 0);
+  assert(degree(p,0) == 0);
   p= construct(Coeff(1));
   assert(degree(p) == 0);
+  assert(degree(p,0) == 0);
   p= construct(Coeff(1),Coeff(2));
   assert(degree(p) == 1);
 

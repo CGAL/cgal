@@ -578,6 +578,7 @@ public:
         Input_iterator begin, 
         Input_iterator end , 
         Tag_true) const {
+      if(begin == end ) return Polynomial_d(0);
       return Polynomial_d(begin,end);
     }
         
@@ -1471,10 +1472,17 @@ public:
   struct Get_monom_representation {      
     typedef std::pair< Exponent_vector, Innermost_coefficient_type >
     Exponents_coeff_pair;
-    typedef std::vector< Exponents_coeff_pair > Monom_rep; 
+    //typedef std::vector< Exponents_coeff_pair > Monom_rep; 
         
+    
     template <class OutputIterator>
     void operator()( const Polynomial_d& p, OutputIterator oit ) const {
+      if(CGAL::is_zero(p)){
+        *oit= make_pair(Exponent_vector(d,0), Innermost_coefficient_type(0));
+        oit++;
+        return;
+      }
+     
       typedef Boolean_tag< d == 1 > Is_univariat;
       create_monom_representation( p, oit , Is_univariat());
     }
