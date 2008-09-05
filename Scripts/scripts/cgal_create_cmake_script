@@ -108,7 +108,7 @@ create_cmake_script()
       BASE=`basename $BASE .cpp`
       egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
-        echo "create_single_source_cgal_program( \"${PROJECT}_${TYPE}\" \"$file\" )"
+        echo "create_single_source_cgal_program( \"$file\" )"
       fi
     done
   fi
