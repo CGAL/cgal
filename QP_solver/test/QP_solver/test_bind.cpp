@@ -14,7 +14,7 @@ Quotient_creator;
 struct Quotient_inverter
 {
   typedef CGAL::Quotient<int> result_type;
-  CGAL::Quotient<int> operator() (const CGAL::Quotient<int>& q)
+  CGAL::Quotient<int> operator() (const CGAL::Quotient<int>& q) const
   {
     return CGAL::Quotient<int> (q.denominator(), q.numerator());
   }
