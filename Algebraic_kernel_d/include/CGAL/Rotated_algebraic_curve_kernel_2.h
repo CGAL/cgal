@@ -685,7 +685,10 @@ struct Rotation_traits_for_base_angle_base<Integer_,45> {
         Rotated_rational_coefficient operator() (int angle) {
             
             Angle_coefficients<Rational> coeffs(angle);
-            typename CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            CGAL_assertion_code(
+              typename 
+              CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
             CGAL_assertion(zero(coeffs.sin.xyzw));
             CGAL_assertion(zero(coeffs.sin.xyz));
             CGAL_assertion(zero(coeffs.sin.xy));
@@ -712,7 +715,10 @@ struct Rotation_traits_for_base_angle_base<Integer_,45> {
         Rotated_rational_coefficient operator() (int angle) {
             
             Angle_coefficients<Rational> coeffs(angle);
-            typename CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            CGAL_assertion_code(
+                    typename 
+                    CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
             CGAL_assertion(zero(coeffs.cos.xyzw));
             CGAL_assertion(zero(coeffs.cos.xyz));
             CGAL_assertion(zero(coeffs.cos.xy));
@@ -766,7 +772,10 @@ struct Rotation_traits_for_base_angle_base<Integer_,30> {
         Rotated_rational_coefficient operator() (int angle) {
             
             Angle_coefficients<Rational> coeffs(angle);
-            typename CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            CGAL_assertion_code(
+                    typename 
+                    CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
             CGAL_assertion(zero(coeffs.sin.xyzw));
             CGAL_assertion(zero(coeffs.sin.xyz));
             CGAL_assertion(zero(coeffs.sin.xy));
@@ -793,7 +802,10 @@ struct Rotation_traits_for_base_angle_base<Integer_,30> {
         Rotated_rational_coefficient operator() (int angle) {
             
             Angle_coefficients<Rational> coeffs(angle);
-            typename CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            CGAL_assertion_code(
+                    typename 
+                    CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
             CGAL_assertion(zero(coeffs.cos.xyzw));
             CGAL_assertion(zero(coeffs.cos.xyz));
             CGAL_assertion(zero(coeffs.cos.xy));
@@ -854,7 +866,10 @@ public:
         Rotated_rational_coefficient operator() (int angle) {
             
             Angle_coefficients<Rational> coeffs(angle);
-            typename CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            CGAL_assertion_code(
+                    typename 
+                    CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
             CGAL_assertion(zero(coeffs.sin.xyzw));
             CGAL_assertion(zero(coeffs.sin.xyz));
             CGAL_assertion(zero(coeffs.sin.xzw));
@@ -880,7 +895,10 @@ public:
         Rotated_rational_coefficient operator() (int angle) {
             
             Angle_coefficients<Rational> coeffs(angle);
-            typename CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            CGAL_assertion_code(
+                    typename 
+                    CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
             CGAL_assertion(zero(coeffs.cos.xyzw));
             CGAL_assertion(zero(coeffs.cos.xyz));
             CGAL_assertion(zero(coeffs.cos.xzw));
@@ -943,7 +961,10 @@ public:
         Rotated_rational_coefficient operator() (int angle) {
             
             Angle_coefficients<Rational> coeffs(angle);
-            typename CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            CGAL_assertion_code(
+                    typename 
+                    CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
             CGAL_assertion(zero(coeffs.sin.xyzw));
             CGAL_assertion(zero(coeffs.sin.xyz));
             CGAL_assertion(zero(coeffs.sin.xzw));
@@ -969,15 +990,16 @@ public:
         Rotated_rational_coefficient operator() (int angle) {
             
             Angle_coefficients<Rational> coeffs(angle);
-            typename CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            CGAL_assertion_code(
+                    typename 
+                    CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
             CGAL_assertion(zero(coeffs.cos.xyzw));
             CGAL_assertion(zero(coeffs.cos.xyz));
-            CGAL_assertion(zero(coeffs.cos.xy));
             CGAL_assertion(zero(coeffs.cos.xzw));
             CGAL_assertion(zero(coeffs.cos.xyw));
             CGAL_assertion(zero(coeffs.cos.xz));
             CGAL_assertion(zero(coeffs.cos.xw));
-            CGAL_assertion(zero(coeffs.cos.x));
             CGAL_assertion(zero(coeffs.cos.yz));
             CGAL_assertion(zero(coeffs.cos.yw));
             CGAL_assertion(zero(coeffs.cos.yzw));
@@ -1027,9 +1049,9 @@ private:
 
 public:
 
-    typedef CGAL::Sqrt_extension<Rat_with_sqrt_3_5,Int_with_sqrt_5> 
+    typedef CGAL::Sqrt_extension<Rat_with_sqrt_3_5,Int_with_sqrt_3_5> 
         Rotated_rational_coefficient; 
-    typedef CGAL::Sqrt_extension<Int_with_sqrt_3_5,Int_with_sqrt_5> 
+    typedef CGAL::Sqrt_extension<Int_with_sqrt_3_5,Int_with_sqrt_3_5> 
         Rotated_coefficient;
 
     struct Sin : public std::unary_function<int,Rotated_rational_coefficient> {
@@ -1037,7 +1059,10 @@ public:
         Rotated_rational_coefficient operator() (int angle) {
             
             Angle_coefficients<Rational> coeffs(angle);
-            typename CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            CGAL_assertion_code(
+                    typename 
+                    CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
             CGAL_assertion(zero(coeffs.sin.xyzw));
             CGAL_assertion(zero(coeffs.sin.xyz));
             CGAL_assertion(zero(coeffs.sin.xzw));
@@ -1055,7 +1080,10 @@ public:
                  (Rat_with_sqrt_3(coeffs.sin.w,coeffs.sin.yw,Integer(3)),
                   Rat_with_sqrt_3(coeffs.sin.zw,coeffs.sin.yzw,Integer(3)),
                   Integer(5)),
-                 Int_with_sqrt_5(Integer(10),Integer(2),Integer(5)));
+                 Int_with_sqrt_3_5
+                 (Int_with_sqrt_3(Integer(10),Integer(0),Integer(3)),
+                  Int_with_sqrt_3(Integer(2),Integer(0),Integer(3)),
+                  Integer(5)));
         }
 
     };
@@ -1064,7 +1092,10 @@ public:
 
         Rotated_rational_coefficient operator() (int angle) {
             Angle_coefficients<Rational> coeffs(angle);
-            typename CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            CGAL_assertion_code(
+                    typename 
+                    CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
             CGAL_assertion(zero(coeffs.cos.xyzw));
             CGAL_assertion(zero(coeffs.cos.xyz));
             CGAL_assertion(zero(coeffs.cos.xzw));
@@ -1082,7 +1113,10 @@ public:
                  (Rat_with_sqrt_3(coeffs.cos.w,coeffs.cos.yw,Integer(3)),
                   Rat_with_sqrt_3(coeffs.cos.zw,coeffs.cos.yzw,Integer(3)),
                   Integer(5)),
-                 Int_with_sqrt_5(Integer(10),Integer(2),Integer(5)));
+                 Int_with_sqrt_3_5
+                 (Int_with_sqrt_3(Integer(10),Integer(0),Integer(3)),
+                  Int_with_sqrt_3(Integer(2),Integer(0),Integer(3)),
+                  Integer(5)));
         }
 
     };
@@ -1102,7 +1136,10 @@ public:
                  (Rat_with_sqrt_3(zero,zero,Integer(3)),
                   Rat_with_sqrt_3(zero,zero,Integer(3)),
                   Integer(5)),
-                 Int_with_sqrt_5(Integer(10),Integer(2),Integer(5)));
+                 Int_with_sqrt_3_5
+                 (Int_with_sqrt_3(Integer(10),Integer(0),Integer(3)),
+                  Int_with_sqrt_3(Integer(2),Integer(0),Integer(3)),
+                  Integer(5)));
         }
     };        
 
@@ -1132,9 +1169,9 @@ private:
 
 public:
 
-    typedef CGAL::Sqrt_extension<Rat_with_sqrt_2_3_5,Int_with_sqrt_5> 
+    typedef CGAL::Sqrt_extension<Rat_with_sqrt_2_3_5,Int_with_sqrt_2_3_5> 
         Rotated_rational_coefficient; 
-    typedef CGAL::Sqrt_extension<Int_with_sqrt_2_3_5,Int_with_sqrt_5> 
+    typedef CGAL::Sqrt_extension<Int_with_sqrt_2_3_5,Int_with_sqrt_2_3_5> 
         Rotated_coefficient;
 
     struct Sin : public std::unary_function<int,Rotated_rational_coefficient> {
@@ -1163,7 +1200,16 @@ public:
                     Rat_with_sqrt_2(coeffs.sin.yzw,coeffs.sin.xyzw,Integer(2)),
                     Integer(3)),
                    Integer(5)),
-                 Int_with_sqrt_5(Integer(10),Integer(2),Integer(5)));
+                 Int_with_sqrt_2_3_5
+                  (Int_with_sqrt_2_3
+                   (Int_with_sqrt_2(Integer(10),Integer(0),Integer(2)),
+                    Int_with_sqrt_2(Integer(0),Integer(0),Integer(2)),
+                    Integer(3)),
+                   Int_with_sqrt_2_3
+                   (Int_with_sqrt_2(Integer(2),Integer(0),Integer(2)),
+                    Int_with_sqrt_2(Integer(0),Integer(0),Integer(2)),
+                    Integer(3)),
+                   Integer(5)));
 
                  
         }
@@ -1196,7 +1242,16 @@ public:
                     Rat_with_sqrt_2(coeffs.cos.yzw,coeffs.cos.xyzw,Integer(2)),
                     Integer(3)),
                    Integer(5)),
-                 Int_with_sqrt_5(Integer(10),Integer(2),Integer(5)));
+                 Int_with_sqrt_2_3_5
+                  (Int_with_sqrt_2_3
+                   (Int_with_sqrt_2(Integer(10),Integer(0),Integer(2)),
+                    Int_with_sqrt_2(Integer(0),Integer(0),Integer(2)),
+                    Integer(3)),
+                   Int_with_sqrt_2_3
+                   (Int_with_sqrt_2(Integer(2),Integer(0),Integer(2)),
+                    Int_with_sqrt_2(Integer(0),Integer(0),Integer(2)),
+                    Integer(3)),
+                   Integer(5)));
         }
 
     };
@@ -1229,7 +1284,16 @@ public:
                     Rat_with_sqrt_2(zero,zero,Integer(2)),
                     Integer(3)),
                    Integer(5)),
-                 Int_with_sqrt_5(Integer(10),Integer(2),Integer(5)));
+                 Int_with_sqrt_2_3_5
+                  (Int_with_sqrt_2_3
+                   (Int_with_sqrt_2(Integer(10),Integer(0),Integer(2)),
+                    Int_with_sqrt_2(Integer(0),Integer(0),Integer(2)),
+                    Integer(3)),
+                   Int_with_sqrt_2_3
+                   (Int_with_sqrt_2(Integer(2),Integer(0),Integer(2)),
+                    Int_with_sqrt_2(Integer(0),Integer(0),Integer(2)),
+                    Integer(3)),
+                   Integer(5)));
         }
     };        
 
