@@ -70,6 +70,7 @@ configure()
 {
   echo "Configuring... "
   
+  rm -f makefile Makefile GNUmakefile
   if eval 'cmake "\$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \\
                                      -DCGAL_DIR="\$CGAL_DIR" \\
                                      -DCGAL_CXX_FLAGS="\$TESTSUITE_CXXFLAGS" \\
