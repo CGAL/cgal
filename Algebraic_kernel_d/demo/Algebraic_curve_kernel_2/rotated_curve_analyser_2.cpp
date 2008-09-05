@@ -30,12 +30,12 @@
 #endif
 
 #ifndef CGAL_ACK_USE_APPROXIMATE_ROTATION
-#define CGAL_ACK_USE_APPROXIMATE_ROTATION 0
+#define CGAL_ACK_USE_APPROXIMATE_ROTATION 1
 #endif
 
 #if !CGAL_ACK_USE_APPROXIMATE_ROTATION
 #ifndef CGAL_ACK_BASE_ANGLE
-#define CGAL_ACK_BASE_ANGLE 15
+#define CGAL_ACK_BASE_ANGLE 30
 #endif
 #endif
 
@@ -59,7 +59,7 @@ CGAL::Timer overall_timer;
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_curve_kernel_2_generator.h>
 
-#ifndef CGAL_ACK_USE_APPROXIMATE_ROTATION
+#if !CGAL_ACK_USE_APPROXIMATE_ROTATION
 #include <CGAL/Rotated_algebraic_curve_kernel_2.h>
 #endif
 

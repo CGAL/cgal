@@ -61,7 +61,7 @@ CGAL::Timer overall_timer;
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_curve_kernel_2_generator.h>
 
-#ifndef CGAL_ACK_USE_APPROXIMATE_ROTATION
+#if !CGAL_ACK_USE_APPROXIMATE_ROTATION
 #include <CGAL/Rotated_algebraic_curve_kernel_2.h>
 #endif
 
