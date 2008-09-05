@@ -189,11 +189,11 @@ public :
   // normals (per facet, then per vertex)
   void compute_normals_per_facet()
   {
-    std::for_each(this->facets_begin(),this->facets_end(),::Facet_normal());
+    std::for_each(this->facets_begin(),this->facets_end(),Facet_normal());
   }
   void compute_normals_per_vertex()
   {
-    std::for_each(this->vertices_begin(),this->vertices_end(),::Vertex_normal());
+    std::for_each(this->vertices_begin(),this->vertices_end(),Vertex_normal());
   }
   void compute_normals()
   {

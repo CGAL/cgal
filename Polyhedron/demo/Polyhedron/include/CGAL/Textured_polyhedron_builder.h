@@ -53,12 +53,12 @@ public:
   void add_vertices(builder &B)
   {
     int index = 0;
-    Polyhedron::Vertex_iterator it;
+    typename Polyhedron::Vertex_iterator it;
     for(it = m_pMesh->vertices_begin();
       it != m_pMesh->vertices_end();
       it++)
     {
-      Polyhedron::Vertex_handle v = it;
+      typename Polyhedron::Vertex_handle v = it;
       m_vertex_map[v] = index++;
       B.add_vertex(v->point());
     }
@@ -67,7 +67,7 @@ public:
   // add facets
   void add_facets(builder &B)
   {
-    Polyhedron::Facet_iterator it;
+    typename Polyhedron::Facet_iterator it;
     for(it = m_pMesh->facets_begin();
         it != m_pMesh->facets_end();
         it++)
