@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include <QMainWindow>
+#include <CGAL/auto_link/Qt4.h>
 
 // forward declaration
 class QLabel;

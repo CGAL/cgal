@@ -1,6 +1,7 @@
 #ifndef CGAL_QT_GRAPHICS_VIEW_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_INPUT_H
 
+#include <CGAL/auto_link/Qt4.h>
 #include <CGAL/Object.h>
 #include <QObject>
 

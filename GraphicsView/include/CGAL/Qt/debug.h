@@ -1,6 +1,7 @@
 #ifndef CGAL_QT_DEBUG_H
 #define CGAL_QT_DEBUG_H
 
+#include <CGAL/auto_link/Qt4.h>
 #include <QString>
 
 namespace CGAL {
