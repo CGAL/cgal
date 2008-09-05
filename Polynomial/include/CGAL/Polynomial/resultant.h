@@ -146,37 +146,50 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
     CGAL_precondition(PT::d >= 2);
     
     typename PT::Degree degree; 
-    typename CGAL::Polynomial_traits_d<Coeff_1>::Degree_vector degree_vector; 
-
     int maxdegree = degree(F,0)*degree(G,PT::d-1) + degree(F,PT::d-1)*degree(G,0); 
 
     typedef std::pair<IC,Coeff_2> Point; 
     std::vector<Point> points; // interpolation points  
     
    
-    int i(0);
-    CGAL::Exponent_vector ev_f(degree_vector(Coeff_1()));
-    CGAL::Exponent_vector ev_g(degree_vector(Coeff_1()));
+    typename CGAL::Polynomial_traits_d<Coeff_1>::Degree  coeff_degree; 
+    int i(-maxdegree/2);
+    int deg_f(0);
+    int deg_g(0);
     
    
     while((int) points.size() <= maxdegree + 1){
         i++;
         // timer1.start();
-        Coeff_1 Fat_i = F.evaluate(Coeff_1(i));
-        Coeff_1 Gat_i = G.evaluate(Coeff_1(i));
+        Coeff_1 Fat_i = typename PT::Evaluate()(F,IC(i));
+        Coeff_1 Gat_i = typename PT::Evaluate()(G,IC(i));
         // timer1.stop();
         
-        if(degree_vector(Fat_i) >  ev_f || degree_vector(Gat_i) >  ev_g){
+        int deg_f_at_i = coeff_degree(Fat_i,0);
+        int deg_g_at_i = coeff_degree(Gat_i,0);
+
+        // std::cout << F << std::endl;
+        // std::cout << Fat_i << std::endl;
+        // std::cout << deg_f_at_i << " vs. " << deg_f << std::endl;
+        if(deg_f_at_i >  deg_f ){
             points.clear();
-            ev_f  = degree_vector(Fat_i);
-            ev_g  = degree_vector(Gat_i);
+            deg_f  = deg_f_at_i;
+            CGAL_postcondition(points.size() == 0);
+        } 
+
+        if(deg_g_at_i >  deg_g){
+            points.clear();
+            deg_g  = deg_g_at_i;
             CGAL_postcondition(points.size() == 0);
         }
-        if(degree_vector(Fat_i) ==  ev_f && degree_vector(Gat_i) ==  ev_g){
+        
+        if(deg_f_at_i ==  deg_f && deg_g_at_i ==  deg_g){
             // timer2.start();
             Coeff_2 res_at_i = resultant_interpolate(Fat_i, Gat_i);
             // timer2.stop();
             points.push_back(Point(IC(i),res_at_i));
+            
+            // std::cout << typename Polynomial_traits_d<Coeff_2>::Degree()(res_at_i) << std::endl ; 
         }      
     }
    
@@ -191,10 +204,10 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
         Coeff_1 Fat_i = typename PT::Evaluate()(F,IC(i));
         Coeff_1 Gat_i = typename PT::Evaluate()(G,IC(i));
         
-        assert(degree_vector(Fat_i) <= ev_f);
-        assert(degree_vector(Gat_i) <= ev_g);
+        assert(coeff_degree(Fat_i,0) <= deg_f);
+        assert(coeff_degree(Gat_i,0) <= deg_g);
         
-        if(degree_vector(Fat_i) ==  ev_f && degree_vector(Gat_i) ==  ev_g){
+        if(coeff_degree( Fat_i , 0) ==  deg_f && coeff_degree( Gat_i , 0 ) ==  deg_g){
             Coeff_2 res_at_i = resultant_interpolate(Fat_i, Gat_i);
             points.push_back(Point(IC(i), res_at_i));
         }

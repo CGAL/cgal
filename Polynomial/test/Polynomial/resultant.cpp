@@ -42,6 +42,10 @@ void test_resultant(){
     Polynomial_d B(8);
     assert(resultant(A,B)==Coeff(1));
   }{
+    Polynomial_d A(4);
+    Polynomial_d B(Coeff(3), Coeff(5), Coeff(7));
+    assert(resultant(A,B)==Coeff(16)); // lcoeff(A)^degree(B)
+  }{
     Polynomial_d f(Coeff(2),Coeff(7),Coeff(1),Coeff(8),Coeff(1),Coeff(8));
     Polynomial_d g(Coeff(3),Coeff(1),Coeff(4),Coeff(1),Coeff(5),Coeff(9));
     assert(resultant(f,g) == Coeff(230664271L)); // Maple
@@ -52,7 +56,6 @@ void test_resultant(){
     assert(resultant(fh,gh) == Coeff(0) );
   } 
     
-
   for (int k = 0; k < 1; k++){
     Polynomial_d F2 = 
       CGAL::generate_sparse_random_polynomial<Polynomial_d>(my_rnd,5); 
