@@ -325,7 +325,7 @@ struct Curve_renderer_traits<CGAL::Interval_nt<true>, CORE::BigRat > :
         { return (CGAL_ABS(x) <= 1e-16); }
     };
 
-    static const unsigned MAX_SUBDIVISION_LEVEL = 6;
+    static const unsigned MAX_SUBDIVISION_LEVEL = 12;
 };
 
 //! Specialization for \c CORE::BigFloat
@@ -374,7 +374,7 @@ struct Curve_renderer_traits<CORE::BigFloat, class CORE::BigRat>
         { x.makeExact(); }
     };
 
-    static const unsigned MAX_SUBDIVISION_LEVEL = 6;
+    static const unsigned MAX_SUBDIVISION_LEVEL = 12;
 };
 
 //! Specialization for \c CORE::BigRat

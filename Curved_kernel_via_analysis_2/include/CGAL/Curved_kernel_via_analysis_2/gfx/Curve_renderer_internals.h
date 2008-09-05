@@ -625,6 +625,7 @@ bool get_range_AARD_1(int var,
     }
     zero_bounds = ((eval1&eval2) == 0);
     if(eval1*eval2 < 0) {
+        //std::cerr << "eval1 = " << low << "; eval2 = " << up << std::endl;
         return true;
     } 
     return false;
@@ -759,6 +760,8 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
         eval1 = CGAL_SGN(low);
         eval2 = CGAL_SGN(up);
     }
+    //if(eval1*eval2 < 0)
+      //  std::cerr << "eval1 = " << low << "; eval2 = " << up << std::endl;
     zero_bounds = ((eval1 & eval2) == 0);
     return (eval1*eval2 < 0);
 }
@@ -831,7 +834,7 @@ bool get_range_MAA_1(int var, const NT& l_, const NT& r_, const NT& key,
     typename Renderer_traits::Extract_eval extract;
     unsigned index = CGAL_RECURSIVE_DER_MAX_DEGREE;
     if(index >= der->size()) {
-        low = up = extract(poly.lcoeff()) * (*der_it_2).lcoeff();
+        low = up = extract(poly.lcoeff()) * (der->end()-1)->lcoeff();
     } else {
         der_it_2 = der->begin()+index;
         low = 1;

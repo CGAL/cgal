@@ -1023,7 +1023,7 @@ void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x,
             pix.level = 0;
             pix.sub_x = 0;
             pix.sub_y = 0;
-            Gfx_OUT(witness << " " << prev_pix << std::endl);
+            //Gfx_OUT(witness << " " << prev_pix << std::endl);
         } else {
             ux = pix.x;
             uy = pix.y;
@@ -1307,8 +1307,7 @@ bool get_seed_point(const Rational& seed, Pixel_2& start, int *dir,
         s_stack.push(Seed_point(start, dir[1], b_taken[1], b_coincide));
     }
     if(b_coincide)
-        Gfx_DETAILED_OUT("seed point with coincide branches found" <<
-            std::endl);
+        Gfx_OUT("seed point with coincide branches found" << std::endl);
     return true;
 }
 
@@ -1326,6 +1325,11 @@ bool test_pixel(const Pixel_2& pix, int *dir, int *b_taken, bool& b_coincide)
     // bottom(2), top(3), left(0), right(1)
     int n_sign = 0, i, j, n_dir = 0, shift, n_local, new_dir;
     get_polynomials(CGAL_Y_RANGE, box[0]);
+
+
+    Gfx_OUT("test pixel: " << pix << "--------------------------------\n");
+    dump_neighbourhood(pix);
+    Gfx_OUT("----------------------------------------------\n\n");
     
     b_coincide = false;
     int n_corner_dir = 0, corner_dir[] = {-1, -1};
@@ -2165,7 +2169,7 @@ Lexit:
 inline bool get_range_1(int var, const NT& lower, const NT& upper, 
     const NT& key, const Poly_1& poly, int check = 1)
 {
-    bool res = engine.get_range_AARD_1(var, lower, upper, key, poly, check);
+    bool res = engine.get_range_QF_1(var, lower, upper, key, poly, check);
         //engine.get_range_MAA_1(var, lower, upper, key, poly, check);
     return res;
 }
@@ -2469,7 +2473,7 @@ inline bool is_isolated_pixel(const Pixel_2& pix) {
 
 // DEBUG ONLY
 void dump_neighbourhood(const Pixel_2& pix) {
-#ifdef Gfx_USE_DETAILED_OUT
+#ifdef Gfx_USE_OUT
     CGAL::set_mode(std::cerr, CGAL::IO::PRETTY);
     CGAL::set_mode(std::cout, CGAL::IO::PRETTY);
 
@@ -2646,7 +2650,7 @@ void dump_neighbourhood(const Pixel_2& pix) {
     Gfx_OUT("val = " << b << std::endl);
     if(a*b < 0) 
         Gfx_OUT("sign change at segment 2" << std::endl);
-#endif
+#endif // Gfx_USE_OUT
 }
 
 //!@} 
