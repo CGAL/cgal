@@ -31,9 +31,6 @@ set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-
-find_package(OpenGL REQUIRED)
-
 find_package(TAUCS REQUIRED)
 include_directories( ${TAUCS_INCLUDE_DIR} )
 link_directories( ${TAUCS_LIBRARIES_DIR} )
@@ -41,6 +38,8 @@ link_directories( ${TAUCS_LIBRARIES_DIR} )
 find_package(Qt4 REQUIRED)
 
 include(${QT_USE_FILE})
+
+find_package(OpenGL REQUIRED)
 
 find_package(QGLViewer REQUIRED )
 include_directories( ${QGLVIEWER_INCLUDE_DIR} )
@@ -96,13 +95,13 @@ endif(ENABLE_FORWARD_DECL)
 # Link with Qt libraries
 target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
 
-# If auto-link is not enabled (on Linux for example), link with libCGAL and Boost.Thread explicitly.
+# If auto-link is not enabled (on Linux for example), link with libCGAL, libCGALQt4 and Boost.Thread explicitly.
 if ( NOT AUTO_LINK_ENABLED )    
-  target_link_libraries( Polyhedron_3 CGAL ${Boost_THREAD_LIBRARY_RELEASE} )
+  target_link_libraries( Polyhedron_3 CGAL CGAL-Qt4 ${Boost_THREAD_LIBRARY_RELEASE} )
 endif()
 
-# Link with libCGAL-Qt4, libQGLViewer, OpenGL
-target_link_libraries( Polyhedron_3 CGAL-Qt4 ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+# Link with libQGLViewer, OpenGL
+target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
 # Blas and Lapack, under Linux
 if( NOT AUTO_LINK_ENABLED )

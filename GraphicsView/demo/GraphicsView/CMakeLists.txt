@@ -28,5 +28,8 @@ link_directories(../../src/CGALQt4)
 # minimal graphics view executable: min 
 #----------------------------------------
 add_executable  ( min min.cpp )
-target_link_libraries( min ${QT_LIBRARIES} CGAL CGAL-Qt4 )
+if ( NOT AUTO_LINK_ENABLED )    
+  # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
+  target_link_libraries( min ${QT_LIBRARIES} CGAL CGAL-Qt4 )
+endif()
 

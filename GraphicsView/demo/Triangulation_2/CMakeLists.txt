@@ -64,5 +64,5 @@ target_link_libraries( Delaunay_triangulation_2 ${QT_LIBRARIES} )
 if ( NOT AUTO_LINK_ENABLED )    
   # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
   target_link_libraries( Delaunay_triangulation_2 CGAL )
+  target_link_libraries( Delaunay_triangulation_2 CGAL-Qt4 )
 endif()
-target_link_libraries( Delaunay_triangulation_2 CGAL-Qt4 )

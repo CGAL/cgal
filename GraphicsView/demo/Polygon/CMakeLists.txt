@@ -3,6 +3,8 @@
 
 project (GraphicsView)
 
+cmake_minimum_required(VERSION 2.4.5)
+
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 find_package(CGAL REQUIRED)
@@ -39,7 +41,7 @@ add_executable  ( Polygon_2 Polygon_2.cpp ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 # Link with Qt libraries
 target_link_libraries( Polygon_2 ${QT_LIBRARIES} )
 if ( NOT AUTO_LINK_ENABLED )    
-  # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
+  # If auto-link is not enabled (on Linux for example), link with libCGAL and libCGAL-Qt4 explicitly.
   target_link_libraries( Polygon_2 CGAL )
+  target_link_libraries( Polygon_2 CGAL-Qt4 )
 endif()
-target_link_libraries( Polygon_2 CGAL-Qt4 )
