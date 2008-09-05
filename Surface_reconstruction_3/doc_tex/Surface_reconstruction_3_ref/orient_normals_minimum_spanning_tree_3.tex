@@ -26,7 +26,7 @@
 {
 Orient the normals of a point set using the method described in {\em Hoppe, DeRose, Duchamp, McDonald, Stuetzle, Surface reconstruction from unorganized points, ACM SIGGRAPH Computer Graphics, v.26 n.2, p.71-78, July 1992}.
 Preconditions:\begin{itemize}
-\item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item KNN $>$= 2. \end{itemize}
+\item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item Normals must be unit vectors.\item KNN $>$= 2. \end{itemize}
 }
 \ccGlue
 \begin{description}

@@ -25,6 +25,9 @@
 /// ImplicitFctDelaunayTriangulationCellBase_3 and the vertex base class
 /// must be a model of ImplicitFctDelaunayTriangulationVertexBase_3.
 ///
+/// CAUTION: invalidate_bounding_box() must be called
+/// after modifying the points.
+///
 /// @heading Has Models:
 /// Implicit_fct_delaunay_triangulation_3<GeomTraits, TriangulationDataStructure_3>
 
@@ -45,12 +48,18 @@ public:
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
   typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
 
-  /// Iterator over normals
+  /// Iterator over all normals.
   typedef xxx Normal_iterator;
 
   /// Point type
   static const unsigned char INPUT = 0;
   static const unsigned char STEINER = 1;
+
+  /// Iterator over INPUT vertices.
+  typedef xxx Input_vertices_iterator;
+
+  /// Iterator over INPUT points.
+  typedef xxx Project_point<Vertex> >  Input_point_iterator;
 
 // Public methods
 public:
@@ -60,16 +69,32 @@ public:
   /// Get past-the-end iterator over finite vertices normals.
   Normal_iterator normals_end();
 
-  /// Get the bounding box.
+  /// Get first iterator over INPUT vertices.
+  Input_vertices_iterator input_vertices_begin() const;
+  /// Get past-the-end iterator over INPUT vertices.
+  Input_vertices_iterator input_vertices_end() const;
+
+  /// Get first iterator over INPUT points.
+  Input_point_iterator input_points_begin() const;
+  /// Get past-the-end iterator over INPUT points.
+  Input_point_iterator input_points_end() const;
+  /// Get the bounding box of all points.
   Iso_cuboid bounding_box() const;
 
-  /// Get bounding sphere.
+
+  /// Get the bounding box of INPUT points.
+  Iso_cuboid input_points_bounding_box() const;
+  /// Get the bounding sphere of all points.
   Sphere bounding_sphere() const;
 
-  /// Get points barycenter.
+
+  /// Get the bounding sphere of INPUT points.
+  Sphere input_points_bounding_sphere() const;
+
+  /// Get the barycenter of all points.
   Point barycenter() const;
 
-  /// Get the standard deviation of the distance to barycenter.
+  /// Get the standard deviation of the distance to barycenter (for all points).
   FT diameter_standard_deviation() const;
 
   /// Update barycenter, bounding box, bounding sphere and standard deviation.

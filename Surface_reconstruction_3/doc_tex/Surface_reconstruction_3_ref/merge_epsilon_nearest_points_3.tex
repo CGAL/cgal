@@ -22,7 +22,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{OutputIterator merge_epsilon_nearest_points_3(InputIterator first, InputIterator beyond, OutputIterator output, const Kernel &, double epsilon);}
+\ccFunction{OutputIterator merge_epsilon_nearest_points_3(InputIterator first, InputIterator beyond, OutputIterator output, double epsilon, const Kernel &);}
 {
 Merge points which belong to the same cell of a grid of cell size = epsilon. This variant requires the kernel.
 Precondition: epsilon $>$ 0.
@@ -31,7 +31,7 @@ Precondition: epsilon $>$ 0.
 \begin{description}
 \item[Template Parameters:]
 \begin{description}
-\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[OutputIterator]\ccc{value_type} is \ccc{Point_3}. \item[Kernel]Geometric traits class.\end{description}
+\item[InputIterator]\ccc{value_type} must be convertible to OutputIterator's \ccc{value_type}. \item[OutputIterator]\ccc{value_type} must be convertible to \ccc{Point_3}. \item[Kernel]Geometric traits class.\end{description}
 \end{description}
 \begin{description}
 \item[Returns:]past-the-end output iterator. \end{description}
@@ -41,7 +41,7 @@ Precondition: epsilon $>$ 0.
 \item[first]input points \item[output]output points \item[epsilon]tolerance value when comparing 3D points \end{description}
 \end{description}
 \ccGlue
-\ccFunction{void merge_epsilon_nearest_points_3(ForwardIterator first, ForwardIterator beyond, const Kernel &, double epsilon);}
+\ccFunction{ForwardIterator merge_epsilon_nearest_points_3(ForwardIterator first, ForwardIterator beyond, double epsilon, const Kernel &);}
 {
 Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant requires the kernel.
 Precondition: epsilon $>$ 0.
@@ -50,8 +50,10 @@ Precondition: epsilon $>$ 0.
 \begin{description}
 \item[Template Parameters:]
 \begin{description}
-\item[ForwardIterator]\ccc{value_type} is \ccc{Point_3}. \item[Kernel]Geometric traits class. \end{description}
+\item[ForwardIterator]\ccc{value_type} must be convertible to \ccc{Point_3}. \item[Kernel]Geometric traits class.\end{description}
 \end{description}
+\begin{description}
+\item[Returns:]First iterator to remove (see erase-remove idiom). \end{description}
 \begin{description}
 \item[Parameters: ]
 \begin{description}
@@ -67,7 +69,7 @@ Precondition: epsilon $>$ 0.
 \begin{description}
 \item[Template Parameters:]
 \begin{description}
-\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[OutputIterator]\ccc{value_type} is \ccc{Point_3}.\end{description}
+\item[InputIterator]\ccc{value_type} must be convertible to OutputIterator's \ccc{value_type}. \item[OutputIterator]\ccc{value_type} must be convertible to \ccc{Point_3}.\end{description}
 \end{description}
 \begin{description}
 \item[Returns:]past-the-end output iterator. \end{description}
@@ -77,7 +79,7 @@ Precondition: epsilon $>$ 0.
 \item[first]input points \item[output]output points \item[epsilon]tolerance value when comparing 3D points \end{description}
 \end{description}
 \ccGlue
-\ccFunction{void merge_epsilon_nearest_points_3(ForwardIterator first, ForwardIterator beyond, double epsilon);}
+\ccFunction{ForwardIterator merge_epsilon_nearest_points_3(ForwardIterator first, ForwardIterator beyond, double epsilon);}
 {
 Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant deduces the kernel from iterator types.
 Precondition: epsilon $>$ 0.
@@ -86,8 +88,10 @@ Precondition: epsilon $>$ 0.
 \begin{description}
 \item[Template Parameters:]
 \begin{description}
-\item[ForwardIterator]\ccc{value_type} is \ccc{Point_3}. \end{description}
+\item[ForwardIterator]\ccc{value_type} must be convertible to \ccc{Point_3}.\end{description}
 \end{description}
+\begin{description}
+\item[Returns:]First iterator to remove (see erase-remove idiom). \end{description}
 \begin{description}
 \item[Parameters: ]
 \begin{description}
@@ -111,13 +115,13 @@ typename InputIterator,   \\
 typename OutputIterator,   \\
 typename Kernel$>$  \\
 OutputIterator  \\
-\ccc{merge_epsilon_nearest_points_3} (InputIterator first, InputIterator beyond, OutputIterator output, const Kernel \&, double epsilon);  \\
+\ccc{merge_epsilon_nearest_points_3} (InputIterator first, InputIterator beyond, OutputIterator output, double epsilon, const Kernel \&);  \\
   \\
 template$<$  \\
 typename ForwardIterator,   \\
 typename Kernel$>$  \\
-void  \\
-\ccc{merge_epsilon_nearest_points_3} (ForwardIterator first, ForwardIterator beyond, const Kernel \&, double epsilon);  \\
+ForwardIterator  \\
+\ccc{merge_epsilon_nearest_points_3} (ForwardIterator first, ForwardIterator beyond, double epsilon, const Kernel \&);  \\
   \\
 template$<$  \\
 typename InputIterator,   \\
@@ -127,7 +131,7 @@ OutputIterator  \\
   \\
 template$<$  \\
 typename ForwardIterator$>$  \\
-void  \\
+ForwardIterator  \\
 \ccc{merge_epsilon_nearest_points_3} (ForwardIterator first, ForwardIterator beyond, double epsilon);  \\
 
 %END-AUTO(\ccParameters)

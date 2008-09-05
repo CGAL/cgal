@@ -66,5 +66,9 @@ public:
   /// Get/set normal (vector + orientation).
   const Normal& normal() const;
   Normal&       normal();
+
+  /// General purpose tag
+  int tag() const;
+  int& tag();
 };
 

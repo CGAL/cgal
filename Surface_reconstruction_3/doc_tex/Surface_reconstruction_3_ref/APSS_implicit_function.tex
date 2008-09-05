@@ -99,7 +99,7 @@ Kernel's geometric traits.
 \ccGlue
 \ccNestedType{Point_with_normal}
 {
-Model of \ccc{PointWithNormal_3}.
+Model of \ccc{PointWithNormal_3} concept.
 }
 \ccGlue
 \ccNestedType{Normal}
@@ -120,7 +120,7 @@ Model of \ccc{OrientedNormal_3} concept.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccConstructor{APSS_implicit_function(InputIterator first, InputIterator beyond);}
+\ccConstructor{APSS_implicit_function(InputIterator first, InputIterator beyond, unsigned int k, FT projection_error = 3.16e-4);}
 {
 Create an APSS implicit function from a point set.
 Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
@@ -129,7 +129,7 @@ Precondition: the value type of InputIterator must be convertible to \ccc{Point_
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[first]First point to add. \item[beyond]Past-the-end point to add. \end{description}
+\item[first]First point of point set. \item[beyond]Past-the-end point of point set. \item[k]Number of nearest neighbours. \item[\ccc{projection_error}]Dichotomy error when projecting point. \end{description}
 \end{description}
 \ccGlue
 \ccConstructor{APSS_implicit_function(const APSS_implicit_function<Gt, PointWithNormal_3>& other);}
@@ -150,6 +150,11 @@ Precondition: the value type of InputIterator must be convertible to \ccc{Point_
 \ccGlue
 \ccMethod{void setNofNeighbors(unsigned int k);}
 {
+}
+\ccGlue
+\ccMethod{Iso_cuboid bounding_box() const;}
+{
+Get the bounding box.
 }
 \ccGlue
 \ccMethod{const Sphere& bounding_sphere() const;}

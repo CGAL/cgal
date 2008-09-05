@@ -32,7 +32,7 @@ Precondition: KNN $>$= 2.
 \begin{description}
 \item[Template Parameters:]
 \begin{description}
-\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[OutputIterator]\ccc{value_type} is \ccc{Point_3}. \item[Kernel]Geometric traits class.\end{description}
+\item[InputIterator]\ccc{value_type} must be convertible to OutputIterator's \ccc{value_type}. \item[OutputIterator]\ccc{value_type} must be convertible to \ccc{Point_3}. \item[Kernel]Geometric traits class.\end{description}
 \end{description}
 \begin{description}
 \item[Returns:]past-the-end output iterator. \end{description}
@@ -42,7 +42,7 @@ Precondition: KNN $>$= 2.
 \item[first]input points \item[output]output points \item[KNN]number of neighbors \item[\ccc{threshold_percent}]percentage of points to remove \end{description}
 \end{description}
 \ccGlue
-\ccFunction{void remove_outliers_wrt_avg_knn_sq_distance_3(ForwardIterator first, ForwardIterator beyond, unsigned int KNN, const Kernel &, double threshold_percent);}
+\ccFunction{ForwardIterator remove_outliers_wrt_avg_knn_sq_distance_3(ForwardIterator first, ForwardIterator beyond, unsigned int KNN, const Kernel &, double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
 \item compute average squared distance to the K nearest neighbors,\item percentage of points to remove. This function is mutating the input point set. This variant requires the kernel.\end{itemize}
@@ -52,8 +52,10 @@ Precondition: KNN $>$= 2.
 \begin{description}
 \item[Template Parameters:]
 \begin{description}
-\item[ForwardIterator]\ccc{value_type} is \ccc{Point_3}. \item[Kernel]Geometric traits class. \end{description}
+\item[ForwardIterator]\ccc{value_type} must be convertible to \ccc{Point_3}. \item[Kernel]Geometric traits class.\end{description}
 \end{description}
+\begin{description}
+\item[Returns:]First iterator to remove (see erase-remove idiom). \end{description}
 \begin{description}
 \item[Parameters: ]
 \begin{description}
@@ -70,7 +72,7 @@ Precondition: KNN $>$= 2.
 \begin{description}
 \item[Template Parameters:]
 \begin{description}
-\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[OutputIterator]\ccc{value_type} is \ccc{Point_3}.\end{description}
+\item[InputIterator]\ccc{value_type} must be convertible to OutputIterator's \ccc{value_type}. \item[OutputIterator]\ccc{value_type} must be convertible to \ccc{Point_3}.\end{description}
 \end{description}
 \begin{description}
 \item[Returns:]past-the-end output iterator. \end{description}
@@ -80,7 +82,7 @@ Precondition: KNN $>$= 2.
 \item[first]input points \item[output]output points \item[KNN]number of neighbors \item[\ccc{threshold_percent}]percentage of points to remove \end{description}
 \end{description}
 \ccGlue
-\ccFunction{void remove_outliers_wrt_avg_knn_sq_distance_3(ForwardIterator first, ForwardIterator beyond, unsigned int KNN, double threshold_percent);}
+\ccFunction{ForwardIterator remove_outliers_wrt_avg_knn_sq_distance_3(ForwardIterator first, ForwardIterator beyond, unsigned int KNN, double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
 \item compute average squared distance to the K nearest neighbors,\item percentage of points to remove. This function is mutating the input point set. This variant deduces the kernel from iterator types.\end{itemize}
@@ -90,8 +92,10 @@ Precondition: KNN $>$= 2.
 \begin{description}
 \item[Template Parameters:]
 \begin{description}
-\item[ForwardIterator]\ccc{value_type} is \ccc{Point_3}. \end{description}
+\item[ForwardIterator]\ccc{value_type} must be convertible to \ccc{Point_3}.\end{description}
 \end{description}
+\begin{description}
+\item[Returns:]First iterator to remove (see erase-remove idiom). \end{description}
 \begin{description}
 \item[Parameters: ]
 \begin{description}
@@ -120,7 +124,7 @@ OutputIterator  \\
 template$<$  \\
 typename ForwardIterator,   \\
 typename Kernel$>$  \\
-void  \\
+ForwardIterator  \\
 \ccc{remove_outliers_wrt_avg_knn_sq_distance_3} (ForwardIterator first, ForwardIterator beyond, unsigned int KNN, const Kernel \&, double \ccc{threshold_percent});  \\
   \\
 template$<$  \\
@@ -131,7 +135,7 @@ OutputIterator  \\
   \\
 template$<$  \\
 typename ForwardIterator$>$  \\
-void  \\
+ForwardIterator  \\
 \ccc{remove_outliers_wrt_avg_knn_sq_distance_3} (ForwardIterator first, ForwardIterator beyond, unsigned int KNN, double \ccc{threshold_percent});  \\
 
 %END-AUTO(\ccParameters)

@@ -192,11 +192,6 @@ public:
   bool  constrained() const { return m_constrained; }
   bool& constrained()       { return m_constrained; }
 
-  //tag
-  int tag() const { return m_tag; }
-  int& tag()       { return m_tag; }
-
-
   /// Get/set the value of the implicit function.
   FT  f() const { return m_f; }
   FT& f()       { return m_f; }
@@ -205,7 +200,6 @@ public:
   /// Get/set the value of the implicit function.
   double  average_spacing() const { return m_average_spacing; }
   double& average_spacing()       { return m_average_spacing; }
-
 
   /// Get/set the type = INPUT or STEINER.
   unsigned char  type() const { return m_type; }
@@ -218,6 +212,10 @@ public:
   /// Get/set normal (vector + orientation).
   const Normal& normal() const { return this->point().normal(); }
   Normal&       normal()       { return this->point().normal(); }
+
+  /// General purpose tag
+  int tag() const { return m_tag; }
+  int& tag()       { return m_tag; }
 
 // Private methods
 private:

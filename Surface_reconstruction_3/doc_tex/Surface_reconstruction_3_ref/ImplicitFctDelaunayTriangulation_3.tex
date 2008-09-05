@@ -24,6 +24,8 @@
 
 The \ccc{ImplicitFctDelaunayTriangulation_3} concept defines the interface of a 3D Delaunay triangulation requested by the \ccc{Poisson_implicit_function} class. The cell base class must be a model of \ccc{ImplicitFctDelaunayTriangulationCellBase_3} and the vertex base class must be a model of \ccc{ImplicitFctDelaunayTriangulationVertexBase_3}.
 
+CAUTION: \ccc{invalidate_bounding_box}() must be called after modifying the points.
+
 %END-AUTO(\ccDefinition)
   
 \ccRefines
@@ -74,7 +76,17 @@ Model of \ccc{OrientedNormal_3} concept.
 \ccGlue
 \ccNestedType{Normal_iterator}
 {
-Iterator over normals.
+Iterator over all normals.
+}
+\ccGlue
+\ccNestedType{Input_vertices_iterator}
+{
+Iterator over INPUT vertices.
+}
+\ccGlue
+\ccNestedType{Input_point_iterator}
+{
+Iterator over INPUT points.
 }
 \ccGlue
 
@@ -117,24 +129,54 @@ Get first iterator over finite vertices normals.
 Get past-the-end iterator over finite vertices normals.
 }
 \ccGlue
+\ccMethod{Input_vertices_iterator input_vertices_begin() const;}
+{
+Get first iterator over INPUT vertices.
+}
+\ccGlue
+\ccMethod{Input_vertices_iterator input_vertices_end() const;}
+{
+Get past-the-end iterator over INPUT vertices.
+}
+\ccGlue
+\ccMethod{Input_point_iterator input_points_begin() const;}
+{
+Get first iterator over INPUT points.
+}
+\ccGlue
+\ccMethod{Input_point_iterator input_points_end() const;}
+{
+Get past-the-end iterator over INPUT points.
+}
+\ccGlue
 \ccMethod{Iso_cuboid bounding_box() const;}
 {
-Get the bounding box.
+Get the bounding box of all points.
+}
+\ccGlue
+\ccMethod{Iso_cuboid input_points_bounding_box() const;}
+{
+Get the bounding box of INPUT points.
 }
 \ccGlue
 \ccMethod{Sphere bounding_sphere() const;}
 {
-Get bounding sphere.
+Get the bounding sphere of all points.
+}
+\ccGlue
+\ccMethod{Sphere input_points_bounding_sphere() const;}
+{
+Get the bounding sphere of INPUT points.
 }
 \ccGlue
 \ccMethod{Point barycenter() const;}
 {
-Get points barycenter.
+Get the barycenter of all points.
 }
 \ccGlue
 \ccMethod{FT diameter_standard_deviation() const;}
 {
-Get the standard deviation of the distance to barycenter.
+Get the standard deviation of the distance to barycenter (for all points).
 }
 \ccGlue
 \ccMethod{void invalidate_bounding_box();}
