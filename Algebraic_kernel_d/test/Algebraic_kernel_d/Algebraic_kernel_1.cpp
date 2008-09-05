@@ -20,6 +20,8 @@
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_coefficient_kernel.h>
 #include <CGAL/Algebraic_kernel_d/Descartes.h>
 #include <CGAL/_test_algebraic_kernel_1.h>
 
@@ -32,12 +34,15 @@ void test_algebraic_kernel_coeff_boundary_rep() {
   typedef Boundary_    Boundary;
   typedef RepClass     Rep_class;
   
-  typedef CGAL::Polynomial< Coefficient >                            Polynomial_1;
+  typedef CGAL::Polynomial< Coefficient >                                Polynomial_1;
   typedef CGAL::CGALi::Algebraic_real_pure
-    < Coefficient, Boundary, CGAL::Handle_policy_no_union, Rep_class > Algebraic_real_1;
+    < Coefficient, Boundary, CGAL::Handle_policy_no_union, Rep_class >   Algebraic_real_1;
   
-  typedef CGAL::CGALi::Descartes< Polynomial_1, Boundary >           Descartes;
-  typedef CGAL::CGALi::Bitstream_descartes< Polynomial_1, Boundary > BDescartes;
+  typedef CGAL::CGALi::Descartes< Polynomial_1, Boundary >               Descartes;
+  typedef CGAL::CGALi::Bitstream_descartes<
+            CGAL::CGALi::Bitstream_descartes_rndl_tree_traits
+            <CGAL::CGALi::Bitstream_coefficient_kernel<Coefficient> > >  BDescartes;
+//   typedef CGAL::CGALi::Bitstream_descartes< Polynomial_1, Boundary > BDescartes;
   
   typedef CGAL::Algebraic_kernel_1< Coefficient, Boundary, Rep_class , Descartes>
     Kernel_Descartes;
