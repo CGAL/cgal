@@ -48,13 +48,16 @@ NT prs_resultant_integral_domain(Polynomial<NT> A, Polynomial<NT> B) {
     typedef CGAL::Scalar_factor_traits<Polynomial<NT> > SFT;
     typedef typename SFT::Scalar Scalar; 
     typename SFT::Scalar_factor scalar_factor;
+    typename CGAL::Coercion_traits<Scalar, NT>::Cast cast_scalar_nt; 
     
     Scalar a = scalar_factor(A), b = scalar_factor(B);
-    NT g(1), h(1), t = CGAL::ipower(a, B.degree()) * CGAL::ipower(b, A.degree());
+    NT g(1), h(1);
+    NT t = cast_scalar_nt (CGAL::ipower(a, B.degree()) * CGAL::ipower(b, A.degree()));
+
     Polynomial<NT> Q, R; NT d;
     int delta;
 
-    A /= NT(a); B /= NT(b);
+    A /= cast_scalar_nt(a); B /= cast_scalar_nt(b);
     do {
         signflip ^= (A.degree() & B.degree() & 1);
         Polynomial<NT>::pseudo_division(A, B, Q, R, d);

@@ -116,6 +116,10 @@ int main(){
   test_resultant<EPolynomial_3>();
   timer.stop();
   
+  typedef CGAL::Sqrt_extension<EXT, AK::Integer> EXT2;
+  typedef CGAL::Polynomial<EXT2>            E2Polynomial_1;
+  test_resultant<E2Polynomial_1>();
+  
   std::cout <<" TOTAL TIME: " << timer.time();
 }
 
