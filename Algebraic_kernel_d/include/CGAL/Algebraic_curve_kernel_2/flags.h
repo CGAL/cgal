@@ -103,7 +103,7 @@
  * by a subresultant computation, the flag should not be set to one currently
  */
 #ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY
-#define CGAL_ACK_RESULTANT_FIRST_STRATEGY 0
+#define CGAL_ACK_RESULTANT_FIRST_STRATEGY 1
 #endif
 
 /**
@@ -115,7 +115,7 @@
  * If CGAL_ACK_RESULTANT_FIRST_STRATEGY is not set, this flag has no effect
  */
 #ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD
-#define CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD 11
+#define CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD 0
 #endif
 
 /**
