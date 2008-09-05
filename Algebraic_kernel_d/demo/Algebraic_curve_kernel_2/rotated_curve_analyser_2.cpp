@@ -30,12 +30,18 @@
 #endif
 
 #ifndef CGAL_ACK_USE_APPROXIMATE_ROTATION
-#define CGAL_ACK_USE_APPROXIMATE_ROTATION 1
+#define CGAL_ACK_USE_APPROXIMATE_ROTATION 0
 #endif
 
 #if !CGAL_ACK_USE_APPROXIMATE_ROTATION
 #ifndef CGAL_ACK_BASE_ANGLE
-#define CGAL_ACK_BASE_ANGLE 30
+#define CGAL_ACK_BASE_ANGLE 18
+#endif
+#endif
+
+#if CGAL_ACK_USE_APPROXIMATE_ROTATION
+#ifndef CGAL_ACK_ANGLE_PRECISION
+#define CGAL_ACK_ANGLE_PRECISION 8
 #endif
 #endif
 
@@ -275,7 +281,7 @@ int main(int argc,char** argv) {
         if(argc>4) {
             prec = atoi(argv[4]);
         } else {
-            prec=1;
+            prec=CGAL_ACK_ANGLE_PRECISION;
         }
 #endif 
 
@@ -300,9 +306,8 @@ int main(int argc,char** argv) {
 
         std::cout << "*************** Analysis finished ***************" << std::endl;
      
-        std::cout << algebraic_curve;
-
         std::cout << "Overall time: " << overall_timer.time() << std::endl;
+        std::cout << algebraic_curve;
      
     }
     return 0;
