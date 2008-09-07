@@ -52,12 +52,24 @@ class Expr;
 
 CGAL_BEGIN_NAMESPACE
 
-// A class which tells the prefered exact number type corresponding to a type.
+// A class which tells the prefered "exact number type" corresponding to a type.
 
-// The default template chooses Quotient<MP_Float>.
-// It should support the built-in types, MP_Float, Quotient<MP_Float>.
+// The default template chooses Gmpq or Quotient<MP_Float>.
+// It should support the built-in types.
 template < typename >
 struct Exact_type_selecter
+#ifdef CGAL_USE_GMP
+{ typedef Gmpq Type; };
+#else
+{ typedef Quotient<MP_Float> Type; };
+#endif
+
+template <>
+struct Exact_type_selecter<MP_Float>
+{ typedef Quotient<MP_Float> Type; };
+
+template <>
+struct Exact_type_selecter<Quotient<MP_Float> >
 { typedef Quotient<MP_Float> Type; };
 
 // And we specialize for the following types :
