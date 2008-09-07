@@ -106,10 +106,10 @@ struct Test {
   void S_S()
   {
     std::cout << "Segment - Segment\n";
-    check_squared_distance (S(p(1, 0), p(0, 1)), S(p(0.5, 0.5), p(2, 0)), 0);
-    check_squared_distance (S(p(10, 0), p(0, 10)), S(p(6, 6), p(20, 0)), 2);
-    check_squared_distance (S(p(-10, -13), p(0, 10)), S(p(10, 5), p(70, -30)), 124.642);
-    check_squared_distance (S(p( 0,    0), p(6,-2)), S(p(-1, 4), p(8, 6)), 16.9882);
+    check_squared_distance (S(p(2,     0), p(0,   2)), S(p(1, 1),      p(4, 0)), 0);
+    check_squared_distance (S(p(10,    0), p(0,  10)), S(p(6, 6),      p(20, 0)), 2);
+    check_squared_distance (S(p(-10, -13), p(0,  10)), S(p(10, 5),     p(70, -30)), 124.642);
+    check_squared_distance (S(p( 0,    0), p(6,  -2)), S(p(-1, 4),     p(8, 6)), 16.9882);
     check_squared_distance (S(p(-8,   -7), p( 11, 6)), S(p(  23, -27), p(-17, 16)), 0);
     check_squared_distance (S(p( 5,    0), p(  0, 0)), S(p(   1,   1), p(  2,  1)), 1);
     check_squared_distance (S(p( 0,    0), p(  5, 0)), S(p(   6,   1), p(  8,  1)), 2);
@@ -117,7 +117,7 @@ struct Test {
     check_squared_distance (S(p( 0,    0), p(  0, 0)), S(p(   8,   1), p(  6,  1)), 37);
     check_squared_distance (S(p( 0,    0), p(  5, 0)), S(p(   8,   1), p(  6,  1)),  2);
     check_squared_distance (S(p( 0,    0), p(  5, 0)), S(p(   8,   0), p( 12,  0)),  9);
-    check_squared_distance (S(p( 0,    0), p(  5, 0)), S(p(   8,   1), p( 12,1.1)), 10);
+    check_squared_distance (S(p( 0,    0), p( 50, 0)), S(p(  80,  10), p(120, 11)), 1000);
     check_squared_distance (S(p( 0,    0), p(  1, 0)), S(p(   2,   1), p(  2, -1)),  1);
     check_squared_distance (S(p( 4,    0), p( -3,-1)), S(p(   1,   1), p(  2, 11)),  2);
     check_squared_distance (S(p( 3,    4), p(  7, 7)), S(p(   7,   0), p(  6,  5)),  1);
@@ -131,7 +131,7 @@ struct Test {
   void P_R()
   {
     std::cout << "Point - Ray\n";
-    check_squared_distance (p(0, 0), R(p( 3, 1), p( 2.5, 0.9)), 2);
+    check_squared_distance (p(0, 0), R(p(30,10), p(  25,   9)), 15.3846);
     check_squared_distance (p(1, 1), R(p( 2, 1), p(  10,   1)), 1);
     check_squared_distance (p(1, 1), R(p( 2, 1), p( -10,   1)), 0);
     check_squared_distance (p(1, 1), R(p(-2, 1), p( -10,   1)), 9);
