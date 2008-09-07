@@ -60,7 +60,7 @@ private:
   typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
   
   typedef typename Polygon_with_holes_2::Hole_const_iterator  
-    GP_Holes_const_iterator;
+    															GP_Holes_const_iterator;
   typedef typename Traits_2::Curve_const_iterator         Curve_const_iterator;
   typedef typename Traits_2::Compare_endpoints_xy_2
     Compare_endpoints_xy_2;
@@ -1029,8 +1029,12 @@ public:
   }
   
   bool _is_plane(const Polygon_with_holes_2& pgn) const
-  {
-    return (pgn.is_unbounded() && (pgn.holes_begin() == pgn.holes_end()));
+  {  		
+  		//typedef typename  Traits_2::Is_unbounded  Is_unbounded;
+		bool unbounded = m_traits->construct_is_unbounded_object()(pgn); 		
+		std::pair<GP_Holes_const_iterator, GP_Holes_const_iterator> pair = m_traits->construct_holes_object()(pgn);  		  		
+      return (unbounded && (pair.first == pair.second));
+    //used to return (pgn.is_unbounded() && (pgn.holes_begin() == pgn.holes_end()))
   }
   
   void _intersection(const Arrangement_2& arr)
