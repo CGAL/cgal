@@ -1279,8 +1279,8 @@ void Curve_pair_analysis_2<AlgebraicKernel_2>::compute_resultant() const {
 #ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD
     bool speed_up = true;
 #else
-    bool speed_up = std::min(curve_analysis(false).degree(),
-                             curve_analysis(true).degree()) >= 
+    bool speed_up = std::min(curve_analysis(false).polynomial_2().degree(),
+                             curve_analysis(true).polynomial_2().degree()) >= 
         CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD;
 #endif
 #else
