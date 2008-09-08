@@ -20,8 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
-
 #include "Qt_widget_toolbar_layers.h"
 
 // icons
@@ -179,4 +177,3 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
 
 #include "Qt_widget_toolbar_layers.moc"
 
-#endif

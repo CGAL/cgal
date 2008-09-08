@@ -19,8 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
-
 #include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_toolbar.h"
 
@@ -82,5 +80,3 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
 };
 
 #include "Qt_widget_toolbar.moc"
-
-#endif

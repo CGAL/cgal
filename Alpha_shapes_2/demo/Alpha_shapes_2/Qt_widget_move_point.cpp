@@ -20,8 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
-
 #include "Qt_widget_move_point.h"
 
 void Qt_widget_movepoint_helper::delete_point() { delete_pointi(); };
@@ -33,5 +31,3 @@ void Qt_widget_movepoint_helper::stateChanged(int i){
     deactivate();
 }
 #include "Qt_widget_move_point.moc"
-
-#endif
