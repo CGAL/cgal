@@ -40,6 +40,7 @@ if ( GMP_FOUND )
 endif()
 
 if ( MPFR_FOUND )
+  set( MPFR_DEPENDENCY_INCLUDE_DIR ${GMP_INCLUDE_DIR} )
   get_dependency_version(MPFR)
   message( STATUS "MPFR include:     ${MPFR_INCLUDE_DIR}" )
   message( STATUS "MPFR libraries:   ${MPFR_LIBRARIES}" )

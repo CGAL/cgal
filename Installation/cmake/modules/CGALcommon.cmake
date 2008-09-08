@@ -70,9 +70,9 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
                ${LIB}_COMPILE_RES 
                ${CMAKE_BINARY_DIR} 
                ${CMAKE_SOURCE_DIR}/config/support/print_${LIB}_version.cpp 
-               CMAKE_FLAGS -DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR} 
-                           -DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES}
-                           -DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARY_DIR}                           
+               CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${${PKG}_DEPENDENCY_INCLUDE_DIR};${${PKG}_INCLUDE_DIR}"
+                           "-DLINK_LIBRARIES:STRING=${${PKG}_DEPENDENCY_LIBRARIES};${${PKG}_LIBRARIES}"
+                           "-DLINK_DIRECTORIES:STRING=${${PKG}_DEPENDENCY_LIBRARY_DIR};${${PKG}_LIBRARY_DIR}"
                OUTPUT_VARIABLE ${LIB}_OUTPUT 
             )
             
