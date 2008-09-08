@@ -1,5 +1,4 @@
 Algebraic_foundations
-Algebraic_kernel_d
 Algebraic_kernel_for_circles
 Algebraic_kernel_for_spheres
 Alpha_shapes_2
@@ -7,7 +6,6 @@ Alpha_shapes_3
 Apollonius_graph_2
 Approximate_min_ellipsoid_d
 Arrangement_on_surface_2
-Benchmark
 Boolean_set_operations_2
 Box_intersection_d
 BGL
@@ -22,7 +20,6 @@ Convex_hull_3
 Convex_hull_d
 Convex_decomposition_3
 Core
-Curved_kernel_via_analysis_2
 Developers_manual
 Distance_2
 Distance_3
