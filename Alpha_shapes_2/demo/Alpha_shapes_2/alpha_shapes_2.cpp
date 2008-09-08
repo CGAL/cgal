@@ -17,19 +17,7 @@
 //
 // Author(s)     : Radu Ursu
 
-#include <CGAL/basic.h>
 
-// if QT is not installed, a message will be issued in runtime.
-#ifndef CGAL_USE_QT
-#include <iostream>
-
-int main(int, char*)
-{
-  std::cout << "Sorry, this demo needs QT." << std::endl;
-  return 0;
-}
-
-#else
 
 
 //Application headers
@@ -497,4 +485,3 @@ main(int argc, char **argv)
   return app.exec();
 }
 
-#endif // CGAL_USE_QT
