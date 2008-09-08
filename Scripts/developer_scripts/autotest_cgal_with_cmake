@@ -482,7 +482,11 @@ ${MAKE_CMD} -k -fMakefile;
 cd ..;
 EOF
         chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript"
-        remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" > "${ACTUAL_LOGFILE}.${PLATFORM}" 2>&1
+        if [ -n "${SHOW_PROGRESS}" ]; then
+	  remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" | tee -a "${ACTUAL_LOGFILE}.${PLATFORM}" 2>&1
+	else
+          remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" > "${ACTUAL_LOGFILE}.${PLATFORM}" 2>&1
+	fi
                                
         cp "${ACTUAL_LOGFILE}.${PLATFORM}" "${CGAL_BINARY_DIR}/installation.log"
       fi
@@ -594,10 +598,14 @@ echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
 echo 'COPYING RESULTS';
 cp 'results_${CGAL_TESTER}_${PLATFORM}.tar.gz' 'results_${CGAL_TESTER}_${PLATFORM}.txt' '${CGAL_TEST_DIR}';
-echo 'REMOVING LOCAL_TEST_DIR';
 cd ..;
+EOF
+     if [ -z "${KEEP_TESTS}" ]; then
+      cat >> "${CGAL_BINARY_DIR}/localtestscript" <<EOF
+echo 'REMOVING LOCAL_TEST_DIR';
 rm -rf '${CGAL_BINARY_DIR}/test'
 EOF
+     fi
 
 
     chmod ugo+x "${CGAL_BINARY_DIR}/localtestscript"
@@ -718,6 +726,10 @@ do
   if [ "$arg" = "-s" ]; then
     echo "Showing progress."
     SHOW_PROGRESS="y"
+  fi
+  if [ "$arg" = "-k" ]; then
+    echo "Compiled test/ directory will be kept."
+    KEEP_TESTS="y"
   fi
 done
 
