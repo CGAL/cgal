@@ -56,7 +56,7 @@ print_testresult()
       # string "warning" preceded with a letter that is not a letter or '_' or ','
       # That avoids some false positives such as
       # '-read_only_relocs,warning' or '-D_CRT_SECURE_NO_WARNINGS'
-      if $GREP -i -E '[^a-zA-Z_,]warning' "CompilerOutput_$1" "ErrorOutput_$1" > /dev/null ; then
+      if $GREP -i -E '[^a-zA-Z_,]warning' "CompilerOutput_$1" ProgramOutput.*.$1 > /dev/null ; then
         RESULT="w"
       else
         RESULT="y"
