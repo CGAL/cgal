@@ -1,5 +1,5 @@
-\begin{ccRefClass} {Modular}
-\label{Modular}
+\begin{ccRefClass} {Residue}
+\label{Residue}
 
 \def\ccTagOperatorLayout{\ccFalse}
 
@@ -20,7 +20,7 @@ The initial value of $p$ is 67111067.
 
 Note that due to the static prime the type is not thread-safe.
 
-\ccInclude{CGAL/Modular.h}
+\ccInclude{CGAL/Residue.h}
 
 \ccIsModel
 \ccc{Field}\\
@@ -29,16 +29,16 @@ Note that due to the static prime the type is not thread-safe.
 \ccCreation
 \ccCreationVariable{x}
 
-\ccConstructor{Modular();}
+\ccConstructor{Residue();}
 {introduces a variable \ccVar, which is initialized with zero;}
 \ccGlue
-\ccConstructor{Modular(const Modular& m);}
+\ccConstructor{Residue(const Residue& m);}
 {copy constructor;}
 \ccGlue
-\ccConstructor{Modular(int i);}
+\ccConstructor{Residue(int i);}
 {introduces a variable \ccVar, which is initialized with $i \%  p$;}
 \ccGlue
-\ccConstructor{Modular(long i);}
+\ccConstructor{Residue(long i);}
 {introduces a variable \ccVar, which is initialized with $i \%  p$;}
 
 \ccOperations
@@ -57,17 +57,17 @@ Note that due to the static prime the type is not thread-safe.
     }
 
 
-\ccFunction{Modular operator+(const Modular&a);}{}\ccGlue
-\ccFunction{Modular operator-(const Modular&a);}{}\ccGlue
+\ccFunction{Residue operator+(const Residue&a);}{}\ccGlue
+\ccFunction{Residue operator-(const Residue&a);}{}\ccGlue
 
-\ccFunction{Modular operator+(const Modular&a,const Modular& b);}{}\ccGlue
-\ccFunction{Modular operator-(const Modular&a,const Modular& b);}{}\ccGlue
-\ccFunction{Modular operator*(const Modular&a,const Modular& b);}{}\ccGlue
-\ccFunction{Modular operator/(const Modular&a,const Modular& b);}{}\ccGlue
+\ccFunction{Residue operator+(const Residue&a,const Residue& b);}{}\ccGlue
+\ccFunction{Residue operator-(const Residue&a,const Residue& b);}{}\ccGlue
+\ccFunction{Residue operator*(const Residue&a,const Residue& b);}{}\ccGlue
+\ccFunction{Residue operator/(const Residue&a,const Residue& b);}{}\ccGlue
 
-\ccMethod{Modular & operator+=(const Modular& a);}{}\ccGlue
-\ccMethod{Modular & operator-=(const Modular& a);}{}\ccGlue
-\ccMethod{Modular & operator*=(const Modular& a);}{}\ccGlue
-\ccMethod{Modular & operator/=(const Modular& a);}{}\ccGlue
+\ccMethod{Residue & operator+=(const Residue& a);}{}\ccGlue
+\ccMethod{Residue & operator-=(const Residue& a);}{}\ccGlue
+\ccMethod{Residue & operator*=(const Residue& a);}{}\ccGlue
+\ccMethod{Residue & operator/=(const Residue& a);}{}\ccGlue
 
 \end{ccRefClass} 

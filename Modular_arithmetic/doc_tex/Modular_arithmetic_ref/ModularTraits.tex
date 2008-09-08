@@ -4,7 +4,7 @@
 
 A model of \ccc{ModularTraits} is associated to specific \ccc{Type}.
 In case this associated type is \ccc{Modularizable}, this is indicated by the 
-boolean tag \ccc{Is_modularizable}. The mapping into the \ccc{Modular_type} is
+boolean tag \ccc{Is_modularizable}. The mapping into the \ccc{Residue_type} is
 provided by the functor \ccc{Modular_image}.
 
 \ccTypes
@@ -21,7 +21,7 @@ A model of \ccc{ModularTraits} is supposed to provide:\\
 
 \ccGlue
 
-\ccNestedType{Modular_type}{
+\ccNestedType{Residue_type}{
    The type of the modular image. \\
    In case the type is not \ccc{Modularizable} this is undefined. 
 }
@@ -42,7 +42,7 @@ In case a functor is not provided, it is set to \ccc{CGAL::Null_functor}.
 \ccRefIdfierPage{CGAL::Modular_traits<T>}\\
 
 \ccSeeAlso
-\ccRefConceptPage{CGAL::Modular}\\
+\ccRefConceptPage{CGAL::Residue}\\
 \ccRefConceptPage{Modularizable}\\
 
 \end{ccRefConcept}

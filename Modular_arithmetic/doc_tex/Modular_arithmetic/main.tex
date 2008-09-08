@@ -8,15 +8,15 @@
 
 Modular arithmetic is a fundamental tool in modern algebra systems. In conjunction with the Chinese remainder theorem it serves as the workhorse in several algorithms computing the gcd, resultant etc. Moreover, it can serve as a very efficient filter, since it is often possible to exclude that some value is zero by computing its modular correspondent with respect to one prime only. 
 
-This package introduces a type \ccc{CGAL::Modular}
+This package introduces a type \ccc{CGAL::Residue}
 representing a finite field over some prime. 
 The prime can be changed at runtime. 
 
 Moreover, the package introduces \ccc{CGAL::Modular_traits<T>} 
 providing a mapping from some algebraic structure \ccc{T} into an algebraic 
-structure that is based on the type \ccc{CGAL::Modular}.  
+structure that is based on the type \ccc{CGAL::Residue}.  
 For scalar types, e.g. Integers, this mapping is just the canonical homomorphism
-into the type \ccc{CGAL::Modular}. 
+into the type \ccc{CGAL::Residue}. 
 For compound types, e.g. Polynomials, the mapping is applied to the 
 coefficients of the compound type. 
 
@@ -31,4 +31,13 @@ The class \ccc{CGAL::Modular_traits<T>} is designed such that the concept
 
 In the following example the modular arithmetic is used as a filter. 
 \ccIncludeExampleCode{Modular_arithmetic/modular_filter.cpp}
+
+
+\section{Design and Implementation History}
+
+The class \ccc{CGAL::Residue} is based on the C-code of Sylvain Pion et. al. 
+as it was presented in \cite{bepp-sdrns-99}. 
+
+The remaining part of the package is the result of the integration process
+of the NumeriX libray of EXACUS \cite{beh+-eeeafcs-05} into CGAL. 
 
