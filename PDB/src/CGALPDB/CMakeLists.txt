@@ -19,7 +19,7 @@
    
 assert(CGAL_BINARY_DIR)
 
-include_directories( ${CGAL_PARTY_INCLUDE_DIRS} )
+include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
 add_library(CGAL_PDB "all_files.cpp")
 
