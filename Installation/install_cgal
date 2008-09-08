@@ -472,7 +472,7 @@ _check_dir_exists()
 _check_dir_exists_create()
 {
     if [ ! -d "${1}" ]; then
-	log_print "WARNING: Directory ${1} does not exist, it will be created."
+	log_print "NOTE: Directory ${1} does not exist, it will be created."
 	${_mkdir} -p "${1}"
     fi
     _check_read "${1}"
