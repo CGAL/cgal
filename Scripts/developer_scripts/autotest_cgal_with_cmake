@@ -24,6 +24,11 @@
 #sets the umask to 022 & 0777
 umask 022
 
+# We want english warning and error messages!!
+LANG=C
+LC_ALL=C
+export LANG
+export LC_ALL
 
 SCP="scp"
 WGET="wget"
