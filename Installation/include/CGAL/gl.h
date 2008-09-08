@@ -18,9 +18,7 @@
 #ifndef CGAL_GL_H
 #define CGAL_GL_H
 
-#include <CGAL/basic.h>
-
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
 #  include <wtypes.h>
 #  include <wingdi.h>
 #endif

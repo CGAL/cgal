@@ -23,13 +23,19 @@
 
 // Tests if OPEN GL and GLU are available.
 
-#if defined(_MSC_VER)
-#include <wtypes.h>
-#include <wingdi.h>
+#ifdef _MSC_VER
+#  include <wtypes.h>
+#  include <wingdi.h>
 #endif
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+#ifdef __APPLE__
+#  include <OpenGL/gl.h>
+#  include <OpenGL/glu.h>
+#else
+#  include <GL/gl.h>
+#  include <GL/glu.h>
+#endif
+
 #include <iostream>
 
 // The following global variable is needed otherwise GCC removes the body of 
