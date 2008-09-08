@@ -236,7 +236,6 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
 // function objects plus, minus, multiplies, divides...).  But it would require
 // a template template parameter, and GCC 2.95 seems to crash easily with them.
 
-#ifndef CGAL_CFG_COMMA_BUG
 // Macro for unary operations
 #define CGAL_LAZY_UNARY_OP(OP, NAME)                                     \
 template <typename ET>                                                   \
@@ -254,33 +253,12 @@ struct NAME : public Lazy_exact_unary<ET>                                \
     this->prune_dag();                                                   \
    }                                                                     \
 };
-#else
-// Macro for unary operations
-#define CGAL_LAZY_UNARY_OP(OP, NAME)                                     \
-template <typename ET>                                                   \
-struct NAME : public Lazy_exact_unary<ET>                                \
-{                                                                        \
-  typedef typename Lazy_exact_unary<ET>::AT::Protector P;                \
-  NAME (const Lazy_exact_nt<ET> &a)                                      \
-      : Lazy_exact_unary<ET>(a.approx() /* dummy value */, a)            \
-  { P p; this->approx() = OP(a.approx()); }                              \
-                                                                         \
-  void update_exact()                                                    \
-  {                                                                      \
-    this->et = new ET(OP(this->op1.exact()));                            \
-    if (!this->approx().is_point())                                      \
-      this->approx() = CGAL_NTS to_interval(*(this->et));                \
-    this->prune_dag();                                                   \
-  }                                                                      \
-};
-#endif
 
 CGAL_LAZY_UNARY_OP(opposite,  Lazy_exact_Opp)
 CGAL_LAZY_UNARY_OP(CGAL_NTS abs,    Lazy_exact_Abs)
 CGAL_LAZY_UNARY_OP(CGAL_NTS square, Lazy_exact_Square)
 CGAL_LAZY_UNARY_OP(CGAL_NTS sqrt,   Lazy_exact_Sqrt)
 
-#ifndef CGAL_CFG_COMMA_BUG
 // A macro for +, -, * and /
 #define CGAL_LAZY_BINARY_OP(OP, NAME)                                    \
 template <typename ET, typename ET1 = ET, typename ET2 = ET>             \
@@ -298,26 +276,6 @@ struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
     this->prune_dag();                                                   \
    }                                                                     \
 };
-#else
-// A macro for +, -, * and /
-#define CGAL_LAZY_BINARY_OP(OP, NAME)                                    \
-template <typename ET, typename ET1 = ET, typename ET2 = ET>             \
-struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
-{                                                                        \
-  typedef typename Lazy_exact_binary<ET, ET1, ET2>::AT::Protector P;     \
-  NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)        \
-    : Lazy_exact_binary<ET, ET1, ET2>(a.approx() /* dummy value */, a, b)\
-  {P p; this->approx() = a.approx() OP b.approx(); }                     \
-                                                                         \
-  void update_exact()                                                    \
-  {                                                                      \
-    this->et = new ET(this->op1.exact() OP this->op2.exact());           \
-    if (!this->approx().is_point())                                      \
-      this->approx() = CGAL_NTS to_interval(*(this->et));                   \
-    this->prune_dag();                                                   \
-   }                                                                     \
-};
-#endif
 
 CGAL_LAZY_BINARY_OP(+, Lazy_exact_Add)
 CGAL_LAZY_BINARY_OP(-, Lazy_exact_Sub)
@@ -1324,34 +1282,14 @@ struct Lazy_exact_ro2
     Lazy_exact_ro2 (const Lazy_exact_nt<ET> &a,
                     const Lazy_exact_nt<ET> &b,
                     const Lazy_exact_nt<ET> &c, bool s)
-#ifndef CGAL_CFG_COMMA_BUG
       : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx(), s))),
         op1(a), op2(b), op3(c), smaller(s), old_rep(true) {}
-#else
-      : Base(a.approx() /* dummy value */),
-        op1(a), op2(b), op3(c), smaller(s), old_rep(true)
-    {
-      P p;
-      this->approx() = make_root_of_2(a.approx(), b.approx(),
-                                      c.approx(), s);
-    }
-#endif
 
     Lazy_exact_ro2 (const Lazy_exact_nt<ET> &a,
                     const Lazy_exact_nt<ET> &b,
                     const Lazy_exact_nt<ET> &c)
-#ifndef CGAL_CFG_COMMA_BUG
       : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx()))),
         op1(a), op2(b), op3(c), smaller(true), old_rep(false) {}
-#else
-      : Base(a.approx() /* dummy value */),
-        op1(a), op2(b), op3(c), smaller(true), old_rep(false)
-    {
-      P p;
-      this->approx() = make_root_of_2(a.approx(), b.approx(),
-                                      c.approx());
-    }
-#endif
 
     void update_exact()
     {
