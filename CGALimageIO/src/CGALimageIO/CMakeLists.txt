@@ -83,6 +83,8 @@ if(ZLIB_FOUND AND OPENGL_FOUND)
     
     mark_as_advanced(CGAL_ImageIO_LIBRARY)
 
+    target_link_libraries( CGAL_ImageIO ${CGAL_LIBRARY} )
+
   else()
   
     set(CGAL_ImageIO_LIBRARY)
