@@ -294,18 +294,16 @@ sign(TMC_Vertex_handle vit) const {
   CGAL_assertion(!_tmc.is_infinite(ch));
 
   // don't use sign, since the point is constructed:
+  CGAL_BRANCH_PROFILER(std::string(" NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   try
     {
-      CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
-                    std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<true> P;
       Sign result = vit->cell()->info().second->sign(vit->point());
       if (is_certain(result))
         return result;
     }
   catch (Uncertain_conversion_exception) {}
-  CGAL_PROFILER(std::string("NGHK: failures of : ") + 
-                std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
   typedef Exact_predicates_exact_constructions_kernel EK;
   Skin_surface_traits_3<EK> exact_traits(shrink_factor());
@@ -332,18 +330,16 @@ template <class MixedComplexTraits_3>
 Sign 
 Skin_surface_base_3<MixedComplexTraits_3>::
 sign(const Bare_point &p, const Cell_info &info) const {
+  CGAL_BRANCH_PROFILER(std::string(" NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   try
     {
-      CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
-                    std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<true> P;
       Sign result = sign_inexact(p,info);
       if (is_certain(result))
         return result;
     }
   catch (Uncertain_conversion_exception) {}
-  CGAL_PROFILER(std::string("NGHK: failures of : ") + 
-                std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
   return construct_surface
     (info.first, 
@@ -624,10 +620,9 @@ compare(Cell_info &info1,
      const Bare_point &p1,
      Cell_info &info2,
      const Bare_point &p2) const {
+  CGAL_BRANCH_PROFILER(std::string(" NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   try
     {
-      CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
-                    std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<true> P;
       Sign result = CGAL_NTS sign(info1.second->value(p1) -
                                   info2.second->value(p2));
@@ -635,8 +630,7 @@ compare(Cell_info &info1,
         return result;
     }
   catch (Uncertain_conversion_exception) {}
-  CGAL_PROFILER(std::string("NGHK: failures of : ") + 
-                std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
     
   return CGAL_NTS sign(

@@ -153,17 +153,17 @@ typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
 Filtered_predicate<EP,AP,C2E,C2A,Protection>::
   operator()(const Args&... args) const
 {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try
     {
-      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<Protection> P;
+      Protect_FPU_rounding<Protection> p;
       Ares res = ap(c2a(args)...);
       if (is_certain(res))
         return get_certain(res);
     }
     catch (Uncertain_conversion_exception) {}
-    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(args)...);
 }
 
@@ -175,17 +175,17 @@ typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
 Filtered_predicate<EP,AP,C2E,C2A,Protection>::
   operator()(const A1 &a1) const
 {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try
     {
-      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<Protection> P;
+      Protect_FPU_rounding<Protection> p;
       Ares res = ap(c2a(a1));
       if (is_certain(res))
         return get_certain(res);
     }
     catch (Uncertain_conversion_exception) {}
-    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(a1));
 }
 
@@ -195,17 +195,17 @@ typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
 Filtered_predicate<EP,AP,C2E,C2A,Protection>::
   operator()(const A1 &a1, const A2 &a2) const
 {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try
     {
-      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<Protection> P;
+      Protect_FPU_rounding<Protection> p;
       Ares res = ap(c2a(a1), c2a(a2));
       if (is_certain(res))
         return get_certain(res);
     }
     catch (Uncertain_conversion_exception) {}
-    CGAL_PROFILER(std::string("failures of : ")+ std::string(CGAL_PRETTY_FUNCTION));
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2));
 }
 
@@ -215,17 +215,17 @@ typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
 Filtered_predicate<EP,AP,C2E,C2A,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
 {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try
     {
-      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<Protection> P;
+      Protect_FPU_rounding<Protection> p;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3));
       if (is_certain(res))
         return get_certain(res);
     }
     catch (Uncertain_conversion_exception) {}
-    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3));
 }
 
@@ -235,17 +235,17 @@ typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
 Filtered_predicate<EP,AP,C2E,C2A,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
 {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try
     {
-      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<Protection> P;
+      Protect_FPU_rounding<Protection> p;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4));
       if (is_certain(res))
         return get_certain(res);
     }
     catch (Uncertain_conversion_exception) {}
-    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4));
 }
 
@@ -256,17 +256,17 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5) const
 {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try
     {
-      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<Protection> P;
+      Protect_FPU_rounding<Protection> p;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5));
       if (is_certain(res))
         return get_certain(res);
     }
     catch (Uncertain_conversion_exception) {}
-    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5));
 }
 
@@ -277,17 +277,17 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5, const A6 &a6) const
 {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try
     {
-      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<Protection> P;
+      Protect_FPU_rounding<Protection> p;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6));
       if (is_certain(res))
         return get_certain(res);
     }
     catch (Uncertain_conversion_exception) {}
-    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6));
 }
 
@@ -299,18 +299,18 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5, const A6 &a6, const A7 &a7) const
 {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try
     {
-      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<Protection> P;
+      Protect_FPU_rounding<Protection> p;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7));
       if (is_certain(res))
         return get_certain(res);
     }
     catch (Uncertain_conversion_exception) {}
-    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7));
 }
 
@@ -322,18 +322,18 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8) const
 {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try
     {
-      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<Protection> P;
+      Protect_FPU_rounding<Protection> p;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7), c2a(a8));
       if (is_certain(res))
         return get_certain(res);
     }
     catch (Uncertain_conversion_exception) {}
-    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
               c2e(a8));
 }
@@ -347,18 +347,18 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	     const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
              const A9 &a9) const
 {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try
     {
-      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<Protection> P;
+      Protect_FPU_rounding<Protection> p;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7), c2a(a8), c2a(a9));
       if (is_certain(res))
         return get_certain(res);
     }
     catch (Uncertain_conversion_exception) {}
-    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
               c2e(a8), c2e(a9));
 }
@@ -372,18 +372,18 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 	     const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
              const A9 &a9, const A10 &a10) const
 {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try
     {
-      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<Protection> P;
+      Protect_FPU_rounding<Protection> p;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7), c2a(a8), c2a(a9), c2a(a10));
       if (is_certain(res))
         return get_certain(res);
     }
     catch (Uncertain_conversion_exception) {}
-    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
               c2e(a8), c2e(a9), c2e(a10));
 }

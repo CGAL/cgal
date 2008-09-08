@@ -468,13 +468,13 @@ template <typename ET1, typename ET2>
 bool
 operator<(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   if (a.identical(b))
     return false;
   Uncertain<bool> res = a.approx() < b.approx();
   if (is_certain(res))
     return get_certain(res);
-  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   return a.exact() < b.exact();
 }
 
@@ -482,13 +482,13 @@ template <typename ET1, typename ET2>
 bool
 operator==(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   if (a.identical(b))
     return true;
   Uncertain<bool> res = a.approx() == b.approx();
   if (is_certain(res))
     return get_certain(res);
-  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   return a.exact() == b.exact();
 }
 
@@ -534,11 +534,11 @@ template <typename ET>
 bool
 operator<(const Lazy_exact_nt<ET>& a, int b)
 {
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   Uncertain<bool> res = a.approx() < b;
   if (is_certain(res))
     return res;
-  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   return a.exact() < b;
 }
 
@@ -546,11 +546,11 @@ template <typename ET>
 bool
 operator>(const Lazy_exact_nt<ET>& a, int b)
 {
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   Uncertain<bool> res = b < a.approx();
   if (is_certain(res))
     return get_certain(res);
-  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   return b < a.exact();
 }
 
@@ -558,11 +558,11 @@ template <typename ET>
 bool
 operator==(const Lazy_exact_nt<ET>& a, int b)
 {
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   Uncertain<bool> res = b == a.approx();
   if (is_certain(res))
     return get_certain(res);
-  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   return b == a.exact();
 }
 
@@ -572,11 +572,11 @@ template <typename ET>
 bool
 operator<(const Lazy_exact_nt<ET>& a, double b)
 {
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   Uncertain<bool> res = a.approx() < b;
   if (is_certain(res))
     return res;
-  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   return a.exact() < b;
 }
 
@@ -584,11 +584,11 @@ template <typename ET>
 bool
 operator>(const Lazy_exact_nt<ET>& a, double b)
 {
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   Uncertain<bool> res = b < a.approx();
   if (is_certain(res))
     return res;
-  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   return b < a.exact();
 }
 
@@ -596,11 +596,11 @@ template <typename ET>
 bool
 operator==(const Lazy_exact_nt<ET>& a, double b)
 {
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   Uncertain<bool> res = b == a.approx();
   if (is_certain(res))
     return res;
-  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   return b == a.exact();
 }
 
@@ -992,11 +992,11 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
       : public std::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& a ) const {
-            CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+            CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
             Uncertain< ::CGAL::Sign> res = CGAL_NTS sign(a.approx());
             if (is_certain(res))
                 return get_certain(res);
-            CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+            CGAL_BRANCH_PROFILER_BRANCH(tmp);
             return CGAL_NTS sign(a.exact());
         }
     };
@@ -1007,13 +1007,13 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
       public:
         Comparison_result operator()( const Type& a,
                                             const Type& b ) const {
-            CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+            CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
             if (a.identical(b))
                 return EQUAL;
             Uncertain<Comparison_result> res = CGAL_NTS compare(a.approx(), b.approx());
             if (is_certain(res))
                 return get_certain(res);
-            CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+            CGAL_BRANCH_PROFILER_BRANCH(tmp);
             return CGAL_NTS compare(a.exact(), b.exact());
         }
 
@@ -1026,7 +1026,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
       : public std::unary_function< Type, double > {
       public:
         double operator()( const Type& a ) const {
-            CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+            CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
 
             const Interval_nt<false>& app = a.approx();
             double r;
@@ -1038,7 +1038,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
                  Lazy_exact_nt<ET>::get_relative_precision_of_to_double()))
                 return CGAL_NTS to_double(app);
 
-            CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+            CGAL_BRANCH_PROFILER_BRANCH(tmp);
 
             // Otherwise we trigger exact computation first,
             // which will refine the approximation.

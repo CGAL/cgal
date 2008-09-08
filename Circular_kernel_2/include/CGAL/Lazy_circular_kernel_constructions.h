@@ -91,9 +91,8 @@ public:
   OutputIterator
   operator()(const L1& l1, const L2& l2, OutputIterator it) const
   {
-  
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Lazy_vector lv(new Lazy_construct_rep_with_vector_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
 
@@ -131,7 +130,7 @@ public:
       }
       
     } catch (Uncertain_conversion_exception) {
-      CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       // TODO: Instead of using a vector, write an iterator adapter
       std::vector<Object> exact_objects;
@@ -170,9 +169,8 @@ public:
   OutputIterator
   operator()(const L1& l1,OutputIterator it) const
   {
-  
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Lazy_vector lv(new Lazy_construct_rep_with_vector_1<AC, EC, E2A, L1>(ac, ec, l1));
       // lv.approx() is a std::vector<Object([AK::Point_2,AK::Segment_2])>
@@ -199,7 +197,7 @@ public:
       }
       
     } catch (Uncertain_conversion_exception) {
-      CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       // TODO: Instead of using a vector, write an iterator adapter
       std::vector<Object> exact_objects;
@@ -239,9 +237,8 @@ public:
   OutputIterator
   operator()(const L1& l1,OutputIterator it) const
   {
-  
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Lazy_vector lv(new Lazy_construct_rep_with_vector_1<AC, EC, E2A, L1>(ac, ec, l1));
       // lv.approx() is a std::vector<Object([AK::Point_2,AK::Segment_2])>
@@ -268,7 +265,7 @@ public:
       }
       
     } catch (Uncertain_conversion_exception) {
-      CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       // TODO: Instead of using a vector, write an iterator adapter
       std::vector<Object> exact_objects;
@@ -315,9 +312,8 @@ template <typename L1>
   result_type
   operator()(const L1& l1) const
   {
-  
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Lazy_object lo(new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1));
       
@@ -351,7 +347,7 @@ template <typename L1>
 	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
       }
     } catch (Uncertain_conversion_exception) {
-      CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1));
       return make_lazy_CK<LK>(eto);
@@ -365,9 +361,8 @@ template <typename L1>
   result_type
   operator()(const L1& l1, const L2& l2) const
   {
-  
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Lazy_object lo(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
  
@@ -402,7 +397,7 @@ template <typename L1>
 	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
       }
     } catch (Uncertain_conversion_exception) {
-      CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1), CGAL::exact(l2));
       return make_lazy_CK<LK>(eto);
