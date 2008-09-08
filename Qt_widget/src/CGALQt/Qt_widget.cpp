@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include <CGAL/Bbox_2.h>
 
@@ -570,5 +569,3 @@ void Qt_widget::clear() {
 
 // moc_source_file: ../../include/CGAL/IO/Qt_widget.h
 #include "Qt_widget.moc"
-
-#endif

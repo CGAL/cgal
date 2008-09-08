@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget_history.h>
 
@@ -94,4 +93,3 @@ void Qt_widget_history::save()
 }; // end namespace
 #include "Qt_widget_history.moc"
 
-#endif // CGAL_USE_QT

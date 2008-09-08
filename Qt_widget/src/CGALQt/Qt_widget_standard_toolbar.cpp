@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
@@ -257,5 +256,3 @@ namespace CGAL {
 
 }//end namespace
 #include "Qt_widget_standard_toolbar.moc"
-
-#endif

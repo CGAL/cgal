@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget_layer.h>
 
@@ -69,4 +68,3 @@ namespace CGAL {
 
 #include "Qt_widget_layer.moc"
 
-#endif // CGAL_USE_QT
