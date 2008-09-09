@@ -25,62 +25,11 @@
 #ifndef CGAL_OBJECT_HANDLE_H
 #define CGAL_OBJECT_HANDLE_H
 
-#include <CGAL/Handle_for_virtual.h>
-#include <CGAL/circulator.h>
+#include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class T>
-class Handle_wrapper : public Ref_counted_virtual
-{
-  public:
-    Handle_wrapper(const T& object) : _object(object) {}
-    Handle_wrapper() {}
-    operator T() const { return _object; }
-    ~Handle_wrapper() {}
-  private:
-  T _object;
-};
-
-
-class Object_handle
-  : public Handle_for_virtual<Ref_counted_virtual>
-{
-  struct empty{};
-  typedef Handle_for_virtual<Ref_counted_virtual> base;
-public:
-  Object_handle()
-  { initialize_with(Handle_wrapper<empty>()); }
-
-  template <class T>
-  Object_handle(const T&t)
-  { initialize_with(Handle_wrapper<T>(t)); }
-
-  template <class T>
-  bool assign(T &t) const
-  {
-
-      const Handle_wrapper<T> *wp = 
-      	dynamic_cast<const Handle_wrapper<T> *>(Ptr());
-      if ( wp == static_cast<Handle_wrapper<T> *>(0) )
-      	return false;
-      t = *(wp);
-
-    return true;
-  }
-
-  bool is_empty() const
-  { empty E; return assign(E); }
-  bool operator==(Nullptr_t n) const
-  { CGAL_assertion(n == 0); return is_empty(); }
-  bool operator!=(Nullptr_t n) const
-  { CGAL_assertion(n == 0); return !is_empty(); }
-
-};
-
-template <class T>
-inline bool assign(T& t, const Object_handle& o)
-{ return o.assign(t); }
+typedef Object Object_handle;
 
 CGAL_END_NAMESPACE
 

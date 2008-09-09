@@ -1550,7 +1550,7 @@ protected:
 	   CGAL_assertion(fct.is_shalfedge());
 	   setemp = fc;
 	   *fc = *fct;
-	   *fct = setemp;
+	   *fct = make_object(setemp);
 	 }
 	 ++fc;
 	 ++fct;
@@ -1569,7 +1569,7 @@ protected:
 						      setemp->source()->source()->point()))
 	       setemp = hfc;
 	   }
-	   *fc = setemp;
+	   *fc = make_object(setemp);
 	 }
        }
      }
@@ -1845,10 +1845,10 @@ protected:
     Halfedge_handle e;
     Halffacet_handle f;
     Volume_handle c;
-    if(assign(v,o)) return Vertex_const_handle(v);
-    if(assign(e,o)) return Halfedge_const_handle(e);
-    if(assign(f,o)) return Halffacet_const_handle(f);
-    if(assign(c,o)) return Volume_const_handle(c);
+    if(assign(v,o)) return make_object(Vertex_const_handle(v));
+    if(assign(e,o)) return make_object(Halfedge_const_handle(e));
+    if(assign(f,o)) return make_object(Halffacet_const_handle(f));
+    if(assign(c,o)) return make_object(Volume_const_handle(c));
 
     return Object_handle();
   }

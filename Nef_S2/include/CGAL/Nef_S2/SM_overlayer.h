@@ -163,7 +163,7 @@ void supporting_segment(Halfedge_handle e, IT it) const
 
 void trivial_segment(Vertex_handle v, IT it) const
 { INFO& si = M[it];
-  CGAL_assertion( si._o != NULL );
+  CGAL_assertion( ! si._o.empty() );
   typename SM_const_decorator::SHalfedge_const_handle se;
   typename SM_const_decorator::SHalfloop_const_handle sl;
   typename SM_const_decorator::SVertex_const_handle sv;
@@ -173,7 +173,7 @@ void trivial_segment(Vertex_handle v, IT it) const
     if(se->source()->point() != v->point())
       G.supp_object(v,si._from) = si._o;
     else
-      G.supp_object(v,si._from) = Object_handle(se->source());
+      G.supp_object(v,si._from) = make_object(se->source());
   } else if(CGAL::assign(sl, si._o)) {
     G.supp_object(v,si._from) = si._o;
   } else if(CGAL::assign(sv, si._o)) {
@@ -199,7 +199,7 @@ void starting_segment(Vertex_handle v, IT it) const
 	return;
       }
     }
-    G.supp_object(v,si._from) = Object_handle(se->source());
+    G.supp_object(v,si._from) = make_object(se->source());
     CGAL_NEF_TRACEN("starting_segment " << si._from << ":"<< 
 		    v->point() << " " << se->source()->point()); 
   } else if(CGAL::assign(sl, si._o)) {
@@ -222,7 +222,7 @@ void ending_segment(Vertex_handle v, IT it) const
 	return;
       }
     }
-    G.supp_object(v,si._from) = Object_handle(se->source());
+    G.supp_object(v,si._from) = make_object(se->source());
     CGAL_NEF_TRACEN("ending_segment " << si._from << ":"<< 
 		    v->point() << ":" << 
 		    se->source()->point() << "->" << 
@@ -442,11 +442,11 @@ public:
 
     Seg_info() : _o(), _from(-1) {}
     Seg_info(SVertex_const_handle v, int i) 
-    { _o=Object_handle(v); _from=i; }
+    { _o=make_object(v); _from=i; }
     Seg_info(SHalfedge_const_handle e, int i) 
-    { _o=Object_handle(e); _from=i; }
+    { _o=make_object(e); _from=i; }
     Seg_info(SHalfloop_const_handle l, int i) 
-    { _o=Object_handle(l); _from=i; }
+    { _o=make_object(l); _from=i; }
     Seg_info(const Seg_info& si) 
     { _o=si._o; _from=si._from; }
     Seg_info& operator=(const Seg_info& si) 
@@ -1689,13 +1689,13 @@ transfer_data(Association& A) {
   CGAL_forall_svertices(sv, *this) {
     //    std::cerr << "svertex " << sv->point() << std::endl;
     Object_handle o0 = supp_object(sv,0), o1 = supp_object(sv,1);
-    if(o0 == NULL) {
+    if(o0.empty()) {
       if(CGAL::assign(sv1, o1))
 	A.handle_support(sv, sv1);
       else
 	continue;
     } else if(CGAL::assign(se0, o0)) {
-      if(o1 == NULL) 
+      if(o1.empty()) 
 	continue;
       else if(assign(se1, o1))
 	A.handle_support(sv, se0, se1);
@@ -1706,7 +1706,7 @@ transfer_data(Association& A) {
       else
 	CGAL_error_msg( "wrong handle");
     } else if(CGAL::assign(sv0, o0)) {
-      if(o1 == NULL)
+      if(o1.empty())
 	A.handle_support(sv, sv0);
       else if(CGAL::assign(se1, o1))
 	A.handle_support(sv, sv0, se1);
@@ -1717,7 +1717,7 @@ transfer_data(Association& A) {
       else
 	CGAL_error_msg( "wrong handle");
     } else if(CGAL::assign(sl0, o0)) {
-      if(o1 == NULL)
+      if(o1.empty())
 	continue;
       else if(CGAL::assign(sv1, o1))
 	A.handle_support(sv, sl0, sv1);
@@ -1732,7 +1732,7 @@ transfer_data(Association& A) {
   CGAL_forall_sedges(se, *this) {
     CGAL_assertion(is_forward(se));
     Object_handle o0 = supp_object(se,0), o1 = supp_object(se,1);   
-    if(o0 == NULL) {
+    if(o0.empty()) {
       if(assign(se1, o1))
 	A.handle_support(se, se1);
       else if(assign(sl1, o1))
@@ -1740,7 +1740,7 @@ transfer_data(Association& A) {
       else
 	continue; // CGAL_error_msg( "wrong handle");
     } else if(assign(se0, o0)) {
-      if(o1 == NULL)
+      if(o1.empty())
 	A.handle_support(se, se0);
       else if(assign(se1, o1))
 	A.handle_support(se, se0, se1);
@@ -1749,7 +1749,7 @@ transfer_data(Association& A) {
       else
 	CGAL_error_msg( "wrong handle");    
     } else if(assign(sl0, o0)) {
-      if(o1 == NULL)
+      if(o1.empty())
 	A.handle_support(se, sl0);
       else if(assign(se1, o1))
 	A.handle_support(se, sl0, se1);
@@ -1992,7 +1992,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 
     for (int i=0; i<2; ++i) {
       Object_handle o = supp_object(v,i);
-      if ( o == NULL ) { 
+      if ( o.empty() ) { 
 	CGAL_NEF_TRACEN("no vertex support"); 
 	mark(v,i) = m_buffer[i]; continue; 
       }
@@ -2023,7 +2023,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
       if ( !is_forward(e) ) break;
       CGAL_NEF_TRACEN("  forward edge "<<PH(e));
       for (int i=0; i<2; ++i) {
-        if ( supp_object(e,i) != NULL ) {
+        if ( ! supp_object(e,i).empty() ) {
           SHalfedge_const_handle ei; 
           if ( CGAL::assign(ei,supp_object(e,i)) ) { 
             if (!equal_not_opposite(ei->circle(),e->circle())) 

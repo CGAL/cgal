@@ -309,7 +309,7 @@ bool is_sm_boundary_object(H h) const
 template <typename H>
 void store_sm_boundary_object(H h, SFace_handle f) {
   CGAL_assertion(!map()->is_sm_boundary_object(h));
-  f->boundary_entry_objects().push_back(Object_handle(h));
+  f->boundary_entry_objects().push_back(make_object(h));
   map()->store_sm_boundary_item(h, --(f->sface_cycles_end()));
 }
 

@@ -1108,7 +1108,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
 	      se = sfc;
 	  }
 	  this->sncp()->store_boundary_item(se,fc);
-	  *fc = se;
+	  *fc = make_object(se);
 	}
       }
       fi->plane() = normalized(fi->plane());
@@ -1178,7 +1178,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
 		se = cb;
 	  }
 	  this->sncp()->store_sm_boundary_item(se,fc);
-	  *fc = se;
+	  *fc = make_object(se);
 	}
       }
       sfi->boundary_entry_objects().sort(sort_sface_cycle_entries<Base>((Base) *this));
@@ -1204,7 +1204,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
       CGAL_forall_shells_of(it,ci) {
 	findMinSF.minimal_sface() = SFace_handle(it);
 	visit_shell_objects(SFace_handle(it),findMinSF);
-	*it = findMinSF.minimal_sface();
+	*it = make_object(findMinSF.minimal_sface());
       }
       ci->shell_entry_objects().sort(sort_shell_entries<Base>((Base)*this));
     } 
@@ -1590,7 +1590,7 @@ read_facet(Halffacet_handle fh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    fh->boundary_entry_objects().push_back(SEdge_of[index]);
+    fh->boundary_entry_objects().push_back(make_object(SEdge_of[index]));
     in >> cc;
   }
   
@@ -1598,7 +1598,7 @@ read_facet(Halffacet_handle fh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    fh->boundary_entry_objects().push_back(SLoop_of[index]);
+    fh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
     in >> cc;
   }
   
@@ -1645,7 +1645,7 @@ read_volume(Volume_handle ch) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    ch->shell_entry_objects().push_back(SFace_of[index]);
+    ch->shell_entry_objects().push_back(make_object(SFace_of[index]));
     in >> cc;
   }
   in >> ch->mark();
@@ -1831,7 +1831,7 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    sfh->boundary_entry_objects().push_back(Edge_of[index]);
+    sfh->boundary_entry_objects().push_back(make_object(Edge_of[index]));
     this->sncp()->store_sm_boundary_item(Edge_of[index], --(sfh->sface_cycles_end()));
     in >> cc;
   }
@@ -1840,7 +1840,7 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
-    sfh->boundary_entry_objects().push_back(SLoop_of[index]);
+    sfh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
     this->sncp()->store_sm_boundary_item(SLoop_of[index], --(sfh->sface_cycles_end()));
     in >> cc;
   }
@@ -1945,7 +1945,7 @@ void SNC_io_parser<EW>::add_infi_box() {
   for(int i = 0; i < 12; ++i) {
     Halffacet_handle fh = Halffacet_of[fn+i];
     fh->twin() = Halffacet_of[fn+(i/2*2)+((i+1)%2)];
-    fh->boundary_entry_objects().push_back(SEdge_of[sen+bnd[i]]);
+    fh->boundary_entry_objects().push_back(make_object(SEdge_of[sen+bnd[i]]));
     fh->incident_volume() = Volume_of[((i%4) == 1 || (i%4 == 2)) ? 1 : 0];
     if(i<4) {
       hz = i % 2 ? -1 : 1;
@@ -1964,9 +1964,9 @@ void SNC_io_parser<EW>::add_infi_box() {
     fh->mark() = 1;
   }
   
-  Volume_of[0]->shell_entry_objects().push_back(SFace_of[sfn]);
+  Volume_of[0]->shell_entry_objects().push_back(make_object(SFace_of[sfn]));
   Volume_of[0]->mark() = 0;
-  Volume_of[1]->shell_entry_objects().push_front(SFace_of[sfn+1]);
+  Volume_of[1]->shell_entry_objects().push_front(make_object(SFace_of[sfn+1]));
   
   int sprevOff[6] = {4,3,0,5,2,1};
   int snextOff[6] = {2,5,4,1,0,3};
@@ -2031,7 +2031,7 @@ void SNC_io_parser<EW>::add_infi_box() {
   for(int i = 0; i < 16; ++i) {
     SFace_handle sfh = SFace_of[sfn+i];
     sfh->center_vertex() = Vertex_of[vn+(i/2)];
-    sfh->boundary_entry_objects().push_back(SEdge_of[sen+(i/2*6)+(i%2)]);
+    sfh->boundary_entry_objects().push_back(make_object(SEdge_of[sen+(i/2*6)+(i%2)]));
     this->sncp()->store_sm_boundary_item(SEdge_of[sen+(i/2*6)+(i%2)], 
 					  --(sfh->sface_cycles_end()));
     int cIdx = i%2 ? 1-volIdx[i/2] : volIdx[i/2];

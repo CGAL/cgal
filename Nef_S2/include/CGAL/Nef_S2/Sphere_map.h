@@ -558,13 +558,13 @@ pointer_update(const Sphere_map<K, I, M>& D)
 	fci != f->boundary_entry_objects().end(); ++fci) {
       if ( fci.is_svertex() ) 
       { v = SVertex_handle(fci);
-	*fci = Object_handle(VM[v]); store_sm_boundary_item(v,fci); }
+	*fci = make_object(VM[v]); store_sm_boundary_item(v,fci); }
       else if ( fci.is_shalfedge() ) 
       { e = SHalfedge_handle(fci);
-	*fci = Object_handle(EM[e]); store_sm_boundary_item(e,fci); }
+	*fci = make_object(EM[e]); store_sm_boundary_item(e,fci); }
       else if ( fci.is_shalfloop() ) 
       { l = SHalfloop_handle(fci);
-	*fci = Object_handle(LM[l]); store_sm_boundary_item(l,fci); }
+	*fci = make_object(LM[l]); store_sm_boundary_item(l,fci); }
       else CGAL_error_msg("damn wrong boundary item in face.");
     }
   }

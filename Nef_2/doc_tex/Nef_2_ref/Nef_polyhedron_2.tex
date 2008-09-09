@@ -195,7 +195,7 @@ Location_mode m = DEFAULT) ;}{ returns a handle \ccc{h} with
 \ccc{Vertex_/Halfedge_/Face_const_handle} as described above. The
 object returned is intersected by the ray starting in \ccc{p} with
 direction \ccc{d} and has minimal distance to \ccc{p}.  The operation
-returns the null handle \ccc{NULL} if the ray shoot along \ccc{d} does
+returns an empty \ccc{Object_handle} if the ray shoot along \ccc{d} does
 not hit any object \ccc{h} of \ccc{N} with \ccc{N.contains(h)}. The
 location mode flag \ccc{m} allows one to choose between different
 point location strategies.  }
@@ -206,7 +206,7 @@ that can be converted to a \ccc{Vertex_/Halfedge_const_handle} as
 described above. The object returned is part of the $1$-skeleton of
 \ccc{N}, intersected by the ray starting in \ccc{p} with direction
 \ccc{d} and has minimal distance to \ccc{p}.  The operation returns
-the null handle \ccc{NULL} if the ray shoot along \ccc{d} does not hit
+an empty \ccc{Object_handle} if the ray shoot along \ccc{d} does not hit
 any $1$-skeleton object \ccc{h} of \ccc{N}. The location mode flag
 \ccc{m} allows one to choose between different point location
 strategies.  }

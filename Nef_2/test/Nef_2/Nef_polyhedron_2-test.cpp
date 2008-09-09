@@ -106,7 +106,7 @@ int main()
   // shooting along x-axis:
   h1 = N3.ray_shoot(p6,Direction(1,0));
   h2 = N3.ray_shoot(p6,Direction(1,0),Nef_polyhedron::NAIVE);
-  CGAL_TEST( h1 == NULL && h2 == NULL );
+  CGAL_TEST( h1.empty() && h2.empty() );
   // shooting along y-axis:
   h1 = N3.ray_shoot(p5,Direction(0,1));
   h2 = N3.ray_shoot(p5,Direction(0,1),Nef_polyhedron::NAIVE);
@@ -232,7 +232,7 @@ int main()
   // shooting along x-axis:
   h1 = N3.ray_shoot(p6,Direction(1,0));
   h2 = N3.ray_shoot(p6,Direction(1,0),Nef_polyhedron::NAIVE);
-  CGAL_TEST( h1 == NULL && h2 == NULL );
+  CGAL_TEST( h1.empty() && h2.empty() );
   // shooting along y-axis:
   h1 = N3.ray_shoot(p5,Direction(0,1));
   h2 = N3.ray_shoot(p5,Direction(0,1),Nef_polyhedron::NAIVE);
@@ -364,7 +364,7 @@ int main()
   // shooting along x-axis:
   h1 = N3.ray_shoot(p6,Direction(1,0));
   h2 = N3.ray_shoot(p6,Direction(1,0),Nef_polyhedron::NAIVE);
-  CGAL_TEST( h1 == NULL && h2 == NULL );
+  CGAL_TEST( h1.empty() && h2.empty() );
   // shooting along y-axis:
   h1 = N3.ray_shoot(p5,Direction(0,1));
   h2 = N3.ray_shoot(p5,Direction(0,1),Nef_polyhedron::NAIVE);

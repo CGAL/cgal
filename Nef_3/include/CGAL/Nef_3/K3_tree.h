@@ -327,7 +327,7 @@ public:
       for(o = object_list.begin(); o != object_list.end(); ++o)
         if(assign(tri,*o)) {
           tri.transform(t);
-	  *o = Object_handle(tri);
+	  *o = make_object(tri);
         }
 #endif // CGAL_NEF3_TRIANGULATE_FACETS 
     }
@@ -385,7 +385,7 @@ public:
   template<typename Depth>
   void add_facet(Halffacet_handle f, Depth depth) {
     if(left_node == 0) {
-      object_list.push_back(Object_handle(f));
+      object_list.push_back(make_object(f));
       return;
     }
 
@@ -400,7 +400,7 @@ public:
   template<typename Depth>
   void add_edge(Halfedge_handle e, Depth depth) {
     if(left_node == 0) {
-      object_list.push_back(Object_handle(e));
+      object_list.push_back(make_object(e));
       return;
     }
 
@@ -415,7 +415,7 @@ public:
   template<typename Depth>
   void add_vertex(Vertex_handle v, Depth depth) {
     if(left_node == 0) {
-      object_list.push_back(Object_handle(v));
+      object_list.push_back(make_object(v));
       return;
     }
 
@@ -792,10 +792,10 @@ public:
     Halfedge_iterator e;
     Halffacet_iterator f;
     CGAL_forall_vertices( v, *W)
-      objects.push_back(Object_handle(Vertex_handle(v)));
+      objects.push_back(make_object(Vertex_handle(v)));
     typename Object_list::difference_type v_end = objects.size();
     CGAL_forall_edges( e, *W)
-      objects.push_back(Object_handle(Halfedge_handle(e)));
+      objects.push_back(make_object(Halfedge_handle(e)));
     CGAL_forall_facets( f, *W) {
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
    
@@ -819,28 +819,28 @@ public:
         while(th.get_next_triangle(tr)) {
 	  triangles.push_front(tr);
           Halffacet_triangle_handle th( f, *triangles.begin());
-          objects.push_back(Object_handle(th));
+          objects.push_back(make_object(th));
         }
       } else if(c == 1) {
         Triangulation_handler<SNC_structure, XZ> th(f);
         while(th.get_next_triangle(tr)) {
 	  triangles.push_front(tr);
           Halffacet_triangle_handle th( f, *triangles.begin());
-          objects.push_back(Object_handle(th));
+          objects.push_back(make_object(th));
         }
       } else if(c == 2) {
         Triangulation_handler<SNC_structure, XY> th(f);
         while(th.get_next_triangle(tr)) {
 	  triangles.push_front(tr);
           Halffacet_triangle_handle th( f, *triangles.begin());
-          objects.push_back(Object_handle(th));
+          objects.push_back(make_object(th));
         }
       } else 
       	CGAL_error_msg( "wrong value");
       } else
-        objects.push_back(Object_handle(Halffacet_handle(f)));
+        objects.push_back(make_object(Halffacet_handle(f)));
 #else
-      objects.push_back(Object_handle(Halffacet_handle(f)));
+      objects.push_back(make_object(Halffacet_handle(f)));
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
     }
     Object_iterator oli=objects.begin()+v_end;
@@ -1211,9 +1211,9 @@ bool classify_objects(Object_iterator start, Object_iterator end,
     if(CGAL::assign(pf, *o)) {
       Partial_facet pfn,pfp;
       if(pf.divide(partition_plane, pfn, pfp)) {
-	*o1 = Object_handle(pfn);
+	*o1 = make_object(pfn);
 	++o1;
-	*o2 = Object_handle(pfp);
+	*o2 = make_object(pfp);
 	++o2;
 	continue;
       }

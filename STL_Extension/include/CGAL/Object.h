@@ -136,6 +136,14 @@ class Object
         return empty() ? typeid(void) : Ptr()->type();
     }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+    // The comparisons with NULL are only there for Nef...
+    bool operator==(Nullptr_t CGAL_assertion_code(n)) const
+    { CGAL_assertion(n == 0); return empty(); }
+    bool operator!=(Nullptr_t CGAL_assertion_code(n)) const
+    { CGAL_assertion(n == 0); return !empty(); }
+#endif // CGAL_NO_DEPRECATED_CODE
+
 };
 
 
