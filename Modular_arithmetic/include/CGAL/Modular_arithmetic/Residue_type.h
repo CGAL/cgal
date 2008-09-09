@@ -24,8 +24,12 @@
 #include <CGAL/basic.h>
 
 #include <cfloat>
+#include <boost/operators.hpp>
 
 CGAL_BEGIN_NAMESPACE
+
+// fwd
+void force_ieee_double_precision(); 
 
 namespace CGALi{
 
