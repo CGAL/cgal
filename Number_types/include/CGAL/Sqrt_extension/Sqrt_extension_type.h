@@ -35,11 +35,13 @@
 #define CGAL_SQRT_EXTENSION_TYPE_H
 
 #include <CGAL/number_type_basic.h>
+#include <boost/operators.hpp>
 
 //#define SQRT_EXT_USE_FILTER 1
 #ifdef SQRT_EXT_USE_FILTER
   #include <CGAL/Interval_arithmetic.h> 
 #endif
+
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
