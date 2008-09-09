@@ -1,9 +1,7 @@
-#include <CGAL/basic.h>
+#define CORE_NO_AUTOMATIC_NAMESPACE 1
 
-#ifdef CGAL_USE_CORE
 
 #include <CGAL/CORE_Expr.h>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
@@ -29,14 +27,3 @@ int main() {
 }
 
 
-#else // CGAL_USE_CORE
-
-#include <iostream>
-
-int main()
-{
-  std::cout << "Core is not installed" << std::endl;
-  return 0;
-}
-
-#endif // CGAL_USE_CORE
