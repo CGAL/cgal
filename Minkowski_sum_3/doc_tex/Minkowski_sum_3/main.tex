@@ -110,7 +110,7 @@ Since the computation of the Minkowski sum takes quite some time, we
 give the running times of some Minkowski sum computations. The were
 computed with CGAL 3.3 on a machine with a 2.4 GHz AMD Opteron
 processor and 4 GB RAM. The code was compiled with
-{g\raise.08ex\hbox{\tt ++}} 3.2 and compiler options -O2. The
+{\tt g++} 3.2 and compiler options -O2. The
 \ccc{Nef\_polyhedron\_3} class was instantiated with the geometric
 kernel \ccc{Homogeneous<leda_integer>}. The Minkowski sum of the spoon
 and the star is illustrated in Figure~\ref{fig:spoonStar}.
@@ -204,16 +204,15 @@ itself to keep the memory usage as small as possible.
 \section{Glide}
 
 \begin{figure}
-  \begin{ccTexOnly}
-    \begin{center}
+  \begin{center}
+    \begin{ccTexOnly}
       \includegraphics[width=0.5\textwidth]{Minkowski_sum_3/fig/glide}
-    \end{center}
+
   \end{ccTexOnly}
   \begin{ccHtmlOnly}
-    <p><center>
     <img src="./fig/glide.gif" border=0 alt="glide operation">
-    </center>
   \end{ccHtmlOnly}
+    \end{center}
   \caption{The region swept by a star that moves along a polygonal path.}
 \end{figure}
 
