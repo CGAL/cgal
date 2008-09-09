@@ -34,7 +34,7 @@
 
 #ifdef CGAL_NEF3_OLD_VISUALIZATION
 
-#elif defined CGAL_USE_QT
+#else
 #include <CGAL/IO/Qt_widget_Nef_3.h>
 #include <qapplication.h>
 #endif
@@ -342,15 +342,13 @@ public:
             }
 #ifdef CGAL_NEF3_OLD_VISUALIZATION
 	    nef.back().visualize();
-#elif defined (CGAL_USE_QT)
+#else
 	    QApplication a(argc, argv);
 	    CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
 	      new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(nef.back());
 	    a.setMainWidget(w);
 	    w->show();
 	    a.exec();
-#else
-	    std::cout << "Sorry, this demo needs QT..." << std::endl;
 #endif
         } else if ( strcmp( argv[i], "trans") == 0) {
             if ( nef.size() == 0) {

@@ -19,16 +19,7 @@
 
 #include <CGAL/basic.h>
 
-// if QT is not installed, a message will be issued in runtime.
-#if !defined CGAL_USE_QT
-#include <iostream>
-int main(int, char*)
-{
-  std::cout << "Sorry, this demo needs QT..."; std::cout << std::endl;
-  return 0;
-}
-
-#elif !defined CGAL_USE_GMP
+#if !defined CGAL_USE_GMP
 #include <iostream>
 int main(int, char*)
 {
@@ -795,4 +786,4 @@ main(int argc, char **argv)
   return app.exec();
 }
 
-#endif // CGAL_USE_QT
+#endif // CGAL_USE_GMP

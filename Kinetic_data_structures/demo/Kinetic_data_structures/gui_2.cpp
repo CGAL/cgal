@@ -1,10 +1,8 @@
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <CGAL/Kinetic/Enclosing_box_2.h>
 
-#ifdef CGAL_USE_QT
 #include <CGAL/Kinetic/IO/Qt_widget_2.h>
 #include <CGAL/Kinetic/IO/Qt_moving_points_2.h>
-#endif
 
 #include <CGAL/Kinetic/Insert_event.h>
 
@@ -15,7 +13,6 @@
 int main(int argc, char*argv[])
 {
 
-#ifdef CGAL_USE_QT
   CGAL_SET_LOG_LEVEL(CGAL::Log::LOTS);
 
   typedef CGAL::Kinetic::Exact_simulation_traits Traits;
@@ -41,8 +38,4 @@ int main(int argc, char*argv[])
 						 tr.active_points_2_table_handle()));
 
   return qtsim->begin_event_loop();
-#else
-  bool warning_qt_is_not_available_no_2d_visualization;
-  return 0;
-#endif
 }
