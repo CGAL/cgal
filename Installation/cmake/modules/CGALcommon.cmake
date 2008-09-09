@@ -110,6 +110,17 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     endif()
     
   endmacro()
+
+  macro( create_CGALconfig_files )
+    # FindCGAL and UseCGAL are platform specific so they are generated and stored in the binary folder.
+    configure_file(${CMAKE_SOURCE_DIR}/CGALConfig_binary.cmake.in  ${CMAKE_BINARY_DIR}/CGALConfig.cmake       @ONLY IMMEDIATE)
+    
+    if ( SOURCE_INSTALL )
+      configure_file(${CMAKE_SOURCE_DIR}/CGALConfig_install.cmake.source.in ${CMAKE_BINARY_DIR}/cmake/CGALConfig.cmake @ONLY IMMEDIATE)
+    else()
+      configure_file(${CMAKE_SOURCE_DIR}/CGALConfig_install.cmake.fhs.in    ${CMAKE_BINARY_DIR}/cmake/CGALConfig.cmake @ONLY IMMEDIATE)
+    endif()
+  endmacro()
   
   # CMAKE_ROOT must be properly configured, but is not by the CMake windows installer, so check here
   if (NOT CMAKE_ROOT)
