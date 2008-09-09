@@ -24,8 +24,8 @@ The template parameter of \ccRefName\ must be a \cgal\ \ccc{Kernel}.
 \ccCreationVariable{in}
 \ccSetTwoColumns{GraphicsViewCircleInput}{}
 
-\ccConstructor{GraphicsViewCircleInput<T>(QGraphicsScene* s, int pointsOnCircle = 1);}
-{\ccc{s} is the scene where the circle is generated. \ccc{pointsOnCircle} is the
+\ccConstructor{GraphicsViewCircleInput<T>(QObject *p, QGraphicsScene* s, int pointsOnCircle = 1);}
+{\ccc{p} is a parent object. \ccc{s} is the scene where the circle is generated. \ccc{pointsOnCircle} is the
   number of points on the circle to be generated, that is the default value \ccc{1}
   corresponds to the case center/radius.}
 
