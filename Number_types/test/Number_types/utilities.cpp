@@ -97,6 +97,8 @@ int main()
       TESTIT(CORE::BigRat, "CORE::BigRat")
       TESTIT(CORE::BigFloat, "CORE::BigFloat")
       TESTIT(CORE::Expr, "CORE::Expr")
+      typedef CGAL::Number_type_checker<CORE::BigRat,CORE::Expr> NT_checker;
+      TESTIT(NT_checker, "NT_checker");
 #endif
 
       // LEDA based NTs
@@ -105,8 +107,6 @@ int main()
       TESTIT(leda_rational, "leda_rational")
       TESTIT(leda_bigfloat, "leda_bigfloat")
       TESTIT(leda_real, "leda_real")
-      typedef CGAL::Number_type_checker<leda_rational,leda_real> NT_checker;
-      TESTIT(NT_checker, "NT_checker");
 #endif // CGAL_USE_LEDA
 
        // TEST Sqrt_extension 
