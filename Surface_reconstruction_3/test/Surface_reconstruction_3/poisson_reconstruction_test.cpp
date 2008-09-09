@@ -217,7 +217,7 @@ int main(int argc, char * argv[])
     std::cerr << "Compute implicit function...\n";
 
     /// Compute the Poisson indicator function f()
-    /// at each vertex of the triangulation
+    /// at each vertex of the triangulation.
     if ( ! poisson_function.compute_implicit_function() )
     {
       std::cerr << "Error: cannot compute implicit function" << std::endl;
@@ -251,7 +251,7 @@ int main(int argc, char * argv[])
       continue;
     }
 
-    // Get implicit surface's size
+    // Get implicit surface's radius
     Sphere bounding_sphere = poisson_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 

@@ -166,7 +166,7 @@ merge_epsilon_nearest_points_3(
 
     // Replace [first, beyond) range by the content of points_to_keep, then points_to_remove.
     ForwardIterator first_iterator_to_remove = 
-      std::copy(points_to_keep.begin(), points_to_keep.end(), first);
+    std::copy(points_to_keep.begin(), points_to_keep.end(), first);
     std::copy(points_to_remove.begin(), points_to_remove.end(), first_iterator_to_remove);
     
     return first_iterator_to_remove;

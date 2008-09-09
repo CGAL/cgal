@@ -101,12 +101,12 @@ public:
   /// Owner is responsible to call this function after modifying the triangulation.
   void invalidate_bounding_box();
 
-  /// Insert point to the triangulation.
+  /// Insert point in the triangulation.
   Vertex_handle insert(const Point& p,
                        unsigned char type = INPUT /* INPUT or STEINER */,
                        Cell_handle start = Cell_handle());
 
-  /// Insert points to the triangulation using a spatial sort.
+  /// Insert points in the triangulation using a spatial sort.
   ///
   /// Precondition: the value type of InputIterator must 'Point'.
   ///

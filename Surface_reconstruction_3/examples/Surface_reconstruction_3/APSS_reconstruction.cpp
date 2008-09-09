@@ -234,7 +234,7 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    // Get implicit surface's size
+    // Get implicit surface's radius
     Sphere bounding_sphere = apss_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
