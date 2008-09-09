@@ -1,6 +1,8 @@
 add_subdirectory(CGAL)
-
+create_CGALconfig_files()
+set(CGAL_DIR ${CMAKE_BINARY_DIR})
 optional_add_subdirectory( CGALCore    ON )
 optional_add_subdirectory( CGALimageIO ON )
 optional_add_subdirectory( CGALPDB     ON )
 optional_add_subdirectory( CGALQt      ON )
+optional_add_subdirectory( CGALQt4     ON )
