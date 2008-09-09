@@ -19,8 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
-
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -546,19 +544,3 @@ main(int argc, char* argv[])
 
 
 // moc_source_file: apollonius_graph_2.C
-
-#else
-
-#include <iostream>
-
-int
-main(int argc, char* argv[])
-{
-  std::cerr << "This demo needs CGAL's Qt_widget installed "
-	    << "in order to run..."
-	    << std::endl << std::endl;
-  return 0;
-}
-
-
-#endif

@@ -19,8 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
-
 #include <iostream>
 #include <fstream>
 
@@ -70,20 +68,3 @@ main(int argc, char* argv[])
 
   return app.exec();
 }
-
-
-#else
-
-#include <iostream>
-
-int
-main(int argc, char* argv[])
-{
-  std::cerr << "This demo needs CGAL's Qt_widget installed "
-            << "in order to run..."
-            << std::endl << std::endl;
-  return 0;
-}
-
-
-#endif

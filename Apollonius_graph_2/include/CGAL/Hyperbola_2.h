@@ -212,7 +212,6 @@ public:
   }
 
 
-#if defined CGAL_USE_QT
   template<class QTWIDGET>
   void generate_points_qt(const QTWIDGET& W,
 			  std::vector<Point_2>& pleft,
@@ -262,7 +261,6 @@ public:
 	W << Segment_2(pright[i], pright[i+1]);
       }
     }
-#endif
 
   void generate_points(std::vector<Point_2>& pleft,
 		       std::vector<Point_2>& pright) const

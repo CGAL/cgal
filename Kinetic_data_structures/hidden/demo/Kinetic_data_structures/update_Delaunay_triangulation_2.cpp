@@ -9,8 +9,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
-
 #include <CGAL/Updatable_Delaunay_triangulation_2.h>
 
 #include <CGAL/Kinetic/IO/Qt_moving_points_2.h>
@@ -61,8 +59,3 @@ int main(int argc, char *argv[]) {
   typedef CGAL::Updatable_Delaunay_triangulation_2<CGAL::Indirect_point_2_kernel<CGAL::Exact_predicates_inexact_constructions_kernel> > UD;
   return UD::run(argc, argv, n,d,seed, ifile, ffile);   
 };
-#else
-int main(int, char *[]){
-  return 0;
-}
-#endif

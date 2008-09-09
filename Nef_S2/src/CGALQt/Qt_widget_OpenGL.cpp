@@ -21,8 +21,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
-
 #include <CGAL/IO/Qt_widget_OpenGL.h>
 #include <cmath>
 
@@ -252,4 +250,3 @@ void Qt_widget_OpenGL::slotPerspective() {
 
 } // namespace CGAL
 #include "Qt_widget_OpenGL.moc"
-#endif

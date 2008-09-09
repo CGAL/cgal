@@ -20,8 +20,6 @@
 #ifndef CGAL_QT_WIDGET_HYPERBOLA_2_H
 #define CGAL_QT_WIDGET_HYPERBOLA_2_H
 
-#if defined CGAL_USE_QT
-
 #include <CGAL/Hyperbola_2.h>
 #include <CGAL/Hyperbola_ray_2.h>
 #include <CGAL/IO/Qt_widget.h>
@@ -45,8 +43,5 @@ Qt_widget& operator<<(Qt_widget &s, Hyperbola_ray_2<Gt> &H)
 }
 
 CGAL_END_NAMESPACE
-
-#endif
-
 
 #endif // CGAL_QT_WIDGET_HYPERBOLA_2_H

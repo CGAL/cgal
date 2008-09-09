@@ -1,5 +1,4 @@
 #include <CGAL/Kinetic/basic.h>
-#ifdef CGAL_USE_QT
 #include <CGAL/Kinetic/Delaunay_triangulation_2.h>
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Random.h>
@@ -104,8 +103,3 @@ int main(int argc, char *argv[])
   kdel->set_has_certificates(true);
   return qtsim->begin_event_loop();
 };
-#else
-int main(int, char *[]){
-  return 0;
-}
-#endif

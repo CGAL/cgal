@@ -89,7 +89,6 @@ public:
   }
 
 
-#ifdef CGAL_USE_QT
   template<class QTWIDGET>
   void draw_qt(QTWIDGET& s)
   {
@@ -116,7 +115,6 @@ public:
     
     Hyperbola_segment_2< Gt >::draw(s);
   }
-#endif
 
   template< class Stream >
   inline

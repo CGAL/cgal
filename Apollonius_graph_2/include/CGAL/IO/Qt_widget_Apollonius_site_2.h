@@ -21,8 +21,6 @@
 #ifndef CGAL_QT_WIDGET_APOLLONIUS_SITE_2_H
 #define CGAL_QT_WIDGET_APOLLONIUS_SITE_2_H
 
-#ifdef CGAL_USE_QT
-
 #include <CGAL/Apollonius_site_2.h>
 #include <CGAL/IO/Qt_widget.h>
 
@@ -44,7 +42,5 @@ CGAL_END_NAMESPACE
 
 
 #include <CGAL/IO/Qt_widget_Hyperbola_2.h>
-
-#endif
 
 #endif // CGAL_QT_WIDGET_APOLLONIUS_SITE_2_H

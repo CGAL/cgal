@@ -568,7 +568,3 @@ int main(int argc, char** argv)
 
   return app.exec();
 }
-#else
-#include <iostream>
-int main(int, char*){
-  std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
