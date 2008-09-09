@@ -18,12 +18,6 @@
 // Author(s)     : Peter Hachenberger
 
 #include <CGAL/basic.h>
-#ifndef CGAL_USE_QT
-#include <iostream>
-int main(int, char*){
-  std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
-#else
-
 #ifdef CGAL_VSH_FILTERED
   #include <CGAL/Simple_cartesian.h>
   #include <CGAL/Lazy_kernel.h>
@@ -164,4 +158,3 @@ int main(int argc, char* argv[]) {
   w->show();
   a.exec();
 }
-#endif

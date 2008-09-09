@@ -13,12 +13,6 @@
 
 #include<CGAL/basic.h>
 
-#ifndef CGAL_USE_QT
-#include <iostream>
-int main(int, char*){
-  std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
-#else
-
 #include<qapplication.h>
 #include<qmainwindow.h>
 #include<iostream>
@@ -367,4 +361,3 @@ int main(int argc,char ** argv) {
   pouloum->show();
   app.exec();
 }
-#endif

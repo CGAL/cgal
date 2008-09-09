@@ -20,15 +20,6 @@
 
 #include <CGAL/basic.h>
 
-// if QT is not installed, a message will be issued in runtime.
-#ifndef CGAL_USE_QT
-#include <iostream>
-int main(int, char*){
-  std::cout << "Sorry, this demo needs QT...";
-  std::cout << std::endl; return 0;
-}
-#else
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/function_objects.h>
@@ -378,6 +369,3 @@ main(int argc, char **argv)
   current_state = -1;
   return app.exec();
 }
-
-
-#endif
