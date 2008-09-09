@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "arrangement_2.h"
 #include "forms.h"
@@ -678,4 +677,3 @@ void MyWindow::fileSave_ps()
 #endif
 }
 
-#endif // CGAL_USE_QT

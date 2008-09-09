@@ -25,9 +25,7 @@
 
 #include <CGAL/Curved_kernel_via_analysis_2/Arc_2.h>
 
-#if CGAL_USE_QT
 #include <CGAL/IO/Qt_widget.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -260,7 +258,7 @@ std::ostream& operator <<(std::ostream& os,
     return os;
 }
 
-#if (CGAL_USE_QT) || DOXYGEN_RUNNING
+#if DOXYGEN_RUNNING
 
 /*!\relates Non_x_monotone_arc_2
  * \brief
@@ -298,7 +296,7 @@ CGAL::Qt_widget& operator <<(CGAL::Qt_widget& ws,
     return ws;
 };
 
-#endif // CGAL_USE_QT
+#endif // DOXYGEN_RUNNING
 
 } // namespace CGALi
 

@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "qt_layer.h"
 #include "demo_tab.h"
@@ -78,4 +77,3 @@ void Qt_layer::draw()
 
 }
 
-#endif // CGAL_USE_QT

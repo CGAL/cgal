@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "Qt_widget_style_editor.h"
 #include "Qt_widget_style_editor-aux.h"
@@ -126,4 +125,3 @@ void Qt_widget_style_editor::map(bool b)
 // moc_source_file: Qt_widget_style_editor-aux.h
 #include "Qt_widget_style_editor-aux.moc"
 
-#endif // CGAL_USE_QT

@@ -20,7 +20,6 @@
 #ifndef CGAL_QT_WIDGET_POWER_DIAGRAM_HALFEDGE_2_H
 #define CGAL_QT_WIDGET_POWER_DIAGRAM_HALFEDGE_2_H 1
 
-#ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>
 
@@ -135,6 +134,5 @@ Qt_widget& operator<<(Qt_widget& qt_w,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_USE_QT
 
 #endif // CGAL_QT_WIDGET_POWER_DIAGRAM_HALFEDGE_2_H

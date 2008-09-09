@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "arrangement_2.h"
 #include "forms.h"
@@ -291,4 +290,3 @@ int MyWindow::realIndex(int index)
 }
 
 
-#endif // CGAL_USE_QT

@@ -12,7 +12,6 @@
 // (ACS -- Algorithms for Complex Shapes)
 
 #include <CGAL/basic.h>
-#ifdef CGAL_USE_QT
 
 #include "demo_circle.moc"
 
@@ -39,15 +38,3 @@ int main (int argc, char** argv) {
 	windows->show();
 	return app.exec();
 }
-
-#else // CGAL_USE_QT not defined:
-
-#include <iostream>
-
-int main()
-{
-  std::cout << "Sorry, this demo needs QT ..." << std::endl;
-  return (0);
-}
-
-#endif // CGAL_USE_QT

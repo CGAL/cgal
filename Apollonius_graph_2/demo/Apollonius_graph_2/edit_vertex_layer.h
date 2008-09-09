@@ -20,7 +20,6 @@
 #ifndef APOLLONIUS_GRAPH_2_EDIT_VERTEX_H
 #define APOLLONIUS_GRAPH_2_EDIT_VERTEX_H
 
-#ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
@@ -279,6 +278,5 @@ private:
 
 
 
-#endif // CGAL_USE_QT
 
 #endif // APOLLONIUS_GRAPH_2_EDIT_VERTEX_H

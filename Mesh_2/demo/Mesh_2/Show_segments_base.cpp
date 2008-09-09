@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "Show_segments_base.h"
 
@@ -60,4 +59,3 @@ namespace CGAL {
 // moc_source_file: Show_segments_base.h
 #include "Show_segments_base.moc"
 
-#endif // CGAL_USE_QT

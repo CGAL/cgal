@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 #ifdef CGAL_USE_CORE
 
 #include "arrangement_2.h"
@@ -470,15 +469,3 @@ int main(int, char*)
 }
 
 #endif // CGAL_USE_CORE
-#else // CGAL_USE_QT not defined:
-
-#include <iostream>
-
-int main(int, char*)
-{
-
-  std::cout << "Sorry, this demo needs QT ..." << std::endl;
-  return (0);
-}
-
-#endif // CGAL_USE_QT

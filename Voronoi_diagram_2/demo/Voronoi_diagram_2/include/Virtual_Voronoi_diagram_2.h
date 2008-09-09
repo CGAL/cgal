@@ -24,9 +24,7 @@
 #include <CGAL/iterator.h>
 #include "../typedefs.h"
 
-#ifdef CGAL_USE_QT
 #include <CGAL/IO/Qt_widget.h>
-#endif
 
 #include <CGAL/IO/Qt_widget_Apollonius_diagram_halfedge_2.h>
 #include <CGAL/IO/Qt_widget_Voronoi_diagram_halfedge_2.h>
@@ -52,7 +50,6 @@ struct Virtual_Voronoi_diagram_2
   // remove a site
   virtual void remove(const Object&) = 0;
 
-#ifdef CGAL_USE_QT
   virtual void draw_feature(const Object&, Qt_widget&) const = 0;
   virtual void draw_diagram(Qt_widget&) const = 0;
   virtual void draw_sites(Qt_widget&) const = 0;
@@ -60,7 +57,6 @@ struct Virtual_Voronoi_diagram_2
 			      Qt_widget&) const = 0;
   virtual void draw_conflicts(const Circle_2&, const Object&,
 			      Qt_widget&) const = 0;
-#endif
 
   virtual Object locate(const Point_2&) const = 0;
 
@@ -165,7 +161,6 @@ class Virtual_Voronoi_diagram_base_2
     return false;
   }
 
-#ifdef CGAL_USE_QT
   virtual void draw_conflicts(const Site_2& s, const Object& o,
 			      Qt_widget& widget) const {
     typedef std::vector<Delaunay_edge>           Edge_vector;
@@ -225,10 +220,8 @@ class Virtual_Voronoi_diagram_base_2
 
     widget << CGAL::LineWidth(linewidth);
   }
-#endif // CGAL_USE_QT
 
  public:
-#ifdef CGAL_USE_QT
   void draw_edge(const Halfedge& e, Qt_widget& widget) const {
     Halfedge_with_draw ee(e);
     widget << ee;
@@ -280,8 +273,6 @@ class Virtual_Voronoi_diagram_base_2
 
   virtual void draw_conflicts(const Circle_2& , const Object& ,
 			      Qt_widget& ) const {}
-
-#endif // CGAL_USE_QT
 
   virtual Object locate(const Point_2& q) const {
     if ( Base::number_of_faces() == 0 ) {
@@ -346,7 +337,6 @@ class Concrete_Voronoi_diagram_2
     return CGAL::make_object( (int)0 );
   }
 
-#ifdef CGAL_USE_QT
   virtual void draw_conflicts(const Point_2& p, const Object& o,
   			      Qt_widget& widget) const
   {
@@ -357,7 +347,6 @@ class Concrete_Voronoi_diagram_2
 			      Qt_widget& ) const {
     return;
   }
-#endif
 
   virtual Object ptr() { return CGAL::make_object(this); }
 };
@@ -410,7 +399,6 @@ class Concrete_power_diagram_2
     return conflicts( to_site(c) );
   }
 
-#ifdef CGAL_USE_QT
   virtual void draw_sites(Qt_widget& widget) const
   {
     VBase::draw_sites(widget);
@@ -437,7 +425,6 @@ class Concrete_power_diagram_2
   {
     VBase::draw_conflicts( to_site(c), o, widget);
   }
-#endif
 
   virtual Object ptr() { return CGAL::make_object(this); }
 };
@@ -492,7 +479,6 @@ class Concrete_Apollonius_diagram_2
     return conflicts( to_site(c) );
   }
 
-#ifdef CGAL_USE_QT
   virtual void draw_sites(Qt_widget& widget) const
   {
     VBase::draw_sites(widget);
@@ -515,7 +501,6 @@ class Concrete_Apollonius_diagram_2
   {
     VBase::draw_conflicts( to_site(c), o, widget);
   }
-#endif
 
   virtual Object ptr() { return CGAL::make_object(this); }
 };
