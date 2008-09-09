@@ -1583,6 +1583,8 @@ GraphicsView/demo/resources/CGAL.qrc -text
 GraphicsView/demo/resources/about_CGAL.html svneol=native#text/html
 GraphicsView/demo/resources/cgal_large_FAF8E8.gif -text svneol=unset#image/gif
 GraphicsView/demo/resources/cgal_logo.xpm -text
+GraphicsView/doc_tex/GraphicsView/detail.png -text
+GraphicsView/doc_tex/GraphicsView/full.png -text
 GraphicsView/doc_tex/GraphicsView/uml-design.eps -text
 GraphicsView/doc_tex/GraphicsView/uml-design.graphml -text
 GraphicsView/doc_tex/GraphicsView/uml-design.pdf -text
