@@ -29,6 +29,13 @@ A model for this must provide:
 	containing \ccc{center} and normal to \ccc{n}.
         \ccPrecond{\ccc{sq_r} $\geq$ 0.}}
 
+\ccMemberFunction{Kernel::Circle_3 operator()
+			( Kernel::Point_3 const& p,
+                        Kernel::Point_3 const& q, 
+                        Kernel::Point_3 const& r);}
+        {introduces a variable of type \ccc{Kernel::Point_3}.
+        It is initialized to the circle passing through the three points.
+        \ccPrecond{The three points are not collinear.}}
 
 \ccMemberFunction{Kernel::Circle_3 operator()
 			( Kernel::Sphere_3 const& sphere1,
