@@ -36,6 +36,7 @@
 #include <CGAL/surface_reconstruction_assertions.h>
 #include <CGAL/remove_outliers_wrt_avg_knn_sq_distance_3.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/poisson_refinement_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -179,12 +180,6 @@ private:
   typedef typename CGAL::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
   K_nearest_neighbor m_nn_search;
 
-  // delaunay refinement
-  typedef typename CGAL::Candidate<Vertex_handle,Point> Candidate;
-  typedef typename std::priority_queue< Candidate,
-                                        std::vector<Candidate>,
-                                        less<Candidate> > Refinement_pqueue;
-
   // contouring and meshing
   Point m_sink; // Point with the minimum value of f()
   mutable Cell_handle m_hint; // last cell found = hint for next search
@@ -294,16 +289,16 @@ public:
     CGAL_TRACE_STREAM << "Delaunay refinement...\n";
 
     // Delaunay refinement
-    int nb_vertices = m_dt.number_of_vertices();
-    const FT quality = 2.5;
+    const FT radius_edge_ratio_bound = 2.5;
     const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
     const FT enlarge_ratio = 1.5;
-    delaunay_refinement(quality,max_vertices,enlarge_ratio,50000);
+    const FT size = sqrt(bounding_sphere().squared_radius()); // get triangulation's radius
+    const FT cell_radius_bound = size/5.; // large
+    unsigned int nb_vertices_added = delaunay_refinement(radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarge_ratio);
 
     // Print status
     long memory = CGAL::Memory_sizer().virtual_size();
-    int nb_vertices2 = m_dt.number_of_vertices();
-    CGAL_TRACE_STREAM << "Delaunay refinement: " << "added " << nb_vertices2-nb_vertices << " Steiner points, "
+    CGAL_TRACE_STREAM << "Delaunay refinement: " << "added " << nb_vertices_added << " Steiner points, "
                                                  << task_timer.time() << " seconds, "
                                                  << (memory>>20) << " Mb allocated"
                                                  << std::endl;
@@ -407,92 +402,33 @@ public:
   /// bad means badly shaped or too big). The normal of
   /// Steiner points is set to zero.
   /// Return the number of vertices inserted.
-  unsigned int delaunay_refinement(const FT threshold,
-                                   unsigned int maximum,
-                                   const FT enlarge_ratio,
-                                   unsigned int restart_each)
+  unsigned int delaunay_refinement(FT radius_edge_ratio_bound, ///< radius edge ratio bound (ignored if zero)
+                                   FT cell_radius_bound, ///< cell radius bound (ignored if zero)
+                                   unsigned int max_vertices, ///< number of vertices bound
+                                   FT enlarge_ratio) ///< bounding box enlarge ratio
   {
-    CGAL_TRACE("Call delaunay_refinement()\n");
+    CGAL_TRACE("Call delaunay_refinement(radius_edge_ratio_bound=%lf, cell_radius_bound=%lf, max_vertices=%u, enlarge_ratio=%lf)\n",
+               radius_edge_ratio_bound, cell_radius_bound, max_vertices, enlarge_ratio);
 
-    // create enlarged bounding box
+#define DELAUNAY_REFINEMENT_USE_BOUNDING_BOX
+#ifdef  DELAUNAY_REFINEMENT_USE_BOUNDING_BOX
     Iso_cuboid enlarged_bbox = enlarged_bounding_box(enlarge_ratio);
+    unsigned int nb_vertices_added = poisson_refinement_3(m_dt,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
+#else
+    Sphere enlarged_bbox = enlarged_bounding_sphere(enlarge_ratio);
+    unsigned int nb_vertices_added = poisson_refinement_3(m_dt,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
+#endif
 
-    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("  Create queue\n");
-
-    long max_memory = memory; // max memory allocated by this algorithm
-
-    // push bad cells to the queue
-    Refinement_pqueue queue;
-    init_queue(queue,threshold,enlarged_bbox);
-
-    unsigned int nb = 0;
-    while(!queue.empty())
-    {
-      memory = CGAL::Memory_sizer().virtual_size(); max_memory = (std::max)(max_memory, memory); 
-
-      if(nb%restart_each == 0)
-      {
-        reset_queue(queue,threshold,enlarged_bbox);
-        if(queue.empty())
-          break;
-      }
-
-      Candidate candidate = queue.top();
-      queue.pop();
-      Vertex_handle v0 = candidate.v0();
-      Vertex_handle v1 = candidate.v1();
-      Vertex_handle v2 = candidate.v2();
-      Vertex_handle v3 = candidate.v3();
-      Cell_handle cell = NULL;
-      if(m_dt.is_cell(v0,v1,v2,v3,cell))
-      {
-        Point point = m_dt.dual(cell);
-        Vertex_handle v = m_dt.insert(point,Triangulation::STEINER,cell);
-
-        if(nb++ > maximum)
-          break; // premature ending
-
-        // iterate over incident cells and feed queue
-        std::list<Cell_handle> cells;
-        m_dt.incident_cells(v,std::back_inserter(cells));
-        typename std::list<Cell_handle>::iterator it;
-        for(it = cells.begin();
-            it != cells.end();
-            it++)
-        {
-          Cell_handle c = *it;
-          if(m_dt.is_infinite(c))
-            continue;
-
-          FT rer = radius_edge_ratio(c);
-          Point point = m_dt.dual(c);
-          bool inside = enlarged_bbox.has_on_bounded_side(point);
-          if(inside && rer > threshold)
-          {
-            Vertex_handle v0 = c->vertex(0);
-            Vertex_handle v1 = c->vertex(1);
-            Vertex_handle v2 = c->vertex(2);
-            Vertex_handle v3 = c->vertex(3);
-            float score = (float)max_edge_len(cell);
-            queue.push(Candidate(v0,v1,v2,v3,score));
-          }
-        }
-      }
-    }
     m_dt.invalidate_bounding_box();
-
-    CGAL_TRACE("  Max allocation = %ld Mb\n", max_memory>>20);
-
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    
     CGAL_TRACE("End of delaunay_refinement()\n");
 
-    return nb;
+    return nb_vertices_added;
   }
 
   unsigned int delaunay_refinement_shell(FT size_shell,
                                          FT sizing,
-                                         unsigned int maximum)
+                                         unsigned int max_vertices)
   {
     // make parameters relative to size
     Sphere bounding_sphere = m_dt.bounding_sphere();
@@ -539,10 +475,10 @@ public:
       Cell_handle cell = NULL;
       if(m_dt.is_cell(v0,v1,v2,v3,cell))
       {
-        Point point = m_dt.dual(cell);
-        Vertex_handle v = m_dt.insert(point, Triangulation::STEINER);
+        Point circumcenter = m_dt.dual(cell);
+        Vertex_handle v = m_dt.insert(circumcenter, Triangulation::STEINER);
 
-        if(nb++ > maximum)
+        if(nb++ > max_vertices)
           return nb; // premature ending
 
         // iterate over incident cells and feed queue
@@ -1068,31 +1004,6 @@ private:
     d = std::fabs(td.volume() / v);
   }
 
-  // radius-edge ratio (the ratio of the circumradius to
-  // the shortest edge length of tetrahedron)
-  // check template type
-  double radius_edge_ratio(Cell_handle c) const
-  {
-    double r = circumradius(c);
-    double l = len_shortest_edge(c);
-    if(l != 0.0)
-      return r/l;
-    else
-      return 1e38;
-  }
-
-  FT len_shortest_edge(Cell_handle c) const
-  {
-    FT d1 = distance(c->vertex(0),c->vertex(1));
-    FT d2 = distance(c->vertex(0),c->vertex(2));
-    FT d3 = distance(c->vertex(0),c->vertex(3));
-    FT d4 = distance(c->vertex(1),c->vertex(2));
-    FT d5 = distance(c->vertex(1),c->vertex(3));
-    FT d6 = distance(c->vertex(2),c->vertex(3));
-    return (std::min)((std::min)((std::min)(d1,d2),d3),
-                      (std::min)((std::min)(d4,d5),d6));
-  }
-
   FT distance(Vertex_handle v1, Vertex_handle v2) const
   {
     const Point& a = v1->point();
@@ -1551,11 +1462,11 @@ private:
     return Edge(cell,i1,i2);
   }
 
-  /// Compute enlarged geometric bounding box of the embedded triangulation
+  /// Compute enlarged geometric bounding box of the embedded triangulation.
   Iso_cuboid enlarged_bounding_box(FT ratio) const
   {
     // Get triangulation's bounding box
-    Iso_cuboid bbox = m_dt.bounding_box();
+    Iso_cuboid bbox = bounding_box();
 
     // Its center point is:
     FT mx = 0.5 * (bbox.xmax() + bbox.xmin());
@@ -1572,41 +1483,11 @@ private:
     return Iso_cuboid(p,q);
   }
 
-  void reset_queue(Refinement_pqueue& queue,
-                   const FT threshold,
-                   Iso_cuboid& enlarged_bbox)
+  /// Compute enlarged geometric bounding sphere of the embedded triangulation.
+  Sphere enlarged_bounding_sphere(FT ratio) const
   {
-    // clear queue
-    while(!queue.empty())
-      queue.pop();
-
-    // push bad cells to the queue
-    init_queue(queue,threshold,enlarged_bbox);
-  }
-
-  // push bad cells to the queue
-  void init_queue(Refinement_pqueue& queue,
-                  const FT threshold,
-                  Iso_cuboid& enlarged_bbox)
-  {
-    Finite_cells_iterator c;
-    for(c = m_dt.finite_cells_begin();
-        c != m_dt.finite_cells_end();
-        c++)
-    {
-      FT rer = radius_edge_ratio(c);
-      Point point = m_dt.dual(c);
-      bool inside = enlarged_bbox.has_on_bounded_side(point);
-      if(inside && rer > threshold)
-      {
-        Vertex_handle v0 = c->vertex(0);
-        Vertex_handle v1 = c->vertex(1);
-        Vertex_handle v2 = c->vertex(2);
-        Vertex_handle v3 = c->vertex(3);
-        float score = (float)max_edge_len(c);
-        queue.push(Candidate(v0,v1,v2,v3,score));
-      }
-    }
+    Sphere bbox = bounding_sphere(); // triangulation's bounding sphere
+    return Sphere(bbox.center(), bbox.squared_radius() * ratio*ratio);
   }
 
   void init_nn_search_shell()
@@ -1660,23 +1541,6 @@ private:
   FT distance(const Point& a, const Point& b) const
   {
     return std::sqrt(CGAL::squared_distance(a,b));
-  }
-
-  FT max_edge_len(Cell_handle cell) const
-  {
-    const Point& a = cell->vertex(0)->point();
-    const Point& b = cell->vertex(1)->point();
-    const Point& c = cell->vertex(2)->point();
-    const Point& d = cell->vertex(3)->point();
-    FT ab = (a-b)*(a-b);
-    FT ac = (a-c)*(a-c);
-    FT bc = (c-b)*(c-b);
-    FT ad = (a-d)*(a-d);
-    FT bd = (d-b)*(d-b);
-    FT cd = (c-d)*(c-d);
-    FT sq_max = (std::max)((std::max)((std::max)(ab,ac),
-                (std::max)(bc,ad)), (std::max)(bd,cd));
-    return std::sqrt(sq_max);
   }
 
   FT circumradius(Cell_handle c) const

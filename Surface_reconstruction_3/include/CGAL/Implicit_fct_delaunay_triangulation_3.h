@@ -131,11 +131,12 @@ public:
 
 // data members
 private:
+
   FT m_f;               // value of the implicit function
                         // PA: should we make a separate type instead?
                         // (so that the user can decide to run in float or double mode)
   bool m_constrained;   // is vertex constrained?
-  unsigned char m_type; // INPUT or STEINER
+  unsigned char m_type; // INPUT or STEINER. Default type is INPUT.
   unsigned int m_index; // index in matrix
   double m_average_spacing;   // average spacing
   int m_tag;
@@ -150,8 +151,8 @@ public:
     m_type = 0;
     m_constrained = false;
     m_index = 0;
-	m_average_spacing = 0.0;
-	m_tag = -1;
+    m_average_spacing = 0.0;
+    m_tag = -1;
   }
 
   Implicit_fct_delaunay_triangulation_vertex_base_3(const Point& p)
@@ -161,8 +162,8 @@ public:
     m_type = 0;
     m_constrained = false;
     m_index = 0;
-	m_average_spacing = 0.0;
-	m_tag = -1;
+    m_average_spacing = 0.0;
+    m_tag = -1;
 	
   }
 
@@ -173,8 +174,8 @@ public:
     m_type = 0;
     m_constrained = false;
     m_index = 0;
-	m_average_spacing = 0.0;
-	m_tag = -1;
+    m_average_spacing = 0.0;
+    m_tag = -1;
   }
 
   Implicit_fct_delaunay_triangulation_vertex_base_3(Cell_handle c)
@@ -184,8 +185,8 @@ public:
     m_type = 0;
     m_constrained = false;
     m_index = 0;
-	m_average_spacing = 0.0;
-	tag = -1;
+    m_average_spacing = 0.0;
+    tag = -1;
   }
 
   /// is vertex constrained?
@@ -469,20 +470,22 @@ public:
     m_bounding_box_is_valid = false;
   }
 
-  /// Insert point to the triangulation.
+  /// Insert point in the triangulation.
+  /// Default type is INPUT.
   Vertex_handle insert(const Point& p,
                        unsigned char type = INPUT /* INPUT or STEINER */,
                        Cell_handle start = Cell_handle())
   {
     Vertex_handle v = Base::insert(p, start);
+    
     v->type() = type;
-
     invalidate_bounding_box();
 
     return v;
   }
 
-  /// Insert points to the triangulation using a spatial sort.
+  /// Insert points in the triangulation using a spatial sort.
+  /// Default type is INPUT.
   ///
   /// Precondition: the value type of InputIterator must 'Point'.
   ///
@@ -513,6 +516,22 @@ public:
     return number_of_vertices() - n;
   }
 
+  /// Delaunay refinement callback:
+  /// insert STEINER point in the triangulation.
+  template <class CellIt>
+  Vertex_handle
+  insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
+	         Cell_handle begin, int i,
+                 unsigned char type = STEINER /* INPUT or STEINER */)
+  {
+      Vertex_handle v = Base::insert_in_hole(p, cell_begin, cell_end, begin, i);
+      
+      v->type() = type;
+      invalidate_bounding_box();
+      
+      return v;
+  }
+ 
   /// Index all (finite) vertices following the order of Finite_vertices_iterator.
   /// @return the number of (finite) vertices.
   unsigned int index_vertices()

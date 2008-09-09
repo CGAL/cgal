@@ -758,10 +758,13 @@ void CPoissonDoc::OnReconstructionDelaunayRefinement()
   status_message("Delaunay refinement...");
   CGAL::Timer task_timer; task_timer.start();
 
-  const double quality = 2.5;
+  const double radius_edge_ratio_bound = 2.5;
   const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
   const double enlarge_ratio = 1.5;
-  unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement(quality,max_vertices,enlarge_ratio,50000);
+  const double size = sqrt(m_poisson_function->bounding_sphere().squared_radius()); // get triangulation's radius
+  const double cell_radius_bound = size/5.; // large
+  unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement(radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarge_ratio);
+
   m_triangulation_refined = true;
 
   status_message("Delaunay refinement...done (%.2lf s, %d vertices inserted)", 
@@ -786,7 +789,6 @@ void CPoissonDoc::OnAlgorithmsRefineInShell()
   status_message("Delaunay refinement in surface shell...");
   CGAL::Timer task_timer; task_timer.start();
 
-  const double quality = 2.5;
   const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
   const double enlarge_ratio = 1.5;
   unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement_shell(m_dr_shell_size,m_dr_sizing,m_dr_max_vertices);
@@ -921,7 +923,7 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
       return;
     }
 
-    // Get implicit surface's size
+    // Get implicit surface's radius
     Sphere bounding_sphere = m_poisson_function->bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
@@ -1253,7 +1255,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
       return;
     }
 
-    // Get implicit surface's size
+    // Get implicit surface's radius
     Sphere bounding_sphere = m_apss_function->bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
@@ -1396,7 +1398,7 @@ void CPoissonDoc::OnPointCloudSimplificationByClustering()
   status_message("Point cloud simplification by clustering...");
   CGAL::Timer task_timer; task_timer.start();
 
-  // Get point set's size
+  // Get point set's radius
   Sphere bounding_sphere = m_points.bounding_sphere();
   FT size = sqrt(bounding_sphere.squared_radius());
 
