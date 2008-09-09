@@ -733,7 +733,7 @@ public:
         bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_finite");
             bool r1 =  typename RET1::Is_finite()(a.n1());
-            CGAL_assertion( r1 == typename RET2::Sign()(a.n2()) );
+            CGAL_assertion( r1 == typename RET2::Is_finite()(a.n2()) );
             return r1;
         }
     };
