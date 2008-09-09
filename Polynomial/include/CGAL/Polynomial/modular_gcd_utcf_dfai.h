@@ -257,7 +257,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
      
         // --------------------------------------
         // try chinese remainder
-        typename CGAL::Modular_traits<Poly>::Modular_image_inv inv_map;
+        typename CGAL::Modular_traits<Poly>::Modular_image_representative inv_map;
         if(n == 1){ 
             // init chinese remainder
             q =  CGAL::Residue::get_current_prime(); // implicit ! 

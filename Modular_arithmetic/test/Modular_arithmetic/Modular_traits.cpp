@@ -46,14 +46,14 @@ void test_modular_traits(){
         typedef CGAL::Modular_traits<TESTT> MT;
         typedef typename MT::Residue_type Residue_type;
         typedef typename MT::Modular_image Modular_image;
-        typedef typename MT::Modular_image_inv Modular_image_inv;
+        typedef typename MT::Modular_image_representative Modular_image_representative;
         typedef typename MT::Is_modularizable Is_modularizable;
         typedef typename MT::NT NT;
         
         assert(
             !(::boost::is_same<CGAL::Null_functor,Modular_image>::value));
         assert(
-            !(::boost::is_same<CGAL::Null_functor,Modular_image_inv>::value));
+            !(::boost::is_same<CGAL::Null_functor,Modular_image_representative>::value));
         assert(
             (::boost::is_same<CGAL::Tag_true,Is_modularizable>::value));
         assert(
@@ -69,8 +69,8 @@ void test_modular_traits(){
         assert(modular_image(TESTT(22)) == Residue_type(1));
         assert(modular_image(TESTT(777777722)) == Residue_type(1));
 
-        Modular_image_inv modular_image_inv;
-        assert(modular_image_inv(modular_image(TESTT(20)))
+        Modular_image_representative modular_image_representative;
+        assert(modular_image_representative(modular_image(TESTT(20)))
             == TESTT(-1)); 
 }
 

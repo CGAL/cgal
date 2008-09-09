@@ -261,7 +261,7 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
             n++; // increase number of lucky primes
         }
  
-        typename CGAL::Modular_traits<Poly>::Modular_image_inv inv_map;
+        typename CGAL::Modular_traits<Poly>::Modular_image_representative inv_map;
  
         
 // ----------------------------- Chinese Remainder --------------------- 

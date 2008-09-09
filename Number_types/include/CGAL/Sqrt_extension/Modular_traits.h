@@ -59,10 +59,10 @@ public:
         }
     };
 
-    struct Modular_image_inv{
+    struct Modular_image_representative{
         NT operator()(const Residue_type& a){
-            typename MT_ROOT::Modular_image_inv mod_image_inv_root;
-            typename MT_COEFF::Modular_image_inv mod_image_inv_coeff;
+            typename MT_ROOT::Modular_image_representative mod_image_inv_root;
+            typename MT_COEFF::Modular_image_representative mod_image_inv_coeff;
             
             if(a.is_extended()){
                 return NT(

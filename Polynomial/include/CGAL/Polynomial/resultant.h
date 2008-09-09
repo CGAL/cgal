@@ -252,7 +252,7 @@ Coeff resultant_modularize(
     typedef typename CGAL::Modular_traits<Scalar>::Residue_type     MScalar;  
         
     typename CRT::Chinese_remainder chinese_remainder; 
-    typename CGAL::Modular_traits<Coeff>::Modular_image_inv inv_map;
+    typename CGAL::Modular_traits<Coeff>::Modular_image_representative inv_map;
 
 
     typename PT::Degree_vector                                     degree_vector; 

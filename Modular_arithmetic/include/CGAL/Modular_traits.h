@@ -42,7 +42,7 @@ public:
     typedef ::CGAL::Tag_false Is_modularizable;
     typedef ::CGAL::Null_functor Residue_type;
     typedef ::CGAL::Null_functor Modular_image;  
-    typedef ::CGAL::Null_functor Modular_image_inv;    
+    typedef ::CGAL::Null_functor Modular_image_representative;    
 };
 
 template <class NT>
@@ -74,7 +74,7 @@ public:
             return Residue_type(i);
         }
     };    
-    struct Modular_image_inv{
+    struct Modular_image_representative{
         NT operator()(const Residue_type& x){
             return x.get_value();
         }
@@ -98,7 +98,7 @@ public:
             return Residue_type(i);
         }
     };   
-    struct Modular_image_inv{
+    struct Modular_image_representative{
         NT operator()(const Residue_type& x){
             return NT(x.get_value());
         }

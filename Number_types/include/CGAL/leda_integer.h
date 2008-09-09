@@ -222,7 +222,7 @@ class Modular_traits< ::leda::integer > {
             return Residue_type ((a%NT(MOD::get_current_prime())).to_long());
         }
     };
-    struct Modular_image_inv{
+    struct Modular_image_representative{
         NT operator()(const Residue_type& x){
             return NT(x.get_value());
         }

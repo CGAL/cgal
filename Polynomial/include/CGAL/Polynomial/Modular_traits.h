@@ -54,12 +54,12 @@ public:
         }
     };
 
-    struct Modular_image_inv{ 
+    struct Modular_image_representative{ 
         NT operator()(const Residue_type& p) const {  
             std::vector<COEFF> V;
-            typename Mtr::Modular_image_inv modular_image_inv;
+            typename Mtr::Modular_image_representative modular_image_representative;
             for(int i=0; i<=p.degree();i++)
-                V.push_back(modular_image_inv(p[i]));
+                V.push_back(modular_image_representative(p[i]));
             return NT(V.begin(),V.end());           
         }
     };

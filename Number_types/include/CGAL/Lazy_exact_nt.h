@@ -1362,7 +1362,7 @@ public:
   typedef ::CGAL::Tag_false Is_modularizable;
   typedef ::CGAL::Null_functor Residue_type;
   typedef ::CGAL::Null_functor Modular_image;  
-  typedef ::CGAL::Null_functor Modular_image_inv;    
+  typedef ::CGAL::Null_functor Modular_image_representative;    
 };
 
 template< typename ET >
@@ -1379,10 +1379,10 @@ public:
       return modular_image(a.exact());
     }
   };
-  struct Modular_image_inv{
+  struct Modular_image_representative{
     NT operator()(const Residue_type& x){
-      typename MT_ET::Modular_image_inv modular_image_inv;
-      return NT(modular_image_inv(x));
+      typename MT_ET::Modular_image_representative modular_image_representative;
+      return NT(modular_image_representative(x));
     }
   };    
 };

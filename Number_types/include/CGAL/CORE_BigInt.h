@@ -155,7 +155,7 @@ class Modular_traits< ::CORE::BigInt > {
             return Residue_type(mi);
         }
     };
-    struct Modular_image_inv{
+    struct Modular_image_representative{
         NT operator()(const Residue_type& x){
             return NT(x.get_value());
         }

@@ -880,7 +880,7 @@ struct Quotient_modular_traits_base{
   typedef ::CGAL::Tag_false Is_modularizable;
   typedef ::CGAL::Null_functor Residue_type;
   typedef ::CGAL::Null_functor Modular_image;  
-  typedef ::CGAL::Null_functor Modular_image_inv;    
+  typedef ::CGAL::Null_functor Modular_image_representative;    
 };
 
 template<typename RT>
@@ -899,7 +899,7 @@ public:
       return num / den; 
     }
   };
-  struct Modular_image_inv{
+  struct Modular_image_representative{
     NT operator()(const Residue_type& x){
       return NT(x.get_value());
     }

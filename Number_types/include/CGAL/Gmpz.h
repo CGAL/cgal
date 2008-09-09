@@ -207,7 +207,7 @@ class Modular_traits< Gmpz > {
           return CGAL::Residue(int(mpz_get_si(tmp_1.mpz())));
         }
     };
-    struct Modular_image_inv{
+    struct Modular_image_representative{
         NT operator()(const Residue_type& x){
           return NT(x.get_value());
         }

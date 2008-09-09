@@ -79,7 +79,7 @@ void test_CR_for(const NT& f){
     typedef CGAL::Modular_traits<NT> MT;
     typedef typename CGAL::Modular_traits<NT>::Residue_type MNT;
     typename MT::Modular_image modular_image;
-    typename MT::Modular_image_inv modular_image_inv; 
+    typename MT::Modular_image_representative modular_image_representative; 
     
 
     typedef CGAL::Chinese_remainder_traits<NT> CRT; 
@@ -98,7 +98,7 @@ void test_CR_for(const NT& f){
     // init chinese remainder
     q = current_prime = CGAL::CGALi::primes[prime_index];
     CGAL::Residue::set_current_prime(current_prime); 
-    g_old = modular_image_inv(modular_image(f));
+    g_old = modular_image_representative(modular_image(f));
     pq= p = q;
     
         
@@ -118,7 +118,7 @@ void test_CR_for(const NT& f){
         CGAL::Residue::set_current_prime(current_prime); 
         p = current_prime;
         
-        chinese_remainder(q,g_old,p,modular_image_inv(modular_image(f)),pq,g);
+        chinese_remainder(q,g_old,p,modular_image_representative(modular_image(f)),pq,g);
        
         try{
             test = g != g_old;
