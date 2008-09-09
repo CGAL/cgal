@@ -161,20 +161,25 @@ public:
  */
 template<>
 class Modular_traits< ::CORE::BigRat > {
-    typedef ::CORE::BigInt Integer;
-    typedef Modular_traits<Integer> MT_int;
+  typedef ::CORE::BigInt Integer;
+  typedef Modular_traits<Integer> MT_int;
 public:
-    typedef ::CORE::BigRat NT;
-    typedef ::CGAL::Tag_true Is_modularizable;
-    typedef CGAL::Residue Residue_type;
-    struct Modular_image{
-        Residue_type operator()(const NT& rat){
-            MT_int::Modular_image int_mod;
-            Residue_type num = int_mod(CGAL_CORE_NUMERATOR(rat));
-            Residue_type den = int_mod(CGAL_CORE_DENOMINATOR(rat));
-            return num/den;
-        }
-    };  
+  typedef ::CORE::BigRat NT;
+  typedef ::CGAL::Tag_true Is_modularizable;
+  typedef CGAL::Residue Residue_type;
+  struct Modular_image{
+    Residue_type operator()(const NT& rat){
+      MT_int::Modular_image int_mod;
+      Residue_type num = int_mod(CGAL_CORE_NUMERATOR(rat));
+      Residue_type den = int_mod(CGAL_CORE_DENOMINATOR(rat));
+      return num/den;
+    }
+  };   
+  struct Modular_image_inv{
+    NT operator()(const Residue_type& x){
+      return NT(x.get_value());
+    }
+  };    
 };
 
 

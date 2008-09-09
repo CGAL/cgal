@@ -10,20 +10,34 @@
 #include <cassert>
 #include <CGAL/Modular_traits.h>
 #include <CGAL/Sqrt_extension.h>
+#include <CGAL/Polynomial.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/Lazy_exact_nt.h>
+//#include <CGAL/MP_Float.h>
+ 
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 #include <CGAL/leda_rational.h>
 #endif // CGAL_USE_LEDA
+
 #ifdef CGAL_USE_CORE
 #include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #endif // CGAL_USE_CORE
 
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/mpz_class.h>
+#include <CGAL/mpq_class.h>
+#endif // CGAL_USE_GMP
+
+
+
 #include <cstdlib>
 
 #include <boost/type_traits.hpp>
-
 
 template <class TESTT>
 void test_modular_traits(){
@@ -32,35 +46,91 @@ void test_modular_traits(){
         typedef CGAL::Modular_traits<TESTT> MT;
         typedef typename MT::Residue_type Residue_type;
         typedef typename MT::Modular_image Modular_image;
+        typedef typename MT::Modular_image_inv Modular_image_inv;
         typedef typename MT::Is_modularizable Is_modularizable;
         typedef typename MT::NT NT;
         
         assert(
-                !(::boost::is_same<CGAL::Null_functor,Modular_image>::value));
+            !(::boost::is_same<CGAL::Null_functor,Modular_image>::value));
         assert(
-                (::boost::is_same<CGAL::Tag_true,Is_modularizable>::value));
+            !(::boost::is_same<CGAL::Null_functor,Modular_image_inv>::value));
         assert(
-                (::boost::is_same<TESTT,NT>::value));
+            (::boost::is_same<CGAL::Tag_true,Is_modularizable>::value));
+        assert(
+            (::boost::is_same<TESTT,NT>::value));
         
         Residue::set_current_prime(7);
         Modular_image modular_image;
+        assert(modular_image(TESTT(10)+TESTT(10)) == Residue_type(-1)); 
+        assert(modular_image(TESTT(2) *TESTT(10)) == Residue_type(-1)); 
+        assert(modular_image(TESTT(20)) == Residue_type(-1)); 
+        assert(modular_image(TESTT(20)) == Residue_type(6));   
         assert(modular_image(TESTT(21)) == Residue_type(0));   
         assert(modular_image(TESTT(22)) == Residue_type(1));
         assert(modular_image(TESTT(777777722)) == Residue_type(1));
+
+        Modular_image_inv modular_image_inv;
+        assert(modular_image_inv(modular_image(TESTT(20)))
+            == TESTT(-1)); 
 }
 
 int main()
 {   
     test_modular_traits<int>();
+   
 #ifdef CGAL_USE_LEDA
     test_modular_traits<leda::integer>();
     test_modular_traits<leda::rational>();
-    test_modular_traits<CGAL::Sqrt_extension< leda::integer, leda::integer > >();
+    test_modular_traits<CGAL::Polynomial< leda::integer > >();
+    test_modular_traits<CGAL::Polynomial< leda::rational > >();
+    test_modular_traits<CGAL::Quotient< leda::integer > >();
+    test_modular_traits<CGAL::Lazy_exact_nt< leda::integer > >();
+    test_modular_traits<CGAL::Sqrt_extension< leda::integer , leda::integer > >();
 #endif
 #ifdef CGAL_USE_CORE
     test_modular_traits<CORE::BigInt>();
     test_modular_traits<CORE::BigRat>();
-    test_modular_traits<CGAL::Sqrt_extension< CORE::BigInt, CORE::BigInt > >();
+    test_modular_traits<CGAL::Polynomial< CORE::BigInt > >();
+    test_modular_traits<CGAL::Polynomial< CORE::BigRat > >();
+    test_modular_traits<CGAL::Quotient< CORE::BigInt > >();
+    test_modular_traits<CGAL::Lazy_exact_nt< CORE::BigInt > >();
+    test_modular_traits<CGAL::Sqrt_extension< CORE::BigInt , CORE::BigInt > >();
 #endif
 
+#ifdef CGAL_USE_GMP
+    test_modular_traits<CGAL::Gmpz>();
+    test_modular_traits<CGAL::Gmpq>();
+    test_modular_traits< mpz_class >();
+    test_modular_traits< mpq_class >();
+#endif
+    
+    // test Sqrt_extension
+    test_modular_traits<CGAL::Sqrt_extension< int , int > >();
+    assert(
+        (!CGAL::Modular_traits<CGAL::Sqrt_extension<double,double> >
+            ::Is_modularizable::value));
+
+    // test Polynomial 
+    test_modular_traits<CGAL::Polynomial< int > >();
+    assert(
+        !CGAL::Modular_traits<CGAL::Polynomial<double> >
+        ::Is_modularizable::value);
+    
+    // test Quotient
+    test_modular_traits<CGAL::Quotient< int > >();
+    assert(
+        !CGAL::Modular_traits<CGAL::Quotient<double> >
+        ::Is_modularizable::value);
+    assert(
+        !CGAL::Modular_traits<CGAL::Quotient<CGAL::Polynomial<int> > >
+        ::Is_modularizable::value);
+
+    // test_modular_traits<CGAL::MP_Float >();
+    
+    test_modular_traits< CGAL::Lazy_exact_nt<int> >();
+    assert(
+        !CGAL::Modular_traits<CGAL::Lazy_exact_nt< double > >
+        ::Is_modularizable::value);
+    
+    
 }

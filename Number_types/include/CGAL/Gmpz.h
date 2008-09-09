@@ -37,6 +37,7 @@
 #include <locale>
 
 #include <CGAL/Root_of_traits.h>
+#include <CGAL/Modular_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -185,6 +186,32 @@ struct Needs_parens_as_product<Gmpz> {
   bool operator()(const Gmpz& x) {
     return CGAL_NTS is_negative(x);
   }
+};
+
+
+/*! \ingroup NiX_Modular_traits_spec
+ *  \brief a model of concept ModularTraits, 
+ *  specialization of NiX::Modular_traits. 
+ */
+template<>
+class Modular_traits< Gmpz > {
+  typedef Residue RES;
+ public:
+    typedef Gmpz NT;
+    typedef CGAL::Tag_true Is_modularizable;
+    typedef Residue Residue_type;
+
+    struct Modular_image{
+        Residue_type operator()(const NT& a){
+          NT tmp_1(a % NT(RES::get_current_prime()));
+          return CGAL::Residue(int(mpz_get_si(tmp_1.mpz())));
+        }
+    };
+    struct Modular_image_inv{
+        NT operator()(const Residue_type& x){
+          return NT(x.get_value());
+        }
+    };    
 };
 
 CGAL_END_NAMESPACE

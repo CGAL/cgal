@@ -1354,6 +1354,46 @@ print(std::ostream &os, const CGAL::Lazy_exact_nt< Root_of_2<RT> > &r)
   print(os,r.exact());
 }
 
+namespace INTERN_LAZY_EXACT_NT {
+template< typename ET , typename Tag>
+class Modular_traits_base{
+public:
+  typedef Lazy_exact_nt<ET> NT;
+  typedef ::CGAL::Tag_false Is_modularizable;
+  typedef ::CGAL::Null_functor Residue_type;
+  typedef ::CGAL::Null_functor Modular_image;  
+  typedef ::CGAL::Null_functor Modular_image_inv;    
+};
+
+template< typename ET >
+class Modular_traits_base<ET, Tag_true>{
+  typedef Modular_traits<ET> MT_ET;
+public:
+  typedef Lazy_exact_nt<ET> NT;
+  typedef CGAL::Tag_true Is_modularizable;
+  typedef typename MT_ET::Residue_type Residue_type;
+
+  struct Modular_image{
+    Residue_type operator()(const NT& a){
+      typename MT_ET::Modular_image modular_image;
+      return modular_image(a.exact());
+    }
+  };
+  struct Modular_image_inv{
+    NT operator()(const Residue_type& x){
+      typename MT_ET::Modular_image_inv modular_image_inv;
+      return NT(modular_image_inv(x));
+    }
+  };    
+};
+} // namespace INTERN_LAZY_EXACT_NT
+
+template < typename ET > 
+class Modular_traits<Lazy_exact_nt<ET> >
+  :public INTERN_LAZY_EXACT_NT::Modular_traits_base
+<ET,typename Modular_traits<ET>::Is_modularizable>{};
+
+
 #undef CGAL_double
 #undef CGAL_int
 #undef CGAL_To_interval

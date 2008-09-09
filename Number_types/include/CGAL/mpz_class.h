@@ -26,6 +26,7 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/gmpxx_coercion_traits.h>
+#include <CGAL/Modular_traits.h>
 
 
 // This file gathers the necessary adaptors so that the following
@@ -291,6 +292,30 @@ public:
             return std::pair<double, double>(i, s);
         }
     };
+};
+
+/*! \ingroup NiX_Modular_traits_spec
+ *  \brief a model of concept ModularTraits, 
+ *  specialization of NiX::Modular_traits. 
+ */
+template<>
+class Modular_traits< mpz_class > {
+public:
+  typedef mpz_class NT;
+  typedef CGAL::Tag_true Is_modularizable;
+  typedef Residue Residue_type;
+
+  struct Modular_image{
+    Residue_type operator()(const mpz_class& a){
+      NT tmp(CGAL::mod(a,NT(Residue::get_current_prime())));
+      return CGAL::Residue(int(mpz_get_si(tmp.get_mpz_t())));
+    }
+  };
+  struct Modular_image_inv{
+    NT operator()(const Residue_type& x){
+      return NT(x.get_value());
+    }
+  };    
 };
 
 
