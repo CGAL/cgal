@@ -25,6 +25,10 @@ if( GMP_FOUND AND MPFR_FOUND )
   
   add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} )
   
+  add_dependencies( CGAL_CORE CGAL )
+   
+  target_link_libraries( CGAL_CORE ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} )
+  
   set_target_properties(CGAL_CORE PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
   
   # ${CGAL_CORE_BASENAME} comes defined from FindCGAL_CORE.cmake

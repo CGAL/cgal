@@ -25,7 +25,7 @@ add_library(CGAL_PDB "all_files.cpp")
 
 set_target_properties(CGAL_PDB PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
 
-target_link_libraries( CGAL_PDB ${CGAL_3RD_PARTY_LIBRARIES} )
+target_link_libraries( CGAL_PDB ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} )
         
 add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} )
 
