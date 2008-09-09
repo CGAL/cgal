@@ -27,7 +27,7 @@ MACRO (QT3_GENERATE_MOC infile outfile)
     GET_FILENAME_COMPONENT(outfile ${outfile} ABSOLUTE)
 
     ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
-        COMMAND ${QT_MOC_EXECUTABLE}
+        COMMAND ${QT3_MOC_EXECUTABLE}
 #         ARGS ${moc_includes} -o ${outfile} ${infile}
         ARGS -o ${outfile} ${infile}
         DEPENDS ${infile})
@@ -47,7 +47,7 @@ ENDMACRO (QT3_GENERATE_MOC)
 #
 #         SET(outfile ${CMAKE_CURRENT_BINARY_DIR}/moc_${outfile}.cxx)
 #         ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
-#             COMMAND ${QT_MOC_EXECUTABLE}
+#             COMMAND ${QT3_MOC_EXECUTABLE}
 #             ARGS ${moc_includes} -o ${outfile} ${it}
 #             DEPENDS ${it})
 #         SET(${outfiles} ${${outfiles}} ${outfile})
@@ -63,7 +63,7 @@ ENDMACRO (QT3_GENERATE_MOC)
 #     GET_FILENAME_COMPONENT(infile ${it} ABSOLUTE)
 #     SET(outfile ${CMAKE_CURRENT_BINARY_DIR}/ui_${outfile}.h)
 #     ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
-#         COMMAND ${QT_UIC_EXECUTABLE}
+#         COMMAND ${QT3_UIC_EXECUTABLE}
 #         ARGS -o ${outfile} ${infile}
 #         MAIN_DEPENDENCY ${infile})
 #     SET(${outfiles} ${${outfiles}} ${outfile})
@@ -89,7 +89,7 @@ MACRO (QT3_ADD_RESOURCES outfiles )
         SET(_RC_DEPENDS ${_RC_DEPENDS} "${rc_path}/${_RC_FILE}")
     ENDFOREACH(_RC_FILE)
     ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
-        COMMAND ${QT_RCC_EXECUTABLE}
+        COMMAND ${QT3_RCC_EXECUTABLE}
         ARGS -name ${outfilename} -o ${outfile} ${infile}
         MAIN_DEPENDENCY ${infile}
         DEPENDS ${_RC_DEPENDS})
@@ -154,7 +154,7 @@ MACRO(QT3_AUTOMOC)
 #                         MESSAGE(STATUS "QT3_AUTOMOC: add rule ${_moc} <- ${moc_source}") # debug
                      include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
                      ADD_CUSTOM_COMMAND(OUTPUT ${_moc}
-                                        COMMAND ${QT_MOC_EXECUTABLE}
+                                        COMMAND ${QT3_MOC_EXECUTABLE}
 #                                          ARGS ${_moc_INCS} ${_header} -o ${_moc}
                                         ${moc_source} -o ${_moc}
                                         DEPENDS ${moc_source}

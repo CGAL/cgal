@@ -21,10 +21,10 @@ assert(CGAL_BINARY_DIR)
 find_package(OpenGL)
 find_package(Qt3)
 
-if( QT_FOUND AND OPENGL_FOUND )
+if( QT3_FOUND AND OPENGL_FOUND )
 
     get_dependency_version(OPENGL OpenGL)
-    get_dependency_version(QT)
+    get_dependency_version(QT3)
     
     set( CGAL_USE_QT3 TRUE ) 
     add_config_flag( CGAL_USE_QT3 )
@@ -32,15 +32,15 @@ if( QT_FOUND AND OPENGL_FOUND )
     message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
     message( STATUS "OpenGL definitions: ${OPENGL_DEFINITIONS}" )
-    message( STATUS "Qt3 include:        ${QT_INCLUDE_DIR}" )
-    message( STATUS "Qt3 libraries:      ${QT_LIBRARIES}" )
-    message( STATUS "Qt3 definitions:    ${QT_DEFINITIONS}" )
-    message( STATUS "moc executable:     ${QT_MOC_EXECUTABLE}" )
-    message( STATUS "uic executable:     ${QT_UIC_EXECUTABLE}" )
+    message( STATUS "Qt3 include:        ${QT3_INCLUDE_DIR}" )
+    message( STATUS "Qt3 libraries:      ${QT3_LIBRARIES}" )
+    message( STATUS "Qt3 definitions:    ${QT3_DEFINITIONS}" )
+    message( STATUS "moc executable:     ${QT3_MOC_EXECUTABLE}" )
+    message( STATUS "uic executable:     ${QT3_UIC_EXECUTABLE}" )
     
-    cache_set(CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS ${QT_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
-    cache_set(CGAL_Qt3_3RD_PARTY_LIBRARIES    ${QT_LIBRARIES}   ${OPENGL_LIBRARIES}   )
-    cache_set(CGAL_Qt3_3RD_PARTY_DEFINITIONS  ${QT_DEFINITIONS} ${OPENGL_DEFINITIONS} )
+    cache_set(CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS ${QT3_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
+    cache_set(CGAL_Qt3_3RD_PARTY_LIBRARIES    ${QT3_LIBRARIES}   ${OPENGL_LIBRARIES}   )
+    cache_set(CGAL_Qt3_3RD_PARTY_DEFINITIONS  ${QT3_DEFINITIONS} ${OPENGL_DEFINITIONS} )
     
     include(Qt3Macros)
        
@@ -94,7 +94,7 @@ if( QT_FOUND AND OPENGL_FOUND )
     
     set_target_properties(CGAL_Qt3 PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
     
-    target_link_libraries( CGAL_Qt3 ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt3_3RD_PARTY_LIBRARIES} )
+    target_link_libraries( CGAL_Qt3 ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt3_3RD_PARTY_LIBRARIES} )
         
     add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt3_3RD_PARTY_DEFINITIONS} )
     
