@@ -284,8 +284,9 @@ protected:
   bool _is_simple (const Polygon_with_holes_2& pgn)
   {
     // Construct a container of all boundary curves.
-	 Traits_2     traits;    
-    Cci_pair         itr_pair = construct_curves_func (traits.construct_outer_boundary_object()(pgn));
+	 Traits_2     traits;
+	 Polygon_2 pgn2 = traits.construct_outer_boundary_object()(pgn);   
+    Cci_pair     itr_pair = construct_curves_func(pgn2);
     
     std::list<X_monotone_curve_2>  curves;
     std::copy (itr_pair.first, itr_pair.second,
@@ -324,8 +325,9 @@ protected:
   bool _has_valid_orientation (const Polygon_with_holes_2& pgn)
   {
     // Check the orientation of the outer boundary.
-	 Traits_2     traits;    
-    Cci_pair         itr_pair = construct_curves_func (traits.construct_outer_boundary_object()(pgn));
+    Traits_2     traits;
+    Polygon_2 pgn2 = traits.construct_outer_boundary_object()(pgn);
+    Cci_pair itr_pair = construct_curves_func (pgn2);
 
     if ((itr_pair.first != itr_pair.second) && 
         check_orientation_func (itr_pair.first,  
