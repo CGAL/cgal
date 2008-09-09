@@ -12,14 +12,6 @@
 
 #include <CGAL/basic.h>
 
-// if QT is not installed, a message will be issued at runtime.
-#ifndef CGAL_USE_QT
-#include <iostream>
-int main() {
-  std::cout << "Sorry, this demo needs QT..." << std::endl;
-  return 0;
-}
-#else
 #include <CGAL/MP_Float.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
@@ -421,4 +413,3 @@ main(int argc, char **argv)
   return app.exec();
 }
 
-#endif // CGAL_USE_QT
