@@ -37,13 +37,13 @@
 #include <CGAL/array.h>
 
 namespace CGAL {
-namespac Qt {
+namespace Qt {
 
 template <typename K>
 class GraphicsViewIsoRectangleInput : public GraphicsViewInput
 {
 public:
-  GraphicsViewIsoRectangleInput(QGraphicsScene* s); 
+  GraphicsViewIsoRectangleInput(QObject *parent, QGraphicsScene* s); 
   ~GraphicsViewIsoRectangleInput();
 
 protected:
@@ -62,7 +62,7 @@ private:
   typedef typename K::Point_2 Point_2;
   QPointF qp, qq, qr;
   Point_2 p, q, r;
-  QGraphicsRectItem rectItem;
+  QGraphicsRectItem *rectItem;
   QPointF rect_first_point;
   QGraphicsScene *scene_;  
   Converter<K> convert;
@@ -70,15 +70,14 @@ private:
 
 
 template <typename K>
-GraphicsViewIsoRectangleInput<K>::GraphicsViewIsoRectangleInput(QGraphicsScene* s)
-  : rectItem(new QGraphicsRectItem),scene_(s)
+GraphicsViewIsoRectangleInput<K>::GraphicsViewIsoRectangleInput(QObject *parent, QGraphicsScene* s)
+  : GraphicsViewInput(parent), rectItem(new QGraphicsRectItem), scene_(s)
 {
   rectItem->setBrush(QBrush());
   scene_->addItem(rectItem);
   rectItem->hide();
   rectItem->setZValue(10000);
 }
-
 
 template <typename K>
 GraphicsViewIsoRectangleInput<K>::~GraphicsViewIsoRectangleInput()
@@ -92,7 +91,7 @@ void
 GraphicsViewIsoRectangleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
   // todo: only do this if no modifiers are pressed at the same time
-  if(mouseEvent->button() == ::Qt::LeftButton) {
+  if(event->button() == ::Qt::LeftButton) {
     if(rectItem->isVisible()) {
       // we have clicked twice
       emit generate(CGAL::make_object(convert(rectItem->rect())));
@@ -148,6 +147,8 @@ GraphicsViewIsoRectangleInput<K>::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
   }
 } 
+
+} // namespace Qt
 
 } // namespace CGAL
 

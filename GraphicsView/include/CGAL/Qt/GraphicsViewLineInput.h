@@ -41,7 +41,7 @@ template <typename K>
 class GraphicsViewLineInput : public GraphicsViewInput
 {
 public:
-  GraphicsViewLineInput(QGraphicsScene* s);
+  GraphicsViewLineInput(QObject *parent, QGraphicsScene* s);
 
 protected:
     
@@ -88,8 +88,8 @@ LineInput_2<K>::boundingRect()
 
 
 template <typename K>
-GraphicsViewLineInput<K>::GraphicsViewLineInput(QGraphicsScene* s)
-  : second(false), scene_(s)
+GraphicsViewLineInput<K>::GraphicsViewLineInput(QObject *parent, QGraphicsScene* s)
+  : GraphicsViewInput(parent), second(false), scene_(s)
 {}
 
 

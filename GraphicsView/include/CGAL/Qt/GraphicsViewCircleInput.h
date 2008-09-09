@@ -43,7 +43,7 @@ template <typename K>
 class GraphicsViewCircleInput : public GraphicsViewInput
 {
 public:
-  GraphicsViewCircleInput(QGraphicsScene* s, int pointsOnCircle=1); 
+  GraphicsViewCircleInput(QObject *parent, QGraphicsScene* s, int pointsOnCircle=1); 
 
 protected:
     
@@ -70,8 +70,8 @@ private:
 
 
 template <typename K>
-GraphicsViewCircleInput<K>::GraphicsViewCircleInput(QGraphicsScene* s, int pointsOnCircle)
-  : qcircle(new QGraphicsEllipseItem()), scene_(s), m_pointsOnCircle(pointsOnCircle), count(0)
+GraphicsViewCircleInput<K>::GraphicsViewCircleInput(QObject *parent, QGraphicsScene* s, int pointsOnCircle)
+  : GraphicsViewInput(parent), qcircle(new QGraphicsEllipseItem()), scene_(s), m_pointsOnCircle(pointsOnCircle), count(0)
 {
   qcircle->hide();
   s->addItem(qcircle);
