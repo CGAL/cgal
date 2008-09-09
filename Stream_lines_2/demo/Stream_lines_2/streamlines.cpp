@@ -3,16 +3,6 @@
 #include <CGAL/basic.h>
 #include <iostream>
 
-#ifndef CGAL_USE_QT
-
-int main(int, char*)
-{
-  std::cout << "Sorry, this demo needs QT...";
-  std::cout << std::endl;
-  return 0;
-}
-
-#else
 #include <qapplication.h>
 #include <qfont.h>
 #include <qpushbutton.h>
@@ -611,4 +601,3 @@ int main(int argc, char *argv[])
   return app.exec();
 }
 
-#endif

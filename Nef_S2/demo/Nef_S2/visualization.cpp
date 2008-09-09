@@ -19,11 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifndef CGAL_USE_QT
-#include <iostream>
-int main(int, char*){
-  std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
-#else
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_S2.h>
@@ -47,4 +42,3 @@ int main(int argc, char* argv[]) {
   w->show();
   return a.exec();
 }
-#endif
