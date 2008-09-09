@@ -19,7 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "polygon_2_toolbar.h"
 
@@ -120,4 +119,3 @@ Polygon_toolbar::Polygon_toolbar(CGAL::Qt_widget *w, QMainWindow *mw) :
 
 #include "polygon_2_toolbar.moc"
 
-#endif

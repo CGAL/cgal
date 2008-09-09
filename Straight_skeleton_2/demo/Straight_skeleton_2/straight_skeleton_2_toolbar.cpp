@@ -18,7 +18,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "cgal_types.h"
 #include "ss_types.h"
@@ -70,4 +69,3 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw) :
 
 #include "straight_skeleton_2_toolbar.moc"
 
-#endif

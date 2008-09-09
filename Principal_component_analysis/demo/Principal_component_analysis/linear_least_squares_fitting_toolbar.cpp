@@ -19,7 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>
 #include "linear_least_squares_fitting_toolbar.h"
@@ -64,4 +63,3 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
 
 #include "linear_least_squares_fitting_toolbar.moc"
 
-#endif

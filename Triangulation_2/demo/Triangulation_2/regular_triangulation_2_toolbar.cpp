@@ -19,7 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>
 #include "regular_triangulation_2_toolbar.h"
@@ -91,4 +90,3 @@
 
 #include "regular_triangulation_2_toolbar.moc"
 
-#endif

@@ -19,7 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "partition_2_toolbar_layers.h"
 #include "partition_2_layers.h"
@@ -122,4 +121,3 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
 
 #include "partition_2_toolbar_layers.moc"
 
-#endif

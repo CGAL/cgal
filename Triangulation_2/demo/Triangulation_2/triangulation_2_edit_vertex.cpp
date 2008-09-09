@@ -19,7 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "triangulation_2_edit_vertex.h"
 
@@ -39,4 +38,3 @@ void triangulation_2_edit_vertex_helper::stateChanged(int i){
 
 #include "triangulation_2_edit_vertex.moc"
 
-#endif

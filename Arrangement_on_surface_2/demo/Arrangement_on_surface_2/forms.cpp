@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -517,4 +516,3 @@ QDialog( parent, name, modal, f )
 
 #include "forms.moc"
 
-#endif

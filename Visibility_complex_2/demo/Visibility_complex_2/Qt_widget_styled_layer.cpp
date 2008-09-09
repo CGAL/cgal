@@ -1,6 +1,5 @@
 #include<CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 #include "Qt_widget_styled_layer.h"
 
 namespace CGAL {
@@ -102,4 +101,3 @@ namespace CGAL {
 
 // moc_source_file: Qt_widget_styled_layer.h
 #include "Qt_widget_styled_layer.moc"
-#endif

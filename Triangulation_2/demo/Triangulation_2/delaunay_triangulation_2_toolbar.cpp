@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>
 #include "delaunay_triangulation_2_toolbar.h"
@@ -92,4 +91,3 @@
 
 #include "delaunay_triangulation_2_toolbar.moc"
 
-#endif

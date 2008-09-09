@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "constrained_delaunay_triangulation_2_toolbar_layers.h"
 
@@ -86,4 +85,3 @@
 
 #include "constrained_delaunay_triangulation_2_toolbar_layers.moc"
 
-#endif

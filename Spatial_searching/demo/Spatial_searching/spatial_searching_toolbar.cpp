@@ -19,7 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>
 #include "spatial_searching_toolbar.h"
@@ -100,4 +99,3 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
 
 #include "spatial_searching_toolbar.moc"
 
-#endif

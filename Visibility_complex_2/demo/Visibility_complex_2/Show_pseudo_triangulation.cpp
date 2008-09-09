@@ -1,6 +1,5 @@
 #include<CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 #include "Show_pseudo_triangulation.h"
 
 namespace CGAL {
@@ -39,4 +38,3 @@ namespace CGAL {
 
 // moc_source_file: Show_pseudo_triangulation.h
 #include "Show_pseudo_triangulation.moc"
-#endif

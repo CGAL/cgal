@@ -18,7 +18,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "cgal_types.h"
 #include "ss_types.h"
@@ -110,4 +109,3 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget*        w
 
 #include "straight_skeleton_2_toolbar_layers.moc"
 
-#endif

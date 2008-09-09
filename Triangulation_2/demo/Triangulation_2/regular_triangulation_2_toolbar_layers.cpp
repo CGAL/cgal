@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "regular_triangulation_2_toolbar_layers.h"
 
@@ -87,4 +86,3 @@
 
 #include "regular_triangulation_2_toolbar_layers.moc"
 
-#endif

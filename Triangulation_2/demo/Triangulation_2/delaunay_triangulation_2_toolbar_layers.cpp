@@ -20,7 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "delaunay_triangulation_2_toolbar_layers.h"
 
@@ -178,4 +177,3 @@ static const char * circum_circle_small_xpm[] = {
 
 #include "delaunay_triangulation_2_toolbar_layers.moc"
 
-#endif

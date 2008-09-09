@@ -19,7 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "Qt_widget_move_list_point.h"
 
@@ -34,4 +33,3 @@ void Qt_widget_movepoint_helper::stateChanged(int i){
 
 #include "Qt_widget_move_list_point.moc"
 
-#endif

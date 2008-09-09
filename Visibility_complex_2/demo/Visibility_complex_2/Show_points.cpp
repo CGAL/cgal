@@ -1,6 +1,5 @@
 #include<CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 #include "Show_points.h"
 
 namespace CGAL {
@@ -46,5 +45,4 @@ namespace CGAL {
 
 // moc_source_file: Show_points.h
 #include "Show_points.moc"
-#endif
 

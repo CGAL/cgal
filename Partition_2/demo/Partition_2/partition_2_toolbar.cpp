@@ -19,7 +19,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_QT
 
 #include "partition_2_toolbar.h"
 
@@ -68,4 +67,3 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw) :
 
 #include "partition_2_toolbar.moc"
 
-#endif
