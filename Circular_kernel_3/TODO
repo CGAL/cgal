@@ -1,11 +1,3 @@
-prioritaire ============
-
-copyright
-
-remplacer les std::acos(-1.) par CGAL_PI
-
-cercle par 3 points
-
 ============
 
 to think about:
