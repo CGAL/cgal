@@ -26,7 +26,6 @@ include(${CGAL_USE_FILE})
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTOPENGL TRUE )
 find_package(Qt4 QUIET)
-message(STATUS "QT_DEFINITIONS=${QT_DEFINITIONS}")
 
 include_directories (BEFORE ../../include)
 
