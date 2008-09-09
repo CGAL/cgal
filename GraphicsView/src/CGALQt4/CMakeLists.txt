@@ -65,7 +65,7 @@ if( QT4_FOUND )
     # qrc files (resources files, that contain icons, at least)
     qt4_add_resources ( RESOURCE_FILES ../../demo/resources/CGAL.qrc ../../demo/icons/Input.qrc ../../demo/icons/File.qrc ../../demo/icons/Triangulation_2.qrc)
 
-    set( CGAL_QT4_BASENAME CGAL-Qt4 )
+    set( CGAL_Qt4_BASENAME CGAL-Qt4 )
 
     add_library( CGAL_Qt4 debug.cpp ${moc_files} GraphicsViewNavigation.cpp GraphicsViewPolylineInput.cpp DemosMainWindow.cpp ${RESOURCE_FILES} )
     
