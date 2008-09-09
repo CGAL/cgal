@@ -28,9 +28,6 @@ if( QT_FOUND )
     get_dependency_version(OPENGL OpenGL)
     get_dependency_version(QT)
     
-    set( CGAL_USE_QT3 TRUE ) 
-    add_config_flag( CGAL_USE_QT3 )
-      
     message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
     message( STATUS "OpenGL definitions: ${OPENGL_DEFINITIONS}" )
