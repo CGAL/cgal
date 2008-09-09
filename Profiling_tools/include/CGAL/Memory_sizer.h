@@ -131,6 +131,9 @@ private:
     // -- Samuel Hornus
 
     task_t task = MACH_PORT_NULL;
+		// The task_for_pid() seems to be time consuming (looking at the source
+		// in xnu-source/bsd/vm/vm_unix.c
+		// TODO: so it may be a good idea to cache the resulting 'task'
     if (task_for_pid(current_task(), getpid(), &task) != KERN_SUCCESS)
         return 0;
 		// It seems to me that after calling :
