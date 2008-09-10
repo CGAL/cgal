@@ -69,7 +69,7 @@ if( QT4_FOUND )
 
     set( CGAL_Qt4_BASENAME CGAL-Qt4 )
 
-    add_library( CGAL_Qt4 debug.cpp ${moc_files} GraphicsViewNavigation.cpp GraphicsViewPolylineInput.cpp DemosMainWindow.cpp ${RESOURCE_FILES} )
+    add_library( CGAL_Qt4 debug.cpp ${mocfiles} GraphicsViewNavigation.cpp GraphicsViewPolylineInput.cpp DemosMainWindow.cpp ${RESOURCE_FILES} )
     
     if ( NOT IS_TOP_LEVEL )
       add_dependencies( CGAL_Qt4 CGAL )
