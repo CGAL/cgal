@@ -21,7 +21,7 @@ assert(CGAL_BINARY_DIR)
 find_package(OpenGL QUIET )
 find_package(Qt3    QUIET )
 
-if( QT_FOUND )
+if( QT3_FOUND )
 
   if( OPENGL_FOUND )
 
@@ -31,15 +31,15 @@ if( QT_FOUND )
     message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
     message( STATUS "OpenGL definitions: ${OPENGL_DEFINITIONS}" )
-    message( STATUS "Qt3 include:        ${QT_INCLUDE_DIR}" )
-    message( STATUS "Qt3 libraries:      ${QT_LIBRARIES}" )
-    message( STATUS "Qt3 definitions:    ${QT_DEFINITIONS}" )
-    message( STATUS "moc executable:     ${QT_MOC_EXECUTABLE}" )
-    message( STATUS "uic executable:     ${QT_UIC_EXECUTABLE}" )
+    message( STATUS "Qt3 include:        ${QT3_INCLUDE_DIR}" )
+    message( STATUS "Qt3 libraries:      ${QT3_LIBRARIES}" )
+    message( STATUS "Qt3 definitions:    ${QT3_DEFINITIONS}" )
+    message( STATUS "moc executable:     ${QT3_MOC_EXECUTABLE}" )
+    message( STATUS "uic executable:     ${QT3_UIC_EXECUTABLE}" )
     
-    cache_set(CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS ${QT_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
-    cache_set(CGAL_Qt3_3RD_PARTY_LIBRARIES    ${QT_LIBRARIES}   ${OPENGL_LIBRARIES}   )
-    cache_set(CGAL_Qt3_3RD_PARTY_DEFINITIONS  ${QT_DEFINITIONS} ${OPENGL_DEFINITIONS} )
+    cache_set(CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS ${QT3_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
+    cache_set(CGAL_Qt3_3RD_PARTY_LIBRARIES    ${QT3_LIBRARIES}   ${OPENGL_LIBRARIES}   )
+    cache_set(CGAL_Qt3_3RD_PARTY_DEFINITIONS  ${QT3_DEFINITIONS} ${OPENGL_DEFINITIONS} )
     
     include(Qt3Macros)
        
