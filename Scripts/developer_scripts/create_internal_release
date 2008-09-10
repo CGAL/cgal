@@ -300,7 +300,7 @@ sub CreateDemoTestDirs()
     chdir "$RELEASEDIR/$VERSION" or die;
     chdir 'demo' or return;
     foreach $DIR (glob("*")) {
-	if ( -d $DIR -a "$DIR" != "icons" -a "$DIR" != "resources" ) {
+	if ( -d $DIR -&& "$DIR" != "icons" && "$DIR" != "resources" ) {
 	    dircopy("$DIR", "../test/${DIR}_Demo");
 	}
     }
