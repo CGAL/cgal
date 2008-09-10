@@ -277,11 +277,12 @@ EOF
 sub CreateExampleTestDirs()
 {
     my $DIR;
-    print "Creating $VERSION/test/example directories ...\n";
     chdir "$RELEASEDIR/$VERSION" or die;
     chdir 'examples' or return;
+    print "Creating $VERSION/test/example directories ...\n";
     foreach $DIR (glob("*")) {
 	if ( -d $DIR ) {
+	    print "Creating test/${DIR}_Examples ...\n";
 	    dircopy("$DIR", "../test/${DIR}_Examples");
 	}
     }
@@ -296,11 +297,12 @@ sub CreateExampleTestDirs()
 sub CreateDemoTestDirs()
 {
     my $DIR;
-    print "Creating $VERSION/test/demo directories ...\n";
     chdir "$RELEASEDIR/$VERSION" or die;
     chdir 'demo' or return;
+    print "Creating $VERSION/test/demo directories ...\n";
     foreach $DIR (glob("*")) {
-	if ( -d $DIR && "$DIR" != "icons" && "$DIR" != "resources" ) {
+	if ( (-d $DIR) && ("$DIR" ne "icons") && ("$DIR" ne "resources") ) {
+	    print "Creating test/${DIR}_Demo ...\n";
 	    dircopy("$DIR", "../test/${DIR}_Demo");
 	}
     }
