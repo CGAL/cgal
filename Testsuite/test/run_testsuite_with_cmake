@@ -170,6 +170,8 @@ run_testsuite()
   done
 }
 
+[ x"$1" = x"icons" -o x"$1" = x"resources" ] && exit 0
+
 if [ -z "$1" ] ; then
   TEST_DIRECTORIES=`ls`
 else
