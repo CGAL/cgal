@@ -27,7 +27,6 @@
 #include "TriangulationCircumcircle.h"
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
-#include <CGAL/Qt/PointContainerGraphicsItem.h>
 
 // the two base classes
 #include "ui_Constrained_Delaunay_triangulation_2.h"
@@ -118,7 +117,6 @@ private:
   std::list<Point_2> seeds;
 
   CGAL::Qt::ConstrainedTriangulationGraphicsItem<CDT> * dgi;
-  CGAL::Qt::PointContainerGraphicsItem<std::list<Point_2> > * sgi;
 
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
   CGAL::Qt::TriangulationCircumcircle<CDT> *tcc;
