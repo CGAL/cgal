@@ -69,7 +69,7 @@ enum Fig_line_style
   FIG_DASH_TRIPLE_DOTTED = 5
 };
 
-#define CGAL_FIG_DEFAULT_STYLE_VALUE    4.0
+#define FIG_DEFAULT_STYLE_VALUE   4.0
     
 /*!
  * FIG fill styles.
@@ -403,6 +403,22 @@ public:
   /// \name Accessing drawing properties.
   //@{
   
+  /*!
+   * Get the workspace bounding rectangle.
+   */
+  Iso_rectangle_2 bounding_rect() const
+  {
+      return (_bound_rect);
+  }
+
+  /*!
+   * Get the physical width of the fig
+   */  
+  int width () const
+  {
+    return _width;
+  }
+
   /*!
    * Get the depth.
    */
@@ -1440,6 +1456,8 @@ protected:
                        const Fig_color&      fill_color,
                        const Fig_fill_style& fill_style) 
   {
+    
+
     // Write the ellipse properties.
     _ofile << "1 1 "                      // Desginate an ellipse.
            << line_style << ' ' 
