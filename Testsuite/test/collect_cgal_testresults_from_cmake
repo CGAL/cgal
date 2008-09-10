@@ -60,7 +60,7 @@ parse_shared_or_static()
 {
   if [ -f "${PLATFORM_BUILD_LOGFILE}" ] ; then
   
-    if grep "Building shared libraries"  ${PLATFORM_BUILD_LOGFILE}; then
+    if grep "Building shared libraries"  ${PLATFORM_BUILD_LOGFILE} >/dev/null 2>&1; then
       shared_or_static='shared'  
     else
       shared_or_static='static'  
@@ -96,7 +96,7 @@ parse_lib_building_results()
       y_or_no='y'
     fi
      
-    marker_beg=`grep -e "${target}.dir/depend$" ${PLATFORM_BUILD_LOGFILE}`
+    marker_beg=`grep -e "${target}.dir/depend$" ${PLATFORM_BUILD_LOGFILE} | head -1`
     
     if [ -n "${marker_beg}" ]; then
   
@@ -125,7 +125,7 @@ parse_lib_building_results()
 
 output_main_logs()
 {
-  mkdir "Installation"
+  [ -e Installation ] || mkdir "Installation"
   
   INSTALLATION_TEST_REPORT="Installation/$TEST_REPORT"
  
