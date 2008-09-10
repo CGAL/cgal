@@ -196,21 +196,21 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
 } // namespace CGALi
 
 
-template< class COEFF, class ROOT>
-class Algebraic_structure_traits< Sqrt_extension< COEFF, ROOT > >
+template< class COEFF_, class ROOT_>
+class Algebraic_structure_traits< Sqrt_extension< COEFF_, ROOT_ > >
     : public CGALi::Sqrt_extension_algebraic_structure_traits_base<
-      Sqrt_extension< COEFF, ROOT >,
-      typename Algebraic_structure_traits< COEFF >::Algebraic_category > {
+      Sqrt_extension< COEFF_, ROOT_ >,
+      typename Algebraic_structure_traits< COEFF_ >::Algebraic_category > {
 public:
-    typedef Sqrt_extension< COEFF, ROOT > Type;
+    typedef Sqrt_extension< COEFF_, ROOT_ > Type;
 
     // Tag_true if COEFF and ROOT are exact
     typedef typename ::boost::mpl::if_c<
-       bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<ROOT >::Is_exact,::CGAL::Tag_true>::value )&&
-       bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<COEFF>::Is_exact,::CGAL::Tag_true>::value )
+       bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<ROOT_ >::Is_exact,::CGAL::Tag_true>::value )&&
+       bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<COEFF_>::Is_exact,::CGAL::Tag_true>::value )
            ,::CGAL::Tag_true,::CGAL::Tag_false>::type Is_exact;
 
-    typedef typename Algebraic_structure_traits<COEFF>::Is_numerical_sensitive
+    typedef typename Algebraic_structure_traits<COEFF_>::Is_numerical_sensitive
     Is_numerical_sensitive;
 };
 
