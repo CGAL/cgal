@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# If there is already a cgal_test_with_cmake script in the current directory, execute it.
+[ ! -x cgal_test_with_cmake ] && echo "No cgal_test_with_cmake in current directory, creating it" && create_cgal_test_with_cmake
+
+./cgal_test_with_cmake $@
