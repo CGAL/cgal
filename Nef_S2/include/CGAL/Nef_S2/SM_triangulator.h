@@ -337,23 +337,23 @@ void SM_triangulator<Decorator_>::triangulate()
   CGAL_forall_svertices(v,*E_) {
     if ( !E_->is_isolated(v) ) continue;
     L.push_back(trivial_segment(E_,v));
-    From[--L.end()] = Object_handle(v);
+    From[--L.end()] = make_object(v);
   }
   SHalfedge_const_iterator e;
   CGAL_forall_sedges(e,*E_) {
     if ( e->source() == e->twin()->source() ) {
       Seg_pair p = two_segments(E_,e);
       L.push_back(p.first); L.push_back(p.second);
-      From[--L.end()] = From[--(--L.end())] = Object_handle(e);
+      From[--L.end()] = From[--(--L.end())] = make_object(e);
     } else {
       L.push_back(segment(E_,e));
-      From[--L.end()] = Object_handle(e);
+      From[--L.end()] = make_object(e);
     }
   }
   if ( E_->has_shalfloop() ) {
     Seg_pair p = two_segments(E_,E_->shalfloop());
     L.push_back(p.first); L.push_back(p.second);
-    From[--L.end()] = From[--(--L.end())] = Object_handle(E_->shalfloop());
+    From[--L.end()] = From[--(--L.end())] = make_object(E_->shalfloop());
   }
 
   // partition segments from L to positive and negative hemisphere
