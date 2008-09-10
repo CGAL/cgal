@@ -44,8 +44,12 @@ template <class Tr,
 class Poisson_mesher_level_impl_base :
     public Mesh_3::Refine_tets_with_oracle_base<Tr, Criteria, Surface, Oracle, Container>
 {
-protected:
   typedef Mesh_3::Refine_tets_with_oracle_base<Tr, Criteria, Surface, Oracle, Container> Base;
+
+  // Inherited methods and fields used below
+  using Base::triangulation_ref_impl;
+  using Base::oracle;
+  using Base::surface;
 
 public:
   typedef typename Tr::Geom_traits Geom_traits;
@@ -54,13 +58,11 @@ public:
   typedef typename Tr::Point Point;
   typedef typename Base::Quality Quality;
 
-  using Base::triangulation_ref_impl;  
-  
 public:
   /** \name CONSTRUCTORS */
 
   Poisson_mesher_level_impl_base(Tr& t, Criteria crit, unsigned int max_vert, Surface& surface, Oracle& oracle)
-    : Base(t, crit, surface, oracle), 
+    : Base(t, crit, surface, oracle),
       max_vertices(max_vert), ///< number of vertices bound (ignored if zero)
       max_memory(CGAL::Memory_sizer().virtual_size()) ///< max memory allocated by this algorithm
   {
@@ -102,8 +104,8 @@ public:
     update_star(v);
 
     // Update used memory
-    long memory = CGAL::Memory_sizer().virtual_size(); 
-    max_memory = (std::max)(max_memory, memory); 
+    long memory = CGAL::Memory_sizer().virtual_size();
+    max_memory = (std::max)(max_memory, memory);
   }
 
   void update_star(const Vertex_handle& v)
@@ -127,7 +129,7 @@ public:
   /// Tells if the algorithm is done.
   bool no_longer_element_to_refine_impl() const
   {
-    return Base::no_longer_element_to_refine_impl() || 
+    return Base::no_longer_element_to_refine_impl() ||
            (max_vertices > 0 && triangulation_ref_impl().number_of_vertices() >= max_vertices);
   }
 
@@ -146,20 +148,21 @@ private:
 
 
 /// Utility class for poisson_refinement_3():
-/// glue class that inherits from both Mesher_level 
+/// glue class that inherits from both Mesher_level
 /// and Poisson_mesher_level_impl_base.
 template <typename Tr,
           typename Criteria,
           typename Surface,
-          typename Oracle = typename CGAL::Surface_mesh_traits_generator_3<Surface>::type
+          typename Oracle = typename CGAL::Surface_mesh_traits_generator_3<Surface>::type,
+          typename PreviousLevel = Null_mesher_level
  >
-class Poisson_mesher_level : 
-  public Poisson_mesher_level_impl_base<Tr, Criteria, Surface, Oracle>, 
+class Poisson_mesher_level :
+  public Poisson_mesher_level_impl_base<Tr, Criteria, Surface, Oracle>,
   public Mesher_level <
     Tr,
-    Poisson_mesher_level<Tr, Criteria, Surface, Oracle>,
+    Poisson_mesher_level<Tr, Criteria, Surface, Oracle, PreviousLevel>,
     typename Tr::Cell_handle,
-    Null_mesher_level,
+    PreviousLevel,
     Triangulation_mesher_level_traits_3<Tr>
   >
 {
@@ -168,15 +171,15 @@ class Poisson_mesher_level :
 public:
   typedef Mesher_level <
     Tr,
-    Poisson_mesher_level<Tr, Criteria, Surface, Oracle>,
+    Poisson_mesher_level<Tr, Criteria, Surface, Oracle, PreviousLevel>,
     typename Tr::Cell_handle,
-    Null_mesher_level,
+    PreviousLevel,
     Triangulation_mesher_level_traits_3<Tr>
   > Mesher;
-  
-  Poisson_mesher_level(Tr& t, Criteria criteria, unsigned int max_vertices, Surface& surface, Oracle& oracle = Oracle())
-    : Base(t, criteria, max_vertices, surface, oracle), 
-      Mesher(Null_mesher_level()) 
+
+  Poisson_mesher_level(Tr& t, Criteria criteria, unsigned int max_vertices, Surface& surface, Oracle& oracle, PreviousLevel& previous_level)
+    : Base(t, criteria, max_vertices, surface, oracle),
+      Mesher(previous_level)
   {
   }
 
@@ -184,10 +187,10 @@ public:
 
 
 /// Delaunay refinement (break bad tetrahedra, where
-/// bad means badly shaped or too big). 
+/// bad means badly shaped or too big).
 /// @return the number of vertices inserted.
 ///
-/// Precondition: 
+/// Precondition:
 /// convergence is guaranteed if radius_edge_ratio_bound >= 1.0.
 ///
 /// @heading Parameters:
@@ -210,10 +213,11 @@ unsigned int poisson_refinement_3(Tr& tr,
   typedef typename Tr::Geom_traits Gt;
   typedef typename Gt::FT FT;
   typedef typename Gt::Point_3 Point;
-  
+
   // Mesher_level types
   typedef Mesh_criteria_3<Tr> Tets_criteria;
-  typedef Poisson_mesher_level<Tr, Tets_criteria, Surface> Refiner;
+  typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::type Oracle;
+  typedef Poisson_mesher_level<Tr, Tets_criteria, Surface, Oracle, Null_mesher_level> Refiner;
 
   long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Create queue\n");
@@ -222,10 +226,12 @@ unsigned int poisson_refinement_3(Tr& tr,
 
   // Delaunay refinement
   Tets_criteria tets_criteria(radius_edge_ratio_bound*radius_edge_ratio_bound, cell_radius_bound);
-  Refiner refiner(tr, tets_criteria, max_vertices, enlarged_bbox);  
+  Oracle oracle;
+  Null_mesher_level null_mesher_level;
+  Refiner refiner(tr, tets_criteria, max_vertices, enlarged_bbox, oracle, null_mesher_level);
   refiner.scan_triangulation(); // Push bad cells to the queue
   refiner.refine(Null_mesh_visitor()); // Refine triangulation until queue is empty
-  
+
   int nb_vertices_added = tr.number_of_vertices() - nb_vertices;
 
   long max_memory = refiner.max_memory_allocated();
