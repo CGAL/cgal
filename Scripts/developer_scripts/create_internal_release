@@ -323,7 +323,7 @@ sub make_testscripts()
 
     chdir 'test';
     foreach $DIR (glob("*")) {
-	if ( -d $DIR ) {
+	if ( (-d $DIR) && ("$DIR" ne "icons") && ("$DIR" ne "resources") ) {
 	    chdir $DIR;
 	    if ( -f 'Makefile') {
 		rename 'Makefile', 'makefile';
@@ -420,7 +420,7 @@ sub generate_cmake_scripts
   
   foreach $DIR (glob("*")) 
   {
-    if ( -d $DIR ) 
+    if ( (-d $DIR) && ("$DIR" ne "icons") && ("$DIR" ne "resources") ) 
     {
       chdir $DIR;
       
@@ -457,7 +457,7 @@ sub generate_cgal_test_with_cmake
 {
   foreach $DIR (glob("*")) 
   {
-    if ( -d $DIR ) 
+    if ( (-d $DIR) && ("$DIR" ne "icons") && ("$DIR" ne "resources") ) 
     {
       chdir $DIR;
       if ( ! -f 'cgal_test_with_cmake' ) 
