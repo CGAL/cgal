@@ -5,7 +5,14 @@
 # The "all" target is split in several parts (based on the first
 # character of each directory) to allow parallelization using "make -j".
 
-all: all_aA all_bB all_cC all_dD all_eE all_fF all_gG all_hH all_iI all_jJ all_kK all_lL all_mM all_nN all_oO all_pP all_qQ all_rR  all_sS all_tT all_uU all_vV all_wW all_xX all_yY all_zZ 
+
+#                         !! NOTE !! 
+#
+# The following target are purposedly NOT in alphabetical order so as to boost
+# the total running time why testing the most time consuming packages
+# first.
+#
+all: all_sS all_nN all_aA all_bB all_cC all_dD all_eE all_fF all_gG all_hH all_iI all_jJ all_kK all_lL all_mM all_oO all_pP all_qQ all_rR all_tT all_uU all_vV all_wW all_xX all_yY all_zZ
 
 all_aA:
 	@+for DIR in [0-9_aA]*; do \
