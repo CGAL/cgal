@@ -40,8 +40,10 @@ if( QT4_FOUND )
     get_dependency_version(OPENGL OpenGL)
     get_dependency_version(QT4 Qt4)
 
-    set( CGAL_HAS_QT4 TRUE ) 
-    add_config_flag( CGAL_HAS_QT4 )
+    if(COMMAND add_config_flag)
+      set( CGAL_HAS_QT4 TRUE ) 
+      add_config_flag( CGAL_HAS_QT4 )
+    endif()
     
     message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
@@ -77,7 +79,9 @@ if( QT4_FOUND )
 
     add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} )
     
-    set_target_properties(CGAL_Qt4 PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+    if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
+      set_target_properties(CGAL_Qt4 PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+    endif()
 
     if (NOT AUTO_LINK_ENABLED )
     
