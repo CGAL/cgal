@@ -411,12 +411,29 @@ public:
       return (_bound_rect);
   }
 
+/*   /\*! */
+/*    * Set the workspace bounding rectangle. */
+/*    *\/ */
+/*   void set_bounding_rect(const Iso_rectangle_2& rect) */
+/*   { */
+/*       _bound_rect = rect; */
+/*   } */
+
+
   /*!
    * Get the physical width of the fig
    */  
   int width () const
   {
     return _width;
+  }
+
+  /*!
+   * Get the physical height of the fig
+   */  
+  int height () const
+  {
+    return _height;
   }
 
   /*!
