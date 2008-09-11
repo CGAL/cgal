@@ -6,6 +6,7 @@
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
+#include <CGAL/convert_to_bfi.h>
 
 #include <cstdlib>
 #include <sstream>
@@ -200,20 +201,36 @@ void convert_to_real(){
         CGAL::convert_to(ext,tmp);
         assert(tmp==real);
     }
-    
 }
 
-/*template<class NT, class ROOT>
-  void convert_to_polynomial(){
-  typedef CGAL::Sqrt_extension<NT,ROOT> EXT1;
-  typedef CGAL::Polynomial<EXT1> POLY;
+template<class NT, class ROOT,class BFI>
+void convert_to_bfi(){
+    typedef CGAL::Sqrt_extension<NT,ROOT> EXT1;
+    typename CGAL::Bigfloat_interval_traits<BFI>::Get_precision get_precision;
+    typename CGAL::Bigfloat_interval_traits<BFI>::Set_precision set_precision;
+    long old_precision = get_precision();
     
-  EXT1 ext((NT)3 ,(NT)5  ,(ROOT)17);
-  POLY p(ext);
-  POLY tmp;
-  CGAL::convert_to(ext,tmp);
-  assert(tmp==p);
-  }*/
+    for(int i = 0; i < 3; i++){
+      long precision = old_precision;
+      for(int p = 0; p < 3; p++){
+        set_precision(precision);
+        {
+          EXT1 ext((NT)3 ,(NT)5  ,(ROOT)17);
+          BFI interval= BFI(3)+BFI(5)*CGAL_NTS sqrt(BFI(17));
+          BFI tmp = CGAL::convert_to_bfi(ext);
+          assert(CGAL::overlap(tmp,interval));
+        }{
+          EXT1 ext((NT)3);
+          BFI interval= BFI(3);
+          BFI tmp = CGAL::convert_to_bfi(ext);
+          assert(CGAL::overlap(tmp,interval));
+        }
+        precision*=2;
+      }   
+    }   
+    set_precision(old_precision);
+}
+
 
 template < class AT> 
 void sqrt_ext_pretty_output_test(){
@@ -687,6 +704,9 @@ void sqrt_extension_test(){
  
     is_exact_test();    
     convert_to_real<Integer,Integer,Field_with_sqrt>();
+    
+    convert_to_bfi<Integer,Integer,typename AT::Bigfloat_interval>();
+    
 
     sqrt_ext_pretty_output_test<AT>();
     fraction_traits_test<AT>();
