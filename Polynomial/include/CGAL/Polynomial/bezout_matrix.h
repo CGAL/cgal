@@ -470,7 +470,7 @@ template<class NT>
 typename CGALi::Simple_matrix< NT> polynomial_subresultant_matrix(
                                                CGAL::Polynomial<NT> f,
 					       CGAL::Polynomial<NT> g,
-					       int d=0) {
+					       int d) {
     CGAL_precondition(f.degree()>=0);
     CGAL_precondition(g.degree()>=0);
     CGAL_precondition(d>=0);
