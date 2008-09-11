@@ -26,6 +26,6 @@
 #include <iostream>
 int main()
 {
-  std::cout << "version=" << GCC_MAJOR << "." << GCC_MINOR << std::endl;
+  std::cout << "version=" << __GNUC__ << "." << __GNUC_MINOR__ << std::endl;
   return 0;
 }

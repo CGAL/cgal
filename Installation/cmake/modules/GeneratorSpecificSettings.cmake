@@ -71,6 +71,8 @@ set( GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED 1 )
 
   if ( CMAKE_COMPILER_IS_GNUCC )
   
+    set( GCC_FOUND TRUE )
+    
     get_dependency_version(GCC)
     
     if ( "${GCC_VERSION}" MATCHES "4." )
