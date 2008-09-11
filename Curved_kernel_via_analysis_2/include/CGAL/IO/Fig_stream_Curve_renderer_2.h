@@ -72,9 +72,9 @@ operator <<
         for (; vit != vec.end(); ++vit)
         {
             polyline.push_back(Point_2(vit->first, height - vit->second));
-            ws.write_polyline(polyline.begin(), polyline.end());
         }
         lit++;
+        ws.write_polyline(polyline.begin(), polyline.end());
     }
         
     return ws;
