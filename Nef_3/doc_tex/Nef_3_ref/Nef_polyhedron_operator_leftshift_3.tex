@@ -16,7 +16,7 @@
 
 \ccDefinition
 
-This operator writes The Nef polyhedron \emph{N} to the output stream \ccc{out} 
+This operator writes The Nef polyhedron \ccc{N} to the output stream \ccc{out} 
 using a propriatary file format. It includes the 
 complete incidence structure, the geometric data, and the marks of each item.
 
@@ -30,7 +30,7 @@ provided by the traits class, it might not be possible that the input operator
 and output operators of different traits classes are not compatible. We recommend
 to use the \cgal\ kernels \ccc{Homogeneous}, \ccc{Simple_homogeneous}, or 
 \ccc{Extended_homogeneous}
-parametrized with any exact number type that models $mathbb{Z}$ (e.g. \ccc{Gmpz}
+parametrized with any exact number type that models $\mathbb{Z}$ (e.g. \ccc{Gmpz}
 or \ccc{leda_integer}).
 
 A bounded \ccc{Nef_polyhedron_3<Extended_homogeneous>} is automatically written
@@ -40,9 +40,9 @@ operator of each of these types can read the output.
 
 \ccInclude{CGAL/IO/Nef_polyhedron_iostream_3.h}
 
-\ccGlobalFunction{template <class Nef_polyhedronTraits_3>
+\ccGlobalFunction{template <class Traits>
     ostream& operator<<( ostream& out, 
-                         const CGAL::Nef_polyhedron_3<Nef_polyhedronTraits_3>& N);}
+                         const CGAL::Nef_polyhedron_3<Traits>& N);}
   
 \ccSeeAlso
 

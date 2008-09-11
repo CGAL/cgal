@@ -30,13 +30,12 @@ An unbounded Nef polyhedron can only be read by a Nef polyhedron parametrized wi
 an extended kernel. It is also recommended to use the \cgal\ stream modifier 
 \ccc{set_ascii_mode}.
 
-The input operator and output operators of N
 
 \ccInclude{CGAL/IO/Nef_polyhedron_iostream_3.h}
 
-\ccGlobalFunction{template <class Nef_polyhedronTraits_3>
+\ccGlobalFunction{template <class Traits>
     istream& operator>>( istream& in,
-                         CGAL::Nef_polyhedron_3<Nef_polyhedronTraits_3>& N);}
+                         CGAL::Nef_polyhedron_3<Traits>& N);}
   
 \ccSeeAlso
 
