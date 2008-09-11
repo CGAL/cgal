@@ -97,7 +97,7 @@ target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
 
 # If auto-link is not enabled (on Linux for example), link with libCGAL, libCGALQt4 and Boost.Thread explicitly.
 if ( NOT AUTO_LINK_ENABLED )    
-  target_link_libraries( Polyhedron_3 CGAL CGAL-Qt4 ${Boost_THREAD_LIBRARY_RELEASE} )
+  target_link_libraries( Polyhedron_3 ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} CGAL-Qt4 ${Boost_THREAD_LIBRARY_RELEASE} )
 endif()
 
 # Link with libQGLViewer, OpenGL
