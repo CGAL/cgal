@@ -69,6 +69,22 @@ set( GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED 1 )
     message( STATUS "Generator uses intermediate configuration directory: ${CMAKE_CFG_INTDIR}" )
   endif()
 
+  if ( CMAKE_COMPILER_IS_GNUCC )
+  
+    get_dependency_version(GCC)
+    
+    if ( "${GCC_VERSION}" MATCHES "4." )
+      message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
+      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frounding-math" )
+    endif()
+    
+    if ( "${GCC_VERSION}" MATCHES "4.2" )
+      message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )
+      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-strict-aliasing" )
+    endif()
+    
+  endif()
+
   mark_as_advanced(CMAKE_CXX_WARNING_LEVEL)
 
 endif()
