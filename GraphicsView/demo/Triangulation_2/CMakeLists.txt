@@ -5,7 +5,7 @@ project (GraphicsView)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL REQUIRED)
+find_package(CGAL REQUIRED Qt4)
 
 include(${CGAL_USE_FILE})
 
@@ -38,11 +38,8 @@ add_executable  ( Constrained_Delaunay_triangulation_2 Constrained_Delaunay_tria
 
 # Link with Qt libraries
 target_link_libraries( Constrained_Delaunay_triangulation_2 ${QT_LIBRARIES} )
-if ( NOT AUTO_LINK_ENABLED )    
-  # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
-  target_link_libraries( Constrained_Delaunay_triangulation_2 CGAL )
-endif()
-target_link_libraries( Constrained_Delaunay_triangulation_2 CGAL-Qt4 )
+# Link with CGAL
+target_link_libraries( Constrained_Delaunay_triangulation_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 #--------------------------------
 # The "Delaunay" demo: Delaunay_triangulation_2
@@ -61,8 +58,5 @@ add_executable  ( Delaunay_triangulation_2 Delaunay_triangulation_2.cpp Delaunay
 
 # Link with Qt libraries
 target_link_libraries( Delaunay_triangulation_2 ${QT_LIBRARIES} )
-if ( NOT AUTO_LINK_ENABLED )    
-  # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
-  target_link_libraries( Delaunay_triangulation_2 CGAL )
-  target_link_libraries( Delaunay_triangulation_2 CGAL-Qt4 )
-endif()
+# Link with CGAL
+target_link_libraries( Delaunay_triangulation_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
