@@ -1,7 +1,7 @@
 #ifndef _GL_RENDER_
 #define _GL_RENDER_
 
-#include <GL/gl.h>
+#include <CGAL/gl.h>
 #include <CGAL/compute_normal.h>
 
 template <class Polyhedron>

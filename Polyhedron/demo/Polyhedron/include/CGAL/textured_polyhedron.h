@@ -5,7 +5,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/HalfedgeDS_default.h>
 
-#include <GL/gl.h>
+#include <CGAL/gl.h>
 
 namespace CGAL
 
