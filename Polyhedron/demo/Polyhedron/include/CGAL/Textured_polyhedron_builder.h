@@ -44,8 +44,8 @@ public:
   {
     builder B(hds,true);
     B.begin_surface(3,1,6);
-    add_vertices(B);
-    add_facets(B);
+      add_vertices(B);
+      add_facets(B);
     B.end_surface();
   }
 
@@ -69,8 +69,8 @@ public:
   {
     typename Polyhedron::Facet_iterator it;
     for(it = m_pMesh->facets_begin();
-        it != m_pMesh->facets_end();
-        it++)
+      it != m_pMesh->facets_end();
+      it++)
     {
       B.begin_facet();
       HF_circulator he = it->facet_begin();
@@ -93,7 +93,7 @@ public:
 
 public:
   void run(Polyhedron &input,
-           Textured_polyhedron &output)
+    Textured_polyhedron &output)
   {
     Modifier_textured_polyhedron<HalfedgeDS,Polyhedron,Textured_polyhedron,Kernel> copier(&input);
     output.delegate(copier);

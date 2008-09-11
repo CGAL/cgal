@@ -8,9 +8,9 @@ void gl_render_polyhedron_facets(Polyhedron *p)
   gl_render_facets(*p);
 }
 
-void gl_render_polyhedron_facets(Textured_polyhedron *p)
+void gl_render_tex_polyhedron_facets(Textured_polyhedron *p)
 {
-  //gl_render_facets(*p);
+  p->gl_draw_textured_triangles(true,true,1.0);
 }
 
 void gl_render_polyhedron_edges(Polyhedron *p)

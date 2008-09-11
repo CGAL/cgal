@@ -35,6 +35,19 @@ viewEdges(true)
 {
   // generate checkboard
   texture.GenerateCheckerBoard(1024,1024,512,0,0,0,255,255,255);
+
+  glEnable(GL_TEXTURE_2D);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+
+  glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,texture.GetWidth(),
+    texture.GetHeight(),0, GL_RGB,GL_UNSIGNED_BYTE, texture.GetData());
 }
 
 Scene::~Scene()
@@ -294,7 +307,26 @@ Scene::draw(bool with_names)
 	  CGALglcolor(entry.color.lighter(120));
 	else
 	  CGALglcolor(entry.color);
-	draw(entry);
+
+	switch(entry.polyhedron_ptr.which())
+	{
+	case NEF_ENTRY:
+    	  draw(entry);
+	  break;
+	case POLYHEDRON_ENTRY:
+	  draw(entry);
+	  break;
+	case TEX_POLYHEDRON_ENTRY:
+	  {
+	    glEnable(GL_TEXTURE_2D);
+	    Textured_polyhedron* p = boost::get<Textured_polyhedron*>(entry.polyhedron_ptr);
+  glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,texture.GetWidth(),
+    texture.GetHeight(),0, GL_RGB,GL_UNSIGNED_BYTE, texture.GetData());
+	    gl_render_tex_polyhedron_facets(p);
+	    glDisable(GL_TEXTURE_2D);
+	  }
+	}
+
       }
       if(viewEdges)
       {
@@ -312,7 +344,6 @@ Scene::draw(bool with_names)
 	  gl_render_nef_edges(boost::get<Nef_polyhedron*>(entry.polyhedron_ptr));
 	  break;
 	case POLYHEDRON_ENTRY:
-	case TEX_POLYHEDRON_ENTRY:
 	  draw(entry);
 	}
       }
@@ -367,11 +398,6 @@ void Scene::gl_render_facets(Polyhedron_ptr ptr)
       Polyhedron* p = boost::get<Polyhedron*>(ptr);
       gl_render_polyhedron_facets(p);
       break;
-    }
-  case TEX_POLYHEDRON_ENTRY:
-    {
-      Textured_polyhedron* p = boost::get<Textured_polyhedron*>(ptr);
-      gl_render_polyhedron_facets(p);
     }
   }
 }

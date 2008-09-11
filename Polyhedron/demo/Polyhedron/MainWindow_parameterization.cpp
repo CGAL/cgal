@@ -63,38 +63,32 @@ void MainWindow::parameterize(const Parameterization_method method)
     return;
   }
 
-  // add parameterized mesh 
-  Polyhedron *pParameterization = new Polyhedron(*pMesh);
-  Polyhedron::Vertex_iterator it1, it2;
+  // add textured polyhedon
+  Textured_polyhedron *pTex_polyhedron = new Textured_polyhedron();
+  Textured_polyhedron_builder<Polyhedron,Textured_polyhedron,Kernel> builder;
+  builder.run(*pMesh,*pTex_polyhedron);
+  pTex_polyhedron->compute_normals();
+
+  Polyhedron::Vertex_iterator it1;
+  Textured_polyhedron::Vertex_iterator it2;
   for(it1 = pMesh->vertices_begin(), 
-      it2 = pParameterization->vertices_begin();
+      it2 = pTex_polyhedron->vertices_begin();
       it1 != pMesh->vertices_end(),
-      it2 != pParameterization->vertices_end();
+      it2 != pTex_polyhedron->vertices_end();
       it1++, it2++)
   {
     // (u,v) pair is stored in any halfedge
     FT u = adaptor.info(it1->halfedge())->uv().x();
     FT v = adaptor.info(it1->halfedge())->uv().y();
-    it2->point() = Point(u-0.5,v-0.5,0.0);
+    it2->u() = u;
+    it2->v() = v;
   }
 
-  scene->addPolyhedron(pParameterization,
-    tr("%1 (parameterization)").arg(scene->polyhedronName(index)),
+  scene->addTexPolyhedron(pTex_polyhedron,
+    tr("%1 (parameterized)").arg(scene->polyhedronName(index)),
     Qt::magenta,
     scene->isPolyhedronActivated(index),
     scene->polyhedronRenderingMode(index));
-
-  Textured_polyhedron *pTex_polyhedron = new Textured_polyhedron();
-  //*((Polyhedron *)pTex_polyhedron) = *pMesh; // copy -> BUG
-
-  Textured_polyhedron_builder<Polyhedron,Textured_polyhedron,Kernel> builder;
-  builder.run(*pMesh,*pTex_polyhedron);
-
-  //scene->addTexPolyhedron(pTex_polyhedron,
-  //  tr("%1 (parameterization)").arg(scene->polyhedronName(index)),
-  //  Qt::magenta,
-  //  scene->isPolyhedronActivated(index),
-  //  scene->polyhedronRenderingMode(index));
 
   QApplication::setOverrideCursor(Qt::ArrowCursor);
 }

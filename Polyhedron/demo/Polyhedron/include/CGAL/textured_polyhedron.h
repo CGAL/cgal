@@ -239,6 +239,7 @@ public :
       const Point& p  = he->vertex()->point();
       const double u = he->vertex()->u();
       const double v = he->vertex()->v();
+      // std::cout << u << " " << v << std::endl;
       ::glTexCoord2d(u * scaling_tex_coordinates, v * scaling_tex_coordinates);
       ::glVertex3d(p[0],p[1],p[2]);
     }
