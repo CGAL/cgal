@@ -1396,6 +1396,7 @@ Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Curve
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Subdivision_1.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Subdivision_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/test/simple_models.h -text
+Curved_kernel_via_analysis_2/include/CGAL/IO/Fig_stream_Curve_renderer_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/IO/Qt_widget_Curve_renderer_2.h -text
 Curved_kernel_via_analysis_2/package_info/Curved_kernel_via_analysis_2/maintainer -text
 Curved_kernel_via_analysis_2/test/Curved_kernel_via_analysis_2/makefile -text

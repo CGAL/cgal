@@ -1,0 +1,114 @@
+// Copyright (c) 2006 Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: 
+// $Id: 
+// 
+// Author(s)     : Ophir Setter           <ophir.setter@cs.tau.ac.il>
+//
+
+/*!\file CGAL/IO/Fig_stream_Curve_renderer_2.h
+ * \brief
+  * provides \c CGAL::Fig_stream interface for the curve renderer
+ */
+
+#ifndef CGAL_FIG_STREAM_CURVE_RENDERER_2_H
+#define CGAL_FIG_STREAM_CURVE_RENDERER_2_H
+
+#include <CGAL/IO/Fig_stream.h>
+#include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
+
+CGAL_BEGIN_NAMESPACE
+
+/*! \brief
+ * outputs a curve arc to \c Fig_stream
+ */
+template <class CKvA_2, class RatKernel>
+CGAL::Fig_stream<RatKernel>& 
+operator << 
+(CGAL::Fig_stream<RatKernel>& ws, const CGALi::Arc_2< CKvA_2 >& arc)
+{
+    typedef typename RatKernel::Point_2       Point_2;
+    typedef typename RatKernel::Segment_2     Segment_2;
+
+    typedef Curve_renderer_facade<CKvA_2> Facade;
+
+    typedef std::pair< int, int > Coord_2;
+    typedef std::vector< Coord_2 > Coord_vec_2;
+
+    boost::optional < Coord_2 > p1, p2;
+    std::list<Coord_vec_2> points;
+
+    Bbox_2 bbox (CGAL::to_double(ws.bounding_rect().xmin()), 
+                 CGAL::to_double(ws.bounding_rect().ymin()), 
+                 CGAL::to_double(ws.bounding_rect().xmax()), 
+                 CGAL::to_double(ws.bounding_rect().ymax()));
+
+    Facade::setup(bbox, ws.width(), ws.height());
+
+    Facade::instance().draw(arc, points, &p1, &p2);
+    if(points.empty())
+        return ws;
+        
+    int height = ws.height();
+
+    typename std::list<Coord_vec_2>::const_iterator lit = points.begin();
+    while(lit != points.end())
+    {
+        const Coord_vec_2& vec = *lit;
+        typename Coord_vec_2::const_iterator vit = vec.begin();
+
+        std::vector< Point_2 > polyline;
+        for (; vit != vec.end(); ++vit)
+        {
+            polyline.push_back(Point_2(vit->first, height - vit->second));
+            ws.write_polyline(polyline.begin(), polyline.end());
+        }
+        lit++;
+    }
+        
+    return ws;
+}
+
+/*! \brief
+ *  outputs a curve point to \c Fig_stream
+ */
+template <class CKvA_2, class RatKernel>
+CGAL::Fig_stream<RatKernel>& 
+operator << 
+(CGAL::Fig_stream<RatKernel>& ws, const CGALi::Point_2< CKvA_2 >& pt)
+{
+    
+/*     typedef Curve_renderer_facade<CKvA_2> Facade; */
+   
+/*     std::pair< int, int > coord; */
+/*     Facade::setup(CGAL::Bbox_2(ws.x_min(), ws.y_min(), ws.x_max(), ws.y_max()), */
+/*             ws.width(), ws.height()); */
+
+/*     if(!Facade::instance().draw(pt, coord)) */
+/*         return ws; */
+       
+/*     QPainter *ppnt = &ws.get_painter(); */
+/*     QPen old_pen = ppnt->pen(); */
+/*     ppnt->setPen(QPen(Qt::NoPen)); */
+/*     ppnt->drawEllipse(coord.first - 3, ws.height() - coord.second - 3, 6, 6); */
+/*     ppnt->setPen(old_pen); */
+    return ws;
+}
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_FIG_STREAM_CURVE_RENDERER_2_H
+
+
+
