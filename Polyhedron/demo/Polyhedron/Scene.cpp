@@ -35,19 +35,10 @@ viewEdges(true)
 {
   // generate checkboard
   texture.GenerateCheckerBoard(1024,1024,512,0,0,0,255,255,255);
-
-  glEnable(GL_TEXTURE_2D);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_BLEND);
+  // std::cout << "texture: " << texture.GetWidth() << " x " << texture.GetHeight() << std::endl;
 
   glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,texture.GetWidth(),
-    texture.GetHeight(),0, GL_RGB,GL_UNSIGNED_BYTE, texture.GetData());
+    texture.GetHeight(), 0, GL_RGB,GL_UNSIGNED_BYTE, texture.GetData());
 }
 
 Scene::~Scene()
@@ -311,7 +302,7 @@ Scene::draw(bool with_names)
 	switch(entry.polyhedron_ptr.which())
 	{
 	case NEF_ENTRY:
-    	  draw(entry);
+	  draw(entry);
 	  break;
 	case POLYHEDRON_ENTRY:
 	  draw(entry);
@@ -319,9 +310,15 @@ Scene::draw(bool with_names)
 	case TEX_POLYHEDRON_ENTRY:
 	  {
 	    glEnable(GL_TEXTURE_2D);
+
+	    glEnable(GL_TEXTURE_2D);
+	    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
 	    Textured_polyhedron* p = boost::get<Textured_polyhedron*>(entry.polyhedron_ptr);
-  glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,texture.GetWidth(),
-    texture.GetHeight(),0, GL_RGB,GL_UNSIGNED_BYTE, texture.GetData());
 	    gl_render_tex_polyhedron_facets(p);
 	    glDisable(GL_TEXTURE_2D);
 	  }
