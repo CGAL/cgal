@@ -32,7 +32,7 @@
 #include <CGAL/Circular_arc_point_2.h>
 #include <CGAL/Line_arc_2.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 // TODO : Add the other ones...
 
@@ -103,6 +103,6 @@ make_x_monotone(const Line_arc_2<CK> &A, OutputIterator it)
   return CK().make_x_monotone_2_object()(A, it);
 }
 
-} // namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_ARCS_2_H

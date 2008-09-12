@@ -29,8 +29,6 @@
 template <class CK>
 void _test_circle_construct(CK ck)
 {
-//typedef CK2 CK;
-#if 1
   typedef typename CK::Circle_2                    Circle_2;
   typedef typename CK::Circular_arc_2              Circular_arc_2;
   typedef typename CK::RT                          RT;
@@ -43,25 +41,8 @@ void _test_circle_construct(CK ck)
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
   typedef typename CK::Split_2                     Split_2;  
   typedef typename CK::Get_equation                Get_equation;
-  //typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
   typedef typename CK::Compare_xy_2                Compare_xy_2;
   typedef typename CK::Do_intersect_2              Do_intersect_2;
-#else
-  typedef CK::Circle_2                    Circle_2;
-  typedef CK::Circular_arc_2              Circular_arc_2;
-  typedef CK::RT                          RT;
-  typedef CK::FT                          FT;
-  typedef CK::Point_2                     Point_2;
-  typedef CK::Line_2                      Line_2;
-  typedef CK::Circular_arc_point_2     Circular_arc_point_2;
-  typedef CK::Construct_circle_2          Construct_circle_2;
-  typedef CK::Intersect_2   Intersect_2;
-  typedef CK::Make_x_monotone_2           Make_x_monotone_2;
-  typedef CK::Split_2                     Split_2;  
-  typedef CK::Get_equation                Get_equation;
-  //typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
-  typedef CK::Compare_xy_2                Compare_xy_2;
-#endif
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -80,26 +61,6 @@ void _test_circle_construct(CK ck)
   Circle_2 circ_equation(center_circ_equation, r_equation);
   std::cout << "the circle used by the equation :" 
 	    << circ_equation << std::endl;
-//  Get_equation theEquation = ck.get_equation_object();
-  //Polynomial_for_circles_2_2 theResult_equation = theEquation(circ_equation);
-  //std::cout << "a= " << theResult_equation.a() << ", b= " <<
-  //  theResult_equation.b() << ", r_sq= " <<
-  //  theResult_equation.r_sq() <<std::endl;
-
-
-
-//  //Construct_circle_2
-//  Construct_circle_2 theConstruct_circle = ck.construct_circle_2_object();
-//  //We use the Polynomial_for_circles_2_2 fund before
-//  Circle_2 theConstruct_circle_2 = theConstruct_circle(theResult_equation);
-//  std::cout << "the circle made with the equation :" <<
-//    theConstruct_circle_2 << std::endl;
-//  assert(circ_equation == theConstruct_circle_2);
-
-
-  //not declare 29/06/2005
-  //ck.construct_circular_arc_2_object();
-  //ck.construct_circular_arc_endpoint_2_object();
 
   //Constuct_intersections_2 with 2 intersection's points
   std::cout << std::endl << "construct_intersection_2" << std::endl;
@@ -452,7 +413,6 @@ void _test_circle_construct(CK ck)
 						      true));
   assert(the_pair.second == 1u);
   //assert(the_pair.first.is_left());
-
 
   std::cout << "Intersection on one points tangent of 2 Circular_arc no x_monotone" 
 	    << std::endl;

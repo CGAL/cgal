@@ -575,6 +575,18 @@ template < class CK >
 
     template < class OutputIterator >
     OutputIterator
+    operator()(const Circle & c1, const Circular_arc & c2, 
+	       OutputIterator res) const
+    { return CircularFunctors::intersect_2<CK> (Circular_arc(c1),c2,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc & c1, const Circle & c2, 
+	       OutputIterator res) const
+    { return CircularFunctors::intersect_2<CK> (c1,Circular_arc(c2),res); }
+
+    template < class OutputIterator >
+    OutputIterator
     operator()(const Circular_arc & c1, const Circular_arc & c2, 
 	       OutputIterator res) const
       { return CircularFunctors::intersect_2<CK> (c1,c2,res); }  
@@ -1163,29 +1175,6 @@ template < class CK >
     operator()(const Circle_2& c, const Circular_arc_point_2& p) const
     { return CK().bounded_side_2_object()(c,p) == ON_UNBOUNDED_SIDE; }
 
-  };
-
-  template <class CK>
-  class Collinear_2
-    : public CK::Linear_kernel::Collinear_2
-  {
-    typedef typename CK::Circular_arc_point_2       Circular_arc_point_2;
-
-  public:
-	  typedef typename CK::Linear_kernel::Collinear_2::result_type result_type;
-
-    using CK::Linear_kernel::Collinear_2::operator();
-
-    // PRE CONDITION: 
-    // The coordinates of P, Q, R have to have the same 
-    // delta or (beta == 0 || delta == 0)
-    // We cannot code this pre condition because
-    // if Root_of_2 is interval_nt "beta", "delta" mean nothing
-    result_type
-    operator()(const Circular_arc_point_2& p, 
-               const Circular_arc_point_2& q, 
-               const Circular_arc_point_2& r) const
-    { return orientation<CK>(p,q,r) == COLLINEAR; }
   };
 
 } // namespace CircularFunctors

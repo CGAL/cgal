@@ -40,20 +40,33 @@
 
 #include <CGAL/Circular_kernel_type_equality_wrapper.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
+
 namespace CGALi {
 
-template < class CircularKernel, class LinearKernelBase >
-struct Circular_kernel_base_no_ref_count: public LinearKernelBase
+template < class CircularKernel, class LinearKernelBase, class AlgebraicKernel >
+struct Circular_kernel_base_ref_count: public LinearKernelBase
 {
   typedef CGALi::Circular_arc_2<CircularKernel>         Circular_arc_2;
   typedef CGALi::Circular_arc_point_2<CircularKernel>   Circular_arc_point_2;
   typedef CGALi::Line_arc_2<CircularKernel>             Line_arc_2;
+  typedef LinearKernelBase                              Linear_kernel;
+  typedef AlgebraicKernel                               Algebraic_kernel;
+  typedef typename Algebraic_kernel::Root_of_2            Root_of_2;
+  typedef typename Algebraic_kernel::Root_for_circles_2_2 Root_for_circles_2_2;
+  typedef typename Algebraic_kernel::Polynomial_for_circles_2_2
+                                                    Polynomial_for_circles_2_2;
+  typedef typename Algebraic_kernel::Polynomial_1_2 Polynomial_1_2;
+  typedef typename Linear_kernel::RT                       RT;
+  typedef typename Linear_kernel::FT                       FT;
 
   // The mecanism that allows to specify reference-counting or not.
   template < typename T >
   struct Handle { typedef T    type; };
-  
+
+  template < typename Kernel2 >
+  struct Base { typedef Circular_kernel_base_ref_count<Kernel2, LinearKernelBase, AlgebraicKernel>  Type; };  
+
   #define CGAL_Circular_Kernel_pred(Y,Z) \
     typedef CircularFunctors::Y<CircularKernel> Y; \
     Y Z() const { return Y(); }
@@ -68,40 +81,16 @@ template < class LinearKernel, class AlgebraicKernel >
 struct Circular_kernel_2
   : public Circular_kernel_type_equality_wrapper
   <
-  CGALi::Circular_kernel_base_no_ref_count
+  CGALi::Circular_kernel_base_ref_count
   < Circular_kernel_2<LinearKernel,AlgebraicKernel>,
     typename LinearKernel:: template 
-    Base<Circular_kernel_2<LinearKernel,AlgebraicKernel> >::Type 
+    Base<Circular_kernel_2<LinearKernel,AlgebraicKernel> >::Type,
+    AlgebraicKernel 
   >,
-  Circular_kernel_2<LinearKernel,AlgebraicKernel> 
+  Circular_kernel_2<LinearKernel,AlgebraicKernel>
   >
-{
-  typedef Circular_kernel_2<LinearKernel,AlgebraicKernel>      Self;
+{};
 
-  typedef typename LinearKernel::template 
-  Base<Circular_kernel_2<LinearKernel,AlgebraicKernel> >::Type Linear_kernel;
-  typedef AlgebraicKernel                                  Algebraic_kernel;
-
-  // for Lazy hexagons/bbox kernels
-  // Please remove this if you consider it to be sloppy
-  struct Circular_tag{};
-  typedef Circular_tag Definition_tag;
-  //
-
-  typedef typename LinearKernel::RT                       RT;
-  typedef typename LinearKernel::FT                       FT;
-
-  typedef typename Algebraic_kernel::Root_of_2            Root_of_2;
-  typedef typename Algebraic_kernel::Root_for_circles_2_2 Root_for_circles_2_2;
-  typedef typename Algebraic_kernel::Polynomial_for_circles_2_2
-                                                    Polynomial_for_circles_2_2;
-  typedef typename Algebraic_kernel::Polynomial_1_2 Polynomial_1_2;
-
-//   typedef CGAL::Object Object_2;
-//   typedef CGAL::Object Object_3;
-  
-};
-
-} // namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_SIMPLE_CIRCULAR_KERNEL_2_H

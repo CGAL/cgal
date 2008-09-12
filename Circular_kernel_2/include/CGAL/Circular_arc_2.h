@@ -25,7 +25,7 @@
 #ifndef CGAL_CIRCULAR_ARC_2_H
 #define CGAL_CIRCULAR_ARC_2_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
   
 template <class CircularKernel> 
 class Circular_arc_2 
@@ -183,6 +183,24 @@ public:
 
 };
 
+  template < typename CircularKernel >
+  inline
+  bool
+  operator==(const Circular_arc_2<CircularKernel> &p,
+	     const Circular_arc_2<CircularKernel> &q)
+  {
+    return CircularKernel().equal_2_object()(p, q);
+  }
+  
+  template < typename CircularKernel >
+  inline
+  bool
+  operator!=(const Circular_arc_2<CircularKernel> &p,
+	     const Circular_arc_2<CircularKernel> &q)
+  {
+    return ! (p == q);
+  }
+
   template < typename CK >
   std::ostream &
   operator<<(std::ostream & os, const Circular_arc_2<CK> &a)
@@ -211,6 +229,153 @@ public:
     return is;
   }
 
-} // namespace CGAL
+template < class CK >
+struct Filtered_bbox_circular_kernel_2;
+
+template < typename CK >
+class Circular_arc_2 < Filtered_bbox_circular_kernel_2 < CK > > {
+
+	  typedef Filtered_bbox_circular_kernel_2 < CK >         BK;
+    typedef Circular_arc_2< BK >                           Self;
+    typedef typename CK::FT                                FT;
+    typedef typename CK::RT                                RT;
+    typedef typename CK::Point_2                           Point_2;
+    typedef typename CK::Line_2                            Line_2;
+    typedef typename CK::Circle_2                          Circle_2;
+    typedef typename BK::Circular_arc_point_2              Circular_arc_point_2;
+    typedef typename CK::Circular_arc_2                    Rcircular_arc_2;
+    typedef typename CK::Root_of_2                         Root_of_2;
+    typedef CK R;
+
+public:
+
+     ///////////Construction/////////////
+
+    Circular_arc_2(){}
+
+    Circular_arc_2(const Circle_2 &c)
+    : P_arc(c),bb(NULL)
+    {}
+
+    Circular_arc_2(const Circle_2 &support, 
+                 	 const Line_2 &l1, const bool b_l1,
+                   const Line_2 &l2, const bool b_l2)
+    : P_arc(support,l1,b_l1,l2,b_l2),bb(NULL)
+    {}
+
+    
+    Circular_arc_2(const Circle_2 &c, 
+	   		   const Circle_2 &c1, const bool b_1,
+	   		   const Circle_2 &c2, const bool b_2)
+    : P_arc(c,c1,b_1,c2,b_2),bb(NULL)
+    {}
+
+    
+    Circular_arc_2(const Rcircular_arc_2 &A, const bool b,
+		   const Circle_2 &ccut, const bool b_cut)
+    : P_arc(A, b, ccut, b_cut),bb(NULL)
+    {}
+
+
+    Circular_arc_2(const Point_2 &start,
+    	   const Point_2 &middle,
+    	   const Point_2 &end)
+    : P_arc(start, middle, end),bb(NULL)
+    {}
+
+    Circular_arc_2(const Point_2 &begin,
+                             const Point_2 &end,
+	                         const FT &bulge) 
+    : P_arc(begin, end, bulge),bb(NULL)
+    {}
+
+	Circular_arc_2(const Circle_2 &support,
+    	   const Circular_arc_point_2 &begin,
+    	   const Circular_arc_point_2 &end)
+    : P_arc(support, begin.point(), end.point()),bb(NULL) 
+	{}
+
+	Circular_arc_2(const Rcircular_arc_2 &a)
+    : P_arc(a),bb(NULL) 
+	{}
+
+	Circular_arc_2(const Circular_arc_2 &c) : P_arc(c.P_arc), bb(NULL) {}
+
+	~Circular_arc_2() { if(bb) delete bb; }
+
+
+		//////////Predicates//////////
+
+		bool is_x_monotone() const
+		{ return P_arc.is_x_monotone();}
+
+		bool is_y_monotone() const
+		{ return P_arc.is_y_monotone();}
+
+		bool on_upper_part() const
+		{ return P_arc.on_upper_part();}
+		
+		
+		//////////Accessors///////////
+
+		const Rcircular_arc_2& arc () const
+			{ return P_arc ;}
+  
+		///Interface of the inner arc/// 
+
+		typename Qualified_result_of<typename BK::Construct_circular_source_vertex_2,Self>::type
+                source() const
+			{ return typename BK::Construct_circular_source_vertex_2()(*this);}
+
+		typename Qualified_result_of<typename BK::Construct_circular_target_vertex_2,Self>::type
+                target() const
+			{ return typename BK::Construct_circular_target_vertex_2()(*this);}
+
+                typename Qualified_result_of<typename BK::Construct_circular_min_vertex_2,Self>::type
+                left() const
+                        {
+			  return typename BK::Construct_circular_min_vertex_2()(*this);
+			}
+	      
+                typename Qualified_result_of<typename BK::Construct_circular_max_vertex_2,Self>::type
+                right() const
+                        {
+			  return typename BK::Construct_circular_max_vertex_2()(*this);
+			}
+
+		const Circle_2& supporting_circle() const
+			{ return P_arc.supporting_circle();}
+
+		const Point_2& center() const
+			{ return P_arc.center();}
+
+		const FT& squared_radius() const
+			{ return P_arc.squared_radius();}
+		
+		Bbox_2 bbox() const
+			{ 
+                          if(bb==NULL)
+                            bb=new Bbox_2(P_arc.bbox());
+
+                          return *bb;
+                        }
+                          
+			
+		///Specific check used for bbox construction///
+		
+		bool has_no_bbox() const
+		{ return (bb==NULL);}
+
+	private:
+
+		Rcircular_arc_2 P_arc;
+		mutable Bbox_2 *bb;
+
+
+};
+
+
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_CIRCULAR_ARC_2_H

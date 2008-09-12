@@ -25,7 +25,7 @@
 #ifndef CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_2_H
 #define CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_2_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template< class CK >
 inline
@@ -54,5 +54,6 @@ intersect_2( const typename CK::Line_2 & l,
 }
 
 
-} // namespace CGAL
+CGAL_END_NAMESPACE
+
 #endif // CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_2_H

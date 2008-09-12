@@ -25,7 +25,7 @@
 #ifndef CGAL_CIRCULAR_ARC_POINT_2_H
 #define CGAL_CIRCULAR_ARC_POINT_2_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template < typename CircularKernel >
 class Circular_arc_point_2
@@ -133,7 +133,77 @@ public:
   {
     return os << p.x() << " " << p.y() << " ";
   }
+
+template < class CK >
+struct Filtered_bbox_circular_kernel_2;
+
+template < typename CK >
+class Circular_arc_point_2 < Filtered_bbox_circular_kernel_2 < CK > > {
+
+    typedef typename CK::FT                                    FT;
+    typedef typename CK::RT                                    RT;
+    typedef typename CK::Point_2                               Point_2;
+    typedef typename CK::Line_2                                Line_2;
+    typedef typename CK::Circle_2                              Circle_2;
+    typedef typename CK::Circular_arc_point_2                  Rcircular_arc_point_2;
+    typedef typename CK::Circular_arc_2                        Circular_arc_2;
+    typedef typename CK::Root_of_2                             Root_of_2;
+
+public:
+    typedef typename Rcircular_arc_point_2::Root_for_circles_2_2 
+     Root_for_circles_2_2;
+    typedef CK   R;  
+
+  ////Construction/////
+  Circular_arc_point_2()
+    : P_point(),bb(NULL)
+    {}
+
+  Circular_arc_point_2(const Root_for_circles_2_2 & np)
+    : P_point(np),bb(NULL)
+      {}
+
+  Circular_arc_point_2(const Rcircular_arc_point_2 & p)
+    : P_point(p),bb(NULL)
+      {}
+
+	Circular_arc_point_2(const Circular_arc_point_2 &c) : P_point(c.P_point), bb(NULL) {}
+	~Circular_arc_point_2() { if(bb) delete bb; }
+
+  ////Accesors////
+  const Rcircular_arc_point_2& point() const
+  {return P_point;}
+            
+  typename Qualified_result_of<typename R::Compute_Circular_x_2,Rcircular_arc_point_2>::type
+  x() const
+    { return P_point.x();}
+
+  typename Qualified_result_of<typename R::Compute_Circular_y_2,Rcircular_arc_point_2>::type
+  y() const
+    { return P_point.y();}
+
+
+  ////Bbox related accessors////
   
-} // namespace CGAL
+bool has_no_bbox() const
+  { return (bb==NULL);}
+
+  Bbox_2  bbox() const
+    { 
+      if(this->has_no_bbox())
+        bb= new Bbox_2(P_point.bbox());
+              
+        return *bb;     
+    }
+
+
+private:
+
+   Rcircular_arc_point_2  P_point;
+   mutable Bbox_2         *bb;
+
+};
+  
+CGAL_END_NAMESPACE
 
 #endif // CGAL_CIRCULAR_ARC_POINT_2_H

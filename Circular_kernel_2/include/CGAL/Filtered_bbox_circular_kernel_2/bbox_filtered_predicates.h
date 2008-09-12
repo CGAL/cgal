@@ -26,7 +26,6 @@
 #ifndef CGAL_BBOX_FILTERED_PREDICATES_H  
 #define CGAL_BBOX_FILTERED_PREDICATES_H  
 
-#include <CGAL/Filtered_bbox_circular_kernel_2/bbox_filtered_intersections.h>
 #include <CGAL/assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/Object.h>
@@ -37,17 +36,18 @@ CGAL_BEGIN_NAMESPACE
 namespace Bbox_functors {
 
 template <class BK>
-class Compare_x_2
+class Compare_x_2 : public BK::Circular_kernel::Compare_x_2
   {
-    typedef typename BK::Circular_kernel                           CK;
+    typedef typename BK::Circular_kernel                         CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
 
    public:
 
-    typedef Comparison_result result_type;
+    typedef typename CK::Compare_x_2::result_type result_type; 
+    using CK::Compare_x_2::operator();
 
    public:
-
+	
     result_type
     operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
     {
@@ -66,14 +66,15 @@ class Compare_x_2
 
 
 template <class BK>
-class Compare_y_2
+class Compare_y_2 : public BK::Circular_kernel::Compare_y_2
   {
-    typedef typename BK::Circular_kernel                           CK;
+    typedef typename BK::Circular_kernel                         CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
 
    public:
 
-    typedef Comparison_result result_type;
+    typedef typename CK::Compare_y_2::result_type result_type; 
+    using CK::Compare_y_2::operator();
 
    public:
 
@@ -95,14 +96,15 @@ class Compare_y_2
   };
 
 template <class BK>
-class Compare_xy_2
+class Compare_xy_2 : public BK::Circular_kernel::Compare_xy_2
   {
-    typedef typename BK::Circular_kernel                           CK;
+    typedef typename BK::Circular_kernel                         CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
 
    public:
 
-    typedef Comparison_result result_type;
+    typedef typename CK::Compare_xy_2::result_type result_type; 
+    using CK::Compare_xy_2::operator();
 
    public:
 
@@ -123,16 +125,17 @@ class Compare_xy_2
 
 
 template <class BK>
-class In_x_range_2
+class In_x_range_2 : public BK::Circular_kernel::In_x_range_2
   {
-    typedef typename BK::Circular_kernel                           CK;
+    typedef typename BK::Circular_kernel                         CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                          Circular_arc_2;
     typedef typename BK::Line_arc_2                              Line_arc_2;
 
    public:
 
-    typedef bool result_type;
+    typedef typename CK::In_x_range_2::result_type result_type; 
+    using CK::In_x_range_2::operator();
 
    private:
 
@@ -219,12 +222,6 @@ template < class BK >
 	       const Circular_arc_point_2 &p2) const
     { return Line_arc_2(support,p1,p2); }
 
-//     result_type
-//     operator()(const Line_2 &support,
-// 	       const Point_2 &p1,
-// 	       const Point_2 &p2) const
-//     { return Line_arc_2(support,p1,p2); }
-
     result_type
     operator()(const Segment_2 &s) const
     { return Line_arc_2(s); }
@@ -299,8 +296,30 @@ template < class BK >
 
   };
 
+  template < class BK >
+  class Construct_circular_arc_point_2
+  {
+    typedef typename BK::Point_2               Point_2;
+    typedef typename BK::Circular_arc_point_2  Circular_arc_point_2;
+    typedef typename Circular_arc_point_2::Root_for_circles_2_2  
+                                               Root_for_circles_2_2;
 
+  public:
+    typedef Circular_arc_point_2 result_type;
 
+    result_type
+    operator()(void) 
+    { return Circular_arc_point_2(); }
+
+    result_type
+    operator()(const Root_for_circles_2_2 & np) const
+    { return Circular_arc_point_2(np); }
+
+    result_type
+    operator()(const Point_2 & p) const
+    { return Circular_arc_point_2(p); }
+
+  };
 
 template <class BK>
 class Construct_circular_source_vertex_2
@@ -380,15 +399,16 @@ class Construct_circular_max_vertex_2
   };
 
 template <class BK>
-class Is_vertical_2
+class Is_vertical_2 : public BK::Circular_kernel::Is_vertical_2
   {
-    typedef typename BK::Circular_kernel                           CK;
+    typedef typename BK::Circular_kernel                         CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                          Circular_arc_2;
 
    public:
 
-    typedef bool result_type;
+    typedef typename CK::Is_vertical_2::result_type result_type; 
+    using CK::Is_vertical_2::operator();
     
     template <typename T>
     result_type
@@ -400,16 +420,17 @@ class Is_vertical_2
 
 
 template <class BK>
-class Compare_y_at_x_2
+class Compare_y_at_x_2 : public BK::Circular_kernel::Compare_y_at_x_2
   {
-    typedef typename BK::Circular_kernel                                    CK;
+    typedef typename BK::Circular_kernel                                  CK;
     typedef typename BK::Circular_arc_2                                   Circular_arc_2;
     typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
     typedef typename BK::Line_arc_2                                       Line_arc_2;
 
   public:
 
-    typedef Comparison_result result_type;
+    typedef typename CK::Compare_y_at_x_2::result_type result_type; 
+    using CK::Compare_y_at_x_2::operator();
 
   private:
 
@@ -448,16 +469,17 @@ class Compare_y_at_x_2
 
 
 template <class BK>
-class Has_on_2
+class Has_on_2 : public BK::Circular_kernel::Has_on_2
   {
-    typedef typename BK::Circular_kernel                                    CK;
+    typedef typename BK::Circular_kernel                                  CK;
     typedef typename BK::Circular_arc_2                                   Circular_arc_2;
     typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
     typedef typename BK::Line_arc_2                                       Line_arc_2;
 
   public:
 
-    typedef bool result_type;
+    typedef typename CK::Has_on_2::result_type result_type; 
+    using CK::Has_on_2::operator();
 
   private:
 
@@ -490,16 +512,17 @@ class Has_on_2
 
 
 template <class BK>
-class Equal_2
+class Equal_2 : public BK::Circular_kernel::Equal_2
   {
-    typedef typename BK::Circular_kernel                                    CK;
+    typedef typename BK::Circular_kernel                                  CK;
     typedef typename BK::Circular_arc_2                                   Circular_arc_2;
     typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
     typedef typename BK::Line_arc_2                                       Line_arc_2;
 
   public:
 
-    typedef bool result_type;
+    typedef typename CK::Equal_2::result_type result_type; 
+    using CK::Equal_2::operator();
 
   private:
 
@@ -568,15 +591,16 @@ class Equal_2
 
 
 template <class BK>
-class Do_overlap_2
+class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
   {
-    typedef typename BK::Circular_kernel                                  CK;
+    typedef typename BK::Circular_kernel                                CK;
     typedef typename BK::Circular_arc_2                                 Circular_arc_2;
     typedef typename BK::Line_arc_2                                     Line_arc_2;
 
   public:
 
-    typedef bool result_type;
+    typedef typename CK::Do_overlap_2::result_type result_type; 
+    using CK::Do_overlap_2::operator();
 
   private:
 
@@ -624,14 +648,15 @@ class Do_overlap_2
 // This predicate cannot be filtered
 
  template < class BK >
-  class Compare_y_to_right_2
+  class Compare_y_to_right_2 : public BK::Circular_kernel::Compare_y_to_right_2
   {
-    typedef typename BK::Circular_kernel            CK;
-    typedef typename BK::Circular_arc_2           Circular_arc_2;
+    typedef typename BK::Circular_kernel       CK;
+    typedef typename BK::Circular_arc_2        Circular_arc_2;
     typedef typename BK::Circular_arc_point_2  Circular_arc_point_2;
 
   public:
-    typedef Comparison_result result_type;
+    typedef typename CK::Compare_y_to_right_2::result_type result_type; 
+    using CK::Compare_y_to_right_2::operator();
     
     template <typename T1, typename T2>
     result_type
@@ -644,15 +669,16 @@ class Do_overlap_2
 
 
   template < class BK >
-  class Make_x_monotone_2
+  class Make_x_monotone_2 : public BK::Circular_kernel::Make_x_monotone_2
   {
-    typedef typename BK::Circular_kernel            CK;
-    typedef typename BK::Rcirc_arc_2              Rcirc_arc_2;
+    typedef typename BK::Circular_kernel          CK;
+    typedef typename CK::Circular_arc_2           Rcirc_arc_2;
     typedef typename BK::Circular_arc_2       	  Circular_arc_2;
     typedef typename BK::Line_arc_2               Line_arc_2;
 
   public:
-    // typedef OutputIterator result_type;
+    typedef typename CK::Make_x_monotone_2::result_type result_type; 
+    using CK::Make_x_monotone_2::operator();
 
     template < class OutputIterator >
     OutputIterator
@@ -683,10 +709,12 @@ class Do_overlap_2
   };
 
   template < class BK >
-  class Do_intersect_2
+  class Do_intersect_2 : public BK::Circular_kernel::Do_intersect_2
   {
   public:
-    typedef typename BK::Boolean    result_type;
+    typedef typename BK::Circular_kernel            CK;
+    typedef typename CK::Do_intersect_2::result_type result_type; 
+    using CK::Do_intersect_2::operator();
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
@@ -694,7 +722,7 @@ class Do_overlap_2
   };
 
   template < class BK >
-  class Intersect_2
+  class Intersect_2 : public BK::Circular_kernel::Intersect_2
   {
     public:
 
@@ -702,11 +730,14 @@ class Do_overlap_2
     typedef typename BK::Circular_arc_2           Circular_arc_2;
     typedef typename BK::Circular_arc_point_2     Circular_arc_point_2;
     typedef typename BK::Line_arc_2               Line_arc_2;
-    typedef typename BK::Rcirc_arc_2              Rcirc_arc_2;
-    typedef typename BK::Rline_arc_2              Rline_arc_2;
-    typedef typename BK::Rcirc_arc_point_2        Rcirc_arc_point_2;
+    typedef typename CK::Circular_arc_2           Rcirc_arc_2;
+    typedef typename CK::Line_arc_2               Rline_arc_2;
+    typedef typename CK::Circular_arc_point_2     Rcirc_arc_point_2;
     typedef typename BK::Circle_2                 Circle;
     typedef typename BK::Line_2                   Line_2;
+
+    typedef typename CK::Intersect_2::result_type result_type; 
+    using CK::Intersect_2::operator();
 
     template < class OutputIterator >
     OutputIterator
@@ -732,6 +763,20 @@ class Do_overlap_2
 
         return res;
       }
+
+	    template < class OutputIterator >
+	    OutputIterator
+	    operator()(const Circle & c1, const Circular_arc_2 & c2, OutputIterator res)
+	      { 
+	        return operator()(Circular_arc(c1),c2,res);
+	      }
+
+     	template < class OutputIterator >
+	    OutputIterator
+	    operator()(const Circular_arc_2 & c1, const Circle & c2, OutputIterator res)
+	    { 
+	      return operator()(c1,Circular_arc_2(c2),res);
+	    }
 
      template < class OutputIterator >
     OutputIterator
@@ -874,18 +919,19 @@ class Do_overlap_2
 
 
   template < class BK >
-  class Split_2
+  class Split_2 : public BK::Circular_kernel::Split_2
   {
 
-    typedef typename BK::Circular_kernel            CK;
-    typedef typename BK::Rcirc_arc_2              Rcirc_arc_2;
-    typedef typename BK::Rline_arc_2              Rline_arc_2;
-    typedef typename BK::Circular_arc_2           Circular_arc_2;
-    typedef typename BK::Line_arc_2               Line_arc_2;
+    typedef typename BK::Circular_kernel       CK;
+    typedef typename CK::Circular_arc_2        Rcirc_arc_2;
+    typedef typename CK::Line_arc_2            Rline_arc_2;
+    typedef typename BK::Circular_arc_2        Circular_arc_2;
+    typedef typename BK::Line_arc_2            Line_arc_2;
     typedef typename BK::Circular_arc_point_2  Circular_arc_point_2;
 
   public:
-    typedef void result_type;
+    typedef typename CK::Split_2::result_type result_type; 
+    using CK::Split_2::operator();
 
     result_type
     operator()(const Circular_arc_2 &A, 
@@ -913,6 +959,36 @@ class Do_overlap_2
       ha2=Line_arc_2(ca2);
     }
     
+  };
+
+template <class BK>
+class Construct_bbox_2 : public BK::Circular_kernel::Construct_bbox_2
+  {
+	  typedef typename BK::Circular_kernel           CK;
+    typedef typename BK::Circular_arc_2            Circular_arc_2;
+    typedef typename BK::Circular_arc_point_2      Circular_arc_point_2;
+    typedef typename BK::Line_arc_2                Line_arc_2;
+
+  public:
+
+	  typedef typename CK::Construct_bbox_2::result_type result_type; 
+    using CK::Construct_bbox_2::operator();
+
+    result_type operator() (const Circular_arc_point_2 & a) const
+    {
+      return a.rep().bbox();
+    }
+
+    result_type operator() (const Circular_arc_2 & a) const
+    {
+      return a.rep().bbox();
+    }
+
+    result_type operator() (const Line_arc_2 & a) const
+    {
+      return a.rep().bbox();
+    }
+
   };
 
 

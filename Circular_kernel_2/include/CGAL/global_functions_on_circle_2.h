@@ -25,7 +25,7 @@
 #ifndef CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_CIRCLE_2_H
 #define CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_CIRCLE_2_H
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template< class CK >
 inline
@@ -61,6 +61,6 @@ has_on_2(const typename CK::Circle_2 &c, const typename CK::Circular_arc_point_2
   return CK().has_on_2_object()(c, p);
 }
 
-} // namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_CIRCLE_2_H
