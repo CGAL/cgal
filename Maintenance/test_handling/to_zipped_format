@@ -109,10 +109,10 @@ sub reformat_results($)
 	if (/CUSTOM_LDFLAGS = '([^']*)'/) {
 	    $LDFLAGS="$1";
 	}
-        if(/^CGAL_TEST_PLATFORM /) {
-            # should be the last one of the header
-            last;
-        }
+#        if(/^CGAL_TEST_PLATFORM /) {
+#            # should be the last one of the header
+#            last;
+#        }
 #        if(! /^[A-Z][a-z]/ ) {
 #            # the header is finished
 #            print PLATFORM_NEW_RESULTS $_;
