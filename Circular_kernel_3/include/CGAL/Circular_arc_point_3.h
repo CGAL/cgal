@@ -224,6 +224,24 @@ public:
     return is;
   }
 
+  template < typename SK >
+  inline
+  bool
+  operator==(const Circular_arc_point_3<SK> &p,
+	     const Circular_arc_point_3<SK> &q)
+  {
+    return SK().equal_3_object()(p, q);
+  }
+  
+  template < typename SK >
+  inline
+  bool
+  operator!=(const Circular_arc_point_3<SK> &p,
+	     const Circular_arc_point_3<SK> &q)
+  {
+    return ! (p == q);
+  }
+
 }
 
 #endif
