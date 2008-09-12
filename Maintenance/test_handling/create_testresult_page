@@ -335,7 +335,7 @@ EOF
 	$pf_no++;
 	# my $pf_short = join('_',parse_platform_2($pf));
 	my $pf_short = $pf;
-	print OUTPUT "<td>$pf_short\n";
+	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\">$pf_short</a>\n";
 
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
 	    $_ = <PLATFORM_INFO>;
