@@ -246,7 +246,12 @@ public:
     		: P_arc(a) , bb(NULL)
 		{}
 
-	  Line_arc_2(const Line_arc_2 &c) : P_arc(c.P_arc), bb(NULL) {}
+	  Line_arc_2(const Line_arc_2 &c) : P_arc(c.P_arc)
+	  {
+		  if(c.bb) bb = new Bbox_2(*(c.bb));
+			else bb = NULL;	
+		}
+		
 	  ~Line_arc_2() { if(bb) delete bb; }
 
 

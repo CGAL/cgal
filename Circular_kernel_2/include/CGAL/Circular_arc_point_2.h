@@ -172,7 +172,12 @@ public:
     : P_point(p),bb(NULL)
       {}
 
-	Circular_arc_point_2(const Circular_arc_point_2 &c) : P_point(c.P_point), bb(NULL) {}
+	Circular_arc_point_2(const Circular_arc_point_2 &c) : P_point(c.P_point) 
+	{
+		if(c.bb) bb = new Bbox_2(*(c.bb));
+		else bb = NULL;
+	}
+	
 	~Circular_arc_point_2() { if(bb) delete bb; }
 
   ////Accesors////
