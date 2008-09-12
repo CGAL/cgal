@@ -23,11 +23,6 @@ set( GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED 1 )
     message( STATUS "Using ${CMAKE_CXX_COMPILER} compiler." )
   endif()
 
-  if( "${CMAKE_CXX_COMPILER_ID}" MATCHES SunPro )
-    message( STATUS "Using SunPro compiler, using STLPort 4." )
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -features=extensions -library=stlport4 -D_GNU_SOURCE" )
-    set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -library=stlport4" )
-  endif()
   
   # From james Bigler, in the cmake users list.
   IF (APPLE)
@@ -56,36 +51,12 @@ set( GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED 1 )
     endif()
   endif()
   
-  if ( "${CMAKE_CONFIGURATION_TYPES}" MATCHES "Release" OR "${CMAKE_BUILD_TYPE}" MATCHES "Release" )
-    set( CGAL_RELEASE TRUE )
-  endif()
-  
-  if ( "${CMAKE_CONFIGURATION_TYPES}" MATCHES "Debug" OR "${CMAKE_BUILD_TYPE}" MATCHES "Debug" )
-    set( CGAL_DEBUG TRUE )
-  endif()
   
   if ( NOT "${CMAKE_CFG_INTDIR}" STREQUAL "." )
     set(HAS_CFG_INTDIR TRUE CACHE INTERNAL "Generator uses intermediate configuration directory" )
     message( STATUS "Generator uses intermediate configuration directory: ${CMAKE_CFG_INTDIR}" )
   endif()
 
-  if ( CMAKE_COMPILER_IS_GNUCC )
-  
-    set( GCC_FOUND TRUE )
-    
-    get_dependency_version(GCC)
-    
-    if ( "${GCC_VERSION}" MATCHES "4." )
-      message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
-      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frounding-math" )
-    endif()
-    
-    if ( "${GCC_VERSION}" MATCHES "4.2" )
-      message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )
-      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-strict-aliasing" )
-    endif()
-    
-  endif()
 
   mark_as_advanced(CMAKE_CXX_WARNING_LEVEL)
 

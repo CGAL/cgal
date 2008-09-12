@@ -221,10 +221,44 @@ include_directories (${CGAL_INCLUDE_DIRS})
 
 if( MSVC )
   
-  set( CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS" )
+  uniquely_add_flags ( CGAL_CXX_FLAGS "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS" )
 
   # _SECURE_SCL=0 is defined because it has been reported that the Secure SCL has an overhead of near one order of magnitude EVEN IN RELEASE BUILDS    
-  set( CGAL_CXX_FLAGS_RELEASE "${CGAL_CXX_FLAGS_RELEASE} -D_SECURE_SCL=0" )
+  uniquely_add_flags( CGAL_CXX_FLAGS_RELEASE "-D_SECURE_SCL=0" )
+  
+endif()
+
+if ( "${CMAKE_CONFIGURATION_TYPES}" MATCHES "Release" OR "${CMAKE_BUILD_TYPE}" MATCHES "Release" )
+  set( CGAL_RELEASE TRUE )
+endif()
+
+if ( "${CMAKE_CONFIGURATION_TYPES}" MATCHES "Debug" OR "${CMAKE_BUILD_TYPE}" MATCHES "Debug" )
+  set( CGAL_DEBUG TRUE )
+endif()
+
+if( "${CMAKE_CXX_COMPILER_ID}" MATCHES SunPro )
+  message( STATUS "Using SunPro compiler, using STLPort 4." )
+  
+  uniquely_add_flags( CGAL_CXX_FLAGS "-features=extensions;-library=stlport4;-D_GNU_SOURCE" )
+  uniquely_add_flags( CGAL_SHARED_LINKER_FLAGS "-library=stlport4" )
+  uniquely_add_flags( CGAL_EXE_LINKER_FLAGS    "-library=stlport4" )
+endif()
+
+if ( CMAKE_COMPILER_IS_GNUCC )
+
+  set( GCC_FOUND TRUE )
+  
+  get_dependency_version(GCC)
+  
+  if ( "${GCC_VERSION}" MATCHES "4." )
+    message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
+    uniquely_add_flags( CGAL_CXX_FLAGS "-frounding-math" )
+  endif()
+  
+  if ( "${GCC_VERSION}" MATCHES "4.2" )
+    message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )
+    uniquely_add_flags( CGAL_CXX_FLAGS "-fno-strict-aliasing" )
+  endif()
   
 endif()
 

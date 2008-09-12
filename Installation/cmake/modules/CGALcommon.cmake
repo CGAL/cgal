@@ -1,6 +1,11 @@
 # This allows else(), endif(), etc... (without repeating the expression)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
+# CMAKE_ROOT must be properly configured, but is not by the CMake windows installer, so check here
+if (NOT CMAKE_ROOT)
+  message( FATAL_ERROR "CMAKE_ROOT enviroment variable not set. It should point to the directory where CMake is installed.")
+endif()
+
 if ( "${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" )
   set( IS_TOP_LEVEL TRUE )
 else()
@@ -52,6 +57,17 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     else()
       set( ${var} "NOTFOUND" )    
     endif()
+  endmacro()
+  
+  macro( uniquely_add_flags target_var flags )
+    set( target_list "${${target_var}}" )
+    separate_arguments( target_list )
+    foreach( flag ${flags} )
+      list( FIND target_list ${flag} ${flag}_FOUND )
+      if ( ${flag}_FOUND EQUAL -1 )
+        set( ${target_var} "${${target_var}} ${flag}" CACHE STRING "User-defined flags" FORCE )
+      endif()  
+    endforeach()
   endmacro()
   
   macro( get_dependency_version LIB )
@@ -122,13 +138,8 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     endif()
   endmacro()
   
-  # CMAKE_ROOT must be properly configured, but is not by the CMake windows installer, so check here
-  if (NOT CMAKE_ROOT)
-    message( FATAL_ERROR "CMAKE_ROOT enviroment variable not set. It should point to the directory where CMake is installed.")
-  endif()
 
   if ( COMMAND cmake_policy )
-    cmake_policy( SET CMP0002 NEW )  
     cmake_policy( SET CMP0003 NEW )  
   endif()
   
