@@ -234,7 +234,7 @@ namespace CGAL {
            const bool has_on_supporting_circle = false)
     { 
       if(!has_on_supporting_circle) {
-        if(!has_on<SK>(a.supporting_circle(),p)) 
+        if(!SK().has_on_3_object()(a.supporting_circle(),p)) 
           return false;
       }
       if(a.rep().is_full()) return true;
@@ -245,7 +245,7 @@ namespace CGAL {
         compute_sign_of_cross_product<SK>(p,a.target(),a.center());
       if(s_x_t == ZERO) return (s_x_p != NEGATIVE);
       if(a.source() == p) return true;
-      if(p == a.target()) return true;
+      if(a.target() == p) return true;
       if(s_x_t == POSITIVE) {
         if(s_x_p == POSITIVE) return p_x_t == POSITIVE;
         else return false;

@@ -600,7 +600,13 @@ template < class SK > \
                const Plane_3 &p2, bool less_xyz_p2,
                const Circle_3 &c) const
     { return Rep(c,p1,less_xyz_p1,p2,less_xyz_p2); }
-   
+
+    result_type
+    operator()(const Point_3 &begin,
+               const Point_3 &middle, 
+               const Point_3 &end) const
+    { return Rep(begin,middle,end); }   
+
   };
 
   template <class SK>

@@ -118,6 +118,13 @@ namespace CGAL {
                                                                c))
       {}
 
+	  Circular_arc_3(const Point_3 &start,
+	                 const Point_3 &middle,
+	                 const Point_3 &end)
+	    : RCircular_arc_3(typename 
+			      R::Construct_circular_arc_3()(start, middle, end)) 
+	  {}
+
     Circular_arc_3(const RCircular_arc_3 &a)
      : RCircular_arc_3(a)
       {}
