@@ -12,39 +12,47 @@
 \ccThree{Circular_arc_point_2}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-\ccConstructor{Line_arc_2(const CircularKernel::Line_2 &l,
-		const CircularKernel::Circular_arc_point_2 &p1,
-		const CircularKernel::Circular_arc_point_2 &p2)}
+\ccConstructor{Line_arc_2(const Line_2<CircularKernel> &l,
+		const Circular_arc_point_2<CircularKernel> &p1,
+		const Circular_arc_point_2<CircularKernel> &p2)}
 {Construct the line segment supported by \ccc{l}, whose source 
 is \ccc{p1} and whose target is \ccc{p2}.
 \ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{l}.}}
 
-\ccConstructor{Line_arc_2(const CircularKernel::Line_2 &l,
-		const CircularKernel::Point_2 &p1,
-		const CircularKernel::Point_2 &p2)}
+\ccConstructor{Line_arc_2(const Line_2<CircularKernel> &l,
+		const Point_2<CircularKernel> &p1,
+		const Point_2<CircularKernel> &p2)}
 {Same.}
 
-\ccConstructor{Line_arc_2(const CircularKernel::Segment_2 &s)}
+\ccConstructor{Line_arc_2(const Segment_2<CircularKernel> &s)}
 {}
 
 \ccAccessFunctions
 
-\ccThree{CircularKernel::Circular_arc_point_2}{ca.is_x_monotone()}{}
+\ccThree{Circular_arc_point_2<CircularKernel>}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-\ccMethod{CircularKernel::Line_2 supporting_line();}{}
+\ccMethod{Line_2<CircularKernel> supporting_line();}{}
 
-\ccMethod{CircularKernel::Circular_arc_point_2 source();}{}
+\ccMethod{Circular_arc_point_2<CircularKernel> source();}{}
 \ccGlue
-\ccMethod{CircularKernel::Circular_arc_point_2 target();}{}
+\ccMethod{Circular_arc_point_2<CircularKernel> target();}{}
 
-\ccMethod{CircularKernel::Circular_arc_point_2 left();}{}
+\ccMethod{Circular_arc_point_2<CircularKernel> left();}{}
 \ccGlue
-\ccMethod{CircularKernel::Circular_arc_point_2 right();}{}
+\ccMethod{Circular_arc_point_2<CircularKernel> right();}{}
 
 \ccQueryFunctions
 
 \ccMethod{bool is_vertical();}{}
+
+\ccOperations
+
+\ccFunction{bool operator==(const Line_arc_2<CircularKernel> &ca1,
+  const Line_arc_2<CircularKernel> &ca2);} 
+{Test for equality. Two arcs are equal, iff their non-oriented
+  supporting lines are equal (i.e. they contain the same set of
+  points) and their endpoints are equal.}
 
 \ccHeading{I/O}
 

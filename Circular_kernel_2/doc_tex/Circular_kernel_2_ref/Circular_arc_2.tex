@@ -12,29 +12,29 @@
 \ccThree{Circular_arc_point_2}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-\ccConstructor{Circular_arc_2(const CircularKernel::Circle_2 &c)}
+\ccConstructor{Circular_arc_2(const Circle_2<CircularKernel> &c)}
 {Constructs an arc from a full circle.}
 
-\ccConstructor{Circular_arc_2(const CircularKernel::Circle_2 &c,
-		const CircularKernel::Circular_arc_point_2 &p1,
-		const CircularKernel::Circular_arc_point_2 &p2)}
+\ccConstructor{Circular_arc_2(const Circle_2<CircularKernel> &c,
+		const Circular_arc_point_2<CircularKernel> &p1,
+		const Circular_arc_point_2<CircularKernel> &p2)}
 {Constructs the circular arc supported by \ccc{c}, that is oriented 
 counterclockwise, whose source is \ccc{p1} and whose target is \ccc{p2}.
 \ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{c}.}}
 
 \ccAccessFunctions
 
-\ccThree{CircularKernel::Circular_arc_point_2}{ca.is_x_monotone()}{}
+\ccThree{Circular_arc_point_2<CircularKernel>}{Ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-\ccMethod{CircularKernel::Circle_2 supporting_circle();}{}
+\ccMethod{Circle_2<CircularKernel> supporting_circle();}{}
 
 A circular arc is supposed to be oriented counterclockwise, from 
 \ccc{source} to \ccc{target}. 
 
-\ccMethod{CircularKernel::Circular_arc_point_2 source();}{}
+\ccMethod{Circular_arc_point_2<CircularKernel> source();}{}
 \ccGlue
-\ccMethod{CircularKernel::Circular_arc_point_2 target();}{}
+\ccMethod{Circular_arc_point_2<CircularKernel> target();}{}
 
 When the methods \ccc{source} and \ccc{target} return the same point, then 
 the arc is in fact a full circle. %\footnote{so far, arcs of zero length are
@@ -44,15 +44,23 @@ the arc is in fact a full circle. %\footnote{so far, arcs of zero length are
 When an arc is x-monotone, its left and right points can be accessed
 directly:
 
-\ccMethod{CircularKernel::Circular_arc_point_2 left();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
+\ccMethod{Circular_arc_point_2<CircularKernel> Left();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
 \ccGlue
-\ccMethod{CircularKernel::Circular_arc_point_2 right();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
+\ccMethod{Circular_arc_point_2<CircularKernel> right();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
 
 \ccQueryFunctions
 
 \ccMethod{bool is_x_monotone();}{Tests whether the arc is x-monotone.}
 \ccGlue
 \ccMethod{bool is_y_monotone();}{Tests whether the arc is y-monotone.}
+
+\ccOperations
+
+\ccFunction{bool operator==(const Circular_arc_2<CircularKernel> &ca1,
+  const Circular_arc_2<CircularKernel> &ca2);} 
+{Test for equality. Two arcs are equal, iff their non-oriented
+  supporting circles are equal (i.e. they have same center and same
+  squared radius) and their endpoints are equal.}
 
 \ccHeading{I/O}
 
