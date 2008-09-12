@@ -6,7 +6,6 @@ typedef CGAL::Exact_circular_kernel_2             Circular_k;
 typedef CGAL::Point_2<Circular_k>                 Point_2;
 typedef CGAL::Circle_2<Circular_k>                Circle_2;
 typedef CGAL::Circular_arc_2<Circular_k>          Circular_arc_2;
-typedef CGAL::Line_arc_2<Circular_k>              Line_arc_2;
 
 template <typename T>
 double prob_2() {
