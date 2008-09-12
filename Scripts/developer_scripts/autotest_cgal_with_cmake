@@ -644,7 +644,7 @@ EOF
     
     ${TAR} cf "test_results-${HOST}.tar" "results_${CGAL_TESTER}_${PLATFORM}.tar.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt"
     ${COMPRESSOR} -9f "test_results-${HOST}.tar"
-    COMPILER=`echo -n $2 | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
+    COMPILER=`printf "%s" "$2" | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
     FILENAME="${CGAL_RELEASE_ID}_${CGAL_TESTER}-test`datestr`-${COMPILER}-cmake.tar.gz"
     LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${HOST}.gz"
     ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.${HOST}"
