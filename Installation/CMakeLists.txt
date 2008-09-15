@@ -87,6 +87,40 @@ message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
 #
 #--------------------------------------------------------------------------------------------------
 
+#
+# The following variables are in the cache just so subdirectories can set them persistently.
+# But they are not intended to persist from run to run as normal cache variables.
+#
+cache_set(CGAL_3RD_PARTY_DEFINITIONS   "" )
+cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS  "" )
+cache_set(CGAL_3RD_PARTY_LIBRARIES     "" )
+cache_set(CGAL_3RD_PARTY_LIBRARIES_DIR "" ) 
+
+cache_set(CGAL_CORE_3RD_PARTY_DEFINITIONS   "" )
+cache_set(CGAL_CORE_3RD_PARTY_INCLUDE_DIRS  "" )
+cache_set(CGAL_CORE_3RD_PARTY_LIBRARIES     "" )
+cache_set(CGAL_CORE_3RD_PARTY_LIBRARIES_DIR "" ) 
+
+cache_set(CGAL_ImageIO_3RD_PARTY_DEFINITIONS   "" )
+cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS  "" )
+cache_set(CGAL_ImageIO_3RD_PARTY_LIBRARIES     "" )
+cache_set(CGAL_ImageIO_3RD_PARTY_LIBRARIES_DIR "" )
+
+cache_set(CGAL_Qt3_3RD_PARTY_DEFINITIONS   "" )
+cache_set(CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS  "" )
+cache_set(CGAL_Qt3_3RD_PARTY_LIBRARIES     "" )
+cache_set(CGAL_Qt3_3RD_PARTY_LIBRARIES_DIR "" ) 
+
+cache_set(CGAL_Qt4_3RD_PARTY_DEFINITIONS   "" )
+cache_set(CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS  "" )
+cache_set(CGAL_Qt4_3RD_PARTY_LIBRARIES     "" )
+cache_set(CGAL_Qt4_3RD_PARTY_LIBRARIES_DIR "" ) 
+
+cache_set(CGAL_PDB_3RD_PARTY_DEFINITIONS   "" )
+cache_set(CGAL_PDB_3RD_PARTY_INCLUDE_DIRS  "" )
+cache_set(CGAL_PDB_3RD_PARTY_LIBRARIES     "" )
+cache_set(CGAL_PDB_3RD_PARTY_LIBRARIES_DIR "" ) 
+
 include(FindCGALDependencies)
 
 #--------------------------------------------------------------------------------------------------
