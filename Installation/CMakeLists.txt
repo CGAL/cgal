@@ -382,7 +382,7 @@ macro( add_programs subdir ON_OFF )
   
   cache_get( CGAL_EXECUTABLE_TARGETS )
   
-  foreach( CGAL_EXECUTABLE_TARGET in ${CGAL_EXECUTABLE_TARGETS} )
+  foreach( CGAL_EXECUTABLE_TARGET ${CGAL_EXECUTABLE_TARGETS} )
     add_dependencies( ${subdir} ${CGAL_EXECUTABLE_TARGET} )
   endforeach()
      
