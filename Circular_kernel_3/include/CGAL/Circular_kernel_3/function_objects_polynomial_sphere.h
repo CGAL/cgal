@@ -346,18 +346,27 @@ template < class SK > \
     { return construct_plane_3<SK>(eq); }
   };
 
-  template < class SK >
-  class Construct_line_3 : public  SK::Linear_kernel::Construct_line_3
+  template <class SK>
+  class Construct_line_3 : public SK::Linear_kernel::Construct_line_3
   {
-  public:
-    
-		typedef typename SK::Linear_kernel::Construct_line_3::result_type result_type;
+    typedef typename SK::Line_arc_3                Line_arc_3;
+    typedef typename SK::Line_3                    Line_3;
 
+  public:
+
+    typedef typename SK::Linear_kernel::Construct_line_3::result_type 
+      result_type;
+
+    typedef const result_type &  qualified_result_type;
     using SK::Linear_kernel::Construct_line_3::operator();
+
+    qualified_result_type operator() (const Line_arc_3 & a) const
+    { return (a.rep().supporting_line()); }
 
     result_type
     operator() ( const typename SK::Polynomials_for_line_3 &eq )
     { return construct_line_3<SK>(eq); }
+
   };
 
   template < class SK >
@@ -678,22 +687,6 @@ template < class SK > \
 
     qualified_result_type operator() (const Circular_arc_3 & a) const
     { return (a.rep().target()); }
-
-  };
-
-  template <class SK>
-  class Construct_supporting_line_3 : Has_qrt
-  {
-    typedef typename SK::Line_arc_3                Line_arc_3;
-    typedef typename SK::Line_3                    Line_3;
-
-  public:
-
-    typedef Line_3 result_type;
-    typedef const result_type &  qualified_result_type;
-
-    qualified_result_type operator() (const Line_arc_3 & a) const
-    { return (a.rep().supporting_line()); }
 
   };
 
@@ -1384,6 +1377,14 @@ template < class SK > \
   };
 
 } // namespace SphericalFunctors
+
+template < typename K >
+struct Qualified_result_of<SphericalFunctors::Construct_line_3<K>,
+                           typename K::Line_arc_3>
+{
+  typedef typename K::Line_3 const &   type;
+};
+
 } // namespace CGAL
 
 #endif // CGAL_SPHERICAL_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_SPHERE_H

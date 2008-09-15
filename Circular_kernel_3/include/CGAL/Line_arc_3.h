@@ -158,10 +158,10 @@ namespace CGAL {
     }
 
     typename Qualified_result_of
-    <typename R::Construct_supporting_line_3,Line_arc_3>::type
+    <typename R::Construct_line_3,Line_arc_3>::type
     supporting_line() const
     {
-      return typename R::Construct_supporting_line_3()(*this);
+      return typename R::Construct_line_3()(*this);
     }
 
     Bbox_3 bbox() const
