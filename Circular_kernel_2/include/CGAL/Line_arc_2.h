@@ -123,11 +123,11 @@ public:
   }
 
   typename Qualified_result_of
-  <typename R::Construct_supporting_line_2,Line_arc_2>::type
+  <typename R::Construct_line_2,Line_arc_2>::type
   //const Line_2 & 
     supporting_line() const
   {
-        return typename R::Construct_supporting_line_2()(*this);
+        return typename R::Construct_line_2()(*this);
   }
   
 

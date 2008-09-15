@@ -27,21 +27,32 @@
 #define CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_ON_LINE_2_H
 
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_2.h>
+#include <CGAL/Circular_kernel_2/internal_functions_on_line_arc_2.h>
 
 namespace CGAL {
+
 namespace LinearFunctors {
 
   template < class CK >
   class Construct_line_2 : public  CK::Linear_kernel::Construct_line_2
   {
+	  typedef typename CK::Line_arc_2            Line_arc_2;
+    typedef typename CK::Line_2                Line_2;
     public:
 
     typedef typename CK::Line_2 result_type;
+    typedef const result_type &  qualified_result_type;
+    using CK::Linear_kernel::Construct_line_2::operator();
+
+    qualified_result_type operator() (const Line_arc_2 & a) const
+    {
+      return (a.rep().supporting_line());
+    }
 
     result_type
     operator() ( const typename CK::Polynomial_1_2 &eq )
       {
-	return construct_line_2<CK>(eq);
+	      return construct_line_2<CK>(eq);
       }
   };
 
@@ -60,6 +71,14 @@ namespace LinearFunctors {
   };
 
 } // namespace LinearFunctors
+
+template < typename K >
+struct Qualified_result_of<LinearFunctors::Construct_line_2<K>,
+                           typename K::Line_arc_2>
+{
+  typedef typename K::Line_2 const &   type;
+};
+
 } // namespace CGAL
 
 #endif // CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_ON_LINE_2_H

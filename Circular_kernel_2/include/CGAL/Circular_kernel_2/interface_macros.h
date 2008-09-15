@@ -102,8 +102,6 @@
 
   CGAL_Circular_Kernel_cons(Construct_supporting_circle_2,
   construct_supporting_circle_2_object)
-  CGAL_Circular_Kernel_cons(Construct_supporting_line_2,
-  construct_supporting_line_2_object)
   CGAL_Circular_Kernel_cons(Construct_bbox_2,
   construct_bbox_2_object)
 

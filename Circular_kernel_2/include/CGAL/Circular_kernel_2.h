@@ -32,6 +32,9 @@
 #include <CGAL/Circular_arc_point_2.h>
 #include <CGAL/Line_arc_2.h>
 
+#include <CGAL/Circular_kernel_2/function_objects_on_line_2.h>
+#include <CGAL/global_functions_on_line_2.h>
+
 #include <CGAL/Circular_kernel_2/function_objects_on_circle_2.h>
 #include <CGAL/global_functions_on_circle_2.h>
 
@@ -73,6 +76,10 @@ struct Circular_kernel_base_ref_count: public LinearKernelBase
   #define CGAL_Circular_Kernel_cons(Y,Z) CGAL_Circular_Kernel_pred(Y,Z)
 
   #include <CGAL/Circular_kernel_2/interface_macros.h>
+
+	typedef LinearFunctors::Construct_line_2<CircularKernel> Construct_line_2;
+  Construct_line_2 construct_line_2_object() const { return Construct_line_2(); }
+
 };
 
 } // namespace CGALi
