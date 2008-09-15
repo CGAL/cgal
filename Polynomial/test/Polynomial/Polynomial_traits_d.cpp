@@ -758,17 +758,23 @@ void test_square_free_factorize(const Polynomial_traits_d&){
   typename AST::Integral_division idiv;
   typename PT::Square_free_factorize sqff;
   typename PT::Canonicalize canonicalize;
+  typename PT::Total_degree total_degree;
+  typename PT::Leading_coefficient lcoeff;
   (void) idiv;
   (void) sqff;
   (void) canonicalize;
 
   for(int i = 0; i < 5; i++){
     Polynomial_d f1 = generate_sparse_random_polynomial<Polynomial_d>(2);
-    Polynomial_d f2 = generate_sparse_random_polynomial<Polynomial_d>(2);    
-    Polynomial_d p = f1*f1*f2;
+    Polynomial_d f2 = generate_sparse_random_polynomial<Polynomial_d>(2);  
+    Polynomial_d f3 = generate_sparse_random_polynomial<Polynomial_d>(2);    
+    f3 = Polynomial_d(lcoeff(f3));
+    Polynomial_d p = f1*f1*f2*f3*f3*f3;
     std::vector<std::pair<Polynomial_d,int> > fac_mul_pairs;
     sqff(p, std::back_inserter(fac_mul_pairs));
     int n = fac_mul_pairs.size();
+    assert(n >= 3 
+        || total_degree(f1) == 0 || total_degree(f2) == 0 || total_degree(f3) == 0);
     for (int j = 0; j < n; j++){
       Polynomial_d factor = fac_mul_pairs[j].first;
       int multi = fac_mul_pairs[j].second;
@@ -778,7 +784,8 @@ void test_square_free_factorize(const Polynomial_traits_d&){
     }
     assert(CGAL::is_one(canonicalize(p)));
   }
-    
+
+
   
   typename PT::Innermost_leading_coefficient ileading_coeff;
   typename PT::Multivariate_content multivariate_content;
@@ -1685,9 +1692,6 @@ void test_AT(){
 
 int main(){
 
-#if 1    
-  test_AT<CGAL::Arithmetic_kernel>();
-#else
 #ifdef CGAL_USE_LEDA
   {        
     typedef CGAL::LEDA_arithmetic_kernel AT;
@@ -1700,6 +1704,6 @@ int main(){
     test_AT<AT>();
   }
 #endif
-#endif
+
   return 0;
 }
