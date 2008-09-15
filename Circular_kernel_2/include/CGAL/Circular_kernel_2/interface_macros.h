@@ -100,6 +100,13 @@
   CGAL_Circular_Kernel_pred(Bounded_side_2, bounded_side_2_object)
   CGAL_Circular_Kernel_pred(Do_intersect_2, do_intersect_2_object)
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+	CGAL_Circular_Kernel_cons(Construct_supporting_circle_2,
+	  construct_supporting_circle_2_object)
+	CGAL_Circular_Kernel_cons(Construct_supporting_line_2,
+	  construct_supporting_line_2_object)
+#endif
+	
   CGAL_Circular_Kernel_cons(Construct_bbox_2,
   construct_bbox_2_object)
 

@@ -1141,6 +1141,44 @@ template < class CK >
 
   };
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+  template <class CK>
+  class Construct_supporting_circle_2: Has_qrt
+  {
+    typedef typename CK::Circular_arc_2            Circular_arc_2;
+    typedef typename CK::Circle_2                  Circle_2;
+
+  public:
+
+    typedef Circle_2             result_type;
+    typedef const result_type &  qualified_result_type;
+    
+    CGAL_DEPRECATED qualified_result_type operator() (const Circular_arc_2 & a) const
+    {
+      return (a.rep().supporting_circle());
+    }
+  };
+  
+  
+  template <class CK>
+  class Construct_supporting_line_2: Has_qrt
+  {
+    typedef typename CK::Line_arc_2            Line_arc_2;
+    typedef typename CK::Line_2                Line_2;
+    typedef typename CK::Circle_2              Circle_2;
+
+  public:
+
+    typedef Line_2               result_type;
+    typedef const result_type &  qualified_result_type;
+    
+    CGAL_DEPRECATED qualified_result_type operator() (const Line_arc_2 & a) const
+    {
+      return (a.rep().supporting_line());
+    }
+  };
+#endif
+
 } // namespace CircularFunctors
 } // namespace CGAL
 
