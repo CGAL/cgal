@@ -331,7 +331,7 @@ public:
       init_tds();
     }
 
-  Triangulation_3 & operator=(Triangulation_3 tr)
+  Triangulation_3 & operator=(Triangulation_3 &tr)
     {
       swap(tr);
       return *this;
