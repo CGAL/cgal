@@ -144,10 +144,10 @@ namespace CGAL {
     }
 
     typename Qualified_result_of
-    <typename R::Construct_supporting_circle_3,Circular_arc_3>::type
+    <typename R::Construct_circle_3,Circular_arc_3>::type
     supporting_circle() const
     {
-      return typename R::Construct_supporting_circle_3()(*this);
+      return typename R::Construct_circle_3()(*this);
     }
 
     Sphere_3 diametral_sphere() const
@@ -167,7 +167,7 @@ namespace CGAL {
 
     Plane_3 supporting_plane() const
     {
-      return typename R::Construct_supporting_plane_3()(*this);
+      return typename R::Construct_plane_3()(*this);
     }
 
     Bbox_3 bbox() const
