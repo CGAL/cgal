@@ -40,7 +40,8 @@ namespace LinearFunctors {
     typedef typename CK::Line_2                Line_2;
     public:
 
-    typedef typename CK::Line_2 result_type;
+    typedef typename CK::Linear_kernel::Construct_line_2::result_type 
+      result_type;
     typedef const result_type &  qualified_result_type;
     using CK::Linear_kernel::Construct_line_2::operator();
 
