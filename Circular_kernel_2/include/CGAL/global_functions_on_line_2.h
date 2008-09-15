@@ -43,14 +43,6 @@ construct_line_2(const typename CK::Polynomial_1_2 & eq)
   return CK().construct_line_2_object()(eq);
 }
 
-template< class CK >
-inline
-typename CK::Line_2
-supporting_line_2(const typename CK::Line_arc_2 & la)
-{
-  return CK().construct_line_2_object()(la);
-}
-
 template< class CK, class OutputIterator>
 inline
 OutputIterator
