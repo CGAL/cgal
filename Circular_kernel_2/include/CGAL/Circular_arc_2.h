@@ -159,21 +159,21 @@ public:
   }
 
   typename Qualified_result_of
-  <typename R::Construct_supporting_circle_2,Circular_arc_2>::type
+  <typename R::Construct_circle_2,Circular_arc_2>::type
   //const Circle_2 &
   supporting_circle() const
   {
-    return typename R::Construct_supporting_circle_2()(*this);
+    return typename R::Construct_circle_2()(*this);
   }
 
   const Point_2 & center() const
   {
-    return typename R::Construct_supporting_circle_2()(*this).center();
+    return typename R::Construct_circle_2()(*this).center();
   }
 
   const FT & squared_radius() const
   {
-    return typename R::Construct_supporting_circle_2()(*this).squared_radius();
+    return typename R::Construct_circle_2()(*this).squared_radius();
   }
 
  Bbox_2 bbox(void) const

@@ -39,15 +39,25 @@ namespace CircularFunctors {
   {
   public:
     
-    typedef typename CK::Circle_2 result_type;
-
+    typedef typename CK::Circular_arc_2 Circular_arc_2;
+    typedef typename CK::Linear_kernel::Construct_circle_2::result_type
+      result_type;
+		typedef const result_type& qualified_result_type;
+		
     using CK::Linear_kernel::Construct_circle_2::operator();
 
     result_type
     operator() ( const typename CK::Polynomial_for_circles_2_2 &eq )
       {
-	return construct_circle_2<CK>(eq);
+	      return construct_circle_2<CK>(eq);
       }
+
+	  qualified_result_type 
+	  operator() (const Circular_arc_2 & a) const
+	    {
+	      return (a.rep().supporting_circle());
+	    }
+
   };
 
   template < class CK >
@@ -67,6 +77,14 @@ namespace CircularFunctors {
   };
 
 } // namespace CircularFunctors
+
+template < typename K >
+struct Qualified_result_of<CircularFunctors::Construct_circle_2<K>,
+                           typename K::Circular_arc_2>
+{
+  typedef typename K::Circle_2 const &   type;
+};
+
 } // namespace CGAL
 
 #endif // CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_ON_CIRCLE_2_H
