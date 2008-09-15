@@ -75,15 +75,15 @@ void ConvertBuffer( void *bufferIn,
   }
   
   switch ( typeOut ) {
-  case SCHAR :
+  case CGAL_SCHAR :
     s8buf = (s8*)bufferOut;
     min = -128; max = 127;
     switch( typeIn ) {
-    case SCHAR :
+    case CGAL_SCHAR :
       if ( bufferOut == bufferIn ) return;
       (void)memcpy( bufferOut, bufferIn, bufferLength * sizeof(s8) );
       break;
-    case FLOAT :
+    case CGAL_FLOAT :
       r32buf = (r32*)bufferIn;
       for (i=bufferLength; i>0; i--, s8buf++, r32buf++ ) {
 	if ( *r32buf < min ) *s8buf = min;
@@ -92,7 +92,7 @@ void ConvertBuffer( void *bufferIn,
 	else *s8buf = max;
       }
       break;
-    case DOUBLE :
+    case CGAL_DOUBLE :
       r64buf = (r64*)bufferIn;
       for (i=bufferLength; i>0; i--, s8buf++, r64buf++ ) {
 	if ( *r64buf < min ) *s8buf = min;
@@ -106,28 +106,28 @@ void ConvertBuffer( void *bufferIn,
 	       proc );
       return;
     }
-    break; /* end case typeOut = SCHAR */
+    break; /* end case typeOut = CGAL_SCHAR */
 
 
 
 
     
-  case UCHAR :
+  case CGAL_UCHAR :
     u8buf = (u8*)bufferOut;
     min = 0; max = 255;
     switch( typeIn ) {
-    case UCHAR :
+    case CGAL_UCHAR :
       if ( bufferOut == bufferIn ) return;
       (void)memcpy( bufferOut, bufferIn, bufferLength * sizeof(u8) );
       break;
-    case USHORT :
+    case CGAL_USHORT :
       u16buf = (u16*)bufferIn;
       for (i=bufferLength; i>0; i--, u8buf++, u16buf++ ) {
 	if ( *u16buf < max ) *u8buf = (u8)*u16buf;
 	else *u8buf = max;
       }
       break;
-    case FLOAT :
+    case CGAL_FLOAT :
       r32buf = (r32*)bufferIn;
       for (i=bufferLength; i>0; i--, u8buf++, r32buf++ ) {
 	if ( *r32buf < min ) *u8buf = min;
@@ -135,7 +135,7 @@ void ConvertBuffer( void *bufferIn,
 	else *u8buf = max;
       }
       break;
-    case DOUBLE :
+    case CGAL_DOUBLE :
       r64buf = (r64*)bufferIn;
       for (i=bufferLength; i>0; i--, u8buf++, r64buf++ ) {
 	if ( *r64buf < min ) *u8buf = min;
@@ -148,29 +148,29 @@ void ConvertBuffer( void *bufferIn,
 	       proc );
       return;
     }
-    break; /* end case typeOut = UCHAR */
+    break; /* end case typeOut = CGAL_UCHAR */
 
 
 
 
 
     
-  case SSHORT :
+  case CGAL_SSHORT :
     s16buf = (s16*)bufferOut;
     min = -32768; max = 32767;
     switch( typeIn ) {
-    case SSHORT :
+    case CGAL_SSHORT :
       if ( bufferOut == bufferIn ) return;
       (void)memcpy( bufferOut, bufferIn, bufferLength * sizeof(s16) );
       break;
-    case USHORT :
+    case CGAL_USHORT :
       u16buf = (u16*)bufferIn;
       for (i=bufferLength; i>0; i--, s16buf++, u16buf++ ) {
 	if ( *u16buf < max ) *s16buf = (s16)*u16buf;
 	else *s16buf = max;
       }
       break;
-    case FLOAT :
+    case CGAL_FLOAT :
       r32buf = (r32*)bufferIn;
       for (i=bufferLength; i>0; i--, s16buf++, r32buf++ ) {
 	if ( *r32buf < min ) *s16buf = min;
@@ -179,7 +179,7 @@ void ConvertBuffer( void *bufferIn,
 	else *s16buf = max;
       }
       break;
-    case DOUBLE :
+    case CGAL_DOUBLE :
       r64buf = (r64*)bufferIn;
       for (i=bufferLength; i>0; i--, s16buf++, r64buf++ ) {
 	if ( *r64buf < min ) *s16buf = min;
@@ -193,21 +193,21 @@ void ConvertBuffer( void *bufferIn,
 	       proc );
       return;
     }
-    break; /* end case typeOut = SSHORT */
+    break; /* end case typeOut = CGAL_SSHORT */
 
 
 
 
     
-  case USHORT :
+  case CGAL_USHORT :
     u16buf = (u16*)bufferOut;
     min = 0; max = 65535;
     switch( typeIn ) {
-    case USHORT :
+    case CGAL_USHORT :
       if ( bufferOut == bufferIn ) return;
       (void)memcpy( bufferOut, bufferIn, bufferLength * sizeof(u16) );
       break;
-    case FLOAT :
+    case CGAL_FLOAT :
       r32buf = (r32*)bufferIn;
       for (i=bufferLength; i>0; i--, u16buf++, r32buf++ ) {
 	if ( *r32buf < min ) *u16buf = min;
@@ -216,7 +216,7 @@ void ConvertBuffer( void *bufferIn,
 	else *u16buf = max;
       }
       break;
-    case DOUBLE :
+    case CGAL_DOUBLE :
       r64buf = (r64*)bufferIn;
       for (i=bufferLength; i>0; i--, u16buf++, r64buf++ ) {
 	if ( *r64buf < min ) *u16buf = min;
@@ -230,27 +230,27 @@ void ConvertBuffer( void *bufferIn,
 	       proc );
       return;
     }
-    break; /* end case typeOut = USHORT */
+    break; /* end case typeOut = CGAL_USHORT */
 
 
 
 
 
     
-  case INT :
+  case CGAL_INT :
     s32buf = (s32*)bufferOut;
     switch( typeIn ) {
-    case INT :
+    case CGAL_INT :
       if ( bufferOut == bufferIn ) return;
       (void)memcpy( bufferOut, bufferIn, bufferLength * sizeof(s32) );
       break;
-    case FLOAT :
+    case CGAL_FLOAT :
       r32buf = (r32*)bufferIn;
       for (i=bufferLength; i>0; i--, s32buf++, r32buf++ ) {
 	*s32buf = (int)(*r32buf);
       }
       break;
-    case DOUBLE :
+    case CGAL_DOUBLE :
       r64buf = (r64*)bufferIn;
       for (i=bufferLength; i>0; i--, s32buf++, r64buf++ ) {
 	*s32buf = (int)(*r64buf);
@@ -261,51 +261,51 @@ void ConvertBuffer( void *bufferIn,
 	       proc );
       return;
     }
-    break; /* end case typeOut = INT */
+    break; /* end case typeOut = CGAL_INT */
 
 
 
 
 
     
-  case FLOAT :
+  case CGAL_FLOAT :
     r32buf = (r32*)bufferOut;
     switch( typeIn ) {
-    case UCHAR :
+    case CGAL_UCHAR :
       u8buf = (u8*)bufferIn;
       for (i=bufferLength; i>0; i--, r32buf++, u8buf++ ) {
 	*r32buf = (float)(*u8buf);
       }
       break;
-    case SCHAR :
+    case CGAL_SCHAR :
       s8buf = (s8*)bufferIn;
       for (i=bufferLength; i>0; i--, r32buf++, s8buf++ ) {
 	*r32buf = (float)(*s8buf);
       }
       break;
-    case USHORT :
+    case CGAL_USHORT :
       u16buf = (u16*)bufferIn;
       for (i=bufferLength; i>0; i--, r32buf++, u16buf++ ) {
 	*r32buf = (float)(*u16buf);
       }
       break;
-    case SSHORT :
+    case CGAL_SSHORT :
       s16buf = (s16*)bufferIn;
       for (i=bufferLength; i>0; i--, r32buf++, s16buf++ ) {
 	*r32buf = (float)(*s16buf);
       }
       break;
-    case INT :
+    case CGAL_INT :
       s32buf = (s32*)bufferIn;
       for (i=bufferLength; i>0; i--, r32buf++, s32buf++ ) {
 	*r32buf = (float)(*s32buf);
       }
       break;
-    case FLOAT :
+    case CGAL_FLOAT :
       if ( bufferOut == bufferIn ) return;
       (void)memcpy( bufferOut, bufferIn, bufferLength * sizeof(r32) );
       break;
-    case DOUBLE :
+    case CGAL_DOUBLE :
       r64buf = (r64*)bufferIn;
       for (i=bufferLength; i>0; i--, r32buf++, r64buf++ ) {
 	*r32buf = (float)(*r64buf);
@@ -316,52 +316,52 @@ void ConvertBuffer( void *bufferIn,
 	       proc );
       return;
     }
-    break; /* end case typeOut = FLOAT */
+    break; /* end case typeOut = CGAL_FLOAT */
 
 
 
 
     
-  case DOUBLE :
+  case CGAL_DOUBLE :
     r64buf = (r64*)bufferOut;
     switch( typeIn ) {
-    case UCHAR :
+    case CGAL_UCHAR :
       u8buf = (u8*)bufferIn;
       for (i=bufferLength; i>0; i--, r64buf++, u8buf++ ) {
 	*r64buf = (double)(*u8buf);
       }
       break;
-    case SCHAR :
+    case CGAL_SCHAR :
       s8buf = (s8*)bufferIn;
       for (i=bufferLength; i>0; i--, r64buf++, s8buf++ ) {
 	*r64buf = (double)(*s8buf);
       }
       break;
-    case USHORT :
+    case CGAL_USHORT :
       u16buf = (u16*)bufferIn;
       for (i=bufferLength; i>0; i--, r64buf++, u16buf++ ) {
 	*r64buf = (double)(*u16buf);
       }
       break;
-    case SSHORT :
+    case CGAL_SSHORT :
       s16buf = (s16*)bufferIn;
       for (i=bufferLength; i>0; i--, r64buf++, s16buf++ ) {
 	*r64buf = (double)(*s16buf);
       }
       break;
-    case INT :
+    case CGAL_INT :
       s32buf = (s32*)bufferIn;
       for (i=bufferLength; i>0; i--, r64buf++, s32buf++ ) {
 	*r64buf = (double)(*s32buf);
       }
       break;
-    case FLOAT :
+    case CGAL_FLOAT :
       r32buf = (r32*)bufferIn;
       for (i=bufferLength; i>0; i--, r32buf++, r64buf++ ) {
 	*r64buf = (double)(*r32buf);
       }
       break;
-    case DOUBLE :
+    case CGAL_DOUBLE :
       if ( bufferOut == bufferIn ) return;
       (void)memcpy( bufferOut, bufferIn, bufferLength * sizeof(r64) );
       break;
@@ -370,7 +370,7 @@ void ConvertBuffer( void *bufferIn,
 	       proc );
       return;
     }
-    break; /* end case typeOut = DOUBLE */
+    break; /* end case typeOut = CGAL_DOUBLE */
 
 
 

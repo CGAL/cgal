@@ -49,14 +49,14 @@
  */
 typedef enum {
   TYPE_UNKNOWN /* unknown type */,
-  UCHAR  /* unsigned char */,
-  SCHAR  /* signed char */,
-  USHORT /* unsigned short int */,
-  SSHORT /* signed short int */,
-  INT    /* signed int */,
-  ULINT  /* unsigned long int */,
-  FLOAT  /* float */,
-  DOUBLE  /* double */
+  CGAL_UCHAR  /* unsigned char */,
+  CGAL_SCHAR  /* signed char */,
+  CGAL_USHORT /* unsigned short int */,
+  CGAL_SSHORT /* signed short int */,
+  CGAL_INT    /* signed int */,
+  CGAL_ULINT  /* unsigned long int */,
+  CGAL_FLOAT  /* float */,
+  CGAL_DOUBLE  /* double */
 } ImageType, bufferType;
 
 typedef char               s8;
