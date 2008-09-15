@@ -690,13 +690,13 @@ void test_scale_homogeneous(const Polynomial_traits_d&){
   std::cerr << " ok "<< std::endl;
 }
 
-// //       Derivative;
+// //       Differentiate;
 template <class Polynomial_traits_d>
 void test_derivative(const Polynomial_traits_d&){
   std::cerr << "start test_derivative "; std::cerr.flush();
   CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
-  typename PT::Derivative diff;
+  typename PT::Differentiate diff;
   typename PT::Swap swap;
   (void) diff;
   (void) swap;

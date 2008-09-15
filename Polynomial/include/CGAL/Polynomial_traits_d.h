@@ -333,7 +333,7 @@ public:
   typedef Null_functor  Translate;
   typedef Null_functor  Translate_homogeneous;
   typedef Null_functor  Scale_homogeneous;
-  typedef Null_functor  Derivative;
+  typedef Null_functor  Differentiate;
     
   struct Is_square_free
     : public std::unary_function< ICoeff, bool > {
@@ -832,8 +832,8 @@ public:
     }  
   };
 
-  //       Derivative;
-  struct Derivative 
+  //       Differentiate;
+  struct Differentiate 
     : public std::unary_function<Polynomial_d, Polynomial_d>{
     Polynomial_d
     operator()(Polynomial_d p, int i = (d-1)) const {
@@ -1035,7 +1035,7 @@ public:
             
       Univariate_content_up_to_constant_factor ucontent_utcf;
       Integral_division_up_to_constant_factor  idiv_utcf;
-      Derivative diff;
+      Differentiate diff;
             
       Coefficient_type content = ucontent_utcf( p );
       typename PTC::Is_square_free isf;
@@ -1058,7 +1058,7 @@ public:
       if (CGAL::is_zero(p)) return p;
       Univariate_content_up_to_constant_factor ucontent_utcf;
       Integral_division_up_to_constant_factor  idiv_utcf;
-      Derivative diff;
+      Differentiate diff;
       typename PTC::Make_square_free msf;
             
       Coefficient_type content = ucontent_utcf(p);
