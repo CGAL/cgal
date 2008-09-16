@@ -1,5 +1,7 @@
 for release 3.4
 
+NEW PACKAGE !!!
+
 ===================
 
 Changes in Kernel
@@ -7,3 +9,4 @@ Changes in Kernel
 missing cases in intersection computations added (Line_3)
 
 new geometric concept and class Circle_3
+new constructors of Sphere_3 and Plane_3, from Circle_3
