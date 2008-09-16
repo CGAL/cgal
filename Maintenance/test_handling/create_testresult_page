@@ -256,7 +256,7 @@ sub parse_platform_2($)
 sub short_pfname($)
 {
     my @pflist = parse_platform_2($_[0]);
-    my $shortpf = join('_', $pflist[2], $pflist[1]);
+    my $shortpf = join('_', $pflist[1], $pflist[2]);
     return $shortpf;
 }
 
@@ -275,8 +275,7 @@ sub choose_platforms()
 # and add those platforms at the end of the list of known platforms.
     foreach (@available_platforms) {
 	$pf = $_;
-	my @pflist = parse_platform_2($pf);
-	my $shortpf = join('_', $pflist[2], $pflist[1]);
+	my $shortpf = short_pfname($pf);
 	$pf =~ s/^[^_]*_//;
 	$pf =~ s/_LEDA$//;
 	if (!exists $platform_index{$shortpf}) {
