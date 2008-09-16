@@ -9,7 +9,11 @@
 A model \ccVar\ of this type must provide:
 
 \ccMemberFunction{SphericalKernel::Plane_3 operator()
-	(SphericalKernel::Polynomial_1_3);}
+	(const SphericalKernel::Circular_arc_3 &a);}
+{Constructs the plane containing the arc.}
+
+\ccMemberFunction{SphericalKernel::Plane_3 operator()
+	(const SphericalKernel::Polynomial_1_3 &p);}
 {Constructs a plane from an equation.}
 
 \ccSeeAlso
@@ -27,8 +31,8 @@ A model \ccVar\ of this type must provide:
 A model \ccVar\ of this type must provide:
 
 \ccMemberFunction{SphericalKernel::Sphere_3 operator()
-	(SphericalKernel::Polynomial_2_3);}
-{Constructs a circle from an equation.}
+	(const SphericalKernel::Polynomial_2_3 &p);}
+{Constructs a sphere from an equation.}
 
 \ccSeeAlso
 
@@ -45,7 +49,11 @@ A model \ccVar\ of this type must provide:
 A model \ccVar\ of this type must provide:
 
 \ccMemberFunction{SphericalKernel::Line_3 operator()
-	(SphericalKernel::Polynomials_for_lines_3);}
+	(const SphericalKernel::Line_arc_3 &s);}
+{Constructs the line containing the segment.}
+
+\ccMemberFunction{SphericalKernel::Line_3 operator()
+	(const SphericalKernel::Polynomials_for_lines_3 &p);}
 {Constructs a line from an equation.}
 
 \ccSeeAlso
@@ -59,7 +67,11 @@ A model \ccVar\ of this type must provide:
 A model \ccVar\ of this type must provide:
 
 \ccMemberFunction{SphericalKernel::Circle_3 operator()
-	(SphericalKernel::Polynomials_for_circles_3);}
+	(const SphericalKernel::Circular_arc_3 &a);}
+{Constructs the circle containing the arc.}
+
+\ccMemberFunction{SphericalKernel::Circle_3 operator()
+	(const SphericalKernel::Polynomials_for_circles_3 &p);}
 {Constructs a circle from an equation.}
 
 \ccSeeAlso
@@ -88,12 +100,11 @@ A model \ccVar\ of this type must provide:
 
 \ccMemberFunction{SphericalKernel::Line_arc_3 operator()
 	(const SphericalKernel::Line_3 &l,
-	const SphericalKernel::Circular_arc_point_3 &p1,
-	const SphericalKernel::Circular_arc_point_3 &p2);}
+	const SphericalKernel::Circular_arc_point_3 &p,
+	const SphericalKernel::Circular_arc_point_3 &q);}
 {Constructs the line segment supported by \ccc{l}, whose source 
-is \ccc{p1} and whose target is \ccc{p2}.
-\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{l}. 
-\ccc{p1} and \ccc{p2} are different.}}
+is \ccc{p} and whose target is \ccc{q}.
+\ccPrecond{\ccc{p} and \ccc{q} lie on \ccc{l} and are different.}}
 
 %\ccMemberFunction{SphericalKernel::Line_arc_3 operator()
 %	(const SphericalKernel::Line_3 &l,
@@ -106,8 +117,8 @@ is \ccc{p1} and whose target is \ccc{p2}.
 {}
 
 \ccMemberFunction{SphericalKernel::Line_arc_3 operator()
-	(const SphericalKernel::Point_3 &p1,
-	const SphericalKernel::Point_3 &p2);}
+	(const SphericalKernel::Point_3 &p,
+	const SphericalKernel::Point_3 &q);}
 {}
 
 \end{ccRefFunctionObjectConcept}
@@ -122,12 +133,11 @@ A model \ccVar\ of this type must provide:
 
 \ccMemberFunction{SphericalKernel::Circular_arc_3 operator()
 	(const SphericalKernel::Circle_3 &c,
-	const SphericalKernel::Circular_arc_point_3 &p1,
-	const SphericalKernel::Circular_arc_point_3 &p2);}
+	const SphericalKernel::Circular_arc_point_3 &p,
+	const SphericalKernel::Circular_arc_point_3 &q);}
 {Constructs the circular arc supported by \ccc{c}, whose source and target 
-are respectively \ccc{p1} and \ccc{p2}.
-\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{c}. \ccc{p1} and \ccc{p2} 
-are different.}}
+are respectively \ccc{p} and \ccc{q}.
+\ccPrecond{\ccc{p} and \ccc{q} lie on \ccc{c} and they are different.}}
 
 The circular arc constructed from a circle, a source, and a target, is
 defined as the set of points of the circle that lie between the source
@@ -137,6 +147,20 @@ counterclockwise in the \textit{positive} plane containing the circle.
 In this definition, we say that a plane is \textit{positive} if its
 equation is of the form $ax+by+cz+d=0$ with $(a,b,c)>(0,0,0)$
 (i.e. $(a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)$).
+
+\ccConstructor{SphericalKernel::Circular_arc_3 operator()
+                 (const SphericalKernel::Point_3 &p,
+                 const SphericalKernel::Point_3 &q,
+                 const SphericalKernel::Point_3 &r);}
+{Constructs an arc that is supported by the circle of type
+  \ccc{SphericalKernel::Circle_3} passing through the points \ccc{p},
+  \ccc{q} and \ccc{r}. The source and target are respectively \ccc{p}
+  and \ccc{r}, when traversing the supporting circle in the
+  counterclockwise direction in the \textit{positive} plane containing
+  the circle. 
+  Note that, depending on the orientation of the point triple
+  \ccc{(p,q,r)}, \ccc{q} may not lie on the arc. 
+\ccPrecond{\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructCircularMinVertex_3} 

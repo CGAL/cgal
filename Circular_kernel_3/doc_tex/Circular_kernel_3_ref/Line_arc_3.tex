@@ -12,38 +12,38 @@
 \ccThree{Circular_arc_point_3}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-\ccConstructor{Line_arc_3(const SphericalKernel::Line_3 &l,
-		const SphericalKernel::Circular_arc_point_3 &p1,
-		const SphericalKernel::Circular_arc_point_3 &p2)}
+\ccConstructor{Line_arc_3(const Line_3<SphericalKernel> &l,
+		const Circular_arc_point_3<SphericalKernel> &p1,
+		const Circular_arc_point_3<SphericalKernel> &p2)}
 {Construct the line segment supported by \ccc{l}, whose source 
 is \ccc{p1}, and whose target is \ccc{p2}.
 \ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{l}. 
 \ccc{p1} and \ccc{p2} are different.}}
 
-\ccConstructor{Line_arc_3(const SphericalKernel::Line_3 &l,
-		const SphericalKernel::Point_3 &p1,
-		const SphericalKernel::Point_3 &p2)}
+\ccConstructor{Line_arc_3(const Line_3<SphericalKernel> &l,
+		const Point_3<SphericalKernel> &p1,
+		const Point_3<SphericalKernel> &p2)}
 {Same.}
 
-\ccConstructor{Line_arc_3(const SphericalKernel::Segment_3 &s)}
+\ccConstructor{Line_arc_3(const Segment_3<SphericalKernel> &s)}
 {}
 
 \ccAccessFunctions
 
-\ccThree{SphericalKernel::Circular_arc_point_3}{ca.is_x_monotone()}{}
+\ccThree{Circular_arc_point_3<SphericalKernel>}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-\ccMethod{SphericalKernel::Line_3 supporting_line();}{}
+\ccMethod{Line_3<SphericalKernel> supporting_line();}{}
 
-\ccMethod{SphericalKernel::Circular_arc_point_3 source();}{}
+\ccMethod{Circular_arc_point_3<SphericalKernel> source();}{}
 \ccGlue
-\ccMethod{SphericalKernel::Circular_arc_point_3 target();}{}
+\ccMethod{Circular_arc_point_3<SphericalKernel> target();}{}
 
-\ccMethod{SphericalKernel::Circular_arc_point_3 min();}
+\ccMethod{Circular_arc_point_3<SphericalKernel> min();}
 {Constructs the minimum vertex according to the lexicographic ordering 
 of coordinates.} 
 \ccGlue
-\ccMethod{SphericalKernel::Circular_arc_point_3 max();}
+\ccMethod{Circular_arc_point_3<SphericalKernel> max();}
 {Same for the maximum vertex.}
 
 \ccQueryFunctions

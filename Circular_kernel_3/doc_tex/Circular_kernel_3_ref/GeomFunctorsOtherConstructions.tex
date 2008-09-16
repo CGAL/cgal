@@ -14,36 +14,3 @@ In addition, an object \ccVar\ of this type must provide:
 {Returns the sphere having the supporting circle of \ccc{a} as diameter.}
 
 \end{ccRefFunctionObjectConcept}
-\begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructSupportingPlane_3}
-
-\ccCreationVariable{fo}
-
-An object \ccVar\ of this type must provide:
-
-\ccMemberFunction{SphericalKernel::Plane_3
-	operator()(const SphericalKernel::Circular_arc_3 & c);}
-{Returns the plane containing the arc.}
-
-\end{ccRefFunctionObjectConcept}
-\begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructSupportingLine_3}
-
-\ccCreationVariable{fo}
-
-An object \ccVar\ of this type must provide:
-
-\ccMemberFunction{SphericalKernel::Line_3
-	operator()(const SphericalKernel::Line_arc_3 & l);}
-{Returns the line containing the segment.}
-
-\end{ccRefFunctionObjectConcept}
-\begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructSupportingCircle_3}
-
-\ccCreationVariable{fo}
-
-An object \ccVar\ of this type must provide:
-
-\ccMemberFunction{SphericalKernel::Circle_3
-	operator()(const SphericalKernel::Circular_arc_3 & c);}
-{Returns the circle containing the arc.}
-
-\end{ccRefFunctionObjectConcept}
