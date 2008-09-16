@@ -26,19 +26,26 @@
 #include <cfloat>
 #include <boost/operators.hpp>
 
+#ifdef CGAL_HAS_THREADS
+#  include <boost/thread/tss.hpp>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 // fwd
 void force_ieee_double_precision(); 
 
-namespace CGALi{
+#ifdef CGAL_HAS_THREADS
+#else
 
+namespace CGALi{
 struct Modular_arithmetic_needs_ieee_double_precision{
-    Modular_arithmetic_needs_ieee_double_precision(){
-        CGAL::force_ieee_double_precision();
-    }
+  Modular_arithmetic_needs_ieee_double_precision(){
+    CGAL::force_ieee_double_precision();
+  }
 };
-}
+} // namespace CGALi
+#endif
 
 class Residue;
     
@@ -69,15 +76,51 @@ public:
 
 private:
     static const double  CST_CUT; 
-    static const CGALi::Modular_arithmetic_needs_ieee_double_precision 
-    modular_arithmetic_needs_ieee_double_precision;
-private:
-   
-    static int prime_int;
-    static double prime;
-    static double prime_inv;
-    
-    
+
+#ifdef CGAL_HAS_THREADS
+  static boost::thread_specific_ptr<int>    prime_int_;
+  static boost::thread_specific_ptr<double> prime_;
+  static boost::thread_specific_ptr<double> prime_inv_;
+  
+  static void init_class_for_thread(){
+    CGAL_precondition(prime_int_.get() == NULL); 
+    CGAL_precondition(prime_.get()     == NULL); 
+    CGAL_precondition(prime_inv_.get() == NULL); 
+    prime_int_.reset(new int(67111067));
+    prime_.reset(new double(67111067.0));
+    prime_inv_.reset(new double(1.0/67111067.0));
+    CGAL::force_ieee_double_precision();
+  }
+  
+  static inline int get_prime_int(){
+    if (prime_int_.get() == NULL)
+      init_class_for_thread();
+    return *prime_int_.get();
+  }
+  
+  static inline double get_prime(){
+    if (prime_.get() == NULL)
+      init_class_for_thread();
+    return *prime_.get();
+  }
+  
+  static inline double get_prime_inv(){
+    if (prime_inv_.get() == NULL)
+      init_class_for_thread();
+    return *prime_inv_.get();
+  }
+#else
+  static int prime_int;
+  static double prime;
+  static double prime_inv;
+  static int get_prime_int(){ return prime_int;}
+  static double get_prime()    { return prime;}
+  static double get_prime_inv(){ return prime_inv;}  
+  // calls force_ieee_double_precision(); within constructor
+  static const CGALi::Modular_arithmetic_needs_ieee_double_precision 
+  modular_arithmetic_needs_ieee_double_precision;
+#endif
+
     /* Quick integer rounding, valid if a<2^51. for double */ 
     static inline 
     double RES_round (double a){
@@ -102,13 +145,14 @@ private:
     /* Big modular reduction (e.g. after multiplication) */
     static inline 
     double RES_reduce (double a){
-        return a - prime * RES_round(a * prime_inv);
+      return a - get_prime() * RES_round(a * get_prime_inv());
     }
 
 
     /* Little modular reduction (e.g. after a simple addition). */
     static inline 
     double RES_soft_reduce (double a){
+      double prime = get_prime();
         double b = 2*a;
         return (b>prime) ? a-prime :
             ((b<-prime) ? a+prime : a);
@@ -142,7 +186,7 @@ private:
     double RES_inv (double ri1){
         double bi = 0.0;
         double bi1 = 1.0;
-        double ri = prime;
+        double ri = get_prime();
         double p, tmp, tmp2;
     
         Real_embeddable_traits<double>::Abs double_abs;
@@ -175,16 +219,23 @@ public:
      *  
      */
     static int 
-    set_current_prime(int p){       
-        int old_prime = prime_int; 
-        prime_int = p;
-        prime = (double)p;
-        prime_inv = (double)1/prime;
-        return old_prime; 
+    set_current_prime(int p){   
+      int old_prime = get_prime_int();  
+#ifdef CGAL_HAS_THREADS
+      *prime_int_.get() = p;
+      *prime_.get() = double(p);
+      *prime_inv_.get() = 1.0/double(p);
+#else
+      prime_int = p;
+      prime = double(p);
+      prime_inv = 1.0 / prime;
+#endif
+      return old_prime; 
     }
-     /*! \brief return the current prime.  */
+ 
+  /*! \brief return the current prime.  */
     static int get_current_prime(){
-        return prime_int;
+      return get_prime_int();
     }
     int  get_value() const{
         return int(x_);
