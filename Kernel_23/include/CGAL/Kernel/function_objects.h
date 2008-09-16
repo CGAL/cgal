@@ -2405,6 +2405,7 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Iso_cuboid_3      Iso_cuboid_3;
     typedef typename K::Line_3            Line_3;
+    typedef typename K::Circle_3          Circle_3;
     typedef typename K::Plane_3           Plane_3;
     typedef typename K::Ray_3             Ray_3;
     typedef typename K::Segment_3         Segment_3;
@@ -2445,6 +2446,11 @@ namespace CommonKernelFunctors {
     result_type
     operator()( const Tetrahedron_3& t) const
     { return t.rep().is_degenerate(); }
+
+    result_type
+    operator()( const Circle_3& t) const
+    { return t.rep().is_degenerate(); }
+
   };
 
   template <typename K>
