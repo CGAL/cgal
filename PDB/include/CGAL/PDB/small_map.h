@@ -83,6 +83,13 @@ public:
 };
 
 
+template <class K, class D>
+bool operator< (const K& k, const small_map_value_type<K,D>& sm)
+  {
+    return sm > k;
+  }
+
+
 /*CGAL_PDB_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
