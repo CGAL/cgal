@@ -399,9 +399,9 @@ template < class SK > \
     operator() ( const typename SK::Polynomials_for_circle_3 &eq )
     { return Rep(construct_circle_3<SK>(eq)); }
 
-    qualified_result_type operator() (const Circular_arc_3 & a) const
+    qualified_result_type 
+    operator() (const Circular_arc_3 & a) const
     { return (a.rep().supporting_circle()); }
-
 
   };
 
