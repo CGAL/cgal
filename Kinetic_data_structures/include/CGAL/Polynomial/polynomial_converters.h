@@ -55,6 +55,13 @@ class Polynomial_converter
     {
       return it_-o.it_;
     }
+
+    bool operator<(const Iterator& o) const
+    {
+      return   ( it_-o.it_ ) <  0;
+    }
+
+
     bool operator==(const Iterator &o) const
     {
       return it_==o.it_;
