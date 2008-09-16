@@ -69,9 +69,10 @@ $y$-extremal point otherwise.
 
 \ccFunction{bool operator==(const Circular_arc_3<SphericalKernel> &a1,
 			const Circular_arc_3<SphericalKernel> &a2);}
-{Test for equality. Two arcs are equal, iff the centers and squared
+{Test for equality. Two arcs are equal, iff their non-oriented
+  supporting planes are equal, if the centers and squared
   radii of their respective supporting circles are equal, and if their
-  source and target are equal.} 
+  sources and targets are equal.} 
 
 \ccFunction{bool operator!=(const Circular_arc_3<SphericalKernel> &a1,
 			const Circular_arc_3<SphericalKernel> &a2);}
