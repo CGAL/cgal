@@ -26,6 +26,8 @@ double compute_greatest_camera_angle_3(const typename Kernel::Point_3& position,
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::Vector_3 Vector;
+    
+    assert(first_camera != beyond_camera);
 
     std::vector<Point> cameras;
     std::copy(first_camera, beyond_camera, std::back_inserter(cameras));
