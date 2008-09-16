@@ -63,12 +63,17 @@ that is based on similar techniques as
 %benchmarking should still be done and further optimizations will be
 %provided for future releases.}
 
-\section{Example}
+\section{Examples}
 
-This example shows how to construct circles or circular arcs from
-points, and how to compute intersections between them.
+The first example shows how to construct circles or circular arcs from
+points, and how to compute intersections between them using the global
+function.
 
 \ccIncludeExampleCode{Circular_kernel_2/intersecting_arcs.cpp}
+
+The following example shows how to use a functor of the kernel.
+
+\ccIncludeExampleCode{Circular_kernel_2/functor_has_on.cpp}
 
 \section{Design and Implementation History}
 
