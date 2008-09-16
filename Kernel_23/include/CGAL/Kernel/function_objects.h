@@ -820,21 +820,6 @@ namespace CommonKernelFunctors {
     { return this->operator()(Return_base_tag(), p1, p2, p3); }
   };
 
-
-  template <typename K>
-  class Construct_diametral_sphere_3
-  {
-    typedef typename K::Sphere_3       Sphere_3;
-    typedef typename K::Circle_3       Circle_3;
-
-  public:
-    typedef Sphere_3        result_type;
-    
-    Sphere_3
-    operator() (const Circle_3 & c) const
-    { return c.rep().diametral_sphere(); }
-  };
-
   template <typename K>
   class Construct_iso_cuboid_3
   {
@@ -1199,6 +1184,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Ray_3        Ray_3;
     typedef typename K::Segment_3    Segment_3;
     typedef typename K::Plane_3      Plane_3;
+    typedef typename K::Circle_3     Circle_3;
     typedef typename Plane_3::Rep    Rep;
   public:
     typedef Plane_3          result_type;
@@ -1231,6 +1217,9 @@ namespace CommonKernelFunctors {
     operator()(Return_base_tag, const Segment_3& s, const Point_3& p) const
     { return Rep(s, p); }
 
+    Rep // Plane_3
+    operator()(Return_base_tag, const Circle_3 & c) const
+    { return c.rep().supporting_plane(); }
 
     Plane_3
     operator()(const RT& a, const RT& b, const RT& c, const RT& d) const
@@ -1259,6 +1248,11 @@ namespace CommonKernelFunctors {
     Plane_3
     operator()(const Segment_3& s, const Point_3& p) const
     { return this->operator()(Return_base_tag(), s, p); }
+
+    Plane_3
+    operator()(const Circle_3 & c) const
+    { return this->operator()(Return_base_tag(), c); }
+
   };
 
   template <typename K>
@@ -1552,6 +1546,7 @@ namespace CommonKernelFunctors {
     typedef typename K::FT         FT;
     typedef typename K::Point_3    Point_3;
     typedef typename K::Sphere_3   Sphere_3;
+    typedef typename K::Circle_3   Circle_3;
     typedef typename Sphere_3::Rep Rep;
   public:
     typedef Sphere_3               result_type;
@@ -1581,6 +1576,9 @@ namespace CommonKernelFunctors {
 	        Orientation orientation = COUNTERCLOCKWISE) const
     {  return Rep(center, orientation); }
 
+    Rep
+    operator() (Return_base_tag, const Circle_3 & c) const
+    { return c.rep().diametral_sphere(); }
 
     Sphere_3
     operator()( const Point_3& center, const FT& squared_radius,
@@ -1606,6 +1604,11 @@ namespace CommonKernelFunctors {
     operator()( const Point_3& center,
 	        Orientation orientation = COUNTERCLOCKWISE) const
     { return this->operator()(Return_base_tag(), center, orientation); }
+
+    Sphere_3
+    operator() (const Circle_3 & c) const
+    { return this->operator()(Return_base_tag(), c); }
+
   };
 
   template <typename K>
@@ -1613,7 +1616,6 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Triangle_3  Triangle_3;
     typedef typename K::Plane_3     Plane_3;
-    typedef typename K::Circle_3    Circle_3;
   public:
     typedef Plane_3          result_type;
 
@@ -1621,9 +1623,6 @@ namespace CommonKernelFunctors {
     operator()( const Triangle_3& t) const
     { return t.rep().supporting_plane(); }
 
-    Plane_3
-    operator()(const Circle_3 & c) const
-    { return c.rep().supporting_plane(); }
   };
 
   template <typename K>

@@ -102,29 +102,27 @@ public:
     : Rep(r) {}
 
   typename Qualified_result_of
-  <typename R::Construct_diametral_sphere_3, Circle_3>::type
-  //const Sphere_3 &
+  <typename R::Construct_sphere_3, Circle_3>::type
   diametral_sphere() const
   {
-    return typename R::Construct_diametral_sphere_3()(*this);
+    return typename R::Construct_sphere_3()(*this);
   }
 
   Point_3 center() const
   {
-    return typename R::Construct_diametral_sphere_3()(*this).center();
+    return typename R::Construct_sphere_3()(*this).center();
   }
 
   FT squared_radius() const
   {
-    return typename R::Construct_diametral_sphere_3()(*this).squared_radius();
+    return typename R::Construct_sphere_3()(*this).squared_radius();
   }
 
   typename Qualified_result_of
-  <typename R::Construct_supporting_plane_3, Circle_3>::type
-  //const Plane_3 &
+  <typename R::Construct_plane_3, Circle_3>::type
   supporting_plane() const
   {
-    return typename R::Construct_supporting_plane_3()(*this);
+    return typename R::Construct_plane_3()(*this);
   }
 
   Bbox_3 bbox() const

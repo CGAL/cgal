@@ -275,8 +275,6 @@ CGAL_Kernel_cons(Construct_circumcenter_3,
 		 construct_circumcenter_3_object)
 CGAL_Kernel_cons(Construct_cross_product_vector_3,
 		 construct_cross_product_vector_3_object)
-CGAL_Kernel_cons(Construct_diametral_sphere_3,
-		 construct_diametral_sphere_3_object)
 CGAL_Kernel_cons(Construct_direction_2,
 		 construct_direction_2_object)
 CGAL_Kernel_cons(Construct_direction_3,
