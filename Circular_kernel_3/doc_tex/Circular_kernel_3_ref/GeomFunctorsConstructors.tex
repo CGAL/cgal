@@ -30,6 +30,12 @@ A model \ccVar\ of this type must provide:
 
 A model \ccVar\ of this type must provide:
 
+\ccMemberFunction{SphericalKernel::Sphere_3
+	operator()(const SphericalKernel::Circular_arc_3 & a);}
+{Returns the sphere having the supporting circle of \ccc{a} as
+  diameter (ie, returns the diametral sphere of the supporting circle
+  of the arc).}
+
 \ccMemberFunction{SphericalKernel::Sphere_3 operator()
 	(const SphericalKernel::Polynomial_2_3 &p);}
 {Constructs a sphere from an equation.}
