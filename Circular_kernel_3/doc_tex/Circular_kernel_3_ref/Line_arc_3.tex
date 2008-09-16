@@ -48,7 +48,20 @@ of coordinates.}
 
 \ccQueryFunctions
 
-\ccMethod{bool is_vertical();}{Returns true \ccc{iff} the segment is vertical.}
+\ccMethod{bool is_vertical();}{Returns true \ccc{iff} the segment is
+  vertical.}
+
+\ccOperations
+
+\ccFunction{bool operator==(const Line_arc_3<SphericalKernel> &s1,
+			const Line_arc_3<SphericalKernel> &s2);}
+{Test for equality. Two segments are equal, iff their non-oriented
+  supporting lines are equal (i.e. they define the same set of
+  points), and if their endpoints are the same.}
+
+\ccFunction{bool operator!=(const Line_arc_3<SphericalKernel> &s1,
+			const Line_arc_3<SphericalKernel> &s2);}
+{Test for nonequality.} 
 
 \ccHeading{I/O}
 

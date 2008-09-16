@@ -16,12 +16,11 @@
 {Constructs an arc from a full circle.}
 
 \ccConstructor{Circular_arc_3(const Circle_3<SphericalKernel> &c,
-		const Circular_arc_point_3<SphericalKernel> &p1,
-		const Circular_arc_point_3<SphericalKernel> &p2)}
+		const Circular_arc_point_3<SphericalKernel> &p,
+		const Circular_arc_point_3<SphericalKernel> &q)}
 {Constructs the circular arc supported by \ccc{c}, whose source and target 
-are respectively \ccc{p1} and \ccc{p2}.
-\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{c}. \ccc{p1} and \ccc{p2} 
-are different.}}
+are respectively \ccc{p} and \ccc{q}.
+\ccPrecond{\ccc{p} and \ccc{q} lie on \ccc{c} and are different.}}
 
 The circular arc constructed from a circle, a source, and a target, is
 defined as the set of points of the circle that lie between the source
@@ -65,6 +64,18 @@ When the arc was constructed from its (full) underlying circle, then
 source and target both return the smallest $x$-extremal point of the
 circle if the circle is not contained in a plane $x=A$, and the smallest
 $y$-extremal point otherwise.
+
+\ccOperations
+
+\ccFunction{bool operator==(const Circular_arc_3<SphericalKernel> &a1,
+			const Circular_arc_3<SphericalKernel> &a2);}
+{Test for equality. Two arcs are equal, iff the centers and squared
+  radii of their respective supporting circles are equal, and if their
+  source and target are equal.} 
+
+\ccFunction{bool operator!=(const Circular_arc_3<SphericalKernel> &a1,
+			const Circular_arc_3<SphericalKernel> &a2);}
+{Test for nonequality.} 
 
 \ccHeading{I/O}
 
