@@ -152,17 +152,17 @@ namespace CGAL {
 
     Sphere_3 diametral_sphere() const
     {
-      return typename R::Construct_diametral_sphere_3()(*this);
+      return typename R::Construct_sphere_3()(*this);
     }
 
     Point_3 center() const
     {
-      return typename R::Construct_diametral_sphere_3()(*this).center();
+      return typename R::Construct_sphere_3()(*this).center();
     }
 
     FT squared_radius() const
     {
-      return typename R::Construct_diametral_sphere_3()(*this).squared_radius();
+      return typename R::Construct_sphere_3()(*this).squared_radius();
     }
 
     Plane_3 supporting_plane() const

@@ -321,6 +321,8 @@ template < class SK > \
   template < class SK >
   class Construct_sphere_3 : public  SK::Linear_kernel::Construct_sphere_3
   {
+	  typedef typename SK::Circular_arc_3 Circular_arc_3;
+	
   public:
     
 		typedef typename SK::Linear_kernel::Construct_sphere_3::result_type result_type; 
@@ -330,6 +332,10 @@ template < class SK > \
     result_type
     operator() ( const typename SK::Polynomial_for_spheres_2_3 &eq )
     { return construct_sphere_3<SK>(eq); }
+
+    result_type operator() (const Circular_arc_3 & c) const
+    { return c.rep().diametral_sphere(); }
+
   };
 
   template < class SK >
@@ -402,24 +408,6 @@ template < class SK > \
     qualified_result_type 
     operator() (const Circular_arc_3 & a) const
     { return (a.rep().supporting_circle()); }
-
-  };
-
-  template <class SK>
-  class Construct_diametral_sphere_3 : public  SK::Linear_kernel::Construct_diametral_sphere_3
-  {
-    typedef typename SK::Sphere_3       Sphere_3;
-    typedef typename SK::Circle_3       Circle_3;
-    typedef typename SK::Circular_arc_3 Circular_arc_3;
-
-  public:
-
-		typedef typename SK::Linear_kernel::Construct_diametral_sphere_3::result_type result_type;
-    
-    using SK::Linear_kernel::Construct_diametral_sphere_3::operator();
-
-    result_type operator() (const Circular_arc_3 & c) const
-    { return c.rep().diametral_sphere(); }
 
   };
 
