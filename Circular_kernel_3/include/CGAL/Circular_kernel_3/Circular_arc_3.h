@@ -195,17 +195,17 @@ namespace CGAL {
          *this = Circular_arc_3(c, pair1.first, pair2.first);
       }
 
-			Circular_arc_3(const Point_3 &begin,
-			               const Point_3 &middle,
-			               const Point_3 &end)
-			{
-			  CGAL_kernel_precondition(!CGAL::collinear(begin, middle, end));
-			  const Circle_3 c = Circle_3(begin, middle, end);
-			  base = Rep(c,begin,end);
+      Circular_arc_3(const Point_3 &begin,
+		     const Point_3 &middle,
+		     const Point_3 &end)
+      {
+	CGAL_kernel_precondition(!CGAL::collinear(begin, middle, end));
+	const Circle_3 c = Circle_3(begin, middle, end);
+	base = Rep(c,begin,end);
         _sign_cross_product =
-          CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>(begin,end,
-          c.center());
-	    }
+          CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>
+	         (begin,end,c.center());
+      }
 
       const Circle_3& supporting_circle() const 
       {
