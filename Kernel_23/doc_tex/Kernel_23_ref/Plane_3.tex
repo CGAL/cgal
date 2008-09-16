@@ -73,6 +73,10 @@ Notice that \ccVar\ is degenerate if the points are collinear.}
 {introduces a plane \ccVar\ that is defined through the  three points 
  \ccStyle{s.source()}, \ccStyle{s.target()} and \ccStyle{p}.}
 
+\ccConstructor{Plane_3(const Circle_3<Kernel> &c)}
+{introduces a plane \ccVar\ that is defined as the plane containing
+  the circle.}
+
 \ccOperations
 \ccHidden \ccMethod{Plane_3<Kernel> & operator=(const Plane_3<Kernel> &h);}
         {Assignment.}
