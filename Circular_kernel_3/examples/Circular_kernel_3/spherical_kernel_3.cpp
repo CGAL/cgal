@@ -1,21 +1,10 @@
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
-
-#include <CGAL/Spherical_kernel_3.h>
-
+#include <CGAL/Exact_spherical_kernel_3.h>
 #include <CGAL/Random.h>
 
-typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
-typedef CGAL::Cartesian<NT>                             Linear_k;
-typedef CGAL::Algebraic_kernel_for_spheres_2_3<NT>      Algebraic_k;
-typedef CGAL::Spherical_kernel_3<Linear_k, Algebraic_k> Spherical_k;
+typedef CGAL::Exact_spherical_kernel_3         Spherical_k;
 
-typedef CGAL::Point_3<Spherical_k>                       Point_3;
-typedef CGAL::Sphere_3<Spherical_k>                      Sphere_3;
-typedef CGAL::Circle_3<Spherical_k>                      Circle_3;
+typedef CGAL::Point_3<Spherical_k>             Point_3;
+typedef CGAL::Sphere_3<Spherical_k>            Sphere_3;
 
 int main() {
 
