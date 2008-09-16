@@ -7,3 +7,10 @@
 ./data/wheels_part1.dat ./data/wheels_part2.dat -hg
 ./data/r35975_part1.dat ./data/r35975_part2.dat -sohg
 ./data/r38305_part1.dat ./data/r38305_part2.dat -sohg
+./data/D.dat ./data/E.dat -sohg
+./data/F.dat ./data/G.dat -sohg
+./data/F.dat ./data/E.dat -sohg
+./data/F.dat ./data/D.dat -sohg
+./data/F.dat ./data/A.dat -sohg
+./data/A.dat ./data/G.dat -sohg
+./data/B.dat ./data/G.dat -sohg

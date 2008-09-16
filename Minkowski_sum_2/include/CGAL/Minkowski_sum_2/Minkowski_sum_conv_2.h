@@ -50,6 +50,7 @@ private:
   typedef typename Kernel::Construct_translated_point_2  Translate_point_2;
   typedef typename Kernel::Construct_vector_2            Construct_vector_2;
   typedef typename Kernel::Construct_direction_2         Construct_direction_2;
+  typedef typename Kernel::Construct_opposite_line_2     Opposite_line_2;
   typedef typename Kernel::Orientation_2                 Compute_orientation_2;
   typedef typename Kernel::Compare_xy_2                  Compare_xy_2;
   typedef typename Kernel::Counterclockwise_in_between_2 Ccw_in_between_2;
@@ -80,7 +81,7 @@ private:
 
     /*! Constructor with parameters. */
     Convolution_label (unsigned int ind1, unsigned int ind2, 
-		       unsigned int move) :
+                       unsigned int move) :
       index1 (ind1),
       index2 (ind2),
       move_on (move)
@@ -92,14 +93,14 @@ private:
     bool operator< (const Convolution_label& label) const
     {
       if (index1 < label.index1)
-	return (true);
+        return (true);
       else if (index1 > label.index1)
-	return (false);
+        return (false);
 
       if (index2 < label.index2)
-	return (true);
+        return (true);
       else if (index2 > label.index2)
-	return (false);
+        return (false);
 
       return (move_on < label.move_on);
     }
@@ -122,6 +123,7 @@ private:
   Translate_point_2       f_add;
   Construct_vector_2      f_vector;
   Construct_direction_2   f_direction;
+  Opposite_line_2         f_opp_line;
   Compute_orientation_2   f_orientation;
   Compare_xy_2            f_compare_xy;
   Ccw_in_between_2        f_ccw_in_between;
@@ -138,6 +140,7 @@ public:
     f_add = ker.construct_translated_point_2_object(); 
     f_vector = ker.construct_vector_2_object();
     f_direction = ker.construct_direction_2_object();
+    f_opp_line = ker.construct_opposite_line_2_object();
     f_orientation = ker.orientation_2_object();
     f_compare_xy = ker.compare_xy_2_object();
     f_ccw_in_between = ker.counterclockwise_in_between_2_object();
@@ -320,7 +323,7 @@ public:
               CGAL_assertion (cycle.empty());
             }
           }
-	  cycles++;
+          cycles++;
         }
 
         curr1 = next1;
@@ -409,7 +412,7 @@ private:
         if (used_labels.count (label) != 0)
           inc1 = false;
       }
-      
+
       if (f_ccw_in_between (dirs2[k2],
                             dirs1[(n1 + k1 - 1) % n1],
                             dirs1[k1]))
@@ -423,8 +426,8 @@ private:
           label = Convolution_label (k1, k2, 2);
           if (used_labels.count (label) == 0)
           {
-	    queue.push_back (Anchor (Vertex_ref (curr1, k1),
-				     Vertex_ref (curr2, k2)));
+            queue.push_back (Anchor (Vertex_ref (curr1, k1),
+                                     Vertex_ref (curr2, k2)));
           }
         }
         else
@@ -436,7 +439,7 @@ private:
             inc2 = false;
         }
       }
-      
+
       if (! inc1 && ! inc2 &&
           f_equal (dirs1[k1], dirs2[k2]))
       {
@@ -471,9 +474,9 @@ private:
                                             X_curve_label ((res == SMALLER),
                                                            cycle_id,
                                                            seg_index,
-							   MOVE_ON_1)));
+                                                           MOVE_ON_1)));
         used_labels.insert (Convolution_label (k1, k2, 1));
-	seg_index++;
+        seg_index++;
 
         // Proceed to the next vertex of the first polygon.
         curr1 = next1;
@@ -499,9 +502,9 @@ private:
                                             X_curve_label ((res == SMALLER),
                                                            cycle_id,
                                                            seg_index,
-							   MOVE_ON_2)));
+                                                           MOVE_ON_2)));
         used_labels.insert (Convolution_label (k1, k2, 2));
-	seg_index++;
+        seg_index++;
 
         // Proceed to the next vertex of the second polygon.
         curr2 = next2;
@@ -559,10 +562,10 @@ private:
       if ((move_on == MOVE_ON_1 && count == n1) ||
           (move_on == MOVE_ON_2 && count == n2))
       {
-	// We have discovered a sequence of moves on one of the polygon that
-	// equals the polygon size, so we can remove this sequence.
+        // We have discovered a sequence of moves on one of the polygon that
+        // equals the polygon size, so we can remove this sequence.
         cycle.erase (first, curr);
-	reduced_cycle = true;
+        reduced_cycle = true;
         first = curr;
         move_on = first->label().get_flag();
         count = 1;
@@ -594,39 +597,51 @@ private:
 
     // Eliminate "antenna"s that occur in the cycle.
     typename std::list<Labeled_segment_2>::iterator  next, after_next;
-    bool                                             found_antenna;
+    bool                                             is_last = false;
 
     next = curr = cycle.begin();
     ++next;
 
-    while (curr != cycle.end())
+    do
     {
       // If the current segment is the last one in the cycle, its next segment
       // (in cyclic order) is the first one.
       if (next == cycle.end())
       {
-        found_antenna = f_equal (curr->source(), cycle.begin()->target());
-        if (found_antenna)
-        {
-          next = cycle.begin();
-          after_next = cycle.end();
-        }
+        is_last = true;
+        next = cycle.begin();
+        after_next = cycle.end();
       }
       else
       {
-        found_antenna = f_equal (curr->source(), next->target());
-        if (found_antenna)
-        {
-          after_next = next;
-          ++after_next;
-        }
+        after_next = next;
+        ++after_next;
       }
 
-      // We know that curr's target and next's source is the same point.
-      // If they also share their other endpoint, then these two segments
-      // form an antenna and should threrefore be removed from the cycle.
-      if (found_antenna)
+      // Check whether the current segment and the next segment form an
+      // "antenna". This can happen only if their supporting lines are
+      // opposite (as we know curr's target equals next's source):
+      if (f_equal (curr->line(), f_opp_line (next->line())))
       {
+        // In case curr's source equals next's target, then the two segments
+        // are opposite and cancel one another. We can therefore remove them
+        // both. Otherwise, we replace them with the segment directed from
+        // curr's source to next's target.
+        curr_pt = curr->source();
+        next_pt = next->target();
+
+        res = f_compare_xy (curr_pt, next_pt);
+
+        if (res != EQUAL)
+        {
+          cycle.insert (curr,
+                        Labeled_segment_2 (Segment_2 (curr_pt, next_pt),
+                                           X_curve_label ((res == SMALLER),
+                                                          cycle_id,
+                                                          curr->label().index(),
+                                                          false)));
+        }
+
         cycle.erase (curr);
         cycle.erase (next);
         curr = after_next;
@@ -637,17 +652,19 @@ private:
           ++next;
         }
 
+        // Mark that we have reduced the cycle.
         reduced_cycle = true;
       }
       else
       {
         curr = next;
-	if(next != cycle.end())
-	{
-	  ++next;
-	}
+        if (next != cycle.end())
+        {
+          ++next;
+        }
       }
-    }
+
+    } while (! is_last);
 
     // In case we have reduced the cycle, re-number the segments in it.
     if (reduced_cycle)

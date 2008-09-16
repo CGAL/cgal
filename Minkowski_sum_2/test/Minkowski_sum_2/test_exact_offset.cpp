@@ -63,116 +63,133 @@ int main (int argc, char **argv)
   // Read the input file.
   if (argc < 3)
   {
-    std::cerr << "Usage: <polygon> <radius> ." << std::endl;
+    std::cerr << "Usage (input is triplets of): <polygon> <radius> " 
+      "[decomposition flags]" << std::endl;
     return (1);
   }
 
   // Read the polygon from the input file.
   Polygon_2   pgn;
   
-  if (! read_polygon (argv[1], pgn))
+  int i = 1;
+  while (i < argc)
   {
-    std::cerr << "Failed to read: <" << argv[1] << ">." << std::endl;
-    return (1);
-  }
-  
-  // Read the offset radius.
-  int         numer, denom;
-
-  if (sscanf (argv[2], "%d/%d", &numer, &denom) != 2)
-  {
-    std::cerr << "Invalid radius: " << argv[2] << std::endl;
-    return (1);
-  }
-
-  Rational    r = Rational (numer, denom);
- 
-  // Read the decomposition flags.
-  bool         use_ssab = true;
-  bool         use_opt = true;
-  bool         use_hm = true;
-  bool         use_greene = true;
-
-  if (argc > 3)
-  {
-    use_ssab = (strchr (argv[3], 's') != NULL);
-    use_opt = (strchr (argv[3], 'o') != NULL);
-    use_hm = (strchr (argv[3], 'h') != NULL);
-    use_greene = (strchr (argv[3], 'g') != NULL);
-  }
-
-  // Compute the Minkowski sum using the convolution method.
-  Conic_traits_2    traits;
-
-  Offset_polygon_with_holes_2                                 offset_conv;
-
-  std::cout << "Using the convolution method ... ";
-  offset_conv = offset_polygon_2 (pgn, r, traits);
-  std::cout << "Done." << std::endl;
-
-  // Define auxiliary polygon-decomposition objects.
-  CGAL::Small_side_angle_bisector_decomposition_2<Rat_kernel> ssab_decomp;
-  CGAL::Optimal_convex_decomposition_2<Rat_kernel>            opt_decomp;
-  CGAL::Hertel_Mehlhorn_convex_decomposition_2<Rat_kernel>    hm_approx_decomp;
-  CGAL::Greene_convex_decomposition_2<Rat_kernel>             greene_decomp;
-  Offset_polygon_with_holes_2                                 offset_decomp;
-
-  if (use_ssab)
-  {
-    std::cout << "Using the small-side angle-bisector decomposition ... ";
-    offset_decomp = offset_polygon_2 (pgn, r, ssab_decomp, traits);
-    if (are_equal (offset_conv, offset_decomp))
+    if (! read_polygon (argv[i], pgn))
     {
-      std::cout << "OK." << std::endl;
+      std::cerr << "Failed to read: <" << argv[i] << ">." << std::endl;
+      return (1);
     }
+    
+    // Read the offset radius.
+    int         numer, denom;
+    
+    if (sscanf (argv[i+1], "%d/%d", &numer, &denom) != 2)
+    {
+      std::cerr << "Invalid radius: " << argv[i+1] << std::endl;
+      return (1);
+    }
+
+    std::cout << "Testing " << argv[i] << " with radius " << argv[i+1] <<
+      std::endl;
+    
+    Rational    r = Rational (numer, denom);
+    
+    // Read the decomposition flags.
+    bool         use_ssab = true;
+    bool         use_opt = true;
+    bool         use_hm = true;
+    bool         use_greene = true;
+    
+    if (i+2 < argc && argv[i+2][0] == '-')
+    {
+      use_ssab = (strchr (argv[i+2], 's') != NULL);
+      use_opt = (strchr (argv[i+2], 'o') != NULL);
+      use_hm = (strchr (argv[i+2], 'h') != NULL);
+      use_greene = (strchr (argv[i+2], 'g') != NULL);
+    }
+    
+    // Compute the Minkowski sum using the convolution method.
+    Conic_traits_2    traits;
+    
+    Offset_polygon_with_holes_2                                 offset_conv;
+
+    std::cout << "Using the convolution method ... ";
+    offset_conv = offset_polygon_2 (pgn, r, traits);
+    std::cout << "Done." << std::endl;
+    
+    // Define auxiliary polygon-decomposition objects.
+    CGAL::Small_side_angle_bisector_decomposition_2<Rat_kernel> ssab_decomp;
+    CGAL::Optimal_convex_decomposition_2<Rat_kernel>            opt_decomp;
+    CGAL::Hertel_Mehlhorn_convex_decomposition_2<Rat_kernel>    hm_approx_decomp;
+    CGAL::Greene_convex_decomposition_2<Rat_kernel>             greene_decomp;
+    Offset_polygon_with_holes_2                                 offset_decomp;
+    
+    if (use_ssab)
+    {
+      std::cout << "Using the small-side angle-bisector decomposition ... ";
+      offset_decomp = offset_polygon_2 (pgn, r, ssab_decomp, traits);
+      if (are_equal (offset_conv, offset_decomp))
+      {
+        std::cout << "OK." << std::endl;
+      }
+      else
+      {
+        std::cout << "ERROR (different result)." << std::endl;
+        return 1;
+      }
+    }
+    
+    if (use_opt)
+    {
+      std::cout << "Using the optimal convex decomposition ... ";
+      offset_decomp = offset_polygon_2 (pgn, r, opt_decomp, traits);
+      if (are_equal (offset_conv, offset_decomp))
+      {
+        std::cout << "OK." << std::endl;
+      }
+      else
+      {
+        std::cout << "ERROR (different result)." << std::endl;
+        return 1;
+      }
+    }
+    
+    if (use_hm)
+    {
+      std::cout << "Using the Hertel--Mehlhorn decomposition ... ";
+      offset_decomp = offset_polygon_2 (pgn, r, hm_approx_decomp, traits);
+      if (are_equal (offset_conv, offset_decomp))
+      {
+        std::cout << "OK." << std::endl;
+      }
+      else
+      {
+        std::cout << "ERROR (different result)." << std::endl;
+        return 1;
+      }
+    }
+    
+    if (use_greene)
+    {
+      std::cout << "Using the Greene decomposition ... ";
+      offset_decomp = offset_polygon_2 (pgn, r, greene_decomp, traits);
+      if (are_equal (offset_conv, offset_decomp))
+      {
+        std::cout << "OK." << std::endl;
+      }
+      else
+      {
+        std::cout << "ERROR (different result)." << std::endl;
+        return 1;
+      }
+    }
+
+    if (i+2 < argc && argv[i+2][0] == '-')
+      i += 3;
     else
-    {
-      std::cout << "ERROR (different result)." << std::endl;
-    }
+      i += 2;
+    
   }
-
-  if (use_opt)
-  {
-    std::cout << "Using the optimal convex decomposition ... ";
-    offset_decomp = offset_polygon_2 (pgn, r, opt_decomp, traits);
-    if (are_equal (offset_conv, offset_decomp))
-    {
-      std::cout << "OK." << std::endl;
-    }
-    else
-    {
-      std::cout << "ERROR (different result)." << std::endl;
-    }
-  }
-
-  if (use_hm)
-  {
-    std::cout << "Using the Hertel--Mehlhorn decomposition ... ";
-    offset_decomp = offset_polygon_2 (pgn, r, hm_approx_decomp, traits);
-    if (are_equal (offset_conv, offset_decomp))
-    {
-      std::cout << "OK." << std::endl;
-    }
-    else
-    {
-      std::cout << "ERROR (different result)." << std::endl;
-    }
-  }
-
-  if (use_greene)
-  {
-    std::cout << "Using the Greene decomposition ... ";
-    offset_decomp = offset_polygon_2 (pgn, r, greene_decomp, traits);
-    if (are_equal (offset_conv, offset_decomp))
-    {
-      std::cout << "OK." << std::endl;
-    }
-    else
-    {
-      std::cout << "ERROR (different result)." << std::endl;
-    }
-  }
-
   return (0);
 }
 
