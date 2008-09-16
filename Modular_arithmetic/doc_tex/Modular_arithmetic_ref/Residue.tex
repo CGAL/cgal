@@ -18,7 +18,14 @@ Since the type is based on double
 arithmetic the prime is restricted to values less than $2^{26}$. 
 The initial value of $p$ is 67111067. 
 
-Note that due to the static prime the type is not thread-safe.
+In case the flag \ccc{CGAL_HAS_THREADS} 
+is undefined the prime is just stored in a static member 
+of the class, that is, \ccRefName\ is not thread-safe in this case.  
+In case \ccc{CGAL_HAS_THREADS}
+the implementation of the class is thread safe using 
+\ccc{boost::thread_specific_ptr}. However, this may cause some performance 
+penalty. Hence, it may be advisable to configure \ccc{CGAL} with 
+\ccc{CGAL_HAS_NO_THREADS}. 
 
 \ccInclude{CGAL/Residue.h}
 
