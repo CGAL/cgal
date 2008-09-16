@@ -16,11 +16,24 @@
 {Constructs an arc from a full circle.}
 
 \ccConstructor{Circular_arc_2(const Circle_2<CircularKernel> &c,
-		const Circular_arc_point_2<CircularKernel> &p1,
-		const Circular_arc_point_2<CircularKernel> &p2)}
-{Constructs the circular arc supported by \ccc{c}, that is oriented 
-counterclockwise, whose source is \ccc{p1} and whose target is \ccc{p2}.
-\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{c}.}}
+		const Circular_arc_point_2<CircularKernel> &p,
+		const Circular_arc_point_2<CircularKernel> &q)}
+{Constructs the circular arc supported by \ccc{c}, whose source is
+  \ccc{p} and whose target is \ccc{q} when traversing the circle in
+  counterclockwise direction. 
+\ccPrecond{\ccc{p} and \ccc{q} lie on \ccc{c}.}}
+
+\ccConstructor{Circular_arc_2(const Point_2<CircularKernel> &p,
+                              const Point_2<CircularKernel> &q,
+                              const Point_2<CircularKernel> &r)}
+{Constructs an arc that is supported by the circle of type
+  \ccc{Circle_2<CircularKernel>} passing through the points \ccc{p},
+  \ccc{q} and \ccc{r}. The source and target are respectively \ccc{p}
+  and \ccc{r}, when traversing the supporting circle in the
+  counterclockwise direction. 
+  Note that, depending on the orientation of the point triple
+  \ccc{(p,q,r)}, \ccc{q} may not lie on the arc. 
+\ccPrecond{\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}}
 
 \ccAccessFunctions
 
@@ -29,8 +42,9 @@ counterclockwise, whose source is \ccc{p1} and whose target is \ccc{p2}.
 
 \ccMethod{Circle_2<CircularKernel> supporting_circle();}{}
 
-A circular arc is supposed to be oriented counterclockwise, from 
-\ccc{source} to \ccc{target}. 
+A circular arc is not oriented. Still, its source and target endpoints
+can be defined, supposing that its supporting circle in traversed the
+counterclockwise direction from \ccc{source} to \ccc{target}. 
 
 \ccMethod{Circular_arc_point_2<CircularKernel> source();}{}
 \ccGlue
