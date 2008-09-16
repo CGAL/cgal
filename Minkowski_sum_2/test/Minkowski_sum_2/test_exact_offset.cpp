@@ -60,7 +60,10 @@ bool are_equal (const Offset_polygon_with_holes_2& ph1,
 /*! The main program. */
 int main (int argc, char **argv)
 {
-  // Read the input file.
+  // Read the input file. Because of the structure of the *.cmd file 
+  // (which is concatenated to the command line) we need to get all the
+  // inputs in one command line. This is the reason we read triplets/pairs of
+  // arguments. Each triplet/double is one input for the program.
   if (argc < 3)
   {
     std::cerr << "Usage (input is triplets of): <polygon> <radius> " 
