@@ -1,0 +1,9 @@
+for release 3.4
+
+===================
+
+Changes in Kernel
+
+missing cases in intersection computations added (Line_3)
+
+new geometric concept and class Circle_3
