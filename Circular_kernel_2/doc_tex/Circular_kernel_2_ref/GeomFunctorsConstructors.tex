@@ -116,8 +116,9 @@ A model \ccVar\ of this type must provide:
 	(const CircularKernel::Circle_2 &c,
 	const CircularKernel::Circular_arc_point_2 &p1,
 	const CircularKernel::Circular_arc_point_2 &p2);}
-{Construct the circular arc supported by \ccc{c}, that is oriented 
-counterclockwise, whose source is \ccc{p1} and whose target is \ccc{p2}.
+{Construct the circular arc supported by \ccc{c}, whose source is
+  \ccc{p1} and whose target is \ccc{p2} when traversing the circle in
+  counterclockwise direction. 
 \ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{c}.}}
 
 %\ccMemberFunction{CircularKernel::Circular_arc_2 operator()
@@ -130,19 +131,33 @@ counterclockwise, whose source is \ccc{p1} and whose target is \ccc{p2}.
 	(const CircularKernel::Circle_2 &c, 
 	const CircularKernel::Circle_2 &c1, bool b1,
 	const CircularKernel::Circle_2 &c2, bool b2);}
-{Constructs the unique circular arc that is oriented counterclockwise,
-whose supporting circle is \ccc{c}, and whose source endpoint is the
-intersection of \ccc{c} and \ccc{c1} with index $b_1$, and whose target
-is the intersection of \ccc{c} and \ccc{c2} of index $b_2$, where
-intersections are ordered lexicographically.
+{Constructs the unique circular arc whose supporting circle is
+  \ccc{c}, and whose source is the intersection of \ccc{c}
+  and \ccc{c1} with index $b_1$, and whose target is the intersection
+  of \ccc{c} and \ccc{c2} of index $b_2$, where intersections are
+  ordered lexicographically, and when traversing the circle in
+  counterclockwise direction.  
 \ccPrecond{\ccc{c} intersects both \ccc{c1} and \ccc{c2}, and the arc
-defined by the intersections has non-zero length.}}
+  defined by the intersections has non-zero length.}}
 
 \ccMemberFunction{CircularKernel::Circular_arc_2 operator()
 	(const CircularKernel::Circle_2 &c,
 	const CircularKernel::Line_2 &l1, bool b1,
  	const CircularKernel::Line_2 &l2, bool b2);}
 {Same, for intersections defined by lines instead of circles.}
+
+\ccMemberFunction{CircularKernel::Circular_arc_2 operator()
+	(const CircularKernel::Point_2 &p,
+        const CircularKernel::Point_2 &q,
+        const CircularKernel::Point_2 &r);}
+{Constructs an arc that is supported by the circle of type
+  \ccc{CircularKernel::Circle_2} passing through the points \ccc{p},
+  \ccc{q} and \ccc{r}. The source and target are respectively \ccc{p}
+  and \ccc{r}, when traversing the supporting circle in the
+  counterclockwise direction. 
+  Note that, depending on the orientation of the point triple
+  \ccc{(p,q,r)}, \ccc{q} may not lie on the arc. 
+\ccPrecond{\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularMinVertex_2} 
