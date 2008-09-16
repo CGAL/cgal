@@ -38,6 +38,7 @@ class Sphere_3 : public R_::Kernel_base::Sphere_3
 {
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
+  typedef typename R_::Circle_3              Circle_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Sphere_3                           Self;
@@ -85,6 +86,9 @@ public:
 
   Sphere_3(const Point_3& p, const Orientation& o = COUNTERCLOCKWISE)
    : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, o)) {}
+
+  Sphere_3(const Circle_3& c)
+   : Rep(typename R::Construct_sphere_3()(c)) {}
 
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const;
 

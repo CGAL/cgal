@@ -42,6 +42,7 @@ class Plane_3 : public R_::Kernel_base::Plane_3
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Line_3                Line_3;
   typedef typename R_::Ray_3                 Ray_3;
+  typedef typename R_::Circle_3              Circle_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Plane_3                            Self;
@@ -91,6 +92,9 @@ public:
 
   Plane_3(const Ray_3& r, const Point_3& p)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), r, p)) {}
+
+  Plane_3(const Circle_3& c)
+    : Rep(typename R::Construct_plane_3()(c)) {}
 
   Plane_3 transform(const Aff_transformation_3 &t) const
   {

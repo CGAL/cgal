@@ -80,6 +80,7 @@ void _test_circle_construct(const K &k) {
   typedef typename K::Plane_3                          Plane_3;
   typedef typename K::Circle_3                         Circle_3;
   typedef typename K::Vector_3                         Vector_3;
+  typedef typename K::Sphere_3                         Sphere_3;
   typedef typename K::Equal_3                          Equal_3;
   typedef typename K::Construct_circle_3               Construct_circle_3;
   typedef typename K::Compute_squared_distance_3       Compute_squared_distance_3;
@@ -142,6 +143,11 @@ void _test_circle_construct(const K &k) {
     Circle_3 circle3 = theConstruct_circle_3(p,sqr,Vector_3(a,b,c));
     assert(theEqual_3(circle,circle2));
     assert(theEqual_3(circle,circle3));
+
+		Plane_3 pus = circle2;
+		Sphere_3 sus = circle3;
+		assert(pus == circle2.supporting_plane());
+		assert(sus == circle3.diametral_sphere());
   }
 
   Point_3 p1, p2, p3;
