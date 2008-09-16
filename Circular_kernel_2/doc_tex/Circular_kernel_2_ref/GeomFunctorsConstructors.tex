@@ -9,6 +9,10 @@
 A model \ccVar\ of this type must provide:
 
 \ccMemberFunction{CircularKernel::Line_2 operator()
+	(CircularKernel::LineArc_2);}
+{Constructs the supporting line of a line segment.}
+
+\ccMemberFunction{CircularKernel::Line_2 operator()
 	(CircularKernel::Polynomial_1_2);}
 {Constructs a line from an equation.}
 
@@ -25,6 +29,10 @@ A model \ccVar\ of this type must provide:
 \ccc{Kernel::ConstructCircle_2}
 
 A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circle_2 operator()
+	(CircularKernel::CircularArc_2);}
+{Constructs the supporting circle of a circular arc.}
 
 \ccMemberFunction{CircularKernel::Circle_2 operator()
 	(CircularKernel::Polynomial_for_circles_2_2);}
