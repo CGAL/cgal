@@ -24,6 +24,31 @@
 #sets the umask to 022 & 0777
 umask 022
 
+# Warn deprecated use of enviroment variables to pass on flags
+if [ -n "$TESTSUITE_CXXFLAGS" ] ; then
+  echo "\$TESTSUITE_CXXFLAGS is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_CXX_FLAGS instead" ;
+fi
+
+if [ -n "$TESTSUITE_CXXFLAGS_RELEASE" ] ; then
+  echo "\$TESTSUITE_CXXFLAGS_RELEASE is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_CXX_FLAGS_RELEASE instead" ;
+fi
+
+if [ -n "$TESTSUITE_CXXFLAGS_DEBUG" ] ; then
+  echo "\$TESTSUITE_CXXFLAGS_DEBUG is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_CXX_FLAGS_DEBUG instead" ;
+fi
+
+if [ -n "$TESTSUITE_LDFLAGS" ] ; then
+  echo "\$TESTSUITE_LDFLAGS is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_(MODULE|SHARED|EXE)_LINKER_FLAGS instead" ;
+fi
+
+if [ -n "$TESTSUITE_LDFLAGS_RELEASE" ] ; then
+  echo "\$TESTSUITE_LDFLAGS_RELEASE is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_(MODULE|SHARED|EXE)_LINKER_FLAGS_RELEASE instead" ;
+fi
+
+if [ -n "$TESTSUITE_LDFLAGS_DEBUG" ] ; then
+  echo "\$TESTSUITE_LDFLAGS_DEBUG is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_(MODULE|SHARED|EXE)_LINKER_FLAGS_DEBUG instead" ;
+fi
+
 # We want english warning and error messages!!
 LANG=C
 LC_ALL=C
