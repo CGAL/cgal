@@ -2518,6 +2518,7 @@ Modular_arithmetic/doc_tex/Modular_arithmetic_ref/main.tex -text
 Modular_arithmetic/examples/Modular_arithmetic/modular_filter.cpp -text
 Modular_arithmetic/include/CGAL/Modular_arithmetic/Residue_type.h -text
 Modular_arithmetic/test/Modular_arithmetic/Modular_traits.cpp -text
+Modular_arithmetic/test/Modular_arithmetic/multi_threads.cpp -text
 Nef_2/demo/Nef_2/filtered_homogeneous_data/complex.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/filtered_homogeneous_data/symmdif.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/help/index.html svneol=native#text/html
