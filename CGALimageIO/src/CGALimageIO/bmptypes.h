@@ -36,21 +36,21 @@
 *
 * Data types.
 *
-* INT8 is an integer of at least 8 bits wide.
-* INT16 is an integer of at least 16 bits wide.
-* INT32 is an integer of at least 32 bits wide.
+* CGAL_INT8 is an integer of at least 8 bits wide.
+* CGAL_INT16 is an integer of at least 16 bits wide.
+* CGAL_INT32 is an integer of at least 32 bits wide.
 *
-* UINT8 is an unsigned INT8
-* UINT16 is an unsigned INT16
-* UINT32 is an unsigned INT32
+* CGAL_UINT8 is an unsigned CGAL_INT8
+* CGAL_UINT16 is an unsigned CGAL_INT16
+* CGAL_UINT32 is an unsigned CGAL_INT32
 */
 
-typedef char           INT8;
-typedef short          INT16;
-typedef long           INT32;
-typedef unsigned char  UINT8;
-typedef unsigned short UINT16;
-typedef unsigned long  UINT32;
+typedef char           CGAL_INT8;
+typedef short          CGAL_INT16;
+typedef long           CGAL_INT32;
+typedef unsigned char  CGAL_UINT8;
+typedef unsigned short CGAL_UINT16;
+typedef unsigned long  CGAL_UINT32;
 
 /*****************************************************************************
 *
@@ -60,7 +60,7 @@ typedef unsigned long  UINT32;
 */
 
 /*
- * Constants used in the "type" field of BITMAPFILEHEADER and
+ * Constants used in the "type" field of Bitmapfileheader and
  * BITMAPARRAYHEADER structures.  Note that these are all two-character
  * mnemonics as well as integer constants.
  */
@@ -116,39 +116,39 @@ typedef unsigned long  UINT32;
 */
    
 /*
- * BITMAPFILEHEADER defines a single bitmap image.  Its analogue in the
- * Windows SDK is the BITMAPFILEHEADER.  Its analogues in the OS/2 Toolkit are
- * the BITMAPFILEHEADER and BITMAPFILEHEADER2 structures.
+ * Bitmapfileheader defines a single bitmap image.  Its analogue in the
+ * Windows SDK is the Bitmapfileheader.  Its analogues in the OS/2 Toolkit are
+ * the Bitmapfileheader and Bitmapfileheader2 structures.
  *
  * A BITMAPHEADER structure is always concatenated to the end of a
- * BITMAPFILEHEADER structure.
+ * Bitmapfileheader structure.
  */
-typedef struct BITMAPFILEHEADER
+typedef struct Bitmapfileheader
 {
-    UINT16    type;
-    UINT32    size;
-    INT16     xHotspot;
-    INT16     yHotspot;
-    UINT32    offsetToBits;
-} BITMAPFILEHEADER;
+    CGAL_UINT16    type;
+    CGAL_UINT32    size;
+    CGAL_INT16     xHotspot;
+    CGAL_INT16     yHotspot;
+    CGAL_UINT32    offsetToBits;
+} Bitmapfileheader;
 
 
 /*
- * BITMAPARRAYHEADER is used to establish a linked list of BITMAPFILEHEADER
+ * BITMAPARRAYHEADER is used to establish a linked list of Bitmapfileheader
  * structures for a bitmap file with multiple images in it.  There is no
  * equivalent structure in the Windows SDK.  Its analogues in the OS/2 toolkit
  * are the BITMAPARRAYFILEHEADER and BITMAPARRAYFILEHEADER2 strucutres.
  *
- * A BITMAPFILEHEADER structure is always concatenated to the end of a
+ * A Bitmapfileheader structure is always concatenated to the end of a
  * BITMAPARRAYHEADER structure.
  */
 typedef struct BITMAPARRAYHEADER
 {
-    UINT16    type;
-    UINT32    size;
-    UINT32    next;
-    UINT16    screenWidth;
-    UINT16    screenHeight;
+    CGAL_UINT16    type;
+    CGAL_UINT32    size;
+    CGAL_UINT32    next;
+    CGAL_UINT16    screenWidth;
+    CGAL_UINT16    screenHeight;
 } BITMAPARRAYHEADER;
    
 
@@ -162,7 +162,7 @@ typedef struct BITMAPARRAYHEADER
  * the color table determined by the bit-depth of the image.
  *
  * Note, that if the field "size" is 12 or less, then the width and height
- * fields should be read as UINT16's instead of UINT32's.
+ * fields should be read as CGAL_UINT16's instead of CGAL_UINT32's.
  *
  * Also note that if the field "size" is greater than 12, then the color table
  * will have an extra byte of padding between each structures (to longword
@@ -173,25 +173,25 @@ typedef struct BITMAPARRAYHEADER
  */
 typedef struct BITMAPHEADER
 {
-    UINT32 size;
-    INT32  width;
-    INT32  height;
-    UINT16 numBitPlanes;
-    UINT16 numBitsPerPlane;
-    UINT32 compressionScheme;
-    UINT32 sizeOfImageData;
-    UINT32 xResolution;
-    UINT32 yResolution;
-    UINT32 numColorsUsed;
-    UINT32 numImportantColors;
-    UINT16 resolutionUnits;
-    UINT16 padding;
-    UINT16 origin;
-    UINT16 halftoning;
-    UINT32 halftoningParam1;
-    UINT32 halftoningParam2;
-    UINT32 colorEncoding;
-    UINT32 identifier;
+    CGAL_UINT32 size;
+    CGAL_INT32  width;
+    CGAL_INT32  height;
+    CGAL_UINT16 numBitPlanes;
+    CGAL_UINT16 numBitsPerPlane;
+    CGAL_UINT32 compressionScheme;
+    CGAL_UINT32 sizeOfImageData;
+    CGAL_UINT32 xResolution;
+    CGAL_UINT32 yResolution;
+    CGAL_UINT32 numColorsUsed;
+    CGAL_UINT32 numImportantColors;
+    CGAL_UINT16 resolutionUnits;
+    CGAL_UINT16 padding;
+    CGAL_UINT16 origin;
+    CGAL_UINT16 halftoning;
+    CGAL_UINT32 halftoningParam1;
+    CGAL_UINT32 halftoningParam2;
+    CGAL_UINT32 colorEncoding;
+    CGAL_UINT32 identifier;
 } BITMAPHEADER;
 
 
@@ -202,9 +202,9 @@ typedef struct BITMAPHEADER
  */
 typedef struct RGB
 {
-    UINT8 blue;
-    UINT8 green;
-    UINT8 red;
+    CGAL_UINT8 blue;
+    CGAL_UINT8 green;
+    CGAL_UINT8 red;
 } RGB;
 
 #endif   /* __BMPTYPES_H_INCLUDED__ */

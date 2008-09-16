@@ -36,7 +36,7 @@
 /*
  * Mid-level functions
  */
-int readBitmapFileHeader(FILE *fp, BITMAPFILEHEADER *bfh);
+int readBitmapFileHeader(FILE *fp, Bitmapfileheader *bfh);
 int readBitmapArrayHeader(FILE *fp, BITMAPARRAYHEADER *bah);
 int readBitmapHeader(FILE *fp, BITMAPHEADER *bh);
 int readRgb(FILE *fp, RGB *rgb, int numBytes);
@@ -52,13 +52,13 @@ void reflectYchar(char *image, int width, int height);
 /*
  * High level functions.
  */
-int readSingleImageBMP(FILE *fp, RGB **argb, UINT32 *width, UINT32 *height);
+int readSingleImageBMP(FILE *fp, RGB **argb, CGAL_UINT32 *width, CGAL_UINT32 *height);
 int readSingleImageICOPTR(FILE *fp, char **xorMask, char **andMask,
-		          UINT32 *width, UINT32 *height);
+		          CGAL_UINT32 *width, CGAL_UINT32 *height);
 int readSingleImageColorICOPTR(FILE *fp, RGB **argb, char **xorMask,
-			       char **andMask, UINT32 *width, UINT32 *height);
+			       char **andMask, CGAL_UINT32 *width, CGAL_UINT32 *height);
 int readMultipleImage(FILE *fp, RGB ***argbs, char ***xorMasks,
-		      char ***andMasks, UINT32 **widths, UINT32 **heights,
+		      char ***andMasks, CGAL_UINT32 **widths, CGAL_UINT32 **heights,
 		      int *imageCount);
 
 #endif

@@ -94,8 +94,8 @@ void *_readBmpImage( const char *name,
   FILE *fp;
   RGB **argbs;
   char **xorMasks, **andMasks;
-  UINT32 *heights, *widths, row, col;
-  UINT16 fileType;
+  CGAL_UINT32 *heights, *widths, row, col;
+  CGAL_UINT16 fileType;
   long filePos;
   int numImages, i;
   int rc;
@@ -166,7 +166,7 @@ void *_readBmpImage( const char *name,
 	    rc = 1005;
 	    break;
 	}
-	heights = (UINT32 *)calloc(1, sizeof(UINT32));
+	heights = (CGAL_UINT32 *)calloc(1, sizeof(CGAL_UINT32));
 	if (heights == NULL)
 	{
 	    free(argbs);
@@ -175,7 +175,7 @@ void *_readBmpImage( const char *name,
 	    rc = 1005;
 	    break;
 	}
-	widths = (UINT32 *)calloc(1, sizeof(UINT32));
+	widths = (CGAL_UINT32 *)calloc(1, sizeof(CGAL_UINT32));
 	if (widths == NULL)
 	{
 	    free(argbs);

@@ -35,7 +35,6 @@
 
 
 
-typedef int boolean;
 typedef unsigned char byte;
 #define TRUE 1
 #define FALSE 0
@@ -122,7 +121,7 @@ int readGifImage(const char *name,_image *im) {
     FinChar=0,			/* Decompressor variable */
     BitMask,			/* AND mask for data size */
     Misc;                       /* miscellaneous bits (interlace, local cmap)*/
-  boolean Interlace, HasColormap;
+  int Interlace, HasColormap;
   /* not used
    */
   /* char header[10]; */

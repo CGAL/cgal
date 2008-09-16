@@ -27,7 +27,7 @@
 
 /*
  * This is the header for endian.c - functions to read/write our
- * INT8, INT16 and INT32 types from/to a little-endian file.
+ * CGAL_INT8, CGAL_INT16 and CGAL_INT32 types from/to a little-endian file.
  */
 
 #ifndef __ENDIAN_H_INCLUDED__
@@ -37,23 +37,23 @@
  * Read the basic types as little-endian values.  The return value will be
  * zero if successful, EOF, otherwise.
  */
-extern int readINT8little(FILE *f, INT8 *i);
-extern int readINT16little(FILE *f, INT16 *i);
-extern int readINT32little(FILE *f, INT32 *i);
-extern int readUINT8little(FILE *f, UINT8 *i);
-extern int readUINT16little(FILE *f, UINT16 *i);
-extern int readUINT32little(FILE *f, UINT32 *i);
+extern int readINT8little(FILE *f, CGAL_INT8 *i);
+extern int readINT16little(FILE *f, CGAL_INT16 *i);
+extern int readINT32little(FILE *f, CGAL_INT32 *i);
+extern int readUINT8little(FILE *f, CGAL_UINT8 *i);
+extern int readUINT16little(FILE *f, CGAL_UINT16 *i);
+extern int readUINT32little(FILE *f, CGAL_UINT32 *i);
 
 /*
  * Write the basic types as little-endian values.  The return value will be
  * zero if successful, EOF otherwise.
  */
-int writeINT8little(FILE *f, INT8 i);
-int writeINT16little(FILE *f, INT16 i);
-int writeINT32little(FILE *f, INT32 i);
-int writeUINT8little(FILE *f, UINT8 i);
-int writeUINT16little(FILE *f, UINT16 i);
-int writeUINT32little(FILE *f, UINT32 i);
+int writeINT8little(FILE *f, CGAL_INT8 i);
+int writeINT16little(FILE *f, CGAL_INT16 i);
+int writeINT32little(FILE *f, CGAL_INT32 i);
+int writeUINT8little(FILE *f, CGAL_UINT8 i);
+int writeUINT16little(FILE *f, CGAL_UINT16 i);
+int writeUINT32little(FILE *f, CGAL_UINT32 i);
 
 #endif  /* __ENDIAN_H_INCLUDED__ */
 
