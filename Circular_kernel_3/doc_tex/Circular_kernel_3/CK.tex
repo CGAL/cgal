@@ -69,11 +69,16 @@ In fact, the spherical kernel is documented as a concept,
 \item {} and a predefined kernel \ccc{Exact_spherical_kernel_3}.
 \end{itemize}
 
-\section{Example}
+\section{Examples}
 
-This example shows how to construct spheres and compute intersections on them.
+The first example shows how to construct spheres and compute
+intersections on them using the global function.
 
-\ccIncludeExampleCode{Circular_kernel_3/spherical_kernel_3.cpp}
+\ccIncludeExampleCode{Circular_kernel_3/intersecting_spheres.cpp}
+
+The second example illustrates the use of a functor. 
+
+\ccIncludeExampleCode{Circular_kernel_3/functor_has_on.cpp}
 
 \section{Design and Implementation History}
 
