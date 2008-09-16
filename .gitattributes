@@ -2450,6 +2450,12 @@ Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pstex_t -text svneol=unset#app
 Minkowski_sum_2/examples/Minkowski_sum_2/rooms_star.dat -text
 Minkowski_sum_2/examples/Minkowski_sum_2/spiked.dat -text
 Minkowski_sum_2/examples/Minkowski_sum_2/tight.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/data/A.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/data/B.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/data/D.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/data/E.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/data/F.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/data/G.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/comb_part1.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/comb_part2.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/fork_part1.dat -text
