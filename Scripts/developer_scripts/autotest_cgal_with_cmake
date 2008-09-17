@@ -503,12 +503,6 @@ export CGAL_BINARY_DIR;
 export CGAL_REFERENCE_CACHE_DIR;
 cd '${CGAL_BINARY_DIR}';
 cmake '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
-                           -DCGAL_CXX_FLAGS="\$TESTSUITE_CXXFLAGS" \\
-                           -DCGAL_EXE_LINKER_FLAGS="\$TESTSUITE_LDFLAGS" \\
-                           -DCGAL_CXX_FLAGS_RELEASE="\$TESTSUITE_CXXFLAGS_RELEASE" \\
-                           -DCGAL_EXE_LINKER_FLAGS_RELEASE="\$TESTSUITE_LDFLAGS_RELEASE" \\
-                           -DCGAL_CXX_FLAGS_DEBUG="\$TESTSUITE_CXXFLAGS_DEBUG" \\
-                           -DCGAL_EXE_LINKER_FLAGS_DEBUG="\$TESTSUITE_LDFLAGS_DEBUG" \\
                            -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
                            VERBOSE=1 \\
                            ../../..; 
