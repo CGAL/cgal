@@ -94,6 +94,7 @@ public:
   Gmpz(double d)
   {
      CGAL_warning_msg(is_integer(d), "Gmpz constructed from non-integer double value");
+     CGAL_assertion(is_finite(d));
      mpz_init_set_d(mpz(), d);
    }
 

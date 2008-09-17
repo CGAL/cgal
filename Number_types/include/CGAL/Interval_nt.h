@@ -66,7 +66,7 @@ public:
     : _inf(i), _sup(i) {}
 
   Interval_nt(double d)
-    : _inf(d), _sup(d) {}
+    : _inf(d), _sup(d) { CGAL_assertion(is_finite(d)); }
 
 // The Intel compiler on Linux is aggressive with constant propagation and
 // it seems there is no flag to stop it, so disable this check for it.

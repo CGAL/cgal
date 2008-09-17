@@ -121,7 +121,10 @@ public:
   }
 
   Gmpq(double d)
-  { mpq_set_d(mpq(), d); }
+  {
+    CGAL_assertion(is_finite(d));
+    mpq_set_d(mpq(), d);
+  }
 
   Gmpq(const std::string& str, int base = 10)
   {
