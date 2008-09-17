@@ -156,10 +156,12 @@ MACRO (_Boost_ADJUST_LIB_VARS basename)
     
     IF (Boost_${basename}_LIBRARY)
       SET(Boost_${basename}_LIBRARY ${Boost_${basename}_LIBRARY} CACHE FILEPATH "The Boost ${basename} library")
-      FOREACH(Boost_${basename}_LIBRARY_path ${Boost_${basename}_LIBRARY})
-        GET_FILENAME_COMPONENT(Boost_LIBRARY_DIRS "${Boost_${basename}_LIBRARY_path}" PATH)
-        SET(Boost_LIBRARY_DIRS ${Boost_LIBRARY_DIRS} CACHE FILEPATH "Boost library directory")
-      ENDFOREACH(Boost_${basename}_LIBRARY_path ${Boost_${basename}_LIBRARY})
+      IF(NOT Boost_LIBRARY_DIRS)
+	FOREACH(Boost_${basename}_LIBRARY_path ${Boost_${basename}_LIBRARY})
+          GET_FILENAME_COMPONENT(Boost_LIBRARY_DIRS "${Boost_${basename}_LIBRARY_path}" PATH)
+          SET(Boost_LIBRARY_DIRS ${Boost_LIBRARY_DIRS} CACHE FILEPATH "Boost library directory")
+	ENDFOREACH(Boost_${basename}_LIBRARY_path ${Boost_${basename}_LIBRARY})
+      ENDIF(NOT Boost_LIBRARY_DIRS)
       SET(Boost_${basename}_FOUND ON CACHE INTERNAL "Whether the Boost ${basename} library found")
     ENDIF (Boost_${basename}_LIBRARY)
 
@@ -241,6 +243,10 @@ ELSE (_boost_IN_CACHE)
     "$ENV{ProgramFiles}/Boost"
     /sw/local/lib
   )
+
+  IF(Boost_LIBRARY_DIRS)
+    SET(_boost_LIBRARIES_SEARCH_DIRS ${Boost_LIBRARY_DIRS} ${_boost_LIBRARIES_SEARCH_DIRS})
+  ENDIF(Boost_LIBRARY_DIRS)
 
   # If BOOST_ROOT was defined in the environment, use it.
   if (NOT BOOST_ROOT AND NOT $ENV{BOOST_ROOT} STREQUAL "")
