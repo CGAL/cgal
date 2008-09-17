@@ -73,7 +73,7 @@ void MP_Float::construct_from_builtin_fp_type(T d)
     if (d == 0)
       return;
 
-    CGAL_assertion(is_finite(d) & is_valid(d));
+    CGAL_assertion(is_finite(d));
 
     // This is subtle, because ints are not symetric against 0.
 
