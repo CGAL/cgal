@@ -1,7 +1,8 @@
 TODO
 changes
 GNUmakefile
-makefile
+test/Circular_kernel_2/makefile
+examples/Circular_kernel_2/makefile 
 bench
 Benchmarks/
 include/CGAL/Filtered_hexagon_circular_kernel_2.h
