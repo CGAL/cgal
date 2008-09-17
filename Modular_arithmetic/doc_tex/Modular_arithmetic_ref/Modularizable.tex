@@ -2,7 +2,7 @@
 
 \ccDefinition
 
-An algebraic structure is called \ccRefName, if there is an suitable mapping 
+An algebraic structure is called \ccRefName, if there is a suitable mapping 
 into an algebraic structure which is based on the type \ccc{CGAL::Residue}. 
 For scalar types, e.g. Integers, this mapping is just the canonical homomorphism 
 into the type \ccc{CGAL::Residue}. For compound types, e.g. Polynomials, 
@@ -10,6 +10,24 @@ the mapping is applied to the coefficients of the compound type.
 
 The mapping is provided via \ccc{CGAL::Modular_traits<Modularizable>}, 
 being a model of \ccc{ModularTraits}.
+
+\ccHasModels
+
+\ccRefIdfierPage{int}\\
+\ccRefIdfierPage{long}\\
+\ccRefIdfierPage{CORE::BigInt}\\
+\ccRefIdfierPage{CORE::BigRat}\\
+\ccRefIdfierPage{CGAL::Gmpz}\\
+\ccRefIdfierPage{CGAL::Gmpq}\\
+\ccRefIdfierPage{leda::integer}\\
+\ccRefIdfierPage{leda::rational}\\
+\ccRefIdfierPage{mpz_class}\\
+\ccRefIdfierPage{mpq_class}\\
+
+\ccRefIdfierPage{CGAL::Quotient<NT>}, depends on template argument.\\ 
+\ccRefIdfierPage{CGAL::Lazy_exact_nt<NT>}, depends on template argument.\\ 
+\ccRefIdfierPage{CGAL::Sqrt_extension<NT,ROOT>}, depends on template arguments.\\ 
+\ccRefIdfierPage{CGAL::Polynomial<Coeff>}, depends on template argument.\\ 
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Residue}\\
