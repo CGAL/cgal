@@ -1,4 +1,5 @@
-makefile
+test/Circular_kernel_3/makefile
+examples/Circular_kernel_3/makefile 
 GNUmakefile
 changes
 TODO
