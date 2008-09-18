@@ -60,22 +60,6 @@ namespace CircularFunctors {
 
   };
 
-  template < class CK >
-  class Get_equation : public LinearFunctors::Get_equation<CK>
-  {
-    public:
-
-    typedef typename CK::Polynomial_for_circles_2_2 result_type;
-
-    using LinearFunctors::Get_equation<CK>::operator();
-
-    result_type
-    operator() ( const typename CK::Circle_2 & c )
-      {
-	return CircularFunctors::get_equation<CK>(c);
-      }
-  };
-
 } // namespace CircularFunctors
 
 template < typename K >

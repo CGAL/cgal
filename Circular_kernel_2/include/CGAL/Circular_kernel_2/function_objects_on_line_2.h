@@ -57,20 +57,6 @@ namespace LinearFunctors {
       }
   };
 
-  template < class CK >
-  class Get_equation
-  {
-    public:
-
-    typedef typename CK::Polynomial_1_2 result_type;
-
-    result_type
-    operator() ( const typename CK::Line_2 & l )
-      {
-	return LinearFunctors::get_equation<CK>(l);
-      }
-  };
-
 } // namespace LinearFunctors
 
 template < typename K >

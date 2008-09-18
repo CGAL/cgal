@@ -647,6 +647,25 @@ template < class CK >
 
   };
 
+  template < class CK >
+  class Get_equation
+  {
+    public:
+
+    typedef void result_type;
+
+    typename CK::Polynomial_1_2
+    operator() ( const typename CK::Line_2 & l )
+      {
+	      return LinearFunctors::get_equation<CK>(l);
+      }
+
+    typename CK::Polynomial_for_circles_2_2
+    operator() ( const typename CK::Circle_2 & c )
+      {
+        return CircularFunctors::get_equation<CK>(c);
+		  }		
+  };
 
   template < class CK >
   class Split_2
