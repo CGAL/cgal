@@ -20,24 +20,24 @@ Patch6:         CGAL_manual_tools-cc_ref_wizard.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires: bison flex
-BuildRequires:  /usr/bin/kpsewhich
+BuildRequires: tetex-fonts
 Requires:       tetex-latex tetex-dvips 
 Requires:       ghostscript >= 6.0
-Requires(post):   /usr/bin/texhash
-Requires(postun): /usr/bin/texhash
+Requires(post):   tetex-fonts
+Requires(postun): tetex-fonts
 
 %description
 Specification and Manual Writing Tools for C++ Reference Manuals
 
 %prep
 %setup -q -n Manual_tools -a 1
-%patch0 -p0
-%patch1 -p0
-%patch2 -p0
-%patch3 -p0
-%patch4 -p0
-%patch5 -p0
-%patch6 -p0
+%patch0 -p0 -b .config
+%patch1 -p0 -b .rpm
+%patch2 -p0 -b .perl
+%patch3 -p0 -b .cgal_manual
+%patch4 -p0 -b .cc_extract
+%patch5 -p0 -b .latex_to_html
+%patch6 -p0 -b .cc_ref_wizard
 
 %build
 source install.config
@@ -45,15 +45,16 @@ make -C src LATEX_CONV_INPUTS=$LATEX_CONV_INPUTS \
             CXXFLAGS="${CXXFLAGS:-%optflags}" || exit 1
 
 %install
-rm -rf $RPM_BUILD_ROOT
-sed -i.bak -e 's|/usr|$RPM_BUILD_ROOT/usr|g' install.config
+rm -rf %{buildroot}
+sed -i.bak -e 's|/usr|%{buildroot}/usr|g' install.config
 ./install.sh
-[ -d $RPM_BUILD_ROOT/usr/share/texmf/tex/latex/CGAL ] || mkdir -p $RPM_BUILD_ROOT/usr/share/texmf/tex/latex/CGAL
-cp -r doc_tex/Manual $RPM_BUILD_ROOT/usr/share/texmf/tex/latex/CGAL
-cp doc_tex/ipe.sty $RPM_BUILD_ROOT/usr/share/texmf/tex/latex/CGAL
-[ -d $RPM_BUILD_ROOT/usr/share/texmf/bibtex/bib/CGAL ] || mkdir -p $RPM_BUILD_ROOT/usr/share/texmf/bibtex/bib/CGAL/Manual
-mv $RPM_BUILD_ROOT/usr/share/texmf/tex/latex/CGAL/Manual/*.bib $RPM_BUILD_ROOT/usr/share/texmf/bibtex/bib/CGAL/Manual
-cp developer_scripts/cgal_manual developer_scripts/bibmerge $RPM_BUILD_ROOT/usr/bin/ 
+[ -d %{buildroot}%{_datadir}/texmf/tex/latex/CGAL ] || mkdir -p %{buildroot}%{_datadir}/texmf/tex/latex/CGAL
+cp -r doc_tex/Manual %{buildroot}%{_datadir}/texmf/tex/latex/CGAL
+cp doc_tex/ipe.sty %{buildroot}%{_datadir}/texmf/tex/latex/CGAL
+[ -d %{buildroot}%{_datadir}/texmf/bibtex/bib/CGAL ] || mkdir -p %{buildroot}%{_datadir}/texmf/bibtex/bib/CGAL/Manual
+mv %{buildroot}%{_datadir}/texmf/tex/latex/CGAL/Manual/*.bib %{buildroot}%{_datadir}/texmf/bibtex/bib/CGAL/Manual
+[ -d %{buildroot}%{_bindir}/ ] || mkdir -p %{buildroot}%{_bindir}/
+install -p developer_scripts/cgal_manual developer_scripts/bibmerge %{buildroot}%{_bindir}/ 
 
 %post
 texhash > /dev/null 2>&1 || :
@@ -62,16 +63,16 @@ texhash > /dev/null 2>&1 || :
 texhash > /dev/null 2>&1 || :
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
 %doc doc_ps/*
-/usr/bin/*
-/usr/share/texmf/tex/latex/CGAL
-/usr/share/texmf/bibtex/bib/CGAL
-%dir /usr/share/CGAL/
-/usr/share/CGAL/latex_conv_config
+%{_bindir}/*
+%{_datadir}/texmf/tex/latex/CGAL
+%{_datadir}/texmf/bibtex/bib/CGAL
+%dir %{_datadir}/CGAL/
+%{_datadir}/CGAL/latex_conv_config
 
 %changelog
 * Fri May 11 2007 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 38638-1%{?dist}
