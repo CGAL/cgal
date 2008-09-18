@@ -31,7 +31,7 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Sqrt_extension.h>
 
-#include <CGAL/_test_real_comparable.h>
+#include <CGAL/Test/_test_real_embeddable.h>
 
 #include <cstdlib>
 
@@ -51,7 +51,7 @@ void algebraic_number_test()
 
     typedef CGAL::CGALi::Algebraic_real_pure<Coeff_NT,rat_NT, CGAL::Handle_policy_no_union, RepClass > ALGNUM; 
     typedef CGAL::Polynomial<Coeff_NT> Poly;
-     
+    CGAL::test_real_embeddable<ALGNUM>();
     // general test of comparable functionality  
 
     // TODO generates a precondition error in Algebraic_real_rep

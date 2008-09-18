@@ -369,7 +369,7 @@ public:
 	} 
     };
     
-    typedef typename CGAL::Real_embeddable_traits<Integer>::Sign Sign;
+    typedef typename CGAL::Real_embeddable_traits<Integer>::Sgn Sign;
     typedef typename CGAL::CGALi::Real_embeddable_extension<Integer>
         ::Ceil_log2_abs Ceil_log2_abs_Integer;
     typedef typename CGAL::CGALi::Real_embeddable_extension<long>

@@ -1038,28 +1038,28 @@ public:
     typedef Decompose_2 Make_coprime_2;
     
     //! computes the derivative w.r.t. x
-    struct Derivative_x_2 : 
+    struct Differentiate_x_2 : 
         public std::unary_function< Polynomial_2, Polynomial_2 > {
         
         Polynomial_2 operator()(const Polynomial_2& p) const
         {
-            typename Polynomial_traits_2::Derivative derivate;
+            typename Polynomial_traits_2::Differentiate derivate;
             return derivate(p, 0);
         }
     };
-    CGAL_Algebraic_Kernel_cons(Derivative_x_2, derivative_x_2_object);
+    CGAL_Algebraic_Kernel_cons(Differentiate_x_2, derivative_x_2_object);
 
     //! \brief computes the derivative w.r.t. y
-    struct Derivative_y_2 :
+    struct Differentiate_y_2 :
         public std::unary_function< Polynomial_2, Polynomial_2 > {
         
         Polynomial_2 operator()(const Polynomial_2& p) const
         {
-            typename Polynomial_traits_2::Derivative derivate;
+            typename Polynomial_traits_2::Differentiate derivate;
             return derivate(p, 1);
         }
     };
-    CGAL_Algebraic_Kernel_cons(Derivative_y_2, derivative_y_2_object);
+    CGAL_Algebraic_Kernel_cons(Differentiate_y_2, derivative_y_2_object);
 
     
     /*!
@@ -1082,7 +1082,7 @@ public:
         OutputIterator operator()(const Curve_analysis_2& ca_2,
                 OutputIterator oi) const {
                 
-            typename Self::Derivative_x_2 der_x;
+            typename Self::Differentiate_x_2 der_x;
             Construct_curve_2 cc_2;
             Construct_curve_pair_2 ccp_2;
             // construct curve analysis of a derivative in y
@@ -1175,7 +1175,7 @@ public:
                         continue;
                     }
                     if(!cpa_constructed) {
-                        typename Self::Derivative_y_2 der_y;
+                        typename Self::Differentiate_y_2 der_y;
                         // construct curve analysis of a derivative in x
                         Curve_analysis_2 ca_2y =
                             cc_2(der_y(ca_2.polynomial_2()));

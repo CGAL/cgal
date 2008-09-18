@@ -185,7 +185,7 @@ public:
                     CGAL_ACK_DEBUG_PRINT << "Ev check..." << std::flush;
 #endif
                     Polynomial_2 fx 
-                        = typename Polynomial_traits_2::Derivative() (f,0);
+                        = typename Polynomial_traits_2::Differentiate() (f,0);
                     Polynomial_2 fy(f);
                     fy.diff();
                     event_flag=event_point_checker(bit_des,f,alpha,k,fx,fy);
