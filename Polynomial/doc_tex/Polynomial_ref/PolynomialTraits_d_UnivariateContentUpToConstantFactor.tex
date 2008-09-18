@@ -2,7 +2,7 @@
 
 \ccDefinition
 
-This \ccc{AdaptableBinaryFunction} computes the content of a 
+This \ccc{AdaptableUnaryFunction} computes the content of a 
 \ccc{PolynomialTraits_d::Polynomial_d} 
 with respect to the univariate (recursive) view on the 
 polynomial {\em up to  a constant factor (utcf)}, that is, 
@@ -15,14 +15,14 @@ However, a concept \ccc{PolynomialTraits_d::MultivariateContentUpToConstantFacto
 does not exist since the result is trivial. 
  
 \ccRefines 
-\ccc{AdaptableBinaryFunction}
+\ccc{AdaptableUnaryFunction}
+\ccCreationVariable{fo}
 
 \ccTypes
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
 \ccTypedef{typedef PolynomialTraits_d::Coefficient_type  result_type;}{}\ccGlue
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d first_argument_type;}{}\ccGlue
-\ccTypedef{typedef int                              second_argument_type;}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d argument_type;}{}
 
 \ccOperations
 \ccMethod{result_type operator()(first_argument_type p);}

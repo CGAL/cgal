@@ -3,8 +3,8 @@
 \ccDefinition
 
 This \ccc{AdaptableUnaryFunction} computes a unique representative from the set: 
-$\{ q | \lambda * q = p with \lambda \in R  \}$, where $p$ is the given polynomial and 
-$R$ the base of the polynomial ring. 
+$\{ q | \lambda * q = p\ for\ some\ \lambda \in R  \}$, 
+where $p$ is the given polynomial and $R$ the base of the polynomial ring. 
 In particular, the computed polynomial has the same zero set as the given one.
 
 In case \ccc{PolynomialTraits::Innermost_coefficient_type} is a model of \ccc{Field}, 
@@ -30,8 +30,9 @@ For all other cases the notion of uniqueness is up to the concrete model.
 
 \ccOperations
 
-\ccCreationVariable{canonicalize}
-\ccMethod{result_type operator()(first_argument_type  f);}{}
+\ccCreationVariable{fo}
+\ccMethod{result_type operator()(first_argument_type  p);}{
+        Returns the cononical representative of $p$.}
 
 
 

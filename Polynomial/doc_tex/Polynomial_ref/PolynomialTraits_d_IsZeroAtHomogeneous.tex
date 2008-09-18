@@ -15,19 +15,20 @@ polynomial  $p(x_0,x_1,w) = x_0^2x_1^3+x_1^4w^1$.
 \ccTypes
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccCreationVariable{is_zero_at_homogeneous}
+\ccCreationVariable{fo}
 \ccTypedef{typedef bool                        result_type;}{}\ccGlue
 
 \ccOperations
+\ccMethod{
 template <class InputIterator>
-\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+result_type operator()(PolynomialTraits_d::Polynomial_d  p,
                                  InputIterator                     begin,
                                  InputIterator                     end );}{ 
 Computes whether $p$ is zero at the homogeneous point given by the iterator range, 
 where $begin$ is referring to the innermost variable.
 \ccPrecond{\ccc{std::iterator_traits< InputIterator >::value_type} is  
   \ccc{PolynomialTraits_d::Innermost_coefficient_type}.}
-\ccPrecond 
+\ccPrecond{(end-begin == \ccc{PolynomialTraits_d::d}+1)}
 }
 %\ccHasModels
 

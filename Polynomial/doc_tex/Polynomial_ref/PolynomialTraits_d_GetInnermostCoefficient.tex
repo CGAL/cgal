@@ -18,12 +18,13 @@ the (multivariate) monomial specified by the given \ccc{Exponent_vector}.
 \ccGlue
 \ccTypedef{typedef Exponent_vector                  second_argument_type;}{}
 
-\ccCreationVariable{get_innermost_coefficient}
+\ccCreationVariable{fo}
 \ccOperations
 
 \ccMethod{result_type operator()( first_argument_type p, 
                                   second_argument_type v);}{ 
-Returns the innermost coefficient of the monomial defined by the given \ccc{Exponent_vector} $v$. }
+For given polynomial $p$ this operator returns the innermost coefficient of the 
+monomial corresponding to the given \ccc{Exponent_vector} $v$. }
 
 %\ccHasModels
 

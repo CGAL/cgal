@@ -25,7 +25,7 @@ DefaultConstructible\\
 \ccOperations
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccCreationVariable{sqff}
+\ccCreationVariable{fo}
 
 \ccMethod{template<class OutputIterator>
 OutputIterator operator()(PolynomialTraits_d::Polynomial_d  p,
@@ -38,8 +38,7 @@ OutputIterator operator()(PolynomialTraits_d::Polynomial_d  p,
 
 \ccMethod{template<class OutputIterator>
 OutputIterator operator()(PolynomialTraits_d::Polynomial_d  p,
-                          OutputIterator                   it,
-                          PolynomialTraits_d::Innermost_coefficient_type& a);}
+                          OutputIterator                   it);}
 { As the first operator, just not computing the factor $a$. }
 
 %\ccHasModels

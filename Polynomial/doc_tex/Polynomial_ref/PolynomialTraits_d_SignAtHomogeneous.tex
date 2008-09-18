@@ -18,12 +18,13 @@ This functor is well defined if \ccc{PolynomialTraits_d::Innermost_coefficient_t
 \ccTypes
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccCreationVariable{sign_at_homogeneous}
+\ccCreationVariable{fo}
 \ccTypedef{typedef CGAL::Sign                        result_type;}{}\ccGlue
 
 \ccOperations
-template <class InputIterator>
-\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+\ccMethod{
+template <class InputIterator> 
+result_type operator()(PolynomialTraits_d::Polynomial_d  p,
                                  InputIterator                     begin,
                                  InputIterator                     end );}{ 
 Returns the sign of $p$ at the given homogeneous point, where $begin$ is 

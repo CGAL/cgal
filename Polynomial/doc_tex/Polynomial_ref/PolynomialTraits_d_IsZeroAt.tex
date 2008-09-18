@@ -11,7 +11,7 @@ which is represented as an iterator range.
 \ccTypes
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccCreationVariable{is_zero_at}
+\ccCreationVariable{fo}
 \ccTypedef{typedef bool                        result_type;}{}\ccGlue
 
 \ccOperations
@@ -22,7 +22,7 @@ result_type operator()(PolynomialTraits_d::Polynomial_d  p,
                        InputIterator                     end );}{ 
 Computes whether $p$ is zero at the Cartesian point given by the iterator range, 
 where $begin$ is referring to the innermost variable.
-\ccPrecond (end-begin == \ccc{PolynomialTraits_d::d})  
+\ccPrecond{(end-begin == \ccc{PolynomialTraits_d::d})}  
 }
 %\ccHasModels
 

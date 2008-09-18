@@ -13,19 +13,19 @@ Given this decomposition, the square free part is defined as the product $g_1  \
 which is computed by this functor. 
 
 \ccRefines 
-\ccc{AdaptableBinaryFunction}
+\ccc{AdaptableUnaryFunction}
 
 \ccTypes
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccCreationVariable{make_square_free}
+\ccCreationVariable{fo}
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}
 \ccGlue
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}
 
 \ccOperations
 \ccMethod{result_type operator()(argument_type  p);}
-         { return the square-free part of $p$.}
+         { Returns the square-free part of $p$.}
 
 
 %\ccHasModels
@@ -34,5 +34,6 @@ which is computed by this functor.
 
 \ccRefIdfierPage{Polynomial_d}\\
 \ccRefIdfierPage{PolynomialTraits_d}\\
-\ccRefIdfierPage{PolynomialTraits_d::Canonicalize}
+\ccRefIdfierPage{PolynomialTraits_d::Canonicalize}\\
+
 \end{ccRefConcept}
