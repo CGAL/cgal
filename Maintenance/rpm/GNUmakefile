@@ -27,7 +27,7 @@ all:
 #
 #############################################################################
 
-CGAL_MANUAL_REVISION:=$(shell rpm -q --qf '%{version}\n' --specfile SPECS/CGAL-manual-tools.spec | head -1)
+CGAL_MANUAL_REVISION:=$(shell svn info . | awk '/Revision/ {print $$2}')
 CGAL_MANUAL_RELEASE_NUMBER:=$(shell rpm -q --qf '%{release}\n' --specfile SPECS/CGAL-manual-tools.spec | head -1)
 
 RPM_OPTIONS+= --define "cgal_manual_revision $(CGAL_MANUAL_REVISION)"
@@ -47,11 +47,14 @@ CGAL_MANUAL_PACKAGE_DEPS = \
         $(CGAL_MANUAL_PACKAGE_SOURCES) \
 	SPECS/CGAL-manual-tools.spec
 
-.PHONY:: prepare-CGAL-manual-tools-sources
+.PHONY:: prepare-CGAL-manual-tools-sources echo-manual-revision
+
+echo-manual-revision:
+	@echo "CGAL_MANUAL_REVISION=$(CGAL_MANUAL_REVISION)"
 
 prepare-CGAL-manual-tools-sources: $(CGAL_MANUAL_PACKAGE_SOURCES)
 
-SOURCES/Manual_tools-$(CGAL_MANUAL_REVISION).tar.gz:
+SOURCES/Manual_tools-$(CGAL_MANUAL_REVISION).tar.gz: echo-manual-revision
 	cd SOURCES && svn export -r $(CGAL_MANUAL_REVISION) --force \
 	    $(CGAL_URL)/Manual_tools && \
 	tar czf Manual_tools-$(CGAL_MANUAL_REVISION).tar.gz Manual_tools/
