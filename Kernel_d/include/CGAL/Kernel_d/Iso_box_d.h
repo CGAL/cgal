@@ -256,6 +256,8 @@ namespace CGAL {
   template < typename Kernel_ > 
   class Iso_box_d : public Handle_for< Kernel_d::Iso_box_d_rep<Kernel_> > 
   { 
+
+  public:
     typedef Kernel_                   Kernel;
     typedef Kernel_                   R;
     
