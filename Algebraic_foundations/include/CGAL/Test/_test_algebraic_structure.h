@@ -144,7 +144,7 @@ void test_algebraic_structure_intern( const CGAL::Integral_domain_tag& ) {
     typedef typename AST::Is_exact Is_exact;
     // VC7 produced an ICE for
     // assert( ! Is_exact::value || ... );
-    bool ie = Is_exact::value;
+    bool ie = Is_exact::value; (void) ie;
     AS tmp; 
     assert( divides(b,AS(0),tmp));
     assert( !ie || tmp == integral_division(AS(0),b));
@@ -749,6 +749,15 @@ void test_Type_functions( const CGAL::Field_with_root_of_tag&) {
 */
 }
 
+// checks the result type of a functor 
+template <typename AdaptableFunctor, typename ResultType>
+void check_result_type(AdaptableFunctor, ResultType){
+  typedef typename AdaptableFunctor::result_type result_type;
+  BOOST_STATIC_ASSERT((::boost::is_same<result_type,ResultType>::value));
+}
+// check nothing for CGAL::Null_functor
+template <typename ResultType>
+void check_result_type(CGAL::Null_functor, ResultType){}
 
 template <class  AS , class Algebraic_category, class Is_exact>
 void test_algebraic_structure(){
@@ -756,11 +765,18 @@ void test_algebraic_structure(){
     test_Type_functions< AS >(Algebraic_category());
   
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;
-    BOOST_STATIC_ASSERT((::boost::is_same<AS,typename AST::Type>::value));
-
     CGAL_SNAP_AST_FUNCTORS(AST);
-    typedef typename AST::Algebraic_category  Tag;
     
+    BOOST_STATIC_ASSERT((::boost::is_same<AS,typename AST::Type>::value));
+    
+    typedef typename AST::Boolean Boolean;
+    assert(!Boolean());
+    check_result_type(Is_zero(), Boolean());
+    check_result_type(Is_one(), Boolean());
+    check_result_type(Divides(), Boolean());
+    check_result_type(Is_square(), Boolean());
+
+    typedef typename AST::Algebraic_category  Tag;
     using CGAL::Integral_domain_without_division_tag; 
     using CGAL::Null_functor;
     // Test for desired exactness
@@ -879,7 +895,8 @@ void test_algebraic_structure(){
 }
 
 template <class  AS , class Algebraic_category, class Is_exact >
-void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {    
+void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {
+ 
     assert( a !=  AS (0));
     assert( b !=  AS (0));
     assert( c !=  AS (0));

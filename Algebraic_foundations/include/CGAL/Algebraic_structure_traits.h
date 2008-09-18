@@ -102,6 +102,7 @@ class Algebraic_structure_traits_base< Type_, Null_tag > {
     typedef Null_tag       Algebraic_category;
     typedef Tag_false      Is_exact;
     typedef Null_tag       Is_numerical_sensitive;
+    typedef Null_tag       Boolean; 
 
     // does nothing by default
     class Simplify 
@@ -137,8 +138,9 @@ class Algebraic_structure_traits_base< Type_,
     : public Algebraic_structure_traits_base< Type_, 
                                               Null_tag > {
   public:
-    typedef Type_                   Type;
+    typedef Type_                                 Type;
     typedef Integral_domain_without_division_tag  Algebraic_category;
+    typedef bool                                  Boolean;
 
     // returns Type(1) by default
     class Unit_part 

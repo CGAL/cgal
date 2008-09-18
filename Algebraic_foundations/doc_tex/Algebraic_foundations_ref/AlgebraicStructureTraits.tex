@@ -60,6 +60,13 @@ A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
           number of an algorithm.
         }
 
+\ccNestedType{Boolean}
+        { This type specifies the return type of the predicates provided
+          by this traits. The type must be convertible to \ccc{bool} and 
+          typically the type indeed maps to \ccc{bool}. However, there are also 
+          cases such as interval arithmetic, in which it is \ccc{Uncertain<bool>} 
+          or some similar type. 
+        }
 
 \ccHeading{Functors}
 

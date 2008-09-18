@@ -421,7 +421,8 @@ class NTC_AST_base
 template < typename NT1, typename NT2, typename Cmp >
 class NTC_AST_base
 < Number_type_checker<NT1, NT2, Cmp> , Integral_domain_without_division_tag>
-:public Algebraic_structure_traits_base<Number_type_checker<NT1, NT2, Cmp>, Null_tag>
+:public Algebraic_structure_traits_base<Number_type_checker<NT1, NT2, Cmp>, 
+Integral_domain_without_division_tag>
 {
 private:
     typedef Algebraic_structure_traits<NT1> AST1;

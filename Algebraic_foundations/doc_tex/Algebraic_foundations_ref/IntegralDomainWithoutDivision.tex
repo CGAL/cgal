@@ -78,13 +78,15 @@ Moreover, \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >
 
 Equality comparable: 
 
-\ccFunction{bool 
+\ccFunction{ result_type 
             operator==(const IntegralDomainWithoutDivision &a, 
-                      const IntegralDomainWithoutDivision &b);}{}
+                      const IntegralDomainWithoutDivision &b);}
+        {The \ccc{result_type} is convertible to \ccc{bool}. }
 \ccGlue
-\ccFunction{bool 
+\ccFunction{ result_type 
             operator!=(const IntegralDomainWithoutDivision &a, 
-                      const IntegralDomainWithoutDivision &b);}{}
+                      const IntegralDomainWithoutDivision &b);}
+        {The \ccc{result_type} is convertible to \ccc{bool}. }
 \ccGlue
  
 \ccSeeAlso

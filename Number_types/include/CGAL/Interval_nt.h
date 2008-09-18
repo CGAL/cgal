@@ -1183,19 +1183,20 @@ class Algebraic_structure_traits< Interval_nt<B> >
     typedef Interval_nt<B>      Type;
     typedef Tag_false           Is_exact;
     typedef Tag_true            Is_numerical_sensitive;
+    typedef Uncertain<bool>     Boolean; 
 
     class Is_zero
-      : public std::unary_function< Type, Uncertain<bool> > {
+      : public std::unary_function< Type, Boolean > {
       public:
-        Uncertain<bool> operator()( const Type& x ) const {
+        Boolean operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_zero( x );
         }
     };
 
     class Is_one
-      : public std::unary_function< Type, Uncertain<bool> > {
+      : public std::unary_function< Type, Boolean > {
       public:
-        Uncertain<bool> operator()( const Type& x ) const {
+        Boolean operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_one( x );
         }
     };
@@ -1217,16 +1218,16 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     struct Is_square
-        :public std::binary_function<Interval_nt<B>,Interval_nt<B>&,Uncertain<bool> >
+        :public std::binary_function<Interval_nt<B>,Interval_nt<B>&,Boolean >
     {
-        bool operator()(const Interval_nt<B>& x) const {
+        Boolean operator()(const Interval_nt<B>& x) const {
             return INTERN_INTERVAL_NT::is_positive( x );
         }
 
-        bool operator()(
+        Boolean operator()(
                 const Interval_nt<B>& x,
                 Interval_nt<B>      & result) const {
-            Uncertain<bool> is_positive = INTERN_INTERVAL_NT::is_positive( x );
+            Boolean is_positive = INTERN_INTERVAL_NT::is_positive( x );
             if ( is_positive.inf() == true ){
                 typename Algebraic_structure_traits<Interval_nt<B> >::Sqrt sqrt;
                 result = sqrt(x);
@@ -1238,6 +1239,21 @@ class Algebraic_structure_traits< Interval_nt<B> >
             return is_positive;
         }
     };
+
+  class Divides
+    : public std::binary_function< Type, Type, Boolean > { 
+  public:
+    Boolean operator()( const Type& x, const Type&) const {
+      return ! Is_zero()(x);
+    } 
+    // second operator computing q
+    Boolean operator()( const Type& x, const Type& y, Type& q) const {
+      if (! Is_zero()(x) )
+        q  = y/x ;
+      return Boolean(true);
+    }
+  };
+  
 };
 
 
