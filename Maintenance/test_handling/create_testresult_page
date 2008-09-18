@@ -23,6 +23,7 @@ my $release_name;
 my @platforms_to_do;
 my @known_platforms;
 my %platform_short_names;
+my %platform_use_cmake;
 my @available_platforms;
 my %test_directories = ();
 my @testresults;
@@ -207,6 +208,8 @@ sub print_resultpage()
     my $platform_count = scalar(@platforms_to_do);
 
     print OUTPUT '<h2><a name="testresults">Test Results</a></h2>'."\n";
+    print OUTPUT '<p>In the table below, each column is numeroted, and correspond to a platform. ';
+    print OUTPUT 'Each column number is a link to the platform description table.</p> ', "\n";
     if ($PLATFORMS_BESIDE_RESULTS) {
     	print OUTPUT <<"EOF";
 <table border="0" cellspacing="5" cellpadding="0">
@@ -334,39 +337,52 @@ EOF
 	$pf_no++;
 	# my $pf_short = join('_',parse_platform_2($pf));
 	my $pf_short = $pf;
-	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\">$pf_short</a>\n";
 
+	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\">$pf_short</a>";
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
-	    $_ = <PLATFORM_INFO>;
-	    $_ = <PLATFORM_INFO>;
-	    $_ = <PLATFORM_INFO>;
+	    $_ = <PLATFORM_INFO>; # CGAL_VERSION
+	    $_ = <PLATFORM_INFO>; # TESTER
+	    $_ = <PLATFORM_INFO>; # TESTER_NAME
 	    chomp;
 	    my $tester_name = $_;
-	    $_ = <PLATFORM_INFO>;
+	    $_ = <PLATFORM_INFO>; # TESTER_ADDRESS
 	    chomp;
 	    my $tester_address = $_;
-	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a>\n";
 
-	    my $count;
-	    $count = $testresults[$platform_num]->{"y"};
-	    print OUTPUT "<td>$count\n"; 
-	    $count = $testresults[$platform_num]->{"w"};
-	    print OUTPUT "<td>$count\n"; 
-	    $count = $testresults[$platform_num]->{"n"};
-	    print OUTPUT "<td>$count\n"; 
+	    my $county = $testresults[$platform_num]->{"y"};
+	    my $countw = $testresults[$platform_num]->{"w"};
+	    my $countn = $testresults[$platform_num]->{"n"};
 
 	    my $index = 11;
+	    my @tmp;
 	    while ($index) {
 	        $index--;
 		$_ = <PLATFORM_INFO>;
 		chomp;
-		print OUTPUT "<td align=\"center\">$_\n";
+		$tmp[$index] = $_;
+	    }
+	    $_ = <PLATFORM_INFO>;
+	    chomp;
+	    $platform_use_cmake{$pf} = $_;
+	    if($_) { # if use cmake
+		    print OUTPUT " <span class=\"cmaketag\">(CMAKE)</span>"
+	    }
+	    print OUTPUT "</td>\n";
+	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a></td>\n";
+	    print OUTPUT "<td>$county</td>\n"; 
+	    print OUTPUT "<td>$countw</td>\n"; 
+ 	    print OUTPUT "<td>$countn</td>\n"; 
+	    $index = 11;
+	    while ($index) {
+	        $index--;
+		$_ = $tmp[$index];
+		print OUTPUT "<td align=\"center\">$_</td>\n";
 	    }
 	} else {
-	    print OUTPUT "<td>?\n";
-	    print OUTPUT "<td>?\n";
-	    print OUTPUT "<td>?\n";
-	    print OUTPUT "<td>?\n";
+	    my $index = 15;
+	    while ($index) {
+		print OUTPUT "<td>?</td>\n";
+	    }
 	}
 	++$platform_num;
     }
@@ -379,7 +395,13 @@ sub print_platforms_numbers()
     foreach $platform (@platforms_to_do) {
 	++$platform_num;
 	my $pf_short = short_pfname($platform);
-	print OUTPUT "<td><a href=\"#platform$platform_num\" title=\"$pf_short\"><b>$platform_num</b></a>\n";
+	my $class = "";
+	my $tag = "";
+	if( $platform_use_cmake{$platform}) {
+	    $class = " class=\"cmake\"";
+	    $tag = " (cmake platform)";
+	}
+	print OUTPUT "<td$class><a href=\"#platform$platform_num\" title=\"$pf_short$tag\"><b>$platform_num</b></a>\n";
     }
 }
 
@@ -391,7 +413,11 @@ sub print_platforms()
 	print OUTPUT "<tr>\n<td>$pf_no\n";
 	$pf_no++;
 	my $pf_short = short_pfname($pf);
-	print OUTPUT "<td>$platform_short_names{$pf_short}\n</tr>\n";
+	print OUTPUT "<td>$platform_short_names{$pf_short}";
+	if($platform_use_cmake{$pf}) {
+	    print OUTPUT " <span class=\"cmaketag\">(CMAKE)</span>"
+	}
+	print OUTPUT "\n</td></tr>\n";
     }
     print OUTPUT "</table>\n";
 }
@@ -439,9 +465,6 @@ EOF
     }
 
     print OUTPUT "</ol>\n";
-    print OUTPUT '<p>The description of all platforms is <a href="#platforms">at the end of the page</a>. ';
-    print OUTPUT 'In the table below, each column is numeroted, and correspond to a platform. ';
-    print OUTPUT 'Each column number is a link to the platform description table.</p> ', "\n";
 }
 
 
@@ -477,8 +500,8 @@ sub main()
     chdir $release_name or die;
     collect_results();
     print_little_header();
-    print_resultpage();
     print_platform_descriptions();
+    print_resultpage();
 
     print OUTPUT << 'EOF';
  <p style="width: 100%">This page has been created by the test results

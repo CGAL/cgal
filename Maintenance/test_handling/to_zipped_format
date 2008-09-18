@@ -32,6 +32,7 @@ sub reformat_results($)
     $_ = shift;
     s/\.tar//;
     my $platform = $_;
+    my $use_cmake = 0;
 #    system("dos2unix ${platform}.txt ${platform}.txt");
     open (PLATFORM_RESULTS,"<${platform}.txt") or return;
     my $line;
@@ -46,6 +47,9 @@ sub reformat_results($)
         if(/^\s*$/) {
             goto NEXT;
         }
+	if(/^-- USING /) {
+	    $use_cmake = 1;
+	}
 	if (/^CGAL_VERSION\s+([\w\.-]+)/) {
 	    $CGAL_VERSION = $1;
 	}
@@ -143,6 +147,7 @@ $TAUCS
 $LEDA_VERSION
 $CXXFLAGS
 $LDFLAGS
+$use_cmake
 EOF
     close(PLATFORM_INFO);
     close(PLATFORM_RESULTS);
