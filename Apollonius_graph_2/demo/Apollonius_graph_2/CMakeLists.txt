@@ -1,6 +1,6 @@
 # This is the CMake script for compiling a CGAL application.
 
-project( Apollonius_graph_2_2 ) 
+project( Apollonius_graph_2 ) 
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
