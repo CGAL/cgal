@@ -654,7 +654,7 @@ public:
     }
   };
     
-  class Sign 
+  class Sgn 
     : public std::unary_function< Type, ::CGAL::Sign > {
   public:
     ::CGAL::Sign operator()( const Type& x ) const {
