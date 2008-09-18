@@ -1363,7 +1363,7 @@ void CPoissonDoc::OnEditDelete()
     BeginWaitCursor();
     status_message("Delete selected points");
 
-    m_points.deleted_selection();
+    m_points.delete_selection();
 
     update_status();
     UpdateAllViews(NULL);

@@ -147,14 +147,14 @@ public:
   } 
 
   /// Delete selected points.
-  void deleted_selection()
+  void delete_selection()
   {
     // erase-remove idiom
-    erase(std::remove_if(begin(), end(), 
-                         std::mem_fun_ref(&Gyroviz_point::is_selected)),
+    erase(std::remove_if(begin(), end(), std::mem_fun_ref(&Gyroviz_point::is_selected)),
           end());    
 
     m_nb_selected_points = 0;
+    invalidate_bounding_box();
   } 
 
   /// Get the bounding box.
