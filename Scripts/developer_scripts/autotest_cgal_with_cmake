@@ -511,12 +511,12 @@ cd ..;
 EOF
         chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript"
         if [ -n "${SHOW_PROGRESS}" ]; then
-	  remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" | tee -a "${ACTUAL_LOGFILE}.${PLATFORM}" 2>&1
-	else
-          remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" > "${ACTUAL_LOGFILE}.${PLATFORM}" 2>&1
-	fi
+          remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" | tee "${ACTUAL_LOGFILE}.build.${PLATFORM}" 2>&1
+        else
+          remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" > "${ACTUAL_LOGFILE}.build.${PLATFORM}" 2>&1
+        fi
                                
-        cp "${ACTUAL_LOGFILE}.${PLATFORM}" "${CGAL_BINARY_DIR}/installation.log"
+        cp "${ACTUAL_LOGFILE}.build.${PLATFORM}" "${CGAL_BINARY_DIR}/installation.log"
       fi
         
     done
@@ -558,7 +558,7 @@ run_test_on_host_and_platform()
   NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${HOST}`"
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
   cd "${CGAL_BINARY_DIR}"
-  log "${ACTUAL_LOGFILE}.${HOST}" "Testing on host ${HOST} and platform ${PLATFORM}"
+  log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
   if [ "${NUMBER_OF_PROCESSORS}" = "1" ] ; then
     MAKE_OPTS=""
   else
@@ -639,23 +639,23 @@ EOF
     chmod ugo+x "${CGAL_BINARY_DIR}/localtestscript"
     
     if [ -n "${SHOW_PROGRESS}" ]; then
-      remote_command ${HOST} "${CGAL_BINARY_DIR}/localtestscript" | tee -a "${ACTUAL_LOGFILE}.${HOST}" 2>&1
+      remote_command ${HOST} "${CGAL_BINARY_DIR}/localtestscript" | tee "${ACTUAL_LOGFILE}.test.${PLATFORM}" 2>&1
     else
-      remote_command ${HOST} "${CGAL_BINARY_DIR}/localtestscript" >> "${ACTUAL_LOGFILE}.${HOST}" 2>&1
+      remote_command ${HOST} "${CGAL_BINARY_DIR}/localtestscript" > "${ACTUAL_LOGFILE}.test.${PLATFORM}" 2>&1
     fi
     
-    log_done "${ACTUAL_LOGFILE}.${HOST}"
+    log_done "${ACTUAL_LOGFILE}.test.${PLATFORM}"
     
     #
     # collect results and put them on the web
     #
     cd "${CGAL_TEST_DIR}"
-    log "${ACTUAL_LOGFILE}.${HOST}" "PUTTING RESULTS ON THE WEB"
-    log "${ACTUAL_LOGFILE}.${HOST}" "RESULTS COLLECTED ${PLATFORM}-${HOST}"
+    log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "PUTTING RESULTS ON THE WEB"
+    log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "RESULTS COLLECTED ${PLATFORM}-${HOST}"
     
     # If this file does not exist results collection failed. Fake a results so this fact is itself reported
     if [ ! -f "results_${CGAL_TESTER}_${PLATFORM}.txt" ]; then
-      log "${ACTUAL_LOGFILE}.${HOST}" "Results collection for tester ${CGAL_TESTER} and platform ${PLATFORM} failed!" 
+      log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Results collection for tester ${CGAL_TESTER} and platform ${PLATFORM} failed!" 
       echo "Results collection failed!" >> "results_${CGAL_TESTER}_${PLATFORM}.txt" 
       ${TAR} cf "results_${CGAL_TESTER}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.txt"
       ${COMPRESSOR} -9f "results_${CGAL_TESTER}_${PLATFORM}.tar"
@@ -666,8 +666,8 @@ EOF
     COMPILER=`printf "%s" "$2" | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
     FILENAME="${CGAL_RELEASE_ID}_${CGAL_TESTER}-test`datestr`-${COMPILER}-cmake.tar.gz"
     LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${HOST}.gz"
-    ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.${HOST}"
-    mv "${ACTUAL_LOGFILE}.${HOST}.gz" "${LOGS_DIR}/${LOGFILENAME}"
+    ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.test.${PLATFORM}"
+    mv "${ACTUAL_LOGFILE}.test.${PLATFORM}.gz" "${LOGS_DIR}/${LOGFILENAME}"
 
     log "${ACTUAL_LOGFILE}" "Test results: ${CGAL_TEST_DIR}/test_results-${HOST}.tar.gz"
     
@@ -687,6 +687,23 @@ EOF
   fi
 }
 
+# ----------------------------------------------------------------------------------------
+# Runs the test on the host $1
+# ----------------------------------------------------------------------------------------
+run_test_on_host()
+{
+  HOST=${1}
+  
+  PLATFORMS=`value_of COMPILERS_${HOST}`
+  
+  if [ "${PLATFORMS}" = "all" ]; then
+    collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
+  fi
+  
+  for PLATFORM in ${PLATFORMS}; do
+    run_test_on_host_and_platform "${HOST}" "${PLATFORM}"
+  done
+}
 
 # ----------------------------------------------------------------------------------------
 # run the testsuites
@@ -699,17 +716,7 @@ run_test()
   fi
   
   for HOST in ${BUILD_HOSTS}; do
-  
-    PLATFORMS=`value_of COMPILERS_${HOST}`
-    
-    if [ "${PLATFORMS}" = "all" ]; then
-      collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
-    fi
-    
-    for PLATFORM in ${PLATFORMS}; do
-      run_test_on_host_and_platform "${HOST}" "${PLATFORM}" &
-    done
-            
+    run_test_on_host ${HOST} &
   done
 }
 
