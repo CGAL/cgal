@@ -242,7 +242,7 @@ public:
         }
     };    
 
-    class Sign 
+    class Sgn 
         : public std::unary_function< Real_embeddable, CGAL::Sign >{
     public:
         CGAL::Sign operator()(const Real_embeddable& x) const {

@@ -184,7 +184,7 @@ template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> >
         }        
     };
 
-    class Sign 
+    class Sgn 
       : public std::unary_function< Type, CGAL::Sign > {
       public:
         CGAL::Sign inline operator()( const Type& x ) const {

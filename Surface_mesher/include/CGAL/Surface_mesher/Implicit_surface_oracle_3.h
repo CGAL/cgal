@@ -109,7 +109,7 @@ namespace CGAL {
     class GT,
     class Surface,
     class Transform_functor_ = 
-      typename Real_embeddable_traits<typename Surface::FT>::Sign,
+      typename Real_embeddable_traits<typename Surface::FT>::Sgn,
     class Surface_identifiers_generator_ = 
       Return_min<typename Transform_functor_::result_type>,
     class Point_creator = Creator_uniform_3<typename GT::FT,
