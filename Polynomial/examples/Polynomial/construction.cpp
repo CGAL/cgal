@@ -2,16 +2,14 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial_type_generator.h>
-#include <CGAL/Gmpz.h>
 
 int main(){
   CGAL::set_pretty_mode(std::cout);
   
-  typedef CGAL::Polynomial_type_generator<CGAL::Gmpz,2>::Type Poly_2;
-
-  typedef CGAL::Polynomial_traits_d<Poly_2>                   PT_2;
-  typedef PT_2::Coefficient_type                                   Poly_1;
-  typedef PT_2::Innermost_coefficient_type                         Integer; 
+  typedef CGAL::Polynomial_type_generator<int,2>::Type Poly_2;
+  typedef CGAL::Polynomial_traits_d<Poly_2>            PT_2;
+  typedef PT_2::Coefficient_type                       Poly_1;
+  typedef PT_2::Innermost_coefficient_type             Integer; 
    
   PT_2::Construct_polynomial construct_polynomial;
   
@@ -35,10 +33,10 @@ int main(){
   
   std::list<std::pair<CGAL::Exponent_vector, Integer> > innermost_coeffs;
   CGAL::Exponent_vector ev(2,0); // = [0,0] sequence 
-  innermost_coeffs.push_back(std::make_pair(ev,CGAL::Gmpz(-2)));
+  innermost_coeffs.push_back(std::make_pair(ev,-2));
   ev[0]=3; 
   ev[1]=5; 
-  innermost_coeffs.push_back(std::make_pair(ev,CGAL::Gmpz(2)));
+  innermost_coeffs.push_back(std::make_pair(ev,2));
   Poly_2 G = 
     construct_polynomial(innermost_coeffs.begin(),innermost_coeffs.end());
   std::cout << "The bivariate polynomial G: " << G << std::endl;

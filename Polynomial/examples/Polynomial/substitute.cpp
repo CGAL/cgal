@@ -2,14 +2,11 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial_type_generator.h>
-#include <CGAL/Gmpz.h>
 
 int main(){
   CGAL::set_pretty_mode(std::cout);
-  typedef CGAL::Polynomial_type_generator<CGAL::Gmpz,2>::Type Poly_2;
-  typedef CGAL::Polynomial_traits_d<Poly_2>                   PT_2;
-  typedef PT_2::Coefficient_type                                   Poly_1;
-  typedef PT_2::Innermost_coefficient_type                         Integer; 
+  typedef CGAL::Polynomial_type_generator<int,2>::Type Poly_2;
+  typedef CGAL::Polynomial_traits_d<Poly_2>            PT_2;
   
   //construction using shift 
   Poly_2 x = PT_2::Shift()(Poly_2(1),1,0); // x_0^1
@@ -24,11 +21,11 @@ int main(){
   PT_2::Evaluate_homogeneous hevaluate;
   
   // Evaluation considers a polynomials as univariate:
-  std::cout << "F(5): " << evaluate(F,Integer(5)) << std::endl;
+  std::cout << "F(5): " << evaluate(F,5) << std::endl;
   // Evaluate_homogeneous considers F as a homogeneous polynomial in 
   // the outermost variable only, that is, F is interpreted as 
   // F(u,v) = 2*x*u*v^2 + 3 * u^3 
-  std::cout << "F(5,7): " << hevaluate(F,Integer(5), Integer(7)) << std::endl;
+  std::cout << "F(5,7): " << hevaluate(F,5,7) << std::endl;
   std::cout << std::endl;
 
   

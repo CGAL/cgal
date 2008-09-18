@@ -2,14 +2,11 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial_type_generator.h>
-#include <CGAL/Gmpz.h>
 
 int main(){
   CGAL::set_pretty_mode(std::cout);
-  typedef CGAL::Polynomial_type_generator<CGAL::Gmpz,3>::Type Poly_3;
-  typedef CGAL::Polynomial_traits_d<Poly_3>                   PT_3;
-  typedef PT_3::Coefficient_type                                   Poly_1;
-  typedef PT_3::Innermost_coefficient_type                         Integer; 
+  typedef CGAL::Polynomial_type_generator<int,3>::Type Poly_3;
+  typedef CGAL::Polynomial_traits_d<Poly_3>            PT_3;
   
   //construction using shift 
   Poly_3 x = PT_3::Shift()(Poly_3(1),1,0); // x_0^1
