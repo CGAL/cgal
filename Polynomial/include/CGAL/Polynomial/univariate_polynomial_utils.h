@@ -55,10 +55,9 @@ namespace CGALi {
      */
     template <class NT>
     int sign_variations(const Polynomial<NT>& P) { 
-        typename Real_embeddable_traits<NT>::Sign sign;
         const int n = P.degree();
         int variations = 0;
-        int old_sign = sign(P[n]); // never zero unless P is zero
+        int old_sign = CGAL::sign(P[n]); // never zero unless P is zero
         for (int i = n-1; i >= 0; i--) {
             int s = sign(P[i]);
             if (s == 0) continue;
