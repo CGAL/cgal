@@ -254,7 +254,7 @@ namespace CGAL {
   } // namespace Kernel_d
 
   template < typename Kernel_ > 
-  struct Iso_box_d : public Handle_for< Kernel_d::Iso_box_d_rep<Kernel_> > 
+  class Iso_box_d : public Handle_for< Kernel_d::Iso_box_d_rep<Kernel_> > 
   { 
     typedef Kernel_                   Kernel;
     typedef Kernel_                   R;
