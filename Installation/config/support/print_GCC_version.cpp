@@ -19,11 +19,25 @@
 // $Id$
 // 
 //
-// Author(s)     : Andreas Fabri, Laurent Saboret
+// Author(s)     : Fernando Cacciola
 
-// Test if ZLIB is available.
+// Print out the gcc version
 
 #include <iostream>
+
+
+//
+// Just in case this is called with a non-gcc compiler such as pgCC
+//
+ 
+#ifndef __GNUC__
+  #define __GNUC__ 0
+#endif
+
+#ifndef __GNUC_MINOR__
+  #define __GNUC_MINOR__ 0
+#endif
+
 int main()
 {
   std::cout << "version=" << __GNUC__ << "." << __GNUC_MINOR__ << std::endl;
