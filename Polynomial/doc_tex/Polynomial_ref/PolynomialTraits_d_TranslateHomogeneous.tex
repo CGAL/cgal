@@ -23,7 +23,8 @@ Note that $a$ and $b$ are of type \ccc{PolynomialTraits_d::Coefficient_type}.
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d p,
                                  PolynomialTraits_d::Coefficient_type  a,
                                  PolynomialTraits_d::Coefficient_type  b);}
-         { return $b^{degree}\cdot p(x+a/b)$, with respect to the outermost variable. }
+         { Returns $b^{degree}\cdot p(x+a/b)$, 
+        with respect to the outermost variable. }
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d p,
                                  PolynomialTraits_d::Coefficient_type a,
                                  PolynomialTraits_d::Coefficient_type  b,

@@ -24,11 +24,13 @@ order of the coefficients with respect to the specified variable.
 
 \ccOperations
 \ccMethod{result_type operator()(argument_type  p);}{ 
-        return $x^{degree(p)}p(1/x)$, where x refers to the outermost variable $x_{d-1}$.
+        Returns $x^{degree(p)}p(1/x)$, 
+        where x refers to the outermost variable $x_{d-1}$.
         }
 
 \ccMethod{result_type operator()(argument_type  p,  int i);}{ 
-        return $x^{degree(p)}p(1/x)$, where x refers to the variable $x_{i}$.        
+        Return $x^{degree(p)}p(1/x)$, 
+        where x refers to the variable $x_{i}$.        
         \ccPrecond $0 \leq i  < d$ }
 
 %\ccHasModels

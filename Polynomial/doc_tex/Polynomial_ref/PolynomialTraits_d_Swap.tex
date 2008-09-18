@@ -16,12 +16,12 @@ This \ccc{AdaptableFunctor} swaps two variables of a multivariate polynomial.
 \ccOperations
 
 \ccCreationVariable{fo}
-\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d,
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d p,
                                  int i, int j);}
-                { return polynomial with interchanged variables $x_i$,$x_j$. 
-                  \ccPrecond $0 \leq i  < d$   
-                  \ccPrecond $0 \leq j  < d$                       
-                }       
+               { Returns polynomial $p$ with interchanged variables $x_i$,$x_j$. 
+                 \ccPrecond $0 \leq i  < d$   
+                 \ccPrecond $0 \leq j  < d$                       
+               }       
 
 
 

@@ -18,11 +18,11 @@ This \ccc{AdaptableBinaryFunction} evaluates
 \ccOperations
 \ccMethod{result_type operator()(first_argument_type  p,
                                  second_argument_type x);}
-         { return $p(x)$, with respect to the outermost variable. }
+         { Returns $p(x)$, with respect to the outermost variable. }
 \ccMethod{result_type operator()(first_argument_type  p,
                                  second_argument_type x,
                                  int i);}
-         { return $p(x)$, with respect to variable $x_i$. 
+         { Returns $p(x)$, with respect to variable $x_i$. 
           \ccPrecond $0 \leq i  < d$
          }
 

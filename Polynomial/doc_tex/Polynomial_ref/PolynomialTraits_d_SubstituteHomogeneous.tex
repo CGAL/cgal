@@ -32,8 +32,8 @@ Hence, it can not be provided as a public type in advance.
 template<class Input_iterator>        
 result_type operator()(PolynomialTraits_d::Polynomial_d  p,
                        Input_iterator begin, Input_iterator end);}{ 
-Substitute each variable of $p$ by the values given in the iterator range, where 
-$p$ is interpreted as a homogeneous polynomial in all variables. 
+Substitutes each variable of $p$ by the values given in the iterator range, 
+where $p$ is interpreted as a homogeneous polynomial in all variables. 
 The begin iterator refers to the innermost variable $x_0$. 
 The homogeneous degree is considered as equal to the total degree of $p$.
 \ccPrecond{(end-begin == \ccc{PolynomialTraits_d::d})+1}  

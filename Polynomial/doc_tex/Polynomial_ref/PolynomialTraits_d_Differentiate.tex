@@ -17,10 +17,10 @@ This \ccc{AdaptableUnaryFunction} computes the derivative of a
 
 \ccOperations
 \ccMethod{result_type operator()(argument_type  p);}
-         { return $p'$, with respect to the outermost variable. }
+         { Returns $p'$, with respect to the outermost variable. }
 \ccMethod{result_type operator()(argument_type  p,
                                  int i);}
-         { return $p'$, with respect to variable $x_i$. 
+         { Returns $p'$, with respect to variable $x_i$. 
            \ccPrecond $0 \leq i  < d$ 
          }
 
