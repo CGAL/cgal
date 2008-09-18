@@ -10,6 +10,8 @@ find_package(CGAL REQUIRED Qt3 )
 
 include( ${CGAL_USE_FILE} )
 
+include_directories (BEFORE ./include)
+
 # use the Qt MOC preprocessor on classes that derives from QObject
 include( Qt3Macros )
 qt3_generate_moc( apollonius_graph_2.cpp apollonius_graph_2.moc )
