@@ -950,12 +950,11 @@ private:
   struct Sign_at_ {
   private:
     typedef Real_embeddable_traits<Innermost_coefficient_type> RT;
-    typedef typename RT::Sign::result_type SIGN;
   public:
-    typedef SIGN result_type;
+    typedef typename RT::Sign result_type;
 
     template< class Input_iterator >
-    SIGN operator()( 
+    result_type operator()( 
         const Polynomial_d& p, 
         Input_iterator begin, 
         Input_iterator end ) const 
@@ -967,12 +966,11 @@ private:
   
   struct Sign_at_homogeneous_ {
     typedef Real_embeddable_traits<Innermost_coefficient_type> RT;
-    typedef typename RT::Sign::result_type SIGN;
   public:
-    typedef SIGN result_type;
+    typedef typename RT::Sign result_type;
         
     template< class Input_iterator >
-    SIGN operator()( 
+    result_type operator()( 
         const Polynomial_d& p, 
         Input_iterator begin, 
         Input_iterator end) const {

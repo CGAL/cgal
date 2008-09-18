@@ -26,10 +26,11 @@
 
 //#include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/Test/_test_algebraic_structure.h>
 
 #define CGAL_SNAP_RET_FUNCTORS(RET)                      \
     typedef typename RET::Abs Abs;                       \
-    typedef typename RET::Sign Sign;                     \
+    typedef typename RET::Sgn Sgn;                       \
     typedef typename RET::Is_finite Is_finite;           \
     typedef typename RET::Is_positive Is_positive;       \
     typedef typename RET::Is_negative Is_negative;       \
@@ -125,8 +126,24 @@ void test_real_embeddable() {
     using CGAL::Tag_true;
     BOOST_STATIC_ASSERT(( ::boost::is_same< Is_real_embeddable, Tag_true>::value));
 
+    typedef typename RET::Boolean Boolean;
+    typedef typename RET::Sign Sign;
+    typedef typename RET::Comparison_result Comparison_result;
+
+    check_result_type(Is_finite()  ,Boolean());
+    check_result_type(Is_positive(),Boolean());
+    check_result_type(Is_negative(),Boolean());
+    check_result_type(Is_zero(),Boolean());
+    check_result_type(Sgn(),Sign());
+    check_result_type(Compare(),Comparison_result());
+
+    // test implicit interoperability with base type and proper default
+    assert(Boolean()              == bool());
+    assert(Sign()                 == CGAL::Sign());
+    assert(Comparison_result()    == CGAL::Comparison_result());
+    
     typename RET::Compare compare;
-    const Sign    sign = Sign();
+    const Sgn     sign = Sgn();
     const Abs     abs=Abs(); 
     const Is_finite  is_finite=Is_finite();
     const Is_positive is_positive=Is_positive();

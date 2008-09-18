@@ -42,7 +42,7 @@ public:
         }
     };
 
-    class Sign {
+    class Sgn {
     public:
         typedef Polynomial<NT>              argument_type;
         typedef CGAL::Sign        result_type;

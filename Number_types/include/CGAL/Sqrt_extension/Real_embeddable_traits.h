@@ -34,7 +34,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
   public:
     typedef Sqrt_extension<COEFF, ROOT> Type;
 
-    class Sign
+    class Sgn
         : public std::unary_function< Type, ::CGAL::Sign >{
     public:
         ::CGAL::Sign operator()( const Type& x ) const {

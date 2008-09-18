@@ -72,7 +72,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
         }
     };
 
-    class Sign
+    class Sgn
       : public std::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
@@ -86,8 +86,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
       public:
         Comparison_result operator()( const Type& x,
                                             const Type& y ) const {
-          typedef Real_embeddable_traits<int> Int_traits;
-          return Int_traits::Sign()( ::CORE::cmp(x,y));
+          return CGAL::sign( ::CORE::cmp(x,y));
         }
     };
 

@@ -62,7 +62,7 @@ struct To_interval : Real_embeddable_traits<NT>::To_interval{};
 
 // Sign would result in a name clash with enum.h
 template < class NT >
-struct Sgn : Real_embeddable_traits<NT>::Sign {};
+struct Sgn : Real_embeddable_traits<NT>::Sgn {};
 
 
 template < class NT >

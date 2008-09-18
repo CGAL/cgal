@@ -91,7 +91,7 @@ class Real_embeddable_traits< Gmpzf >
 public:
   typedef AST::Is_zero Is_zero;
   
-    struct Sign
+    struct Sgn
         : public std::unary_function< Type, ::CGAL::Sign > {
     public:
         ::CGAL::Sign operator()( const Type& x ) const {

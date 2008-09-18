@@ -186,7 +186,7 @@ class Real_embeddable_traits< mpq_class >
         }
     };
 
-    struct Sign
+    struct Sgn
         : public std::unary_function< mpq_class, ::CGAL::Sign > {
     public:
         template <typename T, typename U>

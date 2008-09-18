@@ -1044,57 +1044,6 @@ namespace INTERN_INTERVAL_NT {
     else
       return std::pair<double,double>(l,l);
   }
-
-/*  template < bool b >
-  struct Is_zero < Interval_nt<b> >
-    : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
-  {
-    Uncertain<bool> operator()( const Interval_nt<b>& x) const
-    { return CGAL_NTS is_zero(x); }
-  };
-
-  template < bool b >
-  struct Is_one < Interval_nt<b> >
-    : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
-  {
-    Uncertain<bool> operator()( const Interval_nt<b>& x) const
-    { return CGAL_NTS is_one(x); }
-  };
-
-  template < bool b >
-  struct Is_negative < Interval_nt<b> >
-    : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
-  {
-    Uncertain<bool> operator()( const Interval_nt<b>& x) const
-    { return CGAL_NTS is_negative(x); }
-  };
-
-  template < bool b >
-  struct Is_positive < Interval_nt<b> >
-    : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
-  {
-    Uncertain<bool> operator()( const Interval_nt<b>& x) const
-    { return CGAL_NTS is_positive(x); }
-  };
-
-  template < bool b >
-  struct Sgn < Interval_nt<b> >
-    : public std::unary_function< Interval_nt<b>, Uncertain<Sign> >
-  {
-    Uncertain<Sign> operator()( const Interval_nt<b>& x) const
-    { return CGAL_NTS sign(x); }
-  };
-
-  template < bool b >
-  struct Compare < Interval_nt<b> >
-    : public std::binary_function< Interval_nt<b>, Interval_nt<b>,
-                              Uncertain<Comparison_result> >
-  {
-    Uncertain<Comparison_result>
-    operator()( const Interval_nt<b>& x, const Interval_nt<b>& y) const
-    { return CGAL_NTS compare(x, y); }
-  };*/
-
 } // namespace INTERN_INTERVAL_NT
 
 
@@ -1102,6 +1051,9 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
   : public INTERN_RET::Real_embeddable_traits_base< Interval_nt<B> , CGAL::Tag_true> {
   public:
     typedef Interval_nt<B>  Type;
+  typedef Uncertain<CGAL::Sign> Sign;
+  typedef Uncertain<bool> Boolean;
+  typedef Uncertain<CGAL::Comparison_result> Comparison_result; 
 
     class Abs
       : public std::unary_function< Type, Type > {
@@ -1111,7 +1063,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
         }
     };
 
-    class Sign
+    class Sgn
         : public std::unary_function< Type, Uncertain< ::CGAL::Sign > > {
       public:
         Uncertain< ::CGAL::Sign > operator()( const Type& x ) const {
@@ -1136,16 +1088,13 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
-                                Uncertain<Comparison_result> > {
+      : public std::binary_function< Type, Type, Comparison_result > {
       public:
-        Uncertain<Comparison_result> operator()(
-                const Type& x,
-                const Type& y ) const {
-            return INTERN_INTERVAL_NT::compare( x, y );
-        }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
-                Comparison_result )
+      Comparison_result operator()( const Type& x, const Type& y ) const {
+        return INTERN_INTERVAL_NT::compare( x, y );
+      }
+      CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
+          Comparison_result )
     };
 
     class To_double
@@ -1165,9 +1114,9 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Is_finite
-      : public std::unary_function< Type, bool > {
+      : public std::unary_function< Type, Boolean > {
       public :
-        bool operator()( const Type& x ) const {
+        Boolean operator()( const Type& x ) const {
           return CGAL_NTS is_finite( x.inf() ) && CGAL_NTS is_finite( x.sup() );
         }
     };

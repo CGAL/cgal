@@ -69,7 +69,7 @@ template <> class Real_embeddable_traits< Gmpq >
   : public INTERN_RET::Real_embeddable_traits_base< Gmpq , CGAL::Tag_true > {
   public:
   
-    class Sign
+    class Sgn
       : public std::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {

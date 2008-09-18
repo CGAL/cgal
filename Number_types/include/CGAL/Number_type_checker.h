@@ -716,13 +716,13 @@ public:
     };
 
     // CGAL::Real_embeddable_traits<  >::Sign
-    class Sign
+    class Sgn
         : public std::unary_function< Type , ::CGAL::Sign > {
     public:
         ::CGAL::Sign operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Sign");
-            ::CGAL::Sign r1 =  typename RET1::Sign()(a.n1());
-            CGAL_assertion( r1 == typename RET2::Sign()(a.n2()) );
+            ::CGAL::Sign r1 =  typename RET1::Sgn()(a.n1());
+            CGAL_assertion( r1 == typename RET2::Sgn()(a.n2()) );
             return r1;
         }
     };

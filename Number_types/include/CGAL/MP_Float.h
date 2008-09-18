@@ -494,7 +494,7 @@ template <> class Real_embeddable_traits< MP_Float >
   : public INTERN_RET::Real_embeddable_traits_base< MP_Float , CGAL::Tag_true > {
   public:
 
-    class Sign
+    class Sgn
       : public std::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {

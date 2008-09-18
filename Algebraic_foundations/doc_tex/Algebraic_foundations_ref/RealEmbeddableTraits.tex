@@ -16,6 +16,30 @@ A model of \ccc{RealEmbeddableTraits} is supposed to provide:\\
         { Tag indicating whether the associated type is real embeddable. \\
           This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. }
 
+\ccNestedType{Boolean}
+        { This type specifies the return type of the predicates provided
+          by this traits. The type must be convertible to \ccc{bool} and 
+          typically the type indeed maps to \ccc{bool}. However, there are also 
+          cases such as interval arithmetic, in which it is \ccc{Uncertain<bool>} 
+          or some similar type. 
+        }
+
+\ccNestedType{Sign}
+        { This type specifies the return type of the \ccc{Sgn} functor. 
+          The type must be convertible to \ccc{CGAL::Sign} and 
+          typically the type indeed maps to \ccc{CGAL::Sign}. However, there are also 
+          cases such as interval arithmetic, in which it is \ccc{Uncertain<CGAL::Sign>} 
+          or some similar type. 
+        }        
+
+\ccNestedType{Comparison_result}
+        { This type specifies the return type of the \ccc{Compare} functor. 
+          The type must be convertible to \ccc{CGAL::Comparison_result} and 
+          typically the type indeed maps to \ccc{CGAL::Comparison_result}. However, there are also 
+          cases such as interval arithmetic, in which it is \ccc{Uncertain<CGAL::Comparison_result>} 
+          or some similar type. 
+        }     
+
 \ccHeading{Functors}
 
 In case the associated type is \ccc{RealEmbeddable} all functors are provided.\\
@@ -26,7 +50,7 @@ A model of \ccc{RealEmbeddableTraits::IsZero}
 In case \ccc{Type} is also model of \ccc{IntegralDomainWithoutDivision} 
 this is a model of \ccc{AlgebraicStructureTraits::IsZero}.}
 \ccNestedType{Abs}{ A model of \ccc{RealEmbeddableTraits::Abs} }
-\ccNestedType{Sign}{ A model of \ccc{RealEmbeddableTraits::Sign} }
+\ccNestedType{Sgn}{ A model of \ccc{RealEmbeddableTraits::Sgn} }
 \ccNestedType{Is_positive}{ A model of \ccc{RealEmbeddableTraits::IsPositive} }
 \ccNestedType{Is_negative}{ A model of \ccc{RealEmbeddableTraits::IsNegative} }
 \ccNestedType{Compare}{ A model of \ccc{RealEmbeddableTraits::Compare} }

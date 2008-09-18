@@ -48,9 +48,12 @@ class Real_embeddable_traits_base{
 public:
   typedef Type_                 Type;
   typedef Is_real_embeddable_   Is_real_embeddable;
+  typedef Null_tag              Boolean;
+  typedef Null_tag              Sign; 
+  typedef Null_tag              Comparison_result; 
 
   typedef Null_functor Abs;
-  typedef Null_functor Sign;
+  typedef Null_functor Sgn;
   typedef Null_functor Is_finite;
   typedef Null_functor Is_positive;
   typedef Null_functor Is_negative;
@@ -63,8 +66,11 @@ public:
 template< class Type_ >
 class Real_embeddable_traits_base<Type_, CGAL::Tag_true> {
 public:
-  typedef Type_       Type;
-  typedef Tag_true    Is_real_embeddable; 
+  typedef Type_                    Type;
+  typedef Tag_true                 Is_real_embeddable; 
+  typedef bool                     Boolean;
+  typedef CGAL::Sign               Sign; 
+  typedef CGAL::Comparison_result  Comparison_result; 
   
 private:
   typedef typename Algebraic_structure_traits< Type >::Is_zero AST_Is_zero; 
@@ -74,9 +80,9 @@ public:
   Is_zero;
   
   //! The generic \c Is_finite functor returns true
-  class Is_finite : public std::unary_function< Type, bool > {
+  class Is_finite : public std::unary_function< Type, Boolean > {
   public:
-    bool operator()( const Type& ) const {
+    Boolean operator()( const Type& ) const {
       return true;
     }
   };
@@ -92,8 +98,8 @@ public:
     }
   };
     
-  //! The generic \c Sign functor implementation uses two comparisons.
-  class Sign 
+  //! The generic \c Sgn functor implementation uses two comparisons.
+  class Sgn 
     : public std::unary_function< Type, ::CGAL::Sign > {
   public:
     //! the function call.
@@ -108,20 +114,20 @@ public:
     
   //! The generic \c Is_positive functor implementation uses one comparison.
   class Is_positive 
-    : public std::unary_function< Type, bool > {
+    : public std::unary_function< Type, Boolean > {
   public:        
     //! the function call.
-    bool operator()( const Type& x ) const {
+    Boolean operator()( const Type& x ) const {
       return x > Type(0);
     }
   };
     
   //! The generic \c Is_negative functor implementation uses one comparison.
   class Is_negative 
-    : public std::unary_function< Type, bool > {
+    : public std::unary_function< Type, Boolean > {
   public:        
     //! the function call.
-    bool operator()( const Type& x ) const {
+    Boolean operator()( const Type& x ) const {
       return x < Type(0);
     }
   };

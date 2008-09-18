@@ -236,10 +236,10 @@ abs( const Real_embeddable& x ) {
 template< class Real_embeddable >
 inline 
 //::Sign 
-typename Real_embeddable_traits< Real_embeddable >::Sign::result_type
+typename Real_embeddable_traits< Real_embeddable >::Sgn::result_type
 sign( const Real_embeddable& x ) {
-    typename Real_embeddable_traits< Real_embeddable >::Sign sign;
-    return sign( x );
+    typename Real_embeddable_traits< Real_embeddable >::Sgn sgn;
+    return sgn( x );
 }
 
 template< class Real_embeddable >

@@ -271,8 +271,8 @@ bool utility_test()
   DEBUG( std::cout << "sign test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = (CGAL_NTS compare(b,e) == CGAL::SMALLER)
-         && (CGAL_NTS compare(g,g) == CGAL::EQUAL);
+  tmpflag = ((CGAL_NTS compare(b,e)) == CGAL::SMALLER)
+         && ((CGAL_NTS compare(g,g)) == CGAL::EQUAL);
   DEBUG( std::cout << "compare test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 

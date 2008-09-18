@@ -534,14 +534,13 @@ public:
     CGAL::Sign sign() const {
 //        BOOST_STATIC_ASSERT( (boost::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
 //                              CGAL::Tag_true>::value) );
-      typename Real_embeddable_traits<NT>::Sign sign;
-      return sign(lcoeff());
+      return CGAL::sign(lcoeff());
     }
 
     //! return sign of difference
     CGAL::Comparison_result compare(const Polynomial& p2) const {
       typename Real_embeddable_traits<NT>::Compare compare;
-      typename Real_embeddable_traits<NT>::Sign sign;
+      typename Real_embeddable_traits<NT>::Sgn sign;
       CGAL_precondition(degree() >= 0);
       CGAL_precondition(p2.degree() >= 0);
 
@@ -565,7 +564,7 @@ public:
     //! return sign of difference with constant "polynomial"
     CGAL::Comparison_result compare(const NT& p2) const {
       typename Real_embeddable_traits<NT>::Compare compare;
-      typename Real_embeddable_traits<NT>::Sign sign;
+      typename Real_embeddable_traits<NT>::Sgn sign;
       CGAL_precondition(degree() >= 0);
 
       if (degree() > 0) {

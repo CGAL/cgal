@@ -34,6 +34,15 @@
 #ifndef CGAL_TEST_ALGEBRAIC_STRUCTURE_H
 #define CGAL_TEST_ALGEBRAIC_STRUCTURE_H
 
+// checks the result type of a functor 
+template <typename AdaptableFunctor, typename ResultType>
+void check_result_type(AdaptableFunctor, ResultType){
+  typedef typename AdaptableFunctor::result_type result_type;
+  BOOST_STATIC_ASSERT((::boost::is_same<result_type,ResultType>::value));
+}
+// check nothing for CGAL::Null_functor
+template <typename ResultType>
+void check_result_type(CGAL::Null_functor, ResultType){}
 
 #define CGAL_SNAP_AST_FUNCTORS(Traits)                         \
   typedef typename AST::Simplify Simplify ;                    \
@@ -748,16 +757,6 @@ void test_Type_functions( const CGAL::Field_with_root_of_tag&) {
      assert(CGAL::sqrt(real2) == CGAL::sqrt( AS (3)));
 */
 }
-
-// checks the result type of a functor 
-template <typename AdaptableFunctor, typename ResultType>
-void check_result_type(AdaptableFunctor, ResultType){
-  typedef typename AdaptableFunctor::result_type result_type;
-  BOOST_STATIC_ASSERT((::boost::is_same<result_type,ResultType>::value));
-}
-// check nothing for CGAL::Null_functor
-template <typename ResultType>
-void check_result_type(CGAL::Null_functor, ResultType){}
 
 template <class  AS , class Algebraic_category, class Is_exact>
 void test_algebraic_structure(){
