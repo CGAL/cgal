@@ -7,8 +7,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 find_package(CGAL REQUIRED Qt3 )
-
 include( ${CGAL_USE_FILE} )
+
+find_package(Qt3 REQUIRED)
 
 include_directories (BEFORE ./include)
 
@@ -17,7 +18,7 @@ include( Qt3Macros )
 qt3_generate_moc( apollonius_graph_2.cpp apollonius_graph_2.moc )
 qt3_generate_moc( qt_file_toolbar.h qt_file_toolbar.moc )
 qt3_generate_moc( qt_layers_toolbar.h qt_layers_toolbar.moc )
-qt3_generate_moc( edit_vertex_layer.cpp edit_vertex_layer.moc )
+qt3_generate_moc( edit_vertex_layer.h edit_vertex_layer.moc )
 
 
 # The executable itself.
