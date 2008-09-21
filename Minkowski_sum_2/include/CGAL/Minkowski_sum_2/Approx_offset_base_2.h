@@ -586,3 +586,4 @@ protected:
 CGAL_END_NAMESPACE
 
 #endif
+
