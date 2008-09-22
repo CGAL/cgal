@@ -12,6 +12,10 @@
 %% macro for Windows-specific installation
 \newcommand{\MSInst}{Windows-specific Installation}
 
+%% macro for Windows-specific installation
+\newcommand{\cmake}{CMake}
+\newcommand{\cmakepage}{\path'http://www.cmake.org/'}
+
 %% macro for g++
 \newcommand{\Gcc}[1]{\gnu~\texttt{g++}~{\rm #1}}
 \newcommand{\gccurl}{\path'http://gcc.gnu.org/'}
@@ -36,7 +40,7 @@
 \newcommand{\mswin}{\textsc{MS}~Windows}
 
 %% macro for CGAL release number
-\newcommand{\cgalrelease}{3.3}
+\newcommand{\cgalrelease}{3.4}
 
 %% macro for CGAL directory
 \newcommand{\cgaldir}{\texttt{CGAL-\cgalrelease}}
@@ -77,12 +81,9 @@ an {\sc Esprit Ltr} project. The goal of \cgal\ is to make the large
 body of geometric algorithms developed in the field of computational
 geometry available for industrial application.
 
-This document describes how to install \cgal\ on Unix-like systems.
-If you install \cgal\ on Windows but not using cygwin, you should locate
-and load the Windows installer, read the file INSTALL.win32, and skip
-this manual as it doesn't apply for you.
+This document describes how to install \cgal\ on Windows, Unix-like systems and Mac.
 
-Besides that, you will find some information about the makefile
+Besides that, you will find some information about the build system
 structure of \cgal\ and the support for using \cgal\ together with
 other software libraries, such as the \boost\
 libraries\footnote{\boostpage}, the \gnu\ Multiple Precision library
@@ -110,32 +111,35 @@ and C++03).
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
     \textbf{compiler}        & \textbf{operating system}\\\hline\hline
-    \Gcc{3.4, 4.0, 4.1, 4.2, 4.3} \footnotemark[9]
+    \Gcc{3.4, 4.0, 4.1, 4.2, 4.3} \footnotemark[10]
     & Solaris 2.6+ / Linux 2.x / MacOS X /
-      \\ & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
-    \msvc{7.1} (\textsc{.NET}) \footnotemark[12]
-    & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
+      \\ & \mswin\ 95/98/2000/XP/NT4\footnotemark[11]\\\hline
+    \msvc{8.0, 9.0} (\textsc{Visual Studio 2005 and 2008}) \footnotemark[12]
+    & \mswin\ 95/98/2000/XP/NT4/Vista\footnotemark[11]\\\hline
     \icl{8.1} \footnotemark[13]
-    & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
+    & \mswin\ 95/98/2000/XP/NT4/Vista\footnotemark[11]\\\hline
   \end{tabular}
 \end{center}
-\footnotetext[9]{\gccurl}\addtocounter{footnote}{1}
-\footnotetext[10]{with Cygwin
-  (\path~http://www.cygwin.com~)}\addtocounter{footnote}{1}
-%%\footnotetext[11]{\sunproccurl}\addtocounter{footnote}{1}
-\footnotetext[12]{\msvcurl}\addtocounter{footnote}{1}
-\footnotetext[13]{\iclurl}\addtocounter{footnote}{1}
-%%\footnotetext[13]{\bccurl}\addtocounter{footnote}{1}
-\addtocounter{footnote}{1}
+\footnotetext[10]{\gccurl}\addtocounter{footnote}{1}
+\footnotetext[11]{\msvcurl}\addtocounter{footnote}{1}
+\footnotetext[12]{\iclurl}\addtocounter{footnote}{1}
 
 Note that neither prerelease versions nor repository snapshots of
 \texttt{GCC} are supported.
 
+In order to configure, build and install the \cgal\ libraries, as well
+as any program using \cgal, you need \cmake, a Cross Platform Make system.
+If \cmake\ is not installed already you can obtain it from \cmakepage,
+version of 2.4-patch-7 or later.
+
 Moreover, \cgal\ requires a working installation of the \boost\
-libraries (at least, the header files) Version 1.33 or later. In case
+libraries (the header files and the threading library binaries), 
+Version 1.33.1 or later. In case
 the \boost\ libraries are not installed on your system already, you
 can obtain them from \boostpage. For Windows you can download an
 installer from \path'http://www.boost-consulting.com/download.html'.
+Since \ccc{Boost.Thread} is required, make sure to either install the precompiled 
+{\em static} binaries for your compiler or to build \ccc{libboost-thread} appropiately.
 
 Having \gmp\ version 4.1.4 or later and \mpfr\ version 2.0.1 or later
 installed is highly recommended. These libraries can be obtained from
@@ -161,7 +165,7 @@ and go to the `Download' section. Just follow the instructions on this
 page to obtain your copy of the library.
 
 After you have downloaded the file containing the \cgal\ library, you
-have to decompress it. Use the commands
+have to decompress it. Under a Unix-like shell, use the commands
 
 \begin{verbatim}
       gunzip <filename>.tar.gz
@@ -212,1233 +216,149 @@ Some demo programs for 3D structures require the geomview program for
 visualization.\index{visualization!geomview} This is available from
 \path'http://www.geomview.org' (note that it does not run on \mswin).
 
-\section{Installing CGAL}
+\section{Configuring, Building and Installing CGAL}
 
-The directory \cgaldir\ contains a Bourne shell script called
-\texttt{install\_cgal}\TTindex{install\_cgal}
-\index{scripts!\texttt{install\_cgal}}. The script can be run in two
-modes: a menu-driven interactive mode and a non-interactive mode.
-The non-interactive mode is prefered, but you may try the interactive
-mode which is meant to guide the user a bit more.
+These tasks are handled by \cmake, as explained in the the rest of this chapter.
+\footnote{Earlier versions of \cgal\ used a custom build system based on a shell-script,
+but starting at version 3.4, this is replaced by \cmake.}
+\footnote{\cmake\ is a sophisticated tool with its own scripting language, modules 
+and details. This manual provides only a simple overview of \cmake\ sufficient to work
+with \cgal. Please refer to the \cmake\ documentation at \cmakepage\ for further details.}
 
-We first describe a sample installation in
-Section~\ref{sec:sample-inst}. This section provides an overview on
-the interactive installation. If you want more detailed information
-about specific menus and their options, take a look at
-Section~\ref{sec:interactive-mode}. Finally, for the non-interactive
-mode refer to Section~\ref{sec:non-interactive}.
+\subsection{CMake}
 
-\section{A Sample Installation\label{sec:sample-inst}}
+\cmake\ is cross-platform make system which can be used to configure, build and install
+libraries and executables. It works uniformly on many platforms (such as Windows, 
+UNIX/Linux and the Mac) and it supports a varierty of development tools 
+(compilers, linkers etc) on each platform.
 
-In this section we sketch an example installation on a Linux machine
-with the \Gcc{4.1.1} compiler. For a complete description of the
-different menus and their options refer to
-Section~\ref{sec:interactive-mode}.
+\subsection{Configuring \cgal}
 
-\subsection{Start the Script}
+As with any library/program, building \cgal\ involves setting up {\em configuration parameters}:
+the choice of compiler/linker, the corresponding flags, the details of the required third-party libraries,
+some user choices such as which cgal component to buid, etc... Gathering all these parameters is called
+{\em configuration}, it is the very first step in the process and \cmake\ is the tool responsible for that. 
+When \cmake\ finishes the configuration, it produces a makefile or project file than you can use to build cgal.
 
-Go to the \cgaldir\ directory and enter the command
-\begin{verbatim}
-      ./install_cgal -i
-\end{verbatim}
-
-The script first parses support options for various third party
-libraries that can be use together with \cgal. Then you get a message
-indicating the \cgal\ version you are going to install and that you
-are running the interactive mode.
-
-{\ccTexHtml{\scriptsize}{}
-\begin{alltt}
-Looking for POSIX utilities... done.
-Loading support for 3rd party libraries...done.
-
---------------------------------------------------------
-  This is the install script for CGAL \cgalrelease
---------------------------------------------------------
-
-starting interactive mode - one moment, please
-
---------------------------------------------------------
-Settings from Command Line/Environment:
---------------------------------------------------------
-
-  Choosing compiler GNU 4.1.1.
-\end{alltt}}
-
-The script searches for \CC\ compilers that are installed on your
-system and accessible through your \texttt{PATH} environment variable.
-If more than one compiler (that is supported by \cgal) is found on
-your system, you are presented a list of compilers to choose from. In
-this example, only one compiler, \Gcc{4.1.1}, was found on the system
-and the script selects this compiler without any user interaction. In
-general, the selection of which compiler to use can be made from the
-compiler menu (cf. Section~\ref{sec:compiler-menu}).
-
-The script interprets the environment variables \texttt{CXX},
-\texttt{CXXFLAGS}, and \texttt{LDFLAGS} and accordingly sets the
-compiler, compiler flags, and linker flags, respectively.  Therefore,
-another way to select the compiler is to set the environment variable
-\texttt{CXX} to the compiler to be selected.
-
-A menu similar to the following will appear on your screen.\index{main
-  menu}\index{menus!main}
-
-{\ccTexHtml{\scriptsize}{} \label{pic:main-menu}
-\begin{alltt}
-  ****************************************************************
-  **             CGAL 3.3 Installation Main Menu                **
-  **             ===============================                **
-  **                                                            **
-  **   OS:          i686_Linux-2.6                              **
-  **   Compiler:    GNU 4.1.1                                   **
-  **   Support for: no other library.                           **
-  **                                                            **
-  **   Compiler is supported by CGAL.                           **
-  **   The setup has not been tested.                           **
-  **                                                            **
-  **   There are no libs for this os/compiler.                  **
-  **                                                            **
-  **   <C>  Compiler Menu                                       **
-  **   <S>  Support Menu                                        **
-  **   <T>  Test (and save) setup                               **
-  **   <A>  Run all setup tests (no cache)                      **
-  **                                                            **
-  **   <B>  Build CGAL Libraries                                **
-  **   <I>  Install CGAL Libraries                              **
-  **                                                            **
-  **   <Q>  Back to OS                                          **
-  **                                                            **
-  **   Your Choice:                                             **
-  **                                                            **
-  ****************************************************************
-\end{alltt}}
-
-The first lines below the headline contain some kind of status report:
-current OS and compiler, and which third-party software libraries are
-supported. Moreover you can see that the current setup has not yet
-been tested, and that there do not exist \cgal\ libraries for this
-OS/compiler combination in the \cgal\ lib directory by now.
-
-\subsection{Test the Setup\label{sec:test-the-setup}}
-
-As a first step, you should test the current setup by typing ``{\tt
-  t}''. This starts a number of tests to check whether your compiler
-supports certain language constructs or has specific bugs.  The script
-also tries to locate other libraries that are installed on your system
-and can be used together with \cgal. There is quite a number of these
-tests, so this step may take a while.  For each test you should get a
-message what in particular is tested at the moment and what the result
-is. More details about why a certain test failed can be found in the
-installation logfile \texttt{install.log}.
+The simplest way to start the configuration is to run a command-line tool called \ccc{cmake} passing 
+as argument the root directory of \cgal. For example:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  ****************************************************************
-  **   The following lines show results of configuration tests. **
-  **   Some of the tests might fail, since many compilers are   **
-  **   still not completely ISO standard compliant.             **
-  **   Since we worked around the arising problems,             **
-  **                *** CGAL will work fine ***                 **
-  **   regardless of the outcome of these tests.                **
-  ****************************************************************
-  Checking for standard header files
-  All headers at once : ok.
-  Testing for CCTYPE_MACRO_BUG ... ok.
-
-  <many lines omitted>
-
-  Saving current setup ... done.
+  cd CGAL 
+  cmake . # Notice the dot to indicate the current directory.
 \end{verbatim}
 }
 
-After all these tests are completed, the current settings are saved
-into a file that resides in the directory \cgalinstconfdir.  Thus, if
-you run the install script a second time for this OS/compiler, you
-will not have to go through the whole config-/test cycle again, but
-the configuration will be retrieved from the corresponding config file
-instead. In case you want to re-run all tests, pick the option
-\texttt{<A> Run all setup tests (no cache)} from the main menu.
+This executes a special-purpose \cmake\ script
+\footnote{Called \ccc{CMakeLists.txt} and located in the \cgal\ root} 
+which attempts to determine the value of all the configuration parameters needed to build the \cgal\
+libraries and any programs using \cgal. 
 
-Looking at the menu header field ``\texttt{Support for}'', you can see
-whether the setup has been tested successfully and which other
-libraries have been found on your system. The install script
-automatically enables \cgal\ support for any library that has been
-found.
+Here are the first lines of a typical output in a Windows machine:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  ****************************************************************
-  **              CGAL 3.3 Installation Main Menu               **
-  **              ===============================               **
-  **                                                            **
-  **   OS:          i686_Linux-2.6                              **
-  **   Compiler:    GNU 4.1.1                                   **
-  **   Support for: BOOST, BOOST_PROGRAM_OPTIONS, X11, GMP,     **
-  **                GMPXX, MPFR, ZLIB, BLAS, LAPACK, ATLAS,     **
-  **                OPENGL, QT, and TAUCS.                      **
-  **                                                            **
-  **   Compiler is supported by CGAL.                           **
-  **   The setup has been tested ok.                            **
-
-  <some lines omitted>
-
-  ****************************************************************
+-- Check for working C compiler: cl
+-- Check for working C compiler: cl -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working CXX compiler: cl
+-- Check for working CXX compiler: cl -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
 \end{verbatim}
 }
 
-In case you are not happy with the set of libraries for which support
-is configured, you can change the settings for each library
-individually from the support menu (cf.
-Section~\ref{sec:support-menu}). In case you wonder why a certain
-library was not automatically configured correctly, you will find more
-details in the installation logfile \texttt{\cgaldir/install.log}.
+As you can see, the very first thing \cmake\ does is to detect the compiler to use.
+This detection is performed by a special cmake module called a {\em generator}. A
+\cmake\ generator understands the build requirements for a particular compiler/linker
+ and generates the necessary files for that. For example, the 
+{\em UNIX Makefiles} generator understands the GNU toolchain (g++,gcc,ld etc) and produces makefiles
+which can be used to build a target by a simple call to \ccc{make}.
+Likewise, the {\em Visual Studio 2005} generator produces solution and project files and can be manually
+launched in the VS IDE to build the target.
 
-\subsection{Build the CGAL Libraries\label{sec:build-the-libs}}
+Each platform has a default generator so you only need to select one when the default is
+not what you want. 
+\footnote{Running \ccc{cmake} with no parameters in a command-line prints the list of available generators supported 
+by your platform and \cmake\ version. If the generator you need is not listed there, you can
+try a newer \cmake\ version since generators are hardcoded into \cmake\ and more and
+more generators are added with each release.}
+For example, under Windows, it is possible to generate {\em NMakefiles}
+instead of Visual Studio project files in order to build the library via \ccc{nmake}.
 
-We are now ready to build the \cgal\ libraries. From the main menu
-just type ``{\tt b}'' to start compilation. Building consists of
-several steps:
-%%
-\begin{enumerate}
-\item write the include makefile,
-\item compile the static libraries, \textit{and}
-\item \textit{(on some systems)} compile the shared libraries.
-\end{enumerate}
-%%
-The include makefile\index{include makefile} encapsulates the OS-- and
-compiler-specific settings and should be included (hence the name) in
-all makefiles that compile \cgal\ applications. If everything went ok,
-the output should look as follows. (Otherwise, you should have a look
-at the error messages from compiler or linker.)
+Since the choice of generator determines the type of build files to generate, in some cases
+you choose a particular generator as a mean to choose a specific compiler (because they use different 
+build files. For example, the following generates solution files for use in Visual C++ 9.0:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  ****************************************************************
-  **                                                            **
-  **                     Compiling CGAL 3.3                     **
-  **                     ==================                     **
-  **                                                            **
-  ****************************************************************
-
-  OS:                           i686_Linux-2.6
-  COMPILER:                     GNU 4.1.1
-  BOOST:                        supported (1.33.1)
-  BOOST_PROGRAM_OPTIONS:        supported (1.33.1)
-  BOOST_BIMAP:                  not supported
-  X11:                          supported (11.0)
-  GMP:                          supported (4.1.4)
-  GMPXX:                        supported (4.1.4)
-  MPFR:                         supported (unknown)
-  ZLIB:                         supported (1.2.3)
-  BLAS:                         supported (unknown version)
-  LAPACK:                       supported (unknown version)
-  ATLAS:                        supported (unknown version)
-  LEDA:                         not supported
-  LEDAWIN:                      not supported
-  OPENGL:                       supported (2.0)
-  QT:                           supported (3.3.7)
-  TAUCS:                        supported (2.x)
-
-  Generating Makefiles ... done.
-  Building libCGAL static ... done.
-  Building libCGAL shared ... done.
-  Building libCGALQt static ... done.
-  Building libCGALQt shared ... done.
-  <some lines omitted>
-
-  ****************************************************************
-  **             Please press <ENTER> to continue.              **
-  ****************************************************************
-\end{verbatim}}
-{
+  cd CGAL 
+  cmake -G"Visual Studio 9 2008" . 
+\end{verbatim}
 }
 
-That's all, it's done. Press ``\texttt{<ENTER>}'' to return to the
-main menu. \cgal\ is now ready to use.
-
-\subsection{Install the CGAL Libraries\label{sec:install-the-libs}}
-
-It is perfectly fine to install and use \cgal\ from its build-tree
-and, in fact, this has been the default setup for many years. But
-sometimes it is more convenient to install \cgal\ in a directory
-outside its build-tree such as, for instance,
-\texttt{/usr/local/cgal}. In case you prefer such a setup, go to the
-install menu by choosing the option ``\texttt{i}'' from the main menu.
+In other cases, however, the generator doesn't directly identify a specific compiler but a tool chain.
+For example, the \ccc{UNIX Makefiles} generator produces \ccc{makefiles} wich call some auto-detected
+command-line compiler, like \ccc{gcc}. If you need the makefiles to use a different compiler you need to
+say so in the call to cmake, as in this example:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  ****************************************************************
-  **             CGAL 3.3 Installation Install Menu             **
-  **             ==================================             **
-  **                                                            **
-  **   OS:          i686_Linux-2.6                              **
-  **   Compiler:    GNU 4.1.1                                   **
-  **   Support for: BOOST, BOOST_PROGRAM_OPTIONS, X11, GMP,     **
-  **                GMPXX, MPFR, ZLIB, BLAS, LAPACK, ATLAS,     **
-  **                OPENGL, QT, and TAUCS.                      **
-  **                                                            **
-  **   Compiler is supported by CGAL.                           **
-  **   The setup has been tested ok.                            **
-  **                                                            **
-  **   Libs built:          19 Apr 17:20                        **
-  **                                                            **
-  **   <D>  Change Installation root directory                  **
-  **       /usr/local/CGAL-3.3                                  **
-  **   <I>  Install CGAL                                        **
-  **                                                            **
-  **   <Q>  Back to Main Menu                                   **
-  **                                                            **
-  **   Your Choice:                                             **
-  **                                                            **
-  ****************************************************************
+  cd CGAL 
+  cmake -DCMAKE_CXX_COMPILER:FILEPATH=some_non_default_g++ . 
 \end{verbatim}
 }
 
-You can adjust the installation root directory using option
-``\texttt{d}''; it defaults to the current build root. Then start the
-installation by selecting ``\texttt{i}''.
 
-{\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
-  ****************************************************************
-  **                                                            **
-  **                    Installing CGAL 3.3                     **
-  **                    ===================                     **
-  **                                                            **
-  ****************************************************************
-
-  OS:                           i686_Linux-2.6
-  <some lines omitted>
-
-  ****************************************************************
-  **                                                            **
-  **   Target Directory: /usr/local/CGAL-3.3.                   **
-  **   Do you want to install CGAL into this directory (y/N)?   **
-  **                                                            **
-  ****************************************************************
-\end{verbatim}
-}
-
-If you confirm the settings and enter ``\texttt{y}'', \cgal\ is
-installed below the given root directory. It can there be used
-independently from its build-tree, that is, you may even delete the
-build-tree.
-
-{\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
-  Install CGAL headers ... done.
-  Install CGAL libraries ... done.
-  Install CGAL programs ... done.
-  Install CGAL Makefile ... done.
-
-  ****************************************************************
-  **             Please press <ENTER> to continue.              **
-  ****************************************************************
-\end{verbatim}
-}
-
-Press ``\texttt{<ENTER>}'' and then select ``\texttt{q}'' to return to
-the main menu.
-
-\subsection{Further Steps\label{sec:further}}
-
-You may now proceed by installing \cgal\ for a different compiler (go
-to the compiler menu and choose ``\texttt{c}'' to get a list of
-supported compilers detected on your system).
-
-Another option is to simply quit the install script by typing
-``\texttt{q}''. When leaving the script, you get a list of successful
-builds during the session.  Furthermore, the script prints the setting
-of \texttt{CGAL\_MAKEFILE} for the last active configuration. Remember
-to set this environment variable before compiling \cgal\ applications.
-On Bourne shell derivatives, you would type in our example
-\begin{alltt}
-      export CGAL_MAKEFILE=\cgaldir/make/makefile_i686_Linux-2.6_g++-4.1.1
-\end{alltt}
-while for \texttt{csh} descendants the syntax is
-\begin{alltt}
-      setenv CGAL_MAKEFILE \cgaldir/make/makefile_i686_Linux-2.6_g++-4.1.1
-\end{alltt}
-In Section~\ref{sec:makefiles} you can find more information on the
-\cgal\ makefile structure, and how to set \texttt{CGAL\_MAKEFILE} when
-using \cgal\ on several platforms.
-
-\section{The Interactive Mode\label{sec:interactive-mode}}
-\index{interactive installation}\index{installation!interactive}
-\TTsubindex{install\_cgal}{interactive mode}
-
-To run the install script in the interactive mode, go to the \cgaldir\
-directory and enter the command
-\begin{verbatim}
-      ./install_cgal -i
-\end{verbatim}
-
-After initialization during which certain utility programs are located
-and your system is searched for compilers supported by \cgal, you get
-into the \cgal\ installation \textit{main menu} (see
-page~\pageref{pic:main-menu} for a picture).
-
-From the main menu you can reach a number of different sub-menus, of
-which the most important maybe is the \textit{compiler menu}. This is
-where you can choose the compiler you want to work with and set custom
-compiler or linker options. The compiler menu is described in
-Section~\ref{sec:compiler-menu}.
-
-If you want to use other libraries such as \boost, \gmp, \mpfr, \core,
-\blas, \lapack, \taucs, \leda, or \qt\ with \cgal, you can setup
-support for these libraries from the support menu that is described in
-Section~\ref{sec:support-menu}.
-
-At some point, you most probably want to build the \cgal\ libraries by
-typing \texttt{b}. However, it is recommended to run the \textit{setup
-  test} -- which is available in all menus as option \texttt{t} --
-before. The setup test includes tests for certain compiler features or
-bugs as well as tests for the presence of other libraries that can be
-used in conjunction with \cgal. The install script tries to find and
-enable support for as many other libraries as possible.
-
-As a default, \cgal\ is built and installed within its build-tree. In
-case you want to install \cgal\ in a directory separate from its
-build-tree, the \textit{install menu} is the place to go to.
-
-The install script keeps track of the tests passed and only tests
-again, if you change the setup in a way that may affect the test
-result. If you want to redo \textit{all} tests, you have to choose
-option ``\texttt{a}'' from the main menu.
-
-\subsection{Files Created during Installation\label{sec:filescreated}}
-
-The install script stores all relevant settings for an OS/compiler
-combination in a file
-\begin{center}
-  \texttt{\cgalinstconfdir/$<$\textit{CGAL-OS-description}$>$}
-\end{center}
-where $<$\textit{CGAL-OS-description}$>$ identifies your OS/compiler
-combination in a way specified in Section~\ref{sec:os-compiler-id}.
-This saves you the work of configuring everything again, if you
-upgrade \index{upgrading \cgal}\index{CGAL@\cgal!upgrade} \cgal\ or
-another package that makes recompiling the \cgal\ libraries necessary.
-
-Besides the config files, the install script uses several temporary
-files during interactive installation. Most of them are removed after
-use, but some are not, since it might be helpful to keep some
-information about the last run.  You can keep or delete them as you
-like, as they are not needed anymore once the script terminated.  A
-list of these files (all are plain ASCII and reside in \cgaldir)
-follows.
-\begin{center}\index{files!temporary}\index{logfiles}
-  \renewcommand{\arraystretch}{1.3}
-  \gdef\lcTabularBorder{2}
-  \begin{tabular}{|l|l|} \hline
-    \textbf{filename} & \textbf{content}\\\hline\hline
-    \texttt{install.log}\TTindex{install.log} &
-    detailed overall protocol\\\hline
-    \texttt{install.completed}\TTindex{install.completed} &
-    list of systems for which \cgal\ libraries
-    have been built\\\hline
-    \texttt{compile.log}\TTindex{compile.log} &
-    output of the last compiler call\\\hline
-  \end{tabular}
-\end{center}
-
-\subsection{The Compiler Menu\label{sec:compiler-menu}}
-\index{compiler menu}\index{menus!compiler}
-
-Here is the place to set compiler specific options, such as the
-compiler to use (if more than one has been detected), custom compiler
-or linker flags, or to decide whether or not to build shared and static
-libraries.\bigskip
-
-\fbox{
-\begin{minipage}{.95\linewidth}
-\vspace{2pt}
-\centerline{{\large{\bf Compiler Menu}}}
-\vspace{2pt}
-\begin{description}
-\item[$<$C$>$] Choose the compiler to be used from the list of
-  detected compilers.  You can also register other compilers, if they
-  have not been detected automatically.\index{compilers!choosing}
-\item[$<$F$>$] Set custom compiler flags. These are the first flags
-  given to the compiler in every call. Under normal circumstances
-  there should be no need to set any such
-  flag.\index{compilers!setting custom flags}
-\item[$<$L$>$] Set custom linker flags. These are the first flags
-  given to the linker in every call. Under normal circumstances
-  there should be no need to set any such flag.
-\item[$<$S$>$] Toggle shared/static libraries building.
-  By default, shared (e.g. \texttt{libCGAL.so}) and static
-  (e.g. \texttt{libCGAL.a}) libraries are both built,
-  but it is possible to only build shared or static libraries using this
-  option. Press the key once to build only static libraries, and twice to
-  build only shared libraries.
-\item[$<$O$>$] Set custom ostype tag.  Set a tag that is mangled into
-  the CGAL-OS-description. This is useful to distinguish \cgal\
-  installations with different settings for the same OS-compiler
-  combination.
-\end{description}
-\vspace{2pt}
-\end{minipage}
-\hfill}
-
-\subsection{The Support Menu\label{sec:support-menu}}
-\index{support menu}\index{menus!support}
-
-This menu provides the starting point to setup support for third-party
-software libraries such as \boost, \gmp, \mpfr, \core,
-\blas, \lapack, \taucs, \leda, or \qt.\bigskip
-
-First, it provides an option ``\texttt{Auto-find all libraries}'' to
-find and enable support for as many of those third-party software
-libraries as possible. Note that this is also done automatically
-during the first setup test for a platform.
-
-Then there is a sub-menu for each third-party library that can be used
-in conjunction with \cgal. Each of these sub-menus contains an
-autofind option that is similar to the global autofind in the support
-menu but restricted to the particular library under consideration.
-
-In case a library is installed in a non-standard location, you may
-have to provide a path to its header files and/or libraries.
-Therefore, the menu for each library \texttt{L} offers an option to
-set an include directory \texttt{L\_INCL\_DIR} and a lib directory
-\texttt{L\_LIB\_DIR} for \texttt{L}. For instance, if on your system
-\gmp\ is installed in \texttt{/opt/sw/gmp/}, you would set
-\texttt{GMP\_INCL\_DIR} to \texttt{/opt/sw/gmp/include} and
-\texttt{GMP\_LIB\_DIR} to \texttt{/opt/sw/gmp/lib}. Note that on
-Cygwin you have to provide Posix-style paths, e.g.,
-\texttt{/cygdrive/c/gmp} instead of \verb|C:\gmp|.
-
-If you have trouble to setup support for one of the libraries, having
-a look at the \texttt{install.log} file may give you a hint.
-
-More details about the different third-party libraries that are
-supported by \cgal\ can be found in sections
-\ref{sec:boost-setup}--\ref{sec:qt-setup}.
-
-\section{The Non-Interactive Mode\label{sec:non-interactive}}
-\index{non-interactive
-  installation}\index{installation!non-interactive}
-\TTsubindex{install\_cgal}{non-interactive mode}
-
-To run the install script in the non-interactive mode, you have to
-specify the compiler to use by setting the environment variable
-\texttt{CXX} to the C++ compiler executable.\index{compilers!choosing}
-Make sure you do pass a \CC\ compiler, not a C compiler, otherwise
-you will probably get some link errors.
-You can either specify a full path, e.g.
-\texttt{CXX=/usr/local/bin/g++}, or just the basename, e.g.
-\texttt{CXX=g++}, which means the script searches your \texttt{PATH}
-for the compiler location. If your compiler call contains whitespaces
-then it has to be quoted, e.g., \texttt{CXX="CC -n32"}. The options
-given this way become part of your \cgal-OS description\index{OS
-  description} (see Section~\ref{sec:os-compiler-id}) which is useful,
-e.g., to distinguish between different compilers using the same
-frontend.
-
-Go to the \cgaldir\ directory and enter the command
-\begin{verbatim}
-      CXX=<compiler> ./install_cgal -ni
-\end{verbatim}
-where \texttt{<compiler>} is the C++ compiler executable, as described
-above.
-
-There are a number of additional command line options to customize
-your \cgal\ setup which are discussed below. You should read the
-corresponding paragraphs before you continue, especially if you want
-to enable support for a third party library that is installed in a
-non-standard location.
-
-The script tries to enable support for as many third party libraries
-as possible, most of them should be found automatically if installed
-in a standard location. If you do not want to enable support for third
-party libraries automatically, use the command line switch
-\texttt{--without-autofind}.
-
-Once you started the script, it should give you a message indicating
-the \cgal\ version you are going to install and that you are running
-the non-interactive mode. Then it proceeds by locating some utility
-programs, determining your OS and compiler version and displaying the
-settings you gave via command line. Your compiler is also checked for
-a number of bugs resp. support of certain language features; a message
-\texttt{ok} always indicates that your compiler works as it should,
-that is, a feature is supported or a bug is \textit{not} present. On
-the other hand, \texttt{no} or \texttt{unfortunately} indicate a lack
-of support or the presence of a bug.
-
-Then the current setup is summarized, system specific directories for
-makefiles and libraries are created (if they did not exist before) and
-a new include makefile is written into the makefile directory. If
-there already exists a makefile for the current OS/compiler
-combination, it is backed up.
-
-Finally, the \cgal\ libraries are built and -- if a separate
-installation root was specified -- installed into the given
-installation directory.
-
-\subsection{Specify an Install Directory\label{sec:install-setup}}
-\index{install directory}
-
-As a default, \cgal\ is installed within its build-tree. The
-installation root directory can be changed using the command line
-option ``\texttt{--prefix <dir>}''. For example, to install \cgal\
-below \texttt{/usr/local/cgal}, you would type
-%%
-\begin{verbatim}
-  --prefix /usr/local/cgal
-\end{verbatim}
-%%
-
-\subsection{Setup Support for Boost\label{sec:boost-setup}}
-\index{Boost@\boost!enable support}
-
-The \boost\ headers are required by \cgal, you can get them from
-\boostpage. If installed in a standard location, \boost\ should be
-found automatically. Otherwise, you have to specify where \boost\ is
-installed on your system using the command line options
-``\texttt{--BOOST\_INCL\_DIR}'' and/or ``\texttt{--BOOST\_LIB\_DIR}''.
-For instance, if you have installed \boost\ in \texttt{/opt/boost/},
-type
-%%
-\begin{verbatim}
-  --BOOST_INCL_DIR /opt/boost/include --BOOST_LIB_DIR /opt/boost/lib
-\end{verbatim}
-%%
-
-Even in case you disabled the automatic support for third party
-libraries, boost support is still enabled because it is required.
-
-\subsection{Setup Support for Boost program options\label{sec:boostlibs-setup}}
-\index{Boost@\boost!enable support}
-
-The \boost\ library program\_options is used by a few demo programs to
-parse command line options. You can get it from \boostpage. If
-installed in a standard location, program\_options should be found
-automatically. Otherwise, you have to specify where program\_options
-is installed on your system using the command line options
-``\texttt{--BOOSTPROGRAMOPTIONS\_INCL\_DIR}'' and/or
-``\texttt{--BOOSTPROGRAMOPTIONS\_LIB\_DIR}''.
-
-In case you disabled the automatic support for third party libraries,
-support for program\_options can be enabled with the command line
-switch ``\texttt{--with-BOOSTPROGRAMOPTIONS}''.
-
-
-\subsection{Setup Support for BLAS\label{sec:blas-setup}}
-\index{BLAS@\blas!enable support}
-
-The \blas\ (Basic Linear Algebra Subprograms) are routines that provide
-standard building blocks for performing basic vector and matrix operations.
-In \cgal, \blas\ is required by the packages
-\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
-and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
-
-You can download the official release from \blaspage
-or download optimized implementations from \path'http://www.netlib.org/blas/faq.html#5'.
-Alternatively, installing \taucs\ provides \blas\ (see Section~\ref{sec:taucs-setup}).
-
-If installed in a standard location, \blas\ should be found
-automatically. Otherwise, you have to specify where \blas\ is located
-on your system using the command line options
-``\texttt{--BLAS\_INCL\_DIR}'' and ``\texttt{--BLAS\_LIB\_DIR}''.
-
-In case you disabled the automatic support for third party libraries,
-support for \blas\ can be enabled with the command line switches
-``\texttt{--with-PACKAGENAME}'', where PACKAGENAME is one of
-\texttt{APPLEVECLIB, SUNPERFORMANCECC, SUNPERFORMANCEGCC,
-MKL64, MKL32, MKLWIN64, MKLWIN32, ACML, ACMLWIN, BLASIFORTATLAS, BLASGCCATLAS,
-BLASWINATLAS, REFBLASGCC, REFBLASLINUXGCC, REFBLASSHARED or REFBLASWIN}
-(depending of your platform and BLAS library).
-
-
-\subsection{Setup Support for ATLAS\label{sec:atlas-setup}}
-\index{ATLAS@\atlas!enable support}
-
-\atlas\ provides a portably efficient \blas\ implementation,
-as well as a few routines from \lapack.
-
-You can download the official release from \atlaspage.
-Alternatively, installing \taucs\ provides \atlas\ on systems with
-no native \blas\ and \lapack\ implementations (see Section~\ref{sec:taucs-setup}).
-
-Usually, \atlas\ setup is automatically deduced from \blas\ setup
-(i.e. install\_cgal will detect if the \blas\ library on your machine is \atlas).
-
-
-\subsection{Setup Support for LAPACK\label{sec:lapack-setup}}
-\index{LAPACK@\lapack!enable support}
-
-\lapack\ provides routines for solving systems of simultaneous linear equations,
-least-squares solutions of linear systems of equations, eigenvalue problems,
-and singular value problems.
-In \cgal, \lapack\ is required by the packages
-\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
-and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
-
-You can download the official release from \lapackpage.
-Alternatively, installing \taucs\ customized for \cgal\ provides \lapack\
-(see Section~\ref{sec:taucs-setup}).
-
-If installed in a standard location, \lapack\ should be found
-automatically. Otherwise, you have to specify where \lapack\ is located
-on your system using the command line options
-``\texttt{--LAPACK\_INCL\_DIR}'' and ``\texttt{--LAPACK\_LIB\_DIR}''.
-
-In case you disabled the automatic support for third party libraries,
-support for \lapack\ can be enabled with the command line switches
-``\texttt{--with-PACKAGENAME}'', where PACKAGENAME is one of
-\texttt{LAPACK, LAPACKWIN, REFLAPACKLINUXGCC or REFLAPACKWIN}
-(depending of your platform and \lapack\ library name).
-
-
-\subsection{Setup Support for TAUCS\label{sec:taucs-setup}}
-\index{TAUCS@\taucs!enable support}
-
-\taucs\ is a library of sparse linear solvers.
-In \cgal, it is used to improve (a lot) the computations within the
-\ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization} package only.
-
-You can download the official release from \taucspage
-or download a version customized for \cgal\
-from the Download section of \path'http://www.cgal.org'.
-We highly recommend to install the version customized for \cgal\
-which contains an installer, bug fixes, and a complete \lapack\
-implementation.
-
-If installed in a standard location, \taucs\ should be found
-automatically. Otherwise, you have to specify where \taucs\ is located
-on your system using the command line options
-``\texttt{--TAUCS\_INCL\_DIR}'' and ``\texttt{--TAUCS\_LIB\_DIR}''
-(you may also have to use the command line options for \blas, \lapack\
-or \atlas\ as \taucs\ requires either \blas\ plus \lapack\ or \atlas). For
-instance, if you installed \taucs\ customized for \cgal\
-in \texttt{/opt/TAUCS/}, type
-%%
-\begin{verbatim}
-  --BLAS_INCL_DIR "/opt/TAUCS/include" --BLAS_LIB_DIR "/opt/TAUCS/lib"
-\end{verbatim}
-%%
-
-In case you disabled the automatic support for third party libraries,
-support for \taucs\ can be enabled with the command line switches
-``\texttt{--with-PACKAGENAME}'', where PACKAGENAME is one of
-\texttt{TAUCSWINLAPACK, TAUCSWINATLAS, TAUCSLAPACK, TAUCSATLAS,
-TAUCSFREEBSDLAPACK, TAUCSFREEBSDATLAS or TAUCSDARWIN}
-(depending of your platform and if \lapack\ or \atlas\ is installed).
-
-
-\subsection{Setup Support for X11\label{sec:x11-setup}}
-\index{X11@\texttt{X11}!enable support}
-
-As visualization in \cgal\ is done using \qt\ mostly, the direct
-support for X11 is used in conjunction with other graphical libraries.
-You can get X11 from \xpage.
-
-If installed in a standard location, X11 should be found
-automatically. Otherwise, you have to specify where X11 is installed
-on your system using the command line options
-``\texttt{--X11\_INCL\_DIR}'' and/or ``\texttt{--X11\_LIB\_DIR}''. For
-instance, if you have installed X11 in \texttt{/opt/X11R8/}, type
-%%
-\begin{verbatim}
-  --X11_INCL_DIR /opt/X11R8/include --X11_LIB_DIR /opt/X11R8/lib
-\end{verbatim}
-%%
-
-In case you disabled the automatic support for third party libraries,
-support for X11 can be enabled with the command line switch
-``\texttt{--with-X11}''.
-
-\subsection{Setup Support for GMP\label{sec:gmp-setup}}
-\index{GMP@\gmp!enable support}
-
-\gmp\ is a multi-precision number type library that is available from
-\gmppage. In \cgal\ it is used in many example and demo programs to
-speedup the computation. It is highly recommended to configure \cgal\
-with support for \gmp. Note that \gmp\ support also requires \mpfr\
-support and vice versa.
-
-Note that \gmp\ support is necessary to enable \core\ support.
-\core\ is a number type library for exact geometric computation that
-is available from \corepage. A modified version of \core\ version 1.7
-is shipped with \cgal~\cgalrelease. Support for \core\ automatically
-gets enabled if \gmp\ support is enabled. In \cgal\, \core\ is used
-in many example and demo programs to speedup the computation. It is
-highly recommended to configure \cgal\ with support for \gmp\ in order
-to enable support for \core.
-
-If installed in a standard location, \gmp\ should be
-found automatically. Otherwise, you have to specify where \gmp\ is
-installed on your system using the command line options
-``\texttt{--GMP\_INCL\_DIR}'' and/or ``\texttt{--GMP\_LIB\_DIR}''. For
-instance, if you have installed \gmp\ in \texttt{/opt/gmp}, type
-%%
-\begin{verbatim}
-  --GMP_INCL_DIR /opt/gmp/include --GMP_LIB_DIR /opt/gmp/lib
-\end{verbatim}
-%%
-
-In case you disabled the automatic support for third party libraries,
-support for \gmp\ can be enabled with the command line switch
-``\texttt{--with-GMP}''.
-
-\subsection{Setup Support for GMPXX\label{sec:gmpxx-setup}}
-\index{GMPXX@\texttt{GMPXX}!enable support}
-
-GMPXX denotes a \CC\ wrapper for \gmp, that is an optional feature of
-\gmp\ and, therefore, not present in all installations.
-
-If installed in a standard location, GMPXX should be found
-automatically. As GMPXX depends on \gmp, there is usually no need to
-specify include or lib directories for GMPXX once \gmp\ support is
-configured correctly.
-
-In case you disabled the automatic support for third party libraries,
-support for GMPXX can be enabled with the command line switch
-``\texttt{--with-GMPXX}''.
-
-\subsection{Setup Support for MPFR\label{sec:mpfr-setup}}
-\index{MPFR@\texttt{MPFR}!enable support}
-
-\mpfr\ is a library for multi-precision floating-point computations
-with exact rounding that is available from \mpfrpage. In \cgal\ it is
-used in many example and demo programs to speedup the computation. It
-is highly recommended to configure \cgal\ with support for \mpfr. Note
-that \mpfr\ support also requires \gmp\ support and vice versa.
-
-If installed in a standard location, \mpfr\ should be found
-automatically. As \mpfr\ depends on \gmp, there is no need to specify
-include or lib directories for \mpfr\ when \gmp\ version prior to 4.2
-is used and configured correctly. Otherwise, you have to specify where
-\mpfr\ is installed on your system using the command line options
-``\texttt{--MPFR\_INCL\_DIR}'' and/or ``\texttt{--MPFR\_LIB\_DIR}''.
-For instance, if you have installed \mpfr\ in \texttt{/opt/mpfr}, type
-%%
-\begin{verbatim}
-  --MPFR_INCL_DIR /opt/mpfr/include --MPFR_LIB_DIR /opt/mpfr/lib
-\end{verbatim}
-%%
-
-In case you disabled the automatic support for third party libraries,
-support for \mpfr\ can be enabled with the command line switch
-``\texttt{--with-MPFR}''.
-
-\subsection{Setup Support for ZLIB\label{sec:zlib-setup}}
-\index{ZLIB@\texttt{ZLIB}!enable support}
-
-ZLIB is a compression library that is available from \zlibpage.
-Within \cgal, it is used to compress images for the Surface Mesher
-only.
-
-If installed in a standard location, ZLIB should be found
-automatically.  Otherwise, you have to specify where ZLIB is installed
-on your system using the command line options
-``\texttt{--ZLIB\_INCL\_DIR}'' and/or ``\texttt{--ZLIB\_LIB\_DIR}''.
-For instance, if you have installed ZLIB in \texttt{/opt/zlib}, type
-%%
-\begin{verbatim}
-  --ZLIB_INCL_DIR /opt/zlib/include --ZLIB_LIB_DIR /opt/zlib/lib
-\end{verbatim}
-%%
-
-In case you disabled the automatic support for third party libraries,
-support for ZLIB can be enabled with the command line switch
-``\texttt{--with-ZLIBMS}'' (for Microsoft and Intel Compiler) or
-``\texttt{--with-ZLIB}'' (all other compilers).
-
-\subsection{Setup Support for LEDA\label{sec:leda-setup}}
-\index{LEDA@\leda!enable support}
-
-\leda\ is a library for efficient data types and algorithms that can
-be bought from \ledapage. \cgal\ offers an interface to the
-\leda\ number types. For more details, see Section~\ref{sec:leda}.
-
-If installed in a standard location, \leda\ should be found
-automatically. Otherwise, you have to specify where \leda\ is
-installed on your system using the command line options
-``\texttt{--LEDA\_INCL\_DIR}'' and/or ``\texttt{--LEDA\_LIB\_DIR}''.
-For instance, if you have installed \leda\ in \texttt{/opt/leda}, type
-%%
-\begin{verbatim}
-  --LEDA_INCL_DIR /opt/leda/include --LEDA_LIB_DIR /opt/leda/lib
-\end{verbatim}
-%%
-
-In case you disabled the automatic support for third party libraries,
-support for \leda\ can be enabled with the command line switch
-``\texttt{--with-LEDAMS}'' (for Microsoft and Intel Compiler) or
-``\texttt{--with-LEDA}'' (all other compilers). Support for the \leda\
-window library can be enabled with the command line switch
-``\texttt{--with-LEDAWINMS}'' (for Microsoft and Intel Compiler) or
-``\texttt{--with-LEDAWIN}'' (all other compilers).
-
-\subsection{Setup Support for Qt\label{sec:qt-setup}}
-\index{Qt!enable support}
-
-\qt\ is a GUI library that is available from \qtpage. Most demo
-programs of \cgal\ for two-dimensional data structures and algorithms
-use \qt\ for visualization. Note that \cgal\ supports \qt~3 but not
-(yet) \qt~4.
-
-\qt\ support requires the environment variable \texttt{QTDIR} to be
-set to the \qt\ root directory. On most systems where \qt\ is
-installed this should be set correctly, otherwise you have to set this
-variable manually. We assume the \qt\ meta object compiler is
-available under \texttt{\${QTDIR}/bin/moc}.
-
-Based on the setting of \texttt{QTDIR}, \qt\ should be found
-automatically. Therefore, it should not be necessary to specify
-include or lib directories for \qt\ on the command line.
-
-There are two different ways to build \qt, namely single-threaded or
-multi-threaded. The automatic support settings prefer the
-multi-threaded version where present.
-
-In case you disabled the automatic support for third party libraries,
-support for the multi-threaded version of \qt\ can be enabled with the
-command line switch ``\texttt{--with-QT3MSMT}'' (for Microsoft and
-Intel Compiler) or ``\texttt{--with-QT3MT}'' (all other compilers).
-Support for the single-threaded version of \qt\ can be enabled with
-the command line switch ``\texttt{--with-QT3MSST}'' (for Microsoft and
-Intel Compiler) or ``\texttt{--with-QT3ST}'' (all other compilers).
-
-\subsection{Setting Custom Compiler/Linker Flags\label{sec:custom-setup}}
-\index{compilers!setting custom flags}
-
-You can supply custom compiler and linker flags using the options
-\mbox{(``\texttt{--CUSTOM\_CXXFLAGS}
-  \textit{$<$flags$>$}'')\TTindex{CUSTOM\_CXXFLAGS}} and
-\mbox{(``\texttt{--CUSTOM\_LDFLAGS}
-  \textit{$<$flags$>$}'')\TTindex{CUSTOM\_LDFLAGS}}. These are the
-first flags given to the compiler/linker in every call.
-
-\textit{Note:} Do not forget to quote your options in case they
-contain spaces. Example:
-\begin{verbatim}
-  --CUSTOM_CXXFLAGS "-I/my/include -O2"
-\end{verbatim}
-
-
-\subsection{Disable Shared Libraries\label{sec:disable-shared-setup}}
-\index{compilers!disabling shared libraries building}
-
-You can disable the building of shared libraries (e.g.,
-\texttt{libCGAL.so}) using the option
-\mbox{``\texttt{--disable-shared}''\TTindex{disable-shared}}. This
-way, only static libraries (object file archives) are built.
-
-\subsection{Disable Static Archives\label{sec:disable-static-setup}}
-\index{compilers!disabling static archives building}
-
-You can disable the building of static archives (e.g.,
-\texttt{libCGAL.a}) using the option
-\mbox{``\texttt{--disable-static}''\TTindex{disable-static}}. This
-way, only shared libraries are built. Do not disable shared libraries as
-well if you use this option.
-
-\subsection{Other Options\label{sec:other-options}}
-
-Some less important features of the install script are summarized
-here.
-
-First of all, you can get the version number of \texttt{install\_cgal}
-using the option ``\texttt{--version}''. All other options are ignored
-in this case.\TTsubindex{install\_cgal}{version number}
-
-Second, there is an option ``\texttt{-os \textit{$<$compiler$>$}}''
-where \textit{$<$compiler$>$} is your \CC\ compiler. This allows you
-to determine your \cgal-OS description\index{OS description} (see
-Section~\ref{sec:os-compiler-id}). The compiler can either be given by
-an absolute path like
-\begin{verbatim}
-  ./install_cgal -os /usr/local/gcc-3.4.3/sun/bin/g++
-\end{verbatim}
-or just by denoting its basename, as long as it is on your path:
-\begin{verbatim}
-  ./install_cgal -os CC
-\end{verbatim}
-The option is intended for testing purposes and automatic detection of
-the correct include makefile (see also Section~\ref{sec:makefiles}).
-
-Finally, there exists an option
-``\texttt{--verbose}''\TTsubindex{install\_cgal}{verbose mode} that
-can be set in interactive mode as well as in non-interactive mode.
-When set you get a detailed summary of error messages occurring during
-\textit{any} compiler test (determining \stl\ version etc.). Normally
-you only get these messages, if a required test (such as the general
-\stl\ test) fails, otherwise you are just informed, \textit{if} it
-succeeded or not. This option is not recommended for general use, but
-it can be useful to check why a certain test fails that was expected
-to be passed. Most of the extra information it provides can also be
-extracted from the installation logfile.
-
-\section{Upgrade an Existing CGAL Installation\label{sec:upgrade}}
-\index{upgrading \cgal}\index{CGAL@\cgal!upgrade}
-
-Due to a large number of changes in the configuration and installation
-process, we recommend to install \cgal\ from scratch, without re-using
-configuration files of possible previous \cgal\ installations.
-
-%% In case you already have a previous release of \cgal\ installed on
-%% your system, you might like to reuse your configuration files. Simply
-%% use the following command to copy them into the right
-%% place:\TTsubindex{install\_cgal}{upgrade option}
-%% \begin{verbatim}
-%% ./install_cgal --upgrade <OLD_CGAL_DIR>
-%% \end{verbatim}
-%% where \texttt{<OLD\_CGAL\_DIR>} is the root directory of your existing
-%% \cgal\ installation\\ (e.g. \texttt{/pub/local/CGAL-3.0}).  You can
-%% then build all libraries for the actual operating system that existed
-%% in your previous \cgal\ installation with
-%% \TTsubindex{install\_cgal}{rebuild-all option}
-%% \begin{verbatim}
-%% ./install_cgal --rebuild-all
-%% \end{verbatim}
-
-%% If you want to install \cgal\ for more than one operating system in
-%% the same directory structure, you have to run the latter command
-%% (\texttt{rebuild-all}) once on each operating system.
-
-%% Using \texttt{--build-all} instead of \texttt{--rebuild-all} will save
-%% you the time of the configuration tests, and will only rebuild the libraries.
-
-%% If you want to install only one configuration on a given operating system,
-%% you can specify its name (the base name of a file in \cgalinstconfdir) with
-%% the option \texttt{--rebuild <config>} or \texttt{--build <config>}.
-
-%% \textbf{Note} that some compilers that have been supported in previous
-%% \cgal\ releases might not be supported in \cgal-\cgalrelease\ anymore,
-%% see section \ref{sec:prerequisites}. Trying to build
-%% \cgal-\cgalrelease\ with these compilers will most probably fail. You
-%% can solve this problem by deleting the obsolete config files (see
-%% section \ref{sec:filescreated}) from \cgalinstconfdir\ before issuing
-%% the \texttt{rebuild-all} command.
-
-%% Similarly, you might want to use compilers with \cgal-\cgalrelease\
-%% that have not been supported in previous releases. For these compilers
-%% please follow the usual procedure as described in section
-%% \ref{sec:interactive-mode} or \ref{sec:non-interactive}.
-
-\section{Identify OS and Compiler\label{sec:os-compiler-id}}
-\index{OS description}\index{identifying OS and compiler}
-
-Since \cgal\ supports several different operating systems and
-compilers, this is also reflected in the structure of the \cgal\
-directory tree. Each OS/compiler combination has its own lib directory
-under \texttt{\cgaldir/lib}) (and analogously its own include
-makefile\index{include makefile} in \texttt{\cgaldir/make}) named as
-determined by the following scheme.
-\begin{center}
-  \textit{$<$arch$>$\texttt{\_}$<$os$>$\texttt{-}$<$os-version$>$\texttt{\_}$<$comp$>${\tt
-    -}$<$comp-version$>$}
-\end{center}
-
-\begin{description}
-\item[$<$arch$>$] is the system architecture as defined by ``{\tt
-    uname -p}'' or ``\texttt{uname -m}'',
-\item[$<$os$>$] is the operating system as defined by ``\texttt{uname
-    -s}'',
-\item[$<$os-version$>$] is the operating system version as defined by
-  ``\texttt{uname -r}'',
-\item[$<$comp$>$] is the basename of the compiler executable (if it
-  contains spaces, these are replaced by "-") \textit{and}
-\item[$<$comp-version$>$] is the compiler's version number (which
-  unfortunately can not be derived in a uniform manner, since it is
-  quite compiler specific).
-\end{description}
-
-We call the resulting string \cgal-OS description.\\ Examples are
-\texttt{i686\_Linux-2.6\_g++-4.1.1} or {\tt
-  sparc\_SunOS-5.5\_g++-3.4.3}.\\ You can use the install script to
-get your \cgal-OS description, see Section~\ref{sec:other-options}.
-
-\section{The CGAL Makefile Structure\label{sec:makefiles}}
-\index{makefile structure}
-
-There is a makefile in each directory below \texttt{\cgaldir/examples}
-and \texttt{\cgaldir/demo}. All these makefiles are generic: they can
-be used for more than one compiler. To achieve this, the first section
-of each makefile contains an include statement that looks as follows:
-%%
-\begin{verbatim}
-  # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-  include $(CGAL_MAKEFILE)
-\end{verbatim}
-%$
-
-The file \texttt{CGAL\_MAKEFILE}\TTindex{CGAL\_MAKEFILE} is an include
-file\index{include makefile} with platform dependent makefile
-settings. The abbreviation \texttt{<CGAL-OS description>} (see
-Section~\ref{sec:os-compiler-id} for details) is used to identify the
-operating system and compiler for which the settings hold. For
-example, the file \texttt{makefile\_i686\_Linux-2.6\_g++-4.1.1}
-contains makefile settings for the Linux 2.6 operating system and the
-\Gcc\ 4.1.1 compiler.  These include files are automatically
-generated by the \texttt{install\_cgal} script and they are all
-located in the \texttt{\cgaldir/make} directory.
-%% M: I don't think this is true anymore.
-%%For convenience, the \texttt{install\_cgal} script will substitute the
-%%include makefile that was generated most recently.
-
-If you want to compile an application or an object library with a
-different compiler, the only thing you need to do is to substitute
-another include makefile for the \texttt{CGAL\_MAKEFILE} variable. A
-very convenient way to do this is to create an environment variable
-\texttt{CGAL\_MAKEFILE}. In Bourne shell you type
-\begin{alltt}
-  export CGAL_MAKEFILE=<\textit{insert your CGAL makefile}>
-\end{alltt}
-whereas in csh derivatives you use
-\begin{alltt}
-  setenv CGAL_MAKEFILE <\textit{insert your CGAL makefile}>
-\end{alltt}
-For instance,
-\begin{verbatim}
-  setenv CGAL_MAKEFILE /usr/CGAL-3.3/make/makefile_i686_Linux-2.6_g++-3.4.4
-\end{verbatim}
-
-If you use \cgal\ with several different OS/compiler combination, a
-comfortable way to set \texttt{CGAL\_MAKEFILE} is by using
-\texttt{install\_cgal~-os} (see Section~\ref{sec:other-options}).  For
-example, if your compiler is \texttt{g++}, you would type
-\begin{alltt}
-CGAL_MAKEFILE=`\yourcgaldir/install_cgal -os g++`
-\end{alltt}
-in Bourne shell resp.
-\begin{alltt}
-setenv CGAL_MAKEFILE `\yourcgaldir/install_cgal -os g++`
-\end{alltt}
-in csh derivatives.
-
-\textit{Tip:} Include the setting of \texttt{CGAL\_MAKEFILE} into your
-shell startup script (e.g. \texttt{.}(\texttt{t})\texttt{cshrc} for
-(\texttt{t})\texttt{csh} or \texttt{.bashrc} for \texttt{bash}).
-
-All makefiles contain sections with compiler and linker flags.  You
-can add your own flags here. For example, you might want to add the
-flag \texttt{-DCGAL\_NDEBUG} to turn off all assertions
-checking. The flags \texttt{\$(CGAL\_CXXFLAGS)} and
-\texttt{\$(CGAL\_LDFLAGS)} should never be removed.
-
-The default extension for \cgal\ source files is \texttt{.cpp}.  The
-last section of the makefiles contains a suffix rule that tells the
-compiler how to create a \texttt{.o}-file from a \texttt{.cpp}-file.  If
-you want to use the default rule that is defined by the make utility,
-you may want to remove this suffix rule.  However, note that this may
-have consequences for the makefile variables \texttt{CGAL\_CXX} and
-\texttt{CXXFLAGS}.
-
-\section{Compile a CGAL Application\label{sec:appl}}
-\index{building applications}
-\index{compiling applications}
-
-There is a script for conveniently creating makefiles for \cgal\
-applications, see Section~\ref{sec:create_cgal_makefile}.
-
-The directories \texttt{\cgaldir/examples} and \texttt{\cgaldir/demo}
-contain many subdirectories with non-graphical and graphical example
-programs. In all these directories you will find a makefile that is
-ready to use.
-
-You either need to substitute the \texttt{CGAL\_MAKEFILE} variable in
-these makefiles (see Section~\ref{sec:makefiles}), or set the
-environment variable, to point to the makefile in the
-\texttt{\cgaldir/make} directory. Then just type \texttt{make}.
-
-Within \cgal, the file \texttt{<CGAL/basic.h>}
-\index{files!\texttt{basic.h}} manages all configuration problems. It
-is therefore \textbf{important that \texttt{<CGAL/basic.h>} is always
-  included before any other file}. In most cases you do not have to do
-anything special for this, because many \cgal\ files (in particular,
-\texttt{<CGAL/Cartesian.h>} and \texttt{<CGAL/Homogeneous.h>}) already
-take care of including \texttt{<CGAL/basic.h>} first. Nevertheless it
-is a good idea to always start your \cgal\ programs with including
-\texttt{<CGAL/basic.h>}.
-
-\section{Installation on Cygwin\label{sec:cygwin}}
-\index{Cygwin!installation on}\index{installation!on Cygwin}
-
-Cygwin is a free Unix-like environment for MS-Windows, distributed by
-Red Hat. It consists of a port of a large number of GNU
-tools, such as bash, make, gcc, gas, file utilities, etc, as well as
-tools ensuring an ability to emulate Unix-like access to resources,
-for instance mount. For a comprehensive introduction and details, see
-\path~http://www.cygwin.com/~ .
-
-Make sure that the link \texttt{/bin/sh.exe} exists. If not, create
-it:
-\begin{verbatim}
-cd /bin
-ln -s bash.exe sh.exe
-\end{verbatim}
-
-\subsection{Pathnames}
-\index{Cygwin!pathnames}
-
-Cygwin has a UNIX-like way of navigating hard drives, NFS shares, etc.
-This is also the way in which directories and pathnames have to given
-to the installation script. They are automatically converted to
-Win32-style pathnames when given to the compiler or linker.
-
-The main difference is that directories are separated by slash (``/'')
-rather than by backslash (``$\backslash$'').  The other difference is
-concerned with specifying drives. One way is to use POSIX-style
-pathnames that map Win32-style drives (\texttt{A:}, \texttt{B:}) to
-\texttt{//a/\ldots}, \texttt{//b/\ldots} respectively. For instance,
-the path
-\texttt{D:$\backslash$Mystuff$\backslash$Mydir$\backslash$LEDA}
-translates to \texttt{//d/Mystuff/Mydir/LEDA}.
-
-Alternatively, it can be done using the mount utility, that can be
-used to establish a map between Win32-style drives and the Unix-like
-style. More precisely, it maps the forest of the directories/files on
-Win32-drives to a tree with the root that is usually located at the top
-level of the boot drive, say \texttt{C:}.  The root location can be
-seen by typing \texttt{mount} command without parameters.  For
-instance, if \texttt{D:} is mounted on
-\texttt{C:$\backslash$ddrive}\footnote{by typing \texttt{mount D:
-    /ddrive}} then the path
-\texttt{D:$\backslash$Mystuff$\backslash$Mydir$\backslash$LEDA}
-translates to \texttt{/ddrive/Mystuff/Mydir/LEDA}.
-
-\paragraph{Upper/lower case and spaces in file names}
-Behavior of Cygwin in this regard might be different from the \mswin\
-behavior. In particular, using spaces in filenames should be avoided.
-
-\paragraph{Links, shortcuts, etc.} should be avoided as well.
-
-\subsection{\msvc{}-Setup}
-\index{Cygwin!setup for \msvc{}}
-\index{msvc@\msvc{}!setup on cygwin}
-
-A number of environment variables has to be set (or updated)
-in order to use the installation.
-
-\texttt{PATH} should contain \msvc{} command line tools locations.
-The environment variables \texttt{INCLUDE} and \texttt{LIB} should
-point to the location of \msvc{} header files and to the location of
-the \msvc{} libraries, respectively.
-
-First, the memory for environment variables has to be increased.
-Select the Cygwin icon from the Start-menu, press the right mouse
-button and choose \textit{Properties}. Go to \textit{Memory}, select
-\textit{Initial Environment}, set it to at least 2048 and
-\textit{apply} the changes.
-
-Second, edit the file \texttt{cygwin.bat}, located in the cygwin main
-directory and add the line
-\begin{verbatim}
-call C:\VisualStudio2003\Common7\Tools\vsvars32.bat
-\end{verbatim}
-customized according to where \msvc{} is installed on your system.
-Depending on the version of \msvc{} you might have to replace
-\texttt{VSVARS32.BAT} by \texttt{MSCVARS32.BAT} or
-\texttt{VCVARS32.BAT} and the script may reside in a different
-sub-directory.
-
-All libraries that are used by an application have to be compiled with
-the same options\footnote{\msvc\ compilation/linking options
-  \texttt{-ML, -MT, -MD, -MLD, -MTD, -MDD}} controlling the use of
-debugging and multithreading.
+\cmake\ mantains configuration parameters in so-called {\em cmake variables}, like the \ccc{CMAKE_CXX_COMPILER}
+in the example above. These variables {\em are not environment variables} and they must be set and modified in
+certain specific ways as explained below. Some of the cmake variables represent user choices, such as
+\ccc{WITH_examples} or \ccc{CMAKE_BUILD_TYPE=Release}, while others indicate the details of a third-party library, 
+such as \ccc{Boost_INCLUDE_DIR} or the compiler flags to use, such as \ccc{CMAKE_CXX_FLAGS}. 
+
+The command line tool \ccc{cmake} accepts cmake variables as arguments of the form \ccc{-D<VAR>:<TYPE>=<VALUE>}, as
+in the example above, but this is only useful if you already know which variables needs to be explicitely defined.
+\cmake\ provides an interactive tool which lets you configure \cgal\ by suppling the missing pieces 
+which \cmake\ indicates. In Windows, this is the \ccc{CMakeSetup.exe} program, while in Unix/Linux/Mac it is \ccc{ccmake}
+(or \ccc{cmake-gui} if you have a recent cmake version). 
+
+These interactive configuration tools execute the cmake script just like the non-interactive \ccc{cmake} does. It assign
+values to all the cmake variables used in the configuration and presents the variables to you. You can then change 
+any of the values (such as those representing user choices: \ccc{WITH_<choice>}) and once they are all OK you can select 
+\ccc{Configure} to finish. It will produce the build files just like the non-interactive cmake.
+
+Some variables however, like those corresponding to the path of required third-party dependencies, are critical: they 
+must be defined with proper values. If the script fails to locate a required dependency, for example, the corresponding variable,
+say \ccc{Boost_INCLUDE_DIR}, will have a \ccc{NOTFOUND} value and will show up distinctively (i.e. in red in the GUI cmake).
+\cmake\ will refuse to generate the build files until all these variables are given proper values, so you need
+to define them and press \ccc{Configure} iteratively until there are no more critical variables left undefined. Only then
+pressing \ccc{Configure} will finish the configuration, build the files and return.
+
+\begin{ccAdvanced}
+\cmake\ keeps the variables that a user can manipulate in a so-called {\em cmake cache}, a simple text file specifically 
+named \ccc{CMakeCache.txt} whose entries are of the form VARIABLE:TYPE=VALUE. Advanced users can just manually edit this 
+file instead of going through the interactive configuration session explained before.
+\end{ccAdvanced}
+
+
+The configuration process not only determines the location of the required dependencies. It also dynamically generates a
+\ccc{compiler_config.h} file which encodes the properties of your system. It also generates a special file named 
+\ccc{CGALConfig.cmake} which is used to build programs using \cgal\ (the usage of this file will be explained later).
+
+\subsection{Building \cgal libraries}
+
+
+\begin{ccAdvanced}
+The makefiles/project-files produced by cmake are autoconfigured. That is, if you change any 
+of the dependencies, the build step automatically goes all the way back to the configure step
+during the building. This way, once the target has been configured the very first time by
+invoking cmake, you don't neccesarily need to invoke \ccc{cmake} again and invoking just \ccc{make}
+(or building from within an IDE) will call itself \ccc{cmake} and regenerate the makefile/project-file
+if needed. Keep this in mind if you configure \cgal\ for the Visual Studio IDE since a build
+can change the project file in place and VS will prompt you to reload it.
+\end{ccAdvanced}
 
 %%
 %% EOF
