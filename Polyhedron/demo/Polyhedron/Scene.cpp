@@ -36,9 +36,6 @@ viewEdges(true)
   // generate checkboard
   texture.GenerateCheckerBoard(1024,1024,512,0,0,0,255,255,255);
   // std::cout << "texture: " << texture.GetWidth() << " x " << texture.GetHeight() << std::endl;
-
-  glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,texture.GetWidth(),
-    texture.GetHeight(), 0, GL_RGB,GL_UNSIGNED_BYTE, texture.GetData());
 }
 
 Scene::~Scene()
@@ -277,6 +274,19 @@ Scene::duplicate(int polyhedron_index)
     entry.activated);
 
   return polyhedra.size() - 1;
+}
+
+void Scene::initializeGL()
+{
+  glTexImage2D(GL_TEXTURE_2D,
+	       0,
+	       GL_RGB,
+	       texture.GetWidth(),
+	       texture.GetHeight(),
+	       0,
+	       GL_RGB,
+	       GL_UNSIGNED_BYTE, 
+	       texture.GetData());
 }
 
 void 

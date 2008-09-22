@@ -96,6 +96,8 @@ public:
   // for backward compatibility
   Polyhedron* getPolyhedron(int i) { return polyhedron(i); }
 
+  // initializeGL() is called by Viewer::initializeGL()
+  void initializeGL();
   // draw() is called by Viewer::draw()
   void draw(bool with_names = false);
 

@@ -16,6 +16,7 @@ public:
 
   // overload several QGLViewer virtual functions
   void draw();
+  void initializeGL();
   void drawWithNames();
   void postSelection(const QPoint&);
 

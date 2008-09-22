@@ -25,6 +25,12 @@ void Viewer::draw()
   draw_aux(false);
 }
 
+void Viewer::initializeGL()
+{
+  QGLViewer::initializeGL();
+  scene->initializeGL();
+}
+
 void Viewer::draw_aux(bool with_names)
 {
   QGLViewer::draw();
