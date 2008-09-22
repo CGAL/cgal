@@ -24,7 +24,15 @@ namespace CGAL_SS_i
 {
 
 #ifdef CGAL_USE_CORE  
-inline CORE::BigFloat MP_Float_to_BigFloat( MP_Float const& b )
+
+template<class NT>
+inline CORE::BigFloat to_BigFloat( NT const& n )
+{
+  return CORE::BigFloat( CGAL::to_double(n) ) ;
+}
+
+template<>
+inline CORE::BigFloat to_BigFloat<MP_Float>( MP_Float const& b )
 {
   if (b.is_zero())
     return CORE::BigFloat::getZero();
@@ -51,53 +59,21 @@ inline CORE::BigFloat MP_Float_to_BigFloat( MP_Float const& b )
 
   return d * CORE::BigFloat::exp2( static_cast<int>(exp * log_limb) );
 }
+
+
 #endif
 
-template<class NT>
-inline NT inexact_sqrt( NT const& n )
-{
-  return CGAL_NTS sqrt(n);
-}
 
-inline MP_Float inexact_sqrt( MP_Float const& n )
-{
-  CGAL_precondition(n > 0);
-  
-#ifdef CGAL_USE_CORE
-
-  CORE::BigFloat nn = MP_Float_to_BigFloat(n);
-  CORE::BigFloat s  = CORE::sqrt(nn);
-  return s.doubleValue();
-  
-#else
-
-  double nn = CGAL_NTS to_double(n);
-  
-  if ( !CGAL_NTS is_valid(nn) || ! CGAL_NTS is_finite(nn) )
-    nn = std::numeric_limits<double>::max BOOST_PREVENT_MACRO_SUBSTITUTION () ;
-    
-  CGAL_precondition(nn > 0);
-  
-  return CGAL_NTS sqrt(nn);
-#endif
-  
-}
-
-inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
-{
-  CGAL_precondition(q > 0);
-  return Quotient<MP_Float>(CGAL_SS_i::inexact_sqrt(q.numerator()*q.denominator()), q.denominator() );
-}
 
 template<class NT> 
-inline Lazy_exact_nt<NT> inexact_sqrt( Lazy_exact_nt<NT> const& n )
+inline NT inexact_sqrt_implementation( NT const& n, CGAL::Null_functor no_sqrt )
 {
 
 #ifdef CGAL_USE_CORE
 
-  CORE::BigFloat nn = CGAL::to_double(n) ;
+  CORE::BigFloat nn = to_BigFloat(n) ;
   CORE::BigFloat s  = CORE::sqrt(nn);
-  return Lazy_exact_nt<NT>(s.doubleValue());
+  return NT(s.doubleValue());
   
 #else
 
@@ -110,10 +86,31 @@ inline Lazy_exact_nt<NT> inexact_sqrt( Lazy_exact_nt<NT> const& n )
   
   double s = CGAL_NTS sqrt(nn);
   
-  return Lazy_exact_nt<NT>(s);
+  return NT(s);
   
 #endif
 }
+
+template<class NT, class Sqrt>
+inline NT inexact_sqrt_implementation( NT const& n, Sqrt sqrt_f )
+{
+  return sqrt_f(n);
+}
+
+template<class NT>
+inline NT inexact_sqrt( NT const& n )
+{
+  typedef CGAL::Algebraic_structure_traits<NT> AST;
+  typedef typename AST::Sqrt Sqrt; 
+  return inexact_sqrt_implementation(n,Sqrt());
+}
+
+inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
+{
+  CGAL_precondition(q > 0);
+  return Quotient<MP_Float>(CGAL_SS_i::inexact_sqrt(q.numerator()*q.denominator()), q.denominator() );
+}
+
 
 // Given an oriented 2D straight line segment 'e', computes the normalized coefficients (a,b,c) of the
 // supporting line.
