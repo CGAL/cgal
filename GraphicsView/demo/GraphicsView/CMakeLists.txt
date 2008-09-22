@@ -15,6 +15,14 @@ set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
+find_package(Qt4       REQUIRED)
+include(${QT_USE_FILE})
+
 
 add_executable  ( min min.cpp )
 
+
+# Link with Qt libraries
+target_link_libraries( min ${QT_LIBRARIES} )
+# Link with CGAL
+target_link_libraries( min ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
