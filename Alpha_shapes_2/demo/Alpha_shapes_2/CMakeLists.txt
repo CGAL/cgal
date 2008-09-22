@@ -26,8 +26,4 @@ add_executable  ( alpha_shapes_2
 		  Qt_widget_toolbar.cpp Qt_widget_toolbar.moc 
 		  Qt_widget_toolbar_layers.cpp Qt_widget_toolbar_layers.moc )
 
-if ( AUTO_LINK_ENABLED )    
-  target_link_libraries( alpha_shapes_2 ${CGAL_3RD_PARTY_LIBRARIES} )
-else()
-  target_link_libraries( alpha_shapes_2 ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_LIBRARIES} )
-endif()
+target_link_libraries( alpha_shapes_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})

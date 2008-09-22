@@ -7,9 +7,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 find_package(CGAL REQUIRED Qt3 )
-
 include( ${CGAL_USE_FILE} )
 
+find_package(Qt3 REQUIRED)
 
 # use the Qt MOC preprocessor on classes that derives from QObject
 include( Qt3Macros )
@@ -24,4 +24,4 @@ add_executable  ( boolean_operations_2
                   Qt_widget_locate_layer.cpp
 		  )
 
-
+target_link_libraries( boolean_operations_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )

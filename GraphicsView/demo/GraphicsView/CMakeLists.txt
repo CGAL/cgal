@@ -8,6 +8,8 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 find_package(CGAL REQUIRED Qt4)
 
+find_package(Qt4 REQUIRED)
+
 include(${CGAL_USE_FILE})
 
 set( QT_USE_QTXML    TRUE )

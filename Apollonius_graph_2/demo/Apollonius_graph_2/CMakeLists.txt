@@ -27,3 +27,4 @@ add_executable  ( apollonius_graph_2
 		  qt_file_toolbar.moc qt_layers_toolbar.moc edit_vertex_layer.moc )
 
 
+target_link_libraries( apollonius_graph_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
