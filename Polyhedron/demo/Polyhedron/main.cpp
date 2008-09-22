@@ -55,6 +55,8 @@ int main(int argc, char **argv)
 #  include "MainWindow_self_intersection.cpp"
 #  include "MainWindow_simplify.cpp"
 #  include "MainWindow_subdivision_methods.cpp"
-#  include "MainWindow_parameterization.cpp"
+#  if CGAL_TAUCS_ENABLED
+#    include "MainWindow_parameterization.cpp"
+#  endif
 #  include "texture.cpp"
 #endif

@@ -39,6 +39,7 @@ protected slots:
   void readSettings();
   void writeSettings();
 
+
   void on_actionLoadPolyhedron_triggered();
   bool on_actionErasePolyhedron_triggered();
   void on_actionEraseAll_triggered();
@@ -49,8 +50,11 @@ protected slots:
   void on_actionSetPolyhedronB_triggered();
   void on_actionInsideOut_triggered();
 
+#if CGAL_TAUCS_ENABLED
+  // defined in MainWindow_parameterization.cpp
   void on_actionMVC_triggered();
   void on_actionDCP_triggered();
+#endif
 
   // save
   // TODO: save all, save current (do we store the current file name?)
@@ -96,13 +100,15 @@ protected:
   enum  Boolean_operation { BOOLEAN_UNION,
                             BOOLEAN_INTERSECTION,
                             BOOLEAN_DIFFERENCE };
-  enum  Parameterization_method  { PARAM_MVC,
-                                   PARAM_DCP};
   // defined in MainWindow_boolean_operations.cpp
   void boolean_operation(const Boolean_operation operation);
 
+#if CGAL_TAUCS_ENABLED
+  enum  Parameterization_method  { PARAM_MVC,
+                                   PARAM_DCP};
   // defined in MainWindow_parameterization.cpp
   void parameterize(const Parameterization_method method);
+#endif
 
   void dragEnterEvent(QDragEnterEvent *event);
   void dropEvent(QDropEvent *event);

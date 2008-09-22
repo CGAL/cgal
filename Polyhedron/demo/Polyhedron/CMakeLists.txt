@@ -22,7 +22,7 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
   link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
 endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
 
-find_package(CGAL REQUIRED)
+find_package(CGAL REQUIRED Qt4)
 include( ${CGAL_USE_FILE} )
 
 find_package(Boost 1.34.1 COMPONENTS thread REQUIRED)
@@ -31,9 +31,15 @@ set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-find_package(TAUCS REQUIRED)
-include_directories( ${TAUCS_INCLUDE_DIR} )
-link_directories( ${TAUCS_LIBRARIES_DIR} )
+
+find_package(TAUCS QUIET)
+if(TAUCS_FOUND)
+  include_directories( ${TAUCS_INCLUDE_DIR} )
+  link_directories( ${TAUCS_LIBRARIES_DIR} )
+  add_definitions(-DCGAL_TAUCS_ENABLED=1)
+else(TAUCS_FOUND)
+  message(STATUS "warning: TAUCS is not found. parametrisation will not be availlable.")
+endif(TAUCS_FOUND)
 
 find_package(Qt4 REQUIRED)
 
@@ -86,6 +92,9 @@ if(ENABLE_FORWARD_DECL)
 				 texture.cpp
 
                                ${UI_FILES} ${RESOURCE_FILES} )
+  if(TAUCS_FOUND)
+    add_executable( Polyhedron_3 MainWindow_parameterization.cpp )
+  endif(TAUCS_FOUND)
 else(ENABLE_FORWARD_DECL)
   add_file_dependencies( main.cpp MainWindow_moc.cpp Scene_moc.cpp Viewer_moc.cpp )
   add_executable  ( Polyhedron_3 main.cpp ${UI_FILES} ${RESOURCE_FILES} )
@@ -95,10 +104,8 @@ endif(ENABLE_FORWARD_DECL)
 # Link with Qt libraries
 target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
 
-# If auto-link is not enabled (on Linux for example), link with libCGAL, libCGALQt4 and Boost.Thread explicitly.
-if ( NOT AUTO_LINK_ENABLED )    
-  target_link_libraries( Polyhedron_3 ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} CGAL-Qt4 ${Boost_THREAD_LIBRARY_RELEASE} )
-endif()
+# Link with CGAL
+target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 # Link with libQGLViewer, OpenGL
 target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )

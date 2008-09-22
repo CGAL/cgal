@@ -1,6 +1,8 @@
 #ifndef CGAL_RAY_3_BBOX_3_DO_INTERSECT_H
 #define CGAL_RAY_3_BBOX_3_DO_INTERSECT_H
 
+#include <CGAL/Ray_3.h>
+
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
 
 CGAL_BEGIN_NAMESPACE
@@ -72,14 +74,16 @@ template <class K>
 bool do_intersect(const CGAL::Ray_3<K>& ray, 
 		  const CGAL::Bbox_3& bbox)
 {
-  return typename K::Do_intersect_3()(ray, bbox);
+  return CGALi::do_intersect(ray, bbox, K());
+//   return typename K::Do_intersect_3()(ray, bbox);
 }
 
 template <class K>
 bool do_intersect(const CGAL::Bbox_3& bbox, 
 		  const CGAL::Ray_3<K>& ray)
 {
-  return typename K::Do_intersect_3()(ray, bbox);
+  return CGALi::do_intersect(ray, bbox, K());
+//   return typename K::Do_intersect_3()(ray, bbox);
 }
 
 

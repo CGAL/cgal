@@ -12,7 +12,7 @@
 
 #include "Nef_type_fwd.h" // declares Nef_polyhedron
 #include "Polyhedron_type_fwd.h" // declares Polyhedron
-#include "Textured_polyhedron_type.h" // declares textured polyhedron
+#include "Textured_polyhedron_type_fwd.h" // declares textured polyhedron
 
 #include <iostream>
 #include <cmath>
