@@ -188,6 +188,47 @@ generate_point() {
 
 template < class P, class Creator = 
                    Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P> >
+class Random_points_in_iso_rectangle_2 : public Random_generator_base<P> {
+  double left, right, top, bottom;
+    void generate_point();
+public:
+    typedef Random_points_in_iso_rectangle_2<P,Creator> This;
+    Random_points_in_iso_rectangle_2( const P&p, const P& q, Random& rnd = default_random)
+      : Random_generator_base<P>( 1.0 , rnd)
+  {
+    left = (std::min)(to_double(p.x()), to_double(q.x()));
+    right = (std::max)(to_double(p.x()), to_double(q.x()));
+    top = (std::min)(to_double(p.y()), to_double(q.y()));
+    bottom = (std::max)(to_double(p.y()), to_double(q.y()));
+    generate_point(); 
+  }
+
+    This& operator++()    {
+        generate_point();
+        return *this;
+    }
+    This  operator++(int) {
+        This tmp = *this;
+        ++(*this);
+        return tmp;
+    }
+};
+
+template < class P, class Creator >
+void
+Random_points_in_iso_rectangle_2<P,Creator>::
+generate_point() {
+    typedef typename Creator::argument_type  T;
+    Creator creator;
+    this->d_item =
+	    creator( T(this->_rnd.get_double(left,right)),
+                     T(this->_rnd.get_double(top,bottom)));
+}
+
+
+
+template < class P, class Creator = 
+                   Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P> >
 class Random_points_on_segment_2 : public Random_generator_base<P> {
     P _p;
     P _q;
