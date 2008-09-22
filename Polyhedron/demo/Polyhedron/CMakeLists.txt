@@ -108,6 +108,12 @@ target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES
 # Link with libQGLViewer, OpenGL
 target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
+if(TAUCS_FOUND)
+# Link with TAUCS
+  link_directories(Polyhedron_3 ${TAUCS_LIBRARIES_DIR})
+  target_link_libraries(Polyhedron_3 ${TAUCS_LIBRARIES})
+endif(TAUCS_FOUND)
+
 # Blas and Lapack, under Linux
 if( NOT AUTO_LINK_ENABLED )
   add_definitions( -DCGAL_USE_F2C )
