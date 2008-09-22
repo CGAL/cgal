@@ -72,7 +72,6 @@ if(ENABLE_FORWARD_DECL)
                                  Scene.cpp
                                  Scene_nef_polyhedron_operations.cpp
                                  Scene_polyhedron_operations.cpp
-				 Scene_tex_polyhedron_operations.cpp
 				 Scene_nef_and_polyhedron_operations.cpp
 				 Scene_rendering.cpp
 				 Scene_nef_rendering.cpp
@@ -93,7 +92,7 @@ if(ENABLE_FORWARD_DECL)
 
                                ${UI_FILES} ${RESOURCE_FILES} )
   if(TAUCS_FOUND)
-    add_executable( Polyhedron_3 MainWindow_parameterization.cpp )
+    add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp MainWindow_parameterization.cpp )
   endif(TAUCS_FOUND)
 else(ENABLE_FORWARD_DECL)
   add_file_dependencies( main.cpp MainWindow_moc.cpp Scene_moc.cpp Viewer_moc.cpp )

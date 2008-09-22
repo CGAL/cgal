@@ -41,6 +41,7 @@ int main(int argc, char **argv)
 #  include "Scene_nef_and_polyhedron_operations.cpp"
 #  include "Scene_rendering.cpp"
 #  include "Scene_nef_rendering.cpp"
+#  include "Scene_tex_rendering.cpp"
 #  include "Viewer.cpp"
 #  include "Viewer_moc.cpp"
 #  include "MainWindow.cpp"

@@ -3,13 +3,13 @@
 
 #ifdef USE_FORWARD_DECL
 
-struct Exact_kernel;
+struct EPIC_kernel;
 namespace CGAL {
   struct Textured_items;
   template <class Kernel, class Items> class Textured_polyhedron;
 }
 
-typedef CGAL::Textured_polyhedron<Exact_kernel,CGAL::Textured_items> Textured_polyhedron;
+typedef CGAL::Textured_polyhedron<EPIC_kernel,CGAL::Textured_items> Textured_polyhedron;
 
 #else // USE_FORWARD_DECL
 #  include "Textured_polyhedron_type.h"
