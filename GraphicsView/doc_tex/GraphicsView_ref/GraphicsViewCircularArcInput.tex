@@ -1,0 +1,40 @@
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Qt::]{GraphicsViewCircularArcInput<K>}
+
+\ccDefinition
+An object of type \ccRefName\ creates a circular arc, defined by three points on a circle. A new 
+vertex is inserted every time the left mouse button is released.
+The \ccc{Del} key removes the last entered point. The \ccc{Esc} 
+key removes all entered points.
+
+
+\ccInclude{CGAL/Qt/GraphicsViewCircularArcInput.h}
+
+\ccParameters
+
+The template parameter of \ccRefName\ must be a \cgal\ \ccc{CircularKernel}. 
+
+\ccInheritsFrom
+\ccc{Qt::GraphicsViewInput}
+
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{in}
+\ccSetTwoColumns{GraphicsViewCircularArcInput}{}
+
+\ccConstructor{GraphicsViewCircularArcInput<T>(QObject *p, QGraphicsScene* s);}
+{\ccc{p} is a parent object. \ccc{s} is the scene where the circular arc is generated.}
+
+\ccHeading{Signals}
+
+\ccMethod{void generate(Object o);}{The object \ccc{o} contains a \ccc{Circular_arc_2<K>}.}
+
+\end{ccRefClass}
+
+
+
+
+
+
+
