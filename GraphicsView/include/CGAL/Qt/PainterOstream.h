@@ -82,9 +82,42 @@ public:
 
   PainterOstream& operator<<(const Circle_2<K>& c)
   {
-    qp->drawRect(convert(c.bbox()));
+    qp->drawEllipse(convert(c.bbox()));
     return *this;
   }
+
+  PainterOstream& operator<<(const Circular_arc_2<K>& arc)
+  {
+    const typename K::Circle_2 & circ = arc.supporting_circle();
+    const typename K::Point_2 & center = circ.center();
+    const typename K::Circular_arc_point_2 & source = arc.source();
+    const typename K::Circular_arc_point_2 & target = arc.target();
+    double radius = std::sqrt(CGAL::to_double(circ.squared_radius()));
+
+
+    double a   = std::atan2( to_double(source.y() - center.y()),
+		             to_double(source.x() - center.x())); 
+    double a2p = std::atan2( to_double(target.y() - center.y()),
+		             to_double(target.x() - center.x()));
+
+    std::cout << "a = " << a << "  a2p = " << a2p << std::endl;
+    if (a2p <= a)
+        a2p += 2 * CGAL_PI;
+
+    double alen2 = a - a2p;
+
+    double diff = 180/CGAL_PI*16;
+    
+    std::cout << "start " << (int)(a * diff) << std::endl;
+    std::cout << "angle " << (int)(alen2 * diff) << std::endl;
+    
+    //    qp->drawEllipse(convert(circ.bbox()));
+    qp->drawArc(convert(circ.bbox()), 
+				 (int)(a * diff), 
+				 (int)(alen2 * diff));
+    return *this;
+  }
+
 };
 
 } // namespace Qt

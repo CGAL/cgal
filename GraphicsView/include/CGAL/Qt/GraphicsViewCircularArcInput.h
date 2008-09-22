@@ -18,14 +18,15 @@
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
-#ifndef CGAL_QT_GRAPHICS_VIEW_CIRCLE_INPUT_H
-#define CGAL_QT_GRAPHICS_VIEW_CIRCLE_INPUT_H
+#ifndef CGAL_QT_GRAPHICS_VIEW_CIRCULAR_ARC_INPUT_H
+#define CGAL_QT_GRAPHICS_VIEW_CIRCULAR_ARC_INPUT_H
 
 #include <QGraphicsView>
 #include <QRectF>
 #include <QPointF>
 #include <QGraphicsItem>
 #include <QGraphicsEllipseItem> 
+#include <QGraphicsLineItem> 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -33,6 +34,7 @@
 
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
+#include <CGAL/Qt/CircularArcGraphicsItem.h>
 
 #include <CGAL/array.h>
 
@@ -40,10 +42,10 @@ namespace CGAL {
 namespace Qt {
 
 template <typename K>
-class GraphicsViewCircleInput : public GraphicsViewInput
+class GraphicsViewCircularArcInput : public GraphicsViewInput
 {
 public:
-  GraphicsViewCircleInput(QObject *parent, QGraphicsScene* s, int pointsOnCircle=1); 
+  GraphicsViewCircularArcInput(QObject *parent, QGraphicsScene* s); 
 
 protected:
     
@@ -57,11 +59,11 @@ protected:
   
 
 private:
-
+  typedef typename K::Circular_arc_2 Circular_arc_2;
   typedef typename K::Point_2 Point_2;
-  int m_pointsOnCircle; // 1, 2 or 3
   int count;
-  QGraphicsEllipseItem *qcircle;
+  QGraphicsLineItem *qline;
+  CircularArcGraphicsItem<K> *qcarc;
   QPointF qp, qq, qr;
   Point_2 p, q, r;
   QGraphicsScene *scene_;  
@@ -70,56 +72,39 @@ private:
 
 
 template <typename K>
-GraphicsViewCircleInput<K>::GraphicsViewCircleInput(QObject *parent, QGraphicsScene* s, int pointsOnCircle)
-  : GraphicsViewInput(parent), qcircle(new QGraphicsEllipseItem()), scene_(s), m_pointsOnCircle(pointsOnCircle), count(0)
+GraphicsViewCircularArcInput<K>::GraphicsViewCircularArcInput(QObject *parent, QGraphicsScene* s)
+  : GraphicsViewInput(parent), qline(new QGraphicsLineItem()), qcarc(new CircularArcGraphicsItem<K>()), scene_(s), count(0)
 {
-  qcircle->hide();
-  s->addItem(qcircle);
+  qline->hide();
+  qcarc->hide();
+  s->addItem(qline);
+  s->addItem(qcarc);
 }
 
 
 template <typename K>
 void 
-GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+GraphicsViewCircularArcInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
-  if(m_pointsOnCircle < 3){
-    if(count == 0){
-      qp = event->scenePos();
-      p = convert(qp);
-      count = 1;
-    } else {
-      qq = event->scenePos();
-      if(qp != qq){
-	qcircle->hide();
-	q = convert(qq);
-	if(m_pointsOnCircle == 1){
-	  K::FT sd = squared_distance(p,q);
-	  emit generate(CGAL::make_object(std::make_pair(p, sd)));
-	} else {
-	  emit generate(CGAL::make_object(std::make_pair(p, q)));
-	}
-	count = 0;
-      } 
-    }
-  } else {
-    if(count == 0){
-      qp = event->scenePos();
-      p = convert(qp);
-      count = 1;
-    } else if(count == 1){
-      qq = event->scenePos();
-      if(qp != qq){
-	q = convert(qq);
-	count = 2;
-      }
-    } else { // count == 2
-      qr  = event->scenePos();
-      r = convert(qr);
-      typename K::Collinear_2 collinear;
-      if(! collinear(p,q,r)){
-	emit generate(CGAL::make_object(CGAL::make_array(p,q,r)));
-	count = 0;
-      }
+  if(count == 0){
+    qp = event->scenePos();
+    p = convert(qp);
+    qline->setLine(QLineF(qp, qp));
+    qline->show();
+    count = 1;
+  } else if(count == 1){
+    qq = event->scenePos();
+    qline->setLine(QLineF(qp, qq));
+    q = convert(qq);
+    count = 2;
+  } else if(count == 2){
+    qr  = event->scenePos();
+    r = convert(qr);
+    typename K::Collinear_2 collinear;
+    if(! collinear(p,q,r)){
+      qcarc->hide();
+      emit generate(CGAL::make_object(Circular_arc_2(p,q,r)));
+      count = 0;
     }
   }
 }
@@ -127,46 +112,36 @@ GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename K>
 void 
-GraphicsViewCircleInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+GraphicsViewCircularArcInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-  CGAL::Bbox_2 bb;
-  typename K::Construct_circle_2 construct_circle;
   if(count == 0){
-    qcircle->hide();
+    qcarc->hide();
+    qline->hide();
     return;
   } else if(count == 1) {
     qq = event->scenePos();
     q = convert(qq);
-    if(qp == qq){
-      qcircle->hide();
-      return;
-    } else {
-      if(m_pointsOnCircle == 1){
-	K::FT sd = squared_distance(p,q);
-	bb = construct_circle(p, sd).bbox();
-      } else {
-	bb = construct_circle(p, q).bbox();
-      }
-    }
-  } else { // count == 2
+    qline->setLine(QLineF(qp, qq));
+  } else if(count == 2){
+    qline->hide();
     qr = event->scenePos();
     r = convert(qr);
     typename K::Collinear_2 collinear;
     if(collinear(p,q,r)){
-      qcircle->hide();
+      qcarc->hide();
       return;
     } else {
-      bb = construct_circle(p, q, r).bbox();
+      if(CGAL::orientation(p, q, r) != CGAL::COUNTERCLOCKWISE) std::swap(p, r);
+      qcarc->setArc(Circular_arc_2(p,q,r));
+      qcarc->show();
     }
   }
-  qcircle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
-  qcircle->show();
 }
 
 
 template <typename K>
 void 
-GraphicsViewCircleInput<K>::keyPressEvent ( QKeyEvent * event ) 
+GraphicsViewCircularArcInput<K>::keyPressEvent ( QKeyEvent * event ) 
 {
   if(event->key() == ::Qt::Key_Delete){
     if(count>0){
@@ -179,7 +154,7 @@ GraphicsViewCircleInput<K>::keyPressEvent ( QKeyEvent * event )
 
 template <typename K>
 bool 
-GraphicsViewCircleInput<K>::eventFilter(QObject *obj, QEvent *event)
+GraphicsViewCircularArcInput<K>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -200,7 +175,6 @@ GraphicsViewCircleInput<K>::eventFilter(QObject *obj, QEvent *event)
 } 
 
 } // namespace Qt
-
 } // namespace CGAL
 
-#endif // CGAL_QT_GRAPHICS_VIEW_CIRCLE_INPUT_H
+#endif // CGAL_QT_GRAPHICS_VIEW_CIRCULAR_ARC_INPUT_H
