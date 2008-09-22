@@ -35,8 +35,7 @@ set( QT_USE_QTOPENGL  TRUE )
 find_package(TAUCS QUIET)
 if(TAUCS_FOUND)
   include_directories( ${TAUCS_INCLUDE_DIR} )
-  link_directories( ${TAUCS_LIBRARIES_DIR} )
-  add_definitions(-DCGAL_TAUCS_ENABLED=1)
+  add_definitions(-DCGAL_TAUCS_ENABLED)
 else(TAUCS_FOUND)
   message(STATUS "warning: TAUCS is not found. parametrisation will not be availlable.")
 endif(TAUCS_FOUND)
@@ -85,14 +84,14 @@ if(ENABLE_FORWARD_DECL)
 				 MainWindow_self_intersection.cpp
 				 MainWindow_simplify.cpp
 				 MainWindow_subdivision_methods.cpp
+				 MainWindow_parameterization.cpp
                                  MainWindow_moc.cpp
                                  Scene_moc.cpp
                                  Viewer_moc.cpp
 				 texture.cpp
-
-                               ${UI_FILES} ${RESOURCE_FILES} )
+				 ${UI_FILES} ${RESOURCE_FILES} )
   if(TAUCS_FOUND)
-    add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp MainWindow_parameterization.cpp )
+    add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
   endif(TAUCS_FOUND)
 else(ENABLE_FORWARD_DECL)
   add_file_dependencies( main.cpp MainWindow_moc.cpp Scene_moc.cpp Viewer_moc.cpp )

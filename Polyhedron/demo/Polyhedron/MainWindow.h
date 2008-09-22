@@ -50,11 +50,9 @@ protected slots:
   void on_actionSetPolyhedronB_triggered();
   void on_actionInsideOut_triggered();
 
-#if CGAL_TAUCS_ENABLED
   // defined in MainWindow_parameterization.cpp
   void on_actionMVC_triggered();
   void on_actionDCP_triggered();
-#endif
 
   // save
   // TODO: save all, save current (do we store the current file name?)
@@ -103,7 +101,7 @@ protected:
   // defined in MainWindow_boolean_operations.cpp
   void boolean_operation(const Boolean_operation operation);
 
-#if CGAL_TAUCS_ENABLED
+#ifdef CGAL_TAUCS_ENABLED
   enum  Parameterization_method  { PARAM_MVC,
                                    PARAM_DCP};
   // defined in MainWindow_parameterization.cpp

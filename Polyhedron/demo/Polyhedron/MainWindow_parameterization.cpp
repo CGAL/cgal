@@ -1,3 +1,5 @@
+#ifdef CGAL_TAUCS_ENABLED
+
 #include <QApplication>
 #include <QTime>
 
@@ -103,3 +105,15 @@ void MainWindow::on_actionDCP_triggered()
   std::cerr << "DCP...";
   parameterize(PARAM_DCP);
 }
+
+#else // #ifdef CGAL_TAUCS_ENABLED 
+
+void MainWindow::on_actionMVC_triggered()
+{
+}
+
+void MainWindow::on_actionDCP_triggered()
+{
+}
+
+#endif // #ifdef CGAL_TAUCS_ENABLED 
