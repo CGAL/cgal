@@ -86,6 +86,7 @@ public:
     return *this;
   }
 
+#if 0
   PainterOstream& operator<<(const Circular_arc_2<K>& arc)
   {
     const typename K::Circle_2 & circ = arc.supporting_circle();
@@ -117,7 +118,7 @@ public:
 				 (int)(alen2 * diff));
     return *this;
   }
-
+#endif
 };
 
 } // namespace Qt
