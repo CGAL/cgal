@@ -39,8 +39,6 @@ void MainWindow::on_actionEstimateCurvature_triggered()
       // compute min edge len around central vertex
       // to scale the ribbons used to display the directions
       FT min_edge_len = 1e38;
-
-      // and its neighbors
       Polyhedron::Halfedge_around_vertex_circulator he = v->vertex_begin();
       Polyhedron::Halfedge_around_vertex_circulator end = he;
       CGAL_For_all(he,end)
@@ -51,6 +49,9 @@ void MainWindow::on_actionEstimateCurvature_triggered()
 	min_edge_len = edge_len < min_edge_len ? edge_len : min_edge_len; // avoids #undef min
       }
 
+      const double du = 0.2;
+      const double dv = 0.02;
+      const double lift = 0.1;
       if(points.size() > 5)
       {
 	// estimate curvature by fitting
@@ -67,17 +68,17 @@ void MainWindow::on_actionEstimateCurvature_triggered()
 	Vector umin = min_edge_len * monge_form.minimal_principal_direction();
 	Vector umax = min_edge_len * monge_form.maximal_principal_direction();
 
-	Point lifted_point = central_point + 0.1 * normal;
+	Point lifted_point = central_point + lift * normal;
 
-	min_directions.push_back(lifted_point +  0.2 * umin + 0.02 * umax);
-	min_directions.push_back(lifted_point -  0.2 * umin + 0.02 * umax);
-	min_directions.push_back(lifted_point -  0.2 * umin - 0.02 * umax);
-	min_directions.push_back(lifted_point +  0.2 * umin - 0.02 * umax);
+	min_directions.push_back(lifted_point +  du * umin + dv * umax);
+	min_directions.push_back(lifted_point -  du * umin + dv * umax);
+	min_directions.push_back(lifted_point -  du * umin - dv * umax);
+	min_directions.push_back(lifted_point +  du * umin - dv * umax);
 
-	max_directions.push_back(lifted_point + 0.02 * umin +  0.2 * umax);
-	max_directions.push_back(lifted_point - 0.02 * umin +  0.2 * umax);
-	max_directions.push_back(lifted_point - 0.02 * umin -  0.2 * umax);
-	max_directions.push_back(lifted_point + 0.02 * umin -  0.2 * umax);
+	max_directions.push_back(lifted_point + dv * umin +  du * umax);
+	max_directions.push_back(lifted_point - dv * umin +  du * umax);
+	max_directions.push_back(lifted_point - dv * umin -  du * umax);
+	max_directions.push_back(lifted_point + dv * umin -  du * umax);
       }
     }
 

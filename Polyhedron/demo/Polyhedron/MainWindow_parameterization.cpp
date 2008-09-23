@@ -39,7 +39,7 @@ void MainWindow::parameterize(const Parameterization_method method)
   bool success;
   switch(method)
   {
-    case PARAM_MVC:
+  case PARAM_MVC:
     {
       std::cout << "Parameterize (MVC)...";
       typedef CGAL::Mean_value_coordinates_parameterizer_3<Adaptor> Parameterizer;
@@ -47,7 +47,7 @@ void MainWindow::parameterize(const Parameterization_method method)
       success = err == Parameterizer::OK;
       break;
     }
-    case PARAM_DCP:
+  case PARAM_DCP:
     {
       std::cout << "Parameterize (DCP)...";
       typedef CGAL::Discrete_conformal_map_parameterizer_3<Adaptor> Parameterizer;
@@ -65,7 +65,7 @@ void MainWindow::parameterize(const Parameterization_method method)
     return;
   }
 
-  // add textured polyhedon
+  // add textured polyhedon to the scene
   Textured_polyhedron *pTex_polyhedron = new Textured_polyhedron();
   Textured_polyhedron_builder<Polyhedron,Textured_polyhedron,Kernel> builder;
   builder.run(*pMesh,*pTex_polyhedron);
@@ -74,12 +74,12 @@ void MainWindow::parameterize(const Parameterization_method method)
   Polyhedron::Vertex_iterator it1;
   Textured_polyhedron::Vertex_iterator it2;
   for(it1 = pMesh->vertices_begin(), 
-      it2 = pTex_polyhedron->vertices_begin();
-      it1 != pMesh->vertices_end(),
-      it2 != pTex_polyhedron->vertices_end();
-      it1++, it2++)
+    it2 = pTex_polyhedron->vertices_begin();
+    it1 != pMesh->vertices_end(),
+    it2 != pTex_polyhedron->vertices_end();
+  it1++, it2++)
   {
-    // (u,v) pair is stored in any halfedge
+    // (u,v) pair is stored per halfedge
     FT u = adaptor.info(it1->halfedge())->uv().x();
     FT v = adaptor.info(it1->halfedge())->uv().y();
     it2->u() = u;
@@ -88,7 +88,7 @@ void MainWindow::parameterize(const Parameterization_method method)
 
   scene->addTexPolyhedron(pTex_polyhedron,
     tr("%1 (parameterized)").arg(scene->polyhedronName(index)),
-    Qt::magenta,
+    Qt::white,
     scene->isPolyhedronActivated(index),
     scene->polyhedronRenderingMode(index));
 

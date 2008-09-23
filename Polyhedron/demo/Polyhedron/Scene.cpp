@@ -34,8 +34,7 @@ item_B(-1),
 viewEdges(true)
 {
   // generate checkboard
-  texture.GenerateCheckerBoard(1024,1024,512,0,0,0,255,255,255);
-  // std::cout << "texture: " << texture.GetWidth() << " x " << texture.GetHeight() << std::endl;
+  texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
 }
 
 Scene::~Scene()

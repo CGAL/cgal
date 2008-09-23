@@ -7,6 +7,7 @@ void MainWindow::on_actionInsideOut_triggered()
 {
   if(onePolygonIsSelected())
   {
+    // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // get selected polyhedron
@@ -18,6 +19,8 @@ void MainWindow::on_actionInsideOut_triggered()
 
     // update scene
     scene->polyhedronChanged(index);
+
+    // default cursor
     QApplication::restoreOverrideCursor();
   }
 }
