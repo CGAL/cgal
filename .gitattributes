@@ -2954,7 +2954,6 @@ Polynomial/include/CGAL/Polynomial/resultant.h -text
 Polynomial/include/CGAL/Polynomial/square_free_factorize.h -text
 Polynomial/include/CGAL/Polynomial/sturm_habicht_sequence.h -text
 Polynomial/include/CGAL/Polynomial/subresultants.h -text
-Polynomial/include/CGAL/Polynomial/univariate_polynomial_utils.h -text
 Polynomial/include/CGAL/Polynomial_type_generator.h -text
 Polynomial/test/Polynomial/Polynomial_type_generator.cpp -text
 Polynomial/test/Polynomial/sturm_habicht_sequence.cpp -text
