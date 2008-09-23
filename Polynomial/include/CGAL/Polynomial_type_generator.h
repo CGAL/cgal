@@ -15,6 +15,8 @@
 #ifndef CGAL_POLYNOMIAL_TYPE_GENERATOR_H
 #define CGAL_POLYNOMIAL_TYPE_GENERATOR_H
 
+#include <CGAL/Polynomial_traits_d.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class T, int d>
