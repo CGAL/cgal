@@ -126,6 +126,8 @@ GraphicsViewCircularArcInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     qq = event->scenePos();
     q = convert(qq);
     qline->setLine(QLineF(qp, qq));
+    qline->show();
+    qcarc->hide();
   } else if(count == 2){
     qline->hide();
     qr = event->scenePos();
@@ -154,6 +156,10 @@ GraphicsViewCircularArcInput<K>::keyPressEvent ( QKeyEvent * event )
     if(count>0){
       --count;
     }
+  }
+  
+  if(event->key() == ::Qt::Key_Escape){
+    count = 0;
   }
 }
 
