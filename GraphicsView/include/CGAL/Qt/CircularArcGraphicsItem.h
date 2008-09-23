@@ -73,6 +73,11 @@ public:
   
   void setArc(const Circular_arc_2& a);
 
+  Circular_arc_2 arc() const
+  {
+    return arc_;
+  }
+
 protected:
   void updateBoundingBox();
 
@@ -83,7 +88,7 @@ protected:
 
   QPen edges_pen;
 
-  Circular_arc_2 arc;
+  Circular_arc_2 arc_;
 };
 
 
@@ -91,7 +96,7 @@ template <typename CK>
 void 
 CircularArcGraphicsItem<CK>::setArc(const Circular_arc_2& a)
 {
-  arc = a;
+  arc_ = a;
   updateBoundingBox();
   update();
 }
@@ -108,9 +113,7 @@ template <typename CK>
 QRectF 
 CircularArcGraphicsItem<CK>::boundingRect() const
 {
-  return QRectF(-500,-500,1000,1000); 
-  Converter<CK> convert;
-  return convert(arc.bbox());
+  return bounding_rect;
 }
 
 
@@ -122,22 +125,20 @@ CircularArcGraphicsItem<CK>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * widget)
 {
-  std::cout << "CircularArcGraphicsItem<CK>::paint" << std::endl;
   painter->setPen(this->edgesPen());
   painterostream = PainterOstream<CK>(painter);
   
-  painterostream << arc;
+  painterostream << arc_;
 }
 
-// We let the bounding box only grow, so that when vertices get removed
-// the maximal bbox gets refreshed in the GraphicsView
 template <typename CK>
 void 
 CircularArcGraphicsItem<CK>::updateBoundingBox()
 {
   Converter<CK> convert;
   prepareGeometryChange();
-  bounding_rect = convert(arc.bbox());
+  //bounding_rect = convert(arc_.supporting_circle().bbox());
+  bounding_rect = convert(arc_.bbox());
 }
 
 

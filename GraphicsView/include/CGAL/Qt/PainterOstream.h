@@ -29,7 +29,13 @@
 namespace CGAL {
 
   template <class CK>
+  class  Circular_arc_point_2;
+
+  template <class CK>
   class  Circular_arc_2;
+
+  template <class CK>
+  class  Line_arc_2;
 
 namespace Qt {
 
@@ -84,9 +90,17 @@ public:
     return *this;
   }
 
+
   PainterOstream& operator<<(const Circle_2<K>& c)
   {
     qp->drawEllipse(convert(c.bbox()));
+    return *this;
+  }
+
+
+  PainterOstream& operator<<(const Circular_arc_point_2<K>& p)
+  {
+    (*this) << Point_2<K>(to_double(p.x()), to_double(p.y()));
     return *this;
   }
 
@@ -103,6 +117,7 @@ public:
     double atarget = std::atan2( -to_double(target.y() - center.y()),
 				 to_double(target.x() - center.x()));
 
+    std::swap(asource, atarget);
     double aspan = atarget - asource;
 
     if(aspan < 0.)
@@ -111,10 +126,16 @@ public:
     const double coeff = 180*16/CGAL_PI;
     qp->drawArc(convert(circ.bbox()), 
 		(int)(asource * coeff), 
-	        (int)(aspan * coeff));
+	         (int)(aspan * coeff));
     return *this;
   }
 
+  PainterOstream& operator<<(const Line_arc_2<K>& arc)
+  {
+    (*this) << Segment_2<K>(Point_2<K>(to_double(arc.source().x()), to_double(arc.source().y())),
+			    Point_2<K>(to_double(arc.target().x()), to_double(arc.target().y())));
+     return *this;
+  }
 };
 
 } // namespace Qt

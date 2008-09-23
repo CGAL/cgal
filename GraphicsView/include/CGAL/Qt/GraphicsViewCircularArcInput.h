@@ -46,6 +46,7 @@ class GraphicsViewCircularArcInput : public GraphicsViewInput
 {
 public:
   GraphicsViewCircularArcInput(QObject *parent, QGraphicsScene* s); 
+  ~GraphicsViewCircularArcInput();
 
 protected:
     
@@ -60,7 +61,10 @@ protected:
 
 private:
   typedef typename K::Circular_arc_2 Circular_arc_2;
+  typedef typename K::Line_arc_2 Line_arc_2;
   typedef typename K::Point_2 Point_2;
+  typedef typename K::Segment_2 Segment_2;
+
   int count;
   QGraphicsLineItem *qline;
   CircularArcGraphicsItem<K> *qcarc;
@@ -83,6 +87,14 @@ GraphicsViewCircularArcInput<K>::GraphicsViewCircularArcInput(QObject *parent, Q
 
 
 template <typename K>
+GraphicsViewCircularArcInput<K>::~GraphicsViewCircularArcInput()
+{
+  delete qline;
+  delete qcarc;
+}
+
+
+template <typename K>
 void 
 GraphicsViewCircularArcInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
@@ -96,18 +108,20 @@ GraphicsViewCircularArcInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event
     qq = event->scenePos();
     qline->setLine(QLineF(qp, qq));
     q = convert(qq);
-    count = 2;
+    if( (event->button() == ::Qt::RightButton) && (p != q) ){
+      qline->hide();
+      emit generate(CGAL::make_object(Line_arc_2(Segment_2(p,q))));
+      count = 0;
+    } else {
+      count = 2;
+    }
   } else if(count == 2){
     qr  = event->scenePos();
     r = convert(qr);
     typename K::Collinear_2 collinear;
     if(! collinear(p,q,r)){
       qcarc->hide();
-      if(CGAL::orientation(p, r, q) == CGAL::COUNTERCLOCKWISE){
-	emit generate(CGAL::make_object(Circular_arc_2(q,r,p)));
-      } else {
-	emit generate(CGAL::make_object(Circular_arc_2(p,r,q)));
-      }
+      emit generate(make_object(qcarc->arc()));
       count = 0;
     }
   }
@@ -123,11 +137,11 @@ GraphicsViewCircularArcInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     qline->hide();
     return;
   } else if(count == 1) {
+    qcarc->hide();
     qq = event->scenePos();
     q = convert(qq);
     qline->setLine(QLineF(qp, qq));
     qline->show();
-    qcarc->hide();
   } else if(count == 2){
     qline->hide();
     qr = event->scenePos();
@@ -137,10 +151,10 @@ GraphicsViewCircularArcInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
       qcarc->hide();
       return;
     } else {
-      if(CGAL::orientation(p, r, q) == CGAL::COUNTERCLOCKWISE) {
-	qcarc->setArc(Circular_arc_2(q,r,p));
-      } else {
+      if(CGAL::orientation(p, q, r) == CGAL::RIGHT_TURN) {
 	qcarc->setArc(Circular_arc_2(p,r,q));
+      } else {
+	qcarc->setArc(Circular_arc_2(q,r,p));
       }
       qcarc->show();
     }
