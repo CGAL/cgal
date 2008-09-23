@@ -1249,9 +1249,6 @@ Boolean_set_operations_2/doc_tex/Boolean_set_operations_2_ref/GpsTraitsGeneralPo
 Boolean_set_operations_2/examples/Boolean_set_operations_2/char_g.dat -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/char_m.dat -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/pgn_holes.dat -text
-Boolean_set_operations_2/examples/Boolean_set_operations_2/pgn_holes3.dat -text
-Boolean_set_operations_2/examples/Boolean_set_operations_2/pgn_holes4.dat -text
-Boolean_set_operations_2/examples/Boolean_set_operations_2/pgn_holes5.dat -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/test.dxf -text svneol=unset#application/octet-stream
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_agg_op.cmd eol=lf
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_bop.cmd eol=lf
