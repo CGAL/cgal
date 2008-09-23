@@ -138,8 +138,8 @@ Version 1.33.1 or later. In case
 the \boost\ libraries are not installed on your system already, you
 can obtain them from \boostpage. For Windows you can download an
 installer from \path'http://www.boost-consulting.com/download.html'.
-Since \ccc{Boost.Thread} is required, make sure to either install the precompiled 
-{\em static} binaries for your compiler or to build \ccc{libboost-thread} appropiately.
+Since \texttt{Boost.Thread} is required, make sure to either install the precompiled 
+{\em static} binaries for your compiler or to build \texttt{libboost-thread} appropiately.
 
 Having \gmp\ version 4.1.4 or later and \mpfr\ version 2.0.1 or later
 installed is highly recommended. These libraries can be obtained from
@@ -240,22 +240,331 @@ some user choices such as which cgal component to buid, etc... Gathering all the
 {\em configuration}, it is the very first step in the process and \cmake\ is the tool responsible for that. 
 When \cmake\ finishes the configuration, it produces a makefile or project file than you can use to build cgal.
 
-The simplest way to start the configuration is to run a command-line tool called \ccc{cmake} passing 
+The simplest way to start the configuration is to run a command-line tool called \texttt{cmake} passing 
 as argument the root directory of \cgal. For example:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd CGAL 
+  cd <CGALROOT>
   cmake . # Notice the dot to indicate the current directory.
 \end{verbatim}
 }
 
 This executes a special-purpose \cmake\ script
-\footnote{Called \ccc{CMakeLists.txt} and located in the \cgal\ root} 
+\footnote{Called \texttt{CMakeLists.txt} and located in the \cgal\ root} 
 which attempts to determine the value of all the configuration parameters needed to build the \cgal\
 libraries and any programs using \cgal. 
 
-Here are the first lines of a typical output in a Windows machine:
+The very first thing \cmake\ does is to detect the compiler to use.
+This detection is performed by a special cmake module called a {\em generator}. A
+\cmake\ generator understands the build requirements for a particular compiler/linker
+ and generates the necessary files for that. For example, the 
+{\em UNIX Makefiles} generator understands the GNU toolchain (g++,gcc,ld etc) and produces makefiles
+which can be used to build a target by a simple call to \texttt{make}.
+Likewise, the {\em Visual Studio 2005} generator produces solution and project files and can be manually
+launched in the VS IDE to build the target.
+
+Each platform has a default generator so you only need to select one when the default is
+not what you want. 
+\footnote{Running \texttt{cmake} with no parameters in a command-line prints the list of available generators supported 
+by your platform and \cmake\ version. If the generator you need is not listed there, you can
+try a newer \cmake\ version since generators are hardcoded into \cmake\ and more and
+more generators are added with each release.}
+For example, under Windows, it is possible to generate {\em NMakefiles}
+instead of Visual Studio project files in order to build the library via \texttt{nmake}.
+
+Since the choice of generator determines the type of build files to generate, in some cases
+you choose a particular generator as a mean to choose a specific compiler (because they use different 
+build files. For example, the following generates solution files for use in Visual C++ 9.0:
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+  cd <CGALROOT> 
+  cmake -G"Visual Studio 9 2008" . 
+\end{verbatim}
+}
+
+In other cases, however, the generator doesn't directly identify a specific compiler but a tool chain.
+For example, the \texttt{UNIX Makefiles} generator produces \texttt{makefiles} wich call some auto-detected
+command-line compiler, like \texttt{gcc}. If you need the makefiles to use a different compiler you need to
+say so in the call to cmake, as in this example:
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+  cd <CGALROOT> 
+  cmake -DCMAKE_CXX_COMPILER:FILEPATH=some_non_default_g++ . 
+\end{verbatim}
+}
+
+
+\cmake\ mantains configuration parameters in so-called {\em cmake variables}, like the \texttt{CMAKE\_CXX\_COMPILER}
+in the example above. These variables {\em are not environment variables} and they must be set and modified in
+certain specific ways as explained below. Some of the cmake variables represent user choices, such as
+\texttt{WITH\_examples} or \texttt{CMAKE\_BUILD\_TYPE=Release}, while others indicate the details of a third-party library, 
+such as \texttt{Boost\_INCLUDE\_DIR} or the compiler flags to use, such as \texttt{CMAKE\_CXX\_FLAGS}. 
+
+The command line tool \texttt{cmake} accepts cmake variables as arguments of the form \texttt{-D<VAR>:<TYPE>=<VALUE>}, as
+in the example above, but this is only useful if you already know which variables needs to be explicitely defined.
+\cmake\ provides an interactive tool which lets you configure \cgal\ by suppling the missing pieces 
+which \cmake\ indicates. In Windows, this is the \texttt{CMakeSetup.exe} program, while in Unix/Linux/Mac it is \texttt{ccmake}
+(or \texttt{cmake-gui} if you have a recent cmake version). 
+
+These interactive configuration tools execute the cmake script just like the non-interactive \texttt{cmake} does. It assign
+values to all the cmake variables used in the configuration and presents the variables to you. You can then change 
+any of the values (such as those representing user choices: \texttt{WITH\_<choice>}) and once they are all OK you can select 
+\texttt{Configure} to finish. It will produce the build files just like the non-interactive cmake.
+
+Some variables however, like those corresponding to the path of required third-party dependencies, are critical: they 
+must be defined with proper values. If the script fails to locate a required dependency, for example, the corresponding variable,
+say \texttt{Boost\_INCLUDE\_DIR}, will have a \texttt{NOTFOUND} value and will show up distinctively (i.e. in red in the GUI cmake).
+\cmake\ will refuse to generate the build files until all these variables are given proper values, so you need
+to define them and press \texttt{Configure} iteratively until there are no more critical variables left undefined. Only then
+pressing \texttt{Configure} will finish the configuration, build the files and return.
+
+\begin{ccAdvanced}
+\cmake\ keeps the variables that a user can manipulate in a so-called {\em cmake cache}, a simple text file specifically 
+named \texttt{CMakeCache.txt} whose entries are of the form VARIABLE:TYPE=VALUE. Advanced users can just manually edit this 
+file instead of going through the interactive configuration session explained before.
+\end{ccAdvanced}
+
+
+The configuration process not only determines the location of the required dependencies, it also dynamically generates a
+\texttt{compiler\_config.h} file which encodes the properties of your system and a special file named 
+\texttt{CGALConfig.cmake} which is used to build programs using \cgal\ (this file will be explained later).
+
+\subsubsection{\cgal\ components}
+
+For convenience, \cgal\ is physically separated into {\em library components} in order to push some auxiliary 
+functionality outside of the main library. During configuration, each component (except the main library) is selected 
+via a cmake variable of the form {\tt WITH\_<component>}. All components are {\tt ON} by default.
+
+\begin{center}\index{cgal!components}\index{cgal components}
+  \renewcommand{\arraystretch}{1.3}
+  \gdef\lcTabularBorder{2}
+  \begin{tabular}{|l|l|l|l|} \hline
+    \textbf{library} & \textbf{cmake variable} & \textbf{functionality} & \textbf{dependencies}
+    \\\hline\hline
+    {\tt CGAL} & {\em none} & Main library (all kernels and packages) & GMP, MPFR, Boost (headers) and Boost.Thread (library)
+    \\\hline
+    {\tt CGAL-core++} & {\tt WITH\_CGALCore} & The CORE library used for robust numerical and geometric computation.
+    \footnote{CGAL-core++ is not part of \cgal, it is a custom version the CORE library ditributed by \cgal\
+              for the user convenience and it has it's own license. }
+    & GMP and MPFR
+    \\\hline
+    {\tt CGAL-Qt3} & {\tt WITH\_CGALQt3} & \ccc{CGAL::Qt_widget} used by some old Qt3-based demos & Qt3 and OpenGL
+    \\\hline
+    {\tt CGAL-Qt4} & {\tt WITH\_CGALQt4} & \ccc{CGAL::GraphicsView} used by the Qt4-based demos & Qt4 and OpenGL
+    \\\hline
+    {\tt CGAL-ImageIO} & {\tt WITH\_CGALimageIO} & Utilities to read and write image files in various formats 
+    & OpenGL and ZLib and VTK\footnote{Only if VTK is available}
+    \\\hline
+    {\tt CGAL-PDB} & {\tt WITH\_CGALPDB} & \ccc{CGAL::PDB} used to manipulate {\tt PDB} files & {\em none}
+    \\\hline
+  \end{tabular}
+\end{center}
+
+If you turn off the configuration of a component you can still configure it manually from the component source directory:
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+  cd <CGALROOT>/src/CGALQt4 
+  cmake . # configures only the CGAL-Qt4 component
+\end{verbatim}
+}
+
+Notice that all kernels and packages are bundled toghether in the main library; the components are only to separate
+auxiliary functionality.
+
+\cgal\ is ditributed with a large collection of examples and demos. By default, these are all configured along with
+the \cgal\ libraries. When configured, they are not automatically built along with the libraries, you do that
+by selecting the {\tt examples} or {\tt demo} make targets as explained in the following section, but you can set the 
+variables {\tt WITH\_examples=OFF} and {\tt WITH\_demo=OFF} to prevent configuration of examples and demos alltoghether.
+
+\subsubsection{Library variants}
+
+The cmake variable {\tt CMAKE\_BUILD\_TYPE} can take the values {\tt Release} or {\tt Debug} to indicate how to build
+the libraries. The default depends on the platform so it is recommended that you always indicate the build type explicitely.
+\footnote{\cmake\ suports additional build types but those are not supported by \cgal\, thus you should choose only
+{\tt Release} or {\tt Debug}}
+
+In windows, the \cgal\ libraries are neccesarily static\footnote{There is currently no support for DLLs under Windows}
+({\tt .lib}), but in the other platforms, including {\tt cygwin}, they are by default shared libraries ({\tt .so}).
+You can choose to produce static libs instead by setting the cmake variable {\tt CMAKE\_SHARED\_LIBS=FALSE} 
+
+These setting affect the variants of third-party libraries selected whenever the choice is available.
+
+\subsubsection{Multiple variants}\label{sec:cmake-out-of-source}
+
+While you can choose between release/debug builds, shared/static libraries\footnote{Except on windows}, etc...
+it is not possible to have both variants on a single configuration. To do that you need to run cmake in a 
+different directory for each variant, each with its own selection of configuration parameters.
+
+\cmake\ stores the resulting makefiles/projectfiles, along with several temporary and auxiliary files such
+as the variables cache, in the directory where it is executed, called {\tt CMAKE\_BINARY\_DIR}, but it
+takes the source files and configuration scripts from whatever directory is indicated, called
+{\tt CMAKE\_SOURCE\_DIR} 
+
+The binary and source directory need not be the same, thus, you can configure multiple variants by creating a
+distinct directory for each one and running cmake from there. This is known in \cmake\ as 
+{\em out-of-sources configuration}, as opposite to an {\em in-source configuration} as the one shown in the 
+previous short examples.
+
+The \cgal\ directory tree contains directories \cgaldir/cmake/platforms and you can create your 
+variant subdirectory in there:
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+mkdir <CGALROOT>/cmake/platforms/debug
+cd <CGALROOT>/cmake/platforms/debug
+cmake -DCMAKE_BUILD_TYPE=Debug ../../..
+
+mkdir <CGALROOT>/cmake/platforms/release
+cd <CGALROOT>/cmake/platforms/release
+cmake -DCMAKE_BUILD_TYPE=Release ../../..
+\end{verbatim}
+}
+
+\subsubsection{Compiler and Linker flags}
+
+\cmake\ determines the set of compiler and linker flags to use based on the target compiler and automatically defines
+the following cmake variables:
+
+\begin{enumerate}
+\item {\tt CMAKE\_CXX\_FLAGS}
+\item {\tt CMAKE\_CXX\_FLAGS\_RELEASE}
+\item {\tt CMAKE\_CXX\_FLAGS\_DEBUG}
+\item {\tt CMAKE\_MODULE\_LINKER\_FLAGS}
+\item {\tt CMAKE\_MODULE\_LINKER\_FLAGS\_RELEASE}
+\item {\tt CMAKE\_MODULE\_LINKER\_FLAGS\_DEBUG}
+\item {\tt CMAKE\_SHARED\_LINKER\_FLAGS}
+\item {\tt CMAKE\_SHARED\_LINKER\_FLAGS\_RELEASE}
+\item {\tt CMAKE\_SHARED\_LINKER\_FLAGS\_DEBUG}
+\item {\tt CMAKE\_EXE\_LINKER\_FLAGS}
+\item {\tt CMAKE\_EXE\_LINKER\_FLAGS\_RELEASE}
+\item {\tt CMAKE\_EXE\_LINKER\_FLAGS\_DEBUG}
+\end{enumerate}
+
+The {\tt MODULE} family of flags correspond to static libraries, the {\tt SHARED} flags to shared libraries
+and {\tt EXE} flags to executables.
+
+The effective flags are always a concatenation of the general and build-type specific flags, such as
+{\tt CMAKE\_CXX\_FLAGS} {\em then} {\tt CMAKE\_CXX\_FLAGS\_RELEASE}.
+
+You can {\em completely override} any of these variables if you pass them on the command-line {\tt cmake}
+Alternatively, you can change the values given by \cmake\ using the interactive cmake tools
+\footnote{{\tt CMakeSetup.exe, ccmake or cmake-guid}}  This is usefull for example to produce a fast debug
+variant without diagnostics (-DNDEBUG added). 
+
+If you do not want to override the automatically configured flags but only add more, you can 
+define any of the following cmake variables, which are counterparts of the default
+variables but starting with {\tt CGAL} instead of {\tt CMAKE}:
+
+\begin{enumerate}
+\item {\tt CGAL\_CXX\_FLAGS}
+\item {\tt CGAL\_CXX\_FLAGS\_RELEASE}
+\item {\tt CGAL\_CXX\_FLAGS\_DEBUG}
+\item {\tt CGAL\_MODULE\_LINKER\_FLAGS}
+\item {\tt CGAL\_MODULE\_LINKER\_FLAGS\_RELEASE}
+\item {\tt CGAL\_MODULE\_LINKER\_FLAGS\_DEBUG}
+\item {\tt CGAL\_SHARED\_LINKER\_FLAGS}
+\item {\tt CGAL\_SHARED\_LINKER\_FLAGS\_RELEASE}
+\item {\tt CGAL\_SHARED\_LINKER\_FLAGS\_DEBUG}
+\item {\tt CGAL\_EXE\_LINKER\_FLAGS}
+\item {\tt CGAL\_EXE\_LINKER\_FLAGS\_RELEASE}
+\item {\tt CGAL\_EXE\_LINKER\_FLAGS\_DEBUG}
+\end{enumerate}
+
+
+\subsection{Building \cgal\ libraries}
+
+If configuration succeeded there will be certain {\em build files} ready to build the libraries.
+The nature of the build files depend on the generator used during configuration, but in all cases they 
+will contain several {\em targets}, one per component,  and a default global target corresponding 
+to all the library components at once.
+
+For example, in a unix-like environment the default generator produces makefiles and you would
+use the {\tt make} command-line tool as follow:
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+
+cd <CGALROOT>
+cmake .
+
+# build all the selected components at once
+make 
+
+# build each selected component independently,
+# continuing with the next component in case of error
+# due to the '-k' switch.
+
+make -k CGAL CGAL_CORE CGAL_PDB CGAL_ImageIO CGAL_Qt3 CGAL_Qt4
+
+\end{verbatim}
+}
+
+Notice that by make rules, an error in the default target will abort compilation/linking of
+all the \cgal\ components (which are part of the same single default target) even if {\tt -k} 
+is specified, so you need to list the components explicitely to prevent that.
+
+If you have not turned off configuration of examples and/or demos, there will be additional
+targets named {\tt examples} and {\tt demo}, plus one target for each example and each demo.
+None of these targets are included in the default so you need to build them explicitely
+{\em after} the \cgal\ libraries have been successfully compiled and linked
+\footnote{The targets {\tt examples} and {\tt demo} include themselves all the targets
+for examples and demos respectively.}.
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+
+# build all examples at once
+make examples 
+
+# build only the Striaght Skeleton demo
+make Straight_skeleton_2_demo
+
+\end{verbatim}
+}
+
+The libraries will all be located in a subdirectory {\tt /lib} under {\tt <CMAKE\_BINARY\_DIR>}
+\footnote{Which need not be the cgal root directory as explained in Section ~\ref{sec:cmake-outofsource}}
+
+With generators other than {\tt UNIX Makefiles} the resulting build files are solution/project files which
+should be launched in an IDE, such as Visual Studio or KDevelop3. They will contain the targets described
+above which you can manually build as any other solution/project within your IDE.
+
+\begin{ccAdvanced}
+The build files produced by cmake are autoconfigured. That is, if you change any 
+of the dependencies, the build step automatically goes all the way back to the configure step
+during the building. This way, once the target has been configured the very first time by
+invoking cmake, you don't necessarily need to invoke \texttt{cmake} again. Rebuilding will call
+itself \texttt{cmake} and re-generate the build file whenever needed. Keep this in mind if you
+configure \cgal\ for the Visual Studio IDE since a build could then change the solution/project 
+file in-place and VS will prompt you to reload it.
+\end{ccAdvanced}
+
+
+\subsection{Installing \cgal\ libraries}
+
+
+
+\section{Configuring and Building Programs Using \cgal}
+
+
+\section{Example} 
+
+Here is an example output on a Windows machine with VC8 installed, using \cmake\ 2.6,
+and the following command-line call to {\tt cmake}:
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+cmake -DWITH_examples=false 
+      -DWITH_demo=false 
+      -DCMAKE_BUILD_TYPE=Release 
+      ../../..
+\end{verbatim}
+}
+
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
@@ -267,98 +576,93 @@ Here are the first lines of a typical output in a Windows machine:
 -- Check for working CXX compiler: cl -- works
 -- Detecting CXX compiler ABI info
 -- Detecting CXX compiler ABI info - done
+-- CGAL_REFERENCE_CACHE_DIR=
+-- Building static libraries
+-- Targetting Visual Studio 8 2005
+-- Target build enviroment supports auto-linking
+-- Using VC80 compiler.
+-- Build type: Release
+-- Generator uses intermediate configuration directory: $(OutDir)
+-- CMake version: 2.6.1
+-- System: Windows
+-- CGAL_MAJOR_VERSION=3
+-- CGAL_MINOR_VERSION=4
+-- CGAL_BUILD_VERSION=442
+-- CGAL_SONAME_VERSION=3
+-- CGAL_SOVERSION     =3.0.0
+-- Boost version: 1.35.0
+-- Found the following Boost libraries:
+--   thread
+-- Boost include:      C:/Program Files/boost/boost_1_35_0
+-- Boost libraries:    
+-- Boost definitions:  
+-- USING BOOST_VERSION = '1.35.0'
+-- Could NOT find GMP
+-- Could NOT find MPFR
+-- Performing Test CGAL_CFG_DENORMALS_COMPILE_BUG - Success
+-- Performing Test CGAL_CFG_IEEE_754_BUG - Success
+-- Performing Test CGAL_CFG_ISTREAM_INT_BUG - Success
+-- Performing Test CGAL_CFG_LONGNAME_BUG - Failed
+-- Performing Test CGAL_CFG_MATCHING_BUG_5 - Success
+-- Performing Test CGAL_CFG_MATCHING_BUG_6 - Failed
+-- Performing Test CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG - Failed
+-- Performing Test CGAL_CFG_NET2003_MATCHING_BUG - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_ARRAY - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_DECLTYPE - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_DELEGATING_CONSTRUCTORS - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_ISFINITE - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_LONG_LONG - Success
+-- Performing Test CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES - Failed
+-- Performing Test CGAL_CFG_NO_LIMITS - Success
+-- Performing Test CGAL_CFG_NO_NEXTAFTER - Failed
+-- Performing Test CGAL_CFG_NO_STATEMENT_EXPRESSIONS - Failed
+-- Performing Test CGAL_CFG_NO_STL - Success
+-- Performing Test CGAL_CFG_NO_TMPL_IN_TMPL_PARAM - Success
+-- Performing Test CGAL_CFG_NO_TR1_ARRAY - Failed
+-- Performing Test CGAL_CFG_NUMERIC_LIMITS_BUG - Success
+-- Performing Test CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG - Success
+-- Performing Test CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG - Failed
+-- Performing Test CGAL_CFG_USING_BASE_MEMBER_BUG_2 - Success
+-- CMAKE_INSTALL_PREFIX=C:/Program Files/CGAL
+-- USING CUSTOM_CXXFLAGS = ' -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS   -D_SECURE_SCL=0'
+-- USING        CXXFLAGS = ' /DWIN32 /D_WINDOWS /W3 /Zm1000 /EHsc /GR /MD /O2 /Ob2 /D NDEBUG'
+-- USING CUSTOM_LDFLAGS = '  '
+-- USING        LDFLAGS = ' '
+-- USING CUSTOM_EXEFLAGS = '  '
+-- USING        EXEFLAGS = ' /MANIFEST /STACK:10000000 /machine:I386 /INCREMENTAL:NO'
+-- Configuring CGALCore. Set WITH_CGALCore to FALSE to unselect it.
+-- CGAL-core++ needs GMP and MPFR, cannot be configured.
+-- Configuring CGALimageIO. Set WITH_CGALimageIO to FALSE to unselect it.
+-- Could NOT find ZLIB
+-- CGAL-ImageIO needs ZLib and OpenGL, cannot be configured.
+-- Configuring CGALPDB. Set WITH_CGALPDB to FALSE to unselect it.
+-- Configuring CGALQt. Set WITH_CGALQt to FALSE to unselect it.
+-- CGAL-Qt3 needs Qt3, cannot be configured.
+-- Configuring CGALQt4. Set WITH_CGALQt4 to FALSE to unselect it.
+-- Looking for Q_WS_X11
+-- Looking for Q_WS_X11 - not found.
+-- Looking for Q_WS_WIN
+-- Looking for Q_WS_WIN - found
+-- Looking for Q_WS_QWS
+-- Looking for Q_WS_QWS - not found.
+-- Looking for Q_WS_MAC
+-- Looking for Q_WS_MAC - not found.
+-- OpenGL include:     
+-- OpenGL libraries:   glu32;opengl32
+-- OpenGL definitions: 
+-- Qt4 include:        C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/include
+-- Qt4 libraries:      optimized;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/qtmain.lib;debug;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/qtmaind.lib;optimized;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtOpenGL4.lib;debug;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtOpenGLd4.lib;opengl32.lib glu32.lib gdi32.lib user32.lib;optimized;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtGui4.lib;debug;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtGuid4.lib;imm32;winmm;optimized;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtCore4.lib;debug;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtCored4.lib;ws2_32
+-- Qt4 definitions:    -DQT_DLL
+-- moc executable:     C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/bin/moc.exe
+-- uic executable:     C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/bin/uic.exe
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Work/Active/GeometryFactory/CGAL/Autotest/CGAL-3.4-I-442/cmake/platforms/a
 \end{verbatim}
 }
 
-As you can see, the very first thing \cmake\ does is to detect the compiler to use.
-This detection is performed by a special cmake module called a {\em generator}. A
-\cmake\ generator understands the build requirements for a particular compiler/linker
- and generates the necessary files for that. For example, the 
-{\em UNIX Makefiles} generator understands the GNU toolchain (g++,gcc,ld etc) and produces makefiles
-which can be used to build a target by a simple call to \ccc{make}.
-Likewise, the {\em Visual Studio 2005} generator produces solution and project files and can be manually
-launched in the VS IDE to build the target.
-
-Each platform has a default generator so you only need to select one when the default is
-not what you want. 
-\footnote{Running \ccc{cmake} with no parameters in a command-line prints the list of available generators supported 
-by your platform and \cmake\ version. If the generator you need is not listed there, you can
-try a newer \cmake\ version since generators are hardcoded into \cmake\ and more and
-more generators are added with each release.}
-For example, under Windows, it is possible to generate {\em NMakefiles}
-instead of Visual Studio project files in order to build the library via \ccc{nmake}.
-
-Since the choice of generator determines the type of build files to generate, in some cases
-you choose a particular generator as a mean to choose a specific compiler (because they use different 
-build files. For example, the following generates solution files for use in Visual C++ 9.0:
-
-{\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
-  cd CGAL 
-  cmake -G"Visual Studio 9 2008" . 
-\end{verbatim}
-}
-
-In other cases, however, the generator doesn't directly identify a specific compiler but a tool chain.
-For example, the \ccc{UNIX Makefiles} generator produces \ccc{makefiles} wich call some auto-detected
-command-line compiler, like \ccc{gcc}. If you need the makefiles to use a different compiler you need to
-say so in the call to cmake, as in this example:
-
-{\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
-  cd CGAL 
-  cmake -DCMAKE_CXX_COMPILER:FILEPATH=some_non_default_g++ . 
-\end{verbatim}
-}
-
-
-\cmake\ mantains configuration parameters in so-called {\em cmake variables}, like the \ccc{CMAKE_CXX_COMPILER}
-in the example above. These variables {\em are not environment variables} and they must be set and modified in
-certain specific ways as explained below. Some of the cmake variables represent user choices, such as
-\ccc{WITH_examples} or \ccc{CMAKE_BUILD_TYPE=Release}, while others indicate the details of a third-party library, 
-such as \ccc{Boost_INCLUDE_DIR} or the compiler flags to use, such as \ccc{CMAKE_CXX_FLAGS}. 
-
-The command line tool \ccc{cmake} accepts cmake variables as arguments of the form \ccc{-D<VAR>:<TYPE>=<VALUE>}, as
-in the example above, but this is only useful if you already know which variables needs to be explicitely defined.
-\cmake\ provides an interactive tool which lets you configure \cgal\ by suppling the missing pieces 
-which \cmake\ indicates. In Windows, this is the \ccc{CMakeSetup.exe} program, while in Unix/Linux/Mac it is \ccc{ccmake}
-(or \ccc{cmake-gui} if you have a recent cmake version). 
-
-These interactive configuration tools execute the cmake script just like the non-interactive \ccc{cmake} does. It assign
-values to all the cmake variables used in the configuration and presents the variables to you. You can then change 
-any of the values (such as those representing user choices: \ccc{WITH_<choice>}) and once they are all OK you can select 
-\ccc{Configure} to finish. It will produce the build files just like the non-interactive cmake.
-
-Some variables however, like those corresponding to the path of required third-party dependencies, are critical: they 
-must be defined with proper values. If the script fails to locate a required dependency, for example, the corresponding variable,
-say \ccc{Boost_INCLUDE_DIR}, will have a \ccc{NOTFOUND} value and will show up distinctively (i.e. in red in the GUI cmake).
-\cmake\ will refuse to generate the build files until all these variables are given proper values, so you need
-to define them and press \ccc{Configure} iteratively until there are no more critical variables left undefined. Only then
-pressing \ccc{Configure} will finish the configuration, build the files and return.
-
-\begin{ccAdvanced}
-\cmake\ keeps the variables that a user can manipulate in a so-called {\em cmake cache}, a simple text file specifically 
-named \ccc{CMakeCache.txt} whose entries are of the form VARIABLE:TYPE=VALUE. Advanced users can just manually edit this 
-file instead of going through the interactive configuration session explained before.
-\end{ccAdvanced}
-
-
-The configuration process not only determines the location of the required dependencies. It also dynamically generates a
-\ccc{compiler_config.h} file which encodes the properties of your system. It also generates a special file named 
-\ccc{CGALConfig.cmake} which is used to build programs using \cgal\ (the usage of this file will be explained later).
-
-\subsection{Building \cgal libraries}
-
-
-\begin{ccAdvanced}
-The makefiles/project-files produced by cmake are autoconfigured. That is, if you change any 
-of the dependencies, the build step automatically goes all the way back to the configure step
-during the building. This way, once the target has been configured the very first time by
-invoking cmake, you don't neccesarily need to invoke \ccc{cmake} again and invoking just \ccc{make}
-(or building from within an IDE) will call itself \ccc{cmake} and regenerate the makefile/project-file
-if needed. Keep this in mind if you configure \cgal\ for the Visual Studio IDE since a build
-can change the project file in place and VS will prompt you to reload it.
-\end{ccAdvanced}
 
 %%
 %% EOF
