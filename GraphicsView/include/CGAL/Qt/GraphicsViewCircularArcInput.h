@@ -103,7 +103,11 @@ GraphicsViewCircularArcInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event
     typename K::Collinear_2 collinear;
     if(! collinear(p,q,r)){
       qcarc->hide();
-      emit generate(CGAL::make_object(Circular_arc_2(p,q,r)));
+      if(CGAL::orientation(p, r, q) == CGAL::COUNTERCLOCKWISE){
+	emit generate(CGAL::make_object(Circular_arc_2(q,r,p)));
+      } else {
+	emit generate(CGAL::make_object(Circular_arc_2(p,r,q)));
+      }
       count = 0;
     }
   }
