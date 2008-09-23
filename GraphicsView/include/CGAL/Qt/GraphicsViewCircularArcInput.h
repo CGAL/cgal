@@ -131,8 +131,11 @@ GraphicsViewCircularArcInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
       qcarc->hide();
       return;
     } else {
-      if(CGAL::orientation(p, q, r) != CGAL::COUNTERCLOCKWISE) std::swap(p, r);
-      qcarc->setArc(Circular_arc_2(p,q,r));
+      if(CGAL::orientation(p, r, q) == CGAL::COUNTERCLOCKWISE) {
+	qcarc->setArc(Circular_arc_2(q,r,p));
+      } else {
+	qcarc->setArc(Circular_arc_2(p,r,q));
+      }
       qcarc->show();
     }
   }

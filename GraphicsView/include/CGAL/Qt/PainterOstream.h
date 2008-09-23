@@ -27,6 +27,10 @@
 #include <CGAL/Qt/Converter.h>
 
 namespace CGAL {
+
+  template <class CK>
+  class  Circular_arc_2;
+
 namespace Qt {
 
 template <typename K>
@@ -86,39 +90,31 @@ public:
     return *this;
   }
 
-#if 0
+
   PainterOstream& operator<<(const Circular_arc_2<K>& arc)
   {
     const typename K::Circle_2 & circ = arc.supporting_circle();
     const typename K::Point_2 & center = circ.center();
     const typename K::Circular_arc_point_2 & source = arc.source();
     const typename K::Circular_arc_point_2 & target = arc.target();
-    double radius = std::sqrt(CGAL::to_double(circ.squared_radius()));
 
+    double asource = std::atan2( -to_double(source.y() - center.y()),
+				 to_double(source.x() - center.x())); 
+    double atarget = std::atan2( -to_double(target.y() - center.y()),
+				 to_double(target.x() - center.x()));
 
-    double a   = std::atan2( to_double(source.y() - center.y()),
-		             to_double(source.x() - center.x())); 
-    double a2p = std::atan2( to_double(target.y() - center.y()),
-		             to_double(target.x() - center.x()));
+    double aspan = atarget - asource;
 
-    std::cout << "a = " << a << "  a2p = " << a2p << std::endl;
-    if (a2p <= a)
-        a2p += 2 * CGAL_PI;
+    if(aspan < 0.)
+      aspan += 2 * CGAL_PI;
 
-    double alen2 = a - a2p;
-
-    double diff = 180/CGAL_PI*16;
-    
-    std::cout << "start " << (int)(a * diff) << std::endl;
-    std::cout << "angle " << (int)(alen2 * diff) << std::endl;
-    
-    //    qp->drawEllipse(convert(circ.bbox()));
+    const double coeff = 180*16/CGAL_PI;
     qp->drawArc(convert(circ.bbox()), 
-				 (int)(a * diff), 
-				 (int)(alen2 * diff));
+		(int)(asource * coeff), 
+	        (int)(aspan * coeff));
     return *this;
   }
-#endif
+
 };
 
 } // namespace Qt
