@@ -18,6 +18,7 @@
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 #include <CGAL/Bigfloat_interval_traits.h>
 #include <CGAL/Algebraic_kernel_d/Float_traits.h>
+#include <CGAL/Polynomial_type_generator.h>
 
 #include <vector>
 
@@ -74,7 +75,8 @@ public:
     typedef typename Bitstream_coefficient_kernel::Bigfloat_interval BFI;
     typedef typename CGAL::Bigfloat_interval_traits<BFI>::Boundary BF; 
     
-    typedef  CGAL::Polynomial<Coefficient> POLY; 
+    typedef typename 
+        CGAL::Polynomial_type_generator<Coefficient,1>::Type POLY; 
     typedef  Bitstream_descartes_rndl_tree_traits
         < Bitstream_coefficient_kernel > Self;
 

@@ -18,9 +18,8 @@
 #define CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_REAL_REP_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/Polynomial_traits_d.h>
-#include <CGAL/Polynomial/may_have_common_factor.h>
 #include <boost/optional.hpp>
 
 CGAL_BEGIN_NAMESPACE
@@ -47,7 +46,7 @@ private:
     typedef Field_                                  Field;
     
     
-    typedef CGAL::Polynomial<Coefficient>            Poly;
+    typedef typename CGAL::Polynomial_type_generator<Coefficient,1>::Type Poly;
     typedef CGAL::Sign                              TRI_BOOL;
 
     typedef Algebraic_real_rep <Coefficient,Field>     Self;   

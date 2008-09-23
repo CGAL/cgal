@@ -58,7 +58,8 @@ void test_descartes(){
         CGAL::CGALi::test_real_root_isolator<Isolator>();
     }{
         typedef CGAL::Sqrt_extension<Integer,Integer> EXT;
-        typedef CGAL::Polynomial<EXT> Polynomial;
+        typedef typename 
+            CGAL::Polynomial_type_generator<EXT,1>::Type Polynomial;
         typedef CGAL::CGALi::Bitstream_descartes<
             CGAL::CGALi::Bitstream_descartes_rndl_tree_traits
             <CGAL::CGALi::Bitstream_coefficient_kernel<EXT> > > Isolator;

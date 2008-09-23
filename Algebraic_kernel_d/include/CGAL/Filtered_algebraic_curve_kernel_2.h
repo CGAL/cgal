@@ -219,8 +219,12 @@ public:
 
         typedef typename Xy_coordinate_2::Boundary_interval Interval;
         
-        typedef CGAL::Polynomial<Boundary> Poly_rat_1;
-        typedef CGAL::Polynomial<Poly_rat_1> Poly_rat_2;
+        typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
+            ::template Rebind<Boundary,1>::Other::Type
+            Poly_rat_1;
+        typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
+            ::template Rebind<Boundary,2>::Other::Type
+            Poly_rat_2;
         
         Sign operator()(const Curve_analysis_2& ca,
                 const Xy_coordinate_2& r) const

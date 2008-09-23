@@ -22,8 +22,6 @@
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Exceptions.h>
 
-#include <CGAL/Polynomial/sturm_habicht_sequence.h>
-
 #include <boost/numeric/interval.hpp>
 #include <vector>
 #include <algorithm>
@@ -69,7 +67,9 @@ public:
     typedef typename Algebraic_kernel_2::Polynomial_2 Polynomial_2;
 
     // \brief Rational polynomials
-    typedef CGAL::Polynomial<Boundary> Poly_rat_1;
+    typedef typename
+    CGAL::Polynomial_traits_d<Polynomial_2>
+        ::template Rebind<Boundary,1>::Other::Type Poly_rat_1;
 
     // \brief Type for x-values
     typedef typename Curve_analysis_2::Algebraic_real_1 Algebraic_real_1;

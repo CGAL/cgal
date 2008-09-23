@@ -28,8 +28,8 @@ CGAL_BEGIN_NAMESPACE
         ::Arithmetic_kernel Arithmetic_kernel; \
     typedef typename Arithmetic_kernel::Integer Integer; \
     typedef typename Algebraic_kernel_1::Algebraic_real_1 Algebraic_real_1;   \
-        typedef CGAL::Polynomial< Coefficient > Polynomial_1; \
-    typedef CGAL::Polynomial< Polynomial_1 > Polynomial_2; \
+    typedef typename Algebraic_kernel_2::Polynomial_1 Polynomial_1; \
+    typedef typename Algebraic_kernel_2::Polynomial_2 Polynomial_2;      \
     typedef typename Algebraic_kernel_1::Solve_1 Solve_1;       \
     typedef CGAL::CGALi::Bitstream_descartes_rndl_tree_traits \
         < CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha \

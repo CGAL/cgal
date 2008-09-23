@@ -20,7 +20,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 
-#include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Arithmetic_kernel.h>
@@ -71,12 +71,11 @@ class Algebraic_real_pure :
         public
 ::CGAL::Handle_with_policy< RepClass, HandlePolicy > {    
 public :
-    typedef Coefficient_                                            Coefficient;
-    typedef Rational_                                               Rational;
-   
-    typedef CGAL::Polynomial<Coefficient>                            Polynomial;   
-    
-    
+    typedef Coefficient_                                         Coefficient;
+    typedef Rational_                                            Rational;
+    typedef typename
+        CGAL::Polynomial_type_generator<Coefficient,1>::Type     Polynomial;
+  
     typedef RepClass    Int_rep;
 
     typedef ::CGAL::Handle_with_policy<Int_rep,HandlePolicy>                       Base;
@@ -414,7 +413,7 @@ operator >> (std::istream& is,
     }
     case CGAL::IS_GENERAL:{
         Rational low, high;
-        CGAL::Polynomial<Coefficient> poly;
+        typename CGAL::Polynomial_type_generator<Coefficient,1>::Type poly;
         is >> poly;
         swallow(is, '[');// read the "["
         is >> iformat(low);

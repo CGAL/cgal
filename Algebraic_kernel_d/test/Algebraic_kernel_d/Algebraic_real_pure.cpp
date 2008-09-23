@@ -28,7 +28,7 @@
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
-#include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Sqrt_extension.h>
 
 #include <CGAL/Test/_test_real_embeddable.h>
@@ -50,7 +50,7 @@ void algebraic_number_test()
     typedef Z Integer;
 
     typedef CGAL::CGALi::Algebraic_real_pure<Coeff_NT,rat_NT, CGAL::Handle_policy_no_union, RepClass > ALGNUM; 
-    typedef CGAL::Polynomial<Coeff_NT> Poly;
+    typedef typename CGAL::Polynomial_type_generator<Coeff_NT,1>::Type Poly;
     CGAL::test_real_embeddable<ALGNUM>();
     // general test of comparable functionality  
 

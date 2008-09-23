@@ -40,10 +40,7 @@
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_coefficient_kernel_at_alpha.h>
 #include <CGAL/Algebraic_curve_kernel_2/shear.h>
 
-#include <CGAL/Polynomial/sturm_habicht_sequence.h>
 #include <CGAL/Polynomial_traits_d.h>
-
-
 
 #if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
 // put includes here
@@ -299,7 +296,8 @@ private:
     typedef typename Coercion::Type Coercion_type;
 
     //! Polynomial over the \c Coercion_type
-    typedef CGAL::Polynomial< Coercion_type > Poly_coer_1;
+    typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
+        ::template Rebind<Coercion_type,1>::Other::Type Poly_coer_1;
 
 public:
 
@@ -907,7 +905,11 @@ private:
         Bitstream_traits traits(x);
 
         // We need to make an artificial bivariate polynomial
-        typedef CGAL::Polynomial<typename FT::Numerator_type> Poly_coer_num_2;
+        typedef typename 
+            CGAL::Polynomial_traits_d<typename FT::Numerator_type>
+            ::template Rebind<typename FT::Numerator_type,1>::Other::Type 
+            Poly_coer_num_2;
+
         std::vector<typename FT::Numerator_type> coeffs;
         for(int i = 0; i <= f_at_x_sq_free.degree(); i++) {
             coeffs.push_back(typename FT::Numerator_type(f_at_x_sq_free[i]));

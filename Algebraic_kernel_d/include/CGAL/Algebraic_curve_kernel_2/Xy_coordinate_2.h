@@ -760,19 +760,26 @@ public:
     template<typename Polynomial_2>
     Coercion_interval interval_evaluate_2(const Polynomial_2& p) const {
         
-        //TODO: This function assumes CGAL::Polynomial type, do it generically
-
         typename Coercion::Cast cast;
+
+        typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
+            ::Coefficient_iterator Coefficient_iterator;
 
         Coercion_interval iy(cast(get_approximation_y().lower()),
                              cast(get_approximation_y().upper()));
 
         // CGAL::Polynomial does not provide Coercion_traits for number
         // types => therefore evaluate manually
-        typename Polynomial_2::const_iterator it = p.end() - 1;
+        Coefficient_iterator it 
+            = typename CGAL::Polynomial_traits_d<Polynomial_2>
+                ::Coefficient_end()(p) - 1;
         Coercion_interval res(interval_evaluate_1(*it));
         
-        while((it--) != p.begin()) 
+        Coefficient_iterator p_begin 
+            = typename CGAL::Polynomial_traits_d<Polynomial_2>
+                ::Coefficient_begin()(p);
+
+        while((it--) != p_begin) 
             res = res * iy + (interval_evaluate_1(*it));
         return res;
     }
@@ -780,16 +787,24 @@ public:
     template<typename Polynomial_1>
     Coercion_interval interval_evaluate_1(const Polynomial_1& p) const {
         
-        //TODO: This function assumes CGAL::Polynomial type, do it generically
-
         typename Coercion::Cast cast;
+
+        typedef typename CGAL::Polynomial_traits_d<Polynomial_1>
+            ::Coefficient_iterator Coefficient_iterator;
 
         Coercion_interval ix(cast(get_approximation_x().lower()),
                              cast(get_approximation_x().upper()));
+        
+        Coefficient_iterator it 
+            = typename CGAL::Polynomial_traits_d<Polynomial_1>
+                ::Coefficient_end()(p) - 1;
 
-        typename Polynomial_1::const_iterator it = p.end() - 1;
         Coercion_interval res(cast(*it));
-        while((it--) != p.begin()) 
+
+        Coefficient_iterator p_begin 
+            = typename CGAL::Polynomial_traits_d<Polynomial_1>
+                ::Coefficient_begin()(p);
+        while((it--) != p_begin) 
             res = res * ix + Coercion_interval(cast(*it));
         return res;
     }

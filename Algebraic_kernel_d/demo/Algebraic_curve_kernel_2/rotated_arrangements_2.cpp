@@ -165,7 +165,8 @@ int main(int argc, char** argv) {
         <Rotation_traits> Rotated_algebraic_curve_kernel_2;
 #endif
 
-    typedef CGAL::Polynomial<CGAL::Polynomial<Integer> > Integer_polynomial_2;
+    typedef CGAL::Polynomial_type_generator<Integer,2>::Type 
+        Integer_polynomial_2;
 
     std::vector<Integer_polynomial_2> curves;
 

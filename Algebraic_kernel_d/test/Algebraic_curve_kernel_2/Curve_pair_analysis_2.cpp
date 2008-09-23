@@ -52,8 +52,10 @@ void test_routine() {
     typedef typename Arithmetic_kernel::Integer Integer;
     
     typedef Integer Coefficient;
-    typedef CGAL::Polynomial<Coefficient> Poly_1;
-    typedef CGAL::Polynomial<Poly_1> Poly_2;
+    typedef typename 
+        CGAL::Polynomial_type_generator<Coefficient,1>::Type Poly_1;
+    typedef typename 
+        CGAL::Polynomial_type_generator<Coefficient,2>::Type Poly_2;
     
     typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi
         < Coefficient, Rational > Rep_class;
@@ -702,13 +704,15 @@ void test_routine() {
         typedef CGAL::Sqrt_extension<Integer, Integer> Sqrt_extension;
 
         typedef Sqrt_extension Coefficient;
-        typedef CGAL::Polynomial<Coefficient> Poly_sqrt1;
-        typedef CGAL::Polynomial<Poly_sqrt1> Poly_sqrt2;
+        typedef typename
+            CGAL::Polynomial_type_generator<Coefficient,1>::Type Poly_sqrt1;
+        typedef typename
+            CGAL::Polynomial_type_generator<Coefficient,2>::Type Poly_sqrt2;
+
     
         typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi
             < Coefficient, Rational > Rep_class;
-        typedef CGAL::CGALi::Bitstream_descartes< CGAL::Polynomial
-                                                    < Coefficient >, 
+        typedef CGAL::CGALi::Bitstream_descartes< Poly_sqrt1, 
                                                   Rational > Isolator;
         typedef CGAL::Algebraic_kernel_1< Coefficient,Rational,
                                           Rep_class, Isolator > 

@@ -34,7 +34,8 @@ void test_algebraic_kernel_coeff_boundary_rep() {
   typedef Boundary_    Boundary;
   typedef RepClass     Rep_class;
   
-  typedef CGAL::Polynomial< Coefficient >                                Polynomial_1;
+  typedef typename CGAL::Polynomial_type_generator<Coefficient,1>::Type 
+      Polynomial_1;
   typedef CGAL::CGALi::Algebraic_real_pure
     < Coefficient, Boundary, CGAL::Handle_policy_no_union, Rep_class >   Algebraic_real_1;
   

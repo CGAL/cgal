@@ -25,7 +25,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
-#include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
 #include <CGAL/Interval_traits.h>
 #include <CGAL/Bigfloat_interval_traits.h>
@@ -65,7 +65,7 @@ class Algebraic_real_rep_bfi
     typedef typename AT::Bigfloat_interval BFI;
     typedef typename AT::Field_with_sqrt   FWS; 
     
-    typedef CGAL::Polynomial<Coefficient>            Poly;
+    typedef typename CGAL::Polynomial_type_generator<Coefficient,1>::Type Poly;
     typedef typename Poly::const_iterator           PIterator; 
     
     typedef Algebraic_real_rep_bfi <Coefficient,Field>     Self;   
@@ -74,11 +74,13 @@ class Algebraic_real_rep_bfi
     mutable long                      current_prec;
         
 private:
-    template <class NT, class OI> 
+    template <class Polynomial_1, class OI> 
     inline 
-    void convert_coeffs(const CGAL::Polynomial<NT>& poly ,OI it) const {
+    void convert_coeffs(const Polynomial_1& poly, OI it) const {
+        typename CGAL::Polynomial_traits_d<Polynomial_1>::Get_coefficient
+            coeff;
         for(int i = 0; i <= poly.degree(); i++){
-            *it++ = convert_to_bfi(poly[i]);
+            *it++ = convert_to_bfi(coeff(poly,i));
         }
     }
      

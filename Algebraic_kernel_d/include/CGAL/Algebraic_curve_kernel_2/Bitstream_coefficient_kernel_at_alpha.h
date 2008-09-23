@@ -126,7 +126,8 @@ public:
         Convert_to_bfi(Algebraic_real_1 alpha) : _m_alpha(alpha) {}
 
         Bigfloat_interval operator() (Coefficient f) const {
-            CGAL::Polynomial<Bigfloat_interval> f_bfi;
+            typename CGAL::Polynomial_traits_d<Coefficient>
+                ::template Rebind<Bigfloat_interval,1>::Other::Type f_bfi;
             Bigfloat_interval alpha_bfi, f_alpha_bfi;
             
             long p = CGAL::get_precision(Bigfloat_interval());
@@ -162,15 +163,21 @@ public:
         
     private:
         
-        CGAL::Polynomial<Bigfloat_interval> 
+        typename CGAL::Polynomial_traits_d<Coefficient>
+        ::template Rebind<Bigfloat_interval,1>::Other::Type
         _convert_polynomial_to_bfi(Coefficient f) const {
 
+            typename
+                CGAL::Polynomial_traits_d<Coefficient>::Degree degree;
+            typename
+                CGAL::Polynomial_traits_d<Coefficient>::Get_coefficient coeff;
             std::vector<Bigfloat_interval> coeffs;
-            for(int i = 0; i <= f.degree(); i++) {
-                coeffs.push_back(CGAL::convert_to_bfi(f[i]));
+            for(int i = 0; i <= degree(f); i++) {
+                coeffs.push_back(CGAL::convert_to_bfi(coeff(f,i)));
             }
-            return CGAL::Polynomial<Bigfloat_interval>(coeffs.begin(), 
-                                                       coeffs.end());   
+            return typename CGAL::Polynomial_traits_d<Coefficient>
+                ::template Rebind<Bigfloat_interval,1>::Other
+                ::Construct_polynomial()(coeffs.begin(),coeffs.end());   
         }
         
         Algebraic_real_1 _m_alpha;

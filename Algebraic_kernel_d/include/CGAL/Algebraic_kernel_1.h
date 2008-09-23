@@ -37,7 +37,8 @@ public:
             
   typedef typename Algebraic_real_1::Coefficient      Coefficient;
   typedef typename Algebraic_real_1::Rational         Boundary;
-  typedef Polynomial< Coefficient >                   Polynomial_1;
+  typedef typename 
+      CGAL::Polynomial_type_generator< Coefficient,1 >::Type Polynomial_1;
 
 private:
   typedef CGAL::Polynomial_traits_d< Polynomial_1 >   PT_1;
@@ -257,7 +258,7 @@ public:
 template< class Coefficient,
           class Boundary = typename CGAL::Get_arithmetic_kernel< Coefficient >::Arithmetic_kernel::Rational,
           class RepClass = CGALi::Algebraic_real_rep< Coefficient, Boundary >,
-          class Isolator = CGALi::Descartes< typename CGAL::Polynomial< Coefficient >, Boundary > >
+          class Isolator = CGALi::Descartes< typename CGAL::Polynomial_type_generator<Coefficient,1>::Type, Boundary > >
 class Algebraic_kernel_1    
   : public CGALi::Algebraic_kernel_1_base< 
 

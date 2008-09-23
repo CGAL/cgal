@@ -33,8 +33,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h> 
 
-#include <CGAL/Polynomial/univariate_polynomial_utils.h>
+#include <CGAL/Algebraic_kernel_d/univariate_polynomial_utils.h>
 #include <CGAL/Algebraic_kernel_d/construct_binary.h>
+
+#define POLYNOMIAL_REBIND( coeff ) \
+    typename CGAL::Polynomial_traits_d<Polynomial>::template \
+    Rebind<coeff,1>::Other::Type
 
 
 CGAL_BEGIN_NAMESPACE
@@ -270,21 +274,26 @@ private:
         typedef typename  Polynomial__::NT Coeff;
         if(!interval_given)
             {
-                LEFT = -weak_upper_root_bound(P);
+                LEFT = -weak_upper_root_bound<Coeff>(P);
                 SCALE = - LEFT * IT(2);
                 DENOM = IT(1);
             }
         Polynomial__ R = ::CGAL::translate(P,Coeff(LEFT));
         Polynomial__ Q = ::CGAL::scale_up(R,Coeff(SCALE));
-        zero_one_descartes(Q,0,0);
+        zero_one_descartes<Coeff>(Q,0,0);
     }
     
     
     //! returns the polynomial $(1 + x)^n P(1/(1 + x))$.
     template <class Coeff__>
-    CGAL::Polynomial<Coeff__> 
-    variation_transformation(const CGAL::Polynomial<Coeff__>& P) { 
-        CGAL::Polynomial<Coeff__> R = reversal(P);
+    /*
+    typename 
+    CGAL::Polynomial_traits_d<Polynomial> 
+    ::template Rebind<Coeff__,1>::Other::Type
+    */
+    POLYNOMIAL_REBIND(Coeff__) 
+        variation_transformation(const POLYNOMIAL_REBIND(Coeff__)& P) { 
+        POLYNOMIAL_REBIND(Coeff__) R = reversal(P);
         return translate_by_one(R); 
     }
 
@@ -293,7 +302,7 @@ private:
      * polynomials. 
      */
     template <class Coeff__>
-    IT weak_upper_root_bound(const CGAL::Polynomial<Coeff__>& P) { 
+    IT weak_upper_root_bound(const POLYNOMIAL_REBIND(Coeff__)& P) { 
   
         typename Real_embeddable_traits<Coeff__>::Abs abs;
         const int n = P.degree();
@@ -313,10 +322,10 @@ private:
 
     //! tests if the polynomial has no root in the interval.
     template <class Coeff__>
-    bool not_zero_in_interval(const CGAL::Polynomial<Coeff__>& P)
+    bool not_zero_in_interval(const POLYNOMIAL_REBIND(Coeff__)& P)
     {
         if(P.degree() == 0) return true;
-        if(CGALi::sign_variations(variation_transformation(P)) != 0)
+        if(CGALi::sign_variations(variation_transformation<Coeff__>(P)) != 0)
             return false;
         return (P[0] != Coeff__(0) && P.evaluate(Coeff__(1)) != Coeff__(0));
     }
@@ -325,13 +334,13 @@ private:
     // The parameters $(i,D)$ describe the interval $(i/2^D, (i+1)/2^D)$.
     // Here $0\leq i < 2^D$.
     template <class Coeff__>
-    void zero_one_descartes(const CGAL::Polynomial<Coeff__>& P,
+    void zero_one_descartes(const POLYNOMIAL_REBIND(Coeff__)& P,
             IT i, IT D) { 
         // Determine the number of sign variations of the transformed 
         // polynomial $(1+x)^nP(1/(1+x))$. This gives the number of 
         // roots of $P$ in $(0,1)$.
 
-        CGAL::Polynomial<Coeff__> R = variation_transformation(P);
+        POLYNOMIAL_REBIND(Coeff__) R = variation_transformation<Coeff__>(P);
         int descarte = sign_variations(R);
         
         // no root
@@ -344,7 +353,7 @@ private:
                 && P[0] != Coeff__(0) 
                 && P.evaluate(Coeff__(1)) != Coeff__(0) ) { 
             if(is_strong_) {
-                strong_zero_one_descartes(P,i,D);
+                strong_zero_one_descartes<Coeff__>(P,i,D);
                 return;
             }
             else {
@@ -362,13 +371,13 @@ private:
 
         // Transform the polynomial such that the first half of the interval
         // is mapped to the unit interval.
-        CGAL::Polynomial<Coeff__> Q = scale_down(P,Coeff__(2));
+        POLYNOMIAL_REBIND(Coeff__) Q = scale_down(P,Coeff__(2));
  
         // Consider the first half of the interval.
-        zero_one_descartes(Q,i,D);
+        zero_one_descartes<Coeff__>(Q,i,D);
      
         // Test if the polynomial is zero at the midpoint of the interval 
-        CGAL::Polynomial<Coeff__>  S = translate_by_one(Q);
+        POLYNOMIAL_REBIND(Coeff__)  S = translate_by_one(Q);
         if ( S[0] == Coeff__(0) ) { 
             numerator[number_of_real_roots_] = i + 1;
             denominator_exponent[number_of_real_roots_] = D;
@@ -377,7 +386,7 @@ private:
         }
          
         // Consider the second half of the interval. 
-        zero_one_descartes(S,i+1,D); 
+        zero_one_descartes<Coeff__>(S,i+1,D); 
     }
 
 
@@ -388,7 +397,7 @@ private:
     // The parameters $(i,D)$ describe the interval $(i/2^D, (i+1)/2^D)$.
     // Here $0\leq i < D$.
     template <class Coeff__>
-    void strong_zero_one_descartes(const CGAL::Polynomial<Coeff__>& P,
+    void strong_zero_one_descartes(const POLYNOMIAL_REBIND(Coeff__)& P,
             IT i, IT D) { 
 
         // Test if the polynomial P' has no roots in the
@@ -405,8 +414,8 @@ private:
         // <=> 2^D > (r-l) / 2^(-k)
         // <=> 2^D > (r-l) * 2^k
 
-        CGAL::Polynomial<Coeff__> PP = diff(P);
-        if(not_zero_in_interval(PP)) { // P'
+        POLYNOMIAL_REBIND(Coeff__) PP = diff(P);
+        if(not_zero_in_interval<Coeff__>(PP)) { // P'
             IT tmp;
             construct_binary(D-k, tmp);  // tmp = 2^{D-k}
             if(tmp * DENOM > SCALE ) {
@@ -425,10 +434,10 @@ private:
 
         // Transform the polynomial such that the first half of the interval
         // is mapped to the unit interval.
-        CGAL::Polynomial<Coeff__> Q = scale_down(P,Coeff__(2));
+        POLYNOMIAL_REBIND(Coeff__) Q = scale_down(P,Coeff__(2));
  
         // Test if the polynomial is zero at the midpoint of the interval 
-        CGAL::Polynomial<Coeff__>  S = translate_by_one(Q);
+        POLYNOMIAL_REBIND(Coeff__)  S = translate_by_one(Q);
         if ( S[0] == Coeff__(0) ) { 
             numerator[number_of_real_roots_] = i + 1;
             denominator_exponent[number_of_real_roots_] = D;
@@ -438,13 +447,13 @@ private:
         }
 
         // Consider the first half of the interval.
-        if(sign_variations(variation_transformation(Q)) == 1) {
-            strong_zero_one_descartes(Q,i,D);
+        if(sign_variations(variation_transformation<Coeff__>(Q)) == 1) {
+            strong_zero_one_descartes<Coeff__>(Q,i,D);
             return;
         }
          
         // Consider the second half of the interval. 
-        strong_zero_one_descartes(S,i+1,D); 
+        strong_zero_one_descartes<Coeff__>(S,i+1,D); 
         return;
     } 
 };

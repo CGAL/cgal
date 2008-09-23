@@ -134,13 +134,12 @@ public:
     // Boundary type
     typedef typename Algebraic_kernel_1::Boundary Boundary;
         
-    //! CGAL univariate polynomial type 
-    typedef typename
-        CGAL::Polynomial_type_generator<Coefficient,1>::Type Polynomial_1;
+    //! Univariate polynomial type 
+    typedef typename Algebraic_kernel_1::Polynomial_1 Polynomial_1;
     
-    //! new CGAL bivariate polynomial type
-    typedef typename 
-        CGAL::Polynomial_type_generator<Coefficient,2>::Type Polynomial_2;
+    //! Bivariate polynomial type
+    typedef typename CGAL::Polynomial_traits_d<Polynomial_1>
+    :: template Rebind<Coefficient,2>::Other::Type Polynomial_2;
     
     //! bivariate polynomial traits
     typedef ::CGAL::Polynomial_traits_d< Polynomial_2 >
@@ -363,7 +362,10 @@ public:
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "angle=" << angle << std::endl;
             CGAL_ACK_DEBUG_PRINT << "final_prec=" << final_prec << std::endl;
-#endif            
+#endif          
+
+            CGAL::Timer trigo_timer;
+            trigo_timer.start();
             
             typedef typename CGAL::Get_arithmetic_kernel<Boundary>
                 ::Arithmetic_kernel::Integer Integer;
@@ -486,10 +488,12 @@ public:
             CGAL_ACK_DEBUG_PRINT << "cosine=" << cosine << std::endl;
 #endif
             
-            typedef typename CGAL::Polynomial_type_generator<Boundary,1>::Type
+            typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
+                ::template Rebind<Boundary,1>::Other::Type
                 Poly_rat_1;
 
-            typedef typename CGAL::Polynomial_type_generator<Boundary,2>::Type
+            typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
+                ::template Rebind<Boundary,2>::Other::Type
                 Poly_rat_2;
 
             Poly_rat_2 
@@ -512,10 +516,13 @@ public:
             Polynomial_2 num;
             typename FT::Decompose()(res, num, dummy);
             
+            trigo_timer.stop();
+            std::cout << "trigo_timer: " << trigo_timer.time() << std::endl;
+
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "integralized poly: " << num << std::endl;
 #endif
-
+            
             return Self::curve_cache_2()(num);
         }
 
@@ -1228,10 +1235,12 @@ public:
 
         typedef typename Xy_coordinate_2::Coercion_interval Coercion_interval;
         
-        typedef typename 
-            CGAL::Polynomial_type_generator<Boundary,1>::Type Poly_rat_1;
-        typedef typename
-            CGAL::Polynomial_type_generator<Boundary,2>::Type Poly_rat_2;
+        typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
+            ::template Rebind<Boundary,1>::Other::Type
+            Poly_rat_1;
+        typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
+            ::template Rebind<Boundary,2>::Other::Type
+            Poly_rat_2;
         
         Sign operator()(const Polynomial_2& f,
                         const Xy_coordinate_2& r) const {

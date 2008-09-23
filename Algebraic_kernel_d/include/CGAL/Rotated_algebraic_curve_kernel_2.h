@@ -1352,11 +1352,11 @@ public:
             Rotated_rational_coefficient ecos = typename Base::Cos()(angle);
             Rotated_rational_coefficient ezero = typename Base::Zero()();
 
-            typedef typename CGAL::Polynomial_type_generator
-                <Rotated_rational_coefficient,1>::Type 
+            typedef typename CGAL::Polynomial_traits_d<Rotated_polynomial_2>
+                ::template Rebind<Rotated_rational_coefficient,1>::Other::Type 
                 Rotated_rational_polynomial_1;
-            typedef typename CGAL::Polynomial_type_generator
-                <Rotated_rational_coefficient,2>::Type 
+            typedef typename CGAL::Polynomial_traits_d<Rotated_polynomial_2>
+                ::template Rebind<Rotated_rational_coefficient,2>::Other::Type 
                 Rotated_rational_polynomial_2;
             
             Rotated_rational_polynomial_2 

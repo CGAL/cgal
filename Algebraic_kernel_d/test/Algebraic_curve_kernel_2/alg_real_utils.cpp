@@ -28,7 +28,7 @@ void test_routine() {
   typedef typename Arithmetic_kernel::Integer Integer;
   typedef typename Arithmetic_kernel::Rational Rational;
   
-  typedef CGAL::Polynomial<Integer> Poly_int1;
+  typedef typename CGAL::Polynomial_type_generator<Integer,1>::Type Poly_int1;
 
   typedef CGAL::Algebraic_kernel_1<Integer> Algebraic_kernel_1;
   

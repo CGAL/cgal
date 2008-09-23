@@ -25,7 +25,7 @@
 #include <CGAL/Algebraic_extension_traits.h>
 #include <CGAL/Scalar_factor_traits.h>
 
-#include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/_test_real_root_isolator.h>
 
 #include <CGAL/Algebraic_kernel_d/Descartes.h>
@@ -36,13 +36,15 @@ void test_descartes(){
     typedef typename AT::Integer Integer;
     typedef typename AT::Rational Rational;
     {
-        typedef ::CGAL::Polynomial<Integer> Polynomial;
+        typedef typename CGAL::Polynomial_type_generator<Integer,1>::Type 
+            Polynomial;
         typedef ::CGAL::CGALi::Descartes<Polynomial,Rational> Isolator;
         
         // general test of concept RealRootIsolator
         CGAL::CGALi::test_real_root_isolator<Isolator>();
     }{
-        typedef ::CGAL::Polynomial<Rational> Polynomial;
+        typedef typename CGAL::Polynomial_type_generator<Rational,1>::Type 
+            Polynomial;
         typedef ::CGAL::CGALi::Descartes<Polynomial,Rational> Isolator;
         // general test of concept RealRootIsolator
         CGAL::CGALi::test_real_root_isolator<Isolator>();

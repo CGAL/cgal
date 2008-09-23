@@ -20,6 +20,7 @@
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_pure.h>
+#include <CGAL/Polynomial_type_generator.h>
 
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 
@@ -60,8 +61,8 @@ void test_bitstream_descartes() {
   typedef typename Arithmetic_kernel::Integer Integer;
   typedef typename Arithmetic_kernel::Rational Rational;
   
-  typedef CGAL::Polynomial<Integer> Poly_int1;
-  typedef CGAL::Polynomial<Poly_int1> Poly_int2;
+  typedef typename CGAL::Polynomial_type_generator<Integer,1>::Type Poly_int1;
+  typedef typename CGAL::Polynomial_type_generator<Integer,2>::Type Poly_int2;
   typedef CGAL::CGALi::Algebraic_real_pure<Integer,Rational>
       Algebraic_real;
 

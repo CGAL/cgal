@@ -23,7 +23,7 @@
 #include <CGAL/Algebraic_kernel_d/Float_traits.h>
 #include <CGAL/convert_to_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
-#include <CGAL/Polynomial/polynomial_gcd.h>
+#include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_coefficient_kernel.h>
 #include <boost/numeric/interval.hpp>
 
@@ -493,8 +493,7 @@ evaluate_iv(Poly1_ f,boost::numeric::interval<Boundary_> iv) {
         CGAL::Coercion_traits<typename Poly1::NT, Boundary_>::Type Coercion;
 	//typename CGAL::Coercion_traits<typename Poly1::NT, Boundary_>::Cast cast;
     CGAL_assertion(f.degree()>=0);
-#if !AcX_USE_AFFINE_ARITHMETIC
-	typename CGAL::Coercion_traits<typename Poly1::NT, Boundary_>::Cast cast;
+    typename CGAL::Coercion_traits<typename Poly1::NT, Boundary_>::Cast cast;
     typedef boost::numeric::interval<Coercion> Coercion_interval;
     Coercion_interval iv_cast(cast(iv.lower()),cast(iv.upper()));
     int n=f.degree();
@@ -504,156 +503,16 @@ evaluate_iv(Poly1_ f,boost::numeric::interval<Boundary_> iv) {
         ret += Coercion_interval(cast(f[i]),cast(f[i]));
     }
     return ret;
-#else
-	typedef boost::numeric::interval<Coercion> Coercion_interval;
-	int n=f.degree();
-	Boundary x0 = (iv.lower() + iv.upper()) / 2;
-	Boundary x1 = iv.upper() - x0;
-
-	//! Now here four test-implementations of Affine Arithmetic
-	// AF1 is the first form, which should avoid the fact, that affine forms
-	// grow by doing non-affine operations
-	if(AcX_USE_AFFINE_ARITHMETIC == 1)
-	{
-		//! AF 1
-		//std::cout << "Using Affine Arithmetic -> AF1" << std::endl;
-		Boundary y0 = f[n];
-		Boundary y1 = 0, y2 = 0, spread = 0;
-		for(int i = n-1; i >= 0; i--)
-		{
-			y2 = abs(x0)*y2 + abs(x1)*(abs(y1)+abs(y2));
-			y1 = x0*y1 + x1*y0;
-			y0 = x0*y0 + f[i];
-		}
-		spread = abs(y1) + abs(y2);
-		return  Coercion_interval(y0-spread, y0+spread);
-	}
-	// AF2 is the second form, which should avoid the fact described in AF1
-	// and to decrease the difficulty of even powers
-	else if(AcX_USE_AFFINE_ARITHMETIC == 2)
-	{
-		//! AF 2
-		//std::cout << "Using Affine Arithmetic -> AF2" << std::endl;
-		Boundary y0 = f[n];
-		Boundary y1 = 0, k2 = 0, k3 = 0, e1 = 0, e2 = 0, e3 = 0, low = 0, high = 0, tmp = 0;
-		for(int i = n-1; i >= 0; i--)
-		{
-			if(x0 > 0)
-			{
-				k2 = x0 * e2;
-				k3 = x0 * e3;
-			}
-			else
-			{
-				k2 = -x0 * e3;
-				k3 = -x0 * e2;
-			}
-			tmp = x1 * y1;
-			if(tmp > 0)
-			{
-				k2 = k2 + tmp;
-			}
-			else
-			{
-				k3 = k3 + abs(tmp);
-			}
-			e1 = abs(x0)*e1 + abs(x1)*(e1 + e2 + e3);
-			e2 = k2;
-			e3 = k3;
-			y1 = x0*y1 + x1*y0;
-			y0 = x0*y0 + f[i];
-		}
-		low = abs(y1) + e1 + e3;
-		high = abs(y1) + e1 + e2;
-		return  Coercion_interval(y0-low, y0+high);
-	}
-	// QF (quadratic form) is the third form, which should avoid the facts of
-	// AF1 and decreases better the problem of even powers than AF2
-	else if(AcX_USE_AFFINE_ARITHMETIC == 3)
-	{
-		//! QF
-		//std::cout << "Using Affine Arithmetic -> QF" << std::endl;
-		Boundary y0 = f[n];
-		Boundary y1 = 0, z1 = 0, e1 = 0, spread = 0, low = 0, high = 0;
-		for(int i = n-1; i >= 0; i--)
-		{
-			e1 = abs(x0)*e1 + abs(x1)*e1 + abs(x1*z1);
-			z1 = x0*z1 + x1*y1;
-			y1 = x0*y1 + x1*y0;
-			y0 = x0*y0 + f[i];
-		}
-		spread = abs(y1) + e1;
-		if(z1 > 0)
-		{
-			high = spread + z1;
-		}
-		else
-		{
-			low = spread - z1;
-		}
-		return  Coercion_interval(y0-low, y0+high);
-	}
-	// Here we create a own version of the implementation for Affine Arithmetic
-	// We sort the powers to null, even and odd and compute the intervals
-	else if(AcX_USE_AFFINE_ARITHMETIC == 4)
-	{
-		//! AF own creation
-		//std::cout << "Using Affine Arithmetic -> own AF" << std::endl;
-		Boundary mid_point = (iv.lower() + iv.upper()) / 2;
-		Boundary width = iv.upper() - mid_point;
-		typedef CGAL::Polynomial<Boundary> Rat_poly_1;
-		typedef CGAL::Polynomial<Coercion> Coer_poly_1;
-		Rat_poly_1 affine_poly(mid_point, width);
-		Coer_poly_1 poly_aa = f.evaluate(affine_poly);
-		int n = poly_aa.degree();
-		CGAL_assertion(n>=0);
-		Coercion low = poly_aa[0];
-		Coercion high = poly_aa[0];
-		for(int i = 1; i <= n ; i++)
-		{
-			CGAL::Sign sign = CGAL::sign(poly_aa[i]);
-			if(sign == CGAL::ZERO)
-			{
-				continue;
-			}
-			if(i%2 == 0)
-			{
-				if(sign == CGAL::POSITIVE)
-				{
-					high = high + poly_aa[i];
-				}
-				else
-				{
-					low = low + poly_aa[i];
-				}
-			}
-			else
-			{
-				if(sign == CGAL::POSITIVE)
-				{
-					low = low - poly_aa[i];
-					high = high + poly_aa[i];
-				}
-				else
-				{
-					low = low + poly_aa[i];
-					high = high - poly_aa[i];
-				}
-			}
-		}
-		return  boost::numeric::interval<Coercion>(low, high);
-	}
-#endif
 }
 
 //! \brief replaces the \c NiX::is_root_of function, using \c AcX::ntl_gcd
-template<typename Polynomial,typename AlgebraicReal>
-bool is_root_of(const AlgebraicReal & x,Polynomial p) {
+template<typename Polynomial_2,typename AlgebraicReal>
+bool is_root_of(const AlgebraicReal & x,Polynomial_2 p) {
     if(x.is_rational()) {
         typedef typename AlgebraicReal::Rational Rational;
         Rational exact_value = x.rational();
         typedef typename CGAL::Coercion_traits<Rational, 
-            typename Polynomial::NT>::Type
+            typename Polynomial_2::NT>::Type
             Type;
         return CGAL::sign(p.evaluate(exact_value))==CGAL::ZERO; 
     }
@@ -661,7 +520,8 @@ bool is_root_of(const AlgebraicReal & x,Polynomial p) {
         CGAL_precondition(p.degree()>=0);
       
         if(p.degree()==0) return p.is_zero();
-        Polynomial g=CGAL::CGALi::gcd_utcf(p,x.polynomial());
+        Polynomial_2 g=typename CGAL::Polynomial_traits_d<Polynomial_2>
+            ::Gcd_up_to_constant_factor()(p,x.polynomial());
         return g.sign_at(x.low())!=g.sign_at(x.high());
       
     }

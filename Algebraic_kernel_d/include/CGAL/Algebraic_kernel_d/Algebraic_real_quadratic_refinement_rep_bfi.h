@@ -28,6 +28,8 @@
 
 #include <boost/none.hpp>
 
+#include <CGAL/Polynomial_type_generator.h>
+
 CGAL_BEGIN_NAMESPACE
 ;
 
@@ -66,7 +68,8 @@ class Algebraic_real_quadratic_refinement_rep_bfi
     // modelling rational numbers to get an integer type
     typedef typename CGAL::Fraction_traits<Field>::Numerator_type Integer;
     
-    typedef CGAL::Polynomial<Coefficient>            Poly;
+    typedef typename
+        CGAL::Polynomial_type_generator<Coefficient,1>::Type Poly;
 
     typedef Algebraic_real_rep <Coefficient,Field>     Base;
     typedef Algebraic_real_quadratic_refinement_rep_bfi<Coefficient,Field> 
@@ -79,19 +82,24 @@ private:
 
     mutable long prec_;
 
-    mutable boost::optional<CGAL::Polynomial<BFI> > f_bfi_;
+    typedef typename 
+        CGAL::Polynomial_traits_d<Poly>::template Rebind<BFI,1>
+    ::Other::Type BFI_polynomial;
+
+    mutable boost::optional
+        < BFI_polynomial > f_bfi_;
     
     mutable boost::optional<BFI> low_bfi_, f_low_bfi_, 
         high_bfi_, f_high_bfi_; 
 
     mutable long N;
 
-    CGAL::Polynomial<BFI> _convert_polynomial_to_bfi(Poly f) const {
+    BFI_polynomial _convert_polynomial_to_bfi(Poly f) const {
         std::vector<BFI> coeffs;
         for(int i = 0; i <= this->polynomial().degree(); i++) {
             coeffs.push_back(CGAL::convert_to_bfi(this->polynomial()[i]));
         }
-        return CGAL::Polynomial<BFI>(coeffs.begin(), coeffs.end());   
+        return BFI_polynomial(coeffs.begin(), coeffs.end());   
     }
 
     void _set_prec(long new_prec) const {

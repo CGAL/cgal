@@ -344,7 +344,8 @@ private:
     typedef typename Coercion::Type Coercion_type;
 
     // Polynomials over that supertype
-    typedef CGAL::Polynomial<Coercion_type> Poly_coer_1;
+    typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
+        ::template Rebind<Coercion_type,1>::Other::Type Poly_coer_1;
 
     // Functor to isolate real roots of univariate polynomials
     typedef typename Algebraic_kernel_2::Algebraic_kernel_1::Solve_1 Solve_1;
