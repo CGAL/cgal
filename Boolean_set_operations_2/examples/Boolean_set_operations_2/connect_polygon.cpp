@@ -14,11 +14,12 @@ typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
 
 int main (int argc, char **argv)
 {
-  // Open the input file.
-  const char   *filename = "pgn_holes.dat";
-
-  if (argc >= 2)
-    filename = argv[1];
+  
+  // Get the name of the input file from the command line, or use the default
+  // pgn_holes.dat file if no command-line parameters are given.
+  //pgn_holes2.dat shows that if the hole has a vertex on the polygon's outer
+  //boundary no other connections are made.  
+  const char   *filename = (argc > 1) ? argv[1] : "pgn_holes3.dat";  
 
   std::ifstream input_file (filename);
 
