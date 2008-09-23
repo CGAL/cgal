@@ -19,6 +19,7 @@
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
 #include <CGAL/Qt/GraphicsViewNavigation.h>
+#include <CGAL/Qt/utility.h> // for mapToScene(QGraphicsView*, QRect)
 #include <cmath>
 #include <iostream>
 #include <boost/format.hpp>
@@ -244,13 +245,6 @@ namespace Qt {
     dragging_start_in_view = v->mapFromScene(dragging_start);
 //     std::cerr << boost::format("         after=(%1%, %2%)\n")
 //       % dragging_start_in_view.x() % dragging_start_in_view.y();
-  }
-
-  QRectF GraphicsViewNavigation::mapToScene(QGraphicsView* v, QRect rect) const
-  {
-    QPointF top_left = v->mapToScene(rect.topLeft());
-    QPointF bottom_right = v->mapToScene(rect.bottomRight());
-    return QRectF(top_left, bottom_right);
   }
 
   void GraphicsViewNavigation::translateView(QGraphicsView* v, int dx,  int dy)

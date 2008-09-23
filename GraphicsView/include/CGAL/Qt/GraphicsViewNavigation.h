@@ -55,7 +55,6 @@ private:
   void scaleView(QGraphicsView*, qreal scaleFactor);
   void translateView(QGraphicsView*, int dx,  int dy);
   void drag_to(QGraphicsView*, QPoint new_pos);
-  QRectF mapToScene(QGraphicsView*, QRect rect) const;
   void display_parameters(QGraphicsView*);
 
   QGraphicsRectItem* rectItem;

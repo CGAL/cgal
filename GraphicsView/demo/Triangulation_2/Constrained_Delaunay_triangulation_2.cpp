@@ -32,6 +32,9 @@
 #include "ui_Constrained_Delaunay_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
+// for viewportsBbox(QGraphicsScene*)
+#include <CGAL/Qt/utility.h>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
 typedef K::Segment_2 Segment_2;
@@ -616,17 +619,7 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
 void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
- QRectF rect;
-  QList<QGraphicsView *>  views = scene.views();
-  for (int i = 0; i < views.size(); ++i) {
-    QGraphicsView *view = views.at(i);
-    QRect vprect = view->viewport()->rect();
-    QPoint tl = vprect.topLeft();
-    QPoint br = vprect.bottomRight();
-    QPointF tlf = view->mapToScene(tl);
-    QPointF brf = view->mapToScene(br);
-    rect |= QRectF(tlf, brf);
-  }
+  QRectF rect = CGAL::Qt::viewportsBbox(&scene);
   typedef CGAL::Creator_uniform_2<double,Point_2>  Creator;
   CGAL::Random xgenerator, ygenerator;
   const int number_of_points = 

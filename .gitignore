@@ -62,8 +62,8 @@ GraphicsView/doc_tex/auto
 GraphicsView/src/CGALQt4/*.dll
 GraphicsView/src/CGALQt4/*.lib
 GraphicsView/src/CGALQt4/*.so
-GraphicsView/src/CGALQt4/*_moc.cpp
 GraphicsView/src/CGALQt4/Makefile
+GraphicsView/src/CGALQt4/moc_*.cxx
 GraphicsView/src/CGALQt4/qrc_*.cxx
 Maintenance/rpm/BUILD/*
 Maintenance/rpm/RPMS/*
