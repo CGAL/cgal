@@ -108,7 +108,6 @@ inline Three_valued_estimate operator- ( Three_valued_estimate sign ) {
  * Helper functions
  */
 
-namespace INTERN_RNDL_TREE {
 // compute g(x) = 2^p f((ax+b)/c) for c = 2^log_c with absolute error <= 1
 template <class Integer, class RandomAccessIterator, class OutputIterator,
 class Approximator, class CeilLog2AbsInteger, class CeilLog2AbsLong>
@@ -249,9 +248,6 @@ void var_eps(
         }
     }
 } // var_eps()
-
-} // namespace INTERN_RNDL_TREE
-
 
 /*
  * The generic de Casteljau method
@@ -406,8 +402,6 @@ de_casteljau_generic(
  * Helper functors
  */
 
-namespace INTERN_RNDL_TREE {
-
 template <class CeilLog2Abs>
 class Abs_le_pow2 {
 public:
@@ -445,8 +439,6 @@ public:
     }
 }; // class Sign_eps_log2
 
-} // namespace INTERN_RNDL_TREE
-
 } // namespace CGALi
 
 
@@ -454,13 +446,11 @@ namespace CGALi {
     template <class BitstreamDescartesRndlTreeTraits>
     class Bitstream_descartes_rndl_tree;
 
-    namespace INTERN_RNDL_TREE {
-        template <class BitstreamDescartesRndlTreeTraits>
-        struct Bitstream_descartes_rndl_node;
+    template <class BitstreamDescartesRndlTreeTraits>
+    struct Bitstream_descartes_rndl_node;
 
-        template <class BitstreamDescartesRndlTreeTraits>
-        class Bitstream_descartes_rndl_tree_rep;
-    } // namespace INTERN_RNDL_TREE
+    template <class BitstreamDescartesRndlTreeTraits>
+    class Bitstream_descartes_rndl_tree_rep;
 } // namespace CGALi
 
 /* The template argument supplied as BitstreamDescartesRndlTreeTraits
@@ -501,8 +491,8 @@ namespace CGALi {
     CGAL_SNAP_BITSTREAM_DESCARTES_RNDL_TREE_TRAITS_TYPEDEFS(TRAITS);       \
     typedef std::vector<Coefficient> Coefficient_vector;                  \
     typedef std::vector<Integer> Integer_vector;                          \
-    typedef CGALi::INTERN_RNDL_TREE::Abs_le_pow2<Ceil_log2_abs_Integer> Abs_le_pow2;  \
-    typedef CGALi::INTERN_RNDL_TREE::Sign_eps_log2<Integer, Abs_le_pow2, Sign>        \
+    typedef CGALi::Abs_le_pow2<Ceil_log2_abs_Integer> Abs_le_pow2;  \
+    typedef CGALi::Sign_eps_log2<Integer, Abs_le_pow2, Sign>        \
                     Sign_eps_log2;                                        \
 
 // end #define
@@ -510,15 +500,13 @@ namespace CGALi {
 // typedefs for Bitstream_descartes_rndl_tree{,_rep}
 #define CGAL_BITSTREAM_DESCARTES_RNDL_TREE_TYPEDEFS                   \
     CGAL_BITSTREAM_DESCARTES_RNDL_TREE_COMMON_TYPEDEFS;               \
-    typedef CGALi::INTERN_RNDL_TREE::Bitstream_descartes_rndl_node<TRAITS> Node; \
+    typedef CGALi::Bitstream_descartes_rndl_node<TRAITS> Node; \
     typedef std::list<Node> Node_list;                               \
 
 // end #define
 
 
 namespace CGALi {
-
-namespace INTERN_RNDL_TREE {
 
 /*
  * class Bitstream_descartes_rndl_node
@@ -531,7 +519,7 @@ public:
     CGAL_BITSTREAM_DESCARTES_RNDL_TREE_COMMON_TYPEDEFS;
 
     friend class CGALi::Bitstream_descartes_rndl_tree<TRAITS>;
-    friend class CGALi::INTERN_RNDL_TREE::Bitstream_descartes_rndl_tree_rep<TRAITS>;
+    friend class CGALi::Bitstream_descartes_rndl_tree_rep<TRAITS>;
 
 private:
     // "node data" (set individually in subdivision)
@@ -625,9 +613,6 @@ public:
         tmp2_coeff_.resize(degree_ + 1);
     }
 }; // class Bitstream_descartes_rndl_tree_rep
-
-} // namespace INTERN_RNDL_TREE
-
 
 /*
  * class Bitstream_descartes_rndl_tree
@@ -906,14 +891,14 @@ public:
 template <class BitstreamDescartesRndlTreeTraits>
 class Bitstream_descartes_rndl_tree
 // TODO: Replaced CGAL::Handle by following CGAL::Handle_with_policy, is this correct?
-    : public ::CGAL::Handle_with_policy< INTERN_RNDL_TREE::Bitstream_descartes_rndl_tree_rep<
+    : public ::CGAL::Handle_with_policy< Bitstream_descartes_rndl_tree_rep<
         BitstreamDescartesRndlTreeTraits
     >, ::CGAL::Handle_policy_no_union >
 {
 public:
     typedef Bitstream_descartes_rndl_tree Self;
     CGAL_BITSTREAM_DESCARTES_RNDL_TREE_TYPEDEFS;
-    typedef INTERN_RNDL_TREE::Bitstream_descartes_rndl_tree_rep<TRAITS> Rep;
+    typedef Bitstream_descartes_rndl_tree_rep<TRAITS> Rep;
     typedef ::CGAL::Handle_with_policy< Rep, ::CGAL::Handle_policy_no_union > Base;
 
     //! node iterator.
@@ -1174,9 +1159,9 @@ Bitstream_descartes_rndl_tree<BitstreamDescartesRndlTreeTraits>
     long target_log_lcf = (4 - n->log_sep_)*this->ptr()->degree_
         + n->log_eps_ + 2*this->ptr()->ceil_log_degree_ + 10;
     long log_lcf_scale = target_log_lcf - this->ptr()->lbd_log_lcoeff_
-        - (log(INTERN_RNDL_TREE::caching_factorial<Integer>(this->ptr()->degree_)) - 1);
+        - (log(caching_factorial<Integer>(this->ptr()->degree_)) - 1);
 
-    INTERN_RNDL_TREE::polynomial_power_to_bernstein_approx(
+    polynomial_power_to_bernstein_approx(
             this->ptr()->input_monomial_coeff_.begin(),
             this->ptr()->input_monomial_coeff_.end(),
             n->coeff_.begin(),
@@ -1194,7 +1179,7 @@ Bitstream_descartes_rndl_tree<BitstreamDescartesRndlTreeTraits>
     ) {
         return false;
     } else {
-        INTERN_RNDL_TREE::var_eps(n->coeff_.begin(), n->coeff_.end(),
+        var_eps(n->coeff_.begin(), n->coeff_.end(),
                 n->min_var_, n->max_var_, Sign_eps_log2(n->log_eps_)
         );
         return true;
@@ -1258,11 +1243,11 @@ Bitstream_descartes_rndl_tree<BitstreamDescartesRndlTreeTraits>
     CGAL_assertion(delta_log_bdry_den >= 0);
 
     int l_min_var, l_max_var, r_min_var, r_max_var;
-    INTERN_RNDL_TREE::var_eps(this->ptr()->tmp1_coeff_.begin(),
+    var_eps(this->ptr()->tmp1_coeff_.begin(),
             this->ptr()->tmp1_coeff_.end(),
             l_min_var, l_max_var, Sign_eps_log2(n->log_eps_)
     );
-    INTERN_RNDL_TREE::var_eps(this->ptr()->tmp2_coeff_.begin(),
+    var_eps(this->ptr()->tmp2_coeff_.begin(),
             this->ptr()->tmp2_coeff_.end(),
             r_min_var, r_max_var, Sign_eps_log2(n->log_eps_)
     );
@@ -1375,8 +1360,6 @@ Bitstream_descartes_rndl_tree<BitstreamDescartesRndlTreeTraits>
 
 namespace CGALi {
 
-namespace INTERN_RNDL_TREE {
-
 struct Fujiwara_root_bound_queue_entry {
     typedef Fujiwara_root_bound_queue_entry Self;
 
@@ -1401,8 +1384,6 @@ public:
         return *a < *b;
     }
 };
-
-} // namespace INTERN_RNDL_TREE
 
 template <class CeilLog2Abs>
 class Upper_bound_log2_abs_approximator_from_ceil_log2_abs {
@@ -1519,8 +1500,8 @@ long Fujiwara_root_bound_log(
     if (n < 1) return 0;
     long lblog2_lcoeff = lblog2(*(beyond - 1));
 
-    INTERN_RNDL_TREE::Fujiwara_root_bound_queue_entry_ptr_less less;
-    typedef INTERN_RNDL_TREE::Fujiwara_root_bound_queue_entry QE;
+    Fujiwara_root_bound_queue_entry_ptr_less less;
+    typedef Fujiwara_root_bound_queue_entry QE;
     std::vector<QE>  entries(n); // entries are never copied
     std::vector<QE*> heap(n);    // heap is built from pointers to them
     for (int i = 0; i < n; ++i) {

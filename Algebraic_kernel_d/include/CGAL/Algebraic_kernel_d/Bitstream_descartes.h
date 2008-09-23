@@ -17,10 +17,11 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial_type_generator.h>
 
 // NOTE: If this flag is set, you need EXACUS!
 #if CGAL_ACK_BITSTREAM_USES_E08_TREE
-#include <NiX/Bitstream_descartes_E08_tree.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_descartes_E08_tree.h>
 #else
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree.h>
 #endif
@@ -92,13 +93,14 @@ CGAL_BEGIN_NAMESPACE
                 Coefficient;
             
             //! The polynomial type
-            typedef CGAL::Polynomial<Coefficient> Polynomial;
+            typedef typename Bitstream_descartes_rndl_tree_traits::POLY
+                Polynomial;
     
             typedef Generic_descartes_rep<Bitstream_descartes_rndl_tree_traits> Self;
       
             //! The type of the used Bitstream Descartes tree
 #if CGAL_ACK_BITSTREAM_USES_E08_TREE
-            typedef NiX::Bitstream_descartes_E08_tree
+            typedef CGAL::CGALi::Bitstream_descartes_E08_tree
                 <Bitstream_descartes_rndl_tree_traits> 
                 Bitstream_tree;
 #else
@@ -317,18 +319,20 @@ CGAL_BEGIN_NAMESPACE
                                 = traits.upper_bound_log2_abs_approximator_object();
                             //AcX_DSTREAM("Fujiwara bound.." << p <<  std::endl);
 #if CGAL_ACK_BITSTREAM_USES_E08_TREE
-                            log_div = -NiX::Fujiwara_root_bound_log(p.begin(),
-                                                                    p.end(),
-                                                                    lower_bound_log2_abs,
-                                                                    upper_bound_log2_abs_approximator
-                            );
+                            log_div = -CGAL::CGALi::Fujiwara_root_bound_log
+                                (p.begin(),
+                                 p.end(),
+                                 lower_bound_log2_abs,
+                                 upper_bound_log2_abs_approximator
+                                );
 #else
 
                             log_div = -CGAL::CGALi
-                                ::Fujiwara_root_bound_log(p.begin(),
-                                                          p.end(),
-                                                          lower_bound_log2_abs,
-                                                          upper_bound_log2_abs_approximator
+                                ::Fujiwara_root_bound_log
+                                (p.begin(),
+                                 p.end(),
+                                 lower_bound_log2_abs,
+                                 upper_bound_log2_abs_approximator
                                 );
 #endif
 
@@ -974,7 +978,8 @@ CGAL_BEGIN_NAMESPACE
         Coefficient;
         
         //! The polynomial type
-        typedef CGAL::Polynomial<Coefficient> Polynomial;
+        typedef typename CGAL::Polynomial_type_generator<Coefficient,1>::Type 
+            Polynomial;
         
         typedef Vert_line_adapter_descartes_rep
         <Bitstream_descartes_rndl_tree_traits, Vert_line, Policy> Self;
@@ -1131,14 +1136,15 @@ CGAL_BEGIN_NAMESPACE
         Coefficient;
     
         //! The polynomial's type
-        typedef CGAL::Polynomial<Coefficient> Polynomial;
+        typedef typename CGAL::Polynomial_type_generator<Coefficient,1>::Type 
+            Polynomial;
     
         typedef Bitstream_descartes<Bitstream_descartes_rndl_tree_traits> 
         Self;
     
         // Type for the Bitstream Descartes tree
 #if CGAL_ACK_BITSTREAM_USES_E08_TREE
-        typedef NiX::Bitstream_descartes_E08_tree
+        typedef CGAL::CGALi::Bitstream_descartes_E08_tree
         <Bitstream_descartes_rndl_tree_traits> 
         Bitstream_tree;
 #else

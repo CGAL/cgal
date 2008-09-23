@@ -41,11 +41,9 @@
 
 /**
  * Allows to use the Bitstream tree described in Eigenwillig's thesis
- * This tree is currently only implemented in EXACUS, so the code
- * won't work without that library
  */
 #ifndef CGAL_ACK_BITSTREAM_USES_E08_TREE
-#define CGAL_ACK_BITSTREAM_USES_E08_TREE 0
+#define CGAL_ACK_BITSTREAM_USES_E08_TREE 1
 #endif
 
 
