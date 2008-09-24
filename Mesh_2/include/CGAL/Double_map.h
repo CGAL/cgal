@@ -26,6 +26,11 @@
 #include <CGAL/assertions.h>
 #include <CGAL/function_objects.h> // for CGAL::Identity
 
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 103500
+#  define CGAL_USE_BOOST_BIMAP
+#endif
+
 #ifdef CGAL_USE_BOOST_BIMAP
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
