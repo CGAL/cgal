@@ -1,21 +1,8 @@
 # src/CGALQt4/CMakeLists.txt
 #
-# The following variables must be set from the parent script:
-# The first two cannot be empty
+# The following variables can be set from the parent script:
 #
-# CGAL_BINARY_DIR
-# CGAL_LIB_INSTALL_DIR
-#
-# CGAL_INCLUDE_DIRS
-# GMP_INCLUDE_DIRS
-# CGAL_DEFINITIONS
-# CGAL_3RD_PARTY_INCLUDE_DIRS
-# CGAL_3RD_PARTY_LIBRARIES
-# CGAL_3RD_PARTY_DEFINITIONS
-# CGAL_LIB_SHARED_LINKER_FLAGS
-# CGAL_VERSION
-# CGAL_MAJOR_VERSION
-# CGAL_MINOR_VERSION
+# CGAL_SONAME_VERSION
 # CGAL_SOVERSION
 
 project (CGALQt4)
@@ -38,7 +25,7 @@ if( QT4_FOUND )
     include(${QT_USE_FILE})
 
     get_dependency_version(OPENGL OpenGL)
-    get_dependency_version(QT4 Qt4)
+    get_dependency_version(QT4)
 
     if(COMMAND add_config_flag)
       set( CGAL_HAS_QT4 TRUE ) 
@@ -86,7 +73,7 @@ if( QT4_FOUND )
     add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} )
     
     if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
-      set_target_properties(CGAL_Qt4 PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+      set_target_properties(CGAL_Qt4 PROPERTIES VERSION "${CGAL_SOVERSION}" SOVERSION "${CGAL_SONAME_VERSION}")
     endif()
 
     if (NOT AUTO_LINK_ENABLED )

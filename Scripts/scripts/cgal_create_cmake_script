@@ -35,71 +35,73 @@
 create_cmake_script()
 {
   # print makefile header
-  echo '# Created by the script cgal_create_cmake_script'
-  echo '# This is the CMake script for compiling a CGAL application.'
-  echo
-  
-  echo "project( ${PROJECT}_${TYPE} ) "
-  echo
-  echo 'CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)'
-  echo
-  echo 'set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)'
-  echo
+  cat <<EOF
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
 
-  
+
+project( ${PROJECT}_${TYPE} )
+EOF
+  cat <<'EOF'
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
+
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+ 
+EOF
+
   if [ "${TYPE}" = "demo" ] ; then
-  
-    echo 'find_package(Qt3 REQUIRED)'
-    echo
-    echo 'find_package(CGAL REQUIRED CORE Qt3 )'
-    echo
-    echo 'include( ${CGAL_USE_FILE} )'
-    echo 'include( Qt3Macros )'
-    echo
-    
     target_name="${PROJECT}_${TYPE}"
     
     for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
       all="$all $file"
     done
-    
+    cat <<'EOF'  
+find_package(CGAL REQUIRED CORE Qt3 )
+include( ${CGAL_USE_FILE} )
+
+find_package(Qt3-patched QUIET )
+# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+# that it can be used together with FindQt4: all its variables are prefixed
+# by "QT3_" instead of "QT_".
+
+include( Qt3Macros )
+EOF
     echo "QT3_AUTOMOC( ${all} )"
-    echo
-    
-    echo '# Make sure the compiler can find generated .moc files'
-    echo 'include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})'
-    
-    echo 'include_directories( ${QT_INCLUDE_DIR} )'
+    cat<<'EOF'
+
+# Make sure the compiler can find generated .moc files
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+
+include_directories( ${QT3_INCLUDE_DIR} )
+
+EOF
     
     if [ -d include ] ; then
       echo 'include_directories (BEFORE include)'
+      echo
     fi
-    echo
-    
-    echo "add_executable  (${target_name} ${all})"
-    echo
-    echo "add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${target_name} )"
-    echo
-      
-    echo '# Link the executable to CGAL and third-party libraries'
-    echo 'if ( AUTO_LINK_ENABLED )'
-    echo "   target_link_libraries(${target_name}"' ${QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}  )'
-    echo 'else()'
-    echo "  target_link_libraries(${target_name}" ' ${QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_LIBRARIES} )'
-    echo 'endif()'
+    cat <<EOF
+add_executable  (${target_name} ${all})
+
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${target_name} )
+
+
+# Link the executable to CGAL and third-party libraries
+target_link_libraries(${target_name} \${QT3_LIBRARIES} \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES} )
+EOF
     
   else
-  
-    echo 'find_package(CGAL REQUIRED CORE )'
-    echo
-    echo
-    echo 'include( ${CGAL_USE_FILE} )'
-    echo 'include( CreateSingleSourceCGALProgram )'
-    echo
-  
+    cat <<'EOF'
+find_package(CGAL REQUIRED CORE )
+include( ${CGAL_USE_FILE} )
+
+include( CreateSingleSourceCGALProgram )
+
+EOF
     if [ -d include ] ; then
       echo 'include_directories (BEFORE include)'
-    echo
+      echo
     fi
     
     for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
@@ -123,7 +125,7 @@ usage()
   echo "Usage: cgal_create_cmake_script [TYPE]"
   echo
   echo "  TYPE must be any of example, demo or test."
-  echo "  Defaukt is example."
+  echo "  Default is example."
   echo 
 }
 

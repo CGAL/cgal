@@ -9,22 +9,32 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 find_package(CGAL REQUIRED Qt3 )
 include( ${CGAL_USE_FILE} )
 
-find_package(Qt3 REQUIRED)
+find_package(Qt3-patched QUIET)
+# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+# that it can be used together with FindQt4: all its variables are prefixed
+# by "QT3_" instead of "QT_".
 
-# use the Qt MOC preprocessor on classes that derives from QObject
-include( Qt3Macros )
-qt3_generate_moc( arrangement_2.h arrangement_2.moc )
-qt3_generate_moc( forms.h forms.moc )
+if ( CGAL_FOUND AND QT3_FOUND )
 
-
-# The executable itself.
-add_executable  ( arrangement_2 
-		  arrangement_2.cpp arrangement_2.moc
-                  forms.cpp forms.moc
-		  demo_tab.cpp
-		  MyWindow_files.cpp
-		  MyWindow_operations.cpp
-		  at_layer.cpp
-		  )
+  # use the Qt MOC preprocessor on classes that derives from QObject
+  include( Qt3Macros-patched )
+  qt3_generate_moc( arrangement_2.h arrangement_2.moc )
+  qt3_generate_moc( forms.h forms.moc )
 
 
+  # The executable itself.
+  add_executable  ( arrangement_2 
+                    arrangement_2.cpp arrangement_2.moc
+		    forms.cpp forms.moc
+		    demo_tab.cpp
+		    MyWindow_files.cpp
+		    MyWindow_operations.cpp
+		    at_layer.cpp
+		    )
+  target_link_libraries( arrangement_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
+
+else()
+
+  message(STATUS "NOTICE: This demo requires CGAL and Qt3, and will not be compiled.")
+
+endif()

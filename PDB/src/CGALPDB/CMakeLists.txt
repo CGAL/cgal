@@ -23,7 +23,7 @@ include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
 add_library(CGAL_PDB "all_files.cpp")
 
-set_target_properties(CGAL_PDB PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+set_target_properties(CGAL_PDB PROPERTIES VERSION "${CGAL_SOVERSION}" SOVERSION "${CGAL_SONAME_VERSION}")
 
 target_link_libraries( CGAL_PDB ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} )
         

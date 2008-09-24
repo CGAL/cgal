@@ -1,6 +1,6 @@
 # src/CGALQt/CMakeLists.txt
 #
-# The following variables must be set from the parent script:
+# The following variables can be set from the parent script:
 # The first two cannot be empty
 #
 # CGAL_BINARY_DIR
@@ -16,18 +16,31 @@
 # CGAL_MAJOR_VERSION
 # CGAL_MINOR_VERSION
 
-assert(CGAL_BINARY_DIR)
+project (CGALQt3)
+
+find_package(CGAL REQUIRED)
+include(${CGAL_USE_FILE})
 
 find_package(OpenGL QUIET )
-find_package(Qt3    QUIET )
+
+find_package(Qt3-patched QUIET )
+# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+# that it can be used together with FindQt4: all its variables are prefixed
+# by "QT3_" instead of "QT_".
 
 if( QT3_FOUND )
 
   if( OPENGL_FOUND )
 
     get_dependency_version(OPENGL OpenGL)
-    get_dependency_version(QT)
+    get_dependency_version(QT3)
     
+    if(COMMAND add_config_flag)
+      set( CGAL_HAS_QT3 TRUE ) 
+      add_config_flag( CGAL_HAS_QT3 )
+    endif()
+    
+    message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
     message( STATUS "OpenGL definitions: ${OPENGL_DEFINITIONS}" )
@@ -41,7 +54,7 @@ if( QT3_FOUND )
     cache_set(CGAL_Qt3_3RD_PARTY_LIBRARIES    ${QT3_LIBRARIES}   ${OPENGL_LIBRARIES}   )
     cache_set(CGAL_Qt3_3RD_PARTY_DEFINITIONS  ${QT3_DEFINITIONS} ${OPENGL_DEFINITIONS} )
     
-    include(Qt3Macros)
+    include(Qt3Macros-patched)
        
     include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS} )
        
@@ -91,7 +104,9 @@ if( QT3_FOUND )
     
     add_dependencies( CGAL_Qt3 CGAL )
     
-    set_target_properties(CGAL_Qt3 PROPERTIES VERSION "${CGAL_SONAME_VERSION}" SOVERSION "${CGAL_SOVERSION}")
+    if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
+      set_target_properties(CGAL_Qt3 PROPERTIES VERSION "${CGAL_SOVERSION}" SOVERSION "${CGAL_SONAME_VERSION}")
+    endif()
     
     target_link_libraries( CGAL_Qt3 ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt3_3RD_PARTY_LIBRARIES} )
         

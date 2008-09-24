@@ -1,19 +1,22 @@
-# Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
-
 
 project (Nef_3_Demo)
 
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
+
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL)
+find_package(CGAL REQUIRED Qt3)
+include(${CGAL_USE_FILE})
 
-find_package(Qt3)
+find_package(Qt3-patched QUIET )
+# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+# that it can be used together with FindQt4: all its variables are prefixed
+# by "QT3_" instead of "QT_".
 
-if ( CGAL_FOUND AND QT_FOUND )
+if ( CGAL_FOUND AND QT3_FOUND )
 
-  include(${CGAL_USE_FILE})
-  include(Qt3Macros)
+  include(Qt3Macros-patched)
   include(CreateSingleSourceCGALQt3Program)
 
   include_directories (BEFORE include)
@@ -27,6 +30,6 @@ if ( CGAL_FOUND AND QT_FOUND )
 
 else()
 
-  message( STATUS "This demo requires CGAL and Qt3" )
-  
+  message(STATUS "NOTICE: This demo requires CGAL and Qt3, and will not be compiled.")
+
 endif()

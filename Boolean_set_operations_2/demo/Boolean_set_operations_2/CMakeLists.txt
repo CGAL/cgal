@@ -9,19 +9,30 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 find_package(CGAL REQUIRED Qt3 )
 include( ${CGAL_USE_FILE} )
 
-find_package(Qt3 REQUIRED)
+find_package(Qt3-patched QUIET)
+# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+# that it can be used together with FindQt4: all its variables are prefixed
+# by "QT3_" instead of "QT_".
 
-# use the Qt MOC preprocessor on classes that derives from QObject
-include( Qt3Macros )
-qt3_generate_moc( boolean_operations_2_toolbar.h boolean_operations_2_toolbar.moc )
-qt3_generate_moc( boolean_operations_2.h boolean_operations_2.moc )
+if ( CGAL_FOUND AND QT3_FOUND )
+
+  # use the Qt MOC preprocessor on classes that derives from QObject
+  include( Qt3Macros-patched )
+  qt3_generate_moc( boolean_operations_2_toolbar.h boolean_operations_2_toolbar.moc )
+  qt3_generate_moc( boolean_operations_2.h boolean_operations_2.moc )
 
 
-# The executable itself.
-add_executable  ( boolean_operations_2 
-		  boolean_operations_2.cpp boolean_operations_2.moc
-                  boolean_operations_2_toolbar.cpp boolean_operations_2_toolbar.moc
-                  Qt_widget_locate_layer.cpp
-		  )
+  # The executable itself.
+  add_executable  ( boolean_operations_2 
+    boolean_operations_2.cpp boolean_operations_2.moc
+    boolean_operations_2_toolbar.cpp boolean_operations_2_toolbar.moc
+    Qt_widget_locate_layer.cpp
+    )
 
-target_link_libraries( boolean_operations_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  target_link_libraries( boolean_operations_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+
+else()
+
+  message(STATUS "NOTICE: This demo requires CGAL and Qt3, and will not be compiled.")
+
+endif()
