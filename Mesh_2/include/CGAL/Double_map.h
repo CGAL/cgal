@@ -27,7 +27,7 @@
 #include <CGAL/function_objects.h> // for CGAL::Identity
 
 #ifdef CGAL_USE_BOOST_BIMAP
-#include <boost/bimap/bimap.hpp>
+#include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #endif
 
@@ -46,11 +46,11 @@ public:
   typedef Double_map<Key, Data, Direct_compare, Reverse_compare> Self;
   
 #ifdef CGAL_USE_BOOST_BIMAP
-  typedef ::boost::bimap::bimap< ::boost::bimap::set_of<Key, Direct_compare>,
-				 ::boost::bimap::multiset_of<Data, Reverse_compare> > Boost_bimap;
+  typedef ::boost::bimap< ::boost::bimaps::set_of<Key, Direct_compare>,
+				 ::boost::bimaps::multiset_of<Data, Reverse_compare> > Boost_bimap;
 
-  typedef typename Boost_bimap::left_map_type Direct_func;
-  typedef typename Boost_bimap::right_map_type Reverse_func;
+  typedef typename Boost_bimap::left_map Direct_func;
+  typedef typename Boost_bimap::right_map Reverse_func;
   typedef typename Reverse_func::iterator reverse_iterator;
   typedef typename Boost_bimap::relation relation;
   typedef typename Boost_bimap::left_key_type left_key_type;
