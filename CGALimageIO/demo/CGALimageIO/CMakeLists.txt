@@ -1,4 +1,4 @@
-PROJECT(image_to_vtk_viewer)
+project(image_to_vtk_viewer)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
@@ -7,8 +7,6 @@ set(PACKAGE_ROOT ../..)
 # Add several CGAL packages to the include and link paths,
 # if they lie in ${PACKAGE_ROOT}/.
 foreach(INC_DIR ${PACKAGE_ROOT}/include 
-                ${PACKAGE_ROOT}/../Data_structure_for_queries_3/include 
-		${PACKAGE_ROOT}/../Marching_cube/include 
 		${PACKAGE_ROOT}/../CGALimageIO/include )
   if(EXISTS ${INC_DIR})
     include_directories (BEFORE ${INC_DIR})
@@ -21,49 +19,43 @@ foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALimageIO)
 endforeach()
 
 
-FIND_PACKAGE(CGAL)
-IF(CGAL_FOUND)
-  include( ${CGAL_USE_FILE} )
-ENDIF(CGAL_FOUND)
+find_package(CGAL REQUIRED ImageIO)
+include( ${CGAL_USE_FILE} )
+find_package(VTK QUIET)
 
-FIND_PACKAGE(VTK QUIET)
-IF(VTK_FOUND)
-  ADD_DEFINITIONS(-DCGAL_USE_VTK)
-  IF(NOT VTK_DIR)
-    MESSAGE(FATAL_ERROR "Please set VTK_DIR.")
-  ENDIF(NOT VTK_DIR)
-  INCLUDE(${VTK_USE_FILE})
+if(VTK_FOUND AND WITH_VTK)
+  add_definitions(-DCGAL_USE_VTK)
+  include(${VTK_USE_FILE})
 
-  SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
-  SET(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
-  SET(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
-  SET(DESIRED_QT_VERSION ${VTK_DESIRED_QT_VERSION} CACHE FILEPATH "")
-  FIND_PACKAGE(Qt)
-  IF(QT_USE_FILE)
-    INCLUDE(${QT_USE_FILE})
-  ELSE(QT_USE_FILE)
-    SET(QT_LIBRARIES   ${QT_QT_LIBRARY})
-  ENDIF(QT_USE_FILE)
+  set(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
+  set(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
+  set(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
+  set(DESIRED_QT_VERSION ${VTK_DESIRED_QT_VERSION} CACHE FILEPATH "")
 
-  SET (SRCS
-    image_to_vtk_viewer.cpp
-    )
+  find_package(Qt QUIET)
+  if(QT_FOUND)
+    include(${QT_USE_FILE})
 
-  # Use the include path and library for Qt that is used by VTK.
-  INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
-    ${QT_QTCORE_INCLUDE_DIR})
+    # Use the include path and library for Qt that is used by VTK.
+    include_directories( ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
+      ${QT_QTCORE_INCLUDE_DIR})
 
-  ADD_EXECUTABLE( image_to_vtk_viewer MACOSX_BUNDLE ${SRCS})
+    add_executable( image_to_vtk_viewer image_to_vtk_viewer.cpp)
 
-  TARGET_LINK_LIBRARIES( image_to_vtk_viewer
-    QVTK
-    ${QT_LIBRARIES}
-    vtkRendering
-    vtkGraphics
-    vtkIO
-    vtkCommon
-    CGAL
-    CGAL-ImageIO
-    )
-ENDIF(VTK_FOUND)
+    target_link_libraries( image_to_vtk_viewer
+      QVTK
+      ${QT_LIBRARIES}
+      vtkRendering
+      vtkGraphics
+      vtkIO
+      vtkCommon
+      ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
+      )
+  else(QT_FOUND)
+    message(STATUS "NOTICE: This demo needs Qt, and will not be compiled.")
+  endif(QT_FOUND)
+else(VTK_FOUND)
 
+  message(STATUS "NOTICE: This demo needs VTK, and will not be compiled.")
+
+endif(VTK_FOUND)
