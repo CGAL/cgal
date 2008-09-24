@@ -413,8 +413,9 @@ public:
       const Vertex_handle& v2 = it->first.second;
       
       if(fh->is_constrained(i) &&
-         !is_locally_conform(tr, v1, v2) )
+         !is_locally_conform(tr, v1, v2) ){
         add_constrained_edge_to_be_conformed(v1, v2);
+      }
     }
 #endif
   } // end scan_triangulation_impl()
