@@ -251,10 +251,11 @@ public:
 
   // Draw normals using OpenGL calls.
   void gl_draw_normals(unsigned char r, unsigned char g, unsigned char b,
-                       FT scale = 1.0) const
+                       FT scale = 1.0, FT line_width = 1.0) const
   {
     // Draw *oriented* normals
     ::glColor3ub(r,g,b);
+    ::glLineWidth(line_width);
     ::glBegin(GL_LINES);
     for (const_iterator it = begin(); it != end(); it++)
     {
