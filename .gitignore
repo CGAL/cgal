@@ -144,7 +144,10 @@ Mesh_2/include/CGAL/semantic.cache
 Mesh_2/test/Mesh_2/*.core
 Mesh_2/test/Mesh_2/*.exe
 Mesh_2/test/Mesh_2/.*.deps
+Mesh_2/test/Mesh_2/CMakeLists.txt
+Mesh_2/test/Mesh_2/Makefile
 Mesh_2/test/Mesh_2/bench_double_map
+Mesh_2/test/Mesh_2/cgal_test_with_cmake
 Mesh_2/test/Mesh_2/depends
 Mesh_2/test/Mesh_2/my_makefile
 Mesh_2/test/Mesh_2/semantic.cache
