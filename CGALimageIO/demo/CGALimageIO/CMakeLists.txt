@@ -54,8 +54,8 @@ if(VTK_FOUND AND WITH_VTK)
   else(QT_FOUND)
     message(STATUS "NOTICE: This demo needs Qt, and will not be compiled.")
   endif(QT_FOUND)
-else(VTK_FOUND)
+else(VTK_FOUND AND WITH_VTK)
 
   message(STATUS "NOTICE: This demo needs VTK, and will not be compiled.")
 
-endif(VTK_FOUND)
+endif(VTK_FOUND AND WITH_VTK)
