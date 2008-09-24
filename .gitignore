@@ -32,6 +32,13 @@ CGALimageIO/examples/CGALimageIO/makefile
 CGALimageIO/examples/CGALimageIO/test_imageio
 Distance_3/include
 GraphicsView/TAGS
+GraphicsView/demo/Circular_kernel_2/*.exe
+GraphicsView/demo/Circular_kernel_2/*.sln
+GraphicsView/demo/Circular_kernel_2/*.vcproj
+GraphicsView/demo/Circular_kernel_2/Circular_kernel_2
+GraphicsView/demo/Circular_kernel_2/Makefile
+GraphicsView/demo/Circular_kernel_2/qrc_*.cxx
+GraphicsView/demo/Circular_kernel_2/ui_*.h
 GraphicsView/demo/GraphicsView/*.exe
 GraphicsView/demo/GraphicsView/*_moc.cpp
 GraphicsView/demo/GraphicsView/Delaunay_triangulation
