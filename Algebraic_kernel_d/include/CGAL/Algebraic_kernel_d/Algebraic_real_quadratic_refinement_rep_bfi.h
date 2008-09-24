@@ -352,7 +352,7 @@ private:
             Integer i_low = int_pair.first;
             Integer i_high = int_pair.second;
 
-            if(CGAL::abs(i_high-i_low) <2) {
+            if(CGAL::abs(i_high-i_low) <= 2) {
                 i = CGAL::abs((i_high+i_low))/2;
                 break;
             }
