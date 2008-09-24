@@ -53,7 +53,7 @@ public:
 
   const QPen& verticesPen() const
   {
-    return vertices_pen;
+    return this->vertices_pen;
   }
 
   const QPen& edgesPen() const
@@ -63,7 +63,7 @@ public:
 
   void setVerticesPen(const QPen& pen)
   {
-    vertices_pen = pen;
+    this->vertices_pen = pen;
   }
 
   void setEdgesPen(const QPen& pen)
