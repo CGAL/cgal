@@ -5,17 +5,13 @@ project (GraphicsView)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL REQUIRED)
+find_package(CGAL REQUIRED Qt4)
 
 include(${CGAL_USE_FILE})
 
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
 
 
-find_package(Qt4       REQUIRED)
+find_package(Qt4 REQUIRED)
 include(${QT_USE_FILE})
 include_directories (BEFORE ../../include)
 link_directories(../../src/CGALQt4)
