@@ -28,6 +28,6 @@ macro(create_single_source_cgal_qt3_program first )
       target_link_libraries(${exe_name} ${CGAL_LIBRARIES} ${CGAL_QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT3_LIBRARIES})
     endif()
     
-  endif(EXISTS ${first})
+  endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${first})
   
 endmacro()
