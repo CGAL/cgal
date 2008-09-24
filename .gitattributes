@@ -1568,6 +1568,7 @@ Generator/doc_tex/Generator/generators_prog2.ps -text svneol=unset#application/p
 Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#image/gif
 GraphicsView/GraphicsView.odp -text
 GraphicsView/TODO -text
+GraphicsView/demo/Circular_kernel_2/Circular_kernel_2.qrc -text
 GraphicsView/demo/Circular_kernel_2/Circular_kernel_2.ui -text
 GraphicsView/demo/Circular_kernel_2/arcs.arc -text
 GraphicsView/demo/Polygon/Polygon_2.qrc -text
