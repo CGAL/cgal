@@ -670,10 +670,10 @@ template <typename Integer_>
 struct Rotation_traits_for_base_angle_base<Integer_,45> {
     
     typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
-    Arithemtic_kernel;
+    Arithmetic_kernel;
 
-    typedef Arithmetic_kernel::Integer Integer;
-    typedef Arithmetic_kernel::Rational Rational;
+    typedef typename Arithmetic_kernel::Integer Integer;
+    typedef typename Arithmetic_kernel::Rational Rational;
 
     typedef CGAL::Sqrt_extension<Rational, Integer> 
         Rotated_rational_coefficient; //root(2)
@@ -757,10 +757,10 @@ template <typename Integer_>
 struct Rotation_traits_for_base_angle_base<Integer_,30> {
     
     typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
-    Arithemtic_kernel;
+    Arithmetic_kernel;
 
-    typedef Arithmetic_kernel::Integer Integer;
-    typedef Arithmetic_kernel::Rational Rational;
+    typedef typename Arithmetic_kernel::Integer Integer;
+    typedef typename Arithmetic_kernel::Rational Rational;
 
     typedef CGAL::Sqrt_extension<Rational, Integer> 
         Rotated_rational_coefficient; //root(3)
@@ -844,10 +844,10 @@ template <typename Integer_>
 struct Rotation_traits_for_base_angle_base<Integer_,18> {
     
     typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
-    Arithemtic_kernel;
+    Arithmetic_kernel;
 
-    typedef Arithmetic_kernel::Integer Integer;
-    typedef Arithmetic_kernel::Rational Rational;
+    typedef typename Arithmetic_kernel::Integer Integer;
+    typedef typename Arithmetic_kernel::Rational Rational;
 
 private:
 
@@ -939,10 +939,10 @@ template <typename Integer_>
 struct Rotation_traits_for_base_angle_base<Integer_,15> {
     
     typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
-    Arithemtic_kernel;
+    Arithmetic_kernel;
 
-    typedef Arithmetic_kernel::Integer Integer;
-    typedef Arithmetic_kernel::Rational Rational;
+    typedef typename Arithmetic_kernel::Integer Integer;
+    typedef typename Arithmetic_kernel::Rational Rational;
 
 private:
 
@@ -1034,10 +1034,10 @@ template <typename Integer_>
 struct Rotation_traits_for_base_angle_base<Integer_,6> {
     
     typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
-    Arithemtic_kernel;
+    Arithmetic_kernel;
 
-    typedef Arithmetic_kernel::Integer Integer;
-    typedef Arithmetic_kernel::Rational Rational;
+    typedef typename Arithmetic_kernel::Integer Integer;
+    typedef typename Arithmetic_kernel::Rational Rational;
 
 private:
 
@@ -1150,10 +1150,10 @@ template <typename Integer_>
 struct Rotation_traits_for_base_angle_base<Integer_,3> {
     
     typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
-    Arithemtic_kernel;
+    Arithmetic_kernel;
 
-    typedef Arithmetic_kernel::Integer Integer;
-    typedef Arithmetic_kernel::Rational Rational;
+    typedef typename Arithmetic_kernel::Integer Integer;
+    typedef typename Arithmetic_kernel::Rational Rational;
 
 private:
 
@@ -1321,7 +1321,10 @@ public:
     typedef typename Base::Rotated_coefficient Rotated_coefficient;
     
     typedef typename 
-    CGAL::Algebraic_curve_kernel_2_generator<Rotated_coefficient>
+    CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel::Rational Rational;
+
+    typedef typename 
+    CGAL::Algebraic_curve_kernel_2_generator<Rotated_coefficient,Rational>
         ::Filtered_algebraic_curve_kernel_with_qir_and_bitstream_2 
         Rotated_kernel_2;
 
@@ -1349,9 +1352,11 @@ public:
                 Rotated_rational_coefficient;
 
             Rotated_rational_coefficient esin = typename Base::Sin()(angle);
+            CGAL::simplify(esin);
             Rotated_rational_coefficient ecos = typename Base::Cos()(angle);
+            CGAL::simplify(ecos);
             Rotated_rational_coefficient ezero = typename Base::Zero()();
-
+            
             typedef typename CGAL::Polynomial_traits_d<Rotated_polynomial_2>
                 ::template Rebind<Rotated_rational_coefficient,1>::Other::Type 
                 Rotated_rational_polynomial_1;
@@ -1364,7 +1369,8 @@ public:
                       Rotated_rational_polynomial_1(esin)), 
                 sub_y(Rotated_rational_polynomial_1(ezero, -esin), 
                       Rotated_rational_polynomial_1(ecos));
-
+            CGAL::simplify(sub_x);
+            CGAL::simplify(sub_y);
             std::vector<Rotated_rational_polynomial_2> subs;
             subs.push_back(sub_x);
             subs.push_back(sub_y);
@@ -1372,7 +1378,7 @@ public:
             Rotated_rational_polynomial_2 result 
                 = typename CGAL::Polynomial_traits_d<Integer_polynomial_2>
                 ::Substitute() (f, subs.begin(), subs.end());
-            
+            CGAL::simplify(result);
             //std::cout << "rotated poly: " << res << std::endl;
             // integralize polynomial
             typedef CGAL::Fraction_traits<Rotated_rational_polynomial_2> FT;
