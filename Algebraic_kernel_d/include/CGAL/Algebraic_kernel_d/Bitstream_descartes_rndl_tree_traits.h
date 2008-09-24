@@ -19,6 +19,7 @@
 #include <CGAL/Bigfloat_interval_traits.h>
 #include <CGAL/Algebraic_kernel_d/Float_traits.h>
 #include <CGAL/Polynomial_type_generator.h>
+#include <CGAL/convert_to_bfi.h>
 
 #include <vector>
 
