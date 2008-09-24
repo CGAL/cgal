@@ -20,7 +20,7 @@ int main(){
     BOOST_STATIC_ASSERT((::boost::is_same<CGAL::Tag_false,Is_real_embeddable>::value)); 
     
     CGAL_IS_RET_NULL_FUNCTOR(Abs);
-    CGAL_IS_RET_NULL_FUNCTOR(Sign);
+    CGAL_IS_RET_NULL_FUNCTOR(Sgn);
     CGAL_IS_RET_NULL_FUNCTOR(Is_finite);
     CGAL_IS_RET_NULL_FUNCTOR(Is_positive);
     CGAL_IS_RET_NULL_FUNCTOR(Is_negative);
