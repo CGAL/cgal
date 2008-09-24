@@ -17,9 +17,9 @@ int main (int argc, char **argv)
   
   // Get the name of the input file from the command line, or use the default
   // pgn_holes.dat file if no command-line parameters are given.
-  //pgn_holes2.dat shows that if the hole has a vertex on the polygon's outer
+  //more data files can be found under test data
   //boundary no other connections are made.  
-  const char   *filename = (argc > 1) ? argv[1] : "pgn_holes3.dat";  
+  const char   *filename = (argc > 1) ? argv[1] : "pgn_holes.dat";  
 
   std::ifstream input_file (filename);
 

@@ -83,8 +83,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
   typedef typename Traits_2::X_monotone_curve_2    Segment_2;
   typedef CGAL::Gps_default_dcel<Traits_2>  		dcel;  
   typedef General_polygon_set_2<Gps_segment_traits_2<Kernel, Container, Traits_2> , dcel>
-  																	General_polygon_set_2;   
-  //typedef Arrangement_2<Traits_2, dcel>             Arrangement_2;  
+  																	General_polygon_set_2;    
   typedef Arrangement_2<Gps_segment_traits_2<Kernel, Container, Traits_2>, dcel>   Arrangement_2;
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
