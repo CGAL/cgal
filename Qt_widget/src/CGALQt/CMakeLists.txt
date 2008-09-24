@@ -33,7 +33,7 @@ if( QT3_FOUND )
   if( OPENGL_FOUND )
 
     get_dependency_version(OPENGL OpenGL)
-    get_dependency_version(QT3)
+    get_dependency_version(QT Qt3)
     
     if(COMMAND add_config_flag)
       set( CGAL_HAS_QT3 TRUE ) 
