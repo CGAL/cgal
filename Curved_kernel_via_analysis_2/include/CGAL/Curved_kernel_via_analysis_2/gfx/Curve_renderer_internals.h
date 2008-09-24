@@ -1065,8 +1065,8 @@ void precompute(const Polynomial_2& in) {
     *rational_x = typename RP_traits::Swap()(*rational_y, 0, 1);
 
     // rational fx and fy must have y outermost var and x innermost
-    *rational_fx = typename RP_traits::Derivative()(*rational_y, 0);
-    *rational_fy = typename RP_traits::Derivative()(*rational_y, 1);
+    *rational_fx = typename RP_traits::Differentiate()(*rational_y, 0);
+    *rational_fy = typename RP_traits::Differentiate()(*rational_y, 1);
     
     // modular polynomials are not used with Field_with_sqrt
 //#if !AcX_SQRT_EXTENSION  
