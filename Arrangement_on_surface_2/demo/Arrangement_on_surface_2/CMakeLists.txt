@@ -29,7 +29,7 @@ if ( CGAL_FOUND AND QT3_FOUND )
 		    demo_tab.cpp
 		    MyWindow_files.cpp
 		    MyWindow_operations.cpp
-		    at_layer.cpp
+		    qt_layer.cpp
 		    )
   target_link_libraries( arrangement_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
