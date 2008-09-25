@@ -6,10 +6,15 @@
 
 \section{Introduction}
 
-Modular arithmetic is a fundamental tool in modern algebra systems. In conjunction with the Chinese remainder theorem it serves as the workhorse in several algorithms computing the gcd, resultant etc. Moreover, it can serve as a very efficient filter, since it is often possible to exclude that some value is zero by computing its modular correspondent with respect to one prime only. 
+Modular arithmetic is a fundamental tool in modern algebra systems. 
+In conjunction with the Chinese remainder theorem it serves as the 
+workhorse in several algorithms computing the gcd, resultant etc. 
+Moreover, it can serve as a very efficient filter, since it is often 
+possible to exclude that some value is zero by computing its modular 
+correspondent with respect to one prime only. 
 
-This package introduces a type \ccc{CGAL::Residue}, which can be considered as 
-the workhorse of the package. It represents $\Z_{/p\Z}$ for some prime $p$. 
+First of all, this package introduces a type \ccc{CGAL::Residue}.
+It represents $\Z_{/p\Z}$ for some prime $p$. 
 The prime number $p$ is stored in a static member variable. 
 The class provides static member functions to change this value. 
 {\bf Note that changing the prime invalidates already existing objects 
@@ -44,11 +49,10 @@ The class \ccc{CGAL::Modular_traits<T>} is designed such that the concept
 \ccc{Modularizable} can be considered as optional, i.e., 
 \ccc{CGAL::Modular_traits<T>} provides a tag that can be used for dispatching. 
 
-\subsection{Examples}
+\subsection{Example}
 
-In the following example the modular arithmetic is used as a filter. 
+In the following example modular arithmetic is used as a filter. 
 \ccIncludeExampleCode{Modular_arithmetic/modular_filter.cpp}
-
 
 \section{Design and Implementation History}
 
