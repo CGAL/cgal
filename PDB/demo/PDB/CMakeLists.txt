@@ -23,6 +23,6 @@ create_single_source_cgal_program( pdb_tree.cpp )
 
 else()
 
-  message(STATUS "NOTICE:his demo requires CGAL and PDB, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL and PDB, and will not be compiled.")
 
 endif()
