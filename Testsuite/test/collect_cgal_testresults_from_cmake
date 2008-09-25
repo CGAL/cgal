@@ -48,7 +48,12 @@ print_testresult()
       then
         RESULT="w"
       else
-        RESULT="y"
+	if grep -i -E -q 'NOTICE: This demo requires' CompilerOutput_$1
+	then
+	  RESULT="r"
+        else
+          RESULT="y"
+	fi
       fi
     fi
   fi
