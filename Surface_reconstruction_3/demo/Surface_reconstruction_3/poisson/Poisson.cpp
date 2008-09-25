@@ -5,6 +5,7 @@
 #include "Poisson.h"
 
 #include "RedirectIOToConsole.h"
+#include "RedirectIOToFile.h"
 
 #include "MainFrm.h"
 
@@ -98,10 +99,15 @@ BOOL CPoissonApp::InitInstance()
 	if (!ProcessShellCommand(cmdInfo))
 		return FALSE;
 
-  // Create console window
-  RedirectIOToConsole();
-  std::cerr << "Console" << std::endl;
-  fprintf(stderr, "(closing this window will stop the application)\n\n");
+    // Create console window...
+    RedirectIOToConsole();
+    std::cerr << "Console" << std::endl;
+    fprintf(stderr, "(closing this window will stop the application)\n\n");
+    //
+    //// ...or redirect stdout/stderr to log file
+    //RedirectIOToFile("Poisson.log");
+    //std::cerr << "Poisson log file" << std::endl;
+    //fprintf(stderr, "\n");
 
 	// The main window has been initialized, so show and update it
 	pMainFrame->ShowWindow(m_nCmdShow);
