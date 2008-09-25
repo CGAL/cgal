@@ -26,6 +26,7 @@
 #define CGAL_INT_H
 
 #include <CGAL/number_type_basic.h>
+#include <CGAL/Modular_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -67,6 +68,30 @@ template<> class Algebraic_structure_traits< int >
 template <> class Real_embeddable_traits< int >
   : public INTERN_RET::Real_embeddable_traits_base< int , CGAL::Tag_true > {};
 
+/*! \ingroup CGAL_Modular_traits_spec
+  \brief Specialization of CGAL::Modular_traits for \c int.
+  
+  A model of concept ModularTraits, supports \c int. 
+*/
+template<>
+class Modular_traits<int>{
+public: 
+    typedef int NT;
+    typedef ::CGAL::Tag_true Is_modularizable;
+    typedef Residue Residue_type;
+ 
+    struct Modular_image{
+        Residue_type operator()(int i){
+            return Residue_type(i);
+        }
+    };    
+    struct Modular_image_representative{
+        NT operator()(const Residue_type& x){
+            return x.get_value();
+        }
+    };    
+};
+
 // long
 
 template<> class Algebraic_structure_traits< long int >
@@ -86,6 +111,30 @@ template<> class Algebraic_structure_traits< long int >
 
 template <> class Real_embeddable_traits< long int >
   : public INTERN_RET::Real_embeddable_traits_base< long int , CGAL::Tag_true > {};
+
+/*! \ingroup CGAL_Modular_traits_spec
+  \brief Specialization of CGAL::Modular_traits for \c long.
+  
+  A model of concept ModularTraits, supports \c long. 
+*/
+template<>
+class Modular_traits<long>{
+public: 
+    typedef long NT;
+    typedef ::CGAL::Tag_true Is_modularizable;
+    typedef Residue Residue_type;
+ 
+    struct Modular_image{
+        Residue_type operator()(long i){
+            return Residue_type(i);
+        }
+    };   
+    struct Modular_image_representative{
+        NT operator()(const Residue_type& x){
+            return NT(x.get_value());
+        }
+    };    
+};
 
 // short
 
