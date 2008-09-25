@@ -1,0 +1,40 @@
+# This is the CMake script for compiling a CGAL application.
+
+project( voronoi_diagram_2 ) 
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
+
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
+find_package(CGAL REQUIRED Qt3 )
+include( ${CGAL_USE_FILE} )
+
+include_directories( ./include )
+
+find_package(Qt3-patched QUIET)
+# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+# that it can be used together with FindQt4: all its variables are prefixed
+# by "QT3_" instead of "QT_".
+
+if ( CGAL_FOUND AND QT3_FOUND )
+
+  # use the Qt MOC preprocessor on classes that derives from QObject
+  include( Qt3Macros-patched )
+  qt3_generate_moc( qt_file_toolbar.h qt_file_toolbar.moc )
+  qt3_generate_moc( qt_layers_toolbar.h qt_layers_toolbar.moc )
+  qt3_generate_moc( my_window.h my_window.moc )
+
+
+  # The executable itself.
+  add_executable  ( voronoi_diagram_2 
+    voronoi_diagram_2.cpp voronoi_diagram_2.moc
+    qt_file_toolbar.moc qt_layers_toolbar.moc my_window.moc
+    )
+
+  target_link_libraries( voronoi_diagram_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+
+else()
+
+  message(STATUS "NOTICE: This demo requires CGAL and Qt3, and will not be compiled.")
+
+endif()
