@@ -11,7 +11,6 @@
 #include <CGAL/Modular_traits.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Polynomial.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/Lazy_exact_nt.h>
 //#include <CGAL/MP_Float.h>
  
@@ -23,14 +22,11 @@
 
 #ifdef CGAL_USE_CORE
 #include <CGAL/CORE_BigInt.h>
-#include <CGAL/CORE_BigRat.h>
 #endif // CGAL_USE_CORE
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/mpz_class.h>
-#include <CGAL/mpq_class.h>
 #endif // CGAL_USE_GMP
 
 
@@ -80,28 +76,20 @@ int main()
    
 #ifdef CGAL_USE_LEDA
     test_modular_traits<leda::integer>();
-    test_modular_traits<leda::rational>();
     test_modular_traits<CGAL::Polynomial< leda::integer > >();
-    test_modular_traits<CGAL::Polynomial< leda::rational > >();
-    test_modular_traits<CGAL::Quotient< leda::integer > >();
     test_modular_traits<CGAL::Lazy_exact_nt< leda::integer > >();
     test_modular_traits<CGAL::Sqrt_extension< leda::integer , leda::integer > >();
 #endif
 #ifdef CGAL_USE_CORE
     test_modular_traits<CORE::BigInt>();
-    test_modular_traits<CORE::BigRat>();
     test_modular_traits<CGAL::Polynomial< CORE::BigInt > >();
-    test_modular_traits<CGAL::Polynomial< CORE::BigRat > >();
-    test_modular_traits<CGAL::Quotient< CORE::BigInt > >();
     test_modular_traits<CGAL::Lazy_exact_nt< CORE::BigInt > >();
     test_modular_traits<CGAL::Sqrt_extension< CORE::BigInt , CORE::BigInt > >();
 #endif
 
 #ifdef CGAL_USE_GMP
     test_modular_traits<CGAL::Gmpz>();
-    test_modular_traits<CGAL::Gmpq>();
     test_modular_traits< mpz_class >();
-    test_modular_traits< mpq_class >();
 #endif
     
     // test Sqrt_extension
@@ -114,15 +102,6 @@ int main()
     test_modular_traits<CGAL::Polynomial< int > >();
     assert(
         !CGAL::Modular_traits<CGAL::Polynomial<double> >
-        ::Is_modularizable::value);
-    
-    // test Quotient
-    test_modular_traits<CGAL::Quotient< int > >();
-    assert(
-        !CGAL::Modular_traits<CGAL::Quotient<double> >
-        ::Is_modularizable::value);
-    assert(
-        !CGAL::Modular_traits<CGAL::Quotient<CGAL::Polynomial<int> > >
         ::Is_modularizable::value);
 
     // test_modular_traits<CGAL::MP_Float >();

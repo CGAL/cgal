@@ -284,31 +284,6 @@ public:
     };
 };
 
-template<>
-class Modular_traits< mpq_class > {
-public:
-  typedef mpq_class NT;
-  typedef CGAL::Tag_true Is_modularizable;
-  typedef Residue Residue_type;
-
-  struct Modular_image{
-    Residue_type operator()(const mpq_class& a){
-      typedef Fraction_traits<mpq_class> FT;
-      mpz_class num, den;  
-      FT::Decompose()(a,num,den);
-      mpz_class prime(Residue::get_current_prime());
-      CGAL::Residue num_m(int(mpz_get_si(CGAL::mod(num,prime).get_mpz_t())));
-      CGAL::Residue den_m(int(mpz_get_si(CGAL::mod(den,prime).get_mpz_t())));
-      return num_m/den_m;
-    }
-  };
-  struct Modular_image_representative{
-    NT operator()(const Residue_type& x){
-      return NT(x.get_value());
-    }
-  };    
-};
-
 CGAL_END_NAMESPACE
 
 #undef CGAL_CHECK_GMP_EXPR

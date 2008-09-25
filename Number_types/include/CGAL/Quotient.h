@@ -42,7 +42,6 @@
 #include <CGAL/Kernel/mpl.h>
 
 #include <boost/operators.hpp>
-#include <CGAL/Modular_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -868,61 +867,6 @@ public:
         }
     };
 };
-
-//fwd 
-class Residue;
-
-namespace CGALi{
-
-template<typename RT, typename TAG>
-struct Quotient_modular_traits_base{
-  typedef Quotient<RT> NT;
-  typedef ::CGAL::Tag_false Is_modularizable;
-  typedef ::CGAL::Null_functor Residue_type;
-  typedef ::CGAL::Null_functor Modular_image;  
-  typedef ::CGAL::Null_functor Modular_image_representative;    
-};
-
-template<typename RT>
-class Quotient_modular_traits_base<RT,CGAL::Tag_true>{ 
-public:
-  typedef Quotient<RT> NT;
-  typedef CGAL::Tag_true Is_modularizable;
-  typedef Residue Residue_type;
-
-  struct Modular_image{
-    Residue_type operator()(const NT& a){
-      typedef CGAL::Modular_traits<RT> MT_RT;
-      typename MT_RT::Modular_image modular_image;
-      typename MT_RT::Residue_type num(modular_image(a.numerator()));
-      typename MT_RT::Residue_type den(modular_image(a.denominator()));
-      return num / den; 
-    }
-  };
-  struct Modular_image_representative{
-    NT operator()(const Residue_type& x){
-      return NT(x.get_value());
-    }
-  };    
-};
-
-template <typename RT>
-struct Quotient_is_modularizable{
-private:
-  typedef typename Modular_traits<RT>::Residue_type Residue_type;
-  typedef Algebraic_structure_traits<Residue_type> AST;
-  typedef typename AST::Algebraic_category Algebraic_category;
-  typedef CGAL::is_same_or_derived<Algebraic_category,CGAL::Field_tag> Is_field;
-public:
-  typedef CGAL::Boolean_tag<Is_field::value> Type;
-};
-
-} // namespace CGALi
-
-template <typename RT> 
-class Modular_traits<Quotient<RT> >
-  :public CGALi::Quotient_modular_traits_base
-    <RT,typename CGALi::Quotient_is_modularizable<RT>::Type>{};
 
 CGAL_END_NAMESPACE
 

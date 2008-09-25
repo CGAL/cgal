@@ -31,9 +31,6 @@
 #include <CGAL/leda_coercion_traits.h>
 #include <CGAL/Interval_nt.h>
 
-#include <CGAL/Residue.h>
-#include <CGAL/Modular_traits.h>
-
 #include <CGAL/Needs_parens_as_product.h>
 
 #include <utility>
@@ -201,32 +198,6 @@ public:
         }
     };
 };
-
-// Modular_traits
-template<>
-class Modular_traits< ::leda::rational > {
-  typedef ::leda::integer Integer;
-  typedef CGAL::Modular_traits<Integer> MT_int;
-public:
-  typedef ::leda::rational NT;
-  typedef ::CGAL::Tag_true Is_modularizable;
-  typedef CGAL::Residue Residue_type;
-
-  struct Modular_image{
-    Residue_type operator()(const NT& rat){
-      MT_int::Modular_image int_mod;
-      Residue_type num = int_mod(rat.numerator());
-      Residue_type den = int_mod(rat.denominator());
-      return num/den;
-    }
-  };
-  struct Modular_image_representative{
-    NT operator()(const Residue_type& x){
-      return NT(x.get_value());
-    }
-  };    
-};
-
 
 template <class F>
 class Output_rep< leda_rational, F> {

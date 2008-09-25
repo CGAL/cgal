@@ -24,7 +24,6 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmp_coercion_traits.h>
-#include <CGAL/Modular_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -131,33 +130,6 @@ public:
             return Gmpq(num, den);
         }
     };
-};
-
-/*! \ingroup NiX_Modular_traits_spec
- *  \brief a model of concept ModularTraits, 
- *  specialization of NiX::Modular_traits. 
- */
-template<>
-class Modular_traits< Gmpq > {
-public:
-  typedef Gmpq NT;
-  typedef CGAL::Tag_true Is_modularizable;
-  typedef Residue Residue_type;
-
-  struct Modular_image{
-    Residue_type operator()(const NT& a){
-      Gmpz num(a.numerator()   % Residue::get_current_prime() );
-      Gmpz den(a.denominator() % Residue::get_current_prime() );
-      Residue num_m (CGAL::Residue(int(mpz_get_si(num.mpz()))));
-      Residue den_m (CGAL::Residue(int(mpz_get_si(den.mpz()))));
-      return num_m / den_m; 
-    }
-  };
-  struct Modular_image_representative{
-    NT operator()(const Residue_type& x){
-      return NT(x.get_value());
-    }
-  };    
 };
 
 CGAL_END_NAMESPACE
