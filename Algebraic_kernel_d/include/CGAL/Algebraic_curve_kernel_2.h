@@ -363,130 +363,11 @@ public:
             CGAL_ACK_DEBUG_PRINT << "angle=" << angle << std::endl;
             CGAL_ACK_DEBUG_PRINT << "final_prec=" << final_prec << std::endl;
 #endif          
+            std::pair<Boundary,Boundary> sin_cos
+                = approximate_sin_and_cos_of_angle(angle,final_prec);
 
-            CGAL::Timer trigo_timer;
-            trigo_timer.start();
-            
-            typedef typename CGAL::Get_arithmetic_kernel<Boundary>
-                ::Arithmetic_kernel::Integer Integer;
+            Boundary sine = sin_cos.first, cosine = sin_cos.second;            
 
-            while(abs(angle)>180) {
-                angle>0 ?  angle-=360 : angle+=360;
-            }
-            std::cout << angle << std::endl;
-            bool between_90_and_270 = abs(angle)>=90;
-            bool greater_180 =(angle<0);
-            // Normalize
-            angle=abs(angle);
-            if(between_90_and_270) {
-                angle=180-angle;
-            }
-            CGAL_assertion(angle>=0 && angle <= 90);
-
-            bool greater_45 = (angle>=45);
-            if(greater_45) {
-                angle=90-angle;
-            }
-
-            Boundary sine, cosine;
-
-            // Filter boundary case of 0 degree
-            if(angle==Boundary(0) || 
-               Boundary(1)/angle>CGAL::ipower(Integer(2),final_prec)) {
-                sine = 0;
-                cosine = 1;
-            } else {
-
-                typedef typename 
-                    CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel AT;
-                typedef typename AT::Bigfloat_interval Bigfloat_interval;
-                typedef typename Bigfloat_interval_traits<Bigfloat_interval>
-                    ::Boundary Bigfloat_boundary;
-
-
-                long old_prec = CGAL::get_precision(Bigfloat_interval());
-
-                long prec = 16;
-                Boundary t;
-                while(true) {
-                    CGAL::set_precision(Bigfloat_interval(),prec);
-                    std::cout << "increased prec to " << (prec) 
-                              << std::endl; 
-                    Bigfloat_interval pi = CGAL::pi<AT>(prec);
-                    Bigfloat_interval s 
-                        = CGAL::sin<AT>
-                        (CGAL::median(
-                                 pi*CGAL::convert_to_bfi(angle)/
-                                 CGAL::convert_to_bfi(Integer(180))),
-                         prec);
-                    Bigfloat_boundary x 
-                        = CGAL::median(CGAL::convert_to_bfi(Integer(1))/s + 
-                                       CGAL::sqrt
-                                       (CGAL::convert_to_bfi(Integer(1))/(s*s)-CGAL::convert_to_bfi(Integer(1))));
-
-                    int n = 0;
-                    typename CGAL::Fraction_traits<Boundary>::Compose compose;
-                    
-                    bool success=false;
-                    
-                    Bigfloat_boundary e0=x, e1=-1, olde0;
-                    Integer p0=0, q0=1, p1=1, q1=0,oldp0,oldq0;
-                    while(true) {
-                        Integer r = CGAL::CGALi::floor(e0/e1);
-                        Integer oldp0=p0, oldq0=q0;
-                        Bigfloat_boundary olde0=e0;
-                        e0=e1;p0=p1;q0=q1;
-                        e1=olde0-r*e1;
-                        p1=oldp0-r*p1;
-                        q1=oldq0-r*q1;
-                        if(q1!=Integer(0)) {
-                            t = compose(p1,q1);
-                            CGAL::simplify(t);
-                            sine = CGAL::abs(2/(t+1/t));
-                            CGAL::simplify(sine);
-                            Bigfloat_interval asin 
-                                = CGAL::arcsin<AT>(sine,prec)
-                                * CGAL::convert_to_bfi(Integer(180))/pi;
-                            long bound = CGAL::CGALi::ceil_log2_abs
-                                (CGAL::abs(asin-CGAL::convert_to_bfi(angle)));
-                            success = (bound <= -final_prec);
-                            typename 
-                                CGAL::Coercion_traits<Boundary, 
-                                                      Bigfloat_boundary>::Cast
-                                cast;
-                            if((cast(t)==cast(x)) || success) {
-                                break;
-                            }
-                        }
-                        n++;
-                    }
-                    if(success) {
-                        CGAL::set_precision(Bigfloat_interval(),old_prec);
-                        break;
-                    } else {
-                        prec*=2;
-                    }
-                }
-                
-                cosine = (t-1/t)/(t+1/t);
-                CGAL::simplify(cosine);
-                
-            }
-            if(greater_45) {
-                std::swap(sine,cosine);
-            }
-            
-            if(greater_180) {
-                sine = -sine;
-            }
-            if(between_90_and_270) {
-                cosine=-cosine;
-            }
-            
-#if CGAL_ACK_DEBUG_FLAG
-            CGAL_ACK_DEBUG_PRINT << "sine=" << sine << std::endl;
-            CGAL_ACK_DEBUG_PRINT << "cosine=" << cosine << std::endl;
-#endif
             
             typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
                 ::template Rebind<Boundary,1>::Other::Type
@@ -515,9 +396,6 @@ public:
             typename FT::Denominator_type dummy;
             Polynomial_2 num;
             typename FT::Decompose()(res, num, dummy);
-            
-            trigo_timer.stop();
-            std::cout << "trigo_timer: " << trigo_timer.time() << std::endl;
 
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "integralized poly: " << num << std::endl;
