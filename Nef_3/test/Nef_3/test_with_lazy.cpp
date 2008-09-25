@@ -23,7 +23,9 @@
 // coordinator   : MPI Saarbruecken
 //
 // ============================================================================
-#include <CGAL/basic.h>
+
+#define CGAL_NEF3_SORT_OUTPUT 1
+
 #include <CGAL/Gmpq.h>
 typedef CGAL::Gmpq NT;
 #include <CGAL/Simple_cartesian.h>

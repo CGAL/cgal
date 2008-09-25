@@ -1,3 +1,6 @@
+
+#define CGAL_NEF3_SORT_OUTPUT 1
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>

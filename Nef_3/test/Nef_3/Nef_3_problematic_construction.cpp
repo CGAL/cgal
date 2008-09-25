@@ -23,7 +23,11 @@
 // coordinator   : MPI Saarbruecken
 //
 // ============================================================================
-#include <CGAL/basic.h>
+
+
+#define CGAL_NEF3_SORT_OUTPUT 1
+
+
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Quotient.h>

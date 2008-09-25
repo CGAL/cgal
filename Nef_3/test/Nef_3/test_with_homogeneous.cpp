@@ -23,6 +23,9 @@
 // coordinator   : MPI Saarbruecken
 //
 // ============================================================================
+
+#define CGAL_NEF3_SORT_OUTPUT 1
+
 #include <CGAL/basic.h>
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
