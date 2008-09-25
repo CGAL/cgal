@@ -6,7 +6,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL REQUIRED Qt3 )
+find_package(CGAL REQUIRED Qt3 CORE)
 include( ${CGAL_USE_FILE} )
 
 find_package(Qt3-patched QUIET)
@@ -29,6 +29,7 @@ if ( CGAL_FOUND AND QT3_FOUND )
 		    demo_tab.cpp
 		    MyWindow_files.cpp
 		    MyWindow_operations.cpp
+		    MyWindow_overlay.cpp
 		    qt_layer.cpp
 		    )
   target_link_libraries( arrangement_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
