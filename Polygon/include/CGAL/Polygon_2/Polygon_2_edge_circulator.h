@@ -31,13 +31,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//-----------------------------------------------------------------------//
-//                          Polygon_2_const_edge_circulator
-//-----------------------------------------------------------------------//
-// Ideally the class Polygon_2_const_edge_circulator would be a nested
-// class of Polygon_2, but this leads to compiler problems with
-// SGI C++ 4.0 with the iterator_category() function
-
 template <class _Traits, class _Container> class Polygon_2;
 
 template <class _Traits, class _Container>
@@ -136,7 +129,7 @@ class Polygon_2_const_edge_circulator {
     }
 
     Polygon_2_const_edge_circulator<_Traits, _Container>
-    operator+(difference_type n)
+    operator+(difference_type n) const
     {
       return Polygon_2_const_edge_circulator<_Traits, _Container>(
         this->container, first_vertex + n);
@@ -149,7 +142,7 @@ class Polygon_2_const_edge_circulator {
     }
 
     Polygon_2_const_edge_circulator<_Traits, _Container>
-    operator-(difference_type n)
+    operator-(difference_type n) const
     {
       return Polygon_2_const_edge_circulator<_Traits, _Container>(
         this->container, first_vertex - n);
@@ -157,37 +150,37 @@ class Polygon_2_const_edge_circulator {
 
     difference_type
     operator-(
-      const Polygon_2_const_edge_circulator<_Traits, _Container>& a)
+      const Polygon_2_const_edge_circulator<_Traits, _Container>& a) const
     {
       return first_vertex - a.first_vertex;
     }
 
-    Segment_2 operator[](int n)
+    Segment_2 operator[](int n) const
     {
       return *Polygon_2_const_edge_circulator<_Traits, _Container>(
         this->container, first_vertex+n);
     }
 
     bool operator<(
-      const Polygon_2_const_edge_circulator<_Traits, _Container>& a)
+      const Polygon_2_const_edge_circulator<_Traits, _Container>& a) const
     {
       return first_vertex < a.first_vertex;
     }
 
     bool operator>(
-      const Polygon_2_const_edge_circulator<_Traits, _Container>& a)
+      const Polygon_2_const_edge_circulator<_Traits, _Container>& a) const
     {
       return first_vertex > a.first_vertex;
     }
 
     bool operator<=(
-      const Polygon_2_const_edge_circulator<_Traits, _Container>& a)
+      const Polygon_2_const_edge_circulator<_Traits, _Container>& a) const
     {
       return first_vertex <= a.first_vertex;
     }
 
     bool operator>=(
-      const Polygon_2_const_edge_circulator<_Traits, _Container>& a)
+      const Polygon_2_const_edge_circulator<_Traits, _Container>& a) const
     {
       return first_vertex >= a.first_vertex;
     }
@@ -229,4 +222,3 @@ value_type(const Polygon_2_const_edge_circulator<_Traits,_Container>&)
 CGAL_END_NAMESPACE
 
 #endif
-
