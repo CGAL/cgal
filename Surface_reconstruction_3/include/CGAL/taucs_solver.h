@@ -49,11 +49,11 @@ public:
   {
     m_io_handle = NULL;
 
-//#ifdef DEBUG_TRACE
-//    // Turn on TAUCS trace
-//    std::cerr.flush();
-//    taucs_logfile((char*)"stderr");
-//#endif
+#if DEBUG_TRACE >= 2
+    // Turn on TAUCS trace
+    std::cerr.flush();
+    taucs_logfile((char*)"stderr");
+#endif
   }
 
   ~Taucs_solver()
@@ -109,6 +109,11 @@ public:
 
     // bandlimitation
     taucs_ccs_order(&A, &perm, &invperm, (char*)"metis");
+    if (perm == NULL || invperm == NULL)
+    {
+      std::cerr << "Taucs_solver: Metis failed\n";
+      return false;
+    }
     PAP = taucs_ccs_permute_symmetrically(&A, perm, invperm);
     if (!PAP)
     {
@@ -137,6 +142,11 @@ public:
 
     // bandlimitation
     taucs_ccs_order(&A, &perm, &invperm, (char*)"metis");
+    if (perm == NULL || invperm == NULL)
+    {
+      std::cerr << "Taucs_solver: Metis failed\n";
+      return false;
+    }
     PAP = taucs_ccs_permute_symmetrically(&A, perm, invperm);
     if (!PAP)
     {
