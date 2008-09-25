@@ -13,7 +13,8 @@
    If the type is not Modularizable the filter is just not applied and the 
    function returns true. 
 */
-#include <CGAL/basic.h>
+
+#include <CGAL/config.h>
 
 #ifdef CGAL_USE_GMP
 
