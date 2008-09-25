@@ -102,6 +102,8 @@ sub collect_results_of_platform($)
 	    } elsif ($2 eq 'n' or $2 eq 'N') {
 		$resulttext = 'n';
 		++$nays;
+	    } elsif ($2 eq 'r') {
+		$resulttext = 'r';
 	    } else {
 		$resulttext = ' ';
 	    }
@@ -188,6 +190,8 @@ EOF
 		print OUTPUT ' class="warning"';
 	    } elsif ($resulttext eq 'n') {
 		print OUTPUT ' class="error"';
+	    } elsif ($resulttext eq 'r') {
+		print OUTPUT ' class="requirements"';
 	    } 
 	    else {
 		print OUTPUT ' class="na"';
@@ -445,7 +449,7 @@ sub print_little_header(){
 <h2>Test Results of ${release_name}</h2>
 <!--#include virtual="versions.inc"-->
 <p>The results of the tests are presented in a table
-('y' = success, 'w' = warning, 'n' = failure),
+('y' = success, 'w' = warning, 'n' = failure, 'r' = a requirement is not found),
 and the error + compiler output from each test can be retrieved by clicking
 on it.</p>
 <p><b>N.B. The detection of warnings is not exact.
