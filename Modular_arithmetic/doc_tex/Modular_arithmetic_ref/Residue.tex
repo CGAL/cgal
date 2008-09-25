@@ -1,7 +1,7 @@
 \begin{ccRefClass} {Residue}
 \label{Residue}
 
-\def\ccTagOperatorLayout{\ccFalse}
+\def\ccTagOperatorLayout{\ccTrue}
 
 \ccDefinition
 
@@ -64,17 +64,21 @@ penalty. Hence, it may be advisable to configure \ccc{CGAL} with
     }
 
 
-\ccFunction{Residue operator+(const Residue&a);}{}\ccGlue
-\ccFunction{Residue operator-(const Residue&a);}{}\ccGlue
+\ccFunction{Residue operator+(Residue a);}{}\ccGlue
+\ccFunction{Residue operator-(Residue a);}{}\ccGlue
 
-\ccFunction{Residue operator+(const Residue&a,const Residue& b);}{}\ccGlue
-\ccFunction{Residue operator-(const Residue&a,const Residue& b);}{}\ccGlue
-\ccFunction{Residue operator*(const Residue&a,const Residue& b);}{}\ccGlue
-\ccFunction{Residue operator/(const Residue&a,const Residue& b);}{}\ccGlue
+\ccFunction{Residue operator+(Residue a,Residue b);}{}\ccGlue
+\ccFunction{Residue operator-(Residue a,Residue b);}{}\ccGlue
+\ccFunction{Residue operator*(Residue a,Residue b);}{}\ccGlue
+\ccFunction{Residue operator/(Residue a,Residue b);}{}\ccGlue
 
-\ccMethod{Residue & operator+=(const Residue& a);}{}\ccGlue
-\ccMethod{Residue & operator-=(const Residue& a);}{}\ccGlue
-\ccMethod{Residue & operator*=(const Residue& a);}{}\ccGlue
-\ccMethod{Residue & operator/=(const Residue& a);}{}\ccGlue
+\ccMethod{Residue & operator+=(Residue a);}{}\ccGlue
+\ccMethod{Residue & operator-=(Residue a);}{}\ccGlue
+\ccMethod{Residue & operator*=(Residue a);}{}\ccGlue
+\ccMethod{Residue & operator/=(Residue a);}{}\ccGlue
+
+\ccFunction{Residue operator==(Residue a,Residue b);}{}\ccGlue
+\ccFunction{Residue operator!=(Residue a,Residue b);}{}\ccGlue
+
 
 \end{ccRefClass} 
