@@ -82,7 +82,7 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-#ifdef DEBUG_TRACE
+#if DEBUG_TRACE >= 2
         // Turn on TAUCS trace
         std::cerr.flush();
         taucs_logfile((char*)"stderr");
@@ -194,7 +194,7 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-#ifdef DEBUG_TRACE
+#if DEBUG_TRACE >= 2
         // Turn on TAUCS trace
         std::cerr.flush();
         taucs_logfile((char*)"stderr");
