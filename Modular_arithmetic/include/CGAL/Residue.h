@@ -28,8 +28,8 @@
 #define CGAL_RESIDUE_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/Coercion_traits.h>
 #include <CGAL/Modular_arithmetic/Residue_type.h>
+#include <CGAL/Coercion_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 

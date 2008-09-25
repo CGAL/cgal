@@ -8,6 +8,7 @@
 
 #include <CGAL/basic.h>
 #include <cassert>
+#include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Polynomial.h>

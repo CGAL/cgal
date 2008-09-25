@@ -22,10 +22,12 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Residue.h>
+#include <CGAL/Modular_arithmetic/Residue_type.h>
 #include <vector>
 
 
 namespace CGAL { 
+
 
 /*! \ingroup CGAL_Modular_traits_spec 
     \brief A model of concept ModularTraits. 
@@ -52,58 +54,6 @@ modular_image(const NT& x){
     typename CGAL::Modular_traits<NT>::Modular_image modular_image;
     return modular_image(x);
 }
-
-
-// The MODULAR_TRAITS specializations for some builtin types
-// =========================================================================
-
-/*! \ingroup CGAL_Modular_traits_spec
-  \brief Specialization of CGAL::Modular_traits for \c int.
-  
-  A model of concept ModularTraits, supports \c int. 
-*/
-template<>
-class Modular_traits<int>{
-public: 
-    typedef int NT;
-    typedef ::CGAL::Tag_true Is_modularizable;
-    typedef Residue Residue_type;
- 
-    struct Modular_image{
-        Residue_type operator()(int i){
-            return Residue_type(i);
-        }
-    };    
-    struct Modular_image_representative{
-        NT operator()(const Residue_type& x){
-            return x.get_value();
-        }
-    };    
-};
-
-/*! \ingroup CGAL_Modular_traits_spec
-  \brief Specialization of CGAL::Modular_traits for \c long.
-  
-  A model of concept ModularTraits, supports \c long. 
-*/
-template<>
-class Modular_traits<long>{
-public: 
-    typedef long NT;
-    typedef ::CGAL::Tag_true Is_modularizable;
-    typedef Residue Residue_type;
- 
-    struct Modular_image{
-        Residue_type operator()(long i){
-            return Residue_type(i);
-        }
-    };   
-    struct Modular_image_representative{
-        NT operator()(const Residue_type& x){
-            return NT(x.get_value());
-        }
-    };    
-};
 
 }///namespace CGAL
 #endif //#ifnedef CGAL_MODULAR_TRAITS_H 1
