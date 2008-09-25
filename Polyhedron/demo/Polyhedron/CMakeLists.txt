@@ -37,7 +37,7 @@ if(TAUCS_FOUND)
   include_directories( ${TAUCS_INCLUDE_DIR} )
   add_definitions(-DCGAL_TAUCS_ENABLED)
 else(TAUCS_FOUND)
-  message(STATUS "warning: TAUCS is not found. parametrisation will not be availlable.")
+  message(STATUS "warning: TAUCS is not found. parametrization will not be available.")
 endif(TAUCS_FOUND)
 
 find_package(Qt4 REQUIRED)
