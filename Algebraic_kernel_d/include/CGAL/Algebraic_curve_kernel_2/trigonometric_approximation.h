@@ -341,7 +341,6 @@ approximate_sin_and_cos_of_angle(Boundary angle,long final_prec) {
             CGAL::set_precision(Bigfloat_interval(),prec);
             std::cout << "increased prec to " << (prec) 
                       << std::endl; 
-            ia_timer.start();
             Bigfloat_interval pi = CGAL::pi<AT>(prec);
             Bigfloat_interval s 
                 = CGAL::sin<AT>
@@ -353,7 +352,6 @@ approximate_sin_and_cos_of_angle(Boundary angle,long final_prec) {
                 = CGAL::median(CGAL::convert_to_bfi(Integer(1))/s + 
                                CGAL::sqrt
                                (CGAL::convert_to_bfi(Integer(1))/(s*s)-CGAL::convert_to_bfi(Integer(1))));
-            ia_timer.stop();
             
             int n = 0;
             typename CGAL::Fraction_traits<Boundary>::Compose compose;
@@ -375,14 +373,12 @@ approximate_sin_and_cos_of_angle(Boundary angle,long final_prec) {
                     CGAL::simplify(t);
                     sine = CGAL::abs(2/(t+1/t));
                     CGAL::simplify(sine);
-                    ia_timer.start();
                     Bigfloat_interval asin 
                         = CGAL::arcsin<AT>(sine,prec)
                         * CGAL::convert_to_bfi(Integer(180))/pi;
                     
                     long bound = CGAL::CGALi::ceil_log2_abs
                         (CGAL::abs(asin-CGAL::convert_to_bfi(angle)));
-                    ia_timer.stop();
                     success = (bound <= -final_prec);
                     typename 
                         CGAL::Coercion_traits<Boundary, 
