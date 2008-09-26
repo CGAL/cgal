@@ -16,6 +16,7 @@
 // GraphicsView items and event filters (input classes)
 #include "TriangulationCircumcircle.h"
 #include "TriangulationMovingPoint.h"
+#include "TriangulationConflictZone.h"
 #include "TriangulationRemoveVertex.h"
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
@@ -45,6 +46,7 @@ private:
   CGAL::Qt::VoronoiGraphicsItem<Delaunay> * vgi;
 
   CGAL::Qt::TriangulationMovingPoint<Delaunay> * mp;
+  CGAL::Qt::TriangulationConflictZone<Delaunay> * cz;
   CGAL::Qt::TriangulationRemoveVertex<Delaunay> * trv;
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
   CGAL::Qt::TriangulationCircumcircle<Delaunay> *tcc;
@@ -56,6 +58,8 @@ public slots:
   void processInput(CGAL::Object o);
 
   void on_actionMovingPoint_toggled(bool checked);
+
+  void on_actionShowConflictZone_toggled(bool checked);
 
   void on_actionCircumcenter_toggled(bool checked);
 
@@ -127,7 +131,8 @@ MainWindow::MainWindow()
 
   tcc = new CGAL::Qt::TriangulationCircumcircle<Delaunay>(&scene, &dt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  
+
+  cz = new CGAL::Qt::TriangulationConflictZone<Delaunay>(&scene, &dt, this);
 
   // 
   // Manual handling of actions
@@ -139,6 +144,8 @@ MainWindow::MainWindow()
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPoint);
   ag->addAction(this->actionMovingPoint);
+  ag->addAction(this->actionShowCircumcenter);
+  ag->addAction(this->actionShowConflictZone);
 
   // Check two actions 
   this->actionInsertPoint->setChecked(true);
@@ -210,6 +217,17 @@ MainWindow::on_actionMovingPoint_toggled(bool checked)
   }
 }
 
+
+void
+MainWindow::on_actionShowConflictZone_toggled(bool checked)
+{
+
+  if(checked){
+    scene.installEventFilter(cz);
+  } else {
+    scene.removeEventFilter(cz);
+  }
+}
 
 void
 MainWindow::on_actionCircumcenter_toggled(bool checked)
