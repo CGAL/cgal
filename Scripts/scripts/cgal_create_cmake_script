@@ -65,7 +65,7 @@ find_package(Qt3-patched QUIET )
 # that it can be used together with FindQt4: all its variables are prefixed
 # by "QT3_" instead of "QT_".
 
-include( Qt3Macros )
+include( Qt3Macros-patched )
 EOF
     echo "QT3_AUTOMOC( ${all} )"
     cat<<'EOF'
