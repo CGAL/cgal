@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kinetic::Simulator_kds_listener<Listener, KDS>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kinetic::Simulator_listener<Listener, KDS>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -24,13 +24,13 @@ structures which want to respond to
 data structures can audit themselves, the \ccRefName\ calls the
 \ccc{audit()} method on the kinetic data structure.
 
-\ccInclude{CGAL/Kinetic/Simulator_kds_listener.h}
+\ccInclude{CGAL/Kinetic/listeners.h}
 
 
 \ccCreation
 \ccCreationVariable{a}  %% choose variable name
 
-\ccConstructor{Simulator_kds_listener(Simulator::Handle, KDS *kds);}{default constructor.}
+\ccConstructor{Simulator_listener(Simulator::Handle, KDS *kds);}{default constructor.}
 
 \ccSeeAlso
 
