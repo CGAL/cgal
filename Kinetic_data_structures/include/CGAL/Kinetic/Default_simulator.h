@@ -320,11 +320,13 @@ public:
     //if (0) cert.process();
     //std::cout << "Requested to schedule "; cert->write(std::cout);
     //std::cout<< " at time " << t << std::endl;
+    CGAL_exactness_precondition(CGAL::compare(t, current_time()) != CGAL::SMALLER);
+    CGAL_precondition(CGAL::compare(t, std::numeric_limits<Time>::infinity())
+                                    == CGAL::SMALLER);
     Event_key key= queue_.insert(t, cert);
     //write_eventqueue(log().stream(Log::DEBUG));
     //log()->stream(Log::SOME) << key;
     //log()->stream(Log::SOME)
-    CGAL_exactness_precondition(CGAL::compare(t, current_time()) != CGAL::SMALLER);
 
     CGAL_LOG(Log::SOME, "Created event " << key << std::endl);
     //CGAL_LOG(Log::SOME, *this << std::endl);
@@ -476,14 +478,14 @@ public:
     i must be greater than current_event_number().
   */
   CGAL_SET(unsigned int, current_event_number,
-    while (!queue_.empty() && number_of_events_ < k) {
-      /*#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
-	if (current_time() < audit_time_ && next_event_time() >= audit_time_) {
-	audit_all_kdss();
-	}
-	#endif*/
-      process_next_event();
-    }
+           while (!queue_.empty() && number_of_events_ < k) {
+             /*#ifdef CGAL_KINETIC_CHECK_EXPENSIVE
+               if (current_time() < audit_time_ && next_event_time() >= audit_time_) {
+               audit_all_kdss();
+               }
+               #endif*/
+             process_next_event();
+           }
 	   );
 
   std::ostream& write(std::ostream &out) const
@@ -529,6 +531,11 @@ protected:
   template <class Root>
   bool compute_audit_time(const Root &) {
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
+    
+    if (current_time() == end_time() 
+        && end_time() == std::numeric_limits<Time>::infinity()) {
+      return false;
+    }
     if (queue_.empty()) {
       if (cur_time_ != end_time()) {
 	std::pair<double,double> ei= CGAL::to_interval(end_time());
@@ -605,13 +612,13 @@ protected:
       }
       #endif*/
 
-
+    CGAL_precondition(!queue_.empty());
     CGAL_exactness_precondition(CGAL::compare(next_event_time(),current_time())
 				!= CGAL::SMALLER);
     //if (CGAL::compare(next_event_time(),cur_time_) == CGAL::LARGER) {
     cur_time_= next_event_time();
-      
     cur_event_= queue_.front();
+    CGAL_LOG(Log::LOTS, "Processing event at time " << cur_time_ << std::endl);
     queue_.process_front();
     ++number_of_events_;
     cur_event_= Event_key();
@@ -619,7 +626,7 @@ protected:
     CGAL_LOG(Log::LOTS, *this);
 
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
-    if (compute_audit_time(current_time())) {
+    if (compute_audit_time(Time())) {
       CGAL_LOG(Log::SOME, "Audit is at time " << audit_time_ << std::endl);
       //if (current_time() < audit_time_ && t >= audit_time_) {
       audit_all_kdss();

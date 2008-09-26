@@ -171,7 +171,11 @@ template <class NT>
       IFn fi(begin, end);
       if (roots.empty()) {
 	Interval_arithmetic_guard guard;
-	vi = fi((INT(lb)+INT(ub))/2.0);
+        if (ub== std::numeric_limits<double>::infinity()) {
+          vi = 10*lb + 1000;
+        } else {
+          vi = fi((INT(lb)+INT(ub))/2.0);
+        }
       } else {
 	Interval_arithmetic_guard guard;
 	vi = fi((INT(last_root)+INT(roots.back()))/2.0);
