@@ -574,7 +574,8 @@ run_test_on_host_and_platform()
       rm -f "${CGAL_BINARY_DIR}/localtestscript"
     fi
     
-    cat >> "${CGAL_BINARY_DIR}/localtestscript" <<EOF
+    for file in "${CGAL_BINARY_DIR}/localtestscript" "${CGAL_BINARY_DIR}/localtestscript-redo-results-collection"; do 
+      cat >> "$file" <<EOF
 CGAL_TESTER='${CGAL_TESTER}';
 CGAL_TESTER_NAME='${CGAL_TESTER_NAME}';
 CGAL_TESTER_ADDRESS='${CGAL_TESTER_ADDRESS}';
@@ -592,7 +593,9 @@ export CGAL_DIR;
 export CGAL_TEST_HOST CGAL_TEST_PLATFORM;
 export CMAKE_GENERATOR;
 export MAKE_CMD;
-
+EOF
+    done
+    cat >> "${CGAL_BINARY_DIR}/localtestscript" <<EOF
 LIST_TEST_PACKAGES='${LIST_TEST_PACKAGES}'
 CGAL_ROOT='${CGAL_ROOT}'
 
@@ -622,21 +625,25 @@ fi
 cd '${CGAL_BINARY_DIR}/test';
 [ -n "${ULIMIT_OPTIONS}" ] && ulimit ${ULIMIT_OPTIONS};
 nice ${NICE_OPTIONS} make ${MAKE_OPTS} -k -fmakefile2;
+EOF
+    for file in "${CGAL_BINARY_DIR}/localtestscript" "${CGAL_BINARY_DIR}/localtestscript-redo-results-collection"; do 
+      cat >> "$file" <<EOF
 echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
 echo 'COPYING RESULTS';
 cp 'results_${CGAL_TESTER}_${PLATFORM}.tar.gz' 'results_${CGAL_TESTER}_${PLATFORM}.txt' '${CGAL_TEST_DIR}';
 cd ..;
 EOF
-     if [ -z "${KEEP_TESTS}" ]; then
+    done
+    if [ -z "${KEEP_TESTS}" ]; then
       cat >> "${CGAL_BINARY_DIR}/localtestscript" <<EOF
 echo 'REMOVING LOCAL_TEST_DIR';
 rm -rf '${CGAL_BINARY_DIR}/test'
 EOF
-     fi
+    fi
 
 
-    chmod ugo+x "${CGAL_BINARY_DIR}/localtestscript"
+    chmod ugo+x "${CGAL_BINARY_DIR}"/localtestscript*
     
     if [ -n "${SHOW_PROGRESS}" ]; then
       remote_command ${HOST} "${CGAL_BINARY_DIR}/localtestscript" | tee "${ACTUAL_LOGFILE}.test.${PLATFORM}" 2>&1
@@ -646,44 +653,51 @@ EOF
     
     log_done "${ACTUAL_LOGFILE}.test.${PLATFORM}"
     
-    #
-    # collect results and put them on the web
-    #
-    cd "${CGAL_TEST_DIR}"
-    log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "PUTTING RESULTS ON THE WEB"
-    log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "RESULTS COLLECTED ${PLATFORM}-${HOST}"
-    
-    # If this file does not exist results collection failed. Fake a results so this fact is itself reported
-    if [ ! -f "results_${CGAL_TESTER}_${PLATFORM}.txt" ]; then
-      log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Results collection for tester ${CGAL_TESTER} and platform ${PLATFORM} failed!" 
-      echo "Results collection failed!" >> "results_${CGAL_TESTER}_${PLATFORM}.txt" 
-      ${TAR} cf "results_${CGAL_TESTER}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.txt"
-      ${COMPRESSOR} -9f "results_${CGAL_TESTER}_${PLATFORM}.tar"
-    fi
-    
-    ${TAR} cf "test_results-${HOST}.tar" "results_${CGAL_TESTER}_${PLATFORM}.tar.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt"
-    ${COMPRESSOR} -9f "test_results-${HOST}.tar"
-    COMPILER=`printf "%s" "$2" | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
-    FILENAME="${CGAL_RELEASE_ID}_${CGAL_TESTER}-test`datestr`-${COMPILER}-cmake.tar.gz"
-    LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${HOST}.gz"
-    ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.test.${PLATFORM}"
-    mv "${ACTUAL_LOGFILE}.test.${PLATFORM}.gz" "${LOGS_DIR}/${LOGFILENAME}"
+  fi
+}
 
-    log "${ACTUAL_LOGFILE}" "Test results: ${CGAL_TEST_DIR}/test_results-${HOST}.tar.gz"
-    
-    if [ -z "${DO_NOT_UPLOAD}" ]; then
-      put_on_web "test_results-${HOST}.tar.gz" "${FILENAME}"
-    fi       
+publish_results()
+{
+  HOST=${1}
+  PLATFORM=${2}
 
-    #
-    # notify the CGAL world
-    #
-    if [ ! "${MAIL_ADDRESS}" = "must_be_set_in_.autocgalrc" ]; then
-      for i in ${MAIL_ADDRESS}; do
-        echo "Notifying ${i} about autotest finished." 
-        printf "result collection::\n${FILENAME}\n" | ${SENDMAIL} -s "autohandle" ${i}
-      done
-    fi
+  #
+  # collect results and put them on the web
+  #
+  cd "${CGAL_TEST_DIR}"
+  log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "PUTTING RESULTS ON THE WEB"
+  log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "RESULTS COLLECTED ${PLATFORM}-${HOST}"
+
+  # If this file does not exist results collection failed. Fake a results so this fact is itself reported
+  if [ ! -f "results_${CGAL_TESTER}_${PLATFORM}.txt" ]; then
+    log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Results collection for tester ${CGAL_TESTER} and platform ${PLATFORM} failed!" 
+    echo "Results collection failed!" >> "results_${CGAL_TESTER}_${PLATFORM}.txt" 
+    ${TAR} cf "results_${CGAL_TESTER}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.txt"
+    ${COMPRESSOR} -9f "results_${CGAL_TESTER}_${PLATFORM}.tar"
+  fi
+  
+  ${TAR} cf "test_results-${HOST}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.tar.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt"
+  ${COMPRESSOR} -9f "test_results-${HOST}_${PLATFORM}.tar"
+  COMPILER=`printf "%s" "$2" | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
+  FILENAME="${CGAL_RELEASE_ID}_${CGAL_TESTER}-test`datestr`-${COMPILER}-cmake.tar.gz"
+  LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${HOST}.gz"
+  ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.test.${PLATFORM}"
+  mv "${ACTUAL_LOGFILE}.test.${PLATFORM}.gz" "${LOGS_DIR}/${LOGFILENAME}"
+
+  log "${ACTUAL_LOGFILE}" "Test results: ${CGAL_TEST_DIR}/test_results-${HOST}_${PLATFORM}.tar.gz"
+  
+  if [ -z "${DO_NOT_UPLOAD}" ]; then
+    put_on_web "test_results-${HOST}_${PLATFORM}.tar.gz" "${FILENAME}"
+  fi       
+
+  #
+  # notify the CGAL world
+  #
+  if [ ! "${MAIL_ADDRESS}" = "must_be_set_in_.autocgalrc" ]; then
+    for i in ${MAIL_ADDRESS}; do
+      echo "Notifying ${i} about autotest finished." 
+      printf "result collection::\n${FILENAME}\n" | ${SENDMAIL} -s "autohandle" ${i}
+    done
   fi
 }
 
@@ -702,6 +716,7 @@ run_test_on_host()
   
   for PLATFORM in ${PLATFORMS}; do
     run_test_on_host_and_platform "${HOST}" "${PLATFORM}"
+    publish_results "${HOST}" "${PLATFORM}"
   done
 }
 
@@ -717,6 +732,7 @@ run_test()
   
   for HOST in ${BUILD_HOSTS}; do
     run_test_on_host ${HOST} &
+    publish_results "${HOST}" "${PLATFORM}"
   done
 }
 
