@@ -38,7 +38,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                mesh_demo$(EXE_EXT) \
+                mesh_2_demo$(EXE_EXT) \
 		mesh$(EXE_EXT) \
 		conform$(EXE_EXT)
 
@@ -68,23 +68,23 @@ Show_segments_base$(OBJ_EXT): Show_segments_base.moc Show_segments_base.cpp
 
 icons$(OBJ_EXT): seeds.xpm marked.xpm contraints.xpm
 
-mesh_demo.moc:  mesh_demo.cpp
-	$(QT_MOC) -o mesh_demo.moc $<
+mesh_2_demo.moc:  mesh_2_demo.cpp
+	$(QT_MOC) -o mesh_2_demo.moc $<
 
 Show_clusters.moc: Show_clusters.h
 	$(QT_MOC) -o Show_clusters.moc $<
 
-mesh_demo$(OBJ_EXT): mesh_demo.moc Show_clusters.moc Show_segments_base.moc\
+mesh_2_demo$(OBJ_EXT): mesh_2_demo.moc Show_clusters.moc Show_segments_base.moc\
 	Show_points.h \
 	Qt_widget_style_editor.h 
 
-mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT) icons$(OBJ_EXT) \
+mesh_2_demo$(EXE_EXT): mesh_2_demo$(OBJ_EXT) icons$(OBJ_EXT) \
 		Show_points$(OBJ_EXT) \
 		Show_segments_base$(OBJ_EXT) \
 		Qt_widget_styled_layer$(OBJ_EXT) \
 		Qt_widget_style_editor$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_demo \
-	mesh_demo$(OBJ_EXT) \
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_2_demo$(EXE_EXT) \
+	mesh_2_demo$(OBJ_EXT) \
 	icons$(OBJ_EXT) \
 	Show_points$(OBJ_EXT) \
 	Show_segments_base$(OBJ_EXT) \
@@ -92,8 +92,8 @@ mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT) icons$(OBJ_EXT) \
 	Qt_widget_style_editor$(OBJ_EXT) \
 	$(LDFLAGS)
 
-run_mesh_demo: mesh_demo$(EXE_EXT)
-	./mesh_demo$(EXE_EXT)
+run_mesh_demo: mesh_2_demo$(EXE_EXT)
+	./mesh_2_demo$(EXE_EXT)
 
 conform$(EXE_EXT): conform$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)conform conform$(OBJ_EXT) $(LDFLAGS)
@@ -103,7 +103,7 @@ mesh$(EXE_EXT): mesh$(OBJ_EXT)
 
 clean: \
 		icons.clean \
-		mesh_demo.clean \
+		mesh_2_demo.clean \
 		mesh.clean \
 		conform.clean \
 		Show_points.clean \
