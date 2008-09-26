@@ -127,29 +127,29 @@ public:
 	b = CGAL::to_double(squared_distance(pc, pa)),
 	c = CGAL::to_double(squared_distance(pa, pb));
       
-      double max_length; // squared max edge length
-      double second_max_length;
+      double max_sq_length; // squared max edge length
+      double second_max_sq_length;
       
       if(a<b)
 	{
 	  if(b<c) {
-	    max_length = c;
-	    second_max_length = b;
+	    max_sq_length = c;
+	    second_max_sq_length = b;
 	  }
 	  else { // c<=b
-	    max_length = b;
-	    second_max_length = ( a < c ? c : a );
+	    max_sq_length = b;
+	    second_max_sq_length = ( a < c ? c : a );
 	  }
 	}
       else // b<=a
 	{
 	  if(a<c) {
-	    max_length = c;
-	    second_max_length = a;
+	    max_sq_length = c;
+	    second_max_sq_length = a;
 	  }
 	  else { // c<=a
-	    max_length = a;
-	    second_max_length = ( b < c ? c : b );
+	    max_sq_length = a;
+	    second_max_sq_length = ( b < c ? c : b );
 	  }
 	}
 
@@ -157,7 +157,7 @@ public:
       if( squared_size_bound != 0 )
 	{
           //	  std::cerr << squared_size_bound << std::endl;
-	  q.second = max_length / squared_size_bound;
+	  q.second = max_sq_length / squared_size_bound;
 	    // normalized by size bound to deal
 	    // with size field
 	  if( q.size() > 1 )
@@ -171,7 +171,7 @@ public:
 
       double area = 2*CGAL::to_double(area_2(pa, pb, pc));
 
-      q.first = (area * area) / (max_length * second_max_length); // (sine)
+      q.first = (area * area) / (max_sq_length * second_max_sq_length); // (sine)
       
       if( q.sine() < this->B )
 	return Mesh_2::BAD;
