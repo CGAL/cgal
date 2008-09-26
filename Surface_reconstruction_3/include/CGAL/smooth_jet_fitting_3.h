@@ -22,7 +22,6 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Monge_via_jet_fitting.h>
-#include <CGAL/Oriented_normal_3.h>
 
 #include <iterator>
 #include <list>
@@ -37,13 +36,11 @@ CGAL_BEGIN_NAMESPACE
 /// @heading Parameters:
 /// @param Kernel Geometric traits class.
 /// @param Tree KD-tree.
-/// @param Point Type of return value.
 ///
 /// @return computed point
-template < typename Kernel,
-           typename Tree,
-           typename Point>
-Point
+template <typename Kernel,
+          typename Tree>
+typename Kernel::Point_3
 smooth_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D point to project
                      Tree& tree, ///< KD-tree
                      const unsigned int KNN,
@@ -51,6 +48,7 @@ smooth_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D point to pro
                      const unsigned int degree_monge)
 {
   // basic geometric types
+  typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
 
   // types for K nearest neighbors search
@@ -95,8 +93,8 @@ smooth_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D point to pro
 /// Precondition: KNN >= 2.
 ///
 /// @heading Parameters:
-/// @param InputIterator value_type is Point_3.
-/// @param OutputIterator value_type is Point_3.
+/// @param InputIterator value_type convertible to Point_3.
+/// @param OutputIterator value_type convertible to Point_3.
 /// @param Kernel Geometric traits class.
 ///
 /// @return past-the-end output iterator.
@@ -133,7 +131,7 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
 
   // iterate over input points, compute and output smooth points
   for(InputIterator it = first; it != beyond; it++)
-    *output++ = smooth_jet_fitting_3<Kernel,Tree,Point>(*it,tree,KNN,degre_fitting,degree_monge);
+    *output++ = smooth_jet_fitting_3<Kernel>(*it,tree,KNN,degre_fitting,degree_monge);
     
   return output;
 }
@@ -146,11 +144,10 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
 /// Precondition: KNN >= 2.
 ///
 /// @heading Parameters:
-/// @param ForwardIterator value_type is Point_3.
+/// @param ForwardIterator value_type convertible to Point_3.
 /// @param Kernel Geometric traits class.
 template <typename ForwardIterator,
-          typename Kernel
->
+          typename Kernel>
 void
 smooth_jet_fitting_3(ForwardIterator first,     ///< input/output points
                      ForwardIterator beyond,
@@ -177,10 +174,11 @@ smooth_jet_fitting_3(ForwardIterator first,     ///< input/output points
   // instanciate a KD-tree search
   Tree tree(first,beyond);
 
-  // iterate over input points and mutate them
+  // Iterate over input points and mutate them.
+  // Note: the cast to (Point&) ensures compatibility with classes derived from Point_3.
   ForwardIterator it;
   for(it = first; it != beyond; it++)
-    *it = smooth_jet_fitting_3<Kernel,Tree,Point>(*it,tree,KNN,degre_fitting,degree_monge);
+    (Point&)(*it) = smooth_jet_fitting_3<Kernel>(*it,tree,KNN,degre_fitting,degree_monge);
 }
 
 
@@ -215,7 +213,7 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
 /// Precondition: KNN >= 2.
 ///
 /// @heading Parameters:
-/// @param ForwardIterator value_type is Point_3.
+/// @param ForwardIterator value_type convertible to Point_3.
 template <typename ForwardIterator>
 void
 smooth_jet_fitting_3(ForwardIterator first,     ///< input/output points

@@ -10,6 +10,7 @@
 #include "surface_reconstruction_read_pwc.h"
 #include "surface_reconstruction_read_g23.h"
 #include "remove_outliers_wrt_camera_cone_angle_3.h"
+#include "orient_normals_wrt_cameras_3.h"
 
 // CGAL
 //Warning: crash when using #define CGAL_C2T3_USE_POLYHEDRON
@@ -670,7 +671,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
 void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWithMST(CCmdUI *pCmdUI)
 {
   assert(m_points.begin() != m_points.end());
-  bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
+  bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
   pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals);
 }
 
@@ -693,7 +694,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
   // Select swapped normals
   m_points.select(m_points.begin(), m_points.end(), false);
   for (int i=0; i<m_points.size(); i++)
-    if (m_points[i].normal().get_vector() * normals_copy[i].get_vector() < 0)
+    if (m_points[i].normal() * normals_copy[i] < 0)
       m_points.select(&m_points[i]);
 
   status_message("Orient Normals wrt Cameras...done (%.2lf s)", task_timer.time());
@@ -705,7 +706,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
 void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWrtCameras(CCmdUI *pCmdUI)
 {
   assert(m_points.begin() != m_points.end());
-  bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
+  bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
   bool points_have_cameras = (m_points.begin()->cameras_begin() != m_points.begin()->cameras_end());
   pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals && points_have_cameras);
 }
@@ -742,7 +743,7 @@ void CPoissonDoc::OnCreatePoissonTriangulation()
 void CPoissonDoc::OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI)
 {
   assert(m_points.begin() != m_points.end());
-  bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
+  bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
   bool normals_are_oriented = m_points.begin()->normal().is_oriented();
   pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == POISSON)
                  && points_have_normals && normals_are_oriented);
@@ -1038,12 +1039,8 @@ void CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting()
   CGAL::Timer task_timer; task_timer.start();
 
   // Smooth points in m_points[]
-  std::vector<Point> output; // intermediate buffer
   CGAL::smooth_jet_fitting_3(m_points.begin(), m_points.end(),
-                             std::back_inserter(output),
                              m_number_of_neighbours);
-  for (int i=0; i < m_points.size(); i++)
-      m_points[i].set_position(output[i]);
   m_points.invalidate_bounding_box();
 
   status_message("Smooth Point Set...done (%.2lf s)", task_timer.time());
@@ -1304,7 +1301,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
 void CPoissonDoc::OnUpdateReconstructionApssReconstruction(CCmdUI *pCmdUI)
 {
   assert(m_points.begin() != m_points.end());
-  bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
+  bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
   bool normals_are_oriented = m_points.begin()->normal().is_oriented();
   pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == APSS)
                  && points_have_normals && normals_are_oriented);
