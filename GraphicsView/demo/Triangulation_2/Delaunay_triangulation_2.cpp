@@ -144,7 +144,7 @@ MainWindow::MainWindow()
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPoint);
   ag->addAction(this->actionMovingPoint);
-  ag->addAction(this->actionShowCircumcenter);
+  ag->addAction(this->actionCircumcenter);
   ag->addAction(this->actionShowConflictZone);
 
   // Check two actions 
