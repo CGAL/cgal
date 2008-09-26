@@ -27,6 +27,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
+typedef K::Iso_rectangle_2 Iso_rectangle_2;
 
 typedef CGAL::Delaunay_triangulation_2<K> Delaunay;
 
@@ -248,20 +249,36 @@ MainWindow::on_actionClear_triggered()
 void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
-  typedef CGAL::Creator_uniform_2<double,Point_2>  Creator;
-  CGAL::Random_points_in_disc_2<Point_2,Creator> g( 100.0);
+  CGAL::Qt::Converter<K> convert;
+  QRectF rect;
+  QList<QGraphicsView *>  views = scene.views();
+  for (int i = 0; i < views.size(); ++i) {
+    QGraphicsView *view = views.at(i);
+    QRect vprect = view->viewport()->rect();
+    QPoint tl = vprect.topLeft();
+    QPoint br = vprect.bottomRight();
+    QPointF tlf = view->mapToScene(tl);
+    QPointF brf = view->mapToScene(br);
+    rect |= QRectF(tlf, brf);
+  }
   
+  Iso_rectangle_2 isor = convert(rect);
+  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg(isor.min(), isor.max());
   const int number_of_points = 
     QInputDialog::getInteger(this, 
                              tr("Number of random points"),
-                             tr("Enter number of random points"));
+                             tr("Enter number of random points"), 100, 0);
 
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   std::vector<Point_2> points;
   points.reserve(number_of_points);
   for(int i = 0; i < number_of_points; ++i){
-    points.push_back(*g++);
+    points.push_back(*pg++);
   }
   dt.insert(points.begin(), points.end());
+  // default cursor
+  QApplication::setOverrideCursor(Qt::ArrowCursor);
   emit(changed());
 }
 
