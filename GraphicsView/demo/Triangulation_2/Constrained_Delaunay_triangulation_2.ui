@@ -6,15 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>981</width>
+    <height>569</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>CGAL Constrained Delaunay Triangulation</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../resources/CGAL.qrc" >:/cgal/logos/cgal_icon</iconset>
+   <iconset resource="../resources/CGAL.qrc" >
+    <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
@@ -72,8 +73,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
-     <height>19</height>
+     <width>981</width>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
@@ -145,7 +146,8 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../icons/Input.qrc" >:/cgal/Input/inputPolyline.png</iconset>
+    <iconset resource="../icons/Input.qrc" >
+     <normaloff>:/cgal/Input/inputPolyline.png</normaloff>:/cgal/Input/inputPolyline.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Insert Polyline</string>
@@ -159,7 +161,8 @@
   </action>
   <action name="actionClear" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileNew.png</iconset>
+    <iconset resource="../icons/File.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Clear</string>
@@ -176,7 +179,8 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../icons/Triangulation_2.qrc" >:/cgal/Triangulation_2/Voronoi_diagram_2.png</iconset>
+    <iconset resource="../icons/Triangulation_2.qrc" >
+     <normaloff>:/cgal/Triangulation_2/Voronoi_diagram_2.png</normaloff>:/cgal/Triangulation_2/Voronoi_diagram_2.png</iconset>
    </property>
    <property name="text" >
     <string>Show &amp;Voronoi Diagram</string>
@@ -193,7 +197,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../icons/Triangulation_2.qrc" >:/cgal/Triangulation_2/Delaunay_triangulation_2.png</iconset>
+    <iconset resource="../icons/Triangulation_2.qrc" >
+     <normaloff>:/cgal/Triangulation_2/Delaunay_triangulation_2.png</normaloff>:/cgal/Triangulation_2/Delaunay_triangulation_2.png</iconset>
    </property>
    <property name="text" >
     <string>Show &amp;Delaunay Triangulation</string>
@@ -204,10 +209,11 @@
   </action>
   <action name="actionLoadConstraints" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileOpen.png</iconset>
+    <iconset resource="../icons/File.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Load Constraints...</string>
+    <string>&amp;Load...</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+L</string>
@@ -215,10 +221,11 @@
   </action>
   <action name="actionSaveConstraints" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileSave.png</iconset>
+    <iconset resource="../icons/File.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Save Constraints...</string>
+    <string>&amp;Save...</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+S</string>
@@ -229,7 +236,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="Constrained_Delaunay_triangulation_2.qrc" >:/cgal/Actions/icons/circumcenter.png</iconset>
+    <iconset resource="Constrained_Delaunay_triangulation_2.qrc" >
+     <normaloff>:/cgal/Actions/icons/circumcenter.png</normaloff>:/cgal/Actions/icons/circumcenter.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Circumcenter</string>
@@ -240,7 +248,8 @@
   </action>
   <action name="actionRecenter" >
    <property name="icon" >
-    <iconset resource="../icons/Input.qrc" >:/cgal/Input/zoom-best-fit</iconset>
+    <iconset resource="../icons/Input.qrc" >
+     <normaloff>:/cgal/Input/zoom-best-fit</normaloff>:/cgal/Input/zoom-best-fit</iconset>
    </property>
    <property name="text" >
     <string>Re&amp;center the viewport</string>
