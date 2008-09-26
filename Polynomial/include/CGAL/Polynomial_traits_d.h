@@ -1111,9 +1111,15 @@ public:
     :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
     Polynomial_d
     operator()(const Polynomial_d& p, const Polynomial_d& q) const {
-      if (CGAL::is_zero(p) && CGAL::is_zero(q)) 
+      if (CGAL::is_zero(p) && CGAL::is_zero(q)){
         return Polynomial_d(0);
-      return CGALi::gcd_utcf(p,q);
+      }
+      // apply modular filter first
+      if (CGALi::may_have_common_factor(p,q)){
+        return CGALi::gcd_utcf(p,q);
+      }else{
+        return Polynomial_d(1);
+      }
     }
   };
     

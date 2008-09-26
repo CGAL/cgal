@@ -190,29 +190,43 @@ class Polynomial_algebraic_structure_traits_base< POLY, Unique_factorization_dom
   public:
     typedef Unique_factorization_domain_tag Algebraic_category;
     
-    class Gcd 
-      : public std::binary_function< POLY, POLY, POLY > {
-      public:
-        POLY operator()( const POLY& x, const POLY& y ) const {
-            typedef Algebraic_structure_traits<POLY> AST;
-            typename AST::Integral_division idiv;
-            typename AST::Unit_part upart; 
-
-          // First: the extreme cases and negative sign corrections.          
-          if (x == POLY(0)) {
-              if (y == POLY(0))  
-                  return POLY(0);
-              return idiv(y,upart(y));
-          }
-          if (y == POLY(0))
-              return idiv(x,upart(x));
-          
-          return CGALi::gcd(x,y);
-        }
-        
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( POLY )
-        
-    };
+  class Gcd 
+    : public std::binary_function< POLY, POLY, POLY > {
+    typedef typename Polynomial_traits_d<POLY>::Multivariate_content Mcontent;
+    typedef typename Mcontent::result_type ICoeff; 
+    
+    ICoeff gcd_help(const ICoeff& x, const ICoeff& y, Field_tag) const {
+      return ICoeff(1);
+    }
+    ICoeff gcd_help(const ICoeff& x, const ICoeff& y, 
+        Unique_factorization_domain_tag) const {
+      return CGAL::gcd(x,y);
+    }
+  public:
+    POLY operator()( const POLY& x, const POLY& y ) const {
+      typedef Algebraic_structure_traits<POLY> AST;
+      typename AST::Integral_division idiv;
+      typename AST::Unit_part upart; 
+      
+      // First: the extreme cases and negative sign corrections.          
+      if (CGAL::is_zero(x)) {
+        if (CGAL::is_zero(y))
+          return POLY(0);
+        return idiv(y,upart(y));
+      }
+      if (CGAL::is_zero(y))
+        return idiv(x,upart(x));
+      
+      if (CGALi::may_have_common_factor(x,y))
+        return CGALi::gcd(x,y);
+      else{        
+        typename Algebraic_structure_traits<ICoeff>::Algebraic_category category;  
+        return POLY(gcd_help(Mcontent()(x),Mcontent()(y), category));
+      }
+    }
+    
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( POLY )  
+  };
 };
 
 // Clone this for a EuclideanRing
