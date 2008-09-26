@@ -393,7 +393,13 @@ public:
     out << "Sort:\n";
     for (typename std::list<OD>::const_iterator it
 	   = sorted_.begin(); it != sorted_.end(); ++it) {
-      out << it->object() << " with event (" << it->event() << ")\n";
+      out << it->object() << " with event (";
+      if (it->event() != Event_key()) {
+        out << it->event();
+      } else {
+        out << "NULL";
+      }
+      out << ")\n";
     }
     out << std::endl << std::endl;;
   }
