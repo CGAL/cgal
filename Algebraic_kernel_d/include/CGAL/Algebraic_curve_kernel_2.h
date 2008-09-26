@@ -286,7 +286,8 @@ protected:
     template<typename T> struct Gcd {
     
         T operator() (std::pair<T,T> pair) {
-            return CGAL::CGALi::gcd_utcf(pair.first,pair.second);
+            return typename CGAL::Polynomial_traits_d<Polynomial_2>
+                ::Gcd_up_to_constant_factor()(pair.first,pair.second);
         }
     } ;     
 
