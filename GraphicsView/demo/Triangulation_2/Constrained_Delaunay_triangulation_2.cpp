@@ -1,17 +1,20 @@
+//#define CGAL_USE_BOOST_BIMAP
+
 #include <fstream>
 #include <vector>
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Lipschitz_sizing_field_2.h>
 #include <CGAL/Lipschitz_sizing_field_criteria_2.h>
 #include <CGAL/Triangulation_conformer_2.h>
-#include <CGAL/spatial_sort.h>
 #include <CGAL/Random.h>
+#include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
 
 // Qt headers
@@ -27,6 +30,7 @@
 #include "TriangulationCircumcircle.h"
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
+#include <CGAL/Qt/Converter.h>
 
 // the two base classes
 #include "ui_Constrained_Delaunay_triangulation_2.h"
@@ -38,9 +42,11 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
 typedef K::Segment_2 Segment_2;
+typedef K::Iso_rectangle_2 Iso_rectangle_2;
 typedef CGAL::Triangulation_vertex_base_2<K>  Vertex_base;
 //typedef CGAL::Constrained_triangulation_face_base_2<K> Face_base;
-typedef CGAL::Delaunay_mesh_face_base_2<K> Face_base;
+typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
+typedef CGAL::Triangulation_face_base_with_info_2<int,K,Fb> Face_base;
 typedef CGAL::Triangulation_data_structure_2<Vertex_base, Face_base>  TDS;
 typedef CGAL::Exact_predicates_tag              Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
@@ -50,61 +56,69 @@ typedef CGAL::Lipschitz_sizing_field_2<K> Lipschitz_sizing_field;
 typedef CGAL::Lipschitz_sizing_field_criteria_2<CDT, Lipschitz_sizing_field> Lipschitz_criteria;
 typedef CGAL::Delaunay_mesher_2<CDT, Lipschitz_criteria> Lipschitz_mesher;
 
-typedef std::pair<std::vector<Point_2>*, int> Point_iterator;
+typedef CDT::Vertex_handle Vertex_handle;
+typedef CDT::Face_handle Face_handle;
+typedef CDT::All_faces_iterator All_faces_iterator;
 
 
-
-template <typename Kernel, typename Iterator>
-struct Sort_traits_2 {
-
-  Kernel k;
-
-  Sort_traits_2 (const Kernel &kernel = Kernel())
-      : k (kernel)
-  {}
-
-  typedef Iterator Point_2;
-
-  struct Less_x_2 {
-    Kernel k;
-    Less_x_2 (const Kernel &kernel = Kernel())
-        : k (kernel)
-    {}
-    bool operator() (const Point_2 &p, const Point_2 &q) const
-    {
-      return k.less_x_2_object() ((*(p.first))[p.second], (*(q.first))[q.second]);
-    }
-  };
-
-  Less_x_2
-  less_x_2_object() const
-  {
-    return Less_x_2(k);
+void
+initializeID(const CDT& ct)
+{
+  for(All_faces_iterator it = ct.all_faces_begin(); it != ct.all_faces_end(); ++it){
+    it->info() = -1;
   }
-
-  struct Less_y_2 {
-    Kernel k;
-    Less_y_2 (const Kernel &kernel = Kernel())
-        : k (kernel)
-    {}
-    bool operator() (const Point_2 &p, const Point_2 &q) const
-    {
-      return k.less_y_2_object() ((*(p.first))[p.second], (*(q.first))[q.second]);
-    }
-  };
+}
 
 
-  Less_y_2
-  less_y_2_object() const
-  {
-    return Less_y_2(k);
+void 
+discoverComponent(const CDT & ct, 
+		  Face_handle start, 
+		  int index, 
+		  std::list<CDT::Edge>& border )
+{
+  if(start->info() != -1){
+    return;
   }
-};
+  std::list<Face_handle> queue;
+  queue.push_back(start);
 
+  while(! queue.empty()){
+    Face_handle fh = queue.front();
+    queue.pop_front();
+    if(fh->info() == -1){
+      fh->info() = index;
+      fh->set_in_domain(index%2 == 1);
+      for(int i = 0; i < 3; i++){
+	CDT::Edge e(fh,i);
+	Face_handle n = fh->neighbor(i);
+	if(n->info() == -1){
+	  if(ct.is_constrained(e)){
+	    border.push_back(e);
+	  } else {
+	    queue.push_back(n);
+	  }
+	}
+	
+      }
+    }
+  }
+}
 
-typedef CGAL::Hilbert_sort_2<Sort_traits_2<K, Point_iterator> > Hilbert_sort_2;
-typedef CGAL::Multiscale_sort<Hilbert_sort_2> Spatial_sort_2;
-
+void 
+discoverComponents(const CDT & ct)
+{
+  int index = 0;
+  std::list<CDT::Edge> border;
+  discoverComponent(ct, ct.infinite_face(), index++, border);
+  while(! border.empty()){
+    CDT::Edge e = border.front();
+    border.pop_front();
+    Face_handle n = e.first->neighbor(e.second);
+    if(n->info() == -1){
+      discoverComponent(ct, n, e.first->info()+1, border);
+    }
+  }
+} 
 
 
 
@@ -172,7 +186,7 @@ public slots:
 
   void on_actionLoadConstraints_triggered();
 
-  void loadPolyConstraints(QString);
+  void loadPolygonConstraints(QString);
 
   void loadEdgConstraints(QString);
 
@@ -215,7 +229,6 @@ MainWindow::MainWindow()
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are not closed
-
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
     
@@ -282,15 +295,27 @@ MainWindow::dropEvent(QDropEvent *event)
 void
 MainWindow::processInput(CGAL::Object o)
 {
+
   std::list<Point_2> points;
   if(CGAL::assign(points, o)){
     if(points.size() == 1) {
       cdt.insert(points.front());
     }
     else {
+      /*
+      std::cout.precision(12);
+      std::cout << points.size() << std::endl;
+      for( std::list<Point_2>::iterator it =  points.begin(); it != points.end(); ++it){
+	std::cout << *it << std::endl;
+      }
+      */
       insert_polyline(points.begin(), points.end());
     }
   }
+
+
+  initializeID(cdt);
+  discoverComponents(cdt);
   emit(changed());
 }
 
@@ -345,8 +370,8 @@ void
 MainWindow::open(QString fileName)
 {
   if(! fileName.isEmpty()){
-    if(fileName.endsWith(".poly")){
-      loadPolyConstraints(fileName);
+    if(fileName.endsWith(".plg")){
+      loadPolygonConstraints(fileName);
       this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".edg")){
       loadEdgConstraints(fileName);
@@ -362,34 +387,35 @@ MainWindow::on_actionLoadConstraints_triggered()
 						  tr("Open Constraint File"),
 						  ".",
 						  tr("Edge files (*.edg)\n"
-						     "Poly files (*.poly)"));
+						     "Poly files (*.plg)"));
   open(fileName);
 }
 
 void
-MainWindow::loadPolyConstraints(QString fileName)
+MainWindow::loadPolygonConstraints(QString fileName)
 {
+  K::Point_2 p,q, first;
+  CDT::Vertex_handle vp, vq, vfirst;
   std::ifstream ifs(qPrintable(fileName));
-  bool first=true;
   int n;
-  ifs >> n;
-  
-  K::Point_2 p,q, qold;
-  CDT::Vertex_handle vp, vq, vqold;
-  while(ifs >> p) {
-    ifs >> q;
-    if((!first) && (p == qold)){
-      vp = vqold;
-    } else {
-      vp = cdt.insert(p);
+  while(ifs >> n){
+    ifs >> first;
+    p = first;
+    vfirst = vp = cdt.insert(p);
+    n--;
+    while(n--){
+      ifs >> q;
+      vq = cdt.insert(q, vp->face());
+      cdt.insert_constraint(vp,vq);
+      p = q;
+      vp = vq;
     }
-    vq = cdt.insert(q, vp->face());
-    cdt.insert_constraint(vp,vq);
-    qold = q;
-    vqold = vq;
-    first = false;
+    cdt.insert_constraint(vp, vfirst);
   }
-
+  
+  
+  initializeID(cdt);
+  discoverComponents(cdt);
   emit(changed());
   actionRecenter->trigger();
 }
@@ -408,7 +434,7 @@ MainWindow::loadEdgConstraints(QString fileName)
   ifs >> n;
   
   K::Point_2 p,q, qold;
-#if 1
+
   CDT::Vertex_handle vp, vq, vqold;
   while(ifs >> p) {
     ifs >> q;
@@ -428,63 +454,7 @@ MainWindow::loadEdgConstraints(QString fileName)
     first = false;
   }
 
-#else 
 
-  Spatial_sort_2 sort_2;
-
-  std::vector<Point_2> points;
-  std::vector<bool> bop; // beginning of polyline
-  std::vector<std::pair<std::vector<Point_2>*,int> > iterators;
-  std::vector<CDT::Vertex_handle> vertices;
-  CDT::Vertex_handle vh;
-
-  points.reserve(n); // As n is the number of segments the vectors might become twice as big
-  bop.reserve(n);
-
-  while(ifs >> p){
-    ifs >> q;
-    if(p == q){
-      std::cout << "Ignore zero length segment" << std::endl;
-      continue;
-    }
-    if(first || (p != qold)){
-      // start a new polyline
-      bop.push_back(true);
-      points.push_back(p);
-    } 
-    bop.push_back(false);
-    points.push_back(q);
-    first = false;
-  }
-  iterators.reserve(points.size());
-  for(int i=0; i < points.size(); i++){
-    iterators.push_back(std::make_pair(&points,i));
-  }
-
-  sort_2(iterators.begin(), iterators.end());
-
-  // insert the points in the spatial sort order
-  first = true;
-  vertices.resize(points.size());
-  for(std::vector<std::pair<std::vector<Point_2>*,int> >::iterator it = iterators.begin();
-      it != iterators.end(); 
-      it++) {
-    if(first){
-      vh = vertices[it->second] = cdt.insert(points[it->second]);
-      first = false;
-    } else {
-      vh = vertices[it->second] = cdt.insert(points[it->second], vh->face());
-    }
-  }
-
-  // insert the constraints
-  CDT::Vertex_handle vp, vq;
-  for(int i = 0; i < vertices.size(); i++){
-    if(!bop[i]){
-      cdt.insert_constraint(vertices[i-1], vertices[i]);
-    }
-  }
-#endif
   tim.stop();
   statusBar()->showMessage(QString("Insertion took %1 seconds").arg(tim.time()), 2000);
   // default cursor
@@ -561,23 +531,18 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
   double edge_length = 0;
-/*
-  double len = 0;
-  int cc = 0;
-  for(CDT::Finite_edges_iterator it = cdt.finite_edges_begin();
-      it != cdt.finite_edges_end();
-      ++it){
-    if(cdt.is_constrained(*it)){
-      ++cc;
-      len+= sqrt(cdt.segment(*it).squared_length());
-    }
-  }
-  edge_length = len/cc;
-  */
+  CGAL::Timer timer;
+  timer.start();
+  initializeID(cdt);
+  discoverComponents(cdt);
+
   int nv = cdt.number_of_vertices();
-  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, edge_length));
+  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, edge_length), true);
+  timer.stop();
   nv = cdt.number_of_vertices() - nv;
-  statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
+  initializeID(cdt);
+  discoverComponents(cdt);
+  statusBar()->showMessage(QString("Added %1 vertices in %2 seconds").arg(nv).arg(timer.time()), 2000);
   // default cursor
   QApplication::setOverrideCursor(Qt::ArrowCursor);
   emit(changed());
@@ -620,8 +585,9 @@ void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
-  typedef CGAL::Creator_uniform_2<double,Point_2>  Creator;
-  CGAL::Random xgenerator, ygenerator;
+  CGAL::Qt::Converter<K> convert;
+  Iso_rectangle_2 isor = convert(rect);
+  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg(isor.min(), isor.max());
   const int number_of_points = 
     QInputDialog::getInteger(this, 
                              tr("Number of random points"),
@@ -632,7 +598,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   std::vector<Point_2> points;
   points.reserve(number_of_points);
   for(int i = 0; i < number_of_points; ++i){
-    points.push_back(Point_2(xgenerator.get_double(rect.left(), rect.right()), ygenerator.get_double(rect.top(),rect.bottom())));
+    points.push_back(*pg++);
   }
   cdt.insert(points.begin(), points.end());
   // default cursor
