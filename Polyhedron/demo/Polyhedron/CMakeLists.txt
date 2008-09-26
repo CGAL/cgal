@@ -66,7 +66,7 @@ qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
 if(ENABLE_FORWARD_DECL)
   add_definitions(-DUSE_FORWARD_DECL)
   add_executable  ( Polyhedron_3 MainWindow.cpp
-                                 main.cpp
+                                 Polyhedron_3.cpp
                                  Viewer.cpp
                                  Scene.cpp
                                  Scene_nef_polyhedron_operations.cpp
@@ -94,8 +94,8 @@ if(ENABLE_FORWARD_DECL)
     add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
   endif(TAUCS_FOUND)
 else(ENABLE_FORWARD_DECL)
-  add_file_dependencies( main.cpp MainWindow_moc.cpp Scene_moc.cpp Viewer_moc.cpp )
-  add_executable  ( Polyhedron_3 main.cpp ${UI_FILES} ${RESOURCE_FILES} )
+  add_file_dependencies( Polyhedron_3.cpp MainWindow_moc.cpp Scene_moc.cpp Viewer_moc.cpp )
+  add_executable  ( Polyhedron_3 Polyhedron_3.cpp ${UI_FILES} ${RESOURCE_FILES} )
 endif(ENABLE_FORWARD_DECL)
 
 
