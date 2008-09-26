@@ -98,7 +98,7 @@ LOGFILE="${TMPDIR}/create_release.log.$date_.$$"
 
 if [ -z "$VERBOSE" ]; then
   # Redirect standard out and standard err to $LOGFILE
-  exec >> ${LOGFILE} 2>&1
+  exec 3>&1 >> ${LOGFILE} 2>&1
 fi
 
 # Verbose: displays all executed commands 
@@ -129,7 +129,7 @@ if [ -r $VERSION_FILE ]; then
   INTERNAL_NUMBER=$(( `cat $VERSION_FILE` + 1 ))
   [ "$DO_IT" ] && printf "%d\n" "${INTERNAL_NUMBER}" > $VERSION_FILE
 else
-  INTERNAL_NUMBER=$(("`svn ls $SVNCGAL/tags/internal-releases | awk "/${MAJOR_NUMBER}\\.${MINOR_NUMBER}${BUGFIX_STRING}/ "'{FS="-|/"; print $4}' | sort -n | tail -1`" + 1 ))
+  INTERNAL_NUMBER=$((`svn ls $SVNCGAL/tags/internal-releases | awk "/${MAJOR_NUMBER}\\.${MINOR_NUMBER}${BUGFIX_STRING}/ "'{FS="-|/"; print $4}' | sort -n | tail -1` + 1 ))
 fi
 if [ -z "$INTERNAL_NUMBER" ]; then
   INTERNAL_NUMBER=1

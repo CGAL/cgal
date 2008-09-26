@@ -111,6 +111,11 @@ sub install_packages() {
   }
   close PACKAGES_TO_INCLUDE;
 
+  if( ! open(LOG_CONFLICTS, ">>&=3") ) {
+      print STDOUT "STDOUT\n";
+      open(LOG_CONFLICTS, ">&", STDOUT);
+  }
+
   opendir ALLPACKAGESDIR, $ALLPACKAGESDIR or die;
   while (defined($package_name = readdir(ALLPACKAGESDIR))) {
     next unless $is_permitted_package{$package_name};
@@ -133,8 +138,8 @@ sub install_packages() {
       {
 	if(exists($files{$_->name}))
         {
-	    print "File ", $_->name(), " from package ", $package_name;
-	    print " conflicts with one from package ", $files{$_->name()}. "\n";
+	    print LOG_CONFLICTS "File ", $_->name(), " from package ", $package_name;
+	    print LOG_CONFLICTS " conflicts with one from package ", $files{$_->name()}. "\n";
 	}
 	else
 	{
@@ -157,6 +162,7 @@ sub install_packages() {
 #    }
 #    system('rm', '-rf', "$tmp_package_name");
   }
+  close(LOG_CONFLICTS);
   closedir ALLPACKAGESDIR;
   unlink 'temppack.tar';
 }
