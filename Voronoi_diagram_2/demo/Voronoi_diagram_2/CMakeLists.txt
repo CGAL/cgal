@@ -27,7 +27,7 @@ if ( CGAL_FOUND AND QT3_FOUND )
 
   # The executable itself.
   add_executable  ( voronoi_diagram_2 
-    voronoi_diagram_2.cpp voronoi_diagram_2.moc
+    voronoi_diagram_2.cpp
     qt_file_toolbar.moc qt_layers_toolbar.moc my_window.moc
     )
 
