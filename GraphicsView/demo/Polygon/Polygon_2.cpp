@@ -3,8 +3,9 @@
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
-
 #include <CGAL/point_generators_2.h>
+#include <CGAL/partition_2.h>
+#include <CGAL/Partition_traits_2.h>
 
 // Qt headers
 #include <QtGui>
@@ -24,7 +25,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
 
-typedef CGAL::Polygon_2<K> Polygon;
+typedef CGAL::Polygon_2<K,std::list<Point_2> > Polygon; // it must be a list for the partition
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -40,6 +41,9 @@ private:
 
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
 
+  std::list<Polygon> partitionPolygons;
+  std::list<CGAL::Qt::PolygonGraphicsItem<Polygon>* >  partitionGraphicsItems;
+
 public:
   MainWindow();
 
@@ -51,6 +55,9 @@ public slots:
 
   void on_actionRecenter_triggered();
 
+  void on_actionCreateInputPolygon_toggled(bool);
+
+  void on_actionPartition_triggered();
 
 signals:
   void changed();
@@ -62,7 +69,7 @@ MainWindow::MainWindow()
 {
   setupUi(this);
 
-  // Add a GraphicItem for the Polygon_2 triangulation
+  // Add a GraphicItem for the Polygon_2
   pgi = new CGAL::Qt::PolygonGraphicsItem<Polygon>(&poly);
 
   QObject::connect(this, SIGNAL(changed()),
@@ -72,12 +79,9 @@ MainWindow::MainWindow()
   scene.addItem(pgi);
 
   // Setup input handlers. They get events before the scene gets them
-  // and the input they generate is passed to the triangulation with 
-  // the signal/slot mechanism    
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true);
 
-  scene.installEventFilter(pi);
-    
+  this->actionCreateInputPolygon->setChecked(true);
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
 
@@ -115,6 +119,8 @@ MainWindow::MainWindow()
 void
 MainWindow::processInput(CGAL::Object o)
 {
+  std::cout << "processInput" << std::endl;
+  this->actionCreateInputPolygon->setChecked(false);
   std::list<Point_2> points;
   if(CGAL::assign(points, o)){
     if((points.size() == 1)&& poly.size()>0){
@@ -131,6 +137,9 @@ MainWindow::processInput(CGAL::Object o)
       }
     } else {
       poly.clear();
+      if(points.front() == points.back()){
+	points.pop_back();
+      }
       poly.insert(poly.vertices_begin(), points.begin(), points.end());
       textEdit->clear();
       if(poly.is_empty()){
@@ -168,7 +177,6 @@ MainWindow::processInput(CGAL::Object o)
  *  "on_<action_name>_<signal_name>"
  */
 
-
 void
 MainWindow::on_actionClear_triggered()
 {
@@ -176,7 +184,17 @@ MainWindow::on_actionClear_triggered()
   emit(changed());
 }
 
-
+void
+MainWindow::on_actionCreateInputPolygon_toggled(bool checked)
+{
+  poly.clear();
+  if(checked){
+    scene.installEventFilter(pi);
+  } else {
+    scene.removeEventFilter(pi);
+  }
+  emit(changed());
+}
 
 void
 MainWindow::on_actionRecenter_triggered()
@@ -185,6 +203,29 @@ MainWindow::on_actionRecenter_triggered()
   this->graphicsView->fitInView(pgi->boundingRect(), Qt::KeepAspectRatio);  
 }
 
+void
+MainWindow::on_actionPartition_triggered()
+{
+  if(poly.size()>0){
+    partitionPolygons.clear();
+    if(! poly.is_counterclockwise_oriented()){
+      poly.reverse_orientation();
+    }
+    CGAL::approx_convex_partition_2(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(partitionPolygons));
+    for(std::list<CGAL::Qt::PolygonGraphicsItem<Polygon>* >::iterator it = partitionGraphicsItems.begin();
+	it != partitionGraphicsItems.end();
+	++it){
+      scene.removeItem(*it);
+    }
+    partitionGraphicsItems.clear();
+    for(std::list<Polygon>::iterator it = partitionPolygons.begin();
+	it != partitionPolygons.end();
+	++it){
+      partitionGraphicsItems.push_back(new CGAL::Qt::PolygonGraphicsItem<Polygon>(&(*it)));
+      scene.addItem(partitionGraphicsItems.back());
+    }
+  }
+}
 
 #include "Polygon_2.moc"
 
