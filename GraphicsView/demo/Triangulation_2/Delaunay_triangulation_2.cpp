@@ -267,25 +267,24 @@ MainWindow::on_actionClear_triggered()
 void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
-  CGAL::Qt::Converter<K> convert;
-  QRectF rect;
-  QList<QGraphicsView *>  views = scene.views();
-  for (int i = 0; i < views.size(); ++i) {
-    QGraphicsView *view = views.at(i);
-    QRect vprect = view->viewport()->rect();
-    QPoint tl = vprect.topLeft();
-    QPoint br = vprect.bottomRight();
-    QPointF tlf = view->mapToScene(tl);
-    QPointF brf = view->mapToScene(br);
-    rect |= QRectF(tlf, brf);
-  }
-  
+  QRectF rect = CGAL::Qt::viewportsBbox(&scene);
+  CGAL::Qt::Converter<K> convert;  
   Iso_rectangle_2 isor = convert(rect);
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg(isor.min(), isor.max());
+  bool ok = false;
   const int number_of_points = 
     QInputDialog::getInteger(this, 
                              tr("Number of random points"),
-                             tr("Enter number of random points"), 100, 0);
+                             tr("Enter number of random points"),
+			     100,
+			     0,
+			     std::numeric_limits<int>::max(),
+			     1,
+			     &ok);
+
+  if(!ok) {
+    return;
+  }
 
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
