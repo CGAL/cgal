@@ -48,7 +48,7 @@ print_testresult()
       then
         RESULT="w"
       else
-	if grep -i -E -q 'NOTICE: This demo requires' CompilerOutput_$1
+	if grep -E -q 'NOTICE: This [^ ]+ (require|need)' CompilerOutput_$1
 	then
 	  RESULT="r"
         else
