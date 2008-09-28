@@ -34,6 +34,6 @@ void MainWindow::on_actionConvexHull_triggered()
 
 
     // default cursor
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QApplication::restoreOverrideCursor();
   }
 }

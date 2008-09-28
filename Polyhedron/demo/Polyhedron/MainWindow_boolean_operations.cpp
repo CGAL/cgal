@@ -208,6 +208,6 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
   if(!nefpolyB)
     delete n2; // destroyed n2, if it was a copy
 
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
 }
 

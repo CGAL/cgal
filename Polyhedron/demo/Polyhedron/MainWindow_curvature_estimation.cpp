@@ -104,6 +104,6 @@ void MainWindow::on_actionEstimateCurvature_triggered()
       scene->polyhedronRenderingMode(index));
 
     // default cursor
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QApplication::restoreOverrideCursor();
   }
 }

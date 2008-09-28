@@ -77,7 +77,7 @@ void MainWindow::on_actionFitPlane_triggered()
       scene->isPolyhedronActivated(index),
       scene->polyhedronRenderingMode(index));
 
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QApplication::restoreOverrideCursor();
   }
 }
 
@@ -160,6 +160,6 @@ void MainWindow::on_actionFitLine_triggered()
       scene->isPolyhedronActivated(index),
       scene->polyhedronRenderingMode(index));
 
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QApplication::restoreOverrideCursor();
   }
 }

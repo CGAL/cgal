@@ -26,7 +26,7 @@ void MainWindow::parameterize(const Parameterization_method method)
   Polyhedron* pMesh = scene->polyhedron(index);
   if(pMesh == NULL)
   {
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QApplication::restoreOverrideCursor();
     return;
   }
 
@@ -61,7 +61,7 @@ void MainWindow::parameterize(const Parameterization_method method)
   else
   {
     std::cout << "failure" << std::endl;
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QApplication::restoreOverrideCursor();
     return;
   }
 
@@ -92,7 +92,7 @@ void MainWindow::parameterize(const Parameterization_method method)
     scene->isPolyhedronActivated(index),
     scene->polyhedronRenderingMode(index));
 
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionMVC_triggered()

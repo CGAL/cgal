@@ -458,7 +458,7 @@ MainWindow::loadEdgConstraints(QString fileName)
   tim.stop();
   statusBar()->showMessage(QString("Insertion took %1 seconds").arg(tim.time()), 2000);
   // default cursor
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
   emit(changed());
   actionRecenter->trigger();
 }
@@ -505,7 +505,7 @@ MainWindow::on_actionMakeGabrielConform_triggered()
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   // default cursor
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
   emit(changed());
 }
 
@@ -520,7 +520,7 @@ MainWindow::on_actionMakeDelaunayConform_triggered()
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
    // default cursor
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
   emit(changed());
 }
 
@@ -544,7 +544,7 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   discoverComponents(cdt);
   statusBar()->showMessage(QString("Added %1 vertices in %2 seconds").arg(nv).arg(timer.time()), 2000);
   // default cursor
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
   emit(changed());
 
 }
@@ -575,7 +575,7 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   // default cursor
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
   emit(changed());
 }
 
@@ -612,7 +612,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   }
   cdt.insert(points.begin(), points.end());
   // default cursor
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
   emit(changed());
 }
 

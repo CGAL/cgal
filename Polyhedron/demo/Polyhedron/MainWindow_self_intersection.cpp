@@ -42,7 +42,7 @@ void MainWindow::on_actionSelfIntersection_triggered()
 	scene->polyhedronRenderingMode(index));
     }
 
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QApplication::restoreOverrideCursor();
   }
 }
 

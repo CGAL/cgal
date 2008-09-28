@@ -295,7 +295,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   }
   dt.insert(points.begin(), points.end());
   // default cursor
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
   emit(changed());
 }
 

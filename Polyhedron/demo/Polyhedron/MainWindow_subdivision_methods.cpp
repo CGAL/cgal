@@ -17,7 +17,7 @@ void MainWindow::on_actionLoop_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::Loop_subdivision(*poly, 1);
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
   scene->polyhedronChanged(poly);
 }
 
@@ -31,7 +31,7 @@ void MainWindow::on_actionCatmullClark_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::CatmullClark_subdivision(*poly, 1);
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
   scene->polyhedronChanged(poly);
 }
 
@@ -45,6 +45,6 @@ void MainWindow::on_actionSqrt3_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::Sqrt3_subdivision(*poly, 1);
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-  QApplication::setOverrideCursor(Qt::ArrowCursor);
+  QApplication::restoreOverrideCursor();
   scene->polyhedronChanged(poly);
 }
