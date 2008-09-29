@@ -64,9 +64,12 @@
    </attribute>
    <addaction name="actionInsertPoint" />
    <addaction name="actionMovingPoint" />
+   <addaction name="actionCircumcenter" />
+   <addaction name="actionShowConflictZone" />
+   <addaction name="separator" />
    <addaction name="actionShowDelaunay" />
    <addaction name="actionShowVoronoi" />
-   <addaction name="actionCircumcenter" />
+   <addaction name="separator" />
    <addaction name="actionRecenter" />
   </widget>
   <widget class="QMenuBar" name="menubar" >
@@ -99,11 +102,13 @@
     <property name="title" >
      <string>&amp;Tools</string>
     </property>
-    <addaction name="actionMovingPoint" />
     <addaction name="actionInsertPoint" />
+    <addaction name="actionMovingPoint" />
+    <addaction name="actionCircumcenter" />
+    <addaction name="actionShowConflictZone" />
+    <addaction name="separator" />
     <addaction name="actionShowDelaunay" />
     <addaction name="actionShowVoronoi" />
-    <addaction name="actionShowConflictZone" />
     <addaction name="separator" />
     <addaction name="actionRecenter" />
    </widget>
@@ -143,10 +148,10 @@
    </property>
    <property name="icon" >
     <iconset resource="Delaunay_triangulation_2.qrc" >
-     <normaloff>:/cgal/Actions/icons/movingPoint.png</normaloff>:/cgal/Actions/icons/movingPoint.png</iconset>
+     <normaloff>:/cgal/Actions/icons/moving_point.png</normaloff>:/cgal/Actions/icons/moving_point.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Moving Point</string>
+    <string>&amp;Simulate insertion</string>
    </property>
    <property name="toolTip" >
     <string comment="The comment" >Simulate Insertion</string>
@@ -214,8 +219,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../icons/Triangulation_2.qrc" >
-     <normaloff>:/cgal/Triangulation_2/Delaunay_triangulation_2.png</normaloff>:/cgal/Triangulation_2/Delaunay_triangulation_2.png</iconset>
+    <iconset resource="Delaunay_triangulation_2.qrc" >
+     <normaloff>:/cgal/Actions/icons/triangulation.png</normaloff>:/cgal/Actions/icons/triangulation.png</iconset>
    </property>
    <property name="text" >
     <string>Show &amp;Delaunay Triangulation</string>
@@ -278,6 +283,10 @@
   <action name="actionShowConflictZone" >
    <property name="checkable" >
     <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="Delaunay_triangulation_2.qrc" >
+     <normaloff>:/cgal/Actions/icons/conflict_zone.png</normaloff>:/cgal/Actions/icons/conflict_zone.png</iconset>
    </property>
    <property name="text" >
     <string>Show Conflict Zone</string>

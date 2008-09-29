@@ -6,7 +6,6 @@
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
@@ -29,7 +28,7 @@
 // GraphicsView items and event filters (input classes)
 #include "TriangulationCircumcircle.h"
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
-#include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
+#include <CGAL/Qt/DelaunayMeshTriangulationGraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
 
 // the two base classes
@@ -44,10 +43,59 @@ typedef K::Point_2 Point_2;
 typedef K::Segment_2 Segment_2;
 typedef K::Iso_rectangle_2 Iso_rectangle_2;
 typedef CGAL::Triangulation_vertex_base_2<K>  Vertex_base;
-//typedef CGAL::Constrained_triangulation_face_base_2<K> Face_base;
-typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
-typedef CGAL::Triangulation_face_base_with_info_2<int,K,Fb> Face_base;
-typedef CGAL::Triangulation_data_structure_2<Vertex_base, Face_base>  TDS;
+typedef CGAL::Constrained_triangulation_face_base_2<K> Face_base;
+
+template <class Gt,
+          class Fb >
+class Enriched_face_base_2 : public Fb {
+public:
+  typedef Gt Geom_traits;
+  typedef typename Fb::Vertex_handle Vertex_handle;
+  typedef typename Fb::Face_handle Face_handle;
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Fb::template Rebind_TDS<TDS2>::Other Fb2;
+    typedef Enriched_face_base_2<Gt,Fb2> Other;
+  };
+
+protected:
+  int status;
+
+public:
+  Enriched_face_base_2(): Fb(), status(-1) {};
+
+  Enriched_face_base_2(Vertex_handle v0, 
+		       Vertex_handle v1, 
+		       Vertex_handle v2)
+    : Fb(v0,v1,v2), status(-1) {};
+
+  Enriched_face_base_2(Vertex_handle v0, 
+		       Vertex_handle v1, 
+		       Vertex_handle v2,
+		       Face_handle n0, 
+		       Face_handle n1, 
+		       Face_handle n2)
+    : Fb(v0,v1,v2,n0,n1,n2), status(-1) {};
+
+  inline
+  bool is_in_domain() const { return (status%2 == 1); };
+
+  inline
+  void set_in_domain(const bool b) { status = (b ? 1 : 0); };
+
+  inline 
+  void set_counter(int i) { status = i; };
+
+  inline 
+  int counter() const { return status; };
+
+  inline 
+  int& counter() { return status; };
+}; // end class Enriched_face_base_2
+
+typedef Enriched_face_base_2<K, Face_base> Fb;
+typedef CGAL::Triangulation_data_structure_2<Vertex_base, Fb>  TDS;
 typedef CGAL::Exact_predicates_tag              Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
 typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
@@ -65,7 +113,7 @@ void
 initializeID(const CDT& ct)
 {
   for(All_faces_iterator it = ct.all_faces_begin(); it != ct.all_faces_end(); ++it){
-    it->info() = -1;
+    it->set_counter(-1);
   }
 }
 
@@ -76,7 +124,7 @@ discoverComponent(const CDT & ct,
 		  int index, 
 		  std::list<CDT::Edge>& border )
 {
-  if(start->info() != -1){
+  if(start->counter() != -1){
     return;
   }
   std::list<Face_handle> queue;
@@ -85,13 +133,13 @@ discoverComponent(const CDT & ct,
   while(! queue.empty()){
     Face_handle fh = queue.front();
     queue.pop_front();
-    if(fh->info() == -1){
-      fh->info() = index;
+    if(fh->counter() == -1){
+      fh->counter() = index;
       fh->set_in_domain(index%2 == 1);
       for(int i = 0; i < 3; i++){
 	CDT::Edge e(fh,i);
 	Face_handle n = fh->neighbor(i);
-	if(n->info() == -1){
+	if(n->counter() == -1){
 	  if(ct.is_constrained(e)){
 	    border.push_back(e);
 	  } else {
@@ -114,8 +162,8 @@ discoverComponents(const CDT & ct)
     CDT::Edge e = border.front();
     border.pop_front();
     Face_handle n = e.first->neighbor(e.second);
-    if(n->info() == -1){
-      discoverComponent(ct, n, e.first->info()+1, border);
+    if(n->counter() == -1){
+      discoverComponent(ct, n, e.first->counter()+1, border);
     }
   }
 } 
@@ -133,7 +181,7 @@ private:
   QGraphicsScene scene;
   std::list<Point_2> seeds;
 
-  CGAL::Qt::ConstrainedTriangulationGraphicsItem<CDT> * dgi;
+  CGAL::Qt::DelaunayMeshTriangulationGraphicsItem<CDT> * dgi;
 
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
   CGAL::Qt::TriangulationCircumcircle<CDT> *tcc;
@@ -176,6 +224,10 @@ public slots:
 
   void on_actionShowDelaunay_toggled(bool checked);
 
+  void on_actionShow_constrained_edges_toggled(bool checked);
+
+  void on_actionShow_faces_in_domain_toggled(bool checked);
+
   void on_actionInsertPolyline_toggled(bool checked);
   
   void on_actionCircumcenter_toggled(bool checked);
@@ -217,12 +269,16 @@ MainWindow::MainWindow()
   setAcceptDrops(true);
 
   // Add a GraphicItem for the CDT triangulation
-  dgi = new CGAL::Qt::ConstrainedTriangulationGraphicsItem<CDT>(&cdt);
+  dgi = new CGAL::Qt::DelaunayMeshTriangulationGraphicsItem<CDT>(&cdt);
+  QColor facesColor(::Qt::blue);
+  facesColor.setAlpha(150);
+  dgi->setFacesInDomainBrush(facesColor);
     
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
 
   dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->setZValue(-1);
   scene.addItem(dgi);
 
   // Setup input handlers. They get events before the scene gets them
@@ -250,6 +306,8 @@ MainWindow::MainWindow()
   // Check two actions 
   this->actionInsertPolyline->setChecked(true);
   this->actionShowDelaunay->setChecked(true);
+  this->actionShow_faces_in_domain->setChecked(true);
+  this->actionShow_constrained_edges->setChecked(true);
 
   //
   // Setup the scene and the view
@@ -342,8 +400,22 @@ void
 MainWindow::on_actionShowDelaunay_toggled(bool checked)
 {
   dgi->setVisibleEdges(checked);
+  update();
 }
 
+void
+MainWindow::on_actionShow_constrained_edges_toggled(bool checked)
+{
+  dgi->setVisibleConstraints(checked);
+  update();
+}
+
+void
+MainWindow::on_actionShow_faces_in_domain_toggled(bool checked)
+{
+  dgi->setVisibleFacesInDomain(checked);
+  update();
+}
 
 void
 MainWindow::on_actionCircumcenter_toggled(bool checked)
@@ -565,11 +637,15 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
     }
   }
 
+  initializeID(cdt);
+  discoverComponents(cdt);
+
   int nv = cdt.number_of_vertices();
   Lipschitz_sizing_field field(points.begin(), points.end(), 0.7 ); // k-lipschitz with k=1
   Lipschitz_criteria criteria(0.125, &field);
   Lipschitz_mesher mesher(cdt);
   mesher.set_criteria(criteria);
+  mesher.init(true);
   //  mesher.set_seeds(m_seeds.begin(),m_seeds.end(),false);
   mesher.refine_mesh();
   nv = cdt.number_of_vertices() - nv;

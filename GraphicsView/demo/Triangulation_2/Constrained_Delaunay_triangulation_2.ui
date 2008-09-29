@@ -63,9 +63,13 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionInsertPolyline" />
+   <addaction name="separator" />
    <addaction name="actionShowDelaunay" />
+   <addaction name="actionShow_constrained_edges" />
    <addaction name="actionShowVoronoi" />
+   <addaction name="actionShow_faces_in_domain" />
    <addaction name="actionCircumcenter" />
+   <addaction name="separator" />
    <addaction name="actionRecenter" />
   </widget>
   <widget class="QMenuBar" name="menubar" >
@@ -99,8 +103,12 @@
      <string>&amp;Tools</string>
     </property>
     <addaction name="actionInsertPolyline" />
+    <addaction name="separator" />
     <addaction name="actionShowDelaunay" />
     <addaction name="actionShowVoronoi" />
+    <addaction name="actionShow_constrained_edges" />
+    <addaction name="actionShow_faces_in_domain" />
+    <addaction name="actionCircumcenter" />
     <addaction name="separator" />
     <addaction name="actionRecenter" />
     <addaction name="actionMakeGabrielConform" />
@@ -197,14 +205,14 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../icons/Triangulation_2.qrc" >
-     <normaloff>:/cgal/Triangulation_2/Delaunay_triangulation_2.png</normaloff>:/cgal/Triangulation_2/Delaunay_triangulation_2.png</iconset>
+    <iconset resource="Constrained_Delaunay_triangulation_2.qrc" >
+     <normaloff>:/cgal/Actions/icons/constrained_triangulation.png</normaloff>:/cgal/Actions/icons/constrained_triangulation.png</iconset>
    </property>
    <property name="text" >
-    <string>Show &amp;Delaunay Triangulation</string>
+    <string>Show &amp;triangulation</string>
    </property>
    <property name="shortcut" >
-    <string>Ctrl+D</string>
+    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="actionLoadConstraints" >
@@ -276,6 +284,36 @@
   <action name="actionMakeLipschitzDelaunayMesh" >
    <property name="text" >
     <string>Make Lipschitz Delaunay mesh</string>
+   </property>
+  </action>
+  <action name="actionShow_constrained_edges" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="Constrained_Delaunay_triangulation_2.qrc" >
+     <normaloff>:/cgal/Actions/icons/constrained_triangulation_show_constraints.png</normaloff>:/cgal/Actions/icons/constrained_triangulation_show_constraints.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Show &amp;constrained edges</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionShow_faces_in_domain" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="Constrained_Delaunay_triangulation_2.qrc" >
+     <normaloff>:/cgal/Actions/icons/constrained_triangulation_show_in_domain.png</normaloff>:/cgal/Actions/icons/constrained_triangulation_show_in_domain.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Show &amp;faces in domain</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+F</string>
    </property>
   </action>
  </widget>

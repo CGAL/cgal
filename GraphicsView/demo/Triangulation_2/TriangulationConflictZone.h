@@ -69,7 +69,9 @@ TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
       ++it){
     if(! dt->is_infinite(*it)){
       QGraphicsPolygonItem *item = new QGraphicsPolygonItem(convert(dt->triangle(*it)));
-      item->setBrush(::Qt::cyan);
+      QColor color(::Qt::blue);
+      color.setAlpha(150);
+      item->setBrush(color);
       scene_->addItem(item);
       qfaces.push_back(item);
     }

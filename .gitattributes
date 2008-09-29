@@ -1584,7 +1584,18 @@ GraphicsView/demo/Triangulation_2/data/fish.poly -text svneol=unset#application/
 GraphicsView/demo/Triangulation_2/data/trivial.poly -text svneol=unset#application/octet-stream
 GraphicsView/demo/Triangulation_2/icons/circumcenter.pdf -text
 GraphicsView/demo/Triangulation_2/icons/circumcenter.png -text
-GraphicsView/demo/Triangulation_2/icons/movingPoint.png -text
+GraphicsView/demo/Triangulation_2/icons/conflict_zone.pdf -text svneol=unset#application/pdf
+GraphicsView/demo/Triangulation_2/icons/conflict_zone.png -text svneol=unset#image/png
+GraphicsView/demo/Triangulation_2/icons/constrained_triangulation.pdf -text svneol=unset#application/pdf
+GraphicsView/demo/Triangulation_2/icons/constrained_triangulation.png -text svneol=unset#image/png
+GraphicsView/demo/Triangulation_2/icons/constrained_triangulation_show_constraints.pdf -text svneol=unset#application/pdf
+GraphicsView/demo/Triangulation_2/icons/constrained_triangulation_show_constraints.png -text svneol=unset#image/png
+GraphicsView/demo/Triangulation_2/icons/constrained_triangulation_show_in_domain.pdf -text svneol=unset#application/pdf
+GraphicsView/demo/Triangulation_2/icons/constrained_triangulation_show_in_domain.png -text svneol=unset#image/png
+GraphicsView/demo/Triangulation_2/icons/moving_point.pdf -text svneol=unset#application/pdf
+GraphicsView/demo/Triangulation_2/icons/moving_point.png -text svneol=unset#image/png
+GraphicsView/demo/Triangulation_2/icons/triangulation.pdf -text svneol=unset#application/pdf
+GraphicsView/demo/Triangulation_2/icons/triangulation.png -text svneol=unset#image/png
 GraphicsView/demo/icons/Delaunay_triangulation_2.png -text
 GraphicsView/demo/icons/File.qrc -text
 GraphicsView/demo/icons/Input.qrc -text
