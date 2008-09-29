@@ -57,7 +57,7 @@ public:
     return visible_constraints;
   }
 
-  void setvisibleConstraints(const bool b)
+  void setVisibleConstraints(const bool b)
   {
     visible_constraints = b;
     this->update();
