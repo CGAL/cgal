@@ -24,8 +24,6 @@
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <QPen>
 
-class QGraphicsSceneMouseEvent;
-
 namespace CGAL {
 
 namespace Qt {
@@ -83,12 +81,11 @@ ConstrainedTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   for(typename T::Finite_edges_iterator eit = this->t->finite_edges_begin();
       eit != this->t->finite_edges_end();
       ++eit){
-    if(this->t->is_constrained(*eit)){
+    if(this->visibleConstraints() && this->t->is_constrained(*eit)){
       painter->setPen(constraintsPen());
-    } else {
+      this->painterostream << this->t->segment(*eit);
+    } else if( this->visibleEdges() ){
       painter->setPen(this->edgesPen());
-    }
-    if(this->visibleEdges() || this->visibleConstraints()){
       this->painterostream << this->t->segment(*eit);
     }
   }
@@ -102,14 +99,13 @@ ConstrainedTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   for (int i=0; i<3; i++) {
     if ( fh < fh->neighbor(i) || this->t->is_infinite(fh->neighbor(i)) )  {
-      if(this->t->is_constrained(typename T::Edge(fh,i))){
+      if(this->visibleConstraints() && this->t->is_constrained(typename T::Edge(fh,i))){
         this->m_painter->setPen(constraintsPen());
-      } else {
-	this->m_painter->setPen(this->edgesPen());
-      }
-      if(this->visibleEdges() || this->visibleConstraints()){
 	this->painterostream << this->t->segment(fh,i);
-      }   
+      } else if( this->visibleEdges() ){
+	this->m_painter->setPen(this->edgesPen());
+	this->painterostream << this->t->segment(fh,i);
+      }
     }
     if(this->visibleVertices()) {
       paintOneVertex(fh->vertex(i)->point());
