@@ -128,11 +128,15 @@ public:
   virtual ET solution_denominator() const = 0;
   Quotient<ET> solution( ) const
   { 
+    // workaround to please Boost 1.33.1: 
+    ET n = solution_numerator();
+    ET d = solution_denominator();
     return 
       boost::bind 
       (Quotient_normalizer(), boost::bind
        (U_Quotient_creator(), _1, _2))
-      (solution_numerator(), solution_denominator());
+      (n, d);
+      // (solution_numerator(), solution_denominator());
   }
   virtual Quadratic_program_status status() const = 0;
   virtual int iterations() const = 0;

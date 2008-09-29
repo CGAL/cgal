@@ -24,12 +24,14 @@ int main()
 {
   // create composed functor (a,b) -> b/a...
   // ---------------------------------------
+  int three = 3;
+  int two = 2;
   std::cout << boost::bind
     (Quotient_inverter(), boost::bind
      (Quotient_creator(), _1, _2))
   // ...and apply it to (3, 2)
   // -------------------------
-  (3, 2);
+  (three, two);
 
   return 0;
 }
