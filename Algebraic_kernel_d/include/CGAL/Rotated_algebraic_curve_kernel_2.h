@@ -666,13 +666,18 @@ struct Rotation_traits_for_base_angle_base {
 };
 
 // ZZ[sqrt(2)]
-template <typename Integer_>
-struct Rotation_traits_for_base_angle_base<Integer_,45> {
+template <typename Polynomial_2>
+struct Rotation_traits_for_base_angle_base<Polynomial_2,45> {
     
-    typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
+
+    typedef Polynomial_2 Unrotated_polynomial_type_2;
+
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+        ::Innermost_coefficient_type Integer;
+
+    typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
     Arithmetic_kernel;
 
-    typedef typename Arithmetic_kernel::Integer Integer;
     typedef typename Arithmetic_kernel::Rational Rational;
 
     typedef CGAL::Sqrt_extension<Rational, Integer> 
@@ -753,13 +758,17 @@ struct Rotation_traits_for_base_angle_base<Integer_,45> {
 };
 
 // ZZ[sqrt(3)]
-template <typename Integer_>
-struct Rotation_traits_for_base_angle_base<Integer_,30> {
+template <typename Polynomial_2>
+struct Rotation_traits_for_base_angle_base<Polynomial_2,30> {
     
-    typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
+    typedef Polynomial_2 Unrotated_polynomial_type_2;
+
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+        ::Innermost_coefficient_type Integer;
+
+    typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
     Arithmetic_kernel;
 
-    typedef typename Arithmetic_kernel::Integer Integer;
     typedef typename Arithmetic_kernel::Rational Rational;
 
     typedef CGAL::Sqrt_extension<Rational, Integer> 
@@ -840,13 +849,17 @@ struct Rotation_traits_for_base_angle_base<Integer_,30> {
 };
 
 // ZZ[sqrt(5),sqrt(10+2sqrt(5)))]
-template <typename Integer_>
-struct Rotation_traits_for_base_angle_base<Integer_,18> {
+template <typename Polynomial_2>
+struct Rotation_traits_for_base_angle_base<Polynomial_2,18> {
     
-    typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
+    typedef Polynomial_2 Unrotated_polynomial_type_2;
+
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+        ::Innermost_coefficient_type Integer;
+
+    typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
     Arithmetic_kernel;
 
-    typedef typename Arithmetic_kernel::Integer Integer;
     typedef typename Arithmetic_kernel::Rational Rational;
 
 private:
@@ -935,13 +948,17 @@ public:
 };
 
 // ZZ[sqrt(2),sqrt(3)]
-template <typename Integer_>
-struct Rotation_traits_for_base_angle_base<Integer_,15> {
+template <typename Polynomial_2>
+struct Rotation_traits_for_base_angle_base<Polynomial_2,15> {
     
-    typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
+    typedef Polynomial_2 Unrotated_polynomial_type_2;
+
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+        ::Innermost_coefficient_type Integer;
+
+    typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
     Arithmetic_kernel;
 
-    typedef typename Arithmetic_kernel::Integer Integer;
     typedef typename Arithmetic_kernel::Rational Rational;
 
 private:
@@ -1030,13 +1047,17 @@ public:
 };
 
 // ZZ[sqrt(3),sqrt(5),sqrt(10+2sqrt(5))]
-template <typename Integer_>
-struct Rotation_traits_for_base_angle_base<Integer_,6> {
+template <typename Polynomial_2>
+struct Rotation_traits_for_base_angle_base<Polynomial_2,6> {
     
-    typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
+    typedef Polynomial_2 Unrotated_polynomial_type_2;
+
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+        ::Innermost_coefficient_type Integer;
+
+    typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
     Arithmetic_kernel;
 
-    typedef typename Arithmetic_kernel::Integer Integer;
     typedef typename Arithmetic_kernel::Rational Rational;
 
 private:
@@ -1146,13 +1167,17 @@ public:
 };
 
 // ZZ[sqrt(2),sqrt(3),sqrt(5),sqrt(10+2sqrt(5))]
-template <typename Integer_>
-struct Rotation_traits_for_base_angle_base<Integer_,3> {
+template <typename Polynomial_2>
+struct Rotation_traits_for_base_angle_base<Polynomial_2,3> {
     
-    typedef typename CGAL::Get_arithmetic_kernel<Integer_>::Arithmetic_kernel
+    typedef Polynomial_2 Unrotated_polynomial_type_2;
+
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+        ::Innermost_coefficient_type Integer;
+
+    typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
     Arithmetic_kernel;
 
-    typedef typename Arithmetic_kernel::Integer Integer;
     typedef typename Arithmetic_kernel::Rational Rational;
 
 private:
@@ -1302,18 +1327,17 @@ public:
 
 } // anonymous namespace
 
-template <typename Integer_,int BaseAngle> 
+template <typename Polynomial_2,int BaseAngle> 
 class Rotation_traits_for_base_angle 
-    : Rotation_traits_for_base_angle_base<Integer_,BaseAngle> {
+    : Rotation_traits_for_base_angle_base<Polynomial_2,BaseAngle> {
 
 public:
 
-    typedef Integer_ Integer;
-
     typedef int Angle_type;
-    typedef Integer Unrotated_coefficient_type;
-    typedef typename CGAL::Polynomial_type_generator<Integer,2>::Type
-        Integer_polynomial_2;
+    typedef Polynomial_2 Unrotated_polynomial_type_2;
+
+    typedef typename Polynomial_traits_d<Unrotated_polynomial_type_2>
+        ::Innermost_coefficient_type Integer;
 
     typedef Rotation_traits_for_base_angle_base<Integer,BaseAngle>
         Base;
@@ -1326,15 +1350,16 @@ public:
     typedef typename 
     CGAL::Algebraic_curve_kernel_2_generator<Rotated_coefficient,Rational>
         ::Filtered_algebraic_curve_kernel_with_qir_and_bitstream_2 
-        Rotated_kernel_2;
+        Algebraic_kernel_with_analysis_2;
 
-    typedef typename Rotated_kernel_2::Polynomial_2 Rotated_polynomial_2;
+    typedef typename  Algebraic_kernel_with_analysis_2::Polynomial_2 
+        Rotated_polynomial_2;
 
-    struct Rotate : public binary_function<Integer_polynomial_2,
+    struct Rotate : public binary_function<Unrotated_polynomial_type_2,
                                            Angle_type,
                                            Rotated_polynomial_2> {
 
-        Rotated_polynomial_2 operator() (Integer_polynomial_2 f,
+        Rotated_polynomial_2 operator() (Unrotated_polynomial_type_2 f,
                                          Angle_type angle) const {
 
             if(angle%BaseAngle) {
@@ -1376,7 +1401,8 @@ public:
             subs.push_back(sub_y);
             
             Rotated_rational_polynomial_2 result 
-                = typename CGAL::Polynomial_traits_d<Integer_polynomial_2>
+                = typename 
+                    CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
                 ::Substitute() (f, subs.begin(), subs.end());
             CGAL::simplify(result);
             //std::cout << "rotated poly: " << res << std::endl;
@@ -1396,15 +1422,16 @@ public:
 
 template <typename RotationTraits>
 struct Rotated_algebraic_curve_kernel_2 :
-    public RotationTraits::Rotated_kernel_2 {
+    public RotationTraits::Algebraic_kernel_with_analysis_2 {
 
 public:
     typedef RotationTraits Rotation_traits;
     
-    typedef typename Rotation_traits::Rotated_kernel_2 Rotated_kernel_2;
+    typedef typename Rotation_traits::Algebraic_kernel_with_analysis_2 
+        Rotated_kernel_2;
 
-    typedef typename CGAL::Polynomial_type_generator
-    <typename Rotation_traits::Unrotated_coefficient_type,2>::Type Poly_int_2;
+    typedef typename Rotation_traits::Unrotated_polynomial_type_2
+        Poly_int_2;
 
     typedef typename Rotation_traits::Angle_type Angle_type;
 

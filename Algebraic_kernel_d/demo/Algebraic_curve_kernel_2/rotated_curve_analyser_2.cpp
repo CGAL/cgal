@@ -35,7 +35,7 @@
 
 #if !CGAL_ACK_USE_APPROXIMATE_ROTATION
 #ifndef CGAL_ACK_BASE_ANGLE
-#define CGAL_ACK_BASE_ANGLE 18
+#define CGAL_ACK_BASE_ANGLE 30
 #endif
 #endif
 
@@ -149,21 +149,23 @@ int main(int argc,char** argv) {
     typedef CGAL::Algebraic_curve_kernel_2_generator<Coefficient>
         ::Algebraic_curve_kernel_with_qir_and_bitstream_2
         Basic_algebraic_curve_kernel_2;
+    typedef Basic_algebraic_curve_kernel_2::Polynomial_2 Input_polynomial_2;
+    typedef Basic_algebraic_curve_kernel_2::Polynomial_1 Input_polynomial_1;
+    typedef Basic_algebraic_curve_kernel_2::Boundary Rational;
+    
+
 #if CGAL_ACK_USE_APPROXIMATE_ROTATION
     typedef Basic_algebraic_curve_kernel_2
         Rotated_algebraic_curve_kernel_2;
 #else
     typedef CGAL::Rotation_traits_for_base_angle
-        <Coefficient,CGAL_ACK_BASE_ANGLE> Rotation_traits;
+        <Input_polynomial_2,CGAL_ACK_BASE_ANGLE> Rotation_traits;
     
     typedef CGAL::Rotated_algebraic_curve_kernel_2<Rotation_traits>
         Rotated_algebraic_curve_kernel_2;
 #endif
     typedef Rotated_algebraic_curve_kernel_2::Curve_analysis_2 
         Curve_analysis_2;
-    typedef Basic_algebraic_curve_kernel_2::Polynomial_2 Input_polynomial_2;
-    typedef Basic_algebraic_curve_kernel_2::Polynomial_1 Input_polynomial_1;
-    typedef Basic_algebraic_curve_kernel_2::Boundary Rational;
     typedef Curve_analysis_2::Integer Integer;
   
 

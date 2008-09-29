@@ -11,6 +11,13 @@
 //
 // ============================================================================
 
+#ifndef CGAL_ACK_DEBUG_FLAG
+#define CGAL_ACK_DEBUG_FLAG 1
+#endif
+
+#ifndef CGAL_ACK_DEBUG_PRINT
+#define CGAL_ACK_DEBUG_PRINT std::cout
+#endif
 
 #include <CGAL/Algebraic_curve_kernel_2/flags.h>
 
@@ -33,7 +40,7 @@
 #endif
 
 #ifndef CGAL_ACK_USE_APPROXIMATE_ROTATION
-#define CGAL_ACK_USE_APPROXIMATE_ROTATION 1
+#define CGAL_ACK_USE_APPROXIMATE_ROTATION 0
 #endif
 
 #if !CGAL_ACK_USE_APPROXIMATE_ROTATION
@@ -44,7 +51,7 @@
 
 #if CGAL_ACK_USE_APPROXIMATE_ROTATION
 #ifndef CGAL_ACK_ANGLE_PRECISION
-#define CGAL_ACK_ANGLE_PRECISION 8
+#define CGAL_ACK_ANGLE_PRECISION 16
 #endif
 #endif
 
@@ -144,7 +151,8 @@ int main(int argc, char** argv) {
 
     typedef CGAL_ACK_COEFFICIENT Integer;
 
-
+    typedef CGAL::Polynomial_type_generator<Integer,2>::Type 
+        Integer_polynomial_2;
 
 #if CGAL_ACK_USE_APPROXIMATE_ROTATION
 
@@ -159,14 +167,14 @@ int main(int argc, char** argv) {
 #endif
 
 #else
-    typedef CGAL::Rotation_traits_for_base_angle<Integer,CGAL_ACK_BASE_ANGLE>
+    typedef CGAL::Rotation_traits_for_base_angle<Integer_polynomial_2,
+                                                 CGAL_ACK_BASE_ANGLE>
         Rotation_traits;
     typedef CGAL::Rotated_algebraic_curve_kernel_2
         <Rotation_traits> Rotated_algebraic_curve_kernel_2;
 #endif
 
-    typedef CGAL::Polynomial_type_generator<Integer,2>::Type 
-        Integer_polynomial_2;
+    
 
     std::vector<Integer_polynomial_2> curves;
 
@@ -340,7 +348,7 @@ int main(int argc, char** argv) {
             }
         }
 */
-        std::cout << "Start sweep with " << sweepable_objects.size() << " segments" << std::endl;
+        
         std::vector<Curved_kernel_2::X_monotone_curve_2> segments;
         std::vector<Curved_kernel_2::Point_2> isol_points;
 
@@ -370,7 +378,8 @@ int main(int argc, char** argv) {
                               &curve_kernel);
 */
       
-
+        std::cout << "Start sweep with " << sweepable_objects.size() 
+                  << " segments" << std::endl;
         CGAL::insert_empty(cgal_arrangement,
                            segments.begin(),
                            segments.end(),
