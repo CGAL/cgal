@@ -25,22 +25,25 @@
          </font>
         </property>
         <property name="text" >
-         <string>alpha:</string>
+         <string>&amp;alpha:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>alphaBox</cstring>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="alphaLineEdit" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <widget class="QSpinBox" name="alphaBox" >
+        <property name="maximum" >
+         <number>100</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSlider" name="alphaSlider" >
+        <property name="maximum" >
+         <number>100</number>
+        </property>
         <property name="singleStep" >
          <number>1</number>
         </property>
@@ -62,7 +65,7 @@
      <x>0</x>
      <y>0</y>
      <width>635</width>
-     <height>19</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >

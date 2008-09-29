@@ -24,6 +24,15 @@ MainWindow::connectActions()
   QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)), 
 		   this, SLOT(alphaChanged(int)));
 
+  QObject::connect(this->alphaBox, SIGNAL(valueChanged(int)),
+		   this, SLOT(alphaChanged(int)));
+
+  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)), 
+		   this->alphaBox, SLOT(setValue(int)));
+
+  QObject::connect(this->alphaBox, SIGNAL(valueChanged(int)), 
+		   this->alphaSlider, SLOT(setValue(int)));
+
   QObject::connect(this, SIGNAL(sceneChanged()), 
 		   this->viewer, SLOT(sceneChanged()));
 
@@ -67,7 +76,6 @@ MainWindow::alphaChanged(int i)
   }
   emit (alphaChanged());
 }
-
 
 void
 MainWindow::open(const QString& fileName)
