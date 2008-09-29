@@ -349,6 +349,11 @@ Skin_surface_3/test/Skin_surface_3/error.txt
 Skin_surface_3/test/Skin_surface_3/makefile
 Skin_surface_3/test/Skin_surface_3/msgs.txt
 Skin_surface_3/test/Skin_surface_3/subdivision_test
+Stream_lines_2/demo/Stream_lines_2/*.exe
+Stream_lines_2/demo/Stream_lines_2/*.sln
+Stream_lines_2/demo/Stream_lines_2/*.vcproj
+Stream_lines_2/demo/Stream_lines_2/Makefile
+Stream_lines_2/demo/Stream_lines_2/streamlines
 Surface_mesh_parameterization/doc_doxygen
 Surface_mesh_parameterization/doc_html
 Surface_mesh_parameterization/doc_pdf

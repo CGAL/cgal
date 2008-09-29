@@ -25,7 +25,7 @@ if ( CGAL_FOUND AND QT3_FOUND )
   add_executable  ( streamlines
                     streamlines.cpp streamlines.moc )
 
-  target_link_libraries( alpha_shapes_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
+  target_link_libraries( streamlines ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 else()
 
