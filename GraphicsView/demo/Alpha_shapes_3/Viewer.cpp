@@ -56,7 +56,7 @@ Viewer::draw()
   // anti-aliasing (if the OpenGL driver permits that)
   ::glEnable(GL_LINE_SMOOTH);
 
-  ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE); 
+  ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE); 
   // draw surface mesh
   bool m_view_surface = true;
   bool draw_triangles_edges = true;
