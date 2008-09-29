@@ -9,9 +9,16 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 find_package(CGAL REQUIRED  Qt4)
 
-if ( CGAL_FOUND )
+set( QT_USE_QTXML    TRUE )
+set( QT_USE_QTMAIN   TRUE )
+set( QT_USE_QTSCRIPT  TRUE )
+set( QT_USE_QTOPENGL  TRUE )
+find_package(Qt4 QUIET)
+
+if ( CGAL_FOUND AND QT_FOUND)
 
   include(${CGAL_USE_FILE})
+  include(${QT_USE_FILE})
   include(CreateSingleSourceCGALQt4Program)
 
   set( QT_USE_QTOPENGL TRUE )
@@ -19,8 +26,6 @@ if ( CGAL_FOUND )
   set( QT_USE_QTMAIN   TRUE )
   set( QT_USE_QTSCRIPT  TRUE )
 
-  find_package(QT4       REQUIRED)
-  include(${QT_USE_FILE})
   find_package(OpenGL    REQUIRED)
   find_package(QGLViewer REQUIRED)
 
@@ -32,5 +37,7 @@ if ( CGAL_FOUND )
   qt4_automoc( MainWindow.cpp Viewer.cpp)
 
   add_executable  ( Alpha_shape_3 Alpha_shape_3.cpp MainWindow.cpp Viewer.cpp ${uis} )
-  target_link_libraries( Alpha_shape_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+  target_link_libraries( Alpha_shape_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+  target_link_libraries( Alpha_shape_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} )
+  target_link_libraries( Alpha_shape_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 endif()

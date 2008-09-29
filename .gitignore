@@ -32,6 +32,14 @@ CGALimageIO/examples/CGALimageIO/makefile
 CGALimageIO/examples/CGALimageIO/test_imageio
 Distance_3/include
 GraphicsView/TAGS
+GraphicsView/demo/Alpha_shapes_3/*.exe
+GraphicsView/demo/Alpha_shapes_3/*.sln
+GraphicsView/demo/Alpha_shapes_3/*.vcproj
+GraphicsView/demo/Alpha_shapes_3/Alpha_shape_3
+GraphicsView/demo/Alpha_shapes_3/Makefile
+GraphicsView/demo/Alpha_shapes_3/moc_*.cxx
+GraphicsView/demo/Alpha_shapes_3/qrc_*.cxx
+GraphicsView/demo/Alpha_shapes_3/ui_*.h
 GraphicsView/demo/Circular_kernel_2/*.exe
 GraphicsView/demo/Circular_kernel_2/*.sln
 GraphicsView/demo/Circular_kernel_2/*.vcproj
