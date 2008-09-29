@@ -58,7 +58,7 @@
      </layout>
     </item>
     <item>
-     <widget class="Viewer" native="1" name="viewer" />
+     <widget class="Viewer" name="viewer" />
     </item>
    </layout>
   </widget>
@@ -77,6 +77,7 @@
     </property>
     <addaction name="actionLoad_New_File" />
     <addaction name="actionLoad_Additional_File" />
+    <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
    <addaction name="menuFile" />
