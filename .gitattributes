@@ -2556,7 +2556,6 @@ Nef_2/demo/Nef_2/homogeneous_data/mpii.nef -text svneol=native#application/octet
 Nef_2/demo/Nef_2/homogeneous_data/star.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/homogeneous_data/symmdiff.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/homogeneous_data/triangle.nef -text svneol=native#application/octet-stream
-Nef_2/demo/Nef_2/nef_2.vcproj eol=crlf
 Nef_2/demo/Nef_2/xpms/basic.gif -text svneol=unset#image/gif
 Nef_2/demo/Nef_2/xpms/basic.pcx -text
 Nef_2/demo/Nef_2/xpms/basic2.pcx -text
