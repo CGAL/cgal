@@ -321,8 +321,9 @@ public:
     //std::cout << "Requested to schedule "; cert->write(std::cout);
     //std::cout<< " at time " << t << std::endl;
     CGAL_exactness_precondition(CGAL::compare(t, current_time()) != CGAL::SMALLER);
-    CGAL_precondition(CGAL::compare(t, std::numeric_limits<Time>::infinity())
-                                    == CGAL::SMALLER);
+    CGAL_precondition(!std::numeric_limits<Time>::has_infinity 
+                      || CGAL::compare(t, std::numeric_limits<Time>::infinity())
+                      == CGAL::SMALLER);
     Event_key key= queue_.insert(t, cert);
     //write_eventqueue(log().stream(Log::DEBUG));
     //log()->stream(Log::SOME) << key;
