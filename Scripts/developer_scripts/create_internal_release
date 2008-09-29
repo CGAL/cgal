@@ -112,7 +112,6 @@ sub install_packages() {
   close PACKAGES_TO_INCLUDE;
 
   if( ! open(LOG_CONFLICTS, ">>&=3") ) {
-      print STDOUT "STDOUT\n";
       open(LOG_CONFLICTS, ">&", STDOUT);
   }
 
@@ -132,6 +131,12 @@ sub install_packages() {
 
     chdir "$RELEASEDIR/$VERSION" or die;
     my $tar = Archive::Tar->new("temppack.tar") or die;
+    if( (-e "/proc/self/fd/3") ) {
+	open(LOG_CONFLICTS, ">&=", 3);
+    }
+    else {
+	open(LOG_CONFLICTS, ">&", STDOUT);
+    }
     for( $tar->get_files() )
     {
       if( ! $_->is_dir() )
@@ -147,6 +152,7 @@ sub install_packages() {
 	}
       }
     }
+    close(LOG_CONFLICTS);
     $size = scalar keys %files;
     system('tar', '-xf', "temppack.tar");
 #    $tmp_package_name = "temp_${package_name}";
@@ -307,9 +313,15 @@ sub CreateDemoTestDirs()
     chdir 'demo' or return;
     print "Creating $VERSION/test/demo directories ...\n";
     foreach $DIR (glob("*")) {
-	if ( (-d $DIR) && ("$DIR" ne "icons") && ("$DIR" ne "resources") ) {
-	    print "Creating test/${DIR}_Demo ...\n";
-	    dircopy("$DIR", "../test/${DIR}_Demo");
+	if ( -d $DIR) {
+	    if( ("$DIR" ne "icons") && ("$DIR" ne "resources") ) {
+		print "Creating test/${DIR}_Demo ...\n";
+		dircopy("$DIR", "../test/${DIR}_Demo");
+	    }
+	    else {
+		print "Creating test/${DIR}...\n";
+		dircopy("$DIR", "../test/${DIR}");
+	    }
 	}
     }
     chdir '..';
