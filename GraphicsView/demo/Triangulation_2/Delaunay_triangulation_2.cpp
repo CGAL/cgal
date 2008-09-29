@@ -21,6 +21,9 @@
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/VoronoiGraphicsItem.h>
+
+// for viewportsBbox
+#include <CGAL/Qt/utility.h>
   
 // the two base classes
 #include "ui_Delaunay_triangulation_2.h"
