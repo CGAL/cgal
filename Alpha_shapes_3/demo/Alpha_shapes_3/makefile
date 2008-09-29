@@ -30,25 +30,13 @@ LDFLAGS = $(CGAL_LDFLAGS)
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: alpha_shapes_3$(EXE_EXT) weighted_alpha_shapes_3$(EXE_EXT)
-
-alpha_shapes_3$(EXE_EXT): alpha_shapes_3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)alpha_shapes_3  alpha_shapes_3$(OBJ_EXT) $(LDFLAGS)
+all:  weighted_alpha_shapes_3$(EXE_EXT)
 
 weighted_alpha_shapes_3$(EXE_EXT): weighted_alpha_shapes_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)weighted_alpha_shapes_3  weighted_alpha_shapes_3$(OBJ_EXT) $(LDFLAGS)
 
 clean:
 	\rm -f *.o  *.obj *.exe \
-                   alpha_shapes_3$(EXE_EXT)  weighted_alpha_shapes_3$(EXE_EXT) \
+                    weighted_alpha_shapes_3$(EXE_EXT) \
                    core
-
-#---------------------------------------------------------------------#
-#                    suffix rules
-#---------------------------------------------------------------------#
-
-.cpp$(OBJ_EXT):
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-
-
 
