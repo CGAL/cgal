@@ -173,7 +173,7 @@ namespace CGALi {
 	typedef std::vector<CGAL::Object > solutions_container;
 	
 	solutions_container solutions;
-	CGAL::intersect_2<CK>( c, c1, std::back_inserter(solutions) );
+	intersection( c, c1, std::back_inserter(solutions) );
 	typename solutions_container::iterator it = solutions.begin();
 
 	CGAL_kernel_precondition( it != solutions.end() );

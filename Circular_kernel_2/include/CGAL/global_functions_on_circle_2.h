@@ -38,25 +38,15 @@ get_equation(const Circle_2<CK> & c)
 template< class CK >
 inline
 Circle_2<CK>
-construct_circle_2(const typename CK::Polynomial_for_circles_2_2 & eq)
+construct_circle(const typename CK::Polynomial_for_circles_2_2 & eq)
 {
   return CK().construct_circle_2_object()(eq);
-}
-
-template< class CK, class OutputIterator>
-inline
-OutputIterator
-intersect_2( const Circle_2<CK> & c1,
-			   const Circle_2<CK> & c2,
-			   OutputIterator res )
-{
-  return CK().intersect_2_object()(c1,c2,res);
 }
 
 template< class CK >
 inline
 bool
-has_on_2(const Circle_2<CK> &c, const Circular_arc_point_2<CK> &p)
+has_on(const Circle_2<CK> &c, const Circular_arc_point_2<CK> &p)
 {
   return CK().has_on_2_object()(c, p);
 }

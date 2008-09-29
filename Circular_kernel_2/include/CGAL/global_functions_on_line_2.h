@@ -38,21 +38,10 @@ get_equation(const Line_2<CK> & l)
 template< class CK >
 inline
 CGAL::Line_2<CK>
-construct_line_2(const typename CK::Polynomial_1_2 & eq)
+construct_line(const typename CK::Polynomial_1_2 & eq)
 {
   return CK().construct_line_2_object()(eq);
 }
-
-template< class CK, class OutputIterator>
-inline
-OutputIterator
-intersect_2( const Line_2<CK> & l,
-			   const Circle_2<CK> & c,
-			   OutputIterator res )
-{
-  return CK().intersect_2_object()(l,c,res);
-}
-
 
 CGAL_END_NAMESPACE
 

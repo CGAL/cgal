@@ -37,7 +37,7 @@ circle_intersect( const typename CK::Circle_2 & c1,
   typedef std::vector<CGAL::Object > solutions_container;
   solutions_container solutions;
   
-  CGAL::intersect_2<CK>( c1, c2, std::back_inserter(solutions) );
+  intersection( c1, c2, std::back_inserter(solutions) );
   
   typename solutions_container::iterator it = solutions.begin();
   

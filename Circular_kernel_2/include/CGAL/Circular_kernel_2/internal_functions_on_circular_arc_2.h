@@ -725,7 +725,7 @@ namespace CircularFunctors {
          (a1,a2,solutions)) {
 #endif
 
-      CGAL::intersect_2<CK> ( a1.supporting_circle(), a2.supporting_circle(),
+      intersection( a1.supporting_circle(), a2.supporting_circle(),
         std::back_inserter(solutions) );
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
