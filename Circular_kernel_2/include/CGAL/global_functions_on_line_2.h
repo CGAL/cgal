@@ -30,14 +30,14 @@ CGAL_BEGIN_NAMESPACE
 template< class CK >
 inline
 typename CK::Polynomial_1_2
-get_equation(const typename CK::Line_2 & l)
+get_equation(const Line_2<CK> & l)
 {
   return CK().get_equation_object()(l);
 }
 
 template< class CK >
 inline
-typename CK::Line_2
+CGAL::Line_2<CK>
 construct_line_2(const typename CK::Polynomial_1_2 & eq)
 {
   return CK().construct_line_2_object()(eq);
@@ -46,8 +46,8 @@ construct_line_2(const typename CK::Polynomial_1_2 & eq)
 template< class CK, class OutputIterator>
 inline
 OutputIterator
-intersect_2( const typename CK::Line_2 & l,
-			   const typename CK::Circle_2 & c,
+intersect_2( const Line_2<CK> & l,
+			   const Circle_2<CK> & c,
 			   OutputIterator res )
 {
   return CK().intersect_2_object()(l,c,res);

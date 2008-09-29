@@ -25,23 +25,23 @@
 #ifndef CGAL_CIRCULAR_KERNEL_2_H
 #define CGAL_CIRCULAR_KERNEL_2_H
 
-#include <CGAL/Circular_kernel_2/Circular_arc_point_2.h>
-#include <CGAL/Circular_kernel_2/Circular_arc_2.h>
-#include <CGAL/Circular_kernel_2/Line_arc_2.h>
 #include <CGAL/Circular_arc_2.h>
 #include <CGAL/Circular_arc_point_2.h>
 #include <CGAL/Line_arc_2.h>
+#include <CGAL/Circular_kernel_2/Circular_arc_point_2.h>
+#include <CGAL/Circular_kernel_2/Circular_arc_2.h>
+#include <CGAL/Circular_kernel_2/Line_arc_2.h>
+
+#include <CGAL/Circular_kernel_type_equality_wrapper.h>
+
+#include <CGAL/Circular_kernel_2/function_objects_polynomial_circular.h>
+#include <CGAL/global_functions_on_circular_arcs_2.h>
 
 #include <CGAL/Circular_kernel_2/function_objects_on_line_2.h>
 #include <CGAL/global_functions_on_line_2.h>
 
 #include <CGAL/Circular_kernel_2/function_objects_on_circle_2.h>
 #include <CGAL/global_functions_on_circle_2.h>
-
-#include <CGAL/Circular_kernel_2/function_objects_polynomial_circular.h>
-#include <CGAL/global_functions_on_circular_arcs_2.h>
-
-#include <CGAL/Circular_kernel_type_equality_wrapper.h>
 
 CGAL_BEGIN_NAMESPACE
 

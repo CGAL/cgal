@@ -32,8 +32,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// TODO : Add the other ones...
-
 //Circles
 
 template< class CK >
@@ -57,7 +55,7 @@ compare_x(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 template< class CK >
 inline
 CGAL::Comparison_result 
-compare_x(const Circular_arc_point_2<CK> &p, const typename CK::Point_2 &q)
+compare_x(const Circular_arc_point_2<CK> &p, const Point_2<CK> &q)
 {
   return CK().compare_x_2_object()(p, q);
 }
@@ -65,7 +63,7 @@ compare_x(const Circular_arc_point_2<CK> &p, const typename CK::Point_2 &q)
 template< class CK >
 inline
 CGAL::Comparison_result 
-compare_x(const typename CK::Point_2 &p, const Circular_arc_point_2<CK> &q)
+compare_x(const Point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 {
   return CK().compare_x_2_object()(p, q);
 }
@@ -81,7 +79,7 @@ compare_y(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 template< class CK >
 inline
 CGAL::Comparison_result 
-compare_y(const Circular_arc_point_2<CK> &p, const typename CK::Point_2 &q)
+compare_y(const Circular_arc_point_2<CK> &p, const Point_2<CK> &q)
 {
   return CK().compare_y_2_object()(p, q);
 }
@@ -89,7 +87,7 @@ compare_y(const Circular_arc_point_2<CK> &p, const typename CK::Point_2 &q)
 template< class CK >
 inline
 CGAL::Comparison_result 
-compare_y(const typename CK::Point_2 &p, const Circular_arc_point_2<CK> &q)
+compare_y(const Point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 {
   return CK().compare_y_2_object()(p, q);
 }
@@ -106,7 +104,7 @@ compare_xy(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 template< class CK >
 inline
 CGAL::Comparison_result 
-compare_xy(const Circular_arc_point_2<CK> &p, const typename CK::Point_2 &q)
+compare_xy(const Circular_arc_point_2<CK> &p, const Point_2<CK> &q)
 {
   return CK().compare_xy_2_object()(p, q);
 }
@@ -114,7 +112,7 @@ compare_xy(const Circular_arc_point_2<CK> &p, const typename CK::Point_2 &q)
 template< class CK >
 inline
 CGAL::Comparison_result 
-compare_xy(const typename CK::Point_2 &p, const Circular_arc_point_2<CK> &q)
+compare_xy(const Point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 {
   return CK().compare_xy_2_object()(p, q);
 }

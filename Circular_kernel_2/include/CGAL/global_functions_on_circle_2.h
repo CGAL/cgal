@@ -30,14 +30,14 @@ CGAL_BEGIN_NAMESPACE
 template< class CK >
 inline
 typename CK::Polynomial_for_circles_2_2
-get_equation(const typename CK::Circle_2 & c)
+get_equation(const Circle_2<CK> & c)
 {
   return CK().get_equation_object()(c);
 }
 
 template< class CK >
 inline
-typename CK::Circle_2
+Circle_2<CK>
 construct_circle_2(const typename CK::Polynomial_for_circles_2_2 & eq)
 {
   return CK().construct_circle_2_object()(eq);
@@ -46,8 +46,8 @@ construct_circle_2(const typename CK::Polynomial_for_circles_2_2 & eq)
 template< class CK, class OutputIterator>
 inline
 OutputIterator
-intersect_2( const typename CK::Circle_2 & c1,
-			   const typename CK::Circle_2 & c2,
+intersect_2( const Circle_2<CK> & c1,
+			   const Circle_2<CK> & c2,
 			   OutputIterator res )
 {
   return CK().intersect_2_object()(c1,c2,res);
@@ -56,7 +56,7 @@ intersect_2( const typename CK::Circle_2 & c1,
 template< class CK >
 inline
 bool
-has_on_2(const typename CK::Circle_2 &c, const typename CK::Circular_arc_point_2 &p)
+has_on_2(const Circle_2<CK> &c, const Circular_arc_point_2<CK> &p)
 {
   return CK().has_on_2_object()(c, p);
 }

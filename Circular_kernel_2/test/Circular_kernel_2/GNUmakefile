@@ -43,8 +43,6 @@ all:            \
                 test_Circular_kernel$(EXE_EXT) \
 		test_Exact_circular_kernel$(EXE_EXT)\
 		test_Filtered_bbox_circular_kernel$(EXE_EXT)\
-		test_Lazy_circular_kernel$(EXE_EXT)\
-		test_Lazy_Line_arc$(EXE_EXT)\
                 test_Line_arc$(EXE_EXT)
 
 test_Circular_kernel$(EXE_EXT): test_Circular_kernel$(OBJ_EXT)
@@ -56,21 +54,13 @@ test_Exact_circular_kernel$(EXE_EXT): test_Exact_circular_kernel$(OBJ_EXT)
 test_Filtered_bbox_circular_kernel$(EXE_EXT): test_Filtered_bbox_circular_kernel$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Filtered_bbox_circular_kernel test_Filtered_bbox_circular_kernel$(OBJ_EXT) $(LDFLAGS)
 
-test_Lazy_circular_kernel$(EXE_EXT): test_Lazy_circular_kernel$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_circular_kernel test_Lazy_circular_kernel$(OBJ_EXT) $(LDFLAGS)
-
-test_Lazy_Line_arc$(EXE_EXT): test_Lazy_Line_arc$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_Line_arc test_Lazy_Line_arc$(OBJ_EXT) $(LDFLAGS)
-
 test_Line_arc$(EXE_EXT): test_Line_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Line_arc test_Line_arc$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    test_Circular_kernel.clean \
 		   test_Exact_circular_kernel.clean \
-		   test_Lazy_circular_kernel.clean\
 		   test_Filtered_bbox_circular_kernel.clean\
-		   test_Lazy_Line_arc.clean \
                    test_Line_arc.clean 
 
 #---------------------------------------------------------------------#
