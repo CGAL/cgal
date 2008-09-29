@@ -14,21 +14,24 @@ find_package(Qt3-patched QUIET)
 # that it can be used together with FindQt4: all its variables are prefixed
 # by "QT3_" instead of "QT_".
 
-if ( CGAL_FOUND AND QT3_FOUND )
+find_package(OpenGL QUIET)
+
+if ( CGAL_FOUND AND QT3_FOUND AND OPENGL_FOUND)
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
   qt3_generate_moc( streamlines.cpp streamlines.moc )
 
+  include_directories(${OPENGL_INCLUDE_DIR})
 
   # The executable itself.
   add_executable  ( streamlines
                     streamlines.cpp streamlines.moc )
 
-  target_link_libraries( streamlines ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
+  target_link_libraries( streamlines ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES})
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL and Qt3, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, Qt3, and OpenGL, and will not be compiled.")
 
 endif()
