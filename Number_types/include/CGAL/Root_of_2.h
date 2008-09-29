@@ -681,23 +681,12 @@ public:
         : public std::unary_function< Type, double >{
     public:
         double operator()(const Type& x) const {
-            typedef typename Root_of_traits<RT>::RootOf_1 FT;
-            typedef Rational_traits< FT > Rational;
-            Rational r;
-            const RT r1 = r.numerator(x.alpha());
-            const RT d1 = r.denominator(x.alpha());
-            const RT r2 = r.numerator(x.beta());
-            const RT d2 = r.denominator(x.beta());
-            const RT r3 = r.numerator(x.gamma());
-            const RT d3 = r.denominator(x.gamma());
-
             if (x.is_rational()) {
-                return (CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1));
-            }
-
-            return ((CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1)) +
-                    (CGAL_NTS to_double(r2) / CGAL_NTS to_double(d2)) *
-                    std::sqrt((CGAL_NTS to_double(r3) / CGAL_NTS to_double(d3))));
+			        return (CGAL_NTS to_double(x.alpha()));
+			      }
+            return CGAL_NTS to_double(x.alpha()) +
+                   CGAL_NTS to_double(x.beta()) *
+                   (std::sqrt)(CGAL_NTS to_double(x.gamma()));
         }
     };
 
@@ -1312,23 +1301,12 @@ template < typename RT >
 double
 to_double(const Root_of_2<RT> &x)
 {
-  typedef typename Root_of_traits<RT>::RootOf_1 FT;
-  typedef Rational_traits< FT > Rational;
-  Rational r;
-  const RT r1 = r.numerator(x.alpha());
-  const RT d1 = r.denominator(x.alpha());
-  const RT r2 = r.numerator(x.beta());
-  const RT d2 = r.denominator(x.beta());
-  const RT r3 = r.numerator(x.gamma());
-  const RT d3 = r.denominator(x.gamma());
-
   if (x.is_rational()) {
-    return (CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1));
+    return (CGAL_NTS to_double(x.alpha()));
   }
-
-  return ((CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1)) +
-          (CGAL_NTS to_double(r2) / CGAL_NTS to_double(d2)) *
-          std::sqrt((CGAL_NTS to_double(r3) / CGAL_NTS to_double(d3))));
+  return CGAL_NTS to_double(x.alpha()) +
+         CGAL_NTS to_double(x.beta()) *
+         (std::sqrt)(CGAL_NTS to_double(x.gamma()));
 }
 
 template < typename RT >
