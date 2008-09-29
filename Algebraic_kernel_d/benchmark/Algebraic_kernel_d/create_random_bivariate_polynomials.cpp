@@ -13,10 +13,6 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Benchmark/Benchmark.hpp>
-#include <CGAL/Benchmark/Option_parser.hpp>
-
-
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial.h>
 
