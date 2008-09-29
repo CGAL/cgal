@@ -141,6 +141,10 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
 ///
+/// Warning: 
+/// This method moves the points, thus
+//  should not be called on containers sorted wrt points position.
+///
 /// Precondition: KNN >= 2.
 ///
 /// @heading Parameters:
@@ -209,6 +213,10 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
 /// nearest neighbors and reprojection onto the jet.
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
+///
+/// Warning: 
+/// This method moves the points, thus
+//  should not be called on containers sorted wrt points position.
 ///
 /// Precondition: KNN >= 2.
 ///

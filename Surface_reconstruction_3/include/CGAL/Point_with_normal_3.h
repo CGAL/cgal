@@ -1,4 +1,4 @@
-// Copyright (c) 2007  INRIA (France).
+// Copyright (c) 2007-2008  INRIA (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -69,12 +69,30 @@ public:
     }
     Point_with_normal_3(const Point& point,
                         const Normal& normal = NULL_VECTOR)
-    : Base(point)
+    : Base(point),
+      m_normal(normal)
     {
-      m_normal = normal;
     }
 
-    // Default copy constructor and operator =() are fine.
+    /// Copy constructor
+    Point_with_normal_3(const Point_with_normal_3& pwn)
+    : Base(pwn),
+      m_normal(pwn.normal())
+    {
+    }
+    template <class K>
+    Point_with_normal_3(const Point_with_normal_3<K>& pwn)
+    : Base(pwn),
+      m_normal(pwn.normal())
+    {
+    }
+    /// Operator =()
+    Point_with_normal_3& operator=(const Point_with_normal_3& pwn)
+    {
+      Base::operator=(pwn);
+      m_normal = pwn.normal();
+      return *this;
+    }
 
     /// Compare positions
     bool operator==(const Point_with_normal_3& that)
@@ -89,7 +107,7 @@ public:
     // Set position.
     void set_position(const Point& point)
     {
-          Base::operator=(point);
+      Base::operator=(point);
     }
 
     /// Get/set normal (vector + orientation).

@@ -41,19 +41,25 @@ typedef Kernel::Point_3 Point;
 // Private functions
 // ----------------------------------------------------------------------------
 
-void test_avg_knn_sq_distance(const std::vector<Point>& points, // input point set
+void test_avg_knn_sq_distance(std::vector<Point>& points, // input point set
                               unsigned int k,// number of neighbors
                               double outliers_percentage) // percentage of points to remove 
 {
   std::cerr << "  Remove outliers using Average KNN Squared Distance...";
 
-  // todo: use mutating version when ready
   std::vector<Point> output;
   CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(
-          points.begin(), points.end(),
-          std::back_inserter(output),
-          k, 
-          outliers_percentage);
+                  points.begin(), points.end(),
+                  std::back_inserter(output),
+                  k, 
+                  outliers_percentage);
+  
+  // mutating version of the same function
+  points.erase(CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(
+                  points.begin(), points.end(),
+                  k, 
+                  outliers_percentage),
+               points.end());
   
   std::cerr << "ok" << std::endl;
 }

@@ -68,6 +68,10 @@ random_simplification_points_3(
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
 ///
+/// Warning: 
+/// This method modifies the order of points, thus
+//  should not be called on sorted containers.
+///
 /// @heading Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3.
 /// @param Kernel Geometric traits class.
@@ -126,6 +130,10 @@ random_simplification_points_3(
 /// Delete random points.
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
+///
+/// Warning: 
+/// This method modifies the order of points, thus
+//  should not be called on sorted containers.
 ///
 /// @heading Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3.

@@ -67,6 +67,13 @@ public:
       m_pNormal = (that.m_pNormal == NULL) ? NULL : new Vector(*that.m_pNormal);
       m_oriented = that.m_oriented;
     }
+    template <class K>
+    Oriented_normal_3(const Oriented_normal_3<K>& that)
+    {
+      Vector vector = that.get_vector();
+      m_pNormal = (vector == NULL_VECTOR) ? NULL : new Vector(vector);
+      m_oriented = that.is_oriented();
+    }
     /// Operator =()
     Oriented_normal_3& operator=(const Oriented_normal_3& that)
     {
@@ -91,7 +98,7 @@ public:
       delete m_pNormal; m_pNormal = NULL;
     }
 
-    /// Get normal vector. 
+    /// Get (a copy of) the actual vector. 
     Vector get_vector() const
     {
       if(m_pNormal != NULL)

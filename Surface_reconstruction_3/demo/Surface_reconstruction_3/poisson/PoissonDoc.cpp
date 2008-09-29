@@ -245,7 +245,9 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
       {
         const Point& p = v->point();
         const Vector& n = v->normal();
-        m_points.push_back(Point_with_normal(p,n));
+        Point_with_normal pwn(p,n);
+        Point_with_normal pwn2 = pwn;
+        m_points.push_back(pwn);
       }
     }
     else // Read OFF file as a point cloud
@@ -1332,7 +1334,6 @@ void CPoissonDoc::OnCalculateAverageSpacing()
   status_message("Calculating average spacing");
   CGAL::Timer task_timer; task_timer.start();
 
-  // todo: use mutating version when ready
   Point_set output;
   m_poisson_function->average_spacing_avg_knn_sq_distance_3();
   status_message("Average spacing calculated...took %f seconds", task_timer.time());

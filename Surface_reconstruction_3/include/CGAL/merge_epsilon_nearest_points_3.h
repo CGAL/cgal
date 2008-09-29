@@ -69,6 +69,11 @@ private:
 /// Utility class for merge_epsilon_nearest_points_3():
 /// 3D points set which allows at most 1 point per cell
 /// of a grid of cell size = epsilon.
+///
+/// Warning: 
+/// This class is a container sorted wrt points position 
+/// => you should not modify directly the order or the position of points.
+
 template <class Point_3>
 class Epsilon_point_set_3
   : public std::set<Point_3,Less_epsilon_points_3<Point_3> >
@@ -129,6 +134,10 @@ merge_epsilon_nearest_points_3(
 /// Merge points which belong to the same cell of a grid of cell size = epsilon.
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
+///
+/// Warning: 
+/// This method modifies the order of points, thus
+//  should not be called on sorted containers.
 ///
 /// Precondition: epsilon > 0.
 ///
@@ -200,6 +209,10 @@ merge_epsilon_nearest_points_3(
 /// Merge points which belong to the same cell of a grid of cell size = epsilon.
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
+///
+/// Warning: 
+/// This method modifies the order of points, thus
+//  should not be called on sorted containers.
 ///
 /// Precondition: epsilon > 0.
 ///

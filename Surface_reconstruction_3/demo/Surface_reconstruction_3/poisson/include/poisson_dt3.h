@@ -1,9 +1,6 @@
 #ifndef POISSON_DT3_H
 #define POISSON_DT3_H
 
-// This demo + Gyroviz
-#include "orient_normals_wrt_cameras_3.h"
-
 // CGAL
 #include <CGAL/Implicit_fct_delaunay_triangulation_3.h>
 #include <CGAL/orient_normals_minimum_spanning_tree_3.h>
@@ -11,9 +8,6 @@
 // STL
 #include <algorithm>
 #include <GL/gl.h>
-
-// Boost
-#include <boost/graph/properties.hpp>
 
 
 /// The Poisson_dt3 class is a 3D triangulation class that provides:

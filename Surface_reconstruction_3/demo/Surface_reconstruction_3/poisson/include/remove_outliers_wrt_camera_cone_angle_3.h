@@ -10,27 +10,24 @@
 #include <map>
 
 
-/// Compute greatest camera angle for a single point.
+/// Compute cameras' cone angle for a single point.
 ///
 /// @heading Parameters:
 /// @param Kernel Geometric traits class.
-/// @param CameraInputIterator value_type must be convertible to Point_3.
 ///
 /// @return computed greatest camera angle (radians).
-template < typename Kernel, typename CameraInputIterator >
-double compute_greatest_camera_angle_3(const typename Kernel::Point_3& position, 
-                                       CameraInputIterator first_camera, 
-                                       CameraInputIterator beyond_camera)
+template < typename Kernel >
+double compute_greatest_camera_angle_3(const Gyroviz_point_3<Kernel>& gpt)
 {
     // geometric types
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::Vector_3 Vector;
     
-    assert(first_camera != beyond_camera);
+    assert(gpt.cameras_begin() != gpt.cameras_end());
 
     std::vector<Point> cameras;
-    std::copy(first_camera, beyond_camera, std::back_inserter(cameras));
+    std::copy(gpt.cameras_begin(), gpt.cameras_end(), std::back_inserter(cameras));
 
     // give a score to each vertex: the score will help detecting outliers			  
     FT greatest_camera_angle=0, v1_v2, n_v1, n_v2, intermediate_score;
@@ -39,8 +36,8 @@ double compute_greatest_camera_angle_3(const typename Kernel::Point_3& position,
     {
         for(int j=i+1; j<cameras.size(); ++j)
         {
-            v1 = cameras[i] - position;
-            v2 = cameras[j] - position;
+            v1 = cameras[i] - gpt;
+            v2 = cameras[j] - gpt;
             n_v1  = sqrt(v1.squared_length());
             n_v2  = sqrt(v2.squared_length()); 
             v1_v2 = v1 * v2; // scalar product
@@ -67,9 +64,9 @@ public:
     Is_cameras_cone_angle_greater_equal(FT min_camera_cone_angle) ///< min angle of camera's cone (radians)
       : m_min_camera_cone_angle (min_camera_cone_angle) {}
 
-    bool operator() (const Gyroviz_point_3<Kernel>& gpt) const {
-        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(gpt, 
-                                                                           gpt.cameras_begin(), gpt.cameras_end());
+    bool operator() (const Gyroviz_point_3<Kernel>& gpt) const 
+    {
+        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(gpt);
         return (greatest_camera_angle >= m_min_camera_cone_angle);
     }
 };
@@ -107,8 +104,7 @@ remove_outliers_wrt_camera_cone_angle_3(InputIterator first,           ///< inpu
     // iterate over input points and output points / camera angle >= min_camera_cone_angle
     for(InputIterator point_it = first; point_it != beyond; point_it++)
     {
-        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(*point_it, 
-                                                                           point_it->cameras_begin(), point_it->cameras_end());
+        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(*point_it);
         if (greatest_camera_angle >= min_camera_cone_angle)
             *output++ = *point_it;
     }
@@ -118,6 +114,10 @@ remove_outliers_wrt_camera_cone_angle_3(InputIterator first,           ///< inpu
 /// Remove points / cameras cone's angle < min_camera_cone_angle.
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
+///
+/// Warning: 
+/// This method modifies the order of points, thus
+//  should not be called on sorted containers.
 ///
 /// Precondition: min_camera_cone_angle >= 0.
 ///
@@ -176,6 +176,10 @@ remove_outliers_wrt_camera_cone_angle_3(InputIterator first,           ///< inpu
 /// Remove points / cameras cone's angle < min_camera_cone_angle.
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
+///
+/// Warning: 
+/// This method modifies the order of points, thus
+//  should not be called on sorted containers.
 ///
 /// Precondition: min_camera_cone_angle >= 0.
 ///

@@ -158,6 +158,10 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
 ///
+/// Warning: 
+/// This method modifies the order of points, thus
+//  should not be called on sorted containers.
+///
 /// Precondition: KNN >= 2.
 ///
 /// @heading Parameters:
@@ -259,6 +263,10 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 /// - percentage of points to remove.
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
+///
+/// Warning: 
+/// This method modifies the order of points, thus
+//  should not be called on sorted containers.
 ///
 /// Precondition: KNN >= 2.
 ///

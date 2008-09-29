@@ -34,7 +34,6 @@
 #include <CGAL/k_nearest_neighbor.h>
 #include <CGAL/centroid.h>
 #include <CGAL/surface_reconstruction_assertions.h>
-#include <CGAL/remove_outliers_wrt_avg_knn_sq_distance_3.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/poisson_refinement_3.h>
 
