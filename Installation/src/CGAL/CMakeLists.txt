@@ -37,7 +37,7 @@ if (NOT AUTO_LINK_ENABLED )
   
   get_target_property( CGAL_LIBRARY_FULL_PATH CGAL LOCATION  )
   
-  set(CGAL_LIBRARY "${CGAL_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL library" )
+  set(CGAL_LIBRARY "${CGAL_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL library" FORCE)
   
   hide_variable(CGAL_LIBRARY)
   

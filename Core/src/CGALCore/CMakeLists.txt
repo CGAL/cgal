@@ -40,7 +40,7 @@ if( GMP_FOUND AND MPFR_FOUND )
     
     get_target_property( CGAL_CORE_LIBRARY_FULL_PATH CGAL_CORE LOCATION  )
     
-    set(CGAL_CORE_LIBRARY ${CGAL_CORE_LIBRARY_FULL_PATH} CACHE STRING "The CGAL-core++ library" )
+    set(CGAL_CORE_LIBRARY ${CGAL_CORE_LIBRARY_FULL_PATH} CACHE STRING "The CGAL-core++ library" FORCE)
     
     mark_as_advanced(CGAL_CORE_LIBRARY)
     

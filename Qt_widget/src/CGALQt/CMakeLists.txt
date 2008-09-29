@@ -120,7 +120,7 @@ if( QT3_FOUND )
       
       get_target_property( CGAL_Qt3_LIBRARY_FULL_PATH CGAL_Qt3 LOCATION  )
       
-      set(CGAL_Qt3_LIBRARY "${CGAL_Qt3_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-Qt3 library")
+      set(CGAL_Qt3_LIBRARY "${CGAL_Qt3_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-Qt3 library" FORCE)
       
       mark_as_advanced(CGAL_Qt3_LIBRARY)
       

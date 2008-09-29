@@ -79,7 +79,7 @@ if(ZLIB_FOUND AND OPENGL_FOUND)
     
     get_target_property( CGAL_ImageIO_LIBRARY_FULL_PATH CGAL_ImageIO LOCATION  )
     
-    set(CGAL_ImageIO_LIBRARY "${CGAL_ImageIO_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-ImageIO library")
+    set(CGAL_ImageIO_LIBRARY "${CGAL_ImageIO_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-ImageIO library" FORCE)
     
     mark_as_advanced(CGAL_ImageIO_LIBRARY)
 

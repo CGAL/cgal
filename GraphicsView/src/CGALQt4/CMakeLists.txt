@@ -81,7 +81,7 @@ if( QT4_FOUND )
       set_target_properties( CGAL_Qt4 PROPERTIES OUTPUT_NAME "${CGAL_Qt4_BASENAME}" )
       get_target_property( CGAL_Qt4_LIBRARY_FULL_PATH CGAL_Qt4 LOCATION  )
 
-      set(CGAL_Qt4_LIBRARY "${CGAL_Qt4_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-Qt4 library")
+      set(CGAL_Qt4_LIBRARY "${CGAL_Qt4_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-Qt4 library" FORCE)
       mark_as_advanced(CGAL_Qt4_LIBRARY)
 
     else()
