@@ -106,7 +106,7 @@
  <customwidgets>
   <customwidget>
    <class>Viewer</class>
-   <extends>QWidget</extends>
+   <extends>QGLViewer</extends>
    <header>Viewer.h</header>
   </customwidget>
  </customwidgets>
