@@ -22,6 +22,7 @@
 #define CGAL_IMPLICIT_FCT_DELAUNAY_TRIANGULATION_H
 
 #include <CGAL/Point_with_normal_3.h>
+#include <CGAL/Lightweight_vector_3.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -126,7 +127,7 @@ public:
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
-  typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
+  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
 
 // data members
 private:
@@ -227,15 +228,17 @@ private:
 }; // end of Implicit_fct_delaunay_triangulation_vertex_base_3
 
 
-/// Helper class: Implicit_fct_delaunay_triangulation_default_geom_traits_3
-/// changes in a geometric traits class the Point_3 type to Point_with_normal_3.
+/// Helper class: 
+/// Implicit_fct_delaunay_triangulation_default_geom_traits_3
+/// changes in a geometric traits class the Point_3 type to 
+/// a lightweight model of PointWithNormal_3.
 ///
 /// @heading Parameters:
 /// @param BaseGt   Kernel's regular geometric traits.
 template <class BaseGt>
 struct Implicit_fct_delaunay_triangulation_default_geom_traits_3 : public BaseGt
 {
-  typedef Point_with_normal_3<BaseGt> Point_3;
+  typedef Point_with_normal_3<BaseGt, Lightweight_vector_3<BaseGt> > Point_3;
 };
 
 
@@ -335,7 +338,7 @@ public:
   /// The geometric traits class's Point_3 type is a model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
-  typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
+  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
 
   /// Iterator over all normals.
   typedef Iterator_project<Finite_vertices_iterator,

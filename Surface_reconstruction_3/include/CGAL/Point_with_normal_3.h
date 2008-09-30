@@ -22,22 +22,23 @@
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Origin.h>
-#include <CGAL/Oriented_normal_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
 /// The Point_with_normal_3 class represents a 3D point with:
 /// - a position,
-/// - a normal (oriented or not).
-/// The normal vector is allocated only when needed.
+/// - a normal (orientable or always oriented).
 ///
-/// @heading Is Model for the Concepts: Model of the PointWithNormal_3 concept.
+/// @heading Is Model for the Concepts: 
+/// Model of the PointWithNormal_3 concept.
+/// Model of the PointWithOrientableNormal_3 if Normal_3 is a model of OrientableNormal_3 concept.
 ///
 /// @heading Parameters:
-/// @param Gt   Kernel's geometric traits.
+/// @param Gt       Kernel's geometric traits.
+/// @param Normal_3 Model of Kernel::Vector_3 or of OrientableNormal_3.
 
-template<class Gt>
+template<class Gt, class Normal_3 = typename Gt::Vector_3>
 class Point_with_normal_3 : public Gt::Point_3
 {
 // Private types
@@ -50,8 +51,9 @@ public:
 
     typedef Gt Geom_traits; ///< Kernel's geometric traits
     typedef typename Geom_traits::FT FT;
+    typedef typename Geom_traits::RT RT;
     typedef typename Geom_traits::Point_3  Point;  ///< Kernel's Point_3 class.
-    typedef Oriented_normal_3<Geom_traits> Normal; ///< Model of OrientedNormal_3 concept.
+    typedef Normal_3 Normal; ///< Model of Kernel::Vector_3 or of OrientableNormal_3.
 
 // Public methods
 public:
@@ -63,8 +65,16 @@ public:
     : Base(o)
     {
     }
-    Point_with_normal_3(FT x, FT y, FT z)
-    : Base(x,y,z)
+    Point_with_normal_3(FT x, FT y, FT z,
+                        const Normal& normal = NULL_VECTOR)
+    : Base(x,y,z), 
+      m_normal(normal)
+    {
+    }
+    Point_with_normal_3(RT hx, RT hy, RT hz, RT hw,
+                        const Normal& normal = NULL_VECTOR)
+    : Base(hx,hy,hz,hw), 
+      m_normal(normal)
     {
     }
     Point_with_normal_3(const Point& point,
@@ -80,8 +90,8 @@ public:
       m_normal(pwn.normal())
     {
     }
-    template <class K>
-    Point_with_normal_3(const Point_with_normal_3<K>& pwn)
+    template <class K, class N>
+    Point_with_normal_3(const Point_with_normal_3<K,N>& pwn)
     : Base(pwn),
       m_normal(pwn.normal())
     {
@@ -94,23 +104,23 @@ public:
       return *this;
     }
 
-    /// Compare positions
-    bool operator==(const Point_with_normal_3& that)
-    {
-      return ((Base&)(*this) == (Base&)that);
-    }
-    bool operator!=(const Point_with_normal_3& that)
-    {
-      return ! (*this == that);
-    }
+    // Inherited operators ==() and !=() are fine.
+    //bool operator==(const Point_with_normal_3& that)
+    //{
+    //  return ((Base&)(*this) == (Base&)that);
+    //}
+    //bool operator!=(const Point_with_normal_3& that)
+    //{
+    //  return ! (*this == that);
+    //}
 
-    // Set position.
+    /// Set position.
     void set_position(const Point& point)
     {
       Base::operator=(point);
     }
 
-    /// Get/set normal (vector + orientation).
+    /// Get/set normal.
     const Normal& normal() const { return m_normal; }
     Normal&       normal()       { return m_normal; }
 

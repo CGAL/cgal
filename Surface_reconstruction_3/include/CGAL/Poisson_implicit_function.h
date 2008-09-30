@@ -35,6 +35,7 @@
 #include <CGAL/centroid.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/Peak_memory_sizer.h>
 #include <CGAL/poisson_refinement_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -130,13 +131,13 @@ public:
 
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;
+  typedef typename Geom_traits::Vector_3 Vector;
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   typedef typename Triangulation::Point_with_normal Point_with_normal;
                                                      ///< Model of PointWithNormal_3
-  typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
-  typedef typename Geom_traits::Vector_3 Vector;
+  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
 
 // Private types
 private:
@@ -520,11 +521,10 @@ public:
         v != m_dt.finite_vertices_end();
         v++)
     {
-      if(v->normal().get_vector() != CGAL::NULL_VECTOR)
+      if(v->normal() != CGAL::NULL_VECTOR)
         continue;
 
       Vector normal = CGAL::NULL_VECTOR;  // normal vector to compute
-      bool oriented_normal = true;        // normal orientation to compute
 
       std::list<Vertex_handle> vertices;
       m_dt.incident_vertices(v,std::back_inserter(vertices));
@@ -533,15 +533,14 @@ public:
           it++)
       {
         Vertex_handle nv = *it;
-        normal = normal + nv->normal().get_vector();
-        oriented_normal &=  nv->normal().is_oriented();
+        normal = normal + nv->normal();
       }
 
       FT sq_norm = normal * normal;
       if(sq_norm > 0.0)
         normal = normal / std::sqrt(sq_norm);
 
-      extrapolated_normals[v] = Normal(normal, oriented_normal);
+      extrapolated_normals[v] = Normal(normal);
     }
 
     // set normals
@@ -549,7 +548,7 @@ public:
       v != m_dt.finite_vertices_end();
       v++)
     {
-      if(v->normal().get_vector() != CGAL::NULL_VECTOR)
+      if(v->normal() != CGAL::NULL_VECTOR)
         continue;
 
       typename std::map<Vertex_handle,Normal>::iterator it = extrapolated_normals.find(v);
@@ -591,18 +590,13 @@ public:
           if (v_cur->type() != Triangulation::INPUT)
           {
             FT gf = gaussian_function(limit_distance,distance_cur);
-            v_cur->normal() = Normal(v_cur->normal().get_vector()
-              + gf * v->normal().get_vector() , true) ;
-
+            v_cur->normal() = v_cur->normal() + gf * v->normal();
           }
           // get incident_vertices
           std::vector<Vertex_handle> v_neighbors;
-
           m_dt.incident_vertices(v_cur,std::back_inserter(v_neighbors));
           typename std::vector<Vertex_handle>::iterator it;
-          for(it = v_neighbors.begin();
-            it != v_neighbors.end();
-            it++)
+          for(it = v_neighbors.begin(); it != v_neighbors.end(); it++)
           {
             Vertex_handle nv = *it;
             int tag = nv->tag();
@@ -624,10 +618,10 @@ public:
     {
       if(v->type() != Triangulation::INPUT )
       {
-        FT sq_norm = std::sqrt(v->normal().get_vector()*v->normal().get_vector());
+        FT sq_norm = std::sqrt(v->normal()*v->normal());
         if(sq_norm > 0.0)
         {
-          v->normal() = Normal(v->normal().get_vector() / sq_norm , true);
+          v->normal() = v->normal() / sq_norm;
           counter++;
         }
         //v->type() = Triangulation::INPUT;
@@ -654,6 +648,7 @@ public:
     *duration_solve = 0.0;
 
     long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    long old_max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
     CGAL_TRACE("  Create matrix\n");
 
     // get #variables
@@ -701,6 +696,11 @@ public:
     if(!solver.factorize_ooc())
       return false;
     *duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
+
+    // Print peak memory (Windows only)
+    long max_memory = CGAL::Peak_memory_sizer().peak_resident_size();
+    if (max_memory > old_max_memory)
+      CGAL_TRACE("  Max allocation = %ld Mb\n", max_memory>>20);
 
     /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Direct solve by forward and backward substitution\n");
@@ -1194,10 +1194,10 @@ private:
 
   Vector cell_normal(Cell_handle cell)
   {
-    const Vector& n0 = cell->vertex(0)->normal().get_vector();
-    const Vector& n1 = cell->vertex(1)->normal().get_vector();
-    const Vector& n2 = cell->vertex(2)->normal().get_vector();
-    const Vector& n3 = cell->vertex(3)->normal().get_vector();
+    const Vector& n0 = cell->vertex(0)->normal();
+    const Vector& n1 = cell->vertex(1)->normal();
+    const Vector& n2 = cell->vertex(2)->normal();
+    const Vector& n3 = cell->vertex(3)->normal();
     Vector n = n0 + n1 + n2 + n3;
     FT sq_norm = n*n;
     if(sq_norm != 0.0)

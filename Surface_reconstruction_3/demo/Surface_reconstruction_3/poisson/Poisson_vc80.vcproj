@@ -135,7 +135,7 @@
 				AdditionalOptions="/Zm900"
 				Optimization="2"
 				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\Spatial_searching\include;..\..\..\..\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
-				PreprocessorDefinitions="WIN32;CGAL_NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;CGAL_USE_TAUCS"
+				PreprocessorDefinitions="WIN32;CGAL_NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;CGAL_USE_TAUCS;DEBUG_TRACE"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
@@ -199,7 +199,7 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
+			Name="Demo Source Files"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
@@ -253,7 +253,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Header Files"
+			Name="Demo Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
@@ -343,7 +343,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
+			Name="Demo Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
@@ -381,10 +381,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\poisson_refinement_3.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\include\CGAL\estimate_normals_3.h"
 				>
 			</File>
@@ -413,6 +409,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\include\CGAL\Lightweight_vector_3.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\CGAL\merge_epsilon_nearest_points_3.h"
 				>
 			</File>
@@ -421,7 +421,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\Oriented_normal_3.h"
+				RelativePath="..\..\..\include\CGAL\Orientable_normal_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\Peak_memory_sizer.h"
 				>
 			</File>
 			<File
@@ -430,6 +434,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\Poisson_implicit_function.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\poisson_refinement_3.h"
 				>
 			</File>
 			<File
@@ -513,11 +521,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\doc\concepts\OrientedNormal_3.h"
+				RelativePath="..\..\..\doc\concepts\OrientableNormal_3.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\doc\concepts\PointWithNormal_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\doc\concepts\PointWithOrientableNormal_3.h"
 				>
 			</File>
 			<File

@@ -31,17 +31,17 @@ typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle;
 typedef Kernel::Tetrahedron_3 Tetrahedron;
 
-// Point + normal
-typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // Model of the PointWithNormal_3 concept
-typedef Point_with_normal::Normal Normal; // Model of OrientedNormal_3 concept
-
 // Point + normal + Gyroviz stuff
-typedef Gyroviz_point_3<Kernel> Gyroviz_point; // Point_with_normal + selection flag + cameras
+typedef Gyroviz_point_3<Kernel> Gyroviz_point; // Point + normal + selection flag + cameras
+
+// Point + normal without Gyroviz stuff (superclasss of Gyroviz_point)
+typedef Gyroviz_point::Point_with_normal Point_with_normal; ///< Model of PointWithOrientableNormal_3
+typedef Gyroviz_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
 
 // Point set (points are of type Gyroviz_point)
 typedef Point_set_3<Kernel> Point_set;
 
-// Poisson's Delaunay triangulation 3 and implicit function
+// Poisson's 3D Delaunay triangulation and implicit function
 typedef Poisson_dt3<Kernel> Dt3;
 typedef CGAL::Poisson_implicit_function<Kernel, Dt3> Poisson_implicit_function;
 

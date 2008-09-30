@@ -37,7 +37,7 @@ public:
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
-  typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
+  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
 
 // Public methods
 public:

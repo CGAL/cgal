@@ -28,7 +28,7 @@
 #include <CGAL/estimate_normals_pca_3.h>
 #include <CGAL/estimate_normals_jet_fitting_3.h>
 #include <CGAL/orient_normals_minimum_spanning_tree_3.h>
-#include <CGAL/Oriented_normal_3.h>
+#include <CGAL/Orientable_normal_3.h>
 #include <CGAL/Vector_index_property_map.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
@@ -49,7 +49,7 @@ typedef CGAL::Simple_cartesian<float> Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-typedef CGAL::Oriented_normal_3<Kernel> Normal;
+typedef CGAL::Orientable_normal_3<Kernel> Normal;
 
 // ----------------------------------------------------------------------------
 // Private functions

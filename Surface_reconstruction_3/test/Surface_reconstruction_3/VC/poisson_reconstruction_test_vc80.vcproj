@@ -124,7 +124,7 @@
 				AdditionalOptions="/Zm900"
 				Optimization="2"
 				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\..\..\Spatial_searching\include;..\..\..\..\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
-				PreprocessorDefinitions="WIN32;CGAL_NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;CGAL_USE_TAUCS"
+				PreprocessorDefinitions="WIN32;CGAL_NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;CGAL_USE_TAUCS;DEBUG_TRACE"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
@@ -206,10 +206,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
-				RelativePath="..\..\..\include\CGAL\poisson_refinement_3.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\include\CGAL\Implicit_fct_delaunay_triangulation_3.h"
 				>
 			</File>
@@ -223,6 +219,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\Poisson_implicit_function.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\poisson_refinement_3.h"
 				>
 			</File>
 			<File

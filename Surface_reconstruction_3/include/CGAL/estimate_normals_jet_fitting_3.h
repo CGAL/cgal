@@ -23,7 +23,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Monge_via_jet_fitting.h>
-#include <CGAL/Oriented_normal_3.h>
+#include <CGAL/Orientable_normal_3.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -41,14 +41,14 @@ CGAL_BEGIN_NAMESPACE
 /// @heading Parameters:
 /// @param Kernel Geometric traits class.
 /// @param Tree KD-tree.
-/// @param OrientedNormal_3 Type of return value.
+/// @param OrientableNormal_3 Type of return value.
 ///
-/// @return Computed normal, model of OrientedNormal_3.
+/// @return Computed normal, model of OrientableNormal_3.
 template < typename Kernel,
            typename Tree,
-           typename OrientedNormal_3
+           typename OrientableNormal_3
 >
-OrientedNormal_3
+OrientableNormal_3
 estimate_normal_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
                               Tree& tree, ///< KD-tree
                               const unsigned int KNN,
@@ -57,7 +57,7 @@ estimate_normal_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D poi
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Vector_3 Vector;
-  typedef OrientedNormal_3 Oriented_normal;
+  typedef OrientableNormal_3 Oriented_normal;
 
   // types for K nearest neighbors search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
@@ -92,8 +92,8 @@ estimate_normal_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D poi
                                     degre_fitting, degree_monge);
 
   // output normal vector (already normalized in monge form)
-  return OrientedNormal_3(monge_form.normal_direction(),
-                          false /* not oriented */);
+  return OrientableNormal_3(monge_form.normal_direction(),
+                            false /* not oriented */);
 }
 
 

@@ -3,7 +3,7 @@
 #ifndef ORIENT_NORMALS_WRT_CAMERAS_3_H
 #define ORIENT_NORMALS_WRT_CAMERAS_3_H
 
-#include <CGAL/Oriented_normal_3.h>
+#include <CGAL/Orientable_normal_3.h>
 
 #include <iterator>
 
@@ -11,21 +11,21 @@
 /// Orient a 3D point's normal w.r.t. the position of cameras
 /// that reconstructed the point by photogrammetry.
 template < class Gt, ///< Geometric traits class.
-           class OrientedNormal_3,
+           class OrientableNormal_3,
            class InputIterator
 >
 void
 orient_normal_wrt_cameras_3(const typename Gt::Point_3& p, ///< 3D point position
-                            OrientedNormal_3& normal, ///< 3D point normal (in and out)
+                            OrientableNormal_3& normal, ///< 3D point normal (in and out)
                             InputIterator first_camera,  ///< 3D point cameras
                             InputIterator beyond_camera) ///< 3D point cameras
 {
     typedef typename Gt::FT       FT;
     typedef typename Gt::Point_3  Point;
-    typedef OrientedNormal_3      Normal;
+    typedef OrientableNormal_3    Normal;
     typedef typename Gt::Vector_3 Vector;
 
-    Vector n = normal.get_vector();
+    Vector n = normal;
 
     //                                        ->
     //                                        cp     ->

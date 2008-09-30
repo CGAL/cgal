@@ -52,7 +52,7 @@ bool surface_reconstruction_write_xyz(const char* pFilename,
   for(InputIterator it = first; it != beyond; it++)
   {
     const Point& p = *it;
-    const Vector& n = it->normal().get_vector();
+    const Vector& n = it->normal();
     fprintf(pFile,"%lf %lf %lf %lf %lf %lf\n",
                   p.x(),p.y(),p.z(),
                   n.x(),n.y(),n.z());

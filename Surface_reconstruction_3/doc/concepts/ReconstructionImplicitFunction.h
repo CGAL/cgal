@@ -42,7 +42,7 @@ public:
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   typedef xxx Point_with_normal;                     ///< Model of PointWithNormal_3
-  typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
+  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
   typedef typename Geom_traits::Vector_3 Vector;
 
 // Public methods

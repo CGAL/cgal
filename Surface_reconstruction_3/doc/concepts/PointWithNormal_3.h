@@ -1,4 +1,4 @@
-// Copyright (c) 2007  INRIA (France).
+// Copyright (c) 2007-2008  INRIA (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -20,42 +20,41 @@
 
 /// A PointWithNormal_3 concept represents a 3D point with:
 /// - a position
-/// - a normal (oriented or not).
+/// - a normal (oriented).
 ///
 /// @heading Has Models:
-/// - Point_with_normal_3<Geom_traits>
-/// - Gyroviz_point_3<Geom_traits>
+/// - Point_with_normal_3<Geom_traits, Normal_3>
 
-class PointWithNormal_3 : public Kernel::Point_3,
-                          public DefaultConstructible, public CopyConstructible, public Assignable
+class PointWithNormal_3 
+  : public Kernel::Point_3,
+    public DefaultConstructible, public CopyConstructible, public Assignable, public EqualityComparable
 {
 // Public types
 public:
 
     typedef xxx Geom_traits; ///< Kernel's geometric traits
-    typedef Geom_traits::FT FT;
-    typedef Geom_traits::Point_3 Point;   ///< Kernel's Point_3 class.
-    typedef xxx Normal; ///< Model of OrientedNormal_3 concept.
+    typedef typename Geom_traits::FT FT;
+    typedef typename Geom_traits::RT RT;
+    typedef typename Geom_traits::Point_3  Point;  ///< Kernel's Point_3 class.
+    typedef Normal_3 Normal; ///< Model of Kernel::Vector_3 or of OrientableNormal_3.
 
 // Public methods
 public:
 
     /// Point is (0,0,0) by default.
     /// Normal is (0,0,0) by default.
-    /// Normal is oriented by default.
     PointWithNormal_3(const Origin& o = ORIGIN);
-    PointWithNormal_3(FT x, FT y, FT z);
     PointWithNormal_3(const Point& point,
                       const Normal& normal = NULL_VECTOR);
+    PointWithNormal_3(FT x, FT y, FT z,
+                      const Normal& normal = NULL_VECTOR);
+    PointWithNormal_3(RT hx, RT hy, RT hz, RT hw,
+                      const Normal& normal = NULL_VECTOR);
 
-    /// Compare positions
-    bool operator==(const PointWithNormal_3& that);
-    bool operator!=(const PointWithNormal_3& that);
-
-    // Set position.
+    /// Set position.
     void set_position(const Point& point);
 
-    /// Get/set normal (vector + orientation).
+    /// Get/set normal.
     const Normal& normal() const;
     Normal&       normal();
 };

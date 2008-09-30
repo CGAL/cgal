@@ -65,7 +65,7 @@ public:
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   typedef PointWithNormal_3 Point_with_normal;       ///< Model of PointWithNormal_3 concept.
-  typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
+  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
   typedef typename Geom_traits::Vector_3 Vector;
 
 // Private types
@@ -219,7 +219,7 @@ private:
     for (typename Neighbor_search::iterator it = search.begin(); it != search.end(); ++it)
     {
       Vector p = it->first - CGAL::ORIGIN;
-      const Vector& n = it->first.normal().get_vector();
+      const Vector& n = it->first.normal();
       FT w = 1. - it->second*invr2;
       w = w*w; w = w*w;
 
@@ -277,7 +277,7 @@ public:
         Point pp = p;
         //project(pp,n,1);
         pp = m->cached_nearest_neighbor.first;
-        n  = m->cached_nearest_neighbor.first.normal().get_vector();
+        n  = m->cached_nearest_neighbor.first.normal();
         Vector h = sub(p,pp);
         return length(h) * ( dot(n,h)>0. ? 1. : -1.);
       }
@@ -329,7 +329,7 @@ private:
       if (!isValid(search,p))
       {
         p = search.begin()->first;
-        n = search.begin()->first.normal().get_vector();
+        n = search.begin()->first.normal();
         delta2 = search.begin()->second;
       }
       else

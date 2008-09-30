@@ -1,3 +1,5 @@
+// Author: Laurent Saboret
+
 #ifndef POINT_SET_3_H
 #define POINT_SET_3_H
 
@@ -15,8 +17,9 @@
 #include <GL/gl.h>
 
 
-/// The Point_set_3 class is array of points + normals of type PointWithNormal_3
-/// (in fact Gyroviz_point_3 to support algorithms specific to Gyroviz). 
+/// The Point_set_3 class is array of points + normals of type 
+/// Point_with_normal_3<Gt, Orientable_normal_3<Gt> > (in fact 
+/// Gyroviz_point_3 to support algorithms specific to Gyroviz). 
 /// It provides:
 /// - accessors: points and normals iterators, property maps
 /// - OpenGL rendering
@@ -56,7 +59,7 @@ public:
   using Base::const_iterator;
   /// @endcond
 
-  // Geometric types
+  // Classic CGAL geometric types
   typedef Gt  Geom_traits; ///<Geometric traits class.
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;
@@ -64,9 +67,9 @@ public:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  typedef CGAL::Point_with_normal_3<Gt> Point_with_normal; ///< Model of PointWithNormal_3
   typedef Gyroviz_point_3<Gt> Gyroviz_point; ///< Point_with_normal + selection flag + cameras
-  typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
+  typedef typename Gyroviz_point::Point_with_normal Point_with_normal; ///< Model of PointWithOrientableNormal_3
+  typedef typename Gyroviz_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
 
   // Iterator over Point_3 points
   typedef std::vector<Gyroviz_point>::iterator        Point_iterator;      
@@ -263,7 +266,7 @@ public:
       const Normal& n = p.normal();
       if (n.is_oriented())
       {
-        Point q = p + scale * n.get_vector();
+        Point q = p + scale * n;
         ::glVertex3d(p.x(),p.y(),p.z());
         ::glVertex3d(q.x(),q.y(),q.z());
       }
@@ -279,7 +282,7 @@ public:
       const Normal& n = p.normal();
       if ( ! n.is_oriented() )
       {
-        Point q = p + scale * n.get_vector();
+        Point q = p + scale * n;
         ::glVertex3d(p.x(),p.y(),p.z());
         ::glVertex3d(q.x(),q.y(),q.z());
       }

@@ -21,6 +21,7 @@
 #define GYROVIZ_POINT_3_H
 
 #include <CGAL/Point_with_normal_3.h>
+#include <CGAL/Orientable_normal_3.h>
 #include <CGAL/Iterator_project.h>
 
 #include <set>
@@ -34,19 +35,20 @@
 /// from an image sequence.
 ///
 /// @heading Is Model for the Concepts: 
-/// Model of the PointWithNormal_3 concept.
+/// Model of the PointWithOrientableNormal_3 concept.
 ///
 /// @heading Parameters:
 /// @param Gt   Kernel's geometric traits.
 
 template<class Gt>
-class Gyroviz_point_3 : public CGAL::Point_with_normal_3<Gt>
+class Gyroviz_point_3 
+  : public CGAL::Point_with_normal_3<Gt, CGAL::Orientable_normal_3<Gt> >
 {
 // Private types
 private:
 
     // Base class
-    typedef CGAL::Point_with_normal_3<Gt> Base;
+    typedef CGAL::Point_with_normal_3<Gt, CGAL::Orientable_normal_3<Gt> > Base;
 
     // Auxiliary class to build a camera iterator
     template <class Node> // Node is Camera_point2_pair
@@ -62,14 +64,15 @@ private:
 public:
 
     // Base class
-    typedef CGAL::Point_with_normal_3<Gt> Point_with_normal; ///< Model of the PointWithNormal_3 concept.
+    typedef Base Point_with_normal; ///< Model of the PointWithOrientableNormal_3 concept.
 
     // Repeat Point_with_normal_3 public types
     typedef Gt Geom_traits; ///< Kernel's geometric traits.
     typedef typename Geom_traits::FT FT;
+    typedef typename Geom_traits::RT RT;
     typedef typename Geom_traits::Point_2 Point_2; ///< Kernel's Point_2 class.
     typedef typename Geom_traits::Point_3 Point_3; ///< Kernel's Point_3 class.
-    typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
+    typedef typename Point_with_normal::Normal Normal; ///< Model of OrientableNormal_3 concept.
 
     /// Camera/2D point pair. The 2D point is the 3D point (*this) projection's
     /// in the camera's image plane.
@@ -97,8 +100,15 @@ public:
     {
       m_is_selected = false;
     }
-    Gyroviz_point_3(FT x, FT y, FT z)
-    : Base(x,y,z)
+    Gyroviz_point_3(FT x, FT y, FT z,
+                    const Normal& normal = CGAL::NULL_VECTOR)
+    : Base(x,y,z,normal)
+    {
+      m_is_selected = false;
+    }
+    Gyroviz_point_3(RT hx, RT hy, RT hz, RT hw,
+                    const Normal& normal = CGAL::NULL_VECTOR)
+    : Base(hx,hy,hz,hw,normal)
     {
       m_is_selected = false;
     }
@@ -108,8 +118,8 @@ public:
     {
       m_is_selected = false;
     }
-    template<class K>
-    Gyroviz_point_3(const Point_with_normal_3<K>& pwn)
+    template <class K, class N>
+    Gyroviz_point_3(const Point_with_normal_3<K,N>& pwn)
     : Base(pwn)
     {
       m_is_selected = false;
@@ -158,23 +168,23 @@ public:
     }
 
     /// Merge points, including lists of camera/2D point pairs.
-    void merge(const Gyroviz_point_3& that)
+    void merge(const Gyroviz_point_3& gpt)
     { 
       // we assume that both points 3D position is the same
       
       // merge camera/2D point maps
-      camera_point2_map.insert(that.camera_point2_pairs_begin(), that.camera_point2_pairs_end()); 
+      camera_point2_map.insert(gpt.camera_point2_pairs_begin(), gpt.camera_point2_pairs_end()); 
     }
 
-    /// Compare positions.
-    bool operator==(const Gyroviz_point_3& that)
-    { 
-      return Base::operator==(that); 
-    }
-    bool operator!=(const Gyroviz_point_3& that)
-    { 
-      return ! (*this == that); 
-    }
+    // Inherited operators ==() and !=() are fine.
+    //bool operator==(const Gyroviz_point_3& that)
+    //{ 
+    //  return Base::operator==(that); 
+    //}
+    //bool operator!=(const Gyroviz_point_3& that)
+    //{ 
+    //  return ! (*this == that); 
+    //}
 
     // Selection
     bool is_selected() const { return m_is_selected; }

@@ -186,9 +186,8 @@ int main(int argc, char * argv[])
     }
 
     assert(pwns.begin() != pwns.end());
-    bool points_have_normals = (pwns.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
-    bool normals_are_oriented = pwns.begin()->normal().is_oriented();
-    if ( ! (points_have_normals && normals_are_oriented) )
+    bool points_have_normals = (pwns.begin()->normal() != CGAL::NULL_VECTOR);
+    if ( ! points_have_normals )
     {
       std::cerr << "Input point set not supported: this reconstruction method requires oriented normals" << std::endl;
       return EXIT_FAILURE;

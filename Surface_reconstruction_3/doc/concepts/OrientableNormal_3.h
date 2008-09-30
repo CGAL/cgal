@@ -18,34 +18,37 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 
-/// The OrientedNormal_3 concept represents a normal vector (oriented or not).
+/// The OrientableNormal_3 concept represents a normal vector (oriented or not).
 ///
 /// @heading Has Models:
-/// - Oriented_normal_3<Geom_traits>
+/// - Orientable_normal_3<Geom_traits>
 
-class OrientedNormal_3 : public DefaultConstructible, public CopyConstructible, public Assignable
+class OrientableNormal_3 
+  : public Kernel::Vector_3,
+    public DefaultConstructible, public CopyConstructible, public Assignable, public EqualityComparable
 {
 // Public types
 public:
 
-    typedef xxx Vector; ///< Model of Kernel::Vector_3 concept.
-    typedef typename Geom_traits::Vector_3 Vector; 
+    typedef xxx Geom_traits; ///< Kernel's geometric traits
+    typedef typename Geom_traits::FT FT;
+    typedef typename Geom_traits::RT RT;
+    typedef typename Geom_traits::Vector_3 Vector; ///< Kernel's Vector_3 class.
 
 // Public methods
 public:
 
     /// Normal vector is (0,0,0) by default.
     /// Normal is oriented by default.
-    OrientedNormal_3(Null_vector = NULL_VECTOR);
-    OrientedNormal_3(const Vector& vector, bool oriented = true);
+    OrientableNormal_3(Null_vector = NULL_VECTOR);
+    OrientableNormal_3(const Vector& vector, bool oriented = true);
+    OrientableNormal_3(FT x, FT y, FT z, bool oriented = true);
+    Orientable_normal_3(RT hx, RT hy, RT hz, RT hw, bool oriented = true)
 
-    /// Get normal vector.
+    /// Get (a copy of) the actual vector. 
     Vector get_vector() const;
 
     /// Get normal orientation.
     bool is_oriented() const;
-
-    /// Set normal (vector + orientation).
-    void set(const Vector& vector, bool oriented = true);
 };
 

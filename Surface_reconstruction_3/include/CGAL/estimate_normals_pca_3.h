@@ -23,7 +23,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
-#include <CGAL/Oriented_normal_3.h>
+#include <CGAL/Orientable_normal_3.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -41,14 +41,14 @@ CGAL_BEGIN_NAMESPACE
 /// @heading Parameters:
 /// @param Kernel Geometric traits class.
 /// @param Tree KD-tree.
-/// @param OrientedNormal_3 Type of return value.
+/// @param OrientableNormal_3 Type of return value.
 ///
-/// @return Computed normal, model of OrientedNormal_3.
+/// @return Computed normal, model of OrientableNormal_3.
 template < typename Kernel,
            typename Tree,
-           typename OrientedNormal_3
+           typename OrientableNormal_3
 >
-OrientedNormal_3
+OrientableNormal_3
 estimate_normal_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
                       Tree& tree, ///< KD-tree
                       const unsigned int KNN)
@@ -57,7 +57,7 @@ estimate_normal_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Plane_3  Plane;
   typedef typename Kernel::Vector_3 Vector;
-  typedef OrientedNormal_3 Oriented_normal;
+  typedef OrientableNormal_3 Oriented_normal;
 
   // types for K nearest neighbors search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
@@ -86,8 +86,8 @@ estimate_normal_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose
   linear_least_squares_fitting_3(points.begin(),points.end(),plane,Dimension_tag<0>());
 
   // output normal vector (already normalized by PCA)
-  return OrientedNormal_3(plane.orthogonal_vector(),
-                          false /* not oriented */);
+  return OrientableNormal_3(plane.orthogonal_vector(),
+                            false /* not oriented */);
 }
 
 

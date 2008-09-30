@@ -78,7 +78,7 @@ public:
   /// The geometric traits class's Point_3 type is a model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
-  typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
+  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
 
 // Public methods
 public:
@@ -226,10 +226,10 @@ private:
 
 public:
 
+  // Draw normals
   void gl_draw_normals(unsigned char r, unsigned char g, unsigned char b,
                        FT c = 1.0) const
   {
-    // Draw *oriented* normals
     ::glColor3ub(r,g,b);
     ::glBegin(GL_LINES);
     for(Finite_vertices_iterator v = finite_vertices_begin();
@@ -237,44 +237,10 @@ public:
         v++)
     { 
       Normal n = v->normal();
-	  if ( n.is_oriented() && n.get_vector() != CGAL::NULL_VECTOR && v->type() == 0)
+	  if ( n != CGAL::NULL_VECTOR && v->type() == 0)
       {
         Point a = v->point();
-        Point b = a + c * n.get_vector();
-        glVertex3d(a.x(),a.y(),a.z());
-        glVertex3d(b.x(),b.y(),b.z());
-      }
-    }
-    ::glEnd();
-    
-	/*::glColor3ub(0,0,255);
-    ::glBegin(GL_LINES);
-    for(Finite_vertices_iterator v = finite_vertices_begin();
-        v != finite_vertices_end();
-        v++)
-    { 
-      Normal n = v->normal();
-	  if ( n.is_oriented() && n.get_vector() != CGAL::NULL_VECTOR && v->type() != 0)
-      {
-        Point a = v->point();
-        Point b = a + c * n.get_vector();
-        glVertex3d(a.x(),a.y(),a.z());
-        glVertex3d(b.x(),b.y(),b.z());
-      }
-    }
-    ::glEnd();*/
-    // Draw *non-oriented* normals
-    ::glColor3ub(255,0,0);
-    ::glBegin(GL_LINES);
-    for(Finite_vertices_iterator v = finite_vertices_begin();
-        v != finite_vertices_end();
-        v++)
-    {
-      Normal n = v->normal();
-      if ( ! n.is_oriented() && n.get_vector() != CGAL::NULL_VECTOR )
-      {
-        Point a = v->point();
-        Point b = a + c * n.get_vector();
+        Point b = a + c * n;
         glVertex3d(a.x(),a.y(),a.z());
         glVertex3d(b.x(),b.y(),b.z());
       }

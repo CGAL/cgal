@@ -213,7 +213,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\Oriented_normal_3.h"
+				RelativePath="..\..\..\include\CGAL\Orientable_normal_3.h"
 				>
 			</File>
 			<File

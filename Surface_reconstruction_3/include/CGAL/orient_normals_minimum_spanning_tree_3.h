@@ -22,7 +22,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_vertex_handle_3.h>
-#include <CGAL/Oriented_normal_3.h>
+#include <CGAL/Orientable_normal_3.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
@@ -163,12 +163,12 @@ struct propagate_normal
         // Get source normal
         vertex_descriptor vtx1 = boost::source(edge, graph);
         Normal& normal1 = get(get(boost::vertex_normal, graph), vtx1);
-        Vector vec1 = normal1.get_vector();
+        Vector vec1 = normal1;
 
         // Get target normal
         vertex_descriptor vtx2 = boost::target(edge, graph);
         Normal& normal2 = get(get(boost::vertex_normal, graph), vtx2);
-        Vector vec2 = normal2.get_vector();
+        Vector vec2 = normal2;
 
         double dot = vec1 * vec2;
 
@@ -264,7 +264,7 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
     // Orient its normal towards +Z axis
     const Vector Z(0, 0, 1);
     Normal& normal = vertex_normal_map[source_vertex];
-    Vector vec = normal.get_vector();
+    Vector vec = normal;
     if (Z * vec < 0) {
         //CGAL_TRACE("  Flip source vertex %d\n", (int)source_vertex_index);
         vec = -vec;
@@ -305,7 +305,7 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
     for (VertexIterator it = first; it != beyond; it++)
     {
         unsigned int it_index = get(vertex_index_map,it);
-        Vector it_normal_vector = vertex_normal_map[it].get_vector();
+        Vector it_normal_vector = vertex_normal_map[it];
 
         // Gather set of (KNN+1) neighboring points.
         // Perform KNN+1 queries (as in point set, the query point is
@@ -335,7 +335,7 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
                 //                               ->        ->
                 // Compute edge weight = 1 - | normal1 * normal2 |
                 // where normal1 and normal2 are the normal at the edge extremities.
-                Vector neighbour_normal_vector = vertex_normal_map[neighbour].get_vector();
+                Vector neighbour_normal_vector = vertex_normal_map[neighbour];
                 double weight = 1.0 - std::abs(it_normal_vector * neighbour_normal_vector);
                 if (weight < 0)
                     weight = 0; // safety check
