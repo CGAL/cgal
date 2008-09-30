@@ -62,3 +62,23 @@ add_executable  ( Delaunay_triangulation_2 Delaunay_triangulation_2.cpp Delaunay
 target_link_libraries( Delaunay_triangulation_2 ${QT_LIBRARIES} )
 # Link with CGAL
 target_link_libraries( Delaunay_triangulation_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+
+#--------------------------------
+# The "Regular" demo: Regular_triangulation_2
+#--------------------------------
+# UI files (Qt Designer files)
+qt4_wrap_ui( DT_UI_FILES Regular_triangulation_2.ui )
+
+# qrc files (resources files, that contain icons, at least)
+qt4_add_resources ( DT_RESOURCE_FILES ./Regular_triangulation_2.qrc )
+
+# use the Qt MOC preprocessor on classes that derives from QObject
+qt4_generate_moc( Regular_triangulation_2.cpp Regular_triangulation_2.moc )
+
+# The executable itself.
+add_executable  ( Regular_triangulation_2 Regular_triangulation_2.cpp Regular_triangulation_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+
+# Link with Qt libraries
+target_link_libraries( Regular_triangulation_2 ${QT_LIBRARIES} )
+# Link with CGAL
+target_link_libraries( Regular_triangulation_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
