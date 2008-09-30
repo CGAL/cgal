@@ -65,6 +65,7 @@ public:
     : RCircular_arc_2(typename R::Construct_circular_arc_2()(c))
   {}
 
+  // Not Documented
   Circular_arc_2(const Circle_2 &support, 
                  const Line_2 &l1, const bool b_l1,
                  const Line_2 &l2, const bool b_l2)
@@ -72,6 +73,7 @@ public:
 		      R::Construct_circular_arc_2()(support,l1,b_l1,l2,b_l2))
   {}
 
+  // Not Documented
   Circular_arc_2(const Circle_2 &c, 
 		 const Circle_2 &c1, const bool b_1,
 		 const Circle_2 &c2, const bool b_2)

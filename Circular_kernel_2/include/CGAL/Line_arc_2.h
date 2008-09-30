@@ -59,12 +59,14 @@ public:
      : RLine_arc_2(typename R::Construct_line_arc_2()())
    {}
 
+   // Not Documented
    Line_arc_2(const Line_2 &support,
 	      const Circle_2 &c1,const bool b1,
 	      const Circle_2 &c2,const bool b2)
      : RLine_arc_2(typename R::Construct_line_arc_2()(support, c1, b1, c2, b2))
    {}
 
+   // Not Documented
    Line_arc_2(const Line_2 &support,
 	       const Line_2 &l1,
 	       const Line_2 &l2)

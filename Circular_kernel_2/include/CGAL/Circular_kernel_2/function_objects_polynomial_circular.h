@@ -678,12 +678,14 @@ namespace CircularFunctors {
                const Circular_arc_point_2 &target) const
     { return Rep(support,source,target); }
 
+    // Not Documented
     result_type
     operator()(const Circle_2 &support,
                const Line_2 &l1, bool b1,
                const Line_2 &l2, bool b2) const
     { return Rep(support,l1,b1,l2,b2); }
 
+    // Not Documented
     result_type
     operator()(const Circle_2 &c,
                const Circle_2 &c1, bool b_1,
@@ -696,6 +698,7 @@ namespace CircularFunctors {
                const Point_2 &end) const
     { return Rep(begin,middle,end); }
 
+    // Not Documented
     result_type
     operator()(const Point_2 &begin,
                const Point_2 &end,
@@ -724,12 +727,14 @@ namespace CircularFunctors {
     operator()(void) 
     { return Rep(); }
 
+    // Not Documented
     result_type
     operator()(const Line_2 &support,
 	       const Circle_2 &c1,const bool b1,
 	       const Circle_2 &c2,const bool b2) const
     { return Rep(support,c1,b1,c2,b2); }
 
+    // Not Documented
     result_type
     operator()(const Line_2 &support,
 	       const Line_2 &l1,

@@ -59,7 +59,7 @@ void _test_Line_arc(CK ck)
   Circle_2 circle2(center_circle1, circle1_r * circle1_r * 4);
   Point_2 p2_line_horizontal(1, 0);
 
-  Line_arc_2 line_arc_horizontal(Line_2(center_circle1, p2_line_horizontal),
+  Line_arc_2 line_arc_horizontal = Line_arc_2(Line_2(center_circle1, p2_line_horizontal),
 			circle1,
 			true,
 			circle2,
