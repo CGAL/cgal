@@ -2,7 +2,7 @@
 % | Reference manual page: PointWithNormal_3.tex
 % +------------------------------------------------------------------------+
 % | 19.02.2008   Laurent Saboret, Pierre Alliez
-% | Package: Package
+% | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSPointWithNormalRev}{$Id$}
 \RCSdefDate{\RCSPointWithNormalDate}{$Date$}
@@ -23,7 +23,7 @@
 %START-AUTO(\ccDefinition)
 
 A \ccc{PointWithNormal_3} concept represents a 3D point with:\begin{itemize}
-\item a position\item a normal (oriented or not).\end{itemize}
+\item a position\item a normal (oriented).\end{itemize}
 
 %END-AUTO(\ccDefinition)
 
@@ -32,7 +32,7 @@ A \ccc{PointWithNormal_3} concept represents a 3D point with:\begin{itemize}
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccRefines)
 
-\ccc{Kernel::Point_3}, DefaultConstructible, CopyConstructible, and Assignable
+\ccc{Kernel::Point_3}, DefaultConstructible, CopyConstructible, Assignable, and EqualityComparable
 
 %END-AUTO(\ccRefines)
 
@@ -50,6 +50,10 @@ Kernel's geometric traits.
 {
 }
 \ccGlue
+\ccNestedType{RT}
+{
+}
+\ccGlue
 \ccNestedType{Point}
 {
 Kernel's \ccc{Point_3} class.
@@ -57,7 +61,7 @@ Kernel's \ccc{Point_3} class.
 \ccGlue
 \ccNestedType{Normal}
 {
-Model of \ccc{OrientedNormal_3} concept.
+Model of \ccc{Kernel::Vector_3} or of \ccc{OrientableNormal_3}.
 }
 \ccGlue
 
@@ -71,14 +75,18 @@ Model of \ccc{OrientedNormal_3} concept.
 
 \ccConstructor{PointWithNormal_3(const Origin& o = ORIGIN);}
 {
-Point is (0,0,0) by default. Normal is (0,0,0) by default. Normal is oriented by default.
-}
-\ccGlue
-\ccConstructor{PointWithNormal_3(FT x, FT y, FT z);}
-{
+Point is (0,0,0) by default. Normal is (0,0,0) by default.
 }
 \ccGlue
 \ccConstructor{PointWithNormal_3(const Point& point, const Normal& normal = NULL_VECTOR);}
+{
+}
+\ccGlue
+\ccConstructor{PointWithNormal_3(FT x, FT y, FT z, const Normal& normal = NULL_VECTOR);}
+{
+}
+\ccGlue
+\ccConstructor{PointWithNormal_3(RT hx, RT hy, RT hz, RT hw, const Normal& normal = NULL_VECTOR);}
 {
 }
 \ccGlue
@@ -90,22 +98,14 @@ Point is (0,0,0) by default. Normal is (0,0,0) by default. Normal is oriented by
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{bool operator==(const PointWithNormal_3& that);}
-{
-Compare positions.
-}
-\ccGlue
-\ccMethod{bool operator!=(const PointWithNormal_3& that);}
-{
-}
-\ccGlue
 \ccMethod{void set_position(const Point& point);}
 {
+Set position.
 }
 \ccGlue
 \ccMethod{const Normal& normal() const;}
 {
-Get/set normal (vector + orientation).
+Get/set normal.
 }
 \ccGlue
 \ccMethod{Normal& normal();}
@@ -120,8 +120,7 @@ Get/set normal (vector + orientation).
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHasModels)
 
-\ccc{Point_with_normal_3<Geom_traits, Normal_3>}  \\
-\ccc{Gyroviz_point_3<Geom_traits>}
+\ccc{Point_with_normal_3<Geom_traits, Normal_3>}
 
 %END-AUTO(\ccHasModels)
 

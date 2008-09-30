@@ -110,7 +110,7 @@ Model of \ccc{PointWithNormal_3}.
 \ccGlue
 \ccNestedType{Normal}
 {
-Model of \ccc{OrientedNormal_3} concept.
+Model of \ccc{Kernel::Vector_3} concept.
 }
 \ccGlue
 \ccNestedType{Normal_iterator}
@@ -236,12 +236,12 @@ Update barycenter, bounding box, bounding sphere and standard deviation. Owner i
 \ccGlue
 \ccMethod{Vertex_handle insert(const Point& p, unsigned char type = INPUT, Cell_handle start = Cell_handle());}
 {
-Insert point to the triangulation.
+Insert point in the triangulation. Default type is INPUT.
 }
 \ccGlue
 \ccMethod{int insert(InputIterator first, InputIterator beyond, unsigned char type = INPUT);}
 {
-Insert points to the triangulation using a spatial sort.
+Insert points in the triangulation using a spatial sort. Default type is INPUT.
 Precondition: the value type of InputIterator must \ccc{Point}.
 }
 \ccGlue
@@ -252,6 +252,11 @@ Precondition: the value type of InputIterator must \ccc{Point}.
 \end{description}
 \begin{description}
 \item[Returns:]the number of inserted points. \end{description}
+\ccGlue
+\ccMethod{Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end, Cell_handle begin, int i, unsigned char type = STEINER);}
+{
+Delaunay refinement callback: insert STEINER point in the triangulation.
+}
 \ccGlue
 \ccMethod{unsigned int index_vertices();}
 {

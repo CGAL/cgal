@@ -44,7 +44,7 @@ Precondition: epsilon $>$ 0.
 \ccFunction{ForwardIterator merge_epsilon_nearest_points_3(ForwardIterator first, ForwardIterator beyond, double epsilon, const Kernel &);}
 {
 Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant requires the kernel.
-Precondition: epsilon $>$ 0.
+Warning: This method modifies the order of points, thus Precondition: epsilon $>$ 0.
 }
 \ccGlue
 \begin{description}
@@ -82,7 +82,7 @@ Precondition: epsilon $>$ 0.
 \ccFunction{ForwardIterator merge_epsilon_nearest_points_3(ForwardIterator first, ForwardIterator beyond, double epsilon);}
 {
 Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant deduces the kernel from iterator types.
-Precondition: epsilon $>$ 0.
+Warning: This method modifies the order of points, thus Precondition: epsilon $>$ 0.
 }
 \ccGlue
 \begin{description}

@@ -46,7 +46,7 @@ Precondition: KNN $>$= 2.
 {
 Remove outliers:\begin{itemize}
 \item compute average squared distance to the K nearest neighbors,\item percentage of points to remove. This function is mutating the input point set. This variant requires the kernel.\end{itemize}
-Precondition: KNN $>$= 2.
+Warning: This method modifies the order of points, thus Precondition: KNN $>$= 2.
 }
 \ccGlue
 \begin{description}
@@ -86,7 +86,7 @@ Precondition: KNN $>$= 2.
 {
 Remove outliers:\begin{itemize}
 \item compute average squared distance to the K nearest neighbors,\item percentage of points to remove. This function is mutating the input point set. This variant deduces the kernel from iterator types.\end{itemize}
-Precondition: KNN $>$= 2.
+Warning: This method modifies the order of points, thus Precondition: KNN $>$= 2.
 }
 \ccGlue
 \begin{description}

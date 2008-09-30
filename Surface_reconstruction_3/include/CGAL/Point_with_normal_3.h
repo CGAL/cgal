@@ -30,9 +30,9 @@ CGAL_BEGIN_NAMESPACE
 /// - a position,
 /// - a normal (orientable or always oriented).
 ///
-/// @heading Is Model for the Concepts: 
-/// Model of the PointWithNormal_3 concept.
-/// Model of the PointWithOrientableNormal_3 if Normal_3 is a model of OrientableNormal_3 concept.
+/// @heading Is Model for the Concepts:
+/// - Model of the PointWithNormal_3 concept.
+/// - Model of the PointWithOrientableNormal_3 if Normal_3 is a model of OrientableNormal_3 concept.
 ///
 /// @heading Parameters:
 /// @param Gt       Kernel's geometric traits.
@@ -67,13 +67,13 @@ public:
     }
     Point_with_normal_3(FT x, FT y, FT z,
                         const Normal& normal = NULL_VECTOR)
-    : Base(x,y,z), 
+    : Base(x,y,z),
       m_normal(normal)
     {
     }
     Point_with_normal_3(RT hx, RT hy, RT hz, RT hw,
                         const Normal& normal = NULL_VECTOR)
-    : Base(hx,hy,hz,hw), 
+    : Base(hx,hy,hz,hw),
       m_normal(normal)
     {
     }

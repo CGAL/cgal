@@ -23,7 +23,7 @@
 /// @heading Has Models:
 /// - Orientable_normal_3<Geom_traits>
 
-class OrientableNormal_3 
+class OrientableNormal_3
   : public Kernel::Vector_3,
     public DefaultConstructible, public CopyConstructible, public Assignable, public EqualityComparable
 {
@@ -43,9 +43,9 @@ public:
     OrientableNormal_3(Null_vector = NULL_VECTOR);
     OrientableNormal_3(const Vector& vector, bool oriented = true);
     OrientableNormal_3(FT x, FT y, FT z, bool oriented = true);
-    Orientable_normal_3(RT hx, RT hy, RT hz, RT hw, bool oriented = true)
+    OrientableNormal_3(RT hx, RT hy, RT hz, RT hw, bool oriented = true);
 
-    /// Get (a copy of) the actual vector. 
+    /// Get (a copy of) the actual vector.
     Vector get_vector() const;
 
     /// Get normal orientation.
