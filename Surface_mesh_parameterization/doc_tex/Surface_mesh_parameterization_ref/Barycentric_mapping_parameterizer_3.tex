@@ -118,14 +118,14 @@ Constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{virtual NT compute_w_ij(const Adaptor &, Vertex_const_handle, Vertex_around_vertex_const_circulator);}
+\ccMethod{virtual NT compute_w_ij(const Adaptor& , Vertex_const_handle, Vertex_around_vertex_const_circulator);}
 {
 [protected, virtual] \\
 Compute \ccc{w_ij} = (i,j) coefficient of matrix A for j neighbor vertex of i.
 Tutte Barycentric Mapping algorithm is the most simple one: \ccc{w_ij} = 1 for j neighbor vertex of i.
 }
 \ccGlue
-\ccMethod{virtual bool is_one_to_one_mapping(const Adaptor &, const Matrix &, const Vector &, const Vector &);}
+\ccMethod{virtual bool is_one_to_one_mapping(const Adaptor& , const Matrix& , const Vector& , const Vector& );}
 {
 [protected, virtual] \\
 Check if 3D -$>$ 2D mapping is one-to-one.
