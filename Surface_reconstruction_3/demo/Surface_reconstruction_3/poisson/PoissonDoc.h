@@ -46,7 +46,7 @@ typedef Poisson_dt3<Kernel> Dt3;
 typedef CGAL::Poisson_implicit_function<Kernel, Dt3> Poisson_implicit_function;
 
 // APSS implicit function
-typedef CGAL::APSS_implicit_function<Kernel,Point_with_normal> APSS_implicit_function;
+typedef CGAL::APSS_implicit_function<Kernel> APSS_implicit_function;
 
 // Surface mesh generator 
 typedef CGAL::Surface_mesh_vertex_base_3<Kernel> SVb;

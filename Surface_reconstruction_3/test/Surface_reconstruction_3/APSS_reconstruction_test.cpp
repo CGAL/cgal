@@ -54,7 +54,7 @@ typedef Kernel::Sphere_3 Sphere;
 typedef std::vector<Point_with_normal> PointList;
 
 // APSS implicit function
-typedef CGAL::APSS_implicit_function<Kernel,Point_with_normal> APSS_implicit_function;
+typedef CGAL::APSS_implicit_function<Kernel> APSS_implicit_function;
 
 // Surface mesher
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;

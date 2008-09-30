@@ -24,6 +24,7 @@
 #include <vector>
 #include <algorithm>
 
+#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
@@ -49,9 +50,8 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
-/// @param PointWithNormal_3 Model of PointWithNormal_3 concept.
 
-template <class Gt, class PointWithNormal_3>
+template <class Gt>
 class APSS_implicit_function
 {
 // Public types
@@ -64,27 +64,28 @@ public:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  typedef PointWithNormal_3 Point_with_normal;       ///< Model of PointWithNormal_3 concept.
-  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
+  typedef Point_with_normal_3<Gt> Point_with_normal; // Point_with_normal_3<Gt> is the most compact representation
+  typedef typename Point_with_normal::Normal Normal; // == Vector_3
   typedef typename Geom_traits::Vector_3 Vector;
 
 // Private types
 private:
 
   // Item in the Kd-tree: position (Point_3) + normal + index
-  class KdTreeElement : public PointWithNormal_3
+  class KdTreeElement : public Point_with_normal
   {
   public:
     unsigned int index;
 
     KdTreeElement(const Origin& o = ORIGIN, unsigned int id=0)
-      : PointWithNormal_3(o), index(id)
+      : Point_with_normal(o), index(id)
     {}
-    KdTreeElement(const PointWithNormal_3& pwn, unsigned int id=0)
-      : PointWithNormal_3(pwn), index(id)
+    template <class K, class N>
+    KdTreeElement(const Point_with_normal_3<K,N>& pwn, unsigned int id=0)
+      : Point_with_normal(pwn), index(id)
     {}
     KdTreeElement(const Point& p, unsigned int id=0)
-      : PointWithNormal_3(p), index(id)
+      : Point_with_normal(p), index(id)
     {}
   };
 
@@ -106,7 +107,7 @@ public:
 
   /// Create an APSS implicit function from a point set.
   ///
-  /// Precondition: the value type of InputIterator must be convertible to Point_with_normal.
+  /// Precondition: the value type of InputIterator must be convertible to Point_with_normal_3.
   ///
   /// @param first First point of point set.
   /// @param beyond Past-the-end point of point set.
