@@ -101,7 +101,7 @@
     <addaction name="actionLoadPoints" />
     <addaction name="actionSavePoints" />
     <addaction name="separator" />
-    <addaction name="actionExit" />
+    <addaction name="actionQuit" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
@@ -131,7 +131,7 @@
     <string>About &amp;CGAL</string>
    </property>
   </action>
-  <action name="actionExit" >
+  <action name="actionQuit" >
    <property name="text" >
     <string>&amp;Quit</string>
    </property>

@@ -88,7 +88,7 @@ MainWindow::MainWindow()
   // 
   // Manual handling of actions
   //
-  QObject::connect(this->actionExit, SIGNAL(triggered()), 
+  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
 		   this, SLOT(close()));
 
  
