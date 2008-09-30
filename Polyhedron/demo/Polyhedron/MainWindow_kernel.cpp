@@ -56,9 +56,9 @@ void MainWindow::on_actionKernel_triggered()
       it++)
     {
       const Triangle& triangle = *it;
-      const Point& p0 = triangle[0] - translate;
-      const Point& p1 = triangle[1] - translate;
-      const Point& p2 = triangle[2] - translate;
+      const Point p0 = triangle[0] - translate;
+      const Point p1 = triangle[1] - translate;
+      const Point p2 = triangle[2] - translate;
       Plane plane(p0,p1,p2); 
       Vector normal = plane.orthogonal_vector();
       normal = normal / std::sqrt(normal*normal);

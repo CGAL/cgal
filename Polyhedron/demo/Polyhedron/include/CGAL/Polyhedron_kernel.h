@@ -63,7 +63,7 @@ public:
 	bool solve(InputIterator begin, InputIterator end)
 	{
 		// solve linear program with constraints Ax >= b
-		LP lp(CGAL::LARGER);
+		LP lp(CGAL::LARGER,false);
 
 		// column indices
 		const int index_x1 = 0;
