@@ -61,6 +61,31 @@ void _test_circle_construct(CK ck)
   Circle_2 circ_equation(center_circ_equation, r_equation);
   std::cout << "the circle used by the equation :" 
 	    << circ_equation << std::endl;
+	
+	std::cout << "testing {x,y}_critical_points" << std::endl;
+	for(int i=0; i<20; i++) {
+	  int x1 = theRandom.get_int(random_min,random_max);
+	  int y1 = theRandom.get_int(random_min,random_max);
+	  int x2 = theRandom.get_int(random_min,random_max);
+	  int y2 = theRandom.get_int(random_min,random_max);
+	  int x3 = theRandom.get_int(random_min,random_max);
+	  int y3 = theRandom.get_int(random_min,random_max);
+		if(x1 == x2 && y1 == y2) continue;
+		if(x1 == x3 && y1 == y3) continue;
+		if(x2 == x3 && y2 == y3) continue;
+	  Circular_arc_2 ca(Point_2(x1,y1), Point_2(x2,y2), Point_2(x3,y3));
+		Circle_2 c = ca.supporting_circle();
+		Circular_arc_point_2 cp_x_min = x_extremal_point(c, true);
+		Circular_arc_point_2 cp_x_max = x_extremal_point(c, false);
+		Circular_arc_point_2 cp_y_min = y_extremal_point(c, true);
+		Circular_arc_point_2 cp_y_max = y_extremal_point(c, false);
+		assert(CGAL_NTS square(cp_x_min.x() - c.center().x()) == c.squared_radius());
+		assert(CGAL_NTS square(cp_x_max.x() - c.center().x()) == c.squared_radius());
+		assert(CGAL_NTS square(cp_y_min.y() - c.center().y()) == c.squared_radius());
+		assert(CGAL_NTS square(cp_y_max.y() - c.center().y()) == c.squared_radius());
+		assert(cp_x_min.x() < cp_x_max.x());
+		assert(cp_y_min.y() < cp_y_max.y());
+  }
 
   //Constuct_intersections_2 with 2 intersection's points
   std::cout << std::endl << "construct_intersection_2" << std::endl;
@@ -840,4 +865,5 @@ void _test_circle_construct(CK ck)
   assert(theDo_intersect_2(lo1, cao7));
   assert(v_ll8.size() == 0);
   assert(!theDo_intersect_2(lo1, cao8));
+
 }

@@ -29,10 +29,37 @@
 
 #include <CGAL/Circular_arc_2.h>
 #include <CGAL/Circular_arc_point_2.h>
+#include <CGAL/Circular_kernel_2/internal_functions_on_circle_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
-//Circles
+template <class CK>
+typename CK::Circular_arc_point_2
+x_extremal_point(const Circle_2<CK> & c, bool i)
+{
+	return CircularFunctors::x_extremal_point<CK>(c,i);
+}
+  
+template <class CK, class OutputIterator>
+OutputIterator
+x_extremal_points(const Circle_2<CK> & c, OutputIterator res)
+{
+ 	return CircularFunctors::x_extremal_points<CK>(c,res);
+}
+
+template <class CK>
+typename CK::Circular_arc_point_2
+y_extremal_point(const Circle_2<CK> & c, bool i)
+{
+  return CircularFunctors::y_extremal_point<CK>(c,i);
+}
+
+template <class CK, class OutputIterator>
+OutputIterator
+y_extremal_points(const Circle_2<CK> & c, OutputIterator res)
+{
+ 	return CircularFunctors::y_extremal_points<CK>(c,res);
+}
 
 template< class CK >
 inline
