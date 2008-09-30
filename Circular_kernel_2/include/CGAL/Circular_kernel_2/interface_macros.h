@@ -58,10 +58,6 @@
   make_x_monotone_2_object)
   CGAL_Circular_Kernel_cons(Make_xy_monotone_2,
   make_xy_monotone_2_object)
-  CGAL_Circular_Kernel_cons(Advanced_make_x_monotone_2,
-  advanced_make_x_monotone_2_object)
-  CGAL_Circular_Kernel_cons(Advanced_make_xy_monotone_2,
-  advanced_make_xy_monotone_2_object)
   CGAL_Circular_Kernel_cons(Intersect_2,
   intersect_2_object)
   CGAL_Circular_Kernel_cons(Split_2,
@@ -88,8 +84,6 @@
   is_x_monotone_2_object)  
   CGAL_Circular_Kernel_pred(Is_y_monotone_2,
   is_y_monotone_2_object)
-  CGAL_Circular_Kernel_pred(On_upper_part_2,
-  on_upper_part_2_object)
   CGAL_Circular_Kernel_pred(Is_vertical_2,
   is_vertical_2_object) 
   CGAL_Circular_Kernel_pred(Has_on_2,

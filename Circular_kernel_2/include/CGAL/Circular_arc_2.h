@@ -79,12 +79,6 @@ public:
 		      R::Construct_circular_arc_2()(c,c1,b_1,c2,b_2))
   {}
 
-  Circular_arc_2(const Circular_arc_2 &A, const bool b,
-		 const Circle_2 &ccut, const bool b_cut)
-    : RCircular_arc_2(typename 
-		      R::Construct_circular_arc_2()(A, b, ccut, b_cut))
-    {}
-
   Circular_arc_2(const Point_2 &start,
                  const Point_2 &middle,
                  const Point_2 &end)
@@ -151,11 +145,6 @@ public:
   bool is_y_monotone() const
   {
     return typename R::Is_y_monotone_2()(*this);
-  }
-
-  bool on_upper_part() const
-  {
-    return typename R::On_upper_part_2()(*this);
   }
 
   typename Qualified_result_of

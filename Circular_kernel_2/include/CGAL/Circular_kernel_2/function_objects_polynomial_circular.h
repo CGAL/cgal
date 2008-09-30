@@ -363,14 +363,6 @@ namespace CircularFunctors {
     result_type
     operator() (const Line_arc_2 &a0, const Line_arc_2 &a1) const
     { return equal<CK>(a0, a1); }
-
-    result_type
-      operator() ( const Line_arc_2 &a0, const Circular_arc_2 &a1) const
-    {return false;}
-
-    result_type
-      operator() ( const Circular_arc_2 &a0, const Line_arc_2 &a1) const
-    {return false;}
     
    };
 
@@ -473,67 +465,6 @@ namespace CircularFunctors {
     OutputIterator
     operator()(const Line_arc_2 &A, OutputIterator res) const
     { *res++ = make_object(A);
-      return res;
-    }
-
-  };
-
-
-
- template < class CK >
-  class Advanced_make_x_monotone_2
-  {
-    typedef typename CK::Circular_arc_2 Circular_arc_2;
-    typedef typename CK::Line_arc_2 Line_arc_2;
-
-  public:
-
-     typedef void         result_type;   //!!!
-
-    template < class OutputIterator >
-    OutputIterator
-    operator()(const Circular_arc_2 &A, OutputIterator res) const
-      {  return CircularFunctors::advanced_make_x_monotone<CK> (A, res);}
-
-
- // No extra information is meant to be returned for line arcs (should it?)
- // So attention on the fact that the second part of the pair contains dummy 
- // info. Maybe there shouldn't be such an operator for line arcs after all
-
-    template < class OutputIterator >
-    OutputIterator
-    operator()(const Line_arc_2 &A, OutputIterator res) const
-    { *res++ = std::make_pair(make_object(A),false); //
-      return res;
-    }
-
-  };
-
-
-template < class CK >
-  class Advanced_make_xy_monotone_2
-  {
-    typedef typename CK::Circular_arc_2 Circular_arc_2;
-    typedef typename CK::Line_arc_2 Line_arc_2;
-
-  public:
-
-     typedef void         result_type;   //!!!
-
-    template < class OutputIterator >
-    OutputIterator
-    operator()(const Circular_arc_2 &A, OutputIterator res) const
-      {  return CircularFunctors::advanced_make_xy_monotone<CK> (A, res);}
-
-
- // No extra information is meant to be returned for line arcs (should it?)
- // So attention on the fact that the second part of the pair contains dummy 
- // info. Maybe there shouldn't be such an operator for line arcs after all
-
-    template < class OutputIterator >
-    OutputIterator
-    operator()(const Line_arc_2 &A, OutputIterator res) const
-    { *res++ = std::make_pair(make_object(A),std::make_pair(false,false));
       return res;
     }
 
@@ -758,12 +689,6 @@ template < class CK >
                const Circle_2 &c1, bool b_1,
                const Circle_2 &c2, bool b_2) const
     { return Rep(c,c1,b_1,c2,b_2); }
-
-    result_type
-    operator()(const Circular_arc_2 &A,
-               bool b,
-               const Circle_2 &ccut, bool b_cut) const
-    { return Rep(A,b,ccut,b_cut); }
 
     result_type
     operator()(const Point_2 &begin,
@@ -1038,22 +963,6 @@ template < class CK >
       return (a.rep().is_y_monotone());
     }
 
-  };
-
-
-  template <class CK>
-  class On_upper_part_2
-  {
-    typedef typename CK::Circular_arc_2            Circular_arc_2;
-
-  public:
-
-    typedef bool         result_type;
-
-    result_type operator() (const Circular_arc_2 & a) const
-    {
-      return (a.rep().on_upper_part());
-    }
   };
 
   template <class CK>
