@@ -41,7 +41,7 @@ Precondition: KNN $>$= 2.
 \item[query]3D point to project \item[tree]KD-tree \end{description}
 \end{description}
 \ccGlue
-\ccFunction{OutputIterator smooth_jet_fitting_3(InputIterator first, InputIterator beyond, OutputIterator output, const unsigned int KNN, const Kernel &, const unsigned int degre_fitting = 2, const unsigned int degree_monge = 2);}
+\ccFunction{OutputIterator smooth_jet_fitting_3(InputIterator first, InputIterator beyond, OutputIterator output, const unsigned int KNN, const Kernel& , const unsigned int degre_fitting = 2, const unsigned int degree_monge = 2);}
 {
 Smooth a point set using jet fitting on the KNN nearest neighbors and reprojection onto the jet. This variant requires the kernel.
 Precondition: KNN $>$= 2.
@@ -60,7 +60,7 @@ Precondition: KNN $>$= 2.
 \item[first]input points \item[output]output points \item[KNN]number of neighbors \end{description}
 \end{description}
 \ccGlue
-\ccFunction{void smooth_jet_fitting_3(ForwardIterator first, ForwardIterator beyond, unsigned int KNN, const Kernel &, const unsigned int degre_fitting = 2, const unsigned int degree_monge = 2);}
+\ccFunction{void smooth_jet_fitting_3(ForwardIterator first, ForwardIterator beyond, unsigned int KNN, const Kernel& , const unsigned int degre_fitting = 2, const unsigned int degree_monge = 2);}
 {
 Smooth a point set using jet fitting on the KNN nearest neighbors and reprojection onto the jet. This function is mutating the input point set. This variant requires the kernel.
 Warning: This method moves the points, thus Precondition: KNN $>$= 2.
@@ -124,20 +124,20 @@ template$<$  \\
 typename Kernel,   \\
 typename Tree$>$  \\
 \ccc{Kernel::Point_3}  \\
-\ccc{smooth_jet_fitting_3} (const typename \ccc{Kernel::Point_3} \&query, Tree \&tree, const unsigned int KNN, const unsigned int \ccc{degre_fitting}, const unsigned int \ccc{degree_monge});  \\
+\ccc{smooth_jet_fitting_3} (const typename \ccc{Kernel::Point_3}\& query, Tree\& tree, const unsigned int KNN, const unsigned int \ccc{degre_fitting}, const unsigned int \ccc{degree_monge});  \\
   \\
 template$<$  \\
 typename InputIterator,   \\
 typename OutputIterator,   \\
 typename Kernel$>$  \\
 OutputIterator  \\
-\ccc{smooth_jet_fitting_3} (InputIterator first, InputIterator beyond, OutputIterator output, const unsigned int KNN, const Kernel \&, const unsigned int \ccc{degre_fitting}=2, const unsigned int \ccc{degree_monge}=2);  \\
+\ccc{smooth_jet_fitting_3} (InputIterator first, InputIterator beyond, OutputIterator output, const unsigned int KNN, const Kernel\& , const unsigned int \ccc{degre_fitting}=2, const unsigned int \ccc{degree_monge}=2);  \\
   \\
 template$<$  \\
 typename ForwardIterator,   \\
 typename Kernel$>$  \\
 void  \\
-\ccc{smooth_jet_fitting_3} (ForwardIterator first, ForwardIterator beyond, unsigned int KNN, const Kernel \&, const unsigned int \ccc{degre_fitting}=2, const unsigned int \ccc{degree_monge}=2);  \\
+\ccc{smooth_jet_fitting_3} (ForwardIterator first, ForwardIterator beyond, unsigned int KNN, const Kernel\& , const unsigned int \ccc{degre_fitting}=2, const unsigned int \ccc{degree_monge}=2);  \\
   \\
 template$<$  \\
 typename InputIterator,   \\

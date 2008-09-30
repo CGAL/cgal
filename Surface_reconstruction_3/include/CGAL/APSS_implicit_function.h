@@ -42,7 +42,7 @@ CGAL_BEGIN_NAMESPACE
 /// See "Algebraic Point Set Surfaces" by Guennebaud and Gross (2007).
 ///
 /// @heading Is Model for the Concepts:
-/// Model of the Reconstruction_implicit_function concept.
+/// Model of the ReconstructionImplicitFunction concept.
 ///
 /// @heading Design Pattern:
 /// A model of ReconstructionImplicitFunction is a
@@ -99,7 +99,7 @@ private:
   typedef Search_traits_3<KdTreeGT> TreeTraits;
   typedef Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::Point_with_transformed_distance 
+  typedef typename Neighbor_search::Point_with_transformed_distance
                                     Point_with_transformed_distance;
 
 // Public methods
@@ -141,13 +141,13 @@ public:
       FT maxdist2 = (--search.end())->second; // squared distance to furthest neighbor
       m->radii.push_back(sqrt(maxdist2)/2.);
     }
-    
+
     // Compute barycenter, bounding box, bounding sphere and standard deviation.
     update_bounding_box(first, beyond);
 
     // Find a point inside the surface.
     find_inner_point();
-    
+
     // Dichotomy error when projecting point (squared)
     m->sqError = projection_error * projection_error * Gt().compute_squared_radius_3_object()(m->bounding_sphere);
   }
@@ -259,7 +259,7 @@ public:
   FT operator()(const Point& p) const
   {
     // Is 'p' close to the surface?
-    // Optimization: test first if 'p' is close to one of the neighbors 
+    // Optimization: test first if 'p' is close to one of the neighbors
     //               computed during the previous call.
     typename Geom_traits::Compute_squared_distance_3 sqd;
     m->cached_nearest_neighbor.second = sqd(p, m->cached_nearest_neighbor.first);
@@ -269,7 +269,7 @@ public:
       KdTreeElement query(p);
       Neighbor_search search_1nn(*(m->tree), query, 1);
       m->cached_nearest_neighbor = *(search_1nn.begin());
-    
+
       // Is 'p' close to the surface?
       if (!isValid(m->cached_nearest_neighbor, p))
       {
@@ -283,16 +283,16 @@ public:
         return length(h) * ( dot(n,h)>0. ? 1. : -1.);
       }
     }
-    
+
     // Compute k nearest neighbors and cache the first one
     KdTreeElement query(p);
     Neighbor_search search_knn(*(m->tree), query, m->nofNeighbors);
     m->cached_nearest_neighbor = *(search_knn.begin());
-    
-    // If 'p' is close to the surface, fit an algebraic sphere 
+
+    // If 'p' is close to the surface, fit an algebraic sphere
     // on a set of neigbors in a Moving Least Square sense.
     fit(search_knn);
-    
+
     // return the distance to the sphere
     return m->as.euclideanDistance(p);
   }
@@ -576,7 +576,7 @@ private:
     // Try random points until we find a point / value < 0
     Point center = m->bounding_sphere.center();
     FT radius = sqrt(m->bounding_sphere.squared_radius());
-    CGAL::Random_points_in_sphere_3<Point> rnd(radius);  
+    CGAL::Random_points_in_sphere_3<Point> rnd(radius);
     while (min_f > 0)
     {
       // Create random point in bounding sphere
@@ -593,17 +593,17 @@ private:
 // Data members
 private:
 
-  struct Private 
+  struct Private
   {
     Private()
       : tree(NULL), count(1)
     {}
-    
+
     ~Private()
     {
       delete tree; tree = NULL;
     }
-    
+
     Tree* tree;
     std::vector<KdTreeElement> treeElements;
     std::vector<FT> radii;

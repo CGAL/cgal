@@ -58,7 +58,7 @@ class \ccc{Poisson_implicit_function};
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Model of the \ccc{Reconstruction_implicit_function} concept.
+Model of the ReconstructionImplicitFunction concept.
 
 %END-AUTO(\ccIsModel)
 
@@ -135,7 +135,7 @@ Create a Poisson indicator function f() piecewise-linear over the tetrahedra of 
 \item[pdt]\ccc{ImplicitFctDelaunayTriangulation_3} base of the Poisson indicator function. \end{description}
 \end{description}
 \ccGlue
-\ccConstructor{Poisson_implicit_function(Triangulation& pdt, InputIterator first, InputIterator beyond);}
+\ccConstructor{template<class InputIterator>Poisson_implicit_function(Triangulation& pdt, InputIterator first, InputIterator beyond);}
 {
 Create an implicit function from a point set. Insert the first...beyond point set into pdt and create a Poisson indicator function f() piecewise-linear over the tetrahedra of pdt.
 Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
@@ -155,7 +155,7 @@ Precondition: the value type of InputIterator must be convertible to \ccc{Point_
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{int insert(InputIterator first, InputIterator beyond);}
+\ccMethod{template<class InputIterator>int insert(InputIterator first, InputIterator beyond);}
 {
 Insert points.
 Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal}.

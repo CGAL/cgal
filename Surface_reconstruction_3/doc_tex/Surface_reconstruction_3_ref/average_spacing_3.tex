@@ -41,7 +41,7 @@ Precondition: KNN $>$= 2.
 \item[query]3D point whose spacing we want to compute \item[tree]KD-tree \item[KNN]number of neighbors \end{description}
 \end{description}
 \ccGlue
-\ccFunction{Kernel::FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int KNN, const Kernel &);}
+\ccFunction{Kernel::FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int KNN, const Kernel& );}
 {
 Compute average spacing from K nearest neighbors. This variant requires the kernel.
 Precondition: KNN $>$= 2.
@@ -95,13 +95,13 @@ template$<$  \\
 typename Kernel,   \\
 typename Tree$>$  \\
 \ccc{Kernel::FT}  \\
-\ccc{average_spacing_3} (const typename \ccc{Kernel::Point_3} \&query, Tree \&tree, unsigned int KNN);  \\
+\ccc{average_spacing_3} (const typename \ccc{Kernel::Point_3}\& query, Tree\& tree, unsigned int KNN);  \\
   \\
 template$<$  \\
 typename InputIterator,   \\
 typename Kernel$>$  \\
 \ccc{Kernel::FT}  \\
-\ccc{average_spacing_3} (InputIterator first, InputIterator beyond, unsigned int KNN, const Kernel \&);  \\
+\ccc{average_spacing_3} (InputIterator first, InputIterator beyond, unsigned int KNN, const Kernel\& );  \\
   \\
 template$<$  \\
 typename InputIterator,   \\

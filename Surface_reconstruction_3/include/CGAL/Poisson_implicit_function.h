@@ -108,7 +108,7 @@ public:
 /// solver. One vertex must be constrained.
 ///
 /// @heading Is Model for the Concepts:
-/// Model of the Reconstruction_implicit_function concept.
+/// Model of the ReconstructionImplicitFunction concept.
 ///
 /// @heading Design Pattern:
 /// A model of ReconstructionImplicitFunction is a
@@ -420,7 +420,7 @@ public:
 #endif
 
     m_dt.invalidate_bounding_box();
-    
+
     CGAL_TRACE("End of delaunay_refinement()\n");
 
     return nb_vertices_added;
@@ -673,7 +673,7 @@ public:
     {
       if(!v->constrained())
       {
-        B[v->index()] = is_normalized ? div_normalized(v) 
+        B[v->index()] = is_normalized ? div_normalized(v)
                                       : div(v); // rhs -> divergent
         assemble_poisson_row(solver,v,B,lambda);
       }
