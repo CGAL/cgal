@@ -109,8 +109,8 @@ MainWindow::MainWindow()
 
   // Manual handling of actions
   //
-  QObject::connect(this->actionExit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
+		   qApp, SLOT(quit()));
 
   // Check two actions 
   this->actionInsertCircularArc->setChecked(true);
