@@ -36,12 +36,11 @@
 
 #include <CGAL/Circular_kernel_2/function_objects_polynomial_circular.h>
 #include <CGAL/global_functions_on_circular_arcs_2.h>
+#include <CGAL/global_functions_on_line_arcs_2.h>
 
 #include <CGAL/Circular_kernel_2/function_objects_on_line_2.h>
-#include <CGAL/global_functions_on_line_2.h>
 
 #include <CGAL/Circular_kernel_2/function_objects_on_circle_2.h>
-#include <CGAL/global_functions_on_circle_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

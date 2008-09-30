@@ -156,6 +156,14 @@ make_xy_monotone(const Circular_arc_2<CK> &A, OutputIterator it)
   return CK().make_xy_monotone_2_object()(A, it);
 }
 
+template< class CK >
+inline
+bool
+has_on(const Circle_2<CK> &c, const Circular_arc_point_2<CK> &p)
+{
+  return CK().has_on_2_object()(c, p);
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_CIRCULAR_ARCS_2_H

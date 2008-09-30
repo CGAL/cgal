@@ -27,21 +27,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template< class CK >
-inline
-typename CK::Polynomial_1_2
-get_equation(const Line_2<CK> & l)
-{
-  return CK().get_equation_object()(l);
-}
-
-template< class CK >
-inline
-CGAL::Line_2<CK>
-construct_line(const typename CK::Polynomial_1_2 & eq)
-{
-  return CK().construct_line_2_object()(eq);
-}
 
 CGAL_END_NAMESPACE
 

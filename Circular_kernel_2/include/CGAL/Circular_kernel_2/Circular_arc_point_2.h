@@ -29,7 +29,6 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Interval_nt.h>
 #include <boost/type_traits/is_same.hpp>
-#include <CGAL/global_functions_on_circle_2.h>
 
 namespace CGAL {
 namespace CGALi {
