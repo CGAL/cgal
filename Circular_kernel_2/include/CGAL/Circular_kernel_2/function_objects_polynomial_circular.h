@@ -864,7 +864,7 @@ template < class CK >
 
 
   template <class CK>
-  class Compute_Circular_x_2: Has_qrt
+  class Compute_circular_x_2: Has_qrt
   {
     typedef typename CK::Circular_arc_point_2   Circular_arc_point_2;
     typedef typename CK::Root_of_2                 Root_of_2;
@@ -882,8 +882,8 @@ template < class CK >
 
 
   template <class CK>
-  class Compute_Circular_y_2: Has_qrt
-  {
+  class Compute_circular_y_2: Has_qrt
+	{
     typedef typename CK::Circular_arc_point_2   Circular_arc_point_2;
     typedef typename CK::Root_of_2                 Root_of_2;
 

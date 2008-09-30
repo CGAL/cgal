@@ -73,19 +73,19 @@ public:
   {}
       
   typename Qualified_result_of
-  <typename R::Compute_Circular_x_2,Circular_arc_point_2>::type
+  <typename R::Compute_circular_x_2,Circular_arc_point_2>::type
   //const Root_of_2 &
   x() const
   { 
-    return typename R::Compute_Circular_x_2()(*this); 
+    return typename R::Compute_circular_x_2()(*this); 
   }
 
   typename Qualified_result_of
-  <typename R::Compute_Circular_y_2,Circular_arc_point_2>::type
+  <typename R::Compute_circular_y_2,Circular_arc_point_2>::type
   //const Root_of_2 &
   y() const
   { 
-    return typename R::Compute_Circular_y_2()(*this); 
+    return typename R::Compute_circular_y_2()(*this); 
   }
 
   Bbox_2  bbox() const
@@ -184,11 +184,11 @@ public:
   const Rcircular_arc_point_2& point() const
   {return P_point;}
             
-  typename Qualified_result_of<typename R::Compute_Circular_x_2,Rcircular_arc_point_2>::type
+  typename Qualified_result_of<typename R::Compute_circular_x_2,Rcircular_arc_point_2>::type
   x() const
     { return P_point.x();}
 
-  typename Qualified_result_of<typename R::Compute_Circular_y_2,Rcircular_arc_point_2>::type
+  typename Qualified_result_of<typename R::Compute_circular_y_2,Rcircular_arc_point_2>::type
   y() const
     { return P_point.y();}
 

@@ -72,9 +72,9 @@
   construct_line_arc_2_object)
   CGAL_Circular_Kernel_cons(Construct_circular_arc_point_2,
   construct_circular_arc_point_2_object)
-  CGAL_Circular_Kernel_cons(Compute_Circular_x_2,
+  CGAL_Circular_Kernel_cons(Compute_circular_x_2,
   compute_circular_x_2_object)  
-  CGAL_Circular_Kernel_cons(Compute_Circular_y_2,
+  CGAL_Circular_Kernel_cons(Compute_circular_y_2,
   compute_circular_y_2_object)
   CGAL_Circular_Kernel_cons(Construct_circular_min_vertex_2,
   construct_circular_min_vertex_2_object)
