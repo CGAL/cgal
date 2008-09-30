@@ -8,25 +8,24 @@
 The concept \ccRefName\ refines the concept \ccc{SurfaceMeshTraits_3}, and
 adds the requirement to handle the knowledge of the 1D~curves of a
 piecewise smooth surface. A model of this concept must be able to tell
-whether a triangle intersect the set of 1D~curves of the surface, and to
-compute the intersection.
+whether a Voronoi facet, dual to a Delaunay edge, intersects the set of
+1D~curves of the surface, and to compute the intersection.
 
 \ccGeneralizes
 \ccc{SurfaceMeshTraits_3}
 
 \ccTypes
 
-\ccNestedType{Triangle_3}{The type of triangles.}
+\ccNestedType{Edge}{The type of the triangulation edges.}
 
 %\ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
 \ccHeading{Methods}
 
-\ccMethod{Object intersect_curves_with_triangle(const Surface_3& surface,
-			                        const Triangle_3& t) const;}
-{ Compute the intersection between a triangle and the set of 1D~curves of
-  the surface \ccc{surface}. }
+\ccMethod{Object intersect_curves_with_voronoi_facet(const Edge& e) const;}
+{ Compute the intersection between the Voronoi facet dual to the edge
+  \ccc{e} and the set of 1D~curves of the surface. }
 
 \ccHasModels
 
