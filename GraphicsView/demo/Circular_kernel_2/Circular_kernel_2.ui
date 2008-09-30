@@ -11,10 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>CGAL  Circular Kernel Demo</string>
+   <string> CGAL  2D Circular Kernel</string>
   </property>
   <property name="windowIcon" >
-   <iconset>
+   <iconset resource="../resources/CGAL.qrc" >
     <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
@@ -78,7 +78,7 @@
     <addaction name="separator" />
     <addaction name="actionClear" />
     <addaction name="separator" />
-    <addaction name="actionExit" />
+    <addaction name="actionQuit" />
     <addaction name="actionLoadLineAndCircularArcs" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
@@ -107,7 +107,7 @@
     <string>About &amp;CGAL</string>
    </property>
   </action>
-  <action name="actionExit" >
+  <action name="actionQuit" >
    <property name="text" >
     <string>&amp;Quit</string>
    </property>
@@ -195,13 +195,10 @@
  </widget>
  <resources>
   <include location="Circular_kernel_2.qrc" />
+  <include location="../resources/CGAL.qrc" />
   <include location="../icons/File.qrc" />
-  <include location="../icons/Logos.qrc" />
   <include location="../icons/Triangulation_2.qrc" />
   <include location="../icons/Input.qrc" />
-  <include location="../icons/File.qrc" />
-  <include location="../icons/Input.qrc" />
-  <include location="../icons/Logos.qrc" />
  </resources>
  <connections/>
 </ui>
