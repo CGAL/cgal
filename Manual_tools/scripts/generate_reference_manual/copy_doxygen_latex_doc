@@ -24,7 +24,7 @@ my @known_section_titles = (
     '\ccDefinition', '\ccInclude', '\ccParameters', '\ccInheritsFrom', '\ccRefines',
     '\ccGeneralizes', '\ccIsModel', '\ccHeading{Design Pattern}', '\ccTypes',
     '\ccConstants', '\ccHeading{Variables}', '\ccCreation', '\ccOperations',
-    '\ccHeading{Friends And Related Functions}', '\ccHasModels', '\ccImplementation',
+    '\ccHeading{Related Functions}', '\ccHasModels', '\ccImplementation',
 #     '\ccHeading{Misc}',
     '\ccSeeAlso', '\ccExample'
 );
@@ -218,9 +218,14 @@ sub doxygen_latex_to_latex
     $buf =~ s/Reimplemented in .*//g;           # Same thing with "Reimplemented in"
     $buf =~ s/\[package\]//g;
     $buf =~ s/\[related\]//g;
+    $buf =~ s/\[friend\]//g;
 
     # Add a \n before (parameters) descriptions to ease parsing
     $buf =~ s/\n?\\begin\{Desc\}/\n\\begin\{Desc\}/smg;
+
+    # Use a canonic style "type& variable" for references to ease parsing
+    $buf =~ s/([\w\>]+)\s*&\s*/$1& /g;
+    $buf =~ s/Constructor& Destructor/Constructor & Destructor/g;
 
     # "Desc" is a doxygen style based on "description",
     # "CompactItemize" is a doxygen style based on "itemize"
@@ -489,6 +494,7 @@ sub format_curly_brace_pairs_expressions
         $buf =~ s/\\paragraph\{enum\s(.*)\}/\\ccEnum\{enum $1\}\n\{/g;
         $buf =~ s/\\item\[Enumerator/\\item\[Enumeration values/g;
         $buf =~ s/\\paragraph\{\Q$item_to_document\E\s+\((.*)\}/\\ccConstructor\{$item_to_document \($1;\}\n\{/g;
+        $buf =~ s/\\paragraph\{(template\s*<.*?>\s*)\Q$item_to_document\E\s+\((.*)\}/\\ccConstructor\{$1$item_to_document \($2;\}\n\{/g;
         $buf =~ s/\\paragraph\{([^\(\)]*?)\}/\\ccVariable\{$1;\}\n\{/g;
         $buf =~ s/\\paragraph\{(.*\(.*\).*)\}/\\ccMethod\{$1;\}\n\{/g;
     }
@@ -650,6 +656,23 @@ sub format_doxygen_class_doc
         $buf = $buf . $line . "\n";             # concat line back to $buf
     }
 
+    # Copy template parameters of templated methods from brief to detailed section
+    if ($buf =~ m/\\subsubsection\*\{Public Member Functions\}\n\\begin\{itemize\}\n(.*?)\\end\{itemize\}/sm)
+    {
+        # extract template params from \subsubsection*{Public Member Functions} section
+        my $methods = $1;
+
+        # for each templated method
+        while ($methods =~ m/(template\s*<.*?>\s*)(.*)/g)
+        {
+            my $template_params = $1;
+            my $method = $2;
+
+            # insert $template_params before $method in detailed section
+            $buf =~ s/\\paragraph\{\Q$method\E\}/\\paragraph\{$template_params$method\}/;
+        }
+    }
+
     # Rename \ccDefinition title
     $buf =~ s/\\subsubsection\{Detailed Description\}/\\ccDefinition\n/;
 
@@ -671,14 +694,14 @@ sub format_doxygen_class_doc
     # Rename \ccOperations title
     $buf =~ s/\\subsubsection\{Member Function Documentation\}/\n\n\\ccOperations\n/;
 
-    # Rename \ccHeading{Friends And Related Functions} title
-    $buf =~ s/\\subsubsection\{Friends And Related Function Documentation\}/\n\n\\ccHeading\{Friends And Related Functions\}\n/;
+    # Rename \ccHeading{Related Functions} title
+    $buf =~ s/\\subsubsection\{Friends And Related Function Documentation\}/\n\n\\ccHeading\{Related Functions\}\n/;
 
 #     # Fallback is \ccHeading{Misc} title
 #     $buf =~ s/\\subsubsection\{.*?\}/\n\n\\ccHeading\{Misc\}\n/;
 
     # Rename \ccFunction expressions
-    $buf =~ s/(\\ccHeading\{Friends And Related Functions\}.*?$all_titles_pattern)/
+    $buf =~ s/(\\ccHeading\{Related Functions\}.*?$all_titles_pattern)/
               format_curly_brace_pairs_expressions("", "function", $1)/smge;
 
     # Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable expressions
