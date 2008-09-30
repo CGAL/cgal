@@ -82,6 +82,9 @@ template <typename K>
 void 
 GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
+  if(event->modifiers()  & ::Qt::ShiftModifier){
+    return;
+  }
   if(m_pointsOnCircle < 3){
     if(count == 0){
       qp = event->scenePos();
