@@ -63,7 +63,7 @@ void _test_circle_construct(CK ck)
   std::cout << "the circle used by the equation :" 
 	    << circ_equation << std::endl;
 	
-	std::cout << "testing {x,y}_critical_points" << std::endl;
+	std::cout << "testing {x,y}_extremal_points" << std::endl;
 	for(int i=0; i<20; i++) {
 	  int x1 = theRandom.get_int(random_min,random_max);
 	  int y1 = theRandom.get_int(random_min,random_max);
