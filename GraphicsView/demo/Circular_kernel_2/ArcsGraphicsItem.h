@@ -95,7 +95,7 @@ ArcsGraphicsItem<CK>::paint(QPainter *painter,
 {
   painter->setPen(this->inputPen());
   painterostream = PainterOstream<CK>(painter);
-  
+ 
   for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
     Circular_arc_2 ca;
     Line_arc_2 la;
@@ -113,6 +113,7 @@ ArcsGraphicsItem<CK>::paint(QPainter *painter,
     std::pair<Circular_arc_point_2,unsigned> cap_ui;
     Circular_arc_2 ca;
     Line_arc_2 la;
+
     if(assign(cap_ui, *it)){
       painterostream << cap_ui.first;
     }if(assign(ca, *it)){

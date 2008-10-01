@@ -65,6 +65,8 @@ public:
 
 public slots:
 
+  void open(const QString&);
+
   void processInput(CGAL::Object o);
 
 
@@ -136,6 +138,9 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Circular_kernel_2.html");
   this->addAboutCGAL();
+  this->addRecentFiles(this->menuFile, this->actionQuit);
+  connect(this, SIGNAL(openRecentFile(QString)),
+	  this, SLOT(open(QString)));
 }
 
 
@@ -210,7 +215,15 @@ MainWindow::on_actionLoadLineAndCircularArcs_triggered()
 						  ".",
 						  tr("Edge files (*.arc)\n"));
   if(! fileName.isEmpty()){
-    
+    open(fileName);
+    this->addToRecentFiles(fileName);
+  }
+}
+
+
+void
+MainWindow::open(const QString& fileName)
+{
     std::ifstream ifs(qPrintable(fileName));
     char c;
     double x,y;
@@ -255,7 +268,6 @@ MainWindow::on_actionLoadLineAndCircularArcs_triggered()
       }
     }
     emit (changed());
-  }
 }
 
 void
@@ -271,6 +283,10 @@ MainWindow::on_actionRecenter_triggered()
 int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
+
+  app.setOrganizationDomain("geometryfactory.com");
+  app.setOrganizationName("GeometryFactory");
+  app.setApplicationName("Circular_kernel_2 demo");
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE

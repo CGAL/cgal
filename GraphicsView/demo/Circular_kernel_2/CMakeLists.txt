@@ -17,6 +17,10 @@ find_package(Qt4 REQUIRED)
 include(${QT_USE_FILE})
 
 
+include_directories (BEFORE ../../include)
+
+if ( CGAL_FOUND AND QT4_FOUND )
+
 #--------------------------------
 # The demo: Circular_kernel_2
 #--------------------------------
@@ -38,3 +42,9 @@ target_link_libraries( Circular_kernel_2 ${QT_LIBRARIES} )
 target_link_libraries( Circular_kernel_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 
+
+else()
+
+  message(STATUS "NOTICE: This demo requires CGAL and Qt4, and will not be compiled.")
+
+endif()
