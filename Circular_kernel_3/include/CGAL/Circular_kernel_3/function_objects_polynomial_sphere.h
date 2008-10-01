@@ -1037,14 +1037,6 @@ template < class SK > \
                 const bool known_equal_supporting_circle = false) const
     { return do_overlap<SK>(c1, c2, known_equal_supporting_circle); }
 
-    result_type
-    operator() (const Circular_arc_3 &c, const Line_arc_3 &l) const
-    { return false; }
-
-    result_type
-    operator() (const Line_arc_3 &l, const Circular_arc_3 &c) const
-    { return false; }
-
   };
 
   template < class SK >
