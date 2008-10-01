@@ -42,6 +42,12 @@
 
 \ccMethod{Circle_2<CircularKernel> supporting_circle();}{}
 
+\ccMethod{Point_2<CircularKernel> const& center( ) const;}{
+        returns the center of the supporting circle.}
+\ccGlue
+\ccMemberFunction{CircularKernel::FT const& squared_radius( ) const;}{
+        returns the squared radius of the supporting circle.}
+
 A circular arc is not oriented. Still, its source and target endpoints
 can be defined, supposing that its supporting circle in traversed the
 counterclockwise direction from \ccc{source} to \ccc{target}. 
@@ -58,9 +64,12 @@ the arc is in fact a full circle. %\footnote{so far, arcs of zero length are
 When an arc is x-monotone, its left and right points can be accessed
 directly:
 
-\ccMethod{Circular_arc_point_2<CircularKernel> Left();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
+\ccMethod{Circular_arc_point_2<CircularKernel> left();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
 \ccGlue
 \ccMethod{Circular_arc_point_2<CircularKernel> right();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
+
+\ccMethod{Bbox_2 bbox() const;}
+{Returns a bounding box containing the arc.}
 
 \ccQueryFunctions
 
@@ -75,6 +84,10 @@ directly:
 {Test for equality. Two arcs are equal, iff their non-oriented
   supporting circles are equal (i.e. they have same center and same
   squared radius) and their endpoints are equal.}
+
+\ccFunction{bool operator!=(const Circular_arc_2<CircularKernel> &ca1,
+  const Circular_arc_2<CircularKernel> &ca2);} 
+{Test for non-equality}
 
 \ccHeading{I/O}
 
