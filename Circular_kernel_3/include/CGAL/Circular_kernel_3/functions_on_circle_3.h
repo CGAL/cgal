@@ -25,8 +25,6 @@
 
 namespace CGAL {
 
-  // At the moment we dont need those functions
-  // But in the future maybe (some make_x_monotone? etc..)
   template <class SK>
   typename SK::Circular_arc_point_3
   x_extremal_point(const Circle_3<SK> & c, bool i)
