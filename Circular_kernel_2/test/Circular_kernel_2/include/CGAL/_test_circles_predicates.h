@@ -191,8 +191,13 @@ void _test_circle_predicat(CK ck)
     theCompare_y_to_right_2(circ1_arc_high,
 			    circ_high_arc_low,
 			    circ1_arc_end_p3);
+	CGAL::Comparison_result theComparison_result_y_to_right_2_l = 
+	  compare_y_to_right(circ1_arc_high,
+						    circ_high_arc_low,
+						    circ1_arc_end_p3);
   assert(theComparison_result_y_to_right_2 == CGAL::LARGER);
-  
+  assert(theComparison_result_y_to_right_2_l == CGAL::LARGER);
+	
   theComparison_result_y_to_right_2= 
     theCompare_y_to_right_2(circ_high_arc_low,
 			    circ1_arc_high,
