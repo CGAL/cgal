@@ -346,19 +346,19 @@ via a cmake variable of the form {\tt WITH\_<component>}. All components are {\t
     \\\hline\hline
     {\tt CGAL} & {\em none} & Main library (all kernels and packages) & GMP, MPFR, Boost (headers) and Boost.Thread (library)
     \\\hline
-    {\tt CGAL-core++} & {\tt WITH\_CGALCore} & The CORE library used for robust numerical and geometric computation.
+    {\tt CGAL-core++} & {\tt WITH\_CGAL\_Core} & The CORE library used for robust numerical and geometric computation.
     \footnote{CGAL-core++ is not part of \cgal, it is a custom version the CORE library ditributed by \cgal\
               for the user convenience and it has it's own license. }
     & GMP and MPFR
     \\\hline
-    {\tt CGAL-Qt3} & {\tt WITH\_CGALQt3} & \ccc{CGAL::Qt_widget} used by some old Qt3-based demos & Qt3 and OpenGL
+    {\tt CGAL-Qt3} & {\tt WITH\_CGAL\_Qt3} & \ccc{CGAL::Qt_widget} used by some old Qt3-based demos & Qt3 and OpenGL
     \\\hline
-    {\tt CGAL-Qt4} & {\tt WITH\_CGALQt4} & \ccc{CGAL::GraphicsView} used by the Qt4-based demos & Qt4 and OpenGL
+    {\tt CGAL-Qt4} & {\tt WITH\_CGAL\_Qt4} & \ccc{CGAL::GraphicsView} used by the Qt4-based demos & Qt4 and OpenGL
     \\\hline
-    {\tt CGAL-ImageIO} & {\tt WITH\_CGALimageIO} & Utilities to read and write image files in various formats 
+    {\tt CGAL-ImageIO} & {\tt WITH\_CGAL\_ImageIO} & Utilities to read and write image files in various formats 
     & OpenGL and ZLib and VTK\footnote{Only if VTK is available}
     \\\hline
-    {\tt CGAL-PDB} & {\tt WITH\_CGALPDB} & \ccc{CGAL::PDB} used to manipulate {\tt PDB} files & {\em none}
+    {\tt CGAL-PDB} & {\tt WITH\_CGA\_PDB} & \ccc{CGAL::PDB} used to manipulate {\tt PDB} files & {\em none}
     \\\hline
   \end{tabular}
 \end{center}
@@ -368,7 +368,7 @@ If you turn off the configuration of a component you can still configure it manu
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
   cd <CGALROOT>/src/CGALQt4 
-  cmake . # configures only the CGAL-Qt4 component
+  cmake . # configures only the CGAL_Qt4 component
 \end{verbatim}
 }
 
@@ -498,7 +498,7 @@ make
 # continuing with the next component in case of error
 # due to the '-k' switch.
 
-make -k CGAL CGAL_CORE CGAL_PDB CGAL_ImageIO CGAL_Qt3 CGAL_Qt4
+make -k CGAL CGAL_Core CGAL_PDB CGAL_ImageIO CGAL_Qt3 CGAL_Qt4
 
 \end{verbatim}
 }

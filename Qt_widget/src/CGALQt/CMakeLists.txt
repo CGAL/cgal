@@ -1,25 +1,9 @@
-# src/CGALQt/CMakeLists.txt
-#
-# The following variables can be set from the parent script:
-# The first two cannot be empty
-#
-# CGAL_BINARY_DIR
-# CGAL_LIB_INSTALL_DIR
-#
-# CGAL_INCLUDE_DIRS
-# CGAL_DEFINITIONS
-# CGAL_3RD_PARTY_INCLUDE_DIRS
-# CGAL_3RD_PARTY_LIBRARIES
-# CGAL_3RD_PARTY_DEFINITIONS
-# CGAL_LIB_SHARED_LINKER_FLAGS
-# CGAL_VERSION
-# CGAL_MAJOR_VERSION
-# CGAL_MINOR_VERSION
+project (CGAL_Qt3)
 
-project (CGALQt3)
-
-find_package(CGAL REQUIRED)
-include(${CGAL_USE_FILE})
+if ( NOT CGAL_FOUND )
+  find_package(CGAL REQUIRED)
+  include(${CGAL_USE_FILE})
+endif()
 
 find_package(OpenGL QUIET )
 
@@ -120,7 +104,7 @@ if( QT3_FOUND )
       
       get_target_property( CGAL_Qt3_LIBRARY_FULL_PATH CGAL_Qt3 LOCATION  )
       
-      set(CGAL_Qt3_LIBRARY "${CGAL_Qt3_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-Qt3 library" FORCE)
+      set(CGAL_Qt3_LIBRARY "${CGAL_Qt3_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL_Qt3 library" FORCE)
       
       mark_as_advanced(CGAL_Qt3_LIBRARY)
       
@@ -133,10 +117,10 @@ if( QT3_FOUND )
       set(CGAL_Qt3_MINSIZEREL_MANGLED_NAME     "${CGAL_Qt3_BASENAME}-${TOOLSET}-mt-o" ) 
       set(CGAL_Qt3_RELWITHDEBINFO_MANGLED_NAME "${CGAL_Qt3_BASENAME}-${TOOLSET}-mt-g" ) 
       
-      set_target_properties( CGAL_Qt3 PROPERTIES DEBUG_OUTPUT_NAME         "${CGAL_Qt3_DEBUG_MANGLED_NAME}" 
-                                                RELEASE_OUTPUT_NAME        "${CGAL_Qt3_RELEASE_MANGLED_NAME}" 
-                                                MINSIZEREL_OUTPUT_NAME     "${CGAL_Qt3_MINSIZEREL_MANGLED_NAME}" 
-                                                RELWITHDEBINFO_OUTPUT_NAME "${CGAL_Qt3_RELWITHDEBINFO_MANGLED_NAME}" 
+      set_target_properties( CGAL_Qt3 PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_Qt3_DEBUG_MANGLED_NAME}" 
+                                                 RELEASE_OUTPUT_NAME        "${CGAL_Qt3_RELEASE_MANGLED_NAME}" 
+                                                 MINSIZEREL_OUTPUT_NAME     "${CGAL_Qt3_MINSIZEREL_MANGLED_NAME}" 
+                                                 RELWITHDEBINFO_OUTPUT_NAME "${CGAL_Qt3_RELWITHDEBINFO_MANGLED_NAME}" 
                            )
 
       if ( HAS_CFG_INTDIR )                      
@@ -151,10 +135,10 @@ if( QT3_FOUND )
     endif()
 
   else()
-    message( STATUS "CGAL-Qt3 needs OpenGL, cannot be configured.")
+    message( STATUS "CGAL_Qt3 needs OpenGL, cannot be configured.")
   endif()  
 else()
-  message( STATUS "CGAL-Qt3 needs Qt3, cannot be configured.")
+  message( STATUS "CGAL_Qt3 needs Qt3, cannot be configured.")
 endif()
 
    

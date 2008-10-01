@@ -1,24 +1,3 @@
-# src/CGAL/CMakeLists.txt
-#
-# The following variables must be set from the parent script:
-# The first two cannot be empty
-#
-# CGAL_BINARY_DIR
-# CGAL_LIB_INSTALL_DIR
-#
-# CGAL_INCLUDE_DIRS
-# CGAL_DEFINITIONS
-# CGAL_3RD_PARTY_INCLUDE_DIRS
-# CGAL_3RD_PARTY_LIBRARIES
-# CGAL_3RD_PARTY_DEFINITIONS
-# CGAL_LIB_SHARED_LINKER_FLAGS
-# CGAL_VERSION
-# CGAL_MAJOR_VERSION
-# CGAL_MINOR_VERSION
-
-   
-assert(CGAL_BINARY_DIR)
-
 add_library (CGAL "all_files.cpp" )
 
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
@@ -42,19 +21,21 @@ if (NOT AUTO_LINK_ENABLED )
   hide_variable(CGAL_LIBRARY)
   
 else()
-
-  set(CGAL_LIBRARY)
   
-  set(CGAL_RELEASE_MANGLED_NAME        "${CGAL_BASENAME}-${TOOLSET}-mt" ) 
-  set(CGAL_DEBUG_MANGLED_NAME          "${CGAL_BASENAME}-${TOOLSET}-mt-gd" ) 
-  set(CGAL_MINSIZEREL_MANGLED_NAME     "${CGAL_BASENAME}-${TOOLSET}-mt-o" ) 
-  set(CGAL_RELWITHDEBINFO_MANGLED_NAME "${CGAL_BASENAME}-${TOOLSET}-mt-g" ) 
+  set(CGAL_Release_MANGLED_NAME        "${CGAL_BASENAME}-${TOOLSET}-mt" ) 
+  set(CGAL_Debug_MANGLED_NAME          "${CGAL_BASENAME}-${TOOLSET}-mt-gd" ) 
+  set(CGAL_MinSizeRel_MANGLED_NAME     "${CGAL_BASENAME}-${TOOLSET}-mt-o" ) 
+  set(CGAL_RelWithDebInfo_MANGLED_NAME "${CGAL_BASENAME}-${TOOLSET}-mt-g" ) 
   
-  set_target_properties( CGAL PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_DEBUG_MANGLED_NAME}" 
-                                         RELEASE_OUTPUT_NAME        "${CGAL_RELEASE_MANGLED_NAME}" 
-                                         MINSIZEREL_OUTPUT_NAME     "${CGAL_MINSIZEREL_MANGLED_NAME}" 
-                                         RELWITHDEBINFO_OUTPUT_NAME "${CGAL_RELWITHDEBINFO_MANGLED_NAME}" 
+  set_target_properties( CGAL PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_Release_MANGLED_NAME}" 
+                                         RELEASE_OUTPUT_NAME        "${CGAL_Debug_MANGLED_NAME}" 
+                                         MINSIZEREL_OUTPUT_NAME     "${CGAL_MinSizeRel_MANGLED_NAME}" 
+                                         RELWITHDEBINFO_OUTPUT_NAME "${CGAL_RelWithDebInfo_MANGLED_NAME}" 
                        )
+  
+  
+  set(CGAL_LIBRARY "${CGAL_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL library" FORCE)
+  set(CGAL_LIBRARY "${CGAL_${CMAKE_BUILD_TYPE}_MANGLED_NAME}")
   
   if ( HAS_CFG_INTDIR )                      
     add_custom_command(TARGET CGAL POST_BUILD COMMAND copy /Y "$(TargetPath)" "$(SolutionDir)lib" )

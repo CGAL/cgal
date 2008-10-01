@@ -1,23 +1,9 @@
-# src/Core/CMakeLists.txt
-#
-# The following variables must be set from the parent script:
-# The first two cannot be empty
-#
-# CGAL_BINARY_DIR
-# CGAL_LIB_INSTALL_DIR
-#
-# CGAL_INCLUDE_DIRS
-# GMP_INCLUDE_DIRS
-# CGAL_DEFINITIONS
-# CGAL_3RD_PARTY_INCLUDE_DIRS
-# CGAL_3RD_PARTY_LIBRARIES
-# CGAL_3RD_PARTY_DEFINITIONS
-# CGAL_LIB_SHARED_LINKER_FLAGS
-# CGAL_VERSION
-# CGAL_MAJOR_VERSION
-# CGAL_MINOR_VERSION
+project (CGAL_PDB)
    
-assert(CGAL_BINARY_DIR)
+if ( NOT CGAL_FOUND )   
+  find_package(CGAL REQUIRED)
+  include(${CGAL_USE_FILE})
+endif()
 
 include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
@@ -39,7 +25,7 @@ if (NOT AUTO_LINK_ENABLED )
   
   get_target_property( CGAL_PDB_LIBRARY_FULL_PATH CGAL_PDB LOCATION  )
   
-  set(CGAL_PDB_LIBRARY "${CGAL_PDB_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-PDB library" FORCE)
+  set(CGAL_PDB_LIBRARY "${CGAL_PDB_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL_PDB library" FORCE)
   
   mark_as_advanced(CGAL_PDB_LIBRARY)
   
@@ -53,9 +39,9 @@ else()
   set(CGAL_PDB_RELWITHDEBINFO_MANGLED_NAME "${CGAL_PDB_BASENAME}-${TOOLSET}-mt-g" ) 
   
   set_target_properties( CGAL_PDB PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_PDB_DEBUG_MANGLED_NAME}" 
-                                              RELEASE_OUTPUT_NAME        "${CGAL_PDB_RELEASE_MANGLED_NAME}" 
-                                              MINSIZEREL_OUTPUT_NAME     "${CGAL_PDB_MINSIZEREL_MANGLED_NAME}" 
-                                              RELWITHDEBINFO_OUTPUT_NAME "${CGAL_PDB_RELWITHDEBINFO_MANGLED_NAME}" 
+                                             RELEASE_OUTPUT_NAME        "${CGAL_PDB_RELEASE_MANGLED_NAME}" 
+                                             MINSIZEREL_OUTPUT_NAME     "${CGAL_PDB_MINSIZEREL_MANGLED_NAME}" 
+                                             RELWITHDEBINFO_OUTPUT_NAME "${CGAL_PDB_RELWITHDEBINFO_MANGLED_NAME}" 
                        )
   
   if ( HAS_CFG_INTDIR )                      

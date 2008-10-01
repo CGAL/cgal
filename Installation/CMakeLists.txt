@@ -38,7 +38,6 @@ endif()
 include(CGALcommon)
 include(GeneratorSpecificSettings)
 include(CheckCXXFileRuns)
-include(OptionalAddSubdirectory)
 
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
@@ -412,7 +411,10 @@ macro( add_programs subdir ON_OFF )
   
   add_custom_target( ${subdir} )
   
-  optional_add_subdirectory( ${subdir} ${ON_OFF} EXCLUDE_FROM_ALL )
+  option( WITH_${subdir} "Select ${subdir}" ${ON_OFF} )
+  if ( WITH_${subdir} )
+    add_subdirectory( ${subdir} EXCLUDE_FROM_ALL )
+  endif()
   
   cache_get( CGAL_EXECUTABLE_TARGETS )
   

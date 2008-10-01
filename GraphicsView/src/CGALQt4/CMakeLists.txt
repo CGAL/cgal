@@ -1,14 +1,9 @@
-# src/CGALQt4/CMakeLists.txt
-#
-# The following variables can be set from the parent script:
-#
-# CGAL_SONAME_VERSION
-# CGAL_SOVERSION
-
-project (CGALQt4)
+project (CGAL_Qt4)
    
-find_package(CGAL REQUIRED)
-include(${CGAL_USE_FILE})
+if ( NOT CGAL_FOUND )   
+  find_package(CGAL REQUIRED)
+  include(${CGAL_USE_FILE})
+endif()
 
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTOPENGL TRUE )
@@ -19,16 +14,18 @@ find_package(OpenGL QUIET )
 if( QT4_FOUND )
 
   if( OPENGL_FOUND )
-  
+  77777777777777777
     include_directories (BEFORE ../../include)
     
     include(${QT_USE_FILE})
 
     get_dependency_version(OPENGL OpenGL)
-    get_dependency_version(QT4)
+    
+    get_dependency_version(QT4 QT)
 
     if(COMMAND add_config_flag)
       set( CGAL_HAS_QT4 TRUE ) 
+      
       add_config_flag( CGAL_HAS_QT4 )
     endif()
     
@@ -81,7 +78,7 @@ if( QT4_FOUND )
       set_target_properties( CGAL_Qt4 PROPERTIES OUTPUT_NAME "${CGAL_Qt4_BASENAME}" )
       get_target_property( CGAL_Qt4_LIBRARY_FULL_PATH CGAL_Qt4 LOCATION  )
 
-      set(CGAL_Qt4_LIBRARY "${CGAL_Qt4_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL-Qt4 library" FORCE)
+      set(CGAL_Qt4_LIBRARY "${CGAL_Qt4_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL_Qt4 library" FORCE)
       mark_as_advanced(CGAL_Qt4_LIBRARY)
 
     else()
@@ -111,9 +108,9 @@ if( QT4_FOUND )
     endif()
 
   else()
-    message( STATUS "CGAL-Qt4 needs OpenGL, cannot be configured.")
+    message( STATUS "CGAL_Qt4 needs OpenGL, cannot be configured.")
   endif()  
   
 else()
-  message( STATUS "CGAL-Qt4 needs Qt4, cannot be configured.")
+  message( STATUS "CGAL_Qt4 needs Qt4, cannot be configured.")
 endif()
