@@ -77,9 +77,9 @@
     </property>
     <addaction name="separator" />
     <addaction name="actionClear" />
+    <addaction name="actionLoadLineAndCircularArcs" />
     <addaction name="separator" />
     <addaction name="actionQuit" />
-    <addaction name="actionLoadLineAndCircularArcs" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
@@ -197,7 +197,6 @@
   <include location="Circular_kernel_2.qrc" />
   <include location="../resources/CGAL.qrc" />
   <include location="../icons/File.qrc" />
-  <include location="../icons/Triangulation_2.qrc" />
   <include location="../icons/Input.qrc" />
  </resources>
  <connections/>

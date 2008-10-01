@@ -62,7 +62,8 @@ protected:
   QRectF bounding_rect;
 
   QPen intersections_pen;
-  QPen input_pen;
+  QPen input_pen;  
+  Converter<CK> convert;
 };
 
 
@@ -115,7 +116,10 @@ ArcsGraphicsItem<CK>::paint(QPainter *painter,
     Line_arc_2 la;
 
     if(assign(cap_ui, *it)){
-      painterostream << cap_ui.first;
+      QMatrix matrix = painter->matrix();
+      painter->resetMatrix();
+      painter->drawPoint(matrix.map(convert(cap_ui.first)));
+      painter->setMatrix(matrix);
     }if(assign(ca, *it)){
       painterostream << ca;
     } else if(assign(la, *it)){
@@ -150,7 +154,7 @@ ArcsGraphicsItem<CK>::updateBoundingBox()
       }
     }
   }
-  Converter<CK> convert;
+
   prepareGeometryChange();
   bounding_rect = convert(bb);
 }
