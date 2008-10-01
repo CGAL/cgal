@@ -18,7 +18,7 @@
 #include "TriangulationMovingPoint.h"
 #include "TriangulationConflictZone.h"
 #include "TriangulationRemoveVertex.h"
-#include <CGAL/Qt/GraphicsViewPolylineInput.h>
+#include "TriangulationPointInputAndConflictZone.h"
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/VoronoiGraphicsItem.h>
 
@@ -51,7 +51,7 @@ private:
   CGAL::Qt::TriangulationMovingPoint<Delaunay> * mp;
   CGAL::Qt::TriangulationConflictZone<Delaunay> * cz;
   CGAL::Qt::TriangulationRemoveVertex<Delaunay> * trv;
-  CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
+  CGAL::Qt::TriangulationPointInputAndConflictZone<Delaunay> * pi;
   CGAL::Qt::TriangulationCircumcircle<Delaunay> *tcc;
 public:
   MainWindow();
@@ -116,8 +116,7 @@ MainWindow::MainWindow()
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
-  pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 1, false); // inputs
-                                                                           // points
+  pi = new CGAL::Qt::TriangulationPointInputAndConflictZone<Delaunay>(&scene, &dt, this );
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
@@ -185,11 +184,9 @@ MainWindow::MainWindow()
 void
 MainWindow::processInput(CGAL::Object o)
 {
-  std::list<Point_2> points;
-  if(CGAL::assign(points, o)){
-    if(points.size() == 1) {
-      dt.insert(points.front());
-    }
+  Point_2 p;
+  if(CGAL::assign(p, o)){
+    dt.insert(p);
   }
   emit(changed());
 }
