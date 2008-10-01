@@ -12,4 +12,5 @@ of a generic tool (generic in terms of inputs and queries), which is still under
 development. It is already added to the trunk because it is used by the Polyhedron 
 Demo to efficiently remesh polyhedral surfaces. 
 
-For CGAL-3.5, we hope to integrate the fully generic version, for triangle soups and polylines, with more queries (intersection, projection), parallelism, etc.
+For CGAL-3.5, we hope to integrate the fully generic version, for triangle soups and 
+polylines, with more queries (intersection, projection), parallelism, etc.
