@@ -1,7 +1,9 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (GraphicsView)
+project (Circular_kernel_2)
+
+cmake_minimum_required(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
@@ -13,9 +15,6 @@ include(${CGAL_USE_FILE})
 
 find_package(Qt4 REQUIRED)
 include(${QT_USE_FILE})
-include_directories (BEFORE ../../include)
-link_directories(../../src/CGALQt4)
-
 
 
 #--------------------------------
@@ -37,3 +36,5 @@ add_executable  ( Circular_kernel_2 Circular_kernel_2.cpp ${DT_UI_FILES} ${DT_RE
 target_link_libraries( Circular_kernel_2 ${QT_LIBRARIES} )
 # Link with CGAL
 target_link_libraries( Circular_kernel_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
+
+
