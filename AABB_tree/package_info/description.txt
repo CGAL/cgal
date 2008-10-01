@@ -1,1 +1,1 @@
-Static collision model for polyhedra.
+Static collision model for triangle soups.
