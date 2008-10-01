@@ -1,4 +1,4 @@
-This package implements a collision detection tool, using so called AABB trees,
+This package implements a collision detection algorithm, using so called AABB trees,
 along the lines of 
 
 @article{terdiman2003ooc,
@@ -9,7 +9,7 @@ along the lines of
 
 This package will not be documented for CGAL-3.4. It is a stripped down version
 of a generic tool (generic in terms of inputs and queries), which is still under 
-development. It is already added to the trunk because it is used in the Polyhedron 
-Demo to remesh polyhedra. 
+development. It is already added to the trunk because it is used by the Polyhedron 
+Demo to efficiently remesh polyhedral surfaces. 
 
-For CGAL-3.5, we hope to integrate the fully generic version, with parallelism.
+For CGAL-3.5, we hope to integrate the fully generic version, for triangle soups and polylines, with more queries (intersection, projection), parallelism, etc.
