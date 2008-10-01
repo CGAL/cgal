@@ -1283,6 +1283,7 @@ Circular_kernel_2/demo/Circular_kernel_2/help/sweeper.jpeg -text svneol=unset#im
 Circular_kernel_2/demo/Circular_kernel_2/help/trash.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation.png -text
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation_detail.png -text
+Circular_kernel_2/doc_tex/Circular_kernel_2_ref/global_functions.tex -text
 Circular_kernel_2/examples/Circular_kernel_2/functor_has_on_2.cpp -text
 Circular_kernel_2/include/CGAL/Circular_kernel_intersections.h -text
 Circular_kernel_2/include/CGAL/Filtered_bbox_circular_kernel_2/interface_macros.h -text
