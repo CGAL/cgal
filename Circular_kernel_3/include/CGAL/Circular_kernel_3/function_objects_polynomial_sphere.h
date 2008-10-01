@@ -157,13 +157,12 @@ template < class SK > \
                 const Line_3 &l1) const
     { return LK_Equal_3()(l0,l1); }
 
-#endif
-
-    // Our Circle_3 dont have orientation
     result_type
     operator() (const Circle_3 &c0,
                 const Circle_3 &c1) const
-    { return equal<SK>(c0, c1); }
+    { return LK_Equal_3()(c0, c1); }
+
+#endif
 
     result_type
     operator() (const Circular_arc_point_3 &c0,
