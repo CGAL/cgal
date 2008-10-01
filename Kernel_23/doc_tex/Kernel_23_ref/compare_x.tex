@@ -1,5 +1,12 @@
 \begin{ccRefFunction}{compare_x}
 
+Depending on which \cgal\ \ccHtmlNoLinksFrom{kernel} is used,
+different versions of this global function are available. This is
+described below.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the basic 2D and 3D Kernel} (see Chapter~\ref{chapter-kernel-23})
+
 \ccFunction{Comparison_result compare_x(const Point_2<Kernel> &p,
                                         const Point_2<Kernel> &q);}
         {compares the $x$-coordinates of $p$ and $q$.}
@@ -47,6 +54,26 @@ given) points in the boxes.\label{fig-compare}}
 <img border=0 src="fig/compare1.gif" align=middle alt="Comparison of the x 
 or y coordinates of the (implicitly given) points in the boxes">
 \end{ccHtmlOnly} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the 2D Circular Kernel} (see Chapter~\ref{chapter-circular-kernel}) 
+
+\ccInclude{CGAL/global_functions_on_circular_arcs_2.h}
+
+If this kernel is used, in addition to the function and the
+combination of 2D types described above, another version of the function
+is provided.
+
+\ccFunction{Comparison_result 
+  compare_x(const Circular_arc_point_2<CircularKernel> &p,
+            const Circular_arc_point_2<CircularKernel> &q);}
+{compares the $x$-coordinates of $p$ and $q$.}
+
+\ccFunction{Comparison_result 
+  compare_x(const Circular_arc_point_2<CircularKernel> &p,
+            const Point_2<CircularKernel> &q);}
+{compares the $x$-coordinates of $p$ and $q$.}
+
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::compare_xy} \\
