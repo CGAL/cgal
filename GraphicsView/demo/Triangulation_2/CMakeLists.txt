@@ -19,6 +19,7 @@ set( QT_USE_QTOPENGL  TRUE )
 
 find_package(Qt4       REQUIRED)
 include(${QT_USE_FILE})
+include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
 
 
