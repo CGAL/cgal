@@ -11,6 +11,8 @@ if ( NOT GMPXX_FOUND )
       message( STATUS "GMPXX include:    ${GMPXX_INCLUDE_DIR}" )
       message( STATUS "GMPXX libraries:  ${GMPXX_LIBRARIES}" )
       
+      set ( CGAL_USE_GMPXX 1 )
+      
       include(CGAL_Macros)
       
       cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${GMPXX_INCLUDE_DIR}  "" )

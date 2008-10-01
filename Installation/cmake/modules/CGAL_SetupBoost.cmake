@@ -15,6 +15,8 @@ if ( NOT Boost_FOUND )
   message( STATUS "Boost libraries:   ${Boost_LIBRARIES}" )
   message( STATUS "Boost definitions: ${Boost_DEFINITIONS}" )
   
+  set ( CGAL_USE_BOOST 1 )
+  
   include(CGAL_Macros)
   
   cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_3RD_PARTY_INCLUDE_DIRS}   ${Boost_INCLUDE_DIRS} "" )

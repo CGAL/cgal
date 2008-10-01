@@ -8,6 +8,8 @@ if ( NOT MPFR_FOUND )
   
   include(CGAL_Macros)
   
+  set ( CGAL_USE_MPFR 1 )
+  
   set( MPFR_DEPENDENCY_INCLUDE_DIR ${GMP_INCLUDE_DIR} )
   get_dependency_version(MPFR)
   

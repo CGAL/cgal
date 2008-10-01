@@ -6,6 +6,8 @@ if ( NOT GMP_FOUND )
   message( STATUS "GMP libraries:   ${GMP_LIBRARIES}" )
   message( STATUS "GMP definitions: ${GMP_DEFINITIONS}" )
   
+  set ( CGAL_USE_GMP 1 )
+  
   include(CGAL_Macros)
   
   get_dependency_version(GMP)
