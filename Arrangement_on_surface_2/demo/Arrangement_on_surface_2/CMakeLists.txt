@@ -6,7 +6,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL REQUIRED Qt3 CORE)
+find_package(CGAL QUIET COMPONENTS Qt3 CORE )
+
 include( ${CGAL_USE_FILE} )
 
 find_package(Qt3-patched QUIET)
