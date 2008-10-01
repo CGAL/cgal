@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL REQUIRED Qt4)
+find_package(CGAL QUIET COMPONENTS Qt4)
 
 include(${CGAL_USE_FILE})
 
@@ -17,13 +17,14 @@ set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
 
-find_package(Qt4       REQUIRED)
-include(${QT_USE_FILE})
+find_package(Qt4  QUIET)
 include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
 
 
 if ( CGAL_FOUND AND QT4_FOUND )
+
+include(${QT_USE_FILE})
 
 #--------------------------------
 # The "constrained Delaunay" demo: Constrained_Delaunay_triangulation_2
