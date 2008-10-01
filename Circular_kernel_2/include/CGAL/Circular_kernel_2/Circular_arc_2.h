@@ -33,7 +33,6 @@
 #ifndef CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_2_H
 #define CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_2_H
 
-#include <CGAL/global_functions_on_circular_arcs_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h> // temporarily
 
 #ifdef CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
