@@ -48,7 +48,7 @@ RegularTriangulationRemoveVertex<T>::mousePressEvent(QGraphicsSceneMouseEvent *e
     if(dt->number_of_vertices() == 0){
       dt->clear();
     }else {
-      typedef Kernel_traits<typename T::Bare_point>::Kernel K;
+      typedef typename Kernel_traits<typename T::Bare_point>::Kernel K;
       Converter<K> convert;
       typename T::Vertex_handle selected_vertex = dt->nearest_power_vertex(convert(event->scenePos()));
       dt->remove(selected_vertex);

@@ -96,7 +96,7 @@ GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	qcircle->hide();
 	q = convert(qq);
 	if(m_pointsOnCircle == 1){
-	  K::FT sd = squared_distance(p,q);
+	  typename K::FT sd = squared_distance(p,q);
 	  emit generate(CGAL::make_object(std::make_pair(p, sd)));
 	} else {
 	  emit generate(CGAL::make_object(std::make_pair(p, q)));
@@ -145,7 +145,7 @@ GraphicsViewCircleInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
       return;
     } else {
       if(m_pointsOnCircle == 1){
-	K::FT sd = squared_distance(p,q);
+	typename K::FT sd = squared_distance(p,q);
 	bb = construct_circle(p, sd).bbox();
       } else {
 	bb = construct_circle(p, q).bbox();
