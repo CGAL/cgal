@@ -7,7 +7,7 @@ A model \ccVar\ of this type must provide:
 \ccMemberFunction{template < class OutputIterator >
     OutputIterator
     operator()(const CircularKernel::Circular_arc_2 &ca, OutputIterator oit);}
-{Splits the arc \ccc{ca} into monotone arcs that are returned through the 
+{Splits the arc \ccc{ca} into $x$-monotone arcs that are returned through the 
 output iterator. Note that, to ensure an easy interface with the 
 \ccc{Arrangement_2} package, the arcs are returned as \ccc{CGAL::Object}'s 
 (see the \ccc{ArrangementTraits_2} concept).}
@@ -17,7 +17,33 @@ defined for a
 \ccc{Line_arc_2}. In this case, the input line arc itself is the only
 arc returned through the \ccc{OutputIterator}. 
 
+\ccSeeAlso
 
+\ccRefIdfierPage{CircularKernel::MakeXYMonotone_2}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::MakeXYMonotone_2}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const CircularKernel::Circular_arc_2 &ca, OutputIterator oit);}
+{Splits the arc \ccc{ca} into $xy$-monotone arcs that are returned through the 
+output iterator. Note that, to ensure an easy interface with the 
+\ccc{Arrangement_2} package, the arcs are returned as \ccc{CGAL::Object}'s 
+(see the \ccc{ArrangementTraits_2} concept).}
+
+For the sake of completeness, the \ccc{operator()} must also be
+defined for a
+\ccc{Line_arc_2}. In this case, the input line arc itself is the only
+arc returned through the \ccc{OutputIterator}. 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::MakeXMonotone_2}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{CircularKernel::Intersect_2}
