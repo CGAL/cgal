@@ -93,8 +93,9 @@ A model \ccVar\ of this type must provide:
 \ccMethod{template < class OutputIterator >
     AlgebraicKernelForCircles::Root_for_circles_2_2
     operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p,
-	     bool i);}
-{Computes the \ccc{i}th \ccc{x}-critical point of polynomial \ccc{p}.} 
+	     bool b);}
+{Computes the \ccc{x}-critical point with smallest (resp. largest) $x$
+  of polynomial \ccc{p} if $b$ is \ccc{true} (resp. \ccc{false}).} 
 
 \end{ccRefConcept}
 \begin{ccRefConcept}{AlgebraicKernelForCircles::YCriticalPoints}
@@ -116,6 +117,7 @@ A model \ccVar\ of this type must provide:
     AlgebraicKernelForCircles::Root_for_circles_2_2
     operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p,
 	     bool i);}
-{Computes the \ccc{i}th \ccc{y}-critical point of polynomial \ccc{p}.} 
+{Computes the \ccc{y}-critical point with smallest (resp. largest) $y$
+  of polynomial \ccc{p} if $b$ is \ccc{true} (resp. \ccc{false}).} 
 
 \end{ccRefConcept}
