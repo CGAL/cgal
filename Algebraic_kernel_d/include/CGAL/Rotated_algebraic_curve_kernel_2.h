@@ -670,9 +670,9 @@ template <typename Polynomial_2>
 struct Rotation_traits_for_base_angle_base<Polynomial_2,45> {
     
 
-    typedef Polynomial_2 Unrotated_polynomial_type_2;
+    typedef Polynomial_2 Unrotated_polynomial_2;
 
-    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_2>
         ::Innermost_coefficient_type Integer;
 
     typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
@@ -761,9 +761,9 @@ struct Rotation_traits_for_base_angle_base<Polynomial_2,45> {
 template <typename Polynomial_2>
 struct Rotation_traits_for_base_angle_base<Polynomial_2,30> {
     
-    typedef Polynomial_2 Unrotated_polynomial_type_2;
+    typedef Polynomial_2 Unrotated_polynomial_2;
 
-    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_2>
         ::Innermost_coefficient_type Integer;
 
     typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
@@ -852,9 +852,9 @@ struct Rotation_traits_for_base_angle_base<Polynomial_2,30> {
 template <typename Polynomial_2>
 struct Rotation_traits_for_base_angle_base<Polynomial_2,18> {
     
-    typedef Polynomial_2 Unrotated_polynomial_type_2;
+    typedef Polynomial_2 Unrotated_polynomial_2;
 
-    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_2>
         ::Innermost_coefficient_type Integer;
 
     typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
@@ -951,9 +951,9 @@ public:
 template <typename Polynomial_2>
 struct Rotation_traits_for_base_angle_base<Polynomial_2,15> {
     
-    typedef Polynomial_2 Unrotated_polynomial_type_2;
+    typedef Polynomial_2 Unrotated_polynomial_2;
 
-    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_2>
         ::Innermost_coefficient_type Integer;
 
     typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
@@ -1046,13 +1046,136 @@ public:
 
 };
 
+// ZZ[sqrt(2),sqrt(5),sqrt(10+2sqrt(5))]
+template <typename Polynomial_2>
+struct Rotation_traits_for_base_angle_base<Polynomial_2,9> {
+    
+    typedef Polynomial_2 Unrotated_polynomial_2;
+
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_2>
+        ::Innermost_coefficient_type Integer;
+
+    typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
+    Arithmetic_kernel;
+
+    typedef typename Arithmetic_kernel::Rational Rational;
+
+private:
+
+    typedef CGAL::Sqrt_extension<Rational,Integer> Rat_with_sqrt_2;
+    typedef CGAL::Sqrt_extension<Integer,Integer> Int_with_sqrt_2;
+    typedef CGAL::Sqrt_extension<Integer,Integer> Int_with_sqrt_5;
+    typedef CGAL::Sqrt_extension<Rat_with_sqrt_2,Integer> Rat_with_sqrt_2_5;
+    typedef CGAL::Sqrt_extension<Int_with_sqrt_2,Integer> Int_with_sqrt_2_5;
+
+public:
+
+    typedef CGAL::Sqrt_extension<Rat_with_sqrt_2_5,Int_with_sqrt_2_5> 
+        Rotated_rational_coefficient; 
+    typedef CGAL::Sqrt_extension<Int_with_sqrt_2_5,Int_with_sqrt_2_5> 
+        Rotated_coefficient;
+
+    struct Sin : public std::unary_function<int,Rotated_rational_coefficient> {
+
+        Rotated_rational_coefficient operator() (int angle) {
+            
+            Angle_coefficients<Rational> coeffs(angle);
+            CGAL_assertion_code(
+                    typename 
+                    CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
+            CGAL_assertion(zero(coeffs.sin.xyzw));
+            CGAL_assertion(zero(coeffs.sin.xyz));
+            CGAL_assertion(zero(coeffs.sin.xyw));
+            CGAL_assertion(zero(coeffs.sin.xy));
+            CGAL_assertion(zero(coeffs.sin.yzw));
+            CGAL_assertion(zero(coeffs.sin.yz));
+            CGAL_assertion(zero(coeffs.sin.yw));
+            CGAL_assertion(zero(coeffs.sin.y));
+            return Rotated_rational_coefficient
+                (Rat_with_sqrt_2_5
+                 (Rat_with_sqrt_2(coeffs.sin.c,coeffs.sin.x,Integer(2)),
+                  Rat_with_sqrt_2(coeffs.sin.z,coeffs.sin.xz,Integer(2)),
+                  Integer(5)),
+                 Rat_with_sqrt_2_5
+                 (Rat_with_sqrt_2(coeffs.sin.w,coeffs.sin.xw,Integer(2)),
+                  Rat_with_sqrt_2(coeffs.sin.zw,coeffs.sin.xzw,Integer(2)),
+                  Integer(5)),
+                 Int_with_sqrt_2_5
+                 (Int_with_sqrt_2(Integer(10),Integer(0),Integer(2)),
+                  Int_with_sqrt_2(Integer(2),Integer(0),Integer(2)),
+                  Integer(5)));
+        }
+
+    };
+
+    struct Cos : public std::unary_function<int,Rotated_rational_coefficient> {
+
+        Rotated_rational_coefficient operator() (int angle) {
+            Angle_coefficients<Rational> coeffs(angle);
+            CGAL_assertion_code(
+                    typename 
+                    CGAL::Algebraic_structure_traits<Rational>::Is_zero zero;
+            );
+
+            CGAL_assertion(zero(coeffs.cos.xyzw));
+            CGAL_assertion(zero(coeffs.cos.xyz));
+            CGAL_assertion(zero(coeffs.cos.xyw));
+            CGAL_assertion(zero(coeffs.cos.xy));
+            CGAL_assertion(zero(coeffs.cos.yzw));
+            CGAL_assertion(zero(coeffs.cos.yz));
+            CGAL_assertion(zero(coeffs.cos.yw));
+            CGAL_assertion(zero(coeffs.cos.y));
+            return Rotated_rational_coefficient
+                (Rat_with_sqrt_2_5
+                 (Rat_with_sqrt_2(coeffs.cos.c,coeffs.cos.x,Integer(2)),
+                  Rat_with_sqrt_2(coeffs.cos.z,coeffs.cos.xz,Integer(2)),
+                  Integer(5)),
+                 Rat_with_sqrt_2_5
+                 (Rat_with_sqrt_2(coeffs.cos.w,coeffs.cos.xw,Integer(2)),
+                  Rat_with_sqrt_2(coeffs.cos.zw,coeffs.cos.xzw,Integer(2)),
+                  Integer(5)),
+                 Int_with_sqrt_2_5
+                 (Int_with_sqrt_2(Integer(10),Integer(0),Integer(2)),
+                  Int_with_sqrt_2(Integer(2),Integer(0),Integer(2)),
+                  Integer(5)));
+
+        }
+
+    };
+    
+    struct Zero {
+        
+        typedef Rotated_rational_coefficient result_type;
+
+        Rotated_rational_coefficient operator() () {
+            Rational zero(0);
+            return Rotated_rational_coefficient
+                (Rat_with_sqrt_2_5
+                 (Rat_with_sqrt_2(zero,zero,Integer(2)),
+                  Rat_with_sqrt_2(zero,zero,Integer(2)),
+                  Integer(5)),
+                 Rat_with_sqrt_2_5
+                 (Rat_with_sqrt_2(zero,zero,Integer(2)),
+                  Rat_with_sqrt_2(zero,zero,Integer(2)),
+                  Integer(5)),
+                 Int_with_sqrt_2_5
+                 (Int_with_sqrt_2(Integer(10),Integer(0),Integer(2)),
+                  Int_with_sqrt_2(Integer(2),Integer(0),Integer(2)),
+                  Integer(5)));
+        }
+    };        
+
+};
+
+
 // ZZ[sqrt(3),sqrt(5),sqrt(10+2sqrt(5))]
 template <typename Polynomial_2>
 struct Rotation_traits_for_base_angle_base<Polynomial_2,6> {
     
-    typedef Polynomial_2 Unrotated_polynomial_type_2;
+    typedef Polynomial_2 Unrotated_polynomial_2;
 
-    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_2>
         ::Innermost_coefficient_type Integer;
 
     typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
@@ -1170,9 +1293,9 @@ public:
 template <typename Polynomial_2>
 struct Rotation_traits_for_base_angle_base<Polynomial_2,3> {
     
-    typedef Polynomial_2 Unrotated_polynomial_type_2;
+    typedef Polynomial_2 Unrotated_polynomial_2;
 
-    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+    typedef typename CGAL::Polynomial_traits_d<Unrotated_polynomial_2>
         ::Innermost_coefficient_type Integer;
 
     typedef typename CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel
@@ -1333,10 +1456,10 @@ class Rotation_traits_for_base_angle
 
 public:
 
-    typedef int Angle_type;
-    typedef Polynomial_2 Unrotated_polynomial_type_2;
+    typedef int Angle;
+    typedef Polynomial_2 Unrotated_polynomial_2;
 
-    typedef typename Polynomial_traits_d<Unrotated_polynomial_type_2>
+    typedef typename Polynomial_traits_d<Unrotated_polynomial_2>
         ::Innermost_coefficient_type Integer;
 
     typedef Rotation_traits_for_base_angle_base<Integer,BaseAngle>
@@ -1355,12 +1478,12 @@ public:
     typedef typename  Algebraic_kernel_with_analysis_2::Polynomial_2 
         Rotated_polynomial_2;
 
-    struct Rotate : public binary_function<Unrotated_polynomial_type_2,
-                                           Angle_type,
+    struct Rotate : public binary_function<Unrotated_polynomial_2,
+                                           Angle,
                                            Rotated_polynomial_2> {
 
-        Rotated_polynomial_2 operator() (Unrotated_polynomial_type_2 f,
-                                         Angle_type angle) const {
+        Rotated_polynomial_2 operator() (Unrotated_polynomial_2 f,
+                                         Angle angle) const {
 
             if(angle%BaseAngle) {
                 std::cerr <<  angle << " is not a multiple of " << BaseAngle
@@ -1402,7 +1525,7 @@ public:
             
             Rotated_rational_polynomial_2 result 
                 = typename 
-                    CGAL::Polynomial_traits_d<Unrotated_polynomial_type_2>
+                    CGAL::Polynomial_traits_d<Unrotated_polynomial_2>
                 ::Substitute() (f, subs.begin(), subs.end());
             CGAL::simplify(result);
             //std::cout << "rotated poly: " << res << std::endl;
@@ -1430,10 +1553,10 @@ public:
     typedef typename Rotation_traits::Algebraic_kernel_with_analysis_2 
         Rotated_kernel_2;
 
-    typedef typename Rotation_traits::Unrotated_polynomial_type_2
+    typedef typename Rotation_traits::Unrotated_polynomial_2
         Poly_int_2;
 
-    typedef typename Rotation_traits::Angle_type Angle_type;
+    typedef typename Rotation_traits::Angle Angle;
 
     typedef typename Rotation_traits::Rotate Rotate;
 
@@ -1452,7 +1575,7 @@ public:
     struct Construct_curve_2 {
             
         Curve_analysis_2 operator()(const Poly_int_2& f, 
-                                    Angle_type angle=Angle_type()) 
+                                    Angle angle=Angle()) 
             const {
             return Rotated_kernel_2::curve_cache_2()(Rotate()(f, angle));
         }
