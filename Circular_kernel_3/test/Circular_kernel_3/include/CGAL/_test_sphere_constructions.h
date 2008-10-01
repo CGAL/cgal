@@ -385,20 +385,20 @@ void _test_line_arc_construct(SK sk) {
     Line_3 line = theConstruct_line_3(p);
     Circular_arc_point_3 cpa = theConstruct_circular_arc_point_3(pa);
     Circular_arc_point_3 cpb = theConstruct_circular_arc_point_3(pb);
-    Line_arc_3 line_arc[6];
+		Line_arc_3 line_arc[7];
     line_arc[0] = theConstruct_line_arc_3(line, pa, pb);
     line_arc[1] = theConstruct_line_arc_3(line, pb, pa);
     line_arc[2] = theConstruct_line_arc_3(line, cpb, cpa);
     line_arc[3] = theConstruct_line_arc_3(line, cpa, cpb);
     line_arc[4] = theConstruct_line_arc_3(line, cpb, pa);
     line_arc[5] = theConstruct_line_arc_3(line, pa, cpb);
-    for(int t1=0;t1<6;t1++) {
-      for(int t2=0;t2<6;t2++) {
+    line_arc[6] = theConstruct_line_arc_3(pa, pb);
+    for(int t1=0;t1<7;t1++) {
+      for(int t2=0;t2<7;t2++) {
         assert(theEqual_3(line_arc[t1],line_arc[t2]));
       }
     }
   }
-
 }
 
 template <class SK>

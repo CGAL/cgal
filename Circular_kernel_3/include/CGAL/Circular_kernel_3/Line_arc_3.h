@@ -80,41 +80,12 @@ namespace CGAL {
                    s.target());
       }
 
-      Line_arc_3(const Line_3 &l, 
-                 const Point_3 &s,
+      Line_arc_3(const Point_3 &s,
                  const Point_3 &t) 
       : begin_less_xyz_than_end_flag(0)
       {
-        // l must pass through s and t, and s != t
-        CGAL_kernel_precondition(SK().has_on_3_object()(l,s));
-        CGAL_kernel_precondition(SK().has_on_3_object()(l,t));
-        CGAL_kernel_precondition(Circular_arc_point_3(s) != 
-                                 Circular_arc_point_3(t));
-        base = Rep(l,s,t);
-      }
-
-      Line_arc_3(const Line_3 &l, 
-                 const Point_3 &s,
-                 const Circular_arc_point_3 &t) 
-      : begin_less_xyz_than_end_flag(0)
-      {
-        // l must pass through s and t, and s != t
-        CGAL_kernel_precondition(SK().has_on_3_object()(l,s));
-        CGAL_kernel_precondition(SK().has_on_3_object()(l,t));
-        CGAL_kernel_precondition(Circular_arc_point_3(s) != t);
-        base = Rep(l,s,t);
-      }
-
-      Line_arc_3(const Line_3 &l, 
-                 const Circular_arc_point_3 &s,
-                 const Point_3 &t) 
-      : begin_less_xyz_than_end_flag(0)
-      {
-        // l must pass through s and t, and s != t
-        CGAL_kernel_precondition(SK().has_on_3_object()(l,s));
-        CGAL_kernel_precondition(SK().has_on_3_object()(l,t));
-        CGAL_kernel_precondition(s != Circular_arc_point_3(t));
-        base = Rep(l,s,t);
+        CGAL_kernel_precondition(s != t);
+        base = Rep(SK().construct_line_3_object()(s,t),s,t);
       }
 
       Line_arc_3(const Line_3 &l, 

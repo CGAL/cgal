@@ -65,22 +65,9 @@ namespace CGAL {
       : RLine_arc_3(typename R::Construct_line_arc_3()(l,s,t))
       {}
 
-    Line_arc_3(const Line_3& l, 
-               const Point_3& s, 
-               const Circular_arc_point_3& t)
-      : RLine_arc_3(typename R::Construct_line_arc_3()(l,s,t))
-      {}
-
-    Line_arc_3(const Line_3& l, 
-               const Circular_arc_point_3& s, 
+    Line_arc_3(const Point_3& s, 
                const Point_3& t)
-      : RLine_arc_3(typename R::Construct_line_arc_3()(l,s,t))
-      {}
-
-    Line_arc_3(const Line_3& l, 
-               const Point_3& s, 
-               const Point_3& t)
-      : RLine_arc_3(typename R::Construct_line_arc_3()(l,s,t))
+      : RLine_arc_3(typename R::Construct_line_arc_3()(s,t))
       {}
 
     Line_arc_3(const Segment_3 &s) 

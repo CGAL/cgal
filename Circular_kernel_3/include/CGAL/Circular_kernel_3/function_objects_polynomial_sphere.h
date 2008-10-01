@@ -440,22 +440,9 @@ template < class SK > \
     { return Rep(l,s,t); }
 
     result_type
-    operator()(const Line_3 &l,
-	       const Point_3 &s,
-	       const Circular_arc_point_3 &t) const
-    { return Rep(l,s,t); }
-
-    result_type
-    operator()(const Line_3 &l,
-	       const Circular_arc_point_3 &s,
-	       const Point_3 &t) const
-    { return Rep(l,s,t); }
-
-    result_type
-    operator()(const Line_3 &l,
-	       const Point_3 &s,
-	       const Point_3 &t) const
-    { return Rep(l,s,t); }
+    operator()(const Point_3 &s,
+	             const Point_3 &t) const
+    { return Rep(s,t); }
 
     result_type
     operator()(const Segment_3 &s) const
