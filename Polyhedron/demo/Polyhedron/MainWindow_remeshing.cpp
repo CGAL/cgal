@@ -3,8 +3,8 @@
 
 #include <QApplication>
 
-#include <CGAL/Collisions/AABB_polyhedral_oracle.h>
-#include <CGAL/Collisions/AABB_tree.h>
+#include <CGAL/AABB_tree/AABB_polyhedral_oracle.h>
+#include <CGAL/AABB_tree/AABB_tree.h>
 
 #include "MainWindow.h"
 #include "Scene.h"
