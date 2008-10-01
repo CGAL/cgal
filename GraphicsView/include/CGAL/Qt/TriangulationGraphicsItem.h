@@ -162,6 +162,7 @@ void
 TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
   painterostream = PainterOstream<Geom_traits>(painter);
+ 
   if(visibleEdges()) {
     for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
         eit != t->finite_edges_end();

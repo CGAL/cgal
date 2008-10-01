@@ -89,8 +89,10 @@ GraphicsViewIsoRectangleInput<K>::~GraphicsViewIsoRectangleInput()
 template <typename K>
 void 
 GraphicsViewIsoRectangleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{ 
-  // todo: only do this if no modifiers are pressed at the same time
+{  
+  if(event->modifiers()  & ::Qt::ShiftModifier){
+    return;
+  }
   if(event->button() == ::Qt::LeftButton) {
     if(rectItem->isVisible()) {
       // we have clicked twice

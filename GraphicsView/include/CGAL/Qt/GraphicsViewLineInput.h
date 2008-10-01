@@ -33,6 +33,7 @@
 
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
+#include <CGAL/Qt/utility.h>
 
 namespace CGAL {
 namespace Qt {
@@ -72,17 +73,7 @@ template <typename K>
 QRectF
 LineInput_2<K>::boundingRect()
 {
-  QRectF rect;
-  QList<QGraphicsView *>  views = scene_->views();
-  for (int i = 0; i < views.size(); ++i) {
-    QGraphicsView *view = views.at(i);
-    QRect vprect = view->viewport()->rect();
-    QPoint tl = vprect.topLeft();
-    QPoint br = vprect.bottomRight();
-    QPointF tlf = view->mapToScene(tl);
-    QPointF brf = view->mapToScene(br);
-    rect = QRectF(tlf, brf);
-  }
+  QRectF rect = CGAL::Qt::viewportsBbox(scene_);
   return rect;
 }
 
@@ -113,7 +104,10 @@ GraphicsViewLineInput<K>::qlinef()
 template <typename K>
 void 
 GraphicsViewLineInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{ 
+{  
+  if(event->modifiers()  & ::Qt::ShiftModifier){
+    return;
+  }
   if(second){
       qtp = event->scenePos();
       sp = convert(qsp);

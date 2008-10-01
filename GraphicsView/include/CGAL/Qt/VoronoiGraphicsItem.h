@@ -25,6 +25,7 @@
 
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/PainterOstream.h>
+#include <CGAL/Qt/utility.h>
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -83,17 +84,7 @@ template <typename DT>
 QRectF 
 VoronoiGraphicsItem<DT>::boundingRect() const
 {
-  QRectF rect;
-  QList<QGraphicsView *>  views = scene()->views();
-  for (int i = 0; i < views.size(); ++i) {
-    QGraphicsView *view = views.at(i);
-    QRect vprect = view->viewport()->rect();
-    QPoint tl = vprect.topLeft();
-    QPoint br = vprect.bottomRight();
-    QPointF tlf = view->mapToScene(tl);
-    QPointF brf = view->mapToScene(br);
-    rect |= QRectF(tlf, brf);
-  }
+  QRectF rect = CGAL::Qt::viewportsBbox(scene());
   return rect;
 }
 

@@ -69,7 +69,7 @@ private:
   QGraphicsLineItem *qline;
   CircularArcGraphicsItem<K> *qcarc;
   QPointF qp, qq, qr;
-  Point_2 p, q, r;
+  Point_2 p, q, r, ap, aq, ar;
   QGraphicsScene *scene_;  
   Converter<K> convert;
 };
@@ -97,7 +97,10 @@ GraphicsViewCircularArcInput<K>::~GraphicsViewCircularArcInput()
 template <typename K>
 void 
 GraphicsViewCircularArcInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{ 
+{  
+  if(event->modifiers()  & ::Qt::ShiftModifier){
+    return;
+  }
   if(count == 0){
     qp = event->scenePos();
     p = convert(qp);
@@ -121,6 +124,8 @@ GraphicsViewCircularArcInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event
     typename K::Collinear_2 collinear;
     if(! collinear(p,q,r)){
       qcarc->hide();
+      std::cout.precision(20);
+      std::cout << "arc " << ap << "   " << ar << "   " << aq << std::endl;
       emit generate(make_object(qcarc->arc()));
       count = 0;
     }
@@ -152,8 +157,10 @@ GraphicsViewCircularArcInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
       return;
     } else {
       if(CGAL::orientation(p, q, r) == CGAL::RIGHT_TURN) {
+	ap = p; ar = r; aq = q;
 	qcarc->setArc(Circular_arc_2(p,r,q));
       } else {
+	ap = q; ar = r; aq = p;
 	qcarc->setArc(Circular_arc_2(q,r,p));
       }
       qcarc->show();

@@ -100,7 +100,8 @@ public:
 
   PainterOstream& operator<<(const Circular_arc_point_2<K>& p)
   {
-    (*this) << Point_2<K>(to_double(p.x()), to_double(p.y()));
+    typedef typename K::Point_2   Point_2;
+    (*this) << Point_2(to_double(p.x()), to_double(p.y()));
     return *this;
   }
 
