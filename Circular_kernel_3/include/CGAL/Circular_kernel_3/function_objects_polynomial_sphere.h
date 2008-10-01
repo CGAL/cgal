@@ -1121,21 +1121,6 @@ template < class SK > \
   };
 
   template <class SK>
-  class Compute_approximate_area_3
-  {
-    typedef typename SK::Circle_3                  Circle_3;
-    typedef typename SK::FT                        FT;
-
-  public:
-
-    typedef double result_type;
-
-    result_type operator() (const Circle_3 & c) const
-    { return c.rep().approximate_area(); }
-
-  };
-
-  template <class SK>
   class Compute_approximate_squared_length_3
   {
     typedef typename SK::Circle_3                  Circle_3;
@@ -1145,9 +1130,6 @@ template < class SK > \
   public:
 
     typedef double result_type;
-
-    result_type operator() (const Circle_3 & c) const
-    { return c.rep().approximate_squared_length(); }
 
     result_type operator() (const Circular_arc_3 & c) const
     { return c.rep().approximate_squared_length(); }
