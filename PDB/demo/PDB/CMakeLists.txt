@@ -9,8 +9,11 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 find_package(CGAL REQUIRED PDB )
 include( ${CGAL_USE_FILE} )
 
+find_package ( Boost REQUIRED program_options )
 
-if (CGAL_FOUND)
+if (CGAL_PDB_FOUND  AND  Boost_PROGRAM_OPTIONS_FOUND )
+
+link_libraries(${Boost_PROGRAM_OPTIONS_LIBRARY})
 
 include(CreateSingleSourceCGALProgram)
 
@@ -23,6 +26,6 @@ create_single_source_cgal_program( pdb_tree.cpp )
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL and PDB, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires PDB and program options, and will not be compiled.")
 
 endif()
