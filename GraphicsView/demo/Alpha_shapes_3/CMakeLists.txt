@@ -7,7 +7,8 @@ cmake_minimum_required(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL REQUIRED  Qt4)
+find_package(CGAL QUIET  COMPONENTS Qt4)
+include(${CGAL_USE_FILE})
 
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
@@ -15,22 +16,16 @@ set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 find_package(Qt4 QUIET)
 
-if ( CGAL_FOUND AND QT_FOUND)
+find_package(OpenGL    QUIET)
+find_package(QGLViewer QUIET)
 
-  include(${CGAL_USE_FILE})
+if ( CGAL_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
+
   include(${QT_USE_FILE})
   include(CreateSingleSourceCGALQt4Program)
 
-  set( QT_USE_QTOPENGL TRUE )
-  set( QT_USE_QTXML    TRUE )
-  set( QT_USE_QTMAIN   TRUE )
-  set( QT_USE_QTSCRIPT  TRUE )
-
-  find_package(OpenGL    REQUIRED)
-  find_package(QGLViewer REQUIRED)
-
   include_directories (${QGLVIEWER_INCLUDE_DIR})
- include_directories (BEFORE ../../include)
+  include_directories (BEFORE ../../include)
 
   qt4_wrap_ui( uis MainWindow.ui )
 
@@ -40,4 +35,8 @@ if ( CGAL_FOUND AND QT_FOUND)
   target_link_libraries( Alpha_shape_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
   target_link_libraries( Alpha_shape_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} )
   target_link_libraries( Alpha_shape_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+
+else()
+
+  message(STATUS "NOTICE: This demo requires CGAL, the QGLViewer, OpenGL and Qt4, and will not be compiled.")
 endif()
