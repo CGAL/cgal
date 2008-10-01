@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL REQUIRED  Qt4)
+find_package(CGAL QUIET COMPONENTS Qt4)
 
 include(${CGAL_USE_FILE})
 
@@ -17,12 +17,14 @@ set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
 
-find_package(Qt4       REQUIRED)
-include(${QT_USE_FILE})
+find_package(Qt4       QUIET)
+
 include_directories (BEFORE ../../include)
-link_directories(../../src/CGALQt4)
 
 
+if ( CGAL_FOUND AND QT4_FOUND )
+
+include(${QT_USE_FILE})
 #--------------------------------
 # Demo: Polygon_2
 #--------------------------------
@@ -42,3 +44,9 @@ add_executable  ( Polygon_2 Polygon_2.cpp ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 target_link_libraries( Polygon_2 ${QT_LIBRARIES} )
 # And with CGAL libraries
 target_link_libraries( Polygon_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+
+else()
+
+  message(STATUS "NOTICE: This demo requires CGAL and Qt4, and will not be compiled.")
+
+endif()
