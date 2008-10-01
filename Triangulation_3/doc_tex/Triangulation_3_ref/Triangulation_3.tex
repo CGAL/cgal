@@ -443,7 +443,7 @@ which can happen in case of degenerate dimensions, \ccc{lt} is set to
 \ccc{OUTSIDE_AFFINE_HULL}, and the cell returned has no meaning.
 As a particular case, if there is no finite vertex yet in the
 triangulation, \ccc{lt} is set to \ccc{OUTSIDE_AFFINE_HULL} and
-\ccc{locate} returns the default constructed handle. \\
+\textit{locate} returns the default constructed handle. \\
 The optional argument \ccc{start} is used as a starting place for the search.
 }
 
@@ -459,7 +459,7 @@ its finite facet and not containing any other point of the triangulation. \\
 - \ccc{ON_BOUNDARY} if p on the boundary of the cell. For an infinite
 cell this means that \ccc{p} lies on the \textit{finite} facet. Then
 \ccc{lt} together with \ccc{li} and \ccc{lj} give the precise location
-on the boundary. (See the descriptions of the \ccc{locate} methods.)\\ 
+on the boundary. (See the descriptions of the \textit{locate} methods.)\\ 
 - \ccc{ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the cell. For an
 infinite cell this means that \ccc{p} does not satisfy either of the
 two previous conditions.  
@@ -613,7 +613,7 @@ The optional argument \ccc{start} is used as a starting place for the search.}
 {Inserts point \ccc{p} in the triangulation and returns the corresponding
  vertex. Similar to the above \ccc{insert()} function, but takes as additional
  parameter the return values of a previous location query.  See description of
- \ccc{locate()} above.}
+ \textit{locate()} above.}
 
 \ccMethod{template < class InputIterator >
           int
