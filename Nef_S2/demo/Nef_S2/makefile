@@ -35,21 +35,13 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                visualization$(EXE_EXT)
+                nef_S2$(EXE_EXT)
 
-visualization$(EXE_EXT): visualization$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)visualization visualization$(OBJ_EXT) $(LDFLAGS)
+nef_S2$(EXE_EXT): nef_S2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nef_S2 nef_S2$(OBJ_EXT) $(LDFLAGS)
 
-visualization.clean:
-	rm -f visualization visualization.o
+nef_S2.clean:
+	rm -f nef_S2 visualization$(OBJ_EXT)
 
 clean: \
                    visualization.clean
-
-#---------------------------------------------------------------------#
-#                    suffix rules
-#---------------------------------------------------------------------#
-
-.cpp$(OBJ_EXT):
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-
