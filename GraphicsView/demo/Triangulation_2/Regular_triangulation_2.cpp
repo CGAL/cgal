@@ -91,7 +91,7 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
 
-  dgi->setVerticesPen(QPen(Qt::red, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->setVerticesPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dgi);
 
   // Add a GraphicItem for the Powerdiagram diagram
@@ -289,6 +289,10 @@ MainWindow::on_actionRecenter_triggered()
 int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
+
+  app.setOrganizationDomain("geometryfactory.com");
+  app.setOrganizationName("GeometryFactory");
+  app.setApplicationName("Regular_triangulation_2 demo");
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE

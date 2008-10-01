@@ -82,6 +82,7 @@ public slots:
 
   void on_actionRecenter_triggered();
 
+  void open(const QString& fileName);
 
 signals:
   void changed();
@@ -140,7 +141,8 @@ MainWindow::MainWindow()
   // 
   // Manual handling of actions
   //
-  QObject::connect(this->actionExit, SIGNAL(triggered()), 
+
+  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
 		   this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
@@ -173,6 +175,10 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Delaunay_triangulation_2.html");
   this->addAboutCGAL();
+
+  this->addRecentFiles(this->menuFile, this->actionQuit);
+  connect(this, SIGNAL(openRecentFile(QString)),
+	  this, SLOT(open(QString)));
 }
 
 
@@ -310,20 +316,32 @@ MainWindow::on_actionLoadPoints_triggered()
 						  tr("Open Points file"),
 						  ".");
   if(! fileName.isEmpty()){
-    std::ifstream ifs(qPrintable(fileName));
-
-    K::Point_2 p;
-    std::vector<K::Point_2> points;
-    while(ifs >> p) {
-      points.push_back(p);
-    }
-    dt.insert(points.begin(), points.end());
-
-    actionRecenter->trigger();
-    emit(changed());
+    open(fileName);
   }
 }
 
+
+void
+MainWindow::open(const QString& fileName)
+{
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  std::ifstream ifs(qPrintable(fileName));
+  
+  K::Point_2 p;
+  std::vector<K::Point_2> points;
+  while(ifs >> p) {
+    points.push_back(p);
+  }
+  dt.insert(points.begin(), points.end());
+
+  // default cursor
+  QApplication::restoreOverrideCursor();
+  this->addToRecentFiles(fileName);
+  actionRecenter->trigger();
+  emit(changed());
+    
+}
 
 void
 MainWindow::on_actionSavePoints_triggered()
@@ -357,6 +375,10 @@ MainWindow::on_actionRecenter_triggered()
 int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
+
+  app.setOrganizationDomain("geometryfactory.com");
+  app.setOrganizationName("GeometryFactory");
+  app.setApplicationName("Delaunay_triangulation_2 demo");
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE

@@ -296,7 +296,7 @@ MainWindow::MainWindow()
   // 
   // Manual handling of actions
   //
-  QObject::connect(this->actionExit, SIGNAL(triggered()), 
+  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
 		   this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
@@ -329,7 +329,7 @@ MainWindow::MainWindow()
   this->addAboutDemo(":/cgal/help/about_Constrained_Delaunay_triangulation_2.html");
   this->addAboutCGAL();
 
-  this->addRecentFiles(this->menuFile, this->actionExit);
+  this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
 	  this, SLOT(open(QString)));
 }
