@@ -77,8 +77,10 @@ private:
 
 template <typename K>
 GraphicsViewCircularArcInput<K>::GraphicsViewCircularArcInput(QObject *parent, QGraphicsScene* s)
-  : GraphicsViewInput(parent), qline(new QGraphicsLineItem()), qcarc(new CircularArcGraphicsItem<K>()), scene_(s), count(0)
+  : GraphicsViewInput(parent), scene_(s), count(0)
 {
+  qline = new QGraphicsLineItem();
+  qcarc = new CircularArcGraphicsItem<K>();
   qline->hide();
   qcarc->hide();
   s->addItem(qline);
@@ -89,8 +91,7 @@ GraphicsViewCircularArcInput<K>::GraphicsViewCircularArcInput(QObject *parent, Q
 template <typename K>
 GraphicsViewCircularArcInput<K>::~GraphicsViewCircularArcInput()
 {
-  delete qline;
-  delete qcarc;
+  // do not delete qline and qcarc, because 's' owns them and will delete them.
 }
 
 
