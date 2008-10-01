@@ -29,6 +29,10 @@
 #include <CGAL/intersection_2.h>
 
 namespace CGAL {
+
+template <typename K>
+class Circular_arc_point_2;
+
 namespace Qt {
 
 
@@ -62,6 +66,11 @@ public:
 
 
   QPointF operator()(const typename K::Point_2& p) const
+  {
+    return QPointF(to_double(p.x()), to_double(p.y()));
+  }
+
+  QPointF operator()(const typename CGAL::Circular_arc_point_2<K>& p) const
   {
     return QPointF(to_double(p.x()), to_double(p.y()));
   }
