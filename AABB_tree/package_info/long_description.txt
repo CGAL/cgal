@@ -1,15 +1,15 @@
-This package implements a collision model for polyhedra, using so
-called AABB trees.
+This package implements a collision detection tool, using so called AABB trees,
+along the lines of 
 
-@article{vandenbergen2005ecd,
-  title={{Efficient Collision Detection of Complex Deformable Models using AABB Trees}},
-  author={van den Bergen, G.},
-  journal={Graphics Tools: The Jgt Editors' Choice},
-  year={2005},
-  publisher={AK Peters, Ltd.}
+@article{terdiman2003ooc,
+  title={{Opcode: Optimized collision detection}},
+  author={Terdiman, P.},
+  year={2003}
 }
 
-This package will not be documented for CGAL-3.4. That is currently a tool
-used in the Polyhedron Demo to remesh polyhedra. For CGAL-3.5, we hope it
-will be documented as a general data structure to compute collision
-detections.
+This package will not be documented for CGAL-3.4. It is a stripped down version
+of a generic tool (generic in terms of inputs and queries), which is still under 
+development. It is already added to the trunk because it is used in the Polyhedron 
+Demo to remesh polyhedra. 
+
+For CGAL-3.5, we hope to integrate the fully generic version, with parallelism.
