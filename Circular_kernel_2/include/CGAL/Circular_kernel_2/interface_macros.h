@@ -46,8 +46,6 @@
   compare_y_at_x_2_object)  
   CGAL_Circular_Kernel_pred(Compare_y_to_right_2,
   compare_y_to_right_2_object)  
-  CGAL_Circular_Kernel_pred(Compare_y_to_left_2,
-  compare_y_to_left_2_object)  
   CGAL_Circular_Kernel_pred(Do_overlap_2,
   do_overlap_2_object)  
   CGAL_Circular_Kernel_pred(Equal_2,

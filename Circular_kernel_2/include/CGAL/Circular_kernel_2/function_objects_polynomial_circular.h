@@ -229,46 +229,6 @@ namespace CircularFunctors {
   };
  
   template < class CK >
-  class Compare_y_to_left_2
-  {
-    typedef typename CK::Circular_arc_2           Circular_arc_2;
-    typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
-    typedef typename CK::Line_arc_2               Line_arc_2;
-
-  public:
-    typedef CGAL::Comparison_result result_type;
-    
-    result_type
-    operator()(const Circular_arc_2 &a1,
-               const Circular_arc_2 &a2,
-               const Circular_arc_point_2 &p) const
-    { return compare_y_to_left<CK>(a1, a2, p); }
-
-    result_type
-    operator()(const Line_arc_2 &a1,
-               const Line_arc_2 &a2,
-               const Circular_arc_point_2 &p) const
-    { return compare_y_to_left<CK>(a1, a2, p); }
-
-    result_type
-    operator()(const Line_arc_2 &a1,
-               const Circular_arc_2 &a2,
-               const Circular_arc_point_2 &p) const
-    { return compare_y_to_left<CK>(a1, a2, p); }
-
-    result_type
-    operator()(const Circular_arc_2 &a1,
-               const Line_arc_2 &a2,
-               const Circular_arc_point_2 &p) const
-    { if (compare_y_to_left<CK>(a2, a1, p) == CGAL::LARGER)
-	return CGAL::SMALLER;
-      return CGAL::LARGER;
-    }
-  
-  };
-
-
-  template < class CK >
   class Equal_2
  #ifndef CGAL_CFG_MATCHING_BUG_6
   : public CK::Linear_kernel::Equal_2
