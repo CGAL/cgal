@@ -89,7 +89,7 @@ described below.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{With the 2D Circular Kernel} (see Chapter~\ref{chapter-circular-kernel}) 
 
-\ccInclude{CGAL/global_functions_on_circular_arcs_2.h}
+\ccInclude{CGAL/global_functions_circular_kernel.h}
 
 If this kernel is used, in addition to the function and the
 combination of 2D types described above, another version of the function
@@ -99,6 +99,11 @@ is provided.
   compare_y_at_x(const Circular_arc_point_2<CircularKernel> &p, 
                  const Circular_arc_2<CircularKernel> &a);}
 {Same as above, for a point and a circular arc.}
+
+\ccFunction{Comparison_result 
+  compare_y_at_x(const Circular_arc_point_2<CircularKernel> &p, 
+                 const Line_arc_2<CircularKernel> &a);}
+{Same as above, for a point and a line segment.}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::compare_xy} \\
