@@ -6,7 +6,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL REQUIRED Qt3 )
+find_package(CGAL QUIET COMPONENTS Qt3 )
 include( ${CGAL_USE_FILE} )
 
 include_directories( ./include )
