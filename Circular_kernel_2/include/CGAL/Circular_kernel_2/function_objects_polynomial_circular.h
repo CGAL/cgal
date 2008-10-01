@@ -454,7 +454,7 @@ namespace CircularFunctors {
 
         CircularFunctors::advanced_make_xy_monotone<CK> (A, std::back_inserter(vec));
 
-        for(int i=0;i<vec.size();++i)
+        for(unsigned i=0;i<vec.size();++i)
           *res++=vec.at(i).first;
 
         return res;

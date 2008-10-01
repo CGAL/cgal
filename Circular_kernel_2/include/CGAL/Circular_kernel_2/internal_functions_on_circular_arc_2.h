@@ -1336,10 +1336,10 @@ template < class CK, class OutputIterator >
     int cmp_x=compare_x(A.source(),A.target());
     
     // We don't need to split
-    if (cmp_begin_y != opposite(cmp_end_y) &&
-        (((cmp_begin_y > 0 || cmp_end_y > 0) && cmp_x > 0) ||
-	 (cmp_begin_y < 0 || cmp_end_y < 0) && cmp_x < 0) ) {
-      
+    if ((cmp_begin_y != opposite(cmp_end_y)) && 
+        ((((cmp_begin_y > 0) || (cmp_end_y > 0)) && (cmp_x > 0)) || 
+         (((cmp_begin_y < 0) || (cmp_end_y < 0)) && 
+         (cmp_x < 0)))) {
       *res++ = S_pair(make_object(A),(cmp_begin_y>0 || cmp_end_y>0) );
       return res; 
     }

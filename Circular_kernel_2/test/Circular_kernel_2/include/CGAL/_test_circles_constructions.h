@@ -39,6 +39,7 @@ void _test_circle_construct(CK ck)
   typedef typename CK::Construct_circle_2          Construct_circle_2;
   typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
+  typedef typename CK::Make_xy_monotone_2           Make_xy_monotone_2;
   typedef typename CK::Split_2                     Split_2;  
   typedef typename CK::Get_equation                Get_equation;
   typedef typename CK::Compare_xy_2                Compare_xy_2;
@@ -702,7 +703,63 @@ void _test_circle_construct(CK ck)
 	      << circular_arc_2_full.target() << std::endl;
     assert(circular_arc_2_full.is_x_monotone());
   }
-  
+
+  //Make_xy_monotone_2 with a full circle
+  Make_xy_monotone_2 theMake_xy_monotone = ck.make_xy_monotone_2_object();
+  outputIterator1.clear();
+  theMake_xy_monotone(theCircular_arc_2_full,
+		     std::back_inserter(outputIterator1));
+	assert(outputIterator1.size() == 4);
+  for(std::size_t i = 0; i < outputIterator1.size(); i++){
+    assign(circular_arc_2_full,  outputIterator1[i]);
+    assert(circular_arc_2_full.is_x_monotone());
+    assert(circular_arc_2_full.is_y_monotone());
+  } 
+
+  //Make_xy_monotone_2 general test
+	Point_2 ps[8];
+	ps[0] = Point_2(-5, 0);
+  ps[1] = Point_2(-3, -4);
+  ps[2] = Point_2(0, -5);
+  ps[3] = Point_2(3, -4);
+  ps[4] = Point_2(5, 0);
+  ps[5] = Point_2(3, 4);
+  ps[6] = Point_2(0, 5);
+  ps[7] = Point_2(-3, 4);
+	Circle_2 tc = Circle_2(Point_2(0,0),25);
+	
+	unsigned isize[2][8];
+	isize[0][1] = 1;
+	isize[0][2] = 1;
+	isize[0][3] = 2;
+	isize[0][4] = 2;
+	isize[0][5] = 3;
+	isize[0][6] = 3;
+	isize[0][7] = 4;
+	isize[1][2] = 1;
+	isize[1][3] = 2;
+	isize[1][4] = 2;
+	isize[1][5] = 3;
+	isize[1][6] = 3;
+	isize[1][7] = 4;
+	isize[1][0] = 4; 
+	
+	for(int i=0; i<2; i++) {
+		for(int j=i+1; j!=i; j = (j+1)%8) {
+	    Circular_arc_2 ca;
+	    ca = Circular_arc_2(tc, ps[i], ps[j]); 
+      outputIterator1.clear();
+      theMake_xy_monotone(ca, std::back_inserter(outputIterator1));
+			std::cout << "T: " << i << " " << j << std::endl;
+	    assert(outputIterator1.size() == isize[i][j]);
+      for(std::size_t k = 0; k < outputIterator1.size(); k++) {
+        assign(circular_arc_2_full,  outputIterator1[k]);
+        assert(circular_arc_2_full.is_x_monotone());
+        assert(circular_arc_2_full.is_y_monotone());
+      }
+    }
+  }
+
   //Make_x_monotone_2 with a three quarter of last circle
   Point_2 pointLine_2_1(x,y+r);
   Line_2  theLine_2_1(center_circ_monotone, pointLine_2_1);
@@ -719,13 +776,13 @@ void _test_circle_construct(CK ck)
 	    << circ_monotone << std::endl;
   std::cout << vector_of_object_1.size() << std::endl;
   Circular_arc_2 circular_arc_2_quarter;
- 
   for(std::size_t i = 0; i < vector_of_object_1.size(); i++){
     assign(circular_arc_2_quarter,  vector_of_object_1[i]);
     std::cout << "Circular_arc_2_" << i << " : " 
 	      << circular_arc_2_quarter << std::endl;
     assert(circular_arc_2_quarter.is_x_monotone());
   }
+
   //Make_x_monotone_2 with half circle
   Circular_arc_2 theCircular_arc_2_half(circ_monotone,
 					theLine_2_2, false,
