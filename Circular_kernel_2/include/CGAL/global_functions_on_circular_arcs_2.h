@@ -61,6 +61,7 @@ y_extremal_points(const Circle_2<CK> & c, OutputIterator res)
  	return CircularFunctors::y_extremal_points<CK>(c,res);
 }
 
+// Not Documented
 template< class CK >
 inline
 CGAL::Comparison_result 

@@ -71,6 +71,7 @@ CGAL_BEGIN_NAMESPACE
 //  return CK().compare_xy_2_object()(p, q);
 //}
 
+// Not Documented
 template< class CK >
 inline
 CGAL::Comparison_result 
@@ -96,6 +97,7 @@ compare_y_at_x(const Circular_arc_point_2<CK> &p, const Line_arc_2<CK> &a)
   return CK().compare_y_at_x_2_object()(p, a);
 }
 
+// Not Documented
 template < class CK, class OutputIterator >
 OutputIterator
 make_x_monotone(const Line_arc_2<CK> &A, OutputIterator it)
