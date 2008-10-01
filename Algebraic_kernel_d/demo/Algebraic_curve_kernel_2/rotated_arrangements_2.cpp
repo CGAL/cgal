@@ -12,7 +12,7 @@
 // ============================================================================
 
 #ifndef CGAL_ACK_DEBUG_FLAG
-#define CGAL_ACK_DEBUG_FLAG 1
+#define CGAL_ACK_DEBUG_FLAG 0
 #endif
 
 #ifndef CGAL_ACK_DEBUG_PRINT
@@ -40,7 +40,7 @@
 #endif
 
 #ifndef CGAL_ACK_USE_APPROXIMATE_ROTATION
-#define CGAL_ACK_USE_APPROXIMATE_ROTATION 0
+#define CGAL_ACK_USE_APPROXIMATE_ROTATION 1
 #endif
 
 #if !CGAL_ACK_USE_APPROXIMATE_ROTATION
@@ -149,6 +149,8 @@ int main(int argc, char** argv) {
         std::exit(-1);
     }
 
+    int curr_arg=1;
+
     typedef CGAL_ACK_COEFFICIENT Integer;
 
     typedef CGAL::Polynomial_type_generator<Integer,2>::Type 
@@ -182,7 +184,7 @@ int main(int argc, char** argv) {
 
     int arrangement_type;
   
-    std::string str(argv[1]);
+    std::string str(argv[curr_arg++]);
 
     if(str=="LEDA" || str=="Leda" || str=="leda") {
         arrangement_type=1;
@@ -199,7 +201,7 @@ int main(int argc, char** argv) {
         print_help(argv[0]);
         std::exit(1);
     }
-    std::string file(argv[2]);
+    std::string file(argv[curr_arg++]);
 
     if(file=="RANDOM" || file=="random" || file=="Random") {
 #if CGAL_ACK_COEFFICIENT_IS_INTEGER
@@ -207,9 +209,9 @@ int main(int argc, char** argv) {
             print_help(argv[0]);
             std::exit(-1);
         }
-        int no_curves = atoi(argv[3]);
-        int max_degree = atoi(argv[4]);
-        int max_coeff = atoi(argv[5]);
+        int no_curves = atoi(argv[curr_arg++]);
+        int max_degree = atoi(argv[curr_arg++]);
+        int max_coeff = atoi(argv[curr_arg++]);
         for(int i=0;i<no_curves;i++) {
             Integer_polynomial_2 curr_curve = random_dense_bivariate_polynomial<Integer_polynomial_2>(max_degree,max_coeff);
             curves.push_back(curr_curve);
@@ -271,6 +273,15 @@ int main(int argc, char** argv) {
         std::cout << *it << std::endl;
         std::cout << "Rotation: " << *angle_it << std::endl;
     }
+#if CGAL_ACK_USE_APPROXIMATE_ROTATION
+    long prec;
+    if(curr_arg<argc) {
+        prec = atoi(argv[curr_arg++]);
+    } else {
+        prec = CGAL_ACK_ANGLE_PRECISION;
+    }
+    std::cout << "Precision: " << prec << std::endl;
+#endif
     CGAL::Timer overall_timer;
     overall_timer.start();
     
@@ -300,11 +311,14 @@ int main(int argc, char** argv) {
         Curved_kernel_2::Curve_kernel_2::Construct_curve_2 construct_curve =
             Curved_kernel_2::instance().kernel().construct_curve_2_object();
         
-        Curved_kernel_2::Curve_kernel_2::Curve_analysis_2 curr_curve = 
+         
 #if CGAL_ACK_USE_APPROXIMATE_ROTATION
-            construct_curve(*it,*angle_it,CGAL_ACK_ANGLE_PRECISION);
+            
+            Curved_kernel_2::Curve_kernel_2::Curve_analysis_2 curr_curve =
+                construct_curve(*it,*angle_it,prec);
 #else
-            construct_curve(*it,*angle_it);
+            Curved_kernel_2::Curve_kernel_2::Curve_analysis_2 curr_curve =
+                construct_curve(*it,*angle_it);
 #endif
 #if CGAL_ACK_ONE_SEGMENT_PER_CURVE
 #warning Warning, only one segment per curve is chosen
