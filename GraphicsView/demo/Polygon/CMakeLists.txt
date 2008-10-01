@@ -20,6 +20,7 @@ set( QT_USE_QTOPENGL  TRUE )
 find_package(Qt4       QUIET)
 
 include_directories (BEFORE ../../include)
+include_directories (BEFORE ../../../Straight_skeleton_2/include)
 
 
 if ( CGAL_FOUND AND QT4_FOUND )

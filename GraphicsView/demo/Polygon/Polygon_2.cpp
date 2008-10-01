@@ -1,11 +1,12 @@
 #include <fstream>
-
+#include<boost/shared_ptr.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/partition_2.h>
 #include <CGAL/Partition_traits_2.h>
+#include<CGAL/Create_straight_skeleton_2.h>
 
 // Qt headers
 #include <QtGui>
@@ -13,6 +14,7 @@
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QGraphicsLineItem>
 
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
@@ -24,8 +26,14 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
+typedef K::Segment_2 Segment_2;
 
 typedef CGAL::Polygon_2<K,std::list<Point_2> > Polygon; // it must be a list for the partition
+
+typedef CGAL::Straight_skeleton_2<K> Ss ;
+
+typedef boost::shared_ptr<Ss> SsPtr ;
+
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -33,7 +41,8 @@ class MainWindow :
 {
   Q_OBJECT
   
-private:  
+private:
+  CGAL::Qt::Converter<K> convert;
   Polygon poly; 
   QGraphicsScene scene;  
 
@@ -43,6 +52,7 @@ private:
 
   std::list<Polygon> partitionPolygons;
   std::list<CGAL::Qt::PolygonGraphicsItem<Polygon>* >  partitionGraphicsItems;
+  std::list<QGraphicsLineItem* >  skeletonGraphicsItems;
 
 public:
   MainWindow();
@@ -53,12 +63,19 @@ public slots:
 
   void on_actionClear_triggered();
 
-  void on_actionRecenter_triggered();
+  void on_actionLoadPolygon_triggered();
+  void on_actionSavePolygon_triggered();
 
+  void on_actionRecenter_triggered();
+  void on_actionInnerSkeleton_triggered();
   void on_actionCreateInputPolygon_toggled(bool);
 
   void on_actionPartition_triggered();
 
+  void clearPartition();
+  void clearSkeleton();
+
+  void open(const QString&);
 signals:
   void changed();
 };
@@ -103,7 +120,7 @@ MainWindow::MainWindow()
 //   actionUse_Antialiasing->setChecked(true);
 
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
+  this->graphicsView->scale(1, -1);
                                                       
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
@@ -113,13 +130,16 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Polygon_2.html");
   this->addAboutCGAL();
+
+  this->addRecentFiles(this->menuFile, this->actionQuit);
+  connect(this, SIGNAL(openRecentFile(QString)),
+	  this, SLOT(open(QString)));
 }
 
 
 void
 MainWindow::processInput(CGAL::Object o)
 {
-  std::cout << "processInput" << std::endl;
   this->actionCreateInputPolygon->setChecked(false);
   std::list<Point_2> points;
   if(CGAL::assign(points, o)){
@@ -181,8 +201,47 @@ void
 MainWindow::on_actionClear_triggered()
 {
   poly.clear();
+  clearSkeleton();
+  clearPartition();
+  this->actionCreateInputPolygon->setChecked(true);
   emit(changed());
 }
+
+
+void
+MainWindow::on_actionLoadPolygon_triggered()
+{
+  QString fileName = QFileDialog::getOpenFileName(this,
+						  tr("Open Polygon File"),
+						  ".",
+						  tr( "Poly files (*.poly)"));
+  if(! fileName.isEmpty()){
+    open(fileName);
+  }
+}
+
+void
+MainWindow::open(const QString& fileName)
+{
+  this->actionCreateInputPolygon->setChecked(false);
+  std::ifstream ifs(qPrintable(fileName));
+  int number_of_polygons;
+  ifs >> number_of_polygons;
+  poly.clear();
+  ifs >> poly;
+  clearSkeleton();
+  clearPartition();
+
+  this->addToRecentFiles(fileName);
+  emit (changed());
+}
+
+
+void
+MainWindow::on_actionSavePolygon_triggered()
+{
+}
+
 
 void
 MainWindow::on_actionCreateInputPolygon_toggled(bool checked)
@@ -204,27 +263,79 @@ MainWindow::on_actionRecenter_triggered()
 }
 
 void
+MainWindow::on_actionInnerSkeleton_triggered()
+{
+  if(poly.size()>0){
+    clearSkeleton();
+    clearPartition();
+    if(! poly.is_counterclockwise_oriented()){
+      poly.reverse_orientation();
+    }
+    SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end());
+
+    CGAL::Straight_skeleton_2<K> const& ss = *iss;
+
+  typedef Ss::Vertex_const_handle     Vertex_const_handle ;
+  typedef Ss::Halfedge_const_handle   Halfedge_const_handle ;
+  typedef Ss::Halfedge_const_iterator Halfedge_const_iterator ;
+  
+  Halfedge_const_handle null_halfedge ;
+  Vertex_const_handle   null_vertex ;
+
+  for ( Halfedge_const_iterator i = ss.halfedges_begin(); i != ss.halfedges_end(); ++i )
+  {
+    if ( i->is_bisector() ){
+      Segment_2 s(i->opposite()->vertex()->point(), i->vertex()->point());
+      skeletonGraphicsItems.push_back(new QGraphicsLineItem(convert(s)));
+      scene.addItem(skeletonGraphicsItems.back());
+      skeletonGraphicsItems.back()->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    }
+  }
+      
+  }
+
+}
+void
 MainWindow::on_actionPartition_triggered()
 {
   if(poly.size()>0){
-    partitionPolygons.clear();
+    clearSkeleton();
+    clearPartition();
     if(! poly.is_counterclockwise_oriented()){
       poly.reverse_orientation();
     }
     CGAL::approx_convex_partition_2(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(partitionPolygons));
-    for(std::list<CGAL::Qt::PolygonGraphicsItem<Polygon>* >::iterator it = partitionGraphicsItems.begin();
-	it != partitionGraphicsItems.end();
-	++it){
-      scene.removeItem(*it);
-    }
-    partitionGraphicsItems.clear();
+    
     for(std::list<Polygon>::iterator it = partitionPolygons.begin();
 	it != partitionPolygons.end();
 	++it){
       partitionGraphicsItems.push_back(new CGAL::Qt::PolygonGraphicsItem<Polygon>(&(*it)));
       scene.addItem(partitionGraphicsItems.back());
+      partitionGraphicsItems.back()->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     }
   }
+}
+
+void
+MainWindow::clearPartition()
+{
+  partitionPolygons.clear();
+  for(std::list<CGAL::Qt::PolygonGraphicsItem<Polygon>* >::iterator it = partitionGraphicsItems.begin();
+      it != partitionGraphicsItems.end();
+      ++it){
+    scene.removeItem(*it);
+  }
+  partitionGraphicsItems.clear();
+}
+
+void
+MainWindow::clearSkeleton()
+{ for(std::list<QGraphicsLineItem* >::iterator it = skeletonGraphicsItems.begin();
+      it != skeletonGraphicsItems.end();
+      ++it){
+    scene.removeItem(*it);
+  }
+  skeletonGraphicsItems.clear();
 }
 
 #include "Polygon_2.moc"
@@ -232,6 +343,10 @@ MainWindow::on_actionPartition_triggered()
 int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
+
+  app.setOrganizationDomain("geometryfactory.com");
+  app.setOrganizationName("GeometryFactory");
+  app.setApplicationName("Polygon_2 demo");
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE

@@ -68,8 +68,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionClear" />
-   <addaction name="actionLoadPoints" />
-   <addaction name="actionSavePoints" />
+   <addaction name="actionLoadPolygon" />
+   <addaction name="actionSavePolygon" />
   </widget>
   <widget class="QToolBar" name="toolBar" >
    <property name="windowTitle" >
@@ -98,8 +98,8 @@
     </property>
     <addaction name="separator" />
     <addaction name="actionClear" />
-    <addaction name="actionLoadPoints" />
-    <addaction name="actionSavePoints" />
+    <addaction name="actionLoadPolygon" />
+    <addaction name="actionSavePolygon" />
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
@@ -116,6 +116,7 @@
     <addaction name="actionRecenter" />
     <addaction name="actionCreateInputPolygon" />
     <addaction name="actionPartition" />
+    <addaction name="actionInnerSkeleton" />
    </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
@@ -151,25 +152,25 @@
     <string>Ctrl+C</string>
    </property>
   </action>
-  <action name="actionLoadPoints" >
+  <action name="actionLoadPolygon" >
    <property name="icon" >
     <iconset resource="../icons/File.qrc" >
      <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Load Points...</string>
+    <string>&amp;Load Polygon</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+L</string>
    </property>
   </action>
-  <action name="actionSavePoints" >
+  <action name="actionSavePolygon" >
    <property name="icon" >
     <iconset resource="../icons/File.qrc" >
      <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Save Points...</string>
+    <string>&amp;Save Polygon</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+S</string>
@@ -198,6 +199,11 @@
    </property>
    <property name="text" >
     <string>Create Input Polygon</string>
+   </property>
+  </action>
+  <action name="actionInnerSkeleton" >
+   <property name="text" >
+    <string>Inner Skeleton</string>
    </property>
   </action>
  </widget>
