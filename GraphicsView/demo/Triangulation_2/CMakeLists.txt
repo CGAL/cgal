@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (GraphicsView)
+project (Triangulation_2)
 
 cmake_minimum_required(VERSION 2.4.5)
 
@@ -19,9 +19,10 @@ set( QT_USE_QTOPENGL  TRUE )
 
 find_package(Qt4       REQUIRED)
 include(${QT_USE_FILE})
-include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
-link_directories(../../src/CGALQt4)
+
+
+if ( CGAL_FOUND AND QT4_FOUND )
 
 #--------------------------------
 # The "constrained Delaunay" demo: Constrained_Delaunay_triangulation_2
@@ -82,3 +83,9 @@ add_executable  ( Regular_triangulation_2 Regular_triangulation_2.cpp Regular_tr
 target_link_libraries( Regular_triangulation_2 ${QT_LIBRARIES} )
 # Link with CGAL
 target_link_libraries( Regular_triangulation_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+
+else()
+
+  message(STATUS "NOTICE: This demo requires CGAL and Qt4, and will not be compiled.")
+
+endif()
