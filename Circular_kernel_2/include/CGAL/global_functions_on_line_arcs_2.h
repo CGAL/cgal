@@ -81,6 +81,17 @@ compare_y_to_right(const Line_arc_2<CK> &A1,
   return CK().compare_y_to_right_2_object()(A1, A2, p);
 }
 
+template< class CK >
+inline
+CGAL::Comparison_result 
+compare_y_to_left(const Line_arc_2<CK> &A1,
+		   const Line_arc_2<CK> &A2,
+		   const Circular_arc_point_2<CK> &p)
+{
+  return CK().compare_y_to_left_2_object()(A1, A2, p);
+}
+
+
 template < class CK >
 inline
 bool
