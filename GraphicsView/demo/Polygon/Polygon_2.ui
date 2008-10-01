@@ -115,7 +115,9 @@
     <addaction name="separator" />
     <addaction name="actionRecenter" />
     <addaction name="actionCreateInputPolygon" />
-    <addaction name="actionPartition" />
+    <addaction name="actionYMonotonePartition" />
+    <addaction name="actionApproximateConvexPartition" />
+    <addaction name="actionOptimalConvexPartition" />
     <addaction name="actionInnerSkeleton" />
    </widget>
    <addaction name="menuFile" />
@@ -188,9 +190,9 @@
     <string>Ctrl+R</string>
    </property>
   </action>
-  <action name="actionPartition" >
+  <action name="actionYMonotonePartition" >
    <property name="text" >
-    <string>Partition</string>
+    <string>Y-monotone Partition</string>
    </property>
   </action>
   <action name="actionCreateInputPolygon" >
@@ -204,6 +206,16 @@
   <action name="actionInnerSkeleton" >
    <property name="text" >
     <string>Inner Skeleton</string>
+   </property>
+  </action>
+  <action name="actionOptimalConvexPartition" >
+   <property name="text" >
+    <string>Optimal Convex Partition</string>
+   </property>
+  </action>
+  <action name="actionApproximateConvexPartition" >
+   <property name="text" >
+    <string>Approximate Convex Partition</string>
    </property>
   </action>
  </widget>

@@ -42,6 +42,10 @@ class MainWindow :
   Q_OBJECT
   
 private:
+
+  enum PartitionAlgorithm {YMonotone, ApproximateConvex, OptimalConvex} ;
+
+
   CGAL::Qt::Converter<K> convert;
   Polygon poly; 
   QGraphicsScene scene;  
@@ -70,7 +74,10 @@ public slots:
   void on_actionInnerSkeleton_triggered();
   void on_actionCreateInputPolygon_toggled(bool);
 
-  void on_actionPartition_triggered();
+  void on_actionYMonotonePartition_triggered();
+  void on_actionApproximateConvexPartition_triggered();
+  void on_actionOptimalConvexPartition_triggered();
+  void partition(PartitionAlgorithm);
 
   void clearPartition();
   void clearSkeleton();
@@ -295,8 +302,30 @@ MainWindow::on_actionInnerSkeleton_triggered()
   }
 
 }
+
 void
-MainWindow::on_actionPartition_triggered()
+MainWindow::on_actionYMonotonePartition_triggered()
+{
+  partition(YMonotone);
+}
+
+
+void
+MainWindow::on_actionOptimalConvexPartition_triggered()
+{
+  partition(OptimalConvex);
+}
+
+
+void
+MainWindow::on_actionApproximateConvexPartition_triggered()
+{
+  partition(ApproximateConvex);
+}
+
+
+void 
+MainWindow::partition(PartitionAlgorithm pa)
 {
   if(poly.size()>0){
     clearSkeleton();
@@ -304,8 +333,17 @@ MainWindow::on_actionPartition_triggered()
     if(! poly.is_counterclockwise_oriented()){
       poly.reverse_orientation();
     }
-    CGAL::approx_convex_partition_2(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(partitionPolygons));
-    
+    switch (pa) {
+    case YMonotone :
+      CGAL::y_monotone_partition_2(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(partitionPolygons));
+      break;
+    case ApproximateConvex:
+      CGAL::approx_convex_partition_2(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(partitionPolygons));
+      break;
+    default:
+      CGAL::optimal_convex_partition_2(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(partitionPolygons));
+      break;
+    }
     for(std::list<Polygon>::iterator it = partitionPolygons.begin();
 	it != partitionPolygons.end();
 	++it){
