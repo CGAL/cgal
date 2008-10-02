@@ -33,7 +33,7 @@
 #include <CGAL/Circular_kernel_3/Circular_arc_3.h>
 #include <CGAL/Circular_arc_3.h>
 
-#include <CGAL/global_functions_circular_kernel_3.h>
+#include <CGAL/global_functions_spherical_kernel_3.h>
 
 #include <CGAL/Circular_kernel_3/function_objects_polynomial_sphere.h>
 
