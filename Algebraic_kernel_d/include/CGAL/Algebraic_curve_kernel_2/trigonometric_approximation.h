@@ -26,17 +26,6 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi{
 
-long number_of_summands_for_pi(long precision) {
-
-    long m = 0;
-    
-    while((long)(precision-4*m-2) > long(std::ceil(log(double(2*m+1))/log(2)))) {
-        m++;
-    }
-    return m;
-    
-}
-
 // So far, this is independent of the actual value to approximate
 // Precondition: 0<x<Pi/4
 template<typename Arithmetic_traits>
@@ -88,9 +77,12 @@ typename Arithmetic_traits::Bigfloat_interval pi(long precision)  {
         
         long prec = 16;
         CGAL::set_precision(Bigfloat_interval(),prec);
-        long m 
-            = CGAL::CGALi::number_of_summands_for_pi(precision+error_offset);
-
+        long m = 0;
+        
+        while((long)(precision-4*m-2) > 
+              long(std::ceil(log(double(2*m+1))/log(2)))) {
+            m++;
+        }
         typedef typename CGAL::Bigfloat_interval_traits<Bigfloat_interval>
             ::Boundary Bigfloat_boundary;
         Bigfloat_boundary bb(Integer(1));
