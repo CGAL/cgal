@@ -678,10 +678,10 @@ public:
     typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
 
 protected:
-    typedef typename Curve_2::Arithmetic_traits AT;
-    typedef typename AT::Integer Integer;
-    typedef typename AT::Poly_int1 Polynomial_1;
-    typedef typename AT::Poly_int2 Polynomial_2;
+    typedef typename Curve_2::Arithmetic_kernel AK;
+    typedef typename AK::Integer Integer;
+    typedef CGAL::Polynomial< Integer > Polynomial_1;
+    typedef CGAL::Polynomial<Polynomial_1> Polynomial_2;
     typedef CGAL::Polynomial<Polynomial_2> Polynomial_3;
     typedef CGAL::Polynomial<Polynomial_3> Polynomial_4;
     typedef typename Curved_kernel_via_analysis_2::Dupin_cyclide_3 
@@ -1263,15 +1263,15 @@ public:
     
     // TODO remove depency to Exacus
     //! type of arithmetic traits
-    typedef typename NiX::Get_arithmetic_traits< 
+    typedef typename CGAL::Get_arithmetic_kernel< 
       typename Curve_kernel_2::Coefficient 
-    >::Arithmetic_traits
-    AT;
+    >::Arithmetic_kernel
+    AK;
     
     //! type of Surface
-    typedef QdX::Dupin_cyclide_3< AT > Dupin_cyclide_3;
+    typedef QdX::Dupin_cyclide_3< AK > Dupin_cyclide_3;
 
-    typedef QdX::Algebraic_surface_3< AT > Surface_3;
+    typedef QdX::Algebraic_surface_3< AK > Surface_3;
 
     //! typedef of Curve_2
     typedef Surface_3 Curve_2;
