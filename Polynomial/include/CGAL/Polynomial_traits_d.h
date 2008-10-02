@@ -48,12 +48,12 @@
                                                                         \
   typedef CGAL::Recursive_const_flattening< d-1,                        \
     typename CGAL::Polynomial<Coefficient_type>::const_iterator >            \
-  Coefficient_flattening;                                               \
+  Coefficient_const_flattening;                                               \
                                                                         \
   public:                                                               \
-  typedef typename Coefficient_flattening::Recursive_flattening_iterator \
-  Innermost_coefficient_iterator;                                       \
-  typedef typename  Polynomial_d::iterator Coefficient_iterator;        \
+  typedef typename Coefficient_const_flattening::Recursive_flattening_iterator \
+  Innermost_coefficient_const_iterator;                                       \
+  typedef typename  Polynomial_d::const_iterator Coefficient_const_iterator;        \
                                                                         \
   private:
 
@@ -99,10 +99,10 @@ public:
     : public std::unary_function< Polynomial_d , Innermost_coefficient_type >{
     Innermost_coefficient_type 
     operator()(const Polynomial_d& p) const {
-      typedef Innermost_coefficient_iterator IT;
+      typedef Innermost_coefficient_const_iterator IT;
       Innermost_coefficient_type content(0);
-      for (IT it = typename PT::Innermost_coefficient_begin()(p);
-           it != typename PT::Innermost_coefficient_end()(p);
+      for (IT it = typename PT::Innermost_coefficient_const_begin()(p);
+           it != typename PT::Innermost_coefficient_const_end()(p);
            it++){
         content = CGAL::gcd(content, *it);
         if(CGAL::is_one(content)) break;
@@ -998,30 +998,30 @@ public:
 
 
   // This is going to be in PolynomialToolBox 
-  struct Coefficient_begin                                                  
-    : public std::unary_function< Polynomial_d, Coefficient_iterator > {       
-    Coefficient_iterator                                                  
+  struct Coefficient_const_begin                                                  
+    : public std::unary_function< Polynomial_d, Coefficient_const_iterator > {       
+    Coefficient_const_iterator                                                  
     operator () (const Polynomial_d& p) { return p.begin(); }             
   };                                                                        
-  struct Coefficient_end                                                    
-    : public std::unary_function< Polynomial_d, Coefficient_iterator > {       
-    Coefficient_iterator                                                  
+  struct Coefficient_const_end                                                    
+    : public std::unary_function< Polynomial_d, Coefficient_const_iterator > {       
+    Coefficient_const_iterator                                                  
     operator () (const Polynomial_d& p) { return p.end(); }               
   };                                                                        
                                                                               
-  struct Innermost_coefficient_begin                                        
-    : public std::unary_function< Polynomial_d, Innermost_coefficient_iterator > {  
-    Innermost_coefficient_iterator                                             
+  struct Innermost_coefficient_const_begin                                        
+    : public std::unary_function< Polynomial_d, Innermost_coefficient_const_iterator > {  
+    Innermost_coefficient_const_iterator                                             
     operator () (const Polynomial_d& p) {                                      
-      return typename Coefficient_flattening::Flatten()(p.end(),p.begin());  
+      return typename Coefficient_const_flattening::Flatten()(p.end(),p.begin());  
     }                                                                          
   };                           
   
-  struct Innermost_coefficient_end
-    : public std::unary_function< Polynomial_d, Innermost_coefficient_iterator > {
-    Innermost_coefficient_iterator
+  struct Innermost_coefficient_const_end
+    : public std::unary_function< Polynomial_d, Innermost_coefficient_const_iterator > {
+    Innermost_coefficient_const_iterator
     operator () (const Polynomial_d& p) {
-      return typename Coefficient_flattening::Flatten()(p.end(),p.end());
+      return typename Coefficient_const_flattening::Flatten()(p.end(),p.end());
     }
   };
   
@@ -1131,8 +1131,8 @@ public:
 
       typename PT::Construct_polynomial construct;
       typename PT::Innermost_leading_coefficient ilcoeff;
-      typename PT::Innermost_coefficient_begin begin;
-      typename PT::Innermost_coefficient_end end;
+      typename PT::Innermost_coefficient_const_begin begin;
+      typename PT::Innermost_coefficient_const_end end;
       typedef Algebraic_extension_traits<Innermost_coefficient_type> AET;
       typename AET::Denominator_for_algebraic_integers dfai;
       typename AET::Normalization_factor nfac;

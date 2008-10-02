@@ -874,15 +874,15 @@ void flat_iterator_tests() {
     typedef CGAL::Polynomial_traits_d<POLY3> PT3;
 
     int i;
-    typename PT1::Innermost_coefficient_iterator it1; (void) it1;
-    typename PT1::Innermost_coefficient_begin begin1; (void) begin1;
-    typename PT1::Innermost_coefficient_end     end1; (void) end1;
-    typename PT2::Innermost_coefficient_iterator it2; (void) it2;
-    typename PT2::Innermost_coefficient_begin begin2; (void) begin2;
-    typename PT2::Innermost_coefficient_end     end2; (void) end2;
-    typename PT3::Innermost_coefficient_iterator it3; (void) it3;
-    typename PT3::Innermost_coefficient_begin begin3; (void) begin3;
-    typename PT3::Innermost_coefficient_end     end3; (void) end3;
+    typename PT1::Innermost_coefficient_const_iterator it1; (void) it1;
+    typename PT1::Innermost_coefficient_const_begin begin1; (void) begin1;
+    typename PT1::Innermost_coefficient_const_end     end1; (void) end1;
+    typename PT2::Innermost_coefficient_const_iterator it2; (void) it2;
+    typename PT2::Innermost_coefficient_const_begin begin2; (void) begin2;
+    typename PT2::Innermost_coefficient_const_end     end2; (void) end2;
+    typename PT3::Innermost_coefficient_const_iterator it3; (void) it3;
+    typename PT3::Innermost_coefficient_const_begin begin3; (void) begin3;
+    typename PT3::Innermost_coefficient_const_end     end3; (void) end3;
 
     for (i = 1, it1 = begin1(p1); i <= 3; ++i, ++it1)
         assert(*it1 == i);

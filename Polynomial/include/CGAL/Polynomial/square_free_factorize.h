@@ -159,8 +159,8 @@ inline int square_free_factorize_for_regular_polynomial_
     typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient_type IC;
     typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
     //typename Polynomial_traits_d<POLY>::Innermost_coefficient_to_polynomial ictp;
-    typename Polynomial_traits_d<POLY>::Innermost_coefficient_begin begin;
-    typename Polynomial_traits_d<POLY>::Innermost_coefficient_end end;
+    typename Polynomial_traits_d<POLY>::Innermost_coefficient_const_begin begin;
+    typename Polynomial_traits_d<POLY>::Innermost_coefficient_const_end end;
     typename Algebraic_extension_traits<IC>::Denominator_for_algebraic_integers dfai;
     typename Algebraic_extension_traits<IC>::Normalization_factor nfac;
     typename Scalar_factor_traits<POLY>::Scalar_factor sfac;  

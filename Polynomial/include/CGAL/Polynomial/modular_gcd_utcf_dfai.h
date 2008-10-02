@@ -79,8 +79,8 @@ Polynomial<NT> modular_gcd_utcf_dfai(
     typedef typename PT::Innermost_coefficient_type IC;
 
     typename Coercion_traits<Poly,IC>::Cast ictp;
-    typename PT::Innermost_coefficient_begin begin;
-    typename PT::Innermost_coefficient_end end;
+    typename PT::Innermost_coefficient_const_begin begin;
+    typename PT::Innermost_coefficient_const_end end;
     typename PT::Innermost_leading_coefficient ilcoeff;
     
     typedef  Algebraic_extension_traits<IC> ANT; 
