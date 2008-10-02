@@ -208,6 +208,9 @@ int main(int argc, char * argv[])
     APSS_implicit_function apss_function(pwns.begin(), pwns.end(),
                                          number_of_neighbours);
 
+    // Recover memory used by pwns[]
+    pwns.clear();
+
     // Print status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Compute implicit function: " << task_timer.time() << " seconds, "

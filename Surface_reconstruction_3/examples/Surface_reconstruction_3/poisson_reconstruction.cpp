@@ -203,6 +203,9 @@ int main(int argc, char * argv[])
     // Insert vertices and normals in triangulation.
     Dt3 dt;
     Poisson_implicit_function poisson_function(dt, pwns.begin(), pwns.end());
+    
+    // Recover memory used by pwns[]
+    pwns.clear();
 
     // Print status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();
@@ -214,7 +217,7 @@ int main(int argc, char * argv[])
     std::cerr << "Compute implicit function...\n";
 
     /// Compute the Poisson indicator function f()
-    /// at each vertex of the triangulation
+    /// at each vertex of the triangulation.
     if ( ! poisson_function.compute_implicit_function() )
     {
       std::cerr << "Error: cannot compute implicit function" << std::endl;
