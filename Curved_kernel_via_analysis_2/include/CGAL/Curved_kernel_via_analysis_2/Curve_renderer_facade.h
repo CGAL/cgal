@@ -25,9 +25,9 @@
 //#define CGAL_CKVA_DUMMY_RENDERER
 
 // whether to use multi-precision arithmetic
-//#define CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
+#define CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
 // whether to use exact rational arithmetic
-//#define CGAL_CKVA_USE_RATIONAL_ARITHMETIC
+#define CGAL_CKVA_USE_RATIONAL_ARITHMETIC
 
 // this turns on a signleton curve renderer 
 // (not recommended for multi-threaded applications)
