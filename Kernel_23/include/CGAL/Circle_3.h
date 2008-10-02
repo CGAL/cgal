@@ -132,22 +132,22 @@ public:
 
 	FT area_divided_by_pi() const
 	{
-    return typename R::Compute_area_divided_by_pi_3()(*this);
+	  return rep().area_divided_by_pi();
   }
 
   double approximate_area() const
   {
-	  return typename R::Compute_approximate_area_3()(*this);
+	  return rep().approximate_area();
 	}
 
 	FT squared_length_divided_by_pi_square() const
 	{
-    return typename R::Compute_squared_length_divided_by_pi_square_3()(*this);
+	  return rep().squared_length_divided_by_pi_square();
   }
 
   double approximate_squared_length() const
   {
-	  return typename R::Compute_approximate_squared_length_3()(*this);
+	  return rep().approximate_squared_length();
 	}
 	
 	typename R::Boolean
