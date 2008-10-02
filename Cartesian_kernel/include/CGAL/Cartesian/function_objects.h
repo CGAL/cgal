@@ -1006,12 +1006,17 @@ namespace CartesianKernelFunctors {
     typedef typename K::FT          FT;
     typedef typename K::Point_3     Point_3;
     typedef typename K::Sphere_3    Sphere_3;
+    typedef typename K::Circle_3    Circle_3;
   public:
     typedef FT               result_type;
 
     result_type
     operator()( const Sphere_3& s) const
     { return s.rep().squared_radius(); }
+
+    result_type
+    operator()( const Circle_3& c) const
+    { return c.rep().squared_radius(); }
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const

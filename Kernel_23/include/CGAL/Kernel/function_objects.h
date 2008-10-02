@@ -608,12 +608,18 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_3   Point_3;
     typedef typename K::Sphere_3  Sphere_3;
+    typedef typename K::Circle_3  Circle_3;
   public:
     typedef Point_3          result_type;
 
     const Point_3 &
     operator()(const Sphere_3& s) const
     { return s.rep().center(); }
+
+    const Point_3 &
+    operator()(const Circle_3& c) const
+    { return c.rep().center(); }
+
   };
 
   template <typename K>
