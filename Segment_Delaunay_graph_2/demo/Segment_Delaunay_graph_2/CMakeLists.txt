@@ -6,7 +6,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL QUIET COMPONENTS Qt3 )
+find_package(CGAL QUIET COMPONENTS Qt3 Core )
 include( ${CGAL_USE_FILE} )
 
 find_package(Qt3-patched QUIET)
@@ -40,6 +40,6 @@ if ( CGAL_FOUND AND QT3_FOUND )
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL and Qt3, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL,, Core, and Qt3, and will not be compiled.")
 
 endif()
