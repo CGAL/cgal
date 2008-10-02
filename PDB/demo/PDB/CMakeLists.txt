@@ -6,10 +6,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL REQUIRED PDB )
+find_package(CGAL QUIET COMPONENTS PDB )
 include( ${CGAL_USE_FILE} )
 
-find_package ( Boost REQUIRED program_options )
+find_package ( Boost QUIET COMPONENTS program_options )
 
 if (CGAL_PDB_FOUND  AND  Boost_PROGRAM_OPTIONS_FOUND )
 
@@ -26,6 +26,6 @@ create_single_source_cgal_program( pdb_tree.cpp )
 
 else()
 
-  message(STATUS "NOTICE: This demo requires PDB and program options, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires PDB and Boost program_options, and will not be compiled.")
 
 endif()
