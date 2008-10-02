@@ -28,8 +28,8 @@ if ( CGAL_FOUND AND QT3_FOUND )
   create_single_source_cgal_qt3_program( visualization_SM.cpp  )
   create_single_source_cgal_qt3_program( visualization_SNC.cpp )
 
-else()
+else( CGAL_FOUND AND QT3_FOUND )
 
   message(STATUS "NOTICE: This demo requires CGAL and Qt3, and will not be compiled.")
 
-endif()
+endif( CGAL_FOUND AND QT3_FOUND )
