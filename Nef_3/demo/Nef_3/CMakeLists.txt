@@ -6,7 +6,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL REQUIRED Qt3)
+find_package(CGAL QUIET COMPONENTS Qt3)
 include(${CGAL_USE_FILE})
 
 find_package(Qt3-patched QUIET )
@@ -14,7 +14,7 @@ find_package(Qt3-patched QUIET )
 # that it can be used together with FindQt4: all its variables are prefixed
 # by "QT3_" instead of "QT_".
 
-if ( CGAL_FOUND AND QT3_FOUND )
+if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
 
   include(Qt3Macros-patched)
   include(CreateSingleSourceCGALQt3Program)
