@@ -732,7 +732,6 @@ run_test()
   
   for HOST in ${BUILD_HOSTS}; do
     run_test_on_host ${HOST} &
-    publish_results "${HOST}" "${PLATFORM}"
   done
 }
 
