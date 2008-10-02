@@ -671,6 +671,38 @@ void _test_bounded_side(SK sk) {
 }
 
 template <class SK>
+void _test_lexico_operations(SK sk) {
+  typedef typename SK::RT                               RT;
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Root_of_2                        Root_of_2;
+  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+  typedef typename SK::Point_3                          Point_3;
+  typedef typename SK::Sphere_3                         Sphere_3;
+  typedef typename SK::Algebraic_kernel                 AK;
+  typedef typename SK::Get_equation                     Get_equation;
+  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
+  typedef typename SK::Bounded_side_3                   Bounded_side_3;
+  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 =
+    sk.construct_circular_arc_point_3_object();
+
+	Circular_arc_point_3 p[3];
+	p[0] = Point_3(1,0,0);
+  p[1] = Point_3(1,0,0); 
+  p[2] = Point_3(0,1,0);
+  std::cout << "Testing lexico_operations(Circular_arc_point, Circular_arc_point)..." << std::endl;
+	assert(p[0] > p[2]);
+	assert(p[0] >= p[1]);
+	assert(p[0] <= p[1]);
+	assert(p[2] < p[0]);
+}
+
+template <class SK>
 void _test_spherical_kernel_predicates(SK sk)
 {
   std::cout << "TESTING PREDICATES" << std::endl;
@@ -680,5 +712,6 @@ void _test_spherical_kernel_predicates(SK sk)
   _test_has_on_predicate(sk);
   _test_do_overlap_predicate(sk);
   _test_bounded_side(sk);
+  _test_lexico_operations(sk);
   std::cout << "All tests on predicates are OK." << std::endl;
 }

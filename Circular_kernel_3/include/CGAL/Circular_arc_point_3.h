@@ -255,6 +255,44 @@ public:
     return ! (p == q);
   }
 
+  template < typename SK >
+  inline
+  bool
+  operator<(const Circular_arc_point_3<SK> &p,
+	     const Circular_arc_point_3<SK> &q)
+  {
+    return SK().compare_xyz_3_object()(p, q) == CGAL::SMALLER;
+  }
+
+  template < typename SK >
+  inline
+  bool
+  operator>(const Circular_arc_point_3<SK> &p,
+	     const Circular_arc_point_3<SK> &q)
+  {
+    return SK().compare_xyz_3_object()(p, q) == CGAL::LARGER;
+  }
+
+  template < typename SK >
+  inline
+  bool
+  operator<=(const Circular_arc_point_3<SK> &p,
+	     const Circular_arc_point_3<SK> &q)
+	{
+		CGAL::Comparison_result c = SK().compare_xyz_3_object()(p, q);
+    return (c == CGAL::SMALLER) || (c == CGAL::EQUAL);
+	}
+
+  template < typename SK >
+  inline
+  bool
+  operator>=(const Circular_arc_point_3<SK> &p,
+	     const Circular_arc_point_3<SK> &q)
+  {
+    CGAL::Comparison_result c = SK().compare_xyz_3_object()(p, q);
+    return (c == CGAL::LARGER) || (c == CGAL::EQUAL);
+  }
+
 }
 
 #endif
