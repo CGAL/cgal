@@ -48,7 +48,17 @@ private:
                                     FALSE, pid );
     if ( GetProcessMemoryInfo( hProcess, &pmc, sizeof(pmc)) )
     {
-      result = (virtual_size)? pmc.PeakPagefileUsage : pmc.PeakWorkingSetSize;
+//CGAL_TRACE("    Peak_memory_sizer: WorkingSetSize=%ld Mb\n",              pmc.WorkingSetSize>>20);
+//CGAL_TRACE("    Peak_memory_sizer: PagefileUsage=%ld Mb\n",               pmc.PagefileUsage>>20);
+//CGAL_TRACE("    Peak_memory_sizer: PeakWorkingSetSize=%ld Mb\n",          pmc.PeakWorkingSetSize>>20);
+//CGAL_TRACE("    Peak_memory_sizer: PeakPagefileUsage=%ld Mb\n",           pmc.PeakPagefileUsage>>20);
+           
+      // LS 10/2008: PeakPagefileUsage seems unreliable, thus we use an approximation:
+      size_t memory_paged_out = (pmc.PagefileUsage>pmc.WorkingSetSize) ? (pmc.PagefileUsage-pmc.WorkingSetSize) : 0;
+      size_t approximate_peak_virtual_size = pmc.PeakWorkingSetSize + memory_paged_out;
+//CGAL_TRACE("    Peak_memory_sizer: approximate_peak_virtual_size=%ld Mb\n", approximate_peak_virtual_size>>20);
+      
+      result = virtual_size ? approximate_peak_virtual_size : pmc.PeakWorkingSetSize;
     }
 
     CloseHandle( hProcess );
