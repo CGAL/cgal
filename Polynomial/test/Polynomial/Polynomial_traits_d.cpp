@@ -1500,7 +1500,82 @@ void test_ac_poly_functors(const PT& traits, CGAL::Unique_factorization_domain_t
   test_square_free_factorize(traits);
 }
 
+template <class PT >
+void test_coefficient_const_iterator(const PT&) {
 
+  typedef typename PT::Polynomial_d                Polynomial_d;
+  typedef typename PT::Coefficient_type            Coefficient; 
+  typedef typename PT::Coefficient_const_iterator  CCIterator;
+  
+  typename PT::Coefficient_const_begin begin;
+  typename PT::Coefficient_const_end   end;
+  typename PT::Degree                  degree;
+  typename PT::Get_coefficient         coeff;
+  
+  Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();
+
+  CCIterator it = begin(p);
+  for(int i = 0; i <= degree(p); i++){
+    assert(*it == coeff(p,i));
+    it++;
+  }
+  assert(end(p) == it);
+}
+
+
+
+template <class PT>
+void test_innermost_coefficient_const_iterator(const PT&) {
+  
+  typedef typename PT::Innermost_coefficient_type NT; 
+
+  typedef typename PT:: template Rebind< NT, 1 >::Other PT_1;
+  typedef typename PT:: template Rebind< NT, 2 >::Other PT_2;
+  typedef typename PT:: template Rebind< NT, 3 >::Other PT_3;
+
+  typedef typename PT_1::Polynomial_d Polynomial_1;
+  typedef typename PT_2::Polynomial_d Polynomial_2;
+  typedef typename PT_3::Polynomial_d Polynomial_3;
+  
+  Polynomial_1
+    p1(NT( 1), NT( 2), NT( 3)), 
+    p2(NT( 4), NT( 5), NT( 6)),
+    p3(NT( 7), NT( 8), NT( 9)),
+    p4(NT(10), NT(11), NT(12)),
+    p5(NT(13), NT(14), NT(15)),
+    p6(NT(16), NT(17), NT(18)),
+    p7(NT(19), NT(20), NT(21)),
+    p8(NT(22), NT(23), NT(24)),
+    p9(NT(25), NT(26), NT(27));
+
+  Polynomial_2
+    q1(p1, p2, p3),
+    q2(p4, p5, p6),
+    q3(p7, p8, p9);
+
+  Polynomial_3 r(q1, q2, q3);
+
+  int i;
+  typename PT_1::Innermost_coefficient_const_iterator it1; (void) it1;
+  typename PT_1::Innermost_coefficient_const_begin begin1; (void) begin1;
+  typename PT_1::Innermost_coefficient_const_end     end1; (void) end1;
+  typename PT_2::Innermost_coefficient_const_iterator it2; (void) it2;
+  typename PT_2::Innermost_coefficient_const_begin begin2; (void) begin2;
+  typename PT_2::Innermost_coefficient_const_end     end2; (void) end2;
+  typename PT_3::Innermost_coefficient_const_iterator it3; (void) it3;
+  typename PT_3::Innermost_coefficient_const_begin begin3; (void) begin3;
+  typename PT_3::Innermost_coefficient_const_end     end3; (void) end3;
+
+  for (i = 1, it1 = begin1(p1); i <= 3; ++i, ++it1)
+    assert(*it1 == i);
+  assert(it1 == end1(p1));
+  for (i = 1, it2 = begin2(q1); i <= 9; ++i, ++it2)
+    assert(*it2 == i);
+  assert(it2 == end2(q1));
+  for (i = 1, it3 = begin3(r); i <= 27; ++i, ++it3)
+    assert(*it3 == i);
+  assert(it3 == end3(r));
+}
 
 
 template< class PT >
@@ -1519,8 +1594,9 @@ void test_polynomial_traits_d(const PT& traits){
 
   typedef typename CGAL::Real_embeddable_traits<ICoeff> RET_IC;
   typedef typename RET_IC::Is_real_embeddable Is_real_embeddable; 
-  test_real_embeddable_functors(traits, Is_real_embeddable());
-  
+  test_real_embeddable_functors(traits, Is_real_embeddable()); 
+  test_coefficient_const_iterator(traits);
+  test_innermost_coefficient_const_iterator(traits);
 }
 
 template< class InnermostCoefficient_type >
@@ -1683,9 +1759,6 @@ void test_AT(){
             << std::endl;    
   test_multiple_dimensions< CGAL::Sqrt_extension< Rational, Rational > >();   
 
-
-
-    
   test_rebind<AT>();
 }    
   
