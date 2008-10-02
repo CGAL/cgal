@@ -112,6 +112,44 @@ public:
   {
     return ! (p == q);
   }
+
+  template < typename CircularKernel >
+  inline
+  bool
+  operator<(const Circular_arc_point_2<CircularKernel> &p,
+	     const Circular_arc_point_2<CircularKernel> &q)
+  {
+    return CircularKernel().compare_xy_2_object()(p, q) == CGAL::SMALLER;
+  }
+
+  template < typename CircularKernel >
+  inline
+  bool
+  operator>(const Circular_arc_point_2<CircularKernel> &p,
+     const Circular_arc_point_2<CircularKernel> &q)
+  {
+    return CircularKernel().compare_xy_2_object()(p, q) == CGAL::LARGER;
+  }
+
+  template < typename CircularKernel >
+  inline
+  bool
+  operator<=(const Circular_arc_point_2<CircularKernel> &p,
+	     const Circular_arc_point_2<CircularKernel> &q)
+	{
+		CGAL::Comparison_result c = CircularKernel().compare_xy_2_object()(p, q);
+    return (c == CGAL::SMALLER) || (c == CGAL::EQUAL);
+	}
+
+  template < typename CircularKernel >
+  inline
+  bool
+  operator>=(const Circular_arc_point_2<CircularKernel> &p,
+     const Circular_arc_point_2<CircularKernel> &q)
+  {
+    CGAL::Comparison_result c = CircularKernel().compare_xy_2_object()(p, q);
+    return (c == CGAL::LARGER) || (c == CGAL::EQUAL);
+  }
   
   template < typename CK >
   std::istream &
