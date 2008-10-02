@@ -80,7 +80,10 @@ private:
                                     FALSE, pid );
     if ( GetProcessMemoryInfo( hProcess, &pmc, sizeof(pmc)) )
     {
-      result = (virtual_size)? pmc.PagefileUsage : pmc.WorkingSetSize;
+      // PagefileUsage seems not very precise, thus check it against WorkingSetSize:
+      size_t approximate_virtual_size = (std::max)(pmc.PagefileUsage, pmc.WorkingSetSize);
+      
+      result = (virtual_size)? approximate_virtual_size : pmc.WorkingSetSize;
     }
 
     CloseHandle( hProcess );
