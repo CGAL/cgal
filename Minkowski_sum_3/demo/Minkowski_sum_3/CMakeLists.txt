@@ -21,7 +21,7 @@ if ( CGAL_FOUND AND QT3_FOUND )
   add_executable  ( minkowski_sum_3
                     minkowski_sum_3.cpp )
 
-  target_link_libraries( nef_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
+  target_link_libraries( minkowski_sum_3 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 else()
 
