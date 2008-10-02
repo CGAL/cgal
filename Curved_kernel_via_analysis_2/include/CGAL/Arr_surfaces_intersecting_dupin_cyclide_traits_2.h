@@ -39,7 +39,7 @@
 
 // TODO remove dependency to Exacus!
 #include <QdX/basic.h>
-#include <NiX/Get_arithmetic_traits.h>
+#include <CGAL/Arithmetic_kernel.h>
 #include <QdX/SfX/Dupin_cyclide_3.h>
 
 CGAL_BEGIN_NAMESPACE 
