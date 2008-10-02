@@ -83,6 +83,7 @@ public:
     typename R::Construct_circular_arc_point_3()(p))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Sphere_3 & s1,
                        const Sphere_3 & s2,
                        const Sphere_3 & s3,
@@ -91,6 +92,7 @@ public:
     typename R::Construct_circular_arc_point_3()(s1,s2,s3,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Plane_3 & p,
                        const Sphere_3 & s1,
                        const Sphere_3 & s2,
@@ -99,6 +101,7 @@ public:
     typename R::Construct_circular_arc_point_3()(p,s1,s2,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Sphere_3 & s1,
                        const Plane_3 & p,
                        const Sphere_3 & s2,
@@ -107,6 +110,7 @@ public:
     typename R::Construct_circular_arc_point_3()(s1,p,s2,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Sphere_3 & s1,
                        const Sphere_3 & s2,
                        const Plane_3 & p,
@@ -115,6 +119,7 @@ public:
     typename R::Construct_circular_arc_point_3()(s1,s2,p,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Plane_3 & p1,
                        const Plane_3 & p2,
                        const Sphere_3 & s,
@@ -123,6 +128,7 @@ public:
     typename R::Construct_circular_arc_point_3()(p1,p2,s,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Plane_3 & p1,
                        const Sphere_3 & s,
                        const Plane_3 & p2,
@@ -131,6 +137,7 @@ public:
     typename R::Construct_circular_arc_point_3()(p1,s,p2,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Sphere_3 & s,
                        const Plane_3 & p1,
                        const Plane_3 & p2,
@@ -139,6 +146,7 @@ public:
     typename R::Construct_circular_arc_point_3()(s,p1,p2,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Line_3 & l,
                        const Sphere_3 & s,
                        const bool less_xyz = true)
@@ -146,6 +154,7 @@ public:
     typename R::Construct_circular_arc_point_3()(l,s,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Sphere_3 & s,
                        const Line_3 & l,
                        const bool less_xyz = true)
@@ -153,6 +162,7 @@ public:
     typename R::Construct_circular_arc_point_3()(s,l,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Circle_3 & c,
                        const Sphere_3 & s,
                        const bool less_xyz = true)
@@ -160,6 +170,7 @@ public:
     typename R::Construct_circular_arc_point_3()(c,s,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Sphere_3 & s,
                        const Circle_3 & c,
                        const bool less_xyz = true)
@@ -167,6 +178,7 @@ public:
     typename R::Construct_circular_arc_point_3()(s,c,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Circle_3 & c,
                        const Plane_3 & p,
                        const bool less_xyz = true)
@@ -174,6 +186,7 @@ public:
     typename R::Construct_circular_arc_point_3()(c,p,less_xyz))
   {}
 
+    // Not Documented
   Circular_arc_point_3(const Sphere_3 & s,
                        const Plane_3 & p,
                        const bool less_xyz = true)

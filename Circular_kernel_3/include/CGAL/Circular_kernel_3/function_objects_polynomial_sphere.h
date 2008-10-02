@@ -210,11 +210,10 @@ template < class SK > \
   public:
     typedef  Circular_arc_point_3 result_type;
 
-
     result_type
     operator()(void) 
     { return Rep(); }
-    
+
     result_type
       operator()(const Root_of_2 & x,
 		 const Root_of_2 & y,
@@ -230,6 +229,7 @@ template < class SK > \
     operator()(const Point_3 & p) const
     { return Rep(p); }
 
+    // Not Documented
     result_type
     operator()(const Sphere_3 & s1,
                const Sphere_3 & s2,
@@ -237,6 +237,7 @@ template < class SK > \
                const bool less_xyz = true) const
     { return Rep(s1,s2,s3,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Plane_3 & p,
                const Sphere_3 & s1,
@@ -244,6 +245,7 @@ template < class SK > \
                const bool less_xyz = true) const
     { return Rep(p,s1,s2,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Sphere_3 & s1,
                const Plane_3 & p,
@@ -251,6 +253,7 @@ template < class SK > \
                const bool less_xyz = true) const
     { return Rep(p,s1,s2,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Sphere_3 & s1,
                const Sphere_3 & s2,
@@ -258,6 +261,7 @@ template < class SK > \
                const bool less_xyz = true) const
     { return Rep(p,s1,s2,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Plane_3 & p1,
                const Plane_3 & p2,
@@ -265,6 +269,7 @@ template < class SK > \
                const bool less_xyz = true) const
     { return Rep(p1,p2,s,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Plane_3 & p1,
                const Sphere_3 & s,
@@ -272,6 +277,7 @@ template < class SK > \
                const bool less_xyz = true) const
     { return Rep(p1,p2,s,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Sphere_3 & s,
                const Plane_3 & p1,
@@ -279,36 +285,42 @@ template < class SK > \
                const bool less_xyz = true) const
     { return Rep(p1,p2,s,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Line_3 & l,
                const Sphere_3 & s,
                const bool less_xyz = true) const
     { return Rep(l,s,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Sphere_3 & s,
                const Line_3 & l,
                const bool less_xyz = true) const
     { return Rep(l,s,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Circle_3 & c,
                const Sphere_3 & s,
                const bool less_xyz = true) const
     { return Rep(c,s,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Sphere_3 & s,
                const Circle_3 & c,
                const bool less_xyz = true) const
     { return Rep(c,s,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Circle_3 & c,
                const Plane_3 & p,
                const bool less_xyz = true) const
     { return Rep(c,p,less_xyz); }
 
+    // Not Documented
     result_type
     operator()(const Plane_3 & p,
                const Circle_3 & c,
@@ -426,8 +438,7 @@ template < class SK > \
 
   public:
     typedef Line_arc_3   result_type;
-                                // 3 operands, maybe we should remove this
-    
+
     result_type
     operator()(void) const
     { return Rep(); }
@@ -447,18 +458,21 @@ template < class SK > \
     operator()(const Segment_3 &s) const
     { return Rep(s); }
 
+    // Not Documented
     result_type
     operator()(const Line_3 &l,
                const Sphere_3 &s,
                bool less_xyz_first = true) const
     { return Rep(l,s,less_xyz_first); }
 
+    // Not Documented
     result_type
     operator()(const Sphere_3 &s,
                const Line_3 &l,
                bool less_xyz_first = true) const
     { return Rep(l,s,less_xyz_first); }
 
+    // Not Documented
     result_type
     operator()(const Line_3 &l, 
                const Sphere_3 &s1, bool less_xyz_s1,
@@ -466,6 +480,7 @@ template < class SK > \
     { return Rep(l,s1,less_xyz_s1,
                    s2,less_xyz_s2); }
 
+    // Not Documented
     result_type
     operator()(const Sphere_3 &s1, bool less_xyz_s1,
                const Sphere_3 &s2, bool less_xyz_s2,
@@ -473,12 +488,14 @@ template < class SK > \
     { return Rep(l,s1,less_xyz_s1,
                    s2,less_xyz_s2); }
 
+    // Not Documented
     result_type
     operator()(const Line_3 &l,
 	       const Plane_3 &p1,
 	       const Plane_3 &p2) const
     { return Rep(l,p1,p2); }
 
+    // Not Documented
     result_type
     operator()(const Plane_3 &p1,
 	       const Plane_3 &p2,
@@ -505,7 +522,6 @@ template < class SK > \
     typedef typename Circular_arc_3::Rep               Rep;
   public:
     typedef Circular_arc_3   result_type;
-                                // 3 operands, maybe we should remove this
 
     result_type
     operator()(void) const
@@ -521,42 +537,28 @@ template < class SK > \
 	       const Circular_arc_point_3 &t) const
     { return Rep(l,s,t); }
 
-    result_type
-    operator()(const Circle_3 &l,
-	       const Point_3 &s,
-	       const Circular_arc_point_3 &t) const
-    { return Rep(l,s,t); }
-
-    result_type
-    operator()(const Circle_3 &l,
-	       const Circular_arc_point_3 &s,
-	       const Point_3 &t) const
-    { return Rep(l,s,t); }
-
-    result_type
-    operator()(const Circle_3 &l,
-	       const Point_3 &s,
-	       const Point_3 &t) const
-    { return Rep(l,s,t); }
-
+    // Not Documented
     result_type
     operator()(const Circle_3 &c, 
                const Sphere_3 &s1, bool less_xyz_s1,
                const Sphere_3 &s2, bool less_xyz_s2) const
     { return Rep(c,s1,less_xyz_s1,s2,less_xyz_s2); }
 
+    // Not Documented
     result_type
     operator()(const Sphere_3 &s1, bool less_xyz_s1,
                const Sphere_3 &s2, bool less_xyz_s2,
                const Circle_3 &c) const
     { return Rep(c,s1,less_xyz_s1,s2,less_xyz_s2); }
 
+    // Not Documented
     result_type
     operator()(const Circle_3 &c, 
                const Plane_3 &p1, bool less_xyz_p1,
                const Plane_3 &p2, bool less_xyz_p2) const
     { return Rep(c,p1,less_xyz_p1,p2,less_xyz_p2); }
 
+    // Not Documented
     result_type
     operator()(const Plane_3 &p1, bool less_xyz_p1,
                const Plane_3 &p2, bool less_xyz_p2,

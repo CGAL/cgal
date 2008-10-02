@@ -74,18 +74,21 @@ namespace CGAL {
       : RLine_arc_3(typename R::Construct_line_arc_3()(s))
       {}
 
+    // Not Documented
     Line_arc_3(const Line_3 &l,
                const Sphere_3 &s,
                bool less_xyz_first = true) 
       : RLine_arc_3(typename R::Construct_line_arc_3()(l,s,less_xyz_first))
     {}
 
+    // Not Documented
     Line_arc_3(const Sphere_3 &s,
                const Line_3 &l,
                bool less_xyz_first = true) 
       : RLine_arc_3(typename R::Construct_line_arc_3()(s,l,less_xyz_first))
     {}
 
+    // Not Documented
     Line_arc_3(const Line_3 &l, 
                const Sphere_3 &s1, bool less_xyz_s1,
                const Sphere_3 &s2, bool less_xyz_s2) 
@@ -93,6 +96,7 @@ namespace CGAL {
                                                          s2,less_xyz_s2)) 
     {}
 
+    // Not Documented
     Line_arc_3(const Sphere_3 &s1, bool less_xyz_s1,
                const Sphere_3 &s2, bool less_xyz_s2,
                const Line_3 &l) 
@@ -100,12 +104,14 @@ namespace CGAL {
                                                        s2,less_xyz_s2,l)) 
     {}
 
+    // Not Documented
     Line_arc_3(const Line_3 &l,
 	       const Plane_3 &p1,
 	       const Plane_3 &p2) 
       : RLine_arc_3(typename R::Construct_line_arc_3()(l,p1,p2))
     {}
 
+    // Not Documented
     Line_arc_3(const Plane_3 &p1,
 	       const Plane_3 &p2,
                const Line_3 &l) 

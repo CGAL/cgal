@@ -66,28 +66,11 @@ namespace CGAL {
       : RCircular_arc_3(typename R::Construct_circular_arc_3()(c,s,t))
       {}
 
-    Circular_arc_3(const Circle_3& c, 
-               const Point_3& s, 
-               const Circular_arc_point_3& t)
-      : RCircular_arc_3(typename R::Construct_circular_arc_3()(c,s,t))
-      {}
-
-    Circular_arc_3(const Circle_3& c, 
-               const Circular_arc_point_3& s, 
-               const Point_3& t)
-      : RCircular_arc_3(typename R::Construct_circular_arc_3()(c,s,t))
-      {}
-
-    Circular_arc_3(const Circle_3& c, 
-               const Point_3& s, 
-               const Point_3& t)
-      : RCircular_arc_3(typename R::Construct_circular_arc_3()(c,s,t))
-      {}
-
     Circular_arc_3(const Circle_3& c)
       : RCircular_arc_3(typename R::Construct_circular_arc_3()(c))
       {}
 
+    // Not Documented
     Circular_arc_3(const Circle_3 &c, 
                    const Sphere_3 &s1, bool less_xyz_s1,
                    const Sphere_3 &s2, bool less_xyz_s2) 
@@ -95,6 +78,7 @@ namespace CGAL {
                                                                  s2,less_xyz_s2))
       {}
 
+    // Not Documented
     Circular_arc_3(const Sphere_3 &s1, bool less_xyz_s1,
                    const Sphere_3 &s2, bool less_xyz_s2,
                    const Circle_3 &c) 
@@ -103,6 +87,7 @@ namespace CGAL {
                                                                c))
       {}
 
+    // Not Documented
     Circular_arc_3(const Circle_3 &c, 
                    const Plane_3 &p1, bool less_xyz_p1,
                    const Plane_3 &p2, bool less_xyz_p2) 
@@ -110,6 +95,7 @@ namespace CGAL {
                                                                  p2,less_xyz_p2))
       {}
 
+    // Not Documented
     Circular_arc_3(const Plane_3 &p1, bool less_xyz_p1,
                    const Plane_3 &p2, bool less_xyz_p2,
                    const Circle_3 &c) 
