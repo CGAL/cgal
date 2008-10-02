@@ -7,12 +7,15 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL REQUIRED ImageIO )
+find_package(CGAL QUIET COMPONENTS ImageIO )
 
 
 include( ${CGAL_USE_FILE} )
 include( CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "convert_raw_image_to_inr.cpp" )
-create_single_source_cgal_program( "test_imageio.cpp" )
-
+if(CGAL_ImageIO_FOUND)
+  create_single_source_cgal_program( "convert_raw_image_to_inr.cpp" )
+  create_single_source_cgal_program( "test_imageio.cpp" )
+else()
+  message(STATUS "This demo needs the CGAL ImageIO library, and will not be compiled.")
+endif()
