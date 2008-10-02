@@ -51,6 +51,16 @@ equation is of the form $ax+by+cz+d=0$ with $(a,b,c)>(0,0,0)$
 
 \ccMethod{Circle_3<SphericalKernel> supporting_circle();}{}
 
+\ccMethod{Point_3<SphericalKernel> const& center( ) const;}{
+        returns the center of the supporting circle.}
+\ccGlue
+\ccMemberFunction{SphericalKernel::FT const& squared_radius( ) const;}{
+        returns the squared radius of the supporting circle.}
+
+\ccMethod{Plane_3<SphericalKernel> supporting_plane();}{}
+\ccGlue
+\ccMethod{Sphere_3<SphericalKernel> diametral_sphere();}{}
+
 \ccMethod{Circular_arc_point_3<SphericalKernel> source();}{}
 \ccGlue
 \ccMethod{Circular_arc_point_3<SphericalKernel> target();}{}
