@@ -494,11 +494,7 @@ namespace CircularFunctors {
 	typename CK::Circular_arc_2 &ca1,
 	typename CK::Circular_arc_2 &ca2)
   {
-    //CGAL_kernel_precondition( A.is_x_monotone() );
-    //CGAL_kernel_precondition( CircularFunctors::point_in_x_range<CK>( A, p ) );
-    //CGAL_kernel_precondition( A.on_upper_part() == (p.y() >
-    //			      A.supporting_circle().center().y()) );
-    //CGAL_kernel_precondition( CircularFunctors::has_on<CK>(A, p) );
+    CGAL_kernel_precondition( CircularFunctors::has_on<CK>(A, p));
    
     typedef typename CK::Circular_arc_2  Circular_arc_2;
 
