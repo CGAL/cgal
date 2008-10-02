@@ -1091,36 +1091,6 @@ template < class SK > \
   };
 
   template <class SK>
-  class Compute_area_divided_by_pi_3
-  {
-    typedef typename SK::Circle_3                  Circle_3;
-    typedef typename SK::FT                        FT;
-
-  public:
-
-    typedef const FT result_type;
-
-    result_type operator() (const Circle_3 & c) const
-    { return c.rep().area_divided_by_pi(); }
-
-  };
-
-  template <class SK>
-  class Compute_squared_length_divided_by_pi_square_3
-  {
-    typedef typename SK::Circle_3                  Circle_3;
-    typedef typename SK::FT                        FT;
-
-  public:
-
-    typedef const FT result_type;
-
-    result_type operator() (const Circle_3 & c) const
-    { return c.rep().squared_length_divided_by_pi_square(); }
-
-  };
-
-  template <class SK>
   class Compute_approximate_squared_length_3
   {
     typedef typename SK::Circle_3                  Circle_3;
@@ -1148,21 +1118,6 @@ template < class SK > \
     result_type operator() (const Circular_arc_3 & c) const
     { return c.rep().approximate_angle(); }
 
-  };
-
-  // Maybe this one should be on the Linear Kernel
-  template <class SK> 
-  class Construct_radical_plane_3
-  {
-    typedef typename SK::Plane_3            Plane_3;
-    typedef typename SK::Sphere_3           Sphere_3;
-
-  public:
-
-    typedef Plane_3 result_type;
-
-    result_type operator() (const Sphere_3 & s1, const Sphere_3 & s2) const
-    { return radical_plane<SK>(s1, s2); }
   };
 
   template <class SK>

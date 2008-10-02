@@ -1796,6 +1796,97 @@ void _test_split_construct(SK sk) {
 }
 
 template <class SK>
+void _test_extremal_points_construct(SK sk) {
+  typedef typename SK::RT                               RT;
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Root_of_2                        Root_of_2;
+  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+  typedef typename SK::Point_3                          Point_3;
+  typedef typename SK::Line_3                           Line_3;
+  typedef typename SK::Plane_3                          Plane_3;
+  typedef typename SK::Sphere_3                         Sphere_3;
+  typedef typename SK::Circle_3                         Circle_3;
+  typedef typename SK::Line_arc_3                       Line_arc_3;
+  typedef typename SK::Circular_arc_3                   Circular_arc_3;
+  typedef typename SK::Algebraic_kernel                 AK;
+  typedef typename SK::Get_equation                     Get_equation;
+  typedef typename SK::Equal_3                          Equal_3;
+  typedef typename SK::Has_on_3                         Has_on_3;
+  typedef typename SK::Split_3                          Split_3;
+  typedef typename SK::Intersect_3                      Intersect_3;
+  typedef typename SK::Construct_circular_arc_3         Construct_circular_arc_3;
+  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
+  typedef typename SK::Construct_circle_3               Construct_circle_3;
+  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+  typedef typename SK::Construct_plane_3                Construct_plane_3;
+  typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
+  typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
+  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+  Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
+  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+
+  std::cout << "Testing {x,y,z}_extremal_points..." << std::endl;
+
+  const Polynomials_for_circle_3 pcc_test = 
+      std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
+                     Polynomial_1_3(1,0,1,0));
+  Circle_3 c = theConstruct_circle_3(pcc_test);
+	Sphere_3 s = theConstruct_sphere_3(Polynomial_for_spheres_2_3(1,1,1,2));
+	
+	Circular_arc_point_3 pc[4], ps[6], res[6];
+
+	pc[0] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)), 
+	                             0,
+	                             CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)));
+	pc[1] = Root_for_spheres_2_3(0,1,0);
+	pc[2] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)), 
+	                             0,
+	                             CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)));
+	pc[3] = Root_for_spheres_2_3(0,-1,0);
+	
+	res[0] = x_extremal_point(c, true);
+	res[1] = x_extremal_point(c, false);
+	res[2] = y_extremal_point(c, true);
+	res[3] = y_extremal_point(c, false);
+	res[4] = z_extremal_point(c, true);
+	res[5] = z_extremal_point(c, false);
+	
+	assert(res[0] == pc[0]);
+	assert(res[1] == pc[2]);
+	assert(res[2] == pc[3]);
+	assert(res[3] == pc[1]);
+	assert(res[4] == pc[0]);
+	assert(res[5] == pc[2]);
+	
+	ps[0] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(1),-FT(1),FT(2)), 1, 1);
+	ps[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(1),FT(1),FT(2)), 1, 1);
+	ps[2] = Root_for_spheres_2_3(1, CGAL::make_root_of_2(FT(1),-FT(1),FT(2)), 1);
+	ps[3] = Root_for_spheres_2_3(1, CGAL::make_root_of_2(FT(1),FT(1),FT(2)), 1);
+	ps[4] = Root_for_spheres_2_3(1, 1, CGAL::make_root_of_2(FT(1),-FT(1),FT(2)));
+	ps[5] = Root_for_spheres_2_3(1, 1, CGAL::make_root_of_2(FT(1),FT(1),FT(2)));
+
+	res[0] = x_extremal_point(s, true);
+	res[1] = x_extremal_point(s, false);
+	res[2] = y_extremal_point(s, true);
+	res[3] = y_extremal_point(s, false);
+	res[4] = z_extremal_point(s, true);
+	res[5] = z_extremal_point(s, false);
+
+	assert(res[0] == ps[0]);
+	assert(res[1] == ps[1]);
+	assert(res[2] == ps[2]);
+	assert(res[3] == ps[3]);
+	assert(res[4] == ps[4]);
+	assert(res[5] == ps[5]);
+
+}
+
+template <class SK>
 void _test_spherical_kernel_construct(SK sk)
 {
   std::cout << "TESTING CONSTRUCTIONS" << std::endl;
@@ -1809,5 +1900,6 @@ void _test_spherical_kernel_construct(SK sk)
   _test_intersection_construct(sk);
   _test_split_construct(sk);
   _test_bounding_box_construct(sk);
+  _test_extremal_points_construct(sk);
   std::cout << "All tests on construction are OK." << std::endl;
 }
