@@ -1,0 +1,20 @@
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::Split_3}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{void operator()
+	(const SphericalKernel::Circular_arc_3 &a, 
+	const SphericalKernel::Circular_arc_point_3 &p,
+	SphericalKernel::Circular_arc_3 &a1, 
+	SphericalKernel::Circular_arc_3 &a2);}
+{Splits arc $a$ at point $p$, which creates arcs $a1$ and $a2$.}
+
+\ccMemberFunction{void operator()
+	(const SphericalKernel::Line_arc_3 &l, 
+	 const SphericalKernel::Circular_arc_point_3 &p,
+	 SphericalKernel::Line_arc_3 &l1, SphericalKernel::Line_arc_3 &l2);}
+{Same for a line arc.}
+
+\end{ccRefFunctionObjectConcept}
