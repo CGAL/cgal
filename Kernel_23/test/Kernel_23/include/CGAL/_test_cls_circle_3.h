@@ -335,6 +335,7 @@ void _test_has_on_predicate(const K &k) {
   assert(theHas_on_3(c_1,p_1_c_1));
   assert(theHas_on_3(c_1,p_2_c_1));
   assert(!theHas_on_3(c_1,p_3_c_1));
+  assert(!c_1.has_on(p_3_c_1));
 
   std::cout << "Testing has_on(Sphere,Circle)..." << std::endl;
   assert(theHas_on_3(s_1,c_1));
