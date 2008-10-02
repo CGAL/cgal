@@ -116,7 +116,6 @@ struct Transform {
     OutputPoly_2 operator()(
         const typename Innermost_coefficient_type<InputPoly_2>::Type& x, Op op)
         const {
-            
         return static_cast<OutputPoly_2>(op(x));
     }
 };
@@ -196,6 +195,8 @@ struct Curve_renderer_traits_base
             
     //!@todo: use Rat_to_float functor instead of coercion traits ?
     //! need some sort of polymorphism..
+
+            //std::cerr << "calling transform..\n";
             typedef typename CGAL::Coercion_traits<Extended, Coeff>::Cast
                 Cast;
             Transform<result_type,

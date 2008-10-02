@@ -573,7 +573,7 @@ void draw(const Arc_2& arc,
         int inc = (pix_2.y > pix_1.y ? 1 : -1);
         for(; pix_1.y != pix_2.y; pix_1.y += inc) {
             CGAL_CKVA_STORE_COORDS(rev_points, pix_1);
-            pix_1.yv += engine.pixel_h * NT(inc);
+            pix_1.yv += CGAL::to_double(engine.pixel_h * NT(inc));
         }
 
 #endif

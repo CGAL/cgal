@@ -406,7 +406,7 @@ public:
         
     Eval_cache *eval_cached;    //! cache of polynomial evaluations
     
-    Modular_poly_2 *modular_x, *modular_y; //! modular images of a polynomial
+   // Modular_poly_2 *modular_x, *modular_y; //! modular images of a polynomial
     
     Rational_poly_2 *rational_x, *rational_y;   //! poly with rational coeffs
     
@@ -432,7 +432,7 @@ private:
     Derivative_2 der_x_[CGAL_N_CACHES], der_y_[CGAL_N_CACHES];
     Poly_cache cached_x_[CGAL_N_CACHES], cached_y_[CGAL_N_CACHES];
     Eval_cache eval_cached_[CGAL_N_CACHES];
-    Modular_poly_2 modular_x_[CGAL_N_CACHES], modular_y_[CGAL_N_CACHES];
+   // Modular_poly_2 modular_x_[CGAL_N_CACHES], modular_y_[CGAL_N_CACHES];
     Rational_poly_2 rational_x_[CGAL_N_CACHES], rational_y_[CGAL_N_CACHES];
     Rational_poly_2 rational_fx_[CGAL_N_CACHES], rational_fy_[CGAL_N_CACHES];
         
@@ -1000,6 +1000,7 @@ int evaluate_generic(int var, const NT& c, const NT& key, const Poly_1& poly)
 //! this is a fast way to test for exact zero if the test fails we obtain
 //! a correct sign by evaluating with rational polynomial, returns -1, 0 or 1
 //! depending on the sign of the evaluation
+#if 0
 int evaluate_modular(int var, const NT& c, const NT& key)
 {
 #if !AcX_SQRT_EXTENSION
@@ -1025,6 +1026,7 @@ int evaluate_modular(int var, const NT& c, const NT& key)
     return -1; // modular arithmetic is disabled with sqrt extension
 #endif    
 }
+#endif
 
 //! \brief evaluates a polynomial at (x, y) using exact rational arithmetic
 int evaluate_rational(int var, const NT& c, const NT& key)
@@ -1059,7 +1061,7 @@ void precompute(const Polynomial_2& in) {
     typedef Reduce_by<Rat_coercion_type, Coeff_src> Reduce_op;
     Transform<Rational_poly_2, Polynomial_2, Reduce_op> transform;
     Reduce_op op(max_c);
-
+    
     typedef CGAL::Polynomial_traits_d<Rational_poly_2> RP_traits;
     *rational_y = transform(in, op);
     *rational_x = typename RP_traits::Swap()(*rational_y, 0, 1);
@@ -1069,13 +1071,11 @@ void precompute(const Polynomial_2& in) {
     *rational_fy = typename RP_traits::Differentiate()(*rational_y, 1);
     
     // modular polynomials are not used with Field_with_sqrt
-//#if !AcX_SQRT_EXTENSION  
-    typename MT_poly_2::Modular_image image_poly_2;
-    *modular_y = image_poly_2(*rational_y);
-    *modular_x = typename CGAL::Polynomial_traits_d<Modular_poly_2>::
-            Swap()(*modular_y, 0, 1);
-//#endif 
-                    
+//     typename MT_poly_2::Modular_image image_poly_2;
+//     *modular_y = image_poly_2(*rational_y);
+//     *modular_x = typename CGAL::Polynomial_traits_d<Modular_poly_2>::
+//             Swap()(*modular_y, 0, 1);
+
     typename Renderer_traits::Convert_poly convert_poly;
     ////////////////////////////////////////////////////////
     /////// ATTENTION: need to call makeExact for bigfloats after conversion
@@ -1128,8 +1128,8 @@ void select_cache_entry(int cache_id)
 {
     coeffs_x = coeffs_x_ + cache_id;
     coeffs_y = coeffs_y_ + cache_id;
-    modular_x = modular_x_ + cache_id;
-    modular_y = modular_y_ + cache_id;
+    //modular_x = modular_x_ + cache_id;
+    //modular_y = modular_y_ + cache_id;
     rational_x = rational_x_ + cache_id;
     rational_y = rational_y_ + cache_id;
     rational_fx = rational_fx_ + cache_id;
