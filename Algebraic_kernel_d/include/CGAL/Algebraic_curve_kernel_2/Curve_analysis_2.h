@@ -1519,23 +1519,24 @@ private:
         bool speed_up=false;
 #endif
         
-        if(! speed_up) {
-            
-            // Compute resultant using the Sturm-Habicht sequence
-	  if(polynomial_2().degree() == 0) {
+        if(polynomial_2().degree() == 0) {
 	    this->ptr()->resultant_of_primitive_and_derivative_y 
                 = Polynomial_1(1);
-	  } else {
-            this->ptr()->resultant_of_primitive_and_derivative_y 
-	      = principal_sturm_habicht_of_primitive(0);
-	  }
-            
         } else {
             
-            this->ptr()->resultant_of_primitive_and_derivative_y
-                = CGAL::CGALi::resultant
-                    (primitive_polynomial_2(),
-                     CGAL::diff(primitive_polynomial_2()));
+            if(! speed_up) {
+                
+                // Compute resultant using the Sturm-Habicht sequence
+                this->ptr()->resultant_of_primitive_and_derivative_y 
+                    = principal_sturm_habicht_of_primitive(0);
+        
+            } else {
+                
+                this->ptr()->resultant_of_primitive_and_derivative_y
+                    = CGAL::CGALi::resultant
+                        (primitive_polynomial_2(),
+                         CGAL::diff(primitive_polynomial_2()));
+            }
 
         }
 
