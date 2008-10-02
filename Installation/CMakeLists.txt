@@ -3,7 +3,7 @@
 # refer to the root source directory of the project as ${CMAKE_SOURCE_DIR} or
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
-project(CGAL C CXX)
+project(CGAL)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 
@@ -95,10 +95,10 @@ cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS   "" )
 cache_set(CGAL_3RD_PARTY_LIBRARIES      "" )
 cache_set(CGAL_3RD_PARTY_LIBRARIES_DIRS "" ) 
 
-cache_set(CGAL_CORE_3RD_PARTY_DEFINITIONS    "" )
-cache_set(CGAL_CORE_3RD_PARTY_INCLUDE_DIRS   "" )
-cache_set(CGAL_CORE_3RD_PARTY_LIBRARIES      "" )
-cache_set(CGAL_CORE_3RD_PARTY_LIBRARIES_DIRS "" ) 
+cache_set(CGAL_Core_3RD_PARTY_DEFINITIONS    "" )
+cache_set(CGAL_Core_3RD_PARTY_INCLUDE_DIRS   "" )
+cache_set(CGAL_Core_3RD_PARTY_LIBRARIES      "" )
+cache_set(CGAL_Core_3RD_PARTY_LIBRARIES_DIRS "" ) 
 
 cache_set(CGAL_ImageIO_3RD_PARTY_DEFINITIONS    "" )
 cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS   "" )
@@ -300,7 +300,7 @@ include(CGAL_SetupFlags)
 add_subdirectory(src)
 
 cache_get(CGAL_LIBRARY)
-cache_get(CGAL_CORE_LIBRARY)
+cache_get(CGAL_Core_LIBRARY)
 cache_get(CGAL_ImageIO_LIBRARY)
 cache_get(CGAL_PDB_LIBRARY)
 cache_get(CGAL_Qt3_LIBRARY)
@@ -311,10 +311,10 @@ cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS) 
 
-cache_get(CGAL_CORE_3RD_PARTY_DEFINITIONS   )
-cache_get(CGAL_CORE_3RD_PARTY_INCLUDE_DIRS  )
-cache_get(CGAL_CORE_3RD_PARTY_LIBRARIES     )
-cache_get(CGAL_CORE_3RD_PARTY_LIBRARIES_DIRS) 
+cache_get(CGAL_Core_3RD_PARTY_DEFINITIONS   )
+cache_get(CGAL_Core_3RD_PARTY_INCLUDE_DIRS  )
+cache_get(CGAL_Core_3RD_PARTY_LIBRARIES     )
+cache_get(CGAL_Core_3RD_PARTY_LIBRARIES_DIRS) 
 
 cache_get(CGAL_ImageIO_3RD_PARTY_DEFINITIONS   )
 cache_get(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS  )

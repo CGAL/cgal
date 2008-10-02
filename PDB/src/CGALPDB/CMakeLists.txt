@@ -1,5 +1,9 @@
 project (CGAL_PDB)
    
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+  
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+
 if ( NOT CGAL_FOUND )   
   find_package(CGAL REQUIRED)
   include(${CGAL_USE_FILE})
@@ -17,7 +21,7 @@ add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} )
 
 add_dependencies( CGAL_PDB CGAL )
 
-set( CGAL_PDB_BASENAME CGAL-PDB )
+set( CGAL_PDB_BASENAME CGAL_PDB )
 
 if (NOT AUTO_LINK_ENABLED )
 

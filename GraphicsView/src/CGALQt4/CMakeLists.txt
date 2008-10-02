@@ -1,4 +1,8 @@
 project (CGAL_Qt4)
+
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+  
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
    
 if ( NOT CGAL_FOUND )   
   find_package(CGAL REQUIRED)
@@ -14,7 +18,7 @@ find_package(OpenGL QUIET )
 if( QT4_FOUND )
 
   if( OPENGL_FOUND )
-  77777777777777777
+    
     include_directories (BEFORE ../../include)
     
     include(${QT_USE_FILE})
@@ -51,7 +55,7 @@ if( QT4_FOUND )
     # qrc files (resources files, that contain icons, at least)
     qt4_add_resources ( RESOURCE_FILES ../../demo/resources/CGAL.qrc ../../demo/icons/Input.qrc ../../demo/icons/File.qrc ../../demo/icons/Triangulation_2.qrc)
 
-    set( CGAL_Qt4_BASENAME CGAL-Qt4 )
+    set( CGAL_Qt4_BASENAME CGAL_Qt4 )
 
     add_library( CGAL_Qt4 debug.cpp 
 			  GraphicsViewNavigation.cpp

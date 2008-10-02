@@ -1,10 +1,13 @@
 project (CGAL_Core)
    
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+  
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+
 if ( NOT CGAL_FOUND )
   find_package(CGAL REQUIRED)
   include(${CGAL_USE_FILE})
 endif()
-
 
 include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
@@ -18,7 +21,7 @@ target_link_libraries( CGAL_Core ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 set_target_properties(CGAL_Core PROPERTIES VERSION "${CGAL_SOVERSION}" SOVERSION "${CGAL_SONAME_VERSION}")
 
-set( CGAL_Core_BASENAME CGAL-Core++ )
+set( CGAL_Core_BASENAME CGAL_Core )
 
 if (NOT AUTO_LINK_ENABLED )
 

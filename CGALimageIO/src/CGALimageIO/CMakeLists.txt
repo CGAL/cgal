@@ -1,5 +1,9 @@
 project (CGAL_ImageIO)
    
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+  
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+
 if ( NOT CGAL_FOUND )   
   find_package(CGAL REQUIRED)
   include(${CGAL_USE_FILE})
@@ -27,7 +31,7 @@ if(ZLIB_FOUND)
     message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
     message( STATUS "OpenGL definitions: ${OPENGL_DEFINITIONS}" )
     
-    set( CGAL_ImageIO_BASENAME CGAL-ImageIO )
+    set( CGAL_ImageIO_BASENAME CGAL_ImageIO )
     
     cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
     cache_set(CGAL_ImageIO_3RD_PARTY_LIBRARIES    ${ZLIB_LIBRARY}     ${OPENGL_LIBRARIES}   )

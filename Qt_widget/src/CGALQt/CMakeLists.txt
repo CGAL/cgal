@@ -1,5 +1,9 @@
 project (CGAL_Qt3)
 
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+  
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+
 if ( NOT CGAL_FOUND )
   find_package(CGAL REQUIRED)
   include(${CGAL_USE_FILE})
@@ -96,7 +100,7 @@ if( QT3_FOUND )
         
     add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt3_3RD_PARTY_DEFINITIONS} )
     
-    set( CGAL_Qt3_BASENAME CGAL-Qt3 )
+    set( CGAL_Qt3_BASENAME CGAL_Qt3 )
     
     if (NOT AUTO_LINK_ENABLED )
 
