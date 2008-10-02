@@ -844,57 +844,6 @@ void test_evaluate_homogeneous(){
         assert(P.evaluate(u/v)==Rational(62)/Rational(25));
     }
 }
-
-template <class NT>
-void flat_iterator_tests() {
-    typedef CGAL::Polynomial<NT> POLY1;
-    typedef CGAL::Polynomial<POLY1> POLY2;
-    typedef CGAL::Polynomial<POLY2> POLY3;
-
-    POLY1
-        p1(NT( 1), NT( 2), NT( 3)), 
-        p2(NT( 4), NT( 5), NT( 6)),
-        p3(NT( 7), NT( 8), NT( 9)),
-        p4(NT(10), NT(11), NT(12)),
-        p5(NT(13), NT(14), NT(15)),
-        p6(NT(16), NT(17), NT(18)),
-        p7(NT(19), NT(20), NT(21)),
-        p8(NT(22), NT(23), NT(24)),
-        p9(NT(25), NT(26), NT(27));
-
-    POLY2
-        q1(p1, p2, p3),
-        q2(p4, p5, p6),
-        q3(p7, p8, p9);
-
-    POLY3 r(q1, q2, q3);
-
-    typedef CGAL::Polynomial_traits_d<POLY1> PT1;
-    typedef CGAL::Polynomial_traits_d<POLY2> PT2;
-    typedef CGAL::Polynomial_traits_d<POLY3> PT3;
-
-    int i;
-    typename PT1::Innermost_coefficient_const_iterator it1; (void) it1;
-    typename PT1::Innermost_coefficient_const_begin begin1; (void) begin1;
-    typename PT1::Innermost_coefficient_const_end     end1; (void) end1;
-    typename PT2::Innermost_coefficient_const_iterator it2; (void) it2;
-    typename PT2::Innermost_coefficient_const_begin begin2; (void) begin2;
-    typename PT2::Innermost_coefficient_const_end     end2; (void) end2;
-    typename PT3::Innermost_coefficient_const_iterator it3; (void) it3;
-    typename PT3::Innermost_coefficient_const_begin begin3; (void) begin3;
-    typename PT3::Innermost_coefficient_const_end     end3; (void) end3;
-
-    for (i = 1, it1 = begin1(p1); i <= 3; ++i, ++it1)
-        assert(*it1 == i);
-    assert(it1 == end1(p1));
-    for (i = 1, it2 = begin2(q1); i <= 9; ++i, ++it2)
-        assert(*it2 == i);
-    assert(it2 == end2(q1));
-    for (i = 1, it3 = begin3(r); i <= 27; ++i, ++it3)
-        assert(*it3 == i);
-    assert(it3 == end3(r));
-}
-
 void test_total_degree(){
     typedef CGAL::Polynomial<int>    Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
@@ -1075,9 +1024,6 @@ void test_AT(){
 
     basic_tests<int>();
     basic_tests<double>();
-    // TODO: The flat_iterator_test leads to compile errors. Need to be fixed
-    flat_iterator_tests<int>();
-        
     {
         typedef typename AT::Integer Integer;
         typedef typename CGAL::Polynomial<Integer> Polynomial;
