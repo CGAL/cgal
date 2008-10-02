@@ -763,21 +763,21 @@ public:
         typename Coercion::Cast cast;
 
         typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
-            ::Coefficient_iterator Coefficient_iterator;
+            ::Coefficient_const_iterator Coefficient_const_iterator;
 
         Coercion_interval iy(cast(get_approximation_y().lower()),
                              cast(get_approximation_y().upper()));
 
         // CGAL::Polynomial does not provide Coercion_traits for number
         // types => therefore evaluate manually
-        Coefficient_iterator it 
+        Coefficient_const_iterator it 
             = typename CGAL::Polynomial_traits_d<Polynomial_2>
-                ::Coefficient_end()(p) - 1;
+                ::Coefficient_const_end()(p) - 1;
         Coercion_interval res(interval_evaluate_1(*it));
         
-        Coefficient_iterator p_begin 
+        Coefficient_const_iterator p_begin 
             = typename CGAL::Polynomial_traits_d<Polynomial_2>
-                ::Coefficient_begin()(p);
+                ::Coefficient_const_begin()(p);
 
         while((it--) != p_begin) 
             res = res * iy + (interval_evaluate_1(*it));
@@ -790,20 +790,20 @@ public:
         typename Coercion::Cast cast;
 
         typedef typename CGAL::Polynomial_traits_d<Polynomial_1>
-            ::Coefficient_iterator Coefficient_iterator;
+            ::Coefficient_const_iterator Coefficient_const_iterator;
 
         Coercion_interval ix(cast(get_approximation_x().lower()),
                              cast(get_approximation_x().upper()));
         
-        Coefficient_iterator it 
+        Coefficient_const_iterator it 
             = typename CGAL::Polynomial_traits_d<Polynomial_1>
-                ::Coefficient_end()(p) - 1;
+                ::Coefficient_const_end()(p) - 1;
 
         Coercion_interval res(cast(*it));
 
-        Coefficient_iterator p_begin 
+        Coefficient_const_iterator p_begin 
             = typename CGAL::Polynomial_traits_d<Polynomial_1>
-                ::Coefficient_begin()(p);
+                ::Coefficient_const_begin()(p);
         while((it--) != p_begin) 
             res = res * ix + Coercion_interval(cast(*it));
         return res;
