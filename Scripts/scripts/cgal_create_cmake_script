@@ -57,25 +57,28 @@ EOF
       all="$all $file"
     done
     cat <<'EOF'  
-find_package(CGAL QUIET COMPONENTS CORE Qt3 )
-include( ${CGAL_USE_FILE} )
+find_package(CGAL QUIET COMPONENTS Core Qt3 )
 
-find_package(Qt3-patched QUIET )
-# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
-# that it can be used together with FindQt4: all its variables are prefixed
-# by "QT3_" instead of "QT_".
+if ( CGAL_FOUND )
 
-if(CGAL_Qt3_FOUND AND QT3_FOUND)
-
-  include( Qt3Macros-patched )
+  include( ${CGAL_USE_FILE} )
+  
+  find_package(Qt3-patched QUIET )
+  # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+  # that it can be used together with FindQt4: all its variables are prefixed
+  # by "QT3_" instead of "QT_".
+  
+  if(CGAL_Qt3_FOUND AND QT3_FOUND)
+  
+    include( Qt3Macros-patched )
 EOF
     echo "  QT3_AUTOMOC( ${all} )"
     cat<<'EOF'
 
-  # Make sure the compiler can find generated .moc files
-  include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-
-  include_directories( ${QT3_INCLUDE_DIR} )
+    # Make sure the compiler can find generated .moc files
+    include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+  
+    include_directories( ${QT3_INCLUDE_DIR} )
 
 EOF
     
@@ -84,26 +87,36 @@ EOF
       echo
     fi
     cat <<EOF
-  add_executable  (${target_name} ${all})
-
-  add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${target_name} )
-
-
-  # Link the executable to CGAL and third-party libraries
-  target_link_libraries(${target_name} \${QT3_LIBRARIES} \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES} )
-else(CGAL_Qt3_FOUND AND QT3_FOUND)
-
-  message(STATUS "This demo requires Qt3 and the CGAL Qt3 library, and will not be compiled.")
-
-endif(CGAL_Qt3_FOUND AND QT3_FOUND)
+    add_executable  (${target_name} ${all})
+  
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${target_name} )
+  
+  
+    # Link the executable to CGAL and third-party libraries
+    target_link_libraries(${target_name} \${QT3_LIBRARIES} \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES} )
+  else()
+  
+    message(STATUS "This demo requires Qt3 and the CGAL Qt3 library, and will not be compiled.")
+  
+  endif()
+  
+else()
+  
+    message(STATUS "This demo requires the CGAL library, and will not be compiled.")
+  
+endif()
 EOF
     
   else
+  
     cat <<'EOF'
-find_package(CGAL REQUIRED CORE )
-include( ${CGAL_USE_FILE} )
+find_package(CGAL QUIET COMPONENTS Core )
 
-include( CreateSingleSourceCGALProgram )
+if ( CGAL_FOUND )
+
+  include( ${CGAL_USE_FILE} )
+
+  include( CreateSingleSourceCGALProgram )
 
 EOF
     if [ -d include ] ; then
@@ -120,6 +133,16 @@ EOF
         echo "create_single_source_cgal_program( \"$file\" )"
       fi
     done
+    
+    cat <<'EOF'
+
+else()
+  
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+  
+endif()
+EOF
+
   fi
   
   echo
