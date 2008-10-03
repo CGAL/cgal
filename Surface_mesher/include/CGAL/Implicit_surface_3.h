@@ -86,6 +86,11 @@ namespace CGAL {
         v1->point().element_index() != v3->point().element_index();
     }
 
+    const Function& function() const
+    {
+      return func;
+    }
+
   private:
     Function func;
     Sphere_3 sphere;
