@@ -9,7 +9,8 @@ A model \ccVar\ of this type must provide:
 	const SphericalKernel::Circular_arc_point_3 &p,
 	SphericalKernel::Circular_arc_3 &a1, 
 	SphericalKernel::Circular_arc_3 &a2);}
-{Splits arc $a$ at point $p$, which creates arcs $a1$ and $a2$.}
+{Splits arc $a$ at point $p$, which creates arcs $a1$ and $a2$.
+\ccPrecond{The point lies on the input arc.}}
 
 \ccMemberFunction{void operator()
 	(const SphericalKernel::Line_arc_3 &l, 

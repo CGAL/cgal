@@ -3,7 +3,7 @@
 \ccInclude{CGAL/global_functions_spherical_kernel_3.h}
 
 \ccFunction{Circular_arc_point_3<SphericalKernel>
-  x_extremal_point(const Sphere_3<SphericalKernel> & c, bool b);}
+  x_extremal_point(Const Sphere_3<SphericalKernel> & c, bool b);}
 {Returns the point on the sphere that is the smallest (resp. largest)
   point in the $x$-direction if $b$ is \ccc{true}
   (resp. \ccc{false}).}
@@ -41,5 +41,68 @@
 \ccFunction{Circular_arc_point_3<SphericalKernel>
   z_extremal_point(const Circle_3<SphericalKernel> & c, bool b);}
 {Same for a circle.}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{x_extremal_points}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  x_extremal_points(const Sphere_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $x$-extremal points of the
+  sphere. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  x_extremal_points(const Circle_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $x$-extremal points of the
+  circle. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{y_extremal_points}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  y_extremal_points(const Sphere_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $y$-extremal points of the
+  sphere. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  y_extremal_points(const Circle_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $y$-extremal points of the
+  circle. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{z_extremal_points}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  z_extremal_points(const Sphere_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $z$-extremal points of the
+  sphere. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  z_extremal_points(const Circle_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $z$-extremal points of the
+  circle. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
 
 \end{ccRefFunction}
