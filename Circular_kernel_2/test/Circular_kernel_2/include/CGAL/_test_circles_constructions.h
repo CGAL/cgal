@@ -29,13 +29,13 @@
 template <class CK>
 void _test_circle_construct(CK ck)
 {
-  typedef typename CK::Circle_2                    Circle_2;
-  typedef typename CK::Circular_arc_2              Circular_arc_2;
+  typedef CGAL::Circle_2<CK>                       Circle_2;
+  typedef CGAL::Circular_arc_2<CK>                 Circular_arc_2;
+  typedef CGAL::Point_2<CK>                        Point_2;
+  typedef CGAL::Line_2<CK>                         Line_2;
+  typedef CGAL::Circular_arc_point_2<CK>           Circular_arc_point_2;
   typedef typename CK::RT                          RT;
   typedef typename CK::FT                          FT;
-  typedef typename CK::Point_2                     Point_2;
-  typedef typename CK::Line_2                      Line_2;
-  typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
   typedef typename CK::Construct_circle_2          Construct_circle_2;
   typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
@@ -108,18 +108,24 @@ void _test_circle_construct(CK ck)
 				  circ_intersection_2_1_r);
    
   std::vector< CGAL::Object > 
-    vector_for_intersection_1;
+    vector_for_intersection_1, vector_for_intersection_1l;
   
   theConstruct_intersect_2(circ_intersections_2_1, 
 			   circ_intersections_2_2,
 			   std::back_inserter(vector_for_intersection_1));
+	intersection(circ_intersections_2_1, 
+					   circ_intersections_2_2,
+					   std::back_inserter(vector_for_intersection_1l));
   // there are 2 intersection's points
 	assert(theDo_intersect_2(circ_intersections_2_1, circ_intersections_2_1));
+	assert(do_intersect(circ_intersections_2_1, circ_intersections_2_1));
   std::pair<Circular_arc_point_2, unsigned > the_pair;
   assert(assign(the_pair, vector_for_intersection_1[0]));
+  assert(assign(the_pair, vector_for_intersection_1l[0]));
   Circular_arc_point_2 first = the_pair.first;
   std::cout << first << std::endl;
   assert(assign(the_pair, vector_for_intersection_1[1]));
+  assert(assign(the_pair, vector_for_intersection_1l[1]));
   Circular_arc_point_2 second = the_pair.first;
   std::cout << second << std::endl;
   Compare_xy_2 theCompare_xy_2 = ck.compare_xy_2_object();
@@ -686,15 +692,17 @@ void _test_circle_construct(CK ck)
   Point_2 center_circ_monotone(x,y);
   Circle_2 circ_monotone(center_circ_monotone, r*r);
   Circular_arc_2 theCircular_arc_2_full(circ_monotone);
-  std::vector< CGAL::Object > outputIterator1;
+  std::vector< CGAL::Object > outputIterator1, outputIterator1l;
   theMake_x_monotone(theCircular_arc_2_full,
 		     std::back_inserter(outputIterator1));
+	make_x_monotone(theCircular_arc_2_full,	std::back_inserter(outputIterator1l));
   std::cout << std::endl;
   std::cout << "x_monotone full circle : " 
 	    << circ_monotone << std::endl;
-  Circular_arc_2 circular_arc_2_full;
+  Circular_arc_2 circular_arc_2_full, circular_arc_2_fulll;
   for(std::size_t i = 0; i < outputIterator1.size(); i++){
     assign(circular_arc_2_full,  outputIterator1[i]);
+    assign(circular_arc_2_fulll,  outputIterator1l[i]);
     std::cout << "Circular_arc_2_" << i << " : " 
 	      << circular_arc_2_full << std::endl;
    std::cout << "Circular_arc_2_" << i << "source : " 
@@ -702,18 +710,24 @@ void _test_circle_construct(CK ck)
     std::cout << "Circular_arc_2_" << i << "target : " 
 	      << circular_arc_2_full.target() << std::endl;
     assert(circular_arc_2_full.is_x_monotone());
+		assert(circular_arc_2_full == circular_arc_2_fulll);
   }
 
   //Make_xy_monotone_2 with a full circle
   Make_xy_monotone_2 theMake_xy_monotone = ck.make_xy_monotone_2_object();
   outputIterator1.clear();
+  outputIterator1l.clear();
   theMake_xy_monotone(theCircular_arc_2_full,
 		     std::back_inserter(outputIterator1));
+	theMake_xy_monotone(theCircular_arc_2_full,
+		     std::back_inserter(outputIterator1l));
 	assert(outputIterator1.size() == 4);
   for(std::size_t i = 0; i < outputIterator1.size(); i++){
     assign(circular_arc_2_full,  outputIterator1[i]);
+    assign(circular_arc_2_fulll,  outputIterator1l[i]);
     assert(circular_arc_2_full.is_x_monotone());
     assert(circular_arc_2_full.is_y_monotone());
+    assert(circular_arc_2_full == circular_arc_2_fulll);
   } 
 
   //Make_xy_monotone_2 general test

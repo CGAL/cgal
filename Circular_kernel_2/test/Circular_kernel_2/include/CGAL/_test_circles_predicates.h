@@ -29,14 +29,14 @@ template <class CK>
 void _test_circle_predicat(CK ck)
 {
   typedef typename CK::FT                      FT;
-  typedef typename CK::Circle_2                Circle_2;
-  typedef typename CK::Circular_arc_2          Circular_arc_2;
-  typedef typename CK::Point_2                 Point_2;
-  typedef typename CK::Line_2                  Line_2;
+  typedef CGAL::Circle_2<CK>                   Circle_2;
+  typedef CGAL::Circular_arc_2<CK>            Circular_arc_2;
+  typedef CGAL::Point_2<CK>                    Point_2;
+  typedef CGAL::Line_2<CK>                     Line_2;
+  typedef CGAL::Circular_arc_point_2<CK>       Circular_arc_point_2;
   typedef typename CK::Compare_x_2             Compare_x_2;
   typedef typename CK::Compare_y_2             Compare_y_2;
   typedef typename CK::Compare_xy_2            Compare_xy_2;
-  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
   typedef typename CK::Compare_y_to_right_2    Compare_y_to_right_2;
   typedef typename CK::Compare_y_at_x_2        Compare_y_at_x_2;
   typedef typename CK::Equal_2                 Equal_2;
@@ -134,7 +134,7 @@ void _test_circle_predicat(CK ck)
   CGAL::Comparison_result theComparison_result_y_at_x_2 =
     theCompare_y_at_x_2(circ1_arc_end_p3,circ1_arc_high);
   assert(theComparison_result_y_at_x_2 == CGAL::EQUAL);
-  
+  assert(compare_y_at_x(circ1_arc_end_p3,circ1_arc_high) == CGAL::EQUAL);
   //Comparison between the inferior arc and a point in top (p3)
   theComparison_result_y_at_x_2 = 
     theCompare_y_at_x_2(circ1_arc_end_p3,circ1_arc_low);
@@ -304,6 +304,13 @@ void _test_circle_predicat(CK ck)
   assert(theIn_x_range_2(circ1_arc_high, circ2_arc_end_p1));
   assert(theIn_x_range_2(circ1_arc_low, circ2_arc_end_p1));
   assert(!theIn_x_range_2(circ1_arc_low, circ1_left_arc_end_p1));
+
+  assert(has_in_x_range(circ1_arc_low, circ1_arc_end_p7));
+  assert(has_in_x_range(circ1_arc_high, circ1_arc_end_p7));
+  assert(has_in_x_range(circ1_arc_high, circ2_arc_end_p1));
+  assert(has_in_x_range(circ1_arc_low, circ2_arc_end_p1));
+  assert(!has_in_x_range(circ1_arc_low, circ1_left_arc_end_p1));
+
   std::cout << std::endl;
 
   
