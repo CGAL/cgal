@@ -25,14 +25,34 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// Peak_memory_sizer extends Memory_sizer by giving access to the peak memory used by the process.
-// Both the virtual memory size and the resident size.
+/// Peak_memory_sizer extends Memory_sizer with new memory statistics.
 struct Peak_memory_sizer : public Memory_sizer
 {
     typedef std::size_t   size_type;
 
+    /// Get the peak memory used by the process.
+    /// Both the virtual memory size and the resident size.
     size_type peak_virtual_size()  const { return get_peak_memory(true); }
     size_type peak_resident_size() const { return get_peak_memory(false); }
+
+    /// Get the number of large free memory blocks.
+    size_type count_free_memory_blocks(size_type min_block_size)
+    {
+        // Allocate all memory blocks >= min_block_size
+        std::vector<void*> blocks;
+        void* block;
+        while ((block = malloc(min_block_size)) != NULL)
+          blocks.push_back(block);
+        
+        // Return value
+        size_type count = blocks.size();
+        
+        // Free large memory blocks
+        for (int i=0; i<count; i++)
+          free(blocks[i]);
+          
+        return count;
+    }
 
 private:
 

@@ -297,10 +297,9 @@ public:
     unsigned int nb_vertices_added = delaunay_refinement(radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarge_ratio);
 
     // Print status
-    long memory = CGAL::Memory_sizer().virtual_size();
     CGAL_TRACE_STREAM << "Delaunay refinement: " << "added " << nb_vertices_added << " Steiner points, "
                                                  << task_timer.time() << " seconds, "
-                                                 << (memory>>20) << " Mb allocated"
+                                                 << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
                                                  << std::endl;
     task_timer.reset();
 
@@ -326,9 +325,8 @@ public:
     set_contouring_value(median_value_at_input_vertices());
 
     // Print status
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size();
     CGAL_TRACE_STREAM << "Solve Poisson equation: " << task_timer.time() << " seconds, "
-                                                    << (memory>>20) << " Mb allocated"
+                                                    << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
                                                     << std::endl;
     task_timer.reset();
 
@@ -338,9 +336,9 @@ public:
   //Calculate and store average spacing at each input point
   void average_spacing_avg_knn_sq_distance_3()
   {
-	   Finite_vertices_iterator v;
-	   int number_vertices = 0;
-		for(v = m_dt.finite_vertices_begin();
+    Finite_vertices_iterator v;
+    int number_vertices = 0;
+    for(v = m_dt.finite_vertices_begin();
         v != m_dt.finite_vertices_end();
         v++)
 		number_vertices++;
@@ -350,18 +348,18 @@ public:
 	{
 	  FT sq_distance = 0.0;
 	  int counter = 0;
-	// std::stack<Vertex_handle> vertices; // use to walk in 3D Delaunay
+	  // std::stack<Vertex_handle> vertices; // use to walk in 3D Delaunay
 	  //  vertices.push(v);
-	std::list<Vertex_handle> v_neighbors;
-	m_dt.incident_vertices(v,std::back_inserter(v_neighbors));
-	typename std::list<Vertex_handle>::iterator it;
-	for(it = v_neighbors.begin();
-			it != v_neighbors.end();
-			it++)
-	{
-		sq_distance = sq_distance +  distance(*it,v)*distance(*it,v);
-		counter++;
-	}
+	  std::list<Vertex_handle> v_neighbors;
+	  m_dt.incident_vertices(v,std::back_inserter(v_neighbors));
+	  typename std::list<Vertex_handle>::iterator it;
+	  for(it = v_neighbors.begin();
+			  it != v_neighbors.end();
+			  it++)
+	  {
+		  sq_distance = sq_distance +  distance(*it,v)*distance(*it,v);
+		  counter++;
+	  }
 
 		/*while(!vertices.empty() && counter < 0.001 * number_vertices )
 		{
@@ -647,8 +645,12 @@ public:
     *duration_factorization = 0.0;
     *duration_solve = 0.0;
 
-    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     long old_max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
+
+    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n", 
+               long(CGAL::Memory_sizer().virtual_size())>>20,
+               long(taucs_available_memory_size())>>20,
+               long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Create matrix\n");
 
     // get #variables
@@ -657,7 +659,7 @@ public:
     // at least one vertex must be constrained
     if(nb_variables == m_dt.number_of_vertices())
     {
-   //  constrain_input_vertex_on_convex_hull();
+      constrain_one_vertex_on_convex_hull();
       nb_variables = m_dt.index_unconstrained_vertices();
     }
 
@@ -688,7 +690,10 @@ public:
     *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
     */
 
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n", 
+               long(CGAL::Memory_sizer().virtual_size())>>20,
+               long(taucs_available_memory_size())>>20,
+               long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Choleschy factorization\n");
 
     // Choleschy factorization M = L L^T
@@ -698,11 +703,14 @@ public:
     *duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
 
     // Print peak memory (Windows only)
-    long max_memory = CGAL::Peak_memory_sizer().peak_resident_size();
+    long max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
     if (max_memory > old_max_memory)
       CGAL_TRACE("  Max allocation = %ld Mb\n", max_memory>>20);
 
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n", 
+               long(CGAL::Memory_sizer().virtual_size())>>20,
+               long(taucs_available_memory_size())>>20,
+               CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576));
     CGAL_TRACE("  Direct solve by forward and backward substitution\n");
 
     // Direct solve by forward and backward substitution
@@ -733,7 +741,10 @@ public:
       if(!v->constrained())
         v->f() = X[index++];
 
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n", 
+               long(CGAL::Memory_sizer().virtual_size())>>20,
+               long(taucs_available_memory_size())>>20,
+               long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("End of solve_poisson()\n");
 
     return true;
@@ -1062,17 +1073,17 @@ private:
     v->f() = value;
   }
 
-  void constrain_input_vertex_on_convex_hull(const FT value = 0.0)
-  {
-    for(Finite_vertices_iterator v = m_dt.finite_vertices_begin();
-      v != m_dt.finite_vertices_end();
-      v++)
-	  if (v->type() == Triangulation::INPUT)
-	  {
-		  v->constrained() = true;
-		  v->f() = value;
-	  }
-  }
+  //void constrain_input_vertices_on_convex_hull(const FT value = 0.0)
+  //{
+  //  for(Finite_vertices_iterator v = m_dt.finite_vertices_begin();
+  //    v != m_dt.finite_vertices_end();
+  //    v++)
+	 // if (v->type() == Triangulation::INPUT)
+	 // {
+		//  v->constrained() = true;
+		//  v->f() = value;
+	 // }
+  //}
 
   // divergent
   FT div(Vertex_handle v)
@@ -1411,6 +1422,7 @@ private:
     // assemble new row
     solver.begin_row();
 
+    // for each vertex vj neighbor of vi
     std::list<Vertex_handle> vertices;
     m_dt.incident_vertices(vi,std::back_inserter(vertices));
     double diagonal = 0.0;

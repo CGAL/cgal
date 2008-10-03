@@ -13,14 +13,16 @@
 #include "orient_normals_wrt_cameras_3.h"
 
 // CGAL
-//Warning: crash when using #define CGAL_C2T3_USE_POLYHEDRON
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
-#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+
+//Warning: crash when using #define CGAL_C2T3_USE_POLYHEDRON
+#define CGAL_C2T3_USE_FILE_WRITER_OFF
+#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 // This package
 #include <CGAL/IO/surface_reconstruction_read_off_point_cloud.h>
@@ -38,6 +40,7 @@
 #include <CGAL/average_spacing_3.h>
 #include <CGAL/merge_epsilon_nearest_points_3.h>
 #include <CGAL/random_simplification_points_3.h>
+#include <CGAL/Peak_memory_sizer.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
 // STL
@@ -482,11 +485,11 @@ void CPoissonDoc::update_status()
     CString selected_points;
     selected_points.Format("%d selected",m_points.nb_selected_points());
 
-    long memory = CGAL::Memory_sizer().virtual_size();
-
     // write message to cerr
     std::cerr << "=> " << points << " (" << selected_points << "), " 
-                       << (memory>>20) << " Mb allocated"
+                       << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated, "
+                       << "largest free block=" << (long(taucs_available_memory_size())>>20) << " Mb, "
+                       << "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
                        << std::endl;
 
     // Update status bar
@@ -504,11 +507,11 @@ void CPoissonDoc::update_status()
     CString tets;
     tets.Format("%d tets",m_poisson_dt->number_of_cells());
 
-    long memory = CGAL::Memory_sizer().virtual_size();
-    
     // write message to cerr
     std::cerr << "=> " << vertices << ", " << tets << ", "
-                       << (memory>>20) << " Mb allocated"
+                       << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated, "
+                       << "largest free block=" << (long(taucs_available_memory_size())>>20) << " Mb, "
+                       << "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
                        << std::endl;
 
     // Update status bar
@@ -948,10 +951,10 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
                       << "                    angle="<<m_sm_angle << " degrees,\n"
                       << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
                       << "                    distance="<<m_sm_distance_poisson<<" * p.s.r.,\n"
-                      << "                    Non_manifold_tag)\n";
+                      << "                    Manifold_tag)\n";
 
     // meshing surface
-    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
+    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_tag());
 
     // get output surface
     std::list<Triangle> triangles;
@@ -1276,10 +1279,10 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
                       << "                    angle="<<m_sm_angle << " degrees,\n"
                       << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
                       << "                    distance="<<m_sm_distance_apss<<" * p.s.r.,\n"
-                      << "                    Non_manifold_tag)\n";
+                      << "                    Manifold_tag)\n";
 
     // meshing surface
-    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
+    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_tag());
 
     // get output surface
     std::list<Triangle> triangles;
