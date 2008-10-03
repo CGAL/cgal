@@ -705,8 +705,8 @@ void _test_lexico_operations(SK sk) {
 template <class SK>
 void _test_compare(SK sk) {
 	
-	typedef typename CGAL::Circular_arc_point_3<SK>  Circular_arc_point_3;
-  typedef typename CGAL::Point_3<SK>               Point_3;
+	typedef CGAL::Circular_arc_point_3<SK>  Circular_arc_point_3;
+  typedef CGAL::Point_3<SK>               Point_3;
 
 	Circular_arc_point_3 p[8];
 	p[0] = Point_3(1,0,0);
