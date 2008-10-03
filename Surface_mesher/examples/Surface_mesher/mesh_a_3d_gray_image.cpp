@@ -32,7 +32,7 @@ int main() {
   GT::Sphere_3 bounding_sphere(bounding_sphere_center,
                                    bounding_sphere_squared_radius);
 
-  // definition of the surface, with 10^-2 as relative precision
+  // definition of the surface, with 10^-5 as relative precision
   Surface_3 surface(image, bounding_sphere, 1e-5);
 
   // defining meshing criteria
