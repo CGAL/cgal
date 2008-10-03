@@ -112,6 +112,46 @@ z_extremal_points(const Sphere_3<SK> & c, OutputIterator res)
   return SphericalFunctors::z_extremal_point<SK>(c,res);
 }
 
+template< class CK >
+inline
+CGAL::Comparison_result 
+compare_x(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
+{
+  return CK().compare_x_3_object()(p, q);
+}
+
+template< class CK >
+inline
+CGAL::Comparison_result 
+compare_y(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
+{
+  return CK().compare_y_3_object()(p, q);
+}
+
+template< class CK >
+inline
+CGAL::Comparison_result 
+compare_z(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
+{
+  return CK().compare_z_3_object()(p, q);
+}
+
+template< class CK >
+inline
+CGAL::Comparison_result 
+compare_xy(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
+{
+  return CK().compare_xy_3_object()(p, q);
+}
+
+template< class CK >
+inline
+CGAL::Comparison_result 
+compare_xyz(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
+{
+  return CK().compare_xyz_3_object()(p, q);
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_SPHERICAL_KERNEL_GLOBAL_FUNCTIONS_CIRCULAR_KERNEL_3_H

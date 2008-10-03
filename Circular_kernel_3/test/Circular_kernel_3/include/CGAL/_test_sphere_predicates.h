@@ -703,6 +703,57 @@ void _test_lexico_operations(SK sk) {
 }
 
 template <class SK>
+void _test_compare(SK sk) {
+  typedef typename SK::RT                               RT;
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Root_of_2                        Root_of_2;
+  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+  typedef typename SK::Point_3                          Point_3;
+  typedef typename SK::Sphere_3                         Sphere_3;
+  typedef typename SK::Algebraic_kernel                 AK;
+  typedef typename SK::Get_equation                     Get_equation;
+  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
+  typedef typename SK::Bounded_side_3                   Bounded_side_3;
+  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+	Circular_arc_point_3 p[8];
+	p[0] = Point_3(1,0,0);
+  p[1] = Point_3(1,0,0); 
+  p[2] = Point_3(0,1,0);
+  p[3] = Point_3(0,1,0);
+  p[4] = Point_3(0,0,1);
+  p[5] = Point_3(0,0,1);
+  p[6] = Point_3(1,1,0);
+  p[7] = Point_3(1,1,1);
+
+  std::cout << "Testing compare..." << std::endl;
+
+	assert(compare_x(p[0], p[2]) == CGAL::LARGER);
+	assert(compare_x(p[2], p[4]) == CGAL::EQUAL);
+	assert(compare_x(p[2], p[0]) == CGAL::SMALLER);
+	
+	assert(compare_y(p[2], p[0]) == CGAL::LARGER);
+	assert(compare_y(p[2], p[3]) == CGAL::EQUAL);
+	assert(compare_y(p[0], p[2]) == CGAL::SMALLER);
+	
+	assert(compare_z(p[4], p[2]) == CGAL::LARGER);
+	assert(compare_z(p[4], p[5]) == CGAL::EQUAL);
+	assert(compare_z(p[2], p[4]) == CGAL::SMALLER);
+	
+	assert(compare_xy(p[6], p[0]) == CGAL::LARGER);
+	assert(compare_xy(p[6], p[6]) == CGAL::EQUAL);
+	assert(compare_xy(p[0], p[6]) == CGAL::SMALLER);
+	
+	assert(compare_xyz(p[7], p[6]) == CGAL::LARGER);
+	assert(compare_xyz(p[7], p[7]) == CGAL::EQUAL);
+	assert(compare_xyz(p[6], p[7]) == CGAL::SMALLER);
+}
+
+template <class SK>
 void _test_spherical_kernel_predicates(SK sk)
 {
   std::cout << "TESTING PREDICATES" << std::endl;
@@ -713,5 +764,6 @@ void _test_spherical_kernel_predicates(SK sk)
   _test_do_overlap_predicate(sk);
   _test_bounded_side(sk);
   _test_lexico_operations(sk);
+  _test_compare(sk);
   std::cout << "All tests on predicates are OK." << std::endl;
 }
