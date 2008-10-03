@@ -81,23 +81,6 @@ compare_x(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
   return CK().compare_x_2_object()(p, q);
 }
 
-
-template< class CK >
-inline
-CGAL::Comparison_result 
-compare_x(const Circular_arc_point_2<CK> &p, const Point_2<CK> &q)
-{
-  return CK().compare_x_2_object()(p, q);
-}
-
-template< class CK >
-inline
-CGAL::Comparison_result 
-compare_x(const Point_2<CK> &p, const Circular_arc_point_2<CK> &q)
-{
-  return CK().compare_x_2_object()(p, q);
-}
-
 template< class CK >
 inline
 CGAL::Comparison_result 
@@ -109,40 +92,7 @@ compare_y(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 template< class CK >
 inline
 CGAL::Comparison_result 
-compare_y(const Circular_arc_point_2<CK> &p, const Point_2<CK> &q)
-{
-  return CK().compare_y_2_object()(p, q);
-}
-
-template< class CK >
-inline
-CGAL::Comparison_result 
-compare_y(const Point_2<CK> &p, const Circular_arc_point_2<CK> &q)
-{
-  return CK().compare_y_2_object()(p, q);
-}
-
-
-template< class CK >
-inline
-CGAL::Comparison_result 
 compare_xy(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
-{
-  return CK().compare_xy_2_object()(p, q);
-}
-
-template< class CK >
-inline
-CGAL::Comparison_result 
-compare_xy(const Circular_arc_point_2<CK> &p, const Point_2<CK> &q)
-{
-  return CK().compare_xy_2_object()(p, q);
-}
-
-template< class CK >
-inline
-CGAL::Comparison_result 
-compare_xy(const Point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 {
   return CK().compare_xy_2_object()(p, q);
 }

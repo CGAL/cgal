@@ -87,6 +87,18 @@ void _test_circle_predicat(CK ck)
   assert(theCompare_y_2(circ1_arc_end_p2,circ1_arc_end_p1) == CGAL::LARGER);
   assert(theCompare_xy_2(circ1_arc_end_p2,circ1_arc_end_p1) == CGAL::LARGER);
 
+  assert(compare_x(circ1_arc_end_p1,circ1_arc_end_p2 )== CGAL::SMALLER);
+  assert(compare_y(circ1_arc_end_p1,circ1_arc_end_p2) == CGAL::SMALLER);
+  assert(compare_xy(circ1_arc_end_p1,circ1_arc_end_p2) == CGAL::SMALLER);
+
+  assert(compare_x(circ1_arc_end_p2,circ1_arc_end_p2) == CGAL::EQUAL);
+  assert(compare_y(circ1_arc_end_p2,circ1_arc_end_p2) == CGAL::EQUAL);
+  assert(compare_xy(circ1_arc_end_p2,circ1_arc_end_p2) == CGAL::EQUAL);
+
+  assert(compare_x(circ1_arc_end_p2,circ1_arc_end_p1) == CGAL::LARGER);
+  assert(compare_y(circ1_arc_end_p2,circ1_arc_end_p1) == CGAL::LARGER);
+  assert(compare_xy(circ1_arc_end_p2,circ1_arc_end_p1) == CGAL::LARGER);
+
   //We create a circle in top of the circle1
   Point_2 center1_high(center1_x, center1_y + circ1_r);
   Circle_2 circ1_high(center1_high, circ1_r * circ1_r);
