@@ -3254,6 +3254,7 @@ Scripts/developer_scripts/common_impl.rb -text
 Scripts/developer_scripts/create_assertions.sh eol=lf
 Scripts/developer_scripts/create_cgal_test_with_cmake -text
 Scripts/developer_scripts/create_macosx_installer -text
+Scripts/developer_scripts/do_what_i_mean -text
 Scripts/developer_scripts/list_package_files.rb -text
 Scripts/developer_scripts/list_package_files_impl.rb -text
 Scripts/developer_scripts/mirror_all_packages.rb -text
