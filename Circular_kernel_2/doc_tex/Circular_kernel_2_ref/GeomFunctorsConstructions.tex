@@ -139,7 +139,8 @@ A model \ccVar\ of this type must provide:
 	const CircularKernel::Circular_arc_point_2 &p,
 	CircularKernel::Circular_arc_2 &a1, 
 	CircularKernel::Circular_arc_2 &a2);}
-{Splits arc $a$ at point $p$, which creates arcs $a1$ and $a2$.}
+{Splits arc $a$ at point $p$, which creates arcs $a1$ and $a2$.
+\ccPrecond{The point lies on the input arc.}}
 
 \ccMemberFunction{void operator()
 	(const CircularKernel::Line_arc_2 &l, 
