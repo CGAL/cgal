@@ -33,7 +33,7 @@
  */
 
 #include <CGAL/basic.h>
-#include <CGAL/global_functions_on_circular_arcs_2.h>
+#include <CGAL/global_functions_circular_kernel_2.h>
 #include <CGAL/Arr_tags.h>
 
 namespace CGAL {

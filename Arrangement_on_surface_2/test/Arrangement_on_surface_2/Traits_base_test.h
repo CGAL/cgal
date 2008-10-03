@@ -1645,35 +1645,38 @@ Circular_kernel::Circular_arc_2 read_arc(char type,stream & is)
 {
   if (type == 'b' || type == 'B')
   {
-    Circular_kernel::Circle_2 c_temp,c_temp1,c_temp2;
-    bool b1,b2;
-    is >> c_temp >> c_temp1 >> b1 >> c_temp2 >> b2 ;
-    return Circular_kernel::Circular_arc_2(c_temp,c_temp1,b1,c_temp2,b2);
+    Circular_kernel::Circle_2 circle, circle1, circle2;
+    bool b1, b2;
+    is >> circle >> circle1 >> b1 >> circle2 >> b2;
+
+    return Circular_kernel::Circular_arc_2(circle, circle1, b1, circle2, b2);
   }
   else if (type == 'c' || type == 'C')
   {
-    Circular_kernel::Circle_2 c_temp;
-    Circular_kernel::Circular_arc_point_2 p0,p1;
-    is >> c_temp >> p0 >> p1;
-    return Circular_kernel::Circular_arc_2(c_temp,p0,p1);
+    Circular_kernel::Circle_2 circle;
+    Circular_kernel::Circular_arc_point_2 p0, p1;
+    is >> circle >> p0 >> p1;
+    return Circular_kernel::Circular_arc_2(circle, p0, p1);
   }
   else if (type == 'd' || type == 'D')
   {
-    Circular_kernel::Circle_2 c_temp;
-    Circular_kernel::Line_2 l_temp1,l_temp2;
+    Circular_kernel::Circle_2 circle;
+    Circular_kernel::Line_2 line1, line2;
     bool b1,b2;
-    is >> c_temp >> l_temp1 >> b1 >> l_temp2 >> b2;
-    return Circular_kernel::Circular_arc_2(c_temp,l_temp1,b1,l_temp2,b2);
+    is >> circle >> line1 >> b1 >> line2 >> b2;
+    return Circular_kernel::Circular_arc_2(circle, line1, b1, line2, b2);
   }
-  else if (type == 'e' || type == 'E')
-  {
-    Circular_kernel::Circular_arc_2 a_temp;
-    Circular_kernel::Circle_2 c_temp;
-    bool b1,b2;
-    is >> a_temp >> b1 >> c_temp >> b2;
-    return Circular_kernel::Circular_arc_2(a_temp,b1,c_temp,b2);
-  }
-  std::cout << "should never happen Circular_arc_2" << std::endl;
+  else
+    CGAL_error_msg("Unrecognized constructor. Should never happen"      \
+                   "Circular_arc_2");
+  //  else if (type == 'e' || type == 'E')
+  //  {
+  //    Circular_kernel::Circular_arc_2 arc;
+  //    Circular_kernel::Circle_2 circle;
+  //    bool b1, b2;
+  //    is >> arc >> b1 >> circle >> b2;
+  //    return Circular_kernel::Circular_arc_2(arc, b1, circle, b2);
+  //  }
   return Circular_kernel::Circular_arc_2(); //should never happen
 }
 #endif
@@ -1763,9 +1766,9 @@ Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
   is >> type;
   if (type == 'a' || type == 'A') 
   {
-    Circular_kernel::Circle_2 c_temp;
-    is >> c_temp;
-    cv=Circular_kernel::Circular_arc_2(c_temp);
+    Circular_kernel::Circle_2 circle;
+    is >> circle;
+    cv=Circular_kernel::Circular_arc_2(circle);
     return true;
   }
   else if (is_deg_2(type))
@@ -1816,9 +1819,9 @@ bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
   char type;
   is >> type;
   if (type == 'a' || type == 'A') {
-    Circular_kernel::Circle_2 c_temp;
-    is >> c_temp;
-    cv=Curve_2(c_temp);
+    Circular_kernel::Circle_2 circle;
+    is >> circle;
+    cv=Curve_2(circle);
     return true;
   }
   else if (is_deg_1(type)) {
