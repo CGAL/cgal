@@ -220,12 +220,17 @@ public:
         if(!Facade::instance().draw(this->projected_point(), cc))
             return false; // bad luck
          
-        double *ptr = (double *)&cc;
         typename CGAL::Polynomial_traits_d< Poly_double_3 >::Substitute subst;
-
-        Poly_double_1 ppt = subst(base_poly_approx(), ptr, ptr+2);   
+        
+        CGAL::Polynomial< double > xyz[3] = { 
+            cc.first, cc.second, CGAL::Polynomial< double >(0.0,1.0) 
+        };
+        
+        Poly_double_1 ppt = subst(base_poly_approx(this->surface().f()), 
+                                  xyz, xyz+3);   
+        
         result = Approximation_3(ptr[0], ptr[1], 
-                compute_z(ppt, this->sheet()));
+                                 compute_z(ppt, this->sheet()));
         return true;
     }
 #endif // CGAL_CKVA_COMPILE_RENDERER   
@@ -238,13 +243,18 @@ public:
             algebraic_real_2(this->arcno()).to_double();
         
         typename CGAL::Polynomial_traits_d< Poly_double_3 >::Substitute subst;
-        double *ptr = (double *)&xy;
-
+        
+        CGAL::Polynomial< double > xyz[3] = { 
+            xy.first, xy.second, CGAL::Polynomial< double >(0.0,1.0) 
+        };
+        
         Poly_double_1 ppt = 
-            subst(base_poly_approx(CGAL::to_double(this->surface().f())),
-                ptr, ptr+2);       
-
-        return Approximation_3(ptr[0], ptr[1], compute_z(ppt, this->sheet()));
+            subst(base_poly_approx(CGAL::to_double(this->surface().f())), 
+                  xyz, xyz+3
+            );
+        
+        return Approximation_3(xy.first, xy.second, 
+                               compute_z(ppt, this->sheet()));
     }
 
 private:
@@ -639,10 +649,22 @@ public:
                 xprev = cit->first, yprev = cit->second;
                 
                 double *ptr = (double *)&(*cit);
-                Poly_double_1 ppt = subst(Quadric_point_2::base_poly_approx(),
-                     ptr, ptr+2);    
-                *oi++ = Approximation_3(ptr[0], ptr[1], 
-                    Quadric_point_2::compute_z(ppt, this->sheet()));
+                CGAL::Polynomial< double > xyz[3] = { 
+                    cit->first, cit->second, 
+                    CGAL::Polynomial< double >(0.0,1.0) 
+                };
+                
+                Poly_double_1 ppt = 
+                    subst(Quadric_point_2::base_poly_approx(
+                                  this->surface().f()
+                          ),
+                          xyz, xyz+3
+                    );    
+                
+                *oi++ = Approximation_3(
+                        ptr[0], ptr[1], 
+                        Quadric_point_2::compute_z(ppt, this->sheet())
+                );
             }
         }
         return oi;
