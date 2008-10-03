@@ -704,21 +704,9 @@ void _test_lexico_operations(SK sk) {
 
 template <class SK>
 void _test_compare(SK sk) {
-  typedef typename SK::RT                               RT;
-  typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
-  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
-  typedef typename SK::Point_3                          Point_3;
-  typedef typename SK::Sphere_3                         Sphere_3;
-  typedef typename SK::Algebraic_kernel                 AK;
-  typedef typename SK::Get_equation                     Get_equation;
-  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
-  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
-  typedef typename SK::Bounded_side_3                   Bounded_side_3;
-  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
-  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
-  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+	
+	typedef typename CGAL::Circular_arc_point_3<SK>  Circular_arc_point_3;
+  typedef typename CGAL::Point_3<SK>               Point_3;
 
 	Circular_arc_point_3 p[8];
 	p[0] = Point_3(1,0,0);
