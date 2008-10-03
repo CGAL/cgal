@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL QUIET COMPONENTS Qt4)
+find_package(CGAL QUIET COMPONENTS Qt4 Core)
 
 include(${CGAL_USE_FILE})
 
@@ -15,7 +15,6 @@ set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-
 
 find_package(Qt4       QUIET)
 
