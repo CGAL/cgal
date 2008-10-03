@@ -41,7 +41,9 @@ typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle_3;
 typedef Kernel::Segment_3 Segment_3;
 
-typedef CGAL::Triple<Triangle_3,Vector,const QTreeWidgetItem*> Facet;
+// typedef CGAL::Triple<Triangle_3,Vector,const QTreeWidgetItem*> Facet;
+
+typedef boost::tuple<Triangle_3,Vector,const QTreeWidgetItem*> Facet;
 
 typedef CBinary_image_3<FT,Point> Binary_image;
 

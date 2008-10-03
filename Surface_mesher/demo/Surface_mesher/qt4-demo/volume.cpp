@@ -516,7 +516,7 @@ void Volume::status_message(QString string)
 
 void Volume::busy() const 
 {
-  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+  QApplication::restoreOverrideCursor();
 }
 
 void Volume::not_busy() const 
@@ -614,7 +614,7 @@ void Volume::display_marchin_cube()
         it = m_surface_mc.begin(), end = m_surface_mc.end();
       it != end; ++it)
   {
-    bbox = bbox + it->first.bbox();
+    bbox = bbox + it->get<0>().bbox();
   }
 
   m_view_mc = true;
@@ -763,7 +763,7 @@ void Volume::display_surface_mesher_result()
         it = m_surface.begin(), end = m_surface.end();
       it != end; ++it)
   {
-    bbox = bbox + it->first.bbox();
+    bbox = bbox + it->get<0>().bbox();
   }
 
   // toggle visualization
@@ -1013,16 +1013,16 @@ void Volume::gl_draw_surface(Iterator begin, Iterator end, const QTreeWidgetItem
   {
     const Facet& f = *it;
 
-    if(f.third != i) continue;
+    if(f.get<2>() != i) continue;
 
-    const Vector& n = f.second;
+    const Vector& n = f.get<1>();
 
     if(m_inverse_normals)
       ::glNormal3d(-n.x(),-n.y(),-n.z());
     else
       ::glNormal3d(n.x(),n.y(),n.z());
 
-    const Triangle_3& t = f.first;
+    const Triangle_3& t = f.get<0>();
     const Point& a = t[0];
     const Point& b = t[1];
     const Point& c = t[2];
