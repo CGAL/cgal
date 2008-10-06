@@ -159,12 +159,12 @@ CPoissonDoc::CPoissonDoc()
   m_number_of_neighbours = 7;
 
   // Outliers removal
-  m_min_cameras_cone_angle = 0.5; // min angle of camera's cone (degrees) 
-  m_threshold_percent_avg_knn_sq_dst = 5.0; // percentage of outliers to remove 
+  m_min_cameras_cone_angle = 0.5; // min angle of camera's cone (degrees)
+  m_threshold_percent_avg_knn_sq_dst = 5.0; // percentage of outliers to remove
 
   // Point set simplification
   m_clustering_step = 0.004; // Grid's step for simplification by clustering
-  m_random_simplification_percentage = 50.0; // percentage of random points to remove 
+  m_random_simplification_percentage = 50.0; // percentage of random points to remove
 }
 
 CPoissonDoc::~CPoissonDoc()
@@ -303,7 +303,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
       prompt_message("Unable to read file");
       return FALSE;
     }
-    
+
     // Set options for Gyroviz file
     m_number_of_neighbours = 50;
   }
@@ -320,7 +320,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
       prompt_message("Unable to read file");
       return FALSE;
     }
-    
+
     // Set options for Gyroviz file
     m_number_of_neighbours = 50;
   }
@@ -486,9 +486,9 @@ void CPoissonDoc::update_status()
     selected_points.Format("%d selected",m_points.nb_selected_points());
 
     // write message to cerr
-    std::cerr << "=> " << points << " (" << selected_points << "), " 
+    std::cerr << "=> " << points << " (" << selected_points << "), "
                        << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated, "
-                       << "largest free block=" << (long(taucs_available_memory_size())>>20) << " Mb, "
+                       << "largest free block=" << long(taucs_available_memory_size()/1048576.0) << " Mb, "
                        << "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
                        << std::endl;
 
@@ -510,7 +510,7 @@ void CPoissonDoc::update_status()
     // write message to cerr
     std::cerr << "=> " << vertices << ", " << tets << ", "
                        << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated, "
-                       << "largest free block=" << (long(taucs_available_memory_size())>>20) << " Mb, "
+                       << "largest free block=" << long(taucs_available_memory_size()/1048576.0) << " Mb, "
                        << "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
                        << std::endl;
 
@@ -652,13 +652,13 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
   BeginWaitCursor();
   status_message("Orient Normals with MST...");
   CGAL::Timer task_timer; task_timer.start();
-  
+
   CGAL::orient_normals_minimum_spanning_tree_3(m_points.begin(), m_points.end(),
                                                get(boost::vertex_index, m_points),
                                                get(CGAL::vertex_point, m_points),
                                                get(boost::vertex_normal, m_points),
                                                m_number_of_neighbours);
-                                               
+
   // Select non-oriented normals
   m_points.select(m_points.begin(), m_points.end(), false);
   for (int i=0; i<m_points.size(); i++)
@@ -693,7 +693,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
                                get(CGAL::vertex_point, m_points),
                                get(boost::vertex_normal, m_points),
                                get(boost::vertex_cameras, m_points));
-                                               
+
   // Select swapped normals
   m_points.select(m_points.begin(), m_points.end(), false);
   for (int i=0; i<m_points.size(); i++)
@@ -771,7 +771,7 @@ void CPoissonDoc::OnReconstructionDelaunayRefinement()
 
   m_triangulation_refined = true;
 
-  status_message("Delaunay refinement...done (%.2lf s, %d vertices inserted)", 
+  status_message("Delaunay refinement...done (%.2lf s, %d vertices inserted)",
                  task_timer.time(), nb_vertices_added);
   update_status();
   UpdateAllViews(NULL);
@@ -798,7 +798,7 @@ void CPoissonDoc::OnAlgorithmsRefineInShell()
   unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement_shell(m_dr_shell_size,m_dr_sizing,m_dr_max_vertices);
   m_triangulation_refined = true;
 
-  status_message("Delaunay refinement in surface shell...done (%.2lf s, %d vertices inserted)", 
+  status_message("Delaunay refinement in surface shell...done (%.2lf s, %d vertices inserted)",
                  task_timer.time(), nb_vertices_added);
   update_status();
   UpdateAllViews(NULL);
@@ -994,7 +994,7 @@ void CPoissonDoc::OnAlgorithmsMarchingTetContouring()
   int nb = m_poisson_dt->marching_tet(std::back_inserter(triangles), m_contouring_value);
   m_contour.insert(m_contour.end(), triangles.begin(), triangles.end());
 
-  status_message("Marching tet contouring...done (%d triangles, %.2lf s)", 
+  status_message("Marching tet contouring...done (%d triangles, %.2lf s)",
                  nb, task_timer.time());
   update_status();
   UpdateAllViews(NULL);
@@ -1160,7 +1160,7 @@ void CPoissonDoc::OnAlgorithmsOutliersRemovalWrtCamerasConeAngle()
   CGAL::Timer task_timer; task_timer.start();
 
   // Select points to delete
-  Point_set::iterator first_iterator_to_remove = 
+  Point_set::iterator first_iterator_to_remove =
     remove_outliers_wrt_camera_cone_angle_3(
             m_points.begin(), m_points.end(),
             m_min_cameras_cone_angle*M_PI/180.0);
@@ -1187,9 +1187,9 @@ void CPoissonDoc::OnOutliersRemovalWrtAvgKnnSqDist()
   BeginWaitCursor();
   status_message("Remove outliers wrt average squared distance to knn...");
   CGAL::Timer task_timer; task_timer.start();
-  
+
   // Select points to delete
-  Point_set::iterator first_iterator_to_remove = 
+  Point_set::iterator first_iterator_to_remove =
     CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(
             m_points.begin(), m_points.end(),
             m_number_of_neighbours,
@@ -1243,7 +1243,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
 
     // Create implicit function
     CGAL_TRACE_STREAM << "  APSS_implicit_function(knn="<<m_number_of_neighbours << ")\n";
-    m_apss_function = new APSS_implicit_function(m_points.begin(), m_points.end(), 
+    m_apss_function = new APSS_implicit_function(m_points.begin(), m_points.end(),
                                                  m_number_of_neighbours);
 
     // Get inner point
@@ -1293,7 +1293,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     m_edit_mode = APSS;
 
     // Print status
-    status_message("APSS reconstruction...done (%d vertices, %.2lf s)", 
+    status_message("APSS reconstruction...done (%d vertices, %.2lf s)",
                    m_surface_mesher_dt.number_of_vertices(), task_timer.time());
     update_status();
     UpdateAllViews(NULL);
@@ -1402,7 +1402,7 @@ void CPoissonDoc::OnPointCloudSimplificationByClustering()
   FT size = sqrt(bounding_sphere.squared_radius());
 
   // Select points to delete
-  Point_set::iterator first_iterator_to_remove = 
+  Point_set::iterator first_iterator_to_remove =
     CGAL::merge_epsilon_nearest_points_3(
             m_points.begin(), m_points.end(),
             m_clustering_step*size);
@@ -1426,7 +1426,7 @@ void CPoissonDoc::OnPointCloudSimplificationRandom()
   CGAL::Timer task_timer; task_timer.start();
 
   // Select points to delete
-  Point_set::iterator first_iterator_to_remove = 
+  Point_set::iterator first_iterator_to_remove =
     CGAL::random_simplification_points_3(
             m_points.begin(), m_points.end(),
             m_random_simplification_percentage);

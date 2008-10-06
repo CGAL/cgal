@@ -647,9 +647,9 @@ public:
 
     long old_max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
 
-    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n", 
+    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(taucs_available_memory_size())>>20,
+               long(taucs_available_memory_size()/1048576.0),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Create matrix\n");
 
@@ -690,9 +690,9 @@ public:
     *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
     */
 
-    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n", 
+    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(taucs_available_memory_size())>>20,
+               long(taucs_available_memory_size()/1048576.0),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Choleschy factorization\n");
 
@@ -707,10 +707,10 @@ public:
     if (max_memory > old_max_memory)
       CGAL_TRACE("  Max allocation = %ld Mb\n", max_memory>>20);
 
-    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n", 
+    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(taucs_available_memory_size())>>20,
-               CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576));
+               long(taucs_available_memory_size()/1048576.0),
+               long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Direct solve by forward and backward substitution\n");
 
     // Direct solve by forward and backward substitution
@@ -741,9 +741,9 @@ public:
       if(!v->constrained())
         v->f() = X[index++];
 
-    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n", 
+    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(taucs_available_memory_size())>>20,
+               long(taucs_available_memory_size()/1048576.0),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("End of solve_poisson()\n");
 

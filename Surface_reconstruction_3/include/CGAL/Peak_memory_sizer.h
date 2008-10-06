@@ -14,8 +14,8 @@
 //
 // $URL$
 // $Id$
-// 
-// Author(s)     : Laurent Saboret 
+//
+// Author(s)     : Laurent Saboret
 //                 (based on Memory_sizer.h by Sylvain Pion and Andreas Fabri)
 
 #ifndef CGAL_PEAK_MEMORY_SIZER_H
@@ -43,20 +43,20 @@ struct Peak_memory_sizer : public Memory_sizer
         void* block;
         while ((block = malloc(min_block_size)) != NULL)
           blocks.push_back(block);
-        
+
         // Return value
         size_type count = blocks.size();
-        
+
         // Free large memory blocks
-        for (int i=0; i<count; i++)
+        for (size_type i=0; i<count; i++)
           free(blocks[i]);
-          
+
         return count;
     }
 
 private:
 
-  size_type get_peak_memory (bool virtual_size)  const 
+  size_type get_peak_memory (bool virtual_size)  const
   {
 #ifdef _MSC_VER
     DWORD pid = GetCurrentProcessId();
@@ -72,12 +72,12 @@ private:
 //CGAL_TRACE("    Peak_memory_sizer: PagefileUsage=%ld Mb\n",               pmc.PagefileUsage>>20);
 //CGAL_TRACE("    Peak_memory_sizer: PeakWorkingSetSize=%ld Mb\n",          pmc.PeakWorkingSetSize>>20);
 //CGAL_TRACE("    Peak_memory_sizer: PeakPagefileUsage=%ld Mb\n",           pmc.PeakPagefileUsage>>20);
-           
+
       // LS 10/2008: PeakPagefileUsage seems unreliable, thus we use an approximation:
       size_t memory_paged_out = (pmc.PagefileUsage>pmc.WorkingSetSize) ? (pmc.PagefileUsage-pmc.WorkingSetSize) : 0;
       size_t approximate_peak_virtual_size = pmc.PeakWorkingSetSize + memory_paged_out;
 //CGAL_TRACE("    Peak_memory_sizer: approximate_peak_virtual_size=%ld Mb\n", approximate_peak_virtual_size>>20);
-      
+
       result = virtual_size ? approximate_peak_virtual_size : pmc.PeakWorkingSetSize;
     }
 
@@ -86,7 +86,7 @@ private:
 
 #else
     // Not yet implemented
-    return 0; 
+    return 0;
 #endif
   }
 };
