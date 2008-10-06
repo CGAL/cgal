@@ -46,9 +46,9 @@
 #include <CGAL/Arrangement_2l/Z_stack_helpers.h>
 #include <CGAL/Arrangement_2l/Adjacencies_3.h>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
-namespace Intern {
+namespace CGALi {
 
 template < class SurfaceZAtXyIsolatorTraits, class DcelData >
 class Z_cell_rep {
@@ -289,7 +289,7 @@ public:
     }
     
     // friends
-    friend class SoX::Z_stack< Surface_z_at_xy_isolator_traits, Dcel_data >;
+    friend class CGAL::Z_stack< Surface_z_at_xy_isolator_traits, Dcel_data >;
 
 }; // Z_cell
 
@@ -339,7 +339,7 @@ public:
     /*!\brief
      * standard constructor with the help of a point \c xy
      */
-    Z_stack_rep(SoX::Dcel_feature feature,
+    Z_stack_rep(CGAL::Dcel_feature feature,
                 const Dcel_data* data, const Point_2& pt) :
         _m_dcel_feature(feature),
         _m_dcel_data(data),
@@ -354,7 +354,7 @@ public:
 private:
     // data members
     //! type of dcel_feature
-    mutable SoX::Dcel_feature _m_dcel_feature;
+    mutable CGAL::Dcel_feature _m_dcel_feature;
 
     //! storage for isolators
     mutable Z_at_xy_isolators _m_z_at_xy_isolators;
@@ -377,7 +377,7 @@ private:
     friend class Z_stack< Surface_z_at_xy_isolator_traits, Dcel_data >;
 };
 
-} // namespace Intern
+} // namespace CGALi
 
 /*!\brief
  * Class to describe the order of surfaces of a planar (refinable) point.
@@ -385,7 +385,7 @@ private:
 template < class SurfaceZAtXyIsolatorTraits, class DcelData >
 class Z_stack : public 
 ::CGAL::Handle_with_policy< 
-Intern::Z_stack_rep< SurfaceZAtXyIsolatorTraits, DcelData > > {
+CGAL::CGALi::Z_stack_rep< SurfaceZAtXyIsolatorTraits, DcelData > > {
 public:
     //! this instance's first template parameter
     typedef SurfaceZAtXyIsolatorTraits Surface_z_at_xy_isolator_traits;
@@ -398,7 +398,8 @@ public:
     );
     
     //! type of rep
-    typedef Intern::Z_stack_rep< Surface_z_at_xy_isolator_traits, Dcel_data > 
+    typedef 
+    CGAL::CGALi::Z_stack_rep< Surface_z_at_xy_isolator_traits, Dcel_data > 
     Rep; 
     
     //! base type
@@ -428,7 +429,7 @@ public:
     /*!\brief
      * standard constructor from a refinable point
      */
-    Z_stack(SoX::Dcel_feature feature, 
+    Z_stack(CGAL::Dcel_feature feature, 
             const Dcel_data* data, const Point_2& pt) :
         Base(Rep(feature,data,pt)) {
     };
@@ -437,7 +438,7 @@ public:
      * copies z-stack \c self, but replaces feature
      */
     Z_stack(const Self& self, 
-            SoX::Dcel_feature feature, const Dcel_data* data) :
+            CGAL::Dcel_feature feature, const Dcel_data* data) :
         Base(*self.ptr()) {
         this->copy_on_write();
         this->ptr()->_m_dcel_feature = feature;
@@ -582,7 +583,7 @@ private:
         // EDGE: If mult > 1 => equal-z
         // VERTEX: isolated
         
-        SoX::Dcel_feature feature = this->ptr()->_m_dcel_feature;
+        CGAL::Dcel_feature feature = this->ptr()->_m_dcel_feature;
         
         typedef typename Surface_3::Surface_less_than Surface_less_than;
         
@@ -595,7 +596,7 @@ private:
             );
         
         
-        SoX::Intern::Refineable_interval_helper< Z_at_xy_isolator > iv_helper;
+        CGAL::CGALi::Refineable_interval_helper< Z_at_xy_isolator > iv_helper;
         
         std::set< Surface_3, Surface_less_than > projected_sil1s;
         std::map< Surface_3, std::pair< int, 
@@ -640,7 +641,7 @@ private:
                                     std::make_pair(
                                             // make sense for EDGE 
                                             // in the test *mult == 1
-                                            (feature == SoX::VERTEX ? 
+                                            (feature == CGAL::VERTEX ? 
                                              -1 : 
                                              *this->ptr()->
                                              _m_dcel_data->multiplicity_of_cut(
@@ -656,7 +657,7 @@ private:
             }
             
             // for VERTEX:
-            if (feature == SoX::VERTEX && projected_cut2) { 
+            if (feature == CGAL::VERTEX && projected_cut2) { 
                 // if there is a projected cut over a vertex
                 
                 
@@ -674,11 +675,11 @@ private:
                 
                 if (!vh->is_isolated()) {
                  
-                    std::pair< Self, SoX::Dcel_feature > z_stack2to = 
+                    std::pair< Self, CGAL::Dcel_feature > z_stack2to = 
                         vh->data()->_z_stack_of_surface(surface2);
                     
                     boost::optional< 
-                        std::pair< SoX::Dcel_feature,CGAL::Object >
+                        std::pair< CGAL::Dcel_feature,CGAL::Object >
                         > opt2to = vh->data()->_dcel(surface2);
                     CGAL_assertion(opt2to);
                     CGAL_assertion(
@@ -708,13 +709,13 @@ private:
                                 sheet2 >= 0) {
                                 
                                 // compute adjacencies of surface2 towards goal
-                                std::pair< Self, SoX::Dcel_feature > 
+                                std::pair< Self, CGAL::Dcel_feature > 
                                     z_stack2from =
                                     circ->data()->_z_stack_of_surface(
                                             surface2
                                     );
                                 boost::optional< 
-                                    std::pair< SoX::Dcel_feature,CGAL::Object >
+                                    std::pair< CGAL::Dcel_feature,CGAL::Object >
                                     > opt2from = circ->data()->_dcel(surface2);
                                 CGAL_assertion(opt2from);
                                 CGAL_assertion(
@@ -748,13 +749,13 @@ private:
                                         continue;
                                     }
                                     
-                                    std::pair< Self, SoX::Dcel_feature > 
+                                    std::pair< Self, CGAL::Dcel_feature > 
                                         z_stack1from = 
                                         circ->data()->_z_stack_of_surface(
                                                 surface1
                                         );
                                     boost::optional< 
-                                        std::pair< SoX::Dcel_feature,
+                                        std::pair< CGAL::Dcel_feature,
                                         CGAL::Object >
                                         > opt1from = 
                                         circ->data()->_dcel(surface1);
@@ -764,13 +765,13 @@ private:
                                             z_stack1from.second
                                     );
 
-                                    std::pair< Self, SoX::Dcel_feature > 
+                                    std::pair< Self, CGAL::Dcel_feature > 
                                         z_stack1to = 
                                         vh->data()->_z_stack_of_surface(
                                                 surface1
                                         );
                                     boost::optional< 
-                                        std::pair< SoX::Dcel_feature,
+                                        std::pair< CGAL::Dcel_feature,
                                         CGAL::Object >
                                         > opt1to = 
                                         vh->data()->_dcel(surface1);
@@ -877,9 +878,9 @@ private:
 
                 // filter: intersections can only happen for non-FACES
                 if (!surely_equal && !surely_unequal && still_possible_equal) {
-                    still_possible_equal = (feature != SoX::FACE);
+                    still_possible_equal = (feature != CGAL::FACE);
                     //std::cout << "filterA" << std::endl;
-                    if (feature == SoX::FACE) {
+                    if (feature == CGAL::FACE) {
                         //std::cout << "filterA2" << std::endl;
                         surely_unequal = true;
                     }
@@ -932,7 +933,7 @@ private:
                 // filter: EDGE: at most one intersection?
                 if (!surely_equal && !surely_unequal && still_possible_equal) {
                     //std::cout << "filterD" << std::endl;
-                    if (feature == SoX::EDGE) {
+                    if (feature == CGAL::EDGE) {
                         //std::cout << "filterD2" << "mult=" << mult << std::endl;
                         CGAL_assertion(mult > 0);
                         if (mult == 1) {
@@ -965,7 +966,7 @@ private:
                 // filter: VERTEX using adjacencies
                 if (!surely_equal && !surely_unequal && still_possible_equal) {
                     //std::cout << "filterE" << std::endl;
-                    if (feature == SoX::VERTEX) {
+                    if (feature == CGAL::VERTEX) {
                         //std::cout << "filterE2" << std::endl;
                         if (!adj_x_map.empty()) {
                             //std::cout << "filterE3" << std::endl;
@@ -999,7 +1000,7 @@ private:
 
                 // Filter: VERTEX further intersections require silhouette
                 if (!surely_equal && !surely_unequal && still_possible_equal) {
-                    if (feature == SoX::VERTEX) {
+                    if (feature == CGAL::VERTEX) {
                         if (!projected_sil2) {
                             
                             if (! projected_sil1) {
@@ -1028,7 +1029,7 @@ private:
                 //         and at least one silhouette exists
                 // Filter:
                 if (!surely_equal && !surely_unequal && still_possible_equal) {
-                    if (feature == SoX::VERTEX) {
+                    if (feature == CGAL::VERTEX) {
                       CGAL_assertion(projected_sil1 || projected_sil2);
                     }
                 }
@@ -1048,15 +1049,15 @@ private:
                 // TODO move filter before adjacenceny?
                 // Filter: If vertex is not a genuine vertex in cut-curve arr
                 if (!surely_equal && !surely_unequal && still_possible_equal) {
-                    if (feature == SoX::VERTEX) {
+                    if (feature == CGAL::VERTEX) {
                         boost::optional< 
-                            std::pair< SoX::Dcel_feature, CGAL::Object > >
+                            std::pair< CGAL::Dcel_feature, CGAL::Object > >
                             dcel_pair = 
                             this->ptr()->_m_dcel_data->_dcel(
                                     surface1, surface2
                             );
                         CGAL_assertion(dcel_pair);
-                        if (dcel_pair->first == SoX::EDGE) {
+                        if (dcel_pair->first == CGAL::EDGE) {
                             typename Restricted_cad_3::Halfedge_const_handle 
                                 hh;
                             CGAL_assertion_code(bool check = )
@@ -1449,10 +1450,10 @@ public:
      * sheet number at \c to.
      */
     std::pair< int, int > adjacency(const Surface_3& surface, int sheet, 
-                                    SoX::Dcel_feature feat_from,
+                                    CGAL::Dcel_feature feat_from,
                                     CGAL::Object dcel_handle_from,
                                     Self to,
-                                    SoX::Dcel_feature feat_to,
+                                    CGAL::Dcel_feature feat_to,
                                     CGAL::Object dcel_handle_to
     ) const {
         typename Z_at_xy_isolators::const_iterator thisit =
@@ -1472,7 +1473,7 @@ public:
         
         typedef typename Surface_z_at_xy_isolator_traits::Adjacency Adjacency;
         
-        typedef typename SoX::Adjacencies_3::Adjacency_interval 
+        typedef typename CGAL::Adjacencies_3::Adjacency_interval 
             Adjacency_interval;
         
         if (this->id() == to.id()) {
@@ -1488,7 +1489,7 @@ public:
         );
         
         bool has_vertical_line_from = false;
-        if (feat_from == SoX::VERTEX) {
+        if (feat_from == CGAL::VERTEX) {
             typename Restricted_cad_3::Vertex_const_handle vh;
             CGAL_assertion_code(bool check = )
                 CGAL::assign(vh,dcel_handle_from);
@@ -1501,7 +1502,7 @@ public:
 
         CGAL_assertion_code((
         {
-            if (feat_from == SoX::EDGE) {
+            if (feat_from == CGAL::EDGE) {
                 typename Restricted_cad_3::Halfedge_const_handle hh1, hh2;
                 CGAL_assertion_code(CGAL::assign(hh1, dcel_handle_from));
                 CGAL_assertion(hh1->data()->_rs_id() == cad.id());
@@ -1514,7 +1515,7 @@ public:
         );
         CGAL_assertion_code((
         {
-            if (feat_from == SoX::FACE) {
+            if (feat_from == CGAL::FACE) {
                 typename Restricted_cad_3::Face_const_handle fh1, fh2;
                 CGAL_assertion(CGAL::assign(fh1, dcel_handle_from));
                 CGAL_assertion(fh1->data()->_rs_id() == cad.id());
@@ -1527,7 +1528,7 @@ public:
         );
         
         bool has_vertical_line_to = false;
-        if (feat_to == SoX::VERTEX) {
+        if (feat_to == CGAL::VERTEX) {
             typename Restricted_cad_3::Vertex_const_handle vh;
             CGAL_assertion_code(bool check = )
                 CGAL::assign(vh,dcel_handle_to);
@@ -1540,7 +1541,7 @@ public:
 
         CGAL_assertion_code((
         {
-            if (feat_to == SoX::EDGE) {
+            if (feat_to == CGAL::EDGE) {
                 typename Restricted_cad_3::Halfedge_const_handle hh1, hh2;
                 CGAL_assertion_code(CGAL::assign(hh1, dcel_handle_to));
                 CGAL_assertion(hh1->data()->_rs_id() == cad.id());
@@ -1553,7 +1554,7 @@ public:
         );
         CGAL_assertion_code((
         {
-            if (feat_to == SoX::FACE) {
+            if (feat_to == CGAL::FACE) {
                 typename Restricted_cad_3::Face_const_handle fh1, fh2;
                 CGAL_assertion(CGAL::assign(fh1, dcel_handle_to));
                 CGAL_assertion(fh1->data()->_rs_id() == cad.id());
@@ -1567,7 +1568,7 @@ public:
        
         
         Adjacency compute_adj; // TODO single instance
-        SoX::Adjacencies_3 adj = 
+        CGAL::Adjacencies_3 adj = 
             compute_adj(surface, 
                         thisit->second, feat_from, dcel_handle_from,
                         has_vertical_line_from,
@@ -1601,11 +1602,11 @@ public:
     //!@}
 
     // friend
-    friend class SoX::P_dcel_info< Surface_z_at_xy_isolator_traits >;
+    friend class CGAL::P_dcel_info< Surface_z_at_xy_isolator_traits >;
     // for _isolator
     friend class 
-    SoX::Intern::Z_cell< Surface_z_at_xy_isolator_traits, Dcel_data >;
-    friend class SoX::Restricted_cad_3< Surface_z_at_xy_isolator_traits >;
+    CGAL::CGALi::Z_cell< Surface_z_at_xy_isolator_traits, Dcel_data >;
+    friend class CGAL::Restricted_cad_3< Surface_z_at_xy_isolator_traits >;
 };
 
 
@@ -1623,7 +1624,7 @@ std::ostream& operator<<(
 }
     
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_Z_STACK_H
 // EOF

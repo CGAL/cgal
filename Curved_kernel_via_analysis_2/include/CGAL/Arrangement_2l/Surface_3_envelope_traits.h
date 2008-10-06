@@ -46,9 +46,9 @@
 
 #include <CGAL/Arrangement_2l/Restricted_cad_3_accessor.h>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
-namespace Intern {
+namespace CGALi {
 
 #if CGAL_ENVELOPE_3_USE_EDGE_HANDLES
 template < class SurfacePair_3 >
@@ -122,7 +122,7 @@ public:
 };
 #endif
 
-} // namespace Intern
+} // namespace CGALi
 
 
 // TODO implement Apollonius-Mode
@@ -132,8 +132,8 @@ class Surface_3_envelope_traits : public
 #if CGAL_ENVELOPE_3_USE_EDGE_HANDLES
 CGAL::Arr_curve_data_traits_2<
 typename SurfacePair_3::Surface_z_at_xy_isolator_traits::Arrangement_traits_2,
-Intern::Intersection_info< SurfacePair_3 >,
-Intern::Intersection_info< SurfacePair_3 >
+CGAL::CGALi::Intersection_info< SurfacePair_3 >,
+CGAL::CGALi::Intersection_info< SurfacePair_3 >
 >
 #else
 SurfacePair_3::Surface_z_at_xy_isolator_traits::Arrangement_traits_2
@@ -172,7 +172,7 @@ private:
     typedef typename Restricted_cad_3::Edge_const_handle Edge_const_handle;
 
 #if CGAL_ENVELOPE_3_USE_EDGE_HANDLES
-    typedef Intern::Intersection_info< Surface_pair_3 > Info;
+    typedef CGAL::CGALi::Intersection_info< Surface_pair_3 > Info;
 
     //! type of base class
     typedef 
@@ -835,7 +835,7 @@ public:
 
 }; // Surface_3_envelope_traits
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_SURFACE_3_ENVELOPE_TRAITS
 // EOF

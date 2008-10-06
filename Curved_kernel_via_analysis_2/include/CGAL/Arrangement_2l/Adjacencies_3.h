@@ -40,10 +40,9 @@
 #include <vector>
 #include <algorithm>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
-
-namespace Intern {
+namespace CGALi {
 
 class Adjacencies_3_rep {
 
@@ -74,18 +73,18 @@ public:
 
 };
 
-} // namespace Intern
+} // namespace CGALi
 
 //! The Adjacency output object
 class Adjacencies_3 : 
-        public CGAL::Handle_with_policy< Intern::Adjacencies_3_rep > {
+    public CGAL::Handle_with_policy< CGAL::CGALi::Adjacencies_3_rep > {
     
 public:
     //! the class itself
     typedef Adjacencies_3 Self;
     
     //! the rep type
-    typedef Intern::Adjacencies_3_rep Rep;
+    typedef CGALi::Adjacencies_3_rep Rep;
 
     //! the base type
     typedef CGAL::Handle_with_policy< Rep > Base;
@@ -209,6 +208,6 @@ std::ostream& operator<<(
     return os;
 }
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_ADJACENCIES_3

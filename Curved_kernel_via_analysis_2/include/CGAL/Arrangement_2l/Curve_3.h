@@ -43,13 +43,13 @@
 
 #include <CGAL/Arrangement_2l/Surface_pair_3.h>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
-namespace Intern {
+namespace CGALi {
 
 template < class SurfaceZAtXyIsolatorTraits >
 class Curve_3_rep : 
-        public SoX::Intern::Surface_pair_3_rep< SurfaceZAtXyIsolatorTraits > {
+        public CGAL::CGALi::Surface_pair_3_rep< SurfaceZAtXyIsolatorTraits > {
     
 public:
     //! this instance's template parameter
@@ -63,7 +63,7 @@ public:
     typedef Curve_3_rep< Surface_z_at_xy_isolator_traits > Self;
 
     //! the base classe
-    typedef SoX::Intern::Surface_pair_3_rep< Surface_z_at_xy_isolator_traits > 
+    typedef CGAL::CGALi::Surface_pair_3_rep< Surface_z_at_xy_isolator_traits > 
     Base;
     
     //! type of restricted cad 
@@ -89,11 +89,11 @@ public:
 
 };
 
-} // namespace Intern
+} // namespace CGALi
 
 template < 
 class SurfaceZAtXyIsolatorTraits, 
-class Rep_ = SoX::Intern::Curve_3_rep< SurfaceZAtXyIsolatorTraits >
+class Rep_ = CGAL::CGALi::Curve_3_rep< SurfaceZAtXyIsolatorTraits >
 >
 class Curve_3 : 
         public Surface_pair_3<SurfaceZAtXyIsolatorTraits, Rep_ > {
@@ -110,7 +110,7 @@ public:
     );
     
     //! type of Base
-    typedef SoX::Surface_pair_3< Surface_z_at_xy_isolator_traits, Rep > Base;
+    typedef CGAL::Surface_pair_3< Surface_z_at_xy_isolator_traits, Rep > Base;
 
     //! type of restricted cad
     typedef typename Base::Restricted_cad_3 Restricted_cad_3;
@@ -240,7 +240,7 @@ public:
              this->_silhouette2_cut());
         // we won't access z-stacks of cad directly, only for support!
 
-        SoX::Intern::Refineable_interval_helper< Z_at_xy_isolator > 
+        CGAL::Intern::Refineable_interval_helper< Z_at_xy_isolator > 
             iv_helper;
         
         // iterate over all features of cut
@@ -263,7 +263,7 @@ public:
                     construct_isolator(support, point, 
                                        cad.nk(eit, support),
                                        (cad.has_silhouette(eit) ?
-                                        SoX::EDGE : SoX::FACE)
+                                        CGAL::EDGE : CGAL::FACE)
                     );
                 
                 int n = support_isolator.number_of_real_roots();
@@ -279,7 +279,7 @@ public:
                         construct_isolator(
                                 other, point, 
                                 cad.nk(cad.faces_begin(), support),
-                                SoX::FACE
+                                CGAL::FACE
                         );
                     std::cout << "RRs" 
                               << support_isolator.number_of_real_roots()
@@ -344,7 +344,7 @@ public:
                         construct_isolator(
                                 local_gcd, point,
                                 cad.nk(eit, support),
-                                (on_gcd_sil ? SoX::EDGE : SoX::FACE)
+                                (on_gcd_sil ? CGAL::EDGE : CGAL::FACE)
                         );
                     
                     // compute overlaps
@@ -547,7 +547,7 @@ public:
                             support, point, 
                             cad.nk(vit, support),
                             (cad.has_silhouette(vit) ? 
-                             SoX::EDGE : SoX::FACE)
+                             CGAL::EDGE : CGAL::FACE)
                     );
                 
                 int n = support_isolator.number_of_real_roots();
@@ -662,7 +662,7 @@ public:
                     construct_isolator(
                             local_gcd, point, 
                             cad.nk(vit, support),
-                            (on_gcd_sil ? SoX::EDGE : SoX::FACE)
+                            (on_gcd_sil ? CGAL::EDGE : CGAL::FACE)
                     );
                 
                 // compute overlaps
@@ -719,7 +719,7 @@ public:
 
 }; // Curve_3
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_CURVE_3_H
 // EOF

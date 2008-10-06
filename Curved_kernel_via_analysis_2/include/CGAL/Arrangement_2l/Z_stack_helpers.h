@@ -34,9 +34,9 @@
 
 #include <CGAL/config.h>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
-namespace Intern {
+namespace CGALi {
 
 /*!\brief
  * Functor to determine the order and overlaps of two realrootisolators
@@ -301,9 +301,9 @@ public:
 }; // Refineable_interval_helper
 
 
-} // namespace Intern
+} // namespace CGALi
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_Z_STACK_HELPERS_H
 // EOF

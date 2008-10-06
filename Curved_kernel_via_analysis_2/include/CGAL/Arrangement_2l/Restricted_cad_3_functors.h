@@ -51,9 +51,9 @@
 #include <CGAL/Arrangement_2l/P_dcel_info.h>
 #include <CGAL/Arrangement_2l/Restricted_cad_3.h>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
-namespace Intern {
+namespace CGALi {
 
 /*!\brief 
  * Computes projected cut curves for two two given surfaces
@@ -69,9 +69,9 @@ class Construct_nk_decomposition_2 {
             Surface_z_at_xy_isolator_traits
     );
 
-    typedef SoX::Restricted_cad_3< Surface_z_at_xy_isolator_traits > 
+    typedef CGAL::Restricted_cad_3< Surface_z_at_xy_isolator_traits > 
     Restricted_cad_3;
-    typedef SoX::Restricted_cad_3_accessor< Restricted_cad_3 > 
+    typedef CGAL::Restricted_cad_3_accessor< Restricted_cad_3 > 
     Accessor;
     
     /*!\brief
@@ -119,9 +119,9 @@ class Construct_nk_decomposition_2 {
                      nkd.faces_begin();
                  fit != nkd.faces_end(); fit++) {
                 nkd._set_nk_value(fit, surface, 
-                                  SoX::Nk::N, surface.f().degree());
+                                  CGAL::Nk::N, surface.f().degree());
                 nkd._set_nk_value(fit, surface, 
-                                  SoX::Nk::K, 0);
+                                  CGAL::Nk::K, 0);
             }            
             return nkd;
         }
@@ -136,7 +136,7 @@ class Construct_nk_decomposition_2 {
             nkds.push_back(
                     _arrangement_of_curve(
                             surface, cit->first, 
-                            SoX::Nk::MULT, cit->second
+                            CGAL::Nk::MULT, cit->second
                     )
             );
         }
@@ -146,7 +146,7 @@ class Construct_nk_decomposition_2 {
         Overlay_restricted_cad_3< Surface_z_at_xy_isolator_traits > 
             overlay; // TODO single instance
         
-        nkd = overlay(nkds.begin(), nkds.end(), surface, SoX::Nk::MULT);
+        nkd = overlay(nkds.begin(), nkds.end(), surface, CGAL::Nk::MULT);
         
 #if !NDEBUG
         std::cout << "done." << std::endl;
@@ -182,9 +182,9 @@ class Construct_nk_decomposition_2 {
                  nkd.faces_begin();
              fit != nkd.faces_end(); fit++) {
             nkd._set_nk_value(fit, surface, 
-                              SoX::Nk::N, surface.f().degree());
+                              CGAL::Nk::N, surface.f().degree());
             nkd._set_nk_value(fit, surface, 
-                              SoX::Nk::K, 0);
+                              CGAL::Nk::K, 0);
         }            
 
         CGAL_assertion_code((
@@ -261,7 +261,7 @@ class Construct_nk_decomposition_2 {
             stop = _refine_with_respect_to(
                     surface, nkd, curves.begin(), curves.end(), 
                     whole_plane, 
-                    SoX::Nk::N, set_i, i
+                    CGAL::Nk::N, set_i, i
             ); 
             
             if (set_i) {
@@ -283,17 +283,17 @@ class Construct_nk_decomposition_2 {
             for (typename Restricted_cad_3::Vertex_const_iterator vit =
                      nkd.vertices_begin();
                  vit != nkd.vertices_end(); vit++) {
-                const SoX::Nk& nk = nkd.nk(vit, surface);
+                const CGAL::Nk& nk = nkd.nk(vit, surface);
                 if (nk.n() == -2) {
-                    nkd._set_nk_value(vit, surface, SoX::Nk::N, -1);
+                    nkd._set_nk_value(vit, surface, CGAL::Nk::N, -1);
                 }
             }
             for (typename Restricted_cad_3::Edge_const_iterator eit =
                      nkd.edges_begin();
                  eit != nkd.edges_end(); eit++) {
-                const SoX::Nk& nk = nkd.nk(eit, surface);
+                const CGAL::Nk& nk = nkd.nk(eit, surface);
                 if (nk.n() == -2) {
-                    nkd._set_nk_value(eit, surface, SoX::Nk::N, -1);
+                    nkd._set_nk_value(eit, surface, CGAL::Nk::N, -1);
                 }
             }
         }
@@ -306,21 +306,21 @@ class Construct_nk_decomposition_2 {
             for (typename Restricted_cad_3::Vertex_const_iterator vit =
                      nkd.vertices_begin();
                  vit != nkd.vertices_end(); vit++) {
-                const SoX::Nk& nk = nkd.nk(vit, surface);
+                const CGAL::Nk& nk = nkd.nk(vit, surface);
                 CGAL_assertion(nk.mult() != -1);
                 CGAL_assertion(nk.n() != -2);
             }
             for (typename Restricted_cad_3::Edge_const_iterator eit =
                      nkd.edges_begin();
                  eit != nkd.edges_end(); eit++) {
-                const SoX::Nk& nk = nkd.nk(eit, surface);
+                const CGAL::Nk& nk = nkd.nk(eit, surface);
                 CGAL_assertion(nk.mult() != -1);
                 CGAL_assertion(nk.n() != -2);
             }
             for (typename Restricted_cad_3::Face_const_iterator fit =
                      nkd.faces_begin();
                  fit != nkd.faces_end(); fit++) {
-                const SoX::Nk& nk = nkd.nk(fit, surface);
+                const CGAL::Nk& nk = nkd.nk(fit, surface);
                 CGAL_assertion(nk.mult() == -1);
                 CGAL_assertion(nk.n() != -2);
             }
@@ -392,7 +392,7 @@ class Construct_nk_decomposition_2 {
                 stop = _refine_with_respect_to(
                         surface, nkd, curves.begin(), curves.end(), 
                         whole_plane,
-                        SoX::Nk::K, set_k, k, *nit
+                        CGAL::Nk::K, set_k, k, *nit
                 );
                 
 #if !NDEBUG
@@ -415,22 +415,22 @@ class Construct_nk_decomposition_2 {
             for (typename Restricted_cad_3::Vertex_const_iterator vit =
                      nkd.vertices_begin();
                  vit != nkd.vertices_end(); vit++) {
-                const SoX::Nk& nk = nkd.nk(vit, surface);
+                const CGAL::Nk& nk = nkd.nk(vit, surface);
                 if (nk.k() == -2) {
                     if (nk.n() <= 0) {
                         CGAL_assertion(nk.n() > -2);
-                        nkd._set_nk_value(vit, surface, SoX::Nk::K, nk.n());
+                        nkd._set_nk_value(vit, surface, CGAL::Nk::K, nk.n());
                     } 
                 }
             }
             for (typename Restricted_cad_3::Edge_const_iterator eit =
                      nkd.edges_begin();
                  eit != nkd.edges_end(); eit++) {
-                const SoX::Nk& nk = nkd.nk(eit, surface);
+                const CGAL::Nk& nk = nkd.nk(eit, surface);
                 if (nk.k() == -2) {
                     if (nk.n() <= 0) {
                         CGAL_assertion(nk.n() > -2);
-                        nkd._set_nk_value(eit, surface, SoX::Nk::K, nk.n());
+                        nkd._set_nk_value(eit, surface, CGAL::Nk::K, nk.n());
                     }
                 }
             }
@@ -445,7 +445,7 @@ class Construct_nk_decomposition_2 {
             bool remove = false;
             
             if (vit->degree() == 2) {
-                const SoX::Nk& nk = nkd.nk(vit, surface);
+                const CGAL::Nk& nk = nkd.nk(vit, surface);
                 //std::cout << "vnk: " << nk << std::endl;
                 
                 
@@ -453,7 +453,7 @@ class Construct_nk_decomposition_2 {
                     Restricted_cad_3::Halfedge_around_vertex_const_circulator 
                     e1 = vit->incident_halfedges();
                 
-                const SoX::Nk& nk1 = nkd.nk(e1, surface);
+                const CGAL::Nk& nk1 = nkd.nk(e1, surface);
                 
                 if (nk1.same_nk(nk)) {
                     
@@ -463,7 +463,7 @@ class Construct_nk_decomposition_2 {
                         e1->next();
                     CGAL_assertion(e1 != e2);
                     
-                    const SoX::Nk& nk2 = nkd.nk(e2, surface);
+                    const CGAL::Nk& nk2 = nkd.nk(e2, surface);
                     
                     if (nk2.same_nk(nk)) {
                         if (e2->curve().are_mergeable(e1->curve())) {
@@ -488,7 +488,7 @@ class Construct_nk_decomposition_2 {
             for (typename Restricted_cad_3::Face_const_iterator fit =
                      nkd.faces_begin();
                  fit != nkd.faces_end(); fit++) {
-                const SoX::Nk& nk = nkd.nk(fit, surface);
+                const CGAL::Nk& nk = nkd.nk(fit, surface);
                 //std::cout << "fnk: " << nk << std::endl;
                 CGAL_assertion(nk.mult() == -1);
                 CGAL_assertion(nk.n() ==  surface.f().degree());
@@ -499,7 +499,7 @@ class Construct_nk_decomposition_2 {
                      eit =
                      nkd.edges_begin();
                  eit != nkd.edges_end(); eit++) {
-                const SoX::Nk& nk = nkd.nk(eit, surface);
+                const CGAL::Nk& nk = nkd.nk(eit, surface);
                 //std::cout << "hnk: " << nk << std::endl;
                 CGAL_assertion(nk.mult() > 0);
                 CGAL_assertion(nk.n() != -2);
@@ -514,7 +514,7 @@ class Construct_nk_decomposition_2 {
             for (typename Restricted_cad_3::Vertex_const_iterator vit =
                      nkd.vertices_begin();
                  vit != nkd.vertices_end(); vit++) {
-                const SoX::Nk& nk = nkd.nk(vit, surface);
+                const CGAL::Nk& nk = nkd.nk(vit, surface);
                 //std::cout << "vnk: " << nk << std::endl;
                 CGAL_assertion(nk.mult() == 0);
                 CGAL_assertion(nk.n() != -2);
@@ -540,7 +540,7 @@ private:
     Restricted_cad_3 
     _arrangement_of_curve(const Surface_3& surface, 
                           const Curve_analysis_2& curve, 
-                          SoX::Nk::Value_type type, 
+                          CGAL::Nk::Value_type type, 
                           int value) const {
         
         Restricted_cad_3 nkd = Accessor::construct_for_curve(curve);
@@ -551,20 +551,20 @@ private:
         acc.init(surface);
         
         // set nk-data
-        if (type == SoX::Nk::MULT) {
+        if (type == CGAL::Nk::MULT) {
             // set mult
             // TODO store multiplicity of singular point??!?!
             for (typename Restricted_cad_3::Vertex_const_iterator vit =
                      nkd.vertices_begin();
                  vit != nkd.vertices_end(); vit++) {
-                nkd._set_nk_value(vit, surface, SoX::Nk::MULT, 0);
+                nkd._set_nk_value(vit, surface, CGAL::Nk::MULT, 0);
                 // set it to 0 to indicate
                 // that it belongs to sil
             }
             for (typename Restricted_cad_3::Edge_const_iterator eit =
                      nkd.edges_begin();
                  eit != nkd.edges_end(); eit++) {
-                nkd._set_nk_value(eit, surface, SoX::Nk::MULT, value);
+                nkd._set_nk_value(eit, surface, CGAL::Nk::MULT, value);
             }
             for (typename Restricted_cad_3::Face_const_iterator fit =
                      nkd.faces_begin();
@@ -602,7 +602,7 @@ private:
                                  Restricted_cad_3& nkd,
                                  InputIterator begin, InputIterator end,
                                  bool whole_plane,
-                                 SoX::Nk::Value_type type,
+                                 CGAL::Nk::Value_type type,
                                  bool& set_value,
                                  int value1,
                                  int value2 = -1) const {
@@ -650,7 +650,7 @@ private:
                      ti, eit =
                      tmp.edges_begin();
                  eit != tmp.edges_end();) {
-                if (tmp.nk(eit, surface).feature1() == SoX::FACE) {
+                if (tmp.nk(eit, surface).feature1() == CGAL::FACE) {
                     ti = eit; 
                     eit++;
                     acc.remove_edge(acc.non_const_handle(ti));
@@ -664,7 +664,7 @@ private:
                      vt, vit =
                      tmp.vertices_begin();
                  vit != tmp.vertices_end();) {
-                if (tmp.nk(vit, surface).feature1() == SoX::FACE) {
+                if (tmp.nk(vit, surface).feature1() == CGAL::FACE) {
                     vt = vit; 
                     vit++;
                     acc.remove_vertex(acc.non_const_handle(vt));
@@ -678,14 +678,14 @@ private:
                      vt, vit =
                      tmp.vertices_begin();
                  vit != tmp.vertices_end(); ) {
-                const SoX::Nk& nk = tmp.nk(vit, surface);
+                const CGAL::Nk& nk = tmp.nk(vit, surface);
                 bool remove = false;
-                if (nk.feature1() == SoX::EDGE) {
-                    if (type == SoX::Nk::N) {
+                if (nk.feature1() == CGAL::EDGE) {
+                    if (type == CGAL::Nk::N) {
                         if (nk.n() == -2) {
                             remove = true;
                         }
-                    } else if (type == SoX::Nk::K) {
+                    } else if (type == CGAL::Nk::K) {
                         if (nk.k() != -2 || 
                             nk.n() != value2) {
                             remove = true;
@@ -708,34 +708,34 @@ private:
                  eit =
                  tmp.edges_begin();
              eit != tmp.edges_end(); eit++) { 
-            SoX::Nk nk = tmp.nk(eit, surface);
+            CGAL::Nk nk = tmp.nk(eit, surface);
             //std::cout << "H1: " << nk << std::endl;
-            if (nk.feature2() == SoX::FACE) {
+            if (nk.feature2() == CGAL::FACE) {
                 CGAL_assertion(nk.mult() != -1);
-                if (type == SoX::Nk::N) {
+                if (type == CGAL::Nk::N) {
                     if (!whole_plane && 
                         nk.n() == -2) {
                         //std::cout << "HN: " << value1 << std::endl;
-                        nkd._set_nk_value(eit, surface, SoX::Nk::N, value1);
+                        nkd._set_nk_value(eit, surface, CGAL::Nk::N, value1);
                         set_value = true;
                     } 
-                } else if (type == SoX::Nk::K) {
+                } else if (type == CGAL::Nk::K) {
                     if (nk.n() == value2 &&
                         !whole_plane && 
                         nk.k() == -2) {
                         //std::cout << "HK: " << value1 << std::endl;
-                        nkd._set_nk_value(eit, surface, SoX::Nk::K, value1);
+                        nkd._set_nk_value(eit, surface, CGAL::Nk::K, value1);
                         set_value = true;
                     } 
                 }
             }
             nk = tmp.nk(eit, surface);
             if (stop) {
-                if (type == SoX::Nk::N) {
+                if (type == CGAL::Nk::N) {
                     if (nk.n() == -2) {
                         stop = false;
                     }
-                } else if (type == SoX::Nk::K) {
+                } else if (type == CGAL::Nk::K) {
                     if (nk.k() == -2) {
                         stop = false;
                     }
@@ -747,34 +747,34 @@ private:
         for (typename Restricted_cad_3::Vertex_const_iterator vit =
                  tmp.vertices_begin();
              vit != tmp.vertices_end(); vit++) { 
-            SoX::Nk nk = tmp.nk(vit, surface);
+            CGAL::Nk nk = tmp.nk(vit, surface);
             //std::cout << "V1: " << nk << std::endl;
-            if (nk.feature2() == SoX::FACE) {
+            if (nk.feature2() == CGAL::FACE) {
                 CGAL_assertion(nk.mult() != -1);
-                if (type == SoX::Nk::N) {
+                if (type == CGAL::Nk::N) {
                     if (!whole_plane && 
                         nk.n() == -2) {
                         //std::cout << "VN: " << value1 << std::endl;
-                        nkd._set_nk_value(vit, surface, SoX::Nk::N, value1);
+                        nkd._set_nk_value(vit, surface, CGAL::Nk::N, value1);
                         set_value = true;
                     }
-                } else if (type == SoX::Nk::K) {
+                } else if (type == CGAL::Nk::K) {
                     if (!whole_plane && 
                         nk.n() == value2 &&
                         nk.k() == -2) {
                         //std::cout << "VK: " << value1 << std::endl;
-                        nkd._set_nk_value(vit, surface, SoX::Nk::K, value1);
+                        nkd._set_nk_value(vit, surface, CGAL::Nk::K, value1);
                         set_value = true;
                     }
                 }
             }
             nk = tmp.nk(vit, surface);
             if (stop) {
-                if (type == SoX::Nk::N) {
+                if (type == CGAL::Nk::N) {
                     if (nk.n() == -2) {
                         stop = false;
                     }
-                } else if (type == SoX::Nk::K) {
+                } else if (type == CGAL::Nk::K) {
                     if (nk.k() == -2) {
                         stop = false;
                     }
@@ -790,7 +790,7 @@ private:
 
 
 
-} // namespace Intern
+} // namespace CGALi
 
 /*!\brief
  * Functor class that provides creation of restriced_cads.
@@ -849,7 +849,7 @@ private:
     Restricted_cad_3 operator()(const Surface_3& surface, 
                                 Non_cached_construction_tag t) const {
         
-        typedef Intern::Construct_nk_decomposition_2< 
+        typedef CGAL::CGALi::Construct_nk_decomposition_2< 
             Surface_z_at_xy_isolator_traits >
             Construct_nk_decomposition_2;
         
@@ -909,11 +909,11 @@ private:
                  fit != cad.faces_end(); fit++) {
                 if (!fit->data()) {
                     CGAL::Object obj = CGAL::make_object(fit);
-                    cad.non_const_handle(fit)->data() = Data(SoX::FACE, obj);
+                    cad.non_const_handle(fit)->data() = Data(CGAL::FACE, obj);
                     fit->data()->_set_rs_id(cad.id());
                     fit->data()->_add_surface(surface1);
                     fit->data()->_add_surface(surface2);
-                    fit->data()->_set_dcel(surface1, surface2, SoX::FACE, obj);
+                    fit->data()->_set_dcel(surface1, surface2, CGAL::FACE, obj);
                 }
             }
             // and return it
@@ -927,7 +927,7 @@ private:
             );
         int i = 0;
         
-        typedef SoX::Restricted_cad_3_accessor< Restricted_cad_3 > 
+        typedef CGAL::Restricted_cad_3_accessor< Restricted_cad_3 > 
             Accessor;
 
         for (typename std::list< std::pair< Curve_analysis_2, int > >::
@@ -957,8 +957,8 @@ private:
              vit != tmp.vertices_end(); vit++) {
             vit->data()->_set_rs_id(tmp.id());
             CGAL::Object obj = CGAL::make_object(vit);
-            vit->data()->_set_dcel(SoX::VERTEX, obj);
-            vit->data()->_set_dcel(surface1, surface2, SoX::VERTEX, obj);
+            vit->data()->_set_dcel(CGAL::VERTEX, obj);
+            vit->data()->_set_dcel(surface1, surface2, CGAL::VERTEX, obj);
         }
         for (typename Restricted_cad_3::Halfedge_const_iterator hit =
                  tmp.halfedges_begin();
@@ -967,8 +967,8 @@ private:
             if (correct_dir) {
                 hit->data()->_set_rs_id(tmp.id());
                 CGAL::Object obj = CGAL::make_object(hit);
-                hit->data()->_set_dcel(SoX::EDGE, obj);
-                hit->data()->_set_dcel(surface1, surface2, SoX::EDGE, obj);
+                hit->data()->_set_dcel(CGAL::EDGE, obj);
+                hit->data()->_set_dcel(surface1, surface2, CGAL::EDGE, obj);
             }
         }
         for (typename Restricted_cad_3::Face_const_iterator fit =
@@ -976,8 +976,8 @@ private:
              fit != tmp.faces_end(); fit++) {
             fit->data()->_set_rs_id(tmp.id());
             CGAL::Object obj = CGAL::make_object(fit);
-            fit->data()->_set_dcel(SoX::FACE, obj);
-            fit->data()->_set_dcel(surface1, surface2, SoX::FACE, obj);
+            fit->data()->_set_dcel(CGAL::FACE, obj);
+            fit->data()->_set_dcel(surface1, surface2, CGAL::FACE, obj);
 #if 0
             // TASK benchmark: check whether this saves time
             // it may be even problematic, as we have to isolate
@@ -1078,7 +1078,7 @@ private:
             CGAL_assertion(!vit->is_at_infinity());
             if (!vit->data()) {
                 rscad.non_const_handle(vit)->data() = 
-                    Data(SoX::VERTEX, CGAL::make_object(vit));
+                    Data(CGAL::VERTEX, CGAL::make_object(vit));
                 vit->data()->_add_surface(surface);
             }
             // store multiplicity of singular point
@@ -1107,7 +1107,7 @@ private:
              hit != rscad.halfedges_end(); hit++) {
             if (!hit->data()) {
                 rscad.non_const_handle(hit)->data() = 
-                    Data(SoX::EDGE, CGAL::make_object(hit));
+                    Data(CGAL::EDGE, CGAL::make_object(hit));
                 hit->data()->_add_silhouette(surface, multiplicity, 
                                              false, vertical);
                 hit->data()->_add_surface(surface);
@@ -1123,7 +1123,7 @@ private:
              fit != rscad.faces_end(); fit++) {
             if (!fit->data()) {
                 rscad.non_const_handle(fit)->data() = 
-                    Data(SoX::FACE, CGAL::make_object(fit));
+                    Data(CGAL::FACE, CGAL::make_object(fit));
                 fit->data()->_add_surface(surface);
             }
         }
@@ -1144,7 +1144,7 @@ private:
             CGAL_assertion(!vit->is_at_infinity());
             if (!vit->data()) {
                 rscad.non_const_handle(vit)->data() = 
-                    Data(SoX::VERTEX, CGAL::make_object(vit));
+                    Data(CGAL::VERTEX, CGAL::make_object(vit));
                 vit->data()->_add_surface(surface1);
                 vit->data()->_add_surface(surface2);
             }
@@ -1177,7 +1177,7 @@ private:
              hit != rscad.halfedges_end(); hit++) {
             if (!hit->data()) {
                 rscad.non_const_handle(hit)->data() = 
-                    Data(SoX::EDGE, CGAL::make_object(hit));
+                    Data(CGAL::EDGE, CGAL::make_object(hit));
                 hit->data()->_add_cut(surface1, surface2, 
                                       multiplicity, false);
                 hit->data()->_add_surface(surface1);
@@ -1194,7 +1194,7 @@ private:
              fit != rscad.faces_end(); fit++) {
             if (!fit->data()) {
                 rscad.non_const_handle(fit)->data() = 
-                    Data(SoX::FACE, CGAL::make_object(fit));
+                    Data(CGAL::FACE, CGAL::make_object(fit));
                 fit->data()->_add_surface(surface1);
                 fit->data()->_add_surface(surface2);
             }
@@ -1206,12 +1206,12 @@ private:
     // friend
     // for non-cached construction
     friend class 
-    Intern::Restricted_cad_3_cache< Surface_z_at_xy_isolator_traits >;
+    CGAL::CGALi::Restricted_cad_3_cache< Surface_z_at_xy_isolator_traits >;
     
 }; // Create
 
 
-// TODO move Overlay_restricted_cad_3 to namespace Intern?!?!
+// TODO move Overlay_restricted_cad_3 to namespace CGALi?!?!
 /*!\brief
  * Functor class that provides overlaying of restriced_cads.
  */
@@ -1296,7 +1296,7 @@ private:
              vit != out.vertices_end(); vit++) {
             vit->data()->_set_rs_id(out.id());
             CGAL::Object obj = CGAL::make_object(vit);
-            vit->data()->_set_dcel(SoX::VERTEX, obj);
+            vit->data()->_set_dcel(CGAL::VERTEX, obj);
             CGAL_postcondition(vit->data());
         }
         for (typename Restricted_cad_3::Halfedge_const_iterator hit =
@@ -1306,7 +1306,7 @@ private:
             if (correct_dir) {
                 hit->data()->_set_rs_id(out.id());
                 CGAL::Object obj = CGAL::make_object(hit);
-                hit->data()->_set_dcel(SoX::EDGE, obj);
+                hit->data()->_set_dcel(CGAL::EDGE, obj);
             }
             CGAL_postcondition(hit->data());
         }
@@ -1315,7 +1315,7 @@ private:
              fit != out.faces_end(); fit++) {
             fit->data()->_set_rs_id(out.id());
             CGAL::Object obj = CGAL::make_object(fit);
-            fit->data()->_set_dcel(SoX::FACE, obj);
+            fit->data()->_set_dcel(CGAL::FACE, obj);
             CGAL_postcondition(fit->data());
         }
         
@@ -1327,7 +1327,7 @@ private:
     Restricted_cad_3 operator()(const Restricted_cad_3& rscad1, 
                                 const Restricted_cad_3& rscad2,
                                 const Surface_3& surface,
-                                SoX::Nk::Value_type type) const {
+                                CGAL::Nk::Value_type type) const {
         
         Restricted_cad_3 out; 
         out._renew();
@@ -1455,7 +1455,7 @@ private:
     template < class InputIterator >
     Restricted_cad_3 operator()(InputIterator begin, InputIterator end,
                                 const Surface_3& surface, 
-                                SoX::Nk::Value_type type) const {
+                                CGAL::Nk::Value_type type) const {
         
         CGAL_precondition(begin != end);
 
@@ -1510,10 +1510,10 @@ private:
     friend class Create_restricted_cad_3< Surface_z_at_xy_isolator_traits >;
     
     friend class 
-    Intern::Construct_nk_decomposition_2< Surface_z_at_xy_isolator_traits >;
+    CGAL::CGALi::Construct_nk_decomposition_2< Surface_z_at_xy_isolator_traits >;
     
 }; // Overlay
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_RESTRICTED_CAD_3_FUNCTORS_H

@@ -59,9 +59,9 @@
 #include <CGAL/Arrangement_2l/Restricted_cad_3_accessor.h>
 #include <CGAL/Arrangement_2l/Restricted_cad_3_functors.h>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
-namespace Intern {
+namespace CGALi {
 
 /*!\brief
  * Functor class that provides creation and overlaying of
@@ -89,7 +89,7 @@ public:
 
 private:
     //! type of creator
-    typedef SoX::Create_restricted_cad_3< Surface_z_at_xy_isolator_traits >
+    typedef CGAL::Create_restricted_cad_3< Surface_z_at_xy_isolator_traits >
     Creator;
     
     //! less for cad
@@ -223,7 +223,7 @@ private:
     Surface_pair_cache_3 _m_pair_map;
 };
 
-} // namespace Intern
+} // namespace CGALi
 
 // TODO document
 template < class SurfaceZAtXyIsolatorTraits >
@@ -232,9 +232,9 @@ class Restricted_cad_3 :
 typename SurfaceZAtXyIsolatorTraits::Arrangement_traits_2, 
         CGAL::Arr_extended_dcel< 
     typename SurfaceZAtXyIsolatorTraits::Arrangement_traits_2, 
-        boost::optional< SoX::P_dcel_info< SurfaceZAtXyIsolatorTraits > >, 
-        boost::optional< SoX::P_dcel_info< SurfaceZAtXyIsolatorTraits > >, 
-        boost::optional< SoX::P_dcel_info< SurfaceZAtXyIsolatorTraits > > 
+        boost::optional< CGAL::P_dcel_info< SurfaceZAtXyIsolatorTraits > >, 
+        boost::optional< CGAL::P_dcel_info< SurfaceZAtXyIsolatorTraits > >, 
+        boost::optional< CGAL::P_dcel_info< SurfaceZAtXyIsolatorTraits > > 
 > 
 > 
 > {
@@ -252,7 +252,7 @@ public:
 #endif
 
     //! data type
-    typedef SoX::P_dcel_info< Surface_z_at_xy_isolator_traits > Data;
+    typedef CGAL::P_dcel_info< Surface_z_at_xy_isolator_traits > Data;
 
 private:    
     //! optionalized data
@@ -279,7 +279,7 @@ private:
     typedef Restricted_cad_3< Surface_z_at_xy_isolator_traits > Self;
 
     //! type of cache
-    typedef Intern::Restricted_cad_3_cache< Surface_z_at_xy_isolator_traits >
+    typedef CGALi::Restricted_cad_3_cache< Surface_z_at_xy_isolator_traits >
     Restricted_cad_3_cache;
 
 public:
@@ -408,7 +408,7 @@ private:
     template < class DcelConstHandle >
     void _init_feature(const Surface_3& surface, 
                        DcelConstHandle handle, 
-                       SoX::Dcel_feature feature) {
+                       CGAL::Dcel_feature feature) {
         
         CGAL::Object obj = CGAL::make_object(handle);
         this->non_const_handle(handle)->data() = Data(feature, obj);
@@ -428,7 +428,7 @@ private:
             
             CGAL_precondition(!vit->data());
             
-            _init_feature(surface, vit, SoX::VERTEX);
+            _init_feature(surface, vit, CGAL::VERTEX);
             
             CGAL_postcondition(vit->data());
         }
@@ -442,7 +442,7 @@ private:
                 CGAL_precondition(!hit->twin()->data());
                 
                 
-                _init_feature(surface, hit, SoX::EDGE);
+                _init_feature(surface, hit, CGAL::EDGE);
                 this->non_const_handle(hit->twin())->data() = *hit->data();
             }
             
@@ -456,7 +456,7 @@ private:
             
             CGAL_precondition(!fit->data());
             
-            _init_feature(surface, fit, SoX::FACE);
+            _init_feature(surface, fit, CGAL::FACE);
             
             CGAL_postcondition(fit->data());
         }
@@ -531,7 +531,7 @@ private:
     /*! overlays two instances */
     void _overlay(Self rscad1, Self rscad2, bool factors_of_same_curve) {
         // use correct overlay instance
-        SoX::Arr_p_dcel_info_overlay_traits< Self > 
+        CGAL::Arr_p_dcel_info_overlay_traits< Self > 
             ovltraits(*this, factors_of_same_curve);
         this->ptr()->clear();
         CGAL::overlay(*(rscad1.ptr()), *(rscad2.ptr()),
@@ -541,9 +541,9 @@ private:
     /*! overlays two instances */
     void _overlay(Self rscad1, Self rscad2, 
                   const Surface_3& surface, 
-                  SoX::Nk::Value_type type) {
+                  CGAL::Nk::Value_type type) {
         // use correct overlay instance
-        SoX::Arr_p_dcel_info_overlay_traits< Self > 
+        CGAL::Arr_p_dcel_info_overlay_traits< Self > 
             ovltraits(surface, *this, type);
         this->ptr()->clear();
         CGAL::overlay(*(rscad1.ptr()), *(rscad2.ptr()),
@@ -907,16 +907,16 @@ private:
     //! set value for vertex handle
     void _set_nk_value(const Vertex_const_handle& vh, 
                       const Surface_3& surface,
-                      SoX::Nk::Value_type type, 
+                      CGAL::Nk::Value_type type, 
                       int value) const {
         switch (type) {
-        case SoX::Nk::MULT:
+        case CGAL::Nk::MULT:
             vh->data()->_nk(surface).set_mult(value);
             break;
-        case SoX::Nk::N:
+        case CGAL::Nk::N:
             vh->data()->_nk(surface).set_n(value);
             break;
-        case SoX::Nk::K:
+        case CGAL::Nk::K:
             vh->data()->_nk(surface).set_k(value);
             break;
         }
@@ -925,16 +925,16 @@ private:
     //! set value for halfedge handle
     void _set_nk_value(const Halfedge_const_handle& heh, 
                       const Surface_3& surface,
-                      SoX::Nk::Value_type type, 
+                      CGAL::Nk::Value_type type, 
                       int value) const {
         switch (type) {
-        case SoX::Nk::MULT:
+        case CGAL::Nk::MULT:
             heh->data()->_nk(surface).set_mult(value);
             break;
-        case SoX::Nk::N:
+        case CGAL::Nk::N:
             heh->data()->_nk(surface).set_n(value);
             break;
-        case SoX::Nk::K:
+        case CGAL::Nk::K:
             heh->data()->_nk(surface).set_k(value);
             break;
         }
@@ -943,16 +943,16 @@ private:
     //! set value for edge handle
     void _set_nk_value(const Edge_const_handle& eh, 
                       const Surface_3& surface,
-                      SoX::Nk::Value_type type, 
+                      CGAL::Nk::Value_type type, 
                       int value) const {
         switch (type) {
-        case SoX::Nk::MULT:
+        case CGAL::Nk::MULT:
             eh->data()->_nk(surface).set_mult(value);
             break;
-        case SoX::Nk::N:
+        case CGAL::Nk::N:
             eh->data()->_nk(surface).set_n(value);
             break;
-        case SoX::Nk::K:
+        case CGAL::Nk::K:
             eh->data()->_nk(surface).set_k(value);
             break;
         }
@@ -961,16 +961,16 @@ private:
     //! set value for face handle
     void _set_nk_value(const Face_const_handle& fh, 
                       const Surface_3& surface,
-                      SoX::Nk::Value_type type, 
+                      CGAL::Nk::Value_type type, 
                        int value) const {
         switch (type) {
-        case SoX::Nk::MULT:
+        case CGAL::Nk::MULT:
             fh->data()->_nk(surface).set_mult(value);
             break;
-        case SoX::Nk::N:
+        case CGAL::Nk::N:
             fh->data()->_nk(surface).set_n(value);
             break;
-        case SoX::Nk::K:
+        case CGAL::Nk::K:
             fh->data()->_nk(surface).set_k(value);
             break;
         }
@@ -978,27 +978,27 @@ private:
     
 public:
     //! nk values for vertex handle
-    const SoX::Nk& nk(const Vertex_const_handle& vh, 
+    const CGAL::Nk& nk(const Vertex_const_handle& vh, 
                       const Surface_3& surface) const {
         return vh->data()->_nk(surface);
     }
 
 private:
     //! nk values for halfedge handle
-    const SoX::Nk& nk(const Halfedge_const_handle& heh, 
+    const CGAL::Nk& nk(const Halfedge_const_handle& heh, 
                       const Surface_3& surface) const {
         return heh->data()->_nk(surface);
     }
 
 public:
     //! nk values for edge handle
-    const SoX::Nk& nk(const Edge_const_handle& eh, 
+    const CGAL::Nk& nk(const Edge_const_handle& eh, 
                       const Surface_3& surface) const {
         return eh->data()->_nk(surface);
     }
 
     //! nk values for face handle
-    const SoX::Nk& nk(const Face_const_handle& fh, 
+    const CGAL::Nk& nk(const Face_const_handle& fh, 
                       const Surface_3& surface) const {
         return fh->data()->_nk(surface);
     }
@@ -1245,24 +1245,24 @@ public:
         
         CGAL::Object obj = (cad_cache()(surface)).locate(pt);
 
-        SoX::Nk nk;
-        SoX::Dcel_feature feature;
+        CGAL::Nk nk;
+        CGAL::Dcel_feature feature;
 
         Face_const_handle fh;
         Halfedge_const_handle heh;
         Vertex_const_handle vh;
         if (CGAL::assign(fh,obj)) {
             nk = fh->data()->_nk(surface);
-            feature = SoX::FACE;
+            feature = CGAL::FACE;
         } else if (CGAL::assign(heh, obj)) {
             nk = heh->data()->_nk(surface);
-            feature = SoX::EDGE;
+            feature = CGAL::EDGE;
         } else {
             CGAL_assertion_code(bool check =)
                 CGAL::assign (vh, obj);
             CGAL_assertion(check);
             nk = vh->data()->_nk(surface);
-            feature = SoX::VERTEX;
+            feature = CGAL::VERTEX;
         }
         
         Z_at_xy_isolator isolator = 
@@ -1322,57 +1322,57 @@ public:
 
 #if 0
     //! returns z_stack for given point
-    std::pair< Z_stack, SoX::Dcel_feature >
+    std::pair< Z_stack, CGAL::Dcel_feature >
     z_stack_at(const Point_2& point) const {
         CGAL::Object obj = this->locate(point);
         Face_const_handle fh;
         if (CGAL::assign(fh,obj)) {
-            return std::make_pair(fh->data()->_z_stack(point, SoX::FACE),
-                                  SoX::FACE);
+            return std::make_pair(fh->data()->_z_stack(point, CGAL::FACE),
+                                  CGAL::FACE);
         }
         Halfedge_const_handle heh;
         if (CGAL::assign(heh, obj)) {
-            return std::make_pair(heh->data()->_z_stack(point, SoX::EDGE),
-                                  SoX::EDGE);
+            return std::make_pair(heh->data()->_z_stack(point, CGAL::EDGE),
+                                  CGAL::EDGE);
         }
         Vertex_const_handle vh;
         CGAL_assertion_code(bool check =)
             CGAL::assign (vh, obj);
         CGAL_assertion(check);
-        return std::make_pair(this->z_stack(vh), SoX::VERTEX);
+        return std::make_pair(this->z_stack(vh), CGAL::VERTEX);
     };
 #endif
     
     //! returns z_stack of silhouette-curve of \c surface at given vertex handle
-    std::pair< Z_stack, SoX::Dcel_feature > 
+    std::pair< Z_stack, CGAL::Dcel_feature > 
     z_stack(const Vertex_const_handle& vh, 
             const Surface_3& surface) const {
         return vh->data()->_z_stack_of_surface(surface);
     }
 private:
     //! returns z_stack of silhouette-curve of \c surface at given edge handle
-    std::pair< Z_stack, SoX::Dcel_feature > 
+    std::pair< Z_stack, CGAL::Dcel_feature > 
     z_stack(const Halfedge_const_handle& heh, 
             const Surface_3& surface) const {
         return heh->data()->_z_stack_of_surface(surface);
     }
 public:
     //! returns z_stack of silhouette-curve of \c surface at given edge handle
-    std::pair < Z_stack, SoX::Dcel_feature > 
+    std::pair < Z_stack, CGAL::Dcel_feature > 
     z_stack(const Edge_const_handle& eh, 
             const Surface_3& surface) const {
         return eh->data()->_z_stack_of_surface(surface);
     }
     
     //! returns z_stack of silhouette-curve of \c surface at given face handle
-    std::pair < Z_stack, SoX::Dcel_feature > 
+    std::pair < Z_stack, CGAL::Dcel_feature > 
     z_stack(const Face_const_handle& fh, 
             const Surface_3& surface) const {
         return fh->data()->_z_stack_of_surface(surface);
     }
 
     //! returns z_stack for given point
-    std::pair< Z_stack, SoX::Dcel_feature >
+    std::pair< Z_stack, CGAL::Dcel_feature >
     z_stack_for(const Point_2& point, const Surface_3& surface) const {
         CGAL::Object obj = this->locate(point);
         Face_const_handle fh;
@@ -1392,7 +1392,7 @@ public:
 
 #if 0
     //! returns z_stack for given point
-    std::pair< Z_stack, SoX::Dcel_feature >
+    std::pair< Z_stack, CGAL::Dcel_feature >
     z_stack_at(const Point_2& point, const Surface_3& surface) const {
         CGAL::Object obj = this->locate(point);
         Face_const_handle fh;
@@ -1427,20 +1427,20 @@ public:
                        const Surface_3& surface, int sheet, 
                        DcelConstHandle2 to) const {
         
-        std::pair< Z_stack, SoX::Dcel_feature > z_stack_from = 
+        std::pair< Z_stack, CGAL::Dcel_feature > z_stack_from = 
             z_stack(from, surface);
-        std::pair< Z_stack, SoX::Dcel_feature > z_stack_to = 
+        std::pair< Z_stack, CGAL::Dcel_feature > z_stack_to = 
             z_stack(to, surface);
         
         CGAL_assertion(from->data()->_rs_id() == to->data()->_rs_id());
 
         boost::optional< 
-            std::pair< SoX::Dcel_feature,CGAL::Object >
+            std::pair< CGAL::Dcel_feature,CGAL::Object >
             > sffrom = from->data()->_dcel(surface);        
         CGAL_assertion(sffrom);
         
         boost::optional< 
-            std::pair< SoX::Dcel_feature,CGAL::Object >
+            std::pair< CGAL::Dcel_feature,CGAL::Object >
             > sfto = to->data()->_dcel(surface);        
         CGAL_assertion(sfto);
 
@@ -1529,20 +1529,20 @@ public:
             const Surface_3& surface, int sheet, 
             DcelConstHandle2 to) const {
         
-        std::pair< Z_stack, SoX::Dcel_feature > z_stack_from = 
+        std::pair< Z_stack, CGAL::Dcel_feature > z_stack_from = 
             z_stack(from, surface);
-        std::pair< Z_stack, SoX::Dcel_feature > z_stack_to = 
+        std::pair< Z_stack, CGAL::Dcel_feature > z_stack_to = 
             z_stack(to, surface);
         
         CGAL_assertion(from->data()->_rs_id() == to->data()->_rs_id());
 
         boost::optional< 
-            std::pair< SoX::Dcel_feature,CGAL::Object >
+            std::pair< CGAL::Dcel_feature,CGAL::Object >
             > sffrom = from->data()->_dcel(surface);        
         CGAL_assertion(sffrom);
         
         boost::optional< 
-            std::pair< SoX::Dcel_feature,CGAL::Object >
+            std::pair< CGAL::Dcel_feature,CGAL::Object >
             > sfto = to->data()->_dcel(surface);        
         CGAL_assertion(sfto);
 
@@ -1563,24 +1563,24 @@ public:
     }
     
     template < class DcelConstHandle1, class DcelConstHandle2 >
-    SoX::Adjacencies_3 adjacency(DcelConstHandle1 from, 
+    CGAL::Adjacencies_3 adjacency(DcelConstHandle1 from, 
                                  const Surface_3& surface,
                                  DcelConstHandle2 to) const {
         
-        std::pair< Z_stack, SoX::Dcel_feature > z_stack_from = 
+        std::pair< Z_stack, CGAL::Dcel_feature > z_stack_from = 
             z_stack(from, surface);
-        std::pair< Z_stack, SoX::Dcel_feature > z_stack_to = 
+        std::pair< Z_stack, CGAL::Dcel_feature > z_stack_to = 
             z_stack(to, surface);
         
         CGAL_assertion(from->data()->_rs_id() == to->data()->_rs_id());
         
         boost::optional< 
-        std::pair< SoX::Dcel_feature,CGAL::Object > > sffrom = 
+        std::pair< CGAL::Dcel_feature,CGAL::Object > > sffrom = 
             from->data()->_dcel(surface);        
         CGAL_assertion(sffrom);
         
         boost::optional< 
-        std::pair< SoX::Dcel_feature,CGAL::Object > > sfto = 
+        std::pair< CGAL::Dcel_feature,CGAL::Object > > sfto = 
             to->data()->_dcel(surface);        
         CGAL_assertion(sfto);
         
@@ -1590,7 +1590,7 @@ public:
         typename Surface_z_at_xy_isolator_traits::Adjacency 
             compute_adj; // TODO single instance
         
-        SoX::Adjacencies_3 adj = 
+        CGAL::Adjacencies_3 adj = 
             compute_adj(surface,
                         // is valid as we just constructed z-stack
                         *isolator(from, surface),
@@ -1609,21 +1609,21 @@ public:
     // friends
     // for non_const_handle, _insert*, _overlay, halfedge-stuff
     friend class 
-    SoX::Create_restricted_cad_3< Surface_z_at_xy_isolator_traits >;
+    CGAL::Create_restricted_cad_3< Surface_z_at_xy_isolator_traits >;
     friend class 
-    SoX::Overlay_restricted_cad_3< Surface_z_at_xy_isolator_traits >;
-    friend class SoX::P_dcel_info< Surface_z_at_xy_isolator_traits >;
-    friend class SoX::Arr_p_dcel_info_overlay_traits< Self >;
+    CGAL::Overlay_restricted_cad_3< Surface_z_at_xy_isolator_traits >;
+    friend class CGAL::P_dcel_info< Surface_z_at_xy_isolator_traits >;
+    friend class CGAL::Arr_p_dcel_info_overlay_traits< Self >;
     // for types
-    friend class SoX::Z_stack< Surface_z_at_xy_isolator_traits, Data >;
+    friend class CGAL::Z_stack< Surface_z_at_xy_isolator_traits, Data >;
     // for all private members
-    friend class SoX::Restricted_cad_3_accessor< Self >;
-    friend class SoX::Intern::Construct_nk_decomposition_2< 
+    friend class CGAL::Restricted_cad_3_accessor< Self >;
+    friend class CGAL::CGALi::Construct_nk_decomposition_2< 
     Surface_z_at_xy_isolator_traits >;
     
 };
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_RESTRICTED_CAD_3_H
 // EOF

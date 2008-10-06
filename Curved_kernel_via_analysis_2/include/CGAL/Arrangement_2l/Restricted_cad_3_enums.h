@@ -37,7 +37,7 @@
 
 #include <iostream>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
 //! distinguishes between the three possible dcel-features
 enum Dcel_feature {
@@ -76,8 +76,8 @@ public:
     };
     
     Nk() :
-        _m_feat1(SoX::VERTEX),
-        _m_feat2(SoX::VERTEX),
+        _m_feat1(CGAL::VERTEX),
+        _m_feat2(CGAL::VERTEX),
         _m_mult(-1),
         // TODO other initial value?
         _m_n(-2),
@@ -87,20 +87,20 @@ public:
     
 public:
     
-    SoX::Dcel_feature feature1() const {
+    CGAL::Dcel_feature feature1() const {
         return _m_feat1;
     }
 
-    SoX::Dcel_feature feature2() const {
+    CGAL::Dcel_feature feature2() const {
         return _m_feat2;
     }
 
-    void set_feature1(SoX::Dcel_feature feature) const {
+    void set_feature1(CGAL::Dcel_feature feature) const {
         CGAL_precondition(!_m_fixed);
         _m_feat1 = feature;
     }
     
-    void set_feature2(SoX::Dcel_feature feature) const {
+    void set_feature2(CGAL::Dcel_feature feature) const {
         CGAL_precondition(!_m_fixed);
         _m_feat2 = feature;
     }
@@ -147,8 +147,8 @@ public:
 
 private:
     // members
-    mutable SoX::Dcel_feature _m_feat1;
-    mutable SoX::Dcel_feature _m_feat2;
+    mutable CGAL::Dcel_feature _m_feat1;
+    mutable CGAL::Dcel_feature _m_feat2;
 
 
     mutable int _m_mult;
@@ -160,12 +160,12 @@ private:
 
 
 inline
-std::ostream& operator<<(std::ostream& out, const SoX::Nk& nk) {
+std::ostream& operator<<(std::ostream& out, const CGAL::Nk& nk) {
     out << "NK(mult=" << nk.mult() << ",n=" << nk.n() 
         << ",k=" << nk.k() << ")";
     return out;
 }
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_RESTRICTED_CAD_3_ENUMS_H

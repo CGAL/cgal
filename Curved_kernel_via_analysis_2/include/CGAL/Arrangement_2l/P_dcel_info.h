@@ -56,9 +56,9 @@
 #include <CGAL/Arrangement_2l/Restricted_cad_3_enums.h>
 #include <CGAL/Arrangement_2l/Arr_p_dcel_info_overlay_traits.h>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
-namespace Intern {
+namespace CGALi {
 
 /*!\brief
  * Representation class for P_dcel_info
@@ -85,7 +85,7 @@ public:
     typedef std::set< Surface_3, Surface_less_than > Surface_container;
 
     //! type of nk map for silhouettes
-    typedef std::map< Surface_3, SoX::Nk, Surface_less_than > 
+    typedef std::map< Surface_3, CGAL::Nk, Surface_less_than > 
     Silhouettes_nk_map;
     
     //! type of Silhouette map
@@ -103,10 +103,10 @@ public:
     typedef std::map< Surface_pair, int, Surface_pair_less > Cuts_map;
 
     //! type of Dcel_data
-    typedef SoX::P_dcel_info< Surface_z_at_xy_isolator_traits > Dcel_data;
+    typedef CGAL::P_dcel_info< Surface_z_at_xy_isolator_traits > Dcel_data;
     
     //! type of Z_stack
-    typedef SoX::Z_stack< Surface_z_at_xy_isolator_traits, Dcel_data > 
+    typedef CGAL::Z_stack< Surface_z_at_xy_isolator_traits, Dcel_data > 
     Z_stack;
 
     //! type of id
@@ -114,17 +114,17 @@ public:
     
 private:
     //! originating dcel-handles for single surfaces
-    typedef std::map< Surface_3, std::pair< SoX::Dcel_feature, CGAL::Object >, 
+    typedef std::map< Surface_3, std::pair< CGAL::Dcel_feature, CGAL::Object >, 
     Surface_less_than > Surface_dcel_handle_map;
 
     //! originating dcel-handles for single surfaces
     typedef std::map< Surface_pair, 
-    std::pair< SoX::Dcel_feature,CGAL::Object >, Surface_pair_less >
+    std::pair< CGAL::Dcel_feature,CGAL::Object >, Surface_pair_less >
     Surface_pair_dcel_handle_map;
 
 
     //! Standard constructor
-    P_dcel_info_rep (const SoX::Dcel_feature feature, 
+    P_dcel_info_rep (const CGAL::Dcel_feature feature, 
                      const CGAL::Object dcel_handle) :
         _m_rs_id(0),
         _m_dcel_feature(feature),
@@ -137,7 +137,7 @@ private:
     mutable Rs_id _m_rs_id;
 
     //! stored feature
-    mutable SoX::Dcel_feature _m_dcel_feature;
+    mutable CGAL::Dcel_feature _m_dcel_feature;
 
     //! stored for this dcel-handle
     mutable CGAL::Object _m_dcel_handle;
@@ -188,7 +188,7 @@ private:
     friend class Restricted_cad_3< Surface_z_at_xy_isolator_traits>;
 };
 
-} // namespace Intern
+} // namespace CGALi
 
 
 /*!\brief
@@ -196,7 +196,7 @@ private:
  */
 template < class SurfaceZAtXyIsolatorTraits >
 class P_dcel_info : public 
-::CGAL::Handle_with_policy< Intern::P_dcel_info_rep< SurfaceZAtXyIsolatorTraits > > {
+::CGAL::Handle_with_policy< CGALi::P_dcel_info_rep< SurfaceZAtXyIsolatorTraits > > {
 public:
 
      //! this instance's first template parameter
@@ -207,10 +207,10 @@ public:
     );
 
     //! type of rep;
-    typedef Intern::P_dcel_info_rep< Surface_z_at_xy_isolator_traits > Rep;
+    typedef CGALi::P_dcel_info_rep< Surface_z_at_xy_isolator_traits > Rep;
     
     //! type of Base
-    typedef ::CGAL::Handle_with_policy< Rep > Base;
+    typedef CGAL::Handle_with_policy< Rep > Base;
 
     //! the class itself
     typedef P_dcel_info< Surface_z_at_xy_isolator_traits > Self;
@@ -270,7 +270,7 @@ private:
 
 private:
     //! Standard constructor
-    P_dcel_info(const SoX::Dcel_feature feature, 
+    P_dcel_info(const CGAL::Dcel_feature feature, 
                 const CGAL::Object& dcel_handle) :
         Base(Rep(feature, dcel_handle)) {
     }
@@ -299,17 +299,17 @@ private:
     }
     
     //! sets the dcel-handle 
-    void _set_dcel(const SoX::Dcel_feature feature, 
+    void _set_dcel(const CGAL::Dcel_feature feature, 
                    const CGAL::Object& dcel_handle) const {
         this->ptr()->_m_dcel_feature = feature;
         this->ptr()->_m_dcel_handle = dcel_handle;
     }
     
     //! return (if exiting) a pair of dcel-feature + handle for \c surface
-    boost::optional< std::pair< SoX::Dcel_feature, CGAL::Object > >
+    boost::optional< std::pair< CGAL::Dcel_feature, CGAL::Object > >
     _dcel(const Surface_3& surface) const {
         typedef
-            boost::optional< std::pair< SoX::Dcel_feature, CGAL::Object > >
+            boost::optional< std::pair< CGAL::Dcel_feature, CGAL::Object > >
             Return_type;
                 typename Surface_dcel_handle_map::iterator it = 
             this->ptr()->_m_surface_dcel_handle_map.find(surface);
@@ -326,7 +326,7 @@ private:
      * stores for given \c surface the dcel in originating rscad
      */
     void _set_dcel(const Surface_3& surface,
-                   const SoX::Dcel_feature feature, 
+                   const CGAL::Dcel_feature feature, 
                    CGAL::Object obj) const {
 
         CGAL_assertion_code((
@@ -334,21 +334,21 @@ private:
             typedef Restricted_cad_3< Surface_z_at_xy_isolator_traits> 
                 Restricted_cad_3;
             switch (feature) {
-            case SoX::FACE: {
+            case CGAL::FACE: {
                 typename Restricted_cad_3::Face_const_iterator fit;
                 CGAL_assertion_code(bool check = )
                     CGAL::assign (fit, obj);
                 CGAL_assertion(check);
                 break;
             }
-            case SoX::EDGE: {
+            case CGAL::EDGE: {
                 typename Restricted_cad_3::Halfedge_const_iterator hit;
                 CGAL_assertion_code(bool check = )
                     CGAL::assign (hit, obj);
                 CGAL_assertion(check);
                 break;
             }
-            case SoX::VERTEX: {
+            case CGAL::VERTEX: {
                 typename Restricted_cad_3::Vertex_const_iterator vit;
                 CGAL_assertion_code(bool check = )
                     CGAL::assign (vit, obj);
@@ -369,10 +369,10 @@ private:
     }
     
     //! return (if exiting) a pair of dcel-feature + handle for \c surfaces
-    boost::optional< std::pair< SoX::Dcel_feature, CGAL::Object > >
+    boost::optional< std::pair< CGAL::Dcel_feature, CGAL::Object > >
     _dcel(const Surface_3& surface1, const Surface_3& surface2) const {
         typedef 
-            boost::optional< std::pair< SoX::Dcel_feature, CGAL::Object > >
+            boost::optional< std::pair< CGAL::Dcel_feature, CGAL::Object > >
             Return_type;
         static Canonicalize_pair canonicalize;
         Surface_pair pair = canonicalize(std::make_pair(surface1, surface2));
@@ -391,7 +391,7 @@ private:
      */
     void _set_dcel(const Surface_3& surface1,
                    const Surface_3& surface2,
-                   const SoX::Dcel_feature feature, 
+                   const CGAL::Dcel_feature feature, 
                    CGAL::Object obj) const {
         static Canonicalize_pair canonicalize;
         Surface_pair pair = canonicalize(std::make_pair(surface1, surface2));
@@ -423,7 +423,7 @@ private:
     void _init_nk(const Surface_3& surface) const {
         this->ptr()->_m_surfaces.insert(surface);
         
-        SoX::Nk nk;
+        CGAL::Nk nk;
         
         typename Silhouettes_nk_map::iterator it = 
             this->ptr()->_m_silhouettes_nk.find(surface);
@@ -438,7 +438,7 @@ private:
      */
     void _finalize_nk(const Surface_3& surface) const {
         
-        SoX::Nk nk = _nk(surface);
+        CGAL::Nk nk = _nk(surface);
         
 #if !NDEBUG
         std::cout << "Finalizing Nk for " << this->ptr()->_m_dcel_feature 
@@ -450,12 +450,12 @@ private:
                 this->ptr()->_m_has_silhouette_curve = true;
             }
             if (nk.n() == -1) {
-                if (this->ptr()->_m_dcel_feature == SoX::VERTEX) {
+                if (this->ptr()->_m_dcel_feature == CGAL::VERTEX) {
                     // TODO be carefull if point is at infinity
                     if (!this->ptr()->_m_has_vertical_line) {
                         this->ptr()->_m_has_vertical_line = true;
                     }
-                } else if (this->ptr()->_m_dcel_feature == SoX::EDGE) {
+                } else if (this->ptr()->_m_dcel_feature == CGAL::EDGE) {
                     if (!this->ptr()->_m_has_vertical_surface) {
                         this->ptr()->_m_has_vertical_surface = true;
                     }
@@ -535,7 +535,7 @@ private:
 
     /*! return nk-instance of given surface 
      */
-    const SoX::Nk& _nk(const Surface_3& surface) const {
+    const CGAL::Nk& _nk(const Surface_3& surface) const {
         
         typename Silhouettes_nk_map::iterator it = 
             this->ptr()->_m_silhouettes_nk.find(surface);
@@ -591,7 +591,7 @@ public:
     boost::optional< int > multiplicity_of_silhouette(
             const Surface_3& surface
     ) const {
-        CGAL_precondition(this->ptr()->_m_dcel_feature == SoX::EDGE);
+        CGAL_precondition(this->ptr()->_m_dcel_feature == CGAL::EDGE);
         typename Silhouettes_nk_map::iterator it = 
             this->ptr()->_m_silhouettes_nk.find(surface);
         if (it == this->ptr()->_m_silhouettes_nk.end()) {
@@ -611,7 +611,7 @@ public:
             const Surface_3& surface1,
             const Surface_3& surface2
     ) const {
-        CGAL_precondition(this->ptr()->_m_dcel_feature == SoX::EDGE);
+        CGAL_precondition(this->ptr()->_m_dcel_feature == CGAL::EDGE);
         static Canonicalize_pair canonicalize;
         Surface_pair pair = canonicalize(std::make_pair(surface1, surface2));
         typename Cuts_map::iterator it = 
@@ -978,7 +978,7 @@ private:
             }
             
             // store z_stack
-            _set_z_stack(SoX::VERTEX);
+            _set_z_stack(CGAL::VERTEX);
         }
 
         // delete all old z_stacks
@@ -1015,7 +1015,7 @@ private:
             }
             
             // store z_stack
-            _set_z_stack(SoX::EDGE);
+            _set_z_stack(CGAL::EDGE);
         }
 
         // delete all old z_stacks
@@ -1052,7 +1052,7 @@ private:
             }
 
             // store z_stack
-            _set_z_stack(SoX::FACE);
+            _set_z_stack(CGAL::FACE);
         }
 
         // delete all old z_stacks
@@ -1069,7 +1069,7 @@ private:
     }
 
     //! returns for given \c surface and \cad the store z_stack in the sil-cad
-    std::pair< Z_stack, SoX::Dcel_feature > _z_stack_of_surface(
+    std::pair< Z_stack, CGAL::Dcel_feature > _z_stack_of_surface(
             const Surface_3& surface
     ) const {
         typedef Restricted_cad_3< Surface_z_at_xy_isolator_traits> 
@@ -1079,33 +1079,33 @@ private:
             this->ptr()->_m_surface_dcel_handle_map.find(surface);
         CGAL_precondition(it != this->ptr()->_m_surface_dcel_handle_map.end());
         
-        if (it->second.first == SoX::FACE) {
+        if (it->second.first == CGAL::FACE) {
             typename Restricted_cad_3::Face_const_iterator fit;
             CGAL_assertion_code(bool check = )
                 CGAL::assign (fit, it->second.second);
             CGAL_assertion(check);
             return std::make_pair(
                     fit->data()->_z_stack_for_face_handle(fit),
-                    SoX::FACE
+                    CGAL::FACE
             );
-        } else if (it->second.first == SoX::EDGE) {
+        } else if (it->second.first == CGAL::EDGE) {
             typename Restricted_cad_3::Halfedge_const_iterator hit;
             CGAL_assertion_code(bool check = )
                 CGAL::assign (hit, it->second.second);
             CGAL_assertion(check);
             return std::make_pair(
                     hit->data()->_z_stack_for_halfedge_handle(hit),
-                    SoX::EDGE
+                    CGAL::EDGE
             );
         } 
         // else
-        CGAL_assertion(it->second.first == SoX::VERTEX);
+        CGAL_assertion(it->second.first == CGAL::VERTEX);
         typename Restricted_cad_3::Vertex_const_iterator vit;
         CGAL_assertion_code(bool check =)
             CGAL::assign (vit, it->second.second);
         CGAL_assertion(check);
         return std::make_pair(vit->data()->_z_stack_for_vertex_handle(vit),
-                              SoX::VERTEX);
+                              CGAL::VERTEX);
     }
     
     /*!\brief
@@ -1345,7 +1345,7 @@ private:
     /*!\brief
      * sets z_stack for object
      */
-    void _set_z_stack(SoX::Dcel_feature feature) const {
+    void _set_z_stack(CGAL::Dcel_feature feature) const {
         CGAL_precondition(this->ptr()->_m_point);        
         CGAL_precondition(!this->ptr()->_m_z_stack);        
 
@@ -1396,7 +1396,7 @@ private:
                      this->ptr()->_m_surfaces.begin();
                  it != this->ptr()->_m_surfaces.end(); it++) {
                 
-                if (this->ptr()->_m_dcel_feature == SoX::EDGE && 
+                if (this->ptr()->_m_dcel_feature == CGAL::EDGE && 
                     _is_surface_vertical(*it)) {
                     continue;
                 }
@@ -1410,7 +1410,7 @@ private:
                     // TODO (construct_isolator_object())
                     // construct isolator
                     boost::optional< 
-                        std::pair< SoX::Dcel_feature, CGAL::Object > >
+                        std::pair< CGAL::Dcel_feature, CGAL::Object > >
                         dcelinfo = _dcel(*it);
                     CGAL_assertion(dcelinfo);
                     Z_at_xy_isolator isolator = 
@@ -1459,7 +1459,7 @@ private:
                         construct_isolator; 
                     // TODO (construct_isolator_object())
                     boost::optional< 
-                        std::pair< SoX::Dcel_feature, CGAL::Object > >
+                        std::pair< CGAL::Dcel_feature, CGAL::Object > >
                         dcelinfo = _dcel(*it);
                     CGAL_assertion(dcelinfo);
                     Z_at_xy_isolator isolator = 
@@ -1597,7 +1597,7 @@ public:
            << ", rsid: " <<  this->_rs_id() 
            << ", feat=" << this->ptr()->_m_dcel_feature << "): " 
            << std::endl;
-        if (this->ptr()->_m_dcel_feature == SoX::VERTEX) {
+        if (this->ptr()->_m_dcel_feature == CGAL::VERTEX) {
             typedef Restricted_cad_3< Surface_z_at_xy_isolator_traits> 
                 Restricted_cad_3;
             typename Restricted_cad_3::Vertex_const_iterator vit;
@@ -1606,7 +1606,7 @@ public:
             CGAL_assertion(check);
             os << "Point: " << vit->point() << std::endl;
         }
-        if (this->ptr()->_m_dcel_feature == SoX::EDGE) {
+        if (this->ptr()->_m_dcel_feature == CGAL::EDGE) {
             typedef Restricted_cad_3< Surface_z_at_xy_isolator_traits> 
                 Restricted_cad_3;
             typename Restricted_cad_3::Halfedge_const_iterator hit;
@@ -1621,7 +1621,7 @@ public:
              it != this->ptr()->_m_surfaces.end(); it++){ 
             os << "<" << it->id() << ">" << std::flush;
         }
-        if (this->ptr()->_m_dcel_feature != SoX::FACE) {
+        if (this->ptr()->_m_dcel_feature != CGAL::FACE) {
             os << std::endl;
         }
         if (this->_has_silhouette()) {
@@ -1632,10 +1632,10 @@ public:
                 if (it->second.mult() != -1) {
                     os << "<" << it->first.id() << "," << it->second;
                     if (it->second.n() == 0) {
-                        if (this->ptr()->_m_dcel_feature == SoX::EDGE) {
+                        if (this->ptr()->_m_dcel_feature == CGAL::EDGE) {
                             os << ",V";
                         } else if (this->ptr()->_m_dcel_feature == 
-                                   SoX::VERTEX) {
+                                   CGAL::VERTEX) {
                             os << ",VL";
                         }
                     }
@@ -1670,7 +1670,7 @@ public:
                 }
                 os << "BdryY " << *this->ptr()->_m_boundary_type_in_y;
             }
-            if (this->ptr()->_m_dcel_feature != SoX::FACE) {
+            if (this->ptr()->_m_dcel_feature != CGAL::FACE) {
                 os << std::endl;
             }
         }
@@ -1685,21 +1685,21 @@ private:
     
     // friends
     // for z_stacks
-    friend class Restricted_cad_3< Surface_z_at_xy_isolator_traits>;
-    friend class Restricted_cad_3_accessor< Restricted_cad_3< 
+    friend class CGAL::Restricted_cad_3< Surface_z_at_xy_isolator_traits>;
+    friend class CGAL::Restricted_cad_3_accessor< Restricted_cad_3< 
     Surface_z_at_xy_isolator_traits> >;
     
     // for add members
-    friend class Create_restricted_cad_3< Surface_z_at_xy_isolator_traits >;
+    friend class CGAL::Create_restricted_cad_3< Surface_z_at_xy_isolator_traits >;
     // for _set_rs_id
-    friend class Overlay_restricted_cad_3< Surface_z_at_xy_isolator_traits >;
+    friend class CGAL::Overlay_restricted_cad_3< Surface_z_at_xy_isolator_traits >;
 
     // for _overlay_with
-    friend class Arr_p_dcel_info_overlay_traits< 
+    friend class CGAL::Arr_p_dcel_info_overlay_traits< 
     Restricted_cad_3< Surface_z_at_xy_isolator_traits> >;
     
     // for _z_stack_of_surface
-    friend class SoX::Z_stack< Surface_z_at_xy_isolator_traits, Self>;
+    friend class CGAL::Z_stack< Surface_z_at_xy_isolator_traits, Self>;
     
     // data members
 };
@@ -1719,7 +1719,7 @@ std::ostream& operator<<(
 }
     
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_P_DCEL_INFO_H
 // EOF

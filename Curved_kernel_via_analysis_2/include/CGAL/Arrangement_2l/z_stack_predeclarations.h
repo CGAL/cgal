@@ -34,7 +34,7 @@
 
 #include <CGAL/config.h>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
 // pre-declaration
 template < class SurfaceZAtXyIsolatorTraits >
@@ -64,7 +64,7 @@ class Arr_p_dcel_info_overlay_traits;
 template < class SurfaceZAtXyIsolatorTraits, class Rep_ >
 class Surface_pair_3;
 
-namespace Intern {
+namespace CGALi {
 
 // pre-declaration
 template < class SurfaceZAtXyIsolatorTraits >
@@ -74,9 +74,9 @@ class Restricted_cad_3_cache;
 template < class SurfaceZAtXyIsolatorTraits, class DcelData >
 class Z_cell;
 
-} // namespace Intern
+} // namespace CGALi
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_Z_STACK_PREDECLARATIONS_H
 // EOF

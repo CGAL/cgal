@@ -36,7 +36,7 @@
 
 #include <CGAL/Arrangement_2l/Restricted_cad_3_enums.h>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
 /*!\brief
  * Accessor class for private types and members of RestrictedCad_3
@@ -198,7 +198,7 @@ public:
     inline
     void overlay(Restricted_cad_3 rscad1, 
                  Restricted_cad_3 rscad2, 
-                 Surface_3 surface, SoX::Nk::Value_type type) {
+                 Surface_3 surface, CGAL::Nk::Value_type type) {
         _m_rscad._overlay(rscad1, rscad2, surface, type);
     }
     
@@ -303,7 +303,7 @@ public:
     //! set value for vertex handle
     inline void set_nk_value(const Vertex_const_handle& vh, 
                              const Surface_3& surface,
-                             SoX::Nk::Value_type type, 
+                             CGAL::Nk::Value_type type, 
                              int value) const {
         _m_rscad._set_nk_value(vh, surface, type, value);
     }
@@ -311,7 +311,7 @@ public:
     //! set value for halfedge handle
     inline void set_nk_value(const Halfedge_const_handle& heh, 
                              const Surface_3& surface,
-                             SoX::Nk::Value_type type, 
+                             CGAL::Nk::Value_type type, 
                              int value) const {
         _m_rscad._set_nk_value(heh, surface, type, value);
     }
@@ -319,7 +319,7 @@ public:
     //! set value for edge handle
     inline void set_nk_value(const Edge_const_handle& eh, 
                              const Surface_3& surface,
-                             SoX::Nk::Value_type type, 
+                             CGAL::Nk::Value_type type, 
                              int value) const {
         _m_rscad._set_nk_value(eh, surface, type, value);
     }
@@ -327,13 +327,13 @@ public:
     //! set value for face handle
     inline void set_nk_value(const Face_const_handle& fh, 
                              const Surface_3& surface,
-                             SoX::Nk::Value_type type, 
+                             CGAL::Nk::Value_type type, 
                              int value) const {
         _m_rscad._set_nk_value(fh, surface, type, value);
     }
     
     //! nk for halfedge handle
-    const SoX::Nk& nk(const Halfedge_const_handle& heh, 
+    const CGAL::Nk& nk(const Halfedge_const_handle& heh, 
                       const Surface_3& surface) const {
         return _m_rscad.nk(heh, surface);
     }
@@ -422,7 +422,7 @@ public:
 
     //! returns z_stack of silhouette-curve of \c surface at halfedge handle
     inline
-    std::pair< Z_stack, SoX::Dcel_feature > 
+    std::pair< Z_stack, CGAL::Dcel_feature > 
     z_stack(const Halfedge_const_handle& heh, 
           const Surface_3& surface) const {
         return _m_rscad.z_stack(heh, surface);
@@ -435,7 +435,7 @@ private:
     
 };
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_RESTRICTED_CAD_3_ACCESSOR_H
 // EOF

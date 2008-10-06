@@ -41,11 +41,11 @@
 #include <CGAL/Arrangement_2l/z_stack_predeclarations.h>
 #include <CGAL/Arrangement_2l/Restricted_cad_3_accessor.h>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
 /*!\brief
  * Model of CGAL::ArrangementOverlayTraits_2 for Arrangements
- * attached with SoX::P_dcel_info<> data.
+ * attached with CGAL::P_dcel_info<> data.
  */
 template < class RestrictedCad_3 >
 class Arr_p_dcel_info_overlay_traits : public 
@@ -67,7 +67,7 @@ public:
     typedef Restricted_cad_3 RS_3;
 
     //! type of accesor
-    typedef Restricted_cad_3_accessor< Restricted_cad_3 > Accessor;
+    typedef CGAL::Restricted_cad_3_accessor< Restricted_cad_3 > Accessor;
 
     //! the class itself
     typedef Arr_p_dcel_info_overlay_traits< Arrangement_2 > Self;
@@ -90,7 +90,7 @@ public:
      */
     Arr_p_dcel_info_overlay_traits(const Surface_3& surface, 
                                    const Restricted_cad_3& cad,
-                                   SoX::Nk::Value_type type) :
+                                   CGAL::Nk::Value_type type) :
         _m_surface_mode(true),
         _m_surface(surface),
         _m_cad(cad),
@@ -117,14 +117,14 @@ public:
 private:
 
     // for vertex/face
-    inline void merge(Nk nk1, Nk nk2, const Nk& nk, 
-                      const Dcel_feature& feature) const {
+    inline void merge(CGAL::Nk nk1, CGAL::Nk nk2, const CGAL::Nk& nk, 
+                      const CGAL::Dcel_feature& feature) const {
 
-        if (this->_m_type == SoX::Nk::MULT) {
+        if (this->_m_type == CGAL::Nk::MULT) {
             // mults!
-            if (feature == SoX::VERTEX) {
+            if (feature == CGAL::VERTEX) {
                 nk.set_mult(0);
-            } else if (feature == SoX::EDGE) {
+            } else if (feature == CGAL::EDGE) {
                 nk.set_mult(
                         (nk1.mult() > 0 ? nk1.mult() : 0) +
                         (nk2.mult() > 0 ? nk2.mult() : 0)
@@ -134,10 +134,10 @@ private:
         } else { 
             // copy already set values!
             if (nk1.mult() >= 0) {
-                if (feature == SoX::VERTEX) {
+                if (feature == CGAL::VERTEX) {
                     nk.set_mult(0);
                 } else {
-                    CGAL_assertion(feature == SoX::EDGE);
+                    CGAL_assertion(feature == CGAL::EDGE);
                     nk.set_mult(nk1.mult());
                 }
             }
@@ -167,7 +167,7 @@ public:
 
         if (_m_surface_mode) {
             CGAL_precondition(!v->data());
-            _m_cad._init_feature(_m_surface, v, SoX::VERTEX);
+            _m_cad._init_feature(_m_surface, v, CGAL::VERTEX);
             
             v1->data()->_nk(_m_surface);
             v2->data()->_nk(_m_surface);
@@ -175,11 +175,11 @@ public:
 
             merge(v1->data()->_nk(_m_surface), 
                   v2->data()->_nk(_m_surface), 
-                  v->data()->_nk(_m_surface), SoX::VERTEX);
+                  v->data()->_nk(_m_surface), CGAL::VERTEX);
             CGAL_postcondition(v->data());
             
-            v->data()->_nk(_m_surface).set_feature1(SoX::VERTEX);
-            v->data()->_nk(_m_surface).set_feature2(SoX::VERTEX);
+            v->data()->_nk(_m_surface).set_feature1(CGAL::VERTEX);
+            v->data()->_nk(_m_surface).set_feature2(CGAL::VERTEX);
         } else {
             _m_acc.non_const_handle(v)->data() = 
                 v1->data()->_overlay_with(*v2->data(), 
@@ -200,14 +200,14 @@ public:
         
         if (_m_surface_mode) {
             CGAL_precondition(!v->data());
-            _m_cad._init_feature(_m_surface, v, SoX::VERTEX);
+            _m_cad._init_feature(_m_surface, v, CGAL::VERTEX);
             merge(v1->data()->_nk(_m_surface), 
                   e2->data()->_nk(_m_surface), 
-                  v->data()->_nk(_m_surface), SoX::VERTEX);
+                  v->data()->_nk(_m_surface), CGAL::VERTEX);
             CGAL_postcondition(v->data());
 
-            v->data()->_nk(_m_surface).set_feature1(SoX::VERTEX);
-            v->data()->_nk(_m_surface).set_feature2(SoX::EDGE);
+            v->data()->_nk(_m_surface).set_feature1(CGAL::VERTEX);
+            v->data()->_nk(_m_surface).set_feature2(CGAL::EDGE);
         } else {
             _m_acc.non_const_handle(v)->data() = 
                 v1->data()->_overlay_with(*e2->data(), 
@@ -228,14 +228,14 @@ public:
 
         if (_m_surface_mode) {
             CGAL_precondition(!v->data());
-            _m_cad._init_feature(_m_surface, v, SoX::VERTEX);
+            _m_cad._init_feature(_m_surface, v, CGAL::VERTEX);
             merge(v1->data()->_nk(_m_surface), 
                   f2->data()->_nk(_m_surface), 
-                  v->data()->_nk(_m_surface), SoX::VERTEX);
+                  v->data()->_nk(_m_surface), CGAL::VERTEX);
             CGAL_postcondition(v->data());
 
-            v->data()->_nk(_m_surface).set_feature1(SoX::VERTEX);
-            v->data()->_nk(_m_surface).set_feature2(SoX::FACE);
+            v->data()->_nk(_m_surface).set_feature1(CGAL::VERTEX);
+            v->data()->_nk(_m_surface).set_feature2(CGAL::FACE);
 
         } else {
             _m_acc.non_const_handle(v)->data() = 
@@ -257,14 +257,14 @@ public:
         
         if (_m_surface_mode) {
               CGAL_precondition(!v->data());
-              _m_cad._init_feature(_m_surface, v, SoX::VERTEX);
+              _m_cad._init_feature(_m_surface, v, CGAL::VERTEX);
               merge(e1->data()->_nk(_m_surface), 
                     v2->data()->_nk(_m_surface), 
-                    v->data()->_nk(_m_surface), SoX::VERTEX);
+                    v->data()->_nk(_m_surface), CGAL::VERTEX);
               CGAL_postcondition(v->data());
 
-              v->data()->_nk(_m_surface).set_feature1(SoX::EDGE);
-              v->data()->_nk(_m_surface).set_feature2(SoX::VERTEX);
+              v->data()->_nk(_m_surface).set_feature1(CGAL::EDGE);
+              v->data()->_nk(_m_surface).set_feature2(CGAL::VERTEX);
         } else {
             _m_acc.non_const_handle(v)->data() = 
                 v2->data()->_overlay_with(*e1->data(),
@@ -285,14 +285,14 @@ public:
 
         if (_m_surface_mode) {
               CGAL_precondition(!v->data());
-              _m_cad._init_feature(_m_surface, v, SoX::VERTEX);
+              _m_cad._init_feature(_m_surface, v, CGAL::VERTEX);
               merge(f1->data()->_nk(_m_surface), 
                     v2->data()->_nk(_m_surface), 
-                    v->data()->_nk(_m_surface), SoX::VERTEX);
+                    v->data()->_nk(_m_surface), CGAL::VERTEX);
               CGAL_postcondition(v->data());
 
-              v->data()->_nk(_m_surface).set_feature1(SoX::FACE);
-              v->data()->_nk(_m_surface).set_feature2(SoX::VERTEX);
+              v->data()->_nk(_m_surface).set_feature1(CGAL::FACE);
+              v->data()->_nk(_m_surface).set_feature2(CGAL::VERTEX);
         } else {
             _m_acc.non_const_handle(v)->data() = 
                 v2->data()->_overlay_with(*f1->data(),
@@ -312,14 +312,14 @@ public:
         
         if (_m_surface_mode) {
               CGAL_precondition(!v->data());
-              _m_cad._init_feature(_m_surface, v, SoX::VERTEX);
+              _m_cad._init_feature(_m_surface, v, CGAL::VERTEX);
               merge(e1->data()->_nk(_m_surface), 
                     e2->data()->_nk(_m_surface), 
-                    v->data()->_nk(_m_surface), SoX::VERTEX);
+                    v->data()->_nk(_m_surface), CGAL::VERTEX);
               CGAL_postcondition(v->data());
 
-              v->data()->_nk(_m_surface).set_feature1(SoX::EDGE);
-              v->data()->_nk(_m_surface).set_feature2(SoX::EDGE);
+              v->data()->_nk(_m_surface).set_feature1(CGAL::EDGE);
+              v->data()->_nk(_m_surface).set_feature2(CGAL::EDGE);
         } else {
             _m_acc.non_const_handle(v)->data() = 
                 e1->data()->_overlay_with(*e2->data(),
@@ -339,14 +339,14 @@ public:
 
         if (_m_surface_mode) {
             CGAL_precondition(!e->data());
-            _m_cad._init_feature(_m_surface, e, SoX::EDGE);
+            _m_cad._init_feature(_m_surface, e, CGAL::EDGE);
             merge(e1->data()->_nk(_m_surface), 
                   e2->data()->_nk(_m_surface), 
-                  e->data()->_nk(_m_surface), SoX::EDGE);
+                  e->data()->_nk(_m_surface), CGAL::EDGE);
             CGAL_postcondition(e->data());
 
-            e->data()->_nk(_m_surface).set_feature1(SoX::EDGE);
-            e->data()->_nk(_m_surface).set_feature2(SoX::EDGE);
+            e->data()->_nk(_m_surface).set_feature1(CGAL::EDGE);
+            e->data()->_nk(_m_surface).set_feature2(CGAL::EDGE);
         } else {
             _m_acc.non_const_handle(e)->data() = 
                 e1->data()->_overlay_with(*e2->data(),
@@ -368,14 +368,14 @@ public:
 
         if (_m_surface_mode) {
             CGAL_precondition(!e->data());
-            _m_cad._init_feature(_m_surface, e, SoX::EDGE);
+            _m_cad._init_feature(_m_surface, e, CGAL::EDGE);
             merge(e1->data()->_nk(_m_surface), 
                   f2->data()->_nk(_m_surface), 
-                  e->data()->_nk(_m_surface), SoX::EDGE);
+                  e->data()->_nk(_m_surface), CGAL::EDGE);
             CGAL_postcondition(e->data());
 
-            e->data()->_nk(_m_surface).set_feature1(SoX::EDGE);
-            e->data()->_nk(_m_surface).set_feature2(SoX::FACE);
+            e->data()->_nk(_m_surface).set_feature1(CGAL::EDGE);
+            e->data()->_nk(_m_surface).set_feature2(CGAL::FACE);
         } else {
             _m_acc.non_const_handle(e)->data() = 
                 e1->data()->_overlay_with(*f2->data(),
@@ -397,14 +397,14 @@ public:
 
         if (_m_surface_mode) {
             CGAL_precondition(!e->data());
-            _m_cad._init_feature(_m_surface, e, SoX::EDGE);
+            _m_cad._init_feature(_m_surface, e, CGAL::EDGE);
             merge(f1->data()->_nk(_m_surface), 
                   e2->data()->_nk(_m_surface), 
-                  e->data()->_nk(_m_surface), SoX::EDGE);
+                  e->data()->_nk(_m_surface), CGAL::EDGE);
             CGAL_postcondition(e->data());
 
-            e->data()->_nk(_m_surface).set_feature1(SoX::FACE);
-            e->data()->_nk(_m_surface).set_feature2(SoX::EDGE);
+            e->data()->_nk(_m_surface).set_feature1(CGAL::FACE);
+            e->data()->_nk(_m_surface).set_feature2(CGAL::EDGE);
         } else {
             _m_acc.non_const_handle(e)->data() = 
                 e2->data()->_overlay_with(*f1->data(),
@@ -426,16 +426,16 @@ public:
 
         if (_m_surface_mode) {
             CGAL_precondition(!f->data());
-            _m_cad._init_feature(_m_surface, f, SoX::FACE);
+            _m_cad._init_feature(_m_surface, f, CGAL::FACE);
             CGAL_assertion(f1->data()->_nk(_m_surface).mult() == -1);
             CGAL_assertion(f2->data()->_nk(_m_surface).mult() == -1);
             merge(f1->data()->_nk(_m_surface), 
                   f2->data()->_nk(_m_surface), 
-                  f->data()->_nk(_m_surface), SoX::FACE);
+                  f->data()->_nk(_m_surface), CGAL::FACE);
             CGAL_postcondition(f->data());
 
-            f->data()->_nk(_m_surface).set_feature1(SoX::FACE);
-            f->data()->_nk(_m_surface).set_feature2(SoX::FACE);
+            f->data()->_nk(_m_surface).set_feature1(CGAL::FACE);
+            f->data()->_nk(_m_surface).set_feature2(CGAL::FACE);
         } else {
             _m_acc.non_const_handle(f)->data() = 
                 f1->data()->_overlay_with(*f2->data(),
@@ -458,14 +458,13 @@ private:
     Accessor _m_acc;
 
     //! overlay type
-    SoX::Nk::Value_type _m_type;
+    CGAL::Nk::Value_type _m_type;
     
     //! factors of same curve
     bool _m_factors_of_same_curve;
 };
 
-
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_ARR_P_DCEL_INFO_OVERLAY_TRAITS_H
-// EO
+// EOF

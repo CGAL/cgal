@@ -44,9 +44,9 @@
 #include <CGAL/Arrangement_2l/Restricted_cad_3.h>
 #include <CGAL/Arrangement_2l/Restricted_cad_3_functors.h>
 
-namespace SoX {
+CGAL_BEGIN_NAMESPACE
 
-namespace Intern {
+namespace CGALi {
 
 template < class SurfaceZAtXyIsolatorTraits >
 class Surface_pair_3_rep {
@@ -117,11 +117,11 @@ public:
     friend class Surface_pair_3< Surface_z_at_xy_isolator_traits, Self > ;
 };
 
-} // namespace Intern
+} // namespace CGALi
 
 template < 
 class SurfaceZAtXyIsolatorTraits, 
-class Rep_ = Intern::Surface_pair_3_rep < SurfaceZAtXyIsolatorTraits >
+class Rep_ = CGAL::CGALi::Surface_pair_3_rep < SurfaceZAtXyIsolatorTraits >
 >
 class Surface_pair_3 : 
         public ::CGAL::Handle_with_policy< Rep_ > {
@@ -318,7 +318,7 @@ public:
     //!@}
 };
 
-} // namespace SoX
+CGAL_END_NAMESPACE
 
 #endif // SoX_GAPS_SURFACE_PAIR_3_H
 // EOF
