@@ -132,28 +132,28 @@ public:
 
 	FT area_divided_by_pi() const
 	{
-	  return rep().area_divided_by_pi();
+	  return typename R::Compute_area_divided_by_pi_3()(*this);
   }
 
   double approximate_area() const
   {
-	  return rep().approximate_area();
+	  return typename R::Compute_approximate_area_3()(*this);
 	}
 
 	FT squared_length_divided_by_pi_square() const
 	{
-	  return rep().squared_length_divided_by_pi_square();
+	  return typename R::Compute_squared_length_divided_by_pi_square_3()(*this);
   }
 
   double approximate_squared_length() const
   {
-	  return rep().approximate_squared_length();
+	  return typename R::Compute_approximate_squared_length_3()(*this);
 	}
 	
 	typename R::Boolean
   has_on(const Point_3 &p) const
   {
-    return rep().has_on(p);
+    return typename R::Has_on_3()(*this, p);
   }
 
 };
