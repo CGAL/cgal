@@ -62,7 +62,7 @@
 
 #include <CGAL/Arr_topology_traits/Sign_of_path.h>
 
-#include <SoX/GAPS/Restricted_cad_3.h>
+#include <CGAL/Arrangement_2l/Restricted_cad_3.h>
 #include <QdX/Quadric_3_z_at_xy_isolator_traits.h>
 
 CGAL_BEGIN_NAMESPACE
