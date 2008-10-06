@@ -240,7 +240,7 @@ public:
              this->_silhouette2_cut());
         // we won't access z-stacks of cad directly, only for support!
 
-        CGAL::Intern::Refineable_interval_helper< Z_at_xy_isolator > 
+        CGAL::CGALi::Refineable_interval_helper< Z_at_xy_isolator > 
             iv_helper;
         
         // iterate over all features of cut
