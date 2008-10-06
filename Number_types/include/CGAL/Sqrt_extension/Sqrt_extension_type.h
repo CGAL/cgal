@@ -569,13 +569,21 @@ template <class NT,class ROOT>   bool operator ==
 template <class NT,class ROOT>    bool operator <
 (const Sqrt_extension<NT,ROOT>& p, const NT& num)
 { return ( p.compare(num) == CGAL::SMALLER ); }
+template <class NT,class ROOT>    bool operator >
+(const Sqrt_extension<NT,ROOT>& p, const NT& num)
+{ return ( p.compare(num) == CGAL::LARGER ); }
+
 // lefthand side
 template <class NT,class ROOT> bool operator ==
 (const NT& num, const Sqrt_extension<NT,ROOT>& p)
 { return  ( p == num );}
 template <class NT,class ROOT>  bool operator <
 (const NT& num, const Sqrt_extension<NT,ROOT>& p)
-{ return !( p < num ); }
+{ return ( p.compare(num) == CGAL::LARGER ); }
+template <class NT,class ROOT>  bool operator >
+(const NT& num, const Sqrt_extension<NT,ROOT>& p)
+{ return ( p.compare(num) == CGAL::SMALLER ); }
+
 
 //CGAL_int(NT)
 template <class NT,class ROOT>    bool operator ==
@@ -583,13 +591,20 @@ template <class NT,class ROOT>    bool operator ==
 { return (p-num).is_zero();}
 template <class NT,class ROOT>    bool operator <
 (const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num)
-{ return p.compare(num);}
+{ return ( p.compare(num) == CGAL::SMALLER ); }
+template <class NT,class ROOT>    bool operator >
+(const Sqrt_extension<NT,ROOT>& p, CGAL_int(NT) num)
+{ return ( p.compare(num) == CGAL::LARGER ); }
+
 template <class NT,class ROOT> bool operator ==
 (CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p)
 { return  ( p == num );}
 template <class NT,class ROOT>  bool operator <
 (CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p)
-{ return !( p < num ); }
+{ return ( p.compare(num) == CGAL::LARGER ); }
+template <class NT,class ROOT>  bool operator >
+(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p)
+{ return ( p.compare(num) == CGAL::SMALLER ); }
 
 CGAL_END_NAMESPACE
 
