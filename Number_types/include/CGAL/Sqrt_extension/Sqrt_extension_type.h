@@ -194,9 +194,15 @@ public:
 
     //! propagates the simplify command to the members of xx
     void simplify(){
-        CGAL_NTS simplify(a0_);
-        CGAL_NTS simplify(a1_);
-        CGAL_NTS simplify(root_);
+      if(is_extended_){
+        if(CGAL_NTS is_zero(a1_)){
+          is_extended_ = false; 
+        }else{
+          CGAL_NTS simplify(a1_);
+          CGAL_NTS simplify(root_);
+        }
+      }
+      CGAL_NTS simplify(a0_);
     }
 
     //! determines the sign of xx by repeated squaring (with no filtering).
