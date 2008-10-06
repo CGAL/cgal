@@ -257,7 +257,7 @@ public:
                 int number_of_sheets = -1;
                 typedef typename Surface_pair_3::Restricted_cad_3
                 Restricted_cad_3;
-                typedef SoX::Restricted_cad_3_accessor< Restricted_cad_3 > 
+                typedef CGAL::Restricted_cad_3_accessor< Restricted_cad_3 > 
                 Accessor;
                 Restricted_cad_3 cad =
                 Restricted_cad_3::cad_cache()(surface);
@@ -351,7 +351,7 @@ public:
                 int number_of_sheets = -1;
                 typedef typename Surface_pair_3::Restricted_cad_3
                 Restricted_cad_3;
-                typedef SoX::Restricted_cad_3_accessor< Restricted_cad_3 > 
+                typedef CGAL::Restricted_cad_3_accessor< Restricted_cad_3 > 
                 Accessor;
                 Restricted_cad_3 cad =
                 Restricted_cad_3::cad_cache()(surface);
@@ -420,7 +420,7 @@ public:
                 int number_of_sheets = -1;
                 typedef typename Surface_pair_3::Restricted_cad_3
                 Restricted_cad_3;
-                typedef SoX::Restricted_cad_3_accessor< Restricted_cad_3 > 
+                typedef CGAL::Restricted_cad_3_accessor< Restricted_cad_3 > 
                 Accessor;
                 Restricted_cad_3 cad =
                 Restricted_cad_3::cad_cache()(surface);
@@ -489,7 +489,7 @@ public:
                 int number_of_sheets = -1;
                 typedef typename Surface_pair_3::Restricted_cad_3
                 Restricted_cad_3;
-                typedef SoX::Restricted_cad_3_accessor< Restricted_cad_3 > 
+                typedef CGAL::Restricted_cad_3_accessor< Restricted_cad_3 > 
                 Accessor;
                 Restricted_cad_3 cad =
                 Restricted_cad_3::cad_cache()(surface);
@@ -569,7 +569,7 @@ public:
                 int number_of_sheets = -1;
                 typedef typename Surface_pair_3::Restricted_cad_3
                 Restricted_cad_3;
-                typedef SoX::Restricted_cad_3_accessor< Restricted_cad_3 > 
+                typedef CGAL::Restricted_cad_3_accessor< Restricted_cad_3 > 
                 Accessor;
                 Restricted_cad_3 cad =
                 Restricted_cad_3::cad_cache()(surface);
@@ -630,7 +630,7 @@ public:
                 int number_of_sheets = -1;
                 typedef typename Surface_pair_3::Restricted_cad_3
                 Restricted_cad_3;
-                typedef SoX::Restricted_cad_3_accessor< Restricted_cad_3 > 
+                typedef CGAL::Restricted_cad_3_accessor< Restricted_cad_3 > 
                 Accessor;
                 Restricted_cad_3 cad =
                 Restricted_cad_3::cad_cache()(surface);
