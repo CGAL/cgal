@@ -262,7 +262,7 @@ private:
             typename Geometry_traits_2::Curved_kernel_via_analysis_2, 
             Quadric_3 
         > Traits;
-        typedef SoX::Create_restricted_cad_3< Traits > Creator;
+        typedef CGAL::Create_restricted_cad_3< Traits > Creator;
         typename Creator::Restricted_cad_3 cad = Creator()(base);
         
         if (base.is_ellipsoid()) {
