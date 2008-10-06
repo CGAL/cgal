@@ -20,17 +20,18 @@
  *  Kernel for generic points and arcs on surfaces, lifted from 2D.
  */
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/config.h>
 
 #include <iostream>
 #include <boost/optional.hpp>
 
+#include <CGAL/Cartesian.h>
+
 #include <CGAL/Curved_kernel_via_analysis_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
 
-#include <SoX/GAPS/Restricted_cad_3.h>
-#include <SoX/GAPS/Restricted_cad_3_accessor.h>
+#include <CGAL/Arrangement_2l/Restricted_cad_3.h>
+#include <CGAL/Arrangement_2l/Restricted_cad_3_accessor.h>
 
 CGAL_BEGIN_NAMESPACE
 
