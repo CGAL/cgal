@@ -3863,7 +3863,6 @@ Surface_mesher/demo/Surface_mesher/qt4-demo/icons/surface.svg -text svneol=unset
 Surface_mesher/demo/Surface_mesher/qt4-demo/icons/twosides.png -text svneol=unset#image/png
 Surface_mesher/demo/Surface_mesher/qt4-demo/icons/twosides.svg -text svneol=unset#image/svg%2Bxml
 Surface_mesher/demo/Surface_mesher/qt4-demo/isovalues_list.qrc -text
-Surface_mesher/demo/Surface_mesher/qt4-demo/qt4-demo.pro -text
 Surface_mesher/demo/Surface_mesher/qt4-demo/surface_mesher.qrc -text
 Surface_mesher/demo/Surface_mesher/qt4-demo/ui/isovalues_list.ui -text
 Surface_mesher/demo/Surface_mesher/qt4-demo/ui/mainwindow.ui -text
