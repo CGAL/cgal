@@ -1,11 +1,10 @@
-// ============================================================================
-//
-// Copyright (c) 2001-2008 Max-Planck-Institut Saarbruecken (Germany).
+// Copyright (c) 2007-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/);
-// you may redistribute it under the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with EXACUS.
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -13,24 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// ----------------------------------------------------------------------------
-//
-// Library       : SoX
-// File          : include/SoX/GAPS/Z_stack_helpers.h
-// SoX_release   : $Name:  $
-// Revision      : $Revision$
-// Revision_date : $Date$
+// $URL$
+// $Id$
+// 
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
-//
-// ============================================================================
 
-/*! \file SoX/GAPS/Z_stack_helpers.h
+/*!\file include/CGAL/Arrangement_2l/Z_stack_helpers.h
  * \brief definition of Z_stack helpers
  */
 
-#ifndef SoX_GAPS_Z_STACK_HELPERS_H
-#define SoX_GAPS_Z_STACK_HELPERS_H 1
+#ifndef CGAL_ARRANGEMENT_2l_Z_STACK_HELPERS_H
+#define CGAL_ARRANGEMENT_2l_Z_STACK_HELPERS_H 1
 
 #include <CGAL/config.h>
 
@@ -300,10 +293,9 @@ public:
     
 }; // Refineable_interval_helper
 
-
 } // namespace CGALi
 
 CGAL_END_NAMESPACE
 
-#endif // SoX_GAPS_Z_STACK_HELPERS_H
+#endif // CGAL_ARRANGEMENT_2l_Z_STACK_HELPERS_H
 // EOF
