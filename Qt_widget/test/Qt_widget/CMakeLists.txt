@@ -19,7 +19,7 @@ if ( CGAL_FOUND AND QT3_FOUND )
 
   # The executable itself.
   add_executable  ( test_qt_version
-                    test_qt_version..cpp )
+                    test_qt_version.cpp )
 
   target_link_libraries( test_qt_version ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
