@@ -1767,6 +1767,13 @@ Installation/config/support/test_BOOST_THREAD.cpp -text
 Installation/config/testfiles/CGAL_CFG_NO_CPP0X_ISFINITE.cpp -text
 Installation/src/CGAL/all_files.cpp -text
 Installation/src/CMakeLists.txt -text
+Installation/test/Installation/CMakeLists.txt -text
+Installation/test/Installation/link_to_CGAL.cpp -text
+Installation/test/Installation/link_to_CGAL_Core.cpp -text
+Installation/test/Installation/link_to_CGAL_ImageIO.cpp -text
+Installation/test/Installation/link_to_CGAL_PDB.cpp -text
+Installation/test/Installation/link_to_CGAL_Qt3.cpp -text
+Installation/test/Installation/link_to_CGAL_Qt4.cpp -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
