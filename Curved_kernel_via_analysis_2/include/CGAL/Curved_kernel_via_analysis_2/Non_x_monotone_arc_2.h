@@ -1,26 +1,33 @@
-// TODO: Add licence
+// Copyright (c) 2007-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:
-// $Id: 
-// 
+// $URL: svn+ssh://eric@scm.gforge.inria.fr/svn/cgal/trunk/Kernel_23/include/CGAL/enum.h $
+// $Id: enum.h 44129 2008-07-12 21:09:38Z spion $
+//
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
-//
-// ============================================================================
 
-#ifndef CGAL_CURVED_KERNEL_NON_X_MONOTONE_ARC_2
-#define CGAL_CURVED_KERNEL_NON_X_MONOTONE_ARC_2
+#ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_NON_X_MONOTONE_ARC_2_H
+#define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_NON_X_MONOTONE_ARC_2_H
 
-/*! \file Curved_kernel_via_analysis_2/Non_x_monotone_arc_2.h
- *  \brief defines class \c Non_x_monotone_arc_2
+/*!\file include/CGAL/Curved_kernel_via_analysis_2/Non_x_monotone_arc_2.h
+ * \brief defines class \c Non_x_monotone_arc_2
  *  
- *  non x-monotone arc of a generic curve
+ * non x-monotone arc of a generic curve
  */
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Handle_with_policy.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2/Arc_2.h>
@@ -302,4 +309,5 @@ CGAL::Qt_widget& operator <<(CGAL::Qt_widget& ws,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CURVED_KERNEL_NON_X_MONOTONE_ARC_2
+#endif // CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_NON_X_MONOTONE_ARC_2_H
+// EOF

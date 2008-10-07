@@ -1,30 +1,38 @@
-// TODO: Add licence
+// Copyright (c) 2004-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id: $
-// 
+// $URL: svn+ssh://eric@scm.gforge.inria.fr/svn/cgal/trunk/Kernel_23/include/CGAL/enum.h $
+// $Id: enum.h 44129 2008-07-12 21:09:38Z spion $
+//
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
-//
-// ============================================================================
 
-/*! \file simple_models.h
- *  \brief defines dummy implementations satisfying Curve_kernel_2
- *  concept requirenments 
+#ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_TEST_SIMPLE_MODELS_H
+#define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_TEST_SIMPLE_MODELS_H
+
+/*!\file include/CGAL/Curved_kernel_via_analysis_2/test/simple_models.h
+ * \brief defines dummy implementations satisfying Curve_kernel_2
+ * concept requirenments 
  */
 
-#ifndef CGAL_CKVA_2_SIMPLE_MODELS_H
-#define CGAL_CKVA_2_SIMPLE_MODELS_H
+#include <CGAL/config.h>
 
-#include <CGAL/basic.h>
+#include <CGAL/Arithmetic_kernel.h>
 
 #include <CGAL/Polynomial.h>
 
 #include <CGAL/Algebraic_kernel_1.h>
-#include <CGAL/Arithmetic_kernel.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1396,4 +1404,5 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CKVA_2_SIMPLE_MODELS_H
+#endif // CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_TEST_SIMPLE_MODELS_H
+// EOF
