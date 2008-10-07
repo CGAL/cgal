@@ -21,7 +21,7 @@
 #ifndef CGAL_ARR_DUPIN_CYCLIDE_OVERLAY_HELPER_H
 #define CGAL_ARR_DUPIN_CYCLIDE_OVERLAY_HELPER_H 1
 
-/*!\file include/CGAL/Arr_topology_traits/Arr_dupin_cyclide_overlay_helper
+/*!\file include/CGAL/Arr_topology_traits/Arr_dupin_cyclide_overlay_helper.h
  * \brief Definition of the Arr_dupin_cyclide_overlay_helper class-template.
  */
 
