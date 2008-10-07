@@ -1,5 +1,5 @@
-// Copyright (c) 2006 Tel-Aviv University (Israel).
-// All rights reserved.
+// Copyright (c) 2007-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -20,11 +20,11 @@
 #ifndef CGAL_ARR_TOPOLOGY_TRAITS_SIGN_OF_PATH_H
 #define CGAL_ARR_TOPOLOGY_TRAITS_SIGN_OF_PATH_H
 
-/*! \file
- * Definition of the Sign_of_path class template
+/*!\file include/CGAL/Arr_topology_traits/Sign_of_path.h
+ * \brief Definition of the Sign_of_path class template
  */
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -339,4 +339,3 @@ CGAL_END_NAMESPACE
 
 #endif // CGAL_ARR_TOPOLOGY_TRAITS_SIGN_OF_PATH_H
 // EOF
-
