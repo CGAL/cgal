@@ -1,6 +1,5 @@
-// Copyright (c) 2006, 2007  Tel-Aviv University (Israel), Max-Planck-Institut
-// fuer Informatik (Germany).
-// All rights reserved.
+// Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -22,11 +21,13 @@
 //                 
 
 #ifndef CGAL_ARR_QdX_CONSTRUCTION_HELPER_H
-#define CGAL_ARR_QdX_CONSTRUCTION_HELPER_H
+#define CGAL_ARR_QdX_CONSTRUCTION_HELPER_H 1
 
-/*! \file
- * Definition of the Arr_qdx_construction_helper class-template.
+/*!\file include/CGAL/Arr_topology_traits/Arr_qdx_construction_helper.h
+ * \brief Definition of the Arr_qdx_construction_helper class-template.
  */
+
+#include <CGAL/config.h>
 
 #include <CGAL/Sweep_line_empty_visitor.h>
 #include <CGAL/Unique_hash_map.h>
@@ -278,3 +279,4 @@ public:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ARR_QdX_CONSTRUCTION_HELPER
+// EOF

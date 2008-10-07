@@ -1,5 +1,5 @@
-// Copyright (c) 2008 Max-Planck-Institute Saarbruecken (Germany).
-// All rights reserved.
+// Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -19,15 +19,17 @@
 //                 Ron Wein <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_H
-#define CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_H
+#define CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_H 1
 
 #ifndef CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
 #define CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 0
 #endif
 
-/*! \file
- * Definition of the Arr_qdx_topology_traits_2<GeomTraits> class.
+/*!\file include/CGAL/Arr_qdx_topology_traits_2.h
+ * \brief Definition of the Arr_qdx_topology_traits_2<GeomTraits> class.
  */
+
+#include <CGAL/config.h>
 
 #include <map>
 #include <algorithm>
@@ -1063,4 +1065,5 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/Arr_topology_traits/Arr_qdx_topology_traits_2_impl.h>
 
-#endif
+#endif // CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_H
+// EOF

@@ -1,5 +1,5 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
-// All rights reserved.
+// Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -13,23 +13,24 @@
 //
 // $URL$
 // $Id$
+// 
 //
-//
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
+//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_QdX_BATCHED_PL_HELPER_H
-#define CGAL_ARR_QdX_BATCHED_PL_HELPER_H
+#define CGAL_ARR_QdX_BATCHED_PL_HELPER_H 1
 
-/*!
- * Definition of the Arr_qdx_batched_pl_helper class-template.
+/*!\file include/CGAL/Arr_topology_traits/Arr_qdx_batched_pl_helper.h
+ * \brief Definition of the Arr_qdx_batched_pl_helper class-template.
  */
 
-#include <CGAL/basic.h>
-
-CGAL_BEGIN_NAMESPACE
+#include <CGAL/config.h>
 
 #include <CGAL/Sweep_line_empty_visitor.h>
+
+CGAL_BEGIN_NAMESPACE
 
 /*! \class Arr_qdx_batched_pl_helper
  * A helper class for the batched point-location sweep-line visitor, suitable
@@ -160,4 +161,5 @@ void Arr_qdx_batched_pl_helper<Tr, Arr>::after_handle_event
 
 CGAL_END_NAMESPACE
 
-#endif // ARR_QdX_BATCHED_PL_HELPER
+#endif // CGAL_ARR_QdX_BATCHED_PL_HELPER
+// EOF

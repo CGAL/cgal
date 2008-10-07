@@ -1,5 +1,5 @@
-// Copyright (c) 2006,2007,2008 Max-Planck-Institute Saarbruecken (Germany).
-// All rights reserved.
+// Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -19,7 +19,7 @@
 //                 Ron Wein <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_IMPL_H
-#define CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_IMPL_H
+#define CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_IMPL_H 1
 
 #ifndef CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
 #define CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 0
@@ -29,10 +29,12 @@
 #define CGAL_ARR_SIGN_OF_PATH_VERBOSE 0
 #endif
 
-/*! \file
- * Member-function definitions for the
+/*!\file include/CGAL/Arr_topology_traits/Arr_qdx_topology_traits_2_impl.h
+ * \brief Member-function definitions for the
  * Arr_qdx_topology_traits_2<GeomTraits> class.
  */
+
+#include <CGAL/config.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1758,5 +1760,5 @@ _sign_of_subpath(const Halfedge* he1,
 
 CGAL_END_NAMESPACE
 
-#endif
+#endif // CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_IMPL_H
 // EOF

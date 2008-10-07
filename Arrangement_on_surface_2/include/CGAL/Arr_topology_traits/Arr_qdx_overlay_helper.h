@@ -1,5 +1,5 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
-// All rights reserved.
+// Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -19,11 +19,13 @@
 //                 Ron Wein <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_QdX_OVERLAY_HELPER_H
-#define CGAL_ARR_QdX_OVERLAY_HELPER_H
+#define CGAL_ARR_QdX_OVERLAY_HELPER_H 1
 
-/*!
- * Definition of the Arr_qdx_overlay_helper class-template.
+/*!\file include/CGAL/Arr_topology_traits/Arr_qdx_overlay_helper.h
+ * \brief Definition of the Arr_qdx_overlay_helper class-template.
  */
+
+#include <CGAL/config.h>
 
 #include <CGAL/Arr_topology_traits/Arr_qdx_construction_helper.h>
 
@@ -215,4 +217,5 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // ARR_QdX_OVERLAY_HELPER
+#endif // CGAL_ARR_QdX_OVERLAY_HELPER
+// EOF
