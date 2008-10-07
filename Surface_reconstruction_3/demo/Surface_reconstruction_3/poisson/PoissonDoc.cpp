@@ -1119,8 +1119,10 @@ void CPoissonDoc::OnOneStepPoissonReconstruction()
 
   OnCreatePoissonTriangulation();
   OnReconstructionDelaunayRefinement();
-  OnReconstructionPoisson();
-  OnReconstructionPoissonSurfaceMeshing();
+  if (m_triangulation_refined)
+    OnReconstructionPoisson();
+  if (m_poisson_solved)
+    OnReconstructionPoissonSurfaceMeshing();
 
   status_message("1-step Poisson reconstruction...done (%.2lf s)", task_timer.time());
   update_status();
