@@ -162,15 +162,15 @@ namespace CGAL {
   public:
 
     // Constructors
-    Implicit_surface_oracle_3 (Visitor visitor_ = Visitor()) :
-      visitor(visitor_), 
-      transform_functor(),
-      surface_identifiers_generator()
-    {
-#ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
-      std::cerr << "CONS: Implicit_surface_oracle_3\n";
-#endif
-    }
+//     Implicit_surface_oracle_3 (Visitor visitor_ = Visitor()) :
+//       visitor(visitor_), 
+//       transform_functor(),
+//       surface_identifiers_generator()
+//     {
+// #ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
+//       std::cerr << "CONS: Implicit_surface_oracle_3\n";
+// #endif
+//     }
 
     Implicit_surface_oracle_3 (Transform_functor transform_functor
                                  = Transform_functor(),
