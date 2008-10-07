@@ -38,7 +38,7 @@ qt4_add_resources ( DT_RESOURCE_FILES ./Polygon_2.qrc )
 qt4_generate_moc( Polygon_2.cpp Polygon_2.moc )
 
 # The executable itself.
-add_executable  ( Polygon_2 Polygon_2.cpp ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+add_executable  ( Polygon_2 Polygon_2.cpp Polygon_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
 # Link with Qt libraries
 target_link_libraries( Polygon_2 ${QT_LIBRARIES} )
