@@ -9,6 +9,7 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 find_package(CGAL REQUIRED PDB )
 include( ${CGAL_USE_FILE} )
 
+INCLUDE_DIRECTORIES ( BEFORE ./include )
 
 if (CGAL_PDB_FOUND )
 
