@@ -25,15 +25,14 @@ typedef std::map<const char*, Signal_slot_pair> Connection_map;
 // piece-wise loop subdivision
 #include <CGAL/pws_loop_subdivision.h>
 
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Poly_kernel;
+typedef Poly_kernel::FT FT;
+typedef Poly_kernel::Point_3 Poly_point;
+typedef Poly_kernel::Sphere_3 Sphere;
+typedef Poly_kernel::Vector_3 Vector;
+typedef Poly_kernel::Triangle_3 Triangle_3;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::FT FT;
-typedef Kernel::Point_3 Point;
-typedef Kernel::Sphere_3 Sphere;
-typedef Kernel::Vector_3 Vector;
-typedef Kernel::Triangle_3 Triangle_3;
-
-typedef CGAL::Polyhedral_surface_3<Kernel,
+typedef CGAL::Polyhedral_surface_3<Poly_kernel,
               CGAL::Surface_mesher::Has_edges> CGAL_polyhedral_surface;
 
 
@@ -43,8 +42,8 @@ class Polyhedral_surface : public Surface
   
 public:
   Polyhedral_surface(QObject* parent,
-		     double sharp_edges_angle_lower_bound,
-		     double sharp_edges_angle_upper_bound);
+		     double sharp_edges_angle_lower_bound = 90,
+		     double sharp_edges_angle_upper_bound = 120);
 
   ~Polyhedral_surface();
 public slots:
@@ -67,7 +66,7 @@ public slots:
   void on_action_Options_triggered();
 
 public:
-  void open(const QString& filename);
+  bool open(const QString& filename);
   void close();
   void draw();
   void drawWithNames();

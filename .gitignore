@@ -23,6 +23,7 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2/*.vcproj
 Boolean_set_operations_2/demo/Boolean_set_operations_2/Makefile
 Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations_2
 CGALimageIO/demo/CGALimageIO/Makefile
+CGALimageIO/demo/CGALimageIO/cgal_test_with_cmake
 CGALimageIO/demo/CGALimageIO/cmake_install.cmake
 CGALimageIO/demo/CGALimageIO/image_to_vtk_viewer
 CGALimageIO/examples/CGALimageIO/*.exe
@@ -30,6 +31,7 @@ CGALimageIO/examples/CGALimageIO/Makefile
 CGALimageIO/examples/CGALimageIO/convert_raw_image_to_inr
 CGALimageIO/examples/CGALimageIO/makefile
 CGALimageIO/examples/CGALimageIO/test_imageio
+CGALimageIO/src/CGALimageIO/Makefile
 Distance_3/include
 GraphicsView/TAGS
 GraphicsView/demo/Alpha_shapes_3/*.exe
@@ -411,6 +413,7 @@ Surface_mesher/demo/Surface_mesher/qt4-demo/.qglviewer.xml
 Surface_mesher/demo/Surface_mesher/qt4-demo/CMakeCache.txt
 Surface_mesher/demo/Surface_mesher/qt4-demo/CMakeFiles
 Surface_mesher/demo/Surface_mesher/qt4-demo/Makefile
+Surface_mesher/demo/Surface_mesher/qt4-demo/Surface_mesher
 Surface_mesher/demo/Surface_mesher/qt4-demo/Surface_mesher_Qt4_Demo
 Surface_mesher/demo/Surface_mesher/qt4-demo/cgal.prf
 Surface_mesher/demo/Surface_mesher/qt4-demo/cmake_install.cmake

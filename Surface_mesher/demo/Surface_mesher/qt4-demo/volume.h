@@ -72,7 +72,7 @@ typedef CGAL::Implicit_surface_3<Kernel, Binary_image> Surface_3;
 class MainWindow;
 class QDoubleSpinBox;
 class Viewer;
-class Isovalues_list;
+class Values_list;
 
 class Volume : public Surface
 {
@@ -109,7 +109,7 @@ private:
 
   MainWindow* mw;
   QFileInfo fileinfo;
-  Isovalues_list* isovalues_list;
+  Values_list* values_list;
   QDoubleSpinBox* spinBox_radius_bound;
   QDoubleSpinBox* spinBox_distance_bound;
 
@@ -128,8 +128,12 @@ private:
   template <typename Iterator>
   void gl_draw_surface(Iterator begin, Iterator end, const QTreeWidgetItem* = 0);
 
-  template <typename PointsOutputIterator, typename TransformOperator>
-  void search_for_connected_components(PointsOutputIterator, TransformOperator);
+  template <typename PointsOutputIterator,
+	    typename DomainsOutputIterator,
+	    typename TransformOperator>
+  void search_for_connected_components(PointsOutputIterator,
+				       DomainsOutputIterator, 
+				       TransformOperator);
 
 public:
   void gl_draw_surface();
@@ -148,12 +152,12 @@ public slots:
   void set_triangulation_edges_color();
   void set_draw_triangulation(const bool);
   void set_use_gouraud(const bool);
-  void open(const QString& filename);
+  bool open(const QString& filename);
 #ifdef CGAL_USE_VTK
-  void open_vtk(const QString& filename);
+  bool open_vtk(const QString& filename);
 #endif
   bool open_xt(const QString& filename);
-  void opendir(const QString& dirname);
+  bool opendir(const QString& dirname);
   void finish_open();
   void export_off();
   void check_can_export_off();
@@ -172,8 +176,12 @@ private:
   void not_busy() const;
 };
 
-template <typename PointsOutputIterator, typename TransformOperator>
-void Volume::search_for_connected_components(PointsOutputIterator it, TransformOperator transform)
+template <typename PointsOutputIterator,
+	  typename DomainsOutputIterator,
+	  typename TransformOperator>
+void Volume::search_for_connected_components(PointsOutputIterator it,
+					     DomainsOutputIterator dom_it,
+					     TransformOperator transform)
 {
   const unsigned int nx = m_image.xdim();
   const unsigned int ny = m_image.ydim();
@@ -195,6 +203,7 @@ void Volume::search_for_connected_components(PointsOutputIterator it, TransformO
         if(visited[i][j][k]>0)
           continue;
         const Label current_label = transform(m_image.value(i, j, k));
+	*dom_it++ = current_label;
         if(current_label == Label()) {
           visited[i][j][k] = 3;
           continue;

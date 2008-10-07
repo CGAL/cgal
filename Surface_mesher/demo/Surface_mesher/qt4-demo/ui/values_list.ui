@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>Isovalues_list</class>
- <widget class="QWidget" name="Isovalues_list" >
+ <class>Values_list</class>
+ <widget class="QWidget" name="Values_list" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -76,7 +76,7 @@
         <string>...</string>
        </property>
        <property name="icon" >
-        <iconset resource="../isovalues_list.qrc" >:/isovalues/plus.png</iconset>
+        <iconset resource="../values_list.qrc" >:/values/plus.png</iconset>
        </property>
       </widget>
      </item>
@@ -86,7 +86,7 @@
         <string>...</string>
        </property>
        <property name="icon" >
-        <iconset resource="../isovalues_list.qrc" >:/isovalues/minus.png</iconset>
+        <iconset resource="../values_list.qrc" >:/values/minus.png</iconset>
        </property>
        <property name="shortcut" >
         <string>Del</string>
@@ -112,7 +112,7 @@
  </widget>
  <resources>
   <include location="../surface_mesher.qrc" />
-  <include location="../isovalues_list.qrc" />
+  <include location="../values_list.qrc" />
  </resources>
  <connections/>
 </ui>

@@ -5,18 +5,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1090</width>
-    <height>570</height>
+    <width>1100</width>
+    <height>595</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Surface mesher demo</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../surface_mesher.qrc" >:/icons/cgal_logo.xpm</iconset>
+   <iconset resource="../surface_mesher.qrc" >
+    <normaloff>:/icons/cgal_logo.xpm</normaloff>:/icons/cgal_logo.xpm</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <layout class="QGridLayout" >
+   <layout class="QGridLayout" name="gridLayout" >
     <item row="0" column="0" >
      <widget class="QSplitter" name="splitter" >
       <property name="orientation" >
@@ -30,12 +31,107 @@
         </sizepolicy>
        </property>
       </widget>
-      <widget class="Isovalues_list" native="1" name="isovalues" >
-       <property name="show_only_in" stdset="0" >
-        <stringlist>
-         <string>volume</string>
-        </stringlist>
-       </property>
+      <widget class="QWidget" name="layoutWidget" >
+       <layout class="QVBoxLayout" name="optionsLayout" >
+        <item>
+         <widget class="QGroupBox" name="groupBoxImageType" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title" >
+           <string>Image type</string>
+          </property>
+          <property name="show_only_in" stdset="0" >
+           <stringlist>
+            <string>volume</string>
+           </stringlist>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout" >
+           <item>
+            <widget class="QRadioButton" name="grayLevelRadioButton" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Grayscale image</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="labellizedRadioButton" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Segmented image</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBoxCriteria" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title" >
+           <string>Criteria</string>
+          </property>
+          <property name="show_only_in" stdset="0" >
+           <stringlist>
+            <string>volume</string>
+           </stringlist>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2" >
+           <item>
+            <widget class="QCheckBox" name="manifoldCheckBox" >
+             <property name="text" >
+              <string>Manifold</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="sameIndexCheckBox" >
+             <property name="text" >
+              <string>Facets vertices have same index</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="Values_list" native="1" name="values" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="show_only_in" stdset="0" >
+           <stringlist>
+            <string>volume</string>
+           </stringlist>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -46,7 +142,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1090</width>
+     <width>1100</width>
      <height>29</height>
     </rect>
    </property>
@@ -66,7 +162,7 @@
     <property name="show_only_in" stdset="0" >
      <stringlist>
       <string>volume</string>
-      <string>polyhedra</string>
+      <string>polyhedral</string>
      </stringlist>
     </property>
     <addaction name="actionInverse_normals" />
@@ -113,7 +209,6 @@
    </attribute>
    <addaction name="action_Open" />
    <addaction name="actionExport_surface_mesh_to_OFF" />
-   <addaction name="action_Clone" />
    <addaction name="separator" />
    <addaction name="actionAuto_resize" />
    <addaction name="actionDisplay_front_and_back" />
@@ -141,7 +236,8 @@
   </widget>
   <action name="action_Open" >
    <property name="icon" >
-    <iconset resource="../surface_mesher.qrc" >:/icons/fileopen.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >
+     <normaloff>:/icons/fileopen.png</normaloff>:/icons/fileopen.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Open...</string>
@@ -166,7 +262,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../surface_mesher.qrc" >:/icons/flip.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >
+     <normaloff>:/icons/flip.png</normaloff>:/icons/flip.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Inverse normals</string>
@@ -189,7 +286,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../surface_mesher.qrc" >:/icons/bbox.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >
+     <normaloff>:/icons/bbox.png</normaloff>:/icons/bbox.png</iconset>
    </property>
    <property name="text" >
     <string>Display oc&amp;tree</string>
@@ -211,7 +309,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../surface_mesher.qrc" >:/icons/surface.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >
+     <normaloff>:/icons/surface.png</normaloff>:/icons/surface.png</iconset>
    </property>
    <property name="text" >
     <string>Display &amp;surface</string>
@@ -288,7 +387,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../surface_mesher.qrc" >:/icons/bbox-red.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >
+     <normaloff>:/icons/bbox-red.png</normaloff>:/icons/bbox-red.png</iconset>
    </property>
    <property name="text" >
     <string>Display edges octree</string>
@@ -333,7 +433,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../surface_mesher.qrc" >:/icons/twosides.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >
+     <normaloff>:/icons/twosides.png</normaloff>:/icons/twosides.png</iconset>
    </property>
    <property name="text" >
     <string>Display facets with &amp;front and back</string>
@@ -347,7 +448,7 @@
    <property name="show_only_in" stdset="0" >
     <stringlist>
      <string>volume</string>
-     <string>surface</string>
+     <string>polyhedral</string>
     </stringlist>
    </property>
   </action>
@@ -364,7 +465,8 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../surface_mesher.qrc" >:/icons/resize.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >
+     <normaloff>:/icons/resize.png</normaloff>:/icons/resize.png</iconset>
    </property>
    <property name="text" >
     <string>Auto-&amp;resize</string>
@@ -460,7 +562,8 @@
   </action>
   <action name="actionExport_surface_mesh_to_OFF" >
    <property name="icon" >
-    <iconset resource="../surface_mesher.qrc" >:/icons/filesave.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >
+     <normaloff>:/icons/filesave.png</normaloff>:/icons/filesave.png</iconset>
    </property>
    <property name="text" >
     <string>Export surface mesh to OFF...</string>
@@ -479,9 +582,9 @@
    <header>viewer.h</header>
   </customwidget>
   <customwidget>
-   <class>Isovalues_list</class>
+   <class>Values_list</class>
    <extends>QWidget</extends>
-   <header>isovalues_list.h</header>
+   <header>values_list.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -31,6 +31,8 @@
 template <typename FT_, typename Point>
 class CBinary_image_3 : public CGAL::Image_3
 {
+  bool interpolate_;
+
 public:
   float min_value;
   float max_value;
@@ -38,11 +40,12 @@ public:
   typedef FT_ FT;
 
 public:
-  CBinary_image_3() : Image_3()
+  CBinary_image_3() : Image_3(), interpolate_(true)
   {
   }
 
-  CBinary_image_3(const CBinary_image_3& bi) : Image_3(bi)
+  CBinary_image_3(const CBinary_image_3& bi)
+    : Image_3(bi), interpolate_(bi.interpolate_)
   {
     std::cerr << "CBinary_image_3::copy_constructor\n";
     min_value = bi.min_value;
@@ -151,16 +154,55 @@ public:
   float rand_y() { return (float)rand() / (float)RAND_MAX * ymax(); }
   float rand_z() { return (float)rand() / (float)RAND_MAX * zmax(); }
 
+  void set_interpolation(const bool b)
+  {
+    interpolate_ = b;
+  }
+
+  bool interpolation() const {
+    return interpolate_;
+  }
+
   FT operator()(Point p) const
   {
     const float x = static_cast<float>(CGAL::to_double(p.x()));
     const float y = static_cast<float>(CGAL::to_double(p.y()));
     const float z = static_cast<float>(CGAL::to_double(p.z()));
-
-    if(inside(x,y,z))
-      return FT(::trilinear_interpolation(image_ptr.get(),x,y,z));
-    else
-      return 0;
+      
+    if(interpolation()) {
+      std::cerr << "interpolation\n";
+      if(inside(x,y,z))
+	return FT(::trilinear_interpolation(image_ptr.get(),x,y,z));
+      else
+	return 0;
+    }
+    else {
+      const int i = static_cast<int>(x/image()->vx + 0.5f);
+      const int j = static_cast<int>(y/image()->vy + 0.5f);
+      const int k = static_cast<int>(z/image()->vz + 0.5f);
+      if( i < 0 ||
+	  j < 0 ||
+	  k < 0 )
+      {
+	return 0;
+      }
+      else
+      {    
+	const unsigned int ui = static_cast<unsigned int>(i);
+	const unsigned int uj = static_cast<unsigned int>(j);
+	const unsigned int uk = static_cast<unsigned int>(k);
+	if( ui >= image()->xdim ||
+	    uj >= image()->ydim ||
+	    uk >= image()->zdim )
+	{
+	  return 0;
+	}
+	else
+	{
+	  return this->value(ui, uj, uk);
+	}
+      }
+    }
   }
 }; // end CBinary_image_3
  

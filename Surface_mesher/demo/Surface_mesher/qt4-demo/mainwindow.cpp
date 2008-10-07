@@ -24,6 +24,7 @@
 
 #include "ui_mainwindow.h"
 #include "volume.h"
+#include "polyhedral_surface.h"
 
 MainWindow::MainWindow(MainWindow* other_window /* = 0 */) : 
   CGAL::Qt::DemosMainWindow(),
@@ -42,6 +43,7 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
 
   QToolBar* tb_meshing = qFindChild<QToolBar*>(this, "toolBar_meshing");
 //   tb_meshing->setVisible(false);
+
   QAction* action_mc = qFindChild<QAction*>(this, "actionMarching_cubes");
 
   if(tb_meshing && action_mc) {
@@ -51,10 +53,11 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
     tb_meshing->insertWidget(action_mc, 
                              meshing_bar);
     tb_meshing->insertSeparator(action_mc);
+    meshing_bar->setProperty("show_only_in", QStringList() << "volume");
   }
 
   show_only("");
-  surface = new Volume(this);
+//   surface = new Volume(this);
 
   addAboutCGAL();
   this->addRecentFiles(this->menu_File,
@@ -78,8 +81,17 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::surface_open(const QString& filename)
 {
-  surface->open(filename);
-  this->addToRecentFiles(filename);
+  surface = new Polyhedral_surface(this);
+  if(surface->open(filename)) {
+    this->addToRecentFiles(filename);
+  }
+  else {
+    delete surface;
+    surface = new Volume(this);
+    if(surface->open(filename)) {
+      this->addToRecentFiles(filename);
+    }
+  }
 }
 
 void MainWindow::show_only(QString tag)
@@ -98,9 +110,12 @@ void MainWindow::show_only(QString tag)
         err << s << " ";
       const bool visible = show_only_in.contains(tag);
       err << (visible ? "(enabled)\n" : "(disabled)\n");
-      object->setProperty("visible", QVariant::fromValue<bool>(visible));
-      if(QMenu* menu = qobject_cast<QMenu*>(object))
+      if(QMenu* menu = qobject_cast<QMenu*>(object)) {
         menu->menuAction()->setVisible(visible);
+      }
+      else {
+	object->setProperty("visible", QVariant::fromValue<bool>(visible));
+      }
     }
   }
 }

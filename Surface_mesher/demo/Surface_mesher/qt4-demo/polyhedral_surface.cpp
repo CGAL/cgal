@@ -2,6 +2,7 @@
 #include "get_polyhedral_surface.h"
 
 #include <QMainWindow>
+#include <QString>
 #include <QStatusBar>
 #include <QApplication>
 #include <QAction>
@@ -123,8 +124,11 @@ void Polyhedral_surface::connect_actions()
               this, it->second.second);
   }
   MainWindow* mw = qobject_cast<MainWindow *>(parent);
-  if(mw)
-    mw->fix_menus_visibility();
+  if(mw) {
+//     mw->fix_menus_visibility();
+    mw->show_only("polyhedral");
+  }
+
 
   connect(this, SIGNAL(changed()), this, SLOT(display_nb_elements_in_status_bar()));
 }
@@ -241,7 +245,7 @@ void Polyhedral_surface::make_one_subdivision_step()
   if(surface_ptr)
   {
     Polyhedron output;
-    CSubdivider_loop<Polyhedron , Kernel> pw_loop_subdiviser;
+    CSubdivider_loop<Polyhedron , Poly_kernel> pw_loop_subdiviser;
 
     pw_loop_subdiviser.subdivide(*surface_ptr, output);
     static_cast<Polyhedron&>(*surface_ptr) = output;
@@ -252,14 +256,15 @@ void Polyhedral_surface::make_one_subdivision_step()
   }
 }
 
-void Polyhedral_surface::open(const QString& filename)
+bool Polyhedral_surface::open(const QString& filename)
 {
   clear();
 
-  std::cerr << "Opening file \"" << filename.toLocal8Bit() << "\"...";
-  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+  std::cerr << "Opening file \"" << qPrintable(filename) << "\"...";
   std::ifstream in(filename.toUtf8());
-  if(!in) return;
+  if(!in) return false;
+
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
   if(surface_ptr)
     delete surface_ptr;
@@ -268,6 +273,10 @@ void Polyhedral_surface::open(const QString& filename)
                                             sharp_edges_angle_upper_bound,
                                             false /*do not construct 
                                                     octree*/);
+  if(!in) {
+    QApplication::restoreOverrideCursor();
+    return false;
+  }
   is_octree_initialized = false;
   selected_facet = selected_edge = -1;
   update_data_structures();
@@ -299,6 +308,7 @@ void Polyhedral_surface::open(const QString& filename)
   QAction* actionInverse_normals = qFindChild<QAction*>(this, "actionInverse_normals");
   if(actionInverse_normals) actionInverse_normals->setChecked(false);
   emit set_dirty();
+  return true;
 }
 
 void Polyhedral_surface::close() 

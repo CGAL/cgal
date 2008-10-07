@@ -1,6 +1,7 @@
-#include "isovalues_list.h"
-#include "ui_isovalues_list.h"
+#include "values_list.h"
+#include "ui_values_list.h"
 #include "colorlisteditor.h"
+#include <iostream>
 
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -20,12 +21,12 @@
 #include <QLineEdit>
 #include <QDoubleValidator>
 
-Isovalues_delegate::Isovalues_delegate(QWidget* parent) : QItemDelegate(parent) {}
-void Isovalues_delegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
+Values_delegate::Values_delegate(QWidget* parent) : QItemDelegate(parent) {}
+void Values_delegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
   switch(index.column())
   {
-  case Isovalues_list::Color: {
+  case Values_list::Color: {
     painter->fillRect(option.rect, index.data().value<QColor>());
     drawFocus(painter, option, option.rect);
     break;
@@ -35,15 +36,15 @@ void Isovalues_delegate::paint(QPainter * painter, const QStyleOptionViewItem & 
   }
 }
 
-QWidget *Isovalues_delegate::createEditor(QWidget *parent,
+QWidget *Values_delegate::createEditor(QWidget *parent,
                                           const QStyleOptionViewItem & option,
                                           const QModelIndex & index) const
 {
-  if(index.column() == Isovalues_list::Color)
+  if(index.column() == Values_list::Color)
   {
     return new ColorListEditor(parent);
   }
-  else if(index.column() == Isovalues_list::Isovalue)
+  else if(index.column() == Values_list::Value)
   {
     QLineEdit* lineedit = new QLineEdit(parent);
     lineedit->setAutoFillBackground(true);
@@ -53,16 +54,16 @@ QWidget *Isovalues_delegate::createEditor(QWidget *parent,
   else return QItemDelegate::createEditor(parent, option, index);
 }
   
-void Isovalues_delegate::setEditorData(QWidget *editor,
+void Values_delegate::setEditorData(QWidget *editor,
                                        const QModelIndex &index) const
 {
-  if(index.column() == Isovalues_list::Color)
+  if(index.column() == Values_list::Color)
   {
     ColorListEditor* coloreditor = qobject_cast<ColorListEditor*>(editor);
     if(coloreditor)
       coloreditor->setColor(index.data().value<QColor>());
   }
-  else if(index.column() == Isovalues_list::Isovalue)
+  else if(index.column() == Values_list::Value)
   {
     QLineEdit* lineedit = qobject_cast<QLineEdit*>(editor);
     if(lineedit)
@@ -70,10 +71,10 @@ void Isovalues_delegate::setEditorData(QWidget *editor,
   }
   else QItemDelegate::setEditorData(editor, index);
 }
-void Isovalues_delegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+void Values_delegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                       const QModelIndex &index) const
 {
-  if(index.column() == Isovalues_list::Color)
+  if(index.column() == Values_list::Color)
   {
     ColorListEditor* coloreditor = qobject_cast<ColorListEditor*>(editor);
     if(coloreditor)
@@ -82,44 +83,47 @@ void Isovalues_delegate::setModelData(QWidget *editor, QAbstractItemModel *model
       emit new_color(index);
     }
   }
-  else if(index.column() == Isovalues_list::Isovalue)
+  else if(index.column() == Values_list::Value)
   {
     QLineEdit* lineedit = qobject_cast<QLineEdit*>(editor);
     if(lineedit)
     {
       model->setData(index, lineedit->text().toDouble());
-      emit new_isovalue(index);
+      emit new_value(index);
     }
   }
   else QItemDelegate::setModelData(editor, model, index);
 }
 
-const double Isovalues_list::default_isovalue = 0.0;
+const double Values_list::default_value = 0.0;
 
-Isovalues_list::Isovalues_list(QWidget* parent):
+Values_list::Values_list(QWidget* parent):
   QWidget(parent)
 {
-  Ui::Isovalues_list().setupUi(this);
+  Ui::Values_list().setupUi(this);
 
   treeWidget = parent->findChild<QTreeWidget*>("treeWidget");
-  Q_ASSERT_X(treeWidget, "Isovalues_list constructor", "cannot find widget \"treeWidget\"");
+  Q_ASSERT_X(treeWidget, "Values_list constructor", "cannot find widget \"treeWidget\"");
 
-  treeWidget->sortByColumn(Isovalue, Qt::AscendingOrder);
+  treeWidget->sortByColumn(Value, Qt::AscendingOrder);
   treeWidget->header()->setClickable(false);
 
-  Isovalues_delegate* isovalues_delegate = new Isovalues_delegate(parent);
+  Values_delegate* values_delegate = new Values_delegate(parent);
 
-  treeWidget->setItemDelegate(isovalues_delegate);
-  connect(isovalues_delegate, SIGNAL(new_isovalue(const QModelIndex&)),
-          this, SIGNAL(isovalues_changed()));
-  connect(isovalues_delegate, SIGNAL(new_color(const QModelIndex&)),
+  treeWidget->setItemDelegate(values_delegate);
+  connect(values_delegate, SIGNAL(new_value(const QModelIndex&)),
+          this, SIGNAL(values_changed()));
+  connect(values_delegate, SIGNAL(new_color(const QModelIndex&)),
           this, SIGNAL(colors_changed()));
   connect(this->treeWidget->model(),
           SIGNAL(dataChanged (const QModelIndex &, const QModelIndex &)),
           this, SIGNAL(changed()));
+
+  connect(this, SIGNAL(changed()),
+	  this, SLOT(update_items_cache()));
 }
 
-QColor Isovalues_list::color(const int i) const
+QColor Values_list::color(const int i) const
 {
   if(i < 0 || i > treeWidget->topLevelItemCount())
     return QColor();
@@ -127,25 +131,25 @@ QColor Isovalues_list::color(const int i) const
     return treeWidget->topLevelItem(i)->data(Color, Qt::DisplayRole).value<QColor>();
 }
 
-QColor Isovalues_list::color(const QTreeWidgetItem* item) const
+QColor Values_list::color(const QTreeWidgetItem* item) const
 {
     return item->data(Color, Qt::DisplayRole).value<QColor>();
 }
 
-int Isovalues_list::numberOfIsoValues() const
+int Values_list::numberOfValues() const
 {
   return treeWidget->topLevelItemCount();
 }
 
-double Isovalues_list::isovalue(const int i) const
+double Values_list::value(const int i) const
 {
-  if(i < 0 || i > numberOfIsoValues())
+  if(i < 0 || i > numberOfValues())
     return 0.;
   else
-    return treeWidget->topLevelItem(i)->data(Isovalue, Qt::DisplayRole).toDouble();
+    return treeWidget->topLevelItem(i)->data(Value, Qt::DisplayRole).toDouble();
 }
 
-QString Isovalues_list::name(const int i) const
+QString Values_list::name(const int i) const
 {
   if(i < 0 || i > treeWidget->topLevelItemCount())
     return QString();
@@ -153,20 +157,20 @@ QString Isovalues_list::name(const int i) const
     return treeWidget->topLevelItem(i)->data(Name, Qt::DisplayRole).toString();
 }
 
-bool Isovalues_list::enabled(const int i) const
+bool Values_list::enabled(const int i) const
 {
   if(i < 0 || i > treeWidget->topLevelItemCount())
     return 0.;
   else
-    return treeWidget->topLevelItem(i)->data(Isovalue, Qt::CheckStateRole).toDouble();
+    return treeWidget->topLevelItem(i)->data(Value, Qt::CheckStateRole).toDouble();
 }
 
-bool Isovalues_list::enabled(const QTreeWidgetItem* item) const
+bool Values_list::enabled(const QTreeWidgetItem* item) const
 {
-    return item->data(Isovalue, Qt::CheckStateRole).toDouble();
+    return item->data(Value, Qt::CheckStateRole).toDouble();
 }
 
-const QTreeWidgetItem* Isovalues_list::item(const int i) const
+const QTreeWidgetItem* Values_list::item(const int i) const
 {
   if(i < 0 || i > treeWidget->topLevelItemCount())
     return 0;
@@ -174,15 +178,15 @@ const QTreeWidgetItem* Isovalues_list::item(const int i) const
     return treeWidget->topLevelItem(i);
 }
 
-void Isovalues_list::save_values(QString filename) const
+void Values_list::save_values(QString filename) const
 {
   QSettings settings;
 
   settings.beginGroup(QUrl::toPercentEncoding(filename));
-  settings.beginWriteArray("isovalues");
-  for (int i = 0; i < numberOfIsoValues(); ++i) {
+  settings.beginWriteArray("values");
+  for (int i = 0; i < numberOfValues(); ++i) {
     settings.setArrayIndex(i);
-    settings.setValue("isovalue", isovalue(i));
+    settings.setValue("value", value(i));
     settings.setValue("color", color(i));
     settings.setValue("name", name(i));
     settings.setValue("enabled", enabled(i));
@@ -191,18 +195,18 @@ void Isovalues_list::save_values(QString filename) const
  settings.endGroup();
 }
 
-void Isovalues_list::load_values(QString filename) 
+void Values_list::load_values(QString filename) 
 {
   QSettings settings;
 
   settings.beginGroup(QUrl::toPercentEncoding(filename));
-  int nb = settings.beginReadArray("isovalues");
+  int nb = settings.beginReadArray("values");
   for (int i = 0; i < nb; ++i) {
     settings.setArrayIndex(i);
     QTreeWidgetItem *newItem = new QTreeWidgetItem(treeWidget);
     newItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
-    newItem->setData(Isovalue, Qt::CheckStateRole, settings.value("enabled").toBool() ? Qt::Checked : Qt::Unchecked);
-    newItem->setData(Isovalue, Qt::DisplayRole, settings.value("isovalue").toDouble());
+    newItem->setData(Value, Qt::CheckStateRole, settings.value("enabled").toBool() ? Qt::Checked : Qt::Unchecked);
+    newItem->setData(Value, Qt::DisplayRole, settings.value("value").toDouble());
     newItem->setData(Color, Qt::DisplayRole, settings.value("color").value<QColor>());
     newItem->setData(Name, Qt::DisplayRole, settings.value("name").toString());
   }
@@ -210,28 +214,51 @@ void Isovalues_list::load_values(QString filename)
   settings.endGroup();
 }
 
-void Isovalues_list::on_minusButton_clicked()
+void Values_list::on_minusButton_clicked()
 {
   Q_FOREACH(QTreeWidgetItem* item, treeWidget->selectedItems())
   {
     treeWidget->invisibleRootItem()->removeChild(item);
     delete item;
   }
-  emit isovalues_changed();
+  emit values_changed();
 }
 
-void Isovalues_list::on_plusButton_clicked()
+void Values_list::on_plusButton_clicked()
+{
+  addValue();
+}
+
+void Values_list::addValue(const double i)
 {
   QTreeWidgetItem *newItem = new QTreeWidgetItem(treeWidget);
   newItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
-  newItem->setData(Isovalue, Qt::CheckStateRole, Qt::Checked);
-  newItem->setData(Isovalue, Qt::DisplayRole, default_isovalue);
+  newItem->setData(Value, Qt::CheckStateRole, Qt::Checked);
+  newItem->setData(Value, Qt::DisplayRole, i);
   QStringList colors = QColor::colorNames();
   const int color_index = qrand() % colors.size();
   QColor color = QColor(colors[color_index]);
   newItem->setData(Color, Qt::DisplayRole, color);
   newItem->setData(Name, Qt::DisplayRole, "");
-  emit isovalues_changed();
+  emit values_changed();
 }
 
-#include "isovalues_list.moc"
+void Values_list::update_items_cache() {
+  items_cache.clear();
+  for(int i = 0, nb = numberOfValues(); i < nb; ++i) {
+    items_cache.insert(std::make_pair(value(i), item(i)));
+  }
+}
+
+const QTreeWidgetItem* Values_list::search(const double value) const
+{
+  Items_cache::const_iterator it = items_cache.find(value);
+  if(it != items_cache.end()) {
+    return it->second;
+  }
+  else {
+    return 0;
+  }
+}
+
+#include "values_list.moc"

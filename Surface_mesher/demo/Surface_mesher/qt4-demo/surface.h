@@ -19,7 +19,7 @@ protected:
     viewer->set_surface(this);
   }
 public slots:
-  virtual void open(const QString& filename) = 0;
+  virtual bool open(const QString& filename) = 0;
   virtual void close() = 0;
   virtual void draw() = 0;
   virtual void get_bbox(float&, float&, float&,

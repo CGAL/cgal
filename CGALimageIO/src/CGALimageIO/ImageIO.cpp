@@ -560,7 +560,8 @@ _image* _readImage_raw(const char *name,
                        const unsigned int rz,
                        const double vx,
                        const double vy,
-                       const double vz)
+                       const double vz,
+		       const unsigned int offset)
 {
   _image *im = NULL;
   im = (_image *) ImageIO_alloc(sizeof(_image));
@@ -610,8 +611,14 @@ _image* _readImage_raw(const char *name,
     return NULL;
   }
 
+  // read offset
+  if(offset > 0) {
+    im->data = ImageIO_alloc(offset+1);
+    ImageIO_read(im, im->data, offset);
+    ImageIO_free(im->data);
+  }
   // allocate memory
-  im->data = (void *)new unsigned char[rx*ry*rz];
+  im->data = ImageIO_alloc(rx*ry*rz);
   if(im->data == NULL)
     return NULL;
 

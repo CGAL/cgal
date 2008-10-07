@@ -338,7 +338,8 @@ public:
     timer.start();
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     CGAL::scan_OFF(input_file, *this, true);
-    CGAL_assertion(input_file);
+    if(!input_file)
+      return;
     this->compute_bounding_box();
     this->compute_normals();
 

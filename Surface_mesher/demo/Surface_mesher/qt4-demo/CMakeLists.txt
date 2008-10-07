@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.4.5)
 
-set ( prj Surface_mesher_Qt4_Demo )
+set ( prj Surface_mesher )
 
 project ( ${prj} )
 
@@ -29,7 +29,7 @@ set( QT_USE_QTOPENGL TRUE )
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 
-find_package(CGAL      REQUIRED )
+find_package(CGAL      REQUIRED COMPONENTS ImageIO Qt4)
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
@@ -38,7 +38,7 @@ if ( CGAL_FOUND )
   find_package(QGLViewer REQUIRED )
   find_package(OpenGL    REQUIRED )
   find_package(ZLIB      REQUIRED )
-#  find_package(VTK       QUIET)
+  find_package(VTK       QUIET)
 
   find_path(bimap_DIR boost/bimap/bimap.hpp ${Boost_INCLUDE_DIRS} DOC "The directory containing the bimap subdirectory.")
 
@@ -50,7 +50,7 @@ if ( CGAL_FOUND )
     endif()
   endif(EXISTS ${bimap_DIR}/boost/bimap/bimap.hpp)
 
-  if( VTK_FOUND )
+  if( VTK_FOUND AND EXISTS ${VTK_USE_FILE})
 #    if( ${VTK_MAJOR_VERSION} STRGREATER "5")
       message(STATUS "VTK-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}.${VTK_BUILD_VERSION} found in ${VTK_DIR}.")
       set(VTK_BUILD_SETTINGS_FILE "")
@@ -58,9 +58,9 @@ if ( CGAL_FOUND )
       add_definitions(-DCGAL_USE_VTK)
 #    endif( ${VTK_MAJOR_VERSION} GREATER 5)
     SET(PRJ_VTK_LIBS vtkImaging vtkIO)
-  else( VTK_FOUND)
+  else( VTK_FOUND AND EXISTS ${VTK_USE_FILE})
     message(STATUS "VTK not found.")
-  endif( VTK_FOUND )
+  endif( VTK_FOUND  AND EXISTS ${VTK_USE_FILE})
 
   add_definitions(-DCGAL_USE_ZLIB)
 
@@ -80,7 +80,7 @@ if ( CGAL_FOUND )
     
     include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
-    set( sources colorlisteditor.cpp isovalues_list.cpp mainwindow.cpp surface_mesher.cpp viewer.cpp volume.cpp ${PACKAGE_ROOT}/../Marching_cube/src/mc/ply.c)
+    set( sources colorlisteditor.cpp values_list.cpp mainwindow.cpp Surface_mesher.cpp viewer.cpp volume.cpp polyhedral_surface.cpp ${PACKAGE_ROOT}/../Marching_cube/src/mc/ply.c)
     
     qt4_automoc( ${sources} )
 
@@ -88,18 +88,16 @@ if ( CGAL_FOUND )
 
     set( sources ${sources} moc_surface.cpp)
     
-    qt4_wrap_ui( uis ui/isovalues_list.ui ui/mainwindow.ui ui/meshing_bar.ui ui/optionsdialog.ui )
+    qt4_wrap_ui( uis ui/values_list.ui ui/mainwindow.ui ui/meshing_bar.ui ui/optionsdialog.ui ui/raw_image.ui )
     
-    qt4_add_resources( qrc_sources isovalues_list.qrc surface_mesher.qrc  ) 
+    qt4_add_resources( qrc_sources values_list.qrc surface_mesher.qrc  ) 
 
     add_executable  ( ${prj}  ${sources} ${uis} ${qrc_sources} )
     
     # Link the executable to CGAL and third-party libraries
-    if ( NOT AUTO_LINK_ENABLED )    
-      target_link_libraries( ${prj} CGAL CGAL-ImageIO ${CGAL_3RD_PARTY_LIBRARIES})
-    endif()
+    target_link_libraries( ${prj} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
     
-    target_link_libraries( ${prj} CGAL-Qt4 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ) # ${PRJ_VTK_LIBS}
+    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${PRJ_VTK_LIBS} )
     
   endif()
 endif(CGAL_FOUND)

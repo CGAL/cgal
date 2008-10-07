@@ -9,7 +9,7 @@
 #include "volume.h"
 #include "viewer.h"
 #include "mainwindow.h"
-#include "isovalues_list.h"
+#include "values_list.h"
 
 #include "File_XT.h" // format XT from Total/ELF
 
@@ -23,6 +23,9 @@
 #include <QTime>
 #include <QColor>
 #include <QColorDialog>
+#include <QSettings>
+#include <QUrl>
+#include "Raw_image_dialog.h"
 
 #include <GL/glu.h>
 
@@ -35,12 +38,15 @@
 
 struct Threshold : public std::unary_function<FT, unsigned char> {
   double isovalue;
+  bool is_identity;
 
-  Threshold(double isovalue) : isovalue(isovalue) {}
+  Threshold(double isovalue) : isovalue(isovalue), is_identity(false) {}
 
   result_type operator()(FT value)
   {
-    if(value >=  isovalue)
+    if(is_identity)
+      return static_cast<unsigned char>(value);
+    else if(value >=  isovalue)
       return 1;
     else
       return 0;
@@ -53,6 +59,7 @@ class Classify_from_isovalue_list :
   typedef std::pair<FT, result_type> Isovalue;
   typedef std::vector<Isovalue> Isovalues;
   boost::shared_ptr<Isovalues> isovalues;
+  bool is_identity;
 
   struct Sort_isovalues : std::binary_function<Isovalue, Isovalue, bool> 
   {
@@ -62,16 +69,24 @@ class Classify_from_isovalue_list :
     }
   };
 public:
-  Classify_from_isovalue_list(Isovalues_list * list)
+  Classify_from_isovalue_list(Values_list * list)
+    : is_identity(false)
   {
-    isovalues = boost::shared_ptr<Isovalues>(new Isovalues(list->numberOfIsoValues()));
-    for(int i = 0, nbs = list->numberOfIsoValues(); i < nbs; ++i )
-      (*isovalues)[i] = std::make_pair(list->isovalue(i), i);
+    isovalues = boost::shared_ptr<Isovalues>(new Isovalues(list->numberOfValues()));
+    for(int i = 0, nbs = list->numberOfValues(); i < nbs; ++i )
+      (*isovalues)[i] = std::make_pair(list->value(i), i);
     std::sort(isovalues->begin(), isovalues->end(), Sort_isovalues());
+  }
+
+  void set_identity(bool b) {
+    is_identity = b;
   }
 
   result_type operator()(FT value)
   {
+    if(is_identity) {
+      return static_cast<unsigned char>(value);
+    }
     result_type result = 0;
 //     std::cerr << "isovalues: ";
     for(int i = 1, end = isovalues->size(); i <= end; ++i)
@@ -84,7 +99,7 @@ public:
       }
     }
 //     if(result>1)
-//       std::cerr << "result = "  << (int)result << "/" << list->numberOfIsoValues() << std::endl;
+//       std::cerr << "result = "  << (int)result << "/" << list->numberOfValues() << std::endl;
 //     else
 //       std::cerr << std::endl;
     if(result>0)
@@ -99,14 +114,25 @@ class Generate_surface_identifiers :
                               Classify_from_isovalue_list::result_type,
                               const QTreeWidgetItem*>
 {
-  Isovalues_list* list;
+  Values_list* list;
+  bool labellized;
+
 public:
-  Generate_surface_identifiers(Isovalues_list* list) : list(list) {};
+  Generate_surface_identifiers(Values_list* list)
+    : list(list), labellized(false) {};
+
+  void set_labellized_image(bool b)
+  {
+    labellized = b;
+  }
 
   result_type operator()(const Classify_from_isovalue_list::result_type& a,
                          const Classify_from_isovalue_list::result_type& b)
   {
-    return list->item((std::min)(a, b));
+    if(labellized)
+      return list->search((std::max)(a, b));
+    else
+      return list->item((std::min)(a, b));
   }
 };
 
@@ -179,7 +205,7 @@ Volume::Volume(MainWindow* mw) :
   Q_ASSERT_X(spinBox_radius_bound && spinBox_distance_bound,
              "Volume::Volume()", "Cannot find spinboxes!");
 
-  isovalues_list = mw->isovalues;
+  values_list = mw->values;
 
   connect(spinBox_radius_bound, SIGNAL(valueChanged(double)),
           this, SLOT(set_radius_bound(double)));
@@ -217,9 +243,9 @@ Volume::Volume(MainWindow* mw) :
   connect(this, SIGNAL(new_bounding_box(double, double, double, double, double, double)),
           mw->viewer, SLOT(interpolateToFitBoundingBox(double, double, double, double, double, double)));
 
-  connect(isovalues_list, SIGNAL(isovalues_changed()),
+  connect(values_list, SIGNAL(values_changed()),
           this, SLOT(changed_parameters()));
-  connect(isovalues_list, SIGNAL(changed()),
+  connect(values_list, SIGNAL(changed()),
           mw->viewer, SLOT(updateGL()));
   connect(this, SIGNAL(changed()),
           this, SLOT(check_can_export_off()));
@@ -273,13 +299,15 @@ void Volume::set_use_gouraud(const bool b) {
 #include <vtkImageReader.h>
 #include <vtkImageGaussianSmooth.h>
 
-void Volume::opendir(const QString& dirname) 
+bool Volume::opendir(const QString& dirname) 
 {
+  bool result = true;
   if(!fileinfo.isReadable())
   {
     QMessageBox::warning(mw, mw->windowTitle(),
                          tr("Cannot read directory <tt>%1</tt>!").arg(dirname));
     status_message(tr("Opening of directory %1 failed!").arg(dirname));
+    result = false;
   }
   else
   {
@@ -298,18 +326,21 @@ void Volume::opendir(const QString& dirname)
       QMessageBox::warning(mw, mw->windowTitle(),
                            tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
       status_message(tr("Opening of file %1/ failed!").arg(dirname));
+      result = false;
     }
     else
     {
       status_message(tr("File %1/ successfully opened.").arg(dirname));
       finish_open();
+      result = true;
     }
     dicom_reader->Delete();
     // smoother->Delete();
   }
+  return result;
 }
 
-void Volume::open_vtk(const QString& filename)
+bool Volume::open_vtk(const QString& filename)
 {
   mw->show_only("volume");
 
@@ -317,8 +348,7 @@ void Volume::open_vtk(const QString& filename)
 
   if(fileinfo.isDir())
   {
-    opendir(filename);
-    return;
+    return opendir(filename);
   }
 
   if(!fileinfo.isReadable())
@@ -326,6 +356,7 @@ void Volume::open_vtk(const QString& filename)
     QMessageBox::warning(mw, mw->windowTitle(),
                          tr("Cannot read file <tt>%1</tt>!").arg(filename));
     status_message(tr("Opening of file %1 failed!").arg(filename));
+    return false;
   }
   else
   {
@@ -344,11 +375,13 @@ void Volume::open_vtk(const QString& filename)
       QMessageBox::warning(mw, mw->windowTitle(),
                            tr("Error with file <tt>%1</tt>:\nunknown file format!").arg(filename));
       status_message(tr("Opening of file %1 failed!").arg(filename));
+      return false;
     }
     else
     {
       status_message(tr("File %1 successfully opened.").arg(filename));
       finish_open();
+      return true;
     }
   }
 }
@@ -421,14 +454,18 @@ bool Volume::open_xt(const QString& filename)
 }
 
 #else // CGAL_USE_VTK
-void Volume::opendir(const QString&) {}
+bool Volume::opendir(const QString&)
+{
+  return false;
+}
+
 bool Volume::open_xt(const QString&)
 {
   return false;
 }
 #endif // CGAL_USE_VTK
 
-void Volume::open(const QString& filename)
+bool Volume::open(const QString& filename)
 {
   mw->show_only("volume");
 
@@ -436,15 +473,13 @@ void Volume::open(const QString& filename)
 
   if(fileinfo.isDir())
   {
-    opendir(filename);
-    return;
+    return opendir(filename);
   }
 
   if(!fileinfo.isReadable())
   {
     QMessageBox::warning(mw, mw->windowTitle(),
                          tr("Cannot read file <tt>%1</tt>!").arg(filename));
-    status_message(tr("Opening of file %1 failed!").arg(filename));
   }
   else
   {
@@ -452,13 +487,63 @@ void Volume::open(const QString& filename)
     {
       status_message(tr("File %1 successfully opened.").arg(filename));
       finish_open();
+      return true;
     }
     else if(!open_xt(filename)) {
-      QMessageBox::warning(mw, mw->windowTitle(),
-			   tr("Error with file <tt>%1</tt>:\nunknown file format!").arg(filename));
-      status_message(tr("Opening of file %1 failed!").arg(filename));
+      QSettings settings;
+      settings.beginGroup(QUrl::toPercentEncoding(fileinfo.absoluteFilePath()));
+      if( settings.value("is_raw").toBool() &&
+	  m_image.read_raw(filename.toStdString().c_str(),
+			   settings.value("dim_x").toInt(),
+			   settings.value("dim_y").toInt(),
+			   settings.value("dim_z").toInt(),
+			   settings.value("spacing_x").toDouble(),
+			   settings.value("spacing_y").toDouble(),
+			   settings.value("spacing_z").toDouble(),
+			   settings.value("offset").toInt()) )
+      {
+	status_message(tr("File %1 successfully opened.").arg(filename));
+	finish_open();
+	return true;
+      }
+      else if(QMessageBox::warning(mw, mw->windowTitle(),
+				   tr("Error with file <tt>%1</tt>:\n"
+				      "unknown file format!\n"
+				      "\n"
+				      "Open it as a raw image?").arg(filename),
+				   QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes) 
+      {
+	Raw_image_dialog raw_dialog;
+	if( raw_dialog.exec() && 
+	    m_image.read_raw(filename.toStdString().c_str(),
+			     raw_dialog.dim_x->value(),
+			     raw_dialog.dim_y->value(),
+			     raw_dialog.dim_z->value(),
+			     raw_dialog.spacing_x->value(),
+			     raw_dialog.spacing_y->value(),
+			     raw_dialog.spacing_z->value(),
+			     raw_dialog.offset->value()) )
+	{
+	  status_message(tr("File %1 successfully opened.").arg(filename));
+	  QSettings settings;
+	  settings.beginGroup(QUrl::toPercentEncoding(fileinfo.absoluteFilePath()));
+	  settings.setValue("is_raw", true);
+	  settings.setValue("dim_x", raw_dialog.dim_x->value());
+	  settings.setValue("dim_y", raw_dialog.dim_y->value());
+	  settings.setValue("dim_z", raw_dialog.dim_z->value());
+	  settings.setValue("spacing_x", raw_dialog.spacing_x->value());
+	  settings.setValue("spacing_y", raw_dialog.spacing_y->value());
+	  settings.setValue("spacing_z", raw_dialog.spacing_z->value());
+	  settings.setValue("offset", raw_dialog.offset->value());
+	  settings.endGroup();
+	  finish_open();
+	  return true;
+	}
+      }
     }
   }
+  status_message(tr("Opening of file %1 failed!").arg(filename));
+  return false;
 }
 
 void Volume::finish_open()
@@ -469,7 +554,7 @@ void Volume::finish_open()
                                                            m_image.zmax()));
 
   mw->viewer->showEntireScene();
-  isovalues_list->load_values(fileinfo.absoluteFilePath());
+  values_list->load_values(fileinfo.absoluteFilePath());
   changed_parameters();
   emit changed();
 }
@@ -531,7 +616,7 @@ void Volume::display_marchin_cube()
     QTime total_time;
     total_time.start();
 
-    isovalues_list->save_values(fileinfo.absoluteFilePath());
+    values_list->save_values(fileinfo.absoluteFilePath());
 
     unsigned int nx = m_image.xdim();
     unsigned int ny = m_image.ydim();
@@ -555,13 +640,13 @@ void Volume::display_marchin_cube()
     mc.init_all();
     mc.set_ext_data(static_cast<unsigned char*>(m_image.image()->data));
 
-    nbs_of_mc_triangles.resize(isovalues_list->numberOfIsoValues());
+    nbs_of_mc_triangles.resize(values_list->numberOfValues());
 
-    for(int isovalue_id = 0; 
-        isovalue_id < isovalues_list->numberOfIsoValues();
-        ++isovalue_id)
+    for(int value_id = 0; 
+        value_id < values_list->numberOfValues();
+        ++value_id)
     {
-      status_message(tr("Marching cubes, isovalue #%1...").arg(isovalue_id));
+      status_message(tr("Marching cubes, isovalue #%1...").arg(value_id));
 
       // set data
 //       for(unsigned int i=0;i<nx;i++)
@@ -572,9 +657,9 @@ void Volume::display_marchin_cube()
 //             mc.set_data(value,i,j,k);
 //           }
       // compute scaling ratio
-      if(isovalue_id > 0)
+      if(value_id > 0)
         mc.init_temps();
-      mc.run(isovalues_list->isovalue(isovalue_id),
+      mc.run(values_list->value(value_id),
              m_image.vx(),
              m_image.vy(),
              m_image.vz());
@@ -584,7 +669,7 @@ void Volume::display_marchin_cube()
       mc.get_facets(facets);
 
       mc_timer.stop();
-      const unsigned int begin = isovalue_id == 0 ? 0 : nbs_of_mc_triangles[isovalue_id-1];
+      const unsigned int begin = value_id == 0 ? 0 : nbs_of_mc_triangles[value_id-1];
       const unsigned int nbt = facets.size() / 9;
       for(unsigned int i=begin;i<nbt;i++)
       {
@@ -596,9 +681,9 @@ void Volume::display_marchin_cube()
         const Vector v = t[2] - t[0];
         Vector n = CGAL::cross_product(u,v);
         n = n / std::sqrt(n*n);
-        m_surface_mc.push_back(Facet(t,n,isovalues_list->item(isovalue_id)));
+        m_surface_mc.push_back(Facet(t,n,values_list->item(value_id)));
       }
-      nbs_of_mc_triangles[isovalue_id]=m_surface_mc.size();
+      nbs_of_mc_triangles[value_id]=m_surface_mc.size();
       mc_timer.start();
     }
     mc_timer.stop();
@@ -644,7 +729,7 @@ void Volume::display_surface_mesher_result()
     QTime total_time;
     total_time.start();
 
-    isovalues_list->save_values(fileinfo.absoluteFilePath());
+    values_list->save_values(fileinfo.absoluteFilePath());
 
     unsigned int nx = m_image.xdim();
     unsigned int ny = m_image.ydim();
@@ -667,15 +752,34 @@ void Volume::display_surface_mesher_result()
     del.clear();
     Sphere bounding_sphere(m_image.center(),m_image.radius()*m_image.radius());
 
+    m_image.set_interpolation(mw->grayLevelRadioButton->isChecked());
+
     // definition of the surface
     Surface_3 surface(m_image, bounding_sphere, m_relative_precision);
 //     Threshold threshold(m_image.isovalue());
-    Classify_from_isovalue_list classify(isovalues_list);
-    Generate_surface_identifiers generate_ids(isovalues_list);
+    Classify_from_isovalue_list classify(values_list);
+    Generate_surface_identifiers generate_ids(values_list);
+
+    classify.set_identity(mw->labellizedRadioButton->isChecked());
+    generate_ids.set_labellized_image(mw->labellizedRadioButton->isChecked());
 
     std::vector<Point> seeds;
-    search_for_connected_components(std::back_inserter(seeds), classify);
+    {
+      std::set<unsigned char> domains;
+      search_for_connected_components(std::back_inserter(seeds),
+				      CGAL::inserter(domains),
+				      classify);
 
+      if(mw->labellizedRadioButton->isChecked() && 
+	 values_list->numberOfValues() == 0) 
+      {
+	Q_FOREACH(unsigned char label, domains) {
+	  if(label != 0) {
+	    values_list->addValue(label);
+	  }
+	}
+      }
+    }
     // surface mesh traits class
     typedef CGAL::Surface_mesher::Implicit_surface_oracle_3<Kernel,
 //     typedef CGAL::Surface_mesher::Image_surface_oracle_3<Kernel,
@@ -722,16 +826,25 @@ void Volume::display_surface_mesher_result()
     criterion_vector.push_back(&aspect_ratio_criterion);
     criterion_vector.push_back(&uniform_size_criterion);
     criterion_vector.push_back(&curvature_size_criterion);
-    criterion_vector.push_back(&vertices_on_the_same_psc_element_criterion);
+    if(mw->sameIndexCheckBox->isChecked()) {
+      criterion_vector.push_back(&vertices_on_the_same_psc_element_criterion);
+      std::cerr << "vertices_on_the_same_psc_element_criterion is activated.\n";
+    }
 
     CGAL::Surface_mesher::Standard_criteria<Criterion> criteria(criterion_vector);
     std::cerr << "Surface_mesher... angle=" << m_sm_angle << ", radius= " << m_sm_radius
               << ", distance=" << m_sm_distance << "\n";
 
-    // meshing surface
-    make_surface_mesh(c2t3, surface, oracle, criteria,
-// 		      CGAL::Non_manifold_tag(), 0);
-		      CGAL::Manifold_tag(), 0);
+    if(mw->manifoldCheckBox->isChecked()) {
+      // meshing surface
+      std::cerr << "manifold criteria is activated.\n";
+      make_surface_mesh(c2t3, surface, oracle, criteria,
+			CGAL::Manifold_tag(), 0);
+    }
+    else {
+      make_surface_mesh(c2t3, surface, oracle, criteria,
+			CGAL::Non_manifold_tag(), 0);
+    }
     sm_timer.stop();
     not_busy();
 
@@ -909,19 +1022,19 @@ void Volume::gl_draw_surface_mc()
   
   if(lists_draw_surface_mc_is_valid)
   {
-    for(int i = 0, nbs = isovalues_list->numberOfIsoValues(); i < nbs; ++i )
+    for(int i = 0, nbs = values_list->numberOfValues(); i < nbs; ++i )
     {
-      if(isovalues_list->enabled(i))
+      if(values_list->enabled(i))
       {
-        mw->viewer->qglColor(isovalues_list->color(i));
+        mw->viewer->qglColor(values_list->color(i));
         ::glCallList(lists_draw_surface_mc[i]);
       }
     }
   }
   else
   {
-    lists_draw_surface_mc.resize(isovalues_list->numberOfIsoValues(), 0);
-    for(int i = 0, nbs = isovalues_list->numberOfIsoValues(); i < nbs; ++i )
+    lists_draw_surface_mc.resize(values_list->numberOfValues(), 0);
+    for(int i = 0, nbs = values_list->numberOfValues(); i < nbs; ++i )
     {
       if(!lists_draw_surface_mc[i])
       {
@@ -933,18 +1046,18 @@ void Volume::gl_draw_surface_mc()
         % lists_draw_surface_mc[i]
         % i;
 
-      mw->viewer->qglColor(isovalues_list->color(i));
+      mw->viewer->qglColor(values_list->color(i));
 
       if(lists_draw_surface_mc[i])             // If
         ::glNewList(lists_draw_surface_mc[i],  // lists_draw_surface[i]==0 then something
-                    isovalues_list->enabled(i) // got wrong in the list generation.
+                    values_list->enabled(i) // got wrong in the list generation.
                     ? GL_COMPILE_AND_EXECUTE
                     : GL_COMPILE);
 
 
       gl_draw_surface(m_surface_mc.begin(),
                       m_surface_mc.end(),
-                      isovalues_list->item(i));
+                      values_list->item(i));
         
       if(lists_draw_surface_mc[i]) // If lists_draw_surface[i]==0 then
       {                            // something got wrong in the list
@@ -957,21 +1070,28 @@ void Volume::gl_draw_surface_mc()
 
 void Volume::gl_draw_surface()
 {
+//   if(mw->labellizedRadioButton->isChecked()) {
+//     mw->viewer->qglColor(::Qt::blue);
+//     gl_draw_surface(m_surface.begin(),
+// 		    m_surface.end(),
+// 		    0);
+//   }
+//   else
   if(lists_draw_surface_is_valid)
   {
-    for(int i = 0, nbs = isovalues_list->numberOfIsoValues(); i < nbs; ++i )
+    for(int i = 0, nbs = values_list->numberOfValues(); i < nbs; ++i )
     {
-      if(isovalues_list->enabled(i))
+      if(values_list->enabled(i))
       {
-        mw->viewer->qglColor(isovalues_list->color(i));
+        mw->viewer->qglColor(values_list->color(i));
         ::glCallList(lists_draw_surface[i]);
       }
     }
   }
   else
   {
-    lists_draw_surface.resize(isovalues_list->numberOfIsoValues(), 0);
-    for(int i = 0, nbs = isovalues_list->numberOfIsoValues(); i < nbs; ++i )
+    lists_draw_surface.resize(values_list->numberOfValues(), 0);
+    for(int i = 0, nbs = values_list->numberOfValues(); i < nbs; ++i )
     {
       if(!lists_draw_surface[i])
       {
@@ -983,17 +1103,17 @@ void Volume::gl_draw_surface()
         % lists_draw_surface[i]
         % i;
         
-      mw->viewer->qglColor(isovalues_list->color(i));
+      mw->viewer->qglColor(values_list->color(i));
 
       if(lists_draw_surface[i])                 // If
         ::glNewList(lists_draw_surface[i],      // lists_draw_surface[i]==0
-                    isovalues_list->enabled(i)  // then something got wrong
+                    values_list->enabled(i)  // then something got wrong
                     ? GL_COMPILE_AND_EXECUTE    // in the list generation.
                     : GL_COMPILE);
 
       gl_draw_surface(m_surface.begin(),
                       m_surface.end(),
-                      isovalues_list->item(i));
+                      values_list->item(i));
         
       if(lists_draw_surface[i]) // If lists_draw_surface[i]==0 then
       {                         // something got wrong in the list
@@ -1086,11 +1206,11 @@ void Volume::gl_draw_marchingcube()
     if(!m_inverse_normals)
       ::glEnableClientState(GL_NORMAL_ARRAY);
 
-    for(int i = 0, nbs = isovalues_list->numberOfIsoValues(); i < nbs; ++i)
+    for(int i = 0, nbs = values_list->numberOfValues(); i < nbs; ++i)
     {
       const int begin = i == 0 ? 0 : nbs_of_mc_triangles[i-1];
       const int end = nbs_of_mc_triangles[i];
-      mw->viewer->qglColor(isovalues_list->color(i));
+      mw->viewer->qglColor(values_list->color(i));
       ::glBegin(GL_TRIANGLES);
       for(int i = begin; i < end; ++i)
       {

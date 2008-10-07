@@ -382,7 +382,8 @@ _image* _readImage_raw(const char *name,
                        const unsigned int rz,
                        const double vx = 1.,
                        const double vy = 1.,
-                       const double vz = 1.);
+                       const double vz = 1.,
+		       const unsigned int offset = 0);
 
 
 /** Writes given image in file 'name'.<br>

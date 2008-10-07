@@ -113,11 +113,12 @@ public:
                 const unsigned int rz,
                 const double vx = 1,
                 const double vy = 1,
-                const double vz = 1)
+                const double vz = 1,
+		const unsigned int offset = 0)
   {
     return private_read(::_readImage_raw(file,
                                          rx,ry,rz,
-                                         vx,vy,vz));
+                                         vx,vy,vz,offset));
   }
 
 #ifdef CGAL_USE_VTK
