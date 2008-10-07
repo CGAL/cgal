@@ -7,6 +7,7 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
+
 #include <CGAL/Make_quad_soup.h> // output for plane fitting
 #include <CGAL/Make_bar.h> // output for line fitting
 
