@@ -37,9 +37,7 @@
 #include <boost/numeric/interval.hpp>
 
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
-
-// TODO move file to CGAL
-#include <QdX/Bitstream_in_z_for_xy_traits.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_in_z_for_xy_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -136,7 +134,7 @@ public:
     typedef typename Polynomial_3::NT Polynomial_2;
     
     //! type of Isolator traits
-    typedef QdX::Bitstream_in_z_for_xy_traits< Self > Isolator_traits;
+    typedef CGAL::Bitstream_in_z_for_xy_traits< Self > Isolator_traits;
 
     //! type of isolator
     typedef CGAL::CGALi::Bitstream_descartes< Isolator_traits > 
