@@ -68,7 +68,7 @@ CGAL_BEGIN_NAMESPACE
     typedef CGAL::Polynomial< Nested_extn > Poly_nested_extn1; \
     typedef CGAL::Polynomial< Poly_nested_extn1 > Poly_nested_extn2; \
     typedef CGAL::Polynomial< Poly_nested_extn2 > Poly_nested_extn3; \
-// end #define QdX_SNAP_ARITHMETIC_TYPEDEFS(AT)
+// end #define CGAL_SNAP_AK_3_TYPEDEFS(AT)
 
 
 CGAL_END_NAMESPACE

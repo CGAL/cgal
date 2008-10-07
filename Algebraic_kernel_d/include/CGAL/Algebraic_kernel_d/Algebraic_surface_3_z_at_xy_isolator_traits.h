@@ -51,7 +51,7 @@ CGAL_BEGIN_NAMESPACE
  */
 template < class CurvedKernelViaAnalysis_2, class Surface_3_ >
 class Algebraic_surface_3_z_at_xy_isolator_traits : public 
-QdX::Algebraic_surface_3_z_at_xy_isolator_traits_base< 
+CGAL::Algebraic_surface_3_z_at_xy_isolator_traits_base< 
     CurvedKernelViaAnalysis_2, Surface_3_
 > {
 
@@ -71,7 +71,7 @@ public:
     > Self;
 
     //! type of base
-    typedef QdX::Algebraic_surface_3_z_at_xy_isolator_traits_base< 
+    typedef CGAL::Algebraic_surface_3_z_at_xy_isolator_traits_base< 
         Curved_kernel_via_analysis_2, Surface_3
     >
     Base;
@@ -638,7 +638,7 @@ public:
             // * .n(), local degree: deg f(point,z) in R[z]
             // * .k(), local gcd degree: deg gcd (f(point,z),f'(point,z))
             
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
             isol_timer.start();
 #endif
             
@@ -783,7 +783,7 @@ public:
                         }                                          
                         
                         // Function ignores leading zeroes
-#if QdX_USE_M_K_DESCARTES
+#if CGAL_USE_M_K_DESCARTES
                         int m = 
                             CGAL::CGALi::stha_count_number_of_real_roots<int>(
                                     signs.begin(), signs.end()
@@ -803,7 +803,7 @@ public:
                         // Try m-k-Descartes first
                         try {
                             
-#if QdX_USE_M_K_DESCARTES
+#if CGAL_USE_M_K_DESCARTES
 #if !NDEBUG
                             std::cout << "Try m-k-Descartes.." << std::flush;
 #endif
@@ -849,7 +849,7 @@ public:
                 
             }
             
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
             isol_timer.stop();
 #endif
             // return stored value
@@ -896,7 +896,7 @@ public:
             std::cout << "Compute the gcd..." << std::flush;
 #endif
             //!  type of surface pair
-            typedef QdX::Algebraic_surface_pair_3< Self > 
+            typedef CGAL::Algebraic_surface_pair_3< Self > 
                 Algebraic_surface_pair_3;
             
             Algebraic_surface_pair_3 pair = 
@@ -2249,12 +2249,12 @@ public:
 #endif
 
                 // Point location
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
                 adj_timers[2].start();
 #endif
                 CGAL::Object obj = 
                     _locate_point_on_vertex_incident_path(p, arr);
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
                 adj_timers[2].stop();
 #endif
                 CGAL_assertion_code
@@ -4193,7 +4193,7 @@ public:
                 isolator_f2 = cad.z_stack(f2_handle).isolator(surface);
 
             // Get the two edge-to-face adjacencies
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
             bool adj0 = adj_timers[0].is_running();
             bool adj1 = adj_timers[1].is_running();
             if (adj0) {
@@ -4215,7 +4215,7 @@ public:
                                   he_obj, false,
                                   isolator_f2,CGAL::FACE,
                                   f2_obj, false);
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
             if (adj0) {
                 adj_timers[0].start();
             }
@@ -4247,7 +4247,7 @@ public:
                            
             // Get the two face-to-vertex adjacencies
 
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
             adj0 = adj_timers[0].is_running();
             adj1 = adj_timers[1].is_running();
             if (adj0) {
@@ -4269,7 +4269,7 @@ public:
                                   f2_obj, false,
                                   isolator1,CGAL::VERTEX,
                                   v_obj, false);
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
             if (adj0) {
                 adj_timers[0].start();
             }
@@ -4564,7 +4564,7 @@ public:
             std::cout << ")" << std::endl;
 #endif
             if(feature1 == CGAL::EDGE) {
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
                 adj_timers[0].start();
 #endif
                 CGAL::Adjacencies_3 adj = 
@@ -4573,13 +4573,13 @@ public:
                       isolator1, dcel_handle1,
                       isolator2, dcel_handle2
                     );
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
                 adj_timers[0].stop();
 #endif          
                 return adj;
 
             } else {
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
                 adj_timers[1].start();
 
 #endif
@@ -4589,7 +4589,7 @@ public:
                       isolator1, dcel_handle1, has_vertical_line1, 
                       isolator2, feature2, dcel_handle2 
                     );
-#if QdX_CAD_BENCHMARK_TIMERS
+#if CGAL_CAD_BENCHMARK_TIMERS
                 adj_timers[1].stop();
 #endif          
                 return adj;
