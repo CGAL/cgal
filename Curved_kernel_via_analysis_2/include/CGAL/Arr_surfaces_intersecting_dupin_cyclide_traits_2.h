@@ -1,34 +1,42 @@
-// TODO add licence
+// Copyright (c) 2007-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// ----------------------------------------------------------------------------
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
-// Library       : QdX
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// File          : CGAL/Arr_surfaces_intersecting_dupin_cyclide_traits_2.h
-// QdX_release   : $Name:  $
-// Revision      : $Revision: 1.17 $
-// Revision_date : $Date: 2008-02-09 16:31:13 $
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: svn+ssh://eric@scm.gforge.inria.fr/svn/cgal/trunk/Kernel_23/include/CGAL/enum.h $
+// $Id: enum.h 44129 2008-07-12 21:09:38Z spion $
+//
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Michael Kerber <mkerber@mpi-inf.mpg.de>
-//
-// ============================================================================
-
-/*! \file Arr_surfaces_intersecting_dupin_cyclide_traits_2.h
- * \brief Provides traits class to compute arrangement on a Dupin cyclide
- * induced by other intersection curves with other surfaces
- */
 
 #ifndef CGAL_ARR_SURFACES_INTERSECTING_DUPIN_CYCLIDE_TRAITS_2
 #define CGAL_ARR_SURFACES_INTERSECTING_DUPIN_CYCLIDE_TRAITS_2 1
+
+
+/*!\file include/CGAL/Arr_surfaces_intersecting_dupin_cyclide_traits_2.h
+ *\brief Provides traits class to compute arrangement on a Dupin cyclide
+ * induced by other intersection curves with other surfaces
+ */
 
 #ifndef CGAL_ARRANGEMENT_ON_DUPIN_CYCLIDE
 #define CGAL_ARRANGEMENT_ON_DUPIN_CYCLIDE 1
 #endif 
 
-#include <CGAL/basic.h>
-#include <CGAL/Arr_tags.h>
+#include <CGAL/config.h>
+
 #include <boost/array.hpp>
+
+#include <CGAL/Arr_tags.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h>
@@ -39,7 +47,6 @@
 
 // TODO remove dependency to Exacus!
 #include <QdX/basic.h>
-#include <CGAL/Arithmetic_kernel.h>
 #include <QdX/SfX/Dupin_cyclide_3.h>
 
 CGAL_BEGIN_NAMESPACE 
