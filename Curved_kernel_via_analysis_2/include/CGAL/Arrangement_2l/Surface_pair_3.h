@@ -47,7 +47,7 @@ public:
     //! this instance's template parameter
     typedef SurfaceZAtXyIsolatorTraits Surface_z_at_xy_isolator_traits;
     
-    SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
+    CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
             Surface_z_at_xy_isolator_traits
     );
     
@@ -125,7 +125,7 @@ public:
     //! this instance's second template parameter
     typedef Rep_ Rep;
     
-    SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
+    CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
             Surface_z_at_xy_isolator_traits
     );
     

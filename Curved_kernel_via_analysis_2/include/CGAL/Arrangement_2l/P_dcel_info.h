@@ -64,7 +64,7 @@ public:
     //! this instance's first template parameter
     typedef SurfaceZAtXyIsolatorTraits Surface_z_at_xy_isolator_traits;
 
-    SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
+    CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
             Surface_z_at_xy_isolator_traits
     );
 
@@ -195,7 +195,7 @@ public:
      //! this instance's first template parameter
     typedef SurfaceZAtXyIsolatorTraits Surface_z_at_xy_isolator_traits;
 
-    SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
+    CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
             Surface_z_at_xy_isolator_traits
     );
 
@@ -675,7 +675,7 @@ private:
         typedef Restricted_cad_3< Surface_z_at_xy_isolator_traits> 
             Restricted_cad_3;
         
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
 
         bool running = z_stack_time[0].is_running();
         if (!running) {
@@ -746,7 +746,7 @@ private:
             }
         }
 
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
         if (!running) {
             z_stack_time[0].stop();
         }
@@ -767,7 +767,7 @@ private:
         typedef Restricted_cad_3< Surface_z_at_xy_isolator_traits> 
             Restricted_cad_3;
 
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
         bool running = z_stack_time[1].is_running();
         if (!running) {
             z_stack_time[1].start();
@@ -836,7 +836,7 @@ private:
             }
         }
 
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
         if (!running) {
             z_stack_time[1].stop();
         }
@@ -856,7 +856,7 @@ private:
         typedef Restricted_cad_3< Surface_z_at_xy_isolator_traits> 
             Restricted_cad_3;
         
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
         bool running = z_stack_time[2].is_running();
         if (!running) {
             z_stack_time[2].start();
@@ -926,7 +926,7 @@ private:
                 }
             }
         }
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
         if (!running) {
             z_stack_time[2].stop();
         }
@@ -959,7 +959,7 @@ private:
     template < class VertexHandle >
     Z_stack _z_stack_for_vertex_handle(VertexHandle vh) const {
         CGAL_precondition(!vh->is_at_infinity());
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
         bool running = z_stack_time[0].is_running();
         if (!running) {
             z_stack_time[0].start();
@@ -977,7 +977,7 @@ private:
         // delete all old z_stacks
         this->ptr()->_m_z_stacks.clear();
       
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
         if (!running) {
             z_stack_time[0].stop();
         }
@@ -996,7 +996,7 @@ private:
         typedef Restricted_cad_3< Surface_z_at_xy_isolator_traits> 
             Restricted_cad_3;
 
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
         bool running = z_stack_time[1].is_running();
         if (!running) {
             z_stack_time[1].start();
@@ -1014,7 +1014,7 @@ private:
         // delete all old z_stacks
         this->ptr()->_m_z_stacks.clear();
         
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
         if (!running) {
             z_stack_time[1].stop();
         }
@@ -1033,7 +1033,7 @@ private:
         typedef Restricted_cad_3< Surface_z_at_xy_isolator_traits> 
             Restricted_cad_3;
         
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
         bool running = z_stack_time[2].is_running();
         if (!running) {
             z_stack_time[2].start();
@@ -1051,7 +1051,7 @@ private:
         // delete all old z_stacks
         this->ptr()->_m_z_stacks.clear();
         
-#if 0 && SoX_Z_STACK_Z_TIMERS
+#if 0 && CGAL_Z_STACK_Z_TIMERS
         if (!running) {
             z_stack_time[2].stop();
         }

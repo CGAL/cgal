@@ -58,7 +58,7 @@ class Construct_nk_decomposition_2 {
     //! this instance's first template parameter
     typedef SurfaceZAtXyIsolatorTraits Surface_z_at_xy_isolator_traits;
     
-    SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
+    CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
             Surface_z_at_xy_isolator_traits
     );
 
@@ -795,7 +795,7 @@ public:
     //! this instance's first template parameter
     typedef SurfaceZAtXyIsolatorTraits Surface_z_at_xy_isolator_traits;
     
-    SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
+    CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
             Surface_z_at_xy_isolator_traits
     );
     
@@ -1215,7 +1215,7 @@ public:
     //! this instance's first template parameter
     typedef SurfaceZAtXyIsolatorTraits Surface_z_at_xy_isolator_traits;
     
-    SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
+    CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
             Surface_z_at_xy_isolator_traits
     );
     

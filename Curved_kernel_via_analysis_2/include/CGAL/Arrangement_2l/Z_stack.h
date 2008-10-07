@@ -56,7 +56,7 @@ public:
     //! the class itself
     typedef Z_cell_rep< Surface_z_at_xy_isolator_traits, Dcel_data > Self;
 
-    SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
+    CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
             Surface_z_at_xy_isolator_traits
     );
     
@@ -127,7 +127,7 @@ public:
     //! the class itself
     typedef Z_cell< Surface_z_at_xy_isolator_traits, Dcel_data > Self;
 
-    SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
+    CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
             Surface_z_at_xy_isolator_traits
     );
 
@@ -298,7 +298,7 @@ public:
     //! this instance's second template parameter
     typedef DcelData Dcel_data;
     
-    SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
+    CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
             Surface_z_at_xy_isolator_traits
     );
 
@@ -386,7 +386,7 @@ public:
     //! this instance's second template parameter
     typedef DcelData Dcel_data;
     
-    SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
+    CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(
             Surface_z_at_xy_isolator_traits
     );
     

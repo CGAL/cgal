@@ -28,7 +28,7 @@
 #include <CGAL/config.h>
 
 // TASK document 
-#define SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(Traits) \
+#define CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(Traits) \
  typedef typename Traits::Surface_3 Surface_3; \
  typedef typename Traits::Arrangement_traits_2 Arrangement_traits_2; \
  typedef typename Arrangement_traits_2::Curve_kernel_2 Curve_kernel_2; \
@@ -38,7 +38,7 @@
  typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2; \
  typedef typename Traits::Point_2 Point_2; \
  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2; \
-// end #define SoX_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(Traits)
+// end #define CGAL_SURFACE_Z_AT_XY_ISOLATOR_TRAITS_SNAP_TYPEDEFS(Traits)
 
 
 #endif // CGAL_ARRANGEMENT_2l_MACROS_H
