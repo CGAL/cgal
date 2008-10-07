@@ -1,11 +1,10 @@
-// ============================================================================
+// Copyright (c) 2002-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// Copyright (c) 2001-2008 Max-Planck-Institut Saarbruecken (Germany).
-// All rights reserved.
-//
-// This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/);
-// you may redistribute it under the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with EXACUS.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -13,21 +12,16 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// ----------------------------------------------------------------------------
+// $URL$
+// $Id$
 //
-// Library       : CGAL
-// File          : include/CGAL/Polynomial/polynomial_functions.h
-// CGAL_release   : $Name:  $
-// Revision      : $Revision$
-// Revision_date : $Date$
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Arno Eigenwillig <arno@mpi-inf.mpg.de>
-//
-// ============================================================================
+//                 Ralf Schindlbeck <rschindl@mpi-inf.mpg.de>
 
-/*! \file CGAL/Polynomial/polynomial_functions.h
- *   \brief Various small helper functions for polynomials
+/*!\file include/CGAL/Polynomial/polynomial_functions.h
+ * \brief Various small helper functions for polynomials
  */
 
 #ifndef CGAL_POLYNOMIAL_FUNCTIONS_H
