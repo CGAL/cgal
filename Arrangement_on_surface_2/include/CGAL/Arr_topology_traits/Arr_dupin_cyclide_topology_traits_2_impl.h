@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007 Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2007-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -19,16 +19,18 @@
 //                 Ron Wein <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_IMPL_H
-#define CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_IMPL_H
+#define CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_IMPL_H 1
 
 #ifndef CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
 #define CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 0
 #endif
 
-/*! \file
- * Member-function definitions for the
+/*!\file include/CGAL/Arr_topology_traits_2/Arr_dupin_cyclide_topology_traits_2_impl.h
+ * \brief Member-function definitions for the
  * Arr_dupin_cyclide_topology_traits_2<GeomTraits> class.
  */
+
+#include <CGAL/config.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1463,5 +1465,5 @@ _face_before_vertex_on_identifications (Vertex * v) const {
 
 CGAL_END_NAMESPACE
 
-#endif
+#endif // CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_IMPL_H
 // EOF

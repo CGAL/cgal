@@ -1,6 +1,5 @@
-// Copyright (c) 2006, 2007  Tel-Aviv University (Israel), Max-Planck-Institut
-// fuer Informatik (Germany).
-// All rights reserved.
+// Copyright (c) 2007-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -16,20 +15,24 @@
 // $Id$
 // 
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
+//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
-//                 Eric Berberich <eric@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_DUPIN_CYCLIDE_CONSTRUCTION_HELPER_H
-#define CGAL_ARR_DUPIN_CYCLIDE_CONSTRUCTION_HELPER_H
+#define CGAL_ARR_DUPIN_CYCLIDE_CONSTRUCTION_HELPER_H 1 
 
-/*! \file
- * Definition of the Arr_dupin_cyclide_construction_helper class-template.
+/*!\file include/CGAL/Arr_topology_traits/Arr_dupin_cyclide_construction_helper.h
+ * \brief Definition of the 
+ * Arr_dupin_cyclide_construction_helper class-template.
  */
 
-#include <CGAL/Sweep_line_empty_visitor.h>
+#include <CGAL/config.h>
+
 #include <CGAL/Unique_hash_map.h>
+
+#include <CGAL/Sweep_line_empty_visitor.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -335,3 +338,4 @@ public:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ARR_DUPIN_CYCLIDE_CONSTRUCTION_HELPER
+// EOF

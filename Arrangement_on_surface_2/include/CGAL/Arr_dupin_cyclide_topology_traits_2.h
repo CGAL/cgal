@@ -1,5 +1,5 @@
-// Copyright (c) 2007 Max-Planck-Institute Saarbruecken (Germany).
-// All rights reserved.
+// Copyright (c) 2007-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -19,17 +19,21 @@
 //                 Ron Wein <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_H
-#define CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_H
+#define CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_H 1
 
-/*! \file
- * Definition of the Arr_dupin_cyclide_topology_traits_2<GeomTraits> class.
+/*!\file include/CGAL/Arr_dupin_cyclide_topology_traits_2
+ * \brief Definition of the Arr_dupin_cyclide_topology_traits_2<GeomTraits> 
+ * class.
  */
+
+#include <CGAL/config.h>
 
 #include <map>
 #include <algorithm>
 
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_default_dcel.h>
+
 #if 1
 // TASK replace point location strategy
 #include <CGAL/Arr_naive_point_location.h>
@@ -948,4 +952,5 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/Arr_topology_traits/Arr_dupin_cyclide_topology_traits_2_impl.h>
 
-#endif
+#endif // CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_H
+// EOF
