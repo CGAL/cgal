@@ -7,15 +7,23 @@
 // $Id: $
 // 
 //
-// Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
+// Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
+//                 Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
 // ============================================================================
-
 
 #ifndef CGAL_ACK_MACROS_H
 #define CGAL_ACK_MACROS_H 1
 
-#include <CGAL/basic.h>
+/*!\file include/CGAL/Algebraic_kernel_d/macros.d
+ * \brief Macro definitions wrt algebraic kernels
+ */
+
+#include <CGAL/config.h>
+
+#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Polynomial.h>
+#include <CGAL/Sqrt_extension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,6 +51,27 @@ CGAL_BEGIN_NAMESPACE
     typedef CGAL::CGALi::Status_line_CA_1< Curve_analysis_2 > Status_line_1; \
 
 
+
+#define CGAL_SNAP_AK_3_TYPEDEFS(Arithmetic_kernel)    \
+    CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(Arithmetic_kernel) \
+    typedef CGAL::Polynomial< Integer > Poly_int1; \
+    typedef CGAL::Polynomial< Poly_int1 > Poly_int2; \
+    typedef CGAL::Polynomial< Poly_int2 > Poly_int3; \
+    typedef CGAL::Polynomial< Rational > Poly_rat1; \
+    typedef CGAL::Polynomial< Poly_rat1 > Poly_rat2; \
+    typedef CGAL::Polynomial< Poly_rat2 > Poly_rat3; \
+    typedef CGAL::Sqrt_extension< Rational, Integer > Extn; \
+    typedef CGAL::Sqrt_extension< Extn, Extn > Nested_extn; \
+    typedef CGAL::Polynomial< Extn > Poly_extn1; \
+    typedef CGAL::Polynomial< Poly_extn1 > Poly_extn2; \
+    typedef CGAL::Polynomial< Poly_extn2 > Poly_extn3; \
+    typedef CGAL::Polynomial< Nested_extn > Poly_nested_extn1; \
+    typedef CGAL::Polynomial< Poly_nested_extn1 > Poly_nested_extn2; \
+    typedef CGAL::Polynomial< Poly_nested_extn2 > Poly_nested_extn3; \
+// end #define QdX_SNAP_ARITHMETIC_TYPEDEFS(AT)
+
+
 CGAL_END_NAMESPACE
 
 #endif //CGAL_ACK_MACROS_H
+// EOF
