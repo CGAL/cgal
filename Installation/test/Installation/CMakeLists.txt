@@ -56,7 +56,11 @@ if ( CGAL_FOUND )
   endif()
   
   if ( WITH_CGAL_Qt4 )
-    create_link_to_program(CGAL_Qt4)
+    find_package(Qt4 QUIET)
+    if( QT4_FOUND )
+      include(${QT_USE_FILE})
+      create_link_to_program(CGAL_Qt4)
+    endif()  
   endif()
   
 else()
