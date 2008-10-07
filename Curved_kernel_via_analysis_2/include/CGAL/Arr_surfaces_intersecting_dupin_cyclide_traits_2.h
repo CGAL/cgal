@@ -22,7 +22,6 @@
 #ifndef CGAL_ARR_SURFACES_INTERSECTING_DUPIN_CYCLIDE_TRAITS_2
 #define CGAL_ARR_SURFACES_INTERSECTING_DUPIN_CYCLIDE_TRAITS_2 1
 
-
 /*!\file include/CGAL/Arr_surfaces_intersecting_dupin_cyclide_traits_2.h
  *\brief Provides traits class to compute arrangement on a Dupin cyclide
  * induced by other intersection curves with other surfaces
@@ -45,9 +44,7 @@
 #include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
 #endif
 
-// TODO remove dependency to Exacus!
-#include <QdX/basic.h>
-#include <QdX/SfX/Dupin_cyclide_3.h>
+#include <CGAL/Algebraic_kernel_d/Dupin_cyclide_3.h>
 
 CGAL_BEGIN_NAMESPACE 
 
@@ -1276,9 +1273,9 @@ public:
     AK;
     
     //! type of Surface
-    typedef QdX::Dupin_cyclide_3< AK > Dupin_cyclide_3;
+    typedef CGAL::Dupin_cyclide_3< AK > Dupin_cyclide_3;
 
-    typedef QdX::Algebraic_surface_3< AK > Surface_3;
+    typedef CGAL::Algebraic_surface_3< AK > Surface_3;
 
     //! typedef of Curve_2
     typedef Surface_3 Curve_2;
