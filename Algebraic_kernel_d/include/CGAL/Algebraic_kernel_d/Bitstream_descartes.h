@@ -26,7 +26,7 @@
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree.h>
 #endif
 
-#include <CGAL/Algebraic_kernel_d/Exceptions.h>
+#include <CGAL/Algebraic_kernel_d/exceptions.h>
 
 CGAL_BEGIN_NAMESPACE
 
