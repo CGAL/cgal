@@ -21,6 +21,9 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
+
+//Warning: crash when using #define CGAL_C2T3_USE_POLYHEDRON
+#define CGAL_C2T3_USE_FILE_WRITER_OFF
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 // This package
