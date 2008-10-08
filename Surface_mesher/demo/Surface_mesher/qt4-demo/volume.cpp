@@ -27,7 +27,7 @@
 #include <QUrl>
 #include "Raw_image_dialog.h"
 
-#include <GL/glu.h>
+#include <CGAL/glu.h>
 
 #include <CGAL/Surface_mesher/Standard_criteria.h>
 // #include <CGAL/Surface_mesher/Image_surface_oracle_3.h>
