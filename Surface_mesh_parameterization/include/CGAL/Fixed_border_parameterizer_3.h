@@ -444,7 +444,7 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
         // Get vertex index in sparse linear system
         int index = mesh.get_vertex_index(it);
 
-        // Write a as diagonal coefficient of A
+        // Write a diagonal coefficient of A
         A.set_coef(index, index, 1);
 
         // Write constant in Bu and Bv
