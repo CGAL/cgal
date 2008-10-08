@@ -21,6 +21,7 @@
 #include <CGAL/PDB/Model.h>
 #include <cassert>
 #include <CGAL/PDB/internal/pdb_utils.h>
+#include <CGAL/PDB/internal/Error_logger.h>
 #include <cstdio>
 using std::sscanf;
 CGAL_PDB_BEGIN_NAMESPACE

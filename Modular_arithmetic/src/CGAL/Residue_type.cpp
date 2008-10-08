@@ -18,7 +18,7 @@
 // Author(s)     : Michael Hemmer
 
 
-#include <CGAL/Modular_arithmetic/Residue_type.h>
+#include <CGAL/residue.h>
 
 namespace CGAL{
 #ifdef CGAL_HAS_THREADS
