@@ -8,13 +8,13 @@
 %% $Id$
 %%
 
+\newcommand{\cmake}{CMake}
+\newcommand{\cpack}{CPack}
+\newcommand{\nsis}{NullSoft Scriptable Installer}
+
 
 %% macro for Windows-specific installation
 \newcommand{\MSInst}{Windows-specific Installation}
-
-%% macro for Windows-specific installation
-\newcommand{\cmake}{CMake}
-\newcommand{\cmakepage}{\path'http://www.cmake.org/'}
 
 %% macro for g++
 \newcommand{\Gcc}[1]{\gnu~\texttt{g++}~{\rm #1}}
@@ -67,6 +67,10 @@
 \newcommand{\taucspage}{\path'http://www.tau.ac.il/~stoledo/taucs/'}
 \newcommand{\xpage}{\path'http://www.x.org/'}
 \newcommand{\zlibpage}{\path'http://www.zlib.net/'}
+\newcommand{\cmakepage}{\path'http://www.cmake.org/'}
+\newcommand{\cpackpage}{\path'http://www.cmake.org/cmake/help/cpack2.6docs.html'}
+\newcommand{\nsispage}{\path'http://nsis.sourceforge.net/Main\_Page'}
+\newcommand{\fhs}{\path'http://www.pathname.com/fhs/pub/fhs-2.3.html'}
 
 %% write index in typewriter type. (c) Susan :-)
 \newcommand{\TTindex}[1]{\index{#1@{\tt #1}}}
@@ -279,7 +283,7 @@ build files. For example, the following generates solution files for use in Visu
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd <CGALROOT> 
+  cd ~/CGAL-3.4
   cmake -G"Visual Studio 9 2008" . 
 \end{verbatim}
 }
@@ -291,8 +295,8 @@ say so in the call to cmake, as in this example:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd <CGALROOT> 
-  cmake -DCMAKE_CXX_COMPILER:FILEPATH=some_non_default_g++ . 
+  cd ~/CGAL-3.4
+  cmake -DCMAKE_CXX_COMPILER:FILEPATH=g++-3.4 . 
 \end{verbatim}
 }
 
@@ -346,19 +350,19 @@ via a cmake variable of the form {\tt WITH\_<component>}. All components are {\t
     \\\hline\hline
     {\tt CGAL} & {\em none} & Main library (all kernels and packages) & GMP, MPFR, Boost (headers) and Boost.Thread (library)
     \\\hline
-    {\tt CGAL-core++} & {\tt WITH\_CGAL\_Core} & The CORE library used for robust numerical and geometric computation.
+    {\tt CGAL\_Core} & {\tt WITH\_CGAL\_Core} & The CORE library used for robust numerical and geometric computation.
     \footnote{CGAL-core++ is not part of \cgal, it is a custom version the CORE library ditributed by \cgal\
               for the user convenience and it has it's own license. }
     & GMP and MPFR
     \\\hline
-    {\tt CGAL-Qt3} & {\tt WITH\_CGAL\_Qt3} & \ccc{CGAL::Qt_widget} used by some old Qt3-based demos & Qt3 and OpenGL
+    {\tt CGAL\_Qt3} & {\tt WITH\_CGAL\_Qt3} & \ccc{CGAL::Qt_widget} used by some old Qt3-based demos & Qt3 and OpenGL
     \\\hline
-    {\tt CGAL-Qt4} & {\tt WITH\_CGAL\_Qt4} & \ccc{CGAL::GraphicsView} used by the Qt4-based demos & Qt4 and OpenGL
+    {\tt CGAL\_Qt4} & {\tt WITH\_CGAL\_Qt4} & \ccc{CGAL::GraphicsView} used by the Qt4-based demos & Qt4 and OpenGL
     \\\hline
-    {\tt CGAL-ImageIO} & {\tt WITH\_CGAL\_ImageIO} & Utilities to read and write image files in various formats 
+    {\tt CGAL\_ImageIO} & {\tt WITH\_CGAL\_ImageIO} & Utilities to read and write image files in various formats 
     & OpenGL and ZLib and VTK\footnote{Only if VTK is available}
     \\\hline
-    {\tt CGAL-PDB} & {\tt WITH\_CGA\_PDB} & \ccc{CGAL::PDB} used to manipulate {\tt PDB} files & {\em none}
+    {\tt CGAL\_PDB} & {\tt WITH\_CGAL\_PDB} & \ccc{CGAL::PDB} used to manipulate {\tt PDB} files & {\em none}
     \\\hline
   \end{tabular}
 \end{center}
@@ -367,7 +371,7 @@ If you turn off the configuration of a component you can still configure it manu
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd <CGALROOT>/src/CGALQt4 
+  cd ~/CGAL-3.4/src/CGALQt4 
   cmake . # configures only the CGAL_Qt4 component
 \end{verbatim}
 }
@@ -414,12 +418,12 @@ variant subdirectory in there:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-mkdir <CGALROOT>/cmake/platforms/debug
-cd <CGALROOT>/cmake/platforms/debug
+mkdir ~/CGAL-3.4/cmake/platforms/debug
+cd ~/CGAL-3.4/cmake/platforms/debug
 cmake -DCMAKE_BUILD_TYPE=Debug ../../..
 
-mkdir <CGALROOT>/cmake/platforms/release
-cd <CGALROOT>/cmake/platforms/release
+mkdir ~/CGAL-3.4/cmake/platforms/release
+cd ~/CGAL-3.4/cmake/platforms/release
 cmake -DCMAKE_BUILD_TYPE=Release ../../..
 \end{verbatim}
 }
@@ -482,13 +486,13 @@ The nature of the build files depend on the generator used during configuration,
 will contain several {\em targets}, one per component,  and a default global target corresponding 
 to all the library components at once.
 
-For example, in a unix-like environment the default generator produces makefiles and you would
+For example, in a UNIX-like environment the default generator produces makefiles and you would
 use the {\tt make} command-line tool as follow:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 
-cd <CGALROOT>
+cd ~/CGAL-3.4
 cmake .
 
 # build all the selected components at once
@@ -503,7 +507,7 @@ make -k CGAL CGAL_Core CGAL_PDB CGAL_ImageIO CGAL_Qt3 CGAL_Qt4
 \end{verbatim}
 }
 
-Notice that by make rules, an error in the default target will abort compilation/linking of
+Notice that according to the rules of 'make', an error in the default target will abort compilation/linking of
 all the \cgal\ components (which are part of the same single default target) even if {\tt -k} 
 is specified, so you need to list the components explicitely to prevent that.
 
@@ -546,9 +550,122 @@ file in-place and VS will prompt you to reload it.
 
 \subsection{Installing \cgal\ libraries}
 
+I many platforms, library pieces such as headers, docs and binaries are expected to be placed in specific locations. The
+typical example being the Filesystem Hierarchy Standard (see \fhs) of UNIX-like operating systems. The process of placing or copying
+the library elements into its standard location is sometimes referred to as {\em Installation} and it is a post step after
+configuration and compilation.
 
+\cmake\ supports installation by producing a build target named {\em install}. The following example shows a typical session
+from configuration to installation in a UNIX-like environment:
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+
+cd ~/CGAL-3.4
+
+cmake . # configure
+make    # make
+
+sudo make install # install
+
+\end{verbatim}
+}
+
+The installation step copies files to locations wich are typically accessible only to the root user so
+it is typically neccessary to do so as a super-user, hence the call to {\tt 'sudo'} first.
+
+If you used a generator which produced IDE files (for Visual Studio for instance) there will be an optional
+{\tt INSTALL} project which you can {\em ``build''} to execute the installation step. 
+
+The files are copied into a directory tree relative to the {\em installation directory} determined by the 
+cmake variable {\tt CMAKE\_INSTALL\_PREFIX}. This variable defaults to {\tt /usr/local} under UNIX-like operating systems
+and {\tt PROGRAMFILES } under Windows. If you want to install to a different location you must override that cmake
+variable explicitely {\em at configuration time} (not when executing the install step).
+
+If you wish the be able to specify the install location when executing the install step rather than fixing it during
+configuration you can use the environment variable {\tt DESTDIR}. However, since {\tt CMAKE\_INSTALL\_PREFIX} is prepended
+to the value of {\tt DESTDIR} (hence its name), in practice you need to define it as an empty string in order to gain complete
+control via {\tt DESTDIR}.
+This is illustrated in the following exampple:
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+
+cd ~/CGAL-3.4
+
+cmake -DCMAKE_INSTALL_PREFIX="" . 
+
+make
+
+DESTDIR=/usr/share sudo make install
+
+\end{verbatim}
+}
+
+
+If for whatever reason you wish the configuration to avoid creating the install target you can define the cmake variable
+ {\tt WITH\_INSTALL=FALSE}.
+
+\subsection{Packaging \cgal}
+
+\cmake\ version 2.4.2 is distributed with a packaging tool called \cpack. You can use it to generate an archive containing
+\cgal\ for simple distribution along multiple similar systems. To do that you must define the cmake variable
+{\tt WITH\_CPACK=ON} when configuring \cgal.
+Under Windows this will generate a \nsis\ installer (see \nsispage).
+Under UNIX-like environments, the configuration step will create targets named {\tt package} and {\tt package\_source}. When built, they would generate 
+{\tt .tar.gz} archives containing the \cgal\ libraries in binary and source form, respectively.
+
+Further details about the packaging tools can be found at \cpackpage.
 
 \section{Configuring and Building Programs Using \cgal}
+
+\cmake can be used to configure and build user programs as well via a \cmake script ({\tt CMakeLists.txt}) for the program.
+All the examples and demos contain such \cmake scripts.
+
+During configuration of the \cgal\ libraries a file named {\tt CGALConfig.cmake} will be generated in the binary directory. This file contains
+the definitions of several cmake variable which summarize the configuration of \cgal. In order to configure a user program you need to indicate
+the location of that config file in the cmake variable {\tt CGAL\_DIR}:.
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+
+# sources are in /CGAL-3.4 but the compiled cgal is in /my_cgal_bin
+cd ~/my_cgal_bin
+cmake ~/CGAL-3.4
+make
+
+cd ~/my_cgal_program
+cmake -DCGAL_DIR=~/my_cgal_bin . 
+make
+
+\end{verbatim}
+}
+
+By default, \cgal\ programs inherit the flags and buil-type used
+for \cgal\ to avoid runtime problems, unless you specifically indicate otherwise by
+defining the cmake variable {\tt CGAL\_DONT\_OVERRIDE\_DEFAULT\_SETTINGS=TRUE}.
+The following example illustrates this:
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+
+cd ~/CGAL-3.4
+
+# CGAL configured in release mode but with debug information 
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-g .
+
+cd ~/my_cgal_program
+
+# In this case, the settings of build type and flags HAVE NO EFFECT
+# because they are overriden by the values used above
+cmake -DCGAL_DIR=~/CGAL-3.4 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 . 
+
+# But in this case they are respected
+cmake -DCGAL_DIR=~/CGAL-3.4 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_DEFAULT_SETTINGS=TRUE . 
+
+\end{verbatim}
+}
+
 
 
 \section{Example} 
