@@ -17,6 +17,8 @@ find_package(Qt3-patched QUIET)
 if ( CGAL_FOUND AND QT3_FOUND )
 
 
+INCLUDE_DIRECTORIES ( BEFORE ./include )
+
   # The executable itself.
   add_executable  ( nef_S2
                     nef_S2.cpp )
