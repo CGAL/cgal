@@ -22,7 +22,7 @@ include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
 
 
-if ( CGAL_FOUND AND QT4_FOUND )
+if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
 include(${QT_USE_FILE})
 
