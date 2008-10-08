@@ -644,7 +644,7 @@ move(Vertex_handle v, const Point &p) {
   Locate_type lt;
   int li;
   Vertex_handle inserted;
-  Face_handle loc = locate(p, lt, li);
+  Face_handle loc = locate(p, lt, li, v->face());
 
   if(lt == Triangulation_2<Gt,Tds>::VERTEX) return false;
 
