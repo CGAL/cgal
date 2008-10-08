@@ -653,6 +653,12 @@ public:
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Create matrix\n");
 
+    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n", 
+               long(CGAL::Memory_sizer().virtual_size())>>20,
+               long(taucs_available_memory_size()/1048576.0),
+               long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
+    CGAL_TRACE("  Create matrix...\n");
+
     // get #variables
     unsigned int nb_variables = m_dt.index_unconstrained_vertices();
 
@@ -682,7 +688,8 @@ public:
     }
 
     *duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
-
+    CGAL_TRACE("  Create matrix: done (%.2lf s)\n", *duration_assembly);
+    
     /*
     time_init = clock();
     if(!solver.solve_conjugate_gradient(B,X,10000,1e-15))
@@ -694,13 +701,14 @@ public:
                long(CGAL::Memory_sizer().virtual_size())>>20,
                long(taucs_available_memory_size()/1048576.0),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
-    CGAL_TRACE("  Choleschy factorization\n");
+    CGAL_TRACE("  Choleschy factorization...\n");
 
     // Choleschy factorization M = L L^T
     time_init = clock();
     if(!solver.factorize_ooc())
       return false;
     *duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
+    CGAL_TRACE("  Choleschy factorization: done (%.2lf s)\n", *duration_factorization);
 
     // Print peak memory (Windows only)
     long max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
@@ -711,13 +719,14 @@ public:
                long(CGAL::Memory_sizer().virtual_size())>>20,
                long(taucs_available_memory_size()/1048576.0),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
-    CGAL_TRACE("  Direct solve by forward and backward substitution\n");
+    CGAL_TRACE("  Direct solve...\n");
 
     // Direct solve by forward and backward substitution
     time_init = clock();
     if(!solver.solve_ooc(B,X))
       return false;
     *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
+    CGAL_TRACE("  Direct solve: done (%.2lf s)\n", *duration_solve);
 
     /*
     // Choleschy factorization M = L L^T
@@ -732,6 +741,8 @@ public:
       return false;
     *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
     */
+
+    CGAL_TRACE("  Choleschy factorization + solve: done (%.2lf s)\n", *duration_factorization + *duration_solve);
 
     // set values to vertices
     unsigned int index = 0;
