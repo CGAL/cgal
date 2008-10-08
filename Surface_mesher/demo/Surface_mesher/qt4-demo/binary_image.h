@@ -170,7 +170,6 @@ public:
     const float z = static_cast<float>(CGAL::to_double(p.z()));
       
     if(interpolation()) {
-      std::cerr << "interpolation\n";
       if(inside(x,y,z))
 	return FT(::trilinear_interpolation(image_ptr.get(),x,y,z));
       else
