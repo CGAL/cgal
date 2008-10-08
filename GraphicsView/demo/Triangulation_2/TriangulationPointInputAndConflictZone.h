@@ -54,13 +54,14 @@ template <typename T>
 void 
 TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+  p = convert(event->scenePos());
   if(dt->number_of_vertices() == 0 ||
      event->modifiers() != 0 ||
      event->button() != ::Qt::LeftButton) {
     return;
   }
   
-  p = convert(event->scenePos());
+
   dt->find_conflicts(p, faces);
   for(typename std::list<Face_handle>::iterator it = faces.begin();
       it != faces.end();
