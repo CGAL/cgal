@@ -53,8 +53,10 @@ public:
   typedef SHalfedge* SHalfedge_handle;
 };
 
+int main() 
+{
 
-int main() {
+  //  CGAL_NEF_SETDTHREAD(239);
 
   typedef CGAL::Homogeneous<CGAL::Gmpz> Kernel;
   typedef Test_SNC<Kernel> SNC;
@@ -68,7 +70,11 @@ int main() {
 
   Vertex v0(Point_3(0,0,0));
   
+  Halfedge d0(&v0, Sphere_point( 2,  0,  0));
+  Halfedge d1(&v0, Sphere_point(-5,  0,  0));
+
   Halfedge e0(&v0, Sphere_point( 0,  0,  1));
+
   Halfedge e1(&v0, Sphere_point( 1,  0,  5));
   Halfedge e2(&v0, Sphere_point( 1, -1,  5));
   Halfedge e3(&v0, Sphere_point( 0, -1,  5));
@@ -78,6 +84,8 @@ int main() {
   Halfedge e7(&v0, Sphere_point( 0,  1,  5));
   Halfedge e8(&v0, Sphere_point( 1,  1,  5));
 
+  SHalfedge sd0(&d0);
+  SHalfedge sd1(&d1);
   SHalfedge se1(&e0);
   SHalfedge st1(&e1);
   SHalfedge se2(&e0);
@@ -94,7 +102,7 @@ int main() {
   SHalfedge st7(&e7);
   SHalfedge se8(&e0);
   SHalfedge st8(&e8);
-  
+
   se1.set_twin(&st1);
   st1.set_twin(&se1);
   se2.set_twin(&st2);
@@ -112,7 +120,133 @@ int main() {
   se8.set_twin(&st8);
   st8.set_twin(&se8);
 
-  se1.sprev() = &se1;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&sd0, dir, false) == 0);
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&sd1, dir, false) == 0);
 
-  assert(CGAL::is_reflex_sedge<SNC>(&se1, dir, false) == 0);
+  se1.sprev() = &st1;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se1, dir, false) == 2);
+  se2.sprev() = &st2;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se2, dir, false) == 3);
+  se5.sprev() = &st5;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se5, dir, false) == 1);
+
+  se1.sprev() = &st2;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se1, dir, false) == 2);
+  se1.sprev() = &st3;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se1, dir, false) == 2);
+  se1.sprev() = &st4;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se1, dir, false) == 2);
+  se1.sprev() = &st5;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se1, dir, false) == 0);
+  se1.sprev() = &st6;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se1, dir, false) == 0);
+  se1.sprev() = &st7;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se1, dir, false) == 0);
+  se1.sprev() = &st8;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se1, dir, false) == 0);
+
+  se2.sprev() = &st3;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se2, dir, false) == 3);
+  se2.sprev() = &st4;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se2, dir, false) == 3);
+  se2.sprev() = &st5;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se2, dir, false) == 1);
+  se2.sprev() = &st6;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se2, dir, false) == 0);
+  se2.sprev() = &st7;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se2, dir, false) == 0);
+  se2.sprev() = &st8;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se2, dir, false) == 0);
+  se2.sprev() = &st1;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se2, dir, false) == 0);
+
+  se3.sprev() = &st4;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se3, dir, false) == 3);
+  se3.sprev() = &st5;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se3, dir, false) == 1);
+  se3.sprev() = &st6;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se3, dir, false) == 1);
+  se3.sprev() = &st7;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se3, dir, false) == 0);
+  se3.sprev() = &st8;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se3, dir, false) == 0);
+  se3.sprev() = &st1;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se3, dir, false) == 0);
+  se3.sprev() = &st2;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se3, dir, false) == 0);
+
+  se4.sprev() = &st5;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se4, dir, false) == 1);
+  se4.sprev() = &st6;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se4, dir, false) == 1);
+  se4.sprev() = &st7;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se4, dir, false) == 1);
+  se4.sprev() = &st8;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se4, dir, false) == 0);
+  se4.sprev() = &st1;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se4, dir, false) == 0);
+  se4.sprev() = &st2;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se4, dir, false) == 0);
+  se4.sprev() = &st3;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se4, dir, false) == 0);
+
+  se5.sprev() = &st6;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se5, dir, false) == 1);
+  se5.sprev() = &st7;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se5, dir, false) == 1);
+  se5.sprev() = &st8;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se5, dir, false) == 1);
+  se5.sprev() = &st1;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se5, dir, false) == 0);
+  se5.sprev() = &st2;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se5, dir, false) == 0);
+  se5.sprev() = &st3;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se5, dir, false) == 0);
+  se5.sprev() = &st4;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se5, dir, false) == 0);
+
+  se6.sprev() = &st7;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se6, dir, false) == 3);
+  se6.sprev() = &st8;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se6, dir, false) == 3);
+  se6.sprev() = &st1;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se6, dir, false) == 2);
+  se6.sprev() = &st2;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se6, dir, false) == 0);
+  se6.sprev() = &st3;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se6, dir, false) == 0);
+  se6.sprev() = &st4;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se6, dir, false) == 0);
+  se6.sprev() = &st5;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se6, dir, false) == 0);
+
+  se7.sprev() = &st8;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se7, dir, false) == 3);
+  se7.sprev() = &st1;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se7, dir, false) == 2);
+  se7.sprev() = &st2;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se7, dir, false) == 2);
+  se7.sprev() = &st3;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se7, dir, false) == 0);
+  se7.sprev() = &st4;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se7, dir, false) == 0);
+  se7.sprev() = &st5;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se7, dir, false) == 0);
+  se7.sprev() = &st6;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se7, dir, false) == 0);
+
+  se8.sprev() = &st1;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se8, dir, false) == 2);
+  se8.sprev() = &st2;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se8, dir, false) == 2);
+  se8.sprev() = &st3;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se8, dir, false) == 2);
+  se8.sprev() = &st4;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se8, dir, false) == 0);
+  se8.sprev() = &st5;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se8, dir, false) == 0);
+  se8.sprev() = &st6;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se8, dir, false) == 0);
+  se8.sprev() = &st7;
+  CGAL_assertion(CGAL::is_reflex_sedge<SNC>(&se8, dir, false) == 0);
 }
