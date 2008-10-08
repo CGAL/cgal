@@ -72,7 +72,7 @@ if ( CGAL_FOUND )
   
     include( Qt3Macros-patched )
 EOF
-    echo "  QT3_AUTOMOC( ${all} )"
+    echo "    qt3_automoc( ${all} )"
     cat<<'EOF'
 
     # Make sure the compiler can find generated .moc files
