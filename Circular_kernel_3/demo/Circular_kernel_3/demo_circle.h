@@ -45,8 +45,8 @@
 
 // INCLUDES D'OPENGL
 //#include <GL/glut.h> // Header File For The GLUT Library
-#include <GL/gl.h> // Header File For The OpenGL32 Library
-#include <GL/glu.h> // Header File For The GLu32 Library
+#include <CGAL/gl.h> // Header File For The OpenGL32 Library
+#include <CGAL/glu.h> // Header File For The GLu32 Library
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
