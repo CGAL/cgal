@@ -32,7 +32,7 @@ qt4_add_resources ( DT_RESOURCE_FILES ./Circular_kernel_2.qrc )
 qt4_generate_moc( Circular_kernel_2.cpp Circular_kernel_2.moc )
 
 # The executable itself.
-add_executable  ( Circular_kernel_2 Circular_kernel_2.cpp ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+add_executable  ( Circular_kernel_2 Circular_kernel_2.cpp Circular_kernel_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
 # Link with Qt libraries
 target_link_libraries( Circular_kernel_2 ${QT_LIBRARIES} )
