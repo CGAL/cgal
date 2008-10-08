@@ -5,7 +5,7 @@
 
 #include "surface.h"
 #include "viewer.h"
-#include <GL/gl.h>
+#include <CGAL/gl.h>
 
 #include <map>
 #include <utility>

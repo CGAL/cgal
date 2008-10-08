@@ -15,7 +15,7 @@
 #include <CGAL/HalfedgeDS_default.h>
 #include <list>
 
-#include <GL/gl.h>
+#include <CGAL/gl.h>
 
 // a refined facet with a normal and a tag
 template <class Refs, class T, class P, class Norm>
