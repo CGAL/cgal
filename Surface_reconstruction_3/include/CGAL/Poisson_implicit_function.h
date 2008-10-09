@@ -1,4 +1,4 @@
-// Copyright (c) 2007  INRIA (France).
+// Copyright (c) 2007-2008  INRIA (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -169,11 +169,15 @@ private:
   typedef typename Triangulation::All_cells_iterator       All_cells_iterator;
   typedef typename Triangulation::Locate_type Locate_type;
 
+  // TAUCS solver
+  typedef Taucs_solver<double>  Solver;
+  typedef std::vector<double>   Sparse_vector;
+
 // Data members
 private:
 
   Triangulation& m_dt; // f() is pre-computed on vertices of m_dt by solving
-                       // the Poisson equation Laplacian(f) = divergent(normals field)
+                       // the Poisson equation Laplacian(f) = divergent(normals field).
 
   // neighbor search
   typedef typename CGAL::K_nearest_neighbor<Geom_traits,Vertex_handle> K_nearest_neighbor;
@@ -649,13 +653,7 @@ public:
 
     CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(taucs_available_memory_size()/1048576.0),
-               long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
-    CGAL_TRACE("  Create matrix\n");
-
-    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n", 
-               long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(taucs_available_memory_size()/1048576.0),
+               (CGAL::Peak_memory_sizer().largest_free_block()>>20),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Create matrix...\n");
 
@@ -669,10 +667,10 @@ public:
       nb_variables = m_dt.index_unconstrained_vertices();
     }
 
-    // Assemble linear system
-    Taucs_solver solver;
-    std::vector<double> X(nb_variables);
-    std::vector<double> B(nb_variables);
+    // Assemble linear system solver*X=B
+    Solver solver;
+    Sparse_vector X(nb_variables);
+    Sparse_vector B(nb_variables);
 
     Finite_vertices_iterator v;
     for(v = m_dt.finite_vertices_begin();
@@ -699,7 +697,7 @@ public:
 
     CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(taucs_available_memory_size()/1048576.0),
+               (CGAL::Peak_memory_sizer().largest_free_block()>>20),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Choleschy factorization...\n");
 
@@ -717,7 +715,7 @@ public:
 
     CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(taucs_available_memory_size()/1048576.0),
+               (CGAL::Peak_memory_sizer().largest_free_block()>>20),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Direct solve...\n");
 
@@ -744,17 +742,15 @@ public:
 
     CGAL_TRACE("  Choleschy factorization + solve: done (%.2lf s)\n", *duration_factorization + *duration_solve);
 
-    // set values to vertices
+    // copy function's values to vertices
     unsigned int index = 0;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
-        v++)
+    for (v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
       if(!v->constrained())
         v->f() = X[index++];
 
     CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(taucs_available_memory_size()/1048576.0),
+               (CGAL::Peak_memory_sizer().largest_free_block()>>20),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("End of solve_poisson()\n");
 
@@ -1425,9 +1421,10 @@ private:
     CGAL_surface_reconstruction_assertion(l_done);
   }
 
-  void assemble_poisson_row(Taucs_solver& solver,
+  // Assemble vi's row of the linear system solver*X=B
+  void assemble_poisson_row(Solver& solver,
                             Vertex_handle vi,
-                            std::vector<double>& B,
+                            Sparse_vector& B,
                             double lambda)
   {
     // assemble new row
@@ -1453,8 +1450,7 @@ private:
       if(vj->constrained())
         B[vi->index()] -= cij * vj->f(); // change rhs
       else
-        // off-diagonal coefficient
-        solver.add_value(vj->index(),-cij);
+        solver.add_value(vj->index(),-cij); // off-diagonal coefficient
 
       diagonal += cij;
     }

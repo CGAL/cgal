@@ -488,7 +488,7 @@ void CPoissonDoc::update_status()
     // write message to cerr
     std::cerr << "=> " << points << " (" << selected_points << "), "
                        << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated, "
-                       << "largest free block=" << long(taucs_available_memory_size()/1048576.0) << " Mb, "
+                       << "largest free block=" << (CGAL::Peak_memory_sizer().largest_free_block()>>20) << " Mb, "
                        << "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
                        << std::endl;
 
@@ -510,7 +510,7 @@ void CPoissonDoc::update_status()
     // write message to cerr
     std::cerr << "=> " << vertices << ", " << tets << ", "
                        << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated, "
-                       << "largest free block=" << long(taucs_available_memory_size()/1048576.0) << " Mb, "
+                       << "largest free block=" << (CGAL::Peak_memory_sizer().largest_free_block()>>20) << " Mb, "
                        << "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
                        << std::endl;
 

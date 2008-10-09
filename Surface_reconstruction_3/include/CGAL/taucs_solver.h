@@ -33,11 +33,25 @@
 CGAL_BEGIN_NAMESPACE
 
 
+// Forward declaration
+template<class T> struct Taucs_number;
+
+
 /// CLASS Taucs_solver:
-/// direct solver for symmetric positive definite sparse systems
+/// direct solver for symmetric positive definite sparse systems.
+template<class T>       // Tested with T = float or double
 class Taucs_solver
 {
+// Public types
 public:
+
+  typedef std::vector<T> Vector;
+  typedef T NT;
+
+
+// Public operations
+public:
+
   Taucs_solver()
     : PAP(0),
       L(0),
@@ -69,25 +83,16 @@ public:
       n_rows = (int)colptr.size()-1;
     }
   }
-  void add_value(int _i,
-                 double _val,
-                 const bool symmetric = true)
+  
+  void add_value(int _i, T _val)
   {
-    if(symmetric)
-    {
+      // We store only the lower diagonal matrix
       if(_i <= n_rows)
       {
         values.push_back(_val);
         rowind.push_back(_i);
       }
-    }
-    else
-    {
-      values.push_back(_val);
-      rowind.push_back(_i);
-    }
   }
-
 
   void end_row()
   {
@@ -157,6 +162,7 @@ public:
     // out-of-core Cholesky factorization.
     // LS 03/2008: ooc file opening will fail if 2 instances of the application
     //             run at the same time. Better use tempnam().
+    unlink("taucs-ooc.0"); // make sure TAUCS ooc file does not exist
     m_io_handle = taucs_io_create_multifile((char*)"taucs-ooc");
     if(m_io_handle == NULL)
     {
@@ -178,7 +184,7 @@ public:
 
 
 
-  bool solve(std::vector<double>& _b, std::vector<double>& _x)
+  bool solve(Vector& _b, Vector& _x)
   {
     const unsigned int N = A.n;
 
@@ -188,13 +194,11 @@ public:
       return false;
     }
 
-    std::vector<double>  PB(N), PX(N);
-
+    Vector  PB(N), PX(N);
 
     // permute rhs
     for (unsigned int i=0; i<N; ++i)
       PB[i] = _b[perm[i]];
-
 
     // solve by back-substitution
     if ((supernodal_ ?
@@ -206,7 +210,6 @@ public:
       return false;
     }
 
-
     // re-permute x
     for (unsigned int i=0; i<N; ++i)
       _x[i] = PX[invperm[i]];
@@ -214,8 +217,7 @@ public:
     return true;
   }
 
-  bool solve_ooc(std::vector<double>& _b,
-                 std::vector<double>& _x)
+  bool solve_ooc(Vector& _b, Vector& _x)
   {
     const unsigned int N = A.n;
 
@@ -225,13 +227,11 @@ public:
       return false;
     }
 
-    std::vector<double>  PB(N), PX(N);
-
+    Vector  PB(N), PX(N);
 
     // permute rhs
     for (unsigned int i=0; i<N; ++i)
       PB[i] = _b[perm[i]];
-
 
     if(taucs_ooc_solve_llt(m_io_handle,&PX[0],&PB[0]) != TAUCS_SUCCESS)
     {
@@ -247,11 +247,11 @@ public:
   }
 
 
-  bool solve_minres(std::vector<double>& _b,
-                    std::vector<double>& _x)
+  bool solve_minres(Vector& _b,
+                    Vector& _x)
   {
-    double* x = new double[_x.size()];
-    double* b = new double[_b.size()];
+    T* x = new T[_x.size()];
+    T* b = new T[_b.size()];
     for(unsigned int i=0;i<_b.size();i++)
     {
       x[i] = _x[i];
@@ -260,16 +260,15 @@ public:
     int result = taucs_minres(&A,NULL,NULL,x,b,1000,0.01);
     delete [] x;
     delete [] b;
-    if(result == TAUCS_SUCCESS)
-      return true;
-    return false;
+    return (result == TAUCS_SUCCESS);
   }
 
-  bool solve_linear(std::vector<double>& _b,
-                    std::vector<double>& _x)
+  /// Solve using a TAUCS sparse linear solver for symmetric positive definite matrices.
+  bool solve_linear(Vector& _b,
+                    Vector& _x)
   {
-    double* x = new double[_x.size()];
-    double* b = new double[_b.size()];
+    T* x = new T[_x.size()];
+    T* b = new T[_b.size()];
     for(unsigned int i=0;i<_b.size();i++)
     {
       x[i] = _x[i];
@@ -280,24 +279,22 @@ public:
     int result = taucs_linsolve(&A,NULL,1,x,b,options,NULL);
     delete [] x;
     delete [] b;
-    if(result == TAUCS_SUCCESS)
-      return true;
-    return false;
+    return (result == TAUCS_SUCCESS);
   }
 
-  bool solve_conjugate_gradient(std::vector<double>& b,
-                                std::vector<double>& x,
+  bool solve_conjugate_gradient(Vector& b,
+                                Vector& x,
                                 const int itermax,
-                                const double convergetol)
+                                const T convergetol)
   {
     finalize_matrix();
     int result = taucs_conjugate_gradients(&A,NULL,NULL,&x[0],&b[0],itermax,convergetol);
-    return (result == TAUCS_SUCCESS) ? true : false;
+    return (result == TAUCS_SUCCESS);
   }
 
 
-  bool solve(std::vector<double>& b,
-             std::vector<double>& x,
+  bool solve(Vector& b,
+             Vector& x,
              const unsigned int dim)
   {
     const unsigned int N = A.n;
@@ -309,8 +306,8 @@ public:
       return false;
     }
 
-    std::vector<double>  PB(N);
-    std::vector<double>  PX(N);
+    Vector  PB(N);
+    Vector  PX(N);
 
     // solver component-wise
     for (unsigned int c=0;c<dim;c++)
@@ -335,17 +332,21 @@ public:
     return true;
   }
 
+// Private operations
 private:
 
+  // setup ccs matrix
   void finalize_matrix()
   {
-    // setup ccs matrix
     A.n        = (int)(colptr.size()-1);
     A.m        = (int)(colptr.size()-1);
-    A.flags    = (TAUCS_DOUBLE | TAUCS_SYMMETRIC | TAUCS_LOWER);
+
+    // Convert matrix's T type to the corresponding TAUCS constant
+    A.flags    = (Taucs_number<T>::TAUCS_FLAG | TAUCS_SYMMETRIC | TAUCS_LOWER);
+
     A.colptr   = &colptr[0];
     A.rowind   = &rowind[0];
-    A.values.d = &values[0];
+    A.values.v = &values[0];
   }
 
   void delete_matrices()
@@ -364,18 +365,35 @@ private:
     }
   }
 
-
+// Data
 private:
 
   taucs_ccs_matrix           A, *PAP, *L;
   void                       *SL;
-  std::vector<double>        values;
+  Vector                     values;
   std::vector<int>           colptr;
   std::vector<int>           rowind;
   int                        n_rows;
   int                        *perm, *invperm;
   bool                       supernodal_;
-  taucs_io_handle *m_io_handle;
+  taucs_io_handle            *m_io_handle;
+};
+
+
+// Utility class:
+// convert matrix's T type to the corresponding TAUCS constant (called TAUCS_FLAG).
+template<class T> struct Taucs_number {};
+template<> struct Taucs_number<double> {
+    enum { TAUCS_FLAG = TAUCS_DOUBLE };
+};
+template<> struct Taucs_number<float>  {
+    enum { TAUCS_FLAG = TAUCS_SINGLE };
+};
+template<> struct Taucs_number<taucs_dcomplex> {
+    enum { TAUCS_FLAG = TAUCS_DCOMPLEX };
+};
+template<> struct Taucs_number<taucs_scomplex> {
+    enum { TAUCS_FLAG = TAUCS_SCOMPLEX };
 };
 
 
