@@ -32,12 +32,12 @@ ET QP_solver<Q, ET, Tags>::original_variable_value_under_bounds(int i) const
   CGAL_assertion(!check_tag(Is_nonnegative()) && i<qp_n);
   switch (x_O_v_i[i]) {
   case UPPER:
-    return qp_u[i];
+    return *(qp_u+i);
   case ZERO:
     return et0;
   case LOWER:
   case FIXED:
-    return qp_l[i];
+    return *(qp_l+i);
   case BASIC:
     CGAL_qpe_assertion(false);
   }
@@ -60,12 +60,12 @@ ET QP_solver<Q, ET, Tags>::variable_numerator_value(int i) const
   typedef QP_solver<Q, ET, Tags> QP;
   switch (x_O_v_i[i]) {
   case QP::UPPER:
-    return ET(qp_u[i]) * d;
+    return ET(*(qp_u+i)) * d;
   case QP::ZERO:
     return et0;
   case QP::LOWER:
   case QP::FIXED:
-    return ET(qp_l[i]) * d;
+    return ET(*(qp_l+i)) * d;
   case QP::BASIC:
     return x_B_O[in_B[i]];
   default: // never reached
@@ -103,11 +103,11 @@ ET  QP_solver<Q, ET, Tags>::multiply__A_ixO(int row) const
     // nonzero.
     switch (x_O_v_i[i]) {
     case UPPER:
-      value += ET(qp_u[i]) * ET((*(qp_A+i))[row]);
+      value += ET(*(qp_u+i)) * ET(*((*(qp_A+i))+row));
       break;
     case LOWER:
     case FIXED:
-      value += ET(qp_l[i]) * ET((*(qp_A+i))[row]);
+      value += ET(*(qp_l+i)) * ET(*((*(qp_A+i))+row));
       break;
     case BASIC:
       CGAL_qpe_assertion(false);
@@ -139,7 +139,7 @@ multiply__A_CxN_O(Value_iterator out) const
       for (Index_const_iterator row_it = C.begin();
 	   row_it != C.end();
 	   ++row_it, ++out_it)
-	*out_it += x_i * ET(a_col[*row_it]);
+	*out_it += x_i * ET(*(a_col+ *row_it));
     }
 }
 
@@ -191,7 +191,7 @@ multiply__A_S_BxN_O(Value_iterator out) const
       for (Index_const_iterator row_it = S_B.begin();
 	   row_it != S_B.end();
 	   ++row_it, ++out_it)
-	*out_it += x_i * ET(a_col[*row_it]);
+	*out_it += x_i * ET(*(a_col+ *row_it));
     }
 }
 

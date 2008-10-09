@@ -699,9 +699,9 @@ public: // only the pricing strategies (including user-defined ones
   {
     CGAL_assertion(!check_tag(Is_nonnegative()) &&
 		   !is_basic(i) && i < qp_n && x_O_v_i[i] == ZERO);
-    if (*(qp_fl+i) && CGAL::is_zero(qp_l[i]))
+    if (*(qp_fl+i) && CGAL::is_zero(*(qp_l+i)))
       return -1;
-    if (*(qp_fu+i) && CGAL::is_zero(qp_u[i]))
+    if (*(qp_fu+i) && CGAL::is_zero(*(qp_u+i)))
       return 1;
     return 0;
   }
@@ -1267,7 +1267,7 @@ public:
     if ( j < qp_n) {                                // original variable
 
       // [c_j +] A_Cj^T * lambda_C
-      mu_j = ( is_phaseI ? NT( 0) : dd * NT(qp_c[ j]));
+      mu_j = ( is_phaseI ? NT( 0) : dd * NT(*(qp_c+ j)));
       mu_j__linear_part( mu_j, j, lambda_it, no_ineq);
 
       // ... + 2 D_Bj^T * x_B
@@ -1294,7 +1294,7 @@ public:
     if ( j < qp_n) {                                // original variable
 
       // [c_j +] A_Cj^T * lambda_C
-      mu_j = ( is_phaseI ? NT( 0) : dd * NT(qp_c[ j]));
+      mu_j = ( is_phaseI ? NT( 0) : dd * NT(*(qp_c+ j)));
       mu_j__linear_part( mu_j, j, lambda_it, no_ineq);
 
       // ... + 2 D_Bj^T * x_B + 2 D_Nj x_N

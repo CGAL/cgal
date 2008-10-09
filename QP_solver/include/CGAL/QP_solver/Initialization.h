@@ -196,25 +196,25 @@ init_x_O_v_i()
   // and so we initialize them to zero (if the bound on the variable
   // allows it), or to the variable's lower or upper bound:
   for (int i = 0; i < qp_n; ++i) {
-    CGAL_qpe_assertion( !*(qp_fl+i) || !*(qp_fu+i) || qp_l[i]<=qp_u[i]);
+    CGAL_qpe_assertion( !*(qp_fl+i) || !*(qp_fu+i) || *(qp_l+i)<=*(qp_u+i));
 
     if (*(qp_fl+i))                    // finite lower bound?
       if (*(qp_fu+i))                  // finite lower and finite upper bound?
-	if (qp_l[i] == qp_u[i])        // fixed variable?
+	if (*(qp_l+i) == *(qp_u+i))    // fixed variable?
 	  x_O_v_i[i] = FIXED;
 	else                           // finite lower and finite upper?
-	  if (qp_l[i] <= l0 && u0 <= qp_u[i])
+	  if (*(qp_l+i) <= l0 && u0 <= *(qp_u+i))
 	    x_O_v_i[i] = ZERO;
 	  else
 	    x_O_v_i[i] = LOWER;
       else                             // finite lower and infinite upper?
-	if (qp_l[i] <= l0)
+	if (*(qp_l+i) <= l0)
 	  x_O_v_i[i] = ZERO;
 	else 
 	  x_O_v_i[i] = LOWER;
     else                               // infinite lower bound?
       if (*(qp_fu+i))                  // infinite lower and finite upper?
-	if (u0 <= qp_u[i])
+	if (u0 <= *(qp_u+i))
 	  x_O_v_i[i] = ZERO;
 	else
 	  x_O_v_i[i] = UPPER;
@@ -238,12 +238,12 @@ set_up_auxiliary_problem()
     // 0<=i<qp_n), and therefore, rhs=b-Ax is not simply b as in the standard
     // form case, but Ax_init-b:
     const ET rhs = check_tag(Is_nonnegative())?
-      ET(qp_b[i]) : ET(qp_b[i]) - multiply__A_ixO(i);
+      ET(*(qp_b+i)) : ET(*(qp_b+i)) - multiply__A_ixO(i);
 
-    if (has_ineq && (qp_r[i] != CGAL::EQUAL)) { // inequality constraint, so we
+    if (has_ineq && (*(qp_r+i) != CGAL::EQUAL)) { // inequality constraint, so we
 					       // add a slack variable, and (if
 					       // needed) a special artificial
-      if (qp_r[i] == CGAL::SMALLER) {        // '<='
+      if (*(qp_r+i) == CGAL::SMALLER) {        // '<='
 
 	// add special artificial ('< -0') in case the inequality is
 	// infeasible for our starting point (which is the origin):
@@ -491,7 +491,7 @@ init_basis__constraints(int s_i, Tag_false)  // Note: s_i-th inequality is the
   if (s_i >= 0) s_i = slack_A[s_i].first;    // now s_i is absolute index
                                              // of most infeasible row
   for (i = 0, j = 0; i < qp_m; ++i)
-    if (qp_r[i] == CGAL::EQUAL) {             // equal. constraint basic
+    if (*(qp_r+i) == CGAL::EQUAL) {             // equal. constraint basic
       C.push_back(i);
       in_C[i] = j;
       ++j;

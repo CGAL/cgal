@@ -144,11 +144,11 @@ solution_numerator( ) const
 	  // half the off-diagonal contribution
 	  j=0;
 	  for (; j<i; ++j_it, ++j)
-	    s += ET((*(qp_D+i))[j]) * *j_it;
+	    s += ET(*((*(qp_D+i))+j)) * *j_it;
 	  // the other half
 	  s *= et2;
 	  // the diagonal entry
-	  s += ET((*(qp_D+i))[j]) * *j_it;
+	  s += ET(*((*(qp_D+i))+j)) * *j_it;
 	  // accumulate
 	  z += s * *i_it;
 	}
@@ -158,7 +158,7 @@ solution_numerator( ) const
       for (Variable_numerator_iterator 
 	     j_it = this->original_variables_numerator_begin();
 	   j_it < this->original_variables_numerator_end(); ++j_it, ++j)
-	s +=  et2 * ET(qp_c[j]) * *j_it;
+	s +=  et2 * ET(*(qp_c+j)) * *j_it;
       z += d * s;
     }
     // finally, add the constant term (phase II only)
@@ -263,7 +263,7 @@ pivot_step( )
 		    q_lambda.begin(),    q_x_O.begin());
 	        if (is_QP) {
 		    if (j < qp_n) {
-		        nu -= d*ET((*(qp_D+j))[j]);
+		        nu -= d*ET(*((*(qp_D+j))+j));
 		    }
 		}
 		CGAL_qpe_assertion(nu == et0);
@@ -620,7 +620,7 @@ ratio_test_1__t_min_j(Tag_false /*is_nonnegative*/)
         if (direction == 1) {
             if (x_O_v_i[j] == LOWER) {              // has lower bound value
                 if (*(qp_fu+j)) {                   // has finite upper bound
-                    x_i = (qp_u[j] - qp_l[j]);
+                    x_i = (*(qp_u+j) - *(qp_l+j));
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = UPPER;
@@ -630,7 +630,7 @@ ratio_test_1__t_min_j(Tag_false /*is_nonnegative*/)
                 }
             } else {                                // has value zero
                 if (*(qp_fu+j)) {                   // has finite upper bound
-                    x_i = qp_u[j];
+                    x_i = *(qp_u+j);
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = UPPER;
@@ -642,7 +642,7 @@ ratio_test_1__t_min_j(Tag_false /*is_nonnegative*/)
         } else {                                    // direction == -1
             if (x_O_v_i[j] == UPPER) {              // has upper bound value
                 if (*(qp_fl+j)) {                   // has finite lower bound
-                    x_i = (qp_u[j] - qp_l[j]);
+                    x_i = (*(qp_u+j) - *(qp_l+j));
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = LOWER;
@@ -652,7 +652,7 @@ ratio_test_1__t_min_j(Tag_false /*is_nonnegative*/)
                 }
             } else {                                // has value zero
                 if (*(qp_fl+j)) {                   // has finite lower bound
-                    x_i = -qp_l[j];
+                    x_i = -(*(qp_l+j));
                     q_i = et1;
                     i = j;
                     ratio_test_bound_index = LOWER;
@@ -797,7 +797,7 @@ test_explicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
 {
     if (q_k > et0) {                                // check for lower bound
         if (*(qp_fl+k)) {
-            ET  diff = x_k - (d * ET(qp_l[k])); 
+            ET  diff = x_k - (d * ET(*(qp_l+k))); 
             if (diff * q_min < d_min * q_k) {
                 i_min = k;
                 d_min = diff;
@@ -807,7 +807,7 @@ test_explicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
         }
     } else {                                        // check for upper bound
         if ((q_k < et0) && (*(qp_fu+k))) {
-            ET  diff = (d * ET(qp_u[k])) - x_k;
+            ET  diff = (d * ET(*(qp_u+k))) - x_k;
             if (diff * q_min < -(d_min * q_k)) {
                 i_min = k;
                 d_min = diff;
@@ -829,7 +829,7 @@ test_explicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
 {
     if (q_k < et0) {                                // check for lower bound
         if (*(qp_fl+k)) {
-            ET  diff = x_k - (d * ET(qp_l[k])); 
+            ET  diff = x_k - (d * ET(*(qp_l+k))); 
             if (diff * q_min < -(d_min * q_k)) {
                 i_min = k;
                 d_min = diff;
@@ -839,7 +839,7 @@ test_explicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
         }
     } else {                                        // check for upper bound
         if ((q_k > et0) && (*(qp_fu+k))) {
-            ET  diff = (d * ET(qp_u[k])) - x_k;
+            ET  diff = (d * ET(*(qp_u+k))) - x_k;
             if (diff * q_min < d_min * q_k) {
                 i_min = k;
                 d_min = diff;
@@ -862,7 +862,7 @@ test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
     if (q_k > et0) {                                // check for lower bound
         if (k < qp_n) {                             // original variable
             if (*(qp_fl+k)) {
-                ET  diff = x_k - (d * ET(qp_l[k]));
+                ET  diff = x_k - (d * ET(*(qp_l+k)));
                 if (diff * q_min < d_min * q_k) {
                     i_min = k;
                     d_min = diff;
@@ -879,7 +879,7 @@ test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
         }
     } else {                                        // check for upper bound
         if ((q_k < et0) && (k < qp_n) && *(qp_fu+k)) {
-            ET  diff = (d * ET(qp_u[k])) - x_k;
+            ET  diff = (d * ET(*(qp_u+k))) - x_k;
             if (diff * q_min < -(d_min * q_k)) {
                 i_min = k;
                 d_min = diff;
@@ -902,7 +902,7 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
     if (q_k < et0) {                                // check for lower bound
         if (k < qp_n) {                             // original variable
             if (*(qp_fl+k)) {
-                ET  diff = x_k - (d * ET(qp_l[k]));
+                ET  diff = x_k - (d * ET(*(qp_l+k)));
                 if (diff * q_min < -(d_min * q_k)) {
                     i_min = k;
                     d_min = diff;
@@ -919,7 +919,7 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
         }
     } else {                                        // check for upper bound
         if ((q_k > et0) && (k < qp_n) && *(qp_fu+k)) {
-            ET  diff = (d * ET(qp_u[k])) - x_k;
+            ET  diff = (d * ET(*(qp_u+k))) - x_k;
             if (diff * q_min < d_min * q_k) {
                 i_min = k;
                 d_min = diff;
@@ -1289,7 +1289,7 @@ replace_variable_original_original( )
 
     minus_c_B[ k] = 
       ( is_phaseI ? 
-	( j < qp_n ? et0 : -aux_c[j-qp_n-slack_A.size()]) : -ET( qp_c[ j]));
+	( j < qp_n ? et0 : -aux_c[j-qp_n-slack_A.size()]) : -ET( *(qp_c+ j)));
 
     if ( is_phaseI) {
 	if ( j >= qp_n) ++art_basic;
@@ -1323,7 +1323,7 @@ replace_variable_original_original_upd_r(Tag_false )
     
     if (is_artificial(j)) {
         if (!is_artificial(i)) {
-            x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+            x_i = (ratio_test_bound_index == LOWER) ? *(qp_l+i) : *(qp_u+i);
             update_r_C_r_S_B__i(x_i);
             // update x_O_v_i
             x_O_v_i[i] = ratio_test_bound_index;
@@ -1333,7 +1333,7 @@ replace_variable_original_original_upd_r(Tag_false )
         if (is_artificial(i)) {
             update_r_C_r_S_B__j(x_j);
         } else {
-            x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+            x_i = (ratio_test_bound_index == LOWER) ? *(qp_l+i) : *(qp_u+i);
             update_r_C_r_S_B__j_i(x_j, x_i);
             // update x_O_v_i
             x_O_v_i[i] = ratio_test_bound_index;
@@ -1369,7 +1369,7 @@ replace_variable_slack_slack( )
     in_C[ new_row] = k;
        C[ k      ] = new_row;
 
-     b_C[ k] = ET( qp_b[ new_row]);
+     b_C[ k] = ET( *(qp_b+ new_row));
 
     // diagnostic output
     CGAL_qpe_debug {
@@ -1467,7 +1467,7 @@ void  QP_solver<Q, ET, Tags>::
 replace_variable_slack_original_upd_r(Tag_false )
 {
     if (!is_artificial(i)) {
-        ET  x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+        ET  x_i = (ratio_test_bound_index == LOWER) ? *(qp_l+i) : *(qp_u+i);
         update_r_C_r_S_B__i(x_i);
     }
     
@@ -1499,7 +1499,8 @@ replace_variable_original_slack( )
 
     minus_c_B[ B_O.size()]
       = ( is_phaseI ? 
-	  ( j < qp_n ? et0 : -aux_c[j-qp_n-slack_A.size()]) : -ET( qp_c[ j]));
+	  ( j < qp_n ? et0 : -aux_c[j-qp_n-slack_A.size()]) 
+	  : -ET( *(qp_c+ j)));
     
 
     in_B  [ j] = B_O.size();
@@ -1518,7 +1519,7 @@ replace_variable_original_slack( )
     // enter inequality constraint [ in: i ]
     int new_row = slack_A[ i-qp_n].first;
 
-     b_C[ C.size()] = ET( qp_b[ new_row]);
+     b_C[ C.size()] = ET( *(qp_b+ new_row));
     in_C[ new_row ] = C.size();
        C.push_back( new_row);
     // diagnostic output
@@ -1652,9 +1653,9 @@ enter_and_leave_variable( )
     ET x_j = nonbasic_original_variable_value(j);
     
     if (ratio_test_bound_index == LOWER) {
-        diff = x_j - ET(qp_l[j]);
+        diff = x_j - ET(*(qp_l+j));
     } else {
-        diff = x_j - ET(qp_u[j]);
+        diff = x_j - ET(*(qp_u+j));
     }
     
     if (is_phaseI) {
@@ -1710,7 +1711,7 @@ enter_variable( )
 	     two_D_Bj.push_back(et0);
 	        x_B_O.push_back(et0);
 	}
-	minus_c_B[B_O.size()] = -ET(qp_c[ j]); // Note: B_O has always the
+	minus_c_B[B_O.size()] = -ET(*(qp_c+ j)); // Note: B_O has always the
 					       // correct size.
 	
 	in_B[j] = B_O.size();
@@ -1868,9 +1869,9 @@ leave_variable( )
 	// enter inequality constraint [ in: i ]
 	int new_row = slack_A[ i-qp_n].first;
 
-	A_Cj[ C.size()] = ( j < qp_n ? ET( (*(qp_A + j))[ new_row]) : et0);
+	A_Cj[ C.size()] = ( j < qp_n ? ET( *((*(qp_A + j))+ new_row)) : et0);
 
-	 b_C[ C.size()] = ET( qp_b[ new_row]);
+	 b_C[ C.size()] = ET( *(qp_b+ new_row));
 	in_C[ new_row ] = C.size();
 	   C.push_back( new_row);
 
@@ -1910,7 +1911,7 @@ void  QP_solver<Q, ET, Tags>::
 leave_variable_original_upd_w_r(Tag_false )
 {
 
-    ET      x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+    ET      x_i = (ratio_test_bound_index == LOWER) ? *(qp_l+i) : *(qp_u+i);
     
     // Note: w needs to be updated before r_C, r_S_B
     update_w_r_B_O__i(x_i);
@@ -2022,7 +2023,7 @@ z_replace_variable_original_by_original( )
     in_B  [ j] = k;
        B_O[ k] = j;
 
-    minus_c_B[ k] = -ET( qp_c[ j]);
+    minus_c_B[ k] = -ET( *(qp_c+ j));
 
     // diagnostic output
     CGAL_qpe_debug {
@@ -2057,7 +2058,7 @@ z_replace_variable_original_by_original_upd_w_r(Tag_false )
 {
 
     ET      x_j = nonbasic_original_variable_value(j);
-    ET      x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+    ET      x_i = (ratio_test_bound_index == LOWER) ? *(qp_l+i) : *(qp_u+i);
     
     // Note: w needs to be updated before r_C, r_S_B
     update_w_r_B_O__j_i(x_j, x_i);
@@ -2132,7 +2133,7 @@ void  QP_solver<Q, ET, Tags>::
 z_replace_variable_original_by_slack_upd_w_r(Tag_false )
 {
 
-    ET      x_i = (ratio_test_bound_index == LOWER) ? qp_l[i] : qp_u[i];
+    ET      x_i = (ratio_test_bound_index == LOWER) ? *(qp_l+i) : *(qp_u+i);
     
     // Note: w needs to be updated before r_C, r_S_B
     update_w_r_B_O__i(x_i);
@@ -2186,7 +2187,7 @@ z_replace_variable_slack_by_original( )
 
     // enter original variable [ in: j ]
 
-    minus_c_B[ B_O.size()] = -ET( qp_c[ j]);
+    minus_c_B[ B_O.size()] = -ET( *(qp_c+ j));
     
 
     in_B  [ j] = B_O.size();
@@ -2204,7 +2205,7 @@ z_replace_variable_slack_by_original( )
     // enter inequality constraint [ in: i ]
     int new_row = slack_A[ i-qp_n].first;
 
-     b_C[ C.size()] = ET( qp_b[ new_row]);
+     b_C[ C.size()] = ET( *(qp_b+ new_row));
     in_C[ new_row ] = C.size();
        C.push_back( new_row);
     
@@ -2225,7 +2226,7 @@ z_replace_variable_slack_by_original( )
     
     
     // prepare kappa
-    ET  kappa = d * ET((*(qp_A + j))[new_row]) 
+    ET  kappa = d * ET(*((*(qp_A + j))+new_row)) 
                 - inv_M_B.inner_product_x( tmp_x.begin(), q_x_O.begin());
 		
 	// note: (-1)/hat{\nu} is stored instead of \hat{\nu}	 
@@ -2295,7 +2296,7 @@ z_replace_variable_slack_by_slack( )
     in_C[ new_row] = k;
        C[ k      ] = new_row;
 
-     b_C[ k] = ET( qp_b[ new_row]);
+     b_C[ k] = ET( *(qp_b+ new_row));
 
     // diagnostic output
     CGAL_qpe_debug {
@@ -3011,7 +3012,7 @@ print_program( ) const
 
 	// original variables
 	for (i = 0; i < qp_n; ++i) 
-	  vout4.out() << (*(qp_A+ i))[row] << ' ';
+	  vout4.out() << *((*(qp_A+ i))+row) << ' ';
 
 	// slack variables
 	if ( ! slack_A.empty()) {
@@ -3036,9 +3037,9 @@ print_program( ) const
 
 	// rhs
 	vout4.out() << " |  "
-		    << ( qp_r[ row] == CGAL::EQUAL      ? ' ' :
-		       ( qp_r[ row] == CGAL::SMALLER ? '<' : '>')) << "=  "
-		    << qp_b[ row];
+		    << ( *(qp_r+ row) == CGAL::EQUAL      ? ' ' :
+		       ( *(qp_r+ row) == CGAL::SMALLER ? '<' : '>')) << "=  "
+		    << *(qp_b+ row);
 		    if (!is_nonnegative) {
 		        vout4.out() << " - " << multiply__A_ixO(row);
 		    }
@@ -3051,13 +3052,13 @@ print_program( ) const
         vout4.out() << "explicit bounds:" << std::endl; 
         for (int i = 0; i < qp_n; ++i) {
             if (*(qp_fl+i)) {                   // finite lower bound
-                vout4.out() << qp_l[i];
+                vout4.out() << *(qp_l+i);
             } else {                            // infinite lower bound
                 vout4.out() << "-inf";
             }
             vout4.out() << " <= x_" << i << " <= ";
             if (*(qp_fu+i)) {
-                vout4.out() << qp_u[i];
+                vout4.out() << *(qp_u+i);
             } else {
                 vout4.out() << "inf";
             }
@@ -3092,7 +3093,7 @@ print_basis( ) const
 		      << "basic constraints:  ";
 	  for (Index_const_iterator i_it = 
 		 C.begin(); i_it != C.end(); ++i_it) {
-	    label = (qp_r[*i_it] == CGAL::EQUAL) ? 'e' : 'i';
+	    label = (*(qp_r+ *i_it) == CGAL::EQUAL) ? 'e' : 'i';
 	    vout2.out() << *i_it << ":" << label << " ";
 	  }
 	  /*
@@ -3224,7 +3225,7 @@ print_ratio_1_original(int k, const ET& x_k, const ET& q_k)
             if (B_O[k] < qp_n) {                         // original variable
                 if (*(qp_fl+B_O[k])) {                   // finite lower bound
                     vout2.out() << "t_O_" << k << ": "
-                    << x_k - (d * ET(qp_l[B_O[k]])) << '/' << q_k
+                    << x_k - (d * ET(*(qp_l+B_O[k]))) << '/' << q_k
                     << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
                     << std::endl;
                 } else {                            // lower bound -infinity
@@ -3243,7 +3244,7 @@ print_ratio_1_original(int k, const ET& x_k, const ET& q_k)
             if (B_O[k] < qp_n) {                         // original variable
                 if (*(qp_fu+B_O[k])) {                   // finite upper bound
                     vout2.out() << "t_O_" << k << ": "
-                    << (d * ET(qp_l[B_O[k]])) - x_k << '/' << q_k
+                    << (d * ET(*(qp_l+B_O[k]))) - x_k << '/' << q_k
                     << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
                     << std::endl;                    
                 } else {                            // upper bound infinity
