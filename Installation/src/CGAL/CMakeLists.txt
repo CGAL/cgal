@@ -27,8 +27,8 @@ else()
   set(CGAL_MinSizeRel_MANGLED_NAME     "${CGAL_BASENAME}-${TOOLSET}-mt-o" ) 
   set(CGAL_RelWithDebInfo_MANGLED_NAME "${CGAL_BASENAME}-${TOOLSET}-mt-g" ) 
   
-  set_target_properties( CGAL PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_Release_MANGLED_NAME}" 
-                                         RELEASE_OUTPUT_NAME        "${CGAL_Debug_MANGLED_NAME}" 
+  set_target_properties( CGAL PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_Debug_MANGLED_NAME}" 
+                                         RELEASE_OUTPUT_NAME        "${CGAL_Release_MANGLED_NAME}" 
                                          MINSIZEREL_OUTPUT_NAME     "${CGAL_MinSizeRel_MANGLED_NAME}" 
                                          RELWITHDEBINFO_OUTPUT_NAME "${CGAL_RelWithDebInfo_MANGLED_NAME}" 
                        )
