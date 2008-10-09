@@ -112,15 +112,15 @@ namespace PD_detail {
   template <class NT, class Access_coordinate_begin_d,
 	    class Point_iterator >
   class A_matrix : public std::unary_function
-  <int, CGAL::Transform_diff_const_iterator
-   <int, A_column
-    <NT, typename Access_coordinate_begin_d::Coordinate_iterator> > >
+  <int, boost::transform_iterator <A_column
+    <NT, typename Access_coordinate_begin_d::Coordinate_iterator>, 
+				   boost::counting_iterator<int> > >
   { 
     typedef PD_detail::A_column
     <NT, typename Access_coordinate_begin_d::Coordinate_iterator> A_column;
   public:
-    typedef CGAL::Transform_diff_const_iterator
-    <int, A_column> result_type;
+    typedef  boost::transform_iterator
+    <A_column, boost::counting_iterator<int> > result_type;
     
     A_matrix ()
     {}
@@ -247,10 +247,12 @@ namespace PD_detail {
   // functor for matrix D
   template <class NT>
   class D_matrix : public std::unary_function
-  <int, CGAL::Transform_diff_const_iterator<int, D_row<NT> > >
+  <int, boost::transform_iterator<D_row<NT>,
+				  boost::counting_iterator<int> > >
   { 
   public:
-    typedef CGAL::Transform_diff_const_iterator<int, D_row<NT> > result_type; 
+    typedef boost::transform_iterator<D_row<NT>,
+	    boost::counting_iterator<int> > result_type; 
     D_matrix ()
     {}
     D_matrix (int d)
@@ -328,16 +330,19 @@ private:
   // QP solver iterator types
   typedef PD_detail::A_matrix <NT, Access_coordinates_begin_d,
 			       Point_iterator> A_matrix;
-  typedef CGAL::Transform_diff_const_iterator<int, A_matrix> A_iterator;
+  typedef boost::transform_iterator<
+    A_matrix, boost::counting_iterator<int> > A_iterator;
 
   typedef PD_detail::B_vector <NT> B_vector;
-  typedef CGAL::Transform_diff_const_iterator<int, B_vector> B_iterator;
+  typedef boost::transform_iterator<
+    B_vector, boost::counting_iterator<int> > B_iterator;
 
   typedef CGAL::Const_oneset_iterator<CGAL::Comparison_result> R_iterator;  
   typedef CGAL::Const_oneset_iterator<NT> C_iterator; 
 
   typedef PD_detail::D_matrix <NT> D_matrix;
-  typedef CGAL::Transform_diff_const_iterator<int, D_matrix> D_iterator;
+  typedef boost::transform_iterator <
+    D_matrix, boost::counting_iterator<int> > D_iterator;
 
   // Program type
   typedef CGAL::Nonnegative_quadratic_program_from_iterators
@@ -685,11 +690,12 @@ private:
     CGAL_optimisation_precondition (p_points.size() > 0);
     QP qp (n, m, 
 	   A_iterator 
-	   (0, A_matrix (d, da_coord, p_points.begin(), p_points.size(), 
+	   (boost::counting_iterator<int>(0), 
+	    A_matrix (d, da_coord, p_points.begin(), p_points.size(), 
 			 q_points.begin())),
-	   B_iterator (0, B_vector (d)), 
+	   B_iterator (boost::counting_iterator<int>(0), B_vector (d)), 
 	   R_iterator (CGAL::EQUAL), 
-	   D_iterator (0, D_matrix (d)),
+	   D_iterator (boost::counting_iterator<int>(0), D_matrix (d)),
 	   C_iterator (nt_0));
 
     delete solver;
