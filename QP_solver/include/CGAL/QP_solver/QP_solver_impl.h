@@ -2824,7 +2824,7 @@ check_basis_inverse( Tag_false)
 	row = ( has_ineq ? C[ col] : col);
 	v_it = tmp_x.begin();
 	for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-	    *v_it = ( *i_it < qp_n ? (*(qp_A+ *i_it))[ row] :  // original
+	    *v_it = ( *i_it < qp_n ? *((*(qp_A+ *i_it))+ row) :  // original
 		      art_A[ *i_it - qp_n].first != (int)row ? et0 :// artific.
 		      ( art_A[ *i_it - qp_n].second ? -et1 : et1));
 	}

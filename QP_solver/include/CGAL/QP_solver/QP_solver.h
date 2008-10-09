@@ -1722,7 +1722,7 @@ ratio_test_2__p( Tag_false)
 	    i_it != B_O.end();
 	    ++i_it,                ++v_it                ) {
       *v_it = ( sign ? 
-		(*(qp_A+ *i_it))[ row] : - (*(qp_A + *i_it))[ row]);
+		*((*(qp_A+ *i_it))+ row) : - (*((*(qp_A + *i_it))+ row)));
     }
 
     // compute  ( p_l | p_x_O )^T = M_B^{-1} * ( 0 | A_{S_j,B_O} )^T
