@@ -167,7 +167,8 @@ void Model::process_atom(const char *line) {
     Monomer *cur_residue=NULL;
   
     if (insertion_residue_code != ' '){
-      if (curchain.insert_residues_.find(resindex) == curchain.insert_residues_.end()
+      if (curchain.insert_residues_.find(resindex) 
+          == curchain.insert_residues_.end()
           || curchain.insert_residues_[resindex].find(Chain::IR_key(insertion_residue_code)) 
           == curchain.insert_residues_[resindex].end()) {
         Monomer::Type rl= Monomer::type(resname);
@@ -230,7 +231,7 @@ void Model::process_atom(const char *line) {
       oss << "Error adding atom to residue " <<  resindex << std::endl;
       CGAL_PDB_INTERNAL_NS::error_logger.new_warning(oss.str().c_str());
     }
-	
+    
     //residue(resnum-1)->set_coords (al, Point(x,y,z));
     //residue(resnum-1)->set_index(al, snum);
     //++cur_atom_index;
@@ -247,7 +248,7 @@ void Model::process_line(const char *line) {
   if (lt== CGAL_PDB_INTERNAL_NS::ATOM) {
     process_atom(line);
   } else if (lt == CGAL_PDB_INTERNAL_NS::TER) {
-    assert(!chains_.empty());
+    //CGAL_assertion(!chains_.empty());
     //chains_.back().process_line(line);
   } else if (lt== CGAL_PDB_INTERNAL_NS::HETATM){
     process_hetatom(line);

@@ -69,7 +69,7 @@ int main(int , char *[]){
   }
 	
   p.write(of);
-  std::ofstream tmpfile("/tmp/out.pdb");
+  //std::ofstream tmpfile("/tmp/out.pdb");
   //p.write(tmpfile);
   //of << std::fflush;
 	

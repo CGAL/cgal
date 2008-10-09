@@ -30,7 +30,7 @@ int main(int , char *[]){
   //assert(argc==3);
   std::ifstream in("data/check_hetatom.pdb");
   CGAL_PDB_NS::PDB p(in);
-  p.write(std::cout);
+  //p.write(std::cout);
   std::ostringstream of;
   
   std::cout << "There are " << p.number_of_models() << " models." << std::endl;

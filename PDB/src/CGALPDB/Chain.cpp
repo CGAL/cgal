@@ -58,14 +58,16 @@ int Chain::write(char chain, int start_index, std::ostream &out) const {
     //residues_[i]->atoms();
     start_index= res.write(chain, it->key().index(), ' ', start_index, out);
     
-    IR_Map::const_iterator irit= insert_residues_.find(it->key());
+    /*IR_Map::const_iterator irit= insert_residues_.find(it->key());
     if (irit!= insert_residues_.end()) {
       for (unsigned int i=0; i< irit->data().size(); ++i){
+        ir= irit->data().find(IR_key(i));
+        CGAL_assertion(ir != irit->data().
 	start_index= 
-	  irit->data().find(IR_key(i))->data().write(chain, it->key().index(),
-						     irit->data().find(IR_key(i))->key().index(), start_index, out);
+	  ir->data().write(chain, it->key().index(),
+                           ir->key().index(), start_index, out);
       }
-    }
+      }*/
     last_resindex= it->key();
     last_type= it->data().type();
   }

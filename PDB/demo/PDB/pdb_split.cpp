@@ -35,7 +35,8 @@
   chain.
 */
 
-std::string make_fname(std::string format, int model, char chain, std::string name) {
+std::string make_fname(std::string format, int model, char chain,
+                       std::string name, bool skip_empty) {
   std::ostringstream oss;
   std::size_t t= format.find("%c%");
   if (t != std::string::npos) {
@@ -43,7 +44,9 @@ std::string make_fname(std::string format, int model, char chain, std::string na
     if (chain != ' ') {
       oss << chain;
     } else {
-      oss << "-";
+      if (!skip_empty) {
+        oss << "-";
+      }
     }
     format.replace(t, 3, oss.str(), 0, oss.str().size());
   }
@@ -53,7 +56,9 @@ std::string make_fname(std::string format, int model, char chain, std::string na
     if (model != -1) {
       oss << model;
     } else {
-      oss << "-";
+      if (!skip_empty) {
+        oss << "-";
+      }
     }
     format.replace(t, 3, oss.str(),0,  oss.str().size());
   }
@@ -62,7 +67,10 @@ std::string make_fname(std::string format, int model, char chain, std::string na
     if (!name.empty()) {
       format.replace(t, 3, name, 0, name.size());
     } else {
-      std::string nn("noname");
+      std::string nn;
+      if (!skip_empty) {
+        nn="noname";
+      }
       format.replace(t, 3, nn, 0, nn.size());
     }
   }
@@ -75,6 +83,8 @@ int main(int argc, char *argv[]){
   bool split_chains=false;
   bool split_models=false;
   bool split_heterogens=false;
+  bool skip_empty_fields=false;
+  bool strip_headers=false;
   std::string input_file, output_template;
   bool print_help=false;
   bool verbose=false;
@@ -90,7 +100,14 @@ int main(int argc, char *argv[]){
     ("split-heterogens,h", boost::program_options::bool_switch(&split_heterogens),
      "Split all heterogens into separate files.")
     ("split-models,m", boost::program_options::bool_switch(&split_models),
-     "Split all models into separate files.");
+     "Split all models into separate files.")
+    ("strip-headers,h", boost::program_options::bool_switch(&strip_headers),
+     "Do not output any header lines to the PDB files, just output coordinates "
+     "and connectivity.")
+    ("skip-empty,k", boost::program_options::bool_switch(&skip_empty_fields),
+     "Remove fields which have no value from the output file name rather "
+     "than inserting a placehold. If this if false, name.%n%.pdb becomes "
+     "name.noname.pdb. If it is true it becomes name..pdb.");
   po.add_options()
     ("input-pdb", boost::program_options::value< std::string>(&input_file),
      "input file")
@@ -158,17 +175,17 @@ int main(int argc, char *argv[]){
 	PDB out;
 	out.insert(PDB::Model_key(0), it->model());
 	outputs[make_fname(output_template, it->key().index(),
-			   '-', std::string())]= out;
+			   '-', std::string(), skip_empty_fields)]= out;
       } else {
 	for (Model::Chain_const_iterator cit= it->model().chains_begin();
 	     cit != it->model().chains_end(); ++cit) {
 	  std::string name;
 	  if (split_models) {
 	    name= make_fname(output_template, it->key().index(), cit->key().index(),
-			     cit->chain().name());
+			     cit->chain().name(), skip_empty_fields);
 	  } else {
 	    name= make_fname(output_template, -1, cit->key().index(),
-			     cit->chain().name());
+			     cit->chain().name(), skip_empty_fields);
 	  }
 	  Model model;
 	  model.insert(cit->key(), cit->chain());
@@ -189,10 +206,10 @@ int main(int argc, char *argv[]){
           }
 	  if (split_models) {
 	    fname= make_fname(output_template, it->key().index(), cit->heterogen().chain(),
-                              name);
+                              name, skip_empty_fields);
 	  } else {
 	    fname= make_fname(output_template, -1, cit->heterogen().chain(),
-                              name);
+                              name, skip_empty_fields);
 	  }
           PDB::Model_key mk;
           if (split_models) {
@@ -211,7 +228,7 @@ int main(int argc, char *argv[]){
       }
     }
   } else {
-    outputs[make_fname(output_template, -1, '-', std::string())]
+    outputs[make_fname(output_template, -1, '-', std::string(), skip_empty_fields)]
 					 =pdb;
   }
 
@@ -223,7 +240,9 @@ int main(int argc, char *argv[]){
       continue;
     }
     std::cout << "Writing file " << it->first << std::endl;
-    it->second.set_header(pdb.headers_begin(), pdb.headers_end());
+    if (!strip_headers) {
+      it->second.set_header(pdb.headers_begin(), pdb.headers_end());
+    }
     it->second.write(out);
   }
 

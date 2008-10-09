@@ -20,7 +20,7 @@
 
 #include <CGAL/PDB/Heterogen.h>
 #include <CGAL/PDB/internal/Error_logger.h>
-#include <CGAL/PDB/internal/pdb_utils.h>
+#include <CGAL/basic.h>
 #include <iostream>
 #include <limits>
 
@@ -34,10 +34,16 @@ void Heterogen::copy_from(const Heterogen &o) {
   type_= o.type_;
   bonds_.clear();
   for (unsigned int i=0; i< o.bonds_.size(); ++i) {
-    std::string nma=bonds_[i].first.key();
-    std::string nmb=bonds_[i].second.key();
-    Bond nb(Bond_endpoint(find(nma)),
-            Bond_endpoint(find(nmb)));
+    std::string nma=o.bonds_[i].first.key();
+    std::string nmb=o.bonds_[i].second.key();
+    Atom_const_iterator ita=find(nma);
+    Atom_const_iterator itb=find(nmb);
+    CGAL_assertion(ita != o.atoms_end());
+    CGAL_assertion(itb != atoms_end());
+    // needed due to idiotic C++ syntax
+    Bond_endpoint bea(ita);
+    Bond_endpoint beb(itb);
+    Bond nb(bea, beb);
     bonds_.push_back(nb);
   }
   chain_=o.chain_;

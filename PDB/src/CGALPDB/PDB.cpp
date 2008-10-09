@@ -39,8 +39,9 @@ void PDB::load(std::istream &in, bool print_errors){
   CGAL_PDB_INTERNAL_NS::error_logger.set_is_output(print_errors);
   std::map<char, std::string> names;
   std::string last_name;
-  Model_key cur_model(0);
+  Model_key cur_model(1);
   bool done_with_model=false;
+  char dummy_char;
   while (in.getline (line, 600)) {
       
     CGAL_PDB_INTERNAL_NS::Line_type lt= CGAL_PDB_INTERNAL_NS::line_type(line);
@@ -64,10 +65,24 @@ void PDB::load(std::istream &in, bool print_errors){
     } else if (lt == CGAL_PDB_INTERNAL_NS::COMPND) {
       header_.push_back(std::string(line));
       int ti;
-      char chain;
-      if (std::sscanf(line, "COMPND %d CHAIN: %c", &ti, &chain) == 2) {
-	names[chain]=last_name;
-      } else if (std::sscanf(line, "COMPND %d MOLECULE:", &ti) ==1) {
+      char dummychain;
+      // need dummychain to enforce matching of the CHAIN part of the string
+      if (sscanf(line, "COMPND %d CHAIN: %c", &ti,&dummychain) == 2) {
+        std::istringstream iss(line+17);
+        //std::cout << "Line is " << line+17 << std::endl;
+        //std::cout << "Name is " << last_name << std::endl;
+        while (true) {
+          char chain='\0';
+          iss >> chain;
+          if (chain == '\0') break;
+          if (chain == ' ') continue;
+          if (chain == ',') continue;
+          if (chain == ';') break;
+          //std::cout << "Chain is " << chain << std::endl;
+          names[chain]=last_name;
+        }
+	
+      } else if (sscanf(line, "COMPND %d MOLECULE: %c", &ti, &dummy_char) ==2) {
 	int len= std::strlen(line);
 	CGAL_assertion(line[len]=='\0');
 	--len;
@@ -94,6 +109,7 @@ void PDB::load(std::istream &in, bool print_errors){
       std::sscanf(line, "%s %d", buf, &mnum);
       //new_model(Model_key(mnum), Model());
       cur_model= Model_key(mnum);
+      done_with_model=false;
     } else if (  lt== CGAL_PDB_INTERNAL_NS::HETATM 
 		 || lt== CGAL_PDB_INTERNAL_NS::ATOM ) {
       if (done_with_model) {
@@ -102,8 +118,9 @@ void PDB::load(std::istream &in, bool print_errors){
         done_with_model=false;
       }
       models_[cur_model].process_line(line);
-    } else if (lt== CGAL_PDB_INTERNAL_NS::TER 
-               || lt== CGAL_PDB_INTERNAL_NS::ENDMDL){
+    } else if (lt== CGAL_PDB_INTERNAL_NS::TER){
+      models_[cur_model].process_line(line);
+    } else if (lt== CGAL_PDB_INTERNAL_NS::ENDMDL){
       done_with_model=true;
       models_[cur_model].process_line(line);
     } else if (lt== CGAL_PDB_INTERNAL_NS::MASTER){
