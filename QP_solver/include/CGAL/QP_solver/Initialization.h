@@ -238,7 +238,7 @@ set_up_auxiliary_problem()
     // 0<=i<qp_n), and therefore, rhs=b-Ax is not simply b as in the standard
     // form case, but Ax_init-b:
     const ET rhs = check_tag(Is_nonnegative())?
-      qp_b[i] : ET(qp_b[i]) - multiply__A_ixO(i);
+      ET(qp_b[i]) : ET(qp_b[i]) - multiply__A_ixO(i);
 
     if (has_ineq && (qp_r[i] != CGAL::EQUAL)) { // inequality constraint, so we
 					       // add a slack variable, and (if

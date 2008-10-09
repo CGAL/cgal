@@ -183,7 +183,7 @@ update_maxima( )
 
 	    // scan row and update maxima
 	    for ( col = 0; col < n; ++col) {
-		z = CGAL::abs( (*(a_it + col))[ row]);
+		z = CGAL::abs( *((*(a_it + col))+row));
 		if ( z > row_max      ) row_max       = z;
 		if ( z > col_max[ col]) col_max[ col] = z;
 	    }
