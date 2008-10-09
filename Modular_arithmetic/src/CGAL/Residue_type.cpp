@@ -18,7 +18,7 @@
 // Author(s)     : Michael Hemmer
 
 
-#include <CGAL/residue.h>
+#include <CGAL/Residue.h>
 
 namespace CGAL{
 #ifdef CGAL_HAS_THREADS
