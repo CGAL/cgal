@@ -86,6 +86,7 @@ TriangulationPointInputAndConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouse
   for(std::list<QGraphicsPolygonItem*>::iterator it = qfaces.begin();
       it != qfaces.end();
       ++it){
+    scene_->removeItem(*it);
     delete *it;
   }
   qfaces.clear();
