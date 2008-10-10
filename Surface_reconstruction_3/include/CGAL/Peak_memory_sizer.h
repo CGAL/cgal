@@ -68,19 +68,26 @@ struct Peak_memory_sizer : public Memory_sizer
       size_t m,m_low,m_high,m_tol;
       char*  p;
       size_t m_max;
-
-      // Get physical system memory size
-      m_sys = (size_t) (taucs_system_memory_size() + 0.5);
-
-      // If m_sys is meaningful, then we limit malloc test by m_sys
-      // to avoid an infinite loop on linux (malloc() never returns null
-      // due to "optimistic memory allocation").
-      // TODO: replace m_sys by virtual address space limit?        
-      if (m_sys > 0)
-        m_max = m_sys;
+      
+      // Limit malloc test to avoid an infinite loop on Linux
+      // (malloc() never returns null due to "optimistic memory allocation").
+  
+      int is_32_bits = (sizeof(void*) == 4);
+      if (is_32_bits)
+      {
+        m_max = 4294967295; // 2^32 - 1 = 4 GB
+      }
       else
-        m_max = (std::numeric_limits<size_t>::max)();
-
+      {
+        // Limit malloc test by physical system memory size.
+        // TODO: replace m_sys by virtual address space limit?        
+        m_sys = (size_t) (taucs_system_memory_size() + 0.5);
+        if (m_sys > 0)
+          m_max = m_sys;
+        else
+          m_max = (std::numeric_limits<size_t>::max)();
+      }
+      
       /* malloc test */
 
       m = 1048576;
