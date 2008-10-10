@@ -261,8 +261,10 @@ private:
     CGAL_assertion(N == C);
 
     double alpha = CGAL_PI * 20 / 180.0;
-    RT diry = std::sin( alpha) * 256*256*256;
-    RT dirx = std::cos( alpha) * 256*256*256;
+    int tmpy = std::sin( alpha) * 128*256;
+    int tmpx = std::cos( alpha) * 128*256;
+	RT diry = tmpy;
+	RT dirx = tmpx;
     RT sin_alpha;
     RT cos_alpha;
     RT w;
