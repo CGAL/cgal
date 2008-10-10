@@ -18,7 +18,7 @@ if ( CGAL_FOUND AND QT3_FOUND )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( straight_skeleleton_2_toolbar.h straight_skeleleton_2_toolbar.moc )
+  qt3_generate_moc( straight_skeleton_2_toolbar.h straight_skeleleton_2_toolbar.moc )
   qt3_generate_moc( straight_skeleton_2_toolbar_layers.h straight_skeleton_2_toolbar_layers.moc )
   qt3_generate_moc( straight_skeleton_2.cpp straight_skeleton_2.moc )
 
