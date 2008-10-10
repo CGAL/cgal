@@ -14,7 +14,7 @@ find_package(Qt3-patched QUIET)
 # that it can be used together with FindQt4: all its variables are prefixed
 # by "QT3_" instead of "QT_".
 
-if ( CGAL_QT3_FOUND AND QT3_FOUND )
+if ( CGAL_Qt3_FOUND AND QT3_FOUND )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
