@@ -19,7 +19,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+// Author(s)     : Sylvain Pion
 //                 Menelaos Karavelas <mkaravel@cse.nd.edu>
 
 #ifndef CGAL_HOMOGENEOUS_CONVERTER_H

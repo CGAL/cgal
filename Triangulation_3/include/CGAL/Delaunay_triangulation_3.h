@@ -16,7 +16,7 @@
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+//                 Sylvain Pion
 //                 Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
 
 

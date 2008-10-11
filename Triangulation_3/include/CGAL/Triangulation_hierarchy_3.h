@@ -16,7 +16,7 @@
 // 
 //
 // Author(s)     : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
-//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+//                 Sylvain Pion
 
 #ifndef CGAL_TRIANGULATION_HIERARCHY_3_H
 #define CGAL_TRIANGULATION_HIERARCHY_3_H

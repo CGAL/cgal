@@ -16,7 +16,7 @@
 // 
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+//                 Sylvain Pion
 //                 Christophe Delage <Christophe.Delage@sophia.inria.fr>
 
 #ifndef CGAL_REGULAR_TRIANGULATION_3_H

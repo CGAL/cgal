@@ -21,10 +21,11 @@
 // $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
+//             Sylvain Pion
 //             Pedro Machado    <tashimir@gmail.com>
 //             Julien Hazebrouck
 //             Damien Leroy
+
 #ifndef CGAL_ALGEBRAIC_KERNEL_POLYNOMIALS_1_3_H
 #define CGAL_ALGEBRAIC_KERNEL_POLYNOMIALS_1_3_H
 

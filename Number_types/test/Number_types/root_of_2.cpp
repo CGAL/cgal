@@ -1,11 +1,9 @@
-
-
 // Copyright (c) 2003  INRIA Sophia-Antipolis (France) and
 //                     Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//           Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
+//           Sylvain Pion
 // 
 // Partially supported by the IST Programme of the EU as a Shared-cost
 // RTD (FET Open) Project under Contract No  IST-2000-26473 

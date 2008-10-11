@@ -22,7 +22,7 @@
 // $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
+//             Sylvain Pion
 //             Pedro Machado    <tashimir@gmail.com>
 //             Julien Hazebrouck
 //             Damien Leroy

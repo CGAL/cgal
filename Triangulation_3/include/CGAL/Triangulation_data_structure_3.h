@@ -16,7 +16,7 @@
 // 
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+//                 Sylvain Pion
 //
 // combinatorial triangulation of the boundary of a polytope
 // of dimension d in dimension d+1

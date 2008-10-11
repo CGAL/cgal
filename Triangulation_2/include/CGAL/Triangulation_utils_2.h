@@ -16,8 +16,9 @@
 // 
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
-//                 Sylvain Pion    <Sylvain.Pion@sophia.inria.fr>
+//                 Sylvain Pion
 //                 Andreas Fabri   <Andreas.Fabri@geometryfactory.com>
+
 #ifndef CGAL_TRIANGULATION_UTILS_2_H
 #define CGAL_TRIANGULATION_UTILS_2_H
 

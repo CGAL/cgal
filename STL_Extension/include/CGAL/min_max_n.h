@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+// Author(s)     : Sylvain Pion
 
 #ifndef CGAL_MIN_MAX_N_H
 #define CGAL_MIN_MAX_N_H

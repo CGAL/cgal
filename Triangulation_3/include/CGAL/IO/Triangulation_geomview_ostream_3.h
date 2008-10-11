@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+// Author(s)     : Sylvain Pion
 
 #ifndef CGAL_IO_TRIANGULATION_GEOMVIEW_OSTREAM_3_H
 #define CGAL_IO_TRIANGULATION_GEOMVIEW_OSTREAM_3_H

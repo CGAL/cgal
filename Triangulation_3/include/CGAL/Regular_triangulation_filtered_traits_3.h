@@ -14,8 +14,7 @@
 // $URL$
 // $Id$
 // 
-//
-// Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+// Author(s)     : Sylvain Pion
 
 #ifndef CGAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
 #define CGAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
