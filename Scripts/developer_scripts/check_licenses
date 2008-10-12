@@ -98,10 +98,12 @@ echo
 echo Detailed results excluding examples and demo:
 
 for EXT in $EXTENSIONS; do
-	echo
-	echo $EXT files
-	echo
-	cat $PREFIX2.$EXT
+	if [ `cat $PREFIX2.$EXT | wc -l` -gt 0 ]; then
+		echo
+		echo $EXT files
+		echo
+		cat $PREFIX2.$EXT
+	fi
 done
 
 echo
