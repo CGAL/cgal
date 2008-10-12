@@ -22,7 +22,7 @@
 
 #ifndef CGAL_NO_AUTOLINK_PDB
 
-#define CGAL_LIB_NAME CGAL-PDB
+#define CGAL_LIB_NAME CGAL_PDB
 #include <CGAL/auto_link/auto_link.h>
 
 #endif // CGAL_NO_AUTOLINK_PDB

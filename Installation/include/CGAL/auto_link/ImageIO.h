@@ -22,7 +22,7 @@
 
 #ifndef CGAL_NO_AUTOLINK_IMAGEIO
 
-#define CGAL_LIB_NAME CGAL-ImageIO
+#define CGAL_LIB_NAME CGAL_ImageIO
 #include <CGAL/auto_link/auto_link.h>
 
 #endif // CGAL_NO_AUTOLINK_IMAGEIO
