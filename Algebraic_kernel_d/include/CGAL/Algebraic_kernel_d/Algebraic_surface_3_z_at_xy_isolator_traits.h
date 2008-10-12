@@ -32,6 +32,8 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Cache.h>
 
+#include <CGAL/number_utils.h>
+
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>
 #include <CGAL/Algebraic_curve_kernel_2/alg_real_utils.h>
 
@@ -255,19 +257,19 @@ public:
             std::cout << "f2: " << f2 << std::endl;
             std::cout << "f3: " << f3 << std::endl;
             std::cout << "Coprime 1.." << std::flush;
-#endif            
+#endif      
             Polynomial_2 gcd12 = CGAL::CGALi::gcd(f1,f2);
-            f2 = NiX::integral_div(f2,gcd12);
+            f2 = CGAL::integral_division(f2,gcd12);
 #if !NDEBUG
             std::cout << "2.." << std::flush;
 #endif
             Polynomial_2 gcd13 = CGAL::CGALi::gcd(f1,f3);
-            f3 = NiX::integral_div(f3,gcd13);
+            f3 = CGAL::integral_division(f3,gcd13);
 #if !NDEBUG
             std::cout << "3.." << std::flush;
 #endif            
             Polynomial_2 gcd23 = CGAL::CGALi::gcd(f2,f3);
-            f3 = NiX::integral_div(f3,gcd23);
+            f3 = CGAL::integral_division(f3,gcd23);
 #if !NDEBUG
             std::cout << "done" << std::endl;
             std::cout << "f1: " << f1 << std::endl;
