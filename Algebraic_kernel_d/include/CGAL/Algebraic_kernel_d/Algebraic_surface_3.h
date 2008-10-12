@@ -18,12 +18,12 @@
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 
+#ifndef CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_SURFACE_3_H
+#define CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_SURFACE_3_H 1
+
 /*!\file include/CGAL/Algebraic_kernel_d/Algebraic_surface_3.h
  * \brief Class that defines a real algebraic surface in 3d.
  */
-
-#ifndef CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_SURFACE_3_H
-#define CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_SURFACE_3_H 1
 
 // define for determining the resultant computation scheme
 #ifndef CGAL_RESULTANT
