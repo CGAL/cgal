@@ -208,7 +208,7 @@ namespace CGAL {
     return ! (x == y);
   }
   
-  template < typename Kernel_ > struct Iso_box_d;
+  template < typename Kernel_ > class Iso_box_d;
   
   namespace Kernel_d {
 
