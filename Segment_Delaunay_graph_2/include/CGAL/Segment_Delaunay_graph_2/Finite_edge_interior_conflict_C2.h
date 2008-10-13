@@ -25,6 +25,11 @@
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4800) // complaint about performance where we can't do anything
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
@@ -716,5 +721,11 @@ public:
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_FINITE_EDGE_INTERIOR_CONFLICT_C2_H
