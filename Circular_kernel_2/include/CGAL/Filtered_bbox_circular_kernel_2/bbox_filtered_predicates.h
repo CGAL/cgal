@@ -512,7 +512,7 @@ class Has_on_2 : public BK::Circular_kernel::Has_on_2
 
 
 template <class BK>
-class Equal_2 : public BK::Circular_kernel::Equal_2
+class Equal_2
   {
     typedef typename BK::Circular_kernel                                  CK;
     typedef typename BK::Circular_arc_2                                   Circular_arc_2;
@@ -521,8 +521,7 @@ class Equal_2 : public BK::Circular_kernel::Equal_2
 
   public:
 
-    typedef typename CK::Equal_2::result_type result_type; 
-    using CK::Equal_2::operator();
+    typedef bool result_type; 
 
   private:
 
@@ -553,7 +552,7 @@ class Equal_2 : public BK::Circular_kernel::Equal_2
 
     result_type
     operator()( const Circular_arc_point_2 &a ,
-                const Circular_arc_point_2 &b ) const
+                const Circular_arc_point_2 &b) const
     { 
       Bbox_2 bb1=a.bbox(),bb2=b.bbox();
       if(bb1.xmin() > bb2.xmax()) return false;
@@ -709,12 +708,12 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
   };
 
   template < class BK >
-  class Do_intersect_2 : public BK::Circular_kernel::Do_intersect_2
+  class Do_intersect_2 : public BK::Circular_kernel::Linear_kernel::Do_intersect_2
   {
   public:
     typedef typename BK::Circular_kernel            CK;
     typedef typename CK::Do_intersect_2::result_type result_type; 
-    using CK::Do_intersect_2::operator();
+    using BK::Circular_kernel::Linear_kernel::Do_intersect_2::operator();
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
@@ -722,7 +721,7 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
   };
 
   template < class BK >
-  class Intersect_2 : public BK::Circular_kernel::Intersect_2
+  class Intersect_2 : public BK::Circular_kernel::Linear_kernel::Intersect_2
   {
     public:
 
@@ -737,7 +736,141 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
     typedef typename BK::Line_2                   Line_2;
 
     typedef typename CK::Intersect_2::result_type result_type; 
-    using CK::Intersect_2::operator();
+    using BK::Circular_kernel::Linear_kernel::Intersect_2::operator();
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_2 & c1, const Circle & c2, OutputIterator res)
+      {
+	      std::vector<Object> vec;
+         
+        CK().intersect_2_object()(c1,c2,std::back_inserter(vec));
+
+        for(unsigned i=0; i<vec.size() ; i++)
+        {
+          const std::pair<Rcirc_arc_point_2, unsigned> *tmp_point;
+
+          if ( (tmp_point=object_cast<std::pair<Rcirc_arc_point_2, unsigned> >(&vec.at(i)))!=NULL )
+            *res++ = make_object( std::make_pair(Circular_arc_point_2(tmp_point->first),tmp_point->second));
+          else
+            *res++=vec.at(i);
+        }
+
+        return res;
+	    }
+	
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circle & c1, const Line_2 & c2, OutputIterator res)
+      {
+	      std::vector<Object> vec;
+         
+        CK().intersect_2_object()(c1,c2,std::back_inserter(vec));
+
+        for(unsigned i=0; i<vec.size() ; i++)
+        {
+          const std::pair<Rcirc_arc_point_2, unsigned> *tmp_point;
+
+          if ( (tmp_point=object_cast<std::pair<Rcirc_arc_point_2, unsigned> >(&vec.at(i)))!=NULL )
+            *res++ = make_object( std::make_pair(Circular_arc_point_2(tmp_point->first),tmp_point->second));
+          else
+            *res++=vec.at(i);
+        }
+
+        return res;
+	    }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc_2 & c1, const Circle & c2, OutputIterator res)
+      {
+        if(!do_overlap(c1.bbox(),c2.bbox()))
+          return res;
+
+	      std::vector<Object> vec;
+         
+        CK().intersect_2_object()(c1.arc(),c2,std::back_inserter(vec));
+
+        for(unsigned i=0; i<vec.size() ; i++)
+        {
+          const std::pair<Rcirc_arc_point_2, unsigned> *tmp_point;
+
+          if ( (tmp_point=object_cast<std::pair<Rcirc_arc_point_2, unsigned> >(&vec.at(i)))!=NULL )
+            *res++ = make_object( std::make_pair(Circular_arc_point_2(tmp_point->first),tmp_point->second));
+          else
+            *res++=vec.at(i);
+        }
+
+        return res;
+	    }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circle & c1, const Line_arc_2 & c2, OutputIterator res)
+      {
+        if(!do_overlap(c1.bbox(),c2.bbox()))
+          return res;
+
+	      std::vector<Object> vec;
+         
+        CK().intersect_2_object()(c1,c2.arc(),std::back_inserter(vec));
+
+        for(unsigned i=0; i<vec.size() ; i++)
+        {
+          const std::pair<Rcirc_arc_point_2, unsigned> *tmp_point;
+
+          if ( (tmp_point=object_cast<std::pair<Rcirc_arc_point_2, unsigned> >(&vec.at(i)))!=NULL )
+            *res++ = make_object( std::make_pair(Circular_arc_point_2(tmp_point->first),tmp_point->second));
+          else
+            *res++=vec.at(i);
+        }
+
+        return res;
+	    }
+
+		template < class OutputIterator >
+		OutputIterator
+		operator()(const Line_2 & c1, const Circular_arc_2 & c2, 
+		      OutputIterator res)
+		  {
+	      std::vector<Object> vec;
+         
+        CK().intersect_2_object()(c1,c2.arc(),std::back_inserter(vec));
+
+        for(unsigned i=0; i<vec.size() ; i++)
+        {
+          const std::pair<Rcirc_arc_point_2, unsigned> *tmp_point;
+
+          if ( (tmp_point=object_cast<std::pair<Rcirc_arc_point_2, unsigned> >(&vec.at(i)))!=NULL )
+            *res++ = make_object( std::make_pair(Circular_arc_point_2(tmp_point->first),tmp_point->second));
+          else
+            *res++=vec.at(i);
+        }
+
+        return res;
+		  }
+
+		template < class OutputIterator >
+		OutputIterator
+		operator()(const Line_2 & c1, const Line_arc_2 & c2, 
+		       OutputIterator res)
+		  {
+	      std::vector<Object> vec;
+         
+        CK().intersect_2_object()(c1,c2,std::back_inserter(vec));
+
+        for(unsigned i=0; i<vec.size() ; i++)
+        {
+          const std::pair<Rcirc_arc_point_2, unsigned> *tmp_point;
+
+          if ( (tmp_point=object_cast<std::pair<Rcirc_arc_point_2, unsigned> >(&vec.at(i)))!=NULL )
+            *res++ = make_object( std::make_pair(Circular_arc_point_2(tmp_point->first),tmp_point->second));
+          else
+            *res++=vec.at(i);
+        }
+
+        return res;
+			}
 
     template < class OutputIterator >
     OutputIterator
@@ -746,10 +879,9 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
         if(!do_overlap(c1.bbox(),c2.bbox()))
           return res;
 
-	std::vector<Object> vec;
+	      std::vector<Object> vec;
          
         CK().intersect_2_object()(c1,c2,std::back_inserter(vec));
-        //return CK().intersect_2_object()(c1,c2,res);
 
         for(unsigned i=0; i<vec.size() ; i++)
         {
@@ -886,22 +1018,6 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
     operator()(const Line_arc_2 & c1, const Circular_arc_2 & c2, 
 	       OutputIterator res)
       {	return operator()(c2,c1,res);}
-   
-	    template < class OutputIterator >
-	  OutputIterator
-	  operator()(const Line_2 & c1, const Circular_arc_2 & c2, 
-		       OutputIterator res)
-	    {
-		    return CK().intersect_2_object()(c1,c2.arc(),res);
-		  }
-
-		template < class OutputIterator >
-		OutputIterator
-		operator()(const Line_2 & c1, const Line_arc_2 & c2, 
-		       OutputIterator res)
-		  {
-			  return CK().intersect_2_object()(c1,c2.arc(),res);
-			}	  
 
 		    template < class OutputIterator >
 		  OutputIterator

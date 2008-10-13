@@ -417,9 +417,9 @@ void _test_circle_predicat(CK ck)
 
   // Testing Comparison Operators
   Circular_arc_point_2 p[3];
-	p[0] = Point_2(1,0);
-  p[1] = Point_2(1,0); 
-  p[2] = Point_2(0,1);
+	p[0] = Circular_arc_point_2(Point_2(1,0));
+  p[1] = Circular_arc_point_2(Point_2(1,0)); 
+  p[2] = Circular_arc_point_2(Point_2(0,1));
   std::cout << "Testing lexico_operations(Circular_arc_point, Circular_arc_point)..." << std::endl;
 	assert(p[0] > p[2]);
 	assert(p[0] >= p[1]);

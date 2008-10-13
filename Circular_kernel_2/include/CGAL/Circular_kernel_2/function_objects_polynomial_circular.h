@@ -461,6 +461,18 @@ namespace CircularFunctors {
 
     template < class OutputIterator >
     OutputIterator
+    operator()(const Line & c1, const Circle & c2, 
+	       OutputIterator res) const
+      { return CircularFunctors::intersect_2<CK> (c1,c2,res); }  
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circle & c1, const Line & c2, 
+	       OutputIterator res) const
+      {	return CircularFunctors::intersect_2<CK> (c1,c2,res); }
+
+    template < class OutputIterator >
+    OutputIterator
     operator()(const Circle & c1, const Circle & c2, OutputIterator res) const
       { return CircularFunctors::intersect_2<CK> (c1,c2,res); }
 

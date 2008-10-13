@@ -377,6 +377,39 @@ namespace CircularFunctors {
 
   template< class CK, class OutputIterator>
   OutputIterator
+  intersect_2( const typename CK::Line_2 & l,
+	       const typename CK::Circle_2 & c,
+	       OutputIterator res )
+  {
+    typedef typename CK::Algebraic_kernel            AK;
+    typedef typename CK::Polynomial_1_2              Equation_line;
+    typedef typename CK::Polynomial_for_circles_2_2  Equation_circle; 
+    typedef typename CK::Root_for_circles_2_2        Root_for_circles_2_2;
+    
+    Equation_line e1 = CK().get_equation_object()(l);
+    Equation_circle e2 = CK().get_equation_object()(c);
+    
+    typedef std::vector< std::pair < Root_for_circles_2_2, unsigned > > 
+      solutions_container;
+    solutions_container solutions;
+
+    AK().solve_object()(e1, e2, std::back_inserter(solutions)); 
+    // to be optimized
+
+    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
+
+    for ( typename solutions_container::iterator it = solutions.begin(); 
+	  it != solutions.end(); ++it )
+      {
+	*res++ = make_object
+	  (std::make_pair(Circular_arc_point_2(it->first), it->second ));
+      }
+
+    return res;
+  }
+
+  template< class CK, class OutputIterator>
+  OutputIterator
   intersect_2( const typename CK::Line_arc_2 &a1,
 	       const typename CK::Line_arc_2 &a2,
 	       OutputIterator res )
@@ -470,7 +503,7 @@ namespace CircularFunctors {
     typedef std::vector<CGAL::Object> solutions_container;
     solutions_container solutions;
 
-    CGAL::LinearFunctors::intersect_2<CK>
+    CircularFunctors::intersect_2<CK>
       ( l.supporting_line(), c, std::back_inserter(solutions) );
     
     for (typename solutions_container::iterator it = solutions.begin(); 
@@ -603,7 +636,7 @@ namespace CircularFunctors {
 	return res;
       } else { //Case 4b
 	solutions_container solutions;
-	CGAL::LinearFunctors::intersect_2<CK>( l.supporting_line(), c.supporting_circle(),
+	CGAL::CircularFunctors::intersect_2<CK>( l.supporting_line(), c.supporting_circle(),
 					       std::back_inserter(solutions) );
 	
 	if(CircularFunctors::compare_x<CK>(r,q) == LARGER){
@@ -632,7 +665,7 @@ namespace CircularFunctors {
          (c,l,solutions)) {
 #endif
 
-      CGAL::LinearFunctors::intersect_2<CK>
+      CGAL::CircularFunctors::intersect_2<CK>
       ( l.supporting_line(), c.supporting_circle(),
 	std::back_inserter(solutions) );
     
@@ -755,7 +788,7 @@ namespace CircularFunctors {
 
     solutions_container solutions;
 
-    CGAL::LinearFunctors::intersect_2<CK>
+    CGAL::CircularFunctors::intersect_2<CK>
       ( l, c.supporting_circle(),
 	std::back_inserter(solutions) );
 
@@ -778,8 +811,8 @@ namespace CircularFunctors {
 	       OutputIterator res )
   {
     return intersect_2<CK>(l,c,res);
-  }
-   
+  }   
+
   template < class CK, class OutputIterator >
   OutputIterator
   make_x_monotone( const typename CK::Line_arc_2 &A,

@@ -302,6 +302,10 @@ public:
 		bool has_no_bbox() const
 		{ return (bb==NULL);}
 		
+	bool equal_ref(const Line_arc_2 &c) const
+  {
+    return CGAL::identical(P_arc, c.P_arc);      
+  }
 		
 	private:
 

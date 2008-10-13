@@ -406,6 +406,7 @@ namespace CircularFunctors {
 	 const typename CK::Circular_arc_point_2 &p,
          const bool has_on_supporting_circle = false)
   {
+
     if( (p.equal_ref(a.source())) || (p.equal_ref(a.source()))) {
       return true;
     }

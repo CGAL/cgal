@@ -72,39 +72,6 @@ namespace LinearFunctors {
            (b1c*c2c == b2c*c1c);
   }
 
-  template< class CK, class OutputIterator>
-  OutputIterator
-  intersect_2( const typename CK::Line_2 & l,
-	       const typename CK::Circle_2 & c,
-	       OutputIterator res )
-  {
-    typedef typename CK::Algebraic_kernel            AK;
-    typedef typename CK::Polynomial_1_2              Equation_line;
-    typedef typename CK::Polynomial_for_circles_2_2  Equation_circle; 
-    typedef typename CK::Root_for_circles_2_2        Root_for_circles_2_2;
-    
-    Equation_line e1 = CK().get_equation_object()(l);
-    Equation_circle e2 = CK().get_equation_object()(c);
-    
-    typedef std::vector< std::pair < Root_for_circles_2_2, unsigned > > 
-      solutions_container;
-    solutions_container solutions;
-
-    AK().solve_object()(e1, e2, std::back_inserter(solutions)); 
-    // to be optimized
-
-    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-
-    for ( typename solutions_container::iterator it = solutions.begin(); 
-	  it != solutions.end(); ++it )
-      {
-	*res++ = make_object
-	  (std::make_pair(Circular_arc_point_2(it->first), it->second ));
-      }
-
-    return res;
-  }
-
 } // namespace LinearFunctors
 } // namespace CGAL
 #endif // CGAL_CIRCULAR_KERNEL_FUNCTIONS_ON_LINE_2_H

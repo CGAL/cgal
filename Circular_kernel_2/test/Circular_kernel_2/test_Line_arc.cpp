@@ -31,6 +31,7 @@
 #include <CGAL/Circular_kernel_2/function_objects_polynomial_circular.h>
 #include <CGAL/Circular_kernel_2/Circular_arc_2.h>
 #include <CGAL/Circular_kernel_2/Line_arc_2.h>
+#include <CGAL/Exact_circular_kernel_2.h>
 
 #include <CGAL/Random.h>
 
@@ -38,10 +39,10 @@ template <class CK>
 void _test_Line_arc(CK ck)
 {
   typedef typename CK::FT                      FT;
-  typedef typename CK::Circle_2                Circle_2;
-  typedef typename CK::Circular_arc_2          Circular_arc_2;
-  typedef typename CK::Point_2                 Point_2;
-  typedef typename CK::Line_2                  Line_2;
+  typedef CGAL::Circle_2<CK>                   Circle_2;
+  typedef CGAL::Circular_arc_2<CK>             Circular_arc_2;
+  typedef CGAL::Point_2<CK>                    Point_2;
+  typedef CGAL::Line_2<CK>                     Line_2;
   typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Split_2                 Split_2;
   typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
@@ -291,13 +292,13 @@ template <class CK>
 void _test_intersection_Line_arc_Circle(CK ck)
 {
   typedef typename CK::FT                      FT;
-  typedef typename CK::Circle_2                Circle_2;
-  typedef typename CK::Circular_arc_2          Circular_arc_2;
-  typedef typename CK::Point_2                 Point_2;
-  typedef typename CK::Line_2                  Line_2;
+  typedef CGAL::Circle_2<CK>                   Circle_2;
+  typedef CGAL::Circular_arc_2<CK>             Circular_arc_2;
+  typedef CGAL::Point_2<CK>                    Point_2;
+  typedef CGAL::Line_2<CK>                     Line_2;
+  typedef CGAL::Line_arc_2<CK>                 Line_arc_2;
+  typedef CGAL::Circular_arc_point_2<CK>       Circular_arc_point_2;
   typedef typename CK::Intersect_2   Intersect_2;
-  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-  typedef typename CK::Line_arc_2              Line_arc_2;
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
@@ -638,14 +639,14 @@ template <class CK>
 void _test_intersection_Line_arc_Circular_arc(CK ck)
 {
   typedef typename CK::FT                      FT;
-  typedef typename CK::Circle_2                Circle_2;
-  typedef typename CK::Circular_arc_2          Circular_arc_2;
-  typedef typename CK::Point_2                 Point_2;
-  typedef typename CK::Line_2                  Line_2;
+  typedef CGAL::Circle_2<CK>                   Circle_2;
+  typedef CGAL::Circular_arc_2<CK>             Circular_arc_2;
+  typedef CGAL::Point_2<CK>                    Point_2;
+  typedef CGAL::Line_2<CK>                     Line_2;
+  typedef CGAL::Line_arc_2<CK>                 Line_arc_2;
+  typedef CGAL::Circular_arc_point_2<CK>       Circular_arc_point_2;
   typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
-  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-  typedef typename CK::Line_arc_2              Line_arc_2;
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
@@ -860,14 +861,14 @@ template <class CK>
 void _test_compare_y_to_right(CK ck)
 {
   typedef typename CK::FT                      FT;
-  typedef typename CK::Circle_2                Circle_2;
-  typedef typename CK::Circular_arc_2          Circular_arc_2;
-  typedef typename CK::Point_2                 Point_2;
-  typedef typename CK::Line_2                  Line_2;
+  typedef CGAL::Circle_2<CK>                   Circle_2;
+  typedef CGAL::Circular_arc_2<CK>             Circular_arc_2;
+  typedef CGAL::Point_2<CK>                    Point_2;
+  typedef CGAL::Line_2<CK>                     Line_2;
+  typedef CGAL::Line_arc_2<CK>                 Line_arc_2;
+  typedef CGAL::Circular_arc_point_2<CK>       Circular_arc_point_2;
   typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
-  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-  typedef typename CK::Line_arc_2              Line_arc_2;
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   std::cout << "random_seed = " << random_seed << std::endl;
@@ -992,14 +993,14 @@ template <class CK>
 void _test_compare_y_at_x(CK ck)
 {
   typedef typename CK::FT                      FT;
-  typedef typename CK::Circle_2                Circle_2;
-  typedef typename CK::Circular_arc_2          Circular_arc_2;
-  typedef typename CK::Point_2                 Point_2;
-  typedef typename CK::Line_2                  Line_2;
+  typedef CGAL::Circle_2<CK>                   Circle_2;
+  typedef CGAL::Circular_arc_2<CK>             Circular_arc_2;
+  typedef CGAL::Point_2<CK>                    Point_2;
+  typedef CGAL::Line_2<CK>                     Line_2;
+  typedef CGAL::Line_arc_2<CK>                 Line_arc_2;
+  typedef CGAL::Circular_arc_point_2<CK>       Circular_arc_point_2;
   typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
-  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-  typedef typename CK::Line_arc_2              Line_arc_2;
   typedef typename CK::Compare_y_at_x_2        Compare_y_at_x_2;
   
   Line_arc_2 line_arc_horizontal(Point_2(-1, 0), Point_2(1, 0));
@@ -1044,14 +1045,14 @@ template <class CK>
 void _test_has_on(CK)
 {
   typedef typename CK::FT                      FT;
-  typedef typename CK::Circle_2                Circle_2;
-  typedef typename CK::Circular_arc_2          Circular_arc_2;
-  typedef typename CK::Point_2                 Point_2;
-  typedef typename CK::Line_2                  Line_2;
+  typedef CGAL::Circle_2<CK>                   Circle_2;
+  typedef CGAL::Circular_arc_2<CK>             Circular_arc_2;
+  typedef CGAL::Point_2<CK>                    Point_2;
+  typedef CGAL::Line_2<CK>                     Line_2;
+  typedef CGAL::Line_arc_2<CK>                 Line_arc_2;
+  typedef CGAL::Circular_arc_point_2<CK>       Circular_arc_point_2;
   typedef typename CK::Intersect_2   Intersect_2;
   typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
-  typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-  typedef typename CK::Line_arc_2              Line_arc_2;
   typedef typename CK::Compare_y_at_x_2        Compare_y_at_x_2;
   
   Line_arc_2 line_arc_horizontal(Point_2(-1, 0), Point_2(1, 0));
@@ -1073,17 +1074,22 @@ void _test_has_on(CK)
 
 }
 
+template <class K>
+void do_test() {
+  _test_Line_arc(K());
+  _test_intersection_Line_arc_Circle(K());
+  _test_intersection_Line_arc_Circular_arc(K());
+  _test_compare_y_to_right(K());
+  _test_compare_y_at_x(K());
+  _test_has_on(K());
+}
+
 int main()
 {
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
   typedef CGAL::Circular_kernel_2<Linear_k1,Algebraic_k1>      CK1;
-  CK1 ck1;
-  _test_Line_arc(ck1);
-  _test_intersection_Line_arc_Circle(ck1);
-  _test_intersection_Line_arc_Circular_arc(ck1);
-  _test_compare_y_to_right(ck1);
-  _test_compare_y_at_x(ck1);
-  _test_has_on(ck1);
+	//do_test< CK1 >();
+	do_test< CGAL::Exact_circular_kernel_2 >();
 }

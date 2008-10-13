@@ -94,7 +94,7 @@ public:
     : RCircular_arc_2(typename 
 		      R::Construct_circular_arc_2()(support, begin, end)) 
   {}
- 
+
   Circular_arc_2(const Point_2 &start,
                  const Point_2 &end,
 		 const FT &bulge)
@@ -244,7 +244,8 @@ public:
 
     Circular_arc_2(){}
 
-    Circular_arc_2(const Circle_2 &c)
+    // otherwise it will lead to ambiguos definitions
+    explicit Circular_arc_2(const Circle_2 &c)
     : P_arc(c),bb(NULL)
     {}
 
@@ -360,6 +361,43 @@ public:
 		
 		bool has_no_bbox() const
 		{ return (bb==NULL);}
+		
+		bool equal_ref(const Circular_arc_2 &c) const
+    {
+      return CGAL::identical(P_arc, c.P_arc);      
+    }
+
+    bool is_full() const {
+			return P_arc.is_full();
+	  }
+
+    bool is_complementary_x_monotone() const {
+      return P_arc.is_complementary_x_monotone();
+    } 
+
+    bool is_complementary_y_monotone() const {
+	    return P_arc.is_complementary_y_monotone();
+    }
+
+    bool two_end_points_on_upper_part() const {
+      return P_arc.two_end_points_on_upper_part();
+    }
+
+    bool complementary_on_upper_part() const {
+      return P_arc.complementary_on_upper_part();
+    }
+
+    bool two_end_points_on_left_part() const {
+      return P_arc.two_end_points_on_left_part();
+    }
+
+    bool on_left_part() const {
+      return P_arc.on_left_part();
+    }
+
+    bool complementary_on_left_part() const {
+      return P_arc.complementary_on_left_part();
+    }
 
 	private:
 

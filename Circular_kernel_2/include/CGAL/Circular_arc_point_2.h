@@ -202,7 +202,7 @@ public:
     : P_point(np), bb(NULL)
       {}
 
-	Circular_arc_point_2(const Point_2 & p)
+  Circular_arc_point_2(const Point_2 & p)
 	  : P_point(p), bb(NULL)
 	{}
 
@@ -244,6 +244,13 @@ bool has_no_bbox() const
         return *bb;     
     }
 
+    const Root_for_circles_2_2 & coordinates() const 
+    { return P_point.coordinates(); }
+
+		bool equal_ref(const Circular_arc_point_2 &p) const
+    {
+      return CGAL::identical(P_point, p.P_point);      
+    }
 
 private:
 

@@ -76,7 +76,7 @@ namespace CGALi {
 	solutions_container;
       
       solutions_container solutions;
-      CGAL::LinearFunctors::intersect_2<CK>
+      CGAL::CircularFunctors::intersect_2<CK>
 	( l, c, std::back_inserter(solutions) );
       typename solutions_container::iterator it = solutions.begin();
       
