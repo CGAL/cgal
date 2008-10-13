@@ -27,6 +27,9 @@
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
+#endif
+
+#ifdef CGAL_USE_GMPXX
 #include <CGAL/mpz_class.h>
 #endif // CGAL_USE_GMP
 
@@ -90,6 +93,9 @@ int main()
 
 #ifdef CGAL_USE_GMP
     test_modular_traits<CGAL::Gmpz>();
+#endif 
+
+#ifdef CGAL_USE_GMPXX
     test_modular_traits< mpz_class >();
 #endif
     
