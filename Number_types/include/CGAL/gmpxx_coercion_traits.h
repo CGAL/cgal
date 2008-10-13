@@ -30,8 +30,6 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Coercion_traits.h>
 
-#ifdef CGAL_USE_GMP
-
 #include <cstring> // needed by GMP 4.1.4 since <gmpxx.h> misses it.
 #include <gmpxx.h>
 #include <mpfr.h>
@@ -109,6 +107,5 @@ struct Coercion_traits< int , ::__gmp_expr< T , U> >
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_USE_GMP
 #endif //CGAL_GMPXX_COERCION_TRAITS_H 1
 //EOF
