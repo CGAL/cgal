@@ -173,19 +173,19 @@ namespace CircularFunctors {
 
     result_type
     operator()(const Circle_2 &a, const Circular_arc_point_2 &p) const
-    { return has_on<CK>(a, p); }
+    { return CircularFunctors::has_on<CK>(a, p); }
     
     result_type
     operator()(const Line_2 &a, const Circular_arc_point_2 &p) const
-    { return has_on<CK>(a, p); }
+    { return LinearFunctors::has_on<CK>(a, p); }
     
     result_type
     operator()(const Circular_arc_2 &a, const Circular_arc_point_2 &p) const
-    { return has_on<CK>(a, p); }
+    { return CircularFunctors::has_on<CK>(a, p); }
 
     result_type
     operator()(const Line_arc_2 &a, const Circular_arc_point_2 &p) const
-    { return has_on<CK>(a, p); }
+    { return CircularFunctors::has_on<CK>(a, p); }
     
   };
   
@@ -203,25 +203,25 @@ namespace CircularFunctors {
     operator()(const Circular_arc_2 &a1,
                const Circular_arc_2 &a2,
                const Circular_arc_point_2 &p) const
-    { return compare_y_to_right<CK>(a1, a2, p); }
+    { return CircularFunctors::compare_y_to_right<CK>(a1, a2, p); }
 
     result_type
     operator()(const Line_arc_2 &a1,
                const Line_arc_2 &a2,
                const Circular_arc_point_2 &p) const
-    { return compare_y_to_right<CK>(a1, a2, p); }
+    { return CircularFunctors::compare_y_to_right<CK>(a1, a2, p); }
 
     result_type
     operator()(const Line_arc_2 &a1,
                const Circular_arc_2 &a2,
                const Circular_arc_point_2 &p) const
-    { return compare_y_to_right<CK>(a1, a2, p); }
+    { return CircularFunctors::compare_y_to_right<CK>(a1, a2, p); }
 
     result_type
     operator()(const Circular_arc_2 &a1,
                const Line_arc_2 &a2,
                const Circular_arc_point_2 &p) const
-    { if (compare_y_to_right<CK>(a2, a1, p) == CGAL::LARGER)
+    { if (CircularFunctors::compare_y_to_right<CK>(a2, a1, p) == CGAL::LARGER)
 	return CGAL::SMALLER;
       return CGAL::LARGER;
     }
@@ -314,15 +314,15 @@ namespace CircularFunctors {
     result_type
     operator() (const Circular_arc_point_2 &p0,
                 const Circular_arc_point_2 &p1) const
-    { return equal<CK>(p0, p1); }
+    { return CircularFunctors::equal<CK>(p0, p1); }
     
     result_type
     operator() (const Circular_arc_2 &a0, const Circular_arc_2 &a1) const
-    { return equal<CK>(a0, a1); }
+    { return CircularFunctors::equal<CK>(a0, a1); }
 
     result_type
     operator() (const Line_arc_2 &a0, const Line_arc_2 &a1) const
-    { return equal<CK>(a0, a1); }
+    { return CircularFunctors::equal<CK>(a0, a1); }
     
    };
 
@@ -1006,7 +1006,7 @@ namespace CircularFunctors {
 
     result_type
     operator()(const Circle_2& c, const Circular_arc_point_2& p) const
-    { return bounded_side<CK>(c,p); }
+    { return CircularFunctors::bounded_side<CK>(c,p); }
 
   };
 
