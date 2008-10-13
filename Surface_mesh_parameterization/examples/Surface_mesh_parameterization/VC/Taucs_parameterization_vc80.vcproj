@@ -46,6 +46,7 @@
 				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;CGAL_USE_TAUCS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
+				ExceptionHandling="2"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
 				ProgramDataBaseFileName="$(IntDir)\$(ProjectName).pdb"
@@ -70,6 +71,7 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;"
 				GenerateDebugInformation="true"
+				StackReserveSize="2097152"
 				LargeAddressAware="2"
 			/>
 			<Tool
@@ -128,6 +130,7 @@
 				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\..\..\OpenNL\include;..\..\..\..\Installation\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
 				PreprocessorDefinitions="WIN32;CGAL_NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;CGAL_USE_TAUCS"
 				MinimalRebuild="false"
+				ExceptionHandling="2"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
 				ProgramDataBaseFileName="$(IntDir)\$(ProjectName).pdb"
@@ -152,6 +155,7 @@
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;"
 				GenerateDebugInformation="false"
+				StackReserveSize="2097152"
 				LargeAddressAware="2"
 			/>
 			<Tool

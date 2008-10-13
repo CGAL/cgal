@@ -25,12 +25,23 @@
 
 #ifdef CGAL_USE_TAUCS
 
+// Uncomment the next line to see libraries selected by auto-link
+//#define CGAL_LIB_DIAGNOSTIC
 #include <CGAL/auto_link/TAUCS.h>
+
 #include <CGAL/Taucs_matrix.h>
 #include <CGAL/Taucs_vector.h>
 #include <CGAL/Taucs_fix.h>
 
+#ifdef WIN32
+  #include <CGAL/Win32_exception.h>
+#endif
+    
 #include <boost/shared_ptr.hpp>
+
+#include <cmath>
+#include <cfloat>
+#include <climits>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -61,8 +72,8 @@ public:
     /// See taucs_linsolve() documentation for the meaning of the
     /// 'options' and 'arguments' parameters.
     Taucs_symmetric_solver_traits(
-                    const char*  options[]   = NULL,  ///< must be persistent
-		    const void*  arguments[] = NULL)  ///< must be persistent
+      const char*  options[]   = NULL,  ///< must be persistent
+      const void*  arguments[] = NULL)  ///< must be persistent
     {
         static const char* MULTIFRONTAL_LLT[] = {"taucs.factor.LLT=true",
                                                  "taucs.factor.mf=true",
@@ -82,10 +93,14 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-#if DEBUG_TRACE >= 2
-        // Turn on TAUCS trace
+#ifdef DEBUG_TRACE
+        // Turn on TAUCS trace to stderr or to a log file
+    #if DEBUG_TRACE >= 2
         std::cerr.flush();
         taucs_logfile((char*)"stderr");
+    #else
+        taucs_logfile((char*)"taucs.log");
+    #endif
 
 //         // Print A and B
 //         int n = A.row_dimension();
@@ -120,8 +135,15 @@ public:
 //         }
 #endif
 
+#ifdef WIN32
+        Win32_exception_handler eh; // catch Win32 structured exceptions
+#endif
+    
         try
         {
+//printf("A[0][0]=%lf\n", (double) A.get_coef(0,0));
+//printf("A[77][77]=%lf\n", (double) A.get_coef(77,77));
+//printf("taucs_linsolve()\n");
             // Factor, solve and free
             int success = taucs_linsolve((taucs_ccs_matrix*) A.get_taucs_matrix(),
                                          NULL,
@@ -130,6 +152,8 @@ public:
                                          (T*) B.get_taucs_vector(),
                                          (char**) m_options,
                                          (void**) m_arguments);
+//printf("A[0][0]=%lf\n", (double) A.get_coef(0,0));
+//printf("A[77][77]=%lf\n", (double) A.get_coef(77,77));
             if (success != TAUCS_SUCCESS) {
                 taucs_printf((char*)"\tSolving Failed\n");
                 return false;
@@ -194,10 +218,14 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-#if DEBUG_TRACE >= 2
-        // Turn on TAUCS trace
+#ifdef DEBUG_TRACE
+        // Turn on TAUCS trace to stderr or to a log file
+    #if DEBUG_TRACE >= 2
         std::cerr.flush();
         taucs_logfile((char*)"stderr");
+    #else
+        taucs_logfile((char*)"taucs.log");
+    #endif
 
 //         // Print A and B
 //         int n = A.row_dimension();
@@ -232,6 +260,10 @@ public:
 //         }
 #endif
 
+#ifdef WIN32
+        Win32_exception_handler eh; // catch Win32 structured exceptions
+#endif
+    
         try
         {
             int     success;
