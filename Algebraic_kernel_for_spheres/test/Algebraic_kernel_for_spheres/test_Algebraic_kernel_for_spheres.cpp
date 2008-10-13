@@ -22,7 +22,7 @@
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion
-//             Pedro Machado    <tashimir@gmail.com>
+//             Pedro Machado
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>

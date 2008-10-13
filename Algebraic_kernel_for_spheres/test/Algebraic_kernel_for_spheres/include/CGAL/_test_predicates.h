@@ -22,7 +22,7 @@
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion
-//             Pedro Machado    <tashimir@gmail.com>
+//             Pedro Machado
 
 #include <CGAL/Random.h>
 #include <cassert>

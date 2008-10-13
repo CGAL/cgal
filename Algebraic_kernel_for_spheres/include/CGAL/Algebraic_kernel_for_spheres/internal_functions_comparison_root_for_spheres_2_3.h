@@ -22,7 +22,7 @@
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion
-//             Pedro Machado    <tashimir@gmail.com>
+//             Pedro Machado
 
 #ifndef CGAL_ALGEBRAIC_KERNEL_COMPARISON_ROOT_FOR_SPHERES_2_3_H
 #define CGAL_ALGEBRAIC_KERNEL_COMPARISON_ROOT_FOR_SPHERES_2_3_H
