@@ -15,17 +15,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://pmachado@scm.gforge.inria.fr/svn/cgal/trunk/Intersections_2/include/CGAL/Circle_2_Circle_2_intersection.h $
+// $Id: Circle_2_Circle_2_intersection.h 39776 2007-08-08 15:15:20Z spion $
 // 
 //
 // Author(s)     : Geert-Jan Giezeman
 
 
-#ifndef CGAL_CIRCLE_2_CIRCLE_2_INTERSECTION_H
-#define CGAL_CIRCLE_2_CIRCLE_2_INTERSECTION_H
+#ifndef CGAL_CIRCLE_2_LINE_2_INTERSECTION_H
+#define CGAL_CIRCLE_2_LINE_2_INTERSECTION_H
 
 #include <CGAL/Circle_2.h>
+#include <CGAL/Line_2.h>
 #include <CGAL/Object.h>
 #include <CGAL/squared_distance_2_1.h>
 
@@ -35,16 +36,20 @@ namespace CGALi {
 
 template <class K>
 bool
-do_intersect(const typename K::Circle_2 & circ1, 
-	     const typename K::Circle_2& circ2,
+do_intersect(const typename K::Circle_2 & c, 
+	     const typename K::Line_2& l,
 	     const K&)
 {
-    typedef typename K::FT FT;
-    FT sr1 = circ1.squared_radius();
-    FT sr2 = circ2.squared_radius();
-    FT squared_dist = squared_distance(circ1.center(), circ2.center());
-    FT temp = sr1+sr2-squared_dist;
-    return !(FT(4)*sr1*sr2 < temp*temp);
+    return squared_distance(c.center(), l) <= c.squared_radius();
+}
+
+template <class K>
+bool
+do_intersect(const typename K::Line_2& l, 
+	     const typename K::Circle_2 & c,
+	     const K&)
+{
+    return squared_distance(c.center(), l) <= c.squared_radius();
 }
 
 } // namespace CGALi
@@ -52,11 +57,21 @@ do_intersect(const typename K::Circle_2 & circ1,
 template <class K>
 inline
 bool
-do_intersect(const Circle_2<K> & circ1, 
-	     const Circle_2<K> & circ2)
+do_intersect(const Circle_2<K> & c, 
+	     const Line_2<K> & l)
 {
   typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(circ1, circ2);
+  return Do_intersect()(c, l);
+}
+
+template <class K>
+inline
+bool
+do_intersect(const Line_2<K> & l, 
+	     const Circle_2<K> & c)
+{
+  typedef typename K::Do_intersect_2 Do_intersect;
+  return Do_intersect()(c, l);
 }
 
 

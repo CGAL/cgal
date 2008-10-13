@@ -1780,6 +1780,7 @@ Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#application/pdf
 Interpolation/doc_tex/Interpolation/nn_coords.xml svneol=native#text/xml
+Intersections_2/include/CGAL/Circle_2_Line_2_intersection.h -text
 Interval_skip_list/doc_tex/Interval_skip_list/query.png -text
 Interval_skip_list/examples/Interval_skip_list/terrain.pts -text
 Jet_fitting_3/clean_tree.csh eol=lf
