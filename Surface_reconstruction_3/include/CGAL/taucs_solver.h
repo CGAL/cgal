@@ -11,7 +11,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
+// $URL$
 // $Id$
 //
 // Author(s) : Pierre Alliez and Mario Botsch
@@ -29,7 +29,7 @@
 #ifdef WIN32
   #include <CGAL/Win32_exception.h>
 #endif
-    
+
 #include <vector>
 #include <set>
 
@@ -91,7 +91,7 @@ public:
       n_rows = (int)colptr.size()-1;
     }
   }
-  
+
   void add_value(int _i, T _val)
   {
       // We store only the lower diagonal matrix
@@ -116,7 +116,7 @@ public:
 #ifdef WIN32
     Win32_exception_handler eh; // catch Win32 structured exceptions
 #endif
-    
+
     supernodal_ = _use_supernodal;
 
     // delete old matrices
@@ -133,7 +133,7 @@ public:
     // bandlimitation
     try {
       taucs_ccs_order(&A, &perm, &invperm, (char*)"metis");
-    } 
+    }
     catch (...) {}
     if (perm == NULL || invperm == NULL)
     {
@@ -143,7 +143,7 @@ public:
 
     try {
       PAP = taucs_ccs_permute_symmetrically(&A, perm, invperm);
-    } 
+    }
     catch (...) {}
     if (PAP == NULL)
     {
@@ -155,7 +155,7 @@ public:
     try {
       if (supernodal_)  SL = taucs_ccs_factor_llt_mf (PAP);
       else               L = taucs_ccs_factor_llt    (PAP, 0, 0);
-    } 
+    }
     catch (...) {}
     if (!(L || SL))
     {
@@ -171,7 +171,7 @@ public:
 #ifdef WIN32
     Win32_exception_handler eh; // catch Win32 structured exceptions
 #endif
-    
+
     // delete old matrices
     delete_matrices();
 
@@ -185,7 +185,7 @@ public:
     // bandlimitation
     try {
       taucs_ccs_order(&A, &perm, &invperm, (char*)"metis");
-    } 
+    }
     catch (...) {}
     if (perm == NULL || invperm == NULL)
     {
@@ -195,7 +195,7 @@ public:
 
     try {
       PAP = taucs_ccs_permute_symmetrically(&A, perm, invperm);
-    } 
+    }
     catch (...) {}
     if (PAP == NULL)
     {
@@ -208,7 +208,7 @@ public:
     CGAL_surface_reconstruction_assertion(matrixfile != NULL);
     try {
       m_io_handle = taucs_io_create_multifile(matrixfile);
-    } 
+    }
     catch (...) {}
     free(matrixfile);
     if(m_io_handle == NULL)
@@ -221,14 +221,14 @@ public:
     try {
       double available_memory = taucs_available_memory_size();
       result = taucs_ooc_factor_llt(PAP,m_io_handle,available_memory);
-    } 
+    }
     catch (...) {}
     if(result != TAUCS_SUCCESS)
     {
       std::cerr << "Taucs_solver: ooc factorization failed\n";
       return false;
     }
-    
+
     return true;
   }
 

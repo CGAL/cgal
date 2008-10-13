@@ -659,7 +659,7 @@ public:
 
     CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               (CGAL::Peak_memory_sizer().largest_free_block()>>20),
+               long(CGAL::Peak_memory_sizer().largest_free_block()>>20),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Create matrix...\n");
 
@@ -693,7 +693,7 @@ public:
 
     *duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
     CGAL_TRACE("  Create matrix: done (%.2lf s)\n", *duration_assembly);
-    
+
     /*
     time_init = clock();
     if(!solver.solve_conjugate_gradient(B,X,10000,1e-15))
@@ -703,7 +703,7 @@ public:
 
     CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               (CGAL::Peak_memory_sizer().largest_free_block()>>20),
+               long(CGAL::Peak_memory_sizer().largest_free_block()>>20),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Choleschy factorization...\n");
 
@@ -721,7 +721,7 @@ public:
 
     CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               (CGAL::Peak_memory_sizer().largest_free_block()>>20),
+               long(CGAL::Peak_memory_sizer().largest_free_block()>>20),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("  Direct solve...\n");
 
@@ -756,7 +756,7 @@ public:
 
     CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
                long(CGAL::Memory_sizer().virtual_size())>>20,
-               (CGAL::Peak_memory_sizer().largest_free_block()>>20),
+               long(CGAL::Peak_memory_sizer().largest_free_block()>>20),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
     CGAL_TRACE("End of solve_poisson()\n");
 
@@ -1533,7 +1533,7 @@ private:
   }
 
   bool is_refinable(Cell_handle cell,
-                    K_nearest_neighbor& nn_search, 
+                    K_nearest_neighbor& nn_search,
                     const FT size_shell,
                     const FT sizing,
                     FT& size,
