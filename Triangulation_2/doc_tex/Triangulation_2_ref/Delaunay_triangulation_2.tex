@@ -165,7 +165,8 @@ The boundary edges
 of the conflict  zone are output in counter-clockwise order
 and each edge is described  through its incident face
 which is not in conflict with \ccc{p}.
-The function returns in a std::pair the resulting output iterators.}
+The function returns in a std::pair the resulting output iterators.
+\ccPrecond dimension()==2}
 
 \ccMethod{template <class OutputItFaces> 
           OutputItFaces
@@ -173,7 +174,8 @@ The function returns in a std::pair the resulting output iterators.}
                          OutputItFaces fit, 
                          Face_handle start) const;}
 {same as above except that only the faces in conflict with \ccc{p}
-are output. The function returns the resulting output iterator.}
+are output. The function returns the resulting output iterator.
+\ccPrecond dimension()==2}
 
 \ccMethod{template <class OutputItBoundaryEdges>
           OutputItBoundaryEdges
