@@ -47,8 +47,8 @@ struct box_limits<unsigned int> {
 
 template<>
 struct box_limits<float> {
-    static float inf() { return -sup(); }
-    static float sup() { return CGALi::infinity; }
+    static float inf() { return (std::numeric_limits<float>::min)(); }
+    static float sup() { return (std::numeric_limits<float>::max)(); }
 };
 
 template<>
