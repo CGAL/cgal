@@ -13,7 +13,9 @@ find_package ( Boost QUIET COMPONENTS program_options )
 
 if (CGAL_PDB_FOUND  AND  Boost_PROGRAM_OPTIONS_FOUND )
 
+if ( NOT AUTO_LINK_ENABLED )
 link_libraries(${Boost_PROGRAM_OPTIONS_LIBRARY})
+endif ()
 
 include(CreateSingleSourceCGALProgram)
 
