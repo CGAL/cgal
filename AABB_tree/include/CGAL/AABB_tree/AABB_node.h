@@ -17,8 +17,8 @@
 //
 // Author(s)     : 
 
-#ifndef _AABB_NODE_
-#define _AABB_NODE_
+#ifndef CGAL_AABB_NODE_H
+#define CGAL_AABB_NODE_H
 
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/intersections.h>
@@ -461,5 +461,5 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // _AABB_NODE_
+#endif // CGAL_AABB_NODE_
 

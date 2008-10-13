@@ -17,8 +17,8 @@
 //
 // Author(s)     : 
 
-#ifndef _AABB_TREE_
-#define _AABB_TREE_
+#ifndef CGAL_AABB_TREE_H
+#define CGAL_AABB_TREE_H
 
 #include <list>
 #include <stack>
@@ -146,4 +146,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // _AABB_TREE_
+#endif // CGAL_AABB_TREE_H
