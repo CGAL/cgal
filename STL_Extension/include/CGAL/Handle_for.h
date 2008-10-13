@@ -27,6 +27,10 @@
 #include <CGAL/memory.h>
 #include <algorithm>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4345) // Avoid warning  http://msdn.microsoft.com/en-us/library/wewb47ee(VS.80).aspx
+#endif
 CGAL_BEGIN_NAMESPACE
 
 template <class T, class Alloc = CGAL_ALLOCATOR(T) >
@@ -51,7 +55,7 @@ public:
     Handle_for()
       : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) T();
+        new (&(ptr_->t)) T(); // we get the warning here 
         ptr_->count = 1;
     }
 
@@ -304,5 +308,9 @@ get(const T &t)
 }
 
 CGAL_END_NAMESPACE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_HANDLE_FOR_H
