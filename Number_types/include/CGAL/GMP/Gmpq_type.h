@@ -181,7 +181,7 @@ public:
 inline
 bool
 operator==(const Gmpq &a, const Gmpq &b)
-{ return mpq_equal(a.mpq(), b.mpq()); }
+{ return mpq_equal(a.mpq(), b.mpq()) != 0; }
 
 inline
 bool
