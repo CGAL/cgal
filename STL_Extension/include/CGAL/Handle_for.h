@@ -24,6 +24,7 @@
 #ifndef CGAL_HANDLE_FOR_H
 #define CGAL_HANDLE_FOR_H
 
+#include <boost/config.hpp>
 #include <CGAL/memory.h>
 #include <algorithm>
 
