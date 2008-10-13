@@ -11,24 +11,28 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: 
-// $Id: 
+// $URL$ 
+// $Id$
 //
 // Author(s) : Pierre Alliez and Mario Botsch
 
 #ifndef CGAL_TAUCS_SOLVER_H
 #define CGAL_TAUCS_SOLVER_H
 
-#include <vector>
-#include <set>
-
 #include <CGAL/Taucs_fix.h>
+#include <CGAL/surface_reconstruction_assertions.h>
 
 // Uncomment the next line to see libraries selected by auto-link
 //#define CGAL_LIB_DIAGNOSTIC
 #include <CGAL/auto_link/TAUCS.h>
 
-#include <CGAL/surface_reconstruction_assertions.h>
+#ifdef WIN32
+  #include <CGAL/Win32_exception.h>
+#endif
+    
+#include <vector>
+#include <set>
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -63,10 +67,14 @@ public:
   {
     m_io_handle = NULL;
 
-#if DEBUG_TRACE >= 2
-    // Turn on TAUCS trace
+#ifdef DEBUG_TRACE
+    // Turn on TAUCS trace to stderr or to a log file
+  #if DEBUG_TRACE >= 2
     std::cerr.flush();
     taucs_logfile((char*)"stderr");
+  #else
+    taucs_logfile((char*)"taucs.log");
+  #endif
 #endif
   }
 
@@ -105,30 +113,50 @@ public:
 
   bool factorize(bool _use_supernodal = true)
   {
+#ifdef WIN32
+    Win32_exception_handler eh; // catch Win32 structured exceptions
+#endif
+    
     supernodal_ = _use_supernodal;
 
     // delete old matrices
     delete_matrices();
 
+    CGAL_surface_reconstruction_assertion(perm == NULL);
+    CGAL_surface_reconstruction_assertion(invperm == NULL);
+    CGAL_surface_reconstruction_assertion(PAP == NULL);
+    CGAL_surface_reconstruction_assertion(SL == NULL);
+    CGAL_surface_reconstruction_assertion(L == NULL);
+
     finalize_matrix();
 
     // bandlimitation
-    taucs_ccs_order(&A, &perm, &invperm, (char*)"metis");
+    try {
+      taucs_ccs_order(&A, &perm, &invperm, (char*)"metis");
+    } 
+    catch (...) {}
     if (perm == NULL || invperm == NULL)
     {
-      std::cerr << "Taucs_solver: Metis failed\n";
+      std::cerr << "Taucs_solver: metis failed\n";
       return false;
     }
-    PAP = taucs_ccs_permute_symmetrically(&A, perm, invperm);
-    if (!PAP)
+
+    try {
+      PAP = taucs_ccs_permute_symmetrically(&A, perm, invperm);
+    } 
+    catch (...) {}
+    if (PAP == NULL)
     {
       std::cerr << "Taucs_solver: permutation failed\n";
       return false;
     }
 
     // Cholesky factorization
-    if (supernodal_)  SL = taucs_ccs_factor_llt_mf (PAP);
-    else               L = taucs_ccs_factor_llt    (PAP, 0, 0);
+    try {
+      if (supernodal_)  SL = taucs_ccs_factor_llt_mf (PAP);
+      else               L = taucs_ccs_factor_llt    (PAP, 0, 0);
+    } 
+    catch (...) {}
     if (!(L || SL))
     {
       std::cerr << "Taucs_solver: factorization failed\n";
@@ -140,45 +168,67 @@ public:
 
   bool factorize_ooc()
   {
+#ifdef WIN32
+    Win32_exception_handler eh; // catch Win32 structured exceptions
+#endif
+    
     // delete old matrices
     delete_matrices();
+
+    CGAL_surface_reconstruction_assertion(perm == NULL);
+    CGAL_surface_reconstruction_assertion(invperm == NULL);
+    CGAL_surface_reconstruction_assertion(PAP == NULL);
+    CGAL_surface_reconstruction_assertion(m_io_handle == NULL);
 
     finalize_matrix();
 
     // bandlimitation
-    taucs_ccs_order(&A, &perm, &invperm, (char*)"metis");
+    try {
+      taucs_ccs_order(&A, &perm, &invperm, (char*)"metis");
+    } 
+    catch (...) {}
     if (perm == NULL || invperm == NULL)
     {
-      std::cerr << "Taucs_solver: Metis failed\n";
+      std::cerr << "Taucs_solver: metis failed\n";
       return false;
     }
-    PAP = taucs_ccs_permute_symmetrically(&A, perm, invperm);
-    if (!PAP)
+
+    try {
+      PAP = taucs_ccs_permute_symmetrically(&A, perm, invperm);
+    } 
+    catch (...) {}
+    if (PAP == NULL)
     {
       std::cerr << "Taucs_solver: permutation failed\n";
       return false;
     }
 
-    // out-of-core Cholesky factorization.
-    // LS 03/2008: ooc file opening will fail if 2 instances of the application
-    //             run at the same time. Better use tempnam().
-    unlink("taucs-ooc.0"); // make sure TAUCS ooc file does not exist
-    m_io_handle = taucs_io_create_multifile((char*)"taucs-ooc");
+    // out-of-core Cholesky factorization
+    char* matrixfile = tempnam(NULL, "taucs.L");
+    CGAL_surface_reconstruction_assertion(matrixfile != NULL);
+    try {
+      m_io_handle = taucs_io_create_multifile(matrixfile);
+    } 
+    catch (...) {}
+    free(matrixfile);
     if(m_io_handle == NULL)
     {
-        //CGAL_surface_reconstruction_assertion(false);
-        std::cerr << "ooc file opening failed\n";
+        std::cerr << "Taucs_solver: ooc file opening failed\n";
         return false;
     }
 
-    double available_memory = taucs_available_memory_size();
-    int result = taucs_ooc_factor_llt(PAP,m_io_handle,available_memory);
+    int result = TAUCS_ERROR;
+    try {
+      double available_memory = taucs_available_memory_size();
+      result = taucs_ooc_factor_llt(PAP,m_io_handle,available_memory);
+    } 
+    catch (...) {}
     if(result != TAUCS_SUCCESS)
     {
-      //CGAL_surface_reconstruction_assertion(false);
-      std::cerr << "ooc factorization failed\n";
+      std::cerr << "Taucs_solver: ooc factorization failed\n";
       return false;
     }
+    
     return true;
   }
 
