@@ -96,7 +96,7 @@ public:
 public:
   // PREDICATES
   //-----------
-  bool is_defined() const { return type_; }
+  bool is_defined() const { return type_ != 0; }
   bool is_point() const { return type_ == 1; }
   bool is_segment() const { return type_ == 2; }
   bool is_input() const { return true; }
