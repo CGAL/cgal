@@ -20,6 +20,7 @@
 
 #include <CGAL/PDB/Heterogen.h>
 #include <CGAL/PDB/internal/Error_logger.h>
+#include <CGAL/PDB/internal/pdb_utils.h>
 #include <CGAL/basic.h>
 #include <iostream>
 #include <limits>
