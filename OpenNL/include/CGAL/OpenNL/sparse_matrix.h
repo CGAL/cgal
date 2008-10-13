@@ -92,17 +92,24 @@ public:
 
         // a_{index} <- val
         // (added for SparseLinearAlgebraTraits_d::Matrix concept)
-        void set_coef(unsigned int index, T val)
+        //
+        // Optimization:
+        // - Caller can optimize this call by setting 'new_coef' to true
+        //   if the coefficient does not already exists in the matrix. 
+        void set_coef(unsigned int index, T val, bool new_coef)
         {
-            // search for coefficient in superclass vector
-            for(typename superclass::iterator it = superclass::begin() ;
-                it != superclass::end() ;
-                it++)
+            if (!new_coef)
             {
-                if(it->index == index) {
-                    it->a = val ;                       // =
-                    return ;
-                }
+              // search for coefficient in superclass vector
+              for(typename superclass::iterator it = superclass::begin() ;
+                  it != superclass::end() ;
+                  it++)
+              {
+                  if(it->index == index) {
+                      it->a = val ;                       // =
+                      return ;
+                  }
+              }
             }
             // coefficient doesn't exist yet if we reach this point
             superclass::push_back(Coeff(index, val)) ;
@@ -198,13 +205,17 @@ public:
     // Write access to 1 matrix coefficient: a_ij <- val
     //(added for SparseLinearAlgebraTraits_d::Matrix concept)
     //
+    // Optimization:
+    // - Caller can optimize this call by setting 'new_coef' to true
+    //   if the coefficient does not already exists in the matrix. 
+    //
     // Preconditions:
-    // * 0 <= i < row_dimension()
-    // * 0 <= j < column_dimension()
-    void set_coef(unsigned int i, unsigned int j, NT  val) {
+    // - 0 <= i < row_dimension().
+    // - 0 <= j < column_dimension().
+    void set_coef(unsigned int i, unsigned int j, NT  val, bool new_coef = false) {
         CGAL_assertion(i < dimension_) ;
         CGAL_assertion(j < dimension_) ;
-        row(i).set_coef(j, val) ;
+        row(i).set_coef(j, val, new_coef) ;
     }
 
     /**

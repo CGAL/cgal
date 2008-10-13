@@ -1,4 +1,4 @@
-// Copyright (c) 2005  INRIA (France).
+// Copyright (c) 2005-2008  INRIA (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -26,7 +26,9 @@
 #ifdef CGAL_USE_TAUCS
 
 #include <CGAL/Taucs_fix.h>
+#include <CGAL/assertions.h>
 
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,7 +45,7 @@ template<class T> struct Taucs_number;
 ///
 /// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d::Matrix concept.
 ///
-template<class T>       // Tested with T = taucs_single or taucs_double
+template<class T>       // Tested with T = float or double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
 struct Taucs_matrix
 {
@@ -73,52 +75,11 @@ private:
     public:
 
         // Return the number of elements in the column
-        int dimension() const    { return m_values.size(); }
+        int size() const    { return m_values.size(); }
 
-        // column{index} <- column{index} + val
-        void add_coef(int index, T val)
-        {
-            // Search for element in vectors
-            std::vector<int>::iterator          index_it;
-            typename std::vector<T>::iterator   value_it;
-            for (index_it = m_indices.begin(), value_it = m_values.begin();
-                 index_it != m_indices.end();
-                 index_it++, value_it++)
-            {
-                if(*index_it == index) {
-                    *value_it += val;       // +=
-                    return;
-                }
-            }
-
-            // Element doesn't exist yet if we reach this point
-            m_indices.push_back(index);
-            m_values.push_back(val);
-        }
-
-        // column{index} <- val
-        void set_coef(int index, T val)
-        {
-            // Search for element in vectors
-            std::vector<int>::iterator          index_it;
-            typename std::vector<T>::iterator   value_it;
-            for (index_it = m_indices.begin(), value_it = m_values.begin();
-                 index_it != m_indices.end();
-                 index_it++, value_it++)
-            {
-                if(*index_it == index) {
-                    *value_it = val;        // =
-                    return;
-                }
-            }
-
-            // Element doesn't exist yet if we reach this point
-            m_indices.push_back(index);
-            m_values.push_back(val);
-        }
-
-        // return column{index} (0 by default)
-        T get_coef(int index) const
+        // return address of column{index} 
+        // (NULL if coefficient does not exist).
+        const T* get_coef_addr(int index) const
         {
             // Search for element in vectors
             std::vector<int>::const_iterator        index_it;
@@ -128,11 +89,58 @@ private:
                  index_it++, value_it++)
             {
                 if(*index_it == index)
-                    return *value_it;       // return value
+                    return &*value_it;       // return address
             }
 
-            // Element doesn't exist yet if we reach this point
-            return 0;
+            // Element doesn't exist if we reach this point
+            return NULL;
+        }
+
+        // column{index} <- column{index} + val
+        void add_coef(int index, T val)
+        {
+            // Search for element in m_values[]
+            T* coef_addr = (T*) get_coef_addr(index);
+            if (coef_addr == NULL) 
+            {
+              // if the coefficient doesn't exist yet
+              m_indices.push_back(index);
+              m_values.push_back(val);
+            }
+            else
+            {
+              // if the coefficient already exists
+              *coef_addr += val;       // +=
+            } 
+        }
+
+        // column{index} <- val.
+        void set_coef(int index, T val)
+        {
+            // Search for element in m_values[]
+            T* coef_addr = (T*) get_coef_addr(index);
+            if (coef_addr == NULL) 
+            {
+              // if the coefficient doesn't exist yet
+              m_indices.push_back(index);
+              m_values.push_back(val);
+            }
+            else 
+            {
+              // if the coefficient already exists
+              *coef_addr = val;        // =
+            } 
+        }
+
+        // return column{index} (0 by default)
+        T get_coef(int index) const
+        {
+            // Search for element in m_values[]
+            const T* coef_addr = get_coef_addr(index);
+            if (coef_addr == NULL) 
+              return 0; // if the coefficient doesn't exist
+            else
+              return *coef_addr; 
         }
     }; // class Column
 
@@ -149,8 +157,8 @@ public:
 
         m_row_dimension     = dim;
         m_column_dimension  = dim;
-        m_columns           = new Column[m_column_dimension];
         m_is_symmetric      = is_symmetric;
+        m_columns           = new Column[m_column_dimension];
         m_matrix            = NULL;
     }
 
@@ -167,8 +175,8 @@ public:
 
         m_row_dimension     = rows;
         m_column_dimension  = columns;
-        m_columns           = new Column[m_column_dimension];
         m_is_symmetric      = is_symmetric;
+        m_columns           = new Column[m_column_dimension];
         m_matrix            = NULL;
     }
 
@@ -198,33 +206,54 @@ public:
     /// - 0 <= j < column_dimension().
     T  get_coef(int i, int j) const
     {
+        CGAL_precondition(i < m_row_dimension);
+        CGAL_precondition(j < m_column_dimension);
+
         // For symmetric matrices, we store only the lower triangle
         // => swap i and j if (i, j) belongs to the upper triangle
         if (m_is_symmetric && (j > i))
             std::swap(i, j);
+            
+        // Construct back the m_columns[] array after a call to get_taucs_matrix()  
+        if (m_columns == NULL)
+          construct_back_columns();
 
-        CGAL_precondition(i < m_row_dimension);
-        CGAL_precondition(j < m_column_dimension);
         return m_columns[j].get_coef(i);
     }
 
     /// Write access to a matrix coefficient: a_ij <- val.
     ///
-    /// Optimization:
-    /// For symmetric matrices, Taucs_matrix stores only the lower triangle
-    /// set_coef() does nothing if (i, j) belongs to the upper triangle.
+    /// Optimizations:
+    /// - For symmetric matrices, Taucs_matrix stores only the lower triangle
+    ///   set_coef() does nothing if (i, j) belongs to the upper triangle.
+    // - Caller can optimize this call by setting 'new_coef' to true
+    //   if the coefficient does not already exists in the matrix. 
     ///
     /// Preconditions:
     /// - 0 <= i < row_dimension().
     /// - 0 <= j < column_dimension().
-    void set_coef(int i, int j, T  val)
+    void set_coef(int i, int j, T  val, bool new_coef = false)
     {
+        CGAL_precondition(i < m_row_dimension);
+        CGAL_precondition(j < m_column_dimension);
+
         if (m_is_symmetric && (j > i))
             return;
 
-        CGAL_precondition(i < m_row_dimension);
-        CGAL_precondition(j < m_column_dimension);
-        m_columns[j].set_coef(i, val);
+        // Construct back the m_columns[] array after a call to get_taucs_matrix()  
+        if (m_columns == NULL)
+          construct_back_columns();
+
+        // if caller knows that the coefficient doesn't exist yet
+        if (new_coef)
+        {
+          m_columns[j].m_indices.push_back(i);
+          m_columns[j].m_values.push_back(val);
+        }
+        else
+        {
+          m_columns[j].set_coef(i, val);
+        }
     }
 
     /// Write access to a matrix coefficient: a_ij <- a_ij + val.
@@ -238,64 +267,116 @@ public:
     /// - 0 <= j < column_dimension().
     void add_coef(int i, int j, T val)
     {
+        CGAL_precondition(i < m_row_dimension);
+        CGAL_precondition(j < m_column_dimension);
+        
         if (m_is_symmetric && (j > i))
             return;
 
-        CGAL_precondition(i < m_row_dimension);
-        CGAL_precondition(j < m_column_dimension);
+        // Construct back the m_columns[] array after a call to get_taucs_matrix()  
+        if (m_columns == NULL)
+          construct_back_columns();
+
         m_columns[j].add_coef(i, val);
     }
 
     /// Construct and return the TAUCS matrix wrapped by this object.
-    /// Note: the TAUCS matrix returned by this method is valid
-    ///       only until the next call to set_coef(), add_coef() or get_taucs_matrix().
+    /// The TAUCS matrix returned by this method is valid
+    /// only until the next call to get_coef(), set_coef() or add_coef().
+    //
+    // Implementation note: this method deletes m_columns[] to save memory.
     const taucs_ccs_matrix* get_taucs_matrix() const
     {
-        if (m_matrix != NULL) {
-            taucs_ccs_free(m_matrix);
-            m_matrix = NULL;
-        }
-
-        // Convert matrix's T type to the corresponding TAUCS constant
-        int flags = Taucs_number<T>::TAUCS_FLAG;
-
-        // We store only the lower triangle of symmetric matrices
-        if (m_is_symmetric)
-            flags |= TAUCS_TRIANGULAR | TAUCS_SYMMETRIC | TAUCS_LOWER;
-
-        // Compute the number of non null elements in the matrix
-        int nb_max_elements = 0;
-        for (int col=0; col < m_column_dimension; col++)
-            nb_max_elements += m_columns[col].dimension();
-
-        // Create the TAUCS matrix wrapped by this object
-        m_matrix = taucs_ccs_create(m_row_dimension, m_column_dimension, nb_max_elements, flags);
-
-        // Fill m_matrix's colptr[], rowind[] and values[] arrays
-        // Implementation note:
-        // - rowind[] = array of non null elements of the matrix, ordered by columns
-        // - values[] = array of row index of each element of rowind[]
-        // - colptr[j] is the index of the first element of the column j (or where it
-        //   should be if it doesn't exist) + the past-the-end index of the last column
-        m_matrix->colptr[0] = 0;
-        for (int col=0; col < m_column_dimension; col++)
+        if (m_matrix == NULL) 
         {
-            // Number of non null elements of the column
-            int nb_elements = m_columns[col].dimension();
+          CGAL_precondition(m_columns != NULL);
 
-            // Fast copy of column indices and values
-            memcpy(&m_matrix->rowind[m_matrix->colptr[col]], &m_columns[col].m_indices[0], nb_elements*sizeof(int));
-            T* taucs_values = (T*) m_matrix->values.v;
-            memcpy(&taucs_values[m_matrix->colptr[col]], &m_columns[col].m_values[0],  nb_elements*sizeof(T));
+          // Convert matrix's T type to the corresponding TAUCS constant
+          int flags = Taucs_number<T>::TAUCS_FLAG;
 
-            // Start of next column will be:
-            m_matrix->colptr[col+1] = m_matrix->colptr[col] + nb_elements;
+          // We store only the lower triangle of symmetric matrices
+          if (m_is_symmetric)
+              flags |= TAUCS_TRIANGULAR | TAUCS_SYMMETRIC | TAUCS_LOWER;
+
+          // Compute the number of non null elements in the matrix
+          int nb_max_elements = 0;
+          for (int col=0; col < m_column_dimension; col++)
+              nb_max_elements += m_columns[col].size();
+
+          // Allocate m_matrix
+          m_matrix = taucs_ccs_create(m_row_dimension, m_column_dimension, nb_max_elements, flags);
+
+          // Fill m_matrix. TAUCS matrix format is:
+          // - rowind[] = array of non null elements of the matrix, ordered by columns
+          // - values[] = array of row index of each element of rowind[]
+          // - colptr[j] is the index of the first element of the column j (or where it
+          //   should be if it doesn't exist) + the past-the-end index of the last column
+          m_matrix->colptr[0] = 0;
+          for (int col=0; col < m_column_dimension; col++)
+          {
+              int first_index = m_matrix->colptr[col]; // Index of 1st non null element of the column
+              int nb_elements = m_columns[col].size(); // Number of non null elements of the column
+
+              // Fast copy of column indices and values
+              memcpy(&m_matrix->rowind[first_index], &m_columns[col].m_indices[0], nb_elements*sizeof(int));
+              T* taucs_values = (T*) m_matrix->values.v;
+              memcpy(&taucs_values[first_index], &m_columns[col].m_values[0],  nb_elements*sizeof(T));
+
+              // Start of next column will be:
+              m_matrix->colptr[col+1] = first_index + nb_elements;
+          }
+          
+          // Delete m_columns[] to save memory.
+          delete[] m_columns;
+          m_columns = NULL;
         }
+
+        CGAL_postcondition(m_matrix != NULL);
+        CGAL_postcondition(m_columns == NULL);
 
         return m_matrix;
     }
 
 private:
+
+    // Construct back the m_columns[] array after a call to get_taucs_matrix(),
+    // then delete m_matrix.
+    void construct_back_columns() const
+    {
+        if (m_columns == NULL) 
+        {
+          CGAL_precondition(m_matrix != NULL);
+
+          // Allocate m_columns[].
+          m_columns = new Column[m_column_dimension];
+
+          // Fill m_columns[]. TAUCS matrix format is:
+          // - rowind[] = array of non null elements of the matrix, ordered by columns
+          // - values[] = array of row index of each element of rowind[]
+          // - colptr[j] is the index of the first element of the column j (or where it
+          //   should be if it doesn't exist) + the past-the-end index of the last column
+          for (int col=0; col < m_column_dimension; col++)
+          {
+              int first_index = m_matrix->colptr[col]; // Index of 1st non null element of the column
+              int nb_elements = m_matrix->colptr[col+1] - first_index; 
+                                                       // Number of non null elements of the column
+
+              // Fast copy of column indices and values
+              m_columns[col].m_indices.assign(&m_matrix->rowind[first_index], 
+                                              &m_matrix->rowind[first_index + nb_elements - 1]);
+              T* taucs_values = (T*) m_matrix->values.v;
+              m_columns[col].m_values.assign(&taucs_values[first_index], 
+                                             &taucs_values[first_index + nb_elements - 1]); 
+          }
+          
+          // Delete m_matrix
+          taucs_ccs_free(m_matrix);
+          m_matrix = NULL;
+        }
+
+        CGAL_postcondition(m_columns != NULL);
+        CGAL_postcondition(m_matrix == NULL);
+    }
 
     /// Taucs_matrix cannot be copied (yet)
     Taucs_matrix(const Taucs_matrix& rhs);
@@ -307,14 +388,12 @@ private:
     // Matrix dimensions
     int     m_row_dimension, m_column_dimension;
 
-    // Columns array
-    Column* m_columns;
-
     // Symmetric/hermitian?
     bool    m_is_symmetric;
 
-    /// The actual TAUCS matrix wrapped by this object.
-    // This is in fact a COPY of the columns array
+    // Matrix as a Columns array or a TAUCS matrix.
+    // The matrix exists always as one of these kinds.
+    mutable Column*           m_columns;
     mutable taucs_ccs_matrix* m_matrix;
 
 }; // Taucs_matrix
@@ -343,22 +422,20 @@ public:
     /// Create a square SYMMETRIC matrix initialized with zeros.
     /// The max number of non 0 elements in the matrix is automatically computed.
     Taucs_symmetric_matrix(int  dim)                  ///< Matrix dimension.
-        : Taucs_matrix<T>(dim, true)
+        : Taucs_matrix<T>(dim, true /* symmetric */)
     {
     }
 
     /// Create a square SYMMETRIC matrix initialized with zeros.
     Taucs_symmetric_matrix(int  rows,                 ///< Matrix dimensions.
-                           int  columns,
-                           int  nb_max_elements = 0)  ///< Max number of non 0 elements in the
-                                                      ///< matrix (automatically computed if 0).
-        : Taucs_matrix<T>(rows, columns, true, nb_max_elements)
+                           int  columns)
+        : Taucs_matrix<T>(rows, columns, true /* symmetric */)
     {
     }
 };
 
 
-// Utility class to Taucs_matrix
+// Utility class for Taucs_matrix
 // Convert matrix's T type to the corresponding TAUCS constant (called TAUCS_FLAG)
 template<class T> struct Taucs_number {};
 template<> struct Taucs_number<taucs_double> {

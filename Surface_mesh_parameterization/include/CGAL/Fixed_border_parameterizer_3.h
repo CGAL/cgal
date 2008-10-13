@@ -445,7 +445,7 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
         int index = mesh.get_vertex_index(it);
 
         // Write a diagonal coefficient of A
-        A.set_coef(index, index, 1);
+        A.set_coef(index, index, 1, true /*new*/);
 
         // Write constant in Bu and Bv
         Point_2 uv = mesh.get_vertex_uv(it);
@@ -494,7 +494,7 @@ setup_inner_vertex_relations(Matrix& A,
         int j = mesh.get_vertex_index(v_j);
 
         // Set w_ij in matrix
-        A.set_coef(i,j, w_ij);
+        A.set_coef(i,j, w_ij, true /*new*/);
 
         vertexIndex++;
     }
@@ -502,7 +502,7 @@ setup_inner_vertex_relations(Matrix& A,
         return Base::ERROR_NON_TRIANGULAR_MESH;
 
     // Set w_ii in matrix
-    A.set_coef(i,i, w_ii);
+    A.set_coef(i,i, w_ii, true /*new*/);
 
     return Base::OK;
 }

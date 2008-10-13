@@ -62,12 +62,16 @@ public:
     /// - 0 <= column < column_dimension().
     void add_coef(int row, int column, NT value);
 
-    /// Write access to a matrix coefficient.
+    /// Write access to a matrix coefficient: a_ij <- val.
+    ///
+    /// Optimization:
+    // - Caller can optimize this call by setting 'new_coef' to true
+    //   if the coefficient does not already exists in the matrix. 
     ///
     /// Preconditions:
-    /// - 0 <= row < row_dimension().
-    /// - 0 <= column < column_dimension().
-    void  set_coef (int row, int column, NT value);
+    /// - 0 <= i < row_dimension().
+    /// - 0 <= j < column_dimension().
+    void set_coef(int row, int column, NT value, bool new_coef = false);
 };
 
 
