@@ -327,16 +327,20 @@ class Construct_circular_source_vertex_2
     typedef typename BK::Circular_kernel                       CK;
     typedef typename BK::Circular_arc_point_2                Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                      Circular_arc_2;
+    typedef typename BK::Line_arc_2                              Line_arc_2;
 
    public:
 
     typedef Circular_arc_point_2    result_type;
     typedef const result_type &     qualified_result_type;
 
-    template <typename T>
     result_type
-      operator()(const T& a) const
-    {return CK().construct_circular_source_vertex_2_object()(a.arc());}
+    operator()(const Circular_arc_2& a) const
+    { return CK().construct_circular_source_vertex_2_object()(a.arc()); }
+
+    result_type
+    operator()(const Line_arc_2& a) const
+    { return CK().construct_circular_source_vertex_2_object()(a.arc()); }
 
   };
 
@@ -347,16 +351,20 @@ class Construct_circular_target_vertex_2
     typedef typename BK::Circular_kernel                       CK;
     typedef typename BK::Circular_arc_point_2                Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                      Circular_arc_2;
+    typedef typename BK::Line_arc_2                              Line_arc_2;
 
    public:
 
     typedef Circular_arc_point_2 result_type;
     typedef const result_type &     qualified_result_type;
 
-    template <typename T>
     result_type
-      operator()(const T& a) const
-    {return CK().construct_circular_target_vertex_2_object()(a.arc());}
+    operator()(const Circular_arc_2& a) const
+    { return CK().construct_circular_target_vertex_2_object()(a.arc()); }
+
+    result_type
+    operator()(const Line_arc_2& a) const
+    { return CK().construct_circular_target_vertex_2_object()(a.arc()); }
 
   };
 
@@ -368,15 +376,19 @@ class Construct_circular_min_vertex_2
     typedef typename BK::Circular_kernel                       CK;
     typedef typename BK::Circular_arc_point_2                Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                      Circular_arc_2;
+    typedef typename BK::Line_arc_2                              Line_arc_2;
 
    public:
 
     typedef Circular_arc_point_2 result_type;
     
-    template <typename T>
     result_type
-      operator()(const T& a) const
-    {return CK().construct_circular_min_vertex_2_object()(a.arc());}
+    operator()(const Circular_arc_2& a) const
+    { return CK().construct_circular_min_vertex_2_object()(a.arc()); }
+
+    result_type
+    operator()(const Line_arc_2& a) const
+    { return CK().construct_circular_min_vertex_2_object()(a.arc()); }
     
   };
 
@@ -386,14 +398,18 @@ class Construct_circular_max_vertex_2
     typedef typename BK::Circular_kernel                           CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                          Circular_arc_2;
+    typedef typename BK::Line_arc_2                              Line_arc_2;
 
    public:
 
     typedef Circular_arc_point_2 result_type;
 
-    template <typename T>
-     result_type
-      operator()(const T& a) const
+    result_type
+    operator()(const Circular_arc_2& a) const
+    { return CK().construct_circular_max_vertex_2_object()(a.arc()); }
+
+    result_type
+    operator()(const Line_arc_2& a) const
     { return CK().construct_circular_max_vertex_2_object()(a.arc()); }
 
   };
@@ -404,20 +420,22 @@ class Is_vertical_2 : public BK::Circular_kernel::Is_vertical_2
     typedef typename BK::Circular_kernel                         CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
     typedef typename BK::Circular_arc_2                          Circular_arc_2;
+    typedef typename BK::Line_arc_2                              Line_arc_2;
 
    public:
 
     typedef typename CK::Is_vertical_2::result_type result_type; 
     using CK::Is_vertical_2::operator();
     
-    template <typename T>
     result_type
-      operator()(const T& a) const
+      operator()(const Circular_arc_2& a) const
     { return CK().is_vertical_2_object()(a.arc()); }
+
+    result_type
+      operator()(const Line_arc_2& a) const
+    { return CK().is_vertical_2_object()(a.arc()); }
+
   };
-
- 
-
 
 template <class BK>
 class Compare_y_at_x_2 : public BK::Circular_kernel::Compare_y_at_x_2
@@ -707,17 +725,99 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
       }
   };
 
+
+	CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_2, Circular_arc_2)
+	CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_2, Line_arc_2)
+	CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circular_arc_2, Line_2)
+	CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_arc_2, Line_2)
+
   template < class BK >
   class Do_intersect_2 : public BK::Circular_kernel::Linear_kernel::Do_intersect_2
   {
   public:
     typedef typename BK::Circular_kernel            CK;
+    typedef typename BK::Circular_arc_2           Circular_arc_2;
+    typedef typename BK::Circular_arc_point_2     Circular_arc_point_2;
+    typedef typename BK::Line_arc_2               Line_arc_2;
+    typedef typename CK::Circular_arc_2           Rcirc_arc_2;
+    typedef typename CK::Line_arc_2               Rline_arc_2;
+    typedef typename CK::Circular_arc_point_2     Rcirc_arc_point_2;
+    typedef typename BK::Circle_2                 Circle_2;
+    typedef typename BK::Line_2                   Line_2;
+
     typedef typename CK::Do_intersect_2::result_type result_type; 
     using BK::Circular_kernel::Linear_kernel::Do_intersect_2::operator();
-    template <class T1, class T2>
+
     result_type
-    operator()(const T1& t1, const T2& t2) const
-    { return CGALi::do_intersect(t1, t2, BK()); }
+    operator()(const Circular_arc_2 & c1, const Circular_arc_2 & c2) {
+			return CK().do_intersect_2_object()(c1.arc(), c2.arc());
+	  }
+
+    result_type
+    operator()(const Line_arc_2 & c1, const Line_arc_2 & c2) {
+			return CK().do_intersect_2_object()(c1.arc(), c2.arc());
+	  }
+
+    result_type
+    operator()(const Line_arc_2 & c1, const Circle_2 & c2) {
+			return CK().do_intersect_2_object()(c1.arc(), c2);
+	  }
+
+    result_type
+    operator()(const Circle_2 & c1, const Line_arc_2 & c2) {
+			return CK().do_intersect_2_object()(c1, c2.arc());
+	  }
+
+    result_type
+    operator()(const Circular_arc_2 & c1, const Circle_2 & c2) {
+			return CK().do_intersect_2_object()(c1.arc(), c2);
+	  }
+
+    result_type
+    operator()(const Circle_2 & c1, const Circular_arc_2 & c2) {
+			return CK().do_intersect_2_object()(c1, c2.arc());
+	  }
+
+    result_type
+    operator()(const Line_arc_2 & c1, const Circular_arc_2 & c2) {
+			return CK().do_intersect_2_object()(c1.arc(), c2.arc());
+	  }
+
+    result_type
+    operator()(const Circular_arc_2 & c1, const Line_arc_2 & c2) {
+			return CK().do_intersect_2_object()(c1.arc(), c2.arc());
+	  }
+
+    result_type
+    operator()(const Line_2 & c1, const Line_arc_2 & c2) {
+			return CK().do_intersect_2_object()(c1, c2.arc());
+	  }
+
+    result_type
+    operator()(const Line_arc_2 & c1, const Line_2 & c2) {
+			return CK().do_intersect_2_object()(c1.arc(), c2);
+	  }
+
+    result_type
+    operator()(const Line_2 & c1, const Circular_arc_2 & c2) {
+			return CK().do_intersect_2_object()(c1, c2.arc());
+	  }
+
+    result_type
+    operator()(const Circular_arc_2 & c1, const Line_2 & c2) {
+			return CK().do_intersect_2_object()(c1.arc(), c2);
+	  }
+
+    result_type
+    operator()(const Line_2 & c1, const Circle_2 & c2) {
+			return CK().do_intersect_2_object()(c1, c2);
+	  }
+
+    result_type
+    operator()(const Circle_2 & c1, const Line_2 & c2) {
+			return CK().do_intersect_2_object()(c1, c2);
+	  }
+
   };
 
   template < class BK >

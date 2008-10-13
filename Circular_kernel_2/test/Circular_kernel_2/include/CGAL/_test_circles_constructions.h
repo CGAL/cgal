@@ -965,12 +965,12 @@ void _test_circle_construct(CK ck)
 
   assert(v_rllc1.size() == 2);
   assert(theDo_intersect_2(llu1.supporting_line(), ccu));
-  //assert(CGAL::do_intersect(llu1.supporting_line(), ccu));
+  assert(CGAL::do_intersect(llu1.supporting_line(), ccu));
   assert(v_rllc2.size() == 1);
   assert(theDo_intersect_2(llu2.supporting_line(), ccu));
-  //assert(CGAL::do_intersect(llu2.supporting_line(), ccu));
+  assert(CGAL::do_intersect(llu2.supporting_line(), ccu));
   assert(v_rllc3.size() == 0);
   assert(!theDo_intersect_2(llu3.supporting_line(), ccu));
-  //assert(!CGAL::do_intersect(llu3.supporting_line(), ccu));
+  assert(!CGAL::do_intersect(llu3.supporting_line(), ccu));
 
 }

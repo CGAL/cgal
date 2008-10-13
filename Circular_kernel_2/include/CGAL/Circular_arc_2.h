@@ -228,11 +228,11 @@ class Circular_arc_2 < Filtered_bbox_circular_kernel_2 < CK > > {
 
 	  typedef Filtered_bbox_circular_kernel_2 < CK >         BK;
     typedef Circular_arc_2< BK >                           Self;
-    typedef typename CK::FT                                FT;
-    typedef typename CK::RT                                RT;
-    typedef typename CK::Point_2                           Point_2;
-    typedef typename CK::Line_2                            Line_2;
-    typedef typename CK::Circle_2                          Circle_2;
+    typedef typename BK::FT                                FT;
+    typedef typename BK::RT                                RT;
+    typedef typename BK::Point_2                           Point_2;
+    typedef typename BK::Line_2                            Line_2;
+    typedef typename BK::Circle_2                          Circle_2;
     typedef typename BK::Circular_arc_point_2              Circular_arc_point_2;
     typedef typename CK::Circular_arc_2                    Rcircular_arc_2;
     typedef typename CK::Root_of_2                         Root_of_2;
@@ -339,13 +339,13 @@ public:
 			  return typename BK::Construct_circular_max_vertex_2()(*this);
 			}
 
-		const Circle_2& supporting_circle() const
+		Circle_2 supporting_circle() const
 			{ return P_arc.supporting_circle();}
 
-		const Point_2& center() const
+		Point_2 center() const
 			{ return P_arc.center();}
 
-		const FT& squared_radius() const
+		FT squared_radius() const
 			{ return P_arc.squared_radius();}
 		
 		Bbox_2 bbox() const

@@ -15,6 +15,7 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
+           -I../../../Intersections_2/include \
            -Iinclude\
            -g\
 	   $(TESTSUITE_CXXFLAGS) \

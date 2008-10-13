@@ -198,7 +198,7 @@ class Line_arc_2 < Filtered_bbox_circular_kernel_2 < CK > > {
     typedef typename CK::FT                                FT;
     typedef typename CK::RT                                RT;
     typedef typename CK::Point_2                           Point_2;
-    typedef typename CK::Line_2                            Line_2;
+    typedef typename BK::Line_2                            Line_2;
     typedef typename CK::Segment_2                         Segment_2;
     typedef typename CK::Circle_2                          Circle_2;
     typedef typename BK::Circular_arc_point_2            Circular_arc_point_2;
@@ -285,7 +285,7 @@ public:
                 target() const
                         {return typename BK::Construct_circular_target_vertex_2()(*this);}
 		
-		const Line_2& supporting_line() const
+		Line_2 supporting_line() const
 			{ return P_arc.supporting_line();}
 
                 Bbox_2 bbox() const
