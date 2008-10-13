@@ -107,6 +107,9 @@ public:
 /// of the triangulation via the TAUCS sparse linear
 /// solver. One vertex must be constrained.
 ///
+/// The Surface Mesh Generation package makes copies of implicit functions,
+/// thus such a class must be lightweight and stateless.
+///
 /// @heading Is Model for the Concepts:
 /// Model of the ReconstructionImplicitFunction concept.
 ///
@@ -169,20 +172,21 @@ private:
   typedef typename Triangulation::All_cells_iterator       All_cells_iterator;
   typedef typename Triangulation::Locate_type Locate_type;
 
+  // neighbor search
+  typedef typename CGAL::K_nearest_neighbor<Geom_traits,Vertex_handle> K_nearest_neighbor;
+  typedef typename CGAL::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
+
   // TAUCS solver
   typedef Taucs_solver<double>  Solver;
   typedef std::vector<double>   Sparse_vector;
 
-// Data members
+// Data members.
+// Warning: the Surface Mesh Generation package makes copies of implicit functions,
+// thus this class must be lightweight and stateless.
 private:
 
   Triangulation& m_dt; // f() is pre-computed on vertices of m_dt by solving
                        // the Poisson equation Laplacian(f) = divergent(normals field).
-
-  // neighbor search
-  typedef typename CGAL::K_nearest_neighbor<Geom_traits,Vertex_handle> K_nearest_neighbor;
-  typedef typename CGAL::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
-  K_nearest_neighbor m_nn_search;
 
   // contouring and meshing
   Point m_sink; // Point with the minimum value of f()
@@ -438,7 +442,9 @@ public:
     size_shell *= size;
     sizing *= size;
 
-    init_nn_search_shell();
+    // neighbor search
+    K_nearest_neighbor nn_search;
+    init_nn_search_shell(nn_search);
 
     typedef typename CGAL::Candidate<Vertex_handle,Point> Candidate;
     typedef typename std::priority_queue<Candidate,
@@ -454,7 +460,7 @@ public:
     {
       Point p;
       FT size = 0.0;
-      if(is_refinable(c,size_shell,sizing,size,p))
+      if(is_refinable(c,nn_search,size_shell,sizing,size,p))
       {
         Vertex_handle v0 = c->vertex(0);
         Vertex_handle v1 = c->vertex(1);
@@ -497,7 +503,7 @@ public:
 
           Point p;
           FT size = 0.0;
-          if(is_refinable(c,size_shell,sizing,size,p))
+          if(is_refinable(c,nn_search,size_shell,sizing,size,p))
           {
             Vertex_handle v0 = c->vertex(0);
             Vertex_handle v1 = c->vertex(1);
@@ -508,7 +514,7 @@ public:
         }
       }
     }
-		m_nn_search.clear();
+
     return nb;
   }
 
@@ -1508,7 +1514,7 @@ private:
     return Sphere(bbox.center(), bbox.squared_radius() * ratio*ratio);
   }
 
-  void init_nn_search_shell()
+  void init_nn_search_shell(K_nearest_neighbor& nn_search)
   {
     // Instanciate a KD-tree search.
     // We have to wrap each input vertex by a Point_vertex_handle_3.
@@ -1523,10 +1529,11 @@ private:
       Point_vertex_handle_3 kv(p.x(),p.y(),p.z(),v);
       kvertices.push_back(kv);
     }
-    m_nn_search = K_nearest_neighbor(kvertices.begin(), kvertices.end());
+    nn_search = K_nearest_neighbor(kvertices.begin(), kvertices.end());
   }
 
   bool is_refinable(Cell_handle cell,
+                    K_nearest_neighbor& nn_search, 
                     const FT size_shell,
                     const FT sizing,
                     FT& size,
@@ -1538,17 +1545,17 @@ private:
 
     // try circumcenter
     p = m_dt.dual(cell);
-    if(distance_to_input_points(p) < size_shell)
+    if(distance_to_input_points(nn_search, p) < size_shell)
       return true;
 
     return false;
   }
 
-  FT distance_to_input_points(const Point& p)
+  FT distance_to_input_points(K_nearest_neighbor& nn_search, const Point& p)
   {
     // Get nearest neighbour
     std::list<Vertex_handle> nearest_vertices;
-    m_nn_search.get_k_nearest_neighbors(p,1,nearest_vertices);
+    nn_search.get_k_nearest_neighbors(p,1,nearest_vertices);
     Vertex_handle nv = *nearest_vertices.begin();
     if(nv != NULL)
       return distance(nv->point(),p);

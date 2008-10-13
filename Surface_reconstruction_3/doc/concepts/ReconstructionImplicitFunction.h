@@ -23,6 +23,9 @@
 /// used by the Surface_reconstruction_3 package.
 /// The surface is the zero-level of the implicit function.
 ///
+/// The Surface Mesh Generation package makes copies of implicit functions,
+/// thus such a class must be lightweight and stateless.
+///
 /// @heading Design Pattern:
 /// A model of ReconstructionImplicitFunction is a
 /// Strategy [GHJV95]: it implements a strategy of surface mesh reconstruction.

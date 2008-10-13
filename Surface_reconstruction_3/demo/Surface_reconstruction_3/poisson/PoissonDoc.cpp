@@ -932,7 +932,7 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     FT size = sqrt(bounding_sphere.squared_radius());
 
     // defining the surface
-    typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function&> Surface_3;
+    typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function> Surface_3;
     Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
     FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
@@ -1262,7 +1262,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     FT size = sqrt(bounding_sphere.squared_radius());
 
     // defining the surface
-    typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function&> Surface_3;
+    typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function> Surface_3;
     Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
     FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface

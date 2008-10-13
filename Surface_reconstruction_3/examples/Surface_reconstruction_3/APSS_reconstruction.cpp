@@ -63,7 +63,7 @@ typedef CGAL::APSS_implicit_function<Kernel> APSS_implicit_function;
 // Surface mesher
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function&> Surface_3;
+typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function> Surface_3;
 
 
 // ----------------------------------------------------------------------------

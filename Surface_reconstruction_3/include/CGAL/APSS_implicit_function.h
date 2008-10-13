@@ -41,6 +41,9 @@ CGAL_BEGIN_NAMESPACE
 /// moving least squares (MLS) fitting of algebraic spheres.
 /// See "Algebraic Point Set Surfaces" by Guennebaud and Gross (2007).
 ///
+/// The Surface Mesh Generation package makes copies of implicit functions,
+/// thus such a class must be lightweight and stateless.
+///
 /// @heading Is Model for the Concepts:
 /// Model of the ReconstructionImplicitFunction concept.
 ///
@@ -118,6 +121,7 @@ public:
                          unsigned int k,
                          FT projection_error = 3.16e-4) // sqrt(1e-7)
   {
+    // Allocate smart pointer to data
     m = new Private;
 
     // Number of nearest neighbours
@@ -152,16 +156,19 @@ public:
     m->sqError = projection_error * projection_error * Gt().compute_squared_radius_3_object()(m->bounding_sphere);
   }
 
+  /// Copy constructor
   APSS_implicit_function(const APSS_implicit_function& other) {
     m = other.m;
     m->count++;
   }
 
+  /// operator =()
   APSS_implicit_function& operator = (const APSS_implicit_function& other) {
     m = other.m;
     m->count++;
   }
 
+  /// Destructor
   ~APSS_implicit_function() {
     if (--(m->count)==0)
       delete m;
@@ -619,7 +626,7 @@ private:
     int count; // reference counter
   };
 
-  Private* m;
+  Private* m; // smart pointer to data
 
 }; // end of APSS_implicit_function
 
