@@ -77,7 +77,7 @@ private:
         // Return the number of elements in the column
         int size() const    { return m_values.size(); }
 
-        // return address of column{index} 
+        // return address of column{index}
         // (NULL if coefficient does not exist).
         const T* get_coef_addr(int index) const
         {
@@ -101,7 +101,7 @@ private:
         {
             // Search for element in m_values[]
             T* coef_addr = (T*) get_coef_addr(index);
-            if (coef_addr == NULL) 
+            if (coef_addr == NULL)
             {
               // if the coefficient doesn't exist yet
               m_indices.push_back(index);
@@ -111,7 +111,7 @@ private:
             {
               // if the coefficient already exists
               *coef_addr += val;       // +=
-            } 
+            }
         }
 
         // column{index} <- val.
@@ -119,17 +119,17 @@ private:
         {
             // Search for element in m_values[]
             T* coef_addr = (T*) get_coef_addr(index);
-            if (coef_addr == NULL) 
+            if (coef_addr == NULL)
             {
               // if the coefficient doesn't exist yet
               m_indices.push_back(index);
               m_values.push_back(val);
             }
-            else 
+            else
             {
               // if the coefficient already exists
               *coef_addr = val;        // =
-            } 
+            }
         }
 
         // return column{index} (0 by default)
@@ -137,10 +137,10 @@ private:
         {
             // Search for element in m_values[]
             const T* coef_addr = get_coef_addr(index);
-            if (coef_addr == NULL) 
+            if (coef_addr == NULL)
               return 0; // if the coefficient doesn't exist
             else
-              return *coef_addr; 
+              return *coef_addr;
         }
     }; // class Column
 
@@ -213,8 +213,8 @@ public:
         // => swap i and j if (i, j) belongs to the upper triangle
         if (m_is_symmetric && (j > i))
             std::swap(i, j);
-            
-        // Construct back the m_columns[] array after a call to get_taucs_matrix()  
+
+        // Construct back the m_columns[] array after a call to get_taucs_matrix()
         if (m_columns == NULL)
           construct_back_columns();
 
@@ -226,8 +226,8 @@ public:
     /// Optimizations:
     /// - For symmetric matrices, Taucs_matrix stores only the lower triangle
     ///   set_coef() does nothing if (i, j) belongs to the upper triangle.
-    // - Caller can optimize this call by setting 'new_coef' to true
-    //   if the coefficient does not already exists in the matrix. 
+    /// - Caller can optimize this call by setting 'new_coef' to true
+    ///   if the coefficient does not already exist in the matrix.
     ///
     /// Preconditions:
     /// - 0 <= i < row_dimension().
@@ -240,7 +240,7 @@ public:
         if (m_is_symmetric && (j > i))
             return;
 
-        // Construct back the m_columns[] array after a call to get_taucs_matrix()  
+        // Construct back the m_columns[] array after a call to get_taucs_matrix()
         if (m_columns == NULL)
           construct_back_columns();
 
@@ -269,11 +269,11 @@ public:
     {
         CGAL_precondition(i < m_row_dimension);
         CGAL_precondition(j < m_column_dimension);
-        
+
         if (m_is_symmetric && (j > i))
             return;
 
-        // Construct back the m_columns[] array after a call to get_taucs_matrix()  
+        // Construct back the m_columns[] array after a call to get_taucs_matrix()
         if (m_columns == NULL)
           construct_back_columns();
 
@@ -287,7 +287,7 @@ public:
     // Implementation note: this method deletes m_columns[] to save memory.
     const taucs_ccs_matrix* get_taucs_matrix() const
     {
-        if (m_matrix == NULL) 
+        if (m_matrix == NULL)
         {
           CGAL_precondition(m_columns != NULL);
 
@@ -325,7 +325,7 @@ public:
               // Start of next column will be:
               m_matrix->colptr[col+1] = first_index + nb_elements;
           }
-          
+
           // Delete m_columns[] to save memory.
           delete[] m_columns;
           m_columns = NULL;
@@ -343,7 +343,7 @@ private:
     // then delete m_matrix.
     void construct_back_columns() const
     {
-        if (m_columns == NULL) 
+        if (m_columns == NULL)
         {
           CGAL_precondition(m_matrix != NULL);
 
@@ -358,17 +358,17 @@ private:
           for (int col=0; col < m_column_dimension; col++)
           {
               int first_index = m_matrix->colptr[col]; // Index of 1st non null element of the column
-              int nb_elements = m_matrix->colptr[col+1] - first_index; 
+              int nb_elements = m_matrix->colptr[col+1] - first_index;
                                                        // Number of non null elements of the column
 
               // Fast copy of column indices and values
-              m_columns[col].m_indices.assign(&m_matrix->rowind[first_index], 
+              m_columns[col].m_indices.assign(&m_matrix->rowind[first_index],
                                               &m_matrix->rowind[first_index + nb_elements - 1]);
               T* taucs_values = (T*) m_matrix->values.v;
-              m_columns[col].m_values.assign(&taucs_values[first_index], 
-                                             &taucs_values[first_index + nb_elements - 1]); 
+              m_columns[col].m_values.assign(&taucs_values[first_index],
+                                             &taucs_values[first_index + nb_elements - 1]);
           }
-          
+
           // Delete m_matrix
           taucs_ccs_free(m_matrix);
           m_matrix = NULL;

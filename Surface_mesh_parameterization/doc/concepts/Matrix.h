@@ -65,8 +65,8 @@ public:
     /// Write access to a matrix coefficient: a_ij <- val.
     ///
     /// Optimization:
-    // - Caller can optimize this call by setting 'new_coef' to true
-    //   if the coefficient does not already exists in the matrix. 
+    /// - Caller can optimize this call by setting 'new_coef' to true
+    ///   if the coefficient does not already exist in the matrix.
     ///
     /// Preconditions:
     /// - 0 <= i < row_dimension().
