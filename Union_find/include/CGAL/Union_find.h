@@ -60,7 +60,7 @@ public:
     reference operator*()  const { return m_p->value; }
     pointer   operator->() const { return &(m_p->value); }
     Self&     operator++() {
-                  CGAL_assertion(m_p);
+                  CGAL_assertion(m_p != 0);
                   m_p = m_p->next;
                   return *this;
     }
@@ -132,7 +132,7 @@ private:
     Self& operator=(const Self&);
 
     pointer find( pointer p) const {
-        CGAL_assertion(p);
+        CGAL_assertion(p != 0);
         pointer r = p;
         while (r->up) 
             r = r->up; // now r is the root;
