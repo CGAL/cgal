@@ -27,14 +27,14 @@ namespace internal {
       return &ret_;
     }
     const This& operator++() {
+      CGAL_assert(ait_ != aend_);
       ++ait_;
-      if (ait_== aend_) {
+      while (ait_== aend_) {
 	++rit_;
-	if (rit_!= rend_){
-	  boost::tie(ait_, aend_) = Inner_range()(rit_);
-	  //ait_=rit_->second.chains_begin();
-	  ret_=Make_value()(rit_, ait_);
-	}
+	if (rit_== rend_) {
+          break;
+        }
+        boost::tie(ait_, aend_) = Inner_range()(rit_);
       }
       if (rit_ != rend_) {
 	ret_=Make_value()(rit_, ait_);
