@@ -59,7 +59,7 @@ class Voronoi_diagram_2
   typedef Voronoi_diagram_2<DG,AT,AP>        Self;
   typedef Triangulation_cw_ccw_2             CW_CCW_2;
 
-  friend struct CGAL_VORONOI_DIAGRAM_2_INS::Accessor<Self>;
+  friend class CGAL_VORONOI_DIAGRAM_2_INS::Accessor<Self>;
  public:
   //-------
   // TYPES
