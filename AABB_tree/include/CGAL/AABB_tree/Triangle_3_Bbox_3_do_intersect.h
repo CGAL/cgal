@@ -1,4 +1,4 @@
-// Copyright (c) 2008  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETHZ (Suisse).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : 
+// Author(s)     : Camille Wormser, Pierre Alliez
 
 #ifndef CGAL_TRIANGLE_3_BBOX_3_DO_INTERSECT_H
 #define CGAL_TRIANGLE_3_BBOX_3_DO_INTERSECT_H
