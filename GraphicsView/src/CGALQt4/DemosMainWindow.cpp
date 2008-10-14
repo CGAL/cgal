@@ -323,5 +323,31 @@ DemosMainWindow::updateRecentFileActions()
   recentFilesSeparator->setVisible(numRecentFiles > 0);
 }
 
+void DemosMainWindow::writeState(QString groupname)
+{
+  QSettings settings;
+
+  settings.beginGroup(groupname);
+  settings.setValue("size", size());
+  settings.setValue("pos", pos());
+  settings.setValue("state", saveState());
+  settings.endGroup();
+}
+
+void DemosMainWindow::readState(QString groupname, Options what_to_save)
+{
+  QSettings settings;
+  
+  settings.beginGroup(groupname);
+  resize(settings.value("size", this->size()).toSize());
+  move(settings.value("pos", this->pos()).toPoint());
+  QByteArray mainWindowState = settings.value("state").toByteArray();
+  if(!mainWindowState.isNull()) {
+    this->restoreState(mainWindowState);
+  }
+  settings.endGroup();
+}
+
+
 } // namespace Qt
 } // namespace CGAL

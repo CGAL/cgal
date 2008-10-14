@@ -42,6 +42,14 @@ class DemosMainWindow : public QMainWindow
   Q_OBJECT
 
 public:
+  enum Option { NoOption = 0x0,
+		Size     = 0x1,
+		Position = 0x2,
+		State    = 0x4};
+
+  Q_DECLARE_FLAGS(Options, Option);
+
+public:
   unsigned int maxNumberOfRecentFiles() const ;
 
 public slots:
@@ -61,6 +69,10 @@ protected:
   void addAboutDemo(QString htmlResourceName, QMenu* menu  = 0);
 
   void addRecentFiles(QMenu* menu, QAction* insertBefore = 0);
+
+  void writeState(QString groupname = "MainWindow");
+  void readState(QString groupname = "MainWindow",
+		 Options what_to_save = Options(Size|State));
 
 protected slots:
   void setUseAntialiasing(bool checked);
@@ -91,8 +103,10 @@ protected:
   unsigned int maxNumRecentFiles;
   QVector<QAction*> recentFileActs;
 }; // end class DemosMainWindow
- 
+
 } // namespace Qt
 } // namespace CGAL
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(CGAL::Qt::DemosMainWindow::Options)
 
 #endif // CGAL_QT_DEMOS_MAIN_WINDOW_H
