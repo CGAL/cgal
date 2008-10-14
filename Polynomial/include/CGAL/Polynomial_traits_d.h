@@ -29,33 +29,33 @@
 #include <CGAL/extended_euclidean_algorithm.h>
 
 #define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                          \
-  typedef Polynomial_traits_d< Polynomial< Coefficient_type_ > > PT;         \
-  typedef Polynomial_traits_d< Coefficient_type_ > PTC;                      \
+  private:                                                              \
+  typedef Polynomial_traits_d< Polynomial< Coefficient_type_ > > PT;    \
+  typedef Polynomial_traits_d< Coefficient_type_ > PTC;                 \
                                                                         \
-  public:                                                               \
-  typedef Polynomial<Coefficient_type_>                  Polynomial_d;       \
-  typedef Coefficient_type_                              Coefficient_type;        \
+  typedef Polynomial<Coefficient_type_>               Polynomial_d;     \
+  typedef Coefficient_type_                          Coefficient_type;  \
                                                                         \
-  typedef typename Innermost_coefficient_type<Polynomial_d>::Type            \
-  Innermost_coefficient_type;                                                \
+  typedef typename Innermost_coefficient_type<Polynomial_d>::Type       \
+  Innermost_coefficient_type;                                           \
   static const int d = Dimension<Polynomial_d>::value;                  \
                                                                         \
                                                                         \
-  private:                                                              \
-  typedef std::pair< Exponent_vector, Innermost_coefficient_type >           \
+  typedef std::pair< Exponent_vector, Innermost_coefficient_type >      \
   Exponents_coeff_pair;                                                 \
   typedef std::vector< Exponents_coeff_pair > Monom_rep;                \
                                                                         \
   typedef CGAL::Recursive_const_flattening< d-1,                        \
-    typename CGAL::Polynomial<Coefficient_type>::const_iterator >            \
-  Coefficient_const_flattening;                                               \
+    typename CGAL::Polynomial<Coefficient_type>::const_iterator >       \
+  Coefficient_const_flattening;                                         \
                                                                         \
-  public:                                                               \
-  typedef typename Coefficient_const_flattening::Recursive_flattening_iterator \
-  Innermost_coefficient_const_iterator;                                       \
-  typedef typename  Polynomial_d::const_iterator Coefficient_const_iterator;        \
+  typedef typename                                                      \
+  Coefficient_const_flattening::Recursive_flattening_iterator           \
+  Innermost_coefficient_const_iterator;                                 \
                                                                         \
-  private:
+  typedef typename  Polynomial_d::const_iterator                        \
+  Coefficient_const_iterator;
+ 
 
 CGAL_BEGIN_NAMESPACE;
 
@@ -67,9 +67,6 @@ template< class Coefficient_type_, class ICoeffAlgebraicCategory >
 class Polynomial_traits_d_base_icoeff_algebraic_category {    
 public:    
   typedef Null_functor    Multivariate_content;
-  
-  // Disabled for release 
-  // typedef Null_functor    Interpolate;
 };
 
 // Specializations
@@ -138,56 +135,6 @@ public:
         return Innermost_coefficient_type(1);
     }
   };
-  
-//  // Disabled for release
-//  struct Interpolate{
-//     typedef Polynomial<Innermost_coefficient_type> Polynomial_1; 
-        
-//     void operator() (
-//         const Polynomial_1& m1, const Polynomial_d& u1,
-//         const Polynomial_1& m2, const Polynomial_d& u2,
-//         Polynomial_1& m, Polynomial_d& u) const {
-//       Polynomial_1 s,t; 
-            
-//       CGAL::extended_euclidean_algorithm(m1,m2,s,t);
-//       m = m1 * m2;
-//       this->operator()(m1,m2,m,s,t,u1,u2,u);
-//     }
-        
-//     void operator() (
-//         const Polynomial_1& m1, const Polynomial_1& m2, 
-//         const Polynomial_1& m, 
-//         const Polynomial_1& s,  const Polynomial_1& t,  
-//         Polynomial_d u1, Polynomial_d u2, 
-//         Polynomial_d& u) const {
-// #ifndef NDEBUG 
-//       Polynomial_1 tmp,s_,t_;
-//       tmp = CGAL::extended_euclidean_algorithm(m1,m2,s_,t_);
- 
-//       CGAL_precondition(tmp == Polynomial_1(1));
-//       CGAL_precondition(s_ == s);
-//       CGAL_precondition(t_ == t);
-// #endif
-            
-//       typename CGAL::Coercion_traits<Polynomial_1,Polynomial_d>::Cast cast;
-//       typename Polynomial_traits_d<Polynomial_1>::Canonicalize canonicalize;
-//       typename Polynomial_traits_d<Polynomial_d>::Pseudo_division_remainder
-//         pseudo_remainder;
-            
-//       CGAL_precondition(u1.degree() < m1.degree() || u1.is_zero());
-//       CGAL_precondition(u2.degree() < m2.degree() || u2.is_zero());
-//       if(m1.degree() < m2.degree()){
-//         Polynomial_d v = 
-//           pseudo_remainder(cast(s)*(u2-u1),cast(canonicalize(m2)));
-//         u = cast(m1)*v + u1;
-//       }
-//       else{
-//         Polynomial_d v 
-//           = pseudo_remainder(cast(t)*(u1-u2),cast(canonicalize(m1)));
-//         u = cast(m2)*v + u2;
-//       }
-//     }
-//   };
 };
 
 template< class Coefficient_type_ >
@@ -452,7 +399,6 @@ public:
       return result;
     }
   };
-  
 };
 
 // Now the version for the polynomials with all functors provided by all 
@@ -464,9 +410,33 @@ class Polynomial_traits_d_base< Polynomial< Coefficient_type_ >,
   : public Polynomial_traits_d_base_icoeff_algebraic_category< 
         Polynomial< Coefficient_type_ >, ICoeffAlgebraicCategory >,
     public Polynomial_traits_d_base_polynomial_algebraic_category<
-        Polynomial< Coefficient_type_ >, PolynomialAlgebraicCategory > {
-
-  CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
+        Polynomial< Coefficient_type_ >, PolynomialAlgebraicCategory > {      
+                 
+  typedef Polynomial_traits_d< Polynomial< Coefficient_type_ > > PT;         
+  typedef Polynomial_traits_d< Coefficient_type_ > PTC;                      
+                                                                        
+  public:                                                               
+  typedef Polynomial<Coefficient_type_>                  Polynomial_d;       
+  typedef Coefficient_type_                              Coefficient_type;        
+                                                                        
+  typedef typename Innermost_coefficient_type<Polynomial_d>::Type            
+  Innermost_coefficient_type;                                                
+  static const int d = Dimension<Polynomial_d>::value;                  
+                                                                        
+                                                                        
+  private:                                                              
+  typedef std::pair< Exponent_vector, Innermost_coefficient_type >           
+  Exponents_coeff_pair;                                                 
+  typedef std::vector< Exponents_coeff_pair > Monom_rep;                
+                                                                        
+  typedef CGAL::Recursive_const_flattening< d-1,                        
+    typename CGAL::Polynomial<Coefficient_type>::const_iterator >            
+  Coefficient_const_flattening;                                               
+                                                                        
+  public:                                                               
+  typedef typename Coefficient_const_flattening::Recursive_flattening_iterator 
+  Innermost_coefficient_const_iterator;                                       
+  typedef typename  Polynomial_d::const_iterator Coefficient_const_iterator;       
 
 
   // We use our own Strict Weak Ordering predicate in order to avoid
