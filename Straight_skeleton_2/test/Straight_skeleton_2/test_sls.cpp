@@ -92,6 +92,8 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
       
   if ( sAbortOnError )    
     std::exit(1);     
+    
+  throw std::runtime_error("CGAL Error");  
 }
 
 typedef std::vector<std::string>                     FP_filter_failure_list ;

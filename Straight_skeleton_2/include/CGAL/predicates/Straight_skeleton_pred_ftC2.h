@@ -249,10 +249,8 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
     Quotient mt = mt_->to_quotient();
     Quotient nt = nt_->to_quotient();
    
-    CGAL_assertion ( CGAL_NTS certified_is_positive(mt) ) ;
-    CGAL_assertion ( CGAL_NTS certified_is_positive(nt) ) ;
-
-    rResult = CGAL_NTS certified_compare(mt,nt);
+    if ( CGAL_NTS certified_is_positive(mt) && CGAL_NTS certified_is_positive(nt) ) 
+      rResult = CGAL_NTS certified_compare(mt,nt);
   }
   
   return rResult ;
@@ -499,25 +497,26 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > con
     Quotient lt = lt_->to_quotient();
     Quotient rt = rt_->to_quotient();
 
-    CGAL_assertion ( CGAL_NTS certified_is_positive(lt) ) ;
-    CGAL_assertion ( CGAL_NTS certified_is_positive(rt) ) ;
-
-    Uncertain<bool> equal_times = CGAL_NTS certified_is_equal(lt,rt);
-    
-    if ( is_certain(equal_times) )
+    if ( CGAL_NTS certified_is_positive(lt) && CGAL_NTS certified_is_positive(rt) ) 
     {
-      if ( equal_times )
+      Uncertain<bool> equal_times = CGAL_NTS certified_is_equal(lt,rt);
+      
+      if ( is_certain(equal_times) )
       {
-        Optional_point_2 li = construct_offset_lines_isecC2(l);
-        Optional_point_2 ri = construct_offset_lines_isecC2(r);
-
-        if ( li && ri )
-          rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li->x(),ri->x())
-                                        , CGAL_NTS certified_is_equal(li->y(),ri->y())
-                                        ) ;
+        if ( equal_times )
+        {
+          Optional_point_2 li = construct_offset_lines_isecC2(l);
+          Optional_point_2 ri = construct_offset_lines_isecC2(r);
+  
+          if ( li && ri )
+            rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li->x(),ri->x())
+                                          , CGAL_NTS certified_is_equal(li->y(),ri->y())
+                                          ) ;
+        }
+        else rResult = false;
       }
-      else rResult = false;
     }
+
   }
   return rResult;
 }
