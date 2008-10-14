@@ -53,10 +53,10 @@ compile()
   if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
       export TESTSUITE_CXXFLAGS="-DCGAL_ARR_TEST_POINT_LOCATION=$2 -DCGAL_ARR_TEST_TRAITS=$3 "
       configure
-      eval '${MAKE_CMD} VERBOSE=1 -fMakefile  \
+      eval '${MAKE_CMD} VERBOSE=1 -f Makefile  \
             $1'
   else
-      eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+      eval '${MAKE_CMD} CGAL_MAKEFILE=$CGAL_MAKEFILE \
         TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
         TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1'
   fi
@@ -78,7 +78,7 @@ compile_and_run()
     echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
   fi
 
-  eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
+  eval "2>&1 ${MAKE_CMD} CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
 
 }
 
@@ -90,10 +90,10 @@ clean_tests()
     # always fails for some reason
     #
 	if ! ( uname | grep -q "CYGWIN" ) ; then
-	    make -fMakefile clean
+	    "${MAKE_CMD}" -f Makefile clean
 	fi
     fi
-    eval "make clean > /dev/null 2>&1"
+    eval "${MAKE_CMD} clean > /dev/null 2>&1"
 }
 
 compile_and_run_sweep()
