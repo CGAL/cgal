@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Camille Wormser, Pierre Alliez
+// Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez
 
 #ifndef CGAL_TRIANGLE_3_BBOX_3_DO_INTERSECT_H
 #define CGAL_TRIANGLE_3_BBOX_3_DO_INTERSECT_H
@@ -85,17 +85,13 @@ namespace CGALi {
     const typename K::Vector_3* sides, 
     const CGAL::Bbox_3& bbox)
   {
-    //	K::Vector_3 a(AXE==0? 0: AXE==1? sides[SIDE].z(): -sides[SIDE].y(),
-    //								AXE==0? -sides[SIDE].z(): AXE==1? 0: sides[SIDE].x(),
-    //								AXE==0? sides[SIDE].y(): AXE==1? -sides[SIDE].x(): 0);
-
     const typename K::Point_3& j = triangle.vertex(SIDE);
     const typename K::Point_3& k = triangle.vertex((SIDE+2)%3);
-    //	K::FT t_min = a.x()*j.x() + a.y()*j.y() + a.z()*j.z();
+
     typename K::FT t_min = AXE==0? -sides[SIDE].z()*j.y() + sides[SIDE].y()*j.z():
       AXE==1?  sides[SIDE].z()*j.x() - sides[SIDE].x()*j.z(): 
       -sides[SIDE].y()*j.x() + sides[SIDE].x()*j.y();
-    //	K::FT t_max = a.x()*k.x() + a.y()*k.y() + a.z()*k.z();
+
     typename K::FT t_max = AXE==0? -sides[SIDE].z()*k.y() + sides[SIDE].y()*k.z():
       AXE==1?  sides[SIDE].z()*k.x() - sides[SIDE].x()*k.z(): 
       -sides[SIDE].y()*k.x() + sides[SIDE].x()*k.y();
@@ -132,7 +128,6 @@ namespace CGALi {
     void get_min_max(const typename K::FT& px,
     const typename K::FT& py,
     const typename K::FT& pz,
-
     const CGAL::Bbox_3& c,
     typename K::Point_3& p_min, 
     typename K::Point_3& p_max)
@@ -174,9 +169,6 @@ namespace CGALi {
     const CGAL::Bbox_3& bbox,
     const K& kernel)
   {
-    //  if(! CGAL::do_intersect(triangle.supporting_plane(), bbox))
-    //    return false;
-
     if(! do_bbox_intersect<K>(triangle, bbox))
       return false;
 

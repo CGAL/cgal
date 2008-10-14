@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Camille Wormser, Pierre Alliez
+// Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez
 
 #ifndef CGAL_RAY_3_BBOX_3_DO_INTERSECT_H
 #define CGAL_RAY_3_BBOX_3_DO_INTERSECT_H

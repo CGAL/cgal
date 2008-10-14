@@ -15,7 +15,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Camille Wormser, Pierre Alliez
+// Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez
+
 
 #ifndef CGAL_SEGMENT_3_BBOX_3_DO_INTERSECT_H
 #define CGAL_SEGMENT_3_BBOX_3_DO_INTERSECT_H
@@ -58,7 +59,7 @@ namespace CGALi {
     FT tmin = (parameters[sign_x].x() - source.x()) * inv_direction.x();
     FT tmax = (parameters[1-sign_x].x() - source.x()) * inv_direction.x();
 
-    // faster exit
+    // premature exit
     if(tmax < (FT)0.0 || tmin > (FT)1.0)
       return false;
 

@@ -26,13 +26,13 @@
 #include <CGAL/Bbox_3.h>
 #include <vector>
 
-#include "Ray_3_Bbox_3_do_intersect.h"
-#include "Bbox_3_Bbox_3_do_intersect.h"
-#include "Segment_3_Bbox_3_do_intersect.h"
-#include "Plane_3_Bbox_3_do_intersect.h"
-#include "Triangle_3_Bbox_3_do_intersect.h"
-#include "Line_3_Bbox_3_do_intersect.h"
-#include "Sphere_3_Bbox_do_intersect.h"
+#include <CGAL/AABB_tree/Ray_3_Bbox_3_do_intersect.h>
+#include <CGAL/AABB_tree/Bbox_3_Bbox_3_do_intersect.h>
+#include <CGAL/AABB_tree/Segment_3_Bbox_3_do_intersect.h>
+#include <CGAL/AABB_tree/Plane_3_Bbox_3_do_intersect.h>
+#include <CGAL/AABB_tree/Triangle_3_Bbox_3_do_intersect.h>
+#include <CGAL/AABB_tree/Line_3_Bbox_3_do_intersect.h>
+#include <CGAL/AABB_tree/Sphere_3_Bbox_do_intersect.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -461,5 +461,5 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_AABB_NODE_
+#endif // CGAL_AABB_NODE_H
 

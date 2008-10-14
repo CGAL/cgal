@@ -15,15 +15,12 @@
 // $Id$
 // 
 //
-// Author(s)     :  Camille Wormser, Pierre Alliez
+// Author(s)     :  Camille Wormser, Jane Tournois, Pierre Alliez
 
 #ifndef CGAL_BBOX_3_BBOX_3_DO_INTERSECT_H
 #define CGAL_BBOX_3_BBOX_3_DO_INTERSECT_H
 
 CGAL_BEGIN_NAMESPACE
-
-#undef min
-#undef max
 
 namespace CGALi {
 
@@ -34,10 +31,9 @@ namespace CGALi {
     const CGAL::Bbox_3& c2,
     const K& kernel)
   {
-    for(int i = 0; i < 3; ++i) {
+    for(int i = 0; i < 3; ++i)
       if(c1.max(i) < c2.min(i) || c1.min(i) > c2.max(i))
 	return false;
-    }
     return true;
   }
 

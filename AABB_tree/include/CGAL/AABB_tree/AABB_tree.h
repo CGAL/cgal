@@ -22,7 +22,7 @@
 
 #include <list>
 #include <stack>
-#include "AABB_node.h"
+#include <CGAL/AABB_tree/AABB_node.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -45,7 +45,6 @@ public:
   typedef AABB_node<Kernel,Input,PSC> Node;
   typedef typename Node::Point_with_input Point_with_input;
 
-
 private:
 
   // set of input primitives (halfedge or face handles)
@@ -56,7 +55,7 @@ private:
 
 public:
   // life cycle
-  AABB_tree() {m_root = NULL;}
+  AABB_tree() : m_root(NULL) {}
   ~AABB_tree()
   {
     cleanup();
@@ -70,7 +69,7 @@ public:
       delete [] m_root;
   }
 
-  // build tree when Input = face_handle
+  // build tree when input = face_handle
   bool build_faces(PSC& psc)
   {
     cleanup();
