@@ -26,6 +26,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace Qt {
+  template <typename K> class PainterOstream;
+}
+
 template < class Gt >
 class Parabola_segment_2 : public Parabola_2< Gt >
 {
@@ -147,6 +151,11 @@ public:
     for (unsigned int i = 0; i < p.size() - 1; i++) {
       W << Segment_2(p[i], p[i+1]);
     }
+  }
+
+  template< class K >
+  void draw(CGAL::Qt::PainterOstream<K>& stream) const {
+    stream.draw_parabola_segment(this->center(), this->line(), p1, p2);
   }
 };
 

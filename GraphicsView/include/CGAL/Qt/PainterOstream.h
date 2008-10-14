@@ -24,6 +24,7 @@
 #include <QPainter>
 #include <QPen>
 #include <QRectF>
+#include <QPainterPath>
 #include <CGAL/Qt/Converter.h>
 
 namespace CGAL {
@@ -136,6 +137,22 @@ public:
     (*this) << Segment_2<K>(Point_2<K>(to_double(arc.source().x()), to_double(arc.source().y())),
 			    Point_2<K>(to_double(arc.target().x()), to_double(arc.target().y())));
      return *this;
+  }
+
+  void draw_parabola_segment(const  Point_2<K>& center, const Line_2<K>& line, 
+			     const  Point_2<K>& source, const Point_2<K>& target)
+  {
+    const Point_2<K> proj_source = line.projection(source);
+    const Point_2<K> proj_target = line.projection(target);
+    const Point_2<K> intersection = circumcenter(proj_source,
+						 proj_target,
+						 center);
+    // Property: "intersection" is the intersection of the two tangent
+    // lines in source and target.
+    QPainterPath path;
+    path.moveTo(convert(source));
+    path.quadTo(convert(intersection), convert(target));
+    qp->drawPath(path);
   }
 };
 
