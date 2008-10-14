@@ -25,9 +25,15 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   namespace Min_sphere_of_spheres_d_impl {
     const double Min_float = 1.0e-120;
-    const double Eps = 1.0e-16;
-    const double SqrOfEps = 1.0e-32;
-    const double Tol = 1.0+Eps;
+
+    const float Eps_float = 1.0e-7f;
+    const double Eps_double = 1.0e-16;
+    float SqrOfEps (float) {return 1.0e-14f;}
+    double SqrOfEps (double) {return 1.0e-32;}
+
+    float Tol (float) {return 1.0+Eps_float;}
+    template <class FT>
+    double Tol (FT) {return 1.0+Eps_double;}
   }
 
   template<typename FT>
