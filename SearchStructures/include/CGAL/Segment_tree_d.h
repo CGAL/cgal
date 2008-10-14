@@ -98,7 +98,7 @@ protected:
   // type of a vertex
   // struct Segment_tree_node;
   
-  friend class Segment_tree_node<C_Data,C_Window,C_Interface>;
+  friend struct Segment_tree_node<C_Data,C_Window,C_Interface>;
   typedef Segment_tree_node<C_Data,C_Window,C_Interface> Segment_tree_node_t;
   typedef Segment_tree_node<C_Data,C_Window,C_Interface> *link_type;
   
