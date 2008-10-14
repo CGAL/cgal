@@ -2,13 +2,13 @@
 
 #include<boost/shared_ptr.hpp>
 
-#include<CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include<CGAL/Polygon_2.h>
 #include<CGAL/Create_offset_polygons_2.h>
 
 #include "print.h"
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel K ;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
 typedef K::FT                        FT ;
 typedef K::Point_2                   Point ;
