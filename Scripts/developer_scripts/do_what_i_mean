@@ -5,5 +5,5 @@
 [ -r Makefile ] || cmake .
 
 if [ $? == 0 ]; then
-  make -f Makefile
+  make -f Makefile ${1+"$@"}
 fi
