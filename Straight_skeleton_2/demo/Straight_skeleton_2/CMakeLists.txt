@@ -18,7 +18,7 @@ if ( CGAL_FOUND AND QT3_FOUND )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( straight_skeleton_2_toolbar.h straight_skeleleton_2_toolbar.moc )
+  qt3_generate_moc( straight_skeleton_2_toolbar.h straight_skeleton_2_toolbar.moc )
   qt3_generate_moc( straight_skeleton_2_toolbar_layers.h straight_skeleton_2_toolbar_layers.moc )
   qt3_generate_moc( straight_skeleton_2.cpp straight_skeleton_2.moc )
 
@@ -26,10 +26,15 @@ if ( CGAL_FOUND AND QT3_FOUND )
   # The executable itself.
   add_executable  ( straight_skeleton_2 
     straight_skeleton_2.cpp straight_skeleton_2.moc
-    straight_skeleleton_2_toolbar.moc straight_skeleton_2_toolbar_layers.moc
+    straight_skeleton_2_toolbar.cpp straight_skeleton_2_toolbar.moc 
+    straight_skeleton_2_toolbar_layers.cpp straight_skeleton_2_toolbar_layers.moc
     )
 
-  target_link_libraries( straight_skeleton_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  target_link_libraries( straight_skeleton_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT3_LIBRARIES} )
+  
+message( STATUS "QT3_LIBRARIES=${QT3_LIBRARIES}" )   
+message( STATUS "CGAL_LIBRARIES=${CGAL_LIBRARIES}" )   
+message( STATUS "CGAL_3RD_PARTY_LIBRARIES=${CGAL_3RD_PARTY_LIBRARIES}" )   
 
 else()
 
