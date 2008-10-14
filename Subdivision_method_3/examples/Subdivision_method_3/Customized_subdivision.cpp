@@ -46,7 +46,7 @@ public:
 	       (3*(p1[2]+p2[2])+f1[2]+f2[2])/8 );
   }
   void vertex_node(Vertex_iterator vitr, Point& pt) {
-    float R[] = {0.0, 0.0, 0.0};
+    double R[] = {0.0, 0.0, 0.0};
     Point& S = vitr->point();
 
     Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
