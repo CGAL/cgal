@@ -2,6 +2,8 @@
 #define CGAL_PDB_NESTED_ITERATOR
 #include <CGAL/PDB/basic.h>
 #include <boost/tuple/tuple.hpp>
+#include <CGAL/assertions.h>
+
 CGAL_PDB_BEGIN_NAMESPACE
 namespace internal {
   //! An iterator through the atoms of a CGAL::PDB::Chain.
@@ -27,7 +29,7 @@ namespace internal {
       return &ret_;
     }
     const This& operator++() {
-      CGAL_assert(ait_ != aend_);
+      CGAL_assertion(ait_ != aend_);
       ++ait_;
       while (ait_== aend_) {
 	++rit_;
