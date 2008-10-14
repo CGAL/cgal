@@ -27,8 +27,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-struct Cartesian_tag;
-struct Homogeneous_tag;
+class Cartesian_tag;
+class Homogeneous_tag;
 
 // Class declaration
 // =================
