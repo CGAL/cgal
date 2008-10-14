@@ -450,7 +450,7 @@ operator>>(std::istream& in, Quotient<NT>& r)
   if (( in ) && ( c == '/'))
   {
       while (in.get(c) && std::isspace(c, std::locale::classic() )) {}
-      CGAL_assertion( in );
+      CGAL_assertion( in != 0 );
       in.putback(c);
       in >> den;
   }
