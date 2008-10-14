@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     :  Camille Wormser, Pierre Alliez
+// Author(s)     :  Camille Wormser, Jane Tournois, Pierre Alliez
 
 #ifndef CGAL_AABB_TREE_H
 #define CGAL_AABB_TREE_H
@@ -23,7 +23,6 @@
 #include <list>
 #include <stack>
 #include "AABB_node.h"
-#include "knn.h"
 
 CGAL_BEGIN_NAMESPACE
 
@@ -46,8 +45,6 @@ public:
   typedef AABB_node<Kernel,Input,PSC> Node;
   typedef typename Node::Point_with_input Point_with_input;
 
-  // types for K nearest neighbors search structure
-  typedef CNeighbor_search<Kernel> Neighbor_search;
 
 private:
 

@@ -135,7 +135,7 @@ public:
                                      int n) const 
     {
       // TODO (with visitor)
-      // std::cout << "construct initial point set" << std::endl;
+			std::cout << "AABB_polyhedral_oracle: construct initial point set not implemented" << std::endl;
       // *out++= p;
       return out;
     }
@@ -149,7 +149,7 @@ public:
   template <class P>
   bool is_in_volume(const Surface_3& surface, const P& p)
   {
-    std::cout << "DEBUG: call is in volume" << std::endl;
+		std::cout << "call is in volume: empty function" << std::endl;
     return true;
   }
 }; // end class AABB_polyhedral_oracle

@@ -39,9 +39,6 @@ namespace CGALi {
     typedef typename K::Vector_3 Vector;
     typedef typename K::Segment_3 Segment;
 
-    //tried checking whether point is inside the box, but that significantly reduces performance
-    //bbox-bbox(segment) without precomputing also reduces performance
-
     Point parameters[2];
     parameters[0] = Point(bbox.xmin(), bbox.ymin(), bbox.zmin());
     parameters[1] = Point(bbox.xmax(), bbox.ymax(), bbox.zmax());
@@ -61,9 +58,10 @@ namespace CGALi {
     FT tmin = (parameters[sign_x].x() - source.x()) * inv_direction.x();
     FT tmax = (parameters[1-sign_x].x() - source.x()) * inv_direction.x();
 
-    //faster exit - thanks to camille
+    // faster exit
     if(tmax < (FT)0.0 || tmin > (FT)1.0)
       return false;
+
     if(tmin < (FT)0.0)
       tmin = (FT)0.0;
     if(tmax > (FT)1.0)
@@ -97,7 +95,6 @@ bool do_intersect(const CGAL::Segment_3<K>& segment,
 		  const CGAL::Bbox_3& bbox)
 {
   return CGALi::do_intersect(segment, bbox, K());
-//   return typename K::Do_intersect_3()(segment, bbox);
 }
 
 template <class K>
@@ -105,9 +102,7 @@ bool do_intersect(const CGAL::Bbox_3& bbox,
 		  const CGAL::Segment_3<K>& segment)
 {
   return CGALi::do_intersect(segment, bbox, K());
-//   return typename K::Do_intersect_3()(segment, bbox);
 }
-
 
 CGAL_END_NAMESPACE
 

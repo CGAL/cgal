@@ -16,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     :  Camille Wormser, Pierre Alliez
+// Author(s)     :  Camille Wormser, Jane Tournois, Pierre Alliez
 
 #ifndef CGAL_AABB_NODE_H
 #define CGAL_AABB_NODE_H
@@ -32,7 +32,6 @@
 #include "Plane_3_Bbox_3_do_intersect.h"
 #include "Triangle_3_Bbox_3_do_intersect.h"
 #include "Line_3_Bbox_3_do_intersect.h"
-#include "Plucker_ray_3_Bbox_3_do_intersect.h"
 #include "Sphere_3_Bbox_do_intersect.h"
 
 CGAL_BEGIN_NAMESPACE

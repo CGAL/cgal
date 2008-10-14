@@ -20,8 +20,6 @@
 #ifndef CGAL_BBOX_3_BBOX_3_DO_INTERSECT_H
 #define CGAL_BBOX_3_BBOX_3_DO_INTERSECT_H
 
-//#include <CGAL/number_utils.h>
-
 CGAL_BEGIN_NAMESPACE
 
 #undef min
