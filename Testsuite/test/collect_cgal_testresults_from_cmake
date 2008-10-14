@@ -257,7 +257,7 @@ output_main_logs
 
 parse_flags_and_third_party_choices
 
-parse_lib_building_results "libCGALCore"    "CGAL_CORE"    
+parse_lib_building_results "libCGALCore"    "CGAL_Core"    
 parse_lib_building_results "libCGAL"        "CGAL"    
 parse_lib_building_results "libCGALimageIO" "CGAL_ImageIO" 
 parse_lib_building_results "libCGALPDB"     "CGAL_PDB"     
