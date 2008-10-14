@@ -557,8 +557,8 @@ void construct_axes() const
   // red x-axis and equator
   glColor3f(1.0,0.0,0.0);
   glBegin(GL_LINES);
-  glVertex3f(0.0,0.0,0.0);
-  glVertex3f(1.2,0.0,0.0);
+  glVertex3d(0.0,0.0,0.0);
+  glVertex3d(1.2,0.0,0.0);
   glEnd();
   glBegin(GL_LINE_LOOP);
   for(i=0;i<100;i++)
@@ -567,8 +567,8 @@ void construct_axes() const
   // green y-axis and equator
   glColor3f(0.0,1.0,0.0);
   glBegin(GL_LINES);
-  glVertex3f(0.0,0.0,0.0);
-  glVertex3f(0.0,1.2,0.0);
+  glVertex3d(0.0,0.0,0.0);
+  glVertex3d(0.0,1.2,0.0);
   glEnd();
   glBegin(GL_LINE_LOOP);
   for(i=0;i<100;i++)
@@ -577,8 +577,8 @@ void construct_axes() const
   // blue z-axis and equator
   glColor3f(0.0,0.0,1.0);
   glBegin(GL_LINES);
-  glVertex3f(0.0,0.0,0.0);
-  glVertex3f(0.0,0.0,1.2);
+  glVertex3d(0.0,0.0,0.0);
+  glVertex3d(0.0,0.0,1.2);
   glEnd();
   glBegin(GL_LINE_LOOP);
   for(i=0;i<100;i++)
@@ -603,26 +603,26 @@ void construct_cube() const
   glColor3f(1,1,0); // yellow
   glLineWidth(2.0);
   glBegin(GL_LINE_LOOP);
-  glVertex3f(-1.0,-1.0,-1.0);
-  glVertex3f( 1.0,-1.0,-1.0);
-  glVertex3f( 1.0, 1.0,-1.0);
-  glVertex3f(-1.0, 1.0,-1.0);
+  glVertex3d(-1.0,-1.0,-1.0);
+  glVertex3d( 1.0,-1.0,-1.0);
+  glVertex3d( 1.0, 1.0,-1.0);
+  glVertex3d(-1.0, 1.0,-1.0);
   glEnd();
   glBegin(GL_LINE_LOOP);
-  glVertex3f(-1.0,-1.0, 1.0);
-  glVertex3f( 1.0,-1.0, 1.0);
-  glVertex3f( 1.0, 1.0, 1.0);
-  glVertex3f(-1.0, 1.0, 1.0);
+  glVertex3d(-1.0,-1.0, 1.0);
+  glVertex3d( 1.0,-1.0, 1.0);
+  glVertex3d( 1.0, 1.0, 1.0);
+  glVertex3d(-1.0, 1.0, 1.0);
   glEnd();
   glBegin(GL_LINES);
-  glVertex3f(-1.0,-1.0,-1.0);
-  glVertex3f(-1.0,-1.0, 1.0);
-  glVertex3f( 1.0,-1.0,-1.0);
-  glVertex3f( 1.0,-1.0, 1.0);
-  glVertex3f( 1.0, 1.0,-1.0);
-  glVertex3f( 1.0, 1.0, 1.0);
-  glVertex3f(-1.0, 1.0,-1.0);
-  glVertex3f(-1.0, 1.0, 1.0);
+  glVertex3d(-1.0,-1.0,-1.0);
+  glVertex3d(-1.0,-1.0, 1.0);
+  glVertex3d( 1.0,-1.0,-1.0);
+  glVertex3d( 1.0,-1.0, 1.0);
+  glVertex3d( 1.0, 1.0,-1.0);
+  glVertex3d( 1.0, 1.0, 1.0);
+  glVertex3d(-1.0, 1.0,-1.0);
+  glVertex3d(-1.0, 1.0, 1.0);
   glEnd(); glEndList();
 }
 
@@ -661,7 +661,7 @@ void draw() const
   glEnable(GL_LIGHTING);
   if ( style_ == SM_SKELETON ) {
     glEnable(GL_COLOR_MATERIAL);
-    glColor3f(0.7,0.7,0.7);
+    glColor3f(0.7f,0.7f,0.7f);
     gluSphere(sphere_,shrink_fac,50,50);
     glDisable(GL_COLOR_MATERIAL);
   }
