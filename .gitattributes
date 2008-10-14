@@ -1329,7 +1329,6 @@ Convex_hull_2/doc_tex/Convex_hull_2/convex_hull.png -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text svneol=unset#application/postscript
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#image/gif
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#application/pdf
-Convex_hull_2/test/Convex_hull_2/CMakeLists.txt -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.png -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.wrl.gz -text
 Core/src/CGALCore/Core_71.vcproj -text
