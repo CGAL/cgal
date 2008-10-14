@@ -21,13 +21,17 @@
 #include <CGAL/PDB/Monomer.h>
 #include <CGAL/PDB/internal/Monomer_data.h>
 #include <CGAL/PDB/internal/pdb_utils.h>
-#include <iostream>
 #include <CGAL/PDB/internal/Error_logger.h>
+
+#include <boost/format.hpp>
+
+#include <iostream>
 #include <limits>
 #include <sstream>
 #include <cstdio>
-using std::sprintf;
+
 using std::sscanf;
+
 CGAL_PDB_BEGIN_NAMESPACE
 
 void Monomer::set_has_bonds(bool tf) {
@@ -158,7 +162,7 @@ void Monomer::dump(std::ostream &out) const {
 
 int Monomer::write(char chain, int monomer_index,
 		   char insertion_residue_code, int start_index, std::ostream &out) const {
-  char line[81];
+  
  
   for (Atoms::const_iterator it= atoms_.begin(); it != atoms_.end(); ++it) {
     Atom_key al= it->key();
@@ -167,12 +171,11 @@ int Monomer::write(char chain, int monomer_index,
     Point pt = a.point();
     char alt=' ';
     //char chain=' ';
-    sprintf(line, CGAL_PDB_INTERNAL_NS::atom_line_oformat_,
-	    start_index++, Monomer::atom_key_string(al).c_str(), alt,
-	    Monomer::type_string(type()).c_str(), chain,monomer_index, insertion_residue_code,
-	    pt.x(), pt.y(), pt.z(), a.occupancy(), a.temperature_factor(), a.segment_id().c_str(),
-	    a.element().c_str(), a.charge().c_str());
-    out << line << std::endl;
+    out << boost::format(CGAL_PDB_INTERNAL_NS::atom_line_oformat_)
+      % (start_index++) % Monomer::atom_key_string(al).c_str() % alt 
+      % Monomer::type_string(type()).c_str() % chain % monomer_index % insertion_residue_code
+      % pt.x() % pt.y() % pt.z() % a.occupancy() % a.temperature_factor() % a.segment_id().c_str()
+      % a.element().c_str()% a.charge().c_str() << std::endl;
     //++anum;
   }
   return start_index;

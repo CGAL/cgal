@@ -22,6 +22,9 @@
 #include <CGAL/PDB/internal/Error_logger.h>
 #include <CGAL/PDB/internal/pdb_utils.h>
 #include <CGAL/basic.h>
+
+#include <boost/format.hpp>
+
 #include <iostream>
 #include <limits>
 
@@ -91,8 +94,6 @@ void Heterogen::dump(std::ostream & /* out */ ) const {
 
 int Heterogen::write(std::string name, int num, 
                      int start_index, std::ostream &out) const {
-  char line[81];
- 
   for (Atoms::const_iterator it= atoms_.begin(); it != atoms_.end(); ++it) {
     Atom_key al= it->key();
     //Point pt= res->cartesian_coords(al);
@@ -102,12 +103,11 @@ int Heterogen::write(std::string name, int num,
     //char chain=' ';
 
     //"HETATM%5d %4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s";
-    std::sprintf(line, CGAL_PDB_INTERNAL_NS::hetatom_line_oformat_,
-                 start_index++, al.c_str(),
-                 name.c_str(), num,
-                 pt.x(), pt.y(), pt.z(), a.occupancy(), a.temperature_factor(),
-                 a.element().c_str(), "  ");
-    out << line << std::endl;
+    out << boost::format(CGAL_PDB_INTERNAL_NS::hetatom_line_oformat_)
+      % (start_index++) % al.c_str()
+      % name.c_str() % num
+      % pt.x() % pt.y() % pt.z() % a.occupancy() % a.temperature_factor()
+      % a.element().c_str() % "  " << std::endl;
     //++anum;
   }
   std::map<int, std::vector<int> > connects;

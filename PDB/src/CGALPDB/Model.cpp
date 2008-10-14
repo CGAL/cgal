@@ -19,11 +19,16 @@
    MA 02110-1301, USA. */
 
 #include <CGAL/PDB/Model.h>
-#include <cassert>
 #include <CGAL/PDB/internal/pdb_utils.h>
 #include <CGAL/PDB/internal/Error_logger.h>
+
+#include <boost/format.hpp>
+
+#include <cassert>
 #include <cstdio>
+
 using std::sscanf;
+
 CGAL_PDB_BEGIN_NAMESPACE
 
 /*static unsigned int  getSequenceNumber (const char* line)
@@ -259,10 +264,8 @@ void Model::process_line(const char *line) {
 }
 
 void Model::write(int model_index, std::ostream &out) const {
-  char line[81];
   
-  std::sprintf(line, "MODEL %8d         ", model_index);
-  out << line << std::endl;
+  out << boost::format("MODEL %8d         ") % model_index << std::endl;
   int index=1;
   for (Chain_const_iterator it= chains_.begin(); it != chains_.end(); ++it){
     index= it->chain().write(it->key().index(), index, out);

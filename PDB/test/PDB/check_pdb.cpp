@@ -69,8 +69,8 @@ int main(int , char *[]){
   }
 	
   p.write(of);
-  //std::ofstream tmpfile("/tmp/out.pdb");
-  //p.write(tmpfile);
+  std::ofstream tmpfile("/tmp/out.pdb");
+  p.write(tmpfile);
   //of << std::fflush;
 	
   std::ifstream nif(argv1.c_str());
