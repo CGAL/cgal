@@ -43,3 +43,4 @@
 #include "Timer.cpp"
 #include "Turkowski_numeric_solver.cpp"
 #include "primes.cpp"
+#include "test_FPU_rounding_mode.cpp"
