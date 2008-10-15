@@ -23,7 +23,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   
   macro( add_to_cached_list listname )
     cache_get ( ${listname} )
-    cache_set ( ${listname} ${listname} ${ARGN} )
+    cache_set ( ${listname} ${${listname}} ${ARGN} )
   endmacro()
   
   macro( at list idx var )
