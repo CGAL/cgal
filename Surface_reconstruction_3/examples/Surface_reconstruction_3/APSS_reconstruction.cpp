@@ -6,9 +6,9 @@
 // ----------------------------------------------------------------------------
 
 //----------------------------------------------------------
-// APSS reconstruction method.
-// Input file formats are .off and .xyz.
-// Output file format is .off.
+// APSS reconstruction method:
+// Read a point set or a mesh's set of vertices, reconstruct a surface,
+// and save the surface.
 //----------------------------------------------------------
 // APSS_reconstruction file_in file_out [options]
 
@@ -31,7 +31,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/surface_reconstruction_output.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/IO/surface_reconstruction_read_pwn.h>
 
 // This test
 #include "enriched_polyhedron.h"
@@ -79,18 +79,22 @@ int main(int argc, char * argv[])
     // decode parameters
     //***************************************
 
+    // usage
     if (argc<3)
     {
-        std::cerr << "Usage: " << argv[0] << " file_in file_out [options]\n";
-        std::cerr << "Input file formats are .off and .xyz.\n";
-        std::cerr << "Output file format is .off.\n";
-        std::cerr << "Options:\n";
-        std::cerr << "  -sm_radius <float>     Radius upper bound (default=0.1 * point set radius)\n";
-        std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.005 * point set radius)\n";
-        std::cerr << "  -k <int>               Number of neighbors (default=7)\n";
-        std::cerr << "                           - should be greater than 7,\n";
-        std::cerr << "                           - high numbers lead to smoother surfaces.\n";
-        return EXIT_FAILURE;
+      std::cerr << "Read a point set or a mesh's set of vertices, reconstruct a surface,\n";
+      std::cerr << "and save the surface.\n";
+      std::cerr << "\n";
+      std::cerr << "Usage: " << argv[0] << " file_in file_out [options]\n";
+      std::cerr << "Input file formats are .off (mesh) and .xyz or .pwn (point set).\n";
+      std::cerr << "Output file format is .off.\n";
+      std::cerr << "Options:\n";
+      std::cerr << "  -sm_radius <float>     Radius upper bound (default=0.1 * point set radius)\n";
+      std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.005 * point set radius)\n";
+      std::cerr << "  -k <int>               Number of neighbors (default=7)\n";
+      std::cerr << "                           - should be greater than 7,\n";
+      std::cerr << "                           - high numbers lead to smoother surfaces.\n";
+      return EXIT_FAILURE;
     }
 
     // Default APSS options
@@ -103,16 +107,19 @@ int main(int argc, char * argv[])
                             // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
     FT sm_error_bound = 1e-3;
 
+    // decode parameters
+    std::string input_filename  = argv[1];
+    std::string output_filename = argv[2];
     for (int i=3; i+1<argc ; ++i)
     {
-        if (std::string(argv[i])=="-sm_radius")
-            sm_radius = atof(argv[++i]);
-        else if (std::string(argv[i])=="-sm_distance")
-            sm_distance = atof(argv[++i]);
-        else if (std::string(argv[i])=="-k")
-            number_of_neighbours = atoi(argv[++i]);
-        else
-            std::cerr << "invalid option " << argv[i] << "\n";
+      if (std::string(argv[i])=="-sm_radius")
+        sm_radius = atof(argv[++i]);
+      else if (std::string(argv[i])=="-sm_distance")
+        sm_distance = atof(argv[++i]);
+      else if (std::string(argv[i])=="-k")
+        number_of_neighbours = atoi(argv[++i]);
+      else
+        std::cerr << "invalid option " << argv[i] << "\n";
     }
 
     CGAL::Timer task_timer; task_timer.start();
@@ -121,14 +128,9 @@ int main(int argc, char * argv[])
     // Load mesh/point set
     //***************************************
 
-    // File name is:
-    std::string input_filename  = argv[1];
-
-    // get extension
-    std::string extension = input_filename.substr(input_filename.find_last_of('.'));
-
     PointList pwns;
 
+    std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
       // Read the mesh file in a polyhedron
@@ -147,9 +149,7 @@ int main(int argc, char * argv[])
 
       // Convert vertices and normals to PointList
       Polyhedron::Vertex_iterator v;
-      for(v = input_mesh.vertices_begin();
-          v != input_mesh.vertices_end();
-          v++)
+      for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
       {
         const Point& p = v->point();
         const Vector& n = v->normal();
@@ -158,14 +158,23 @@ int main(int argc, char * argv[])
     }
     else if (extension == ".xyz" || extension == ".XYZ")
     {
-      // Read the point set file in pwns
+      // Read the point set file in pwns[]
       if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
                                                 std::back_inserter(pwns)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
       }
-
+    }
+    else if (extension == ".pwn" || extension == ".PWN")
+    {
+      // Read the point set file in pwns[]
+      if(!CGAL::surface_reconstruction_read_pwn(input_filename.c_str(),
+                                                std::back_inserter(pwns)))
+      {
+        std::cerr << "Error: cannot read file " << input_filename << std::endl;
+        return EXIT_FAILURE;
+      }
     }
     else
     {
@@ -275,12 +284,14 @@ int main(int argc, char * argv[])
                                      << std::endl;
     task_timer.reset();
 
+    //***************************************
     // save the mesh
-    std::ofstream out(argv[2]);
-    CGAL::output_surface_facets_to_off(out, c2t3);
+    //***************************************
 
-    // Print status
-    std::cerr << "Write file " << argv[2] << std::endl << std::endl;
+    std::cerr << "Write file " << output_filename << std::endl << std::endl;
+
+    std::ofstream out(output_filename.c_str());
+    CGAL::output_surface_facets_to_off(out, c2t3);
 
     return EXIT_SUCCESS;
 }

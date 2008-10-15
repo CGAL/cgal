@@ -6,8 +6,8 @@
 // ----------------------------------------------------------------------------
 
 //----------------------------------------------------------
-// Test the Poisson Delaunay Reconstruction method
-// Input file formats are .off and .xyz.
+// Test the Poisson Delaunay Reconstruction method:
+// For each input point set or mesh's set of vertices, reconstruct a surface.
 // No output.
 //----------------------------------------------------------
 // poisson_reconstruction_test mesh1.off point_set2.xyz...
@@ -32,7 +32,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/surface_reconstruction_output.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/IO/surface_reconstruction_read_pwn.h>
 
 // This test
 #include "enriched_polyhedron.h"
@@ -81,12 +81,15 @@ int main(int argc, char * argv[])
   // decode parameters
   //***************************************
 
+  // usage
   if (argc-1 == 0)
   {
-    std::cerr << "Usage: " << argv[0] << " mesh1.off point_set2.xyz ..." << std::endl;
-    std::cerr << "Input file formats are .off and .xyz.\n";
-    std::cerr << "No output." << std::endl;
-    return EXIT_FAILURE;
+      std::cerr << "For each input point set or mesh's set of vertices, reconstruct a surface.\n";
+      std::cerr << "\n";
+      std::cerr << "Usage: " << argv[0] << " mesh1.off point_set2.xyz ..." << std::endl;
+      std::cerr << "Input file formats are .off (mesh) and .xyz or .pwn (point set).\n";
+      std::cerr << "No output" << std::endl;
+      return EXIT_FAILURE;
   }
 
   // Surface Mesher options
@@ -98,10 +101,7 @@ int main(int argc, char * argv[])
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
 
-  //***************************************
   // Process each input file
-  //***************************************
-
   for (int arg_index = 1; arg_index <= argc-1; arg_index++)
   {
     CGAL::Timer task_timer; task_timer.start();
@@ -115,11 +115,9 @@ int main(int argc, char * argv[])
     // File name is:
     std::string input_filename  = argv[arg_index];
 
-    // get extension
-    std::string extension = input_filename.substr(input_filename.find_last_of('.'));
-
     PointList pwns;
 
+    std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
       // Read the mesh file in a polyhedron
@@ -139,9 +137,7 @@ int main(int argc, char * argv[])
 
       // Convert vertices and normals to PointList
       Polyhedron::Vertex_iterator v;
-      for(v = input_mesh.vertices_begin();
-          v != input_mesh.vertices_end();
-          v++)
+      for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
       {
         const Point& p = v->point();
         const Vector& n = v->normal();
@@ -150,8 +146,19 @@ int main(int argc, char * argv[])
     }
     else if (extension == ".xyz" || extension == ".XYZ")
     {
-      // Read the point set file in pwns
+      // Read the point set file in pwns[]
       if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
+                                                std::back_inserter(pwns)))
+      {
+        std::cerr << "Error: cannot read file " << input_filename << std::endl;
+        accumulated_fatal_err = EXIT_FAILURE;
+        continue;
+      }
+    }
+    else if (extension == ".pwn" || extension == ".PWN")
+    {
+      // Read the point set file in pwns[]
+      if(!CGAL::surface_reconstruction_read_pwn(input_filename.c_str(),
                                                 std::back_inserter(pwns)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
@@ -268,6 +275,7 @@ int main(int argc, char * argv[])
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // lower bound of facets angles (degrees)
                                                         sm_radius*size,  // upper bound of Delaunay balls radii
                                                         sm_distance*size); // upper bound of distance to surface
+
     CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<sm_error_bound<<" * point set radius,\n"
                       << "                    sphere center=("<<sm_sphere_center << "),\n"
                       << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
