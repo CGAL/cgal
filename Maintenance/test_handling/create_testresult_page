@@ -327,7 +327,8 @@ sub print_platform_descriptions()
 <th>BOOST</th>
 <th>MPFR</th>
 <th>GMP</th>
-<th>QT</th>
+<th>QT3</th>
+<th>QT4</th>
 <th>OPENGL</th>
 <th>BLAS</th>
 <th>LAPACK</th>
@@ -361,7 +362,7 @@ EOF
 	    my $countn = $testresults[$platform_num]->{"n"};
 	    my $countr = $testresults[$platform_num]->{"r"};
 
-	    my $index = 11;
+	    my $index = 12;
 	    my @tmp;
 	    while ($index) {
 	        $index--;
@@ -381,7 +382,7 @@ EOF
 	    print OUTPUT "<td>$countw</td>\n"; 
  	    print OUTPUT "<td>$countn</td>\n"; 
  	    print OUTPUT "<td>$countr</td>\n"; 
-	    $index = 11;
+	    $index = 12;
 	    while ($index) {
 	        $index--;
 		$_ = $tmp[$index];
