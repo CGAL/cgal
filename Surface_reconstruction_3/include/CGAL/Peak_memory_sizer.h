@@ -61,13 +61,14 @@ struct Peak_memory_sizer : public Memory_sizer
         return count;
     }
 
-    /// Give size of largest block available for allocation
+    /// Give size of largest block available for allocation.
+    // (based on taucs_available_memory_size() by S. Toledo)
     size_t largest_free_block() const
     {
-      size_t m_sys;
-      size_t m,m_low,m_high,m_tol;
+      double m_sys;
+      double m,m_low,m_high,m_tol;
       char*  p;
-      size_t m_max;
+      double m_max;
 
       // Limit malloc test to avoid an infinite loop on Linux
       // (malloc() never returns null due to "optimistic memory allocation").
@@ -81,35 +82,35 @@ struct Peak_memory_sizer : public Memory_sizer
       {
         // Limit malloc test by physical system memory size.
         // TODO: replace m_sys by virtual address space limit?
-        m_sys = (size_t) (taucs_system_memory_size() + 0.5);
+        m_sys = taucs_system_memory_size();
         if (m_sys > 0)
           m_max = m_sys;
         else
-          m_max = (std::numeric_limits<size_t>::max)();
+          m_max = DBL_MAX;
       }
 
       /* malloc test */
 
-      m = 1048576;
+      m = 1048576.0;
 
       while ( (m < m_max-1) /* m_max not reached */
-           && ((p=(char*) malloc( (std::min)(m_max,m*2) )) != NULL) ) {
-        //CGAL_TRACE("largest_free_block: %.2lf Mb\n", double((std::min)(m_max,m*2)) / 1048576.0);
+           && ((p=(char*) malloc( (size_t) (std::min)(m_max,m*2.0) )) != NULL) ) {
+//         CGAL_TRACE("largest_free_block: %.0lf Mb\n", (std::min)(m_max,m*2.0) / 1048576.0);
         free(p);
-        m = (std::min)(m_max,m*2);
+        m = (std::min)(m_max,m*2.0);
       }
 
       m_low  = m;
-      m_high = (std::min)(m_max,m*2);
-      m_tol  = m / 128;
+      m_high = (std::min)(m_max,m*2.0);
+      m_tol  = m / 128.0;
 
       while ( m_high - m_low > m_tol ) {
-        m = m_low + ( (m_high-m_low)/2 );
-        //CGAL_TRACE("largest_free_block: [%.2lf %.2lf %.2lf]\n",
-	//           (double)m_low  / 1048576.0,
-	//           (double)m      / 1048576.0,
-	//           (double)m_high / 1048576.0);
-        if ( (p=(char*) malloc(m)) != NULL )
+        m = m_low + ( (m_high-m_low)/2.0 );
+/*        CGAL_TRACE("largest_free_block: [%.0lf %.0lf %.0lf]\n",
+          	       m_low  / 1048576.0,
+          	       m      / 1048576.0,
+          	       m_high / 1048576.0);*/
+        if ( (p=(char*) malloc( (size_t) m )) != NULL )
           m_low = m;
         else
           m_high = m;
@@ -118,11 +119,10 @@ struct Peak_memory_sizer : public Memory_sizer
 
       m = m_low;
 
-      //CGAL_TRACE("largest_free_block: malloc test=%.2lf MB sys test=%.2lf MB\n",
-      //      (double)m      / 1048576.0,
-      //      (double)m_sys  / 1048576.0);
-
-      return m;
+/*      CGAL_TRACE("largest_free_block: malloc test=%.0lf MB sys test=%.0lf MB\n",
+          	     m / 1048576.0,
+          	     m_sys / 1048576.0);*/
+      return (size_t) m;
     }
 
 private:
