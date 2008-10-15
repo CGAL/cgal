@@ -107,7 +107,7 @@ protected:
   // A vertex is of this type:
   //  struct Range_tree_node;
 
-  friend class Range_tree_node<C_Data,C_Window,C_Interface>;
+  friend struct Range_tree_node<C_Data,C_Window,C_Interface>;
 
   typedef Range_tree_node<C_Data,C_Window,C_Interface> Range_tree_node2;
   typedef Range_tree_node<C_Data,C_Window,C_Interface> *link_type;
