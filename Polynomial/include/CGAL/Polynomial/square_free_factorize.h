@@ -156,11 +156,10 @@ inline int square_free_factorize_for_regular_polynomial_
 
     typedef Polynomial<Coeff> POLY;
     typedef Polynomial_traits_d<POLY> PT;
-    typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient_type IC;
-    typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
-    //typename Polynomial_traits_d<POLY>::Innermost_coefficient_to_polynomial ictp;
-    typename Polynomial_traits_d<POLY>::Innermost_coefficient_const_begin begin;
-    typename Polynomial_traits_d<POLY>::Innermost_coefficient_const_end end;
+    typedef typename PT::Innermost_coefficient_type IC;
+    typename PT::Innermost_leading_coefficient ilcoeff;
+    //typename PT::Innermost_coefficient_to_polynomial ictp;
+    typename PT::Construct_innermost_coefficient_const_iterator_range range;
     typename Algebraic_extension_traits<IC>::Denominator_for_algebraic_integers dfai;
     typename Algebraic_extension_traits<IC>::Normalization_factor nfac;
     typename Scalar_factor_traits<POLY>::Scalar_factor sfac;  
@@ -186,7 +185,7 @@ inline int square_free_factorize_for_regular_polynomial_
     // integers, which comes out from c=gcd(a,b), such that a and b are 
     // divisible by c
     IC lcoeff = ilcoeff(c);
-    IC denom = dfai(begin(c), end(c));
+    IC denom = dfai(range(c).first, range(c).second);
     lcoeff *= denom * nfac(denom);
     POLY w = (a * POLY(lcoeff)) / c;
     POLY y = (b * POLY(lcoeff)) / c;
@@ -209,7 +208,7 @@ inline int square_free_factorize_for_regular_polynomial_
         }
         i++;
         lcoeff = ilcoeff(g); // same as above
-        denom =dfai(begin(c), end(c)); 
+        denom =dfai(range(c).first, range(c).second); 
         lcoeff *= denom * nfac(denom);
         w = (w * POLY(lcoeff)) / g;
         y = (z * POLY(lcoeff)) / g;

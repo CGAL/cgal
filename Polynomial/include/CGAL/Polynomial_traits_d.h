@@ -54,7 +54,16 @@
   Innermost_coefficient_const_iterator;                                 \
                                                                         \
   typedef typename  Polynomial_d::const_iterator                        \
-  Coefficient_const_iterator;
+  Coefficient_const_iterator;                                           \
+                                                                        \
+  typedef std::pair<Innermost_coefficient_const_iterator,               \
+                    Innermost_coefficient_const_iterator>               \
+  Innermost_coefficient_const_iterator_range;                           \
+                                                                        \
+  typedef std::pair<Coefficient_const_iterator,                         \
+                    Coefficient_const_iterator>                         \
+  Coefficient_const_iterator_range;                                     \
+
  
 
 CGAL_BEGIN_NAMESPACE;
@@ -98,9 +107,8 @@ public:
     operator()(const Polynomial_d& p) const {
       typedef Innermost_coefficient_const_iterator IT;
       Innermost_coefficient_type content(0);
-      for (IT it = typename PT::Innermost_coefficient_const_begin()(p);
-           it != typename PT::Innermost_coefficient_const_end()(p);
-           it++){
+      typename PT::Construct_innermost_coefficient_const_iterator_range range;
+      for (IT it = range(p).first; it != range(p).second; it++){
         content = CGAL::gcd(content, *it);
         if(CGAL::is_one(content)) break;
       }
@@ -437,6 +445,14 @@ class Polynomial_traits_d_base< Polynomial< Coefficient_type_ >,
   typedef typename Coefficient_const_flattening::Recursive_flattening_iterator 
   Innermost_coefficient_const_iterator;                                       
   typedef typename  Polynomial_d::const_iterator Coefficient_const_iterator;       
+  
+  typedef std::pair<Innermost_coefficient_const_iterator,               
+                    Innermost_coefficient_const_iterator>               
+                    Innermost_coefficient_const_iterator_range;
+                                                                        
+  typedef std::pair<Coefficient_const_iterator,                         
+                    Coefficient_const_iterator>                         
+                    Coefficient_const_iterator_range;         
 
 
   // We use our own Strict Weak Ordering predicate in order to avoid
@@ -966,34 +982,25 @@ public:
   typedef typename ::boost::mpl::if_<IC_is_real_embeddable,Compare_,Null_functor>::type Compare; 
  
 
-
-  // This is going to be in PolynomialToolBox 
-  struct Coefficient_const_begin                                                  
-    : public std::unary_function< Polynomial_d, Coefficient_const_iterator > {       
-    Coefficient_const_iterator                                                  
-    operator () (const Polynomial_d& p) { return p.begin(); }             
-  };                                                                        
-  struct Coefficient_const_end                                                    
-    : public std::unary_function< Polynomial_d, Coefficient_const_iterator > {       
-    Coefficient_const_iterator                                                  
-    operator () (const Polynomial_d& p) { return p.end(); }               
-  };                                                                        
-                                                                              
-  struct Innermost_coefficient_const_begin                                        
-    : public std::unary_function< Polynomial_d, Innermost_coefficient_const_iterator > {  
-    Innermost_coefficient_const_iterator                                             
+struct Construct_coefficient_const_iterator_range                                       
+     : public std::unary_function< Polynomial_d, 
+                                  Coefficient_const_iterator_range> {
+    Coefficient_const_iterator_range      
     operator () (const Polynomial_d& p) {                                      
-      return typename Coefficient_const_flattening::Flatten()(p.end(),p.begin());  
+      return make_pair( p.begin(), p.end() );
+    }                                                                          
+};        
+                                       
+  struct Construct_innermost_coefficient_const_iterator_range                                       
+    : public std::unary_function< Polynomial_d, 
+                                  Innermost_coefficient_const_iterator_range> {
+    Innermost_coefficient_const_iterator_range      
+    operator () (const Polynomial_d& p) {                                      
+      return make_pair(
+          typename Coefficient_const_flattening::Flatten()(p.end(),p.begin()),
+          typename Coefficient_const_flattening::Flatten()(p.end(),p.end()));
     }                                                                          
   };                           
-  
-  struct Innermost_coefficient_const_end
-    : public std::unary_function< Polynomial_d, Innermost_coefficient_const_iterator > {
-    Innermost_coefficient_const_iterator
-    operator () (const Polynomial_d& p) {
-      return typename Coefficient_const_flattening::Flatten()(p.end(),p.end());
-    }
-  };
   
   struct Is_square_free 
     : public std::unary_function< Polynomial_d, bool >{
@@ -1101,8 +1108,7 @@ public:
 
       typename PT::Construct_polynomial construct;
       typename PT::Innermost_leading_coefficient ilcoeff;
-      typename PT::Innermost_coefficient_const_begin begin;
-      typename PT::Innermost_coefficient_const_end end;
+      typename PT::Construct_innermost_coefficient_const_iterator_range range;
       typedef Algebraic_extension_traits<Innermost_coefficient_type> AET;
       typename AET::Denominator_for_algebraic_integers dfai;
       typename AET::Normalization_factor nfac;
@@ -1110,7 +1116,7 @@ public:
             
       IC ilcoeff_q = ilcoeff(q);
       // this factor is needed in case IC is an Algebraic extension
-      IC dfai_q = dfai(begin(q), end(q));
+      IC dfai_q = dfai(range(q).first, range(q).second);
       // make dfai_q a 'scalar'
       ilcoeff_q *= dfai_q * nfac(dfai_q);
             

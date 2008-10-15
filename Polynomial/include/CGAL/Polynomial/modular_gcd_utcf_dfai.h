@@ -79,8 +79,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
     typedef typename PT::Innermost_coefficient_type IC;
 
     typename Coercion_traits<Poly,IC>::Cast ictp;
-    typename PT::Innermost_coefficient_const_begin begin;
-    typename PT::Innermost_coefficient_const_end end;
+    typename PT::Construct_innermost_coefficient_const_iterator_range range; 
     typename PT::Innermost_leading_coefficient ilcoeff;
     
     typedef  Algebraic_extension_traits<IC> ANT; 
@@ -131,7 +130,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
     IC denom;
     {
         Poly tmp = F1+F2;
-        denom = dfai(begin(tmp),end(tmp)); 
+        denom = dfai(range(tmp).first, range(tmp).second); 
     }
     denom *= nfac(denom);
     
