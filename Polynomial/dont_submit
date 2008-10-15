@@ -1,1 +1,2 @@
 include/CGAL/Polynomial/polynomial_functions.h
+test/Polynomial/polynomial_functions.cpp
