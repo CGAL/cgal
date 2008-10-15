@@ -210,9 +210,6 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Loop()
       CGAL_ECMS_TRACE(1,edge_to_string(*lEdge) << " uncomputable cost."  );
     }
   }
-
-  CGAL_SURF_SIMPL_TEST_assertion ( mCurrentEdgeCount = mSurface.size_of_halfedges() * 2 ) ;
-
 }
 
 template<class M,class SP, class VIM,class EIM,class EBM, class CF,class PF,class V>
