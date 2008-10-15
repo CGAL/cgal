@@ -725,12 +725,6 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
       }
   };
 
-
-	CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_2, Circular_arc_2)
-	CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_2, Line_arc_2)
-	CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circular_arc_2, Line_2)
-	CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_arc_2, Line_2)
-
   template < class BK >
   class Do_intersect_2 : public BK::Circular_kernel::Linear_kernel::Do_intersect_2
   {
@@ -746,7 +740,7 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
     typedef typename BK::Line_2                   Line_2;
 
     typedef typename CK::Do_intersect_2::result_type result_type; 
-    using BK::Circular_kernel::Linear_kernel::Do_intersect_2::operator();
+    using typename CK::Linear_kernel::Do_intersect_2::operator();
 
     result_type
     operator()(const Circular_arc_2 & c1, const Circular_arc_2 & c2) {
@@ -836,7 +830,7 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
     typedef typename BK::Line_2                   Line_2;
 
     typedef typename CK::Intersect_2::result_type result_type; 
-    using BK::Circular_kernel::Linear_kernel::Intersect_2::operator();
+    using typename CK::Linear_kernel::Intersect_2::operator();
 
     template < class OutputIterator >
     OutputIterator
