@@ -13,11 +13,13 @@ int main() {
     assert(!(ev1<ev2));
     assert(!(ev1>ev2));
     
-    ev1 = CGAL::Exponent_vector(3);
-    ev2 = CGAL::Exponent_vector(3);
-    
-    ev1[0]=1;
-    ev2[1]=1;
+    ev1.push_back(1); 
+    ev1.push_back(0); 
+    ev1.push_back(0);
+ 
+    ev2.push_back(0); 
+    ev2.push_back(1); 
+    ev2.push_back(0); 
  
     assert(!(ev2 == ev1)) ; 
     assert( (ev2 != ev1)) ; 

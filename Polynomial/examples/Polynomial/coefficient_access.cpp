@@ -32,7 +32,7 @@ int main(){
             << lcoeff(F) << std::endl;
 
   PT_2::Get_innermost_coefficient get_icoeff;
-  CGAL:: Exponent_vector ev(2,0); ev[0]=1; ev[1]=4;
+  CGAL:: Exponent_vector ev; ev.push_back(1); ev.push_back(4);
   std::cout << "Innermost coefficient of monomial x^1y^4:        "
             << get_icoeff(F,ev) << std::endl;
   

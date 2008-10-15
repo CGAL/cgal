@@ -32,7 +32,7 @@ int main(){
   // construction from an iterator range over monomials 
   
   std::list<std::pair<CGAL::Exponent_vector, Integer> > innermost_coeffs;
-  CGAL::Exponent_vector ev(2,0); // = [0,0] sequence 
+  CGAL::Exponent_vector ev(std::vector<int>(2,0)); // = [0,0] sequence 
   innermost_coeffs.push_back(std::make_pair(ev,-2));
   ev[0]=3; 
   ev[1]=5; 

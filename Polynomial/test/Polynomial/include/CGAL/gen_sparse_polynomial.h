@@ -28,9 +28,9 @@ generate_sparse_random_polynomial(CGAL::Random random, int max_degree = 6){
     
     Polynomial_d result; 
     for(int i = 0; i < number_of_coeffs; i++){
-        CGAL::Exponent_vector exps(PT::d);
+        CGAL::Exponent_vector exps;
         for(int j = 0; j < PT::d; j++){
-            exps[j]=random.get_int(0,max_degree);
+          exps.push_back(random.get_int(0,max_degree));
         }
         IC c = IC(random.get_int(-range,range));
         Monom_rep monom_rep;

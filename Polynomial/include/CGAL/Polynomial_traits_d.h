@@ -1458,7 +1458,7 @@ struct Construct_coefficient_const_iterator_range
     template <class OutputIterator>
     void operator()( const Polynomial_d& p, OutputIterator oit ) const {
       if(CGAL::is_zero(p)){
-        *oit= make_pair(Exponent_vector(d,0), Innermost_coefficient_type(0));
+        *oit= make_pair(Exponent_vector(std::vector<int>(d,0)), Innermost_coefficient_type(0));
         oit++;
         return;
       }

@@ -56,9 +56,9 @@ generate_sparse_random_polynomial(int max_degree = 10){
     
   Polynomial_d result; 
   for(int i = 0; i < number_of_coeffs; i++){
-    CGAL::Exponent_vector exps(PT::d);
+    CGAL::Exponent_vector exps;
     for(int j = 0; j < PT::d; j++){
-      exps[j]=my_rnd.get_int(0,max_degree);
+      exps.push_back(my_rnd.get_int(0,max_degree));
     }
     ICoeff c = ICoeff(my_rnd.get_int(-range,range));
     Monom_rep monom_rep;
@@ -121,9 +121,9 @@ void test_construct_polynomial(const Polynomial_traits_d&){
     assert(construct(monom_list.begin(),monom_list.end()) == construct(0));
     CGAL::Random rnd(7);
     for(int j = 0; j < 2; j++){
-      CGAL::Exponent_vector exps(d);
+      CGAL::Exponent_vector exps;
       for(int i = 0; i < d; i++){
-        exps[i]=j+i*5;
+        exps.push_back(j+i*5);
       }
       monom_list.push_back(Monom(exps,ICoeff(j+1)));
     };
@@ -1777,7 +1777,7 @@ int main(){
 #ifdef CGAL_USE_CORE
   {    
     typedef CGAL::CORE_arithmetic_kernel AT;
-    //test_AT<AT>();
+    test_AT<AT>();
   }
 #endif
 

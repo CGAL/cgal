@@ -31,10 +31,29 @@ class Exponent_vector :
     typedef std::vector<int> Base;
 public:
     Exponent_vector(): Base(){};
-    Exponent_vector(Base::size_type i): Base(i){};
-    Exponent_vector(Base::size_type i, Base::value_type x): Base(i,x){};
-    Exponent_vector(int i, int x): Base(i,x){};
-    Exponent_vector(const Exponent_vector& x): Base ( x ){};
+
+// OLD CONSTRUCTORS 
+  // Exponent_vector(Base::size_type i): Base(i){};
+  // Exponent_vector(Base::size_type i, Base::value_type x): Base(i,x){};
+  // Exponent_vector(int i, int x): Base(i,x){};
+// NEW CONSTRUCTORS 
+
+/*
+  Exponent_vector(int e0):Base(1){
+  *this[0]=e0;
+  };
+  Exponent_vector(int e0, int e1):Base(2){
+    *this[0]=e0; *this[1]=e1; 
+  };
+  Exponent_vector(int e0, int e1, int e2):Base(3){
+  *this[0]=e0; *this[1]=e1; *this[2]=e2;
+  };
+  Exponent_vector(int e0, int e1, int e2, int e3):Base(4){
+    *this[0]=e0; *this[1]=e1; *this[2]=e2; *this[3]=e3;
+    };
+*/
+    Exponent_vector(const Base& v): Base ( v ){};
+    Exponent_vector(const Exponent_vector& v): Base ( v ){};
 
     template <class InputIterator>
     Exponent_vector(InputIterator begin , InputIterator end)
