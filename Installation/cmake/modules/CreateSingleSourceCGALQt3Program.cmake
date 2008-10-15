@@ -19,7 +19,7 @@ macro(create_single_source_cgal_qt3_program first )
     
     add_executable  (${exe_name} ${all})
   
-    add_to_cached_list( CGAL_EXECUTABLES ${exe_name} )
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
     
     # Link the executable to CGAL and third-party libraries
     if ( AUTO_LINK_ENABLED )    
