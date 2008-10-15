@@ -2720,6 +2720,7 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#application/post
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Nef_S2/include/CGAL/IO/Nef_polyhedron_iostream_S2.h -text
+Number_types/doc_tex/NumberTypeSupport/illustration.png -text
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text
