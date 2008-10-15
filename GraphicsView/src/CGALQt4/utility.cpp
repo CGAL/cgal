@@ -41,6 +41,7 @@ QRectF viewportsBbox(const QGraphicsScene* scene) {
    {
      rect |= mapToScene(view, view->viewport()->rect());
    }
+   rect = rect.normalized();
    return rect;
 }
 
