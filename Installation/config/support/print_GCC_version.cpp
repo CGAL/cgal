@@ -31,15 +31,14 @@
 //
  
 #ifndef __GNUC__
-  #define __GNUC__ 0
+  #define __VERSION__ "Not GNU/CC"
 #endif
-
-#ifndef __GNUC_MINOR__
-  #define __GNUC_MINOR__ 0
+#ifndef __VERSION__
+  #define __VERSION__ "Unknown version (__VERSION__ is not defined)"
 #endif
 
 int main()
 {
-  std::cout << "version=" << __GNUC__ << "." << __GNUC_MINOR__ << std::endl;
+  std::cout << "version=" << __VERSION__ << std::endl;
   return 0;
 }
