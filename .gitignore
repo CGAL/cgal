@@ -507,6 +507,7 @@ Surface_mesher/test/Surface_mesher/my_makefile
 Surface_mesher/test/Surface_mesher/test_c2t3_iterators
 Surface_mesher/test/Surface_mesher/test_canonical_edge
 Surface_mesher/test/Surface_mesher/test_robust_circumcenter
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/*.off
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/AQtimeproject
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/extras
 Surface_reconstruction_3/doc_doxygen
