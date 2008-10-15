@@ -726,7 +726,7 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
   };
 
   template < class BK >
-  class Do_intersect_2 : public BK::Circular_kernel::Linear_kernel::Do_intersect_2
+  class Do_intersect_2 : public BK::Circular_kernel::Do_intersect_2
   {
   public:
     typedef typename BK::Circular_kernel            CK;
@@ -740,7 +740,7 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
     typedef typename BK::Line_2                   Line_2;
 
     typedef typename CK::Do_intersect_2::result_type result_type; 
-    using typename CK::Linear_kernel::Do_intersect_2::operator();
+    using CK::Do_intersect_2::operator();
 
     result_type
     operator()(const Circular_arc_2 & c1, const Circular_arc_2 & c2) {
@@ -815,7 +815,7 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
   };
 
   template < class BK >
-  class Intersect_2 : public BK::Circular_kernel::Linear_kernel::Intersect_2
+  class Intersect_2 : public BK::Circular_kernel::Intersect_2
   {
     public:
 
@@ -830,7 +830,7 @@ class Do_overlap_2 : public BK::Circular_kernel::Do_overlap_2
     typedef typename BK::Line_2                   Line_2;
 
     typedef typename CK::Intersect_2::result_type result_type; 
-    using typename CK::Linear_kernel::Intersect_2::operator();
+    using CK::Intersect_2::operator();
 
     template < class OutputIterator >
     OutputIterator
