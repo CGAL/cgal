@@ -92,8 +92,9 @@ clean_tests()
 	if ! ( uname | grep -q "CYGWIN" ) ; then
 	    "${MAKE_CMD}" -f Makefile clean
 	fi
+    else
+	eval "${MAKE_CMD} clean > /dev/null 2>&1"
     fi
-    eval "${MAKE_CMD} clean > /dev/null 2>&1"
 }
 
 compile_and_run_sweep()
