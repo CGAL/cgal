@@ -92,7 +92,7 @@ private :
   
 public :
   
-  Visitor ( string audit_name ) 
+  Visitor ( string audit_name ) : infinite_cost(1e+8)
   {
     TRACE( str ( format("AUDIT FILE: %1%") % audit_name ) ) ;
     ifstream in(audit_name.c_str());  
@@ -110,6 +110,7 @@ public :
     CHECK_EQUAL( audit_table.size(), actual_table.size() ) ;
     
     size_t total = audit_table.size() ;
+    size_t failed = 0 ;
     for ( size_t i = 0, ei = total ; i != ei ; ++ i )
     {
       size_t idx = i * 2 ;
@@ -127,16 +128,20 @@ public :
         cerr << "Cost mismatch detected: " << cost_m 
              << "\nExpected: " << audit2str(audit_data) 
              << "\nGot: " << audit2str(actual_data) << endl ;
-        throw runtime_error("");
+        ++ failed ;     
       } 
       if ( !placement_m.ok() )
       {
         cerr << "Placement mismatch detected: " << placement_m 
              << "\nExpected: " << audit2str(audit_data) 
              << "\nGot: " << audit2str(actual_data) << endl ;
-        throw runtime_error("");
+        ++ failed ;     
       } 
     }
+    
+    if ( ( failed * 100 / total ) >= 5 )
+      throw runtime_error("");
+    
   } 
   
   void OnStopConditionReached( Profile const& ) {} 
@@ -175,43 +180,57 @@ public :
   
   struct match
   {
-    match ( optional<NT> ad, NT md ) : actual_diff(ad), max_diff(md) {}
-   
-    bool ok() const
-    {
-      return !!actual_diff ? *actual_diff <= max_diff : false ;
-    }    
+    match ( std::string aFailure ) : mFailure(aFailure) {}
     
-    friend std::ostream& operator<< ( std::ostream& os, match const& m )
-    {
-      return os << "actual_diff=" << opt2str(m.actual_diff) << " max_diff=" << m.max_diff ;
-    }
+    bool ok() const { return mFailure.empty() ; }    
     
-    optional<NT> actual_diff ;
-    NT           max_diff ;
+    friend std::ostream& operator<< ( std::ostream& os, match const& m )  { return os << m.mFailure ; }
+    
+    std::string mFailure ;
   } ;
   
   match equal_cost ( optional<NT> const& a, optional<NT> const& b )
   {
-    optional<NT> diff ;
+    std::string failure ;
     
     if ( a && b )
-      diff = CGAL_NTS abs(*a-*b) ;
-    else if ( !a && !b )
-      diff = NT(0.0) ; 
+    { 
+      NT actual_diff = CGAL_NTS abs(*a-*b) ;
       
-   return match ( diff , epsilon_cost ) ;
+      if ( actual_diff > epsilon_cost )
+        failure = str(format("actual_diff=%1% max_diff=%1%") % actual_diff % epsilon_cost) ;
+    }
+    else if ( !a && b )
+    {
+      if ( *b < infinite_cost )
+      {
+        failure = "non-collapsable in case A but collapsable in case B" ;
+      }
+    }
+    else  if ( a && !b )
+    {
+      if ( *a < infinite_cost )
+      {
+        failure = "non-collapsable in case B but collapsable in case A" ;
+      }
+    }
+      
+    return match(failure);   
   }
   
   match equal_placement ( optional<Point> const& a, optional<Point> const& b )
   {
-    optional<NT> diff ;
+    std::string failure ;
+    
     if ( a && b )
-      diff = squared_distance(*a,*b) ;
-    else if ( !a && !b )
-      diff = NT(0.0) ; 
+    {
+      NT actual_diff = squared_distance(*a,*b) ;
       
-   return match ( diff , epsilon_sqdist ) ;
+      if ( actual_diff > epsilon_sqdist )
+        failure = str(format("actual_diff=%1% max_diff=%1%") % actual_diff % epsilon_sqdist) ;
+    }
+      
+    return match(failure);   
   }
 
   void error ( char const* file, int line, char const* pred, string msg )
@@ -231,4 +250,5 @@ private :
   Table actual_table ;      
   NT    epsilon_cost ;
   NT    epsilon_sqdist ;
+  NT    infinite_cost ;
 } ;
