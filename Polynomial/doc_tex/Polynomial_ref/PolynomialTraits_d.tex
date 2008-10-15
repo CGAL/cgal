@@ -39,10 +39,10 @@ is possible to select a certain variable.
 \ccNestedType{Coefficient_type }{ Type representing $R[x_0,\dots,x_{d-2}]$.}\ccGlue
 \ccNestedType{Innermost_coefficient_type}{ Type representing the base ring $R$.}
 
-%\ccNestedType{Coefficient_const_iterator}
-%{ Const iterator used to iterate through all coefficients of the polynomial.}
-%\ccNestedType{Innermost_coefficient_const_iterator}
-%{ Const iterator used to iterate through all innermost coefficients of the polynomial.}
+\ccNestedType{Coefficient_const_iterator}
+{ Const iterator used to iterate through all coefficients of the polynomial.}
+\ccNestedType{Innermost_coefficient_const_iterator}
+{ Const iterator used to iterate through all innermost coefficients of the polynomial.}
 
 \ccNestedType{template <typename T, int d> struct Rebind}
 {This nested template class has to define a type \ccc{Other} which is a model 
@@ -61,6 +61,14 @@ In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
         {A model of \ccc{PolynomialTraits_d::GetCoefficient}.}
 \ccNestedType{Get_innermost_coefficient}
         {A model of \ccc{PolynomialTraits_d::GetInnermostCoefficient}.}
+
+\ccNestedType{Construct_cofficient_const_iterator_range}
+        {A model of 
+        \ccc{PolynomialTraits_d::ConstructCoefficientConstIteratorRange}.}
+\ccNestedType{Construct_innermost_cofficient_const_iterator_range}
+        {A model of 
+        \ccc{PolynomialTraits_d::ConstructInnermostCoefficientConstIteratorRange}.}
+
 
 \ccNestedType{Swap}
         { A model of \ccc{PolynomialTraits_d::Swap}.}

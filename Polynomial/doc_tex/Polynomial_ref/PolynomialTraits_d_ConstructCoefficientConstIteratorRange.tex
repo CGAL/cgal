@@ -1,0 +1,32 @@
+\begin{ccRefConcept}{PolynomialTraits_d::ConstructCoefficientConstIteratorRange}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} returns a const itreator range over the 
+coefficients of the given polynomial.
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+
+\ccCreationVariable{fo}
+\ccTypedef{typedef std::pair<
+        PolynomialTraits_d::Coefficient_const_iterator,
+        PolynomialTraits_d::Coefficient_const_iterator > result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(argument_type p);}
+         {Returns a const itreator range over the coefficients of $p$.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}
