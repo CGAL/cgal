@@ -119,6 +119,7 @@
     <addaction name="actionApproximateConvexPartition" />
     <addaction name="actionOptimalConvexPartition" />
     <addaction name="actionInnerSkeleton" />
+    <addaction name="actionLinearLeastSquaresFitting" />
    </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
@@ -216,6 +217,11 @@
   <action name="actionApproximateConvexPartition" >
    <property name="text" >
     <string>Approximate Convex Partition</string>
+   </property>
+  </action>
+  <action name="actionLinearLeastSquaresFitting" >
+   <property name="text" >
+    <string>Linear Least Squares Fitting</string>
    </property>
   </action>
  </widget>

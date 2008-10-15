@@ -7,6 +7,7 @@
 #include <CGAL/partition_2.h>
 #include <CGAL/Partition_traits_2.h>
 #include<CGAL/Create_straight_skeleton_2.h>
+#include <CGAL/linear_least_squares_fitting_2.h>
 
 // Qt headers
 #include <QtGui>
@@ -19,6 +20,7 @@
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/PolygonGraphicsItem.h>
+#include <CGAL/Qt/LineGraphicsItem.h>
   
 // the two base classes
 #include "ui_Polygon_2.h"
@@ -27,6 +29,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
 typedef K::Segment_2 Segment_2;
+typedef K::Line_2 Line_2;
 
 typedef CGAL::Polygon_2<K,std::list<Point_2> > Polygon; // it must be a list for the partition
 
@@ -57,6 +60,7 @@ private:
   std::list<Polygon> partitionPolygons;
   std::list<CGAL::Qt::PolygonGraphicsItem<Polygon>* >  partitionGraphicsItems;
   std::list<QGraphicsLineItem* >  skeletonGraphicsItems;
+  CGAL::Qt::LineGraphicsItem<K>* lgi;
 
 public:
   MainWindow();
@@ -72,6 +76,7 @@ public slots:
 
   void on_actionRecenter_triggered();
   void on_actionInnerSkeleton_triggered();
+  void on_actionLinearLeastSquaresFitting_triggered();
   void on_actionCreateInputPolygon_toggled(bool);
 
   void on_actionYMonotonePartition_triggered();
@@ -81,6 +86,7 @@ public slots:
 
   void clearPartition();
   void clearSkeleton();
+  void clear();
 
   void open(const QString&);
 signals:
@@ -102,6 +108,11 @@ MainWindow::MainWindow()
   pgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(pgi);
 
+
+  lgi = new CGAL::Qt::LineGraphicsItem<K>();
+  lgi->hide();
+  scene.addItem(lgi);
+  assert(lgi->scene() == &scene);
   // Setup input handlers. They get events before the scene gets them
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true);
 
@@ -208,8 +219,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   poly.clear();
-  clearSkeleton();
-  clearPartition();
+  clear();
   this->actionCreateInputPolygon->setChecked(true);
   emit(changed());
 }
@@ -236,8 +246,7 @@ MainWindow::open(const QString& fileName)
   ifs >> number_of_polygons;
   poly.clear();
   ifs >> poly;
-  clearSkeleton();
-  clearPartition();
+  clear();
 
   this->addToRecentFiles(fileName);
   emit (changed());
@@ -273,8 +282,7 @@ void
 MainWindow::on_actionInnerSkeleton_triggered()
 {
   if(poly.size()>0){
-    clearSkeleton();
-    clearPartition();
+    clear();
     if(! poly.is_counterclockwise_oriented()){
       poly.reverse_orientation();
     }
@@ -304,6 +312,25 @@ MainWindow::on_actionInnerSkeleton_triggered()
 }
 
 void
+MainWindow::on_actionLinearLeastSquaresFitting_triggered()
+{
+  if(poly.size()>2){
+    clear();
+    
+    Line_2 line;
+      CGAL::linear_least_squares_fitting_2(poly.vertices_begin(),
+					   poly.vertices_end(),
+					   line,
+					   CGAL::Dimension_tag<0>());
+
+      //      Line_2 line (Point_2(0,0), Point_2(1,1));
+      lgi->setLine(line);
+      lgi->show();
+  }
+}
+
+
+void
 MainWindow::on_actionYMonotonePartition_triggered()
 {
   partition(YMonotone);
@@ -328,8 +355,7 @@ void
 MainWindow::partition(PartitionAlgorithm pa)
 {
   if(poly.size()>0){
-    clearSkeleton();
-    clearPartition();
+    clear();
     if(! poly.is_counterclockwise_oriented()){
       poly.reverse_orientation();
     }
@@ -375,6 +401,16 @@ MainWindow::clearSkeleton()
   }
   skeletonGraphicsItems.clear();
 }
+
+
+void
+MainWindow::clear()
+{
+  clearPartition();
+  clearSkeleton();
+  lgi->hide();
+}
+
 
 #include "Polygon_2.moc"
 
