@@ -516,6 +516,8 @@ Surface_reconstruction_3/doc_pdf
 Surface_reconstruction_3/doc_ps
 Surface_reconstruction_3/examples/Surface_reconstruction_3/*.kdev*
 Surface_reconstruction_3/examples/Surface_reconstruction_3/*.ncb
+Surface_reconstruction_3/examples/Surface_reconstruction_3/*.off
+Surface_reconstruction_3/examples/Surface_reconstruction_3/*.pwn
 Surface_reconstruction_3/examples/Surface_reconstruction_3/*.suo
 Surface_reconstruction_3/examples/Surface_reconstruction_3/.cdtproject
 Surface_reconstruction_3/examples/Surface_reconstruction_3/.project
@@ -528,8 +530,6 @@ Surface_reconstruction_3/examples/Surface_reconstruction_3/debug
 Surface_reconstruction_3/examples/Surface_reconstruction_3/error.txt
 Surface_reconstruction_3/examples/Surface_reconstruction_3/makefile
 Surface_reconstruction_3/examples/Surface_reconstruction_3/poisson_reconstruction
-Surface_reconstruction_3/examples/Surface_reconstruction_3/polygirl_apss.off
-Surface_reconstruction_3/examples/Surface_reconstruction_3/polygirl_poisson.off
 Surface_reconstruction_3/examples/Surface_reconstruction_3/release
 Surface_reconstruction_3/test/Surface_reconstruction_3/*.kdev*
 Surface_reconstruction_3/test/Surface_reconstruction_3/*.ncb

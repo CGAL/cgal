@@ -2,6 +2,8 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "poisson_reconstruction_test", "VC\poisson_reconstruction_vc80.vcproj", "{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "normal_estimation", "VC\normal_estimation_vc80.vcproj", "{264B1CCF-DDA3-49F8-B132-B8B6E3703689}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APSS_reconstruction", "VC\APSS_reconstruction_vc80.vcproj", "{87C5AB4F-0345-4B41-89DB-F743EC4339D7}"
 EndProject
 Global
@@ -14,6 +16,10 @@ Global
 		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Debug|Win32.Build.0 = Debug|Win32
 		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release|Win32.ActiveCfg = Release|Win32
 		{E2A5087B-4619-4EDD-A6BA-5655F62BA4FE}.Release|Win32.Build.0 = Release|Win32
+		{264B1CCF-DDA3-49F8-B132-B8B6E3703689}.Debug|Win32.ActiveCfg = Debug|Win32
+		{264B1CCF-DDA3-49F8-B132-B8B6E3703689}.Debug|Win32.Build.0 = Debug|Win32
+		{264B1CCF-DDA3-49F8-B132-B8B6E3703689}.Release|Win32.ActiveCfg = Release|Win32
+		{264B1CCF-DDA3-49F8-B132-B8B6E3703689}.Release|Win32.Build.0 = Release|Win32
 		{87C5AB4F-0345-4B41-89DB-F743EC4339D7}.Debug|Win32.ActiveCfg = Debug|Win32
 		{87C5AB4F-0345-4B41-89DB-F743EC4339D7}.Debug|Win32.Build.0 = Debug|Win32
 		{87C5AB4F-0345-4B41-89DB-F743EC4339D7}.Release|Win32.ActiveCfg = Release|Win32

@@ -47,7 +47,7 @@ run()
     if eval $COMMAND 2>&1 ; then
         echo "   successful execution   of $1" >> $ERRORFILE
     else
-        echo "   ERROR:    execution   of $1" >> $ERRORFILE
+        echo "   ERROR:     execution   of $1" >> $ERRORFILE
     fi
     echo
 }

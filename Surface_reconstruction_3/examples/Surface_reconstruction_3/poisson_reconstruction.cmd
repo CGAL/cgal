@@ -1,1 +1,1 @@
-data/polygirl.off polygirl_poisson.off
+data/camel.off camel_poisson.off

@@ -47,7 +47,7 @@ run()
     if eval $COMMAND 2>&1 ; then
         echo "   successful execution   of $1" >> $ERRORFILE
     else
-        echo "   ERROR:    execution   of $1" >> $ERRORFILE
+        echo "   ERROR:     execution   of $1" >> $ERRORFILE
     fi
     echo
 }
@@ -68,6 +68,7 @@ if [ $# -ne 0 ] ; then
   done
 else
   run APSS_reconstruction
+  run normal_estimation
   run poisson_reconstruction
 fi
 

@@ -1,1 +1,1 @@
-data/polygirl.off polygirl_apss.off
+data/camel.off camel_apss.off
