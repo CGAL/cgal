@@ -1090,6 +1090,6 @@ int main()
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
   typedef CGAL::Circular_kernel_2<Linear_k1,Algebraic_k1>      CK1;
-	//do_test< CK1 >();
+	do_test< CK1 >();
 	do_test< CGAL::Exact_circular_kernel_2 >();
 }
