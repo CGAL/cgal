@@ -22,6 +22,7 @@ foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALimageIO ${PACKAGE_ROOT}/.
   endif()
 endforeach()
 
+option(WITH_POLYHEDRAL_SURFACE "Compile the support for polyhedral surfaces." ON)
 
 # QGLViwer needs Qt4 configured with QtOpenGL and QtXml support
 
@@ -80,7 +81,13 @@ if ( CGAL_FOUND )
     
     include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
-    set( sources colorlisteditor.cpp values_list.cpp mainwindow.cpp Surface_mesher.cpp viewer.cpp volume.cpp polyhedral_surface.cpp ${PACKAGE_ROOT}/../Marching_cube/src/mc/ply.c)
+    set( sources colorlisteditor.cpp values_list.cpp mainwindow.cpp Surface_mesher.cpp viewer.cpp volume.cpp )
+
+    if(WITH_POLYHEDRAL_SURFACE)
+      set(sources ${sources} polyhedral_surface.cpp ${PACKAGE_ROOT}/../Marching_cube/src/mc/ply.c)
+    else(WITH_POLYHEDRAL_SURFACE)
+      add_definitions(-DCGAL_DO_NOT_USE_POLYHEDRAL_SURFACE)
+    endif(WITH_POLYHEDRAL_SURFACE)
     
     qt4_automoc( ${sources} )
 
@@ -88,7 +95,7 @@ if ( CGAL_FOUND )
 
     set( sources ${sources} moc_surface.cpp)
     
-    qt4_wrap_ui( uis ui/values_list.ui ui/mainwindow.ui ui/meshing_bar.ui ui/optionsdialog.ui ui/raw_image.ui )
+    qt4_wrap_ui( uis ui/values_list.ui ui/mainwindow.ui ui/optionsdialog.ui ui/raw_image.ui )
     
     qt4_add_resources( qrc_sources values_list.qrc surface_mesher.qrc  ) 
 

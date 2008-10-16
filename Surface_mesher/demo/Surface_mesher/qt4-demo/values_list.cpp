@@ -261,4 +261,9 @@ const QTreeWidgetItem* Values_list::search(const double value) const
   }
 }
 
+void Values_list::setHeaderTitle(QString title)
+{
+  treeWidget->headerItem()->setText(0, title);
+}
+
 #include "values_list.moc"

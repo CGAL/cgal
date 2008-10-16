@@ -170,6 +170,11 @@ public slots:
   void set_radius_bound(double);
   void set_distance_bound(double);
   void changed_parameters();
+
+  void labellizedToogled(bool);
+
+  void save_image_settings(QString);
+  void load_image_settings(QString);
 private:
   void status_message(QString);
   void busy() const;

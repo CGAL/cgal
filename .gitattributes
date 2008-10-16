@@ -3878,7 +3878,6 @@ Surface_mesher/demo/Surface_mesher/qt4-demo/icons/twosides.png -text svneol=unse
 Surface_mesher/demo/Surface_mesher/qt4-demo/icons/twosides.svg -text svneol=unset#image/svg%2Bxml
 Surface_mesher/demo/Surface_mesher/qt4-demo/surface_mesher.qrc -text
 Surface_mesher/demo/Surface_mesher/qt4-demo/ui/mainwindow.ui -text
-Surface_mesher/demo/Surface_mesher/qt4-demo/ui/meshing_bar.ui -text
 Surface_mesher/demo/Surface_mesher/qt4-demo/ui/optionsdialog.ui -text
 Surface_mesher/demo/Surface_mesher/qt4-demo/ui/raw_image.ui -text
 Surface_mesher/demo/Surface_mesher/qt4-demo/ui/values_list.ui -text

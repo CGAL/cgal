@@ -250,6 +250,9 @@ Volume::Volume(MainWindow* mw) :
   connect(this, SIGNAL(changed()),
           this, SLOT(check_can_export_off()));
 
+  connect(mw->labellizedRadioButton, SIGNAL(toggled(bool)),
+	  this, SLOT(labellizedToogled(bool)));
+
   mw->actionExport_surface_mesh_to_OFF->setEnabled(false);
   connect(mw->actionExport_surface_mesh_to_OFF, SIGNAL(triggered()),
           this, SLOT(export_off()));
@@ -489,7 +492,11 @@ bool Volume::open(const QString& filename)
       finish_open();
       return true;
     }
-    else if(!open_xt(filename)) {
+    else if(open_xt(filename)) {
+      return true;
+    }
+    else 
+    {
       QSettings settings;
       settings.beginGroup(QUrl::toPercentEncoding(fileinfo.absoluteFilePath()));
       if( settings.value("is_raw").toBool() &&
@@ -555,6 +562,7 @@ void Volume::finish_open()
 
   mw->viewer->showEntireScene();
   values_list->load_values(fileinfo.absoluteFilePath());
+  load_image_settings(fileinfo.absoluteFilePath());
   changed_parameters();
   emit changed();
 }
@@ -718,6 +726,8 @@ void Volume::display_marchin_cube()
                  .arg(mc_timer.time())
                  .arg(m_surface_mc.size())
                  .arg(mc_total_time/1000.));
+
+  save_image_settings(fileinfo.absoluteFilePath());
 }
 
 void Volume::display_surface_mesher_result()
@@ -896,6 +906,7 @@ void Volume::display_surface_mesher_result()
                  .arg(m_surface.size())
                  .arg(sm_timer.time())
                  .arg(sm_total_time/1000.));
+  save_image_settings(fileinfo.absoluteFilePath());
 }
 
 void Volume::draw()
@@ -1229,6 +1240,32 @@ void Volume::gl_draw_marchingcube()
     if(!list_draw_marching_cube_is_valid)
       std::cerr << boost::format("OpenGL error: %1%\n") 
         % ::gluErrorString(::glGetError());
+  }
+}
+
+void Volume::save_image_settings(QString filename)
+{
+  QSettings settings;
+  settings.beginGroup(QUrl::toPercentEncoding(filename));
+  settings.setValue("labellized", mw->labellizedRadioButton->isChecked());
+  settings.endGroup();
+}
+
+void Volume::load_image_settings(QString filename)
+{
+  QSettings settings;
+  settings.beginGroup(QUrl::toPercentEncoding(filename));
+  mw->labellizedRadioButton->setChecked(settings.value("labellized").toBool());
+  settings.endGroup();
+}
+
+void Volume::labellizedToogled(bool toggled)
+{
+  if(toggled) {
+    values_list->setHeaderTitle(tr("Label"));
+  }
+  else {
+    values_list->setHeaderTitle(tr("Iso-Value"));
   }
 }
 

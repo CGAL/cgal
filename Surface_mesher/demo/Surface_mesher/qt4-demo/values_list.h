@@ -58,6 +58,8 @@ public slots:
   // setters
   void addValue(const double v = Values_list::default_value);
 
+  void setHeaderTitle(QString);
+
 private slots:
   void update_items_cache();
 

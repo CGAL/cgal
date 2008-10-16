@@ -10,6 +10,7 @@ class QDropEvent;
 class Surface;
 class QGLViewer;
 class QDoubleSpinBox;
+class QCloseEvent;
 
 class MainWindow : public CGAL::Qt::DemosMainWindow, public Ui::MainWindow
 {
@@ -29,6 +30,7 @@ private slots:
   void on_action_Clone_triggered();
   
 private:
+  void closeEvent(QCloseEvent *event);
   Surface* surface;
   double sharp_edges_angle_lower_bound;
   double sharp_edges_angle_upper_bound;

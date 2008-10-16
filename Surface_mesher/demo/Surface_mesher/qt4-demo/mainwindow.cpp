@@ -13,10 +13,9 @@
 #include <QToolBar>
 #include <QDoubleSpinBox>
 #include <QLabel>
+#include <QSettings>
 
 #include <QGLViewer/vec.h>
-
-#include "ui_meshing_bar.h"
 
 #include <algorithm> // std::max
 #include <cmath> // std::sqrt
@@ -24,7 +23,9 @@
 
 #include "ui_mainwindow.h"
 #include "volume.h"
-#include "polyhedral_surface.h"
+#ifndef CGAL_DO_NOT_USE_POLYHEDRAL_SURFACE
+#  include "polyhedral_surface.h"
+#endif
 
 MainWindow::MainWindow(MainWindow* other_window /* = 0 */) : 
   CGAL::Qt::DemosMainWindow(),
@@ -41,29 +42,15 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
             this, SLOT(close()));
   }
 
-  QToolBar* tb_meshing = qFindChild<QToolBar*>(this, "toolBar_meshing");
-//   tb_meshing->setVisible(false);
-
-  QAction* action_mc = qFindChild<QAction*>(this, "actionMarching_cubes");
-
-  if(tb_meshing && action_mc) {
-    QWidget* meshing_bar = new QWidget;
-    Ui::meshing_bar ui;
-    ui.setupUi(meshing_bar);
-    tb_meshing->insertWidget(action_mc, 
-                             meshing_bar);
-    tb_meshing->insertSeparator(action_mc);
-    meshing_bar->setProperty("show_only_in", QStringList() << "volume");
-  }
-
   show_only("");
-//   surface = new Volume(this);
 
-  addAboutCGAL();
+  this->addAboutCGAL();
   this->addRecentFiles(this->menu_File,
 		       this->action_Quit);
   connect(this, SIGNAL(openRecentFile(QString)),
 	  this, SLOT(surface_open(QString)));
+
+  this->readState();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -81,22 +68,28 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::surface_open(const QString& filename)
 {
+#ifndef CGAL_DO_NOT_USE_POLYHEDRAL_SURFACE
   surface = new Polyhedral_surface(this);
   if(surface->open(filename)) {
     this->addToRecentFiles(filename);
+    return;
   }
-  else {
-    delete surface;
-    surface = new Volume(this);
-    if(surface->open(filename)) {
-      this->addToRecentFiles(filename);
-    }
+  delete surface;
+#endif
+  surface = new Volume(this);
+  if(surface->open(filename)) {
+    this->addToRecentFiles(filename);
   }
 }
 
 void MainWindow::show_only(QString tag)
 {
+#if 0
   QTextStream err(stderr);
+#else
+  QString dummy;
+  QTextStream err(&dummy);
+#endif
   err << "** Show only in \"" << tag << "\"\n";
   Q_FOREACH(QObject* object, 
             this->findChildren<QObject*>())
@@ -122,16 +115,32 @@ void MainWindow::show_only(QString tag)
 
 void MainWindow::on_action_Open_triggered()
 {
+  QSettings settings;
+  QString directory = settings.value("Open directory",
+				     QDir::current().dirName()).toString();
   QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),
-                                                  "",
+                                                  directory,
                                                   tr("all Files (*.*)"));
-  if(!filename.isEmpty())
-    surface_open(filename);
+  if(!filename.isEmpty()) {
+    QFileInfo fileinfo(filename);
+    if(fileinfo.isFile() && fileinfo.isReadable()) {
+      settings.setValue("Open directory",
+			fileinfo.absoluteDir().absolutePath());
+      surface_open(filename);
+    }
+  }
 }
 
 void MainWindow::on_action_Quit_triggered()
 {
+  this->writeState();
   qApp->exit();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+  this->writeState();
+  event->accept();
 }
 
 void MainWindow::on_action_Clone_triggered()
