@@ -469,7 +469,7 @@ namespace CircularFunctors {
     OutputIterator
     operator()(const Circle & c1, const Line & c2, 
 	       OutputIterator res) const
-      {	return CircularFunctors::intersect_2<CK> (c1,c2,res); }
+      {	return CircularFunctors::intersect_2<CK> (c2,c1,res); }
 
     template < class OutputIterator >
     OutputIterator

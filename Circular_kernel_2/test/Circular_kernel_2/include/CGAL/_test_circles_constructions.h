@@ -958,19 +958,36 @@ void _test_circle_construct(CK ck)
   assert(!theDo_intersect_2(llu3, ccu));
   assert(!CGAL::do_intersect(llu3, ccu));
 
-	std::vector< CGAL::Object > v_rllc1, v_rllc2, v_rllc3;
+	std::vector< CGAL::Object > v_rllc1, v_rllc2, v_rllc3, v_rllc1l, v_rllc2l, v_rllc3l;
   theConstruct_intersect_2(llu1.supporting_line(), ccu, std::back_inserter(v_rllc1));
   theConstruct_intersect_2(llu2.supporting_line(), ccu, std::back_inserter(v_rllc2));
   theConstruct_intersect_2(llu3.supporting_line(), ccu, std::back_inserter(v_rllc3));
+  theConstruct_intersect_2(ccu, llu1.supporting_line(), std::back_inserter(v_rllc1l));
+  theConstruct_intersect_2(ccu, llu2.supporting_line(), std::back_inserter(v_rllc2l));
+  theConstruct_intersect_2(ccu, llu3.supporting_line(), std::back_inserter(v_rllc3l));
 
   assert(v_rllc1.size() == 2);
   assert(theDo_intersect_2(llu1.supporting_line(), ccu));
   assert(CGAL::do_intersect(llu1.supporting_line(), ccu));
+
+  assert(v_rllc1l.size() == 2);
+  assert(theDo_intersect_2(ccu, llu1.supporting_line()));
+  assert(CGAL::do_intersect(ccu, llu1.supporting_line()));
+
   assert(v_rllc2.size() == 1);
   assert(theDo_intersect_2(llu2.supporting_line(), ccu));
   assert(CGAL::do_intersect(llu2.supporting_line(), ccu));
+
+  assert(v_rllc2l.size() == 1);
+  assert(theDo_intersect_2(ccu, llu2.supporting_line()));
+  assert(CGAL::do_intersect(ccu, llu2.supporting_line()));
+
   assert(v_rllc3.size() == 0);
   assert(!theDo_intersect_2(llu3.supporting_line(), ccu));
   assert(!CGAL::do_intersect(llu3.supporting_line(), ccu));
+
+  assert(v_rllc3l.size() == 0);
+  assert(!theDo_intersect_2(ccu, llu3.supporting_line()));
+  assert(!CGAL::do_intersect(ccu, llu3.supporting_line()));
 
 }
