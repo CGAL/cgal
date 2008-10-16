@@ -133,9 +133,10 @@
     <addaction name="actionErasePolyhedron" />
     <addaction name="actionEraseAll" />
     <addaction name="actionDuplicatePolyhedron" />
-    <addaction name="separator" />
-    <addaction name="actionMergeAll" />
     <addaction name="actionSaveAs" />
+    <addaction name="separator" />
+    <addaction name="actionExplode" />
+    <addaction name="actionMergeAll" />
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
@@ -146,22 +147,6 @@
     <addaction name="actionActivatePolyhedron" />
     <addaction name="actionSetPolyhedronA" />
     <addaction name="actionSetPolyhedronB" />
-    <addaction name="actionOptions" />
-   </widget>
-   <widget class="QMenu" name="menuAlgorithms" >
-    <property name="title" >
-     <string>&amp;Algorithms</string>
-    </property>
-    <widget class="QMenu" name="menu_Principale_components_analysis" >
-     <property name="title" >
-      <string>&amp;PCA</string>
-     </property>
-     <addaction name="actionFitPlane" />
-     <addaction name="actionFitLine" />
-    </widget>
-    <addaction name="actionSelfIntersection" />
-    <addaction name="menu_Principale_components_analysis" />
-    <addaction name="actionEstimateCurvature" />
    </widget>
    <widget class="QMenu" name="menuOperations" >
     <property name="title" >
@@ -190,6 +175,16 @@
      <addaction name="actionMVC" />
      <addaction name="actionDCP" />
     </widget>
+    <widget class="QMenu" name="menuPCA" >
+     <property name="title" >
+      <string>PCA</string>
+     </property>
+     <addaction name="actionFitLine" />
+     <addaction name="actionFitPlane" />
+    </widget>
+    <addaction name="menuPCA" />
+    <addaction name="actionEstimateCurvature" />
+    <addaction name="actionSelfIntersection" />
     <addaction name="actionConvexHull" />
     <addaction name="actionKernel" />
     <addaction name="menuSubdivision" />
@@ -215,7 +210,6 @@
    </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
-   <addaction name="menuAlgorithms" />
    <addaction name="menuOperations" />
    <addaction name="menuView" />
   </widget>
@@ -463,6 +457,11 @@
   <action name="actionDCP" >
    <property name="text" >
     <string>Discrete conformal maps</string>
+   </property>
+  </action>
+  <action name="actionExplode" >
+   <property name="text" >
+    <string>Explode</string>
    </property>
   </action>
  </widget>
