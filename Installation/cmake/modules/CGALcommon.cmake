@@ -23,7 +23,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     cmake_policy( SET CMP0007 OLD )  
   endif()
   
-  if ( NOT BUILD_SHARED_LIBS )
+  if ( "BUILD_SHARED_LIBS" STREQUAL "" )
     if ( WIN32 )
       set(BUILD_SHARED_LIBS OFF)
     else()
