@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Forward declaration
-template<class T> struct Taucs_number;
+template<class T> struct Taucs_traits;
 
 
 /// The class Taucs_matrix
@@ -292,7 +292,7 @@ public:
           CGAL_precondition(m_columns != NULL);
 
           // Convert matrix's T type to the corresponding TAUCS constant
-          int flags = Taucs_number<T>::TAUCS_FLAG;
+          int flags = Taucs_traits<T>::TAUCS_FLAG;
 
           // We store only the lower triangle of symmetric matrices
           if (m_is_symmetric)
@@ -437,17 +437,17 @@ public:
 
 // Utility class for Taucs_matrix
 // Convert matrix's T type to the corresponding TAUCS constant (called TAUCS_FLAG)
-template<class T> struct Taucs_number {};
-template<> struct Taucs_number<taucs_double> {
+template<class T> struct Taucs_traits {};
+template<> struct Taucs_traits<taucs_double> {
     enum { TAUCS_FLAG = TAUCS_DOUBLE };
 };
-template<> struct Taucs_number<taucs_single>  {
+template<> struct Taucs_traits<taucs_single>  {
     enum { TAUCS_FLAG = TAUCS_SINGLE };
 };
-template<> struct Taucs_number<taucs_dcomplex> {
+template<> struct Taucs_traits<taucs_dcomplex> {
     enum { TAUCS_FLAG = TAUCS_DCOMPLEX };
 };
-template<> struct Taucs_number<taucs_scomplex> {
+template<> struct Taucs_traits<taucs_scomplex> {
     enum { TAUCS_FLAG = TAUCS_SCOMPLEX };
 };
 
