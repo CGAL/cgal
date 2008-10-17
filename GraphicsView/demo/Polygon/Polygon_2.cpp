@@ -77,6 +77,7 @@ public slots:
   void on_actionRecenter_triggered();
   void on_actionInnerSkeleton_triggered();
   void on_actionLinearLeastSquaresFitting_triggered();
+  void on_actionLinearLeastSquaresFittingOfSegments_triggered();
   void on_actionCreateInputPolygon_toggled(bool);
 
   void on_actionYMonotonePartition_triggered();
@@ -323,17 +324,33 @@ MainWindow::on_actionLinearLeastSquaresFitting_triggered()
     clear();
     
     Line_2 line;
-      CGAL::linear_least_squares_fitting_2(poly.vertices_begin(),
-					   poly.vertices_end(),
-					   line,
-					   CGAL::Dimension_tag<0>());
-
-      //      Line_2 line (Point_2(0,0), Point_2(1,1));
-      lgi->setLine(line);
-      lgi->show();
+    CGAL::linear_least_squares_fitting_2(poly.vertices_begin(),
+					 poly.vertices_end(),
+					 line,
+					 CGAL::Dimension_tag<0>());
+  
+    lgi->setLine(line);
+    lgi->show();
   }
 }
 
+void
+MainWindow::on_actionLinearLeastSquaresFittingOfSegments_triggered()
+{
+  if(poly.size()>2){
+    clear();
+    
+    Line_2 line;
+    CGAL::linear_least_squares_fitting_2(poly.edges_begin(),
+					 poly.edges_end(),
+					 line,
+					 CGAL::Dimension_tag<1>());
+
+
+    lgi->setLine(line);
+    lgi->show();
+  }
+}
 
 void
 MainWindow::on_actionYMonotonePartition_triggered()

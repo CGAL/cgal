@@ -120,6 +120,7 @@
     <addaction name="actionOptimalConvexPartition" />
     <addaction name="actionInnerSkeleton" />
     <addaction name="actionLinearLeastSquaresFitting" />
+    <addaction name="actionLinearLeastSquaresFittingOfSegments" />
    </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
@@ -221,7 +222,12 @@
   </action>
   <action name="actionLinearLeastSquaresFitting" >
    <property name="text" >
-    <string>Linear Least Squares Fitting</string>
+    <string>Linear Least Squares Fitting of Points</string>
+   </property>
+  </action>
+  <action name="actionLinearLeastSquaresFittingOfSegments" >
+   <property name="text" >
+    <string>Linear Least Squares Fitting of Segments</string>
    </property>
   </action>
  </widget>
