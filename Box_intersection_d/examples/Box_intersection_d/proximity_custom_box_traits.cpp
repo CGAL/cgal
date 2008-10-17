@@ -13,7 +13,7 @@ typedef CGAL::Random_points_on_sphere_3<Point_3>  Points_on_sphere;
 
 std::vector<Point_3>  points;
 std::vector<Point_3*> boxes;     // boxes are just pointers to points
-const float           eps = 0.1; // finds point pairs of distance < 2*eps
+const float           eps = 0.1f; // finds point pairs of distance < 2*eps
 
 // Boxes are just pointers to 3d points. The traits class adds the
 // +- eps size to each interval around the point, effectively building
