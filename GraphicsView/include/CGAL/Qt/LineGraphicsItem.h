@@ -49,25 +49,17 @@ public:
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
   
 
-  const QPen& verticesPen() const
+  const QPen& Pen() const
   {
-    return this->vertices_pen;
+    return this->pen;
   }
 
-  const QPen& edgesPen() const
+
+  void setPen(const QPen& pen_)
   {
-    return edges_pen;
+    this->pen = pen_;
   }
 
-  void setVerticesPen(const QPen& pen)
-  {
-    this->vertices_pen = pen;
-  }
-
-  void setEdgesPen(const QPen& pen)
-  {
-    edges_pen = pen;
-  }
   
   void setLine(const Line_2& a);
 
@@ -82,7 +74,7 @@ protected:
   PainterOstream<CK> painterostream;
 
 
-  QPen edges_pen;
+  QPen pen;
 
   Line_2 line_;
 };
@@ -108,16 +100,10 @@ template <typename CK>
 QRectF 
 LineGraphicsItem<CK>::boundingRect() const
 {
-  std::cerr << "Enter boundingRect" << std::endl;
-  if(isVisible()){
-    std::cerr << "visible" << std::endl;
-    QRectF rect = CGAL::Qt::viewportsBbox(scene());
-    assert(rect.isValid());
-    return rect;
-  } else {
-    std::cerr << "not visible" << std::endl;
-    return QRectF();
+  if(scene()){
+    return CGAL::Qt::viewportsBbox(scene());
   }
+  return QRectF();
 }
 
 
@@ -129,8 +115,7 @@ LineGraphicsItem<CK>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * widget)
 {
-  painter->setPen(this->edgesPen());
-  std::cerr << "in paint" << std::endl;
+  painter->setPen(this->Pen());
   painterostream = PainterOstream<CK>(painter, boundingRect());
   painterostream << line_;
 }
