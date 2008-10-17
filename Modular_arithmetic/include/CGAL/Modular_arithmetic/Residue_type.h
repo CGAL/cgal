@@ -32,20 +32,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// fwd
-void force_ieee_double_precision(); 
 
-#ifdef CGAL_HAS_THREADS
-#else
-
-namespace CGALi{
-struct Modular_arithmetic_needs_ieee_double_precision{
-  Modular_arithmetic_needs_ieee_double_precision(){
-    CGAL::force_ieee_double_precision();
-  }
-};
-} // namespace CGALi
-#endif
 
 class Residue;
     
@@ -89,7 +76,6 @@ private:
     prime_int_.reset(new int(67111067));
     prime_.reset(new double(67111067.0));
     prime_inv_.reset(new double(1.0/67111067.0));
-    CGAL::force_ieee_double_precision();
   }
   
   static inline int get_prime_int(){
@@ -116,9 +102,6 @@ private:
   static int get_prime_int(){ return prime_int;}
   static double get_prime()    { return prime;}
   static double get_prime_inv(){ return prime_inv;}  
-  // calls force_ieee_double_precision(); within constructor
-  static const CGALi::Modular_arithmetic_needs_ieee_double_precision 
-  modular_arithmetic_needs_ieee_double_precision;
 #endif
 
     /* Quick integer rounding, valid if a<2^51. for double */ 

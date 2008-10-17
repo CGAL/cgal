@@ -29,9 +29,7 @@ boost::thread_specific_ptr<double> Residue::prime_inv_;
 int Residue::prime_int = 67111067;
 double Residue::prime = 67111067.0;
 double Residue::prime_inv =1/67111067.0;
-const CGALi::Modular_arithmetic_needs_ieee_double_precision 
-Residue::modular_arithmetic_needs_ieee_double_precision 
-= CGALi::Modular_arithmetic_needs_ieee_double_precision();
+
 #endif
 
 const double Residue::CST_CUT = std::ldexp( 3., 51 );

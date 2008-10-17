@@ -13,7 +13,9 @@
 #include <CGAL/number_utils.h>
 
 int main()
-{   
+{
+    // Enforce IEEE double precision (on i386/Windows)
+    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
     typedef CGAL::Residue NT;
     typedef CGAL::Field_tag Tag;
     typedef CGAL::Tag_true Is_exact;
