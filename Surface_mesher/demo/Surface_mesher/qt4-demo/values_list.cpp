@@ -199,6 +199,7 @@ void Values_list::load_values(QString filename)
 {
   QSettings settings;
 
+  treeWidget->clear();
   settings.beginGroup(QUrl::toPercentEncoding(filename));
   int nb = settings.beginReadArray("values");
   for (int i = 0; i < nb; ++i) {
