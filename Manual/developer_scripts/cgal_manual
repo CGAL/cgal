@@ -446,7 +446,7 @@ cmdlog() {
     shift;
   fi
   if [ $DoCmdLog -eq 1 ]; then
-    printf "$@\n" >> $cmd_log
+    printf "%s\n" "$@" >> $cmd_log
   fi
   if [ $do_exec -eq 1 ]; then
     eval "$@";
@@ -608,7 +608,7 @@ EOF
 cleanup_latex() {
     rm -f $1.toc $1.bmt $1.mtc* $1.idx $1.ind $1.dvi $1.inc $1.out $1.ref
     rm -f $1.ind.unfixed
-    find . -name "listofrefpages.tex" | while read f ; do rm $f; done
+    find . -name "listofrefpages.tex" | while read f ; do cmdlog "rm $f"; done
     if [ $MakeHTML -eq 0 ]; then
         rm -f $1.aux $1.bbl
     fi
@@ -1997,8 +1997,8 @@ if [ -d ../examples ] ; then
 fi
 
 find $EXAMPLECODEDIRECTORIES -name "*.cpp" -or -name "*.h" | while read f ; do
-  echo $f | sed 's/[\.][\.][\/]//' > $f.filename
-  cat $f | perl -e 'while(<>) { if( $_ !~ /(^\/\/)|(^\s*$)/ ) { print; last; } } while(<>) { print; }' > $f.noheader
+  cmdlog "echo $f | sed 's/[\.][\.][\/]//' > $f.filename"
+  cmdlog "cat $f | perl -e 'while(<>) { if( \$_ !~ /(^\/\/)|(^\s\*\$)/ ) { print; last; } } while(<>) { print; }' > $f.noheader"
 done
 
 GlobalReturnStatus=0
@@ -2057,7 +2057,7 @@ fi
 
 # cleanup again
 find $EXAMPLECODEDIRECTORIES -name "*.cpp" -or -name "*.h" | while read f ; do
-  rm -f $f.filename $f.noheader
+  cmdlog "rm -f $f.filename $f.noheader"
 done
 
 if [ $MakeTestSuiteResult -eq 1 ]; then
