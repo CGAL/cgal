@@ -110,6 +110,7 @@ MainWindow::MainWindow()
 
 
   lgi = new CGAL::Qt::LineGraphicsItem<K>();
+  lgi->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   lgi->hide();
   scene.addItem(lgi);
   assert(lgi->scene() == &scene);
@@ -263,6 +264,7 @@ void
 MainWindow::on_actionCreateInputPolygon_toggled(bool checked)
 {
   poly.clear();
+  clear();
   if(checked){
     scene.installEventFilter(pi);
   } else {
@@ -282,6 +284,9 @@ void
 MainWindow::on_actionInnerSkeleton_triggered()
 {
   if(poly.size()>0){
+    if(! poly.is_simple()){
+      return;
+    }
     clear();
     if(! poly.is_counterclockwise_oriented()){
       poly.reverse_orientation();
@@ -290,22 +295,22 @@ MainWindow::on_actionInnerSkeleton_triggered()
 
     CGAL::Straight_skeleton_2<K> const& ss = *iss;
 
-  typedef Ss::Vertex_const_handle     Vertex_const_handle ;
-  typedef Ss::Halfedge_const_handle   Halfedge_const_handle ;
-  typedef Ss::Halfedge_const_iterator Halfedge_const_iterator ;
+    typedef Ss::Vertex_const_handle     Vertex_const_handle ;
+    typedef Ss::Halfedge_const_handle   Halfedge_const_handle ;
+    typedef Ss::Halfedge_const_iterator Halfedge_const_iterator ;
   
-  Halfedge_const_handle null_halfedge ;
-  Vertex_const_handle   null_vertex ;
+    Halfedge_const_handle null_halfedge ;
+    Vertex_const_handle   null_vertex ;
 
-  for ( Halfedge_const_iterator i = ss.halfedges_begin(); i != ss.halfedges_end(); ++i )
-  {
-    if ( i->is_bisector() ){
-      Segment_2 s(i->opposite()->vertex()->point(), i->vertex()->point());
-      skeletonGraphicsItems.push_back(new QGraphicsLineItem(convert(s)));
-      scene.addItem(skeletonGraphicsItems.back());
-      skeletonGraphicsItems.back()->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    }
-  }
+    for ( Halfedge_const_iterator i = ss.halfedges_begin(); i != ss.halfedges_end(); ++i )
+      {
+	if ( i->is_bisector() ){
+	  Segment_2 s(i->opposite()->vertex()->point(), i->vertex()->point());
+	  skeletonGraphicsItems.push_back(new QGraphicsLineItem(convert(s)));
+	  scene.addItem(skeletonGraphicsItems.back());
+	  skeletonGraphicsItems.back()->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+	}
+      }
       
   }
 
