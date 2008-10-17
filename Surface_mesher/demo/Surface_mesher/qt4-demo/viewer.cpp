@@ -32,7 +32,7 @@ QString Viewer::helpString() const
 void Viewer::interpolateToFitBoundingBox(double xmin, double ymin, double zmin,
                                          double xmax, double ymax, double zmax)
 {
-  QAction* auto_resize = parent()->parent()->parent()->findChild<QAction*>("actionAuto_resize");
+  QAction* auto_resize = parent()->parent()->findChild<QAction*>("actionAuto_resize");
   Q_ASSERT_X(auto_resize, "Viewer::interpolateToFitBoundingBox", "cannot find action \"actionAuto_resize\"");
   if(auto_resize && auto_resize->isChecked())
   {

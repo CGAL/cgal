@@ -42,8 +42,6 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
             this, SLOT(close()));
   }
 
-  show_only("");
-
   this->addAboutCGAL();
   this->addRecentFiles(this->menu_File,
 		       this->action_Quit);
@@ -51,6 +49,8 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
 	  this, SLOT(surface_open(QString)));
 
   this->readState();
+
+  show_only("");
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
