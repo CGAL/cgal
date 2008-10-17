@@ -609,7 +609,7 @@ void Volume::status_message(QString string)
 
 void Volume::busy() const 
 {
-  QApplication::restoreOverrideCursor();
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 }
 
 void Volume::not_busy() const 
