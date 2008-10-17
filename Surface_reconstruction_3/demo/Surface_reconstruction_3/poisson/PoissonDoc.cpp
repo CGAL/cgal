@@ -44,6 +44,9 @@
 #include <CGAL/surface_reconstruction_assertions.h>
 
 // STL
+#include <deque>
+#include <vector>
+#include <iterator>
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -295,7 +298,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   // if Gyroviz .pwc extension
   else if (extension.CompareNoCase(".pwc") == 0)
   {
-    std::vector<Point> cameras; // temporary container of cameras to read
+    std::deque<Point> cameras; // temporary container of cameras to read
     if( ! surface_reconstruction_read_pwc(lpszPathName,
                                           std::back_inserter(m_points),
                                           std::back_inserter(cameras)) )
@@ -311,7 +314,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   else if (extension.CompareNoCase(".g23") == 0)
   {
     std::string movie_file_name;
-    std::vector<Point> cameras; // temporary container of cameras to read
+    std::deque<Point> cameras; // temporary container of cameras to read
     if( ! surface_reconstruction_read_g23(lpszPathName,
                                           std::back_inserter(m_points),
                                           std::back_inserter(cameras),
@@ -957,8 +960,8 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_tag());
 
     // get output surface
-    std::list<Triangle> triangles;
-    CGAL::output_surface_facets<C2t3,Triangle>(triangles,m_surface_mesher_c2t3);
+    std::deque<Triangle> triangles;
+    CGAL::output_surface_facets(m_surface_mesher_c2t3, std::back_inserter(triangles));
     m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
 
     // Reset contouring value
@@ -990,7 +993,7 @@ void CPoissonDoc::OnAlgorithmsMarchingTetContouring()
 
   m_contour.clear(); // clear previous call
 
-  std::list<Triangle> triangles;
+  std::deque<Triangle> triangles;
   int nb = m_poisson_dt->marching_tet(std::back_inserter(triangles), m_contouring_value);
   m_contour.insert(m_contour.end(), triangles.begin(), triangles.end());
 
@@ -1287,8 +1290,8 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_tag());
 
     // get output surface
-    std::list<Triangle> triangles;
-    CGAL::output_surface_facets<C2t3,Triangle>(triangles,m_surface_mesher_c2t3);
+    std::deque<Triangle> triangles;
+    CGAL::output_surface_facets(m_surface_mesher_c2t3, std::back_inserter(triangles));
     m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
 
     // Record new mode

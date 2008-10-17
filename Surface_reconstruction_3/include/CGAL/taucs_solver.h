@@ -38,7 +38,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 // Forward declaration
-template<class T> struct Taucs_number;
+template<class T> struct Taucs_traits;
 
 
 /// CLASS Taucs_solver:
@@ -56,16 +56,30 @@ public:
 // Public operations
 public:
 
-  Taucs_solver()
-    : PAP(0),
+  Taucs_solver(unsigned int size, ///< Number of rows = number of columns
+               unsigned int nb_elements_per_line=0) ///< Number of non null elements per line
+                                                    ///< (ignored if 0).
+    : n_rows(size),
+      PAP(0),
       L(0),
       SL(0),
-      n_rows(0),
+      row_index(0),
       perm(0),
       invperm(0),
-      supernodal_(true)
+      supernodal_(true),
+      m_io_handle(NULL)
   {
-    m_io_handle = NULL;
+    // Reserve taucs_ccs_matrix's arrays to avoid memory fragmentation:
+    // - rowind[] = array of non null elements of the matrix, ordered by columns.
+    // - values[] = array of row index of each element of rowind[].
+    // - colptr[j] is the index of the first element of the column j (or where it
+    //   should be if it doesn't exist) + the past-the-end index of the last column.
+    colptr.reserve(n_rows+1);
+    if (nb_elements_per_line > 0)
+    {
+      rowind.reserve(n_rows*nb_elements_per_line + 16); // 16 is slack
+      values.reserve(n_rows*nb_elements_per_line + 16); // 16 is slack
+    }
 
 #ifdef DEBUG_TRACE
     // Turn on TAUCS trace to stderr or to a log file
@@ -88,15 +102,20 @@ public:
     if (colptr.empty() || colptr.back() != (int)values.size())
     {
       colptr.push_back((int)values.size());
-      n_rows = (int)colptr.size()-1;
+      row_index = (int)colptr.size()-1;
     }
+    CGAL_surface_reconstruction_assertion(row_index <= n_rows);
   }
 
   void add_value(int _i, T _val)
   {
       // We store only the lower diagonal matrix
-      if(_i <= n_rows)
+      if(_i <= row_index)
       {
+        // print warning if reallocating the arrays
+        if (values.capacity() == values.size() || rowind.capacity() == rowind.size())
+          std::cerr << "Taucs_solver: reallocating the matrix\n";
+
         values.push_back(_val);
         rowind.push_back(_i);
       }
@@ -107,8 +126,9 @@ public:
     if (colptr.empty() || colptr.back() != (int)values.size())
     {
       colptr.push_back((int)values.size());
-      n_rows = (int)(colptr.size()-1);
+      row_index = (int)(colptr.size()-1);
     }
+    CGAL_surface_reconstruction_assertion(row_index <= n_rows + 1);
   }
 
   bool factorize(bool _use_supernodal = true)
@@ -385,14 +405,18 @@ public:
 // Private operations
 private:
 
-  // setup ccs matrix
+  /// Copy constructor and operator =() are not implemented.
+  Taucs_solver(const Taucs_solver& toCopy);
+  Taucs_solver& operator =(const Taucs_solver& toCopy);
+
+  // Setup ccs matrix.
   void finalize_matrix()
   {
     A.n        = (int)(colptr.size()-1);
     A.m        = (int)(colptr.size()-1);
 
     // Convert matrix's T type to the corresponding TAUCS constant
-    A.flags    = (Taucs_number<T>::TAUCS_FLAG | TAUCS_SYMMETRIC | TAUCS_LOWER);
+    A.flags    = (Taucs_traits<T>::TAUCS_FLAG | TAUCS_SYMMETRIC | TAUCS_LOWER);
 
     A.colptr   = &colptr[0];
     A.rowind   = &rowind[0];
@@ -420,10 +444,11 @@ private:
 
   taucs_ccs_matrix           A, *PAP, *L;
   void                       *SL;
-  Vector                     values;
+  std::vector<T>             values;
   std::vector<int>           colptr;
   std::vector<int>           rowind;
-  int                        n_rows;
+  int                        n_rows; // number of rows = number of columns
+  int                        row_index; // index of current row
   int                        *perm, *invperm;
   bool                       supernodal_;
   taucs_io_handle            *m_io_handle;
@@ -432,17 +457,17 @@ private:
 
 // Utility class:
 // convert matrix's T type to the corresponding TAUCS constant (called TAUCS_FLAG).
-template<class T> struct Taucs_number {};
-template<> struct Taucs_number<double> {
+template<class T> struct Taucs_traits {};
+template<> struct Taucs_traits<double> {
     enum { TAUCS_FLAG = TAUCS_DOUBLE };
 };
-template<> struct Taucs_number<float>  {
+template<> struct Taucs_traits<float>  {
     enum { TAUCS_FLAG = TAUCS_SINGLE };
 };
-template<> struct Taucs_number<taucs_dcomplex> {
+template<> struct Taucs_traits<taucs_dcomplex> {
     enum { TAUCS_FLAG = TAUCS_DCOMPLEX };
 };
-template<> struct Taucs_number<taucs_scomplex> {
+template<> struct Taucs_traits<taucs_scomplex> {
     enum { TAUCS_FLAG = TAUCS_SCOMPLEX };
 };
 

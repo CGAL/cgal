@@ -38,6 +38,7 @@
 #include "enriched_polyhedron.h"
 
 // STL stuff
+#include <deque>
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
@@ -56,7 +57,7 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
 
-typedef std::vector<Point_with_normal> PointList;
+typedef std::deque<Point_with_normal> PointList;
 
 // Poisson's Delaunay triangulation 3 and implicit function
 typedef CGAL::Implicit_fct_delaunay_triangulation_3<Kernel> Dt3;

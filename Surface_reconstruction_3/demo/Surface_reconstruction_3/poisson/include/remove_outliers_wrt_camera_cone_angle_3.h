@@ -26,8 +26,7 @@ double compute_greatest_camera_angle_3(const Gyroviz_point_3<Kernel>& gpt)
     
     assert(gpt.cameras_begin() != gpt.cameras_end());
 
-    std::vector<Point> cameras;
-    std::copy(gpt.cameras_begin(), gpt.cameras_end(), std::back_inserter(cameras));
+    std::vector<Point> cameras(gpt.cameras_begin(), gpt.cameras_end());
 
     // give a score to each vertex: the score will help detecting outliers			  
     FT greatest_camera_angle=0, v1_v2, n_v1, n_v2, intermediate_score;

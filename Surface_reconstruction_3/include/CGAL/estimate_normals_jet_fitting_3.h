@@ -72,7 +72,7 @@ estimate_normal_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D poi
   // Perform KNN+1 queries (as in point set, the query point is
   // output first). Search may be aborted when KNN is greater
   // than number of input points.
-  std::vector<Point> points;
+  std::vector<Point> points; points.reserve(KNN+1);
   Neighbor_search search(tree,query,KNN+1);
   Search_iterator search_iterator = search.begin();
   unsigned int i;

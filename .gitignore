@@ -531,6 +531,11 @@ Surface_reconstruction_3/examples/Surface_reconstruction_3/error.txt
 Surface_reconstruction_3/examples/Surface_reconstruction_3/makefile
 Surface_reconstruction_3/examples/Surface_reconstruction_3/poisson_reconstruction
 Surface_reconstruction_3/examples/Surface_reconstruction_3/release
+Surface_reconstruction_3/include/CGAL/*.Taucs_symmetric_solver_traits
+Surface_reconstruction_3/include/CGAL/*.object_pool
+Surface_reconstruction_3/include/CGAL/*.pool
+Surface_reconstruction_3/include/CGAL/*.reserve_RAM
+Surface_reconstruction_3/include/CGAL/*.set_se_translator
 Surface_reconstruction_3/test/Surface_reconstruction_3/*.kdev*
 Surface_reconstruction_3/test/Surface_reconstruction_3/*.ncb
 Surface_reconstruction_3/test/Surface_reconstruction_3/*.suo

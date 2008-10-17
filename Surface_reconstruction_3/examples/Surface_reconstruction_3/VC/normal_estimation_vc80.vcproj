@@ -232,10 +232,6 @@
 				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_write_xyz.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\Vector_index_property_map.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

@@ -277,8 +277,7 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
     // Instanciate a KD-tree search.
     // Notes: We have to wrap each input vertex by a Point_vertex_handle_3.
     //        The KD-tree is allocated dynamically to recover RAM as soon as possible.
-    std::vector<Point_vertex_handle_3> kd_tree_points;
-    kd_tree_points.reserve(num_input_vertices);
+    std::vector<Point_vertex_handle_3> kd_tree_points; kd_tree_points.reserve(num_input_vertices);
     for (VertexIterator it = first; it != beyond; it++)
     {
         Point point = get(vertex_point_map, it);

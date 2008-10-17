@@ -4,7 +4,7 @@
 #define POINT_SET_3_H
 
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/Vector_index_property_map.h>
+#include <CGAL/Random_access_container_index_pmap.h>
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 
@@ -13,7 +13,7 @@
 #include <CGAL/boost/graph/properties.h>
 
 #include <algorithm>
-#include <vector>
+#include <deque>
 #include <GL/gl.h>
 
 
@@ -32,13 +32,13 @@
 /// @param Gt       Geometric traits class.
 
 template <class Gt>
-class Point_set_3 : public std::vector<Gyroviz_point_3<Gt> >
+class Point_set_3 : public std::deque<Gyroviz_point_3<Gt> >
 {
 // Private types
 private:
 
   // Base class 
-  typedef std::vector<Gyroviz_point_3<Gt> > Base;
+  typedef std::deque<Gyroviz_point_3<Gt> > Base;
 
   // Auxiliary class to build a normals iterator
   template <class Node>
@@ -72,8 +72,8 @@ public:
   typedef typename Gyroviz_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
 
   // Iterator over Point_3 points
-  typedef std::vector<Gyroviz_point>::iterator        Point_iterator;      
-  typedef std::vector<Gyroviz_point>::const_iterator  Point_const_iterator;      
+  typedef std::deque<Gyroviz_point>::iterator        Point_iterator;      
+  typedef std::deque<Gyroviz_point>::const_iterator  Point_const_iterator;      
 
   // Iterator over normals
   typedef CGAL::Iterator_project<iterator, 

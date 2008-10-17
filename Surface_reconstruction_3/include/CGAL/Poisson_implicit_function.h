@@ -24,6 +24,7 @@
 #include <queue>
 #include <list>
 #include <vector>
+#include <deque>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -350,6 +351,7 @@ public:
         v != m_dt.finite_vertices_end();
         v++)
 		number_vertices++;
+		
     for(v = m_dt.finite_vertices_begin();
         v != m_dt.finite_vertices_end();
         v++)
@@ -358,9 +360,9 @@ public:
 	  int counter = 0;
 	  // std::stack<Vertex_handle> vertices; // use to walk in 3D Delaunay
 	  //  vertices.push(v);
-	  std::list<Vertex_handle> v_neighbors;
+	  std::vector<Vertex_handle> v_neighbors;
 	  m_dt.incident_vertices(v,std::back_inserter(v_neighbors));
-	  typename std::list<Vertex_handle>::iterator it;
+	  typename std::vector<Vertex_handle>::iterator it;
 	  for(it = v_neighbors.begin();
 			  it != v_neighbors.end();
 			  it++)
@@ -380,8 +382,8 @@ public:
 			 m_dt.incident_vertices(v_cur,std::back_inserter(v_neighbors));
 			std::vector<Vertex_handle>::iterator it;
 			for(it = v_neighbors.begin();
-			it != v_neighbors.end();
-			it++)
+			    it != v_neighbors.end();
+			    it++)
 			{
 				Vertex_handle nv = *it;
 				int tag = nv->tag();
@@ -490,9 +492,9 @@ public:
           return nb; // premature ending
 
         // iterate over incident cells and feed queue
-        std::list<Cell_handle> cells;
+        std::vector<Cell_handle> cells;
         m_dt.incident_cells(v,std::back_inserter(cells));
-        typename std::list<Cell_handle>::iterator it;
+        typename std::vector<Cell_handle>::iterator it;
         for(it = cells.begin();
             it != cells.end();
             it++)
@@ -534,9 +536,9 @@ public:
 
       Vector normal = CGAL::NULL_VECTOR;  // normal vector to compute
 
-      std::list<Vertex_handle> vertices;
+      std::vector<Vertex_handle> vertices;
       m_dt.incident_vertices(v,std::back_inserter(vertices));
-      for(typename std::list<Vertex_handle>::iterator it = vertices.begin();
+      for(typename std::vector<Vertex_handle>::iterator it = vertices.begin();
           it != vertices.end();
           it++)
       {
@@ -572,8 +574,7 @@ public:
    }
 
 
-  /// Extrapolate the normals field:
-
+  /// Extrapolate the normals field
   int extrapolate_normals_using_gaussian_kernel()
   {
     int counter = 0;
@@ -673,8 +674,8 @@ public:
       nb_variables = m_dt.index_unconstrained_vertices();
     }
 
-    // Assemble linear system solver*X=B
-    Solver solver;
+    // Assemble linear system A*X=B
+    Solver solver(nb_variables, 9); // average non null elements per line = 8.3
     Sparse_vector X(nb_variables);
     Sparse_vector B(nb_variables);
 
@@ -879,7 +880,7 @@ public:
   /// Get median value of the implicit function over input vertices.
   FT median_value_at_input_vertices() const
   {
-    std::vector<FT> values;
+    std::deque<FT> values;
     Finite_vertices_iterator v;
     for(v = m_dt.finite_vertices_begin();
         v != m_dt.finite_vertices_end();
@@ -950,12 +951,12 @@ public:
   FT median_value_at_convex_hull() const
   {
     // Get convex hull vertices
-    std::list<Vertex_handle> convex_hull_vertices;
+    std::vector<Vertex_handle> convex_hull_vertices;
     m_dt.incident_vertices(m_dt.infinite_vertex(),std::back_inserter(convex_hull_vertices));
 
     // Get values of the implicit function over convex hull vertices
-    std::vector<FT> values;
-    typename std::list<Vertex_handle>::iterator it;
+    std::deque<FT> values;
+    typename std::vector<Vertex_handle>::iterator it;
     for(it = convex_hull_vertices.begin();
         it != convex_hull_vertices.end();
         it++)
@@ -980,12 +981,12 @@ public:
   /// Get average value of the implicit function over convex hull vertices.
   FT average_value_at_convex_hull() const
   {
-    std::list<Vertex_handle> convex_hull_vertices;
+    std::vector<Vertex_handle> convex_hull_vertices;
     m_dt.incident_vertices(m_dt.infinite_vertex(),std::back_inserter(convex_hull_vertices));
 
     FT sum = 0.0;
     unsigned int nb = 0;
-    typename std::list<Vertex_handle>::iterator it;
+    typename std::vector<Vertex_handle>::iterator it;
     for(it = convex_hull_vertices.begin();
         it != convex_hull_vertices.end();
         it++,nb++)
@@ -1073,9 +1074,9 @@ private:
   Vertex_handle any_vertex_on_convex_hull()
   {
     // TODO: return NULL if none and assert
-    std::list<Vertex_handle> vertices;
+    std::vector<Vertex_handle> vertices;
     m_dt.incident_vertices(m_dt.infinite_vertex(),std::back_inserter(vertices));
-    typename std::list<Vertex_handle>::iterator it = vertices.begin();
+    typename std::vector<Vertex_handle>::iterator it = vertices.begin();
     return *it;
   }
 
@@ -1101,16 +1102,14 @@ private:
   // divergent
   FT div(Vertex_handle v)
   {
-    std::list<Cell_handle> cells;
+    std::vector<Cell_handle> cells;
     m_dt.incident_cells(v,std::back_inserter(cells));
     if(cells.size() == 0)
       return 0.0;
 
     FT div = 0.0;
-    typename std::list<Cell_handle>::iterator it;
-    for(it = cells.begin();
-        it != cells.end();
-        it++)
+    typename std::vector<Cell_handle>::iterator it;
+    for(it = cells.begin(); it != cells.end(); it++)
     {
       Cell_handle cell = *it;
       if(m_dt.is_infinite(cell))
@@ -1141,17 +1140,16 @@ private:
 
  FT div_normalized(Vertex_handle v)
   {
-    std::list<Cell_handle> cells;
+    std::vector<Cell_handle> cells;
     m_dt.incident_cells(v,std::back_inserter(cells));
     if(cells.size() == 0)
       return 0.0;
+      
 	FT length = 100000;
 	int counter = 0;
     FT div = 0.0;
-    typename std::list<Cell_handle>::iterator it;
-    for(it = cells.begin();
-        it != cells.end();
-        it++)
+    typename std::vector<Cell_handle>::iterator it;
+    for(it = cells.begin(); it != cells.end(); it++)
     {
       Cell_handle cell = *it;
       if(m_dt.is_infinite(cell))
@@ -1189,32 +1187,32 @@ private:
     return div;
   }
 
- FT mesh_size(Vertex_handle v) {
-	  std::list<Cell_handle> cells;
-	  int counter = 0;
-	  FT length_total = 100000.0;
-    m_dt.incident_cells(v,std::back_inserter(cells));
-    if(cells.size() == 0)
-      return 0.0;
-	    typename std::list<Cell_handle>::iterator it;
-    for(it = cells.begin();
-        it != cells.end();
-        it++)
-    {
-      Cell_handle cell = *it;
-      if(m_dt.is_infinite(cell))
-        continue;
-	  int index = cell->index(v);
-	  const Point& x = cell->vertex(index)->point();
-      const Point& a = cell->vertex((index+1)%4)->point();
-      const Point& b = cell->vertex((index+2)%4)->point();
-      const Point& c = cell->vertex((index+3)%4)->point();
+ FT mesh_size(Vertex_handle v) 
+ {
+   std::vector<Cell_handle> cells;
+   int counter = 0;
+   FT length_total = 100000.0;
+   m_dt.incident_cells(v,std::back_inserter(cells));
+   if(cells.size() == 0)
+     return 0.0;
+     
+   typename std::vector<Cell_handle>::iterator it;
+   for(it = cells.begin(); it != cells.end(); it++)
+   {
+     Cell_handle cell = *it;
+     if(m_dt.is_infinite(cell))
+       continue;
+     int index = cell->index(v);
+     const Point& x = cell->vertex(index)->point();
+     const Point& a = cell->vertex((index+1)%4)->point();
+     const Point& b = cell->vertex((index+2)%4)->point();
+     const Point& c = cell->vertex((index+3)%4)->point();
      if (length_total > std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c)))
-	  length_total = std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c));
-	  counter++;
-	  }
-	 return length_total / 3 ;
-  }
+       length_total = std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c));
+     counter++;
+   }
+   return length_total / 3 ;
+ }
 
   Vector cell_normal(Cell_handle cell)
   {
@@ -1427,7 +1425,7 @@ private:
     CGAL_surface_reconstruction_assertion(l_done);
   }
 
-  // Assemble vi's row of the linear system solver*X=B
+  // Assemble vi's row of the linear system A*X=B
   void assemble_poisson_row(Solver& solver,
                             Vertex_handle vi,
                             Sparse_vector& B,
@@ -1437,10 +1435,10 @@ private:
     solver.begin_row();
 
     // for each vertex vj neighbor of vi
-    std::list<Vertex_handle> vertices;
+    std::vector<Vertex_handle> vertices;
     m_dt.incident_vertices(vi,std::back_inserter(vertices));
     double diagonal = 0.0;
-    for(typename std::list<Vertex_handle>::iterator it = vertices.begin();
+    for(typename std::vector<Vertex_handle>::iterator it = vertices.begin();
         it != vertices.end();
         it++)
     {
@@ -1518,7 +1516,7 @@ private:
   {
     // Instanciate a KD-tree search.
     // We have to wrap each input vertex by a Point_vertex_handle_3.
-    std::list<Point_vertex_handle_3> kvertices;
+    std::deque<Point_vertex_handle_3> kvertices;
     for(Finite_vertices_iterator v = m_dt.finite_vertices_begin();
       v != m_dt.finite_vertices_end();
       v++)

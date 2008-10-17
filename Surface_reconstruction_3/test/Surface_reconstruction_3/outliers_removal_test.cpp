@@ -21,7 +21,7 @@
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
 // STL stuff
-#include <list>
+#include <deque>
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
@@ -41,13 +41,13 @@ typedef Kernel::Point_3 Point;
 // Private functions
 // ----------------------------------------------------------------------------
 
-void test_avg_knn_sq_distance(std::vector<Point>& points, // input point set
+void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
                               unsigned int k,// number of neighbors
                               double outliers_percentage) // percentage of points to remove 
 {
   std::cerr << "  Remove outliers using Average KNN Squared Distance...";
 
-  std::vector<Point> output;
+  std::deque<Point> output;
   CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(
                   points.begin(), points.end(),
                   std::back_inserter(output),
@@ -93,7 +93,7 @@ int main(int argc, char * argv[])
     std::cerr << std::endl;
 
     // Load point set
-    std::vector<Point> points;
+    std::deque<Point> points;
     std::cerr << "  Open " << argv[i] << " for reading...";
     if(CGAL::surface_reconstruction_read_xyz(argv[i], 
                                              std::back_inserter(points), 

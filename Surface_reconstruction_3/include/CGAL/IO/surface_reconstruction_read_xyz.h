@@ -23,6 +23,7 @@
 #include <CGAL/value_type_traits.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
+#include <deque>
 #include <stdio.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -114,7 +115,7 @@ bool surface_reconstruction_read_xyz(const char* pFilename,
   typedef typename CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 
   // Read file in temporary Point_with_normal_3 container
-  std::list<Point_with_normal> pwns;
+  std::deque<Point_with_normal> pwns;
   if (surface_reconstruction_read_xyz(pFilename, std::back_inserter(pwns)))
   {
     // copy to Point_3 container, removing normals

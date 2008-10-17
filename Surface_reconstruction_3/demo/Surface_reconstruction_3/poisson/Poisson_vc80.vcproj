@@ -445,6 +445,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\include\CGAL\Random_access_container_index_pmap.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\CGAL\random_simplification_points_3.h"
 				>
 			</File>
@@ -502,10 +506,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\value_type_traits.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\Vector_index_property_map.h"
 				>
 			</File>
 		</Filter>

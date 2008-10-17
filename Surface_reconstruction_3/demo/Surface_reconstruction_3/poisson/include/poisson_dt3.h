@@ -6,6 +6,7 @@
 #include <CGAL/orient_normals_minimum_spanning_tree_3.h>
 
 // STL
+#include <vector>
 #include <algorithm>
 #include <GL/gl.h>
 
@@ -160,7 +161,7 @@ private:
                        OutputIterator& output, // notice the '&'
                        const FT value)
   {
-    std::list<Point> points;
+    std::vector<Point> points;
     Point point;
     if(level_set(cell,value,0,1,point)) points.push_back(point);
     if(level_set(cell,value,0,2,point)) points.push_back(point);
@@ -172,7 +173,7 @@ private:
     // only 3 or 4
     if(points.size() == 3)
     {
-      std::list<Point>::iterator it = points.begin();
+      std::vector<Point>::iterator it = points.begin();
       const Point& a = (*it); it++;
       const Point& b = (*it); it++;
       const Point& c = (*it);
@@ -183,7 +184,7 @@ private:
     }
     else if(points.size() == 4)
     {
-      std::list<Point>::iterator it = points.begin();
+      std::vector<Point>::iterator it = points.begin();
       std::vector<Point> p(4);
       for(int i=0;i<4;i++)
       {

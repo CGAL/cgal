@@ -20,6 +20,7 @@
 
 #include <iterator>
 #include <set>
+#include <deque>
 #include <algorithm>
 #include <cmath>
 
@@ -164,7 +165,7 @@ merge_epsilon_nearest_points_3(
     // Merge points which belong to the same cell of a grid of cell size = epsilon.
     // points_to_keep will contain 1 point per cell; the others will be in points_to_remove.
     Epsilon_point_set_3<Point> points_to_keep(epsilon);
-    std::vector<Point> points_to_remove;
+    std::deque<Point> points_to_remove;
     for (ForwardIterator it=first ; it != beyond ; it++)
     {
         std::pair<Epsilon_point_set_3<Point>::iterator,bool> result;

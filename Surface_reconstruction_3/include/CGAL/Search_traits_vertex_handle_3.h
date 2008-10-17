@@ -41,7 +41,7 @@ public:
     m_coord[0] =
     m_coord[1] =
     m_coord[2] = 0;
-    m_vertex_handle = NULL;
+    //m_vertex_handle = NULL;
   }
 
   Point_vertex_handle_3(double x, double y, double z,

@@ -25,7 +25,7 @@
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
 // STL stuff
-#include <list>
+#include <deque>
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
@@ -46,11 +46,11 @@ typedef Kernel::Vector_3 Vector;
 // Private functions
 // ----------------------------------------------------------------------------
 
-void test_jet_fitting(std::list<Point>& points,
+void test_jet_fitting(std::deque<Point>& points,
                       const unsigned int k)
 {
   std::cerr << "  Smooth using KNN and jet fitting...";
-  std::list<Point> output;
+  std::deque<Point> output;
   CGAL::smooth_jet_fitting_3(points.begin(),points.end(),std::back_inserter(output),k);
   std::cerr << "ok" << std::endl;
 
@@ -88,7 +88,7 @@ int main(int argc, char * argv[])
     std::cerr << std::endl;
 
     // Load point set
-    std::list<Point> points;
+    std::deque<Point> points;
     std::cerr << "  Open " << argv[i] << " for reading...";
     if(CGAL::surface_reconstruction_read_xyz(argv[i], 
                                              std::back_inserter(points), 

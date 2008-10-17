@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <deque>
 #include <GL/gl.h>
 
 
@@ -87,7 +88,7 @@ public:
               InputIterator first, InputIterator beyond)
   {
     // Compute normals in temporary container
-    std::vector<Facet_with_normal> tmp;
+    std::deque<Facet_with_normal> tmp;
     for (InputIterator it = first; it != beyond; ++it)
     {
       const Triangle& t = *it;

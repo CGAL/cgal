@@ -32,7 +32,6 @@
 #include <CGAL/orient_normals_minimum_spanning_tree_3.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Orientable_normal_3.h>
-#include <CGAL/Vector_index_property_map.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 #include <CGAL/IO/surface_reconstruction_read_pwn.h>
 #include <CGAL/IO/surface_reconstruction_write_xyz.h>
@@ -42,6 +41,7 @@
 #include "enriched_polyhedron.h"
 
 // STL stuff
+#include <deque>
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
@@ -63,14 +63,14 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::Orientable_normal_3<Kernel> Orientable_normal; // normal vector + orientation
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // position + normal vector
 
-typedef std::vector<Point_with_normal> PointList;
+typedef std::deque<Point_with_normal> PointList;
 
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
 
 void estimate_normals_pca(const PointList& points, // input point set
-                          std::vector<Orientable_normal>& normals, // computed normals
+                          std::deque<Orientable_normal>& normals, // computed normals
                           unsigned int k) // number of neighbors
 {
   std::cerr << "Estimate normals using KNN and point-based PCA (knn="<<k << ")...\n";
@@ -85,7 +85,7 @@ void estimate_normals_pca(const PointList& points, // input point set
 }
 
 void estimate_normals_jet_fitting(const PointList& points, // input point set
-                                  std::vector<Orientable_normal>& normals, // computed normals
+                                  std::deque<Orientable_normal>& normals, // computed normals
                                   unsigned int k) // number of neighbors)
 {
   std::cerr << "Estimate normals using KNN and jet fitting (knn="<<k << ")...\n";
@@ -100,7 +100,7 @@ void estimate_normals_jet_fitting(const PointList& points, // input point set
 }
 
 void orient_normals_MST(const PointList& points, // input point set
-                        std::vector<Orientable_normal>& normals, // normals to orient
+                        std::deque<Orientable_normal>& normals, // normals to orient
                         unsigned int k) // number of neighbors
 {
   std::cerr << "Orient normals using a minimum spanning tree (knn="<<k << ")...\n";
@@ -277,7 +277,7 @@ int main(int argc, char * argv[])
     // Compute normals
     //***************************************
 
-    std::vector<Orientable_normal> computed_normals;
+    std::deque<Orientable_normal> computed_normals;
     
     // Estimate normals direction
     if (estimate == "plane")
@@ -291,7 +291,7 @@ int main(int argc, char * argv[])
     
     // Check computed normals
     int unoriented_normals = 0;
-    std::vector<Orientable_normal>::iterator n;
+    std::deque<Orientable_normal>::iterator n;
     for (n = computed_normals.begin(); n != computed_normals.end(); n++)
     {
       // Check unit vector
@@ -320,7 +320,7 @@ int main(int argc, char * argv[])
       std::cerr << "Compare with original normals..." << std::endl;
     
       PointList::iterator p;
-      /*std::vector<Orientable_normal>::iterator*/ n;
+      /*std::deque<Orientable_normal>::iterator*/ n;
       double min_normal_deviation = DBL_MAX;
       double max_normal_deviation = DBL_MIN;
       double avg_normal_deviation = 0;
@@ -367,7 +367,7 @@ int main(int argc, char * argv[])
     
     // Replace old normals by new ones
     PointList::iterator p;
-    /*std::vector<Orientable_normal>::iterator*/ n;
+    /*std::deque<Orientable_normal>::iterator*/ n;
     for (p = pwns.begin(), n = computed_normals.begin(); p != pwns.end(); p++, n++)
       p->normal() = *n;
 

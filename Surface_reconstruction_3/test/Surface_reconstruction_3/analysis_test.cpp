@@ -20,7 +20,7 @@
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
 // STL stuff
-#include <list>
+#include <deque>
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
@@ -40,12 +40,11 @@ typedef Kernel::Point_3 Point;
 // Private functions
 // ----------------------------------------------------------------------------
 
-void test_average_spacing(std::list<Point>& points,
+void test_average_spacing(std::deque<Point>& points,
                           const unsigned int k)
 {
   std::cerr << "  Average spacing using KNN: ";
-  std::list<Point> output;
-  typedef std::list<Point>::iterator Iterator;
+  typedef std::deque<Point>::iterator Iterator;
   std::cerr << CGAL::average_spacing_3<Iterator,FT>(points.begin(),points.end(),k);
   std::cerr << " ok" << std::endl;
 }
@@ -78,7 +77,7 @@ int main(int argc, char * argv[])
     std::cerr << std::endl;
 
     // Load point set
-    std::list<Point> points;
+    std::deque<Point> points;
     std::cerr << "  Open " << argv[i] << " for reading...";
     if(CGAL::surface_reconstruction_read_xyz(argv[i], 
                                              std::back_inserter(points), 

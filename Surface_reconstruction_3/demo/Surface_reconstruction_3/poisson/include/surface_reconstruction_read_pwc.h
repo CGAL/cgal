@@ -70,6 +70,7 @@ bool surface_reconstruction_read_pwc(const char* pFilename,
         std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
         return false;
       }
+      cameras.reserve(cameras_count);
     }       
 
     // Read cameras on next lines

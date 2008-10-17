@@ -123,13 +123,15 @@ public:
   {
     // Allocate smart pointer to data
     m = new Private;
+    
+    int nb_points = std::distance(first, beyond);
 
     // Number of nearest neighbours
     m->nofNeighbors = k;
 
     // Create kd-tree
+    m->treeElements.reserve(nb_points);
     unsigned int i=0;
-    m->treeElements.reserve(std::distance(first, beyond));
     for (InputIterator it=first ; it != beyond ; ++it,++i)
     {
       m->treeElements.push_back(KdTreeElement(*it,i));
@@ -138,8 +140,8 @@ public:
 
     // Compute the radius of each point = (distance max to KNN)/2.
     // The union of these balls defines the surface definition domain.
-    i = 0;
-    for (InputIterator it=first ; it != beyond ; ++it,++i)
+    m->radii.reserve(nb_points);
+    for (InputIterator it=first ; it != beyond ; ++it)
     {
       Neighbor_search search(*(m->tree), *it, 16); // why 16?
       FT maxdist2 = (--search.end())->second; // squared distance to furthest neighbor

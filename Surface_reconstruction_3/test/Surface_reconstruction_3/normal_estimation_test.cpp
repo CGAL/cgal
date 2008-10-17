@@ -29,10 +29,10 @@
 #include <CGAL/estimate_normals_jet_fitting_3.h>
 #include <CGAL/orient_normals_minimum_spanning_tree_3.h>
 #include <CGAL/Orientable_normal_3.h>
-#include <CGAL/Vector_index_property_map.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
 // STL stuff
+#include <deque>
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
@@ -50,14 +50,14 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::Orientable_normal_3<Kernel> Orientable_normal; // normal vector + orientation
 
-typedef std::vector<Point> PointList;
+typedef std::deque<Point> PointList;
 
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
 
 void estimate_normals_pca(const PointList& points, // input point set
-                          std::vector<Orientable_normal>& normals, // computed normals
+                          std::deque<Orientable_normal>& normals, // computed normals
                           unsigned int k) // number of neighbors
 {
   std::cerr << "Estimate normals using KNN and point-based PCA (knn="<<k << ")...\n";
@@ -72,7 +72,7 @@ void estimate_normals_pca(const PointList& points, // input point set
 }
 
 void estimate_normals_jet_fitting(const PointList& points, // input point set
-                                  std::vector<Orientable_normal>& normals, // computed normals
+                                  std::deque<Orientable_normal>& normals, // computed normals
                                   unsigned int k) // number of neighbors)
 {
   std::cerr << "Estimate normals using KNN and jet fitting (knn="<<k << ")...\n";
@@ -87,7 +87,7 @@ void estimate_normals_jet_fitting(const PointList& points, // input point set
 }
 
 void orient_normals_MST(const PointList& points, // input point set
-                        std::vector<Orientable_normal>& normals, // normals to orient
+                        std::deque<Orientable_normal>& normals, // normals to orient
                         unsigned int k) // number of neighbors
 {
   std::cerr << "Orient normals using a minimum spanning tree (knn="<<k << ")...\n";
@@ -201,7 +201,7 @@ int main(int argc, char * argv[])
     // Compute normals
     //***************************************
 
-    std::vector<Orientable_normal> computed_normals;
+    std::deque<Orientable_normal> computed_normals;
     
     // Estimate normals direction
     estimate_normals_pca(points, computed_normals, k);
@@ -213,7 +213,7 @@ int main(int argc, char * argv[])
     
     // Check computed normals
     int unoriented_normals = 0;
-    std::vector<Orientable_normal>::iterator n;
+    std::deque<Orientable_normal>::iterator n;
     for (n = computed_normals.begin(); n != computed_normals.end(); n++)
     {
       // Check unit vector

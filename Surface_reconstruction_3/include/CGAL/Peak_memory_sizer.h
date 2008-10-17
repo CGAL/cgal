@@ -25,6 +25,7 @@
 #include <CGAL/Taucs_fix.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
+#include <deque>
 #include <cmath>
 #include <cfloat>
 #include <climits>
@@ -46,7 +47,7 @@ struct Peak_memory_sizer : public Memory_sizer
     size_type count_free_memory_blocks(size_type min_block_size) const
     {
         // Allocate all memory blocks >= min_block_size
-        std::vector<void*> blocks;
+        std::deque<void*> blocks;
         void* block;
         while ((block = malloc(min_block_size)) != NULL)
           blocks.push_back(block);
@@ -76,7 +77,7 @@ struct Peak_memory_sizer : public Memory_sizer
       int is_32_bits = (sizeof(void*) == 4);
       if (is_32_bits)
       {
-        m_max = 4294967295U; // 2^32 - 1 = 4 GB
+        m_max = 4294967296.0; // 4 GB
       }
       else
       {
@@ -95,7 +96,7 @@ struct Peak_memory_sizer : public Memory_sizer
 
       while ( (m < m_max-1) /* m_max not reached */
            && ((p=(char*) malloc( (size_t) (std::min)(m_max,m*2.0) )) != NULL) ) {
-//         CGAL_TRACE("largest_free_block: %.0lf Mb\n", (std::min)(m_max,m*2.0) / 1048576.0);
+         //CGAL_TRACE("largest_free_block: %.0lf Mb\n", (std::min)(m_max,m*2.0) / 1048576.0);
         free(p);
         m = (std::min)(m_max,m*2.0);
       }
@@ -106,10 +107,10 @@ struct Peak_memory_sizer : public Memory_sizer
 
       while ( m_high - m_low > m_tol ) {
         m = m_low + ( (m_high-m_low)/2.0 );
-/*        CGAL_TRACE("largest_free_block: [%.0lf %.0lf %.0lf]\n",
-          	       m_low  / 1048576.0,
-          	       m      / 1048576.0,
-          	       m_high / 1048576.0);*/
+        //CGAL_TRACE("largest_free_block: [%.0lf %.0lf %.0lf]\n",
+        //  	       m_low  / 1048576.0,
+        //  	       m      / 1048576.0,
+        //  	       m_high / 1048576.0);
         if ( (p=(char*) malloc( (size_t) m )) != NULL )
           m_low = m;
         else
@@ -119,9 +120,9 @@ struct Peak_memory_sizer : public Memory_sizer
 
       m = m_low;
 
-/*      CGAL_TRACE("largest_free_block: malloc test=%.0lf MB sys test=%.0lf MB\n",
-          	     m / 1048576.0,
-          	     m_sys / 1048576.0);*/
+      //CGAL_TRACE("largest_free_block: malloc test=%.0lf MB max test=%.0lf MB\n",
+      //    	     m / 1048576.0,
+      //    	     m_max / 1048576.0);
       return (size_t) m;
     }
 
