@@ -233,7 +233,7 @@ MainWindow::on_actionLoadPolygon_triggered()
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Polygon File"),
 						  ".",
-						  tr( "Poly files (*.poly)"));
+						  tr( "Any file (*.*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -244,8 +244,6 @@ MainWindow::open(const QString& fileName)
 {
   this->actionCreateInputPolygon->setChecked(false);
   std::ifstream ifs(qPrintable(fileName));
-  int number_of_polygons;
-  ifs >> number_of_polygons;
   poly.clear();
   ifs >> poly;
   clear();
@@ -258,6 +256,14 @@ MainWindow::open(const QString& fileName)
 void
 MainWindow::on_actionSavePolygon_triggered()
 {
+  QString fileName = QFileDialog::getSaveFileName(this,
+						  tr("Save Polygon"),
+						  ".",
+						  tr("Any files (*.*)"));
+  if(! fileName.isEmpty()){
+    std::ofstream ofs(qPrintable(fileName));
+    ofs << poly;
+  }
 }
 
 
