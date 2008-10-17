@@ -39,8 +39,7 @@ int main(){
     // to double is done in a consistent way.  Otherwise we may get
     // double-rounding effects (show up on x86 at -O2 typically), which
     // makes the timer non-monotone.
-    CGAL::force_ieee_double_precision();
-
+    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
     double p = 0.0;
     std::cout << "CGAL::Timer:\n";
     p += test_timer<CGAL::Timer>();
