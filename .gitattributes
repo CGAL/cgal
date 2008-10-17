@@ -1676,6 +1676,7 @@ Installation/cmake/modules/CGAL_SetupFlags.cmake -text
 Installation/cmake/modules/CGAL_SetupGMP.cmake -text
 Installation/cmake/modules/CGAL_SetupGMPXX.cmake -text
 Installation/cmake/modules/CGAL_SetupLAPACK.cmake -text
+Installation/cmake/modules/CGAL_SetupLEDA.cmake -text
 Installation/cmake/modules/CGAL_SetupMPFR.cmake -text
 Installation/cmake/modules/CGAL_SetupTAUCS.cmake -text
 Installation/cmake/modules/CGALcommon.cmake -text
@@ -1691,6 +1692,7 @@ Installation/cmake/modules/FindCORE.cmake -text
 Installation/cmake/modules/FindGMP.cmake -text
 Installation/cmake/modules/FindGMPXX.cmake -text
 Installation/cmake/modules/FindLAPACK.cmake -text
+Installation/cmake/modules/FindLEDA.cmake -text
 Installation/cmake/modules/FindMPFR.cmake -text
 Installation/cmake/modules/FindOpenGL.cmake -text
 Installation/cmake/modules/FindPackageHandleStandardArgs.cmake -text
