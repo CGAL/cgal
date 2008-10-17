@@ -608,7 +608,7 @@ int
 main( int argc, char* argv[])
 {
     // this is needed for the equality test in line 197, surprisingly
-    CGAL::force_ieee_double_precision(); 
+    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
 
     // command line options
     // --------------------
