@@ -96,7 +96,7 @@ struct Splitter_test {
 int 
 main() {
 
-  CGAL::force_ieee_double_precision();
+  //CGAL::force_ieee_double_precision();
 
   Vector points;
   Random_points g( 150.0);
