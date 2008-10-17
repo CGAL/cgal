@@ -4,6 +4,10 @@
 #include <CGAL/Polynomial_type_generator.h>
 
 int main(){
+
+  // Enforce IEEE double precision for modular arithmetic 
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+
   CGAL::set_pretty_mode(std::cout);
   typedef CGAL::Polynomial_type_generator<int,1>::Type Poly_1;
   typedef CGAL::Polynomial_traits_d<Poly_1>            PT_1;

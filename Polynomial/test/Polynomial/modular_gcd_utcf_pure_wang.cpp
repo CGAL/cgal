@@ -37,6 +37,9 @@
 
 int main(){
     
+  // Enforce IEEE double precision for modular arithmetic 
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+
   #ifdef CGAL_USE_LEDA
    CGAL::CGALi::test_modular_gcd<CGAL::LEDA_arithmetic_kernel>
        (CGAL::Integral_domain_tag());  

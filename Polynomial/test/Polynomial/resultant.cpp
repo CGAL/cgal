@@ -78,6 +78,9 @@ void test_resultant(){
 
 int main(){
 
+  // Enforce IEEE double precision for modular arithmetic 
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+
   CGAL::Timer timer; 
   timer.start();
   //CGAL::force_ieee_double_precision();

@@ -193,6 +193,9 @@ void test_univariate() {
 
 int main(){
     
+    // Enforce IEEE double precision for modular arithmetic 
+    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+
 #ifdef CGAL_USE_LEDA
     test_univariate<CGAL::LEDA_arithmetic_kernel>();
 #endif // CGAL_USE_LEDA    

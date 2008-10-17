@@ -1768,6 +1768,9 @@ void test_AT(){
 
 int main(){
 
+    // Enforce IEEE double precision for modular arithmetic 
+    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+
 #ifdef CGAL_USE_LEDA
   {        
     typedef CGAL::LEDA_arithmetic_kernel AT;

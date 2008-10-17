@@ -1055,6 +1055,9 @@ void test_AT(){
 
 int main() {
   
+    // Enforce IEEE double precision for modular arithmetic 
+    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+
     CGAL::set_pretty_mode(std::cout);
 // The MODULAR_TRAITS specializations for Polynomial
 // =========================================================================
