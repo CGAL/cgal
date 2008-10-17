@@ -593,6 +593,8 @@ export CGAL_DIR;
 export CGAL_TEST_HOST CGAL_TEST_PLATFORM;
 export CMAKE_GENERATOR;
 export MAKE_CMD;
+
+cd '${CGAL_BINARY_DIR}/test';
 EOF
     done
     cat >> "${CGAL_BINARY_DIR}/localtestscript" <<EOF
