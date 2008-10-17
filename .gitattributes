@@ -3024,8 +3024,8 @@ Principal_component_analysis/demo/Principal_component_analysis/data/mushroom-19v
 Principal_component_analysis/demo/Principal_component_analysis/data/mushroom-651v.off -text
 Principal_component_analysis/demo/Principal_component_analysis/data/mushroom-81v.off -text
 Principal_component_analysis/demo/Principal_component_analysis/data/mushroom.off -text
-Principal_component_analysis/demo/Principal_component_analysis/help/index.html svneol=native#text/html
-Principal_component_analysis/demo/Principal_component_analysis/linear_least_squares_fitting.vcproj eol=crlf
+Principal_component_analysis/demo/Principal_component_analysis/qt3/help/index.html svneol=native#text/html
+Principal_component_analysis/demo/Principal_component_analysis/qt3/linear_least_squares_fitting.vcproj eol=crlf
 Principal_component_analysis/demo/Principal_component_analysis/windows/2d/pca.sln eol=crlf
 Principal_component_analysis/demo/Principal_component_analysis/windows/2d/pca.vcproj eol=crlf
 Principal_component_analysis/demo/Principal_component_analysis/windows/2d/res/pca.ico -text svneol=unset#image/x-icon
