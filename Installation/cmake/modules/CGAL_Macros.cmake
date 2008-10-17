@@ -123,4 +123,13 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     endif()
   endmacro()
   
+  macro ( fetch_env_var VAR )
+    if ( "${${VAR}}" STREQUAL "" )
+      set( ${VAR}_env_value "$ENV{${VAR}}" )
+      if ( NOT "${${VAR}_env_value}" STREQUAL "" )
+        set( ${VAR} ${${VAR}_env_value} )
+      endif()
+    endif()
+  endmacro()
+  
 endif()
