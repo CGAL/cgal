@@ -31,6 +31,7 @@ class AABB_tree
 {
 public:
 
+  // basic kernel object types
   typedef typename Kernel::FT FT;
   typedef typename CGAL::Bbox_3 Bbox;
   typedef typename Kernel::Ray_3 Ray;
@@ -42,6 +43,7 @@ public:
   typedef typename Kernel::Triangle_3 Triangle;
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
 
+  // Nodes of the tree
   typedef AABB_node<Kernel,Input,PSC> Node;
   typedef typename Node::Point_with_input Point_with_input;
 
@@ -63,10 +65,8 @@ public:
 
   void cleanup()
   {
-    int n = std::max<int>(m_data.size(), 2);
     m_data.clear();
-    if(m_root != NULL)
-      delete [] m_root;
+    delete [] m_root; m_root = NULL;
   }
 
   // build tree when input = face_handle
@@ -74,7 +74,6 @@ public:
   {
     cleanup();
     set_face_data(psc);
-    m_root = NULL;
     if(!empty())
     {
       m_root = new Node[m_data.size()-1]();
@@ -84,21 +83,25 @@ public:
     return false;
   }
 
+private:
+
   void set_face_data(PSC& psc)
   {
     unsigned int nbf = psc.size_of_facets();
     m_data.reserve(nbf);
     typename PSC::Facet_iterator f;
-    for(f = psc.facets_begin();
-      f != psc.facets_end();
-      f++)
+    for(f = psc.facets_begin(); f != psc.facets_end(); f++)
       m_data.push_back(f);
   }
+
+public:
 
   bool empty()
   {
     return m_data.size() < 2; // TODO: change this requirement to < 1
   }
+
+  // --------------------RAY/SEGMENT ORACLES----------------------//
 
   bool first_intersection(const Ray& ray,
                           Point_with_input& pwh)

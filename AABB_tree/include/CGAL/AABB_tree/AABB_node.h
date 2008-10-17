@@ -41,7 +41,7 @@ class AABB_node
 {
 public:
 
-  // type with fixed (double) floating point arithmetic
+  // Bounding box with fixed (double) floating point arithmetic
   typedef CGAL::Bbox_3 Bbox;
 
   // basic kernel object types
@@ -63,6 +63,8 @@ public:
   typedef typename PSC_kernel::Point_3 PSC_point;
   typedef typename PSC_kernel::Vector_3 PSC_vector;
   typedef typename PSC_kernel::Triangle_3 PSC_triangle;
+
+  // Converter of number types, points and vectors
   typedef CGAL::Cartesian_converter<PSC_kernel, Kernel > Converter;
 
 private:
@@ -70,9 +72,9 @@ private:
   // bounding box
   Bbox m_bbox;
 
-  // children nodes
+  // children nodes:
   // either pointing towards children (if the children are not leaves)
-  // or pointing toward Input primitives (if the children are leaves)
+  // or pointing toward Input primitives (if the children are leaves).
   void *m_left_child;
   void *m_right_child;
 
@@ -86,10 +88,8 @@ public:
 
   ~AABB_node() {}
 
-public:
-
   // deletes the whole subtree rooted at this node (except this node, of course).
-  // node = number of primitives contained in this node.
+  // nb_primitives = number of primitives contained in this node.
   void cleanup_recurse(int nb_primitives)
   {
     switch(nb_primitives)
@@ -97,18 +97,19 @@ public:
     case 2:
       break;
     case 3:
-      delete static_cast<Node*>(m_right_child);
+      delete static_cast<Node*>(m_right_child); m_right_child = NULL;
       break;
     default:
       static_cast<Node*>(m_left_child)->cleanup_recurse(nb_primitives/2);
       static_cast<Node*>(m_right_child)->cleanup_recurse(nb_primitives - nb_primitives/2);
-      delete static_cast<Node*>(m_left_child);
-      delete static_cast<Node*>(m_right_child);
+      delete static_cast<Node*>(m_left_child); m_left_child = NULL;
+      delete static_cast<Node*>(m_right_child); m_right_child = NULL;
     }
   }
 
 private:
 
+  // compute bbox for one input primitive
   Bbox compute_bbox(Input f)
   {
     const PSC_point a = f->halfedge()->vertex()->point();
@@ -127,9 +128,10 @@ private:
   }
 
 public:
+
   // builds the tree by recursive expansion.
   // [a,b[ is the range of primitives to be added to the tree.
-  // node is the length of this range.
+  // 'range' is the length of this range.
   void expand(const PSC& psc, Iterator a, Iterator b, int range)
   {
     m_bbox = bbox(psc, a, b);
@@ -217,9 +219,10 @@ private:
     }
   }
 
+  // Return the node's longest axis as 0 (X), 1 (Y) or 2 (Z)
   int longest_axis()
   {
-    FT max_size = std::max(xsize(),std::max(ysize(),zsize()));
+    FT max_size = (std::max)(xsize(),(std::max)(ysize(),zsize()));
     if(max_size == xsize())
       return 0; // axis along x
     if(max_size == ysize())
