@@ -53,11 +53,14 @@ The meshing algorithm is based on the notion of the restricted
 Delaunay triangulation. Basically the algorithm  computes a set of
 sample points on the surface, and extract an interpolating 
 surface mesh  from the three dimensional triangulation of these 
-sample points. It also interpolates a 1D mesh of the 1D curves of the
-surface, if any. Points are iteratively added to the sample,
+sample points. 
+%It also interpolates a 1D mesh of the 1D curves of the
+%surface, if any.
+Points are iteratively added to the sample,
 as in a Delaunay refinement process, until some size and shape
-criteria on the elements of the surface mesh and the 1D mesh are
-satisfied. 
+criteria on the elements of the surface mesh 
+%and the 1D mesh
+are satisfied. 
 
 
 The size and shape criteria guide the  behavior of
@@ -206,47 +209,47 @@ to include at least one point on each connected component of the surface
 to be meshed.
 
 
-\section{The Surface Mesh Generator Interface for Piecewise Smooth
-  Surfaces\label{SurfaceMesher_piecewise_section_interface}}
+% \section{The Surface Mesh Generator Interface for Piecewise Smooth
+%   Surfaces\label{SurfaceMesher_piecewise_section_interface}}
 
-The meshing process for piecewise smooth surfaces is launched in a way
-similar to the smooth case. There are also two overloaded versions of a
-meshing function:
+% The meshing process for piecewise smooth surfaces is launched in a way
+% similar to the smooth case. There are also two overloaded versions of a
+% meshing function:
 
-\ccGlobalFunction{template <class SurfaceMeshC2T3,
-                            class Surface,
-                            class FacetsCriteria,
-                            class EdgesCriteria,
-                            class Tag >
-void make_piecewise_smooth_surface_mesh(SurfaceMeshC2T3& c2t3,
-                                        Surface surface,
-                                        FacetsCriteria facets_criteria,
-                                        EdgesCriteria edges_criteria
-                                        Tag ) ;}
-
-
-\ccGlobalFunction{template <class SurfaceMeshC2T3,
-                            class SurfaceMeshTraits,
-                            class FacetsCriteria,
-                            class EdgesCriteria,
-                            class Tag >
-void make_piecewise_smooth_surface_mesh(SurfaceMeshC2T3& c2t3,
-                                        SurfaceMeshTraits::Surface_3  surface,
-		                        SurfaceMeshTraits traits,
-                                        FacetsCriteria facets_criteria,
-                                        EdgesCriteria edges_criteria
-                                        Tag );}
+% \ccGlobalFunction{template <class SurfaceMeshC2T3,
+%                             class Surface,
+%                             class FacetsCriteria,
+%                             class EdgesCriteria,
+%                             class Tag >
+% void make_piecewise_smooth_surface_mesh(SurfaceMeshC2T3& c2t3,
+%                                         Surface surface,
+%                                         FacetsCriteria facets_criteria,
+%                                         EdgesCriteria edges_criteria
+%                                         Tag ) ;}
 
 
-Every parameters has the same meaning than in the smooth case. The template
-parameter \ccc{SurfaceMeshTraits} has to be a model of the concept
-\ccc{PiecewiseSmoothSurfaceMeshTraits_3}, which refines the concept
-\ccc{SurfaceMeshTraits_3} by adding the methods needed to compute the
-intersections between a triangle and the set of 1D curves of the piecewise
-smooth surface \ccc{surface}.
+% \ccGlobalFunction{template <class SurfaceMeshC2T3,
+%                             class SurfaceMeshTraits,
+%                             class FacetsCriteria,
+%                             class EdgesCriteria,
+%                             class Tag >
+% void make_piecewise_smooth_surface_mesh(SurfaceMeshC2T3& c2t3,
+%                                         SurfaceMeshTraits::Surface_3  surface,
+% 		                        SurfaceMeshTraits traits,
+%                                         FacetsCriteria facets_criteria,
+%                                         EdgesCriteria edges_criteria
+%                                         Tag );}
 
-The parameter \ccc{edges_criteria} gives the size criteria on the edges of
-the 1D mesh interpolating the 1D curves.
+
+% Every parameters has the same meaning than in the smooth case. The template
+% parameter \ccc{SurfaceMeshTraits} has to be a model of the concept
+% \ccc{PiecewiseSmoothSurfaceMeshTraits_3}, which refines the concept
+% \ccc{SurfaceMeshTraits_3} by adding the methods needed to compute the
+% intersections between a triangle and the set of 1D curves of the piecewise
+% smooth surface \ccc{surface}.
+
+% The parameter \ccc{edges_criteria} gives the size criteria on the edges of
+% the 1D mesh interpolating the 1D curves.
 
 \def\ccLongParamLayout{\ccFalse}
 
@@ -326,17 +329,17 @@ resulting mesh is the introducing picture of this chapter.
 
 \ccIncludeExampleCode{Surface_mesher/mesh_a_3d_gray_image.cpp}
 
-\subsection{Remeshing a polyhedral surface}
-In this example, the surface is a polyhedral surface, that represents a
-piecewise smooth surface. The 1D curves of that surfaces are the union o
-the border edges (if any) and the edges at which the dihedral angle is
-smaller than 120~degrees. The polyhedral surface is given by an OFF file.
+% \subsection{Remeshing a polyhedral surface}
+% In this example, the surface is a polyhedral surface, that represents a
+% piecewise smooth surface. The 1D curves of that surfaces are the union o
+% the border edges (if any) and the edges at which the dihedral angle is
+% smaller than 120~degrees. The polyhedral surface is given by an OFF file.
 
-The criteria on the facets of the surface mesh are given by the same class
-than in the smooth case. Some extra criteria on the edges of the 1D mesh
-are given.
+% The criteria on the facets of the surface mesh are given by the same class
+% than in the smooth case. Some extra criteria on the edges of the 1D mesh
+% are given.
 
-\ccIncludeExampleCode{Surface_mesher/polyhedron_remesher.cpp}
+% \ccIncludeExampleCode{Surface_mesher/polyhedron_remesher.cpp}
 
 \section{Meshing Criteria, Guarantees and Variations\label{SurfaceMesher_section_criteria}}
 \label{SurfaceMesher_section_variations}
