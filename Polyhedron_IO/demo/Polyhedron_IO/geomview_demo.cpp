@@ -19,7 +19,8 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_GEOMVIEW
+#ifdef  _MSC_VER
+
 #include <iostream>
 
 int main() {
