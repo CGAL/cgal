@@ -22,7 +22,7 @@ void test_2D()
 	typedef typename Kernel::Triangle_2 Triangle_2;
 
   std::vector<Point_2> points;
-  points.push_back(Point_2(0.0,0.0));
+  points.push_back(Point_2(FT(0),FT(0)));
 
   // fit a line
   // call all versions of the function
@@ -56,13 +56,13 @@ void test_2D_point_set(const unsigned int nb_points)
 	typedef typename Kernel::Triangle_2 Triangle_2;
 
   // create points on a horizontal segment
-  Point_2 p(0.0,0.5);
-  Point_2 q(1.0,0.5);
+  Point_2 p(FT(0.0),FT(0.5));
+  Point_2 q(FT(1.0),FT(0.5));
 
   std::cout << "generate " << nb_points << 
        " 2D points on a horizontal line...";
   std::list<Point_2> points;
-  points_on_segment_2(p,q,100,std::back_inserter(points));
+  points_on_segment_2(p, q, 100, std::back_inserter(points));
   std::cout << "done " << std::endl;
 
   // fit a line
