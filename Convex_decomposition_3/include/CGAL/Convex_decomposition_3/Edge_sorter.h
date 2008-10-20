@@ -31,93 +31,97 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template<typename Halfedge_handle, typename Point_comparison>
+class Compare_halfedges_in_reflex_edge_sorter
+{
+public:
+	typedef Point_comparison Compare_points;
+	Compare_points comp;
+	Compare_halfedges_in_reflex_edge_sorter() {}
+	bool operator()(Halfedge_handle e0, Halfedge_handle e1) 
+	{
+		return comp(e0->source()->point(), e1->source()->point());
+	}
+};
+
 template<typename Point_3,
-  typename PointComparison, 
   typename FTComparison,
   typename SplitTest,
   typename VertexInserter,
   typename Container>
 class Generic_edge_sorter
 {
-  typedef typename Container::iterator Iterator;
-  typedef typename Container::value_type Edge_handle;
-
-  struct Sort_edges {
-    PointComparison comp;
-    bool operator()(Edge_handle e1, Edge_handle e2) {
-      return comp(e1->source()->point(), e2->source()->point());
-    }
-  };
+	typedef typename Container::iterator Iterator;
+	typedef typename Container::value_type Edge_handle;
+	typedef typename Container::key_compare EdgeComparison;
+	typedef typename EdgeComparison::Compare_points PointComparison;
   
-  PointComparison compare_points;
-  FTComparison compare_fts;
+	PointComparison compare_points;
+	FTComparison compare_fts;
   
- public:
-  Generic_edge_sorter() {}
+public:
+	Generic_edge_sorter() {}
 
-  void operator()(Container& c, SplitTest& st, VertexInserter& vi) {
+	void operator()(Container& c, SplitTest& st, VertexInserter& vi) 
+	{
+//		CGAL_NEF_SETDTHREAD(547);
     
-    CGAL_assertion_code(
-	for(Iterator ti = c.begin(); ti != c.end(); ++ti)
-	CGAL_assertion(compare_points((*ti)->source()->point(),
-				      (*ti)->twin()->source()->point())));
-    CGAL_NEF_TRACEN("edge_sorter " << c.size());
-
-    std::sort(c.begin(), c.end(), Sort_edges());
+		CGAL_assertion_code(
+			for(Iterator ti = c.begin(); ti != c.end(); ++ti)
+				CGAL_assertion(compare_points((*ti)->source()->point(),
+											  (*ti)->twin()->source()->point())));
+		CGAL_NEF_TRACEN("edge_sorter " << c.size());
+	
+//		std::sort(c.begin(), c.end(), Sort_edges());
     
-    Iterator esi1,esi2,esi3;
-    for(esi1 = c.begin(); esi1 != c.end(); ++esi1) {
-      CGAL_NEF_TRACEN("1: " << (*esi1)->source()->point() << 
-		      "->" << (*esi1)->twin()->source()->point());
-      esi2 = esi1;
-      ++esi2;
-      CGAL_assertion_code(
-        if(esi2!=c.end())
-	  CGAL_NEF_TRACEN("2: " << (*esi2)->source()->point() << 
-			  "->" << (*esi2)->twin()->source()->point()););
-      while(esi2!=c.end() &&
-	    compare_fts((*esi2)->source()->point().x(),
-			(*esi1)->twin()->source()->point().x())) {
-	if((*esi1)->source() == (*esi2)->source()) {
-	  ++esi2;
-	  continue;
-	}
-	Point_3 ip;
-	bool b = st(*esi1, *esi2, ip);
-	if(b) {
-	  CGAL_NEF_TRACEN("ip " << ip);
+		Iterator esi1,esi2,esi3;
+		for(esi1 = c.begin(); esi1 != c.end(); ++esi1)
+		{
+			CGAL_NEF_TRACEN("1: " << (*esi1)->source()->point() << 
+							"->" << (*esi1)->twin()->source()->point());
+			esi2 = esi1;
+			++esi2;
+			CGAL_assertion_code(
+				if(esi2!=c.end())
+					CGAL_NEF_TRACEN("2: " << (*esi2)->source()->point() << 
+									"->" << (*esi2)->twin()->source()->point()););
+			while(esi2!=c.end() &&
+				  compare_fts((*esi2)->source()->point().x(),
+							  (*esi1)->twin()->source()->point().x())) 
+			{
+				if((*esi1)->source() == (*esi2)->source()) 
+				{
+					++esi2;
+					continue;
+				}
+				Point_3 ip;
+				bool b = st(*esi1, *esi2, ip);
+				if(b) 
+				{
+					CGAL_NEF_TRACEN("ip " << ip);
+				
+					Edge_handle e = *esi2;
+					Edge_handle svf = vi(e, ip);
+				
+					esi3 = esi2;
+					++esi3;
+					while(esi3 != c.end() && 
+						  compare_points((*esi3)->source()->point(),
+										 svf->source()->point()))
+						++esi3;
+				
+					c.insert(esi3, svf);
+				}
 
-	  Edge_handle e = *esi2;
-	  Edge_handle svf = vi(e, ip);
+				++esi2;
 
-	  esi3 = esi2;
-	  ++esi3;
-	  while(esi3 != c.end() && 
-		compare_points((*esi3)->source()->point(),
-			       svf->source()->point()))
-	    ++esi3;
-
-	  c.insert(esi3, svf);
-
-	  /*
-	  std::cerr << "check " << std::endl;
-	  for(Iterator ti=c.begin(); ti != c.end(); ++ti)
-	    std::cerr << (*ti)->source()->point() << "->" 
-		      << (*ti)->twin()->source()->point() << std::endl;
-	  */
-
-	  CGAL_NEF_TRACEN("already in " << e->source()->point()
-			  << "->" << e->twin()->source()->point());
-	  CGAL_NEF_TRACEN("new        " << svf->source()->point()
-			  << "->" << svf->twin()->source()->point());
-	}
-
-	++esi2;
-	CGAL_NEF_TRACEN("e2: " << (*esi2)->source()->point() << 
-			"->" << (*esi2)->twin()->source()->point());
-      }
-    }
-  }
+				CGAL_assertion_code(
+					if(esi2!=c.end())
+						CGAL_NEF_TRACEN("y2: " << (*esi2)->source()->point() << 
+										"->" << (*esi2)->twin()->source()->point()););
+			} // while
+		} //while
+	} // operator()
 
 };
 
@@ -171,8 +175,7 @@ class Need_to_split {
   }
 };
 
-template<typename Nef_, typename PointComparison, 
-         typename FTComparison, typename Container>
+template<typename Nef_, typename FTComparison, typename Container>
   class Edge_sorter : public CGAL::Modifier_base<typename Nef_::SNC_and_PL> {
   
   typedef Nef_                                   Nef_polyhedron;
@@ -197,13 +200,12 @@ template<typename Nef_, typename PointComparison,
 
   typedef typename Container::iterator Iterator;
   typedef typename Container::const_iterator Const_iterator;
-
+  typedef typename Container::key_compare::Compare_points PointComparison;
   
   typedef typename CGAL::Insert_vertex_into_edge<SNC_structure, SNC_point_locator> InsertVertex;
 
   typedef typename CGAL::Generic_edge_sorter<
     Point_3, 
-    PointComparison, 
     FTComparison, 
     Need_to_split<Kernel, PointComparison>, 
     InsertVertex, 

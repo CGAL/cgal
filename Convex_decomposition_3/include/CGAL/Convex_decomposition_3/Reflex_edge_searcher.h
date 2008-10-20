@@ -24,7 +24,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<typename Nef_>
+template<typename Nef_, typename Positively_sorted_set, typename Negatively_sorted_set>
 class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> {
 
   typedef Nef_                                            Nef_polyhedron;
@@ -52,16 +52,13 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
   typedef typename SNC_structure::Sphere_point            Sphere_point;
   typedef typename SNC_structure::Sphere_circle           Sphere_circle;
   typedef typename SNC_structure::Sphere_segment          Sphere_segment;
-
-  typedef typename std::deque<Halfedge_handle>           Edge_list;
+ public:
+  typedef typename Positively_sorted_set::const_iterator  Positive_reflex_edge_iterator;
+  typedef typename Negatively_sorted_set::const_iterator  Negative_reflex_edge_iterator;
 
  public:
-  typedef typename Edge_list::iterator                    Reflex_sedge_iterator;
-  typedef Edge_list                                       Container;
-
- public:
-  Edge_list pos;
-  Edge_list neg;
+  Positively_sorted_set pos;
+  Negatively_sorted_set  neg;
   Sphere_point dir;
 
   Reflex_edge_searcher(Sphere_point dir_in)
@@ -94,34 +91,12 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
 	CGAL_NEF_TRACEN("isrse final " << sei->source()->source()->point()
 			<< "->" << sei->source()->twin()->source()->point()
 			<< ": " << isrse);
-	if((isrse&1)==1) pos.push_back(sei->source()->twin());
-	if((isrse&2)==2) neg.push_back(sei->source());
-	/*
-	if((isrse&2)==2) {
-          sei->source()->mark()=false;
-          sei->source()->twin()->mark()=false;
-	}
-	*/
+	if((isrse&1)==1) pos.insert(sei->source()->twin());
+	if((isrse&2)==2) neg.insert(sei->source());
       }
     }
   }
 
-  /*
-  void operator()(SNC_structure& snc) {
-    pos.clear();
-    neg.clear();    
-
-    Reflex_edge_visitor rev(pos,neg,dir);
-    SNC_decorator D(snc);
-    Volume_iterator c;
-    CGAL_forall_volumes(c, snc) {
-      if(c->mark())
-	for(Shell_entry_iterator shi=c->shells_begin(); shi!=c->shells_end(); ++shi) {
-	  D.visit_shell_objects(SFace_handle(shi),rev);
-	}
-      }  
-    }
-  */
   void handle_new_edge(Halfedge_handle e) { 
     if(normalized(e->point()) == dir || 
        normalized(e->twin()->point()) == dir) {
@@ -138,20 +113,20 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
     CGAL_For_all(svc, send) {
       int isrse = is_reflex_sedge(svc, dir);
       if(isrse == 0) continue;
-      if((pushed&=1==0) && (isrse&1==1)) pos.push_back(svc->source());
-      if((pushed&=2==0) && (isrse&2==2)) neg.push_back(svc->source());
+      if((pushed&=1==0) && (isrse&1==1)) pos.insert(svc->source());
+      if((pushed&=2==0) && (isrse&2==2)) neg.insert(svc->source());
       pushed |= isrse;
       if(pushed == 3)
 	break;
     }
   }
 
-  Edge_list& get_positive_redges() { return pos; }
-  Edge_list& get_negative_redges() { return neg; }
-  Reflex_sedge_iterator positive_redges_begin() { return pos.begin(); }
-  Reflex_sedge_iterator positive_redges_end() { return pos.end(); }
-  Reflex_sedge_iterator negative_redges_begin() { return neg.begin(); }
-  Reflex_sedge_iterator negative_redges_end() { return neg.end(); }
+  Positively_sorted_set& get_positive_redges() { return pos; }
+  Negatively_sorted_set& get_negative_redges() { return neg; }
+  Positive_reflex_edge_iterator positive_redges_begin() { return pos.begin(); }
+  Positive_reflex_edge_iterator positive_redges_end() { return pos.end(); }
+  Negative_reflex_edge_iterator negative_redges_begin() { return neg.begin(); }
+  Negative_reflex_edge_iterator negative_redges_end() { return neg.end(); }
 };
 
 CGAL_END_NAMESPACE

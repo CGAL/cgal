@@ -33,8 +33,8 @@
 CGAL_BEGIN_NAMESPACE
 
 template<typename Nef_polyhedron>
-void convex_decomposition_3(Nef_polyhedron& N) {
-
+void convex_decomposition_3(Nef_polyhedron& N) 
+{
   typedef typename Nef_polyhedron::SNC_structure  SNC_structure;
   typedef typename SNC_structure::Vertex_handle Vertex_handle;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
@@ -49,16 +49,25 @@ void convex_decomposition_3(Nef_polyhedron& N) {
   typedef typename CGAL::Single_wall_creator2<Nef_polyhedron> Single_wall2;
   typedef typename CGAL::YVertical_wall_builder<Nef_polyhedron> YVertical_wall_builder;
   typedef typename CGAL::Reflex_vertex_searcher<Nef_polyhedron>  Reflex_vertex_searcher;
-  typedef typename CGAL::Reflex_edge_searcher<Nef_polyhedron>  Reflex_edge_searcher;
-  typedef typename Reflex_edge_searcher::Reflex_sedge_iterator Reflex_sedge_iterator;
-  typedef typename Reflex_edge_searcher::Container            Container;
   typedef typename CGAL::Ray_hit_generator2<Nef_polyhedron> Ray_hit2;
   typedef typename CGAL::External_structure_builder<Nef_polyhedron> External_structure_builder;
   typedef typename CGAL::SFace_separator<Nef_polyhedron> SFace_separator;
-  typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::less<Point_3>, 
-                                     std::less<FT>, Container> Edge_sorter;
-  typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::greater<Point_3>,
-                                     std::greater<FT>, Container> Edge_sorter2;
+
+  typedef Compare_halfedges_in_reflex_edge_sorter<Halfedge_handle, std::less<Point_3> >
+	  Less_edges;
+  typedef Compare_halfedges_in_reflex_edge_sorter<Halfedge_handle, std::greater<Point_3> >
+	  Greater_edges;
+
+  typedef typename std::multiset<Halfedge_handle, Less_edges> Negatively_sorted_set;
+  typedef typename std::multiset<Halfedge_handle, Greater_edges> Positively_sorted_set;
+  typedef typename Positively_sorted_set::const_iterator  Positive_reflex_edge_iterator;
+  typedef typename Negatively_sorted_set::const_iterator  Negative_reflex_edge_iterator;
+
+  typedef typename CGAL::Reflex_edge_searcher<Nef_polyhedron, Positively_sorted_set, Negatively_sorted_set>
+	  Reflex_edge_searcher;
+
+  typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::less<FT>, Negatively_sorted_set> Edge_sorter;
+  typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::greater<FT>, Positively_sorted_set> Edge_sorter2;
 
   External_structure_builder esb;
   SFace_separator sf_sep;
@@ -70,9 +79,9 @@ void convex_decomposition_3(Nef_polyhedron& N) {
   Edge_sorter es(res.get_negative_redges());
   N.delegate(es);
   
-  Reflex_sedge_iterator rei;
-  for(rei=res.negative_redges_begin(); rei!=res.negative_redges_end(); ++rei) {
-    Halfedge_handle e = (*rei);
+  Negative_reflex_edge_iterator nrei;
+  for(nrei=res.negative_redges_begin(); nrei!=res.negative_redges_end(); ++nrei) {
+    Halfedge_handle e = (*nrei);
     
     Single_wall W(e,Vector_3(-1,0,0));
     if(!W.need_to_create_wall()) continue;
@@ -89,8 +98,8 @@ void convex_decomposition_3(Nef_polyhedron& N) {
   }
   
   int i=0;
-  for(rei=res.negative_redges_begin(); rei!=res.negative_redges_end(); ++rei) {
-    Halfedge_handle e = (*rei);
+  for(nrei=res.negative_redges_begin(); nrei!=res.negative_redges_end(); ++nrei) {
+    Halfedge_handle e = (*nrei);
     if(e->point().hx() > 0)
       e = e->twin();
     Single_wall W(e,Vector_3(-1,0,0));
@@ -108,8 +117,9 @@ void convex_decomposition_3(Nef_polyhedron& N) {
   Edge_sorter2 es2(res2.get_positive_redges());
   N.delegate(es2);
   
-  for(rei=res2.positive_redges_begin(); rei!=res2.positive_redges_end(); ++rei) {
-    Halfedge_handle e = (*rei);
+  Positive_reflex_edge_iterator prei;
+  for(prei=res2.positive_redges_begin(); prei!=res2.positive_redges_end(); ++prei) {
+    Halfedge_handle e = (*prei);
     
     CGAL_assertion(e->source()->point() >
 		   e->twin()->source()->point());
@@ -128,8 +138,8 @@ void convex_decomposition_3(Nef_polyhedron& N) {
   }
   
   i=0;
-  for(rei=res2.positive_redges_begin(); rei!=res2.positive_redges_end(); ++rei) {
-    Halfedge_handle e = (*rei);
+  for(prei=res2.positive_redges_begin(); prei!=res2.positive_redges_end(); ++prei) {
+    Halfedge_handle e = (*prei);
     Single_wall W(e,Vector_3(1,0,0));
     if(!W.need_to_create_wall()) continue;
     N.delegate(W);
