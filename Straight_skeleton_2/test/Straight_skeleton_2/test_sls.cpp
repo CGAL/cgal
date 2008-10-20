@@ -58,6 +58,8 @@ double sDX    = 0.0 ;
 double sDY    = 0.0 ;
 double sScale = 1.0 ;
 
+double sTimeout = 0.0 ;
+
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING
 
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 4
@@ -117,7 +119,6 @@ void register_construction_success ( std::string cons) { ++ sConsSuccessMap[cons
 
 #include <CGAL/test_sls_types.h>
 
-#include <CGAL/Real_timer.h>
 
 #include <CGAL/IO/Dxf_stream.h>
 
@@ -165,34 +166,61 @@ struct TestCase
   Zone Outer ;
 } ;
 
-const int cOK = 0 ;
-const int cNonSimpleInput = 1 ;
-const int cDegenerateInput = 2 ;
-const int cLargeInputIgnored = 3 ;
-const int cFileNotFound = 4 ;
-const int cExceptionCaught = 5 ;
+const int cTimedOut          = -6 ;
+const int cLoadException     = -5 ;
+const int cFileNotFound      = -4 ;
+const int cLargeInputIgnored = -3 ;
+const int cNonSimpleInput    = -2 ;
+const int cDegenerateInput   = -1 ;
+const int cOK                =  0 ;
+const int cFailed            =  1 ;
+const int cUnknown           =  2 ;
 
-const char* LoadExitCodeStr[] = { "OK"
-                                , "Non-simple polygon"
-                                , "Degenerate polygon"
-                                , "Large sample (ignored on request)"
-                                , "File not found"
-                                , "Exception"
-                                } ;
+const char* cStatusStr[] = { "Timed-out  "
+                           , "Can't load "
+                           , "Not-found  "
+                           , "Too-large  "
+                           , "Non-simple "
+                           , "Degenerate "
+                           , "OK         "
+                           , "Failed     "
+                           } ;
                                 
-const char* LoadExitCodeNM[] = {  "??         "
-                                , "Non-simple "
-                                , "Degenerate "
-                                , "Large      "
-                                , "Not found  "
-                                , "Cannot load"
-                                } ;
+const char* StatusToStr( int aStatus ) { return cStatusStr[ ( 6 + aStatus) % 8 ] ; }
                                
-const char* load_exit_code_to_str( int aCode ) { return LoadExitCodeStr[aCode] ; }
+                               
+struct Timed_out {} ;                               
 
-IRegionPtr load_region( string file, int aShift, int& rExitCode )
+CGAL::Real_timer sTimeoutWatchdog ;                               
+bool             sHadTimedOut ;
+
+void start_timeout_watchdog()
+{
+  sTimeoutWatchdog.reset();
+  sTimeoutWatchdog.start();  
+  sHadTimedOut = false ;
+}
+
+void end_timeout_watchdog()
+{
+  sTimeoutWatchdog.stop();  
+}
+                               
+void check_timeout()
+{
+  if ( sTimeout > 0.0 && sTimeoutWatchdog.time() > sTimeout  )
+  {
+    sHadTimedOut = true ;
+    
+    throw Timed_out() ;
+  }  
+}
+
+IRegionPtr load_region( string file, int aShift, int& rStatus )
 {
   IRegionPtr rRegion ;
+  
+  rStatus = cOK ;
 
   try
   {
@@ -246,43 +274,45 @@ IRegionPtr load_region( string file, int aShift, int& rExitCode )
               if ( orientation == expected )
                    rRegion->push_back(lPoly);
               else rRegion->push_back( IPolygonPtr( new IPolygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
+              
             }
             else
             {
-              rExitCode = cNonSimpleInput ;
+              rStatus = cNonSimpleInput ;
             }
           }
           else 
           {
-            rExitCode = cDegenerateInput ;
+            rStatus = cDegenerateInput ;
             rRegion = IRegionPtr();
             break;
           }  
         }
         else 
         {
-          rExitCode = cLargeInputIgnored ;
+          rStatus = cLargeInputIgnored ;
         }  
       }
     }
     else
     {
-      rExitCode = cFileNotFound ;
+      rStatus = cFileNotFound ;
     }
   }
   catch ( exception const& x ) 
   { 
-    rExitCode = cExceptionCaught ;
+    rStatus = cLoadException ;
     cerr << "std::exception caught loading file: " << x.what() << endl ; 
   }
   catch ( ... ) 
   { 
-    rExitCode = cExceptionCaught ;
+    rStatus = cLoadException ;
     cerr << "Unhandled exception loading file." << endl ;
   }
   
   if ( rRegion && rRegion->size() == 0 )
   {
+    rStatus = cDegenerateInput ;
     rRegion = IRegionPtr();
   }
   
@@ -641,42 +671,54 @@ bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton )
 }
 
 
-bool create_skeleton ( Zone& rZone, boost::optional<IFT> const& aMaxTime = boost::optional<IFT>() )
+int create_skeleton ( Zone& rZone, boost::optional<IFT> const& aMaxTime = boost::optional<IFT>() )
 {
-  bool rOK = false ;
+  int rStatus = cUnknown ;
   
   Real_timer t ;
   t.start();
   
   ISlsPtr lSls ;
   
+  ISlsBuilderVisitor lWatchdog(check_timeout);
+  
   try
   {  
     if ( sVerbose )
       cout << "    Building " << ( aMaxTime ? "partial" : "full" ) << " straight skeleton." << endl ; 
     
-    ISlsBuilder builder(aMaxTime)  ;
+    
+    ISlsBuilderTraits lTraits ;
+    
+    ISlsBuilder builder(aMaxTime, lTraits, lWatchdog) ;
     
     for( IRegion::const_iterator bit = rZone.Input->begin(), ebit = rZone.Input->end() ; bit != ebit ; ++ bit )
       builder.enter_contour((*bit)->begin(),(*bit)->end());
     
     lSls = builder.construct_skeleton(false) ;
-    
-    t.stop();
       
   }
   catch ( exception const& x ) 
   { 
+    rStatus = cFailed ;
+    
     if ( sVerbose )
       cout << "    Failed: std::exception caught: " << x.what() << endl ; 
   }
   catch ( ... ) 
   { 
+    rStatus = cFailed ;
     if ( sVerbose )
       cout << "    Failed: Unhandled exception." << endl ;
   }
     
-  rOK = is_skeleton_valid(*rZone.Input,*lSls) ;
+  t.stop();
+  
+  if ( sHadTimedOut )
+    rStatus = cTimedOut ;
+    
+  if ( rStatus == cUnknown )
+    rStatus = lSls && is_skeleton_valid(*rZone.Input,*lSls) ? cOK : cFailed ;
   
   double lEllapsedTime = t.time();
   
@@ -691,33 +733,32 @@ bool create_skeleton ( Zone& rZone, boost::optional<IFT> const& aMaxTime = boost
     rZone.FullSkeletonTime = lEllapsedTime ;
   }  
   
-  return rOK ; 
+  return rStatus ; 
 }
 
-bool test_zone ( Zone& rZone )
+int test_zone ( Zone& rZone )
 {
   ISlsPtr lFullSls, lPar ;  
   double  lFullSkeletonTime  ;
   
   bool lUseFullSkeleton =  sMaxTime == 0 || sAlwaysTestFullSkeleton ;
   
-  bool rOK = lUseFullSkeleton ? create_skeleton(rZone) : true ;
+  int rStatus = lUseFullSkeleton ? create_skeleton(rZone) : cOK ;
   
   if ( sMaxTime > 0 )
   {
     boost::optional<IFT> lMaxTime = static_cast<IFT>(sMaxTime) ;
-    if ( !create_skeleton(rZone,lMaxTime) )
-      rOK = false ;
+    rStatus = create_skeleton(rZone,lMaxTime) ;
   }
   else
   {
     rZone.PartialSkeleton     = rZone.FullSkeleton ;
-    rZone.PartialSkeletonTime = 0 ;
+    rZone.PartialSkeletonTime = rZone.FullSkeletonTime ;
   }
     
   if ( rZone.PartialSkeleton )
   {
-    if ( rOK && sTestOffsets )
+    if ( rStatus == cOK && sTestOffsets )
     {
       set<double> lTimes ;
       
@@ -787,8 +828,12 @@ bool test_zone ( Zone& rZone )
         OSlsPtr lOSkeleton = CvtSls(*rZone.PartialSkeleton) ;
         
         CGAL_assertion( lOSkeleton->is_valid() ) ;
-             
-        OffsetBuilder lOffsetBuilder(*lOSkeleton);
+        
+        IOffsetBuilderVisitor lWatchdog(check_timeout);
+        
+        OffsetBuilderTraits lTraits  ;
+        
+        OffsetBuilder lOffsetBuilder(*lOSkeleton,lTraits,lWatchdog);
         
         for ( vector<double>::const_iterator oit = lOffsets.begin() ; oit != lOffsets.end() ; ++ oit )
         {
@@ -809,13 +854,13 @@ bool test_zone ( Zone& rZone )
             }
             catch ( exception const& x ) 
             { 
-              rOK = false ;
+              rStatus = cFailed ;
               if ( sVerbose )
                 cout << "      Failed: std::exception caught: " << x.what() << endl ; 
             }
             catch ( ... )
             { 
-              rOK = false ;
+              rStatus = cFailed ;
               if ( sVerbose )
                 cout << "      Failed: Unhandled exception." << endl ;
             }
@@ -876,6 +921,9 @@ bool test_zone ( Zone& rZone )
           }
         }
         
+        if ( sHadTimedOut )
+          rStatus = cTimedOut ;
+
         if ( lNumContours > 0 )
           rZone.ContouringTime = lAccTime / double(lNumContours) ;
       }
@@ -887,7 +935,7 @@ bool test_zone ( Zone& rZone )
       cout << "    Failed." << endl ;
   }
   
-  return rOK ;
+  return rStatus ;
 }
 
 
@@ -895,96 +943,99 @@ int test( TestCase& rCase, int aShift )
 {
   int rR = 0 ;
   
+  start_timeout_watchdog();
+  
   if ( sVerbose )
     cout << "Testing " << rCase.Filename << "(" << aShift << ")" << endl ;
   
-  int lLoadExitCode = 0 ;
+  int lStatus = cLoadException ;
   
-  IRegionPtr lInnerRegion = load_region(rCase.Filename,aShift,lLoadExitCode);
+  IRegionPtr lInnerRegion = load_region(rCase.Filename,aShift,lStatus);
   
-  if ( lLoadExitCode != cOK && sVerbose )
+  if ( lStatus == cOK )
   {
-    cout << "Load exit code: " << load_exit_code_to_str(lLoadExitCode) << endl ;
-  }
-  
-  if ( lInnerRegion )
-  {
-    rCase.Inner.Input = lInnerRegion ;
-    
-    if ( !sNoOp )
+    if ( lInnerRegion )
     {
-      if ( sTestInner )
+      rCase.Inner.Input = lInnerRegion ;
+      
+      if ( !sNoOp )
       {
-        if ( sVerbose )
-          cout << "  Testing inner zone" << endl ;
+        if ( sTestInner )
+        {
+          if ( sVerbose )
+            cout << "  Testing inner zone" << endl ;
+            
+          lStatus = test_zone(rCase.Inner) ;
           
-        if (test_zone(rCase.Inner) )
-             rR = rR == 0 ? 1 : rR ;
-        else rR = -1 ;  
+        }
+        
+        if ( sTestOuter )
+        {
+          if ( sVerbose )
+            cout << "  Testing outer zone" << endl ;
+            
+          IPolygonPtr lOuterPoly = lInnerRegion->front();
+          IPolygonPtr lFrame = create_outer_frame(*lOuterPoly);
+          if ( lFrame )
+          {
+            rCase.Outer.Input = IRegionPtr ( new IRegion ) ;
+            rCase.Outer.Input->push_back(lFrame);
+            rCase.Outer.Input->push_back( IPolygonPtr( new IPolygon(lOuterPoly->rbegin(),lOuterPoly->rend()) ) ) ;
+            
+            int lOuterStatus = test_zone( rCase.Outer ) ;
+            if ( lStatus == cOK )
+              lStatus = lOuterStatus ;
+          }
+        }
+        
       }
       
-      if ( sTestOuter )
+      rR = lStatus == cOK ? 1 : lStatus == cFailed ? -1 : 0 ;
+      
+      if ( sVerbose )
       {
-        if ( sVerbose )
-          cout << "  Testing outer zone" << endl ;
-          
-        IPolygonPtr lOuterPoly = lInnerRegion->front();
-        IPolygonPtr lFrame = create_outer_frame(*lOuterPoly);
-        if ( lFrame )
+        cout  << " FullInnerSlsTime=" << rCase.Inner.FullSkeletonTime 
+              << " PartialInnerSlsTime=" << rCase.Inner.PartialSkeletonTime 
+              << " InnerOffTime=" << rCase.Inner.ContouringTime
+              << " FullOuterSlsTime=" << rCase.Outer.FullSkeletonTime 
+              << " PartialOuterSlsTime=" << rCase.Outer.PartialSkeletonTime 
+              << " OuterOffTime=" << rCase.Outer.ContouringTime 
+              << endl ;
+      }
+        
+            
+      if ( sClassifyCases )
+      {
+        if ( rR > 0 )
         {
-          rCase.Outer.Input = IRegionPtr ( new IRegion ) ;
-          rCase.Outer.Input->push_back(lFrame);
-          rCase.Outer.Input->push_back( IPolygonPtr( new IPolygon(lOuterPoly->rbegin(),lOuterPoly->rend()) ) ) ;
-          
-          if ( test_zone( rCase.Outer ) )
-               rR = rR == 0 ? 1 : rR ;
-          else rR = -1 ;  
+          ofstream ok_cases("./test_sls_ok_cases.txt", ios::app | ios::ate );
+          ok_cases << rCase.Filename << endl ;
+        }
+        else if ( rR < 0 )
+        {
+          ofstream failed_cases("./test_sls_failed_cases.txt", ios::app | ios::ate );
+          failed_cases << rCase.Filename << endl ;
+        }
+        else
+        {
+          ofstream failed_cases("./test_sls_invalid_cases.txt", ios::app | ios::ate );
+          failed_cases << rCase.Filename << endl ;
         }
       }
-    }
-    
-    if ( sVerbose && rR != 0 )
-    {
-      cout << ( ( rR > 0 ) ? "  OK " : "  !!!!!!!!!!!FAILED!!!!!!!!!!!!! " ) 
-            << " FullInnerSlsTime=" << rCase.Inner.FullSkeletonTime 
-            << " PartialInnerSlsTime=" << rCase.Inner.PartialSkeletonTime 
-            << " InnerOffTime=" << rCase.Inner.ContouringTime
-            << " FullOuterSlsTime=" << rCase.Outer.FullSkeletonTime 
-            << " PartialOuterSlsTime=" << rCase.Outer.PartialSkeletonTime 
-            << " OuterOffTime=" << rCase.Outer.ContouringTime 
-            << endl ;
-    }
       
-          
-    if ( sClassifyCases )
-    {
-      if ( rR > 0 )
-      {
-        ofstream ok_cases("./test_sls_ok_cases.txt", ios::app | ios::ate );
-        ok_cases << rCase.Filename << endl ;
-      }
-      else if ( rR < 0 )
-      {
-        ofstream failed_cases("./test_sls_failed_cases.txt", ios::app | ios::ate );
-        failed_cases << rCase.Filename << endl ;
-      }
-      else
-      {
-        ofstream failed_cases("./test_sls_invalid_cases.txt", ios::app | ios::ate );
-        failed_cases << rCase.Filename << endl ;
-      }
+      if ( sDumpEPS )
+        dump_to_eps(rCase);
+        
+      if ( sDumpDXF)
+        dump_to_dxf(rCase);
     }
-    
-    if ( sDumpEPS )
-      dump_to_eps(rCase);
-      
-    if ( sDumpDXF)
-      dump_to_dxf(rCase);
   }
   
-  cerr << ( rR > 0 ? "OK         " : ( rR < 0 ? "!!FAILED!! "  : LoadExitCodeNM[lLoadExitCode] )  ) 
-       << rCase.Filename 
-       << "(" << aShift << ")" ;
+  
+  cerr <<  StatusToStr(lStatus) << rCase.Filename  ;
+  
+  if ( aShift > 0 )
+    cerr << "(" << aShift << ")" ;
   
   if ( rR > 0 )
   {
@@ -1000,6 +1051,8 @@ int test( TestCase& rCase, int aShift )
   }
   
   cerr << endl ;
+  
+  end_timeout_watchdog();
   
   return rR ;
 }
@@ -1103,6 +1156,10 @@ int main( int argc, char const* argv[] )
               sScale = atof(&arg[2]) ; 
             break ;
             
+          case 't' : 
+            if ( arg.length() > 2 ) 
+              sTimeout = atof(&arg[2]) ; 
+            break ;
           
           case 'f' : 
             if ( arg.length() > 2 ) 
@@ -1327,6 +1384,7 @@ int main( int argc, char const* argv[] )
          << "         DxS 'S' evenly space offsets separated distance 'D' via partial skeleton." << endl 
          << "         Dx* Evenly spaced offsets separated distance 'D' via partial skeleton." << endl 
          << endl 
+         << "     -tSecs  Aborts a test case if it hasn't finished within 'Secs' seconds." << endl
          << "     -a      Abort on first error." << endl
          << "     -p      Permissive mode. Accept non-simple input polygons." << endl
          << "     -e      Dumps result into an .eps file." << endl

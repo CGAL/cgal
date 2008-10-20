@@ -34,6 +34,8 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
+#include <CGAL/Real_timer.h>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   IK;
 //typedef CGAL::Exact_predicates_exact_constructions_kernel     IK;
 //typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt IK;
@@ -68,12 +70,8 @@ typedef boost::shared_ptr<ORegion>    ORegionPtr ;
 typedef std::vector<ORegionPtr>       ORegions ;
 
 typedef CGAL::Straight_skeleton_2<IK>                             ISls;
-typedef CGAL::Straight_skeleton_builder_traits_2<IK>              ISlsBuilderTraits;
-typedef CGAL::Straight_skeleton_builder_2<ISlsBuilderTraits,ISls> ISlsBuilder;
 
 typedef CGAL::Straight_skeleton_2<OK>                                     OSls;
-typedef CGAL::Polygon_offset_builder_traits_2<OK>                         OffsetBuilderTraits;
-typedef CGAL::Polygon_offset_builder_2<OSls,OffsetBuilderTraits,OPolygon> OffsetBuilder;
 
 typedef ISls::Halfedge_iterator       Halfedge_iterator;
 typedef ISls::Vertex_handle           Vertex_handle;
@@ -82,6 +80,87 @@ typedef ISls::Halfedge_const_handle   Halfedge_const_handle ;
 typedef ISls::Halfedge_const_iterator Halfedge_const_iterator ;
 typedef ISls::Vertex_const_handle     Vertex_const_handle ;
 typedef ISls::Vertex_const_iterator   Vertex_const_iterator ;
+
+class VisitorBase
+{
+
+public:
+
+  typedef void (*CheckTimeoutCallbackType) () ;
+  
+  VisitorBase( CheckTimeoutCallbackType aCheckTimeoutCallback ) : check_timeout(aCheckTimeoutCallback) {}
+  
+protected:  
+  
+  CheckTimeoutCallbackType check_timeout ;
+} ;
+
+class ISlsBuilderVisitor : public VisitorBase
+{
+public:
+
+  ISlsBuilderVisitor( CheckTimeoutCallbackType aCheckTimeoutCallback ) : VisitorBase(aCheckTimeoutCallback) {}
+  
+  void on_contour_edge_entered ( Halfedge_const_handle const& ) const {}
+
+  void on_initialization_started( int size_of_vertices ) const {}
+
+  void on_initial_events_collected( Vertex_const_handle const& , bool , bool ) const { check_timeout(); }
+
+  void on_edge_event_created( Vertex_const_handle const&, Vertex_const_handle const& ) const { check_timeout(); }
+
+  void on_split_event_created( Vertex_const_handle const& ) const { check_timeout(); }
+
+  void on_pseudo_split_event_created( Vertex_const_handle const&, Vertex_const_handle const& ) const { check_timeout(); }
+
+  void on_initialization_finished() const { check_timeout(); }
+
+  void on_propagation_started() const {}
+
+  void on_anihiliation_event_processed ( Vertex_const_handle const&, Vertex_const_handle const& ) const { check_timeout(); }
+
+  void on_edge_event_processed( Vertex_const_handle const&, Vertex_const_handle const&, Vertex_const_handle const& ) const { check_timeout(); }
+
+  void on_split_event_processed( Vertex_const_handle const&, Vertex_const_handle const&, Vertex_const_handle const& ) const { check_timeout(); }
+
+  void on_pseudo_split_event_processed( Vertex_const_handle const&, Vertex_const_handle const&, Vertex_const_handle const&, Vertex_const_handle const& ) const { check_timeout(); }
+
+  void on_vertex_processed( Vertex_const_handle const& ) const { check_timeout(); }
+
+  void on_propagation_finished() const { check_timeout(); }
+
+  void on_cleanup_started() const {}
+
+  void on_cleanup_finished() const { check_timeout(); }
+
+  void on_error( char const* ) const { check_timeout(); }
+
+  void on_algorithm_finished ( bool ) const {}
+
+} ;
+
+  
+class IOffsetBuilderVisitor : public VisitorBase
+{
+public:
+
+  IOffsetBuilderVisitor( CheckTimeoutCallbackType aCheckTimeoutCallback ) : VisitorBase(aCheckTimeoutCallback) {}
+  
+  void on_construction_started ( IFT ) const {}
+  
+  void on_offset_contour_started() const { check_timeout(); }
+  
+  void on_offset_point ( IPoint const& ) const { check_timeout(); }
+
+  IPoint on_offset_point_overflowed( Halfedge_const_handle ) const { return CGAL::ORIGIN ; }
+  
+  void on_offset_contour_finished ( bool ) const { check_timeout(); }
+  
+  void on_construction_finished () const {}
+  
+  void on_error( char const* ) const { check_timeout(); }
+
+} ;
 
 typedef CGAL::HalfedgeDS_const_decorator<ISls> Sls_const_decorator ;
 
@@ -92,6 +171,11 @@ typedef CGAL::Straight_skeleton_items_converter_2<ISls,OSls> SlsItemsConverter ;
 
 typedef CGAL::Straight_skeleton_converter_2<ISls,OSls,SlsItemsConverter> SlsConverter ;
 
+typedef CGAL::Straight_skeleton_builder_traits_2<IK>                                 ISlsBuilderTraits;
+typedef CGAL::Straight_skeleton_builder_2<ISlsBuilderTraits,ISls,ISlsBuilderVisitor> ISlsBuilder;
+
+typedef CGAL::Polygon_offset_builder_traits_2<OK>                                               OffsetBuilderTraits;
+typedef CGAL::Polygon_offset_builder_2<OSls,OffsetBuilderTraits,OPolygon,IOffsetBuilderVisitor> OffsetBuilder;
 
 #endif
 
