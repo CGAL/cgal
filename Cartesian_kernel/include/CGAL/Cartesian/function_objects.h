@@ -2945,6 +2945,32 @@ namespace CartesianKernelFunctors {
   };
 
   template <class K> 
+  class Construct_radical_line_2
+  {
+    typedef typename K::Line_2            Line_2;
+    typedef typename K::Circle_2          Circle_2;
+    typedef typename K::FT                 FT;
+
+  public:
+
+    typedef Line_2 result_type;
+
+    result_type 
+    operator() (const Circle_2 & c1, const Circle_2 & c2) const
+	  {
+      // Concentric Circles don't have radical line
+      CGAL_kernel_precondition (c1.center() != c2.center());
+      const FT a = 2*(c2.center().x() - c1.center().x());
+      const FT b = 2*(c2.center().y() - c1.center().y());
+      const FT c = CGAL::square(c1.center().x()) + 
+        CGAL::square(c1.center().y()) - c1.squared_radius() -
+        CGAL::square(c2.center().x()) -
+        CGAL::square(c2.center().y()) + c2.squared_radius();
+      return Line_2(a, b, c);
+    }
+  };
+
+  template <class K> 
   class Construct_radical_plane_3
   {
     typedef typename K::Plane_3            Plane_3;

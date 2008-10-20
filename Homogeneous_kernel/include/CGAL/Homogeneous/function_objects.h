@@ -50,6 +50,7 @@ namespace HomogeneousKernelFunctors {
   using CartesianKernelFunctors::Compute_approximate_squared_length_3;
   using CartesianKernelFunctors::Compute_area_divided_by_pi_3;
   using CartesianKernelFunctors::Compute_squared_length_divided_by_pi_square_3;
+  using CartesianKernelFunctors::Construct_radical_line_2;
   using CartesianKernelFunctors::Construct_radical_plane_3;
 
   template <typename K>

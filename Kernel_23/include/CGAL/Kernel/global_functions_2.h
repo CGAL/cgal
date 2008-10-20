@@ -903,6 +903,15 @@ orientation(const Vector_2<K> &u, const Vector_2<K> &v)
 
 // parallel() functions are in global_functions.h
 
+template <class K>
+inline
+typename K::Line_2
+radical_line(const Circle_2<K> &s1,
+              const Circle_2<K> &s2)
+{
+  return K().construct_radical_line_2_object()(s1,s2);
+}
+
 template <typename K>
 inline
 typename K::Boolean

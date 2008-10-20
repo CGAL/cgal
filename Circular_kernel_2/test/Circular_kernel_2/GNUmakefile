@@ -14,8 +14,11 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../include \
+           -I../../../Kernel_23/include \
+           -I../../../Cartesian_kernel/include \
+           -I../../../Homogeneous_kernel/include \
            -I../../../Intersections_2/include \
+           -I../../include \
            -Iinclude\
            -g\
 	   $(TESTSUITE_CXXFLAGS) \

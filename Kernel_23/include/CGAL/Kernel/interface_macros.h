@@ -373,6 +373,8 @@ CGAL_Kernel_cons(Construct_projected_point_3,
 		 construct_projected_point_3_object)
 CGAL_Kernel_cons(Construct_projected_xy_point_2,
 		 construct_projected_xy_point_2_object)
+CGAL_Kernel_cons(Construct_radical_line_2,
+     construct_radical_line_2_object)		
 CGAL_Kernel_cons(Construct_radical_plane_3,
                  construct_radical_plane_3_object)
 CGAL_Kernel_cons(Construct_ray_2,
