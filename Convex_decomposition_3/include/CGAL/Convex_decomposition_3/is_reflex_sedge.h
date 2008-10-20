@@ -78,8 +78,8 @@ bool is_reflex_sedge_in_any_direction
 template<class SNC_structure>  
 int is_reflex_sedge(typename SNC_structure::SHalfedge_handle se,
 		    typename SNC_structure::Sphere_point dir,
-		    bool only_small_to_large = true) {
-  
+		    bool only_small_to_large = true) 
+{
   typename SNC_structure::Halfedge_handle e = se->source();
   CGAL_NEF_TRACEN("is reflex edge?");
   CGAL_NEF_TRACEN("  e " << e->source()->point() 
@@ -95,7 +95,8 @@ int is_reflex_sedge(typename SNC_structure::SHalfedge_handle se,
   
   typename SNC_structure::Sphere_circle cp(e->point(), dir);
   typename SNC_structure::SHalfedge_handle se2 = se->sprev()->twin();
-
+  CGAL_assertion(se2->source() == se->source());
+		   
   if(se2 == se) {
     typename SNC_structure::Sphere_segment
       seg(se->source()->point(), se->twin()->source()->point(), se->circle());
@@ -106,12 +107,6 @@ int is_reflex_sedge(typename SNC_structure::SHalfedge_handle se,
       return 2;
     if(seg.sphere_circle() == cp.opposite())
       return 1;
-    /*
-    if(seg.has_on(dir))
-      return 2;
-    if(seg.has_on(dir.antipode()))
-      return 1;
-    */
     return 3;
   }
   
