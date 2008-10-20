@@ -25,6 +25,54 @@
 #include <CGAL/Bbox_2.h>
 #include <cassert>
 
+template <class K>
+void _test_construct_radical_line(const K &k) {
+  typedef typename K::FT                               FT;
+  typedef typename K::Point_2                          Point_2;
+  typedef typename K::Line_2                           Line_2;
+  typedef typename K::Circle_2                         Circle_2;
+  typedef typename K::Has_on_2                         Has_on_2;
+  typedef typename K::Intersect_2                      Intersect_2;
+  typedef typename K::Construct_circle_2               Construct_circle_2;
+  typedef typename K::Construct_radical_line_2         Construct_radical_line_2;
+
+  Intersect_2 theIntersect_2 = k.intersect_2_object();
+  Construct_circle_2 theConstruct_circle_2 = k.construct_circle_2_object();
+  Construct_radical_line_2 theConstruct_radical_line_2 = k.construct_radical_line_2_object();
+  Has_on_2 theHas_on_2 = k.has_on_2_object();
+
+  std::cout << "Testing radical_line(Circle,Circle)..." << std::endl;
+  Circle_2 s = theConstruct_circle_2(Point_2(0,0),1);
+  for(int vx=-3;vx<4;vx++) {
+    for(int vy=-3;vy<4;vy++) {
+      for(int vr=1;vr<6;vr++) {
+        const FT x = FT(vx);
+        const FT y = FT(vy);
+        const FT r = FT(vr)/FT(2);
+        if(x == 0 && y == 0) continue;
+        Circle_2 sl_1 = theConstruct_circle_2(Point_2(x,y),r*r);
+        int d2 = (vx*vx + vy*vy);
+        Line_2 p = theConstruct_radical_line_2(s, sl_1);
+        Line_2 global_p = CGAL::radical_line(s, sl_1);
+        assert(p == global_p);
+        // No intersection
+        if((d2 > (r+1)*(r+1)) || (d2 < (r-1)*(r-1))) {
+          assert(!do_intersect(s, p));
+        }
+        // Tangent, 1 Intersection
+        else if((d2 == (r+1)*(r+1)) || (d2 == (r-1)*(r-1))) {
+          assert(do_intersect(s, p));
+        }
+        // 1 Intersection Circle
+        else {
+          assert(do_intersect(s, p));
+        }
+      }
+    }
+  }
+}
+
+
 template <class R>
 bool
 _test_cls_circle_2(const R& )
@@ -182,6 +230,8 @@ _test_cls_circle_2(const R& )
  assert(bb.xmax() >= 8.0);
  assert(bb.ymin() <= -4.0);
  assert(bb.ymax() >= 8.0);
+
+ _test_construct_radical_line(R());
 
  std::cout << "done" << std::endl;
  return true;
