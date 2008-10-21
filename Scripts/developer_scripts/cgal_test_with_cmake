@@ -1,6 +1,13 @@
 #!/bin/sh
 
+dir=${PWD%/*}
+dir=${dir##*/}
+
+if [ "x${dir}" == "xdemo" ]; then
+  in_demo="--no-run"
+fi
+
 # If there is already a cgal_test_with_cmake script in the current directory, execute it.
-[ ! -x cgal_test_with_cmake ] && echo "No cgal_test_with_cmake in current directory, creating it" && create_cgal_test_with_cmake
+[ ! -x cgal_test_with_cmake ] && echo "No cgal_test_with_cmake in current directory, creating it" && create_cgal_test_with_cmake ${in_demo}
 
 ./cgal_test_with_cmake $@
