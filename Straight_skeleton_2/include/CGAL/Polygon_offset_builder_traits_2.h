@@ -20,8 +20,8 @@
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/Straight_skeleton_builder_traits_2.h>
-#include <CGAL/predicates/Polygon_offset_pred_ftC2.h>
-#include <CGAL/constructions/Polygon_offset_cons_ftC2.h>
+#include <CGAL/predicates/polygon_offset_pred_ftC2.h>
+#include <CGAL/constructions/polygon_offset_cons_ftC2.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include "boost/type_traits/is_same.hpp"

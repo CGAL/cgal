@@ -2,7 +2,7 @@
 
 #include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include<CGAL/Polygon_with_holes_2.h>
-#include<CGAL/Create_straight_skeleton_from_polygon_with_holes_2.h>
+#include<CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
 
 #include "print.h"
 

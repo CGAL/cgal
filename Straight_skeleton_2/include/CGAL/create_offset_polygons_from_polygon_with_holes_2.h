@@ -19,9 +19,9 @@
 #ifndef CGAL_CREATE_OFFSET_POLYGONS_FROM_POLYGON_WITH_HOLES_2_H
 #define CGAL_CREATE_OFFSET_POLYGONS_FROM_POLYGON_WITH_HOLES_2_H
 
-#include <CGAL/Create_offset_polygons_2.h>
+#include <CGAL/create_offset_polygons_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
-#include <CGAL/Arrange_offset_polygons_2.h>
+#include <CGAL/arrange_offset_polygons_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

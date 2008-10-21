@@ -4,7 +4,7 @@
 
 #include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include<CGAL/Polygon_2.h>
-#include<CGAL/Create_offset_polygons_2.h>
+#include<CGAL/create_offset_polygons_2.h>
 
 #include "print.h"
 

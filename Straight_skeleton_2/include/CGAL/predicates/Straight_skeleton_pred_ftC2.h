@@ -18,7 +18,7 @@
 #ifndef CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H 
 #define CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H 1
 
-#include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
+#include <CGAL/constructions/straight_skeleton_cons_ftC2.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/certified_quotient_predicates.h>
 

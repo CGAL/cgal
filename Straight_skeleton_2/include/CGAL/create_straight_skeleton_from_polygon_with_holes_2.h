@@ -19,7 +19,7 @@
 #ifndef CGAL_CREATE_STRAIGHT_SKELETON_FROM_POLYGON_WITH_HOLES_2_H
 #define CGAL_CREATE_STRAIGHT_SKELETON_FROM_POLYGON_WITH_HOLES_2_H
 
-#include <CGAL/Create_straight_skeleton_2.h>
+#include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
 CGAL_BEGIN_NAMESPACE
