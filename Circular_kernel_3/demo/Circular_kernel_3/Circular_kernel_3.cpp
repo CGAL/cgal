@@ -13,7 +13,7 @@
 
 #include <CGAL/basic.h>
 
-#include "demo_circle.moc"
+#include "Circular_kernel_3.moc"
 
 int main (int argc, char** argv) {
 	QApplication app(argc, argv);
