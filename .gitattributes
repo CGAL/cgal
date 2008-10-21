@@ -2884,6 +2884,7 @@ Polyhedron/demo/Polyhedron/data/femur.off -text svneol=unset#application/octet-s
 Polyhedron/demo/Polyhedron/data/handle.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/joint.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/knot1.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/knot2.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/lion-head.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/man.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/mushroom.off -text svneol=unset#application/octet-stream
