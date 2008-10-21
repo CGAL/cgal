@@ -140,7 +140,6 @@ template < class SK > \
 #ifndef CGAL_CFG_MATCHING_BUG_6
     using SK::Linear_kernel::Equal_3::operator();
 #else  
-    typedef bool result_type;
 
     result_type
     operator() (const Point_3 &p0,
