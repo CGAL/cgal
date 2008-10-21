@@ -70,14 +70,14 @@ struct Filtered_bbox_circular_kernel_base_ref_count : public CircularKernel
 
 } // namespace CGALi
 
-template < typename K_base, typename Kernel >
+template < typename K_base, typename FbcKernel >
 struct Filtered_bbox_circular_kernel_type_equality_wrapper
-  : public Type_equality_wrapper<K_base, Kernel>
+  : public Type_equality_wrapper<K_base, FbcKernel>
 {
     typedef K_base                                  Kernel_base;
-    typedef CGAL::Circular_arc_2<Kernel>            Circular_arc_2;     
-    typedef CGAL::Line_arc_2<Kernel>                Line_arc_2;
-    typedef CGAL::Circular_arc_point_2<Kernel>      Circular_arc_point_2;
+    typedef CGAL::Circular_arc_2<FbcKernel>            Circular_arc_2;     
+    typedef CGAL::Line_arc_2<FbcKernel>                Line_arc_2;
+    typedef CGAL::Circular_arc_point_2<FbcKernel>      Circular_arc_point_2;
 };
 
 template < class CircularKernel >
