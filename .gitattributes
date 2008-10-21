@@ -2870,19 +2870,16 @@ Polygon/doc_tex/Polygon/polygon.png -text
 Polyhedron/demo/Polyhedron/MainWindow.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/data/anchor.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/beetle.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/bones.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/bull.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cow.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cross.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/cube-111.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cube.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/fandisk.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/femur.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/knot_2_3.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/knot.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/lion-head.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/lucy-25kf.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/man.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/mushroom.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/pinion.off -text svneol=unset#application/octet-stream
@@ -2894,7 +2891,6 @@ Polyhedron/demo/Polyhedron/data/star.off -text svneol=unset#application/octet-st
 Polyhedron/demo/Polyhedron/data/translated-cube.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/tripod.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/turbine.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/vis-hand.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/resources/about.html svneol=native#text/html
 Polyhedron/demo/Polyhedron/resources/boolean-diff.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/boolean-intersection.png -text svneol=unset#image/png
