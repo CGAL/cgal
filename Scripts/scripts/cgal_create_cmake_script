@@ -83,7 +83,7 @@ EOF
 EOF
     
     if [ -d include ] ; then
-      echo '  include_directories (BEFORE include)'
+      echo '    include_directories (BEFORE include)'
       echo
     fi
     cat <<EOF
