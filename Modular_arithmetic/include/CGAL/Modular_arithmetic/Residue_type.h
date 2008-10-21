@@ -107,21 +107,12 @@ private:
     /* Quick integer rounding, valid if a<2^51. for double */ 
     static inline 
     double RES_round (double a){
-#ifdef CGAL_USE_LEDA 
-        return ( (a + CST_CUT)  - CST_CUT); 
-#else
-     // TODO: 
-     // In order to get rid of the volatile double
-     // one should call: 
-     // CGAL/FPU.h : inline void force_ieee_double_precision()
-     // the problem is where and when it should be called ? 
-     // and whether on should restore the old behaviour 
-     // since it changes the global behaviour of doubles. 
-     // Note that this code works if LEDA is present, since leda automatically 
-     // changes this behaviour in the desired way. 
-        volatile double b = (a + CST_CUT);
-        return b - CST_CUT;
-#endif
+      // use Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST)
+      CGAL_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+      return ( (a + CST_CUT)  - CST_CUT); 
+      
+//      volatile double b = (a + CST_CUT);
+//      return b - CST_CUT;     
     }
 
 
