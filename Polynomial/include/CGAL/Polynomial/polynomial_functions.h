@@ -165,39 +165,6 @@ substitute_xy(
     return sub;
 }
 
-//! coefficient <I>a<SUB>ij</SUB></I> of <I>x<SUP>i</SUP>y<SUP>j</SUP></I>
-template < class NT >
-NT coefficient(const CGAL::Polynomial< CGAL::Polynomial< NT > > &p, 
-               int i, int j) {
-
-    typedef CGAL::Polynomial_traits_d< 
-    CGAL::Polynomial< CGAL::Polynomial< NT > > > PT_2;
-    CGAL_precondition(2 == PT_2::d);
-    typename PT_2::Get_innermost_coefficient coefficient;
-    CGAL::Exponent_vector ev;
-    ev.push_back(i);
-    ev.push_back(j);
-    return coefficient(p, ev);
-}
-
-//! coefficient <I>a<SUB>ijk</SUB></I> of <I>x<SUP>i</SUP>y<SUP>j</SUP><I>z<SUP>k</SUP></I>
-template < class NT >
-NT coefficient(
-        const CGAL::Polynomial < CGAL::Polynomial< CGAL::Polynomial< NT > > > 
-        &p, 
-        int i, int j, int k) {
-
-    typedef CGAL::Polynomial_traits_d< 
-    CGAL::Polynomial< CGAL::Polynomial< CGAL::Polynomial< NT > > > > PT_3;
-    CGAL_precondition(3 == PT_3::d);
-    typename PT_3::Get_innermost_coefficient coefficient;
-    CGAL::Exponent_vector ev;
-    ev.push_back(i);
-    ev.push_back(j);
-    ev.push_back(k);
-    return coefficient(p, ev);
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_POLYNOMIAL_FUNCTIONS_H
