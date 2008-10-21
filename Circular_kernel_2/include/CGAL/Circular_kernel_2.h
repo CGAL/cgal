@@ -85,15 +85,14 @@ struct Circular_kernel_base_ref_count: public LinearKernelBase
 template < class LinearKernel, class AlgebraicKernel >
 struct Circular_kernel_2
   : public Circular_kernel_type_equality_wrapper
-  <
-  CGALi::Circular_kernel_base_ref_count
-  < Circular_kernel_2<LinearKernel,AlgebraicKernel>,
-    typename LinearKernel:: template 
-    Base<Circular_kernel_2<LinearKernel,AlgebraicKernel> >::Type,
-    AlgebraicKernel 
-  >,
-  Circular_kernel_2<LinearKernel,AlgebraicKernel>
-  >
+     < CGALi::Circular_kernel_base_ref_count
+        < Circular_kernel_2<LinearKernel,AlgebraicKernel>,
+          typename LinearKernel:: template 
+          Base<Circular_kernel_2<LinearKernel,AlgebraicKernel> >::Type,
+          AlgebraicKernel 
+        >,
+       Circular_kernel_2<LinearKernel,AlgebraicKernel>
+     >
 {};
 
 CGAL_END_NAMESPACE
