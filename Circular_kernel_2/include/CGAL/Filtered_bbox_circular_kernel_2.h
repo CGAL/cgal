@@ -91,7 +91,7 @@ struct Filtered_bbox_circular_kernel_2
        Filtered_bbox_circular_kernel_2< CircularKernel >
      >
 {
-	typedef CircularKernel                                         Circular_kernel;
+  typedef CircularKernel                                         Circular_kernel;
   typedef Filtered_bbox_circular_kernel_2< CircularKernel >      Self;
 };
 
