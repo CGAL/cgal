@@ -189,14 +189,18 @@ create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& k )
   return CGAL_SS_i::create_offset_polygons_2<Polygon>(aOffset,aSs,k,same_kernel);
 }
 
-template<class Polygon, class FT, class Skeleton>
-std::vector< boost::shared_ptr<Polygon> > 
+
+template<class FT, class Skeleton, class K>
+std::vector< boost::shared_ptr< Polygon_2<K> > > 
 inline
-create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs )
+create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& k )
 {
-  return create_offset_polygons_2(aOffset, aSs, typename Polygon::Traits() ) ;
+  typedef Polygon_2<K> Polygon ;
+  
+  return create_offset_polygons_2<Polygon>(aOffset, aSs, k ) ;
 }
 
+#if !defined(_MSC_VER) || ( _MSC_VER >= 1500 )
 template<class FT, class Skeleton>
 std::vector< boost::shared_ptr< Polygon_2< typename Skeleton::Traits::Kernel > > > 
 inline
@@ -204,9 +208,16 @@ create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs )
 {
   typedef typename Skeleton::Traits::Kernel K ;
   
-  typedef Polygon_2<K> Polygon ;
-  
-  return create_offset_polygons_2<Polygon>(aOffset, aSs, K() ) ;
+  return create_offset_polygons_2(aOffset, aSs, K() ) ;
+}
+#endif
+
+template<class Polygon, class FT, class Skeleton>
+std::vector< boost::shared_ptr<Polygon> > 
+inline
+create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs )
+{
+  return create_offset_polygons_2<Polygon>(aOffset, aSs, typename Polygon::Traits() ) ;
 }
 
 template<class FT, class Polygon, class HoleIterator, class OfK, class SsK>

@@ -36,7 +36,7 @@ int main()
   
   double lOffset = 1 ;
   
-  PolygonPtrVector offset_polygons = CGAL::create_offset_polygons_2(lOffset,*ss);
+  PolygonPtrVector offset_polygons = CGAL::create_offset_polygons_2<Polygon>(lOffset,*ss);
   
   print_polygons(offset_polygons);
   
