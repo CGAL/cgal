@@ -88,6 +88,11 @@ GraphicsView/src/CGALQt4/*.so
 GraphicsView/src/CGALQt4/Makefile
 GraphicsView/src/CGALQt4/moc_*.cxx
 GraphicsView/src/CGALQt4/qrc_*.cxx
+Kinetic_data_structures/demo/Kinetic_data_structures/Delaunay_triangulation_2
+Kinetic_data_structures/demo/Kinetic_data_structures/Delaunay_triangulation_stable_subset_2
+Kinetic_data_structures/demo/Kinetic_data_structures/Makefile
+Kinetic_data_structures/demo/Kinetic_data_structures/generate_data
+Kinetic_data_structures/demo/Kinetic_data_structures/gui_2
 Largest_empty_rect_2/test/Largest_empty_rect_2/CMakeLists.txt
 Largest_empty_rect_2/test/Largest_empty_rect_2/Makefile
 Largest_empty_rect_2/test/Largest_empty_rect_2/data/out
