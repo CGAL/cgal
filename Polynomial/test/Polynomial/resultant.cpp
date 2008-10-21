@@ -78,8 +78,8 @@ void test_resultant(){
 
 int main(){
 
-  // Enforce IEEE double precision for modular arithmetic 
-  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  // Set wrong rounding mode to test modular arithmetic 
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
 
   CGAL::Timer timer; 
   timer.start();

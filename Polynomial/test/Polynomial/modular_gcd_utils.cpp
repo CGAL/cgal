@@ -137,8 +137,8 @@ void test_modular_gcd_utils() {
 }
 int main(){
     
-  // Enforce IEEE double precision for modular arithmetic 
-  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  // Set wrong rounding mode to test modular arithmetic 
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
 
 #ifdef CGAL_USE_LEDA
     test_modular_gcd_utils<CGAL::LEDA_arithmetic_kernel>();       

@@ -749,6 +749,8 @@ void polynomial_gcd_test() {
 }
 
 int main(){
+  // This is the wrong rounding mode for modular arithmetic by intention 
+  CGAL::Protect_FPU_rounding<> pfr(CGAL_FE_UPWARD);
 #ifdef CGAL_USE_LEDA
     polynomial_gcd_test<CGAL::LEDA_arithmetic_kernel>();
 #endif // CGAL_USE_LEDA
