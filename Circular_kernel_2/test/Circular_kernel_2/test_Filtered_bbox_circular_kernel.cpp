@@ -45,10 +45,12 @@ typedef CGAL::Filtered_bbox_circular_kernel_2<CircularKernel> CK;
 #include <CGAL/_test_circles_extention.h>
   
 int main() {
+
   _test_circle_predicat(ck);
-    _test_circle_construct(ck);
+  _test_circle_construct(ck);
   _test_circle_bbox(ck);
   _test_circular_arc_bbox(ck);
   _test_has_on(ck);
+
   return 0;
 }
