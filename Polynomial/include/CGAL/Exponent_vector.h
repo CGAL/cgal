@@ -38,20 +38,19 @@ public:
   // Exponent_vector(int i, int x): Base(i,x){};
 // NEW CONSTRUCTORS 
 
-/*
-  Exponent_vector(int e0):Base(1){
-  *this[0]=e0;
-  };
-  Exponent_vector(int e0, int e1):Base(2){
-    *this[0]=e0; *this[1]=e1; 
-  };
-  Exponent_vector(int e0, int e1, int e2):Base(3){
-  *this[0]=e0; *this[1]=e1; *this[2]=e2;
-  };
-  Exponent_vector(int e0, int e1, int e2, int e3):Base(4){
-    *this[0]=e0; *this[1]=e1; *this[2]=e2; *this[3]=e3;
+    Exponent_vector(int e0): Base(1) {
+        (*this)[0]=e0;
     };
-*/
+    Exponent_vector(int e0, int e1): Base(2) {
+        (*this)[0]=e0; (*this)[1]=e1; 
+    };
+    Exponent_vector(int e0, int e1, int e2): Base(3) {
+        (*this)[0]=e0; (*this)[1]=e1; (*this)[2]=e2;
+    };
+    Exponent_vector(int e0, int e1, int e2, int e3): Base(4) {
+        (*this)[0]=e0; (*this)[1]=e1; (*this)[2]=e2; (*this)[3]=e3;
+    };
+    
     Exponent_vector(const Base& v): Base ( v ){};
     Exponent_vector(const Exponent_vector& v): Base ( v ){};
 
