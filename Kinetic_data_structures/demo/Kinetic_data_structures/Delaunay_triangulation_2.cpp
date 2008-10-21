@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 #else
   std::cerr << "Warning, this demo is not very functional without "
             << "boost program options. You probably need to modify "
-            << "the code directly.\n"
+            << "the code directly.\n";
 #endif
 
   if (true) {
