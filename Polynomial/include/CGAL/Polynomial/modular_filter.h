@@ -22,9 +22,7 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial/polynomial_utils.h>
 #include <CGAL/Polynomial/prs_resultant.h>
-
-// for shear_modular_polynomial
-#include <CGAL/Polynomial/may_have_common_factor.h>
+#include <CGAL/Modular_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -2969,7 +2969,6 @@ Polynomial/include/CGAL/Polynomial/Coercion_traits.h -text
 Polynomial/include/CGAL/Polynomial/bezout_matrix.h -text
 Polynomial/include/CGAL/Polynomial/determinant.h -text
 Polynomial/include/CGAL/Polynomial/hgdelta_update.h -text
-Polynomial/include/CGAL/Polynomial/may_have_common_factor.h -text
 Polynomial/include/CGAL/Polynomial/modular_filter.h -text
 Polynomial/include/CGAL/Polynomial/resultant.h -text
 Polynomial/include/CGAL/Polynomial/square_free_factorize.h -text
