@@ -2872,9 +2872,11 @@ Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/data/anchor.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/bones.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/bull.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/couplingdown.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cow.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cross.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cube.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/elephant.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/fandisk.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/femur.off -text svneol=unset#application/octet-stream
