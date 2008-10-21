@@ -62,38 +62,6 @@ void bivariate_polynomial_test() {
     assert(CGAL::check_leadcoeff(f0) == true);
     assert(CGAL::check_leadcoeff(f) == false);
     assert(CGAL::check_leadcoeff(fx) == true);
-
-    // coefficient
-    assert(CGAL::coefficient(f,0,0) == NT(-1));
-    assert(CGAL::coefficient(f,1,0) == NT( 2));
-    assert(CGAL::coefficient(f,2,1) == NT( 3));
-    assert(CGAL::coefficient(f,1,2) == NT( 1));
-    
-    // not "existing"
-    assert(CGAL::coefficient(f,0,1) == NT( 0));
-    assert(CGAL::coefficient(f,2,2) == NT( 0));
-    assert(CGAL::coefficient(f,0,3) == NT( 0));
-    
-    BIPOLY g = BIPOLY(
-            UNPOLY(NT(63), NT(50), NT(-37), NT(-85)),
-            UNPOLY(NT(49), NT(97), NT(-55)),
-            UNPOLY(NT(56), NT(-35)),
-            UNPOLY(NT(79))
-    );
-      
-    assert(CGAL::coefficient(g,0,0) == NT( 63));
-    assert(CGAL::coefficient(g,1,0) == NT( 50));
-    assert(CGAL::coefficient(g,2,0) == NT(-37));
-    assert(CGAL::coefficient(g,3,0) == NT(-85));
-    assert(CGAL::coefficient(g,0,1) == NT( 49));
-    assert(CGAL::coefficient(g,1,1) == NT( 97));
-    assert(CGAL::coefficient(g,2,1) == NT(-55));
-    assert(CGAL::coefficient(g,0,2) == NT( 56));
-    assert(CGAL::coefficient(g,1,2) == NT(-35));
-    assert(CGAL::coefficient(g,0,3) == NT( 79));
-    // not "existing"
-    assert(CGAL::coefficient(f,2,2) == NT( 0));
-    assert(CGAL::coefficient(f,0,4) == NT( 0));
 }
 
 
@@ -122,37 +90,6 @@ void trivariate_polynomial_test() {
     // LCC
     assert(CGAL::check_leadcoeff(f1) == false);
     assert(CGAL::check_leadcoeff(f2) == true);
-
-    // coefficient
-    assert(CGAL::coefficient(f1,0,0,0) == NT(-6));
-    assert(CGAL::coefficient(f1,0,0,1) == NT( 8));
-    assert(CGAL::coefficient(f1,0,1,0) == NT(-3));
-    assert(CGAL::coefficient(f1,1,0,0) == NT( 5));
-    assert(CGAL::coefficient(f1,0,1,1) == NT( 4));
-    assert(CGAL::coefficient(f1,2,0,1) == NT(-2));
-    assert(CGAL::coefficient(f1,1,0,2) == NT( 1));
-    
-    // not "existing"
-    assert(CGAL::coefficient(f1,1,0,1) == NT( 0));
-    assert(CGAL::coefficient(f1,0,1,2) == NT( 0));
-    assert(CGAL::coefficient(f1,1,2,0) == NT( 0));
-    assert(CGAL::coefficient(f1,0,0,3) == NT( 0));
-
-    // coefficient
-    assert(CGAL::coefficient(f2,0,0,0) == NT(-6));
-    assert(CGAL::coefficient(f2,0,0,1) == NT( 8));
-    assert(CGAL::coefficient(f2,1,0,0) == NT( 5));
-    assert(CGAL::coefficient(f2,2,0,1) == NT(-2));
-    assert(CGAL::coefficient(f2,0,1,1) == NT(-5));
-    assert(CGAL::coefficient(f2,0,0,3) == NT( 9));
-    
-    assert(CGAL::coefficient(f2,0,1,0) == NT( 0));
-    assert(CGAL::coefficient(f2,2,1,0) == NT( 0));
-    assert(CGAL::coefficient(f2,1,1,0) == NT( 0));
-    assert(CGAL::coefficient(f2,1,0,1) == NT( 0));
-    assert(CGAL::coefficient(f2,1,2,0) == NT( 0));
-    assert(CGAL::coefficient(f2,1,1,1) == NT( 0));
-    
 }
 
 
