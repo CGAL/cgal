@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>479</width>
-    <height>316</height>
+    <width>585</width>
+    <height>342</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -41,7 +41,7 @@
        </widget>
       </item>
       <item row="3" column="1" >
-       <widget class="QRadioButton" name="radioButton_6" >
+       <widget class="QRadioButton" name="double_bt" >
         <property name="text" >
          <string>Double</string>
         </property>
@@ -51,6 +51,13 @@
        <widget class="QCheckBox" name="signed_bt" >
         <property name="text" >
          <string>Signed</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="char_bt" >
+        <property name="text" >
+         <string>char (8 bits)</string>
         </property>
        </widget>
       </item>
@@ -78,7 +85,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
+        <item row="2" column="0" >
          <widget class="QLabel" name="label_spacing" >
           <property name="text" >
            <string>&amp;Spacing:</string>
@@ -121,7 +128,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1" >
+        <item row="2" column="1" >
          <widget class="QDoubleSpinBox" name="spacing_x" >
           <property name="prefix" >
            <string>vx: </string>
@@ -134,7 +141,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2" >
+        <item row="2" column="2" >
          <widget class="QDoubleSpinBox" name="spacing_y" >
           <property name="prefix" >
            <string>vy: </string>
@@ -147,7 +154,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="3" >
+        <item row="2" column="3" >
          <widget class="QDoubleSpinBox" name="spacing_z" >
           <property name="prefix" >
            <string>vz: </string>
@@ -160,7 +167,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0" >
+        <item row="3" column="0" >
          <widget class="QLabel" name="offset_label" >
           <property name="text" >
            <string>&amp;Offset:</string>
@@ -173,13 +180,47 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1" >
+        <item row="3" column="1" >
          <widget class="QSpinBox" name="offset" >
           <property name="suffix" >
            <string> bytes</string>
           </property>
           <property name="maximum" >
            <number>999999999</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="imagesize_budy" >
+          <property name="text" >
+           <string>Image size:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QLabel" name="label_image_size" >
+          <property name="text" >
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2" >
+         <widget class="QLabel" name="filesize_budy" >
+          <property name="text" >
+           <string>File size:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3" >
+         <widget class="QLabel" name="label_file_size" >
+          <property name="text" >
+           <string>0</string>
           </property>
          </widget>
         </item>
@@ -202,7 +243,7 @@
   <tabstop>short_bt</tabstop>
   <tabstop>signed_bt</tabstop>
   <tabstop>float_bt</tabstop>
-  <tabstop>radioButton_6</tabstop>
+  <tabstop>double_bt</tabstop>
   <tabstop>dim_x</tabstop>
   <tabstop>dim_y</tabstop>
   <tabstop>dim_z</tabstop>
@@ -225,24 +266,24 @@
      <y>112</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>257</x>
-     <y>83</y>
+     <x>553</x>
+     <y>94</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>radioButton_6</sender>
+   <sender>double_bt</sender>
    <signal>toggled(bool)</signal>
    <receiver>signed_bt</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>281</x>
-     <y>113</y>
+     <x>564</x>
+     <y>127</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>290</x>
-     <y>82</y>
+     <x>564</x>
+     <y>94</y>
     </hint>
    </hints>
   </connection>
@@ -254,7 +295,7 @@
    <hints>
     <hint type="sourcelabel" >
      <x>191</x>
-     <y>290</y>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel" >
      <x>183</x>
@@ -270,7 +311,7 @@
    <hints>
     <hint type="sourcelabel" >
      <x>253</x>
-     <y>293</y>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel" >
      <x>252</x>
@@ -278,5 +319,136 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>dim_x</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Raw_image_dialog</receiver>
+   <slot>update_image_size()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>178</x>
+     <y>187</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>99</x>
+     <y>141</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dim_z</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Raw_image_dialog</receiver>
+   <slot>update_image_size()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>473</x>
+     <y>178</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>441</x>
+     <y>142</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>char_bt</sender>
+   <signal>clicked()</signal>
+   <receiver>Raw_image_dialog</receiver>
+   <slot>update_image_size()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>71</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>137</x>
+     <y>3</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>short_bt</sender>
+   <signal>clicked()</signal>
+   <receiver>Raw_image_dialog</receiver>
+   <slot>update_image_size()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>117</x>
+     <y>81</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>49</x>
+     <y>6</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>float_bt</sender>
+   <signal>clicked()</signal>
+   <receiver>Raw_image_dialog</receiver>
+   <slot>update_image_size()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>137</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>67</x>
+     <y>-5</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>int_bt</sender>
+   <signal>clicked()</signal>
+   <receiver>Raw_image_dialog</receiver>
+   <slot>update_image_size()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>358</x>
+     <y>49</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>584</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dim_y</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Raw_image_dialog</receiver>
+   <slot>update_image_size()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>332</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>271</x>
+     <y>142</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>double_bt</sender>
+   <signal>clicked()</signal>
+   <receiver>Raw_image_dialog</receiver>
+   <slot>update_image_size()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>514</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>581</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>update_image_size()</slot>
+ </slots>
 </ui>

@@ -521,6 +521,7 @@ bool Volume::open(const QString& filename)
 				   QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes) 
       {
 	Raw_image_dialog raw_dialog;
+	raw_dialog.label_file_size->setText(QString("%1 B").arg(fileinfo.size()));
 	if( raw_dialog.exec() && 
 	    m_image.read_raw(filename.toStdString().c_str(),
 			     raw_dialog.dim_x->value(),

@@ -81,7 +81,7 @@ if ( CGAL_FOUND )
     
     include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
-    set( sources colorlisteditor.cpp values_list.cpp mainwindow.cpp Surface_mesher.cpp viewer.cpp volume.cpp )
+    set( sources Raw_image_dialog.cpp colorlisteditor.cpp values_list.cpp mainwindow.cpp Surface_mesher.cpp viewer.cpp volume.cpp )
 
     if(WITH_POLYHEDRAL_SURFACE)
       set(sources ${sources} polyhedral_surface.cpp ${PACKAGE_ROOT}/../Marching_cube/src/mc/ply.c)
