@@ -91,7 +91,9 @@ void _test_circle_construct(CK ck)
 
   //Constuct_intersections_2 with 2 intersection's points
   std::cout << std::endl << "construct_intersection_2" << std::endl;
+
   Do_intersect_2 theDo_intersect_2 = ck.do_intersect_2_object();
+
   Intersect_2 theConstruct_intersect_2 
     = ck.intersect_2_object();
   int center_circ_intersection_2_1_x = theRandom.get_int(random_min, random_max);
@@ -942,7 +944,7 @@ void _test_circle_construct(CK ck)
 	Line_arc_2 llu2 = Line_arc_2(Point_2(-1,-1), Point_2(-1,1));
 	Line_arc_2 llu3 = Line_arc_2(Point_2(-2,-1), Point_2(-2,1));
 	Circle_2 ccu = Circle_2(Point_2(0,-1), Point_2(-1,0), Point_2(0,1));
-	
+
 	std::vector< CGAL::Object > v_llc1, v_llc2, v_llc3;
   theConstruct_intersect_2(llu1, ccu, std::back_inserter(v_llc1));
   theConstruct_intersect_2(llu2, ccu, std::back_inserter(v_llc2));
@@ -967,7 +969,25 @@ void _test_circle_construct(CK ck)
   theConstruct_intersect_2(ccu, llu3.supporting_line(), std::back_inserter(v_rllc3l));
 
   assert(v_rllc1.size() == 2);
+  
+    std::cout << typeid(llu1).name()<< std::endl << std::endl;
+    std::cout << typeid(llu1.supporting_line()).name()<< std::endl << std::endl;
+    std::cout << typeid(ccu).name()<< std::endl << std::endl;
+    std::cout << typeid(theDo_intersect_2).name()<< std::endl << std::endl;
+
+    /*
+class CGAL::Line_arc_2<struct CGAL::Filtered_bbox_circular_kernel_2<struct CGAL::Circular_kernel_2<struct CGAL::Cartesian<class CGAL::Quotient<class CGAL::MP_Float> >,struct CGAL::Algebraic_kernel_for_circles_2_2<class CGAL::Quotient<class CGAL::MP_Float> > > > >
+
+class CGAL::Line_2<struct CGAL::Filtered_bbox_circular_kernel_2<struct CGAL::Circular_kernel_2<struct CGAL::Cartesian<class CGAL::Quotient<class CGAL::MP_Float> >,struct CGAL::Algebraic_kernel_for_circles_2_2<class CGAL::Quotient<class CGAL::MP_Float> > > > >
+
+class CGAL::Circle_2<struct CGAL::Filtered_bbox_circular_kernel_2<struct CGAL::Circular_kernel_2<struct CGAL::Cartesian<class CGAL::Quotient<class CGAL::MP_Float> >,struct CGAL::Algebraic_kernel_for_circles_2_2<class CGAL::Quotient<class CGAL::MP_Float> > > > >
+
+class CGAL::Bbox_functors::Do_intersect_2<struct CGAL::Filtered_bbox_circular_kernel_2<struct CGAL::Circular_kernel_2<struct CGAL::Cartesian<class CGAL::Quotient<class CGAL::MP_Float> >,struct CGAL::Algebraic_kernel_for_circles_2_2<class CGAL::Quotient<class CGAL::MP_Float> > > > >
+
+     */
+
   assert(theDo_intersect_2(llu1.supporting_line(), ccu));
+
   assert(CGAL::do_intersect(llu1.supporting_line(), ccu));
 
   assert(v_rllc1l.size() == 2);
@@ -989,5 +1009,6 @@ void _test_circle_construct(CK ck)
   assert(v_rllc3l.size() == 0);
   assert(!theDo_intersect_2(ccu, llu3.supporting_line()));
   assert(!CGAL::do_intersect(ccu, llu3.supporting_line()));
+  
 
 }
