@@ -1,0 +1,19 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructRadicalLine_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Line_2 operator()
+			(const Kernel::Circle_2& c1,
+				const Kernel::Circle_2& c2);}
+       {returns the radical line of the circles.
+	\ccPrecond{The two circles don't have the same center.}}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_2<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}
+

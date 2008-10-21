@@ -1815,6 +1815,7 @@ Jet_fitting_3/examples/Jet_fitting_3/VC/Single_estimation.vcproj eol=crlf
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
 Jet_fitting_3/examples/Jet_fitting_3/skip_vcproj_auto_generation -text
 Kernel_23/doc_tex/Kernel_23/fig/pointSegmentTriangle.png -text
+Kernel_23/doc_tex/Kernel_23_ref/Kernel_ConstructRadicalLine_2.tex -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text svneol=unset#application/postscript
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.pdf -text svneol=unset#application/pdf
@@ -1840,6 +1841,7 @@ Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.gif -text svneol=unset#image/
 Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.pdf -text svneol=unset#application/pdf
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvecthree.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#image/gif
+Kernel_23/doc_tex/Kernel_23_ref/radical_line.tex -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/test/Kernel_23/CMakeLists.txt -text
 Kernel_d/include/CGAL/Kernel_d/Cartesian_const_iterator_d.h -text
