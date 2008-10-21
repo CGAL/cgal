@@ -63,13 +63,14 @@ void test_Construct_polynomial_for_quadric_3() {
 
     Poly_nt_3 p(p0,p1,p2);
     
-    assert(CGAL::Construct_polynomial_for_quadric_3< NT >()
-           (pa,pb,pc,pd,pe,pf,pg,ph,pk,pl) == p);
+    CGAL::Construct_polynomial_for_quadric_3< NT > construct_quadric_poly;
+
+    assert(construct_quadric_poly(pa,pb,pc,pd,pe,pf,pg,ph,pk,pl) == p);
     
     typedef CGAL::Exponent_vector EV;
     typename CGAL::Polynomial_traits_d< Poly_nt_3 >::Get_innermost_coefficient
         icoefficient;
-
+    
     // second test
     assert(icoefficient(p,EV(2,0,0)) == -85);
     assert(icoefficient(p,EV(1,1,0)) == -55);
