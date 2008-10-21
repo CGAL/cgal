@@ -326,11 +326,9 @@ Alpha_shapes_2/doc_tex/Alpha_shapes_2/alpha-detail.png -text
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.eps -text svneol=unset#application/postscript
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.gif -text svneol=unset#image/gif
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.pdf -text svneol=unset#application/pdf
-Alpha_shapes_3/demo/Alpha_shapes_3/weighted_alpha_shapes_3.vcproj eol=crlf
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.eps -text svneol=unset#application/postscript
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.gif -text svneol=unset#image/gif
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.pdf -text svneol=unset#application/pdf
-Apollonius_graph_2/demo/Apollonius_graph_2/apollonius_graph_2.vcproj eol=crlf
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices.eps -text svneol=unset#application/postscript
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices.gif -text svneol=unset#image/gif
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices_bw.eps -text svneol=unset#application/postscript
@@ -453,7 +451,6 @@ Arrangement_on_surface_2/benchmarks/data/benchArrAosSegments.xml svneol=native#t
 Arrangement_on_surface_2/benchmarks/data/benchArrConics.xml svneol=native#text/xml
 Arrangement_on_surface_2/benchmarks/data/benchArrPolylines.xml svneol=native#text/xml
 Arrangement_on_surface_2/benchmarks/data/benchArrSegments.xml svneol=native#text/xml
-Arrangement_on_surface_2/demo/Arrangement_on_surface_2/arrangement_2.vcproj eol=crlf
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/big_circ_arcs.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/circles_21.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/polyline/ps_circs.dat -text
@@ -1182,7 +1179,6 @@ Benchmark/doc_tex/Benchmark/fig/classification.pdf -text svneol=unset#applicatio
 Benchmark/src/Benchmark/benchmark_lexer.l -text
 Benchmark_instances/developer_scripts/cgal_create_bench_webpage -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/Qt_widget_locate_layer.cpp -text
-Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations.vcproj eol=crlf
 Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations_2.h -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_1.dxf -text svneol=unset#application/octet-stream
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_2.dxf -text svneol=unset#application/octet-stream
@@ -1266,8 +1262,6 @@ Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.eps -text svneol=un
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.gif -text svneol=unset#image/gif
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=unset#application/pdf
 Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#application/postscript
-CGALimageIO/src/CGALimageIO/CGALimageIO_71.vcproj eol=crlf
-CGALimageIO/src/CGALimageIO/CGALimageIO_80.vcproj eol=crlf
 CGALimageIO/src/CGALimageIO/CMakeLists.txt -text
 CGALimageIO/src/CGALimageIO/local_makefile -text
 Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
@@ -1276,7 +1270,6 @@ Circular_kernel_2/Benchmarks/readme.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/Benchmarks/readme.sxw -text
 Circular_kernel_2/changes -text
 Circular_kernel_2/demo/Circular_kernel_2/README -text
-Circular_kernel_2/demo/Circular_kernel_2/demo.vcproj eol=crlf
 Circular_kernel_2/demo/Circular_kernel_2/help/get_arc.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/demo/Circular_kernel_2/help/index.html svneol=native#text/html
 Circular_kernel_2/demo/Circular_kernel_2/help/planar_map_icon.jpeg -text svneol=unset#image/jpeg
@@ -1323,7 +1316,6 @@ Convex_decomposition_3/examples/Convex_decomposition_3/list_of_convex_parts.cin 
 Convex_decomposition_3/test/Convex_decomposition_3/check_decomposition.cin -text
 Convex_decomposition_3/test/Convex_decomposition_3/reflex_sedge.cpp -text
 Convex_decomposition_3/test/Convex_decomposition_3/star.nef3 -text
-Convex_hull_2/demo/Convex_hull_2/convex_hull_2.vcproj eol=crlf
 Convex_hull_2/demo/Convex_hull_2/help/index.html svneol=native#text/html
 Convex_hull_2/doc_tex/Convex_hull_2/convex_hull.png -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text svneol=unset#application/postscript
@@ -1331,8 +1323,6 @@ Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#image/gif
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#application/pdf
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.png -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.wrl.gz -text
-Core/src/CGALCore/Core_71.vcproj -text
-Core/src/CGALCore/Core_80.vcproj -text
 Core/src/CGALCore/all_files.cpp -text
 Curved_kernel_via_analysis_2/doc_tex/Curved_kernel_via_analysis_2/PkgDescription.tex -text
 Curved_kernel_via_analysis_2/doc_tex/Curved_kernel_via_analysis_2/main.tex -text
@@ -1463,7 +1453,6 @@ Envelope_2/test/Envelope_2/data/onebig_100.dat -text
 Envelope_2/test/Envelope_2/data/random_500.dat -text
 Envelope_2/test/Envelope_2/data/segs_4.dat -text
 Envelope_2/test/Envelope_2/test_envelope_segments.cmd -text
-Envelope_3/demo/Envelope_3/envelope_3.vcproj eol=crlf
 Envelope_3/demo/Envelope_3/help/index.html svneol=native#text/html
 Envelope_3/demo/Envelope_3/icons/edges.bmp -text svneol=unset#image/bmp
 Envelope_3/demo/Envelope_3/icons/faces.bmp -text svneol=unset#image/bmp
@@ -1553,7 +1542,6 @@ Envelope_3/test/Envelope_3/data/triangles/test_w_vertical.cin -text
 Envelope_3/test/Envelope_3/spheres_test.cmd eol=lf
 Envelope_3/test/Envelope_3/triangles_test.cmd eol=lf
 Filtered_kernel/developer_scripts/profile_cleanup -text
-Generator/demo/Generator/generator.vcproj eol=crlf
 Generator/demo/Generator/help/index.html svneol=native#text/html
 Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/Segment_generator_prog1.pdf -text svneol=unset#application/pdf
@@ -1810,8 +1798,6 @@ Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.eps -text svneol=uns
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text svneol=unset#image/jpeg
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/examples/Jet_fitting_3/Jet_fitting_3.sln eol=crlf
-Jet_fitting_3/examples/Jet_fitting_3/VC/Mesh_estimation.vcproj eol=crlf
-Jet_fitting_3/examples/Jet_fitting_3/VC/Single_estimation.vcproj eol=crlf
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
 Jet_fitting_3/examples/Jet_fitting_3/skip_vcproj_auto_generation -text
 Kernel_23/doc_tex/Kernel_23/fig/pointSegmentTriangle.png -text
@@ -1846,7 +1832,6 @@ Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/test/Kernel_23/CMakeLists.txt -text
 Kernel_d/include/CGAL/Kernel_d/Cartesian_const_iterator_d.h -text
 Kernel_d/test/Kernel_d/Linear_algebra-test.cmd eol=lf
-Kinetic_data_structures/demo/Kinetic_data_structures/Delaunay_triangulation_2.vcproj eol=crlf
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after002 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after010 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after088 -text
@@ -1927,7 +1912,6 @@ Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=3,n -
 Kinetic_data_structures/test/Kinetic_data_structures/instantaneous_kernel.cpp -text
 Kinetic_data_structures/todo -text
 Largest_empty_rect_2/demo/Largest_empty_rect_2/help/index.html svneol=native#text/html
-Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj eol=crlf
 Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler-detail.png -text
 Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler.png -text
 Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test eol=lf
@@ -2389,8 +2373,6 @@ Manual_tools/test/Manual_tools/cgal_test eol=lf
 Manual_tools/test/Manual_tools/html.orig.tgz -text svneol=unset#application/gzip
 Matrix_search/demo/Matrix_search/help/index.html svneol=native#text/html
 Matrix_search/demo/Matrix_search/help/rindex.html svneol=native#text/html
-Matrix_search/demo/Matrix_search/max_k-gon.vcproj eol=crlf
-Matrix_search/demo/Matrix_search/rectangular_p_center_2.vcproj eol=crlf
 Matrix_search/doc_tex/Bounding_volumes_ref/MatrixSearch_pcenter1.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Bounding_volumes_ref/MatrixSearch_pcenter2.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Bounding_volumes_ref/MatrixSearch_pcenter3.gif -text svneol=unset#image/gif
@@ -2412,7 +2394,6 @@ Mesh_2/bench/data/square.poly -text svneol=unset#application/octet-stream
 Mesh_2/demo/Mesh_2/data/clusters.poly -text svneol=unset#application/octet-stream
 Mesh_2/demo/Mesh_2/data/fish.poly -text svneol=unset#application/octet-stream
 Mesh_2/demo/Mesh_2/data/trivial.poly -text svneol=unset#application/octet-stream
-Mesh_2/demo/Mesh_2/mesh_demo.vcproj eol=crlf
 Mesh_2/doc_tex/Mesh_2/delaunaymesh-small.png -text svneol=unset#image/png
 Mesh_2/doc_tex/Mesh_2/delaunaymesh-teaser.png -text svneol=unset#image/png
 Mesh_2/doc_tex/Mesh_2/domain-mesh.eps -text svneol=unset#application/postscript
@@ -2436,13 +2417,10 @@ Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text svneol=unset#application/octet-
 Mesh_2/test/Mesh_2/fish.edg -text
 Mesh_2/test/Mesh_2/fish.poly -text svneol=unset#application/octet-stream
 Min_circle_2/demo/Min_circle_2/help/index.html svneol=native#text/html
-Min_circle_2/demo/Min_circle_2/min_circle_2.vcproj eol=crlf
 Min_circle_2/test/Min_circle_2/test_Min_circle.cmd eol=lf
 Min_ellipse_2/demo/Min_ellipse_2/help/index.html svneol=native#text/html
-Min_ellipse_2/demo/Min_ellipse_2/min_ellipse_2.vcproj eol=crlf
 Min_ellipse_2/test/Min_ellipse_2/test_Min_ellipse_2.cmd eol=lf
 Min_quadrilateral_2/demo/Min_quadrilateral_2/help/index.html svneol=native#text/html
-Min_quadrilateral_2/demo/Min_quadrilateral_2/min_quadrilateral_2.vcproj eol=crlf
 Min_sphere_d_new/test/Min_sphere_d_new/test_Min_sphere_d_2.cmd eol=lf
 Min_sphere_d_new/test/Min_sphere_d_new/test_Min_sphere_d_3.cmd eol=lf
 Min_sphere_d_new/test/Min_sphere_d_new/test_Min_sphere_d_d.cmd eol=lf
@@ -2631,13 +2609,6 @@ Nef_3/demo/Nef_3/CMakeLists.txt -text
 Nef_3/demo/Nef_3/cube.off -text svneol=unset#application/octet-stream
 Nef_3/demo/Nef_3/makefile -text
 Nef_3/demo/Nef_3/mpi.vsh -text
-Nef_3/demo/Nef_3/nef_3.vcproj eol=crlf
-Nef_3/demo/Nef_3/nef_3_extended.vcproj eol=crlf
-Nef_3/demo/Nef_3/nef_3_filtered.vcproj eol=crlf
-Nef_3/demo/Nef_3/nef_3_homogeneous.vcproj eol=crlf
-Nef_3/demo/Nef_3/visual_hull.vcproj eol=crlf
-Nef_3/demo/Nef_3/visualization_SM.vcproj eol=crlf
-Nef_3/demo/Nef_3/visualization_SNC.vcproj eol=crlf
 Nef_3/doc_tex/Nef_3/fig/closeup.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3/fig/closeup.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/closeup.pdf -text svneol=unset#application/pdf
@@ -2806,8 +2777,6 @@ PDB/include/CGAL/PDB/iterator.h -text
 PDB/include/CGAL/PDB/small_map.h -text
 PDB/package_info/PDB/maintainer -text
 PDB/src/CGALPDB/Atom.cpp -text
-PDB/src/CGALPDB/CGALPDB_71.vcproj eol=crlf
-PDB/src/CGALPDB/CGALPDB_80.vcproj eol=crlf
 PDB/src/CGALPDB/CMakeLists.txt -text
 PDB/src/CGALPDB/Chain.cpp -text
 PDB/src/CGALPDB/Error_logger.cpp -text
@@ -2849,7 +2818,6 @@ PDB/test/PDB/data/check_refine_alignment_2.pdb -text
 PDB/test/PDB/include/check_equal.h -text
 PDB/todo -text
 Partition_2/demo/Partition_2/Qt3/help/index.html svneol=native#text/html
-Partition_2/demo/Partition_2/Qt3/partition_2.vcproj eol=crlf
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.gif -text svneol=unset#image/gif
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.pdf -text svneol=unset#application/pdf
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.ps -text svneol=unset#application/postscript
@@ -2860,7 +2828,6 @@ Partition_2/doc_tex/Partition_2/teaser-small.png -text svneol=unset#image/png
 Partition_2/doc_tex/Partition_2/teaser.png -text svneol=unset#image/png
 Point_set_2/doc_tex/Point_set_2/point_set.png -text
 Polygon/demo/Polygon/qt3/help/index.html svneol=native#text/html
-Polygon/demo/Polygon/qt3/polygon_2.vcproj eol=crlf
 Polygon/doc_tex/Polygon/pgn_algos.eps -text svneol=unset#application/postscript
 Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#image/gif
 Polygon/doc_tex/Polygon/pgn_algos.ipe -text svneol=unset#application/postscript
@@ -3061,20 +3028,6 @@ Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text 
 Principal_component_analysis/doc_tex/Principal_component_analysis/teaserLeastSquaresFitting-large.png -text
 Principal_component_analysis/doc_tex/Principal_component_analysis/teaserLeastSquaresFitting.png -text
 Principal_component_analysis/examples/Principal_component_analysis/Principal_component_analysis.sln eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/barycenter.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/bounding_box.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/centroid.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/linear_least_squares_fitting_circles_2.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/linear_least_squares_fitting_cuboids_3.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/linear_least_squares_fitting_points_2.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/linear_least_squares_fitting_points_3.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/linear_least_squares_fitting_rectangles_2.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/linear_least_squares_fitting_segments_2.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/linear_least_squares_fitting_segments_3.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/linear_least_squares_fitting_spheres_3.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/linear_least_squares_fitting_tetrahedra_3.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/linear_least_squares_fitting_triangles_2.vcproj eol=crlf
-Principal_component_analysis/examples/Principal_component_analysis/VC/linear_least_squares_fitting_triangles_3.vcproj eol=crlf
 Principal_component_analysis/examples/Principal_component_analysis/linear_least_squares_fitting_circles_2.cpp -text
 Principal_component_analysis/examples/Principal_component_analysis/linear_least_squares_fitting_cuboids_3.cpp -text
 Principal_component_analysis/examples/Principal_component_analysis/linear_least_squares_fitting_points_2.cpp -text
@@ -3099,19 +3052,6 @@ Principal_component_analysis/include/CGAL/linear_least_squares_fitting_tetrahedr
 Principal_component_analysis/include/CGAL/linear_least_squares_fitting_triangles_2.h -text
 Principal_component_analysis/include/CGAL/linear_least_squares_fitting_triangles_3.h -text
 Principal_component_analysis/test/Principal_component_analysis/Principal_component_analysis.sln eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/barycenter.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/bounding_box.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/linear_least_squares_fitting_circles_2.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/linear_least_squares_fitting_cuboids_3.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/linear_least_squares_fitting_points_2.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/linear_least_squares_fitting_points_3.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/linear_least_squares_fitting_rectangles_2.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/linear_least_squares_fitting_segments_2.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/linear_least_squares_fitting_segments_3.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/linear_least_squares_fitting_spheres_3.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/linear_least_squares_fitting_tetrahedra_3.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/linear_least_squares_fitting_triangles_2.vcproj eol=crlf
-Principal_component_analysis/test/Principal_component_analysis/VC/linear_least_squares_fitting_triangles_3.vcproj eol=crlf
 Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_circles_2.cpp -text
 Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_cuboids_3.cpp -text
 Principal_component_analysis/test/Principal_component_analysis/linear_least_squares_fitting_rectangles_2.cpp -text
@@ -3222,10 +3162,6 @@ QP_solver/test/QP_solver/test_random_qp.cpp -text
 QP_solver/test/QP_solver/test_random_qp2.cpp -text
 QP_solver/test/QP_solver/test_solver.cout -text
 QP_solver/test/QP_solver/test_solver_data/masters/additional/QSCORPIO.QPS -text
-Qt_widget/demo/Qt_widget/hellosegment.vcproj eol=crlf
-Qt_widget/demo/Qt_widget/layer.vcproj eol=crlf
-Qt_widget/demo/Qt_widget/standard_toolbar.vcproj eol=crlf
-Qt_widget/demo/Qt_widget/tutorial2.vcproj eol=crlf
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text svneol=unset#application/postscript
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#application/pdf
@@ -3233,8 +3169,6 @@ Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#image/png
 Qt_widget/doc_tex/Qt_widget/triangulation.eps -text svneol=unset#application/postscript
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
-Qt_widget/src/CGALQt/CGALQt_71.vcproj -text
-Qt_widget/src/CGALQt/CGALQt_80.vcproj -text
 Qt_widget/src/CGALQt/CMakeLists.txt -text
 Reconstruction_from_slices_3/examples/Reconstruction_from_slices_3/data/blibli_non_parallele.slc -text
 Reconstruction_from_slices_3/examples/Reconstruction_from_slices_3/data/blibli_parallele.slc -text
@@ -3260,12 +3194,10 @@ Ridges_3/doc_tex/Ridges_3/mecanic-sub1_crestTweight1Tsharp7-jpg.png -text svneol
 Ridges_3/doc_tex/Ridges_3/star.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/star.png -text svneol=unset#image/png
 Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics.sln eol=crlf
-Ridges_3/examples/Ridges_3/VC/Compute_Ridges_Umbilics.vcproj eol=crlf
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#application/octet-stream
 Ridges_3/examples/Ridges_3/skip_vcproj_auto_generation -text
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html
-Robustness/demo/Robustness/robustness.vcproj eol=crlf
 STL_Extension/doc_tex/STL_Extension_ref/Uncertain.tex -text
 STL_Extension/include/CGAL/Default_argument.h -text
 STL_Extension/include/CGAL/array.h -text
@@ -3321,8 +3253,6 @@ SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.pdf -text svneol=unset
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.eps -text svneol=unset#application/postscript
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.gif -text svneol=unset#image/gif
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.pdf -text svneol=unset#application/pdf
-Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/polygon_delaunay_graph_2.vcproj eol=crlf
-Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/segment_delaunay_graph_2.vcproj eol=crlf
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/fig/norway.png -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/fig/svd.png -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.eps -text svneol=unset#application/postscript
@@ -3383,7 +3313,6 @@ Skin_surface_3/test/Skin_surface_3/data/test7.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test8.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test9.cin -text
 Snap_rounding_2/demo/Snap_rounding_2/help/index.html svneol=native#text/html
-Snap_rounding_2/demo/Snap_rounding_2/snap_rounding_2.vcproj eol=crlf
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.gif -text svneol=unset#image/gif
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.pdf -text svneol=unset#application/pdf
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.ps -text svneol=unset#application/postscript
@@ -3396,7 +3325,6 @@ Snap_rounding_2/test/Snap_rounding_2/cgal_test eol=lf
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_base -text
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_with_cmake -text
 Spatial_searching/demo/Spatial_searching/help/index.html svneol=native#text/html
-Spatial_searching/demo/Spatial_searching/spatial_searching.vcproj eol=crlf
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#image/gif
 Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text svneol=unset#application/postscript
 Spatial_searching/doc_tex/Spatial_searching/windowQuery.png -text
@@ -3413,7 +3341,6 @@ Straight_skeleton_2/demo/Straight_skeleton_2/data/large_2.poly -text svneol=unse
 Straight_skeleton_2/demo/Straight_skeleton_2/data/large_3.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/large_4.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/help/index.html svneol=native#text/html
-Straight_skeleton_2/demo/Straight_skeleton_2/straight_skeleton_2.vcproj eol=crlf
 Straight_skeleton_2/dll/Straight_skeleton_2/A.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/dll/Straight_skeleton_2/ex1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/dll/Straight_skeleton_2/input.poly -text svneol=unset#application/octet-stream
@@ -3651,7 +3578,6 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/wiggly_03_cgal.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_types.h -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cmd -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cpp -text
-Stream_lines_2/demo/Stream_lines_2/streamlines.vcproj eol=crlf
 Stream_lines_2/doc_tex/Stream_lines_2/1.eps -text svneol=unset#application/postscript
 Stream_lines_2/doc_tex/Stream_lines_2/1.gif -text svneol=unset#image/gif
 Stream_lines_2/doc_tex/Stream_lines_2/1.jpeg -text svneol=unset#image/jpeg
@@ -3754,13 +3680,6 @@ Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Parameteriz
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Simple_parameterization.cmd eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Square_border_parameterization.cmd eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Taucs_parameterization.cmd eol=lf
-Surface_mesh_parameterization/examples/Surface_mesh_parameterization/VC/Authalic_parameterization_vc80.vcproj eol=crlf
-Surface_mesh_parameterization/examples/Surface_mesh_parameterization/VC/Complete_parameterization_example_vc80.vcproj eol=crlf
-Surface_mesh_parameterization/examples/Surface_mesh_parameterization/VC/Mesh_cutting_parameterization_vc80.vcproj eol=crlf
-Surface_mesh_parameterization/examples/Surface_mesh_parameterization/VC/Simple_parameterization_vc80.vcproj eol=crlf
-Surface_mesh_parameterization/examples/Surface_mesh_parameterization/VC/Square_border_parameterization_vc80.vcproj eol=crlf
-Surface_mesh_parameterization/examples/Surface_mesh_parameterization/VC/Taucs_parameterization_vc80.vcproj eol=crlf
-Surface_mesh_parameterization/examples/Surface_mesh_parameterization/VC/polyhedron_ex_parameterization_vc80.vcproj eol=crlf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/check_64x64.bmp -text svneol=unset#image/bmp
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/holes.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/mannequin-devil.off -text svneol=unset#application/octet-stream
@@ -3775,7 +3694,6 @@ Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test.sh eol
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_all.bat eol=crlf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_all.sh eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_model.sh eol=lf
-Surface_mesh_parameterization/test/Surface_mesh_parameterization/VC/extensive_parameterization_test_vc80.vcproj eol=crlf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/aircraft.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text svneol=unset#application/octet-stream
@@ -3919,15 +3837,12 @@ Surface_mesher/doc_tex/Surface_mesher/sphere-surface.eps -text svneol=unset#appl
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text svneol=unset#image/png
 Surface_mesher/examples/Surface_mesher/data/skull_2.9.inr -text
 Surface_mesher/examples/Surface_mesher/data/triceratops.off -text svneol=unset#application/octet-stream
-Surface_mesher/examples/Surface_mesher/mesh_a_3d_gray_image.vcproj eol=crlf
-Surface_mesher/examples/Surface_mesher/mesh_an_implicit_function.vcproj eol=crlf
 Surface_mesher/examples/Surface_mesher/skip_vcproj_auto_generation -text
 Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text
 Surface_mesher/test/Surface_mesher/combined_spheres.cin -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/PoissonDoc.cpp -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc80.sln eol=crlf
-Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc80.vcproj eol=crlf
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/camel.pwn -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/oni.pwn -text
@@ -3942,9 +3857,6 @@ Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/fig/reconstructionDeta
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/introduction.eps -text svneol=unset#application/postscript
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/introduction.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_3/examples/Surface_reconstruction_3/APSS_reconstruction.cmd eol=lf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/APSS_reconstruction_vc80.vcproj eol=crlf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/normal_estimation_vc80.vcproj eol=crlf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/poisson_reconstruction_vc80.vcproj eol=crlf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/examples/Surface_reconstruction_3/data/camel.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/examples/Surface_reconstruction_3/data/sphere_20k.xyz -text
@@ -3957,11 +3869,6 @@ Surface_reconstruction_3/include/CGAL/Orientable_normal_3.h -text
 Surface_reconstruction_3/include/CGAL/average_spacing_3.h -text
 Surface_reconstruction_3/include/CGAL/smooth_jet_fitting_3.h -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/APSS_reconstruction_test.cmd eol=lf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/APSS_reconstruction_test_vc80.vcproj eol=crlf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/analysis_test_vc80.vcproj -text
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/outliers_removal_test_vc80.vcproj eol=crlf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/poisson_reconstruction_test_vc80.vcproj eol=crlf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/smoothing_test_vc80.vcproj -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cpp -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
@@ -3980,8 +3887,6 @@ Testsuite/test/collect_cgal_testresults_from_cmake -text
 Testsuite/test/makefile2 -text
 Testsuite/test/run_testsuite eol=lf
 Testsuite/test/run_testsuite_with_cmake -text
-Triangulation_2/demo/Triangulation_2/qt3/constrained_delaunay_triangulation_2.vcproj eol=crlf
-Triangulation_2/demo/Triangulation_2/qt3/delaunay_triangulation_2.vcproj eol=crlf
 Triangulation_2/demo/Triangulation_2/qt3/help/cindex.html svneol=native#text/html
 Triangulation_2/demo/Triangulation_2/qt3/help/cinput_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/qt3/help/conflict_zone.gif -text svneol=unset#image/gif
@@ -3993,7 +3898,6 @@ Triangulation_2/demo/Triangulation_2/qt3/help/input_line_layer.gif -text svneol=
 Triangulation_2/demo/Triangulation_2/qt3/help/input_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/qt3/help/movedelete_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/qt3/help/rindex.html svneol=native#text/html
-Triangulation_2/demo/Triangulation_2/qt3/regular_triangulation_2.vcproj eol=crlf
 Triangulation_2/doc_tex/TDS_2/Flip.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/Three.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/flip.ltex -text svneol=unset#application/octet-stream
@@ -4249,7 +4153,6 @@ Visibility_complex_2/examples/Visibility_complex_2/data/ellipse.d -text
 Visibility_complex_2/examples/Visibility_complex_2/data/point.d -text
 Visibility_complex_2/examples/Visibility_complex_2/data/poly.d -text
 Visibility_complex_2/examples/Visibility_complex_2/data/segment.d -text
-Voronoi_diagram_2/demo/Voronoi_diagram_2/voronoi_diagram_2.vcproj eol=crlf
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
 iostream/test/iostream/data/io.cin -text
 wininst/developer_scripts/CGAL.bmp -text svneol=unset#image/bmp
