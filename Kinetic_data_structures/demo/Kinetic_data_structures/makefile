@@ -45,10 +45,10 @@ DEPS_3D =  SoQt_examiner_viewer.moc SoQt_examiner_viewer$(OBJ_EXT)
 #                    target entries
 #---------------------------------------------------------------------#
 2d:          \
-                Delaunay_triangulation_2$(EXE_EXT) \
-                gui_2$(EXE_EXT) \
-                generate_data$(EXE_EXT) \
-                Delaunay_triangulation_stable_subset_2$(EXE_EXT) 
+                KDS_Delaunay_triangulation_2$(EXE_EXT) \
+                KDS_gui_2$(EXE_EXT) \
+                KDS_generate_data$(EXE_EXT) \
+                KDS_Delaunay_triangulation_stable_subset_2$(EXE_EXT) 
 	@echo "Do \"make 3d\" to build the 3d demos."
 	@echo "They require Coin and SoQt be available as #include <Inventor/someheader.h>."
 all: 2d
@@ -63,22 +63,22 @@ activate_coin:
 	rm -rf include/control_coin.h
 	echo "#define CGAL_USE_COIN" > include/control_coin.h
 
-generate_data$(EXE_EXT): generate_data$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)generate_data generate_data$(OBJ_EXT) $(LDFLAGS)
+KDS_generate_data$(EXE_EXT): KDS_generate_data$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)KDS_generate_data KDS_generate_data$(OBJ_EXT) $(LDFLAGS)
 
 
-Delaunay_triangulation_2$(EXE_EXT): Delaunay_triangulation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_2 Delaunay_triangulation_2$(OBJ_EXT) $(QT_LDFLAGS) 
+KDS_Delaunay_triangulation_2$(EXE_EXT): KDS_Delaunay_triangulation_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)KDS_Delaunay_triangulation_2 KDS_Delaunay_triangulation_2$(OBJ_EXT) $(QT_LDFLAGS) 
 
 triangulation_2$(EXE_EXT): triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)triangulation_2 triangulation_2$(OBJ_EXT) $(QT_LDFLAGS) 
 
 
-Delaunay_triangulation_stable_subset_2$(EXE_EXT): Delaunay_triangulation_stable_subset_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_stable_subset_2 Delaunay_triangulation_stable_subset_2$(OBJ_EXT) $(QT_LDFLAGS)
+KDS_Delaunay_triangulation_stable_subset_2$(EXE_EXT): KDS_Delaunay_triangulation_stable_subset_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)KDS_Delaunay_triangulation_stable_subset_2 KDS_Delaunay_triangulation_stable_subset_2$(OBJ_EXT) $(QT_LDFLAGS)
 
-gui_2$(EXE_EXT): gui_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)gui_2 gui_2$(OBJ_EXT) $(QT_LDFLAGS) 
+KDS_gui_2$(EXE_EXT): KDS_gui_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)KDS_gui_2 KDS_gui_2$(OBJ_EXT) $(QT_LDFLAGS) 
 
 
 
@@ -100,12 +100,12 @@ SoQt_examiner_viewer.moc: include/SoQt_examiner_viewer.h
 
 
 clean: \
-                   gui_2.clean \
+                   KDS_gui_2.clean \
                   gui_3.clean \
-                   generate_data.clean \
-                   Delaunay_triangulation_2.clean \
+                   KDS_generate_data.clean \
+                   KDS_Delaunay_triangulation_2.clean \
                    Delaunay_triangulation_3.clean \
-                   Delaunay_triangulation_stable_subset_2.clean \
+                   KDS_Delaunay_triangulation_stable_subset_2.clean \
 		   SoQt_examiner_viewer.clean\
                    regular_triangulation_3.clean
 	rm -f SoQt_examiner_viewer.moc
