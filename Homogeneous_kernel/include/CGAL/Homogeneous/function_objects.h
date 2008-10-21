@@ -50,9 +50,8 @@ namespace HomogeneousKernelFunctors {
   using CartesianKernelFunctors::Compute_approximate_squared_length_3;
   using CartesianKernelFunctors::Compute_area_divided_by_pi_3;
   using CartesianKernelFunctors::Compute_squared_length_divided_by_pi_square_3;
-  using CartesianKernelFunctors::Construct_radical_line_2;
   using CartesianKernelFunctors::Construct_radical_plane_3;
-
+	
   template <typename K>
   class Angle_2
   {
@@ -3152,6 +3151,37 @@ namespace HomogeneousKernelFunctors {
     operator()( const Plane_3& h, const Point_3& p ) const
     { return h.rep().projection(p); }
   };
+
+  template <class K> 
+  class Construct_radical_line_2
+  {
+    typedef typename K::Line_2            Line_2;
+    typedef typename K::Circle_2          Circle_2;
+    typedef typename K::RT                RT;
+    typedef typename K::FT                FT;
+
+  public:
+
+    typedef Line_2 result_type;
+
+    result_type 
+    operator() (const Circle_2 & c1, const Circle_2 & c2) const
+	  {
+      // Concentric Circles don't have radical line
+      CGAL_kernel_precondition (c1.center() != c2.center());
+      const FT a = 2*(c2.center().x() - c1.center().x());
+      const FT b = 2*(c2.center().y() - c1.center().y());
+      const FT c = CGAL::square(c1.center().x()) + 
+        CGAL::square(c1.center().y()) - c1.squared_radius() -
+        CGAL::square(c2.center().x()) -
+        CGAL::square(c2.center().y()) + c2.squared_radius();
+			const RT aa = a.numerator() * b.denominator() * c.denominator();
+			const RT bb = a.denominator() * b.numerator() * c.denominator();
+			const RT cc = a.denominator() * b.denominator() * c.numerator();
+      return Line_2(aa, bb, cc);
+    }
+  };
+
 
   template <typename K>
   class Construct_scaled_vector_2
