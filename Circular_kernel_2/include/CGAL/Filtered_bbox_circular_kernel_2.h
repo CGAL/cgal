@@ -83,14 +83,13 @@ struct Filtered_bbox_circular_kernel_type_equality_wrapper
 template < class CircularKernel >
 struct Filtered_bbox_circular_kernel_2
   : public Filtered_bbox_circular_kernel_type_equality_wrapper
-<
-	CGALi::Filtered_bbox_circular_kernel_base_ref_count
-  < Filtered_bbox_circular_kernel_2< CircularKernel >,
-  typename CircularKernel:: template 
-	  Base<Filtered_bbox_circular_kernel_2< CircularKernel > >::Type
-	>,
-	Filtered_bbox_circular_kernel_2< CircularKernel >
->
+     < CGALi::Filtered_bbox_circular_kernel_base_ref_count
+         < Filtered_bbox_circular_kernel_2< CircularKernel >,
+           typename CircularKernel:: template 
+           Base<Filtered_bbox_circular_kernel_2< CircularKernel > >::Type
+	 >,
+       Filtered_bbox_circular_kernel_2< CircularKernel >
+     >
 {
 	typedef CircularKernel                                         Circular_kernel;
   typedef Filtered_bbox_circular_kernel_2< CircularKernel >      Self;
