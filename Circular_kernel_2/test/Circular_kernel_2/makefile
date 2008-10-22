@@ -21,6 +21,10 @@ CXXFLAGS = \
            -I../../include \
            -Iinclude\
            -I../../../Kernel_23/test/Kernel_23/include \
+           -I../Kernel_23/include \
+           -I../Cartesian_kernel/include \
+           -I../Homogeneous_kernel/include \
+           -I../Intersections_2/include \
            -g\
 	   $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
