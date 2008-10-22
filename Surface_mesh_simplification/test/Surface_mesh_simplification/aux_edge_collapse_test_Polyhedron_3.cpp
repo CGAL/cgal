@@ -23,6 +23,7 @@
 #include <sstream>
 #include <string>
 #include <fstream>
+#include <exception>
 
 #include <boost/format.hpp>
 
@@ -224,7 +225,7 @@ bool Test ( string aName )
       cerr << "Unable to open test file " << aName << endl ;
     }              
   }
-  catch ( exception const& x ) 
+  catch ( std::exception const& x ) 
   {
     string what(x.what());
     if ( what.length() > 0 )
