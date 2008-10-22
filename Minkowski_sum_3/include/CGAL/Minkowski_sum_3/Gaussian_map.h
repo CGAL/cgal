@@ -1007,73 +1007,77 @@ class Gaussian_map :
   }
 
 
-  void simplify() {
-    CGAL_NEF_TRACEN("simplify");
+  void simplify() 
+  {
+	  CGAL_NEF_TRACEN("simplify");
     
-    typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(NULL);
-    CGAL::Union_find< SFace_handle> UF;
+	  typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
+	  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(NULL);
+	  CGAL::Union_find< SFace_handle> UF;
     
-    SFace_iterator f;
-    CGAL_forall_sfaces(f,*this) {
-      Pitem[f] = UF.make_set(f);
-      clear_face_cycle_entries(f);
-    }
+	  SFace_iterator f;
+	  CGAL_forall_sfaces(f,*this) {
+		  Pitem[f] = UF.make_set(f);
+		  clear_face_cycle_entries(f);
+	  }
     
-    SHalfedge_iterator e;
-    for(e = this->shalfedges_begin(); 
-	e != this->shalfedges_end(); 
-	++e) { 
-      
-      if (e->is_twin() ) continue;
-      CGAL_NEF_TRACEN("can simplify ? " << PH(e));
-      CGAL_NEF_TRACEN(e->mark() << " " << e->incident_sface()->mark() 
-		      << " " << e->twin()->incident_sface()->mark());
-      if (e->incident_sface()->mark() == 
-	  e->twin()->incident_sface()->mark()) {
-	CGAL_NEF_TRACEN("deleting "<<PH(e));
-	if ( !UF.same_set(Pitem[e->incident_sface()],
-			  Pitem[e->twin()->incident_sface()]) ) {
+	  SHalfedge_iterator e, en;
+	  for(e = this->shalfedges_begin(); e != this->shalfedges_end(); e = en) 
+	  { 
+		  en = e; ++en; if ( en==e->twin() ) ++en;
+		  CGAL_NEF_TRACEN("can simplify ? " << PH(e));
+		  CGAL_NEF_TRACEN(e->mark() << " " << e->incident_sface()->mark() 
+						  << " " << e->twin()->incident_sface()->mark());
+		  if (e->incident_sface()->mark() == 
+			  e->twin()->incident_sface()->mark()) {
+			  CGAL_NEF_TRACEN("deleting "<<PH(e));
+			  if ( !UF.same_set(Pitem[e->incident_sface()],
+								Pitem[e->twin()->incident_sface()]) ) {
 	  
-	  UF.unify_sets( Pitem[e->incident_sface()],
-			 Pitem[e->twin()->incident_sface()] );
-	  CGAL_NEF_TRACEN("unioning disjoint faces");
-	}
+				  UF.unify_sets( Pitem[e->incident_sface()],
+								 Pitem[e->twin()->incident_sface()] );
+				  CGAL_NEF_TRACEN("unioning disjoint faces");
+			  }
 	
-	CGAL_NEF_TRACEN("is_closed_at_source " << is_closed_at_source(e) << 
-			" " << is_closed_at_source(e->twin()));
-	delete_edge_pair(e);
-      }
-    }
+			  CGAL_NEF_TRACEN("is_closed_at_source " << is_closed_at_source(e) << 
+							  " " << is_closed_at_source(e->twin()));
+			  delete_edge_pair(e);
+		  }
+	  }
     
-    CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
-    for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
-      if ( linked[e] ) continue;
-      SHalfedge_around_sface_circulator hfc(e),hend(hfc);
-      SFace_handle f = *(UF.find( Pitem[e->incident_sface()]));
-      CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
-      store_sm_boundary_object(e,f);
-    }
+	  CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
+	  for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
+		  if ( linked[e] ) continue;
+		  SHalfedge_around_sface_circulator hfc(e),hend(hfc);
+		  SFace_handle f = *(UF.find( Pitem[e->incident_sface()]));
+		  CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
+		  store_sm_boundary_object(e,f);
+	  }
     
-    SVertex_iterator v;
-    for(v = this->svertices_begin(); v != this->svertices_end(); ++v) {
-      if ( is_isolated(v) ) {
-	delete_vertex_only(v);
-	continue;
-      }
-      if ( has_outdeg_two(v)) {
-	merge_edge_pairs_at_target(first_out_edge(v)->sprev()); 
-      } 
-    }
+	  SVertex_iterator v,vn;
+	  for(v = this->svertices_begin(); v != this->svertices_end(); v=vn) 
+	  {
+		  vn=v; ++vn;
+		  if ( is_isolated(v) ) {
+			  delete_vertex_only(v);
+			  continue;
+		  }
+		  if ( has_outdeg_two(v)) {
+			  merge_edge_pairs_at_target(first_out_edge(v)->sprev()); 
+		  } 
+	  }
     
-    for (f = this->sfaces_begin(); f != this->sfaces_end(); ++f) { 
-      Union_find_handle pit = Pitem[f];
-      if ( UF.find(pit) != pit ) {
-	CGAL_NEF_TRACEN("delete face " << &*f);
-	delete_face_only(f);
-      }
-    }
-  }    
+	  SFace_iterator fn;
+	  for (f = fn = this->sfaces_begin(); f != this->sfaces_end(); f=fn) 
+	  { 
+		  ++fn;
+		  Union_find_handle pit = Pitem[f];
+		  if ( UF.find(pit) != pit ) {
+			  CGAL_NEF_TRACEN("delete face " << &*f);
+			  delete_face_only(f);
+		  }
+	  }
+  }      
   
   void minkowski_sum(const Gaussian_map& G1, const Gaussian_map& G2) {
     SM_overlayer O(this->sphere_map());
