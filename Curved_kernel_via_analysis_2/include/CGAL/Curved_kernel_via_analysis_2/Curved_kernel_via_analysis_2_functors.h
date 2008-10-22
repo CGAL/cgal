@@ -759,16 +759,16 @@ public:
       
       typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2 
                                                       Algebraic_curve_kernel_2;
-      typedef typename Algebraic_curve_kernel_2::Boundary       Boundary;
+      typedef typename Algebraic_curve_kernel_2::Boundary Boundary;
       typedef typename Algebraic_curve_kernel_2::X_coordinate_1 X_coordinate_1;
       
-      typedef CGAL::Polynomial<Boundary>                        Poly_rat_1;
-      typedef CGAL::Polynomial< Poly_rat_1 >                    Poly_rat_2;
+      typedef CGAL::Polynomial< Boundary > Poly_rat_1;
+      typedef CGAL::Polynomial< Poly_rat_1 > Poly_rat_2;
       
-      typedef CGAL::Polynomial_traits_d< Poly_rat_1 >                  PT_rat_1;
-      typedef CGAL::Polynomial_traits_d< Poly_rat_2 >                  PT_rat_2;
+      typedef CGAL::Polynomial_traits_d< Poly_rat_1 > PT_rat_1;
+      typedef CGAL::Polynomial_traits_d< Poly_rat_2 > PT_rat_2;
       
-      typedef CGAL::Fraction_traits< Poly_rat_2 >                      FT_2;
+      typedef CGAL::Fraction_traits< Poly_rat_2 > FT_2;
 
       if (!arc.is_vertical())
       {
