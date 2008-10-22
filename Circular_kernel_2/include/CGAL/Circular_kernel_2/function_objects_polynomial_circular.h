@@ -327,15 +327,17 @@ namespace CircularFunctors {
    };
 
   template < class CK >
-  class Compare_y_at_x_2
+  class Compare_y_at_x_2 : public CK::Linear_kernel::Compare_y_at_x_2
   {
     typedef typename CK::Circular_arc_2          Circular_arc_2;
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     typedef typename CK::Line_arc_2              Line_arc_2;
 
   public:
-    typedef CGAL::Comparison_result result_type;
-    
+    typedef typename CK::Linear_kernel::Compare_y_at_x_2::result_type   result_type;
+
+    using CK::Linear_kernel::Compare_y_at_x_2::operator();    
+
     result_type
     operator() (const Circular_arc_point_2 &p,
                 const Circular_arc_2 &A1) const
