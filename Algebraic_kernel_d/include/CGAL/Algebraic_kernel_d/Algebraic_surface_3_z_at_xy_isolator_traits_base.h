@@ -35,6 +35,8 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/numeric/interval.hpp>
+#include <boost/iterator/counting_iterator.hpp>
+
 
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_in_z_for_xy_traits.h>
