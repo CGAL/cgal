@@ -211,19 +211,22 @@ public:
      * \param arc Can be used to query meta data
      * \return The constructed point
      */
-    Point_2 operator()(const X_coordinate_1& x,
-            const Curve_analysis_2& c, int arcno, const Arc_2& arc) {
-
+    Point_2 operator()(
+            const X_coordinate_1& x,
+            const Curve_analysis_2& c, int arcno, const Arc_2& arc
+    ) {
+        
         //CGAL::set_pretty_mode(std::cerr);
         CERR("Construct_pt_on_arc: " << CGAL::to_double(x) << ", " << arcno <<
              ", " << c.id() <<  "\narc = " << arc << "\n");
 
-        CGAL_assertion(c.id() == arc.curve().id());
-        CGAL_assertion(arcno == arc.arcno(x));
+        //CGAL_assertion(c.id() == arc.curve().id());
+        //CGAL_assertion(arcno == arc.arcno(x));
 
         Point_2 pt = Base::_ckva()->construct_point_2_object()(x, c, arcno);
         
-        // here we can modify the point, if we want to
+        // here we can modify the point wrt "data stored in arc", 
+        // if we want to
         return pt;
     }
 };
