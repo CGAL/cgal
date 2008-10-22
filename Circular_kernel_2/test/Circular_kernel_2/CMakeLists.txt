@@ -1,0 +1,34 @@
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
+
+
+project( Circular_kernel_2_example )
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
+
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+ 
+find_package(CGAL QUIET COMPONENTS Core )
+
+if ( CGAL_FOUND )
+
+  include( ${CGAL_USE_FILE} )
+
+  include( CreateSingleSourceCGALProgram )
+
+include_directories (BEFORE include)
+include_directories (BEFORE ../../include)
+include_directories (BEFORE ../../../Kernel_23/test/Kernel_23/include)
+include_directories (BEFORE ../Kernel_23/include)
+
+create_single_source_cgal_program( "test_Circular_kernel.cpp" )
+create_single_source_cgal_program( "test_Exact_circular_kernel.cpp" )
+create_single_source_cgal_program( "test_Filtered_bbox_circular_kernel.cpp" )
+create_single_source_cgal_program( "test_Line_arc.cpp" )
+
+else()
+  
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+  
+endif()
+

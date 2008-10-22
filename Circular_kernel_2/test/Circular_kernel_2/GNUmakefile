@@ -20,6 +20,8 @@ CXXFLAGS = \
            -I../../../Intersections_2/include \
            -I../../include \
            -Iinclude\
+           -I../../../Kernel_23/test/Kernel_23/include \
+           -I../Kernel_23/include \
            -g\
 	   $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
@@ -67,9 +69,3 @@ clean: \
 		   test_Filtered_bbox_circular_kernel.clean\
                    test_Line_arc.clean 
 
-#---------------------------------------------------------------------#
-#                    suffix rules
-#---------------------------------------------------------------------#
-
-.cpp$(OBJ_EXT):
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
