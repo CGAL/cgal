@@ -1058,74 +1058,7 @@ int main() {
     // Set wrong rounding mode to test modular arithmetic 
     CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
 
-    CGAL::set_pretty_mode(std::cout);
-// The MODULAR_TRAITS specializations for Polynomial
-// =========================================================================
-#ifdef CGAL_USE_LEDA    
-/*    {
-        typedef CGAL::Polynomial<leda::integer> TESTT;
-        typedef CGAL::Modular MOD;
-        MOD::set_current_prime(7);
-        typedef CGAL::Modular_traits<TESTT> MOD_traits;
-        typedef MOD_traits::Residue_type MOD_NT;
-        MOD_traits::Modular_image MOD_image;
-    
-        //definition of MOD::NT
-        assert((::boost::is_same<TESTT,
-                  MOD_traits::NT>::value));
-        // Is_modularizable
-        assert( 
-            (::boost::is_same<::CGAL::Tag_true,
-             MOD_traits::Is_modularizable>::value)
-            );
-
-        assert(MOD_image(TESTT(21)) == MOD_NT(0));   
-        assert(MOD_image(TESTT(22)) == MOD_NT(1));
-        assert(MOD_image(TESTT(777777722)) == MOD_NT(1));
-        
-        TESTT p(12,2,4,21),q(5,2,4);
-        assert(MOD_image(p)==MOD_image(q));
-        p=TESTT(7,21,14,-28);
-        assert(MOD_image(p)==MOD_NT(0));
-    }*/
-
-    // NT_Traits<POLY>::to_Interval
-/*    {  
-        typedef leda_integer NT;
-        typedef CGAL::Interval Interval;
-        typedef CGAL::Polynomial<NT> POLY;
-        typedef CGAL::Polynomial<Interval> IPOLY;
-        typedef CGAL::Real_embeddable_traits<POLY>::To_interval::result_type RESULTTYPE;
-        CGAL::Real_embeddable_traits<POLY>::To_interval to_Interval;
-        
-        BOOST_STATIC_ASSERT((::boost::is_same<IPOLY,RESULTTYPE>::value));
-        POLY p(NT(6), NT(-5), NT(1));
-        IPOLY ip=to_Interval(p);
-        assert(CGAL::in(12.0, ip.evaluate(Interval(-1))));
-        assert(CGAL::in(6.0 , ip.evaluate(Interval(0))));
-        assert(CGAL::in(2.0 , ip.evaluate(Interval(1))));
-        assert(CGAL::in(0.0 , ip.evaluate(Interval(2))));
-        assert(CGAL::in(0.0 , ip.evaluate(Interval(3))));
-    }
-    {   //POLY.evaluate(Interval)
-        typedef leda::integer NT;
-        typedef CGAL::Polynomial<NT> POLY;
-        typedef CGAL::Interval Interval;
-       
-        POLY p(NT(6), NT(-5), NT(1));
-        assert(CGAL::in(12.0, p.evaluate(Interval(-1))));
-        assert(CGAL::in(6.0 , p.evaluate(Interval(0))));
-        assert(CGAL::in(2.0 , p.evaluate(Interval(1))));
-        assert(CGAL::in(0.0 , p.evaluate(Interval(2))));
-        assert(CGAL::in(0.0 , p.evaluate(Interval(3))));
-        assert(CGAL::in(12.0, p.evaluate_absolute(Interval(1))));
-        assert(CGAL::in(12.0, p.evaluate_absolute(Interval(-1))));
-        assert(CGAL::in(6.0 , p.evaluate_absolute(Interval(0))));        
-    }*/
-    // coefficients_to
-//    test_coefficients_to<leda::rational>();
-#endif // CGAL_USE_LEDA        
- 
+    CGAL::set_pretty_mode(std::cout);     
 
 #ifdef CGAL_USE_LEDA
     {        
