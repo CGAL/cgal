@@ -126,8 +126,7 @@ public:
             const typename Point_2::X_coordinate_1& x, 
             const typename Point_2::Curve_analysis_2& c, int arcno,
             const Arc_2& arc) {
-        CGAL_assertion(c.id() == arc.curve().id());
-        CGAL_assertion(arcno == arc.arcno(x));
+
         typename Curved_kernel_via_analysis_2l::Construct_projected_point_2 
             construct_projected_point = 
             Curved_kernel_via_analysis_2l::instance().
