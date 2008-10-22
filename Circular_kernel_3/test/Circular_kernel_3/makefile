@@ -52,7 +52,8 @@ all:            \
                 test_Spherical_kernel$(EXE_EXT) \
 		test_Exact_spherical_kernel$(EXE_EXT)\
 		test_Lazy_Spherical_kernel$(EXE_EXT)\
-		test_Spherical_kernel_basics$(EXE_EXT)
+		test_Spherical_kernel_basics$(EXE_EXT)\
+		test_Lazy_spherical_kernel_basics$(EXE_EXT)
 				
 test_Spherical_kernel$(EXE_EXT): test_Spherical_kernel$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Spherical_kernel test_Spherical_kernel$(OBJ_EXT) $(LDFLAGS)
@@ -66,12 +67,16 @@ test_Lazy_Spherical_kernel$(EXE_EXT): test_Lazy_Spherical_kernel$(OBJ_EXT)
 test_Spherical_kernel_basics$(EXE_EXT): test_Spherical_kernel_basics$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Spherical_kernel_basics test_Spherical_kernel_basics$(OBJ_EXT) $(LDFLAGS)
 
+test_Lazy_spherical_kernel_basics$(EXE_EXT): test_Lazy_spherical_kernel_basics$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Lazy_spherical_kernel_basics test_Lazy_spherical_kernel_basics$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
        test_Spherical_kernel.clean \
        test_Spherical_kernel_basics.clean \
 		   test_Exact_spherical_kernel.clean \
-		   test_Lazy_Spherical_kernel.clean
-
+		   test_Lazy_Spherical_kernel.clean \
+		   test_Lazy_spherical_kernel_basics.clean
+		
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#

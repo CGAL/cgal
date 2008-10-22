@@ -1304,6 +1304,7 @@ Circular_kernel_3/test/Circular_kernel_3/CMakeLists.txt -text
 Circular_kernel_3/test/Circular_kernel_3/GNUmakefile -text
 Circular_kernel_3/test/Circular_kernel_3/makefile -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_Spherical_kernel.cpp -text
+Circular_kernel_3/test/Circular_kernel_3/test_Lazy_spherical_kernel_basics.cpp -text
 Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_basics.cpp -text
 Convex_decomposition_3/demo/Convex_decomposition_3/star.nef3 -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/PkgDescription.tex -text
