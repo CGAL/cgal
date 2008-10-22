@@ -1713,17 +1713,6 @@ void test_AT(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 
-
-  std::cerr << std::endl;
-  std::cerr << 
-    "Test for coefficient type CGAL::Residue" 
-            << std::endl;
-  std::cerr << 
-    "----------------------------------------------------------------------"
-            << std::endl;    
-  test_multiple_dimensions< CGAL::Residue >();   
-
-
   typedef typename AT::Integer Integer;
   typedef typename AT::Rational Rational; 
 
@@ -1763,6 +1752,17 @@ void test_AT(){
   test_multiple_dimensions< CGAL::Sqrt_extension< Rational, Rational > >();   
 
   test_rebind<AT>();
+
+  std::cerr << std::endl;
+  std::cerr << 
+    "Test for coefficient type CGAL::Residue" 
+            << std::endl;
+  std::cerr << 
+    "----------------------------------------------------------------------"
+            << std::endl;    
+  // Enforce IEEE double precision before using modular arithmetic
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  test_multiple_dimensions< CGAL::Residue >();   
 }    
   
 

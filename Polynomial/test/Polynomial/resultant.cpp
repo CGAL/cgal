@@ -95,15 +95,7 @@ int main(){
   test_resultant<Polynomial_1>();
   test_resultant<Polynomial_2>();
   test_resultant<Polynomial_3>();
-   
-  typedef CGAL::Polynomial<CGAL::Residue>  MPolynomial_1;
-  typedef CGAL::Polynomial<MPolynomial_1>  MPolynomial_2;
-  typedef CGAL::Polynomial<MPolynomial_2>  MPolynomial_3;
-
-  test_resultant<MPolynomial_1>();
-  test_resultant<MPolynomial_2>();
-  test_resultant<MPolynomial_3>();
-
+ 
   typedef CGAL::Polynomial<AK::Rational>   RPolynomial_1;
   typedef CGAL::Polynomial<RPolynomial_1>  RPolynomial_2;
   typedef CGAL::Polynomial<RPolynomial_2>  RPolynomial_3;
@@ -125,8 +117,20 @@ int main(){
   typedef CGAL::Sqrt_extension<EXT, AK::Integer> EXT2;
   typedef CGAL::Polynomial<EXT2>            E2Polynomial_1;
   test_resultant<E2Polynomial_1>();
+
+
+  // Enforce IEEE double precision before using modular arithmetic
+  CGAL::FPU_set_cw(CGAL_FE_TONEAREST);
+
+  typedef CGAL::Polynomial<CGAL::Residue>  MPolynomial_1;
+  typedef CGAL::Polynomial<MPolynomial_1>  MPolynomial_2;
+  typedef CGAL::Polynomial<MPolynomial_2>  MPolynomial_3;
+
+  test_resultant<MPolynomial_1>();
+  test_resultant<MPolynomial_2>();
+  test_resultant<MPolynomial_3>();
   
-  std::cout <<" TOTAL TIME: " << timer.time();
+  std::cout <<" TOTAL TIME: " << timer.time()<< std::endl;
 }
 
  

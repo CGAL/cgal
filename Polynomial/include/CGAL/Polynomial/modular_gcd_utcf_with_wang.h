@@ -75,6 +75,10 @@ template <class NT>
 Polynomial<NT> modular_gcd_utcf_with_wang(
         const Polynomial<NT>& FF1_ ,
         const Polynomial<NT>& FF2_ ){
+
+  // Enforce IEEE double precision before using modular arithmetic
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+
 //    std::cout << "start modular_gcd_utcf_with_wang " << std::endl;
 
 #ifdef CGAL_MODULAR_GCD_TIMER

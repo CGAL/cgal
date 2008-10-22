@@ -75,7 +75,10 @@ void test_modular_traits(){
 }
 
 int main()
-{   
+{ 
+  // Enforce IEEE double precision before using modular arithmetic
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  
     test_modular_traits<int>();
    
 #ifdef CGAL_USE_LEDA

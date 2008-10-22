@@ -75,7 +75,10 @@ struct Get_max_coefficient<CGAL::Polynomial<NT> >{
 
 template<class NT>
 void test_CR_for(const NT& f){
-
+  
+  // Enforce IEEE double precision before using modular arithmetic
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  
     typedef CGAL::Modular_traits<NT> MT;
     typedef typename CGAL::Modular_traits<NT>::Residue_type MNT;
     typename MT::Modular_image modular_image;

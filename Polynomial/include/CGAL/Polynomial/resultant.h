@@ -64,6 +64,9 @@ CGAL_BEGIN_NAMESPACE
 // CGAL::CGALi::resultant_interpolate applies for multivairate polynomials
 // CGAL::CGALi::resultant_univariate selects the proper algorithm for IC 
 
+// CGAL_RESULTANT_USE_DECOMPOSE ( default = 1 )
+// CGAL_RESULTANT_USE_MODULAR_ARITHMETIC (default = 0 ) 
+
 namespace CGALi{
 
 template <class Coeff> 
@@ -92,7 +95,8 @@ inline Coeff resultant_(
 template <class Coeff> 
 inline Coeff resultant_univariate( 
     const CGAL::Polynomial<Coeff>& A, 
-    const CGAL::Polynomial<Coeff>& B, CGAL::Integral_domain_without_division_tag){ 
+    const CGAL::Polynomial<Coeff>& B, 
+    CGAL::Integral_domain_without_division_tag){ 
   return hybrid_bezout_subresultant(A,B,0);
 }
 template <class Coeff> 
@@ -238,6 +242,10 @@ Coeff resultant_modularize(
         const CGAL::Polynomial<Coeff>& G, 
         CGAL::Tag_true){
     
+  // Enforce IEEE double precision before using modular arithmetic
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  
+
     typedef Polynomial_traits_d<CGAL::Polynomial<Coeff> > PT;
     typedef typename PT::Polynomial_d Polynomial;
     typedef typename PT::Innermost_coefficient_type IC;

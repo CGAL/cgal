@@ -53,8 +53,6 @@ void test_interpolator(){
 
 int main(){
 
-    // Set wrong rounding mode to test modular arithmetic 
-    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
 
     CGAL::set_pretty_mode(std::cout);
 
@@ -63,11 +61,7 @@ int main(){
     typedef CGAL::Polynomial<Integer>      Polynomial_1;
     typedef CGAL::Polynomial<Polynomial_1> Polynomial_2;
     typedef CGAL::Polynomial<Polynomial_2> Polynomial_3;
-    
-
-    typedef CGAL::Polynomial<CGAL::Residue>  MPolynomial_1;
-    typedef CGAL::Polynomial<MPolynomial_1>  MPolynomial_2;
-    typedef CGAL::Polynomial<MPolynomial_2>  MPolynomial_3;
+     
 
     typedef CGAL::Sqrt_extension<Integer,Integer> EXT;
     typedef CGAL::Polynomial<EXT>            EPolynomial_1;
@@ -77,11 +71,18 @@ int main(){
     test_interpolator<Polynomial_1>();
     test_interpolator<Polynomial_2>();
     test_interpolator<Polynomial_3>();
-    test_interpolator<MPolynomial_1>();
-    test_interpolator<MPolynomial_2>();
-    test_interpolator<MPolynomial_3>();
     test_interpolator<EPolynomial_1>();
     test_interpolator<EPolynomial_2>();
     test_interpolator<EPolynomial_3>();
+    
+    // Enforce IEEE double precision for modular arithmetic
+    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+    
+    typedef CGAL::Polynomial<CGAL::Residue>  MPolynomial_1;
+    typedef CGAL::Polynomial<MPolynomial_1>  MPolynomial_2;
+    typedef CGAL::Polynomial<MPolynomial_2>  MPolynomial_3;
+    test_interpolator<MPolynomial_1>();
+    test_interpolator<MPolynomial_2>();
+    test_interpolator<MPolynomial_3>();
 }
 
