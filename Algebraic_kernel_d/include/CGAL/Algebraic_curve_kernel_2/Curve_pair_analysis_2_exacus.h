@@ -105,6 +105,12 @@ public:
     //! type of a curve point
     typedef typename Algebraic_curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
 
+    //! required by Status_line_CPA_1
+    typedef X_coordinate_1 Algebraic_real_1;
+
+    //! required by Status_line_CPA_1
+    typedef Xy_coordinate_2 Algebraic_real_2;
+
     //! type of 1-curve analysis
     typedef typename Algebraic_curve_kernel_2::Curve_analysis_2 
             Curve_analysis_2;

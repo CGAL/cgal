@@ -112,6 +112,12 @@ public:
     //! type of a curve point
     typedef typename Algebraic_curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
 
+    //! required by Status_line_CA_1
+    typedef X_coordinate_1 Algebraic_real_1;
+
+    //! required by Status_line_CA_1
+    typedef Xy_coordinate_2 Algebraic_real_2;
+
     //! supporting polynomial type
     typedef typename Algebraic_curve_kernel_2::Polynomial_2
         Polynomial_2;
@@ -242,7 +248,7 @@ public:
 #ifndef CGAL_ACK_2_USE_STATUS_LINES
         Event1_info info 
             = _internal_curve().event_info_at_x
-                (_internal_curve().boundary_value_in_interval(i));
+            (_internal_curve().boundary_value_in_interval(i));
         sline.set_isolator(info.refinement());
 #endif
         return sline;
