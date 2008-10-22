@@ -40,6 +40,7 @@ class Compare_x_2 : public BK::Circular_kernel::Compare_x_2
   {
     typedef typename BK::Circular_kernel                         CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
+    typedef typename BK::Point_2                                 Point_2;
 
    public:
 
@@ -47,6 +48,12 @@ class Compare_x_2 : public BK::Circular_kernel::Compare_x_2
     using CK::Compare_x_2::operator();
 
    public:
+
+    result_type
+    operator()( const Point_2 &a, const Point_2 &b) const
+    {
+       return CK().compare_x_2_object()(a,b);
+    }
 	
     result_type
     operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
@@ -70,6 +77,7 @@ class Compare_y_2 : public BK::Circular_kernel::Compare_y_2
   {
     typedef typename BK::Circular_kernel                         CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
+    typedef typename BK::Point_2                                 Point_2;
 
    public:
 
@@ -77,6 +85,12 @@ class Compare_y_2 : public BK::Circular_kernel::Compare_y_2
     using CK::Compare_y_2::operator();
 
    public:
+
+    result_type
+    operator()( const Point_2 &a, const Point_2 &b) const
+    {
+       return CK().compare_y_2_object()(a,b);
+    }
 
     result_type
     operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
@@ -100,6 +114,7 @@ class Compare_xy_2 : public BK::Circular_kernel::Compare_xy_2
   {
     typedef typename BK::Circular_kernel                         CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
+    typedef typename BK::Point_2                                 Point_2;
 
    public:
 
@@ -107,6 +122,12 @@ class Compare_xy_2 : public BK::Circular_kernel::Compare_xy_2
     using CK::Compare_xy_2::operator();
 
    public:
+	
+    result_type
+    operator()( const Point_2 &a, const Point_2 &b) const
+    {
+       return CK().compare_xy_2_object()(a,b);
+    }
 
     result_type
     operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
@@ -530,16 +551,18 @@ class Has_on_2 : public BK::Circular_kernel::Has_on_2
 
 
 template <class BK>
-class Equal_2
+class Equal_2 : public BK::Circular_kernel::Equal_2
   {
     typedef typename BK::Circular_kernel                                  CK;
     typedef typename BK::Circular_arc_2                                   Circular_arc_2;
+    typedef typename BK::Point_2                                          Point_2;
     typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
     typedef typename BK::Line_arc_2                                       Line_arc_2;
 
   public:
 
-    typedef bool result_type; 
+    typedef typename CK::Equal_2::result_type result_type; 
+    using CK::Equal_2::operator();
 
   private:
 
@@ -568,7 +591,7 @@ class Equal_2
 
   public:
 
-    result_type
+		result_type
     operator()( const Circular_arc_point_2 &a ,
                 const Circular_arc_point_2 &b) const
     { 
@@ -578,6 +601,14 @@ class Equal_2
       if(bb1.ymin() > bb2.ymax()) return false;
       if(bb1.ymax() < bb2.ymin()) return false;
       return CK().equal_2_object()( a.point(),b.point() );
+    }
+
+    // redefine to solve ambiguous call error
+    result_type
+    operator()( const Point_2 &a ,
+                const Point_2 &b) const
+    { 
+      return CK().equal_2_object()( a, b);
     }
 
     result_type
@@ -1177,12 +1208,19 @@ class Construct_bbox_2 : public BK::Circular_kernel::Construct_bbox_2
 	  typedef typename BK::Circular_kernel           CK;
     typedef typename BK::Circular_arc_2            Circular_arc_2;
     typedef typename BK::Circular_arc_point_2      Circular_arc_point_2;
+    typedef typename BK::Point_2                   Point_2;
     typedef typename BK::Line_arc_2                Line_arc_2;
 
   public:
 
 	  typedef typename CK::Construct_bbox_2::result_type result_type; 
     using CK::Construct_bbox_2::operator();
+
+    // redefine to avoid ambiguity
+    result_type operator() (const Point_2 & a) const
+    {
+      return CK().construct_bbox_2_object()(a);
+    }
 
     result_type operator() (const Circular_arc_point_2 & a) const
     {

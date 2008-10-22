@@ -109,10 +109,10 @@ namespace CircularFunctors {
   typename CK::Linear_kernel::Bounded_side
   bounded_side(const typename CK::Circle_2 &c,
                const typename CK::Circular_arc_point_2 &p) {
-    typedef typename CK::Algebraic_kernel AK;
+   typedef typename CK::Algebraic_kernel AK;
     typedef typename CK::Polynomial_for_circles_2_2 Equation;
     Equation equation = get_equation<CK>(c);
-    Sign sign = AK().sign_at_object()(equation,p.rep().coordinates());
+    Sign sign = AK().sign_at_object()(equation,p.coordinates());
     if(sign == NEGATIVE) return ON_BOUNDED_SIDE;
     else if(sign == POSITIVE) return ON_UNBOUNDED_SIDE;
     else return ON_BOUNDARY;

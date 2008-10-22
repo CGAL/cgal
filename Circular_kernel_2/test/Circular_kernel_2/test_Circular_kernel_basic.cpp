@@ -47,7 +47,7 @@
 int
 main()
 {
-	typedef CGAL::Quotient<CGAL::Quotient<Precise_integer> >     NT1;
+	typedef CGAL::Quotient<Precise_integer >                     NT1;
 	typedef double                                               NT2;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
@@ -64,35 +64,17 @@ main()
   std::cout << std::endl;
   _test_2( Cls() );
 
-  std::cout << "Testing 3d with Cartesian<Quotient<Precise_integer>> :";
-  std::cout << std::endl;
-  _test_3( Cls() );
-  _test_cls_circle_3( Cls() );
-
   std::cout << "Testing new 2d with Cartesian<Quotient<Precise_integer>> :";
   std::cout << std::endl;
   test_new_2( Cls() );
   _test_cls_new_2( Cls() );
 
-  std::cout << "Testing new 3d with Cartesian<Quotient<Precise_integer>> :";
-  std::cout << std::endl;
-  test_new_3( Cls() );
-
   std::cout << "Testing new parts with Cartesian<Quotient<Precise_integer>> :";
   std::cout << std::endl;
   _test_orientation_and_bounded_side( Cls() );
-  _test_fct_points_implicit_sphere( Cls() );
   _test_fct_constructions_2( Cls() );
-  _test_fct_constructions_3( Cls() );
-  _test_fct_point_3( Cls() );
-  _test_fct_coplanar_3( Cls() );
-  _test_cls_iso_cuboid_3( Cls() );
   _test_angle( Cls() );
 
-  std::cout << "Testing 3d-2d with Cartesian<Quotient<Precise_integer> > :";
-  std::cout << std::endl;
-  _test_mf_plane_3_to_2d( Cls() );
-  
   std::cout << "All tests done" << std::endl;
   return 0;
 }
