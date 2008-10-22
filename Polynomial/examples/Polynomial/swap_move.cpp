@@ -21,12 +21,16 @@ int main(){
   PT_3::Swap swap; 
   PT_3::Move move; 
 
-  std::cout << "x (x_0) and z (x_2) swapped: "<< swap(F,0,2) <<std::endl;  
-  std::cout << "x (x_0) and y (x_1) swapped: "<< swap(F,0,1) <<std::endl;
-  std::cout << std::endl;
-  std::cout << "x (x_0) moved to outermost position (x_2): "<< move(F,0,2) 
+  std::cout << "x and z swapped: "<< swap(F,0,2) // = 3*z + (5*y + (7*x))
+            << std::endl;  
+  std::cout << "x and y swapped: "<< swap(F,0,1) // = 7*z + (3*y + (5*x))
+            << std::endl << std::endl; 
+  
+  std::cout << "x moved to outermost position: "
+            << move(F,0,2)                       // = 3*z + (7*y + (5*x))
             << std::endl;
-  std::cout << "Same as swap(swap(F,0,1),1,2): "<< swap(swap(F,0,1),1,2) 
+  std::cout << "Same as swap(swap(F,0,1),1,2): "
+            << swap(swap(F,0,1),1,2)             // = 3*z + (7*y + (5*x))
             << std::endl;
   
 }

@@ -14,7 +14,7 @@ int main(){
   PT_2::Construct_polynomial construct_polynomial;
   
   // constructing a constant polynomial from int
-  Poly_2 two(2);
+  Poly_2 two(2); // = 2 
   std::cout << "A constant polynomial: " << two << std::endl;
 
   
@@ -24,7 +24,7 @@ int main(){
   univariate_coeffs.push_back(Poly_1(3));
   univariate_coeffs.push_back(Poly_1(0));
   univariate_coeffs.push_back(Poly_1(5));
-  Poly_2 F = 
+  Poly_2 F = // 5*y^2 + 3
     construct_polynomial(univariate_coeffs.begin(),univariate_coeffs.end());
   std::cout << "The bivariate polynomial F: " << F << std::endl;
   
@@ -32,12 +32,9 @@ int main(){
   // construction from an iterator range over monomials 
   
   std::list<std::pair<CGAL::Exponent_vector, Integer> > innermost_coeffs;
-  CGAL::Exponent_vector ev(std::vector<int>(2,0)); // = [0,0] sequence 
-  innermost_coeffs.push_back(std::make_pair(ev,-2));
-  ev[0]=3; 
-  ev[1]=5; 
-  innermost_coeffs.push_back(std::make_pair(ev,2));
-  Poly_2 G = 
+  innermost_coeffs.push_back(std::make_pair(CGAL::Exponent_vector(0,0),-2));
+  innermost_coeffs.push_back(std::make_pair(CGAL::Exponent_vector(3,5),2));
+  Poly_2 G = // (2*x^3)*y^5 + (-2)
     construct_polynomial(innermost_coeffs.begin(),innermost_coeffs.end());
   std::cout << "The bivariate polynomial G: " << G << std::endl;
   
@@ -46,6 +43,6 @@ int main(){
   Poly_2 x = shift(Poly_2(1),1,0); // 'multiply' 1 by x_0^1
   Poly_2 y = shift(Poly_2(1),1,1); // 'multiply' 1 by x_1^1
   
-  Poly_2 H = 5 * x * y + 3 * y * y; 
+  Poly_2 H = 5 * x * y + 3 * y * y; // = 3*y^2 + (5*x)*y
   std::cout << "The bivariate polynomial H: " << H << std::endl;
 }

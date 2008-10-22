@@ -9,10 +9,10 @@ int main(){
   typedef CGAL::Polynomial_traits_d<Poly_2>            PT_2;
   
   //construction using shift 
-  Poly_2 x = PT_2::Shift()(Poly_2(1),1,0); // x_0^1
-  Poly_2 y = PT_2::Shift()(Poly_2(1),1,1); // x_1^1
+  Poly_2 x = PT_2::Shift()(Poly_2(1),1,0); // = x^1
+  Poly_2 y = PT_2::Shift()(Poly_2(1),1,1); // = y^1
   
-  Poly_2 F 
+  Poly_2 F // = (11*x^2 + 5*x)*y^4 + (7*x^2)*y^3
     = 11 * CGAL::ipower(y,4) * CGAL::ipower(x,2) 
     + 5 * CGAL::ipower(y,4)  * CGAL::ipower(x,1) 
     + 7 * CGAL::ipower(y,3)  * CGAL::ipower(x,2);  
@@ -29,14 +29,16 @@ int main(){
   
   PT_2::Leading_coefficient lcoeff;
   std::cout << "Leading coefficient with respect to y:           "
-            << lcoeff(F) << std::endl;
+            << lcoeff(F)   // = 11*x^2 + 5*x
+            << std::endl;
 
   PT_2::Get_innermost_coefficient get_icoeff;
-  CGAL:: Exponent_vector ev; ev.push_back(1); ev.push_back(4);
   std::cout << "Innermost coefficient of monomial x^1y^4:        "
-            << get_icoeff(F,ev) << std::endl;
+            << get_icoeff(F,CGAL::Exponent_vector(1,4)) // = 5
+            << std::endl;
   
   PT_2::Innermost_leading_coefficient ilcoeff;
   std::cout << "Innermost leading coefficient with respect to y: "
-            << ilcoeff(F) << std::endl; 
+            << ilcoeff(F) // = 11 
+            << std::endl; 
 }
