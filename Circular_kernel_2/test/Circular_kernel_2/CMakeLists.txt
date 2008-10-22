@@ -18,13 +18,18 @@ if ( CGAL_FOUND )
 
 include_directories (BEFORE include)
 include_directories (BEFORE ../../include)
+include_directories (BEFORE ../../../Kernel_23/include)
+include_directories (BEFORE ../../../Cartesian_kernel/include)
+include_directories (BEFORE ../../../Homogeneous_kernel/include)
+include_directories (BEFORE ../../../Intersections_2/include)
 include_directories (BEFORE ../../../Kernel_23/test/Kernel_23/include)
-include_directories (BEFORE ../Kernel_23/include)
 
 create_single_source_cgal_program( "test_Circular_kernel.cpp" )
 create_single_source_cgal_program( "test_Exact_circular_kernel.cpp" )
 create_single_source_cgal_program( "test_Filtered_bbox_circular_kernel.cpp" )
 create_single_source_cgal_program( "test_Line_arc.cpp" )
+create_single_source_cgal_program( "test_Circular_kernel_basic.cpp" )
+create_single_source_cgal_program( "test_Exact_circular_kernel_basic.cpp" )
 
 else()
   
