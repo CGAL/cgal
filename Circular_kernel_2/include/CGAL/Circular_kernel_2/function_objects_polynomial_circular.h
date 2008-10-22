@@ -962,7 +962,7 @@ namespace CircularFunctors {
     using CK::Linear_kernel::Construct_bbox_2::operator();
 #else
     typedef CGAL::Bbox_2 result_type;
-    typedef typename  CK::Linear_kernel LK;
+    typedef typename CK::Linear_kernel LK;
     typedef typename LK::Construct_bbox_2 LK_Construct_bbox_2;
     typedef typename LK::Point_2 Point_2;
 
