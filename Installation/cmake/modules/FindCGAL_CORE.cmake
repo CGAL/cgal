@@ -26,7 +26,7 @@ if(GMP_FOUND)
   
     set( CGAL_CORE_BASENAME CGAL-core++ )
     
-    if ( AUTO_LINK_ENABLED )
+    if ( CGAL_AUTO_LINK_ENABLED )
     
       set(CGAL_CORE_LIBRARY "" )
       

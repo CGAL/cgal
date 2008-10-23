@@ -29,10 +29,10 @@ else()
     set( MPFR_IN_CGAL_AUXILIARY TRUE CACHE INTERNAL "" )
   endif()
   
-  if ( AUTO_LINK_ENABLED )
+  if ( CGAL_AUTO_LINK_ENABLED )
   
     find_path(MPFR_LIBRARIES_DIR 
-              NAMES "mpfr-${TOOLSET}-mt.lib" "mpfr-${TOOLSET}-mt-gd.lib"
+              NAMES "mpfr-${CGAL_TOOLSET}-mt.lib" "mpfr-${CGAL_TOOLSET}-mt-gd.lib"
               PATHS ${CGAL_SOURCE_DIR}/auxiliary/gmp/lib
                     ENV MPFR_LIB_DIR
               DOC "Directory containing the MPFR library"

@@ -124,7 +124,7 @@ if(CGAL_Qt4_FOUND AND Boost_FOUND AND Boost_THREAD_FOUND AND QT_FOUND AND OPENGL
   endif(TAUCS_FOUND)
 
   # Blas and Lapack, under Linux
-  if( NOT AUTO_LINK_ENABLED )
+  if( NOT CGAL_AUTO_LINK_ENABLED )
     add_definitions( -DCGAL_USE_F2C )
     target_link_libraries( Polyhedron_3 lapack blas )
   endif()

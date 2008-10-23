@@ -65,7 +65,7 @@ if( QT4_FOUND )
                           ${mocfiles} 
 			  ${RESOURCE_FILES} )
     
-    if ( NOT IS_TOP_LEVEL )
+    if ( NOT CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL )
       add_dependencies( CGAL_Qt4 CGAL )
     endif()    
 
@@ -77,7 +77,7 @@ if( QT4_FOUND )
       set_target_properties(CGAL_Qt4 PROPERTIES VERSION "${CGAL_SOVERSION}" SOVERSION "${CGAL_SONAME_VERSION}")
     endif()
 
-    if (NOT AUTO_LINK_ENABLED )
+    if (NOT CGAL_AUTO_LINK_ENABLED )
     
       set_target_properties( CGAL_Qt4 PROPERTIES OUTPUT_NAME "${CGAL_Qt4_BASENAME}" )
       get_target_property( CGAL_Qt4_LIBRARY_FULL_PATH CGAL_Qt4 LOCATION  )
@@ -89,10 +89,10 @@ if( QT4_FOUND )
     
       set(CGAL_Qt4_LIBRARY)
       
-      set(CGAL_Qt4_RELEASE_MANGLED_NAME        "${CGAL_Qt4_BASENAME}-${TOOLSET}-mt" ) 
-      set(CGAL_Qt4_DEBUG_MANGLED_NAME          "${CGAL_Qt4_BASENAME}-${TOOLSET}-mt-gd" ) 
-      set(CGAL_Qt4_MINSIZEREL_MANGLED_NAME     "${CGAL_Qt4_BASENAME}-${TOOLSET}-mt-o" ) 
-      set(CGAL_Qt4_RELWITHDEBINFO_MANGLED_NAME "${CGAL_Qt4_BASENAME}-${TOOLSET}-mt-g" ) 
+      set(CGAL_Qt4_RELEASE_MANGLED_NAME        "${CGAL_Qt4_BASENAME}-${CGAL_TOOLSET}-mt" ) 
+      set(CGAL_Qt4_DEBUG_MANGLED_NAME          "${CGAL_Qt4_BASENAME}-${CGAL_TOOLSET}-mt-gd" ) 
+      set(CGAL_Qt4_MINSIZEREL_MANGLED_NAME     "${CGAL_Qt4_BASENAME}-${CGAL_TOOLSET}-mt-o" ) 
+      set(CGAL_Qt4_RELWITHDEBINFO_MANGLED_NAME "${CGAL_Qt4_BASENAME}-${CGAL_TOOLSET}-mt-g" ) 
       
       set_target_properties( CGAL_Qt4 PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_Qt4_DEBUG_MANGLED_NAME}" 
                                                  RELEASE_OUTPUT_NAME        "${CGAL_Qt4_RELEASE_MANGLED_NAME}" 

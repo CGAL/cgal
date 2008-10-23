@@ -8,7 +8,7 @@ set(CMAKE_MODULE_PATH ${ORIG_CMAKE_MODULE_PATH} )
 
 find_package(OpenGL)
 
-if ( OPENGL_FOUND AND APPLE_LEOPARD )
+if ( OPENGL_FOUND AND CGAL_APPLE_LEOPARD )
   set (CMAKE_SHARED_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib") 
 endif()
 

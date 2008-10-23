@@ -102,7 +102,7 @@ if( QT3_FOUND )
     
     set( CGAL_Qt3_BASENAME CGAL_Qt3 )
     
-    if (NOT AUTO_LINK_ENABLED )
+    if (NOT CGAL_AUTO_LINK_ENABLED )
 
       set_target_properties( CGAL_Qt3 PROPERTIES OUTPUT_NAME "${CGAL_Qt3_BASENAME}" )
       
@@ -116,10 +116,10 @@ if( QT3_FOUND )
 
       set(CGAL_Qt3_LIBRARY)
       
-      set(CGAL_Qt3_RELEASE_MANGLED_NAME        "${CGAL_Qt3_BASENAME}-${TOOLSET}-mt" ) 
-      set(CGAL_Qt3_DEBUG_MANGLED_NAME          "${CGAL_Qt3_BASENAME}-${TOOLSET}-mt-gd" ) 
-      set(CGAL_Qt3_MINSIZEREL_MANGLED_NAME     "${CGAL_Qt3_BASENAME}-${TOOLSET}-mt-o" ) 
-      set(CGAL_Qt3_RELWITHDEBINFO_MANGLED_NAME "${CGAL_Qt3_BASENAME}-${TOOLSET}-mt-g" ) 
+      set(CGAL_Qt3_RELEASE_MANGLED_NAME        "${CGAL_Qt3_BASENAME}-${CGAL_TOOLSET}-mt" ) 
+      set(CGAL_Qt3_DEBUG_MANGLED_NAME          "${CGAL_Qt3_BASENAME}-${CGAL_TOOLSET}-mt-gd" ) 
+      set(CGAL_Qt3_MINSIZEREL_MANGLED_NAME     "${CGAL_Qt3_BASENAME}-${CGAL_TOOLSET}-mt-o" ) 
+      set(CGAL_Qt3_RELWITHDEBINFO_MANGLED_NAME "${CGAL_Qt3_BASENAME}-${CGAL_TOOLSET}-mt-g" ) 
       
       set_target_properties( CGAL_Qt3 PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_Qt3_DEBUG_MANGLED_NAME}" 
                                                  RELEASE_OUTPUT_NAME        "${CGAL_Qt3_RELEASE_MANGLED_NAME}" 

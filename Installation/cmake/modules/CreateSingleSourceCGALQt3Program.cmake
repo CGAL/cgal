@@ -22,7 +22,7 @@ macro(create_single_source_cgal_qt3_program first )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
     
     # Link the executable to CGAL and third-party libraries
-    if ( AUTO_LINK_ENABLED )    
+    if ( CGAL_AUTO_LINK_ENABLED )    
       target_link_libraries(${exe_name} ${CGAL_3RD_PARTY_LIBRARIES} ${QT3_LIBRARIES} )
     else()
       target_link_libraries(${exe_name} ${CGAL_LIBRARIES} ${CGAL_QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT3_LIBRARIES})

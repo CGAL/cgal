@@ -65,7 +65,7 @@ if(ZLIB_FOUND)
     
     target_link_libraries( CGAL_ImageIO ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} )
     
-    if (NOT AUTO_LINK_ENABLED )
+    if (NOT CGAL_AUTO_LINK_ENABLED )
     
       set_target_properties( CGAL_ImageIO PROPERTIES OUTPUT_NAME "${CGAL_ImageIO_BASENAME}" )
       
@@ -81,10 +81,10 @@ if(ZLIB_FOUND)
     
       set(CGAL_ImageIO_LIBRARY)
       
-      set(CGAL_ImageIO_RELEASE_MANGLED_NAME        "${CGAL_ImageIO_BASENAME}-${TOOLSET}-mt" ) 
-      set(CGAL_ImageIO_DEBUG_MANGLED_NAME          "${CGAL_ImageIO_BASENAME}-${TOOLSET}-mt-gd" ) 
-      set(CGAL_ImageIO_MINSIZEREL_MANGLED_NAME     "${CGAL_ImageIO_BASENAME}-${TOOLSET}-mt-o" ) 
-      set(CGAL_ImageIO_RELWITHDEBINFO_MANGLED_NAME "${CGAL_ImageIO_BASENAME}-${TOOLSET}-mt-g" ) 
+      set(CGAL_ImageIO_RELEASE_MANGLED_NAME        "${CGAL_ImageIO_BASENAME}-${CGAL_TOOLSET}-mt" ) 
+      set(CGAL_ImageIO_DEBUG_MANGLED_NAME          "${CGAL_ImageIO_BASENAME}-${CGAL_TOOLSET}-mt-gd" ) 
+      set(CGAL_ImageIO_MINSIZEREL_MANGLED_NAME     "${CGAL_ImageIO_BASENAME}-${CGAL_TOOLSET}-mt-o" ) 
+      set(CGAL_ImageIO_RELWITHDEBINFO_MANGLED_NAME "${CGAL_ImageIO_BASENAME}-${CGAL_TOOLSET}-mt-g" ) 
       
       set_target_properties( CGAL_ImageIO PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_ImageIO_DEBUG_MANGLED_NAME}" 
                                                      RELEASE_OUTPUT_NAME        "${CGAL_ImageIO_RELEASE_MANGLED_NAME}" 

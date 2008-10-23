@@ -19,7 +19,7 @@ macro(create_link_to_program COMPONENT )
   link_directories(  ${${COMPONENT}_3RD_PARTY_LIBRARIES_DIRS})
   
   # Link the executable to CGAL and third-party libraries
-  if ( AUTO_LINK_ENABLED )    
+  if ( CGAL_AUTO_LINK_ENABLED )    
     target_link_libraries(link_to_${COMPONENT} ${CGAL_3RD_PARTY_LIBRARIES} ${${COMPONENT}_3RD_PARTY_LIBRARIES} )
   else()
     target_link_libraries(link_to_${COMPONENT} ${${COMPONENT}_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${${COMPONENT}_3RD_PARTY_LIBRARIES} )

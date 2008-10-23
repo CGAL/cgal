@@ -23,7 +23,7 @@ set_target_properties(CGAL_Core PROPERTIES VERSION "${CGAL_SOVERSION}" SOVERSION
 
 set( CGAL_Core_BASENAME CGAL_Core )
 
-if (NOT AUTO_LINK_ENABLED )
+if (NOT CGAL_AUTO_LINK_ENABLED )
 
   set_target_properties( CGAL_Core PROPERTIES OUTPUT_NAME ${CGAL_Core_BASENAME} )
   target_link_libraries( CGAL_Core ${CGAL_3RD_PARTY_LIBRARIES})
@@ -38,10 +38,10 @@ else()
 
   set(CGAL_Core_LIBRARY)
   
-  set(CGAL_Core_RELEASE_MANGLED_NAME        "${CGAL_Core_BASENAME}-${TOOLSET}-mt" ) 
-  set(CGAL_Core_DEBUG_MANGLED_NAME          "${CGAL_Core_BASENAME}-${TOOLSET}-mt-gd" ) 
-  set(CGAL_Core_MINSIZEREL_MANGLED_NAME     "${CGAL_Core_BASENAME}-${TOOLSET}-mt-o" ) 
-  set(CGAL_Core_RELWITHDEBINFO_MANGLED_NAME "${CGAL_Core_BASENAME}-${TOOLSET}-mt-g" ) 
+  set(CGAL_Core_RELEASE_MANGLED_NAME        "${CGAL_Core_BASENAME}-${CGAL_TOOLSET}-mt" ) 
+  set(CGAL_Core_DEBUG_MANGLED_NAME          "${CGAL_Core_BASENAME}-${CGAL_TOOLSET}-mt-gd" ) 
+  set(CGAL_Core_MINSIZEREL_MANGLED_NAME     "${CGAL_Core_BASENAME}-${CGAL_TOOLSET}-mt-o" ) 
+  set(CGAL_Core_RELWITHDEBINFO_MANGLED_NAME "${CGAL_Core_BASENAME}-${CGAL_TOOLSET}-mt-g" ) 
   
   set_target_properties( CGAL_Core PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_Core_DEBUG_MANGLED_NAME}" 
                                               RELEASE_OUTPUT_NAME        "${CGAL_Core_RELEASE_MANGLED_NAME}" 

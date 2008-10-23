@@ -15,7 +15,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
 
   include(CGALcommon)
   
-  if ( IS_TOP_LEVEL )
+  if ( CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL )
     include(CGAL_SetupFlags)
     include(GeneratorSpecificSettings)
   endif()

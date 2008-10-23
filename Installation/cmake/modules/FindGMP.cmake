@@ -29,10 +29,10 @@ else()
     set( GMP_IN_CGAL_AUXILIARY TRUE CACHE INTERNAL "" )
   endif()
   
-  if ( AUTO_LINK_ENABLED )
+  if ( CGAL_AUTO_LINK_ENABLED )
   
     find_path(GMP_LIBRARIES_DIR 
-              NAMES "gmp-${TOOLSET}-mt.lib" "gmp-${TOOLSET}-mt-gd.lib"
+              NAMES "gmp-${CGAL_TOOLSET}-mt.lib" "gmp-${CGAL_TOOLSET}-mt-gd.lib"
               PATHS ${CGAL_SOURCE_DIR}/auxiliary/gmp/lib
                     ENV GMP_LIB_DIR
               DOC "Directory containing the GMP library"
