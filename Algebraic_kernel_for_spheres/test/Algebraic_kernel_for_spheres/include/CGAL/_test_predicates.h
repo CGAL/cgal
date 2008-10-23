@@ -576,6 +576,9 @@ void _test_solve(AK ak)
       s3 = Polynomial_for_spheres_2_3(c1,c2,c3,c4);
     } while((a4 <= 0) || (b4 <= 0) || (c4 <= 0) ||
             (s1 == s2) || (s2 == s3) || (s1 == s3));
+		std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
+		std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
+		std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
     std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sss;
     theSolve(s1,s2,s3,std::back_inserter(res_sss));
     if(res_sss.size() == 1) {
@@ -623,6 +626,9 @@ void _test_solve(AK ak)
       p = Polynomial_1_3(c1,c2,c3,c4);
     } while((a4 <= 0) || (b4 <= 0) || (s1 == s2) ||
             (c1 == 0 && c2 == 0 && c3 == 0));
+		std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
+    std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
+    std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
     std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_ssp;
     theSolve(p,s1,s2,std::back_inserter(res_ssp));
     if(res_ssp.size() == 1) {
