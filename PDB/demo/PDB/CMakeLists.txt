@@ -24,6 +24,7 @@ create_single_source_cgal_program( pdb_echo.cpp )
 create_single_source_cgal_program( pdb_split.cpp )
 create_single_source_cgal_program( pdb_transform.cpp )
 create_single_source_cgal_program( pdb_tree.cpp )
+create_single_source_cgal_program( pdb_info.cpp )
 
 
 else()

@@ -2743,6 +2743,7 @@ PDB/demo/PDB/makefile -text
 PDB/demo/PDB/pdb_cat.cpp -text
 PDB/demo/PDB/pdb_distance_matrix.cc -text
 PDB/demo/PDB/pdb_echo.cpp -text
+PDB/demo/PDB/pdb_info.cpp -text
 PDB/demo/PDB/pdb_split.cpp -text
 PDB/demo/PDB/pdb_transform.cpp -text
 PDB/demo/PDB/pdb_tree.cpp -text
