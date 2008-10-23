@@ -105,6 +105,7 @@ Maintenance/rpm/SOURCES/Manual_tools
 Maintenance/rpm/SOURCES/Manual_tools-*.tar.gz
 Maintenance/rpm/SRPMS/*
 Maintenance/rpm/my_makefile
+Manual_tools/scripts/generate_reference_manual/Archives
 Mesh_2/.*.deps
 Mesh_2/bench/.*.deps
 Mesh_2/bench/bench
