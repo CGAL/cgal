@@ -1182,12 +1182,13 @@ struct Lazy_construction_bbox
   result_type operator()(const L1& l1) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return ac(CGAL::approx(l1));
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return ec(CGAL::exact(l1));
     }
   }
@@ -1212,12 +1213,12 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return new Lazy_rep_1<AC, EC, To_interval<ET>, L1>(ac, ec, l1);
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return new Lazy_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1)));
     }
   }
@@ -1226,12 +1227,12 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1, const L2& l2) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return new Lazy_rep_2<AC, EC, To_interval<ET>, L1,L2>(ac, ec, l1,l2);
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return new Lazy_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), CGAL::exact(l2)));
     }
   }
@@ -1240,12 +1241,12 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1, const L2& l2, const L3& l3) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return new Lazy_rep_3<AC, EC, To_interval<ET>, L1,L2,L3>(ac, ec, l1,l2,l3);
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return new Lazy_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3)));
     }
   }
@@ -1254,12 +1255,12 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return new Lazy_rep_4<AC, EC, To_interval<ET>, L1,L2,L3,L4>(ac, ec, l1,l2,l3,l4);
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return new Lazy_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4)));
     }
   }
@@ -1268,12 +1269,12 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return new Lazy_rep_5<AC, EC, To_interval<ET>, L1,L2,L3,L4,L5>(ac, ec, l1,l2,l3,l4,l5);
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return new Lazy_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5)));
     }
   }
@@ -1426,13 +1427,13 @@ public:
   operator()(const L1& l1, const L2& l2, R1& r1) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       // we suppose that R1 is a Lazy<Something>
       r1 = R1(new Lazy_rep_2_1<AC, EC, E2A, L1, L2, R1>(ac, ec, l1, l2));
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       typename R1::ET et;
       ec(CGAL::exact(l1), CGAL::exact(l2), et);
       r1 = R1(new Lazy_rep_0<typename R1::AT,typename R1::ET,E2A>(et));
@@ -1491,8 +1492,8 @@ public:
   operator()(const L1& l1, const L2& l2, R1& r1, R2& r2) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       typedef Lazy<std::pair<typename R1::AT, typename R2::AT>, std::pair<typename R1::ET, typename R2::ET>, EFT, E2A> Lazy_pair;
       Lazy_pair lv(new Lazy_rep_2_2<AC, EC, E2A, L1, L2, R1, R2>(ac, ec, l1, l2));
       // lv->approx() is a std::pair<R1::AT, R2::AT>;
@@ -1500,7 +1501,7 @@ public:
       r2 = R2(new Lazy_rep_1<Second<std::pair<typename R1::AT, typename R2::AT> >, Second<std::pair<typename R1::ET, typename R2::ET> >, E2A, Lazy_pair>(Second<std::pair<typename R1::AT, typename R2::AT> >(), Second<std::pair<typename R1::ET, typename R2::ET> >(), lv));
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       typename R1::ET et1, et2;
       ec(CGAL::exact(l1), CGAL::exact(l2), et1, et2);
       r1 = R1(new Lazy_rep_0<typename R1::AT,typename R1::ET,E2A>(et1));
@@ -1536,8 +1537,8 @@ public:
   operator()(const L1& l1, const L2& l2, OutputIterator it) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       Lazy_vector lv(new Lazy_rep_with_vector_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
       // lv.approx() is a std::vector<Object([AK::Point_2,AK::Segment_2])>
       // that is, when we get here we have constructed all approximate results
@@ -1558,7 +1559,7 @@ public:
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       // TODO: Instead of using a vector, write an iterator adapter
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       std::vector<Object> exact_objects;
       ec(CGAL::exact(l1), CGAL::exact(l2), std::back_inserter(exact_objects));
       for (std::vector<Object>::const_iterator oit = exact_objects.begin();
@@ -1615,8 +1616,8 @@ public:
   operator()(const L1& l1) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       Lazy_object lo(new Lazy_rep_1<AC, EC, E2A, L1>(ac, ec, l1));
 
       if(lo.approx().is_empty())
@@ -1636,7 +1637,7 @@ public:
 
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1));
       return make_lazy<LK>(eto);
     }
@@ -1648,8 +1649,8 @@ public:
   operator()(const L1& l1, const L2& l2) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       Lazy_object lo(new Lazy_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
 
       if(lo.approx().is_empty())
@@ -1669,7 +1670,7 @@ public:
 
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1), CGAL::exact(l2));
       return make_lazy<LK>(eto);
     }
@@ -1713,12 +1714,12 @@ public:
   operator()(const L1& l1) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return  Handle(new Lazy_rep_1<AC, EC, E2A, L1>(ac, ec, l1));
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return Handle(new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1))));
     }
   }
@@ -1728,12 +1729,12 @@ public:
   operator()(const L1& l1, const L2& l2) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return Handle(new Lazy_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return Handle(new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2))));
     }
   }
@@ -1743,12 +1744,12 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    try {
       Protect_FPU_rounding<Protection> P;
+    try {
       return Handle(new Lazy_rep_3<AC, EC, E2A, L1, L2, L3>(ac, ec, l1, l2, l3));
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return Handle(new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3))));
     }
   }
@@ -1758,12 +1759,12 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return Handle(new Lazy_rep_4<AC, EC, E2A, L1, L2, L3, L4>(ac, ec, l1, l2, l3, l4));
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return Handle(new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4))));
     }
   }
@@ -1773,12 +1774,12 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return Handle(new Lazy_rep_5<AC, EC, E2A, L1, L2, L3, L4, L5>(ac, ec, l1, l2, l3, l4, l5));
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return Handle(new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5))));
     }
   }
@@ -1788,12 +1789,12 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return Handle(new Lazy_rep_6<AC, EC, E2A, L1, L2, L3, L4, L5, L6>(ac, ec, l1, l2, l3, l4, l5, l6));
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return Handle(new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5), CGAL::exact(l6))));
     }
   }
@@ -1803,12 +1804,12 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return Handle(new Lazy_rep_7<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7>(ac, ec, l1, l2, l3, l4, l5, l6, l7));
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return Handle(new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5), CGAL::exact(l6), CGAL::exact(l7))));
     }
   }
@@ -1818,12 +1819,12 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7, const L8& l8) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
     try {
-      Protect_FPU_rounding<Protection> P;
       return Handle(new Lazy_rep_8<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7, L8>(ac, ec, l1, l2, l3, l4, l5, l6, l7, l8));
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return Handle(new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5), CGAL::exact(l6), CGAL::exact(l7), CGAL::exact(l8))));
     }
   }
