@@ -485,7 +485,7 @@ I non_negative_mod(I n, U m) {
         n = n % m;
     #else
     if (n < 0)
-        n = - (( - n - 1) % m) + m - 1;
+        n = m - 1 - (( - n - 1) % m) ;
     else
         n = n % m;
     #endif
