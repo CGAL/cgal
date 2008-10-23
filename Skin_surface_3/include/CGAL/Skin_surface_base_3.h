@@ -295,14 +295,17 @@ sign(TMC_Vertex_handle vit) const {
 
   // don't use sign, since the point is constructed:
   CGAL_BRANCH_PROFILER(std::string(" NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  try
-    {
-      Protect_FPU_rounding<true> P;
-      Sign result = vit->cell()->info().second->sign(vit->point());
-      if (is_certain(result))
-        return result;
-    }
-  catch (Uncertain_conversion_exception) {}
+  {
+    // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
+    Protect_FPU_rounding<true> P;
+    try
+      {
+	Sign result = vit->cell()->info().second->sign(vit->point());
+	if (is_certain(result))
+	  return result;
+      }
+    catch (Uncertain_conversion_exception) {}
+  }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
   typedef Exact_predicates_exact_constructions_kernel EK;
@@ -331,14 +334,16 @@ Sign
 Skin_surface_base_3<MixedComplexTraits_3>::
 sign(const Bare_point &p, const Cell_info &info) const {
   CGAL_BRANCH_PROFILER(std::string(" NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  try
-    {
-      Protect_FPU_rounding<true> P;
-      Sign result = sign_inexact(p,info);
-      if (is_certain(result))
-        return result;
-    }
+  {
+    Protect_FPU_rounding<true> P;
+    try
+      {
+	Sign result = sign_inexact(p,info);
+	if (is_certain(result))
+	  return result;
+      }
   catch (Uncertain_conversion_exception) {}
+  }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
   return construct_surface
@@ -621,15 +626,17 @@ compare(Cell_info &info1,
      Cell_info &info2,
      const Bare_point &p2) const {
   CGAL_BRANCH_PROFILER(std::string(" NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  try
-    {
-      Protect_FPU_rounding<true> P;
-      Sign result = CGAL_NTS sign(info1.second->value(p1) -
-                                  info2.second->value(p2));
-      if (is_certain(result))
-        return result;
-    }
-  catch (Uncertain_conversion_exception) {}
+  {
+    Protect_FPU_rounding<true> P;
+    try
+      {
+	Sign result = CGAL_NTS sign(info1.second->value(p1) -
+				    info2.second->value(p2));
+	if (is_certain(result))
+	  return result;
+      }
+    catch (Uncertain_conversion_exception) {}
+  }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
     
@@ -688,32 +695,34 @@ locate_in_tmc(const Bare_point &p0,
     // We temporarily put p at i's place in pts.
     const TMC_Point* backup = pts[i];
     pts[i] = &p_inexact;
-    try {
+    {
       Protect_FPU_rounding<true> P;
-
-      o = TMC_Geom_traits().orientation_3_object()(*pts[0], *pts[1], *pts[2], *pts[3]);
-    } catch (Uncertain_conversion_exception) {
-      Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-      typedef Exact_predicates_exact_constructions_kernel EK;
-      Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
-
-      Skin_surface_traits_3<EK> exact_traits(shrink_factor());
-   
-      typename EK::Point_3 e_pts[4];
-
-      // We know that the 4 vertices of c are positively oriented.
-      // So, in order to test if p is seen outside from one of c's facets,
-      // we just replace the corresponding point by p in the orientation
-      // test.  We do this using the array below.
-      for (int k=0; k<4; k++) {
-        if (k != i) {
-          e_pts[k] = get_anchor_point(c->vertex(k)->info(), exact_traits);
-        } else {
-          e_pts[k] = converter_ek(p0);
-        }
+      try {
+	o = TMC_Geom_traits().orientation_3_object()(*pts[0], *pts[1], *pts[2], *pts[3]);
+      } catch (Uncertain_conversion_exception) {
+	Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+	typedef Exact_predicates_exact_constructions_kernel EK;
+	Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
+	
+	Skin_surface_traits_3<EK> exact_traits(shrink_factor());
+	
+	typename EK::Point_3 e_pts[4];
+	
+	// We know that the 4 vertices of c are positively oriented.
+	// So, in order to test if p is seen outside from one of c's facets,
+	// we just replace the corresponding point by p in the orientation
+	// test.  We do this using the array below.
+	for (int k=0; k<4; k++) {
+	  if (k != i) {
+	    e_pts[k] = get_anchor_point(c->vertex(k)->info(), exact_traits);
+	  } else {
+	    e_pts[k] = converter_ek(p0);
+	  }
+	}
+	o = orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]);
       }
-      o = orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]);
     }
+
     if ( o != NEGATIVE ) {
       pts[i] = backup;
       continue;
@@ -731,10 +740,10 @@ locate_in_tmc(const Bare_point &p0,
   CGAL_assertion(c->vertex(1) != _tmc.infinite_vertex());
   CGAL_assertion(c->vertex(2) != _tmc.infinite_vertex());
   CGAL_assertion(c->vertex(3) != _tmc.infinite_vertex());
-
+  
   return c;
 }
-
+  
 template <class MixedComplexTraits_3> 
 template <class Gt2>
 typename Gt2::Bare_point
