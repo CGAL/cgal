@@ -1255,12 +1255,13 @@ Mixed_complex_triangulator_3<
   TriangulatedMixedComplex_3,
   TriangulatedMixedComplexObserver_3>::
 orientation(Tmc_Cell_handle ch) {
-  Orientation o;
-  try {
+    Orientation o;
+    // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
+    Protect_FPU_rounding<true> P;
+    try {
     Tmc_Point pts[4];
     for (int i=0; i<4; i++) pts[i] = ch->vertex(i)->point();
 
-    Protect_FPU_rounding<true> P;
     
     // filtered kernel
     o = _tmc.geom_traits().orientation_3_object()(pts[0], pts[1], 
