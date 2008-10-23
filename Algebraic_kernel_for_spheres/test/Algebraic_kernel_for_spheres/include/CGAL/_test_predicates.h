@@ -545,6 +545,9 @@ void _test_solve(AK ak)
     } while(CGAL::same_solutions<FT>(p1,p2) ||
             CGAL::same_solutions<FT>(p1,p3) || 
             CGAL::same_solutions<FT>(p2,p3));
+		std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
+		std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
+	  std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
     std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_ppp;
     theSolve(p1,p2,p3,std::back_inserter(res_ppp));
     if(res_ppp.size() != 0) {
@@ -677,6 +680,9 @@ void _test_solve(AK ak)
     } while((a1 == 0 && a2 == 0 && a3 == 0) ||
             (b1 == 0 && b2 == 0 && b3 == 0) ||
             (c4 <= 0) || (CGAL::same_solutions<FT>(p1,p2)));
+		std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
+		std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
+		std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
     std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_spp;
     theSolve(p1,p2,s,std::back_inserter(res_spp));
     if(res_spp.size() == 1) {
@@ -720,6 +726,9 @@ void _test_solve(AK ak)
       l = Polynomials_for_line_3(a1,b1,a2,b2,a3,b3);
       s = Polynomial_for_spheres_2_3(c1,c2,c3,c4);
     } while((l.degenerated()) || (c4 <= 0));
+		std::cout << a1 << " " << a2 << " " << a3 << std::endl;
+		std::cout << b1 << " " << b2 << " " << b3 << std::endl;
+		std::cout << c1 << " " << c2 << " " << c3 << std::endl;
     std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_ls;
     theSolve(l,s,std::back_inserter(res_ls));
     if(res_ls.size() == 1) {
