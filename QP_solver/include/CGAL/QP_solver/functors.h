@@ -49,6 +49,8 @@ class QP_matrix_pairwise_accessor;
 template < class RndAccIt >
 class Value_by_basic_index;
 
+template<typename Map>
+class Map_with_default;
 
 // =====================
 // class implementations
@@ -228,6 +230,42 @@ private:
   RndAccIt     a;
 };
 
+
+// -------------------
+// Map_with_default
+// -------------------
+template<typename Map>
+class Map_with_default {
+  // public types
+public:
+  typedef typename Map::mapped_type       mapped_type;
+  typedef typename Map::difference_type   difference_type;
+  typedef mapped_type                     result_type;
+  // data members
+private:
+  const Map* map; // pointer to map
+  mapped_type d;  // default value
+  
+public:
+  // construction
+  Map_with_default ()
+    : map(0), d()
+  {}
+
+  Map_with_default (const Map* m, const mapped_type& v = mapped_type())
+    : map(m), d(v)
+  {}
+  
+  // operator()
+  const mapped_type& operator() (difference_type n) const {
+    CGAL_qpe_precondition (map != 0);
+    typename Map::const_iterator i = map->find (n);
+    if (i != map->end())
+      return i->second;
+    else
+      return d;
+  }
+};
 
 CGAL_END_NAMESPACE
 

@@ -25,7 +25,6 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/QP_solver/basic.h>
-#include <CGAL/QP_solver/iterator.h>
 #include <CGAL/QP_solver/functors.h>
 #include <CGAL/QP_options.h>
 #include <CGAL/QP_solution.h>

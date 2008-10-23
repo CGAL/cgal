@@ -313,8 +313,8 @@ namespace QP_functions_detail {
 	written = true;
       }
       for (int i=0; i<m; ++i) { 
-	if (!CGAL_NTS is_zero ((*a)[i])) {
-	  out << "  x" << j << "  c" << i << "  " << (*a)[i] << "\n";
+	if (!CGAL_NTS is_zero (*((*a)+i))) {
+	  out << "  x" << j << "  c" << i << "  " << *((*a)+i) << "\n";
 	  written = true;
 	}
       }
