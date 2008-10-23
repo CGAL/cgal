@@ -426,9 +426,9 @@ class Polynomial_traits_d_base< Polynomial< Coefficient_type_ >,
   public:                                                               
   typedef Polynomial<Coefficient_type_>                  Polynomial_d;       
   typedef Coefficient_type_                              Coefficient_type;        
-                                                                        
-  typedef typename Innermost_coefficient_type<Polynomial_d>::Type            
-  Innermost_coefficient_type;                                                
+          
+  typedef typename CGALi::Innermost_coefficient_type<Polynomial_d>::Type    Innermost_coefficient_type;                                                               
+
   static const int d = Dimension<Polynomial_d>::value;                  
                                                                         
                                                                         
