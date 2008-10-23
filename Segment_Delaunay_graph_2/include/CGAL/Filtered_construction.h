@@ -54,9 +54,10 @@ public:
   result_type
   operator()(const A1 &a1) const
   {
+    // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
+    Protect_FPU_rounding<Protection> P1;
     try
     {
-      Protect_FPU_rounding<Protection> P;
       return From_Filtered( Filter_construction(To_Filtered(a1)) );
     }
     catch (Uncertain_conversion_exception)
@@ -69,9 +70,9 @@ public:
   result_type
   operator()(const A1 &a1, const A2 &a2) const
   {
+    Protect_FPU_rounding<Protection> P1;
     try
     {
-      Protect_FPU_rounding<Protection> P;
       return From_Filtered( Filter_construction(To_Filtered(a1),
 						To_Filtered(a2)) );
     }
@@ -87,9 +88,9 @@ public:
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
   {
+    Protect_FPU_rounding<Protection> P1;
     try
     {
-      Protect_FPU_rounding<Protection> P;
       return From_Filtered( Filter_construction(To_Filtered(a1),
 						To_Filtered(a2),
 						To_Filtered(a3)) );
