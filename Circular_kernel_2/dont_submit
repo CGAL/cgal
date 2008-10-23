@@ -2,7 +2,6 @@ Qt3/
 TODO
 changes
 GNUmakefile
-test/Circular_kernel_2/makefile
 examples/Circular_kernel_2/makefile 
 bench
 Benchmarks/
