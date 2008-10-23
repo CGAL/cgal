@@ -29,7 +29,7 @@
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
 
 #include <CGAL/Algebraic_kernel_d/macros.h>
-#include <CGAL/Algebraic_kernel_d/Exceptions.h>
+#include <CGAL/Algebraic_kernel_d/exceptions.h>
 #include <CGAL/Algebraic_kernel_d/enums.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/alg_real_utils.h>

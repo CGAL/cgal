@@ -29,7 +29,7 @@
 #include <CGAL/Algebraic_curve_kernel_2/Shear_controller.h>
 #include <CGAL/Algebraic_curve_kernel_2/Shear_transformation.h>
 #include <CGAL/Algebraic_kernel_d/enums.h>
-#include <CGAL/Algebraic_kernel_d/Exceptions.h>
+#include <CGAL/Algebraic_kernel_d/exceptions.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/Status_line_CPA_1.h>
 
