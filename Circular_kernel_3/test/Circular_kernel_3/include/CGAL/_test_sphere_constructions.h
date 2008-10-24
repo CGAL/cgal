@@ -2189,12 +2189,6 @@ void _test_bbox(const typename SK::Circle_3 &c)
   Construct_line_3 theConstruct_line_3 = SK().construct_line_3_object();
   Construct_bbox_3 theConstruct_bbox_3 = SK().construct_bbox_3_object();
 
-// CK_3 PROVIDE A MORE ACCURATE TEST FOR CIRCLE_3 BBOX 
-// (intersection of a plane and circle_3 is provided only in CK3)
-// FOR THE TEST_BBOX OF A CIRCLE WE ASSUME THAT THE BOUNDING BOX
-// IS ONLY 1/1.000 BIGGER THEN THE SHORTEST BOUNDING BOX POSSIBLE
-// MAYBE IT IS A STRONG ASSUMPTIO FOR ALL CASES
-
   Bbox_3 b = theConstruct_bbox_3(c);
   const FT x1 = FT(b.xmin());
   const FT x2 = FT(b.xmax());
@@ -2207,69 +2201,39 @@ void _test_bbox(const typename SK::Circle_3 &c)
   assert(y1 <= y2);
   assert(z1 <= z2);
 
-  if(b.xmin() != b.xmax()) { 
-    Plane_3 pt_xneg_min = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x1-FT(FT_Q(1,1000))) ));
-    Plane_3 pt_xneg_max = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x1+FT(FT_Q(1,1000))) ));
-    Plane_3 pt_xpos_min = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x2-FT(FT_Q(1,1000))) ));
-    Plane_3 pt_xpos_max = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x2+FT(FT_Q(1,1000))) ));
-  
-    std::vector< CGAL::Object > intersection_test_x_1;
-    std::vector< CGAL::Object > intersection_test_x_2;
-    std::vector< CGAL::Object > intersection_test_x_3;
-    std::vector< CGAL::Object > intersection_test_x_4;
-    theIntersect_3(c, pt_xneg_min, std::back_inserter(intersection_test_x_1));
-    theIntersect_3(c, pt_xneg_max, std::back_inserter(intersection_test_x_2));
-    theIntersect_3(c, pt_xpos_min, std::back_inserter(intersection_test_x_3));
-    theIntersect_3(c, pt_xpos_max, std::back_inserter(intersection_test_x_4));
+	Circular_arc_point_3 ex1, ex2, ey1, ey2, ez1, ez2;
 
-    CGAL_warning(intersection_test_x_1.size() == 0);
-    CGAL_warning(intersection_test_x_2.size() > 0);
-    CGAL_warning(intersection_test_x_3.size() > 0);
-    CGAL_warning(intersection_test_x_4.size() == 0);
+  if(is_zero(c.supporting_plane().b()) &&
+		is_zero(c.supporting_plane().c())) ex2 = ex1 = c.center();
+	else {
+    ex1 = x_extremal_point(c, true);
+    ex2 = x_extremal_point(c, false);
   }
 
-  if(b.ymin() != b.ymax()) { 
-    Plane_3 pt_yneg_min = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y1-FT(FT_Q(1,1000))) ));
-    Plane_3 pt_yneg_max = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y1+FT(FT_Q(1,1000))) ));
-    Plane_3 pt_ypos_min = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y2-FT(FT_Q(1,1000))) ));
-    Plane_3 pt_ypos_max = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y2+FT(FT_Q(1,1000))) ));
-  
-    std::vector< CGAL::Object > intersection_test_y_1;
-    std::vector< CGAL::Object > intersection_test_y_2;
-    std::vector< CGAL::Object > intersection_test_y_3;
-    std::vector< CGAL::Object > intersection_test_y_4;
-    theIntersect_3(c, pt_yneg_min, std::back_inserter(intersection_test_y_1));
-    theIntersect_3(c, pt_yneg_max, std::back_inserter(intersection_test_y_2));
-    theIntersect_3(c, pt_ypos_min, std::back_inserter(intersection_test_y_3));
-    theIntersect_3(c, pt_ypos_max, std::back_inserter(intersection_test_y_4));
-
-    CGAL_warning(intersection_test_y_1.size() == 0);
-    CGAL_warning(intersection_test_y_2.size() > 0);
-    CGAL_warning(intersection_test_y_3.size() > 0);
-    CGAL_warning(intersection_test_y_4.size() == 0);
+  if(is_zero(c.supporting_plane().a()) &&
+		is_zero(c.supporting_plane().c())) ey2 = ey1 = c.center();
+	else {
+    ey1 = y_extremal_point(c, true);
+    ey2 = y_extremal_point(c, false);
   }
 
-  if(b.zmin() != b.zmax()) { 
-    Plane_3 pt_zneg_min = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z1-FT(FT_Q(1,1000))) ));
-    Plane_3 pt_zneg_max = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z1+FT(FT_Q(1,1000))) ));
-    Plane_3 pt_zpos_min = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z2-FT(FT_Q(1,1000))) ));
-    Plane_3 pt_zpos_max = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z2+FT(FT_Q(1,1000))) ));
-  
-    std::vector< CGAL::Object > intersection_test_z_1;
-    std::vector< CGAL::Object > intersection_test_z_2;
-    std::vector< CGAL::Object > intersection_test_z_3;
-    std::vector< CGAL::Object > intersection_test_z_4;
-    theIntersect_3(c, pt_zneg_min, std::back_inserter(intersection_test_z_1));
-    theIntersect_3(c, pt_zneg_max, std::back_inserter(intersection_test_z_2));
-    theIntersect_3(c, pt_zpos_min, std::back_inserter(intersection_test_z_3));
-    theIntersect_3(c, pt_zpos_max, std::back_inserter(intersection_test_z_4));
-
-    CGAL_warning(intersection_test_z_1.size() == 0);
-    CGAL_warning(intersection_test_z_2.size() > 0);
-    CGAL_warning(intersection_test_z_3.size() > 0);
-    CGAL_warning(intersection_test_z_4.size() == 0);
+  if(is_zero(c.supporting_plane().a()) &&
+		is_zero(c.supporting_plane().b())) ez2 = ez1 = c.center();
+  else {
+	  ez1 = z_extremal_point(c, true);
+    ez2 = z_extremal_point(c, false);
   }
 
+	if(ex1.x() > ex2.x()) std::swap(ex1, ex2);
+	if(ey1.y() > ey2.y()) std::swap(ey1, ey2);
+	if(ez1.z() > ez2.z()) std::swap(ez1, ez2);
+	
+  assert(x1 <= ex1.x());
+  assert(x2 >= ex2.x());
+  assert(y1 <= ey1.y());
+	assert(y2 >= ey2.y());
+  assert(z1 <= ez1.z());
+	assert(z2 >= ez2.z());	
 }
 
 template <class SK>
@@ -2385,7 +2349,7 @@ void _test_bounding_box_construct(SK sk)
           CGAL::Object intersection_2 = theIntersect_3(s_t10, sl_2);
           // No intersection
           if((d2 > (r+1)*(r+1)) || (d2 < (r-1)*(r-1))) continue; 
-          if(x == 0 && y == 0 && z == 0 && r == 1) continue;
+          if(x == 0 && y == 0 && z == 0) continue;
           if((d2 == (r+1)*(r+1)) || (d2 == (r-1)*(r-1))) continue; 
           Circle_3 circle1, circle2;
           assign(circle1, intersection_1);
