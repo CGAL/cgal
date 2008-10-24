@@ -1074,15 +1074,38 @@ namespace CircularFunctors {
 
   template <class CK>
   class Bounded_side_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Bounded_side_2
+#endif
   {
     typedef typename CK::Circle_2              Circle_2;
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
 
   public:
-	  typedef typename CK::Linear_kernel::Bounded_side_2::result_type result_type;
+    typedef typename CK::Linear_kernel::Bounded_side_2::result_type result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Bounded_side_2::operator();
+#else 
+    typedef typename CK::Point_2 Point_2;
+    typedef typename CK::Triangle_2 Triangle_2;
+    typedef typename CK::Iso_rectangle_2 Iso_rectangle_2;
+    typedef typename CK::Linear_kernel LK;
+    typedef typename LK::Bounded_side_2 LK_Bounded_side_2;
+
+    result_type
+    operator()(const Circle_2& c, const Point_2& p) const
+    { return LK_Bounded_side_2()(c,p); }
+
+    result_type
+    operator()(const Triangle_2& c, const Point_2& p) const
+    { return LK_Bounded_side_2()(c,p); }
+
+    result_type
+    operator()(const Iso_rectangle_2& c, const Point_2& p) const
+    { return LK_Bounded_side_2()(c,p); }
+
+#endif
 
     result_type
     operator()(const Circle_2& c, const Circular_arc_point_2& p) const
@@ -1092,15 +1115,37 @@ namespace CircularFunctors {
 
   template <class CK>
   class Has_on_bounded_side_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Has_on_bounded_side_2
+#endif
   {
     typedef typename CK::Circle_2              Circle_2;
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
 
   public:
-	  typedef typename CK::Linear_kernel::Has_on_bounded_side_2::result_type result_type;
+    typedef typename CK::Linear_kernel::Has_on_bounded_side_2::result_type result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Has_on_bounded_side_2::operator();
+#else
+    typedef typename CK::Point_2 Point_2;
+    typedef typename CK::Triangle_2 Triangle_2;
+    typedef typename CK::Iso_rectangle_2 Iso_rectangle_2;
+    typedef typename CK::Linear_kernel LK;
+    typedef typename LK::Has_on_bounded_side_2 LK_Has_on_bounded_side_2;
+
+    result_type
+    operator()(const Circle_2& c, const Point_2& p) const
+    { return LK_Has_on_bounded_side_2()(c,p); }
+
+    result_type
+    operator()(const Triangle_2& c, const Point_2& p) const
+    { return LK_Has_on_bounded_side_2()(c,p); }
+
+    result_type
+    operator()(const Iso_rectangle_2& c, const Point_2& p) const
+    { return LK_Has_on_bounded_side_2()(c,p); }
+#endif
 
     result_type
     operator()(const Circle_2& c, const Circular_arc_point_2& p) const
@@ -1110,15 +1155,37 @@ namespace CircularFunctors {
 
   template <class CK>
   class Has_on_unbounded_side_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public CK::Linear_kernel::Has_on_unbounded_side_2
+#endif
   {
     typedef typename CK::Circle_2              Circle_2;
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
 
   public:
-	  typedef typename CK::Linear_kernel::Has_on_unbounded_side_2::result_type result_type;
+    typedef typename CK::Linear_kernel::Has_on_unbounded_side_2::result_type result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Has_on_unbounded_side_2::operator();
+#else 
+    typedef typename CK::Point_2 Point_2;
+    typedef typename CK::Triangle_2 Triangle_2;
+    typedef typename CK::Iso_rectangle_2 Iso_rectangle_2;
+    typedef typename CK::Linear_kernel LK;
+    typedef typename LK::Has_on_unbounded_side_2 LK_Has_on_unbounded_side_2;
+
+    result_type
+    operator()(const Circle_2& c, const Point_2& p) const
+    { return LK_Has_on_unbounded_side_2()(c,p); }
+
+    result_type
+    operator()(const Triangle_2& c, const Point_2& p) const
+    { return LK_Has_on_unbounded_side_2()(c,p); }
+
+    result_type
+    operator()(const Iso_rectangle_2& c, const Point_2& p) const
+    { return LK_Has_on_unbounded_side_2()(c,p); }
+#endif
 
     result_type
     operator()(const Circle_2& c, const Circular_arc_point_2& p) const

@@ -45,15 +45,47 @@ class Compare_x_2 : public BK::Circular_kernel::Compare_x_2
    public:
 
     typedef typename CK::Compare_x_2::result_type result_type; 
-    using CK::Compare_x_2::operator();
 
-   public:
+
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using CK::Compare_x_2::operator();
+#else
+    typedef typename CK::Compare_x_2 CK_Compare_x_2;
+    typedef typename CK::Line_2 Line_2;
 
     result_type
-    operator()( const Point_2 &a, const Point_2 &b) const
+    operator() (const Point_2 &p0,
+                const Point_2 &p1) const
     {
-       return CK().compare_x_2_object()(a,b);
+      return CK_Compare_x_2()(p0, p1);
     }
+
+    result_type
+    operator() (const Point_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2) const
+    {
+      return CK_Compare_x_2()(p0, p1,p2);
+    }
+
+    result_type
+    operator() (const Line_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2) const
+    {
+      return CK_Compare_x_2()(p0, p1,p2);
+    }
+
+    result_type
+    operator() (const Line_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2,
+                const Line_2 &p3) const
+    {
+      return CK_Compare_x_2()(p0, p1,p2,p3);
+    }
+#endif
+  
 	
     result_type
     operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
@@ -82,16 +114,46 @@ class Compare_y_2 : public BK::Circular_kernel::Compare_y_2
    public:
 
     typedef typename CK::Compare_y_2::result_type result_type; 
-    using CK::Compare_y_2::operator();
 
-   public:
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using CK::Compare_x_2::operator();
+#else
+    typedef typename CK::Compare_y_2 CK_Compare_y_2;
+    typedef typename CK::Line_2 Line_2;
 
     result_type
-    operator()( const Point_2 &a, const Point_2 &b) const
+    operator() (const Point_2 &p0,
+                const Point_2 &p1) const
     {
-       return CK().compare_y_2_object()(a,b);
+      return CK_Compare_y_2()(p0, p1);
     }
 
+    result_type
+    operator() (const Point_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2) const
+    {
+      return CK_Compare_y_2()(p0, p1,p2);
+    }
+
+    result_type
+    operator() (const Line_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2) const
+    {
+      return CK_Compare_y_2()(p0, p1,p2);
+    }
+
+    result_type
+    operator() (const Line_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2,
+                const Line_2 &p3) const
+    {
+      return CK_Compare_y_2()(p0, p1,p2,p3);
+    }
+#endif
+  
     result_type
     operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
     {
@@ -551,18 +613,94 @@ class Has_on_2 : public BK::Circular_kernel::Has_on_2
 
 
 template <class BK>
-class Equal_2 : public BK::Circular_kernel::Equal_2
+class Equal_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
+ : public BK::Circular_kernel::Equal_2
+#endif
   {
     typedef typename BK::Circular_kernel                                  CK;
     typedef typename BK::Circular_arc_2                                   Circular_arc_2;
     typedef typename BK::Point_2                                          Point_2;
+    typedef typename BK::Direction_2                                          Direction_2;
+    typedef typename BK::Vector_2                                          Vector_2;
+    typedef typename BK::Segment_2                                         Segment_2 ;
+    typedef typename BK::Ray_2                                          Ray_2;
+    typedef typename BK::Line_2                                          Line_2;
+    typedef typename BK::Circle_2                                          Circle_2;
+    typedef typename BK::Triangle_2                                          Triangle_2;
+    typedef typename BK::Iso_rectangle_2 Iso_rectangle_2;
     typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
     typedef typename BK::Line_arc_2                                       Line_arc_2;
 
   public:
 
     typedef typename CK::Equal_2::result_type result_type; 
+
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Equal_2::operator();
+#else  
+    typedef typename CK::Equal_2 CK_Equal_2;
+    result_type
+    operator() (const Point_2 &p0,
+                const Point_2 &p1) const
+    { return CK_Equal_2()(p0,p1); }
+      
+    result_type
+    operator() (const Vector_2 &p0,
+                const Vector_2 &p1) const
+    { return CK_Equal_2()(p0,p1); }
+       
+    result_type
+    operator() (const Vector_2 &p0,
+                const Null_vector &p1) const
+    { return CK_Equal_2()(p0,p1); }
+      
+    result_type
+    operator() (const Null_vector &p0,
+                const Vector_2 &p1) const
+    { return CK_Equal_2()(p0,p1); }
+      
+    result_type
+    operator() (const Direction_2 &p0,
+                const Direction_2 &p1) const
+    { return CK_Equal_2()(p0,p1); }
+    
+  
+    result_type
+    operator() (const Segment_2 &p0,
+                const Segment_2 &p1) const
+    { return CK_Equal_2()(p0,p1); }
+    
+
+    result_type
+    operator() (const Ray_2 &p0,
+                const Ray_2 &p1) const
+    { return CK_Equal_2()(p0,p1); }
+    
+    result_type
+    operator() (const Line_2 &p0,
+                const Line_2 &p1) const
+    { return CK_Equal_2()(p0,p1); }
+    
+
+
+    result_type
+    operator() (const Triangle_2 &p0,
+                const Triangle_2 &p1) const
+    { return CK_Equal_2()(p0,p1); }
+    
+
+    result_type
+    operator() (const Iso_rectangle_2 &p0,
+                const Iso_rectangle_2 &p1) const
+    { return CK_Equal_2()(p0,p1); }
+    
+
+    result_type
+    operator() (const Circle_2 &p0,
+                const Circle_2 &p1) const
+    { return CK_Equal_2()(p0,p1); }
+#endif
 
   private:
 
@@ -603,6 +741,7 @@ class Equal_2 : public BK::Circular_kernel::Equal_2
       return CK().equal_2_object()( a.point(),b.point() );
     }
 
+    /* WAS THAT HERE FOR OTHER COMPILERS THAN VC* ???
     // redefine to solve ambiguous call error
     result_type
     operator()( const Point_2 &a ,
@@ -610,7 +749,7 @@ class Equal_2 : public BK::Circular_kernel::Equal_2
     { 
       return CK().equal_2_object()( a, b);
     }
-
+    */
     result_type
     operator()( const Circular_arc_2 &a , const Circular_arc_2 &b ) const
     {
