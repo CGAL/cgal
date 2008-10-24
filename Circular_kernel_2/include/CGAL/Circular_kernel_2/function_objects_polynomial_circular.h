@@ -46,18 +46,44 @@ namespace CircularFunctors {
 
   public:
 
+    typedef typename CK::Linear_kernel::Compare_x_2::result_type result_type;
 #ifndef CGAL_CFG_MATCHING_BUG_6
-		typedef typename CK::Linear_kernel::Compare_x_2::result_type result_type;
     using CK::Linear_kernel::Compare_x_2::operator();
 #else
-    typedef CGAL::Comparison_result result_type;
+    typedef typename CK::Linear_kernel LK;
+    typedef typename LK::Compare_x_2 LK_Compare_x_2;
+    typedef typename CK::Line_2 Line_2;
+
     result_type
     operator() (const Point_2 &p0,
                 const Point_2 &p1) const
     {
-      typedef typename CK::Linear_kernel LK;
-      typedef typename LK::Compare_x_2 LK_Compare_x_2;
       return LK_Compare_x_2()(p0, p1);
+    }
+
+    result_type
+    operator() (const Point_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2) const
+    {
+      return LK_Compare_x_2()(p0, p1,p2);
+    }
+
+    result_type
+    operator() (const Line_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2) const
+    {
+      return LK_Compare_x_2()(p0, p1,p2);
+    }
+
+    result_type
+    operator() (const Line_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2,
+                const Line_2 &p3) const
+    {
+      return LK_Compare_x_2()(p0, p1,p2,p3);
     }
 #endif
 
@@ -80,18 +106,45 @@ namespace CircularFunctors {
 
   public:
 	
+    typedef typename CK::Linear_kernel::Compare_y_2::result_type result_type;
 #ifndef CGAL_CFG_MATCHING_BUG_6
-	  typedef typename CK::Linear_kernel::Compare_y_2::result_type result_type;
     using CK::Linear_kernel::Compare_y_2::operator();
 #else
-    typedef CGAL::Comparison_result result_type;
+
+    typedef typename CK::Linear_kernel LK;
+    typedef typename LK::Compare_y_2 LK_Compare_y_2;
+    typedef typename CK::Line_2 Line_2;
+
     result_type
     operator() (const Point_2 &p0,
                 const Point_2 &p1) const
     {
-      typedef typename CK::Linear_kernel LK;
-      typedef typename LK::Compare_y_2 LK_Compare_y_2;
       return LK_Compare_y_2()(p0, p1);
+    }
+
+    result_type
+    operator() (const Point_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2) const
+    {
+      return LK_Compare_y_2()(p0, p1,p2);
+    }
+
+    result_type
+    operator() (const Line_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2) const
+    {
+      return LK_Compare_y_2()(p0, p1,p2);
+    }
+
+    result_type
+    operator() (const Line_2 &p0,
+                const Line_2 &p1,
+                const Line_2 &p2,
+                const Line_2 &p3) const
+    {
+      return LK_Compare_y_2()(p0, p1,p2,p3);
     }
 #endif
 
@@ -113,11 +166,11 @@ namespace CircularFunctors {
     
   public:
 
+    typedef typename CK::Linear_kernel::Compare_xy_2::result_type result_type;
 #ifndef CGAL_CFG_MATCHING_BUG_6
-	  typedef typename CK::Linear_kernel::Compare_xy_2::result_type result_type;
     using CK::Linear_kernel::Compare_xy_2::operator();
 #else 
-    typedef CGAL::Comparison_result result_type;
+
     result_type
     operator() (const Point_2 &p0,
                 const Point_2 &p1) const
@@ -253,11 +306,10 @@ namespace CircularFunctors {
     typedef typename LK::Circle_2 Circle_2;
 
     
+    typedef typename CK::Linear_kernel::Equal_2::result_type result_type;
 #ifndef CGAL_CFG_MATCHING_BUG_6
-	  typedef typename CK::Linear_kernel::Equal_2::result_type result_type;
     using CK::Linear_kernel::Equal_2::operator();
 #else  
-    typedef bool         result_type;
 
     result_type
     operator() (const Point_2 &p0,
@@ -266,6 +318,16 @@ namespace CircularFunctors {
       
     result_type
     operator() (const Vector_2 &p0,
+                const Vector_2 &p1) const
+    { return LK_Equal_2()(p0,p1); }
+       
+    result_type
+    operator() (const Vector_2 &p0,
+                const Null_vector &p1) const
+    { return LK_Equal_2()(p0,p1); }
+      
+    result_type
+    operator() (const Null_vector &p0,
                 const Vector_2 &p1) const
     { return LK_Equal_2()(p0,p1); }
       
@@ -284,7 +346,7 @@ namespace CircularFunctors {
     result_type
     operator() (const Ray_2 &p0,
                 const Ray_2 &p1) const
-    { return LK_Equal_2::operator()(p0,p1); }
+    { return LK_Equal_2()(p0,p1); }
     
     result_type
     operator() (const Line_2 &p0,
@@ -957,14 +1019,16 @@ namespace CircularFunctors {
 
   public:
 
+    typedef typename CK::Linear_kernel::Construct_bbox_2::result_type result_type; 
 #ifndef CGAL_CFG_MATCHING_BUG_6
-	  typedef typename CK::Linear_kernel::Construct_bbox_2::result_type result_type; 
     using CK::Linear_kernel::Construct_bbox_2::operator();
 #else
-    typedef CGAL::Bbox_2 result_type;
     typedef typename CK::Linear_kernel LK;
     typedef typename LK::Construct_bbox_2 LK_Construct_bbox_2;
     typedef typename LK::Point_2 Point_2;
+    typedef typename LK::Segment_2 Segment_2;
+    typedef typename LK::Triangle_2  Triangle_2 ;
+    typedef typename LK::Iso_rectangle_2 Iso_rectangle_2 ;
 
     result_type operator() (const Circle_2 & a) const
     {
@@ -972,6 +1036,20 @@ namespace CircularFunctors {
     }
 
     result_type operator() (const Point_2 & a) const
+    {
+      return LK_Construct_bbox_2()(a);
+    }
+
+    result_type operator() (const Segment_2 & a) const
+    {
+      return LK_Construct_bbox_2()(a);
+    }
+
+    result_type operator() (const Triangle_2 & a) const
+    {
+      return LK_Construct_bbox_2()(a);
+    }
+    result_type operator() (const Iso_rectangle_2 & a) const
     {
       return LK_Construct_bbox_2()(a);
     }
