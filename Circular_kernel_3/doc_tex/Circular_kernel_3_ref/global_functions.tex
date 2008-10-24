@@ -11,7 +11,8 @@
 
 \ccFunction{Circular_arc_point_3<SphericalKernel>
   x_extremal_point(const Circle_3<SphericalKernel> & c, bool b);}
-{Same for a circle.}
+{Same for a circle.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $x$-axis.}}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{y_extremal_point}
@@ -27,7 +28,8 @@
 
 \ccFunction{Circular_arc_point_3<SphericalKernel>
   y_extremal_point(const Circle_3<SphericalKernel> & c, bool b);}
-{Same for a circle.}
+{Same for a circle.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $y$-axis.}}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{z_extremal_point}
@@ -43,7 +45,8 @@
 
 \ccFunction{Circular_arc_point_3<SphericalKernel>
   z_extremal_point(const Circle_3<SphericalKernel> & c, bool b);}
-{Same for a circle.}
+{Same for a circle.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $z$-axis.}}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{x_extremal_points}
@@ -64,7 +67,9 @@
   OutputIterator res);}
 {Copies in the output iterator the $x$-extremal points of the
   circle. \ccc{res} iterates on elements of type
-  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically
+  sorted.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $x$-axis.}}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{y_extremal_points}
@@ -85,7 +90,9 @@
   OutputIterator res);}
 {Copies in the output iterator the $y$-extremal points of the
   circle. \ccc{res} iterates on elements of type
-  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically
+  sorted.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $y$-axis.}}
 
 \end{ccRefFunction}
 \begin{ccRefFunction}{z_extremal_points}
@@ -106,6 +113,8 @@
   OutputIterator res);}
 {Copies in the output iterator the $z$-extremal points of the
   circle. \ccc{res} iterates on elements of type
-  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically
+  sorted.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $z$-axis.}}
 
 \end{ccRefFunction}
