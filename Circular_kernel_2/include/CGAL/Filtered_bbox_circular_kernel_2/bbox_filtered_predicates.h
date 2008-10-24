@@ -41,17 +41,11 @@ class Compare_x_2 : public BK::Circular_kernel::Compare_x_2
     typedef typename BK::Circular_kernel                         CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
     typedef typename BK::Point_2                                 Point_2;
+    typedef typename CK::Compare_x_2 CK_Compare_x_2;
 
    public:
 
     typedef typename CK::Compare_x_2::result_type result_type; 
-
-
-#ifndef CGAL_CFG_MATCHING_BUG_6
-    using CK::Compare_x_2::operator();
-#else
-    typedef typename CK::Compare_x_2 CK_Compare_x_2;
-    typedef typename CK::Line_2 Line_2;
 
     result_type
     operator() (const Point_2 &p0,
@@ -59,6 +53,11 @@ class Compare_x_2 : public BK::Circular_kernel::Compare_x_2
     {
       return CK_Compare_x_2()(p0, p1);
     }
+
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using CK::Compare_x_2::operator();
+#else
+    typedef typename CK::Line_2 Line_2;
 
     result_type
     operator() (const Point_2 &p0,
@@ -110,16 +109,11 @@ class Compare_y_2 : public BK::Circular_kernel::Compare_y_2
     typedef typename BK::Circular_kernel                         CK;
     typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
     typedef typename BK::Point_2                                 Point_2;
+    typedef typename CK::Compare_y_2 CK_Compare_y_2;
 
    public:
 
     typedef typename CK::Compare_y_2::result_type result_type; 
-
-#ifndef CGAL_CFG_MATCHING_BUG_6
-    using CK::Compare_x_2::operator();
-#else
-    typedef typename CK::Compare_y_2 CK_Compare_y_2;
-    typedef typename CK::Line_2 Line_2;
 
     result_type
     operator() (const Point_2 &p0,
@@ -127,6 +121,11 @@ class Compare_y_2 : public BK::Circular_kernel::Compare_y_2
     {
       return CK_Compare_y_2()(p0, p1);
     }
+
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using CK::Compare_y_2::operator();
+#else
+    typedef typename CK::Line_2 Line_2;
 
     result_type
     operator() (const Point_2 &p0,
@@ -636,15 +635,15 @@ class Equal_2
 
     typedef typename CK::Equal_2::result_type result_type; 
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
-    using CK::Equal_2::operator();
-#else  
     typedef typename CK::Equal_2 CK_Equal_2;
     result_type
     operator() (const Point_2 &p0,
                 const Point_2 &p1) const
     { return CK_Equal_2()(p0,p1); }
-      
+
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using CK::Equal_2::operator();
+#else  
     result_type
     operator() (const Vector_2 &p0,
                 const Vector_2 &p1) const
