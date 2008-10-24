@@ -10,3 +10,14 @@ makefile.dependencies
 find_debug_macros
 find_non_debug_macros
 polyhedron_remesher.cpp
+
+polyhedron_remesher.cpp
+polyhedron_remesher_with_edges.cpp
+demo/Surface_mesher/qt4-demo/polyhedral_surface.h
+demo/Surface_mesher/windows
+
+examples/Surface_mesher/polyhedron_remesher.cpp
+
+builder.h
+Polyhedral_surface_3.h
+pws_loop_subdivision.h
