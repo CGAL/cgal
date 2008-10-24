@@ -156,11 +156,11 @@ void PDB::build_heterogens() {
   for (unsigned int i=0; i< connections_.size(); ++i) {
     int a= connections_[i].first;
     int b= connections_[i].second;
-    for (unsigned int i=0; i< models_.size(); ++i) {
+    for (Model_iterator it= models_begin(); it != models_end(); ++it) {
       bool found=false;
       for (Model::Heterogen_iterator hit 
-             = models_[Model_key(i)].heterogens_begin();
-           hit != models_[Model_key(i)].heterogens_end(); ++hit) {
+             = it->model().heterogens_begin();
+           hit != it->model().heterogens_end(); ++hit) {
         if (hit->heterogen().connect(Atom::Index(a), Atom::Index(b))) {
           found=true;
           break;
