@@ -25,7 +25,8 @@ result_type operator()(PolynomialTraits_d::Polynomial_d  p,
                        InputIterator                     end );}{ 
 Returns the sign of $p$ at the given Cartesian point, where $begin$ is referring 
 to the innermost variable.
-\ccPrecond (end-begin == \ccc{PolynomialTraits_d::d})  
+\ccPrecond{(end-begin == \ccc{PolynomialTraits_d::d})}
+\ccPrecond{\ccc{std::iterator_traits< InputIterator >::value_type} is  \ccc{ExplicitInteroperable} with  \ccc{PolynomialTraits_d::Innermost_coefficient_type}.} 
 }
 %\ccHasModels
 

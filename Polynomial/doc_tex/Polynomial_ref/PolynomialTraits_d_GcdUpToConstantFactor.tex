@@ -6,10 +6,10 @@ This \ccc{AdaptableBinaryFunction} computes the $gcd$
 {\em up to a constant factor (utcf)} of two polynomials of type 
 \ccc{PolynomialTraits_d::Polynomial_d}. 
 
-In case the base ring $R$, \ccc{PolynomialTraits_d::Innermost_coefficient_type}, 
+In case the base ring $R$ (\ccc{PolynomialTraits_d::Innermost_coefficient_type}) 
 is not a \ccc{UniqueFactorizationDomain} or not a \ccc{Field} the polynomial ring 
-$R[x_0,\dots,x_{d-1}]$ ,\ccc{PolynomialTraits_d::Polynomial_d}, may not 
-possess greatest common divisor. However, since the $R$ is an integral 
+$R[x_0,\dots,x_{d-1}]$ (\ccc{PolynomialTraits_d::Polynomial_d}) may not 
+possess greatest common divisors. However, since $R$ is an integral 
 domain one can consider its quotient field $Q(R)$ for which $gcd$s of 
 polynomials exist. 
 
@@ -34,7 +34,7 @@ Hence, $gcd\_utcf(f,g)$ may not be a divisor of $f$ and $g$ in $R[x_0,\dots,x_{d
 
 \ccMethod{result_type operator()(first_argument_type  f,
                                  second_argument_type g);}
-                {Computes a denominator-free, constant multiple of $gcd(f,g)$}
+                {Computes $gcd(f,g)$ up to a constant factor.}
 
 
 

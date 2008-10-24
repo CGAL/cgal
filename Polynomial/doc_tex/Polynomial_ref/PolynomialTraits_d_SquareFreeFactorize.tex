@@ -7,7 +7,7 @@ of a \ccc{PolynomialTraits_d::Polynomial_d}.
 
 A polynomial $p$ is factored into square-free and pairwise coprime non-constant
 factors $g_i$ with multiplicities $m_i$ and a constant factor $a$, such that 
-$p = a  \cdot  g_1m_1  \cdot  ...  \cdot  g_nm_n$.
+$p = a  \cdot  g_1^{m_1}  \cdot  ...  \cdot  g_n^{m_n}$.
 
 The pairs $(g_i,m_i)$ are written into the given output iterator.\\
 
@@ -31,9 +31,11 @@ DefaultConstructible\\
 OutputIterator operator()(PolynomialTraits_d::Polynomial_d  p,
                           OutputIterator                    it,
                           PolynomialTraits_d::Innermost_coefficient_type& a);}
-{ Computes square-free factorization of $p$.\\
-  The \ccc{OutputIterator} must allow the value type  
-   \ccc{std::pair<PolynomialTraits_d::Polynomial_d,int>}.
+{ Computes the square-free factorization of $p$ and returns the 
+  past-the-end iterator of the written range. 
+  \ccPrecond{ \ccc{std::iterator_traits< OutputIterator >::value_type} 
+  must be constructible from 
+  \ccc{std::pair<PolynomialTraits_d::Polynomial_d,int>}.}
 }
 
 \ccMethod{template<class OutputIterator>

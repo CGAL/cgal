@@ -1,12 +1,12 @@
 \begin{ccRefConcept}{PolynomialTraits_d::ScaleHomogeneous}
 \ccDefinition
 
-This \ccc{AdaptableFunctor} scale a 
-\ccc{PolynomialTraits_d::Polynomial_d} with respect to one variable. 
+Given a numerator $a$ and a denominator $b$ this \ccc{AdaptableFunctor} 
+scales a \ccc{PolynomialTraits_d::Polynomial_d} $p$ with respect to one variable, 
+that is, it computes $b^{degree(p)}\cdot p(a/b\cdot x)$.
 
 Note that this functor operates on the polynomial in the univariate view, that is, 
-the polynomial is considered as a univariate polynomial in one specific variable. 
-Moreover, the polynomial is considered as a homogeneous polynomial in that variable.
+the polynomial is considered as a univariate homogeneous polynomial in one specific variable. 
 Note that $a$ and $b$ are of type \ccc{PolynomialTraits_d::Coefficient_type}.
 
 

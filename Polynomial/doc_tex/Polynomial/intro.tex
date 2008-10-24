@@ -16,7 +16,7 @@ concept \ccc{IntegralDomainWithoutDivision}.
 However, a model of \ccc{Polynomial_d} has to be accompanied by a traits class 
 \ccc{CGAL::Polynomial_traits_d<Polynomial_d>} being a model of 
 \ccc{PolynomialTraits_d}. 
-In principal this traits class provides all further functionalities 
+In principal the traits class provides all further functionalities 
 on polynomials.
 
 Given a $d$-variate polynomial over some base ring $R$ there are at least 
@@ -28,11 +28,11 @@ an element of $R[x_0,\dots,x_{d-2}][x_{d-1}]$. That is, the polynomial
 is treated as a univariate polynomial over the ring $R[x_0,\dots,x_{d-2}]$. 
 \item The symmetric or multivariate view: 
 This view is almost symmetric with respect to all variables. It considers 
-considers the polynomials as an element of $R [x_0,\dots,x_{d-1}]$.
+the polynomial as an element of $R [x_0,\dots,x_{d-1}]$.
 \end{itemize}
 
-According to these two different views the traits class provides two 
-different coefficients types:
+According to these two different views the traits class is required to provide 
+two different coefficient types:
 \begin{itemize}
 \item \ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Coefficient_type} 
 representing $R[x_0,\dots,x_{d-2}]$.
@@ -45,6 +45,10 @@ Another important type which is introduced by this package is
 It is derived from \ccc{std::vector<int>} and used to identify multivariate 
 monomials. For instance the exponent vector containing the sequence 
 $[3,2,4]$ corresponds to the trivariate monomial $x_0^3x_1^2x_2^4$. 
+Note that a vector with negative exponents is considered as invalid. 
+However, we decided to in principal allow negative exponents as they may 
+appear as intermediate results, in particular we did {\bf not} derive from 
+\ccc{std::vector<unsigned int>}. 
 
 
 % ###########################
@@ -125,7 +129,7 @@ a model of this concept returns the degree of the polynomial in the univariate
 view. By default this is the degree with respect to the outermost variable, 
 but it is also possible to select another variable. 
 \item \ccc{PolynomialTraits_d::TotalDegree}: 
-a model of this concept returns the so called total degree of a polynomial. 
+a model of this concept returns the {\em total degree} of a polynomial. 
 The polynomial is considered as a multivariate polynomial. 
 The total degree is the maximum over the sums of the exponents of each 
 multivariate monomial. 
@@ -168,18 +172,18 @@ Since the concept \ccc{PolynomialTraits_d} refines the concept
 \ccc{AlgebraicStructureTraits} the polynomial traits provides functors for 
 integral division, division with remainder, greatest common divisor, etc.
 But note that the algebraic structure of a polynomial depends on the algebraic 
-structure of the innermost coefficient, for instance, a gcd is only available 
+structure of the innermost coefficient, for instance, a gcd is available 
 if and only if the innermost coefficient is a \ccc{Field} or a 
 \ccc{UniqueFactorizationDomain}. Hence, we can not provide a $gcd$ if the 
 innermost coefficient is just an \ccc{IntegralDomain} since it is simply 
 not well defined\footnote{%
 An example for such a number type is the template 
 \ccc{CGAL::Sqrt_extension<NT,ROOT>} representing an algebraic extension of 
-degree 2. This is just an \ccc{IntegralDomain} if NT is not a \ccc{Field}. }.
+degree two. This is just an \ccc{IntegralDomain} if NT is not a \ccc{Field}. }.
 % 
 However, if we would consider the polynomial over the quotient field of the 
 integral domain the $gcd$ would be well defined. The only problem is
-that the the result can not be represented over the ring since it contains 
+that the result can not be represented over the ring since it contains 
 denominators.   
 Therefore, the \ccc{PolynomialTraits_d} requires functors such as 
 \ccc{PolynomialTraits_d::GcdUpToConstantFactor}. 
@@ -189,10 +193,10 @@ but multiplied by some constant such that the result is representable with
 coefficients in the ring. 
 
 However, note that these 'utcf' functions are usually a bit faster than their 
-counter parts. This is due to the fact that the 'utcf' functions are allowed 
+strict counter parts. This is due to the fact that the 'utcf' functions are allowed 
 to skip the computation of the correct constant factor.
 Note that in many cases the constant factor is in fact not needed.
-In particular if the polynomials are supposed to represent some vanishing set, 
+In particular if the polynomials are supposed to represent some zero set, 
 that is, an algebraic curve or surface.  
 
 The concepts for the related functors are: 
@@ -210,16 +214,16 @@ The concepts for the related functors are:
       \ccc{PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor}
 \end{itemize}
 
-In case of \ccc{PolynomialTraits_d::MultivariateContent} a counter part does 
-not make sense, since it is defined as the gcd of all innermost coefficients. 
+%In case of \ccc{PolynomialTraits_d::MultivariateContent} a counter part does 
+%not make sense, since it is defined as the gcd of all innermost coefficients. 
 
-There is also no counterpart to \ccc{PolynomialTraits_d::MakeSquareFree}, since 
-the result is canonicalized, which is supposed to remove superfluous constant 
-factors anyway. (See also \ccc{PolynomialTraits_d::Canonicalize}.)
+%There is also no counterpart to \ccc{PolynomialTraits_d::MakeSquareFree}, since 
+%the result is canonicalized, which is supposed to remove superfluous constant 
+%factors anyway. (See also \ccc{PolynomialTraits_d::Canonicalize}.)
 
 
 Another analog functionality is the pseudo division. 
-The related functors recoup the usual division with remainder in case the 
+The related functors replace the usual division with remainder in case the 
 Polynomial is not a \ccc{EuclideanRing}. \\
 The concepts for the related functors are: 
 \begin{itemize}

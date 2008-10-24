@@ -3,7 +3,9 @@
 \ccDefinition
 
 This \ccc{AdaptableFunctor} moves a variable at position $i$ to a 
-new position $j$. The relative order of the other variables is preserved.
+new position $j$. The relative order of the other variables is preserved, 
+that is, the variables between $x_i$ and $x_j$ (including $x_j$) are moved by
+one position while $x_i$ is moved to the former position of $x_j$. 
 
 This function may be used to make a certain variable the outer most variable. 
 

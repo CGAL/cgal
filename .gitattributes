@@ -2969,6 +2969,7 @@ Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_SubstituteHomogeneous.tex -
 Polynomial/doc_tex/Polynomial_ref/Polynomial_1.tex -text
 Polynomial/doc_tex/Polynomial_ref/Polynomial_traits_d.tex -text
 Polynomial/doc_tex/Polynomial_ref/Polynomial_type_generator.tex -text
+Polynomial/doc_tex/Polynomial_ref/sylvester_matrix.gif -text
 Polynomial/examples/Polynomial/coefficient_access.cpp -text
 Polynomial/examples/Polynomial/construction.cpp -text
 Polynomial/examples/Polynomial/degree.cpp -text

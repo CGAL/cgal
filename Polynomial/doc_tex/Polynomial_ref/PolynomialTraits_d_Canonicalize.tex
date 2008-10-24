@@ -2,18 +2,20 @@
 
 \ccDefinition
 
-This \ccc{AdaptableUnaryFunction} computes a unique representative from the set: 
-$\{ q | \lambda * q = p\ for\ some\ \lambda \in R  \}$, 
-where $p$ is the given polynomial and $R$ the base of the polynomial ring. 
-In particular, the computed polynomial has the same zero set as the given one.
+For a given polynomial $p$ this \ccc{AdaptableUnaryFunction} computes the 
+unique representative of the set 
+\[{\cal P} := \{ q\ |\ \lambda * q = p\ for\ some\ \lambda \in R  \},\]
+where $R$ is the base of the polynomial ring. 
 
-In case \ccc{PolynomialTraits::Innermost_coefficient_type} is a model of \ccc{Field}, 
-the computed polynomial is the {\em monic} polynomial, 
-that is the innermost leading coefficient equals one.
+In case \ccc{PolynomialTraits::Innermost_coefficient_type} is a model of 
+\ccc{Field}, the computed polynomial is the {\em monic} polynomial in 
+{$\cal P$}, that is, the innermost leading coefficient equals one.\\
 In case \ccc{PolynomialTraits::Innermost_coefficient_type} is a model 
-of \ccc{UniqueFactorizationDomain}, the gcd over all innermost coefficients of 
-the computed polynomial is one.
+of \ccc{UniqueFactorizationDomain}, the computed polynomial is the one with 
+a multivariate content of one.\\
 For all other cases the notion of uniqueness is up to the concrete model. 
+
+Note that the computed polynomial has the same zero set as the given one.
 
 
 
@@ -32,7 +34,7 @@ For all other cases the notion of uniqueness is up to the concrete model.
 
 \ccCreationVariable{fo}
 \ccMethod{result_type operator()(first_argument_type  p);}{
-        Returns the cononical representative of $p$.}
+        Returns the canonical representative of $p$.}
 
 
 

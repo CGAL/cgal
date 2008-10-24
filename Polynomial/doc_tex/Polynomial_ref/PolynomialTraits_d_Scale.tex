@@ -1,8 +1,10 @@
 \begin{ccRefConcept}{PolynomialTraits_d::Scale}
 \ccDefinition
 
-This \ccc{AdaptableBinaryFunction} scale a 
-\ccc{PolynomialTraits_d::Polynomial_d} with respect to one variable. 
+
+Given a constant $c$ this \ccc{AdaptableBinaryFunction} scales a 
+\ccc{PolynomialTraits_d::Polynomial_d} $p$ with respect to one variable, that is, 
+it computes $p(c\cdot x)$.
 
 Note that this functor operates on the polynomial in the univariate view, that is, 
 the polynomial is considered as a univariate polynomial in one specific variable. 

@@ -1,8 +1,9 @@
 \begin{ccRefConcept}{PolynomialTraits_d::Invert}
 \ccDefinition
 
-This \ccc{AdaptableUnaryFunction} inverts on variable in a given
-\ccc{PolynomialTraits_d::Polynomial_d}.
+This \ccc{AdaptableUnaryFunction} inverts one variable in a given
+\ccc{PolynomialTraits_d::Polynomial_d}, that is, for a given polynomial 
+$p$ it computes $x^{degree(p)}p(1/x)$. 
 
 Note that this functor operates on the polynomial in the univariate view, that is, 
 the polynomial is considered as a univariate polynomial in one specific variable. 
@@ -29,7 +30,7 @@ order of the coefficients with respect to the specified variable.
         }
 
 \ccMethod{result_type operator()(argument_type  p,  int i);}{ 
-        Return $x^{degree(p)}p(1/x)$, 
+        Return $x^{degree(p,i)}p(1/x)$, 
         where x refers to the variable $x_{i}$.        
         \ccPrecond $0 \leq i  < d$ }
 

@@ -1,7 +1,7 @@
 \begin{ccRefConcept}{PolynomialTraits_d}
 
 \ccDefinition
-A model of \ccc{PolynomialTraits_d} is associated to a type 
+A model of \ccc{PolynomialTraits_d} is associated with a type 
 \ccc{Polynomial_d}. 
 The type \ccc{Polynomial_d} represents a multivariate polynomial.
 The number of variables is denoted as the dimension $d$ of the polynomial,
@@ -13,12 +13,12 @@ $d$ is just set to one.
 multivariate polynomial. 
 
 \begin{itemize}
-\item The recursive view:  In this view, the polynomials is considered as 
+\item The recursive view:  In this view, the polynomial is considered as 
 an element of $R[x_0,\dots,x_{d-2}][x_{d-1}]$. That is, the polynomial 
 is treated as a univariate polynomial over the ring $R[x_0,\dots,x_{d-2}]$. 
 \item The symmetric or multivariate view: This view is symmetric 
 with respect to all variables,
-considering the polynomials as element of $R [x_0,\dots,x_{d-1}]$.
+considering the polynomial as an element of $R [x_0,\dots,x_{d-1}]$.
 \end{itemize}
 
 Many functors consider the polynomial as a univariate polynomial in one variable.
@@ -62,10 +62,10 @@ In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
 \ccNestedType{Get_innermost_coefficient}
         {A model of \ccc{PolynomialTraits_d::GetInnermostCoefficient}.}
 
-\ccNestedType{Construct_cofficient_const_iterator_range}
+\ccNestedType{Construct_coefficient_const_iterator_range}
         {A model of 
         \ccc{PolynomialTraits_d::ConstructCoefficientConstIteratorRange}.}
-\ccNestedType{Construct_innermost_cofficient_const_iterator_range}
+\ccNestedType{Construct_innermost_coefficient_const_iterator_range}
         {A model of 
         \ccc{PolynomialTraits_d::ConstructInnermostCoefficientConstIteratorRange}.}
 
@@ -126,12 +126,12 @@ In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
  
 \ccNestedType{Univariate_content}{ 
         In case \ccc{PolynomialTraits_d::Coefficient_type} is {\bf not} a model of 
-        \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_type}, otherwise this is 
+        \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_functor}, otherwise this is 
         a model of \ccc{PolynomialTraits_d::UnivariateContent}.}
 %\begin{ccAdvanced}
 \ccNestedType{Multivariate_content}{ 
         In case \ccc{PolynomialTraits_d::Innermost_coefficient_type} is {\bf not} 
-        a model of \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_type}, 
+        a model of \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_functor}, 
         otherwise this is a model of 
         \ccc{PolynomialTraits_d::MultivariateContent}.}
 %\end{ccAdvanced}
@@ -159,7 +159,7 @@ In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
 { A model of \ccc{PolynomialTraits_d::MakeSquareFree}.}\ccGlue
 \ccNestedType{Square_free_factorize}
 { In case \ccc{PolynomialTraits::Polynomial_d} 
-is not a model of \ccc{UniqueFactorizationDomain}, this is of type \ccc{CGAL::Null_type},
+is not a model of \ccc{UniqueFactorizationDomain}, this is of type \ccc{CGAL::Null_functor},
  otherwise this is a model of \ccc{PolynomialTraits_d::SquareFreeFactorize}.}
 
 
