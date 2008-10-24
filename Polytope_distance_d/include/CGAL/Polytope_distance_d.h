@@ -28,7 +28,6 @@
 #include <CGAL/QP_options.h>
 #include <CGAL/QP_solver/QP_solver.h>
 #include <CGAL/QP_models.h>
-#include <CGAL/QP_solver/iterator.h>
 #include <CGAL/QP_solver/functors.h>
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
