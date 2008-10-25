@@ -6,15 +6,13 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/partition_2.h>
 #include <CGAL/Partition_traits_2.h>
-#include<CGAL/Create_straight_skeleton_2.h>
+#include<CGAL/create_straight_skeleton_2.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 
 // Qt headers
 #include <QtGui>
 #include <QString>
-#include <QActionGroup>
 #include <QFileDialog>
-#include <QInputDialog>
 #include <QGraphicsLineItem>
 
 // GraphicsView items and event filters (input classes)
