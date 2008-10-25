@@ -50,6 +50,7 @@ void print_rounding_name (CGAL::FPU_CW_t r)
 
 int main()
 {
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
    bool flag = true;
 
    flag = flag && (FPU_empiric_test() == CGAL_FE_TONEAREST);
@@ -91,5 +92,6 @@ int main()
    print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 
+   CGAL::FPU_set_cw(backup); // We restore it, as this gets checked 
    return (int) !flag;
 }
