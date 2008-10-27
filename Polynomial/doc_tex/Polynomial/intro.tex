@@ -1,6 +1,66 @@
 
 \ccChapterAuthor{Michael Hemmer}
 
+\section{Fundamentals}
+
+Note that this is just a very brief introduction to polynomials. 
+For a quick reference we refer to the Wikipedia or for a more elaborate 
+introduction to any class book on elementary algebra. 
+
+A {\em polynomial} is either zero, or can be written as the sum of one or more 
+non-zero {\em terms}. The number of terms is finite. A term consist of a 
+constant {\em coefficient} and a {\em monomial}, 
+that is, the product of zero or more variables. 
+Each variable may have an exponent that is a non-negative integer. 
+The exponent on a variable in a term is equal to the {\em degree} of that 
+variable in that term. A term with no variables is called a constant term.
+The degree of a constant term is 0. 
+
+For example, $-7x^3y$ is a term. The coefficient is $-7$, 
+the monomial is $x^3y$, comprised of the variables $x$ and $y$, 
+the degree of $x$ is three, and the degree of $y$ is one. 
+The {\em total degree} of the entire term is the sum of the 
+degrees in each variable. 
+In the example above, the degree is $3 + 1 = 4$.
+
+A one-variable (univariate) polynomial $f$ of degree $n$ has the following form:
+
+\[f = a_nx^n + a_{n-1}x^{n-1} + ... + a_2x^2 + a_1x + a_0\]
+
+The coefficient $a_0$ is called the {\em constant coefficient}, 
+$a_n$ is called the {\em leading coefficient}.  
+If $f$ is not the zero polynomial the leading coefficient is not zero. 
+The polynomial is called monic if $a_n = 1$. 
+In case the coefficient domain of $f$ possess a greatest common divisor 
+(gcd) the {\em content} of $f$ is the gcd of all coefficients of $f$. 
+For instance, the content of $12 x^3 + 6$ is $6$. 
+
+A multivariate polynomial is a polynomial in more than one variable. 
+According to the number of variables it is possible to 
+further classify multivariate polynomials as bivariate, trivariate etc. 
+In contradiction to univariate polynomials the terms of a multivariate polynomial
+are not completely ordered by their total degree. However, given a certain order 
+on the variables it is possible to define a lexicographic order on the terms. 
+Given this order the leading coefficient of a multivariate polynomial is defined 
+as the coefficient of the highest term. For instance the leading coefficient of 
+the multivariate polynomial $p = 5 x^3y + 7xy^2$ is $7$, given that $y$ has an 
+higher order than $x$. 
+
+However, it is also possible to interpret a multivariate polynomial as a 
+univariate polynomial in that variable. For instance the trivariate polynomial 
+\[q = x^5 + 7x^2y^1z^2 + 13x^1y^2z^2 \in \Z[x,y,z] \]
+may be interpreted as a univariate polynomial in $z$, that is, $q$ is interpreted as an element of $R[z]$, with $R=\Z[x,y]$.  
+\[q = (13x^1y^2 + 7x^2y^1)z^2 + x^5z^0 \in R[z] \]
+In this case the leading coefficient of $q$ with respect to $z$ is
+$13x^1y^2 + 7x^2y^1$ and $x^5$ becomes the 'constant' term. 
+
+A {\em homogeneous polynomial} is a polynomial whose terms do all 
+have the same total degree. 
+For example, $h = x^5 + 7x^2y^1z^2 + 13x^1y^2z^2$ is a homogeneous polynomial 
+of degree $5$, in three variables. 
+
+
+
 \section{Introduction}
 
 This package introduces a concept \ccc{Polynomial_d}, a concept for multivariate 
@@ -10,7 +70,7 @@ particular model of \ccc{Polynomial_d}.
 The concept also allows univariate polynomials.
 
 First of all a model of \ccc{Polynomial_d} is considered as an algebraic 
-structure, that is, the usual arithmetic operations like +,-,* etc. are 
+structure, that is, the ring operations $\{+, -, \cdot\}$ are 
 provided due to the fact that \ccc{Polynomial_d} refines at least the 
 concept \ccc{IntegralDomainWithoutDivision}. 
 However, a model of \ccc{Polynomial_d} has to be accompanied by a traits class 
@@ -207,8 +267,8 @@ The concepts for the related functors are:
 \item \ccc{AlgebraicStructureTraits::IntegralDivision}\\        
       \ccc{PolynomialTraits_d::IntegralDivisionUpToConstantFactor}
 
-\item \ccc{PolynomialTraits_d::UnivariateContent}
-      \ccc{PolynomialTraits_d::UnivariateContentUpToConstantFactor}\\
+\item \ccc{PolynomialTraits_d::UnivariateContent}\\
+      \ccc{PolynomialTraits_d::UnivariateContentUpToConstantFactor}
        
 \item \ccc{PolynomialTraits_d::SquareFreeFactorize}\\
       \ccc{PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor}
@@ -250,22 +310,29 @@ In case the inner most coefficient is \ccc{RealEmbeddable} the traits
 also must provide a function to compute the sign at a given point. \\
 The concepts for the related functors are:
 \begin{itemize}
-\item \ccc{PolynomialTraits_d::Substitute}
-\item \ccc{PolynomialTraits_d::Evaluate}
-\item \ccc{PolynomialTraits_d::IsZeroAt}
+\item \ccc{PolynomialTraits_d::Substitute}\ccGlue
+\item \ccc{PolynomialTraits_d::Evaluate}\ccGlue
+\item \ccc{PolynomialTraits_d::IsZeroAt}\ccGlue
 \item \ccc{PolynomialTraits_d::SignAt}
 \end{itemize}
 
 The traits is also required to provide variants of these functors that 
-interpret the polynomial as a homogeneous polynomial. 
-For instance, these functors can be useful to determine the sign of a 
-polynomial at a rational point although the polynomial is defined 
-over integer coefficients. \\
+interpret the polynomial as a homogeneous polynomial by adding a virtual 
+homogeneous variable such that each term has the same degree, namely the degree of the polynomial.
+Of course there is a difference between the univariate and multivariate view. 
+For instance the polynomial \[5x^3 + 7x - 3\] has degree 3, hence it is interpreted as 
+the homogeneous polynomial \[5x^3 + 7xw^2 -3w^3\] by adding the homogeneous variable $w$. 
+In case of the multivariate view each term is filled up by the homogeneous variable such 
+that the degree of each term is equal to the total degree of the polynomial. 
+Note that these functors may significantly improve efficiency. 
+For instance, it is possible to determine the sign of a polynomial 
+over integer coefficients at a rational point without 
+changing the coefficient domain of the polynomial. 
 For more details have a look at the following concepts:
 \begin{itemize}
-\item \ccc{PolynomialTraits_d::SubstituteHomogeneous}
-\item \ccc{PolynomialTraits_d::EvaluateHomogeneous}
-\item \ccc{PolynomialTraits_d::IsZeroAtHomogeneous}
+\item \ccc{PolynomialTraits_d::SubstituteHomogeneous} \ccGlue
+\item \ccc{PolynomialTraits_d::EvaluateHomogeneous}\ccGlue
+\item \ccc{PolynomialTraits_d::IsZeroAtHomogeneous}\ccGlue
 \item \ccc{PolynomialTraits_d::SignAtHomogeneous}
 \end{itemize}
 
@@ -274,15 +341,15 @@ is \ccc{ExplicitInteroperable} with the innermost coefficient type.
 This is a very powerful tool since it allows the substitution of the variables 
 by polynomials. However, for some standard manipulations such as translation 
 or scaling we require special functors since they are expected to be faster 
-than their equivalent implementation using substitution: \\
+than their equivalent implementation using substitution:
 
 \begin{itemize}
-\item \ccc{PolynomialTraits_d::Shift}
-\item \ccc{PolynomialTraits_d::Negate}
-\item \ccc{PolynomialTraits_d::Invert}
-\item \ccc{PolynomialTraits_d::Translate}
-\item \ccc{PolynomialTraits_d::TranslateHomogeneous}
-\item \ccc{PolynomialTraits_d::Scale}
+\item \ccc{PolynomialTraits_d::Shift}\ccGlue
+\item \ccc{PolynomialTraits_d::Negate}\ccGlue
+\item \ccc{PolynomialTraits_d::Invert}\ccGlue
+\item \ccc{PolynomialTraits_d::Translate}\ccGlue
+\item \ccc{PolynomialTraits_d::TranslateHomogeneous}\ccGlue
+\item \ccc{PolynomialTraits_d::Scale}\ccGlue
 \item \ccc{PolynomialTraits_d::ScaleHomogeneous}
 \end{itemize}
 
@@ -290,3 +357,25 @@ than their equivalent implementation using substitution: \\
 The following example illustrates the application of some functors 
 discussed above:
 \ccIncludeExampleCode{Polynomial/substitute.cpp}
+
+\section{Design and Implementation History}
+
+This package is the result of the integration process of the NumeriX library 
+of EXACUS ~\cite{beh+-eeeafcs-05} into CGAL.
+
+The class \ccc{CGAL::Polynomial<Coeff>} had been started by Michael Seel within 
+CGAL as part of the Nef\_2 package. As part of the EXACUS 
+project it got significantly improved by Arno Eigenwillig and Michael Hemmer. 
+
+However, due to the recursive definition the class was rather restricted to the 
+univariate view. Moreover, it is clear that depending on the context 
+other classes that are symmetric in all variables or dedicated 
+for sparse polynomials may be more efficient. As a consequence this package 
+introduced the \ccc{CGAL::Polynomial_traits_d<Polynomial_d>} giving also
+the symmetric view on polynomials and the opportunity to introduce and use
+other classes representing polynomials within CGAL. 
+
+ 
+
+
+ 
