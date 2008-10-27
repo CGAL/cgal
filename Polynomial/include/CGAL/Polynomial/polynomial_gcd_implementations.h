@@ -119,11 +119,12 @@ NT content_utcf_(const Polynomial<NT>& p)
 template <class NT>
 inline 
 Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
-    // std::cout<<" gcd_utcf_Integral_domain"<<std::endl;
-        
-// handle trivial cases
+  // std::cout<<" gcd_utcf_Integral_domain"<<std::endl;
+  typedef Polynomial<NT> POLY; 
+  
+  // handle trivial cases
     if (p1.is_zero()){
-        if (p2.is_zero()){
+      if (p2.is_zero()){
             return Polynomial<NT>(NT(1));
         }else{
             return CGAL::CGALi::canonicalize_polynomial(p2);
@@ -150,8 +151,8 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     NT gcdcont = CGALi::gcd_utcf_(p1c, p2c);
 
     // compute gcd of primitive parts
-    p1 = div_utcf(p1, p1c/*, true*/); 
-    p2 = div_utcf(p2, p2c/*, true*/); 
+    p1 = integral_division_up_to_constant_factor(p1, POLY(p1c)); 
+    p2 = integral_division_up_to_constant_factor(p2, POLY(p2c)); 
 
  
     Polynomial<NT> q, r;
@@ -192,7 +193,7 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     }
 #endif
 
-    p2 = CGALi::div_utcf(p2, content_utcf_(p2)/*, true*/);
+    p2 = integral_division_up_to_constant_factor(p2, POLY(content_utcf_(p2)));
 
     // combine both parts to proper gcd
     p2 *= gcdcont;

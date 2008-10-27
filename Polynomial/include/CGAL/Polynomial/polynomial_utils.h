@@ -122,33 +122,23 @@ namespace CGALi {
 // div_utfc functions //////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace CGALi {
 
-    //! divide \c f by \c g with respect to constant factors
-    /*! This function provides a division of two polynomials, which takes
-     *  no care of constant factors of the innermost scalar type.
-     *  The result is made unique by canonicalizing it.
-     */
+//! divide \c f by \c g with respect to constant factors
+/*! This function provides a division of two polynomials, which takes
+ *  no care of constant factors of the innermost scalar type.
+ *  The result is made unique by canonicalizing it.
+ */
     
-    template <class NT> inline
-    Polynomial<NT> div_utcf(
-        const Polynomial<NT>& f, const Polynomial<NT>& g)
-    {
-        typedef Polynomial<NT> POLY;
-        typedef Polynomial_traits_d<POLY> PT;
-        typename PT::Integral_division_up_to_constant_factor idiv_utcf; 
-        return idiv_utcf(f, g);
-    }
-    
-    //! overloaded version for divisors with a by one lower nesting level
-    template <class NT> inline
-    Polynomial<NT> div_utcf(
-        const Polynomial<NT>& f, const NT& g)
-    {
-        return CGALi::div_utcf(f,Polynomial<NT>(g));
-    }
+template <class NT> inline
+Polynomial<NT> integral_division_up_to_constant_factor(
+    const Polynomial<NT>& f, const Polynomial<NT>& g)
+{
+  typedef Polynomial<NT> POLY;
+  typedef Polynomial_traits_d<POLY> PT;
+  typename PT::Integral_division_up_to_constant_factor idiv_utcf; 
+  return idiv_utcf(f, g);
+}
 
-} // namespace CGALi
 
 CGAL_END_NAMESPACE
 #endif // CGAL_POLYNOMIAL_CGALi_UTILS_H
