@@ -18,7 +18,7 @@
 #ifndef CGAL_POLYGON_OFFSET_PRED_FTC2_H
 #define CGAL_POLYGON_OFFSET_PRED_FTC2_H 1
 
-#include <CGAL/constructions/straight_skeleton_cons_ftC2.h>
+#include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
 
