@@ -201,8 +201,8 @@ int main()
   delete t5;
   delete t6;
   delete t7;
-//  delete en0;
-//  delete en1;
-//  delete en2;
-//  delete en3;
+  delete en0;
+  delete en1;
+  delete en2;
+  delete en3;
 }
