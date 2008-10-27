@@ -2163,7 +2163,7 @@ protected:
                 deg;
         );
         // common parts and full parts
-        CGAL_precondition(CGAL::CGALi::resultant(mult, f).is_zero());
+        CGAL_precondition(CGAL::CGALi::resultant(mult, f).degree() < 1);
         CGAL_precondition(mult.degree() == f.degree());
         CGAL_precondition(deg(mult) == deg(f));
         
