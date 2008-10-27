@@ -575,6 +575,8 @@ MainWindow::on_actionMakeGabrielConform_triggered()
   int nv = cdt.number_of_vertices();
   CGAL::make_conforming_Gabriel_2(cdt);
   nv = cdt.number_of_vertices() - nv;
+  initializeID(cdt);
+  discoverComponents(cdt);
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   // default cursor
   QApplication::restoreOverrideCursor();
@@ -589,6 +591,8 @@ MainWindow::on_actionMakeDelaunayConform_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   int nv = cdt.number_of_vertices();
   CGAL::make_conforming_Delaunay_2(cdt);
+  initializeID(cdt);
+  discoverComponents(cdt);
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
    // default cursor
