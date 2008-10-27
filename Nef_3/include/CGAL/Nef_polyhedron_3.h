@@ -469,7 +469,7 @@ protected:
    bool first;
    int index;
  public:
-   Sphere_map_creator() : first(true) {}
+   Sphere_map_creator() : first(true), index(0) {}
      
      template<typename point_iterator>
        void create_end_sphere_map(SNC_structure& snc,
