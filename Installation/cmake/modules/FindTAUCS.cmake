@@ -39,6 +39,7 @@ else()
               NAMES taucs.h
               PATHS ${CGAL_TAUCS_INCLUDE_DIR}
                     ENV TAUCS_INC_DIR
+              PATH_SUFFIXES taucs
               DOC "Directories containing the TAUCS header files"
              )
   endif()
@@ -56,12 +57,14 @@ else()
                  NAMES "taucs"
                  PATHS ${CGAL_TAUCS_LIBRARIES_DIR}
                        ENV TAUCS_LIB_DIR
+                 PATH_SUFFIXES taucs
                  DOC "TAUCS library"
                 )
     find_library(METIS_LIBRARY
                  NAMES "metis"
                  PATHS ${CGAL_TAUCS_LIBRARIES_DIR}
                        ENV TAUCS_LIB_DIR
+                 PATH_SUFFIXES taucs
                  DOC "Metis library"
                 )
     if(TAUCS_LIBRARY AND METIS_LIBRARY)
