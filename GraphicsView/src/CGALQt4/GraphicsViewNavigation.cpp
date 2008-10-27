@@ -154,7 +154,7 @@ namespace Qt {
       else if( mouseEvent->modifiers() == ::Qt::ControlModifier ) {
         if(mouseEvent->button() == ::Qt::LeftButton) {
           rect_first_point = v->mapToScene(mouseEvent->pos());
-          rectItem->setRect(QRectF(rect_first_point, rect_first_point));
+          rectItem->setRect(QRectF(rect_first_point, QSizeF(0.,0.)));
           rectItem->show();
           v->scene()->addItem(rectItem);
           return true;
