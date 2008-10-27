@@ -39,6 +39,7 @@ int main() {
     CGAL::test_real_embeddable<NT>();
 }
 {
+    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
     typedef CGAL::Interval_nt<false> NT;
     typedef CGAL::Field_with_sqrt_tag Tag;
     typedef CGAL::Tag_false Is_exact;
