@@ -20,7 +20,7 @@
 #include <CGAL/Polynomial/fwd.h>
 #include <CGAL/Polynomial/misc.h>
 #include <CGAL/Polynomial/Polynomial_type.h>
-#include <CGAL/Polynomial/polynomial_utils.h>
+#include <CGAL/polynomial_utils.h>
 #include <CGAL/Polynomial/resultant.h>
 #include <CGAL/Polynomial/subresultants.h>
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>

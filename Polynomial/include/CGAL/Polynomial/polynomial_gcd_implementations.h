@@ -5,7 +5,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Real_timer.h>
-#include <CGAL/Polynomial/polynomial_utils.h>
+#include <CGAL/polynomial_utils.h>
 #include <CGAL/Polynomial/hgdelta_update.h>
 #include <CGAL/Polynomial/polynomial_gcd.h>
 

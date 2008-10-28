@@ -20,7 +20,7 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/Polynomial.h>
-#include <CGAL/Polynomial/polynomial_utils.h>
+#include <CGAL/polynomial_utils.h>
 #include <CGAL/Polynomial/prs_resultant.h>
 #include <CGAL/Modular_traits.h>
 

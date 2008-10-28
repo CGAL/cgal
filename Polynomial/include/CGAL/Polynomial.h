@@ -63,7 +63,7 @@
 #include <CGAL/Polynomial/prs_resultant.h>  // for compatibility
 
 #include <CGAL/Polynomial_traits_d.h>
-#include <CGAL/Polynomial/polynomial_utils.h>
+#include <CGAL/polynomial_utils.h>
 
 #endif  // CGAL_POLYNOMIAL_H
 
