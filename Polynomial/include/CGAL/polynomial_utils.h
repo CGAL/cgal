@@ -2,8 +2,8 @@
 #include <CGAL/basic.h>
 
 
-#ifndef CGAL_POLYNOMIAL_CGALi_UTILS_H
-#define CGAL_POLYNOMIAL_CGALi_UTILS_H
+#ifndef CGAL_POLYNOMIAL_UTILS_H
+#define CGAL_POLYNOMIAL_UTILS_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -76,4 +76,4 @@ Polynomial<NT> reversal(const Polynomial<NT>& p)
 
 
 CGAL_END_NAMESPACE
-#endif // CGAL_POLYNOMIAL_CGALi_UTILS_H
+#endif // CGAL_POLYNOMIAL_UTILS_H
