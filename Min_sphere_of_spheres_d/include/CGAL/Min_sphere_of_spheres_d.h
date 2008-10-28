@@ -67,7 +67,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     typedef const Result *Cartesian_const_iterator; // coordinate iterator
   
     class Support_iterator {
-      typedef typename std::vector<Sphere>::const_iterator It;
+      typedef typename std::vector<const Sphere*>::const_iterator It;
       It it;
   
     private:
@@ -270,7 +270,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     Min_sphere_of_spheres_d<Traits>::support_begin() {
     if (!is_up_to_date)
       update();
-    return Support_iterator(*l.begin());
+    return Support_iterator(l.begin());
   }
 
   template<class Traits>
@@ -278,7 +278,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     Min_sphere_of_spheres_d<Traits>::support_end() {
     if (!is_up_to_date)
       update();
-    return Support_iterator(*l.begin()+e);
+    return Support_iterator(l.begin()+e);
   }
 
 } // namespace CGAL_MINIBALL_NAMESPACE

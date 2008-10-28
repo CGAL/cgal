@@ -170,6 +170,12 @@ void test(const int n,const FT& tol) {
   checkCondition(ms2.is_valid(),"Minsphere not valid.");
   compare<D,Min_sphere,FT>(tol,ms1,ms2,get_is_exact_tag(tol));
 
+  cout << "  support points..." << endl;
+  typename Min_sphere::Support_iterator sbegin = ms2.support_begin();
+  typename Min_sphere::Support_iterator send = ms2.support_end();
+  for (typename Min_sphere::Support_iterator s = sbegin; s != send; ++s) *s;
+  cout << endl;
+
   cout << " default constructor and insert()..." << endl;
   Min_sphere  ms3;
   ms3.insert(S.begin(),S.end());
