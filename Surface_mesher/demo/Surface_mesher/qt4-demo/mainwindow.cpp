@@ -30,7 +30,8 @@
 MainWindow::MainWindow(MainWindow* other_window /* = 0 */) : 
   CGAL::Qt::DemosMainWindow(),
   sharp_edges_angle_lower_bound(60.),
-  sharp_edges_angle_upper_bound(180.)
+  sharp_edges_angle_upper_bound(180.),
+  surface(0)
 {
   setupUi(this);
   setAcceptDrops(true);
@@ -68,6 +69,10 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::surface_open(const QString& filename)
 {
+  if(surface != 0) {
+    delete surface;
+    surface = 0;
+  }
 #ifndef CGAL_DO_NOT_USE_POLYHEDRAL_SURFACE
   surface = new Polyhedral_surface(this);
   if(surface->open(filename)) {
@@ -75,6 +80,7 @@ void MainWindow::surface_open(const QString& filename)
     return;
   }
   delete surface;
+  surface = 0;
 #endif
   surface = new Volume(this);
   if(surface->open(filename)) {
