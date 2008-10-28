@@ -2191,12 +2191,14 @@ public:
     result_type operator()(const Point_2& p, const Arc_2& cv) const {
 
         bool is_left, is_right;
-        result_type res = (cv.is_in_x_range(p.x(),&is_left,&is_right)) &&
+        result_type res = 
+            (cv.is_in_x_range(p.x(),&is_left,&is_right)) &&
             !(is_left) &&
             !(is_right) &&
             (cv.compare_y_at_x(p) == CGAL::EQUAL);
         return res;
     }
+
 };
 
 
