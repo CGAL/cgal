@@ -40,6 +40,7 @@
 #include <CGAL/average_spacing_3.h>
 #include <CGAL/merge_epsilon_nearest_points_3.h>
 #include <CGAL/random_simplification_points_3.h>
+#include <CGAL/radial_normals_orientation_3.h>
 #include <CGAL/Peak_memory_sizer.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
@@ -77,6 +78,7 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_COMMAND(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, OnReconstructionDelaunayRefinement)
     ON_COMMAND(ID_RECONSTRUCTION_POISSON, OnReconstructionPoisson)
 	ON_COMMAND(ID_RECONSTRUCTION_POISSON_NORMALIZED, OnReconstructionPoissonNormalized)
+    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_POISSON_NORMALIZED, OnUpdateReconstructionPoissonNormalized)
     ON_COMMAND(ID_ALGORITHMS_REFINEINSHELL, OnAlgorithmsRefineInShell)
     ON_COMMAND(ID_RECONSTRUCTION_POISSON_SURFACE_MESHING, OnReconstructionPoissonSurfaceMeshing)
     ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_POISSON, OnUpdateReconstructionPoisson)
@@ -110,21 +112,28 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_COMMAND(ID_ALGORITHMS_OUTLIERS_REMOVAL_WRT_AVG_KNN_SQ_DIST, OnOutliersRemovalWrtAvgKnnSqDist)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_OUTLIERS_REMOVAL_WRT_AVG_KNN_SQ_DIST, OnUpdateOutliersRemovalWrtAvgKnnSqDist)
     ON_COMMAND(ID_ANALYSIS_AVERAGE_SPACING, OnAnalysisAverageSpacing)
-    ON_COMMAND(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnOneStepPoissonReconstruction)
-	ON_COMMAND(ID_RECONSTRUCTION_ONE_STEP_NORMALIZED, OnOneStepPoissonReconstructionWithNormalizedDivergence)
-    ON_UPDATE_COMMAND_UI(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnUpdateOneStepPoissonReconstruction)
     ON_UPDATE_COMMAND_UI(ID_ANALYSIS_AVERAGE_SPACING, OnUpdateAnalysisAverageSpacing)
+    ON_COMMAND(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnOneStepPoissonReconstruction)
+    ON_UPDATE_COMMAND_UI(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnUpdateOneStepPoissonReconstruction)
+	ON_COMMAND(ID_RECONSTRUCTION_ONE_STEP_NORMALIZED, OnOneStepPoissonReconstructionWithNormalizedDivergence)
     ON_COMMAND(ID_RECONSTRUCTION_APSS_RECONSTRUCTION, OnReconstructionApssReconstruction)
     ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_APSS_RECONSTRUCTION, OnUpdateReconstructionApssReconstruction)
     ON_COMMAND(ID_MODE_APSS, OnModeAPSS)
     ON_UPDATE_COMMAND_UI(ID_MODE_APSS, OnUpdateModeAPSS)
-	ON_COMMAND(ID_RECONSTRUCTION_SAVEAS, &CPoissonDoc::OnReconstructionSaveas)
+	ON_COMMAND(ID_RECONSTRUCTION_SAVEAS, OnReconstructionSaveas)
 	ON_COMMAND(ID_STEP_CALCULATEAVERAGESPACING, OnCalculateAverageSpacing)
 	ON_COMMAND(ID_STEP_EXTRAPOLATENORMALSUSINGGAUSSIANKERNELS,OnExtrapolateNormalsUsingGaussianKernel)
-    ON_COMMAND(ID_POINT_CLOUD_SIMPLIFICATION_BY_CLUSTERING, &CPoissonDoc::OnPointCloudSimplificationByClustering)
-    ON_UPDATE_COMMAND_UI(ID_POINT_CLOUD_SIMPLIFICATION_BY_CLUSTERING, &CPoissonDoc::OnUpdatePointCloudSimplificationByClustering)
-    ON_COMMAND(ID_POINT_CLOUD_SIMPLIFICATION_RANDOM, &CPoissonDoc::OnPointCloudSimplificationRandom)
-    ON_UPDATE_COMMAND_UI(ID_POINT_CLOUD_SIMPLIFICATION_RANDOM, &CPoissonDoc::OnUpdatePointCloudSimplificationRandom)
+    ON_UPDATE_COMMAND_UI(ID_STEP_EXTRAPOLATENORMALSUSINGGAUSSIANKERNELS, OnUpdateStepExtrapolatenormalsusinggaussiankernels)
+    ON_COMMAND(ID_POINT_CLOUD_SIMPLIFICATION_BY_CLUSTERING, OnPointCloudSimplificationByClustering)
+    ON_UPDATE_COMMAND_UI(ID_POINT_CLOUD_SIMPLIFICATION_BY_CLUSTERING, OnUpdatePointCloudSimplificationByClustering)
+    ON_COMMAND(ID_POINT_CLOUD_SIMPLIFICATION_RANDOM, OnPointCloudSimplificationRandom)
+    ON_UPDATE_COMMAND_UI(ID_POINT_CLOUD_SIMPLIFICATION_RANDOM, OnUpdatePointCloudSimplificationRandom)
+    ON_COMMAND(ID_RADIAL_NORMALS_ORIENTATION, OnRadialNormalsOrientation)
+    ON_UPDATE_COMMAND_UI(ID_RADIAL_NORMALS_ORIENTATION, OnUpdateRadialNormalsOrientation)
+    ON_COMMAND(ID_FLIP_NORMALS, OnFlipNormals)
+    ON_UPDATE_COMMAND_UI(ID_FLIP_NORMALS, OnUpdateFlipNormals)
+    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_ONE_STEP_NORMALIZED, &CPoissonDoc::OnUpdateReconstructionOneStepNormalized)
+    ON_UPDATE_COMMAND_UI(ID_STEP_CALCULATEAVERAGESPACING, &CPoissonDoc::OnUpdateStepCalculateaveragespacing)
 END_MESSAGE_MAP()
 
 
@@ -374,6 +383,10 @@ void CPoissonDoc::OnFileSaveAs()
     path = path.Left(path.ReverseFind('\\'));
     SetCurrentDirectory(path);
 
+    // Save normals?
+    assert(m_points.begin() != m_points.end());
+    bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
+
     // if .pwn extension
     if(extension.CompareNoCase(".pwn") == 0)
     {
@@ -388,7 +401,8 @@ void CPoissonDoc::OnFileSaveAs()
     else if(extension.CompareNoCase(".xyz") == 0)
     {
       if( ! CGAL::surface_reconstruction_write_xyz(dlgExport.m_ofn.lpstrFile,
-                                                   m_points.begin(), m_points.end()) )
+                                                   m_points.begin(), m_points.end(),
+                                                   points_have_normals) )
       {
         prompt_message("Unable to save file");
         return;
@@ -867,6 +881,12 @@ void CPoissonDoc::OnReconstructionPoisson()
   EndWaitCursor();
 }
 
+// Enable "Solve Poisson equation" if Delaunay refinement is applied
+void CPoissonDoc::OnUpdateReconstructionPoisson(CCmdUI *pCmdUI)
+{
+  pCmdUI->Enable(m_edit_mode == POISSON && m_triangulation_refined);
+}
+
 void CPoissonDoc::OnReconstructionPoissonNormalized()
 {
   assert(m_poisson_dt != NULL);
@@ -897,8 +917,7 @@ void CPoissonDoc::OnReconstructionPoissonNormalized()
   EndWaitCursor();
 }
 
-// Enable "Solve Poisson equation" if Delaunay refinement is applied
-void CPoissonDoc::OnUpdateReconstructionPoisson(CCmdUI *pCmdUI)
+void CPoissonDoc::OnUpdateReconstructionPoissonNormalized(CCmdUI *pCmdUI)
 {
   pCmdUI->Enable(m_edit_mode == POISSON && m_triangulation_refined);
 }
@@ -954,10 +973,10 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
                       << "                    angle="<<m_sm_angle << " degrees,\n"
                       << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
                       << "                    distance="<<m_sm_distance_poisson<<" * p.s.r.,\n"
-                      << "                    Manifold_tag)\n";
+                      << "                    Manifold_with_boundary_tag)\n";
 
     // meshing surface
-    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_tag());
+    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
 
     // get output surface
     std::deque<Triangle> triangles;
@@ -1148,13 +1167,20 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   //OnCalculateAverageSpacing();
   OnReconstructionDelaunayRefinement();
   //OnExtrapolateNormalsUsingGaussianKernel(); // TO TEST
-  OnReconstructionPoissonNormalized();
-  OnReconstructionPoissonSurfaceMeshing();
+  if (m_triangulation_refined)
+    OnReconstructionPoissonNormalized();
+  if (m_poisson_solved)
+    OnReconstructionPoissonSurfaceMeshing();
 
   status_message("1-step Poisson reconstruction with normalized divergence...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
+}
+
+void CPoissonDoc::OnUpdateReconstructionOneStepNormalized(CCmdUI *pCmdUI)
+{
+  OnUpdateCreatePoissonTriangulation(pCmdUI);
 }
 
 // Remove vertices / cameras cone's angle is low
@@ -1165,6 +1191,7 @@ void CPoissonDoc::OnAlgorithmsOutliersRemovalWrtCamerasConeAngle()
   CGAL::Timer task_timer; task_timer.start();
 
   // Select points to delete
+  m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_iterator_to_remove =
     remove_outliers_wrt_camera_cone_angle_3(
             m_points.begin(), m_points.end(),
@@ -1194,6 +1221,7 @@ void CPoissonDoc::OnOutliersRemovalWrtAvgKnnSqDist()
   CGAL::Timer task_timer; task_timer.start();
 
   // Select points to delete
+  m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_iterator_to_remove =
     CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(
             m_points.begin(), m_points.end(),
@@ -1284,10 +1312,10 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
                       << "                    angle="<<m_sm_angle << " degrees,\n"
                       << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
                       << "                    distance="<<m_sm_distance_apss<<" * p.s.r.,\n"
-                      << "                    Manifold_tag)\n";
+                      << "                    Manifold_with_boundary_tag)\n";
 
     // meshing surface
-    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_tag());
+    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
 
     // get output surface
     std::deque<Triangle> triangles;
@@ -1342,10 +1370,16 @@ void CPoissonDoc::OnCalculateAverageSpacing()
 
   Point_set output;
   m_poisson_function->average_spacing_avg_knn_sq_distance_3();
+  
   status_message("Average spacing calculated...took %f seconds", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
+}
+
+void CPoissonDoc::OnUpdateStepCalculateaveragespacing(CCmdUI *pCmdUI)
+{
+  pCmdUI->Enable(m_edit_mode == POISSON);
 }
 
 void CPoissonDoc::OnExtrapolateNormalsUsingGaussianKernel()
@@ -1355,11 +1389,16 @@ void CPoissonDoc::OnExtrapolateNormalsUsingGaussianKernel()
   CGAL::Timer task_timer; task_timer.start();
 
   int a = m_poisson_function->extrapolate_normals_using_gaussian_kernel();
-  status_message("Extrapolation of normals done... %d normals inserted",a);
 
+  status_message("Extrapolation of normals done... %d normals inserted",a);
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
+}
+
+void CPoissonDoc::OnUpdateStepExtrapolatenormalsusinggaussiankernels(CCmdUI *pCmdUI)
+{
+  pCmdUI->Enable(m_edit_mode == POISSON && m_triangulation_refined);
 }
 
 void CPoissonDoc::OnEditDelete()
@@ -1407,6 +1446,7 @@ void CPoissonDoc::OnPointCloudSimplificationByClustering()
   FT size = sqrt(bounding_sphere.squared_radius());
 
   // Select points to delete
+  m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_iterator_to_remove =
     CGAL::merge_epsilon_nearest_points_3(
             m_points.begin(), m_points.end(),
@@ -1431,6 +1471,7 @@ void CPoissonDoc::OnPointCloudSimplificationRandom()
   CGAL::Timer task_timer; task_timer.start();
 
   // Select points to delete
+  m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_iterator_to_remove =
     CGAL::random_simplification_points_3(
             m_points.begin(), m_points.end(),
@@ -1446,4 +1487,58 @@ void CPoissonDoc::OnPointCloudSimplificationRandom()
 void CPoissonDoc::OnUpdatePointCloudSimplificationRandom(CCmdUI *pCmdUI)
 {
   pCmdUI->Enable(m_edit_mode == POINT_SET);
+}
+
+void CPoissonDoc::OnRadialNormalsOrientation()
+{
+  BeginWaitCursor();
+  status_message("Radial Normals Orientation...");
+  CGAL::Timer task_timer; task_timer.start();
+
+  CGAL::radial_normals_orientation_3(m_points.begin(), m_points.end(),
+                                     get(boost::vertex_index, m_points),
+                                     get(CGAL::vertex_point, m_points),
+                                     get(boost::vertex_normal, m_points));
+
+  // Select non-oriented normals
+  m_points.select(m_points.begin(), m_points.end(), false);
+  for (int i=0; i<m_points.size(); i++)
+    if ( ! m_points[i].normal().is_oriented() )
+      m_points.select(&m_points[i]);
+
+  status_message("Radial Normals Orientation...done (%.2lf s)", task_timer.time());
+  update_status();
+  UpdateAllViews(NULL);
+  EndWaitCursor();
+}
+
+void CPoissonDoc::OnUpdateRadialNormalsOrientation(CCmdUI *pCmdUI)
+{
+  assert(m_points.begin() != m_points.end());
+  bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
+  pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals);
+}
+
+void CPoissonDoc::OnFlipNormals()
+{
+  BeginWaitCursor();
+  status_message("Flip Normals...");
+  CGAL::Timer task_timer; task_timer.start();
+
+  // Flip normals
+  for (int i=0; i<m_points.size(); i++)
+    m_points[i].normal() = Normal(-m_points[i].normal().get_vector(), 
+                                  m_points[i].normal().is_oriented());
+
+  status_message("Flip Normals...done (%.2lf s)", task_timer.time());
+  update_status();
+  UpdateAllViews(NULL);
+  EndWaitCursor();
+}
+
+void CPoissonDoc::OnUpdateFlipNormals(CCmdUI *pCmdUI)
+{
+  assert(m_points.begin() != m_points.end());
+  bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
+  pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals);
 }

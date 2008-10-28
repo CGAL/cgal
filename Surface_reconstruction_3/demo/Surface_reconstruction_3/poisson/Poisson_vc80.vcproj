@@ -445,6 +445,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\include\CGAL\radial_normals_orientation_3.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\CGAL\Random_access_container_index_pmap.h"
 				>
 			</File>

@@ -247,6 +247,14 @@ public:
     afx_msg void OnPointCloudSimplificationRandom();
     afx_msg void OnUpdatePointCloudSimplificationByClustering(CCmdUI *pCmdUI);
     afx_msg void OnUpdatePointCloudSimplificationRandom(CCmdUI *pCmdUI);
+    afx_msg void OnRadialNormalsOrientation();
+    afx_msg void OnUpdateRadialNormalsOrientation(CCmdUI *pCmdUI);
+    afx_msg void OnFlipNormals();
+    afx_msg void OnUpdateFlipNormals(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateStepExtrapolatenormalsusinggaussiankernels(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateReconstructionPoissonNormalized(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateReconstructionOneStepNormalized(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateStepCalculateaveragespacing(CCmdUI *pCmdUI);
 };
 
 

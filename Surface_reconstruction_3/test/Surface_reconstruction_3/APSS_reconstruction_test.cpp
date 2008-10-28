@@ -264,10 +264,10 @@ int main(int argc, char * argv[])
                       << "                    angle="<<sm_angle << " degrees,\n"
                       << "                    radius="<<sm_radius<<" * p.s.r.,\n"
                       << "                    distance="<<sm_distance<<" * p.s.r.,\n"
-                      << "                    Manifold_tag)\n";
+                      << "                    Manifold_with_boundary_tag)\n";
 
     // meshing surface
-    CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_tag());
+    CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
 
     // Print status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();

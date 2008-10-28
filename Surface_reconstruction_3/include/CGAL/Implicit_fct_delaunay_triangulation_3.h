@@ -198,7 +198,7 @@ public:
   FT& f()       { return m_f; }
 
 	
-  /// Get/set the value of the implicit function.
+  /// Get/set average spacing at each input point.
   double  average_spacing() const { return m_average_spacing; }
   double& average_spacing()       { return m_average_spacing; }
 
@@ -585,8 +585,8 @@ private:
     FT xmin,xmax,ymin,ymax,zmin,zmax; // for all points
     xmin = ymin = zmin =  1e38;
     xmax = ymax = zmax = -1e38;
-    Vector v = CGAL::NULL_VECTOR;
-    FT norm = 0;
+    Vector sum = CGAL::NULL_VECTOR;
+    FT nb_points = 0;
     FT input_xmin,input_xmax,input_ymin,input_ymax,input_zmin,input_zmax; // for INPUT points
     input_xmin = input_ymin = input_zmin =  1e38;
     input_xmax = input_ymax = input_zmax = -1e38;
@@ -614,14 +614,14 @@ private:
       }
 
       // update barycenter of all points
-      v = v + (p - CGAL::ORIGIN);
-      norm += 1;
+      sum = sum + (p - CGAL::ORIGIN);
+      nb_points += 1;
     }
     //
     Point p(xmin,ymin,zmin); // for all points
     Point q(xmax,ymax,zmax);
     m_bounding_box = Iso_cuboid(p,q);
-    m_barycenter = CGAL::ORIGIN + v / norm;
+    m_barycenter = CGAL::ORIGIN + sum / nb_points;
     //
     Point input_p(input_xmin,input_ymin,input_zmin); // for INPUT points
     Point input_q(input_xmax,input_ymax,input_zmax);

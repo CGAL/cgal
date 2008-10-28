@@ -140,16 +140,19 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Orient Normals with Minimum Spanning Tree", ID_ALGORITHMS_ORIENTNORMALSMST
         MENUITEM "Orient Normals w.r.t. Cameras (Gyroviz)", ID_ALGORITHMS_ORIENTNORMALSCAMERAS
+        MENUITEM "Radial Normals Orientation",  ID_RADIAL_NORMALS_ORIENTATION
+        MENUITEM "Flip Normals",                ID_FLIP_NORMALS
     END
     POPUP "&Reconstruction"
     BEGIN
         MENUITEM "1-step Poisson reconstruction\tP", ID_ONE_STEP_POISSON_RECONSTRUCTION
-        MENUITEM "1-step Poisson reconstruction with Normalized Divergence", 32838
+        MENUITEM "1-step Poisson reconstruction with Normalized Divergence", ID_RECONSTRUCTION_ONE_STEP_NORMALIZED
         POPUP "Step-by-step Poisson reconstruction"
         BEGIN
             MENUITEM "Create Poisson Delaunay Triangulation\t1", ID_CREATE_POISSON_TRIANGULATION
             MENUITEM SEPARATOR
             MENUITEM "Calculate average spacing",   ID_STEP_CALCULATEAVERAGESPACING
+            MENUITEM SEPARATOR
             MENUITEM "Delaunay refinement\t2",      ID_RECONSTRUCTION_DELAUNAYREFINEMENT
             MENUITEM "Delaunay refinement in shell", ID_ALGORITHMS_REFINEINSHELL
             MENUITEM SEPARATOR
@@ -157,9 +160,9 @@ BEGIN
             MENUITEM "Extrapolate Normals using gaussian kernels", ID_STEP_EXTRAPOLATENORMALSUSINGGAUSSIANKERNELS
             MENUITEM SEPARATOR
             MENUITEM "Solve Poisson Equation\t4",   ID_RECONSTRUCTION_POISSON
-            MENUITEM "Solve Poisson Equation With normalized Divergence", ID_RECONSTRUCTION_POISSON_NORMALIZED
-            MENUITEM SEPARATOR
+            MENUITEM "Solve Poisson Equation With Normalized Divergence", ID_RECONSTRUCTION_POISSON_NORMALIZED
             MENUITEM "Poisson Statistics",          ID_ALGORITHMS_POISSONSTATISTICS
+            MENUITEM SEPARATOR
             MENUITEM "Surface Meshing\t5",          ID_RECONSTRUCTION_POISSON_SURFACE_MESHING
             MENUITEM "Marching Tet Contouring\t6",  ID_ALGORITHMS_MARCHINGTETCONTOURING
         END

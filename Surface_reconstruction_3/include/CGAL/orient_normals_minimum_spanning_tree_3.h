@@ -187,7 +187,7 @@ struct propagate_normal
         // Is orientation robust?
         //normal2 = Normal(vec2, true /* oriented */);
         bool oriented = normal1.is_oriented() &&
-                        (std::abs(dot) > 1.0/std::sqrt(2.0)); // oriented iff angle < 45�
+                        (std::abs(dot) > 1.0/std::sqrt(2.0)); // oriented iff angle < 45 degrees
         normal2 = Normal(vec2, oriented);
     }
 };

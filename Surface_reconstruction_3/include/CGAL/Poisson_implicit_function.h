@@ -346,63 +346,20 @@ public:
   void average_spacing_avg_knn_sq_distance_3()
   {
     Finite_vertices_iterator v;
-    int number_vertices = 0;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
-        v++)
-		number_vertices++;
-		
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
-        v++)
+    for(v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
 	{
 	  FT sq_distance = 0.0;
 	  int counter = 0;
-	  // std::stack<Vertex_handle> vertices; // use to walk in 3D Delaunay
-	  //  vertices.push(v);
 	  std::vector<Vertex_handle> v_neighbors;
 	  m_dt.incident_vertices(v,std::back_inserter(v_neighbors));
 	  typename std::vector<Vertex_handle>::iterator it;
-	  for(it = v_neighbors.begin();
-			  it != v_neighbors.end();
-			  it++)
+	  for(it = v_neighbors.begin(); it != v_neighbors.end(); it++)
 	  {
 		  sq_distance = sq_distance +  distance(*it,v)*distance(*it,v);
 		  counter++;
 	  }
-
-		/*while(!vertices.empty() && counter < 0.001 * number_vertices )
-		{
-			Vertex_handle v_cur = vertices.top();
-			vertices.pop();
-			// get incident_vertices
-			std::vector<Vertex_handle> v_neighbors;
-			sq_distance = sq_distance + distance(v_cur,v)* distance(v_cur,v);
-			counter++;
-			 m_dt.incident_vertices(v_cur,std::back_inserter(v_neighbors));
-			std::vector<Vertex_handle>::iterator it;
-			for(it = v_neighbors.begin();
-			    it != v_neighbors.end();
-			    it++)
-			{
-				Vertex_handle nv = *it;
-				int tag = nv->tag();
-				int index = v_cur->index();
-				if (tag != index)
-				{
-					vertices.push(nv);
-					nv->tag() = index;
-				}
-			}
-		*/
-
-	v->average_spacing() = std::sqrt(sq_distance/counter);
-
-	//}
-	/*for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
-        v++)
-			v->tag() = -1;*/
+	  
+	  v->average_spacing() = std::sqrt(sq_distance/counter);
 	}
   }
 
@@ -527,9 +484,7 @@ public:
     // Compute extrapolated normals and store them in extrapolated_normals[]
     std::map<Vertex_handle,Normal> extrapolated_normals; // vector + orientation
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
-        v++)
+    for(v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
     {
       if(v->normal() != CGAL::NULL_VECTOR)
         continue;
@@ -554,9 +509,7 @@ public:
     }
 
     // set normals
-    for(v = m_dt.finite_vertices_begin();
-      v != m_dt.finite_vertices_end();
-      v++)
+    for(v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
     {
       if(v->normal() != CGAL::NULL_VECTOR)
         continue;
@@ -567,21 +520,19 @@ public:
     }
   }
 
-   FT gaussian_function( FT sigma , FT distance)
-   {
-	   FT answer = (1 / std::sqrt(2 * 3.14)) * std::exp(-1 * distance * distance /(2 * sigma * sigma));
-	   return answer;
-   }
+  FT gaussian_function( FT sigma , FT distance)
+  {
+    FT answer = (1 / std::sqrt(2 * 3.14)) * std::exp(-1 * distance * distance /(2 * sigma * sigma));
+    return answer;
+  }
 
-
-  /// Extrapolate the normals field
+  /// Extrapolate the normals field.
+  /// Return the number of normals computed.
   int extrapolate_normals_using_gaussian_kernel()
   {
     int counter = 0;
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin();
-      v != m_dt.finite_vertices_end();
-      v++)
+    for(v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
     {
       if(v->type() == Triangulation::INPUT)
       {
@@ -618,12 +569,9 @@ public:
           }
         }
       }
-
     }
 
-    for(v = m_dt.finite_vertices_begin();
-      v != m_dt.finite_vertices_end();
-      v++)
+    for(v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
     {
       if(v->type() != Triangulation::INPUT )
       {
@@ -633,9 +581,9 @@ public:
           v->normal() = v->normal() / sq_norm;
           counter++;
         }
-        //v->type() = Triangulation::INPUT;
       }
     }
+    
     return counter;
   }
 
