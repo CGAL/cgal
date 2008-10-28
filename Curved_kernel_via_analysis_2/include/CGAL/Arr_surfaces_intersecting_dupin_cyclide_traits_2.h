@@ -812,7 +812,7 @@ public:
             p = p*sf_content;
         }          
         
-        p = CGAL::CGALi::canonicalize_polynomial(p);
+        p = CGAL::canonicalize(p);
         
 #if QdX_PRINTOUT_INTERSECTION_CURVES
         CGAL::set_ascii_mode(std::cout);
