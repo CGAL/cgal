@@ -860,7 +860,7 @@ public:
 
   // Evaluate;
   struct Evaluate
-    :public std::unary_function<Polynomial_d,Coefficient_type>{
+    :public std::binary_function<Polynomial_d,Coefficient_type,Coefficient_type>{
     // Evaluate with respect to one variable 
     Coefficient_type
     operator()(const Polynomial_d& p, Coefficient_type x) const {
@@ -878,7 +878,7 @@ public:
   // Evaluate_homogeneous;
   struct Evaluate_homogeneous{
     typedef Coefficient_type           result_type;  
-    typedef Polynomial_d          first_argument_type;
+    typedef Polynomial_d               first_argument_type;
     typedef Coefficient_type           second_argument_type;
     typedef Coefficient_type           third_argument_type;
        
@@ -967,22 +967,13 @@ private:
       return CGAL::sign( substitute_homogeneous( p, begin, end ) );
     }
   };
-    
-  // Compare;
-  struct Compare_
-    : public std::binary_function< Comparison_result, Polynomial_d, Polynomial_d > {
-    Comparison_result operator()
-      ( const Polynomial_d& p1, const Polynomial_d& p2 ) const {
-      return p1.compare( p2 );
-    }
-  };
- 
+   
   typedef Real_embeddable_traits<Innermost_coefficient_type> RET_IC;
   typedef typename RET_IC::Is_real_embeddable IC_is_real_embeddable;
 public:
   typedef typename ::boost::mpl::if_<IC_is_real_embeddable,Sign_at_,Null_functor>::type Sign_at; 
   typedef typename ::boost::mpl::if_<IC_is_real_embeddable,Sign_at_homogeneous_,Null_functor>::type Sign_at_homogeneous; 
-  typedef typename ::boost::mpl::if_<IC_is_real_embeddable,Compare_,Null_functor>::type Compare; 
+  typedef typename Real_embeddable_traits<Polynomial_d>::Compare Compare; 
  
 
 struct Construct_coefficient_const_iterator_range                                       
@@ -1205,7 +1196,7 @@ struct Construct_coefficient_const_iterator_range
   };
 
   struct Shift
-    : public std::unary_function< Polynomial_d, Polynomial_d >{
+    : public std::binary_function< Polynomial_d,int,Polynomial_d >{
     
     Polynomial_d 
     operator()(const Polynomial_d& p, int e, int i = (d-1)) const {
@@ -1255,20 +1246,20 @@ struct Construct_coefficient_const_iterator_range
   };
 
   struct Translate
-    : public std::binary_function< Polynomial_d , Polynomial_d, 
-                                  Innermost_coefficient_type >{
+    : public std::binary_function< Polynomial_d , Coefficient_type, 
+                                   Polynomial_d >{
     Polynomial_d
     operator()(
         Polynomial_d p, 
-        const Innermost_coefficient_type& c, 
+        const Coefficient_type& c, 
         int i = (d-1)) 
       const {
       if (i == (d-1) ){
-        p.translate(Coefficient_type(c)); 
+        p.translate(c); 
       }else{
         Swap swap;
         p = swap(p,i,d-1);
-        p.translate(Coefficient_type(c));
+        p.translate(c);
         p = swap(p,i,d-1); 
       }
       return p;
@@ -1278,20 +1269,20 @@ struct Construct_coefficient_const_iterator_range
   struct Translate_homogeneous{
     typedef Polynomial_d result_type;
     typedef Polynomial_d first_argument_type;
-    typedef Innermost_coefficient_type second_argument_type;
-    typedef Innermost_coefficient_type third_argument_type;
+    typedef Coefficient_type second_argument_type;
+    typedef Coefficient_type third_argument_type;
         
     Polynomial_d
     operator()(Polynomial_d p, 
-        const Innermost_coefficient_type& a, 
-        const Innermost_coefficient_type& b,
+        const Coefficient_type& a, 
+        const Coefficient_type& b,
         int i = (d-1) ) const {
       if (i == (d-1) ){
-        p.translate(Coefficient_type(a), Coefficient_type(b) );  
+        p.translate(a,b);  
       }else{
         Swap swap;
         p = swap(p,i,d-1);
-        p.translate(Coefficient_type(a), Coefficient_type(b));
+        p.translate(a,b);
         p = swap(p,i,d-1);
       }
       return p;
@@ -1300,12 +1291,14 @@ struct Construct_coefficient_const_iterator_range
 
   struct Scale 
     : public 
-    std::binary_function< Polynomial_d, Innermost_coefficient_type, Polynomial_d > {
+    std::binary_function< Polynomial_d, Coefficient_type, Polynomial_d > {
         
-    Polynomial_d operator()( Polynomial_d p, const Innermost_coefficient_type& c,
+    Polynomial_d operator()( Polynomial_d p, const Coefficient_type& c,
         int i = (PT::d-1) ) {
+      CGAL_precondition( i <= d-1 );
+      CGAL_precondition( i >= 0 );
       typename PT::Scale_homogeneous scale_homogeneous;          
-      return scale_homogeneous( p, c, Innermost_coefficient_type(1), i );
+      return scale_homogeneous( p, c, Coefficient_type(1), i );
     }
         
   };
@@ -1313,28 +1306,31 @@ struct Construct_coefficient_const_iterator_range
   struct Scale_homogeneous{
     typedef Polynomial_d result_type;
     typedef Polynomial_d first_argument_type;
-    typedef Innermost_coefficient_type second_argument_type;
-    typedef Innermost_coefficient_type third_argument_type;
+    typedef Coefficient_type second_argument_type;
+    typedef Coefficient_type third_argument_type;
         
     Polynomial_d
     operator()(
         Polynomial_d p, 
-        const Innermost_coefficient_type& a, 
-        const Innermost_coefficient_type& b,
+        const Coefficient_type& a, 
+        const Coefficient_type& b,
         int i = (d-1) ) const {
+
       CGAL_precondition( ! CGAL::is_zero(b) );
-            
-      if (i == (d-1) ) p = Swap()(p,i,d-1);
+      CGAL_precondition( i <= d-1 );
+      CGAL_precondition( i >= 0 );
+      
+      if (i != (d-1) ) p = Swap()(p,i,d-1);
           
       if(CGAL::is_one(b)) 
-        p.scale_up(Coefficient_type(a));
+        p.scale_up(a);
       else 
         if(CGAL::is_one(a)) 
-          p.scale_down(Coefficient_type(b));
+          p.scale_down(b);
         else 
-          p.scale(Coefficient_type(a), Coefficient_type(b) );  
+          p.scale(a,b);  
           
-      if (i == (d-1) ) p = Swap()(p,i,d-1);
+      if (i != (d-1) ) p = Swap()(p,i,d-1);
           
       return p;
     }

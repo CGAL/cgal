@@ -551,8 +551,8 @@ void test_translate(const Polynomial_traits_d&){
 
   for(int i = 0 ; i < 5 ; i++){
     Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();
-    assert(evaluate(translate(p,ICoeff(5)),ICoeff(3)) 
-        == evaluate(p,ICoeff(8)));
+    assert(evaluate(translate(p,Coeff(5)),Coeff(3)) 
+        == evaluate(p,Coeff(8)));
   }
   std::cerr << " ok "<< std::endl;
 }
@@ -572,17 +572,17 @@ void test_translate_homongenous(const Polynomial_traits_d&){
   for(int i = 0 ; i < 5 ; i++){
     Polynomial_d p,q1,q2;
     p = generate_sparse_random_polynomial<Polynomial_d>(); 
-    q1 = transh(transh(p,ICoeff(5),ICoeff(3)),ICoeff(3),ICoeff(2)) ;
-    q2 = transh(p,ICoeff(19),ICoeff(6)) ;
+    q1 = transh(transh(p,Coeff(5),Coeff(3)),Coeff(3),Coeff(2)) ;
+    q2 = transh(p,Coeff(19),Coeff(6)) ;
     assert(canonicalize(q1) != canonicalize(p)) ;
     assert(canonicalize(q2) != canonicalize(p)) ;
     assert(canonicalize(q1) == canonicalize(q2));
         
     assert(
-        evh(p,ICoeff(19),ICoeff(6)) == evh(q2,ICoeff(0),ICoeff(1)));
+        evh(p,Coeff(19),Coeff(6)) == evh(q2,Coeff(0),Coeff(1)));
         
-    q1 = transh(transh(p,ICoeff(5),ICoeff(3),0),ICoeff(3),ICoeff(2),0) ;  
-    q2 = transh(p,ICoeff(19),ICoeff(6),0) ;
+    q1 = transh(transh(p,Coeff(5),Coeff(3),0),Coeff(3),Coeff(2),0) ;  
+    q2 = transh(p,Coeff(19),Coeff(6),0) ;
         
     assert(canonicalize(q1) != canonicalize(p)) ;
     assert(canonicalize(q2) != canonicalize(p)) ;
@@ -602,7 +602,7 @@ void test_scale(const Polynomial_traits_d&) {
   Polynomial_d p(Coeff(1), Coeff(2), Coeff(3));
     
   assert(
-      scale(p, ICoeff(2)) == Polynomial_d(Coeff(1), Coeff(4), Coeff(12)));
+      scale(p, Coeff(2)) == Polynomial_d(Coeff(1), Coeff(4), Coeff(12)));
     
   std::cerr << " ok" << std::endl;
 }
@@ -620,18 +620,17 @@ void test_scale_homogeneous(const Polynomial_traits_d&){
   for(int i = 0 ; i < 5 ; i++){
     Polynomial_d p,q1,q2;
     p = generate_sparse_random_polynomial<Polynomial_d>(); 
-    q1 = scaleh(scaleh(p,ICoeff(5),ICoeff(3)),ICoeff(3),ICoeff(2)) ;
-    q2 = scaleh(p,ICoeff(15),ICoeff(6)) ;
+    q1 = scaleh(scaleh(p,Coeff(5),Coeff(3)),Coeff(3),Coeff(2)) ;
+    q2 = scaleh(p,Coeff(15),Coeff(6)) ;
     assert(canonicalize(q1) != canonicalize(p)) ;
     assert(canonicalize(q2) != canonicalize(p)) ;
     assert(canonicalize(q1) == canonicalize(q2));
-        
-    q1 = scaleh(scaleh(p,ICoeff(5),ICoeff(3),1),ICoeff(3),ICoeff(2),0) ;  
-    q2 = scaleh(p,ICoeff(15),ICoeff(6),0) ;
-        
-    assert(canonicalize(q1) != canonicalize(p)) ;
-    assert(canonicalize(q2) != canonicalize(p)) ;
-    assert(canonicalize(q1) == canonicalize(q2)); 
+      q1 = scaleh(scaleh(p,Coeff(5),Coeff(3),0),Coeff(3),Coeff(2),0) ;  
+      q2 = scaleh(p,Coeff(15),Coeff(6),0) ;
+      
+      assert(canonicalize(q1) != canonicalize(p)) ;
+      assert(canonicalize(q2) != canonicalize(p)) ;
+      assert(canonicalize(q1) == canonicalize(q2)); 
   }
   std::cerr << " ok "<< std::endl;
 }
@@ -962,13 +961,13 @@ void test_evaluate(const Polynomial_traits_d&){
   typename PT::Move move;
   (void) evaluate;
   (void) move;
-  assert(evaluate(Polynomial_d(0),ICoeff(0)) == Coeff(0));
-  assert(evaluate(Polynomial_d(1),ICoeff(0)) == Coeff(1));
-  assert(evaluate(Polynomial_d(2),ICoeff(5)) == Coeff(2));
+  assert(evaluate(Polynomial_d(0),Coeff(0)) == Coeff(0));
+  assert(evaluate(Polynomial_d(1),Coeff(0)) == Coeff(1));
+  assert(evaluate(Polynomial_d(2),Coeff(5)) == Coeff(2));
 
-  assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(0)) == Coeff(3));
-  assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(1)) == Coeff(5));
-  assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(2)) == Coeff(7));
+  assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),Coeff(0)) == Coeff(3));
+  assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),Coeff(1)) == Coeff(5));
+  assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),Coeff(2)) == Coeff(7));
       
   std::cerr << " ok "<< std::endl;
 }
@@ -981,15 +980,15 @@ void test_evaluate_homogeneous(const Polynomial_traits_d&){
   typename PT::Evaluate_homogeneous evh;
   (void) evh;
   
-  assert(evh(Polynomial_d(0),ICoeff(0),ICoeff(1)) == Coeff(0));
-  assert(evh(Polynomial_d(1),ICoeff(0),ICoeff(2)) == Coeff(1));
-  assert(evh(Polynomial_d(2),ICoeff(5),ICoeff(3)) == Coeff(2));
+  assert(evh(Polynomial_d(0),Coeff(0),Coeff(1)) == Coeff(0));
+  assert(evh(Polynomial_d(1),Coeff(0),Coeff(2)) == Coeff(1));
+  assert(evh(Polynomial_d(2),Coeff(5),Coeff(3)) == Coeff(2));
 
-  assert(evh( Polynomial_d(Coeff(3),Coeff(2)) , ICoeff(0),ICoeff(1)) 
+  assert(evh( Polynomial_d(Coeff(3),Coeff(2)) , Coeff(0),Coeff(1)) 
       == Coeff(3));
-  assert(evh( Polynomial_d(Coeff(3),Coeff(2)) , ICoeff(1),ICoeff(1)) 
+  assert(evh( Polynomial_d(Coeff(3),Coeff(2)) , Coeff(1),Coeff(1)) 
       == Coeff(5));
-  assert(evh( Polynomial_d(Coeff(3),Coeff(2)) , ICoeff(2),ICoeff(3)) 
+  assert(evh( Polynomial_d(Coeff(3),Coeff(2)) , Coeff(2),Coeff(3)) 
       == Coeff(9+4));
     
   std::cerr << " ok "<< std::endl;

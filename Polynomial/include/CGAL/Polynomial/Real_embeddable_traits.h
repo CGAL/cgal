@@ -24,10 +24,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
+template< class Polynomial , class TAG> class Real_embeddable_traits_poly_base;
+
+template< class NT , class TAG> class Real_embeddable_traits_poly_base< Polynomial<NT>, TAG > 
+  : public INTERN_RET::Real_embeddable_traits_base< Polynomial<NT> , CGAL::Tag_false > {};
+  
 // Real embeddable traits
 // TODO: Polynomials aren't Real_embeddable! But for debugging and testing
 //       reasons, the real embeddable functors are provided.
-template< class NT > class Real_embeddable_traits< Polynomial<NT> > 
+template< class NT > class Real_embeddable_traits_poly_base< Polynomial<NT>, CGAL::Tag_true > 
   : public INTERN_RET::Real_embeddable_traits_base< Polynomial<NT> , CGAL::Tag_false > {
 public:
   
@@ -95,6 +101,14 @@ public:
         }
     };
 };
+} // namespace CGALi
+
+template <typename NT>
+struct Real_embeddable_traits<Polynomial<NT> > 
+  :public CGALi::Real_embeddable_traits_poly_base<
+  Polynomial<NT>,
+  typename Real_embeddable_traits<typename CGALi::Innermost_coefficient_type<NT>::Type>::Is_real_embeddable>
+{};
 
 CGAL_END_NAMESPACE
 #endif // CGAL_POLYNOMIAL_REAL_EMBEDDABLE_TRAITS_H
