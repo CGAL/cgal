@@ -1280,18 +1280,35 @@ public:
             std::pair<int, int> ipair;
             for(i = 0; i < n; i++) {
                 cpv_line = cpa_2.status_line_at_event(i);
-                if(!cpv_line.is_intersection())
-                    continue;
-                // store x-coord for future use
                 X_coordinate_1 x = cpv_line.x(); 
+                bool ca1_covers_line 
+                    = ca1.status_line_at_exact_x(x).covers_line();
+                bool ca2_covers_line 
+                    = ca2.status_line_at_exact_x(x).covers_line();
+                
                 for(j = 0; j < cpv_line.number_of_events(); j++) {
                     ipair = cpv_line.curves_at_event(j,ca1,ca2);
-                    if(ipair.first == -1 || ipair.second == -1) 
+                    if(ipair.first != -1 && ipair.second != -1) {
+                        *roots++ 
+                            = Xy_coordinate_2(x, 
+                                              (first_curve ? ca1 : ca2),
+                                              (first_curve ? ipair.first
+                                                           : ipair.second));
+                        *mults++ = cpv_line.multiplicity_of_intersection(j);
                         continue;
-                    // VOILA!! we've got it !!!
-                    *roots++ = Xy_coordinate_2(x, (first_curve ? ca1 : ca2),
-                            (first_curve ? ipair.first: ipair.second));
-                    *mults++ = cpv_line.multiplicity_of_intersection(j);
+                    }
+                    if(ipair.first!=-1 && ca2_covers_line) {
+                        *roots++ 
+                            = Xy_coordinate_2(x,ca1,ipair.first);
+                        *mults++ = -1;
+                        continue;
+                    }
+                    if(ipair.second!=-1 && ca1_covers_line) {
+                        *roots++ 
+                            = Xy_coordinate_2(x,ca2,ipair.second);
+                        *mults++ = -1;
+                        continue;
+                    }
                 }
             }
             return std::make_pair(roots, mults);

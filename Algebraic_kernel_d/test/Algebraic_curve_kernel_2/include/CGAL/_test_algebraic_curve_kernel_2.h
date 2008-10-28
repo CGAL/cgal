@@ -45,12 +45,14 @@ static const char *ACK_2_ascii_polys[] = {
 
     "P[7(1,P[7(1,-500)(3,300)(5,-60)(7,4)])(3,P[5(1,300)(3,-147)(5,12)])(5,P[3(1,-60)(3,12)])(7,P[1(1,4)])]", // (4*x)*y^7 + (12*x^3 + (-60)*x)*y^5 + (12*x^5 + (-147)*x^3 + 300*x)*y^3 + (4*x^7 + (-60)*x^5 + 300*x^3 + (-500)*x)*y // 9
 
-
+    "P[2(0,P[2(0,148)(1,20)(2,1)])(1,P[0(0,16)])(2,P[0(0,1)])]", // y^2 + 16*y + (x^2 + 20*x + 148) //10
+    
+    "P[0(0,P[1(0,10)(1,1)])]", // x+10 // 11
 };
 
 
 
-static const int ACK_2_n_polys = 10;
+static const int ACK_2_n_polys = 12;
 
 template< class AlgebraicCurveKernel_2  >
 void test_algebraic_curve_kernel_2() {
@@ -333,6 +335,21 @@ void test_algebraic_curve_kernel_2() {
             xyit++, iit++) {
         //std::cerr << "pt: " << *xyit << "; mult: " << *iit << "\n";
     }
+
+    points.clear();
+    mults.clear();
+    Curve_analysis_2 c10 = kernel_2.construct_curve_2_object()(polys[10]),
+        c11 = kernel_2.construct_curve_2_object()(polys[11]);
+    kernel_2.solve_2_object()(c10, c11, std::back_inserter(points),
+        std::back_inserter(mults));
+    assert(points.size()==2);
+    points.clear();
+    mults.clear();
+    kernel_2.solve_2_object()(c11, c10, std::back_inserter(points),
+        std::back_inserter(mults));
+    assert(points.size()==2);
+
+
 
     ///////////// testing Swap_x_and_y /////////////
     {
