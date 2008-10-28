@@ -1473,10 +1473,10 @@ public:
                         Root_info root_info;
                         if(box_side == LEFT || box_side == RIGHT) {
                             root_info = std::make_pair(
-                                    CGAL::CGALi::canonicalize_polynomial(*it), i);
+                                    CGAL::canonicalize(*it), i);
                         } else {
                             root_info = std::make_pair(
-                                    CGAL::CGALi::canonicalize_polynomial(*it), -1);
+                                    CGAL::canonicalize(*it), -1);
                         }
                         curr_roots_with_info.push_back
                             (std::make_pair(curr_roots[i], root_info));
@@ -1658,7 +1658,7 @@ public:
                 
             
             he_it->second.planar_curve 
-                = CGAL::CGALi::canonicalize_polynomial
+                = CGAL::canonicalize
                     (CGAL::CGALi::make_square_free
                         (surface_section) );
 

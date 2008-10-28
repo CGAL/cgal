@@ -214,8 +214,8 @@ public:
      */
     // TODO use Polynomial_traits
     Algebraic_surface_3(const Polynomial_3& p, bool z_regular_check = false) :
-        Base(Rep(CGAL::CGALi::canonicalize_polynomial(p))) {
-        Polynomial_3 p_canon = CGAL::CGALi::canonicalize_polynomial(p);
+        Base(Rep(CGAL::canonicalize(p))) {
+        Polynomial_3 p_canon = CGAL::canonicalize(p);
         // check leading coefficient condition
         CGAL_assertion_code(int n = p_canon.degree();)
         CGAL_precondition(n >= 0);
@@ -332,7 +332,7 @@ public:
             } else {
                 this->ptr()->_m_resultant_f_fz = 
                     // TODO use traits
-                    CGAL::CGALi::canonicalize_polynomial(
+                    CGAL::canonicalize(
                             CGAL_RESULTANT(f(), fz()) 
                     );
                 if (this->ptr()->_m_resultant_f_fz->is_zero()) {
@@ -370,7 +370,7 @@ private:
             // Store the resultant, if yet unknown
             if(index==0 && (! this->ptr()->_m_resultant_f_fz)) {
                 this->ptr()->_m_resultant_f_fz = 
-                    CGAL::CGALi::canonicalize_polynomial(poly_3_cont[0].lcoeff());
+                    CGAL::canonicalize(poly_3_cont[0].lcoeff());
             }
         }
         CGAL_assertion(this->ptr()->_m_stha_f[index]);
@@ -407,7 +407,7 @@ private:
             // Store the resultant, if yet unknown
             if(index==0 && ! this->ptr()->_m_resultant_f_fz) {
                 this->ptr()->_m_resultant_f_fz = 
-                    CGAL::CGALi::canonicalize_polynomial(poly_3_cont_sres[0].lcoeff());
+                    CGAL::canonicalize(poly_3_cont_sres[0].lcoeff());
             }       
 
         }
@@ -581,7 +581,7 @@ protected:
          * Returns canonicalized version of \c p
          */
         Polynomial_3 operator()(const Polynomial_3& p) {
-            return CGAL::CGALi::canonicalize_polynomial(p);
+            return CGAL::canonicalize(p);
         }
     };
 

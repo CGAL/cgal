@@ -276,7 +276,7 @@ protected:
              * Returns canonicalized version of \c p
              */
             Polynomial_2 operator()(const Polynomial_2& p) {
-                return CGAL::CGALi::canonicalize_polynomial(p);
+                return CGAL::canonicalize(p);
             }
         };
         

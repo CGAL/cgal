@@ -398,7 +398,7 @@ protected:
          * Returns canonicalized version of \c p
          */
         Polynomial_3 operator()(const Polynomial_3& p) {
-            return CGAL::CGALi::canonicalize_polynomial(p);
+            return CGAL::canonicalize(p);
         }
     };
 

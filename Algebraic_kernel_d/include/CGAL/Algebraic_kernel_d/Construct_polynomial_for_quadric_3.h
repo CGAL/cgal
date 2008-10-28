@@ -100,8 +100,7 @@ public:
         CGAL_precondition(CGAL::total_degree(a_0) <= 1);
         CGAL_precondition(CGAL::total_degree(a_0) == 0);
         Poly_coeff_3 poly(a_0,a_1,a_2);
-        // TODO replace with non-CGALi-version
-        Poly_coeff_3 ret = CGAL::CGALi::canonicalize_polynomial(poly);
+        Poly_coeff_3 ret = CGAL::canonicalize(poly);
         return ret;
     }
 
@@ -121,8 +120,7 @@ public:
                            const Coefficient& l) {
         Poly_coeff_3 poly = 
             _polynomial_from_coefficients(a,b,c,d,e,f,g,h,k,l);
-        // TODO replace with non-CGALi-version
-        Poly_coeff_3 ret = CGAL::CGALi::canonicalize_polynomial(poly);
+        Poly_coeff_3 ret = CGAL::canonicalize(poly);
         return ret;
     }
     
