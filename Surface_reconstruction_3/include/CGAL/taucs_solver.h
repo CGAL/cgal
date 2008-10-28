@@ -59,10 +59,10 @@ public:
   Taucs_solver(unsigned int size, ///< Number of rows = number of columns
                unsigned int nb_elements_per_line=0) ///< Number of non null elements per line
                                                     ///< (ignored if 0).
-    : n_rows(size),
-      PAP(0),
+    : PAP(0),
       L(0),
       SL(0),
+      n_rows(size),
       row_index(0),
       perm(0),
       invperm(0),

@@ -174,18 +174,18 @@ int main(int argc, char * argv[])
         estimate = argv[++i];
         if (estimate != "plane" && estimate != "quadric")
           std::cerr << "invalid option " << argv[i] << "\n";
-      } 
+      }
       else if (std::string(argv[i])=="-estimate_neighbors") {
         estimate_neighbors = atoi(argv[++i]);
-      } 
+      }
       else if (std::string(argv[i])=="-orient") {
         orient = argv[++i];
         if (orient != "MST")
           std::cerr << "invalid option " << argv[i] << "\n";
-      } 
+      }
       else if (std::string(argv[i])=="-orient_neighbors") {
         orient_neighbors = atoi(argv[++i]);
-      } 
+      }
       else {
         std::cerr << "invalid option " << argv[i] << "\n";
       }
@@ -278,17 +278,17 @@ int main(int argc, char * argv[])
     //***************************************
 
     std::deque<Orientable_normal> computed_normals;
-    
+
     // Estimate normals direction
     if (estimate == "plane")
       estimate_normals_pca(pwns, computed_normals, estimate_neighbors);
     else if (estimate == "quadric")
       estimate_normals_jet_fitting(pwns, computed_normals, estimate_neighbors);
-      
+
     // Orient normals
     if (orient == "MST")
       orient_normals_MST(pwns, computed_normals, orient_neighbors);
-    
+
     // Check computed normals
     int unoriented_normals = 0;
     std::deque<Orientable_normal>::iterator n;
@@ -298,7 +298,7 @@ int main(int argc, char * argv[])
       Vector v = *n;
       double norm = std::sqrt( v*v );
       assert(norm > 0.99 || norm < 1.01);
-        
+
       // Check orientation
       if ( ! n->is_oriented() )
         unoriented_normals++;
@@ -318,13 +318,13 @@ int main(int argc, char * argv[])
     if (input_points_have_normals)
     {
       std::cerr << "Compare with original normals..." << std::endl;
-    
-      PointList::iterator p;
-      /*std::deque<Orientable_normal>::iterator*/ n;
+
       double min_normal_deviation = DBL_MAX;
       double max_normal_deviation = DBL_MIN;
       double avg_normal_deviation = 0;
       int flipped_normals = 0;
+      PointList::iterator p;
+      //std::deque<Orientable_normal>::iterator n;
       for (p = pwns.begin(), n = computed_normals.begin(); p != pwns.end(); p++, n++)
       {
         Vector v1 = p->normal(); // input normal
@@ -341,13 +341,13 @@ int main(int argc, char * argv[])
             flipped_normals++;
         }
         double normal_deviation = std::acos(cos_normal_deviation);
-        
+
         min_normal_deviation = (std::min)(min_normal_deviation, normal_deviation);
         max_normal_deviation = (std::max)(max_normal_deviation, normal_deviation);
         avg_normal_deviation += normal_deviation;
       }
       avg_normal_deviation /= double(pwns.size());
-      
+
       if (flipped_normals > 0)
       {
         std::cerr << "Error: " << flipped_normals << " normal(s) are flipped\n";
@@ -364,15 +364,15 @@ int main(int argc, char * argv[])
     //***************************************
     // Save the point set
     //***************************************
-    
+
     // Replace old normals by new ones
     PointList::iterator p;
-    /*std::deque<Orientable_normal>::iterator*/ n;
+    //std::deque<Orientable_normal>::iterator n;
     for (p = pwns.begin(), n = computed_normals.begin(); p != pwns.end(); p++, n++)
       p->normal() = *n;
 
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
-    
+
     /*std::string*/ extension = output_filename.substr(output_filename.find_last_of('.'));
     if (extension == ".pwn" || extension == ".PWN")
     {
