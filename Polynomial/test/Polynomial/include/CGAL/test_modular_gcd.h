@@ -24,12 +24,12 @@ void gcd_utcf_test(const NT& f, const NT& g, const NT& d) {
     std::cout << "\nf(x) = " << f;
     std::cout << "\ng(x) = " << g;
     std::cout << "\ngcd_utcf(f,g) = " << tmp;
-    std::cout << "\nd        = " << CGAL::CGALi::canonicalize_polynomial(d) << "\n";
+    std::cout << "\nd        = " << CGAL::canonicalize(d) << "\n";
 #endif
     assert( 
-            CGAL::CGALi::canonicalize_polynomial(tmp) 
+            CGAL::canonicalize(tmp) 
             == 
-            CGAL::CGALi::canonicalize_polynomial(d) );
+            CGAL::canonicalize(d) );
 }
 
 template<class AT>
@@ -138,7 +138,7 @@ void test_modular_gcd(Integral_domain_tag) {
                 //      std::cout<<"f "<<f<<std::endl;
                 //      std::cout<<"g "<<g<<std::endl;
                 result = CGAL::CGALi::gcd_utcf(f, g);    
-                result = CGAL::CGALi::canonicalize_polynomial(result);
+                result = CGAL::canonicalize(result);
             }
             while(result != int_EXT_1_POLY(1)); 
    
@@ -200,7 +200,7 @@ void test_modular_gcd(Integral_domain_tag) {
                                 rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root), 
                                 root));
                 result = CGAL::CGALi::gcd_utcf(f, g);  
-                result = CGAL::CGALi::canonicalize_polynomial(result);
+                result = CGAL::canonicalize(result);
             }
             while(result != int_EXT_2_POLY(1)); 
    

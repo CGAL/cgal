@@ -97,20 +97,20 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
         else{
             //      std::cout<<"\nFF1 is zero"<<std::endl;
 
-            return CGAL::CGALi::canonicalize_polynomial(FF2);
+            return CGAL::canonicalize(FF2);
         }
     }
     if(FF2.is_zero()){
-        return CGAL::CGALi::canonicalize_polynomial(FF1);
+        return CGAL::canonicalize(FF1);
     }
     if(FF1.degree() == 0 || FF2.degree() == 0){
         Poly result;
         result = CGAL::gcd(FF1.content(),FF2.content());
-        return CGAL::CGALi::canonicalize_polynomial(result);
+        return CGAL::canonicalize(result);
     }
         
-    Poly F1 = CGAL::CGALi::canonicalize_polynomial(FF1);
-    Poly F2 = CGAL::CGALi::canonicalize_polynomial(FF2);
+    Poly F1 = CGAL::canonicalize(FF1);
+    Poly F2 = CGAL::canonicalize(FF2);
        
     Scalar f1 = scalar_factor(F1.lcoeff());  // ilcoeff(F1) 
     Scalar f2 = scalar_factor(F2.lcoeff());  // ilcoeff(F2) 
@@ -273,10 +273,10 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
 //    Scalar scalar_content_f1 = scalar_factor(FF1);
 //    Scalar scalar_content_f2 = scalar_factor(FF2);
 //    Scalar scalar_content_gcd = CGAL::gcd(scalar_content_f1,scalar_content_f2);
-//    Poly result = CGAL::CGALi::canonicalize_polynomial(Gs)*Poly(scalar_content_gcd);
+//    Poly result = CGAL::canonicalize(Gs)*Poly(scalar_content_gcd);
 //    return result; 
 
-    return CGAL::CGALi::canonicalize_polynomial(Gs);
+    return CGAL::canonicalize(Gs);
     
 }
 

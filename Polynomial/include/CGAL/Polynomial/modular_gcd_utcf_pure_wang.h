@@ -159,20 +159,20 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
             return Poly(1);
         }
         else{
-            return CGAL::CGALi::canonicalize_polynomial(FF2);
+            return CGAL::canonicalize(FF2);
         }
       
     }
     if(FF2.is_zero()){
-        return CGAL::CGALi::canonicalize_polynomial(FF1);
+        return CGAL::canonicalize(FF1);
     }
     if(FF1.degree() == 0 || FF2.degree() == 0){
         return Poly(1);
     }
     
     // do we need this in case of wang?
-    Poly F1 = CGAL::CGALi::canonicalize_polynomial(FF1);
-    Poly F2 = CGAL::CGALi::canonicalize_polynomial(FF2);
+    Poly F1 = CGAL::canonicalize(FF1);
+    Poly F2 = CGAL::canonicalize(FF2);
 
     // in case IC is an algebriac extension it may happen, that 
     // Fx=G*Hx is not possible if the coefficients are algebraic integers 
@@ -395,7 +395,7 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
         }catch(...){}    
     } 
     
-    return CGAL::CGALi::canonicalize_polynomial(result);
+    return CGAL::canonicalize(result);
     
 }
 

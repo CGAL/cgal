@@ -119,11 +119,11 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
             return Poly(1);
         }
         else{
-            return CGAL::CGALi::canonicalize_polynomial(FF2);
+            return CGAL::canonicalize(FF2);
         }
     }
     if(FF2.is_zero()){
-        return CGAL::CGALi::canonicalize_polynomial(FF1);
+        return CGAL::canonicalize(FF1);
     }
     if(FF1.degree() == 0 || FF2.degree() == 0){
         //      std::cout<<"\nconst polynomial"<<std::endl;
@@ -131,8 +131,8 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
     }
     
     // do we need this in case of wang?
-    Poly F1 = CGAL::CGALi::canonicalize_polynomial(FF1);
-    Poly F2 = CGAL::CGALi::canonicalize_polynomial(FF2);
+    Poly F1 = CGAL::canonicalize(FF1);
+    Poly F2 = CGAL::canonicalize(FF2);
 
     // in case IC is an algebraic extension it may happen, that 
     // Fx=G*Hx is not possible if the coefficients are algebraic integers 
@@ -298,7 +298,7 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
 #ifdef CGAL_MODULAR_GCD_TIMER
                 timer_division.start();
 #endif
-//                Gs = CGAL::CGALi::canonicalize_polynomial(Gs); 
+//                Gs = CGAL::canonicalize(Gs); 
                 typedef CGAL::Algebraic_structure_traits_extended< Poly > ASTE_Poly;
                 typename ASTE_Poly::Divides divides;
 
@@ -394,7 +394,7 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
             wang_timer.stop();
         }    
     }
-    return CGAL::CGALi::canonicalize_polynomial(result);
+    return CGAL::canonicalize(result);
     
 }
 //#endif

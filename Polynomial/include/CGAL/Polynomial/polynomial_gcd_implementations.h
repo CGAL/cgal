@@ -25,11 +25,11 @@ Polynomial<NT> gcd_utcf_UFD(
     if (p1.is_zero()){
         if (p2.is_zero()) return Polynomial<NT>(NT(1));
         else {
-            return CGAL::CGALi::canonicalize_polynomial(p2);
+            return CGAL::canonicalize(p2);
         }
     }
     if (p2.is_zero()){
-        return CGAL::CGALi::canonicalize_polynomial(p1);
+        return CGAL::canonicalize(p1);
     }
     if (p2.degree() > p1.degree()) {
         Polynomial<NT> p3 = p1; p1 = p2; p2 = p3;
@@ -51,7 +51,7 @@ Polynomial<NT> gcd_utcf_UFD(
         if (r.is_zero()) { break; }
         
         if (r.degree() == 0) { 
-            return CGAL::CGALi::canonicalize_polynomial(Polynomial<NT>(gcdcont));
+            return CGAL::canonicalize(Polynomial<NT>(gcdcont));
         }
         int delta = p1.degree() - p2.degree();
         p1 = p2;
@@ -66,7 +66,7 @@ Polynomial<NT> gcd_utcf_UFD(
     // combine both parts to proper gcd
     p2 *= gcdcont; 
 
-    return CGAL::CGALi::canonicalize_polynomial(p2);
+    return CGAL::canonicalize(p2);
 }
 
 template <class NT>
@@ -127,11 +127,11 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
       if (p2.is_zero()){
             return Polynomial<NT>(NT(1));
         }else{
-            return CGAL::CGALi::canonicalize_polynomial(p2);
+            return CGAL::canonicalize(p2);
         }
     }
     if (p2.is_zero()){
-        return CGAL::CGALi::canonicalize_polynomial(p1);
+        return CGAL::canonicalize(p1);
     }
 
     if (p2.degree() > p1.degree()) {
@@ -139,8 +139,8 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     }
     
     // remove redundant scalar factors
-    p1=canonicalize_polynomial(p1);
-    p2=canonicalize_polynomial(p2); 
+    p1=CGAL::canonicalize(p1);
+    p2=CGAL::canonicalize(p2); 
 
     // compute content of p1 and p2
     NT p1c = CGALi::content_utcf_(p1);
@@ -189,7 +189,7 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
         if (r.degree() == 0) { return Polynomial<NT>(gcdcont); }
         p1 = p2;
         p2 = r ;
-        p2=canonicalize_polynomial(p2);   
+        p2=CGAL::canonicalize(p2);   
     }
 #endif
 
@@ -201,7 +201,7 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     Polynomial<NT> result; 
     
     // make poly unique
-    result = CGAL::CGALi::canonicalize_polynomial(p2);
+    result = CGAL::canonicalize(p2);
     return result; 
 }
 

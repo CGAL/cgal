@@ -136,7 +136,7 @@ gcd_utcf(const CGAL::Polynomial<leda::integer>& p1,
             const CGAL::Polynomial<leda::integer>& p2) {
     CGAL::Polynomial<leda::integer> gcd = 
         CGALi::modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
-    return CGAL::CGALi::canonicalize_polynomial(gcd);
+    return CGAL::canonicalize(gcd);
 }
 template <> 
 inline
@@ -154,7 +154,7 @@ Polynomial<CORE::BigInt>
 gcd_utcf(const Polynomial<CORE::BigInt>& p1,
         const Polynomial<CORE::BigInt>& p2) {
     Polynomial<CORE::BigInt> gcd = modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
-    return CGAL::CGALi::canonicalize_polynomial(gcd);
+    return CGAL::canonicalize(gcd);
 }
 template <> 
 inline

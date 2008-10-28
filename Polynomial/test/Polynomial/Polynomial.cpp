@@ -335,7 +335,7 @@ void io() {
 
 template <class NT>
 void canon(CGAL::Integral_domain_without_division_tag) {
-    // dummy for cases where canonicalize_polynomial() does not apply
+    // dummy for cases where CGAL::canonicalize() does not apply
 }
 
 template <class NT>
@@ -344,11 +344,11 @@ void canon(CGAL::Unique_factorization_domain_tag) {
     typedef CGAL::Polynomial<UNPOLY> BIPOLY;
 
     BIPOLY p(0), c;
-    assert(canonicalize_polynomial(p) == BIPOLY(0));
+    assert(CGAL::canonicalize(p) == BIPOLY(0));
 
     p = BIPOLY(UNPOLY(NT(15)), UNPOLY(NT(-12), NT( 9)), UNPOLY(NT(0), NT(-6)));
     c = BIPOLY(UNPOLY(NT(-5)), UNPOLY(NT(  4), NT(-3)), UNPOLY(NT(0), NT( 2)));
-    assert(canonicalize_polynomial(p) == c);
+    assert(CGAL::canonicalize(p) == c);
 }
 
 template <class NT>
@@ -357,12 +357,12 @@ void canon(CGAL::Field_tag) {
     typedef CGAL::Polynomial<UNPOLY> BIPOLY;
 
     BIPOLY p(0), c;
-    assert(canonicalize_polynomial(p) == BIPOLY(0));
+    assert(CGAL::canonicalize(p) == BIPOLY(0));
 
     p = BIPOLY(UNPOLY(NT(15)), UNPOLY(NT(-12), NT( 9)), UNPOLY(NT(0), NT(-6)));
     c = BIPOLY(UNPOLY(NT(-5)/NT(2)), UNPOLY(NT(2), NT(-3)/NT(2)),
             UNPOLY(NT(0), NT(1)));
-    assert(canonicalize_polynomial(p) == c);
+    assert(CGAL::canonicalize(p) == c);
 }
 
 #ifdef NiX_POLY_USE_NT_TESTS

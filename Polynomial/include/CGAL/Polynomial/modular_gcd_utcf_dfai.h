@@ -104,11 +104,11 @@ Polynomial<NT> modular_gcd_utcf_dfai(
             return Poly(1);
         }
         else{
-            return CGAL::CGALi::canonicalize_polynomial(FF2);
+            return CGAL::canonicalize(FF2);
         }
     }
     if(FF2.is_zero()){;
-        return CGAL::CGALi::canonicalize_polynomial(FF1);
+        return CGAL::canonicalize(FF1);
     }
 
     if(FF1.degree() == 0 || FF2.degree() == 0){
@@ -119,8 +119,8 @@ Polynomial<NT> modular_gcd_utcf_dfai(
     timer_init.start();
 #endif
     
-    Poly F1 = CGAL::CGALi::canonicalize_polynomial(FF1);
-    Poly F2 = CGAL::CGALi::canonicalize_polynomial(FF2);
+    Poly F1 = CGAL::canonicalize(FF1);
+    Poly F2 = CGAL::canonicalize(FF2);
 
    
     // This is the most important part of the (dfai) algorithm, it computes the 
@@ -319,7 +319,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
         catch(...){}
     }
 
-    return CGAL::CGALi::canonicalize_polynomial(Gs);
+    return CGAL::canonicalize(Gs);
 
 }
 

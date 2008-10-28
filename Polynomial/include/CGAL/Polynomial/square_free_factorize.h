@@ -169,7 +169,7 @@ inline int square_free_factorize_for_regular_polynomial_
     
     if (typename PT::Total_degree()(p) == 0) return 0;
 
-    POLY a = canonicalize_polynomial(p);
+    POLY a = CGAL::canonicalize(p);
     POLY b = diff(a);
     POLY c = CGAL::CGALi::gcd_utcf(a, b);
 
@@ -250,7 +250,7 @@ inline int square_free_factorize_for_regular_polynomial_
     typedef Polynomial_traits_d<POLY> PT;
 
     if (typename PT::Total_degree()(p) == 0) return 0;
-    POLY a = canonicalize_polynomial(p);
+    POLY a = CGAL::canonicalize(p);
 
     POLY b = diff(a);  
     POLY c = CGAL::gcd(a, b);
@@ -323,7 +323,7 @@ int filtered_square_free_factorize(
   if(CGAL::CGALi::may_have_multiple_factor(p)){
       return CGALi::square_free_factorize(p, factors, multiplicities);
   }else{
-      *factors++        = canonicalize_polynomial(p);
+      *factors++        = CGAL::canonicalize(p);
       *multiplicities++ = 1;
       return 1;
   }

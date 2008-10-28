@@ -809,12 +809,46 @@ public:
     }
   };
 
-  //       Canonicalize;
+  
+  //return a canonical representative of all constant multiples. 
   struct Canonicalize
     : public std::unary_function<Polynomial_d, Polynomial_d>{
+ 
+  private: 
+    inline Polynomial_d canonicalize_(Polynomial_d p, CGAL::Tag_true) const 
+    {
+      typedef typename Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type IC;
+      typename Polynomial_traits_d<Polynomial_d>::Innermost_leading_coefficient ilcoeff;
+      typename Algebraic_extension_traits<IC>::Normalization_factor nfac;
+      
+      IC tmp = nfac(ilcoeff(p));
+      if(tmp != IC(1)){
+        p *= Polynomial_d(tmp);
+      }
+      remove_scalar_factor(p);
+      p /= p.unit_part();
+      p.simplify_coefficients();
+      
+      CGAL_postcondition(nfac(ilcoeff(p)) == IC(1));
+      return p;
+    };
+    
+    inline Polynomial_d canonicalize_(Polynomial_d p, CGAL::Tag_false) const 
+    {  
+      remove_scalar_factor(p);
+      p /= p.unit_part();
+      p.simplify_coefficients();
+      return p;
+    };
+
+  public:
     Polynomial_d
     operator()( const Polynomial_d& p ) const {
-      return CGAL::CGALi::canonicalize_polynomial(p);
+      if (CGAL::is_zero(p)) return p; 
+
+      typedef Innermost_coefficient_type IC; 
+      typedef typename Algebraic_extension_traits<IC>::Is_extended Is_extended;
+      return canonicalize_(p, Is_extended());
     }  
   };
 

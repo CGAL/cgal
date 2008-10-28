@@ -52,13 +52,13 @@ void gcd_utcf_test(const NT& f, const NT& g, const NT& d) {
     std::cout << "\nf(x) = " << f;
     std::cout << "\ng(x) = " << g;
     std::cout << "\ngcd_utcf(f,g) = " << tmp;
-    std::cout << "\nd        = " << CGAL::CGALi::canonicalize_polynomial(d) << "\n";
+    std::cout << "\nd        = " << CGAL::canonicalize(d) << "\n";
 #endif
     if(tmp != NT(-1))    // NT(-1) when primes exhausted
         assert( 
-                CGAL::CGALi::canonicalize_polynomial(tmp) 
+                CGAL::canonicalize(tmp) 
                 == 
-                CGAL::CGALi::canonicalize_polynomial(d) );
+                CGAL::canonicalize(d) );
 }
 
 template<class NT>
@@ -70,13 +70,13 @@ void sqrt_gcd_utcf_test(const NT& f, const NT& g, const NT& d) {
     std::cout << "\nf(x) = " << f;  
     std::cout << "\ng(x) = " << g;
     std::cout << "\ngcd_utcf(f,g) = " << tmp;
-    std::cout << "\nd        = " << CGAL::CGALi::canonicalize_polynomial(d) << "\n";
+    std::cout << "\nd        = " << CGAL::canonicalize(d) << "\n";
 #endif
     if(tmp != NT(-1))    // NT(-1) when primes exhausted
         assert( 
-                CGAL::CGALi::canonicalize_polynomial(tmp) 
+                CGAL::canonicalize(tmp) 
                 == 
-                CGAL::CGALi::canonicalize_polynomial(d) );
+                CGAL::canonicalize(d) );
 }
 
 
