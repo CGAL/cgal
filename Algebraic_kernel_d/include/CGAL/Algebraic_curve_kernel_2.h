@@ -22,7 +22,7 @@
 #ifndef CGAL_ALGEBRAIC_CURVE_KERNEL_2_H
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_2_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Algebraic_curve_kernel_2/flags.h>
 #include <CGAL/Algebraic_kernel_1.h>
 
@@ -33,6 +33,7 @@
 #include <CGAL/Algebraic_curve_kernel_2/trigonometric_approximation.h>
 
 #include <CGAL/Polynomial_type_generator.h>
+#include <CGAL/polynomial_utils.h>
 
 #if CGAL_ACK_USE_EXACUS
 #include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2_exacus.h>
@@ -173,6 +174,7 @@ public:
 
     //! traits class used for approximations of x-coordinate
     typedef CGALi::Algebraic_real_traits<X_coordinate_1> X_real_traits_1;
+    //typedef typename Algebraic_kernel_1::Algebraic_real_traits X_real_traits_1;
     
     //! traits class used for approximations of y-coordinates
 #if CGAL_ACK_USE_EXACUS
@@ -1185,8 +1187,10 @@ public:
                 
                 Construct_curve_pair_2 ccp_2;
                 Curve_analysis_2 r_curve_remainder =
-                    cc_2(CGAL::CGALi::div_utcf(r.curve().polynomial_2(), 
-                                               gcd));
+                    cc_2(CGAL::integral_division_up_to_constant_factor(
+                                 r.curve().polynomial_2(), gcd
+                         )
+                    );
                     
                 r.simplify_by(ccp_2(gcd_curve, r_curve_remainder));
                 if(r.curve().polynomial_2() == gcd) 

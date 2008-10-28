@@ -378,9 +378,9 @@ public:
             // and let both numbers decide for the gcd or its complement
             Poly F1,F2,G;
             G = gcd_utcf(polynomial(),y.polynomial()); 
-            F1 = div_utcf(polynomial(),G);
+            F1 = integral_division_up_to_constant_factor(polynomial(),G);
             CGAL_postcondition(F1.degree()==polynomial().degree()-G.degree());
-            F2 = div_utcf(y.polynomial(),G);
+            F2 = integral_division_up_to_constant_factor(y.polynomial(),G);
             CGAL_postcondition(F2.degree()==y.polynomial().degree()-G.degree());
            
             learn_from(G,F1);
@@ -422,7 +422,7 @@ protected:
         typename Fraction_traits<Field>::Denominator_type den;
         decomp(m, num, den);
         Poly G = Poly(-Coefficient(num),Coefficient(den)); 
-        Poly F1= div_utcf(polynomial(),G);
+        Poly F1= integral_division_up_to_constant_factor(polynomial(),G);
         CGAL_postcondition(F1.degree()==polynomial().degree()-G.degree());
    
         learn_from(G,F1);
@@ -483,7 +483,9 @@ public:
         if ( may_have_common_factor(polynomial(), Q) ) {
             Poly G = gcd_utcf(polynomial(),Q);
             if(G.degree()!=0){
-                Poly F1 = div_utcf(polynomial(),G);
+                Poly F1 = integral_division_up_to_constant_factor(
+                        polynomial(),G
+                );
                 CGAL_postcondition(F1.degree()==polynomial().degree()-G.degree());
                 learn_from(G,F1);
                 return (G.sign_at(low()) != G.sign_at(high()));
