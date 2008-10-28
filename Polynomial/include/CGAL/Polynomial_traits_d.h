@@ -200,9 +200,6 @@ public:
     Coefficient_type operator()(const Polynomial_d& p) const {
       return p.content();
     }
-    Coefficient_type operator()(Polynomial_d p, int i) const {
-      return typename PT::Swap()(p,i,PT::d-1).content();
-    }
   };
     
   //       Square_free_factorize;
@@ -656,7 +653,7 @@ public:
     };
   };
 
-  //       Get_coefficient;
+  // Get_coefficient;
   struct Get_coefficient 
     : public std::binary_function<Polynomial_d, int, Coefficient_type > {
         
@@ -666,11 +663,6 @@ public:
       if( i >  degree(p) )
         return Coefficient_type(0);
       return p[i];
-    }
-    
-    Coefficient_type operator()( const Polynomial_d& p, int i, int index) const {
-      CGAL_precondition(0 <= index && index < d);
-      return (*this)(Swap()(p,index,d-1),i);
     }       
   };
     
@@ -793,9 +785,6 @@ public:
     Coefficient_type operator()(const Polynomial_d& p) const {
       return p.lcoeff();
     }
-    Coefficient_type operator()(Polynomial_d p, int i) const {
-      return Swap()(p,i,PT::d-1).lcoeff();
-    }
   };
     
   //       Innermost_leading_coefficient;
@@ -877,20 +866,11 @@ public:
     operator()(const Polynomial_d& p, Coefficient_type x) const {
       return p.evaluate(x);
     }
-    Coefficient_type 
-    operator()(const Polynomial_d& p, Coefficient_type x, int i ) const {
-      return Move()(p,i).evaluate(x);
-    } 
 #define ICOEFF typename First_if_different<Innermost_coefficient_type, Coefficient_type>::Type 
     Coefficient_type operator()
       ( const Polynomial_d& p, const ICOEFF& x) const 
     {
       return p.evaluate(x);
-    }
-    Coefficient_type operator()
-      (const Polynomial_d& p, const ICOEFF& x, int i) const 
-    {
-      return Move()(p,i,PT::d-1).evaluate(x);
     }
 #undef ICOEFF      
   };
@@ -907,22 +887,11 @@ public:
     {
       return p.evaluate_homogeneous(a,b);
     }
-    Coefficient_type operator()(
-        const Polynomial_d& p, Coefficient_type a, Coefficient_type b, int i) const 
-    {
-      return Move()(p,i,PT::d-1).evaluate_homogeneous(a,b);
-    }
-
 #define ICOEFF typename First_if_different<Innermost_coefficient_type, Coefficient_type>::Type 
     Coefficient_type operator()
       ( const Polynomial_d& p, const ICOEFF& a, const ICOEFF& b) const 
     {
       return p.evaluate_homogeneous(a,b);
-    }
-    Coefficient_type operator()
-      (const Polynomial_d& p, const ICOEFF& a, const ICOEFF& b, int i) const 
-    {
-      return Move()(p,i,PT::d-1).evaluate_homogeneous(a,b);
     }
 #undef ICOEFF    
 
@@ -1277,7 +1246,7 @@ struct Construct_coefficient_const_iterator_range
       if (i == (d-1)){
         p.reversal(); 
       }else{
-        p =  Swap()(p,i,PT::d-1);
+        p = Swap()(p,i,PT::d-1);
         p.reversal();
         p = Swap()(p,i,PT::d-1);   
       }
@@ -1377,14 +1346,8 @@ struct Construct_coefficient_const_iterator_range
     Coefficient_type
     operator()(
         const Polynomial_d& p, 
-        const Polynomial_d& q,
-        int i = (d-1) ) const {
-      // make i the innermost variabl call CGALi::resultant_
-      // CGALi::resultant would eliminate the outermost variable. 
-      if(i == 0 )
-        return CGALi::resultant_(p,q);
-      else
-        return CGALi::resultant_(Move()(p,i,0),Move()(q,i,0));
+        const Polynomial_d& q) const {
+        return CGALi::resultant(p,q);
     }  
   };
 

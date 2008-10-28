@@ -421,13 +421,7 @@ void test_univariate_content(const Polynomial_traits_d&){
     Coeff ucontentq = univariate_content(q);
     assert(univariate_content(p*q) == ucontentp*ucontentq);     
   }
-  for(int i = 0; i < 5; i++){
-    Polynomial_d p =generate_sparse_random_polynomial<Polynomial_d>();
-    Polynomial_d q =generate_sparse_random_polynomial<Polynomial_d>();
-    Coeff ucontentp = univariate_content(p,0);
-    Coeff ucontentq = univariate_content(q,0);
-    assert(univariate_content(p*q,0) == ucontentp*ucontentq);    
-  }
+  
   std::cerr << " ok "<< std::endl; 
 }
 // //       Multivariate_content;
@@ -460,56 +454,10 @@ void test_multivariate_content(const Polynomial_traits_d&){
         CGAL::integral_division(ICoeff(2), CGAL::unit_part(ICoeff(2))));
     p = CGAL::integral_division(p,content_p);
     assert(mcontent(p) == 
-        CGAL::integral_division(ICoeff(1), CGAL::unit_part(ICoeff(1))));
-        
+        CGAL::integral_division(ICoeff(1), CGAL::unit_part(ICoeff(1))));     
   }
-    
   std::cerr << " ok "<< std::endl; 
 }
-
-//template <class Polynomial_traits_d>
-//void test_interpolate(const Polynomial_traits_d&) {
-//   std::cerr << "start test_interpolate "; std::cerr.flush();
-//   typedef Polynomial_traits_d PT_d; 
-//   typedef typename PT_d::Innermost_coefficient_type ICoeff;
-//   typedef typename PT_d::Polynomial_d Polynomial_d;
-//   typedef typename PT_d:: template Rebind<ICoeff,1>::Other PT_1;
-//   typedef typename PT_1::Polynomial_d Polynomial_1;
-    
-//   typename PT_d::Interpolate interpolate;
-//   typename PT_d::Evaluate eval; 
-    
-//   for(int i = 0; i < 5; i++){
-//     Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>(i);
-       
-//     Polynomial_1 m(1); 
-//     Polynomial_d u(0);
-//     for (int j = 0; j <= i; j++){ 
-//       Polynomial_1 m1 = m; 
-//       Polynomial_d u1 = u; 
-//       Polynomial_1 m2 = Polynomial_1(ICoeff(-j),ICoeff(2));
-//       Polynomial_d u2 = eval(p,ICoeff(j)/ICoeff(2));
-//       interpolate(m1,u1,m2,u2,m,u);
-//     }
-//     assert(u == p);
-//   }
-    
-//   for(int i = 0; i < 5; i++){
-//     Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>(i);
-       
-//     Polynomial_1 m(1); 
-//     Polynomial_d u(0);
-//     for (int j = 0; j <= i; j++){ 
-//       Polynomial_1 m2 = m; 
-//       Polynomial_d u2 = u; 
-//       Polynomial_1 m1 = Polynomial_1(ICoeff(-j),ICoeff(2));
-//       Polynomial_d u1 = eval(p,ICoeff(j)/ICoeff(2));
-//       interpolate(m1,u1,m2,u2,m,u);
-//     }
-//     assert(u == p);
-//   }
-//   std::cerr << " ok "<< std::endl; 
-// }
 
 // //       Shift;
 template <class Polynomial_traits_d>
@@ -605,8 +553,6 @@ void test_translate(const Polynomial_traits_d&){
     Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();
     assert(evaluate(translate(p,ICoeff(5)),ICoeff(3)) 
         == evaluate(p,ICoeff(8)));
-    assert(evaluate(translate(p,ICoeff(5),0),ICoeff(3),0) 
-        == evaluate(move(p,0,PT::d-1),ICoeff(8)));
   }
   std::cerr << " ok "<< std::endl;
 }
@@ -784,8 +730,6 @@ void test_square_free_factorize(const Polynomial_traits_d&){
     }
     assert(CGAL::is_one(canonicalize(p)));
   }
-
-
   
   typename PT::Innermost_leading_coefficient ileading_coeff;
   typename PT::Multivariate_content multivariate_content;
@@ -1025,15 +969,7 @@ void test_evaluate(const Polynomial_traits_d&){
   assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(0)) == Coeff(3));
   assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(1)) == Coeff(5));
   assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(2)) == Coeff(7));
-    
-  for(int i = 0; i < 5; i++){
-    int n; n = my_rnd.get_int(0,PT::d-1);
-    Polynomial_d p,q;
-    p = generate_sparse_random_polynomial<Polynomial_d>();
-    assert(evaluate(p,ICoeff(3),n) 
-        == evaluate(move(p,n,PT::d-1),ICoeff(3)));
-  }
-    
+      
   std::cerr << " ok "<< std::endl;
 }
 
@@ -1268,15 +1204,6 @@ void test_resultant(const Polynomial_traits_d&){
     Polynomial_d gh(g*h);
     assert(resultant(fh,gh) == Coeff(0));
   } 
-  for(int i = 0 ; i < 5 ; i++){
-    int n; 
-    n = my_rnd.get_int(0,PT::d-1);
-    Polynomial_d p,q;
-    p = generate_sparse_random_polynomial<Polynomial_d>(3);
-    q = generate_sparse_random_polynomial<Polynomial_d>(3);
-    assert(resultant(p,q,n) == resultant(move(p,n),move(q,n)));
-  }
-    
   std::cerr << " ok "<< std::endl;    
 }
 

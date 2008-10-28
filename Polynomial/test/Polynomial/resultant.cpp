@@ -55,24 +55,14 @@ void test_resultant(){
     Polynomial_d gh(g*h);
     assert(resultant(fh,gh) == Coeff(0) );
   } 
-    
   for (int k = 0; k < 1; k++){
     Polynomial_d F2 = 
       CGAL::generate_sparse_random_polynomial<Polynomial_d>(my_rnd,5); 
     Polynomial_d F1 = 
       CGAL::generate_sparse_random_polynomial<Polynomial_d>(my_rnd,5);
-    Polynomial_d G1 = typename PT::Move()(F1,PT::d-1,0);
-    Polynomial_d G2 = typename PT::Move()(F2,PT::d-1,0);
-        
-    CGAL::Timer timer_new;
-    timer_new.start();
-    Coeff F = resultant(F1,F2,PT::d-1);
-    Coeff G = resultant(G1,G2,0);
-    timer_new.stop();
-
-    assert(F==G);
+    Coeff F = resultant(F1,F2); (void) F;
   }
-  std::cout << "end resultant: " << PT::d << std::endl;
+  //std::cout << "end resultant: " << PT::d << std::endl;
 }
    
 
@@ -81,9 +71,6 @@ int main(){
   // Set wrong rounding mode to test modular arithmetic 
   CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
 
-  CGAL::Timer timer; 
-  timer.start();
-  //CGAL::force_ieee_double_precision();
   CGAL::set_pretty_mode(std::cout);
   
   typedef CGAL::Arithmetic_kernel AK;
@@ -112,7 +99,6 @@ int main(){
   test_resultant<EPolynomial_1>();
   test_resultant<EPolynomial_2>();
   test_resultant<EPolynomial_3>();
-  timer.stop();
   
   typedef CGAL::Sqrt_extension<EXT, AK::Integer> EXT2;
   typedef CGAL::Polynomial<EXT2>            E2Polynomial_1;
@@ -129,8 +115,6 @@ int main(){
   test_resultant<MPolynomial_1>();
   test_resultant<MPolynomial_2>();
   test_resultant<MPolynomial_3>();
-  
-  std::cout <<" TOTAL TIME: " << timer.time()<< std::endl;
 }
 
  
