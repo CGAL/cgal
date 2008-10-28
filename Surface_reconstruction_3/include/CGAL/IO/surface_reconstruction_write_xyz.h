@@ -27,10 +27,13 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Save points to .xyz file (position + normal, ASCII).
+/// Save points to .xyz file (positions + normals, ASCII).
+///
+/// @heading Parameters:
+/// @param InputIterator value_type must be a model of the PointWithNormal_3 concept.
+///
 /// @return true on success.
-template <typename InputIterator> ///< InputIterator value_type must be
-                                  ///< a model of the PointWithNormal_3 concept.
+template <typename InputIterator>
 bool surface_reconstruction_write_xyz(const char* pFilename, 
                                       InputIterator first,    ///< first input point
                                       InputIterator beyond)   ///< past-the-end input point
@@ -60,6 +63,49 @@ bool surface_reconstruction_write_xyz(const char* pFilename,
 
   fclose(pFile);
   return true;
+}
+
+/// Save points to .xyz file (positions only, ASCII).
+/// Normals are ignored.
+///
+/// @heading Parameters:
+/// @param InputIterator value_type must be a model of PointWithNormal_3 if
+/// write_normals is true, else a model of Kernel::Point_3.
+///
+/// @return true on success.
+template <typename InputIterator>
+bool surface_reconstruction_write_xyz(const char* pFilename, 
+                                      InputIterator first,    ///< first input point
+                                      InputIterator beyond,   ///< past-the-end input point
+                                      bool write_normals)
+{
+  if(write_normals)
+  {
+    return surface_reconstruction_write_xyz(pFilename, first, beyond);
+  }
+  else
+  {
+    // model of Kernel::Point_3
+    typedef typename std::iterator_traits<InputIterator>::value_type Point; 
+
+    CGAL_precondition(pFilename != NULL);
+    CGAL_surface_reconstruction_precondition(first != beyond);
+
+    FILE *pFile = fopen(pFilename,"wt");
+    if(pFile == NULL)
+      return false;
+
+    // Write positions
+    for(InputIterator it = first; it != beyond; it++)
+    {
+      const Point& p = *it;
+      fprintf(pFile,"%lf %lf %lf\n",
+                    p.x(),p.y(),p.z());
+    }
+
+    fclose(pFile);
+    return true;
+  }
 }
 
 
