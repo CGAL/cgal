@@ -393,7 +393,7 @@ public:
                 this->ptr()->_m_arcs[k].second = arcg++;
                 this->ptr()->_m_arcno_to_pos[1].push_back(k);
                 
-            } else if(ait->first == 2) { // 2nd curve
+            } else if(ait->first == 2) { // intersection
                 this->ptr()->_m_arcs[k].first = arcf++;
                 this->ptr()->_m_arcs[k].second = arcg++;
                 this->ptr()->_m_arcno_to_pos[0].push_back(k);
