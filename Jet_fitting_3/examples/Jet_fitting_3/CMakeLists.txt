@@ -27,7 +27,7 @@ if ( CGAL_FOUND )
     add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
     set( CGAL_3RD_PARTY_DEFINITIONS  ${CGAL_3RD_PARTY_DEFINITIONS}  "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
 
-    if( AUTO_LINK_ENABLED )
+    if( CGAL_AUTO_LINK_ENABLED )
       message( STATUS "Boost.ProgramOptions library: found" )
     else()
       message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )

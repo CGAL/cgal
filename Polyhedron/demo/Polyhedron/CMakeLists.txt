@@ -1,6 +1,6 @@
 # This is the CMake script for compiling a CGAL application.
 
-project( Polyhedron ) 
+project( Polyhedron )
 
 cmake_minimum_required(VERSION 2.4)
 
@@ -27,7 +27,7 @@ find_package(CGAL QUIET COMPONENTS Qt4)
 include( ${CGAL_USE_FILE} )
 
 # Find Boost and Boost.Thread
-find_package(Boost 1.34.1 QUIET COMPONENTS thread)
+find_package(Boost 1.33.1 QUIET COMPONENTS thread)
 
 # Find Qt4 itself
 set( QT_USE_QTXML    TRUE )

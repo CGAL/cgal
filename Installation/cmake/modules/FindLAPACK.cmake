@@ -11,7 +11,7 @@
 #  LAPACK_DEFINITIONS - Compilation options to use LAPACK
 #  LAPACK_LINKER_FLAGS - Linker flags to use LAPACK (excluding -l
 #    and -L).
-#  LAPACK_LIBRARIES_DIR - Directories containing the LAPACK libraries. 
+#  LAPACK_LIBRARIES_DIR - Directories containing the LAPACK libraries.
 #     May be null if LAPACK_LIBRARIES contains libraries name using full path.
 #  LAPACK_LIBRARIES - List of libraries to link against LAPACK interface.
 #     May be null if the compiler supports auto-link (e.g. VC++).
@@ -22,7 +22,7 @@
 # - added LAPACK_DEFINITIONS and LAPACK_LIBRARIES_DIR
 # - removed LAPACK95_LIBRARIES
 #
-# TODO (CGAL): 
+# TODO (CGAL):
 # - use a C++ compiler instead of a Fortran one
 # - try to be compatible with CMake 2.4
 # - find CLAPACK (http://www.netlib.org/clapack)?
@@ -100,7 +100,7 @@ endmacro(check_lapack_libraries)
 #
 
 # Is it already configured?
-if (LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES) 
+if (LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
 
   set(LAPACK_FOUND TRUE)
 
@@ -115,14 +115,14 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
 
   # Search for LAPACK libraries in ${CGAL_TAUCS_LIBRARIES_DIR} (LAPACK shipped with CGAL),
   # else in $LAPACK_LIB_DIR environment variable.
-  if(CGAL_TAUCS_FOUND AND AUTO_LINK_ENABLED)
+  if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
     #message("DEBUG: LAPACK: VC++ case")
     set( LAPACK_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}"
                                CACHE FILEPATH "Directories containing the LAPACK libraries")
 
-  else(CGAL_TAUCS_FOUND AND AUTO_LINK_ENABLED)
+  else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     #message("DEBUG: LAPACK: Unix case")
 
@@ -224,14 +224,14 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
     endif(CMAKE_Fortran_COMPILER_WORKS AND BLAS_FOUND)
 
     # Add variables to cache
-    set( LAPACK_DEFINITIONS   "${LAPACK_DEFINITIONS}" 
+    set( LAPACK_DEFINITIONS   "${LAPACK_DEFINITIONS}"
                               CACHE FILEPATH "Compilation options to use LAPACK" )
-    set( LAPACK_LINKER_FLAGS  "${LAPACK_LINKER_FLAGS}" 
+    set( LAPACK_LINKER_FLAGS  "${LAPACK_LINKER_FLAGS}"
                               CACHE FILEPATH "Linker flags to use LAPACK" )
-    set( LAPACK_LIBRARIES     "${LAPACK_LIBRARIES}" 
+    set( LAPACK_LIBRARIES     "${LAPACK_LIBRARIES}"
                               CACHE FILEPATH "LAPACK libraries name" )
 
-  endif(CGAL_TAUCS_FOUND AND AUTO_LINK_ENABLED)
+  endif(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
   if(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
     set(LAPACK_FOUND TRUE)

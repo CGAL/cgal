@@ -46,7 +46,7 @@ else()
 
   # Search for TAUCS libraries in ${CGAL_TAUCS_LIBRARIES_DIR} (TAUCS shipped with CGAL),
   # else in $TAUCS_LIB_DIR environment variable.
-  if( CGAL_TAUCS_FOUND AND AUTO_LINK_ENABLED )
+  if( CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED )
     # if VC++: done
     #message("DEBUG: TAUCS: VC++ case")
     set( TAUCS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}"

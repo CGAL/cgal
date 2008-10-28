@@ -12,7 +12,7 @@
 #  BLAS_DEFINITIONS - Compilation options to use BLAS
 #  BLAS_LINKER_FLAGS - Linker flags to use BLAS (excluding -l
 #    and -L).
-#  BLAS_LIBRARIES_DIR - Directories containing the BLAS libraries. 
+#  BLAS_LIBRARIES_DIR - Directories containing the BLAS libraries.
 #     May be null if BLAS_LIBRARIES contains libraries name using full path.
 #  BLAS_LIBRARIES - List of libraries to link against BLAS interface.
 #     May be null if the compiler supports auto-link (e.g. VC++).
@@ -23,7 +23,7 @@
 # - added BLAS_DEFINITIONS and BLAS_LIBRARIES_DIR
 # - removed BLAS95_LIBRARIES
 #
-# TODO (CGAL): 
+# TODO (CGAL):
 # - use a C++ compiler instead of a Fortran one
 # - try to be compatible with CMake 2.4
 # - find CBLAS (http://www.netlib.org/cblas)?
@@ -119,7 +119,7 @@ endmacro(append_f2c)
 #
 
 # Is it already configured?
-if (BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES) 
+if (BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
 
   set(BLAS_FOUND TRUE)
 
@@ -131,14 +131,14 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
 
   # Search for BLAS libraries in ${CGAL_TAUCS_LIBRARIES_DIR} (BLAS shipped with CGAL),
   # else in $BLAS_LIB_DIR environment variable.
-  if(CGAL_TAUCS_FOUND AND AUTO_LINK_ENABLED)
+  if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
     #message("DEBUG: BLAS: VC++ case")
     set( BLAS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}"
                              CACHE FILEPATH "Directories containing the BLAS libraries")
 
-  else(CGAL_TAUCS_FOUND AND AUTO_LINK_ENABLED)
+  else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     #message("DEBUG: BLAS: Unix case")
 
@@ -407,14 +407,14 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
     endif(CMAKE_Fortran_COMPILER_WORKS)
 
     # Add variables to cache
-    set( BLAS_DEFINITIONS   "${BLAS_DEFINITIONS}" 
+    set( BLAS_DEFINITIONS   "${BLAS_DEFINITIONS}"
                             CACHE FILEPATH "Compilation options to use BLAS" )
-    set( BLAS_LINKER_FLAGS  "${BLAS_LINKER_FLAGS}" 
+    set( BLAS_LINKER_FLAGS  "${BLAS_LINKER_FLAGS}"
                             CACHE FILEPATH "Linker flags to use BLAS" )
-    set( BLAS_LIBRARIES     "${BLAS_LIBRARIES}" 
+    set( BLAS_LIBRARIES     "${BLAS_LIBRARIES}"
                             CACHE FILEPATH "BLAS libraries name" )
 
-  endif(CGAL_TAUCS_FOUND AND AUTO_LINK_ENABLED)
+  endif(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
   if(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
     set(BLAS_FOUND TRUE)
