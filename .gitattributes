@@ -2987,6 +2987,7 @@ Polynomial/include/CGAL/Polynomial/sturm_habicht_sequence.h -text
 Polynomial/include/CGAL/Polynomial/subresultants.h -text
 Polynomial/include/CGAL/Polynomial_type_generator.h -text
 Polynomial/test/Polynomial/Polynomial_type_generator.cpp -text
+Polynomial/test/Polynomial/polynomial_utils.cpp -text
 Polynomial/test/Polynomial/sturm_habicht_sequence.cpp -text
 Polynomial/test/Polynomial/subresultants.cpp -text
 Polytope_distance_d/doc_tex/Polytope_distance_d/dist.png -text
