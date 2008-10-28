@@ -42,7 +42,7 @@ void Heterogen::copy_from(const Heterogen &o) {
     std::string nmb=o.bonds_[i].second.key();
     Atom_const_iterator ita=find(nma);
     Atom_const_iterator itb=find(nmb);
-    CGAL_assertion(ita != o.atoms_end());
+    CGAL_assertion(ita != atoms_end());
     CGAL_assertion(itb != atoms_end());
     // needed due to idiotic C++ syntax
     Bond_endpoint bea(ita);
