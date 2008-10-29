@@ -28,9 +28,8 @@
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Gps_segment_traits_2.h>
 #include <list>
-#include <set>
+#include <CGAL/Unique_hash_map.h>
 #include <iostream>
-#include <assert.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -117,7 +116,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
   General_polygon_set_2 gps(pwh);
   Arrangement_2         arr = gps.arrangement();  
  
-  // The resulting arrangment contains a single holes in the unbounded face,
+  // The resulting arrangment contains a single hole in the unbounded face,
   // which comprises a face f, with several holes in its interior.
   // Go over these holes and pick the topmost vertex in each hole.
   const Face_handle                      uf = arr.unbounded_face();
@@ -133,7 +132,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
   std::set<Vertex_const_handle,
            _Less_handle<Vertex_const_handle> >  top_vertices;
   /*traversal of arrangement face holes - a hole in the face 
-  in arranements is disjoint from te outer boundary (different from BOP
+  in arranements is disjoint from the outer boundary (different from BOP
   where the hole can have vertices along the outer boundary). We look for
   holes only inside faces that are part of the point set. This
   guarantees that if the input PWH had holes with vertices on the outer
@@ -207,8 +206,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
       v_above = arr.non_const_handle (v);
       
       arr.insert_at_vertices (Segment_2 (v_top->point(), v_above->point()),
-                              v_top, v_above);
-      //added for debugging      
+                              v_top, v_above);      
       //std::cout << "connected ((" << v_top->point() << "),( " << v_above->point() << "))" <<std::endl;                      
     }
     else if (CGAL::assign (he, vrs_iter->second.second))
@@ -248,54 +246,70 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
     }
   }
 
-  // The holes of the face f are now all connected to it outer boundary.
+  // The holes of the face f are now all connected to its outer boundary.
   // Go over this boundary and report the vertices along it.
-  // Note that we start with a vertex located on the original outer boundary.
+  // Note that we start with a vertex located on the original PWH outer boundary.
   typedef typename Arrangement_2::Halfedge_const_iterator	
                                               Halfedge_const_iterator;
 
-  /*define two states - one is searching for a key vertice 
-  (one that ispart of a hole that hasn't been traversed, degree>2).
-  Once one is found, switch state and traverse the hole until returning
-  to this vertice. Then return to search mode*/	
+  /*For the traversal we switch between two states using key vertices. 
+  A key vertex is a vertex on the outer boundary of the PWH that has  a degree>2 
+  (note that this includes new vertices added by the vertical ray shooting). 
+  In other words, it is a vertice that leads to holes. One state is searching for a key vertice that
+  leads to a hole that has not been traversed. The other state is traversing (marking) a hole completely 
+  (starting and finishing at the same key vertice). Once the hole traversal is completed 
+  return to search state*/
+  
+  //start state is search state	
   bool marking_hole_state = false;
   
-  /*flags used for printing the edges for debugging purposes  
+  /*flags used for printing the edges for debugging purposes 
   bool skip_print = false; 
-  bool antenna_trav = false;
-  */
-    
+  bool antenna_trav = false; */ 
+  
   //marker of first vertex of hole that is being traversed  
   Vertex_handle hole_start, empty_handle;   
   
-  //create a container for marking holes that are/had been traversed
-  //change to hash map 
-  std::set<Face_handle, _Less_handle<Face_handle> > traversed_holes;
-  std::set<Vertex_const_handle,
-           _Less_handle<Vertex_const_handle> >  outer_vertices;
-
+  /*create a hash map container for outer boundary vertices that helps
+  to discover key vertices efficiently. Hash map is constructed with a
+  size parameter so we'll traverse once around the outer boundary to 
+  count the vertices and once to insert them*/
+  
   f_hole_it = uf->holes_begin();
   Halfedge_const_handle he_han = *f_hole_it;
-  
   if (he_han->face() != uf) 
     he_han = he_han->twin();
-  assert(he_han->face() == uf);	
+  CGAL_assertion(he_han->face() == uf);	
   //std::cout << "outer boundary:" <<std::endl;   
-  outer_vertices.insert(he_han->target());
   //std::cout << "(" << he_han->target()->point() << ")" <<std::endl; 
+  //calculate num of vertices on outer boundary for hash map creation.  
+  std::size_t size = 1;  
   Halfedge_const_handle begin = he_han;
   he_han = he_han->next();
-  assert(he_han->face() == uf);
-  
+  CGAL_assertion(he_han->face() == uf);
   while (he_han != begin) {
-    //insert vertice to outer boundary set 
-    outer_vertices.insert(he_han->target());
     //std::cout << "(" << he_han->target()->point() << ")" <<std::endl;	
+    size++;    
     he_han = he_han->next();
-    assert(he_han->face() == uf);	
+    CGAL_assertion(he_han->face() == uf);	
+  }
+  
+  //construct vertex hash map (default data is 0) and insert vertex
+  //handles as keys (value is 1) 
+  typedef typename CGAL::Unique_hash_map<Vertex_const_handle, int> V_map;  
+  V_map ver_map(0,size); 
+  ver_map[he_han->target()]=1;
+  //std::cout << "(" << he_han->target()->point() << ")" <<std::endl;
+  he_han = he_han->next();
+  while (he_han != begin) {
+    CGAL_assertion(he_han->face() == uf);    
+    ver_map[he_han->target()]=1;
+    //std::cout << "(" << he_han->target()->point() << ")" <<std::endl;	
+    he_han = he_han->next();	
   }
   //std::cout << "outer boundary finished" <<std::endl;
   
+  //get iterator to edge on outer boundary 
   first = f->outer_ccb();
   //std::cout << "first edge is ((" << first->source()->point() << "),(" << first->target()->point() << "))" <<std::endl;
   Halfedge_const_iterator  start, curr, next;  
@@ -304,7 +318,6 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
     start = start->next();
   //std::cout << "start edge is ((" << start->source()->point() << "),(" << start->target()->point() << "))" <<std::endl;
   curr = start;
-  
   do
   {         
     /*traverse_hole (next for any vertice besides vertices on
@@ -319,22 +332,25 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
        
        //case we are starting to traverse an antenna
       if (curr->face() == curr->twin()->face()) {        
-        /*antenna_trav = true ;
-        std::cout << "curr edge is ((" << curr->source()->point() << "),( " << curr->target()->point() << "))" <<std::endl;*/        
+        //antenna_trav = true ;
+        //std::cout << "curr edge is ((" << curr->source()->point() << "),( " << curr->target()->point() << "))" <<std::endl;        
         *oi = curr->target()->point();          
         ++oi;
         curr = curr->next();      
       }
-      
+      Face_handle curr_face;
       //Traversal of the hole               
       while (hole_start != arr.non_const_handle(curr->target())) {
-        traversed_holes.insert(arr.non_const_handle(curr->twin()->face()));
+        curr_face = arr.non_const_handle(curr->twin()->face());
+        /*mark the hole as a hole that has been traversed to save
+         multiple traversals*/        
+        curr_face->set_visited(true); 
         //std::cout << "curr edge is ((" << curr->source()->point() << "),( " << curr->target()->point() << "))" <<std::endl;        
         *oi = curr->target()->point();          
         ++oi;        
         //"turn inside" instead of next if target is located on outer boundary        
-        if ((curr->target()->degree()>2) && //add is on outer boundary instead 
-             (outer_vertices.find(curr->target()) != outer_vertices.end())) {                    
+        if   //(curr->target()->degree()>2) &&
+             (ver_map.is_defined(curr->target())) {                    
           curr = curr->twin()->prev()->twin();
         } else {//regular advance  
           curr = curr->next();
@@ -342,33 +358,33 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
       } //exited loop target is the hole marking start vertex
       hole_start=empty_handle;
       marking_hole_state=false;
-      //check all of the edges that (curr->taget()==edge->source())
-      //to determine next move 
- 
+      /* next iteration willcheck all of the edges which have (curr->target())
+      as their source to determine next move -
+      does curr->target() have more holes to traverse or do we
+      return to searching the outer boundary*/  
     } else
-    {//search for next hole       
+    {//search for next hole to traverse       
             
-      /*Treatment of 4 possible cases (should be narrowed to 3 even though
+      /*Treatment of 4 possible cases (can be narrowed to 3) - the
        first two cannot co-exist here as vertices with degree of 2 that are
-       not on the uf will be encountered when traversing holes (different 
-       state) */
+       not on the unbounded face will be encountered when traversing holes 
+       (different state) */
        next = curr->next();
-      /*target() is a simple vertice with a single possible edge on path.
-      add it to output and continue searching for a hole*/
+      /* case target() is a simple vertice with a single possible edge on path.
+      add it to output and continue searching for a hole. This is when traversing
+      along the outer polygon boundary*/
       if (curr->target()->degree()==2) {                
         //std::cout << "curr edge is ((" << curr->source()->point() << "),( " << curr->target()->point() << "))" <<std::endl;
         //insert target point to result output iterator     
         *oi = curr->target()->point();
         ++oi;        
         curr = curr->next();
-        //can be erased 
-        marking_hole_state=false;
-        hole_start=empty_handle;
+        //maintain the same state 
         continue;
       }
-      /*the case next is on the outer boundary meaning we finished handling
-       holes connected to the target vertex. Add the target to the output, and
-       continue searching for next hole*/
+      /*the case the next half edge is on the outer boundary meaning we finished
+       handling holes connected to the target vertex.
+       Add the target to the output, and continue searching for next hole*/
       if (next->twin()->face() == uf) {
         /*if (!skip_print)          
           std::cout << "curr edge is ((" << curr->source()->point() << "),( " << curr->target()->point() << "))" <<std::endl;        
@@ -379,22 +395,19 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
         *oi = curr->target()->point();
         ++oi;        
         curr = curr->next();
-        //can be erased 
-        marking_hole_state=false;
-        hole_start=empty_handle;
+        //maintain the same state
         continue;
       }
       
       /*if next is a boundary of a hole that has not been traversed,
        or an antenna (which should also be completely traversed until
-       returning to the source vertex).
-       Target must be added to output and state changed */      
-      /*Consult Efi may need to add
-      //if ((next->twin->face() != uf) && (next->twin()->face()->contained()))
-       if somehow next->twin()->face is a contained polygon or uf it 
-       will never be found       
+       returning to the source vertex). an antenna to the outer boundary
+       occurs only for polygons that are detached from the outer boundary
+       and therefore these holes are connected to the boundary only by a 
+       single vertex and will be travrsed only once.
+       Target must be added to output and state changed.     
        */        
-      if  ((traversed_holes.find(arr.non_const_handle(next->twin()->face())) == traversed_holes.end()) 
+      if  ((!next->twin()->face()->visited()) 
             //case of antenna      		
       		|| (next->face()==next->twin()->face())) {
         /*if (!skip_print)          
@@ -421,25 +434,24 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
         
         /*bypass traversed hole from inside*/
         
-        /*print debugging:
+        /*print debugging comment:
         the current edge needs to be printed now before moving on, but the
         current (target) vertex will be inserted to output iterator in case 2*/
         /*if (traversed_holes.find(arr.non_const_handle(curr->twin()->face())) == traversed_holes.end())        
           std::cout << "curr edge is ((" << curr->source()->point() << "),( " << curr->target()->point() << "))" <<std::endl;
+        */
         //case this is the last half edge of an antenna 
-        if (antenna_trav == true) {        
+        /*if (antenna_trav == true) {        
           std::cout << "curr edge is ((" << curr->source()->point() << "),( " << curr->target()->point() << "))" <<std::endl;        
           antenna_trav = false;
         }      
-        skip_print = true;*/
+        skip_print = true; */
         curr = next->twin()->next()->twin();
-        //can erase
-        marking_hole_state=false;
-        hole_start=empty_handle;
+        //maintain the same state 
         continue;
-        //now curr->target() has remained the same but curr->next() will
-        //be adjacent to a different hole or curr->next->twin->face() 
-        //will be the unbounded face
+        /*now curr->target() has remained the same but curr->next() will
+        be adjacent to a different hole or curr->next->twin->face() 
+        will be the unbounded face*/
       }      
     }   
   } while (curr != start);

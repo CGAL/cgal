@@ -110,12 +110,13 @@ int main (int argc, char **argv)
     std::string filename = testfilePrefix + si + testfileSuffix;
     const char *cfilename = filename.c_str();    
     bool res = testExampleFile(cfilename);
-    if (!res)
-      //std::cout << "test " << i << " was a bitter failure" << std::endl;
-       result=1;  
-    /*else {
+    if (!res) {
+        std::cout << "test " << i << " was a bitter failure" << std::endl;
+        result=1;
+    }  
+    else {
       std::cout <<"test " << i << " was a great success" << std::endl;      
-    }*/
+    }
   }
   if (result==0)
     std::cout << "ALL TESTS SUCCEEDED!" << std::endl;  
