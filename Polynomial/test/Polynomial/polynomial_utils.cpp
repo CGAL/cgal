@@ -23,7 +23,7 @@
 
 template <typename AK>
 void test_polynomial_utils(){
-  CGAL::set_pretty_mode(std::cout);
+  //CGAL::set_pretty_mode(std::cout);
   
   typedef typename AK::Integer Integer;
   typedef typename AK::Rational Rational; 
@@ -41,7 +41,7 @@ void test_polynomial_utils(){
   POLY_INT_3 z = shift(POLY_INT_3(1),1,2);
 
   POLY_INT_3 p = -5*x*x*x*y+7*z*z*y;  
-  std::cout << p << std::endl; 
+  //std::cout << p << std::endl; 
   
 // GetInnermostCoefficient
 // ConstructCoefficientConstIteratorRange
