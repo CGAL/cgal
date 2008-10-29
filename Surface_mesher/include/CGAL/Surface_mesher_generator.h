@@ -38,10 +38,9 @@ namespace CGAL {
   struct Non_manifold_tag {};
   struct Manifold_tag {};
   struct Manifold_with_boundary_tag {};
-  struct Singular_edges_allowed_tag {};
 
 //   struct Dynamic_manifold_tag {
-//     enum Tag { Manifold = 0, Non_manifold = 1, Manifold_with_boundary = 2, Singular_edges_allowed = 3 };
+//     enum Tag { Manifold = 0, Non_manifold = 1, Manifold_with_boundary = 2 };
 //   };
 
   template <
@@ -100,35 +99,6 @@ namespace CGAL {
       Criteria,
       Regular_edge_base
       > Mesher_base;
-  };
-
-  template <
-    typename C2T3,
-    typename SurfaceMeshTraits_3,
-    typename Criteria
-  >
-  struct Make_surface_mesh_helper<
-    C2T3,
-    SurfaceMeshTraits_3,
-    Criteria,
-    Singular_edges_allowed_tag> // Singular_edges_allowed_tag
-                                // specialization
-  {
-    typedef Surface_mesher::Surface_mesher_regular_edges_base<
-      C2T3,
-      typename SurfaceMeshTraits_3::Surface_3,
-      SurfaceMeshTraits_3,
-      Criteria,
-      false,
-      true> /* true means "singular edges are allowed"*/ Mesher_base;
-
-//     typedef Surface_mesher::Surface_mesher_manifold_base<
-//       C2T3,
-//       typename SurfaceMeshTraits_3::Surface_3,
-//       SurfaceMeshTraits_3,
-//       Criteria,
-//       Regular_edge_base
-//       > Mesher_base;
   };
 
   template <
