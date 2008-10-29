@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 //
 // Library       : CGAL
-// File          : test/Polynomial/polynomial_functions.C
+// File          : test/Polynomial/polynomial_utils.cpp
 // CGAL_release   : $Name:  $
 // Revision      : $Revision: 46395 $
 // Revision_date : $Date: 2008-10-21 14:59:59 +0200 (Tue, 21 Oct 2008) $
@@ -9,11 +9,6 @@
 // Author(s)     : Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //
 // ============================================================================
-
-/*! \file polynomial_functions.C
-  test for functions related to polynomials
-*/
-
 
 #include <CGAL/polynomial_utils.h>
 #include <CGAL/Polynomial.h>
