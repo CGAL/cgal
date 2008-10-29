@@ -102,8 +102,9 @@ Qt_widget& operator << (Qt_widget& ws, const CGALi::Point_2< CKvA_2 >& pt) {
     Facade::setup(CGAL::Bbox_2(ws.x_min(), ws.y_min(), ws.x_max(), ws.y_max()),
             ws.width(), ws.height());
 
-    if(!Facade::instance().draw(pt, coord))
+    if(!Facade::instance().draw(pt, coord)) {
         return ws;
+    }
        
     QPainter *ppnt = &ws.get_painter();
     QPen old_pen = ppnt->pen();
