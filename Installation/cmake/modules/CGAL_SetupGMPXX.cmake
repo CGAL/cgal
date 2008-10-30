@@ -1,4 +1,4 @@
-if ( NOT GMPXX_FOUND )
+if ( NOT WIN32 AND NOT GMPXX_FOUND )
   
   option( WITH_GMPXX "Search for GMPXX" ON )
   
