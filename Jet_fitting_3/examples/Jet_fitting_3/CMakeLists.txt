@@ -18,11 +18,11 @@ if ( CGAL_FOUND )
   include( GeneratorSpecificSettings )
 
   # Link with BLAS and LAPACK (required)
-  include( CGAL_SetupBLAS )
-  include( CGAL_SetupLAPACK )
+  include( CGAL_UseBLAS )
+  include( CGAL_UseLAPACK )
 
   # Link with Boost.ProgramOptions (optional)
-  include( CGAL_SetupBoostProgramOptions )
+  include( CGAL_UseBoostProgramOptions )
 
   create_single_source_cgal_program( "Mesh_estimation.cpp" )
   create_single_source_cgal_program( "Single_estimation.cpp" )

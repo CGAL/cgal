@@ -34,10 +34,10 @@ if ( CGAL_FOUND )
   include( GeneratorSpecificSettings )
 
   # Link with BLAS, LAPACK and TAUCS (optional)
-  include( CGAL_SetupTAUCS )
+  include( CGAL_UseTAUCS )
 
   # Link with Boost.ProgramOptions (optional)
-  include( CGAL_SetupBoostProgramOptions )
+  include( CGAL_UseBoostProgramOptions )
 
   include_directories (BEFORE include)
 

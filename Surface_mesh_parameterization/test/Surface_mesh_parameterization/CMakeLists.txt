@@ -33,7 +33,7 @@ if ( CGAL_FOUND )
   include( CreateSingleSourceCGALProgram )
 
   # Link with BLAS, LAPACK and TAUCS (optional)
-  include( CGAL_SetupTAUCS )
+  include( CGAL_UseTAUCS )
 
   include_directories (BEFORE include)
 

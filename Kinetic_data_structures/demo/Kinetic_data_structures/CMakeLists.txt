@@ -29,7 +29,7 @@ if ( CGAL_FOUND )
 
     include_directories (BEFORE include)
     
-    include( CGAL_SetupBoostProgramOptions )
+    include( CGAL_UseBoostProgramOptions )
     
     find_package(Boost QUIET COMPONENTS program_options)
 
