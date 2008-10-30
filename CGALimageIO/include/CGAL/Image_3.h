@@ -232,89 +232,123 @@ Image_3::trilinear_interpolation(const Coord_type& x,
    * h = val(i1, j2, k2)
    */
 
-  const Target_word_type outside = transform(value_outside);
-
-  if(x < 0.f ||
-     y < 0.f ||
-     z < 0.f ||
-     i1 >= dimx ||
-     j1 >= dimy ||
-     k1 >= dimz)
+  if(i1 < 0 ||
+     j1 < 0 ||
+     k1 < 0 ||
+     i2 >= dimz ||
+     j2 >= dimy ||
+     k2 >= dimx)
   {
-    return outside;
+    return transform(value_outside);
   }
 
-  Target_word_type a, b, c, d, e, f, g, h; 
+  Image_word_type* ptr = (Image_word_type*)image()->data;
+  ptr += i1 * dimxy + j1 * dimx + k1;
+  const Target_word_type a = *ptr;
+  const Target_word_type e = *(ptr+1);
+  ptr += dimxy; // i2 * dimxy + j1 * dimx + k1;
+  const Target_word_type b = *ptr;
+  const Target_word_type f = *(ptr+1);
+  ptr += dimx; // i2 * dimxy + j2 * dimx + k1
+  const Target_word_type c = *ptr;
+  const Target_word_type g = *(ptr+1);
+  ptr -= dimxy; // i1 * dimxy + j2 * dimx + k1
+  const Target_word_type d = *ptr;
+  const Target_word_type h = *(ptr+1);
+  
 
-  if(k1 < 0) {
-    a = b = c = d = outside;
-  }
-  else {
-    if(j1 < 0) {
-      a = b = outside;
-    }
-    else {
-      if(i1 < 0)
-	a = outside;
-      else
-	a = ((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k1];
+//   const Target_word_type a = ((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k1];
+//   const Target_word_type b = ((Image_word_type*)image()->data)[i2 * dimxy + j1 * dimx + k1];
+//   const Target_word_type c = ((Image_word_type*)image()->data)[i2 * dimxy + j2 * dimx + k1];
+//   const Target_word_type d = ((Image_word_type*)image()->data)[i1 * dimxy + j2 * dimx + k1];
+//   const Target_word_type e = ((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k2];
+//   const Target_word_type f = ((Image_word_type*)image()->data)[i2 * dimxy + j1 * dimx + k2];
+//   const Target_word_type g = ((Image_word_type*)image()->data)[i2 * dimxy + j2 * dimx + k2];
+//   const Target_word_type h = ((Image_word_type*)image()->data)[i1 * dimxy + j2 * dimx + k2];
 
-      if(i2 >= dimx)
-	b = outside;
-      else 
-	b = ((Image_word_type*)image()->data)[i2 * dimxy + j1 * dimx + k1];
-    }
+//   const Target_word_type outside = transform(value_outside);
 
-    if(j2 >= dimy) {
-      c = d = outside;
-    }
-    else {
-      if(i1 < 0)
-	d = outside;
-      else
-	d = ((Image_word_type*)image()->data)[i1 * dimxy + j2 * dimx + k1];
+//   if(x < 0.f ||
+//      y < 0.f ||
+//      z < 0.f ||
+//      i1 >= dimz ||
+//      j1 >= dimy ||
+//      k1 >= dimx)
+//   {
+//     return outside;
+//   }
 
-      if(i2 >= dimx)
-	c = outside;
-      else
-	c = ((Image_word_type*)image()->data)[i2 * dimxy + j2 * dimx + k1];
-    }
-  }
+//   Target_word_type a, b, c, d, e, f, g, h; 
 
-  if(k2 >= dimz) {
-    e = f = g = h = outside;
-  }
-  else {
-    if(j1 < 0) {
-      e = f = outside;
-    }
-    else {
-      if(i1 < 0)
-	e = outside;
-      else
-	e = ((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k2];
+//   if(k1 < 0) {
+//     a = b = c = d = outside;
+//   }
+//   else {
+//     if(j1 < 0) {
+//       a = b = outside;
+//     }
+//     else {
+//       if(i1 < 0)
+// 	a = outside;
+//       else
+// 	a = ((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k1];
 
-      if(i2 >= dimx)
-	f = outside;
-      else 
-	f = ((Image_word_type*)image()->data)[i2 * dimxy + j1 * dimx + k2];
-    }
+//       if(i2 >= dimz)
+// 	b = outside;
+//       else 
+// 	b = ((Image_word_type*)image()->data)[i2 * dimxy + j1 * dimx + k1];
+//     }
 
-    if(j2 >= dimy) {
-      g = h = outside;
-    }
-    else {
-      if(i1 < 0)
-	h = outside;
-      else
-	h = ((Image_word_type*)image()->data)[i1 * dimxy + j2 * dimx + k2];
+//     if(j2 >= dimy) {
+//       c = d = outside;
+//     }
+//     else {
+//       if(i1 < 0)
+// 	d = outside;
+//       else
+// 	d = ((Image_word_type*)image()->data)[i1 * dimxy + j2 * dimx + k1];
 
-      if(i2 >= dimx)
-	g = outside;
-      else
-	g = ((Image_word_type*)image()->data)[i2 * dimxy + j2 * dimx + k2];
-    }
-  }
+//       if(i2 >= dimz)
+// 	c = outside;
+//       else
+// 	c = ((Image_word_type*)image()->data)[i2 * dimxy + j2 * dimx + k1];
+//     }
+//   }
+
+//   if(k2 >= dimx) {
+//     e = f = g = h = outside;
+//   }
+//   else {
+//     if(j1 < 0) {
+//       e = f = outside;
+//     }
+//     else {
+//       if(i1 < 0)
+// 	e = outside;
+//       else
+// 	e = ((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k2];
+
+//       if(i2 >= dimz)
+// 	f = outside;
+//       else 
+// 	f = ((Image_word_type*)image()->data)[i2 * dimxy + j1 * dimx + k2];
+//     }
+
+//     if(j2 >= dimy) {
+//       g = h = outside;
+//     }
+//     else {
+//       if(i1 < 0)
+// 	h = outside;
+//       else
+// 	h = ((Image_word_type*)image()->data)[i1 * dimxy + j2 * dimx + k2];
+
+//       if(i2 >= dimz)
+// 	g = outside;
+//       else
+// 	g = ((Image_word_type*)image()->data)[i2 * dimxy + j2 * dimx + k2];
+//     }
+//   }
 
   const Target_word_type di2 = i2 - z;
   const Target_word_type di1 = z - i1;

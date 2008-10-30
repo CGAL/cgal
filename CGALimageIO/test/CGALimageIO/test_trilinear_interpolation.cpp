@@ -1,5 +1,7 @@
 #include <CGAL/config.h>
 #include <CGAL/Image_3.h>
+#include <CGAL/Random.h>
+#include <CGAL/Timer.h>
 
 #include <cassert>
 #include <iostream>
@@ -79,5 +81,79 @@ int main() {
 
 	data[z * 4 + y * 2 + x] = 0;
       }
-  image.set_data(0);
+
+  // BENCH
+  std::cerr.precision(10);
+
+  float max_diff = 0.f;
+  CGAL::Timer timer_new_implementation;
+  CGAL::Timer timer_old_implementation;
+
+  for(int image_nb = 0; image_nb < 1000; ++image_nb)
+  {
+    // fill the 2x2x2 image
+    for(int i = 0; i < 8; ++i) {
+      data[i] = CGAL::default_random.get_int(0,255);
+    }
+
+    // test the difference between the two implementations
+    for(double d_x = 0.; d_x < 0.9; d_x += 0.1)
+      for(double d_y = 0.; d_y < 0.9; d_y += 0.1)
+	for(double d_z = 0.; d_z < 0.9; d_z += 0.1)
+	{
+
+	  const float value1 = 
+	    image.trilinear_interpolation<Word, float, float>(d_x,
+							      d_y,
+							      d_z,
+							      0);
+	  const float value2 = triLinInterp(image.image(),
+					    d_x, 
+					    d_y,
+					    d_z,
+					    0.f);
+	  float diff = value1 - value2;
+	  if(diff < 0) {
+	    diff =-diff;
+	  }
+	  assert(diff < 0.1f);
+	  if(diff > max_diff)
+	    max_diff = diff;
+	}
+    // bench new implementation
+    float sum = 0.f;
+    timer_new_implementation.start();
+    for(double d_x = 0.; d_x < 0.9; d_x += 0.05)
+      for(double d_y = 0.; d_y < 0.9; d_y += 0.05)
+	for(double d_z = 0.; d_z < 0.9; d_z += 0.05)
+	{
+
+	  sum += 
+	    image.trilinear_interpolation<Word, float, float>(d_x,
+							      d_y,
+							      d_z,
+							      0);
+	}
+    timer_new_implementation.stop();
+
+    sum = 0.f;
+    timer_old_implementation.start();
+    // bench old implementation    
+    for(double d_x = 0.; d_x < 0.9; d_x += 0.05)
+      for(double d_y = 0.; d_y < 0.9; d_y += 0.05)
+	for(double d_z = 0.; d_z < 0.9; d_z += 0.05)
+	{
+	  sum += triLinInterp(image.image(),
+			      d_x, 
+			      d_y,
+			      d_z,
+			      0.f);
+	}
+    timer_old_implementation.stop();
+  }
+  std::cerr << "max difference = " << max_diff << "\n"
+	    << "timer new implementation: " << timer_new_implementation.time()
+	    << "\ntimer old implementation: " << timer_old_implementation.time()
+	    << "\n";
+  image.set_data(0); // trick to avoid ~Image_3 segfault.
 }
