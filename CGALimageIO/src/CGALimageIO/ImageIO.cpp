@@ -487,6 +487,63 @@ _image *_initImage() {
   return im;
 }
 
+_image *_createImage(int x, int y, int z, int v,
+		     float vx, float vy, float vz, int w,
+		     WORD_KIND wk, SIGN sgn)
+{
+  _image *im;
+  
+  im = (_image *) ImageIO_alloc(sizeof(_image));
+  if ( im == NULL ) return( im );
+  
+  im->xdim = x;
+  im->ydim = y;
+  im->zdim = z;
+  im->vdim = v;
+  im->vx = vx;
+  im->vy = vy;
+  im->vz = vz;
+
+  /* default image center  is 0 0 0 */
+  im->cx = im->cy = im->cz = 0;
+
+  /* default image offset  is 0 0 0 */
+  im->tx = im->ty = im->tz = 0.0;
+
+  /* default image rotation  is 0 0 0 */
+  im->rx = im->ry = im->rz = 0.0;
+
+  /* no data yet */
+  im->data = ImageIO_alloc(x*y*z*v*w);
+
+  /* no file associated to image */
+  im->fd = NULL;
+  im->openMode = OM_CLOSE;
+  im->endianness = END_UNKNOWN;
+
+  /* unknown data kind
+     default is binary
+   */
+  im->dataMode = DM_BINARY;
+
+  /* no user string */
+  im->user = NULL;
+  im->nuser = 0;
+
+  /* unknown word kind */
+  im->wdim = w;
+  im->wordKind = wk;
+  im->vectMode = VM_SCALAR;
+  im->sign = sgn;
+  im->imageFormat = NULL;
+
+  /** eventually initializes the supported file formats */
+  if (firstFormat==NULL)
+    initSupportedFileFormat();
+  /* return image descriptor */
+  return im;
+}
+
 /* return the bounding box of the image */
 void _get_image_bounding_box(_image* im,
 			     double* x_min, double* y_min, double* z_min,
