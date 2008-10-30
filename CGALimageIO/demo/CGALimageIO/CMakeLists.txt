@@ -34,28 +34,20 @@ if(VTK_FOUND AND WITH_VTK)
   set(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
   set(DESIRED_QT_VERSION ${VTK_DESIRED_QT_VERSION} CACHE FILEPATH "")
 
-  find_package(Qt QUIET)
-  if(QT_FOUND)
-    include(${QT_USE_FILE})
-
-    # Use the include path and library for Qt that is used by VTK.
-    include_directories( ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
-      ${QT_QTCORE_INCLUDE_DIR})
-
+  if(VTK_USE_QVTK)
     add_executable( image_to_vtk_viewer image_to_vtk_viewer.cpp)
 
     target_link_libraries( image_to_vtk_viewer
       QVTK
-      ${QT_LIBRARIES}
       vtkRendering
       vtkGraphics
       vtkIO
       vtkCommon
       ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
       )
-  else(QT_FOUND)
-    message(STATUS "NOTICE: This demo needs Qt, and will not be compiled.")
-  endif(QT_FOUND)
+  else(VTK_USE_QVTK)
+    message(STATUS "NOTICE: This demo needs QVTK, and will not be compiled.")
+  endif(VTK_USE_QVTK)
 else(VTK_FOUND AND WITH_VTK)
 
   message(STATUS "NOTICE: This demo needs VTK, and will not be compiled.")
