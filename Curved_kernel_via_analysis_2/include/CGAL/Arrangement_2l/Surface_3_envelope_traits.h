@@ -331,6 +331,7 @@ public:
                             if (dir == CGAL::ARR_LEFT_TO_RIGHT) {
                                 side = -side;
                             }
+                            // TODO deal with vertical-case
                             if (k + l > 0) {
                                 *oi++ = CGAL::make_object(
                                         std::make_pair(
