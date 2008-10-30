@@ -1668,6 +1668,7 @@ Installation/cmake/modules/CGAL_Locate_CGAL_TAUCS.cmake -text
 Installation/cmake/modules/CGAL_Macros.cmake -text
 Installation/cmake/modules/CGAL_SetupBLAS.cmake -text
 Installation/cmake/modules/CGAL_SetupBoost.cmake -text
+Installation/cmake/modules/CGAL_SetupBoostProgramOptions.cmake -text
 Installation/cmake/modules/CGAL_SetupFlags.cmake -text
 Installation/cmake/modules/CGAL_SetupGMP.cmake -text
 Installation/cmake/modules/CGAL_SetupGMPXX.cmake -text

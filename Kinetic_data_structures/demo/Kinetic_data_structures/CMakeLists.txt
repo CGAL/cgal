@@ -28,22 +28,14 @@ if ( CGAL_FOUND )
     include_directories( ${QT3_INCLUDE_DIR} )
 
     include_directories (BEFORE include)
-
+    
+    include( CGAL_SetupBoostProgramOptions )
+    
     find_package(Boost QUIET COMPONENTS program_options)
-
-    if(Boost_PROGRAM_OPTIONS_FOUND)
-      add_definitions(-DCGAL_USE_BOOST_PROGRAM_OPTIONS)
-      include_directories(${BOOST_INCLUDE_DIRS})
-    else(Boost_PROGRAM_OPTIONS_FOUND)
-      message(STATUS "Warning: this directory uses Boost.Program_options. Without it, several features are disabled.")
-    endif(Boost_PROGRAM_OPTIONS_FOUND)
 
     # Demo KDS_Delaunay_triangulation_2
     add_executable  (KDS_Delaunay_triangulation_2 KDS_Delaunay_triangulation_2.cpp)
     target_link_libraries(KDS_Delaunay_triangulation_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-    if(Boost_PROGRAM_OPTIONS_FOUND)
-      target_link_libraries(KDS_Delaunay_triangulation_2 ${Boost_PROGRAM_OPTIONS_LIBRARY})
-    endif(Boost_PROGRAM_OPTIONS_FOUND)
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS KDS_Delaunay_triangulation_2 )
 
@@ -56,16 +48,10 @@ if ( CGAL_FOUND )
     # Demo KDS_generate_data
     add_executable  (KDS_generate_data KDS_generate_data.cpp)
     target_link_libraries(KDS_generate_data ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-    if(Boost_PROGRAM_OPTIONS_FOUND)
-      target_link_libraries(KDS_generate_data ${Boost_PROGRAM_OPTIONS_LIBRARY})
-    endif(Boost_PROGRAM_OPTIONS_FOUND)
   
     # Demo KDS_Delaunay_triangulation_stable_subset_2
     add_executable  (KDS_Delaunay_triangulation_stable_subset_2 KDS_Delaunay_triangulation_stable_subset_2.cpp)
     target_link_libraries(KDS_Delaunay_triangulation_stable_subset_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-    if(Boost_PROGRAM_OPTIONS_FOUND)
-      target_link_libraries(KDS_Delaunay_triangulation_stable_subset_2 ${Boost_PROGRAM_OPTIONS_LIBRARY})
-    endif(Boost_PROGRAM_OPTIONS_FOUND)
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS KDS_Delaunay_triangulation_stable_subset_2 )
   

@@ -37,18 +37,7 @@ if ( CGAL_FOUND )
   include( CGAL_SetupTAUCS )
 
   # Link with Boost.ProgramOptions (optional)
-  find_package(Boost 1.33.1 QUIET COMPONENTS program_options)
-  if(Boost_PROGRAM_OPTIONS_FOUND)
-    add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-    set( CGAL_3RD_PARTY_DEFINITIONS  ${CGAL_3RD_PARTY_DEFINITIONS}  "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-
-    if( CGAL_AUTO_LINK_ENABLED )
-      message( STATUS "Boost.ProgramOptions library: found" )
-    else()
-      message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
-      set( CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_PROGRAM_OPTIONS_LIBRARY} )
-    endif()
-  endif()
+  include( CGAL_SetupBoostProgramOptions )
 
   include_directories (BEFORE include)
 
