@@ -35,6 +35,7 @@
 #include <CGAL/Surface_mesher/Vertices_on_the_same_psc_element_criterion.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
+#include <CGAL/make_surface_mesh.h>
 
 struct Threshold : public std::unary_function<FT, unsigned char> {
   double isovalue;
@@ -187,18 +188,20 @@ Volume::Volume(MainWindow* mw) :
   m_sm_distance(0),
   m_relative_precision(0.0000001),
   m_view_surface(false),
-  m_view_mc(false),
   m_triangulation_color(QColor(Qt::green)),
   m_inverse_normals(false),
   two_sides(false),
   del(),
   c2t3(del),
   mw(mw),
-  list_draw_marching_cube(0),
-  list_draw_marching_cube_is_valid(false),
   lists_draw_surface(),
   lists_draw_surface_is_valid(false),
-  lists_draw_surface_mc()
+#ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
+  list_draw_marching_cube(0),
+  list_draw_marching_cube_is_valid(false),
+  lists_draw_surface_mc(),
+#endif // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
+  m_view_mc(false)
 {
   spinBox_radius_bound = mw->findChild<QDoubleSpinBox*>("spinBox_radius_bound");
   spinBox_distance_bound = mw->findChild<QDoubleSpinBox*>("spinBox_distance_bound");
@@ -212,8 +215,6 @@ Volume::Volume(MainWindow* mw) :
   connect(spinBox_distance_bound, SIGNAL(valueChanged(double)),
           this, SLOT(set_distance_bound(double)));
 
-  connect(mw->actionMarching_cubes, SIGNAL(triggered()),
-          this, SLOT(display_marchin_cube()));
   connect(mw->actionSurface_mesher, SIGNAL(triggered()),
           this, SLOT(display_surface_mesher_result()));
 
@@ -232,6 +233,10 @@ Volume::Volume(MainWindow* mw) :
   connect(mw->actionUse_Gouraud_shading, SIGNAL(toggled(bool)),
           this, SLOT(set_use_gouraud(bool)));
   use_gouraud = mw->actionUse_Gouraud_shading->isChecked();
+
+  connect(mw->actionShow_the_image_bounding_box, SIGNAL(toggled(bool)),
+          this, SLOT(set_show_bbox(bool)));
+  show_bbox = mw->actionShow_the_image_bounding_box->isChecked();
 
   connect(mw->actionShow_triangulation, SIGNAL(toggled(bool)),
           this, SLOT(set_draw_triangulation(bool)));
@@ -256,6 +261,11 @@ Volume::Volume(MainWindow* mw) :
   mw->actionExport_surface_mesh_to_OFF->setEnabled(false);
   connect(mw->actionExport_surface_mesh_to_OFF, SIGNAL(triggered()),
           this, SLOT(export_off()));
+
+#ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
+  connect(mw->actionMarching_cubes, SIGNAL(triggered()),
+          this, SLOT(display_marchin_cube()));
+#endif
 }
 
 void Volume::set_inverse_normals(const bool b) {
@@ -293,6 +303,11 @@ void Volume::set_triangulation_edges_color() {
 
 void Volume::set_use_gouraud(const bool b) {
   use_gouraud = b;
+  emit changed();
+}
+
+void Volume::set_show_bbox(const bool b) {
+  show_bbox = b;
   emit changed();
 }
 
@@ -343,9 +358,17 @@ bool Volume::opendir(const QString& dirname)
   return result;
 }
 
-bool Volume::open_vtk(const QString& filename)
+void Volume::only_in()
 {
   mw->show_only("volume");
+#ifndef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
+  mw->actionMarching_cubes->setVisible(false);
+#endif
+}
+
+bool Volume::open_vtk(const QString& filename)
+{
+  only_in();
 
   fileinfo.setFile(filename);
 
@@ -392,7 +415,7 @@ bool Volume::open_vtk(const QString& filename)
 // Total 3D images (XT format, that is the old Inrimage format, 1994.
 bool Volume::open_xt(const QString& filename)
 {
-  mw->show_only("volume");
+  only_in();
 
   fileinfo.setFile(filename);
 
@@ -470,7 +493,7 @@ bool Volume::open_xt(const QString&)
 
 bool Volume::open(const QString& filename)
 {
-  mw->show_only("volume");
+  only_in();
 
   fileinfo.setFile(filename);
 
@@ -620,6 +643,7 @@ void Volume::not_busy() const
 
 void Volume::display_marchin_cube()
 {
+#ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
   if(m_surface_mc.empty())
   {
     QTime total_time;
@@ -729,6 +753,7 @@ void Volume::display_marchin_cube()
                  .arg(mc_total_time/1000.));
 
   save_image_settings(fileinfo.absoluteFilePath());
+#endif // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
 }
 
 void Volume::display_surface_mesher_result()
@@ -842,23 +867,47 @@ void Volume::display_surface_mesher_result()
       std::cerr << "vertices_on_the_same_psc_element_criterion is activated.\n";
     }
 
-    CGAL::Surface_mesher::Standard_criteria<Criterion> criteria(criterion_vector);
+    typedef CGAL::Surface_mesher::Standard_criteria<Criterion> Criteria;
+    Criteria criteria(criterion_vector);
     std::cerr << "Surface_mesher... angle=" << m_sm_angle << ", radius= " << m_sm_radius
               << ", distance=" << m_sm_distance << "\n";
+
+    typedef CGAL::Surface_mesher_generator<C2t3,
+      Oracle,
+      Criteria,
+      CGAL::Manifold_tag,
+      CGAL_SURFACE_MESHER_VERBOSITY
+      >::type Surface_mesher_manifold;
+      
+    typedef CGAL::Surface_mesher_generator<C2t3,
+      Oracle,
+      Criteria,
+      CGAL::Non_manifold_tag,
+      CGAL_SURFACE_MESHER_VERBOSITY
+      >::type Surface_mesher_non_manifold; 
 
     if(mw->manifoldCheckBox->isChecked()) {
       // meshing surface
       std::cerr << "manifold criteria is activated.\n";
-      make_surface_mesh(c2t3, surface, oracle, criteria,
-			CGAL::Manifold_tag(), 0);
+//       make_surface_mesh(c2t3, surface, oracle, criteria,
+// 			CGAL::Manifold_tag(), 0);
+      Surface_mesher_manifold manifold_mesher(c2t3, surface, oracle, criteria);
+      manifold_mesher.refine_mesh();
     }
     else {
-      make_surface_mesh(c2t3, surface, oracle, criteria,
-			CGAL::Non_manifold_tag(), 0);
+      Surface_mesher_non_manifold non_manifold_mesher(c2t3, surface, oracle, criteria);
+      non_manifold_mesher.refine_mesh();
     }
     sm_timer.stop();
     not_busy();
 
+    for(Tr::Finite_cells_iterator 
+	  cit = del.finite_cells_begin(),
+	  end = del.finite_cells_end();
+	cit != end; ++cit)
+    {
+      cit->info() = classify(surface(cit->circumcenter()));
+    }
     // get output surface
     for(C2t3::Facet_iterator
           fit = c2t3.facets_begin(), end = c2t3.facets_end();
@@ -866,6 +915,11 @@ void Volume::display_surface_mesher_result()
     {
       const Tr::Cell_handle& cell = fit->first;
       const int index = fit->second;
+
+      // here "left" means nothing
+      const Point left_circumcenter = cell->circumcenter();
+      const Point right_circumcenter = cell->neighbor(index)->circumcenter();
+
       const Triangle_3 t = 
         Triangle_3(cell->vertex(del.vertex_triple_index(index, 0))->point(),
                    cell->vertex(del.vertex_triple_index(index, 1))->point(),
@@ -874,7 +928,16 @@ void Volume::display_surface_mesher_result()
       const Vector v = t[2] - t[0];
       Vector n = CGAL::cross_product(u,v);
       n = n / std::sqrt(n*n);
-      m_surface.push_back(Facet(t,n,cell->vertex(del.vertex_triple_index(index, 0))->point().element_index()));
+      if(mw->labellizedRadioButton->isChecked()) 
+      {
+	m_surface.push_back(Facet(t,
+				  n,
+				  values_list->search((std::max)(surface(left_circumcenter), 
+								 surface(right_circumcenter)))));
+      }
+      else {
+	m_surface.push_back(Facet(t,n,cell->vertex(del.vertex_triple_index(index, 0))->point().element_index()));
+      }
     }
 
     // invalidate the display list
@@ -967,6 +1030,7 @@ void Volume::draw()
     }
   }
 
+#ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
   // draw MC surface mesh
   if(m_view_mc)
   {
@@ -987,10 +1051,12 @@ void Volume::draw()
       gl_draw_surface_mc();
     }
   }
+#endif CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
 
-  ::glDisable(GL_LIGHTING);
-  m_image.gl_draw_bbox(3.0f,0,0,0);
-
+  if(show_bbox) {
+    ::glDisable(GL_LIGHTING);
+    m_image.gl_draw_bbox(3.0f,0,0,0);
+  }
 
   if(!m_view_mc && m_draw_triangulation)
   {
@@ -1024,6 +1090,7 @@ void Volume::set_distance_bound(double d)
   changed_parameters();
 }
 
+#ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
 void Volume::gl_draw_surface_mc()
 {
   if(use_gouraud)
@@ -1079,6 +1146,7 @@ void Volume::gl_draw_surface_mc()
     lists_draw_surface_mc_is_valid = (::glGetError() == GL_NO_ERROR);
   }
 }
+#endif // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
 
 void Volume::gl_draw_surface()
 {
@@ -1123,10 +1191,55 @@ void Volume::gl_draw_surface()
                     ? GL_COMPILE_AND_EXECUTE    // in the list generation.
                     : GL_COMPILE);
 
-      gl_draw_surface(m_surface.begin(),
-                      m_surface.end(),
-                      values_list->item(i));
-        
+      if(!mw->labellizedRadioButton->isChecked()) 
+      {
+	gl_draw_surface(m_surface.begin(),
+			m_surface.end(),
+			values_list->item(i));
+      }
+      else 
+      {
+	const unsigned char volume_index = values_list->value(i);
+
+	::glBegin(GL_TRIANGLES);
+	unsigned int counter = 0;
+	for(C2t3::Facet_iterator
+	      fit = c2t3.facets_begin(), end = c2t3.facets_end();
+	    fit != end; ++fit)
+	{
+	  Tr::Cell_handle facet_cell = fit->first;
+	  int facet_index = fit->second;
+	  Tr::Cell_handle opposite_cell = facet_cell->neighbor(facet_index);
+	  int opposite_index = opposite_cell->index(facet_cell);
+
+	  if( facet_cell->info() != volume_index ) {
+	    if( opposite_cell->info() == volume_index ) {
+	      std::swap(facet_cell, opposite_cell);
+	      std::swap(facet_index, opposite_index);
+	    }
+	    else 
+	      continue; // go to next facet
+	  }
+	  const Point& a = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 0))->point();
+	  const Point& b = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 1))->point();
+	  const Point& c = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 2))->point();
+	  Vector n = CGAL::cross_product(b-a,c-a);
+	  n = n / std::sqrt(n*n); // unit normal
+	  if(m_inverse_normals) {
+	    ::glNormal3d(-n.x(),-n.y(),-n.z());
+	  } else {
+	    ::glNormal3d(n.x(),n.y(),n.z());
+	  }
+	  ::glVertex3d(a.x(),a.y(),a.z());
+	  ::glVertex3d(b.x(),b.y(),b.z());
+	  ::glVertex3d(c.x(),c.y(),c.z());
+	  ++counter;
+	}
+	::glEnd();
+	std::cerr << boost::format("(c2t3) number of facets: %1%\n")
+	  % counter;
+      }
+
       if(lists_draw_surface[i]) // If lists_draw_surface[i]==0 then
       {                         // something got wrong in the list
         ::glEndList();          // generation.
@@ -1172,7 +1285,9 @@ void Volume::gl_draw_surface(Iterator begin, Iterator end, const QTreeWidgetItem
 void Volume::changed_parameters()
 {
   m_surface.clear();
+#ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
   m_surface_mc.clear();
+#endif
   list_draw_marching_cube_is_valid = false;
   lists_draw_surface_is_valid = false;
   c2t3.clear();
@@ -1181,6 +1296,7 @@ void Volume::changed_parameters()
   emit changed();
 }
 
+#ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
 void Volume::gl_draw_one_marching_cube_vertex(int i)
 {
   if(!m_inverse_normals)
@@ -1243,6 +1359,7 @@ void Volume::gl_draw_marchingcube()
         % ::gluErrorString(::glGetError());
   }
 }
+#endif // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
 
 void Volume::save_image_settings(QString filename)
 {

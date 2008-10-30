@@ -47,27 +47,31 @@ typedef boost::tuple<Triangle_3,Vector,const QTreeWidgetItem*> Facet;
 
 typedef CBinary_image_3<FT,Point> Binary_image;
 
+class QTreeWidgetItem;
+
 // surface mesher
 // #define CGAL_MESHES_NO_OUTPUT
-#define CGAL_SURFACE_MESHER_VERBOSE
 #include <CGAL/Surface_mesh_vertex_base_3.h>
+#include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/Surface_mesh_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Surface_mesh_complex_2_in_triangulation_3.h>
 #include <CGAL/Surface_mesh_default_criteria_3.h>
-#include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 #include <CGAL/Surface_mesh_traits_generator_3.h>
 typedef CGAL::Surface_mesh_vertex_base_3<Kernel> Vb;
-typedef CGAL::Surface_mesh_cell_base_3<Kernel> Cb;
-typedef CGAL::Triangulation_cell_base_with_circumcenter_3<Kernel, Cb> Cb2;
-typedef CGAL::Triangulation_data_structure_3<Vb, Cb2> Tds;
+typedef CGAL::Triangulation_cell_base_with_info_3<unsigned char, Kernel> Cb1;
+typedef CGAL::Surface_mesh_cell_base_3<Kernel, Cb1> Cb2;
+typedef CGAL::Triangulation_cell_base_with_circumcenter_3<Kernel, Cb2> Cb;
+typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, Binary_image> Surface_3;
 
+#ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
 #include <mc/MarchingCubes.h>
+#endif
 
 class MainWindow;
 class QDoubleSpinBox;
@@ -92,18 +96,15 @@ private:
 
   // visualization
   bool m_view_surface;
-  bool m_view_mc;
   bool m_draw_triangulation;
   QColor m_triangulation_color;
   bool m_inverse_normals;
   bool two_sides;
   bool draw_triangles_edges;
   bool use_gouraud;
+  bool show_bbox;
 
   std::vector<Facet> m_surface;
-  std::vector<Facet> m_surface_mc;
-  MarchingCubes<unsigned char> mc ;
-  std::vector<int> nbs_of_mc_triangles;
   Tr del;            // 3D-Delaunay triangulation
   C2t3 c2t3;         // 2D complex in 3D triangulation
 
@@ -117,13 +118,32 @@ private:
   bool list_draw_marching_cube_is_valid;
   std::vector<GLuint> lists_draw_surface;
   bool lists_draw_surface_is_valid;
-  std::vector<GLuint> lists_draw_surface_mc;
-  bool lists_draw_surface_mc_is_valid;
 
   CGAL::Timer sm_timer;
-  CGAL::Timer mc_timer;
   int sm_total_time;
+
+#ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
+  std::vector<Facet> m_surface_mc;
+  MarchingCubes<unsigned char> mc ;
+  std::vector<int> nbs_of_mc_triangles;
+  std::vector<GLuint> lists_draw_surface_mc;
+  bool lists_draw_surface_mc_is_valid;
+  CGAL::Timer mc_timer;
   int mc_total_time;
+public:
+  void gl_draw_surface_mc();
+  void gl_draw_marchingcube();
+private:
+  void gl_draw_one_marching_cube_vertex(int);
+
+#endif // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
+
+  bool m_view_mc; // that boolean is here even with if
+		  // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
+                  // is not defined.
+public slots:
+void display_marchin_cube();
+
 private:
   template <typename Iterator>
   void gl_draw_surface(Iterator begin, Iterator end, const QTreeWidgetItem* = 0);
@@ -137,21 +157,20 @@ private:
 
 public:
   void gl_draw_surface();
-  void gl_draw_surface_mc();
-  void gl_draw_marchingcube();
-private:
-  void gl_draw_one_marching_cube_vertex(int);
 
 signals:
-void new_bounding_box(double, double, double, double, double, double);
+
+  void new_bounding_box(double, double, double, double, double, double);
 
 public slots:
+  void only_in();
   void set_inverse_normals(const bool);
   void set_two_sides(const bool);
   void set_draw_triangles_edges(const bool);
   void set_triangulation_edges_color();
   void set_draw_triangulation(const bool);
   void set_use_gouraud(const bool);
+  void set_show_bbox(const bool);
   bool open(const QString& filename);
 #ifdef CGAL_USE_VTK
   bool open_vtk(const QString& filename);
@@ -165,7 +184,6 @@ public slots:
   void get_bbox(float& /*xmin*/, float& /*ymin*/, float& /*zmin*/,
 		float& /*xmax*/, float& /*ymax*/, float& /*zmax*/) {}
   void close() {}
-  void display_marchin_cube();
   void display_surface_mesher_result();
   void set_radius_bound(double);
   void set_distance_bound(double);
@@ -318,9 +336,12 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
             }
             else // end of second pass, return the last visited voxel
             {
-              *it++ = m_image.point(i, j, k);
-              std::cerr << boost::format("Found seed %5%, which is voxel (%1%, %2%, %3%), value=%4%\n")
-                % i % j % k %  m_image.value(i, j, k) % m_image.point(i, j, k);
+// 	      if(nb_voxels >= 100)
+	      {
+		*it++ = m_image.point(i, j, k);
+		std::cerr << boost::format("Found seed %5%, which is voxel (%1%, %2%, %3%), value=%4%\n")
+		  % i % j % k %  m_image.value(i, j, k) % m_image.point(i, j, k);
+	      }
             }
           } // end if queue.empty()
         } // end while !queue.empty() (with local indices i, j, k)

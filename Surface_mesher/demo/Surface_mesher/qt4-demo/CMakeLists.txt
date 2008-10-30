@@ -8,7 +8,6 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 set(PACKAGE_ROOT ../../..)
 
-
 # Add several CGAL packages to the include and link paths,
 # if they lie in ${PACKAGE_ROOT}/.
 foreach(INC_DIR ${PACKAGE_ROOT}/include ${PACKAGE_ROOT}/../Mesh_2/include ${PACKAGE_ROOT}/../Data_structure_for_queries_3/include ${PACKAGE_ROOT}/../Marching_cube/include ${PACKAGE_ROOT}/../CGALimageIO/include ${PACKAGE_ROOT}/../GraphicsView/include)
@@ -22,72 +21,51 @@ foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALimageIO ${PACKAGE_ROOT}/.
   endif()
 endforeach()
 
-option(WITH_POLYHEDRAL_SURFACE "Compile the support for polyhedral surfaces." ON)
-
 # QGLViwer needs Qt4 configured with QtOpenGL and QtXml support
 
 set( QT_USE_QTOPENGL TRUE )
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 
-find_package(CGAL      REQUIRED COMPONENTS ImageIO Qt4)
-
-if ( CGAL_FOUND )
+find_package(CGAL QUIET COMPONENTS ImageIO Qt4)
+if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
   include( ${CGAL_USE_FILE} )
 
-  find_package(Qt4       REQUIRED )
+  find_package(Qt4 QUIET )
   find_package(QGLViewer REQUIRED )
-  find_package(OpenGL    REQUIRED )
-  find_package(ZLIB      REQUIRED )
-  find_package(VTK       QUIET)
-
-  find_path(bimap_DIR boost/bimap/bimap.hpp ${Boost_INCLUDE_DIRS} DOC "The directory containing the bimap subdirectory.")
-
-  if(EXISTS ${bimap_DIR}/boost/bimap/bimap.hpp)
-    if("${bimap_DIR}" STREQUAL "${Boost_INCLUDE_DIRS}")
-    else()
-      include_directories(${bimap_DIR})
-      add_definitions(-DCGAL_USE_BOOST_BIMAP)
-    endif()
-  endif(EXISTS ${bimap_DIR}/boost/bimap/bimap.hpp)
-
-  if( VTK_FOUND AND EXISTS ${VTK_USE_FILE})
-#    if( ${VTK_MAJOR_VERSION} STRGREATER "5")
-      message(STATUS "VTK-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}.${VTK_BUILD_VERSION} found in ${VTK_DIR}.")
-      set(VTK_BUILD_SETTINGS_FILE "")
-      include( ${VTK_USE_FILE} )
-      add_definitions(-DCGAL_USE_VTK)
-#    endif( ${VTK_MAJOR_VERSION} GREATER 5)
-    SET(PRJ_VTK_LIBS vtkImaging vtkIO)
-  else( VTK_FOUND AND EXISTS ${VTK_USE_FILE})
-    message(STATUS "VTK not found.")
-  endif( VTK_FOUND  AND EXISTS ${VTK_USE_FILE})
-
-  add_definitions(-DCGAL_USE_ZLIB)
-
-  if ( QT_FOUND AND QGLVIEWER_FOUND )
+  find_package(OpenGL    QUIET )
+  
+  if ( QGLVIEWER_FOUND )
 
     include( ${QT_USE_FILE})
-    
-    # Make sure the compiler can find local include files
-    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include")
-      include_directories (BEFORE include)
-    endif()
-
-    include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-    include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-    include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-    include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
-    
+        
     include_directories( ${QGLVIEWER_INCLUDE_DIR} )
+    add_definitions(${QGLVIEWER_DEFINITIONS})
 
     set( sources Raw_image_dialog.cpp colorlisteditor.cpp values_list.cpp mainwindow.cpp Surface_mesher.cpp viewer.cpp volume.cpp )
 
-    if(WITH_POLYHEDRAL_SURFACE)
-      set(sources ${sources} polyhedral_surface.cpp ${PACKAGE_ROOT}/../Marching_cube/src/mc/ply.c)
-    else(WITH_POLYHEDRAL_SURFACE)
+    if(EXISTS ${PACKAGE_ROOT}/../Marching_cube)
+      option(SURFACE_MESH_DEMO_USE_MARCHING_CUBE "Embed a marching cube implementation in the Surface Mesh demo." ON)
+    endif()
+    
+    option(SURFACE_MESH_DEMO_WITH_POLYHEDRAL_SURFACE "Compile the support for polyhedral surfaces." OFF)
+
+    option(SURFACE_MESH_DEMO_VERBOSE "Set this option if you want the Surface Mesh demo to display messages on standard output." OFF)
+
+    if(SURFACE_MESH_DEMO_VERBOSE)
+      add_definitions(-DCGAL_SURFACE_MESHER_VERBOSE)
+    endif()
+
+    if(SURFACE_MESH_DEMO_WITH_POLYHEDRAL_SURFACE)
+      set(sources ${sources} polyhedral_surface.cpp)
+    else(SURFACE_MESH_DEMO_WITH_POLYHEDRAL_SURFACE)
       add_definitions(-DCGAL_DO_NOT_USE_POLYHEDRAL_SURFACE)
-    endif(WITH_POLYHEDRAL_SURFACE)
+    endif(SURFACE_MESH_DEMO_WITH_POLYHEDRAL_SURFACE)
+
+    if(SURFACE_MESH_DEMO_USE_MARCHING_CUBE)
+      set(sources ${sources} ${PACKAGE_ROOT}/../Marching_cube/src/mc/ply.c)
+      add_definitions(-DCGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE)
+    endif()
     
     qt4_automoc( ${sources} )
 
@@ -104,7 +82,11 @@ if ( CGAL_FOUND )
     # Link the executable to CGAL and third-party libraries
     target_link_libraries( ${prj} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
     
-    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${PRJ_VTK_LIBS} )
+    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
     
-  endif()
-endif(CGAL_FOUND)
+  else( QGLVIEWER_FOUND)
+    message(STATUS "NOTICE: This demo needs libQGLViewer, and will not be compiled.")
+  endif( QGLVIEWER_FOUND)
+else(CGAL_FOUND AND CGAL_Qt4_FOUND AND )
+  message(STATUS "NOTICE: This demo needs Qt4, and will not be compiled.")
+endif(CGAL_FOUND AND CGAL_Qt4_FOUND)

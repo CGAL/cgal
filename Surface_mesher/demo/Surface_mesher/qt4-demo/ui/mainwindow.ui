@@ -73,6 +73,7 @@
     <addaction name="actionUse_Gouraud_shading" />
     <addaction name="actionShow_triangulation" />
     <addaction name="actionTriangulation_edges_color" />
+    <addaction name="actionShow_the_image_bounding_box" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
@@ -109,6 +110,7 @@
    <addaction name="actionAuto_resize" />
    <addaction name="actionDisplay_front_and_back" />
    <addaction name="actionInverse_normals" />
+   <addaction name="actionShow_the_image_bounding_box" />
    <addaction name="separator" />
    <addaction name="actionDisplay_surface" />
    <addaction name="actionDisplay_octree" />
@@ -120,6 +122,11 @@
    </property>
    <property name="windowTitle" >
     <string>Meshing toolbar</string>
+   </property>
+   <property name="show_only_in" stdset="0" >
+    <stringlist>
+     <string>volume</string>
+    </stringlist>
    </property>
    <attribute name="toolBarArea" >
     <enum>TopToolBarArea</enum>
@@ -230,6 +237,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="interpolationCheckBox" >
+            <property name="text" >
+             <string>Trilinear interpolation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <layout class="QGridLayout" name="gridLayout" >
             <item row="0" column="0" >
              <widget class="QLabel" name="label" >
@@ -269,6 +283,9 @@
        <property name="orientation" >
         <enum>Qt::Vertical</enum>
        </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
        <property name="sizeHint" stdset="0" >
         <size>
          <width>20</width>
@@ -281,6 +298,12 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="ImageLabels" >
+   <property name="sizePolicy" >
+    <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="windowTitle" >
     <string>Image sub-domaines</string>
    </property>
@@ -293,13 +316,19 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="ImageLabelsContents" >
+    <property name="sizePolicy" >
+     <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+      <horstretch>10</horstretch>
+      <verstretch>10</verstretch>
+     </sizepolicy>
+    </property>
     <layout class="QGridLayout" name="gridLayout_3" >
      <item row="0" column="0" >
       <widget class="Values_list" native="1" name="values" >
        <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
          <horstretch>0</horstretch>
-         <verstretch>2</verstretch>
+         <verstretch>5</verstretch>
         </sizepolicy>
        </property>
        <property name="show_only_in" stdset="0" >
@@ -617,7 +646,7 @@
     <bool>true</bool>
    </property>
    <property name="text" >
-    <string>Show the whole triangulation (surface mesher only)</string>
+    <string>Show the whole &amp;triangulation (surface mesher only)</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+T</string>
@@ -630,7 +659,7 @@
   </action>
   <action name="actionTriangulation_edges_color" >
    <property name="text" >
-    <string>Choose the triangulation edges color...</string>
+    <string>Choose the triangulation edges &amp;color...</string>
    </property>
    <property name="show_only_in" stdset="0" >
     <stringlist>
@@ -652,6 +681,29 @@
     </stringlist>
    </property>
   </action>
+  <action name="actionShow_the_image_bounding_box" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../surface_mesher.qrc" >
+     <normaloff>:/icons/bbox.png</normaloff>:/icons/bbox.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Show the image &amp;bounding box</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+B</string>
+   </property>
+   <property name="show_only_in" stdset="0" >
+    <stringlist>
+     <string>volume</string>
+    </stringlist>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -666,6 +718,16 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>viewer</tabstop>
+  <tabstop>grayLevelRadioButton</tabstop>
+  <tabstop>labellizedRadioButton</tabstop>
+  <tabstop>manifoldCheckBox</tabstop>
+  <tabstop>sameIndexCheckBox</tabstop>
+  <tabstop>interpolationCheckBox</tabstop>
+  <tabstop>spinBox_radius_bound</tabstop>
+  <tabstop>spinBox_distance_bound</tabstop>
+ </tabstops>
  <resources>
   <include location="../surface_mesher.qrc" />
  </resources>
