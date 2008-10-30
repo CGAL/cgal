@@ -1451,7 +1451,8 @@ struct Construct_coefficient_const_iterator_range
     template <class OutputIterator>
     void operator()( const Polynomial_d& p, OutputIterator oit ) const {
       if(CGAL::is_zero(p)){
-        *oit= make_pair(Exponent_vector(std::vector<int>(d,0)), Innermost_coefficient_type(0));
+        *oit= make_pair(Exponent_vector(std::vector<int>(d,0)), 
+            Innermost_coefficient_type(0));
         oit++;
         return;
       }
@@ -1467,7 +1468,7 @@ struct Construct_coefficient_const_iterator_range
     create_monom_representation 
     ( const Polynomial_d& p, OutputIterator oit, Tag_true ) const{
       for( int exponent = 0; exponent <= p.degree(); ++exponent ) {
-        if ( p[exponent] != Coefficient_type(0) ){
+        if ( !CGAL::is_zero(p[exponent])){
           Exponent_vector exp_vec;
           exp_vec.push_back( exponent );
           *oit = Exponents_coeff_pair( exp_vec, p[exponent] ); 
@@ -1478,14 +1479,16 @@ struct Construct_coefficient_const_iterator_range
     void 
     create_monom_representation 
     ( const Polynomial_d& p, OutputIterator oit, Tag_false ) const { 
+      typedef Polynomial_traits_d< Coefficient_type > PT;
+      typename PT::Get_monom_representation gmr;
       for( int exponent = 0; exponent <= p.degree(); ++exponent ) {
-        Monom_rep monom_rep;
-        typedef Polynomial_traits_d< Coefficient_type > PT;
-        typename PT::Get_monom_representation gmr;
-        gmr( p[exponent], std::back_inserter( monom_rep ) );
-        for( typename Monom_rep::iterator it = monom_rep.begin();
-             it != monom_rep.end(); ++it ) {
-          it->first.push_back( exponent );
+          Monom_rep monom_rep; 
+        if ( !CGAL::is_zero(p[exponent])){
+          gmr( p[exponent], std::back_inserter( monom_rep ) );
+          for( typename Monom_rep::iterator it = monom_rep.begin();
+               it != monom_rep.end(); ++it ) {
+            it->first.push_back( exponent );
+          }
         }
         copy( monom_rep.begin(), monom_rep.end(), oit );               
       }

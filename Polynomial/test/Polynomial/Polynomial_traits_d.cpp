@@ -212,12 +212,23 @@ void test_get_monom_representation(const Polynomial_traits_d&){
 
   typename PT::Construct_polynomial construct;
   typename PT::Get_monom_representation gmr;
-
-  Polynomial_d zero(0);
-  Monom_rep monom_rep;
-  gmr(zero,std::back_inserter(monom_rep));
-  assert(monom_rep.size()==1);
-  assert(construct(monom_rep.begin(),monom_rep.end()) == zero);
+  
+  {
+    Polynomial_d zero(0);
+    Monom_rep monom_rep;
+    gmr(zero,std::back_inserter(monom_rep));
+    assert(monom_rep.size()==1);
+    assert(construct(monom_rep.begin(),monom_rep.end()) == zero);
+  }
+  {
+    Polynomial_d x = CGAL::shift(Polynomial_d(1),1,PT::d-1);
+    Polynomial_d p = x*x-1;
+    Monom_rep monom_rep;
+    gmr(p,std::back_inserter(monom_rep));
+    assert(monom_rep.size()==2);
+    assert(construct(monom_rep.begin(),monom_rep.end()) == p);
+  }
+    
  
         
   for (int i = 0; i < 5 ; i++){
