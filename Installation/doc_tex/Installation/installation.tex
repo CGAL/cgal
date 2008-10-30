@@ -659,121 +659,134 @@ cmake -DCGAL_DIR=~/CGAL-3.4 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGA
 
 \section{Summary of configuration variables}
 
-\subsection{CMAKE (not environment) variable used to configure both \cgal\ and user programs}
+\subsection{CMake variables used to configure both \cgal\ libraries and user programs}
 
-\begin{center}\index{cgal!config_vars}\index{cgal configuration variables}
+\begin{center}\index{cgal!general-config-cmake-vars}\index{cgal configuration cmake variables - general}
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
-  \begin{tabular}{|l|l|l|l|} \hline
-    \textbf{variable}  & \textbf{description} & \textbf{possible values} & \textbf{default value}
+  \begin{tabular}{|l|l|l|} \hline
+    \textbf{variable}  & \textbf{description} & \textbf{default value}
     \\\hline\hline
-    {\tt CMAKE_BUILD_TYPE}  & Indicates type of build & Debug/Release & Debug
+    {\tt CMAKE\_BUILD\_TYPE}  & Indicates type of build. Possible values are Debug,Release & Debug
     \\\hline
-    {\tt CMAKE_CXX_FLAGS} & C++ flags for both Debug and Release modes. & space-separated list of flags & platform-dependent, determined by cmake
+    {\tt CMAKE\_CXX\_FLAGS} & Space-separated list of C++ flags for both Debug and Release modes & platform-dependent, determined by cmake
     \\\hline
-    {\tt CMAKE_CXX_FLAGS_RELEASE} & C++ flags for Release mode only. & space-separated list of flags & platform-dependent, determined by cmake
+    {\tt CMAKE\_CXX\_FLAGS\_RELEASE} & Space-separated list of C++ flags for Release mode only  & platform-dependent, determined by cmake
     \\\hline
-    {\tt CMAKE_CXX_FLAGS_DEBUG} & C++ flags for Debug mode only. & space-separated list of flags & platform-dependent
+    {\tt CMAKE\_CXX\_FLAGS\_DEBUG} & Space-separated list of C++ flags for Debug mode only & platform-dependent, determined by cmake
     \\\hline
-    {\tt CMAKE_SHARED_LINKER_FLAGS} & Linker flags for shared libraries on both Debug and Release modes. & space-separated list of flags & platform-dependent
+    {\tt CMAKE\_SHARED\_LINKER\_FLAGS} & Space-separated list of linker flags for shared libraries on both Debug and Release modes & platform-dependent, determined by cmake
     \\\hline
-    {\tt CMAKE_SHARED_LINKER_FLAGS_RELEASE} & Linker flags for shared libraries on Release mode only. & space-separated list of flags & platform-dependent
+    {\tt CMAKE\_SHARED\_LINKER\_FLAGS\_RELEASE} & Space-separated list of linker flags for shared libraries on Release mode only & platform-dependent, determined by cmake
     \\\hline
-    {\tt CMAKE_SHARED_LINKER_FLAGS_DEBUG} & Linker flags for shared libraries on Debug mode only. & space-separated list of flags & platform-dependent
+    {\tt CMAKE\_SHARED\_LINKER\_FLAGS\_DEBUG} & Space-separated list of linker flags for shared libraries on Debug mode only & platform-dependent, determined by cmake
     \\\hline
-    {\tt CMAKE_MODULE_LINKER_FLAGS} & Linker flags for static libraries on both Debug and Release modes. & space-separated list of flags & platform-dependent
+    {\tt CMAKE\_MODULE\_LINKER\_FLAGS} & Space-separated list of linker flags for static libraries on both Debug and Release modes & platform-dependent, determined by cmake
     \\\hline
-    {\tt CMAKE_MODULE_LINKER_FLAGS_RELEASE} & Linker flags for static libraries on Release mode only. & space-separated list of flags & platform-dependent
+    {\tt CMAKE\_MODULE\_LINKER\_FLAGS\_RELEASE} & Space-separated list of linker flags for static libraries on Release mode only & platform-dependent, determined by cmake
     \\\hline
-    {\tt CMAKE_MODULE_LINKER_FLAGS_DEBUG} & Linker flags for static libraries on Debug mode only. & space-separated list of flags & platform-dependent
+    {\tt CMAKE\_MODULE\_LINKER\_FLAGS\_DEBUG} & Space-separated list of linker flags for static libraries on Debug mode only & platform-dependent, determined by cmake
     \\\hline
-    {\tt CMAKE_EXE_LINKER_FLAGS} & Linker flags for executables on both Debug and Release modes. & space-separated list of flags & platform-dependent
+    {\tt CMAKE\_EXE\_LINKER\_FLAGS} & Space-separated list of linker flags for executables on both Debug and Release modes & platform-dependent, determined by cmake
     \\\hline
-    {\tt CMAKE_EXE_LINKER_FLAGS_RELEASE} & Linker flags for executables on Release mode only. & space-separated list of flags & platform-dependent
+    {\tt CMAKE\_EXE\_LINKER\_FLAGS\_RELEASE} & Space-separated list of linker flags for executables on Release mode only & platform-dependent, determined by cmake
     \\\hline
-    {\tt CMAKE_EXE_LINKER_FLAGS_DEBUG} & Linker flags for executables on Debug mode only. & space-separated list of flags & platform-dependent
+    {\tt CMAKE\_EXE\_LINKER\_FLAGS\_DEBUG} & Space-separated list of linker flags for executables on Debug mode only & platform-dependent, determined by cmake
     \\\hline
-    {\tt CGAL_CXX_FLAGS} & Additional C++ flags for both Debug and Release modes. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_CXX\_FLAGS} & Additional space-separated list of C++ flags for both Debug and Release modes & (empty)
     \\\hline
-    {\tt CGAL_CXX_FLAGS_RELEASE} & C++ flags for Release mode only. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_CXX\_FLAGS\_RELEASE} & Additional space-separated list of C++ flags for Release mode only & (empty)
     \\\hline
-    {\tt CGAL_CXX_FLAGS_DEBUG} & C++ flags for Debug mode only. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_CXX\_FLAGS\_DEBUG} & Additional space-separated list of C++ flags for Debug mode only & (empty)
     \\\hline
-    {\tt CGAL_SHARED_LINKER_FLAGS} & Linker flags for shared libraries on both Debug and Release modes. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_SHARED\_LINKER\_FLAGS} & Additional space-separated list of linker flags for shared libraries on both Debug and Release modes & (empty)
     \\\hline
-    {\tt CGAL_SHARED_LINKER_FLAGS_RELEASE} & Linker flags for shared libraries on Release mode only. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_SHARED\_LINKER\_FLAGS\_RELEASE} & Additional space-separated list of linker flags for shared libraries on Release mode only & (empty)
     \\\hline
-    {\tt CGAL_SHARED_LINKER_FLAGS_DEBUG} & Linker flags for shared libraries on Debug mode only. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_SHARED\_LINKER\_FLAGS\_DEBUG} & Additional space-separated list of linker flags for shared libraries on Debug mode only & (empty)
     \\\hline
-    {\tt CGAL_MODULE_LINKER_FLAGS} & Linker flags for static libraries on both Debug and Release modes. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_MODULE\_LINKER\_FLAGS} & Additional space-separated list of linker flags for static libraries on both Debug and Release modes & (empty)
     \\\hline
-    {\tt CGAL_MODULE_LINKER_FLAGS_RELEASE} & Linker flags for static libraries on Release mode only. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_MODULE\_LINKER\_FLAGS\_RELEASE} & Additional space-separated list of linker flags for static libraries on Release mode only & (empty)
     \\\hline
-    {\tt CGAL_MODULE_LINKER_FLAGS_DEBUG} & Linker flags for static libraries on Debug mode only. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_MODULE\_LINKER\_FLAGS\_DEBUG} & Additional space-separated list of linker flags for static libraries on Debug mode only & (empty)
     \\\hline
-    {\tt CGAL_EXE_LINKER_FLAGS} & Linker flags for executables on both Debug and Release modes. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_EXE\_LINKER\_FLAGS} & Additional space-separated list of linker flags for executables on both Debug and Release modes & (empty)
     \\\hline
-    {\tt CGAL_EXE_LINKER_FLAGS_RELEASE} & Linker flags for executables on Release mode only. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_EXE\_LINKER\_FLAGS\_RELEASE} & Additional space-separated list of linker flags for executables on Release mode only & (empty)
     \\\hline
-    {\tt CGAL_EXE_LINKER_FLAGS_DEBUG} & Linker flags for executables on Debug mode only. & space-separated list of flags & platform-dependent
+    {\tt CGAL\_EXE\_LINKER\_FLAGS\_DEBUG} & Additional space-separated list of linker flags for executables on Debug mode only & (empty)
     \\\hline
-    {\tt CMAKE_CXX_COMPILER} & C++ compiler to use. This is used only if Makefiles are generatede. & full path to the compiler executable & platform-dependent
+    {\tt CMAKE\_CXX\_COMPILER} & Full-path to the executable corresponding to the C++ compiler to use. This is used only if Makefiles are generated & platform-dependent, determined by cmake
     \\\hline
-    
   \end{tabular}
 \end{center}
 
-\subsection{Used to configure only the \cgal\ libraries}
+\subsection{Environment variables used to configure both \cgal\ libraries and user programs}
 
-\begin{center}\index{cgal!config_vars}\index{cgal configuration variables}
+\begin{center}\index{cgal!general-config-env-vars}\index{cgal configuration environment variables - general }
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
-  \begin{tabular}{|l|l|l|l|} \hline
-    \textbf{variable} & \textbf{environment or cmake} & \textbf{description} & \textbf{possible values} & \textbf{default value}
+  \begin{tabular}{|l|l|} \hline
+    \textbf{variable}  & \textbf{description} 
     \\\hline\hline
-    {\tt WITH\_examples} & {\em CMake} & Whether to configure examples along with the library & TRUE/FALSE & TRUE
+    {\tt CXX } & Full-path to the executable corresponding to the C++ compiler to use. This is used only if Makefiles are generated
     \\\hline
-    {\tt WITH\_demos}    & {\em CMake} & Whether to configure demos along with the library & TRUE/FALSE & TRUE
-    \\\hline
-    {\tt WITH\_CGAL\_Core}    & {\em CMake} & Whether to configure CGAL_Core component along with the main library & TRUE/FALSE & TRUE
-    \\\hline
-    {\tt WITH\_CGAL\_Qt3}    & {\em CMake} & Whether to configure CGAL_Qt3 component along with the main library & TRUE/FALSE & TRUE
-    \\\hline
-    {\tt WITH\_CGAL\_Qt4}    & {\em CMake} & Whether to configure CGAL_Qt4 component along with the main library & TRUE/FALSE & TRUE
-    \\\hline
-    {\tt WITH\_CGAL\_ImageIO}   & {\em CMake} & Whether to configure CGAL_ImageIO component along with the main library & TRUE/FALSE & TRUE
-    \\\hline
-    {\tt WITH\_CGAL\_PDB}    & {\em CMake} & Whether to configure CGAL_PDB component along with the main library & TRUE/FALSE & TRUE
-    \\\hline
-    
   \end{tabular}
 \end{center}
 
-\subsection{Used to configure only programs linking to \cgal\}
+\subsection{CMake variables used to configure the \cgal\ libraries only}
 
-\begin{center}\index{cgal!config_vars}\index{cgal configuration variables}
+\begin{center}\index{cgal!lib-config-cmake-vars}\index{cgal configuration cmake variables - libs }
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|l|l|} \hline
-    \textbf{variable} & \textbf{environment or cmake} & \textbf{description} & \textbf{possible values} & \textbf{default value}
+    \textbf{variable} & \textbf{description} & \textbf{default value}
     \\\hline\hline
-    {\tt WITH\_examples} & {\em CMake} & Whether to configure examples along with the library & TRUE/FALSE & TRUE
+    {\tt WITH\_examples}  & Whether to configure examples along with the library (TRUE/FALSE) & TRUE
     \\\hline
-    {\tt WITH\_demos}    & {\em CMake} & Whether to configure demos along with the library & TRUE/FALSE & TRUE
+    {\tt WITH\_demos} & Whether to configure demos along with the library (TRUE/FALSE) & TRUE
     \\\hline
-    {\tt WITH\_CGAL\_Core}    & {\em CMake} & Whether to configure CGAL_Core component along with the main library & TRUE/FALSE & TRUE
+    {\tt WITH\_CGAL\_Core} & Whether to configure CGAL\_Core component along with the main library (TRUE/FALSE) & TRUE
     \\\hline
-    {\tt WITH\_CGAL\_Qt3}    & {\em CMake} & Whether to configure CGAL_Qt3 component along with the main library & TRUE/FALSE & TRUE
+    {\tt WITH\_CGAL\_Qt3} & Whether to configure CGAL\_Qt3 component along with the main library (TRUE/FALSE) & TRUE
     \\\hline
-    {\tt WITH\_CGAL\_Qt4}    & {\em CMake} & Whether to configure CGAL_Qt4 component along with the main library & TRUE/FALSE & TRUE
+    {\tt WITH\_CGAL\_Qt4} & Whether to configure CGAL\_Qt4 component along with the main library (TRUE/FALSE) & TRUE
     \\\hline
-    {\tt WITH\_CGAL\_ImageIO}   & {\em CMake} & Whether to configure CGAL_ImageIO component along with the main library & TRUE/FALSE & TRUE
+    {\tt WITH\_CGAL\_ImageIO} & Whether to configure CGAL\_ImageIO component along with the main library (TRUE/FALSE) & TRUE
     \\\hline
-    {\tt WITH\_CGAL\_PDB}    & {\em CMake} & Whether to configure CGAL_PDB component along with the main library & TRUE/FALSE & TRUE
+    {\tt WITH\_CGAL\_PDB} & Whether to configure CGAL\_PDB component along with the main library (TRUE/FALSE) & TRUE
+    \\\hline
+    {\tt WITH\_CPACK} & Whether to create a package for distribution of the library (TRUE/FALSE) & FALSE
+    \\\hline
+  \end{tabular}
+\end{center}
+
+
+\subsection{CMake variables used to configure programs linking to \cgal}
+
+\begin{center}\index{cgal!exe-config-cmake-vars}\index{cgal configuration cmake variables - user programs }
+  \renewcommand{\arraystretch}{1.3}
+  \gdef\lcTabularBorder{2}
+  \begin{tabular}{|l|l|} \hline
+    \textbf{variable} & \textbf{description} 
     \\\hline\hline
-    {\tt CMAKE_BUILD_TYPE}   & {\em CMake} & Whether to configure CGAL_ImageIO component along with the main library & TRUE/FALSE & TRUE
+    {\tt CGAL\_DONT\_OVERRIDE\_CMAKE\_FLAGS} & Set this to TRUE to prevent the flags to be overriden with the values used to build the \cgal\ libraries
     \\\hline
-    
+  \end{tabular}
+\end{center}
+
+
+\subsection{Environment variables used to configure programs linking to \cgal}
+
+\begin{center}\index{cgal!exe-config-env-vars}\index{cgal configuration environment variables - user programs }
+  \renewcommand{\arraystretch}{1.3}
+  \gdef\lcTabularBorder{2}
+  \begin{tabular}{|l|l|} \hline
+    \textbf{variable} & \textbf{description} 
+    \\\hline\hline
+    {\tt CGAL\_DIR} & Directory where { \tt CGALConfig.cmake} is located. That is, the binary directory where you configured \cgal
+    \\\hline
   \end{tabular}
 \end{center}
 
