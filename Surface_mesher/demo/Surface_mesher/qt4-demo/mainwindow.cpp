@@ -29,9 +29,9 @@
 
 MainWindow::MainWindow(MainWindow* other_window /* = 0 */) : 
   CGAL::Qt::DemosMainWindow(),
+  surface(0),
   sharp_edges_angle_lower_bound(60.),
-  sharp_edges_angle_upper_bound(180.),
-  surface(0)
+  sharp_edges_angle_upper_bound(180.)
 {
   setupUi(this);
   setAcceptDrops(true);
