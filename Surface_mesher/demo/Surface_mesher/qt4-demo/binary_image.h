@@ -170,10 +170,8 @@ public:
     const float z = static_cast<float>(CGAL::to_double(p.z()));
       
     if(interpolation()) {
-      if(inside(x,y,z))
-	return FT(::trilinear_interpolation(image_ptr.get(),x,y,z));
-      else
-	return 0;
+	CGAL_IMAGE_IO_CASE(image_ptr.get(),
+			   return (this->trilinear_interpolation<Word, FT>(x, y, z, 0));)
     }
     else {
       const int i = static_cast<int>(x/image()->vx + 0.5f);
