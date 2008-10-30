@@ -528,7 +528,8 @@ public:
       NT1 q1; 
       bool result1 =  typename AST1::Divides()(a.n1(),b.n1(),q1);
       NT2 q2; 
-      bool result2 =  typename AST2::Divides()(a.n2(),b.n2(),q2);
+      CGAL_assertion_code( bool result2 = ) // needed for CGAL_assert only
+        typename AST2::Divides()(a.n2(),b.n2(),q2);
       q = Type(q1,q2);
       CGAL_assertion(result1 == result2);
       return result1;
