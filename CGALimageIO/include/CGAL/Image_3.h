@@ -24,6 +24,7 @@
 
 #include <boost/format.hpp>
 #include <CGAL/ImageIO.h>
+#include <CGAL/function_objects.h>
 
 #include <limits>
 
@@ -46,7 +47,8 @@ public:
 protected:
   Image_shared_ptr image_ptr;
 
-  bool private_read(_image* im); // implementation in src/CGALimageIO/Image_3.cpp
+   // implementation in src/CGALimageIO/Image_3.cpp
+  bool private_read(_image* im);
 
 public:
   Image_3()
@@ -58,6 +60,11 @@ public:
     : image_ptr(bi.image_ptr)
   {
     std::cerr << "Image_3::copy_constructor\n";
+  }
+
+  Image_3(_image* im) 
+  {
+    private_read(im);
   }
 
   ~Image_3()
@@ -82,6 +89,11 @@ public:
   void* data()
   {
     return image()->data;
+  }
+
+  void set_data(void* d)
+  {
+    image()->data = d;
   }
 
   unsigned int xdim() const { return image_ptr->xdim; }
@@ -126,17 +138,198 @@ public:
   bool read_vtk_image_data(vtkImageData*);
 #endif // CGAL_USE_VTK
 
+  // implementation in src/CGALimageIO/Image_3.cpp
   void gl_draw(const float point_size,
                const unsigned char r,
                const unsigned char g,
-               const unsigned char b); // implementation in src/CGALimageIO/Image_3.cpp
+               const unsigned char b);
 
+  // implementation in src/CGALimageIO/Image_3.cpp
   void gl_draw_bbox(const float line_width,
                     const unsigned char red,
                     const unsigned char green,
-                    const unsigned char blue); // implementation in src/CGALimageIO/Image_3.cpp
+                    const unsigned char blue);
 
+public:
+  template <typename Image_word_type,
+	    typename Target_word_type,
+	    typename Coord_type,
+	    class Image_transform>
+  Target_word_type 
+  trilinear_interpolation(const Coord_type&x, 
+			  const Coord_type&y, 
+			  const Coord_type&z,
+			  const Image_word_type& value_outside = 
+			    Image_word_type(),
+			  Image_transform transform = 
+			    Image_transform() ) const;
+
+  // default Image_transform = CGAL::Identity
+  template <typename Image_word_type,
+	    typename Target_word_type,
+	    typename Coord_type>
+  Target_word_type 
+  trilinear_interpolation(const Coord_type&x, 
+			  const Coord_type&y, 
+			  const Coord_type&z,
+			  const Image_word_type& value_outside = 
+			  Image_word_type()) const 
+  {
+    return trilinear_interpolation<
+      Image_word_type,
+      Target_word_type>(x, y, z, value_outside,
+			  CGAL::Identity<Image_word_type>());
+  }
 }; // end Image_3
+
+template <typename Image_word_type,
+	  typename Target_word_type,
+	  typename Coord_type,
+	  class Image_transform>
+Target_word_type 
+Image_3::trilinear_interpolation(const Coord_type& x, 
+				 const Coord_type& y, 
+				 const Coord_type& z,
+				 const Image_word_type& value_outside,
+				 Image_transform transform) const 
+{
+  const int dimx = xdim();
+  const int dimy = ydim();
+  const int dimz = zdim();
+  const int dimxy = dimx*dimy;
+
+  const int i1 = (int)(z / image()->vx);
+  const int j1 = (int)(y / image()->vy);
+  const int k1 = (int)(x / image()->vz); 
+  const int i2 = i1 + 1;
+  const int j2 = j1 + 1;
+  const int k2 = k1 + 1;
+
+  /*   We assume (x,y,z) lies in the following cube.
+   *   a, b, c, d, e, f, g, h are the value of the image at the corresponding
+   *   voxels:
+   *
+   *     z
+   *     |  e______ h
+   *       /|      /|
+   *     f/_|____g/ |
+   *     |  |    |  |
+   *     |  |a___|_d|
+   *     | /     | / 
+   *    b|/_____c|/  _y
+   *    
+   *   x/
+   *
+   * a = val(i1, j1, k1)
+   * b = val(i2, j1, k1)
+   * c = val(i2, j2, k1)
+   * d = val(i1, j2, k1)
+   * e = val(i1, j1, k2)
+   * f = val(i2, j1, k2)
+   * g = val(i2, j2, k2)
+   * h = val(i1, j2, k2)
+   */
+
+  const Target_word_type outside = transform(value_outside);
+
+  if(x < 0.f ||
+     y < 0.f ||
+     z < 0.f ||
+     i1 >= dimx ||
+     j1 >= dimy ||
+     k1 >= dimy)
+  {
+    return outside;
+  }
+
+  Target_word_type a, b, c, d, e, f, g, h; 
+
+  if(k1 < 0) {
+    a = b = c = d = outside;
+  }
+  else {
+    if(j1 < 0) {
+      a = b = outside;
+    }
+    else {
+      if(i1 < 0)
+	a = outside;
+      else
+	a = ((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k1];
+
+      if(i2 >= dimx)
+	b = outside;
+      else 
+	b = ((Image_word_type*)image()->data)[i2 * dimxy + j1 * dimx + k1];
+    }
+
+    if(j2 >= dimy) {
+      c = d = outside;
+    }
+    else {
+      if(i1 < 0)
+	d = outside;
+      else
+	d = ((Image_word_type*)image()->data)[i1 * dimxy + j2 * dimx + k1];
+
+      if(i2 >= dimx)
+	c = outside;
+      else
+	c = ((Image_word_type*)image()->data)[i2 * dimxy + j2 * dimx + k1];
+    }
+  }
+
+  if(k2 >= dimz) {
+    e = f = g = h = outside;
+  }
+  else {
+    if(j1 < 0) {
+      e = f = outside;
+    }
+    else {
+      if(i1 < 0)
+	e = outside;
+      else
+	e = ((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k2];
+
+      if(i2 >= dimx)
+	f = outside;
+      else 
+	f = ((Image_word_type*)image()->data)[i2 * dimxy + j1 * dimx + k2];
+    }
+
+    if(j2 >= dimy) {
+      g = h = outside;
+    }
+    else {
+      if(i1 < 0)
+	h = outside;
+      else
+	h = ((Image_word_type*)image()->data)[i1 * dimxy + j2 * dimx + k2];
+
+      if(i2 >= dimx)
+	g = outside;
+      else
+	g = ((Image_word_type*)image()->data)[i2 * dimxy + j2 * dimx + k2];
+    }
+  }
+
+  const Target_word_type di2 = i2 - x;
+  const Target_word_type di1 = x - i1;
+  const Target_word_type dj2 = j2 - y;
+  const Target_word_type dj1 = y - j1;
+  const Target_word_type dk2 = k2 - z;
+  const Target_word_type dk1 = z - k1;
+//   std::cerr << di2 << " " << di1 << "\n";
+//   std::cerr << dj2 << " " << dj1 << "\n";
+//   std::cerr << dk2 << " " << dk1 << "\n";
+
+  return ( (  ( a * di2 + b * di1 ) * dj2 + 
+	      ( d * di2 + c * di1 ) * dj1   ) * dk2 +
+	   (  ( e * di2 + f * di1 ) * dj2 + 
+	      ( h * di2 + g * di1 ) * dj1   ) * dk1 );
+}
+
 
 } // end namespace CGAL
 
