@@ -33,9 +33,9 @@ bool Image_3::private_read(_image* im)
     }
     image_ptr = Image_shared_ptr(im, Image_deleter());
 
-    std::cerr << 
-      boost::format("image=%1% (xdim=%2%, ydim=%3%, zdim=%4%)\n")
-      % image_ptr.get() % image_ptr->xdim % image_ptr->ydim % image_ptr->zdim;
+//     std::cerr << 
+//       boost::format("image=%1% (xdim=%2%, ydim=%3%, zdim=%4%)\n")
+//       % image_ptr.get() % image_ptr->xdim % image_ptr->ydim % image_ptr->zdim;
 
   }
   return im != 0;
