@@ -1304,9 +1304,13 @@ public:
             typedef Polynomial_1 result_type;
 
             Polynomial_1 operator() (Polynomial_2 p) const {
-
-                return typename CGAL::Polynomial_traits_d<Polynomial_2>
-                    ::Evaluate_homogeneous() (p,num,denom,0);
+                
+                typename CGAL::Polynomial_traits_d<Polynomial_2>::
+                    Evaluate_homogeneous evh;
+                typename CGAL::Polynomial_traits_d<Polynomial_2>::
+                    Move move;
+                
+                return evh(move(p,0,1),num,denom);
             }
             
         private:
@@ -1329,9 +1333,11 @@ public:
             typedef Polynomial_1 result_type;
 
             Polynomial_1 operator() (Polynomial_2 p) const {
+                
+                typename CGAL::Polynomial_traits_d<Polynomial_2>::
+                    Evaluate_homogeneous evh;
 
-                return typename CGAL::Polynomial_traits_d<Polynomial_2>
-                    ::Evaluate_homogeneous() (p,num,denom,1);
+                return evh(p,num,denom);
             }
             
         private:
@@ -1625,7 +1631,12 @@ public:
             }
 
             Polynomial_2 surface_section;
-
+            
+            typename CGAL::Polynomial_traits_d<Polynomial_3>
+                ::Evaluate_homogeneous evh;
+            typename CGAL::Polynomial_traits_d<Polynomial_3>
+                ::Move move;
+            
             if(! is_vertical) {
                 
                 typename CGAL::Fraction_traits<Rational>::Decompose decompose;
@@ -1635,9 +1646,8 @@ public:
                 decompose(rat_val,x_num,x_denom); 
 
                 // rat_val is an x-coordinate
-                surface_section 
-                    = typename CGAL::Polynomial_traits_d<Polynomial_3>
-                    ::Evaluate_homogeneous() (surface.f(),x_num,x_denom,0);
+                surface_section = 
+                    evh(move(surface.f(),0,2),x_num,x_denom);
                 
 
             } else {
@@ -1649,11 +1659,8 @@ public:
                 decompose(rat_val,x_num,x_denom); 
 
                 // rat_val is an x-coordinate
-                surface_section 
-                    = typename CGAL::Polynomial_traits_d<Polynomial_3>
-                    ::Evaluate_homogeneous() (surface.f(),x_num,x_denom,1);
-
-                
+                surface_section =
+                    evh(move(surface.f(),1,2),x_num,x_denom);
             }
                 
             
