@@ -185,57 +185,51 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-option(WITH_INSTALL "Create installation rules" ON )
+set ( CGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
+set ( CGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
 
-if ( WITH_INSTALL )
-
-  set ( CGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
-  set ( CGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
-
-  if ( NOT DEFINED SOURCE_INSTALL )
-    if ( WIN32 AND NOT UNIX AND NOT CYGWIN AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN )
-      set ( SOURCE_INSTALL TRUE )
-    else()
-      set ( SOURCE_INSTALL FALSE )
-    endif()  
-  endif()
-
-  if ( CGAL_WIN32_CMAKE_ON_CYGWIN )
-    exec_program(cygpath ARGS -w ${CMAKE_INSTALL_PREFIX} OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2 )
-    file ( TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX )
-  endif()
-
-  message( STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}" )
-
-  if ( SOURCE_INSTALL )
-
-    set ( CGAL_INSTALL_BIN_DIR "script"  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" )
-    
-    set ( CGAL_INSTALL_CMAKE_DIR "cmake/modules"  
-          CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
-        )
-        
-    set ( CGAL_INSTALL_ROOT_DIR "."  
-          CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
-        )
-        
-    set ( CGAL_INSTALL_DOC_DIR "${CGAL_INSTALL_ROOT_DIR}" ) 
-    
+if ( NOT DEFINED CGAL_SOURCE_INSTALL )
+  if ( WIN32 AND NOT UNIX AND NOT CYGWIN AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN )
+    set ( CGAL_SOURCE_INSTALL TRUE )
   else()
+    set ( CGAL_SOURCE_INSTALL FALSE )
+  endif()  
+endif()
 
-    set ( CGAL_INSTALL_BIN_DIR    "bin"                     
-          CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
-        )
-        
-    set ( CGAL_INSTALL_CMAKE_DIR "lib/CGAL-${CGAL_VERSION}"  
-          CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
-        )
-        
-    set ( CGAL_INSTALL_DOC_DIR "share/doc/CGAL-${CGAL_VERSION}"  
-          CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
-        )
+if ( CGAL_WIN32_CMAKE_ON_CYGWIN )
+  exec_program(cygpath ARGS -w ${CMAKE_INSTALL_PREFIX} OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2 )
+  file ( TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX )
+endif()
 
-  endif()
+message( STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}" )
+
+if ( CGAL_SOURCE_INSTALL )
+
+  set ( CGAL_INSTALL_BIN_DIR "script"  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" )
+  
+  set ( CGAL_INSTALL_CMAKE_DIR "cmake/modules"  
+        CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
+      )
+      
+  set ( CGAL_INSTALL_ROOT_DIR "."  
+        CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
+      )
+      
+  set ( CGAL_INSTALL_DOC_DIR "${CGAL_INSTALL_ROOT_DIR}" ) 
+  
+else()
+
+  set ( CGAL_INSTALL_BIN_DIR    "bin"                     
+        CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+      )
+      
+  set ( CGAL_INSTALL_CMAKE_DIR "lib/CGAL-${CGAL_VERSION}"  
+        CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
+      )
+      
+  set ( CGAL_INSTALL_DOC_DIR "share/doc/CGAL-${CGAL_VERSION}"  
+        CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
+      )
 
 endif()
 
@@ -388,7 +382,7 @@ if ( WITH_INSTALL )
   endif()
 
 
-  if ( SOURCE_INSTALL )
+  if ( CGAL_SOURCE_INSTALL )
     install(FILES ${CMAKE_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
     install(FILES     CMakeLists.txt                         DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
     install(DIRECTORY auxiliary                              DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
