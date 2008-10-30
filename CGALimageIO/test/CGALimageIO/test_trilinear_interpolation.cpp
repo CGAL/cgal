@@ -15,40 +15,14 @@ int main() {
 
   ImageIO_free(image.data());
   image.set_data(&data[0]);
-  _image* im = image.image();
 
-//   im->xdim = 2;
-//   im->ydim = 2;
-//   im->zdim = 2;
-//   im->vdim = 1;
-//   im->vx = 1;
-//   im->vy = 1;
-//   im->vz = 1;
-
-//   im->cx = im->cy = im->cz = 0;
-//   im->tx = im->ty = im->tz = 0.0;
-//   im->rx = im->ry = im->rz = 0.0;
-
-
-//   im->fd = NULL;
-//   im->openMode = OM_CLOSE;
-//   im->endianness = END_UNKNOWN;
-
-//   im->dataMode = DM_BINARY;
-
-//   // word type (unsigned char)
-//   im->wdim = 1;
-//   im->wordKind = WK_FIXED;
-//   im->vectMode = VM_SCALAR;
-//   im->sign = SGN_UNSIGNED;
-//   im->imageFormat = NULL;
   std::cerr << std::setprecision(2) << std::fixed;
 
   for(int x = 0; x <= 1; ++x)
     for(int y = 0; y <= 1; ++y)
       for(int z = 0; z <= 1; ++z)
       {
-	data[x * 4 + y * 2 + z] = 1;
+	data[z * 4 + y * 2 + x] = 1;
 
 	std::cerr << "#### data"
 		  << "[" << x << "]"
@@ -63,10 +37,10 @@ int main() {
 	      assert((int)d_y == 0);
 	      assert((int)d_z == 0);
 	      const double value = 
-		image.trilinear_interpolation<Word, double, float>(d_x,
-								   d_y,
-								   d_z,
-								   255);
+		image.trilinear_interpolation<Word, double, double>(d_x,
+								    d_y,
+								    d_z,
+								    255);
 	      std::cerr << "val(" << d_x << ", " << d_y << " , " << d_z << ") = "
 			<< value << std::endl;
 	      const double sq_dist = 
@@ -83,9 +57,27 @@ int main() {
 		assert(value >= 0.12);
 	      else
 		assert(value <= 0.001);
+
+	      const float value2 = 
+		image.trilinear_interpolation<Word, float, float>(d_x,
+								  d_y,
+								  d_z,
+								  0);
+
+	      const float value3 = triLinInterp(image.image(),
+						d_x, 
+						d_y,
+						d_z,
+						0.f);
+	      std::cerr << "tri(" << d_x << ", " << d_y << " , " << d_z << ") = "
+			<< value3 << std::endl;
+	      if(value2 != value3)
+		std::cerr << std::setprecision(30)
+			  << "   " << value2 << "\n!= " << value3 << std::endl;
+	      assert(value2 == value3);
 	    }
 
-	data[x * 4 + y * 2 + z] = 0;
+	data[z * 4 + y * 2 + x] = 0;
       }
   image.set_data(0);
 }

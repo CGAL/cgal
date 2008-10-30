@@ -198,9 +198,10 @@ Image_3::trilinear_interpolation(const Coord_type& x,
   const int dimz = zdim();
   const int dimxy = dimx*dimy;
 
-  const int i1 = (int)(z / image()->vx);
+  // images are indexed by (z,y,x)
+  const int i1 = (int)(z / image()->vz); 
   const int j1 = (int)(y / image()->vy);
-  const int k1 = (int)(x / image()->vz); 
+  const int k1 = (int)(x / image()->vx);
   const int i2 = i1 + 1;
   const int j2 = j1 + 1;
   const int k2 = k1 + 1;
@@ -209,16 +210,17 @@ Image_3::trilinear_interpolation(const Coord_type& x,
    *   a, b, c, d, e, f, g, h are the value of the image at the corresponding
    *   voxels:
    *
-   *     z
-   *     |  e______ h
+   *
+   *     x        z
+   *     |       /
+   *        f___ __ g
    *       /|      /|
-   *     f/_|____g/ |
+   *     e/_|____h/ |
    *     |  |    |  |
-   *     |  |a___|_d|
-   *     | /     | / 
-   *    b|/_____c|/  _y
+   *     |  |b___|_c|
+   *     | /     | /
+   *    a|/_____d|/  _y
    *    
-   *   x/
    *
    * a = val(i1, j1, k1)
    * b = val(i2, j1, k1)
@@ -237,7 +239,7 @@ Image_3::trilinear_interpolation(const Coord_type& x,
      z < 0.f ||
      i1 >= dimx ||
      j1 >= dimy ||
-     k1 >= dimy)
+     k1 >= dimz)
   {
     return outside;
   }
@@ -314,12 +316,12 @@ Image_3::trilinear_interpolation(const Coord_type& x,
     }
   }
 
-  const Target_word_type di2 = i2 - x;
-  const Target_word_type di1 = x - i1;
+  const Target_word_type di2 = i2 - z;
+  const Target_word_type di1 = z - i1;
   const Target_word_type dj2 = j2 - y;
   const Target_word_type dj1 = y - j1;
-  const Target_word_type dk2 = k2 - z;
-  const Target_word_type dk1 = z - k1;
+  const Target_word_type dk2 = k2 - x;
+  const Target_word_type dk1 = x - k1;
 //   std::cerr << di2 << " " << di1 << "\n";
 //   std::cerr << dj2 << " " << dj1 << "\n";
 //   std::cerr << dk2 << " " << dk1 << "\n";
