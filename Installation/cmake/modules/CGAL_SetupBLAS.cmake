@@ -13,14 +13,11 @@ if ( NOT BLAS_FOUND )
     endif()
     message( STATUS "BLAS link flags:  ${BLAS_LINKER_FLAGS}" )
 
-    #get_dependency_version(BLAS)
-
     add_definitions( ${BLAS_DEFINITIONS} "-DCGAL_USE_BLAS" )
-    set( CGAL_3RD_PARTY_DEFINITIONS     ${CGAL_3RD_PARTY_DEFINITIONS} ${BLAS_DEFINITIONS} )
 
     link_directories( ${BLAS_LIBRARIES_DIR} )
-    set( CGAL_3RD_PARTY_LIBRARIES_DIRS  ${CGAL_3RD_PARTY_LIBRARIES_DIRS} ${BLAS_LIBRARIES_DIR} )
-    set( CGAL_3RD_PARTY_LIBRARIES       ${CGAL_3RD_PARTY_LIBRARIES} ${BLAS_LIBRARIES} ${BLAS_LINKER_FLAGS} )
+    
+    link_libraries( ${BLAS_LIBRARIES} ${BLAS_LINKER_FLAGS} )
 
   endif()
 
