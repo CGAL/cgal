@@ -32,5 +32,4 @@ int main(){
   std::cout << "Same as swap(swap(F,0,1),1,2): "
             << swap(swap(F,0,1),1,2)             // = 3*z + (7*y + (5*x))
             << std::endl;
-  
 }
