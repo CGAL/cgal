@@ -21,7 +21,7 @@
 #define QT_FILE_TOOLBAR_H
 
 // include files for QT
-#include <qapp.h>
+#include <qapplication.h>
 #include <qmainwindow.h>
 #include <qaction.h>
 #include <qmenubar.h>
@@ -32,7 +32,7 @@
 #include <qwhatsthis.h>
 #include <qstring.h>
 #include <qpixmap.h>
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include <qfiledialog.h>
 #include <qprinter.h>
 #include <qpainter.h>
