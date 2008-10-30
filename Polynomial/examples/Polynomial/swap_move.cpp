@@ -14,22 +14,30 @@ int main(){
   Poly_3 z = PT_3::Shift()(Poly_3(1),1,2); // x_2^1
   
   
-  Poly_3 F = 3*x + 5*y + 7*z; 
+  Poly_3 F = x*y*y*z*z*z; 
   std::cout << "The trivariate polynomial F: " << F << std::endl;
   std::cout << std::endl;
 
   PT_3::Swap swap; 
   PT_3::Move move; 
+  PT_3::Permute permute; 
 
-  std::cout << "x and z swapped: "<< swap(F,0,2) // = 3*z + (5*y + (7*x))
+  std::cout << "x and z swapped: "<< swap(F,0,2) // = x^3*y^2*z
             << std::endl;  
-  std::cout << "x and y swapped: "<< swap(F,0,1) // = 7*z + (3*y + (5*x))
+  std::cout << "x and y swapped: "<< swap(F,0,1) // = x^2*y*z^3
             << std::endl << std::endl; 
   
-  std::cout << "x moved to outermost position: "
-            << move(F,0,2)                       // = 3*z + (7*y + (5*x))
+  std::cout << "x moved to outermost position           : "
+            << move(F,0,2)                       // = x^2*y^3*z
             << std::endl;
-  std::cout << "Same as swap(swap(F,0,1),1,2): "
-            << swap(swap(F,0,1),1,2)             // = 3*z + (7*y + (5*x))
+  std::cout << "Same as swap(swap(F,0,1),1,2)           : "
+            << swap(swap(F,0,1),1,2)             // = x^2*y^3*z
             << std::endl;
+
+  std::cout << "Same as the permutation (0,1,2)->(2,0,1): ";
+  std::vector<int> perm; 
+  perm.push_back(2);perm.push_back(0);perm.push_back(1);
+  std::cout << permute(F,perm.begin(),perm.end())// = x^2*y^3*z
+            << std::endl;
+  
 }

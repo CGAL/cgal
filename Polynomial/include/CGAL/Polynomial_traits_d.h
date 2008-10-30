@@ -424,12 +424,11 @@ class Polynomial_traits_d_base< Polynomial< Coefficient_type_ >,
   typedef Polynomial<Coefficient_type_>                  Polynomial_d;       
   typedef Coefficient_type_                              Coefficient_type;        
           
-  typedef typename CGALi::Innermost_coefficient_type<Polynomial_d>::Type    Innermost_coefficient_type;                                                               
-
-  static const int d = Dimension<Polynomial_d>::value;                  
-                                                                        
-                                                                        
-  private:                                                              
+  typedef typename CGALi::Innermost_coefficient_type<Polynomial_d>::Type    
+  Innermost_coefficient_type;              
+  static const int d = Dimension<Polynomial_d>::value; 
+                                                          
+private:                                                              
   typedef std::pair< Exponent_vector, Innermost_coefficient_type >           
   Exponents_coeff_pair;                                                 
   typedef std::vector< Exponents_coeff_pair > Monom_rep;                
@@ -477,7 +476,6 @@ public:
   //
   // Functors as defined in the reference manual 
   // (with sometimes slightly extended functionality)
-
 
   // Construct_polynomial;
   struct Construct_polynomial {
@@ -552,34 +550,27 @@ public:
         const Coefficient_type& a6, const Coefficient_type& a7,
         const Coefficient_type& a8) const 
     {return Polynomial_d(a0,a1,a2,a3,a4,a5,a6,a7,a8);}
-        
 
-
+    // Construct from Coefficient type 
     template< class Input_iterator >
-    inline
-    Polynomial_d construct( 
-        Input_iterator begin, 
-        Input_iterator end , 
-        Tag_true) const {
+    inline Polynomial_d 
+    construct( Input_iterator begin, Input_iterator end, Tag_true) const {
       if(begin == end ) return Polynomial_d(0);
       return Polynomial_d(begin,end);
     }
-        
+    // Construct from momom rep     
     template< class Input_iterator >
-    inline
-    Polynomial_d construct( 
-        Input_iterator begin, 
-        Input_iterator end , 
-        Tag_false) const {
-      std::sort(begin,end,Compare_exponents_coeff_pair()); 
-      return Create_polynomial_from_monom_rep< Coefficient_type >()( begin, end ); 
+    inline Polynomial_d 
+    construct( Input_iterator begin, Input_iterator end, Tag_false) const {
+      // construct from non sorted monom rep 
+      return (*this)(begin,end,false);
     }
         
     template< class Input_iterator >
     Polynomial_d 
     operator()( Input_iterator begin, Input_iterator end ) const {
       if(begin == end ) return Polynomial_d(0);
-      typedef typename Input_iterator::value_type value_type;
+      typedef typename std::iterator_traits<Input_iterator>::value_type value_type;
       typedef Boolean_tag<boost::is_same<value_type,Coefficient_type>::value> 
         Is_coeff;
       std::vector<value_type> vec(begin,end);
@@ -589,11 +580,10 @@ public:
     
     template< class Input_iterator >
     Polynomial_d 
-    operator()( Input_iterator begin, Input_iterator end , bool is_sorted) const {
-      if(is_sorted) 
-        return Create_polynomial_from_monom_rep< Coefficient_type >()( begin, end );
-      else
-        return (*this)(begin,end);
+    operator()(Input_iterator begin, Input_iterator end , bool is_sorted) const{
+      if(!is_sorted) 
+        std::sort(begin,end,Compare_exponents_coeff_pair()); 
+      return Create_polynomial_from_monom_rep< Coefficient_type >()(begin,end); 
     }
     
   public: 
@@ -699,8 +689,7 @@ public:
         Exponents_coeff_pair;
       typedef std::vector< Exponents_coeff_pair > Monom_rep; 
       Get_monom_representation gmr;
-      typename Construct_polynomial
-        ::template Create_polynomial_from_monom_rep< Coefficient_type > construct;
+      Construct_polynomial construct; 
       Monom_rep mon_rep;
       gmr( p, std::back_inserter( mon_rep ) );
       for( typename Monom_rep::iterator it = mon_rep.begin(); 
@@ -709,8 +698,6 @@ public:
         std::swap(it->first[i],it->first[j]);
         // it->first.swap( i, j );
       }
-      std::sort
-        ( mon_rep.begin(), mon_rep.end(), Compare_exponents_coeff_pair() );
       return construct( mon_rep.begin(), mon_rep.end() );
     }
   };
@@ -748,12 +735,43 @@ public:
             std::swap(it->first[k],it->first[k-1]);
                 
       }
-      std::sort
-        ( mon_rep.begin(), mon_rep.end(),Compare_exponents_coeff_pair());
       return construct( mon_rep.begin(), mon_rep.end() );
     }
   };
 
+
+  struct Permute {
+    typedef Polynomial_d        result_type;
+    template <typename Input_iterator> Polynomial_d operator() 
+      (const Polynomial_d& p, Input_iterator first, Input_iterator last) const {
+      Construct_polynomial construct;
+      Get_monom_representation gmr;
+      Monom_rep mon_rep;
+      gmr( p, std::back_inserter( mon_rep ));
+      std::vector<int> on_place, number_is;
+      int i= 0;
+      for (Input_iterator  iter = first ; iter != last ; ++iter)
+        number_is.push_back (i++);
+      on_place = number_is;
+      int rem_place = 0, rem_number = i= 0;
+      for(Input_iterator iter = first ; iter != last ; ++iter){
+        for( typename Monom_rep::iterator it = mon_rep.begin();  it !=
+               mon_rep.end(); ++it )
+          std::swap(it->first[number_is[i]],it->first[(*iter)]);
+
+
+        rem_place= number_is[i];
+        rem_number= on_place[(*iter)];
+
+        on_place[(*iter)] = i;
+        on_place[rem_place]=rem_number;
+        number_is[rem_number]=rem_place;
+        number_is[i++]= (*iter);
+      }
+      return construct( mon_rep.begin(), mon_rep.end() );
+    }
+  };
+  
   //       Degree;    
   struct Degree : public std::unary_function< Polynomial_d , int  >{
     int operator()(const Polynomial_d& p, int i = (d-1)) const {      
