@@ -1,5 +1,5 @@
 # LAPACK requires BLAS
-include( CGAL_SetupBLAS )
+include( CGAL_UseBLAS )
 
 if ( NOT LAPACK_FOUND )
 

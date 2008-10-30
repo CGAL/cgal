@@ -1,6 +1,6 @@
 # TAUCS requires BLAS and LAPACK
-include(CGAL_SetupBLAS)
-include(CGAL_SetupLAPACK)
+include(CGAL_UseBLAS)
+include(CGAL_UseLAPACK)
 
 if ( NOT TAUCS_FOUND )
 
