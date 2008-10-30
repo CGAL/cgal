@@ -21,3 +21,5 @@ examples/Surface_mesher/polyhedron_remesher.cpp
 builder.h
 Polyhedral_surface_3.h
 pws_loop_subdivision.h
+
+mesh_moebius_strip.cpp
