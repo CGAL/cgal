@@ -20,8 +20,6 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     include(GeneratorSpecificSettings)
   endif()
   
-  include_directories (${CGAL_BINARY_DIR}/include) # Plaform-specific include folder where compiler_config.h is located
-  
   set( CGAL_LIBRARIES ${CGAL_LIBRARY} )
   
   foreach ( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )

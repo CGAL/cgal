@@ -18,7 +18,7 @@ if(GMP_FOUND)
 
   # Find CORE include folder
   find_path(CGAL_CORE_INCLUDE_DIR NAMES CORE.h 
-            PATHS ${CGAL_SOURCE_DIR}/include/CGAL/CORE
+            PATHS ${CMAKE_SOURCE_DIR}/include/CGAL/CORE
             DOC "The directory containing the CORE include files shipped with CGAL"
            )
 
@@ -35,12 +35,12 @@ if(GMP_FOUND)
       # We cannot search for the cgal-core library because it is not yet compiled
       # => hard code the name
       if (WIN32)
-        set(CGAL_CORE_LIBRARY ${CGAL_BINARY_DIR}/lib/${CGAL_CORE_BASENAME}.lib)
+        set(CGAL_CORE_LIBRARY ${CMAKE_BINARY_DIR}/lib/${CGAL_CORE_BASENAME}.lib)
       else()
         if(BUILD_SHARED_LIBS)
-          set(CGAL_CORE_LIBRARY ${CGAL_BINARY_DIR}/lib/lib${CGAL_CORE_BASENAME}.so)
+          set(CGAL_CORE_LIBRARY ${CMAKE_BINARY_DIR}/lib/lib${CGAL_CORE_BASENAME}.so)
         else(BUILD_SHARED_LIBS)
-          set(CGAL_CORE_LIBRARY ${CGAL_BINARY_DIR}/lib/lib${CGAL_CORE_BASENAME}.a)
+          set(CGAL_CORE_LIBRARY ${CMAKE_BINARY_DIR}/lib/lib${CGAL_CORE_BASENAME}.a)
         endif(BUILD_SHARED_LIBS)
       endif()
       

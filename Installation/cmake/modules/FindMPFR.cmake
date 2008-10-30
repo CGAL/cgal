@@ -20,12 +20,12 @@ else()
   # Look first for the MPFR distributed with CGAL in auxiliary/mpfr
   find_path(MPFR_INCLUDE_DIR 
             NAMES mpfr.h 
-            PATHS ${CGAL_SOURCE_DIR}/auxiliary/gmp/include
+            PATHS ${CMAKE_SOURCE_DIR}/auxiliary/gmp/include
                   ENV MPFR_INC_DIR
   	        DOC "The directory containing the MPFR header files"
            )
 
-  if ( MPFR_INCLUDE_DIR STREQUAL "${CGAL_SOURCE_DIR}/auxiliary/gmp/include" )
+  if ( MPFR_INCLUDE_DIR STREQUAL "${CMAKE_SOURCE_DIR}/auxiliary/gmp/include" )
     set( MPFR_IN_CGAL_AUXILIARY TRUE CACHE INTERNAL "" )
   endif()
   
@@ -33,7 +33,7 @@ else()
   
     find_path(MPFR_LIBRARIES_DIR 
               NAMES "mpfr-${CGAL_TOOLSET}-mt.lib" "mpfr-${CGAL_TOOLSET}-mt-gd.lib"
-              PATHS ${CGAL_SOURCE_DIR}/auxiliary/gmp/lib
+              PATHS ${CMAKE_SOURCE_DIR}/auxiliary/gmp/lib
                     ENV MPFR_LIB_DIR
               DOC "Directory containing the MPFR library"
              ) 

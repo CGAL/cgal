@@ -20,12 +20,12 @@ else()
   # Look first for the GMP distributed with CGAL in auxiliary/gmp
   find_path(GMP_INCLUDE_DIR 
             NAMES gmp.h 
-            PATHS ${CGAL_SOURCE_DIR}/auxiliary/gmp/include
+            PATHS ${CMAKE_SOURCE_DIR}/auxiliary/gmp/include
                   ENV GMP_INC_DIR
   	        DOC "The directory containing the GMP header files"
            )
 
-  if ( GMP_INCLUDE_DIR STREQUAL "${CGAL_SOURCE_DIR}/auxiliary/gmp/include" )
+  if ( GMP_INCLUDE_DIR STREQUAL "${CMAKE_SOURCE_DIR}/auxiliary/gmp/include" )
     set( GMP_IN_CGAL_AUXILIARY TRUE CACHE INTERNAL "" )
   endif()
   
@@ -33,7 +33,7 @@ else()
   
     find_path(GMP_LIBRARIES_DIR 
               NAMES "gmp-${CGAL_TOOLSET}-mt.lib" "gmp-${CGAL_TOOLSET}-mt-gd.lib"
-              PATHS ${CGAL_SOURCE_DIR}/auxiliary/gmp/lib
+              PATHS ${CMAKE_SOURCE_DIR}/auxiliary/gmp/lib
                     ENV GMP_LIB_DIR
               DOC "Directory containing the GMP library"
              ) 
