@@ -270,10 +270,10 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
   //marker of first vertex of hole that is being traversed  
   Vertex_handle hole_start, empty_handle;   
   
-  /*create a hash map container for outer boundary vertices that helps
-  to discover key vertices efficiently. Hash map is constructed with a
+  /*create a hash map container for outer boundary key vertices (degree>2
+  and on outer boundary. Hash map is constructed with a
   size parameter so we'll traverse once around the outer boundary to 
-  count the vertices and once to insert them*/
+  count the key vertices and once to insert them*/
   
   f_hole_it = uf->holes_begin();
   Halfedge_const_handle he_han = *f_hole_it;
@@ -289,21 +289,24 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
   CGAL_assertion(he_han->face() == uf);
   while (he_han != begin) {
     //std::cout << "(" << he_han->target()->point() << ")" <<std::endl;	
-    size++;    
+    if (he_han->target()->degree()>2)    
+    	size++;    
     he_han = he_han->next();
     CGAL_assertion(he_han->face() == uf);	
   }
   
-  //construct vertex hash map (default data is 0) and insert vertex
-  //handles as keys (value is 1) 
-  typedef typename CGAL::Unique_hash_map<Vertex_const_handle, int> V_map;  
-  V_map ver_map(0,size); 
-  ver_map[he_han->target()]=1;
+  //construct vertex hash map (default data is false) and insert vertex
+  //handles as keys (key vertex data value is true) 
+  typedef typename CGAL::Unique_hash_map<Vertex_const_handle, bool> V_map;  
+  V_map ver_map(false ,size); 
+  if (he_han->target()->degree()>2)
+  	 ver_map[he_han->target()]=true;
   //std::cout << "(" << he_han->target()->point() << ")" <<std::endl;
   he_han = he_han->next();
   while (he_han != begin) {
-    CGAL_assertion(he_han->face() == uf);    
-    ver_map[he_han->target()]=1;
+    CGAL_assertion(he_han->face() == uf);
+    if (he_han->target()->degree()>2)    
+      ver_map[he_han->target()]=true;
     //std::cout << "(" << he_han->target()->point() << ")" <<std::endl;	
     he_han = he_han->next();	
   }
@@ -348,9 +351,9 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
         //std::cout << "curr edge is ((" << curr->source()->point() << "),( " << curr->target()->point() << "))" <<std::endl;        
         *oi = curr->target()->point();          
         ++oi;        
-        //"turn inside" instead of next if target is located on outer boundary        
-        if   //(curr->target()->degree()>2) &&
-             (ver_map.is_defined(curr->target())) {                    
+        //"turn inside" instead of next if target is located on outer boundary
+        //(a key vertex encountered while traversing a hole)        
+        if (ver_map.is_defined(curr->target())) {                    
           curr = curr->twin()->prev()->twin();
         } else {//regular advance  
           curr = curr->next();
