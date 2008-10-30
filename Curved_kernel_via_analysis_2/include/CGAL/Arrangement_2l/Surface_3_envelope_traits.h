@@ -284,6 +284,8 @@ public:
                      cad.edges_begin();
                  eit != cad.edges_end(); eit++) {
                 if (cad.has_silhouette(eit)) {
+                    //std::cout << "eit->curve(): " 
+                    //          << eit->curve() << std::endl;
                     Z_stack z_stack = cad.z_stack(eit);
                     if (!z_stack.is_empty()) {
                         // we are only interested in the lowest boundary
@@ -309,6 +311,8 @@ public:
                             ).number_of_z_cells();
                             CGAL_assertion(k >= 0);
                             CGAL_assertion(l >= 0);
+                            //std::cout << "k: " << k << std::endl;
+                            //std::cout << "l: " << l << std::endl;
                             CGAL::Oriented_side side = 
                                 CGAL::ON_ORIENTED_BOUNDARY;
                             if (k > 0) {
@@ -327,13 +331,16 @@ public:
                             if (dir == CGAL::ARR_LEFT_TO_RIGHT) {
                                 side = -side;
                             }
-                            Edge_const_handle invalid_eh;
-                            *oi++ = CGAL::make_object(
-                                    std::make_pair(
-                                            X_monotone_curve_2(eit->curve()),
-                                            side
-                                    )
-                            );
+                            if (k + l > 0) {
+                                *oi++ = CGAL::make_object(
+                                        std::make_pair(
+                                                X_monotone_curve_2(
+                                                        eit->curve()
+                                                ),
+                                                side
+                                        )
+                                );
+                            }
                         }
                     }
                 }
