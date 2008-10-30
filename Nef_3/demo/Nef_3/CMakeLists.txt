@@ -14,7 +14,7 @@ find_package(Qt3-patched QUIET )
 # that it can be used together with FindQt4: all its variables are prefixed
 # by "QT3_" instead of "QT_".
 
-if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
+if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND )
 
   include(Qt3Macros-patched)
   include(CreateSingleSourceCGALQt3Program)
@@ -28,8 +28,8 @@ if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
   create_single_source_cgal_qt3_program( visualization_SM.cpp  )
   create_single_source_cgal_qt3_program( visualization_SNC.cpp )
 
-else( CGAL_FOUND AND QT3_FOUND )
+else( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND )
 
   message(STATUS "NOTICE: This demo requires CGAL and Qt3, and will not be compiled.")
 
-endif( CGAL_FOUND AND QT3_FOUND )
+endif( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND )
