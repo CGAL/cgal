@@ -1092,6 +1092,31 @@ public:
         return (this->nk(vh, surface).n() == -1);
     };
     
+    //! returns whether  \c surface is vertical over \c vh
+    bool is_vertical(const Vertex_const_handle& vh, 
+                     const Surface_3& surface) const {
+        return vh->data()->_is_surface_vertical(surface);
+    }
+private:
+    //! returns whether  \c surface is vertical over \c heh
+    bool is_vertical(const Halfedge_const_handle& heh, 
+                        const Surface_3& surface) const {
+        return heh->data()->_is_surface_vertical(surface);
+    }
+public:
+    //! returns whether  \c surface is vertical over \c eh
+    bool is_vertical(const Edge_const_handle& eh, 
+                        const Surface_3& surface) const {
+        return eh->data()->_is_surface_vertical(surface);
+    }
+    
+    //! returns whether  \c surface is vertical over \c fh
+    bool is_vertical(const Face_const_handle& fh, 
+                        const Surface_3& surface) const {
+        return false;
+    }
+
+
     //! returns whether cut the two surface at \c vh exisst
     bool has_cut(const Vertex_const_handle& vh, 
                  const Surface_3& surface1,
