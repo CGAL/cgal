@@ -19,7 +19,6 @@ if(WITH_VTK)
 endif(WITH_VTK)
 
 if(ZLIB_FOUND)
-
   if(OPENGL_FOUND)
   
     get_dependency_version(ZLIB)
@@ -35,7 +34,7 @@ if(ZLIB_FOUND)
     
     cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
     cache_set(CGAL_ImageIO_3RD_PARTY_LIBRARIES    ${ZLIB_LIBRARY}     ${OPENGL_LIBRARIES}   )
-    cache_set(CGAL_ImageIO_3RD_PARTY_DEFINITIONS  "" )
+    cache_set(CGAL_ImageIO_3RD_PARTY_DEFINITIONS  "-DCGAL_USE_ZLIB" )
     
     if(WITH_VTK)
     
