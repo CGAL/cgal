@@ -215,6 +215,8 @@ namespace Qt {
       return false;
       break;
     } // end MouseRelease
+    default:
+      return false;
     } // end switch
     return false;
   }
