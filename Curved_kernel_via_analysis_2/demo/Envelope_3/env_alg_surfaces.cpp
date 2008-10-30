@@ -325,7 +325,6 @@ int main( int argc, char **argv ) {
   }
   
   std::cout << "#Surfaces: " << polynomials.size() << std::endl;
-  // TODO print surfaces
 
   surfaces.reserve(polynomials.size());
   for (std::vector< Polynomial_3 >::const_iterator it = polynomials.begin();
@@ -348,13 +347,11 @@ int main( int argc, char **argv ) {
   CGAL::Timer envelope_time;
   
   envelope_time.start();
-#if 0
   CGAL::lower_envelope_3(
           surfaces.begin(),
           surfaces.end(),
           env_diagram
   );
-#endif
   envelope_time.stop();
   
   std::cout << "Time used: envelope construction: "
@@ -367,6 +364,8 @@ int main( int argc, char **argv ) {
             << ",  E = " << env_diagram.number_of_edges() 
             << ",  F = " << env_diagram.number_of_faces() 
             << std::endl;
+
+  // TODO more detailed timings!!!
 
   // done
 
