@@ -20,6 +20,9 @@
 //
 
 #ifdef _MSC_VER
+// Suppress deprecated warning for fileno and strdup
+#  pragma warning(disable:4996) 
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
