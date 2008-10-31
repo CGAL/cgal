@@ -649,8 +649,10 @@ void _test_bounded_side(SK sk) {
         CGAL::Bounded_side b = theBounded_side_3(s,cp);
         if((x*x + y*y + z*z) < 25) {
           assert(b == CGAL::ON_BOUNDED_SIDE);
+					assert(SK().has_on_bounded_side_3_object()(s,cp));
         } else if((x*x + y*y + z*z) > 25) {
           assert(b == CGAL::ON_UNBOUNDED_SIDE);
+					assert(SK().has_on_unbounded_side_3_object()(s,cp));
         } else assert(b == CGAL::ON_BOUNDARY);
       }
     }

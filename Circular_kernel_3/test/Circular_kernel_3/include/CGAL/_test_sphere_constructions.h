@@ -2617,6 +2617,16 @@ void _test_extremal_points_construct(SK sk) {
 }
 
 template <class SK>
+void _test_calls(SK sk) {
+	CGAL::Line_arc_3<SK> la =
+		SK().construct_line_arc_3_object()(CGAL::Point_3<SK>(1,1,1), CGAL::Point_3<SK>(1,2,1));
+	CGAL::Circular_arc_point_3<SK> cap = SK().construct_circular_max_vertex_3_object()(la);
+	cap = SK().construct_circular_min_vertex_3_object()(la);
+	cap = SK().construct_circular_source_vertex_3_object()(la);
+	cap = SK().construct_circular_target_vertex_3_object()(la);
+}
+
+template <class SK>
 void _test_spherical_kernel_construct(SK sk)
 {
   std::cout << "TESTING CONSTRUCTIONS" << std::endl;
@@ -2631,5 +2641,6 @@ void _test_spherical_kernel_construct(SK sk)
   _test_split_construct(sk);
   _test_bounding_box_construct(sk);
   _test_extremal_points_construct(sk);
+	_test_calls(sk);
   std::cout << "All tests on construction are OK." << std::endl;
 }
