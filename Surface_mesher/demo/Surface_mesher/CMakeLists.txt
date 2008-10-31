@@ -6,7 +6,7 @@ project ( ${prj} )
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-set(PACKAGE_ROOT ../../..)
+set(PACKAGE_ROOT ../..)
 
 # Add several CGAL packages to the include and link paths,
 # if they lie in ${PACKAGE_ROOT}/.

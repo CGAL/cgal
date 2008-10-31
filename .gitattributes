@@ -3810,33 +3810,33 @@ Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_
 Surface_mesh_simplification/test/Surface_mesh_simplification/test_LT_strategy.cmd eol=lf
 Surface_mesh_simplification/test/Surface_mesh_simplification/test_MP_strategy.cmd eol=lf
 Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3.cmd eol=lf
+Surface_mesher/demo/Surface_mesher/icons/bbox-red.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/icons/bbox-red.svg -text svneol=unset#image/svg%2Bxml
+Surface_mesher/demo/Surface_mesher/icons/bbox.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/icons/bbox.svg -text svneol=unset#image/svg%2Bxml
+Surface_mesher/demo/Surface_mesher/icons/fileopen.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/icons/filesave.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/icons/flip.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/icons/flip.svg -text svneol=unset#image/svg%2Bxml
+Surface_mesher/demo/Surface_mesher/icons/minus.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/icons/plus.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/icons/resize.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/icons/resize.svg -text svneol=unset#image/svg%2Bxml
+Surface_mesher/demo/Surface_mesher/icons/surface.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/icons/surface.svg -text svneol=unset#image/svg%2Bxml
+Surface_mesher/demo/Surface_mesher/icons/twosides.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/icons/twosides.svg -text svneol=unset#image/svg%2Bxml
 Surface_mesher/demo/Surface_mesher/inputs/ALSTOM_TEST4.off -text svneol=unset#application/octet-stream
 Surface_mesher/demo/Surface_mesher/inputs/boeing.off -text svneol=unset#application/octet-stream
 Surface_mesher/demo/Surface_mesher/inputs/geosphere.off -text svneol=unset#application/octet-stream
 Surface_mesher/demo/Surface_mesher/inputs/triceratops.off -text svneol=unset#application/octet-stream
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/bbox-red.png -text svneol=unset#image/png
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/bbox-red.svg -text svneol=unset#image/svg%2Bxml
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/bbox.png -text svneol=unset#image/png
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/bbox.svg -text svneol=unset#image/svg%2Bxml
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/fileopen.png -text svneol=unset#image/png
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/filesave.png -text svneol=unset#image/png
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/flip.png -text svneol=unset#image/png
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/flip.svg -text svneol=unset#image/svg%2Bxml
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/minus.png -text svneol=unset#image/png
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/plus.png -text svneol=unset#image/png
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/resize.png -text svneol=unset#image/png
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/resize.svg -text svneol=unset#image/svg%2Bxml
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/surface.png -text svneol=unset#image/png
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/surface.svg -text svneol=unset#image/svg%2Bxml
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/twosides.png -text svneol=unset#image/png
-Surface_mesher/demo/Surface_mesher/qt4-demo/icons/twosides.svg -text svneol=unset#image/svg%2Bxml
-Surface_mesher/demo/Surface_mesher/qt4-demo/surface_mesher.qrc -text
-Surface_mesher/demo/Surface_mesher/qt4-demo/ui/mainwindow.ui -text
-Surface_mesher/demo/Surface_mesher/qt4-demo/ui/optionsdialog.ui -text
-Surface_mesher/demo/Surface_mesher/qt4-demo/ui/raw_image.ui -text
-Surface_mesher/demo/Surface_mesher/qt4-demo/ui/values_list.ui -text
-Surface_mesher/demo/Surface_mesher/qt4-demo/values_list.qrc -text
 Surface_mesher/demo/Surface_mesher/replay-tangle -text
+Surface_mesher/demo/Surface_mesher/surface_mesher.qrc -text
+Surface_mesher/demo/Surface_mesher/ui/mainwindow.ui -text
+Surface_mesher/demo/Surface_mesher/ui/optionsdialog.ui -text
+Surface_mesher/demo/Surface_mesher/ui/raw_image.ui -text
+Surface_mesher/demo/Surface_mesher/ui/values_list.ui -text
+Surface_mesher/demo/Surface_mesher/values_list.qrc -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.sln eol=crlf
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.vcproj eol=crlf

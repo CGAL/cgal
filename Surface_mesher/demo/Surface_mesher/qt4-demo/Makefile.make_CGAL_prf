@@ -1,9 +1,0 @@
-include $(CGAL_MAKEFILE)
-
-.PHONY: all
-
-all:
-	rm -f cgal.prf
-	echo INCLUDEPATH += $(CGAL_INCL_CONF_DIR) > cgal.prf
-	echo INCLUDEPATH += $(CGAL_INCL_DIR) >> cgal.prf
-	echo unix:LIBS += $(CGAL_LDFLAGS) | sed -e 's/-lqt-mt//; s/-lCGALQt//;' >> cgal.prf
