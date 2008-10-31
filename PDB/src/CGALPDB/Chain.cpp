@@ -48,7 +48,7 @@ void Chain::write_pdb(std::ostream &out) const {
 }
 
 int Chain::write(char chain, int start_index, std::ostream &out) const {
-  char line[81];
+  // char line[81];
   //    int anum=1;
   Monomer_key last_resindex;
   Monomer::Type last_type= Monomer::INV;
