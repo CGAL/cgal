@@ -175,8 +175,12 @@ namespace Qt {
       QString xy = QString(" ") + QString::number(pos.x(),'g', 6) + " , " + QString::number(pos.y(),'g', 6) + " ";
       emit mouseCoordinates(xy);
       if(rectItem->isVisible()) {
-        rectItem->setRect(QRectF(rect_first_point,
-                                 v->mapToScene(mouseEvent->pos())));
+	QPointF size = v->mapToScene(mouseEvent->pos());
+	size = size - rect_first_point;
+        rectItem->setRect(rect_first_point.x(),
+			  rect_first_point.y(),
+			  size.x(),
+			  size.y());
       }
       if( dragging )
       {

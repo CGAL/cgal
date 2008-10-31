@@ -31,8 +31,12 @@ namespace Qt {
 QRectF mapToScene(const QGraphicsView* v, const QRect rect)
 {
   QPointF top_left = v->mapToScene(rect.topLeft());
-  QPointF bottom_right = v->mapToScene(rect.bottomRight());
-  return QRectF(top_left, bottom_right);
+  QPointF size = v->mapToScene(rect.bottomRight());
+  size -= top_left;
+  return QRectF(top_left.x(),
+		top_left.y(),
+		size.x(),
+		size.y());
 }
 
 QRectF viewportsBbox(const QGraphicsScene* scene) {
