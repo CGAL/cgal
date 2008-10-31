@@ -286,17 +286,17 @@ template<typename NT> inline
 Polynomial<NT> scale_down(const Polynomial<NT>& p, const NT& b)
 { Polynomial<NT> q(p); q.scale_down(b); return q; }
 
-//template<typename NT> inline
-//Polynomial<NT> scale(const Polynomial<NT>& p, const NT& a, const NT& b)
-//{ Polynomial<NT> q(p); q.scale(a, b); return q; }
+template<typename NT> inline
+Polynomial<NT> scale(const Polynomial<NT>& p, const NT& a, const NT& b)
+{ Polynomial<NT> q(p); q.scale(a, b); return q; }
 
 template<typename NT> inline
 Polynomial<NT> translate_by_one(const Polynomial<NT>& p)
 { Polynomial<NT> q(p); q.translate_by_one(); return q; }
 
-//template<typename NT> inline
-//Polynomial<NT> translate(const Polynomial<NT>& p, const NT& c)
-//{ Polynomial<NT> q(p); q.translate(c); return q; }
+template<typename NT> inline
+Polynomial<NT> translate(const Polynomial<NT>& p, const NT& c)
+{ Polynomial<NT> q(p); q.translate(c); return q; }
 
 template<typename NT> inline
 Polynomial<NT> translate(const Polynomial<NT>& p, const NT& a, const NT& b)
