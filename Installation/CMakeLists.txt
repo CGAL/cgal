@@ -278,12 +278,12 @@ if ( CMAKE_COMPILER_IS_GNUCC )
   
   get_dependency_version(GCC)
   
-  if ( "${GCC_VERSION}" MATCHES "4." )
+  if ( "${GCC_VERSION}" MATCHES "^4." )
     message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
     uniquely_add_flags( CGAL_CXX_FLAGS "-frounding-math" )
   endif()
   
-  if ( "${GCC_VERSION}" MATCHES "4.2" )
+  if ( "${GCC_VERSION}" MATCHES "^4.2" )
     message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )
     uniquely_add_flags( CGAL_CXX_FLAGS "-fno-strict-aliasing" )
   endif()
