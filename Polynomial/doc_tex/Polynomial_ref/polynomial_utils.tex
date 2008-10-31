@@ -75,14 +75,9 @@ For more details see the concept \ccc{PolynomialTraits_d::Degree}.  \\ \\
 \ccFunction{
 template <class Polynomial_d>
 Polynomial_traits_d<Polynomial_d>::Degree::result_type 
-degree(const Polynomial_d& p, int i);
-}{
-Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Degree}. 
-}
-\ccFunction{
-template <class Polynomial_d>
-Polynomial_traits_d<Polynomial_d>::Degree::result_type 
-degree(const Polynomial_d& p, int i, int index);
+degree(const Polynomial_d& p, 
+int i, 
+index = Polynomial_traits_d<Polynomial_d>::d-1);
 }{
 Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Degree}. 
 }
@@ -163,7 +158,7 @@ For more details see the concept
 \ccFunction{
 template <class Polynomial_d>
 Polynomial_traits_d<Polynomial_d>::Innermost_leading_coefficient::result_type 
-innermost_leading_coefficient(const Polynomial_d& p, int i, int j);
+innermost_leading_coefficient(const Polynomial_d& p);
 }{
 Adapts \ccc{Polynomial_traits_d<Polynomial_d>::InnermostLeadingCoefficient}. 
 }
@@ -203,14 +198,8 @@ For more details see the concept \ccc{PolynomialTraits_d::Differentiate}. \\ \\
 \ccFunction{
 template <class Polynomial_d>
 Polynomial_traits_d<Polynomial_d>::Differentiate::result_type 
-differentiate(const Polynomial_d& p);
-}{
-Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Differentiate}. 
-}
-\ccFunction{
-template <class Polynomial_d>
-Polynomial_traits_d<Polynomial_d>::Differentiate::result_type 
-differentiate(const Polynomial_d& p, int index);
+differentiate(const Polynomial_d& p,
+index = Polynomial_traits_d<Polynomial_d>::d-1 );
 }{
 Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Differentiate}. 
 }
@@ -510,7 +499,7 @@ For more details see the concept \ccc{PolynomialTraits_d::PseudoDivision}. \\ \\
 \ccInclude{CGAL/polynomial_utils.h}
 \ccFunction{
 template <class Polynomial_d>
-Polynomial_traits_d<Polynomial_d>::Pseudo_division::result_type 
+void
 pseudo_division(
 const Polynomial_d& f, const Polynomial_d& g, 
 Polynomial_d& q, Polynomial_d& r, Polynomial_traits_d<Polynomial_d>::Coefficient_type& D );
