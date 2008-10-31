@@ -42,10 +42,9 @@ namespace LinearFunctors {
 
     typedef typename CK::Linear_kernel::Construct_line_2::result_type 
       result_type;
-    typedef const result_type &  qualified_result_type;
     using CK::Linear_kernel::Construct_line_2::operator();
 
-    qualified_result_type operator() (const Line_arc_2 & a) const
+    result_type operator() (const Line_arc_2 & a) const
     {
       return (a.rep().supporting_line());
     }
@@ -58,13 +57,6 @@ namespace LinearFunctors {
   };
 
 } // namespace LinearFunctors
-
-template < typename K >
-struct Qualified_result_of<LinearFunctors::Construct_line_2<K>,
-                           typename K::Line_arc_2>
-{
-  typedef typename K::Line_2 const &   type;
-};
 
 } // namespace CGAL
 

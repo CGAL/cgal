@@ -30,9 +30,10 @@ void _test_circle_predicat(CK ck)
 {
   typedef typename CK::FT                      FT;
   typedef CGAL::Circle_2<CK>                   Circle_2;
-  typedef CGAL::Circular_arc_2<CK>            Circular_arc_2;
+  typedef CGAL::Circular_arc_2<CK>             Circular_arc_2;
   typedef CGAL::Point_2<CK>                    Point_2;
   typedef CGAL::Line_2<CK>                     Line_2;
+  typedef CGAL::Line_arc_2<CK>                 Line_arc_2;
   typedef CGAL::Circular_arc_point_2<CK>       Circular_arc_point_2;
   typedef typename CK::Compare_x_2             Compare_x_2;
   typedef typename CK::Compare_y_2             Compare_y_2;
@@ -425,4 +426,23 @@ void _test_circle_predicat(CK ck)
 	assert(p[0] >= p[1]);
 	assert(p[0] <= p[1]);
 	assert(p[2] < p[0]);
+	
+	// TEST THE FUNCTOR CALL (VC8 porting mainly reason)
+	Circular_arc_2 ccaa = 
+	  typename CK::Construct_circular_arc_2()(Point_2(1, 2), Point_2(2, 2), Point_2(3, 3));	
+	Line_arc_2 llaa = 
+	  typename CK::Construct_line_arc_2()(Point_2(2, 1), Point_2(2, 2));
+	Circular_arc_point_2 ccaapp = typename CK::Construct_circular_arc_point_2()(Point_2(1, 2));
+	
+	assert(typename CK::Has_on_2()(ccaa, ccaapp));
+	assert(typename CK::Is_vertical_2()(llaa));
+	assert(typename CK::Compute_circular_x_2()(ccaapp) == 1);
+	assert(typename CK::Compute_circular_y_2()(ccaapp) == 2);
+	assert(typename CK::Is_x_monotone_2()(ccaa));
+	assert(!(typename CK::Is_y_monotone_2()(ccaa)));
+	assert(typename CK::Bounded_side_2()(ccaa.supporting_circle(), ccaapp) != CGAL::ON_BOUNDED_SIDE);
+	assert(typename CK::Bounded_side_2()(ccaa.supporting_circle(), ccaapp) != CGAL::ON_UNBOUNDED_SIDE);
+	assert(!(typename CK::Has_on_bounded_side_2()(ccaa.supporting_circle(), ccaapp)));
+	assert(!(typename CK::Has_on_unbounded_side_2()(ccaa.supporting_circle(), ccaapp)));
+	
 }

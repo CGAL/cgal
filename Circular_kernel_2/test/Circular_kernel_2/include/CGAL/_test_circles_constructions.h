@@ -75,6 +75,7 @@ void _test_circle_construct(CK ck)
 		if(x1 == x2 && y1 == y2) continue;
 		if(x1 == x3 && y1 == y3) continue;
 		if(x2 == x3 && y2 == y3) continue;
+		if(CGAL::collinear(Point_2(x1,y1), Point_2(x2,y2), Point_2(x3,y3))) continue;
 	  Circular_arc_2 ca(Point_2(x1,y1), Point_2(x2,y2), Point_2(x3,y3));
 		Circle_2 c = ca.supporting_circle();
 		Circular_arc_point_2 cp_x_min = x_extremal_point(c, true);
@@ -990,4 +991,18 @@ void _test_circle_construct(CK ck)
   assert(!theDo_intersect_2(ccu, llu3.supporting_line()));
   assert(!CGAL::do_intersect(ccu, llu3.supporting_line()));
 
+  // TEST THE FUNCTOR CALL (VC8 porting mainly reason)
+	Circular_arc_2 ccaa = 
+	  typename CK::Construct_circular_arc_2()(Point_2(1, 2), Point_2(2, 2), Point_2(3, 3));
+	Line_arc_2 llaa = 
+	  typename CK::Construct_line_arc_2()(Point_2(1, 2), Point_2(2, 2));
+	Circular_arc_point_2 ccaapp = typename CK::Construct_circular_arc_point_2()(Point_2(1, 2));
+	typename CK::Construct_circular_min_vertex_2()(llaa);
+	typename CK::Construct_circular_max_vertex_2()(llaa);
+	typename CK::Construct_circular_source_vertex_2()(llaa);
+	typename CK::Construct_circular_target_vertex_2()(llaa);
+	
+	// testing the deprecate stuffs
+	typename CK::Construct_supporting_circle_2()(ccaa);
+	typename CK::Construct_supporting_line_2()(llaa);
 }

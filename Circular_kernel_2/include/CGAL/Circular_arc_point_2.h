@@ -191,7 +191,18 @@ class Circular_arc_point_2 < Filtered_bbox_circular_kernel_2 < CK > > {
 public:
     typedef typename Rcircular_arc_point_2::Root_for_circles_2_2 
      Root_for_circles_2_2;
-    typedef CK   R;  
+    typedef BK                          R; 
+	  typedef Circular_arc_point_2<BK>    Rep;
+
+	  const Rep& rep() const
+	  {
+	    return *this;
+	  }
+
+	  Rep& rep()
+	  {
+	    return *this;
+	  }
 
   ////Construction/////
   Circular_arc_point_2()

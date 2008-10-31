@@ -1203,11 +1203,10 @@ namespace CircularFunctors {
   public:
 
     typedef Circle_2             result_type;
-    typedef const result_type &  qualified_result_type;
     
-    CGAL_DEPRECATED qualified_result_type operator() (const Circular_arc_2 & a) const
+    CGAL_DEPRECATED result_type operator() (const Circular_arc_2 & a) const
     {
-      return (a.rep().supporting_circle());
+      return CK().construct_circle_2_object()(a);
     }
   };
   
@@ -1222,11 +1221,10 @@ namespace CircularFunctors {
   public:
 
     typedef Line_2               result_type;
-    typedef const result_type &  qualified_result_type;
     
-    CGAL_DEPRECATED qualified_result_type operator() (const Line_arc_2 & a) const
+    CGAL_DEPRECATED result_type operator() (const Line_arc_2 & a) const
     {
-      return (a.rep().supporting_line());
+      return CK().construct_line_2_object()(a);
     }
   };
 #endif

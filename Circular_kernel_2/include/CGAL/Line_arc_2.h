@@ -124,10 +124,8 @@ public:
         return typename R::Construct_circular_max_vertex_2()(*this);
   }
 
-  typename Qualified_result_of
-  <typename R::Construct_line_2,Line_arc_2>::type
-  //const Line_2 & 
-    supporting_line() const
+  Line_2 
+  supporting_line() const
   {
         return typename R::Construct_line_2()(*this);
   }
@@ -204,10 +202,21 @@ class Line_arc_2 < Filtered_bbox_circular_kernel_2 < CK > > {
     typedef typename BK::Circular_arc_point_2            Circular_arc_point_2;
     typedef typename CK::Line_arc_2                        Rline_arc_2;
     typedef typename CK::Root_of_2                         Root_of_2;
-    typedef CK R;
 
 
 public:
+    typedef BK                       R; 
+    typedef Line_arc_2<BK>           Rep;
+
+    const Rep& rep() const
+    {
+      return *this;
+    }
+
+    Rep& rep()
+    {
+      return *this;
+    }
 
                 ///////////Construction/////////////
 
@@ -269,32 +278,32 @@ public:
   
 		///Interface of the inner arc/// 
 
-                typename Qualified_result_of<typename BK::Construct_circular_min_vertex_2,Self>::type
-		left() const
-	                {return typename BK::Construct_circular_min_vertex_2()(*this);}
+    typename Qualified_result_of<typename BK::Construct_circular_min_vertex_2,Self>::type
+	  left() const
+	    {return typename BK::Construct_circular_min_vertex_2()(*this);}
                 
-                typename Qualified_result_of<typename BK::Construct_circular_max_vertex_2,Self>::type
-                right() const
-	                {return typename BK::Construct_circular_max_vertex_2()(*this);}
+    typename Qualified_result_of<typename BK::Construct_circular_max_vertex_2,Self>::type
+    right() const
+	    {return typename BK::Construct_circular_max_vertex_2()(*this);}
 
-                typename Qualified_result_of<typename BK::Construct_circular_source_vertex_2,Self>::type
-                source() const
-                        {return typename BK::Construct_circular_source_vertex_2()(*this);}
+    typename Qualified_result_of<typename BK::Construct_circular_source_vertex_2,Self>::type
+    source() const
+      {return typename BK::Construct_circular_source_vertex_2()(*this);}
 	      
-                typename Qualified_result_of<typename BK::Construct_circular_target_vertex_2,Self>::type
-                target() const
-                        {return typename BK::Construct_circular_target_vertex_2()(*this);}
+    typename Qualified_result_of<typename BK::Construct_circular_target_vertex_2,Self>::type
+    target() const
+      {return typename BK::Construct_circular_target_vertex_2()(*this);}
 		
-		Line_2 supporting_line() const
-			{ return P_arc.supporting_line();}
+		Line_2
+    supporting_line() const
+		  { return P_arc.supporting_line();}
 
-                Bbox_2 bbox() const
-                        {
-                          if(bb==NULL)
-                            bb=new Bbox_2(P_arc.bbox());
-
-                          return *bb;
-                        }
+    Bbox_2 bbox() const
+    {
+      if(bb==NULL)
+        bb=new Bbox_2(P_arc.bbox());
+      return *bb;
+    }
 
 			
 		///Specific check used for bbox construction///
@@ -302,16 +311,15 @@ public:
 		bool has_no_bbox() const
 		{ return (bb==NULL);}
 		
-	bool equal_ref(const Line_arc_2 &c) const
-  {
-    return CGAL::identical(P_arc, c.P_arc);      
-  }
+	  bool equal_ref(const Line_arc_2 &c) const
+    {
+      return CGAL::identical(P_arc, c.P_arc);      
+    }
 		
 	private:
 
 		Rline_arc_2 P_arc;
 		mutable Bbox_2 *bb;
-
 
 };
 

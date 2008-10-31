@@ -149,9 +149,7 @@ public:
     return typename R::Is_y_monotone_2()(*this);
   }
 
-  typename Qualified_result_of
-  <typename R::Construct_circle_2,Circular_arc_2>::type
-  //const Circle_2 &
+  Circle_2 
   supporting_circle() const
   {
     return typename R::Construct_circle_2()(*this);
@@ -167,10 +165,10 @@ public:
     return typename R::Construct_circle_2()(*this).squared_radius();
   }
 
- Bbox_2 bbox(void) const
- {
-   return typename R::Construct_bbox_2()(*this);
- }
+  Bbox_2 bbox(void) const
+  {
+    return typename R::Construct_bbox_2()(*this);
+  }
 
 };
 
@@ -236,9 +234,20 @@ class Circular_arc_2 < Filtered_bbox_circular_kernel_2 < CK > > {
     typedef typename BK::Circular_arc_point_2              Circular_arc_point_2;
     typedef typename CK::Circular_arc_2                    Rcircular_arc_2;
     typedef typename CK::Root_of_2                         Root_of_2;
-    typedef CK R;
 
 public:
+    typedef BK                       R; 
+    typedef Circular_arc_2<BK>       Rep;
+
+    const Rep& rep() const
+    {
+      return *this;
+    }
+
+    Rep& rep()
+    {
+      return *this;
+    }
 
      ///////////Construction/////////////
 
@@ -281,23 +290,23 @@ public:
     : P_arc(begin, end, bulge),bb(NULL)
     {}
 
-	Circular_arc_2(const Circle_2 &support,
+    Circular_arc_2(const Circle_2 &support,
     	   const Circular_arc_point_2 &begin,
     	   const Circular_arc_point_2 &end)
     : P_arc(support, begin.point(), end.point()),bb(NULL) 
-	{}
+	  {}
 
-	Circular_arc_2(const Rcircular_arc_2 &a)
+    Circular_arc_2(const Rcircular_arc_2 &a)
     : P_arc(a),bb(NULL) 
-	{}
+	  {}
 
-	Circular_arc_2(const Circular_arc_2 &c) : P_arc(c.P_arc) 
-	{
-	  if(c.bb) bb = new Bbox_2(*(c.bb));
-		else bb = NULL;	
-	}
+	  Circular_arc_2(const Circular_arc_2 &c) : P_arc(c.P_arc) 
+	  {
+	    if(c.bb) bb = new Bbox_2(*(c.bb));
+		  else bb = NULL;	
+	  }
 
-	~Circular_arc_2() { if(bb) delete bb; }
+	  ~Circular_arc_2() { if(bb) delete bb; }
 
 
 		//////////Predicates//////////
@@ -327,15 +336,15 @@ public:
                 target() const
 			{ return typename BK::Construct_circular_target_vertex_2()(*this);}
 
-                typename Qualified_result_of<typename BK::Construct_circular_min_vertex_2,Self>::type
+    typename Qualified_result_of<typename BK::Construct_circular_min_vertex_2,Self>::type
                 left() const
-                        {
+      {
 			  return typename BK::Construct_circular_min_vertex_2()(*this);
 			}
 	      
-                typename Qualified_result_of<typename BK::Construct_circular_max_vertex_2,Self>::type
+     typename Qualified_result_of<typename BK::Construct_circular_max_vertex_2,Self>::type
                 right() const
-                        {
+      {
 			  return typename BK::Construct_circular_max_vertex_2()(*this);
 			}
 
@@ -350,11 +359,10 @@ public:
 		
 		Bbox_2 bbox() const
 			{ 
-                          if(bb==NULL)
-                            bb=new Bbox_2(P_arc.bbox());
-
-                          return *bb;
-                        }
+        if(bb==NULL)
+          bb=new Bbox_2(P_arc.bbox());
+        return *bb;
+      }
                           
 			
 		///Specific check used for bbox construction///
