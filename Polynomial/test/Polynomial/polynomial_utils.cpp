@@ -161,28 +161,28 @@ void test_polynomial_utils(){
   assert(CGAL::invert(p,2) == -5*x*x*x*y*z*z+7*y);
   assert(CGAL::invert(p)   == -5*x*x*x*y*z*z+7*y);
 //Translate
-  assert(CGAL::translate(x*y*z,COEFF(2),0) == (x+2)*y*z);
-  assert(CGAL::translate(x*y*z,COEFF(2),1) == (y+2)*x*z);
-  assert(CGAL::translate(x*y*z,COEFF(2),2) == (z+2)*x*y);
-  assert(CGAL::translate(x*y*z,COEFF(2)) == (z+2)*x*y);
+  assert(CGAL::translate(x*y*z,ICOEFF(2),0) == (x+2)*y*z);
+  assert(CGAL::translate(x*y*z,ICOEFF(2),1) == (y+2)*x*z);
+  assert(CGAL::translate(x*y*z,ICOEFF(2),2) == (z+2)*x*y);
+  assert(CGAL::translate(x*y*z,ICOEFF(2)) == (z+2)*x*y);
 //TranslateHomogeneous
-  assert(CGAL::translate_homogeneous(x*y*z,COEFF(2),COEFF(3),0) == (3*x+2)*y*z);
-  assert(CGAL::translate_homogeneous(x*y*z,COEFF(2),COEFF(3),1) == (3*y+2)*x*z);
-  assert(CGAL::translate_homogeneous(x*y*z,COEFF(2),COEFF(3),2) == (3*z+2)*x*y);
-  assert(CGAL::translate_homogeneous(x*y*z,COEFF(2),COEFF(3)) == (3*z+2)*x*y);
+  assert(CGAL::translate_homogeneous(x*y*z,ICOEFF(2),ICOEFF(3),0)==(3*x+2)*y*z);
+  assert(CGAL::translate_homogeneous(x*y*z,ICOEFF(2),ICOEFF(3),1)==(3*y+2)*x*z);
+  assert(CGAL::translate_homogeneous(x*y*z,ICOEFF(2),ICOEFF(3),2)==(3*z+2)*x*y);
+  assert(CGAL::translate_homogeneous(x*y*z,ICOEFF(2),ICOEFF(3))  ==(3*z+2)*x*y);
 //Scale
-  assert(CGAL::scale(x*x+y*y+z*z,COEFF(2),0) == 4*x*x+y*y+z*z);
-  assert(CGAL::scale(x*x+y*y+z*z,COEFF(2),1) == x*x+4*y*y+z*z);
-  assert(CGAL::scale(x*x+y*y+z*z,COEFF(2),2) == x*x+y*y+4*z*z);
-  assert(CGAL::scale(x*x+y*y+z*z,COEFF(2)) ==   x*x+y*y+4*z*z);
+  assert(CGAL::scale(x*x+y*y+z*z,ICOEFF(2),0) == 4*x*x+y*y+z*z);
+  assert(CGAL::scale(x*x+y*y+z*z,ICOEFF(2),1) == x*x+4*y*y+z*z);
+  assert(CGAL::scale(x*x+y*y+z*z,ICOEFF(2),2) == x*x+y*y+4*z*z);
+  assert(CGAL::scale(x*x+y*y+z*z,ICOEFF(2)) ==   x*x+y*y+4*z*z);
 //ScaleHomogeneous
-  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,COEFF(2),COEFF(3),0) 
+  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3),0) 
       == 4*x*x+9*y*y+9*z*z);
-  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,COEFF(2),COEFF(3),1) 
+  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3),1) 
       == 9*x*x+4*y*y+9*z*z);
-  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,COEFF(2),COEFF(3),2) 
+  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3),2) 
       == 9*x*x+9*y*y+4*z*z);
-  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,COEFF(2),COEFF(3)) 
+  assert(CGAL::scale_homogeneous(x*x+y*y+z*z,ICOEFF(2),ICOEFF(3)) 
       == 9*x*x+9*y*y+4*z*z);
 //Resultant
   assert(CGAL::is_zero(CGAL::resultant(p,p)));

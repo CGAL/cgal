@@ -3,8 +3,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Michael Hemmer <hemmer@mpi-inf.mpg.de> 
@@ -228,8 +228,8 @@ CGAL_BINARY_POLY_FUNCTION_INDEX(Translate,translate);
 template <typename Polynomial_d>  inline     
 typename Polynomial_traits_d<Polynomial_d>::Translate_homogeneous::result_type
 translate_homogeneous(const Polynomial_d& f,
-    const typename Polynomial_traits_d<Polynomial_d>::Coefficient_type& num, 
-    const typename Polynomial_traits_d<Polynomial_d>::Coefficient_type& den){
+    const typename Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& num, 
+    const typename Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& den){
       
   typedef Polynomial_traits_d<Polynomial_d> PT;                       
   return typename PT::Translate_homogeneous()(f,num,den);                      
@@ -237,8 +237,8 @@ translate_homogeneous(const Polynomial_d& f,
 template <typename Polynomial_d>  inline     
 typename Polynomial_traits_d<Polynomial_d>::Translate_homogeneous::result_type
 translate_homogeneous(const Polynomial_d& f,
-    const typename Polynomial_traits_d<Polynomial_d>::Coefficient_type& num, 
-    const typename Polynomial_traits_d<Polynomial_d>::Coefficient_type& den,
+    const typename Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& num, 
+    const typename Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& den,
     int index ){
   typedef Polynomial_traits_d<Polynomial_d> PT;                       
   return typename PT::Translate_homogeneous()(f,num,den,index);
@@ -249,8 +249,8 @@ CGAL_BINARY_POLY_FUNCTION_INDEX(Scale,scale);
 template <typename Polynomial_d>  inline     
 typename Polynomial_traits_d<Polynomial_d>::Scale_homogeneous::result_type
 scale_homogeneous(const Polynomial_d& f,
-    const typename Polynomial_traits_d<Polynomial_d>::Coefficient_type& num, 
-    const typename Polynomial_traits_d<Polynomial_d>::Coefficient_type& den){
+    const typename Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& num, 
+    const typename Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& den){
       
   typedef Polynomial_traits_d<Polynomial_d> PT;                       
   return typename PT::Scale_homogeneous()(f,num,den);                      
@@ -258,8 +258,8 @@ scale_homogeneous(const Polynomial_d& f,
 template <typename Polynomial_d>  inline     
 typename Polynomial_traits_d<Polynomial_d>::Scale_homogeneous::result_type
 scale_homogeneous(const Polynomial_d& f,
-    const typename Polynomial_traits_d<Polynomial_d>::Coefficient_type& num, 
-    const typename Polynomial_traits_d<Polynomial_d>::Coefficient_type& den,
+    const typename Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& num, 
+    const typename Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& den,
     int index ){
   typedef Polynomial_traits_d<Polynomial_d> PT;                       
   return typename PT::Scale_homogeneous()(f,num,den,index);
