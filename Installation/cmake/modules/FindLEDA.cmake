@@ -16,15 +16,15 @@ else()
               )
               
   if ( NOT LEDA_INCLUDE_DIR )
-    set( LEDA_INCLUDE_DIR   "$ENV{LEDA_INC_DIR}" CACHE FILEPATH "The directory containing the LEDA header files WITHOUT the LEDA prefix" )
+    set( LEDA_INCLUDE_DIR   "$ENV{LEDA_INC_DIR}" CACHE FILEPATH "The directory containing the LEDA header files WITHOUT the LEDA prefix" FORCE )
   endif()
     
   if ( NOT LEDA_LIBRARIES )
-    set( LEDA_LIBRARIES  "$ENV{LEDA_LIBRARIES}"  CACHE FILEPATH "The LEDA libraries" )
+    set( LEDA_LIBRARIES  "$ENV{LEDA_LIBRARIES}"  CACHE FILEPATH "The LEDA libraries" FORCE )
   endif()
 
   if ( NOT LEDA_DEFINITIONS )
-    set( LEDA_DEFINITIONS "$ENV{LEDA_DEFINITIONS}" CACHE STRING   "Definitions for the LEDA library" )
+    set( LEDA_DEFINITIONS "$ENV{LEDA_DEFINITIONS}" CACHE STRING   "Definitions for the LEDA library" FORCE )
   endif()  
   
   if ( LEDA_INCLUDE_DIR AND LEDA_LIBRARIES)
