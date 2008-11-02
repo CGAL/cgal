@@ -205,37 +205,21 @@ void MainWindow::selectionChanged()
   viewer->updateGL();
 }
 
-void MainWindow::quit()
-{
-  writeSettings();
-  close();
-}
-
 void MainWindow::readSettings()
 {
-  QSettings settings;
-  
-  settings.beginGroup("MainWindow");
-  resize(settings.value("size", QSize(400, 400)).toSize());
-  move(settings.value("pos", QPoint(0, 0)).toPoint());
-  QByteArray mainWindowState = settings.value("state").toByteArray();
-  if(!mainWindowState.isNull()) {
-    restoreState(mainWindowState);
-  }
-  settings.endGroup();
+  this->readState("MainWindow", Size|State);
 }
 
 void MainWindow::writeSettings()
 {
-  QSettings settings;
-
-  settings.beginGroup("MainWindow");
-  settings.setValue("size", size());
-  settings.setValue("pos", pos());
-  settings.setValue("state", saveState());
-  settings.endGroup();
-
+  this->writeState("MainWindow");
   std::cerr << "Write setting... done.\n";
+}
+
+void MainWindow::quit()
+{
+  writeSettings();
+  close();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
