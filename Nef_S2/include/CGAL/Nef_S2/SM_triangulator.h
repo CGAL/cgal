@@ -80,7 +80,7 @@ void halfedge_below(Vertex_handle v, Halfedge_handle e) const
 
 void supporting_segment(Halfedge_handle e, IT it) const
 { T.is_forward(e) = true; 
-  if ( M[it] != NULL ) T.support(e) = M[it]; }
+  if ( ! M[it].empty() ) T.support(e) = M[it]; }
 
 /* the following operation associate segment support with
    vertices, we only update if non-NULL; this prevents 
@@ -88,16 +88,16 @@ void supporting_segment(Halfedge_handle e, IT it) const
    non-NULL support */
 
 void trivial_segment(Vertex_handle v, IT it) const
-{ if ( M[it] != NULL ) T.support(v) = M[it]; }
+{ if ( ! M[it].empty() ) T.support(v) = M[it]; }
 
 void starting_segment(Vertex_handle v, IT it) const
-{ if ( M[it] != NULL ) T.support(v) = M[it]; }
+{ if ( ! M[it].empty() ) T.support(v) = M[it]; }
 
 void ending_segment(Vertex_handle v, IT it) const
-{ if ( M[it] != NULL ) T.support(v) = M[it]; }
+{ if ( ! M[it].empty() ) T.support(v) = M[it]; }
 
 void passing_segment(Vertex_handle v, IT it) const
-{ if ( M[it] != NULL ) T.support(v) = M[it]; }
+{ if ( ! M[it].empty() ) T.support(v) = M[it]; }
 
 
 }; // SM_subdivision
@@ -616,7 +616,7 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
     SVertex_const_handle vs;
     SHalfedge_const_handle es;
     SHalfloop_const_handle ls;
-    if ( o == NULL ) { v->mark() = m_buffer; }
+    if ( o.empty() ) { v->mark() = m_buffer; }
     else if ( CGAL::assign(vs,o) ) { v->mark() = vs->mark(); }
     else if ( CGAL::assign(es,o) ) {
       if ( es->source()->point() == v->point() ) 
@@ -635,7 +635,7 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
     CGAL_For_all(e,hend) {
       CGAL_NEF_TRACEN("  edge "<<PH(e));
       if ( !is_forward(e) ) break;
-      if ( support(e) != NULL ) {
+      if ( ! support(e).empty() ) {
         SHalfedge_const_handle ei;
         if ( CGAL::assign(ei,support(e)) ) { 
           if ( ei->circle() != e->circle() ) { ei = ei->twin(); }
