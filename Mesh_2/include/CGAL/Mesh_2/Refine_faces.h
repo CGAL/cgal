@@ -295,7 +295,7 @@ template <typename Tr, typename Criteria, typename Previous>
 void Refine_faces_base<Tr, Criteria, Previous>::
 compute_new_bad_faces(Vertex_handle v)
 {
-  typename Tr::Face_circulator fc = v->incident_faces(), fcbegin(fc);
+  typename Tr::Face_circulator fc = triangulation_ref_impl().incident_faces(v), fcbegin(fc);
   do {
     if(!triangulation_ref_impl().is_infinite(fc))
       if( fc->is_in_domain() )
