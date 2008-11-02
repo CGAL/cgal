@@ -10,9 +10,9 @@ int main(int argc, char **argv)
 
     QGraphicsScene scene;
     scene.setSceneRect(0,0, 100, 100);
-    scene.addRect(0,0, 100, 100);
-    scene.addLine(0,0, 100, 100);
-    scene.addLine(0,100, 100, 0);
+    scene.addRect(QRectF(0,0, 100, 100));
+    scene.addLine(QLineF(0,0, 100, 100));
+    scene.addLine(QLineF(0,100, 100, 0));
 
     QGraphicsView* view = new QGraphicsView(&scene);
     CGAL::Qt::GraphicsViewNavigation navigation;
