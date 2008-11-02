@@ -311,6 +311,14 @@ void Volume::set_show_bbox(const bool b) {
   emit changed();
 }
 
+void Volume::only_in()
+{
+  mw->show_only("volume");
+#ifndef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
+  mw->actionMarching_cubes->setVisible(false);
+#endif
+}
+
 #ifdef CGAL_USE_VTK
 #include <vtkImageData.h>
 #include <vtkDICOMImageReader.h>
@@ -356,14 +364,6 @@ bool Volume::opendir(const QString& dirname)
     // smoother->Delete();
   }
   return result;
-}
-
-void Volume::only_in()
-{
-  mw->show_only("volume");
-#ifndef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
-  mw->actionMarching_cubes->setVisible(false);
-#endif
 }
 
 bool Volume::open_vtk(const QString& filename)
@@ -1051,7 +1051,7 @@ void Volume::draw()
       gl_draw_surface_mc();
     }
   }
-#endif CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
+#endif // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
 
   if(show_bbox) {
     ::glDisable(GL_LIGHTING);
