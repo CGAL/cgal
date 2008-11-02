@@ -2,6 +2,8 @@
 #include <boost/format.hpp>
 #include <QtGui>
 #include <CGAL/Qt/GraphicsViewNavigation.h>
+#include <QLineF>
+#include <QRectF>
 
 int main(int argc, char **argv)
 {
