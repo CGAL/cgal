@@ -219,7 +219,7 @@ void Values_list::on_minusButton_clicked()
 {
   Q_FOREACH(QTreeWidgetItem* item, treeWidget->selectedItems())
   {
-    treeWidget->invisibleRootItem()->removeChild(item);
+    //   treeWidget->invisibleRootItem()->removeChild(item);
     delete item;
   }
   emit values_changed();
