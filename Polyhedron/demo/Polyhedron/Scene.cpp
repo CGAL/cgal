@@ -288,6 +288,11 @@ void Scene::initializeGL()
 	       texture.GetData());
 }
 
+// workaround for Qt-4.2.
+#if QT_VERSION < 0x040300
+#  define lighter light
+#endif
+
 void 
 Scene::draw(bool with_names)
 {
@@ -334,7 +339,7 @@ Scene::draw(bool with_names)
 	}
 
       }
-      if(viewEdges)
+      if(viewEdges || entry.rendering_mode == Wireframe)
       {
 	::glDisable(GL_LIGHTING);
 	::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
@@ -359,6 +364,9 @@ Scene::draw(bool with_names)
     }
   }
 }
+
+// workaround for Qt-4.2 (see below)
+#undef lighter
 
 void
 Scene::draw(Polyhedron_entry& entry)

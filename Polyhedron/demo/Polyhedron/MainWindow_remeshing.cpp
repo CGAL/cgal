@@ -1,4 +1,4 @@
-#define CGAL_SURFACE_MESHER_VERBOSE 0
+#define CGAL_SURFACE_MESHER_VERBOSE 1
 #undef CGAL_SURFACE_MESHER_VERBOSE
 
 #include <QApplication>
@@ -20,6 +20,7 @@
 
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_polyhedron_builder.h>
+#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 #include <QTime>
 #include <QInputDialog>
@@ -119,7 +120,9 @@ void MainWindow::on_actionRemeshing_triggered()
     // remesh
     time.start();
     std::cout << "Remesh...";
-    CGAL::make_surface_mesh(c2t3, input, facets_criteria, CGAL::Manifold_tag());
+    CGAL::make_surface_mesh(c2t3, input, facets_criteria, CGAL::Non_manifold_tag());
+    std::ofstream out("out.off");
+    CGAL::output_surface_facets_to_off(out, c2t3);
     std::cout << "done (" << time.elapsed() << " ms, " << tr.number_of_vertices() << " vertices)" << std::endl;
 
     if(tr.number_of_vertices() > 0)
