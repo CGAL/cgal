@@ -12,11 +12,11 @@ if ( NOT LEDA_FOUND )
     
     include(CGAL_Macros)
     
-    include_directories( ${LEDA_INCLUDE_DIR} )
+    cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${LEDA_INCLUDE_DIR} )
+    cache_set(CGAL_3RD_PARTY_DEFINITIONS  ${CGAL_3RD_PARTY_DEFINITIONS}  ${LEDA_DEFINITIONS} )
+    cache_set(CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES}    ${LEDA_LIBRARIES}   )
     
-    link_libraries( ${LEDA_LIBRARIES} )
-    
-    add_definitions ( ${LEDA_DEFINITIONS} )
+    message( STATUS "USING LEDA_VERSION = '${CGAL_LEDA_VERSION}'" )
     
   endif()
   

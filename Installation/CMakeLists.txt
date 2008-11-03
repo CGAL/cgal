@@ -7,6 +7,10 @@ project(CGAL)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 
+if ( COMMAND cmake_policy )
+  cmake_policy( SET CMP0003 NEW )  
+endif()
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= BASIC SETUP =-
@@ -79,6 +83,60 @@ mark_as_advanced(CGAL_SOVERSION)
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
+
+set( CGAL_BUILDING_LIBS TRUE )
+
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= FLAGS =-
+#
+#--------------------------------------------------------------------------------------------------
+
+if( MSVC )
+  
+  uniquely_add_flags ( CGAL_CXX_FLAGS "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS" )
+
+  # _SECURE_SCL=0 is defined because it has been reported that the Secure SCL has an overhead of near one order of magnitude EVEN IN RELEASE BUILDS    
+  uniquely_add_flags( CGAL_CXX_FLAGS_RELEASE "-D_SECURE_SCL=0" )
+  
+  if ( RUNNING_CGAL_AUTO_TEST )
+    set(CMAKE_CXX_WARNING_LEVEL 2 CACHE STRING "MSVC C++ compiler warning level" FORCE)
+    mark_as_advanced(CMAKE_CXX_WARNING_LEVEL)
+  endif()
+    
+endif()
+
+if( "${CMAKE_CXX_COMPILER_ID}" MATCHES SunPro )
+  message( STATUS "Using SunPro compiler, using STLPort 4." )
+  
+  uniquely_add_flags( CGAL_CXX_FLAGS "-features=extensions;-library=stlport4;-D_GNU_SOURCE" )
+  uniquely_add_flags( CGAL_SHARED_LINKER_FLAGS "-library=stlport4" )
+  uniquely_add_flags( CGAL_EXE_LINKER_FLAGS    "-library=stlport4" )
+endif()
+
+if ( CMAKE_COMPILER_IS_GNUCC )
+
+  set( GCC_FOUND TRUE )
+  
+  get_dependency_version(GCC)
+  
+  if ( RUNNING_CGAL_AUTO_TEST )
+    uniquely_add_flags( CGAL_CXX_FLAGS "-Wall" )
+  endif()
+  
+  if ( "${GCC_VERSION}" MATCHES "^4." )
+    message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
+    uniquely_add_flags( CGAL_CXX_FLAGS "-frounding-math" )
+  endif()
+  
+  if ( "${GCC_VERSION}" MATCHES "^4.2" )
+    message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )
+    uniquely_add_flags( CGAL_CXX_FLAGS "-fno-strict-aliasing" )
+  endif()
+  
+endif()
+
+include(CGAL_SetupFlags)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -247,50 +305,6 @@ set(CGAL_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include ${CMAKE_SOURCE_DIR}/include)
 
 include_directories (${CGAL_INCLUDE_DIRS})
 
-if( MSVC )
-  
-  uniquely_add_flags ( CGAL_CXX_FLAGS "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS" )
-
-  # _SECURE_SCL=0 is defined because it has been reported that the Secure SCL has an overhead of near one order of magnitude EVEN IN RELEASE BUILDS    
-  uniquely_add_flags( CGAL_CXX_FLAGS_RELEASE "-D_SECURE_SCL=0" )
-  
-endif()
-
-if ( "${CMAKE_CONFIGURATION_TYPES}" MATCHES "Release" OR "${CMAKE_BUILD_TYPE}" MATCHES "Release" )
-  set( CGAL_RELEASE TRUE )
-endif()
-
-if ( "${CMAKE_CONFIGURATION_TYPES}" MATCHES "Debug" OR "${CMAKE_BUILD_TYPE}" MATCHES "Debug" )
-  set( CGAL_DEBUG TRUE )
-endif()
-
-if( "${CMAKE_CXX_COMPILER_ID}" MATCHES SunPro )
-  message( STATUS "Using SunPro compiler, using STLPort 4." )
-  
-  uniquely_add_flags( CGAL_CXX_FLAGS "-features=extensions;-library=stlport4;-D_GNU_SOURCE" )
-  uniquely_add_flags( CGAL_SHARED_LINKER_FLAGS "-library=stlport4" )
-  uniquely_add_flags( CGAL_EXE_LINKER_FLAGS    "-library=stlport4" )
-endif()
-
-if ( CMAKE_COMPILER_IS_GNUCC )
-
-  set( GCC_FOUND TRUE )
-  
-  get_dependency_version(GCC)
-  
-  if ( "${GCC_VERSION}" MATCHES "^4." )
-    message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
-    uniquely_add_flags( CGAL_CXX_FLAGS "-frounding-math" )
-  endif()
-  
-  if ( "${GCC_VERSION}" MATCHES "^4.2" )
-    message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )
-    uniquely_add_flags( CGAL_CXX_FLAGS "-fno-strict-aliasing" )
-  endif()
-  
-endif()
-
-include(CGAL_SetupFlags)
 
 add_subdirectory(src)
 

@@ -27,6 +27,14 @@ else()
     set( LEDA_DEFINITIONS "$ENV{LEDA_DEFINITIONS}" CACHE STRING   "Definitions for the LEDA library" FORCE )
   endif()  
   
+  if ( NOT "$ENV{LEDA_VERSION}" STREQUAL "" )
+    set( CGAL_LEDA_VERSION "$ENV{LEDA_VERSION}" CACHE STRING   "The version of the LEDA library" FORCE )
+  endif()
+  
+  if ( CGAL_LEDA_VERSION )
+    set( LEDA_DEFINITIONS "${LEDA_DEFINITIONS}" "-DLEDA_VERSION=${CGAL_LEDA_VERSION}" "-DCGAL_LEDA_VERSION=${CGAL_LEDA_VERSION}" CACHE STRING "Definitions for the LEDA library" FORCE )
+  endif()
+  
   if ( LEDA_INCLUDE_DIR AND LEDA_LIBRARIES)
     set(LEDA_FOUND TRUE)
   endif()

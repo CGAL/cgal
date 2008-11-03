@@ -19,7 +19,6 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   endif()
   
   if ( COMMAND cmake_policy )
-    cmake_policy( SET CMP0003 NEW )  
     cmake_policy( SET CMP0007 OLD )  
   endif()
   

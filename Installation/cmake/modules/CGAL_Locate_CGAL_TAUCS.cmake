@@ -66,9 +66,9 @@ if ( NOT CGAL_TAUCS_FOUND )
   if ( MSVC )
 
     # Search for TAUCS in CGAL "auxiliary" folder
-    if ( EXISTS "${CGAL_SOURCE_DIR}/auxiliary/taucs" )
-      set( CGAL_TAUCS_INCLUDE_DIR   "${CGAL_SOURCE_DIR}/auxiliary/taucs/include")
-      set( CGAL_TAUCS_LIBRARIES_DIR "${CGAL_SOURCE_DIR}/auxiliary/taucs/lib"    )
+    if ( EXISTS "${CGAL_SOURCE_DIRECTORY}/auxiliary/taucs" )
+      set( CGAL_TAUCS_INCLUDE_DIR   "${CGAL_SOURCE_DIRECTORY}/auxiliary/taucs/include")
+      set( CGAL_TAUCS_LIBRARIES_DIR "${CGAL_SOURCE_DIRECTORY}/auxiliary/taucs/lib"    )
       set( CGAL_TAUCS_FOUND TRUE )
     endif()
 

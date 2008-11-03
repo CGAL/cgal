@@ -4,6 +4,10 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
   
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 
+if ( COMMAND cmake_policy )
+  cmake_policy( SET CMP0003 NEW )  
+endif()
+
 if ( NOT CGAL_FOUND )   
   find_package(CGAL REQUIRED)
   include(${CGAL_USE_FILE})

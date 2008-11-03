@@ -15,11 +15,8 @@ if ( NOT WIN32 AND NOT GMPXX_FOUND )
       
       include(CGAL_Macros)
       
-      cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${GMPXX_INCLUDE_DIR}  "" )
-      
-      if ( NOT MSVC )
-        cache_set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${GMPXX_LIBRARIES})
-      endif()
+      cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${GMPXX_INCLUDE_DIR} )
+      cache_set(CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES}    ${GMPXX_LIBRARIES}   )
       
     endif()
     
