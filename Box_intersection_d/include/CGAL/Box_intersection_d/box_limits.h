@@ -22,7 +22,6 @@
 #define CGAL_BOX_INTERSECTION_D_BOX_LIMITS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/FPU.h> // for CGALi::infinity
 #include <limits>
 
 CGAL_BEGIN_NAMESPACE
@@ -47,14 +46,14 @@ struct box_limits<unsigned int> {
 
 template<>
 struct box_limits<float> {
-    static float inf() { return (std::numeric_limits<float>::min)(); }
+    static float inf() { return -sup(); }
     static float sup() { return (std::numeric_limits<float>::max)(); }
 };
 
 template<>
 struct box_limits<double> {
     static double inf() { return -sup(); }
-    static double sup() { return CGALi::infinity; }
+    static double sup() { return (std::numeric_limits<double>::max)(); }
 };
 
 } // end namespace Box_intersection_d
