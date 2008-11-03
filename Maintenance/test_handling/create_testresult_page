@@ -324,6 +324,7 @@ sub print_platform_descriptions()
 <th class="warning">w</th>
 <th class="error">n</th>
 <th class="requirements">r</th>
+<th>CMake</th>
 <th>BOOST</th>
 <th>MPFR</th>
 <th>GMP</th>
@@ -362,7 +363,7 @@ EOF
 	    my $countn = $testresults[$platform_num]->{"n"};
 	    my $countr = $testresults[$platform_num]->{"r"};
 
-	    my $index = 12;
+	    my $index = 13;
 	    my @tmp;
 	    while ($index) {
 	        $index--;
@@ -382,7 +383,7 @@ EOF
 	    print OUTPUT "<td>$countw</td>\n"; 
  	    print OUTPUT "<td>$countn</td>\n"; 
  	    print OUTPUT "<td>$countr</td>\n"; 
-	    $index = 12;
+	    $index = 13;
 	    while ($index) {
 	        $index--;
 		$_ = $tmp[$index];

@@ -41,7 +41,7 @@ sub reformat_results($)
     $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$BLAS,$LAPACK,$OPENGL,$TAUCS,$BOOST,$QT,$QT4) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","-");
+    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$BLAS,$LAPACK,$OPENGL,$TAUCS,$BOOST,$QT,$QT4,$CMAKE) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","-","no");
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
         if(/^\s*$/) {
@@ -49,6 +49,9 @@ sub reformat_results($)
         }
 	if(/^-- USING /) {
 	    $use_cmake = 1;
+	}
+	if(/^-- USING CMake version: ([\w\.-]+)/) {
+	    $CMAKE = $1;
 	}
 	if (/^CGAL_VERSION\s+([\w\.-]+)/) {
 	    $CGAL_VERSION = $1;
@@ -139,6 +142,7 @@ $CGAL_VERSION
 $TESTER
 $TESTER_NAME
 $TESTER_ADDRESS
+$CMAKE
 $BOOST
 $MPFR
 $GMP
