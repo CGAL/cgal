@@ -18,7 +18,6 @@ if ( CGAL_FOUND )
   include( GeneratorSpecificSettings )
 
   # Link with BLAS and LAPACK (required)
-  include( CGAL_UseBLAS )
   include( CGAL_UseLAPACK )
 
   # Link with Boost.ProgramOptions (optional)

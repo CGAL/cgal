@@ -66,13 +66,13 @@ if ( NOT CGAL_TAUCS_FOUND )
   if ( MSVC )
 
     # Search for TAUCS in CGAL "auxiliary" folder
-    if ( EXISTS "${CMAKE_SOURCE_DIR}/auxiliary/taucs" )
-      set( CGAL_TAUCS_INCLUDE_DIR   "${CMAKE_SOURCE_DIR}/auxiliary/taucs/include")
-      set( CGAL_TAUCS_LIBRARIES_DIR "${CMAKE_SOURCE_DIR}/auxiliary/taucs/lib"    )
+    if ( EXISTS "${CGAL_SOURCE_DIR}/auxiliary/taucs" )
+      set( CGAL_TAUCS_INCLUDE_DIR   "${CGAL_SOURCE_DIR}/auxiliary/taucs/include")
+      set( CGAL_TAUCS_LIBRARIES_DIR "${CGAL_SOURCE_DIR}/auxiliary/taucs/lib"    )
       set( CGAL_TAUCS_FOUND TRUE )
     endif()
 
-  else()
+  else ( MSVC )
 
     # Check $CGAL_TAUCS_DIR environment variable
     fetch_env_var(CGAL_TAUCS_DIR)
@@ -88,7 +88,11 @@ if ( NOT CGAL_TAUCS_FOUND )
       endif()
     endif()
 
-  endif()
-  
-endif()
+  endif ( MSVC )
+
+  #message("DEBUG: CGAL_TAUCS_INCLUDE_DIR = ${CGAL_TAUCS_INCLUDE_DIR}")
+  #message("DEBUG: CGAL_TAUCS_LIBRARIES_DIR = ${CGAL_TAUCS_LIBRARIES_DIR}")
+  #message("DEBUG: CGAL_TAUCS_FOUND = ${CGAL_TAUCS_FOUND}")
+
+endif ( NOT CGAL_TAUCS_FOUND )
 

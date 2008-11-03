@@ -1,7 +1,5 @@
-# LAPACK requires BLAS
-include( CGAL_UseBLAS )
-
-if ( NOT LAPACK_FOUND )
+# Do not check LAPACK_FOUND as it may be set by FindLAPACK.cmake
+# if ( NOT LAPACK_FOUND )
 
   find_package( LAPACK )
 
@@ -17,12 +15,17 @@ if ( NOT LAPACK_FOUND )
     message( STATUS "LAPACK link flags:  ${LAPACK_LINKER_FLAGS}" )
 
     add_definitions( ${LAPACK_DEFINITIONS} "-DCGAL_USE_LAPACK" )
+    if ( "${LAPACK_DEFINITIONS}" MATCHES ".*LAPACK_USE_F2C.*" )
+      add_definitions( "-DCGAL_USE_F2C" )
+    endif()
 
     link_directories( ${LAPACK_LIBRARIES_DIR} )
-    
     link_libraries( ${LAPACK_LIBRARIES} ${LAPACK_LINKER_FLAGS} )
+
+    # LAPACK requires BLAS
+    include( CGAL_UseBLAS )
 
   endif()
 
-endif()
+# endif()
 

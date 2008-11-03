@@ -24,22 +24,17 @@
 # - removed BLAS95_LIBRARIES
 #
 # TODO (CGAL):
-# - use a C++ compiler instead of a Fortran one
-# - try to be compatible with CMake 2.4
 # - find CBLAS (http://www.netlib.org/cblas)?
 
 
-# CheckFortranFunctionExists is new in CMake 2.6
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
-
-include(CheckFortranFunctionExists)
+include(CheckFunctionExists)
 
 include(GeneratorSpecificSettings)
 
 
 # This macro checks for the existence of the combination of fortran libraries
 # given by _list.  If the combination is found, this macro checks (using the
-# Check_Fortran_Function_Exists macro) whether can link against that library
+# check_function_exists macro) whether can link against that library
 # combination using the name of a routine given by _name using the linker
 # flags given by _flags.  If the combination of libraries is found and passes
 # the link test, LIBRARIES is set to the list of complete library paths that
@@ -47,15 +42,17 @@ include(GeneratorSpecificSettings)
 
 # N.B. _prefix is the prefix applied to the names of all cached variables that
 # are generated internally and marked advanced by this macro.
-macro(check_fortran_libraries LIBRARIES _prefix _name _flags _list _path)
+macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _path)
   #message("DEBUG: check_fortran_libraries(${_list} in ${_path})")
-  set(_libraries_work TRUE)
+  set(_libraries_found TRUE)
+  set(_libraries_work FALSE)
+  set(${DEFINITIONS})
   set(${LIBRARIES})
   set(_combined_name)
   foreach(_library ${_list})
     set(_combined_name ${_combined_name}_${_library})
 
-    if(_libraries_work)
+    if(_libraries_found)
       if ( WIN32 )
         find_library(${_prefix}_${_library}_LIBRARY
                     NAMES ${_library}
@@ -75,43 +72,49 @@ macro(check_fortran_libraries LIBRARIES _prefix _name _flags _list _path)
       endif( APPLE )
       mark_as_advanced(${_prefix}_${_library}_LIBRARY)
       set(${LIBRARIES} ${${LIBRARIES}} ${${_prefix}_${_library}_LIBRARY})
-      set(_libraries_work ${${_prefix}_${_library}_LIBRARY})
-    endif(_libraries_work)
+      set(_libraries_found ${${_prefix}_${_library}_LIBRARY})
+    endif(_libraries_found)
   endforeach(_library ${_list})
 
-  if(_libraries_work)
-    # Test this combination of libraries.
+  # Test this combination of libraries with C calling convention
+  if(_libraries_found AND NOT _libraries_work)
     set(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}})
     #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
-    check_fortran_function_exists(${_name} ${_prefix}${_combined_name}_WORKS)
+    check_function_exists(${_name} ${_prefix}_${_name}${_combined_name}_WORKS)
     set(CMAKE_REQUIRED_LIBRARIES)
-    mark_as_advanced(${_prefix}${_combined_name}_WORKS)
-    set(_libraries_work ${${_prefix}${_combined_name}_WORKS})
-  endif(_libraries_work)
+    mark_as_advanced(${_prefix}_${_name}${_combined_name}_WORKS)
+    set(_libraries_work ${${_prefix}_${_name}${_combined_name}_WORKS})
+  endif(_libraries_found AND NOT _libraries_work)
+
+  # Test this combination of libraries with f2c calling convention
+  if(_libraries_found AND NOT _libraries_work)
+    set(${DEFINITIONS}  "-D${_prefix}_USE_F2C")
+    # Some C++ linkers require f2c library to link with Fortran libraries.
+    # I do not know which ones, thus I just add the f2c library if it is available.
+    find_package( F2C QUIET )
+    if ( F2C_FOUND )
+      set(${DEFINITIONS}  ${${DEFINITIONS}} ${F2C_DEFINITIONS})
+      set(${LIBRARIES}    ${${LIBRARIES}} ${F2C_LIBRARIES})
+    endif()
+    set(CMAKE_REQUIRED_DEFINITIONS  ${${DEFINITIONS}})
+    set(CMAKE_REQUIRED_LIBRARIES    ${_flags} ${${LIBRARIES}})
+    #message("DEBUG: CMAKE_REQUIRED_DEFINITIONS = ${CMAKE_REQUIRED_DEFINITIONS}")
+    #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
+    # Check if function exists with f2c calling convention (ie a trailing underscore)
+    check_function_exists(${_name}_ ${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
+    set(CMAKE_REQUIRED_DEFINITIONS})
+    set(CMAKE_REQUIRED_LIBRARIES)
+    mark_as_advanced(${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
+    set(_libraries_work ${${_prefix}_${_name}_${_combined_name}_f2c_WORKS})
+  endif(_libraries_found AND NOT _libraries_work)
 
   if(NOT _libraries_work)
+    set(${DEFINITIONS})
     set(${LIBRARIES} FALSE)
   endif(NOT _libraries_work)
+  #message("DEBUG: ${DEFINITIONS} = ${${DEFINITIONS}}")
   #message("DEBUG: ${LIBRARIES} = ${${LIBRARIES}}")
 endmacro(check_fortran_libraries)
-
-
-# This macro setup BLAS variables to link with Fortran libraries:
-# - it adds "-DCGAL_USE_F2C" to use f2c calling convention
-# - its links with the f2c library if needed
-macro(append_f2c)
-  # Use f2c calling convention
-  set( BLAS_DEFINITIONS  ${BLAS_DEFINITIONS} "-DCGAL_USE_F2C" )
-
-  # Some C++ linkers require f2c to link with Fortran libraries.
-  # Implementation note: I do not know which ones, thus I just add
-  #                      the f2c library if it is available.
-  find_package( F2C QUIET )
-  if ( F2C_FOUND )
-    set( BLAS_DEFINITIONS  ${BLAS_DEFINITIONS} ${F2C_DEFINITIONS} )
-    set( BLAS_LIBRARIES    ${BLAS_LIBRARIES} ${F2C_LIBRARIES} )
-  endif()
-endmacro(append_f2c)
 
 
 #
@@ -140,271 +143,235 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
 
   else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
+    # If Unix, search for BLAS function in possible libraries
     #message("DEBUG: BLAS: Unix case")
 
-    # If Unix, we need a Fortran compiler
-    if (NOT MSVC) # safety: enable_language(Fortran) is broken for VC++
-      enable_language(Fortran OPTIONAL)
+    # BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "cblas;f77blas;atlas"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
     endif()
-    if (CMAKE_Fortran_COMPILER_WORKS)
 
-      # BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        cblas_dgemm
-        ""
-        "cblas;f77blas;atlas"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-        if(BLAS_LIBRARIES)
-          # Some C++ linkers require f2c to link with Fortran libraries
-          append_f2c()
-        endif()
+    # BLAS in PhiPACK libraries? (requires generic BLAS lib, too)
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "sgemm;dgemm;blas"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
+
+    # BLAS in Alpha CXML library?
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "cxml"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
+
+    # BLAS in Alpha DXML library? (now called CXML, see above)
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "dxml"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
+
+    # BLAS in Sun Performance library?
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      "-xlic_lib=sunperf"
+      "sunperf;sunmath"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+      if(BLAS_LIBRARIES)
+        # Extra linker flag
+        set(BLAS_LINKER_FLAGS "-xlic_lib=sunperf")
       endif()
+    endif()
 
-      # BLAS in PhiPACK libraries? (requires generic BLAS lib, too)
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "sgemm;dgemm;blas"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-        if(BLAS_LIBRARIES)
-          # Some C++ linkers require f2c to link with Fortran libraries
-          append_f2c()
-        endif()
-      endif()
+    # BLAS in SCSL library?  (SGI/Cray Scientific Library)
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "scsl"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
 
-      # BLAS in Alpha CXML library?
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "cxml"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-      endif()
+    # BLAS in SGIMATH library?
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "complib.sgimath"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
 
-      # BLAS in Alpha DXML library? (now called CXML, see above)
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "dxml"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-      endif()
+    # BLAS in IBM ESSL library? (requires generic BLAS lib, too)
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "essl;blas"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
 
-      # BLAS in Sun Performance library?
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        "-xlic_lib=sunperf"
-        "sunperf;sunmath"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-        if(BLAS_LIBRARIES)
-          # Use f2c calling convention
-          set( BLAS_DEFINITIONS  "-DCGAL_USE_F2C" )
-          # Extra library
-          set(BLAS_LINKER_FLAGS "-xlic_lib=sunperf")
-        endif()
-      endif()
+    #BLAS in intel mkl 10 library? (em64t 64bit)
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "mkl_intel_lp64;mkl_intel_thread;mkl_core;guide;pthread"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
 
-      # BLAS in SCSL library?  (SGI/Cray Scientific Library)
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "scsl"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-      endif()
+    ### windows version of intel mkl 10?
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      SGEMM
+      ""
+      "mkl_c_dll;mkl_intel_thread_dll;mkl_core_dll;libguide40"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
 
-      # BLAS in SGIMATH library?
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "complib.sgimath"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-      endif()
+    #older versions of intel mkl libs
 
-      # BLAS in IBM ESSL library? (requires generic BLAS lib, too)
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "essl;blas"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-      endif()
+    # BLAS in intel mkl library? (shared)
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "mkl;guide;pthread"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
 
-      #BLAS in intel mkl 10 library? (em64t 64bit)
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "mkl_intel_lp64;mkl_intel_thread;mkl_core;guide;pthread"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-        if(BLAS_LIBRARIES)
-          # Use f2c calling convention
-          set( BLAS_DEFINITIONS  "-DCGAL_USE_F2C" )
-        endif()
-      endif()
+    #BLAS in intel mkl library? (static, 32bit)
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "mkl_ia32;guide;pthread"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
 
-      ### windows version of intel mkl 10?
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        SGEMM
-        ""
-        "mkl_c_dll;mkl_intel_thread_dll;mkl_core_dll;libguide40"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-        if(BLAS_LIBRARIES)
-          # Use f2c calling convention
-          set( BLAS_DEFINITIONS  "-DCGAL_USE_F2C" )
-        endif()
-      endif()
+    #BLAS in intel mkl library? (static, em64t 64bit)
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "mkl_em64t;guide;pthread"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
 
-      #older versions of intel mkl libs
+    #BLAS in acml library?
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "acml"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
 
-      # BLAS in intel mkl library? (shared)
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "mkl;guide;pthread"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-        if(BLAS_LIBRARIES)
-          # Use f2c calling convention
-          set( BLAS_DEFINITIONS  "-DCGAL_USE_F2C" )
-        endif()
-      endif()
+    # Apple BLAS library?
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      cblas_dgemm
+      ""
+      "Accelerate"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
 
-      #BLAS in intel mkl library? (static, 32bit)
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "mkl_ia32;guide;pthread"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-        if(BLAS_LIBRARIES)
-          # Use f2c calling convention
-          set( BLAS_DEFINITIONS  "-DCGAL_USE_F2C" )
-        endif()
-      endif()
+    if ( NOT BLAS_LIBRARIES )
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      cblas_dgemm
+      ""
+      "vecLib"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif ( NOT BLAS_LIBRARIES )
 
-      #BLAS in intel mkl library? (static, em64t 64bit)
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "mkl_em64t;guide;pthread"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-        if(BLAS_LIBRARIES)
-          # Use f2c calling convention
-          set( BLAS_DEFINITIONS  "-DCGAL_USE_F2C" )
-        endif()
-      endif()
-
-      #BLAS in acml library?
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "acml"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-      endif()
-
-      # Apple BLAS library?
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        cblas_dgemm
-        ""
-        "Accelerate"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-        if(BLAS_LIBRARIES)
-          # Use f2c calling convention
-          set( BLAS_DEFINITIONS  "-DCGAL_USE_F2C" )
-        endif()
-      endif()
-
-      if ( NOT BLAS_LIBRARIES )
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        cblas_dgemm
-        ""
-        "vecLib"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-        if(BLAS_LIBRARIES)
-          # Use f2c calling convention
-          set( BLAS_DEFINITIONS  "-DCGAL_USE_F2C" )
-        endif()
-      endif ( NOT BLAS_LIBRARIES )
-
-      # Generic BLAS library?
-      # This configuration *must* be the last try as this library is notably slow.
-      if(NOT BLAS_LIBRARIES)
-        check_fortran_libraries(
-        BLAS_LIBRARIES
-        BLAS
-        sgemm
-        ""
-        "blas"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
-        )
-        if(BLAS_LIBRARIES)
-          # Some C++ linkers require f2c to link with Fortran libraries
-          append_f2c()
-        endif()
-      endif()
-
-    else(CMAKE_Fortran_COMPILER_WORKS)
-
-      message(STATUS "FindBLAS.cmake requires a Fortran compiler")
-
-    endif(CMAKE_Fortran_COMPILER_WORKS)
+    # Generic BLAS library?
+    # This configuration *must* be the last try as this library is notably slow.
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "blas"
+      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      )
+    endif()
 
     # Add variables to cache
     set( BLAS_DEFINITIONS   "${BLAS_DEFINITIONS}"

@@ -1,8 +1,5 @@
-# TAUCS requires BLAS and LAPACK
-include(CGAL_UseBLAS)
-include(CGAL_UseLAPACK)
-
-if ( NOT TAUCS_FOUND )
+# Do not check TAUCS_FOUND as it may be set by FindTAUCS.cmake
+# if ( NOT TAUCS_FOUND )
 
   find_package( TAUCS )
 
@@ -22,9 +19,12 @@ if ( NOT TAUCS_FOUND )
     add_definitions( ${TAUCS_DEFINITIONS} "-DCGAL_USE_TAUCS" )
 
     link_directories( ${TAUCS_LIBRARIES_DIR} )
-    lini_libraries  ( ${TAUCS_LIBRARIES}     )
+    link_libraries  ( ${TAUCS_LIBRARIES}     )
+
+    # TAUCS requires BLAS and LAPACK
+    include(CGAL_UseLAPACK)
 
   endif()
 
-endif()
+# endif()
 

@@ -1807,9 +1807,7 @@ Jet_fitting_3/doc_tex/Jet_fitting_3/ppal_curv_poly2x2+y2.jpg -text svneol=unset#
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.eps -text svneol=unset#application/postscript
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text svneol=unset#image/jpeg
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text svneol=unset#application/pdf
-Jet_fitting_3/examples/Jet_fitting_3/Jet_fitting_3.sln eol=crlf
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
-Jet_fitting_3/examples/Jet_fitting_3/skip_vcproj_auto_generation -text
 Kernel_23/doc_tex/Kernel_23/fig/pointSegmentTriangle.png -text
 Kernel_23/doc_tex/Kernel_23_ref/Kernel_ConstructRadicalLine_2.tex -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text svneol=unset#application/postscript

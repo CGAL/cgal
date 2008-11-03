@@ -13,11 +13,15 @@ if ( NOT Boost_PROGRAM_OPTIONS_FOUND )
   
   if ( Boost_PROGRAM_OPTIONS_FOUND )
   
-    message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
+    if( CGAL_AUTO_LINK_ENABLED )
+      message( STATUS "Boost.ProgramOptions library: found" )
+    else()
+      message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
+    endif()
         
     add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
     
-    if ( NOT MSVC )
+    if ( NOT CGAL_AUTO_LINK_ENABLED )
       link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
     endif()
   

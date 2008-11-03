@@ -23,22 +23,17 @@
 # - removed LAPACK95_LIBRARIES
 #
 # TODO (CGAL):
-# - use a C++ compiler instead of a Fortran one
-# - try to be compatible with CMake 2.4
 # - find CLAPACK (http://www.netlib.org/clapack)?
 
 
-# CheckFortranFunctionExists is new in CMake 2.6
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
-
-include(CheckFortranFunctionExists)
+include(CheckFunctionExists)
 
 include(GeneratorSpecificSettings)
 
 
 # This macro checks for the existence of the combination of fortran libraries
 # given by _list.  If the combination is found, this macro checks (using the
-# Check_Fortran_Function_Exists macro) whether can link against that library
+# check_function_exists macro) whether can link against that library
 # combination using the name of a routine given by _name using the linker
 # flags given by _flags.  If the combination of libraries is found and passes
 # the link test, LIBRARIES is set to the list of complete library paths that
@@ -46,51 +41,82 @@ include(GeneratorSpecificSettings)
 
 # N.B. _prefix is the prefix applied to the names of all cached variables that
 # are generated internally and marked advanced by this macro.
-macro(check_lapack_libraries LIBRARIES _prefix _name _flags _list _blas _path)
-  #message("DEBUG: check_lapack_libraries(${_list} in ${_path})")
-  set(_libraries_work TRUE)
+macro(check_lapack_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _blas _path)
+  #message("DEBUG: check_lapack_libraries(${_list} in ${_path} with ${_blas})")
+  set(_libraries_found TRUE)
+  set(_libraries_work FALSE)
+  set(${DEFINITIONS})
   set(${LIBRARIES})
   set(_combined_name)
   foreach(_library ${_list})
     set(_combined_name ${_combined_name}_${_library})
 
-    if(_libraries_work)
+    if(_libraries_found)
+      # search first in ${_path}
+      find_library(${_prefix}_${_library}_LIBRARY
+                  NAMES ${_library}
+                  PATHS ${_path} NO_DEFAULT_PATH
+                  )
+      # if not found, search in environment variables and system
       if ( WIN32 )
         find_library(${_prefix}_${_library}_LIBRARY
                     NAMES ${_library}
-                    PATHS ${_path} ENV LIB
-        )
-      endif ( WIN32 )
-      if ( APPLE )
+                    PATHS ENV LIB
+                    )
+      elseif ( APPLE )
         find_library(${_prefix}_${_library}_LIBRARY
                     NAMES ${_library}
-                    PATHS ${_path} /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV DYLD_LIBRARY_PATH
-        )
-      else ( APPLE )
+                    PATHS /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV DYLD_LIBRARY_PATH
+                    )
+      else ()
         find_library(${_prefix}_${_library}_LIBRARY
                     NAMES ${_library}
-                    PATHS ${_path} /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV LD_LIBRARY_PATH
-        )
-      endif( APPLE )
+                    PATHS /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV LD_LIBRARY_PATH
+                    )
+      endif()
       mark_as_advanced(${_prefix}_${_library}_LIBRARY)
       set(${LIBRARIES} ${${LIBRARIES}} ${${_prefix}_${_library}_LIBRARY})
-      set(_libraries_work ${${_prefix}_${_library}_LIBRARY})
-    endif(_libraries_work)
+      set(_libraries_found ${${_prefix}_${_library}_LIBRARY})
+    endif(_libraries_found)
   endforeach(_library ${_list})
 
-  if(_libraries_work)
-    # Test this combination of libraries.
+  # Test this combination of libraries with C calling convention
+  if(_libraries_found AND NOT _libraries_work)
     set(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}} ${_blas})
     #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
-    check_fortran_function_exists(${_name} ${_prefix}${_combined_name}_WORKS)
+    check_function_exists(${_name} ${_prefix}_${_name}${_combined_name}_WORKS)
     set(CMAKE_REQUIRED_LIBRARIES)
-    mark_as_advanced(${_prefix}${_combined_name}_WORKS)
-    set(_libraries_work ${${_prefix}${_combined_name}_WORKS})
-  endif(_libraries_work)
+    mark_as_advanced(${_prefix}_${_name}${_combined_name}_WORKS)
+    set(_libraries_work ${${_prefix}_${_name}${_combined_name}_WORKS})
+  endif(_libraries_found AND NOT _libraries_work)
+
+  # Test this combination of libraries with f2c calling convention
+  if(_libraries_found AND NOT _libraries_work)
+    set(${DEFINITIONS}  "-D${_prefix}_USE_F2C")
+    # Some C++ linkers require f2c library to link with Fortran libraries.
+    # I do not know which ones, thus I just add the f2c library if it is available.
+    find_package( F2C QUIET )
+    if ( F2C_FOUND )
+      set(${DEFINITIONS}  ${${DEFINITIONS}} ${F2C_DEFINITIONS})
+      set(${LIBRARIES}    ${${LIBRARIES}} ${F2C_LIBRARIES})
+    endif()
+    set(CMAKE_REQUIRED_DEFINITIONS  ${${DEFINITIONS}})
+    set(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}} ${_blas})
+    #message("DEBUG: CMAKE_REQUIRED_DEFINITIONS = ${CMAKE_REQUIRED_DEFINITIONS}")
+    #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
+    # Check if function exists with f2c calling convention (ie a trailing underscore)
+    check_function_exists(${_name}_ ${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
+    set(CMAKE_REQUIRED_DEFINITIONS})
+    set(CMAKE_REQUIRED_LIBRARIES)
+    mark_as_advanced(${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
+    set(_libraries_work ${${_prefix}_${_name}_${_combined_name}_f2c_WORKS})
+  endif(_libraries_found AND NOT _libraries_work)
 
   if(NOT _libraries_work)
+    set(${DEFINITIONS})
     set(${LIBRARIES} FALSE)
   endif(NOT _libraries_work)
+  #message("DEBUG: ${DEFINITIONS} = ${${DEFINITIONS}}")
   #message("DEBUG: ${LIBRARIES} = ${${LIBRARIES}}")
 endmacro(check_lapack_libraries)
 
@@ -124,21 +150,18 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
 
   else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
+    # If Unix, search for LAPACK function in possible libraries
     #message("DEBUG: LAPACK: Unix case")
-
-    # If Unix, we need a Fortran compiler
-    if (NOT MSVC) # safety: enable_language(Fortran) is broken for VC++
-      enable_language(Fortran OPTIONAL)
-    endif()
 
     # LAPACK requires BLAS
     find_package(BLAS QUIET)
 
-    if(CMAKE_Fortran_COMPILER_WORKS AND BLAS_FOUND)
+    if(BLAS_FOUND)
 
       #intel mkl lapack?
       if(NOT LAPACK_LIBRARIES)
         check_lapack_libraries(
+        LAPACK_DEFINITIONS
         LAPACK_LIBRARIES
         LAPACK
         cheev
@@ -147,15 +170,12 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
         "${BLAS_LIBRARIES}"
         "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{LAPACK_LIB_DIR}"
         )
-        if(LAPACK_LIBRARIES)
-          # Use f2c calling convention
-          set( LAPACK_DEFINITIONS "-DCGAL_USE_F2C" )
-        endif()
       endif()
 
       #acml lapack?
       if(NOT LAPACK_LIBRARIES)
         check_lapack_libraries(
+        LAPACK_DEFINITIONS
         LAPACK_LIBRARIES
         LAPACK
         cheev
@@ -169,6 +189,7 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
       # Apple LAPACK library?
       if(NOT LAPACK_LIBRARIES)
         check_lapack_libraries(
+        LAPACK_DEFINITIONS
         LAPACK_LIBRARIES
         LAPACK
         cheev
@@ -177,14 +198,11 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
         "${BLAS_LIBRARIES}"
         "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{LAPACK_LIB_DIR}"
         )
-        if(LAPACK_LIBRARIES)
-          # Use f2c calling convention
-          set( LAPACK_DEFINITIONS "-DCGAL_USE_F2C" )
-        endif()
       endif()
 
       if ( NOT LAPACK_LIBRARIES )
         check_lapack_libraries(
+        LAPACK_DEFINITIONS
         LAPACK_LIBRARIES
         LAPACK
         cheev
@@ -193,16 +211,13 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
         "${BLAS_LIBRARIES}"
         "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{LAPACK_LIB_DIR}"
         )
-        if(LAPACK_LIBRARIES)
-          # Use f2c calling convention
-          set( LAPACK_DEFINITIONS "-DCGAL_USE_F2C" )
-        endif()
       endif ( NOT LAPACK_LIBRARIES )
 
       # Generic LAPACK library?
       # This configuration *must* be the last try as this library is notably slow.
       if ( NOT LAPACK_LIBRARIES )
         check_lapack_libraries(
+        LAPACK_DEFINITIONS
         LAPACK_LIBRARIES
         LAPACK
         cheev
@@ -211,17 +226,13 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
         "${BLAS_LIBRARIES}"
         "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{LAPACK_LIB_DIR}"
         )
-        if(LAPACK_LIBRARIES)
-          # Use f2c calling convention
-          set( LAPACK_DEFINITIONS "-DCGAL_USE_F2C" )
-        endif()
       endif()
 
-    else(CMAKE_Fortran_COMPILER_WORKS AND BLAS_FOUND)
+    else(BLAS_FOUND)
 
-      message(STATUS "FindLAPACK.cmake requires a Fortran compiler")
+      message(STATUS "LAPACK requires BLAS")
 
-    endif(CMAKE_Fortran_COMPILER_WORKS AND BLAS_FOUND)
+    endif(BLAS_FOUND)
 
     # Add variables to cache
     set( LAPACK_DEFINITIONS   "${LAPACK_DEFINITIONS}"

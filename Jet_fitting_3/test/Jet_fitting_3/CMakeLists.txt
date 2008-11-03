@@ -17,7 +17,6 @@ if ( CGAL_FOUND )
   include( CreateSingleSourceCGALProgram )
 
   # Link with BLAS and LAPACK (required)
-  include( CGAL_UseBLAS )
   include( CGAL_UseLAPACK )
 
   create_single_source_cgal_program( "blind_1pt.cpp" )
