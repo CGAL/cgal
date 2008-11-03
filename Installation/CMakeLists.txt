@@ -41,7 +41,7 @@ include(CheckCXXFileRuns)
 
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
-message( STATUS "CMake version: ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" )
+message( STATUS "USING CMake version: ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" )
 message( STATUS "System: ${CMAKE_SYSTEM_NAME}" )
 
 # 
