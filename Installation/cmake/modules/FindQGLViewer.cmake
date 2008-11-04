@@ -24,7 +24,7 @@ FIND_LIBRARY(QGLVIEWER_LIBRARY_RELEASE
                    ENV QGLVIEWERROOT
                    ENV LD_LIBRARY_PATH
                    ENV LIBRARY_PATH
-             PATH_SUFFIXES QGLViewer/release
+             PATH_SUFFIXES QGLViewer QGLViewer/release
             )
 
 FIND_LIBRARY(QGLVIEWER_LIBRARY_DEBUG
@@ -34,7 +34,7 @@ FIND_LIBRARY(QGLVIEWER_LIBRARY_DEBUG
                    ENV QGLVIEWERROOT
                    ENV LD_LIBRARY_PATH
                    ENV LIBRARY_PATH
-             PATH_SUFFIXES QGLViewer/debug      
+             PATH_SUFFIXES QGLViewer QGLViewer/debug      
             )
 
 IF (QGLVIEWER_LIBRARY_RELEASE AND NOT QGLVIEWER_LIBRARY_DEBUG)

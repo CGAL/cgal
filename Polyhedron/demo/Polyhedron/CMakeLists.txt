@@ -53,6 +53,8 @@ endif()
 
 if(CGAL_Qt4_FOUND AND Boost_FOUND AND Boost_THREAD_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
+  include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
+
   qt4_wrap_ui( UI_FILES MainWindow.ui )
 
   include(AddFileDependencies)

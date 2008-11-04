@@ -310,8 +310,11 @@ Polyhedron/demo/Polyhedron/*.ui
 Polyhedron/demo/Polyhedron/*.vcproj
 Polyhedron/demo/Polyhedron/*_moc.cpp
 Polyhedron/demo/Polyhedron/.qglviewer*.xml
+Polyhedron/demo/Polyhedron/CMakeCache.txt
+Polyhedron/demo/Polyhedron/CMakeFiles
 Polyhedron/demo/Polyhedron/Makefile
 Polyhedron/demo/Polyhedron/Polyhedron_3
+Polyhedron/demo/Polyhedron/cmake_install.cmake
 Polyhedron/demo/Polyhedron/moc_*.h
 Polyhedron/demo/Polyhedron/qrc_*.cxx
 Polyhedron/demo/Polyhedron/snapshot.*
