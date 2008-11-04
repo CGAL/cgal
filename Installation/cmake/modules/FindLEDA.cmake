@@ -31,7 +31,7 @@ else()
     set( LEDA_CXX_FLAGS "$ENV{LEDA_CXX_FLAGS}" CACHE STRING   "Compiler flags for the LEDA library" FORCE )
   endif()  
   
-  if ( NOT LEDA_LINERFLAGS )
+  if ( NOT LEDA_LINKER_FLAGS )
     set( LEDA_LINKER_FLAGS "$ENV{LEDA_LINKER_FLAGS}" CACHE STRING   "Linker flags for the LEDA library" FORCE )
   endif()  
   

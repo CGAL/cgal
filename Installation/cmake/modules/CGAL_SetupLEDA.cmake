@@ -16,6 +16,16 @@ if ( NOT LEDA_FOUND )
     cache_set(CGAL_3RD_PARTY_DEFINITIONS  ${CGAL_3RD_PARTY_DEFINITIONS}  ${LEDA_DEFINITIONS} )
     cache_set(CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES}    ${LEDA_LIBRARIES}   )
     
+    uniquely_add_flags( CMAKE_CXX_FLAGS ${LEDA_CXX_FLAGS} )
+    
+    if ( BUILD_SHARED_LIBS )
+      uniquely_add_flags( CMAKE_SHARED_LINKER_FLAGS ${LEDA_LINKER_FLAGS} )
+    else()
+      uniquely_add_flags( CMAKE_MODULE_LINKER_FLAGS ${LEDA_LINKER_FLAGS} )
+    endif()
+    
+    uniquely_add_flags( CGAL_CXX_FLAGS ${LEDA_CXX_FLAGS} )
+    
     message( STATUS "USING LEDA_VERSION = '${CGAL_LEDA_VERSION}'" )
     
   endif()
