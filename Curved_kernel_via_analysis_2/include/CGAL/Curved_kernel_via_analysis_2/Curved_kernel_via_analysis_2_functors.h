@@ -920,10 +920,22 @@ public:
         // TODO add CGAL_precondition(p1.location() == CGAL::ARR_INTERIOR);
         // TODO add CGAL_precondition(p2.location() == CGAL::ARR_INTERIOR);
         
+        CERR("\ncompare_xy; p1: " << p1
+             << ";\n p2:" << p2 << "");
+
+        if (p1.id() == p2.id()) {
+            result_type res = CGAL::EQUAL;
+            CERR("result: " << res << "\n");
+            return res;
+        }
+
         result_type res =
             (Curved_kernel_via_analysis_2::instance().
              kernel().compare_xy_2_object()
              (p1.xy(), p2.xy(), equal_x));
+
+        CERR("result: " << res << "\n");
+
         return res;
     }
 };
@@ -1178,7 +1190,9 @@ public:
         CGAL_precondition(loc1 == cv2.location(ce));
         // comparing ids is the same as calling is_identical() ??
         if (cv1.id() == cv2.id()) {
-            return CGAL::EQUAL;
+            CGAL::Comparison_result res = CGAL::EQUAL;
+            CERR("result: " << res << "\n");
+            return res;
         } 
         
         // in this setting same handling as for +/-oo ?
