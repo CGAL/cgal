@@ -482,7 +482,15 @@ int main( int argc, char **argv ) {
        it != input_files.end(); it++) {
       std::cout << "Reading curve file '" << *it 
                 << "'" << std::endl;
-      // TODO read linear objects!  
+      std::ifstream from(it->c_str());
+      int n;
+      from >> n;
+      input_objects.reserve(input_objects.size() + n);
+      for (int i = 0; i < n; i++) {
+          Curve_2 curve;
+          from >> curve;
+          input_objects.push_back(CGAL::make_object(curve));
+      }
   }
 
   if (rnd_segments > 0) {
@@ -511,7 +519,23 @@ int main( int argc, char **argv ) {
       }
   }
 
-
+  
+  std::ofstream out(out_file.c_str());
+  if (vm.count("write")) {
+      CGAL::set_ascii_mode(out);
+      out << input_objects.size() << std::endl;
+  }
+  
+  curves.reserve(input_objects.size());
+  for (std::vector< CGAL::Object >::const_iterator it = input_objects.begin();
+       it != input_objects.end(); it++) {
+      Curve_2 curve;
+      CGAL::assign(curve, *it);
+      if (vm.count("write")) {
+          out << curve << std::endl;
+      }
+  }
+  
   // TODO read point!
   point = Point_2(0,0);
   
@@ -532,7 +556,7 @@ int main( int argc, char **argv ) {
 
   CGAL::Timer cell_time;
   cell_time.start();
-    
+  
   if (method == "pl") {
       obj = CGAL::single_cell_pl_2(
               point,
@@ -551,7 +575,7 @@ int main( int argc, char **argv ) {
       std::cerr << "Method not supported" << std::endl;
       std::exit(2);
   }
-  
+
   cell_time.stop();
   
   std::cout << "===================="
