@@ -49,7 +49,7 @@ endif(QT_FOUND)
 include( CGAL_UseTAUCS )
 if (NOT TAUCS_FOUND)
   message(STATUS "warning: TAUCS is not found. parameterization will not be available.")
-endif(TAUCS_FOUND)
+endif()
 
 if(CGAL_Qt4_FOUND AND Boost_FOUND AND Boost_THREAD_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
@@ -97,7 +97,7 @@ if(CGAL_Qt4_FOUND AND Boost_FOUND AND Boost_THREAD_FOUND AND QT_FOUND AND OPENGL
       ${UI_FILES} ${RESOURCE_FILES} )
     if(TAUCS_FOUND)
       add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
-    endif(TAUCS_FOUND)
+    endif()
   else(ENABLE_FORWARD_DECL)
     add_file_dependencies( Polyhedron_3.cpp MainWindow_moc.cpp Scene_moc.cpp Viewer_moc.cpp )
     add_executable  ( Polyhedron_3 Polyhedron_3.cpp ${UI_FILES} ${RESOURCE_FILES} )
