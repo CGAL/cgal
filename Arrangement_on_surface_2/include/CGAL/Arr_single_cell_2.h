@@ -199,7 +199,10 @@ public:
     CGAL::Object cell_rbo_naive(const Point_2& pt) const {
         if (!_m_cell_handle_rbo) {
 #if !NDEBUG
-            std::cout << "Computing cell with NAIVE-RED-BLUE-OVERLAY-method ... " 
+            std::cout << "Computing cell for " 
+                      << (_m_xcvs.size() + _m_pts.size())
+                      << " input objects " 
+                      << "with NAIVE-RED-BLUE-OVERLAY-method ... " 
                       << std::flush;
 #endif
             // TODO permute INPUT randomly!!
