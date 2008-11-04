@@ -153,7 +153,8 @@ void self_intersect(const Polyhedron& polyhedron,
 
   // compute self-intersections filtered out by boxes
   Intersect_facets<Polyhedron,Kernel,OutputIterator> intersect_facets(out);
-  CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,2000);
+  std::ptrdiff_t cutoff = 2000;
+  CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
 
 } // end self_intersect
 
