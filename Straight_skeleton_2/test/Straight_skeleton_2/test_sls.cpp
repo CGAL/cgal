@@ -739,7 +739,6 @@ int create_skeleton ( Zone& rZone, boost::optional<IFT> const& aMaxTime = boost:
 int test_zone ( Zone& rZone )
 {
   ISlsPtr lFullSls, lPar ;  
-  double  lFullSkeletonTime  ;
   
   bool lUseFullSkeleton =  sMaxTime == 0 || sAlwaysTestFullSkeleton ;
   
