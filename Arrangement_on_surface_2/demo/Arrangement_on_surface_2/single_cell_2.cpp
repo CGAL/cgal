@@ -4,7 +4,7 @@
 // the terms of the Q Public License version 1.0.
 // See the file LICENSE.QPL distributed with CGAL.
 //
-// Licensees holding a valid commercial license may use this file in
+// Licensees holding a valid commercial license may use this filue in
 // accordance with the commercial license agreement provided with the software.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
@@ -18,6 +18,10 @@
 
 // ---------------------------------------------------------------------------
 // includes
+
+
+//#define CGAL_SL_VERBOSE 1
+//#define CKvA_DEBUG_PRINT_CERR 1
 
 #ifndef CGAL_USE_ACK_2 
 #define CGAL_USE_ACK_2 1
@@ -33,6 +37,9 @@
 
 #include <fstream>
 #include <vector>
+
+#include <ctime>    // For time()
+#include <cstdlib>  // For srand() and rand()
 
 #include <boost/program_options.hpp>
 #include <boost/static_assert.hpp>
@@ -107,6 +114,8 @@ std::vector< Curve_2 > curves;
 std::vector< CGAL::Object > input_objects;
 
 Arrangement_2 cell;
+
+std::string method;
 
 std::string out_file;
 
@@ -303,7 +312,10 @@ int main( int argc, char **argv ) {
         ("help,h", "produce help message")
         ("write", 
          po::value<std::string>(&out_file), 
-         "write data to file");
+         "write data to file")
+        ("method,M", 
+         po::value<std::string>(&method), 
+         "method - valid options are: pl, rbo_naive");
     
 #if CGAL_USE_ACK_2
     po::options_description random("Random input:");
@@ -379,10 +391,16 @@ int main( int argc, char **argv ) {
         std::cout << visible << "\n";
         return 1;
     }
+
+    if (vm.count("method")) {
+        // TODO to lower
+        //std::transform(method.begin(), method.end(), method.begin(), 
+        //tolower);
+    }
     
 #if !defined(MWA_NO_UI)
   // *************** UI SECTION ***************
-  QApplication app( argc, argv );
+  QApplication app(argc, argv);
   My_window W(5,5);
   app.setMainWidget( &W );
   W.show();
@@ -460,15 +478,30 @@ int main( int argc, char **argv ) {
   
   
   // compute cell
+  CGAL::Object obj;
+
   CGAL::Timer cell_time;
-  
   cell_time.start();
-  CGAL::single_cell_2(
-          point,
-          input_objects.begin(),
-          input_objects.end(),
-          cell
-  );
+    
+  if (method == "pl") {
+      obj = CGAL::single_cell_pl_2(
+              point,
+              input_objects.begin(),
+              input_objects.end(),
+              cell
+      );
+  } else if (method == "rbo_naive" ) {
+      obj = CGAL::single_cell_rbo_naive_2(
+              point,
+              input_objects.begin(),
+              input_objects.end(),
+              cell
+      );
+  } else {
+      std::cerr << "Method not supported" << std::endl;
+      std::exit(2);
+  }
+  
   cell_time.stop();
   
   std::cout << "===================="
@@ -476,7 +509,7 @@ int main( int argc, char **argv ) {
             << "===================="
             << "===================="
             << std::endl;
-  
+ 
   std::cout << "Time used: cell construction: "
             << cell_time.time()
             << " sec"
