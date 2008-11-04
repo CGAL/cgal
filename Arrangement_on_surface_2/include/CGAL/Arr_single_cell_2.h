@@ -28,8 +28,12 @@
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 
-// replace point location strategy
+// TASK select best point location strategy
 #include <CGAL/Arr_naive_point_location.h>
+
+// DOES NOT WORK FOR UNBOUNDED
+//#include <CGAL/Arr_simple_point_location.h>
+//#include <CGAL/Arr_walk_along_line_point_location.h> 
 
 CGAL_BEGIN_NAMESPACE
 
@@ -59,10 +63,15 @@ public:
     //! type of curve
     typedef typename Geometry_traits_2::Curve_2 Curve_2;
 
-    // TODO replace point location strategy
+    // TASK select best point location strategy
     //! type of point location strategy
     typedef CGAL::Arr_naive_point_location< Arrangement_2 > Point_location;
     
+    // DO NOT WORK FOR UNBOUNDED!
+    //typedef CGAL::Arr_simple_point_location< Arrangement_2 > Point_location;
+    //typedef Arr_walk_along_line_point_location< Arrangement_2 > 
+    //Point_location;
+
     //!\name Constructors
     //!@{
     
@@ -116,7 +125,6 @@ public:
                 CGAL_assertion(check);
                 _m_pts.push_back(curr_point);
             }
-            // TODO deal with Curve_2 using Make_x_monotone_2
         }
     }
     
@@ -207,10 +215,15 @@ public:
 #if !NDEBUG
                 std::cout << "Red-blue split" << std::endl;
 #endif
+                // permute input
+                // TODO use better random values
+                std::random_shuffle(_m_xcvs.begin(), _m_xcvs.end());
+                std::random_shuffle(_m_pts.begin(), _m_pts.end());
+
                 // split input into two sets
                 std::vector< X_monotone_curve_2 > xcvs[2];
                 typename 
-                    std::vector< X_monotone_curve_2 >::const_iterator 
+                    std::vector< X_monotone_curve_2 >::iterator 
                     xcvs_mid =
                     _m_xcvs.begin();
                 std::advance(xcvs_mid, (_m_xcvs.size() / 2));
@@ -222,7 +235,7 @@ public:
                           std::back_inserter(xcvs[1]));
                 
                 std::vector< Point_2 > pts[2];
-                typename std::vector< Point_2 >::const_iterator pts_mid =
+                typename std::vector< Point_2 >::iterator pts_mid =
                     _m_pts.begin();
                 std::advance(pts_mid, (_m_pts.size() / 2));
                 pts[0].reserve(std::distance(_m_pts.begin(), pts_mid));
@@ -428,10 +441,10 @@ private:
     std::vector< CGAL::Object > _m_objects;
     
     //! input curves
-    std::vector< X_monotone_curve_2 > _m_xcvs;
+    mutable std::vector< X_monotone_curve_2 > _m_xcvs;
 
     //! input points
-    std::vector< Point_2 > _m_pts;
+    mutable std::vector< Point_2 > _m_pts;
     
     //! the cell
     mutable boost::optional< CGAL::Object > _m_cell_handle_pl; 
