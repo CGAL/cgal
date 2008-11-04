@@ -6,7 +6,7 @@
 # TODO: support Windows and MacOSX
 
 # CORE needs GMP
-include(FindPackageHandleStandardArgs)
+include(CGAL_FindPackageHandleStandardArgs)
 
 if(GMP_FOUND)
   if (CORE_INCLUDE_DIR AND CORE_LIBRARIES)

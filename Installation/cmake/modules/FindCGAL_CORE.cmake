@@ -7,7 +7,7 @@
 
 # CORE needs GMP
 
-include(FindPackageHandleStandardArgs)
+include(CGAL_FindPackageHandleStandardArgs)
 
 
 if(GMP_FOUND)

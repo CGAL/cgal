@@ -19,7 +19,6 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
   include( CreateSingleSourceCGALProgram )
-  include( GeneratorSpecificSettings )
 
   # Link with BLAS and LAPACK (required)
   include( CGAL_UseLAPACK )

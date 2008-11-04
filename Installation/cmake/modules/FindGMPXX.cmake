@@ -23,7 +23,7 @@ if(GMP_FOUND)
                DOC "Path to the GMPXX library"
                )
                
-  include(FindPackageHandleStandardArgs)
+  include(CGAL_FindPackageHandleStandardArgs)
   
   find_package_handle_standard_args(GMPXX "DEFAULT_MSG" GMPXX_LIBRARIES GMPXX_INCLUDE_DIR )
 

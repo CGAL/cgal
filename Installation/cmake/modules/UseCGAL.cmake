@@ -13,11 +13,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH})
 if(NOT USE_CGAL_FILE_INCLUDED) 
   set(USE_CGAL_FILE_INCLUDED 1)
 
-  include(CGALcommon)
+  include(CGAL_Common)
   
   if ( CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL )
     include(CGAL_SetupFlags)
-    include(GeneratorSpecificSettings)
+    include(CGAL_GeneratorSpecificSettings)
   endif()
   
   set( CGAL_LIBRARIES ${CGAL_LIBRARY} )

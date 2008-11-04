@@ -7,8 +7,8 @@
 
 # TODO: support MacOSX
 
-include(FindPackageHandleStandardArgs)
-include(GeneratorSpecificSettings)
+include(CGAL_FindPackageHandleStandardArgs)
+include(CGAL_GeneratorSpecificSettings)
 
 # Is it already configured?
 if (MPFR_INCLUDE_DIR AND MPFR_LIBRARIES_DIR ) 

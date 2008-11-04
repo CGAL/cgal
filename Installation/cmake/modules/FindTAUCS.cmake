@@ -9,8 +9,6 @@
 #  TAUCS_LIBRARIES - TAUCS libraries name.
 #     May be null if the compiler supports auto-link (e.g. VC++).
 
-include(GeneratorSpecificSettings)
-
 # Is it already configured?
 if (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
 
@@ -93,14 +91,5 @@ else()
     endif(TAUCS_FOUND)
   endif(NOT TAUCS_FIND_QUIETLY)
 
-  #message("DEBUG: TAUCS_INCLUDE_DIR = ${TAUCS_INCLUDE_DIR}")
-  #message("DEBUG: TAUCS_LIBRARIES = ${TAUCS_LIBRARIES}")
-  #message("DEBUG: TAUCS_LIBRARIES_DIR = ${TAUCS_LIBRARIES_DIR}")
-  #message("DEBUG: TAUCS_FOUND = ${TAUCS_FOUND}")
-
 endif(TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
 
-#mark_as_advanced(TAUCS_INCLUDE_DIR)
-#mark_as_advanced(TAUCS_DEFINITIONS)
-#mark_as_advanced(TAUCS_LIBRARIES)
-#mark_as_advanced(TAUCS_LIBRARIES_DIR)

@@ -39,9 +39,9 @@ if ( NOT "${CGAL_REFERENCE_CACHE_DIR}" STREQUAL "" )
   endif()
 endif()
 
-include(CGALcommon)
-include(GeneratorSpecificSettings)
-include(CheckCXXFileRuns)
+include(CGAL_Common)
+include(CGAL_GeneratorSpecificSettings)
+include(CGAL_CheckCXXFileRuns)
 
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 
@@ -178,7 +178,7 @@ cache_set(CGAL_PDB_3RD_PARTY_INCLUDE_DIRS   "" )
 cache_set(CGAL_PDB_3RD_PARTY_LIBRARIES      "" )
 cache_set(CGAL_PDB_3RD_PARTY_LIBRARIES_DIRS "" ) 
 
-include(FindCGALDependencies)
+include(CGAL_SetupDependencies)
 
 #--------------------------------------------------------------------------------------------------
 #
