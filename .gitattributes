@@ -1662,7 +1662,6 @@ Installation/CGALConfig_install.cmake.fhs.in -text
 Installation/CGALConfig_install.cmake.source.in -text
 Installation/INSTALL_via_cmake -text
 Installation/LICENSE.FREE_USE -text
-Installation/cmake/modules/AddSubdirectories.cmake -text
 Installation/cmake/modules/CGAL_CheckCXXFileRuns.cmake -text
 Installation/cmake/modules/CGAL_Common.cmake -text
 Installation/cmake/modules/CGAL_FindPackageHandleStandardArgs.cmake -text
@@ -1697,9 +1696,6 @@ Installation/cmake/modules/FindOpenGL.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
 Installation/cmake/modules/FindQt3-patched.cmake -text
 Installation/cmake/modules/FindTAUCS.cmake -text
-Installation/cmake/modules/MacroFindOptionalCGALDependency.cmake -text
-Installation/cmake/modules/MacroOptionalFindPackage.cmake -text
-Installation/cmake/modules/OptionalAddSubdirectory.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text
 Installation/config/support/S05-BOOST -text
