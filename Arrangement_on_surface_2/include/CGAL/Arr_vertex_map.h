@@ -168,7 +168,7 @@ public:
     n_vertices++;
 
     // If necessary, allocate memory for the reverse mapping.
-    if (rev_map.size() > n_vertices)
+    if (rev_map.size() < n_vertices)
       rev_map.resize (2 * n_vertices);
 
     // Update the mapping of the newly created vertex.
@@ -186,7 +186,7 @@ public:
     n_vertices++;
 
     // If necessary, allocate memory for the reverse mapping.
-    if (rev_map.size() > n_vertices)
+    if (rev_map.size() < n_vertices)
       rev_map.resize (2 * n_vertices);
 
     // Update the mapping of the newly created vertex.
@@ -205,7 +205,7 @@ public:
     
     // Reduce memory consumption in case the number of vertices has
     // drastically decreased.
-    if (2*n_vertices < rev_map.size() && 
+    if (2*n_vertices+1 < rev_map.size() && 
 	rev_map.size() / 2 >= MIN_REV_MAP_SIZE)
     {
       rev_map.resize (rev_map.size() / 2);

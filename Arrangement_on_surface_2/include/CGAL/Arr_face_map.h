@@ -114,7 +114,7 @@ public:
    */
   Face_handle face (const int i) const
   {
-    CGAL_precondition (i < n_faces);
+    CGAL_precondition((unsigned int) i < n_faces);
 
     return (rev_map[i]);
   }
@@ -170,8 +170,8 @@ public:
     n_faces++;
 
     // If necessary, allocate memory for the reverse mapping.
-    if (rev_map.size() > n_faces)
-      rev_map.resize (2 * n_faces);
+    if (rev_map.size() < n_faces)
+      rev_map.resize(2 * n_faces);
 
     // Update the mapping of the newly created face.
     index_map[new_f] = n_faces - 1;
@@ -195,7 +195,7 @@ public:
     
     // Reduce memory consumption in case the number of faces has
     // drastically decreased.
-    if (2*n_faces < rev_map.size() && 
+    if (2*n_faces+1 < rev_map.size() && 
 	rev_map.size() / 2 >= MIN_REV_MAP_SIZE)
     {
       rev_map.resize (rev_map.size() / 2);
