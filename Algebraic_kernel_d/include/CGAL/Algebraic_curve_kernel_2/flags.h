@@ -97,8 +97,8 @@
  *
  * This strategy only makes sense if computing resultants is faster than
  * computing subresultants, otherwise, it wastes computation time.
- * Since the current resultant computation method is actually computed
- * by a subresultant computation, the flag should not be set to one currently
+ * Since resultant computation is done by interpolation,
+ * it is faster than the pseudo-remainder based subresultant computation.
  */
 #ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY
 #define CGAL_ACK_RESULTANT_FIRST_STRATEGY 1
