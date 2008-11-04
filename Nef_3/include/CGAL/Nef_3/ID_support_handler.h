@@ -260,8 +260,6 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
 		      SHalfedge_const_handle se1) {
     if(!equal_not_opposite(se->circle(), se1->circle()))
        se1 = se1->twin();
-    CGAL_assertion(normalized(se->circle()) == 
-		   normalized(se1->circle()));
     se->set_index(se1->get_index());
     se->twin()->set_index(se1->twin()->get_index());
     CGAL_NEF_TRACEN("se " << se->source()->point()
