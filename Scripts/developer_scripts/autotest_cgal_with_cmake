@@ -380,6 +380,10 @@ setup_dirs()
 
   CGAL_BINARY_DIR_BASE=${CGAL_DIR}/cmake/platforms
 
+  if [ ! d "${CGAL_BINARY_DIR_BASE}" ]; then
+    mkdir "${CGAL_BINARY_DIR_BASE}"
+  fi
+  
   CGAL_RELEASE_DIR=`readlink "${CGAL_DIR}"`
   
   CGAL_RELEASE_ID=`basename "${CGAL_RELEASE_DIR}"`
