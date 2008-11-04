@@ -1655,7 +1655,6 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.eps -text svneol=unset#applic
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
-HalfedgeDS/examples/HalfedgeDS/CMakeLists.txt -text
 HalfedgeDS/examples/HalfedgeDS/hds_prog_default_with_ccb.cpp -text
 HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
 Installation/CGALConfig_binary.cmake.in -text
