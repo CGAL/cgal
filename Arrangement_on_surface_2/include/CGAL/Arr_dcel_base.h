@@ -798,10 +798,13 @@ private:
 
   Face               *p_f;    // The face the contains the CCB in its interior.
   Outer_ccb_iterator  iter;   // The outer CCB identifier.
+#ifdef _GLIBCXX_DEBUG
   bool copy_iter;
+#endif
 
 public:
 
+#ifdef _GLIBCXX_DEBUG
   /*! Default constructor. */
   Arr_outer_ccb () :
     p_f (NULL), copy_iter(true)
@@ -815,12 +818,18 @@ public:
 
   /*! Copy constructor. */
   Arr_outer_ccb (const Arr_outer_ccb& other )
-    : p_f (other.p_f)
+    : p_f (other.p_f), copy_iter(true)
   {
     if(other.copy_iter) {
       iter = other.iter;
     }
   }
+#else
+  /*! Default constructor. */
+  Arr_outer_ccb () :
+    p_f (NULL)
+  {}
+#endif
 
   /*! Get a halfedge along the component (const version). */
   const Halfedge* halfedge () const
@@ -897,10 +906,13 @@ private:
 
   Face               *p_f;    // The face the contains the CCB in its interior.
   Inner_ccb_iterator  iter;   // The inner CCB identifier.
+#ifdef _GLIBCXX_DEBUG
   bool copy_iter;
+#endif
 
 public:
 
+#ifdef _GLIBCXX_DEBUG
   /*! Default constructor. */
   Arr_inner_ccb () :
     p_f (NULL), copy_iter(true)
@@ -914,12 +926,18 @@ public:
 
   /*! Copy constructor. */
   Arr_inner_ccb (const Arr_inner_ccb& other )
-    : p_f (other.p_f)
+    : p_f (other.p_f), copy_iter(true)
   {
     if(other.copy_iter) {
       iter = other.iter;
     }
   }
+#else
+  /*! Default constructor. */
+  Arr_inner_ccb () :
+    p_f (NULL)
+  {}
+#endif
 
   /*! Get a halfedge along the component (const version). */
   const Halfedge* halfedge () const
@@ -1261,8 +1279,11 @@ public:
   Outer_ccb* new_outer_ccb ()
   {
     Outer_ccb  *oc = out_ccb_alloc.allocate (1);
-    
+#ifdef _GLIBCXX_DEBUG
     out_ccb_alloc.construct (oc, Outer_ccb(false));
+#else
+    out_ccb_alloc.construct (oc, Outer_ccb());
+#endif
     out_ccbs.push_back (*oc);
     return (oc);
   }
@@ -1272,7 +1293,11 @@ public:
   {
     Inner_ccb  *ic = in_ccb_alloc.allocate (1);
     
+#ifdef _GLIBCXX_DEBUG
     in_ccb_alloc.construct (ic, Inner_ccb(false));
+#else
+    in_ccb_alloc.construct (ic, Inner_ccb());
+#endif
     in_ccbs.push_back (*ic);
     return (ic);
   }
