@@ -5,6 +5,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Random.h>
+#include <cmath>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -25,7 +26,7 @@ generate_sparse_random_polynomial(CGAL::Random random, int max_degree = 6){
     int number_of_variables = PT::d;
     double mdp = max_degree+1;
     int number_of_coeffs = 
-        (CGAL::max)(number_of_variables * (int)ceil(log(mdp))+1,100);
+        (CGAL::max)(number_of_variables * (int)std::ceil(std::log(mdp))+1,100);
     
     Polynomial_d result; 
     for(int i = 0; i < number_of_coeffs; i++){

@@ -22,6 +22,7 @@
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/ipower.h>
 #include <CGAL/Random.h>
+#include <cmath>
 
 static CGAL::Random my_rnd(346); // some seed 
 
@@ -51,8 +52,9 @@ generate_sparse_random_polynomial(int max_degree = 10){
 
   int range = 20;
   int number_of_variables = PT::d;
+  double md = max_degree+1;
   int number_of_coeffs = 
-    CGAL::min(number_of_variables * (int)ceil(log(max_degree+1))+1,4);
+    (CGAL::min)(number_of_variables * (int)std::ceil(std::log(md))+1,4);
     
   Polynomial_d result; 
   for(int i = 0; i < number_of_coeffs; i++){
