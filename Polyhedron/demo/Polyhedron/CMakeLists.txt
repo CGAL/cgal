@@ -45,17 +45,13 @@ if(QT_FOUND)
   find_package(QGLViewer QUIET )
 endif(QT_FOUND)
 
-# Find TAUCS (optionnal)
-find_package(TAUCS QUIET)
+# Link with BLAS, LAPACK and TAUCS (optional)
+include( CGAL_UseTAUCS )
+if (NOT TAUCS_FOUND)
+  message(STATUS "warning: TAUCS is not found. parameterization will not be available.")
+endif(TAUCS_FOUND)
 
 if(CGAL_Qt4_FOUND AND Boost_FOUND AND Boost_THREAD_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
-
-  if(TAUCS_FOUND)
-    include_directories( ${TAUCS_INCLUDE_DIR} )
-    add_definitions(-DCGAL_TAUCS_ENABLED)
-  else(TAUCS_FOUND)
-    message(STATUS "warning: TAUCS is not found. parametrization will not be available.")
-  endif(TAUCS_FOUND)
 
   qt4_wrap_ui( UI_FILES MainWindow.ui )
 
@@ -116,18 +112,6 @@ if(CGAL_Qt4_FOUND AND Boost_FOUND AND Boost_THREAD_FOUND AND QT_FOUND AND OPENGL
 
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
-
-  if(TAUCS_FOUND)
-    # Link with TAUCS
-    link_directories(Polyhedron_3 ${TAUCS_LIBRARIES_DIR})
-    target_link_libraries(Polyhedron_3 ${TAUCS_LIBRARIES})
-  endif(TAUCS_FOUND)
-
-  # Blas and Lapack, under Linux
-  if( NOT CGAL_AUTO_LINK_ENABLED )
-    add_definitions( -DCGAL_USE_F2C )
-    target_link_libraries( Polyhedron_3 lapack blas )
-  endif()
 
 else (CGAL_Qt4_FOUND AND Boost_FOUND AND Boost_THREAD_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 

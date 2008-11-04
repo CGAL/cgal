@@ -15,7 +15,7 @@ namespace Ui {
 
 #include "Polyhedron_type_fwd.h"
 
-class MainWindow : 
+class MainWindow :
   public CGAL::Qt::DemosMainWindow
 {
   Q_OBJECT
@@ -58,7 +58,7 @@ protected slots:
   void on_actionDCP_triggered();
 
 	// save selected polyhedron as...
-	void on_actionSaveAs_triggered(); 
+	void on_actionSaveAs_triggered();
 
   // defined in MainWindow_simplify.cpp
   void on_actionSimplify_triggered();
@@ -100,7 +100,7 @@ protected:
   // defined in MainWindow_boolean_operations.cpp
   void boolean_operation(const Boolean_operation operation);
 
-#ifdef CGAL_TAUCS_ENABLED
+#ifdef CGAL_USE_TAUCS
   enum  Parameterization_method  { PARAM_MVC,
                                    PARAM_DCP};
   // defined in MainWindow_parameterization.cpp
