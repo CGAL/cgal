@@ -1680,8 +1680,6 @@ Installation/cmake/modules/CGAL_UseBoostProgramOptions.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CreateSingleSourceCGALProgram.cmake -text
-Installation/cmake/modules/CreateSingleSourceCGALQt3Program.cmake -text
-Installation/cmake/modules/CreateSingleSourceCGALQt4Program.cmake -text
 Installation/cmake/modules/FindBLAS.cmake -text
 Installation/cmake/modules/FindBoost.cmake -text
 Installation/cmake/modules/FindCGAL_CORE.cmake -text

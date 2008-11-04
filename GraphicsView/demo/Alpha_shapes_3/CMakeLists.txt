@@ -26,7 +26,6 @@ find_package(QGLViewer QUIET)
 if ( CGAL_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   include(${QT_USE_FILE})
-  include(CreateSingleSourceCGALQt4Program)
 
   include_directories (${QGLVIEWER_INCLUDE_DIR})
   include_directories (BEFORE ../../include)
