@@ -25,6 +25,8 @@
 #include <boost/none.hpp>
 
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/Arr_overlay_2.h>
+#include <CGAL/Arr_default_overlay_traits.h>
 
 // replace point location strategy
 #include <CGAL/Arr_naive_point_location.h>
@@ -42,6 +44,9 @@ public:
     //! this instance's first template parameter
     typedef Arrangement_2_ Arrangement_2;
 
+    //! the class itself
+    typedef Construct_single_cell_2< Arrangement_2 > Self;
+
     //! geometric traits class
     typedef typename Arrangement_2::Geometry_traits_2 Geometry_traits_2;
 
@@ -54,25 +59,31 @@ public:
     //! type of curve
     typedef typename Geometry_traits_2::Curve_2 Curve_2;
 
-    // TODO remove tags?
-    // tags
-    struct Construction_method {};
+    // TODO replace point location strategy
+    //! type of point location strategy
+    typedef CGAL::Arr_naive_point_location< Arrangement_2 > Point_location;
     
-    struct Point_location : public Construction_method {};
-
-    struct Random_incremental : public Construction_method {};
-    
-    struct Red_blue_overlay : public Construction_method {};
-    
+    //!\name Constructors
+    //!@{
     
     template < class InputIterator >
     Construct_single_cell_2(InputIterator begin, InputIterator end) :
-        _m_cell_pl(boost::none),
-        _m_cell_ri(boost::none),
-        _m_cell_rbo(boost::none) {
-
+        _m_cell_handle_pl(boost::none),
+        _m_cell_handle_ri(boost::none),
+        _m_cell_handle_rbo(boost::none) {
+        
+        // TODO check that iteratortype is CGAL::Object
+        _m_objects.reserve(std::distance(begin, end));
+        
+#if !NDEBUG 
+        std::cout << "Created Construct_single_cell_2 instance for "
+                  << std::distance(begin, end) << " input objects."
+                  << std::endl;
+#endif
 
         for (InputIterator it = begin; it != end; it++) {
+            _m_objects.push_back(*it);
+            
             X_monotone_curve_2 curr_xcurve;
             Point_2 curr_point;
             Curve_2 curr_curve;
@@ -109,83 +120,222 @@ public:
         }
     }
     
+    //!@}
+    
+
+    //!\name cell localizations
+    //!@{
+
     //! returns the cell using point location
-    const Arrangement_2& cell_pl(const Point_2& pt) const {
-        if (!_m_cell_pl) {
-            Point_location pl;
-            this->_compute_cell(pt, pl);
+    CGAL::Object cell_pl(const Point_2& pt) const {
+        if (!_m_cell_handle_pl) {
+#if !NDEBUG
+            std::cout << "Computing cell with POINT-LOCATION-method ... " 
+                      << std::flush;
+#endif
+            // compute full arr
+            this->_m_full_arr = Arrangement_2();
+            _mt_full_arr.start();
+            CGAL::insert_empty(*_m_full_arr,
+                               _m_xcvs.begin(), _m_xcvs.end(),
+                               _m_pts.begin(), _m_pts.end()
+            );
+            _mt_full_arr.stop();
+            
+            std::cout << "The full_arr sizes:" << std::endl
+                      << "   V = " << _m_full_arr->number_of_vertices()
+                      << ",  E = " << _m_full_arr->number_of_edges() 
+                      << ",  F = " << _m_full_arr->number_of_faces() 
+                      << std::endl;
+            
+            // locate point
+            Point_location pl(*_m_full_arr);
+            _mt_pl.start();
+            _m_cell_handle_pl = pl.locate(pt);
+            _mt_pl.stop();
+            
+#if !NDEBUG
+            std::cout << "done."   << std::endl << std::endl;
+#endif
+            std::cout << "tFullArr: " << _mt_full_arr.time() 
+                      << " sec" << std::endl;
+            std::cout << "tPL     : " << _mt_pl.time() 
+                      << " sec" << std::endl;
         }
-        return *_m_cell_pl;
-    }
-
-    //! returns the cell using random incremental
-    const Arrangement_2& cell_ri(const Point_2& pt) const {
-        if (!_m_cell_ri) {
-            Random_incremental ric;
-            this->_compute_cell(pt, ric);
-        }
-        return *_m_cell_ri;
-    }
-
-    //! returns the cell using red-blue overlay
-    const Arrangement_2& cell_rbo(const Point_2& pt) const {
-        if (!_m_cell_rbo) {
-            Red_blue_overlay rbo;
-            this->_compute_cell(pt, rbo);
-        }
-        return *_m_cell_rbo;
+        return *_m_cell_handle_pl;
     }
     
-private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // compute cell 
-    void _compute_cell(const Point_2& pt, Point_location method) const {
-        
+    //! returns the cell using random incremental
+    CGAL::Object cell_ri(const Point_2& pt) const {
+        if (!_m_cell_handle_ri) {
 #if !NDEBUG
-        std::cout << "Computing cell with POINT-LOCATION-method ... " 
-                  << std::flush;
+            std::cout << "Computing cell with RANDOM_INCREMENTAL-method ... " 
+                      << std::flush;
 #endif
-        
-        // TODO replace point location strategy
-        typedef CGAL::Arr_naive_point_location< Arrangement_2 > PL;
-        
-        // compute full arr
-        this->_m_full_arr = Arrangement_2();
-        _mt_full_arr.start();
-        CGAL::insert_empty(*_m_full_arr,
-                           _m_xcvs.begin(), _m_xcvs.end(),
-                           _m_pts.begin(), _m_pts.end()
-        );
-        _mt_full_arr.stop();
-        
-        std::cout << "The full_arr sizes:" << std::endl
-            << "   V = " << _m_full_arr->number_of_vertices()
-            << ",  E = " << _m_full_arr->number_of_edges() 
-            << ",  F = " << _m_full_arr->number_of_faces() 
-            << std::endl;
+            // TODO replace
+            _m_cell_handle_ri = CGAL::Object();
+            
+#if !NDEBUG
+            std::cout << "done."   << std::endl;
+#endif
+        }
+        return *_m_cell_handle_ri;
+    }
 
-        // locate point
-        PL pl(*_m_full_arr);
-        _mt_pl.start();
-        CGAL::Object obj = pl.locate(pt);
-        _mt_pl.stop();
+    CGAL::Object cell_rbo_naive(const Point_2& pt) const {
+        if (!_m_cell_handle_rbo) {
+#if !NDEBUG
+            std::cout << "Computing cell with NAIVE-RED-BLUE-OVERLAY-method ... " 
+                      << std::flush;
+#endif
+            // TODO permute INPUT randomly!!
+            
+            if (_m_xcvs.size() + _m_pts.size() <= 4) {
+                
+#if !NDEBUG
+                std::cout << "Anchor" << std::endl;
+#endif
+                
+                _mt_rec_anchor.start();
+                CGAL::Object cell_handle = cell_pl(pt);
+                _mt_rec_anchor.stop();
+                
+                _m_cell_handle_rbo = cell_handle;
+                
+            } else {
+                
+#if !NDEBUG
+                std::cout << "Red-blue split" << std::endl;
+#endif
+                // split input into two sets
+                std::vector< X_monotone_curve_2 > xcvs[2];
+                typename 
+                    std::vector< X_monotone_curve_2 >::const_iterator 
+                    xcvs_mid =
+                    _m_xcvs.begin();
+                std::advance(xcvs_mid, (_m_xcvs.size() / 2));
+                xcvs[0].reserve(std::distance(_m_xcvs.begin(), xcvs_mid));
+                std::copy(_m_xcvs.begin(), xcvs_mid, 
+                          std::back_inserter(xcvs[0]));
+                xcvs[1].reserve(std::distance(xcvs_mid, _m_xcvs.end()));
+                std::copy(xcvs_mid, _m_xcvs.end(), 
+                          std::back_inserter(xcvs[1]));
+                
+                std::vector< Point_2 > pts[2];
+                typename std::vector< Point_2 >::const_iterator pts_mid =
+                    _m_pts.begin();
+                std::advance(pts_mid, (_m_pts.size() / 2));
+                pts[0].reserve(std::distance(_m_pts.begin(), pts_mid));
+                std::copy(_m_pts.begin(), pts_mid, std::back_inserter(pts[0]));
+                pts[1].reserve(std::distance(pts_mid, _m_pts.end()));
+                std::copy(pts_mid, _m_pts.end(), std::back_inserter(pts[1]));
+                
+                CGAL::Object cell_handle[2];
+                
+                Arrangement_2 cell[2];
+                
+                for (int i = 0; i < 2; i++) {
+                    
+                    std::list< CGAL::Object > objects;
+                    for (typename 
+                             std::vector< X_monotone_curve_2 >::const_iterator
+                             it = xcvs[i].begin(); it != xcvs[i].end(); it++) {
+                        objects.push_back(CGAL::make_object(*it));
+                    }
+                    for (typename std::vector< Point_2 >::const_iterator
+                             it = pts[i].begin(); it != pts[i].end(); it++) {
+                        objects.push_back(CGAL::make_object(*it));
+                    }
+                    
+                    Self recursive(objects.begin(), objects.end());
+                    
+                    cell_handle[i] = recursive.cell_rbo_naive(pt);
+
+                    cell_arr(cell_handle[i], cell[i]);
+                }
+                
+#if !NDEBUG
+                std::cout << "Start overlay ... " << std::flush;
+#endif
+
+                _mt_rec_overlay.start();
+                CGAL::Arr_default_overlay_traits< Arrangement_2 > ovltraits;
+
+                Arrangement_2 arr_purple;
+
+                CGAL::overlay(cell[0], cell[1], 
+                              arr_purple, ovltraits);
+                _mt_rec_overlay.stop();
+                
+                _m_arr_purple = arr_purple;
+                
+#if !NDEBUG
+                std::cout << "done." << std::endl;
+#endif
+                
+                _mt_pl.start();
+                Point_location pl_purple(*_m_arr_purple);
+                CGAL::Object cell_handle_pl_purple = pl_purple.locate(pt);
+                _mt_pl.stop();            
+                
+                _m_cell_handle_rbo = cell_handle_pl_purple;
+            }
+#if !NDEBUG
+            std::cout << "done." << std::endl;
+            std::cout << std::endl;
+#endif
+            std::cout << "tRecAnchor : " << _mt_rec_anchor.time() 
+                      << " sec" << std::endl;
+            std::cout << "tRecOverlay: " << _mt_rec_overlay.time() 
+                      << " sec" << std::endl;
+            std::cout << "tPLs       : " << _mt_pl.time() 
+                      << " sec" << std::endl;
+        }
+        return *_m_cell_handle_rbo;
+    }
+
+
+    //! returns the cell using red-blue overlay
+    CGAL::Object cell_rbo(const Point_2& pt) const {
+        if (!_m_cell_handle_rbo) {
+#if !NDEBUG
+            std::cout << "Computing cell with RED-BLUE-OVERLAY-method ... " 
+                      << std::flush;
+#endif
+            _m_cell_handle_rbo = CGAL::Object();
+            
+#if !NDEBUG
+            std::cout << "done."   << std::endl;
+#endif
+        }
+        return *_m_cell_handle_rbo;
+    }
+    
+    //!@}
+
+    //!\name Helpers
+    //!@{
+
+    /*!\brief 
+     * converts a cell-handle (face, edge, vertex) into its induced arrangement
+     */
+    void cell_arr(CGAL::Object cell_handle, Arrangement_2& cell) const {
         
         _mt_cell.start();
         
         std::list< Point_2 > cell_pts;
         std::list< X_monotone_curve_2 > cell_xcvs;
-
+        
         typename Arrangement_2::Vertex_const_handle vh;
         typename Arrangement_2::Halfedge_const_handle heh;
         typename Arrangement_2::Face_const_handle fh;
-        if (CGAL::assign(vh, obj)) {
+        if (CGAL::assign(vh, cell_handle)) {
             cell_pts.push_back(vh->point());
-        } else if (CGAL::assign(heh, obj)) {
+        } else if (CGAL::assign(heh, cell_handle)) {
             cell_xcvs.push_back(heh->curve());
         } else {
             CGAL_assertion_code(bool check =)
-                CGAL::assign(fh, obj);
+                CGAL::assign(fh, cell_handle);
             CGAL_assertion(check);
             
             // copy curves of CCBs of face
@@ -206,15 +356,16 @@ private:
                  ocb++) {
                 Ccb_halfedge_const_circulator he = *ocb;
                 if (!he->is_fictitious()) {
-                    cell_xcvs.push_back (he->curve());
+                    cell_xcvs.push_back(he->curve());
                 }
                 he++;
                 for (; he != *ocb; he++) {
                     if (!he->is_fictitious()) {
-                        cell_xcvs.push_back (he->curve());
+                        cell_xcvs.push_back(he->curve());
                     }
                 }
             }
+            
             for (Inner_ccb_const_iterator icb = fh->inner_ccbs_begin();
                  icb != fh->inner_ccbs_end(); 
                  icb++) {
@@ -238,91 +389,74 @@ private:
             }
         }
         
+        /*
         std::cout << "#cell-curves:" << cell_xcvs.size() << std::endl;
         std::cout << "#cell-points:" << cell_pts.size() << std::endl;
-        
-        Arrangement_2 cell;
-        
-        CGAL::non_intersecting_insert_empty(
+
+        for (typename 
+                 std::list< X_monotone_curve_2 >::const_iterator
+                 it = cell_xcvs.begin(); it != cell_xcvs.end(); it++) {
+            std::cout << "CURVE: " << *it << std::endl;
+            std::cout << "poly: " << it->curve().polynomial_2() << std::endl;
+            
+        }
+        */
+
+        CGAL::set_pretty_mode(std::cerr);
+        //CGAL::non_intersecting_insert_empty(
+        CGAL::insert_empty(
                 cell, 
                 cell_xcvs.begin(), cell_xcvs.end(),
                 cell_pts.begin(), cell_pts.end()
         );
         
         _mt_cell.stop();
-
-        _m_cell_pl = cell;
         
-#if !NDEBUG
-        std::cout << "done."   << std::endl;
-#endif
-        std::cout << "tFullArr: " << _mt_full_arr.time() 
-                  << " sec" << std::endl;
-        std::cout << "tPl     : " << _mt_pl.time() 
-                  << " sec" << std::endl;
         std::cout << "tCell   : " << _mt_cell.time() 
                   << " sec" << std::endl;
-        
     }
 
-    void _compute_cell(const Point_2& pt, Random_incremental method) const {
-        
-#if !NDEBUG
-        std::cout << "Computing cell with RANDOM_INCREMENTAL-method ... " 
-                  << std::flush;
-#endif
-        _m_cell_ri = Arrangement_2();
+    //!@}
 
-#if !NDEBUG
-        std::cout << "done."   << std::endl;
-#endif
-        
-    }
-
-    void _compute_cell(const Point_2& pt, Red_blue_overlay method) const {
-        
-#if !NDEBUG
-        std::cout << "Computing cell with RED-BLUE-OVERLAY-method ... " 
-                  << std::flush;
-#endif
-        _m_cell_rbo = Arrangement_2();
-
-#if !NDEBUG
-        std::cout << "done."   << std::endl;
-#endif
-        
-    }
+    
+private:
 
     //////////////////////////////////////////////////////////////////////////
     // members
-    //! construction
-    Construction_method _m_method;
+
+    //! input objects
+    std::vector< CGAL::Object > _m_objects;
     
     //! input curves
-    std::list< X_monotone_curve_2 > _m_xcvs;
+    std::vector< X_monotone_curve_2 > _m_xcvs;
 
     //! input points
-    std::list< Point_2 > _m_pts;
+    std::vector< Point_2 > _m_pts;
     
     //! the cell
-    mutable boost::optional< Arrangement_2 > _m_cell_pl; 
-    mutable boost::optional< Arrangement_2 > _m_cell_ri; 
-    mutable boost::optional< Arrangement_2 > _m_cell_rbo; 
+    mutable boost::optional< CGAL::Object > _m_cell_handle_pl; 
+    mutable boost::optional< CGAL::Object > _m_cell_handle_ri; 
+    mutable boost::optional< CGAL::Object > _m_cell_handle_rbo; 
 
     // helper for pl
     mutable boost::optional< Arrangement_2 > _m_full_arr; 
 
-    
+    // helper for rbo_naive
+    mutable boost::optional< Arrangement_2 > _m_arr_purple; 
+
     // timers
     mutable CGAL::Timer _mt_full_arr;
     mutable CGAL::Timer _mt_pl;
     mutable CGAL::Timer _mt_cell;
+
+    mutable CGAL::Timer _mt_rec_anchor;
+    mutable CGAL::Timer _mt_rec_overlay;
 };
 
 } // namespace CGALi
 
 /*!
- * Construct the single cell containing a point
+ * Construct the single cell containing a point using point location
  * \param point The reference point
  * \param begin An iterator for the first input object defining the full 
  *              arrangement
@@ -334,9 +468,11 @@ private:
  *      GeoTraits_2::Make_x_monotone_2()
  */
 template < typename InputIterator, typename GeoTraits_2 >
-void single_cell_2(typename GeoTraits_2::Point_2 point,
-                   InputIterator begin, InputIterator end,
-                   CGAL::Arrangement_2< GeoTraits_2 >& cell) {
+CGAL::Object single_cell_pl_2(
+        typename GeoTraits_2::Point_2 point,
+        InputIterator begin, InputIterator end,
+        CGAL::Arrangement_2< GeoTraits_2 >& cell) {
+    
     typedef GeoTraits_2                                       Geo_traits_2;
     typedef CGAL::Arrangement_2< Geo_traits_2 >               Arrangement_2;
     
@@ -347,12 +483,43 @@ void single_cell_2(typename GeoTraits_2::Point_2 point,
             begin, end
     );
 
-    // TODO write three functions!
-    cell = single_cell.cell_pl(point);
+     CGAL::Object cell_handle = single_cell.cell_pl(point);
+     single_cell.cell_arr(cell_handle, cell);
+    return cell_handle;
+ }
+
+
+/*!
+ * Construct the single cell containing a point using naive red-blue overlay
+ * \param point The reference point
+ * \param begin An iterator for the first input object defining the full 
+ *              arrangement
+ * \param end A past-the-end iterator for the input objects defining the
+ *            full arrangement
+ * \param cell Output: The cell of Arr(begin,end) containing point as 
+ *                     arrangement
+ * \pre The value-type of InputIterator is CGAL::Object which can be passed to
+ *      GeoTraits_2::Make_x_monotone_2()
+ */
+template < typename InputIterator, typename GeoTraits_2 >
+CGAL::Object single_cell_rbo_naive_2(
+        typename GeoTraits_2::Point_2 point,
+        InputIterator begin, InputIterator end,
+        CGAL::Arrangement_2< GeoTraits_2 >& cell) {
     
-    //cell = single_cell.cell_ri(point);
+    typedef GeoTraits_2                                       Geo_traits_2;
+    typedef CGAL::Arrangement_2< Geo_traits_2 >               Arrangement_2;
     
-    //cell = single_cell.cell_rbo(point);
+    typedef CGALi::Construct_single_cell_2< Arrangement_2 >   
+        Construct_single_cell_2;
+    
+    Construct_single_cell_2 single_cell(
+            begin, end
+    );
+    
+    CGAL::Object cell_handle = single_cell.cell_rbo_naive(point);
+    single_cell.cell_arr(cell_handle, cell);
+    return cell_handle;
 }
 
 
