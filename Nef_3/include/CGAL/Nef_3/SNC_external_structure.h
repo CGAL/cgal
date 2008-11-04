@@ -341,7 +341,6 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -369,7 +368,6 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -397,7 +395,6 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -425,7 +422,6 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -506,7 +502,6 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -527,7 +522,6 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -548,7 +542,6 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
@@ -569,7 +562,6 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<< -e2->vector());
-	//	CGAL_assertion(normalized(e1->vector())==normalized(-e2->vector()));
 	CGAL_assertion(e1->source()->point() != e2->source()->point());
 	CGAL_assertion(e1->mark()==e2->mark());
 	make_twins(e1,e2);
@@ -1162,13 +1154,11 @@ public:
 
       CGAL_assertion( cet->get_index() == ce->twin()->get_index());
       CGAL_assertion( cet->twin()->get_index() == ce->get_index());
-      CGAL_assertion( normalized(cet->circle()) == normalized(ce->circle().opposite()) ); 
       CGAL_assertion( cet->source()->twin() == ce->source()); 
       CGAL_For_all(ce,cee) { 
 	CGAL_NEF_TRACEN("circles " << cet->circle() << "   " << ce->circle() << 
 			" sources " << cet->target()->point() << 
 			"   " << ce->target()->point());
-	CGAL_assertion( normalized(cet->circle()) == normalized(ce->circle().opposite())); 
 	CGAL_assertion( cet->source()->twin() == ce->source()); 
 	CGAL_assertion(ce->mark()==cet->mark());
 	link_as_prev_next_pair(cet->twin(),ce);
