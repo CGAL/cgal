@@ -798,13 +798,29 @@ private:
 
   Face               *p_f;    // The face the contains the CCB in its interior.
   Outer_ccb_iterator  iter;   // The outer CCB identifier.
+  bool copy_iter;
 
 public:
 
   /*! Default constructor. */
   Arr_outer_ccb () :
-    p_f (NULL)
+    p_f (NULL), copy_iter(true)
   {}
+
+  Arr_outer_ccb (const bool b) :
+    p_f (NULL), copy_iter(b)
+  {
+    CGAL_assertion(b == false);
+  }
+
+  /*! Copy constructor. */
+  Arr_outer_ccb (const Arr_outer_ccb& other )
+    : p_f (other.p_f)
+  {
+    if(other.copy_iter) {
+      iter = other.iter;
+    }
+  }
 
   /*! Get a halfedge along the component (const version). */
   const Halfedge* halfedge () const
@@ -881,13 +897,29 @@ private:
 
   Face               *p_f;    // The face the contains the CCB in its interior.
   Inner_ccb_iterator  iter;   // The inner CCB identifier.
+  bool copy_iter;
 
 public:
 
   /*! Default constructor. */
   Arr_inner_ccb () :
-    p_f (NULL)
+    p_f (NULL), copy_iter(true)
   {}
+
+  Arr_inner_ccb (const bool b) :
+    p_f (NULL), copy_iter(b)
+  {
+    CGAL_assertion(b == false);
+  }
+
+  /*! Copy constructor. */
+  Arr_inner_ccb (const Arr_inner_ccb& other )
+    : p_f (other.p_f)
+  {
+    if(other.copy_iter) {
+      iter = other.iter;
+    }
+  }
 
   /*! Get a halfedge along the component (const version). */
   const Halfedge* halfedge () const
@@ -1230,7 +1262,7 @@ public:
   {
     Outer_ccb  *oc = out_ccb_alloc.allocate (1);
     
-    out_ccb_alloc.construct (oc, Outer_ccb());
+    out_ccb_alloc.construct (oc, Outer_ccb(false));
     out_ccbs.push_back (*oc);
     return (oc);
   }
@@ -1240,7 +1272,7 @@ public:
   {
     Inner_ccb  *ic = in_ccb_alloc.allocate (1);
     
-    in_ccb_alloc.construct (ic, Inner_ccb());
+    in_ccb_alloc.construct (ic, Inner_ccb(false));
     in_ccbs.push_back (*ic);
     return (ic);
   }
