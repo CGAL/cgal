@@ -153,7 +153,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sweep ()
 {
   CGAL_SL_DEBUG(
   {
-      CGAL_PRINT("Ordered sequence of initial events:\n");
+      CGAL_PRINT("Ordered sequence of " << m_queue->size() 
+                 <<  " initial events:\n");
       Event_queue_iterator eventIter1 = m_queue->begin();
       while (eventIter1 != m_queue->end()) {
           
@@ -666,6 +667,8 @@ _push_event (const Point_2& pt, Attribute type,
 {
   // Look for the point in the event queue.
   Event*    e;  
+  m_queueEventLess.set_parameter_space_in_x (ps_x);
+  m_queueEventLess.set_parameter_space_in_y (ps_y);  
   
   const std::pair<Event_queue_iterator, bool>& pair_res =
     m_queue->find_lower(pt, m_queueEventLess);
