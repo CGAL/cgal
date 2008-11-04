@@ -300,6 +300,70 @@ void test_swap(const Polynomial_traits_d&){
 }
 
 
+
+template <class Polynomial_traits_d>
+void test_permute(const Polynomial_traits_d&){
+  std::cerr << "start test_permutate "; std::cerr.flush();
+
+  const int d=4;
+  typedef typename Polynomial_traits_d::Innermost_coefficient_type ICoeff;
+  typedef typename Polynomial_traits_d:: template Rebind<ICoeff,d>::Other PT4;
+  typename PT4::Permute permutate;
+  typedef typename PT4::Shift Shift;
+  typedef typename PT4::Polynomial_d Polynomial_d;
+  typedef typename std::vector<int>::iterator Iterator;
+  
+  Polynomial_d x  = Shift()(Polynomial_d(1),1,0); 
+  Polynomial_d y  = Shift()(Polynomial_d(1),1,1); 
+  Polynomial_d z  = Shift()(Polynomial_d(1),1,2); 
+  Polynomial_d w1 = Shift()(Polynomial_d(1),1,3); 
+     
+  std::vector<int> change(d);
+  Iterator changeb = change.begin();
+  Iterator changee = change.end();
+  int lauf = 0;
+  for (Iterator itlauf = changeb; itlauf != changee; ++itlauf){
+    change[lauf]= lauf;
+    lauf++ ;
+  }
+  Polynomial_d zero (0);
+  Polynomial_d one (1); 
+  assert(permutate (zero,changeb,changee)==zero);
+  assert(permutate (one,changeb,changee)!=zero);
+	   
+  //1. test //
+  Polynomial_d Orig = y*z*z*w1*w1*w1;
+  Polynomial_d Orig3 = x*x*y*y + z*z*z*w1*w1*w1*w1*x + x*w1*w1;
+  change [0] = 1;change [1] = 3;change [2] = 0;change [3] = 2;  
+  Polynomial_d Res =  permutate  (Orig,changeb, changee);
+  Polynomial_d Res3 = permutate  (Orig3,changeb, changee);
+  assert(Res != Orig);
+  assert(Res3!= Orig3);  
+  change [0] = 2; change [1] = 0; change [2] = 3; change [3] = 1;
+  assert(permutate (Res,changeb,changee)==Orig);
+  assert(permutate (Res3,changeb,changee)==Orig3);
+  //2. test//
+  change [0] = 1; change [1] = 0; change [2] = 3; change [3] = 2;
+  Res =  permutate  (Orig,changeb, changee);
+  Res3 =  permutate  (Orig3,changeb, changee);
+  change [0] = 0; change [1] = 3; change [2] = 2; change [3] = 1;
+  Res =  permutate  (Res,changeb, changee);
+  Res3 =  permutate  (Res3,changeb, changee);
+  change [0] = 3; change [1] = 0; change [2] = 1; change [3] = 2;	
+  assert(permutate (Orig,changeb,changee)==Res);
+  assert(permutate (Orig3,changeb,changee)==Res3);	 
+  //3. test//
+  Polynomial_d Should = x*y*y*y*z*z;
+  Polynomial_d Should3 = w1*w1*x*x+z*z*z*y*y*y*y*w1+w1*y*y; 
+  change [0] = 3; change [1] = 0; change [2] = 2; change [3] = 1;
+  assert(permutate (Orig,changeb,changee)==Should);
+  assert(permutate (Orig3,changeb,changee)==Should3);
+
+  std::cerr << " ok "<< std::endl;    
+}
+
+
+
 template <class Polynomial_traits_d>
 void test_move(const Polynomial_traits_d&){
   std::cerr << "start test_move "; std::cerr.flush();
@@ -1610,6 +1674,11 @@ void test_multiple_dimensions() {
     BOOST_STATIC_ASSERT((PT::d == dimension));
     test_polynomial_traits_d(PT());
   }   
+  {
+  	typedef CGAL::Polynomial< InnermostCoefficient_type > Polynomial_1;
+  	typedef CGAL::Polynomial_traits_d<Polynomial_1> PT; 
+  	test_permute(PT());
+  }
 } 
 
 template < typename AK>
