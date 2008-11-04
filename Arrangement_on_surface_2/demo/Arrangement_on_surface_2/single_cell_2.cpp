@@ -24,7 +24,7 @@
 //#define CKvA_DEBUG_PRINT_CERR 1
 
 #ifndef CGAL_USE_ACK_2 
-#define CGAL_USE_ACK_2 1
+#define CGAL_USE_ACK_2 0
 #endif
 
 #if CGAL_USE_ACK_2
@@ -51,7 +51,11 @@
 #include <CGAL/Algebraic_curve_kernel_2_generator.h>
 #include <CGAL/Curved_kernel_via_analysis_2.h> // traits for Arr_2
 #else
-
+#include <CGAL/Arr_linear_traits_2.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/function_objects.h>
+#include <CGAL/Join_input_iterator.h>
+#include <CGAL/copy_n.h>
 #endif
 
 #include <CGAL/Arr_single_cell_2.h>
@@ -59,14 +63,17 @@
 #if !defined(MWA_NO_UI)
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_Curve_renderer_2.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 
 #include <qapplication.h>
 #include <qmainwindow.h>
 
 #if CGAL_USE_ACK_2
+#include <CGAL/IO/Qt_widget_Curve_renderer_2.h>
 #include <CGAL/IO/Fig_stream_Curve_renderer_2.h>
+#else
+#include <CGAL/IO/Qt_widget_Linear_object_2.h>
+#include <CGAL/IO/Fig_stream.h>
 #endif
 #endif
 
@@ -75,14 +82,11 @@ namespace po = boost::program_options;
 // ---------------------------------------------------------------------------
 // typedefs
 
-#if CGAL_USE_ACK_2
 typedef CGAL::Arithmetic_kernel                       AK;
-typedef AK::Integer                                   Integer;
 typedef AK::Rational                                  Rational;
-typedef AK::Field_with_sqrt                           Field_with_sqrt;
 
-typedef boost::numeric::interval<Field_with_sqrt>     Interval;
-
+#if CGAL_USE_ACK_2
+typedef AK::Integer                                   Integer;
 typedef Integer                                       Coefficient;
 typedef CGAL::Algebraic_curve_kernel_2_generator<Coefficient>::
 Algebraic_curve_kernel_with_qir_and_bitstream_2       ACK_2;
@@ -92,8 +96,10 @@ typedef ACK_2::Polynomial_2                           Polynomial_2;
 typedef CGAL::Curved_kernel_via_analysis_2< ACK_2 >   CKvA_2;
 typedef CKvA_2 Geo_traits_2;
 #else
-
-// typedef ... Geo_traits_2;
+typedef CGAL::Cartesian< Rational >                   K2;
+typedef CGAL::Arr_linear_traits_2< K2 >               Geo_traits_2;
+typedef K2::Segment_2                                 Segment;
+typedef K2::Point_2                                   Point;
 #endif
 
 typedef Geo_traits_2::Point_2                         Point_2;
@@ -143,7 +149,7 @@ void draw_arr(CGAL::Qt_widget &widget, const Arr& arr,
     for (eit = arr.halfedges_begin(); eit != arr.halfedges_end(); ++eit) {
         widget << eit->curve();
         if (fig_stream.is_open()) {
-            fig_stream << eit->curve();
+            //fig_stream << eit->curve();
         }
     }
     
@@ -152,7 +158,7 @@ void draw_arr(CGAL::Qt_widget &widget, const Arr& arr,
     for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
         widget << vit->point();
         if (fig_stream.is_open()) {
-            fig_stream << vit->point();
+            //fig_stream << vit->point();
         }
     }
 }
@@ -302,9 +308,13 @@ random_dense_bivariate_polynomial(int degree, int bitsize) {
 
 int main( int argc, char **argv ) {
     
+#if CGAL_USE_ACK_2
     int rnd_num = 0;
     int rnd_degree = 1;
     int rnd_bitsize = 1;
+#else
+    int rnd_segments = 0;
+#endif
 
     // Declare the supported options.
     po::options_description generic("Generic options");
@@ -314,18 +324,23 @@ int main( int argc, char **argv ) {
          po::value<std::string>(&out_file), 
          "write data to file")
         ("method,M", 
-         po::value<std::string>(&method), 
+         po::value<std::string>(&method)->default_value("pl"), 
          "method - valid options are: pl, rbo_naive");
     
-#if CGAL_USE_ACK_2
+
     po::options_description random("Random input:");
     random.add_options()
+#if CGAL_USE_ACK_2
         ("random,R",  po::value<int>(&rnd_num), "number of random curves")
         ("degree,D",  po::value<int>(&rnd_degree), "degree of curves")
         ("bitsize,B",  po::value<int>(&rnd_bitsize), 
-         "bitsize of coefficients");
+         "bitsize of coefficients")
+#else 
+        ("random,R",  po::value<int>(&rnd_segments), 
+         "number of random segments")
 #endif
-
+        ;
+    
 #if !defined(MWA_NO_UI)
     po::options_description gfx("Graphics options");
     gfx.add_options()
@@ -349,27 +364,21 @@ int main( int argc, char **argv ) {
         
     po::options_description config_file_options;
     config_file_options.add(generic).add(hidden);
-#if CGAL_USE_ACK_2
     config_file_options.add(random);
-#endif
 #if !defined(MWA_NO_UI)
     config_file_options.add(gfx);
 #endif
 
     po::options_description cmdline_options;
     cmdline_options.add(generic).add(hidden);
-#if CGAL_USE_ACK_2
     cmdline_options.add(random);
-#endif
 #if !defined(MWA_NO_UI)
     cmdline_options.add(gfx);
 #endif
     
     po::options_description visible("Usage: single_cell [other options] obinput-file [[input-file]]\n\nAllowed options");
     visible.add(generic);
-#if CGAL_USE_ACK_2
     visible.add(random);
-#endif
 #if !defined(MWA_NO_UI)
     visible.add(gfx);
 #endif
@@ -466,6 +475,47 @@ int main( int argc, char **argv ) {
           out << "P " << curve.polynomial_2() << std::endl;
       }
   }
+#else
+
+
+  for (std::vector< std::string >::const_iterator it = input_files.begin();
+       it != input_files.end(); it++) {
+      std::cout << "Reading curve file '" << *it 
+                << "'" << std::endl;
+      // TODO read linear objects!  
+  }
+
+  if (rnd_segments > 0) {
+
+      std::vector< Segment > segs;
+      segs.reserve(rnd_segments);
+      
+      typedef CGAL::Creator_uniform_2<double,Point>  Pt_creator;
+      
+      typedef CGAL::Random_points_on_segment_2<Point, Pt_creator>  P1;
+      P1 p1(Point(-100,-100), Point(100,-100));
+      P1 p2(Point(-100,100), Point(100,100));
+
+      //typedef CGAL::Random_points_on_circle_2<Point, Pt_creator>  P2;
+      //P2 p2( 250);
+      
+      // Create 200 segments.
+      typedef CGAL::Creator_uniform_2< Point, Segment> Seg_creator;
+      typedef CGAL::Join_input_iterator_2< P1, P1, Seg_creator> Seg_iterator;
+      Seg_iterator g( p1, p2);
+      CGAL::copy_n(g, rnd_segments, std::back_inserter(segs));
+      
+      for (std::vector< Segment >::iterator it = segs.begin();
+           it != segs.end(); it++) {
+          input_objects.push_back(CGAL::make_object(Curve_2(*it)));
+      }
+  }
+
+
+  // TODO read point!
+  point = Point_2(0,0);
+  
+
 #endif
   
   std::cout << std::endl;
@@ -526,6 +576,6 @@ int main( int argc, char **argv ) {
   // done
 
   return app.exec();
-
-}
+  
+  }
 // EOF
