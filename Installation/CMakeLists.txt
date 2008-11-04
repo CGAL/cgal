@@ -56,11 +56,13 @@ message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
 
 set( CGAL_BUILDING_LIBS TRUE )
 
-set( CGAL_MODULES_REL_DIR lib/CGAL-3.4 )
+set( CGAL_VERSION_DIR     CGAL-3.4 )
+set( CGAL_MODULES_REL_DIR lib/${CGAL_VERSION_DIR} )
 set( CGAL_MODULES_DIR     ${CMAKE_SOURCE_DIR}/${CGAL_MODULES_REL_DIR} )
 
 # Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CGAL_CMAKE_MODULE_PATH ${CGAL_MODULES_DIR} )
+
 
 set(ORIGINAL_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} )
 
@@ -271,7 +273,7 @@ if ( CGAL_SOURCE_INSTALL )
 
   set ( CGAL_INSTALL_BIN_DIR "script"  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" )
   
-  set ( CGAL_INSTALL_CMAKE_DIR "lib/CGAL-${CGAL_VERSION}"  
+  set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_MODULES_REL_DIR}"  
         CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
       )
       
@@ -287,11 +289,11 @@ else()
         CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
       )
       
-  set ( CGAL_INSTALL_CMAKE_DIR "lib/CGAL-${CGAL_VERSION}"  
+  set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_MODULES_REL_DIR}"  
         CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
       )
       
-  set ( CGAL_INSTALL_DOC_DIR "share/doc/CGAL-${CGAL_VERSION}"  
+  set ( CGAL_INSTALL_DOC_DIR "share/doc/${CGAL_VERSION_DIR}"  
         CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
       )
 
@@ -381,8 +383,14 @@ install(DIRECTORY "${CMAKE_BINARY_DIR}/include/CGAL" DESTINATION ${CGAL_INSTALL_
 
 install(DIRECTORY scripts/ DESTINATION ${CGAL_INSTALL_BIN_DIR}    )
 
-install(DIRECTORY ${CGAL_MODULES_REL_DIR}/               DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
-install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake  DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+
+if ( NOT "${CMAKE_ROOT}" STREQUAL "" )
+  if ( EXISTS ${CMAKE_ROOT}/Modules )
+    install(FILES  ${CGAL_MODULES_REL_DIR}/FindCGAL.cmake DESTINATION ${CMAKE_ROOT}/Modules )
+  endif()
+endif()  
 
 if ( GMP_IN_AUXILIARY )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
