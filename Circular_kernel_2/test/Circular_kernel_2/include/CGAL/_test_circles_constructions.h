@@ -1002,7 +1002,7 @@ void _test_circle_construct(CK ck)
 	typename CK::Construct_circular_source_vertex_2()(llaa);
 	typename CK::Construct_circular_target_vertex_2()(llaa);
 	
-#ifdef CGAL_NO_DEPRECATED
+#ifndef CGAL_NO_DEPRECATED
 	// testing the deprecate stuffs
 	typename CK::Construct_supporting_circle_2()(ccaa);
 	typename CK::Construct_supporting_line_2()(llaa);
