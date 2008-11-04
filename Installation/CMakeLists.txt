@@ -18,36 +18,6 @@ endif()
 #--------------------------------------------------------------------------------------------------
 
 
-# Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
-set(CGAL_CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-
-set(ORIGINAL_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} )
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH} )
-
-# This allows else(), endif(), etc... (without repeating the expression)
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
-message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
-
-if ( NOT "${CGAL_REFERENCE_CACHE_DIR}" STREQUAL "" )
-  if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR} )
-    if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
-      message( STATUS "Loading reference cache from ${CGAL_REFERENCE_CACHE_DIR}" )
-      load_cache( ${CGAL_REFERENCE_CACHE_DIR} )
-    endif()
-  endif()
-endif()
-
-include(CGAL_Common)
-include(CGAL_GeneratorSpecificSettings)
-include(CGAL_CheckCXXFileRuns)
-
-mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
-
-message( STATUS "USING CMake version: ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" )
-message( STATUS "System: ${CMAKE_SYSTEM_NAME}" )
-
 # 
 # Read and parse CGAL version number from VERSION file
 #
@@ -85,6 +55,42 @@ message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
 
 set( CGAL_BUILDING_LIBS TRUE )
+
+set( CGAL_MODULES_REL_DIR lib/CGAL-3.4 )
+set( CGAL_MODULES_DIR     ${CMAKE_SOURCE_DIR}/${CGAL_MODULES_REL_DIR} )
+
+# Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+set(CGAL_CMAKE_MODULE_PATH ${CGAL_MODULES_DIR} )
+
+set(ORIGINAL_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} )
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH} )
+
+# This allows else(), endif(), etc... (without repeating the expression)
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
+message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
+
+if ( RUNNING_CGAL_AUTO_TEST )
+  if ( NOT "${CGAL_REFERENCE_CACHE_DIR}" STREQUAL "" )
+    if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR} )
+      if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
+        message( STATUS "Loading reference cache from ${CGAL_REFERENCE_CACHE_DIR}" )
+        load_cache( ${CGAL_REFERENCE_CACHE_DIR} )
+      endif()
+    endif()
+  endif()
+endif()
+
+include(CGAL_Common)
+include(CGAL_GeneratorSpecificSettings)
+include(CGAL_CheckCXXFileRuns)
+
+mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
+
+message( STATUS "USING CMake version: ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" )
+message( STATUS "System: ${CMAKE_SYSTEM_NAME}" )
+
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -265,7 +271,7 @@ if ( CGAL_SOURCE_INSTALL )
 
   set ( CGAL_INSTALL_BIN_DIR "script"  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" )
   
-  set ( CGAL_INSTALL_CMAKE_DIR "cmake/modules"  
+  set ( CGAL_INSTALL_CMAKE_DIR "lib/CGAL-${CGAL_VERSION}"  
         CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
       )
       
@@ -362,50 +368,47 @@ create_CGALconfig_files()
 #
 #--------------------------------------------------------------------------------------------------
 
-if ( WITH_INSTALL )
+# WARNING: Use only relative paths; full paths break CPack!
+# DESTINATION option is mandatory; skipping it breaks CPack!
 
-  # WARNING: Use only relative paths; full paths break CPack!
-  # DESTINATION option is mandatory; skipping it breaks CPack!
-
-  install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32.txt LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL README "VERSION"  
-          DESTINATION ${CGAL_INSTALL_DOC_DIR}
-         )
+install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32.txt LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL README "VERSION"  
+        DESTINATION ${CGAL_INSTALL_DOC_DIR}
+        )
 
 
-  install(DIRECTORY include/CGAL                       DESTINATION ${CGAL_INSTALL_INC_DIR} )
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/include/CGAL" DESTINATION ${CGAL_INSTALL_INC_DIR} )
+install(DIRECTORY include/CGAL                       DESTINATION ${CGAL_INSTALL_INC_DIR} )
+install(DIRECTORY "${CMAKE_BINARY_DIR}/include/CGAL" DESTINATION ${CGAL_INSTALL_INC_DIR} )
 
-  install(DIRECTORY scripts/ DESTINATION ${CGAL_INSTALL_BIN_DIR}    )
+install(DIRECTORY scripts/ DESTINATION ${CGAL_INSTALL_BIN_DIR}    )
 
-  install(DIRECTORY cmake/modules/           DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
-  install(FILES cmake/modules/UseCGAL.cmake  DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+install(DIRECTORY ${CGAL_MODULES_REL_DIR}/               DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake  DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
-  if ( GMP_IN_AUXILIARY )
-    install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
-    install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-  endif()
-
-  if ( TAUCS_IN_AUXILIARY )
-    install(DIRECTORY auxiliary/taucs/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
-    install(DIRECTORY auxiliary/tacus/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-  endif()
-
-  if ( ZLIB_IN_AUXILIARY )
-    install(DIRECTORY auxiliary/zlib/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
-    install(DIRECTORY auxiliary/zlib/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-  endif()
-
-
-  if ( CGAL_SOURCE_INSTALL )
-    install(FILES ${CMAKE_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-    install(FILES     CMakeLists.txt                         DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-    install(DIRECTORY auxiliary                              DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-    install(DIRECTORY src                                    DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-  else()
-    install(FILES ${CMAKE_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
-  endif()
-  
+if ( GMP_IN_AUXILIARY )
+  install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
+  install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
 endif()
+
+if ( TAUCS_IN_AUXILIARY )
+  install(DIRECTORY auxiliary/taucs/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
+  install(DIRECTORY auxiliary/tacus/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+endif()
+
+if ( ZLIB_IN_AUXILIARY )
+  install(DIRECTORY auxiliary/zlib/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
+  install(DIRECTORY auxiliary/zlib/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+endif()
+
+
+if ( CGAL_SOURCE_INSTALL )
+  install(FILES ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+  install(FILES     CMakeLists.txt                          DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+  install(DIRECTORY auxiliary                               DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+  install(DIRECTORY src                                     DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+else()
+  install(FILES ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+endif()
+
 
 
 #--------------------------------------------------------------------------------------------------

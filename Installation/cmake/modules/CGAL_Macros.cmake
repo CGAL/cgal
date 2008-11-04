@@ -116,12 +116,12 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   macro( create_CGALconfig_files )
     # FindCGAL and UseCGAL are platform specific so they are generated and stored in the binary folder.
-    configure_file(${CMAKE_SOURCE_DIR}/CGALConfig_binary.cmake.in  ${CMAKE_BINARY_DIR}/CGALConfig.cmake       @ONLY IMMEDIATE)
+    configure_file(${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in  ${CMAKE_BINARY_DIR}/CGALConfig.cmake       @ONLY IMMEDIATE)
     
     if ( SOURCE_INSTALL )
-      configure_file(${CMAKE_SOURCE_DIR}/CGALConfig_install.cmake.source.in ${CMAKE_BINARY_DIR}/cmake/CGALConfig.cmake @ONLY IMMEDIATE)
+      configure_file(${CGAL_MODULES_DIR}/CGALConfig_install.cmake.source.in ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake @ONLY IMMEDIATE)
     else()
-      configure_file(${CMAKE_SOURCE_DIR}/CGALConfig_install.cmake.fhs.in    ${CMAKE_BINARY_DIR}/cmake/CGALConfig.cmake @ONLY IMMEDIATE)
+      configure_file(${CGAL_MODULES_DIR}/CGALConfig_install.cmake.fhs.in    ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake @ONLY IMMEDIATE)
     endif()
   endmacro()
   

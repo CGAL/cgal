@@ -1657,11 +1657,11 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#applic
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
 HalfedgeDS/examples/HalfedgeDS/hds_prog_default_with_ccb.cpp -text
 HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
-Installation/CGALConfig_binary.cmake.in -text
-Installation/CGALConfig_install.cmake.fhs.in -text
-Installation/CGALConfig_install.cmake.source.in -text
 Installation/INSTALL_via_cmake -text
 Installation/LICENSE.FREE_USE -text
+Installation/cmake/modules/CGALConfig_binary.cmake.in -text
+Installation/cmake/modules/CGALConfig_install.cmake.fhs.in -text
+Installation/cmake/modules/CGALConfig_install.cmake.source.in -text
 Installation/cmake/modules/CGAL_CheckCXXFileRuns.cmake -text
 Installation/cmake/modules/CGAL_Common.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgram.cmake -text
@@ -1682,6 +1682,7 @@ Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/FindBLAS.cmake -text
 Installation/cmake/modules/FindBoost.cmake -text
+Installation/cmake/modules/FindCGAL.cmake -text
 Installation/cmake/modules/FindCGAL_CORE.cmake -text
 Installation/cmake/modules/FindCORE.cmake -text
 Installation/cmake/modules/FindF2C.cmake -text
