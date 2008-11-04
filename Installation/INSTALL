@@ -34,7 +34,7 @@ prerequisites are:
 - MPFR (>= 2.2.1), http://www.mpfr.org/
 
 The following prerequisites are recommended, as they are required for the
-visialization functionality of CGAL:
+visualization functionality of CGAL:
 
 - Qt 3.x (>= 3.3), http://trolltech.com/products/
 - Qt 4.x (>= 4.2), http://trolltech.com/products/
