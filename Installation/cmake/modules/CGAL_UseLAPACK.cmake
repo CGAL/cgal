@@ -19,8 +19,14 @@
       add_definitions( "-DCGAL_USE_F2C" )
     endif()
 
+    if ( BUILD_SHARED_LIBS )
+      uniquely_add_flags( CMAKE_SHARED_LINKER_FLAGS ${LAPACK_LINKER_FLAGS} )
+    else()
+      uniquely_add_flags( CMAKE_MODULE_LINKER_FLAGS ${LAPACK_LINKER_FLAGS} )
+    endif()
+
     link_directories( ${LAPACK_LIBRARIES_DIR} )
-    link_libraries( ${LAPACK_LIBRARIES} ${LAPACK_LINKER_FLAGS} )
+    link_libraries  ( ${LAPACK_LIBRARIES}     )
 
     # LAPACK requires BLAS
     include( CGAL_UseBLAS )
