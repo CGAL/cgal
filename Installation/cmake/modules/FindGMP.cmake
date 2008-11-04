@@ -59,7 +59,3 @@ else()
   find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_INCLUDE_DIR GMP_LIBRARIES_DIR)
   
 endif()
-
-#mark_as_advanced(GMP_INCLUDE_DIR)
-#mark_as_advanced(GMP_LIBRARIES)
-#mark_as_advanced(GMP_LIBRARIES_DIR)
