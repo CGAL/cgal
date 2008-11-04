@@ -24,6 +24,8 @@
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
 
+#include <CGAL/Timer.h>
+
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
@@ -99,12 +101,16 @@ public:
             
             if (CGAL::assign(curr_curve, *it)) {
                 std::list< CGAL::Object > tmp;
-                typename Geometry_traits_2::Make_x_monotone_2(
-                        Geometry_traits_2::instance().
-                        make_x_monotone_2_object()
-                )(
-                        curr_curve, std::back_inserter(tmp)
-                );
+#if CGAL_USE_ACK_2
+                typename Geometry_traits_2::Make_x_monotone_2
+                    make_x_monotone = 
+                    Geometry_traits_2::instance().make_x_monotone_2_object();
+#else
+                typename Geometry_traits_2::Make_x_monotone_2
+                    make_x_monotone;
+#endif
+                make_x_monotone(curr_curve, std::back_inserter(tmp));
+                
                 for (typename std::list< CGAL::Object >::const_iterator 
                          iit = tmp.begin();
                      iit != tmp.end(); iit++) {
