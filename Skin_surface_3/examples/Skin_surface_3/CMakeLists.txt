@@ -16,7 +16,7 @@ include( ${CGAL_USE_FILE} )
 
 if(CGAL_PDB_FOUND)
 
-  include( CreateSingleSourceCGALProgram )
+  include( CGAL_CreateSingleSourceCGALProgram )
 
   include_directories (BEFORE include)
 

@@ -37,7 +37,7 @@ if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
 
-  include( CreateSingleSourceCGALProgram )
+  include( CGAL_CreateSingleSourceCGALProgram )
 
   create_single_source_cgal_program( "endian.cpp" )
 

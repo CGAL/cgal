@@ -14,7 +14,7 @@ find_package(CGAL)
 if ( CGAL_FOUND )
 
   include(${CGAL_USE_FILE})
-  include(CreateSingleSourceCGALProgram)
+  include(CGAL_CreateSingleSourceCGALProgram)
 
   include_directories (BEFORE include)
 

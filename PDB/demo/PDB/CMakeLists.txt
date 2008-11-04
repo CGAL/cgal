@@ -21,7 +21,7 @@ if ( NOT CGAL_AUTO_LINK_ENABLED )
 link_libraries(${Boost_PROGRAM_OPTIONS_LIBRARY})
 endif ()
 
-include(CreateSingleSourceCGALProgram)
+include(CGAL_CreateSingleSourceCGALProgram)
 
 create_single_source_cgal_program( pdb_cat.cpp )
 create_single_source_cgal_program( pdb_echo.cpp )

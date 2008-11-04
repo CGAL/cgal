@@ -17,7 +17,7 @@ INCLUDE_DIRECTORIES ( BEFORE ./include )
 
 if (CGAL_PDB_FOUND )
 
-include(CreateSingleSourceCGALProgram)
+include(CGAL_CreateSingleSourceCGALProgram)
 
 create_single_source_cgal_program( check_bonds.cpp )
 create_single_source_cgal_program( check_heatom.cpp )

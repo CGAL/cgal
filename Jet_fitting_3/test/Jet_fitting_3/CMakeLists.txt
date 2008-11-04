@@ -18,7 +18,7 @@ if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
 
-  include( CreateSingleSourceCGALProgram )
+  include( CGAL_CreateSingleSourceCGALProgram )
 
   # Link with BLAS and LAPACK (required)
   include( CGAL_UseLAPACK )

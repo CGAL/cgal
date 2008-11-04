@@ -15,7 +15,7 @@ include( ${CGAL_USE_FILE} )
 
 if(CGAL_PDB_FOUND)
 
-  include( CreateSingleSourceCGALProgram )
+  include( CGAL_CreateSingleSourceCGALProgram )
   
   create_single_source_cgal_program( "extracting_geometry.cpp" )
 
