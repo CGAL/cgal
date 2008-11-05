@@ -18,6 +18,13 @@
 // Author(s)     : Eric Berberich     <ericb@post.tau.ac.il>
 
 
+// flags in this file:
+
+#ifndef CGAL_SINGLE_CELL_RI_NAIVE
+#define CGAL_SINGLE_CELL_RI_NAIVE 0
+#endif
+
+
 #ifndef CGAL_ARR_SINGLE_CELL_2_H
 #define CGAL_ARR_SINGLE_CELL_2_H
 
@@ -30,6 +37,9 @@
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 
+#include <CGAL/Arr_observer.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+
 // TASK select best point location strategy
 #include <CGAL/Arr_naive_point_location.h>
 
@@ -40,6 +50,227 @@
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
+
+/*!\brief
+ * class that observes a city-arrangement
+ * 
+ * Keeps eye on face- and edge-splits
+ * and updates internal structures wrt to given query point
+ */
+template < class Arrangement_2_ >
+struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
+    
+    //! this class template parameter
+    typedef Arrangement_2_ Arrangement_2;
+
+    //! base class
+    typedef CGAL::Arr_observer< Arrangement_2 > Base;
+    
+    //! geometric traits class
+    typedef typename Arrangement_2::Geometry_traits_2 Geometry_traits_2;
+    
+    //! traits adaptor
+    typedef Arr_traits_basic_adaptor_2< Geometry_traits_2 > Traits_adaptor_2;
+    
+    //! type of point
+    typedef typename Geometry_traits_2::Point_2 Point_2;
+    
+    //! type of x-monotone curve
+    typedef typename Geometry_traits_2::X_monotone_curve_2 
+    X_monotone_curve_2;
+    
+    //! type of curve
+    typedef typename Geometry_traits_2::Curve_2 Curve_2;
+    
+    typedef typename Arrangement_2::Vertex_const_handle 
+    Vertex_const_handle;
+    typedef typename Arrangement_2::Halfedge_const_handle 
+    Halfedge_const_handle;
+    typedef typename Arrangement_2::Face_const_handle Face_const_handle;
+    
+    typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
+    Halfedge_around_vertex_const_circulator;
+
+    typedef typename Arrangement_2::Vertex_handle            Vertex_handle;
+    typedef typename Arrangement_2::Halfedge_handle          Halfedge_handle;
+    typedef typename Arrangement_2::Face_handle              Face_handle;
+    
+    //!\name Constructors
+    //!@{
+    
+    //! default constructor from arr and point
+    RI_observer(Arrangement_2& arr, const Point_2& point) :
+        Base(arr),
+        _m_point(point) {
+        
+        // TODO determine initial _m_edge_handle
+        Vertex_const_handle 
+            vtr(Base::arrangement()->topology_traits()->top_right_vertex());
+        
+        Halfedge_around_vertex_const_circulator heh  = 
+            vtr->incident_halfedges();
+        heh++;
+        
+        CGAL_assertion_code(
+                Vertex_const_handle 
+                vtl(Base::arrangement()->topology_traits()->top_left_vertex())
+        );
+        CGAL_assertion(heh->source() == vtl);
+        
+        _m_halfedge_handle = heh->twin();
+        CGAL_assertion(
+                _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
+        );
+        
+        _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
+    }
+
+    //!@}
+    
+    //!\name Notifications
+    //!@{
+
+    /*!
+     * Notification before the splitting of a face into two.
+     * \param f A handle to the existing face.
+     * \param e The new edge whose insertion causes the face to split.
+     */
+    virtual void before_split_face (Face_handle /* f */,
+                                    Halfedge_handle e) 
+    {
+        typename Geometry_traits_2::Is_vertical_2 is_vertical;
+        typename Traits_adaptor_2::Is_in_x_range_2 is_in_x_range =
+            static_cast< Traits_adaptor_2* >
+            (Base::arrangement()->geometry_traits())->is_in_x_range_2_object();
+        
+        typename Geometry_traits_2::Compare_y_at_x_2 compare_y_at_x =
+            Base::arrangement()->geometry_traits()->compare_y_at_x_2_object();
+        
+        X_monotone_curve_2 cv = e->curve();
+        
+        if (!is_vertical(cv)) {
+            if (is_in_x_range(cv, _m_point)) {
+                CGAL::Comparison_result res = compare_y_at_x(_m_point, cv);
+                
+                if (res == CGAL::SMALLER) {
+                    typename Traits_adaptor_2::Compare_y_position_2 
+                        compare_y_pos =
+                        static_cast< Traits_adaptor_2* >
+                        (Base::arrangement()->geometry_traits())->
+                        compare_y_position_2_object();
+                    
+                    if (compare_y_pos(cv, _m_halfedge_handle->curve()) ==
+                        CGAL::SMALLER) {
+                        // new curve is below old curve
+                        // thus, face that contains point is restricted by this
+                        // edge - we only have to ensure the correct order
+                        _m_halfedge_handle = 
+                            ((e->direction() == CGAL::ARR_RIGHT_TO_LEFT) ?
+                             e : e->twin());
+                    }
+                } else if (res == CGAL::EQUAL) {
+                    // TODO on curve!!!!
+                }
+            } 
+        } else {
+            // TODO what if e->curve() is vertical
+        }
+        
+        // else no action is required
+    }
+    
+    /*!
+     * Notification after a face was split.
+     * \param f A handle to the face we have just split.
+     * \param new_f A handle to the new face that has been created.
+     * \param is_hole Whether the new face forms a hole inside f.
+     */
+    virtual void after_split_face (Face_handle /* f */,
+                                   Face_handle /* new_f */,
+                                   bool /* is_hole */)
+    {}
+    
+    
+    /*!
+     * Notification before the splitting of an edge into two.
+     * \param e A handle to one of the existing halfedges.
+     * \param v A vertex representing the split point.
+     * \param c1 The x-monotone curve to be associated with the first edge.
+     * \param c2 The x-monotone curve to be associated with the second edge.
+     */
+    virtual void before_split_edge (Halfedge_handle e,
+                                    Vertex_handle /* v */,
+                                    const X_monotone_curve_2& /* c1 */,
+                                    const X_monotone_curve_2& /* c2 */)
+    {
+        if (e == Base::arrangement()->non_const_handle(_m_halfedge_handle) ||
+            e->twin() == 
+            Base::arrangement()->non_const_handle(_m_halfedge_handle)) {
+            std::cout << "It's maybe required UPDATE _m_halfedge_handle"
+                      << std::endl;
+        }
+        
+    }
+    
+    /*!
+     * Notification after an edge was split.
+     * \param e1 A handle to one of the twin halfedges forming the first edge.
+     * \param e2 A handle to one of the twin halfedges forming the second edge.
+     */
+    virtual void after_split_edge (Halfedge_handle /* e1 */,
+                                   Halfedge_handle /* e2 */)
+    {}
+    
+    
+
+    /*!
+     * Notification before the splitting of a fictitious edge into two.
+     * \param e A handle to one of the existing halfedges.
+     * \param v A vertex representing the unbounded split point.
+     */
+    virtual void before_split_fictitious_edge (Halfedge_handle /* e */,
+                                               Vertex_handle /* v */)
+    {}
+    
+    /*!
+     * Notification after a fictitious edge was split.
+     * \param e1 A handle to one of the twin halfedges forming the first edge.
+     * \param e2 A handle to one of the twin halfedges forming the second edge.
+     */
+    virtual void after_split_fictitious_edge (Halfedge_handle /* e1 */,
+                                              Halfedge_handle /* e2 */)
+    {}
+
+    //!@}
+    
+
+
+    void on_update() {
+        CGAL_assertion(
+                _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
+        );
+        _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
+        
+        // else
+        // TODO update for on_vertex + on_edge
+    }
+    
+    CGAL::Object cell_handle() {
+        return _m_cell_handle;
+    }
+    
+private:
+    //! query point
+    Point_2 _m_point;
+    
+    //! halfedge "immediately above point"
+    mutable Halfedge_const_handle _m_halfedge_handle;
+    
+    //! cell handle to compute
+    CGAL::Object _m_cell_handle;
+};
+
+
 
 /*! \class Functor to compute single cell of point */
 template < class Arrangement_2_ >
@@ -142,23 +373,8 @@ public:
     
     //!@}
     
-private:
-    
-    /*!\brief
-     * class that observes a city-arrangement
-     * 
-     * Keeps eye on face- and edge-splits
-     * and updates internal structures wrt to given query point
-     */
-    struct RI_observer {
-
-
-    };
-    
 public:
     
-
-
     //!\name cell localizations
     //!@{
 
@@ -200,7 +416,8 @@ public:
         }
         return *_m_cell_handle_pl;
     }
-    
+
+public:
     //! returns the cell using random incremental
     CGAL::Object cell_ri(const Point_2& pt) const {
         if (!_m_cell_handle_ri) {
@@ -235,25 +452,34 @@ public:
                 Face_const_handle fh = _m_arr_city->faces_begin();
                 cell_handle = CGAL::make_object(fh);
                 
+#if !CGAL_SINGLE_CELL_RI_NAIVE
+                CGALi::RI_observer< Arrangement_2 > obs((*_m_arr_city), pt);
+#endif
+                
                 // real RI-case
                 for (typename 
                          std::vector< X_monotone_curve_2 >::const_iterator 
                          cit = _m_xcvs.begin(); cit != _m_xcvs.end(); cit++) {
                     // add *cit using zone
                     CGAL::insert(*_m_arr_city, *cit);
-                    
+
+#if CGAL_SINGLE_CELL_RI_NAIVE
+                    // make point location
+                    cell_handle = pl.locate(pt);
+#else
                     // TODO remove point location and replace by
                     //      observer! observer should also try to determine
                     //      whether point lies on new curve 
                     //      (using e.g., before_new_vertex!)
-
-                    // make point location
-                    cell_handle = pl.locate(pt);
-
+                    cell_handle = obs.cell_handle();
+#endif
+                    
                     // simplify!
                     Arrangement_2 new_city;
                     cell_arr(cell_handle, new_city);
                     _m_arr_city = new_city;
+                    // TODO alternative: 
+                    //      delete all feature not defining "cell_handle"
                 }
                 
                 _m_cell_handle_ri = cell_handle;
