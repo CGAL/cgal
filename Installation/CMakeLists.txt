@@ -7,6 +7,9 @@ project(CGAL)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 
+# This allows else(), endif(), etc... (without repeating the expression)
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
 if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
@@ -68,8 +71,6 @@ set(ORIGINAL_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH} )
 
-# This allows else(), endif(), etc... (without repeating the expression)
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
 
