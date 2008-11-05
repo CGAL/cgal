@@ -571,6 +571,13 @@ int main( int argc, char **argv ) {
               input_objects.end(),
               cell
       );
+  } else if (method == "ri" ) {
+      obj = CGAL::single_cell_ri_2(
+              point,
+              input_objects.begin(),
+              input_objects.end(),
+              cell
+      );
   } else {
       std::cerr << "Method not supported" << std::endl;
       std::exit(2);
