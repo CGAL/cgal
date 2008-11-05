@@ -1,5 +1,5 @@
 // Copyright (c) 2005-2008  INRIA Sophia-Antipolis (France).
-//               2008 GeometryFactory
+// Copyright (c) 2008  GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -56,24 +56,6 @@ public:
   {
   }
 
-  void compute_min_max()
-  {
-    if(image() == 0) {
-      min_value = 0;
-      max_value = 0;
-      return;
-    }
-    min_value = max_value = evaluate(image(),0,0,0);
-    for(unsigned int i = 0; i < xdim(); ++i) {
-      for(unsigned int j = 0; j < ydim(); ++j)
-        for(unsigned int k = 0; k < zdim(); ++k) {
-          const float v = evaluate(image(), i, j, k);
-          if(v > max_value) max_value = v;
-          if(v < min_value) min_value = v;
-        }
-    }
-  }
-
   float xmax() const
   {
     return (float)(((image_ptr->xdim) - 1.0)*(image_ptr->vx));
@@ -112,32 +94,6 @@ public:
   }
 
 public:
-
-  unsigned int threshold(const unsigned char value,
-                         const unsigned char equal,
-                         const unsigned char diff)
-  {
-    if(image_ptr.get() == NULL)
-      return 0;
-
-    unsigned int nb = 0;
-    unsigned char *pData = (unsigned char*)image_ptr->data;
-    unsigned int xy = image_ptr->xdim * image_ptr->ydim;
-    for(unsigned int i=0;i<image_ptr->xdim;i++)
-      for(unsigned int j=0;j<image_ptr->ydim;j++)
-        for(unsigned int k=0;k<image_ptr->zdim;k++)
-        {
-          unsigned char voxel = pData[xy*k + j*image_ptr->xdim + i];
-          if(voxel == value)
-          {
-            pData[xy*k + j*image_ptr->xdim + i] = equal;
-            nb++;
-          }
-          else
-            pData[xy*k + j*image_ptr->xdim + i] = diff;
-        }
-    return nb;
-  }
   bool inside(const float x,
               const float y, 
               const float z) const
@@ -200,6 +156,7 @@ public:
 	}
       }
     }
+    return FT();
   }
 }; // end CBinary_image_3
  
