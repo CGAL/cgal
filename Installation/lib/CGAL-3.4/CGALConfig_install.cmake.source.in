@@ -6,6 +6,8 @@
 # This file correspond to a CGAL installation with "make install", thus the actual location
 # must be given by the cmake variable or enviroment variable CGAL_DIR. 
 
+set(CGAL_CONFIG_LOADED TRUE)
+
 set(CGAL_SOURCE_DIRECTORY "@CMAKE_SOURCE_DIR@" )
 
 # CGAL_DIR is the directory where this CGALConfig.cmake is installed

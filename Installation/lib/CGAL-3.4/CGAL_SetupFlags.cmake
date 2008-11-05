@@ -2,8 +2,12 @@
 # Set CGAL_DONT_OVERRIDE_CMAKE_FLAGS to TRUE if you need to prevent the CGAL configuration to
 # override the flags used to build the libraries
 #
+option( CGAL_DONT_OVERRIDE_CMAKE_FLAGS 
+        "Set this to TRUE if you want to define or modify any of CMAKE_*_FLAGS. When this is FALSE, all the CMAKE_*_FLAGS flags are overriden with the values used when building the CGAL libs. For CGAL_*_flags (used for ADDITIONAL flags) , there is no need to set this to TRUE." 
+        FALSE 
+      )
 
-if ( NOT CGAL_DONT_OVERRIDE_CMAKE_FLAGS )
+if ( CGAL_CONFIG_LOADED AND NOT CGAL_DONT_OVERRIDE_CMAKE_FLAGS )
 
   set ( CMAKE_BUILD_TYPE "${CGAL_BUILD_TYPE_INIT}" )
   
