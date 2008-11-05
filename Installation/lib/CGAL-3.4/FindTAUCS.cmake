@@ -9,6 +9,8 @@
 #  TAUCS_LIBRARIES - TAUCS libraries name.
 #     May be null if the compiler supports auto-link (e.g. VC++).
 
+include(CGAL_GeneratorSpecificSettings)
+
 # Is it already configured?
 if (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
 
