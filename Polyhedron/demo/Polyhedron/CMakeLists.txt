@@ -4,7 +4,8 @@ project( Polyhedron )
 
 cmake_minimum_required(VERSION 2.4)
 
-option(ENABLE_FORWARD_DECL "Enable the forward declaration of Polyhedron and Nef_polyhedron." OFF)
+#option(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL "In the Polyhedron demo, enable " OFF)
+#mark_as_advanced(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
 
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
@@ -67,7 +68,7 @@ if(CGAL_Qt4_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
 
-  if(ENABLE_FORWARD_DECL)
+  if(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
     add_definitions(-DUSE_FORWARD_DECL)
     add_executable  ( Polyhedron_3 MainWindow.cpp
       Polyhedron_3.cpp
@@ -97,10 +98,10 @@ if(CGAL_Qt4_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     if(TAUCS_FOUND)
       add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
     endif()
-  else(ENABLE_FORWARD_DECL)
+  else(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
     add_file_dependencies( Polyhedron_3.cpp MainWindow_moc.cpp Scene_moc.cpp Viewer_moc.cpp )
     add_executable  ( Polyhedron_3 Polyhedron_3.cpp ${UI_FILES} ${RESOURCE_FILES} )
-  endif(ENABLE_FORWARD_DECL)
+  endif(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
 
 
   # Link with Qt libraries
