@@ -37,12 +37,14 @@ include(CGAL_GeneratorSpecificSettings)
 # combination using the name of a routine given by _name using the linker
 # flags given by _flags.  If the combination of libraries is found and passes
 # the link test, LIBRARIES is set to the list of complete library paths that
-# have been found.  Otherwise, LIBRARIES is set to FALSE.
-
+# have been found and DEFINITIONS to the required definitions.
+# Otherwise, they are set to FALSE.
 # N.B. _prefix is the prefix applied to the names of all cached variables that
 # are generated internally and marked advanced by this macro.
 macro(check_lapack_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _blas _path)
   #message("DEBUG: check_lapack_libraries(${_list} in ${_path} with ${_blas})")
+
+  # Check for the existence of the libraries given by _list
   set(_libraries_found TRUE)
   set(_libraries_work FALSE)
   set(${DEFINITIONS})
@@ -79,21 +81,16 @@ macro(check_lapack_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _b
       set(_libraries_found ${${_prefix}_${_library}_LIBRARY})
     endif(_libraries_found)
   endforeach(_library ${_list})
+  if(_libraries_found)
+    set(_libraries_found ${${LIBRARIES}})
+  endif()
 
-  # Test this combination of libraries with C calling convention
-  if(_libraries_found AND NOT _libraries_work)
-    set(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}} ${_blas})
-    #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
-    check_function_exists(${_name} ${_prefix}_${_name}${_combined_name}_WORKS)
-    set(CMAKE_REQUIRED_LIBRARIES)
-    mark_as_advanced(${_prefix}_${_name}${_combined_name}_WORKS)
-    set(_libraries_work ${${_prefix}_${_name}${_combined_name}_WORKS})
-  endif(_libraries_found AND NOT _libraries_work)
-
-  # Test this combination of libraries with f2c calling convention
+  # Test this combination of libraries with the Fortran/f2c interface.
+  # We test the Fortran interface first as it is well standardized.
   if(_libraries_found AND NOT _libraries_work)
     set(${DEFINITIONS}  "-D${_prefix}_USE_F2C")
-    # Some C++ linkers require f2c library to link with Fortran libraries.
+    set(${LIBRARIES}    ${_libraries_found})
+    # Some C++ linkers require the f2c library to link with Fortran libraries.
     # I do not know which ones, thus I just add the f2c library if it is available.
     find_package( F2C QUIET )
     if ( F2C_FOUND )
@@ -112,10 +109,25 @@ macro(check_lapack_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _b
     set(_libraries_work ${${_prefix}_${_name}_${_combined_name}_f2c_WORKS})
   endif(_libraries_found AND NOT _libraries_work)
 
-  if(NOT _libraries_work)
+  # If not found, test this combination of libraries with a C interface.
+  # A few implementations (ie ACML) provide a C interface. Unfortunately, there is no standard.
+  if(_libraries_found AND NOT _libraries_work)
     set(${DEFINITIONS})
+    set(${LIBRARIES}    ${_libraries_found})
+    set(CMAKE_REQUIRED_DEFINITIONS)
+    set(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}} ${_blas})
+    #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
+    check_function_exists(${_name} ${_prefix}_${_name}${_combined_name}_WORKS)
+    set(CMAKE_REQUIRED_LIBRARIES)
+    mark_as_advanced(${_prefix}_${_name}${_combined_name}_WORKS)
+    set(_libraries_work ${${_prefix}_${_name}${_combined_name}_WORKS})
+  endif(_libraries_found AND NOT _libraries_work)
+
+  # on failure
+  if(NOT _libraries_work)
+    set(${DEFINITIONS} FALSE)
     set(${LIBRARIES} FALSE)
-  endif(NOT _libraries_work)
+  endif()
   #message("DEBUG: ${DEFINITIONS} = ${${DEFINITIONS}}")
   #message("DEBUG: ${LIBRARIES} = ${${LIBRARIES}}")
 endmacro(check_lapack_libraries)
@@ -144,14 +156,12 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
   if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
-    #message("DEBUG: LAPACK: VC++ case")
     set( LAPACK_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}"
                                CACHE FILEPATH "Directories containing the LAPACK libraries")
 
   else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # If Unix, search for LAPACK function in possible libraries
-    #message("DEBUG: LAPACK: Unix case")
 
     # LAPACK requires BLAS
     find_package(BLAS QUIET)

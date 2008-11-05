@@ -38,12 +38,14 @@ include(CGAL_GeneratorSpecificSettings)
 # combination using the name of a routine given by _name using the linker
 # flags given by _flags.  If the combination of libraries is found and passes
 # the link test, LIBRARIES is set to the list of complete library paths that
-# have been found.  Otherwise, LIBRARIES is set to FALSE.
-
+# have been found and DEFINITIONS to the required definitions.
+# Otherwise, they are set to FALSE.
 # N.B. _prefix is the prefix applied to the names of all cached variables that
 # are generated internally and marked advanced by this macro.
 macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _path)
   #message("DEBUG: check_fortran_libraries(${_list} in ${_path})")
+
+  # Check for the existence of the libraries given by _list
   set(_libraries_found TRUE)
   set(_libraries_work FALSE)
   set(${DEFINITIONS})
@@ -53,43 +55,43 @@ macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _
     set(_combined_name ${_combined_name}_${_library})
 
     if(_libraries_found)
+      # search first in ${_path}
+      find_library(${_prefix}_${_library}_LIBRARY
+                  NAMES ${_library}
+                  PATHS ${_path} NO_DEFAULT_PATH
+                  )
+      # if not found, search in environment variables and system
       if ( WIN32 )
         find_library(${_prefix}_${_library}_LIBRARY
                     NAMES ${_library}
-                    PATHS ${_path} ENV LIB
-        )
-      endif ( WIN32 )
-      if ( APPLE )
+                    PATHS ENV LIB
+                    )
+      elseif ( APPLE )
         find_library(${_prefix}_${_library}_LIBRARY
                     NAMES ${_library}
-                    PATHS ${_path} /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV DYLD_LIBRARY_PATH
-        )
-      else ( APPLE )
+                    PATHS /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV DYLD_LIBRARY_PATH
+                    )
+      else ()
         find_library(${_prefix}_${_library}_LIBRARY
                     NAMES ${_library}
-                    PATHS ${_path} /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV LD_LIBRARY_PATH
-        )
-      endif( APPLE )
+                    PATHS /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV LD_LIBRARY_PATH
+                    )
+      endif()
       mark_as_advanced(${_prefix}_${_library}_LIBRARY)
       set(${LIBRARIES} ${${LIBRARIES}} ${${_prefix}_${_library}_LIBRARY})
       set(_libraries_found ${${_prefix}_${_library}_LIBRARY})
     endif(_libraries_found)
   endforeach(_library ${_list})
+  if(_libraries_found)
+    set(_libraries_found ${${LIBRARIES}})
+  endif()
 
-  # Test this combination of libraries with C calling convention
-  if(_libraries_found AND NOT _libraries_work)
-    set(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}})
-    #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
-    check_function_exists(${_name} ${_prefix}_${_name}${_combined_name}_WORKS)
-    set(CMAKE_REQUIRED_LIBRARIES)
-    mark_as_advanced(${_prefix}_${_name}${_combined_name}_WORKS)
-    set(_libraries_work ${${_prefix}_${_name}${_combined_name}_WORKS})
-  endif(_libraries_found AND NOT _libraries_work)
-
-  # Test this combination of libraries with f2c calling convention
+  # Test this combination of libraries with the Fortran/f2c interface.
+  # We test the Fortran interface first as it is well standardized.
   if(_libraries_found AND NOT _libraries_work)
     set(${DEFINITIONS}  "-D${_prefix}_USE_F2C")
-    # Some C++ linkers require f2c library to link with Fortran libraries.
+    set(${LIBRARIES}    ${_libraries_found})
+    # Some C++ linkers require the f2c library to link with Fortran libraries.
     # I do not know which ones, thus I just add the f2c library if it is available.
     find_package( F2C QUIET )
     if ( F2C_FOUND )
@@ -108,10 +110,25 @@ macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _
     set(_libraries_work ${${_prefix}_${_name}_${_combined_name}_f2c_WORKS})
   endif(_libraries_found AND NOT _libraries_work)
 
-  if(NOT _libraries_work)
+  # If not found, test this combination of libraries with a C interface.
+  # A few implementations (ie ACML) provide a C interface. Unfortunately, there is no standard.
+  if(_libraries_found AND NOT _libraries_work)
     set(${DEFINITIONS})
+    set(${LIBRARIES}    ${_libraries_found})
+    set(CMAKE_REQUIRED_DEFINITIONS)
+    set(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}})
+    #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
+    check_function_exists(${_name} ${_prefix}_${_name}${_combined_name}_WORKS)
+    set(CMAKE_REQUIRED_LIBRARIES)
+    mark_as_advanced(${_prefix}_${_name}${_combined_name}_WORKS)
+    set(_libraries_work ${${_prefix}_${_name}${_combined_name}_WORKS})
+  endif(_libraries_found AND NOT _libraries_work)
+
+  # on failure
+  if(NOT _libraries_work)
+    set(${DEFINITIONS} FALSE)
     set(${LIBRARIES} FALSE)
-  endif(NOT _libraries_work)
+  endif()
   #message("DEBUG: ${DEFINITIONS} = ${${DEFINITIONS}}")
   #message("DEBUG: ${LIBRARIES} = ${${LIBRARIES}}")
 endmacro(check_fortran_libraries)
@@ -137,14 +154,12 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
   if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
-    #message("DEBUG: BLAS: VC++ case")
     set( BLAS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}"
                              CACHE FILEPATH "Directories containing the BLAS libraries")
 
   else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # If Unix, search for BLAS function in possible libraries
-    #message("DEBUG: BLAS: Unix case")
 
     # BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
     if(NOT BLAS_LIBRARIES)
@@ -340,7 +355,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       BLAS_DEFINITIONS
       BLAS_LIBRARIES
       BLAS
-      cblas_dgemm
+      sgemm
       ""
       "Accelerate"
       "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
@@ -352,7 +367,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       BLAS_DEFINITIONS
       BLAS_LIBRARIES
       BLAS
-      cblas_dgemm
+      sgemm
       ""
       "vecLib"
       "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
