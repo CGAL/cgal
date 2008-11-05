@@ -29,7 +29,7 @@ find_package(CGAL REQUIRED ImageIO)
 include( ${CGAL_USE_FILE} )
 find_package(VTK QUIET)
 
-if(VTK_FOUND AND WITH_VTK)
+if(VTK_FOUND)
   add_definitions(-DCGAL_USE_VTK)
   include(${VTK_USE_FILE})
 
@@ -47,8 +47,8 @@ if(VTK_FOUND AND WITH_VTK)
   else(VTK_USE_QVTK)
     message(STATUS "NOTICE: This demo needs QVTK, and will not be compiled.")
   endif(VTK_USE_QVTK)
-else(VTK_FOUND AND WITH_VTK)
+else(VTK_FOUND)
 
   message(STATUS "NOTICE: This demo needs VTK, and will not be compiled.")
 
-endif(VTK_FOUND AND WITH_VTK)
+endif(VTK_FOUND)
