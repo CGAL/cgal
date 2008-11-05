@@ -55,7 +55,7 @@ endmacro()
 if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND )
 
   include(Qt3Macros-patched)
-  include(CreateSingleSourceCGALQt3Program)
+  include(CGAL_CreateSingleSourceCGALProgram)
 
   include_directories (BEFORE include)
 
