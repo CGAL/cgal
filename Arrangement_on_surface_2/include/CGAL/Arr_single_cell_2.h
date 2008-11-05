@@ -65,6 +65,12 @@ public:
     //! type of curve
     typedef typename Geometry_traits_2::Curve_2 Curve_2;
 
+
+    typedef typename Arrangement_2::Vertex_const_handle Vertex_const_handle;
+    typedef typename Arrangement_2::Halfedge_const_handle 
+    Halfedge_const_handle;
+    typedef typename Arrangement_2::Face_const_handle Face_const_handle;
+
     // TASK select best point location strategy
     //! type of point location strategy
     typedef CGAL::Arr_naive_point_location< Arrangement_2 > Point_location;
@@ -136,6 +142,22 @@ public:
     
     //!@}
     
+private:
+    
+    /*!\brief
+     * class that observes a city-arrangement
+     * 
+     * Keeps eye on face- and edge-splits
+     * and updates internal structures wrt to given query point
+     */
+    struct RI_observer {
+
+
+    };
+    
+public:
+    
+
 
     //!\name cell localizations
     //!@{
@@ -186,8 +208,56 @@ public:
             std::cout << "Computing cell with RANDOM_INCREMENTAL-method ... " 
                       << std::flush;
 #endif
-            // TODO replace
-            _m_cell_handle_ri = CGAL::Object();
+            _m_arr_city = Arrangement_2();
+            
+            CGAL::Object cell_handle;            
+            
+            // let's start with all points
+            CGAL::non_intersecting_insert_empty(
+                    *_m_arr_city,
+                    _m_xcvs.begin(), _m_xcvs.begin(), // NO CURVE
+                    _m_pts.begin(), _m_pts.end()
+            );
+            
+            Point_location pl(*_m_arr_city);
+            cell_handle = pl.locate(pt);
+            
+            Face_const_handle fh;
+            if (!CGAL::assign(fh, cell_handle)) {
+                // simple case
+                _m_cell_handle_ri = cell_handle; // found point
+                std::cout << "FOUND POINT" << std::endl;
+            } else {
+                
+                std::random_shuffle(_m_xcvs.begin(), _m_xcvs.end());
+                
+                std::cout << "START RI" << std::endl;
+                Face_const_handle fh = _m_arr_city->faces_begin();
+                cell_handle = CGAL::make_object(fh);
+                
+                // real RI-case
+                for (typename 
+                         std::vector< X_monotone_curve_2 >::const_iterator 
+                         cit = _m_xcvs.begin(); cit != _m_xcvs.end(); cit++) {
+                    // add *cit using zone
+                    CGAL::insert(*_m_arr_city, *cit);
+                    
+                    // TODO remove point location and replace by
+                    //      observer! observer should also try to determine
+                    //      whether point lies on new curve 
+                    //      (using e.g., before_new_vertex!)
+
+                    // make point location
+                    cell_handle = pl.locate(pt);
+
+                    // simplify!
+                    Arrangement_2 new_city;
+                    cell_arr(cell_handle, new_city);
+                    _m_arr_city = new_city;
+                }
+                
+                _m_cell_handle_ri = cell_handle;
+            }
             
 #if !NDEBUG
             std::cout << "done."   << std::endl;
@@ -348,9 +418,9 @@ public:
         std::list< Point_2 > cell_pts;
         std::list< X_monotone_curve_2 > cell_xcvs;
         
-        typename Arrangement_2::Vertex_const_handle vh;
-        typename Arrangement_2::Halfedge_const_handle heh;
-        typename Arrangement_2::Face_const_handle fh;
+        Vertex_const_handle vh;
+        Halfedge_const_handle heh;
+        Face_const_handle fh;
         if (CGAL::assign(vh, cell_handle)) {
             cell_pts.push_back(vh->point());
         } else if (CGAL::assign(heh, cell_handle)) {
@@ -378,12 +448,18 @@ public:
                  ocb++) {
                 Ccb_halfedge_const_circulator he = *ocb;
                 if (!he->is_fictitious()) {
-                    cell_xcvs.push_back(he->curve());
+                    if (std::find(cell_xcvs.begin(), cell_xcvs.end(),
+                                  he->curve()) == cell_xcvs.end()) {
+                        cell_xcvs.push_back(he->curve());
+                    }
                 }
                 he++;
                 for (; he != *ocb; he++) {
                     if (!he->is_fictitious()) {
-                        cell_xcvs.push_back(he->curve());
+                        if (std::find(cell_xcvs.begin(), cell_xcvs.end(),
+                                      he->curve()) == cell_xcvs.end()) {
+                            cell_xcvs.push_back(he->curve());
+                        }
                     }
                 }
             }
@@ -393,12 +469,18 @@ public:
                  icb++) {
                 Ccb_halfedge_const_circulator he = *icb;
                 if (!he->is_fictitious()) {
-                    cell_xcvs.push_back (he->curve());
+                    if (std::find(cell_xcvs.begin(), cell_xcvs.end(),
+                                  he->curve()) == cell_xcvs.end()) {
+                        cell_xcvs.push_back(he->curve());
+                    }
                 }
                 he++;
                 for (; he != *icb; he++) {
                     if (!he->is_fictitious()) {
-                        cell_xcvs.push_back (he->curve());
+                        if (std::find(cell_xcvs.begin(), cell_xcvs.end(),
+                                      he->curve()) == cell_xcvs.end()) {
+                            cell_xcvs.push_back(he->curve());
+                        }
                     }
                 }
             }
@@ -411,22 +493,20 @@ public:
             }
         }
         
-        /*
         std::cout << "#cell-curves:" << cell_xcvs.size() << std::endl;
         std::cout << "#cell-points:" << cell_pts.size() << std::endl;
 
         for (typename 
                  std::list< X_monotone_curve_2 >::const_iterator
                  it = cell_xcvs.begin(); it != cell_xcvs.end(); it++) {
-            std::cout << "CURVE: " << *it << std::endl;
-            std::cout << "poly: " << it->curve().polynomial_2() << std::endl;
+            //std::cout << "CURVE: " << *it << std::endl;
+            //std::cout << "poly: " << it->curve().polynomial_2() << std::endl;
             
         }
-        */
-
+        
         CGAL::set_pretty_mode(std::cerr);
-        //CGAL::non_intersecting_insert_empty(
-        CGAL::insert_empty(
+        CGAL::non_intersecting_insert_empty(
+                //CGAL::insert_empty(
                 cell, 
                 cell_xcvs.begin(), cell_xcvs.end(),
                 cell_pts.begin(), cell_pts.end()
@@ -462,6 +542,9 @@ private:
 
     // helper for pl
     mutable boost::optional< Arrangement_2 > _m_full_arr; 
+
+    // helper for ri
+    mutable boost::optional< Arrangement_2 > _m_arr_city;
 
     // helper for rbo_naive
     mutable boost::optional< Arrangement_2 > _m_arr_purple; 
@@ -506,6 +589,39 @@ CGAL::Object single_cell_pl_2(
     );
 
      CGAL::Object cell_handle = single_cell.cell_pl(point);
+     single_cell.cell_arr(cell_handle, cell);
+    return cell_handle;
+ }
+
+/*!
+ * Construct the single cell containing a point using random incremental 
+ * \param point The reference point
+ * \param begin An iterator for the first input object defining the full 
+ *              arrangement
+ * \param end A past-the-end iterator for the input objects defining the
+ *            full arrangement
+ * \param cell Output: The cell of Arr(begin,end) containing point as 
+ *                     arrangement
+ * \pre The value-type of InputIterator is CGAL::Object which can be passed to
+ *      GeoTraits_2::Make_x_monotone_2()
+ */
+template < typename InputIterator, typename GeoTraits_2 >
+CGAL::Object single_cell_ri_2(
+        typename GeoTraits_2::Point_2 point,
+        InputIterator begin, InputIterator end,
+        CGAL::Arrangement_2< GeoTraits_2 >& cell) {
+    
+    typedef GeoTraits_2                                       Geo_traits_2;
+    typedef CGAL::Arrangement_2< Geo_traits_2 >               Arrangement_2;
+    
+    typedef CGALi::Construct_single_cell_2< Arrangement_2 >   
+        Construct_single_cell_2;
+    
+    Construct_single_cell_2 single_cell(
+            begin, end
+    );
+
+     CGAL::Object cell_handle = single_cell.cell_ri(point);
      single_cell.cell_arr(cell_handle, cell);
     return cell_handle;
  }
