@@ -207,10 +207,13 @@ robust numerical and geometric computation. \core\ is not part of
 \subsection{Visualization\label{sec:vis}}
 
 The programs below the \texttt{demo} directory provide visual output.
-Most of these use \ccc{CGAL::Qt_widget}, a widget and some helper
-classes that allow to interact with two dimensional \cgal\ objects in
-\qt~3 based applications.\index{visualization!Qt} There is no support
-for \qt~4 in \cgal\ yet.
+Most of these use \qt. The demos we made for \cgal Rel.\ 3.3 use \qt~3
+together with \ccc{CGAL::Qt_widget}, a widget and some helper
+classes that allow to interact with two dimensional \cgal\ objects.
+The demos we made for \cgal\ Rel.\ 3.4 use Trolltech's 
+\ccAnchor{http://doc.trolltech.com/4.4/graphicsview.html}{Qt Graphics View Framework}
+for the 2D demos and Gille Debunne's \ccAnchor{http://www.libqglviewer.com/}{libQGLViewer} 
+for the 3D demos. \index{visualization!Qt}.
 
 Some demo programs for 3D structures require the geomview program for
 visualization.\index{visualization!geomview} This is available from
