@@ -225,7 +225,7 @@ public:
     OutputIterator operator()( 
         const Polynomial_d&    p , 
         OutputIterator         oi, 
-        Innermost_coefficient_type& a ) {
+        Innermost_coefficient_type& a ) const {
       
       if( CGAL::is_zero(p) ) {
         a = Innermost_coefficient_type(0);
@@ -367,7 +367,7 @@ public:
     operator()(
         const Innermost_coefficient_type& p, 
         Input_iterator begin, 
-        Input_iterator end){ 
+        Input_iterator end) const { 
       CGAL_precondition(end == begin);
       typedef typename std::iterator_traits<Input_iterator>::value_type 
         value_type;
@@ -390,7 +390,7 @@ public:
         const Innermost_coefficient_type& p, 
         Input_iterator begin, 
         Input_iterator end,
-        int hdegree){ 
+        int hdegree) const { 
       
       typedef typename std::iterator_traits<Input_iterator>::value_type 
         value_type;
@@ -701,7 +701,8 @@ public:
       return construct( mon_rep.begin(), mon_rep.end() );
     }
   };
-
+  
+  
   //       Move;    
   // move variable x_i to position of x_j
   // order of other variables remains 
@@ -1312,7 +1313,7 @@ struct Construct_coefficient_const_iterator_range
     std::binary_function< Polynomial_d, Innermost_coefficient_type, Polynomial_d > {
         
     Polynomial_d operator()( Polynomial_d p, const Innermost_coefficient_type& c,
-        int i = (PT::d-1) ) {
+        int i = (PT::d-1) ) const  {
       CGAL_precondition( i <= d-1 );
       CGAL_precondition( i >= 0 );
       typename PT::Scale_homogeneous scale_homogeneous;          
@@ -1455,7 +1456,7 @@ struct Construct_coefficient_const_iterator_range
     }  
   };
     
-    
+  
   //
   // Functors not mentioned in the reference manual
   //
@@ -1513,6 +1514,7 @@ struct Construct_coefficient_const_iterator_range
     }
   };
 
+
   // returns the Exponten_vector of the innermost leading coefficient 
   struct Degree_vector{
     typedef Exponent_vector           result_type;
@@ -1539,7 +1541,7 @@ struct Construct_coefficient_const_iterator_range
     operator()(
         const Polynomial_d& p, 
         Input_iterator begin, 
-        Input_iterator end){
+        Input_iterator end) const {
       typedef typename std::iterator_traits<Input_iterator> ITT;
       typedef typename ITT::iterator_category  Category; 
       return (*this)(p,begin,end,Category()); 
@@ -1554,7 +1556,7 @@ struct Construct_coefficient_const_iterator_range
         const Polynomial_d& p, 
         Input_iterator begin, 
         Input_iterator end,
-        std::forward_iterator_tag){
+        std::forward_iterator_tag) const {
       typedef typename std::iterator_traits<Input_iterator> ITT;
       std::list<typename ITT::value_type> list(begin,end); 
       return (*this)(p,list.begin(),list.end()); 
@@ -1569,7 +1571,7 @@ struct Construct_coefficient_const_iterator_range
         const Polynomial_d& p, 
         Input_iterator begin, 
         Input_iterator end,
-        std::bidirectional_iterator_tag){
+        std::bidirectional_iterator_tag) const {
             
       typedef typename std::iterator_traits<Input_iterator>::value_type 
         value_type;
@@ -1607,7 +1609,7 @@ struct Construct_coefficient_const_iterator_range
     
     template <class Input_iterator>
     typename Result_type<Input_iterator>::Type
-    operator()( const Polynomial_d& p, Input_iterator begin, Input_iterator end){
+    operator()( const Polynomial_d& p, Input_iterator begin, Input_iterator end) const{
       int hdegree = Total_degree()(p);
 
       typedef std::iterator_traits<Input_iterator> ITT;
@@ -1630,7 +1632,7 @@ struct Construct_coefficient_const_iterator_range
         const Polynomial_d& p, 
         Input_iterator begin, 
         Input_iterator end,
-        int hdegree){
+        int hdegree) const{
       
       
       typedef std::iterator_traits<Input_iterator> ITT;
