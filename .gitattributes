@@ -4182,6 +4182,7 @@ Visibility_complex_2/examples/Visibility_complex_2/data/point.d -text
 Visibility_complex_2/examples/Visibility_complex_2/data/poly.d -text
 Visibility_complex_2/examples/Visibility_complex_2/data/segment.d -text
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
+iostream/doc_tex/IOstream/io.png -text
 iostream/test/iostream/data/io.cin -text
 wininst/developer_scripts/CGAL.bmp -text svneol=unset#image/bmp
 wininst/developer_scripts/DumpLogToFile.nsh -text
