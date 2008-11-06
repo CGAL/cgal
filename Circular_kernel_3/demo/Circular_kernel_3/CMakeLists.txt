@@ -6,12 +6,12 @@ project( Circular_kernel_3_demo )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+ 
 if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
 
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
- 
 find_package(CGAL QUIET COMPONENTS Core Qt3 )
 
 if ( CGAL_FOUND )

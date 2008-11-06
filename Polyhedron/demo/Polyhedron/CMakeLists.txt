@@ -4,14 +4,14 @@ project( Polyhedron )
 
 cmake_minimum_required(VERSION 2.4)
 
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
 #option(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL "In the Polyhedron demo, enable " OFF)
 #mark_as_advanced(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
 
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 foreach(INCDIR ./include ../../../AABB_tree/include ../../../STL_Extension/include ../../../GraphicsView/include ../../../Surface_mesher/include ../../../filtered_kernel/include )
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
