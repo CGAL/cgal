@@ -41,7 +41,7 @@ sub reformat_results($)
     $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$BLAS,$LAPACK,$OPENGL,$TAUCS,$BOOST,$QT,$QT4,$CMAKE) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","-","no");
+    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$BLAS,$LAPACK,$OPENGL,$TAUCS,$BOOST,$QT,$QT4,$CMAKE) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","no");
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
         if(/^\s*$/) {
@@ -104,20 +104,20 @@ sub reformat_results($)
 	if (/BOOST_VERSION = '([^']+)'/) {
 	    $BOOST="$1";
 	}
-	if (/BOOST_THREAD_VERSION = '([^']+)'/) {
-	    $BOOST="$BOOST+thread";
+#	if (/BOOST_THREAD_VERSION = '([^']+)'/) {
+#	    $BOOST="$BOOST+thread";
+#	}
+# 	if (/BOOST_PROGRAM_OPTIONS_VERSION = '([^']+)'/) {
+# 	    $BOOST="$BOOST+program_options";
+# 	}
+#	if (/BOOST_BIMAP_VERSION = '([^']+)'/) {
+#	    $BOOST="$BOOST+bimap";
+#	}
+	if (/USING        CXXFLAGS = '([^']*)'/) {
+	    $CXXFLAGS="$CXXFLAGS $1";
 	}
-	if (/BOOST_PROGRAM_OPTIONS_VERSION = '([^']+)'/) {
-	    $BOOST="$BOOST+program_options";
-	}
-	if (/BOOST_BIMAP_VERSION = '([^']+)'/) {
-	    $BOOST="$BOOST+bimap";
-	}
-	if (/CUSTOM_CXXFLAGS = '([^']*)'/) {
-	    $CXXFLAGS="$1";
-	}
-	if (/CUSTOM_LDFLAGS = '([^']*)'/) {
-	    $LDFLAGS="$1";
+	if (/USING        LDFLAGS = '([^']*)'/) {
+	    $LDFLAGS="$LDFLAGS $1";
 	}
 #        if(/^CGAL_TEST_PLATFORM /) {
 #            # should be the last one of the header
