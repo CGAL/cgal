@@ -96,7 +96,9 @@ struct Splitter_test {
 int 
 main() {
 
-  //CGAL::force_ieee_double_precision();
+  // We enforce IEEE double precision as we compare a distance 
+  // in a register with a distance in memory
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
 
   Vector points;
   Random_points g( 150.0);

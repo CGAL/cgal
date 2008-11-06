@@ -58,7 +58,9 @@ main() {
   Vector points2;
   Random_points g( 150.0);
 
-  //CGAL::force_ieee_double_precision();
+  // We enforce IEEE double precision as we compare a distance 
+  // in a register with a distance in memory
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
 
   CGAL::copy_n( g, 1000, std::back_inserter(points));
 
