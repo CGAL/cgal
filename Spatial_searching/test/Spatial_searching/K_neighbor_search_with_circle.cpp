@@ -1,4 +1,4 @@
-// file: K_neighbor_search_with_circle.C
+// file: K_neighbor_search_with_circle.cpp
 #include <CGAL/Cartesian.h>
 #include <cassert>
 #include <CGAL/Kd_tree.h>
@@ -42,10 +42,14 @@ int main() {
   Neighbor_search search(tree, query, K);
   std::vector<Point> result;
 
+  double max_dist = -1;
   for (Neighbor_search::iterator it = search.begin();
        it != search.end();
        it++){ 
     result.push_back(it->first);
+    if(CGAL::squared_distance(center, it->first) > max_dist){
+      max_dist = it->second;
+    }
   }
   assert(result.size() == K);
   std::sort(points.begin(), points.end());
@@ -60,9 +64,7 @@ int main() {
   for(std::vector<Point>::iterator it = diff.begin();
       it != diff.end();
       it++){
-    double eps = std::sqrt(CGAL::squared_distance(center,*it)) - (0.2 + std::sqrt(dist.transformed_distance(query,*it)));
-    if(eps > 0.00000001 || eps < -0.00000000001) std::cout << "eps = " << eps << std::endl;
-    //    assert(eps < 0.00000001 && eps > -0.00000000001);
+    assert(CGAL::squared_distance(center, *it) >= max_dist);
   }
   
   std::cout << "done" << std::endl;
