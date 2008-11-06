@@ -34,7 +34,8 @@ if(VTK_FOUND)
   include(${VTK_USE_FILE})
 
   if(VTK_USE_QVTK)
-    add_executable( image_to_vtk_viewer image_to_vtk_viewer.cpp)
+    include_directories( ${VTK_QT_INCLUDE_DIR} )
+    add_executable( image_to_vtk_viewer image_to_vtk_viewer.cpp )
 
     target_link_libraries( image_to_vtk_viewer
       QVTK
@@ -43,6 +44,7 @@ if(VTK_FOUND)
       vtkIO
       vtkCommon
       ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
+      ${VTK_QT_QT_LIBRARY}
       )
   else(VTK_USE_QVTK)
     message(STATUS "NOTICE: This demo needs QVTK, and will not be compiled.")
