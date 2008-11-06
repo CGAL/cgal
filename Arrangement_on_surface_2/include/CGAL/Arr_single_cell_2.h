@@ -47,6 +47,9 @@
 //#include <CGAL/Arr_simple_point_location.h>
 //#include <CGAL/Arr_walk_along_line_point_location.h> 
 
+// required for Constructor of RI_observer
+#include <CGAL/Arr_simple_point_location.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -101,9 +104,11 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     //! default constructor from arr and point
     RI_observer(Arrangement_2& arr, const Point_2& point) :
         Base(arr),
-        _m_point(point) {
+        _m_point(point),
+        _m_check_split_edges(false) {
         
         // TODO determine initial _m_edge_handle
+#if 0 // direct mode
         Vertex_const_handle 
             vtr(Base::arrangement()->topology_traits()->top_right_vertex());
         
@@ -122,7 +127,51 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                 _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
         );
         
+#else // indirect mode
+        CGAL::Arr_simple_point_location< Arrangement_2 > 
+            ray(*(Base::arrangement()));
+        CGAL::Object obj = ray.ray_shoot_up(_m_point);
+        Vertex_const_handle vh;
+        
+        if (CGAL::assign(_m_halfedge_handle, obj)) {
+        } else if (CGAL::assign(vh, obj)) {
+            // TODO correct assign
+            std::cerr << "has been assigned point" << std::endl;
+        }  else {
+            Face_const_handle fh;
+            CGAL_assertion_code(bool check =)
+                CGAL::assign(fh, obj);
+            CGAL_assertion(check);
+            
+            Vertex_const_handle 
+                vtr(Base::arrangement()->topology_traits()->
+                    top_right_vertex());
+            
+            Halfedge_around_vertex_const_circulator heh  = 
+                vtr->incident_halfedges();
+            heh++;
+            
+            CGAL_assertion_code(
+                    Vertex_const_handle 
+                    vtl(Base::arrangement()->topology_traits()->
+                        top_left_vertex())
+            );
+            CGAL_assertion(heh->source() == vtl);
+            
+            _m_halfedge_handle = heh->twin();
+            CGAL_assertion(
+                    _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
+            );
+        }
+#endif
         _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
+
+        if (_m_halfedge_handle->is_fictitious()) {
+            std::cout << "Initial curve: fict" << std::endl;
+        } else {
+            std::cout << "Initial curve: " << _m_halfedge_handle->curve()
+                      << std::endl;
+        }
     }
 
     //!@}
@@ -131,6 +180,133 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     //!@{
 
     /*!
+     * Notification before the creation of a new edge.
+     * \param c The x-monotone curve to be associated with the edge.
+     * \param v1 A handle to the first end-vertex of the edge.
+     * \param v2 A handle to the second end-vertex of the edge.
+     */
+    virtual void before_create_edge (const X_monotone_curve_2& /* c */,
+                                     Vertex_handle /* v1 */,
+                                     Vertex_handle /* v2 */)
+    {}
+    
+    /*!
+     * Notification after the creation of a new edge.
+     * \param e A handle to one of the twin halfedges that were created.
+     */
+    virtual void after_create_edge (Halfedge_handle e)
+    {
+        typename Geometry_traits_2::Is_vertical_2 is_vertical =
+            Base::arrangement()->geometry_traits()->is_vertical_2_object();
+        typename Traits_adaptor_2::Is_in_x_range_2 is_in_x_range =
+            static_cast< Traits_adaptor_2* >
+            (Base::arrangement()->geometry_traits())->is_in_x_range_2_object();
+        typename Geometry_traits_2::Compare_y_at_x_2 compare_y_at_x =
+            Base::arrangement()->geometry_traits()->compare_y_at_x_2_object();
+        
+        CGAL_assertion(!e->is_fictitious());
+        
+        X_monotone_curve_2 new_cv = e->curve();
+        
+        std::cout << "after create edge" << std::endl;
+        
+        if (!is_vertical(new_cv)) {
+            // TODO symbolic pertubation for endpoints!
+            if (is_in_x_range(new_cv, _m_point)) {
+                CGAL::Comparison_result res = 
+                    compare_y_at_x(_m_point, new_cv);
+                
+                if (res == CGAL::SMALLER) {
+                    
+                    bool change = false;
+                    
+                    if (_m_halfedge_handle->is_fictitious()) {
+                        change = true;
+                        std::cout << "CHANGE 1 (old fict)" << std::endl;
+                    } else {
+                        X_monotone_curve_2 old_cv = 
+                            _m_halfedge_handle->curve();
+                        
+                        std::cout << "old_cv: " << old_cv << std::endl;
+                        std::cout << "new_cv: " << new_cv << std::endl;
+
+                        typename Traits_adaptor_2::Compare_y_position_2 
+                            compare_y_pos =
+                            static_cast< Traits_adaptor_2* >
+                            (Base::arrangement()->geometry_traits())->
+                            compare_y_position_2_object();
+                        
+                        if (is_in_x_range(new_cv, old_cv)) {
+                            if (compare_y_pos(new_cv, old_cv) ==
+                                CGAL::SMALLER) {
+                                change = true;
+                                std::cout << "CHANGE 2" << std::endl;
+                            }
+                        } else {
+                            typename Geometry_traits_2::Compare_x_2 compare_x =
+                                Base::arrangement()->geometry_traits()->
+                                compare_x_2_object();
+                            typename Geometry_traits_2::Construct_min_vertex_2 
+                                construct_min =
+                                Base::arrangement()->geometry_traits()->
+                                construct_min_vertex_2_object();
+                            typename Geometry_traits_2::Construct_max_vertex_2 
+                                construct_max =
+                                Base::arrangement()->geometry_traits()->
+                                construct_max_vertex_2_object();
+                            
+                            Point_2 min = construct_min(new_cv);
+                            if (compare_x(min, _m_point) == CGAL::EQUAL) {
+                                change = (compare_y_at_x(min, old_cv) 
+                                          == CGAL::SMALLER);
+                                if (change) {
+                                    std::cout << "CHANGE 3" << std::endl;
+                                }
+                            } else {
+                                Point_2 max = construct_max(new_cv);
+                                CGAL_assertion(
+                                        compare_x(max, _m_point) == CGAL::EQUAL
+                                );
+                                change = (compare_y_at_x(max, old_cv)
+                                          == CGAL::SMALLER);
+                                if (change) {
+                                    std::cout << "CHANGE 4" << std::endl;
+                                }
+                            }
+                        }
+                    }
+
+                    // finally
+                    if (change) {
+                        // the new edge replaces the old one
+                        // we only have to ensure the correct order
+                        _m_halfedge_handle = 
+                            ((e->direction() == CGAL::ARR_RIGHT_TO_LEFT) ?
+                             e : e->twin());
+                        
+                        CGAL_assertion(
+                                _m_halfedge_handle->direction() == 
+                                CGAL::ARR_RIGHT_TO_LEFT
+                        );
+                        
+                        _m_cell_handle = 
+                            CGAL::make_object(_m_halfedge_handle->face());
+
+                        std::cout << "HE1 set to cv: " 
+                                  << _m_halfedge_handle->curve() 
+                                  << std::endl;
+                    }
+                } else if (res == CGAL::EQUAL) {
+                    // TODO on curve!!!!
+                }
+            }
+        } else {
+            // TODO what if e->curve() is vertical
+        }
+    }
+    
+#if 0
+    /*!
      * Notification before the splitting of a face into two.
      * \param f A handle to the existing face.
      * \param e The new edge whose insertion causes the face to split.
@@ -138,7 +314,8 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     virtual void before_split_face (Face_handle /* f */,
                                     Halfedge_handle e) 
     {
-        typename Geometry_traits_2::Is_vertical_2 is_vertical;
+        typename Geometry_traits_2::Is_vertical_2 is_vertical =
+            Base::arrangement()->geometry_traits()->is_vertical_2_object();
         typename Traits_adaptor_2::Is_in_x_range_2 is_in_x_range =
             static_cast< Traits_adaptor_2* >
             (Base::arrangement()->geometry_traits())->is_in_x_range_2_object();
@@ -148,7 +325,12 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         
         X_monotone_curve_2 cv = e->curve();
         
+        std::cout << "before split face" << std::endl;
+        std::cout << "cv: " << cv << std::endl;
+        std::cout << "he: " << _m_halfedge_handle->curve() << std::endl;
+
         if (!is_vertical(cv)) {
+            // TODO symbolic pertubation for endpoints!
             if (is_in_x_range(cv, _m_point)) {
                 CGAL::Comparison_result res = compare_y_at_x(_m_point, cv);
                 
@@ -159,14 +341,66 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                         (Base::arrangement()->geometry_traits())->
                         compare_y_position_2_object();
                     
-                    if (compare_y_pos(cv, _m_halfedge_handle->curve()) ==
-                        CGAL::SMALLER) {
-                        // new curve is below old curve
-                        // thus, face that contains point is restricted by this
-                        // edge - we only have to ensure the correct order
-                        _m_halfedge_handle = 
-                            ((e->direction() == CGAL::ARR_RIGHT_TO_LEFT) ?
-                             e : e->twin());
+                    bool change = false;
+
+                    if (is_in_x_range(cv, _m_halfedge_handle->curve())) {
+                        if (compare_y_pos(cv, _m_halfedge_handle->curve()) ==
+                            CGAL::SMALLER) {
+                            change = true;
+                        }
+                    } else {
+                        typename Geometry_traits_2::Compare_x_2 compare_x =
+                            Base::arrangement()->geometry_traits()->
+                            compare_x_2_object();
+                        typename Geometry_traits_2::Construct_min_vertex_2 
+                            construct_min =
+                            Base::arrangement()->geometry_traits()->
+                            construct_min_vertex_2_object();
+                        typename Geometry_traits_2::Construct_max_vertex_2 
+                            construct_max =
+                            Base::arrangement()->geometry_traits()->
+                            construct_max_vertex_2_object();
+                        
+                        Point_2 min = construct_min(cv);
+                        if (compare_x(min, _m_point) == CGAL::EQUAL) {
+                            change = (compare_y_at_x(
+                                              min, 
+                                              _m_halfedge_handle->curve()) 
+                                      == CGAL::SMALLER);
+                        } else {
+                            Point_2 max = construct_max(cv);
+                            CGAL_assertion(
+                                    compare_x(max, _m_point) == CGAL::EQUAL
+                            );
+                            change = (compare_y_at_x(
+                                              max, 
+                                              _m_halfedge_handle->curve()) 
+                                      == CGAL::SMALLER);
+                        }
+                        
+                        if (change) {
+                            // new curve is below old curve
+                            // thus, face that contains point is 
+                            // restricted by this
+                            // edge - we only have to ensure the correct order
+                            _m_halfedge_handle = 
+                                ((e->direction() == CGAL::ARR_RIGHT_TO_LEFT) ?
+                                 e : e->twin());
+                            
+                            CGAL_assertion(
+                                    _m_halfedge_handle->direction() == 
+                                    CGAL::ARR_RIGHT_TO_LEFT
+                            );
+                            
+                            _m_cell_handle = 
+                                CGAL::make_object(_m_halfedge_handle->face());
+                            
+
+                            std::cout << "HE2 set to cv: " 
+                                      << _m_halfedge_handle->curve() 
+                                      << std::endl;
+
+                        }
                     }
                 } else if (res == CGAL::EQUAL) {
                     // TODO on curve!!!!
@@ -178,7 +412,9 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         
         // else no action is required
     }
-    
+
+#endif
+
     /*!
      * Notification after a face was split.
      * \param f A handle to the face we have just split.
@@ -188,8 +424,19 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     virtual void after_split_face (Face_handle /* f */,
                                    Face_handle /* new_f */,
                                    bool /* is_hole */)
-    {}
-    
+    {
+        std::cout << "after_split_face" << std::endl;
+        // TODO remove
+#if 1
+        if (_m_halfedge_handle->direction() != CGAL::ARR_RIGHT_TO_LEFT) {
+            _m_halfedge_handle = _m_halfedge_handle->twin();
+        }
+#endif
+        CGAL_assertion(
+                _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
+        );
+        _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
+    }
     
     /*!
      * Notification before the splitting of an edge into two.
@@ -203,11 +450,18 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                                     const X_monotone_curve_2& /* c1 */,
                                     const X_monotone_curve_2& /* c2 */)
     {
-        if (e == Base::arrangement()->non_const_handle(_m_halfedge_handle) ||
-            e->twin() == 
-            Base::arrangement()->non_const_handle(_m_halfedge_handle)) {
+        Halfedge_handle curr = 
+            Base::arrangement()->non_const_handle(_m_halfedge_handle);
+        if (curr->is_fictitious()) {
+            std::cout << "curr fict";
+        } else {
+            std::cout << "curr: " << curr->curve() << std::endl;
+        }
+        std::cout << std::endl;
+        if (e == curr || e->twin() == curr) {
             std::cout << "It's maybe required UPDATE _m_halfedge_handle"
                       << std::endl;
+            _m_check_split_edges = true;
         }
         
     }
@@ -217,9 +471,75 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
      * \param e1 A handle to one of the twin halfedges forming the first edge.
      * \param e2 A handle to one of the twin halfedges forming the second edge.
      */
-    virtual void after_split_edge (Halfedge_handle /* e1 */,
-                                   Halfedge_handle /* e2 */)
-    {}
+    virtual void after_split_edge (Halfedge_handle e1,
+                                   Halfedge_handle e2)
+    {
+        typename Geometry_traits_2::Is_vertical_2 is_vertical =
+            Base::arrangement()->geometry_traits()->is_vertical_2_object();
+        typename Traits_adaptor_2::Is_in_x_range_2 is_in_x_range =
+            static_cast< Traits_adaptor_2* >
+            (Base::arrangement()->geometry_traits())->is_in_x_range_2_object();
+        
+        typename Geometry_traits_2::Compare_y_at_x_2 compare_y_at_x =
+            Base::arrangement()->geometry_traits()->compare_y_at_x_2_object();
+        
+        X_monotone_curve_2 cv1 = e1->curve();
+        X_monotone_curve_2 cv2 = e2->curve();
+        
+        if (_m_check_split_edges) {
+            std::cout << "pt : " << _m_point << std::endl;
+            std::cout << "cv1: " << cv1 << std::endl;
+            std::cout << "cv2: " << cv2 << std::endl;
+            
+            // Remark:
+            // as e1 and e2 originate from _m_halfedge_handle
+            // we only have to check x-ranges ...
+            if (!is_vertical(cv1)) {
+                CGAL_assertion(!is_vertical(cv2));
+                // TODO symbolic pertubation for endpoints!
+                if (is_in_x_range(cv1, _m_point)) {
+                    _m_halfedge_handle = 
+                        ((e1->direction() == CGAL::ARR_RIGHT_TO_LEFT) ?
+                         e1 : e1->twin());
+
+                    CGAL_assertion(
+                            _m_halfedge_handle->direction() == 
+                            CGAL::ARR_RIGHT_TO_LEFT
+                    );
+                    
+                    _m_cell_handle = 
+                        CGAL::make_object(_m_halfedge_handle->face());
+                    
+                    std::cout << "HE3 set to cv: " 
+                              << _m_halfedge_handle->curve() << std::endl;
+
+                } else {
+                    CGAL_assertion(is_in_x_range(cv2, _m_point));
+                    _m_halfedge_handle = 
+                        ((e2->direction() == CGAL::ARR_RIGHT_TO_LEFT) ?
+                         e2 : e2->twin());
+                    
+                    CGAL_assertion(
+                            _m_halfedge_handle->direction() == 
+                            CGAL::ARR_RIGHT_TO_LEFT
+                    );
+                    
+                    _m_cell_handle = 
+                        CGAL::make_object(_m_halfedge_handle->face());
+                    
+                    std::cout << "HE4 set to cv: " 
+                              << _m_halfedge_handle->curve() << std::endl;
+                    
+                }
+            } else {
+                // or something in vertical case
+                // TODO what if e->curve() is vertical
+            }
+        }
+        
+        // finally reset trigger
+        _m_check_split_edges = false;
+    }
     
     
 
@@ -243,18 +563,7 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
 
     //!@}
     
-
-
-    void on_update() {
-        CGAL_assertion(
-                _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
-        );
-        _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
-        
-        // else
-        // TODO update for on_vertex + on_edge
-    }
-    
+   //! returns cell_handle to cell of given point
     CGAL::Object cell_handle() {
         return _m_cell_handle;
     }
@@ -268,6 +577,10 @@ private:
     
     //! cell handle to compute
     CGAL::Object _m_cell_handle;
+
+    // helper for split edge
+    //! if true has to choose among two split edges
+    bool _m_check_split_edges;
 };
 
 
@@ -340,7 +653,7 @@ public:
                 std::list< CGAL::Object > tmp;
 #if CGAL_USE_ACK_2
                 typename Geometry_traits_2::Make_x_monotone_2
-                    make_x_monotone = 
+                    make_x_monotone =
                     Geometry_traits_2::instance().make_x_monotone_2_object();
 #else
                 typename Geometry_traits_2::Make_x_monotone_2
@@ -443,23 +756,29 @@ public:
             if (!CGAL::assign(fh, cell_handle)) {
                 // simple case
                 _m_cell_handle_ri = cell_handle; // found point
-                std::cout << "FOUND POINT" << std::endl;
+
             } else {
                 
-                std::random_shuffle(_m_xcvs.begin(), _m_xcvs.end());
+                // TODO reactivate random shuffle
+                //std::random_shuffle(_m_xcvs.begin(), _m_xcvs.end());
                 
-                std::cout << "START RI" << std::endl;
                 Face_const_handle fh = _m_arr_city->faces_begin();
                 cell_handle = CGAL::make_object(fh);
-                
-#if !CGAL_SINGLE_CELL_RI_NAIVE
-                CGALi::RI_observer< Arrangement_2 > obs((*_m_arr_city), pt);
-#endif
                 
                 // real RI-case
                 for (typename 
                          std::vector< X_monotone_curve_2 >::const_iterator 
                          cit = _m_xcvs.begin(); cit != _m_xcvs.end(); cit++) {
+
+                    std::cout << "----------------------------------------"
+                              << std::endl;
+                    std::cout << "insert: " << *cit << std::endl; 
+                    std::cout << std::endl;
+                    
+#if !CGAL_SINGLE_CELL_RI_NAIVE
+                    CGALi::RI_observer< Arrangement_2 > 
+                        obs((*_m_arr_city), pt);
+#endif
                     // add *cit using zone
                     CGAL::insert(*_m_arr_city, *cit);
 
@@ -478,10 +797,16 @@ public:
                     Arrangement_2 new_city;
                     cell_arr(cell_handle, new_city);
                     _m_arr_city = new_city;
+
                     // TODO alternative: 
                     //      delete all feature not defining "cell_handle"
                 }
-                
+
+#if CGAL_SINGLE_CELL_RI_NAIVE
+#else
+                // TODO remove this location (ie, improve arr-maintenance)
+                //cell_handle = pl.locate(pt);
+#endif
                 _m_cell_handle_ri = cell_handle;
             }
             
@@ -674,18 +999,12 @@ public:
                  ocb++) {
                 Ccb_halfedge_const_circulator he = *ocb;
                 if (!he->is_fictitious()) {
-                    if (std::find(cell_xcvs.begin(), cell_xcvs.end(),
-                                  he->curve()) == cell_xcvs.end()) {
-                        cell_xcvs.push_back(he->curve());
-                    }
+                    cell_xcvs.push_back(he->curve());
                 }
                 he++;
                 for (; he != *ocb; he++) {
                     if (!he->is_fictitious()) {
-                        if (std::find(cell_xcvs.begin(), cell_xcvs.end(),
-                                      he->curve()) == cell_xcvs.end()) {
-                            cell_xcvs.push_back(he->curve());
-                        }
+                        cell_xcvs.push_back(he->curve());
                     }
                 }
             }
@@ -695,18 +1014,12 @@ public:
                  icb++) {
                 Ccb_halfedge_const_circulator he = *icb;
                 if (!he->is_fictitious()) {
-                    if (std::find(cell_xcvs.begin(), cell_xcvs.end(),
-                                  he->curve()) == cell_xcvs.end()) {
-                        cell_xcvs.push_back(he->curve());
-                    }
+                    cell_xcvs.push_back(he->curve());
                 }
                 he++;
                 for (; he != *icb; he++) {
                     if (!he->is_fictitious()) {
-                        if (std::find(cell_xcvs.begin(), cell_xcvs.end(),
-                                      he->curve()) == cell_xcvs.end()) {
-                            cell_xcvs.push_back(he->curve());
-                        }
+                        cell_xcvs.push_back(he->curve());
                     }
                 }
             }
@@ -725,14 +1038,14 @@ public:
         for (typename 
                  std::list< X_monotone_curve_2 >::const_iterator
                  it = cell_xcvs.begin(); it != cell_xcvs.end(); it++) {
-            //std::cout << "CURVE: " << *it << std::endl;
+            std::cout << "CURVE: " << *it << std::endl;
             //std::cout << "poly: " << it->curve().polynomial_2() << std::endl;
             
         }
         
         CGAL::set_pretty_mode(std::cerr);
-        CGAL::non_intersecting_insert_empty(
-                //CGAL::insert_empty(
+        // TODO use CGAL::non_intersecting_insert_empty(
+        CGAL::insert_empty(
                 cell, 
                 cell_xcvs.begin(), cell_xcvs.end(),
                 cell_pts.begin(), cell_pts.end()
@@ -847,8 +1160,9 @@ CGAL::Object single_cell_ri_2(
             begin, end
     );
 
-     CGAL::Object cell_handle = single_cell.cell_ri(point);
-     single_cell.cell_arr(cell_handle, cell);
+    CGAL::Object cell_handle = single_cell.cell_ri(point);
+    std::cout << "located" << std::endl;
+    single_cell.cell_arr(cell_handle, cell);
     return cell_handle;
  }
 
