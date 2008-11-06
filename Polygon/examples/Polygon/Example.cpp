@@ -1,22 +1,15 @@
-//-----------------------------------------------------------------------//
-// This is just a simple example that demonstrates how to use the
-// class CGAL::Polygon_2.
-//-----------------------------------------------------------------------//
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 
 #include <list>
 
-typedef CGAL::Cartesian<double> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
-typedef CGAL::Polygon_2<K, std::list<Point> > Polygon_2;
-typedef CGAL::Polygon_2<K, std::list<Point> >::Vertex_iterator VertexIterator;
-typedef CGAL::Polygon_2<K, std::list<Point> >::Edge_const_iterator EdgeIterator;
+typedef CGAL::Polygon_2<K> Polygon_2;
+typedef Polygon_2::Vertex_iterator VertexIterator;
+typedef Polygon_2::Edge_const_iterator EdgeIterator;
 
-//-----------------------------------------------------------------------//
-//                          main
-//-----------------------------------------------------------------------//
 
 int main()
 {
