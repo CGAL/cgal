@@ -1657,7 +1657,7 @@ problems to Andreas Meyer.</b></p>
         tests. Thus undefined references are not reported as 'w' for packages.
         Please check the log files, for example, the summary log file, for
         undefined references in packages yourself. For Modules, undefined
-        references are reported as 'w'.</b><p>
+        references are reported as 'w'.<p>
    </li><li> <b>The detection of errors is not (yet) exact.  Please check the
         log files even when a 'y' appears and suggests that everything is
         OK.</b><p>
