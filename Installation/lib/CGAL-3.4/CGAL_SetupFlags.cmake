@@ -41,7 +41,11 @@ uniquely_add_flags( CMAKE_EXE_LINKER_FLAGS_DEBUG      ${CGAL_EXE_LINKER_FLAGS_DE
 
 # Set a default build type if none is given
 if ( NOT CMAKE_BUILD_TYPE )
-  set ( CMAKE_BUILD_TYPE Release )
+  if( RUNNING_CGAL_AUTO_TEST )
+    set ( CMAKE_BUILD_TYPE Debug )
+  else ( RUNNING_CGAL_AUTO_TEST )
+    set ( CMAKE_BUILD_TYPE Release )
+  endif( RUNNING_CGAL_AUTO_TEST )
 endif()
 
 if ( NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
