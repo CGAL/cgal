@@ -25,11 +25,10 @@ Polygons are dynamic. Vertices can be modified, inserted and erased.
 They provide the algorithms described above as member functions.
 Moreover, they provide ways of iterating over the vertices and edges.
 
-Currently, the \ccc{Polygon_2} class is a nice wrapper around the algorithms,
-but little more. Especially, computed values are not cached.
+Currently, the \ccc{Polygon_2} class is a nice wrapper around a container of
+points, but little more. Especially, computed values are not cached.
 That is, when the \ccc{is_simple()} member function is called twice or more,
-the result is computed each time anew. It is possible to set a preprocessor flag
-to alter this behavior. In the future, caching will become the default.
+the result is computed each time anew. 
 
 \section{Example}
 
