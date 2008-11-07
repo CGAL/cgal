@@ -358,7 +358,7 @@ EOF
 	    my $countn = $testresults[$platform_num]->{"n"};
 	    my $countr = $testresults[$platform_num]->{"r"};
 
-	    my $index = 13;
+	    my $index = 10;
 	    my @tmp;
 	    while ($index) {
 	        $index--;
@@ -374,14 +374,14 @@ EOF
 	    print OUTPUT "<td>$countw</td>\n"; 
  	    print OUTPUT "<td>$countn</td>\n"; 
  	    print OUTPUT "<td>$countr</td>\n"; 
-	    $index = 13;
+	    $index = 10;
 	    while ($index) {
 	        $index--;
 		$_ = $tmp[$index];
 		print OUTPUT "<td align=\"center\">$_</td>\n";
 	    }
 	} else {
-	    my $index = 15;
+	    my $index = 12;
 	    while ($index) {
 		print OUTPUT "<td>?</td>\n";
 	    }
