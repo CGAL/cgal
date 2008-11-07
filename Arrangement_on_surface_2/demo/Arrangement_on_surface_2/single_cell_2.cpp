@@ -16,12 +16,16 @@
 //
 // Author(s)     : Eric Berberich <ericb@post.tau.ac.il>
 
-// ---------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // includes
 
 
 //#define CGAL_SL_VERBOSE 1
 //#define CKvA_DEBUG_PRINT_CERR 1
+
+#ifndef CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+#define CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS 1
+#endif
 
 #ifndef CGAL_USE_ACK_2 
 #define CGAL_USE_ACK_2 0
@@ -33,8 +37,6 @@
 
 #include <CGAL/config.h>
 
-#include <CGAL/Cartesian.h>
-
 #include <fstream>
 #include <vector>
 
@@ -44,6 +46,10 @@
 #include <boost/program_options.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+
+#include <CGAL/Timer.h>
+
+#include <CGAL/Cartesian.h>
 
 #include <CGAL/Arithmetic_kernel.h>
 
