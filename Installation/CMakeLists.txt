@@ -123,24 +123,32 @@ if( "${CMAKE_CXX_COMPILER_ID}" MATCHES SunPro )
   uniquely_add_flags( CGAL_EXE_LINKER_FLAGS    "-library=stlport4" )
 endif()
 
-if ( CMAKE_COMPILER_IS_GNUCC )
+if ( CMAKE_COMPILER_IS_GNUCXX )
 
   set( GCC_FOUND TRUE )
   
   get_dependency_version(GCC)
   
-  if ( RUNNING_CGAL_AUTO_TEST )
-    uniquely_add_flags( CGAL_CXX_FLAGS "-Wall" )
+  if ( "${GCC_VERSION}" MATCHES "Not" OR "${GCC_VERSION}" MATCHES "Unknown" )
+    set( GCC_FOUND FALSE )
   endif()
   
-  if ( "${GCC_VERSION}" MATCHES "^4." )
-    message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
-    uniquely_add_flags( CGAL_CXX_FLAGS "-frounding-math" )
-  endif()
+  if ( GCC_FOUND )
   
-  if ( "${GCC_VERSION}" MATCHES "^4.2" )
-    message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )
-    uniquely_add_flags( CGAL_CXX_FLAGS "-fno-strict-aliasing" )
+    if ( RUNNING_CGAL_AUTO_TEST )
+      uniquely_add_flags( CGAL_CXX_FLAGS "-Wall" )
+    endif()
+    
+    if ( "${GCC_VERSION}" MATCHES "^4." )
+      message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
+      uniquely_add_flags( CGAL_CXX_FLAGS "-frounding-math" )
+    endif()
+    
+    if ( "${GCC_VERSION}" MATCHES "^4.2" )
+      message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )
+      uniquely_add_flags( CGAL_CXX_FLAGS "-fno-strict-aliasing" )
+    endif()
+    
   endif()
   
 endif()

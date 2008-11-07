@@ -377,10 +377,10 @@ ELSE (_boost_IN_CACHE)
       # mangled into library names on Mac OS X/Darwin.
       SET (_boost_COMPILER "")
     ELSE (APPLE)
-      IF (NOT CMAKE_COMPILER_IS_GNUCC)
+      IF (NOT CMAKE_COMPILER_IS_GNUCXX)
         # We assume that we have the Intel compiler.
         SET (_boost_COMPILER "-il")
-      ELSE (NOT CMAKE_COMPILER_IS_GNUCC)
+      ELSE (NOT CMAKE_COMPILER_IS_GNUCXX)
         # Determine which version of GCC we have.
         EXEC_PROGRAM(${CMAKE_CXX_COMPILER}
             ARGS -dumpversion
@@ -389,7 +389,7 @@ ELSE (_boost_IN_CACHE)
         STRING(REGEX REPLACE "([0-9])\\.([0-9])\\.[0-9]" "\\1\\2"
                _boost_COMPILER_VERSION ${_boost_COMPILER_VERSION})
         SET (_boost_COMPILER "-gcc${_boost_COMPILER_VERSION}")
-      ENDIF (NOT CMAKE_COMPILER_IS_GNUCC)
+      ENDIF (NOT CMAKE_COMPILER_IS_GNUCXX)
     ENDIF (APPLE)
   ENDIF(UNIX)
 
