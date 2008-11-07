@@ -3,8 +3,11 @@
 \ccDefinition
 
 This \ccc{AdaptableFunctor} permutes the variables of the given polynomial
-with respect to a permutation $\sigma$. $\sigma$ is given by the iterator 
-range of length \ccc{PolynomialTraits_d::d}, containing the second row of the permutation. 
+with respect to a permutation $\sigma$, that is, each monomial 
+$\prod x_i^{e_i}$ will be mapped to the monomial $\prod x_{\sigma(i)}^{e_i}$. 
+The permutation $\sigma$ is given by the iterator range of 
+length \ccc{PolynomialTraits_d::d}, which is supposed to contain 
+the second row of the permutation. 
 
 For instance, let $p$ be a polynomial in 4 variables and it is intended to 
 change the order of the variables such that 
