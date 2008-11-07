@@ -1,4 +1,4 @@
-if ( NOT GMP_FOUND )
+if ( NOT CGAL_GMP_SETUP )
   
   find_package( GMP REQUIRED )
   
@@ -19,6 +19,8 @@ if ( NOT GMP_FOUND )
   if ( NOT MSVC )
     cache_set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${GMP_LIBRARIES})
   endif()
+  
+  set( CGAL_GMP_SETUP TRUE )
   
 endif()
 

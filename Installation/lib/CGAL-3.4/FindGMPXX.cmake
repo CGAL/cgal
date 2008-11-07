@@ -6,6 +6,9 @@
 # TODO: support Windows and MacOSX
 
 # GMPXX needs GMP
+
+find_package( GMP QUIET )
+
 if(GMP_FOUND)
 
   if (GMPXX_INCLUDE_DIR AND GMPXX_LIBRARIES)

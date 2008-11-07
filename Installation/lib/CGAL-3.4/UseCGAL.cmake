@@ -20,7 +20,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     include(CGAL_GeneratorSpecificSettings)
   endif()
   
-  set( CGAL_LIBRARIES ${CGAL_LIBRARY} )
+  set( CGAL_LIBRARIES "" )
   
   foreach ( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )
     
@@ -32,6 +32,8 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     
   endforeach()
     
+  set( CGAL_LIBRARIES ${CGAL_LIBRARIES} ${CGAL_LIBRARY} )
+  
   include_directories (${CGAL_INCLUDE_DIRS} ${CGAL_3RD_PARTY_INCLUDE_DIRS} )     
           
   add_definitions(${CGAL_DEFINITIONS} ${CGAL_3RD_PARTY_DEFINITIONS} )

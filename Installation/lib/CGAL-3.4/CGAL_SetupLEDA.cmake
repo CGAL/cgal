@@ -1,4 +1,4 @@
-if ( NOT LEDA_FOUND )
+if ( NOT CGAL_LEDA_SETUP )
   
   find_package( LEDA )
   
@@ -29,6 +29,9 @@ if ( NOT LEDA_FOUND )
     message( STATUS "USING LEDA_VERSION = '${CGAL_LEDA_VERSION}'" )
     
   endif()
+  
+  
+  set ( CGAL_LEDA_SETUP TRUE )
   
 endif()
 

@@ -1,4 +1,4 @@
-if ( NOT MPFR_FOUND )
+if ( NOT CGAL_MPFR_SETUP )
 
   find_package( MPFR REQUIRED )
   
@@ -20,6 +20,8 @@ if ( NOT MPFR_FOUND )
   if ( NOT MSVC )
     cache_set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${MPFR_LIBRARIES})
   endif()
+  
+  set( CGAL_MPFR_SETUP TRUE ) 
   
 endif()
 

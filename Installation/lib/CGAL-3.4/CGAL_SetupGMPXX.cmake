@@ -1,4 +1,4 @@
-if ( NOT WIN32 AND NOT GMPXX_FOUND )
+if ( NOT WIN32 AND NOT CGAL_GMPXX_SETUP )
   
   option( WITH_GMPXX "Search for GMPXX" ON )
   
@@ -21,6 +21,8 @@ if ( NOT WIN32 AND NOT GMPXX_FOUND )
     endif()
     
   endif()
+  
+  set( CGAL_GMPXX_SETUP TRUE )
   
 endif()
 
