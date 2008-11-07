@@ -21,6 +21,14 @@ to construct objects of type \ccc{PolynomialTraits_d::Polynomial_d}.
 \ccMethod{result_type operator()(int i);}
          {Construct the constant polynomial equal to $i$. }
 
+\ccMethod{result_type operator()
+        (PolynomialTraits_d::Innermost_coefficient_type a);}
+         {Construct the constant polynomial equal to $a$. }
+
+\ccMethod{result_type operator()
+        (PolynomialTraits_d::Coefficient_type a);}
+         {Construct the polynomial equal to $a$.}
+
 \ccMethod{template < class InputIterator >
         result_type operator()(InputIterator begin, InputIterator end);}
         {\ccPrecond The value type of \ccc{InputIterator} is
