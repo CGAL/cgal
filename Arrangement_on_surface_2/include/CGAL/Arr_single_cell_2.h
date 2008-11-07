@@ -101,43 +101,40 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     //!\name Constructors
     //!@{
     
+    // FUTURE TODO allow multiple points
+
     //! default constructor from arr and point
     RI_observer(Arrangement_2& arr, const Point_2& point) :
         Base(arr),
         _m_point(point),
         _m_check_split_edges(false) {
         
-        // TODO determine initial _m_edge_handle
-#if 0 // direct mode
-        Vertex_const_handle 
-            vtr(Base::arrangement()->topology_traits()->top_right_vertex());
-        
-        Halfedge_around_vertex_const_circulator heh  = 
-            vtr->incident_halfedges();
-        heh++;
-        
-        CGAL_assertion_code(
-                Vertex_const_handle 
-                vtl(Base::arrangement()->topology_traits()->top_left_vertex())
-        );
-        CGAL_assertion(heh->source() == vtl);
-        
-        _m_halfedge_handle = heh->twin();
-        CGAL_assertion(
-                _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
-        );
-        
-#else // indirect mode
+        // determine initial _m_edge_handle
+        // TODO avoud ray_shoot up
         CGAL::Arr_simple_point_location< Arrangement_2 > 
             ray(*(Base::arrangement()));
         CGAL::Object obj = ray.ray_shoot_up(_m_point);
         Vertex_const_handle vh;
         
         if (CGAL::assign(_m_halfedge_handle, obj)) {
+            
+            if (_m_halfedge_handle->direction() != CGAL::ARR_RIGHT_TO_LEFT) {
+                _m_halfedge_handle = _m_halfedge_handle->twin();
+            }
+            CGAL_assertion(
+                    _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
+            );
+            
+            _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
+            
         } else if (CGAL::assign(vh, obj)) {
+            
             // TODO correct assign
             std::cerr << "has been assigned point" << std::endl;
+            
         }  else {
+            
+            // TODO does not work with unbounded faces!!!
             Face_const_handle fh;
             CGAL_assertion_code(bool check =)
                 CGAL::assign(fh, obj);
@@ -162,16 +159,18 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
             CGAL_assertion(
                     _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
             );
-        }
-#endif
-        _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
+            _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
 
+        }
+            
+#if !NDEBUG
         if (_m_halfedge_handle->is_fictitious()) {
             std::cout << "Initial curve: fict" << std::endl;
         } else {
             std::cout << "Initial curve: " << _m_halfedge_handle->curve()
                       << std::endl;
         }
+#endif
     }
 
     //!@}
@@ -222,13 +221,13 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                     
                     if (_m_halfedge_handle->is_fictitious()) {
                         change = true;
-                        std::cout << "CHANGE 1 (old fict)" << std::endl;
+                        //std::cout << "CHANGE 1 (old fict)" << std::endl;
                     } else {
                         X_monotone_curve_2 old_cv = 
                             _m_halfedge_handle->curve();
                         
-                        std::cout << "old_cv: " << old_cv << std::endl;
-                        std::cout << "new_cv: " << new_cv << std::endl;
+                        //std::cout << "old_cv: " << old_cv << std::endl;
+                        //std::cout << "new_cv: " << new_cv << std::endl;
 
                         typename Traits_adaptor_2::Compare_y_position_2 
                             compare_y_pos =
@@ -304,8 +303,9 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
             // TODO what if e->curve() is vertical
         }
     }
-    
+
 #if 0
+    // TODO remove? as after_create_edge subsumes this case
     /*!
      * Notification before the splitting of a face into two.
      * \param f A handle to the existing face.
@@ -412,9 +412,8 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         
         // else no action is required
     }
-
 #endif
-
+   
     /*!
      * Notification after a face was split.
      * \param f A handle to the face we have just split.
@@ -426,16 +425,10 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                                    bool /* is_hole */)
     {
         std::cout << "after_split_face" << std::endl;
-        // TODO remove
-#if 1
-        if (_m_halfedge_handle->direction() != CGAL::ARR_RIGHT_TO_LEFT) {
-            _m_halfedge_handle = _m_halfedge_handle->twin();
-        }
-#endif
         CGAL_assertion(
                 _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
         );
-        _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
+        //_m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
     }
     
     /*!
@@ -962,6 +955,7 @@ public:
     /*!\brief 
      * converts a cell-handle (face, edge, vertex) into its induced arrangement
      */
+    // FUTURE TODO allow multiple cell_handles!
     void cell_arr(CGAL::Object cell_handle, Arrangement_2& cell) const {
         
         _mt_cell.start();
@@ -1038,7 +1032,7 @@ public:
         for (typename 
                  std::list< X_monotone_curve_2 >::const_iterator
                  it = cell_xcvs.begin(); it != cell_xcvs.end(); it++) {
-            std::cout << "CURVE: " << *it << std::endl;
+            //std::cout << "CURVE: " << *it << std::endl;
             //std::cout << "poly: " << it->curve().polynomial_2() << std::endl;
             
         }
@@ -1203,237 +1197,6 @@ CGAL::Object single_cell_rbo_naive_2(
 
 CGAL_END_NAMESPACE
 
-
-#if 0
-
-
-#include <CGAL/Envelope_3/Envelope_divide_and_conquer_3.h>
-#include <CGAL/Envelope_3/Envelope_pm_dcel.h>
-#include <CGAL/Envelope_3/Envelope_overlay_functor.h>
-#include <CGAL/Arr_accessor.h>
-
-CGAL_BEGIN_NAMESPACE
-
-/*! \class
- * Representation of an envelope diagram (a minimization diagram or a
- * maximization diagram).
- */
-template <typename T_Traits,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-          template <class T1, class T2>
-#endif
-          class T_Dcel = Envelope_pm_dcel>
-class Envelope_diagram_2 :
-  public Arrangement_2<T_Traits,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-                       T_Dcel<T_Traits,
-                              typename T_Traits::Xy_monotone_surface_3>
-#else
-                       typename T_Dcel::template Dcel<T_Traits,
-                                                      typename T_Traits::Xy_monotone_surface_3>
-#endif
-                       >
-{
-public:
-  typedef T_Traits                                      Traits_3;
-  typedef typename Traits_3::Xy_monotone_surface_3      Xy_monotone_surface_3;
-
-protected:
-  typedef T_Dcel<Traits_3, Xy_monotone_surface_3>       Env_dcel;
-  typedef Envelope_diagram_2<Traits_3, T_Dcel>          Self;
-  friend class Arr_accessor<Self>;
-
-public:
-  typedef Arrangement_2<Traits_3, Env_dcel>             Base;
-  typedef typename Env_dcel::Dcel_data_const_iterator   Surface_const_iterator;
-
-  /*! Default constructor. */
-  Envelope_diagram_2() :
-    Base()
-  {}
-
-  /*! Constructor with a traits-class instance. */
-  Envelope_diagram_2 (Traits_3* tr) :
-    Base (tr)
-  {}
-
-};
-
-/*!
- * Construct the lower envelope of a given set of surfaces.
- * \param begin An iterator for the first surface.
- * \param end A past-the-end iterator for the surfaces in the range.
- * \param min_diag Output: The minimization diagram.
- * \pre The value-type of InputIterator is Traits::Surface_3.
- */
-template <typename InputIterator, typename T_Traits,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-          template <class T1, class T2>
-#endif
-          class T_Dcel>
-void lower_envelope_3 (InputIterator begin, InputIterator end,
-                       Envelope_diagram_2<T_Traits, T_Dcel> & min_diagram)
-{
-  typedef T_Traits                                            Traits_3;
-  typedef typename Envelope_diagram_2<Traits_3, T_Dcel>::Base Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
-  Envelope_algorithm   env_alg (min_diagram.traits(), ENVELOPE_LOWER);
-  env_alg.construct_lu_envelope (begin, end, min_diagram);
-}
-
-/*!
- * Construct the lower envelope of a given set of surfaces.
- * \param begin An iterator for the first surface.
- * \param end A past-the-end iterator for the surfaces in the range.
- * \param min_diag Output: The minimization diagram.
- * \pre The value-type of InputIterator is Traits::Surface_3.
- */
-template <typename InputIterator, typename T_Traits>
-void lower_envelope_3 (InputIterator begin, InputIterator end,
-                       Envelope_diagram_2<T_Traits> & min_diagram)
-{
-  typedef T_Traits                                            Traits_3;
-  typedef typename Envelope_diagram_2<Traits_3>::Base         Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
-  Envelope_algorithm   env_alg (min_diagram.traits(), ENVELOPE_LOWER);
-  env_alg.construct_lu_envelope (begin, end, min_diagram);
-}
-
-/*!
- * Construct the upper envelope of a given set of surfaces.
- * \param begin An iterator for the first surface.
- * \param end A past-the-end iterator for the surfaces in the range.
- * \param max_diag Output: The maximization diagram.
- * \pre The value-type of InputIterator is Traits::Surface_3.
- */
-template <class InputIterator, class Traits,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-          template <class T1, class T2>
-#endif
-          class T_Dcel>
-void upper_envelope_3 (InputIterator begin, InputIterator end,
-                       Envelope_diagram_2<Traits, T_Dcel>& max_diagram)
-{
-  typedef Traits                                              Traits_3;
-  typedef typename Envelope_diagram_2<Traits_3, T_Dcel>::Base Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
-
-  Envelope_algorithm   env_alg (max_diagram.traits(), ENVELOPE_UPPER);
-  env_alg.construct_lu_envelope (begin, end, max_diagram);
-}
-
-/*!
- * Construct the upper envelope of a given set of surfaces.
- * \param begin An iterator for the first surface.
- * \param end A past-the-end iterator for the surfaces in the range.
- * \param max_diag Output: The maximization diagram.
- * \pre The value-type of InputIterator is Traits::Surface_3.
- */
-template <class InputIterator, class Traits>
-void upper_envelope_3 (InputIterator begin, InputIterator end,
-                       Envelope_diagram_2<Traits>& max_diagram)
-{
-  typedef Traits                                        Traits_3;
-  typedef typename Envelope_diagram_2<Traits_3>::Base   Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2>
-                                                        Envelope_algorithm;
-
-  Envelope_algorithm   env_alg (max_diagram.traits(), ENVELOPE_UPPER);
-  env_alg.construct_lu_envelope (begin, end, max_diagram);
-}
-
-/*!
- * Construct the lower envelope of a given set of xy_monotone surfaces.
- * \param begin An iterator for the first xy-monotone surface.
- * \param end A past-the-end iterator for the xy_monotone surfaces in the range.
- * \param min_diag Output: The minimization diagram.
- * \pre The value-type of InputIterator is Traits::Surface_3.
- */
-template <class InputIterator, class Traits,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-          template <class T1, class T2>
-#endif
-          class T_Dcel>
-void
-lower_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
-                              Envelope_diagram_2<Traits, T_Dcel>& min_diagram)
-{
-  typedef Traits                                              Traits_3;
-  typedef typename Envelope_diagram_2<Traits_3, T_Dcel>::Base Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
-  Envelope_algorithm   env_alg (min_diagram.traits(), ENVELOPE_LOWER);
-  env_alg.construct_envelope_xy_monotone (begin, end, min_diagram);
-}
-
-/*!
- * Construct the lower envelope of a given set of xy_monotone surfaces.
- * \param begin An iterator for the first xy-monotone surface.
- * \param end A past-the-end iterator for the xy_monotone surfaces in the range.
- * \param min_diag Output: The minimization diagram.
- * \pre The value-type of InputIterator is Traits::Surface_3.
- */
-template <class InputIterator, class Traits>
-void lower_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
-                                   Envelope_diagram_2<Traits>& min_diagram)
-{
-  typedef Traits                                              Traits_3;
-  typedef typename Envelope_diagram_2<Traits_3>::Base         Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
-  Envelope_algorithm   env_alg (min_diagram.traits(), ENVELOPE_LOWER);
-  env_alg.construct_envelope_xy_monotone (begin, end, min_diagram);
-}
-
-/*!
- * Construct the upper envelope of a given set of xy_monotone surfaces.
- * \param begin An iterator for the first xy_monotone surface.
- * \param end A past-the-end iterator for the xy_monotone surfaces in the range.
- * \param max_diag Output: The maximization diagram.
- * \pre The value-type of InputIterator is Traits::Surface_3.
- */
-template <class InputIterator, class Traits,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-          template <class T1, class T2>
-#endif
-          class T_Dcel>
-void
-upper_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
-                              Envelope_diagram_2<Traits, T_Dcel>& max_diagram)
-{
-  typedef Traits                                              Traits_3;
-  typedef typename Envelope_diagram_2<Traits_3, T_Dcel>::Base Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Traits_3, Base_arr_2> Envelope_algorithm;
-
-  Envelope_algorithm   env_alg (max_diagram.traits(), ENVELOPE_UPPER);
-  env_alg.construct_envelope_xy_monotone (begin, end, max_diagram);
-
-  return;
-}
-
-/*!
- * Construct the upper envelope of a given set of xy_monotone surfaces.
- * \param begin An iterator for the first xy_monotone surface.
- * \param end A past-the-end iterator for the xy_monotone surfaces in the range.
- * \param max_diag Output: The maximization diagram.
- * \pre The value-type of InputIterator is Traits::Surface_3.
- */
-template <class InputIterator, class Traits>
-void upper_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
-                                   Envelope_diagram_2<Traits>& max_diagram)
-{
-  typedef Traits                                       Traits_3;
-  typedef typename Envelope_diagram_2<Traits_3>::Base  Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Traits_3,
-                                        Base_arr_2>    Envelope_algorithm;
-
-  Envelope_algorithm   env_alg (max_diagram.traits(), ENVELOPE_UPPER);
-  env_alg.construct_envelope_xy_monotone (begin, end, max_diagram);
-
-  return;
-}
-
-CGAL_END_NAMESPACE
-
-#endif
-
 #endif // CGAL_ARR_SINGLE_CELL_2_H
+// EOF
 
