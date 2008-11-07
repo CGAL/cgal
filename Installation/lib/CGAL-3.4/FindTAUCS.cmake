@@ -13,12 +13,18 @@
 
 include(CGAL_GeneratorSpecificSettings)
 
+find_package(LAPACK QUIET)
+
+if (NOT LAPACK_FOUND)
+  message(STATUS "TAUCS requires LAPACK and BLAS.")
+endif (NOT LAPACK_FOUND)
+
 # Is it already configured?
-if (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
+if (LAPACK_FOUND AND TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
 
   set(TAUCS_FOUND TRUE)
 
-elseif (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES)
+elseif (LAPACK_FOUND AND TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES)
 
   set(TAUCS_FOUND TRUE)
 
@@ -75,9 +81,9 @@ else()
     endif()
   endif()
 
-  if (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
+  if (LAPACK_FOUND AND TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
     set(TAUCS_FOUND TRUE)
-  elseif (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES)
+  elseif (LAPACK_FOUND AND TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES)
     set(TAUCS_FOUND TRUE)
   else()
     set(TAUCS_FOUND FALSE)
@@ -86,7 +92,6 @@ else()
   if(NOT TAUCS_FIND_QUIETLY)
     if(TAUCS_FOUND)
       message(STATUS "TAUCS libraries found.")
-      set(TAUCS`_USE_FILE "CGAL_UseTAUCS")
     else(TAUCS_FOUND)
       if(TAUCS_FIND_REQUIRED)
         message(FATAL_ERROR "TAUCS libraries not found. Please specify libraries location.")
@@ -102,4 +107,9 @@ else()
   #message("DEBUG: TAUCS_FOUND = ${TAUCS_FOUND}")
 
 endif(TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
+
+if(TAUCS_FOUND)
+  set(TAUCS_USE_FILE "CGAL_UseTAUCS")
+endif(TAUCS_FOUND)
+message(STATUS "Coucou")
 

@@ -240,19 +240,19 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
         )
       endif()
 
+      # Add variables to cache
+      set( LAPACK_DEFINITIONS   "${LAPACK_DEFINITIONS}"
+                                CACHE FILEPATH "Compilation options to use LAPACK" )
+      set( LAPACK_LINKER_FLAGS  "${LAPACK_LINKER_FLAGS}"
+                                CACHE FILEPATH "Linker flags to use LAPACK" )
+      set( LAPACK_LIBRARIES     "${LAPACK_LIBRARIES}"
+                                CACHE FILEPATH "LAPACK libraries name" )
+  
     else(BLAS_FOUND)
 
       message(STATUS "LAPACK requires BLAS")
 
     endif(BLAS_FOUND)
-
-    # Add variables to cache
-    set( LAPACK_DEFINITIONS   "${LAPACK_DEFINITIONS}"
-                              CACHE FILEPATH "Compilation options to use LAPACK" )
-    set( LAPACK_LINKER_FLAGS  "${LAPACK_LINKER_FLAGS}"
-                              CACHE FILEPATH "Linker flags to use LAPACK" )
-    set( LAPACK_LIBRARIES     "${LAPACK_LIBRARIES}"
-                              CACHE FILEPATH "LAPACK libraries name" )
 
   endif(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
@@ -265,7 +265,6 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
   if(NOT LAPACK_FIND_QUIETLY)
     if(LAPACK_FOUND)
       message(STATUS "A library with LAPACK API found.")
-      set(BLAS_USE_FILE "CGAL_UseLAPACK")
     else(LAPACK_FOUND)
       if(LAPACK_FIND_REQUIRED)
         message(FATAL_ERROR "A required library with LAPACK API not found. Please specify library location.")
@@ -283,3 +282,6 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
 
 endif(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
 
+if(LAPACK_FOUND)
+  set(LAPACK_USE_FILE "CGAL_UseLAPACK")
+endif(LAPACK_FOUND)
