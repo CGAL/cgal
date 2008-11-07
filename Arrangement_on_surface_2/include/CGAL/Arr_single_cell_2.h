@@ -160,10 +160,9 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                     _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
             );
             _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
-
         }
-            
-#if !NDEBUG
+
+#if 0
         if (_m_halfedge_handle->is_fictitious()) {
             std::cout << "Initial curve: fict" << std::endl;
         } else {
@@ -330,7 +329,7 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         //std::cout << "he: " << _m_halfedge_handle->curve() << std::endl;
 
         if (!is_vertical(cv)) {
-            // TODO symbolic pertubation for endpoints!
+            // Todo symbolic pertubation for endpoints!
             if (is_in_x_range(cv, _m_point)) {
                 CGAL::Comparison_result res = compare_y_at_x(_m_point, cv);
                 
@@ -395,7 +394,6 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                             _m_cell_handle = 
                                 CGAL::make_object(_m_halfedge_handle->face());
                             
-
                             //std::cout << "HE2 set to cv: " 
                             //          << _m_halfedge_handle->curve() 
                             //          << std::endl;
@@ -403,16 +401,17 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                         }
                     }
                 } else if (res == CGAL::EQUAL) {
-                    // TODO on curve!!!!
+                    // Todo on curve!!!!
                 }
             } 
         } else {
-            // TODO what if e->curve() is vertical
+            // Todo what if e->curve() is vertical
         }
         
         // else no action is required
     }
-   
+#endif   
+
     /*!
      * Notification after a face was split.
      * \param f A handle to the face we have just split.
@@ -422,9 +421,13 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     virtual void after_split_face (Face_handle /* f */,
                                    Face_handle /* new_f */,
                                    bool /* is_hole */)
-    {}
-
-#endif
+    {
+        //std::cout << "after_split_face" << std::endl;
+        CGAL_assertion(
+                _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
+        );
+        _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
+    }
     
     /*!
      * Notification before the splitting of an edge into two.
@@ -445,7 +448,7 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
 //         } else {
 //             std::cout << "curr: " << curr->curve() << std::endl;
 //         }
-        std::cout << std::endl;
+//        std::cout << std::endl;
         if (e == curr || e->twin() == curr) {
             //std::cout << "It's maybe required UPDATE _m_halfedge_handle"
             //          << std::endl;
@@ -744,11 +747,12 @@ public:
             if (!CGAL::assign(fh, cell_handle)) {
                 // simple case
                 _m_cell_handle_ri = cell_handle; // found point
-
+                
             } else {
                 
-                // TODO reactivate random shuffle
-                //std::random_shuffle(_m_xcvs.begin(), _m_xcvs.end());
+                // random shuffle
+                // TODO use better random values
+                std::random_shuffle(_m_xcvs.begin(), _m_xcvs.end());
                 
                 Face_const_handle fh = _m_arr_city->faces_begin();
                 cell_handle = CGAL::make_object(fh);
@@ -762,17 +766,15 @@ public:
                     CGALi::RI_observer< Arrangement_2 > 
                         obs((*_m_arr_city), pt);
 #endif
-                    // add *cit using zone
+                    //std::cout << "Insert: " << *cit << std::endl;
+                    // add *cit using zone/sweep? TODO
                     CGAL::insert(*_m_arr_city, *cit);
 
 #if CGAL_SINGLE_CELL_RI_NAIVE
                     // make point location
                     cell_handle = pl.locate(pt);
 #else
-                    // TODO remove point location and replace by
-                    //      observer! observer should also try to determine
-                    //      whether point lies on new curve 
-                    //      (using e.g., before_new_vertex!)
+                    // point location via observing arrangement
                     cell_handle = obs.cell_handle();
 #endif
                     
@@ -785,11 +787,6 @@ public:
                     //      delete all feature not defining "cell_handle"
                 }
 
-#if CGAL_SINGLE_CELL_RI_NAIVE
-#else
-                // TODO remove this location (ie, improve arr-maintenance)
-                //cell_handle = pl.locate(pt);
-#endif
                 _m_cell_handle_ri = cell_handle;
             }
             
@@ -809,10 +806,8 @@ public:
                       << "with NAIVE-RED-BLUE-OVERLAY-method ... " 
                       << std::flush;
 #endif
-            // TODO permute INPUT randomly!!
-            
             if (_m_xcvs.size() + _m_pts.size() <= 4) {
-                
+
 #if !NDEBUG
                 std::cout << "Anchor" << std::endl;
 #endif
