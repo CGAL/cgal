@@ -20,10 +20,13 @@
 
 // flags in this file:
 
-#ifndef CGAL_SINGLE_CELL_RI_NAIVE
-#define CGAL_SINGLE_CELL_RI_NAIVE 0
+#ifndef CGAL_ARR_SINGLE_CELL_2_RI_NAIVE
+#define CGAL_ARR_SINGLE_CELL_2_RI_NAIVE 0
 #endif
 
+#ifndef CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+#define CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS 0
+#endif
 
 #ifndef CGAL_ARR_SINGLE_CELL_2_H
 #define CGAL_ARR_SINGLE_CELL_2_H
@@ -31,7 +34,9 @@
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
 
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
 #include <CGAL/Timer.h>
+#endif
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_overlay_2.h>
@@ -691,32 +696,43 @@ public:
 #endif
             // compute full arr
             this->_m_full_arr = Arrangement_2();
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
             _mt_full_arr.start();
+#endif
             CGAL::insert_empty(*_m_full_arr,
                                _m_xcvs.begin(), _m_xcvs.end(),
                                _m_pts.begin(), _m_pts.end()
             );
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
             _mt_full_arr.stop();
+#endif
             
+#if !NDEBUG
             std::cout << "The full_arr sizes:" << std::endl
                       << "   V = " << _m_full_arr->number_of_vertices()
                       << ",  E = " << _m_full_arr->number_of_edges() 
                       << ",  F = " << _m_full_arr->number_of_faces() 
                       << std::endl;
-            
+#endif 
             // locate point
             Point_location pl(*_m_full_arr);
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
             _mt_pl.start();
+#endif
             _m_cell_handle_pl = pl.locate(pt);
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
             _mt_pl.stop();
+#endif
             
 #if !NDEBUG
             std::cout << "done."   << std::endl << std::endl;
 #endif
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
             std::cout << "tFullArr: " << _mt_full_arr.time() 
                       << " sec" << std::endl;
             std::cout << "tPL     : " << _mt_pl.time() 
                       << " sec" << std::endl;
+#endif
         }
         return *_m_cell_handle_pl;
     }
@@ -762,7 +778,7 @@ public:
                          std::vector< X_monotone_curve_2 >::const_iterator 
                          cit = _m_xcvs.begin(); cit != _m_xcvs.end(); cit++) {
 
-#if !CGAL_SINGLE_CELL_RI_NAIVE
+#if !CGAL_ARR_SINGLE_CELL_2_RI_NAIVE
                     CGALi::RI_observer< Arrangement_2 > 
                         obs((*_m_arr_city), pt);
 #endif
@@ -770,7 +786,7 @@ public:
                     // add *cit using zone/sweep? TODO
                     CGAL::insert(*_m_arr_city, *cit);
 
-#if CGAL_SINGLE_CELL_RI_NAIVE
+#if CGAL_ARR_SINGLE_CELL_2_RI_NAIVE
                     // make point location
                     cell_handle = pl.locate(pt);
 #else
@@ -812,9 +828,13 @@ public:
                 std::cout << "Anchor" << std::endl;
 #endif
                 
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
                 _mt_rec_anchor.start();
+#endif
                 CGAL::Object cell_handle = cell_pl(pt);
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
                 _mt_rec_anchor.stop();
+#endif
                 
                 _m_cell_handle_rbo = cell_handle;
                 
@@ -879,14 +899,18 @@ public:
                 std::cout << "Start overlay ... " << std::flush;
 #endif
 
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
                 _mt_rec_overlay.start();
+#endif
                 CGAL::Arr_default_overlay_traits< Arrangement_2 > ovltraits;
 
                 Arrangement_2 arr_purple;
 
                 CGAL::overlay(cell[0], cell[1], 
                               arr_purple, ovltraits);
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
                 _mt_rec_overlay.stop();
+#endif
                 
                 _m_arr_purple = arr_purple;
                 
@@ -894,10 +918,14 @@ public:
                 std::cout << "done." << std::endl;
 #endif
                 
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
                 _mt_pl.start();
+#endif
                 Point_location pl_purple(*_m_arr_purple);
                 CGAL::Object cell_handle_pl_purple = pl_purple.locate(pt);
-                _mt_pl.stop();            
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+                _mt_pl.stop();
+#endif   
                 
                 _m_cell_handle_rbo = cell_handle_pl_purple;
             }
@@ -905,12 +933,14 @@ public:
             std::cout << "done." << std::endl;
             std::cout << std::endl;
 #endif
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
             std::cout << "tRecAnchor : " << _mt_rec_anchor.time() 
                       << " sec" << std::endl;
             std::cout << "tRecOverlay: " << _mt_rec_overlay.time() 
                       << " sec" << std::endl;
             std::cout << "tPLs       : " << _mt_pl.time() 
                       << " sec" << std::endl;
+#endif
         }
         return *_m_cell_handle_rbo;
     }
@@ -943,7 +973,9 @@ public:
     // FUTURE TODO allow multiple cell_handles!
     void cell_arr(CGAL::Object cell_handle, Arrangement_2& cell) const {
         
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
         _mt_cell.start();
+#endif
         
         std::list< Point_2 > cell_pts;
         std::list< X_monotone_curve_2 > cell_xcvs;
@@ -1030,10 +1062,12 @@ public:
                 cell_pts.begin(), cell_pts.end()
         );
         
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
         _mt_cell.stop();
         
         std::cout << "tCell   : " << _mt_cell.time() 
                   << " sec" << std::endl;
+#endif
     }
 
     //!@}
@@ -1068,12 +1102,14 @@ private:
     mutable boost::optional< Arrangement_2 > _m_arr_purple; 
 
     // timers
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
     mutable CGAL::Timer _mt_full_arr;
     mutable CGAL::Timer _mt_pl;
     mutable CGAL::Timer _mt_cell;
 
     mutable CGAL::Timer _mt_rec_anchor;
     mutable CGAL::Timer _mt_rec_overlay;
+#endif
 };
 
 } // namespace CGALi
