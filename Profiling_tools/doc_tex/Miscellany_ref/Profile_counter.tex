@@ -7,7 +7,7 @@
 \ccDefinition
 
 \ccInclude{CGAL/Profile_counter.h}
-\ccCreationVariable{t}
+\ccCreationVariable{pc}
 
 The class \ccRefName\ provides a way to count the number of times a given
 line of code is executed during the execution of a program, and print this
@@ -43,7 +43,7 @@ to \ccc{std::cerr} together with the string.}
 to an empty statement.  Otherwise, it is defined to \ccc{static
 CGAL::Profile_counter tmp(MSG); ++tmp;}.}
 
-\ccIncludeExampleCode{Timer/Profile_counter.cpp}
+\ccIncludeExampleCode{Profiling_tools/Profile_counter.cpp}
 
 will print at exit:
 
