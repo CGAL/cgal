@@ -23,7 +23,6 @@ my $release_name;
 my @platforms_to_do;
 my @known_platforms;
 my %platform_short_names;
-my %platform_use_cmake;
 my @available_platforms;
 my %test_directories = ();
 my @testresults;
@@ -331,9 +330,6 @@ sub print_platform_descriptions()
 <th>QT3</th>
 <th>QT4</th>
 <th>OPENGL</th>
-<th>BLAS</th>
-<th>LAPACK</th>
-<th>TAUCS</th>
 <th>LEDA</th>
 <th>CXXFLAGS</th>
 <th>LDFLAGS</th>
@@ -345,8 +341,7 @@ EOF
 	print OUTPUT "<tr>\n<td><a name=\"platform$pf_num_plus_one\">$pf_no</a>\n";
 	$pf_no++;
 	# my $pf_short = join('_',parse_platform_2($pf));
-	my $pf_short = $pf;
-
+	(my $pf_short) = ($pf =~ m/[a-z]+_(.*)/);
 	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\">$pf_short</a>";
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
 	    $_ = <PLATFORM_INFO>; # CGAL_VERSION
@@ -373,10 +368,6 @@ EOF
 	    }
 	    $_ = <PLATFORM_INFO>;
 	    chomp;
-	    $platform_use_cmake{$pf} = $_;
-	    if($_) { # if use cmake
-		    print OUTPUT " <span class=\"cmaketag\">(CMAKE)</span>"
-	    }
 	    print OUTPUT "</td>\n";
 	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a></td>\n";
 	    print OUTPUT "<td>$county</td>\n"; 
@@ -408,10 +399,6 @@ sub print_platforms_numbers()
 	my $pf_short = short_pfname($platform);
 	my $class = "";
 	my $tag = "";
-	if( $platform_use_cmake{$platform}) {
-	    $class = " class=\"cmake\"";
-	    $tag = " (cmake platform)";
-	}
 	print OUTPUT "<td$class><a href=\"#platform$platform_num\" title=\"$pf_short$tag\"><b>$platform_num</b></a>\n";
     }
 }
@@ -425,9 +412,6 @@ sub print_platforms()
 	$pf_no++;
 	my $pf_short = short_pfname($pf);
 	print OUTPUT "<td>$platform_short_names{$pf_short}";
-	if($platform_use_cmake{$pf}) {
-	    print OUTPUT " <span class=\"cmaketag\">(CMAKE)</span>"
-	}
 	print OUTPUT "\n</td></tr>\n";
     }
     print OUTPUT "</table>\n";
