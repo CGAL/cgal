@@ -15,6 +15,8 @@
 #     May be null if LAPACK_LIBRARIES contains libraries name using full path.
 #  LAPACK_LIBRARIES - List of libraries to link against LAPACK interface.
 #     May be null if the compiler supports auto-link (e.g. VC++).
+#  LAPACK_USE_FILE - The name of the cmake module to include to compile
+#     applications or libraries using LAPACK.
 #
 # This module was modified by CGAL team:
 # - find LAPACK library shipped with TAUCS
@@ -263,6 +265,7 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
   if(NOT LAPACK_FIND_QUIETLY)
     if(LAPACK_FOUND)
       message(STATUS "A library with LAPACK API found.")
+      set(BLAS_USE_FILE "CGAL_UseLAPACK")
     else(LAPACK_FOUND)
       if(LAPACK_FIND_REQUIRED)
         message(FATAL_ERROR "A required library with LAPACK API not found. Please specify library location.")

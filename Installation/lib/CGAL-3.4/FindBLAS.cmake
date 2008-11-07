@@ -16,6 +16,8 @@
 #     May be null if BLAS_LIBRARIES contains libraries name using full path.
 #  BLAS_LIBRARIES - List of libraries to link against BLAS interface.
 #     May be null if the compiler supports auto-link (e.g. VC++).
+#  BLAS_USE_FILE - The name of the cmake module to include to compile
+#     applications or libraries using BLAS.
 #
 # This module was modified by CGAL team:
 # - find BLAS library shipped with TAUCS
@@ -407,6 +409,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
   if(NOT BLAS_FIND_QUIETLY)
     if(BLAS_FOUND)
       message(STATUS "A library with BLAS API found.")
+      set(BLAS_USE_FILE "CGAL_UseBLAS")
     else(BLAS_FOUND)
       if(BLAS_FIND_REQUIRED)
         message(FATAL_ERROR "A required library with BLAS API not found. Please specify library location.")

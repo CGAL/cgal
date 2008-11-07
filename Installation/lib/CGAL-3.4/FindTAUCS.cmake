@@ -8,6 +8,8 @@
 #     May be null if TAUCS_LIBRARIES contains libraries name using full path.
 #  TAUCS_LIBRARIES - TAUCS libraries name.
 #     May be null if the compiler supports auto-link (e.g. VC++).
+#  TAUCS_USE_FILE - The name of the cmake module to include to compile
+#     applications or libraries using TAUCS.
 
 include(CGAL_GeneratorSpecificSettings)
 
@@ -84,6 +86,7 @@ else()
   if(NOT TAUCS_FIND_QUIETLY)
     if(TAUCS_FOUND)
       message(STATUS "TAUCS libraries found.")
+      set(TAUCS`_USE_FILE "CGAL_UseTAUCS")
     else(TAUCS_FOUND)
       if(TAUCS_FIND_REQUIRED)
         message(FATAL_ERROR "TAUCS libraries not found. Please specify libraries location.")
