@@ -18,12 +18,10 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
-#ifndef CGAL_TAUCS_MATRIX
-#define CGAL_TAUCS_MATRIX
+#ifndef CGAL_TAUCS_MATRIX_H
+#define CGAL_TAUCS_MATRIX_H
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
-
-#ifdef CGAL_USE_TAUCS
 
 #include <CGAL/Taucs_fix.h>
 #include <CGAL/assertions.h>
@@ -454,6 +452,4 @@ template<> struct Taucs_traits<taucs_scomplex> {
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_USE_TAUCS
-
-#endif // CGAL_TAUCS_MATRIX
+#endif // CGAL_TAUCS_MATRIX_H

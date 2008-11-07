@@ -14,7 +14,7 @@ endif()
 
 find_package(CGAL QUIET COMPONENTS Core )
 
-if ( CGAL_FOUND )
+if ( CGAL_FOUND AND CGAL_Core_FOUND )
 
   # Optimization for applications dealing with large data
   if (MSVC) 
@@ -37,15 +37,25 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
   # Link with BLAS, LAPACK and TAUCS (optional)
-  include( CGAL_UseTAUCS )
+  find_package(TAUCS QUIET)
 
-  include_directories (BEFORE include)
+  if(TAUCS_FOUND)
 
-  create_single_source_cgal_program( "extensive_parameterization_test.cpp" )
+    include( ${TAUCS_USE_FILE} )
+
+    include_directories (BEFORE include)
+
+    create_single_source_cgal_program( "extensive_parameterization_test.cpp" )
+
+  else(TAUCS_FOUND)
+
+    message(STATUS "NOTICE: This program requires the TAUCS library, and will not be compiled.")
+
+  endif(TAUCS_FOUND)
 
 else()
 
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires the CGAL library and the CGAL Core library, and will not be compiled.")
 
 endif()
 

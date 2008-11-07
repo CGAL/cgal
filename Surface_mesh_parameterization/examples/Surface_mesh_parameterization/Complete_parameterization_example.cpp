@@ -1,8 +1,5 @@
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
-#ifdef CGAL_USE_TAUCS
-
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -292,22 +289,3 @@ int main(int argc, char * argv[])
 
     return EXIT_SUCCESS;
 }
-
-
-#else // CGAL_USE_TAUCS
-
-
-#include <iostream>
-#include <cstdlib>
-
-// ----------------------------------------------------------------------------
-// Empty main() if TAUCS is not installed
-// ----------------------------------------------------------------------------
-
-int main()
-{
-    std::cerr << "Skip test as TAUCS is not installed" << std::endl;
-    return EXIT_SUCCESS;
-}
-
-#endif // CGAL_USE_TAUCS

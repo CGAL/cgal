@@ -18,12 +18,10 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 
-#ifndef CGAL_TAUCS_SOLVER_TRAITS
-#define CGAL_TAUCS_SOLVER_TRAITS
+#ifndef CGAL_TAUCS_SOLVER_TRAITS_H
+#define CGAL_TAUCS_SOLVER_TRAITS_H
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
-
-#ifdef CGAL_USE_TAUCS
 
 // Uncomment the next line to see libraries selected by auto-link
 //#define CGAL_LIB_DIAGNOSTIC
@@ -333,6 +331,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_USE_TAUCS
-
-#endif // CGAL_TAUCS_SOLVER_TRAITS
+#endif // CGAL_TAUCS_SOLVER_TRAITS_H

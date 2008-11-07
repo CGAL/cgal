@@ -17,12 +17,10 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
-#ifndef CGAL_TAUCS_FIX
-#define CGAL_TAUCS_FIX
+#ifndef CGAL_TAUCS_FIX_H
+#define CGAL_TAUCS_FIX_H
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
-
-#ifdef CGAL_USE_TAUCS
 
 //
 // Include TAUCS main header taucs.h
@@ -57,6 +55,4 @@ extern "C" {
     #undef max
 #endif
 
-#endif // CGAL_USE_TAUCS
-
-#endif // CGAL_TAUCS_FIX
+#endif // CGAL_TAUCS_FIX_H

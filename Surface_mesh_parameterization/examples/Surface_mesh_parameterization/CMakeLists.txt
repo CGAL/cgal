@@ -36,21 +36,39 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  # Link with BLAS, LAPACK and TAUCS (optional)
-  include( CGAL_UseTAUCS )
-
   # Link with Boost.ProgramOptions (optional)
   include( CGAL_UseBoostProgramOptions )
 
   include_directories (BEFORE include)
 
+  # examples that do not use TAUCS
   create_single_source_cgal_program( "Authalic_parameterization.cpp" )
-  create_single_source_cgal_program( "Complete_parameterization_example.cpp" )
   create_single_source_cgal_program( "Mesh_cutting_parameterization.cpp" )
-  create_single_source_cgal_program( "polyhedron_ex_parameterization.cpp" )
   create_single_source_cgal_program( "Simple_parameterization.cpp" )
   create_single_source_cgal_program( "Square_border_parameterization.cpp" )
-  create_single_source_cgal_program( "Taucs_parameterization.cpp" )
+
+  # Link with BLAS, LAPACK and TAUCS (optional)
+  find_package(TAUCS REQUIRED)
+
+  if(TAUCS_FOUND)
+
+    include( ${TAUCS_USE_FILE} )
+
+    # examples that do use TAUCS
+    create_single_source_cgal_program( "Complete_parameterization_example.cpp" )
+    create_single_source_cgal_program( "Taucs_parameterization.cpp" )
+
+    # for polyhedron_ex_parameterization
+    add_definitions(-DCGAL_USE_TAUCS)
+
+  else(TAUCS_FOUND)
+
+    message(STATUS "NOTICE: This directory requires the TAUCS library, and some examples will not be compiled.")
+
+  endif(TAUCS_FOUND)
+
+  # example that can use TAUCS or not, depending on the macro CGAL_USE_TAUCS
+  create_single_source_cgal_program( "polyhedron_ex_parameterization.cpp" )
 
 else()
 
