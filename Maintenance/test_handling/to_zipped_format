@@ -109,10 +109,10 @@ sub reformat_results($)
 #	if (/BOOST_BIMAP_VERSION = '([^']+)'/) {
 #	    $BOOST="$BOOST+bimap";
 #	}
-	if (/USING        CXXFLAGS = '([^']*)'/) {
+	if (/USING +CXXFLAGS = '([^']*)'/) {
 	    $CXXFLAGS="$CXXFLAGS $1";
 	}
-	if (/USING        LDFLAGS = '([^']*)'/) {
+	if (/USING +LDFLAGS = '([^']*)'/) {
 	    $LDFLAGS="$LDFLAGS $1";
 	}
 #        if(/^CGAL_TEST_PLATFORM /) {
