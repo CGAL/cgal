@@ -207,7 +207,7 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         
         X_monotone_curve_2 new_cv = e->curve();
         
-        std::cout << "after create edge" << std::endl;
+        //std::cout << "after create edge" << std::endl;
         
         if (!is_vertical(new_cv)) {
             // TODO symbolic pertubation for endpoints!
@@ -239,7 +239,7 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                             if (compare_y_pos(new_cv, old_cv) ==
                                 CGAL::SMALLER) {
                                 change = true;
-                                std::cout << "CHANGE 2" << std::endl;
+                                //std::cout << "CHANGE 2" << std::endl;
                             }
                         } else {
                             typename Geometry_traits_2::Compare_x_2 compare_x =
@@ -259,7 +259,7 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                                 change = (compare_y_at_x(min, old_cv) 
                                           == CGAL::SMALLER);
                                 if (change) {
-                                    std::cout << "CHANGE 3" << std::endl;
+                                    //std::cout << "CHANGE 3" << std::endl;
                                 }
                             } else {
                                 Point_2 max = construct_max(new_cv);
@@ -269,7 +269,7 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                                 change = (compare_y_at_x(max, old_cv)
                                           == CGAL::SMALLER);
                                 if (change) {
-                                    std::cout << "CHANGE 4" << std::endl;
+                                    //std::cout << "CHANGE 4" << std::endl;
                                 }
                             }
                         }
@@ -291,9 +291,9 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                         _m_cell_handle = 
                             CGAL::make_object(_m_halfedge_handle->face());
 
-                        std::cout << "HE1 set to cv: " 
-                                  << _m_halfedge_handle->curve() 
-                                  << std::endl;
+                        //std::cout << "HE1 set to cv: " 
+                        //          << _m_halfedge_handle->curve() 
+                        //          << std::endl;
                     }
                 } else if (res == CGAL::EQUAL) {
                     // TODO on curve!!!!
@@ -325,9 +325,9 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         
         X_monotone_curve_2 cv = e->curve();
         
-        std::cout << "before split face" << std::endl;
-        std::cout << "cv: " << cv << std::endl;
-        std::cout << "he: " << _m_halfedge_handle->curve() << std::endl;
+        //std::cout << "before split face" << std::endl;
+        //std::cout << "cv: " << cv << std::endl;
+        //std::cout << "he: " << _m_halfedge_handle->curve() << std::endl;
 
         if (!is_vertical(cv)) {
             // TODO symbolic pertubation for endpoints!
@@ -396,9 +396,9 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                                 CGAL::make_object(_m_halfedge_handle->face());
                             
 
-                            std::cout << "HE2 set to cv: " 
-                                      << _m_halfedge_handle->curve() 
-                                      << std::endl;
+                            //std::cout << "HE2 set to cv: " 
+                            //          << _m_halfedge_handle->curve() 
+                            //          << std::endl;
 
                         }
                     }
@@ -412,7 +412,6 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         
         // else no action is required
     }
-#endif
    
     /*!
      * Notification after a face was split.
@@ -423,13 +422,9 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     virtual void after_split_face (Face_handle /* f */,
                                    Face_handle /* new_f */,
                                    bool /* is_hole */)
-    {
-        std::cout << "after_split_face" << std::endl;
-        CGAL_assertion(
-                _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
-        );
-        //_m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
-    }
+    {}
+
+#endif
     
     /*!
      * Notification before the splitting of an edge into two.
@@ -445,15 +440,15 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     {
         Halfedge_handle curr = 
             Base::arrangement()->non_const_handle(_m_halfedge_handle);
-        if (curr->is_fictitious()) {
-            std::cout << "curr fict";
-        } else {
-            std::cout << "curr: " << curr->curve() << std::endl;
-        }
+//         if (curr->is_fictitious()) {
+//             std::cout << "curr fict";
+//         } else {
+//             std::cout << "curr: " << curr->curve() << std::endl;
+//         }
         std::cout << std::endl;
         if (e == curr || e->twin() == curr) {
-            std::cout << "It's maybe required UPDATE _m_halfedge_handle"
-                      << std::endl;
+            //std::cout << "It's maybe required UPDATE _m_halfedge_handle"
+            //          << std::endl;
             _m_check_split_edges = true;
         }
         
@@ -480,9 +475,9 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         X_monotone_curve_2 cv2 = e2->curve();
         
         if (_m_check_split_edges) {
-            std::cout << "pt : " << _m_point << std::endl;
-            std::cout << "cv1: " << cv1 << std::endl;
-            std::cout << "cv2: " << cv2 << std::endl;
+            //std::cout << "pt : " << _m_point << std::endl;
+            //std::cout << "cv1: " << cv1 << std::endl;
+            //std::cout << "cv2: " << cv2 << std::endl;
             
             // Remark:
             // as e1 and e2 originate from _m_halfedge_handle
@@ -503,8 +498,8 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                     _m_cell_handle = 
                         CGAL::make_object(_m_halfedge_handle->face());
                     
-                    std::cout << "HE3 set to cv: " 
-                              << _m_halfedge_handle->curve() << std::endl;
+                    //std::cout << "HE3 set to cv: " 
+                    //          << _m_halfedge_handle->curve() << std::endl;
 
                 } else {
                     CGAL_assertion(is_in_x_range(cv2, _m_point));
@@ -520,8 +515,8 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                     _m_cell_handle = 
                         CGAL::make_object(_m_halfedge_handle->face());
                     
-                    std::cout << "HE4 set to cv: " 
-                              << _m_halfedge_handle->curve() << std::endl;
+                    //std::cout << "HE4 set to cv: " 
+                    //          << _m_halfedge_handle->curve() << std::endl;
                     
                 }
             } else {
@@ -763,11 +758,6 @@ public:
                          std::vector< X_monotone_curve_2 >::const_iterator 
                          cit = _m_xcvs.begin(); cit != _m_xcvs.end(); cit++) {
 
-                    std::cout << "----------------------------------------"
-                              << std::endl;
-                    std::cout << "insert: " << *cit << std::endl; 
-                    std::cout << std::endl;
-                    
 #if !CGAL_SINGLE_CELL_RI_NAIVE
                     CGALi::RI_observer< Arrangement_2 > 
                         obs((*_m_arr_city), pt);
@@ -1026,8 +1016,8 @@ public:
             }
         }
         
-        std::cout << "#cell-curves:" << cell_xcvs.size() << std::endl;
-        std::cout << "#cell-points:" << cell_pts.size() << std::endl;
+        //std::cout << "#cell-curves:" << cell_xcvs.size() << std::endl;
+        //std::cout << "#cell-points:" << cell_pts.size() << std::endl;
 
         for (typename 
                  std::list< X_monotone_curve_2 >::const_iterator
@@ -1037,8 +1027,8 @@ public:
             
         }
         
-        CGAL::set_pretty_mode(std::cerr);
         // TODO use CGAL::non_intersecting_insert_empty(
+        //      requires: non-equal curves!
         CGAL::insert_empty(
                 cell, 
                 cell_xcvs.begin(), cell_xcvs.end(),
@@ -1155,7 +1145,6 @@ CGAL::Object single_cell_ri_2(
     );
 
     CGAL::Object cell_handle = single_cell.cell_ri(point);
-    std::cout << "located" << std::endl;
     single_cell.cell_arr(cell_handle, cell);
     return cell_handle;
  }
