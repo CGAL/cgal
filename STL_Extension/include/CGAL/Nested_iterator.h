@@ -84,11 +84,6 @@ namespace CGALi {
 
 }
 
-template<class Base_it, class Tr> class Nested_iterator;
-
-template<class Base_it, class Tr>
-bool operator==(const Nested_iterator<Base_it,Tr>&,
-		const Nested_iterator<Base_it,Tr>&);
 
 template <typename Base_it,
 	  typename Tr = Nested_iterator_traits<Base_it> >
@@ -200,8 +195,20 @@ public:
     return nested_it_.operator->();
   }
 
-  friend bool operator==<>(const Self&, const Self&);
 
+  bool operator==(const Self& it2) const
+  {
+    //  CGAL_precondition( it1.b_ == it2.b_ && it1.e_ == it2.e_ );
+    
+    if ( this->base() != it2.base() ) { return false; }
+    return this->is_end() || ( this->nested_it_ == it2.nested_it_ );
+  }
+  
+  bool operator!=(const Self& it2) const
+  {
+    return !(*this == it2);
+  }
+  
 protected:
   void copy_from(const Self& other)
   {
@@ -214,29 +221,6 @@ protected:
 protected:
   Iterator       nested_it_;
 };
-
-
-
-
-
-template<class Base_it, class Traits>
-inline
-bool operator==(const Nested_iterator<Base_it,Traits>& it1,
-		const Nested_iterator<Base_it,Traits>& it2)
-{
-  //  CGAL_precondition( it1.b_ == it2.b_ && it1.e_ == it2.e_ );
-
-  if ( it1.base() != it2.base() ) { return false; }
-  return it1.is_end() || ( it1.nested_it_ == it2.nested_it_ );
-}
-
-template<class Base_it, class Traits>
-inline
-bool operator!=(const Nested_iterator<Base_it,Traits>& it1,
-		const Nested_iterator<Base_it,Traits>& it2)
-{
-  return !(it1 == it2);
-}
 
 
 CGAL_END_NAMESPACE
