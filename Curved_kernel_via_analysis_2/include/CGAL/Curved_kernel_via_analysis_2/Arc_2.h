@@ -2827,7 +2827,12 @@ public:
         }
     }
     //!@}
-   
+
+    //! equality
+    inline
+    bool operator == (const Kernel_arc_2& arc2) const { 
+        return  is_equal(arc2);
+    }
     // befriending the kernel point
     friend class Curved_kernel_via_analysis_2::Point_2;
     
