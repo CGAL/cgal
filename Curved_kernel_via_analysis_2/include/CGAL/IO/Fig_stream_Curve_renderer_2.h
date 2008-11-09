@@ -88,21 +88,34 @@ CGAL::Fig_stream<RatKernel>&
 operator << 
 (CGAL::Fig_stream<RatKernel>& ws, const CGALi::Point_2< CKvA_2 >& pt)
 {
+#if 0 // TODO check why no point is drawn!
+    typedef typename RatKernel::Point_2       Point_2;
+    typedef typename RatKernel::Segment_2     Segment_2;
     
-/*     typedef Curve_renderer_facade<CKvA_2> Facade; */
-   
-/*     std::pair< int, int > coord; */
-/*     Facade::setup(CGAL::Bbox_2(ws.x_min(), ws.y_min(), ws.x_max(), ws.y_max()), */
-/*             ws.width(), ws.height()); */
+    typedef Curve_renderer_facade<CKvA_2> Facade; 
+    
+    Bbox_2 bbox(CGAL::to_double(ws.bounding_rect().xmin()), 
+                CGAL::to_double(ws.bounding_rect().ymin()), 
+                CGAL::to_double(ws.bounding_rect().xmax()), 
+                CGAL::to_double(ws.bounding_rect().ymax()));
+    
+    Facade::setup(bbox, ws.width(), ws.height());
+    
+    std::pair< int, int > coord; 
+    if (!Facade::instance().draw(pt, coord)) {
+        return ws; 
+    }
+    
+    int height = ws.height();
 
-/*     if(!Facade::instance().draw(pt, coord)) */
-/*         return ws; */
-       
-/*     QPainter *ppnt = &ws.get_painter(); */
-/*     QPen old_pen = ppnt->pen(); */
-/*     ppnt->setPen(QPen(Qt::NoPen)); */
-/*     ppnt->drawEllipse(coord.first - 3, ws.height() - coord.second - 3, 6, 6); */
-/*     ppnt->setPen(old_pen); */
+    Point_2 rat_pt(coord.first, height - coord.second);
+
+    ws.set_fill_style(CGAL::FIG_FILLED);
+    ws.set_fill_color(CGAL::FIG_BLACK);
+    ws.set_point_style(CGAL::FIG_DISC);
+    
+    ws.write_point(rat_pt);
+#endif
     return ws;
 }
 
