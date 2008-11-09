@@ -162,46 +162,13 @@ MainWindow::processInput(CGAL::Object o)
   std::list<Point_2> points;
   if(CGAL::assign(points, o)){
     if((points.size() == 1)&& poly.size()>0){
-      Point_2 p = points.front();
-      // make the inside test
-      CGAL::Bounded_side bside   = poly.bounded_side(p);
-      switch (bside) {
-      case CGAL::ON_BOUNDED_SIDE:
-	textEdit->append("  The point is inside the polygon"); break;
-      case CGAL::ON_BOUNDARY:
-	textEdit->append("  The point is on the boundary of the polygon"); break;
-      case CGAL::ON_UNBOUNDED_SIDE:
-	textEdit->append("  The point is outside the polygon"); break;
-      }
+    
     } else {
       poly.clear();
       if(points.front() == points.back()){
 	points.pop_back();
       }
       poly.insert(poly.vertices_begin(), points.begin(), points.end());
-      textEdit->clear();
-      if(poly.is_empty()){
-	textEdit->append("P is empty!");
-      } else {
-	if(poly.is_simple()){
-	  textEdit->append("P is simple");
-	  CGAL::Orientation o = poly.orientation();
-	  switch (o) {
-	  case CGAL::CLOCKWISE:
-	    textEdit->append("P.orientation() == CLOCKWISE");
-	    break;
-	  case CGAL::COUNTERCLOCKWISE:
-	    textEdit->append("P.orientation() == COUNTERCLOCKWISE");
-	    break;
-	  case CGAL::COLLINEAR:
-	    textEdit->append("P.orientation() == COLLINEAR");
-	    break;
-	  }
-	  textEdit->append(QString("The area of P is %1").arg(poly.area()));
-	} else {
-	  textEdit->append("P is not simple");
-	}
-      }
     }
     emit(changed());
   }

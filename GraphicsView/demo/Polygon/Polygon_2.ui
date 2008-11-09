@@ -44,14 +44,6 @@
         <enum>QGraphicsView::NoAnchor</enum>
        </property>
       </widget>
-      <widget class="QTextEdit" name="textEdit" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -103,14 +95,9 @@
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
-   <widget class="QMenu" name="menuEdit" >
-    <property name="title" >
-     <string>&amp;Edit</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menuTools" >
     <property name="title" >
-     <string>&amp;Tools</string>
+     <string>&amp;Algorithms</string>
     </property>
     <addaction name="separator" />
     <addaction name="actionRecenter" />
@@ -123,7 +110,6 @@
     <addaction name="actionLinearLeastSquaresFittingOfSegments" />
    </widget>
    <addaction name="menuFile" />
-   <addaction name="menuEdit" />
    <addaction name="menuTools" />
   </widget>
   <action name="actionAbout" >
