@@ -891,6 +891,18 @@ private:
                 std::back_inserter(curves)
         );
         
+
+#if !NDEBUG
+        std::cout << "#cuts-curves: " << curves.size() << std::endl;
+        
+        for (typename std::list< std::pair< Curve_analysis_2, int > >::
+                 const_iterator it = curves.begin(); it != curves.end();
+             it++) {
+            std::cout << "cut-curve: " 
+                      << it->first.polynomial_2() << std::endl;
+        }
+#endif     
+
         if (curves.empty()) {
             // empty arrangement 
             Restricted_cad_3 cad;
