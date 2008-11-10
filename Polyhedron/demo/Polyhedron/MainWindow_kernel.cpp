@@ -23,8 +23,6 @@ void MainWindow::on_actionKernel_triggered()
     typedef CGAL::Gmpzf ET; // choose exact integral type
     typedef Polyhedron_kernel<Kernel,ET> Polyhedron_kernel;
 
-    double init = clock();
-
     // get triangles from polyhedron
     std::list<Triangle> triangles;
     get_triangles(*pMesh,std::back_inserter(triangles));
