@@ -2008,6 +2008,7 @@ Maintenance/svn_server/hooks/pre-revprop-change.tmpl -text
 Maintenance/svn_server/hooks/pre-unlock.tmpl -text
 Maintenance/svn_server/hooks/start-commit.tmpl -text
 Maintenance/test_handling/testresult.css svneol=native#text/css
+Manual/doc_tex/Introduction/abc.png -text
 Manual/doc_tex/Manual/fig/a-simp.eps -text svneol=unset#application/postscript
 Manual/doc_tex/Manual/fig/a-simp.pdf -text svneol=unset#application/pdf
 Manual/doc_tex/Manual/fig/c-simp.eps -text svneol=unset#application/postscript
