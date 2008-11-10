@@ -1398,18 +1398,23 @@ public:
                     
                     typedef typename  Bool_arrangement_2::Face_const_handle
                         BFace_const_handle;
+                    
+                    typedef Arr_walk_along_line_point_location< 
+                    Bool_arrangement_2 > BPoint_location;
 
+                    BPoint_location pl(cell[i]);
+                    
+                    cell_handle[i] = pl.locate(pt);
+                    
                     BFace_const_handle fh;
+
                     if (CGAL::assign(fh, cell_handle[i])) {
-                        
-                        std::cout << "FOUND face" << std::endl;
                         
                         // TODO right now we ONLY mark faces
                         for (BFace_const_handle fit = cell[i].faces_begin();
                              fit != cell[i].faces_end(); fit++) {
                             if (fit == fh) {
                                 cell[i].non_const_handle(fit)->set_data(true);
-                                std::cout << "SET FACE to true" << std::endl;
                             } else {
                                 cell[i].non_const_handle(fit)->set_data(false);
                             }
