@@ -43,7 +43,7 @@ private:
 
 public:
   Complex_2_in_triangulation_3_polyhedron_builder(const C2t3& c2t3)
-    : c2t3(c2t3), Base()
+    : Base(), c2t3(c2t3)
   {
   }
 
