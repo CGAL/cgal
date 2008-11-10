@@ -2022,6 +2022,7 @@ Manual/doc_tex/Manual/manual-3.3.bib -text
 Manual/doc_tex/Miscellany/modifier.gif -text svneol=unset#image/gif
 Manual/doc_tex/Miscellany/modifier_small.gif -text svneol=unset#image/gif
 Manual/doc_tex/Miscellany/stopwatch.png -text
+Manual/doc_tex/Preliminaries/illustration.jpg -text
 Manual_tools/aspell/.aspell.conf -text
 Manual_tools/aspell/.aspell.en.prepl -text
 Manual_tools/aspell/.aspell.en.pws -text
