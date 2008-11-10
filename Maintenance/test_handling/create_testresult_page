@@ -252,9 +252,9 @@ sub parse_platform_2($)
 {
     my ($pf) = @_;
     my @list = parse_platform($pf);
-    if (@list > 3) {
-        splice(@list,0,@list-3);
-    }
+#    if (@list > 3) {
+#        splice(@list,0,@list-3);
+#    }
     while (@list < 3) {
     	push(@list,'?');
     }
@@ -264,7 +264,25 @@ sub parse_platform_2($)
 sub short_pfname($)
 {
     my @pflist = parse_platform_2($_[0]);
-    my $shortpf = join('_', $pflist[1], $pflist[2]);
+    my $shortpf;
+    if(@pflist < 4) {
+	$shortpf = join('_', $pflist[1], $pflist[2]);
+	print "1: $shortpf\n";
+    }
+    elsif($pflist[2] !~ /Linux/) {
+	$shortpf = join('_', $pflist[3], $pflist[2]);
+	if(@pflist >= 5) {
+	    $shortpf = join('_', $shortpf, $pflist[4]);
+	}
+	print "2: $shortpf\n";
+    }
+    else {
+	$shortpf = $pflist[3];
+	if(@pflist >= 5) {
+	    $shortpf = join('_', $shortpf, $pflist[4]);
+	}
+	print "3: $shortpf\n";
+    }
     return $shortpf;
 }
 
