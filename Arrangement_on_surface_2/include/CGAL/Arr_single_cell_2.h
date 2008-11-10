@@ -54,7 +54,9 @@
 
 // DOES NOT WORK FOR UNBOUNDED
 //#include <CGAL/Arr_simple_point_location.h>
-//#include <CGAL/Arr_walk_along_line_point_location.h> 
+#if !CGAL_USE_ACK_2 
+#include <CGAL/Arr_walk_along_line_point_location.h> 
+#endif
 
 // required for Constructor of RI_observer
 #include <CGAL/Arr_simple_point_location.h>
@@ -686,11 +688,15 @@ public:
 
     // TASK select best point location strategy
     //! type of point location strategy
-    typedef CGAL::Arr_naive_point_location< Arrangement_2 > Point_location;
     
+#if CGAL_USE_ACK_2 
+    typedef CGAL::Arr_naive_point_location< Arrangement_2 > Point_location;
+#else
     // DO NOT WORK FOR UNBOUNDED!
     //typedef CGAL::Arr_simple_point_location< Arrangement_2 > Point_location;
-    //typedef Arr_walk_along_line_point_location< Arrangement_2 > 
+    typedef Arr_walk_along_line_point_location< Arrangement_2 > Point_location;
+#endif
+    
     //Point_location;
 
     //!\name Constructors
