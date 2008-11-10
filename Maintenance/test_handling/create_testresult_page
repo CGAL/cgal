@@ -267,21 +267,18 @@ sub short_pfname($)
     my $shortpf;
     if(@pflist < 4) {
 	$shortpf = join('_', $pflist[1], $pflist[2]);
-	print "1: $shortpf\n";
     }
     elsif($pflist[2] !~ /Linux/) {
 	$shortpf = join('_', $pflist[3], $pflist[2]);
 	if(@pflist >= 5) {
 	    $shortpf = join('_', $shortpf, $pflist[4]);
 	}
-	print "2: $shortpf\n";
     }
     else {
 	$shortpf = $pflist[3];
 	if(@pflist >= 5) {
 	    $shortpf = join('_', $shortpf, $pflist[4]);
 	}
-	print "3: $shortpf\n";
     }
     return $shortpf;
 }
