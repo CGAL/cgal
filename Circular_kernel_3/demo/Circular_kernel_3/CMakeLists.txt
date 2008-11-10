@@ -42,13 +42,13 @@ if ( CGAL_FOUND )
     target_link_libraries(Circular_kernel_3 ${QT3_LIBRARIES} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   else()
   
-    message(STATUS "This demo requires Qt3 and the CGAL Qt3 library, and will not be compiled.")
+    message(STATUS "NOTICE: This demo requires Qt3 and the CGAL Qt3 library, and will not be compiled.")
   
   endif()
   
 else()
   
-    message(STATUS "This demo requires the CGAL library, and will not be compiled.")
+    message(STATUS "NOTICE: This demo requires the CGAL library, and will not be compiled.")
   
 endif()
 

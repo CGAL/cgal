@@ -24,7 +24,7 @@ create_single_source_cgal_program( "test_trilinear_interpolation.cpp" )
 
 else()
   
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
   
 endif()
 

@@ -24,7 +24,7 @@ if ( CGAL_FOUND AND CGAL_ImageIO_FOUND )
 
 else()
   
-    message(STATUS "This program requires the CGAL and CGAL ImageIO libraries, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires the CGAL and CGAL ImageIO libraries, and will not be compiled.")
   
 endif()
 

@@ -35,13 +35,13 @@ if ( CGAL_FOUND )
 
   else(LAPACK_FOUND)
 
-    message(STATUS "This program requires the LAPACK API, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires the LAPACK API, and will not be compiled.")
 
   endif(LAPACK_FOUND)
 
 else()
 
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
 
 endif()
 
