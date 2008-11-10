@@ -17,17 +17,23 @@ find_package(CGAL QUIET COMPONENTS Core )
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
-
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  # Link with BLAS and LAPACK (required)
-  include( CGAL_UseLAPACK )
+  find_package(LAPACK QUIET)
+  if(LAPACK_FOUND)
+    include( ${LAPACK_USE_FILE} )
 
-  # Link with Boost.ProgramOptions (optional)
-  include( CGAL_UseBoostProgramOptions )
+    # Link with Boost.ProgramOptions (optional)
+    include( CGAL_UseBoostProgramOptions )
 
-  create_single_source_cgal_program( "Mesh_estimation.cpp" )
-  create_single_source_cgal_program( "Single_estimation.cpp" )
+    create_single_source_cgal_program( "Mesh_estimation.cpp" )
+    create_single_source_cgal_program( "Single_estimation.cpp" )
+
+  else(LAPACK_FOUND)
+
+    message(STATUS "This program requires the LAPACK API, and will not be compiled.")
+
+  endif(LAPACK_FOUND)
 
 else()
 

@@ -1,13 +1,5 @@
 #include <CGAL/Cartesian.h>
 
-#ifndef CGAL_USE_LAPACK
-int main()
-{
-  std::cerr << "Skip since LAPACK is not installed" << std::endl;
-  std::cerr << std::endl;
-  return 0;
-}
-#else
 
 #include <fstream>
 #include <vector>
@@ -72,4 +64,3 @@ int main(int argc, char *argv[])
 	      << monge_fit.pca_basis(i).second  << std::endl;
   return 0;
 }
-#endif //CGAL_USE_LAPACK

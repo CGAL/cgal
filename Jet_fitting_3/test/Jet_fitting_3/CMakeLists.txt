@@ -20,10 +20,19 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  # Link with BLAS and LAPACK (required)
-  include( CGAL_UseLAPACK )
+  find_package(LAPACK QUIET)
 
-  create_single_source_cgal_program( "blind_1pt.cpp" )
+  if(LAPACK_FOUND)
+
+    include( ${LAPACK_USE_FILE} )
+    create_single_source_cgal_program( "blind_1pt.cpp" )
+
+  else(LAPACK_FOUND)
+
+    message(STATUS "This program requires the LAPACK API, and will not be compiled.")
+
+  endif(LAPACK_FOUND)
+
 
 else()
 

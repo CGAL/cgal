@@ -1,14 +1,5 @@
 #include <CGAL/Cartesian.h>
 #include <cassert>
-#ifndef CGAL_USE_LAPACK
-int main()
-{
-  std::cerr << "Skip since LAPACK is not installed" << std::endl;
-  std::cerr << std::endl;
-  return 0;
-}
-#else
-
 #include <fstream>
 #include <vector>
 #include <CGAL/Monge_via_jet_fitting.h>
@@ -75,6 +66,4 @@ int main()
   std::cout << "success\n";
  return 0;
 }
- 
-#endif // CGAL_USE_LAPACK
  

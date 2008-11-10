@@ -93,6 +93,17 @@ GraphicsView/src/CGALQt4/*.so
 GraphicsView/src/CGALQt4/Makefile
 GraphicsView/src/CGALQt4/moc_*.cxx
 GraphicsView/src/CGALQt4/qrc_*.cxx
+Jet_fitting_3/examples/Jet_fitting_3/*.exe
+Jet_fitting_3/examples/Jet_fitting_3/*.sln
+Jet_fitting_3/examples/Jet_fitting_3/*.vcproj
+Jet_fitting_3/examples/Jet_fitting_3/Makefile
+Jet_fitting_3/examples/Jet_fitting_3/Mesh_estimation
+Jet_fitting_3/examples/Jet_fitting_3/Single_estimation
+Jet_fitting_3/test/Jet_fitting_3/*.exe
+Jet_fitting_3/test/Jet_fitting_3/*.sln
+Jet_fitting_3/test/Jet_fitting_3/*.vcproj
+Jet_fitting_3/test/Jet_fitting_3/Makefile
+Jet_fitting_3/test/Jet_fitting_3/blind_1pt
 Kinetic_data_structures/demo/Kinetic_data_structures/Delaunay_triangulation_2
 Kinetic_data_structures/demo/Kinetic_data_structures/Delaunay_triangulation_stable_subset_2
 Kinetic_data_structures/demo/Kinetic_data_structures/Makefile
