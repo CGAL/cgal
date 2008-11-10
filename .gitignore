@@ -378,6 +378,11 @@ Ridges_3/examples/Ridges_3/*.sln
 Ridges_3/examples/Ridges_3/*.vcproj
 Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics
 Ridges_3/examples/Ridges_3/Makefile
+Ridges_3/test/Ridges_3/*.exe
+Ridges_3/test/Ridges_3/*.sln
+Ridges_3/test/Ridges_3/*.vcproj
+Ridges_3/test/Ridges_3/Makefile
+Ridges_3/test/Ridges_3/ridge_test
 Skin_surface_3/.cdtproject
 Skin_surface_3/.project
 Skin_surface_3/.settings

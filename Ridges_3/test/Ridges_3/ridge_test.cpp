@@ -1,13 +1,5 @@
 #include <CGAL/Cartesian.h>
 #include <cassert>
-#ifndef CGAL_USE_LAPACK
-int main()
-{
-  std::cerr << "Skip since LAPACK is not installed" << std::endl;
-  std::cerr << std::endl;
-  return 0;
-}
-#else
 #include <fstream>
 #include <vector>
 #include <CGAL/Ridges.h> 
@@ -18,6 +10,45 @@ int main()
 //This Is an enriched Polyhedron with facets' normal
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_rings.h"
+
+// Functions declared in PolyhedralSurf.h
+// They were previously defined in a separate file PolyhedralSurf.cpp, 
+// but I prefere to avoid custom CMakeLists.txt files in the testsuite.
+// -- Laurent Rineau, 2008/11/10
+void PolyhedralSurf::compute_facets_normals()
+{
+  std::for_each(this->facets_begin(), this->facets_end(),
+		Facet_unit_normal()); 
+}
+
+const Vector_3 PolyhedralSurf::computeFacetsAverageUnitNormal(const Vertex_const_handle v)
+{
+  Halfedge_const_handle h;
+  Facet_const_handle f;
+  Vector_3 sum(0., 0., 0.), n;
+
+  Halfedge_around_vertex_const_circulator
+    hedgeb = v->vertex_begin(), hedgee = hedgeb;
+
+  do
+    {
+      h = hedgeb;
+      if (h->is_border_edge())
+	{
+	  hedgeb++;
+	  continue;
+	}
+
+      f =  h->facet();
+      n = f->getUnitNormal();
+      sum = (sum + n);
+      hedgeb++;
+    }
+  while (hedgeb != hedgee);
+  sum = sum / std::sqrt(sum * sum);
+  return sum;
+}
+
 
 typedef PolyhedralSurf::Traits          Kernel;
 typedef Kernel::FT                      FT;
@@ -244,6 +275,4 @@ int main()
   std::cout << "success\n";
   return 0;
 }
- 
-#endif // CGAL_USE_LAPACK
  
