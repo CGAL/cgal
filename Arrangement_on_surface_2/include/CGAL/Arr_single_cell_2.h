@@ -49,6 +49,8 @@
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
+#include <CGAL/Arr_extended_dcel.h>
+
 // TASK select best point location strategy
 #include <CGAL/Arr_naive_point_location.h>
 
@@ -65,13 +67,195 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
+template < class Arrangement_2_ >
+struct Copy_features_2 {
+    
+     //! this class template parameter
+    typedef Arrangement_2_ Arrangement_2;
+
+    //! geometric traits class
+    typedef typename Arrangement_2::Geometry_traits_2 Geometry_traits_2;
+    
+    //! type of point
+    typedef typename Geometry_traits_2::Point_2 Point_2;
+    
+    //! type of x-monotone curve
+    typedef typename Geometry_traits_2::X_monotone_curve_2 
+    X_monotone_curve_2;
+    
+    //! type of curve
+    typedef typename Geometry_traits_2::Curve_2 Curve_2;
+    
+    typedef typename Arrangement_2::Vertex_const_handle 
+    Vertex_const_handle;
+    typedef typename Arrangement_2::Halfedge_const_handle 
+    Halfedge_const_handle;
+    typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
+    typedef typename Arrangement_2::Face_const_handle Face_const_handle;
+    
+    typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
+    Halfedge_around_vertex_const_circulator;
+
+    typedef typename Arrangement_2::Vertex_handle            Vertex_handle;
+    typedef typename Arrangement_2::Halfedge_handle          Halfedge_handle;
+    typedef typename Arrangement_2::Face_handle              Face_handle;
+
+    typedef std::vector< Point_2 > Points_container;
+    typedef typename Points_container::iterator Points_iterator;
+    typedef typename Points_container::const_iterator Points_const_iterator;
+
+    typedef std::vector< X_monotone_curve_2 > Curves_container;
+    typedef typename Curves_container::iterator Curves_iterator;
+    typedef typename Curves_container::const_iterator Curves_const_iterator;
+    
+    /*!\brief Copy subarrangement defined by \c cell_handle to \c out
+     */
+    // FUTURE TODO allow multiple cell_handles!
+    void operator()(const CGAL::Object& cell_handle) {
+        
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+        _mt_copy_features.start();
+#endif
+        
+        Vertex_const_handle vh;
+        Halfedge_const_handle heh;
+        Face_const_handle fh;
+        if (CGAL::assign(vh, cell_handle)) {
+            _m_pts.push_back(vh->point());
+        } else if (CGAL::assign(heh, cell_handle)) {
+            _m_xcvs.push_back(heh->curve());
+        } else {
+            CGAL_assertion_code(bool check =)
+                CGAL::assign(fh, cell_handle);
+            CGAL_assertion(check);
+            
+            // copy curves of CCBs of face
+            typedef typename Arrangement_2::Outer_ccb_const_iterator 
+                Outer_ccb_const_iterator;
+            
+            typedef typename Arrangement_2::Inner_ccb_const_iterator 
+                Inner_ccb_const_iterator;
+            
+            typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
+                Ccb_halfedge_const_circulator;
+            
+            typedef typename Arrangement_2::Isolated_vertex_const_iterator 
+                Isolated_vertex_const_iterator;
+            
+            for (Outer_ccb_const_iterator ocb = fh->outer_ccbs_begin();
+                 ocb != fh->outer_ccbs_end(); 
+                 ocb++) {
+                Ccb_halfedge_const_circulator he = *ocb;
+                if (!he->is_fictitious()) {
+                    _m_xcvs.push_back(he->curve());
+                }
+                he++;
+                for (; he != *ocb; he++) {
+                    if (!he->is_fictitious()) {
+                        _m_xcvs.push_back(he->curve());
+                    }
+                }
+            }
+            
+            for (Inner_ccb_const_iterator icb = fh->inner_ccbs_begin();
+                 icb != fh->inner_ccbs_end(); 
+                 icb++) {
+                Ccb_halfedge_const_circulator he = *icb;
+                if (!he->is_fictitious()) {
+                    _m_xcvs.push_back(he->curve());
+                }
+                he++;
+                for (; he != *icb; he++) {
+                    if (!he->is_fictitious()) {
+                        _m_xcvs.push_back(he->curve());
+                    }
+                }
+            }
+            
+            // copy isolated points of face to cell
+            for (Isolated_vertex_const_iterator vt = 
+                     fh->isolated_vertices_begin(); 
+                 vt != fh->isolated_vertices_end(); vt++) {
+                _m_pts.push_back(vt->point());
+            }
+        }
+        
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+        _mt_copy_features.stop();
+        
+        std::cout << "tCopySub   : " << _mt_copy_features.time() 
+                  << " sec" << std::endl;
+#endif
+    }
+
+    //! beginning of read points
+    Points_iterator points_begin() {
+        return _m_pts.begin();
+    }
+
+
+    //! past-the-end of read points
+    Points_iterator points_end() {
+        return _m_pts.end();
+    }
+
+     //! beginning of read points (const version)
+    Points_const_iterator points_begin() const {
+        return _m_pts.begin();
+    }
+
+
+    //! past-the-end of read points (const version)
+    Points_const_iterator points_end() const {
+        return _m_pts.end();
+    }
+
+    //! beginning of read curves
+    Curves_iterator curves_begin() {
+        return _m_xcvs.begin();
+    }
+
+
+    //! past-the-end of read curves
+    Curves_iterator curves_end() {
+        return _m_xcvs.end();
+    }
+
+     //! beginning of read curves (const version)
+    Curves_const_iterator curves_begin() const {
+        return _m_xcvs.begin();
+    }
+
+
+    //! past-the-end of read curves (const version)
+    Curves_const_iterator curves_end() const {
+        return _m_xcvs.end();
+    }
+    
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+    double total_time() {
+        return _mt_copy_features.time();
+    }
+    
+private:
+    //! used time
+    CGAL::Timer _mt_copy_features;
+#endif   
+    
+    //! read points
+    mutable Points_container _m_pts;
+
+    //! read curves
+    mutable Curves_container _m_xcvs;
+};
+
 /*!\brief
  * Fucntor that extracts subarrangement by given handle
  */
 template < class Arrangement_2_ >
 struct Sub_arrangement_2 {
     
-      //! this class template parameter
+    //! this class template parameter
     typedef Arrangement_2_ Arrangement_2;
 
     //! geometric traits class
@@ -199,12 +383,8 @@ struct Sub_arrangement_2 {
     }
 
 #if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
-    double time() {
+    double total_time() {
         return _mt_sub.time();
-    }
-
-    void reset_time() {
-        _mt_sub.reset();
     }
 
 private:
@@ -628,6 +808,123 @@ private:
 
 
 
+template < class BoolArrangement_2 >
+class RB_overlay_traits : 
+        public CGAL::Arr_default_overlay_traits< BoolArrangement_2 > {
+    
+public:
+    //! this class template parameter
+    typedef BoolArrangement_2 Arrangement_2;
+
+    //! geometric traits class
+    typedef typename Arrangement_2::Geometry_traits_2 Geometry_traits_2;
+    
+    //! type of point
+    typedef typename Geometry_traits_2::Point_2 Point_2;
+    
+    //! type of x-monotone curve
+    typedef typename Geometry_traits_2::X_monotone_curve_2 
+    X_monotone_curve_2;
+    
+    //! type of curve
+    typedef typename Geometry_traits_2::Curve_2 Curve_2;
+    
+    typedef typename Arrangement_2::Vertex_const_handle 
+    Vertex_const_handle;
+    typedef typename Arrangement_2::Halfedge_const_handle 
+    Halfedge_const_handle;
+    typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
+    typedef typename Arrangement_2::Face_const_handle Face_const_handle;
+    
+    typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
+    Halfedge_around_vertex_const_circulator;
+
+    typedef typename Arrangement_2::Vertex_handle            Vertex_handle;
+    typedef typename Arrangement_2::Halfedge_handle          Halfedge_handle;
+    typedef typename Arrangement_2::Face_handle              Face_handle;
+    
+    typedef std::vector< Point_2 > Points_container;
+    typedef typename Points_container::iterator Points_iterator;
+    typedef typename Points_container::const_iterator Points_const_iterator;
+
+    typedef std::vector< X_monotone_curve_2 > Curves_container;
+    typedef typename Curves_container::iterator Curves_iterator;
+    typedef typename Curves_container::const_iterator Curves_const_iterator;
+
+    /*!
+     * Create a face f that matches the overlapping region between f1 and f2.
+     */
+    virtual void create_face (Face_const_handle f1,
+                              Face_const_handle f2,
+                              Face_const_handle f) const
+    {
+        if (f1->data() && f2->data()) {
+            
+            Copy_features_2< Arrangement_2 > copy_features;
+            copy_features(CGAL::make_object(f));
+
+            std::copy(copy_features.curves_begin(), copy_features.curves_end(),
+                      std::back_inserter(_m_xcvs));
+
+            std::copy(copy_features.points_begin(), copy_features.points_end(),
+                      std::back_inserter(_m_pts));
+            
+            return;
+        }
+    }
+
+
+  //! beginning of read points
+    Points_iterator points_begin() {
+        return _m_pts.begin();
+    }
+
+
+    //! past-the-end of read points
+    Points_iterator points_end() {
+        return _m_pts.end();
+    }
+
+     //! beginning of read points (const version)
+    Points_const_iterator points_begin() const {
+        return _m_pts.begin();
+    }
+
+
+    //! past-the-end of read points (const version)
+    Points_const_iterator points_end() const {
+        return _m_pts.end();
+    }
+
+    //! beginning of read curves
+    Curves_iterator curves_begin() {
+        return _m_xcvs.begin();
+    }
+
+
+    //! past-the-end of read curves
+    Curves_iterator curves_end() {
+        return _m_xcvs.end();
+    }
+
+     //! beginning of read curves (const version)
+    Curves_const_iterator curves_begin() const {
+        return _m_xcvs.begin();
+    }
+
+
+    //! past-the-end of read curves (const version)
+    Curves_const_iterator curves_end() const {
+        return _m_xcvs.end();
+    }
+
+private:
+    
+    mutable Points_container _m_pts;
+    mutable Curves_container _m_xcvs;
+
+};
+
 /*! \class Functor to compute single cell of point */
 template < class Arrangement_2_ >
 class Construct_single_cell_2 {
@@ -869,7 +1166,7 @@ public:
         }
         return *_m_cell_handle_ri;
     }
-
+    
     CGAL::Object cell_rbo_naive(const Point_2& pt) const {
         if (!_m_cell_handle_rbo) {
 #if !NDEBUG
@@ -879,8 +1176,9 @@ public:
                       << "with NAIVE-RED-BLUE-OVERLAY-method ... " 
                       << std::flush;
 #endif
-            if (_m_xcvs.size() + _m_pts.size() <= 4) {
 
+            if (_m_xcvs.size() + _m_pts.size() <= 4) {
+                
 #if !NDEBUG
                 std::cout << "Anchor" << std::endl;
 #endif
@@ -1008,14 +1306,179 @@ public:
     //! returns the cell using red-blue overlay
     CGAL::Object cell_rbo(const Point_2& pt) const {
         if (!_m_cell_handle_rbo) {
-#if !NDEBUG
-            std::cout << "Computing cell with RED-BLUE-OVERLAY-method ... " 
-                      << std::flush;
-#endif
-            _m_cell_handle_rbo = CGAL::Object();
+            
+            typedef 
+                CGAL::Arr_extended_dcel< Geometry_traits_2, bool, bool, bool > 
+                Bool_dcel;
+            
+            typedef CGAL::Arrangement_2< Geometry_traits_2, Bool_dcel >
+                Bool_arrangement_2;
             
 #if !NDEBUG
-            std::cout << "done."   << std::endl;
+            std::cout << "Computing cell for " 
+                      << (_m_xcvs.size() + _m_pts.size())
+                      << " input objects " 
+                      << "with RED-BLUE-OVERLAY-method ... " 
+                      << std::flush;
+#endif
+            if (_m_xcvs.size() + _m_pts.size() <= 4) {
+                
+#if !NDEBUG
+                std::cout << "Anchor" << std::endl;
+#endif
+                
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+                _mt_rec_anchor.start();
+#endif
+                CGAL::Object cell_handle = cell_pl(pt);
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+                _mt_rec_anchor.stop();
+#endif
+                
+                _m_cell_handle_rbo = cell_handle;
+                
+            } else {
+                
+#if !NDEBUG
+                std::cout << "Red-blue split" << std::endl;
+#endif
+                // permute input
+                // TODO use better random values
+                std::random_shuffle(_m_xcvs.begin(), _m_xcvs.end());
+                std::random_shuffle(_m_pts.begin(), _m_pts.end());
+                
+                // split input into two sets
+                std::vector< X_monotone_curve_2 > xcvs[2];
+                typename 
+                    std::vector< X_monotone_curve_2 >::iterator 
+                    xcvs_mid =
+                    _m_xcvs.begin();
+                std::advance(xcvs_mid, (_m_xcvs.size() / 2));
+                xcvs[0].reserve(std::distance(_m_xcvs.begin(), xcvs_mid));
+                std::copy(_m_xcvs.begin(), xcvs_mid, 
+                          std::back_inserter(xcvs[0]));
+                xcvs[1].reserve(std::distance(xcvs_mid, _m_xcvs.end()));
+                std::copy(xcvs_mid, _m_xcvs.end(), 
+                          std::back_inserter(xcvs[1]));
+                
+                std::vector< Point_2 > pts[2];
+                typename std::vector< Point_2 >::iterator pts_mid =
+                    _m_pts.begin();
+                std::advance(pts_mid, (_m_pts.size() / 2));
+                pts[0].reserve(std::distance(_m_pts.begin(), pts_mid));
+                std::copy(_m_pts.begin(), pts_mid, std::back_inserter(pts[0]));
+                pts[1].reserve(std::distance(pts_mid, _m_pts.end()));
+                std::copy(pts_mid, _m_pts.end(), std::back_inserter(pts[1]));
+                
+                CGAL::Object cell_handle[2];
+                
+                Bool_arrangement_2 cell[2];
+                
+                for (int i = 0; i < 2; i++) {
+                    
+                    std::list< CGAL::Object > objects;
+                    for (typename 
+                             std::vector< X_monotone_curve_2 >::const_iterator
+                             it = xcvs[i].begin(); it != xcvs[i].end(); it++) {
+                        objects.push_back(CGAL::make_object(*it));
+                    }
+                    for (typename std::vector< Point_2 >::const_iterator
+                             it = pts[i].begin(); it != pts[i].end(); it++) {
+                        objects.push_back(CGAL::make_object(*it));
+                    }
+                    
+                    Construct_single_cell_2< Bool_arrangement_2 > 
+                        recursive(objects.begin(), objects.end());
+                    
+                    cell_handle[i] = recursive.cell_rbo(pt);
+                    
+                    // Remark: Cannot use sub_arr here, 
+                    //         as no access to overlaid arrangement
+                    recursive.cell_arr(cell_handle[i], cell[i]);
+                    
+                    typedef typename  Bool_arrangement_2::Face_const_handle
+                        BFace_const_handle;
+
+                    BFace_const_handle fh;
+                    if (CGAL::assign(fh, cell_handle[i])) {
+                        
+                        std::cout << "FOUND face" << std::endl;
+                        
+                        // TODO right now we ONLY mark faces
+                        for (BFace_const_handle fit = cell[i].faces_begin();
+                             fit != cell[i].faces_end(); fit++) {
+                            if (fit == fh) {
+                                cell[i].non_const_handle(fit)->set_data(true);
+                                std::cout << "SET FACE to true" << std::endl;
+                            } else {
+                                cell[i].non_const_handle(fit)->set_data(false);
+                            }
+                        }
+                    }
+                }
+#if !NDEBUG
+                std::cout << "Start overlay ... " << std::flush;
+#endif
+
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+                _mt_rec_overlay.start();
+#endif
+                CGALi::RB_overlay_traits< Bool_arrangement_2 > 
+                    ovltraits;
+
+                Bool_arrangement_2 arr_purple_tmp;
+                
+                // TODO replace overlay by SL-Visitor that directly constructs
+                // arr_purple (i.e., without arr_purple_tmp)
+                // curves + isolated points
+                CGAL::overlay(cell[0], cell[1], 
+                              arr_purple_tmp, ovltraits);
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+                _mt_rec_overlay.stop();
+#endif
+#if !NDEBUG
+                std::cout << "done." << std::endl;
+#endif
+                
+                _m_arr_purple = Arrangement_2();
+                
+                // TODO use CGAL::non_intersecting_insert_empty(
+                //      requires: non-equal curves!
+                CGAL::insert_empty(
+                        *_m_arr_purple,
+                        ovltraits.curves_begin(), 
+                        ovltraits.curves_end(),
+                        ovltraits.points_begin(), 
+                        ovltraits.points_end()
+            );
+                
+
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+                _mt_pl.start();
+#endif
+                Point_location pl_purple(*_m_arr_purple);
+                CGAL::Object cell_handle_pl_purple = pl_purple.locate(pt);
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+                _mt_pl.stop();
+#endif   
+                
+                Sub_arrangement_2< Arrangement_2 > subarr;
+                
+                subarr(*_m_arr_purple, cell_handle_pl_purple);
+
+                _m_cell_handle_rbo = cell_handle_pl_purple;
+            }
+#if !NDEBUG
+            std::cout << "done." << std::endl;
+            std::cout << std::endl;
+#endif
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+            std::cout << "tRecAnchor : " << _mt_rec_anchor.time() 
+                      << " sec" << std::endl;
+            std::cout << "tRecOverlay: " << _mt_rec_overlay.time() 
+                      << " sec" << std::endl;
+            std::cout << "tPLs       : " << _mt_pl.time() 
+                      << " sec" << std::endl;
 #endif
         }
         return *_m_cell_handle_rbo;
@@ -1025,120 +1488,27 @@ public:
 
     //!\name Helpers
     //!@{
-
-    /*!\brief 
-     * converts a cell-handle (face, edge, vertex) into its induced arrangement
-     */
-    // FUTURE TODO allow multiple cell_handles!
-    void cell_arr(CGAL::Object cell_handle, Arrangement_2& cell) const {
         
-#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
-        _mt_cell.start();
-#endif
-        
-        std::list< Point_2 > cell_pts;
-        std::list< X_monotone_curve_2 > cell_xcvs;
-        
-        Vertex_const_handle vh;
-        Halfedge_const_handle heh;
-        Face_const_handle fh;
-        if (CGAL::assign(vh, cell_handle)) {
-            cell_pts.push_back(vh->point());
-        } else if (CGAL::assign(heh, cell_handle)) {
-            cell_xcvs.push_back(heh->curve());
-        } else {
-            CGAL_assertion_code(bool check =)
-                CGAL::assign(fh, cell_handle);
-            CGAL_assertion(check);
+    /*!\brief
+     * converts a cell-handle (face, edge, vertex) into its induced arrangement      */
+        // FUTURE TODO allow multiple cell_handles!
+        void cell_arr(CGAL::Object cell_handle, Arrangement_2& cell) const {
             
-            // copy curves of CCBs of face
-            typedef typename Arrangement_2::Outer_ccb_const_iterator 
-                Outer_ccb_const_iterator;
+            Copy_features_2< Arrangement_2 > copy_features;
             
-            typedef typename Arrangement_2::Inner_ccb_const_iterator 
-                Inner_ccb_const_iterator;
+            copy_features(cell_handle);
             
-            typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
-                Ccb_halfedge_const_circulator;
-            
-            typedef typename Arrangement_2::Isolated_vertex_const_iterator 
-                Isolated_vertex_const_iterator;
-            
-            for (Outer_ccb_const_iterator ocb = fh->outer_ccbs_begin();
-                 ocb != fh->outer_ccbs_end(); 
-                 ocb++) {
-                Ccb_halfedge_const_circulator he = *ocb;
-                if (!he->is_fictitious()) {
-                    cell_xcvs.push_back(he->curve());
-                }
-                he++;
-                for (; he != *ocb; he++) {
-                    if (!he->is_fictitious()) {
-                        cell_xcvs.push_back(he->curve());
-                    }
-                }
-            }
-            
-            for (Inner_ccb_const_iterator icb = fh->inner_ccbs_begin();
-                 icb != fh->inner_ccbs_end(); 
-                 icb++) {
-                Ccb_halfedge_const_circulator he = *icb;
-                if (!he->is_fictitious()) {
-                    cell_xcvs.push_back(he->curve());
-                }
-                he++;
-                for (; he != *icb; he++) {
-                    if (!he->is_fictitious()) {
-                        cell_xcvs.push_back(he->curve());
-                    }
-                }
-            }
-            
-            // copy isolated points of face to cell
-            for (Isolated_vertex_const_iterator vt = 
-                     fh->isolated_vertices_begin(); 
-                 vt != fh->isolated_vertices_end(); vt++) {
-                cell_pts.push_back(vt->point());
-            }
+            // TODO use CGAL::non_intersecting_insert_empty(
+            //      requires: non-equal curves!
+            CGAL::insert_empty(
+                    cell,
+                    copy_features.curves_begin(), 
+                    copy_features.curves_end(),
+                    copy_features.points_begin(), 
+                    copy_features.points_end()
+            );
         }
-        
-        //std::cout << "#cell-curves:" << cell_xcvs.size() << std::endl;
-        //std::cout << "#cell-points:" << cell_pts.size() << std::endl;
 
-        for (typename 
-                 std::list< X_monotone_curve_2 >::const_iterator
-                 it = cell_xcvs.begin(); it != cell_xcvs.end(); it++) {
-            //std::cout << "CURVE: " << *it << std::endl;
-            //std::cout << "poly: " << it->curve().polynomial_2() << std::endl;
-            
-        }
-        
-        // TODO use CGAL::non_intersecting_insert_empty(
-        //      requires: non-equal curves!
-        CGAL::insert_empty(
-                cell, 
-                cell_xcvs.begin(), cell_xcvs.end(),
-                cell_pts.begin(), cell_pts.end()
-        );
-        
-#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
-        _mt_cell.stop();
-        
-        std::cout << "tCell   : " << _mt_cell.time() 
-                  << " sec" << std::endl;
-#endif
-    }
-
-
-
-        
-        
-
-
-
-    //!@}
-
-    
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -1243,7 +1613,7 @@ CGAL::Object single_cell_ri_2(
     );
 
     CGAL::Object cell_handle = single_cell.cell_ri(point);
-    // TODO avoid to reconstruct arrangement!
+    // TODO avoid to reconstruct arrangement
     single_cell.cell_arr(cell_handle, cell);
     return cell_handle;
  }
@@ -1278,6 +1648,41 @@ CGAL::Object single_cell_rbo_naive_2(
     );
     
     CGAL::Object cell_handle = single_cell.cell_rbo_naive(point);
+    // TODO avoid to reconstruct arrangement!
+    single_cell.cell_arr(cell_handle, cell);
+    return cell_handle;
+}
+
+
+/*!
+ * Construct the single cell containing a point using red-blue overlay
+ * \param point The reference point
+ * \param begin An iterator for the first input object defining the full 
+ *              arrangement
+ * \param end A past-the-end iterator for the input objects defining the
+ *            full arrangement
+ * \param cell Output: The cell of Arr(begin,end) containing point as 
+ *                     arrangement
+ * \pre The value-type of InputIterator is CGAL::Object which can be passed to
+ *      GeoTraits_2::Make_x_monotone_2()
+ */
+template < typename InputIterator, typename GeoTraits_2 >
+CGAL::Object single_cell_rbo_2(
+        typename GeoTraits_2::Point_2 point,
+        InputIterator begin, InputIterator end,
+        CGAL::Arrangement_2< GeoTraits_2 >& cell) {
+    
+    typedef GeoTraits_2                                       Geo_traits_2;
+    typedef CGAL::Arrangement_2< Geo_traits_2 >               Arrangement_2;
+    
+    typedef CGALi::Construct_single_cell_2< Arrangement_2 >   
+        Construct_single_cell_2;
+    
+    Construct_single_cell_2 single_cell(
+            begin, end
+    );
+    
+    CGAL::Object cell_handle = single_cell.cell_rbo(point);
     // TODO avoid to reconstruct arrangement!
     single_cell.cell_arr(cell_handle, cell);
     return cell_handle;
