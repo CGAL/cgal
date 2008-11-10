@@ -1,0 +1,11 @@
+\section{Namespace \texttt{CGAL}}
+All names introduced by \cgal, especially those documented in these manuals,
+are in a namespace called \ccc{CGAL}, which is in global 
+scope.
+A user can either qualify names from \cgal\ by adding \ccc{CGAL::} to the name,
+\textit{e.g.},\ \ccc{CGAL::Point_2< CGAL::Homogeneous< int> >}; making a 
+single name from \cgal\ visible in a scope via a \ccc{using} statement, 
+\textit{e.g.}, \ccc{using CGAL::Cartesian;}, and then use this name 
+unqualified in this scope; or making all names from namespace \ccc{CGAL} 
+visible in a scope with \ccc{using namespace CGAL;}. The latter, however, is 
+likely to give rise to name conflicts and is therefore not recommended.   
