@@ -1,196 +1,126 @@
 
 \chapter{General Introduction}
-
-\
+\ccChapterAuthor{CGAL Editorial Board}
 \input{Introduction/PkgDescription}
 
-\cgal, the {\em Computational Geometry Algorithms Library}, is written in 
-\CC\ and consists of several parts.
 
-The first part is about the kernels, which consist of constant-size non-modifiable 
-geometric primitive objects and operations on these objects. 
-The objects are represented both as stand-alone classes that are
-parameterized by a representation class, which specifies
-the underlying number types used for calculations and as members of the
-kernel classes, which allows for more flexibility and adaptability of the 
-kernel.  \cgal\ has several kernels, for 2D and 3D, for arbitrary dimensional
-objects, and for 2D curved objects.
+The goal of the \cgal\ Open Source Project is to provide 
+{\em easy access to efficient and reliable geometric algorithms}
+in the form of a \CC\ library.
 
-The following parts present a collection of basic geometric data structures and
-algorithms, which are parameterized by traits classes that define the 
-interface between the data structure or algorithm and the primitives they use.
-In many cases, the kernel classes provided in \cgal\ can be used as traits
-classes for these data structures and algorithms.
-The collection of basic geometric algorithms and data structures
-currently includes polygons, half-edge data structures, polyhedral surfaces, 
-arrangements of curves, triangulations in 2D and 3D,  surface mesh
-generators, subdivision and parameterization of surface meshes,
-Voronoi diagrams of points, disks and segments, Boolean operations on polygons and polyhedra,
-convex hulls, alpha shapes, optimization algorithms, dynamic
-point sets for geometric queries,  range and segment trees, and 
-kinetic data structures.
+The Computational Geometry Algorithms Library offers data
+structures and algorithms like 
+\ccRef[triangulations]{Part:TriangulationsAndDelaunayTriangulations},
+\ccRef[Voronoi diagrams]{Part:VoronoiDiagrams},
+\ccRef[Boolean operations on polygons]{Part:Polygons},
+\ccRef[Boolean operations on polyhedra]{Part:Polyhedra},
+\ccRef[arrangements of curves]{Part:Arrangements} and their applications,
+\ccRef[mesh generation]{Part:Meshing},
+\ccRef[geometry processing]{Part:GeometryProcessing},
+\ccRef[convex hull algorithms]{Part:ConvexHullAlgorithms},
+\ccRef[interpolation]{Part:Interpolation},
+\ccRef[shape analysis, fitting, and distances]{Part:GeometricOptimization},
+and \ccRef[kinetic data structures]{Part:KineticDataStructures}.
 
-The last part of the library consists of non-geometric support
-facilities, such as support for number types, {\sc Stl} extensions for
-\cgal, handles, circulators, protected access to internal
-representations, geometric object generators, timers, I/O stream
-operators and other stream support including PostScript, colors,
-windows, and visualization tools Geomview and a Qt widget for
-2D \cgal\ objects.
+
+All these data structures and algorithms operate on geometric objects
+like points and segments, and perform geometric tests on them.
+These objects and predicates are regrouped in \cgal\ \ccRef[Kernels]{Part:Kernels}.
+
+
+Finally, the \ccRef[Support Library]{Part:SupportLibrary}
+offers geometric object generators and spatial sorting functions,  
+as well as a matrix search framework and a solver for linear and quadratic programs. 
+It further offers interfaces to third party software such as the GUI libraries Qt, 
+Geomview, and the Boost Graph Library.
+
+
+\section{Organization of the Manual}
+
+This manual is organized in several parts covering the many domains
+of computational geometry. Each part consists of several chapters,
+and each chapter is split into a {\em user manual}  and a {\em reference
+manual}. The user manual gives the general idea and comes with examples.
+The reference manual presents the {\sc Api} of the various classes
+and funcions.
+
+The manual has a table of contents, as well as a package overview
+which gives a short paragraph what the package is about, what license
+it has, and on which other packages it depends. It further provides
+links to a precompiled demo programs for the Windows platform.
+
+\section{Demos and Examples}
+
+In the distribution of the library  you find the two directories {\em demo}
+and {\em examples}. They contain subdirectories for the \cgal\ packages.  
+The demos use third party libraries for the graphical user interface. The 
+examples don't have this dependency and most examples are refered to in the 
+user manual.
+
+
+
+\section{Hello World}
+
+In this section we will take a closer look at one of the \cgal\ example
+programs, namely a 2D convex hull algorithm. The example program reads 
+a sequence of points from standard input \ccc{std::cin} and writes the 
+points on the  convex hull to standard output \ccc{std::cout}.
+
+\ccIncludeExampleCode{Convex_hull_2/convex_hull_2.cpp}
+
+
+All \cgal\ header files are in the subdirectory ``CGAL''.  All \cgal\ 
+classes and functions are in the namespace ``CGAL''.  The geometric
+primitives, like point, are defined in a kernel. \cgal\ comes
+with several kernels, and as the convex hull algorithm only makes
+comparisons of coordinates and orientation tests of input points,
+we can choose a kernel that provides exact predicates, but no 
+exact geometric constructions.
+
+You next see input and output stream iterators templated with the 
+point type.  Iterators are a generalization of pointers, that is
+they can be dereferenced, and one can increment them.  They
+come in \ccc{begin/end} pairs (where \ccc{end} is a pointer 
+past-the end), and you get from \ccc{begin} to \ccc{end} by 
+incrementing the iterator. When you dereference an iterator you 
+obtain what it points to, in our case a \ccc{Point_2}. 
+
+A \ccc{std::istream_iterator<Point_2>}  hence allows to traverse
+a sequence of \ccc{Points}, which in the example come from
+standard input as we pass \ccc{std::cin} to the constructor
+of the iterator. The variable \ccc{input_end} denotes end-of-file.
+
+A \ccc{std::ostream_iterator<Point_2>} is an output iterator,
+that is an iterator to which, when dereferenced, we can assign a value. 
+When such an assignment to the output iterator
+happens somewhere inside the convex hull function, the iterator 
+just writes the assigned point to standard output, because the iterator 
+was  constructed with \ccc{std::cout}.
+
+The call to the convex hull function takes three arguments,
+the input iterator range, and the output iterator to which
+the result gets written. 
+
+If you know the \stl, the Standard Template Library, the above
+makes perfect sense, as this is the way the \stl\  decouples algorithms 
+from containers. If you don't know the \stl, you maybe better
+first familiarize yourself with its basic ideas.
+
+
+
+\section{Further Reading}
+
 
 Additional documents accompanying the \cgal\ distribution are the
 `Installation Guide' and `The Use of \stl\ and \stl\ Extensions in
 \cgal', which gives a manual style introduction to \stl\ constructs
 such as iterators and containers, as well an extension, called
 circulator, used in many places in \cgal. We also recommend the
-standard text book by Austern~\cite{cgal:a-gps-98} for the \stl\ and
+standard text books by Josuttis~\cite{cgal:j-csl-99}, or
+Austern~\cite{cgal:a-gps-98} for the \stl\ and
 its notion of \emph{concepts} and \emph{models}.
 
 
 Other resources for \cgal\ are the tutorials at
 \path|http://www.cgal.org/Tutorials/| and the user support page at
 \path|http://www.cgal.org/|.
-
-\input{Introduction_ref/licenses}
-
-\input{Introduction_ref/thirdparty}
-
-\section{Marking of Advanced Features}
-
-In this manual you will encounter sections marked as follows.
-
-\begin{ccAdvanced}
-Some functionality is considered more advanced.
-Such functionality is described in sections such as this one that are bounded 
-by horizontal brackets.
-\end{ccAdvanced}
-
-
-\section{Namespace CGAL}
-
-All names introduced by \cgal, especially those documented in these
-manuals, are in a namespace called \ccc{CGAL}, which is in global
-scope. A user can either qualify names from \cgal\ by adding
-\ccc{CGAL::}, e.g., \ccc{CGAL::Point_2< CGAL::Homogeneous< int> >},
-make a single name from \cgal\ visible in a scope via a \ccc{using}
-statement, e.g., \ccc{using CGAL::Cartesian;}, and then use this name
-unqualified in this scope, or even make all names from namespace
-\ccc{CGAL} visible in a scope with \ccc{using namespace CGAL;}. The
-latter, however, is likely to give raise to name conflicts and is
-therefore not recommended.
-
-
-\section{Inclusion Order of Header Files}
-
-Not all compilers fully support standard header names. \cgal\ provides 
-workarounds for these problems in \ccc{CGAL/basic.h}. Consequently, as a 
-golden rule, you should always include \ccc{CGAL/basic.h} first in your 
-programs (or \ccc{CGAL/Cartesian.h}, or \ccc{CGAL/Homogeneous.h}, since they 
-include \ccc{CGAL/basic.h} first).
-
-
-
-
-
-
-\section{Compile-time Flags to Control Inlining}
-\ccIndexMainItem{code optimization}
-\ccIndexMainItem{inlining}
-\ccIndexMainItem{\tt inline}
-
-Making functions inlined can, at times, improve the efficiency of your code.
-However this is not always the case and it can differ for a single function
-depending on the application in which it is used. Thus \cgal\ defines a set 
-of compile-time macros that can be used to control whether certain functions 
-are designated as inlined functions or not.  The following table lists the 
-macros and their default values, which are set in one of the \cgal\ include
-files.  
-
-\begin{tabular}{l|l}
-               macro name        & default \\ \hline
-\ccc{CGAL_KERNEL_INLINE}         & inline \\
-\ccc{CGAL_KERNEL_MEDIUM_INLINE}  &  \\
-\ccc{CGAL_KERNEL_LARGE_INLINE}   &  \\
-\ccc{CGAL_MEDIUM_INLINE}         & inline \\
-\ccc{CGAL_LARGE_INLINE}          &  \\
-\ccc{CGAL_HUGE_INLINE}           & 
-\end{tabular}
-
-If you wish to change the value of one or more of these macros,
-you can simply give it a new value when compiling.  For example, to make
-functions that use the macro \ccc{CGAL_KERNEL_MEDIUM_INLINE} inline functions,
-you should set the value of this macro to \texttt{inline} instead of the
-default blank. 
-
-
-
-\section{Identifying the Version of CGAL\label{sec:cgal_version}}
-
-\ccInclude{CGAL/version.h}
-
-Every release of \cgal\ defines the following preprocessor macros:
-\begin{description}
-\item[\texttt{CGAL\_VERSION}]
-     \index{CGAL_VERSION macro@{\tt CGAL\_VERSION} macro}
-     -- a textual description of the current release
-        (e.g., or 3.3 or 3.2.1 or 3.2.1-I-15), and 
-\item[\texttt{CGAL\_VERSION\_NR}]
-     \index{CGAL_VERSION_NR macro@{\tt CGAL\_VERSION\_NR} macro}
-     -- a numerical description of the current release such that
-        more recent releases have higher number.
-
-     More precisely, it is defined as \texttt{1MMmmbiiii},
-     where \texttt{MM} is the major release number (e.g. 03),
-     \texttt{mm} is the minor release number (e.g. 02),
-     \texttt{b} is the bug-fix release number (e.g. 0), and
-     \texttt{iiii} is the internal release number (e.g. 0001). For
-     public releases, the latter is defined as 1000.
-     Examples: for the public release 3.2.4 this number is 
-     1030241000; for internal release 3.2-I-1, it is 1030200001.
-     Note that this scheme was modified around 3.2-I-30.
-\item[\texttt{CGAL\_VERSION\_NUMBER(M,m,b)}]
-     \index{CGAL_VERSION_NUMBER macro@{\tt CGAL\_VERSION\_NUMBER} macro}
-     -- a function macro computing the version number macro
-     from the M.m.b release version.  Note that the internal release
-     number is dropped here.  Example: \texttt{CGAL\_VERSION\_NUMBER(3,2,4)}
-     is equal to 1030241000.
-\end{description}
- 
-
-\section{Thread Safety}
-
-\cgal\ is progressively being made thread-safe.  The guidelines which are followed
-are:
-\begin{itemize}
-\item it should be possible to use different objects in different threads at
-the same time (of the same type or not),
-\item it is not safe to access the same object from different threads
-at the same time, unless otherwise specified in the class documentation.
-\end{itemize}
-
-If the macro \ccc{CGAL_HAS_THREADS} is not defined, then \cgal\ assumes it can use
-any thread-unsafe code (such as static variables).  By default, this macro is not
-defined, unless \ccc{BOOST_HAS_THREADS} or \ccc{_OPENMP} is defined.  It is possible
-to force its definition on the command line, and it is possible to prevent its default
-definition by setting \ccc{CGAL_HAS_NO_THREADS} from the command line.
-
-
-\section{Code Deprecation}
-
-Sometimes, the \cgal\ project decides that a feature is deprecated.  This means
-that it still works in the current release, but it will be removed in the next,
-or a subsequent release.  This can happen when we have found a better way to do
-something, and we would like to reduce the maintenance cost of \cgal\ at some
-point in the future.  There is a trade-off between maintaining backward
-compatibility and implementing new features more easily.
-
-In order to help users manage the changes to apply to their code, we attempt
-to make \cgal\ code emit warnings when deprecated code is used.  This can be
-done using some compiler specific features.  Those warnings can be disabled
-by defining the macro \ccc{CGAL_NO_DEPRECATION_WARNINGS}.  On top of this, we
-also provide a macro, \ccc{CGAL_NO_DEPRECATED_CODE}, which, when defined,
-disables all deprecated features.  This allows users to easily test if their
-code relies on deprecated features.
-
-
-\input{Introduction_ref/checks} % extra chapter
