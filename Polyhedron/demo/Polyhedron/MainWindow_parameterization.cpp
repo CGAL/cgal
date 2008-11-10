@@ -1,4 +1,4 @@
-#ifdef CGAL_USE_TAUCS
+#ifdef CGAL_TAUCS_ENABLED
 
 #include <QApplication>
 #include <QTime>
@@ -34,7 +34,7 @@ void MainWindow::parameterize(const Parameterization_method method)
   QTime time;
   time.start();
   typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron> Adaptor;
-  Adaptor adaptor(*pMesh);
+  Adaptor adaptor(*pMesh);  
 
   bool success;
   switch(method)
@@ -73,7 +73,7 @@ void MainWindow::parameterize(const Parameterization_method method)
 
   Polyhedron::Vertex_iterator it1;
   Textured_polyhedron::Vertex_iterator it2;
-  for(it1 = pMesh->vertices_begin(),
+  for(it1 = pMesh->vertices_begin(), 
     it2 = pTex_polyhedron->vertices_begin();
     it1 != pMesh->vertices_end(),
     it2 != pTex_polyhedron->vertices_end();
@@ -106,7 +106,7 @@ void MainWindow::on_actionDCP_triggered()
   parameterize(PARAM_DCP);
 }
 
-#else // #ifdef CGAL_USE_TAUCS
+#else // #ifdef CGAL_TAUCS_ENABLED 
 
 void MainWindow::on_actionMVC_triggered()
 {
@@ -116,4 +116,4 @@ void MainWindow::on_actionDCP_triggered()
 {
 }
 
-#endif // #ifdef CGAL_USE_TAUCS
+#endif // #ifdef CGAL_TAUCS_ENABLED 

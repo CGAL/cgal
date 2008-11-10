@@ -43,15 +43,19 @@ if(QT_FOUND)
   find_package(QGLViewer QUIET )
 endif(QT_FOUND)
 
-# Link with BLAS, LAPACK and TAUCS (optional)
-include( CGAL_UseTAUCS )
-if (NOT TAUCS_FOUND)
-  message(STATUS "warning: TAUCS is not found. parameterization will not be available.")
-endif()
+# Find TAUCS (optionnal)
+find_package(TAUCS QUIET)
 
 if(CGAL_Qt4_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
+
+  if(TAUCS_FOUND)
+    include( ${TAUCS_USE_FILE} )
+    add_definitions(-DCGAL_TAUCS_ENABLED)
+  else(TAUCS_FOUND)
+    message(STATUS "warning: TAUCS is not found. parametrization will not be available.")
+  endif(TAUCS_FOUND)
 
   qt4_wrap_ui( UI_FILES MainWindow.ui )
 
@@ -112,6 +116,11 @@ if(CGAL_Qt4_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+
+  if(TAUCS_FOUND)
+    # Link with TAUCS
+    target_link_libraries(Polyhedron_3 ${TAUCS_LIBRARIES})
+  endif(TAUCS_FOUND)
 
 else (CGAL_Qt4_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
