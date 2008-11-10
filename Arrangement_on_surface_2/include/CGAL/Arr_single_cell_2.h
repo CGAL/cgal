@@ -20,8 +20,8 @@
 
 // flags in this file:
 
-#ifndef CGAL_ARR_SINGLE_CELL_2_SIMPLIFY_NAIVE
-#define CGAL_ARR_SINGLE_CELL_2_SIMPLIFY_NAIVE 0
+#ifndef CGAL_ARR_SINGLE_CELL_2_SUB_NAIVE
+#define CGAL_ARR_SINGLE_CELL_2_SUB_NAIVE 0
 #endif
 
 #ifndef CGAL_ARR_SINGLE_CELL_2_RI_NAIVE
@@ -64,6 +64,153 @@
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
+
+/*!\brief
+ * Fucntor that extracts subarrangement by given handle
+ */
+template < class Arrangement_2_ >
+struct Sub_arrangement_2 {
+    
+      //! this class template parameter
+    typedef Arrangement_2_ Arrangement_2;
+
+    //! geometric traits class
+    typedef typename Arrangement_2::Geometry_traits_2 Geometry_traits_2;
+    
+    //! type of point
+    typedef typename Geometry_traits_2::Point_2 Point_2;
+    
+    //! type of x-monotone curve
+    typedef typename Geometry_traits_2::X_monotone_curve_2 
+    X_monotone_curve_2;
+    
+    //! type of curve
+    typedef typename Geometry_traits_2::Curve_2 Curve_2;
+    
+    typedef typename Arrangement_2::Vertex_const_handle 
+    Vertex_const_handle;
+    typedef typename Arrangement_2::Halfedge_const_handle 
+    Halfedge_const_handle;
+    typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
+    typedef typename Arrangement_2::Face_const_handle Face_const_handle;
+    
+    typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
+    Halfedge_around_vertex_const_circulator;
+
+    typedef typename Arrangement_2::Vertex_handle            Vertex_handle;
+    typedef typename Arrangement_2::Halfedge_handle          Halfedge_handle;
+    typedef typename Arrangement_2::Face_handle              Face_handle;
+    
+    /*!\brief Extracts subarrangement of \c arr defined by \c cell_handle
+     */
+    // FUTURE TODO allow multiple cell_handles!
+    void operator()(Arrangement_2& arr, const CGAL::Object& cell_handle) {
+        
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+        _mt_sub.start();
+#endif
+        
+        Vertex_const_handle vh;
+        Halfedge_const_handle heh;
+        Face_const_handle fh;
+        if (CGAL::assign(vh, cell_handle)) {
+            
+            // delete all but vh
+            for (Halfedge_const_handle eit = 
+                     arr.halfedges_begin();
+                 eit != arr.halfedges_end(); eit++, eit++) {
+                arr.remove_edge(
+                        arr.non_const_handle(eit)
+                );
+            }
+            
+            for (Vertex_const_handle vit = 
+                     arr.vertices_begin();
+                 vit != arr.vertices_end(); vit++) {
+                if (vit == vh) {
+                    continue;
+                }
+                // else
+                arr.remove_isolated_vertex(
+                        arr.non_const_handle(vit)
+                );
+            }
+            
+        } else if (CGAL::assign(heh, cell_handle)) {
+
+            // delete all but heh
+            for (Halfedge_const_handle eit = 
+                     arr.halfedges_begin();
+                 eit != arr.halfedges_end(); eit++, eit++) {
+                if (eit == heh || eit->twin() == heh) {
+                    continue;
+                }
+                // else
+                arr.remove_edge(
+                        arr.non_const_handle(eit)
+                );
+            }
+            
+            for (Vertex_const_handle vit = 
+                     arr.vertices_begin();
+                 vit != arr.vertices_end(); vit++) {
+                if (!vit->is_isolated()) {
+                    continue;
+                }
+                // else
+                arr.remove_isolated_vertex(
+                        arr.non_const_handle(vit)
+                );
+            }
+            
+        } else {
+            CGAL_assertion_code(bool check =)
+                CGAL::assign(fh, cell_handle);
+            CGAL_assertion(check);
+            
+            for (Halfedge_const_handle eit = arr.halfedges_begin();
+                 eit != arr.halfedges_end(); eit++, eit++) {
+                if (eit->face() == fh || eit->twin()->face() == fh) {
+                    continue;
+                }
+                // else
+                arr.remove_edge(arr.non_const_handle(eit));
+            }
+            
+            for (Vertex_const_handle vit = arr.vertices_begin();
+                 vit != arr.vertices_end(); vit++) {
+                if (!vit->is_isolated()) {
+                    continue;
+                }
+                if (vit->face() == fh) {
+                    continue;
+                }
+                // else
+                arr.remove_isolated_vertex(arr.non_const_handle(vit));
+            }
+        }
+        
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+        _mt_sub.stop();
+        
+        std::cout << "tSub   : " << _mt_sub.time() 
+                  << " sec" << std::endl;
+#endif
+    }
+
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+    double time() {
+        return _mt_sub.time();
+    }
+
+    void reset_time() {
+        _mt_sub.reset();
+    }
+
+private:
+    CGAL::Timer _mt_sub;
+#endif
+};
 
 /*!\brief
  * class that observes a city-arrangement
@@ -122,7 +269,7 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         _m_check_split_edges(false) {
         
         // determine initial _m_edge_handle
-        // TODO avoud ray_shoot up
+        // TODO avoid ray_shoot up
         CGAL::Arr_simple_point_location< Arrangement_2 > 
             ray(*(Base::arrangement()));
         CGAL::Object obj = ray.ray_shoot_up(_m_point);
@@ -146,7 +293,8 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
             
         }  else {
             
-            // TODO does not work with unbounded faces!!!
+            // TODO does not work with unbounded that are bordered by
+            //      infinite curves
             Face_const_handle fh;
             CGAL_assertion_code(bool check =)
                 CGAL::assign(fh, obj);
@@ -189,17 +337,6 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     //!\name Notifications
     //!@{
 
-    /*!
-     * Notification before the creation of a new edge.
-     * \param c The x-monotone curve to be associated with the edge.
-     * \param v1 A handle to the first end-vertex of the edge.
-     * \param v2 A handle to the second end-vertex of the edge.
-     */
-    virtual void before_create_edge (const X_monotone_curve_2& /* c */,
-                                     Vertex_handle /* v1 */,
-                                     Vertex_handle /* v2 */)
-    {}
-    
     /*!
      * Notification after the creation of a new edge.
      * \param e A handle to one of the twin halfedges that were created.
@@ -315,115 +452,6 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         }
     }
 
-#if 0
-    // TODO remove? as after_create_edge subsumes this case
-    /*!
-     * Notification before the splitting of a face into two.
-     * \param f A handle to the existing face.
-     * \param e The new edge whose insertion causes the face to split.
-     */
-    virtual void before_split_face (Face_handle /* f */,
-                                    Halfedge_handle e) 
-    {
-        typename Geometry_traits_2::Is_vertical_2 is_vertical =
-            Base::arrangement()->geometry_traits()->is_vertical_2_object();
-        typename Traits_adaptor_2::Is_in_x_range_2 is_in_x_range =
-            static_cast< Traits_adaptor_2* >
-            (Base::arrangement()->geometry_traits())->is_in_x_range_2_object();
-        
-        typename Geometry_traits_2::Compare_y_at_x_2 compare_y_at_x =
-            Base::arrangement()->geometry_traits()->compare_y_at_x_2_object();
-        
-        X_monotone_curve_2 cv = e->curve();
-        
-        //std::cout << "before split face" << std::endl;
-        //std::cout << "cv: " << cv << std::endl;
-        //std::cout << "he: " << _m_halfedge_handle->curve() << std::endl;
-
-        if (!is_vertical(cv)) {
-            // Todo symbolic pertubation for endpoints!
-            if (is_in_x_range(cv, _m_point)) {
-                CGAL::Comparison_result res = compare_y_at_x(_m_point, cv);
-                
-                if (res == CGAL::SMALLER) {
-                    typename Traits_adaptor_2::Compare_y_position_2 
-                        compare_y_pos =
-                        static_cast< Traits_adaptor_2* >
-                        (Base::arrangement()->geometry_traits())->
-                        compare_y_position_2_object();
-                    
-                    bool change = false;
-
-                    if (is_in_x_range(cv, _m_halfedge_handle->curve())) {
-                        if (compare_y_pos(cv, _m_halfedge_handle->curve()) ==
-                            CGAL::SMALLER) {
-                            change = true;
-                        }
-                    } else {
-                        typename Geometry_traits_2::Compare_x_2 compare_x =
-                            Base::arrangement()->geometry_traits()->
-                            compare_x_2_object();
-                        typename Geometry_traits_2::Construct_min_vertex_2 
-                            construct_min =
-                            Base::arrangement()->geometry_traits()->
-                            construct_min_vertex_2_object();
-                        typename Geometry_traits_2::Construct_max_vertex_2 
-                            construct_max =
-                            Base::arrangement()->geometry_traits()->
-                            construct_max_vertex_2_object();
-                        
-                        Point_2 min = construct_min(cv);
-                        if (compare_x(min, _m_point) == CGAL::EQUAL) {
-                            change = (compare_y_at_x(
-                                              min, 
-                                              _m_halfedge_handle->curve()) 
-                                      == CGAL::SMALLER);
-                        } else {
-                            Point_2 max = construct_max(cv);
-                            CGAL_assertion(
-                                    compare_x(max, _m_point) == CGAL::EQUAL
-                            );
-                            change = (compare_y_at_x(
-                                              max, 
-                                              _m_halfedge_handle->curve()) 
-                                      == CGAL::SMALLER);
-                        }
-                        
-                        if (change) {
-                            // new curve is below old curve
-                            // thus, face that contains point is 
-                            // restricted by this
-                            // edge - we only have to ensure the correct order
-                            _m_halfedge_handle = 
-                                ((e->direction() == CGAL::ARR_RIGHT_TO_LEFT) ?
-                                 e : e->twin());
-                            
-                            CGAL_assertion(
-                                    _m_halfedge_handle->direction() == 
-                                    CGAL::ARR_RIGHT_TO_LEFT
-                            );
-                            
-                            _m_cell_handle = 
-                                CGAL::make_object(_m_halfedge_handle->face());
-                            
-                            //std::cout << "HE2 set to cv: " 
-                            //          << _m_halfedge_handle->curve() 
-                            //          << std::endl;
-
-                        }
-                    }
-                } else if (res == CGAL::EQUAL) {
-                    // Todo on curve!!!!
-                }
-            } 
-        } else {
-            // Todo what if e->curve() is vertical
-        }
-        
-        // else no action is required
-    }
-#endif   
-
     /*!
      * Notification after a face was split.
      * \param f A handle to the face we have just split.
@@ -441,8 +469,13 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
 
 
-#if !CGAL_ARR_SINGLE_CELL_2_SIMPLIFY_NAIVE
-        // what TODO with this? simplify_arr();
+#if !CGAL_ARR_SINGLE_CELL_2_SUB_NAIVE
+        // what TODO with this simplication - it leads - naively used - 
+        // to seg-faults and inconsistencies in zoning
+        /*
+          Sub_arrangement_2< Arrangement_2 > subarr;
+          subarr(*(Base::arrangement()), _m_cell_handle);
+        */
 #endif
     }
     
@@ -549,8 +582,6 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         _m_check_split_edges = false;
     }
     
-    
-
     /*!
      * Notification before the splitting of a fictitious edge into two.
      * \param e A handle to one of the existing halfedges.
@@ -558,7 +589,9 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
      */
     virtual void before_split_fictitious_edge (Halfedge_handle /* e */,
                                                Vertex_handle /* v */)
-    {}
+    {
+        // TODO is required for update of fictitious _m_halfedge_handle
+    }
     
     /*!
      * Notification after a fictitious edge was split.
@@ -567,7 +600,9 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
      */
     virtual void after_split_fictitious_edge (Halfedge_handle /* e1 */,
                                               Halfedge_handle /* e2 */)
-    {}
+    {
+        // TODO is required for update of fictitious _m_halfedge_handle
+    }
 
     //!@}
     
@@ -576,68 +611,6 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         return _m_cell_handle;
     }
 
-private:
-
-       // FUTURE TODO allow multiple cell_handles!
-    void simplify_arr() {
-        
-#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
-        //_mt_cell.start();
-#endif
-        
-        Vertex_const_handle vh;
-        Halfedge_const_handle heh;
-        Face_const_handle fh;
-        if (CGAL::assign(vh, _m_cell_handle)) {
-            
-            // TODO delete all but vh
-            
-            
-        } else if (CGAL::assign(heh, _m_cell_handle)) {
-            
-            // TODO delete all but fh
-            
-        } else {
-            CGAL_assertion_code(bool check =)
-                CGAL::assign(fh, _m_cell_handle);
-            CGAL_assertion(check);
-            
-            for (Halfedge_const_handle eit = 
-                     Base::arrangement()->halfedges_begin();
-                 eit != Base::arrangement()->halfedges_end(); eit++, eit++) {
-                if (eit->face() == fh || eit->twin()->face() == fh) {
-                    continue;
-                }
-                // else
-                Base::arrangement()->remove_edge(
-                        Base::arrangement()->non_const_handle(eit)
-                );
-            }
-            
-            for (Vertex_const_handle vit = 
-                     Base::arrangement()->vertices_begin();
-                 vit != Base::arrangement()->vertices_end(); vit++) {
-                if (!vit->is_isolated()) {
-                    continue;
-                }
-                if (vit->face() == fh) {
-                    continue;
-                }
-                // else
-                Base::arrangement()->remove_isolated_vertex(
-                        Base::arrangement()->non_const_handle(vit)
-                );
-            }
-        }
-        
-#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
-        //_mt_cell.stop();
-        
-        //std::cout << "tCell   : " << _mt_cell.time() 
-        //          << " sec" << std::endl;
-#endif
-    }
-    
 private:
     //! query point
     Point_2 _m_point;
@@ -852,6 +825,10 @@ public:
                 Face_const_handle fh = _m_arr_city->faces_begin();
                 cell_handle = CGAL::make_object(fh);
                 
+#if !CGAL_ARR_SINGLE_CELL_2_SUB_NAIVE
+                Sub_arrangement_2< Arrangement_2 > subarr;
+#endif
+                
                 // real RI-case
                 for (typename 
                          std::vector< X_monotone_curve_2 >::const_iterator 
@@ -862,7 +839,7 @@ public:
                         obs((*_m_arr_city), pt);
 #endif
                     //std::cout << "Insert: " << *cit << std::endl;
-                    // add *cit using zone/sweep? TODO
+                    // add *cit using zone
                     CGAL::insert(*_m_arr_city, *cit);
 
 #if CGAL_ARR_SINGLE_CELL_2_RI_NAIVE
@@ -873,17 +850,14 @@ public:
                     cell_handle = obs.cell_handle();
 #endif
                     
-                    // simplify!
-#if CGAL_ARR_SINGLE_CELL_2_SIMPLIFY_NAIVE
+                    // sub!
+#if CGAL_ARR_SINGLE_CELL_2_SUB_NAIVE
                     Arrangement_2 new_city;
                     cell_arr(cell_handle, new_city);
                     _m_arr_city = new_city;
 #else
-                    simplify_arr(cell_handle, *_m_arr_city);
+                    subarr(*_m_arr_city, cell_handle);
 #endif
-
-                    // TODO alternative: 
-                    //      delete all feature not defining "cell_handle"
                 }
 
                 _m_cell_handle_ri = cell_handle;
@@ -975,7 +949,7 @@ public:
                     
                     cell_handle[i] = recursive.cell_rbo_naive(pt);
                     
-                    // Remark: Cannot use simplify_arr here, 
+                    // Remark: Cannot use sub_arr here, 
                     //         as no access to overlaid arrangement
                     cell_arr(cell_handle[i], cell[i]);
                 }
@@ -1156,59 +1130,9 @@ public:
     }
 
 
-    // FUTURE TODO allow multiple cell_handles!
-    void simplify_arr(CGAL::Object cell_handle, Arrangement_2& cell) const {
+
         
-#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
-        _mt_cell.start();
-#endif
         
-        Vertex_const_handle vh;
-        Halfedge_const_handle heh;
-        Face_const_handle fh;
-        if (CGAL::assign(vh, cell_handle)) {
-            
-            // TODO delete all but vh
-            
-            
-        } else if (CGAL::assign(heh, cell_handle)) {
-            
-            // TODO delete all but fh
-            
-        } else {
-            CGAL_assertion_code(bool check =)
-                CGAL::assign(fh, cell_handle);
-            CGAL_assertion(check);
-            
-            for (Halfedge_const_handle eit = cell.halfedges_begin();
-                 eit != cell.halfedges_end(); eit++, eit++) {
-                if (eit->face() == fh || eit->twin()->face() == fh) {
-                    continue;
-                }
-                // else
-                cell.remove_edge(cell.non_const_handle(eit));
-            }
-            
-            for (Vertex_const_handle vit = cell.vertices_begin();
-                 vit != cell.vertices_end(); vit++) {
-                if (!vit->is_isolated()) {
-                    continue;
-                }
-                if (vit->face() == fh) {
-                    continue;
-                }
-                // else
-                cell.remove_isolated_vertex(cell.non_const_handle(vit));
-            }
-        }
-        
-#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
-        _mt_cell.stop();
-        
-        std::cout << "tCell   : " << _mt_cell.time() 
-                  << " sec" << std::endl;
-#endif
-    }
 
 
 
@@ -1284,11 +1208,11 @@ CGAL::Object single_cell_pl_2(
             begin, end
     );
 
-     CGAL::Object cell_handle = single_cell.cell_pl(point);
-     // TODO avoid to reconstruct arrangement!
-     single_cell.cell_arr(cell_handle, cell);
+    CGAL::Object cell_handle = single_cell.cell_pl(point);
+    // TODO avoid to reconstruct arrangement!
+    single_cell.cell_arr(cell_handle, cell);
     return cell_handle;
- }
+}
 
 /*!
  * Construct the single cell containing a point using random incremental 
