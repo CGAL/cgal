@@ -185,21 +185,7 @@ namespace CGAL {
     Sign
     compute_sign_of_cross_product(const typename SK::Circular_arc_point_3 &p1, 
                                   const typename SK::Circular_arc_point_3 &p2,
-                                  const typename SK::Point_3 &c) {
-      return compute_sign_of_cross_product<SK>(p1.x()-c.x(),
-                                               p1.y()-c.y(),
-                                               p1.z()-c.z(),
-                                               p2.x()-c.x(),
-                                               p2.y()-c.y(),
-                                               p2.z()-c.z());
-    }
-
-    template< class SK>
-    inline
-    Sign
-    compute_sign_of_cross_product(const typename SK::Point_3 &p1, 
-                                  const typename SK::Point_3 &p2,
-                                  const typename SK::Point_3 &c) {
+                                  const typename SK::Circular_arc_point_3 &c) {
       return compute_sign_of_cross_product<SK>(p1.x()-c.x(),
                                                p1.y()-c.y(),
                                                p1.z()-c.z(),
