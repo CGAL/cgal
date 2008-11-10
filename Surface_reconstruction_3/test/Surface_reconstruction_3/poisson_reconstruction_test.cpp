@@ -13,11 +13,6 @@
 // poisson_reconstruction_test mesh1.off point_set2.xyz...
 
 
-#include <CGAL/basic.h> // include basic.h before testing #defines
-
-#ifdef CGAL_USE_TAUCS
-
-
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
@@ -304,23 +299,3 @@ int main(int argc, char * argv[])
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }
-
-
-#else // CGAL_USE_TAUCS
-
-
-#include <iostream>
-#include <cstdlib>
-
-// ----------------------------------------------------------------------------
-// Empty main() if TAUCS is not installed
-// ----------------------------------------------------------------------------
-
-int main()
-{
-  std::cerr << "Skip test as TAUCS is not installed" << std::endl;
-  return EXIT_SUCCESS;
-}
-
-#endif // CGAL_USE_TAUCS
-
