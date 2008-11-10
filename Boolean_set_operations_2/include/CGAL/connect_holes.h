@@ -28,6 +28,7 @@
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Gps_segment_traits_2.h>
 #include <list>
+#include <set>
 #include <CGAL/Unique_hash_map.h>
 #include <iostream>
 
@@ -129,8 +130,11 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
   typename Kernel::Compare_x_2           comp_x = ker.compare_x_2_object();
   Vertex_handle                          v_top;
   Comparison_result                      res;
-  std::set<Vertex_const_handle,
-           _Less_handle<Vertex_const_handle> >  top_vertices;
+  //construct vertex hash map (default data is false) and insert top vertices 
+  //handles as keys (key vertex data value is true) 
+  typedef typename CGAL::Unique_hash_map<Vertex_const_handle, bool> V_map;
+  V_map top_vertices(false ,arr.number_of_faces()); 
+  
   /*traversal of arrangement face holes - a hole in the face 
   in arranements is disjoint from the outer boundary (different from BOP
   where the hole can have vertices along the outer boundary). We look for
@@ -161,7 +165,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
           }
         } while (circ != first);
        // std::cout << "inserted top vertex at " << v_top->point() <<std::endl;
-        top_vertices.insert (Vertex_const_handle (v_top));
+			top_vertices[Vertex_const_handle (v_top)]=true;        
     }
   }
 
@@ -193,7 +197,7 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
 
   for (vrs_iter = vrs_list.begin(); vrs_iter != vrs_list.end(); ++vrs_iter)
   {
-    if (top_vertices.find (vrs_iter->first) == top_vertices.end())
+    if (!top_vertices.is_defined(vrs_iter->first))    
       continue;
 
     v_top = arr.non_const_handle (vrs_iter->first);
@@ -295,9 +299,8 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
     CGAL_assertion(he_han->face() == uf);	
   }
   
-  //construct vertex hash map (default data is false) and insert vertex
-  //handles as keys (key vertex data value is true) 
-  typedef typename CGAL::Unique_hash_map<Vertex_const_handle, bool> V_map;  
+   //construct vertex hash map (default data is false) and insert vertex
+  //handles as keys (key vertex data value is true)
   V_map ver_map(false ,size); 
   if (he_han->target()->degree()>2)
   	 ver_map[he_han->target()]=true;
@@ -373,10 +376,15 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
        not on the unbounded face will be encountered when traversing holes 
        (different state) */
        next = curr->next();
+      //unified 2 simple cases of traversal along outer boundary 
       /* case target() is a simple vertice with a single possible edge on path.
       add it to output and continue searching for a hole. This is when traversing
       along the outer polygon boundary*/
-      if (curr->target()->degree()==2) {                
+      /*the case the next half edge is on the outer boundary meaning we finished
+       handling holes connected to the target vertex.
+       Add the target to the output, and continue searching for next hole*/
+       
+      /*if (curr->target()->degree()==2) {                
         //std::cout << "curr edge is ((" << curr->source()->point() << "),( " << curr->target()->point() << "))" <<std::endl;
         //insert target point to result output iterator     
         *oi = curr->target()->point();
@@ -384,11 +392,8 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
         curr = curr->next();
         //maintain the same state 
         continue;
-      }
-      /*the case the next half edge is on the outer boundary meaning we finished
-       handling holes connected to the target vertex.
-       Add the target to the output, and continue searching for next hole*/
-      if (next->twin()->face() == uf) {
+      }*/
+      if ((curr->target()->degree()==2) ||(next->twin()->face() == uf)) {
         /*if (!skip_print)          
           std::cout << "curr edge is ((" << curr->source()->point() << "),( " << curr->target()->point() << "))" <<std::endl;        
         else {
