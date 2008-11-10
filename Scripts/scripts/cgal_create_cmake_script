@@ -124,7 +124,7 @@ if ( CGAL_FOUND )
 
 EOF
     if [ -d include ] ; then
-      echo 'include_directories (BEFORE include)'
+      echo '  include_directories (BEFORE include)'
       echo
     fi
     
@@ -134,7 +134,7 @@ EOF
       BASE=`basename $BASE .cpp`
       egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
-        echo "create_single_source_cgal_program( \"$file\" )"
+        echo "  create_single_source_cgal_program( \"$file\" )"
       fi
     done
     
