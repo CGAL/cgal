@@ -14,11 +14,6 @@
 // normal_estimation file_in file_out [options]
 
 
-#include <CGAL/basic.h> // include basic.h before testing #defines
-
-#ifdef CGAL_USE_LAPACK
-
-
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
@@ -402,24 +397,3 @@ int main(int argc, char * argv[])
     std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
     return accumulated_fatal_err;
 }
-
-
-#else // CGAL_USE_LAPACK
-
-
-#include <iostream>
-#include <cstdlib>
-
-// ----------------------------------------------------------------------------
-// Empty main() if LAPACK is not installed
-// ----------------------------------------------------------------------------
-
-int main()
-{
-    std::cerr << "Skip test as LAPACK is not installed" << std::endl;
-    return EXIT_SUCCESS;
-}
-
-
-#endif // CGAL_USE_LAPACK
-
