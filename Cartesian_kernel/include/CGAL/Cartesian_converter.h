@@ -176,7 +176,7 @@ public:
         typedef typename K2::Circle_2  Circle_2;
 	return Circle_2(operator()(a.center()),
 		        c(a.squared_radius()),
-			a.rep().orientation());
+			a.orientation());
     }
 
     typename K2::Triangle_2
@@ -244,7 +244,7 @@ public:
         typedef typename K2::Sphere_3  Sphere_3;
 	return Sphere_3(operator()(a.center()),
 		        c(a.squared_radius()),
-			a.rep().orientation());
+			a.orientation());
     }
 
     typename K2::Circle_3
