@@ -218,7 +218,7 @@ int main()
     }
 #else 
     std::cerr << "Command-line options require Boost.ProgramOptions" << std::endl;
-    if_name = "data/ellipsoid_u_0.02.off";
+    if_name = "data/poly2x^2+y^2-0.062500.off";
     d_fitting = 3;
     d_monge = 3;
     nb_rings = 0;

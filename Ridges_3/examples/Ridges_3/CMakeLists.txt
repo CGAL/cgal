@@ -21,8 +21,14 @@ if ( CGAL_FOUND )
   if(LAPACK_FOUND)
     include( ${LAPACK_USE_FILE} )
 
+    find_package( Boost QUIET COMPONENTS program_options )
+    if( Boost_PROGRAM_OPTIONS_FOUND )
+      add_definitions( -DCGAL_USE_BOOST_PROGRAM_OPTIONS )
+      link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+    endif( Boost_PROGRAM_OPTIONS_FOUND )
 
-    create_single_source_cgal_program( "Compute_Ridges_Umbilics.cpp" )
+    add_executable(Compute_Ridges_Umbilics Compute_Ridges_Umbilics.cpp PolyhedralSurf.cpp)
+    target_link_libraries(Compute_Ridges_Umbilics ${CGAL_LIBRARIES})
 
   else(LAPACK_FOUND)
 
