@@ -20,6 +20,10 @@
 
 // flags in this file:
 
+#ifndef CGAL_ARR_SINGLE_CELL_2_SIMPLIFY_NAIVE
+#define CGAL_ARR_SINGLE_CELL_2_SIMPLIFY_NAIVE 0
+#endif
+
 #ifndef CGAL_ARR_SINGLE_CELL_2_RI_NAIVE
 #define CGAL_ARR_SINGLE_CELL_2_RI_NAIVE 0
 #endif
@@ -94,6 +98,7 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     Vertex_const_handle;
     typedef typename Arrangement_2::Halfedge_const_handle 
     Halfedge_const_handle;
+    typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
     typedef typename Arrangement_2::Face_const_handle Face_const_handle;
     
     typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
@@ -432,6 +437,11 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                 _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
         );
         _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
+
+
+#if !CGAL_ARR_SINGLE_CELL_2_SIMPLIFY_NAIVE
+        // what TODO with this? simplify_arr();
+#endif
     }
     
     /*!
@@ -563,6 +573,68 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     CGAL::Object cell_handle() {
         return _m_cell_handle;
     }
+
+private:
+
+       // FUTURE TODO allow multiple cell_handles!
+    void simplify_arr() {
+        
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+        //_mt_cell.start();
+#endif
+        
+        Vertex_const_handle vh;
+        Halfedge_const_handle heh;
+        Face_const_handle fh;
+        if (CGAL::assign(vh, _m_cell_handle)) {
+            
+            // TODO delete all but vh
+            
+            
+        } else if (CGAL::assign(heh, _m_cell_handle)) {
+            
+            // TODO delete all but fh
+            
+        } else {
+            CGAL_assertion_code(bool check =)
+                CGAL::assign(fh, _m_cell_handle);
+            CGAL_assertion(check);
+            
+            for (Halfedge_const_handle eit = 
+                     Base::arrangement()->halfedges_begin();
+                 eit != Base::arrangement()->halfedges_end(); eit++, eit++) {
+                if (eit->face() == fh || eit->twin()->face() == fh) {
+                    continue;
+                }
+                // else
+                Base::arrangement()->remove_edge(
+                        Base::arrangement()->non_const_handle(eit)
+                );
+            }
+            
+            for (Vertex_const_handle vit = 
+                     Base::arrangement()->vertices_begin();
+                 vit != Base::arrangement()->vertices_end(); vit++) {
+                if (!vit->is_isolated()) {
+                    continue;
+                }
+                if (vit->face() == fh) {
+                    continue;
+                }
+                // else
+                Base::arrangement()->remove_isolated_vertex(
+                        Base::arrangement()->non_const_handle(vit)
+                );
+            }
+        }
+        
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+        //_mt_cell.stop();
+        
+        //std::cout << "tCell   : " << _mt_cell.time() 
+        //          << " sec" << std::endl;
+#endif
+    }
     
 private:
     //! query point
@@ -609,6 +681,7 @@ public:
     typedef typename Arrangement_2::Vertex_const_handle Vertex_const_handle;
     typedef typename Arrangement_2::Halfedge_const_handle 
     Halfedge_const_handle;
+    typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
     typedef typename Arrangement_2::Face_const_handle Face_const_handle;
 
     // TASK select best point location strategy
@@ -795,9 +868,13 @@ public:
 #endif
                     
                     // simplify!
+#if CGAL_ARR_SINGLE_CELL_2_SIMPLIFY_NAIVE
                     Arrangement_2 new_city;
                     cell_arr(cell_handle, new_city);
                     _m_arr_city = new_city;
+#else
+                    simplify_arr(cell_handle, *_m_arr_city);
+#endif
 
                     // TODO alternative: 
                     //      delete all feature not defining "cell_handle"
@@ -891,7 +968,9 @@ public:
                     Self recursive(objects.begin(), objects.end());
                     
                     cell_handle[i] = recursive.cell_rbo_naive(pt);
-
+                    
+                    // Remark: Cannot use simplify_arr here, 
+                    //         as no access to overlaid arrangement
                     cell_arr(cell_handle[i], cell[i]);
                 }
                 
@@ -1070,6 +1149,63 @@ public:
 #endif
     }
 
+
+    // FUTURE TODO allow multiple cell_handles!
+    void simplify_arr(CGAL::Object cell_handle, Arrangement_2& cell) const {
+        
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+        _mt_cell.start();
+#endif
+        
+        Vertex_const_handle vh;
+        Halfedge_const_handle heh;
+        Face_const_handle fh;
+        if (CGAL::assign(vh, cell_handle)) {
+            
+            // TODO delete all but vh
+            
+            
+        } else if (CGAL::assign(heh, cell_handle)) {
+            
+            // TODO delete all but fh
+            
+        } else {
+            CGAL_assertion_code(bool check =)
+                CGAL::assign(fh, cell_handle);
+            CGAL_assertion(check);
+            
+            for (Halfedge_const_handle eit = cell.halfedges_begin();
+                 eit != cell.halfedges_end(); eit++, eit++) {
+                if (eit->face() == fh || eit->twin()->face() == fh) {
+                    continue;
+                }
+                // else
+                cell.remove_edge(cell.non_const_handle(eit));
+            }
+            
+            for (Vertex_const_handle vit = cell.vertices_begin();
+                 vit != cell.vertices_end(); vit++) {
+                if (!vit->is_isolated()) {
+                    continue;
+                }
+                if (vit->face() == fh) {
+                    continue;
+                }
+                // else
+                cell.remove_isolated_vertex(cell.non_const_handle(vit));
+            }
+        }
+        
+#if CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
+        _mt_cell.stop();
+        
+        std::cout << "tCell   : " << _mt_cell.time() 
+                  << " sec" << std::endl;
+#endif
+    }
+
+
+
     //!@}
 
     
@@ -1143,6 +1279,7 @@ CGAL::Object single_cell_pl_2(
     );
 
      CGAL::Object cell_handle = single_cell.cell_pl(point);
+     // TODO avoid to reconstruct arrangement!
      single_cell.cell_arr(cell_handle, cell);
     return cell_handle;
  }
@@ -1176,6 +1313,7 @@ CGAL::Object single_cell_ri_2(
     );
 
     CGAL::Object cell_handle = single_cell.cell_ri(point);
+    // TODO avoid to reconstruct arrangement!
     single_cell.cell_arr(cell_handle, cell);
     return cell_handle;
  }
@@ -1210,6 +1348,7 @@ CGAL::Object single_cell_rbo_naive_2(
     );
     
     CGAL::Object cell_handle = single_cell.cell_rbo_naive(point);
+    // TODO avoid to reconstruct arrangement!
     single_cell.cell_arr(cell_handle, cell);
     return cell_handle;
 }
