@@ -55,12 +55,12 @@ else()
   endif()  
   
   if ( NOT "$ENV{LEDA_VERSION}" STREQUAL "" )
-    set( CGAL_LEDA_VERSION "$ENV{LEDA_VERSION}" CACHE STRING   "The version of the LEDA library" FORCE )
+    set( LEDA_VERSION "$ENV{LEDA_VERSION}" CACHE STRING "The version of the LEDA library" FORCE )
   endif()
   
-  if ( CGAL_LEDA_VERSION )
-    if ( NOT "${LEDA_DEFINITIONS}" MATCHES "-DCGAL_LEDA_VERSION=${CGAL_LEDA_VERSION}" )
-      set( LEDA_DEFINITIONS "${LEDA_DEFINITIONS}" "-DCGAL_LEDA_VERSION=${CGAL_LEDA_VERSION}" CACHE STRING "Definitions for the LEDA library" FORCE )
+  if ( LEDA_VERSION )
+    if ( NOT "${LEDA_DEFINITIONS}" MATCHES "-DCGAL_LEDA_VERSION=${LEDA_VERSION}" )
+      set( LEDA_DEFINITIONS "${LEDA_DEFINITIONS}" "-DCGAL_LEDA_VERSION=${LEDA_VERSION}" CACHE STRING "Definitions for the LEDA library" FORCE )
     endif()
   endif()
   
