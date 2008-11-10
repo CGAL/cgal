@@ -23,8 +23,8 @@
 //#define CGAL_SL_VERBOSE 1
 //#define CKvA_DEBUG_PRINT_CERR 1
 
-#ifndef CGAL_ARR_SINGLE_CELL_2_SIMPLIFY_NAIVE
-#define CGAL_ARR_SINGLE_CELL_2_SIMPLIFY_NAIVE 0
+#ifndef CGAL_ARR_SINGLE_CELL_2_SUB_NAIVE
+#define CGAL_ARR_SINGLE_CELL_2_SUB_NAIVE 0
 #endif
 
 #ifndef CGAL_ARR_SINGLE_CELL_2_SHOW_TIMINGS
@@ -335,7 +335,7 @@ int main( int argc, char **argv ) {
          "write data to file")
         ("method,M", 
          po::value<std::string>(&method)->default_value("pl"), 
-         "method - valid options are: pl, rbo_naive");
+         "method - valid options are: pl, ri, rbo_naive, rbo");
     
 
     po::options_description random("Random input:");
@@ -574,6 +574,13 @@ int main( int argc, char **argv ) {
               input_objects.end(),
               cell
       );
+  } else if (method == "ri" ) {
+      obj = CGAL::single_cell_ri_2(
+              point,
+              input_objects.begin(),
+              input_objects.end(),
+              cell
+      );
   } else if (method == "rbo_naive" ) {
       obj = CGAL::single_cell_rbo_naive_2(
               point,
@@ -581,8 +588,8 @@ int main( int argc, char **argv ) {
               input_objects.end(),
               cell
       );
-  } else if (method == "ri" ) {
-      obj = CGAL::single_cell_ri_2(
+  } else if (method == "rbo" ) {
+      obj = CGAL::single_cell_rbo_2(
               point,
               input_objects.begin(),
               input_objects.end(),
@@ -618,5 +625,5 @@ int main( int argc, char **argv ) {
 
   return app.exec();
   
-  }
+}
 // EOF
