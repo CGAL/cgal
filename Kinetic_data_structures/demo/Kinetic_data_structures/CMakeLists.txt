@@ -33,9 +33,12 @@ if ( CGAL_FOUND )
 
     include_directories (BEFORE include)
     
-    include( CGAL_UseBoostProgramOptions )
-    
+    # Link with Boost.ProgramOptions (optional)
     find_package(Boost QUIET COMPONENTS program_options)
+    if(Boost_PROGRAM_OPTIONS_FOUND)
+      add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
+      link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+    endif()
 
     # Demo KDS_Delaunay_triangulation_2
     add_executable  (KDS_Delaunay_triangulation_2 KDS_Delaunay_triangulation_2.cpp)

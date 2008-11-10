@@ -37,7 +37,11 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
   # Link with Boost.ProgramOptions (optional)
-  include( CGAL_UseBoostProgramOptions )
+  find_package(Boost QUIET COMPONENTS program_options)
+  if(Boost_PROGRAM_OPTIONS_FOUND)
+    add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
+    link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+  endif()
 
   include_directories (BEFORE include)
 

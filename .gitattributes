@@ -1748,7 +1748,6 @@ Installation/lib/CGAL-3.4/CGAL_SetupGMPXX.cmake -text
 Installation/lib/CGAL-3.4/CGAL_SetupLEDA.cmake -text
 Installation/lib/CGAL-3.4/CGAL_SetupMPFR.cmake -text
 Installation/lib/CGAL-3.4/CGAL_UseBLAS.cmake -text
-Installation/lib/CGAL-3.4/CGAL_UseBoostProgramOptions.cmake -text
 Installation/lib/CGAL-3.4/CGAL_UseLAPACK.cmake -text
 Installation/lib/CGAL-3.4/CGAL_UseTAUCS.cmake -text
 Installation/lib/CGAL-3.4/FindBLAS.cmake -text
