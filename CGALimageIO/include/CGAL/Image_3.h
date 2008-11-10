@@ -27,10 +27,28 @@
 #include <CGAL/function_objects.h>
 
 #include <limits>
+#include <set>
 
 class vtkImageData;
 
 namespace CGAL {
+
+namespace ImageIO {
+
+template <typename T>
+class Indicator : public std::unary_function<T, unsigned int>
+{
+  const T label;
+public:
+  Indicator(T i) : label(i) {};
+  
+  unsigned int operator()(T x) const 
+  {
+    return (x == label) ? 1 : 0;
+  }
+};
+
+} // end namespace CGAL::ImageIO
 
 class Image_3
 {
@@ -59,7 +77,7 @@ public:
   Image_3(const Image_3& bi)
     : image_ptr(bi.image_ptr)
   {
-    std::cerr << "Image_3::copy_constructor\n";
+//     std::cerr << "Image_3::copy_constructor\n";
   }
 
   Image_3(_image* im) 
@@ -180,6 +198,16 @@ public:
       Target_word_type>(x, y, z, value_outside,
 			  CGAL::Identity<Image_word_type>());
   }
+
+  template <typename Image_word_type,
+	    typename Coord_type>
+  Image_word_type 
+  labellized_trilinear_interpolation(const Coord_type&x, 
+				     const Coord_type&y, 
+				     const Coord_type&z,
+				     const Image_word_type& value_outside = 
+  				       Image_word_type()) const;
+
 }; // end Image_3
 
 template <typename Image_word_type,
@@ -244,17 +272,17 @@ Image_3::trilinear_interpolation(const Coord_type& x,
 
   Image_word_type* ptr = (Image_word_type*)image()->data;
   ptr += i1 * dimxy + j1 * dimx + k1;
-  const Target_word_type a = *ptr;
-  const Target_word_type e = *(ptr+1);
+  const Target_word_type a = transform(*ptr);
+  const Target_word_type e = transform(*(ptr+1));
   ptr += dimxy; // i2 * dimxy + j1 * dimx + k1;
-  const Target_word_type b = *ptr;
-  const Target_word_type f = *(ptr+1);
+  const Target_word_type b = transform(*ptr);
+  const Target_word_type f = transform(*(ptr+1));
   ptr += dimx; // i2 * dimxy + j2 * dimx + k1
-  const Target_word_type c = *ptr;
-  const Target_word_type g = *(ptr+1);
+  const Target_word_type c = transform(*ptr);
+  const Target_word_type g = transform(*(ptr+1));
   ptr -= dimxy; // i1 * dimxy + j2 * dimx + k1
-  const Target_word_type d = *ptr;
-  const Target_word_type h = *(ptr+1);
+  const Target_word_type d = transform(*ptr);
+  const Target_word_type h = transform(*(ptr+1));
   
 
 //   const Target_word_type a = ((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k1];
@@ -364,8 +392,70 @@ Image_3::trilinear_interpolation(const Coord_type& x,
 	      ( d * di2 + c * di1 ) * dj1   ) * dk2 +
 	   (  ( e * di2 + f * di1 ) * dj2 + 
 	      ( h * di2 + g * di1 ) * dj1   ) * dk1 );
-}
+} // end trilinear_interpolation
 
+
+template <typename Image_word_type,
+	  typename Coord_type>
+Image_word_type 
+Image_3::labellized_trilinear_interpolation(const Coord_type& x, 
+					    const Coord_type& y, 
+					    const Coord_type& z,
+					    const Image_word_type& value_outside) const 
+{
+  const int dimx = xdim();
+  const int dimy = ydim();
+  const int dimz = zdim();
+  const int dimxy = dimx*dimy;
+
+  // images are indexed by (z,y,x)
+  const int i1 = (int)(z / image()->vz); 
+  const int j1 = (int)(y / image()->vy);
+  const int k1 = (int)(x / image()->vx);
+  const int i2 = i1 + 1;
+  const int j2 = j1 + 1;
+  const int k2 = k1 + 1;
+
+  if(i1 < 0 ||
+     j1 < 0 ||
+     k1 < 0 ||
+     i2 >= dimz ||
+     j2 >= dimy ||
+     k2 >= dimx)
+  {
+    return value_outside;
+  }
+
+  std::set<Image_word_type> labels;
+  labels.insert(((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k1]);
+  labels.insert(((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k2]);
+  labels.insert(((Image_word_type*)image()->data)[i1 * dimxy + j2 * dimx + k1]);
+  labels.insert(((Image_word_type*)image()->data)[i1 * dimxy + j2 * dimx + k2]);
+  labels.insert(((Image_word_type*)image()->data)[i2 * dimxy + j1 * dimx + k1]);
+  labels.insert(((Image_word_type*)image()->data)[i2 * dimxy + j1 * dimx + k2]);
+  labels.insert(((Image_word_type*)image()->data)[i2 * dimxy + j2 * dimx + k1]);
+  labels.insert(((Image_word_type*)image()->data)[i2 * dimxy + j2 * dimx + k2]);
+
+
+  typedef ImageIO::Indicator<Image_word_type> Ind;
+  double best_value = 0.;
+  Image_word_type best = 0;
+  for(typename std::set<Image_word_type>::const_iterator 
+	label_it = labels.begin(),
+	end = labels.end();
+      label_it != end; ++label_it)
+  {
+    const double r = 
+      trilinear_interpolation<Image_word_type,double,Coord_type, Ind>(x, y, z,
+								      value_outside,
+								      Ind(*label_it));
+    if(r > best_value) {
+      best = *label_it;
+      best_value = r;
+    }
+  }
+  return best;
+}
 
 } // end namespace CGAL
 

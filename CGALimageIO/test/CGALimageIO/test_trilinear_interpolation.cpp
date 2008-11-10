@@ -43,22 +43,41 @@ int main() {
 								    d_y,
 								    d_z,
 								    255);
+
+	      const Word label = 
+		image.labellized_trilinear_interpolation<Word,
+	          double>(d_x, d_y, d_z, 255);
+
 	      std::cerr << "val(" << d_x << ", " << d_y << " , " << d_z << ") = "
 			<< value << std::endl;
 	      const double sq_dist = 
 		(d_x - x) * (d_x - x) +
 		(d_y - y) * (d_y - y) +
 		(d_z - z) * (d_z - z);
-	      if(sq_dist <= 0.001)
+
+	      if(sq_dist <= 0.001) {
 		assert(value >= 0.9);
-	      else if(sq_dist <= 0.51*0.51)
+		assert(label == 1);
+	      }
+	      else if(sq_dist <= 0.51*0.51/2.) {
+		assert(value >= 0.79);
+		assert(label == 1);
+	      }
+	      else if(sq_dist <= 0.51*0.51) {
 		assert(value >= 0.49);
-	      else if(sq_dist <= 2*0.51*0.51)
+	      }
+	      else if(sq_dist <= 2*0.51*0.51) {
 		assert(value >= 0.24);
-	      else if(sq_dist <= 3*0.51*0.51)
+		assert(label == 0);
+	      }
+	      else if(sq_dist <= 3*0.51*0.51) {
 		assert(value >= 0.12);
-	      else
+		assert(label == 0);
+	      }
+	      else {
 		assert(value <= 0.001);
+		assert(label == 0);
+	      }
 
 	      const float value2 = 
 		image.trilinear_interpolation<Word, float, float>(d_x,

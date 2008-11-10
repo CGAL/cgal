@@ -12,6 +12,8 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
 
+include_directories(../../include)
+
 find_package(CGAL QUIET COMPONENTS ImageIO )
 
 if ( CGAL_FOUND )
