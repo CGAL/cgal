@@ -999,21 +999,21 @@ struct Construct_coefficient_const_iterator_range
      : public std::unary_function< Polynomial_d, 
                                   Coefficient_const_iterator_range> {
     Coefficient_const_iterator_range      
-    operator () (const Polynomial_d& p) {                                      
+    operator () (const Polynomial_d& p) const {                                      
       return make_pair( p.begin(), p.end() );
     }                                                                          
 };        
                                        
-  struct Construct_innermost_coefficient_const_iterator_range                                       
-    : public std::unary_function< Polynomial_d, 
-                                  Innermost_coefficient_const_iterator_range> {
-    Innermost_coefficient_const_iterator_range      
-    operator () (const Polynomial_d& p) {                                      
-      return make_pair(
-          typename Coefficient_const_flattening::Flatten()(p.end(),p.begin()),
-          typename Coefficient_const_flattening::Flatten()(p.end(),p.end()));
-    }                                                                          
-  };                           
+struct Construct_innermost_coefficient_const_iterator_range                                       
+   : public std::unary_function< Polynomial_d, 
+                                 Innermost_coefficient_const_iterator_range> {
+   Innermost_coefficient_const_iterator_range      
+   operator () (const Polynomial_d& p) const {                                      
+     return make_pair(
+         typename Coefficient_const_flattening::Flatten()(p.end(),p.begin()),
+         typename Coefficient_const_flattening::Flatten()(p.end(),p.end()));
+   }                                                                          
+};                           
   
   struct Is_square_free 
     : public std::unary_function< Polynomial_d, bool >{
