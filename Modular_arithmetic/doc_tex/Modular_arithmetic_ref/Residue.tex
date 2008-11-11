@@ -17,6 +17,11 @@ old prime and can be reused after restoring the old prime.
 Since the type is based on double 
 arithmetic the prime is restricted to values less than $2^{26}$. 
 The initial value of $p$ is 67111067. 
+Moreover, the implementation of class \ccc{CGAL::Residue} requires that 
+doubles are rounded to nearest, that is, it indispensable that the 
+rounding mode is set accordingly before performing any arithmetic operations. 
+For instance you may use \ccc{CGAL::Protect_FPU_rounding} with 
+\ccc{CGAL_FE_TONEAREST}. 
 
 In case the flag \ccc{CGAL_HAS_THREADS} 
 is undefined the prime is just stored in a static member 
@@ -60,7 +65,8 @@ penalty. Hence, it may be advisable to configure \ccc{CGAL} with
     }
 \ccGlue
 \ccMethod{int  get_value() const;}{
-        Returns the value of \ccVar. 
+        Returns some representative of \ccVar within the range 
+        $[-p,p]$, where $p$ is the current prime. 
     }
 
 
