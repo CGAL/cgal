@@ -358,6 +358,7 @@ struct Sub_arrangement_2 {
                     continue;
                 }
                 // else
+                //std::cout << "DELETE edge: " << &(*eit) << std::endl;
                 arr.remove_edge(arr.non_const_handle(eit));
             }
             
@@ -446,7 +447,8 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
     RI_observer(Arrangement_2& arr, const Point_2& point) :
         Base(arr),
         _m_point(point),
-        _m_check_split_edges(false) {
+        _m_check_split_edges(false),
+        _m_face_split(false) {
         
         // determine initial _m_edge_handle
         // TODO avoid ray_shoot up
@@ -630,6 +632,22 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
         } else {
             // TODO what if e->curve() is vertical
         }
+
+        if (_m_face_split) {
+            CGAL_assertion(
+                    _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
+            );
+            _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
+            
+            
+#if !CGAL_ARR_SINGLE_CELL_2_SUB_NAIVE
+            // what TODO with this simplication - it leads - naively used - 
+            // to seg-faults and inconsistencies in zoning
+            Sub_arrangement_2< Arrangement_2 > subarr;
+            subarr(*(Base::arrangement()), _m_cell_handle);
+#endif
+            _m_face_split = false;
+        }
     }
 
     /*!
@@ -643,20 +661,7 @@ struct RI_observer : CGAL::Arr_observer< Arrangement_2_ > {
                                    bool /* is_hole */)
     {
         //std::cout << "after_split_face" << std::endl;
-        CGAL_assertion(
-                _m_halfedge_handle->direction() == CGAL::ARR_RIGHT_TO_LEFT
-        );
-        _m_cell_handle = CGAL::make_object(_m_halfedge_handle->face());
-
-
-#if !CGAL_ARR_SINGLE_CELL_2_SUB_NAIVE
-        // what TODO with this simplication - it leads - naively used - 
-        // to seg-faults and inconsistencies in zoning
-        /*
-          Sub_arrangement_2< Arrangement_2 > subarr;
-          subarr(*(Base::arrangement()), _m_cell_handle);
-        */
-#endif
+        _m_face_split = true;
     }
     
     /*!
@@ -804,6 +809,9 @@ private:
     // helper for split edge
     //! if true has to choose among two split edges
     bool _m_check_split_edges;
+
+    //! if true face has split
+    bool _m_face_split;
 };
 
 
