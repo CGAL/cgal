@@ -2955,6 +2955,7 @@ Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_GetInnermostCoefficient.tex
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_InnermostLeadingCoefficient.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_IsZeroAt.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_IsZeroAtHomogeneous.tex -text
+Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_MonomialRepresentation.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Move.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Permute.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Polynomial_subresultants.tex -text

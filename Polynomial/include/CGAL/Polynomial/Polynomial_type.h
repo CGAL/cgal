@@ -1344,7 +1344,7 @@ void Polynomial<NT>::output_benchmark(std::ostream &os) const {
     Innermost_coefficient_type;
   typedef std::pair< Exponent_vector, Innermost_coefficient_type >
     Exponents_coeff_pair;
-  typedef typename Polynomial_traits_d< Polynomial<NT> >::Get_monom_representation Gmr;
+  typedef typename Polynomial_traits_d< Polynomial<NT> >::Monomial_representation Gmr;
     
   std::vector< Exponents_coeff_pair > monom_rep;
   Gmr gmr;

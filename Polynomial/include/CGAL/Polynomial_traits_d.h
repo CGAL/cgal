@@ -688,7 +688,7 @@ public:
       typedef std::pair< Exponent_vector, Innermost_coefficient_type >
         Exponents_coeff_pair;
       typedef std::vector< Exponents_coeff_pair > Monom_rep; 
-      Get_monom_representation gmr;
+      Monomial_representation gmr;
       Construct_polynomial construct; 
       Monom_rep mon_rep;
       gmr( p, std::back_inserter( mon_rep ) );
@@ -720,7 +720,7 @@ public:
       typedef std::pair< Exponent_vector, Innermost_coefficient_type >
         Exponents_coeff_pair;
       typedef std::vector< Exponents_coeff_pair > Monom_rep; 
-      Get_monom_representation gmr;
+      Monomial_representation gmr;
       Construct_polynomial construct;
       Monom_rep mon_rep;
       gmr( p, std::back_inserter( mon_rep ) );
@@ -746,7 +746,7 @@ public:
     template <typename Input_iterator> Polynomial_d operator() 
       (const Polynomial_d& p, Input_iterator first, Input_iterator last) const {
       Construct_polynomial construct;
-      Get_monom_representation gmr;
+      Monomial_representation gmr;
       Monom_rep mon_rep;
       gmr( p, std::back_inserter( mon_rep ));
       std::vector<int> on_place, number_is;
@@ -1220,7 +1220,7 @@ struct Construct_innermost_coefficient_const_iterator_range
     Polynomial_d 
     operator()(const Polynomial_d& p, int e, int i = (d-1)) const {
       Construct_polynomial construct; 
-      Get_monom_representation gmr; 
+      Monomial_representation gmr; 
       Monom_rep monom_rep;
       gmr(p,std::back_inserter(monom_rep));
       for(typename Monom_rep::iterator it = monom_rep.begin(); 
@@ -1237,7 +1237,7 @@ struct Construct_innermost_coefficient_const_iterator_range
         
     Polynomial_d operator()(const Polynomial_d& p, int i = (d-1)) const {
       Construct_polynomial construct; 
-      Get_monom_representation gmr; 
+      Monomial_representation gmr; 
       Monom_rep monom_rep;
       gmr(p,std::back_inserter(monom_rep));
       for(typename Monom_rep::iterator it = monom_rep.begin(); 
@@ -1461,7 +1461,7 @@ struct Construct_innermost_coefficient_const_iterator_range
   // Functors not mentioned in the reference manual
   //
 
-  struct Get_monom_representation {      
+  struct Monomial_representation {      
     typedef std::pair< Exponent_vector, Innermost_coefficient_type >
     Exponents_coeff_pair;
     //typedef std::vector< Exponents_coeff_pair > Monom_rep; 
@@ -1499,7 +1499,7 @@ struct Construct_innermost_coefficient_const_iterator_range
     create_monom_representation 
     ( const Polynomial_d& p, OutputIterator oit, Tag_false ) const { 
       typedef Polynomial_traits_d< Coefficient_type > PT;
-      typename PT::Get_monom_representation gmr;
+      typename PT::Monomial_representation gmr;
       for( int exponent = 0; exponent <= p.degree(); ++exponent ) {
           Monom_rep monom_rep; 
         if ( !CGAL::is_zero(p[exponent])){

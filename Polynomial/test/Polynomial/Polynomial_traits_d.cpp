@@ -213,7 +213,7 @@ void test_get_monom_representation(const Polynomial_traits_d&){
   typedef std::vector< Monom > Monom_rep;    
 
   typename PT::Construct_polynomial construct;
-  typename PT::Get_monom_representation gmr;
+  typename PT::Monomial_representation gmr;
   
   {
     Polynomial_d zero(0);
