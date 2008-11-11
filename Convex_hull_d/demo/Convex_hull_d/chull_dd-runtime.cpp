@@ -29,7 +29,6 @@
 #include <cstdlib>
 
 
-
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 typedef CGAL::Homogeneous_d<CGAL::Gmpz>   GKernel;
@@ -229,9 +228,10 @@ if ( which & 16 )  {
 
 #ifdef CGAL_USE_LEDA
 #if defined(LEDA_NAMESPACE)
-  leda::print_statistics();
+ std::cout << "leda::print_statistics() is missing in the free edition" << std::endl;
+//  leda::print_statistics();
 #else
-  print_statistics();
+//  print_statistics();
 #endif
 #endif
   destroy(V,n);
