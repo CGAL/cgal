@@ -14,7 +14,7 @@
    function returns true. 
 */
 
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 
 #ifdef CGAL_USE_GMP
 
