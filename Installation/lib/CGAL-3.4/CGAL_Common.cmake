@@ -30,7 +30,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     endif()
   endif()
   
-  if ( BUILD_SHARED_LIBS )
+  if ( CGAL_BUILDING_LIBS AND BUILD_SHARED_LIBS )
     message( STATUS "Building shared libraries" )
   else()
     message( STATUS "Building static libraries" )
