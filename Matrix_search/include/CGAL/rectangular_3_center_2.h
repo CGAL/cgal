@@ -914,7 +914,7 @@ rectangular_3_center_2_type2(
       op.place_y_square(op.place_y_square(Q_r_empty, Q_r, *pos.second, r),
                         r,
                         rad);
-    boost::function1<FT,FT> le_rad = bind(greater_equal<FT>(), rad, _1);
+    boost::function1<bool,FT> le_rad = bind(greater_equal<FT>(), rad, _1);
     RandomAccessIterator b1 =
       partition(m, l, bind(le_rad, bind(op.distance(), q_t, _1)));
     RandomAccessIterator b2 =
@@ -944,7 +944,7 @@ rectangular_3_center_2_type2(
     Point q_r = op.place_y_square(q_r_afap, r, op.delta()(*m));
 
     // check for covering
-    boost::function1<FT,FT>
+    boost::function1<bool,FT>
       le_delta_m = bind(greater_equal<FT>(), op.delta()(*m), _1);
     RandomAccessIterator b1 =
       partition(m + 1, e,
@@ -987,7 +987,7 @@ rectangular_3_center_2_type2(
     // to Q_t and Q_r are covered by q_t and q_r
     if ((Q_t_empty || op.compute_x_distance(q_t, Q_t) <= op.delta()(*m)) &&
         (Q_r_empty || op.compute_y_distance(q_r, Q_r) <= op.delta()(*m))) {
-      boost::function1<FT,FT> 
+      boost::function1<bool,FT> 
         greater_delta_m = bind(less< FT >(), op.delta()(*m));
       CGAL_optimisation_assertion_code(RandomAccessIterator iii =)
         find_if(e,
@@ -1001,7 +1001,7 @@ rectangular_3_center_2_type2(
     }
     // check whether the points in [f,s) are covered
     {
-      boost::function1<FT,FT> 
+      boost::function1<bool,FT> 
 	le_delta_m = bind(greater_equal<FT>(), op.delta()(*m));
       RandomAccessIterator iii =
         partition(f, s, bind(le_delta_m, bind(op.delta(), _1)));
@@ -1016,7 +1016,7 @@ rectangular_3_center_2_type2(
     // partition the range [m+1, e) into ranges
     // [m+1, b1), [b1, b2),   [b2, b3) and [b3, e)
     //     R      G cap q_t  G cap q_r      none
-    boost::function1<FT,FT> 
+    boost::function1<bool,FT> 
       le_delta_m = bind(greater_equal<FT>(), op.delta()(*m), _1);
     RandomAccessIterator b2 =
       partition(m + 1, e, bind(le_delta_m, bind(op.distance(), q_t, _1)));
@@ -1146,7 +1146,7 @@ rectangular_3_center_2_type2(
     // partition the range [s_b+1, e) into ranges
     // [s_b+1, b1), [b1, b2),   [b2, b3) and [b3, e)
     //     R      G cap q_t  G cap q_r      none
-    boost::function1<FT,FT>
+    boost::function1<bool,FT>
       le_delta_sb = bind(greater_equal<FT>(), op.delta()(*s_b), _1);
     b2 = partition(s_b + 1, e, bind(le_delta_sb,
 				    bind(op.distance(), q_t, _1)));
@@ -1243,7 +1243,7 @@ rectangular_3_center_2_type2(
     q_r = op.place_y_square(q_r_afap, r, op.delta()(*next));
 
     // again check for covering
-    boost::function1<FT,FT>
+    boost::function1<bool,FT>
       le_delta_next = bind(greater_equal<FT>(), op.delta()(*next), _1);
     b2 = partition(s_b, e,
                    bind(le_delta_next, bind(op.distance(), q_t, _1)));
@@ -1347,7 +1347,7 @@ rectangular_3_center_2_type2(
       q_r = op.place_y_square(q_r_afap, r, try_rho);
 
       // check for covering
-      boost::function1<FT,FT>
+      boost::function1<bool,FT>
         greater_rho_max = bind(less<FT>(), try_rho, _1);
       if ((!Q_t_empty && op.compute_x_distance(q_t, Q_t) > try_rho) ||
           (!Q_r_empty && op.compute_y_distance(q_r, Q_r) > try_rho) ||
