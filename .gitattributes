@@ -326,7 +326,6 @@ Alpha_shapes_2/demo/Alpha_shapes_2/data/m30f.jpg -text svneol=unset#image/jpeg
 Alpha_shapes_2/demo/Alpha_shapes_2/help/index.html svneol=native#text/html
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alpha-detail.png -text
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.eps -text svneol=unset#application/postscript
-Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.gif -text svneol=unset#image/gif
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.pdf -text svneol=unset#application/pdf
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.png -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.eps -text svneol=unset#application/postscript
