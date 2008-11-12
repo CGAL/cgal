@@ -26,7 +26,7 @@ if ( NOT CGAL_LEDA_SETUP )
     
     uniquely_add_flags( CGAL_CXX_FLAGS ${LEDA_CXX_FLAGS} )
     
-    message( STATUS "USING LEDA_VERSION = '${CGAL_LEDA_VERSION}'" )
+    get_dependency_version(LEDA)
     
   endif()
   
