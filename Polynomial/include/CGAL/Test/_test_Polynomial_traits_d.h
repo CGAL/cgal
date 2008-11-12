@@ -14,8 +14,6 @@
 #include <CGAL/Random.h>
 #include <cmath>
 
-//gernerate sparse Polynomial noch mit PT weil sonst nicht generisch
-
 
 CGAL_BEGIN_NAMESPACE;
 
