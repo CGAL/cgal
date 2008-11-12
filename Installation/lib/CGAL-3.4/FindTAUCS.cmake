@@ -40,8 +40,8 @@ else()
   # Search for TAUCS headers in ${CGAL_TAUCS_INCLUDE_DIR} (TAUCS shipped with CGAL),
   # else in $TAUCS_INC_DIR environment variable.
   if( CGAL_TAUCS_FOUND )
-  
-     set ( TAUCS_INCLUDE_DIR  "${CGAL_TAUCS_INCLUDE_DIR}" CACHE FILEPATH "Directories containing the TAUCS header files")
+     set( TAUCS_INCLUDE_DIR  "${CGAL_TAUCS_INCLUDE_DIR}"
+                             CACHE FILEPATH "Directories containing the TAUCS header files")
      
   else()
   
@@ -58,10 +58,9 @@ else()
   # else in $TAUCS_LIB_DIR environment variable.
   if( CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED )
     # if VC++: done
-    #message("DEBUG: TAUCS: VC++ case")
-    set( TAUCS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}" CACHE FILEPATH "Directories containing the TAUCS libraries")
+    set( TAUCS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}"
+                              CACHE FILEPATH "Directories containing the TAUCS libraries")
   else()
-    #message("DEBUG: TAUCS: Unix case")
     find_library(TAUCS_LIBRARY
                  NAMES "taucs"
                  PATHS ${CGAL_TAUCS_LIBRARIES_DIR}
@@ -77,7 +76,8 @@ else()
                  DOC "Metis library"
                 )
     if(TAUCS_LIBRARY AND METIS_LIBRARY)
-      set( TAUCS_LIBRARIES  "${TAUCS_LIBRARY};${METIS_LIBRARY}" CACHE FILEPATH "TAUCS libraries name" )
+      set( TAUCS_LIBRARIES  "${TAUCS_LIBRARY};${METIS_LIBRARY}"
+                            CACHE FILEPATH "TAUCS libraries name" )
     endif()
   endif()
 
