@@ -41,7 +41,12 @@
 #include <LEDA/interval.h>
 #else
 #include <LEDA/numbers/rational.h>
+#if defined(  _MSC_VER ) && defined( ERROR )
+#pragma push_macro("ERROR")  
+#undef ERROR
 #include <LEDA/numbers/interval.h>
+#pragma pop_macro("ERROR")  
+#endif
 #endif
 
 #include <CGAL/leda_integer.h> // for GCD in Fraction_traits
