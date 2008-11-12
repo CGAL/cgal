@@ -26,7 +26,7 @@ else()
            )
 
   if ( MPFR_INCLUDE_DIR STREQUAL "${CMAKE_SOURCE_DIR}/auxiliary/gmp/include" )
-    set( MPFR_IN_CGAL_AUXILIARY TRUE CACHE INTERNAL "" )
+    cache_set( MPFR_IN_CGAL_AUXILIARY TRUE )
   endif()
   
   if ( CGAL_AUTO_LINK_ENABLED )

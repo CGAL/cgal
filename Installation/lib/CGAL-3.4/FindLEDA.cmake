@@ -21,15 +21,15 @@ else()
               )
               
   if ( NOT LEDA_INCLUDE_DIR )
-    set( LEDA_INCLUDE_DIR   "$ENV{LEDA_INC_DIR}" CACHE FILEPATH "The directory containing the LEDA header files WITHOUT the LEDA prefix" FORCE )
+    typed_cache_set( FILEPATH "The directory containing the LEDA header files WITHOUT the LEDA prefix" LEDA_INCLUDE_DIR "$ENV{LEDA_INC_DIR}" )
   endif()
     
   if ( NOT LEDA_LIBRARY_RELEASE )
-    set( LEDA_LIBRARY_RELEASE  "$ENV{LEDA_LIBRARY_RELEASE}"  CACHE FILEPATH "The LEDA release-mode libraries" FORCE )
+    typed_cache_set( FILEPATH "The LEDA release-mode libraries" LEDA_LIBRARY_RELEASE "$ENV{LEDA_LIBRARY_RELEASE}" )
   endif()
 
   if ( NOT LEDA_LIBRARY_DEBUG )
-    set( LEDA_LIBRARY_DEBUG "$ENV{LEDA_LIBRARY_DEBUG}"  CACHE FILEPATH "The LEDA debug-mode libraries" FORCE )
+    typed_cache_set( FILEPATH "The LEDA debug-mode libraries" LEDA_LIBRARY_DEBUG "$ENV{LEDA_LIBRARY_DEBUG}" )
   endif()
   
   if ( "${CMAKE_BUILD_TYPE}" STREQUAL "Release" )
@@ -43,24 +43,24 @@ else()
   endif()
   
   if ( NOT LEDA_DEFINITIONS )
-    set( LEDA_DEFINITIONS "$ENV{LEDA_DEFINITIONS}" CACHE STRING   "Definitions for the LEDA library" FORCE )
+    typed_cache_set( STRING "Definitions for the LEDA library" LEDA_DEFINITIONS "$ENV{LEDA_DEFINITIONS}" )
   endif()  
   
   if ( NOT LEDA_CXX_FLAGS )
-    set( LEDA_CXX_FLAGS "$ENV{LEDA_CXX_FLAGS}" CACHE STRING   "Compiler flags for the LEDA library" FORCE )
+    typed_cache_set( STRING "Compiler flags for the LEDA library" LEDA_CXX_FLAGS "$ENV{LEDA_CXX_FLAGS}" )
   endif()  
   
   if ( NOT LEDA_LINKER_FLAGS )
-    set( LEDA_LINKER_FLAGS "$ENV{LEDA_LINKER_FLAGS}" CACHE STRING   "Linker flags for the LEDA library" FORCE )
+    typed_cache_set( STRING "Linker flags for the LEDA library" LEDA_LINKER_FLAGS "$ENV{LEDA_LINKER_FLAGS}" )
   endif()  
   
   if ( NOT "$ENV{LEDA_VERSION}" STREQUAL "" )
-    set( LEDA_VERSION "$ENV{LEDA_VERSION}" CACHE STRING "The version of the LEDA library" FORCE )
+    typed_cache_set( STRING "The version of the LEDA library" LEDA_VERSION "$ENV{LEDA_VERSION}" )
   endif()
   
   if ( LEDA_VERSION )
     if ( NOT "${LEDA_DEFINITIONS}" MATCHES "-DCGAL_LEDA_VERSION=${LEDA_VERSION}" )
-      set( LEDA_DEFINITIONS "${LEDA_DEFINITIONS}" "-DCGAL_LEDA_VERSION=${LEDA_VERSION}" CACHE STRING "Definitions for the LEDA library" FORCE )
+      typed_cache_set( STRING "Definitions for the LEDA library" LEDA_DEFINITIONS "${LEDA_DEFINITIONS}" "-DCGAL_LEDA_VERSION=${LEDA_VERSION}" )
     endif()
   endif()
   
