@@ -1643,7 +1643,6 @@ void test_fundamental_functors(const PT& traits){
 
 }
 
-
 template< class PT >
 void test_real_embeddable_functors(const PT& traits, CGAL::Tag_true){
   test_sign_at(traits);
@@ -1714,80 +1713,111 @@ void test_polynomial_traits_d(const PT& traits){
   test_construct_coefficient_const_iterator_range(traits);
 }
 
-template< class InnermostCoefficient_type >
-void test_multiple_dimensions() {
-  {
-    typedef CGAL::Polynomial< InnermostCoefficient_type > Polynomial_1;
-       
-    const int dimension                    = 1;
-    typedef Polynomial_1                   Polynomial_d;
-    typedef InnermostCoefficient_type           Coefficient_type;
-    typedef InnermostCoefficient_type           Innermost_coefficient_type;
-        
-    typedef CGAL::Polynomial_traits_d<Polynomial_d> PT;
-    typedef CGAL::Algebraic_structure_traits<Innermost_coefficient_type> AST_IC;
-    typedef typename AST_IC::Algebraic_category Algebraic_category;
-                
-    BOOST_STATIC_ASSERT(
-        (boost::is_same<typename PT::Polynomial_d,Polynomial_d>::value));
-    BOOST_STATIC_ASSERT(
-        (boost::is_same< typename PT::Coefficient_type, Coefficient_type>::value));
-    BOOST_STATIC_ASSERT((boost::is_same< typename PT::Innermost_coefficient_type, 
-            Innermost_coefficient_type>::value));
-    BOOST_STATIC_ASSERT((PT::d == dimension));
-    test_polynomial_traits_d(PT());
-  }
-  {
-    typedef CGAL::Polynomial< InnermostCoefficient_type > Polynomial_1;
-    typedef CGAL::Polynomial<Polynomial_1> Polynomial_2;
-
-    const int dimension                  = 2;
-    typedef Polynomial_2                   Polynomial_d;
-    typedef Polynomial_1                   Coefficient_type;
-    typedef InnermostCoefficient_type           Innermost_coefficient_type;
-        
-    typedef CGAL::Polynomial_traits_d<Polynomial_d> PT;
-    typedef CGAL::Algebraic_structure_traits<Innermost_coefficient_type> AST_IC;
-    typedef typename AST_IC::Algebraic_category Algebraic_category;
-        
-    BOOST_STATIC_ASSERT(
-        (boost::is_same<typename PT::Polynomial_d,Polynomial_d>::value));
-    BOOST_STATIC_ASSERT(
-        (boost::is_same< typename PT::Coefficient_type, Coefficient_type>::value));
-    BOOST_STATIC_ASSERT((boost::is_same< typename PT::Innermost_coefficient_type, 
-            Innermost_coefficient_type>::value));
-    BOOST_STATIC_ASSERT((PT::d == dimension));
-    test_polynomial_traits_d(PT());
-  }
-   {
-    typedef CGAL::Polynomial< InnermostCoefficient_type > Polynomial_1;
-    typedef CGAL::Polynomial<Polynomial_1> Polynomial_2;
-    typedef CGAL::Polynomial<Polynomial_2> Polynomial_3;
-
-    const int dimension                  = 3;
-    typedef Polynomial_3                   Polynomial_d;
-    typedef Polynomial_2                   Coefficient_type;
-    typedef InnermostCoefficient_type           Innermost_coefficient_type;
+template <class  PT>
+void test_rebind(const PT& traits){
   
-    typedef CGAL::Algebraic_structure_traits<Innermost_coefficient_type> AST_IC;
-    typedef typename AST_IC::Algebraic_category Algebraic_category;
-    typedef CGAL::Polynomial_traits_d<Polynomial_d> PT;
-            
-    BOOST_STATIC_ASSERT(
-        (boost::is_same<typename PT::Polynomial_d,Polynomial_d>::value));
-    BOOST_STATIC_ASSERT(
-        (boost::is_same< typename PT::Coefficient_type, Coefficient_type>::value));
-    BOOST_STATIC_ASSERT((boost::is_same< typename PT::Innermost_coefficient_type, 
-            Innermost_coefficient_type>::value));
-    BOOST_STATIC_ASSERT((PT::d == dimension));
-    test_polynomial_traits_d(PT());
-  }   
-  {
-    typedef CGAL::Polynomial< InnermostCoefficient_type > Polynomial_1;
-    typedef CGAL::Polynomial_traits_d<Polynomial_1> PT; 
+  typedef typename PT::Innermost_coefficient_type IC;
+
+{
+  const int dimension = 1;
+  typedef typename PT:: template Rebind<IC,1>::Other PT_IC_1;
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_1::Innermost_coefficient_type, 
+            IC>::value));
+  BOOST_STATIC_ASSERT((PT_IC_1::d==dimension));
+} 
+{
+  const int dimension = 2;
+  typedef typename PT:: template Rebind<IC,2>::Other PT_IC_2;
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_2::Innermost_coefficient_type, 
+            IC>::value));
+  BOOST_STATIC_ASSERT((PT_IC_2::d==dimension));
+} 
+{
+  const int dimension = 3;
+  typedef typename PT:: template Rebind<IC,3>::Other PT_IC_3;
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_3::Innermost_coefficient_type, 
+          IC>::value));
+  BOOST_STATIC_ASSERT((PT_IC_3::d==dimension));
+}
+{
+  typedef typename PT:: template Rebind<IC,1>::Other PT_IC_1;
+  typedef typename PT:: template Rebind<IC,2>::Other PT_IC_2;
+  typedef typename PT:: template Rebind<IC,3>::Other PT_IC_3;
+  
+  typedef typename  PT_IC_1::Polynomial_d Poly1;
+  typedef typename  PT_IC_2::Polynomial_d Poly2;
+
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_1::Coefficient_type, 
+          IC>::value));
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_2::Coefficient_type, 
+          Poly1>::value));
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_3::Coefficient_type, 
+          Poly2>::value));
+
+} 
+
+#ifdef CGAL_USE_LEDA
+{        
+  typedef CGAL::LEDA_arithmetic_kernel AT;
+  typedef typename AT::Integer Integer; 
+  typedef typename AT::Rational Rational;
+  const int dimension = 4;
+  typedef typename PT:: template Rebind<Integer,4>::Other PT_Integer_4;
+  typedef typename PT:: template Rebind<Rational,4>::Other PT_Rational_4;
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
+          Integer>::value));
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 
+          Rational>::value));
+  BOOST_STATIC_ASSERT((PT_Integer_4::d==dimension));
+  BOOST_STATIC_ASSERT((PT_Rational_4::d==dimension));
+}
+#endif
+#ifdef CGAL_USE_CORE
+{        
+  typedef CGAL::CORE_arithmetic_kernel AT;
+  typedef typename AT::Integer Integer; 
+  typedef typename AT::Rational Rational;
+  const int dimension = 4;
+  typedef typename PT:: template Rebind<Integer,4>::Other PT_Integer_4;
+  typedef typename PT:: template Rebind<Rational,4>::Other PT_Rational_4;
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
+          Integer>::value));
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 
+          Rational>::value));
+  BOOST_STATIC_ASSERT((PT_Integer_4::d==dimension));
+  BOOST_STATIC_ASSERT((PT_Rational_4::d==dimension));
+}
+#endif
+{        
+  const int dimension = 4;
+  typedef typename PT:: template Rebind<int,4>::Other PT_Integer_4;
+  typedef typename PT:: template Rebind<double,4>::Other PT_Rational_4;
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
+          int>::value));
+  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 
+          double>::value));
+  BOOST_STATIC_ASSERT((PT_Integer_4::d==dimension));
+  BOOST_STATIC_ASSERT((PT_Rational_4::d==dimension));
+}
+}
+
+
+
+template< class PT >
+void test_multiple_dimensions(const PT& traits) {
+    test_rebind(PT());
+
+    typedef typename PT::Innermost_coefficient_type IC; 
+    typedef typename PT:: template Rebind<IC,1>::Other PT_IC_1; 
+    typedef typename PT:: template Rebind<IC,2>::Other PT_IC_2;
+    typedef typename PT:: template Rebind<IC,3>::Other PT_IC_3;
+
     test_permute(PT());
-    test_construct_innermost_coefficient_const_iterator_range(PT());
-  }
+    test_construct_innermost_coefficient_const_iterator_range(PT()); 
+
+    test_polynomial_traits_d(PT_IC_1()); 
+    test_polynomial_traits_d(PT_IC_2());
+    test_polynomial_traits_d(PT_IC_3());
 } 
 
 }//Namespace Test_Pol
