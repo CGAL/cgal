@@ -14,41 +14,6 @@
 
 
 
-template < typename AK>
-void test_rebind(){
-  typedef typename AK::Integer Integer; 
-  typedef typename AK::Rational Rational;
-  typedef CGAL::Polynomial<Integer> Poly_int_1;                
-  typedef CGAL::Polynomial<Poly_int_1> Poly_int_2;              
-  typedef CGAL::Polynomial<Poly_int_2> Poly_int_3;              
-  typedef CGAL::Polynomial<Rational> Poly_rat_1;               
-  typedef CGAL::Polynomial<Poly_rat_1> Poly_rat_2;              
-  typedef CGAL::Polynomial<Poly_rat_2> Poly_rat_3;         
-    
-  typedef CGAL::Polynomial_traits_d<Poly_int_1> PT_int_1;
-  typedef CGAL::Polynomial_traits_d<Poly_int_2> PT_int_2;
-  typedef CGAL::Polynomial_traits_d<Poly_int_3> PT_int_3;
-  typedef CGAL::Polynomial_traits_d<Poly_rat_1> PT_rat_1;
-  typedef CGAL::Polynomial_traits_d<Poly_rat_2> PT_rat_2;
-  typedef CGAL::Polynomial_traits_d<Poly_rat_3> PT_rat_3;
-
-  typedef typename PT_int_1:: template Rebind<Integer,1>::Other PT_int_1_;
-  typedef typename PT_int_3:: template Rebind<Integer,2>::Other PT_int_2_;
-  typedef typename PT_rat_3:: template Rebind<Integer,3>::Other PT_int_3_;
-  typedef typename PT_int_1:: template Rebind<Rational,1>::Other PT_rat_1_;
-  typedef typename PT_rat_2:: template Rebind<Rational,2>::Other PT_rat_2_;
-  typedef typename PT_int_2:: template Rebind<Rational,3>::Other PT_rat_3_;
-    
-  BOOST_STATIC_ASSERT((boost::is_same<PT_int_1_,PT_int_1>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<PT_int_2_,PT_int_2>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<PT_int_3_,PT_int_3>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<PT_rat_1_,PT_rat_1>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<PT_rat_2_,PT_rat_2>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<PT_rat_3_,PT_rat_3>::value));
-
-  BOOST_STATIC_ASSERT((!boost::is_same<PT_rat_3_,PT_rat_2>::value));
-}
-
 
 template < typename AT> 
 void test_AT(){
@@ -57,33 +22,48 @@ void test_AT(){
 
   typedef typename AT::Integer Integer;
   typedef typename AT::Rational Rational; 
-
+  
+  {
+  typedef CGAL::Polynomial<Integer> Poly;
+  typedef CGAL::Polynomial_traits_d<Poly> PT; 
   std::cerr << std::endl;
   std::cerr << "Test for coefficient type Integer" << std::endl;
   std::cerr << "--------------------------------------" << std::endl;
-  CGAL::Test_Pol::test_multiple_dimensions<Integer>();
-
+  CGAL::Test_Pol::test_multiple_dimensions(PT());
+  }
+  {
+  typedef CGAL::Polynomial<Rational> Poly;
+  typedef CGAL::Polynomial_traits_d<Poly> PT; 
   std::cerr << std::endl;
   std::cerr << "Test for coefficient type Rational" << std::endl;
   std::cerr << "---------------------------------------" << std::endl;
-  CGAL::Test_Pol::test_multiple_dimensions<Rational>();
-    
+  CGAL::Test_Pol::test_multiple_dimensions(PT());
+  }
+  {
+  typedef CGAL::Polynomial< CGAL::Sqrt_extension< Integer, Integer > > Poly;
+  typedef CGAL::Polynomial_traits_d<Poly> PT;  
   std::cerr << std::endl;
   std::cerr << "Test for coefficient type Sqrt_extension< Integer, Integer >" 
             << std::endl;
   std::cerr << 
     "----------------------------------------------------------------------"
             << std::endl;    
-  CGAL::Test_Pol::test_multiple_dimensions< CGAL::Sqrt_extension< Integer, Integer > >();    
-
+  CGAL::Test_Pol::test_multiple_dimensions(PT());    
+  }
+  {
+  typedef CGAL::Polynomial< CGAL::Sqrt_extension< Rational, Integer > > Poly;
+  typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
   std::cerr << "Test for coefficient type Sqrt_extension< Rational, Integer >"
             << std::endl;
   std::cerr << 
     "----------------------------------------------------------------------"
             << std::endl;    
-  CGAL::Test_Pol::test_multiple_dimensions< CGAL::Sqrt_extension< Rational, Integer > >();    
-
+  CGAL::Test_Pol::test_multiple_dimensions(PT());    
+  }
+  {
+  typedef CGAL::Polynomial< CGAL::Sqrt_extension< Rational, Rational > > Poly;
+  typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
   std::cerr << 
     "Test for coefficient type Sqrt_extension< Rational, Rational >" 
@@ -91,10 +71,11 @@ void test_AT(){
   std::cerr << 
     "----------------------------------------------------------------------"
             << std::endl;    
-  CGAL::Test_Pol::test_multiple_dimensions< CGAL::Sqrt_extension< Rational, Rational > >();   
-
-  test_rebind<AT>();
-
+  CGAL::Test_Pol::test_multiple_dimensions(PT());   
+  }
+  {
+  typedef CGAL::Polynomial< CGAL::Residue > Poly;
+  typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
   std::cerr << 
     "Test for coefficient type CGAL::Residue" 
@@ -104,10 +85,9 @@ void test_AT(){
             << std::endl;    
  //  Enforce IEEE double precision before using modular arithmetic
   CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
-  CGAL::Test_Pol::test_multiple_dimensions< CGAL::Residue >();   
+  CGAL::Test_Pol::test_multiple_dimensions(PT());   
+  }
 }    
-
-
 
 int main(){
 
