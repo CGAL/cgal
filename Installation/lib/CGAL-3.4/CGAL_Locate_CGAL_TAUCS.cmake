@@ -63,29 +63,45 @@ if ( NOT CGAL_TAUCS_FOUND )
   # Search for TAUCS folder.
   #
 
+  #message("DEBUG: CGAL_SOURCE_DIRECTORY = ${CGAL_SOURCE_DIRECTORY}")
+
+  # VC++ uses auto-link, thus we search for a folder containing the output of
+  # build_taucs_win32_for_CGAL.bat/build_taucs_win64_for_CGAL.bat,
+  # ie TAUCS libraries compiled for all Windows runtimes.
   if ( MSVC )
 
-    # Search for TAUCS in CGAL "auxiliary" folder
-    if ( EXISTS "${CGAL_SOURCE_DIRECTORY}/auxiliary/taucs" )
+    # Check $CGAL_TAUCS_DIR environment variable
+    fetch_env_var(CGAL_TAUCS_DIR)
+    #message("DEBUG: CGAL_TAUCS_DIR = ${CGAL_TAUCS_DIR}")
+    if (NOT "${CGAL_TAUCS_DIR}" STREQUAL "" AND EXISTS ${CGAL_TAUCS_DIR})
+
+      set( CGAL_TAUCS_INCLUDE_DIR   "${CGAL_TAUCS_DIR}/include")
+      set( CGAL_TAUCS_LIBRARIES_DIR "${CGAL_TAUCS_DIR}/lib"    )
+      set( CGAL_TAUCS_FOUND TRUE )
+
+    # Else, search for TAUCS in CGAL "auxiliary" folder
+    elseif ( EXISTS "${CGAL_SOURCE_DIRECTORY}/auxiliary/taucs" )
+
       set( CGAL_TAUCS_INCLUDE_DIR   "${CGAL_SOURCE_DIRECTORY}/auxiliary/taucs/include")
       set( CGAL_TAUCS_LIBRARIES_DIR "${CGAL_SOURCE_DIRECTORY}/auxiliary/taucs/lib"    )
       set( CGAL_TAUCS_FOUND TRUE )
+
     endif()
 
+  # On Unix, search for TAUCS "taucs_full" folder
   else ( MSVC )
 
     # Check $CGAL_TAUCS_DIR environment variable
     fetch_env_var(CGAL_TAUCS_DIR)
-    if ( NOT "${CGAL_TAUCS_DIR}" STREQUAL "" )
-      if ( EXISTS ${CGAL_TAUCS_DIR} )
+    #message("DEBUG: CGAL_TAUCS_DIR = ${CGAL_TAUCS_DIR}")
+    if (NOT "${CGAL_TAUCS_DIR}" STREQUAL "" AND EXISTS ${CGAL_TAUCS_DIR})
 
-          set( CGAL_TAUCS_INCLUDE_DIR   "${CGAL_TAUCS_DIR}/build/${CGAL_TAUCS_PLATFORM}"
-                                        "${CGAL_TAUCS_DIR}/src" )
-          set( CGAL_TAUCS_LIBRARIES_DIR "${CGAL_TAUCS_DIR}/external/lib/${CGAL_TAUCS_PLATFORM}"
-                                        "${CGAL_TAUCS_DIR}/lib/${CGAL_TAUCS_PLATFORM}" )
-          set( CGAL_TAUCS_FOUND TRUE )
+        set( CGAL_TAUCS_INCLUDE_DIR   "${CGAL_TAUCS_DIR}/build/${CGAL_TAUCS_PLATFORM}"
+                                      "${CGAL_TAUCS_DIR}/src" )
+        set( CGAL_TAUCS_LIBRARIES_DIR "${CGAL_TAUCS_DIR}/external/lib/${CGAL_TAUCS_PLATFORM}"
+                                      "${CGAL_TAUCS_DIR}/lib/${CGAL_TAUCS_PLATFORM}" )
+        set( CGAL_TAUCS_FOUND TRUE )
 
-      endif()
     endif()
 
   endif ( MSVC )
