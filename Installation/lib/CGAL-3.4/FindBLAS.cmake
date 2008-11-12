@@ -172,7 +172,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "cblas;f77blas;atlas"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -185,7 +185,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "sgemm;dgemm;blas"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -198,7 +198,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "cxml"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -211,7 +211,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "dxml"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -224,7 +224,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       "-xlic_lib=sunperf"
       "sunperf;sunmath"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
       if(BLAS_LIBRARIES)
         # Extra linker flag
@@ -241,7 +241,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "scsl"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -254,7 +254,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "complib.sgimath"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -267,7 +267,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "essl;blas"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -280,7 +280,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "mkl_intel_lp64;mkl_intel_thread;mkl_core;guide;pthread"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -293,7 +293,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       SGEMM
       ""
       "mkl_c_dll;mkl_intel_thread_dll;mkl_core_dll;libguide40"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -308,7 +308,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "mkl;guide;pthread"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -321,7 +321,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "mkl_ia32;guide;pthread"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -334,7 +334,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "mkl_em64t;guide;pthread"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -347,7 +347,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "acml"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -360,7 +360,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "Accelerate"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 
@@ -372,7 +372,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "vecLib"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif ( NOT BLAS_LIBRARIES )
 
@@ -386,7 +386,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       sgemm
       ""
       "blas"
-      "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{BLAS_LIB_DIR}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
       )
     endif()
 

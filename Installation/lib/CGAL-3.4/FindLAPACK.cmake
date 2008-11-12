@@ -180,7 +180,7 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
         ""
         "mkl_lapack"
         "${BLAS_LIBRARIES}"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{LAPACK_LIB_DIR}"
+        "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
         )
       endif()
 
@@ -194,7 +194,7 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
         ""
         "acml"
         "${BLAS_LIBRARIES}"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{LAPACK_LIB_DIR}"
+        "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
         )
       endif()
 
@@ -208,7 +208,7 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
         ""
         "Accelerate"
         "${BLAS_LIBRARIES}"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{LAPACK_LIB_DIR}"
+        "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
         )
       endif()
 
@@ -221,7 +221,7 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
         ""
         "vecLib"
         "${BLAS_LIBRARIES}"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{LAPACK_LIB_DIR}"
+        "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
         )
       endif ( NOT LAPACK_LIBRARIES )
 
@@ -236,7 +236,7 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
         ""
         "lapack"
         "${BLAS_LIBRARIES}"
-        "${CGAL_TAUCS_LIBRARIES_DIR} $ENV{LAPACK_LIB_DIR}"
+        "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
         )
       endif()
 
