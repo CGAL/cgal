@@ -20,7 +20,7 @@
 #  QT3_WRAP_CPP, set true if3 QT_MOC_EXECUTABLE is found
 #  QT3_WRAP_UI set true if QT3_UIC_EXECUTABLE is found
 
-FILE(GLOB GLOB_PATHS_BIN /usr/lib/qt-3*/bin/)
+FILE(GLOB GLOB_PATHS_BIN /usr/lib/qt-3*/bin /sw/lib/qt3*/bin)
 FIND_PATH(QT3_INCLUDE_DIR qt.h
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.1;InstallDir]/include/Qt"
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.0;InstallDir]/include/Qt"
@@ -122,20 +122,20 @@ FIND_LIBRARY(QT3_QASSISTANTCLIENT_LIBRARY
 # qt 3 should prefer QTDIR over the PATH
 FIND_PROGRAM(QT3_MOC_EXECUTABLE
   NAMES moc moc-qt3
-  HINTS
-  $ENV{QTDIR}/bin
   PATHS
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.1;InstallDir]/include/Qt"
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.0;InstallDir]/include/Qt"
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/include/Qt"
   $ENV{QTDIR}/bin
   ${GLOB_PATHS_BIN}
+  $ENV{PATH}
   /usr/local/qt/bin
   /usr/lib/qt/bin
   /usr/lib/qt3/bin
   /usr/share/qt3/bin
   C:/Progra~1/qt/bin
   /usr/X11R6/bin
+  NO_SYSTEM_ENVIRONMENT_PATH
   )
 
 IF(QT3_MOC_EXECUTABLE)
@@ -145,19 +145,20 @@ ENDIF(QT3_MOC_EXECUTABLE)
 
 # qt 3 should prefer QTDIR over the PATH
 FIND_PROGRAM(QT3_UIC_EXECUTABLE uic
-  HINTS
-  $ENV{QTDIR}/bin
   PATHS
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.1;InstallDir]/include/Qt"
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.0;InstallDir]/include/Qt"
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/include/Qt"
+  $ENV{QTDIR}/bin
   ${GLOB_PATHS_BIN}
+  $ENV{PATH}
   /usr/local/qt/bin
   /usr/lib/qt/bin
   /usr/lib/qt3/bin
   /usr/share/qt3/bin
   C:/Progra~1/qt/bin
   /usr/X11R6/bin
+  NO_SYSTEM_ENVIRONMENT_PATH
   )
 
 IF(QT3_UIC_EXECUTABLE)
