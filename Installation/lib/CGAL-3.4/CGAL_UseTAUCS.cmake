@@ -4,7 +4,7 @@ if ( TAUCS_FOUND )
   include_directories ( ${TAUCS_INCLUDE_DIR} )
 
   message( STATUS "TAUCS definitions: ${TAUCS_DEFINITIONS}" )
-  add_definitions( ${TAUCS_DEFINITIONS} )
+  add_definitions( ${TAUCS_DEFINITIONS} "-DCGAL_USE_TAUCS" )
 
   if (TAUCS_LIBRARIES_DIR)
     message( STATUS "TAUCS library directories:  ${TAUCS_LIBRARIES_DIR}" )
@@ -16,6 +16,9 @@ if ( TAUCS_FOUND )
   endif()
 
   # TAUCS requires BLAS and LAPACK
-  include(CGAL_UseLAPACK)
+  find_package(LAPACK)
+  if(LAPACK_FOUND)
+    include( ${LAPACK_USE_FILE} )
+  endif()
 
 endif()

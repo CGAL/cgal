@@ -1,7 +1,7 @@
 if ( BLAS_FOUND )
 
   message( STATUS "BLAS definitions: ${BLAS_DEFINITIONS}" )
-  add_definitions( ${BLAS_DEFINITIONS} )
+  add_definitions( ${BLAS_DEFINITIONS} "-DCGAL_USE_BLAS" )
   if ( "${BLAS_DEFINITIONS}" MATCHES ".*BLAS_USE_F2C.*" )
     add_definitions( "-DCGAL_USE_F2C" )
   endif()

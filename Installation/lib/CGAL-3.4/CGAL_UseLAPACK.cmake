@@ -1,7 +1,7 @@
 if ( LAPACK_FOUND )
 
   message( STATUS "LAPACK definitions: ${LAPACK_DEFINITIONS}" )
-  add_definitions( ${LAPACK_DEFINITIONS} )
+  add_definitions( ${LAPACK_DEFINITIONS} "-DCGAL_USE_LAPACK" )
   if ( "${LAPACK_DEFINITIONS}" MATCHES ".*LAPACK_USE_F2C.*" )
     add_definitions( "-DCGAL_USE_F2C" )
   endif()
@@ -24,6 +24,9 @@ if ( LAPACK_FOUND )
   endif()
 
   # LAPACK requires BLAS
-  include( CGAL_UseBLAS )
+  find_package(BLAS)
+  if(BLAS_FOUND)
+    include( ${BLAS_USE_FILE} )
+  endif()
 
 endif()
