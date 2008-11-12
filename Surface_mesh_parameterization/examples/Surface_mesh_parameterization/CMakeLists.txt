@@ -39,8 +39,15 @@ if ( CGAL_FOUND )
   # Link with Boost.ProgramOptions (optional)
   find_package(Boost QUIET COMPONENTS program_options)
   if(Boost_PROGRAM_OPTIONS_FOUND)
+    if( CGAL_AUTO_LINK_ENABLED )
+      message( STATUS "Boost.ProgramOptions library: found" )
+    else()
+      message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
+    endif()
     add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-    link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+    if ( NOT CGAL_AUTO_LINK_ENABLED )
+      link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+    endif()
   endif()
 
   include_directories (BEFORE include)
@@ -52,18 +59,14 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Square_border_parameterization.cpp" )
 
   # Link with BLAS, LAPACK and TAUCS (optional)
-  find_package(TAUCS REQUIRED)
-
+  find_package(TAUCS)
   if(TAUCS_FOUND)
 
     include( ${TAUCS_USE_FILE} )
 
-    # examples that do use TAUCS
+    # examples that use TAUCS
     create_single_source_cgal_program( "Complete_parameterization_example.cpp" )
     create_single_source_cgal_program( "Taucs_parameterization.cpp" )
-
-    # for polyhedron_ex_parameterization
-    add_definitions(-DCGAL_USE_TAUCS)
 
   else(TAUCS_FOUND)
 
@@ -76,7 +79,7 @@ if ( CGAL_FOUND )
 
 else()
 
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+  message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
 
 endif()
 
