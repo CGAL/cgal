@@ -31,8 +31,9 @@
 #include <CGAL/LSCM_parameterizer_3.h>
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
 #include <CGAL/OpenNL/linear_solver.h>
-#include <CGAL/Taucs_solver_traits.h>
-
+#ifdef CGAL_USE_TAUCS
+    #include <CGAL/Taucs_solver_traits.h>
+#endif
 
 // This test
 #include "Polyhedron_ex.h"
@@ -356,6 +357,8 @@ int main(int argc, char * argv[])
         std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
         task_timer.reset();
 
+#ifdef CGAL_USE_TAUCS
+
         //***************************************
         // Discrete Conformal Map parameterization
         // with circular arc length border parameterization
@@ -461,6 +464,13 @@ int main(int argc, char * argv[])
 
         std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
         task_timer.reset();
+        
+#else
+
+        std::cerr << "Skip TAUCS tests as TAUCS is not installed" << std::endl << std::endl;
+        // this is not a bug => do not set accumulated_fatal_err
+        
+#endif // CGAL_USE_TAUCS
 
     } // for each input file
 
