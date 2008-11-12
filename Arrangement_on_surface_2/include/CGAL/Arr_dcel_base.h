@@ -798,38 +798,23 @@ private:
 
   Face               *p_f;    // The face the contains the CCB in its interior.
   Outer_ccb_iterator  iter;   // The outer CCB identifier.
-#ifdef _GLIBCXX_DEBUG
-  bool copy_iter;
-#endif
+  bool iter_is_not_singular;
 
 public:
 
-#ifdef _GLIBCXX_DEBUG
   /*! Default constructor. */
   Arr_outer_ccb () :
-    p_f (NULL), copy_iter(true)
+    p_f (NULL), iter_is_not_singular(false)
   {}
-
-  Arr_outer_ccb (const bool b) :
-    p_f (NULL), copy_iter(b)
-  {
-    CGAL_assertion(b == false);
-  }
 
   /*! Copy constructor. */
   Arr_outer_ccb (const Arr_outer_ccb& other )
-    : p_f (other.p_f), copy_iter(true)
+    : p_f (other.p_f), iter_is_not_singular(other.iter_is_not_singular)
   {
-    if(other.copy_iter) {
+    if(other.iter_is_not_singular) {
       iter = other.iter;
     }
   }
-#else
-  /*! Default constructor. */
-  Arr_outer_ccb () :
-    p_f (NULL)
-  {}
-#endif
 
   /*! Get a halfedge along the component (const version). */
   const Halfedge* halfedge () const
@@ -872,12 +857,14 @@ public:
   /*! Get the iterator (const version). */
   Outer_ccb_iterator iterator () const
   {
+    CGAL_assertion(iter_is_not_singular);
     return (iter);
   }
 
   /*! Get the iterator (non-const version). */
   Outer_ccb_iterator iterator ()
   {
+    CGAL_assertion(iter_is_not_singular);
     return (iter);
   }
 
@@ -885,6 +872,7 @@ public:
   void set_iterator (Outer_ccb_iterator it)
   {
     iter = it;
+    iter_is_not_singular = true;
     return;
   }
 };
@@ -906,38 +894,23 @@ private:
 
   Face               *p_f;    // The face the contains the CCB in its interior.
   Inner_ccb_iterator  iter;   // The inner CCB identifier.
-#ifdef _GLIBCXX_DEBUG
-  bool copy_iter;
-#endif
+  bool iter_is_not_singular;
 
 public:
 
-#ifdef _GLIBCXX_DEBUG
   /*! Default constructor. */
   Arr_inner_ccb () :
-    p_f (NULL), copy_iter(true)
+    p_f (NULL), iter_is_not_singular(false)
   {}
-
-  Arr_inner_ccb (const bool b) :
-    p_f (NULL), copy_iter(b)
-  {
-    CGAL_assertion(b == false);
-  }
 
   /*! Copy constructor. */
   Arr_inner_ccb (const Arr_inner_ccb& other )
-    : p_f (other.p_f), copy_iter(true)
+    : p_f (other.p_f), iter_is_not_singular(other.iter_is_not_singular)
   {
-    if(other.copy_iter) {
+    if(other.iter_is_not_singular) {
       iter = other.iter;
     }
   }
-#else
-  /*! Default constructor. */
-  Arr_inner_ccb () :
-    p_f (NULL)
-  {}
-#endif
 
   /*! Get a halfedge along the component (const version). */
   const Halfedge* halfedge () const
@@ -980,12 +953,14 @@ public:
   /*! Get the iterator (const version). */
   Inner_ccb_iterator iterator () const
   {
+    CGAL_assertion(iter_is_not_singular);
     return (iter);
   }
 
   /*! Get the iterator (non-const version). */
   Inner_ccb_iterator iterator ()
   {
+    CGAL_assertion(iter_is_not_singular);
     return (iter);
   }
 
@@ -993,6 +968,7 @@ public:
   void set_iterator (Inner_ccb_iterator it)
   {
     iter = it;
+    iter_is_not_singular = true;
     return;
   }
 };
@@ -1014,12 +990,23 @@ private:
 
   Face                        *p_f;   // The face containing the hole.
   Isolated_vertex_iterator   iv_it; // The isolated vertex identifier.
+  bool iter_is_not_singular;
 
 public:
 
   /*! Default constructor. */
-  Arr_isolated_vertex () 
+  Arr_isolated_vertex ():
+    p_f (NULL), iter_is_not_singular(false)
   {}
+
+  /*! Copy constructor. */
+  Arr_isolated_vertex (const Arr_isolated_vertex& other )
+    : p_f (other.p_f), iter_is_not_singular(other.iter_is_not_singular)
+  {
+    if(other.iter_is_not_singular) {
+      iv_it = other.iv_it;
+    }
+  }
 
   /*! Get the containing face (const version). */
   const Face* face () const
@@ -1043,12 +1030,14 @@ public:
   /*! Get the isolated vertex iterator (const version). */
   Isolated_vertex_iterator iterator () const
   {
+    CGAL_assertion(iter_is_not_singular);
     return (iv_it);
   }
 
   /*! Get the isolated vertex iterator (non-const version). */
   Isolated_vertex_iterator iterator ()
   {
+    CGAL_assertion(iter_is_not_singular);
     return (iv_it);
   }
 
@@ -1056,6 +1045,7 @@ public:
   void set_iterator (Isolated_vertex_iterator iv)
   {
     iv_it = iv;
+    iter_is_not_singular = true;
     return;
   }
 };
@@ -1279,11 +1269,7 @@ public:
   Outer_ccb* new_outer_ccb ()
   {
     Outer_ccb  *oc = out_ccb_alloc.allocate (1);
-#ifdef _GLIBCXX_DEBUG
-    out_ccb_alloc.construct (oc, Outer_ccb(false));
-#else
     out_ccb_alloc.construct (oc, Outer_ccb());
-#endif
     out_ccbs.push_back (*oc);
     return (oc);
   }
@@ -1293,11 +1279,7 @@ public:
   {
     Inner_ccb  *ic = in_ccb_alloc.allocate (1);
     
-#ifdef _GLIBCXX_DEBUG
-    in_ccb_alloc.construct (ic, Inner_ccb(false));
-#else
     in_ccb_alloc.construct (ic, Inner_ccb());
-#endif
     in_ccbs.push_back (*ic);
     return (ic);
   }
