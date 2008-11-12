@@ -131,7 +131,7 @@ struct Exact_triangulation_euclidean_traits_yz_3
 
    Exact_triangulation_euclidean_traits_yz_3(){}
    Exact_triangulation_euclidean_traits_yz_3(
-      const Exact_triangulation_euclidean_traits_yz_3&){}
+      const Exact_triangulation_euclidean_traits_yz_3&) : Tet() {}
    Exact_triangulation_euclidean_traits_yz_3 &operator=(
       const Exact_triangulation_euclidean_traits_yz_3&) {return *this;}
 
