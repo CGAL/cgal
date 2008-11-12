@@ -37,16 +37,18 @@
 
 #include <CGAL/LEDA_basic.h>
 #if CGAL_LEDA_VERSION < 500
-#include <LEDA/rational.h>
-#include <LEDA/interval.h>
+#  include <LEDA/rational.h>
+#  include <LEDA/interval.h>
 #else
-#include <LEDA/numbers/rational.h>
-#if defined(  _MSC_VER ) && defined( ERROR )
-#pragma push_macro("ERROR")  
-#undef ERROR
-#include <LEDA/numbers/interval.h>
-#pragma pop_macro("ERROR")  
-#endif
+#  include <LEDA/numbers/rational.h>
+#  if defined(  _MSC_VER )
+#    pragma push_macro("ERROR")  
+#    undef ERROR
+#  endif // _MSC_VER
+#  include <LEDA/numbers/interval.h>
+#  if defined(  _MSC_VER )
+#    pragma pop_macro("ERROR")  
+#  endif
 #endif
 
 #include <CGAL/leda_integer.h> // for GCD in Fraction_traits
