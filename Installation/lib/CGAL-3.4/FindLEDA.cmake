@@ -54,7 +54,22 @@ else()
     typed_cache_set( STRING "Linker flags for the LEDA library" LEDA_LINKER_FLAGS "$ENV{LEDA_LINKER_FLAGS}" )
   endif()  
   
-  if ( NOT "$ENV{LEDA_VERSION}" STREQUAL "" )
+  set( LEDA_BASIC_H "${LEDA_INCLUDE_DIR}/LEDA/system/basic.h" )
+  if ( NOT EXISTS ${LEDA_BASIC_H} )
+    set( LEDA_BASIC_H "${LEDA_INCLUDE_DIR}/LEDA/basic.h" )
+  endif()
+  
+  if ( EXISTS ${LEDA_BASIC_H} )
+  
+    file(READ "${LEDA_BASIC_H}" LEDA_BASIC_H_CONTENTS)
+
+    string(REGEX REPLACE ".*#define __LEDA__ ([0-9]+).*" "\\1" LEDA_VERSION "${LEDA_BASIC_H_CONTENTS}")
+    
+    message( STATUS "USING LEDA_VERSION = '${LEDA_VERSION}'" )
+    
+  endif()
+  
+  if ( NOT LEDA_VERSION AND NOT "$ENV{LEDA_VERSION}" STREQUAL "" )
     typed_cache_set( STRING "The version of the LEDA library" LEDA_VERSION "$ENV{LEDA_VERSION}" )
   endif()
   

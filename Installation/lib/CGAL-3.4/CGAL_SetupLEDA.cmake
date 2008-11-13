@@ -24,14 +24,9 @@ if ( NOT CGAL_LEDA_SETUP )
       uniquely_add_flags( CMAKE_MODULE_LINKER_FLAGS ${LEDA_LINKER_FLAGS} )
     endif()
     
-    uniquely_add_flags( CGAL_CXX_FLAGS ${LEDA_CXX_FLAGS} )
-    
-    get_dependency_version(LEDA)
-    
   endif()
   
   
   set ( CGAL_LEDA_SETUP TRUE )
   
 endif()
-
