@@ -142,7 +142,13 @@ endmacro(check_lapack_libraries)
 # Is it already configured?
 if (LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
 
-  set(LAPACK_FOUND TRUE)
+  # LAPACK requires BLAS
+  find_package(BLAS QUIET)
+  if(BLAS_FOUND)
+    set(LAPACK_FOUND TRUE)
+  else(BLAS_FOUND)
+     message(STATUS "LAPACK requires BLAS")
+  endif(BLAS_FOUND)    
 
 else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
 
