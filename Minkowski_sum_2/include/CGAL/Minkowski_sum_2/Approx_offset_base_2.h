@@ -300,7 +300,16 @@ protected:
             while (numer == 0)
             {
               denom <<= 1;
-              numer = static_cast<int> (dd * denom + 0.5);
+              if (denom > 0)
+              {
+                numer = static_cast<int> (dd * denom + 0.5);
+              }
+              else
+              {
+		// In case of overflow of denom
+                numer = 1;
+                denom = max_int;
+              } 
             }
         }
 
