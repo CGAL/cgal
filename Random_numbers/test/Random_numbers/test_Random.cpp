@@ -93,6 +93,22 @@ main()
         assert( ( 0 <= i) && ( i < 5555));
     }
 
+    // test get_seed()
+    {
+      CGAL::Random r (53);
+      assert (r.get_seed() == 53);
+    }
+
+    // test save/restore state
+    {
+      CGAL::Random r1(17);
+      CGAL::Random r2(23);
+      CGAL::Random::State s;
+      r1.save_state(s);
+      r2.restore_state(s);
+      assert (r1 == r2);
+    }
+
     return( 0);
 }
 

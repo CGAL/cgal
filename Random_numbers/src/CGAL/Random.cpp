@@ -37,7 +37,7 @@ Random( )
     // get system's time
     std::time_t s;
     std::time( &s);
-    unsigned int  seed = s;
+    seed = s;
 
     // initialize random numbers generator
     std::srand( seed);
@@ -45,12 +45,33 @@ Random( )
 }
 
 Random::
-Random( unsigned int  seed)
-    : rand_max_plus_1( RAND_MAX+1.0), val(0)
+Random( unsigned int  _seed)
+    : rand_max_plus_1( RAND_MAX+1.0), val(0), seed(_seed)
 {
     // initialize random numbers generator
     std::srand( seed);
     random_value = get_int(0, 1<<15);
+}
+
+// seed
+unsigned int
+Random::get_seed () const
+{ 
+  return seed; 
+}
+
+// state
+void 
+Random::save_state( Random::State& state) const
+{
+  state = Random::State(random_value, val);
+}
+
+void 
+Random::restore_state( const Random::State& state)
+{
+  random_value = state.first;
+  val = state.second;
 }
 
 // Global variables

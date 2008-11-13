@@ -26,11 +26,13 @@ It can be used as the random number generating function object in the
 Instances of \ccClassName\ can be seen as input streams. Different
 streams are \emph{independent} of each other, i.e.\ the sequence of
 numbers from one stream does \emph{not} depend upon how many numbers
-were extracted from the other streams.
+were extracted from the other streams. At each time, an instance has 
+a \emph{state} that uniquely determines the subsequent numbers being
+produced.
 
 It can be very useful, e.g.\ for debugging, to reproduce a sequence of
-random numbers.  This can be done by either initialising
-deterministically or using the state functions as described below.
+random numbers. This can be done by either initialising with a fixed
+seed, or by using the state functions as described below.
 
 \ccInclude{CGAL/Random.h}
 
@@ -38,24 +40,21 @@ deterministically or using the state functions as described below.
 \ccTypes
 
 \ccUnchecked
-\ccNestedType{State}{State type.}
+\ccNestedType{State}{The State type.}
 
 % -----------------------------------------------------------------------------
 \ccCreation
 \ccCreationVariable{random}
 
 \ccConstructor{ Random( );}{
-        introduces a variable \ccVar\ of type \ccClassTemplateName.}
+        introduces a variable \ccVar\ of type \ccClassTemplateName. The
+        seed is chosen ``randomly'', depending on the system time.}
 
-\ccConstructor{ Random( long seed);}{
+\ccConstructor{ Random( unsigned int seed);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName\
         and initializes its internal state using \ccc{seed}. Equal
         values for \ccc{seed} result in equal sequences of random
         numbers.}
-
-\ccConstructor{ Random( State state);}{
-        introduces a variable \ccVar\ of type \ccClassTemplateName\
-        and initializes its internal state with \ccc{state}.}
 
 % -----------------------------------------------------------------------------
 \ccOperations
@@ -81,7 +80,10 @@ deterministically or using the state functions as described below.
         returns \ccVar\ccc{.get_int( 0, upper)}.}
 
 % -----------------------------------------------------------------------------
-\ccHeading{State Functions}
+\ccHeading{Seed and State Functions}
+
+\ccMemberFunction{ unsigned int get_seed() const;}{
+        returns the seed used for initialization.}
 
 \ccMemberFunction{ void save_state( State& state) const;}{
         saves the current internal state in \ccc{state}.}
@@ -99,9 +101,9 @@ deterministically or using the state functions as described below.
 % -----------------------------------------------------------------------------
 \ccImplementation
 
-We use the C library function \ccc{erand48} to generate the random
+We use the C library function \ccc{rand} to generate the random
 numbers, \textit{i.e.}, the sequence of numbers depends on the implementation
-of \ccc{erand48} on your specific platform.
+of \ccc{rand} on your specific platform.
 
 
 

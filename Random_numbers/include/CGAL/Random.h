@@ -24,20 +24,31 @@
 #ifndef CGAL_RANDOM_H
 #define CGAL_RANDOM_H
 
+#include <utility>
 #include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
 class Random {
   public:
+    // types
+    typedef std::pair<unsigned int, unsigned int> State;
+
     // creation
     Random( );
     Random( unsigned int  seed);
+
+    // seed
+    unsigned int get_seed ( ) const;
     
     // operations
     bool    get_bool  ( );
     int     get_int   ( int lower, int upper);
     double  get_double( double lower = 0.0, double upper = 1.0);
+
+    // state 
+    void save_state( State& state) const;
+    void restore_state( const State& state);
 
     // Computes a random int value smaller than 2^b.
     // It's supposed to be fast, useful for randomized algorithms.
@@ -70,6 +81,7 @@ class Random {
     const double  rand_max_plus_1;
     unsigned int random_value; // Current 15 bits random value.
     unsigned int val; // random_value shifted by used bits.
+    unsigned int seed; 
 };
 
 // Global variables
