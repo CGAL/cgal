@@ -13,18 +13,19 @@
 
 include(CGAL_GeneratorSpecificSettings)
 
+# TAUCS requires LAPACK
 find_package(LAPACK QUIET)
-
 if (NOT LAPACK_FOUND)
+
   message(STATUS "TAUCS requires LAPACK and BLAS.")
-endif (NOT LAPACK_FOUND)
+  set(TAUCS_FOUND FALSE)
 
 # Is it already configured?
-if (LAPACK_FOUND AND TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
+elseif (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
 
   set(TAUCS_FOUND TRUE)
 
-elseif (LAPACK_FOUND AND TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES)
+elseif (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES)
 
   set(TAUCS_FOUND TRUE)
 
@@ -33,7 +34,7 @@ else()
   # Unused (yet)
   set(TAUCS_DEFINITIONS)
 
-  # Look first for the TAUCS distributed with CGAL in auxiliary/taucs.
+  # Look first for the TAUCS library distributed with CGAL in auxiliary/taucs.
   # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
   include(CGAL_Locate_CGAL_TAUCS)
 
@@ -42,9 +43,7 @@ else()
   if( CGAL_TAUCS_FOUND )
      set( TAUCS_INCLUDE_DIR  "${CGAL_TAUCS_INCLUDE_DIR}"
                              CACHE FILEPATH "Directories containing the TAUCS header files")
-     
   else()
-  
     find_path(TAUCS_INCLUDE_DIR
               NAMES taucs.h
               PATHS ${CGAL_TAUCS_INCLUDE_DIR}
@@ -81,9 +80,9 @@ else()
     endif()
   endif()
 
-  if (LAPACK_FOUND AND TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
+  if (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
     set(TAUCS_FOUND TRUE)
-  elseif (LAPACK_FOUND AND TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES)
+  elseif (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES)
     set(TAUCS_FOUND TRUE)
   else()
     set(TAUCS_FOUND FALSE)
@@ -106,7 +105,7 @@ else()
   #message("DEBUG: TAUCS_LIBRARIES_DIR = ${TAUCS_LIBRARIES_DIR}")
   #message("DEBUG: TAUCS_FOUND = ${TAUCS_FOUND}")
 
-endif(LAPACK_FOUND AND TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES_DIR)
+endif(NOT LAPACK_FOUND)
 
 if(TAUCS_FOUND)
   set(TAUCS_USE_FILE "CGAL_UseTAUCS")

@@ -1,5 +1,8 @@
 if ( LAPACK_FOUND )
 
+  message( STATUS "LAPACK include:     ${LAPACK_INCLUDE_DIR}" )
+  include_directories ( ${LAPACK_INCLUDE_DIR} )
+
   message( STATUS "LAPACK definitions: ${LAPACK_DEFINITIONS}" )
   add_definitions( ${LAPACK_DEFINITIONS} "-DCGAL_USE_LAPACK" )
   if ( "${LAPACK_DEFINITIONS}" MATCHES ".*LAPACK_USE_F2C.*" )
@@ -10,10 +13,9 @@ if ( LAPACK_FOUND )
     message( STATUS "LAPACK library directories:  ${LAPACK_LIBRARIES_DIR}" )
     link_directories( ${LAPACK_LIBRARIES_DIR} )
   endif()
-
   if (LAPACK_LIBRARIES)
     message( STATUS "LAPACK libraries:   ${LAPACK_LIBRARIES}" )
-    link_libraries  ( ${LAPACK_LIBRARIES}     )
+    link_libraries  ( ${LAPACK_LIBRARIES} )
   endif()
 
   message( STATUS "LAPACK link flags:  ${LAPACK_LINKER_FLAGS}" )

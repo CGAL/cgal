@@ -9,6 +9,7 @@
 # This module sets the following variables:
 #  BLAS_FOUND - set to true if a library implementing the BLAS interface
 #    is found
+#  BLAS_INCLUDE_DIR - Directories containing the BLAS header files
 #  BLAS_DEFINITIONS - Compilation options to use BLAS
 #  BLAS_LINKER_FLAGS - Linker flags to use BLAS (excluding -l
 #    and -L).
@@ -22,11 +23,11 @@
 # This module was modified by CGAL team:
 # - find BLAS library shipped with TAUCS
 # - find libraries for a C++ compiler, instead of Fortran
-# - added BLAS_DEFINITIONS and BLAS_LIBRARIES_DIR
+# - added BLAS_INCLUDE_DIR, BLAS_DEFINITIONS and BLAS_LIBRARIES_DIR
 # - removed BLAS95_LIBRARIES
 #
 # TODO (CGAL):
-# - find CBLAS (http://www.netlib.org/cblas)?
+# - find CBLAS (http://www.netlib.org/cblas) on Unix?
 
 
 include(CheckFunctionExists)
@@ -147,21 +148,28 @@ if (BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
 
 else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
 
-  # Look first for the BLAS distributed with CGAL in auxiliary/taucs.
+  # Look first for the TAUCS library distributed with CGAL in auxiliary/taucs.
   # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
   include(CGAL_Locate_CGAL_TAUCS)
 
-  # Search for BLAS libraries in ${CGAL_TAUCS_LIBRARIES_DIR} (BLAS shipped with CGAL),
-  # else in $BLAS_LIB_DIR environment variable.
+  # Search for BLAS in CGAL_TAUCS_INCLUDE_DIR/CGAL_TAUCS_LIBRARIES_DIR (TAUCS shipped with CGAL),
+  # else in $BLAS_INC_DIR/$BLAS_LIB_DIR environment variables.
   if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
+    set( BLAS_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}"
+                             CACHE FILEPATH "Directories containing the BLAS header files")
     set( BLAS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}"
                              CACHE FILEPATH "Directories containing the BLAS libraries")
 
   else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
+    #
     # If Unix, search for BLAS function in possible libraries
+    #
+
+    # Unused (yet)
+    set(BLAS_INCLUDE_DIR)
 
     # BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
     if(NOT BLAS_LIBRARIES)
@@ -391,6 +399,8 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
     endif()
 
     # Add variables to cache
+    set( BLAS_INCLUDE_DIR   "${BLAS_INCLUDE_DIR}"
+                            CACHE FILEPATH "Directories containing the BLAS header files")
     set( BLAS_DEFINITIONS   "${BLAS_DEFINITIONS}"
                             CACHE FILEPATH "Compilation options to use BLAS" )
     set( BLAS_LINKER_FLAGS  "${BLAS_LINKER_FLAGS}"
@@ -418,6 +428,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
     endif(BLAS_FOUND)
   endif(NOT BLAS_FIND_QUIETLY)
 
+  #message("DEBUG: BLAS_INCLUDE_DIR = ${BLAS_INCLUDE_DIR}")
   #message("DEBUG: BLAS_DEFINITIONS = ${BLAS_DEFINITIONS}")
   #message("DEBUG: BLAS_LINKER_FLAGS = ${BLAS_LINKER_FLAGS}")
   #message("DEBUG: BLAS_LIBRARIES = ${BLAS_LIBRARIES}")

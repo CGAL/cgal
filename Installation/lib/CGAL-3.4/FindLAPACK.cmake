@@ -8,6 +8,7 @@
 # This module sets the following variables:
 #  LAPACK_FOUND - set to true if a library implementing the LAPACK interface
 #    is found
+#  LAPACK_INCLUDE_DIR - Directories containing the LAPACK header files
 #  LAPACK_DEFINITIONS - Compilation options to use LAPACK
 #  LAPACK_LINKER_FLAGS - Linker flags to use LAPACK (excluding -l
 #    and -L).
@@ -21,11 +22,11 @@
 # This module was modified by CGAL team:
 # - find LAPACK library shipped with TAUCS
 # - find libraries for a C++ compiler, instead of Fortran
-# - added LAPACK_DEFINITIONS and LAPACK_LIBRARIES_DIR
+# - added LAPACK_INCLUDE_DIR, LAPACK_DEFINITIONS and LAPACK_LIBRARIES_DIR
 # - removed LAPACK95_LIBRARIES
 #
 # TODO (CGAL):
-# - find CLAPACK (http://www.netlib.org/clapack)?
+# - find CLAPACK (http://www.netlib.org/clapack) on Unix?
 
 
 include(CheckFunctionExists)
@@ -139,126 +140,125 @@ endmacro(check_lapack_libraries)
 # main
 #
 
+# LAPACK requires BLAS
+find_package(BLAS QUIET)
+if (NOT BLAS_FOUND)
+
+  message(STATUS "LAPACK requires BLAS.")
+  set(LAPACK_FOUND FALSE)
+
 # Is it already configured?
-if (LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
+elseif (LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
 
-  # LAPACK requires BLAS
-  find_package(BLAS QUIET)
-  if(BLAS_FOUND)
-    set(LAPACK_FOUND TRUE)
-  else(BLAS_FOUND)
-     message(STATUS "LAPACK requires BLAS")
-  endif(BLAS_FOUND)    
+  set(LAPACK_FOUND TRUE)
 
-else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
+else()
 
   # unused (yet)
   set(LAPACK_LINKER_FLAGS)
 
-  # Look first for the LAPACK distributed with CGAL in auxiliary/taucs.
+  # Look first for the TAUCS library distributed with CGAL in auxiliary/taucs.
   # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
   include(CGAL_Locate_CGAL_TAUCS)
 
-  # Search for LAPACK libraries in ${CGAL_TAUCS_LIBRARIES_DIR} (LAPACK shipped with CGAL),
-  # else in $LAPACK_LIB_DIR environment variable.
+  # Search for LAPACK in CGAL_TAUCS_INCLUDE_DIR/CGAL_TAUCS_LIBRARIES_DIR (TAUCS shipped with CGAL),
+  # else in $LAPACK_INC_DIR/$LAPACK_LIB_DIR environment variables.
   if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
+    set( LAPACK_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}"
+                               CACHE FILEPATH "Directories containing the LAPACK header files")
     set( LAPACK_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}"
                                CACHE FILEPATH "Directories containing the LAPACK libraries")
 
   else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
+    #
     # If Unix, search for LAPACK function in possible libraries
+    #
 
-    # LAPACK requires BLAS
-    find_package(BLAS QUIET)
+    # Unused (yet)
+    set(LAPACK_INCLUDE_DIR)
 
-    if(BLAS_FOUND)
+    #intel mkl lapack?
+    if(NOT LAPACK_LIBRARIES)
+      check_lapack_libraries(
+      LAPACK_DEFINITIONS
+      LAPACK_LIBRARIES
+      LAPACK
+      cheev
+      ""
+      "mkl_lapack"
+      "${BLAS_LIBRARIES}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
+      )
+    endif()
 
-      #intel mkl lapack?
-      if(NOT LAPACK_LIBRARIES)
-        check_lapack_libraries(
-        LAPACK_DEFINITIONS
-        LAPACK_LIBRARIES
-        LAPACK
-        cheev
-        ""
-        "mkl_lapack"
-        "${BLAS_LIBRARIES}"
-        "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
-        )
-      endif()
+    #acml lapack?
+    if(NOT LAPACK_LIBRARIES)
+      check_lapack_libraries(
+      LAPACK_DEFINITIONS
+      LAPACK_LIBRARIES
+      LAPACK
+      cheev
+      ""
+      "acml"
+      "${BLAS_LIBRARIES}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
+      )
+    endif()
 
-      #acml lapack?
-      if(NOT LAPACK_LIBRARIES)
-        check_lapack_libraries(
-        LAPACK_DEFINITIONS
-        LAPACK_LIBRARIES
-        LAPACK
-        cheev
-        ""
-        "acml"
-        "${BLAS_LIBRARIES}"
-        "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
-        )
-      endif()
+    # Apple LAPACK library?
+    if(NOT LAPACK_LIBRARIES)
+      check_lapack_libraries(
+      LAPACK_DEFINITIONS
+      LAPACK_LIBRARIES
+      LAPACK
+      cheev
+      ""
+      "Accelerate"
+      "${BLAS_LIBRARIES}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
+      )
+    endif()
 
-      # Apple LAPACK library?
-      if(NOT LAPACK_LIBRARIES)
-        check_lapack_libraries(
-        LAPACK_DEFINITIONS
-        LAPACK_LIBRARIES
-        LAPACK
-        cheev
-        ""
-        "Accelerate"
-        "${BLAS_LIBRARIES}"
-        "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
-        )
-      endif()
+    if ( NOT LAPACK_LIBRARIES )
+      check_lapack_libraries(
+      LAPACK_DEFINITIONS
+      LAPACK_LIBRARIES
+      LAPACK
+      cheev
+      ""
+      "vecLib"
+      "${BLAS_LIBRARIES}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
+      )
+    endif ( NOT LAPACK_LIBRARIES )
 
-      if ( NOT LAPACK_LIBRARIES )
-        check_lapack_libraries(
-        LAPACK_DEFINITIONS
-        LAPACK_LIBRARIES
-        LAPACK
-        cheev
-        ""
-        "vecLib"
-        "${BLAS_LIBRARIES}"
-        "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
-        )
-      endif ( NOT LAPACK_LIBRARIES )
+    # Generic LAPACK library?
+    # This configuration *must* be the last try as this library is notably slow.
+    if ( NOT LAPACK_LIBRARIES )
+      check_lapack_libraries(
+      LAPACK_DEFINITIONS
+      LAPACK_LIBRARIES
+      LAPACK
+      cheev
+      ""
+      "lapack"
+      "${BLAS_LIBRARIES}"
+      "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
+      )
+    endif()
 
-      # Generic LAPACK library?
-      # This configuration *must* be the last try as this library is notably slow.
-      if ( NOT LAPACK_LIBRARIES )
-        check_lapack_libraries(
-        LAPACK_DEFINITIONS
-        LAPACK_LIBRARIES
-        LAPACK
-        cheev
-        ""
-        "lapack"
-        "${BLAS_LIBRARIES}"
-        "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
-        )
-      endif()
-
-      # Add variables to cache
-      set( LAPACK_DEFINITIONS   "${LAPACK_DEFINITIONS}"
-                                CACHE FILEPATH "Compilation options to use LAPACK" )
-      set( LAPACK_LINKER_FLAGS  "${LAPACK_LINKER_FLAGS}"
-                                CACHE FILEPATH "Linker flags to use LAPACK" )
-      set( LAPACK_LIBRARIES     "${LAPACK_LIBRARIES}"
-                                CACHE FILEPATH "LAPACK libraries name" )
-  
-    else(BLAS_FOUND)
-
-      message(STATUS "LAPACK requires BLAS")
-
-    endif(BLAS_FOUND)
+    # Add variables to cache
+    set( LAPACK_INCLUDE_DIR   "${LAPACK_INCLUDE_DIR}"
+                              CACHE FILEPATH "Directories containing the LAPACK header files")
+    set( LAPACK_DEFINITIONS   "${LAPACK_DEFINITIONS}"
+                              CACHE FILEPATH "Compilation options to use LAPACK" )
+    set( LAPACK_LINKER_FLAGS  "${LAPACK_LINKER_FLAGS}"
+                              CACHE FILEPATH "Linker flags to use LAPACK" )
+    set( LAPACK_LIBRARIES     "${LAPACK_LIBRARIES}"
+                              CACHE FILEPATH "LAPACK libraries name" )
 
   endif(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
@@ -280,13 +280,14 @@ else(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
     endif(LAPACK_FOUND)
   endif(NOT LAPACK_FIND_QUIETLY)
 
+  #message("DEBUG: LAPACK_INCLUDE_DIR = ${LAPACK_INCLUDE_DIR}")
   #message("DEBUG: LAPACK_DEFINITIONS = ${LAPACK_DEFINITIONS}")
   #message("DEBUG: LAPACK_LINKER_FLAGS = ${LAPACK_LINKER_FLAGS}")
   #message("DEBUG: LAPACK_LIBRARIES = ${LAPACK_LIBRARIES}")
   #message("DEBUG: LAPACK_LIBRARIES_DIR = ${LAPACK_LIBRARIES_DIR}")
   #message("DEBUG: LAPACK_FOUND = ${LAPACK_FOUND}")
 
-endif(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
+endif(NOT BLAS_FOUND)
 
 if(LAPACK_FOUND)
   set(LAPACK_USE_FILE "CGAL_UseLAPACK")
