@@ -65,7 +65,10 @@ int tries = 5000;
 int max_dim = 10;
 int max_entry = 10;
 
-int main() {
+int main() {  
+  // print seed
+  std::cout << "Random seed: " << rd.get_seed() << std::endl;
+
   // options
   CGAL::Quadratic_program_options options;
   options.set_auto_validation(true);

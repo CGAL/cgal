@@ -91,6 +91,9 @@ unsigned int nlp_unbounded = 0;
 int tries = 50000;
 
 int main() {
+  // print seed
+  std::cout << "Random seed: " << rd.get_seed() << std::endl;
+
   // options
   CGAL::Quadratic_program_options options;
   options.set_auto_validation(true);
