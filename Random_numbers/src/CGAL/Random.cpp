@@ -45,8 +45,8 @@ Random( )
 }
 
 Random::
-Random( unsigned int  _seed)
-    : rand_max_plus_1( RAND_MAX+1.0), val(0), seed(_seed)
+Random( unsigned int  seed_)
+    : rand_max_plus_1( RAND_MAX+1.0), val(0), seed(seed_)
 {
     // initialize random numbers generator
     std::srand( seed);
