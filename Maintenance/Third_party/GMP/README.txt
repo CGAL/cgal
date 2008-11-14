@@ -17,7 +17,9 @@ STEP 2.
 SETP 3.
 
   Follow the instructions supplied by Gladman's port and build one of the static versions
-  of the gmp and mpfr libs.
+  of the gmp and mpfr libs MAKING SURE any Release build contains _SECURE_SCL=0 as a preprocessor
+  definition. This is required for compatibility with CGAL and also highly recommended since
+  the secure SCL in VC is extremely slow for computationally intensive applications.
     
   Typically, in this step you would
   
