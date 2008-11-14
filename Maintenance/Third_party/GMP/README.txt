@@ -17,9 +17,7 @@ STEP 2.
 SETP 3.
 
   Follow the instructions supplied by Gladman's port and build one of the static versions
-  of the gmp and mpfr libs MAKING SURE any Release build contains _SECURE_SCL=0 as a preprocessor
-  definition. This is required for compatibility with CGAL and also highly recommended since
-  the secure SCL in VC is extremely slow for computationally intensive applications.
+  of the gmp and mpfr libs.
     
   Typically, in this step you would
   
@@ -31,7 +29,7 @@ SETP 3.
      renamed "mparam_h.in" to "mparam.h" 
      build the target lib_mpfr.
   
-  but the details may vary depending on the port downloaded. Make sure to follow
+  The details may vary depending on the actual port you are using. Just make sure to follow
   the port instructions and build ONE static version of gmp and mpfr. You can choose
   the generic version (_gc) or one of the optimized (_pN) version but make sure to build only one.
   
@@ -65,14 +63,14 @@ SETP 4
   copy the batch script "create_mangled_versions.bat" into the base directory
   containing gmp and mpfr.
   
-  Run it passing the directory containing gmp then mpfr. For example:
+  Run it passing the directory containing gmp and mpfr. For example:
   
     C:\>create_mangled_versions gmp-4.2.4
     C:\>create_mangled_versions mpfr-2.3.2
     
   This script scans the given directory in search for gmp and mpfr binaries.
   Each time one is found, it creates a copy of it using a "mangled" named that
-  conforms to the autolinking requirements. It constructs the mangled based based
+  conforms to the autolinking requirements. It constructs the mangled name based
   on the relative downpath to the library found. For example, if it finds
     
     build.vc9\lib_gmp_gc\Win32\Debug\gmp.lib
