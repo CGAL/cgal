@@ -106,6 +106,10 @@ if ( NOT CGAL_TAUCS_FOUND )
 
   endif ( MSVC )
 
+  # Add variables to cache
+  set( CGAL_TAUCS_DIR   "${CGAL_TAUCS_DIR}"
+                        CACHE PATH "Directory containing BLAS, LAPACK and TAUCS" )
+
   #message("DEBUG: CGAL_TAUCS_INCLUDE_DIR = ${CGAL_TAUCS_INCLUDE_DIR}")
   #message("DEBUG: CGAL_TAUCS_LIBRARIES_DIR = ${CGAL_TAUCS_LIBRARIES_DIR}")
   #message("DEBUG: CGAL_TAUCS_FOUND = ${CGAL_TAUCS_FOUND}")

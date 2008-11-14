@@ -42,7 +42,7 @@ include(CGAL_GeneratorSpecificSettings)
 # flags given by _flags.  If the combination of libraries is found and passes
 # the link test, LIBRARIES is set to the list of complete library paths that
 # have been found and DEFINITIONS to the required definitions.
-# Otherwise, they are set to FALSE.
+# Otherwise, LIBRARIES is set to FALSE.
 # N.B. _prefix is the prefix applied to the names of all cached variables that
 # are generated internally and marked advanced by this macro.
 macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _path)
@@ -51,8 +51,8 @@ macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _
   # Check for the existence of the libraries given by _list
   set(_libraries_found TRUE)
   set(_libraries_work FALSE)
-  set(${DEFINITIONS})
-  set(${LIBRARIES})
+  set(${DEFINITIONS} "")
+  set(${LIBRARIES} "")
   set(_combined_name)
   foreach(_library ${_list})
     set(_combined_name ${_combined_name}_${_library})
@@ -107,8 +107,8 @@ macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _
     #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
     # Check if function exists with f2c calling convention (ie a trailing underscore)
     check_function_exists(${_name}_ ${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
-    set(CMAKE_REQUIRED_DEFINITIONS})
-    set(CMAKE_REQUIRED_LIBRARIES)
+    set(CMAKE_REQUIRED_DEFINITIONS} "")
+    set(CMAKE_REQUIRED_LIBRARIES    "")
     mark_as_advanced(${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
     set(_libraries_work ${${_prefix}_${_name}_${_combined_name}_f2c_WORKS})
   endif(_libraries_found AND NOT _libraries_work)
@@ -116,21 +116,21 @@ macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _
   # If not found, test this combination of libraries with a C interface.
   # A few implementations (ie ACML) provide a C interface. Unfortunately, there is no standard.
   if(_libraries_found AND NOT _libraries_work)
-    set(${DEFINITIONS})
-    set(${LIBRARIES}    ${_libraries_found})
-    set(CMAKE_REQUIRED_DEFINITIONS)
-    set(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}})
+    set(${DEFINITIONS} "")
+    set(${LIBRARIES}   ${_libraries_found})
+    set(CMAKE_REQUIRED_DEFINITIONS "")
+    set(CMAKE_REQUIRED_LIBRARIES   ${_flags} ${${LIBRARIES}})
     #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
     check_function_exists(${_name} ${_prefix}_${_name}${_combined_name}_WORKS)
-    set(CMAKE_REQUIRED_LIBRARIES)
+    set(CMAKE_REQUIRED_LIBRARIES "")
     mark_as_advanced(${_prefix}_${_name}${_combined_name}_WORKS)
     set(_libraries_work ${${_prefix}_${_name}${_combined_name}_WORKS})
   endif(_libraries_found AND NOT _libraries_work)
 
   # on failure
   if(NOT _libraries_work)
-    set(${DEFINITIONS} FALSE)
-    set(${LIBRARIES} FALSE)
+    set(${DEFINITIONS} "")
+    set(${LIBRARIES}   FALSE)
   endif()
   #message("DEBUG: ${DEFINITIONS} = ${${DEFINITIONS}}")
   #message("DEBUG: ${LIBRARIES} = ${${LIBRARIES}}")
@@ -148,6 +148,13 @@ if (BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
 
 else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
 
+  # reset variables
+  set( BLAS_INCLUDE_DIR "" )
+  set( BLAS_DEFINITIONS "" )
+  set( BLAS_LINKER_FLAGS "" )
+  set( BLAS_LIBRARIES "" )
+  set( BLAS_LIBRARIES_DIR "" )
+
   # Look first for the TAUCS library distributed with CGAL in auxiliary/taucs.
   # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
   include(CGAL_Locate_CGAL_TAUCS)
@@ -157,10 +164,8 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
   if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
-    set( BLAS_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}"
-                             CACHE FILEPATH "Directories containing the BLAS header files")
-    set( BLAS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}"
-                             CACHE FILEPATH "Directories containing the BLAS libraries")
+    set( BLAS_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}" )
+    set( BLAS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}" )
 
   else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
@@ -169,7 +174,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
     #
 
     # Unused (yet)
-    set(BLAS_INCLUDE_DIR)
+    set(BLAS_INCLUDE_DIR "")
 
     # BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
     if(NOT BLAS_LIBRARIES)
@@ -398,16 +403,6 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       )
     endif()
 
-    # Add variables to cache
-    set( BLAS_INCLUDE_DIR   "${BLAS_INCLUDE_DIR}"
-                            CACHE FILEPATH "Directories containing the BLAS header files")
-    set( BLAS_DEFINITIONS   "${BLAS_DEFINITIONS}"
-                            CACHE FILEPATH "Compilation options to use BLAS" )
-    set( BLAS_LINKER_FLAGS  "${BLAS_LINKER_FLAGS}"
-                            CACHE FILEPATH "Linker flags to use BLAS" )
-    set( BLAS_LIBRARIES     "${BLAS_LIBRARIES}"
-                            CACHE FILEPATH "BLAS libraries name" )
-
   endif(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
   if(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
@@ -427,6 +422,18 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
       endif()
     endif(BLAS_FOUND)
   endif(NOT BLAS_FIND_QUIETLY)
+
+  # Add variables to cache
+  set( BLAS_INCLUDE_DIR   "${BLAS_INCLUDE_DIR}" 
+                          CACHE PATH "Directories containing the BLAS header files" FORCE )
+  set( BLAS_DEFINITIONS   "${BLAS_DEFINITIONS}" 
+                          CACHE STRING "Compilation options to use BLAS" FORCE )
+  set( BLAS_LINKER_FLAGS  "${BLAS_LINKER_FLAGS}" 
+                          CACHE STRING "Linker flags to use BLAS" FORCE )
+  set( BLAS_LIBRARIES     "${BLAS_LIBRARIES}" 
+                          CACHE FILEPATH "BLAS libraries name" FORCE )
+  set( BLAS_LIBRARIES_DIR "${BLAS_LIBRARIES_DIR}" 
+                          CACHE PATH "Directories containing the BLAS libraries" FORCE )
 
   #message("DEBUG: BLAS_INCLUDE_DIR = ${BLAS_INCLUDE_DIR}")
   #message("DEBUG: BLAS_DEFINITIONS = ${BLAS_DEFINITIONS}")
