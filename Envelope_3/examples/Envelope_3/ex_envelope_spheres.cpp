@@ -57,9 +57,9 @@ int main(int argc, char **argv)
   // <x_2> <y_2> <x_2> <R_2>       // center and squared radious of sphere #2.
   //   :     :     :     :
   // <x_n> <y_n> <x_n> <R_n>       // center and squared radious of sphere #n.
-  int                   n;
+  int                   n = 0;
   std::list<Sphere_3>   spheres;
-  int                   x, y, z, sqr_r;
+  int                   x = 0, y = 0, z = 0, sqr_r = 0;
   int                   i;
 
   in_file >> n;

@@ -542,13 +542,13 @@ public:
             //Algebraic x_mid = (inter_xs[0] + inter_xs[1]) / 2;
             Alg_point_2 x_mid_point(x_mid, 0);
             
-            int  x_mid_n_y_points;
+            CGAL_precondition_code(int  x_mid_n_y_points;);
             Alg_point_2 x_mid_y_points[2];
 
             Curve_2 inter_cv(R, S, T, U, V, W);
 
-            x_mid_n_y_points = inter_cv.points_at_x(x_mid_point,
-                                                    x_mid_y_points);
+            CGAL_precondition_code(x_mid_n_y_points = )
+              inter_cv.points_at_x(x_mid_point, x_mid_y_points);
             
             CGAL_precondition(x_mid_n_y_points > 0);
 
@@ -603,11 +603,10 @@ public:
 
             Alg_point_2 y_mid_point(0, y_mid);
             Alg_point_2 y_mid_x_points[2];
-            int  y_mid_n_x_points;
-
             Curve_2 inter_cv(R, S, T, U, V, W);
-            y_mid_n_x_points = inter_cv.points_at_y(y_mid_point,
-                                                    y_mid_x_points);
+
+            CGAL_precondition_code(int  y_mid_n_x_points =)
+              inter_cv.points_at_y(y_mid_point, y_mid_x_points);
 
             CGAL_precondition(y_mid_n_x_points > 0);
 
@@ -641,10 +640,13 @@ public:
 
           Curve_2 inter_cv(R, S, T, U, V, W);
           Alg_point_2 vtan_ps[2];
-          int         n_vtan_ps;
 
-          n_vtan_ps = inter_cv.vertical_tangency_points(vtan_ps);
+          CGAL_assertion_code(int         n_vtan_ps =)
+            inter_cv.vertical_tangency_points(vtan_ps);
+          
+          
           CGAL_assertion(n_vtan_ps == 2);
+
           Algebraic lval = Algebraic(la)*vtan_ps[0].x() +
                            Algebraic(lb)*vtan_ps[0].y() + Algebraic(lc);
           Sign lval_sign = CGAL_NTS sign(lval);

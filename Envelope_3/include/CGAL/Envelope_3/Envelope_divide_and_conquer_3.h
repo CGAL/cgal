@@ -1576,7 +1576,6 @@ protected:
         new_f->set_decision(org_f->get_decision());
     }
   };
-
   
 
   // observer for the minimization diagram
@@ -1594,10 +1593,10 @@ protected:
                                                    EnvelopeResolver_3, 
                                                    Overlay_2>::Self Self;
     Keep_edge_data_observer(Minimization_diagram_2& arr,
-                            Self* b = NULL) :
+                            Self* b) :
       Md_observer(arr), base(b)
     {
-      CGAL_assertion(base);
+      CGAL_assertion(base != NULL);
     }
 
     /*virtual void before_split_edge (Halfedge_handle e,
@@ -1719,12 +1718,12 @@ protected:
 
     // Constructor.
     Faces_order_bfs_visitor(const IndexMap& imap, std::list<Face_handle>& f,
-                            Self* b = NULL) :
+                            Self* b) :
       index_map (&imap),
       faces(f),
       base(b)
     {
-      CGAL_assertion(base);
+      CGAL_assertion(base != NULL);
     }
 
     // Write the discover time for a given vertex.

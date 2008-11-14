@@ -1676,7 +1676,7 @@ protected:
     // Map the halfedges and vertices along the two CCBs.
     // Note that we make sure that the two CCBs are of the same size.
     const Halfedge_handle   he_from_end = he_from;
-    const Halfedge_handle   he_to_end = he_to;
+    CGAL_assertion_code(const Halfedge_handle   he_to_end = he_to;);
 
     do
     {
