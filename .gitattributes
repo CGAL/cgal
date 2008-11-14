@@ -1933,8 +1933,7 @@ Maintenance/MacOSX_Installer/Resources/Welcome.rtf -text svneol=unset#applicatio
 Maintenance/MacOSX_Installer/Resources/cgal_very_small.gif -text svneol=unset#image/gif
 Maintenance/MacOSX_Installer/Resources/postflight -text
 Maintenance/MacOSX_Installer/Resources/postupgrade -text
-Maintenance/Third_party/GMP/mangled_gmp_VC.zip -text svneol=unset#application/zip
-Maintenance/Third_party/GMP/mangled_mpfr_VC.zip -text svneol=unset#application/zip
+Maintenance/Third_party/GMP/create_mangled_versions.bat eol=crlf
 Maintenance/deb/etch/debian/README.Debian -text
 Maintenance/deb/etch/debian/changelog -text
 Maintenance/deb/etch/debian/compat -text
