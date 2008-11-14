@@ -1014,7 +1014,6 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       DVertex      *p_v2 = _vertex (v2);
       DIso_vertex  *iv2 = NULL;
       DFace        *f2 = NULL;
-      DFace        *p_f;
 
       if (p_v2->is_isolated())
       {
@@ -1026,22 +1025,14 @@ insert_at_vertices(const X_monotone_curve_2& cv,
           (f1 == NULL || f1 == f2,
            "The two isolated vertices must be located inside the same face.");
 
-        p_f = f2;
-
         // Remove the isolated vertex v2, as it will not be isolated any more.
         f2->erase_isolated_vertex (iv2);
         _dcel().delete_isolated_vertex (iv2);
       }
-      else if (f1 != NULL)
-      {
-        // In case we have the containing face
-        p_f = f1;
-      }
-      else
+      else if(f1 == NULL)
       {
         // In this case the containing face must be given by the user.
         CGAL_precondition (f != Face_handle());
-        p_f = _face (f);
       }
 
       // Perform the insertion.

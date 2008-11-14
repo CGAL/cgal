@@ -1342,10 +1342,9 @@ private:
     Point_2          p_mid = ker.construct_midpoint_2_object() (this->_source,
                                                                 this->_target);
     Algebraic        ys[2];
-    int              n_ys;
-
-    n_ys = _conic_get_y_coordinates (p_mid.x(), ys);
-
+    CGAL_assertion_code(int              n_ys = )
+      _conic_get_y_coordinates (p_mid.x(), ys);
+                        
     CGAL_assertion (n_ys != 0);
 
     // Check which solution lies on the x-monotone arc.
