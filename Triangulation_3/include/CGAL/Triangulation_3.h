@@ -29,6 +29,7 @@
 #include <set>
 #include <map> 
 #include <utility>
+#include <stack>
 
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/triangulation_assertions.h>
@@ -636,35 +637,45 @@ protected:
   Triple<OutputIteratorBoundaryFacets,
          OutputIteratorCells,
          OutputIteratorInternalFacets>
-  find_conflicts(Cell_handle c, const Conflict_test &tester,
+  find_conflicts(Cell_handle d, const Conflict_test &tester,
 		 Triple<OutputIteratorBoundaryFacets,
                         OutputIteratorCells,
 		        OutputIteratorInternalFacets> it) const
   {
     CGAL_triangulation_precondition( dimension()>=2 );
-    CGAL_triangulation_precondition( tester(c) );
+    CGAL_triangulation_precondition( tester(d) );
 
-    c->set_in_conflict_flag(1);
-    *it.second++ = c;
+    std::stack<Cell_handle> cell_stack;
+    cell_stack.push(d);
+    d->set_in_conflict_flag(1);
+    *it.second++ = d;
 
-    for (int i=0; i<dimension()+1; ++i) {
-      Cell_handle test = c->neighbor(i);
-      if (test->get_in_conflict_flag() == 1) {
-	  if (c < test)
-	      *it.third++ = Facet(c, i); // Internal facet.
-          continue; // test was already in conflict.
-      }
-      if (test->get_in_conflict_flag() == 0) {
-	  if (tester(test)) {
-	      if (c < test)
-		  *it.third++ = Facet(c, i); // Internal facet.
-              it = find_conflicts(test, tester, it);
-	      continue;
-	  }
-	  test->set_in_conflict_flag(2); // test is on the boundary.
-      }
-      *it.first++ = Facet(c, i);
-    }
+    do {
+        Cell_handle c = cell_stack.top();
+		cell_stack.pop();
+		
+        for (int i=0; i<dimension()+1; ++i) {
+          Cell_handle test = c->neighbor(i);
+          if (test->get_in_conflict_flag() == 1) {
+	        if (c < test)
+	          *it.third++ = Facet(c, i); // Internal facet.
+            continue; // test was already in conflict.
+          }
+          if (test->get_in_conflict_flag() == 0) {
+	        if (tester(test)) {
+	          if (c < test)
+		        *it.third++ = Facet(c, i); // Internal facet.
+
+              cell_stack.push(test);
+              test->set_in_conflict_flag(1);
+              *it.second++ = test;
+	          continue;
+	        }
+     	    test->set_in_conflict_flag(2); // test is on the boundary.
+          }
+          *it.first++ = Facet(c, i);
+        }
+    } while(!cell_stack.empty());
     return it;
   }
 
