@@ -56,11 +56,15 @@ void PDB::load(std::istream &in, bool print_errors){
         CGAL_LOG(Log::SOME, "Error parsing CONECT record: " << line << std::endl);
         continue;
       }
-      do {
+      else do {
         int o;
         iss >> o;
-        if (!iss) break;
-        connections_.push_back(std::make_pair(base, o));
+        if (!iss) {
+	  break;
+	}
+	else {
+	  connections_.push_back(std::make_pair(base, o));
+	}
       } while (true);
     } else if (lt == CGAL_PDB_INTERNAL_NS::COMPND) {
       header_.push_back(std::string(line));
