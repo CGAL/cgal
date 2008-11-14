@@ -38,7 +38,7 @@ GraphicsViewPolylineInput_non_templated_base(QObject* parent,
                                    QGraphicsScene* s,
                                    int n,
                                    bool closed)
-  : GraphicsViewInput(parent), path_item(NULL), b(NULL), e(NULL), closed_(closed), n_(n), scene_(s)
+  : GraphicsViewInput(parent), closed_(closed), path_item(NULL), b(NULL), e(NULL), n_(n), scene_(s)
 {}
 
 
