@@ -1782,21 +1782,25 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, int> &V ) const
   case 2:
     {
       int m = number_of_facets();
-      os << m;
       if(is_ascii(os))
-	  os << std::endl;
+        os << m << std::endl;
+      else
+        write(os, m);
 
       // write the facets
       Facet_iterator it;
       for(it = facets_begin(); it != facets_end(); ++it) {
 	C[(*it).first] = i++;
 	for(int j = 0; j < 3; j++){
-	  os << V.find((*it).first->vertex(j))->second;
 	  if(is_ascii(os)) {
+	    os << V.find((*it).first->vertex(j))->second;
 	    if ( j==2 )
 	      os << std::endl;
 	    else
 	      os <<  ' ';
+	  }
+	  else {
+	    write(os,  V.find((*it).first->vertex(j))->second);
 	  }
 	}
       }
@@ -1805,12 +1809,15 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, int> &V ) const
       // write the neighbors
       for(it = facets_begin(); it != facets_end(); ++it) {
 	for (int j = 0; j < 3; j++) {
-	  os << C[(*it).first->neighbor(j)];
 	  if(is_ascii(os)){
+	    os << C[(*it).first->neighbor(j)];
 	    if(j==2)
 	      os << std::endl;
 	    else
 	      os <<  ' ';
+	  }
+	  else {
+	    write(os, C[(*it).first->neighbor(j)]);
 	  }
 	}
       }
@@ -1819,21 +1826,24 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, int> &V ) const
   case 1:
     {
       int m = number_of_edges();
-      os << m;
       if(is_ascii(os))
-	  os << std::endl;
-
+        os << m << std::endl;
+      else
+        write(os, m);
       // write the edges
       Edge_iterator it;
       for(it = edges_begin(); it != edges_end(); ++it) {
 	C[(*it).first] = i++;
 	for(int j = 0; j < 2; j++){
-	  os << V.find((*it).first->vertex(j))->second;
 	  if(is_ascii(os)) {
+	    os << V.find((*it).first->vertex(j))->second;
 	    if ( j==1 )
 	      os << std::endl;
 	    else
 	      os <<  ' ';
+	  }
+	  else {
+	    write(os, V.find((*it).first->vertex(j))->second);
 	  }
 	}
       }
@@ -1842,12 +1852,15 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, int> &V ) const
       // write the neighbors
       for(it = edges_begin(); it != edges_end(); ++it) {
 	for (int j = 0; j < 2; j++) {
-	  os << C[(*it).first->neighbor(j)];
 	  if(is_ascii(os)){
+	    os << C[(*it).first->neighbor(j)];
 	    if(j==1)
 	      os << std::endl;
 	    else
 	      os <<  ' ';
+	  }
+	  else {
+	    write(os, C[(*it).first->neighbor(j)]);
 	  }
 	}
       }

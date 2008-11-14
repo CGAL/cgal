@@ -30,6 +30,46 @@
 
 template <class Triangulation>
 void
+_test_cls_triangulation_3_input_output(const Triangulation & T,
+				       const char* filename)
+{
+  const int dim = T.dimension();
+  const typename Triangulation::size_type n = T.number_of_vertices();
+
+  std::cout << "    I/O" << std::endl;
+  {
+    std::ofstream oFile(filename, std::ios::out);
+    oFile << T;
+  }
+  std::ifstream iFile(filename, std::ios::in);
+  Triangulation Tfromfile;
+  iFile >> Tfromfile;
+  assert(Tfromfile.is_valid());
+  assert(Tfromfile.dimension() == dim);
+  assert(Tfromfile.number_of_vertices() == n);
+
+
+  std::string filename_bin = filename;
+  filename_bin = filename_bin + "_binary";
+
+  const char* filename2 = filename_bin.c_str();
+  std::cout << "    I/O (binary)" << std::endl;
+  {
+    std::ofstream oFileBin(filename2, std::ios::out);
+    CGAL::set_binary_mode(oFileBin);
+    oFileBin << T;
+  }
+  std::ifstream iFileBin(filename2, std::ios::in);
+  CGAL::set_binary_mode(iFileBin);
+  Triangulation Tfromfile_binary;
+  iFileBin >> Tfromfile_binary;
+  assert(Tfromfile_binary.is_valid());
+  assert(Tfromfile_binary.dimension() == dim);
+  assert(Tfromfile_binary.number_of_vertices() == n);
+}
+
+template <class Triangulation>
+void
 _test_cls_triangulation_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
@@ -148,17 +188,7 @@ _test_cls_triangulation_3(const Triangulation &)
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations 
     {
-      Cls Tfromfile;
-      std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT1("Test1_triangulation_IO_3",std::ios::out);
-        oFileT1 << T0;
-      }
-      std::ifstream iFileT1("Test1_triangulation_IO_3",std::ios::in);
-      iFileT1 >> Tfromfile;
-      assert(Tfromfile.is_valid());
-      assert(Tfromfile.dimension() == -1);
-      assert(Tfromfile.number_of_vertices() == 0);
+      _test_cls_triangulation_3_input_output(T0, "Test1_triangulation_IO_3");
     }
 
   std::cout << "    Constructor1 " << std::endl;
@@ -171,17 +201,7 @@ _test_cls_triangulation_3(const Triangulation &)
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations 
     {
-      Cls Tfromfile;
-      std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT2("Test2_triangulation_IO_3",std::ios::out);
-        oFileT2 << T0;
-      }
-      std::ifstream iFileT2("Test2_triangulation_IO_3",std::ios::in);
-      iFileT2 >> Tfromfile;
-      assert(Tfromfile.is_valid());
-      assert(Tfromfile.dimension() == 0);
-      assert(Tfromfile.number_of_vertices() == 1);
+      _test_cls_triangulation_3_input_output(T0, "Test2_triangulation_IO_3");
     }
 
   std::cout << "    Constructor2 " << std::endl;
@@ -195,17 +215,7 @@ _test_cls_triangulation_3(const Triangulation &)
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations 
     {
-      Cls Tfromfile;
-      std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT3("Test3_triangulation_IO_3",std::ios::out);
-        oFileT3 << T0;
-      }
-      std::ifstream iFileT3("Test3_triangulation_IO_3",std::ios::in);
-      iFileT3 >> Tfromfile;
-      assert(Tfromfile.is_valid());
-      assert(Tfromfile.dimension() == 1);
-      assert(Tfromfile.number_of_vertices() == 2);
+      _test_cls_triangulation_3_input_output(T0, "Test3_triangulation_IO_3");
     }
 
   std::cout << "    Constructor3 " << std::endl;
@@ -219,17 +229,7 @@ _test_cls_triangulation_3(const Triangulation &)
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations 
     {
-      Cls Tfromfile;
-      std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT4("Test4_triangulation_IO_3",std::ios::out);
-        oFileT4 << T0;
-      }
-      std::ifstream iFileT4("Test4_triangulation_IO_3",std::ios::in);
-      iFileT4 >> Tfromfile;
-      assert(Tfromfile.is_valid());
-      assert(Tfromfile.dimension() == 2);
-      assert(Tfromfile.number_of_vertices() == 3);
+      _test_cls_triangulation_3_input_output(T0, "Test4_triangulation_IO_3");
     }
 
   std::cout << "    Constructor4 " << std::endl;
@@ -243,17 +243,7 @@ _test_cls_triangulation_3(const Triangulation &)
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations 
     {
-      Cls Tfromfile;
-      std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT5("Test5_triangulation_IO_3",std::ios::out);
-        oFileT5 << T0;
-      }
-      std::ifstream iFileT5("Test5_triangulation_IO_3",std::ios::in);
-      iFileT5 >> Tfromfile;
-      assert(Tfromfile.is_valid());
-      assert(Tfromfile.dimension() == 3);
-      assert(Tfromfile.number_of_vertices() == 4);
+      _test_cls_triangulation_3_input_output(T0, "Test5_triangulation_IO_3");
     }
 
   std::cout << "    Constructor5 " << std::endl;
@@ -341,17 +331,7 @@ _test_cls_triangulation_3(const Triangulation &)
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations 
     {
-      Cls Tfromfile;
-      std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT6("Test6_triangulation_IO_3",std::ios::out);
-        oFileT6 << T1_2;
-      }
-      std::ifstream iFileT6("Test6_triangulation_IO_3",std::ios::in);
-      iFileT6 >> Tfromfile;
-      assert(Tfromfile.is_valid());
-      assert(Tfromfile.dimension() == 1);
-      assert(Tfromfile.number_of_vertices() == n);
+      _test_cls_triangulation_3_input_output(T1_2, "Test6_triangulation_IO_3");
     }
 
   std::cout << "    Constructor9 " << std::endl;
@@ -388,17 +368,7 @@ _test_cls_triangulation_3(const Triangulation &)
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations 
     {
-      Cls Tfromfile;
-      std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT7("Test7_triangulation_IO_3",std::ios::out);
-        oFileT7 << T2_0;
-      }
-      std::ifstream iFileT7("Test7_triangulation_IO_3",std::ios::in);
-      iFileT7 >> Tfromfile;
-      assert(Tfromfile.is_valid());
-      assert(Tfromfile.dimension() == 2);
-      assert(Tfromfile.number_of_vertices() == 8);
+      _test_cls_triangulation_3_input_output(T2_0, "Test7_triangulation_IO_3");
     }
 
   std::cout << "    Constructor10 " << std::endl;
@@ -447,17 +417,7 @@ _test_cls_triangulation_3(const Triangulation &)
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations 
     {
-      Cls Tfromfile;
-      std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT8("Test8_triangulation_IO_3",std::ios::out);
-        oFileT8 << T3_1;
-      }
-      std::ifstream iFileT8("Test8_triangulation_IO_3",std::ios::in);
-      iFileT8 >> Tfromfile;
-      assert(Tfromfile.is_valid());
-      assert(Tfromfile.dimension() == 3);
-      assert(Tfromfile.number_of_vertices() == 22);
+      _test_cls_triangulation_3_input_output(T3_1, "Test8_triangulation_IO_3");
     }
 
 
