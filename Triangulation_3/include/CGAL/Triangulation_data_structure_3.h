@@ -33,6 +33,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <stack>
 
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
@@ -551,32 +552,41 @@ public:
 
   // around a vertex
 private:
+ 
   template <class IncidentCellIterator, class IncidentFacetIterator>
   std::pair<IncidentCellIterator, IncidentFacetIterator>
-  incident_cells_3(const Vertex_handle& v, const Cell_handle& c,
-	           std::pair<IncidentCellIterator,
-                             IncidentFacetIterator> it) const
+  incident_cells_3(const Vertex_handle& v, const Cell_handle& d,
+				 std::pair<IncidentCellIterator,
+				 IncidentFacetIterator> it) const
   {
-      CGAL_triangulation_precondition(dimension() == 3);
+	CGAL_triangulation_precondition(dimension() == 3);
+	
+	std::stack<Cell_handle> cell_stack;
+	cell_stack.push(d);
+	d->set_in_conflict_flag(1);
+	*it.first++ = d;
+	
+	do {
+		Cell_handle c = cell_stack.top();
+		cell_stack.pop();
+		
+		for (int i=0; i<4; ++i) {
+			if (c->vertex(i) == v)
+				continue;
+			Cell_handle next = c->neighbor(i);
+			if (c < next)
+				*it.second++ = Facet(c, i); // Incident facet.
+			if (next->get_in_conflict_flag() != 0)
+				continue;			
+			cell_stack.push(next);
+			next->set_in_conflict_flag(1);
+			*it.first++ = next;
+		}
+	} while(!cell_stack.empty());
 
-      // Flag values :
-      // 1 : incident cell already visited
-      // 0 : unknown
-      c->set_in_conflict_flag(1);
-      *it.first++ = c;
-
-      for (int i=0; i<4; ++i) {
-	  if (c->vertex(i) == v)
-	      continue;
-	  Cell_handle next = c->neighbor(i);
-          if (c < next)
-              *it.second++ = Facet(c, i); // Incident facet.
-	  if (next->get_in_conflict_flag() != 0)
-	      continue;
-	  it = incident_cells_3(v, next, it);
-      }
-      return it;
+	return it;
   }
+
 
   template <class OutputIterator>
   void
