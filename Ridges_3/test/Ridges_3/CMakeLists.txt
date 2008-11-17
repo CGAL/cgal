@@ -17,10 +17,11 @@ find_package(CGAL QUIET COMPONENTS Core )
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
+
   include( CGAL_CreateSingleSourceCGALProgram )
 
-
-  find_package(LAPACK QUIET)
+  # Link with BLAS and LAPACK (required)
+  find_package(LAPACK)
 
   if(LAPACK_FOUND)
 
@@ -30,13 +31,13 @@ if ( CGAL_FOUND )
 
   else(LAPACK_FOUND)
   
-    message(STATUS "NOTICE: This program needs the LAPACK API and will not be compiled.")
+    message(STATUS "NOTICE: This program requires LAPACK, and will not be compiled.")
 
   endif(LAPACK_FOUND)
 
 else()
   
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+  message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
   
 endif()
 
