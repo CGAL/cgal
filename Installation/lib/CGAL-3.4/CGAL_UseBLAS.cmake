@@ -1,10 +1,13 @@
-if ( BLAS_FOUND )
+# This module setups the compiler for the BLAS libraries.
+# It assumes that find_package(BLAS) was already called.
+
+if ( BLAS_FOUND AND NOT CGAL_BLAS_SETUP )
 
   message( STATUS "BLAS include:     ${BLAS_INCLUDE_DIR}" )
   include_directories ( ${BLAS_INCLUDE_DIR} )
 
   message( STATUS "BLAS definitions: ${BLAS_DEFINITIONS}" )
-  add_definitions( ${BLAS_DEFINITIONS} "-DCGAL_USE_BLAS" )
+  add_definitions( ${BLAS_DEFINITIONS} )
   if ( "${BLAS_DEFINITIONS}" MATCHES ".*BLAS_USE_F2C.*" )
     add_definitions( "-DCGAL_USE_F2C" )
   endif()
@@ -15,7 +18,7 @@ if ( BLAS_FOUND )
   endif()
   if (BLAS_LIBRARIES)
     message( STATUS "BLAS libraries:   ${BLAS_LIBRARIES}" )
-    link_libraries  ( ${BLAS_LIBRARIES} )
+    link_libraries( ${BLAS_LIBRARIES} )
   endif()
 
   message( STATUS "BLAS link flags:  ${BLAS_LINKER_FLAGS}" )
@@ -24,5 +27,9 @@ if ( BLAS_FOUND )
   else()
     uniquely_add_flags( CMAKE_MODULE_LINKER_FLAGS ${BLAS_LINKER_FLAGS} )
   endif()
-  
+
+  # Setup is done
+  set ( CGAL_BLAS_SETUP TRUE )
+
 endif()
+

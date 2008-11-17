@@ -1,4 +1,7 @@
-if ( TAUCS_FOUND )
+# This module setups the compiler for the TAUCS libraries.
+# It assumes that find_package(TAUCS) was already called.
+
+if ( TAUCS_FOUND AND NOT CGAL_TAUCS_SETUP )
 
   message( STATUS "TAUCS include:     ${TAUCS_INCLUDE_DIR}" )
   include_directories ( ${TAUCS_INCLUDE_DIR} )
@@ -12,13 +15,14 @@ if ( TAUCS_FOUND )
   endif()
   if (TAUCS_LIBRARIES)
     message( STATUS "TAUCS libraries:   ${TAUCS_LIBRARIES}" )
-    link_libraries  ( ${TAUCS_LIBRARIES}     )
+    link_libraries( ${TAUCS_LIBRARIES} )
   endif()
 
   # TAUCS requires BLAS and LAPACK
-  find_package(LAPACK)
-  if(LAPACK_FOUND)
-    include( ${LAPACK_USE_FILE} )
-  endif()
+  include( ${LAPACK_USE_FILE} )
+
+  # Setup is done
+  set ( CGAL_TAUCS_SETUP TRUE )
 
 endif()
+
