@@ -146,7 +146,7 @@ if (BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
 
   set(BLAS_FOUND TRUE)
 
-else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
+else()
 
   # reset variables
   set( BLAS_INCLUDE_DIR "" )
@@ -172,9 +172,6 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
     #
     # If Unix, search for BLAS function in possible libraries
     #
-
-    # Unused (yet)
-    set(BLAS_INCLUDE_DIR "")
 
     # BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
     if(NOT BLAS_LIBRARIES)
@@ -391,7 +388,7 @@ else(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
 
     # Generic BLAS library?
     # This configuration *must* be the last try as this library is notably slow.
-    if(NOT BLAS_LIBRARIES)
+    if ( NOT BLAS_LIBRARIES )
       check_fortran_libraries(
       BLAS_DEFINITIONS
       BLAS_LIBRARIES

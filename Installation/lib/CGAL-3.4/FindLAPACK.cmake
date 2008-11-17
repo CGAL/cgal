@@ -41,7 +41,7 @@ include(CGAL_GeneratorSpecificSettings)
 # flags given by _flags.  If the combination of libraries is found and passes
 # the link test, LIBRARIES is set to the list of complete library paths that
 # have been found and DEFINITIONS to the required definitions.
-# Otherwise, they are set to FALSE.
+# Otherwise, LIBRARIES is set to FALSE.
 # N.B. _prefix is the prefix applied to the names of all cached variables that
 # are generated internally and marked advanced by this macro.
 macro(check_lapack_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _blas _path)
@@ -50,8 +50,8 @@ macro(check_lapack_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _b
   # Check for the existence of the libraries given by _list
   set(_libraries_found TRUE)
   set(_libraries_work FALSE)
-  set(${DEFINITIONS})
-  set(${LIBRARIES})
+  set(${DEFINITIONS} "")
+  set(${LIBRARIES} "")
   set(_combined_name)
   foreach(_library ${_list})
     set(_combined_name ${_combined_name}_${_library})
@@ -101,13 +101,13 @@ macro(check_lapack_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _b
       set(${LIBRARIES}    ${${LIBRARIES}} ${F2C_LIBRARIES})
     endif()
     set(CMAKE_REQUIRED_DEFINITIONS  ${${DEFINITIONS}})
-    set(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}} ${_blas})
+    set(CMAKE_REQUIRED_LIBRARIES    ${_flags} ${${LIBRARIES}} ${_blas})
     #message("DEBUG: CMAKE_REQUIRED_DEFINITIONS = ${CMAKE_REQUIRED_DEFINITIONS}")
     #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
     # Check if function exists with f2c calling convention (ie a trailing underscore)
     check_function_exists(${_name}_ ${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
-    set(CMAKE_REQUIRED_DEFINITIONS})
-    set(CMAKE_REQUIRED_LIBRARIES)
+    set(CMAKE_REQUIRED_DEFINITIONS} "")
+    set(CMAKE_REQUIRED_LIBRARIES    "")
     mark_as_advanced(${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
     set(_libraries_work ${${_prefix}_${_name}_${_combined_name}_f2c_WORKS})
   endif(_libraries_found AND NOT _libraries_work)
@@ -115,21 +115,21 @@ macro(check_lapack_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _b
   # If not found, test this combination of libraries with a C interface.
   # A few implementations (ie ACML) provide a C interface. Unfortunately, there is no standard.
   if(_libraries_found AND NOT _libraries_work)
-    set(${DEFINITIONS})
-    set(${LIBRARIES}    ${_libraries_found})
-    set(CMAKE_REQUIRED_DEFINITIONS)
-    set(CMAKE_REQUIRED_LIBRARIES ${_flags} ${${LIBRARIES}} ${_blas})
+    set(${DEFINITIONS} "")
+    set(${LIBRARIES}   ${_libraries_found})
+    set(CMAKE_REQUIRED_DEFINITIONS "")
+    set(CMAKE_REQUIRED_LIBRARIES   ${_flags} ${${LIBRARIES}} ${_blas})
     #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
     check_function_exists(${_name} ${_prefix}_${_name}${_combined_name}_WORKS)
-    set(CMAKE_REQUIRED_LIBRARIES)
+    set(CMAKE_REQUIRED_LIBRARIES "")
     mark_as_advanced(${_prefix}_${_name}${_combined_name}_WORKS)
     set(_libraries_work ${${_prefix}_${_name}${_combined_name}_WORKS})
   endif(_libraries_found AND NOT _libraries_work)
 
   # on failure
   if(NOT _libraries_work)
-    set(${DEFINITIONS} FALSE)
-    set(${LIBRARIES} FALSE)
+    set(${DEFINITIONS} "")
+    set(${LIBRARIES}   FALSE)
   endif()
   #message("DEBUG: ${DEFINITIONS} = ${${DEFINITIONS}}")
   #message("DEBUG: ${LIBRARIES} = ${${LIBRARIES}}")
@@ -141,7 +141,12 @@ endmacro(check_lapack_libraries)
 #
 
 # LAPACK requires BLAS
-find_package(BLAS QUIET)
+if(LAPACK_FIND_QUIETLY OR NOT LAPACK_FIND_REQUIRED)
+  find_package(BLAS)
+else()
+  find_package(BLAS REQUIRED)
+endif()
+
 if (NOT BLAS_FOUND)
 
   message(STATUS "LAPACK requires BLAS.")
@@ -154,8 +159,12 @@ elseif (LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
 
 else()
 
-  # unused (yet)
-  set(LAPACK_LINKER_FLAGS)
+  # reset variables
+  set( LAPACK_INCLUDE_DIR "" )
+  set( LAPACK_DEFINITIONS "" )
+  set( LAPACK_LINKER_FLAGS "" ) # unused (yet)
+  set( LAPACK_LIBRARIES "" )
+  set( LAPACK_LIBRARIES_DIR "" )
 
   # Look first for the TAUCS library distributed with CGAL in auxiliary/taucs.
   # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
@@ -166,19 +175,14 @@ else()
   if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
-    set( LAPACK_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}"
-                               CACHE FILEPATH "Directories containing the LAPACK header files")
-    set( LAPACK_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}"
-                               CACHE FILEPATH "Directories containing the LAPACK libraries")
+    set( LAPACK_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}" )
+    set( LAPACK_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}" )
 
   else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     #
     # If Unix, search for LAPACK function in possible libraries
     #
-
-    # Unused (yet)
-    set(LAPACK_INCLUDE_DIR)
 
     #intel mkl lapack?
     if(NOT LAPACK_LIBRARIES)
@@ -250,16 +254,6 @@ else()
       )
     endif()
 
-    # Add variables to cache
-    set( LAPACK_INCLUDE_DIR   "${LAPACK_INCLUDE_DIR}"
-                              CACHE FILEPATH "Directories containing the LAPACK header files")
-    set( LAPACK_DEFINITIONS   "${LAPACK_DEFINITIONS}"
-                              CACHE FILEPATH "Compilation options to use LAPACK" )
-    set( LAPACK_LINKER_FLAGS  "${LAPACK_LINKER_FLAGS}"
-                              CACHE FILEPATH "Linker flags to use LAPACK" )
-    set( LAPACK_LIBRARIES     "${LAPACK_LIBRARIES}"
-                              CACHE FILEPATH "LAPACK libraries name" )
-
   endif(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
   if(LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
@@ -279,6 +273,18 @@ else()
       endif()
     endif(LAPACK_FOUND)
   endif(NOT LAPACK_FIND_QUIETLY)
+
+  # Add variables to cache
+  set( LAPACK_INCLUDE_DIR   "${LAPACK_INCLUDE_DIR}"
+                            CACHE PATH "Directories containing the LAPACK header files" FORCE )
+  set( LAPACK_DEFINITIONS   "${LAPACK_DEFINITIONS}"
+                            CACHE STRING "Compilation options to use LAPACK" FORCE )
+  set( LAPACK_LINKER_FLAGS  "${LAPACK_LINKER_FLAGS}"
+                            CACHE STRING "Linker flags to use LAPACK" FORCE )
+  set( LAPACK_LIBRARIES     "${LAPACK_LIBRARIES}"
+                            CACHE FILEPATH "LAPACK libraries name" FORCE )
+  set( LAPACK_LIBRARIES_DIR "${LAPACK_LIBRARIES_DIR}"
+                            CACHE PATH "Directories containing the LAPACK libraries" FORCE )
 
   #message("DEBUG: LAPACK_INCLUDE_DIR = ${LAPACK_INCLUDE_DIR}")
   #message("DEBUG: LAPACK_DEFINITIONS = ${LAPACK_DEFINITIONS}")

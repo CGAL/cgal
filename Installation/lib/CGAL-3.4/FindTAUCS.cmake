@@ -14,7 +14,12 @@
 include(CGAL_GeneratorSpecificSettings)
 
 # TAUCS requires LAPACK
-find_package(LAPACK QUIET)
+if(TAUCS_FIND_QUIETLY OR NOT TAUCS_FIND_REQUIRED)
+  find_package(LAPACK)
+else()
+  find_package(LAPACK REQUIRED)
+endif()
+
 if (NOT LAPACK_FOUND)
 
   message(STATUS "TAUCS requires LAPACK and BLAS.")
@@ -31,8 +36,11 @@ elseif (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES)
 
 else()
 
-  # Unused (yet)
-  set(TAUCS_DEFINITIONS)
+  # reset variables
+  set( TAUCS_INCLUDE_DIR "" )
+  set( TAUCS_DEFINITIONS "" ) # unused (yet)
+  set( TAUCS_LIBRARIES "" )
+  set( TAUCS_LIBRARIES_DIR "" )
 
   # Look first for the TAUCS library distributed with CGAL in auxiliary/taucs.
   # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
@@ -41,15 +49,13 @@ else()
   # Search for TAUCS headers in ${CGAL_TAUCS_INCLUDE_DIR} (TAUCS shipped with CGAL),
   # else in $TAUCS_INC_DIR environment variable.
   if( CGAL_TAUCS_FOUND )
-     set( TAUCS_INCLUDE_DIR  "${CGAL_TAUCS_INCLUDE_DIR}"
-                             CACHE FILEPATH "Directories containing the TAUCS header files")
+    set( TAUCS_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}" )
   else()
     find_path(TAUCS_INCLUDE_DIR
               NAMES taucs.h
               PATHS ${CGAL_TAUCS_INCLUDE_DIR}
                     ENV TAUCS_INC_DIR
               PATH_SUFFIXES taucs
-              DOC "Directories containing the TAUCS header files"
              )
   endif()
 
@@ -57,8 +63,7 @@ else()
   # else in $TAUCS_LIB_DIR environment variable.
   if( CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED )
     # if VC++: done
-    set( TAUCS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}"
-                              CACHE FILEPATH "Directories containing the TAUCS libraries")
+    set( TAUCS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}" )
   else()
     find_library(TAUCS_LIBRARY
                  NAMES "taucs"
@@ -75,8 +80,7 @@ else()
                  DOC "Metis library"
                 )
     if(TAUCS_LIBRARY AND METIS_LIBRARY)
-      set( TAUCS_LIBRARIES  "${TAUCS_LIBRARY};${METIS_LIBRARY}"
-                            CACHE FILEPATH "TAUCS libraries name" )
+      set( TAUCS_LIBRARIES  "${TAUCS_LIBRARY};${METIS_LIBRARY}" )
     endif()
   endif()
 
@@ -100,7 +104,18 @@ else()
     endif(TAUCS_FOUND)
   endif(NOT TAUCS_FIND_QUIETLY)
 
+  # Add variables to cache
+  set( TAUCS_INCLUDE_DIR   "${TAUCS_INCLUDE_DIR}"
+                            CACHE PATH "Directories containing the TAUCS header files" FORCE )
+  set( TAUCS_DEFINITIONS   "${TAUCS_DEFINITIONS}"
+                            CACHE STRING "Compilation options to use TAUCS" FORCE )
+  set( TAUCS_LIBRARIES     "${TAUCS_LIBRARIES}"
+                            CACHE FILEPATH "TAUCS libraries name" FORCE )
+  set( TAUCS_LIBRARIES_DIR "${TAUCS_LIBRARIES_DIR}"
+                            CACHE PATH "Directories containing the TAUCS libraries" FORCE )
+
   #message("DEBUG: TAUCS_INCLUDE_DIR = ${TAUCS_INCLUDE_DIR}")
+  #message("DEBUG: TAUCS_DEFINITIONS = ${TAUCS_DEFINITIONS}")
   #message("DEBUG: TAUCS_LIBRARIES = ${TAUCS_LIBRARIES}")
   #message("DEBUG: TAUCS_LIBRARIES_DIR = ${TAUCS_LIBRARIES_DIR}")
   #message("DEBUG: TAUCS_FOUND = ${TAUCS_FOUND}")
