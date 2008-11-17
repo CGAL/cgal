@@ -114,10 +114,11 @@ private:
   QDoubleSpinBox* spinBox_radius_bound;
   QDoubleSpinBox* spinBox_distance_bound;
 
-  GLuint list_draw_marching_cube;
-  bool list_draw_marching_cube_is_valid;
+  bool direct_draw; // do not use display lists
   std::vector<GLuint> lists_draw_surface;
   bool lists_draw_surface_is_valid;
+  GLuint list_draw_marching_cube;
+  bool list_draw_marching_cube_is_valid;
 
   CGAL::Timer sm_timer;
   int sm_total_time;
@@ -179,6 +180,7 @@ public slots:
   bool opendir(const QString& dirname);
   void finish_open();
   void export_off();
+  void save_image_to_inr();
   void check_can_export_off();
   void draw();
   void get_bbox(float& /*xmin*/, float& /*ymin*/, float& /*zmin*/,

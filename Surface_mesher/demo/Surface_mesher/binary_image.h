@@ -32,6 +32,7 @@ template <typename FT_, typename Point>
 class CBinary_image_3 : public CGAL::Image_3
 {
   bool interpolate_;
+  bool labellized_;
 
 public:
   float min_value;
@@ -45,7 +46,7 @@ public:
   }
 
   CBinary_image_3(const CBinary_image_3& bi)
-    : Image_3(bi), interpolate_(bi.interpolate_)
+    : Image_3(bi), interpolate_(bi.interpolate_),labellized_(bi.labellized_)
   {
     std::cerr << "CBinary_image_3::copy_constructor\n";
     min_value = bi.min_value;
@@ -119,6 +120,15 @@ public:
     return interpolate_;
   }
 
+  void set_labellized(const bool b)
+  {
+    labellized_ = b;
+  }
+
+  bool labellized() const {
+    return labellized_;
+  }
+
   FT operator()(Point p) const
   {
     const float x = static_cast<float>(CGAL::to_double(p.x()));
@@ -126,8 +136,14 @@ public:
     const float z = static_cast<float>(CGAL::to_double(p.z()));
       
     if(interpolation()) {
+      if(labellized()) {
 	CGAL_IMAGE_IO_CASE(image_ptr.get(),
-			   return (this->trilinear_interpolation<Word, FT>(x, y, z, 0));)
+			   return (this->labellized_trilinear_interpolation<Word, double>(x, y, z, 0));)
+      }
+      else {
+	CGAL_IMAGE_IO_CASE(image_ptr.get(),
+ 			   return (this->trilinear_interpolation<Word, float>(x, y, z, 0));)
+      }
     }
     else {
       const int i = static_cast<int>(x/image()->vx + 0.5f);

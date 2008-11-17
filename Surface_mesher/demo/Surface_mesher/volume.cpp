@@ -262,6 +262,9 @@ Volume::Volume(MainWindow* mw) :
   connect(mw->actionExport_surface_mesh_to_OFF, SIGNAL(triggered()),
           this, SLOT(export_off()));
 
+  connect(mw->actionSave, SIGNAL(triggered()),
+          this, SLOT(save_image_to_inr()));
+
 #ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
   connect(mw->actionMarching_cubes, SIGNAL(triggered()),
           this, SLOT(display_marchin_cube()));
@@ -593,7 +596,7 @@ void Volume::finish_open()
 
 void Volume::export_off()
 {
-  QFileDialog filedialog(mw, tr("Open File"));
+  QFileDialog filedialog(mw, tr("Export surface to file"));
   filedialog.setFileMode(QFileDialog::AnyFile);
   filedialog.setFilter(tr("OFF files (*.off);;"
                           "All files (*)"));
@@ -608,7 +611,7 @@ void Volume::export_off()
     if(!out)
     {
       QMessageBox::warning(mw, mw->windowTitle(),
-                           tr("Export to the OFF file <tt>%1</tt>!").arg(filename));
+                           tr("Export to the OFF file <tt>%1</tt> failed!").arg(filename));
       status_message(tr("Export to the OFF file %1 failed!").arg(filename));
       std::cerr << " failed!\n";
     }
@@ -616,6 +619,34 @@ void Volume::export_off()
     {
       std::cerr << " done.\n";
       status_message(tr("Successfull export to the OFF file %1.").arg(filename));
+    }
+  }
+}
+
+void Volume::save_image_to_inr()
+{
+  QFileDialog filedialog(mw, tr("Export image to Inrimage format"));
+  filedialog.setFileMode(QFileDialog::AnyFile);
+  filedialog.setFilter(tr("Inrimage files (*.inr);;"
+                          "Compressed Inrimage files (*.inr.gz)"));
+  filedialog.setAcceptMode(QFileDialog::AcceptSave);
+  filedialog.setDefaultSuffix("inr.gz");
+  if(filedialog.exec())
+  {
+    const QString filename = filedialog.selectedFiles().front();
+    std::cerr << "Saving image to file \"" << filename.toLocal8Bit().data() << "\"...";
+    const int result = ::_writeImage(m_image.image(), filename.toUtf8());
+    if(result != ImageIO_NO_ERROR)
+    {
+      QMessageBox::warning(mw, mw->windowTitle(),
+                           tr("Export to the Inrimage file <tt>%1</tt> failed!").arg(filename));
+      status_message(tr("Export to the Inrimage file %1 failed!").arg(filename));
+      std::cerr << " failed!\n";
+    }
+    else
+    {
+      std::cerr << " done.\n";
+      status_message(tr("Successfull export to the Inrimage file %1.").arg(filename));
     }
   }
 }
@@ -788,23 +819,29 @@ void Volume::display_surface_mesher_result()
     del.clear();
     Sphere bounding_sphere(m_image.center(),m_image.radius()*m_image.radius());
 
-    m_image.set_interpolation(mw->grayLevelRadioButton->isChecked());
+    Classify_from_isovalue_list classify(values_list);
+    Generate_surface_identifiers generate_ids(values_list);
+
+    m_image.set_interpolation(mw->interpolationCheckBox->isChecked());
+    if(mw->labellizedRadioButton->isChecked()) {
+      std::cerr << "Labellized image\n";
+    }
+    m_image.set_labellized(mw->labellizedRadioButton->isChecked());
+    classify.set_identity(mw->labellizedRadioButton->isChecked());
+    generate_ids.set_labellized_image(mw->labellizedRadioButton->isChecked());
 
     // definition of the surface
     Surface_3 surface(m_image, bounding_sphere, m_relative_precision);
 //     Threshold threshold(m_image.isovalue());
-    Classify_from_isovalue_list classify(values_list);
-    Generate_surface_identifiers generate_ids(values_list);
-
-    classify.set_identity(mw->labellizedRadioButton->isChecked());
-    generate_ids.set_labellized_image(mw->labellizedRadioButton->isChecked());
 
     std::vector<Point> seeds;
     {
+      std::cerr << "Search seeds...\n";
       std::set<unsigned char> domains;
       search_for_connected_components(std::back_inserter(seeds),
 				      CGAL::inserter(domains),
 				      classify);
+      std::cerr << "Found " << seeds.size() << " seed(s).\n";
 
       if(mw->labellizedRadioButton->isChecked() && 
 	 values_list->numberOfValues() == 0) 
@@ -895,11 +932,41 @@ void Volume::display_surface_mesher_result()
       manifold_mesher.refine_mesh();
     }
     else {
+//       m_view_surface = true;
       Surface_mesher_non_manifold non_manifold_mesher(c2t3, surface, oracle, criteria);
+#if 0
+      int nb_steps = 0;
+//       direct_draw = true;
+      non_manifold_mesher.init();
+      while(!non_manifold_mesher.is_algorithm_done()) {
+	CGAL::Null_mesh_visitor null_visitor;
+	non_manifold_mesher.one_step(null_visitor);
+	if(++nb_steps % 1000 == 0) {
+	  CGAL::Timer timer;
+	  std::cerr << "(process events...";
+	  timer.start();
+	  list_draw_marching_cube_is_valid = false;
+	  lists_draw_surface_is_valid = false;
+	  for(Tr::Finite_cells_iterator 
+		cit = del.finite_cells_begin(),
+		end = del.finite_cells_end();
+	      cit != end; ++cit)
+	  {
+	    cit->info() = classify(surface(cit->circumcenter()));
+	  }
+// 	  emit changed();
+	  qApp->processEvents();
+	  timer.stop();
+	  std::cerr << timer.time() << " secondes)\n";
+	}
+      }
+#else
       non_manifold_mesher.refine_mesh();
+#endif
     }
     sm_timer.stop();
     not_busy();
+    direct_draw = false;
 
     for(Tr::Finite_cells_iterator 
 	  cit = del.finite_cells_begin(),
@@ -1157,7 +1224,40 @@ void Volume::gl_draw_surface()
 // 		    0);
 //   }
 //   else
-  if(lists_draw_surface_is_valid)
+  if(direct_draw) {
+    ::glBegin(GL_TRIANGLES);
+    unsigned int counter = 0;
+    for(Tr::Finite_cells_iterator
+	  cit = del.finite_cells_begin(), end = del.finite_cells_end();
+	cit != end; ++cit)
+    {
+      for(int facet_index = 0; facet_index < 4; ++facet_index)
+      {
+	const Tr::Cell_handle& facet_cell = cit;
+	if(c2t3.face_status(facet_cell, facet_index) == C2t3::NOT_IN_COMPLEX) {
+	  continue;
+	}
+	const Point& a = facet_cell->vertex(del.vertex_triple_index(facet_index, 0))->point();
+	const Point& b = facet_cell->vertex(del.vertex_triple_index(facet_index, 1))->point();
+	const Point& c = facet_cell->vertex(del.vertex_triple_index(facet_index, 2))->point();
+	Vector n = CGAL::cross_product(b-a,c-a);
+	n = n / std::sqrt(n*n); // unit normal
+	if(m_inverse_normals) {
+	  ::glNormal3d(-n.x(),-n.y(),-n.z());
+	} else {
+	  ::glNormal3d(n.x(),n.y(),n.z());
+	}
+	mw->viewer->qglColor(values_list->color(values_list->search(facet_cell->info())));
+	::glVertex3d(a.x(),a.y(),a.z());
+	::glVertex3d(b.x(),b.y(),b.z());
+	::glVertex3d(c.x(),c.y(),c.z());
+	++counter;
+      }
+      ::glEnd();
+    }
+    return;
+  }
+  if(!direct_draw && lists_draw_surface_is_valid)
   {
     for(int i = 0, nbs = values_list->numberOfValues(); i < nbs; ++i )
     {
@@ -1185,9 +1285,9 @@ void Volume::gl_draw_surface()
         
       mw->viewer->qglColor(values_list->color(i));
 
-      if(lists_draw_surface[i])                 // If
+      if(!direct_draw && lists_draw_surface[i]) // If
         ::glNewList(lists_draw_surface[i],      // lists_draw_surface[i]==0
-                    values_list->enabled(i)  // then something got wrong
+                    values_list->enabled(i)     // then something got wrong
                     ? GL_COMPILE_AND_EXECUTE    // in the list generation.
                     : GL_COMPILE);
 
@@ -1240,7 +1340,8 @@ void Volume::gl_draw_surface()
 	  % counter;
       }
 
-      if(lists_draw_surface[i]) // If lists_draw_surface[i]==0 then
+      if(!direct_draw && lists_draw_surface[i])
+	                        // If lists_draw_surface[i]==0 then
       {                         // something got wrong in the list
         ::glEndList();          // generation.
       }

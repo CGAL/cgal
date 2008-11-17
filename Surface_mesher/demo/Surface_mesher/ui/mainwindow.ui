@@ -47,6 +47,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="action_Open" />
+    <addaction name="actionSave" />
     <addaction name="actionExport_surface_mesh_to_OFF" />
     <addaction name="separator" />
     <addaction name="action_Quit" />
@@ -206,6 +207,56 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="title" >
+          <string>&amp;Operations</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4" >
+          <item>
+           <widget class="QCheckBox" name="interpolationCheckBox" >
+            <property name="text" >
+             <string>Trilinear interpolation</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="searchSeedsCheckBox" >
+            <property name="text" >
+             <string>Search for seeds</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout" >
+            <item>
+             <widget class="QLabel" name="label_3" >
+              <property name="text" >
+               <string>Min size</string>
+              </property>
+              <property name="buddy" >
+               <cstring>minSize</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="minSize" >
+              <property name="statusTip" >
+               <string>If a connected component has its size lower that this bound, </string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupBoxCriteria" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
@@ -214,7 +265,7 @@
           </sizepolicy>
          </property>
          <property name="title" >
-          <string>&amp;Criteria</string>
+          <string>C&amp;riteria</string>
          </property>
          <property name="show_only_in" stdset="0" >
           <stringlist>
@@ -233,13 +284,6 @@
            <widget class="QCheckBox" name="sameIndexCheckBox" >
             <property name="text" >
              <string>Facets vertices have same index</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="interpolationCheckBox" >
-            <property name="text" >
-             <string>Trilinear interpolation</string>
             </property>
            </widget>
           </item>
@@ -704,6 +748,15 @@
     </stringlist>
    </property>
   </action>
+  <action name="actionSave" >
+   <property name="icon" >
+    <iconset resource="../surface_mesher.qrc" >
+     <normaloff>:/icons/filesave.png</normaloff>:/icons/filesave.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Save the image as Inrimage...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -724,12 +777,60 @@
   <tabstop>labellizedRadioButton</tabstop>
   <tabstop>manifoldCheckBox</tabstop>
   <tabstop>sameIndexCheckBox</tabstop>
-  <tabstop>interpolationCheckBox</tabstop>
   <tabstop>spinBox_radius_bound</tabstop>
   <tabstop>spinBox_distance_bound</tabstop>
  </tabstops>
  <resources>
   <include location="../surface_mesher.qrc" />
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>searchSeedsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>87</x>
+     <y>279</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>50</x>
+     <y>308</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>searchSeedsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>minSize</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>206</x>
+     <y>278</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>240</x>
+     <y>303</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>labellizedRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>sameIndexCheckBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>130</x>
+     <y>172</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>139</x>
+     <y>414</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

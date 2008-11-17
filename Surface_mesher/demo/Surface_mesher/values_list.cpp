@@ -213,6 +213,7 @@ void Values_list::load_values(QString filename)
   }
   settings.endArray();
   settings.endGroup();
+  update_items_cache();
 }
 
 void Values_list::on_minusButton_clicked()
