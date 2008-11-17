@@ -170,7 +170,7 @@ bool output_surface_facets_to_off (std::ostream& os,
   bool success = true;
 
   Surface_mesher::Write_to_OFF_file<Tr> 
-    off(os, (options ^ Surface_mesher::IO_VERBOSE != 0));
+    off(os, (options ^ Surface_mesher::IO_VERBOSE) != 0);
 
   success ^= off.write_header(tr.number_of_vertices(),
 			      c2t3.number_of_facets());
