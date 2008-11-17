@@ -12,9 +12,9 @@ STEP 1.
   
 STEP 2.
 
-  Download the correspoding versions of gmp and mpfr depending on the Gladman's port downloaded
+  Download the corresponding versions of gmp and mpfr depending on the Gladman's port downloaded
   
-SETP 3.
+STEP 3.
 
   Follow the instructions supplied by Gladman's port and build one of the static versions
   of the gmp and mpfr libs.
@@ -47,7 +47,7 @@ SETP 3.
                     gmp.lib
                     gmp.pdb
           mpfr-2.3.2
-            buid.vc9 
+            build.vc9 
               lib_mpfr
                 Win32
                   Debug
@@ -58,7 +58,7 @@ SETP 3.
                     mpfr.pdb
 
 
-SETP 4
+STEP 4
 
   copy the batch script "create_mangled_versions.bat" into the base directory
   containing gmp and mpfr.
