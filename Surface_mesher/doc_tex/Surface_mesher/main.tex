@@ -324,7 +324,21 @@ This parameter has a default which was used in the previous example.
 Also note that the center of the bounding sphere is required to be
 internal a point where the function has a negative value.
 
-The chosen iso-value of this 3D~image corresponds to a head skull.
+The chosen iso-value of this 3D~image corresponds to a head skull. The
+resulting mesh is shown in Figure~\ref{figure:Surface_mesher-skull}.
+
+\begin{figure}[ht]
+  \begin{center}
+    \begin{ccTexOnly}
+      \includegraphics[height=10cm]{Surface_mesher/skull-surface}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+      <img border="0" src="./skull-surface.png" height="75%">
+    \end{ccHtmlOnly}
+  \end{center}
+  \caption{Surface mesh of an iso-contour extracted from a gray level 3D~image}
+  \label{figure:Surface_mesher-skull}
+\end{figure}
 
 \ccIncludeExampleCode{Surface_mesher/mesh_a_3d_gray_image.cpp}
 
@@ -393,9 +407,6 @@ surface without boundary.\\
 manifold but may have boundaries.\\
 \ccc{Non_manifold_tag}: the algorithm relies on the given criteria and
 guarantees nothing else.
-
-
-
 
 \section{Design and Implementation History}
 
