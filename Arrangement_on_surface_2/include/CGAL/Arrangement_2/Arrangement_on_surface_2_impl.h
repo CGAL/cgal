@@ -1297,13 +1297,13 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
     std::cout << "Aos_2: insert_at_vertices (interface)" << std::endl;
     std::cout << "cv   : " << cv << std::endl;
-    if (!prev1->has_null_curve()) {
+    if (!prev1->is_fictitious()) {
         std::cout << "prev1: " << prev1->curve() << std::endl;
     } else {
       std::cout << "prev1: fictitious" << std::endl;
   }
   std::cout << "dir1 : " << prev1->direction() << std::endl;
-  if (!prev2->has_null_curve()) {
+  if (!prev2->is_fictitious()) {
       std::cout << "prev2: " << prev2->curve() << std::endl;
   } else {
       std::cout << "prev2: fictitious" << std::endl;
@@ -2864,7 +2864,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                        prev1->outer_ccb()->face())
               << std::endl;
     Sign_of_path sign_of_path(topology_traits());
-    std::cout << "prev1sign: " << sign_of_path(prev1, prev1) << std::endl;
+    //std::cout << "prev1sign: " << sign_of_path(prev1, prev1) << std::endl;
 #endif
 
     // Check whether the two previous halfedges lie on the same innder CCB
@@ -2897,7 +2897,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                            prev2->outer_ccb()->face())
                   << std::endl;
         Sign_of_path sign_of_path(topology_traits());
-        std::cout << "prev2sign: " << sign_of_path(prev2, prev2) << std::endl;
+        //std::cout << "prev2sign: " << sign_of_path(prev2, prev2) << std::endl;
 #endif
 
       }
@@ -2930,7 +2930,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                            prev2->outer_ccb()->face())
                   << std::endl;
         Sign_of_path sign_of_path(topology_traits());
-        std::cout << "prev2sign: " << sign_of_path(prev2, prev2) << std::endl;
+        //std::cout << "prev2sign: " << sign_of_path(prev2, prev2) << std::endl;
 #endif
         
         // Notify the observers that we have added an outer CCB to f.
