@@ -1,4 +1,4 @@
-# This is the CMake script for compiling a CGAL application.
+# This is the CMake script for compiling the CGAL Polyhedron demo.
 
 project( Polyhedron )
 
