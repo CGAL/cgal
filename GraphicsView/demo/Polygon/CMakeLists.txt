@@ -11,7 +11,7 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
 
-find_package(CGAL QUIET COMPONENTS Qt4 Core)
+find_package(CGAL COMPONENTS Qt4 Core)
 
 include(${CGAL_USE_FILE})
 
@@ -20,34 +20,32 @@ set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-find_package(Qt4       QUIET)
+find_package(Qt4)
 
 include_directories (BEFORE ../../include)
-include_directories (BEFORE ../../../Straight_skeleton_2/include)
 
+if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND CGAL_Core_FOUND AND QT4_FOUND )
 
-if ( CGAL_FOUND AND QT4_FOUND )
+  include(${QT_USE_FILE})
+  #--------------------------------
+  # Demo: Polygon_2
+  #--------------------------------
+  # UI files (Qt Designer files)
+  qt4_wrap_ui( DT_UI_FILES Polygon_2.ui )
 
-include(${QT_USE_FILE})
-#--------------------------------
-# Demo: Polygon_2
-#--------------------------------
-# UI files (Qt Designer files)
-qt4_wrap_ui( DT_UI_FILES Polygon_2.ui )
+  # qrc files (resources files, that contain icons, at least)
+  qt4_add_resources ( DT_RESOURCE_FILES ./Polygon_2.qrc )
 
-# qrc files (resources files, that contain icons, at least)
-qt4_add_resources ( DT_RESOURCE_FILES ./Polygon_2.qrc )
+  # use the Qt MOC preprocessor on classes that derives from QObject
+  qt4_generate_moc( Polygon_2.cpp Polygon_2.moc )
 
-# use the Qt MOC preprocessor on classes that derives from QObject
-qt4_generate_moc( Polygon_2.cpp Polygon_2.moc )
+  # The executable itself.
+  add_executable  ( Polygon_2 Polygon_2.cpp Polygon_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
-# The executable itself.
-add_executable  ( Polygon_2 Polygon_2.cpp Polygon_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
-
-# Link with Qt libraries
-target_link_libraries( Polygon_2 ${QT_LIBRARIES} )
-# And with CGAL libraries
-target_link_libraries( Polygon_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  # Link with Qt libraries
+  target_link_libraries( Polygon_2 ${QT_LIBRARIES} )
+  # And with CGAL libraries
+  target_link_libraries( Polygon_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 else()
 
