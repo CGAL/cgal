@@ -11,11 +11,11 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
 
-find_package(CGAL QUIET COMPONENTS Qt4)
+find_package(CGAL COMPONENTS Qt4)
 
 include(${CGAL_USE_FILE})
 
-find_package(Qt4 QUIET)
+find_package(Qt4)
 
 include_directories (BEFORE ../../include)
 

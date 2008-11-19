@@ -11,17 +11,17 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
 
-find_package(CGAL QUIET  COMPONENTS Qt4)
+find_package(CGAL  COMPONENTS Qt4)
 include(${CGAL_USE_FILE})
 
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4 QUIET)
+find_package(Qt4)
 
-find_package(OpenGL    QUIET)
-find_package(QGLViewer QUIET)
+find_package(OpenGL)
+find_package(QGLViewer)
 
 if ( CGAL_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 

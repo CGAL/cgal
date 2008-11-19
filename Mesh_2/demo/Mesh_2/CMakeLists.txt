@@ -12,10 +12,10 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
 
-find_package(CGAL QUIET COMPONENTS Core Qt3 )
+find_package(CGAL COMPONENTS Core Qt3 )
 include( ${CGAL_USE_FILE} )
 
-find_package(Qt3-patched QUIET )
+find_package(Qt3-patched )
 # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
 # that it can be used together with FindQt4: all its variables are prefixed
 # by "QT3_" instead of "QT_".

@@ -24,7 +24,7 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
 endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
 
 # Find CGAL and CGAL Qt4
-find_package(CGAL QUIET COMPONENTS Qt4)
+find_package(CGAL COMPONENTS Qt4)
 include( ${CGAL_USE_FILE} )
 
 # Find Qt4 itself
@@ -32,19 +32,19 @@ set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4 QUIET)
+find_package(Qt4)
 
 # Find OpenGL
-find_package(OpenGL QUIET)
+find_package(OpenGL)
 
 # Find QGLViewer
 if(QT_FOUND)
   include(${QT_USE_FILE})
-  find_package(QGLViewer QUIET )
+  find_package(QGLViewer )
 endif(QT_FOUND)
 
 # Find TAUCS (optionnal)
-find_package(TAUCS QUIET)
+find_package(TAUCS)
 
 if(CGAL_Qt4_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
