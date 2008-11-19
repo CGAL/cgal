@@ -463,7 +463,7 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
       best_value = r;
     }
   }
-  CGAL_assertion(best_value > 0.5);
+//   CGAL_assertion(best_value > 0.5);
   return best;
 }
 
