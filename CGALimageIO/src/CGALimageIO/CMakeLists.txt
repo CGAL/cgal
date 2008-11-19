@@ -13,8 +13,8 @@ if ( NOT CGAL_FOUND )
   include(${CGAL_USE_FILE})
 endif()
 
-find_package(ZLIB   QUIET)
-find_package(OpenGL QUIET)
+find_package(ZLIB)
+find_package(OpenGL)
 
 option(WITH_VTK "Add VTK support to the CGAL ImageIO library." OFF)
 
@@ -27,14 +27,16 @@ if(OPENGL_FOUND)
   
   message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
   message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
-  message( STATUS "OpenGL definitions: ${OPENGL_DEFINITIONS}" )
   
+  cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${OPENGL_INCLUDE_DIR} )
+  cache_set(CGAL_ImageIO_3RD_PARTY_LIBRARIES    ${OPENGL_LIBRARIES}   )
+
   if(ZLIB_FOUND)
     get_dependency_version(ZLIB)
     message( STATUS "ZLib   include:     ${ZLIB_INCLUDE_DIR}" )
     message( STATUS "ZLib   libraries:   ${ZLIB_LIBRARY}" )
-    cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
-    cache_set(CGAL_ImageIO_3RD_PARTY_LIBRARIES    ${ZLIB_LIBRARY}     ${OPENGL_LIBRARIES}   )
+    cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIR} )
+    cache_set(CGAL_ImageIO_3RD_PARTY_LIBRARIES    ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} ${ZLIB_LIBRARY} )
     cache_set(CGAL_ImageIO_3RD_PARTY_DEFINITIONS  "-DCGAL_USE_ZLIB")
   endif(ZLIB_FOUND)
 
