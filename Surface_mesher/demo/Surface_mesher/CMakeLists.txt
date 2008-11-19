@@ -31,13 +31,13 @@ set( QT_USE_QTOPENGL TRUE )
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 
-find_package(CGAL QUIET COMPONENTS ImageIO Qt4)
+find_package(CGAL COMPONENTS ImageIO Qt4)
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
   include( ${CGAL_USE_FILE} )
 
-  find_package(Qt4 QUIET )
-  find_package(QGLViewer QUIET )
-  find_package(OpenGL    QUIET )
+  find_package(Qt4 )
+  find_package(QGLViewer )
+  find_package(OpenGL    )
   
   if ( QGLVIEWER_FOUND )
 
