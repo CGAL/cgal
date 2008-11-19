@@ -136,7 +136,7 @@ FIND_PROGRAM(QT3_MOC_EXECUTABLE
   /usr/share/qt3/bin
   C:/Progra~1/qt/bin
   /usr/X11R6/bin
-  NO_SYSTEM_ENVIRONMENT_PATH
+  NO_DEFAULT_PATH
   )
 
 IF(QT3_MOC_EXECUTABLE)
@@ -159,7 +159,7 @@ FIND_PROGRAM(QT3_UIC_EXECUTABLE uic
   /usr/share/qt3/bin
   C:/Progra~1/qt/bin
   /usr/X11R6/bin
-  NO_SYSTEM_ENVIRONMENT_PATH
+  NO_DEFAULT_PATH
   )
 
 IF(QT3_UIC_EXECUTABLE)
