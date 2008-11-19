@@ -10,26 +10,23 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
 
-find_package(CGAL QUIET COMPONENTS PDB )
+find_package(CGAL COMPONENTS PDB )
 include( ${CGAL_USE_FILE} )
 
-find_package ( Boost QUIET COMPONENTS program_options )
+find_package ( Boost COMPONENTS program_options )
 
 if (CGAL_PDB_FOUND  AND  Boost_PROGRAM_OPTIONS_FOUND )
 
-if ( NOT CGAL_AUTO_LINK_ENABLED )
-link_libraries(${Boost_PROGRAM_OPTIONS_LIBRARY})
-endif ()
+  link_libraries(${Boost_LIBRARIES})
 
-include(CGAL_CreateSingleSourceCGALProgram)
+  include(CGAL_CreateSingleSourceCGALProgram)
 
-create_single_source_cgal_program( pdb_cat.cpp )
-create_single_source_cgal_program( pdb_echo.cpp )
-create_single_source_cgal_program( pdb_split.cpp )
-create_single_source_cgal_program( pdb_transform.cpp )
-create_single_source_cgal_program( pdb_tree.cpp )
-create_single_source_cgal_program( pdb_info.cpp )
-
+  create_single_source_cgal_program( pdb_cat.cpp )
+  create_single_source_cgal_program( pdb_echo.cpp )
+  create_single_source_cgal_program( pdb_split.cpp )
+  create_single_source_cgal_program( pdb_transform.cpp )
+  create_single_source_cgal_program( pdb_tree.cpp )
+  create_single_source_cgal_program( pdb_info.cpp )
 
 else()
 
