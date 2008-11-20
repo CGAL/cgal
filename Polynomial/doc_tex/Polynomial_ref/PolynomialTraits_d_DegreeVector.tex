@@ -2,9 +2,12 @@
 
 \ccDefinition
 
-This \ccc{AdaptableUnaryFunction} returns the exponent vector of 
-the innermost leading coefficient of a 
-\ccc{PolynomialTraits_d::Polynomial_d}. 
+For a given \ccc{PolynomialTraits_d::Polynomial_d} $p$ 
+this \ccc{AdaptableUnaryFunction} returns the degree vector, that is, 
+it returns the exponent vector of the monomial of highest order in $p$, 
+where the monomial order is the lexicographic order giving outer 
+variables a higher priority. In particular, this is the monomial 
+that belongs to the innermost leading coefficient of $p$.  
 
 \ccRefines 
 \ccc{AdaptableUnaryFunction}
@@ -29,7 +32,8 @@ the innermost leading coefficient of a
 \ccRefIdfierPage{Polynomial_d}\\
 \ccRefIdfierPage{PolynomialTraits_d}\\
 \ccRefIdfierPage{PolynomialTraits_d::Degree}\\
-\ccRefIdfierPage{PolynomialTraits_d::TotalDegree}
+\ccRefIdfierPage{PolynomialTraits_d::TotalDegree}\\
+\ccRefIdfierPage{PolynomialTraits_d::InnermostLeadingCoefficient}\\
 
 \end{ccRefConcept}
 
