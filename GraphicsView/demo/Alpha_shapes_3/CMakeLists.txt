@@ -23,7 +23,7 @@ find_package(Qt4)
 find_package(OpenGL)
 find_package(QGLViewer)
 
-if ( CGAL_FOUND AND QT_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
+if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   include(${QT_USE_FILE})
 
