@@ -18,7 +18,7 @@ find_package(Qt3-patched)
 # that it can be used together with FindQt4: all its variables are prefixed
 # by "QT3_" instead of "QT_".
 
-if ( CGAL_FOUND AND QT3_FOUND )
+if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
 
 
 INCLUDE_DIRECTORIES ( BEFORE ./include )
