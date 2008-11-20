@@ -19,31 +19,29 @@ find_package(Qt4)
 
 include_directories (BEFORE ../../include)
 
-if ( CGAL_FOUND AND QT4_FOUND )
+if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
-include(${QT_USE_FILE})
+  include(${QT_USE_FILE})
 
-#--------------------------------
-# The demo: Circular_kernel_2
-#--------------------------------
-# UI files (Qt Designer files)
-qt4_wrap_ui( DT_UI_FILES Circular_kernel_2.ui )
+  #--------------------------------
+  # The demo: Circular_kernel_2
+  #--------------------------------
+  # UI files (Qt Designer files)
+  qt4_wrap_ui( DT_UI_FILES Circular_kernel_2.ui )
 
-# qrc files (resources files, that contain icons, at least)
-qt4_add_resources ( DT_RESOURCE_FILES ./Circular_kernel_2.qrc )
+  # qrc files (resources files, that contain icons, at least)
+  qt4_add_resources ( DT_RESOURCE_FILES ./Circular_kernel_2.qrc )
 
-# use the Qt MOC preprocessor on classes that derives from QObject
-qt4_generate_moc( Circular_kernel_2.cpp Circular_kernel_2.moc )
+  # use the Qt MOC preprocessor on classes that derives from QObject
+  qt4_generate_moc( Circular_kernel_2.cpp Circular_kernel_2.moc )
 
-# The executable itself.
-add_executable  ( Circular_kernel_2 Circular_kernel_2.cpp Circular_kernel_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+  # The executable itself.
+  add_executable  ( Circular_kernel_2 Circular_kernel_2.cpp Circular_kernel_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
-# Link with Qt libraries
-target_link_libraries( Circular_kernel_2 ${QT_LIBRARIES} )
-# Link with CGAL
-target_link_libraries( Circular_kernel_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
-
-
+  # Link with Qt libraries
+  target_link_libraries( Circular_kernel_2 ${QT_LIBRARIES} )
+  # Link with CGAL
+  target_link_libraries( Circular_kernel_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 else()
 

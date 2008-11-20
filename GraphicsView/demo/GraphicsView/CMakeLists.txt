@@ -21,17 +21,19 @@ set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
 find_package(Qt4)
-include(${QT_USE_FILE})
 
-if ( CGAL_FOUND AND QT4_FOUND )
+if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
-add_executable  ( min min.cpp )
+  include(${QT_USE_FILE})
 
 
-# Link with Qt libraries
-target_link_libraries( min ${QT_LIBRARIES} )
-# Link with CGAL
-target_link_libraries( min ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
+  add_executable  ( min min.cpp )
+
+
+  # Link with Qt libraries
+  target_link_libraries( min ${QT_LIBRARIES} )
+  # Link with CGAL
+  target_link_libraries( min ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 else()
 
