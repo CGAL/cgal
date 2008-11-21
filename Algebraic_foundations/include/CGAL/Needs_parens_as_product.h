@@ -81,9 +81,11 @@ template <> struct Needs_parens_as_product<long>{
     bool operator()(const long& x){return x < long(0);} 
 };
 
-//template <> struct Needs_parens_as_product<long long>{
-//    bool operator()(const long long& x){return x < (long long)(0);} 
-//};
+#ifdef CGAL_USE_LONG_LONG
+template <> struct Needs_parens_as_product<long long>{
+    bool operator()(const long long& x){return x < (long long)(0);} 
+};
+#endif
 
 template <> struct Needs_parens_as_product<float>{
     bool operator()(const float& x){return x < float(0);} 
