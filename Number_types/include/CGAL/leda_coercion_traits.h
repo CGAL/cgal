@@ -68,7 +68,7 @@ CGAL_BEGIN_NAMESPACE
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::leda::rational)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::rational)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::leda::rational)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::leda::rational)
+  //    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::leda::rational)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::rational)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::leda::rational)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::leda::rational)
