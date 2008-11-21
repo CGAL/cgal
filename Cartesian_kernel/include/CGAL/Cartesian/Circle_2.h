@@ -50,7 +50,7 @@ public:
   CircleC2(const Point_2 &center, const FT &squared_radius = FT(0),
            const Orientation &orient = COUNTERCLOCKWISE) // Is this new?
   {
-    CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
+    CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &
                               ( orient    != COLLINEAR) );
 
     base = Rep(center, squared_radius, orient);
