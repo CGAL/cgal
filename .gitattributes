@@ -1298,6 +1298,8 @@ Circular_kernel_3/demo/Circular_kernel_3/images/button_texture.gif -text svneol=
 Circular_kernel_3/demo/Circular_kernel_3/images/button_wire.gif -text svneol=unset#image/gif
 Circular_kernel_3/demo/Circular_kernel_3/images/d_solid_b.gif -text svneol=unset#image/gif
 Circular_kernel_3/demo/Circular_kernel_3/images/d_wire_b.gif -text svneol=unset#image/gif
+Circular_kernel_3/doc_tex/Circular_kernel_3/segment_sphere_intersection.png -text
+Circular_kernel_3/doc_tex/Circular_kernel_3/segment_sphere_intersection_detail.png -text
 Circular_kernel_3/doc_tex/Circular_kernel_3_ref/GeomFunctorsConstructions.tex -text
 Circular_kernel_3/doc_tex/Circular_kernel_3_ref/global_functions.tex -text
 Circular_kernel_3/examples/Circular_kernel_3/functor_has_on_3.cpp -text
