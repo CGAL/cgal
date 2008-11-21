@@ -49,6 +49,8 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
+#include <CGAL/assertions_behaviour.h>
+
 using namespace std ;
 using namespace boost ;
 using namespace CGAL ;

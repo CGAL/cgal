@@ -16,7 +16,9 @@ The following functionality has been added or changed:
     helping users discover if they rely on code that may be removed in
     subsequent releases.
 
-  - It is not possible anymore to set the CONTINUE mode for assertion failures.
+  - Assertion behaviour:
+    It is not possible anymore to set the CONTINUE mode for assertion failures.
+    Functions that allow to change the assertion behaviour are now declared in <CGAL/assertions_behaviour.h>.
 
 2- Installation
 

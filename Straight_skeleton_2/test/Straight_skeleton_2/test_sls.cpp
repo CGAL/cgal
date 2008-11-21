@@ -28,6 +28,8 @@
 
 #include<boost/tokenizer.hpp>
 
+#include <CGAL/assertions_behaviour.h>
+
 bool sTestInner              = true  ;
 bool sTestOuter              = true  ;
 bool sTestOffsets            = true  ;

@@ -53,6 +53,8 @@
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/pixmaps/demoicon.xpm>
 
+#include <CGAL/assertions_behaviour.h>
+
 #include "ss_types.h"
 #include "straight_skeleton_2_toolbar.h"
 #include "straight_skeleton_2_toolbar_layers.h"

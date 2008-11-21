@@ -23,6 +23,7 @@
 
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>
+#include <CGAL/assertions_behaviour.h>
 #include <CGAL/exceptions.h>
 
 #include <cstdlib>

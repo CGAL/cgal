@@ -1,3 +1,5 @@
+#include <CGAL/assertions_behaviour.h>
+
 bool test( string off_file )
 {
   bool rContinue = true ;

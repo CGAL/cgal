@@ -26,13 +26,9 @@
 #ifndef CGAL_ASSERTIONS_H
 #define CGAL_ASSERTIONS_H
 
+// #include <CGAL/assertions_behaviour> // for backward compatibility
+
 CGAL_BEGIN_NAMESPACE
-
-// types
-// =====
-
-enum Failure_behaviour { ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE,
-                         THROW_EXCEPTION };
 
 // function declarations
 // =====================
@@ -277,29 +273,6 @@ inline bool possibly(Uncertain<bool> c);
 // CGAL error
 #define CGAL_error_msg(MSG) ::CGAL::assertion_fail( "", __FILE__, __LINE__, MSG )
 #define CGAL_error()        ::CGAL::assertion_fail( "", __FILE__, __LINE__ )
-
-// failure handler declarations
-// ==========================
-// failure handler
-// ---------------
-typedef
-    void
-    (*Failure_function)(
-        const char*, const char*, const char*, int, const char*);
-
-Failure_function
-set_error_handler( Failure_function handler);
-
-Failure_function
-set_warning_handler( Failure_function handler);
-
-// failure behaviour handler
-// -------------------------
-Failure_behaviour
-set_error_behaviour(Failure_behaviour eb);
-
-Failure_behaviour
-set_warning_behaviour(Failure_behaviour eb);
 
 CGAL_END_NAMESPACE
 

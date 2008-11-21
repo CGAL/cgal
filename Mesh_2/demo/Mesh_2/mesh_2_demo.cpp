@@ -1508,6 +1508,7 @@ const QString MyWindow::my_filters =
 
 
 #include <CGAL/assertions.h>
+#include <CGAL/assertions_behaviour.h>
 #include <exception>
 
 CGAL::Failure_function my_previous_failure_function;
