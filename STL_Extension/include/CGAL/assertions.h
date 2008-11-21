@@ -26,7 +26,7 @@
 #ifndef CGAL_ASSERTIONS_H
 #define CGAL_ASSERTIONS_H
 
-// #include <CGAL/assertions_behaviour> // for backward compatibility
+// #include <CGAL/assertions_behaviour.h> // for backward compatibility
 
 CGAL_BEGIN_NAMESPACE
 
