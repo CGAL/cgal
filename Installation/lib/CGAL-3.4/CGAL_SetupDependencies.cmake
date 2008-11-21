@@ -10,6 +10,6 @@ endif()
 include(CGAL_SetupBoost)
 
 if ( MSVC )
-  cache_set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} "psapi.lib" )
+  add_to_persistent_tagged_libraries(CGAL_3RD_PARTY_LIBRARIES "psapi.lib" )
 endif()
 

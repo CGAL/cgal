@@ -24,24 +24,6 @@ else()
     typed_cache_set( FILEPATH "The directory containing the LEDA header files WITHOUT the LEDA prefix" LEDA_INCLUDE_DIR "$ENV{LEDA_INC_DIR}" )
   endif()
     
-  if ( NOT LEDA_LIBRARY_RELEASE )
-    typed_cache_set( FILEPATH "The LEDA release-mode libraries" LEDA_LIBRARY_RELEASE "$ENV{LEDA_LIBRARY_RELEASE}" )
-  endif()
-
-  if ( NOT LEDA_LIBRARY_DEBUG )
-    typed_cache_set( FILEPATH "The LEDA debug-mode libraries" LEDA_LIBRARY_DEBUG "$ENV{LEDA_LIBRARY_DEBUG}" )
-  endif()
-  
-  if ( "${CMAKE_BUILD_TYPE}" STREQUAL "Release" )
-    if ( LEDA_LIBRARY_RELEASE )
-      set( LEDA_LIBRARIES "${LEDA_LIBRARY_RELEASE}" )
-    endif()  
-  else()
-    if ( LEDA_LIBRARY_DEBUG )
-      set( LEDA_LIBRARIES "${LEDA_LIBRARY_DEBUG}" )
-    endif()  
-  endif()
-  
   if ( NOT LEDA_DEFINITIONS )
     typed_cache_set( STRING "Definitions for the LEDA library" LEDA_DEFINITIONS "$ENV{LEDA_DEFINITIONS}" )
   endif()  
@@ -53,6 +35,17 @@ else()
   if ( NOT LEDA_LINKER_FLAGS )
     typed_cache_set( STRING "Linker flags for the LEDA library" LEDA_LINKER_FLAGS "$ENV{LEDA_LINKER_FLAGS}" )
   endif()  
+
+  if ( NOT LEDA_LIBRARY_RELEASE )
+    typed_cache_set( FILEPATH "The LEDA release-mode libraries" LEDA_LIBRARY_RELEASE "$ENV{LEDA_LIBRARY_RELEASE}" )
+  endif()
+
+  if ( NOT LEDA_LIBRARY_DEBUG )
+    typed_cache_set( FILEPATH "The LEDA debug-mode libraries" LEDA_LIBRARY_DEBUG "$ENV{LEDA_LIBRARY_DEBUG}" )
+  endif()
+
+  set(LEDA_LIBRARIES) 
+  tag_libraries( LEDA_LIBRARY_RELEASE LEDA_LIBRARY_DEBUG LEDA_LIBRARIES )
 
 endif()
   

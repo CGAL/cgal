@@ -17,7 +17,6 @@ if (MPFR_INCLUDE_DIR AND MPFR_LIBRARIES_DIR )
   
 else()  
 
-  # Look first for the MPFR distributed with CGAL in auxiliary/mpfr
   find_path(MPFR_INCLUDE_DIR 
             NAMES mpfr.h 
             PATHS ${CMAKE_SOURCE_DIR}/auxiliary/gmp/include

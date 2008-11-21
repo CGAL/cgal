@@ -17,7 +17,6 @@ if (GMP_INCLUDE_DIR AND GMP_LIBRARIES_DIR )
   
 else()  
 
-  # Look first for the GMP distributed with CGAL in auxiliary/gmp
   find_path(GMP_INCLUDE_DIR 
             NAMES gmp.h 
             PATHS ${CMAKE_SOURCE_DIR}/auxiliary/gmp/include
