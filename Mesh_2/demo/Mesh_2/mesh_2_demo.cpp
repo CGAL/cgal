@@ -1506,39 +1506,6 @@ const QString MyWindow::my_filters =
 "Shewchuk Triangle .poly files (*.poly);;"
 "All files (*)";
 
-
-#include <CGAL/assertions.h>
-#include <CGAL/assertions_behaviour.h>
-#include <exception>
-
-CGAL::Failure_function my_previous_failure_function;
-
-class Cgal_exception : public std::exception {
-public:
-  Cgal_exception(const char *t,
-                 const char *e,
-                 const char* f,
-                 int l,
-                 const char* m)
-    : type(t), expr(e), file(f), line(l), msg(m) {};
-
-  const char *type;
-  const char *expr;
-  const char* file;
-  int line;
-  const char* msg;
-};
-
-void cgal_with_exceptions_failure_handler(
-                        const char *type,
-                        const char *expr,
-                        const char* file,
-                        int line,
-                        const char* msg)
-{
-  throw Cgal_exception(type,expr,file,line,msg);
-}
-
 int main(int argc, char** argv)
 {
   QApplication app( argc, argv );
@@ -1553,24 +1520,7 @@ int main(int argc, char** argv)
   if( argc == 2 )
     W->openTriangulation(QString(argv[1]));
 
-  //  my_previous_failure_function =
-  //CGAL::set_error_handler(cgal_with_exceptions_failure_handler);
-
-  try {
-    return app.exec();
-  }
-  catch(Cgal_exception e) {
-    std::cerr << "catch(Cgal_exception e)" << std::endl;
-    try {
-      W->dumpTriangulation();
-    }
-    catch(...) {
-      std::cerr << "PANIC !!" << std::endl;
-    }
-    my_previous_failure_function(e.type, e.expr, e.file, e. line, e.msg);
-  }
-
-  return 0;
+  return app.exec();
 }
 
 // moc_source_file: mesh_2_demo.cpp
