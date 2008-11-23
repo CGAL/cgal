@@ -465,7 +465,7 @@ Polynomial<NT> gcdex(
 ) {
     typedef typename CGAL::Fraction_traits< Polynomial<NT> >
         ::Is_fraction Is_fraction;
-    return gcdex_(p1, p2, f1, f2, Is_fraction());
+    return CGALi::gcdex_(p1, p2, f1, f2, Is_fraction());
 };
 
 
