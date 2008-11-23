@@ -184,28 +184,13 @@ template <> class Real_embeddable_traits< leda_integer >
     class To_interval
       : public std::unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Type& x ) const {
-
-          Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-          double cn = CGAL_NTS to_double(x);
-          leda_integer pn = ( x>0 ? x : -x);
-          if ( pn.iszero() || log(pn) < 53 )
-              return CGAL_NTS to_interval(cn);
-          else {
-            FPU_set_cw(CGAL_FE_UPWARD);
-            Interval_nt_advanced ina(cn);
-            ina += Interval_nt_advanced::smallest();
-            return ina.pair();
-          }
-
-/*        CGAL_LEDA_SCOPE::bigfloat h(x);
-          CGAL_LEDA_SCOPE::bigfloat low =
-                        CGAL_LEDA_SCOPE::round(h,53,CGAL_LEDA_SCOPE::TO_N_INF);
-          CGAL_LEDA_SCOPE::bigfloat high =
-                        CGAL_LEDA_SCOPE::round(h,53,CGAL_LEDA_SCOPE::TO_P_INF);
-          return Double_interval(low.to_double(), high.to_double());
-        }*/
-        }
+      std::pair<double, double> operator()( const Type& x ) const {
+        leda::bigfloat h(x);
+	double abs_err = 0;
+	double  low =h.to_double(abs_err, leda::TO_N_INF);
+	double high =h.to_double(abs_err, leda::TO_P_INF);
+	return std::make_pair(low,high);
+      }
     };
 };
 
