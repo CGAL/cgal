@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <cassert>
 
 template <class CTr>
 typename CTr::size_type number_of_constrained_edges(const CTr& tr)
@@ -74,10 +75,10 @@ struct Tester {
 
     // check that numbers of constrained edges and vertices are the same
 
-    CGAL_assertion( number_of_constrained_edges_edg == 
+    assert( number_of_constrained_edges_edg == 
                     number_of_constrained_edges_poly );
 
-    CGAL_assertion( number_of_vertices_edg == number_of_vertices_poly );
+    assert( number_of_vertices_edg == number_of_vertices_poly );
 
     // CONFORMING
 
@@ -90,14 +91,14 @@ struct Tester {
     make_conforming_Delaunay_2(cdt2);
     std::cout << "Number of vertices after make_conforming_Delaunay_2: "
               << cdt2.number_of_vertices() << "\n";
-    CGAL_assertion( cdt2.number_of_vertices() == 17 );
+    assert( cdt2.number_of_vertices() == 17 );
     make_conforming_Gabriel_2(cdt2);
     std::cout << "Number of vertices after make_conforming_Gabriel_2: "
               << cdt2.number_of_vertices() << "\n";
-    CGAL_assertion( cdt2.number_of_vertices() == 45 );
+    assert( cdt2.number_of_vertices() == 45 );
 
     // check that numbers of vertices are the same in cdt and cdt2
-    CGAL_assertion( cdt2.number_of_vertices() ==
+    assert( cdt2.number_of_vertices() ==
                     cdt.number_of_vertices() );
   };
 };

@@ -11,6 +11,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <cassert>
 
 template <class CTr>
 typename CTr::size_type number_of_constrained_edges(const CTr& tr)
@@ -61,9 +62,9 @@ struct Tester {
                                  Criteria());
     const size_type number_of_vertices0 = cdt.number_of_vertices();
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
-    CGAL_assertion( 64 <= cdt.number_of_vertices() &&
+    assert( 64 <= cdt.number_of_vertices() &&
                     cdt.number_of_vertices() <= 72 );
-    CGAL_assertion( seeds.size() == 3 );
+    assert( seeds.size() == 3 );
 
     std::cerr << "Meshing the triangulation with size 0.2...";
     CGAL::refine_Delaunay_mesh_2(cdt,
@@ -71,7 +72,7 @@ struct Tester {
                                  Criteria(0.125, 0.2));
 
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
-    CGAL_assertion( 190 <= cdt.number_of_vertices() &&
+    assert( 190 <= cdt.number_of_vertices() &&
                     cdt.number_of_vertices() <= 210 );
 
     std::cerr << "Meshing the triangulation with size 0.1...";
@@ -80,7 +81,7 @@ struct Tester {
                                  Criteria(0.125, 0.1));
     const size_type number_of_vertices1 = cdt.number_of_vertices();
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
-    CGAL_assertion( 580 <= cdt.number_of_vertices() &&
+    assert( 580 <= cdt.number_of_vertices() &&
                     cdt.number_of_vertices() <= 640 );
 
     cdt = cdt2;
@@ -94,7 +95,7 @@ struct Tester {
     const size_type number_of_vertices0bis = cdt.number_of_vertices();
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
   
-    CGAL_assertion( number_of_vertices0 == number_of_vertices0bis );
+    assert( number_of_vertices0 == number_of_vertices0bis );
 
     cdt = cdt2;
     std::cerr << "Triangulation restored.\n";
@@ -112,7 +113,7 @@ struct Tester {
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
               << "\n\n";
 
-    CGAL_assertion( number_of_vertices1bis <= number_of_vertices1 );
+    assert( number_of_vertices1bis <= number_of_vertices1 );
 
     cdt = cdt2;
 
@@ -127,7 +128,7 @@ struct Tester {
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() 
               << "\n\n";
 
-    CGAL_assertion( number_of_vertices2 == number_of_vertices1bis );
+    assert( number_of_vertices2 == number_of_vertices1bis );
 
     cdt = cdt2;
 
@@ -145,8 +146,8 @@ struct Tester {
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
               << "\nNumber of steps: " << step << "\n\n";
 
-    CGAL_assertion( step + inititial_number_of_vertices >= number_of_vertices3 );
-    CGAL_assertion( number_of_vertices3 == number_of_vertices2 );
+    assert( step + inititial_number_of_vertices >= number_of_vertices3 );
+    assert( number_of_vertices3 == number_of_vertices2 );
 
     cdt = cdt2;
 
@@ -164,8 +165,8 @@ struct Tester {
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
               << "\nNumber of steps: " << step << "\n\n";
 
-    CGAL_assertion( number_of_vertices4 == number_of_vertices2 );
-    CGAL_assertion( number_of_vertices4 == step + inititial_number_of_vertices );
+    assert( number_of_vertices4 == number_of_vertices2 );
+    assert( number_of_vertices4 == step + inititial_number_of_vertices );
   }
 };
 

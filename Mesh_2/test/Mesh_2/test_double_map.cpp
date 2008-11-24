@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include <cstdlib>
+#include <cassert>
 
 typedef CGAL::Double_map<int, int> Map;
 
@@ -55,7 +56,7 @@ int main(int argc, char** argv)
   f.clear();
   f2.clear();
 
-  CGAL_assertion(f.empty() && f2.empty());
+  assert(f.empty() && f2.empty());
   /* AUTOMATIC CHECKS */
   std::cerr << "Filling f with " << number_of_elements << " random integers...\n";
   for(unsigned int n=0; n<number_of_elements; n++)
@@ -65,7 +66,7 @@ int main(int argc, char** argv)
   }
 
   std::cerr << "Check f.size<=" << number_of_elements << ".\n";
-  CGAL_assertion(f.size()<=number_of_elements);
+  assert(f.size()<=number_of_elements);
 
   std::cerr << "Assignment f2=f...\n";
   f2 = f; // check the assignment 
@@ -79,8 +80,8 @@ int main(int argc, char** argv)
 	    << " ,f2.size()=" << f2.size()
 	    << " ,f3.size()=" << f3.size()
 	    << "\n";
-  CGAL_assertion(f.size() == f2.size());
-  CGAL_assertion(f.size() == f3.size());
+  assert(f.size() == f2.size());
+  assert(f.size() == f3.size());
 
   std::cerr << "Emptying f, f2, and f3, with different methods...\n";
   int i2 = 0;
@@ -94,16 +95,16 @@ int main(int argc, char** argv)
     int i = f.front()->second;
     if(argc > 2)
       std::cerr << "f.front()->second = " << i << "\n";
-    CGAL_assertion_code(bool i_is_in_f2 =) f2.erase(i);
-    CGAL_assertion_code(bool i_is_in_f3 =) f3.erase(i);
-    CGAL_assertion( i_is_in_f2 );
-    CGAL_assertion( i_is_in_f3 );
+    assert_code(bool i_is_in_f2 =) f2.erase(i);
+    assert_code(bool i_is_in_f3 =) f3.erase(i);
+    assert( i_is_in_f2 );
+    assert( i_is_in_f3 );
     int new_i2 = f.front()->first;
     if(argc > 2)
       std::cerr << "f.front()->first = " << new_i2 << "\n";
-    CGAL_assertion(new_i2>=i2);
+    assert(new_i2>=i2);
     i2=new_i2;
-    CGAL_assertion(i2 == i*i);
+    assert(i2 == i*i);
     f.pop_front();
   }
 
@@ -112,9 +113,9 @@ int main(int argc, char** argv)
 	    << " ,f2.size()=" << f2.size()
 	    << " ,f3.size()=" << f3.size()
 	    << "\n";
-  CGAL_assertion(f.size()==0);
-  CGAL_assertion(f2.empty());
-  CGAL_assertion(f3.empty());
+  assert(f.size()==0);
+  assert(f2.empty());
+  assert(f3.empty());
 
   std::cerr << "Filling f with f(i)=i*i, i=0.." << number_of_elements-1 << "...\n";
   for(unsigned int n=0; n<number_of_elements; n++)
@@ -124,7 +125,7 @@ int main(int argc, char** argv)
 
   std::cerr << "Check size: "
 	    << "f.size()=" << f.size() << "\n";
-  CGAL_assertion(f.size()==number_of_elements);
+  assert(f.size()==number_of_elements);
 
   std::cerr << "Emptying f...\n";
   i2=0;
@@ -133,17 +134,17 @@ int main(int argc, char** argv)
   {
     int i = f.front()->second;
     int new_i2 = f.front()->first;
-    CGAL_assertion(new_i2>=i2);
+    assert(new_i2>=i2);
     i2=new_i2;
-    CGAL_assertion(i2 == i*i);
+    assert(i2 == i*i);
     f.pop_front();
     ++counter;
   }
 
   std::cerr << "Check size: "
 	    << "f.size()=" << f.size() << "\n";
-  CGAL_assertion(f.size()==0);
-  CGAL_assertion(counter==number_of_elements);
+  assert(f.size()==0);
+  assert(counter==number_of_elements);
 
   std::cerr << "Filling f with f(i)=i*i, i=0.." << number_of_elements -1 << "...\n";
   for(unsigned int n=0; n<number_of_elements; n++)
@@ -154,7 +155,7 @@ int main(int argc, char** argv)
   f.clear();
   std::cerr << "Check size: "
 	    << "f.size()=" << f.size() << "\n";
-  CGAL_assertion(f.size()==0);
+  assert(f.size()==0);
 
   return 0;
 }
