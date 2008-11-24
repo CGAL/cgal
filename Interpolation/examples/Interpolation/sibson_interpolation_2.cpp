@@ -6,7 +6,7 @@
 #include <CGAL/sibson_gradient_fitting.h>
 #include <CGAL/interpolation_functions.h>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_2<K>               Delaunay_triangulation;
 typedef CGAL::Interpolation_gradient_fitting_traits_2<K> Traits;
 

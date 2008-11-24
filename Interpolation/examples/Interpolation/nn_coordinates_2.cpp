@@ -2,7 +2,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/natural_neighbor_coordinates_2.h>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_2<K>             Delaunay_triangulation;
 typedef std::vector< std::pair< K::Point_2, K::FT  > >
                                                       Point_coordinate_vector;

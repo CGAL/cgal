@@ -3,7 +3,7 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/regular_neighbor_coordinates_2.h>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Regular_triangulation_euclidean_traits_2<K> Gt;
 typedef CGAL::Regular_triangulation_2<Gt>              Regular_triangulation;

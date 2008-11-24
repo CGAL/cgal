@@ -16,7 +16,7 @@
 
 #include <cassert>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                         Coord_type;
 typedef K::Vector_2                                   Vector;
 typedef K::Point_2                                    Point;
