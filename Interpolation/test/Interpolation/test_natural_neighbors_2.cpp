@@ -17,14 +17,13 @@
 //
 // Author(s)     : Naceur MESKINI.
 
-#include <CGAL/basic.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <CGAL/_test_natural_neighbors_2.cpp>
 
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_2<K>            Dt;
 
 

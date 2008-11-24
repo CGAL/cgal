@@ -17,18 +17,16 @@
 //
 // Author(s)     : Julia Floetotto
 
-#include <CGAL/basic.h>
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <CGAL/_test_interpolation_functions_2.cpp>
 
-struct K : CGAL::Exact_predicates_exact_constructions_kernel {};
+typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_2<K>            Dt;
 
-struct K2 : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K2;
 typedef CGAL::Delaunay_triangulation_2<K2>            Dt2;
 
 int main()

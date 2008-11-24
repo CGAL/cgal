@@ -17,14 +17,8 @@
 //
 // Author(s)     : Julia Floetotto
 
-#include <CGAL/basic.h>
-#include <CGAL/double.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-// #include <CGAL/Homogeneous.h>
-// #include <CGAL/MP_Float.h>
-
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
@@ -33,10 +27,10 @@
 #include <CGAL/_test_surface_neighbors_3.cpp>
 
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_3<K>                   Dt;
 
-struct K2 : CGAL::Exact_predicates_exact_constructions_kernel {};
+typedef CGAL::Exact_predicates_exact_constructions_kernel K2;
 typedef CGAL::Delaunay_triangulation_3<K2>                   Dt2;
 
 //Hierarchy with exact pred exact const. kernel:
@@ -46,10 +40,6 @@ typedef CGAL::Triangulation_data_structure_3<Vbh>        Tds;
 typedef CGAL::Delaunay_triangulation_3<K2,Tds>            Dt1;
 typedef CGAL::Triangulation_hierarchy_3<Dt1>              Dh;
 
-// //Homogeneous Kernel:
-// typedef CGAL::MP_Float                                  NT;
-// typedef CGAL::Homogeneous<NT>                           K3;
-// typedef CGAL::Delaunay_triangulation_3<K3>                   Dt3;
 
 // Aff_transformation:
 typedef CGAL::Aff_transformation_3<K2>                   Transformation;
@@ -61,10 +51,6 @@ int main()
   _test_surface_neighbors_3_sphere( Dt() );
   std::cout << " done." << std::endl << std::endl;
 
- //  std::cout << "Using Homogeneous_kernel: " << std::endl ;
-//   std::cout << "Testing surface_neighbors_3 on a sphere ";
-//   _test_surface_neighbors_3_sphere( Dt3() );
-//   std::cout << " done." << std::endl << std::endl;
 
   std::cout << "Using Exact_predicates_exact_constructions_kernel: "
 	    << std::endl;
