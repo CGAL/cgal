@@ -5,8 +5,7 @@
 #include <CGAL/algorithm.h>
 #include <cassert>
 
-
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Triangulation_vertex_base_2<K>             Vbb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;

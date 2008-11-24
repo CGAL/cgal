@@ -3,7 +3,7 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Triangulation_face_base_with_info_2<CGAL::Color,K> Fb;

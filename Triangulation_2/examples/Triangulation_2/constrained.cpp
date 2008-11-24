@@ -4,7 +4,7 @@
 #include <cassert>
 #include <iostream>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Triangulation_vertex_base_2<K>                     Vb;
 typedef CGAL::Constrained_triangulation_face_base_2<K>           Fb;

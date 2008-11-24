@@ -32,7 +32,7 @@ public:
   Vertex_handle get_associated_vertex() {return va_ ; }
 };
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef My_vertex_base<K> Vb;
 typedef CGAL::Triangulation_data_structure_2<Vb> Tds;
