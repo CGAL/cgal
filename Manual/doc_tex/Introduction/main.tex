@@ -42,9 +42,9 @@ of computational geometry. Each part consists of several chapters,
 and each chapter is split into a {\em user manual}  and a {\em reference
 manual}. The user manual gives the general idea and comes with examples.
 The reference manual presents the {\sc Api} of the various classes
-and funcions.
+and functions.
 
-The manual has a table of contents, as well as a package overview
+The manual has a table of contents, and an index, as well as a package overview,
 which gives a short paragraph what the package is about, what license
 it has, and on which other packages it depends. It further provides
 links to precompiled demo programs for the Windows platform.
@@ -69,18 +69,18 @@ points on the  convex hull to standard output \ccc{std::cout}.
 \ccIncludeExampleCode{Convex_hull_2/ex_convex_hull_2.cpp}
 
 
-All \cgal\ header files are in the subdirectory ``CGAL''.  All \cgal\ 
+All \cgal\ header files are in the subdirectory ``include/CGAL''.  All \cgal\ 
 classes and functions are in the namespace ``CGAL''.  The geometric
 primitives, like point, are defined in a kernel. \cgal\ comes
 with several kernels, and as the convex hull algorithm only makes
 comparisons of coordinates and orientation tests of input points,
 we can choose a kernel that provides exact predicates, but no 
-exact geometric constructions.
+exact geometric construction.
 
 You next see input and output stream iterators templated with the 
 point type.  Iterators are a generalization of pointers, that is
 they can be dereferenced, and one can increment them.  They
-come in \ccc{begin/end} pairs (where \ccc{end} is a pointer 
+come in iterator ranges (\ccc{begin/end} pairs, where \ccc{end} is a pointer 
 past-the end), and you get from \ccc{begin} to \ccc{end} by 
 incrementing the iterator. When you dereference an iterator you 
 obtain what it points to, in our case a \ccc{Point_2}. 
