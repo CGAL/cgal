@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;

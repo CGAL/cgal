@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K> CDT;
 typedef CDT::Point Point;
 typedef CDT::Vertex_handle Vertex_handle;
