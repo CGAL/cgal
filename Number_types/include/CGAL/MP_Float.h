@@ -562,10 +562,10 @@ compare_bitlength(const MP_Float &a, const MP_Float &b)
   if (aa.size() > bb.size()) return LARGER;
   if (aa.size() < bb.size()) return SMALLER;
 
-  for (int i = aa.size()-1; i >= 0; --i)
+  for (std::size_t i = aa.size(); i > 0; --i)
   {
-    if (aa.v[i] > bb.v[i]) return LARGER;
-    if (aa.v[i] < bb.v[i]) return SMALLER;
+    if (aa.v[i-1] > bb.v[i-1]) return LARGER;
+    if (aa.v[i-1] < bb.v[i-1]) return SMALLER;
   }
   return EQUAL;
 }
