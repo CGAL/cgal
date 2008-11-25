@@ -181,11 +181,6 @@ void test_with_tag(Tag = CGAL::Non_manifold_tag())
   std::cout << "\nKERNEL CGAL::Filtered_kernel<CGAL::Cartesian<float> >...\n";
   Test_with_kernel<CGAL::Filtered_kernel<CGAL::Cartesian<float> >,Tag>()();
 
-#ifdef CGAL_USE_CORE
-  Test_with_kernel<CGAL::Filtered_kernel<CGAL::Simple_cartesian<CORE::Expr> >,
-    Tag>()(DO_NOT_RUN);
-#endif // #ifdef CGAL_USE_CORE
-
   Test_with_kernel<CGAL::Cartesian<CGAL::Lazy_exact_nt<double> >,
     Tag >()(DO_NOT_RUN);
 #endif // #ifndef CGAL_SURFACE_MESHER_SINGLE_TEST
