@@ -74,9 +74,9 @@ int main(int argc, char *argv[]){
 
   
   CGAL::PDB::PDB outpdb;
-  char next_chain='A';
+
   outpdb.insert(CGAL::PDB::PDB::Model_key(0), CGAL::PDB::Model());
-  CGAL::PDB::Model& outm= outpdb.find(CGAL::PDB::PDB::Model_key(0))->model();
+  outpdb.find(CGAL::PDB::PDB::Model_key(0))->model();
   for (unsigned int i=0; i < input_files.size(); ++i){
     std::ifstream in(input_files[i].c_str());
     if (!in){
