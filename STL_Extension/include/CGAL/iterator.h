@@ -473,6 +473,10 @@ operator+( typename N_step_adaptor_derived<I,N>::difference_type n,
            N_step_adaptor_derived<I,N> i)
 { return i += n; }
 
+template < class I, class P > struct Filter_iterator;
+
+template < class I, class P >
+bool operator==(const Filter_iterator<I,P>&, const Filter_iterator<I,P>&);
 
 template < class I, class P >
 struct Filter_iterator {
@@ -538,18 +542,7 @@ public:
 
   bool is_end() const { return (c_ == e_); }
 
-
-  bool operator==(const Filter_iterator& it2) const
-  {
-    CGAL_precondition(this->e_ == it2.e_);
-    return this->base() == it2.base();
-  }
-  
-  bool operator!=(const Filter_iterator<I,P>& it2) const
-  { 
-    return !(*this == it2); 
-  }
-  
+  friend bool operator== <>(const Self&, const Self&);
 };
 
 template < class I, class P >
@@ -562,6 +555,20 @@ inline Filter_iterator< I, P >
 filter_iterator(I e, const P& p, I c)
 { return Filter_iterator< I, P >(e, p, c); }
 
+template < class I, class P >
+inline
+bool operator==(const Filter_iterator<I,P>& it1,
+                const Filter_iterator<I,P>& it2)
+{
+  CGAL_precondition(it1.e_ == it2.e_);
+  return it1.base() == it2.base();
+}
+
+template < class I, class P >
+inline
+bool operator!=(const Filter_iterator<I,P>& it1,
+                const Filter_iterator<I,P>& it2)
+{ return !(it1 == it2); }
 
 template <class I1,class Op>
 class Join_input_iterator_1 : public 
