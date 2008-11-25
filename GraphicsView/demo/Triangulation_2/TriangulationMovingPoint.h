@@ -40,7 +40,7 @@ protected:
 template <typename T>
 TriangulationMovingPoint<T>::TriangulationMovingPoint(T * dt_,
 							  QObject* parent)
-  :  GraphicsViewInput(parent), dt(dt_), movePointToInsert(false), insertedPoint(false), vh()
+  :  GraphicsViewInput(parent), dt(dt_), vh(), movePointToInsert(false), insertedPoint(false)
 {}
 
 
