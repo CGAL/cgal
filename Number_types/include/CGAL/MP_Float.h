@@ -319,9 +319,10 @@ public:
   }
 
   // Accessory function that finds the least significant bit set (its position).
-  static std::size_t lsb(limb l)
+  static unsigned short 
+  lsb(limb l)
   {
-    std::size_t nb = 0;
+    unsigned short nb = 0;
     for (; (l&1)==0; ++nb, l>>=1)
       ;
     return nb;
@@ -335,7 +336,7 @@ public:
     if (is_zero())
       return;
     // First find how many least significant bits are 0 in the last digit.
-    std::size_t nb = lsb(v[0]);
+    unsigned short nb = lsb(v[0]);
     if (nb != 0)
       *this = *this * (1<<(log_limb-nb));
     CGAL_assertion((v[0]&1) != 0);
@@ -350,7 +351,7 @@ public:
       return 1;
     MP_Float r = (sign() > 0) ? *this : - *this;
     CGAL_assertion(r.v.begin() != r.v.end());
-    std::size_t nb = lsb(r.v[0]);
+    unsigned short nb = lsb(r.v[0]);
     r.v.clear();
     r.v.push_back(1<<nb);
     return (sign() > 0) ? r : -r;
