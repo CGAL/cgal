@@ -129,7 +129,7 @@ and belongs to a tetrahedral cell of the complex.}
 \ccCreation
 \ccCreationVariable{A}
 
-\ccConstructor{Alpha_shape_3(FT alpha = 0,
+\ccConstructor{Alpha_shape_3(NT alpha = 0,
 		        Mode m = REGULARIZED);}
 {Introduces an empty alpha shape data structure
 \ccVar\ for and set the
@@ -146,7 +146,7 @@ Be careful that this operation destroy the triangulation.}
 		Alpha_shape_3(
 			InputIterator first,
 			InputIterator last,
-                const FT& alpha = 0,
+                const NT& alpha = 0,
 	        Mode m = REGULARIZED);}
 {Build an alpha shape data structure in mode \ccc{m} 
 for the points in the range
@@ -177,8 +177,8 @@ before initialization.
 	clear();}
 {Clears the structure.}
 
-\ccMethod{FT
-	set_alpha(const Coord_type& alpha);}
+\ccMethod{NT
+	set_alpha(const NT& alpha);}
 {Sets the $\alpha$-value to \ccc{alpha}.
  Returns the previous $\alpha$-value.
 \ccPrecond \ccc{alpha} $\geq 0$.}
@@ -232,11 +232,11 @@ entails a partial re-computation of the data structure.}
 	get_mode(void) const;}
 {Returns whether \ccVar\ is general or regularized.}
 
-\ccMethod{const FT&
+\ccMethod{const NT&
 	get_alpha(void) const;}
 {Returns the current $\alpha$-value.}
 
-\ccMethod{const FT&  get_nth_alpha(int n) const;}
+\ccMethod{const NT&  get_nth_alpha(int n) const;}
 {Returns the $n$-th alpha-value, sorted in an increasing order.
  \ccPrecond \ccc{n} < number of alphas.}
 
@@ -245,33 +245,33 @@ entails a partial re-computation of the data structure.}
 
 \ccMethod{Classification_type
            classify(const Point& p, 
-	const FT& alpha = get_alpha()) const;}
+	const NT& alpha = get_alpha()) const;}
 {Locates a point  \ccc{p} in the underlying triangulation and Classifies the 
 associated k-face with respect to \ccc{alpha}.}
 
 \ccMethod{Classification_type
-           classify(Cell_handle f, const FT& alpha = get_alpha()) const;}
+           classify(Cell_handle f, const NT& alpha = get_alpha()) const;}
 {Classifies the cell \ccc{f} of the underlying triangulation with
 respect 
 to \ccc{alpha}.}
 
 \ccMethod{Classification_type
-           classify(Facet f, const FT& alpha = get_alpha()) const;}
+           classify(Facet f, const NT& alpha = get_alpha()) const;}
 {Classifies the facet \ccc{e} of the underlying triangulation with
 respect to \ccc{alpha}.}
 
 \ccMethod{Classification_type
-           classify(Cell_handle f, int i, const FT& alpha = get_alpha()) const;}
+           classify(Cell_handle f, int i, const NT& alpha = get_alpha()) const;}
 {Classifies the facet of the cell \ccc{f} opposite to the vertex with index
 \ccc{i} 
 of the underlying triangulation with respect to \ccc{alpha}.}
 
 \ccMethod{Classification_type
-           classify(const Edge& e, const FT& alpha = get_alpha()) const;}
+           classify(const Edge& e, const NT& alpha = get_alpha()) const;}
 {Classifies the edge \ccc{e} with respect to \ccc{alpha} . }
 
 \ccMethod{Classification_type
-           classify(Vertex_handle v, const FT& alpha = get_alpha()) const;}
+           classify(Vertex_handle v, const NT& alpha = get_alpha()) const;}
 {Classifies the vertex \ccc{v} of the underlying triangulation with respect to \ccc{alpha}.}
 
 \ccMethod {template<class OutputIterator>
@@ -333,22 +333,22 @@ sorted sequence of $\alpha$-values of the family of alpha shapes.}
 \ccMethod{Alpha_iterator alpha_end() const;}
 {Returns the corresponding past-the-end iterator.}
 
-\ccMethod{Alpha_iterator alpha_find(const FT& alpha) const;}
+\ccMethod{Alpha_iterator alpha_find(const NT& alpha) const;}
 {Returns an iterator pointing to an element with $\alpha$-value
 \ccc{alpha}, or the corresponding past-the-end iterator if such 
 an element is not found.}
 
-\ccMethod{Alpha_iterator alpha_lower_bound(const FT& alpha) const;}
+\ccMethod{Alpha_iterator alpha_lower_bound(const NT& alpha) const;}
 {Returns an iterator pointing to the first element with
 $\alpha$-value not less than \ccc{alpha}.}
 
-\ccMethod{Alpha_iterator alpha_upper_bound(const FT& alpha) const;}
+\ccMethod{Alpha_iterator alpha_upper_bound(const NT& alpha) const;}
 {Returns an iterator pointing to the first element with $\alpha$-value
 greater than \ccc{alpha}.}
 
 \ccHeading{Operations}
 
-\ccMethod{int number_of_solid_components(const FT& alpha = get_alpha()) const;}
+\ccMethod{int number_of_solid_components(const NT& alpha = get_alpha()) const;}
 {Returns the number of solid components of \ccVar, that is, the number of
 components of its 
 regularized version.}
