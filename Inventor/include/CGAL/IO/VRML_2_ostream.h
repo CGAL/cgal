@@ -53,7 +53,7 @@ public:
         // cerr or a file handle to /dev/null. The latter one would
         // mimick the behaviour that one can still use a stream with
         // an invalid stream, but without producing any output.
-        CGAL_assertion( m_os);
+        CGAL_assertion( m_os != 0 );
         return *m_os;
     }
 private:
