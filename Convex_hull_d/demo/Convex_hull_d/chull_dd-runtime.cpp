@@ -94,7 +94,7 @@ void print_to_file(pp_int V, int n, int d, std::string s)
 void read_from_file(pp_int& V, int& n, int& d, std::string s)
 {
   std::ifstream In(s.c_str());
-  CGAL_assertion(In);
+  CGAL_assertion(In.good());
   In >> d >> n;
   create(V,n,d);int i=0,c;
   while ( In >> c ) { V[i/d][i%d]=c; ++i;}
