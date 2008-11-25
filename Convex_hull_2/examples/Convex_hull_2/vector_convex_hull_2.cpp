@@ -5,7 +5,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
-typdef std::vector<Point_2> Points;
+typedef std::vector<Point_2> Points;
 
 int main()
 {
