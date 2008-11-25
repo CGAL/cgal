@@ -33,6 +33,7 @@
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <fstream>
+#include <cassert>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -155,7 +156,7 @@ private:
   Nef_polyhedron load_off(const char* name) {
     Polyhedron poly;
     std::ifstream off_file(name);
-    CGAL_assertion(off_file != NULL);
+    assert(off_file != NULL);
     off_file >> poly;
     Nef_polyhedron N(poly);
     return N;
@@ -166,7 +167,7 @@ private:
     std::strcpy(fullname, datadir);
     std::strcat(fullname, name);
     std::ifstream input(fullname);
-    CGAL_assertion_msg(input,"could not open file");
+    assertion(input);
     Nef_polyhedron tmp;
     input >> tmp;
     delete[] fullname;
@@ -176,28 +177,28 @@ private:
   void test_cubes() {
     if(!cubes_tested) {
       Nef_polyhedron N = load_off("data/cube.off");
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube.nef3.SH"));
 
       N = load_off("data/wrongly_oriented_cube.off");
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube.nef3.SH"));
 
       N = load_off("data/cube+v.off");
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube.nef3.SH"));
       
       N = load_off("data/cube+vee.off");
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube.nef3.SH"));
       
       N = load_off("data/cube+veeee.off");
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube.nef3.SH")); 
 
       N = load_off("data/cube+vONe.off");
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube.nef3.SH"));
       cubes_tested = true;
     }
   }
@@ -210,10 +211,10 @@ private:
       N2.is_valid(0,0);
       Nef_polyhedron N3 = N1.intersection(N2);
       N3.is_valid(0,0);
-      CGAL_assertion(does_nef3_equals_file(N3,"intersWithIsolatedEdgeRef1.nef3.SH"));
+      assert(does_nef3_equals_file(N3,"intersWithIsolatedEdgeRef1.nef3.SH"));
       N3 = N1.symmetric_difference(N2);
       N3.is_valid(0,0);
-      CGAL_assertion(does_nef3_equals_file(N3,"intersWithIsolatedEdgeRef2.nef3.SH"));
+      assert(does_nef3_equals_file(N3,"intersWithIsolatedEdgeRef2.nef3.SH"));
       isolated_edge_tested = true;
     }
   }
@@ -228,23 +229,23 @@ private:
     std::ofstream out("data/temp.off");
     out << P;
     N = load_off("data/temp.off");
-    CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+    assert(does_nef3_equals_file(N,"cube.nef3.SH"));
 
     N = load_nef3("topology.nef3.SH");
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N,"topology.nef3.SH"));
+    assert(N.is_valid(0,0));
+    assert(does_nef3_equals_file(N,"topology.nef3.SH"));
 
     if(Infi_box::extended_kernel()) {
       N = load_nef3("topology.nef3.EH");
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"topology.nef3.EH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"topology.nef3.EH"));
     }
   }
 
   void newell() {
     Nef_polyhedron N = load_off("data/star.off");
-    CGAL_assertion(N.is_valid(0,0));    
-    CGAL_assertion(does_nef3_equals_file(N,"newell.nef3.SH"));
+    assert(N.is_valid(0,0));    
+    assert(does_nef3_equals_file(N,"newell.nef3.SH"));
   }
 
   void transformation() {
@@ -256,9 +257,9 @@ private:
                                       0,0,1,1));
     N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(4,0,0,1)));
     
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
-    CGAL_assertion(N == C);
+    assert(N.is_valid(0,0));
+    assert(does_nef3_equals_file(N,"cube.nef3.SH"));
+    assert(N == C);
 
     double alpha = CGAL_PI * 20 / 180.0;
     int tmpy = static_cast<int>(std::sin( alpha) * 128*256);
@@ -287,14 +288,14 @@ private:
     N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2,0,0,1)));
     N.transform(rotx20.inverse());
     N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(16,21,2,3)));
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(N == C);
+    assert(N.is_valid(0,0));
+    assert(N == C);
 
     if(Infi_box::extended_kernel()) {    
       N = Nef_polyhedron(Plane_3(1,1,0,0));
-      CGAL_assertion(N.is_valid(0,0));      
+      assert(N.is_valid(0,0));      
       Nef_polyhedron N1(Plane_3(1,-2,3,0));
-      CGAL_assertion(N1.is_valid(0,0));
+      assert(N1.is_valid(0,0));
       N = N.join(N1);
       N1 = N;
       N.transform(rotx20);
@@ -302,100 +303,100 @@ private:
       N.transform(Aff_transformation_3( CGAL::SCALING, 2, 1));
       N.transform(rotx20.inverse());
       N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2,0,0,1)));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(N == N1);
+      assert(N.is_valid(0,0));
+      assert(N == N1);
     }
   }
 
   void construction() {
 
     Nef_polyhedron N = Nef_polyhedron(Nef_polyhedron::EMPTY);
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N,"empty.nef3.SH")); 
+    assert(N.is_valid(0,0));
+    assert(does_nef3_equals_file(N,"empty.nef3.SH")); 
     N.clear();
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N,"empty.nef3.SH")); 
+    assert(N.is_valid(0,0));
+    assert(does_nef3_equals_file(N,"empty.nef3.SH")); 
 
     N = Nef_polyhedron(Nef_polyhedron::COMPLETE);
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N,"complete.nef3.SH")); 
+    assert(N.is_valid(0,0));
+    assert(does_nef3_equals_file(N,"complete.nef3.SH")); 
     
      if(Infi_box::extended_kernel()) {     
       N = Nef_polyhedron(Plane_3(3,4,5,0)); 
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p3-4-5-0.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p3-4-5-0.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(3,4,5,31));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p3-4-5-31.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p3-4-5-31.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(0,2,2,0));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p0-2-2-0.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p0-2-2-0.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(0,2,2,29)); 
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p0-2-2-29.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p0-2-2-29.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(1,2,3,0));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-3-0.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p1-2-3-0.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(1,2,3,23));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-3-23.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p1-2-3-23.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(1,2,4,0));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-4-0.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p1-2-4-0.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(1,2,4,23));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-2-4-23.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p1-2-4-23.nef3.EH")); 
          
       N = Nef_polyhedron(Plane_3(4,2,1,17));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p4-2-1-17.nef3.EH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p4-2-1-17.nef3.EH"));
      
       N = Nef_polyhedron(Plane_3(2,4,1,17));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-4-1-17.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p2-4-1-17.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(-4,-2,-1,17));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p-4--2--1-17.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p-4--2--1-17.nef3.EH")); 
 
       N = Nef_polyhedron(Plane_3(2,0,2,0));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-0-2-0.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p2-0-2-0.nef3.EH")); 
      
       N = Nef_polyhedron(Plane_3(2,2,0,0));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-2-0-0.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p2-2-0-0.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(-2,0,-2,0));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p-2-0--2-0.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p-2-0--2-0.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(3,2,1,0));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p3-2-1-0.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p3-2-1-0.nef3.EH")); 
      
       N = Nef_polyhedron(Plane_3(2,3,1,0));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p2-3-1-0.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p2-3-1-0.nef3.EH")); 
 
       N = Nef_polyhedron(Plane_3(1,-1,5,0));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p1--1-5-0.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p1--1-5-0.nef3.EH")); 
       
       N = Nef_polyhedron(Plane_3(0,0,1,10));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p0-0-1-10.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p0-0-1-10.nef3.EH")); 
 
       N = Nef_polyhedron(Plane_3(1,1,1,1));
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube+p1-1-1-1.nef3.EH")); 
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube+p1-1-1-1.nef3.EH")); 
     }      
   }
 
@@ -410,33 +411,33 @@ private:
 
       N = load_nef3("point_location.nef3.EH");
       o = N.locate(Point_3(-3,-3,0));
-      CGAL_assertion(assign(c,o));
+      assert(assign(c,o));
     }
 
     N = load_nef3("grid.nef3.SH");
-    CGAL_assertion(N.is_valid(0,0));
+    assert(N.is_valid(0,0));
     o = N.locate(Point_3(2,2,-1));
-    CGAL_assertion(assign(c,o));
+    assert(assign(c,o));
     o = N.locate(Point_3(2,0,-1));
-    CGAL_assertion(assign(c,o));
+    assert(assign(c,o));
     
     N = load_nef3("single_vertex.nef3.SH");
-    CGAL_assertion(N.is_valid(0,0));
+    assert(N.is_valid(0,0));
     o = N.locate(Point_3(4,1,3));
-    CGAL_assertion(assign(c,o));
+    assert(assign(c,o));
   }
 
   void point_location_SNC_in(const char* name) {
 
     Nef_polyhedron N = load_nef3(name);
-    CGAL_assertion(N.is_valid(0,0));
+    assert(N.is_valid(0,0));
     
     Vertex_const_iterator vin;
     Vertex_const_handle vout;
     CGAL_forall_vertices(vin,N) {
       Object_handle o = N.locate(vin->point());
-      CGAL_assertion(assign(vout,o));
-      CGAL_assertion(vin == vout);
+      assert(assign(vout,o));
+      assert(vin == vout);
     }
     
     Halfedge_const_iterator ein;
@@ -445,8 +446,8 @@ private:
       Vector_3 d(ein->twin()->source()->point() - ein->source()->point());
       Point_3 s(ein->source()->point());
       Object_handle o = N.locate(s+(d/RT(2)));
-      CGAL_assertion(assign(eout,o));
-      CGAL_assertion(ein == eout || ein == eout->twin());
+      assert(assign(eout,o));
+      assert(ein == eout || ein == eout->twin());
     }
     
     Halffacet_const_iterator fin;
@@ -454,7 +455,7 @@ private:
     CGAL_forall_halffacets(fin,N) {
       Halffacet_cycle_const_iterator fc(fin->facet_cycles_begin());
       SHalfedge_const_handle e;
-      CGAL_assertion(fc.is_shalfedge());
+      assert(fc.is_shalfedge());
       e = SHalfedge_const_handle(fc);
       SHalfedge_around_facet_const_circulator ec(e),ee(e);
       Vertex_const_handle v_min = (ec++)->source()->center_vertex();
@@ -469,8 +470,8 @@ private:
 		   1-CGAL_NTS abs(orth.hz()));
       vec = vec / RT(2);
       Object_handle o = N.locate(v_min->point()+vec);
-      CGAL_assertion(assign(fout,o));
-      CGAL_assertion(fin->plane() == fout->plane() || 
+      assert(assign(fout,o));
+      assert(fin->plane() == fout->plane() || 
 			  fin->plane() == fout->twin()->plane());
     }
     
@@ -492,8 +493,8 @@ private:
       else {
 	o = N.locate(p+vec);
       }
-      CGAL_assertion(assign(Cout,o));
-      CGAL_assertion(Cin == Cout);
+      assert(assign(Cout,o));
+      assert(Cin == Cout);
     }
   }
 
@@ -505,121 +506,121 @@ private:
       
       Point_3 p;
     
-      CGAL_assertion(!is.does_contain_internally(
+      assert(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(0,0,0)));
-      CGAL_assertion(!is.does_contain_internally(
+      assert(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(2,0,0)));
-      CGAL_assertion(!is.does_contain_internally(
+      assert(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(3,0,0)));
-      CGAL_assertion(!is.does_contain_internally(
+      assert(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(-1,0,0)));
-      CGAL_assertion(!is.does_contain_internally(
+      assert(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(1,1,0)));
-      CGAL_assertion(!is.does_contain_internally(
+      assert(!is.does_contain_internally(
 			    Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			    Point_3(7,25,11)));
-      CGAL_assertion(is.does_contain_internally(
+      assert(is.does_contain_internally(
 			   Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
 			   Point_3(1,0,0)));
 
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(0,0,0), Point_3(-1,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(0,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,1)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(0,2,0), Point_3(0,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(0,3,0), Point_3(0,1,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(0,4,0), Point_3(0,2,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(1,5,0), Point_3(1,7,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(1,7,0), Point_3(1,5,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(3,0,0), Point_3(1,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(3,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,3,0), Point_3(0,1,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,3,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,3,0), Point_3(0,1,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(3,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,3,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(3,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,3,0), Point_3(0,1,0)),
 		       	   Segment_3(Point_3(3,0,0), Point_3(1,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
+      assert(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,3,0)),
 		       	   Segment_3(Point_3(3,0,0), Point_3(1,0,0)), p));
-      CGAL_assertion(is.does_intersect_internally(
+      assert(is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      CGAL_assertion(p == Point_3(0,0,0));
+      assert(p == Point_3(0,0,0));
 
       Halffacet_const_iterator hf;
     
-      CGAL_assertion(!is.does_contain_internally(
+      assert(!is.does_contain_internally(
 			    N.halffacets_begin(), Point_3(0,0,0)));
       CGAL_forall_halffacets(hf, N)
-	CGAL_assertion(!is.does_intersect_internally(
+	assert(!is.does_intersect_internally(
 			    Segment_3(Point_3(-31,15,0),Point_3(-31,15,1)),hf,p));
       CGAL_forall_halffacets(hf, N)
-	CGAL_assertion(!is.does_intersect_internally(
+	assert(!is.does_intersect_internally(
 			    Segment_3(Point_3(-31,15,-1),Point_3(-31,15,0)),hf,p));
       CGAL_forall_halffacets(hf, N)
-	CGAL_assertion(!is.does_intersect_internally(
+	assert(!is.does_intersect_internally(
 			    Segment_3(Point_3(-31,15,0),Point_3(-30,15,0)),hf,p));
       CGAL_forall_halffacets(hf, N)
-	CGAL_assertion(!is.does_intersect_internally(
+	assert(!is.does_intersect_internally(
 			    Segment_3(Point_3(-32,15,-1),Point_3(-32,15,0)),hf,p));
       CGAL_forall_halffacets(hf, N)
-	CGAL_assertion(!is.does_intersect_internally(
+	assert(!is.does_intersect_internally(
 			    Segment_3(Point_3(-16,8,-1),Point_3(-16,8,0)),hf,p));
       CGAL_forall_halffacets(hf, N)
-	CGAL_assertion(!is.does_intersect_internally(
+	assert(!is.does_intersect_internally(
 			    Segment_3(Point_3(0,0,-1),Point_3(0,0,1)),hf,p));    
 
       int i=0;
       CGAL_forall_halffacets(hf, N) {
 	bool b = (i == 13 || i == 15);
-	CGAL_assertion( b == is.does_intersect_internally(
+	assert( b == is.does_intersect_internally(
 				  Segment_3(Point_3(-31,15,-1),Point_3(-31,15,1)), 
                                   hf, p));
-	if(b) CGAL_assertion(p == Point_3(-31,15,0));
+	if(b) assert(p == Point_3(-31,15,0));
 	i++;
       }
 
       i=0;
       CGAL_forall_halffacets(hf, N) {
 	bool b = (i == 14 || i == 16);
-	CGAL_assertion( b == is.does_intersect_internally(
+	assert( b == is.does_intersect_internally(
 				   Segment_3(Point_3(-15,7,-1), Point_3(-15,7,1)), 
                                    hf, p));
-	if(b) CGAL_assertion(p == Point_3(-15,7,0));
+	if(b) assert(p == Point_3(-15,7,0));
 	i++;
       }
     }
@@ -630,319 +631,319 @@ private:
     if(Infi_box::extended_kernel()) {  
      
       Nef_polyhedron N = load_nef3("marks_of_halfspheres.nef3.EH");
-      CGAL_assertion(N.is_valid(0,0));
+      assert(N.is_valid(0,0));
       Mark lower, upper;
       int i=0;
       Vertex_const_iterator vi = N.vertices_begin();
  
       do {vi++;} while(++i < 8); //  -1 1 0
-      CGAL_assertion(vi->point() == Point_3(-1,1,0));
+      assert(vi->point() == Point_3(-1,1,0));
       SM_explorer SME(N.SMexplorer(vi));
       SM_point_locator PL(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 1);
-      CGAL_assertion(upper == 0);
+      assert(lower == 1);
+      assert(upper == 0);
       
       do {vi++;} while(++i < 9); //  0 1 -1
-      CGAL_assertion(vi->point() == Point_3(0,1,-1));
+      assert(vi->point() == Point_3(0,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 1);
+      assert(lower == 0);
+      assert(upper == 1);
       
       do {vi++;} while(++i < 10); //  1 1 0
-      CGAL_assertion(vi->point() == Point_3(1,1,0));
+      assert(vi->point() == Point_3(1,1,0));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 1);
+      assert(lower == 0);
+      assert(upper == 1);
       
       do {vi++;} while(++i < 11); //  0 1 1
-      CGAL_assertion(vi->point() == Point_3(0,1,1));
+      assert(vi->point() == Point_3(0,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 1);
-      CGAL_assertion(upper == 0);
+      assert(lower == 1);
+      assert(upper == 0);
       
       do {vi++;} while(++i < 12); //  0 0 -1
-      CGAL_assertion(vi->point() == Point_3(0,0,-1));
+      assert(vi->point() == Point_3(0,0,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 1);
+      assert(lower == 0);
+      assert(upper == 1);
       
       do {vi++;} while(++i < 13); //  0 0 1
-      CGAL_assertion(vi->point() == Point_3(0,0,1));
+      assert(vi->point() == Point_3(0,0,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 1);
-      CGAL_assertion(upper == 0);
+      assert(lower == 1);
+      assert(upper == 0);
       
       do {vi++;} while(++i < 14); //  -1 0 0
-      CGAL_assertion(vi->point() == Point_3(-1,0,0));
+      assert(vi->point() == Point_3(-1,0,0));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 1);
-      CGAL_assertion(upper == 0);
+      assert(lower == 1);
+      assert(upper == 0);
       
       do {vi++;} while(++i < 15); //  1 0 0
-      CGAL_assertion(vi->point() == Point_3(1,0,0));
+      assert(vi->point() == Point_3(1,0,0));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 1);
+      assert(lower == 0);
+      assert(upper == 1);
       
       do {vi++;} while(++i < 17); //  -1 1 1
-      CGAL_assertion(vi->point() == Point_3(-1,1,1));
+      assert(vi->point() == Point_3(-1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 1);
-      CGAL_assertion(upper == 0);
+      assert(lower == 1);
+      assert(upper == 0);
       
       do {vi++;} while(++i < 18); //  1 1 1
-      CGAL_assertion(vi->point() == Point_3(1,1,1));
+      assert(vi->point() == Point_3(1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
       
       do {vi++;} while(++i < 21); //  -1 1 -1
-      CGAL_assertion(vi->point() == Point_3(-1,1,-1));
+      assert(vi->point() == Point_3(-1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
       
       do {vi++;} while(++i < 22); //  1 1 -1
-      CGAL_assertion(vi->point() == Point_3(1,1,-1));
+      assert(vi->point() == Point_3(1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 1);
+      assert(lower == 0);
+      assert(upper == 1);
 
       do {vi++;} while(++i < 29); //  -0.5 -0.5 -1
-      CGAL_assertion(vi->point() == Point_3(-1,-1,-2,2));
+      assert(vi->point() == Point_3(-1,-1,-2,2));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
 
       N = load_nef3("rotatedcube.nef3.SH");
       vi = N.vertices_begin();
       i=0;
 
-      CGAL_assertion(vi->point() == Point_3(-57993689, 27367811, 6449, 37023709));
+      assert(vi->point() == Point_3(-57993689, 27367811, 6449, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(-45133849, -45554371, 6449, 37023709));
+      assert(vi->point() == Point_3(-45133849, -45554371, 6449, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(-6436271, 36459971, -52359431, 37023709));
+      assert(vi->point() == Point_3(-6436271, 36459971, -52359431, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(-6423569, 36462211, 52359431, 37023709));
+      assert(vi->point() == Point_3(-6423569, 36462211, 52359431, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(6423569, -36462211, -52359431, 37023709));
+      assert(vi->point() == Point_3(6423569, -36462211, -52359431, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(6436271, -36459971, 52359431, 37023709));
+      assert(vi->point() == Point_3(6436271, -36459971, 52359431, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(45133849, 45554371, -6449, 37023709));
+      assert(vi->point() == Point_3(45133849, 45554371, -6449, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 1);
-      CGAL_assertion(upper == 1);
+      assert(lower == 1);
+      assert(upper == 1);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(57993689, -27367811, -6449, 37023709));
+      assert(vi->point() == Point_3(57993689, -27367811, -6449, 37023709));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
       
 
       N = load_nef3("two_edges.nef3.SH");
       vi = N.vertices_begin();
       i=0;
 
-      CGAL_assertion(vi->point() == Point_3(1,-1,1));
+      assert(vi->point() == Point_3(1,-1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(1,1,-1));
+      assert(vi->point() == Point_3(1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(1,1,1));
+      assert(vi->point() == Point_3(1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
      
 
       N = load_nef3("plane-vertex.nef3.SH");
       vi = N.vertices_begin();
       i=0;
 
-      CGAL_assertion(vi->point() == Point_3(-1,1,-1));
+      assert(vi->point() == Point_3(-1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(-1,1,1));
+      assert(vi->point() == Point_3(-1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(0,1,0));
+      assert(vi->point() == Point_3(0,1,0));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(1,1,-1));
+      assert(vi->point() == Point_3(1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(1,1,1));
+      assert(vi->point() == Point_3(1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
 
       N = load_nef3("is_vertex.nef3.SH");
       vi = N.vertices_begin();
       i=0;
 
-      CGAL_assertion(vi->point() == Point_3(-1,1,-1));
+      assert(vi->point() == Point_3(-1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(-1,1,1));
+      assert(vi->point() == Point_3(-1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(0,-2379,-8118, 5741));
+      assert(vi->point() == Point_3(0,-2379,-8118, 5741));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(0,1,0));
+      assert(vi->point() == Point_3(0,1,0));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(1,1,-1));
+      assert(vi->point() == Point_3(1,1,-1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
 
       vi++; ++i;
-      CGAL_assertion(vi->point() == Point_3(1,1,1));
+      assert(vi->point() == Point_3(1,1,1));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 0);
-      CGAL_assertion(upper == 0);
+      assert(lower == 0);
+      assert(upper == 0);
     
       N = load_nef3("SMlocateOnSEdge.nef3.SH");
-      CGAL_assertion(N.is_valid(0,0));
+      assert(N.is_valid(0,0));
       vi = N.vertices_begin();
       i=0;
 
       do {vi++;} while(++i < 7); 
-      CGAL_assertion(vi->point() == Point_3(0,0,-1,2));
+      assert(vi->point() == Point_3(0,0,-1,2));
       SME = N.SMexplorer(vi);
       PL = SM_point_locator(&*vi);
       PL.marks_of_halfspheres(lower,upper,2);
-      CGAL_assertion(lower == 1);
-      CGAL_assertion(upper == 1);
+      assert(lower == 1);
+      assert(upper == 1);
 
     }
   }
@@ -952,28 +953,28 @@ private:
     test_cubes();
     
     Nef_polyhedron N = load_nef3("simplifySface.nef3.SH");
-    CGAL_assertion(N.is_valid(0,0));
+    assert(N.is_valid(0,0));
     N = N.regularization();
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N,"simplifySfaceRef.nef3.SH"));    
+    assert(N.is_valid(0,0));
+    assert(does_nef3_equals_file(N,"simplifySfaceRef.nef3.SH"));    
     
     N = load_nef3("donotsimplify.nef3.SH");
-    CGAL_assertion(N.is_valid(0,0));
+    assert(N.is_valid(0,0));
     Nef_polyhedron N1 = load_nef3("openSquare.nef3.SH");
-    CGAL_assertion(N1.is_valid(0,0));
+    assert(N1.is_valid(0,0));
     N = N.join(N1);
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N,"donotsimplifyRef.nef3.SH"));
+    assert(N.is_valid(0,0));
+    assert(does_nef3_equals_file(N,"donotsimplifyRef.nef3.SH"));
 
     N = load_nef3("unionfind.nef3.SH");
-    CGAL_assertion(N.is_valid(0,0));
+    assert(N.is_valid(0,0));
     N = N.regularization();
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N,"unionfindRef.nef3.SH"));
+    assert(N.is_valid(0,0));
+    assert(does_nef3_equals_file(N,"unionfindRef.nef3.SH"));
 
     N = load_nef3("nestedFCafterSimpl.nef3.SH");
     N = N.closure();
-    CGAL_assertion(does_nef3_equals_file(N,"nestedFCafterSimplRef.nef3.SH"));
+    assert(does_nef3_equals_file(N,"nestedFCafterSimplRef.nef3.SH"));
   }
 
   void simplification_SM() {
@@ -983,96 +984,96 @@ private:
     Nef_polyhedron N1 = N;
     Nef_polyhedron N2 = N;
     N2.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,1,0,1)));
-    CGAL_assertion(N2.is_valid(0,0));
+    assert(N2.is_valid(0,0));
     N1=N1.intersection(N2);
-    CGAL_assertion(N1.is_valid(0,0));
+    assert(N1.is_valid(0,0));
     N1.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2,-1,4,2)));
     N1 = N.symmetric_difference(N1);
-    CGAL_assertion(N1.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N1,"cube+plane.nef3.SH"));
+    assert(N1.is_valid(0,0));
+    assert(does_nef3_equals_file(N1,"cube+plane.nef3.SH"));
 
     N  = C;
     N1 = N;
     N2 = N;
     N2.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,2,0,1)));
     N1 = N1.intersection(N2);
-    CGAL_assertion(N1.is_valid(0,0));
+    assert(N1.is_valid(0,0));
     N1.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-1,-1,2,1)));
     N1 = N.join(N1);
-    CGAL_assertion(N1.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N1,"cube+line.nef3.SH"));
+    assert(N1.is_valid(0,0));
+    assert(does_nef3_equals_file(N1,"cube+line.nef3.SH"));
 
     N  = C;
     N1 = N;
     N2 = N;
     N2.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,2,2,1)));
     N1 = N1.intersection(N2);
-    CGAL_assertion(N1.is_valid(0,0));
+    assert(N1.is_valid(0,0));
     N1.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-1,-1,0,1)));
     N2 = N.symmetric_difference(N1);
-    CGAL_assertion(N2.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N2,"cube+vertex1.nef3.SH"));
+    assert(N2.is_valid(0,0));
+    assert(does_nef3_equals_file(N2,"cube+vertex1.nef3.SH"));
 
     N  = C;
     N1.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(0,0,-1,1)));
     N2 = N.symmetric_difference(N1);
-    CGAL_assertion(N2.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N2,"cube+vertex2.nef3.SH"));
+    assert(N2.is_valid(0,0));
+    assert(does_nef3_equals_file(N2,"cube+vertex2.nef3.SH"));
   }
 
   void synthesis() {
 
     if(Infi_box::extended_kernel()) {
       Nef_polyhedron N = Nef_polyhedron(Nef_polyhedron::COMPLETE);  
-      CGAL_assertion(N.is_valid(0,0));               
+      assert(N.is_valid(0,0));               
       Nef_polyhedron N1 = Nef_polyhedron(Plane_3(1,0,0,-1));
       N = N.intersection(N1);
-      CGAL_assertion(N.is_valid(0,0));
+      assert(N.is_valid(0,0));
       N1 = Nef_polyhedron(Plane_3(-1,0,0,-1));
       N = N.intersection(N1);
-      CGAL_assertion(N.is_valid(0,0));
+      assert(N.is_valid(0,0));
       N1 = Nef_polyhedron(Plane_3(0,1,0,-1));
       N = N.intersection(N1);
-      CGAL_assertion(N.is_valid(0,0));
+      assert(N.is_valid(0,0));
       N1 = Nef_polyhedron(Plane_3(0,-1,0,-1));
       N = N.intersection(N1);
-      CGAL_assertion(N.is_valid(0,0));
+      assert(N.is_valid(0,0));
       N1 = Nef_polyhedron(Plane_3(0,0,1,-1));
       N = N.intersection(N1);
-      CGAL_assertion(N.is_valid(0,0));
+      assert(N.is_valid(0,0));
       N1 = Nef_polyhedron(Plane_3(0,0,-1,-1));
       N = N.intersection(N1);      
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"cube_created_from_halfspaces.nef3.SH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"cube_created_from_halfspaces.nef3.SH"));
     }
 
     Nef_polyhedron N,N2,P,R,S,T;
     N = load_off("data/centered_cube.off");
-    CGAL_assertion(N.is_valid(0,0));
+    assert(N.is_valid(0,0));
     N2 = N;
     N2.transform(Aff_transformation_3( CGAL::SCALING, 4, 1));
-    CGAL_assertion(N2.is_valid(0,0));
+    assert(N2.is_valid(0,0));
     P = N;
     P.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2,-2,0,1)));
-    CGAL_assertion(P.is_valid(0,0));
+    assert(P.is_valid(0,0));
     R = N;
     R.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2, 2,0,1)));
-    CGAL_assertion(R.is_valid(0,0));
+    assert(R.is_valid(0,0));
     S = N;
     S.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3( 2,-2,0,1)));
-    CGAL_assertion(S.is_valid(0,0));
+    assert(S.is_valid(0,0));
     T = N;
     T.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3( 2, 2,0,1)));
-    CGAL_assertion(T.is_valid(0,0));
+    assert(T.is_valid(0,0));
     N2 = N2.difference(P);
-    CGAL_assertion(N2.is_valid(0,0));
+    assert(N2.is_valid(0,0));
     N2 = N2.difference(T);
-    CGAL_assertion(N2.is_valid(0,0));
+    assert(N2.is_valid(0,0));
     N2 = N2.difference(R);
-    CGAL_assertion(N2.is_valid(0,0));
+    assert(N2.is_valid(0,0));
     N2 = N2.difference(S);
-    CGAL_assertion(N2.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N2,"synthesis.nef3.SH"));
+    assert(N2.is_valid(0,0));
+    assert(does_nef3_equals_file(N2,"synthesis.nef3.SH"));
 
     intersect_with_isolated_edge();
   }
@@ -1083,34 +1084,34 @@ private:
     Nef_polyhedron Y = load_off("data/centered_cube.off");
     X=X.closure();
     X.difference(Y);
-    CGAL_assertion(X.is_valid());
+    assert(X.is_valid());
 
     if(Infi_box::extended_kernel()) {
       Nef_polyhedron T = load_nef3("topology.nef3.EH");
       Nef_polyhedron N = T;
       N = N.boundary();
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"boundary.nef3.EH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"boundary.nef3.EH"));
     
       N = T;
       N = N.interior();
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"interior.nef3.EH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"interior.nef3.EH"));
       
       N = T;
       N = N.closure();
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"closure.nef3.EH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"closure.nef3.EH"));
       
       N = T;
       N = N.regularization();
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"regularization.nef3.EH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"regularization.nef3.EH"));
       
       N = T; 
       N = N.complement();
-      CGAL_assertion(N.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(N,"complement.nef3.EH"));
+      assert(N.is_valid(0,0));
+      assert(does_nef3_equals_file(N,"complement.nef3.EH"));
     }
   }
     
@@ -1126,56 +1127,56 @@ private:
       N2.transform(Aff_transformation_3( CGAL::SCALING, 2, 1));
       
       R = P2.intersection(P);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "mePPinters.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "mePPinters.nef3.SH"));
       R = P2.intersection(N);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "mePNinters.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "mePNinters.nef3.SH"));
       R = N2.intersection(P);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "meNPinters.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "meNPinters.nef3.SH"));
       R = N2.intersection(N);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "meNNinters.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "meNNinters.nef3.SH"));
 		    
       R = P2.join(P);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "mePPjoin.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "mePPjoin.nef3.SH"));
       R = P2.join(N);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "mePNjoin.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "mePNjoin.nef3.SH"));
       R = N2.join(P);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "meNPjoin.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "meNPjoin.nef3.SH"));
       R = N2.join(N);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "meNNjoin.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "meNNjoin.nef3.SH"));
 
       R = P2.difference(P);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "mePPdiff.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "mePPdiff.nef3.SH"));
       R = P2.difference(N);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "mePNdiff.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "mePNdiff.nef3.SH"));
       R = N2.difference(P);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "meNPdiff.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "meNPdiff.nef3.SH"));
       R = N2.difference(N);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "meNNdiff.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "meNNdiff.nef3.SH"));
 		    
       R = P2.symmetric_difference(P);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "mePPsymdiff.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "mePPsymdiff.nef3.SH"));
       R = P2.symmetric_difference(N);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "mePNsymdiff.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "mePNsymdiff.nef3.SH"));
       R = N2.symmetric_difference(P);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "meNPsymdiff.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "meNPsymdiff.nef3.SH"));
       R = N2.symmetric_difference(N);
-      CGAL_assertion(R.is_valid(0,0));
-      CGAL_assertion(does_nef3_equals_file(R, "meNNsymdiff.nef3.SH"));
+      assert(R.is_valid(0,0));
+      assert(does_nef3_equals_file(R, "meNNsymdiff.nef3.SH"));
     }
   }		     
      
@@ -1184,16 +1185,16 @@ private:
     Nef_polyhedron N = load_off("data/octa.off");    
     Nef_polyhedron N1 = N;
     N1.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3( 3, 4,5,9)));
-    CGAL_assertion(N1.is_valid(0,0));
+    assert(N1.is_valid(0,0));
     N = N.symmetric_difference(N1);
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N, "octa_ref.nef3.SH"));
+    assert(N.is_valid(0,0));
+    assert(does_nef3_equals_file(N, "octa_ref.nef3.SH"));
 
     N = load_off("data/2_cycles_on_halfsphere.off");
     N1 = load_off("data/2_cycles_on_halfsphere2.off");
     N = N1.difference(N);
-    CGAL_assertion(N.is_valid(0,0));
-    CGAL_assertion(does_nef3_equals_file(N, "2_cycles_on_halfsphere_ref.nef3.SH"));
+    assert(N.is_valid(0,0));
+    assert(does_nef3_equals_file(N, "2_cycles_on_halfsphere_ref.nef3.SH"));
   }
     
 public:

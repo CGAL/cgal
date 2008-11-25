@@ -50,7 +50,7 @@ typedef CGAL::Quotient<LNT> LFNT2;
 #include <CGAL/OFF_to_nef_3.h>
 #include <CGAL/Timer.h>
 #include <fstream>
-
+#include <cassert>
 
 template<typename Kernel>
 class test {
@@ -112,10 +112,10 @@ private:
      std::strcat(fullname, name);
 
      std::ifstream off_file (fullname);
-     CGAL_assertion(off_file != NULL);
+     assert(off_file != NULL);
 
      std::size_t discarded = CGAL::OFF_to_nef_3 (off_file, N, true);
-     CGAL_assertion(discarded == 0);
+     assert(discarded == 0);
      return N;
   }
 
@@ -123,7 +123,7 @@ public:
   void run_test(bool compare,const char* suffix) {
     Nef_polyhedron N = built_nef_from_off( "nine_planes.off");
     if(compare)
-      CGAL_assertion(does_nef3_equals_file(N,"nine_planes.nef3",suffix));
+      assert(does_nef3_equals_file(N,"nine_planes.nef3",suffix));
   }
 };
 
