@@ -95,8 +95,14 @@ int main(int argc, char** argv)
     int i = f.front()->second;
     if(argc > 2)
       std::cerr << "f.front()->second = " << i << "\n";
-    assert_code(bool i_is_in_f2 =) f2.erase(i);
-    assert_code(bool i_is_in_f3 =) f3.erase(i);
+#ifndef NDEBUG
+    bool i_is_in_f2 =
+#endif
+      f2.erase(i);
+#ifndef NDEBUG
+    bool i_is_in_f3 = 
+#endif
+      f3.erase(i);
     assert( i_is_in_f2 );
     assert( i_is_in_f3 );
     int new_i2 = f.front()->first;
