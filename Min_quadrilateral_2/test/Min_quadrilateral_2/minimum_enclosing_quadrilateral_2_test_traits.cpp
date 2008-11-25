@@ -311,7 +311,7 @@ struct MyTraits {
   Orientation_2 orientation_2_object() const { return Orientation_2(); }
   
 
-  friend class Data;
+  friend struct Data;
 };
 
 struct Data {
