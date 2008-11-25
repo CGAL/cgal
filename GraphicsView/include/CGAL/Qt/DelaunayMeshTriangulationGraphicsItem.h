@@ -66,8 +66,8 @@ public:
 protected:
   void drawAll(QPainter *painter);
 
-  QBrush in_domain_brush;
   bool visible_in_domain;
+  QBrush in_domain_brush;
 };
 
 template <typename T>

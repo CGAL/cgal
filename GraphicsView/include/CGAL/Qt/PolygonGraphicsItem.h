@@ -103,8 +103,8 @@ protected:
 
   QPen vertices_pen;
   QPen edges_pen;
-  bool draw_vertices;
   bool draw_edges;
+  bool draw_vertices;
 };
 
 

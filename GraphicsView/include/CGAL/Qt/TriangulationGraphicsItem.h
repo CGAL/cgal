@@ -111,8 +111,8 @@ protected:
 
   QPen vertices_pen;
   QPen edges_pen;
-  bool visible_vertices;
   bool visible_edges;
+  bool visible_vertices;
 };
 
 
