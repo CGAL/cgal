@@ -63,6 +63,8 @@ public:
   typedef typename Dt::Triangulation_data_structure Tds;
 
   typedef typename Gt::FT Coord_type;
+  typedef typename Gt::FT NT;
+  typedef typename Gt::FT FT;
   typedef typename Gt::Point_2 Point;
   typedef typename Gt::Segment_2 Segment;
   typedef typename Gt::Ray_2 Ray;
