@@ -31,7 +31,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     float SqrOfEps (float) {return 1.0e-14f;}
     double SqrOfEps (double) {return 1.0e-32;}
 
-    float Tol (float) {return 1.0+Eps_float;}
+    float Tol (float) {return 1.0f+Eps_float;}
     template <class FT>
     double Tol (FT) {return 1.0+Eps_double;}
   }
