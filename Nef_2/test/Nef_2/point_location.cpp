@@ -5,6 +5,7 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Filtered_extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_2.h>
+#include <cassert>
 
 template<typename Kernel>
 void test() {
@@ -47,8 +48,8 @@ void test() {
 
   Vertex_const_handle v;
   Explorer E = N.explorer();
-  CGAL_assertion(CGAL::assign(v,o));
-  CGAL_assertion(E.point(v) == Point(1,1));
+  assert(CGAL::assign(v,o));
+  assert(E.point(v) == Point(1,1));
 }
  
 int main() {
