@@ -102,6 +102,7 @@ public:
 
   typedef typename Gt::FT Coord_type;
   typedef Coord_type      NT;
+  typedef Coord_type      FT;
 
   typedef typename Gt::Point_3 Point;
   
