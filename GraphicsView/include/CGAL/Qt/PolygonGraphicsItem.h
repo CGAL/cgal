@@ -110,8 +110,8 @@ protected:
 
 template <typename P>
 PolygonGraphicsItem<P>::PolygonGraphicsItem(P * p_)
-  :  poly(p_), draw_edges(true), draw_vertices(true),
-     painterostream(0)
+  :  poly(p_), painterostream(0),
+     draw_edges(true), draw_vertices(true)   
 {
   setVerticesPen(QPen(::Qt::red, 3.));
   if(poly->size() == 0){
