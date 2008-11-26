@@ -167,7 +167,7 @@ private:
     std::strcpy(fullname, datadir);
     std::strcat(fullname, name);
     std::ifstream input(fullname);
-    assertion(input);
+    assert(input.good());
     Nef_polyhedron tmp;
     input >> tmp;
     delete[] fullname;
