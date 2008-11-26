@@ -8,24 +8,42 @@
 #include <string>
 
 
-// .g23 format:
-//
+// .g23 version 1 format:
+// ----------------------
 // G23
 // movie_file_name
 // number_of_cameras number_of_3D_points number_of_2D_points
-// camera_index Cx Cy Cz                 for each camera
+// frame_index Cx Cy Cz                  for each camera
 // point_3D_label X Y Z                  for each 3D point
-// camera_index point_3D_label x y       for each 2D point
+// frame_index point_3D_label x y        for each 2D point
 // with:
 // - movie_file_name is the tracked movie's name, with path
 //   (using % notation for image sequences, e.g. foo/bar%3d.tga).
-// - camera_index is the camera's index (aka frame's index).
+// - frame_index is the frame's index (== number in image's name).
 //   Camera indices may not be consecutive.
 // - (Cx, Cy, Cz) is the camera's position.
-// - point_3D_label is the 3D point's label (between double quotes)
-//   3D point indices must start at 1 and be consecutive.
-// - (X,Y,Z) is 3D the point's position.
-// - (x,y) is 2D the point's position.
+// - point_3D_label is the 3D point's label (between double quotes).
+// - (X,Y,Z) is the 3D point's position.
+// - (x,y) is the 2D point's position.
+//
+// .g23 version 2 format:
+// ----------------------
+// G23 v2
+// movie_file_name
+// number_of_cameras number_of_3D_points number_of_2D_points
+// frame_index M11 M12...M34             for each camera
+// point_3D_label X Y Z                  for each 3D point
+// frame_index point_3D_label x y        for each 2D point
+// with:
+// - movie_file_name is the tracked movie's name, with path
+//   (using % notation for image sequences, e.g. foo/bar%3d.png).
+// - frame_index is the frame's index (== number in image's name).
+//   Camera indices may not be consecutive.
+// - (M11 M12...M34) is the camera's 3x4 matrix.
+// - point_3D_label is the 3D point's label (between double quotes).
+// - (X,Y,Z) is the 3D point's position.
+// - (x,y) is the 2D point's position.
+
 
 
 /// Read 3D points + cameras from a Gyroviz .g23 file.
@@ -47,8 +65,10 @@ bool surface_reconstruction_read_g23(const char* pFilename,
                                               Gyroviz_point;
 
   typedef typename Gyroviz_point::Geom_traits Geom_traits;
-  typedef typename Geom_traits::Point_3       Point_3;
-  typedef typename Geom_traits::Point_2       Point_2;
+  typedef typename Geom_traits::Point_3               Point_3;
+  typedef typename Geom_traits::Vector_3              Vector_3;
+  typedef typename Geom_traits::Point_2               Point_2;
+  typedef typename Geom_traits::Aff_transformation_3  Aff_transformation_3;
 
   CGAL_precondition(pFilename != NULL);
   CGAL_precondition(movie_file_name != NULL);
@@ -60,6 +80,7 @@ bool surface_reconstruction_read_g23(const char* pFilename,
     return false;
   }
 
+  int version;
   long positions_2D_count = -1, positions_3D_count = -1, cameras_count = -1; // number of points and cameras in the file
   int lineNumber = 0; // current line number
   char pLine[4096]; // current line buffer
@@ -84,7 +105,10 @@ bool surface_reconstruction_read_g23(const char* pFilename,
     if (lineNumber == 1)
     {
       char signature[512];
-      if ( (sscanf(pLine,"%s",signature) != 1) || (strcmp(signature, "G23") != 0) )
+      version = 1; // version == 1 if lacking in file
+      if ( (sscanf(pLine,"%s v%d", signature, &version) == 0) 
+        || (strcmp(signature, "G23") != 0) 
+        || (version != 1 && version != 2) )
       {
         // if incorrect file format
         std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
@@ -117,16 +141,38 @@ bool surface_reconstruction_read_g23(const char* pFilename,
     // Read cameras on next lines
     else if (cameras.size() < cameras_count)
     {
-      // Read index + position...
-      int camera_index;
-      double Cx,Cy,Cz;   
-      if(sscanf(pLine, "%d %lg %lg %lg", &camera_index, &Cx,&Cy,&Cz) != 4)
+      // If version 1, read frame index + camera's 3D position
+      if (version == 1)
       {
-        std::cerr << "Warning: skip incorrect line " << lineNumber << " of " << pFilename << std::endl;
-        continue;
+        int camera_index;
+        double Cx,Cy,Cz;   
+        if(sscanf(pLine, "%d %lg %lg %lg", &camera_index, &Cx,&Cy,&Cz) != 4)
+        {
+          std::cerr << "Warning: skip incorrect line " << lineNumber << " of " << pFilename << std::endl;
+          continue;
+        }
+        Point_3 camera(Cx,Cy,Cz);
+        cameras[camera_index] = camera;
       }
-      Point_3 camera(Cx,Cy,Cz);
-      cameras[camera_index] = camera;
+      // If version 2, read frame index + 3x4 matrix and compute camera's 3D position
+      else if (version == 2)
+      {
+        // read frame index + 3x4 matrix
+        int camera_index;
+        double m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23;   
+        if(sscanf(pLine, 
+                  "%d %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg", 
+                  &camera_index, &m00,&m01,&m02,&m03,&m10,&m11,&m12,&m13,&m20,&m21,&m22,&m23) != 13)
+        {
+          std::cerr << "Warning: skip incorrect line " << lineNumber << " of " << pFilename << std::endl;
+          continue;
+        }
+        // compute camera's 3D position = - transpose(R) * T if R/T are the matrix rotation/translation
+        Aff_transformation_3 R(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+        Vector_3 T(m03, m13, m23);
+        Point_3 camera = CGAL::ORIGIN - (R.inverse())(T);
+        cameras[camera_index] = camera;
+      }
     }
 
     // Read 3D points on next lines
