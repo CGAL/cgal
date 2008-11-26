@@ -23,6 +23,7 @@
 
 #include <QRectF>
 #include <QRect>
+#include <CGAL/auto_link/Qt4.h>
 
 class QGraphicsScene;
 class QGraphicsView;

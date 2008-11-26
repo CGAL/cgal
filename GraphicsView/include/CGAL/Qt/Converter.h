@@ -27,6 +27,7 @@
 #include <list>
 
 #include <CGAL/intersection_2.h>
+#include <CGAL/auto_link/Qt4.h>
 
 namespace CGAL {
 
