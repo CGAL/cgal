@@ -19,12 +19,12 @@ if ( NOT CGAL_Boost_Setup )
   
   include(CGAL_Macros)
   
-  add_to_list(CGAL_3RD_PARTY_INCLUDE_DIRS   PERSISTENT ${Boost_INCLUDE_DIRS} )
-  add_to_list(CGAL_3RD_PARTY_LIBRARIES_DIRS PERSISTENT ${Boost_LIBRARY_DIRS} )
-  add_to_list(CGAL_3RD_PARTY_DEFINITIONS    PERSISTENT ${Boost_DEFINITIONS}  )
+  add_to_cached_list(CGAL_3RD_PARTY_INCLUDE_DIRS   ${Boost_INCLUDE_DIRS} )
+  add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES_DIRS ${Boost_LIBRARY_DIRS} )
+  add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS    ${Boost_DEFINITIONS}  )
   
   if ( NOT MSVC )
-    add_to_persistent_tagged_libraries(CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES} )
+    add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES} )
   endif()
   
   message( STATUS "USING BOOST_VERSION = '${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}'" )

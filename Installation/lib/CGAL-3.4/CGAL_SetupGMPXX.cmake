@@ -15,9 +15,8 @@ if ( NOT WIN32 AND NOT CGAL_GMPXX_SETUP )
       
       include(CGAL_Macros)
       
-      add_to_list(CGAL_3RD_PARTY_INCLUDE_DIRS PERSISTENT ${GMPXX_INCLUDE_DIR} )
-
-      add_to_persistent_tagged_libraries(CGAL_3RD_PARTY_LIBRARIES ${GMPXX_LIBRARIES} )
+      add_to_cached_list(CGAL_3RD_PARTY_INCLUDE_DIRS ${GMPXX_INCLUDE_DIR} )
+      add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES    ${GMPXX_LIBRARIES}   )
       
     endif()
     

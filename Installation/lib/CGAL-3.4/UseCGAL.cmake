@@ -24,8 +24,8 @@ if(NOT USE_CGAL_FILE_INCLUDED)
 
   foreach ( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )
     
-    add_to_in_memory_tagged_libraries( CGAL_LIBRARIES            ${CGAL_${CGAL_COMPONENT}_LIBRARY}              )
-    add_to_in_memory_tagged_libraries( CGAL_3RD_PARTY_LIBRARIES  ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES}  )
+    add_to_list( CGAL_LIBRARIES            ${CGAL_${CGAL_COMPONENT}_LIBRARY}              )
+    add_to_list( CGAL_3RD_PARTY_LIBRARIES  ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES}  )
   
     add_to_list( CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_INCLUDE_DIRS}   )
     add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_DEFINITIONS}    )
@@ -33,7 +33,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     
   endforeach()
     
-  add_to_in_memory_tagged_libraries( CGAL_LIBRARIES ${CGAL_LIBRARY} )
+  add_to_list( CGAL_LIBRARIES ${CGAL_LIBRARY} )
   
   include_directories ( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS} )     
   add_definitions     ( ${CGAL_3RD_PARTY_DEFINITIONS}  ${CGAL_DEFINITIONS}  )

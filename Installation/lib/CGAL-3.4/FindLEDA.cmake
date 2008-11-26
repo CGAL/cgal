@@ -44,8 +44,7 @@ else()
     typed_cache_set( FILEPATH "The LEDA debug-mode libraries" LEDA_LIBRARY_DEBUG "$ENV{LEDA_LIBRARY_DEBUG}" )
   endif()
 
-  set(LEDA_LIBRARIES) 
-  tag_libraries( LEDA_LIBRARY_RELEASE LEDA_LIBRARY_DEBUG LEDA_LIBRARIES )
+  set(LEDA_LIBRARIES optimized ${LEDA_LIBRARY_RELEASE} debug ${LEDA_LIBRARY_DEBUG} )
 
 endif()
   

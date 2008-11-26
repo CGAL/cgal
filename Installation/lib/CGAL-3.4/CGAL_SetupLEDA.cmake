@@ -12,10 +12,9 @@ if ( NOT CGAL_LEDA_SETUP )
     
     include(CGAL_Macros)
     
-    add_to_list(CGAL_3RD_PARTY_INCLUDE_DIRS PERSISTENT ${LEDA_INCLUDE_DIR} )
-    add_to_list(CGAL_3RD_PARTY_DEFINITIONS  PERSISTENT ${LEDA_DEFINITIONS} )
-
-    add_to_persistent_tagged_libraries(CGAL_3RD_PARTY_LIBRARIES ${LEDA_LIBRARIES} )
+    add_to_cached_list(CGAL_3RD_PARTY_INCLUDE_DIRS ${LEDA_INCLUDE_DIR} )
+    add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS  ${LEDA_DEFINITIONS} )
+    add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES    ${LEDA_LIBRARIES}   )
     
     uniquely_add_flags( CMAKE_CXX_FLAGS ${LEDA_CXX_FLAGS} )
     
