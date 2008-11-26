@@ -120,8 +120,6 @@ and C++03).
       \\ & \mswin\ 95/98/2000/XP/NT4\footnotemark[11]\\\hline
     \msvc{8.0, 9.0} (\textsc{Visual Studio 2005 and 2008}) \footnotemark[12]
     & \mswin\ 95/98/2000/XP/NT4/Vista\footnotemark[11]\\\hline
-    \icl{8.1} \footnotemark[13]
-    & \mswin\ 95/98/2000/XP/NT4/Vista\footnotemark[11]\\\hline
   \end{tabular}
 \end{center}
 \footnotetext[10]{\gccurl}\addtocounter{footnote}{1}
@@ -141,17 +139,16 @@ libraries (the header files and the threading library binaries),
 Version 1.33.1 or later. In case
 the \boost\ libraries are not installed on your system already, you
 can obtain them from \boostpage. For Windows you can download an
-installer from \path'http://www.boost-consulting.com/download.html'.
+installer from \path'http://www.boostpro.com/products/free'.
 Since \texttt{Boost.Thread} is required, make sure to either install the precompiled 
-{\em static} binaries for your compiler or to build \texttt{libboost-thread} appropiately.
+{\em static} binaries for your compiler or to build \texttt{libboost-thread}.
 
 Having \gmp\ version 4.1.4 or later and \mpfr\ version 2.0.1 or later
 installed is highly recommended. These libraries can be obtained from
 \gmppage\ and \mpfrpage, respectively, if they should not be present
-on your system. Note that \mpfr\ used to be included with \gmp\ up to
-\gmp\ version 4.1.X, but it is not included anymore starting from
-\gmp~4.2. Within \cgal, support for \gmp\ requires also \mpfr\ and
-vice versa.
+on your system. Within \cgal, support for \gmp\ requires also \mpfr\ and
+vice versa. As the \gmp\ project doesn't properly support Visual \CC\ we
+provide precompiled versions of \gmp\ and \mpfr.  
 
 \section{Getting CGAL\label{sec:gettingcgal}}
 \index{CGAL@\cgal!getting}\index{getting \cgal}
@@ -165,15 +162,19 @@ and go to the `Download' section. Just follow the instructions on this
 page to obtain your copy of the library.
 
 After you have downloaded the file containing the \cgal\ library, you
-have to decompress it. Under a Unix-like shell, use the commands
+have to decompress it. Under a Unix-like shell, use the command
 
 \begin{verbatim}
-      gunzip <filename>.tar.gz
-      tar xvf <filename>.tar
+      tar xzf CGAL-3.4.tar.gz
 \end{verbatim}
 
 Alternatively, your browser might be able to invoke the right
 decompression program by itself.
+
+On Windows you may download and run the {\em CGAL-3.4-Installer.exe}. It is a
+self extracting executable that installs the \cgal\ source and header
+files, and that allows you to select and download some precompiled
+third party libraries.
 
 In both cases the directory \cgaldir\ will be created. This directory
 contains the following subdirectories:\index{directories!structure}
@@ -183,18 +184,17 @@ contains the following subdirectories:\index{directories!structure}
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
     \textbf{directory} & \textbf{contents}\\\hline\hline
-    \texttt{auxiliary} & packages that can optionally be used with \cgal\\\hline
-    \texttt{config}    & configuration files for install script\\\hline
+    \texttt{auxiliary} & precompiled GMP, MPFR and TAUCS\\\hline
+    \texttt{bin}       & some useful scripts (e.g. for creating CMakeLists.txt files)\\\hline
+    \texttt{cmake/config}    & configuration files for install script\\\hline
+    \texttt{cmake/modules}    & modules for finding and using libraries\\\hline
     \texttt{demo}      & demo programs (most of them need \qt, geomview
                          or other third-party products)\\\hline
     \texttt{doc\_html} & documentation (HTML)\\\hline
     \texttt{doc\_pdf}  & documentation (PDF)\\\hline
-    \texttt{doc\_ps}   & documentation (Postscript)\\\hline
     \texttt{examples}  & example programs\\\hline
     \texttt{include}   & header files\\\hline
     \texttt{lib}       & (shared) object libraries\\\hline
-    \texttt{make}      & files with platform dependent makefile settings\\\hline
-    \texttt{scripts}   & some useful scripts (e.g. for creating makefiles)\\\hline
     \texttt{src}       & source files\\\hline
   \end{tabular}
 \end{center}
@@ -226,29 +226,40 @@ cross-platform build system. It works uniformly on many platforms (such as
 Windows, UNIX/Linux and the Mac) and it supports a variety of development
 tools (compilers, linkers etc) on each platform.
 
-\cmake\ is a sophisticated tool with its own scripting language, modules 
-and details. This manual provides only a simple overview of \cmake\ sufficient to work
-with \cgal. Please refer to the \cmake\ documentation at \cmakepage\ for
-further details.
+This manual provides only a simple 
+overview of \cmake\ sufficient to work with \cgal. Please refer to the 
+\cmake\ documentation at \cmakepage\ for further details.
 
 \subsection{Configuring \cgal}
 
-As with any library/program, building \cgal\ involves setting up {\em
-  configuration parameters}: the choice of compiler/linker, the
-corresponding flags, the details of the required third-party libraries,
-some user choices such as which \cgal\ component to build, etc... Gathering
-all these parameters is called {\em configuration}, it is the very first
-step in the process and \cmake\ is the tool responsible for that.  When
-\cmake\ finishes the configuration, it produces a makefile or project file
-than you can use to build \cgal.
+Before building \cgal\ you have to set up {\em configuration parameters}:
+the choice of the compiler/linker, the corresponding flags, which
+third-party libraries you want to use and where they can be found, 
+which \cgal\ components you want to build. Gathering
+all these parameters is called {\em configuration}. When
+\cmake\ finishes the configuration, it produces a makefile or a Visual \CC\ 
+project file that you can use to build \cgal.
 
-The simplest way to start the configuration is to run a command-line tool
-called \texttt{cmake} passing as argument the root directory of \cgal. For
-example:
+
+The simplest way to start the configuration is to run the graphical
+user interface of cmake. We recommend to use \texttt{cmake-gui}, which
+is available on all platforms since \cmake\ 2.6.   You must pass as 
+argument the root directory of \cgal. For example:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd ~/CGAL-3.4
+  cd  CGAL-3.4
+  cmake-gui . # Notice the dot to indicate the current directory.
+\end{verbatim}
+}
+
+Alternatively, you can run the command-line tool called
+\texttt{cmake}, again passing as argument the root directory of
+\cgal. For example:
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+  cd  CGAL-3.4
   cmake . # Notice the dot to indicate the current directory.
 \end{verbatim}
 }
@@ -278,7 +289,7 @@ instead of Visual Studio project files in order to build the library via \texttt
 
 Since the choice of generator determines the type of build files to generate, in some cases
 you choose a particular generator as a mean to choose a specific compiler (because they use different 
-build files. For example, the following generates solution files for use in Visual C++ 9.0:
+build files. For example, the following generates solution files for use in Visual \CC\ 9.0:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
@@ -391,8 +402,8 @@ the libraries. The default depends on the platform so it is recommended that you
 \texttt{Release} or \texttt{Debug}.
 
 In windows, the \cgal\ libraries are necessarily static
-({\tt .lib}), but in the other platforms, including \texttt{cygwin}, they are by default shared libraries ({\tt .so}).
-You can choose to produce static libs instead by setting the cmake variable {\tt CMAKE\_SHARED\_LIBS=FALSE} 
+({\tt .lib}), but on the other platforms, including \texttt{cygwin}, they are by default shared libraries ({\tt .so}).
+You can choose to produce static libraries instead by setting the cmake variable {\tt CMAKE\_SHARED\_LIBS=FALSE} 
 
 These setting affect the variants of third-party libraries selected whenever the choice is available.
 
@@ -428,7 +439,7 @@ cmake -DCMAKE_BUILD_TYPE=Release ../../..
 \end{verbatim}
 }
 
-\subsubsection{Compiler and Linker flags}
+\subsubsection{Compiler and Linker Flags}
 
 \cmake\ determines the set of compiler and linker flags to use based on the target compiler and automatically defines
 the following cmake variables:
@@ -479,7 +490,7 @@ variables but starting with \texttt{CGAL} instead of \texttt{CMAKE}:
 \end{enumerate}
 
 
-\subsection{Building \cgal\ libraries}
+\subsection{Building \cgal\ Libraries}
 
 If configuration succeeded there will be certain {\em build files} ready to build the libraries.
 The nature of the build files depend on the generator used during configuration, but in all cases they 
@@ -531,11 +542,11 @@ make Straight_skeleton_2_demo
 }
 
 The libraries will all be located in a subdirectory {\tt /lib} under {\tt <CMAKE\_BINARY\_DIR>}
-\footnote{Which need not be the cgal root directory as explained in Section ~\ref{sec:cmake-out-of-source}}
+\footnote{Which need not be the \cgal\ root directory as explained in Section ~\ref{sec:cmake-out-of-source}}
 
 With generators other than {\tt UNIX Makefiles} the resulting build files are solution/project files which
-should be launched in an IDE, such as Visual Studio or KDevelop3. They will contain the targets described
-above which you can manually build as any other solution/project within your IDE.
+should be launched in an {\sc Ide}, such as Visual Studio or KDevelop3. They will contain the targets described
+above which you can manually build as any other solution/project within your {\sc Ide}.
 
 \begin{ccAdvanced}
 The build files produced by cmake are autoconfigured. That is, if you change any 
@@ -550,13 +561,17 @@ file in-place and VS will prompt you to reload it.
 
 \subsection{Installing \cgal\ libraries}
 
-I many platforms, library pieces such as headers, docs and binaries are expected to be placed in specific locations. The
-typical example being the Filesystem Hierarchy Standard (see \fhs) of UNIX-like operating systems. The process of placing or copying
-the library elements into its standard location is sometimes referred to as {\em Installation} and it is a post step after
-configuration and compilation.
+On many platforms, library pieces such as headers, docs and binaries
+are expected to be placed in specific locations. The typical example
+being \path'/usr/include' or \path'/usr/lib' on {\sc Unix}-like
+operating systems or \path'C:/Program Files/' on Windows. The process
+of placing or copying the library elements into its standard location
+is sometimes referred to as {\em Installation} and it is a
+postprocessing step after configuration and compilation.
 
-\cmake\ supports installation by producing a build target named {\em install}. The following example shows a typical session
-from configuration to installation in a UNIX-like environment:
+\cmake\ supports installation by producing a build target named {\em install}. 
+The following example shows a typical session from configuration to
+installation in a {\sc Unix}-like environment:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
@@ -657,7 +672,7 @@ cmake -DCGAL_DIR=~/CGAL-3.4 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGA
 \end{verbatim}
 }
 
-\section{Summary of configuration variables}
+\section{Summary of Configuration Variables}
 
 \subsection{CMake variables used to configure both \cgal\ libraries and user programs}
 
