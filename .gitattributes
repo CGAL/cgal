@@ -4072,6 +4072,7 @@ Triangulation_3/doc_tex/TriangulationDS_3/repres.eps -text svneol=unset#applicat
 Triangulation_3/doc_tex/TriangulationDS_3/repres.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/TriangulationDS_3/repres.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc_tex/TriangulationDS_3/repres.xml svneol=native#text/xml
+Triangulation_3/doc_tex/TriangulationDS_3/tds3_small.png -text
 Triangulation_3/doc_tex/TriangulationDS_3/topo-simplex2.eps -text svneol=unset#application/postscript
 Triangulation_3/doc_tex/TriangulationDS_3/topo-simplex2.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/TriangulationDS_3/topo-simplex2.pdf -text svneol=unset#application/pdf
