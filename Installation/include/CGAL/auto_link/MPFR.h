@@ -23,11 +23,6 @@
 #ifndef CGAL_NO_AUTOLINK_MPFR
 
 #define CGAL_LIB_NAME mpfr
-
-// One hardcodes a toolset for gmp. We do not need to distinguish between
-// vc8 or vc9 (or even vc10), because gmp is a C library (not C++).
-#define CGAL_LIB_TOOLSET vc80
-
 #include <CGAL/auto_link/auto_link.h>
 
 #endif // CGAL_NO_AUTOLINK_MPFR

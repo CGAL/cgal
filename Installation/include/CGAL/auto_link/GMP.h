@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2008 GeometryFactory (France). All rights reserved.
+// Copyright (c) 2007 GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -23,11 +23,6 @@
 #ifndef CGAL_NO_AUTOLINK_GMP
 
 #define CGAL_LIB_NAME gmp
-
-// One hardcodes a toolset for gmp. We do not need to distinguish between
-// vc8 or vc9 (or even vc10), because gmp is a C library (not C++).
-#define CGAL_LIB_TOOLSET vc80
-
 #include <CGAL/auto_link/auto_link.h>
 
 #endif // CGAL_NO_AUTOLINK_GMP
