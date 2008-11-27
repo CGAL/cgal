@@ -341,11 +341,11 @@ To install CGAL, you should:
         CMAKE_EXE_LINKER_FLAGS_RELEASE
         CMAKE_EXE_LINKER_FLAGS_DEBUG
 
-  You can override any of these variabes explicitly when calling CMake.
+  You can override any of these variables explicitly when calling CMake.
 
   Alternatively, you can define any of these additional CGAL specific flags which are
   *appended* to the general flags allowing you to override some of the
-  general settings (i.e. those which might be overriden by specifying a subsequent flag)
+  general settings (i.e. those which might be overridden by specifying a subsequent flag)
 
       CGAL_CXX_FLAGS
       CGAL_CXX_FLAGS_RELEASE
