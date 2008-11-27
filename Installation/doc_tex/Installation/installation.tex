@@ -150,6 +150,7 @@ on your system. Within \cgal, support for \gmp\ requires also \mpfr\ and
 vice versa. As the \gmp\ project doesn't properly support Visual \CC\ we
 provide precompiled versions of \gmp\ and \mpfr.  
 
+
 \section{Getting CGAL\label{sec:gettingcgal}}
 \index{CGAL@\cgal!getting}\index{getting \cgal}
 
@@ -204,27 +205,14 @@ distribution of the \core\ library\footnote{\corepage} version~1.7 for
 robust numerical and geometric computation. \core\ is not part of
 \cgal\ and has its own license.
 
-\subsection{Visualization\label{sec:vis}}
 
-The programs below the \texttt{demo} directory provide visual output.
-Most of these use \qt. The demos we made for \cgal Rel.\ 3.3 use \qt~3
-together with \ccc{CGAL::Qt_widget}, a widget and some helper
-classes that allow to interact with two dimensional \cgal\ objects.
-The demos we made for \cgal\ Rel.\ 3.4 use Trolltech's 
-\ccAnchor{http://doc.trolltech.com/4.4/graphicsview.html}{Qt Graphics View Framework}
-for the 2D demos and Gille Debunne's \ccAnchor{http://www.libqglviewer.com/}{libQGLViewer} 
-for the 3D demos. \index{visualization!Qt}.
-
-Some demo programs for 3D structures require the geomview program for
-visualization.\index{visualization!geomview} This is available from
-\path'http://www.geomview.org' (note that it does not run on \mswin).
 
 \section{Configuring, Building and Installing CGAL}
 
-Since CGAL-3.4, the configuration of CGAL is handled by \cmake. \cmake\ is
+Since CGAL-3.4, the configuration of CGAL is handled by \cmake, a
 cross-platform build system. It works uniformly on many platforms (such as
-Windows, UNIX/Linux and the Mac) and it supports a variety of development
-tools (compilers, linkers etc) on each platform.
+Windows, UNIX/Linux and  MacOS X) and it supports a variety of development
+tools on each platform.
 
 This manual provides only a simple 
 overview of \cmake\ sufficient to work with \cgal. Please refer to the 
@@ -232,17 +220,17 @@ overview of \cmake\ sufficient to work with \cgal. Please refer to the
 
 \subsection{Configuring \cgal}
 
-Before building \cgal\ you have to set up {\em configuration parameters}:
-the choice of the compiler/linker, the corresponding flags, which
+Before building \cgal\ you have to choose the compiler/linker, 
+set compiler and linker  flags, specify which
 third-party libraries you want to use and where they can be found, 
 which \cgal\ components you want to build. Gathering
-all these parameters is called {\em configuration}. When
+all this information is called {\em configuration}. When
 \cmake\ finishes the configuration, it produces a makefile or a Visual \CC\ 
-project file that you can use to build \cgal.
+solution and project file that you can use to build \cgal.
 
 
 The simplest way to start the configuration is to run the graphical
-user interface of cmake. We recommend to use \texttt{cmake-gui}, which
+user interface of \cmake. We recommend to use \texttt{cmake-gui}, which
 is available on all platforms since \cmake\ 2.6.   You must pass as 
 argument the root directory of \cgal. For example:
 
@@ -264,8 +252,8 @@ Alternatively, you can run the command-line tool called
 \end{verbatim}
 }
 
-This executes a special-purpose \cmake\ script, called
-\texttt{CMakeLists.txt} and located in the \cgal\ root, which attempts to
+In both cases this executes a  \cmake\ script, called
+\texttt{CMakeLists.txt}, located in the \cgal\ root, which attempts to
 determine the value of all the configuration parameters needed to build the
 \cgal\ libraries and any programs using \cgal.
 
@@ -285,9 +273,9 @@ by your platform and \cmake\ version. If the generator you need is not listed th
 try a newer \cmake\ version since generators are hardcoded into \cmake\ and more and
 more generators are added with each release.}
 For example, under Windows, it is possible to generate {\em NMakefiles}
-instead of Visual Studio project files in order to build the library via \texttt{nmake}.
+instead of Visual Studio project files in order to build the library with \texttt{nmake}.
 
-Since the choice of generator determines the type of build files to generate, in some cases
+Since the choice of the generator determines the type of build files to generate, in some cases
 you choose a particular generator as a mean to choose a specific compiler (because they use different 
 build files. For example, the following generates solution files for use in Visual \CC\ 9.0:
 
@@ -320,7 +308,7 @@ such as \texttt{Boost\_INCLUDE\_DIR} or the compiler flags to use, such as \text
 The command line tool \texttt{cmake} accepts cmake variables as arguments of the form \texttt{-D<VAR>:<TYPE>=<VALUE>}, as
 in the example above, but this is only useful if you already know which variables needs to be explicitly defined.
 \cmake\ provides an interactive tool which lets you configure \cgal\ by supplying the missing pieces 
-which \cmake\ indicates. In Windows, this is the \texttt{CMakeSetup.exe} program, while in Unix/Linux/Mac it is \texttt{ccmake}
+which \cmake\ indicates. In Windows, this is the \texttt{CMakeSetup.exe} program, while in Unix/Linux/MacOS X it is \texttt{ccmake}
 (or \texttt{cmake-gui} if you have a recent cmake version). 
 
 These interactive configuration tools execute the cmake script just like the non-interactive \texttt{cmake} does. It assign
@@ -535,7 +523,7 @@ for examples and demos respectively.
 # build all examples at once
 make examples 
 
-# build only the Striaght Skeleton demo
+# build only the Straight Skeleton demo
 make Straight_skeleton_2_demo
 
 \end{verbatim}
@@ -617,16 +605,7 @@ DESTDIR=/usr/share sudo make install
 \end{verbatim}
 }
 
-\subsection{Packaging \cgal}
 
-\cmake\ version 2.4.2 is distributed with a packaging tool called \cpack. You can use it to generate an archive containing
-\cgal\ for simple distribution along multiple similar systems. To do that you must define the cmake variable
-{\tt WITH\_CPACK=ON} when configuring \cgal.
-Under Windows this will generate a \nsis\ installer (see \nsispage).
-Under UNIX-like environments, the configuration step will create targets named \texttt{package} and \texttt{package\_source}. When built, they would generate 
-{\tt .tar.gz} archives containing the \cgal\ libraries in binary and source form, respectively.
-
-Further details about the packaging tools can be found at \cpackpage.
 
 \section{Configuring and Building Programs Using \cgal}
 
