@@ -86,7 +86,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
     # Link the executable to CGAL and third-party libraries
     target_link_libraries( ${prj} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
     
-    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
     
   else( QGLVIEWER_FOUND)
     message(STATUS "NOTICE: This demo needs libQGLViewer, and will not be compiled.")
