@@ -60,7 +60,7 @@ message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
 set( CGAL_BUILDING_LIBS TRUE )
 
 set( CGAL_VERSION_DIR     CGAL-3.4 )
-set( CGAL_MODULES_REL_DIR lib/${CGAL_VERSION_DIR} )
+set( CGAL_MODULES_REL_DIR cmake/modules )
 set( CGAL_MODULES_DIR     ${CMAKE_SOURCE_DIR}/${CGAL_MODULES_REL_DIR} )
 
 # Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
