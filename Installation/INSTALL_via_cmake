@@ -18,22 +18,23 @@ To install CGAL, you should:
    * install CMake 2.4-patch-7 or later (http://www.cmake.org/)
      CMake is the build system used by CGAL.
 
-   * install the Boost libraries (http://www.boost.org/)
+   * install the Boost libraries (http://www.boost.org/ or http://www.boostpro.com/products/free)
      Boost is required to build CGAL.
      Compiled parts of Boost are mostly optional, except Boost.Threads.
      Another recommended compiled part is Boost.ProgramOptions.
 
    * install optional additional libraries:
 
-       - qt3 (http://trolltech.com/products/qt)
+     o Used by most Demos
+       - qt (http://trolltech.com/products/qt)
 
-           Used by most Demos
+     o Used for exact arithmetic           
 
        - gmp   (http://gmplib.org/)
        - mpfr  (http://www.mpfr.org/)
        - leda  (http://www.algorithmic-solutions.com/leda/index.htm) (commercial)
 
-           Used for exact arithmetic
+     o Used by a demo
 
        - zlib
        - taucs
@@ -243,7 +244,7 @@ To install CGAL, you should:
   Also, you can run CMake in GUI mode in which case you can
   see and edit in a dialog all configuration variables before
   proceeding with the configuration.
-  To do that run the GUI configuration editor "CMakeSetup"
+  To do that run the GUI configuration editor  "cmake-gui" or "CMakeSetup".
   When the editor is launched press "configure" for the first time:
   all available configuration variables and their default values
   will be displayed on a red background.
