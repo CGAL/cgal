@@ -103,12 +103,8 @@ solvers\footnote{\taucspage}, or Trolltech's\footnote{\trolltechpage}
 
 \section{Prerequisites\label{sec:prerequisites}}
 
-In order to build the \cgal\ libraries you need a \CC\ compiler.  Most
-recent compilers on Unix platforms and \mswin\ are supported, provided
-that they reasonably conform to the ISO 14882 standard for \CC\ (C++98
-and C++03).
-
-\cgaldir\ supports the following compilers/operating systems:
+In order to build the \cgal\ libraries you need a \CC\ compiler.  
+\cgaldir\ is supported for the following compilers/operating systems:
 
 \begin{center}\index{compilers!supported}\index{supported compilers}
   \renewcommand{\arraystretch}{1.3}
@@ -129,10 +125,13 @@ and C++03).
 Note that neither prerelease versions nor repository snapshots of
 \texttt{GCC} are supported.
 
+
+
 In order to configure, build and install the \cgal\ libraries, as well
 as any program using \cgal, you need \cmake, a Cross Platform Make system.
-If \cmake\ is not installed already you can obtain it from \cmakepage,
-version of 2.4-patch-7 or later.
+If \cmake\ is not installed already you can obtain it from \cmakepage.
+We recommend the usage of cmake V. 2.6, and you need at least
+cmake V. 2.4-patch-7.
 
 Moreover, \cgal\ requires a working installation of the \boost\
 libraries (the header files and the threading library binaries), 
@@ -151,28 +150,20 @@ vice versa. As the \gmp\ project doesn't properly support Visual \CC\ we
 provide precompiled versions of \gmp\ and \mpfr.  
 
 
-\section{Getting CGAL\label{sec:gettingcgal}}
+\section{Downloading CGAL\label{sec:gettingcgal}}
 \index{CGAL@\cgal!getting}\index{getting \cgal}
 
-The \cgal\ library can be downloaded from the \cgal\
-homepage:\index{CGAL@\cgal!homepage}
-\begin{quote}
-      \cgalhomepage
-\end{quote}
-and go to the `Download' section. Just follow the instructions on this
-page to obtain your copy of the library.
+The \cgal\ library can be downloaded from the  \path'http://www.cgal.org/download.html'.
 
-After you have downloaded the file containing the \cgal\ library, you
-have to decompress it. Under a Unix-like shell, use the command
+After you have downloaded the file \texttt{CGAL-3.4.tar.gz} containing the \cgal\ library, you
+have to unpack it. Under a Unix-like shell, use the command
 
 \begin{verbatim}
       tar xzf CGAL-3.4.tar.gz
 \end{verbatim}
 
-Alternatively, your browser might be able to invoke the right
-decompression program by itself.
 
-On Windows you may download and run the {\em CGAL-3.4-Installer.exe}. It is a
+When you are on Windows you may download and run the \texttt{CGAL-3.4-Installer.exe}. It is a
 self extracting executable that installs the \cgal\ source and header
 files, and that allows you to select and download some precompiled
 third party libraries.
@@ -207,18 +198,7 @@ robust numerical and geometric computation. \core\ is not part of
 
 
 
-\section{Configuring, Building and Installing CGAL}
-
-Since CGAL-3.4, the configuration of CGAL is handled by \cmake, a
-cross-platform build system. It works uniformly on many platforms (such as
-Windows, UNIX/Linux and  MacOS X) and it supports a variety of development
-tools on each platform.
-
-This manual provides only a simple 
-overview of \cmake\ sufficient to work with \cgal. Please refer to the 
-\cmake\ documentation at \cmakepage\ for further details.
-
-\subsection{Configuring \cgal}
+\section{Configuring CGAL}
 
 Before building \cgal\ you have to choose the compiler/linker, 
 set compiler and linker  flags, specify which
@@ -228,6 +208,14 @@ all this information is called {\em configuration}. When
 \cmake\ finishes the configuration, it produces a makefile or a Visual \CC\ 
 solution and project file that you can use to build \cgal.
 
+Since CGAL-3.4, the configuration of CGAL is handled by \cmake, a
+cross-platform build system.  This manual explains only what of
+\cmake\ is needed in order to build
+\cgal. Please refer to the \cmake\ documentation at \cmakepage\ for
+further details.
+
+
+\subsection{Configuring \cgal with the cmake GUI }
 
 The simplest way to start the configuration is to run the graphical
 user interface of \cmake. We recommend to use \texttt{cmake-gui}, which
@@ -241,6 +229,23 @@ argument the root directory of \cgal. For example:
 \end{verbatim}
 }
 
+Once \texttt{cmake-gui} has started up, you must press 'Configure'. 
+A dialog will pop up and you have to choose what shall get generated.
+After you have made your choice and pressed 'ok', you will see
+the output of tests in the lower window of the application. 
+When these tests are done, you will see many
+red entries, so press 'Configure' again. By now cmake should have
+found many libraries and have intialized variables. If you still
+find red entries you have to provide the necessary information. This typically
+happens if you have installed software at non-standard locations.
+
+Once all entries are greyed, you can press 'Configure' and you
+can exit the tool.
+
+ 
+
+\subsection{Configuring \cgal with the cmake command-line tool }
+
 Alternatively, you can run the command-line tool called
 \texttt{cmake}, again passing as argument the root directory of
 \cgal. For example:
@@ -252,10 +257,6 @@ Alternatively, you can run the command-line tool called
 \end{verbatim}
 }
 
-In both cases this executes a  \cmake\ script, called
-\texttt{CMakeLists.txt}, located in the \cgal\ root, which attempts to
-determine the value of all the configuration parameters needed to build the
-\cgal\ libraries and any programs using \cgal.
 
 The very first thing \cmake\ does is to detect the compiler to use.
 This detection is performed by a special cmake module called a {\em generator}. A
@@ -334,7 +335,7 @@ The configuration process not only determines the location of the required depen
 \texttt{compiler\_config.h} file which encodes the properties of your system and a special file named 
 \texttt{CGALConfig.cmake} which is used to build programs using \cgal\ (this file will be explained later).
 
-\subsubsection{\cgal\ components}
+\subsection{\cgal\ Components}
 
 For convenience, \cgal\ is physically separated into {\em library components} in order to push some auxiliary 
 functionality outside of the main library. During configuration, each component (except the main library) is selected 
@@ -346,7 +347,7 @@ via a cmake variable of the form {\tt WITH\_<component>}. All components are \te
   \begin{tabular}{|l|l|l|l|} \hline
     \textbf{library} & \textbf{cmake variable} & \textbf{functionality} & \textbf{dependencies}
     \\\hline\hline
-    \texttt{CGAL} & {\em none} & Main library (all kernels and packages) & GMP, MPFR, Boost (headers) and Boost.Thread (library)
+    \texttt{CGAL} & {\em none} & Main library  & GMP, MPFR, Boost (headers) and Boost.Thread (library)
     \\\hline
     \texttt{CGAL\_Core} & \texttt{WITH\_CGAL\_Core} & The CORE library used for robust numerical and geometric computation.
     \footnote{CGAL-core++ is not part of \cgal, it is a custom version the CORE library distributed by \cgal\
@@ -374,20 +375,17 @@ If you turn off the configuration of a component you can still configure it manu
 \end{verbatim}
 }
 
-Notice that all kernels and packages are bundled together in the main library; the components are only to separate
-auxiliary functionality.
+
 
 \cgal\ is distributed with a large collection of examples and demos. By default, these are all configured along with
 the \cgal\ libraries. When configured, they are not automatically built along with the libraries, you do that
 by selecting the \texttt{examples} or \texttt{demo} make targets as explained in the following section, but you can set the 
 variables {\tt WITH\_examples=OFF} and {\tt WITH\_demo=OFF} to prevent configuration of examples and demos altogether.
 
-\subsubsection{Library variants}
+\subsection{Library variants}
 
 The cmake variable \texttt{CMAKE\_BUILD\_TYPE} can take the values \texttt{Release} or \texttt{Debug} to indicate how to build
 the libraries. The default depends on the platform so it is recommended that you always indicate the build type explicitly.
-\cmake\ supports additional build types but those are not supported by \cgal\, thus you should choose only
-\texttt{Release} or \texttt{Debug}.
 
 In windows, the \cgal\ libraries are necessarily static
 ({\tt .lib}), but on the other platforms, including \texttt{cygwin}, they are by default shared libraries ({\tt .so}).
@@ -395,7 +393,7 @@ You can choose to produce static libraries instead by setting the cmake variable
 
 These setting affect the variants of third-party libraries selected whenever the choice is available.
 
-\subsubsection{Multiple variants}\label{sec:cmake-out-of-source}
+\subsection{Multiple variants}\label{sec:cmake-out-of-source}
 
 While you can choose between release/debug builds, shared/static libraries
 (except on Windows), etc...
@@ -427,7 +425,7 @@ cmake -DCMAKE_BUILD_TYPE=Release ../../..
 \end{verbatim}
 }
 
-\subsubsection{Compiler and Linker Flags}
+\subsection{Compiler and Linker Flags}
 
 \cmake\ determines the set of compiler and linker flags to use based on the target compiler and automatically defines
 the following cmake variables:
@@ -445,7 +443,7 @@ the following cmake variables:
 \item \texttt{CMAKE\_EXE\_LINKER\_FLAGS}
 \item \texttt{CMAKE\_EXE\_LINKER\_FLAGS\_RELEASE}
 \item \texttt{CMAKE\_EXE\_LINKER\_FLAGS\_DEBUG}
-\end{enumerate}
+ \end{enumerate}
 
 The \texttt{MODULE} family of flags correspond to static libraries, the \texttt{SHARED} flags to shared libraries
 and \texttt{EXE} flags to executables.
@@ -478,7 +476,7 @@ variables but starting with \texttt{CGAL} instead of \texttt{CMAKE}:
 \end{enumerate}
 
 
-\subsection{Building \cgal\ Libraries}
+\section{Building \cgal\ Libraries}
 
 If configuration succeeded there will be certain {\em build files} ready to build the libraries.
 The nature of the build files depend on the generator used during configuration, but in all cases they 
@@ -492,7 +490,6 @@ use the \texttt{make} command-line tool as follow:
 \begin{verbatim}
 
 cd ~/CGAL-3.4
-cmake .
 
 # build all the selected components at once
 make 
@@ -547,7 +544,7 @@ file in-place and VS will prompt you to reload it.
 \end{ccAdvanced}
 
 
-\subsection{Installing \cgal\ libraries}
+\section{Installing \cgal\ Libraries}
 
 On many platforms, library pieces such as headers, docs and binaries
 are expected to be placed in specific locations. The typical example
@@ -609,12 +606,16 @@ DESTDIR=/usr/share sudo make install
 
 \section{Configuring and Building Programs Using \cgal}
 
-\cmake can be used to configure and build user programs as well via a \cmake script ({\tt CMakeLists.txt}) for the program.
-All the examples and demos contain such \cmake scripts.
+\cmake can be used to configure and build user programs as well via a \cmake
+script ({\tt CMakeLists.txt}) for the program.  All the examples and
+demos contain such \cmake scripts.
 
-During configuration of the \cgal\ libraries a file named {\tt CGALConfig.cmake} will be generated in the binary directory. This file contains
-the definitions of several cmake variable which summarize the configuration of \cgal. In order to configure a user program you need to indicate
-the location of that config file in the cmake variable \texttt{CGAL\_DIR}:.
+During configuration of the \cgal\ libraries a file named {\tt
+CGALConfig.cmake} will be generated in the binary directory. This file
+contains the definitions of several cmake variable which summarize the
+configuration of \cgal. In order to configure a user program you need
+to indicate the location of that config file in the cmake variable
+\texttt{CGAL\_DIR}:.
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
