@@ -37,7 +37,7 @@ Random( )
     // get system's time
     std::time_t s;
     std::time( &s);
-    seed = s;
+    seed = (unsigned int)s;
 
     // initialize random numbers generator
     std::srand( seed);
