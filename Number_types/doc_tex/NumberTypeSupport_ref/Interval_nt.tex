@@ -49,7 +49,8 @@ rounding mode switches, at the expense of more care to be taken by the user
 (see below).  The default value, \ccc{true}, is the safe way, and takes care of
 proper rounding mode changes.  When specifying \ccc{false}, the user has to
 take care about setting the rounding mode towards plus infinity before
-doing any computations with the interval class.
+doing any computations with the interval class.  He can do so using the
+\ccc{Protect_FPU_rounding} class for example.
 
 \ccIsModel
 \ccc{FieldWithSqrt}\\
@@ -66,7 +67,7 @@ exceptions raised when uncertain comparisons are performed.}
 \ccNestedType{Protector}{A type whose default constructor and destructor allow
 to protect a block of code from FPU rounding modes necessary for the
 computations with \ccc{Interval_nt<false>}.  It does nothing for
-\ccc{Interval_nt<true>}.}
+\ccc{Interval_nt<true>}.  It is implemented as \ccc{Protect_FPU_rounding<!Protected>}.}
 
 
 \ccCreationVariable{I}
@@ -177,7 +178,8 @@ that expect the rounding mode to be the default (round to the nearest).
 
 We provide two interfaces to change the rounding mode.  The first one is to
 use a protector object whose default constructor and destructor will take care
-of changing the rounding mode.
+of changing the rounding mode.  The protector is implemented using
+\ccc{Protect_FPU_rounding}.
 
 The second one is the following detailed set of functions :
 
