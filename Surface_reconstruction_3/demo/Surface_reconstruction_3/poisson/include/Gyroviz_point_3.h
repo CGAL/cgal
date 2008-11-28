@@ -191,6 +191,10 @@ public:
     void select(bool is_selected=true) { m_is_selected = is_selected; }
 
     /// Get camera/2D point pairs.
+    const Camera_point2_map& camera_point2_pairs() const 
+    { 
+      return camera_point2_map; 
+    }
     Camera_point2_pair_const_iterator camera_point2_pairs_begin() const 
     { 
       return camera_point2_map.begin(); 
@@ -230,6 +234,7 @@ public:
     { 
       return Camera_const_iterator(camera_point2_pairs_end()); 
     }
+    
 // Data
 private:
 

@@ -50,22 +50,22 @@
 ///
 /// @heading Parameters:
 /// @param GyrovizPointOutputIterator value_type must be Gyroviz_point_3.
-/// @param PointOutputIterator value_type must be Point_3.
 ///
 /// @return true on success.
-template <typename GyrovizPointOutputIterator,
-          typename PointOutputIterator>
-bool surface_reconstruction_read_g23(const char* pFilename, 
-                                     GyrovizPointOutputIterator gyroviz_point_output,
-                                     PointOutputIterator camera_output,
-                                     std::string* movie_file_name)
+template <typename Point_3,
+          typename GyrovizPointOutputIterator>
+bool surface_reconstruction_read_g23(
+  const char* pFilename, 
+  GyrovizPointOutputIterator gyroviz_point_output,
+  std::map<int, Point_3>* cameras, // container of (indexed) cameras
+  std::string* movie_file_name)
 {
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   typedef typename CGAL::value_type_traits<GyrovizPointOutputIterator>::type 
                                               Gyroviz_point;
 
   typedef typename Gyroviz_point::Geom_traits Geom_traits;
-  typedef typename Geom_traits::Point_3               Point_3;
+  //typedef typename Geom_traits::Point_3               Point_3;
   typedef typename Geom_traits::Vector_3              Vector_3;
   typedef typename Geom_traits::Point_2               Point_2;
   typedef typename Geom_traits::Aff_transformation_3  Aff_transformation_3;
@@ -84,7 +84,6 @@ bool surface_reconstruction_read_g23(const char* pFilename,
   long positions_2D_count = -1, positions_3D_count = -1, cameras_count = -1; // number of points and cameras in the file
   int lineNumber = 0; // current line number
   char pLine[4096]; // current line buffer
-  std::map<int, Point_3> cameras; // container of (indexed) cameras
   std::map<std::string, Gyroviz_point> gyroviz_points; // container of (labelled) 3D points + camera/2D point pairs
   
   *movie_file_name = "";
@@ -139,7 +138,7 @@ bool surface_reconstruction_read_g23(const char* pFilename,
     }       
 
     // Read cameras on next lines
-    else if (cameras.size() < cameras_count)
+    else if (cameras->size() < cameras_count)
     {
       // If version 1, read frame index + camera's 3D position
       if (version == 1)
@@ -148,11 +147,11 @@ bool surface_reconstruction_read_g23(const char* pFilename,
         double Cx,Cy,Cz;   
         if(sscanf(pLine, "%d %lg %lg %lg", &camera_index, &Cx,&Cy,&Cz) != 4)
         {
-          std::cerr << "Warning: skip incorrect line " << lineNumber << " of " << pFilename << std::endl;
-          continue;
+          std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
+          return false;
         }
         Point_3 camera(Cx,Cy,Cz);
-        cameras[camera_index] = camera;
+        (*cameras)[camera_index] = camera;
       }
       // If version 2, read frame index + 3x4 matrix and compute camera's 3D position
       else if (version == 2)
@@ -164,28 +163,28 @@ bool surface_reconstruction_read_g23(const char* pFilename,
                   "%d %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg", 
                   &camera_index, &m00,&m01,&m02,&m03,&m10,&m11,&m12,&m13,&m20,&m21,&m22,&m23) != 13)
         {
-          std::cerr << "Warning: skip incorrect line " << lineNumber << " of " << pFilename << std::endl;
-          continue;
+          std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
+          return false;
         }
         // compute camera's 3D position = - transpose(R) * T if R/T are the matrix rotation/translation
         Aff_transformation_3 R(m00, m01, m02, m10, m11, m12, m20, m21, m22);
         Vector_3 T(m03, m13, m23);
         Point_3 camera = CGAL::ORIGIN - (R.inverse())(T);
-        cameras[camera_index] = camera;
+        (*cameras)[camera_index] = camera;
       }
     }
 
     // Read 3D points on next lines
     else if (gyroviz_points.size() < positions_3D_count)
     {
-      // Read label + position...
+      // Read label (with double quotes) + position...
       // WARNING: this code does not support spaces in labels.
       char point_3D_label[512];
       double X,Y,Z;   
-      if (sscanf(pLine, "%s %lg %lg %lg", point_3D_label, &X,&Y,&Z) != 4)
+      if (sscanf(pLine, "\"%[^\"]\" %lg %lg %lg", point_3D_label, &X,&Y,&Z) != 4)
       {
-        std::cerr << "Warning: skip incorrect line " << lineNumber << " of " << pFilename << std::endl;
-        continue;
+          std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
+          return false;
       }
       Point_3 position_3D(X,Y,Z);
       gyroviz_points[point_3D_label] = position_3D;
@@ -194,19 +193,19 @@ bool surface_reconstruction_read_g23(const char* pFilename,
     // Read 2D points + camera indices + 3D points indices on remaining lines
     else 
     {
-      // Read camera index, 3D point label and 2D position...
+      // Read camera index, 3D point label (with double quotes) and 2D position...
       // WARNING: this code does not support spaces in labels.
       int camera_index;
       char point_3D_label[512];
       double x,y;   
-      if (sscanf(pLine, "%d %s %lg %lg", &camera_index, point_3D_label, &x,&y) != 4 ||
-          cameras.find(camera_index) == cameras.end() || 
+      if (sscanf(pLine, "%d \"%[^\"]\" %lg %lg", &camera_index, point_3D_label, &x,&y) != 4 ||
+          cameras->find(camera_index) == cameras->end() || 
           gyroviz_points.find(point_3D_label) == gyroviz_points.end())
       {
-        //std::cerr << "Warning: skip incorrect line " << lineNumber << " of " << pFilename << std::endl;
-        continue;
+          std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
+          return false;
       }
-      Point_3 camera = cameras[camera_index];
+      Point_3 camera = (*cameras)[camera_index];
       Point_2 position_2D(x, y);
       gyroviz_points[point_3D_label].add_camera_point2_pair( std::make_pair(camera, position_2D) );
     }
@@ -225,10 +224,6 @@ bool surface_reconstruction_read_g23(const char* pFilename,
     //else
     //  std::cerr << "Skip (" << (Point_3)gpt << ") line " << lineNumber << " of " << pFilename << std::endl;
   }
-  
-  // Copy cameras[] to camera_output
-  for (std::map<int,Point_3>::iterator it=cameras.begin(); it != cameras.end(); it++)
-    *camera_output++ = it->second;
   
   return true;
 }
