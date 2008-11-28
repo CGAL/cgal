@@ -458,7 +458,7 @@ set(CGAL_DIR ${CMAKE_BINARY_DIR} )
 
 if ( NOT RUNNING_CGAL_AUTO_TEST )
 
-  add_programs(examples ON  )
+  add_programs(examples OFF )
   add_programs(demo     OFF )
   
 endif()
