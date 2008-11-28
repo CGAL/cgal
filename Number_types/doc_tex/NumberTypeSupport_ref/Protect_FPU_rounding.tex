@@ -63,22 +63,6 @@ mode change has been taken care of at a higher level in the call stack.
 What follows describes the behavior when the parameter has its default value,
 \ccc{true}.
 
-template <>
-struct Protect_FPU_rounding<true>
-{
-  Protect_FPU_rounding(FPU_CW_t r = CGAL_FE_UPWARD)
-    : backup( FPU_get_and_set_cw(r) ) {}
-
-  ~Protect_FPU_rounding()
-  {
-     FPU_set_cw(backup);
-  }
-
-private:
-  FPU_CW_t backup;
-};
-
-
 \ccCreationVariable{P}
 \ccCreation
 
@@ -87,7 +71,7 @@ private:
 which can be any of \ccc{CGAL_FE_TONEAREST}, \ccc{CGAL_FE_TOWARDZERO},
 \ccc{CGAL_FE_UPWARD} (the default) and \ccc{CGAL_FE_DOWNWARD}.}
 \ccGlue
-\ccDestructor{~Protect_FPU_rounding();}
+\ccFunction{void ~Protect_FPU_rounding();}
 {The rounding mode is restored to the saved value.}
 
 \end{ccRefClass}
