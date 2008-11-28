@@ -21,9 +21,8 @@
 #define CGAL_HILBERT_SORT_3_H
 
 #include <CGAL/basic.h>
-
 #include <functional>
-
+#include <cstddef>
 #include <CGAL/Hilbert_sort_base.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -97,13 +96,13 @@ public:
 
 private:
     Kernel _k;
-    int _limit;
+    std::ptrdiff_t _limit;
 
     template <int x, bool up> struct Cmp : public CGALi::Hilbert_cmp_3<Kernel,x,up>
     { Cmp (const Kernel &k) : CGALi::Hilbert_cmp_3<Kernel,x,up> (k) {} };
 
 public:
-    Hilbert_sort_3 (const Kernel &k = Kernel(), int limit = 1)
+    Hilbert_sort_3 (const Kernel &k = Kernel(), std::ptrdiff_t limit = 1)
         : _k(k), _limit (limit)
     {}
 
