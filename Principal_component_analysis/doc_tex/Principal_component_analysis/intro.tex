@@ -1,12 +1,14 @@
-This \cgal\ package provides functions to compute global information on the shape of a set of 2D or 3D objects such as points. It provides the computation of axis-aligned bounding boxes for point sets, and barycenters of weighted point sets. The set of kernel primitive elements are assumed to be stored into an iterator range of a container.\\
+This package provides functions to analyze sets of objects in 2D and 3D. It provides the computation of axis-aligned bounding boxes, centers of mass and principal component analysis for all bounded objects, as well as barycenters for sets of weighted points.\\
 
-In addition, it computes centroids as well as linear least squares fitting for sets of points, circles, rectangles, segments and triangles in 2D and in points, segments, triangles, cuboids, spheres and tetrahedra in 3D. For each object type in 2D and 3D, it allows the user to specify the dimension of the object fitted. For example, it is possible to fit a set of balls by providing an iterator range of spheres and specifying dimension 3. It is also possible to fit only the edges of a set of tetrahedra by specifying dimension 1, etc.
+
 \section{Definitions}
 
-A \emph{bounding box} for a set of objects is a cuboid that completely contains the set. An \emph{axis-aligned bounding box} is a bounding box aligned with the axes of the coordinate system.\\
+A \emph{bounding box} for a set of objects is a cuboid that contains the set. An \emph{axis-aligned bounding box} is a an expression of the maximum extents of all objects from the set within their coordinate system, i.e., a bounding box aligned with the axes of the coordinate system. Axis-aligned bounding boxes are frequently used in geometric algorithms as an indication of the general position of a data set, for either display, first-approximation spatial query, or spatial indexing purposes. \\
 
-A \emph{centroid} is defined as average of position. A \emph{barycenter} of weighted point sets is defined as weighted
+A center of mass \emph{centroid} is defined as average of position. A \emph{barycenter} of weighted point sets is defined as weighted
 average of position. When all weights are equal the barycenter coincides with the centroid.\\
+Centers of mass are used to summarize data sets for approximation.
+
 
 Given a point set, \emph{linear least squares fitting} amounts to find the linear sub-space which minimizes the sum of squared distances from the points to their projection onto this linear sub-space. This problem is equivalent to search for the linear sub-space which maximizes the variance of projected points, the latter being obtained by eigen decomposition of the covariance matrix of the point set. Eigenvectors corresponding to large eigenvalues are the
 directions in which the data has strong component, or equivalently large variance. If eigenvalues are the same there is no preferable sub-space.\\
