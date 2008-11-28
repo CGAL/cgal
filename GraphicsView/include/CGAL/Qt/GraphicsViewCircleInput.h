@@ -71,7 +71,8 @@ private:
 
 template <typename K>
 GraphicsViewCircleInput<K>::GraphicsViewCircleInput(QObject *parent, QGraphicsScene* s, int pointsOnCircle)
-  : GraphicsViewInput(parent), qcircle(new QGraphicsEllipseItem()), scene_(s), m_pointsOnCircle(pointsOnCircle), count(0)
+  : GraphicsViewInput(parent), m_pointsOnCircle(pointsOnCircle), 
+    count(0), qcircle(new QGraphicsEllipseItem()), scene_(s)
 {
   qcircle->hide();
   s->addItem(qcircle);

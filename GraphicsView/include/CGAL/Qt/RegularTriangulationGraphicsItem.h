@@ -115,16 +115,16 @@ protected:
 
   QPen vertices_pen;
   QPen edges_pen;
-  bool visible_vertices;
   bool visible_edges;
+  bool visible_vertices;
 };
 
 
 template <typename T>
 RegularTriangulationGraphicsItem<T>::RegularTriangulationGraphicsItem(T * t_)
-  :  t(t_), bb(0,0,0,0), bb_initialized(false),
-     visible_edges(true), visible_vertices(true),
-     painterostream(0)
+  :  t(t_), painterostream(0), bb(0,0,0,0), bb_initialized(false),
+     visible_edges(true), visible_vertices(true)
+     
 {
   setVerticesPen(QPen(::Qt::red, 3.));
   if(t->number_of_vertices() == 0){
