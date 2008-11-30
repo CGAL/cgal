@@ -18,9 +18,11 @@ int main()
   segments.push_back(Segment(a,b));
   segments.push_back(Segment(a,c));
 
-	// fit a line
   Line line;
+  
+	// fit a line
   linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
+  linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::Dimension_tag<0>());
 
   return 0;
 }

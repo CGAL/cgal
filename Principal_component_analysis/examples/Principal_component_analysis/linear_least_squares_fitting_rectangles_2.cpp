@@ -21,6 +21,8 @@ int main()
   Point_2 c;
 
   linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,c,CGAL::Dimension_tag<2>());
+  linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,c,CGAL::Dimension_tag<1>());
+  linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,c,CGAL::Dimension_tag<0>());
 
   return 0;
 }
