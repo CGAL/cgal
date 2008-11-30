@@ -13,15 +13,12 @@
 \ccDefinition
   
 The function \ccRefName\ computes the barycenter (weighted center of mass) of a
-set of weighted 2D or 3D objects.  The weight associated to each object is
-specified using a \ccc{std::pair} storing the object and its weight.
+set of 2D or 3D weighted points. The weight associated to each point is
+specified using a \ccc{std::pair} storing the point and its weight.
 
 \ccInclude{CGAL/barycenter.h}
 
-There is a set of overloaded \ccc{barycenter} functions for 2D and 3D
-weighted objects.
-The user can also optionally pass an explicit kernel, in case the default,
-based on \ccc{Kernel_traits} is not sufficient.
+There is a set of overloaded \ccc{barycenter} functions for 2D and 3D weighted points. The user can also optionally pass an explicit kernel, in case the default, based on \ccc{Kernel_traits} is not sufficient.
 The dimension is also deduced automatically.
 
 \ccFunction{template < typename InputIterator >

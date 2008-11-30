@@ -3046,6 +3046,7 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb6.bmp -text svneol=unset#image/bmp
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb7.bmp -text svneol=unset#image/bmp
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#image/bmp
+Principal_component_analysis/doc_tex/Principal_component_analysis/examples.tex -text
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text svneol=unset#application/postscript
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text svneol=unset#image/png
 Principal_component_analysis/doc_tex/Principal_component_analysis/teaserLeastSquaresFitting-large.png -text
