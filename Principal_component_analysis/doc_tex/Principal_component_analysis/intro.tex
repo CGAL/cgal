@@ -9,12 +9,7 @@ A \emph{centroid} of a set of objects is their center of mass, i.e., the point w
 
 A \emph{barycenter} of a set of weighted points is the point whose coordinates are computed by means of weighted coordinates of all weighted points from the set. When all weights are equal the barycenter coincides with the centroid.\\
 
-Given a point set, \emph{linear least squares fitting} amounts to find the linear sub-space which minimizes the sum of squared distances from the points to their projection onto this linear sub-space. 
-
-This problem is equivalent to search for the linear sub-space which maximizes the variance of projected points, the latter being obtained by eigen decomposition of the covariance matrix of the point set. Eigenvectors corresponding to large eigenvalues are the
-directions in which the data has strong component, or equivalently large variance. If eigenvalues are the same there is no preferable sub-space.\\
-
-Given an object set, \emph{linear least squares fitting} amounts to find the linear sub-space which minimizes the sum of squared distances from all points in the set to their projection onto this linear sub-space. This problem is equivalent to the one of fitting a linear sub-space to a point set, except that the covariance matrix is now derived (closed form formula) from a continuous integral over the objects instead of a discrete sum over the points.
+Given a set of objects, \emph{linear least squares fitting} amounts to finding the linear sub-space which minimizes the sum of squared distances from all points composing the objects of the set, to their projection onto this linear sub-space. 
 
 
 \begin{center}
@@ -29,7 +24,8 @@ Given an object set, \emph{linear least squares fitting} amounts to find the lin
     % Title
     \begin{figure}[h]
         \caption{Left: fitting a line to a 2D point set.
-                 Right: fitting a line and a plane to a 3D point set.}
+                 Middle: fitting a line and a plane to a 3D point set.
+                 Right: fitting a plane to a set of 3D triangles.}
     \end{figure}
 \end{center}
 
