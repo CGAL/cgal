@@ -9,8 +9,7 @@ A \emph{centroid} of a set of objects is their center of mass, i.e., the point w
 
 A \emph{barycenter} of a set of weighted points is the point whose coordinates are computed by means of weighted coordinates of all weighted points from the set. When all weights are equal the barycenter coincides with the centroid.\\
 
-Given a set of objects, \emph{linear least squares fitting} amounts to finding the linear sub-space which minimizes the sum of squared distances from all points composing the objects of the set, to their projection onto this linear sub-space. 
-
+Given a set of objects, \emph{linear least squares fitting} amounts to finding the linear sub-space which minimizes the sum of squared distances from all points composing the objects of the set, to their projection onto this linear sub-space. Such linear sub-space is obtained by so-called principal component analysis (PCA). PCA is defined as a transformation that transforms the data to a new coordinate system such that the greatest variance by orthogonal projection of the data comes to lie on the first coordinate (called the first principal component), the second greatest variance on the second coordinate, and so on. PCA is often used in geometric applications to reduce data sets to lower dimensions for analysis or approximation.
 
 \begin{center}
     \label{fit}
