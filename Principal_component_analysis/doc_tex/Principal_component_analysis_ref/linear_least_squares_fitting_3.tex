@@ -13,7 +13,11 @@
 
 \ccDefinition
   
-The function \ccRefName\ computes the best fitting 3D line or plane of 3D sets of points, segments, triangles, spheres, cuboids and tetrahedrons. The best fit linear sub-space minimizes the sum of squared distances from the points to their projections onto the linear sub-space.
+The function \ccRefName\ computes the best fitting 3D line or plane (in the least squares sense) of a set of 3D objects such as points, segments, triangles, spheres, balls, cuboids or tetrahedra. \\
+
+The best fitting linear sub-space (line or plane) minimizes the sum of squared distances from all points comprising these objects to their orthogonal projections onto this linear subspace. It can be shown that the best line or plane goes through the centroid of the set. This problem is equivalent to search for the linear sub-space which maximizes the variance of projected points (sum of squared distances to the centroid). Internally we solve this problem by eigen decomposition of the covariance matrix of the whole set. Note that the $3 \times 3$ covariance matrix is computed internally in closed form and not by point sampling the objects. Eigenvectors corresponding to large eigenvalues are the directions in which the data has strong component, or equivalently large variance.\\
+
+The fitting quality property is characterized by the values of the three eigenvalues. When all three values are distinct the best linear subspace is uniquely determined, be it a line or a plane. When all three eigenvalues are equal there is no preferable sub-space and any line or plane going through the centroid share the same fitting property. A best fitting line is uniquely determined as soon as the largest eigenvalue is different from the two others, otherwise all lines contained in the best fitting plane share the same fitting property. A best fitting plane is uniquely determined as soon as the smallest eigenvalue is different from the two others, otherwise all planes going through the best fitting line share the same fitting property.
 
 \ccInclude{CGAL/linear_least_squares_fitting_3.h}
 
@@ -30,24 +34,21 @@ The function \ccRefName\ computes the best fitting 3D line or plane of 3D sets o
 between $0$ and $1$, where $0$ means that the variance is the same
 along any line (a horizontal line going through the centroid is output
 by default), and $1$ means that the variance is null orthogonally
-to the best fitting line. }
+to the best fitting line (hence the fit is perfect). }
 
-The class \ccc{K} is the kernel in which the type
-\ccc{InputIterator::value_type} is defined. It can be omitted and
-deduced automatically from the value type.
+The class \ccc{K} is the kernel in which the type \ccc{InputIterator::value_type} is defined. It can be omitted and deduced automatically from the value type.
 
-The tag \ccc{tag} identifies the dimension of the objects in the object set. For point sets it should be 0. For segment sets it could be 1 or 0 according to whether one wants to fit the entire segments or just the end points. For triangle sets it can range from 0 to 2 according to whether one wants to fit the corner points, the segments or the entire triangles. For cuboid sets it can range from 0 to 3 according to whether one wants to fit the corners, the segments, the faces or the entire solid cuboids. For sphere sets it can be 2 or 3 according to whether one wants to fit the surface of the spheres or the entire solid balls. For tetrahedron sets it ranges from 0 to 3 according to whether one wants to fit the points, the segments, the surface triangles or the entire solid tetrahedra.
+The tag \ccc{tag} identifies the dimension to be considered from the objects. For point sets it should be 0. For segment sets it could be 1 or 0 according to whether one wants to fit the entire segments or just the end points. For triangle sets it can range from 0 to 2 according to whether one wants to fit either the corner points, the segments or the whole triangles. For cuboid sets it can range from 0 to 3 according to whether one wants to fit either the corners, the segments, the faces or the whole solid cuboids. For sphere sets it can be 2 or 3 according to whether one wants to fit either the surface of the spheres or the whole solid balls. For tetrahedron sets it can range from 0 to 3 according to whether one wants to fit either the points, the segments, the surface triangles or the whole solid tetrahedra.
 
 \ccHeading{Requirements}
 
 \begin{enumerate}
-   \item  \ccc{InputIterator::value_type} is equivalent to \ccc{K::Point_3} or
-          \ccc{K::Segment_3} or \ccc{Triangle_3} or \ccc{Cuboid_3} or
+   \item  \ccc{InputIterator::value_type} can be either \ccc{K::Point_3}, 
+          \ccc{K::Segment_3}, \ccc{Triangle_3}, \ccc{Cuboid_3},
           \ccc{Sphere_3} or \ccc{Tetrahedron_3}.
    \item  \ccc{line} is the best fitting line computed.
-   \item  \ccc{centroid} is the centroid computed. This parameter can be
-          omitted.
-   \item  \ccc{tag} is the tag identifying the dimension of the objects in the object set. It should be one of \ccc{Dimension_tag<0>}, \ccc{Dimension_tag<1>}, \ccc{Dimension_tag<2>} or \ccc{Dimension_tag<3>}. Also, it should not be of a dimension greater than the geometry of the object. For example, a \ccc{Triangle} can not have a \ccc{Dimension_tag<3>} tag, or a \ccc{Segment} cannot have a \ccc{Dimension_tag<2>} nor a \ccc{Dimension_tag<3>} tag.
+   \item  \ccc{centroid} is the centroid computed. This parameter is optional and can be omitted.
+   \item  \ccc{tag} is the tag identifying the dimension to be considered from the objects. It should be one of \ccc{Dimension_tag<0>}, \ccc{Dimension_tag<1>}, \ccc{Dimension_tag<2>} or \ccc{Dimension_tag<3>}. Also, it should not be of a dimension greater nor smaller than the geometry of the object. For example, a \ccc{Triangle} can not have a \ccc{Dimension_tag<3>} tag. A \ccc{Segment} can not have a \ccc{Dimension_tag<2>} nor a \ccc{Dimension_tag<3>} tag. A \ccc{Sphere} can not have a \ccc{Dimension_tag<0>} nor a \ccc{Dimension_tag<1>} tag.
 \end{enumerate}
 
 
@@ -64,24 +65,21 @@ The tag \ccc{tag} identifies the dimension of the objects in the object set. For
 between $0$ and $1$, where $0$ means that the variance is the same
 along any plane (a horizontal plane going through the centroid is output
 by default), and $1$ means that the variance is null orthogonally
-to the best fitting plane. }
+to the best fitting plane (hence the fit is perfect). }
 
-The class \ccc{K} is the kernel in which the type
-\ccc{InputIterator::value_type} is defined. It can be omitted and
-deduced automatically from the value type.
+The class \ccc{K} is the kernel in which the type \ccc{InputIterator::value_type} is defined. It can be omitted and deduced automatically from the value type.
 
-The tag \ccc{tag} identifies the dimension of the objects in the object set (see above). 
+The tag \ccc{tag} identifies the dimension to be considered from the objects (see above).
 
 \ccHeading{Requirements}
 
 \begin{enumerate}
-   \item  \ccc{InputIterator::value_type} is equivalent to \ccc{K::Point_3} or
-          \ccc{K::Segment_3} or \ccc{Triangle_3} or \ccc{Cuboid_3} or
+   \item  \ccc{InputIterator::value_type} can either be \ccc{K::Point_3},
+          \ccc{K::Segment_3}, \ccc{Triangle_3}, \ccc{Cuboid_3},
           \ccc{Sphere_3} or \ccc{Tetrahedron_3}.
    \item  \ccc{plane} is the best fitting plane computed.
-   \item  \ccc{centroid} is the centroid computed. This parameter can be
-          omitted.
-   \item  \ccc{tag} is the tag identifying the dimension of the objects in the object set. It should be one of \ccc{Dimension_tag<0>}, \ccc{Dimension_tag<1>}, \ccc{Dimension_tag<2>} or \ccc{Dimension_tag<3>}. Also, it should not be of a dimension greater than the geometry of the object. For example, a \ccc{Triangle} can not have a \ccc{Dimension_tag<3>} tag, or a \ccc{Segment} can not have a \ccc{Dimension_tag<2>} nor a \ccc{Dimension_tag<3>} tag.
+   \item  \ccc{centroid} is the centroid computed. This parameter is optional and can be omitted.
+   \item  \ccc{tag} is the tag identifying the dimension to be considered from the objects. It should be one of \ccc{Dimension_tag<0>}, \ccc{Dimension_tag<1>}, \ccc{Dimension_tag<2>} or \ccc{Dimension_tag<3>}. Also, it should not be of a dimension greater nor smaller than the geometry of the object. For example, a \ccc{Triangle} can not have a \ccc{Dimension_tag<3>} tag, or a \ccc{Segment} can not have a \ccc{Dimension_tag<2>} nor a \ccc{Dimension_tag<3>} tag. A \ccc{Segment} can not have a \ccc{Dimension_tag<2>} nor a \ccc{Dimension_tag<3>} tag. A \ccc{Sphere} can not have a \ccc{Dimension_tag<0>} nor a \ccc{Dimension_tag<1>} tag.
 \end{enumerate}
 
 \end{ccRefFunction}

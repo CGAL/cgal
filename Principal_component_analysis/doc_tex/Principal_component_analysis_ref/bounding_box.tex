@@ -12,8 +12,7 @@
 
 \ccDefinition
   
-The function \ccRefName\ computes the axis-aligned bounding box of a set of 2D or 3D objects. The function is implemented for all bounded objects from the 2D and 3D kernels such as points, segments, triangles, etc.
-The bounding box is returned as an iso rectangle in 2D and as an iso cuboid in 3D.
+The function \ccRefName\ computes the axis-aligned bounding box of a set of 2D or 3D objects. The function is implemented for all \emph{bounded} objects from the 2D and 3D kernels such as points, segments, triangles, tetrahedra, etc. The bounding box is returned either as an iso rectangle in 2D or as an iso cuboid in 3D, the type being deduced automatically from the value type of the iterator range.
 
 \ccInclude{CGAL/bounding_box.h}
 
