@@ -1,10 +1,8 @@
 // Example program for the linear_least_square_fitting function
-// on a set of tetrahedra in 3D
-
+// on a set of 3D tetrahedra
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <list>
-#include <cstdlib> // for std::rand
 
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  K;
@@ -13,25 +11,13 @@ typedef K::Plane_3           Plane;
 typedef K::Point_3           Point;
 typedef K::Tetrahedron_3     Tetrahedron;
 
-FT random_value()
-{
-	return (FT)std::rand() / (FT)RAND_MAX;
-}
-
-Point random_point()
-{
-	return Point(random_value(),
-		           random_value(),
-							 random_value());
-}
-
 int main(void)
 {
-	Point a = random_point();
-	Point b = random_point();
-	Point c = random_point();
-	Point d = random_point();
-	Point e = random_point();
+	Point a(1.0,2.0,3.0);
+	Point b(4.0,5.0,6.0);
+	Point c(7.0,8.0,9.0);
+	Point d(8.0,7.0,6.0);
+	Point e(2.0,4.0,5.0);
 
 	std::list<Tetrahedron> tetrahedra;
   tetrahedra.push_back(Tetrahedron(a,b,c,d));
@@ -40,19 +26,19 @@ int main(void)
   Line line;
   Plane plane;
 
-	// fit a line and a plane to tetrahedra
+	// fit line and plane to whole tetrahedra
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<3>());
 
-	// fit a line and a plane to tetrahedron faces
+	// fit line and plane to tetrahedron faces
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<2>());
     
-	// fit a line and a plane to tetrahedron edges
+	// fit line and plane to tetrahedron edges
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<1>());
 
-	// fit a line and a plane to tetrahedron vertices
+	// fit line and plane to tetrahedron vertices
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::Dimension_tag<0>());
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<0>());
 

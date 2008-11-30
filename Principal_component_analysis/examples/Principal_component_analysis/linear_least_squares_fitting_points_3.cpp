@@ -16,11 +16,11 @@ int main()
   points.push_back(Point(4.0,5.0,6.0));
   points.push_back(Point(7.0,8.0,9.0));
 
-	// fit a line
+	// fit line
   Line line;
   linear_least_squares_fitting_3(points.begin(),points.end(),line,CGAL::Dimension_tag<0>());
 
-	// fit a plane
+	// fit plane
   Plane plane;
   linear_least_squares_fitting_3(points.begin(),points.end(),plane,CGAL::Dimension_tag<0>());
 

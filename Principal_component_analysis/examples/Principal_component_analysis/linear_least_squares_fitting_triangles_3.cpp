@@ -1,5 +1,4 @@
-// Example program for the linear_least_square_fitting function on set of triangles in 3D
-
+// Example program for the linear_least_square_fitting function on set of 3D triangles
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <list>
@@ -24,15 +23,15 @@ int main(void)
   Line line;
   Plane plane;
 
-	// fit a line and a plane to triangles
+	// fit line and plane to whole triangles
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<2>());
   
-	// fit a line and a plane to triangle edges
+	// fit line and plane to triangle edges
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<1>());
   
-	// fit a line and a plane to triangle vertices
+	// fit line and plane to triangle vertices
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<0>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<0>());
   

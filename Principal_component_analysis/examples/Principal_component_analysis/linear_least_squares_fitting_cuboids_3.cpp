@@ -22,11 +22,11 @@ int main()
   Line line;
   Plane plane;
 
-	// fit volume
+	// fit volumes
   linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line, CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::Dimension_tag<3>());
   
-  // fit faces
+  // fit quadrangle faces
   linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line, CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::Dimension_tag<2>());
 

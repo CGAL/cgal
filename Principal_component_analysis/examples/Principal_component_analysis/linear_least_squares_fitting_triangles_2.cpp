@@ -11,7 +11,6 @@ typedef K::Triangle_2        Triangle;
 
 int main()
 {
-	// generate 2D triangles
   std::list<Triangle> triangles;
 	Point a(1.0,2.0,3.0);
 	Point b(4.0,5.0,6.0);
@@ -20,7 +19,7 @@ int main()
   triangles.push_back(Triangle(a,b,c));
   triangles.push_back(Triangle(a,b,d));
 
-  // fit line to triangles
+  // fit line to whole triangles
   Line line;
   linear_least_squares_fitting_2(triangles.begin(),triangles.end(),line,CGAL::Dimension_tag<2>());
 

@@ -14,7 +14,7 @@ typedef K::Point_3           Point_3;
 
 int main()
 {
-  // barycenter of 2D points
+  // barycenter of 2D weighted points
   std::list<std::pair<Point_2, FT> > points_2;
   points_2.push_back(std::make_pair(Point_2(1.0, 0.0),  1.0));
   points_2.push_back(std::make_pair(Point_2(2.0, 2.0),  2.0));
@@ -23,7 +23,7 @@ int main()
   Point_2 c2 = CGAL::barycenter(points_2.begin(), points_2.end());
   std::cout << c2 << std::endl;
 
-  // barycenter of 3D points
+  // barycenter of 3D weighted points
   std::list<std::pair<Point_3, FT> > points_3;
   points_3.push_back(std::make_pair(Point_3(1.0, 0.0, 0.5),  1.0));
   points_3.push_back(std::make_pair(Point_3(2.0, 2.0, 1.2),  2.0));

@@ -18,11 +18,15 @@ int main()
   Iso_rectangles.push_back(Iso_rectangle_2(Point_2(4.0,8.0),Point_2(0.0,16.0)));
 
   Line_2 line;
-  Point_2 c;
 
-  linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,c,CGAL::Dimension_tag<2>());
-  linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,c,CGAL::Dimension_tag<1>());
-  linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,c,CGAL::Dimension_tag<0>());
+  // fit whole rectangles
+  linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,CGAL::Dimension_tag<2>());
+  
+  // fit rectangle edges
+  linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,CGAL::Dimension_tag<1>());
+  
+  // fit rectangle vertices
+  linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,CGAL::Dimension_tag<0>());
 
   return 0;
 }

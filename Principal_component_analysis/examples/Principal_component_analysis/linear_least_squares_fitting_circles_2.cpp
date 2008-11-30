@@ -1,4 +1,4 @@
-// Example program for linear least squares fitting of 2D circles
+// Example program for linear least squares fitting of 2D circles and disks
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <list>

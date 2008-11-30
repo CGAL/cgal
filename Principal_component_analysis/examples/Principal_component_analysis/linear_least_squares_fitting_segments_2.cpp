@@ -20,8 +20,10 @@ int main()
 
   Line line;
   
-	// fit a line
+	// fit line to whole segments
   linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
+  
+  // fit line to segment end points
   linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::Dimension_tag<0>());
 
   return 0;

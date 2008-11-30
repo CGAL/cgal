@@ -1,4 +1,4 @@
-// Example program for linear least squares fitting of 3D spheres
+// Example program for linear least squares fitting of 3D spheres and balls
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <list>
@@ -19,13 +19,13 @@ int main()
   Line line;
   Plane plane;
 
-  // fit a line and a plane to balls (dimension 3)
-  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line, CGAL::Dimension_tag<3>());
-  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::Dimension_tag<3>());
-
   // fit a line and a plane to spheres (dimension 2)
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line, CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::Dimension_tag<2>());
 
+  // fit a line and a plane to balls (dimension 3)
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line, CGAL::Dimension_tag<3>());
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::Dimension_tag<3>());
+  
   return 0;
 }
