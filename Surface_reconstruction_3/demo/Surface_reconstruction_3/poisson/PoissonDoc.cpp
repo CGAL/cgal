@@ -323,11 +323,11 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   else if (extension.CompareNoCase(".g23") == 0)
   {
     std::string movie_file_name;
-    std::deque<Point> cameras; // temporary container of cameras to read
-    if( ! surface_reconstruction_read_g23(lpszPathName,
-                                          std::back_inserter(m_points),
-                                          std::back_inserter(cameras),
-                                          &movie_file_name) )
+    std::map<int,Point> cameras; // (indexed) cameras
+    if( ! surface_reconstruction_read_g23<Point>(lpszPathName,
+                                                 std::back_inserter(m_points),
+                                                 &cameras,
+                                                 &movie_file_name) )
     {
       prompt_message("Unable to read file");
       return FALSE;
