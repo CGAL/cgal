@@ -80,7 +80,7 @@ wait_for_process()
 
 run_local_cgal_test()
 {
-    eval time ./cgal_test_with_cmake > current_compiler_output 2>&1
+    eval ./cgal_test_with_cmake > current_compiler_output 2>&1
     exit_value=$?
     if [ $exit_value -ne 0 ]
     then
