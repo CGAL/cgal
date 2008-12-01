@@ -3,7 +3,7 @@ Release notes of CGAL.
 ----------------------------- Release 3.4 ----------------------------------
 The following functionality has been added or changed:
 
-1- General
+1 General
 
   - Additional supported platforms:
     - GNU g++ 4.3 supported.  Support for g++ 3.3 is dropped.
@@ -20,11 +20,43 @@ The following functionality has been added or changed:
     It is not possible anymore to set the CONTINUE mode for assertion failures.
     Functions that allow to change the assertion behaviour are now declared in <CGAL/assertions_behaviour.h>.
 
-2- Installation
+2 Installation
 
   - install_cgal has been replaced by CMake.
 
-3- Kernels
+
+3 Arithmetic and Algebra
+
+3.1 Algebraic Foundations
+
+  - This package defines what algebra means for CGAL, in terms of concepts, classes and functions.
+
+
+3.2 Polynomial  (new package)
+
+  - This package introduces a concept Polynomial_d, a concept for multivariate polynomials in d variables.
+
+
+3.3 Modular Arithmetic (new package)
+
+  -  This package provides arithmetic over finite fields. 
+
+
+3.4 Number Types:
+
+  - the counter Interval_nt::number_of_failures() has been removed, replaced by
+    a profiling counter enabled with CGAL_PROFILE.
+
+
+
+4 Kernels
+
+4.1 3D Spherical Geometry Kernel  (new package)
+
+  - This package is an extension of the linear CGAL Kernel. It offers functionalities on spheres, 
+    circles, circular arcs and line segments in the 3D space.
+
+4.2 Linear Kernel
 
   - We recommend that you use the object_cast() function instead of assign()
     to extract an object from a CGAL::Object, for efficiency reasons.
@@ -70,7 +102,25 @@ The following functionality has been added or changed:
   - Global functions: Intersections, Do_intersects and radical_plane.
   - The missing intersection/do_intersect between Line_3 and Line_3 has been added as well.
 
-4- STL Extensions:
+
+
+5 Data Structures and Algorithms
+
+5.1 3D Minkowski Sum (new package)
+
+  - This package provides a function, which computes the Minkowski sum of two point sets in R^3
+
+
+5.2 Triangulation_3:
+
+  - Removed the deprecated functions Cell:mirror_index() and Cell::mirror_vertex().
+  - Derecursification of two functions that in some cases lead to stack overflows
+
+
+5.3 CGAL and the Qt4 GraphicsView (new package)
+
+
+6 STL Extensions:
 
   - The functor adaptors for argument binding and composition
     (bind_*, compose, compose_shared, swap_*, negate, along with the helper
@@ -90,14 +140,7 @@ The following functionality has been added or changed:
     uncertain results for predicates using interval arithmetic, and other filtering
     techniques.
 
-5- Triangulation_3:
 
-  - Removed the deprecated functions Cell:mirror_index() and Cell::mirror_vertex().
-
-6- Number types:
-
-  - the counter Interval_nt::number_of_failures() has been removed, replaced by
-    a profiling counter enabled with CGAL_PROFILE.
 
 
 ----------------------------- Release 3.3.1 ----------------------------------
