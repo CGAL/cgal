@@ -23,6 +23,7 @@ my $release_name;
 my @platforms_to_do;
 my @known_platforms;
 my %platform_short_names;
+my %platform_is_optimized;
 my @available_platforms;
 my %test_directories = ();
 my @testresults;
@@ -381,6 +382,7 @@ EOF
 		chomp;
 		$tmp[$index] = $_;
 	    }
+	    ($platform_is_optimized{$pf}) = ($tmp[1] =~ m|([-/]x?O[1-9])|);
 	    $_ = <PLATFORM_INFO>;
 	    chomp;
 	    print OUTPUT "</td>\n";
@@ -414,6 +416,11 @@ sub print_platforms_numbers()
 	my $pf_short = short_pfname($platform);
 	my $class = "";
 	my $tag = "";
+	if($platform_is_optimized{$platform})
+	{
+	    $class = " class=\"highlight\"";
+	    $tag = " (optimized: $platform_is_optimized{$platform})"
+	}
 	print OUTPUT "<td$class><a href=\"#platform$platform_num\" title=\"$pf_short$tag\"><b>$platform_num</b></a>\n";
     }
 }
