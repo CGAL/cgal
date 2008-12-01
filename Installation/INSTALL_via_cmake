@@ -15,8 +15,9 @@ To install CGAL, you should:
  - setup the pre-requisites:
  ---------------------------
 
-   * install CMake 2.4-patch-7 or later (http://www.cmake.org/)
-     CMake is the build system used by CGAL.
+   * install CMake, the build system used by CGAL
+     Required Rel 2.4-patch-7, Recommended Rel 2.6 supporting a crossplatform cmake-gui
+     Download from: http://www.cmake.org/
 
    * install the Boost libraries (http://www.boost.org/ or http://www.boostpro.com/products/free)
      Boost is required to build CGAL.
@@ -25,8 +26,8 @@ To install CGAL, you should:
 
    * install optional additional libraries:
 
-     o Used by most Demos
-       - qt (http://trolltech.com/products/qt)
+     o Used by most demos
+       - qt3 and qt4 (http://trolltech.com/products/qt)
 
      o Used for exact arithmetic           
 
@@ -34,12 +35,12 @@ To install CGAL, you should:
        - mpfr  (http://www.mpfr.org/)
        - leda  (http://www.algorithmic-solutions.com/leda/index.htm) (commercial)
 
-     o Used by a demo
+     o Miscellaneous
 
-       - zlib
-       - taucs
+       - zlib  (Used by the Surface Mesh Generator demo)
+       - taucs (Used by the Surface parametriation package)
 
-    NOTE: The Windows version comes with a CGAL specific distribution of gmp, mpfr and taucs.
+    NOTE: The Windows installer comes with a CGAL specific distribution of gmp, mpfr and taucs.
 
 
  ---------------------------------------------------------------------------------
