@@ -92,6 +92,7 @@ COMPARE_CW_AROUND_POINT=26
 configure()
 {
     echo "Configuring... "
+    rm -rf CMakeCache.txt CMakeFiles/
     
     if eval 'cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                      -DCGAL_DIR="$CGAL_DIR" \
