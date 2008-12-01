@@ -23,7 +23,6 @@ This distribution of CGAL includes:
                         (experimental) are provided for all programs.
    include/CGAL       - the include files for the CGAL library (and other small
                         external libraries as well, see the LICENSE file)
-   install_cgal       - the script with which you can install CGAL
    INSTALL            - file containing information about the installation
                         process on Unix-like platforms
    INSTALL.MacOSX     - file containine information about the installation
