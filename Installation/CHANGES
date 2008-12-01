@@ -119,6 +119,8 @@ The following functionality has been added or changed:
 
 5.3 CGAL and the Qt4 GraphicsView (new package)
 
+  - 2D CGAL Kernel objects and many data structures have can be rendered in a QGraphicsView
+
 
 6 STL Extensions:
 
