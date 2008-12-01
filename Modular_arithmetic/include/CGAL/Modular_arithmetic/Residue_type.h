@@ -126,10 +126,10 @@ private:
     /* Little modular reduction (e.g. after a simple addition). */
     static inline 
     double RES_soft_reduce (double a){
-      double prime = get_prime();
+      double p = get_prime();
         double b = 2*a;
-        return (b>prime) ? a-prime :
-            ((b<-prime) ? a+prime : a);
+        return (b>p) ? a-p :
+            ((b<-p) ? a+p : a);
     }
     
     /* -a */
