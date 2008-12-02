@@ -65,20 +65,16 @@ but a useful set of tests is defined with the following levels:
 \begin{description}
 \item[Level 0] 
   The number of halfedges is even. All pointers except
-  the vertex pointer and the face pointer for border halfedges and halfedge cycles
-  are unequal to their respective default construction value.  For all
+  the vertex pointer and the face pointer for border halfedges are
+  unequal to their respective default construction value.  For all
   halfedges $h$: The opposite halfedge is different from $h$ and the
   opposite of the opposite is equal to $h$. The next of the previous
   halfedge is equal to $h$. For all vertices $v$: the incident vertex
   of the incident halfedge of $v$ is equal to $v$. The halfedges
   around $v$ starting with the incident halfedge of $v$ form a cycle.
-  For all halfedge cycles $c$: The halfedges starting with the halfedge 
-  referenced by $c$ from a cycle and are all incident to the same face 
-  $f$ referenced by $c$ (or are all border halfedges).
   For all faces $f$: the incident face of the incident halfedge of $f$
   is equal to $f$. The halfedges around $f$ starting with the incident
-  halfedge of $f$ form a cycle.
-  Redundancies among internal variables
+  halfedge of $f$ form a cycle.  Redundancies among internal variables
   are tested, e.g., that iterators enumerate as many items as the
   related size value indicates.
 \item[Level 1] 
@@ -86,8 +82,6 @@ but a useful set of tests is defined with the following levels:
   incident vertex of $h$ exists and is equal to the incident vertex of
   the opposite of the next halfedge. The incident face (or hole) of
   $h$ is equal to the incident face (or hole) of the next halfedge.
-  The halfedge cycle of $h$ is equal to the  halfedge cycle
-   of the next halfedge.
 \item[Level 2]
   All tests of level 1. The sum of all halfedges that can
   be reached through the vertices must be equal to the number of all
@@ -97,8 +91,7 @@ but a useful set of tests is defined with the following levels:
   All tests of level 2. The sum of all halfedges that can
   be reached through the faces must be equal to the number of all
   halfedges, i.e., all halfedges surrounding a face must form a single
-  cycle (no holes in faces). Likewise for the sum of all halfedges that
-  can be reached through the halfedge cycles.
+  cycle (no holes in faces).
 \item[Level 4]
   All tests of level 3 and \ccc{normalized_border_is_valid}.
 \end{description}

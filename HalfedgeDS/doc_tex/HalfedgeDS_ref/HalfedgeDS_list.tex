@@ -72,14 +72,6 @@ additionally:
      valid range in \ccc{source}. \ccc{target} is not in the range
      [\ccc{first, last}).}
 
-\ccMethod{ void halfedge_cycles_splice( Halfedge_cycle_iterator target, Self &source,
-                             Halfedge_cycle_iterator first, Halfedge_cycle_iterator last);}
-    { inserts elements in the range [\ccc{first, last}) before position 
-     \ccc{target} and removes the elements from \ccc{source}. It takes 
-     constant time if \ccc{&source == &}\ccVar; otherwise, it takes linear
-     time in the size of the range. \ccPrecond [\ccc{first, last}) is a
-     valid range in \ccc{source}. \ccc{target} is not in the range
-     [\ccc{first, last}).}
 
 
 \ccSeeAlso

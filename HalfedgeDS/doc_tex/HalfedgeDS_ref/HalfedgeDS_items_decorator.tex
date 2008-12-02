@@ -23,8 +23,7 @@ The classes \ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
 \ccc{CGAL::HalfedgeDS_const_decorator<HDS>} provide additional functions
 to examine and to modify a halfedge data structure \ccc{HDS}. The class
 \ccc{CGAL::HalfedgeDS_items_decorator<HDS>} provides additional functions
-for vertices, halfedges, { halfedge cycles}, and faces 
-of a halfedge data structure
+for vertices, halfedges, and faces of a halfedge data structure
 without knowing the containing halfedge data structure. The class
 \ccc{CGAL::HalfedgeDS_decorator<HDS>} stores a reference to the halfedge
 data structure and provides functions that modify the halfedge data
@@ -56,8 +55,6 @@ all halfedge data structures and will not appear here again.
 \ccNestedType{Halfedge}{halfedge type of \ccc{HalfedgeDS}.}
 \ccGlue
 \ccNestedType{Face}{face type of \ccc{HalfedgeDS}.}
-\ccGlue
-\ccNestedType{ Halfedge_cycle}{ halfedge cycle type of \ccc{HalfedgeDS}.}
 
 \ccNestedType{Vertex_handle}{}
 \ccGlue
@@ -65,15 +62,11 @@ all halfedge data structures and will not appear here again.
 \ccGlue
 \ccNestedType{Face_handle}{}
 \ccGlue
-\ccNestedType{ Halfedge_cycle_handle}{}
-\ccGlue
 \ccNestedType{Vertex_iterator}{}
 \ccGlue
 \ccNestedType{Halfedge_iterator}{}
 \ccGlue
 \ccNestedType{Face_iterator}{}
-\ccGlue
-\ccNestedType{ Halfedge_cycle_iterator}{}
 
 The respective \ccc{const_handle}'s and \ccc{const_iterator}'s are
 available as well.
@@ -92,13 +85,7 @@ available as well.
 \ccGlue
 \ccNestedType{Supports_halfedge_face}{}
 \ccGlue
-\ccNestedType{ Supports_halfedge_halfedge_cycle}{}
-\ccGlue
 \ccNestedType{Supports_face_halfedge}{}
-\ccGlue
-\ccNestedType{ Supports_face_halfedge_cycle}{}
-\ccGlue
-\ccNestedType{ Supports_halfedge_cycle_face}{}
 \ccGlue
 \ccNestedType{Supports_removal}{}
 
@@ -134,18 +121,6 @@ available as well.
 \ccMethod{Face_handle get_face(Halfedge_handle h);}
     {returns the incident face of $h$ if supported, 
     \ccc{Face_handle()} otherwise.}
-\ccGlue
-\ccMethod{ Face_handle get_face(Halfedge_cycle_handle c);}
-    { returns the face of $c$ if supported, 
-    \ccc{Face_handle()} otherwise.}
-\ccGlue
-\ccMethod{ Halfedge_cycle_handle get_halfedge_cycle(Halfedge_handle h);}
-    { returns the halfedge cycle of $h$ if supported, 
-    \ccc{Halfedge_cycle_handle()} otherwise.}
-\ccGlue
-\ccMethod{ Halfedge_cycle_handle get_halfedge_cycle(Face_handle f);}
-    { returns the halfedge cycle of $f$ if supported, 
-    \ccc{Halfedge_cycle_handle()} otherwise.}
 \ccGlue
 \ccMethod{Halfedge_handle get_face_halfedge( Face_handle f);}
     {returns the incident halfedge of $f$ if supported, 
@@ -222,34 +197,11 @@ Corresponding member functions for \ccc{const_handle}'s are provided as well.
 \ccMethod{void set_face( Halfedge_handle h, Face_handle f) const;}
     {sets the incident face of $h$ to $f$.}
 \ccGlue
-\ccMethod{ void set_face( Halfedge_cycle_handle b, Face_handle f) const;}
-    { sets $f$ as the face bounded by $b$.}
-\ccGlue
 \ccMethod{void set_face_halfedge( Face_handle f, Halfedge_handle g) const;}
     {sets the incident halfedge of $f$ to $g$.}
 \ccGlue
 \ccMethod{void set_face_halfedge( Halfedge_handle h) const;}
     {sets the incident halfedge of the face incident to $h$ to $h$.}
-\ccGlue
-\ccMethod{ void set_halfedge_cycle( Halfedge_handle h, Halfedge_cycle_handle c) const;}
-    { sets the halfedge cycle of $h$ to $c$.}
-\ccGlue
-\ccMethod{ void insert_outer_halfedge_cycle_to_face( Face_handle f, Halfedge_cycle_handle c, Halfedge_cycle_handle_iterator pos) const;}
-    { inserts $c$ to sequence of outer cycles of $f$ before $pos$.}
-\ccGlue
-\ccMethod{ void insert_inner_halfedge_cycle_to_face( Face_handle f, Halfedge_cycle_handle c, Halfedge_cycle_handle_iterator pos) const;}
-    { inserts $c$ to sequence of inner cycles of $f$ before $pos$.}
-\ccGlue
-\ccMethod{ void insert_isolated_vertex_to_face( Face_handle f, Halfedge_cycle_handle v, Halfedge_cycle_handle_iterator pos) const;}
-    { inserts $v$ to sequence of isolated vertices of $f$ before $pos$.}
-\ccGlue
-\ccMethod{ void remove_outer_halfedge_cycle_of_face( Face_handle f, Halfedge_cycle_handle_iterator it) const;}
-    { removes the entry $it$ in the sequence of outer cycles of $f$}
-\ccGlue
-\ccMethod{ void remove_inner_halfedge_cycle_of_face( Face_handle f, Halfedge_cycle_handle_iterator it) const;}
-    { removes the entry $it$ in the sequence of inner cycles of $f$}
-\ccGlue
-\ccMethod{ void remove_isolated_vertex_of_face( Face_handle f, Halfedge_cycle_handle_iterator it) const;}        { removes the entry $it$ in the sequence of isolated vertices of $f$}
 
 
 \ccSeeAlso

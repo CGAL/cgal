@@ -21,10 +21,9 @@
   
 The class \ccRefName\ is a model of the \ccc{HalfedgeDSItems} concept.
 It uses the default types for vertices, halfedges, and faces that
-declare all incidences supported by a \ccc{HalfedgeDS}.
-{ Halfedge cycles are not supported. 
-The vertex also contains a point of type \ccc{Traits::Point_2}, 
-where \ccc{Traits} is the template argument of the corresponding \ccc{HalfedgeDS}}.
+declare all incidences supported by a \ccc{HalfedgeDS}.  The vertex
+also contains a point of type \ccc{Traits::Point_2}, where \ccc{Traits} 
+is the template argument of the corresponding \ccc{HalfedgeDS}.
 
 \ccInclude{CGAL/HalfedgeDS_items_2.h}
 
@@ -34,15 +33,13 @@ where \ccc{Traits} is the template argument of the corresponding \ccc{HalfedgeDS
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::HalfedgeDS_items_with_halfedge_cycle_2}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
 \ccRefIdfierPage{CGAL::Polyhedron_items_3}\\
 \ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
 \ccRefConceptPage{PolyhedronItems_3}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_cycle_base<Refs>}
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}
 
 \ccExample
 
@@ -64,12 +61,6 @@ struct HalfedgeDS_items_2 {
     template < class Refs, class Traits>
     struct Face_wrapper {
         typedef CGAL::HalfedgeDS_face_base< Refs> Face;
-    };
-
-    // Halfedge_cycles are not supported by default, hence a dummy type is used.
-    template < class Refs, class Traits>
-    struct Halfedge_cycle_wrapper {
-        typedef int Halfedge_cycle;
     };
 };
 \end{ccExampleCode}

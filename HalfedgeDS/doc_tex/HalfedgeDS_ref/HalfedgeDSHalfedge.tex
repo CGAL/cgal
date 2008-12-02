@@ -29,35 +29,10 @@ paired with a halfedge pointing in the opposite direction. The
 \ccc{opposite()} member function returns this halfedge of opposite
 orientation. The \ccc{next()} member function points to the successor
 halfedge along the face -- or if the halfedge is a border halfedge --
-along the open region. 
-
-A halfedge optionally stores a reference to the
+along the open region. A halfedge optionally stores a reference to the
 previous halfedge along the face, a reference to an incident vertex,
-{ a reference to the halfedge cycle containing it},
-and a reference to the incident face.
-Type tags indicate whether the related member functions are supported.
-
-{
-
-\input{HalfedgeDS_ref/Ccb_or_dmr.tex}
-
-The choice is selected via a combination of type tags:
-
-For direct mutual reference use
-
-\ccc{Supports_halfedge_face} $\equiv$  \ccc{CGAL::Tag_true}
-and
-\ccc{Supports_halfedge_halfedge_cycle} $\equiv$  \ccc{CGAL::Tag_false}
-
-For halfedge cycle items use:
-
-\ccc{Supports_halfedge_face} $\equiv$  \ccc{CGAL::Tag_false}
-and
-\ccc{Supports_halfedge_halfedge_cycle} $\equiv$  \ccc{CGAL::Tag_true}
- 
-}
-
-
+and a reference to an incident face. Type tags indicate whether the
+related member functions are supported.
 Figure~\ccTexHtml{\ref{figureHalfedgeDSOptionalMethods}}{}\begin{ccHtmlOnly}
   <A HREF="#figureHalfedgeDSOptionalMethods"><IMG 
   SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
@@ -120,8 +95,6 @@ protection could be bypassed also by an user, but not by accident.)
 \ccNestedType{Vertex}{model of \ccc{HalfedgeDSVertex}.}
 \ccGlue
 \ccNestedType{Face}{model of \ccc{HalfedgeDSFace}.}
-\ccGlue
-\ccNestedType{ Halfedge_cycle}{ model of \ccc{HalfedgeDSHalfedgeCycle}.}
 
 \ccNestedType{Vertex_handle}{handle to vertex.}
 \ccGlue
@@ -129,15 +102,11 @@ protection could be bypassed also by an user, but not by accident.)
 \ccGlue
 \ccNestedType{Face_handle}{handle to face.}
 \ccGlue
-\ccNestedType{ Halfedge_cycle_handle}{ handle to \ccc{halfedge_cycle}.}
-\ccGlue
 \ccNestedType{Vertex_const_handle}{}
 \ccGlue
 \ccNestedType{Halfedge_const_handle}{}
 \ccGlue
 \ccNestedType{Face_const_handle}{}
-\ccGlue
-\ccNestedType{ Halfedge_cycle_const_handle}{}
 
 \ccNestedType{Supports_halfedge_prev}{\ccc{CGAL::Tag_true} or 
   \ccc{CGAL::Tag_false}.}
@@ -145,9 +114,6 @@ protection could be bypassed also by an user, but not by accident.)
 \ccNestedType{Supports_halfedge_vertex}{\~{}}
 \ccGlue
 \ccNestedType{Supports_halfedge_face}{\~{}}
-\ccGlue
-\ccNestedType{ Supports_halfedge_halfedge_cycle}{\~{}}
-
 
 \ccCreation
 \ccCreationVariable{h}
@@ -167,7 +133,7 @@ protection could be bypassed also by an user, but not by accident.)
 \ccMethod{Halfedge_handle next();}{}
 \ccGlue
 \ccMethod{Halfedge_const_handle next() const;}
-    {the next halfedge along the \ccc{halfedge_cycle}.}
+    {the next halfedge around the face.}
 \ccGlue
 \ccMethod{void set_next( Halfedge_handle h);}{
     sets next halfedge to $h$.}
@@ -181,7 +147,7 @@ protection could be bypassed also by an user, but not by accident.)
 \ccMethod{Halfedge_handle prev();}{}
 \ccGlue
 \ccMethod{Halfedge_const_handle prev() const;}
-    {the previous halfedge along the \ccc{halfedge_cycle}.}
+    {the previous halfedge around the face.}
 \ccGlue
 \ccMethod{void set_prev( Halfedge_handle h);}{
     sets prev halfedge to $h$.}
@@ -196,30 +162,17 @@ protection could be bypassed also by an user, but not by accident.)
 \ccMethod{void set_vertex( Vertex_handle v);}{
     sets incident vertex to $v$.}
 
-\ccHeading{Operations available if \ccc{Supports_halfedge_halfedge_cycle} $\equiv$ 
+\ccHeading{Operations available if \ccc{Supports_halfedge_face} $\equiv$ 
            \ccc{CGAL::Tag_true}}
-
-\ccMethod{ Halfedge_cycle_handle       halfedge_cycle();}{}
-\ccGlue
-\ccMethod{ Halfedge_cycle_const_handle halfedge_cycle() const;}
-    { the \ccc{halfedge_cycle} of \ccVar.}
-\ccGlue
-\ccMethod{ void set_halfedge_cycle( Halfedge_cycle_handle c);}{ 
-    sets the \ccc{halfedge_cycle} to $c$.}
-
-\ccHeading{Operations available if \ccc{Supports_halfedge_face} $\equiv$ \ccc{CGAL::Tag_true} 
-          or \ccc{Supports_halfedge_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true}
-          }
 
 \ccMethod{Face_handle       face();}{}
 \ccGlue
 \ccMethod{Face_const_handle face() const;}
     {the incident face of \ccVar.  If \ccVar\ is a border halfedge 
       the result is default construction of the handle.}
-
-\ccHeading{Operations available if \ccc{Supports_halfedge_face} $\equiv$ \ccc{CGAL::Tag_true} }
-
-\ccMethod{void set_face( Face_handle f);}{set face to $f$.}
+\ccGlue
+\ccMethod{void set_face( Face_handle f);}{
+    sets incident face to $f$.}
 
 \ccHasModels
 
@@ -231,8 +184,7 @@ protection could be bypassed also by an user, but not by accident.)
 \ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
 \ccRefConceptPage{HalfedgeDSItems}\\
 \ccRefConceptPage{HalfedgeDSVertex}\\
-\ccRefConceptPage{HalfedgeDSFace}\\
-\ccRefConceptPage{HalfedgeDSHalfedgeCycle}
+\ccRefConceptPage{HalfedgeDSFace}
 
 \end{ccRefConcept}
 

@@ -20,43 +20,33 @@
   
 The class \ccRefName\ is a model of the \ccc{HalfedgeDSFace}
 concept. \ccc{Refs} is an instantiation of a \ccc{HalfedgeDS}.  The
-template declaration of \ccRefName\ has { four} parameters with some
-defaults that allow to select various flavors of faces. 
+template declaration of \ccRefName\ has three parameters with some
+defaults that allow to select various flavors of faces. The
+declaration is best explained with the two following declarations,
+essentially hiding an implementation dependent default setting:
 
-{
+~~~~~~\ccc{template <class Refs, class T = CGAL::Tag_true>}\\
+\mbox{}~~~~~~\ccc{class HalfedgeDS_face_base;}
 
-\begin{tabbing}
-\mbox{}~~~~~~ \= \ccc{template <} \=\ccc{class Refs,}\\
-              \> \>\ccc{class Tag_halfedge      } \mbox{}~~~ \=\ccc{= CGAL::Tag_true,}\\
-              \> \>\ccc{class Tag_plane         } \>\ccc{= CGAL::Tag_false,}\\
-              \> \>\ccc{class Tag_halfedge_cycle} \>\ccc{= CGAL::Tag_true >}\\
-     \> \ccc{class HalfedgeDS_face_base;}
-\end{tabbing}
+~~~~~~\ccc{template <class Refs, class T, class Plane>}\\
+\mbox{}~~~~~~\ccc{class HalfedgeDS_face_base;}
 
-If \ccc{Tag_halfedge} $\equiv$ \ccc{CGAL::Tag_true} a reference to the incident halfedge is supported.
+\ccRefName\ defines a face including a reference to an incident halfedge.
 
-If \ccc{Tag_plane} $\neq$ \ccc{CGAL::Tag_false} a plane object is supported (and the type \ccc{Tag_plane} corresponds to the type of the plane object).
+\ccc{CGAL::HalfedgeDS_face_base<Refs,CGAL::Tag_false>} is a face
+without a reference to an incident halfedge. It is empty besides the
+required type definitions. It can be used for deriving own faces.
+See also \ccc{CGAL::HalfedgeDS_face_min_base<Refs>}.
 
-If \ccc{Tag_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true} halfedge cycles are supported.
+\ccc{CGAL::HalfedgeDS_face_base<Refs,CGAL::Tag_true,Plane>} is a face with
+a reference to an incident halfedge and it stores a plane equation of
+type \ccc{Plane}.  It can be used as a face for a model of the
+\ccc{PolyhedronItems_3} concept.
 
-
-Faces may be bounded by one or multiple halfedge cycles and a face object can optionally store the bounding cycle in one of two mutually exclusive ways: 
-
-Directly storing the incident halfedge (when faces support only one outer halfedge cycle), configuration selected
-with \ccc{Tag_halfedge} $\equiv$ \ccc{CGAL::Tag_true}
-
-or
-
-Storing iterator pairs defining the sequences of outer and inner halfedge cycles that bound the face.
-With \ccc{Tag_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true}
-
-
-
-The choice between storing just one halfedge or \ccc{halfedge_cycle} sequences is made by the combination 
-of the two type tags \ccc{Tag_halfedge} and \ccc{Tag_halfedge_cycle}. These are mutually
-exclusive and only one can be \ccc{CGAL::Tag_true}.
-
-}
+\ccc{CGAL::HalfedgeDS_face_base<Refs,CGAL::Tag_false,Plane>} is a face
+without a reference to an incident halfedge and it stores a plane
+equation of type \ccc{Plane}.  It can be used as a face for a
+model of the \ccc{PolyhedronItems_3} concept.
 
 \ccInclude{CGAL/HalfedgeDS_face_base.h}
 
@@ -111,7 +101,6 @@ exclusive and only one can be \ccc{CGAL::Tag_true}.
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_cycle_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
 
 \end{ccRefClass}

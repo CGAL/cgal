@@ -24,10 +24,9 @@ The full declaration states four template parameters:
 
 \begin{tabbing}
 \mbox{}~~~~~~ \= \ccc{template <} \=\ccc{class Refs,}\\
-              \> \>\ccc{class Tag_prev          } \=\ccc{= CGAL::Tag_true,}\\
-              \> \>\ccc{class Tag_vertex        } \> \ccc{= CGAL::Tag_true,}\\
-              \> \>\ccc{class Tag_face          } \> \ccc{= CGAL::Tag_true,}\\
-              \> \>\ccc{class Tag_halfedge_cycle} \> \ccc{= CGAL::Tag_false >}\\
+              \> \>\ccc{class Tag_prev   } \=\ccc{= CGAL::Tag_true,}\\
+              \> \>\ccc{class Tag_vertex } \>\ccc{= CGAL::Tag_true,}\\
+              \> \>\ccc{class Tag_face   } \>\ccc{= CGAL::Tag_true>}\\
      \> \ccc{class HalfedgeDS_halfedge_base;}
 \end{tabbing}
 
@@ -40,21 +39,8 @@ supported.
 If \ccc{Tag_face} $\equiv$ \ccc{CGAL::Tag_true} an incident face is
 supported.
 
-{ If \ccc{Tag_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true} a host halfedge cycle  is
-supported.}
-
-{
-The incidence relation between a halfedge and a face can be stored in a halfedge in 
-one of two mutually exclusive ways: directly storing the incident face or
-storing the halfedge cycle common to the halfedge and face.
-}
-
 In all cases, a reference to the next halfedge and to the opposite
 halfedge is supported.
-
-The choice between those methods is selected by the combination 
-of the two type tags \ccc{Tag_face} and \ccc{Tag_halfedge_cycle}.
-These are mutually exclusive and only one can be \ccc{CGAL::Tag_true}.
 
 \ccInclude{CGAL/HalfedgeDS_halfedge_base.h}
 
@@ -75,7 +61,6 @@ These are mutually exclusive and only one can be \ccc{CGAL::Tag_true}.
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_cycle_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_min_base<Refs>}
 
 \end{ccRefClass}

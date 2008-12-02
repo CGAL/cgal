@@ -20,9 +20,9 @@
 \ccDefinition
   
 The class \ccRefName\ is a model of the \ccc{HalfedgeDSItems}
-concept.  It defines types for vertices, halfedges and faces 
-hat declare the minimal required incidences for a \ccc{HalfedgeDS}, 
-which are the \ccc{next()} and the \ccc{opposite()} member function for
+concept.  It defines types for vertices, halfedges, and faces that
+declare the minimal required incidences for a \ccc{HalfedgeDS}, which
+are the \ccc{next()} and the \ccc{opposite()} member function for
 halfedges.
 
 \ccInclude{CGAL/HalfedgeDS_min_items.h}
@@ -60,12 +60,6 @@ struct HalfedgeDS_min_items {
     template < class Refs, class Traits>
     struct Face_wrapper {
         typedef CGAL::HalfedgeDS_face_min_base< Refs>     Face;
-    };
-
-    // Halfedge_cycles are not supported if minimum items are used.
-    template < class Refs, class Traits>
-    struct Halfedge_cycle_wrapper {
-        typedef int Halfedge_cycle;
     };
 };
 \end{ccExampleCode}

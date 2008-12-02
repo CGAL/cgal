@@ -10,6 +10,7 @@
 \RCSdef{\hdsRev}{$Id$}
 \RCSdefDate{\hdsDate}{$Date$}
 % +------------------------------------------------------------------------+
+
 \ccParDims
 
 \ccUserChapter{Halfedge Data Structures \label{chapterHalfedgeDS}}
@@ -33,18 +34,17 @@
 % +------------------------------------------------------------------------+
 \section{Introduction}
 
-{ A halfedge data structure (abbreviated as \ccc{HalfedgeDS}, or
+A halfedge data structure (abbreviated as \ccc{HalfedgeDS}, or
 \ccc{HDS} for template parameters) is an edge-centered data structure
 capable of maintaining incidence information of vertices, edges and
 faces, for example for planar maps, polyhedra, or other orientable,
 two-dimensional surfaces embedded in arbitrary dimension. Each edge is
-decomposed into two halfedges with opposite orientations
-Reduced variants of the halfedge data structure can omit some of these
+decomposed into two halfedges with opposite orientations. One incident
+face and one incident vertex are stored in each halfedge.  For each
+face and each vertex, one incident halfedge is stored.  Reduced
+variants of the halfedge data structure can omit some of these
 information, for example the halfedge pointers in faces or the
-storage of faces at all.}
-
-In order to also support faces with holes things are slightly more
-complicated, which will be explained in the next section.
+storage of faces at all.
 
 % \begin{ccTexOnly}
 %     \vspace{-4mm}
@@ -83,9 +83,14 @@ of these different data structures together with a thorough
 description of the design implemented here can be found
 in~\cite{k-ugpdd-99}.  
 
-\section{Faces with Several Boundaries}
-
-\input{HalfedgeDS_ref/Ccb_intro.tex}
+The design presented here is a revised and incompatible version of the
+previous design~\cite{k-ddsps-98} as used in \cgal\ R2.2 and earlier
+releases. Files and identifier names are disjoint with the old design
+which allows for both versions to co-exists. However, classes using a
+halfedge data structure can only use one design. For example the
+polyhedral surface \ccc{Polyhedron_3} uses by default the new
+design. See Chapter~\ref{chapterPolyhedron} for how to still select
+the old implementation.
 
 % +------------------------------------------------------------------------+
 \section{Software Design}
@@ -99,7 +104,7 @@ in~\cite{k-ugpdd-99}.
       }
     \end{center}
     \caption{Responsibilities of the different layers in the 
-             halfedge data-structure design [NEEDS TO BE UPDATED TO INCORPORATE HALFEDGE-CYCLES].}
+             halfedge data-structure design.}
     \label{figureHalfedgeDSDesign}
   \end{figure}
 \end{ccTexOnly}
@@ -110,7 +115,7 @@ in~\cite{k-ugpdd-99}.
         <img src="fig/hds_design_col.gif"
          alt="Halfedge Data-Structure Design"><BR>
     Figure: Responsibilities of the different layers in the 
-            halfedge data-structure design [NEEDS TO BE UPDATED TO INCORPORATE HALFEDGE-CYCLES].
+            halfedge data-structure design.
     <P>
     </CENTER>
 \end{ccHtmlOnly}
@@ -121,32 +126,23 @@ Figure~\ccTexHtml{\ref{figureHalfedgeDSDesign}}{}\begin{ccHtmlOnly}
 \end{ccHtmlOnly}
 illustrates the responsibilities of the three layers of the software
 design, with the \ccc{CGAL::Polyhedron_3} as an example for the top
-layer.  
-{
-The items provide the space for the information that is
+layer.  The items provide the space for the information that is
 actually stored, i.e., with member variables and access member
-functions in \ccc{Vertex}, \ccc{Halfedge}, \ccc{Halfedge_cycle} and
-\ccc{Face}, respectively. Halfedges are required to provide a reference to the
-next halfedge and to the opposite halfedge. Halfedge cycles
-are required to provide a reference to one of the halfedges of the cycle
-they represent.
-Vertices, halfedge cycles, and faces may be empty.
-Vertices may provide a reference to the incident halfedge.
-Halfedge cycles may provide a reference to the face.
-Faces may provide iterator ranges over the outer and inner halfedge cycles, or, 
-alternatively, a reference to the incident halfedge if halfedge cycles are not supported.
-}
-
-The options mentioned are supported in the halfedge data structure and the
+functions in \ccc{Vertex}, \ccc{Halfedge}, and \ccc{Face}
+respectively. Halfedges are required to provide a reference to the
+next halfedge and to the opposite halfedge.  Optionally they may
+provide a reference to the previous halfedge, to the incident vertex,
+and to the incident face. Vertices and faces may be empty. Optionally
+they may provide a reference to the incident halfedge. The options
+mentioned are supported in the halfedge data structure and the
 polyhedron, for example, Euler operations update the optional
 references if they are present. Furthermore, the item classes can be
 extended with arbitrary attributes and member functions, which will be
 promoted by inheritance to the actual classes used for the polyhedron.
 
-
-Vertices, halfedges, halfedge cycles, and faces are passed as local types of the
+Vertices, halfedges, and faces are passed as local types of the
 \ccc{Items} class to the halfedge data structure and polyhedron.
-Implementations for vertices, halfedges, halfedge cycles, and faces are provided that
+Implementations for vertices, halfedges and faces are provided that
 fulfill the mandatory part of the requirements. They can be used as
 base classes for extensions by the user. Richer implementations are
 also provided to serve as defaults; for polyhedra they provide all
@@ -202,8 +198,8 @@ around a vertex or around a facet. To achieve this, the
 \ccc{Polyhedron_3} derives new vertices, halfedges and facets from those
 provided in \ccc{Items}.  These new items are those actually used in
 the \ccc{HalfedgeDS}, which gives us the coherent type
-structure in this design, especially if compared to the
-design of the \ccc{HDS} prior to {\sc Cgal} Rel 2.3.
+structure in this design, especially if compared to our previous
+design.
 
 
 % +========================================================================+
@@ -220,9 +216,7 @@ and the decorator class. The default halfedge data structure uses a
 list-based representation. All incidences of the items and a point
 type for vertices are defined. The trivial traits class provides the
 type used for the point. The program creates a loop, consisting
-of two halfedges, one vertex, and two faces, and checks its validity.
-{ for backward compatibility with 3.3.1, the default items class
-\ccc{HalfedgeDS_items_2} does not support halfedge cycles.}
+of two halfedges, one vertex and two faces, and checks its validity.
 
 \begin{ccTexOnly}
     \vspace{-4mm}
@@ -244,17 +238,6 @@ of two halfedges, one vertex, and two faces, and checks its validity.
 
 
 % +-------------------------------------------------------------+
-\subsection{The Default Halfedge Data Structure with Halfedge Cycles Support}
-
-{
-The following example program uses the default halfedge data structure
-with \ccc{HalfedgeDS_items_with_halfedge_cycle_2}, enabling support for
-halfedge cycles and disabling direct mutual references between faces and halfedges
-}
-
-%\ccIncludeExampleCode{HalfedgeDS/hds_prog_default_with_ccb.cpp}
-
-% +-------------------------------------------------------------+
 \subsection{A Minimal Halfedge Data Structure}
 
 The following program defines a minimal halfedge data structure using
@@ -263,10 +246,9 @@ list-based halfedge data structure. The result is a data structure
 maintaining only halfedges with next and opposite pointers.  No
 vertices or faces are stored. The data structure represents an {\em
   undirected graph}.
-{ for backward compatibility, 
-\ccc{CGAL::HalfedgeDS_min_items} does not support halfedge cycles.}
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_graph.cpp}
+
 
 % +-------------------------------------------------------------+
 \subsection{The Default with a Vector Instead of a List}
@@ -280,6 +262,12 @@ as shown in the example or with the \ccc{reserve()} member function.
 One can later resize the data structure with further calls to the
 \ccc{reserve()} member function, but only if the data structure is 
 in a consistent, i.e., {\em valid}, state.
+
+Unfortunately this example has also to expose the workaround necessary
+for compilers that do not support templates as template parameters.
+The workaround is necessary if the symbolic constant
+\verb|CGAL_CFG_NO_TMPL_IN_TMPL_PARAM| is set. It uses a member 
+template instead of the class template.
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_vector.cpp}
 
@@ -344,20 +332,8 @@ The adapter \ccc{N_step_adaptor} is used to declare the edge
 iterator used in counting the edges.
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_edge_iterator.cpp}
+
 % +--------------------------------------------------------+
-
-\section{Release Notes}
-
-\input{HalfedgeDS_ref/Extension_intro.tex}
-
-The design presented at \cgal\ version 2.3 is a revised and incompatible version of the
-previous design~\cite{k-ddsps-98} as used in \cgal\ R2.2 and earlier
-releases. Files and identifier names are disjoint with the old design
-which allows for both versions to co-exists. However, classes using a
-halfedge data structure can only use one design. For example the
-polyhedral surface \ccc{Polyhedron_3} uses by default the new
-design. See Chapter~\ref{chapterPolyhedron} for how to still select
-the old implementation.
 
 %% \input{HalfedgeDS_ref/main}
 

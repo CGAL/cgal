@@ -1641,13 +1641,6 @@ HalfedgeDS/doc_tex/HalfedgeDS/fig/loop.eps -text svneol=unset#application/postsc
 HalfedgeDS/doc_tex/HalfedgeDS/fig/loop.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS/fig/loop.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS/fig/teaser-small.gif -text svneol=unset#image/gif
-HalfedgeDS/doc_tex/HalfedgeDS_ref/Ccb_intro.tex -text
-HalfedgeDS/doc_tex/HalfedgeDS_ref/Ccb_or_dmr.tex -text
-HalfedgeDS/doc_tex/HalfedgeDS_ref/Extension_intro.tex -text
-HalfedgeDS/doc_tex/HalfedgeDS_ref/HalfedgeDSCcb.tex -text
-HalfedgeDS/doc_tex/HalfedgeDS_ref/HalfedgeDS_ccb_base.tex -text
-HalfedgeDS/doc_tex/HalfedgeDS_ref/HalfedgeDS_items_with_ccb_2.tex -text
-HalfedgeDS/doc_tex/HalfedgeDS_ref/HalfedgeDS_min_items_with_ccb.tex -text
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_center.eps -text svneol=unset#application/postscript
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_center.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_center.pdf -text svneol=unset#application/pdf

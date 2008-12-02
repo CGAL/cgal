@@ -24,64 +24,9 @@ type in the \ccc{HalfedgeDS} concept. It is also required in
 the \ccc{Face_wrapper<Refs,Traits>} member class template of an
 items class, see the \ccc{HalfedgeDSItems} concept.
 
-See page~\ref{pageHalfedgeDSHalfedgeCycleIntro} for an introduction to faces with several boundaries.
-
-{
-If halfedge cycles are used, a face optionally stores begin and end iterators for the  sequences
-of outer and inner halfedge cycles. It also optionally stores iterators for the sequence of halfedge cycles 
-corresponding to isolated vertices.
-If, alternatively, direct mutual reference is used, a face optionally stores a reference 
-to an incident halfedge that points to the face.
-A type tag indicates whether the related member functions are supported. 
-}
-
-{
-
-The choice between using halfedge cycles or direct mutual reference
-is made via a combination of type tags:
-
-For direct mutual reference use
-
-\ccc{Supports_face_halfedge} $\equiv$  \ccc{CGAL::Tag_true}
-and
-\ccc{Supports_face_halfedge_cycle} $\equiv$  \ccc{CGAL::Tag_false}
-
-For halfedge cycle items use:
-
-\ccc{Supports_face_halfedge} $\equiv$  \ccc{CGAL::Tag_false}
-and
-\ccc{Supports_face_halfedge_cycle} $\equiv$  \ccc{CGAL::Tag_true}
- 
-}
-
-\begin{ccAdvanced}
-{
-The storage for halfedge cycle items is controlled by the \ccc{HDS} itself. Therefore, 
-there is a \ccc{Halfedge_cycle_iterator} type local to \ccc{HalfedgeDS} corresponding to a 
-container whose elements are models of \ccc{HalfedgeDSHalfedgeCycle}.
-
-Faces maintain their own local sequences of halfedge cycles. These sequences are
-containers of \ccc{Halfedge_cycle_handle} elements, not of \ccc{Halfedge_cycle} elements (like the
-container in the HDS). Thus, a face defines a local \ccc{Halfedge_cycle_handle_iterator} type.
-
-While a \ccc{Halfedge_cycle_iterator} is implicitly convertible to a \ccc{Halfedge_cycle_handle},
-a \ccc{Halfedge_cycle_handle_iterator} is {\em dereferenceable} as a \ccc{Halfedge_cycle_handle} 
-(i.e. you need to apply the \ccc{operator*} to access the handle)
-}
-\end{ccAdvanced}
-
-\begin{ccAdvanced}
-{
-As faces can have more than one outer boundary, an upper level data structure could use a single
-face to represent disjoint regions each bounded by a distinct outer halfedge cycle. However,
-it is highly recommended to restrict faces to correspond to singly connected regions, and
-to use multiple outer cycles to represent disjoint boundary components around the same 
-connected region. For example, the surface of a cross section of a cylinder is a single
-connected region with two disjoint outer boundaries. This would be given by 1 face with
-2 outer cycles.
-}
-\end{ccAdvanced}
-
+A face optionally stores a reference to an incident halfedge that
+points to the face.  A type tag indicates whether the related member
+functions are supported. 
 Figure~\ccTexHtml{\ref{figureHalfedgeDSOptionalMethods} 
 on page \pageref{figureHalfedgeDSOptionalMethods}}{}\begin{ccHtmlOnly}
   <A HREF="Concept_HalfedgeDS.html#figureHalfedgeDSOptionalMethods"><IMG 
@@ -97,17 +42,14 @@ halfedge data structure they must be derived from a base class \ccc{Base}
 where the modifying member functions are still public. (The protection
 can be bypassed by the user, but not by accident.)
 
-
 \ccTypes
 
-\ccThree{Halfedge_cycle_const_handle_const_iterator}{v.set_halfedge( Halfedge_handle h);}{}
+\ccThree{Halfedge_const_handle}{v.set_halfedge( Halfedge_handle h);}{}
 \ccThreeToTwo
 %\ccTwo{HalfedgeDSFace:: Halfedge_const_handleXX}{}
 
 \ccNestedType{HalfedgeDS}
     {instantiated \ccc{HalfedgeDS} ( $\equiv$ \ccc{Refs}).}
-\ccGlue
-\ccNestedType{size_type}{size type.}
 \ccGlue
 \ccNestedType{Base}{base class that allows modifications.}
 \ccGlue
@@ -115,13 +57,9 @@ can be bypassed by the user, but not by accident.)
 \ccGlue
 \ccNestedType{Halfedge}{model of \ccc{HalfedgeDSHalfedge}.}
 \ccGlue
-\ccNestedType{ Halfedge_cycle}{ model of \ccc{HalfedgeDSHalfedgeCycle}.}
-\ccGlue
 \ccNestedType{Vertex_handle}{handle to vertex.}
 \ccGlue
 \ccNestedType{Halfedge_handle}{handle to halfedge.}
-\ccGlue
-\ccNestedType{ Halfedge_cycle_handle}{ handle to \ccc{halfedge_cycle}.}
 \ccGlue
 \ccNestedType{Face_handle}{handle to face.}
 \ccGlue
@@ -131,17 +69,8 @@ can be bypassed by the user, but not by accident.)
 \ccGlue
 \ccNestedType{Face_const_handle}{}
 \ccGlue
-\ccNestedType{ Halfedge_cycle_const_handle}{}
-
-
-\ccNestedType{ Halfedge_cycle_const_handle_const_iterator}
-\ccGlue
-\ccNestedType{ Halfedge_cycle_handle_iterator}{ iterator to the local sequence of \ccc{Halfedge_cycle_handles}.}
-
-\ccNestedType{Supports_face_halfedge}{\ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.}
-\ccGlue
-\ccNestedType{ Supports_face_halfedge_cycle}{ \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.}
-
+\ccNestedType{Supports_face_halfedge}{\ccc{CGAL::Tag_true} or 
+  \ccc{CGAL::Tag_false}.}
 
 \ccCreation
 \ccCreationVariable{f}
@@ -150,85 +79,14 @@ can be bypassed by the user, but not by accident.)
 
 \ccTagFullDeclarations
 
-\ccHeading{Operations available if \ccc{Supports_face_halfedge_cycle} $\equiv$ \ccc{CGAL::Tag_true}}
-
-\ccMethod{ size_type size_of_isolated_vertices() const;}{ number of isolated  vertices of \ccVar}
-
-\ccMethod{ size_type size_of_outer_halfedge_cycles() const;}
-\ccGlue
-\ccMethod{ size_type size_of_inner_halfedge_cycles() const;}{ number of outer/inner cycles of \ccVar}
-
-
-
-\ccMethod{ Halfedge_cycle_handle_iterator isolated_vertices_begin();}{}
-\ccGlue
-\ccMethod{ Halfedge_cycle_const_handle_const_iterator  isolated_vertices_begin() const;}
-         { the begin iterator for the sequence of isolated vertices of \ccVar.}
-
-\ccMethod{ Halfedge_cycle_handle_iterator outer_halfedge_cycles_begin();}{}
-\ccGlue
-\ccMethod{ Halfedge_cycle_const_handle_const_iterator  outer_halfedge_cycles_begin() const;}
-\ccGlue
-\ccMethod{ Halfedge_cycle_handle_iterator inner_halfedge_cycles_begin();}{}
-\ccGlue
-\ccMethod{ Halfedge_cycle_const_handle_const_iterator  inner_halfedge_cycles_begin() const;}
-         { the begin iterator for the sequence of outer/inner cycles of \ccVar.}
-
-
-\ccMethod{ Halfedge_cycle_handle_iterator isolated_vertices_end();}{}
-\ccGlue
-\ccMethod{ Halfedge_cycle_const_handle_const_iterator isolated_vertices_end() const;}
-         { the past-the-end iterator for the sequence of isolated vertices of \ccVar.}
-
-
-\ccMethod{ Halfedge_cycle_handle_iterator outer_halfedge_cycles_end();}{}
-\ccGlue
-\ccMethod{ Halfedge_cycle_const_handle_const_iterator outer_halfedge_cycles_end() const;}
-\ccGlue
-\ccMethod{ Halfedge_cycle_handle_iterator inner_halfedge_cycles_end();}{}
-\ccGlue
-\ccMethod{ Halfedge_cycle_const_handle_const_iterator inner_halfedge_cycles_end() const;}
-         { the past-the-end iterator for the sequence of outer/inner cycles of \ccVar.}
-
-
-\ccMethod{ void isolated_vertex_push_back( Halfedge_cycle_handle v );}
-         { appends $v$ to the isolated vertices sequence}
-
-\ccMethod{ void outer_halfedge_cycle_push_back( Halfedge_cycle_handle c );}
-\ccGlue
-\ccMethod{ void inner_halfedge_cycle_push_back( Halfedge_cycle_handle c );}
-         { appends $c$ to the outer/inner cycles sequence}
-
-\ccMethod{ Halfedge_cycle_handle_iterator isolated_vertex_insert( Halfedge_cycle_handle_iterator pos, Halfedge_cycle_handle v );}
-         { inserts $v$ before $pos$ in the isolated vertices sequence}
-
-\ccMethod{ Halfedge_cycle_handle_iterator outer_halfedge_cycle_insert( Halfedge_cycle_handle_iterator pos, Halfedge_cycle_handle c );}
-\ccGlue
-\ccMethod{ Halfedge_cycle_handle_iterator inner_halfedge_cycle_insert( Halfedge_cycle_handle_iterator pos, Halfedge_cycle_handle c );}
-         { inserts $c$ before $pos$ in the outer/inner cycles sequence}
-
-\ccMethod{ void isolated_vertex_erase( Halfedge_cycle_handle_iterator it );}
-         { removes the isolated vertex pointed to be $it$ in the coresponding sequence}
-
-\ccMethod{ void outer_halfedge_cycle_erase( Halfedge_cycle_handle_iterator it );}
-\ccGlue
-\ccMethod{ void inner_halfedge_cycle_erase( Halfedge_cycle_handle_iterator it );}
-         { removes the cycle pointed to be $it$ in the corresponding sequence}
-
-\ccMethod{ void isolated_vertices_clear();}{ removes all isolated vertices. }
-
-\ccMethod{ void outer_halfedge_cycles_clear();}{}
-\ccGlue
-\ccMethod{ void inner_halfedge_cycles_clear();}{ removes all outer/inner cycles. }
-
-
-\ccHeading{Operations available if \ccc{Supports_face_halfedge} $\equiv$ \ccc{CGAL::Tag_true}}
+\ccHeading{Operations available if \ccc{Supports_face_halfedge} $\equiv$ 
+           \ccc{CGAL::Tag_true}}
 
 \ccMethod{Halfedge_handle       halfedge();}{}
 \ccGlue
 \ccMethod{Halfedge_const_handle halfedge() const;}{
     incident halfedge that points to \ccVar.}
-
+\ccGlue
 \ccMethod{void set_halfedge( Halfedge_handle h);}{
     sets incident halfedge to $h$.}
 
@@ -243,8 +101,7 @@ can be bypassed by the user, but not by accident.)
 \ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
 \ccRefConceptPage{HalfedgeDSItems}\\
 \ccRefConceptPage{HalfedgeDSVertex}\\
-\ccRefConceptPage{HalfedgeDSHalfedge}\\
-\ccRefConceptPage{HalfedgeDSHalfedgeCycle}
+\ccRefConceptPage{HalfedgeDSHalfedge}
 
 \ccTagDefaults
 \end{ccRefConcept}
