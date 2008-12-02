@@ -203,7 +203,7 @@ robust numerical and geometric computation. \core\ is not part of
 Before building \cgal\ you have to choose the compiler/linker, 
 set compiler and linker  flags, specify which
 third-party libraries you want to use and where they can be found, 
-which \cgal\ components you want to build. Gathering
+which \cgal\ libraries you want to build. Gathering
 all this information is called {\em configuration}. 
 
 For CGAL-3.4, the configuration is generated with \cmake, a
@@ -327,7 +327,7 @@ functionality out of the main library. During configuration, you can selected th
 shall be built by setting the cmake variable of the form {\tt WITH\_<library>}. By default all 
 are switched \texttt{ON}.
 
-\begin{center}\index{cgal!components}\index{cgal components}
+\begin{center}\index{cgal!libraries}\index{cgal libraries}
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|l|l|} \hline
@@ -352,12 +352,12 @@ are switched \texttt{ON}.
   \end{tabular}
 \end{center}
 
-If you turn off the configuration of a component you can still configure it manually from the component source directory:
+If you turn off the configuration of a library you can still configure it manually from the  source directory:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
   cd ~/CGAL-3.4/src/CGALQt4 
-  cmake . # configures only the CGAL_Qt4 component
+  cmake . # configures only the CGAL_Qt4 library
 \end{verbatim}
 }
 
@@ -378,17 +378,16 @@ This is not an issue for solution/project files, as there the user selects the b
 
 \subsection{Static vs.\ Dynamic Libraries }
 
-In windows, the \cgal\ libraries are necessarily static
-({\tt .lib}), but on the other platforms, including \texttt{cygwin}, they are by default shared libraries ({\tt .so}).
+Under Windows we only support  the static versions of the \cgal\ libraries, but on the other platforms
+they are by default shared libraries ({\tt .so}).
 You can choose to produce static libraries instead by setting the cmake variable {\tt CMAKE\_SHARED\_LIBS=FALSE} 
 
 These setting affect the variants of third-party libraries selected whenever the choice is available.
 
-\subsection{Multiple Variants}\label{sec:cmake-out-of-source}
+\subsection{Multiple Variants of makefiles}\label{sec:cmake-out-of-source}
 
-While you can choose between release/debug builds, shared/static libraries
-(except on Windows), etc...
-it is not possible to have both variants on a single configuration. To do that you need to run cmake in a 
+While you can choose between release/debug builds, shared/static libraries,
+it is not possible to generate different variants during a single configuration. To do that you need to run cmake in a 
 different directory for each variant, each with its own selection of configuration parameters.
 
 \cmake\ stores the resulting makefiles/projectfiles, along with several temporary and auxiliary files such
@@ -397,12 +396,12 @@ takes the source files and configuration scripts from whatever directory is indi
 \texttt{CMAKE\_SOURCE\_DIR} 
 
 The binary and source directory need not be the same, thus, you can configure multiple variants by creating a
-distinct directory for each one and running cmake from there. This is known in \cmake\ as 
-{\em out-of-source configuration}, as opposite to an {\em in-source configuration} as the one shown in the 
+distinct directory for each configuration and by running cmake from there. This is known in \cmake\ terminology
+as  {\em out-of-source configuration}, as opposite to an {\em in-source configuration} as showed in the 
 previous sections.
 
-The \cgal\ directory tree contains directories \cgaldir{}\texttt{/cmake/platforms} and you can create your 
-variant subdirectory in there:
+You can for example generate subdirectories \cgaldir{}\texttt{/cmake/platforms/debug} and 
+\cgaldir{}\texttt{/cmake/platforms/release} for two configurations:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
@@ -415,6 +414,8 @@ cd ~/CGAL-3.4/cmake/platforms/release
 cmake -DCMAKE_BUILD_TYPE=Release ../../..
 \end{verbatim}
 }
+
+
 
 \subsection{Compiler and Linker Flags}
 
@@ -471,8 +472,8 @@ variables but starting with \texttt{CGAL} instead of \texttt{CMAKE}:
 
 If configuration succeeded there will be certain {\em build files} ready to build the libraries.
 The nature of the build files depend on the generator used during configuration, but in all cases they 
-will contain several {\em targets}, one per component,  and a default global target corresponding 
-to all the library components at once.
+will contain several {\em targets}, one per library,  and a default global target corresponding 
+to all the libraries at once.
 
 For example, in a UNIX-like environment the default generator produces makefiles and you would
 use the \texttt{make} command-line tool as follow:
@@ -482,21 +483,50 @@ use the \texttt{make} command-line tool as follow:
 
 cd ~/CGAL-3.4
 
-# build all the selected components at once
+# build all the selected library at once
+
 make 
 
-# build each selected component independently,
-# continuing with the next component in case of error
-# due to the '-k' switch.
 
-make -k CGAL CGAL_Core CGAL_PDB CGAL_ImageIO CGAL_Qt3 CGAL_Qt4
+# build just the libraries needed for the Surface mesher demo
+
+make  CGAL  CGAL_ImageIO CGAL_Qt4
 
 \end{verbatim}
 }
 
-Notice that according to the rules of 'make', an error in the default target will abort compilation/linking of
-all the \cgal\ components (which are part of the same single default target) even if {\tt -k} 
-is specified, so you need to list the components explicitly to prevent that.
+The libraries will all be located in a subdirectory {\tt /lib} under {\tt <CMAKE\_BINARY\_DIR>}
+which is \cgaldir\ in case you run an in-source-configuration.
+
+With generators other than {\tt UNIX Makefiles} the resulting build files are solution/project files which
+should be launched in an {\sc Ide}, such as Visual Studio or KDevelop3. They will contain the targets described
+above which you can manually build as any other solution/project within your {\sc Ide}.
+
+Alternatively, you can build it with the command line version of the {\sc Ide}:
+
+{\ccTexHtml{\scriptsize}{}
+\begin{verbatim}
+
+    devenv CGAL.sln /Build Debug
+
+\end{verbatim}
+}
+
+The "Debug" argument is needed because CMake creates solution files with
+all four configurations and you need to explicitly choose one when building
+(the other choices are Release, RelWithDebInfo and MinSizeRel).
+
+
+\begin{ccAdvanced}
+The build files produced by cmake are autoconfigured. That is, if you change any 
+of the dependencies, the build step automatically goes all the way back to the configure step
+during the building. This way, once the target has been configured the very first time by
+invoking cmake, you don't necessarily need to invoke \texttt{cmake} again. Rebuilding will call
+itself \texttt{cmake} and re-generate the build file whenever needed. Keep this in mind if you
+configure \cgal\ for the Visual Studio IDE since a build could then change the solution/project 
+file in-place and VS will prompt you to reload it.
+\end{ccAdvanced}
+
 
 If you have not turned off configuration of examples and/or demos, there will be additional
 targets named \texttt{examples} and \texttt{demo}, plus one target for each example and each demo.
@@ -516,24 +546,6 @@ make Straight_skeleton_2_demo
 
 \end{verbatim}
 }
-
-The libraries will all be located in a subdirectory {\tt /lib} under {\tt <CMAKE\_BINARY\_DIR>}
-\footnote{Which need not be the \cgal\ root directory as explained in Section ~\ref{sec:cmake-out-of-source}}
-
-With generators other than {\tt UNIX Makefiles} the resulting build files are solution/project files which
-should be launched in an {\sc Ide}, such as Visual Studio or KDevelop3. They will contain the targets described
-above which you can manually build as any other solution/project within your {\sc Ide}.
-
-\begin{ccAdvanced}
-The build files produced by cmake are autoconfigured. That is, if you change any 
-of the dependencies, the build step automatically goes all the way back to the configure step
-during the building. This way, once the target has been configured the very first time by
-invoking cmake, you don't necessarily need to invoke \texttt{cmake} again. Rebuilding will call
-itself \texttt{cmake} and re-generate the build file whenever needed. Keep this in mind if you
-configure \cgal\ for the Visual Studio IDE since a build could then change the solution/project 
-file in-place and VS will prompt you to reload it.
-\end{ccAdvanced}
-
 
 \section{Installing \cgal\ Libraries}
 

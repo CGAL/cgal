@@ -16,7 +16,8 @@ To install CGAL, you should:
  ---------------------------
 
    * install CMake, the build system used by CGAL
-     Required Rel 2.4-patch-7, Recommended Rel 2.6 supporting a crossplatform cmake-gui
+     Required Rel 2.4-patch-7, 
+     Recommended Rel 2.6 supporting a crossplatform cmake-gui
      Download from: http://www.cmake.org/
 
    * install the Boost libraries (http://www.boost.org/ or http://www.boostpro.com/products/free)
@@ -31,9 +32,8 @@ To install CGAL, you should:
 
      o Used for exact arithmetic           
 
-       - gmp   (http://gmplib.org/)
-       - mpfr  (http://www.mpfr.org/)
-       - leda  (http://www.algorithmic-solutions.com/leda/index.htm) (commercial)
+       - gmp   (http://gmplib.org/) and mpfr  (http://www.mpfr.org/)
+       - leda  as alternative to gmp+mpfr (http://www.algorithmic-solutions.com/leda/index.htm)
 
      o Miscellaneous
 
@@ -301,7 +301,7 @@ To install CGAL, you should:
   between static or shared libraries (respectively).
   If this is not specified, it defaults to static (FALSE) under Windows and
   shared (TRUE) under Linux.
-  Note that Windows does not support shared libraries.
+  Note that we do not support shared libraries for CGAL under Windows.
 
   Note that CMake uses the term "Module" to refer to static libraries
   (this is relevant in the following section about linker flags).

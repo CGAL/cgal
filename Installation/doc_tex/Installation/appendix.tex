@@ -8,12 +8,6 @@
 %% $Id$
 %%
 
-\section{Using CGAL and LEDA\label{sec:leda}}
-\index{LEDA@\leda!support in \cgal}
-
-\cgal\ provides support functions  for the \leda\ number types
-  \texttt{big\_float}, \texttt{integer}, \texttt{rational} and
-  \texttt{real} (see the files \texttt{<CGAL/leda\_*>}).
 
 \section{Compiler Workarounds}
 \index{compilers!workarounds}\index{workaround flags}
@@ -26,14 +20,10 @@ know the type \texttt{long long}.
 
 For each compiler a file \texttt{<CGAL/compiler\_config.h>}
 \index{files!\texttt{compiler\_config.h}} is defined, with the correct
-settings of all flags. This file is generated automatically by the
-\texttt{install\_cgal} script, and it is located in the compiler
-specific include directory. This directory can be found below
-\texttt{include/CGAL/config/};
-\index{directories!include/CGAL/config@\texttt{include/CGAL/config}}
-\index{directories!compiler specific}\index{compiler specific include
-  directory} it is named according to the compiler's \cgal-OS
-description (cf. Section~\ref{sec:os-compiler-id}).
+settings of all flags. This file is generated automatically by 
+\cmake, and it is located in the \texttt{include} directory of
+where you run \cmake. For an in-source configuration this means
+\texttt{CGAL-3.4/include}.
 
 The test programs used to generate the \texttt{compiler\_config.h}
 file can be found in \texttt{config/testfiles}.
@@ -43,9 +33,8 @@ description of the problem. In case of trouble with one of the
 \texttt{CGAL\_CFG} flags, it is a good idea to take a look at it.
 
 The file \texttt{CGAL/compiler\_config.h} is included from
-\texttt{<CGAL/basic.h>}.\index{files!\texttt{basic.h}} As discussed in
-Section~\ref{sec:appl}, \texttt{<CGAL/basic.h>} should always be the
-first file included in any application using \cgal.
+\texttt{<CGAL/config.h>}.\index{files!\texttt{config.h}}
+which is included by all \cgal\ header files.
 
 \subsection{Standard Header Replacements}
 \index{compilers!missing standard header files} %
@@ -68,26 +57,9 @@ the additions to namespace \ccc{std} by defining the macro
 \index{compilers!optimization}
 \index{optimization compiler flags}
 
-You may have noticed that we do not set optimizer flags as \texttt{-O}
-by default in the include makefiles(see section~\ref{sec:makefiles} for
-a description of the makefile structure in \cgal).  The main reason
-for not doing this is that compilers run much more stable without. On
-the other hand, most if not all \cgal\ programs will run considerably
-faster when compiled with optimizations! So if you are going for
-performance, you should/have to add \texttt{-O}, \texttt{-O3} or maybe
-more specific optimizer flags (please refer to the compiler
-documentation for that) to the \texttt{CXXFLAGS} variable in your
-application makefile:
-\begin{alltt}
-#---------------------------------------------------------------------#
-#                    compiler flags
-#---------------------------------------------------------------------#
-# The flag CGAL_CXXFLAGS contains the path to the compiler and is defined
-# in the file CGAL_MAKEFILE. You may add your own compiler flags to CXXFLAGS.
-
-CXXFLAGS = $(CGAL_CXXFLAGS) -O
-\end{alltt}
-%$
+By default \cmake\ generates makefiles for Release mode, with 
+optimization flags switched on, and vcproj files for Release
+and Debug mode.
 
 \section{Troubleshooting\label{sec:troubleshooting}}
 \index{troubleshooting}
@@ -98,13 +70,11 @@ a look at the bug reporting instructions from the \cgal\ homepage:
 \begin{alltt}
 \cgalhomepage
 \end{alltt}
-In case of problems or questions related to installation, please
-include a copy of the \texttt{install.log} file for reference.
 
 \subsection{Compiler Version Test Execution Failed\label{sec:compvertestfails}}
 \index{Compiler version test}\index{compilers!version test}
 
-Possibly already during the startup of the install script, the
+Possibly already during the startup of the configuration, the
 execution of the compiler version test might fail with the following
 (or similar) error message.
 \begin{verbatim}
@@ -132,28 +102,6 @@ You might want to add this command to your shell startup file.
 Alternatively, you can build the runtime linker path into the
 executables by setting corresponding custom linker flags (cf.
 Section~\ref{sec:compiler-menu}).
-
-%% \subsection{Defect in the G++ 3.2 ABI}
-%% \label{sec:gcc32abi}
-%% \index{gcc@\texttt{g++} 3.2 ABI}\index{compilers!gcc@\texttt{g++} 3.2 ABI}
-
-%% Some versions of \texttt{gcc}, for example \Gcc{3.3.0}, have problems
-%% in their \CC-ABI, that surface in error messages similar to the
-%% following.
-%% %
-%% \begin{verbatim}
-%%   error: due to a defect in the G++ 3.2 ABI, G++ has assigned 
-%%     the same mangled name to two different types.
-%% \end{verbatim}
-%% %
-%% If this occurs to you, please seriously consider upgrading your
-%% compiler. This issue is fixed starting from \Gcc{3.3.1}.
-%% Alternatively, you can add \texttt{-fabi-version=0} to your custom
-%% compiler flags.
-%% In interactive mode, this is done via the Compiler Menu,
-%% as described in Section~\ref{sec:compiler-menu}. Afterwards rebuild
-%% the libraries. But note that changing the \textsc{Abi} might have side
-%% effects. Hence, a compiler upgrade is the recommended fix here.
 
 
 \subsection{The ``Long-Name-Problem'' on Solaris\label{sec:longnamesolaris}}
@@ -222,91 +170,19 @@ and \stl\ may give some problems. In order to avoid them, it is highly
 recommended to use the latest \leda\ release, since this is what we
 test \cgal\ with.
 
-\index{LEDA@\leda!on \bcc}\index{LEDA@\leda!on \msvc}
-With \msvc\ or \bcc, \leda\ has to be compiled and used with the
-\texttt{LEDA\_STD\_HEADERS} flag set. \cgal\ uses \CC\ standard
-conforming headers\footnote{the ones that do not have \texttt{.h}
-  suffix}, while \leda\ can also work with the old-style header files;
-but mixing the styles is strictly forbidden. Before compiling \leda\,
-edit the file \texttt{\$(LEDAROOT)/incl/LEDA/system.h} and uncomment
-the \texttt{\#define} in the following fragment there.
-\begin{alltt}
-// use c++ std headers
-//#define LEDA_STD_HEADERS
-\end{alltt}
 
-\paragraph{\msvc\ Specifics.}
-
-If a binary release of \leda{} is used, make sure that it is one of
-them that uses new-style headers. Namely, among the self-extracting
-executables, choose one of these that have the name ending with
-\texttt{-std.exe}.
-
-%% \subsection{\msvc{}-Specific Problems}
-%% \index{msvc@\msvc{}!specific problems}
-
-%% \subsubsection{\msvc{6.0}}
-
-%% This compiler version is no longer supported starting with \cgal\ 3.0.
-
-%% \subsubsection{\msvc{7.0} (\textsc{.NET})}
-
-%% This compiler version is no longer supported starting with \cgal\ 3.1.
-
-%% \medskip
-
-%% \textbf{Other problems.}
-
-%% Here goes an incomplete list of problems encountered, and
-%% \cgal-specific workarounds, if available.  Compiler error messages are
-%% meant to be hints only, and do not pretend to be complete, as well.
-%% \begin{enumerate}
-%% %
-%% \item Internal compiler errors can sometimes be avoided by increasing
-%%   the amount of memory available to the compiler. Use \texttt{-Zm<number>}
-%% option. In \cgal\ makefiles it is set to \texttt{-Zm900}, meaning
-%% ``using 900\% out of the usual memory limit''. \label{msvc::Zm}
-%% %
-%% \item \texttt{[...]/VC98/INCLUDE/xlocnum(268) :
-%%     error C2587: '\_U' :\\
-%%     illegal use of local variable as default parameter} can
-%%   occur\footnote{For instance, in \cgal\ \texttt{Min\_circle}
-%%     package}. The only workaround we know is to redefine the macro
-%%   \texttt{\_VIRTUAL} in \texttt{<xlocnum>}\footnote{Yes, in the \msvc\ 
-%%     header! You need not edit the actual file though. Copy it to
-%%     a directory that is searched ahead of the other directories.
-%%     DISCLAIMER:
-%%     {\em We do not know if the actions described in this footnote are
-%%       legal in your country. You are on your own here.}}
-%%   to be empty. Search for\\
-%%   \texttt{\#define~\_VIRTUAL~virtual} there and replace it by
-%%   \texttt{\#define~\_VIRTUAL~}. \label{msvc::VIRTUAL}
-%% %
-%% \end{enumerate}
 
 \section{Scripts}
 
-\subsection{\texttt{cgal\_create\_makefile\label{sec:create_cgal_makefile}}}
-\TTindex{cgal\_create\_makefile}\index{scripts!\texttt{cgal\_create\_makefile}}
+\subsection{\texttt{cgal\_create\_cmake_script\label{sec:create_cgal_cmake_script}}}
+\TTindex{cgal\_create\_cmake\_script}\index{scripts!\texttt{cgal\_create\_cmake\_script}}
 
-The Bourne-shell script \texttt{cgal\_create\_makefile} is contained in the
+The Bourne-shell script \texttt{cgal\_create\_cmake\_script} is contained in the
 \cgaldir\texttt{/scripts} directory. It can be used to create
-makefiles for compiling \cgal\ applications. Executing
-\texttt{cgal\_create\_makefile} in an application directory creates a
-\texttt{makefile} containing rules for every \texttt{*.cpp} file there.
+\texttt{CmakeLists.txt} files for compiling \cgal\ applications. Executing
+\texttt{cgal\_create\_cmake\_script} in an application directory creates a
+\texttt{CMakeLists.txt} containing rules for every \texttt{*.cpp} file there.
 
-In order to use this makefile, you have to specify the \cgal\ include
-makefile (see section~\ref{sec:makefiles}) to be used. This can be
-done be either setting the environment variable
-\texttt{CGAL\_MAKEFILE} or by editing the line
-\begin{alltt}
-  # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-\end{alltt}
-of the created makefile. First remove the ``\texttt{\#}'' at the
-beginning of the line and then replace the text after ``\texttt{=}''
-by the location of the include makefile. 
-
-Finally type \texttt{make} to compile the application programs.
 
 %%
 %% EOF
