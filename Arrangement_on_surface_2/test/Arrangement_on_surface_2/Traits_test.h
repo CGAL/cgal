@@ -811,7 +811,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
                                       std::back_inserter(object_vec));
   std::cout << "Test: intersect( " << this->m_xcurves[id1] << ","
             << this->m_xcurves[id2] << " ) ? ";
-  unsigned int num;
+  std::size_t num;
   str_stream >> num;
   if (!this->compare(num, object_vec.size(), "size")) return false;
 

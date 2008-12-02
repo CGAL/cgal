@@ -651,7 +651,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_face
   } while (true);
 
   // We should never reach here:
-  CGAL_error();
+//  CGAL_error();
   return Object();
 }
 

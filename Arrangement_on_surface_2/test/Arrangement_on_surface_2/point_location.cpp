@@ -428,7 +428,7 @@ int read_points(const char * points_filename, Points_list &plist)
     return (-1);
   }
 
-  int points_count;
+  int points_count = 0;
   inp_pnt_file >> points_count;
 
   for (int i = 0; i < points_count; i++) {

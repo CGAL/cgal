@@ -722,7 +722,7 @@ int main (int argc, char * argv[])
     Test_observer    obs (arr);
     Point_2 p;
     Segment_2 s;
-    int i_vh,i_heh;
+    int i_vh = 0, i_heh = 0;
     std::vector<Arrangement_2::Halfedge_handle> heh_vec;
     std::vector<Arrangement_2::Vertex_handle> vh_vec;
     while (!global_input_file.eof())

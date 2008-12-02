@@ -545,7 +545,7 @@ bool Traits_base_test<T_Traits>::perform(std::ifstream & is)
     buff[0] = '\0';
     str_stream.getline(buff, 128, ' ');
     std::string str_command(buff);
-    unsigned int location = 0;
+    std::size_t location = 0;
     m_violation_occurred = m_violation_tested = NON;
 
     if ((int)str_command.find("_precondition", 0) != -1) {
@@ -914,7 +914,7 @@ bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
   // Get the arc type:
   Rat_vector p_coeffs, q_coeffs;
   Algebraic src, trg;
-  int dir;
+  int dir = 0;
   char type;
   is >> type;
   if (type == 'a' || type == 'A') 
@@ -1243,7 +1243,7 @@ bool read_general_arc(stream & is, Curve & cv)
   Rational r, s, t, u, v, w;                // The conic coefficients.
   is >> r >> s >> t >> u >> v >> w;
     // Read the orientation.
-  int i_orient;
+  int i_orient = 0;
   is >> i_orient;
   CGAL::Orientation orient = (i_orient > 0) ? CGAL::COUNTERCLOCKWISE :
     (i_orient < 0) ? CGAL::CLOCKWISE : CGAL::COLLINEAR;

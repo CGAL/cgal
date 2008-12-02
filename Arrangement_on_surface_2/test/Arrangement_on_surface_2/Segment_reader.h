@@ -28,7 +28,7 @@ public:
       std::cerr << "Cannot open file " << filename << "!" << std::endl;
       return -1;
     }
-    int count;
+    int count = 0;
     inp >> count;
 	//std::cout << "count ="<<count <<std::endl;    
 
