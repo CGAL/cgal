@@ -2842,7 +2842,6 @@ Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text svneol=unset#application/
 Partition_2/doc_tex/Partition_2/teaser-small.png -text svneol=unset#image/png
 Partition_2/doc_tex/Partition_2/teaser.png -text svneol=unset#image/png
 Point_set_2/doc_tex/Point_set_2/point_set.png -text
-Polygon/demo/Polygon/qt3/help/index.html svneol=native#text/html
 Polygon/doc_tex/Polygon/pgn_algos.eps -text svneol=unset#application/postscript
 Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#image/gif
 Polygon/doc_tex/Polygon/pgn_algos.ipe -text svneol=unset#application/postscript
