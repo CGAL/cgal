@@ -18,8 +18,10 @@ int main(void)
 	Point b(4.0,5.0,6.0);
 	Point c(7.0,8.0,9.0);
 	Point d(8.0,7.0,6.0);
+	Point e(5.0,3.0,4.0);
   triangles.push_back(Triangle(a,b,c));
   triangles.push_back(Triangle(a,b,d));
+  triangles.push_back(Triangle(d,e,c));
 
   Line line;
   Plane plane;

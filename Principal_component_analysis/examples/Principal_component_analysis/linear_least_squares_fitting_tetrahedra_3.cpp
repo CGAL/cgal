@@ -22,6 +22,7 @@ int main(void)
 	std::list<Tetrahedron> tetrahedra;
   tetrahedra.push_back(Tetrahedron(a,b,c,d));
   tetrahedra.push_back(Tetrahedron(a,b,c,e));
+  tetrahedra.push_back(Tetrahedron(b,c,d,e));
 
   Line line;
   Plane plane;
