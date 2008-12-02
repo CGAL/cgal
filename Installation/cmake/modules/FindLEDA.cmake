@@ -44,7 +44,15 @@ else()
     typed_cache_set( FILEPATH "The LEDA debug-mode libraries" LEDA_LIBRARY_DEBUG "$ENV{LEDA_LIBRARY_DEBUG}" )
   endif()
 
-  set(LEDA_LIBRARIES optimized ${LEDA_LIBRARY_RELEASE} debug ${LEDA_LIBRARY_DEBUG} )
+  if(LEDA_LIBRARY_RELEASE)
+    if(LEDA_LIBRARY_DEBUG)
+      set(LEDA_LIBRARIES_ optimized ${LEDA_LIBRARY_RELEASE} debug ${LEDA_LIBRARY_DEBUG})
+    else()
+      set(LEDA_LIBRARIES_ ${LEDA_LIBRARY_RELEASE})
+    endif()
+  endif()
+  
+  set(LEDA_LIBRARIES ${LEDA_LIBRARIES_} CACHE FILEPATH "The QGLViewer library")
 
 endif()
   
