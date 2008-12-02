@@ -19,10 +19,6 @@ foreach(INCDIR ./include ../../../AABB_tree/include ../../../STL_Extension/inclu
   endif()
 endforeach()
 
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
-  link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
-endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
-
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)
 include( ${CGAL_USE_FILE} )
