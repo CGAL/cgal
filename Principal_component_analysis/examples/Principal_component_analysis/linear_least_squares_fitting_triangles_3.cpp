@@ -1,4 +1,5 @@
-// Example program for the linear_least_square_fitting function on set of 3D triangles
+// Example program for the linear_least_square_fitting function
+// on a set of 3D triangles
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <list>
