@@ -26,17 +26,11 @@ int main(void)
   Line line;
   Plane plane;
 
-	// fit line and plane to whole triangles
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<2>());
+	// fit plane to whole triangles
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<2>());
   
-	// fit line and plane to triangle edges
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<1>());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<1>());
-  
-	// fit line and plane to triangle vertices
+	// fit line to triangle vertices
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<0>());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<0>());
   
   return 0;
 }
