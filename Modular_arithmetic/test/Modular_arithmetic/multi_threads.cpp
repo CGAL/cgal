@@ -17,7 +17,7 @@ int main ()  {
   //Specify variable scoping   
 #pragma omp parallel private(tid)
   {
-    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+    CGAL::Set_ieee_double_precision pfr;
     tid = omp_get_thread_num();
     int old_prime = CGAL::CGALi::primes[0];
     int new_prime = CGAL::CGALi::primes[tid+1];

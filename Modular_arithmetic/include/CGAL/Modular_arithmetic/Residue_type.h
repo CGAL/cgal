@@ -107,7 +107,7 @@ private:
     /* Quick integer rounding, valid if a<2^51. for double */ 
     static inline 
     double RES_round (double a){
-      // use Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST)
+      // use Set_ieee_double_precision pfr;
       CGAL_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
       return ( (a + CST_CUT)  - CST_CUT); 
       

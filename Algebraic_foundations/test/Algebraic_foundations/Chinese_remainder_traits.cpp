@@ -77,7 +77,7 @@ template<class NT>
 void test_CR_for(const NT& f){
   
   // Enforce IEEE double precision before using modular arithmetic
-  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  CGAL::Set_ieee_double_precision pfr;
   
     typedef CGAL::Modular_traits<NT> MT;
     typedef typename CGAL::Modular_traits<NT>::Residue_type MNT;

@@ -66,7 +66,7 @@ void test_modular_gcd_utils() {
   {  
     // testing univariate polynomials with modular coefficients
     // Enforce IEEE double precision before using modular arithmetic
-    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+    CGAL::Set_ieee_double_precision pfr;
     typedef CGAL::Polynomial<Integer> Poly;
     typedef typename CGAL::Modular_traits<Poly>::Residue_type   MPoly;
     CGAL::Residue::set_current_prime(43);
@@ -104,7 +104,7 @@ void test_modular_gcd_utils() {
   {  
     // testing univariate polynomials with modular sqrt coefficients
     // Enforce IEEE double precision before using modular arithmetic
-    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);  
+    CGAL::Set_ieee_double_precision pfr;  
     typedef CGAL::Sqrt_extension<Integer,Integer> EXT;
     typedef CGAL::Polynomial<EXT>  Poly_Ext;
     typedef typename CGAL::Modular_traits<Poly_Ext>::Residue_type   MPoly_Ext;
@@ -142,7 +142,7 @@ void test_modular_gcd_utils() {
 int main(){
     
   // Set wrong rounding mode to test modular arithmetic 
-  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
+  CGAL::Set_ieee_double_precision pfr;
 
 #ifdef CGAL_USE_LEDA
   test_modular_gcd_utils<CGAL::LEDA_arithmetic_kernel>();       

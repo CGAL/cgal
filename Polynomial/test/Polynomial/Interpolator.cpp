@@ -76,7 +76,7 @@ int main(){
     test_interpolator<EPolynomial_3>();
     
     // Enforce IEEE double precision for modular arithmetic
-    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+    CGAL::Set_ieee_double_precision pfr;
     
     typedef CGAL::Polynomial<CGAL::Residue>  MPolynomial_1;
     typedef CGAL::Polynomial<MPolynomial_1>  MPolynomial_2;

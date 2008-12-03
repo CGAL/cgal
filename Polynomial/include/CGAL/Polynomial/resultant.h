@@ -243,7 +243,7 @@ Coeff resultant_modularize(
         CGAL::Tag_true){
     
   // Enforce IEEE double precision before using modular arithmetic
-  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  CGAL::Set_ieee_double_precision pfr;
   
 
     typedef Polynomial_traits_d<CGAL::Polynomial<Coeff> > PT;

@@ -84,7 +84,7 @@ void test_AT(){
     "----------------------------------------------------------------------"
             << std::endl;    
  //  Enforce IEEE double precision before using modular arithmetic
-  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  CGAL::Set_ieee_double_precision pfr;
   CGAL::Test_Pol::test_multiple_dimensions(PT());   
   }
 }    

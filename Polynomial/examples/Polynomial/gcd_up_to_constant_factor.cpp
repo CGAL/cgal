@@ -6,7 +6,7 @@
 int main(){
 
   // Enforce IEEE double precision for modular arithmetic 
-  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  CGAL::Set_ieee_double_precision pfr;
 
   CGAL::set_pretty_mode(std::cout);
   typedef CGAL::Polynomial_type_generator<int,1>::Type Poly_1;

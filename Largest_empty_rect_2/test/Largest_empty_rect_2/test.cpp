@@ -23,7 +23,7 @@ typedef CGAL::Largest_empty_iso_rectangle_2<K> Largest_empty_rect;
 
 int main(int argc,char *argv[])
 {
-  const CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  const CGAL::Set_ieee_double_precision pfr;
 
   std::ifstream *is_ptr;
   double x,y;

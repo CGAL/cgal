@@ -77,8 +77,8 @@ Polynomial modular_filtered_gcd(const Polynomial& p1, const Polynomial& p2){
 }
 
 int main(){
-  // Enforce IEEE double precision (on i386/Windows)
-  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  // Enforce IEEE double precision
+  CGAL::Set_ieee_double_precision pfr;
   CGAL::set_pretty_mode(std::cout);
     
   typedef CGAL::Gmpz NT; 

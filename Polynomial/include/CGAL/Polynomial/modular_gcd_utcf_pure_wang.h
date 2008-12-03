@@ -120,7 +120,7 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
         const Polynomial<NT>& FF2_ ){
 
   // Enforce IEEE double precision before using modular arithmetic
-  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+  CGAL::Set_ieee_double_precision pfr;
 
 #ifdef CGAL_MODULAR_GCD_TIMER
     timer_init.start();
