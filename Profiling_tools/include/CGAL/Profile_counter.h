@@ -21,21 +21,25 @@
 #ifndef CGAL_PROFILE_COUNTER_H
 #define CGAL_PROFILE_COUNTER_H
 
-// This file contains 3 classes to help in profiling, together with macros
+// This file contains several classes to help in profiling, together with macros
 // triggered by CGAL_PROFILE to enable them:
 //
 // - Profile_counter which is able to keep track of a number, and prints a
-// message in the destructor.  Typically, it can be used as a profile counter
-// in a static variable.
+//   message in the destructor.  Typically, it can be used as a profile counter
+//   in a static variable.
 //
 // - Profile_histogram_counter which is similar, but the counter is indexed by
-// a value (unsigned int), and the final dump is the histogram of the non-zero
-// counters.
+//   a value (unsigned int), and the final dump is the histogram of the non-zero
+//   counters.
 //
 // - Profile_branch_counter which keeps track of 2 counters, aiming at measuring
-// the ratio corresponding to the number of times a branch is taken.
+//   the ratio corresponding to the number of times a branch is taken.
+//
+// See also CGAL/Profile_timer.h
 
-// TODO : complete the documentation.
+// TODO :
+// - Really complete the documentation!
+// - Probably at some point we will need ways to selectively enable/disable profilers?
 
 #include <CGAL/config.h>
 #include <iostream>
