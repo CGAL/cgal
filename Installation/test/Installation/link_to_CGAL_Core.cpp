@@ -8,5 +8,5 @@ int main()
   
   volatile double d = n.doubleValue();
   
-  return 0;
+  return (d > 1) ? 0 : 1;
 }

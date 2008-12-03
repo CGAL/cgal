@@ -8,5 +8,5 @@ int main()
 {
   volatile mapToSceneFunction f = CGAL::Qt::mapToScene;
   
-  return 0;
+  return (&f != 0) ? 0 : 1;
 }

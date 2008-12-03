@@ -7,5 +7,5 @@ int main()
 {
   volatile const char * xpm = alpha_shape_xpm[0] ;
   
-  return 0;
+  return (xpm != 0) ? 0 : 1 ;
 }
