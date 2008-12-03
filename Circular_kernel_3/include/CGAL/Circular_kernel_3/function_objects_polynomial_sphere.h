@@ -125,11 +125,19 @@ template < class SK > \
     typedef typename LK::Equal_3 LK_Equal_3;
 
     typedef typename SK::Point_3 Point_3;
+    typedef typename SK::Vector_3 Vector_3;
     typedef typename SK::Direction_3 Direction_3;
     typedef typename SK::Line_3 Line_3;
-
+    typedef typename SK::Ray_3 Ray_3;
+    typedef typename SK::Segment_3 Segment_3;
+    typedef typename SK::Triangle_3 Triangle_3;
+    typedef typename SK::Tetrahedron_3 Tetrahedron_3;
+    typedef typename SK::Iso_cuboid_3 Iso_cuboid_3;
+    typedef typename SK::Plane_3 Plane_3;
     typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
     typedef typename SK::Circle_3                 Circle_3;
+    typedef typename SK::Sphere_3                 Sphere_3;
+
     typedef typename SK::Line_arc_3               Line_arc_3;
     typedef typename SK::Circular_arc_3           Circular_arc_3;
 
@@ -147,6 +155,11 @@ template < class SK > \
     { return LK_Equal_3()(p0,p1); }
 
     result_type
+    operator() (const Vector_3 &d0,
+                const Vector_3 &d1) const
+    { return LK_Equal_3()(d0,d1); }
+
+    result_type
     operator() (const Direction_3 &d0,
                 const Direction_3 &d1) const
     { return LK_Equal_3()(d0,d1); }
@@ -157,8 +170,44 @@ template < class SK > \
     { return LK_Equal_3()(l0,l1); }
 
     result_type
+    operator() (const Segment_3 &l0,
+                const Segment_3 &l1) const
+    { return LK_Equal_3()(l0,l1); }
+
+    result_type
+    operator() (const Ray_3 &l0,
+                const Ray_3 &l1) const
+    { return LK_Equal_3()(l0,l1); }
+
+    result_type
+    operator() (const Triangle_3 &l0,
+                const Triangle_3 &l1) const
+    { return LK_Equal_3()(l0,l1); }
+
+
+    result_type
+    operator() (const Tetrahedron_3 &l0,
+                const Tetrahedron_3 &l1) const
+    { return LK_Equal_3()(l0,l1); }
+
+    result_type
+    operator() (const Iso_cuboid_3 &l0,
+                const Iso_cuboid_3 &l1) const
+    { return LK_Equal_3()(l0,l1); }
+
+    result_type
+    operator() (const Plane_3 &l0,
+                const Plane_3 &l1) const
+    { return LK_Equal_3()(l0,l1); }
+
+    result_type
     operator() (const Circle_3 &c0,
                 const Circle_3 &c1) const
+    { return LK_Equal_3()(c0, c1); }
+
+    result_type
+    operator() (const Sphere_3 &c0,
+                const Sphere_3 &c1) const
     { return LK_Equal_3()(c0, c1); }
 
 #endif
