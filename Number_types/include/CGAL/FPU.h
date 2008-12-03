@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2007  Utrecht University (The Netherlands),
+// Copyright (c) 1998-2008  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -93,6 +93,15 @@ extern "C" {
 #  warning Unsafe SSE2 mode : not supported yet.
 #endif
 
+// The CGAL_FPU_HAS_EXCESS_PRECISION macro is defined if some computations with
+// double can use more than the 53bits of precision of IEEE754, and/or if the
+// exponent has a wider range.  This can produce double rounding effects and
+// other bad things that we need to protect against.
+// The typical offender is the traditional FPU of x86 (SSE2-only mode is not affected).
+// Are there others?
+#if (defined __i386__ && !defined CGAL_SAFE_SSE2) || defined _MSC_VER
+#  define CGAL_FPU_HAS_EXCESS_PRECISION
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -125,15 +134,14 @@ inline double IA_force_to_double(double x)
 #endif
 }
 
-// The x86 processor keeps too wide exponents (15bits) in registers, even in
-// double precision mode !  It's a problem when the intervals overflow or
-// underflow.  To work around that, we store the variable to memory when
-// needed, using the macro below.
-// Another possible workaround would be to use intervals of "long doubles"
-// directly, but I think it would be much slower.
-#if !defined (CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) && \
-    ((defined __i386__ && !defined CGAL_SAFE_SSE2) \
-     || defined _MSC_VER)
+// Interval arithmetic needs to protect against double-rounding effects
+// caused by excess FPU precision, even if it forces the 53bit mantissa
+// precision, because there is no way to fix the problem for the exponent
+// which has the same problem.  This affects underflow and overflow cases.
+// In case one does not care about such "extreme" situations, one can
+// set CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT.
+#if defined CGAL_FPU_HAS_EXCESS_PRECISION && \
+   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
 #else
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
@@ -323,14 +331,6 @@ FPU_get_and_set_cw (FPU_CW_t cw)
 }
 
 
-// The following is meant to truncate the mantissa of x86 FPUs to 53 bits.
-inline void force_ieee_double_precision()
-{
-#if defined __i386__ || defined _MSC_VER
-    FPU_set_cw(CGAL_FE_TONEAREST);
-#endif
-}
-
 // A class whose constructor sets the FPU mode to +inf, saves a backup of it,
 // and whose destructor resets it back to the saved state.
 
@@ -378,6 +378,37 @@ struct Checked_protect_FPU_rounding
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
   }
 };
+
+
+// The class Set_ieee_double_precision forces the double precision (53bit mantissa),
+// to protect from double rounding effects on x86 FPU.
+// ( Note that it also sets the rounding mode to nearest. )
+// Its destructor restores the FPU state as it was previously.
+// Note that this affects "long double" as well, and other potential side effects.
+// And note that it does not (cannot) "fix" the same problem for the exponent.
+
+struct Set_ieee_double_precision
+#ifdef CGAL_FPU_HAS_EXCESS_PRECISION
+  : public Protect_FPU_rounding<>
+{
+  Set_ieee_double_precision()
+    : Protect_FPU_rounding<>(CGAL_FE_TONEAREST) {}
+};
+#else
+{
+  Set_ieee_double_precision() {} // only to kill compiler warnings.
+};
+#endif
+
+
+// The following function serves the same goal as Set_ieee_double_precision but
+// does the change globally (no destructor resets the previous behavior).
+inline void force_ieee_double_precision()
+{
+#ifdef CGAL_FPU_HAS_EXCESS_PRECISION
+    FPU_set_cw(CGAL_FE_TONEAREST);
+#endif
+}
 
 CGAL_END_NAMESPACE
 

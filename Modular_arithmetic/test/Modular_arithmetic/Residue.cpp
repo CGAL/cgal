@@ -7,6 +7,7 @@
 #include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/Residue.h>
+#include <CGAL/FPU.h>
 
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Arithmetic_kernel.h>
@@ -15,7 +16,7 @@
 int main()
 {
     // Enforce IEEE double precision (on i386/Windows)
-    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+    CGAL::Set_ieee_double_precision pfr;
     typedef CGAL::Residue NT;
     typedef CGAL::Field_tag Tag;
     typedef CGAL::Tag_true Is_exact;
@@ -105,7 +106,6 @@ int main()
         int_x -= int_x; int_x = CGAL::mod(int_x, prime);
         mod_x -= mod_x; 
     }
-    //  CGAL::force_ieee_double_precision();
     {
         CGAL::Residue::set_current_prime(67111043);
         CGAL::Residue x(-33546401);

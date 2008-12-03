@@ -68,10 +68,11 @@ template < typename T >
 inline
 void MP_Float::construct_from_builtin_fp_type(T d)
 {
-    // Protection against rounding mode != nearest, and extended precision.
-    Protect_FPU_rounding<> P(CGAL_FE_TONEAREST);
     if (d == 0)
       return;
+
+    // Protection against rounding mode != nearest, and extended precision.
+    Set_ieee_double_precision P;
 
     CGAL_assertion(is_finite(d));
 

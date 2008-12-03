@@ -48,9 +48,18 @@ void print_rounding_name (CGAL::FPU_CW_t r)
   }
 }
 
+void test_set_ieee_double_precision()
+{
+  CGAL::Set_ieee_double_precision protector;
+  IA_min_double = CGAL_IA_STOP_CPROP(CGAL_IA_MIN_DOUBLE);
+  assert ((1.0 + IA_min_double) == (1.0 + CGAL_IA_MIN_DOUBLE));
+}
+
 int main()
 {
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+   test_set_ieee_double_precision();
+
+   CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
    bool flag = true;
 
    flag = flag && (FPU_empiric_test() == CGAL_FE_TONEAREST);

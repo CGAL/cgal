@@ -255,8 +255,6 @@ void compute_epsilons()
 
 int main(int argc, char **argv)
 {
-  // CGAL::force_ieee_double_precision();
-
   int loops = (argc < 2) ? 2000 : std::atoi(argv[1]);
   int seed  = (argc < 3) ? CGAL::default_random.get_int(0, 1<<30)
                          : std::atoi(argv[2]);

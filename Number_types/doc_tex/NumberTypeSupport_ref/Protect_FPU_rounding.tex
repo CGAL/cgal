@@ -22,7 +22,7 @@ In order to efficiently evaluate sequences of interval arithmetic operations,
 such as a geometric predicate computing for example a determinant, it is
 advised to reduce the number of rounding mode changes, which otherwise are
 performed for each arithmetic operation.  \cgal\ exploits the fact that it is
-possible to compute a sequence of interval arimetic operations by doing only
+possible to compute a sequence of interval arithmetic operations by doing only
 one rounding mode change around the whole function evaluation in order to
 benefit from this optimization.
 
@@ -33,16 +33,12 @@ The destructor sets the rounding mode back to the saved value.
 This allows to protect a block of code determined by a C++ scope, and have
 the destructor take care of restoring the value automatically.
 
-Note concerning x86 processors: the traditional FPU of the x86 processor (the
-newer SSE FPU is not concerned by this problem) has floating-point registers
-which have an extended precision for the mantissa and the exponent.  This
-can cause unexpected "double rounding" issues producing wrong results, or
-unexpected discrepencies in results of numerical computations depending on
-compiler optimization.  For this reason, changing the rounding mode using
-\ccc{Protect_FPU_rounding}, even to the nearest, will activate the non-extended
-mantissa precision (nothing can be done for the exponent).  This property is
-required for proper functionning of the \ccc{Residue} class that performs
-modular arithmetic using efficient floating-point operations.
+The related class \ccc{Set_ieee_double_precision} allows to similarly protect
+a block of code from excess precision on some machines (x86 typically with
+the traditional FPU, not the more recent SSE2).  Note that
+\ccc{Protect_FPU_rounding_mode}, when changing rounding modes, also sets the precision
+to the correct 46 bit precision, hence providing a similar effect to
+\ccc{Set_ieee_double_precision}.  This notably affects the \ccc{Residue} class.
 
 Note for Visual C++ 64-bit users: due to a compiler bug, the stack unwinding
 process happenning when an exception is thrown does not correctly execute the
@@ -73,5 +69,8 @@ which can be any of \ccc{CGAL_FE_TONEAREST}, \ccc{CGAL_FE_TOWARDZERO},
 \ccGlue
 \ccFunction{void ~Protect_FPU_rounding();}
 {The rounding mode is restored to the saved value.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Set_ieee_double_precision}
 
 \end{ccRefClass}

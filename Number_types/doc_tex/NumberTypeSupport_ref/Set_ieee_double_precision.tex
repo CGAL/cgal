@@ -1,0 +1,86 @@
+%   $Id$
+%   $URL$
+
+\begin{ccRefClass}{Set_ieee_double_precision}
+\label{set_ieee_double_precision}
+
+\ccDefinition
+
+The IEEE754 standard specifies that the precision of double precision
+floating-point numbers should be 53 bits, with 11 bits for the exponent range.
+
+Some processors violate this rule by providing excess precision during some
+computations (when values are in registers).  This is the case of the x86
+Intel processor and compatible processors (note that the SSE2 more recent
+alternative FPU is fortunately not affected by this issue).  The effect of such
+excess precision can be a problem for some computations, since it can produce
+so-called double rounding effects, where actually \emph{less} precision is
+actually provided!  It can also be the root of non-deterministic computations
+depending on compiler optimizations or not (since this affects how long
+variables are kept in registers), for example numerical floating-point
+values get computed with slightly different results.  Finally, it affects code
+that carefully makes use of cancellation properties, like \ccc{Residue}.
+
+The class \ccc{Set_ieee_double_precision} provides a mechanism to set
+the correct 53 bits precision for a block of code.  It does so by having
+a default constructor that sets a particular mode on the FPU which corrects
+the problem, and have its destructor reset the mode to its previous state.
+
+Note that nothing can be done for the excess range of the exponent, which
+affects underflow and overflow cases, fortunately less frequent.
+
+Note also that in the process of setting the correct precision, the rounding
+mode is also set to the nearest.
+
+Moreover, some compilers provide a flag that performs this setting at the
+time of program startup.  For example, GCC provides the option \texttt{-mpc64}
+since release 4.3 which does exactly this.  Other compilers may have similar
+options.
+
+Similarly, some third-party libraries may do the same thing as part of their
+startup process, and this is notably the case of LEDA (at least some versions
+of it).  \cgal\ does not enforce this at startup as it would impact
+computations with long double performed by other codes in the same program.
+
+Note that this property is notably required for proper functionning of the
+\ccc{Residue} class that performs modular arithmetic using efficient
+floating-point operations.
+
+Note concerning Visual C++ 64-bit: due to a compiler bug, the stack unwinding
+process happenning when an exception is thrown does not correctly execute the
+restoring operation when the \ccc{Set_ieee_double_precision} object is
+destroyed.  Therefore, for this configuration, some explicit code has to be
+added if you care about the state being restored.
+
+\ccInclude{CGAL/FPU.h}
+
+\ccCreationVariable{P}
+\ccCreation
+
+If the platform is not affected by the excess precision problem, this class
+becomes an empty class doing nothing.
+
+\ccConstructor{Set_ieee_double_precision();}
+{Sets the precision of operations on double to 53bits.
+Note that the rounding mode is set to the nearest in the same process.}
+\ccGlue
+\ccFunction{void ~Set_ieee_double_precision();}
+{The precision and rounding modes are reset to the values they held before the
+constructor was called.}
+
+
+Also note that the following free function is also provided that does the same
+thing as the default constructor of \ccc{Set_ieee_double_precision} except that
+it does not perform the save and restore of the previous state.
+
+\ccFunction{void force_ieee_double_precision();}
+{
+Sets the precision of operations on double to 53bits.
+Note that the rounding mode is set to the nearest in the same process.
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Protect_FPU_rounding<Protected>}\\
+\ccRefIdfierPage{CGAL::Residue}
+
+\end{ccRefClass}
