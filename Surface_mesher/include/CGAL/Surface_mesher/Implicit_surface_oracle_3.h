@@ -467,7 +467,7 @@ namespace CGAL {
 
     bool is_in_volume(const Surface_3& surface, const Point& p) const
     {
-      return surface(p) < 0;
+      return transform_functor(surface(p)) != 0;
     }
 
   };  // end Implicit_surface_oracle_3
