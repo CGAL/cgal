@@ -23,6 +23,8 @@ typedef CGAL::Largest_empty_iso_rectangle_2<K> Largest_empty_rect;
 
 int main(int argc,char *argv[])
 {
+  const CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+
   std::ifstream *is_ptr;
   double x,y;
   std::list<Point> points_list;
