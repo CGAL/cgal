@@ -12,47 +12,57 @@ For more information about CGAL, see the <http://www.cgal.org/>.
 To install CGAL, you should:
 
  ---------------------------
- - setup the pre-requisites:
+ - Setup the pre-requisites:
  ---------------------------
 
-   * install CMake, the build system used by CGAL
+   * Install CMake, the build system used by CGAL
      Required Rel 2.4-patch-7, 
      Recommended Rel 2.6 supporting a crossplatform cmake-gui
      Download from: http://www.cmake.org/
 
-   * install the Boost libraries (http://www.boost.org/ or http://www.boostpro.com/products/free)
+   * Install the Boost libraries (http://www.boost.org/ or http://www.boostpro.com/products/free)
      Boost is required to build CGAL.
      Compiled parts of Boost are mostly optional, except Boost.Threads.
      Another recommended compiled part is Boost.ProgramOptions.
 
-   * install optional additional libraries:
-
-     o Used by most demos
-       - qt3 and qt4 (http://trolltech.com/products/qt)
+   * Install optional additional libraries:
 
      o Used for exact arithmetic           
 
-       - gmp   (http://gmplib.org/) and mpfr  (http://www.mpfr.org/)
-       - leda  as alternative to gmp+mpfr (http://www.algorithmic-solutions.com/leda/index.htm)
+       - gmp,mpfr      Multiprecision numbertypes
+                       http://gmplib.org
+                       http://www.mpfr.org
+
+       - leda          an alternative to gmp+mpfr 
+                       http://www.algorithmic-solutions.com/leda/index.htm
+
+     o Used by most demos
+       - qt3 and qt4   Trolltech's cross-plaform GUI toolkits
+                       http://trolltech.com/products/qt
 
      o Miscellaneous
 
-       - zlib  (Used by the Surface Mesh Generator demo)
-       - taucs (Used by the Surface parametriation package)
+       - zlib          A compression library, used by the Surface Mesh Generator demo
+                       http://www.zlib.net  
+                       
+       - taucs         A sparse matrix solver, used by the Surface parametriation package
+
+       - libQGLViewer  A 3D widget for Qt4, used by some 3D demos
+                       http://www.libqglviewer.com
 
     NOTE: The Windows installer comes with a CGAL specific distribution of gmp, mpfr and taucs.
 
 
  ---------------------------------------------------------------------------------
- - download the compressed archive file from the CGAL web site http://www.cgal.org
+ - Download the compressed archive file from the CGAL web site http://www.cgal.org
  ----------------------------------------------------------------------------------
 
  ------------------
- - unpack the file
+ - Unpack the file
  -----------------
 
  ------------------------------
- - configure the CGAL libraries
+ - Configure the CGAL libraries
  ------------------------------
 
     CMake is a "makefile generator".  It does not build the library but generates the
@@ -108,7 +118,7 @@ To install CGAL, you should:
         cmake <path-to-cgal-root>
 
 --------------------------------------
-- build and install the CGAL libraries
+- Build and install the CGAL libraries
 --------------------------------------
 
   By default, CMake will not generate installation rules unless explicitly
@@ -188,7 +198,7 @@ To install CGAL, you should:
 
 
 ---------------------------------------------
-- configure and build applications using CGAL
+- Configure and build applications using CGAL
 - (such as demos, examples, etc)
 ---------------------------------------------
 
