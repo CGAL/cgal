@@ -101,7 +101,6 @@
     </property>
     <addaction name="separator" />
     <addaction name="actionRecenter" />
-    <addaction name="actionCreateInputPolygon" />
     <addaction name="actionYMonotonePartition" />
     <addaction name="actionApproximateConvexPartition" />
     <addaction name="actionOptimalConvexPartition" />
