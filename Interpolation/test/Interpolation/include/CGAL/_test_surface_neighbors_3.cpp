@@ -278,6 +278,8 @@ test_coords_and_neighbors( const Triangul& T, const  typename
 			   const typename  Triangul::Geom_traits::FT&
 			   tolerance, const int& version )
 {
+  const CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+
   typedef std::pair<typename Triangul::Geom_traits::Point_3,
                     typename Triangul::Geom_traits::FT >    Point_coord_pair;
 
