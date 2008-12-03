@@ -121,8 +121,8 @@ sub install_packages() {
     $dont_submit="$ALLPACKAGESDIR/$package_name/dont_submit";
     chdir "$ALLPACKAGESDIR" or die;
     @command = ('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn');
-    if( -f dont_submit ) {
-	@command = (@command, '--exclude-from=dont_submit');
+    if( -f $dont_submit ) {
+	@command = (@command, "--exclude-from=$dont_submit");
     }
     @command = (@command, @global_dont_submit_tar_options);
     @command = (@command, '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=dont_submit', '--exclude=*.dxy', '--exclude=Doxyfile', "-C", "$package_name", ".");
