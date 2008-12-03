@@ -20,19 +20,13 @@
 // STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Spherical_kernel_3.h>
-#include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/Exact_spherical_kernel_3.h>
+
 typedef CGAL::Exact_spherical_kernel_3::FT FT_Q;
+
 #include <CGAL/_test_sphere_predicates.h>
 #include <CGAL/_test_sphere_constructions.h>
 #include <CGAL/_test_sphere_compute.h>
-#include <CGAL/Polynomials_1_3.h>
-#include <CGAL/Polynomials_2_3.h>
-#include <CGAL/Polynomials_for_line_3.h>
 
 int main()
 { 
