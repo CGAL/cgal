@@ -119,13 +119,16 @@ sub install_packages() {
   while (defined($package_name = readdir(ALLPACKAGESDIR))) {
     next unless $is_permitted_package{$package_name};
     $dont_submit="$ALLPACKAGESDIR/$package_name/dont_submit";
-    $exclude_command="--exclude-from=$dont_submit";
     chdir "$ALLPACKAGESDIR" or die;
-    if(-f $dont_submit){
-      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', "$exclude_command", '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=dont_submit', '--exclude=*.dxy', '--exclude=Doxyfile', "-C", "$package_name", ".");
-    } else {
-      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', '--exclude=dont_submit', '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=*.dxy', '--exclude=Doxyfile', "-C", "$package_name", ".");
+    @command = ('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn');
+    if( -f dont_submit) {
+	@command = (@command, '--exclude-from=dont_submit');
     }
+    if( -f $global_dont_submit ) {
+	@command = (@command, "--exclude-from=$global_dont_submit");
+    }
+    @command = (@command, '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=dont_submit', '--exclude=*.dxy', '--exclude=Doxyfile', "-C", "$package_name", ".");
+    system(@command);
     move("$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
     
 
@@ -563,6 +566,7 @@ if ($::opt_l){
   $SCRIPTSDIR="$ALLPACKAGESDIR/Scripts/scripts";
   $DEVELSCRIPTSDIR="$ALLPACKAGESDIR/Scripts/developer_scripts";
   $packages_file="$ALLPACKAGESDIR/Maintenance/release_building/include_in_release";
+  $global_dont_submit="$ALLPACKAGESDIR/Maintenance/release_building/global_dont_submit";
   print "Initializing variables ...\n";
   print "  Release dir: $RELEASEDIR\n";
   print "  All packages dir: $ALLPACKAGESDIR\n";
