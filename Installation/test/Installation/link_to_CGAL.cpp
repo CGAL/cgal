@@ -6,5 +6,5 @@ int main()
 {
   volatile const CGAL::Color* c = &CGAL::BLACK;
   
-  return 0;
+  return (c != 0) ? 0 : 1;
 }
