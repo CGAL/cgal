@@ -2,14 +2,17 @@
 
 #include <CGAL/Profile_timer.h>
 
+void f()
+{
+  CGAL_TIME_PROFILER("seconds spent in this function (total time)");
+  // do something
+  double d = 1+1;
+  (void) d;
+}
+
 int main()
 {
-  CGAL_TIME_PROFILER("seconds spent in this for loop");
-  for (int i=0; i<10; ++i)
-  {
-    // do something
-    double d = 1+1;
-    (void) d;
-  }
+  for (int i=0; i<100000; ++i)
+    f();
   return 0;
 }

@@ -23,8 +23,9 @@
 // This file contains a class to help in profiling, together with macros
 // triggered by CGAL_PROFILE to enable it:
 //
-// - Profile_timer which keeps track of the time spent in its scope-block.
-//   (be careful at recursive functions :-).
+// - Profile_timer which keeps track of the time spent in its scope-block,
+//   it accumulates the timings if it goes there several times.
+//   Note: be careful at recursive functions...
 //
 // See also CGAL/Profile_counter.h
 
@@ -39,26 +40,24 @@ CGAL_BEGIN_NAMESPACE
 struct Profile_timer
 {
     class Local {
-        Profile_timer &p;
+        Real_timer rt;
+        Profile_timer *p;
     public:
-        Local(Profile_timer& p_) : p(p_) { p.start(); }
-        ~Local() { p.stop(); }
+        Local(Profile_timer* p_) : p(p_) { rt.start(); }
+        ~Local() { rt.stop(); p->t += rt.time(); }
     };
 
     Profile_timer(const std::string & ss)
-      : s(ss) { t.reset(); }
-
-    void start() { t.start(); }
-    void stop() { t.stop(); }
+      : t(0) {}
 
     ~Profile_timer()
     {
         std::cerr << "[CGAL::Profile_timer] "
-                  << std::setw(10) << t.time() << " " << s << std::endl;
+                  << std::setw(10) << t << " " << s << std::endl;
     }
 
 private:
-    Real_timer t;
+    double t;
     const std::string s;
 };
 
@@ -66,7 +65,7 @@ private:
 #ifdef CGAL_PROFILE
 #  define CGAL_TIME_PROFILER(NAME) \
           static CGAL::Profile_timer CGAL_profile_timer_tmp(NAME); \
-          CGAL::Profile_timer::Local CGAL_local_profile_timer_tmp(CGAL_profile_timer_tmp);
+          CGAL::Profile_timer::Local CGAL_local_profile_timer_tmp(&CGAL_profile_timer_tmp);
 #else
 #  define CGAL_TIME_PROFILER(NAME)
 #endif
