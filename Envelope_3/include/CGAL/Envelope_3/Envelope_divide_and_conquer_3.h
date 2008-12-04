@@ -864,8 +864,9 @@ protected:
   // this means that the target has the same envelope information as the edge
   bool can_remove_edge_target(Halfedge_handle h)
   {
-    if(h->target()->is_at_infinity())
-      return false;
+    if((h->target()->parameter_space_in_x() != ARR_INTERIOR) ||
+       (h->target()->parameter_space_in_y() != ARR_INTERIOR))
+      return true;
 
     Vertex_handle v = h->target();
     /*if (v->get_is_fake() && !v->is_decision_set())
