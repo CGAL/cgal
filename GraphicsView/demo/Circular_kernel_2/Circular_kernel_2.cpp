@@ -147,7 +147,6 @@ MainWindow::MainWindow()
 void
 MainWindow::processInput(CGAL::Object o)
 {
-  std::cout << "process input" << std::endl;
   Circular_arc_2 ca;
   Line_arc_2 la;
   bool is_circular = false;
