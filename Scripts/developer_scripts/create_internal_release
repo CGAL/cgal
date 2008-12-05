@@ -81,6 +81,8 @@ it could not acquire the needed lock on file $LOCKFILE.
 TOTHIER
 	exit 1;
     }
+    $SIG{EXIT} = \&termination_signal_handler;
+    $SIG{HUP} = \&termination_signal_handler;
     $SIG{INT} = \&termination_signal_handler;
     $SIG{TERM} = \&termination_signal_handler;
 }
@@ -88,6 +90,8 @@ TOTHIER
 sub unlock()
 {
     unlink $LOCKFILE;
+    $SIG{EXIT} = 'DEFAULT';
+    $SIG{HUP} = 'DEFAULT';
     $SIG{INT} = 'DEFAULT';
     $SIG{TERM} = 'DEFAULT';
 }
@@ -600,7 +604,7 @@ CreateDemoTestDirs();
 CreateExampleTestDirs();
 create_version_file();
 create_version_tex_file();
-make_testscripts();
+#make_testscripts();
 make_testscripts_for_cmake();
 
 unlock;
