@@ -73,7 +73,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>19</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
@@ -145,10 +145,10 @@
      <normaloff>:/cgal/Input/inputPoint.png</normaloff>:/cgal/Input/inputPoint.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Insert Point</string>
+    <string>&amp;Insert weighted point</string>
    </property>
    <property name="toolTip" >
-    <string>Insert Point</string>
+    <string>Insert weighted point</string>
    </property>
    <property name="statusTip" >
     <string>Left: Insert vtx</string>
