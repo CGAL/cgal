@@ -9,7 +9,7 @@ if( NOT GMP_FOUND )
   set(CGAL_NO_CORE ON)
 endif( NOT GMP_FOUND )
 
-option ( WITH_LEDA "Use the LEDA number types if available." ON )
+option ( WITH_LEDA "Use the LEDA number types if available." OFF )
 if ( WITH_LEDA )
   include(CGAL_SetupLEDA)
 endif( WITH_LEDA )
