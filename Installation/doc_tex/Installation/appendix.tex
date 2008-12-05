@@ -103,66 +103,6 @@ Alternatively, you can build the runtime linker path into the
 executables by setting corresponding custom linker flags (cf.
 Section~\ref{sec:compiler-menu}).
 
-
-\subsection{The ``Long-Name-Problem'' on Solaris\label{sec:longnamesolaris}}
-\index{problems with long names}\index{long name problem}
-
-The system assembler and linker on Solaris 2.5 and 2.6 cannot handle
-symbols with more than 1024 characters. But this number is quickly
-exceeded where one starts nesting templates into each other. So if you
-encounter strange assembler or linker errors like 
-\begin{alltt}
-/usr/ccs/bin/as: "/var/tmp/cc0B5iGc.s", line 24: 
-error: can't compute value of an expression involving an external symbol
-\end{alltt}
-there is a good chance that you suffer from this ``long-name''
-problem.
-
-A solution is to install the \gnu -binutils\footnote{see
-  \path'http://www.gnu.org/software/binutils/'} and to tell the
-compiler that it shall use the \gnu-- instead of the native tools.
-From the compiler-menu (described in section \ref{sec:compiler-menu})
-you can set the corresponding option through the custom compiler
-flags, i.e. for \texttt{gcc} you would add
-\begin{alltt}
-  -B/my/path/to/gnu/binutils/bin
-\end{alltt}
-assuming you installed the \gnu -binutils executables in
-\texttt{/my/path/to/gnu/binutils/bin}.
-
-If you cannot (or do not want to) install \gnu -binutils, there is a
-workaround that lets you compile, link and run your programs, but it
-prevents debugging, since the executables have to be stripped. In
-short the workaround is to compile with \texttt{-g} and to link with
-\texttt{-z nodefs -s} on Solaris, \texttt{-U -s} on IRIX,
-respectively.
-
-In order to still have portable makefiles (see
-section\ref{sec:makefiles}), we define flags
-\texttt{LONG\_NAME\_PROBLEM\_CXXFLAGS} and
-\texttt{LONG\_NAME\_PROBLEM\_LDFLAGS} in the include makefiles which
-are empty except for the Solaris platform where they are set as stated
-above. In order to use these flags, edit your application makefile and
-add the flags to \texttt{CXXFLAGS} resp. \texttt{LDFLAGS} as indicated
-below.
-\begin{alltt}
-#---------------------------------------------------------------------#
-#                    compiler flags
-#---------------------------------------------------------------------#
-# The flag CGAL_CXXFLAGS contains the path to the compiler and is defined
-# in the file CGAL_MAKEFILE. You may add your own compiler flags to CXXFLAGS.
-
-CXXFLAGS = $(LONG_NAME_PROBLEM_CXXFLAGS) $(CGAL_CXXFLAGS) 
-
-#---------------------------------------------------------------------#
-#                    linker flags
-#---------------------------------------------------------------------#
-# The flag CGAL_LDFLAGS contains common linker flags and is defined
-# in the file CGAL_MAKEFILE. You may add your own linker flags to CXXFLAGS.
-
-LDFLAGS = $(LONG_NAME_PROBLEM_LDFLAGS) $(CGAL_LDFLAGS) 
-\end{alltt}
-
 \subsection{LEDA and STL Conflicts\label{subs:ledastlconfl}}
 
 If you are using an old version of \leda, the combination of \leda\ 

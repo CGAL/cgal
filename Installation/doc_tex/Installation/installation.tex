@@ -175,19 +175,18 @@ contains the following subdirectories:\index{directories!structure}
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
-    \textbf{directory} & \textbf{contents}\\\hline\hline
-    \texttt{auxiliary} & precompiled GMP, MPFR and TAUCS for Windows\\\hline
-    \texttt{config}    & configuration files for install script\\\hline
-    \texttt{cmake/modules}    & modules for finding and using libraries\\\hline
-    \texttt{demo}      & demo programs (most of them need \qt, geomview
-                         or other third-party products)\\\hline
-    \texttt{doc\_html} & documentation (HTML)\\\hline
-    \texttt{doc\_pdf}  & documentation (PDF)\\\hline
-    \texttt{examples}  & example programs\\\hline
-    \texttt{include}   & header files\\\hline
-    \texttt{lib}       & (shared) object libraries\\\hline
+    \textbf{directory}     & \textbf{contents}\\\hline\hline
+    \texttt{auxiliary}     & precompiled GMP, MPFR and TAUCS for Windows\\\hline
+    \texttt{config}        & configuration files for install script\\\hline
+    \texttt{cmake/modules} & modules for finding and using libraries\\\hline
+    \texttt{demo}          & demo programs (most of them need \qt, geomview or other third-party products)\\\hline
+    \texttt{doc\_html}     & documentation (HTML)\\\hline
+    \texttt{doc\_pdf}      & documentation (PDF)\\\hline
+    \texttt{examples}      & example programs\\\hline
+    \texttt{include}       & header files\\\hline
+    \texttt{lib}           & (shared) object libraries\\\hline
     \texttt{scripts}       & some useful scripts (e.g. for creating CMakeLists.txt files)\\\hline
-    \texttt{src}       & source files\\\hline
+    \texttt{src}           & source files\\\hline
   \end{tabular}
 \end{center}
 
@@ -278,11 +277,11 @@ instead of Visual Studio project files in order to build the library with \textt
 
 Since the choice of the generator determines the type of build files to generate, in some cases
 you choose a particular generator as a mean to choose a specific compiler (because they use different 
-build files. For example, the following generates solution files for use in Visual \CC\ 9.0:
+build files). For example, the following generates solution files for use in Visual \CC\ 9.0:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd ~/CGAL-3.4
+  cd CGAL-3.4
   cmake -G"Visual Studio 9 2008" . 
 \end{verbatim}
 }
@@ -294,17 +293,17 @@ say so in the call to cmake, as in this example:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd ~/CGAL-3.4
+  cd CGAL-3.4
   cmake -DCMAKE_CXX_COMPILER:FILEPATH=g++-3.4 . 
 \end{verbatim}
 }
 
 
 \cmake\ maintains configuration parameters in so-called {\em cmake variables}, like the \texttt{CMAKE\_CXX\_COMPILER}
-in the example above. These variables {\em are not environment variables} and they must be set and modified in
-certain specific ways as explained below. Some of the cmake variables represent user choices, such as
-\texttt{WITH\_examples} or \texttt{CMAKE\_BUILD\_TYPE=Release}, while others indicate the details of a third-party library, 
-such as \texttt{Boost\_INCLUDE\_DIR} or the compiler flags to use, such as \texttt{CMAKE\_CXX\_FLAGS}. 
+in the example above. These variables {\em are not environment variables} but {\em cmake variales}. Some of the cmake 
+variables represent user choices, such as \texttt{WITH\_examples} or \texttt{CMAKE\_BUILD\_TYPE=Release}, while others
+indicate the details of a third-party library, such as \texttt{Boost\_INCLUDE\_DIR} or the compiler flags to use,
+such as \texttt{CMAKE\_CXX\_FLAGS}. 
 
 The command line tool \texttt{cmake} accepts cmake variables as arguments of the form \texttt{-D<VAR>:<TYPE>=<VALUE>}, as
 in the example above, but this is only useful if you already know which variables needs to be explicitly defined.
@@ -312,7 +311,7 @@ in the example above, but this is only useful if you already know which variable
 \begin{ccAdvanced}
 \cmake\ keeps the variables that a user can manipulate in a so-called {\em cmake cache}, a simple text file specifically 
 named \texttt{CMakeCache.txt} whose entries are of the form VARIABLE:TYPE=VALUE. Advanced users can just manually edit this 
-file instead of going through the interactive configuration session explained before.
+file instead of going through the interactive configuration session.
 \end{ccAdvanced}
 
 
@@ -322,52 +321,44 @@ The configuration process not only determines the location of the required depen
 
 \subsection{\cgal\ Libraries}
 
-\cgal\ is split in four libraries, in order to push some auxiliary 
-functionality out of the main library. During configuration, you can selected the libraries that 
-shall be built by setting the cmake variable of the form {\tt WITH\_<library>}. By default all 
+\cgal\ is split in four libraries in order to push some auxiliary 
+functionality out of the main library. During configuration, you can select the libraries that 
+shall be built by setting a cmake variable of the form {\tt WITH\_<library>}. By default all 
 are switched \texttt{ON}.
 
 \begin{center}\index{cgal!libraries}\index{cgal libraries}
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|l|l|} \hline
-    \textbf{library} & \textbf{cmake variable} & \textbf{functionality} & \textbf{dependencies}
-    \\\hline\hline
-    \texttt{CGAL} & {\em none} & Main library  & GMP, MPFR, Boost (headers) and Boost.Thread (library)
-    \\\hline
-    \texttt{CGAL\_Core} & \texttt{WITH\_CGAL\_Core} & The CORE library for dealing with algebraic numbers.
-    \footnote{CGAL-core++ is not part of \cgal, it is a custom version the CORE library distributed by \cgal\
-              for the user convenience and it has it's own license. }
-    & GMP and MPFR
-    \\\hline
-    \texttt{CGAL\_Qt3} & \texttt{WITH\_CGAL\_Qt3} & \ccc{CGAL::Qt_widget} used by some old Qt3-based demos & Qt3 and OpenGL
-    \\\hline
-    \texttt{CGAL\_Qt4} & \texttt{WITH\_CGAL\_Qt4} & \ccc{CGAL::GraphicsView} used by the Qt4-based demos & Qt4 and OpenGL
-    \\\hline
-    \texttt{CGAL\_ImageIO} & \texttt{WITH\_CGAL\_ImageIO} & Utilities to read and write image files in various formats 
-    & OpenGL, ZLib, and VTK (optional)
-    \\\hline
-    \texttt{CGAL\_PDB} & \texttt{WITH\_CGAL\_PDB} & \ccc{CGAL::PDB} used to manipulate \texttt{PDB} files & {\em none}
-    \\\hline
+    \textbf{library}       & \textbf{cmake variable}      & \textbf{functionality}                                                & \textbf{dependencies}\\\hline\hline
+    \texttt{CGAL}          & {\em none}                   & Main library                                                          & GMP, MPFR, Boost (headers) and Boost.Thread (library)\\\hline
+    \texttt{CGAL\_Core}    & \texttt{WITH\_CGAL\_Core}    & The CORE library for dealing with algebraic numbers.\footnotemark[15] & GMP and MPFR\\\hline
+    \texttt{CGAL\_Qt3}     & \texttt{WITH\_CGAL\_Qt3}     & \ccc{CGAL::Qt_widget} used by some old Qt3-based demos                & Qt3 and OpenGL\\\hline
+    \texttt{CGAL\_Qt4}     & \texttt{WITH\_CGAL\_Qt4}     & \ccc{CGAL::GraphicsView} used by the Qt4-based demos                  & Qt4 and OpenGL\\\hline
+    \texttt{CGAL\_ImageIO} & \texttt{WITH\_CGAL\_ImageIO} & Utilities to read and write image files in various formats            & OpenGL, ZLib, and VTK (optional)\\\hline
+    \texttt{CGAL\_PDB}     & \texttt{WITH\_CGAL\_PDB}     & \ccc{CGAL::PDB} used to manipulate \texttt{PDB} files                 & {\em none}\\\hline
   \end{tabular}
 \end{center}
+
+\footnotetext[15]{CGAL-core++ is not part of \cgal, it is a custom version the CORE library distributed 
+by \cgal\ for the user convenience and it has it's own license.}\addtocounter{footnote}{1}
 
 If you turn off the configuration of a library you can still configure it manually from the  source directory:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd ~/CGAL-3.4/src/CGALQt4 
+  cd CGAL-3.4/src/CGALQt4 
   cmake . # configures only the CGAL_Qt4 library
 \end{verbatim}
 }
 
 \subsection{Examples and Demos}
 
-\cgal\ is distributed with a large collection of examples and demos. By default, these are all configured along with
-the \cgal\ libraries. When configured, they are not automatically built along with the libraries, you do that
-by selecting the \texttt{examples} or \texttt{demo} make targets as explained in the following section, but you can set the 
-variables {\tt WITH\_examples=OFF} and {\tt WITH\_demo=OFF} to prevent configuration of examples and demos altogether.
+\cgal\ is distributed with a large collection of examples and demos. By default, these are NOT configured along with
+the \cgal\ libraries unless you set the variables {\tt WITH\_examples=ON} and/or {\tt WITH\_demo=ON}.
 
+Nevertheless, even when configured along with \cgal, they are not automatically built along with the libraries.
+To do that you must explicitely build the \texttt{examples} or \texttt{demo} make targets (or IDE projects).
 
 \subsection{Debug vs.\ Release}
 
@@ -405,68 +396,15 @@ You can for example generate subdirectories \cgaldir{}\texttt{/cmake/platforms/d
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-mkdir ~/CGAL-3.4/cmake/platforms/debug
-cd ~/CGAL-3.4/cmake/platforms/debug
+mkdir CGAL-3.4/cmake/platforms/debug
+cd CGAL-3.4/cmake/platforms/debug
 cmake -DCMAKE_BUILD_TYPE=Debug ../../..
 
-mkdir ~/CGAL-3.4/cmake/platforms/release
-cd ~/CGAL-3.4/cmake/platforms/release
+mkdir CGAL-3.4/cmake/platforms/release
+cd CGAL-3.4/cmake/platforms/release
 cmake -DCMAKE_BUILD_TYPE=Release ../../..
 \end{verbatim}
 }
-
-
-
-\subsection{Compiler and Linker Flags}
-
-\cmake\ determines the set of compiler and linker flags to use based on the target compiler and automatically defines
-the following cmake variables:
-
-\begin{enumerate}
-\item \texttt{CMAKE\_CXX\_FLAGS}
-\item \texttt{CMAKE\_CXX\_FLAGS\_RELEASE}
-\item \texttt{CMAKE\_CXX\_FLAGS\_DEBUG}
-\item \texttt{CMAKE\_MODULE\_LINKER\_FLAGS}
-\item \texttt{CMAKE\_MODULE\_LINKER\_FLAGS\_RELEASE}
-\item \texttt{CMAKE\_MODULE\_LINKER\_FLAGS\_DEBUG}
-\item \texttt{CMAKE\_SHARED\_LINKER\_FLAGS}
-\item \texttt{CMAKE\_SHARED\_LINKER\_FLAGS\_RELEASE}
-\item \texttt{CMAKE\_SHARED\_LINKER\_FLAGS\_DEBUG}
-\item \texttt{CMAKE\_EXE\_LINKER\_FLAGS}
-\item \texttt{CMAKE\_EXE\_LINKER\_FLAGS\_RELEASE}
-\item \texttt{CMAKE\_EXE\_LINKER\_FLAGS\_DEBUG}
- \end{enumerate}
-
-The \texttt{MODULE} family of flags correspond to static libraries, the \texttt{SHARED} flags to shared libraries
-and \texttt{EXE} flags to executables.
-
-The effective flags are always a concatenation of the general and build-type specific flags, such as
-\texttt{CMAKE\_CXX\_FLAGS} {\em then} \texttt{CMAKE\_CXX\_FLAGS\_RELEASE}.
-
-You can {\em completely override} any of these variables if you pass them on the command-line \texttt{cmake}
-Alternatively, you can change the values given by \cmake\ using the
-interactive cmake tools (\texttt{CMakeSetup.exe}, \texttt{ccmake} or \texttt{cmake-gui}).  This is useful for example to produce a fast debug
-variant without diagnostics (-DNDEBUG added). 
-
-If you do not want to override the automatically configured flags but only add more, you can 
-define any of the following cmake variables, which are counterparts of the default
-variables but starting with \texttt{CGAL} instead of \texttt{CMAKE}:
-
-\begin{enumerate}
-\item \texttt{CGAL\_CXX\_FLAGS}
-\item \texttt{CGAL\_CXX\_FLAGS\_RELEASE}
-\item \texttt{CGAL\_CXX\_FLAGS\_DEBUG}
-\item \texttt{CGAL\_MODULE\_LINKER\_FLAGS}
-\item \texttt{CGAL\_MODULE\_LINKER\_FLAGS\_RELEASE}
-\item \texttt{CGAL\_MODULE\_LINKER\_FLAGS\_DEBUG}
-\item \texttt{CGAL\_SHARED\_LINKER\_FLAGS}
-\item \texttt{CGAL\_SHARED\_LINKER\_FLAGS\_RELEASE}
-\item \texttt{CGAL\_SHARED\_LINKER\_FLAGS\_DEBUG}
-\item \texttt{CGAL\_EXE\_LINKER\_FLAGS}
-\item \texttt{CGAL\_EXE\_LINKER\_FLAGS\_RELEASE}
-\item \texttt{CGAL\_EXE\_LINKER\_FLAGS\_DEBUG}
-\end{enumerate}
-
 
 \section{Building \cgal\ Libraries}
 
@@ -481,7 +419,7 @@ use the \texttt{make} command-line tool as follow:
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 
-cd ~/CGAL-3.4
+cd CGAL-3.4
 
 # build all the selected library at once
 
@@ -528,7 +466,7 @@ file in-place and VS will prompt you to reload it.
 \end{ccAdvanced}
 
 
-If you have not turned off configuration of examples and/or demos, there will be additional
+If you have turned on the configuration of examples and/or demos, there will be additional
 targets named \texttt{examples} and \texttt{demo}, plus one target for each example and each demo.
 None of these targets are included in the default so you need to build them explicitly
 {\em after} the \cgal\ libraries have been successfully compiled and linked
@@ -546,6 +484,11 @@ make Straight_skeleton_2_demo
 
 \end{verbatim}
 }
+
+\begin{ccAdvanced}
+When using \texttt{UNIX Makefiles} you can find out the exact name of the example or demo target
+of a particular package typing \texttt{make help | grep <package>}.
+\end{ccAdvanced}
 
 \section{Installing \cgal\ Libraries}
 
@@ -567,26 +510,25 @@ installation in a {\sc Unix}-like environment:
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 
-cd ~/CGAL-3.4
+cd CGAL-3.4
 
-cmake . # configure
-make    # make
-
-sudo make install # install
+cmake .      # configure
+make         # compile
+make install # install
 
 \end{verbatim}
 }
 
-The installation step copies files to locations which are typically accessible only to the root user so
-it is typically necessary to do so as a super-user, hence the call to {\tt 'sudo'} first.
-
 If you used a generator which produced IDE files (for Visual Studio for instance) there will be an optional
 \texttt{INSTALL} project which you can {\em ``build''} to execute the installation step. 
+
+\begin{ccAdvanced}
 
 The files are copied into a directory tree relative to the {\em installation directory} determined by the 
 cmake variable \texttt{CMAKE\_INSTALL\_PREFIX}. This variable defaults to {\tt /usr/local} under UNIX-like operating systems
 and {\tt PROGRAMFILES } under Windows. If you want to install to a different location you must override that cmake
 variable explicitly {\em at configuration time} (not when executing the install step).
+
 
 If you wish the be able to specify the install location when executing the install step rather than hard-coding it during
 configuration you can use the environment variable \texttt{DESTDIR}. However, since \texttt{CMAKE\_INSTALL\_PREFIX} is prepended
@@ -597,7 +539,7 @@ This is illustrated in the following example:
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 
-cd ~/CGAL-3.4
+cd CGAL-3.4
 
 cmake -DCMAKE_INSTALL_PREFIX="" . 
 
@@ -608,11 +550,12 @@ DESTDIR=/usr/share sudo make install
 \end{verbatim}
 }
 
+\end{ccAdvanced}
 
 
 \section{Configuring and Building Programs Using \cgal}
 
-\cmake can be used to configure and build user programs as well via a \cmake\ 
+\cmake\ can be used to configure and build user programs as well via a \cmake\ 
 script ({\tt CMakeLists.txt}) for the program.  All the examples and
 demos contain such \cmake\ scripts.
 
@@ -626,170 +569,361 @@ to indicate the location of that config file in the cmake variable
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 
-cd ~/CGAL-3.4/examples/Straight_skeleton_2
-cmake -DCGAL_DIR=~/CGAL-3.4 .
+cd CGAL-3.4/examples/Straight_skeleton_2
+cmake -DCGAL_DIR=CGAL-3.4 .
 make
 
 \end{verbatim}
 }
 
-By default, \cgal\ programs inherit the flags and build-type used
-for \cgal\ to avoid runtime problems unless you explicitely indicate otherwise by
-defining the \cmake\ variable {\tt CGAL\_DONT\_OVERRIDE\_DEFAULT\_SETTINGS=TRUE}.
-The following example illustrates this:
+\texttt{CGAL\_DIR} can also be an environment variable.
+
+\subsection{Custom flags in the programs using \cgal}
+
+Normaly, programs linked to \cgal\ must use the same flags used by the \cgal\
+libraries to avoid runtime problems. For this reason, the {\em very first} time
+a program is configured, all the flags given by the cmake variables \texttt{CMAKE\_*\_FLAGS}
+are {\em locked} in the sense that the values recorded in \texttt{CGALConfig.cmake} 
+are used to override any values given by \cmake\ itself or yourself.
+
+This does not apply to the additional flags that can be given via \texttt{CGAL\_*\_FLAGS}.
+
+Such {\em inherited} values are then recorded on the current cmake cache for the program.
+The flags are then {\em unlocked} in the sense that at any subsequent configuration you can
+provide you own flags and this time they won't be overriden.
+
+When using the interactive \texttt{cmake-gui}, the first press on \texttt{Configure} unlocks
+the flags so you can edit them as needed. 
+
+\begin{ccAdvanced}
+The locking of flags is controlled by the variable {\tt CGAL\_DONT\_OVERRIDE\_CMAKE\_FLAGS}
+which starts out FALSE and is toggled right after the flags have been loaded from
+\texttt{CGALConfig.cmake}.
+
+If you use the command line tool you can specify flags {\em directly} by setting the
+controlling variable right up front:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 
-cd ~/CGAL-3.4
+cd CGAL-3.4
 
-# CGAL configured in release mode but with debug information 
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-g .
 
-cd ~/CGAL-3.4/examples/Straight_skeleton_2
+cd CGAL-3.4/examples/Straight_skeleton_2
 
-# In this case, the settings of build type and flags HAVE NO EFFECT
-# because they are overriden by the values used above
-cmake -DCGAL_DIR=~/CGAL-3.4 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 . 
-
-# But in this case they are respected
-cmake -DCGAL_DIR=~/CGAL-3.4 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_DEFAULT_SETTINGS=TRUE . 
+cmake -DCGAL_DIR=CGAL-3.4 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
 
 \end{verbatim}
 }
+\end{ccAdvanced}
+
+
+
+
+
 
 \section{Summary of Configuration Variables}
 
-\subsection{CMake variables used to configure both \cgal\ libraries and user programs}
+Most configuration variables are not environment variables but {\em cmake variables}. They are given in the command line call to \cmake\ via the \texttt{-D} option, 
+or using the interactive \texttt{cmake-gui}. Unless explicitely indicated, all the variables summarized below are \cmake\ variables.
 
-\begin{center}\index{cgal!general-config-cmake-vars}\index{cgal configuration cmake variables - general}
-  \renewcommand{\arraystretch}{1.3}
-  \gdef\lcTabularBorder{2}
-  \begin{tabular}{|l|l|l|} \hline
-    \textbf{variable}  & \textbf{description} & \textbf{default value}
-    \\\hline\hline
-    \texttt{CMAKE\_BUILD\_TYPE}  & Indicates type of build. Possible values are Debug,Release & Debug
-    \\\hline
-    \texttt{CMAKE\_CXX\_FLAGS} & Space-separated list of C++ flags for both Debug and Release modes & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CMAKE\_CXX\_FLAGS\_RELEASE} & Space-separated list of C++ flags for Release mode only  & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CMAKE\_CXX\_FLAGS\_DEBUG} & Space-separated list of C++ flags for Debug mode only & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CMAKE\_SHARED\_LINKER\_FLAGS} & Space-separated list of linker flags for shared libraries on both Debug and Release modes & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CMAKE\_SHARED\_LINKER\_FLAGS\_RELEASE} & Space-separated list of linker flags for shared libraries on Release mode only & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CMAKE\_SHARED\_LINKER\_FLAGS\_DEBUG} & Space-separated list of linker flags for shared libraries on Debug mode only & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CMAKE\_MODULE\_LINKER\_FLAGS} & Space-separated list of linker flags for static libraries on both Debug and Release modes & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CMAKE\_MODULE\_LINKER\_FLAGS\_RELEASE} & Space-separated list of linker flags for static libraries on Release mode only & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CMAKE\_MODULE\_LINKER\_FLAGS\_DEBUG} & Space-separated list of linker flags for static libraries on Debug mode only & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CMAKE\_EXE\_LINKER\_FLAGS} & Space-separated list of linker flags for executables on both Debug and Release modes & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CMAKE\_EXE\_LINKER\_FLAGS\_RELEASE} & Space-separated list of linker flags for executables on Release mode only & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CMAKE\_EXE\_LINKER\_FLAGS\_DEBUG} & Space-separated list of linker flags for executables on Debug mode only & platform-dependent, determined by cmake
-    \\\hline
-    \texttt{CGAL\_CXX\_FLAGS} & Additional space-separated list of C++ flags for both Debug and Release modes & (empty)
-    \\\hline
-    \texttt{CGAL\_CXX\_FLAGS\_RELEASE} & Additional space-separated list of C++ flags for Release mode only & (empty)
-    \\\hline
-    \texttt{CGAL\_CXX\_FLAGS\_DEBUG} & Additional space-separated list of C++ flags for Debug mode only & (empty)
-    \\\hline
-    \texttt{CGAL\_SHARED\_LINKER\_FLAGS} & Additional space-separated list of linker flags for shared libraries on both Debug and Release modes & (empty)
-    \\\hline
-    \texttt{CGAL\_SHARED\_LINKER\_FLAGS\_RELEASE} & Additional space-separated list of linker flags for shared libraries on Release mode only & (empty)
-    \\\hline
-    \texttt{CGAL\_SHARED\_LINKER\_FLAGS\_DEBUG} & Additional space-separated list of linker flags for shared libraries on Debug mode only & (empty)
-    \\\hline
-    \texttt{CGAL\_MODULE\_LINKER\_FLAGS} & Additional space-separated list of linker flags for static libraries on both Debug and Release modes & (empty)
-    \\\hline
-    \texttt{CGAL\_MODULE\_LINKER\_FLAGS\_RELEASE} & Additional space-separated list of linker flags for static libraries on Release mode only & (empty)
-    \\\hline
-    \texttt{CGAL\_MODULE\_LINKER\_FLAGS\_DEBUG} & Additional space-separated list of linker flags for static libraries on Debug mode only & (empty)
-    \\\hline
-    \texttt{CGAL\_EXE\_LINKER\_FLAGS} & Additional space-separated list of linker flags for executables on both Debug and Release modes & (empty)
-    \\\hline
-    \texttt{CGAL\_EXE\_LINKER\_FLAGS\_RELEASE} & Additional space-separated list of linker flags for executables on Release mode only & (empty)
-    \\\hline
-    \texttt{CGAL\_EXE\_LINKER\_FLAGS\_DEBUG} & Additional space-separated list of linker flags for executables on Debug mode only & (empty)
-    \\\hline
-    \texttt{CMAKE\_CXX\_COMPILER} & Full-path to the executable corresponding to the C++ compiler to use. This is used only if Makefiles are generated & platform-dependent, determined by cmake
-    \\\hline
-  \end{tabular}
-\end{center}
+\index{cgal!cmake-vars-components}\index{cgal configuration variables - components }
+\subsection{Component selection}
 
-\subsection{Environment variables used to configure both \cgal\ libraries and user programs}
+The following boolean variables indicate which \cgal\ components to configure and build. Their values can be ON or OFF.
 
-\begin{center}\index{cgal!general-config-env-vars}\index{cgal configuration environment variables - general }
-  \renewcommand{\arraystretch}{1.3}
-  \gdef\lcTabularBorder{2}
-  \begin{tabular}{|l|l|} \hline
-    \textbf{variable}  & \textbf{description} 
-    \\\hline\hline
-    {\tt CXX } & Full-path to the executable corresponding to the C++ compiler to use. This is used only if Makefiles are generated
-    \\\hline
-  \end{tabular}
-\end{center}
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|} \hline
+  \textbf{Variable}            & \textbf{Default value}\\\hline\hline
+  \texttt{WITH\_examples}      & OFF\\\hline
+  \texttt{WITH\_demos}         & OFF\\\hline
+  \texttt{WITH\_CGAL\_Core}    & ON\\\hline
+  \texttt{WITH\_CGAL\_Qt3}     & ON\\\hline
+  \texttt{WITH\_CGAL\_Qt4}     & ON\\\hline
+  \texttt{WITH\_CGAL\_ImageIO} & ON\\\hline
+  \texttt{WITH\_CGAL\_PDB}     & ON\\\hline
+\end{tabular}
 
-\subsection{CMake variables used to configure the \cgal\ libraries only}
+\index{cgal!general-config-cmake-flags}\index{cgal configuration cmake variables - flags}
+\subsection{Compiler and Linker Flags}
 
-\begin{center}\index{cgal!lib-config-cmake-vars}\index{cgal configuration cmake variables - libs }
-  \renewcommand{\arraystretch}{1.3}
-  \gdef\lcTabularBorder{2}
-  \begin{tabular}{|l|l|l|l|} \hline
-    \textbf{variable} & \textbf{description} & \textbf{default value}
-    \\\hline\hline
-    \texttt{WITH\_examples}  & Whether to configure examples along with the library (TRUE/FALSE) & TRUE
-    \\\hline
-    \texttt{WITH\_demos} & Whether to configure demos along with the library (TRUE/FALSE) & TRUE
-    \\\hline
-    \texttt{WITH\_CGAL\_Core} & Whether to configure CGAL\_Core component along with the main library (TRUE/FALSE) & TRUE
-    \\\hline
-    \texttt{WITH\_CGAL\_Qt3} & Whether to configure CGAL\_Qt3 component along with the main library (TRUE/FALSE) & TRUE
-    \\\hline
-    \texttt{WITH\_CGAL\_Qt4} & Whether to configure CGAL\_Qt4 component along with the main library (TRUE/FALSE) & TRUE
-    \\\hline
-    \texttt{WITH\_CGAL\_ImageIO} & Whether to configure CGAL\_ImageIO component along with the main library (TRUE/FALSE) & TRUE
-    \\\hline
-    \texttt{WITH\_CGAL\_PDB} & Whether to configure CGAL\_PDB component along with the main library (TRUE/FALSE) & TRUE
-    \\\hline
-    \texttt{WITH\_CPACK} & Whether to create a package for distribution of the library (TRUE/FALSE) & FALSE
-    \\\hline
-  \end{tabular}
-\end{center}
+The following variables specify compiler and linker flags. Each variable holds a 
+space-separated list of command-line switches for the compiler and linker and 
+their default values are automatically defined by \cmake\ based on the target platform.
 
+Have in mind that these variables specify a list of flags, not just one single flag, 
+and if you provide your own definition for a variable you will {\em entirely} override
+the list of flags choosen by \cmake\ on that particular variable.
 
-\subsection{CMake variables used to configure programs linking to \cgal}
+The variables that correspond to both debug and release builds are always
+used in conjunction with those for the specific build type.
 
-\begin{center}\index{cgal!exe-config-cmake-vars}\index{cgal configuration cmake variables - user programs }
-  \renewcommand{\arraystretch}{1.3}
-  \gdef\lcTabularBorder{2}
-  \begin{tabular}{|l|l|} \hline
-    \textbf{variable} & \textbf{description} 
-    \\\hline\hline
-    \texttt{CGAL\_DONT\_OVERRIDE\_CMAKE\_FLAGS} & Set this to TRUE to prevent the flags to be overriden with the values used to build the \cgal\ libraries
-    \\\hline
-  \end{tabular}
-\end{center}
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|l|} \hline
+  \textbf{Program}     & \textbf{Both Debug and Release}       & \textbf{Release only}                          & \textbf{Debug Only}\\\hline\hline
+  C++ Compiler         & \texttt{CMAKE\_CXX\_FLAGS}            & \texttt{CMAKE\_CXX\_FLAGS\_RELEASE}            & \texttt{CMAKE\_CXX\_FLAGS\_DEBUG}\\\hline
+  Linker (shared libs) & \texttt{CMAKE\_SHARED\_LINKER\_FLAGS} & \texttt{CMAKE\_SHARED\_LINKER\_FLAGS\_RELEASE} & \texttt{CMAKE\_SHARED\_LINKER\_FLAGS\_DEBUG}\\\hline
+  Linker (static libs) & \texttt{CMAKE\_MODULE\_LINKER\_FLAGS} & \texttt{CMAKE\_MODULE\_LINKER\_FLAGS\_RELEASE} & \texttt{CMAKE\_MODULE\_LINKER\_FLAGS\_DEBUG}\\\hline
+  Linker (programs)    & \texttt{CMAKE\_EXE\_LINKER\_FLAGS}    & \texttt{CMAKE\_EXE\_LINKER\_FLAGS\_RELEASE}    & \texttt{CMAKE\_EXE\_LINKER\_FLAGS\_DEBUG}\\\hline
+\end{tabular}
 
+\index{cgal!general-config-cmake-extra-flags}\index{cgal configuration cmake variables - additional flags}
+\subsubsection{Additional Compiler and Linker Flags}
 
-\subsection{Environment variables used to configure programs linking to \cgal}
+The following variables can be used to {\em add} flags without overriding the ones
+defined by cmake.
 
-\begin{center}\index{cgal!exe-config-env-vars}\index{cgal configuration environment variables - user programs }
-  \renewcommand{\arraystretch}{1.3}
-  \gdef\lcTabularBorder{2}
-  \begin{tabular}{|l|l|} \hline
-    \textbf{variable} & \textbf{description} 
-    \\\hline\hline
-    \texttt{CGAL\_DIR} & Directory where { \tt CGALConfig.cmake} is located. That is, the binary directory where you configured \cgal
-    \\\hline
-  \end{tabular}
-\end{center}
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|l|}\hline
+  \textbf{Program}     & \textbf{Both Debug and Release}      & \textbf{Release only}                         & \textbf{Debug Only}\\\hline\hline
+  C++ Compiler         & \texttt{CGAL\_CXX\_FLAGS}            & \texttt{CGAL\_CXX\_FLAGS\_RELEASE}            & \texttt{CGAL\_CXX\_FLAGS\_DEBUG}\\\hline
+  Linker (shared libs) & \texttt{CGAL\_SHARED\_LINKER\_FLAGS} & \texttt{CGAL\_SHARED\_LINKER\_FLAGS\_RELEASE} & \texttt{CGAL\_SHARED\_LINKER\_FLAGS\_DEBUG}\\\hline
+  Linker (static libs) & \texttt{CGAL\_MODULE\_LINKER\_FLAGS} & \texttt{CGAL\_MODULE\_LINKER\_FLAGS\_RELEASE} & \texttt{CGAL\_MODULE\_LINKER\_FLAGS\_DEBUG}\\\hline
+  Linker (programs)    & \texttt{CGAL\_EXE\_LINKER\_FLAGS}    & \texttt{CGAL\_EXE\_LINKER\_FLAGS\_RELEASE}    & \texttt{CGAL\_EXE\_LINKER\_FLAGS\_DEBUG}\\\hline
+\end{tabular}
+
+\index{cgal!general-config-cmake-vars-misc}\index{cgal configuration cmake variables - miscelaneous}
+\subsection{Miscelaneous Variables}
+
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|l|} \hline
+  \textbf{Variable}             & \textbf{Description}                                                  & \textbf{Type} & \textbf{Default value}\\\hline\hline
+  \texttt{CMAKE\_BUILD\_TYPE}   & Indicates type of build. Possible values are 'Debug' or 'Release'     & CMake         & Release\\\hline
+  \texttt{CMAKE\_CXX\_COMPILER} & Full-path to the executable corresponding to the C++ compiler to use. & CMake         & platform-dependent\\\hline
+  \texttt{CXX}                  & Idem                                                                  & Environment   & Idem\\\hline
+\end{tabular}
+
+\index{cgal!general-config-cmake-vars-exe}\index{cgal configuration cmake variables - for programs only}
+\subsubsection{Variables used only when building programs (such as demos or examples)}
+
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|l|} \hline
+  \textbf{Variable}  & \textbf{Description}                                          & \textbf{Type}               & \textbf{Default value}\\\hline\hline
+  \texttt{CGAL\_DIR} & Full-path to the binary directory where \cgal\ was configured & Either CMake or Environment & {\em none}\\\hline
+\end{tabular}
+
+\index{cgal!general-config-cmake-vars-dep}\index{cgal configuration cmake variables - dependencies}
+\subsection{Variables providing information about 3rd-party libraries}
+
+The following variables provide information about the availability and location
+of the 3rd party libraries used by \cgal. \cmake\ automatically searches 
+for dependencies so you only need to specify these variables if they are given a value 
+ending in \texttt{NOTFOUND} (which indicates that \cmake\ was unable to locate something)
+
+Since 3rd-party libraries are system wide many of the cmake variables listed below can alternatively
+be given as similarly-named environment variables instead. Keep in mind that you must provide one or the
+other but never both.
+
+\index{cgal!general-config-cmake-vars-dep-boost}\index{cgal configuration cmake variables - dependencies - boost}
+\subsubsection{Boost libraries}
+
+In most cases, if boost is not automatically found, setting the \texttt{BOOST\_ROOT} 
+variable is enough. If it is not, you can specify the headers and libraries
+directories individually. You can also provide the full pathname to a specific compiled library
+if it cannot be found in the libs directory or its name is non-standard.
+
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}                             & \textbf{Description}                                                 & \textbf{Type}\\\hline\hline
+  \texttt{BOOST\_ROOT}\footnotemark[16]         & Root directory of your boost installation                            & Either CMake or Environment\\\hline
+  \texttt{Boost\_INCLUDE\_DIR}                  & Directory containing the \texttt{boost/version.hpp} file             & CMake\\\hline
+  \texttt{BOOST\_INCLUDEDIR}                    & Idem                                                                 & Environment\\\hline
+  \texttt{Boost\_LIBRARY\_DIRS}                 & Directory containing the compiled boost libraries                    & CMake\\\hline
+  \texttt{BOOST\_LIBRARYDIR}                    & Idem                                                                 & Environment\\\hline
+  \texttt{Boost\_{\em (xyz)}\_LIBRARY\_RELEASE} & Full pathname to a release build of the compiled 'xyz' boost library & CMake\\\hline
+  \texttt{Boost\_{\em (xyz)}\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the compiled 'xyz' boost library   & CMake\\\hline
+\end{tabular}
+\footnotetext[16]{The environment variable can be spelled either \texttt{BOOST\_ROOT} or \texttt{BOOSTROOT}}\addtocounter{footnote}{1}
+
+\index{cgal!general-config-cmake-vars-dep-gmp-mpfr}\index{cgal configuration cmake variables - dependencies - gmp, mpfr}
+\subsubsection{GMP and MPFR libraries}
+
+Under Windows, auto-linking is used, so only the {\em directory} 
+contaning the libs is needed and you would specify \texttt{GMP|MPFR\_LIBRARY\_DIR} rather than
+\texttt{GMP|MPFR\_LIBRARIES}. On the other hand, under Linux the actual library filename is needed 
+thus you would specify \texttt{GMP|MPFR\_LIBRARIES}. In no case you need to specify both.
+
+\cgal\ uses both gmp and mpfr so both need to be supported. If either of them is unavailable the 
+usage of gmp-mpfr will be disabled.
+
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}             & \textbf{Description}                                & \textbf{Type}\\\hline\hline
+  \texttt{WITH\_GMP}            & Indicates whether to search and use gmp/mpfr or not & CMake\\\hline
+  \texttt{GMP\_INCLUDE\_DIR}    & Directory containing the \texttt{gmp.h} file        & CMake\\\hline
+  \texttt{GMP\_INC\_DIR}        & Idem                                                & Environment\\\hline
+  \texttt{GMP\_LIBRARIES\_DIR}  & Directory containing the compiled gmp library       & CMake\\\hline
+  \texttt{GMP\_LIB\_DIR}        & Idem                                                & Environment\\\hline
+  \texttt{GMP\_LIBRARIES}       & Full pathname of the compiled gmp library           & CMake\\\hline
+  \texttt{MPFR\_INCLUDE\_DIR}   & Directory containing the \texttt{mpfr.h} file       & CMake\\\hline
+  \texttt{MPFR\_INC\_DIR}       & Idem                                                & Environment\\\hline
+  \texttt{MPFR\_LIBRARIES\_DIR} & Directory containing the compiled mpfr library      & CMake\\\hline
+  \texttt{MPFR\_LIB\_DIR}       & Idem                                                & Environment\\\hline
+  \texttt{MPFR\_LIBRARIES}      & Full pathname of the compiled mpfr library          & CMake\\\hline
+\end{tabular}
+
+Under Linux, the GMPXX may also searched for and you might specify the following variables:
+
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}             & \textbf{Description}                           & \textbf{Type}\\\hline\hline
+  \texttt{GMPXX\_INCLUDE\_DIR}  & Directory containing the \texttt{gmpxx.h} file & CMake\\\hline
+  \texttt{GMPXX\_LIBRARIES}     & Full pathname of the compiled gmpxx library    & CMake\\\hline
+\end{tabular}
+
+\index{cgal!general-config-cmake-vars-dep-leda}\index{cgal configuration cmake variables - dependencies - leda}
+\subsubsection{LEDA library}
+
+When the leda libraries are not automatically found, yet they are installed in the system
+with base names 'leda' and 'ledaD' (for the release and debug versions resp.), it might 
+be sufficient to just indicate the library directory via the \texttt{LEDA\_LIBRARY\_DIRS} variable.
+If that doesn't work because the names are different, you can provide the full pathnames of each variant
+via \texttt{LEDA\_LIBRARY\_RELEASE} and \texttt{LEDA\_LIBRARY\_DEBUG}.
+
+The variables specifying definitions and flags can be left undefined if they are not needed by leda.
+
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}               & \textbf{Description}                                                                                                        & \textbf{Type}\\\hline\hline
+  \texttt{WITH\_LEDA}             & Indicates whether to search and use leda or not                                                                             & CMake\\\hline
+  \texttt{LEDA\_INCLUDE\_DIR}     & Directory containing the files \texttt{LEDA/basic.h}\footnotemark[17] or \texttt{LEDA/system/basic.h}\footnotemark[18] file & Either CMake or Environment\\\hline
+  \texttt{LEDA\_LIBRARY\_DIRS}    & Directory containing the compiled leda libraries                                                                            & Either CMake or Environment\\\hline
+  \texttt{LEDA\_LIBRARY\_RELEASE} & Full pathname to a release build of the lead library                                                                        & Either CMake or Environment\\\hline
+  \texttt{LEDA\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the lead library                                                                          & Either CMake or Environment\\\hline
+  \texttt{LEDA\_DEFINITIONS}      & Preprocessor definitions                                                                                                    & Either CMake or Environment\\\hline
+  \texttt{LEDA\_CXX\_FLAGS}       & Compiler flags                                                                                                              & Either CMake or Environment\\\hline
+  \texttt{LEDA\_LINKER\_FLAGS}    & Linker flags                                                                                                                & Either CMake or Environment\\\hline
+\end{tabular}
+\footnotetext[17]{For LEDA 5}\addtocounter{footnote}{1}
+\footnotetext[18]{For LEDA 6}\addtocounter{footnote}{1}
+
+\index{cgal!general-config-cmake-vars-dep-qt3}\index{cgal configuration cmake variables - dependencies - qt3}
+\subsubsection{Qt3 library}
+
+In most cases, if Qt3 is not automatically found, setting the \texttt{QTDIR} 
+environment variable is enough. If it is not, you can specify the directory containing 
+the header files and the full pathnames of the Qt3 libraries.
+
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}                       & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
+  \texttt{QTDIR}                          & Root directory of the Qt3 library                     & Environment\\\hline
+  \texttt{QT3\_INCLUDE\_DIR}              & Directory containing the \texttt{qt.h} file           & CMake\\\hline
+  \texttt{QT3\_QT\_LIBRARY}               & Full pathname to the qt library of Qt3                & CMake\\\hline
+  \texttt{QT3\_QTMAIN\_LIBRARY}           & Full pathname to the qtmain library of Qt3            & CMake\\\hline
+  \texttt{QT3\_QASSISTANTCLIENT\_LIBRARY} & Full pathname to the qassistantclient library of Qt3  & CMake\\\hline
+  \texttt{QT3\_MOC\_LIBRARY}              & Full pathname to the moc exeutable of Qt3             & CMake\\\hline
+  \texttt{QT3\_UIC\_LIBRARY}              & Full pathname to the uic exeutable of Qt3             & CMake\\\hline
+\end{tabular}
+
+\index{cgal!general-config-cmake-vars-dep-qt4}\index{cgal configuration cmake variables - dependencies - qt4}
+\subsubsection{Qt4 library}
+
+In most cases, if Qt4 is not automatically found, setting the \texttt{QTDIR} 
+environment variable is enough. If it is not, you can specify the directory containing 
+the header files and the full pathnames of the Qt4 libraries.
+
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}                 & \textbf{Description}                                             & \textbf{Type}\\\hline\hline
+  \texttt{QT\_INCLUDE\_DIR}         & Directory containing the \texttt{QtCore/qglobal.h} file          & CMake\\\hline
+  \texttt{QT\_LIBRARY\_DIR}         & Directory containing the compiled Qt4 libraries                  & CMake\\\hline
+  \texttt{QT\_{\em (xyz)}\_LIBRARY} & Full pathname to the compiled 'xyz' Qt4 library\footnotemark[19] & CMake\\\hline
+  \texttt{QT\_QMAKE\_EXECUTABLE}    & Full pathname to the qmake executable of Qt4                     & CMake\\\hline
+  \texttt{QT3\_MOC\_LIBRARY}        & Full pathname to the moc executable of Qt4                       & CMake\\\hline
+  \texttt{QT3\_UIC\_LIBRARY}        & Full pathname to the uic executable of Qt4                       & CMake\\\hline
+\end{tabular}
+\footnotetext[19]{If both release and debug versions are available, this variable contains a list 
+of the following form: '\texttt{optmized;<fullpath-to-release-lib>;debug;<fullpath-to-debug-lib>}', where 
+the '\texttt{optimized}' and '\texttt{debug}' tags should appear verbatim.}\addtocounter{footnote}{1}
+
+\index{cgal!general-config-cmake-vars-dep-qglviewer}\index{cgal configuration cmake variables - dependencies - qglviewer}
+\subsubsection{QGLViewer library}
+
+Some demos require the GLViewer library.
+
+In most cases, if QGLViewer is not automatically found, setting the \texttt{QGLVIEWERROOT} 
+environment variable is enough. If it is not, you can specify the directory containing 
+the header files and the full pathnames of the release and debug libraries
+
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}                    & \textbf{Description}                                         & \textbf{Type}\\\hline\hline
+  \texttt{QGLVIEWERROOT}               & Root directory of the QGViewer library                       & Environment\\\hline
+  \texttt{QGLVIEWER\_INCLUDE\_DIR}     & Directory containing the \texttt{QGLViewer/qglviewer.h} file & CMake\\\hline
+  \texttt{QGLVIEWER\_LIBRARY\_RELEASE} & Full pathname to a release build of the QGLViewer library    & CMake\\\hline
+  \texttt{QGLVIEWER\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the QGLViewer library      & CMake\\\hline
+\end{tabular}
+
+\index{cgal!general-config-cmake-vars-dep-taucs}\index{cgal configuration cmake variables - dependencies - taucs}
+\subsubsection{TAUCS and METIS libraries}
+
+Some demos require the TAUCS and METIS libraries. Both must be found otherwise y.
+
+Under Windows, auto-linking is used, so only the {\em directory} 
+contaning the libs is needed and you would specify \texttt{TAUCS\_LIBRARY\_DIR} rather than
+\texttt{TAUCS\_LIBRARIES}. On the other hand, under Linux the actual library filename is needed 
+thus you would specify \texttt{TAUCS\_LIBRARIES}. In no case you need to specify both.
+
+\cgal\ uses both TAUCS and METIS so both need to be supported. If either of them is unavailable the 
+usage of TAUCS-METIS will be disabled.
+
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}              & \textbf{Description}                            & \textbf{Type}\\\hline\hline
+  \texttt{TAUCS\_INCLUDE\_DIR}   & Directory containing the \texttt{taucs.h} file  & CMake\\\hline
+  \texttt{TAUCS\_INC\_DIR}       & Idem                                            & Environment\\\hline
+  \texttt{TAUCS\_LIBRARIES\_DIR} & Directory containing the compiled taucs library & CMake\\\hline
+  \texttt{TAUCS\_LIB\_DIR}       & Idem                                            & Environment\\\hline
+  \texttt{TAUCS\_LIBRARY}        & Full pathname of the compiled taucs library     & CMake\\\hline
+  \texttt{METIS\_LIBRARY}        & Full pathname of the compiled metis library     & CMake\\\hline
+\end{tabular}
+
+\index{cgal!general-config-cmake-vars-dep-blas}\index{cgal configuration cmake variables - dependencies - blas}
+\subsubsection{BLAS and LAPACK libraries}
+
+A few demos require some BLAS and LAPACK functions. There are many vendor specific
+libraries implementing that and \cmake\ searches for most of them.
+
+If they are not found, you can indicate the directory containing the libraries, or provide a
+semi-colon separated list of pathnames to the libraries wich collectively implement the functionality.
+
+Many of the libraries implementing BLAS and LAPACK require the F2C library for Fortran-to-C convertion.
+If this is needed and not found you might specify the fullpath of the library in the \texttt{F2C\_LIBRARIES}
+variable. You do not need to provide this if the BLAS|LAPACK libraries do not need f2c.
+ 
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}               & \textbf{Description}                                                             & \textbf{Type}\\\hline\hline
+  \texttt{BLAS\_INCLUDE\_DIR}     & Directory containing blas header files                                           & CMake\\\hline
+  \texttt{BLAS\_LIBRARIES\_DIR}   & Directory containing the compiled libraries implementing BLAS                    & Environment\\\hline
+  \texttt{BLAS\_LIB\_DIR}         & Idem                                                                             & Environment\\\hline
+  \texttt{BLAS\_LIBRARIES}        & Semi-colon separated list of library pathnames implementing the BLAS functions   & CMake\\\hline
+  \texttt{BLAS\_LINKER\_FLAGS}    & Linker flags                                                                     & CMake\\\hline
+  \texttt{BLAS\_DEFINITIONS}      & Preprocessor definitions                                                         & CMake\\\hline
+  \texttt{LAPACK\_INCLUDE\_DIR}   & Directory containing blas header files                                           & CMake\\\hline
+  \texttt{LAPACK\_LIBRARIES\_DIR} & Directory containing the compiled libraries implementing LAPACK                  & Environment\\\hline
+  \texttt{LAPACK\_LIB\_DIR}       & Idem                                                                             & Environment\\\hline
+  \texttt{LAPACK\_LIBRARIES}      & Semi-colon separated list of library pathnames implementing the LAPACK functions & CMake\\\hline
+  \texttt{LAPACK\_LINKER\_FLAGS}  & Linker flags                                                                     & CMake\\\hline
+  \texttt{LAPACK\_DEFINITIONS}    & Preprocessor definitions                                                         & CMake\\\hline
+  \texttt{F2C\_LIBRARIES}         & Full pathname to the f2c library                                                 & CMake\\\hline
+\end{tabular}
 
 \section{Example} 
 
