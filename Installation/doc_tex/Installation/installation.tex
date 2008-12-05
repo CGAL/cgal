@@ -549,6 +549,8 @@ make Straight_skeleton_2_demo
 
 \section{Installing \cgal\ Libraries}
 
+% prevent links to /usr/include and /usr/lib (\path commands)
+\ccHtmlLinksOff%
 On many platforms, library pieces such as headers, docs and binaries
 are expected to be placed in specific locations. The typical example
 being \path'/usr/include' or \path'/usr/lib' on {\sc Unix}-like
@@ -556,6 +558,7 @@ operating systems or \path'C:/Program Files/' on Windows. The process
 of placing or copying the library elements into its standard location
 is sometimes referred to as {\em Installation} and it is a
 postprocessing step after configuration and compilation.
+\ccHtmlLinksOn%
 
 \cmake\ supports installation by producing a build target named {\em install}. 
 The following example shows a typical session from configuration to
