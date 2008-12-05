@@ -10,7 +10,6 @@ typedef double              FT;
 typedef CGAL::Cartesian<FT> K;
 typedef K::Point_2          Point_2;
 typedef K::Point_3          Point_3;
-typedef K::Point_3          Point_3;
 
 int main()
 {
