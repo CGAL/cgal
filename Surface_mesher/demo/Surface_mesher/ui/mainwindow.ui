@@ -300,7 +300,14 @@
              </widget>
             </item>
             <item row="0" column="1" >
-             <widget class="QDoubleSpinBox" name="spinBox_radius_bound" />
+             <widget class="QDoubleSpinBox" name="spinBox_radius_bound" >
+              <property name="decimals" >
+               <number>5</number>
+              </property>
+              <property name="maximum" >
+               <double>9999.989999999999782</double>
+              </property>
+             </widget>
             </item>
             <item row="1" column="0" >
              <widget class="QLabel" name="label_2" >
@@ -313,7 +320,14 @@
              </widget>
             </item>
             <item row="1" column="1" >
-             <widget class="QDoubleSpinBox" name="spinBox_distance_bound" />
+             <widget class="QDoubleSpinBox" name="spinBox_distance_bound" >
+              <property name="decimals" >
+               <number>5</number>
+              </property>
+              <property name="maximum" >
+               <double>9999.989999999999782</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
