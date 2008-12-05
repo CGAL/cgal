@@ -125,8 +125,6 @@ GraphicsViewCircularArcInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event
     typename K::Collinear_2 collinear;
     if(! collinear(p,q,r)){
       qcarc->hide();
-      std::cout.precision(20);
-      std::cout << "arc " << ap << "   " << ar << "   " << aq << std::endl;
       emit generate(make_object(qcarc->arc()));
       count = 0;
     }
