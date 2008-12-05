@@ -1617,6 +1617,7 @@ GraphicsView/demo/icons/fileOpen.png -text
 GraphicsView/demo/icons/fileSave.png -text
 GraphicsView/demo/icons/fit-page-32.png -text svneol=unset#image/png
 GraphicsView/demo/icons/inputPoint.png -text svneol=unset#image/png
+GraphicsView/demo/icons/inputPoint.svg -text
 GraphicsView/demo/icons/inputPolyline.png -text
 GraphicsView/demo/icons/zoom-best-fit.png -text svneol=unset#image/png
 GraphicsView/demo/icons/zoom-best-fit.svg -text
