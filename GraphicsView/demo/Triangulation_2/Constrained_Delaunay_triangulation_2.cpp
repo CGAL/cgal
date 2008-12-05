@@ -511,7 +511,6 @@ MainWindow::loadEdgConstraints(QString fileName)
   while(ifs >> p) {
     ifs >> q;
     if(p == q){
-      std::cout << "Ignore zero length segment" << std::endl;
       continue;
     }
     if((!first) && (p == qold)){
