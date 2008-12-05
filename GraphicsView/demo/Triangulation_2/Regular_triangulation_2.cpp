@@ -244,8 +244,8 @@ MainWindow::on_actionLoadPoints_triggered()
   if(! fileName.isEmpty()){
     std::ifstream ifs(qPrintable(fileName));
 
-    K::Point_2 p;
-    std::vector<K::Point_2> points;
+    Gt::Weighted_point_2 p;
+    std::vector<Gt::Weighted_point_2> points;
     while(ifs >> p) {
       points.push_back(p);
     }
