@@ -186,7 +186,7 @@ Volume::Volume(MainWindow* mw) :
   m_sm_angle(30),
   m_sm_radius(0),
   m_sm_distance(0),
-  m_relative_precision(0.0000001),
+  m_relative_precision(0.000000001),
   m_view_surface(false),
   m_triangulation_color(QColor(Qt::green)),
   m_inverse_normals(false),
