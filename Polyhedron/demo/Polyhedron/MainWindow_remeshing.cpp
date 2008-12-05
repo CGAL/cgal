@@ -119,7 +119,7 @@ void MainWindow::on_actionRemeshing_triggered()
     // remesh
     time.start();
     std::cout << "Remesh...";
-    CGAL::make_surface_mesh(c2t3, input, facets_criteria, CGAL::Manifold_tag());
+    CGAL::make_surface_mesh(c2t3, input, facets_criteria, CGAL::Manifold_with_boundary_tag());
     std::cout << "done (" << time.elapsed() << " ms, " << tr.number_of_vertices() << " vertices)" << std::endl;
 
     if(tr.number_of_vertices() > 0)
