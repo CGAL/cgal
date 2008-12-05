@@ -32,6 +32,11 @@ if ( CGAL_FOUND )
     SET (CGAL_CXX_FLAGS_DEBUG_INIT "${CGAL_CXX_FLAGS_DEBUG_INIT} /D_HAS_ITERATOR_DEBUGGING=0")
   endif()
 
+  # g++ 4.1.2 optimizer creates an infinite loop in Surface_mesh_parameterization if -O2 or -O3
+  if (CMAKE_COMPILER_IS_GNUCXX)
+    SET (CGAL_CXX_FLAGS_RELEASE_INIT "${CGAL_CXX_FLAGS_RELEASE_INIT} -O")
+  endif()
+
   include( ${CGAL_USE_FILE} )
 
   include( CGAL_CreateSingleSourceCGALProgram )

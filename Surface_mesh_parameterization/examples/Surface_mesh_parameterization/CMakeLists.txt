@@ -9,7 +9,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
+  cmake_policy( SET CMP0003 NEW )
 endif()
 
 find_package(CGAL QUIET COMPONENTS Core )
@@ -17,7 +17,7 @@ find_package(CGAL QUIET COMPONENTS Core )
 if ( CGAL_FOUND )
 
   # Optimization for applications dealing with large data
-  if (MSVC) 
+  if (MSVC)
     # Use /EHa option to catch stack overflows.
     # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
     SET (CGAL_CXX_FLAGS_INIT "/DWIN32 /D_WINDOWS /W2 /Zm1000 /EHa /GR")
@@ -30,6 +30,11 @@ if ( CGAL_FOUND )
 
     # Speed up VC++ debugger
     SET (CGAL_CXX_FLAGS_DEBUG_INIT "${CGAL_CXX_FLAGS_DEBUG_INIT} /D_HAS_ITERATOR_DEBUGGING=0")
+  endif()
+
+  # g++ 4.1.2 optimizer creates an infinite loop in Surface_mesh_parameterization if -O2 or -O3
+  if (CMAKE_COMPILER_IS_GNUCXX)
+    SET (CGAL_CXX_FLAGS_RELEASE_INIT "${CGAL_CXX_FLAGS_RELEASE_INIT} -O")
   endif()
 
   include( ${CGAL_USE_FILE} )
