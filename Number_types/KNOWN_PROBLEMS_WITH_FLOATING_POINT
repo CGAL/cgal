@@ -1,32 +1,6 @@
 Here is a list of problems I found wrt the correct handling of IEEE 754 doubles,
 with the rounding modes used in this package.
 
-1/ On Intel platforms (Linux and Windows, any compiler):
---------------------------------------------------------
-
-  The processor has wider registers than it should, namely wider exponent, as
-  well as wider mantissa.
-  This is bad because there is a rounding (truncation) that is done when a
-  variable is flushed back to memory from a register, and you cannot control
-  _when_ this is performed, so it could be done with a wrong rounding mode,
-  or after the value changed its sign (which reverses rounding), so it's not
-  correctly rounded !
-
-  Solution:
-  - you can force the processor to have exactly 53 bits of mantissa,
-    like IEEE doubles.  This is done automatically by the rounding mode
-    changing macros.  This way, everything is ok as long as you don't play
-    with underflow/overflow (exponent gets out of range).
-    However, there's no way to set the exponent width, and it's always buggy !
-    The solution is to force manually the value back to memory, when needed,
-    that is after each potentially inexact operation that needs to be rounded
-    (+, -, *, /, sqrt).
-    This is the approach implemented, but it slows the code, and is not
-    always useful.
-  - Another approach would be to use "long doubles".  But I fear it's slower
-    and takes more memory.  Moreover, I think you have to use assembly to use
-    them with Visual C++.
-
 2/ Constant propagation:
 ------------------------
 
@@ -62,13 +36,6 @@ with the rounding modes used in this package.
 
   These kind of problem could be handled by the wrapper class Double_IEEE,
   but with a speed penalty.
-
-5/ ISO C99:
------------
-
-  The new (May'00) C standard specifies compiler and library requirements
-  to implement portable interval arithmetic !!!
-  Problem: it's not fully implemented anywhere that I know of, yet...
 
 --
 Sylvain
