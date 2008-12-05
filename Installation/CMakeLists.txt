@@ -382,9 +382,7 @@ create_CGALconfig_files()
 # WARNING: Use only relative paths; full paths break CPack!
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
-install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32.txt LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL README "VERSION"  
-        DESTINATION ${CGAL_INSTALL_DOC_DIR}
-        )
+install(FILES CHANGES LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
 
 
 install(DIRECTORY include/CGAL                       DESTINATION ${CGAL_INSTALL_INC_DIR} )
@@ -395,11 +393,6 @@ install(DIRECTORY scripts/ DESTINATION ${CGAL_INSTALL_BIN_DIR}    )
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
-if ( NOT "${CMAKE_ROOT}" STREQUAL "" )
-  if ( EXISTS ${CMAKE_ROOT}/Modules )
-    install(FILES  ${CGAL_MODULES_REL_DIR}/FindCGAL.cmake DESTINATION ${CMAKE_ROOT}/Modules )
-  endif()
-endif()  
 
 if ( GMP_IN_AUXILIARY )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
@@ -427,6 +420,22 @@ else()
 endif()
 
 
+#--------------------------------------------------------------------------------------------------
+#
+#              -= Special installation commands to copy FindCGAL to the cmake directory =-
+#
+#--------------------------------------------------------------------------------------------------
+
+# Installing FindCGAL into cmake itself is implemented as a custom target
+# because it requires superuser privileges
+
+if ( NOT "${CMAKE_ROOT}" STREQUAL "" )
+  if ( EXISTS ${CMAKE_ROOT}/Modules )
+    add_custom_target( install_FindCGAL
+                      COMMAND ${CMAKE_COMMAND} -E copy ${CGAL_MODULES_DIR}/FindCGAL.cmake ${CMAKE_ROOT}/Modules
+                    ) 
+  endif()
+endif()  
 
 #--------------------------------------------------------------------------------------------------
 #
