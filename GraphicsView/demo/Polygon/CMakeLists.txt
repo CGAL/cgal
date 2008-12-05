@@ -49,6 +49,6 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND CGAL_Core_FOUND AND QT4_FOUND )
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL and Qt4, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, CGAL_Core, and Qt4, and will not be compiled.")
 
 endif()
