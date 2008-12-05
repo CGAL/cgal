@@ -184,6 +184,7 @@ void
 _test_interpolation_functions_2_delaunay( const Triangul &,
 		  const typename Triangul::Geom_traits::FT& tolerance)
 {
+  CGAL::Set_ieee_double_precision pfr;
   Triangul T;
 
   int n=20, m=20;
