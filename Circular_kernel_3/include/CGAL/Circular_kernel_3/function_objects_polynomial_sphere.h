@@ -42,6 +42,7 @@ namespace CGAL {
 	
 namespace SphericalFunctors {
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
 #define CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(V)\
 template < class SK > \
   class Compare_ ##V## _3: public SK::Linear_kernel::Compare_ ##V## _3{\
@@ -64,6 +65,38 @@ template < class SK > \
     { return SphericalFunctors::compare_ ##V <SK>(p0, p1); }\
   };\
   
+#else 
+#define CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(V)\
+template < class SK > \
+  class Compare_ ##V## _3 {\
+    typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;\
+    typedef typename SK::Point_3 Point_3;\
+  public:\
+    typedef  typename SK::Linear_kernel::Compare_ ##V## _3 LK_Compare_ ##V## _3;\
+    typedef  typename SK::Linear_kernel::Compare_ ##V## _3::result_type result_type;\
+    \
+    result_type\
+    operator() (const Circular_arc_point_3 &p0,\
+                const Circular_arc_point_3 &p1) const\
+    { return SphericalFunctors::compare_ ##V <SK>(p0, p1); }\
+    \
+    result_type\
+    operator() (const Circular_arc_point_3 &p0,\
+                const Point_3 &p1) const\
+    { return SphericalFunctors::compare_ ##V <SK>(p0, p1); }\
+    \
+    result_type\
+    operator() (const Point_3 &p0,\
+                const Circular_arc_point_3 &p1) const\
+    { return SphericalFunctors::compare_ ##V <SK>(p0, p1); }\
+    \
+    result_type\
+    operator() (const Point_3 &p0,\
+                const Point_3 &p1) const\
+    { return LK_Compare_ ##V## _3 ()(p0, p1); }\
+  };
+#endif
+
   CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(x)
   CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(y)
   CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(z)
@@ -577,8 +610,14 @@ template < class SK > \
     { return c.rep().supporting_plane(); }
   };
 
+
+
   template <class SK>
-  class Construct_line_3 : public SK::Linear_kernel::Construct_line_3
+  class Construct_line_3
+#ifndef CGAL_CFG_MATCHING_BUG_6
+
+ : public SK::Linear_kernel::Construct_line_3
+#endif
   {
     typedef typename SK::Line_arc_3                Line_arc_3;
     typedef typename SK::Line_3                    Line_3;
@@ -589,8 +628,61 @@ template < class SK > \
       result_type;
 
     typedef const result_type &  qualified_result_type;
-    using SK::Linear_kernel::Construct_line_3::operator();
 
+#ifndef CGAL_CFG_MATCHING_BUG_6   
+    using SK::Linear_kernel::Construct_line_3::operator();
+#else 
+
+    typedef typename SK::Point_3 Point_3;
+    typedef typename SK::Direction_3 Direction_3;
+    typedef typename SK::Vector_3 Vector_3;
+    typedef typename SK::Segment_3 Segment_3;
+    typedef typename SK::Ray_3 Ray_3;
+    typedef typename SK::Linear_kernel::Construct_line_3 LK_Construct_line_3;
+
+    result_type
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
+    { return LK_Construct_line_3()(p, Vector_3(p, q)); }
+
+    result_type
+    operator()(Return_base_tag, const Point_3& p, const Direction_3& d) const
+    { return operator()(Return_base_tag(), p, Vector_3(d.dx(), d.dy(), d.dz())); }
+
+    result_type
+    operator()(Return_base_tag, const Point_3& p, const Vector_3& v) const
+    { return LK_Construct_line_3()(p, v); }
+
+    result_type
+    operator()(Return_base_tag, const Segment_3& s) const
+    { return LK_Construct_line_3()(s.source(), Vector_3(s.source(), s.target())); }
+
+    result_type
+    operator()(Return_base_tag, const Ray_3& r) const
+    { return LK_Construct_line_3()(r.source(), Vector_3(r.source(), r.second_point())); }
+
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q) const
+    { return this->operator()(Return_base_tag(), p, q); }
+
+    result_type
+    operator()(const Point_3& p, const Direction_3& d) const
+    { return this->operator()(Return_base_tag(), p, d); }
+
+    result_type
+    operator()(const Point_3& p, const Vector_3& v) const
+    { return this->operator()(Return_base_tag(), p, v); }
+
+    result_type
+    operator()(const Segment_3& s) const
+    { return this->operator()(Return_base_tag(), s); }
+
+    result_type
+    operator()(const Ray_3& r) const
+    { return this->operator()(Return_base_tag(), r); }
+
+
+#endif
     qualified_result_type operator() (const Line_arc_3 & a) const
     { return (a.rep().supporting_line()); }
 
@@ -1443,7 +1535,9 @@ template < class SK > \
 
   template <class SK>
   class Bounded_side_3
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public SK::Linear_kernel::Bounded_side_3
+#endif
   {
     typedef typename SK::Sphere_3              Sphere_3;
     typedef typename SK::Circle_3              Circle_3;
@@ -1453,7 +1547,29 @@ template < class SK > \
   public:
     typedef typename SK::Linear_kernel::Bounded_side_3::result_type    result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using SK::Linear_kernel::Bounded_side_3::operator();
+#else
+    typedef typename SK::Tetrahedron_3 Tetrahedron_3;
+    typedef typename SK::Iso_cuboid_3 Iso_cuboid_3;
+    typedef typename SK::Linear_kernel::Bounded_side_3 LK_Bounded_side_3;
+
+    result_type
+    operator()( const Sphere_3& s, const Point_3& p) const
+    { return LK_Bounded_side_3()(s,p); }
+
+    result_type
+    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    { return LK_Bounded_side_3()(t,p); }
+
+    result_type
+    operator()( const Iso_cuboid_3& c, const Point_3& p) const
+    { return LK_Bounded_side_3()(c,p); }
+
+    result_type
+    operator()(const Circle_3& c, const Point_3& p) const
+    { return LK_Bounded_side_3()(c,p); }
+#endif
 
     result_type
     operator()( const Sphere_3& s, const Circular_arc_point_3& p) const
@@ -1469,7 +1585,9 @@ template < class SK > \
 
   template <class SK>
   class Has_on_bounded_side_3
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public SK::Linear_kernel::Has_on_bounded_side_3
+#endif
   {
     typedef typename SK::Sphere_3              Sphere_3;
     typedef typename SK::Circle_3              Circle_3;
@@ -1479,7 +1597,29 @@ template < class SK > \
   public:
     typedef typename SK::Linear_kernel::Has_on_bounded_side_3::result_type    result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using SK::Linear_kernel::Has_on_bounded_side_3::operator();
+#else
+    typedef typename SK::Tetrahedron_3 Tetrahedron_3;
+    typedef typename SK::Iso_cuboid_3 Iso_cuboid_3;
+    typedef typename SK::Linear_kernel::Has_on_bounded_side_3 LK_Has_on_bounded_side_3;
+
+    result_type
+    operator()( const Sphere_3& s, const Point_3& p) const
+    { return LK_Has_on_bounded_side_3()(s,p); }
+
+    result_type
+    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    { return LK_Has_on_bounded_side_3()(t,p); }
+
+    result_type
+    operator()( const Iso_cuboid_3& c, const Point_3& p) const
+    { return LK_Has_on_bounded_side_3()(c,p); }
+
+    result_type
+    operator()(const Circle_3& c, const Point_3& p) const
+    { return LK_Has_on_bounded_side_3()(c,p); }
+#endif
 
     result_type
     operator()( const Sphere_3& s, const Circular_arc_point_3& p) const
@@ -1495,7 +1635,9 @@ template < class SK > \
 
   template <class SK>
   class Has_on_unbounded_side_3
+#ifndef CGAL_CFG_MATCHING_BUG_6
     : public SK::Linear_kernel::Has_on_unbounded_side_3
+#endif
   {
     typedef typename SK::Sphere_3              Sphere_3;
     typedef typename SK::Circle_3              Circle_3;
@@ -1505,7 +1647,29 @@ template < class SK > \
   public:
     typedef typename SK::Linear_kernel::Has_on_unbounded_side_3::result_type    result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using SK::Linear_kernel::Has_on_unbounded_side_3::operator();
+#else
+    typedef typename SK::Tetrahedron_3 Tetrahedron_3;
+    typedef typename SK::Iso_cuboid_3 Iso_cuboid_3;
+    typedef typename SK::Linear_kernel::Has_on_unbounded_side_3 LK_Has_on_unbounded_side_3;
+
+    result_type
+    operator()( const Sphere_3& s, const Point_3& p) const
+    { return LK_Has_on_unbounded_side_3()(s,p); }
+
+    result_type
+    operator()( const Tetrahedron_3& t, const Point_3& p) const
+    { return LK_Has_on_unbounded_side_3()(t,p); }
+
+    result_type
+    operator()( const Iso_cuboid_3& c, const Point_3& p) const
+    { return LK_Has_on_unbounded_side_3()(c,p); }
+
+    result_type
+    operator()(const Circle_3& c, const Point_3& p) const
+    { return LK_Has_on_unbounded_side_3()(c,p); }
+#endif
 
     result_type
     operator()( const Sphere_3& s, const Circular_arc_point_3& p) const
