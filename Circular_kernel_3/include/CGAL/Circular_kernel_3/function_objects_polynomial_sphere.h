@@ -444,8 +444,8 @@ template < class SK > \
 
     result_type
     operator()( Return_base_tag tag, const Point_3& p, const Point_3& q, const Point_3& r,
-	        Orientation /* orientation */ = COUNTERCLOCKWISE) const
-    { return LK_Construct_sphere_3()(tag, p, q, r); }
+	        Orientation orientation  = COUNTERCLOCKWISE) const
+    { return LK_Construct_sphere_3()(tag, p, q, r, orientation); }
 
     result_type
     operator()( Return_base_tag tag, const Point_3& p, const Point_3& q,
