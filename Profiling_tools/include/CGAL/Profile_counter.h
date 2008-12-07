@@ -40,6 +40,10 @@
 // TODO :
 // - Really complete the documentation!
 // - Probably at some point we will need ways to selectively enable/disable profilers?
+//   (kind-wise and/or place-wise)
+// - Ideas for new kinds of profilers:
+//   - lock counters in parallel mode
+//     (e.g. time spent spinning, and/or number of locks taken or forbidden...)
 
 #include <CGAL/config.h>
 #include <iostream>
