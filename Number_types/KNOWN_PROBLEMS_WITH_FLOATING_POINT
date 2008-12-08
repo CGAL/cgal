@@ -1,7 +1,7 @@
 Here is a list of problems I found wrt the correct handling of IEEE 754 doubles,
 with the rounding modes used in this package.
 
-2/ Constant propagation:
+1/ Constant propagation:
 ------------------------
 
   Compilers usually propagate the value at compile time, for the variables for
@@ -15,7 +15,7 @@ with the rounding modes used in this package.
     any propagation at the entry.  The drawback is that it also stops many
     other optimizations.  We now use this macro only just before it is needed.
 
-3/ std::sqrt() on Windows (GCC/CygWin and VC++):
+2/ std::sqrt() on Windows (GCC/CygWin and VC++):
 ------------------------------------------------
 
   When you don't optimize, std::sqrt() calls a library routine instead of the
@@ -23,7 +23,7 @@ with the rounding modes used in this package.
   This is plain stupid, and moreover this library routine appears to be buggy !
   GCC/CygWin and VC++ use inline assembly to fix it.
   
-4/ is_valid() bug with VC++:
+3/ is_valid() bug with VC++:
 ----------------------------
 
   This nice compiler returns "true" for the comparison "NaN == NaN".
