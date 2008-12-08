@@ -1598,8 +1598,8 @@ namespace CommonKernelFunctors {
 
     Sphere_3
     operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-	        Orientation /* orientation */ = COUNTERCLOCKWISE) const
-    { return this->operator()(Return_base_tag(), p, q, r); }
+	        Orientation orientation = COUNTERCLOCKWISE) const
+    { return this->operator()(Return_base_tag(), p, q, r, orientation); }
 
     Sphere_3
     operator()( const Point_3& p, const Point_3& q,
