@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2007 Max-Planck-Institute Saarbruecken (Germany),
+// Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany),
 // INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
