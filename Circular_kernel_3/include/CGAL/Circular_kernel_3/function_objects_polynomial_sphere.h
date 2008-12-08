@@ -476,8 +476,8 @@ template < class SK > \
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-	        Orientation /* orientation */ = COUNTERCLOCKWISE) const
-    { return LK_Construct_sphere_3()(p, q, r); }
+	        Orientation orientation = COUNTERCLOCKWISE) const
+    { return LK_Construct_sphere_3()(p, q, r, orientation); }
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
