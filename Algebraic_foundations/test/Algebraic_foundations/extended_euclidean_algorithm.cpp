@@ -27,11 +27,8 @@
 
 //#define WITH_OUTPUT 1
 
-template<class AT>
+template<class Integer>
 void test_extended_euclidean_algorithm() {
-    CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT);
-    
-    typedef typename AT::Integer Integer;
     Integer a, b, d, e, f, g, u, v, result;  
 
     // special cases
@@ -64,7 +61,7 @@ void test_extended_euclidean_algorithm() {
 }
 
 int main(){
-    test_extended_euclidean_algorithm<CGAL::Arithmetic_kernel>();     
+    test_extended_euclidean_algorithm<long>();     
     return 0;
 }
 
