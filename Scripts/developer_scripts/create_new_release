@@ -136,7 +136,12 @@ if [ -z "$INTERNAL_NUMBER" ]; then
 fi
 INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
 internal_nr=`printf "%4s" "${INTERNAL_NUMBER}" | sed "y/ /0/"`
-release_name="CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}${INTERNAL_STRING}"
+
+if [ -r "${NUMBERS_DIR}/release_name" ]; then
+    release_name=`cat "${NUMBERS_DIR}/release_name"`${INTERNAL_STRING}
+else
+    release_name="CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}${INTERNAL_STRING}"
+fi
 echo "${release_name}"
 major_nr=`printf "%2s" "${MAJOR_NUMBER}" | sed "y/ /0/"`
 minor_nr=`printf "%2s" "${MINOR_NUMBER}" | sed "y/ /0/"`
@@ -187,7 +192,11 @@ if [ "$DO_PUBLIC" ]; then
     echo "Making the public version of the tarball"
     public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
     public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
-    public_release_name="CGAL-${public_release_version}"
+    if [ -r "${NUMBERS_DIR}/public_release_name" ]; then
+	public_release_name=`cat "${NUMBERS_DIR/public_release_name"`
+    else
+	public_release_name="CGAL-${public_release_version}"
+    fi
     mv ${release_name} $public_release_name
 
     cd ${public_release_name}
