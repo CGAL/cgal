@@ -130,7 +130,10 @@ assemble_covariance_matrix_3(InputIterator first,
                    t[0].z(), t[1].z(), t[2].z()};
     Matrix transformation = init_matrix<K>(3,delta);
     FT area = std::sqrt(t.squared_area());
-    CGAL_assertion(area != 0.0);
+
+		// skip zero measure primitives
+    if(area == (FT)0.0)
+			continue;
 
     // Find the 2nd order moment for the triangle wrt to the origin by an affine transformation.
     
@@ -210,7 +213,10 @@ assemble_covariance_matrix_3(InputIterator first,
                    t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
     Matrix transformation = init_matrix<K>(3,delta);
     FT volume = t.volume();
-    CGAL_assertion(volume != (FT)0.0);
+
+		// skip zero measure primitives
+    if(volume == (FT)0.0)
+			continue;
 
     // Find the 2nd order moment for the cuboid wrt to the origin by an affine transformation.
     
@@ -301,7 +307,10 @@ assemble_covariance_matrix_3(InputIterator first,
                   std::pow(delta[1]*delta[1] + delta[4]*delta[4] +
                   delta[7]*delta[7],1/3.0)*std::pow(delta[2]*delta[2] +
                   delta[5]*delta[5] + delta[8]*delta[8],1/3.0)*2;
-    CGAL_assertion(area != (FT)0.0);
+
+		// skip zero measure primitives
+    if(area == (FT)0.0)
+			continue;
 
     // Find the 2nd order moment for the cuboid wrt to the origin by an affine transformation.
     
@@ -382,8 +391,11 @@ assemble_covariance_matrix_3(InputIterator first,
                    0.0, radius, 0.0,
                    0.0, 0.0, radius};
     Matrix transformation = init_matrix<K>(3,delta);
-    FT volume = 4/3.0 * radius*t.squared_radius();
-    CGAL_assertion(volume != 0.0);
+    FT volume = (FT)(4.0/3.0) * radius * t.squared_radius();
+
+		// skip zero measure primitives
+    if(volume == (FT)0.0)
+			continue;
 
     // Find the 2nd order moment for the sphere wrt to the origin by an affine transformation.
     
@@ -464,8 +476,11 @@ assemble_covariance_matrix_3(InputIterator first,
                    0.0,    radius, 0.0,
                    0.0,    0.0,    radius};
     Matrix transformation = init_matrix<K>(3,delta);
-    FT area = 4 * t.squared_radius();
-    CGAL_assertion(area != 0.0);
+    FT area = (FT)4.0 * t.squared_radius();
+
+		// skip zero measure primitives
+    if(area == (FT)0.0)
+			continue;
 
     // Find the 2nd order moment for the sphere wrt to the origin by an affine transformation.
     
@@ -550,7 +565,10 @@ assemble_covariance_matrix_3(InputIterator first,
                    t[1].z()-z0, t[2].z()-z0, t[3].z()-z0};
     Matrix transformation = init_matrix<K>(3,delta);
     FT volume = t.volume();
-    CGAL_assertion(volume != 0.0);
+
+		// skip zero measure primitives
+    if(volume == (FT)0.0)
+			continue;
 
     // Find the 2nd order moment for the tetrahedron wrt to the origin by an affine transformation.
     
@@ -632,7 +650,10 @@ assemble_covariance_matrix_3(InputIterator first,
                    t[0].z(), t[1].z(), 1.0};
     Matrix transformation = init_matrix<K>(3,delta);
     FT length = std::sqrt(t.squared_length());
-    CGAL_assertion(length != 0.0);
+
+		// skip zero measure primitives
+    if(length == (FT)0.0)
+			continue;
 
     // Find the 2nd order moment for the segment wrt to the origin by an affine transformation.
     
