@@ -12,6 +12,10 @@
   <property name="windowTitle" >
    <string>CGAL 3D Alpha Shape</string>
   </property>
+  <property name="windowIcon" >
+   <iconset resource="../resources/CGAL.qrc" >
+    <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QVBoxLayout" >
     <item>
@@ -111,6 +115,8 @@
    <header>Viewer.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../resources/CGAL.qrc" />
+ </resources>
  <connections/>
 </ui>
