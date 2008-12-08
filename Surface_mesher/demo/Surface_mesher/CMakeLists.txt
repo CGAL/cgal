@@ -50,11 +50,16 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
 
     if(EXISTS ${PACKAGE_ROOT}/../Marching_cube)
       option(SURFACE_MESH_DEMO_USE_MARCHING_CUBE "Embed a marching cube implementation in the Surface Mesh demo." ON)
+      mark_as_advanced(SURFACE_MESH_DEMO_USE_MARCHING_CUBE)
     endif()
     
-    option(SURFACE_MESH_DEMO_WITH_POLYHEDRAL_SURFACE "Compile the support for polyhedral surfaces." OFF)
+    if(EXISTS ${PACKAGE_ROOT}/include/CGAL/Polyhedral_surface_3.h)
+      option(SURFACE_MESH_DEMO_WITH_POLYHEDRAL_SURFACE "Compile the support for polyhedral surfaces." OFF)
+      mark_as_advanced(SURFACE_MESH_DEMO_WITH_POLYHEDRAL_SURFACE)
+    endif()
 
     option(SURFACE_MESH_DEMO_VERBOSE "Set this option if you want the Surface Mesh demo to display messages on standard output." OFF)
+    mark_as_advanced(SURFACE_MESH_DEMO_VERBOSE)
 
     if(SURFACE_MESH_DEMO_VERBOSE)
       add_definitions(-DCGAL_SURFACE_MESHER_VERBOSE)
