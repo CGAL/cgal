@@ -15,7 +15,7 @@ int main(void)
 {
   std::list<Triangle> triangles;
   Point a(1.0,2.0,3.0);
-  Point b(4.0,5.0,6.0);
+  Point b(4.0,0.0,6.0);
   Point c(7.0,8.0,9.0);
   Point d(8.0,7.0,6.0);
   Point e(5.0,3.0,4.0);
