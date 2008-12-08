@@ -16,15 +16,15 @@
 // $Id: Polynomial.h 47254 2008-12-06 21:18:27Z afabri $
 // 
 //
-// Author(s)     : Michael Hemmer// TODO: Add licence
+// Author(s)     : Michael Hemmer 
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL:$
 
-#ifndef CGAL_POLYNOMIAL_IPOWER_H
-#define CGAL_POLYNOMIAL_IPOWER_H
+#ifndef CGAL_IPOWER_H
+#define CGAL_IPOWER_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -55,4 +55,4 @@ NT ipower(const NT& base, int expn) {
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_POLYNOMIAL_IPOWER_H
+#endif // CGAL_IPOWER_H
