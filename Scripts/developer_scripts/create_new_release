@@ -193,7 +193,7 @@ if [ "$DO_PUBLIC" ]; then
     public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
     public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
     if [ -r "${NUMBERS_DIR}/public_release_name" ]; then
-	public_release_name=`cat "${NUMBERS_DIR/public_release_name"`
+	public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
     else
 	public_release_name="CGAL-${public_release_version}"
     fi
