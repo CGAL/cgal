@@ -20,6 +20,7 @@ Algebraic_foundations/examples/Algebraic_foundations/interoperable.cpp -text
 Algebraic_foundations/include/CGAL/Test/_test_implicit_interoperable.h -text
 Algebraic_foundations/include/CGAL/ipower.h -text
 Algebraic_foundations/package_info/Algebraic_foundations/maintainer -text
+Algebraic_foundations/test/Algebraic_foundations/ipower.cpp -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Algebraic_curve_kernel_2.cpp -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Algebraic_kernel_d_1.cpp -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Curve_kernel_2_data/projected_arr_2_2_8_2.nix -text
