@@ -13,6 +13,7 @@ polyhedron_remesher.cpp
 polyhedron_remesher.cpp
 polyhedron_remesher_with_edges.cpp
 pws_loop_subdivision.h
+enriched_polyhedron.h
 surface_mesher.cpp
 surfaces_union.cpp
 windows
