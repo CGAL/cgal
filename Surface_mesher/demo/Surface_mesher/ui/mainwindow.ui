@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Surface mesher demo</string>
+   <string>CGAL Surface mesh generator</string>
   </property>
   <property name="windowIcon" >
    <iconset resource="../surface_mesher.qrc" >
