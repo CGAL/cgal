@@ -32,9 +32,11 @@ if ( CGAL_FOUND )
     SET (CGAL_CXX_FLAGS_DEBUG_INIT "${CGAL_CXX_FLAGS_DEBUG_INIT} /D_HAS_ITERATOR_DEBUGGING=0")
   endif()
 
-  # g++ 4.1.2 optimizer creates an infinite loop in Surface_mesh_parameterization if -O2 or -O3
+  # g++ 4.1 creates an infinite loop in Surface_mesh_parameterization
+  # if strict-aliasing optimization is on (implied by -O2, -O3 and -Os).
   if (CMAKE_COMPILER_IS_GNUCXX)
-    SET (CGAL_CXX_FLAGS_RELEASE_INIT "${CGAL_CXX_FLAGS_RELEASE_INIT} -O")
+    SET (CGAL_CXX_FLAGS_RELEASE_INIT "${CGAL_CXX_FLAGS_RELEASE_INIT} -fno-strict-aliasing")
+    SET (CGAL_CXX_FLAGS_DEBUG_INIT   "${CGAL_CXX_FLAGS_DEBUG_INIT}   -fno-strict-aliasing")
   endif()
 
   include( ${CGAL_USE_FILE} )
