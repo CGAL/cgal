@@ -108,11 +108,8 @@ private:
     static inline 
     double RES_round (double a){
       // use Set_ieee_double_precision pfr;
-      CGAL_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-      return ( (a + CST_CUT)  - CST_CUT); 
-      
-//      volatile double b = (a + CST_CUT);
-//      return b - CST_CUT;     
+      // CGAL_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+      return ( (a + CST_CUT)  - CST_CUT);      
     }
 
 
