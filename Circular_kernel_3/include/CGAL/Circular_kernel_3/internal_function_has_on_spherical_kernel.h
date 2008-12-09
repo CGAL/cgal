@@ -161,8 +161,29 @@ namespace CGAL {
       return non_oriented_equal<SK>(l, la.supporting_line());
     }
 
+    template< class SK>
+    inline Sign element_cross_product_sign(const typename SK::Root_of_2 & y1,
+                                           const typename SK::Root_of_2 &z2,
+                                           const typename SK::Root_of_2 &z1,
+                                           const typename SK::Root_of_2 &y2)
+    {
+      int s1=sign(z1);
+      int s2=sign(z2);
+      if (s1==0){
+        if (s2==0)
+          return sign(0);
+        else
+          return sign(y1) * sign(z2);
+      }
+      else{
+        if (s2==0)
+          return sign(- z1) * sign(y2);
+        else
+          return sign((s1*s2)*compare(y1/z1,y2/z2));
+      }    
+    }
 
-    template< class SK >
+    template< class SK>
     inline
     Sign
     compute_sign_of_cross_product(const typename SK::Root_of_2 &x1, 
@@ -170,14 +191,14 @@ namespace CGAL {
                                   const typename SK::Root_of_2 &z1,
                                   const typename SK::Root_of_2 &x2, 
                                   const typename SK::Root_of_2 &y2,
-                                  const typename SK::Root_of_2 &z2) {
-      typedef typename SK::Root_of_2 Root_of_2;
-      const Root_of_2 cx = y1 * z2 - z1 * y2;
-      const Root_of_2 cy = z1 * x2 - x1 * z2;
-      const Root_of_2 cz = x1 * y2 - y1 * x2;
-      if(!is_zero(cx)) return sign(cx);
-      if(!is_zero(cy)) return sign(cy);
-      return sign(cz);
+                                  const typename SK::Root_of_2 &z2) 
+    {
+      Sign s = element_cross_product_sign<SK>(y1,z2,z1,y2);
+      if(s!=0) return s;
+      s = element_cross_product_sign<SK>(z1,x2,x1,z2);
+      if(s!=0) return s;
+      s = element_cross_product_sign<SK>(x1,y2,y1,x2);
+      return s;        
     }
 
     template< class SK>
