@@ -32,8 +32,8 @@
 #include <CGAL/Chinese_remainder_traits.h>
 #include <CGAL/Polynomial/modular_gcd_utcf_dfai.h>
 #include <CGAL/Polynomial/modular_gcd_utcf_algorithm_M.h>
-#include <CGAL/Polynomial/modular_gcd_utcf_with_wang.h>
-#include <CGAL/Polynomial/modular_gcd_utcf_pure_wang.h>
+// #include <CGAL/Polynomial/modular_gcd_utcf_with_wang.h>
+// #include <CGAL/Polynomial/modular_gcd_utcf_pure_wang.h>
 
 
 namespace CGAL {
