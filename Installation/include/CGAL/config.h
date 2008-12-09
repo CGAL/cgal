@@ -76,6 +76,15 @@
 #endif
 
 
+#ifdef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+#  define CGAL_DELETED
+#  define CGAL_EXPLICITLY_DEFAULTED
+#else
+#  define CGAL_DELETED = delete
+#  define CGAL_EXPLICITLY_DEFAULTED = default
+#endif
+
+
 // Big endian or little endian machine.
 // ====================================
 
