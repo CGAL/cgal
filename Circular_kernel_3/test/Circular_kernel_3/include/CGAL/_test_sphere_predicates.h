@@ -407,16 +407,19 @@ void _test_has_on_predicate(SK sk) {
   Root_for_spheres_2_3 rt[8];
 
   rt[0] = Root_for_spheres_2_3(0,1,0);
-  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)),0);
-  rt[2] = Root_for_spheres_2_3(-1,0,0);
-  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)),0);
-  rt[4] = Root_for_spheres_2_3(0,-1,0);
-  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)),0);
-  rt[6] = Root_for_spheres_2_3(1,0,0);
-  rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)),0);
+  rt[1] = Root_for_spheres_2_3(-FT(FT_Q(1,2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(3)), 0);
+  rt[2] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)),0);
+  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(3)), FT(FT_Q(1,2)), 0);
 
-  Circular_arc_point_3 cp[8]; 
-  for(int i=0; i<8; i++) {
+  rt[4] = Root_for_spheres_2_3(-1,0,0);
+  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)),0);
+  rt[6] = Root_for_spheres_2_3(0,-1,0);
+  rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT_Q(1,2)),FT(2)),0);
+  rt[8] = Root_for_spheres_2_3(1,0,0);
+  rt[9] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(2)),0);
+
+  Circular_arc_point_3 cp[10]; 
+  for(int i=0; i<10; i++) {
     cp[i] = theConstruct_circular_arc_point_3(rt[i]);
   }
 
@@ -424,11 +427,11 @@ void _test_has_on_predicate(SK sk) {
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
                      Polynomial_1_3(0,0,1,0));
   Circle_3 cc = theConstruct_circle_3(pcc_test);
-  for(int i=0; i<8; i++) {
-    for(int j=i+1; j<8; j++) {
+  for(int i=0; i<10; i++) {
+    for(int j=i+1; j<10; j++) {
       Circular_arc_3 ca = theConstruct_circular_arc_3(cc,cp[i],cp[j]);
       Circular_arc_3 cb = theConstruct_circular_arc_3(cc,cp[j],cp[i]);
-      for(int t=0;t<8;t++) {
+      for(int t=0;t<10;t++) {
         if((i <= t) && (t <= j)) {
           assert(theHas_on_3(ca,cp[t]));
           if(!(t == i || t == j)) {
