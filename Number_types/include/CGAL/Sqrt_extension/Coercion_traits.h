@@ -28,6 +28,43 @@ CGAL_BEGIN_NAMESPACE
 
 /////////// COERCION_TRAITS BEGIN
 
+// <EXT,int> and vice versa 
+template <class Coeff, class Root>
+struct Coercion_traits_for_level<Sqrt_extension<Coeff, Root>,int,CTL_SQRT_EXT>{
+public:
+  typedef Sqrt_extension<Coeff,Root> Type;
+  typedef CGAL::Tag_true Are_explicit_interoperable;
+  typedef CGAL::Tag_true Are_implicit_interoperable;
+  struct Cast{
+    Type operator()(const Type& x) const { return x;}
+    Type operator()(int x) const { return Type(x);}
+  };
+};
+
+template <class Coeff, class Root>
+struct Coercion_traits_for_level<int, Sqrt_extension<Coeff, Root>,CTL_SQRT_EXT>
+  : public Coercion_traits_for_level<Sqrt_extension<Coeff, Root>,int,CTL_SQRT_EXT>{};
+
+
+
+
+template <class Coeff, class Root>
+struct Coercion_traits_for_level<Sqrt_extension<Coeff, Root>,Coeff,CTL_SQRT_EXT>{
+public:
+  typedef Sqrt_extension<Coeff,Root> Type;
+  typedef CGAL::Tag_true Are_explicit_interoperable;
+  typedef CGAL::Tag_true Are_implicit_interoperable;
+  struct Cast{
+    Type operator()(const Type& x) const { return x;}
+    Type operator()(Coeff x) const { return Type(x);}
+  };
+};
+
+template <class Coeff, class Root>
+struct Coercion_traits_for_level<Coeff, Sqrt_extension<Coeff, Root>,CTL_SQRT_EXT>
+  : public Coercion_traits_for_level<Sqrt_extension<Coeff, Root>,Coeff,CTL_SQRT_EXT>{};
+
+
 // <EXT,EXT>
 template <class A_coeff, class B_coeff, class Root>
 struct Coercion_traits_for_level<Sqrt_extension<A_coeff, Root>,
@@ -64,17 +101,17 @@ public:
     };
 };
 
+
 template <class Coeff, class Root_1, class Root_2>
-struct Coercion_traits_for_level<Sqrt_extension<Sqrt_extension<Coeff,Root_1>,
-Root_2>,
+struct Coercion_traits_for_level<Sqrt_extension<Sqrt_extension<Coeff,Root_1>,Root_2>,
                            Sqrt_extension<Coeff,Root_1>,
                            CTL_SQRT_EXT>{
 private:
     typedef Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_2> A;
     typedef Sqrt_extension<Coeff,Root_1> B;
 public:
-    typedef CGAL::Tag_true  Are_explicit_interoperable;
-    typedef CGAL::Tag_false Are_implicit_interoperable;
+    typedef CGAL::Tag_true Are_explicit_interoperable;
+    typedef CGAL::Tag_true Are_implicit_interoperable;
 
     // Type = A
     typedef Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_2> Type;
@@ -98,6 +135,7 @@ struct Coercion_traits_for_level
             ,CTL_SQRT_EXT>
 {};
 
+
 template <class Coeff, class Root_1>
 struct Coercion_traits_for_level
 <
@@ -108,8 +146,8 @@ private:
     typedef  Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1> A;
     typedef  Sqrt_extension<Coeff,Root_1> B;
 public:
-    typedef CGAL::Tag_true  Are_explicit_interoperable;
-    typedef CGAL::Tag_false Are_implicit_interoperable;
+    typedef CGAL::Tag_true Are_explicit_interoperable;
+    typedef CGAL::Tag_true Are_implicit_interoperable;
 
     typedef  Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1> Type;
     struct Cast{
