@@ -130,8 +130,8 @@ Note that neither prerelease versions nor repository snapshots of
 In order to configure, build and install the \cgal\ libraries, as well
 as any program using \cgal, you need \cmake, a Cross Platform Make system.
 If \cmake\ is not installed already you can obtain it from \cmakepage.
-We recommend the usage of cmake Rel. 2.6, and you need at least
-cmake Rel. 2.4-patch-7.
+We recommend the usage of \cmake\ Rel.~2.6, and you need at least
+\cmake\ Rel.~2.4-patch-7.
 
 Moreover, \cgal\ requires a working installation of the \boost\
 libraries (the header files and the threading library binaries), 
@@ -214,11 +214,11 @@ When \cmake\ has finished the configuration, it has generated
 a makefile or a Visual \CC\  solution and project file that you 
 can use to build \cgal.
 
-\subsection{Configuring \cgal{} with the cmake {\sc Gui} }
+\subsection{Configuring \cgal{} with the \cmake{} {\sc Gui} }
 
 The simplest way to start the configuration is to run the graphical
 user interface of \cmake. We recommend to use \texttt{cmake-gui}, which
-is available on all platforms since \cmake\ Rel. 2.6.   You must pass as 
+is available on all platforms since \cmake\ Rel.~2.6.   You must pass as 
 argument the root directory of \cgal. For example:
 
 {\ccTexHtml{\scriptsize}{}
@@ -234,7 +234,7 @@ After you have made your choice and pressed 'ok', you will see
 the output of configuration tests in the lower window of the application. 
 When these tests are done, you will see many
 red entries in the upper window. Just ignore them and  press once again  'Configure'. 
-By now cmake should have found many libraries and have initialized variables. 
+By now \cmake\ should have found many libraries and have initialized variables. 
 If you still find red entries you have to provide the necessary information. 
 This typically happens if you have installed software at non-standard locations.
 Providing information and pressing 'Configure' goes on until 
@@ -258,7 +258,7 @@ Alternatively, you can run the command-line tool called
 
 
 The very first thing \cmake\ does is to detect the compiler to use.
-This detection is performed by a special cmake module called a {\em generator}. A
+This detection is performed by a special \cmake\ module called a {\em generator}. A
 \cmake\ generator understands the build requirements for a particular compiler/linker
  and generates the necessary files for that. For example, the 
 {\em UNIX Makefiles} generator understands the GNU toolchain (g++,gcc,ld etc) and produces makefiles
@@ -289,7 +289,7 @@ build files). For example, the following generates solution files for use in Vis
 In other cases, however, the generator doesn't directly identify a specific compiler but a tool chain.
 For example, the \texttt{UNIX Makefiles} generator produces \texttt{makefiles} that call some auto-detected
 command-line compiler, like \texttt{gcc}. If you need the makefiles to use a different compiler you need to
-say so in the call to cmake, as in this example:
+say so in the call to \cmake{}, as in this example:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
@@ -300,16 +300,16 @@ say so in the call to cmake, as in this example:
 
 
 \cmake\ maintains configuration parameters in so-called {\em cmake variables}, like the \texttt{CMAKE\_CXX\_COMPILER}
-in the example above. These variables {\em are not environment variables} but {\em cmake variables}. Some of the cmake 
+in the example above. These variables {\em are not environment variables} but {\em \cmake\ variables}. Some of the \cmake{} 
 variables represent user choices, such as \texttt{WITH\_examples} or \texttt{CMAKE\_BUILD\_TYPE=Release}, while others
 indicate the details of a third-party library, such as \texttt{Boost\_INCLUDE\_DIR} or the compiler flags to use,
 such as \texttt{CMAKE\_CXX\_FLAGS}. 
 
-The command line tool \texttt{cmake} accepts cmake variables as arguments of the form \texttt{-D<VAR>:<TYPE>=<VALUE>}, as
+The command line tool \texttt{cmake} accepts \cmake\ variables as arguments of the form \texttt{-D<VAR>:<TYPE>=<VALUE>}, as
 in the example above, but this is only useful if you already know which variables needs to be explicitly defined.
 
 \begin{ccAdvanced}
-\cmake\ keeps the variables that a user can manipulate in a so-called {\em cmake cache}, a simple text file specifically 
+\cmake\ keeps the variables that a user can manipulate in a so-called {\em \cmake\ cache}, a simple text file specifically 
 named \texttt{CMakeCache.txt} whose entries are of the form VARIABLE:TYPE=VALUE. Advanced users can just manually edit this 
 file instead of going through the interactive configuration session.
 \end{ccAdvanced}
@@ -323,14 +323,14 @@ The configuration process not only determines the location of the required depen
 
 \cgal\ is split in four libraries in order to push some auxiliary 
 functionality out of the main library. During configuration, you can select the libraries that 
-shall be built by setting a cmake variable of the form {\tt WITH\_<library>}. By default all 
+shall be built by setting a \cmake\ variable of the form {\tt WITH\_<library>}. By default all 
 are switched \texttt{ON}.
 
 \begin{center}\index{cgal!libraries}\index{cgal libraries}
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|l|l|} \hline
-    \textbf{library}       & \textbf{cmake variable}      & \textbf{functionality}                                                & \textbf{dependencies}\\\hline\hline
+    \textbf{library}       & \textbf{\cmake\ variable}    & \textbf{functionality}                                                & \textbf{dependencies}\\\hline\hline
     \texttt{CGAL}          & {\em none}                   & Main library                                                          & GMP, MPFR, Boost (headers) and Boost.Thread (library)\\\hline
     \texttt{CGAL\_Core}    & \texttt{WITH\_CGAL\_Core}    & The CORE library for dealing with algebraic numbers.\footnotemark[15] & GMP and MPFR\\\hline
     \texttt{CGAL\_Qt3}     & \texttt{WITH\_CGAL\_Qt3}     & \ccc{CGAL::Qt_widget} used by some old Qt3-based demos                & Qt3 and OpenGL\\\hline
@@ -362,7 +362,7 @@ To do that you must explicitly build the \texttt{examples} or \texttt{demo} make
 
 \subsection{Debug vs.\ Release}
 
-The cmake variable \texttt{CMAKE\_BUILD\_TYPE} can take the values \texttt{Release} or \texttt{Debug} to indicate how to build
+The \cmake\ variable \texttt{CMAKE\_BUILD\_TYPE} can take the values \texttt{Release} or \texttt{Debug} to indicate how to build
 the libraries. The default depends on the platform so it is recommended that you always indicate the build type explicitly.
 
 This is not an issue for solution/project files, as there the user selects the build type from within the IDE.
@@ -371,14 +371,14 @@ This is not an issue for solution/project files, as there the user selects the b
 
 Under Windows we only support  the static versions of the \cgal\ libraries, but on the other platforms
 they are by default shared libraries ({\tt .so}).
-You can choose to produce static libraries instead by setting the cmake variable {\tt CMAKE\_SHARED\_LIBS=FALSE} 
+You can choose to produce static libraries instead by setting the \cmake\ variable {\tt CMAKE\_SHARED\_LIBS=FALSE} 
 
 These setting affect the variants of third-party libraries selected whenever the choice is available.
 
 \subsection{Multiple Variants of makefiles}\label{sec:cmake-out-of-source}
 
 While you can choose between release/debug builds, shared/static libraries,
-it is not possible to generate different variants during a single configuration. To do that you need to run cmake in a 
+it is not possible to generate different variants during a single configuration. To do that you need to run \cmake\ in a 
 different directory for each variant, each with its own selection of configuration parameters.
 
 \cmake\ stores the resulting makefiles/projectfiles, along with several temporary and auxiliary files such
@@ -387,7 +387,7 @@ takes the source files and configuration scripts from whatever directory is indi
 \texttt{CMAKE\_SOURCE\_DIR} 
 
 The binary and source directory need not be the same, thus, you can configure multiple variants by creating a
-distinct directory for each configuration and by running cmake from there. This is known in \cmake\ terminology
+distinct directory for each configuration and by running \cmake\ from there. This is known in \cmake\ terminology
 as  {\em out-of-source configuration}, as opposite to an {\em in-source configuration} as showed in the 
 previous sections.
 
@@ -450,13 +450,13 @@ Alternatively, you can build it with the command line version of the {\sc Ide}:
 \end{verbatim}
 }
 
-The "Debug" argument is needed because CMake creates solution files with
+The "Debug" argument is needed because \cmake\ creates solution files with
 all four configurations and you need to explicitly choose one when building
 (the other choices are Release, RelWithDebInfo and MinSizeRel).
 
 
 \begin{ccAdvanced}
-The build files produced by cmake are autoconfigured. That is, if you change any 
+The build files produced by \cmake\ are autoconfigured. That is, if you change any 
 of the dependencies, the build step automatically goes all the way back to the configure step
 during the building. This way, once the target has been configured the very first time by
 invoking cmake, you don't necessarily need to invoke \texttt{cmake} again. Rebuilding will call
@@ -525,7 +525,7 @@ If you used a generator which produced IDE files (for Visual Studio for instance
 \begin{ccAdvanced}
 
 The files are copied into a directory tree relative to the {\em installation directory} determined by the 
-cmake variable \texttt{CMAKE\_INSTALL\_PREFIX}. This variable defaults to {\tt /usr/local} under UNIX-like operating systems
+\cmake\ variable \texttt{CMAKE\_INSTALL\_PREFIX}. This variable defaults to {\tt /usr/local} under UNIX-like operating systems
 and {\tt PROGRAMFILES } under Windows. If you want to install to a different location you must override that cmake
 variable explicitly {\em at configuration time} (not when executing the install step).
 
@@ -561,9 +561,9 @@ demos contain such \cmake\ scripts.
 
 During configuration of the \cgal\ libraries a file named {\tt
 CGALConfig.cmake} will be generated in the binary directory. This file
-contains the definitions of several cmake variable which summarize the
+contains the definitions of several \cmake\ variable which summarize the
 configuration of \cgal. In order to configure a user program you need
-to indicate the location of that config file in the cmake variable
+to indicate the location of that config file in the \cmake\ variable
 \texttt{CGAL\_DIR}:.
 
 {\ccTexHtml{\scriptsize}{}
@@ -582,13 +582,13 @@ make
 
 Normally, programs linked to \cgal\ must use the same flags used by the \cgal\
 libraries to avoid runtime problems. For this reason, the {\em very first} time
-a program is configured, all the flags given by the cmake variables \texttt{CMAKE\_*\_FLAGS}
+a program is configured, all the flags given by the \cmake\ variables \texttt{CMAKE\_*\_FLAGS}
 are {\em locked} in the sense that the values recorded in \texttt{CGALConfig.cmake} 
 are used to override any values given by \cmake\ itself or yourself.
 
 This does not apply to the additional flags that can be given via \texttt{CGAL\_*\_FLAGS}.
 
-Such {\em inherited} values are then recorded on the current cmake cache for the program.
+Such {\em inherited} values are then recorded on the current \cmake\ cache for the program.
 The flags are then {\em unlocked} in the sense that at any subsequent configuration you can
 provide you own flags and this time they won't be overridden.
 
@@ -625,7 +625,7 @@ cmake -DCGAL_DIR=CGAL-3.4 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_
 
 \section{Summary of Configuration Variables}
 
-Most configuration variables are not environment variables but {\em cmake variables}. They are given in the command line call to \cmake\ via the \texttt{-D} option, 
+Most configuration variables are not environment variables but {\em \cmake\ variables}. They are given in the command line call to \cmake\ via the \texttt{-D} option, 
 or using the interactive \texttt{cmake-gui}. Unless explicitly indicated, all the variables summarized below are \cmake\ variables.
 
 \index{cgal!cmake-vars-components}\index{cgal configuration variables - components }
@@ -716,7 +716,7 @@ of the 3rd party libraries used by \cgal. \cmake\ automatically searches
 for dependencies so you only need to specify these variables if they are given a value 
 ending in \texttt{NOTFOUND} (which indicates that \cmake\ was unable to locate something)
 
-Since 3rd-party libraries are system wide many of the cmake variables listed below can alternatively
+Since 3rd-party libraries are system wide many of the \cmake\ variables listed below can alternatively
 be given as similarly-named environment variables instead. Keep in mind that you must provide one or the
 other but never both.
 
