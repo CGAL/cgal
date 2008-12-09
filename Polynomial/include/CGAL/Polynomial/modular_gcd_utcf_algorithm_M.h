@@ -25,8 +25,8 @@
 */
 
 
-#ifndef CGAL_MODULAR_GCD_UTCF_ALGORITHM_M_H
-#define CGAL_MODULAR_GCD_UTCF_ALGORITHM_M_H 1
+#ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_ALGORITHM_M_H
+#define CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_ALGORITHM_M_H 1
 
 #include <CGAL/basic.h>
 #include <CGAL/Residue.h>
@@ -278,4 +278,4 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
 
 }  // namespace CGAL
 
-#endif // CGAL_MODULAR_GCD_UTCF_ALGORITHM_M_H
+#endif // CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_ALGORITHM_M_H

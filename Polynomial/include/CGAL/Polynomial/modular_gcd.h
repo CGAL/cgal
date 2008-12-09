@@ -16,15 +16,14 @@
 //
 //
 //Author(s) : Michael Hemmer <mhemmer@uni-mainz.de>
-// This is experimental code ! 
 
 /*! \file CGAL/Polynomial/modular_gcd.h
   provides gcd for Polynomials, based on Modular arithmetic. 
 */
 
 
-#ifndef CGAL_MODULAR_GCD_H
-#define CGAL_MODULAR_GCD_H 1
+#ifndef CGAL_POLYNOMIAL_MODULAR_GCD_H
+#define CGAL_POLYNOMIAL_MODULAR_GCD_H 1
 
 #include <CGAL/basic.h>
 #include <CGAL/Residue.h>
@@ -57,5 +56,5 @@ Polynomial<NT> modular_gcd_utcf(
 }// namespace CGALi
 }///namespace CGAL
 
-#endif //#ifndef CGAL_MODULAR_GCD_H 1
+#endif //#ifndef CGAL_POLYNOMIAL_MODULAR_GCD_H 1
  

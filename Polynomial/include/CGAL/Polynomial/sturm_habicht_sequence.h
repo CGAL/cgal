@@ -20,8 +20,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_ACK_STURM_HABICHT
-#define CGAL_ACK_STURM_HABICHT 1
+#ifndef CGAL_POLYNOMIAL_STURM_HABICHT
+#define CGAL_POLYNOMIAL_STURM_HABICHT 1
 
 #include <vector>
 #include <algorithm>
@@ -402,4 +402,4 @@ namespace CGALi {
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ACK_STURM_HABICHT
+#endif // CGAL_POLYNOMIAL_STURM_HABICHT

@@ -24,8 +24,8 @@
  *  \brief Provides additional utils for the modular GCD calculation 
  */
 
-#ifndef CGAL_MODULAR_GCD_UTILS_H
-#define CGAL_MODULAR_GCD_UTILS_H
+#ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTILS_H
+#define CGAL_POLYNOMIAL_MODULAR_GCD_UTILS_H
 
 #include <CGAL/basic.h>
 #include <vector>
@@ -99,6 +99,6 @@ void euclidean_division_obstinate(const Polynomial<NT>& F1,
 } // namespace CGALi
 } // namespace CGAL
 
-#endif //#ifnedef CGAL_MODULAR_GCD_UTILS_H 1
+#endif //#ifnedef CGAL_POLYNOMIAL_MODULAR_GCD_UTILS_H 1
 
 // EOF

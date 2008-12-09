@@ -23,8 +23,8 @@
 /*! \file CGAL/Polynomial/modular_gcd_utcf_dfai.h
   provides gcd for Polynomials, based on Modular arithmetic. 
 */
-#ifndef CGAL_MODULAR_GCD_UTCF_DFAI_H
-#define CGAL_MODULAR_GCD_UTCF_DFAI_H 1
+#ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_DFAI_H
+#define CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_DFAI_H 1
 
 #include <CGAL/basic.h>
 #include <CGAL/Scalar_factor_traits.h>
@@ -320,4 +320,4 @@ Polynomial<NT> modular_gcd_utcf_dfai(
 } // namespace CGALi
 } // namespace CGAL
 
-#endif // CGAL_MODULAR_GCD_UTCF_DFAI_H
+#endif // CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_DFAI_H

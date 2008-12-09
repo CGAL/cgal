@@ -24,8 +24,8 @@
  *  \brief Defines traits class CGAL::Algebraic_structure_traits_extended. 
  */
 
-#ifndef ALGEBRAIC_STRUCTURE_TRAITS_EXTENDED_H
-#define ALGEBRAIC_STRUCTURE_TRAITS_EXTENDED_H
+#ifndef CGAL_ALGEBRAIC_STRUCTURE_TRAITS_EXTENDED_H
+#define CGAL_ALGEBRAIC_STRUCTURE_TRAITS_EXTENDED_H
 
 #include <CGAL/basic.h>
 #include <CGAL/type_traits.h>

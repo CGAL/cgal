@@ -19,8 +19,8 @@
 // Author(s)     : Michael Hemmer <hemmer@mpi-inf.mpg.de>
 
 
-#ifndef CGAL_NEW_RESULTANT_H
-#define CGAL_NEW_RESULTANT_H
+#ifndef CGAL_POLYNOMIAL_RESULTANT_H
+#define CGAL_POLYNOMIAL_RESULTANT_H
 
 // Modular arithmetic is slower, hence the default is 0
 #ifndef CGAL_RESULTANT_USE_MODULAR_ARITHMETIC
@@ -412,5 +412,5 @@ CGAL_END_NAMESPACE
 
 
 
-#endif // CGAL_NEW_RESULTANT_H
+#endif // CGAL_POLYNOMIAL_RESULTANT_H
 

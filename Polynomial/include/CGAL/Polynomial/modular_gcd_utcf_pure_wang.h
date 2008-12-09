@@ -29,8 +29,8 @@
 */
 
 
-#ifndef CGAL_MODULAR_GCD_UTCF_PURE_WANG_H
-#define CGAL_MODULAR_GCD_UTCF_PURE_WANG_H 1
+#ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_PURE_WANG_H
+#define CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_PURE_WANG_H 1
 
 #include <CGAL/basic.h>
 #include <CGAL/Residue.h>
@@ -396,6 +396,6 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
 }//namespace CGALi
 }//namespace CGAL
 
-#endif //#ifndef CGAL_MODULAR_GCD_UTCF_PURE_WANG_H
+#endif //#ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_PURE_WANG_H
 
 // EOF

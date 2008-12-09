@@ -19,8 +19,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_WANG_TRAITS_H
-#define CGAL_WANG_TRAITS_H 1
+#ifndef CGAL_POLYNOMIAL_WANG_TRAITS_H
+#define CGAL_POLYNOMIAL_WANG_TRAITS_H 1
 
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial/wang.h>
@@ -154,5 +154,5 @@ public:
 } // namespace CGALi
 } // namespace CGAL
 
-#endif // CGAL_WANG_TRAITS_H
+#endif // CGAL_POLYNOMIAL_WANG_TRAITS_H
 // EOF

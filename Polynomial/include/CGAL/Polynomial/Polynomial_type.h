@@ -30,8 +30,8 @@
  *  Polynomials in one variable (or more, by recursion)
  */
 
-#ifndef CGAL_POLYNOMIAL_CGALi_TYPE_H
-#define CGAL_POLYNOMIAL_CGALi_TYPE_H
+#ifndef CGAL_POLYNOMIAL_POLYNOMIAL_TYPE_H
+#define CGAL_POLYNOMIAL_POLYNOMIAL_TYPE_H
 
 #define CGAL_icoeff(T) typename CGAL::First_if_different<       \
 typename CGAL::CGALi::Innermost_coefficient_type<T>::Type, T, 1>::Type  
@@ -1454,4 +1454,4 @@ CGAL_END_NAMESPACE
 #undef CGAL_icoeff
 #undef CGAL_int
 
-#endif // CGAL_POLYNOMIAL_CGALi_TYPE_H
+#endif // CGAL_POLYNOMIAL_POLYNOMIAL_TYPE_H

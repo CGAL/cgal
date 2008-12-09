@@ -17,8 +17,8 @@
 //
 // Author(s)     : Michael Hemmer <hemmer@informatik.uni-mainz.de> 
 
-#ifndef CGAL_INTERPOLATE_H
-#define CGAL_INTERPOLATE_H
+#ifndef CGAL_POLYNOMIAL_INTERPOLATE_H
+#define CGAL_POLYNOMIAL_INTERPOLATE_H
 
 CGAL_BEGIN_NAMESPACE
 namespace CGALi {
@@ -131,4 +131,4 @@ public:
 } // namespace CGALi
 CGAL_END_NAMESPACE
 
-#endif // CGAL_INTERPOLATE_H 
+#endif // CGAL_POLYNOMIAL_INTERPOLATE_H 

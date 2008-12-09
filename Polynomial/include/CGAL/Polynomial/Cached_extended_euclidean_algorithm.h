@@ -19,8 +19,8 @@
 //                 
 // ============================================================================
 
-#ifndef CGAL_CACHED_EXTENDED_EUCLIDEAN_ALGORITHM_H
-#define CGAL_CACHED_EXTENDED_EUCLIDEAN_ALGORITHM_H
+#ifndef CGAL_POLYNOMIAL_CACHED_EXTENDED_EUCLIDEAN_ALGORITHM_H
+#define CGAL_POLYNOMIAL_CACHED_EXTENDED_EUCLIDEAN_ALGORITHM_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Cache.h>
@@ -65,4 +65,4 @@ Cached_extended_euclidean_algorithm<UFD,i>::cache;
 } // namespace CGALi
 CGAL_END_NAMESPACE
 
-#endif//CGAL_CACHED_EXTENDED_EUCLIDEAN_ALGORITHM_H
+#endif//CGAL_POLYNOMIAL_CACHED_EXTENDED_EUCLIDEAN_ALGORITHM_H

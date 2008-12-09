@@ -18,8 +18,8 @@
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
 // ============================================================================
-#ifndef CGAL_ACK_SUBRESULTANTS_H
-#define CGAL_ACK_SUBRESULTANTS_H
+#ifndef CGAL_POLYNOMIAL_SUBRESULTANTS_H
+#define CGAL_POLYNOMIAL_SUBRESULTANTS_H
 
 #include <list>
 
@@ -566,4 +566,4 @@ CGAL_BEGIN_NAMESPACE
   }   // namespace CGALi
 
 CGAL_END_NAMESPACE
-#endif// CGAL_ACK_SUBRESULTANTS_H
+#endif// CGAL_POLYNOMIAL_SUBRESULTANTS_H
