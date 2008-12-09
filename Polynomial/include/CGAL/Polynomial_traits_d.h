@@ -25,6 +25,8 @@
 
 #include <CGAL/basic.h>
 #include <functional>
+#include <list>
+#include <vector>
 
 #include <CGAL/Polynomial/fwd.h>
 #include <CGAL/Polynomial/misc.h>
