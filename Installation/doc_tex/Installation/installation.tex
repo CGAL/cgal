@@ -268,12 +268,12 @@ launched in the VS IDE to build the target.
 
 Each platform has a default generator so you only need to select one when the default is
 not what you want. 
-\footnote{Running \texttt{cmake} with no parameters in a command-line prints the list of available generators supported 
-by your platform and \cmake\ version. If the generator you need is not listed there, you can
-try a newer \cmake\ version since generators are hardcoded into \cmake\ and more and
-more generators are added with each release.}
 For example, under Windows, it is possible to generate {\em NMakefiles}
 instead of Visual Studio project files in order to build the library with \texttt{nmake}.
+Running \texttt{cmake} with no parameters in a command-line prints the list of available generators supported 
+by your platform and \cmake\ version. If the generator you need is not listed there, you can
+try a newer \cmake\ version since generators are hardcoded into \cmake\ and more and
+more generators are added with each release.
 
 Since the choice of the generator determines the type of build files to generate, in some cases
 you choose a particular generator as a mean to choose a specific compiler (because they use different 
@@ -386,7 +386,7 @@ as the variables cache, in the directory where it is executed, called \texttt{CM
 takes the source files and configuration scripts from whatever directory is indicated, called
 \texttt{CMAKE\_SOURCE\_DIR} 
 
-The binary and source directory need not be the same, thus, you can configure multiple variants by creating a
+The binary and source directories need not be the same, thus, you can configure multiple variants by creating a
 distinct directory for each configuration and by running \cmake\ from there. This is known in \cmake\ terminology
 as  {\em out-of-source configuration}, as opposite to an {\em in-source configuration} as showed in the 
 previous sections.
@@ -564,13 +564,13 @@ CGALConfig.cmake} will be generated in the binary directory. This file
 contains the definitions of several \cmake\ variable which summarize the
 configuration of \cgal. In order to configure a user program you need
 to indicate the location of that config file in the \cmake\ variable
-\texttt{CGAL\_DIR}:.
+\texttt{CGAL\_DIR}:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 
 cd CGAL-3.4/examples/Straight_skeleton_2
-cmake -DCGAL_DIR=CGAL-3.4 .
+cmake -DCGAL_DIR=$HOME/CGAL-3.4 .
 make
 
 \end{verbatim}
