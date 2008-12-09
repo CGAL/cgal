@@ -20,9 +20,6 @@
 //
 // =============================================================================
 
-// TODO: The comments are all original EXACUS comments and aren't adapted. So
-//         they may be wrong now.
-
 /*! \file NiX/Coercion_traits.h
  *  \brief Defines class NiX::Coercion_traits. 
  * 
@@ -195,8 +192,8 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double,long double)
 //! Specialization for equal types.
 template <class A>    
 struct Coercion_traits<A,A>{ 
-    typedef Tag_true  Are_explicit_interoperable;
-    typedef Tag_false Are_implicit_interoperable;
+    typedef Tag_true Are_explicit_interoperable;
+    typedef Tag_true Are_implicit_interoperable;
     typedef A Type; 
     struct Cast{                                        
         typedef Type result_type;                             
