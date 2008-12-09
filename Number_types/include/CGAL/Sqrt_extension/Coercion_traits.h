@@ -24,13 +24,15 @@
 
 #include <CGAL/basic.h>
 
+#define CGAL_int(T)    typename First_if_different<int,    T>::Type
+
 CGAL_BEGIN_NAMESPACE
 
 /////////// COERCION_TRAITS BEGIN
 
 // <EXT,int> and vice versa 
 template <class Coeff, class Root>
-struct Coercion_traits_for_level<Sqrt_extension<Coeff, Root>,int,CTL_SQRT_EXT>{
+struct Coercion_traits_for_level<Sqrt_extension<Coeff, Root>,CGAL_int(Coeff),CTL_SQRT_EXT>{
 public:
   typedef Sqrt_extension<Coeff,Root> Type;
   typedef CGAL::Tag_true Are_explicit_interoperable;
@@ -42,8 +44,8 @@ public:
 };
 
 template <class Coeff, class Root>
-struct Coercion_traits_for_level<int, Sqrt_extension<Coeff, Root>,CTL_SQRT_EXT>
-  : public Coercion_traits_for_level<Sqrt_extension<Coeff, Root>,int,CTL_SQRT_EXT>{};
+struct Coercion_traits_for_level<CGAL_int(Coeff), Sqrt_extension<Coeff, Root>,CTL_SQRT_EXT>
+  : public Coercion_traits_for_level<Sqrt_extension<Coeff, Root>,CGAL_int(Coeff),CTL_SQRT_EXT>{};
 
 
 
@@ -273,5 +275,7 @@ public:
 /////////// COERCION_TRAITS END
 
 CGAL_END_NAMESPACE
+
+#undef CGAL_int
 
 #endif
