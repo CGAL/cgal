@@ -220,17 +220,17 @@ public:
 
 //! The template specialization that is used for Sqrt_extensions if the COEFF type is a model
 //! of the \c IntegralDomain concept.
-template< class Type_, class ROOT >
-class Sqrt_algebraic_structure_traits_extended< Sqrt_extension< Type_, ROOT >, 
+template< class Type_, class ROOT_ >
+class Sqrt_algebraic_structure_traits_extended< Sqrt_extension< Type_, ROOT_ >, 
                                                         CGAL::Integral_domain_tag > 
-    : public Algebraic_structure_traits_extended_base< Sqrt_extension< Type_, ROOT >, 
+    : public Algebraic_structure_traits_extended_base< Sqrt_extension< Type_, ROOT_ >, 
                                                               CGAL::Integral_domain_tag >{
 public:
     typedef Type_ COEFF;
-    typedef Sqrt_extension< COEFF, ROOT >  Type;   
+  typedef Sqrt_extension< COEFF, ROOT_ >  Type;    // af: Added scope CGAL::
 
 private:
-    typedef typename CGAL::Coercion_traits< ROOT, COEFF >::Cast Root_nt_cast;
+    typedef typename CGAL::Coercion_traits< ROOT_, COEFF >::Cast Root_nt_cast;
 
 public:
     class Divides { 
@@ -302,15 +302,15 @@ class Sqrt_algebraic_structure_traits_extended< Sqrt_extension< Type_, ROOT >,
 
 //! The template specialization that is used for Sqrt_extensions if the COEFF type is a model
 //! of the \c EuclideanRing concept.
-template< class Type_, class ROOT >
-class Sqrt_algebraic_structure_traits_extended< Sqrt_extension< Type_, ROOT >, 
+template< class Type_, class ROOT_ >
+class Sqrt_algebraic_structure_traits_extended< Sqrt_extension< Type_, ROOT_ >, 
                                                           CGAL::Euclidean_ring_tag >
-  : public Sqrt_algebraic_structure_traits_extended< Sqrt_extension< Type_, ROOT >, 
+  : public Sqrt_algebraic_structure_traits_extended< Sqrt_extension< Type_, ROOT_ >, 
                                                              CGAL::Integral_domain_tag >
 {
 public:
     typedef Type_ COEFF;
-    typedef Sqrt_extension< COEFF, ROOT >  Type;   
+    typedef Sqrt_extension< COEFF, ROOT_ >  Type;   
 };
 
 
