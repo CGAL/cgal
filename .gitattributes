@@ -1833,6 +1833,7 @@ Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23_ref/radical_line.tex -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/test/Kernel_23/CMakeLists.txt -text
+Kernel_d/doc_tex/Kernel_d/hypercube.png -text
 Kernel_d/include/CGAL/Kernel_d/Cartesian_const_iterator_d.h -text
 Kernel_d/test/Kernel_d/Linear_algebra-test.cmd eol=lf
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after002 -text
