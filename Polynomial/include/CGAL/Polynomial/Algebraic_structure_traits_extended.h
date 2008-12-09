@@ -21,7 +21,7 @@
 // ============================================================================
 
 /*! \file CGAL/Algebraic_number_traits.h
- *  \brief Defines traits class CGAL::Algebraic_structure_traits_extended. 
+ *  \brief Defines traits class CGAL::Algebraic_structure_traits. 
  */
 
 #ifndef CGAL_ALGEBRAIC_STRUCTURE_TRAITS_EXTENDED_H
@@ -29,7 +29,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/type_traits.h>
-#include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Polynomial.h>        
 
 namespace CGAL {
@@ -38,7 +37,7 @@ namespace CGAL {
 // The algebraic structure traits extended base class
 // =========================================================================
 template< class Type, class Algebraic_category >
-class Algebraic_structure_traits_extended_base;
+class Algebraic_structure_traits_base;
 
 template< class Type, class Algebraic_category >
 class Sqrt_algebraic_structure_traits_extended;
@@ -47,12 +46,12 @@ template< class Type, class Algebraic_category >
 class Polynomial_algebraic_structure_traits_extended;
 
 template< class Type_ > 
-class Algebraic_structure_traits_extended;
+class Algebraic_structure_traits;
 
 //! The template specialization that can be used for types that are not any
 //! of the number type concepts. The divides functor is set to \c Null_functor.
 template< class Type_ >
-class Algebraic_structure_traits_extended_base< Type_, CGAL::Null_tag > 
+class Algebraic_structure_traits_base< Type_, CGAL::Null_tag > 
     : public CGAL::Algebraic_structure_traits< Type_> {
 public:
     typedef Type_       Type;
@@ -62,9 +61,9 @@ public:
 //! The template specialization that is used if the number type is
 //! a model of the \c IntegralDomainWithoutDiv concept.
 template< class Type_ > 
-class Algebraic_structure_traits_extended_base< Type_, 
+class Algebraic_structure_traits_base< Type_, 
                                        Integral_domain_without_division_tag > 
-    : public Algebraic_structure_traits_extended_base< Type_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               CGAL::Null_tag > {
 public:
     typedef Type_                   Type;
@@ -74,9 +73,9 @@ public:
 //! The template specialization that is used if the number type is
 //! a model of the \c IntegralDomain concept.
 template< class Type_ >
-class Algebraic_structure_traits_extended_base< Type_, 
+class Algebraic_structure_traits_base< Type_, 
                                        Integral_domain_tag >
-    : public Algebraic_structure_traits_extended_base< Type_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                        Integral_domain_without_division_tag > { 
 
 };
@@ -85,9 +84,9 @@ class Algebraic_structure_traits_extended_base< Type_,
 //! a model of the \c UFDomain concept. It is equivalent to the specialization
 //! for the \c IntegralDomain concept.
 template< class Type_ >
-class Algebraic_structure_traits_extended_base< Type_, 
+class Algebraic_structure_traits_base< Type_, 
                                        Unique_factorization_domain_tag >
-    : public Algebraic_structure_traits_extended_base< Type_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               Integral_domain_tag > {
 
 public:
@@ -119,9 +118,9 @@ public:
 //! The template specialization that is used if the number type is
 //! a model of the \c EuclideanRing concept.
 template< class Type_ >
-class Algebraic_structure_traits_extended_base< Type_, 
+class Algebraic_structure_traits_base< Type_, 
                                        Euclidean_ring_tag >
-    : public Algebraic_structure_traits_extended_base< Type_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               Unique_factorization_domain_tag > {
 public:
     typedef Type_        Type;
@@ -151,8 +150,8 @@ public:
 //! The template specialization that is used if the number type is
 //! a model of the \c Field concept.
 template< class Type_ >
-class Algebraic_structure_traits_extended_base< Type_, Field_tag >
-    : public Algebraic_structure_traits_extended_base< Type_, 
+class Algebraic_structure_traits_base< Type_, Field_tag >
+    : public Algebraic_structure_traits_base< Type_, 
                                               Integral_domain_tag > {
 public:
     typedef Type_        Type;
@@ -177,9 +176,9 @@ public:
 //! of the \c FieldWithSqrt concept. It is equivalent to the 
 //! specialization for the \c Field concept.
 template< class Type_ >
-class Algebraic_structure_traits_extended_base< Type_, 
+class Algebraic_structure_traits_base< Type_, 
                                        Field_with_sqrt_tag>
-    : public Algebraic_structure_traits_extended_base< Type_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               Field_tag> {
 public:
     typedef Type_        Type;
@@ -189,9 +188,9 @@ public:
 //! of the \c FieldWithKthRoot concept. It is equivalent to the 
 //! specialization for the \c Field concept.
 template< class Type_ >
-class Algebraic_structure_traits_extended_base< Type_, 
+class Algebraic_structure_traits_base< Type_, 
                                        Field_with_kth_root_tag>
-    : public Algebraic_structure_traits_extended_base< Type_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               Field_with_sqrt_tag> {    
     
 public:
@@ -202,9 +201,9 @@ public:
 //! of the \c FieldWithRootOf concept. It is equivalent to the 
 //! specialization for the \c FieldWithKthRoot concept.
 template< class Type_ >
-class Algebraic_structure_traits_extended_base< Type_, 
+class Algebraic_structure_traits_base< Type_, 
                                        Field_with_root_of_tag >
-    : public Algebraic_structure_traits_extended_base< Type_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               Field_with_kth_root_tag > {
 public:
     typedef Type_           Type;
@@ -216,7 +215,7 @@ public:
 template< class Type_, class ROOT >
 class Sqrt_algebraic_structure_traits_extended< Sqrt_extension< Type_, ROOT >, 
                                                         CGAL::Integral_domain_tag > 
-    : public Algebraic_structure_traits_extended_base< Sqrt_extension< Type_, ROOT >, 
+    : public Algebraic_structure_traits_base< Sqrt_extension< Type_, ROOT >, 
                                                               CGAL::Integral_domain_tag >{
 public:
     typedef Type_ COEFF;
@@ -235,7 +234,7 @@ public:
         bool operator()( const Type& x, 
                 const Type& y, 
                 Type& q) const {       
-            typedef CGAL::Algebraic_structure_traits_extended<COEFF> ASTE;
+            typedef CGAL::Algebraic_structure_traits<COEFF> ASTE;
             typename ASTE::Divides divides;   
 //            std::cout<<"integral domain for sqrt"<<std::endl;
             bool result;
@@ -312,7 +311,7 @@ public:
 template< class Type_ >
 class Polynomial_algebraic_structure_traits_extended< CGAL::Polynomial< Type_ >, 
                                                             Integral_domain_tag > 
-    : public Algebraic_structure_traits_extended_base< CGAL::Polynomial< Type_ >, 
+    : public Algebraic_structure_traits_base< CGAL::Polynomial< Type_ >, 
                                                               CGAL::Integral_domain_tag >{
   
 public:
@@ -332,7 +331,7 @@ public:
             q=Type(0);
 //            std::cout<<"new Sqrt POLY"<<std::endl;
             
-            typedef CGAL::Algebraic_structure_traits_extended<NT> ASTE;
+            typedef CGAL::Algebraic_structure_traits<NT> ASTE;
             typename ASTE::Divides divides;   
             NT q1;
             bool result;
@@ -454,15 +453,15 @@ public:
 };
 
 template< class Type_ > 
-class Algebraic_structure_traits_extended
-    : public Algebraic_structure_traits_extended_base< Type_, 
+class Algebraic_structure_traits
+    : public Algebraic_structure_traits_base< Type_, 
              typename CGAL::Algebraic_structure_traits<Type_>::Algebraic_category > {
 
 };
 
 // The actual algebraic structure extended traits class
 template< class Type_, class ROOT > 
-class Algebraic_structure_traits_extended< Sqrt_extension< Type_, ROOT > >
+class Algebraic_structure_traits< Sqrt_extension< Type_, ROOT > >
     : public Sqrt_algebraic_structure_traits_extended< Sqrt_extension< Type_, ROOT >, 
  typename CGAL::Algebraic_structure_traits<Type_>::Algebraic_category > {
 
@@ -470,7 +469,7 @@ class Algebraic_structure_traits_extended< Sqrt_extension< Type_, ROOT > >
 
 // The actual algebraic structure extended traits class
 template< class Type_ > 
-class Algebraic_structure_traits_extended< CGAL::Polynomial< Type_ > >
+class Algebraic_structure_traits< CGAL::Polynomial< Type_ > >
     : public Polynomial_algebraic_structure_traits_extended< CGAL::Polynomial< Type_ >, 
  typename CGAL::Algebraic_structure_traits<Type_>::Algebraic_category > {
 

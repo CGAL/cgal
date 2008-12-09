@@ -41,7 +41,6 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Cache.h>
 #include <CGAL/Polynomial/Wang_traits.h>
-#include <CGAL/Algebraic_structure_traits_extended.h>
 
 namespace CGAL {
 namespace CGALi{
@@ -293,7 +292,7 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
                 timer_division.start();
 #endif
 //                Gs = CGAL::canonicalize(Gs); 
-                typedef CGAL::Algebraic_structure_traits_extended< Poly > ASTE_Poly;
+                typedef CGAL::Algebraic_structure_traits< Poly > ASTE_Poly;
                 typename ASTE_Poly::Divides divides;
 
                 
@@ -352,7 +351,7 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
                         timer_division.start();
 #endif
 //                        Poly r1,r2;
-                        typedef CGAL::Algebraic_structure_traits_extended
+                        typedef CGAL::Algebraic_structure_traits
                             < Poly > ASTE_Poly;
                         typename ASTE_Poly::Divides divides;
                                     

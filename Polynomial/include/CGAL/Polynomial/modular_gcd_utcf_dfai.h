@@ -39,7 +39,6 @@
 #include <CGAL/Cache.h>
 #include <CGAL/Real_timer.h>
 
-#include <CGAL/Algebraic_structure_traits_extended.h>
 
 
 namespace CGAL {
@@ -281,7 +280,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
 #ifdef CGAL_MODULAR_GCD_TIMER
                 timer_division.start();
 #endif
-                typedef CGAL::Algebraic_structure_traits_extended< Poly >
+                typedef CGAL::Algebraic_structure_traits< Poly >
                     ASTE_Poly;
                 typename ASTE_Poly::Divides divides;
 

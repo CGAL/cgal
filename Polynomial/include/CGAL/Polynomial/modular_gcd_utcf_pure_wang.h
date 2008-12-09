@@ -37,13 +37,11 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Scalar_factor_traits.h>
 #include <CGAL/Chinese_remainder_traits.h>
-#include <CGAL/Chinese_remainder_traits.h>
 #include <CGAL/Polynomial/modular_gcd_utils.h>
 #include <CGAL/Polynomial/Cached_extended_euclidean_algorithm.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Cache.h>
 #include <CGAL/Polynomial/Wang_traits.h>
-#include <CGAL/Algebraic_structure_traits_extended.h>
 
 
 namespace CGAL {
@@ -355,7 +353,7 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
                 timer_division.start();
 #endif
 
-                typedef CGAL::Algebraic_structure_traits_extended< Poly > 
+                typedef CGAL::Algebraic_structure_traits< Poly > 
                     ASTE_Poly;
                 typename ASTE_Poly::Divides divides;
 

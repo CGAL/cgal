@@ -38,8 +38,6 @@
 #include <CGAL/Cache.h>
 #include <CGAL/Real_timer.h>
 
-#include <CGAL/Algebraic_structure_traits_extended.h>
-
 // algorithm M for integer polynomials, without denominator bound
 
 namespace CGAL {
@@ -237,7 +235,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
                 timer_division.start();
 #endif 
 
-                typedef CGAL::Algebraic_structure_traits_extended< Poly > ASTE_Poly;
+                typedef CGAL::Algebraic_structure_traits< Poly > ASTE_Poly;
                 typename ASTE_Poly::Divides divides;
 
                 bool div1=divides(Gs,g_*F1,H1s);
