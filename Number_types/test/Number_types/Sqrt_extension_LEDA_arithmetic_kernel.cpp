@@ -6,7 +6,7 @@
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
-#include <CGAL/Test/_test_implicit_interoperable.h>
+#include <CGAL/Test/_test_coercion_traits.h>
 #include <CGAL/convert_to_bfi.h>
 
 #include <cstdlib>
@@ -372,7 +372,8 @@ void general_test(){
     EXT1 c1((NT)7 ,(NT)-11,(ROOT)17);
     CGAL::test_algebraic_structure<EXT1,Algebraic_type,Is_exact>(a1,b1,c1);
     CGAL::test_real_embeddable<EXT1>();
-    CGAL::test_implicit_interoperable<EXT1,int>();
+    CGAL::test_implicit_interoperable<int,EXT1,EXT1>();
+    CGAL::test_implicit_interoperable<NT ,EXT1,EXT1>();
 
     typedef CGAL::Sqrt_extension<EXT1,ROOT> EXT2;
     EXT2 a2(b1 ,a1  ,(ROOT)19);

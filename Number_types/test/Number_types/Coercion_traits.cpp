@@ -36,7 +36,7 @@ void test_coercion_from_to(CGAL::Null_tag, CGAL::Null_tag){};
 template<class A> void test_coercion_from_to(A, CGAL::Null_tag){};
 template<class B> void test_coercion_from_to(CGAL::Null_tag, B){};
 template<class A, class B> void test_coercion_from_to(A, B){
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<A,B>();
+    CGAL::test_explicit_interoperable_from_to<A,B>();
 };
 
 template <class AT> 
@@ -120,38 +120,38 @@ void check_type_coercion_at(){
 template <class AT> 
 void AT_coercion_test_for_cgal_types_int(){
     typedef typename AT::Integer Integer;
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int    ,Integer>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer,Integer>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer,Interval>();
+    CGAL::test_explicit_interoperable_from_to<int    ,Integer>();
+    CGAL::test_explicit_interoperable_from_to<Integer,Integer>();
+    CGAL::test_explicit_interoperable_from_to<Integer,Interval>();
 
     // Quotient
     typedef CGAL::Quotient<Integer> Quotient;
 
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int     ,Quotient>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double  ,Quotient>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer ,Quotient>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Quotient,Quotient>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Quotient,Interval>();
+    CGAL::test_explicit_interoperable_from_to<int     ,Quotient>();
+    CGAL::test_explicit_interoperable_from_to<double  ,Quotient>();
+    CGAL::test_explicit_interoperable_from_to<Integer ,Quotient>();
+    CGAL::test_explicit_interoperable_from_to<Quotient,Quotient>();
+    CGAL::test_explicit_interoperable_from_to<Quotient,Interval>();
 
     typedef CGAL::Sqrt_extension<Integer, Integer> Extn_1;
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int    ,Extn_1>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer,Extn_1>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_1 ,Extn_1>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_1,Interval>();
+    CGAL::test_explicit_interoperable_from_to<int    ,Extn_1>();
+    CGAL::test_explicit_interoperable_from_to<Integer,Extn_1>();
+    CGAL::test_explicit_interoperable_from_to<Extn_1 ,Extn_1>();
+    CGAL::test_explicit_interoperable_from_to<Extn_1,Interval>();
 
     typedef CGAL::Sqrt_extension<Extn_1,  Extn_1 > Extn_2n;
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int    ,Extn_2n>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer,Extn_2n>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_1 ,Extn_2n>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_2n,Extn_2n>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_2n,Interval>();
+    CGAL::test_explicit_interoperable_from_to<int    ,Extn_2n>();
+    CGAL::test_explicit_interoperable_from_to<Integer,Extn_2n>();
+    CGAL::test_explicit_interoperable_from_to<Extn_1 ,Extn_2n>();
+    CGAL::test_explicit_interoperable_from_to<Extn_2n,Extn_2n>();
+    CGAL::test_explicit_interoperable_from_to<Extn_2n,Interval>();
     
     typedef CGAL::Sqrt_extension<Extn_1,  Integer> Extn_2d;
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int    ,Extn_2d>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer,Extn_2d>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_1 ,Extn_2d>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_2d,Extn_2d>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_2d,Interval>();
+    CGAL::test_explicit_interoperable_from_to<int    ,Extn_2d>();
+    CGAL::test_explicit_interoperable_from_to<Integer,Extn_2d>();
+    CGAL::test_explicit_interoperable_from_to<Extn_1 ,Extn_2d>();
+    CGAL::test_explicit_interoperable_from_to<Extn_2d,Extn_2d>();
+    CGAL::test_explicit_interoperable_from_to<Extn_2d,Interval>();
 }
 
 template <class AT> 
@@ -162,11 +162,11 @@ void AT_coercion_test_for_cgal_types_rat(){
     typedef typename AT::Integer Integer;
     typedef typename AT::Rational Rational;
 
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int     ,Rational>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double  ,Rational>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer ,Rational>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational,Rational>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational,Interval>();
+    CGAL::test_explicit_interoperable_from_to<int     ,Rational>();
+    CGAL::test_explicit_interoperable_from_to<double  ,Rational>();
+    CGAL::test_implicit_interoperable_from_to<Integer ,Rational>();
+    CGAL::test_implicit_interoperable_from_to<Rational,Rational>();
+    CGAL::test_explicit_interoperable_from_to<Rational,Interval>();
 
     
     typedef CGAL::Sqrt_extension<Integer  , Integer> Extn_1;  
@@ -174,36 +174,36 @@ void AT_coercion_test_for_cgal_types_rat(){
     typedef CGAL::Sqrt_extension<Extn_1   , Integer> Extn_2d;
 
     typedef CGAL::Sqrt_extension<Rational  , Integer> Extn_rat_int; 
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int         ,Extn_rat_int>();
-//  CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double      ,Extn_rat_int>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer     ,Extn_rat_int>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational    ,Extn_rat_int>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_1      ,Extn_rat_int>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_rat_int,Extn_rat_int>();
+    CGAL::test_explicit_interoperable_from_to<int         ,Extn_rat_int>();
+//  CGAL::test_explicit_interoperable_from_to<double      ,Extn_rat_int>();
+    CGAL::test_explicit_interoperable_from_to<Integer     ,Extn_rat_int>();
+    CGAL::test_explicit_interoperable_from_to<Rational    ,Extn_rat_int>();
+    CGAL::test_explicit_interoperable_from_to<Extn_1      ,Extn_rat_int>();
+    CGAL::test_explicit_interoperable_from_to<Extn_rat_int,Extn_rat_int>();
         
     typedef CGAL::Sqrt_extension<Rational  , Rational> Extn_rat_1;
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int         ,Extn_rat_1>();
-//  CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double      ,Extn_rat_1>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer     ,Extn_rat_1>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational    ,Extn_rat_1>();
-//  CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_1      ,Extn_rat_1>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_rat_1,Extn_rat_1>();
+    CGAL::test_explicit_interoperable_from_to<int         ,Extn_rat_1>();
+//  CGAL::test_explicit_interoperable_from_to<double      ,Extn_rat_1>();
+    CGAL::test_explicit_interoperable_from_to<Integer     ,Extn_rat_1>();
+    CGAL::test_explicit_interoperable_from_to<Rational    ,Extn_rat_1>();
+//  CGAL::test_explicit_interoperable_from_to<Extn_1      ,Extn_rat_1>();
+    CGAL::test_explicit_interoperable_from_to<Extn_rat_1,Extn_rat_1>();
 
     typedef CGAL::Sqrt_extension<Extn_rat_1, Extn_rat_1 > Extn_rat_2n;
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int         ,Extn_rat_2n>();
-//  CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double      ,Extn_rat_2n>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer     ,Extn_rat_2n>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational    ,Extn_rat_2n>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_rat_1  ,Extn_rat_2n>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_rat_2n ,Extn_rat_2n>();
+    CGAL::test_explicit_interoperable_from_to<int         ,Extn_rat_2n>();
+//  CGAL::test_explicit_interoperable_from_to<double      ,Extn_rat_2n>();
+    CGAL::test_explicit_interoperable_from_to<Integer     ,Extn_rat_2n>();
+    CGAL::test_explicit_interoperable_from_to<Rational    ,Extn_rat_2n>();
+    CGAL::test_explicit_interoperable_from_to<Extn_rat_1  ,Extn_rat_2n>();
+    CGAL::test_explicit_interoperable_from_to<Extn_rat_2n ,Extn_rat_2n>();
 
     typedef CGAL::Sqrt_extension<Extn_rat_1, Rational> Extn_rat_2d;
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int         ,Extn_rat_2d>();
-//  CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double      ,Extn_rat_2d>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer     ,Extn_rat_2d>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational    ,Extn_rat_2d>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_rat_1  ,Extn_rat_2d>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_rat_2d ,Extn_rat_2d>();    
+    CGAL::test_explicit_interoperable_from_to<int         ,Extn_rat_2d>();
+//  CGAL::test_explicit_interoperable_from_to<double      ,Extn_rat_2d>();
+    CGAL::test_explicit_interoperable_from_to<Integer     ,Extn_rat_2d>();
+    CGAL::test_explicit_interoperable_from_to<Rational    ,Extn_rat_2d>();
+    CGAL::test_explicit_interoperable_from_to<Extn_rat_1  ,Extn_rat_2d>();
+    CGAL::test_explicit_interoperable_from_to<Extn_rat_2d ,Extn_rat_2d>();    
 }
 
 
@@ -224,27 +224,27 @@ void AT_coercion_test_for_cgal_types_fws(){
     typedef CGAL::Sqrt_extension<Extn_rat_1, Extn_rat_1 > Extn_rat_2n;
     typedef CGAL::Sqrt_extension<Extn_rat_1, Rational>    Extn_rat_2d; 
     
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int         ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double      ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer     ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational    ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_1      ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_2n     ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_2d     ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_rat_int,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_rat_1  ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_rat_2n ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Extn_rat_2d ,Real>();
+    CGAL::test_explicit_interoperable_from_to<int         ,Real>();
+    CGAL::test_explicit_interoperable_from_to<double      ,Real>();
+    CGAL::test_explicit_interoperable_from_to<Integer     ,Real>();
+    CGAL::test_explicit_interoperable_from_to<Rational    ,Real>();
+    CGAL::test_explicit_interoperable_from_to<Extn_1      ,Real>();
+    CGAL::test_explicit_interoperable_from_to<Extn_2n     ,Real>();
+    CGAL::test_explicit_interoperable_from_to<Extn_2d     ,Real>();
+    CGAL::test_explicit_interoperable_from_to<Extn_rat_int,Real>();
+    CGAL::test_explicit_interoperable_from_to<Extn_rat_1  ,Real>();
+    CGAL::test_explicit_interoperable_from_to<Extn_rat_2n ,Real>();
+    CGAL::test_explicit_interoperable_from_to<Extn_rat_2d ,Real>();
 
   // direct casts 
   // Integer;
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer,Interval>();
+    CGAL::test_explicit_interoperable_from_to<Integer,Interval>();
   
   // Rational
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational,Interval>();
+    CGAL::test_explicit_interoperable_from_to<Rational,Interval>();
   
   // Interval
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Interval,Interval>();
+    CGAL::test_explicit_interoperable_from_to<Interval,Interval>();
 }
 
 // TODO: We have no NT compactified, Matrix, Vector, etc. yet
@@ -389,44 +389,44 @@ void test_vector_d(){
 
 int main(){
     
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short,int>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short,long>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short,long long>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short,float>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short,double>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short,long double>();
+    CGAL::test_implicit_interoperable_from_to<short,int>();
+    CGAL::test_implicit_interoperable_from_to<short,long>();
+    CGAL::test_implicit_interoperable_from_to<short,long long>();
+    CGAL::test_implicit_interoperable_from_to<short,float>();
+    CGAL::test_implicit_interoperable_from_to<short,double>();
+    CGAL::test_implicit_interoperable_from_to<short,long double>();
     
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int,long>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int,long long>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int,float>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int,double>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int,long double>();
+    CGAL::test_implicit_interoperable_from_to<int,long>();
+    CGAL::test_implicit_interoperable_from_to<int,long long>();
+    CGAL::test_implicit_interoperable_from_to<int,float>();
+    CGAL::test_implicit_interoperable_from_to<int,double>();
+    CGAL::test_implicit_interoperable_from_to<int,long double>();
     
    
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<long,long long>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<long,float>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<long,double>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<long,long double>();
+    CGAL::test_implicit_interoperable_from_to<long,long long>();
+    CGAL::test_implicit_interoperable_from_to<long,float>();
+    CGAL::test_implicit_interoperable_from_to<long,double>();
+    CGAL::test_implicit_interoperable_from_to<long,long double>();
     
   
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<long long,float>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<long long,double>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<long long,long double>();
+    CGAL::test_implicit_interoperable_from_to<long long,float>();
+    CGAL::test_implicit_interoperable_from_to<long long,double>();
+    CGAL::test_implicit_interoperable_from_to<long long,long double>();
 
     
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<float,double>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<float,long double>();
+    CGAL::test_implicit_interoperable_from_to<float,double>();
+    CGAL::test_implicit_interoperable_from_to<float,long double>();
     
    
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double,long double>();
+    CGAL::test_implicit_interoperable_from_to<double,long double>();
     
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short,short>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int,int>();   
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<long,long>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<long long,long long>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<float,float>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double,double>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<long double,long double>();
+    CGAL::test_implicit_interoperable_from_to<short,short>();
+    CGAL::test_implicit_interoperable_from_to<int,int>();   
+    CGAL::test_implicit_interoperable_from_to<long,long>();
+    CGAL::test_implicit_interoperable_from_to<long long,long long>();
+    CGAL::test_implicit_interoperable_from_to<float,float>();
+    CGAL::test_implicit_interoperable_from_to<double,double>();
+    CGAL::test_implicit_interoperable_from_to<long double,long double>();
 
 //    test_compactified();
 //    test_tendency();

@@ -29,8 +29,121 @@
 
 // These are test functions for the Coercion_traits
 CGAL_BEGIN_NAMESPACE
-    namespace INTERN_COERCION_TRAITS {
 
+// this test implicit interoperable 
+template< class A, class B, class Type > void test_implicit_interoperable();
+template< class FROM, class TO > void test_implicit_interoperable_from_to();
+
+// this is testing explicit interoperability only
+template <class A, class B, class Type> void test_explicit_interoperable();
+template  <class FROM, class TO> void test_explicit_interoperable_from_to();
+
+namespace INTERN_COERCION_TRAITS {
+
+template <typename A, typename B>
+void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_false){};
+
+template <typename A, typename B>
+void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_true){
+  // two sided test for interoperability with int  
+  A a;
+  B b;
+  a = A(-5);
+  b = B(-2);
+  // a < b 
+  assert (!(a == b));
+  assert ( (a != b));
+  assert ( (a <  b));
+  assert ( (a <= b));
+  assert (!(a >  b));
+  assert (!(a >= b));
+    
+  assert (!(b == a));
+  assert ( (b != a));
+  assert (!(b <  a));
+  assert (!(b <= a));
+  assert ( (b >  a));
+  assert ( (b >= a)); 
+
+  // a > b 
+  a = A(5);
+  b = B(2);
+  assert (!(a == b));
+  assert ( (a != b));
+  assert (!(a <  b));
+  assert (!(a <= b));
+  assert ( (a >  b));
+  assert ( (a >= b));
+    
+  assert (!(b == a));
+  assert ( (b != a));
+  assert ( (b <  a));
+  assert ( (b <= a));
+  assert (!(b >  a));
+  assert (!(b >= a));
+
+  // a == b
+  a = A(3);
+  b = B(3);
+  assert ( (a == b));
+  assert (!(a != b));
+  assert (!(a <  b));
+  assert ( (a <= b));
+  assert (!(a >  b));
+  assert ( (a >= b));
+    
+  assert ( (b == a));
+  assert (!(b != a));
+  assert (!(b <  a));
+  assert ( (b <= a));
+  assert (!(b >  a));
+  assert ( (b >= a));
+};
+
+
+template <typename A, typename B>
+void test_implicit_interoperable_for_algebraic_structure 
+(CGAL::Null_tag){};
+
+template <typename A, typename B>
+void test_implicit_interoperable_for_algebraic_structure 
+(CGAL::Integral_domain_without_division_tag){
+  typedef CGAL::Coercion_traits<A,B> CT; 
+  typedef typename CT::Type C; 
+  A a(6); B b(2);
+  assert(a + b == C(8));
+  assert(a - b == C(4));
+  assert(a * b == C(12));
+  
+  assert(b + a == C(8));
+  assert(b - a == C(-4));
+  assert(b * a == C(12));
+  
+  C c; 
+  c = C(4); assert((c+= A(3)) == C(7));
+  c = C(4); assert((c-= A(3)) == C(1));
+  c = C(4); assert((c*= A(3)) == C(12));
+  
+  c = C(4); assert((c+= B(3)) == C(7));
+  c = C(4); assert((c-= B(3)) == C(1));
+  c = C(4); assert((c*= B(3)) == C(12));  
+};
+
+template <typename A, typename B>
+void test_implicit_interoperable_for_algebraic_structure 
+(CGAL::Field_tag){
+  test_implicit_interoperable_for_algebraic_structure<A,B>
+    (CGAL::Integral_domain_without_division_tag());
+  
+  typedef CGAL::Coercion_traits<A,B> CT; 
+  typedef typename CT::Type C; 
+  A a(6); B b(2);
+  assert(a / b == C(3));
+  assert(b / a == C(2)/C(6)); 
+  C c; 
+  c = C(4); assert((c /= A(2)) == C(2));
+  c = C(4); assert((c /= B(2)) == C(2));
+};
 
 template< class A, class B, class Type, class Compare >
 class Test_compare {
@@ -163,18 +276,15 @@ class Test_mod< A, B, Type, CGAL::Null_functor > {
 };
 
 
-template< class Type >
-void test_implicit_construction( Type a ) {
-  (void)a;
-}
+template< class Type > void test_implicit_construction(Type) {}
 
 template< class A, class B, class Type, class Are_implicit_interoperable >
-class Implicit_interoperability_test {
+class Implicit_test_implicit_interoperable {
   public:
     void operator()() {
-      // test implicit construction
+      // enforce implicit construction from A/B to Type 
       // Results in 'no matching function for call to...' compile error, if type Type
-      //  is not implicit constructable from A and B (which is part of the concept)
+      // is not implicit constructable from A and B (which is part of the concept)
       test_implicit_construction<Type>(A(1));
       test_implicit_construction<Type>(B(2));
       
@@ -185,88 +295,87 @@ class Implicit_interoperability_test {
 };
 
 template< class A, class B, class Type >
-class Implicit_interoperability_test<A,B,Type, CGAL::Tag_false > {
+class Implicit_test_implicit_interoperable<A,B,Type, CGAL::Tag_false > {
   public:
     void operator()() {}
 };
 
 template< class A, class B, class Type >
-void interoperability_test_one_way() {
-  typedef CGAL::Coercion_traits< A, B > CT;
-
-  assert((::boost::is_same< typename CT::Are_implicit_interoperable,
-                                      CGAL::Tag_true 
-                                    >::value));                                    
-  assert((::boost::is_same< typename CT::Type, Type >::value));
+void test_implicit_interoperable_one_way() {
   
-  // Implicit_interoperability_test
-  Implicit_interoperability_test< A, B, Type, 
-        typename CT::Are_implicit_interoperable >()();
-  
-  Test_integral_division< A, B, Type, 
-        typename CGAL::Algebraic_structure_traits<Type>::Integral_division >()();
-  
-  Test_gcd< A, B, Type, 
-        typename CGAL::Algebraic_structure_traits<Type>::Gcd >()();
+  typedef CGAL::Coercion_traits<A,B> CT; 
+  typedef typename CT::Type C; 
+  typedef typename CT::Are_implicit_interoperable Are_implicit_interoperable;
 
-  Test_div_mod< A, B, Type, 
-          typename CGAL::Algebraic_structure_traits<Type>::Div_mod >()();
-
-  Test_div< A, B, Type, 
-          typename CGAL::Algebraic_structure_traits<Type>::Div >()();
-  Test_mod< A, B, Type, 
-          typename CGAL::Algebraic_structure_traits<Type>::Mod >()();
-  Test_compare< A, B, Type,
-          typename CGAL::Real_embeddable_traits<Type>::Compare >()();
+  BOOST_STATIC_ASSERT(
+      (::boost::is_same<Are_implicit_interoperable, CGAL::Tag_true>::value));
+  assert((::boost::is_same<Are_implicit_interoperable, CGAL::Tag_true>::value));  
+  
+  typename CGAL::Real_embeddable_traits<C>::Is_real_embeddable is_real_embeddable;
+  test_implicit_interoperable_for_real_embeddable<A,B>(is_real_embeddable);
+  typename CGAL::Algebraic_structure_traits<C>::Algebraic_category category;
+  test_implicit_interoperable_for_algebraic_structure<A,B>(category);
 }
 
-template< class A, class B, class Type > 
-void interoperability_test() {
-  interoperability_test_one_way< A, B, Type >();
-  interoperability_test_one_way< B, A, Type >();
-}
 
-template< class FROM, class TO >
-void direct_interoperability_from_to_test() {
-  interoperability_test< FROM, TO, TO >();
-}
 
+// test for explicit interoperable types 
 template <class A, class B, class RT>
-void coercion_traits_test_one_way(){
-    typedef CGAL::Coercion_traits<A,B> CT;
-    {
-        typedef typename CT::Type Type;
-        typename CT::Cast cast;
-        assert((::boost::is_same< 
-                                      typename CT::Are_explicit_interoperable,
-                                      CGAL::Tag_true 
-                                          >::value));
-        assert((::boost::is_same<Type,RT>::value));
-        A a(3);
-        B b(3);
-        RT  rt(3);
-        assert(rt==cast(a));
-        assert(rt==cast(b)); 
-    }
-}
-
-template <class A, class B, class Type>
-void coercion_traits_test(){
-    coercion_traits_test_one_way<A,B,Type>();
-    coercion_traits_test_one_way<B,A,Type>();   
-    
-    // TODO: Is this here OK?
-  if((::boost::is_same< typename CGAL::Coercion_traits< A, B >::Are_implicit_interoperable,
-                                      CGAL::Tag_true 
-                                    >::value)) {
-    interoperability_test< A, B, Type >();
-  }
+void test_explicit_interoperable_one_way(){
+  typedef CGAL::Coercion_traits<A,B> CT;
+  typedef typename CT::Type Type;
   
-}
-template  <class FROM, class TO>
-void direct_coercion_from_to_test(){
-    coercion_traits_test<FROM,TO,TO>();
+  assert(
+      (::boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
+  assert((::boost::is_same<Type,RT>::value));
+  
+  typename CT::Cast cast;
+  A a(3);
+  B b(3);
+  RT  rt(3);
+  assert(rt==cast(a));
+  assert(rt==cast(b)); 
+  
+  // Binary Functors should support explicit interoperable types 
+  typedef typename CGAL::Algebraic_structure_traits<Type>::Integral_division Idiv;
+  Test_integral_division< A, B, Type, Idiv>()();
+  typedef typename CGAL::Algebraic_structure_traits<Type>::Gcd Gcd;
+  Test_gcd< A, B, Type, Gcd >()();
+  typedef typename CGAL::Algebraic_structure_traits<Type>::Div_mod Div_mod;
+  Test_div_mod< A, B, Type, Div_mod>()();
+  typedef  typename CGAL::Algebraic_structure_traits<Type>::Div Div;
+  Test_div< A, B, Type, Div >()();
+  typedef typename CGAL::Algebraic_structure_traits<Type>::Mod Mod;
+  Test_mod< A, B, Type, Mod >()();
+  typedef typename CGAL::Real_embeddable_traits<Type>::Compare Compare;
+  Test_compare< A, B, Type, Compare >()();
 }
 
 }// namespace INTERN_COERCION_TRAITS
+
+// this test implicit interoperable 
+template< class A, class B, class Type > 
+void test_implicit_interoperable() {
+  INTERN_COERCION_TRAITS::test_implicit_interoperable_one_way< A, B, Type >();
+  INTERN_COERCION_TRAITS::test_implicit_interoperable_one_way< B, A, Type >(); 
+  INTERN_COERCION_TRAITS::test_explicit_interoperable_one_way<A,B,Type>();
+  INTERN_COERCION_TRAITS::test_explicit_interoperable_one_way<B,A,Type>();  
+}
+
+template< class FROM, class TO >
+void test_implicit_interoperable_from_to() {
+  test_implicit_interoperable< FROM, TO, TO >();
+}
+
+// this is testing explicit interoperability only
+template <class A, class B, class Type>
+void test_explicit_interoperable(){
+    INTERN_COERCION_TRAITS::test_explicit_interoperable_one_way<A,B,Type>();
+    INTERN_COERCION_TRAITS::test_explicit_interoperable_one_way<B,A,Type>();  
+}
+  
+template  <class FROM, class TO>
+void test_explicit_interoperable_from_to(){
+    test_explicit_interoperable<FROM,TO,TO>();
+}
 CGAL_END_NAMESPACE

@@ -12,7 +12,7 @@
 #include <CGAL/Test/_test_coercion_traits.h>
 
 template<class A, class B> void test_coercion_from_to(A, B){
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<A,B>();
+  CGAL::test_explicit_interoperable<A,B,B>();
 };
 
 template <typename AK>
