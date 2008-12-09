@@ -39,7 +39,6 @@
 #include <CGAL/Polynomial/Interpolator.h>
 #include <CGAL/Polynomial/prs_resultant.h>
 #include <CGAL/Polynomial/bezout_matrix.h>
-#include <CGAL/Polynomial/subresultants.h>
 
 #include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
