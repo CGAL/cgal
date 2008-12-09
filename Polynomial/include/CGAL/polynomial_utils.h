@@ -315,6 +315,18 @@ template<typename NT> inline
 Polynomial<NT> reversal(const Polynomial<NT>& p)
 { Polynomial<NT> q(p); q.reversal(); return q; }
 
+
+// CGALi::is_square_free (undocumented)
+namespace CGALi {
+template< class Polynomial > 
+bool is_square_free( const Polynomial& p ) {
+  return typename CGAL::Polynomial_traits_d< Polynomial>::
+    Is_square_free()( p );
+}
+
+} // namespace CGALi
+
+
 CGAL_END_NAMESPACE
 
 #undef CGAL_UNARY_POLY_FUNCTION

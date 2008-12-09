@@ -1695,25 +1695,6 @@ public:
 //------------ Rebind ----------- 
 };
 
-
-// functor adapting functions for some functors (undocumented)
-namespace CGALi {
-
-template< class Polynomial >
-Polynomial make_square_free( const Polynomial& p ) {
-  return typename CGAL::Polynomial_traits_d< Polynomial>::
-    Make_square_free()( p );
-}
-
-template< class Polynomial > 
-bool is_square_free( const Polynomial& p ) {
-  return typename CGAL::Polynomial_traits_d< Polynomial>::
-    Is_square_free()( p );
-}
-
-} // namespace CGALi
-
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_POLYNOMIAL_TRAITS_D_H
