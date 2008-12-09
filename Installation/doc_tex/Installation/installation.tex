@@ -830,10 +830,13 @@ the header files and the full pathnames of the Qt3 libraries.
 \index{cgal!general-config-cmake-vars-dep-qt4}\index{cgal configuration cmake variables - dependencies - qt4}
 \subsubsection{Qt4 library}
 
-In most cases, if Qt4 is not automatically found, setting the \texttt{QTDIR} 
-environment variable is enough. If it is not, you can specify the directory containing 
-the header files and the full pathnames of the Qt4 libraries.
-
+The \cmake\ scripts that search for Qt4 can use the introspection feature
+of the tool \texttt{qmake} present in Qt4 distributions. If Qt4 is not
+automatically found, it is sufficient to set the \texttt{PATH}
+environment variable so that Qt4 \texttt{qmake} tool is in the path, and
+before Qt3 \texttt{qmake} is that one exists. One can alternatively set the
+\cmake\ variable \texttt{QT\_QMAKE\_EXECUTABLE}. The following variables
+should be then filled automatically by \cmake{}.
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
