@@ -17,7 +17,6 @@ Algebraic_foundations/examples/Algebraic_foundations/fraction_traits.cpp -text
 Algebraic_foundations/examples/Algebraic_foundations/implicit_interoperable_dispatch.cpp -text
 Algebraic_foundations/examples/Algebraic_foundations/integralize.cpp -text
 Algebraic_foundations/examples/Algebraic_foundations/interoperable.cpp -text
-Algebraic_foundations/include/CGAL/Test/_test_implicit_interoperable.h -text
 Algebraic_foundations/include/CGAL/ipower.h -text
 Algebraic_foundations/package_info/Algebraic_foundations/maintainer -text
 Algebraic_foundations/test/Algebraic_foundations/ipower.cpp -text
