@@ -45,7 +45,7 @@ To install CGAL, you should:
        - zlib          A compression library, used by the Surface Mesh Generator demo
                        http://www.zlib.net  
                        
-       - taucs         A sparse matrix solver, used by the Surface parametriation package
+       - taucs         A sparse matrix solver, used by the Surface parametrization package
 
        - libQGLViewer  A 3D widget for Qt4, used by some 3D demos
                        http://www.libqglviewer.com
@@ -166,7 +166,7 @@ To install CGAL, you should:
   command line version of VC.
 
   From within cygwin, run CMake without arguments and check that NMake Makefiles
-  are supported to confirm this is NOT the cygwin version of CMake (and if neccesary,
+  are supported to confirm this is NOT the cygwin version of CMake (and if necessary,
   arrange the order of directories in $PATH to make sure the right one is used).
 
   Edit the cygwin.bat launcher and add a call to the vsvars32.bat that corresponds
@@ -272,7 +272,7 @@ To install CGAL, you should:
   it's new) so check again all variables.
   If any variable shows up just now (for the first time, in red),
   it means some previously accepted variable caused this one to
-  become active; edit it, if neccesary, or accept its default
+  become active; edit it, if necessary, or accept its default
   value by pressing "configure" once again.
   Once pressing configure doesn't result in new variables being displayed,
   and all variables have their correct value, press OK to proceed with
