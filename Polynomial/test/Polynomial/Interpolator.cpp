@@ -51,8 +51,9 @@ void test_interpolator(){
     //std::cout << "end interpolate: " << PT::d << std::endl;
 }
 
-int main(){
+#if CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL
 
+int main(){
 
     CGAL::set_pretty_mode(std::cout);
 
@@ -86,3 +87,11 @@ int main(){
     test_interpolator<MPolynomial_3>();
 }
 
+#else
+
+int main(){
+  std::cout << " Test needs a default arithmetic kernel " << std::endl;  
+  return 0; 
+}
+
+#endif // CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL

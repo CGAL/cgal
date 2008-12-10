@@ -65,6 +65,7 @@ void test_resultant(){
   //std::cout << "end resultant: " << PT::d << std::endl;
 }
    
+#if CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL
 
 int main(){
 
@@ -117,5 +118,13 @@ int main(){
   test_resultant<MPolynomial_3>();
 }
 
+#else
+
+int main(){
+  std::cout << " Test needs a default arithmetic kernel " << std::endl;  
+  return 0; 
+}
+
+#endif // CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL
  
 
