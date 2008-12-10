@@ -17,6 +17,7 @@ DO_RPM=""                # Also build RPMs (no RPMs by default)
 DO_PUBLIC=""             # Also build the public versions
 DO_IT=""                 # Real mode (svn tag, copy to HTTP server), versus local testing
 DO_NOT_TAG=""            # If set, do not call svn tag
+DO_TAG=""                # If set, svn tag is called anyway
 SOURCES_DIR="$PWD/trunk" # SVN working copy directory, default is "$PWD/trunk"
 VERBOSE=""               # Verbose mode (displays log to standard err)
 
@@ -33,8 +34,9 @@ while [ $1 ]; do
             echo '                 master! Does write operations (updating the version_number,'
             echo '                 svn tag, copying on the web server...)'
             echo '  --do-not-tag : when used with --do-it, the tag is not created.'
-	    echo '    --verbose : print log to standard output, instead of the log file'
-            echo '    <packages directory> : the directory containing the packages [default is trunk]'
+            echo '  --tag        : when used without --do-it, the tag is created but files are not published'
+	    echo '  --verbose    : print log to standard output, instead of the log file'
+            echo '  <packages directory> : the directory containing the packages [default is trunk]'
             exit
         ;;
         --rpm)
@@ -47,6 +49,10 @@ while [ $1 ]; do
         ;;
         --do-it)
             DO_IT="y"
+            shift; continue
+        ;;
+        --tag)
+            DO_TAG="y"
             shift; continue
         ;;
         --do-not-tag)
@@ -88,6 +94,7 @@ if [ -f $HOME/.cgal_create_new_release_rc ]; then
   . $HOME/.cgal_create_new_release_rc
 fi
 
+[ -n "$DO_IT" -a -z "$DO_NOT_TAG" ] && DO_TAG="y"
 [ -z "$DO_IT" ] && HTML_DIR=$TMPDIR/tmp
 [ -d "$HTML_DIR" ] || mkdir "$HTML_DIR"
 
@@ -127,7 +134,7 @@ fi
 # Compute the internal release number.
 if [ -r $VERSION_FILE ]; then
   INTERNAL_NUMBER=$(( `cat $VERSION_FILE` + 1 ))
-  [ "$DO_IT" ] && printf "%d\n" "${INTERNAL_NUMBER}" > $VERSION_FILE
+  [ -n "$DO_TAG" ] && printf "%d\n" "${INTERNAL_NUMBER}" > $VERSION_FILE
 else
   INTERNAL_NUMBER=$((`svn ls $SVNCGAL/tags/internal-releases | awk "/${MAJOR_NUMBER}\\.${MINOR_NUMBER}${BUGFIX_STRING}/ "'{FS="-|/"; print $4}' | sort -n | tail -1` + 1 ))
 fi
@@ -162,7 +169,7 @@ cp "${release_name}.tar.gz" "${HTML_DIR}"
 echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
 
 # Tag
-if [ "$DO_IT" -a -z "$DO_NOT_TAG" ]; then
+if [ -n "$DO_TAG" ]; then
 #    mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
 #
 #You can fetch it at :
