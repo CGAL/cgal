@@ -203,9 +203,15 @@ void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   insert(arr, c, pl, visitor, Is_x_monotone());
 }
 
+// In some compilers there is a template deduction disambiguity between this
+// function and the function receiving two InputIterator.
+// For now the solution is to add a dummy variable at the end (referring
+// to point-location). Maybe the proper solution is to use boost::enable_if
+// together with appropriate tag.
 template <class GeomTraits, class TopTraits, class Curve, class PointLocation>
 void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-             const Curve& c, const PointLocation& pl)
+             const Curve& c, const PointLocation& pl,
+	     typename PointLocation::Point_2*)
 {
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>  Arr;
   typedef typename TopTraits::Zone_insertion_visitor       Zone_visitor;

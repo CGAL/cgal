@@ -2574,6 +2574,11 @@ protected:
 // Declarations of the various global insertion and removal functions.
 //-----------------------------------------------------------------------------
 
+// In some compilers there is a template deduction disambiguity between this
+// function and the following function receiving two InputIterator.
+// For now the solution is to add a dummy variable at the end (referring
+// to point-location). Maybe the proper solution is to use boost::enable_if
+// together with appropriate tag.
 /*!
  * Insert a curve or x-monotone curve into the arrangement (incremental 
  * insertion).
@@ -2585,7 +2590,8 @@ protected:
  */
 template <class GeomTraits, class TopTraits, class Curve, class PointLocation>
 void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-                   const Curve& c, const PointLocation& pl);
+	     const Curve& c, const PointLocation& pl,
+	     typename PointLocation::Point_2* = 0);
 
 /*!
  * Insert a curve or x-monotone curve into the arrangement (incremental
