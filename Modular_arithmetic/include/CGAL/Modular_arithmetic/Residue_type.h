@@ -209,9 +209,12 @@ public:
     static int get_current_prime(){
       return get_prime_int();
     }
-    int  get_value() const{
-        return int(x_);
-    }
+  
+  int  get_value() const{
+    CGAL_precondition(2*x_ <  get_prime());
+    CGAL_precondition(2*x_ > -get_prime());
+    return int(x_);
+  }
     
 private:
     double x_;
