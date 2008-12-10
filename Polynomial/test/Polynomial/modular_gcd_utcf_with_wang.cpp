@@ -31,13 +31,13 @@
     the gcd of univariate polynomials with (nested) sqrt-extensions
 */
 
+#include <CGAL/Polynomial/modular_gcd_utcf_with_wang.h>
 #define MY_FUNCTION_CALL modular_gcd_utcf_with_wang
+
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/test_modular_gcd.h>
 
 int main(){
-    
-
   // Set wrong rounding mode to test modular arithmetic 
   CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
 

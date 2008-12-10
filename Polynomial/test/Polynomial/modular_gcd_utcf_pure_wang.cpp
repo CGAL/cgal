@@ -31,7 +31,9 @@
     compute the gcd of univariate polynomials with (nested) sqrt-extensions
 */
 
+#include <CGAL/Polynomial/modular_gcd_utcf_pure_wang.h>
 #define MY_FUNCTION_CALL modular_gcd_utcf_pure_wang
+
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/test_modular_gcd.h>
 
