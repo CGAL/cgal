@@ -74,6 +74,10 @@ void test_AT(){
   CGAL::Test_Pol::test_multiple_dimensions(PT());   
   }
   {
+  //  Enforce IEEE double precision and to nearest before 
+  //  using modular arithmetic
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+
   typedef CGAL::Polynomial< CGAL::Residue > Poly;
   typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
@@ -83,8 +87,6 @@ void test_AT(){
   std::cerr << 
     "----------------------------------------------------------------------"
             << std::endl;    
- //  Enforce IEEE double precision before using modular arithmetic
-  CGAL::Set_ieee_double_precision pfr;
   CGAL::Test_Pol::test_multiple_dimensions(PT());   
   }
 }    

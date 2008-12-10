@@ -105,8 +105,8 @@ int main(){
   test_resultant<E2Polynomial_1>();
 
 
-  // Enforce IEEE double precision before using modular arithmetic
-  CGAL::FPU_set_cw(CGAL_FE_TONEAREST);
+  // Enforce IEEE double precision and to nearest before using modular arithmetic
+  CGAL::Protect_FPU_rounding<true> pfr2(CGAL_FE_TONEAREST);
 
   typedef CGAL::Polynomial<CGAL::Residue>  MPolynomial_1;
   typedef CGAL::Polynomial<MPolynomial_1>  MPolynomial_2;
