@@ -63,8 +63,8 @@ Polynomial<NT> modular_gcd_utcf_dfai(
         const Polynomial<NT>& FF1_ ,
         const Polynomial<NT>& FF2_ ){
 
-  // Enforce IEEE double precision before using modular arithmetic
-  CGAL::Set_ieee_double_precision pfr;
+  // Enforce IEEE double precision and to nearest before using modular arithmetic
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
 
     typedef Polynomial<NT> Poly;
     Poly FF1 = FF1_;

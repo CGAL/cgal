@@ -242,8 +242,8 @@ Coeff resultant_modularize(
         const CGAL::Polynomial<Coeff>& G, 
         CGAL::Tag_true){
     
-  // Enforce IEEE double precision before using modular arithmetic
-  CGAL::Set_ieee_double_precision pfr;
+  // Enforce IEEE double precision and to nearest before using modular arithmetic
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
   
 
     typedef Polynomial_traits_d<CGAL::Polynomial<Coeff> > PT;

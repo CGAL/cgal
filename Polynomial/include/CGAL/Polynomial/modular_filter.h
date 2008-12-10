@@ -42,8 +42,8 @@ namespace CGALi {
         const Polynomial<NT>& p2,
         ::CGAL::Tag_true){
       
-      // Enforce IEEE double precision before using modular arithmetic
-      CGAL::Set_ieee_double_precision pfr;
+      // Enforce IEEE double precision and to nearest before using modular arithmetic
+      CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
       
         CGAL_precondition(p1.degree()!=-1);
         CGAL_precondition(p2.degree()!=-1);
@@ -130,8 +130,8 @@ bool may_have_common_factor(const Polynomial<NT>& P,
 template <class NT> inline
 bool may_have_multiple_factor_(const Polynomial<NT>& P, CGAL::Tag_true ){
 
-  // Enforce IEEE double precision before using modular arithmetic
-  CGAL::Set_ieee_double_precision pfr;
+  // Enforce IEEE double precision and to nearest before using modular arithmetic
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
 
     // Create modular images of p
     typedef Polynomial<NT>                Polynomial_nt;
