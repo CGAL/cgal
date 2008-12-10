@@ -1336,6 +1336,7 @@ Convex_hull_2/doc_tex/Convex_hull_2/convex_hull.png -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text svneol=unset#application/postscript
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#image/gif
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#application/pdf
+Convex_hull_3/demo/Convex_hull_3/CMakeLists.txt -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.png -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.wrl.gz -text
 Core/src/CGALCore/all_files.cpp -text
@@ -1575,6 +1576,7 @@ Generator/doc_tex/Generator/generators_prog2.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/generators_prog2.pdf -text svneol=unset#application/pdf
 Generator/doc_tex/Generator/generators_prog2.ps -text svneol=unset#application/postscript
 Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#image/gif
+Geomview/demo/Geomview/CMakeLists.txt -text
 Geomview/doc_tex/Geomview/geomview.gif -text
 GraphicsView/GraphicsView.odp -text
 GraphicsView/TODO -text
@@ -1777,6 +1779,7 @@ Installation/test/Installation/link_to_CGAL_ImageIO.cpp -text
 Installation/test/Installation/link_to_CGAL_PDB.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt3.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt4.cpp -text
+Interpolation/demo/Interpolation/CMakeLists.txt -text
 Interpolation/doc_tex/Interpolation/interpolation.png -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
@@ -4049,6 +4052,7 @@ Triangulation_2/doc_tex/Triangulation_2_ref/insert3.gif -text svneol=unset#image
 Triangulation_2/doc_tex/Triangulation_2_ref/neighbors.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/remove.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/walk.gif -text svneol=unset#image/gif
+Triangulation_3/demo/Triangulation_3/CMakeLists.txt -text
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.eps -text svneol=unset#application/postscript
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.pdf -text svneol=unset#application/pdf

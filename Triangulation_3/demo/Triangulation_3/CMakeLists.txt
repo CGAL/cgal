@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Polyhedron_IO_Demo )
+project( Triangulation_3_Demo )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -20,8 +20,10 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  create_single_source_cgal_program( "geomview_demo.cpp" )
-  create_single_source_cgal_program( "viewpoint2off.cpp" )
+  create_single_source_cgal_program( "demo.cpp" )
+  create_single_source_cgal_program( "demo_color.cpp" )
+  create_single_source_cgal_program( "demo_remove.cpp" )
+  create_single_source_cgal_program( "demo_voronoi.cpp" )
 
 else()
   
