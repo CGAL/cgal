@@ -76,8 +76,8 @@ void test_modular_traits(){
 
 int main()
 { 
-  // Enforce IEEE double precision before using modular arithmetic
-  CGAL::Set_ieee_double_precision pfr;
+  // Enforce IEEE double precision and rounding mode to nearest
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
   
     test_modular_traits<int>();
    

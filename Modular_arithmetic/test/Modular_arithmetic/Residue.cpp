@@ -15,8 +15,9 @@
 
 int main()
 {
-    // Enforce IEEE double precision (on i386/Windows)
-    CGAL::Set_ieee_double_precision pfr;
+    // Enforce IEEE double precision and rounding mode to nearest  
+    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+
     typedef CGAL::Residue NT;
     typedef CGAL::Field_tag Tag;
     typedef CGAL::Tag_true Is_exact;

@@ -26,7 +26,11 @@ template< typename Polynomial >
 bool may_have_common_factor(
     const Polynomial& p1, const Polynomial& p2, CGAL::Tag_true){
   std::cout<< "The type is modularizable" << std::endl; 
-  
+
+  // Enforce IEEE double precision and rounding mode to nearest 
+  // before useing modular arithmetic 
+  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
+ 
   // Use Modular_traits to convert to polynomials with modular coefficients
   typedef CGAL::Modular_traits<Polynomial> MT;
   typedef typename MT::Residue_type MPolynomial;
@@ -77,8 +81,6 @@ Polynomial modular_filtered_gcd(const Polynomial& p1, const Polynomial& p2){
 }
 
 int main(){
-  // Enforce IEEE double precision
-  CGAL::Set_ieee_double_precision pfr;
   CGAL::set_pretty_mode(std::cout);
     
   typedef CGAL::Gmpz NT; 

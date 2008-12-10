@@ -32,8 +32,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-
 class Residue;
     
 Residue operator + (const Residue&);
@@ -107,18 +105,20 @@ private:
     /* Quick integer rounding, valid if a<2^51. for double */ 
     static inline 
     double RES_round (double a){
-      // use Set_ieee_double_precision pfr;
-      // CGAL_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+      // call CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST)
+      // before using modular arithmetic 
+      CGAL_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
       return ( (a + CST_CUT)  - CST_CUT);      
     }
-
 
     /* Big modular reduction (e.g. after multiplication) */
     static inline 
     double RES_reduce (double a){
-      return a - get_prime() * RES_round(a * get_prime_inv());
+      double result = a - get_prime() * RES_round(a * get_prime_inv());
+      CGAL_postcondition(2*result <  get_prime());
+      CGAL_postcondition(2*result > -get_prime());
+      return result;
     }
-
 
     /* Little modular reduction (e.g. after a simple addition). */
     static inline 
@@ -128,6 +128,7 @@ private:
         return (b>p) ? a-p :
             ((b<-p) ? a+p : a);
     }
+
     
     /* -a */
     static inline 
