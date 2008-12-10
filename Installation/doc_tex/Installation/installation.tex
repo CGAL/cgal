@@ -57,7 +57,7 @@
 \newcommand{\mpfrpage}{\path'http://www.mpfr.org/'}
 \newcommand{\boostpage}{\path'http://www.boost.org/'}
 \newcommand{\corepage}{\path'http://www.cs.nyu.edu/exact/core\_pages/'}
-\newcommand{\ledapage}{\path'http://www.algorithmic-solutions.com/'}
+\newcommand{\ledapage}{\path'http://www.algorithmic-solutions.com/leda/index.html'}
 \newcommand{\trolltechpage}{\path'http://www.trolltech.com'}
 \newcommand{\qtpage}{\path'http://doc.trolltech.com/'}
 \newcommand{\qtmocpage}{\path'http://doc.trolltech.com/moc.html'}
@@ -86,21 +86,14 @@ geometric algorithms} in the form of a \CC\ library.
 
 This document describes how to install \cgal\ on Windows, Unix-like systems and MacOS X.
 
-Besides that, you will find some information about the build system
-structure of \cgal\ and the support for using \cgal\ together with
-other software libraries, such as the \boost\
-libraries\footnote{\boostpage}, the \gnu\ Multiple Precision library
-\gmp\footnote{\gmppage}, the \mpfr\ library\footnote{\mpfrpage} for
-multiple-precision floating-point computations with exact rounding,
-the \core\ library\footnote{\corepage} for robust numerical and
-geometric computation, \leda, the Library of Efficient Datatypes and
-Algorithms\footnote{\ledapage}, \blas, the Basic Linear Algebra Subprograms
-library\footnote{\blaspage}, \lapack, the Linear Algebra PACKage library
-\footnote{\lapackpage}, \taucs, a library of sparse linear
-solvers\footnote{\taucspage}, or Trolltech's\footnote{\trolltechpage}
-\qt\ toolkit.
 
 \section{Prerequisites\label{sec:prerequisites}}
+
+The focus of the \cgal\ project is on geometry, and we rely on other
+highly specialized libraries and software for non-geometric issues,
+e.g. for numeric solvers, or visualization.
+
+\subsection{Compilers}
 
 In order to build the \cgal\ libraries you need a \CC\ compiler.  
 \cgal 3.4 is supported for the following compilers/operating systems:
@@ -124,14 +117,16 @@ In order to build the \cgal\ libraries you need a \CC\ compiler.
 Note that neither prerelease versions nor repository snapshots of
 \texttt{GCC} are supported.
 
-
+\subsection{cmake}
 
 In order to configure, build and install the \cgal\ libraries, as well
-as any program using \cgal, you need \cmake, a Cross Platform Make system.
+as the examples and demos, you need \cmake, a cross platform ``makefile generator''.
 If \cmake\ is not installed already you can obtain it from \cmakepage.
 We recommend the usage of \cmake\ Rel.~2.6, and you need at least
 \cmake\ Rel.~2.4-patch-7.
 
+
+\subsection*{boost}
 Moreover, \cgal\ requires a working installation of the \boost\
 libraries (the header files and the threading library binaries), 
 Version 1.33.1 or later. In case
@@ -141,12 +136,44 @@ installer from \path'http://www.boostpro.com/products/free'.
 Since \texttt{Boost.Thread} is required, make sure to either install the precompiled 
 {\em static} binaries for your compiler or to build \texttt{libboost-thread}.
 
+Some demos depend on \texttt{Boost.ProgramOptions}.
+
+\subsection*{Exact Arithmetic}
+
+\cgal\ combines floating point arithmetic with exact arithmetic, in order
+to be fast and reliable.  \cgal\ offers support for \gmp+\mpfr\ and \leda\ 
+exact number types, as well as a built-in exact number type used when
+none of the other two is installed on your system. 
+
 Having \gmp\ version 4.1.4 or later and \mpfr\ version 2.0.1 or later
 installed is highly recommended. These libraries can be obtained from
 \gmppage\ and \mpfrpage, respectively, if they should not be present
-on your system. Within \cgal, support for \gmp\ requires also \mpfr\ and
-vice versa. As the \gmp\ project doesn't properly support Visual \CC\ we
-provide precompiled versions of \gmp\ and \mpfr.  
+on your system. As Visual \CC\ is not properly support by the \gmp\ and 
+\mpfr\ projects, we provide precompiled versions of \gmp\ and \mpfr.  
+
+\leda\ can be found at \ledapage. There is a free and a commercial
+edition for this library.
+
+
+\subsection{Visualization}
+
+Most demos use Trolltech's cross-plaform GUI toolkits Qt3 or Qt4.
+In case Qt is not yet installed on your system, you can download 
+it from \trolltechpage.
+
+Some 3D demos use the libQGLViewer, which is a 3D widget for Qt4.
+It can be downloaded from \path'http://www.libqglviewer.com'
+
+\subsection{Miscellaneous}
+
+The Surface Mesh Generator demo can read compressed image files
+if {\em zlib} is installed. It can be downloaded from \path'http://www.zlib.net'. 
+                       
+The Surface parametriation package can be speeded up by using the sparse matrix solver \taucs.
+This library can be downloaded from \taucspage. As Visual \CC\ is not properly
+supported by the \taucs\ project, we provide a precompiled version of \taucs.
+Note 
+
 
 
 \section{Downloading CGAL\label{sec:gettingcgal}}
@@ -191,10 +218,12 @@ contains the following subdirectories:\index{directories!structure}
 
 The directories \texttt{include/CGAL/CORE} and \texttt{src/CGALCore} contain a
 distribution of the \core\ library\footnote{\corepage} version~1.7 for
-robust numerical and geometric computation. \core\ is not part of
-\cgal\ and has its own license.
+dealing with algebraic numbers. \core\ is not part of \cgal\ and has its own license.
 
 
+The directory \texttt{include/CGAL/OpenNL} contains a distribution of the 
+Open Numerical Library which provides solvers for sparse linear systems, especially designed 
+for the Computer Graphics community. OpenNL is not part of \cgal\ and has its own license.
 
 \section{Configuring CGAL}
 
