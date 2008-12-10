@@ -29,8 +29,9 @@ Please note that the implementation of class \ccc{CGAL::Residue} requires a mant
 precision according to the IEEE Standard for Floating-Point Arithmetic (IEEE 754). 
 However, on some processors the traditional FPU uses an extended precision. Hence, it 
 is  indispensable that the proper mantissa length is enforced before performing 
-any arithmetic operations. For instance you may use \ccc{CGAL::Protect_FPU_rounding} with 
-\ccc{CGAL_FE_TONEAREST}, which enforces the required precision as a side effect. 
+any arithmetic operations. Moreover, it is required that numbers are rounded to the 
+next nearest value. This can be ensured using \ccc{CGAL::Protect_FPU_rounding} with 
+\ccc{CGAL_FE_TONEAREST}, which also enforces the required precision as a side effect. 
 
 \begin{ccAdvanced}      
 In case the flag \ccc{CGAL_HAS_THREADS} 
@@ -67,5 +68,4 @@ The class \ccc{CGAL::Residue} is based on the C-code of Sylvain Pion et. al.
 as it was presented in \cite{bepp-sdrns-99}. 
 
 The remaining part of the package is the result of the integration process
-of the NumeriX library of EXACUS \cite{beh+-eeeafcs-05} into CGAL. 
-
+of the NumeriX library of EXACUS \cite{beh+-eeeafcs-05} into CGAL.

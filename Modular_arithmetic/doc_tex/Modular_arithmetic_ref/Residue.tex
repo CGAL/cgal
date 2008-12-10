@@ -17,13 +17,14 @@ old prime and can be reused after restoring the old prime.
 Since the type is based on double 
 arithmetic the prime is restricted to values less than $2^{26}$. 
 The initial value of $p$ is 67111067. 
-
+ 
 Please note that the implementation of class \ccc{CGAL::Residue} requires a mantissa 
 precision according to the IEEE Standard for Floating-Point Arithmetic (IEEE 754). 
 However, on some processors the traditional FPU uses an extended precision. Hence, it 
 is  indispensable that the proper mantissa length is enforced before performing 
-any arithmetic operations. For instance you may use \ccc{CGAL::Protect_FPU_rounding} with 
-\ccc{CGAL_FE_TONEAREST}, which enforces the required precision as a side effect. 
+any arithmetic operations. Moreover, it is required that numbers are rounded to the 
+next nearest value. This can be ensured using \ccc{CGAL::Protect_FPU_rounding} with 
+\ccc{CGAL_FE_TONEAREST}, which also enforces the required precision as a side effect. 
 
 In case the flag \ccc{CGAL_HAS_THREADS} 
 is undefined the prime is just stored in a static member 
