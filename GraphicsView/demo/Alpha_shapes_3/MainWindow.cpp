@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
   setupUi(this);
   this->viewer->setScene(&scene);
   connectActions();
-  this->addAboutDemo(":/cgal/help/about_Alpha_shape_3.html");
+  this->addAboutDemo(":/cgal/help/about_Alpha_shapes_3.html");
   this->addAboutCGAL();
 
   this->addRecentFiles(this->menuFile, this->actionQuit);

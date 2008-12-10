@@ -62,7 +62,7 @@
      </layout>
     </item>
     <item>
-     <widget class="Viewer" name="viewer" />
+     <widget class="Viewer" native="1" name="viewer" />
     </item>
    </layout>
   </widget>
@@ -72,7 +72,7 @@
      <x>0</x>
      <y>0</y>
      <width>635</width>
-     <height>29</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
@@ -111,12 +111,13 @@
  <customwidgets>
   <customwidget>
    <class>Viewer</class>
-   <extends>QGLViewer</extends>
+   <extends>QWidget</extends>
    <header>Viewer.h</header>
   </customwidget>
  </customwidgets>
  <resources>
   <include location="../resources/CGAL.qrc" />
+  <include location="Alpha_shape_3.qrc" />
  </resources>
  <connections/>
 </ui>
