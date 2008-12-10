@@ -1910,9 +1910,9 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
       CGAL_For_all(hfc,hend) {
 	SFaceCycle[hfc]=i; // assign face cycle number
 	if (hfc->twin()->source() == e_min->twin()->source()) {
-	  Sphere_point p1 = e->source()->point(), 
-	    p2 = e->twin()->source()->point(), 
-	    p3 = e->snext()->twin()->source()->point();	  
+	  Sphere_point p1 = hfc->source()->point(), 
+	    p2 = hfc->twin()->source()->point(), 
+	    p3 = hfc->snext()->twin()->source()->point();	  
 	  if ( SG.orientation(p1,p2,p3) <= 0 )
 	    e_min = hfc;
 	} else if ( SG.compare_xy(hfc->twin()->source()->point(), e_min->twin()->source()->point()) < 0 )
