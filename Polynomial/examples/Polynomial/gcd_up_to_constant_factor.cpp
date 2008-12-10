@@ -4,10 +4,6 @@
 #include <CGAL/Polynomial_type_generator.h>
 
 int main(){
-
-  // Enforce IEEE double precision for modular arithmetic 
-  CGAL::Set_ieee_double_precision pfr;
-
   CGAL::set_pretty_mode(std::cout);
   typedef CGAL::Polynomial_type_generator<int,1>::Type Poly_1;
   typedef CGAL::Polynomial_traits_d<Poly_1>            PT_1;
