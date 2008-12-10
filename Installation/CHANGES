@@ -110,17 +110,27 @@ The following functionality has been added or changed:
 
   - This package provides a function, which computes the Minkowski sum of two point sets in R^3
 
+5.2 Convex Decomposition of Polyhedra (new package)
 
-5.2 Triangulation_3:
+  - This package allows to decompose a 3D Nef Polyhedron in convex parts.
+
+
+5.3 3D Triangulations
 
   - Removed the deprecated functions Cell:mirror_index() and Cell::mirror_vertex().
   - Derecursification of two functions that in some cases lead to stack overflows
 
 
-5.3 CGAL and the Qt4 GraphicsView (new package)
+5.4 3D Nef Polyhedron
+
+  - n-ary union/intersection
+  - intersection with halfspace under standard kernel
+  - constructor for polylines
+
+
+5.5 CGAL and the Qt4 GraphicsView (new package)
 
   - 2D CGAL Kernel objects and many data structures have can be rendered in a QGraphicsView
-
 
 6 STL Extensions:
 
