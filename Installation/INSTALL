@@ -16,8 +16,8 @@ To install CGAL, you should:
  ---------------------------
 
    * Install CMake, the build system used by CGAL
-     Required Rel 2.4-patch-7, 
-     Recommended Rel 2.6 supporting a crossplatform cmake-gui
+     Required Rel 2.4-patch-7,
+     Recommended Rel 2.6 supporting a cross platform cmake-gui
      Download from: http://www.cmake.org/
 
    * Install the Boost libraries (http://www.boost.org/ or http://www.boostpro.com/products/free)
@@ -29,7 +29,7 @@ To install CGAL, you should:
 
      o Used for exact arithmetic           
 
-       - gmp,mpfr      Multiprecision numbertypes
+       - gmp, mpfr     Multi precision number types
                        http://gmplib.org
                        http://www.mpfr.org
 
@@ -37,15 +37,15 @@ To install CGAL, you should:
                        http://www.algorithmic-solutions.com/leda/index.htm
 
      o Used by most demos
-       - qt3 and qt4   Trolltech's cross-plaform GUI toolkits
+       - Qt3 and Qt4   Trolltech's cross-platform GUI toolkits
                        http://trolltech.com/products/qt
 
      o Miscellaneous
 
        - zlib          A compression library, used by the Surface Mesh Generator demo
-                       http://www.zlib.net  
-                       
-       - taucs         A sparse matrix solver, used by the Surface parametrization package
+                       http://www.zlib.net
+
+       - taucs         A sparse matrix solver, used by the Surface parameterization package
 
        - libQGLViewer  A 3D widget for Qt4, used by some 3D demos
                        http://www.libqglviewer.com
@@ -177,10 +177,10 @@ To install CGAL, you should:
   is called from cygwin but without the VC command line environment properly set, cl.exe
   might be found nevertheless but it will not be correctly configured for building CGAL.
   Make sure the environment is properly set and the "link.exe" from VC is found instead of
-  the link.exe from cygwin's g++ (arrange $PATH properly).
+  the link.exe from cygwin g++ (arrange $PATH properly).
 
   If everything is setup correctly: CMake is the windows version and supports NMake Makefiles,
-  cl, nmake and link are set in the path, and link is not cygwin's link.
+  cl, nmake and link are set in the path, and link is not cygwin link.
 
   To build the libraries in this context you need to pass the option
   -G'NMake Makefiles' to CMake at configuration time (otherwise solution files
@@ -255,7 +255,7 @@ To install CGAL, you should:
   Also, you can run CMake in GUI mode in which case you can
   see and edit in a dialog all configuration variables before
   proceeding with the configuration.
-  To do that run the GUI configuration editor  "cmake-gui" or "CMakeSetup".
+  To do that, run the GUI configuration editor "cmake-gui" or "CMakeSetup".
   When the editor is launched press "configure" for the first time:
   all available configuration variables and their default values
   will be displayed on a red background.
@@ -298,13 +298,13 @@ To install CGAL, you should:
   in both debug and release modes.  For example:
 
     cd /<absolute-path-to-CGAL>/cmake/platforms/debug
-    cmake -DCMAKE_BUILD_TYPE=Debug ..\..\..
+    cmake -DCMAKE_BUILD_TYPE=Debug ../../..
 
     cd /<absolute-path-to-CGAL>/cmake/platforms/release
-    cmake -DCMAKE_BUILD_TYPE=Release ..\..\..
+    cmake -DCMAKE_BUILD_TYPE=Release ../../..
 
 ----------------------------------------------------------------------------
-- Static vs Shared libraries
+- Static vs. Shared libraries
 ---------------------------------------------------------------------------
 
   The configuration variable BUILD_SHARED_LIBS can be set to FALSE or TRUE to choose
