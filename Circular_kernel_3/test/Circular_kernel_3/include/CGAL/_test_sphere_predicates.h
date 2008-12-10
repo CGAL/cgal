@@ -404,7 +404,7 @@ void _test_has_on_predicate(SK sk) {
   // That cover all the cases, since the orientation is setted by default to be the
   // clockwise orientation for a well defined normal vector (read the comments on 
   // include/CGAL/Circular_kernel_3/Circular_arc_3.h)
-  Root_for_spheres_2_3 rt[8];
+  Root_for_spheres_2_3 rt[10];
 
   rt[0] = Root_for_spheres_2_3(0,1,0);
   rt[1] = Root_for_spheres_2_3(-FT(FT_Q(1,2)), CGAL::make_root_of_2(FT(0),FT(FT_Q(1,2)),FT(3)), 0);

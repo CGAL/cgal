@@ -25,7 +25,7 @@ CXXFLAGS = \
            -I../Cartesian_kernel/include \
            -I../Homogeneous_kernel/include \
            -I../Intersections_3/include \
-           -g\
+           -g \
 	         $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
