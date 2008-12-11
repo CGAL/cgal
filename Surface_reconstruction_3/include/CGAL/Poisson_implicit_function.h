@@ -478,7 +478,7 @@ public:
   }
 
   /// Extrapolate the normals field:
-  /// compute null normals by averaging neighbour normals.
+  /// compute null normals by averaging neighbor normals.
   void extrapolate_normals()
   {
     // Compute extrapolated normals and store them in extrapolated_normals[]
@@ -1499,7 +1499,7 @@ private:
 
   FT distance_to_input_points(K_nearest_neighbor& nn_search, const Point& p)
   {
-    // Get nearest neighbour
+    // Get nearest neighbor
     std::list<Vertex_handle> nearest_vertices;
     nn_search.get_k_nearest_neighbors(p,1,nearest_vertices);
     Vertex_handle nv = *nearest_vertices.begin();

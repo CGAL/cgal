@@ -61,7 +61,7 @@ distance_MST(std::size_t _First, std::size_t _Last)
 ///
 /// This class is used internally by orient_normals_minimum_spanning_tree_3()
 /// to encode:
-/// - the adjacency relations of vertices in a K-neighbouring,
+/// - the adjacency relations of vertices in a K-neighboring,
 /// - the edge weight = edge weight = 1 - | normal1 * normal2 |
 ///   where normal1 and normal2 are the normal at the edge extremities.
 typedef boost::adjacency_list< boost::vecS, boost::vecS,
@@ -319,28 +319,28 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
             if(search_iterator == search.end())
                 break; // premature ending
 
-            VertexIterator neighbour = search_iterator->first;
-            unsigned int neighbour_index = get(vertex_index_map,neighbour);
-            if (neighbour_index > it_index) // undirected graph
+            VertexIterator neighbor = search_iterator->first;
+            unsigned int neighbor_index = get(vertex_index_map,neighbor);
+            if (neighbor_index > it_index) // undirected graph
             {
                 // Add edge
                 boost::graph_traits<Riemannian_graph>::edge_descriptor e;
                 bool inserted;
                 boost::tie(e, inserted) = boost::add_edge(boost::vertex(it_index, riemannian_graph),
-                                                          boost::vertex(neighbour_index, riemannian_graph),
+                                                          boost::vertex(neighbor_index, riemannian_graph),
                                                           riemannian_graph);
                 CGAL_surface_reconstruction_assertion(inserted);
 
                 //                               ->        ->
                 // Compute edge weight = 1 - | normal1 * normal2 |
                 // where normal1 and normal2 are the normal at the edge extremities.
-                Vector neighbour_normal_vector = vertex_normal_map[neighbour];
-                double weight = 1.0 - std::abs(it_normal_vector * neighbour_normal_vector);
+                Vector neighbor_normal_vector = vertex_normal_map[neighbor];
+                double weight = 1.0 - std::abs(it_normal_vector * neighbor_normal_vector);
                 if (weight < 0)
                     weight = 0; // safety check
                 //CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): weight=%1.3lf\n",
                 //           (int)it_index, it_normal_vector.x(),it_normal_vector.y(),it_normal_vector.z(),
-                //           (int)neighbour_index, neighbour_normal_vector.x(),neighbour_normal_vector.y(),neighbour_normal_vector.z(),
+                //           (int)neighbor_index, neighbor_normal_vector.x(),neighbor_normal_vector.y(),neighbor_normal_vector.z(),
                 //           weight);
                 riemannian_graph_weight_map[e] = (float)weight;
             }

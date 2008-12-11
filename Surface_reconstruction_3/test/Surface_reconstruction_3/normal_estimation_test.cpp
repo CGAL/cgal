@@ -47,45 +47,68 @@ typedef CGAL::Orientable_normal_3<Kernel> Orientable_normal; // normal vector + 
 
 typedef std::deque<Point> PointList;
 
+
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
 
 void estimate_normals_pca(const PointList& points, // input point set
                           std::deque<Orientable_normal>& normals, // computed normals
-                          unsigned int k) // number of neighbors
+                          double nb_neighbors_pca_normals /* % */) // number of neighbors
 {
-  std::cerr << "Estimate normals using KNN and point-based PCA (knn="<<k << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
-  CGAL::estimate_normals_pca_3(points.begin(),points.end(),std::back_inserter(normals),k);
+  // percentage -> number of neighbors
+  int nb_neighbors = int(double(points.size()) * nb_neighbors_pca_normals / 100.0);
+  if (nb_neighbors < 7)
+    nb_neighbors = 7;
+  if (nb_neighbors > points.size()-1)
+    nb_neighbors = points.size()-1;
+
+  std::cerr << "Estimate Normals Direction by PCA (knn="
+            << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
+            
+  CGAL::estimate_normals_pca_3(points.begin(), points.end(),
+                               std::back_inserter(normals),
+                               nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "ok: " << task_timer.time() << " seconds, "
-                      << (memory>>20) << " Mb allocated"
-                      << std::endl;
+  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+                        << (memory>>20) << " Mb allocated"
+                        << std::endl;
 }
 
 void estimate_normals_jet_fitting(const PointList& points, // input point set
                                   std::deque<Orientable_normal>& normals, // computed normals
-                                  unsigned int k) // number of neighbors)
+                                  double nb_neighbors_jet_fitting_normals /* % */) // number of neighbors
 {
-  std::cerr << "Estimate normals using KNN and jet fitting (knn="<<k << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
-  CGAL::estimate_normals_jet_fitting_3(points.begin(),points.end(),std::back_inserter(normals),k);
+  // percentage -> number of neighbors
+  int nb_neighbors = int(double(points.size()) * nb_neighbors_jet_fitting_normals / 100.0);
+  if (nb_neighbors < 7)
+    nb_neighbors = 7;
+  if (nb_neighbors > points.size()-1)
+    nb_neighbors = points.size()-1;
+
+  std::cerr << "Estimate Normals Direction by Jet Fitting (knn="
+            << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
+
+  CGAL::estimate_normals_jet_fitting_3(points.begin(), points.end(),
+                                       std::back_inserter(normals),
+                                       nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "ok: " << task_timer.time() << " seconds, "
-                      << (memory>>20) << " Mb allocated"
-                      << std::endl;
+  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+                        << (memory>>20) << " Mb allocated"
+                        << std::endl;
 }
 
 void orient_normals_MST(const PointList& points, // input point set
                         std::deque<Orientable_normal>& normals, // normals to orient
-                        unsigned int k) // number of neighbors
+                        unsigned int nb_neighbors_mst) // number of neighbors
 {
-  std::cerr << "Orient normals using a minimum spanning tree (knn="<<k << ")...\n";
+  std::cerr << "Orient Normals with a Minimum Spanning Tree (knn="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
   // orient_normals_minimum_spanning_tree_3() requires an iterator over points
@@ -97,13 +120,12 @@ void orient_normals_MST(const PointList& points, // input point set
          index_id, // index -> index property map = identity
          boost::make_iterator_property_map(points.begin(), index_id), // index -> position prop. map
          boost::make_iterator_property_map(normals.begin(), index_id), // index -> normal prop. map
-         k);
-
+         nb_neighbors_mst);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "ok: " << task_timer.time() << " seconds, "
-                      << (memory>>20) << " Mb allocated"
-                      << std::endl;
+  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+                        << (memory>>20) << " Mb allocated"
+                        << std::endl;
 }
 
 
@@ -124,14 +146,19 @@ int main(int argc, char * argv[])
   {
       std::cerr << "For each input point set, compute and orient its normals.\n";
       std::cerr << "\n";
-      std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz ..." << std::endl;
+      std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz..." << std::endl;
       std::cerr << "Input file format is .xyz.\n";
       std::cerr << "No output" << std::endl;
       return EXIT_FAILURE;
   }
 
-  // Options
-  const unsigned int k = 10; // # neighbors
+  // Normals Computing options
+  double nb_neighbors_pca_normals = 0.3 /* % */; // K-nearest neighbors (estimate normals by PCA)
+                                                 // LS: was 10
+  double nb_neighbors_jet_fitting_normals = 0.05 /* % */; // K-nearest neighbors (estimate normals by Jet Fitting)
+                                                          // LS: was 10
+  unsigned int nb_neighbors_mst = 12; // K-nearest neighbors = 2 rings (orient normals by MST)
+                                      // LS: was 10
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -193,22 +220,52 @@ int main(int argc, char * argv[])
     }
 
     //***************************************
-    // Compute normals
+    // Compute normals (PCA + MST)
     //***************************************
 
     std::deque<Orientable_normal> computed_normals;
     
     // Estimate normals direction
-    estimate_normals_pca(points, computed_normals, k);
-    computed_normals.clear();
-    estimate_normals_jet_fitting(points, computed_normals, k);
+    estimate_normals_pca(points, computed_normals, nb_neighbors_pca_normals);
       
     // Orient normals
-    orient_normals_MST(points, computed_normals, k);
+    orient_normals_MST(points, computed_normals, nb_neighbors_mst);
     
     // Check computed normals
     int unoriented_normals = 0;
     std::deque<Orientable_normal>::iterator n;
+    for (n = computed_normals.begin(); n != computed_normals.end(); n++)
+    {
+      // Check unit vector
+      Vector v = *n;
+      double norm = std::sqrt( v*v );
+      assert(norm > 0.99 || norm < 1.01);
+        
+      // Check orientation
+      if ( ! n->is_oriented() )
+        unoriented_normals++;
+    }
+    if (unoriented_normals > 0)
+    {
+      std::cerr << "Error: " << unoriented_normals << " normal(s) are unoriented\n";
+      accumulated_fatal_err = EXIT_FAILURE; // set error and continue
+    }
+
+    //***************************************
+    // Compute normals (jet fitting + MST)
+    //***************************************
+
+    computed_normals.clear(); // to be safe
+    
+    // Estimate normals direction
+    estimate_normals_jet_fitting(points, computed_normals, nb_neighbors_jet_fitting_normals);
+      
+    // Orient normals
+    orient_normals_MST(points, computed_normals, nb_neighbors_mst);
+    
+    // Check computed normals
+    /*int*/ unoriented_normals = 0;
+    /*std::deque<Orientable_normal>::iterator*/ n;
     for (n = computed_normals.begin(); n != computed_normals.end(); n++)
     {
       // Check unit vector

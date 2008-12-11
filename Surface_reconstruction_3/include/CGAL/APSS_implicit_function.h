@@ -114,7 +114,7 @@ public:
   ///
   /// @param first First point of point set.
   /// @param beyond Past-the-end point of point set.
-  /// @param k Number of nearest neighbours.
+  /// @param k Number of nearest neighbors.
   /// @param projection_error Dichotomy error when projecting point.
   template < class InputIterator >
   APSS_implicit_function(InputIterator first, InputIterator beyond,
@@ -126,7 +126,7 @@ public:
     
     int nb_points = std::distance(first, beyond);
 
-    // Number of nearest neighbours
+    // Number of nearest neighbors
     m->nofNeighbors = k;
 
     // Create kd-tree
@@ -621,7 +621,7 @@ private:
     Point barycenter; // Points' barycenter
     FT diameter_standard_deviation; // Standard deviation of the distance to barycenter
     FT sqError; // Dichotomy error when projecting point (squared)
-    unsigned int nofNeighbors; // Number of nearest neighbours
+    unsigned int nofNeighbors; // Number of nearest neighbors
     Point inner_point; // Point inside the surface
     mutable AlgebraicSphere as;
     mutable Point_with_transformed_distance cached_nearest_neighbor;

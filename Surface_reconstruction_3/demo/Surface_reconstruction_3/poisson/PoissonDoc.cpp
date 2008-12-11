@@ -150,33 +150,50 @@ CPoissonDoc::CPoissonDoc()
   m_triangulation_refined = false; // Need to apply Delaunay refinement
   m_poisson_solved = false; // Need to solve Poisson equation
 
-  // Surface mesher options
-  m_sm_angle = 20.0; // theorical guaranty if angle >= 30, but slower
-  m_sm_radius = 0.1; // as suggested by LR
-  m_sm_error_bound = 1e-3;
-
   // Poisson options
-  m_sm_distance_poisson = 0.002; // AG: was 0.005 (upper bound of distance to surface/Poisson)
-  m_dr_shell_size = 0.01; // 3 Delaunay refinements options
+  m_sm_angle_poisson = 20.0; // theorical guaranty if angle >= 30, but slower
+  m_sm_radius_poisson = 0.1; // as suggested by LR
+  m_sm_error_bound_poisson = 1e-3;
+  m_sm_distance_poisson = 0.002; // upper bound of distance to surface (Poisson)
+  m_dr_shell_size = 0.01; // 3 Delaunay refinement options
   m_dr_sizing = 0.5 * m_dr_shell_size;
   m_dr_max_vertices = (unsigned int)5e6;
   m_contouring_value = 0.0; // Poisson contouring value; should be 0 (TEST)
-  m_lambda = 0.1;
+  m_lambda = 0.1; // laplacian smoothing
 
   // APSS options
+  m_sm_angle_apss = 20.0; // theorical guaranty if angle >= 30, but slower
+  m_sm_radius_apss = 0.1; // as suggested by LR
+  m_sm_error_bound_apss = 1e-3;
   m_sm_distance_apss = 0.005; // Upper bound of distance to surface (APSS).
                               // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
+  m_nb_neighbors_apss = 12; // K-nearest neighbors = 2 rings (APSS)
+                            // LS: was 7
 
-  // K-nearest neighbours options
-  m_number_of_neighbours = 7;
+  // Average Spacing options
+  m_nb_neighbors_avg_spacing = 7; // K-nearest neighbors = 1 ring (average spacing)
 
-  // Outliers removal
-  m_min_cameras_cone_angle = 0.5; // min angle of camera's cone (degrees)
-  m_threshold_percent_avg_knn_sq_dst = 5.0; // percentage of outliers to remove
+  // Smoothing options
+  m_nb_neighbors_smooth_jet_fitting = 0.05 /* % */; // K-nearest neighbors (smooth points by Jet Fitting)
+                                                    // LS: was 7
 
-  // Point set simplification
+  // Normals Computing options
+  m_nb_neighbors_pca_normals = 0.3 /* % */; // K-nearest neighbors (estimate normals by PCA)
+                                            // LS: was 7
+  m_nb_neighbors_jet_fitting_normals = 0.05 /* % */; // K-nearest neighbors (estimate normals by Jet Fitting)
+                                                     // LS: was 7
+  m_nb_neighbors_mst = 12; // K-nearest neighbors = 2 rings (orient normals by MST)
+                           // LS: was 7
+
+  // Outliers Removal options
+  m_min_cameras_cone_angle = 0.5 /* degrees */; // min angle of camera's cone
+  m_threshold_percent_avg_knn_sq_dst = 5.0 /* % */; // percentage of outliers to remove
+  m_nb_neighbors_outliers_removal = 0.05 /* % */; // K-nearest neighbors (outliers removal)
+                                                  // LS: was 7
+
+  // Point Set Simplification options
   m_clustering_step = 0.004; // Grid's step for simplification by clustering
-  m_random_simplification_percentage = 50.0; // percentage of random points to remove
+  m_random_simplification_percentage = 50.0 /* % */; // percentage of random points to remove
 }
 
 CPoissonDoc::~CPoissonDoc()
@@ -315,9 +332,6 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
       prompt_message("Unable to read file");
       return FALSE;
     }
-
-    // Set options for Gyroviz file
-    m_number_of_neighbours = 50;
   }
   // if Gyroviz .g23 extension
   else if (extension.CompareNoCase(".g23") == 0)
@@ -332,9 +346,6 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
       prompt_message("Unable to read file");
       return FALSE;
     }
-
-    // Set options for Gyroviz file
-    m_number_of_neighbours = 50;
   }
   // if unknown extension
   else
@@ -580,17 +591,26 @@ void CPoissonDoc::prompt_message(char* fmt,...)
 void CPoissonDoc::OnEditOptions()
 {
   CDialogOptions dlg;
-  dlg.m_sm_angle = m_sm_angle;
-  dlg.m_sm_radius = m_sm_radius;
+  dlg.m_sm_angle_poisson = m_sm_angle_poisson;
+  dlg.m_sm_radius_poisson = m_sm_radius_poisson;
   dlg.m_sm_distance_poisson = m_sm_distance_poisson;
-  dlg.m_sm_error_bound = m_sm_error_bound;
+  dlg.m_sm_error_bound_poisson = m_sm_error_bound_poisson;
+  dlg.m_sm_angle_apss = m_sm_angle_apss;
+  dlg.m_sm_radius_apss = m_sm_radius_apss;
+  dlg.m_sm_distance_apss = m_sm_distance_apss;
+  dlg.m_sm_error_bound_apss = m_sm_error_bound_apss;
   dlg.m_dr_sizing = m_dr_sizing;
   dlg.m_dr_shell_size = m_dr_shell_size;
   dlg.m_dr_max_vertices = m_dr_max_vertices;
   dlg.m_contouring_value = m_contouring_value;
   dlg.m_lambda = m_lambda;
-  dlg.m_sm_distance_apss = m_sm_distance_apss;
-  dlg.m_number_of_neighbours = m_number_of_neighbours;
+  dlg.m_nb_neighbors_avg_spacing = m_nb_neighbors_avg_spacing;
+  dlg.m_nb_neighbors_outliers_removal = m_nb_neighbors_outliers_removal;
+  dlg.m_nb_neighbors_smooth_jet_fitting = m_nb_neighbors_smooth_jet_fitting;
+  dlg.m_nb_neighbors_pca_normals = m_nb_neighbors_pca_normals;
+  dlg.m_nb_neighbors_jet_fitting_normals = m_nb_neighbors_jet_fitting_normals;
+  dlg.m_nb_neighbors_mst = m_nb_neighbors_mst;
+  dlg.m_nb_neighbors_apss = m_nb_neighbors_apss;
   dlg.m_min_cameras_cone_angle = m_min_cameras_cone_angle;
   dlg.m_threshold_percent_avg_knn_sq_dst = m_threshold_percent_avg_knn_sq_dst;
   dlg.m_clustering_step = m_clustering_step;
@@ -598,17 +618,26 @@ void CPoissonDoc::OnEditOptions()
 
   if(dlg.DoModal() == IDOK)
   {
-    m_sm_angle = dlg.m_sm_angle;
-    m_sm_radius = dlg.m_sm_radius;
+    m_sm_angle_poisson = dlg.m_sm_angle_poisson;
+    m_sm_radius_poisson = dlg.m_sm_radius_poisson;
     m_sm_distance_poisson = dlg.m_sm_distance_poisson;
-    m_sm_error_bound = dlg.m_sm_error_bound;
+    m_sm_error_bound_poisson = dlg.m_sm_error_bound_poisson;
+    m_sm_angle_apss = dlg.m_sm_angle_apss;
+    m_sm_radius_apss = dlg.m_sm_radius_apss;
+    m_sm_distance_apss = dlg.m_sm_distance_apss;
+    m_sm_error_bound_apss = dlg.m_sm_error_bound_apss;
     m_dr_sizing = dlg.m_dr_sizing;
     m_dr_shell_size = dlg.m_dr_shell_size;
     m_dr_max_vertices = dlg.m_dr_max_vertices;
     m_contouring_value = dlg.m_contouring_value;
     m_lambda = dlg.m_lambda;
-    m_sm_distance_apss = dlg.m_sm_distance_apss;
-    m_number_of_neighbours = dlg.m_number_of_neighbours;
+    m_nb_neighbors_avg_spacing = dlg.m_nb_neighbors_avg_spacing;
+    m_nb_neighbors_outliers_removal = dlg.m_nb_neighbors_outliers_removal;
+    m_nb_neighbors_smooth_jet_fitting = dlg.m_nb_neighbors_smooth_jet_fitting;
+    m_nb_neighbors_pca_normals = dlg.m_nb_neighbors_pca_normals;
+    m_nb_neighbors_jet_fitting_normals = dlg.m_nb_neighbors_jet_fitting_normals;
+    m_nb_neighbors_mst = dlg.m_nb_neighbors_mst;
+    m_nb_neighbors_apss = dlg.m_nb_neighbors_apss;
     m_min_cameras_cone_angle = dlg.m_min_cameras_cone_angle;
     m_threshold_percent_avg_knn_sq_dst = dlg.m_threshold_percent_avg_knn_sq_dst;
     m_clustering_step = dlg.m_clustering_step;
@@ -623,12 +652,21 @@ void CPoissonDoc::OnEditOptions()
 void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
 {
   BeginWaitCursor();
-  status_message("Estimate Normals Direction by PCA...");
   CGAL::Timer task_timer; task_timer.start();
+
+  // percentage -> number of neighbors
+  int nb_neighbors = int(double(m_points.size()) * m_nb_neighbors_pca_normals / 100.0);
+  if (nb_neighbors < 7)
+    nb_neighbors = 7;
+  if (nb_neighbors > m_points.size()-1)
+    nb_neighbors = m_points.size()-1;
+
+  status_message("Estimate Normals Direction by PCA (knn=%.2lf%%=%d)...", 
+                 m_nb_neighbors_pca_normals, nb_neighbors);
 
   CGAL::estimate_normals_pca_3(m_points.begin(), m_points.end(),
                                m_points.normals_begin(),
-                               m_number_of_neighbours);
+                               nb_neighbors);
 
   status_message("Estimate Normals Direction by PCA...done (%.2lf s)", task_timer.time());
   update_status();
@@ -645,12 +683,21 @@ void CPoissonDoc::OnUpdateAlgorithmsEstimateNormalsByPCA(CCmdUI *pCmdUI)
 void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
 {
   BeginWaitCursor();
-  status_message("Estimate Normals Direction by Jet Fitting...");
   CGAL::Timer task_timer; task_timer.start();
 
+  // percentage -> number of neighbors
+  int nb_neighbors = int(double(m_points.size()) * m_nb_neighbors_jet_fitting_normals / 100.0);
+  if (nb_neighbors < 7)
+    nb_neighbors = 7;
+  if (nb_neighbors > m_points.size()-1)
+    nb_neighbors = m_points.size()-1;
+
+  status_message("Estimate Normals Direction by Jet Fitting (knn=%.2lf%%=%d)...", 
+                 m_nb_neighbors_jet_fitting_normals, nb_neighbors);
+                 
   CGAL::estimate_normals_jet_fitting_3(m_points.begin(), m_points.end(),
                                        m_points.normals_begin(),
-                                       m_number_of_neighbours);
+                                       nb_neighbors);
 
   status_message("Estimate Normals Direction by Jet Fitting...done (%.2lf s)", task_timer.time());
   update_status();
@@ -667,14 +714,14 @@ void CPoissonDoc::OnUpdateAlgorithmsEstimateNormalByJetFitting(CCmdUI *pCmdUI)
 void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
 {
   BeginWaitCursor();
-  status_message("Orient Normals with MST...");
+  status_message("Orient Normals with a Minimum Spanning Tree (knn=%d)...", m_nb_neighbors_mst);
   CGAL::Timer task_timer; task_timer.start();
 
   CGAL::orient_normals_minimum_spanning_tree_3(m_points.begin(), m_points.end(),
                                                get(boost::vertex_index, m_points),
                                                get(CGAL::vertex_point, m_points),
                                                get(boost::vertex_normal, m_points),
-                                               m_number_of_neighbours);
+                                               m_nb_neighbors_mst);
 
   // Select non-oriented normals
   m_points.select(m_points.begin(), m_points.end(), false);
@@ -682,7 +729,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
     if ( ! m_points[i].normal().is_oriented() )
       m_points.select(&m_points[i]);
 
-  status_message("Orient Normals with MST...done (%.2lf s)", task_timer.time());
+  status_message("Orient Normals with a Minimum Spanning Tree...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -828,7 +875,7 @@ void CPoissonDoc::OnUpdateAlgorithmsRefineInShell(CCmdUI *pCmdUI)
 }
 
 // Extrapolate the normals field:
-// compute null normals by averaging neighbour normals.
+// compute null normals by averaging neighbor normals.
 void CPoissonDoc::OnAlgorithmsExtrapolatenormals()
 {
   assert(m_poisson_dt != NULL);
@@ -909,9 +956,9 @@ void CPoissonDoc::OnReconstructionPoissonNormalized()
   m_contouring_value = 0.0;
 
   if (!m_poisson_solved)
-      status_message("Solve Poisson equation...solver failed");
+      status_message("Solve Poisson equation with normalized divergence...solver failed");
   else
-      status_message("Solve Poisson equation...done (%.2lf s)", task_timer.time());
+      status_message("Solve Poisson equation with normalized divergence...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -960,18 +1007,18 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(*m_poisson_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius),
-                      m_sm_error_bound*size/sm_sphere_radius); // dichotomy stops when segment < m_sm_error_bound*size
+                      m_sm_error_bound_poisson*size/sm_sphere_radius); // dichotomy stops when segment < m_sm_error_bound_poisson*size
 
     // defining meshing criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle,  // lower bound of facets angles (degrees)
-                                                        m_sm_radius*size,  // upper bound of Delaunay balls radii
+    CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_poisson,  // lower bound of facets angles (degrees)
+                                                        m_sm_radius_poisson*size,  // upper bound of Delaunay balls radii
                                                         m_sm_distance_poisson*size); // upper bound of distance to surface
 
-    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound<<" * point set radius,\n"
+    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound_poisson<<" * point set radius,\n"
                       << "                    sphere center=("<<sm_sphere_center << "),\n"
                       << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
-                      << "                    angle="<<m_sm_angle << " degrees,\n"
-                      << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
+                      << "                    angle="<<m_sm_angle_poisson << " degrees,\n"
+                      << "                    radius="<<m_sm_radius_poisson<<" * p.s.r.,\n"
                       << "                    distance="<<m_sm_distance_poisson<<" * p.s.r.,\n"
                       << "                    Manifold_with_boundary_tag)\n";
 
@@ -1060,12 +1107,21 @@ void CPoissonDoc::OnUpdateAlgorithmsPoissonStatistics(CCmdUI *pCmdUI)
 void CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting()
 {
   BeginWaitCursor();
-  status_message("Smooth Point Set...");
   CGAL::Timer task_timer; task_timer.start();
 
+  // percentage -> number of neighbors
+  int nb_neighbors = int(double(m_points.size()) * m_nb_neighbors_smooth_jet_fitting / 100.0);
+  if (nb_neighbors < 7)
+    nb_neighbors = 7;
+  if (nb_neighbors > m_points.size()-1)
+    nb_neighbors = m_points.size()-1;
+
+  status_message("Smooth Point Set (knn=%.2lf%%=%d)...", 
+                 m_nb_neighbors_smooth_jet_fitting, nb_neighbors);
+                 
   // Smooth points in m_points[]
   CGAL::smooth_jet_fitting_3(m_points.begin(), m_points.end(),
-                             m_number_of_neighbours);
+                             nb_neighbors);
   m_points.invalidate_bounding_box();
 
   status_message("Smooth Point Set...done (%.2lf s)", task_timer.time());
@@ -1187,7 +1243,7 @@ void CPoissonDoc::OnUpdateReconstructionOneStepNormalized(CCmdUI *pCmdUI)
 void CPoissonDoc::OnAlgorithmsOutliersRemovalWrtCamerasConeAngle()
 {
   BeginWaitCursor();
-  status_message("Remove outliers / cameras cone's angle is low...");
+  status_message("Remove outliers / cameras cone's angle...");
   CGAL::Timer task_timer; task_timer.start();
 
   // Select points to delete
@@ -1198,7 +1254,7 @@ void CPoissonDoc::OnAlgorithmsOutliersRemovalWrtCamerasConeAngle()
             m_min_cameras_cone_angle*M_PI/180.0);
   m_points.select(first_iterator_to_remove, m_points.end(), true);
 
-  status_message("Remove outliers / cameras cone's angle is low...done (%.2lf s)", task_timer.time());
+  status_message("Remove outliers / cameras cone's angle...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1217,15 +1273,24 @@ void CPoissonDoc::OnUpdateAlgorithmsOutliersRemovalWrtCamerasConeAngle(CCmdUI *p
 void CPoissonDoc::OnOutliersRemovalWrtAvgKnnSqDist()
 {
   BeginWaitCursor();
-  status_message("Remove outliers wrt average squared distance to knn...");
   CGAL::Timer task_timer; task_timer.start();
 
+  // percentage -> number of neighbors
+  int nb_neighbors = int(double(m_points.size()) * m_nb_neighbors_outliers_removal / 100.0);
+  if (nb_neighbors < 7)
+    nb_neighbors = 7;
+  if (nb_neighbors > m_points.size()-1)
+    nb_neighbors = m_points.size()-1;
+
+  status_message("Remove outliers wrt average squared distance to knn (remove %.2lf%%, knn=%.2lf%%=%d)...", 
+                 m_threshold_percent_avg_knn_sq_dst, m_nb_neighbors_outliers_removal, nb_neighbors);
+                 
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_iterator_to_remove =
     CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(
             m_points.begin(), m_points.end(),
-            m_number_of_neighbours,
+            nb_neighbors,
             m_threshold_percent_avg_knn_sq_dst);
   m_points.select(first_iterator_to_remove, m_points.end(), true);
 
@@ -1243,14 +1308,20 @@ void CPoissonDoc::OnUpdateOutliersRemovalWrtAvgKnnSqDist(CCmdUI *pCmdUI)
 void CPoissonDoc::OnAnalysisAverageSpacing()
 {
   BeginWaitCursor();
+  status_message("Compute average spacing to knn (knn=%d)...", m_nb_neighbors_avg_spacing);
+  CGAL::Timer task_timer; task_timer.start();
 
   double value = CGAL::average_spacing_3(m_points.begin(),
                                          m_points.end(),
-                                         m_number_of_neighbours,
+                                         m_nb_neighbors_avg_spacing,
                                          Kernel());
+                                         
   // write message in message box
   prompt_message("Average spacing: %lf", value);
 
+  status_message("Compute average spacing to knn...done: %lf (%.2lf s)", value, task_timer.time());
+  update_status();
+  UpdateAllViews(NULL);
   EndWaitCursor();
 }
 
@@ -1275,9 +1346,11 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     m_surface.clear();
 
     // Create implicit function
-    CGAL_TRACE_STREAM << "  APSS_implicit_function(knn="<<m_number_of_neighbours << ")\n";
+    CGAL_TRACE_STREAM << "  Compute APSS implicit function (knn="<<m_nb_neighbors_apss << ")\n";
     m_apss_function = new APSS_implicit_function(m_points.begin(), m_points.end(),
-                                                 m_number_of_neighbours);
+                                                 m_nb_neighbors_apss);
+
+    CGAL_TRACE_STREAM << "  Surface meshing\n";
 
     // Get inner point
     Point inner_point = m_apss_function->get_inner_point();
@@ -1299,18 +1372,18 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(*m_apss_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius),
-                      m_sm_error_bound*size/sm_sphere_radius); // dichotomy stops when segment < m_sm_error_bound*size
+                      m_sm_error_bound_apss*size/sm_sphere_radius); // dichotomy stops when segment < m_sm_error_bound_apss*size
 
     // defining meshing criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle,  // lower bound of facets angles (degrees)
-                                                        m_sm_radius*size,  // upper bound of Delaunay balls radii
+    CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_apss,  // lower bound of facets angles (degrees)
+                                                        m_sm_radius_apss*size,  // upper bound of Delaunay balls radii
                                                         m_sm_distance_apss*size); // upper bound of distance to surface
 
-    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound<<" * point set radius,\n"
+    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound_apss<<" * point set radius,\n"
                       << "                    sphere center=("<<sm_sphere_center << "),\n"
                       << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
-                      << "                    angle="<<m_sm_angle << " degrees,\n"
-                      << "                    radius="<<m_sm_radius<<" * p.s.r.,\n"
+                      << "                    angle="<<m_sm_angle_apss << " degrees,\n"
+                      << "                    radius="<<m_sm_radius_apss<<" * p.s.r.,\n"
                       << "                    distance="<<m_sm_distance_apss<<" * p.s.r.,\n"
                       << "                    Manifold_with_boundary_tag)\n";
 
@@ -1385,12 +1458,12 @@ void CPoissonDoc::OnUpdateStepCalculateaveragespacing(CCmdUI *pCmdUI)
 void CPoissonDoc::OnExtrapolateNormalsUsingGaussianKernel()
 {
   BeginWaitCursor();
-  status_message("Extrapolating using gaussian kernels");
+  status_message("Extrapolating using gaussian kernel");
   CGAL::Timer task_timer; task_timer.start();
 
   int a = m_poisson_function->extrapolate_normals_using_gaussian_kernel();
 
-  status_message("Extrapolation of normals done... %d normals inserted",a);
+  status_message("Extrapolating using gaussian kernel...done: %d normals inserted",a);
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();

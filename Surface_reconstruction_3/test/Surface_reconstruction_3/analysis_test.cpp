@@ -14,6 +14,8 @@
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Timer.h>
+#include <CGAL/Memory_sizer.h>
 
 // This package
 #include <CGAL/average_spacing_3.h>
@@ -25,7 +27,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <cassert>
-#include <iterator>
+
 
 // ----------------------------------------------------------------------------
 // Private types
@@ -36,17 +38,25 @@ typedef CGAL::Simple_cartesian<float> Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 
+
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
 
-void test_average_spacing(std::deque<Point>& points,
-                          const unsigned int k)
+void test_average_spacing(std::deque<Point>& points, // input point set
+                          unsigned int nb_neighbors_avg_spacing) // number of neighbors
 {
-  std::cerr << "  Average spacing using KNN: ";
+  std::cerr << "Compute average spacing to knn (knn="<< nb_neighbors_avg_spacing << ")... ";
+  CGAL::Timer task_timer; task_timer.start();
+
   typedef std::deque<Point>::iterator Iterator;
-  std::cerr << CGAL::average_spacing_3<Iterator,FT>(points.begin(),points.end(),k);
-  std::cerr << " ok" << std::endl;
+  std::cerr << CGAL::average_spacing_3<Iterator,FT>(points.begin(), points.end(),
+                                                    nb_neighbors_avg_spacing) << "\n";
+  
+  long memory = CGAL::Memory_sizer().virtual_size();
+  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+                        << (memory>>20) << " Mb allocated"
+                        << std::endl;
 }
 
 
@@ -56,17 +66,19 @@ void test_average_spacing(std::deque<Point>& points,
 
 int main(int argc, char * argv[])
 {
-  std::cerr << "Analysis tests" << std::endl;
+  std::cerr << "Analysis test" << std::endl;
   std::cerr << "No output" << std::endl;
 
   // decode parameters
   if(argc < 2)
   {
-    std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz ..." << std::endl;
+    std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz..." << std::endl;
     return EXIT_FAILURE;
   }
 
-  const unsigned int k = 8; // # neighbors
+  // Average Spacing options
+  const unsigned int nb_neighbors_avg_spacing = 7; // K-nearest neighbors = 1 ring (average spacing)
+                                                   // LS: was 8
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -78,18 +90,18 @@ int main(int argc, char * argv[])
 
     // Load point set
     std::deque<Point> points;
-    std::cerr << "  Open " << argv[i] << " for reading...";
+    std::cerr << "Open " << argv[i] << " for reading...";
     if(CGAL::surface_reconstruction_read_xyz(argv[i], 
                                              std::back_inserter(points), 
                                              false /*skip normals*/))
     {
-      std::cerr << "ok (" << points.size() << " points)" << std::endl;
+      std::cerr << "  ok (" << points.size() << " points)" << std::endl;
       
-      test_average_spacing(points,k);
+      test_average_spacing(points,nb_neighbors_avg_spacing);
     }
     else
     {
-      std::cerr << "  Error: cannot read file " << argv[i] << std::endl;
+      std::cerr << "Error: cannot read file " << argv[i] << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
     }
   } // for each input file

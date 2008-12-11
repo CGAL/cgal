@@ -14,6 +14,8 @@
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Timer.h>
+#include <CGAL/Memory_sizer.h>
 
 // This package
 #include <CGAL/smooth_jet_fitting_3.h>
@@ -25,7 +27,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <cassert>
-#include <iterator>
+
 
 // ----------------------------------------------------------------------------
 // Private types
@@ -37,22 +39,39 @@ typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
+
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
 
-void test_jet_fitting(std::deque<Point>& points,
-                      const unsigned int k)
+void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
+                             double nb_neighbors_smooth_jet_fitting) // number of neighbors
 {
-  std::cerr << "  Smooth using KNN and jet fitting...";
+  CGAL::Timer task_timer; task_timer.start();
+
+  // percentage -> number of neighbors
+  int nb_neighbors = int(double(points.size()) * nb_neighbors_smooth_jet_fitting / 100.0);
+  if (nb_neighbors < 7)
+    nb_neighbors = 7;
+  if (nb_neighbors > points.size()-1)
+    nb_neighbors = points.size()-1;
+
+  std::cerr << "Smooth Point Set (knn=" 
+            << nb_neighbors_smooth_jet_fitting << "%=" << nb_neighbors << ")...\n";
+            
   std::deque<Point> output;
-  CGAL::smooth_jet_fitting_3(points.begin(),points.end(),std::back_inserter(output),k);
-  std::cerr << "ok" << std::endl;
+  CGAL::smooth_jet_fitting_3(points.begin(), points.end(),
+                             std::back_inserter(output),
+                             nb_neighbors);
 
   // mutating version of the same function
-  std::cerr << "  Smooth using KNN and jet fitting...";
-  CGAL::smooth_jet_fitting_3(points.begin(),points.end(),k);
-  std::cerr << "ok" << std::endl;
+  CGAL::smooth_jet_fitting_3(points.begin(), points.end(),
+                             nb_neighbors);
+
+  long memory = CGAL::Memory_sizer().virtual_size();
+  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+                        << (memory>>20) << " Mb allocated"
+                        << std::endl;
 }
 
 
@@ -68,11 +87,13 @@ int main(int argc, char * argv[])
   // decode parameters
   if(argc < 2)
   {
-    std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz ..." << std::endl;
+    std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz..." << std::endl;
     return EXIT_FAILURE;
   }
 
-  const unsigned int k = 20; // # neighbors
+  // Smoothing options
+  const double nb_neighbors_smooth_jet_fitting = 0.05 /* % */; // K-nearest neighbors (smooth points by Jet Fitting)
+                                                               // LS: was 20
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -84,18 +105,18 @@ int main(int argc, char * argv[])
 
     // Load point set
     std::deque<Point> points;
-    std::cerr << "  Open " << argv[i] << " for reading...";
+    std::cerr << "Open " << argv[i] << " for reading...";
     if(CGAL::surface_reconstruction_read_xyz(argv[i], 
                                              std::back_inserter(points), 
                                              false /*skip normals*/))
     {
-      std::cerr << "ok (" << points.size() << " points)" << std::endl;
+      std::cerr << "  ok (" << points.size() << " points)" << std::endl;
       
-      test_jet_fitting(points,k);
+      test_smooth_jet_fitting(points, nb_neighbors_smooth_jet_fitting);
     }
     else
     {
-      std::cerr << "  Error: cannot read file " << argv[i] << std::endl;
+      std::cerr << "Error: cannot read file " << argv[i] << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
     }
   } // for each input file

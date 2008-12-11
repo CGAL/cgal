@@ -92,21 +92,20 @@ int main(int argc, char * argv[])
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=0.1 * point set radius)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.005 * point set radius)\n";
-      std::cerr << "  -k <int>               Number of neighbors (default=7)\n";
+      std::cerr << "  -k <int>               Number of neighbors (default=12)\n";
       std::cerr << "                           - should be greater than 7,\n";
       std::cerr << "                           - high numbers lead to smoother surfaces.\n";
       return EXIT_FAILURE;
     }
 
-    // Default APSS options
-    unsigned int number_of_neighbours = 7;
-
-    // Default Surface Mesher options
-    FT sm_angle = 20.0; // theorical guaranty if angle >= 30, but slower
-    FT sm_radius = 0.1; // as suggested by LR
-    FT sm_distance = 0.005; // Upper bound of distance to surface (APSS).
-                            // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
-    FT sm_error_bound = 1e-3;
+    // APSS options
+    FT sm_angle_apss = 20.0; // theorical guaranty if angle >= 30, but slower
+    FT sm_radius_apss = 0.1; // as suggested by LR
+    FT sm_error_bound_apss = 1e-3;
+    FT sm_distance_apss = 0.005; // Upper bound of distance to surface (APSS).
+                                 // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
+    unsigned int nb_neighbors_apss = 12; // K-nearest neighbors (APSS)
+                                         // LS: was 7
 
     // decode parameters
     std::string input_filename  = argv[1];
@@ -114,11 +113,11 @@ int main(int argc, char * argv[])
     for (int i=3; i+1<argc ; ++i)
     {
       if (std::string(argv[i])=="-sm_radius")
-        sm_radius = atof(argv[++i]);
+        sm_radius_apss = atof(argv[++i]);
       else if (std::string(argv[i])=="-sm_distance")
-        sm_distance = atof(argv[++i]);
+        sm_distance_apss = atof(argv[++i]);
       else if (std::string(argv[i])=="-k")
-        number_of_neighbours = atoi(argv[++i]);
+        nb_neighbors_apss = atoi(argv[++i]);
       else
         std::cerr << "invalid option " << argv[i] << "\n";
     }
@@ -129,7 +128,7 @@ int main(int argc, char * argv[])
     // Load mesh/point set
     //***************************************
 
-    PointList pwns;
+    PointList points;
 
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
@@ -154,14 +153,14 @@ int main(int argc, char * argv[])
       {
         const Point& p = v->point();
         const Vector& n = v->normal();
-        pwns.push_back(Point_with_normal(p,n));
+        points.push_back(Point_with_normal(p,n));
       }
     }
     else if (extension == ".xyz" || extension == ".XYZ")
     {
-      // Read the point set file in pwns[]
+      // Read the point set file in points[]
       if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
-                                                std::back_inserter(pwns)))
+                                                std::back_inserter(points)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -169,9 +168,9 @@ int main(int argc, char * argv[])
     }
     else if (extension == ".pwn" || extension == ".PWN")
     {
-      // Read the point set file in pwns[]
+      // Read the point set file in points[]
       if(!CGAL::surface_reconstruction_read_pwn(input_filename.c_str(),
-                                                std::back_inserter(pwns)))
+                                                std::back_inserter(points)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -185,7 +184,7 @@ int main(int argc, char * argv[])
 
     // Print status
     long memory = CGAL::Memory_sizer().virtual_size();
-    int nb_vertices = pwns.size();
+    int nb_vertices = points.size();
     std::cerr << "Read file " << input_filename << ": " << nb_vertices << " vertices, "
                                                         << task_timer.time() << " seconds, "
                                                         << (memory>>20) << " Mb allocated"
@@ -202,8 +201,8 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    assert(pwns.begin() != pwns.end());
-    bool points_have_normals = (pwns.begin()->normal() != CGAL::NULL_VECTOR);
+    assert(points.begin() != points.end());
+    bool points_have_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
     if ( ! points_have_normals )
     {
       std::cerr << "Input point set not supported: this reconstruction method requires oriented normals" << std::endl;
@@ -214,15 +213,14 @@ int main(int argc, char * argv[])
     // Compute implicit function
     //***************************************
 
-    std::cerr << "Compute implicit function...\n";
+    std::cerr << "Compute APSS implicit function (knn=" << nb_neighbors_apss << ")...\n";
 
     // Create implicit function
-    CGAL_TRACE_STREAM << "  APSS_implicit_function(knn="<<number_of_neighbours << ")\n";
-    APSS_implicit_function apss_function(pwns.begin(), pwns.end(),
-                                         number_of_neighbours);
+    APSS_implicit_function apss_function(points.begin(), points.end(),
+                                         nb_neighbors_apss);
 
-    // Recover memory used by pwns[]
-    pwns.clear();
+    // Recover memory used by points[]
+    points.clear();
 
     // Print status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();
@@ -237,8 +235,8 @@ int main(int argc, char * argv[])
 
     std::cerr << "Surface meshing...\n";
 
-    STr tr;           // 3D-Delaunay triangulation
-    C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
+    STr tr; // 3D-Delaunay triangulation for Surface Mesher
+    C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
 
     // Get inner point
     Point inner_point = apss_function.get_inner_point();
@@ -259,23 +257,23 @@ int main(int argc, char * argv[])
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(apss_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius),
-                      sm_error_bound*size/sm_sphere_radius); // dichotomy stops when segment < sm_error_bound*size
+                      sm_error_bound_apss*size/sm_sphere_radius); // dichotomy stops when segment < sm_error_bound_apss*size
 
     // defining meshing criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // lower bound of facets angles (degrees)
-                                                        sm_radius*size,  // upper bound of Delaunay balls radii
-                                                        sm_distance*size); // upper bound of distance to surface
+    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle_apss,  // lower bound of facets angles (degrees)
+                                                        sm_radius_apss*size,  // upper bound of Delaunay balls radii
+                                                        sm_distance_apss*size); // upper bound of distance to surface
 
-    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<sm_error_bound<<" * point set radius,\n"
+    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<sm_error_bound_apss<<" * point set radius,\n"
                       << "                    sphere center=("<<sm_sphere_center << "),\n"
                       << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
-                      << "                    angle="<<sm_angle << " degrees,\n"
-                      << "                    radius="<<sm_radius<<" * p.s.r.,\n"
-                      << "                    distance="<<sm_distance<<" * p.s.r.,\n"
+                      << "                    angle="<<sm_angle_apss << " degrees,\n"
+                      << "                    radius="<<sm_radius_apss<<" * p.s.r.,\n"
+                      << "                    distance="<<sm_distance_apss<<" * p.s.r.,\n"
                       << "                    Manifold_with_boundary_tag)\n";
 
     // meshing surface
-    CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
+    CGAL::make_surface_mesh(surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
 
     // Print status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();
@@ -292,7 +290,7 @@ int main(int argc, char * argv[])
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
 
     std::ofstream out(output_filename.c_str());
-    CGAL::output_surface_facets_to_off(out, c2t3);
+    CGAL::output_surface_facets_to_off(out, surface_mesher_c2t3);
 
     return EXIT_SUCCESS;
 }

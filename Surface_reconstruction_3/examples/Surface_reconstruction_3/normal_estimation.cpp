@@ -66,39 +66,61 @@ typedef std::deque<Point_with_normal> PointList;
 
 void estimate_normals_pca(const PointList& points, // input point set
                           std::deque<Orientable_normal>& normals, // computed normals
-                          unsigned int k) // number of neighbors
+                          double nb_neighbors_pca_normals /* % */) // number of neighbors
 {
-  std::cerr << "Estimate normals using KNN and point-based PCA (knn="<<k << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
-  CGAL::estimate_normals_pca_3(points.begin(),points.end(),std::back_inserter(normals),k);
+  // percentage -> number of neighbors
+  int nb_neighbors = int(double(points.size()) * nb_neighbors_pca_normals / 100.0);
+  if (nb_neighbors < 7)
+    nb_neighbors = 7;
+  if (nb_neighbors > points.size()-1)
+    nb_neighbors = points.size()-1;
+
+  std::cerr << "Estimate Normals Direction by PCA (knn="
+            << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
+            
+  CGAL::estimate_normals_pca_3(points.begin(), points.end(),
+                               std::back_inserter(normals),
+                               nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "ok: " << task_timer.time() << " seconds, "
-                      << (memory>>20) << " Mb allocated"
-                      << std::endl;
+  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+                        << (memory>>20) << " Mb allocated"
+                        << std::endl;
 }
 
 void estimate_normals_jet_fitting(const PointList& points, // input point set
                                   std::deque<Orientable_normal>& normals, // computed normals
-                                  unsigned int k) // number of neighbors)
+                                  double nb_neighbors_jet_fitting_normals /* % */) // number of neighbors
 {
-  std::cerr << "Estimate normals using KNN and jet fitting (knn="<<k << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
-  CGAL::estimate_normals_jet_fitting_3(points.begin(),points.end(),std::back_inserter(normals),k);
+  // percentage -> number of neighbors
+  int nb_neighbors = int(double(points.size()) * nb_neighbors_jet_fitting_normals / 100.0);
+  if (nb_neighbors < 7)
+    nb_neighbors = 7;
+  if (nb_neighbors > points.size()-1)
+    nb_neighbors = points.size()-1;
+
+  std::cerr << "Estimate Normals Direction by Jet Fitting (knn="
+            << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
+
+  CGAL::estimate_normals_jet_fitting_3(points.begin(), points.end(),
+                                       std::back_inserter(normals),
+                                       nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "ok: " << task_timer.time() << " seconds, "
-                      << (memory>>20) << " Mb allocated"
-                      << std::endl;
+  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+                        << (memory>>20) << " Mb allocated"
+                        << std::endl;
 }
 
 void orient_normals_MST(const PointList& points, // input point set
                         std::deque<Orientable_normal>& normals, // normals to orient
-                        unsigned int k) // number of neighbors
+                        unsigned int nb_neighbors_mst) // number of neighbors
 {
-  std::cerr << "Orient normals using a minimum spanning tree (knn="<<k << ")...\n";
+  std::cerr << "Orient Normals with a Minimum Spanning Tree (knn="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
   // orient_normals_minimum_spanning_tree_3() requires an iterator over points
@@ -110,13 +132,13 @@ void orient_normals_MST(const PointList& points, // input point set
          index_id, // index -> index property map = identity
          boost::make_iterator_property_map(points.begin(), index_id), // index -> position prop. map
          boost::make_iterator_property_map(normals.begin(), index_id), // index -> normal prop. map
-         k);
+         nb_neighbors_mst);
 
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "ok: " << task_timer.time() << " seconds, "
-                      << (memory>>20) << " Mb allocated"
-                      << std::endl;
+  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+                        << (memory>>20) << " Mb allocated"
+                        << std::endl;
 }
 
 
@@ -143,22 +165,28 @@ int main(int argc, char * argv[])
       std::cerr << "Input file formats are .off (mesh) and .xyz or .pwn (point set).\n";
       std::cerr << "Output file format is .xyz or .pwn (point set).\n";
       std::cerr << "Options:\n";
-      std::cerr << "  -estimate plane|quadric     Estimate normals direction\n";
+      std::cerr << "  -estimate plane|quadric          Estimate normals direction\n";
       std::cerr << "  using a tangent plane or quadric (default=quadric)\n";
-      std::cerr << "  -estimate_neighbors <int>   Number of neighbors\n";
-      std::cerr << "  to compute tangent plane or quadric (default=50)\n";
-      std::cerr << "  -orient MST                 Orient normals\n";
+      std::cerr << "  -nb_neighbors_pca <int>          Number of neighbors\n";
+      std::cerr << "  to compute tangent plane (default=0.3% of points)\n";
+      std::cerr << "  -nb_neighbors_jet_fitting <int>  Number of neighbors\n";
+      std::cerr << "  to compute quadric (default=default=0.05% of points)\n";
+      std::cerr << "  -orient MST                      Orient normals\n";
       std::cerr << "  using a Minimum Spanning Tree (default=MST)\n";
-      std::cerr << "  -orient_neighbors <int>   Number of neighbors\n";
-      std::cerr << "  to compute the MST (default=10)\n";
+      std::cerr << "  -nb_neighbors_mst <int>          Number of neighbors\n";
+      std::cerr << "  to compute the MST (default=12)\n";
       return EXIT_FAILURE;
     }
 
-    // Default options
+    // Normals Computing options
+    double nb_neighbors_pca_normals = 0.3 /* % */; // K-nearest neighbors (estimate normals by PCA)
+                                                   // LS: was 50
+    double nb_neighbors_jet_fitting_normals = 0.05 /* % */; // K-nearest neighbors (estimate normals by Jet Fitting)
+                                                            // LS: was 7
+    unsigned int nb_neighbors_mst = 12; // K-nearest neighbors = 2 rings (orient normals by MST)
+                                        // LS: was 12
     std::string estimate = "quadric"; // estimate normals by jet fitting
-    int estimate_neighbors = 50; // # neighbors
     std::string orient = "MST"; // orient normals using a Minimum Spanning Tree
-    int orient_neighbors = 10; // # neighbors
 
     // decode parameters
     std::string input_filename  = argv[1];
@@ -170,16 +198,19 @@ int main(int argc, char * argv[])
         if (estimate != "plane" && estimate != "quadric")
           std::cerr << "invalid option " << argv[i] << "\n";
       }
-      else if (std::string(argv[i])=="-estimate_neighbors") {
-        estimate_neighbors = atoi(argv[++i]);
+      else if (std::string(argv[i])=="-nb_neighbors_pca") {
+        nb_neighbors_pca_normals = atof(argv[++i]);
+      }
+      else if (std::string(argv[i])=="-nb_neighbors_jet_fitting") {
+        nb_neighbors_jet_fitting_normals = atof(argv[++i]);
       }
       else if (std::string(argv[i])=="-orient") {
         orient = argv[++i];
         if (orient != "MST")
           std::cerr << "invalid option " << argv[i] << "\n";
       }
-      else if (std::string(argv[i])=="-orient_neighbors") {
-        orient_neighbors = atoi(argv[++i]);
+      else if (std::string(argv[i])=="-nb_neighbors_mst") {
+        nb_neighbors_mst = atoi(argv[++i]);
       }
       else {
         std::cerr << "invalid option " << argv[i] << "\n";
@@ -195,7 +226,7 @@ int main(int argc, char * argv[])
     // Load mesh/point set
     //***************************************
 
-    PointList pwns;
+    PointList points;
 
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
@@ -220,14 +251,14 @@ int main(int argc, char * argv[])
       {
         const Point& p = v->point();
         const Vector& n = v->normal();
-        pwns.push_back(Point_with_normal(p,n));
+        points.push_back(Point_with_normal(p,n));
       }
     }
     else if (extension == ".xyz" || extension == ".XYZ")
     {
-      // Read the point set file in pwns[]
+      // Read the point set file in points[]
       if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
-                                                std::back_inserter(pwns)))
+                                                std::back_inserter(points)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -235,9 +266,9 @@ int main(int argc, char * argv[])
     }
     else if (extension == ".pwn" || extension == ".PWN")
     {
-      // Read the point set file in pwns[]
+      // Read the point set file in points[]
       if(!CGAL::surface_reconstruction_read_pwn(input_filename.c_str(),
-                                                std::back_inserter(pwns)))
+                                                std::back_inserter(points)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -251,7 +282,7 @@ int main(int argc, char * argv[])
 
     // Print status
     long memory = CGAL::Memory_sizer().virtual_size();
-    int nb_vertices = pwns.size();
+    int nb_vertices = points.size();
     std::cerr << "Read file " << input_filename << ": " << nb_vertices << " vertices, "
                                                         << task_timer.time() << " seconds, "
                                                         << (memory>>20) << " Mb allocated"
@@ -276,13 +307,13 @@ int main(int argc, char * argv[])
 
     // Estimate normals direction
     if (estimate == "plane")
-      estimate_normals_pca(pwns, computed_normals, estimate_neighbors);
+      estimate_normals_pca(points, computed_normals, nb_neighbors_pca_normals);
     else if (estimate == "quadric")
-      estimate_normals_jet_fitting(pwns, computed_normals, estimate_neighbors);
+      estimate_normals_jet_fitting(points, computed_normals, nb_neighbors_jet_fitting_normals);
 
     // Orient normals
     if (orient == "MST")
-      orient_normals_MST(pwns, computed_normals, orient_neighbors);
+      orient_normals_MST(points, computed_normals, nb_neighbors_mst);
 
     // Check computed normals
     int unoriented_normals = 0;
@@ -308,8 +339,8 @@ int main(int argc, char * argv[])
     // Compare with original normals
     //***************************************
 
-    assert(pwns.begin() != pwns.end());
-    bool input_points_have_normals = (pwns.begin()->normal() != CGAL::NULL_VECTOR);
+    assert(points.begin() != points.end());
+    bool input_points_have_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
     if (input_points_have_normals)
     {
       std::cerr << "Compare with original normals..." << std::endl;
@@ -320,7 +351,7 @@ int main(int argc, char * argv[])
       int flipped_normals = 0;
       PointList::iterator p;
       //std::deque<Orientable_normal>::iterator n;
-      for (p = pwns.begin(), n = computed_normals.begin(); p != pwns.end(); p++, n++)
+      for (p = points.begin(), n = computed_normals.begin(); p != points.end(); p++, n++)
       {
         Vector v1 = p->normal(); // input normal
         double norm1 = std::sqrt( v1*v1 );
@@ -341,7 +372,7 @@ int main(int argc, char * argv[])
         max_normal_deviation = (std::max)(max_normal_deviation, normal_deviation);
         avg_normal_deviation += normal_deviation;
       }
-      avg_normal_deviation /= double(pwns.size());
+      avg_normal_deviation /= double(points.size());
 
       if (flipped_normals > 0)
       {
@@ -363,7 +394,7 @@ int main(int argc, char * argv[])
     // Replace old normals by new ones
     PointList::iterator p;
     //std::deque<Orientable_normal>::iterator n;
-    for (p = pwns.begin(), n = computed_normals.begin(); p != pwns.end(); p++, n++)
+    for (p = points.begin(), n = computed_normals.begin(); p != points.end(); p++, n++)
       p->normal() = *n;
 
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
@@ -372,7 +403,7 @@ int main(int argc, char * argv[])
     if (extension == ".pwn" || extension == ".PWN")
     {
       if( ! CGAL::surface_reconstruction_write_pwn(output_filename.c_str(),
-                                                   pwns.begin(), pwns.end()) )
+                                                   points.begin(), points.end()) )
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;
@@ -381,7 +412,7 @@ int main(int argc, char * argv[])
     else if (extension == ".xyz" || extension == ".XYZ")
     {
       if( ! CGAL::surface_reconstruction_write_xyz(output_filename.c_str(),
-                                                   pwns.begin(), pwns.end()) )
+                                                   points.begin(), points.end()) )
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;
