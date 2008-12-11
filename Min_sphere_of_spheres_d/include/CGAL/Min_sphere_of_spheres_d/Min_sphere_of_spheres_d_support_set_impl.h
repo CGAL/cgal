@@ -31,7 +31,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     inline bool reject(const FT& alpha,const FT& prev,
                        const Tag_false /* is_exact */) {
       using namespace Min_sphere_of_spheres_d_impl;
-      return alpha < SqrOfEps(FT(0))*sqr(prev);
+      return alpha < SqrOfEps<FT>::result * sqr(prev);
     }
 
     template<typename FT,typename Pair>

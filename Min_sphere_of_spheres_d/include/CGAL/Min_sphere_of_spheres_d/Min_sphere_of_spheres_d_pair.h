@@ -24,16 +24,46 @@
 namespace CGAL_MINIBALL_NAMESPACE {
 
   namespace Min_sphere_of_spheres_d_impl {
+
     const double Min_float = 1.0e-120;
 
-    const float Eps_float = 1.0e-7f;
-    const double Eps_double = 1.0e-16;
-    float SqrOfEps (float) {return 1.0e-14f;}
-    double SqrOfEps (double) {return 1.0e-32;}
+    // a bunch of float/double constants that are used as tolerance in the
+    // template code of the package.
+    // "The stuff we're talking about only kicks in when floating-point 
+    // arithmetic is being used, and here double is surely a reasonable 
+    // default."
+    // An old code contained functions instead of the following types and 
+    // it work for exact type (for example, Gmpq) due to the fact that 
+    // they are convertible to double.
+    // This is indeed the least invasive fix dropint the function that were
+    // defined here and cause linkage bug.
+    // You can still have a behaviour of instantiating only if a type
+    // is convertibale to double (by using type_traits together with _if)
+    // but until "the whole design should be overhauled at some point"
+    // this is fine.
+    template <typename FT>
+      struct SqrOfEps
+      {
+        static const double result = 1.0e-14f;
+      };
 
-    float Tol (float) {return 1.0f+Eps_float;}
-    template <class FT>
-    double Tol (FT) {return 1.0+Eps_double;}
+    template <>
+      struct SqrOfEps<float>
+      {
+        static const float result = 1.0e-32;
+      };
+
+    template <typename FT>
+      struct Tol
+      {
+        static const double result = 1.0 + 1.0e-16; // 1.0e-16 = Eps_double
+      };
+
+    template <>
+      struct Tol<float>
+      {
+        static const float result = 1.0f + 1.0e-7f; // 1.0e-7f = Eps_float;
+      };
   }
 
   template<typename FT>

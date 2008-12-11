@@ -61,7 +61,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
             for(int i=0; i<e; ++i)
               if (!T.test(i) && !contains(t.center_cartesian_begin(*l[i]),
                                           t.radius(*l[i]),
-                                          Tol(FT(0)),Is_exact())) {
+                                          Tol<FT>::result,Is_exact())) {
                 isEnclosingSupporting = false;
                 break;
               }
