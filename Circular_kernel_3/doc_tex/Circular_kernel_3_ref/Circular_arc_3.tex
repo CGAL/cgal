@@ -23,13 +23,13 @@ are respectively \ccc{p} and \ccc{q}.
 \ccPrecond{\ccc{p} and \ccc{q} lie on \ccc{c} and are different.}}
 
 The circular arc constructed from a circle, a source, and a target, is
-defined as the set of points of the circle that lie between the source
-\ccc{p1} and the target \ccc{p2}, when traversing the circle
-counterclockwise in the \textit{positive} plane containing the circle.
+defined as the set of points of the circle that lie between the source \ccc{p1}
+and the target \ccc{p2}, when traversing the circle counterclockwise
+seen from the side of the plane of the circle pointed by its \textit{positive} normal 
+vectors.
 
-In this definition, we say that a plane is \textit{positive} if its
-equation is of the form $ax+by+cz+d=0$ with $(a,b,c)>(0,0,0)$
-(i.e. $(a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)$).
+In this definition, we say that a normal vector (a,b,c) is \textit{positive} if 
+(a,b,c)>(0,0,0) (i.e. $(a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)$).
 
 \ccConstructor{Circular_arc_3(const Point_3<SphericalKernel> &p,
                               const Point_3<SphericalKernel> &q,
@@ -38,8 +38,9 @@ equation is of the form $ax+by+cz+d=0$ with $(a,b,c)>(0,0,0)$
   \ccc{Circle_3<SphericalKernel>} passing through the points \ccc{p},
   \ccc{q} and \ccc{r}. The source and target are respectively \ccc{p}
   and \ccc{r}, when traversing the supporting circle in the
-  counterclockwise direction in the \textit{positive} plane containing
-  the circle. 
+  counterclockwise direction 
+  seen from the side of the plane containing the circle pointed by its \textit{positive}
+  normal vectors.
   Note that, depending on the orientation of the point triple
   \ccc{(p,q,r)}, \ccc{q} may not lie on the arc. 
 \ccPrecond{\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}}
