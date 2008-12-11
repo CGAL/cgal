@@ -59,7 +59,7 @@ message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
 
 set( CGAL_BUILDING_LIBS TRUE )
 
-set( CGAL_VERSION_DIR     CGAL-3.4 )
+set( CGAL_VERSION_DIR     CGAL-${CGAL_VERSION} )
 set( CGAL_MODULES_REL_DIR cmake/modules )
 set( CGAL_MODULES_DIR     ${CMAKE_SOURCE_DIR}/${CGAL_MODULES_REL_DIR} )
 
@@ -94,6 +94,9 @@ mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 message( STATUS "USING CMake version: ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" )
 message( STATUS "System: ${CMAKE_SYSTEM_NAME}" )
 
+# The base name of all CGAL libraries (including "CGAL" itself. That
+# variables can be used by foreach() loops that deal with library variables.
+set(ALL_CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_PDB CGAL_Qt3 CGAL_Qt4 CACHE INTERNAL "Name of all CGAL libraries.")
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -298,7 +301,7 @@ else()
         CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
       )
       
-  set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_MODULES_REL_DIR}"  
+  set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/${CGAL_VERSION_DIR}"
         CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
       )
       
@@ -370,6 +373,14 @@ hide_variable(LIBRARY_OUTPUT_PATH)
 #                                    -= USER SIDE SETTINGS =-
 #
 #--------------------------------------------------------------------------------------------------
+
+# Set CGAL_LIBRARY_NAME, CGAL_Qt3_LIBRARY_NAME and so on. Those variables
+# are the name of CGAL libraries, without the path. Used in the generation
+# of the installed CGALConfig.cmake
+foreach(lib ${ALL_CGAL_LIBRARIES})
+  get_filename_component(${lib}_LIBRARY_NAME "${${lib}_LIBRARY}" NAME CACHE)
+  hide_variable(${lib}_LIBRARY_NAME)
+endforeach()
 
 create_CGALconfig_files()
 
