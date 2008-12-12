@@ -20,7 +20,7 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  create_single_source_cgal_program( "interpolation_2.cpp" )
+  create_single_source_cgal_program( "gv_interpolation_2.cpp" )
   create_single_source_cgal_program( "surface_voronoi.cpp" )
 
 else()

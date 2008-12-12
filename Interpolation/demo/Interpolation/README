@@ -3,7 +3,7 @@ These demos use Geomview
 Geomview 1.8.1 is required.  The geomview command must be in the user's $PATH,
 otherwise the program will not be able to execute.]
  
-------- interpolation_2 -------------------------------------------------
+------- gv_interpolation_2 -------------------------------------------------
 using Geomview
 
 This demo program dumps the plot of the different interpolation functions
