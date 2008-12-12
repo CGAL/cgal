@@ -1,6 +1,6 @@
 # This is the CMake script for compiling a CGAL application.
 
-project( min_ellipse_2 ) 
+project( Matrix_search_Demo ) 
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -36,14 +36,14 @@ if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
     )
 
   # The executable itself.
-  add_executable  ( rectangular_p_center_2
+  add_executable  ( rectangular_p_center
     rectangular_p_center_2.cpp rectangular_p_center_2.moc
     Qt_widget_toolbar.cpp Qt_widget_toolbar.moc
     Qt_widget_move_list_point.cpp Qt_widget_move_list_point.moc
     )
 
   target_link_libraries( max_k-gon  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-  target_link_libraries( rectangular_p_center_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  target_link_libraries( rectangular_p_center  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 else()
 
