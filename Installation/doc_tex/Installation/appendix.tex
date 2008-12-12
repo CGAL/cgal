@@ -61,51 +61,6 @@ By default \cmake\ generates makefiles for Release mode, with
 optimization flags switched on, and vcproj files for Release
 and Debug mode.
 
-\section{Troubleshooting\label{sec:troubleshooting}}
-\index{troubleshooting}
-
-This section contains some remarks about known problems and the
-solutions we propose. If your problem is not listed here, please have
-a look at the bug reporting instructions from the \cgal\ homepage:
-\begin{alltt}
-\cgalhomepage
-\end{alltt}
-
-\subsection{Compiler Version Test Execution Failed\label{sec:compvertestfails}}
-\index{Compiler version test}\index{compilers!version test}
-
-Possibly already during the startup of the configuration, the
-execution of the compiler version test might fail with the following
-(or similar) error message.
-\begin{verbatim}
-  ld.so.1: ./tmp_test: fatal: libstdc++.so.5: 
-    open failed: No such file or directory
-\end{verbatim}
-This means that the standard \CC\ library for your compiler is
-installed in a directory that is not on your current runtime linker
-path. You can solve this problem by adding the directory containing
-\texttt{libstdc++.so} to your runtime linker path, usually
-represented by the environment variable \texttt{LD\_LIBRARY\_PATH}.
-
-For example, if you have a standard \texttt{gcc} installation below
-\texttt{/software/gcc-3.3.2/}, you would type 
-\begin{alltt}
-      export LD_LIBRARY_PATH=/software/gcc-3.3.2/lib:$LD_LIBRARY_PATH
-\end{alltt}
-for Bourne shell alikes, while for \texttt{csh} descendants the syntax
-is
-\begin{alltt}
-      setenv LD_LIBRARY_PATH /software/gcc-3.3.2/lib:$LD_LIBRARY_PATH
-\end{alltt}
-You might want to add this command to your shell startup file.
-
-\subsection{LEDA and STL Conflicts\label{subs:ledastlconfl}}
-
-If you are using an old version of \leda, the combination of \leda\ 
-and \stl\ may give some problems. In order to avoid them, it is highly
-recommended to use the latest \leda\ release, since this is what we
-test \cgal\ with.
-
 
 
 \section{Scripts}
