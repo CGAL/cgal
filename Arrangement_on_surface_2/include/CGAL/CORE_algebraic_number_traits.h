@@ -95,12 +95,12 @@ public:
   {
     CGAL_precondition (x1 != x2);
 
-    const BigInt  one (1);
-    Algebraic     scaled_x1 = x1;
-    BigInt        ix1;
-    Algebraic     scaled_x2 = x2;
-    BigInt        ix2;
-    BigInt        denom = 1;
+    const Integer  one (1);
+    Algebraic      scaled_x1 = x1;
+    Integer        ix1;
+    Algebraic      scaled_x2 = x2;
+    Integer        ix2;
+    Integer        denom = 1;
 
     while (true)
     {
