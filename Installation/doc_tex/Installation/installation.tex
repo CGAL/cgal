@@ -96,7 +96,7 @@ e.g. for numeric solvers, or visualization.
 \subsection{Compilers}
 
 In order to build the \cgal\ libraries you need a \CC\ compiler.  
-\cgal 3.4 is supported for the following compilers/operating systems:
+\cgal~3.4 is supported for the following compilers/operating systems:
 
 \begin{center}\index{compilers!supported}\index{supported compilers}
   \renewcommand{\arraystretch}{1.3}
@@ -126,7 +126,7 @@ We recommend the usage of \cmake\ Rel.~2.6, and you need at least
 \cmake\ Rel.~2.4-patch-7.
 
 
-\subsection*{boost}
+\subsection{boost}
 Moreover, \cgal\ requires a working installation of the \boost\
 libraries (the header files and the threading library binaries), 
 Version 1.33.1 or later. In case
@@ -138,7 +138,7 @@ Since \texttt{Boost.Thread} is required, make sure to either install the precomp
 
 Some demos depend on \texttt{Boost.ProgramOptions}.
 
-\subsection*{Exact Arithmetic}
+\subsection{Exact Arithmetic}
 
 \cgal\ combines floating point arithmetic with exact arithmetic, in order
 to be fast and reliable.  \cgal\ offers support for \gmp+\mpfr\ and \leda\ 
@@ -167,12 +167,19 @@ It can be downloaded from \path'http://www.libqglviewer.com'
 \subsection{Miscellaneous}
 
 The Surface Mesh Generator demo can read compressed image files
-if {\em zlib} is installed. It can be downloaded from \path'http://www.zlib.net'. 
+if {\em zlib} is installed. It can be downloaded from
+\path'http://www.zlib.net'.
+
+The Approximation of Ridges and Umbilics on Triangulated Surface Meshes
+package as well as the Estimation of Local Differential Properties package
+depends on the BLAS and LAPACK libraries. Implementations can be found at
+\blaspage\ and \lapackpage. We provides precompiled versions of BLAS and
+LAPACK for Visual~\CC.
                        
-The Surface parametriation package can be speeded up by using the sparse matrix solver \taucs.
-This library can be downloaded from \taucspage. As Visual \CC\ is not properly
-supported by the \taucs\ project, we provide a precompiled version of \taucs.
-Note 
+The Surface parametrization package can be speeded up by using the sparse matrix solver \taucs.
+This library can be downloaded from \taucspage. As Visual~\CC\ is not properly
+supported by the \taucs\ project, we provide a precompiled version of
+\taucs.
 
 
 
@@ -902,7 +909,8 @@ the header files and the full pathnames of the release and debug libraries
 \index{cgal!general-config-cmake-vars-dep-taucs}\index{cgal configuration cmake variables - dependencies - taucs}
 \subsubsection{TAUCS and METIS libraries}
 
-Some demos require the TAUCS and METIS libraries. Both must be found otherwise y.
+Some demos require the TAUCS and METIS libraries. Both must be found
+otherwise the TAUCS support will not be activated.
 
 Under Windows, auto-linking is used, so only the {\em directory} 
 containing the libs is needed and you would specify \texttt{TAUCS\_LIBRARY\_DIR} rather than
