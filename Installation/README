@@ -25,17 +25,11 @@ This distribution of CGAL includes:
    include/CGAL       - the include files for the CGAL library (and other small
                         external libraries as well, see the LICENSE file)
    INSTALL            - file containing information about the installation
-                        process on Unix-like platforms
-   INSTALL.MacOSX     - file containine information about the installation
-                        process on the MacOSX platform
-   INSTALL.win32      - file containing information about the installation
-                        process on the Windows platform
+                        process 
    LICENSE            - A file describing the license of CGAL
    LICENSE.FREE_USE   - A file containing the free use license (see LICENSE file)
    LICENSE.LGPL       - A file containing the LGPL v2.1 license
    LICENSE.QPL        - A file containing the QPL v1.0 license
-   make/              - directory containing CGAL include makefiles, which
-                        are generated during installation
    README             - this file
    scripts/           - directory containing some useful scripts for CGAL
                         programmers

@@ -136,7 +136,7 @@ installer from \path'http://www.boostpro.com/products/free'.
 Since \texttt{Boost.Thread} is required, make sure to either install the precompiled 
 {\em static} binaries for your compiler or to build \texttt{libboost-thread}.
 
-Some demos depend on \texttt{Boost.ProgramOptions}.
+Some demos depend on \texttt{Boost.Program\_options}.
 
 \subsection{Exact Arithmetic}
 
@@ -145,7 +145,7 @@ to be fast and reliable.  \cgal\ offers support for \gmp+\mpfr\ and \leda\
 exact number types, as well as a built-in exact number type used when
 none of the other two is installed on your system. 
 
-Having \gmp\ version 4.1.4 or later and \mpfr\ version 2.0.1 or later
+Having \gmp\ version 4.1.4 or later and \mpfr\ version 2.2.1 or later
 installed is highly recommended. These libraries can be obtained from
 \gmppage\ and \mpfrpage, respectively, if they should not be present
 on your system. As Visual \CC\ is not properly support by the \gmp\ and 
@@ -196,7 +196,7 @@ have to unpack it. Under a Unix-like shell, use the command
 \end{verbatim}
 
 
-When you are on Windows you may download and run the \texttt{CGAL-3.4-Installer.exe}. It is a
+When you are on Windows you may download and run the \texttt{CGAL-3.4-Setup.exe}. It is a
 self extracting executable that installs the \cgal\ source and header
 files, and that allows you to select and download some precompiled
 third party libraries.
@@ -217,7 +217,6 @@ contains the following subdirectories:\index{directories!structure}
     \texttt{doc\_pdf}      & documentation (PDF)\\\hline
     \texttt{examples}      & example programs\\\hline
     \texttt{include}       & header files\\\hline
-    \texttt{lib}           & (shared) object libraries\\\hline
     \texttt{scripts}       & some useful scripts (e.g. for creating CMakeLists.txt files)\\\hline
     \texttt{src}           & source files\\\hline
   \end{tabular}
