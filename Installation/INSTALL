@@ -5,14 +5,13 @@ INSTALL
 INTRODUCTION
 ============
 
-This file describes how to install CGAL on Unix-like systems (e.g., Linux,
-MacOS X, Solaris) as well as on Windows using cygwin. The instructions in
-this file are for the most common use cases. For further information, or in
-case of problems, please see the detailed installation instructions, which
-can be found in this distribution in the file ./doc_html/index.html
-or on the CGAL website at:
-http://www.cgal.org/Manual/3.4/doc_html/installation_manual/contents.html
+This file describes how to install CGAL. The instructions in this file
+are for the most common use cases, and cover the command line tools. 
 
+For further information, or in case of problems, please see the
+detailed installation instructions, which can be found in this
+distribution in the file ./doc_html/index.html or on the CGAL website
+http://www.cgal.org/Manual/3.4/doc_html/installation_manual/contents.html
 
 The documentation of CGAL is available in PDF and HTML formats.
 It is not bundled with the software but can be downloaded separately
