@@ -176,7 +176,7 @@ TestSuiteTableHeight=0
 # not only are pages copied, but the script manages also a clever
 # history of up to $TestSuiteHistory many test-suite results and
 # deletes older ones.
-TestSuiteResultPath="/www/pub/www.cgal.org/Members/Manual_test"
+TestSuiteResultPath="/var/CGAL/www/Members/Manual_test"
 
 # Number of older test-suite results kept. Test-suite results beyond this
 # number are deleted.
@@ -188,10 +188,10 @@ TestSuiteFullHistory=3
 
 # Email address to send the end-of-testsuite announcement to. If this
 # variable is empty, no email will be send.
-TestSuiteResultEmail="cgal-develop-l@postino.mpi-sb.mpg.de"
+TestSuiteResultEmail=""
 
 # The url prefix of the result web page
-TestSuiteResultUrl="http://www.cgal.org/Members/Manual_test"
+TestSuiteResultUrl="https://cgal.geometryfactory.com/CGAL/Members/Manual_test"
 
 # =====================================================================
 # ... End of Configuration Section.
