@@ -1,6 +1,18 @@
 INSTALL
 -------------------------------------------------------------------------------
-This file describes how to install CGAL.
+
+
+INTRODUCTION
+============
+
+This file describes how to install CGAL on Unix-like systems (e.g., Linux,
+MacOS X, Solaris) as well as on Windows using cygwin. The instructions in
+this file are for the most common use cases. For further information, or in
+case of problems, please see the detailed installation instructions, which
+can be found in this distribution in the file ./doc_html/index.html
+or on the CGAL website at:
+http://www.cgal.org/Manual/3.4/doc_html/installation_manual/contents.html
+
 
 The documentation of CGAL is available in PDF and HTML formats.
 It is not bundled with the software but can be downloaded separately
@@ -9,399 +21,171 @@ at <http://www.cgal.org/Manual>.
 For more information about CGAL, see the <http://www.cgal.org/>.
 
 
-To install CGAL, you should:
 
- ---------------------------
- - Setup the pre-requisites:
- ---------------------------
+PREREQUISITES
+=============
 
-   * Install CMake, the build system used by CGAL
-     Required Rel 2.4-patch-7,
-     Recommended Rel 2.6 supporting a cross platform cmake-gui
-     Download from: http://www.cmake.org/
+To install CGAL, you need 'cmake' and several third-party libraries. 
+Some are mandatory for entire CGAL, some are mandatory for particular 
+CGAL  packages, some are only needed for demos.
 
-   * Install the Boost libraries (http://www.boost.org/ or http://www.boostpro.com/products/free)
-     Boost is required to build CGAL.
-     Compiled parts of Boost are mostly optional, except Boost.Threads.
-     Another recommended compiled part is Boost.ProgramOptions.
+   * CMake, the build system used by CGAL
+     Required for building CGAL
+     Rel >= 2.4.5
+     Recommended Rel 2.6, which supports a cross platform cmake-gui
+     http://www.cmake.org/
 
-   * Install optional additional libraries:
+   * Boost  
+     Required for building CGAL and for applications using CGAL
+     Rel >= 1.33.1
+     Required compiled Boost library: Boost.Threads
+     Optional compiled Boost library: Boost.Program_options
+     http://www.boost.org/    or  http://www.boostpro.com/products/free
 
-     o Used for exact arithmetic           
+   * Exact Arithmetic           
+     CGAL combines floating point arithmetic with exact arithmetic, in order
+     to be fast and reliable.  CGAL offers support for GMP+MPFR, for LEDA exact 
+     number types, as well as a built-in exact number type used when
+     none of the other two is installed.
+     Required by several examples which have hard coded the number type.
 
-       - gmp, mpfr     Multi precision number types
-                       http://gmplib.org
-                       http://www.mpfr.org
+     - GMP    
+       Rel >= 4.1.4
+       http://gmplib.org
 
-       - leda          an alternative to gmp+mpfr 
-                       http://www.algorithmic-solutions.com/leda/index.htm
+     - MPFR
+       Rel >= 2.2.1
+       http://www.mpfr.org
 
-     o Used by most demos
-       - Qt3 and Qt4   Trolltech's cross-platform GUI toolkits
-                       http://trolltech.com/products/qt
+     - LEDA
+       Rel.: >= 6.0
+       http://www.algorithmic-solutions.com/leda/index.htm
 
-     o Miscellaneous
 
-       - zlib          A compression library, used by the Surface Mesh Generator demo
-                       http://www.zlib.net
+   * Visualization 
+     Required for most demos
 
-       - taucs         A sparse matrix solver, used by the Surface parameterization package
+     - Qt3 
+       Rel >= 3.3
+       http://trolltech.com/products/qt
 
-       - libQGLViewer  A 3D widget for Qt4, used by some 3D demos
-                       http://www.libqglviewer.com
+     - Qt4
+       Rel >= 4.2   
+       http://trolltech.com/products/qt
 
-    NOTE: The Windows installer comes with a CGAL specific distribution of gmp, mpfr and taucs.
+     - libQGLViewer
+       http://www.libqglviewer.com
 
+     - Geomview
+       http://www.geomview.org/
 
- ---------------------------------------------------------------------------------
- - Download the compressed archive file from the CGAL web site http://www.cgal.org
- ----------------------------------------------------------------------------------
 
- ------------------
- - Unpack the file
- -----------------
+   * Numerical Libraries
+ 
+     - BLAS, LAPACK, ATLAS
+       Required by the packages:
+       o Estimation of Local Differential Properties
+       o Approximation of Ridges and Umbilics
+       o Planar Parameterization of Triangulated Surface Meshes
+       http://www.netlib.org/blas/, http://www.netlib.org/lapack/
 
- ------------------------------
- - Configure the CGAL libraries
- ------------------------------
+     - TAUCS (sparse matrix solver)
+       Accelerates the package:
+       o Planar Parameterization of Triangulated Surface Meshes
+       http://www.tau.ac.il/~stoledo/taucs/
 
-    CMake is a "makefile generator".  It does not build the library but generates the
-    makefiles (or solution files) needed to build it, a process called "configuration".
 
-    CMake configures the library by detecting your development environment, the location
-    and requirements of the third-party libraries used by CGAL (such as BOOST), and
-    the variations you can choose, such as building release or debug versions.
+   * Miscellaneous
+     - zlib         
+       Optional for the package:
+       o Surface Mesh Generator can read compressed images directly
+       http://www.zlib.net
 
-    In most cases, CMake can do all that unattended.  If you get any errors when
-    running CMake OR when building the library, always run CMake again for
-    a second time (sometimes the configuration needs more than one pass).  If that doesn't
-    help, try deleting the file CMakeCache.txt (in the directory where CMake is run)
-    and try again.  If that still doesn't work, you need to tell CMake something
-    about your system, such as the location of a third-party library.  In that case, please
-    refer to the section "Configuration Variables" later on.
+   NOTE: The Windows installer comes with a CGAL specific distribution of 
+         GMP, MPFR and TAUCS.
 
-    The third-party libraries needed by CGAL are detailed in the install notes at
-    <http://www.cgal.org/Manual/doc_html/installation_manual/contents.html>.
 
-    After CMake has been installed, it is useful to define the environment variable CMAKE_ROOT
-    indicating the installation folder for CMake.  Theoretically, when this variable is not
-    already defined, CMake will try to define it automatically based on the
-    path of the executing cmake binary, but this has been reported to fail in some cases.
+CONFIGURATION
+=============
 
-    ------ in source configuration ------
+To configure CGAL, type
 
-    In the simplest typical case, just cd into the CGAL root folder
-    and run the following command
+  cmake .
 
-       cmake .    (notice the "current directory" argument)
+in the directory that contains this INSTALL file. You can add several options
+to this command. The most important ones are
 
-    That will generate the makefiles/solution-files and a lot of intermediate files right
-    there in the source tree.
+  -DCMAKE_INSTALL_PREFIX=<dir>          installation directory [/usr/local]
+  -DCMAKE_BUILD_TYPE=<Debug|Release>    build type [Debug]
+  -DBUILD_SHARED_LIBS=<TRUE|FALSE>      shared or static libraries [TRUE]
+  -DCMAKE_C_COMPILER=<program>          C compiler [gcc]
+  -DCMAKE_CXX_COMPILER=<program>        C++ compiler [g++]
 
-    ------ out of source configuration ------
+In case you want to add additional compiler and linker flags, you can use
 
-    In the "in source configuration" mode, CMake does not directly support
-    multiple configurations at the same time (such as different compilers,
-    release/debug mode, etc.).
-    On the other hand, CMake generates the makefiles/solution-files and any
-    intermediate files in the directory where it is invoked, and it can refer to
-    sources in a different folder.  Therefore, in order to build different
-    configurations of CGAL you need to:
+  -DCGAL_CXX_FLAGS                      additional compiler flags
+  -DCGAL_MODULE_LINKER_FLAGS            add. linker flags (static libraries)
+  -DCGAL_SHARED_LINKER_FLAGS            add. linker flags (shared libraries)
+  -DCGAL_EXE_LINKER_FLAGS               add. linker flags (executables)
 
-      create a folder for each configuration, say
+Variants with the additional suffix "_DEBUG" and "_RELEASE" allow to set
+separate values for debug and release builds. In case you do not want to add
+additional flags, but to override the default flags, replace "CGAL" by
+"CMAKE" in the variable names above.
 
-        mkdir release
+Note that CMake maintains a cache name "CMakeCache.txt". If you change options
+(or your environment changes), it is best to remove that file to avoid
+problems.
 
-      and from within that folder run CMake:
 
-        cd release
-        cmake <path-to-cgal-root>
+BUILDING
+========
 
---------------------------------------
-- Build and install the CGAL libraries
---------------------------------------
+To build the CGAL libraries, type
 
-  By default, CMake will not generate installation rules unless explicitly
-  requested via the -DWITH_INSTALL=TRUE setting.
+  make
 
-  ------ Mac/Unix/Linux ------
+If you want, you can install the CGAL header and libraries. To do so, type
 
-  To build the libraries, just run 'make' from the configuration folder
-  (which would be the CGAL root folder if in source configuration was used).
+  make install
 
-  If you wish to install the libraries in your system run 'make install'.
-  The installation directory must have been defined at configuration time by
-  running CMake with -DCMAKE_INSTALL_PREFIX=<dir>.  By default it is /usr/local.
+You can build all demos or examples by typing
 
-  You can define the variable DESTDIR to prepend CMAKE_INSTALL_PREFIX if needed.
-  For instance, given the default install prefix, the command:
+  make demo                           or
+  make examples
 
-    make install DESTDIR=$HOME/testing
+If you are interested in the demos or examples of just a particular module,
+you can build them in the following way:
 
-  will install under $HOME/testing/usr/local
+  make -C demo/Alpha_shapes_2        (or: cd demo/Alpha_shapes_2; make)
+  make -C examples/Alpha_shapes_2    (or: cd examples/Alpha_shapes_2; make)
 
-  ------ Windows and Visual C++ ------
+A list of all available make targets can be obtained by
 
-  Under Windows CMake will generate a CGAL.sln solution file which you can
-  load and build via the VS IDE, or by running the following command in a DOS prompt:
+  make help
 
-    devenv CGAL.sln /Build Debug
 
-  The "Debug" argument is needed because CMake creates solution files with
-  all four configurations and you need to explicitly choose one when building
-  (the other choices are Release, RelWithDebInfo and MinSizeRel).
+OUT-OF-SOURCE BUILDS
+====================
 
-  ------ Cygwin and gcc ------
+The above instructions build the CGAL library in the same directory tree as
+the CGAL sources. Sometimes it is advisable to place all the generated files
+somewhere else. For example, if you want to build the library in several
+configurations (debug and release, different compilers, and so on). Using
+different build directories keeps all the generated files separated for each
+configuration.
 
-  You can use cygwin to build with gcc.  To do that you need the cygwin
-  version of CMake (run CMake without arguments and check that UNIX Makefiles
-  are supported to confirm this is the cygwin version of CMake).
-  In this case it all works as in any other POSIX environment, so just type
-  'make' to build the libraries and 'make install' to install it.
+In the following, $CGAL_SRC denotes the directory with the CGAL sources;
+$CGAL_BIN is an arbitrary directory where the generated files will be
+placed. You can perform an out-of-source build as follows:
 
-  ------ Cygwin and Visual C++ ------
+  mkdir $CGAL_BIN
+  cd $CGAL_BIN
+  cmake [options] $CGAL_SRC
+  make
+  make install                       (if desired)
+  make demo                          (if desired)
+  make examples                      (if desired)
 
-  You can also use CMake to build with Visual C++ but under cygwin.  To do that, you
-  need the windows version of CMake and the environment properly setup for the
-  command line version of VC.
-
-  From within cygwin, run CMake without arguments and check that NMake Makefiles
-  are supported to confirm this is NOT the cygwin version of CMake (and if necessary,
-  arrange the order of directories in $PATH to make sure the right one is used).
-
-  Edit the cygwin.bat launcher and add a call to the vsvars32.bat that corresponds
-  to the chosen VC version before 'bash' is invoked.  This ensures the environment
-  is properly setup for command line VC.
-  NOTE: DO NOT just call vsvars32.bat from the bash shell within cygwin, since none of the
-  environment variables defined there will be visible outside the .bat, and when CMake
-  is called from cygwin but without the VC command line environment properly set, cl.exe
-  might be found nevertheless but it will not be correctly configured for building CGAL.
-  Make sure the environment is properly set and the "link.exe" from VC is found instead of
-  the link.exe from cygwin g++ (arrange $PATH properly).
-
-  If everything is setup correctly: CMake is the windows version and supports NMake Makefiles,
-  cl, nmake and link are set in the path, and link is not cygwin link.
-
-  To build the libraries in this context you need to pass the option
-  -G'NMake Makefiles' to CMake at configuration time (otherwise solution files
-  will be created since this is the windows version of CMake), then just run
-  'nmake' (instead of 'make').
-
-  You can also run 'nmake install' to install the library.  In this case however
-  you may want to install it under the Windows tree (outside cygwin), or within
-  the cygwin FSH tree.  Since the windows version of CMake is used here,
-  the default CMAKE_INSTALL_PREFIX will be "C:\Program Files\CGAL".  If you are
-  running Windows Vista, 'Program Files' might not be accessible from cygwin so
-  you might need to specify another Windows-style path.
-  Alternatively, you can specify a Unix-style path such as -DCMAKE_INSTALL_PREFIX=/usr/local.
-  The CMake script will turn that into the right windows path (i.e. 'C:\cygwin\usr\local').
-
-
----------------------------------------------
-- Configure and build applications using CGAL
-- (such as demos, examples, etc)
----------------------------------------------
-
-  * Define the environment variable CGAL_DIR to a given configuration folder.
-
-        for example, if you built a debug version by running
-
-           cmake ../../..
-
-        under folder
-
-          /<absolute-path-to-CGAL>/cmake/platforms/debug
-
-        type
-
-          export CGAL_DIR=/<absolute-path-to-CGAL>/cmake/platforms/debug
-
-          (or use the appropriate dialog in Windows)
-
-
-  * cd into the folder containing the CGAL application.
-
-        for example:
-
-        cd /<absolute-path-to-CGAL>/demo/Alpha_shapes_2
-
-  * run CMake "in-source" (passing the current folder as argument)
-
-        cmake .  (pass -G'NMake Makefiles' if using cygwin+VC as explained before)
-
-  * build the application
-
-     Mac/UNIX/Linux/Cygwin+gcc: make
-     Cygwin+VC                : nmake
-     Windows via VS IDE       : Load and build Alpha_shapes_2_demo.sln
-     Windows via a DOS prompt : devenv Alpha_shapes_2_demo.sln /Build <configuration>
-
-
-----------------------------------------------------------------------------
-- Configuration Variables
----------------------------------------------------------------------------
-
-  There are a number of choices for building CGAL which are
-  controlled by configuration variables.
-
-  You can define any such variable in the call to CMake:
-
-     cmake -DVARIABLE=VALUE <path-to-sources>
-
-  Alternatively, you can run CMake in "wizard mode" via the "-i"
-  command-line option, in which case CMake will ask you to
-  confirm or override the default value of each variable.
-
-  Also, you can run CMake in GUI mode in which case you can
-  see and edit in a dialog all configuration variables before
-  proceeding with the configuration.
-  To do that, run the GUI configuration editor "cmake-gui" or "CMakeSetup".
-  When the editor is launched press "configure" for the first time:
-  all available configuration variables and their default values
-  will be displayed on a red background.
-  That red background tells you that the variable has been "seen"
-  for the first time and you may wish to change its value.
-  You can then override the default value of any variable
-  (for example to fix the path to a NOTFOUND third party library,
-  such as gmp, or to enable/disable a library such as CGAL_IMAGE_IO).
-  When you are finished and all the displayed variables have the correct
-  values press "configure" again.  All the previously displayed variables
-  will show up now in a normal background, meaning that you have
-  "accepted" their values.  There can be still variables with the "wrong"
-  value (since the red doesn't mean it's right or wrong, only that
-  it's new) so check again all variables.
-  If any variable shows up just now (for the first time, in red),
-  it means some previously accepted variable caused this one to
-  become active; edit it, if necessary, or accept its default
-  value by pressing "configure" once again.
-  Once pressing configure doesn't result in new variables being displayed,
-  and all variables have their correct value, press OK to proceed with
-  the configuration.
-
-----------------------------------------------------------------------------
-- Debug/Release variants
----------------------------------------------------------------------------
-
-  The configuration variable CMAKE_BUILD_TYPE selects a "Debug" or "Release" build.
-  The default value depends on the generator: for Unix makefiles it is
-  undefined by set to Release, for NMake makefiles it is Debug and for Visual Studio
-  Solution Files is undefined (and left undefined).
-
-  If the generator is Visual Studio and CMAKE_BUILD_TYPE is explicitly defined
-  (there is no default in this case), the project files will contain only the configuration
-  indicated, but if CMAKE_BUILD_TYPE is left unset, several configurations will be included
-  in each project file ("Debug,Release" for Visual Studio 2008 and
-  "Debug,Release,MinSizeRelease,RelWithDebInfo" for older versions).
-
-  If makefiles (UNIX or NMake) are used, there can only be one type of build
-  per CMake call, thus, you need to use the "out of source" mode to build CGAL
-  in both debug and release modes.  For example:
-
-    cd /<absolute-path-to-CGAL>/cmake/platforms/debug
-    cmake -DCMAKE_BUILD_TYPE=Debug ../../..
-
-    cd /<absolute-path-to-CGAL>/cmake/platforms/release
-    cmake -DCMAKE_BUILD_TYPE=Release ../../..
-
-----------------------------------------------------------------------------
-- Static vs. Shared libraries
----------------------------------------------------------------------------
-
-  The configuration variable BUILD_SHARED_LIBS can be set to FALSE or TRUE to choose
-  between static or shared libraries (respectively).
-  If this is not specified, it defaults to static (FALSE) under Windows and
-  shared (TRUE) under Linux.
-  Note that we do not support shared libraries for CGAL under Windows.
-
-  Note that CMake uses the term "Module" to refer to static libraries
-  (this is relevant in the following section about linker flags).
-
-  If you need to build both the static and shared libraries, you will need to
-  use the "out of source" configuration mode with two directories.
-
-----------------------------------------------------------------------------
-- Compiler and linker flags
----------------------------------------------------------------------------
-
-  CMake itself takes care automatically of most compiler and linker flags, depending on the
-  target platform and build type via the following variables:
-
-    Compiler flags:
-
-      CMAKE_CXX_FLAGS          (common to all build types)
-      CMAKE_CXX_FLAGS_RELEASE  (additional for release builds)
-      CMAKE_CXX_FLAGS_DEBUG    (additional for debug builds)
-
-    Linker flags:
-
-      For static libraries:
-
-        CMAKE_MODULE_LINKER_FLAGS
-        CMAKE_MODULE_LINKER_FLAGS_RELEASE
-        CMAKE_MODULE_LINKER_FLAGS_DEBUG
-
-      For shared libraries:
-
-        CMAKE_SHARED_LINKER_FLAGS
-        CMAKE_SHARED_LINKER_FLAGS_RELEASE
-        CMAKE_SHARED_LINKER_FLAGS_DEBUG
-
-      For executables:
-
-        CMAKE_EXE_LINKER_FLAGS
-        CMAKE_EXE_LINKER_FLAGS_RELEASE
-        CMAKE_EXE_LINKER_FLAGS_DEBUG
-
-  You can override any of these variables explicitly when calling CMake.
-
-  Alternatively, you can define any of these additional CGAL specific flags which are
-  *appended* to the general flags allowing you to override some of the
-  general settings (i.e. those which might be overridden by specifying a subsequent flag)
-
-      CGAL_CXX_FLAGS
-      CGAL_CXX_FLAGS_RELEASE
-      CGAL_CXX_FLAGS_DEBUG
-      CGAL_MODULE_LINKER_FLAGS
-      CGAL_MODULE_LINKER_FLAGS_RELEASE
-      CGAL_MODULE_LINKER_FLAGS_DEBUG
-      CGAL_SHARED_LINKER_FLAGS
-      CGAL_SHARED_LINKER_FLAGS_RELEASE
-      CGAL_SHARED_LINKER_FLAGS_DEBUG
-      CGAL_EXE_LINKER_FLAGS
-      CGAL_EXE_LINKER_FLAGS_RELEASE
-      CGAL_EXE_LINKER_FLAGS_DEBUG
-
-  These flags are defined at configuration time and their values are hard-coded into the
-  "CGALConfig.cmake" file generated by running CMake.
-  If you define these variables in the command line when executing CMake:
-
-    cmake -DCGAL_CXX_FLAGS=/W2 .
-
-  that value will be appended to the value defined in CGALConfig.cmake.
-
-  For Visual C++, CGAL_CXX_FLAGS is defined as:
-
-    "-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS"
-
-  and CGAL_CXX_FLAGS_RELEASE as "_D_SECURE_SCL=0"
-
-  NOTE: Visual C++ Secure SCL is disabled in Release mode because it has
-  been reported, for example here:
-
-   http://thread.gmane.org/gmane.comp.lib.boost.build/17824/focus=173782
-
-  that the overhead of the security checks are prohibitive
-  for a computationally intensive framework like CGAL.
-
--------------------------------
-- Running CMake multiple times
--------------------------------
-
-  CMake maintains a file named "CMakeCache.txt" in the "binary directory"
-  (where CMake is run) which records all configuration variables.
-  These cached values are used on subsequent runs of CMake on the same configuration thus
-  it is sometimes better to delete the cache before running CMake again.
-  This is particularly important whenever the environment has changed, for example,
-  Boost or GMP was just installed or moved after a previous configuration.
-
--------------------------------------------------------------------------------
+Basically, the only difference is the last parameter of the "cmake" command:
+$CGAL_SRC instead of "." .
