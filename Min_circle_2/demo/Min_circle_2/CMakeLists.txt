@@ -1,6 +1,6 @@
 # This is the CMake script for compiling a CGAL application.
 
-project( min_circle_2 ) 
+project( Min_circle_2_Demo ) 
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -28,13 +28,13 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
 
 
   # The executable itself.
-  add_executable  ( min_circle_2 
+  add_executable  ( min_circle 
     min_circle_2.cpp min_circle_2.moc
     min_circle_2_toolbar.cpp min_circle_2_toolbar.moc
     Qt_widget_move_list_point.cpp Qt_widget_move_list_point.moc
     )
 
-  target_link_libraries( min_circle_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  target_link_libraries( min_circle  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 else()
 
