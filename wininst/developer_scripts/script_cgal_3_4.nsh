@@ -11,9 +11,7 @@
 ; http://www.boost.org/LICENSE_1_0.txt)
 ;============================
 
-${StrStr}
-
-;!define SkipFiles
+!define SkipFiles
 ;!define SkipSetEnvVar
 ;!define SkipDownload
 ;!define FetchLocal
@@ -23,8 +21,9 @@ ${StrStr}
 Var no_default_compilers
 Var no_default_variants
 Var selected_libs
-Var FoundBoostFolder
 Var Platform
+Var IsGmpInstalled
+Var GmpDllInstalled
 
 ;--------------------------------
 ; Macros
@@ -76,12 +75,12 @@ Var Platform
   !define DownloadAborted "cancel"
 !endif
 
-!macro DownloadFile SRC_FOLDER FILE TGT
+!macro DownloadFileFrom SERVER SRC_FOLDER FILE TGT
 !ifndef SkipDownload
   !ifdef ViaFTP
-    inetc::get ${FTP_SRC}${SRC_FOLDER}${FILE} ${TGT}\${FILE}
+    inetc::get ${SERVER}${SRC_FOLDER}${FILE} ${TGT}\${FILE}
   !else
-    NSISdl::download ${FTP_SRC}${SRC_FOLDER}${FILE} ${TGT}\${FILE}
+    NSISdl::download ${SERVER}${SRC_FOLDER}${FILE} ${TGT}\${FILE}
   !endif  
   Pop $0
   ${If}     "$0" == "OK"
@@ -93,10 +92,14 @@ Var Platform
   ${ElseIf} "$0" == "Cancelled"
     DetailPrint "${FILE} download CANCELLED."
   ${Else}  
-    MessageBox MB_OK "Unable to download ${FTP_SRC}${SRC_FOLDER}${FILE}. Error: $0"
-    DetailPrint "ERROR $0: Unable to download ${FTP_SRC}${SRC_FOLDER}${FILE}."
+    MessageBox MB_OK "Unable to download ${SERVER}${SRC_FOLDER}${FILE}. Error: $0"
+    DetailPrint "ERROR $0: Unable to download ${SERVER}${SRC_FOLDER}${FILE}."
   ${Endif}
 !endif	
+!macroend
+
+!macro DownloadFile SRC_FOLDER FILE TGT
+  !insertmacro DownloadFileFrom ${FTP_SRC} ${SRC_FOLDER} ${FILE} ${TGT}
 !macroend
 
 !macro Install_PDB_if_debug_variant HANDLER PLATFORM VARIANT
@@ -130,6 +133,7 @@ Var Platform
 !ifndef FetchLocal
     !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp-${VARIANT}.dll.zip"  "$INSTDIR\auxiliary\gmp\lib"
     !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr-${VARIANT}.dll.zip" "$INSTDIR\auxiliary\gmp\lib"
+    StrCpy $GmpDllInstalled 1
 !else
   !ifndef SkipFiles
     SetOutPath "$INSTDIR\auxiliary\gmp\lib"
@@ -158,34 +162,15 @@ Var Platform
   ; we want to download headers only if at least one lib variant was selected.
   ${If} $IsGmpInstalled = 0
     StrCpy $IsGmpInstalled 1 
-    SetOutPath "$INSTDIR\auxiliary\gmp\lib"
-    File /nonfatal "${CGAL_SRC}\auxiliary\gmp\lib\README"
-    SetOutPath "$INSTDIR\auxiliary\gmp\include"
-    File /nonfatal "${CGAL_SRC}\auxiliary\gmp\include\README"
     !ifndef FetchLocal
-        !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp.h.zip"  "$INSTDIR\auxiliary\gmp\include"
-        !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr.h.zip" "$INSTDIR\auxiliary\gmp\include"
-    !else
-      !ifndef SkipFiles
-        SetOutPath "$INSTDIR\auxiliary\gmp\include"
-        File /r "${CGAL_SRC}\auxiliary\gmp\include\*.*"
-        SetOutPath "$INSTDIR\auxiliary\gmp\lib"
-        File /nonfatal "${CGAL_SRC}\auxiliary\gmp\lib\README"
-      !endif
+      !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp.h.zip"  "$INSTDIR\auxiliary\gmp\include"
+      !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr.h.zip" "$INSTDIR\auxiliary\gmp\include"
     !endif
   ${Endif}
   
   !insertmacro Install_GMP_MPFR_libs                                "${PLATFORM}" "${VARIANT}"
   !insertmacro Install_PDB_if_debug_variant Install_GMP_MPFR_pdbs   "${PLATFORM}" "${VARIANT}"
   !insertmacro Install_DLL_if_dynamic_variant Install_GMP_MPFR_dlls "${PLATFORM}" "${VARIANT}"
-!macroend
-
-
-!macro SetEnvStr ALLUSERS VAR VALUE
-  # ${ALLUSERS} is 0 or 1
-  # ${VAR}      is the env var to set
-  # ${VALUE}    is the env var value
-  ${WriteEnvStr} ${VAR} ${VALUE} ${ALLUSERS}
 !macroend
 
 ;--------------------------------
@@ -312,36 +297,3 @@ Function SelectDefaultVariants
     Pop $1
     Pop $0
 FunctionEnd
-
-
-Function FindBoostFolder
-  Push $0
-  Push $1
-  Push $2
-  Push $3
-  Push $4
-  Push $5
-  Push $6
-  
-  ${locate::Open} "$PROGRAMFILES\boost" "/F=0 /D=1 /M=boost_*" $0
-	${If} $0 != 0
-    ${DoUntil} "$FoundBoostFolder" != ""
-  	  ${locate::Find} $0 $1 $2 $3 $4 $5 $6
-      ${If} "$2" != ""
-        StrCpy $FoundBoostFolder $1
-      ${EndIf}
-    ${Loop}
-  ${EndIf}  
-  ${locate::Close} $0
-  ${locate::Unload}
-  
-  Pop $6
-  Pop $5
-  Pop $4
-  Pop $3
-  Pop $2
-  Pop $1
-  Pop $0
-FunctionEnd
-
-

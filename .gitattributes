@@ -4201,6 +4201,7 @@ iostream/doc_tex/IOstream/io.png -text
 iostream/test/iostream/data/io.cin -text
 wininst/developer_scripts/CGAL.bmp -text svneol=unset#image/bmp
 wininst/developer_scripts/DumpLogToFile.nsh -text
+wininst/developer_scripts/EnvVarUpdate.nsh -text
 wininst/developer_scripts/ReplaceInFile.nsh -text
 wininst/developer_scripts/StrRep.nsh -text
 wininst/developer_scripts/TextLog.nsh -text
@@ -4208,6 +4209,7 @@ wininst/developer_scripts/WriteEnvStr.nsh -text
 wininst/developer_scripts/cgal-16.ico -text svneol=unset#image/x-icon
 wininst/developer_scripts/cgal.ico -text svneol=unset#image/x-icon
 wininst/developer_scripts/cgal_very_small_FFFFFF.bmp -text svneol=unset#image/bmp
+wininst/developer_scripts/locate.zip -text svneol=unset#application/zip
 wininst/developer_scripts/script_cgal_3_3.nsh -text
 wininst/developer_scripts/script_cgal_3_4.nsh -text
 wininst/developer_scripts/zirkel.bmp -text svneol=unset#image/bmp
