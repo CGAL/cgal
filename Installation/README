@@ -16,6 +16,7 @@ This distribution of CGAL includes:
                         Other programs require geomview (www.geomview.org).
                         Makefiles are provided for all programs and project
                         files for MSVC IDE are provided.
+   doc_html           - A directory with the CGAL Installation Guide
    examples/          - a directory containing programs illustrating the
                         library's functionality.  These programs do not produce
                         visual output.
@@ -29,7 +30,6 @@ This distribution of CGAL includes:
                         process on the MacOSX platform
    INSTALL.win32      - file containing information about the installation
                         process on the Windows platform
-   lib/               - directory in which the CGAL libraries will be installed
    LICENSE            - A file describing the license of CGAL
    LICENSE.FREE_USE   - A file containing the free use license (see LICENSE file)
    LICENSE.LGPL       - A file containing the LGPL v2.1 license
