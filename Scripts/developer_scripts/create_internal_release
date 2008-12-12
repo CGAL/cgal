@@ -200,7 +200,7 @@ sub create_version_file()
     # Create VERSION file
     chdir "$RELEASEDIR/$VERSION" or die;
     open(TEMPFILE, ">tempfile") or die;
-    print TEMPFILE "$newver";
+    print TEMPFILE "$newver\n";
     close TEMPFILE || die "Error closing temporary file: $!\n";
     move("tempfile", 'VERSION');
 
