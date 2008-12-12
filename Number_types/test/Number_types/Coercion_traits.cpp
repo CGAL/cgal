@@ -388,7 +388,6 @@ void test_vector_d(){
 }*/
 
 int main(){
-    
     CGAL::test_implicit_interoperable_from_to<short,int>();
     CGAL::test_implicit_interoperable_from_to<short,long>();
     CGAL::test_implicit_interoperable_from_to<short,long long>();
@@ -450,7 +449,7 @@ int main(){
 
 #ifdef CGAL_USE_GMP
   check_type_coercion_at<CGAL::GMP_arithmetic_kernel>();
-  AT_coercion_test_for_cgal_types_rat<CGAL::CORE_arithmetic_kernel>();
+  AT_coercion_test_for_cgal_types_rat<CGAL::GMP_arithmetic_kernel>();
 #endif // CGAL_USE_GMP
 
   return EXIT_SUCCESS;
