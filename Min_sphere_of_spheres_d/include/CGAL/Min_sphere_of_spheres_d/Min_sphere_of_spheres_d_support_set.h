@@ -274,7 +274,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
         if (std::abs(psi[m]) < Min_float)
           return false;
         sol[m+1] = -omega[m]/psi[m];
-        return sol[m+1]*Tol<FT>::result >= maxradius[m];
+        return sol[m+1]*Tol<FT>::result() >= maxradius[m];
       }
 
       // calculate the two solutions:
@@ -289,12 +289,12 @@ namespace CGAL_MINIBALL_NAMESPACE {
         std::swap(sols[0],sols[1]);
 
       // eliminate negative solutions:
-      if (sols[0]*Tol<FT>::result >= maxradius[m]) {
+      if (sols[0]*Tol<FT>::result() >= maxradius[m]) {
         sol[m+1] = sols[0];
         return true;
       }
       sol[m+1] = sols[1];
-      return sol[m+1]*Tol<FT>::result >= maxradius[m];
+      return sol[m+1]*Tol<FT>::result() >= maxradius[m];
     }
 
     template<class Traits>

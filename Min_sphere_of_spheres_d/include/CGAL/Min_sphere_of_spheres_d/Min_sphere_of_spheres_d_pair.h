@@ -25,7 +25,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
   namespace Min_sphere_of_spheres_d_impl {
 
-    const double Min_float = 1.0e-120;
+    static const double Min_float = 1.0e-120;
 
     // a bunch of float/double constants that are used as tolerance in the
     // template code of the package.
@@ -56,13 +56,27 @@ namespace CGAL_MINIBALL_NAMESPACE {
     template <typename FT>
       struct Tol
       {
-        static const double result = 1.0 + 1.0e-16; // 1.0e-16 = Eps_double
+	// That constant is embedded in an inline static function, to
+	// workaround a bug of g++>=4.1
+	//   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
+	// g++ does not like const floating expression when -frounding-math
+	// is used.
+        static double result() { 
+	  return 1.0 + 1.0e-16; // 1.0e-16 = Eps_double 
+	}
       };
 
     template <>
       struct Tol<float>
       {
-        static const float result = 1.0f + 1.0e-7f; // 1.0e-7f = Eps_float;
+	// That constant is embedded in an inline static function, to
+	// workaround a bug of g++>=4.1
+	//   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
+	// g++ does not like const floating expression when -frounding-math
+	// is used.
+        static float result() {
+	  return 1.0f + 1.0e-7f; // 1.0e-7f = Eps_float;
+	}
       };
   }
 
