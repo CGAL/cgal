@@ -80,7 +80,7 @@
 \section{Introduction}
 
 
-The goal of the \cgal, the textit{Computational Geometry Algorithms Library}
+The goal of the \cgal, the \textit{Computational Geometry Algorithms Library}
  Open Source Project, is to provide {\em easy access to efficient and reliable 
 geometric algorithms} in the form of a \CC\ library.
 
@@ -120,7 +120,7 @@ Note that neither prerelease versions nor repository snapshots of
 \subsection{cmake}
 
 In order to configure, build and install the \cgal\ libraries, as well
-as the examples and demos, you need \cmake, a cross platform ``makefile generator''.
+as the examples and demos, you need \cmake, a cross-platform ``makefile generator''.
 If \cmake\ is not installed already you can obtain it from \cmakepage.
 We recommend the usage of \cmake\ Rel.~2.6, and you need at least
 \cmake\ Rel.~2.4-patch-7.
@@ -563,27 +563,6 @@ The files are copied into a directory tree relative to the {\em installation dir
 and {\tt PROGRAMFILES } under Windows. If you want to install to a different location you must override that cmake
 variable explicitly {\em at configuration time} (not when executing the install step).
 
-
-If you wish the be able to specify the install location when executing the install step rather than hard-coding it during
-configuration you can use the environment variable \texttt{DESTDIR}. However, since \texttt{CMAKE\_INSTALL\_PREFIX} is prepended
-to the value of \texttt{DESTDIR} (hence its name), in practice you need to define it as an empty string in order to gain complete
-control via \texttt{DESTDIR}.
-This is illustrated in the following example:
-
-{\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
-
-cd CGAL-3.4
-
-cmake -DCMAKE_INSTALL_PREFIX="" . 
-
-make
-
-DESTDIR=/usr/share sudo make install
-
-\end{verbatim}
-}
-
 \end{ccAdvanced}
 
 
@@ -817,29 +796,27 @@ Under Linux, the GMPXX may also searched for and you might specify the following
 \index{cgal!general-config-cmake-vars-dep-leda}\index{cgal configuration cmake variables - dependencies - leda}
 \subsubsection{LEDA library}
 
-When the leda libraries are not automatically found, yet they are installed in the system
+When the LEDA libraries are not automatically found, yet they are installed in the system
 with base names 'leda' and 'ledaD' (for the release and debug versions resp.), it might 
 be sufficient to just indicate the library directory via the \texttt{LEDA\_LIBRARY\_DIRS} variable.
 If that doesn't work because the names are different, you can provide the full pathnames of each variant
 via \texttt{LEDA\_LIBRARY\_RELEASE} and \texttt{LEDA\_LIBRARY\_DEBUG}.
 
-The variables specifying definitions and flags can be left undefined if they are not needed by leda.
+The variables specifying definitions and flags can be left undefined if they are not needed by LEDA.
 
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
-  \textbf{Variable}               & \textbf{Description}                                                                                                        & \textbf{Type}\\\hline\hline
-  \texttt{WITH\_LEDA}             & Indicates whether to search and use leda or not                                                                             & CMake\\\hline
-  \texttt{LEDA\_INCLUDE\_DIR}     & Directory containing the files \texttt{LEDA/basic.h}\footnotemark[17] or \texttt{LEDA/system/basic.h}\footnotemark[18] file & Either CMake or Environment\\\hline
-  \texttt{LEDA\_LIBRARY\_DIRS}    & Directory containing the compiled leda libraries                                                                            & Either CMake or Environment\\\hline
-  \texttt{LEDA\_LIBRARY\_RELEASE} & Full pathname to a release build of the lead library                                                                        & Either CMake or Environment\\\hline
-  \texttt{LEDA\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the lead library                                                                          & Either CMake or Environment\\\hline
-  \texttt{LEDA\_DEFINITIONS}      & Preprocessor definitions                                                                                                    & Either CMake or Environment\\\hline
-  \texttt{LEDA\_CXX\_FLAGS}       & Compiler flags                                                                                                              & Either CMake or Environment\\\hline
-  \texttt{LEDA\_LINKER\_FLAGS}    & Linker flags                                                                                                                & Either CMake or Environment\\\hline
+  \textbf{Variable}               & \textbf{Description}                                       & \textbf{Type}\\\hline\hline
+  \texttt{WITH\_LEDA}             & Indicates whether to search and use LEDA or not            & CMake\\\hline
+  \texttt{LEDA\_INCLUDE\_DIR}     & Directory containing the file \texttt{LEDA/system/basic.h} & Either CMake or Environment\\\hline
+  \texttt{LEDA\_LIBRARY\_DIRS}    & Directory containing the compiled LEDA libraries           & Either CMake or Environment\\\hline
+  \texttt{LEDA\_LIBRARY\_RELEASE} & Full pathname to a release build of the LEDA library       & Either CMake or Environment\\\hline
+  \texttt{LEDA\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the LEDA library         & Either CMake or Environment\\\hline
+  \texttt{LEDA\_DEFINITIONS}      & Preprocessor definitions                                   & Either CMake or Environment\\\hline
+  \texttt{LEDA\_CXX\_FLAGS}       & Compiler flags                                             & Either CMake or Environment\\\hline
+  \texttt{LEDA\_LINKER\_FLAGS}    & Linker flags                                               & Either CMake or Environment\\\hline
 \end{tabular}
-\footnotetext[17]{For LEDA 5}\addtocounter{footnote}{1}
-\footnotetext[18]{For LEDA 6}\addtocounter{footnote}{1}
 
 \index{cgal!general-config-cmake-vars-dep-qt3}\index{cgal configuration cmake variables - dependencies - qt3}
 \subsubsection{Qt3 library}
@@ -877,12 +854,12 @@ should be then filled automatically by \cmake{}.
   \textbf{Variable}                 & \textbf{Description}                                             & \textbf{Type}\\\hline\hline
   \texttt{QT\_INCLUDE\_DIR}         & Directory containing the \texttt{QtCore/qglobal.h} file          & CMake\\\hline
   \texttt{QT\_LIBRARY\_DIR}         & Directory containing the compiled Qt4 libraries                  & CMake\\\hline
-  \texttt{QT\_{\em (xyz)}\_LIBRARY} & Full pathname to the compiled 'xyz' Qt4 library\footnotemark[19] & CMake\\\hline
+  \texttt{QT\_{\em (xyz)}\_LIBRARY} & Full pathname to the compiled 'xyz' Qt4 library\footnotemark[17] & CMake\\\hline
   \texttt{QT\_QMAKE\_EXECUTABLE}    & Full pathname to the qmake executable of Qt4                     & CMake\\\hline
   \texttt{QT3\_MOC\_LIBRARY}        & Full pathname to the moc executable of Qt4                       & CMake\\\hline
   \texttt{QT3\_UIC\_LIBRARY}        & Full pathname to the uic executable of Qt4                       & CMake\\\hline
 \end{tabular}
-\footnotetext[19]{If both release and debug versions are available, this variable contains a list 
+\footnotetext[17]{If both release and debug versions are available, this variable contains a list 
 of the following form: '\texttt{optimized;<fullpath-to-release-lib>;debug;<fullpath-to-debug-lib>}', where 
 the '\texttt{optimized}' and '\texttt{debug}' tags should appear verbatim.}\addtocounter{footnote}{1}
 
