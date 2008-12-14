@@ -248,7 +248,7 @@ private:
   Qt_layer_show_ch       testlayer;
 };
 
-#include "min_ellipse_2.moc"
+#include "min_ellipse_2_demo.moc"
 
 
 int
