@@ -34,7 +34,7 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
     Qt_widget_move_list_point.cpp Qt_widget_move_list_point.moc
     )
 
-  target_link_libraries( min_circle  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  target_link_libraries( min_circle_2_demo  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 else()
 
