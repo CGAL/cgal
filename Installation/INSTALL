@@ -20,64 +20,54 @@ at <http://www.cgal.org/Manual>.
 For more information about CGAL, see the <http://www.cgal.org/>.
 
 
-
 PREREQUISITES
 =============
 
 To install CGAL, you need 'cmake' and several third-party libraries. 
 Some are mandatory for entire CGAL, some are mandatory for particular 
-CGAL  packages, some are only needed for demos.
+CGAL packages, some are only needed for demos.
 
-   * CMake, the build system used by CGAL
+   * CMake (>= 2.4.5), the build system used by CGAL
      Required for building CGAL
-     Rel >= 2.4.5
-     Recommended Rel 2.6, which supports a cross platform cmake-gui
+     CMake >= 2.6 is recommended, since it supports a cross platform GUI
      http://www.cmake.org/
 
-   * Boost  
+   * Boost (>= 1.33.1)
      Required for building CGAL and for applications using CGAL
-     Rel >= 1.33.1
      Required compiled Boost library: Boost.Threads
      Optional compiled Boost library: Boost.Program_options
-     http://www.boost.org/    or  http://www.boostpro.com/products/free
+     http://www.boost.org/   or   http://www.boostpro.com/products/free/
 
    * Exact Arithmetic           
      CGAL combines floating point arithmetic with exact arithmetic, in order
-     to be fast and reliable.  CGAL offers support for GMP+MPFR, for LEDA exact 
-     number types, as well as a built-in exact number type used when
+     to be fast and reliable. CGAL offers support for GMP and MPFR, for LEDA
+     exact number types, as well as a built-in exact number type used when
      none of the other two is installed.
      Required by several examples which have hard coded the number type.
 
-     - GMP    
-       Rel >= 4.1.4
-       http://gmplib.org
+     - GMP (>= 4.1.4)
+       http://gmplib.org/
 
-     - MPFR
-       Rel >= 2.2.1
-       http://www.mpfr.org
+     - MPFR (>= 2.2.1)
+       http://www.mpfr.org/
 
-     - LEDA
-       Rel.: >= 6.0
+     - LEDA (>= 6.0)
        http://www.algorithmic-solutions.com/leda/index.htm
-
 
    * Visualization 
      Required for most demos
 
-     - Qt3 
-       Rel >= 3.3
-       http://trolltech.com/products/qt
+     - Qt3 (>= 3.3)
+       http://trolltech.com/products/qt/
 
-     - Qt4
-       Rel >= 4.2   
-       http://trolltech.com/products/qt
+     - Qt4 (>= 4.2)
+       http://trolltech.com/products/qt/
 
      - libQGLViewer
-       http://www.libqglviewer.com
+       http://www.libqglviewer.com/
 
      - Geomview
        http://www.geomview.org/
-
 
    * Numerical Libraries
  
@@ -93,12 +83,12 @@ CGAL  packages, some are only needed for demos.
        o Planar Parameterization of Triangulated Surface Meshes
        http://www.tau.ac.il/~stoledo/taucs/
 
-
    * Miscellaneous
+
      - zlib         
        Optional for the package:
        o Surface Mesh Generator can read compressed images directly
-       http://www.zlib.net
+       http://www.zlib.net/
 
    NOTE: The Windows installer comes with a CGAL specific distribution of 
          GMP, MPFR and TAUCS.
