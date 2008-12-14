@@ -24,12 +24,12 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
   include( Qt3Macros-patched )
   qt3_generate_moc( min_circle_2_toolbar.h min_circle_2_toolbar.moc )
   qt3_generate_moc( Qt_widget_move_list_point.h Qt_widget_move_list_point.moc )
-  qt3_generate_moc( min_circle_2.cpp min_circle_2.moc )
+  qt3_generate_moc( min_circle_2_demo.cpp min_circle_2_demo.moc )
 
 
   # The executable itself.
-  add_executable  ( min_circle 
-    min_circle_2.cpp min_circle_2.moc
+  add_executable  ( min_circle_2_demo
+    min_circle_2_demo.cpp min_circle_2_demo.moc
     min_circle_2_toolbar.cpp min_circle_2_toolbar.moc
     Qt_widget_move_list_point.cpp Qt_widget_move_list_point.moc
     )

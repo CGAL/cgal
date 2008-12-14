@@ -246,7 +246,7 @@ private:
   Qt_layer_show_ch       testlayer;
 };
 
-#include "min_circle_2.moc"
+#include "min_circle_2_demo.moc"
 
 
 int
