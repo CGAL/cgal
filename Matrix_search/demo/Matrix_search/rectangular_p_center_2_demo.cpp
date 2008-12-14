@@ -273,7 +273,7 @@ private:
   Qt_layer_show_ch         testlayer;
 };
 
-#include "rectangular_p_center_2.moc"
+#include "rectangular_p_center_2_demo.moc"
 
 
 int

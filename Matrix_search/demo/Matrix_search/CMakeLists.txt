@@ -25,7 +25,7 @@ if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
   qt3_generate_moc( Qt_widget_toolbar.h Qt_widget_toolbar.moc )
   qt3_generate_moc( Qt_widget_move_list_point.h Qt_widget_move_list_point.moc )
   qt3_generate_moc( max_k-gon.cpp max_k-gon.moc )
-  qt3_generate_moc( rectangular_p_center_2.cpp rectangular_p_center_2.moc )
+  qt3_generate_moc( rectangular_p_center_2_demo.cpp rectangular_p_center_2_demo.moc )
 
 
   # The executable itself.
@@ -36,14 +36,14 @@ if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
     )
 
   # The executable itself.
-  add_executable  ( rectangular_p_center
-    rectangular_p_center_2.cpp rectangular_p_center_2.moc
+  add_executable  ( rectangular_p_center_2_demo
+    rectangular_p_center_2_demo.cpp rectangular_p_center_2_demo.moc
     Qt_widget_toolbar.cpp Qt_widget_toolbar.moc
     Qt_widget_move_list_point.cpp Qt_widget_move_list_point.moc
     )
 
   target_link_libraries( max_k-gon  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-  target_link_libraries( rectangular_p_center  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  target_link_libraries( rectangular_p_center_2_demo  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 else()
 
