@@ -3,38 +3,30 @@ README
 
 This distribution of CGAL includes:
 
-   AUTHORS            - file recording the current and former authors of CGAL
-   auxiliary/         - directory containing miscellaneous things, currently
-                        only the icons needed for the demos on MacOSX.
-   CHANGES            - file recording the history of changes for the library
-   config/            - directory containing several test programs used during
-                        the installation process, and into which configuration
-                        files will be written during installation
-   demo/              - a directory containing many demo programs for the
-                        library's various packages.  These programs produce
-                        visual output.  Thus, for most you must have Qt installed.
-                        Other programs require geomview (www.geomview.org).
-                        Makefiles are provided for all programs and project
-                        files for MSVC IDE are provided.
-   doc_html           - A directory with the CGAL Installation Guide
-   examples/          - a directory containing programs illustrating the
-                        library's functionality.  These programs do not produce
-                        visual output.
-                        Makefiles and project files for the MSVC IDE
-                        (experimental) are provided for all programs.
-   include/CGAL       - the include files for the CGAL library (and other small
-                        external libraries as well, see the LICENSE file)
-   INSTALL            - file containing information about the installation
-                        process 
-   LICENSE            - A file describing the license of CGAL
-   LICENSE.FREE_USE   - A file containing the free use license (see LICENSE file)
-   LICENSE.LGPL       - A file containing the LGPL v2.1 license
-   LICENSE.QPL        - A file containing the QPL v1.0 license
-   README             - this file
-   scripts/           - directory containing some useful scripts for CGAL
-                        programmers
-   src/               - the source code for building the CGAL libraries
-                        (as well as some external libraries, see the LICENSE file)
-   VERSION            - the version number of this release
+  AUTHORS          - current and former authors of CGAL
+  CHANGES          - history of changes for the library
+  CMakeLists.txt   - main script of the build system
+  INSTALL          - information about the installation process 
+  LICENSE          - describes the license of CGAL
+  LICENSE.FREE_USE - text of the free use license (see LICENSE file)
+  LICENSE.LGPL     - text of  LGPL v2.1 license
+  LICENSE.QPL      - text of the QPL v1.0 license
+  README           - this file
+  VERSION          - version number of this release
+  auxiliary/       - directory containing miscellaneous things, currently only
+                     the icons needed for the demos on MacOS X
+  cmake/           - some scripts needed by the build system
+  config/          - some test programs used during the configuration process
+  demo/            - many demo programs for the library's various packages.
+                     These programs produce visual output (see INSTALL for
+                     prerequisites).
+  doc_html/        - documentation, e.g. the CGAL Installation Guide
+  examples/        - programs illustrating the library's functionality.
+                     These programs do not produce visual output.
+  include/         - the include files for the CGAL library (and other small
+                     external libraries as well, see the LICENSE file)
+  scripts/         - some useful scripts for CGAL programmers
+  src/             - the source code for building the CGAL libraries
+                     (as well as some external libraries, see the LICENSE file)
 
 -------------------------------------------------------------------------------
