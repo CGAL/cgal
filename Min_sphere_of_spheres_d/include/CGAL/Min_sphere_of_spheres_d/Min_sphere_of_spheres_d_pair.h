@@ -44,13 +44,27 @@ namespace CGAL_MINIBALL_NAMESPACE {
     template <typename FT>
       struct SqrOfEps
       {
-        static const double result = 1.0e-14f;
+          // That constant is embedded in an inline static function, to
+          // workaround a bug of g++>=4.1
+          //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
+          // g++ does not like const floating expression when -frounding-math
+          // is used.
+          static double result() { 
+              return 1.0e-32;
+          }
       };
 
     template <>
       struct SqrOfEps<float>
       {
-        static const float result = 1.0e-32;
+          // That constant is embedded in an inline static function, to
+          // workaround a bug of g++>=4.1
+          //   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36912
+          // g++ does not like const floating expression when -frounding-math
+          // is used.
+          static float result() { 
+              return  1.0e-14f;
+          }
       };
 
     template <typename FT>
