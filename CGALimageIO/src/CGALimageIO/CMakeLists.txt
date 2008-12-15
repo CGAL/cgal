@@ -16,7 +16,7 @@ endif()
 find_package(ZLIB)
 find_package(OpenGL)
 
-option(WITH_VTK "Add VTK support to the CGAL ImageIO library." OFF)
+#option(WITH_VTK "Add VTK support to the CGAL ImageIO library." OFF)
 
 if(WITH_VTK)
   find_package(VTK QUIET)
