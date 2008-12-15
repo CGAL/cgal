@@ -18,6 +18,7 @@ DO_PUBLIC=""             # Also build the public versions
 DO_IT=""                 # Real mode (svn tag, copy to HTTP server), versus local testing
 DO_NOT_TAG=""            # If set, do not call svn tag
 DO_TAG=""                # If set, svn tag is called anyway
+NO_TESTUITE=""           # If set, the LATEST file is not updated
 SOURCES_DIR="$PWD/trunk" # SVN working copy directory, default is "$PWD/trunk"
 VERBOSE=""               # Verbose mode (displays log to standard err)
 
@@ -27,15 +28,18 @@ while [ $1 ]; do
         -h|-help|--h|--help)
             echo 'Usage : create_new_release [--help] [--rpm] [--public] [--do-it] <packages directory>'
             echo
-            echo '  --help       : prints this usage help'
-            echo '  --rpm        : also build the corresponding SRPMs'
-            echo '  --public     : also build the corresponding public versions'
-            echo '  --do-it      : the real thing (NOT for local tests!  Only for the release'
-            echo '                 master! Does write operations (updating the version_number,'
-            echo '                 svn tag, copying on the web server...)'
-            echo '  --do-not-tag : when used with --do-it, the tag is not created.'
-            echo '  --tag        : when used without --do-it, the tag is created but files are not published'
-	    echo '  --verbose    : print log to standard output, instead of the log file'
+            echo '  --help         : prints this usage help'
+            echo '  --rpm          : also build the corresponding SRPMs'
+            echo '  --public       : also build the corresponding public versions'
+            echo '  --do-it        : the real thing (NOT for local tests!  Only for the release'
+            echo '                   master! Does write operations (updating the version_number,'
+            echo '                   svn tag, copying on the web server...)'
+            echo '  --do-not-tag   : when used with --do-it, the tag is not created.'
+            echo '  --tag          : when used without --do-it, the tag is created, but files'
+	    echo '                   are not published'
+            echo '  --no-testsuite : when used with --do-it, the tag is made, files are published,'
+	    echo '                   but the LATEST file is not updated.'
+	    echo '  --verbose      : print log to standard output, instead of the log file'
             echo '  <packages directory> : the directory containing the packages [default is trunk]'
             exit
         ;;
@@ -57,6 +61,10 @@ while [ $1 ]; do
         ;;
         --do-not-tag)
             DO_NOT_TAG="y"
+            shift; continue
+        ;;
+        --no-testsuite)
+            NO_TESTSUITE="y"
             shift; continue
         ;;
         --verbose)
@@ -81,6 +89,11 @@ VERSION_FILE="version_number"
 # Where to put the resulting tarball and where to send the announce.
 HTML_DIR="/u/agrion/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
+
+# Wine: run Windows application under Linux
+#WINE=wine
+# The NSIS tool
+#MAKENSIS=makensis.exe
 
 # SVN repository
 SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
@@ -166,7 +179,9 @@ cd ..
 tar -cf "${release_name}.tar" "${release_name}"
 gzip "${release_name}.tar"
 cp "${release_name}.tar.gz" "${HTML_DIR}"
-echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
+if [ -z "${NO_TESTSUITE}"]; then
+  echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
+fi
 
 # Tag
 if [ -n "$DO_TAG" ]; then
@@ -195,7 +210,7 @@ if [ "$DO_RPM" ]; then
 fi
 
 # Build public release version
-if [ "$DO_PUBLIC" ]; then
+if [ -n "$DO_PUBLIC" ]; then
     echo "Making the public version of the tarball"
     public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
     public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
@@ -233,10 +248,25 @@ if [ -n "$DO_RPM" -a -n "$DO_PUBLIC" ]; then
     rm -rf rpm
 fi
 
+if [ -n "$DO_PUBLIC" ]; then
+  # Build the Windows installer
+    
+  mkdir ${public_release_name}-NSIS
+  mv ${public_release_name} ${public_release_name}-NSIS
+  cp ${SOURCES_DIR}/wininst/developer_scripts/* ${public_release_name}-NSIS
+  sed -i -e "/define *CGAL_SRC/,+20 s/CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}/${public_release_name}/g" ${public_release_name}-NSIS/script_cgal_${MAJOR_NUMBER}_${MINOR_NUMBER}.nsi
+  pushd ${public_release_name}-NSIS
+  if [ -n "${WINE}" -a -n "${MAKENSIS}" ]; then 
+    "${WINE}" "${MAKENSIS}" "script_cgal_${MAJOR_NUMBER}_${MINOR_NUMBER}.nsi"
+    mv *.exe "${HTML_DIR}/${release_name}-public/"
+  fi
+  popd
+fi
+
 # Remove local directory and tarball
 rm -rf ${release_name}
 rm ${release_name}.tar.gz
-if [ "$DO_PUBLIC" ]; then
-  rm -rf  ${public_release_name}
+if [ -n "$DO_PUBLIC" ]; then
+  rm -rf  ${public_release_name}-NSIS
   rm  ${public_release_name}.tar.gz ${public_release_name}.zip
 fi
