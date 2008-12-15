@@ -228,7 +228,7 @@ if [ -n "$DO_PUBLIC" ]; then
 
     cd ${public_release_name}
     rm -rf test package_info developer_scripts doc_tex winutils include/CGAL/Test include/CGAL/Testsuite/
-    rm -f examples/*/cgal_test demo/*/cgal_test
+    rm -f examples/*/cgal_test* demo/*/cgal_test*
     sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
     echo $public_release_version > VERSION 2>&1
     cd ..
