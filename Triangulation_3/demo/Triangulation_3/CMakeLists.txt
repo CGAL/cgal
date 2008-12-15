@@ -20,10 +20,10 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  create_single_source_cgal_program( "demo.cpp" )
-  create_single_source_cgal_program( "demo_color.cpp" )
-  create_single_source_cgal_program( "demo_remove.cpp" )
-  create_single_source_cgal_program( "demo_voronoi.cpp" )
+  create_single_source_cgal_program( "Triangulation_3_demo.cpp" )
+  create_single_source_cgal_program( "Triangulation_3_color_demo.cpp" )
+  create_single_source_cgal_program( "Triangulation_3_remove_demo.cpp" )
+  create_single_source_cgal_program( "Triangulation_3_voronoi_demo.cpp" )
 
 else()
   
