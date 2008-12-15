@@ -90,10 +90,15 @@ VERSION_FILE="version_number"
 HTML_DIR="/u/agrion/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
 
-# Wine: run Windows application under Linux
+# Wine: run Windows application under Linux.
+# Uncomment the lines with WINE and MAKENSIS to make the Windows installer
 #WINE=wine
 # The NSIS tool
 #MAKENSIS=makensis.exe
+
+# CGAL manual tool
+# Needed by the making of the public release
+CGAL_MANUAL=cgal_manual
 
 # SVN repository
 SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
@@ -227,6 +232,12 @@ if [ -n "$DO_PUBLIC" ]; then
     sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
     echo $public_release_version > VERSION 2>&1
     cd ..
+
+    cp -a ${SOURCES_DIR}/Installation/doc_tex .
+    pushd doc_tex
+    "${CGAL_MANUAL}" -html installation_manual
+    popd
+    cp -a doc_html/* ${public_release_name}/doc_html
     tar -cf "${public_release_name}.tar" "${public_release_name}"
     gzip "${public_release_name}.tar"
     mkdir "${HTML_DIR}/${release_name}-public"
@@ -268,5 +279,7 @@ rm -rf ${release_name}
 rm ${release_name}.tar.gz
 if [ -n "$DO_PUBLIC" ]; then
   rm -rf  ${public_release_name}-NSIS
+  rm -rf doc_tex 
+  rm -rf doc_html
   rm  ${public_release_name}.tar.gz ${public_release_name}.zip
 fi
