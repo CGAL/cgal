@@ -74,12 +74,12 @@ void estimate_normals_pca(const PointList& points, // input point set
   int nb_neighbors = int(double(points.size()) * nb_neighbors_pca_normals / 100.0);
   if (nb_neighbors < 7)
     nb_neighbors = 7;
-  if (nb_neighbors > points.size()-1)
+  if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
   std::cerr << "Estimate Normals Direction by PCA (knn="
             << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
-            
+
   CGAL::estimate_normals_pca_3(points.begin(), points.end(),
                                std::back_inserter(normals),
                                nb_neighbors);
@@ -100,7 +100,7 @@ void estimate_normals_jet_fitting(const PointList& points, // input point set
   int nb_neighbors = int(double(points.size()) * nb_neighbors_jet_fitting_normals / 100.0);
   if (nb_neighbors < 7)
     nb_neighbors = 7;
-  if (nb_neighbors > points.size()-1)
+  if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
   std::cerr << "Estimate Normals Direction by Jet Fitting (knn="

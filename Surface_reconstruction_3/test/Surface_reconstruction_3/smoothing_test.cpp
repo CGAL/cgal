@@ -53,12 +53,12 @@ void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
   int nb_neighbors = int(double(points.size()) * nb_neighbors_smooth_jet_fitting / 100.0);
   if (nb_neighbors < 7)
     nb_neighbors = 7;
-  if (nb_neighbors > points.size()-1)
+  if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
-  std::cerr << "Smooth Point Set (knn=" 
+  std::cerr << "Smooth Point Set (knn="
             << nb_neighbors_smooth_jet_fitting << "%=" << nb_neighbors << ")...\n";
-            
+
   std::deque<Point> output;
   CGAL::smooth_jet_fitting_3(points.begin(), points.end(),
                              std::back_inserter(output),
@@ -106,12 +106,12 @@ int main(int argc, char * argv[])
     // Load point set
     std::deque<Point> points;
     std::cerr << "Open " << argv[i] << " for reading...";
-    if(CGAL::surface_reconstruction_read_xyz(argv[i], 
-                                             std::back_inserter(points), 
+    if(CGAL::surface_reconstruction_read_xyz(argv[i],
+                                             std::back_inserter(points),
                                              false /*skip normals*/))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
-      
+
       test_smooth_jet_fitting(points, nb_neighbors_smooth_jet_fitting);
     }
     else

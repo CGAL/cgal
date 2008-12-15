@@ -62,12 +62,12 @@ void estimate_normals_pca(const PointList& points, // input point set
   int nb_neighbors = int(double(points.size()) * nb_neighbors_pca_normals / 100.0);
   if (nb_neighbors < 7)
     nb_neighbors = 7;
-  if (nb_neighbors > points.size()-1)
+  if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
   std::cerr << "Estimate Normals Direction by PCA (knn="
             << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
-            
+
   CGAL::estimate_normals_pca_3(points.begin(), points.end(),
                                std::back_inserter(normals),
                                nb_neighbors);
@@ -88,7 +88,7 @@ void estimate_normals_jet_fitting(const PointList& points, // input point set
   int nb_neighbors = int(double(points.size()) * nb_neighbors_jet_fitting_normals / 100.0);
   if (nb_neighbors < 7)
     nb_neighbors = 7;
-  if (nb_neighbors > points.size()-1)
+  if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
   std::cerr << "Estimate Normals Direction by Jet Fitting (knn="
@@ -225,13 +225,13 @@ int main(int argc, char * argv[])
     //***************************************
 
     std::deque<Orientable_normal> computed_normals;
-    
+
     // Estimate normals direction
     estimate_normals_pca(points, computed_normals, nb_neighbors_pca_normals);
-      
+
     // Orient normals
     orient_normals_MST(points, computed_normals, nb_neighbors_mst);
-    
+
     // Check computed normals
     int unoriented_normals = 0;
     std::deque<Orientable_normal>::iterator n;
@@ -241,7 +241,7 @@ int main(int argc, char * argv[])
       Vector v = *n;
       double norm = std::sqrt( v*v );
       assert(norm > 0.99 || norm < 1.01);
-        
+
       // Check orientation
       if ( ! n->is_oriented() )
         unoriented_normals++;
@@ -257,23 +257,23 @@ int main(int argc, char * argv[])
     //***************************************
 
     computed_normals.clear(); // to be safe
-    
+
     // Estimate normals direction
     estimate_normals_jet_fitting(points, computed_normals, nb_neighbors_jet_fitting_normals);
-      
+
     // Orient normals
     orient_normals_MST(points, computed_normals, nb_neighbors_mst);
-    
+
     // Check computed normals
     /*int*/ unoriented_normals = 0;
-    /*std::deque<Orientable_normal>::iterator*/ n;
+    //std::deque<Orientable_normal>::iterator n;
     for (n = computed_normals.begin(); n != computed_normals.end(); n++)
     {
       // Check unit vector
       Vector v = *n;
       double norm = std::sqrt( v*v );
       assert(norm > 0.99 || norm < 1.01);
-        
+
       // Check orientation
       if ( ! n->is_oriented() )
         unoriented_normals++;

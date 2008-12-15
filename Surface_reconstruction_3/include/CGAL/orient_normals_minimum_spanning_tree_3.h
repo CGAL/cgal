@@ -101,7 +101,7 @@ class MST_graph_vertex_normal_map
                                   MST_graph_vertex_normal_map<VertexIterator, VertexNormalMap> >
 {
 public:
-    typedef MST_graph<VertexIterator, VertexNormalMap> MST_graph;
+    typedef CGALi::orient_normals_mst_3::MST_graph<VertexIterator, VertexNormalMap> MST_graph;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
     typedef typename MST_graph::vertex_descriptor vertex_descriptor;
 
@@ -159,9 +159,9 @@ template <class VertexIterator,     ///< Input vertex iterator
 struct Propagate_normal_orientation
   : public boost::base_visitor< Propagate_normal_orientation<VertexIterator, VertexNormalMap> >
 {
-    typedef MST_graph<VertexIterator, VertexNormalMap> MST_graph;
+    typedef CGALi::orient_normals_mst_3::MST_graph<VertexIterator, VertexNormalMap> MST_graph;
     typedef boost::on_examine_edge event_filter;
-    
+
     Propagate_normal_orientation(double angle_max) ///< max angle to propagate the normals orientation (radians)
     : m_angle_max(angle_max)
     {
@@ -205,7 +205,7 @@ struct Propagate_normal_orientation
                         (std::abs(dot) >= std::cos(m_angle_max)); // oriented iff angle <= m_angle_max
         normal2 = Normal(vec2, oriented);
     }
-    
+
 // Data
 private:
     double m_angle_max; ///< max angle to propagate the normals orientation (radians)
@@ -243,7 +243,7 @@ orient_top_point_normal_3(
 
     // Bring private stuff to scope
     using namespace CGALi::orient_normals_mst_3;
-    
+
     // Input mesh's types
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
@@ -276,7 +276,7 @@ orient_top_point_normal_3(
       }
       normal = Normal(vec, true /* oriented */);
     }
-    
+
     return source_vertex;
 }
 
@@ -306,7 +306,7 @@ create_riemannian_graph(
 {
     // Bring private stuff to scope
     using namespace CGALi::orient_normals_mst_3;
-    
+
     // Input mesh's types
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
@@ -409,7 +409,7 @@ create_riemannian_graph(
             search_iterator++;
         }
     }
-    
+
     return riemannian_graph;
 }
 
@@ -449,7 +449,7 @@ orient_normals_minimum_spanning_tree_3(
 {
     // Bring private stuff to scope
     using namespace CGALi::orient_normals_mst_3;
-    
+
     // Input mesh's types
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
@@ -465,8 +465,7 @@ orient_normals_minimum_spanning_tree_3(
     CGAL_surface_reconstruction_precondition(first != beyond);
 
     // Precondition: the source vertex's normal must be oriented.
-    Normal& normal = vertex_normal_map[source_vertex];
-    CGAL_surface_reconstruction_precondition(normal.is_oriented());
+    CGAL_surface_reconstruction_precondition(vertex_normal_map[source_vertex].is_oriented());
 
     // Number of input vertices
     const int num_input_vertices = boost::num_vertices(riemannian_graph);
@@ -531,7 +530,7 @@ orient_normals_minimum_spanning_tree_3(
 /// Surface reconstruction from unorganized points,
 /// ACM SIGGRAPH Computer Graphics, v.26 n.2, p.71-78, July 1992".
 ///
-/// This variant implements the original algorithm. 
+/// This variant implements the original algorithm.
 /// Note that it does not orient normals that are already oriented.
 ///
 /// Preconditions:
@@ -556,7 +555,7 @@ orient_normals_minimum_spanning_tree_3(
 
     // Bring private stuff to scope
     using namespace CGALi::orient_normals_mst_3;
-    
+
     // Input mesh's types
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
@@ -583,8 +582,8 @@ orient_normals_minimum_spanning_tree_3(
       = create_riemannian_graph(first, beyond,
                                 vertex_index_map, vertex_point_map, vertex_normal_map,
                                 KNN);
-                                                                
-    // Create a Minimum Spanning Tree starting at source_vertex 
+
+    // Create a Minimum Spanning Tree starting at source_vertex
     // and traverses the point set to propagate its normal's orientation.
     orient_normals_minimum_spanning_tree_3(first, beyond,
                                            vertex_index_map, vertex_point_map, vertex_normal_map,
@@ -632,7 +631,7 @@ orient_normals_minimum_spanning_tree_3(
 
     // Bring private stuff to scope
     using namespace CGALi::orient_normals_mst_3;
-    
+
     // Input mesh's types
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
@@ -662,8 +661,8 @@ orient_normals_minimum_spanning_tree_3(
       = create_riemannian_graph(first, beyond,
                                 vertex_index_map, vertex_point_map, vertex_normal_map,
                                 KNN);
-                                                                
-    // Create a Minimum Spanning Tree starting at source_vertex 
+
+    // Create a Minimum Spanning Tree starting at source_vertex
     // and traverses the point set to propagate its normal's orientation.
     orient_normals_minimum_spanning_tree_3(first, beyond,
                                            vertex_index_map, vertex_point_map, vertex_normal_map,

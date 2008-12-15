@@ -663,10 +663,10 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
   int nb_neighbors = int(double(m_points.size()) * m_nb_neighbors_pca_normals / 100.0);
   if (nb_neighbors < 7)
     nb_neighbors = 7;
-  if (nb_neighbors > m_points.size()-1)
+  if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Estimate Normals Direction by PCA (knn=%.2lf%%=%d)...", 
+  status_message("Estimate Normals Direction by PCA (knn=%.2lf%%=%d)...",
                  m_nb_neighbors_pca_normals, nb_neighbors);
 
   CGAL::estimate_normals_pca_3(m_points.begin(), m_points.end(),
@@ -738,12 +738,12 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
   int nb_neighbors = int(double(m_points.size()) * m_nb_neighbors_jet_fitting_normals / 100.0);
   if (nb_neighbors < 7)
     nb_neighbors = 7;
-  if (nb_neighbors > m_points.size()-1)
+  if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Estimate Normals Direction by Jet Fitting (knn=%.2lf%%=%d)...", 
+  status_message("Estimate Normals Direction by Jet Fitting (knn=%.2lf%%=%d)...",
                  m_nb_neighbors_jet_fitting_normals, nb_neighbors);
-                 
+
   CGAL::estimate_normals_jet_fitting_3(m_points.begin(), m_points.end(),
                                        m_points.normals_begin(),
                                        nb_neighbors);
@@ -1236,12 +1236,12 @@ void CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting()
   int nb_neighbors = int(double(m_points.size()) * m_nb_neighbors_smooth_jet_fitting / 100.0);
   if (nb_neighbors < 7)
     nb_neighbors = 7;
-  if (nb_neighbors > m_points.size()-1)
+  if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Smooth Point Set (knn=%.2lf%%=%d)...", 
+  status_message("Smooth Point Set (knn=%.2lf%%=%d)...",
                  m_nb_neighbors_smooth_jet_fitting, nb_neighbors);
-                 
+
   // Smooth points in m_points[]
   CGAL::smooth_jet_fitting_3(m_points.begin(), m_points.end(),
                              nb_neighbors);
@@ -1402,12 +1402,12 @@ void CPoissonDoc::OnOutliersRemovalWrtAvgKnnSqDist()
   int nb_neighbors = int(double(m_points.size()) * m_nb_neighbors_outliers_removal / 100.0);
   if (nb_neighbors < 7)
     nb_neighbors = 7;
-  if (nb_neighbors > m_points.size()-1)
+  if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Remove outliers wrt average squared distance to knn (remove %.2lf%%, knn=%.2lf%%=%d)...", 
+  status_message("Remove outliers wrt average squared distance to knn (remove %.2lf%%, knn=%.2lf%%=%d)...",
                  m_threshold_percent_avg_knn_sq_dst, m_nb_neighbors_outliers_removal, nb_neighbors);
-                 
+
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_iterator_to_remove =
@@ -1438,7 +1438,7 @@ void CPoissonDoc::OnAnalysisAverageSpacing()
                                          m_points.end(),
                                          m_nb_neighbors_avg_spacing,
                                          Kernel());
-                                         
+
   // write message in message box
   prompt_message("Average spacing: %lf", value);
 
@@ -1566,7 +1566,7 @@ void CPoissonDoc::OnCalculateAverageSpacing()
 
   Point_set output;
   m_poisson_function->average_spacing_avg_knn_sq_distance_3();
-  
+
   status_message("Average spacing calculated...took %f seconds", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
@@ -1723,7 +1723,7 @@ void CPoissonDoc::OnFlipNormals()
 
   // Flip normals
   for (int i=0; i<m_points.size(); i++)
-    m_points[i].normal() = Normal(-m_points[i].normal().get_vector(), 
+    m_points[i].normal() = Normal(-m_points[i].normal().get_vector(),
                                   m_points[i].normal().is_oriented());
 
   status_message("Flip Normals...done (%.2lf s)", task_timer.time());
