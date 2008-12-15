@@ -11,19 +11,13 @@
 ; http://www.boost.org/LICENSE_1_0.txt)
 ;============================
 
-!define SkipFiles
+;!define SkipFiles
 ;!define SkipSetEnvVar
 ;!define SkipDownload
-;!define FetchLocal
-;!define DebugLog
 !define ViaFTP
 
-Var no_default_compilers
-Var no_default_variants
-Var selected_libs
 Var Platform
 Var IsGmpInstalled
-Var GmpDllInstalled
 
 ;--------------------------------
 ; Macros
@@ -117,43 +111,18 @@ Var GmpDllInstalled
 !macroend
 
 !macro Install_GMP_MPFR_libs PLATFORM VARIANT
-!ifndef FetchLocal
-    !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp-${VARIANT}.lib.zip"  "$INSTDIR\auxiliary\gmp\lib"
-    !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr-${VARIANT}.lib.zip" "$INSTDIR\auxiliary\gmp\lib"
-!else
-  !ifndef SkipFiles
-    SetOutPath "$INSTDIR\auxiliary\gmp\lib"
-    File /nonfatal "${CGAL_SRC}\auxiliary\gmp\lib\gmp-${VARIANT}.lib"
-    File /nonfatal "${CGAL_SRC}\auxiliary\gmp\lib\mpfr-${VARIANT}.lib"
-  !endif  
-!endif
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp-${VARIANT}.lib.zip"  "$INSTDIR\auxiliary\gmp\lib"
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr-${VARIANT}.lib.zip" "$INSTDIR\auxiliary\gmp\lib"
 !macroend
 
 !macro Install_GMP_MPFR_dlls PLATFORM VARIANT
-!ifndef FetchLocal
-    !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp-${VARIANT}.dll.zip"  "$INSTDIR\auxiliary\gmp\lib"
-    !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr-${VARIANT}.dll.zip" "$INSTDIR\auxiliary\gmp\lib"
-    StrCpy $GmpDllInstalled 1
-!else
-  !ifndef SkipFiles
-    SetOutPath "$INSTDIR\auxiliary\gmp\lib"
-    File /nonfatal "${CGAL_SRC}\auxiliary\gmp\lib\gmp-${VARIANT}.dll"
-    File /nonfatal "${CGAL_SRC}\auxiliary\gmp\lib\mpfr-${VARIANT}.dll"
-  !endif  
-!endif
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp-${VARIANT}.dll.zip"  "$INSTDIR\auxiliary\gmp\lib"
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr-${VARIANT}.dll.zip" "$INSTDIR\auxiliary\gmp\lib"
 !macroend
 
 !macro Install_GMP_MPFR_pdbs PLATFORM VARIANT
-!ifndef FetchLocal
-    !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp-${VARIANT}.pdb.zip"  "$INSTDIR\auxiliary\gmp\lib"
-    !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr-${VARIANT}.pdb.zip" "$INSTDIR\auxiliary\gmp\lib"
-!else
-  !ifndef SkipFiles
-    SetOutPath "$INSTDIR\auxiliary\gmp\lib"
-    File /nonfatal "${CGAL_SRC}\auxiliary\gmp\lib\gmp-${VARIANT}.pdb"
-    File /nonfatal "${CGAL_SRC}\auxiliary\gmp\lib\mpfr-${VARIANT}.pdb"
-  !endif  
-!endif
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp-${VARIANT}.pdb.zip"  "$INSTDIR\auxiliary\gmp\lib"
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr-${VARIANT}.pdb.zip" "$INSTDIR\auxiliary\gmp\lib"
 !macroend
 
 !macro Install_GMP_MPFR_bin PLATFORM VARIANT
@@ -162,10 +131,8 @@ Var GmpDllInstalled
   ; we want to download headers only if at least one lib variant was selected.
   ${If} $IsGmpInstalled = 0
     StrCpy $IsGmpInstalled 1 
-    !ifndef FetchLocal
-      !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp.h.zip"  "$INSTDIR\auxiliary\gmp\include"
-      !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr.h.zip" "$INSTDIR\auxiliary\gmp\include"
-    !endif
+    !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp.h.zip"  "$INSTDIR\auxiliary\gmp\include"
+    !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr.h.zip" "$INSTDIR\auxiliary\gmp\include"
   ${Endif}
   
   !insertmacro Install_GMP_MPFR_libs                                "${PLATFORM}" "${VARIANT}"
@@ -173,36 +140,15 @@ Var GmpDllInstalled
   !insertmacro Install_DLL_if_dynamic_variant Install_GMP_MPFR_dlls "${PLATFORM}" "${VARIANT}"
 !macroend
 
+
 ;--------------------------------
 ; Functions
 ;--------------------------------
-
-Function initSelectionFlags
-
-    StrCpy $selected_libs ""
-    ClearErrors
-    StrCpy $0 0
-    
-    
-  next:
-    SectionGetText $0 $1
-    IfErrors bail
-    StrCpy $2 $1 "" -4
-    StrCmp $2 "libs" 0 not_lib
-    Push $0
-    call SelectDefaultVariants
-    StrCpy $selected_libs "$selected_libs1"
-  not_lib:
-    IntOp $0 $0 + 1
-    goto next
-  bail:
-FunctionEnd
-
-; Stack 0: compiler name
-; Stack 1: variant name
-; Stack 2: section
-
-Function MaybeSelectVariant
+ 
+; Given a section ($2) implicitely corresponding
+; to a certain compiler ($0) and variant choice ($2)
+; select it or unselect it based on the user choices in the variants page
+Function __MaybeSelectVariant
     Exch $2
     ; c, v, r2
     Exch
@@ -220,31 +166,40 @@ Function MaybeSelectVariant
 
     Push $3
     Push $4
-
-        ${If} $0 == "VC8.0"
-            !insertmacro MUI_INSTALLOPTIONS_READ $3 "variants.ini" "Field 5" "State"
-        ${Else}
-            !insertmacro MUI_INSTALLOPTIONS_READ $3 "variants.ini" "Field 6" "State"
-        ${EndIf}
-
-    StrCpy $5 0
-
-    ${If} $3 != 0
     
-        StrCpy $3 7
-      next:
-        !insertmacro MUI_INSTALLOPTIONS_READ $4 "variants.ini" "Field $3" "Text"
-        IfErrors bail
-        ${If} $4 == $1
-            !insertmacro MUI_INSTALLOPTIONS_READ $5 "variants.ini" "Field $3" "State"
-            goto bail
-        ${EndIf}
-        IntOp $3 $3 + 1
-        goto next
-      bail:
+    ${If} $0 == "VC8.0"
+        !insertmacro MUI_INSTALLOPTIONS_READ $3 "variants.ini" "Field 5" "State"
+    ${Else}
+        !insertmacro MUI_INSTALLOPTIONS_READ $3 "variants.ini" "Field 6" "State"
     ${EndIf}
 
-    ${If} $5 == 0
+    ; If the corresponding compiler+variant is not found in the variant page
+    ; the section is unselected
+    StrCpy $5 0
+
+    ${If} $3 <> 0 ; Is the compiler selected?
+    
+      ; variants are the fields 7 to 10
+      ${For} $3 7 10
+      
+        !insertmacro MUI_INSTALLOPTIONS_READ $4 "variants.ini" "Field $3" "Text"
+        
+        ${If} $4 == $1 ; Is this variant field the one we are looking for?
+        
+          ; Found the variant field. Read the state and exit the loop
+          !insertmacro MUI_INSTALLOPTIONS_READ $5 "variants.ini" "Field $3" "State"
+          
+          goto break ; 
+          
+        ${EndIf}
+        
+      ${Next}
+      
+      break:
+      
+    ${EndIf}
+
+    ${If} $5 = 0
       !insertmacro UnselectSection $2
     ${Else}
       !insertmacro SelectSection $2
@@ -257,43 +212,14 @@ Function MaybeSelectVariant
     Pop $0
 FunctionEnd
 
-; Stack 0: top level section index
-Function SelectDefaultVariants
-    Exch $0
-    Push $1
-    Push $2
-    Push $3
-    Push $4
+!macro _MaybeSelectVariant Compiler Variant Sec
 
-    IntOp $0 $0 + 1
+  Push "${Compiler}"
+  Push "${Variant}"
+  Push "${Sec}"
+  
+  call __MaybeSelectVariant
+  
+!macroend
 
-    StrCpy $1 0 ; Last section was group end
-    StrCpy $4 "" ; Current compiler
- next:
-    SectionGetFlags $0 $2
-    IfErrors bail
-    IntOp $3 $2 & ${SF_SECGRPEND}
-    StrCmp $3 0 not_end
-    StrCmp $1 0 0 bail ; two groups in a row means we are backing out
- not_end:
-    StrCpy $1 $3
-    IntOp $3 $2 & 6
-    StrCmp $3 0 0 not_variant
-    SectionGetText $0 $2
-    Push $4
-    Push $2
-    Push $0
-    call MaybeSelectVariant
-    goto variant
- not_variant:
-    SectionGetText $0 $4
- variant:
-    IntOp $0 $0 + 1
-    goto next
- bail:
-    Pop $4
-    Pop $3
-    Pop $2
-    Pop $1
-    Pop $0
-FunctionEnd
+!define MaybeSelectVariant "!insertmacro _MaybeSelectVariant"

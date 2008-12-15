@@ -13,7 +13,6 @@
 
 
 !include "MUI.nsh"
-;!include "StrFunc.nsh"
 !include "Sections.nsh"
 !include "LogicLib.nsh"
 !include "Locate.nsh"
@@ -22,12 +21,13 @@
 !include "WriteEnvStr.nsh"
 !include "EnvVarUpdate.nsh"
 
-
-!include "script_cgal_3_4.nsh"
+;!define DebugLog
 
 !ifdef DebugLog
   !include "TextLog.nsh"
-!EndIf
+!endif
+
+!include "script_cgal_3_4.nsh"
 
 !define CGAL_SRC  "CGAL-3.4"
 !define FTP_SRC   "https://cgal.geometryfactory.com/CGAL/precompiled_libs/"
@@ -93,14 +93,11 @@
 
   !define MUI_WELCOMEPAGE_TEXT "This installs CGAL-3.4 on your machine."
 
-  !define MUI_FINISHPAGE_TITLE "Installation Not Finished Yet!!!"
+  !define MUI_FINISHPAGE_TITLE "Installation finished"
 
-; !define MUI_FINISHPAGE_TEXT "Read the full installation notes for further instructions: "
+  !define MUI_FINISHPAGE_TEXT "You have downloaded CGAL sucessfully. Please continue the installation, reading the installation instructions."
 
-; !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\INSTALL.txt"
-; !define MUI_FINISHPAGE_SHOWREADME_TEXT " 
-  
-  !define MUI_FINISHPAGE_LINK "Read the full installation notes for further instructions"
+  !define MUI_FINISHPAGE_LINK "Installation instructions"
   !define MUI_FINISHPAGE_LINK_LOCATION $INSTDIR/doc_html/index.html
   
 ;--------------------------------
@@ -153,17 +150,17 @@ Section "!Main CGAL" MAIN_Idx
 !ifndef SkipFiles
   SectionIn RO 
   SetOutPath "$INSTDIR\auxiliary"
-  File /r "${CGAL_SRC}\auxiliary\*.*"
+  File /nonfatal /r "${CGAL_SRC}\auxiliary\*.*"
   SetOutPath "$INSTDIR\cmake"
   File /r "${CGAL_SRC}\cmake\*.*"
+  SetOutPath "$INSTDIR\config"
+  File /r "${CGAL_SRC}\config\*.*"
   SetOutPath "$INSTDIR\doc_html"
   File /r "${CGAL_SRC}\doc_html\*.*"
   SetOutPath "$INSTDIR\include"
   File /r "${CGAL_SRC}\include\*.*"
   SetOutPath "$INSTDIR\scripts"
   File /r "${CGAL_SRC}\scripts\*.*"
-  SetOutPath "$INSTDIR\lib"
-  File /r "${CGAL_SRC}\lib\*.*"
   SetOutPath "$INSTDIR\src"
   File /r "${CGAL_SRC}\src\*.*"
 
@@ -214,89 +211,67 @@ ${MultiVariantSection} "GMP and MPFR precompiled libs"  Install_GMP_MPFR_bin "$P
 
 ;--------------------------------
 
-
-!macro Install_TUACS_libs PLATFORM
-  !ifndef FetchLocal
-
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "libatlas.lib.zip"           "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "libcblas.lib.zip"           "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "libf77blas.lib.zip"         "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "liblapack.lib.zip"          "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "libmetis-vc71-mt-s.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "libmetis-vc71-mt.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "libtaucs-vc71-mt-s.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "libtaucs-vc71-mt.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "libtstatlas.lib.zip"        "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "vcf2c-vc71-mt-s.lib.zip"    "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "vcf2c-vc71-mt.lib.zip"      "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "vcf2c-vc71-mt-sgd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.4/" "vcf2c-vc71-mt-gd.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
-  !else
-    !ifndef SkipFiles
-      SetOutPath "$INSTDIR\auxiliary\taucs\lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\README"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libatlas.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libcblas.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libf77blas.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\liblapack.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libmetis-vc71-mt-s.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libmetis-vc71-mt.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libmetis-vc71-s.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libtaucs-vc71-mt-s.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libtaucs-vc71-mt.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\libtstatlas.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-mt-s.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-mt.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-s.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-mt-sgd.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-mt-gd.lib"
-      File /nonfatal "${CGAL_SRC}\auxiliary\taucs\lib\vcf2c-vc71-sgd.lib"
-    !endif  
-  !endif  
-!macroend
-
 ;--------------------------------
 Section /o "LAPACK and TAUCS precompiled libs" TAUCS_LIB_Idx
 
-  !ifndef FetchLocal
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.4/"  "taucs.h.zip"  "$INSTDIR\auxiliary\taucs\include"
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.4/"  "taucs_config_tests.h.zip"  "$INSTDIR\auxiliary\taucs\include"
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.4/"  "taucs_config_build.h.zip"  "$INSTDIR\auxiliary\taucs\include"
-  !else
-    !ifndef SkipFiles
-      SetOutPath "$INSTDIR\auxiliary\taucs\include" 
-      File /r "${CGAL_SRC}\auxiliary\taucs\include\*.*"
-    !endif
-  !endif
+  !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.4/"  "taucs.h.zip"               "$INSTDIR\auxiliary\taucs\include"
+  !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.4/"  "taucs_private.h.zip"       "$INSTDIR\auxiliary\taucs\include"
+  !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.4/"  "taucs_config_tests.h.zip"  "$INSTDIR\auxiliary\taucs\include"
+  !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.4/"  "taucs_config_build.h.zip"  "$INSTDIR\auxiliary\taucs\include"
+  !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.4/"  "blaswrap.h.zip"            "$INSTDIR\auxiliary\taucs\include"
 
-  !insertmacro Install_TUACS_libs "$Platform"
+  ${If} "$Platform" == "win32"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libatlas.lib.zip"             "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libcblas.lib.zip"             "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libf77blas.lib.zip"           "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "liblapack.lib.zip"            "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libtstatlas.lib.zip"          "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libmetis-vc71-mt-s.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libmetis-vc71-mt.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libmetis-vc71-mt-sgd.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libmetis-vc71-mt-gd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libtaucs-vc71-mt-s.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libtaucs-vc71-mt.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libtaucs-vc71-mt-sgd.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libtaucs-vc71-mt-sgd.pdb.zip" "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libtaucs-vc71-mt-gd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "libtaucs-vc71-mt-gd.pdb.zip"  "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "vcf2c-vc71-mt-s.lib.zip"      "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "vcf2c-vc71-mt.lib.zip"        "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "vcf2c-vc71-mt-sgd.lib.zip"    "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.4/" "vcf2c-vc71-mt-gd.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
+  ${Else}
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "libmetis-vc80-mt-s.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "libmetis-vc80-mt.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "libmetis-vc80-mt-sgd.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "libmetis-vc80-mt-gd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "libtaucs-vc80-mt-s.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "libtaucs-vc80-mt.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "libtaucs-vc80-mt-sgd.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "libtaucs-vc80-mt-sgd.pdb.zip" "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "libtaucs-vc80-mt-gd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "libtaucs-vc80-mt-gd.pdb.zip"  "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "vcf2c-vc80-mt-s.lib.zip"      "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "vcf2c-vc80-mt.lib.zip"        "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "vcf2c-vc80-mt-sgd.lib.zip"    "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "vcf2c-vc80-mt-gd.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "clapack-vc80-mt-s.lib.zip"    "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "clapack-vc80-mt.lib.zip"      "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "clapack-vc80-mt-sgd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "clapack-vc80-mt-gd.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "blas-vc80-mt-s.lib.zip"       "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "blas-vc80-mt.lib.zip"         "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "blas-vc80-mt-sgd.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
+  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "blas-vc80-mt-gd.lib.zip"      "$INSTDIR\auxiliary\taucs\lib"
+  ${Endif}
 SectionEnd
 ;--------------------------------
 
 Section /o "HTML Manuals" DOC_Idx
   !ifndef FetchLocal
-    !insertmacro DownloadFileFrom "http://www.cgal.org/" "Manual/3.3/doc_html/"  "cgal_manual.tar.gz"  "$INSTDIR\doc_html"
+                                  
+    !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/3.4/Manual" "cgal_manual.zip"  "$INSTDIR\doc_html"
   !endif  
-SectionEnd
-
-Section "-unzip" UNZIP_Idx
-  
-  ${locate::Open} "$INSTDIR" "/D=0 /X=zip" $0
-  ${If} $0 != 0
-    ${Do}
-  	  ${locate::Find} $0 $1 $2 $3 $4 $5 $6
-      ${If} "$1" != ""
-        ZipDLL::extractall $1 $2
-		Pop $7
-		${If} "$7" == "success"
-          Delete $1
-		${EndIf}
-      ${EndIf}
-    ${LoopUntil} "$1" == ""
-  ${EndIf}  
-  ${locate::Close} $0
-  ${locate::Unload}
-  
 SectionEnd
 
 ;--------------------------------
@@ -362,7 +337,7 @@ SectionEnd
 Function .onInit
 
   !ifdef DebugLog
-  ${LogSetFileName} "$INSTDIR\windows_install_log.txt"
+  ${LogSetFileName} "CGAL-3.4_install_log.txt"
   ${LogSetOn}
   !endif	
   
@@ -376,49 +351,12 @@ Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "variants.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "environment_variables.ini"
   
-  !insertmacro SelectSection ${UNZIP_Idx}
-  
 FunctionEnd
 
-Function .onSelChange
-    ClearErrors
-    StrCpy $0 0 ; Section index
-    StrCpy $1 0 ; Lib index
-  next:
-    SectionGetText $0 $2
-    IfErrors bail
-    StrCpy $3 $2 "" -4
-    StrCmp $3 "libs" 0 not_lib
-    StrCpy $3 $selected_libs 1 $1 ; $3 == old flag
-    SectionGetFlags $0 $4 ; $4 == flag
-    IntOp $5 $4 & 65
-    StrCmp $5 0 not_true
-    StrCpy $5 1
-  not_true:
-    StrCmp $3 $5 not_toggled 0
-    StrCpy $6 $selected_libs $1 ; Before
-    IntOp $7 $1 + 1
-    StrCpy $7 $selected_libs "" $7 ; After
-    StrCpy $selected_libs "$6$5$7"
-    StrCmp $5 1 0 not_selected
-    ; -- New library was selected, select default variants
-    Push $0
-    call SelectDefaultVariants
-  not_selected:
-  not_toggled:
-    IntOp $1 $1 + 1
-  not_lib:
-    IntOp $0 $0 + 1
-    goto next
-  bail:
-  
-  !insertmacro SelectSection ${UNZIP_Idx}
-  
-FunctionEnd
 
 Function .onInstSuccess
-  
-  ${If} "$SetCGAL_DIR" != ""
+
+  ${If} $SetCGAL_DIR != ""
     ${WriteEnvStr} "CGAL_DIR"  $SetCGAL_DIR $RegLoc
   ${EndIf}
   
@@ -426,7 +364,22 @@ Function .onInstSuccess
     ${EnvVarUpdate} $0 "PATH" "A" $RegLoc "$INSTDIR\auxiliary\gmp\lib"
   ${EndIf}
   
-  !insertmacro SelectSection ${UNZIP_Idx}
+  
+  ${locate::Open} "$INSTDIR" "/D=0 /X=zip" $0
+  ${If} $0 <> 0
+    ${Do}
+  	  ${locate::Find} $0 $1 $2 $3 $4 $5 $6
+      ${If} "$1" != ""
+        ZipDLL::extractall $1 $2
+    		Pop $7
+    		${If} "$7" == "success"
+          Delete $1
+    		${EndIf}
+      ${EndIf}
+    ${LoopUntil} "$1" == ""
+  ${EndIf}  
+  ${locate::Close} $0
+  ${locate::Unload}
   
 FunctionEnd
 
@@ -437,33 +390,30 @@ Function VariantsPage
     !insertmacro MUI_INSTALLOPTIONS_SHOW
 
     !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 5" "State"
-    ${If} $0 == 0
+    ${If} $0 = 0
         !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 6" "State"
     ${EndIf}
 
-    IntOp $0 $0 !
-    StrCpy $no_default_compilers $0
-    StrCpy $0 7
-    StrCpy $1 0
-    ClearErrors
-  next:
-    !insertmacro MUI_INSTALLOPTIONS_READ $2 "variants.ini" "Field $0" "State"
-    IfErrors bail
-    IntOp $1 $1 || $2
-    IntOp $0 $0 + 1
-    goto next
-  bail:
-    IntOp $1 $1 !
-    StrCpy $no_default_variants $1
-
   !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 11" "State"
-  ${If} $0 == 1
+  ${If} $0 = 1
     StrCpy $Platform "win32"
   ${Else}
     StrCpy $Platform "x64"
   ${Endif}
+
+  ;
+  ; These lines are TIGHTLY bound to the exact text in the Variants page
+  ; (from variants.ini) and the section numbers of the GMP/MPFR components
+  ;
+  ${MaybeSelectVariant} "VC8.0" "Multithread Debug"                 4
+  ${MaybeSelectVariant} "VC8.0" "Multithread"                       5
+  ${MaybeSelectVariant} "VC8.0" "Multithread, static runtime"       6
+  ${MaybeSelectVariant} "VC8.0" "Multithread Debug, static runtime" 7
+  ${MaybeSelectVariant} "VC9.0" "Multithread Debug"                 10
+  ${MaybeSelectVariant} "VC9.0" "Multithread"                       11
+  ${MaybeSelectVariant} "VC9.0" "Multithread, static runtime"       12
+  ${MaybeSelectVariant} "VC9.0" "Multithread Debug, static runtime" 13
   
-  call initSelectionFlags
 FunctionEnd
 
 # Disables the env var checkbox # FN and textbox # FN+1
@@ -513,13 +463,18 @@ Function envarsPage
       !insertmacro UncheckEnvStrCheckbox 6
       !insertmacro SetEnvStrLabel        8 $3
   ${Endif}
+
+  SectionGetText ${GMP_LIB_Idx} $2 
   
-  ${If} $GmpDllInstalled = 1
-    !insertmacro CheckEnvStrCheckbox  9
-;    !insertmacro EnableEnvStrCheckbox 9
-  ${Else}
+  SectionGetFlags ${GMP_LIB_Idx} $1 
+  IntOp $2 $1 & ${SF_PSELECTED}
+  
+  ${If} $2 == 0
     !insertmacro UncheckEnvStrCheckbox 9
     !insertmacro DisableEnvStrCheckbox 9
+  ${Else}
+    !insertmacro CheckEnvStrCheckbox  9
+    !insertmacro EnableEnvStrCheckbox 9
   ${Endif}
   
   !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "environment_variables.ini"
@@ -531,7 +486,7 @@ Function envarsPage
     
     !insertmacro MUI_INSTALLOPTIONS_READ $3 "environment_variables.ini" "Field 2" "State" # $3=Is ALL USERS selected
 
-    ${If} $3 = 1
+    ${If} $3 == 1
       StrCpy $RegLoc "HKLM"
     ${Else}  
       StrCpy $RegLoc "HKCU"
@@ -539,12 +494,12 @@ Function envarsPage
     
     !insertmacro MUI_INSTALLOPTIONS_READ $3 "environment_variables.ini" "Field 6" "State" # CGAL_DIR checkbox
     !insertmacro MUI_INSTALLOPTIONS_READ $4 "environment_variables.ini" "Field 7" "State" # CGAL_DIR value
-    ${If} $3 = 1 
+    ${If} $3 == 1 
       StrCpy $SetCGAL_DIR $4
     ${EndIF}
 
     !insertmacro MUI_INSTALLOPTIONS_READ $5 "environment_variables.ini" "Field 9" "State" # Add to PATH checkbox
-    ${If} $5 = 1 
+    ${If} $5 == 1 
       StrCpy $Add_GMP_LIB_DIR_to_PATH 1
     ${EndIF}
     
