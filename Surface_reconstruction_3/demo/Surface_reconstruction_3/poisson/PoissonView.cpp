@@ -41,6 +41,8 @@ BEGIN_MESSAGE_MAP(CPoissonView, CView)
     ON_COMMAND(ID_ARCBALL_RESET, OnArcballReset)
     ON_COMMAND(ID_RENDER_ARCBALL, OnRenderArcball)
     ON_UPDATE_COMMAND_UI(ID_RENDER_ARCBALL, OnUpdateRenderArcball)
+    ON_COMMAND(ID_RENDER_ORIGINAL_NORMALS, OnRenderOriginalnormals)
+    ON_UPDATE_COMMAND_UI(ID_RENDER_ORIGINAL_NORMALS, OnUpdateRenderOriginalnormals)
 END_MESSAGE_MAP()
 
 // CPoissonView construction/destruction
@@ -66,6 +68,7 @@ CPoissonView::CPoissonView()
   m_view_delaunay_edges = false;
   m_view_contour = true;
   m_view_normals = true; 
+  m_view_original_normals = false; 
   m_view_surface = true;
   m_view_arcball = false;
 }
@@ -255,6 +258,7 @@ void CPoissonView::OnPaint()
   // Do points have normals?
   bool points_have_normals = (pDoc->points()->begin()->normal() != CGAL::NULL_VECTOR);
   bool normals_are_oriented = pDoc->points()->begin()->normal().is_oriented();
+  bool points_have_original_normals = (pDoc->points()->begin()->original_normal() != CGAL::NULL_VECTOR);
 
   if(first_paint)
   {
@@ -318,6 +322,12 @@ void CPoissonView::OnPaint()
         pDoc->points()->gl_draw_normals(0,255,0 /*color*/, length);
       else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
         pDoc->poisson_function()->triangulation().gl_draw_normals(0,255,0 /*color*/, length);
+    }
+    if(m_view_original_normals && points_have_original_normals)
+    {
+      float length = (float)sqrt(region_of_interest.squared_radius() / 5000.0f);
+      if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
+        pDoc->points()->gl_draw_original_normals(0,0,255 /*color*/, length, 0.5 /*width*/);
     }
 
     // draw surface reconstructed by marching tet
@@ -545,6 +555,16 @@ void CPoissonView::OnRenderNormals()
 void CPoissonView::OnUpdateRenderNormals(CCmdUI *pCmdUI)
 {
   pCmdUI->SetCheck(m_view_normals);
+}
+
+void CPoissonView::OnRenderOriginalnormals()
+{
+  m_view_original_normals = !m_view_original_normals; 
+  InvalidateRect(NULL,FALSE);
+}
+void CPoissonView::OnUpdateRenderOriginalnormals(CCmdUI *pCmdUI)
+{
+  pCmdUI->SetCheck(m_view_original_normals);
 }
 
 void CPoissonView::OnRenderSurface()

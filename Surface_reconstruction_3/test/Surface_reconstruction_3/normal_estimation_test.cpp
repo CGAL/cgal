@@ -73,7 +73,7 @@ void estimate_normals_pca(const PointList& points, // input point set
                                nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
 }
@@ -99,7 +99,7 @@ void estimate_normals_jet_fitting(const PointList& points, // input point set
                                        nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
 }
@@ -120,10 +120,11 @@ void orient_normals_MST(const PointList& points, // input point set
          index_id, // index -> index property map = identity
          boost::make_iterator_property_map(points.begin(), index_id), // index -> position prop. map
          boost::make_iterator_property_map(normals.begin(), index_id), // index -> normal prop. map
-         nb_neighbors_mst);
+         nb_neighbors_mst,
+         M_PI/4. /* angle max to propagate orientation */);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
 }

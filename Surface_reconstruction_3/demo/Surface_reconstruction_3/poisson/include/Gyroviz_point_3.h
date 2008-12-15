@@ -15,7 +15,7 @@
 // $Id$
 //
 //
-// Author(s)     : Laurent Saboret, Pierre Alliez
+// Author(s)     : Laurent Saboret, Nader Salman
 
 #ifndef GYROVIZ_POINT_3_H
 #define GYROVIZ_POINT_3_H
@@ -31,8 +31,7 @@
 /// The Gyroviz_point_3 class represents a 3D point with:
 /// - a position,
 /// - a normal (oriented or not),
-/// - a list of camera/2D point pairs used to reconstruct the point 
-/// from an image sequence.
+/// - a list of camera/2D point pairs used to reconstruct the point from images,
 ///
 /// @heading Is Model for the Concepts: 
 /// Model of the PointWithOrientableNormal_3 concept.
@@ -98,31 +97,26 @@ public:
     Gyroviz_point_3(const CGAL::Origin& o = CGAL::ORIGIN)
     : Base(o)
     {
-      m_is_selected = false;
     }
     Gyroviz_point_3(FT x, FT y, FT z,
                     const Normal& normal = CGAL::NULL_VECTOR)
     : Base(x,y,z,normal)
     {
-      m_is_selected = false;
     }
     Gyroviz_point_3(RT hx, RT hy, RT hz, RT hw,
                     const Normal& normal = CGAL::NULL_VECTOR)
     : Base(hx,hy,hz,hw,normal)
     {
-      m_is_selected = false;
     }
     Gyroviz_point_3(const Point_3& point,
                     const Normal& normal = CGAL::NULL_VECTOR)
     : Base(point, normal)
     {
-      m_is_selected = false;
     }
     template <class K, class N>
     Gyroviz_point_3(const Point_with_normal_3<K,N>& pwn)
     : Base(pwn)
     {
-      m_is_selected = false;
     }
     template < class InputIterator >
     Gyroviz_point_3(const Point_3& point,
@@ -130,7 +124,6 @@ public:
                     InputIterator beyond_camera_point2_pair)
     : Base(point, CGAL::NULL_VECTOR)
     {
-      m_is_selected = false;
       camera_point2_map.insert(first_camera_point2_pair, beyond_camera_point2_pair); 
     }
     template < class InputIterator >
@@ -140,7 +133,6 @@ public:
                     InputIterator beyond_camera_point2_pair)
     : Base(point, normal)
     {
-      m_is_selected = false;
       camera_point2_map.insert(first_camera_point2_pair, beyond_camera_point2_pair); 
     }
 
@@ -148,21 +140,18 @@ public:
     Gyroviz_point_3(const Gyroviz_point_3& gpt)
     : Base(gpt)
     {
-      m_is_selected = gpt.m_is_selected;
       camera_point2_map = gpt.camera_point2_map;
     }
     template<class K>
     Gyroviz_point_3(const Gyroviz_point_3<K>& gpt)
     : Base(gpt)
     {
-      m_is_selected = gpt.is_selected();
       camera_point2_map.insert(gpt.camera_point2_pairs_begin(), gpt.camera_point2_pairs_end()); 
     }
     /// Operator =()
     Gyroviz_point_3& operator=(const Gyroviz_point_3& gpt)
     {
       Base::operator=(gpt);
-      m_is_selected = gpt.m_is_selected;
       camera_point2_map = gpt.camera_point2_map;
       return *this;
     }
@@ -185,10 +174,6 @@ public:
     //{ 
     //  return ! (*this == that); 
     //}
-
-    // Selection
-    bool is_selected() const { return m_is_selected; }
-    void select(bool is_selected=true) { m_is_selected = is_selected; }
 
     /// Get camera/2D point pairs.
     const Camera_point2_map& camera_point2_pairs() const 
@@ -237,9 +222,6 @@ public:
     
 // Data
 private:
-
-    // selection flag for GUI purpose
-    bool m_is_selected;
 
     // List of cameras
     Camera_point2_map camera_point2_map;

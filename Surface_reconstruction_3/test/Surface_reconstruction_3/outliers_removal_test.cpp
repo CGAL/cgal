@@ -76,7 +76,7 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
                points.end());
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
 }
@@ -118,7 +118,7 @@ int main(int argc, char * argv[])
                                              std::back_inserter(points), 
                                              false /*skip normals*/))
     {
-      std::cerr << "  ok (" << points.size() << " points)" << std::endl;
+      std::cerr << "ok (" << points.size() << " points)" << std::endl;
       
       test_avg_knn_sq_distance(points, nb_neighbors_outliers_removal, threshold_percent_avg_knn_sq_dst);
     }

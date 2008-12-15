@@ -38,6 +38,7 @@ public:
 
 	// Drawing options
 	bool m_view_normals;
+	bool m_view_original_normals;
 	bool m_view_contour;
 	bool m_view_surface;
 	bool m_view_delaunay_edges;
@@ -91,6 +92,8 @@ public:
 	afx_msg void OnArcballReset();
     afx_msg void OnRenderArcball();
     afx_msg void OnUpdateRenderArcball(CCmdUI *pCmdUI);
+    afx_msg void OnRenderOriginalnormals();
+    afx_msg void OnUpdateRenderOriginalnormals(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in PoissonView.cpp

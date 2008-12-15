@@ -18,7 +18,7 @@
 
 // This demo
 #include "poisson_dt3.h"
-#include "Gyroviz_point_3.h"
+#include "UI_point_3.h"
 #include "Point_set_3.h"
 #include "Triangular_surface_3.h"
 
@@ -31,15 +31,17 @@ typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle;
 typedef Kernel::Tetrahedron_3 Tetrahedron;
 
-// Point + normal + Gyroviz stuff
-typedef Gyroviz_point_3<Kernel> Gyroviz_point; // Point + normal + selection flag + cameras
-
-// Point + normal without Gyroviz stuff (superclasss of Gyroviz_point)
-typedef Gyroviz_point::Point_with_normal Point_with_normal; ///< Model of PointWithOrientableNormal_3
-typedef Gyroviz_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
-
-// Point set (points are of type Gyroviz_point)
+// Point set
 typedef Point_set_3<Kernel> Point_set;
+
+/// Type of points in Point_set_3
+typedef UI_point_3<Kernel> UI_point; ///< Position + normal + cameras + selection flag
+// Its superclasses:
+typedef Gyroviz_point_3<Kernel> Gyroviz_point; ///< Position + normal + cameras
+typedef UI_point::Point_with_normal Point_with_normal; ///< Position + normal
+
+// Type of points normal
+typedef UI_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
 
 // Poisson's 3D Delaunay triangulation and implicit function
 typedef Poisson_dt3<Kernel> Dt3;

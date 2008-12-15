@@ -37,6 +37,7 @@
 #include <CGAL/estimate_normals_jet_fitting_3.h>
 #include <CGAL/smooth_jet_fitting_3.h>
 #include <CGAL/estimate_normals_pca_3.h>
+#include <CGAL/orient_normals_minimum_spanning_tree_3.h>
 #include <CGAL/average_spacing_3.h>
 #include <CGAL/merge_epsilon_nearest_points_3.h>
 #include <CGAL/random_simplification_points_3.h>
@@ -354,6 +355,10 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     return FALSE;
   }
 
+  // Save original normals for visual comparison
+  for (int i=0; i<m_points.size(); i++)
+    m_points[i].original_normal() = m_points[i].normal();
+
   m_points.invalidate_bounding_box();
   m_edit_mode = POINT_SET;
 
@@ -668,6 +673,50 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
                                m_points.normals_begin(),
                                nb_neighbors);
 
+  // If original normals are available, compare with them and select normals with large deviation
+  m_points.select(m_points.begin(), m_points.end(), false);
+  bool points_have_original_normals = (m_points.begin()->original_normal() != CGAL::NULL_VECTOR);
+  if (points_have_original_normals)
+  {
+    double min_normal_deviation = DBL_MAX; // deviation / original normal
+    double max_normal_deviation = DBL_MIN;
+    double avg_normal_deviation = 0;
+    int invalid_normals = 0; // #normals with large deviation
+    for (int i=0; i<m_points.size(); i++)
+    {
+      // orient each normal like the original one (but keep the "non oriented" flag)
+      assert( ! m_points[i].normal().is_oriented() );
+      double cos_normal_deviation = m_points[i].normal() * m_points[i].original_normal();
+      if (cos_normal_deviation < 0)
+      {
+        cos_normal_deviation = -cos_normal_deviation;
+        m_points[i].normal() = Normal(- m_points[i].normal(), false /*non oriented*/);
+      }
+      double normal_deviation = std::acos(cos_normal_deviation);
+
+      // statistics about normals deviation
+      min_normal_deviation = (std::min)(min_normal_deviation, normal_deviation);
+      max_normal_deviation = (std::max)(max_normal_deviation, normal_deviation);
+      avg_normal_deviation += normal_deviation;
+
+      // count and select normal if large deviation
+      bool valid = (normal_deviation <= M_PI/4.); // valid if deviation <= 45 degrees
+      if ( ! valid )
+      {
+        m_points.select(&m_points[i]);
+        invalid_normals++;
+      }
+    }
+    avg_normal_deviation /= double(m_points.size());
+
+    std::cerr << "Compare with original normals:" << std::endl;
+    std::cerr << "  Min normal deviation=" << min_normal_deviation*180.0/M_PI << " degrees\n";
+    std::cerr << "  Max normal deviation=" << max_normal_deviation*180.0/M_PI << " degrees\n";
+    std::cerr << "  Avg normal deviation=" << avg_normal_deviation*180.0/M_PI << " degrees\n";
+    if (invalid_normals > 0)
+      std::cerr << "  Error: " << invalid_normals << " normals have a deviation > 45 degrees\n";
+  }
+
   status_message("Estimate Normals Direction by PCA...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
@@ -699,6 +748,50 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
                                        m_points.normals_begin(),
                                        nb_neighbors);
 
+  // If original normals are available, compare with them and select normals with large deviation
+  m_points.select(m_points.begin(), m_points.end(), false);
+  bool points_have_original_normals = (m_points.begin()->original_normal() != CGAL::NULL_VECTOR);
+  if (points_have_original_normals)
+  {
+    double min_normal_deviation = DBL_MAX; // deviation / original normal
+    double max_normal_deviation = DBL_MIN;
+    double avg_normal_deviation = 0;
+    int invalid_normals = 0; // #normals with large deviation
+    for (int i=0; i<m_points.size(); i++)
+    {
+      // orient each normal like the original one (but keep the "non oriented" flag)
+      assert( ! m_points[i].normal().is_oriented() );
+      double cos_normal_deviation = m_points[i].normal() * m_points[i].original_normal();
+      if (cos_normal_deviation < 0)
+      {
+        cos_normal_deviation = -cos_normal_deviation;
+        m_points[i].normal() = Normal(- m_points[i].normal(), false /*non oriented*/);
+      }
+      double normal_deviation = std::acos(cos_normal_deviation);
+
+      // statistics about normals deviation
+      min_normal_deviation = (std::min)(min_normal_deviation, normal_deviation);
+      max_normal_deviation = (std::max)(max_normal_deviation, normal_deviation);
+      avg_normal_deviation += normal_deviation;
+
+      // count and select normal if large deviation
+      bool valid = (normal_deviation <= M_PI/4.); // valid if deviation <= 45 degrees
+      if ( ! valid )
+      {
+        m_points.select(&m_points[i]);
+        invalid_normals++;
+      }
+    }
+    avg_normal_deviation /= double(m_points.size());
+
+    std::cerr << "Compare with original normals:" << std::endl;
+    std::cerr << "  Min normal deviation=" << min_normal_deviation*180.0/M_PI << " degrees\n";
+    std::cerr << "  Max normal deviation=" << max_normal_deviation*180.0/M_PI << " degrees\n";
+    std::cerr << "  Avg normal deviation=" << avg_normal_deviation*180.0/M_PI << " degrees\n";
+    if (invalid_normals > 0)
+      std::cerr << "  Error: " << invalid_normals << " normals have a deviation > 45 degrees\n";
+  }
+
   status_message("Estimate Normals Direction by Jet Fitting...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
@@ -721,13 +814,43 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
                                                get(boost::vertex_index, m_points),
                                                get(CGAL::vertex_point, m_points),
                                                get(boost::vertex_normal, m_points),
-                                               m_nb_neighbors_mst);
+                                               m_nb_neighbors_mst,
+                                               M_PI/4. /* angle max to propagate orientation */);
 
-  // Select non-oriented normals
+  // Count and select non-oriented normals
   m_points.select(m_points.begin(), m_points.end(), false);
+  int unoriented_normals = 0;
   for (int i=0; i<m_points.size(); i++)
+  {
     if ( ! m_points[i].normal().is_oriented() )
+    {
       m_points.select(&m_points[i]);
+      unoriented_normals++;
+    }
+  }
+  if (unoriented_normals > 0)
+    std::cerr << "Error: " << unoriented_normals << " normals are unoriented\n";
+
+  // If original normals are available, compare with them and select flipped normals
+  bool points_have_original_normals = (m_points.begin()->original_normal() != CGAL::NULL_VECTOR);
+  if (points_have_original_normals)
+  {
+    int flipped_normals = 0; // #normals with wrong orientation
+    for (int i=0; i<m_points.size(); i++)
+    {
+      double cos_normal_deviation = m_points[i].normal() * m_points[i].original_normal();
+      if (cos_normal_deviation < 0 // if flipped
+       && m_points[i].normal().is_oriented()) // unoriented normals are already reported
+      {
+        m_points.select(&m_points[i]);
+        flipped_normals++;
+      }
+    }
+
+    std::cerr << "Compare with original normals:" << std::endl;
+    if (flipped_normals > 0)
+      std::cerr << "  Error: " << flipped_normals << " normal(s) are flipped\n";
+  }
 
   status_message("Orient Normals with a Minimum Spanning Tree...done (%.2lf s)", task_timer.time());
   update_status();

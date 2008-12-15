@@ -54,7 +54,7 @@ void test_average_spacing(std::deque<Point>& points, // input point set
                                                     nb_neighbors_avg_spacing) << "\n";
   
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
 }
@@ -95,7 +95,7 @@ int main(int argc, char * argv[])
                                              std::back_inserter(points), 
                                              false /*skip normals*/))
     {
-      std::cerr << "  ok (" << points.size() << " points)" << std::endl;
+      std::cerr << "ok (" << points.size() << " points)" << std::endl;
       
       test_average_spacing(points,nb_neighbors_avg_spacing);
     }

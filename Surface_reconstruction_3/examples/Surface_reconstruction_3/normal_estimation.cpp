@@ -85,7 +85,7 @@ void estimate_normals_pca(const PointList& points, // input point set
                                nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
 }
@@ -111,7 +111,7 @@ void estimate_normals_jet_fitting(const PointList& points, // input point set
                                        nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
 }
@@ -132,11 +132,12 @@ void orient_normals_MST(const PointList& points, // input point set
          index_id, // index -> index property map = identity
          boost::make_iterator_property_map(points.begin(), index_id), // index -> position prop. map
          boost::make_iterator_property_map(normals.begin(), index_id), // index -> normal prop. map
-         nb_neighbors_mst);
+         nb_neighbors_mst,
+         M_PI/4. /* angle max to propagate orientation */);
 
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
 }
@@ -315,10 +316,11 @@ int main(int argc, char * argv[])
     if (orient == "MST")
       orient_normals_MST(points, computed_normals, nb_neighbors_mst);
 
-    // Check computed normals
+    // Check normals orientation
     int unoriented_normals = 0;
     std::deque<Orientable_normal>::iterator n;
-    for (n = computed_normals.begin(); n != computed_normals.end(); n++)
+    int index;
+    for (n = computed_normals.begin(), index=1; n != computed_normals.end(); n++, index++)
     {
       // Check unit vector
       Vector v = *n;
@@ -327,11 +329,14 @@ int main(int argc, char * argv[])
 
       // Check orientation
       if ( ! n->is_oriented() )
+      {
+        CGAL_TRACE_STREAM << "Error: normal " << index << " is unoriented\n";
         unoriented_normals++;
+      }
     }
     if (unoriented_normals > 0)
     {
-      std::cerr << "Error: " << unoriented_normals << " normal(s) are unoriented\n";
+      std::cerr << "Error: " << unoriented_normals << " normals are unoriented\n";
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
     }
 
@@ -343,15 +348,17 @@ int main(int argc, char * argv[])
     bool input_points_have_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
     if (input_points_have_normals)
     {
-      std::cerr << "Compare with original normals..." << std::endl;
+      std::cerr << "Compare with original normals:" << std::endl;
 
-      double min_normal_deviation = DBL_MAX;
+      double min_normal_deviation = DBL_MAX; // deviation / original normal
       double max_normal_deviation = DBL_MIN;
       double avg_normal_deviation = 0;
-      int flipped_normals = 0;
+      int flipped_normals = 0; // #normals with wrong orientation
+      int invalid_normals = 0; // #normals with large deviation
       PointList::iterator p;
       //std::deque<Orientable_normal>::iterator n;
-      for (p = points.begin(), n = computed_normals.begin(); p != points.end(); p++, n++)
+      //int index;
+      for (p = points.begin(), n = computed_normals.begin(), index=1; p != points.end(); p++, n++, index++)
       {
         Vector v1 = p->normal(); // input normal
         double norm1 = std::sqrt( v1*v1 );
@@ -364,27 +371,49 @@ int main(int argc, char * argv[])
         {
           cos_normal_deviation = -cos_normal_deviation;
           if ( n->is_oriented() ) // unoriented normals are already reported
+          {
+            //CGAL_TRACE("Error: normal %d is flipped: (%.2lf,%.2lf,%.2lf) -> (%.2lf,%.2lf,%.2lf)\n",
+            //           index, v1.x(),v1.y(),v1.z(), v2.x(),v2.y(),v2.z());
             flipped_normals++;
+          }
         }
         double normal_deviation = std::acos(cos_normal_deviation);
 
+        // statistics about normals deviation
         min_normal_deviation = (std::min)(min_normal_deviation, normal_deviation);
         max_normal_deviation = (std::max)(max_normal_deviation, normal_deviation);
+        //if (max_normal_deviation < normal_deviation)
+        //{
+        //  CGAL_TRACE("max_normal_deviation=%.2lf for normal %d: (%.2lf,%.2lf,%.2lf) -> (%.2lf,%.2lf,%.2lf)\n",
+        //             max_normal_deviation, index, v1.x(),v1.y(),v1.z(), v2.x(),v2.y(),v2.z());
+        //  max_normal_deviation = normal_deviation;
+        //}
         avg_normal_deviation += normal_deviation;
+
+        // count normal if large deviation
+        bool valid = (normal_deviation <= M_PI/4.); // valid if deviation <= 45 degrees
+        if ( ! valid )
+          invalid_normals++;
       }
       avg_normal_deviation /= double(points.size());
 
       if (flipped_normals > 0)
       {
-        std::cerr << "Error: " << flipped_normals << " normal(s) are flipped\n";
+        std::cerr << "  Error: " << flipped_normals << " normal(s) are flipped\n";
         accumulated_fatal_err = EXIT_FAILURE; // set error and continue
       }
 
-      std::cerr << "Min normal deviation=" << min_normal_deviation*180.0/M_PI << " degrees\n";
-      std::cerr << "Max normal deviation=" << max_normal_deviation*180.0/M_PI << " degrees\n";
-      std::cerr << "Avg normal deviation=" << avg_normal_deviation*180.0/M_PI << " degrees\n";
+      std::cerr << "  Min normal deviation=" << min_normal_deviation*180.0/M_PI << " degrees\n";
+      std::cerr << "  Max normal deviation=" << max_normal_deviation*180.0/M_PI << " degrees\n";
+      std::cerr << "  Avg normal deviation=" << avg_normal_deviation*180.0/M_PI << " degrees\n";
       if (max_normal_deviation*180.0/M_PI > 10.0) // 10 degrees
         accumulated_fatal_err = EXIT_FAILURE; // set error and continue
+
+      if (invalid_normals > 0)
+      {
+        std::cerr << "  Error: " << invalid_normals << " normals have a deviation > 45 degrees\n";
+        accumulated_fatal_err = EXIT_FAILURE; // set error and continue
+      }
     }
 
     //***************************************

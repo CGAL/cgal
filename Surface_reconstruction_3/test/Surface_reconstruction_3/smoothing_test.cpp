@@ -69,7 +69,7 @@ void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
                              nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "  ok: " << task_timer.time() << " seconds, "
+  std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
 }
@@ -110,7 +110,7 @@ int main(int argc, char * argv[])
                                              std::back_inserter(points), 
                                              false /*skip normals*/))
     {
-      std::cerr << "  ok (" << points.size() << " points)" << std::endl;
+      std::cerr << "ok (" << points.size() << " points)" << std::endl;
       
       test_smooth_jet_fitting(points, nb_neighbors_smooth_jet_fitting);
     }

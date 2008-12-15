@@ -8,7 +8,7 @@
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 
-#include <Gyroviz_point_3.h>
+#include <UI_point_3.h>
 
 #include <CGAL/boost/graph/properties.h>
 
@@ -19,7 +19,7 @@
 
 /// The Point_set_3 class is array of points + normals of type 
 /// Point_with_normal_3<Gt, Orientable_normal_3<Gt> > (in fact 
-/// Gyroviz_point_3 to support algorithms specific to Gyroviz). 
+/// UI_point_3 to support algorithms specific to Gyroviz and selection flag). 
 /// It provides:
 /// - accessors: points and normals iterators, property maps
 /// - OpenGL rendering
@@ -32,13 +32,13 @@
 /// @param Gt       Geometric traits class.
 
 template <class Gt>
-class Point_set_3 : public std::deque<Gyroviz_point_3<Gt> >
+class Point_set_3 : public std::deque<UI_point_3<Gt> >
 {
 // Private types
 private:
 
   // Base class 
-  typedef std::deque<Gyroviz_point_3<Gt> > Base;
+  typedef std::deque<UI_point_3<Gt> > Base;
 
   // Auxiliary class to build a normals iterator
   template <class Node>
@@ -67,20 +67,25 @@ public:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  typedef Gyroviz_point_3<Gt> Gyroviz_point; ///< Point_with_normal + selection flag + cameras
-  typedef typename Gyroviz_point::Point_with_normal Point_with_normal; ///< Model of PointWithOrientableNormal_3
-  typedef typename Gyroviz_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
+  /// Type of points in Point_set_3
+  typedef UI_point_3<Gt> UI_point; ///< Position + normal + cameras + selection flag
+  // Its superclasses:
+  typedef Gyroviz_point_3<Gt> Gyroviz_point; ///< Position + normal + cameras
+  typedef typename UI_point::Point_with_normal Point_with_normal; ///< Position + normal
+  
+  // Type of points normal
+  typedef typename UI_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
 
   // Iterator over Point_3 points
-  typedef std::deque<Gyroviz_point>::iterator        Point_iterator;      
-  typedef std::deque<Gyroviz_point>::const_iterator  Point_const_iterator;      
+  typedef std::deque<UI_point>::iterator        Point_iterator;      
+  typedef std::deque<UI_point>::const_iterator  Point_const_iterator;      
 
   // Iterator over normals
   typedef CGAL::Iterator_project<iterator, 
-                                 Project_normal<Gyroviz_point> >  
+                                 Project_normal<UI_point> >  
                                                       Normal_iterator;      
   typedef CGAL::Iterator_project<const_iterator, 
-                                 Project_normal<Gyroviz_point> >  
+                                 Project_normal<UI_point> >  
                                                       Normal_const_iterator;      
 
 // Data members
@@ -126,7 +131,7 @@ public:
   int nb_selected_points() const { return m_nb_selected_points; }
 
   /// Mark a point as selected/not selected.
-  void select(Gyroviz_point* gpt, bool is_selected = true)
+  void select(UI_point* gpt, bool is_selected = true)
   {
     if (gpt->is_selected() != is_selected)
     {
@@ -146,14 +151,14 @@ public:
       it->select(is_selected);
       
     m_nb_selected_points = std::count_if(begin(), end(), 
-                                         std::mem_fun_ref(&Gyroviz_point::is_selected));
+                                         std::mem_fun_ref(&UI_point::is_selected));
   } 
 
   /// Delete selected points.
   void delete_selection()
   {
     // erase-remove idiom
-    erase(std::remove_if(begin(), end(), std::mem_fun_ref(&Gyroviz_point::is_selected)),
+    erase(std::remove_if(begin(), end(), std::mem_fun_ref(&UI_point::is_selected)),
           end());    
 
     m_nb_selected_points = 0;
@@ -224,12 +229,12 @@ public:
     // Draw *selected* points
     if (m_nb_selected_points > 0)
     {
-      ::glPointSize(point_size*1.5);  // selected => bigger
-      ::glColor3ub(255, 0, 0);      // selected = red
+      ::glPointSize(point_size*2.);  // selected => bigger
+      ::glColor3ub(255,0,0);         // selected = red
       ::glBegin(GL_POINTS);
       for (const_iterator it = begin(); it != end(); it++)
       {
-        const Gyroviz_point& p = *it;
+        const UI_point& p = *it;
         if (p.is_selected())
           ::glVertex3d(p.x(), p.y(), p.z());
       }
@@ -244,7 +249,7 @@ public:
       ::glBegin(GL_POINTS);
       for (const_iterator it = begin(); it != end(); it++)
       {
-        const Gyroviz_point& p = *it;
+        const UI_point& p = *it;
         if ( ! p.is_selected() )
           ::glVertex3d(p.x(), p.y(), p.z());
       }
@@ -262,7 +267,7 @@ public:
     ::glBegin(GL_LINES);
     for (const_iterator it = begin(); it != end(); it++)
     {
-      const Gyroviz_point& p = *it;
+      const UI_point& p = *it;
       const Normal& n = p.normal();
       if (n.is_oriented())
       {
@@ -274,13 +279,36 @@ public:
     ::glEnd();
 
     // Draw *non-oriented* normals
-    ::glColor3ub(255,0,0);
+    ::glColor3ub(245,184,0);       // non oriented => orange
+    //::glLineWidth(line_width*1.5); // orange is light color
     ::glBegin(GL_LINES);
     for (const_iterator it = begin(); it != end(); it++)
     {
-      const Gyroviz_point& p = *it;
+      const UI_point& p = *it;
       const Normal& n = p.normal();
       if ( ! n.is_oriented() )
+      {
+        Point q = p + scale * n;
+        ::glVertex3d(p.x(),p.y(),p.z());
+        ::glVertex3d(q.x(),q.y(),q.z());
+      }
+    }
+    ::glEnd();
+  }
+
+  // Draw *original* normals using OpenGL calls.
+  void gl_draw_original_normals(unsigned char r, unsigned char g, unsigned char b,
+                                FT scale = 1.0, FT line_width = 1.0) const
+  {
+    // Draw original normals (always oriented)
+    ::glColor3ub(r,g,b);
+    ::glLineWidth(line_width);
+    ::glBegin(GL_LINES);
+    for (const_iterator it = begin(); it != end(); it++)
+    {
+      const UI_point& p = *it;
+      const Normal& n = p.original_normal();
+      if (n.is_oriented())
       {
         Point q = p + scale * n;
         ::glVertex3d(p.x(),p.y(),p.z());
@@ -426,7 +454,7 @@ class Point_set_vertex_cameras_const_map
 {
 public:
   typedef Point_set_3<Gt> Point_set;
-  typedef typename Point_set::Gyroviz_point::Camera_const_iterator 
+  typedef typename Point_set::UI_point::Camera_const_iterator 
     Camera_const_iterator;  
 
   // Property maps required types

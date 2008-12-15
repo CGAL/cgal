@@ -345,6 +345,10 @@
 				RelativePath=".\include\Triangular_surface_3.h"
 				>
 			</File>
+			<File
+				RelativePath=".\include\UI_point_3.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Demo Resource Files"

@@ -3,7 +3,6 @@
 
 // CGAL
 #include <CGAL/Implicit_fct_delaunay_triangulation_3.h>
-#include <CGAL/orient_normals_minimum_spanning_tree_3.h>
 
 // STL
 #include <vector>
