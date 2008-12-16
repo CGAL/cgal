@@ -95,7 +95,7 @@
 
   !define MUI_FINISHPAGE_TITLE "Installation finished"
 
-  !define MUI_FINISHPAGE_TEXT "You have downloaded CGAL sucessfully. Please continue the installation, reading the installation instructions."
+  !define MUI_FINISHPAGE_TEXT "You have downloaded CGAL successfully. Please continue the installation, reading the installation instructions."
 
   !define MUI_FINISHPAGE_LINK "Installation instructions"
   !define MUI_FINISHPAGE_LINK_LOCATION "file:///$INSTDIR/doc_html/index.html"
