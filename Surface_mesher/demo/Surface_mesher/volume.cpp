@@ -834,52 +834,60 @@ void Volume::display_surface_mesher_result()
     Surface_3 surface(m_image, bounding_sphere, m_relative_precision);
 //     Threshold threshold(m_image.isovalue());
 
-    std::vector<Point> seeds;
-    {
-      std::cerr << "Search seeds...\n";
-      std::set<unsigned char> domains;
-      search_for_connected_components(std::back_inserter(seeds),
-				      CGAL::inserter(domains),
-				      classify);
-      std::cerr << "Found " << seeds.size() << " seed(s).\n";
-
-      if(mw->labellizedRadioButton->isChecked() && 
-	 values_list->numberOfValues() == 0) 
-      {
-	Q_FOREACH(unsigned char label, domains) {
-	  if(label != 0) {
-	    values_list->addValue(label);
-	  }
-	}
-      }
-    }
     // surface mesh traits class
     typedef CGAL::Surface_mesher::Implicit_surface_oracle_3<Kernel,
-//     typedef CGAL::Surface_mesher::Image_surface_oracle_3<Kernel,
+      //     typedef CGAL::Surface_mesher::Image_surface_oracle_3<Kernel,
       Surface_3, 
       Classify_from_isovalue_list,
       Generate_surface_identifiers> Oracle;
     Oracle oracle(classify, generate_ids);
 
-    for(std::vector<Point>::const_iterator it = seeds.begin(), end = seeds.end();
-        it != end; ++it)
+    if(mw->searchSeedsCheckBox->isChecked())
     {
-      CGAL::Random_points_on_sphere_3<Point> random_points_on_sphere_3(2*m_image.radius());
-      Oracle::Intersect_3 intersect = oracle.intersect_3_object();
-      for(int i = 0; i < 20; ++i)
+      std::vector<Point> seeds;
       {
-        const Point test = *it + (*random_points_on_sphere_3++ - CGAL::ORIGIN);
-        CGAL::Object o = intersect(surface, Segment_3(*it, test));
-        if (const Point* intersection = CGAL::object_cast<Point>(&o))
-          del.insert(*intersection);
-        else 
-        {
-          std::cerr << 
-            boost::format("Error. Segment (%1%, %2%) does not intersect the surface! values=(%3%, %4%)\n")
-            % *it % test
-            % surface(*it) % surface(test);
-        }
+	std::cerr << "Search seeds...\n";
+	std::set<unsigned char> domains;
+	search_for_connected_components(std::back_inserter(seeds),
+					CGAL::inserter(domains),
+					classify);
+	std::cerr << "Found " << seeds.size() << " seed(s).\n";
+
+	if(mw->labellizedRadioButton->isChecked() && 
+	   values_list->numberOfValues() == 0) 
+	{
+	  Q_FOREACH(unsigned char label, domains) {
+	    if(label != 0) {
+	      values_list->addValue(label);
+	    }
+	  }
+	}
       }
+      for(std::vector<Point>::const_iterator it = seeds.begin(), end = seeds.end();
+	  it != end; ++it)
+      {
+	CGAL::Random_points_on_sphere_3<Point> random_points_on_sphere_3(2*m_image.radius());
+	Oracle::Intersect_3 intersect = oracle.intersect_3_object();
+	for(int i = 0; i < 20; ++i)
+	{
+	  const Point test = *it + (*random_points_on_sphere_3++ - CGAL::ORIGIN);
+	  CGAL::Object o = intersect(surface, Segment_3(*it, test));
+	  if (const Point* intersection = CGAL::object_cast<Point>(&o))
+	    del.insert(*intersection);
+	  else 
+	  {
+	    std::cerr << 
+	      boost::format("Error. Segment (%1%, %2%) does not intersect the surface! values=(%3%, %4%)\n")
+	      % *it % test
+	      % surface(*it) % surface(test);
+	  }
+	}
+      }
+    }
+    else {
+      oracle.construct_initial_points_object()(surface, 
+					       CGAL::inserter(c2t3.triangulation()),
+					       20);
     }
 
     std::cerr << boost::format("Number of initial points: %1%\n") % del.number_of_vertices();
