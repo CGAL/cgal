@@ -98,7 +98,7 @@
   !define MUI_FINISHPAGE_TEXT "You have downloaded CGAL sucessfully. Please continue the installation, reading the installation instructions."
 
   !define MUI_FINISHPAGE_LINK "Installation instructions"
-  !define MUI_FINISHPAGE_LINK_LOCATION $INSTDIR/doc_html/index.html
+  !define MUI_FINISHPAGE_LINK_LOCATION "file:///$INSTDIR/doc_html/index.html"
   
 ;--------------------------------
 ; Pages
