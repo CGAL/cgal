@@ -165,11 +165,11 @@ different build directories keeps all the generated files separated for each
 configuration.
 
 In the following, $CGAL_SRC denotes the directory with the CGAL sources;
-$CGAL_BIN is an arbitrary directory where the generated files will be
+$CGAL_BUILD is an arbitrary directory where the generated files will be
 placed. You can perform an out-of-source build as follows:
 
-  mkdir $CGAL_BIN
-  cd $CGAL_BIN
+  mkdir $CGAL_BUILD
+  cd $CGAL_BUILD
   cmake [options] $CGAL_SRC
   make
   make install                       (if desired)
