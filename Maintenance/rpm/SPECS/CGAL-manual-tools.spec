@@ -1,4 +1,4 @@
-%{!?cgal_manual_revision: %define cgal_manual_revision 45627}
+%{!?cgal_manual_revision: %define cgal_manual_revision 47461}
 
 Name:           CGAL-manual-tools
 Version:        %{cgal_manual_revision}
