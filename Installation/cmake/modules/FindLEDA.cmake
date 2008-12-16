@@ -52,7 +52,7 @@ else()
     endif()
   endif()
   
-  set(LEDA_LIBRARIES ${LEDA_LIBRARIES_} CACHE FILEPATH "The QGLViewer library")
+  set(LEDA_LIBRARIES ${LEDA_LIBRARIES_} CACHE FILEPATH "The LEDA library")
 
 endif()
   
