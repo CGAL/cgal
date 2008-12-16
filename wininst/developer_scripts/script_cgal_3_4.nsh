@@ -58,6 +58,7 @@ Var IsGmpInstalled
         !insertmacro "${Handler}" "${Platform}" "vc90-mt-sgd"
       SectionEnd
     SectionGroupEnd
+    
   SectionGroupEnd
 !macroend
 

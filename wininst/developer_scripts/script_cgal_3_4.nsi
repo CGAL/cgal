@@ -98,6 +98,7 @@
   !define MUI_FINISHPAGE_TEXT "You have downloaded CGAL successfully. Please continue the installation, reading the installation instructions."
 
   !define MUI_FINISHPAGE_LINK "Installation instructions"
+  
   !define MUI_FINISHPAGE_LINK_LOCATION "file:///$INSTDIR/doc_html/index.html"
   
 ;--------------------------------
@@ -264,14 +265,34 @@ Section /o "LAPACK and TAUCS precompiled libs" TAUCS_LIB_Idx
   	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "blas-vc80-mt-sgd.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
   	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.4/" "blas-vc80-mt-gd.lib.zip"      "$INSTDIR\auxiliary\taucs\lib"
   ${Endif}
+
 SectionEnd
 ;--------------------------------
 
 Section /o "HTML Manuals" DOC_Idx
   !ifndef FetchLocal
-                                  
     !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/3.4/Manual/" "cgal_manual.zip"  "$INSTDIR\doc_html"
   !endif  
+SectionEnd
+
+Section "-Unzip"
+
+  ${locate::Open} "$INSTDIR" "/D=0 /X=zip" $0
+  ${If} $0 <> 0
+    ${Do}
+  	  ${locate::Find} $0 $1 $2 $3 $4 $5 $6
+      ${If} "$1" != ""
+        ZipDLL::extractall $1 $2
+    		Pop $7
+    		${If} "$7" == "success"
+          Delete $1
+    		${EndIf}
+      ${EndIf}
+    ${LoopUntil} "$1" == ""
+  ${EndIf}  
+  ${locate::Close} $0
+  ${locate::Unload}
+
 SectionEnd
 
 ;--------------------------------
@@ -364,23 +385,6 @@ Function .onInstSuccess
     ${EnvVarUpdate} $0 "PATH" "A" $RegLoc "$INSTDIR\auxiliary\gmp\lib"
   ${EndIf}
   
-  
-  ${locate::Open} "$INSTDIR" "/D=0 /X=zip" $0
-  ${If} $0 <> 0
-    ${Do}
-  	  ${locate::Find} $0 $1 $2 $3 $4 $5 $6
-      ${If} "$1" != ""
-        ZipDLL::extractall $1 $2
-    		Pop $7
-    		${If} "$7" == "success"
-          Delete $1
-    		${EndIf}
-      ${EndIf}
-    ${LoopUntil} "$1" == ""
-  ${EndIf}  
-  ${locate::Close} $0
-  ${locate::Unload}
-  
 FunctionEnd
 
 Function VariantsPage
@@ -445,11 +449,13 @@ FunctionEnd
 
 Function envarsPage
 
+  Push $0
   Push $1
   Push $2
   Push $3
   Push $4
   Push $5
+
   
   !insertmacro MUI_HEADER_TEXT "Setting Environment Variables" "Choose whether to set or not the following environment variables"
   
@@ -510,5 +516,6 @@ Function envarsPage
   Pop $3
   Pop $2
   Pop $1
+  Pop $0
   
 FunctionEnd
