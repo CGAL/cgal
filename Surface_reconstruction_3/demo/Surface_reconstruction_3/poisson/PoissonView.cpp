@@ -209,7 +209,7 @@ int CPoissonView::OnCreate(LPCREATESTRUCT lpCreateStruct)
   // Activate Z-buffer
   glEnable(GL_DEPTH_TEST);
   
-  // Background color
+  // Background color = white
   glClearColor(1.0f,1.0f,1.0f,1.0f);
 
   // activate lighting
@@ -305,30 +305,26 @@ void CPoissonView::OnPaint()
     if(m_view_vertices)
     {
       if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
-        pDoc->points()->gl_draw_vertices(0,0,0 /*color*/, 2.0f /*size*/);
+        pDoc->points()->gl_draw_vertices(0,0,0 /*black*/, 2.0f /*size*/);
       else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function()->triangulation().gl_draw_delaunay_vertices(0,0,0 /*color*/, 2.0f /*size*/);
+        pDoc->poisson_function()->triangulation().gl_draw_delaunay_vertices(0,0,0 /*black*/, 2.0f /*size*/);
     }
 
     // draw Delaunay edges
     if(m_view_delaunay_edges && pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function()->triangulation().gl_draw_delaunay_edges(0,0,0 /*color*/, 1.0f /*size*/);
+        pDoc->poisson_function()->triangulation().gl_draw_delaunay_edges(0,0,0 /*black*/, 1.0f /*size*/);
 
     // draw normals
+    float normal_length = (float)sqrt(region_of_interest.squared_radius() / 10000.);
     if(m_view_normals && points_have_normals)
     {
-      float length = (float)sqrt(region_of_interest.squared_radius() / 5000.0f);
       if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
-        pDoc->points()->gl_draw_normals(0,255,0 /*color*/, length);
+        pDoc->points()->gl_draw_normals(0,255,0 /*green*/, normal_length);
       else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function()->triangulation().gl_draw_normals(0,255,0 /*color*/, length);
+        pDoc->poisson_function()->triangulation().gl_draw_normals(0,255,0 /*green*/, normal_length);
     }
     if(m_view_original_normals && points_have_original_normals)
-    {
-      float length = (float)sqrt(region_of_interest.squared_radius() / 5000.0f);
-      if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
-        pDoc->points()->gl_draw_original_normals(0,0,255 /*color*/, length, 0.5 /*width*/);
-    }
+      pDoc->points()->gl_draw_original_normals(128,191,255 /*light blue*/, normal_length);
 
     // draw surface reconstructed by marching tet
     if(m_view_contour && pDoc->edit_mode() == CPoissonDoc::POISSON)
@@ -337,7 +333,7 @@ void CPoissonView::OnPaint()
       ::glEnable(GL_LIGHTING);
       ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
       ::glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE,grey);
-      ::glColor3ub(0,0,0);
+      ::glColor3ub(0,0,0); /*black*/
       pDoc->marching_tet_countour()->gl_draw_surface();
     }
 
@@ -347,14 +343,14 @@ void CPoissonView::OnPaint()
     {
       ::glEnable(GL_LIGHTING);
       ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-      ::glColor3ub(100,100,255);
+      ::glColor3ub(100,100,255); /*grey*/
       ::glEnable(GL_POLYGON_OFFSET_FILL);
       ::glPolygonOffset(3.0f,-3.0f);
       pDoc->surface_mesher_surface()->gl_draw_surface();
 
       ::glDisable(GL_LIGHTING);
       ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-      ::glColor3ub(0,0,0);
+      ::glColor3ub(0,0,0); /*black*/
       ::glDisable(GL_POLYGON_OFFSET_FILL);
       pDoc->surface_mesher_surface()->gl_draw_surface();
     }

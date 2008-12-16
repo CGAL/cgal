@@ -92,8 +92,7 @@ int main(int argc, char * argv[])
   }
 
   // Smoothing options
-  const double nb_neighbors_smooth_jet_fitting = 0.05 /* % */; // K-nearest neighbors (smooth points by Jet Fitting)
-                                                               // LS: was 20
+  const double nb_neighbors_smooth_jet_fitting = 0.1 /* % */; // K-nearest neighbors (smooth points by Jet Fitting)
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;

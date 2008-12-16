@@ -131,11 +131,11 @@ public:
   int nb_selected_points() const { return m_nb_selected_points; }
 
   /// Mark a point as selected/not selected.
-  void select(UI_point* gpt, bool is_selected = true)
+  void select(UI_point* point, bool is_selected = true)
   {
-    if (gpt->is_selected() != is_selected)
+    if (point->is_selected() != is_selected)
     {
-      gpt->select(is_selected);
+      point->select(is_selected);
       m_nb_selected_points += (is_selected ? 1 : -1);
     }
   } 
@@ -230,7 +230,7 @@ public:
     if (m_nb_selected_points > 0)
     {
       ::glPointSize(point_size*2.);  // selected => bigger
-      ::glColor3ub(255,0,0);         // selected = red
+      ::glColor3ub(255,0,0);         // selected => red
       ::glBegin(GL_POINTS);
       for (const_iterator it = begin(); it != end(); it++)
       {
@@ -261,61 +261,108 @@ public:
   void gl_draw_normals(unsigned char r, unsigned char g, unsigned char b,
                        FT scale = 1.0, FT line_width = 1.0) const
   {
-    // Draw *oriented* normals
-    ::glColor3ub(r,g,b);
-    ::glLineWidth(line_width);
-    ::glBegin(GL_LINES);
-    for (const_iterator it = begin(); it != end(); it++)
+    // Draw normals of *selected* points
+    if (m_nb_selected_points > 0)
     {
-      const UI_point& p = *it;
-      const Normal& n = p.normal();
-      if (n.is_oriented())
+      ::glColor3ub(255,0,0); // selected => red
+      ::glLineWidth(line_width);
+      ::glBegin(GL_LINES);
+      for (const_iterator it = begin(); it != end(); it++)
       {
-        Point q = p + scale * n;
-        ::glVertex3d(p.x(),p.y(),p.z());
-        ::glVertex3d(q.x(),q.y(),q.z());
+        const UI_point& p = *it;
+        const Normal& n = p.normal();
+        if (p.is_selected())
+        {
+          Point q = p + scale * n;
+          ::glVertex3d(p.x(),p.y(),p.z());
+          ::glVertex3d(q.x(),q.y(),q.z());
+        }
       }
+      ::glEnd();
     }
-    ::glEnd();
 
-    // Draw *non-oriented* normals
-    ::glColor3ub(245,184,0);       // non oriented => orange
-    //::glLineWidth(line_width*1.5); // orange is light color
-    ::glBegin(GL_LINES);
-    for (const_iterator it = begin(); it != end(); it++)
+    // Draw normals of *non-selected* points
+    if (m_nb_selected_points < size())
     {
-      const UI_point& p = *it;
-      const Normal& n = p.normal();
-      if ( ! n.is_oriented() )
+      // Draw *oriented* normals 
+      ::glColor3ub(r,g,b);
+      ::glLineWidth(line_width);
+      ::glBegin(GL_LINES);
+      for (const_iterator it = begin(); it != end(); it++)
       {
-        Point q = p + scale * n;
-        ::glVertex3d(p.x(),p.y(),p.z());
-        ::glVertex3d(q.x(),q.y(),q.z());
+        const UI_point& p = *it;
+        const Normal& n = p.normal();
+        if (!p.is_selected() && n.is_oriented())
+        {
+          Point q = p + scale * n;
+          ::glVertex3d(p.x(),p.y(),p.z());
+          ::glVertex3d(q.x(),q.y(),q.z());
+        }
       }
+      ::glEnd();
+
+      // Draw *non-oriented* normals 
+      ::glColor3ub(245,184,0);       // non oriented => orange
+      //::glLineWidth(line_width*1.5); // orange is light color
+      ::glBegin(GL_LINES);
+      for (const_iterator it = begin(); it != end(); it++)
+      {
+        const UI_point& p = *it;
+        const Normal& n = p.normal();
+        if (!p.is_selected() && !n.is_oriented())
+        {
+          Point q = p + scale * n;
+          ::glVertex3d(p.x(),p.y(),p.z());
+          ::glVertex3d(q.x(),q.y(),q.z());
+        }
+      }
+      ::glEnd();
     }
-    ::glEnd();
   }
 
   // Draw *original* normals using OpenGL calls.
   void gl_draw_original_normals(unsigned char r, unsigned char g, unsigned char b,
                                 FT scale = 1.0, FT line_width = 1.0) const
   {
-    // Draw original normals (always oriented)
-    ::glColor3ub(r,g,b);
-    ::glLineWidth(line_width);
-    ::glBegin(GL_LINES);
-    for (const_iterator it = begin(); it != end(); it++)
+    // Draw original normals of *selected* points (always oriented)
+    if (m_nb_selected_points > 0)
     {
-      const UI_point& p = *it;
-      const Normal& n = p.original_normal();
-      if (n.is_oriented())
+      ::glColor3ub(r,g,b);
+      ::glLineWidth(line_width*2.);  // selected => bigger
+      ::glBegin(GL_LINES);
+      for (const_iterator it = begin(); it != end(); it++)
       {
-        Point q = p + scale * n;
-        ::glVertex3d(p.x(),p.y(),p.z());
-        ::glVertex3d(q.x(),q.y(),q.z());
+        const UI_point& p = *it;
+        const Vector& n = p.original_normal();
+        if (p.is_selected())
+        {
+          Point q = p + scale * n;
+          ::glVertex3d(p.x(),p.y(),p.z());
+          ::glVertex3d(q.x(),q.y(),q.z());
+        }
       }
+      ::glEnd();
     }
-    ::glEnd();
+    
+    // Draw original normals of *non-selected* points (always oriented)
+    if (m_nb_selected_points < size())
+    {
+      ::glColor3ub(r,g,b);
+      ::glLineWidth(line_width);
+      ::glBegin(GL_LINES);
+      for (const_iterator it = begin(); it != end(); it++)
+      {
+        const UI_point& p = *it;
+        const Vector& n = p.original_normal();
+        if ( ! p.is_selected() )
+        {
+          Point q = p + scale * n;
+          ::glVertex3d(p.x(),p.y(),p.z());
+          ::glVertex3d(q.x(),q.y(),q.z());
+        }
+      }
+      ::glEnd();
+    }
   }
 
 // Private methods:

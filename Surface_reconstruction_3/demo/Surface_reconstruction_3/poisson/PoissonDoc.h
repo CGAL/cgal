@@ -187,6 +187,16 @@ private:
     // Clean up current edit mode
     void CloseMode();
 
+    // Check the accuracy of normals direction estimation.
+    // If original normals are available, compare with them and select normals with large deviation.
+    // @return true on success.
+    bool verify_normals_direction();
+    // Check the accuracy of normals orientation.
+    // Count and select non-oriented normals.
+    // If original normals are available, compare with them and select flipped normals.
+    // @return true on success.
+    bool verify_normals_orientation();
+
 // MFC generated
 public:
 	virtual ~CPoissonDoc();

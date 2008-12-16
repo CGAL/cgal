@@ -154,10 +154,8 @@ int main(int argc, char * argv[])
   }
 
   // Normals Computing options
-  double nb_neighbors_pca_normals = 0.3 /* % */; // K-nearest neighbors (estimate normals by PCA)
-                                                 // LS: was 10
-  double nb_neighbors_jet_fitting_normals = 0.05 /* % */; // K-nearest neighbors (estimate normals by Jet Fitting)
-                                                          // LS: was 10
+  double nb_neighbors_pca_normals = 0.15 /* % */; // K-nearest neighbors (estimate normals by PCA)
+  double nb_neighbors_jet_fitting_normals = 0.1 /* % */; // K-nearest neighbors (estimate normals by Jet Fitting)
   unsigned int nb_neighbors_mst = 12; // K-nearest neighbors = 2 rings (orient normals by MST)
                                       // LS: was 10
 

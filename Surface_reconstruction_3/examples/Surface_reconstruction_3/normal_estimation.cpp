@@ -64,8 +64,73 @@ typedef std::deque<Point_with_normal> PointList;
 // Private functions
 // ----------------------------------------------------------------------------
 
-void estimate_normals_pca(const PointList& points, // input point set
-                          std::deque<Orientable_normal>& normals, // computed normals
+// Check the accuracy of normals direction estimation.
+// If original normals are available, compare with them and count normals with large deviation.
+// @return true on success.
+bool verify_normals_direction(const PointList& points, // input point set
+                              const std::deque<Orientable_normal>& computed_normals) // estimated normals
+{
+  bool success = true;
+  
+  assert(points.begin() != points.end());
+  bool points_have_original_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
+  if (points_have_original_normals)
+  {
+    std::cerr << "Compare with original normals:" << std::endl;
+
+    double min_normal_deviation = DBL_MAX; // deviation / original normal
+    double max_normal_deviation = DBL_MIN;
+    double avg_normal_deviation = 0;
+    int invalid_normals = 0; // #normals with large deviation
+    PointList::const_iterator p;
+    std::deque<Orientable_normal>::const_iterator n;
+    for (p = points.begin(), n = computed_normals.begin(); p != points.end(); p++, n++)
+    {
+      // compute normal deviation
+      Vector v1 = p->normal(); // input normal
+      double norm1 = std::sqrt( v1*v1 );
+      assert(norm1 != 0.0);
+      Vector v2 = *n; // computed normal
+      double norm2 = std::sqrt( v2*v2 );
+      assert(norm2 != 0.0);
+      double cos_normal_deviation = (v1*v2)/(norm1*norm2);
+      if (cos_normal_deviation < 0)
+      {
+        cos_normal_deviation = -cos_normal_deviation;
+      }
+      double normal_deviation = std::acos(cos_normal_deviation);
+
+      // statistics about normals deviation
+      min_normal_deviation = (std::min)(min_normal_deviation, normal_deviation);
+      max_normal_deviation = (std::max)(max_normal_deviation, normal_deviation);
+      avg_normal_deviation += normal_deviation;
+
+      // count normal if large deviation
+      bool valid = (normal_deviation <= M_PI/3.); // valid if deviation <= 60 degrees
+      if ( ! valid )
+      {
+        invalid_normals++;
+      }
+    }
+    avg_normal_deviation /= double(points.size());
+
+    std::cerr << "  Min normal deviation=" << min_normal_deviation*180.0/M_PI << " degrees\n";
+    std::cerr << "  Max normal deviation=" << max_normal_deviation*180.0/M_PI << " degrees\n";
+    std::cerr << "  Avg normal deviation=" << avg_normal_deviation*180.0/M_PI << " degrees\n";
+    if (invalid_normals > 0)
+    {
+      std::cerr << "  Error: " << invalid_normals << " normals have a deviation > 60 degrees\n";
+      success = false;
+    }
+  }
+
+  return success;
+}
+
+// Compute normals direction by Principal Component Analysis
+// @return true on success.
+bool estimate_normals_pca(const PointList& points, // input point set
+                          std::deque<Orientable_normal>& computed_normals, // normals to estimate
                           double nb_neighbors_pca_normals /* % */) // number of neighbors
 {
   CGAL::Timer task_timer; task_timer.start();
@@ -81,17 +146,23 @@ void estimate_normals_pca(const PointList& points, // input point set
             << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
 
   CGAL::estimate_normals_pca_3(points.begin(), points.end(),
-                               std::back_inserter(normals),
+                               std::back_inserter(computed_normals),
                                nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "ok: " << task_timer.time() << " seconds, "
+  std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
+
+  // Check the accuracy of normals direction estimation.
+  // If original normals are available, compare with them.
+  return verify_normals_direction(points, computed_normals);
 }
 
-void estimate_normals_jet_fitting(const PointList& points, // input point set
-                                  std::deque<Orientable_normal>& normals, // computed normals
+// Compute normals direction by Jet Fitting
+// @return true on success.
+bool estimate_normals_jet_fitting(const PointList& points, // input point set
+                                  std::deque<Orientable_normal>& computed_normals, // normals to estimate
                                   double nb_neighbors_jet_fitting_normals /* % */) // number of neighbors
 {
   CGAL::Timer task_timer; task_timer.start();
@@ -107,17 +178,85 @@ void estimate_normals_jet_fitting(const PointList& points, // input point set
             << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
 
   CGAL::estimate_normals_jet_fitting_3(points.begin(), points.end(),
-                                       std::back_inserter(normals),
+                                       std::back_inserter(computed_normals),
                                        nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "ok: " << task_timer.time() << " seconds, "
+  std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
+
+  // Check the accuracy of normals direction estimation.
+  // If original normals are available, compare with them.
+  return verify_normals_direction(points, computed_normals);
 }
 
-void orient_normals_MST(const PointList& points, // input point set
-                        std::deque<Orientable_normal>& normals, // normals to orient
+// Check the accuracy of normals orientation.
+// Count non-oriented normals.
+// If original normals are available, compare with them and count flipped normals.
+bool verify_normals_orientation(const PointList& points, // input point set
+                                const std::deque<Orientable_normal>& computed_normals) // oriented normals
+{
+  bool success = true;
+  
+  // Count non-oriented normals
+  int unoriented_normals = 0;
+  std::deque<Orientable_normal>::const_iterator n;
+  for (n = computed_normals.begin(); n != computed_normals.end(); n++)
+  {
+    // Check unit vector
+    Vector v = *n;
+    double norm = std::sqrt( v*v );
+    assert(norm > 0.99 || norm < 1.01);
+
+    // Check orientation
+    if ( ! n->is_oriented() )
+    {
+      unoriented_normals++;
+    }
+  }
+  if (unoriented_normals > 0)
+  {
+    std::cerr << "Error: " << unoriented_normals << " normals are unoriented\n";
+    success = false;
+  }
+
+  // If original normals are available, compare with them and count flipped normals
+  assert(points.begin() != points.end());
+  bool points_have_original_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
+  if (points_have_original_normals)
+  {
+    std::cerr << "Compare with original normals:" << std::endl;
+
+    int flipped_normals = 0; // #normals with wrong orientation
+    PointList::const_iterator p;
+    std::deque<Orientable_normal>::const_iterator n;
+    for (p = points.begin(), n = computed_normals.begin(); p != points.end(); p++, n++)
+    {
+      Vector v1 = p->normal(); // input normal
+      double norm1 = std::sqrt( v1*v1 );
+      assert(norm1 != 0.0);
+      Vector v2 = *n; // computed normal
+      double norm2 = std::sqrt( v2*v2 );
+      assert(norm2 != 0.0);
+      double cos_normal_deviation = (v1*v2)/(norm1*norm2);
+      if (cos_normal_deviation < 0 // if flipped
+       && n->is_oriented()) // unoriented normals are already reported
+      {
+        flipped_normals++;
+      }
+    }
+
+    if (flipped_normals > 0)
+      std::cerr << "  Error: " << flipped_normals << " normal(s) are flipped\n";
+  }
+
+  return success;
+}
+
+// @return true on success.
+bool orient_normals_MST(const PointList& points, // input point set
+                        std::deque<Orientable_normal>& computed_normals, // normals to orient
                         unsigned int nb_neighbors_mst) // number of neighbors
 {
   std::cerr << "Orient Normals with a Minimum Spanning Tree (knn="<< nb_neighbors_mst << ")...\n";
@@ -131,15 +270,18 @@ void orient_normals_MST(const PointList& points, // input point set
          (std::size_t)0, points.size(), // use the points index as iterator
          index_id, // index -> index property map = identity
          boost::make_iterator_property_map(points.begin(), index_id), // index -> position prop. map
-         boost::make_iterator_property_map(normals.begin(), index_id), // index -> normal prop. map
+         boost::make_iterator_property_map(computed_normals.begin(), index_id), // index -> normal prop. map
          nb_neighbors_mst,
          M_PI/4. /* angle max to propagate orientation */);
 
-
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cerr << "ok: " << task_timer.time() << " seconds, "
+  std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
+
+  // Check the accuracy of normals orientation.
+  // If original normals are available, compare with them.
+  return verify_normals_orientation(points, computed_normals);
 }
 
 
@@ -169,9 +311,9 @@ int main(int argc, char * argv[])
       std::cerr << "  -estimate plane|quadric          Estimate normals direction\n";
       std::cerr << "  using a tangent plane or quadric (default=quadric)\n";
       std::cerr << "  -nb_neighbors_pca <int>          Number of neighbors\n";
-      std::cerr << "  to compute tangent plane (default=0.3% of points)\n";
+      std::cerr << "  to compute tangent plane (default=0.15% of points)\n";
       std::cerr << "  -nb_neighbors_jet_fitting <int>  Number of neighbors\n";
-      std::cerr << "  to compute quadric (default=default=0.05% of points)\n";
+      std::cerr << "  to compute quadric (default=default=0.1% of points)\n";
       std::cerr << "  -orient MST                      Orient normals\n";
       std::cerr << "  using a Minimum Spanning Tree (default=MST)\n";
       std::cerr << "  -nb_neighbors_mst <int>          Number of neighbors\n";
@@ -180,12 +322,9 @@ int main(int argc, char * argv[])
     }
 
     // Normals Computing options
-    double nb_neighbors_pca_normals = 0.3 /* % */; // K-nearest neighbors (estimate normals by PCA)
-                                                   // LS: was 50
-    double nb_neighbors_jet_fitting_normals = 0.05 /* % */; // K-nearest neighbors (estimate normals by Jet Fitting)
-                                                            // LS: was 7
+    double nb_neighbors_pca_normals = 0.15 /* % */; // K-nearest neighbors (estimate normals by PCA)
+    double nb_neighbors_jet_fitting_normals = 0.1 /* % */; // K-nearest neighbors (estimate normals by Jet Fitting)
     unsigned int nb_neighbors_mst = 12; // K-nearest neighbors = 2 rings (orient normals by MST)
-                                        // LS: was 12
     std::string estimate = "quadric"; // estimate normals by jet fitting
     std::string orient = "MST"; // orient normals using a Minimum Spanning Tree
 
@@ -305,116 +444,24 @@ int main(int argc, char * argv[])
     //***************************************
 
     std::deque<Orientable_normal> computed_normals;
+    bool success = false;
 
-    // Estimate normals direction
+    // Estimate normals direction.
+    // Compare with original normals (if any).
     if (estimate == "plane")
-      estimate_normals_pca(points, computed_normals, nb_neighbors_pca_normals);
+      success = estimate_normals_pca(points, computed_normals, nb_neighbors_pca_normals);
     else if (estimate == "quadric")
-      estimate_normals_jet_fitting(points, computed_normals, nb_neighbors_jet_fitting_normals);
-
-    // Orient normals
-    if (orient == "MST")
-      orient_normals_MST(points, computed_normals, nb_neighbors_mst);
-
-    // Check normals orientation
-    int unoriented_normals = 0;
-    std::deque<Orientable_normal>::iterator n;
-    int index;
-    for (n = computed_normals.begin(), index=1; n != computed_normals.end(); n++, index++)
-    {
-      // Check unit vector
-      Vector v = *n;
-      double norm = std::sqrt( v*v );
-      assert(norm > 0.99 || norm < 1.01);
-
-      // Check orientation
-      if ( ! n->is_oriented() )
-      {
-        CGAL_TRACE_STREAM << "Error: normal " << index << " is unoriented\n";
-        unoriented_normals++;
-      }
-    }
-    if (unoriented_normals > 0)
-    {
-      std::cerr << "Error: " << unoriented_normals << " normals are unoriented\n";
+      success = estimate_normals_jet_fitting(points, computed_normals, nb_neighbors_jet_fitting_normals);
+    if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
-    }
 
-    //***************************************
-    // Compare with original normals
-    //***************************************
-
-    assert(points.begin() != points.end());
-    bool input_points_have_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
-    if (input_points_have_normals)
-    {
-      std::cerr << "Compare with original normals:" << std::endl;
-
-      double min_normal_deviation = DBL_MAX; // deviation / original normal
-      double max_normal_deviation = DBL_MIN;
-      double avg_normal_deviation = 0;
-      int flipped_normals = 0; // #normals with wrong orientation
-      int invalid_normals = 0; // #normals with large deviation
-      PointList::iterator p;
-      //std::deque<Orientable_normal>::iterator n;
-      //int index;
-      for (p = points.begin(), n = computed_normals.begin(), index=1; p != points.end(); p++, n++, index++)
-      {
-        Vector v1 = p->normal(); // input normal
-        double norm1 = std::sqrt( v1*v1 );
-        assert(norm1 != 0.0);
-        Vector v2 = *n; // computed normal
-        double norm2 = std::sqrt( v2*v2 );
-        assert(norm2 != 0.0);
-        double cos_normal_deviation = (v1*v2)/(norm1*norm2);
-        if (cos_normal_deviation < 0)
-        {
-          cos_normal_deviation = -cos_normal_deviation;
-          if ( n->is_oriented() ) // unoriented normals are already reported
-          {
-            //CGAL_TRACE("Error: normal %d is flipped: (%.2lf,%.2lf,%.2lf) -> (%.2lf,%.2lf,%.2lf)\n",
-            //           index, v1.x(),v1.y(),v1.z(), v2.x(),v2.y(),v2.z());
-            flipped_normals++;
-          }
-        }
-        double normal_deviation = std::acos(cos_normal_deviation);
-
-        // statistics about normals deviation
-        min_normal_deviation = (std::min)(min_normal_deviation, normal_deviation);
-        max_normal_deviation = (std::max)(max_normal_deviation, normal_deviation);
-        //if (max_normal_deviation < normal_deviation)
-        //{
-        //  CGAL_TRACE("max_normal_deviation=%.2lf for normal %d: (%.2lf,%.2lf,%.2lf) -> (%.2lf,%.2lf,%.2lf)\n",
-        //             max_normal_deviation, index, v1.x(),v1.y(),v1.z(), v2.x(),v2.y(),v2.z());
-        //  max_normal_deviation = normal_deviation;
-        //}
-        avg_normal_deviation += normal_deviation;
-
-        // count normal if large deviation
-        bool valid = (normal_deviation <= M_PI/4.); // valid if deviation <= 45 degrees
-        if ( ! valid )
-          invalid_normals++;
-      }
-      avg_normal_deviation /= double(points.size());
-
-      if (flipped_normals > 0)
-      {
-        std::cerr << "  Error: " << flipped_normals << " normal(s) are flipped\n";
-        accumulated_fatal_err = EXIT_FAILURE; // set error and continue
-      }
-
-      std::cerr << "  Min normal deviation=" << min_normal_deviation*180.0/M_PI << " degrees\n";
-      std::cerr << "  Max normal deviation=" << max_normal_deviation*180.0/M_PI << " degrees\n";
-      std::cerr << "  Avg normal deviation=" << avg_normal_deviation*180.0/M_PI << " degrees\n";
-      if (max_normal_deviation*180.0/M_PI > 10.0) // 10 degrees
-        accumulated_fatal_err = EXIT_FAILURE; // set error and continue
-
-      if (invalid_normals > 0)
-      {
-        std::cerr << "  Error: " << invalid_normals << " normals have a deviation > 45 degrees\n";
-        accumulated_fatal_err = EXIT_FAILURE; // set error and continue
-      }
-    }
+    // Orient normals.
+    // Check normals orientation.
+    // Compare with original normals (if any).
+    if (orient == "MST")
+      success = orient_normals_MST(points, computed_normals, nb_neighbors_mst);
+    if ( ! success )
+      accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 
     //***************************************
     // Save the point set
@@ -422,7 +469,7 @@ int main(int argc, char * argv[])
 
     // Replace old normals by new ones
     PointList::iterator p;
-    //std::deque<Orientable_normal>::iterator n;
+    std::deque<Orientable_normal>::iterator n;
     for (p = points.begin(), n = computed_normals.begin(); p != points.end(); p++, n++)
       p->normal() = *n;
 

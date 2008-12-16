@@ -91,8 +91,9 @@ int main(int argc, char * argv[])
   FT sm_angle_apss = 20.0; // theorical guaranty if angle >= 30, but slower
   FT sm_radius_apss = 0.1; // as suggested by LR
   FT sm_error_bound_apss = 1e-3;
-  FT sm_distance_apss = 0.005; // Upper bound of distance to surface (APSS).
+  FT sm_distance_apss = 0.003; // Upper bound of distance to surface (APSS).
                                // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
+                               // LS: was 0.005
   unsigned int nb_neighbors_apss = 12; // K-nearest neighbors (APSS)
                                        // LS: was 7
 

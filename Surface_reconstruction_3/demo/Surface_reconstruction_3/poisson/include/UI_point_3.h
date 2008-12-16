@@ -132,18 +132,21 @@ public:
     : Base(gpt)
     {
       m_is_selected = gpt.m_is_selected;
+      m_original_normal = gpt.m_original_normal;
     }
     template<class K>
     UI_point_3(const UI_point_3<K>& gpt)
     : Base(gpt)
     {
       m_is_selected = gpt.is_selected();
+      m_original_normal = gpt.m_original_normal;
     }
     /// Operator =()
     UI_point_3& operator=(const UI_point_3& gpt)
     {
       Base::operator=(gpt);
       m_is_selected = gpt.m_is_selected;
+      m_original_normal = gpt.m_original_normal;
       return *this;
     }
 
