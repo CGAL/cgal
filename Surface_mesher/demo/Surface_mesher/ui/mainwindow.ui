@@ -232,27 +232,6 @@
             </property>
            </widget>
           </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout" >
-            <item>
-             <widget class="QLabel" name="label_3" >
-              <property name="text" >
-               <string>Min size</string>
-              </property>
-              <property name="buddy" >
-               <cstring>minSize</cstring>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="minSize" >
-              <property name="statusTip" >
-               <string>If a connected component has its size lower that this bound, </string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
          </layout>
         </widget>
        </item>
@@ -798,38 +777,6 @@
   <include location="../surface_mesher.qrc" />
  </resources>
  <connections>
-  <connection>
-   <sender>searchSeedsCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>label_3</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>87</x>
-     <y>279</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>50</x>
-     <y>308</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>searchSeedsCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>minSize</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>206</x>
-     <y>278</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>240</x>
-     <y>303</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>labellizedRadioButton</sender>
    <signal>toggled(bool)</signal>
