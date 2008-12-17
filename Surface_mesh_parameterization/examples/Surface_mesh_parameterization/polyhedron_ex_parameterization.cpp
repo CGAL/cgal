@@ -335,15 +335,12 @@ int main()
             "output file (EPS or OBJ)")
             ;
 
-
         po::positional_options_description p;
         p.add("input", 1);
-        p.add("output", 2);
+        p.add("output", 1);
 
         po::variables_map vm;
-        po::store(po::command_line_parser(argc, argv).
-                    options(desc).positional(p).run(), vm);
-
+        po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
         po::notify(vm);
 
         if (vm.count("help")) {
