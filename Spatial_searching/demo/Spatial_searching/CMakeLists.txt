@@ -22,9 +22,9 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( spatial_searching_toolbar.h spatial_searching_toolbar.moc )
-  qt3_generate_moc( spatial_searching.cpp spatial_searching.moc )
-  qt3_generate_moc( Qt_widget_move_list_point.h Qt_widget_move_list_point.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/spatial_searching_toolbar.h" spatial_searching_toolbar.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/spatial_searching.cpp" spatial_searching.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Qt_widget_move_list_point.h" Qt_widget_move_list_point.moc )
 
 
   # The executable itself.

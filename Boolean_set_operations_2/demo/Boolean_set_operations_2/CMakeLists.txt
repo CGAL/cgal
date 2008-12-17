@@ -22,8 +22,8 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( boolean_operations_2_toolbar.h boolean_operations_2_toolbar.moc )
-  qt3_generate_moc( boolean_operations_2.h boolean_operations_2.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/boolean_operations_2_toolbar.h" boolean_operations_2_toolbar.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/boolean_operations_2.h" boolean_operations_2.moc )
 
 
   # The executable itself.

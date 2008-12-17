@@ -24,10 +24,10 @@ if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND )
   
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( apollonius_graph_2.cpp apollonius_graph_2.moc )
-  qt3_generate_moc( qt_file_toolbar.h qt_file_toolbar.moc )
-  qt3_generate_moc( qt_layers_toolbar.h qt_layers_toolbar.moc )
-  qt3_generate_moc( edit_vertex_layer.h edit_vertex_layer.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/apollonius_graph_2.cpp" apollonius_graph_2.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/qt_file_toolbar.h" qt_file_toolbar.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/qt_layers_toolbar.h" qt_layers_toolbar.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/edit_vertex_layer.h" edit_vertex_layer.moc )
   
   
   # The executable itself.

@@ -22,7 +22,7 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( envelope_3.cpp envelope_3.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/envelope_3.cpp" envelope_3.moc )
 
 
   # The executable itself.

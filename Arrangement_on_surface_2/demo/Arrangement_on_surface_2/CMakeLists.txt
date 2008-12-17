@@ -23,8 +23,8 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( arrangement_2.h arrangement_2.moc )
-  qt3_generate_moc( forms.h forms.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/arrangement_2.h" arrangement_2.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/forms.h" forms.moc )
 
 
   # The executable itself.

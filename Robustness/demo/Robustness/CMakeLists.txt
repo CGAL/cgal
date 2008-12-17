@@ -22,7 +22,7 @@ if ( CGAL_Qt3_FOUND AND QT3_FOUND )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( robustness.cpp robustness.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/robustness.cpp" robustness.moc )
 
 
   # The executable itself.

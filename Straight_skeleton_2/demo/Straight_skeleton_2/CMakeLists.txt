@@ -22,9 +22,9 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( straight_skeleton_2_toolbar.h straight_skeleton_2_toolbar.moc )
-  qt3_generate_moc( straight_skeleton_2_toolbar_layers.h straight_skeleton_2_toolbar_layers.moc )
-  qt3_generate_moc( straight_skeleton_2.cpp straight_skeleton_2.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/straight_skeleton_2_toolbar.h" straight_skeleton_2_toolbar.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/straight_skeleton_2_toolbar_layers.h" straight_skeleton_2_toolbar_layers.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/straight_skeleton_2.cpp" straight_skeleton_2.moc )
 
 
   # The executable itself.

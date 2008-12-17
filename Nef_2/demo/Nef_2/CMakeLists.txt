@@ -22,8 +22,8 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( nef_2.cpp nef_2.moc )
-  qt3_generate_moc( Qt_widget_toolbar.h Qt_widget_toolbar.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/nef_2.cpp" nef_2.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Qt_widget_toolbar.h" Qt_widget_toolbar.moc )
 
 
   # The executable itself.

@@ -22,10 +22,10 @@ if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( Qt_widget_toolbar.h Qt_widget_toolbar.moc )
-  qt3_generate_moc( Qt_widget_move_list_point.h Qt_widget_move_list_point.moc )
-  qt3_generate_moc( max_k-gon.cpp max_k-gon.moc )
-  qt3_generate_moc( rectangular_p_center_2_demo.cpp rectangular_p_center_2_demo.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Qt_widget_toolbar.h" Qt_widget_toolbar.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Qt_widget_move_list_point.h" Qt_widget_move_list_point.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/max_k-gon.cpp" max_k-gon.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/rectangular_p_center_2_demo.cpp" rectangular_p_center_2_demo.moc )
 
 
   # The executable itself.

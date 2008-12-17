@@ -24,7 +24,7 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND AND OPENGL_FOUND)
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
-  qt3_generate_moc( streamlines.cpp streamlines.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/streamlines.cpp" streamlines.moc )
 
   include_directories(${OPENGL_INCLUDE_DIR})
 
