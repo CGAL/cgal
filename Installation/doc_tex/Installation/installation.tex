@@ -86,7 +86,7 @@ geometric algorithms} in the form of a \CC\ library.
 
 This document describes how to install \cgal\ on Windows, Unix-like systems and MacOS X.
 
-Ideally, the installation resumes to
+Ideally, the installation reduces to
 
 \begin{verbatim}
   cd  CGAL-3.4                                # go to CGAL directory
@@ -96,6 +96,7 @@ Ideally, the installation resumes to
   cmake -DCGAL_DIR=$HOME/CGAL-3.4 .           # configure the examples
   make                                        # build the examples 
 \end{verbatim}
+%%   $   This dollar is there to trick syntax highlighting in emacs 
 
 In a less ideal world, you probably have to install \cmake, a makefile
 generator, and third party libraries. That's what this manual is about.
@@ -116,8 +117,8 @@ In order to build the \cgal\ libraries you need a \CC\ compiler.
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
     \textbf{compiler}        & \textbf{operating system}\\\hline\hline
-    \Gcc{3.4, 4.0, 4.1, 4.2, 4.3} \footnotemark[10]
-    & Solaris 2.6+ / Linux 2.x / MacOS X /
+    \Gcc{4.0, 4.1, 4.2, 4.3} \footnotemark[10]
+    & Solaris 2.6+ / Linux 2.x / MacOS X
       \\ & \mswin\ 95/98/2000/XP/NT4\footnotemark[11]\\\hline
     \msvc{8.0, 9.0} (\textsc{Visual Studio 2005 and 2008}) \footnotemark[12]
     & \mswin\ 95/98/2000/XP/NT4/Vista\footnotemark[11]\\\hline
@@ -135,8 +136,8 @@ Note that neither prerelease versions nor repository snapshots of
 In order to configure, build and install the \cgal\ libraries, as well
 as the examples and demos, you need \cmake, a cross-platform ``makefile generator''.
 If \cmake\ is not installed already you can obtain it from \cmakepage.
-We recommend the usage of \cmake\ Rel.~2.6, and you need at least
-\cmake\ Rel.~2.4-patch-7.
+We recommend the usage of \cmake\ release~2.6, and you need at least
+\cmake\ release~2.4-patch-7.
 
 
 \subsection{boost}
@@ -265,7 +266,7 @@ can use to build \cgal.
 
 The simplest way to start the configuration is to run the graphical
 user interface of \cmake. We recommend to use \texttt{cmake-gui}, which
-is available on all platforms since \cmake\ Rel.~2.6.   You must pass as 
+is available on all platforms since \cmake\ release~2.6.   You must pass as 
 argument the root directory of \cgal. For example:
 
 {\ccTexHtml{\scriptsize}{}
@@ -468,7 +469,7 @@ use the \texttt{make} command-line tool as follow:
 
 cd CGAL-3.4
 
-# build all the selected library at once
+# build all the selected libraries at once
 
 make 
 
