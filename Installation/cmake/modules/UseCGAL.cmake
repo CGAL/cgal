@@ -30,9 +30,12 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     add_to_list( CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_INCLUDE_DIRS}   )
     add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_DEFINITIONS}    )
     add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES_DIRS} )
-    
+  
+      
   endforeach()
     
+  include_directories( "${CMAKE_CURRENT_BINARY_DIR}" ) 
+
   add_to_list( CGAL_LIBRARIES ${CGAL_LIBRARY} )
   
   include_directories ( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS} )     
@@ -41,4 +44,5 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
   link_libraries      ( ${CGAL_LIBRARIES}     ${CGAL_3RD_PARTY_LIBRARIES}      )
 
+  
 endif()
