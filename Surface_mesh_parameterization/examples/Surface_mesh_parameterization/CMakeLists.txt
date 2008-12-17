@@ -16,32 +16,33 @@ find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
+  include( ${CGAL_USE_FILE} )
+  include( CGAL_CreateSingleSourceCGALProgram )
+
   # Optimization for applications dealing with large data
   if (MSVC)
     # Use /EHa option to catch stack overflows.
     # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
-    SET (CGAL_CXX_FLAGS_INIT "/DWIN32 /D_WINDOWS /W2 /Zm1000 /EHa /GR")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
 
     # Allow Windows applications to use up to 3GB of RAM
-    SET (CGAL_EXE_LINKER_FLAGS_INIT "${CGAL_EXE_LINKER_FLAGS_INIT} /LARGEADDRESSAWARE")
+    SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
 
     # Turn off stupid VC++ warnings
-    SET (CGAL_CXX_FLAGS_INIT "${CGAL_CXX_FLAGS_INIT} /wd4267 /wd4311 /wd4800 /wd4503 /wd4244 /wd4345")
-
-    # Speed up VC++ debugger
-    SET (CGAL_CXX_FLAGS_DEBUG_INIT "${CGAL_CXX_FLAGS_DEBUG_INIT} /D_HAS_ITERATOR_DEBUGGING=0")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4267 /wd4311 /wd4800 /wd4503 /wd4244 /wd4345 /wd4996 /wd4396")
   endif()
 
   # g++ 4.1 creates an infinite loop in Surface_mesh_parameterization
   # if strict-aliasing optimization is on (implied by -O2, -O3 and -Os).
   if (CMAKE_COMPILER_IS_GNUCXX)
-    SET (CGAL_CXX_FLAGS_RELEASE_INIT "${CGAL_CXX_FLAGS_RELEASE_INIT} -fno-strict-aliasing")
-    SET (CGAL_CXX_FLAGS_DEBUG_INIT   "${CGAL_CXX_FLAGS_DEBUG_INIT}   -fno-strict-aliasing")
+    SET (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-strict-aliasing")
+    SET (CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -fno-strict-aliasing")
   endif()
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
+  # Print compilation options
+  string( TOUPPER "${CMAKE_BUILD_TYPE}" CGAL_BUILD_TYPE_UPPER )
+  message( STATUS "USING CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CGAL_BUILD_TYPE_UPPER}}'" )
+  message( STATUS "USING EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${CGAL_BUILD_TYPE_UPPER}}'" )
 
   # Link with Boost.ProgramOptions (optional)
   find_package(Boost QUIET COMPONENTS program_options)
