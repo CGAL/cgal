@@ -37,6 +37,8 @@ CGAL packages, some are only needed for demos.
      Required compiled Boost library: Boost.Threads
      Optional compiled Boost library: Boost.Program_options
      http://www.boost.org/   or   http://www.boostpro.com/products/free/
+     You need the former if you plan to compile the boost libraries yourself,
+     for example because you target 64 bit applications for XP64
 
    * Exact Arithmetic           
      CGAL combines floating point arithmetic with exact arithmetic, in order
@@ -47,9 +49,14 @@ CGAL packages, some are only needed for demos.
 
      - GMP (>= 4.1.4)
        http://gmplib.org/
+       or precompiled version that can be downloaded with CGAL-3.4-Setup.exe
+       based on http://fp.gladman.plus.com/computing/gmp4win.htm
+
 
      - MPFR (>= 2.2.1)
        http://www.mpfr.org/
+       or precompiled version that can be downloaded with CGAL-3.4-Setup.exe
+       based on http://fp.gladman.plus.com/computing/gmp4win.htm
 
      - LEDA (>= 6.0)
        http://www.algorithmic-solutions.com/leda/index.htm
@@ -68,6 +75,7 @@ CGAL packages, some are only needed for demos.
 
      - Geomview
        http://www.geomview.org/
+       Not suported with Visual C++
 
    * Numerical Libraries
  
@@ -77,11 +85,13 @@ CGAL packages, some are only needed for demos.
        o Approximation of Ridges and Umbilics
        o Planar Parameterization of Triangulated Surface Meshes
        http://www.netlib.org/blas/, http://www.netlib.org/lapack/
+       or precompiled version that can be downloaded with CGAL-3.4-Setup.exe
 
      - TAUCS (sparse matrix solver)
        Accelerates the package:
        o Planar Parameterization of Triangulated Surface Meshes
        http://www.tau.ac.il/~stoledo/taucs/
+       or precompiled version that can be downloaded with CGAL-3.4-Setup.exe
 
    * Miscellaneous
 
@@ -89,9 +99,6 @@ CGAL packages, some are only needed for demos.
        Optional for the package:
        o Surface Mesh Generator can read compressed images directly
        http://www.zlib.net/
-
-   NOTE: The Windows installer comes with a CGAL specific distribution of 
-         GMP, MPFR and TAUCS.
 
 
 CONFIGURATION
@@ -122,6 +129,12 @@ separate values for debug and release builds. In case you do not want to add
 additional flags, but to override the default flags, replace "CGAL" by
 "CMAKE" in the variable names above.
 
+By default demos and examples are not configured. If you want to configure
+them at the same time as the CGAL library, you can use 
+
+  -DWITH_examples=true
+  -DWITH_demo=true
+
 Note that CMake maintains a cache name "CMakeCache.txt". If you change options
 (or your environment changes), it is best to remove that file to avoid
 problems.
@@ -132,7 +145,7 @@ BUILDING
 
 To build the CGAL libraries, type
 
-  make
+  make                               (or nmake in a Windows command prompt)
 
 If you want, you can install the CGAL header and libraries. To do so, type
 
@@ -178,3 +191,4 @@ placed. You can perform an out-of-source build as follows:
 
 Basically, the only difference is the last parameter of the "cmake" command:
 $CGAL_SRC instead of "." .
+
