@@ -393,7 +393,7 @@ create_CGALconfig_files()
 # WARNING: Use only relative paths; full paths break CPack!
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
-install(FILES CHANGES LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
+install(FILES AUTHORS CHANGES LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
 
 
 install(DIRECTORY include/CGAL                       DESTINATION ${CGAL_INSTALL_INC_DIR} )
