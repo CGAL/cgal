@@ -86,6 +86,19 @@ geometric algorithms} in the form of a \CC\ library.
 
 This document describes how to install \cgal\ on Windows, Unix-like systems and MacOS X.
 
+Ideally, the installation resumes to
+
+\begin{verbatim}
+  cd  CGAL-3.4                                # go to CGAL directory
+  cmake .                                     # configure CGAL
+  make                                        # build the CGAL libraries
+  cd examples/Straight_skeleton_2             # go to an example directory
+  cmake -DCGAL_DIR=$HOME/CGAL-3.4 .           # configure the examples
+  make                                        # build the examples 
+\end{verbatim}
+
+In a less ideal world, you probably have to install \cmake, a makefile
+generator, and third party libraries. That's what this manual is about.
 
 \section{Prerequisites\label{sec:prerequisites}}
 
