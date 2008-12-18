@@ -164,6 +164,10 @@ Section "!Main CGAL" MAIN_Idx
   File /r "${CGAL_SRC}\scripts\*.*"
   SetOutPath "$INSTDIR\src"
   File /r "${CGAL_SRC}\src\*.*"
+  SetOutPath "$INSTDIR\demo\icons"
+  File /r "${CGAL_SRC}\demo\icons\*.*"
+  SetOutPath "$INSTDIR\demo\resources"
+  File /r "${CGAL_SRC}\demo\resources\*.*"
 
   SetOutPath "$INSTDIR"
   File "${CGAL_SRC}\AUTHORS"
