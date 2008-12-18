@@ -1,0 +1,42 @@
+.TH CGAL_CREATE_CMAKE_SCRIPT "1" "December 2008" "CGAL 3.4" "User Commands"
+.SH NAME
+cgal_create_cmake_script \- create a cmake script for applications using CGAL
+.SH SYNOPSIS
+.B cgal_create_cmake_script
+.BR [ example | demo | test ]
+.SH DESCRIPTION
+The script
+.B cgal_create_cmake_script
+allows the simple creation of cmake scripts for applications which use the CGAL
+library. The parameter selects one of three script types, the default type
+is
+.BR example .
+.SH OPTIONS
+.PP
+.TP
+.B example
+Create a cmake script for several simple applications. Each
+.I C
+and
+.IR cpp
+file in the current directory containing a
+.I main()
+function is compiled and linked as a separate executable.
+.TP
+.B demo
+Create a cmake script for a single application including Qt3 support. All
+.I C
+and
+.IR cpp
+files in the current directory are compiled and linked into one executable.
+.TP
+.B test
+Create a cmake script that is suited for the testsuite used by the CGAL developers.
+.SH AUTHOR
+The CGAL project (http://www.cgal.org/).
+.SH "REPORTING BUGS"
+Report bugs to <cgal-discuss@lists-sop.inria.fr> (see http://www.cgal.org/
+for further instructions).
+.SH "SEE ALSO"
+The full documentation for CGAL is available at http://www.cgal.org/ in PDF and
+HTML format.
