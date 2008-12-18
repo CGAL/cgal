@@ -55,7 +55,8 @@ if ( CGAL_FOUND )
     # Demo KDS_generate_data
     add_executable  (KDS_generate_data KDS_generate_data.cpp)
     target_link_libraries(KDS_generate_data ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS KDS_generate_data )
+
     # Demo KDS_Delaunay_triangulation_stable_subset_2
     add_executable  (KDS_Delaunay_triangulation_stable_subset_2 KDS_Delaunay_triangulation_stable_subset_2.cpp)
     target_link_libraries(KDS_Delaunay_triangulation_stable_subset_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})

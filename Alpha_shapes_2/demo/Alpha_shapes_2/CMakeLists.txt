@@ -35,6 +35,8 @@ if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
 		    Qt_widget_toolbar.cpp Qt_widget_toolbar.moc 
 		    Qt_widget_toolbar_layers.cpp Qt_widget_toolbar_layers.moc )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS alpha_shapes_2 )
+
   target_link_libraries( alpha_shapes_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 else()

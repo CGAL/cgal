@@ -37,6 +37,7 @@ if(VTK_FOUND)
   if(VTK_USE_QVTK)
     include_directories( ${VTK_QT_INCLUDE_DIR} )
     add_executable( image_to_vtk_viewer image_to_vtk_viewer.cpp )
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS image_to_vtk_viewer )
 
     target_link_libraries( image_to_vtk_viewer
       QVTK

@@ -45,6 +45,8 @@ qt4_generate_moc( Constrained_Delaunay_triangulation_2.cpp Constrained_Delaunay_
 # The executable itself.
 add_executable  ( Constrained_Delaunay_triangulation_2 Constrained_Delaunay_triangulation_2.cpp Constrained_Delaunay_triangulation_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
 
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS Constrained_Delaunay_triangulation_2 )
+
 # Link with Qt libraries
 target_link_libraries( Constrained_Delaunay_triangulation_2 ${QT_LIBRARIES} )
 # Link with CGAL
@@ -65,6 +67,8 @@ qt4_generate_moc( Delaunay_triangulation_2.cpp Delaunay_triangulation_2.moc )
 # The executable itself.
 add_executable  ( Delaunay_triangulation_2 Delaunay_triangulation_2.cpp Delaunay_triangulation_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS Circular_kernel_3 )
+
 # Link with Qt libraries
 target_link_libraries( Delaunay_triangulation_2 ${QT_LIBRARIES} )
 # Link with CGAL
@@ -84,6 +88,8 @@ qt4_generate_moc( Regular_triangulation_2.cpp Regular_triangulation_2.moc )
 
 # The executable itself.
 add_executable  ( Regular_triangulation_2 Regular_triangulation_2.cpp Regular_triangulation_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS Circular_kernel_3 )
 
 # Link with Qt libraries
 target_link_libraries( Regular_triangulation_2 ${QT_LIBRARIES} )

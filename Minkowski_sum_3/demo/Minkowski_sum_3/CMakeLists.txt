@@ -25,6 +25,8 @@ if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
   add_executable  ( minkowski_sum_3
                     minkowski_sum_3.cpp )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS minkowski_sum_3 )
+
   target_link_libraries( minkowski_sum_3 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 else()

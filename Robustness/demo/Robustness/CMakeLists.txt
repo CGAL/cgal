@@ -30,6 +30,8 @@ if ( CGAL_Qt3_FOUND AND QT3_FOUND )
     robustness.cpp robustness.moc
     )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS robustness )
+
   target_link_libraries( robustness  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 else()

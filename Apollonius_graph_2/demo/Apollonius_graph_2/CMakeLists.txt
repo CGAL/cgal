@@ -35,6 +35,7 @@ if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND )
   		  apollonius_graph_2.cpp apollonius_graph_2.moc 
   		  qt_file_toolbar.moc qt_layers_toolbar.moc edit_vertex_layer.moc )
   
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS apollonius_graph_2 )
   
   target_link_libraries( apollonius_graph_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 

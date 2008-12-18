@@ -34,6 +34,8 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
     straight_skeleton_2_toolbar_layers.cpp straight_skeleton_2_toolbar_layers.moc
     )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS straight_skeleton_2 )
+
   target_link_libraries( straight_skeleton_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT3_LIBRARIES} )
   
 message( STATUS "QT3_LIBRARIES=${QT3_LIBRARIES}" )   

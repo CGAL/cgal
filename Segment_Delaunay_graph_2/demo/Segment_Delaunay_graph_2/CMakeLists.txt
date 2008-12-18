@@ -42,6 +42,8 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
 
   target_link_libraries( segment_delaunay_graph_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS polygon_delaunay_graph_2 )
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS segment_delaunay_graph_2 )
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL,, Core, and Qt3, and will not be compiled.")

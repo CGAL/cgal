@@ -32,6 +32,8 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
     snap_rounding_2_toolbar.cpp snap_rounding_2_toolbar.moc
     )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS snap_rounding_2 )
+
   target_link_libraries( snap_rounding_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 else()

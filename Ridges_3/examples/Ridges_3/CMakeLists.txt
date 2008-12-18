@@ -37,6 +37,7 @@ if ( CGAL_FOUND )
     endif()
 
     add_executable(Compute_Ridges_Umbilics Compute_Ridges_Umbilics.cpp PolyhedralSurf.cpp)
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS Compute_Ridges_Umbilics )
     target_link_libraries(Compute_Ridges_Umbilics ${CGAL_LIBRARIES})
 
   else(LAPACK_FOUND)

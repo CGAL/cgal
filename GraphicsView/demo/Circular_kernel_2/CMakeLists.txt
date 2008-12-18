@@ -38,6 +38,8 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
   # The executable itself.
   add_executable  ( Circular_kernel_2 Circular_kernel_2.cpp Circular_kernel_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Circular_kernel_2 )
+
   # Link with Qt libraries
   target_link_libraries( Circular_kernel_2 ${QT_LIBRARIES} )
   # Link with CGAL

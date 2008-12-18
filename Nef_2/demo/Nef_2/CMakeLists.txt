@@ -31,6 +31,8 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
                     nef_2.cpp nef_2.moc
 		    Qt_widget_toolbar.cpp Qt_widget_toolbar.moc )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS nef_2 )
+
   target_link_libraries( nef_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 else()

@@ -34,6 +34,8 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
     Qt_widget_move_list_point.cpp Qt_widget_move_list_point.moc
     )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS min_ellipse_2_demo )
+
   target_link_libraries( min_ellipse_2_demo  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 else()

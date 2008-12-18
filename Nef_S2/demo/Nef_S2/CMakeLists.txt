@@ -27,6 +27,8 @@ INCLUDE_DIRECTORIES ( BEFORE ./include )
   add_executable  ( nef_S2
                     nef_S2.cpp )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS nef_S2 )
+
   target_link_libraries( nef_S2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 else()

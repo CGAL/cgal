@@ -42,6 +42,8 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND CGAL_Core_FOUND AND QT4_FOUND )
   # The executable itself.
   add_executable  ( Polygon_2 Polygon_2.cpp Polygon_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polygon_2 )
+
   # Link with Qt libraries
   target_link_libraries( Polygon_2 ${QT_LIBRARIES} )
   # And with CGAL libraries

@@ -29,6 +29,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
   add_executable  ( min min.cpp )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS min )
 
   # Link with Qt libraries
   target_link_libraries( min ${QT_LIBRARIES} )

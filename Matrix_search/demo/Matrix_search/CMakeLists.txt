@@ -45,6 +45,9 @@ if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
   target_link_libraries( max_k-gon  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   target_link_libraries( rectangular_p_center_2_demo  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS max_k-gon )
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS rectangular_p_center_2_demo )
+
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL and Qt3, and will not be compiled.")

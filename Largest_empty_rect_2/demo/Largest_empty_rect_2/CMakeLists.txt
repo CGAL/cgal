@@ -35,6 +35,7 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
     Qt_widget_move_list_point.cpp Qt_widget_move_list_point.moc
     )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS largest_empty_rect_2 )
   target_link_libraries( largest_empty_rect_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 else()

@@ -40,10 +40,12 @@ if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
   # conform target
   add_executable  (conform conform.cpp)
   target_link_libraries(conform ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS conform )
 
   # mesh target
   add_executable  (mesh mesh.cpp)
   target_link_libraries(mesh ${QT3_LIBRARIES} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS mesh )
 
 else()
 

@@ -113,6 +113,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
+
   if(TAUCS_FOUND)
     # Link with TAUCS
     target_link_libraries(Polyhedron_3 ${TAUCS_LIBRARIES})
