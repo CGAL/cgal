@@ -184,7 +184,7 @@ cd ..
 tar -cf "${release_name}.tar" "${release_name}"
 gzip "${release_name}.tar"
 cp "${release_name}.tar.gz" "${HTML_DIR}"
-if [ -z "${NO_TESTSUITE}"]; then
+if [ -z "${NO_TESTSUITE}" ]; then
   echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
 fi
 
