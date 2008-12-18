@@ -20,8 +20,8 @@ takes an filename.off file as input,
 it computes a fitting for each vertex
 
 it outputs the results in :
-1. filename.off.4ogl.txt  which can be visualized with 
-	the demo program introspect-qt
+1. filename.off.4ogl.txt  which records raw data (better for a vizualization
+   post-processing)
 2. if option -vtrue, filename.off.verb.txt contains human readable results
 
 Allowed options:
@@ -50,7 +50,3 @@ Note : if the nb of collected points is less than the required min number of
  ./Mesh_estimation -f data/ellipe0.003.off -d2 -m2 -a2 
  ./Mesh_estimation -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
 		
-visu with:
-./introspect-qt ../../examples/Jet_fitting_3/data/ellipe0.003.off ../../examples/Jet_fitting_3/data_ellipe0.003.off.4ogl.txt
-
-../../demo/Jet_fitting_3/introspect-qt data/ellipe0.003.off data_ellipe0.003.off.4ogl.txt
