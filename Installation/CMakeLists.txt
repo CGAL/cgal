@@ -309,6 +309,10 @@ else()
         CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
       )
 
+  set ( CGAL_INSTALL_MAN_DIR "share/man/man1"  
+        CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+      )
+
 endif()
 
 #--------------------------------------------------------------------------------------------------
@@ -431,6 +435,7 @@ if ( CGAL_SOURCE_INSTALL )
   install(DIRECTORY src                                     DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
 else()
   install(FILES ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+  install(FILES auxiliary/cgal_create_cmake_script.1 DESTINATION ${CGAL_INSTALL_MAN_DIR} )
 endif()
 
 
