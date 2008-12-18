@@ -28,11 +28,12 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_
   include(${QT_USE_FILE})
 
   include_directories (${QGLVIEWER_INCLUDE_DIR})
-  include_directories (BEFORE ../../include)
+  include_directories (BEFORE ../../include ./ )
 
+  # ui file, created wih Qt Designer
   qt4_wrap_ui( uis MainWindow.ui )
 
-# qrc files (resources files, that contain icons, at least)
+  # qrc files (resources files, that contain icons, at least)
   qt4_add_resources ( RESOURCE_FILES ./Alpha_shape_3.qrc )
 
   qt4_automoc( MainWindow.cpp Viewer.cpp)
