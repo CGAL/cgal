@@ -14,10 +14,12 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 foreach(INCDIR ./include ../../../AABB_tree/include ../../../STL_Extension/include ../../../GraphicsView/include ../../../Surface_mesher/include ../../../filtered_kernel/include )
-  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
-    include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
+    include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
   endif()
 endforeach()
+
+include_directories( ./ )
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)
@@ -57,14 +59,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include(AddFileDependencies)
 
-  qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h MainWindow_moc.cpp )
-  add_file_dependencies( MainWindow_moc.cpp ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h )
+  qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" MainWindow_moc.cpp )
+  add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
 
-  qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h Viewer_moc.cpp )
-  add_file_dependencies( Viewer_moc.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h )
+  qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" Viewer_moc.cpp )
+  add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
-  qt4_generate_moc( Scene.h Scene_moc.cpp )
-  add_file_dependencies( Scene_moc.cpp Scene.h )
+  qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" Scene_moc.cpp )
+  add_file_dependencies( Scene_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" )
 
   qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
 
@@ -99,7 +101,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
     endif()
   else(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
-    add_file_dependencies( Polyhedron_3.cpp MainWindow_moc.cpp Scene_moc.cpp Viewer_moc.cpp )
+    add_file_dependencies( Polyhedron_3.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
+                                            "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp"
+					    "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
     add_executable  ( Polyhedron_3 Polyhedron_3.cpp ${UI_FILES} ${RESOURCE_FILES} )
   endif(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
 
