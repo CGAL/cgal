@@ -25,7 +25,7 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
   qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Qt_widget_toolbar.h" Qt_widget_toolbar.moc )
   qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Qt_widget_toolbar_layers.h" Qt_widget_toolbar_layers.moc )
   qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Qt_widget_move_list_point.h" Qt_widget_move_list_point.moc )
-  qt3_generate_moc( min_quadrilateral_2.cpp min_quadrilateral_2.moc )
+  qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/min_quadrilateral_2.cpp" min_quadrilateral_2.moc )
 
 
   # The executable itself.
