@@ -25,6 +25,8 @@ foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALimageIO ${PACKAGE_ROOT}/.
   endif()
 endforeach()
 
+include_directories( ./ )
+
 # QGLViwer needs Qt4 configured with QtOpenGL and QtXml support
 
 set( QT_USE_QTOPENGL TRUE )
