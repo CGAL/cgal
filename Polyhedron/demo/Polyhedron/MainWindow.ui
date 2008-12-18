@@ -10,7 +10,11 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Polyhedron demo</string>
+   <string>CGAL Polyhedron demo</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="Polyhedron_3.qrc" >
+    <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" name="gridLayout" >
@@ -106,7 +110,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>24</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >

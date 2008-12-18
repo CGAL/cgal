@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/cgal/icons" >
+    <file>resources/cgal_logo.xpm</file>
     <file>resources/boolean-union.png</file>
     <file>resources/kernel.png</file>
     <file>resources/boolean-diff.png</file>
