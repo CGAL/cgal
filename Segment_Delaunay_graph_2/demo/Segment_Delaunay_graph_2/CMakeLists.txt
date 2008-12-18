@@ -36,7 +36,8 @@ if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
                     qt_file_toolbar.moc  qt_layers_toolbar.moc  my_window.moc )
 
   add_executable  ( segment_delaunay_graph_2
-                    segment_delaunay_graph_2.cpp )
+                    segment_delaunay_graph_2.cpp
+                    qt_file_toolbar.moc  qt_layers_toolbar.moc  my_window.moc )
 
   target_link_libraries( polygon_delaunay_graph_2  ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
