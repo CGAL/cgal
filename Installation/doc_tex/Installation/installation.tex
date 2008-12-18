@@ -403,10 +403,10 @@ If you turn off the configuration of a library you can still configure it manual
 \subsection{Examples and Demos}
 
 \cgal\ is distributed with a large collection of examples and demos. By default, these are NOT configured along with
-the \cgal\ libraries unless you set the variables {\tt WITH\_examples=ON} and/or {\tt WITH\_demo=ON}.
+the \cgal\ libraries unless you set the variables {\tt WITH\_examples=ON} and/or {\tt WITH\_demos=ON}.
 
 Nevertheless, even when configured along with \cgal, they are not automatically built along with the libraries.
-To do that you must explicitly build the \texttt{examples} or \texttt{demo} make targets (or IDE projects).
+To do that you must explicitly build the \texttt{examples} or \texttt{demos} make targets (or IDE projects).
 
 \subsection{Debug vs.\ Release}
 
@@ -515,10 +515,10 @@ file in-place and VS will prompt you to reload it.
 
 
 If you have turned on the configuration of examples and/or demos, there will be additional
-targets named \texttt{examples} and \texttt{demo}, plus one target for each example and each demo.
+targets named \texttt{examples} and \texttt{demos}, plus one target for each example and each demo.
 None of these targets are included in the default so you need to build them explicitly
 {\em after} the \cgal\ libraries have been successfully compiled and linked
-The targets \texttt{examples} and \texttt{demo} include themselves all the targets
+The targets \texttt{examples} and \texttt{demos} include themselves all the targets
 for examples and demos respectively.
 
 {\ccTexHtml{\scriptsize}{}
@@ -528,7 +528,7 @@ for examples and demos respectively.
 make examples 
 
 # build all demos at once
-make demo
+make demos
 
 # build only the Straight Skeleton demo
 make Straight_skeleton_2_demo
@@ -674,7 +674,7 @@ The following boolean variables indicate which \cgal\ components to configure an
 \begin{tabular}{|l|l|} \hline
   \textbf{Variable}            & \textbf{Default value}\\\hline\hline
   \texttt{WITH\_examples}      & OFF\\\hline
-  \texttt{WITH\_demo}          & OFF\\\hline
+  \texttt{WITH\_demos}         & OFF\\\hline
   \texttt{WITH\_CGAL\_Core}    & ON\\\hline
   \texttt{WITH\_CGAL\_Qt3}     & ON\\\hline
   \texttt{WITH\_CGAL\_Qt4}     & ON\\\hline
@@ -971,7 +971,7 @@ and the following command-line call to \texttt{cmake}:
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 cmake -DWITH_examples=false 
-      -DWITH_demo=false 
+      -DWITH_demos=false 
       -DCMAKE_BUILD_TYPE=Release 
       ../../..
 \end{verbatim}

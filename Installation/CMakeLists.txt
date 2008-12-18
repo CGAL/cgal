@@ -457,21 +457,21 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-macro( add_programs subdir ON_OFF )
+macro( add_programs subdir target ON_OFF )
 
   cache_set( CGAL_EXECUTABLE_TARGETS "" )
   
-  add_custom_target( ${subdir} )
+  add_custom_target( ${target} )
   
-  option( WITH_${subdir} "Select ${subdir}" ${ON_OFF} )
-  if ( WITH_${subdir} )
+  option( WITH_${target} "Select ${target}" ${ON_OFF} )
+  if ( WITH_${target} )
     add_subdirectory( ${subdir} EXCLUDE_FROM_ALL )
   endif()
   
   cache_get( CGAL_EXECUTABLE_TARGETS )
   
   foreach( CGAL_EXECUTABLE_TARGET ${CGAL_EXECUTABLE_TARGETS} )
-    add_dependencies( ${subdir} ${CGAL_EXECUTABLE_TARGET} )
+    add_dependencies( ${target} ${CGAL_EXECUTABLE_TARGET} )
   endforeach()
      
 endmacro()
@@ -481,8 +481,8 @@ set(CGAL_DIR ${CMAKE_BINARY_DIR} )
 
 if ( NOT RUNNING_CGAL_AUTO_TEST )
 
-  add_programs(examples OFF )
-  add_programs(demo     OFF )
+  add_programs(examples examples OFF )
+  add_programs(demo     demos    OFF )
   
 endif()
 

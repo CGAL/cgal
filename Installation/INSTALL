@@ -133,7 +133,7 @@ By default demos and examples are not configured. If you want to configure
 them at the same time as the CGAL library, you can use 
 
   -DWITH_examples=true
-  -DWITH_demo=true
+  -DWITH_demos=true
 
 Note that CMake maintains a cache name "CMakeCache.txt". If you change options
 (or your environment changes), it is best to remove that file to avoid
@@ -153,7 +153,7 @@ If you want, you can install the CGAL header and libraries. To do so, type
 
 You can build all demos or examples by typing
 
-  make demo                           or
+  make demos                          or
   make examples
 
 If you are interested in the demos or examples of just a particular module,
@@ -186,7 +186,7 @@ placed. You can perform an out-of-source build as follows:
   cmake [options] $CGAL_SRC
   make
   make install                       (if desired)
-  make demo                          (if desired)
+  make demos                         (if desired)
   make examples                      (if desired)
 
 Basically, the only difference is the last parameter of the "cmake" command:
