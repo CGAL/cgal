@@ -13,17 +13,9 @@
    <string>Polyhedron demo</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>24</y>
-     <width>978</width>
-     <height>548</height>
-    </rect>
-   </property>
    <layout class="QGridLayout" name="gridLayout" >
     <item row="0" column="1" >
-     <widget class="Viewer" name="viewer" />
+     <widget class="Viewer" native="1" name="viewer" />
     </item>
     <item row="0" column="0" >
      <widget class="QDockWidget" name="polyhedraDockWidget" >
@@ -34,14 +26,6 @@
        <string>Polyhedra</string>
       </property>
       <widget class="QWidget" name="dockWidgetContent" >
-       <property name="geometry" >
-        <rect>
-         <x>0</x>
-         <y>22</y>
-         <width>354</width>
-         <height>508</height>
-        </rect>
-       </property>
        <layout class="QGridLayout" name="gridLayout_2" >
         <item row="0" column="0" >
          <layout class="QVBoxLayout" name="verticalLayout" >
@@ -135,9 +119,6 @@
     <addaction name="actionDuplicatePolyhedron" />
     <addaction name="actionSaveAs" />
     <addaction name="separator" />
-    <addaction name="actionExplode" />
-    <addaction name="actionMergeAll" />
-    <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
@@ -213,16 +194,7 @@
    <addaction name="menuOperations" />
    <addaction name="menuView" />
   </widget>
-  <widget class="QStatusBar" name="statusbar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>572</y>
-     <width>978</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
+  <widget class="QStatusBar" name="statusbar" />
   <action name="actionQuit" >
    <property name="text" >
     <string>&amp;Quit</string>
@@ -468,7 +440,7 @@
  <customwidgets>
   <customwidget>
    <class>Viewer</class>
-   <extends>QGLViewer</extends>
+   <extends>QWidget</extends>
    <header>Viewer.h</header>
   </customwidget>
  </customwidgets>

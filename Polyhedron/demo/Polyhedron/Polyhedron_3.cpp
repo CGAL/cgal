@@ -11,7 +11,7 @@ int main(int argc, char **argv)
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
   Q_INIT_RESOURCE(File);
-  Q_INIT_RESOURCE(Triangulation_2); // PA: sounds weird here
+  Q_INIT_RESOURCE(Triangulation_2); 
   Q_INIT_RESOURCE(Input);
   Q_INIT_RESOURCE(CGAL);
 
