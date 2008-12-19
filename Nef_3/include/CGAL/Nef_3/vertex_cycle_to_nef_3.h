@@ -76,7 +76,7 @@ class Compare_cpte {
  public:
   Compare_cpte() {}
 
-  bool operator()(const VV p0, const VV p1) {
+  bool operator()(const VV p0, const VV p1) const {
     if(p0.first != p1.first)
       return p0.first < p1.first;
     else
@@ -90,7 +90,7 @@ class Compare_face {
   Compare_face() {}
 
   template<typename Face>  
-    bool operator()(const Face* f0, const Face* f1) {
+    bool operator()(const Face* f0, const Face* f1) const {
     return f0 < f1;
   }
 };
