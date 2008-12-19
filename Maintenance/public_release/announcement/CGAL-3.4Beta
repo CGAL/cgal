@@ -10,7 +10,7 @@ release of the final version of CGAL 3.4 in January 2009.
 
 
 An important change from CGAL 3.3 to CGAL 3.4 is the switch
-from a proprietary installation script to cmake. 
+from a proprietary installation script to CMake. 
 
 
 Besides improvements to existing packages, this release offers the
@@ -76,7 +76,7 @@ structures and algorithms, like
   range and segment trees),
 - interpolation (natural neighbor interpolation and placement of
   streamlines),
-- optimisation algorithms (smallest enclosing sphere of points or
+- optimization algorithms (smallest enclosing sphere of points or
   spheres, smallest enclosing ellipsoid of points, principal
   component analysis),
 - kinetic data structures
