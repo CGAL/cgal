@@ -91,9 +91,9 @@
 
   !define MUI_COMPONENTSPAGE_SMALLDESC
 
-  !define MUI_WELCOMEPAGE_TEXT "This installs CGAL-3.4 on your machine."
+  !define MUI_WELCOMEPAGE_TEXT "This downloads CGAL-3.4 to your machine."
 
-  !define MUI_FINISHPAGE_TITLE "Installation finished"
+  !define MUI_FINISHPAGE_TITLE "Downloading finished"
 
   !define MUI_FINISHPAGE_TEXT "You have downloaded CGAL successfully. Please continue the installation, reading the installation instructions."
 
@@ -116,7 +116,7 @@
   !insertmacro MUI_PAGE_DIRECTORY
   
   ; A page where the user can check/uncheck the environment variables
-  ; used to specify paths in vproj files to be added.
+  ; used to specify paths in vcproj files to be added.
   Page custom envarsPage 
   
   ;Start Menu Folder Page Configuration
