@@ -48,7 +48,8 @@ public:
     /// Get (a copy of) the actual vector.
     Vector get_vector() const;
 
-    /// Get normal orientation.
+    /// Get/set normal orientation. 
     bool is_oriented() const;
+    void set_orientation(bool oriented);
 };
 

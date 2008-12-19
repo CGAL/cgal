@@ -113,8 +113,9 @@ public:
         return *this;
     }
 
-    /// Get normal orientation. 
+    /// Get/set normal orientation. 
     bool is_oriented() const { return m_oriented; }
+    void set_orientation(bool oriented) { m_oriented = oriented; }
 
 // Data
 private:

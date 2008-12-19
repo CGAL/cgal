@@ -247,13 +247,16 @@ bool verify_normals_orientation(const PointList& points, // input point set
       }
     }
 
-    if (flipped_normals > 0)
+    if (flipped_normals == 0)
+      std::cerr << "  ok\n";
+    else
       std::cerr << "  Error: " << flipped_normals << " normal(s) are flipped\n";
   }
 
   return success;
 }
 
+// Test Hoppe92 normals orientation using a Minimum Spanning Tree.
 // @return true on success.
 bool orient_normals_MST(const PointList& points, // input point set
                         std::deque<Orientable_normal>& computed_normals, // normals to orient
@@ -262,6 +265,11 @@ bool orient_normals_MST(const PointList& points, // input point set
   std::cerr << "Orient Normals with a Minimum Spanning Tree (knn="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
+  // Mark all normals as unoriented
+  std::deque<Orientable_normal>::iterator n;
+  for (n = computed_normals.begin(); n != computed_normals.end(); n++)
+    n->set_orientation(false);
+  
   // orient_normals_minimum_spanning_tree_3() requires an iterator over points
   // + property maps to access each point's index, position and normal.
   // We use the points index as iterator.
@@ -271,8 +279,7 @@ bool orient_normals_MST(const PointList& points, // input point set
          index_id, // index -> index property map = identity
          boost::make_iterator_property_map(points.begin(), index_id), // index -> position prop. map
          boost::make_iterator_property_map(computed_normals.begin(), index_id), // index -> normal prop. map
-         nb_neighbors_mst,
-         M_PI/4. /* angle max to propagate orientation */);
+         nb_neighbors_mst);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -317,14 +324,14 @@ int main(int argc, char * argv[])
       std::cerr << "  -orient MST                      Orient normals\n";
       std::cerr << "  using a Minimum Spanning Tree (default=MST)\n";
       std::cerr << "  -nb_neighbors_mst <int>          Number of neighbors\n";
-      std::cerr << "  to compute the MST (default=12)\n";
+      std::cerr << "  to compute the MST (default=18)\n";
       return EXIT_FAILURE;
     }
 
     // Normals Computing options
     double nb_neighbors_pca_normals = 0.15 /* % */; // K-nearest neighbors (estimate normals by PCA)
     double nb_neighbors_jet_fitting_normals = 0.1 /* % */; // K-nearest neighbors (estimate normals by Jet Fitting)
-    unsigned int nb_neighbors_mst = 12; // K-nearest neighbors = 2 rings (orient normals by MST)
+    unsigned int nb_neighbors_mst = 18; // K-nearest neighbors = 3 rings (orient normals by MST)
     std::string estimate = "quadric"; // estimate normals by jet fitting
     std::string orient = "MST"; // orient normals using a Minimum Spanning Tree
 

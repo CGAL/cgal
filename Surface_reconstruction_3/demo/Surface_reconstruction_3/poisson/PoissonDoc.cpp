@@ -181,8 +181,7 @@ CPoissonDoc::CPoissonDoc()
   // Normals Computing options
   m_nb_neighbors_pca_normals = 0.15 /* % */; // K-nearest neighbors (estimate normals by PCA)
   m_nb_neighbors_jet_fitting_normals = 0.1 /* % */; // K-nearest neighbors (estimate normals by Jet Fitting)
-  m_nb_neighbors_mst = 12; // K-nearest neighbors = 2 rings (orient normals by MST)
-                           // LS: was 7
+  m_nb_neighbors_mst = 18; // K-nearest neighbors = 3 rings (orient normals by MST)
 
   // Outliers Removal options
   m_min_cameras_cone_angle = 0.5 /* degrees */; // min angle of camera's cone
@@ -861,13 +860,16 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
   BeginWaitCursor();
   status_message("Orient Normals with a Minimum Spanning Tree (knn=%d)...", m_nb_neighbors_mst);
   CGAL::Timer task_timer; task_timer.start();
+  
+  // Mark all normals as unoriented
+  for (Point_set::iterator p = m_points.begin(); p != m_points.end(); p++)
+    p->normal().set_orientation(false);
 
   CGAL::orient_normals_minimum_spanning_tree_3(m_points.begin(), m_points.end(),
                                                get(boost::vertex_index, m_points),
                                                get(CGAL::vertex_point, m_points),
                                                get(boost::vertex_normal, m_points),
-                                               m_nb_neighbors_mst,
-                                               M_PI/4. /* angle max to propagate orientation */);
+                                               m_nb_neighbors_mst);
 
   status_message("Orient Normals with a Minimum Spanning Tree...done (%.2lf s)", task_timer.time());
 

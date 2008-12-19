@@ -59,20 +59,32 @@ distance(std::size_t _First, std::size_t _Last)
 ///
 /// This class is used internally by orient_normals_minimum_spanning_tree_3()
 /// to encode:
-/// - the adjacency relations of vertices in a K-neighboring,
+/// - the adjacency relations of vertices in a K-neighboring
+/// - vertices contain the corresponding input vertex handle
 /// - the edge weight = edge weight = 1 - | normal1 * normal2 |
-///   where normal1 and normal2 are the normal at the edge extremities.
-typedef boost::adjacency_list< boost::vecS, boost::vecS,
-                               boost::undirectedS,
-                               boost::no_property,
-                               boost::property<boost::edge_weight_t, float> >
-    Riemannian_graph;
+///   where normal1 and normal2 are the normal at the edge extremities
+
+template <class VertexIterator>
+struct Riemannian_graph_vertex_properties {
+    VertexIterator vertex; ///< Input vertex
+};
+template <class VertexIterator>     ///< Input vertex iterator
+class Riemannian_graph
+  : public boost::adjacency_list< boost::vecS, boost::vecS,
+                                  boost::undirectedS,
+                                  Riemannian_graph_vertex_properties<VertexIterator>,
+                                  boost::property<boost::edge_weight_t, float> >
+{
+};
 
 
 /// Helper class: MST graph
 ///
 /// This class is used internally by orient_normals_minimum_spanning_tree_3()
-/// to encode the adjacency relations of vertices in a Minimum Spanning Tree.
+/// to encode:
+/// - the adjacency relations of vertices in a Minimum Spanning Tree
+/// - vertices contain the corresponding input vertex handle
+
 template <class VertexIterator>
 struct MST_graph_vertex_properties {
     VertexIterator vertex; ///< Input vertex
@@ -90,52 +102,6 @@ public:
 // Public data
     const VertexNormalMap m_vertex_normal_map;
 };
-
-
-/// Helper class: type of the "vertex_normal" property map
-/// of a MST graph.
-template <class VertexIterator,     ///< Input vertex iterator
-          class VertexNormalMap>    ///< property map VertexIterator -> Normal (in and out)
-class MST_graph_vertex_normal_map
-  : public boost::put_get_helper< typename boost::property_traits<VertexNormalMap>::value_type&,
-                                  MST_graph_vertex_normal_map<VertexIterator, VertexNormalMap> >
-{
-public:
-    typedef CGALi::orient_normals_mst_3::MST_graph<VertexIterator, VertexNormalMap> MST_graph;
-    typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
-    typedef typename MST_graph::vertex_descriptor vertex_descriptor;
-
-    // Property maps required types
-    typedef boost::lvalue_property_map_tag              category;
-    typedef Normal                                      value_type;
-    typedef Normal&                                     reference;
-    typedef vertex_descriptor                           key_type;
-
-    MST_graph_vertex_normal_map(const MST_graph& graph)
-      : m_graph(graph) {}
-
-    /// Access the map elements.
-    reference operator[](key_type graph_vertex) const
-    {
-        VertexIterator input_vertex = m_graph[graph_vertex].vertex;
-        Normal& normal = m_graph.m_vertex_normal_map[input_vertex];
-        return normal;
-    }
-
-private:
-    const MST_graph& m_graph;
-};
-
-/// Free function to get the "vertex_normal" property map
-/// of a MST graph.
-template <class VertexIterator, class VertexNormalMap>
-inline
-MST_graph_vertex_normal_map<VertexIterator, VertexNormalMap>
-get(boost::vertex_normal_t, const MST_graph<VertexIterator, VertexNormalMap>& graph)
-{
-  MST_graph_vertex_normal_map<VertexIterator, VertexNormalMap> aMap(graph);
-  return aMap;
-}
 
 
 /// Helper class: Propagate_normal_orientation
@@ -177,50 +143,40 @@ struct Propagate_normal_orientation
         typedef typename MST_graph::vertex_descriptor vertex_descriptor;
 
         // Get source normal
-        vertex_descriptor vtx1 = boost::source(edge, graph);
-        Normal& normal1 = get(get(boost::vertex_normal, graph), vtx1);
-        Vector vec1 = normal1;
+        vertex_descriptor source_vertex = boost::source(edge, graph);
+        Normal& source_normal = graph.m_vertex_normal_map[graph[source_vertex].vertex];
+        Vector source_vector = source_normal;
 
         // Get target normal
-        vertex_descriptor vtx2 = boost::target(edge, graph);
-        Normal& normal2 = get(get(boost::vertex_normal, graph), vtx2);
-        Vector vec2 = normal2;
+        vertex_descriptor target_vertex = boost::target(edge, graph);
+        Normal& target_normal = graph.m_vertex_normal_map[graph[target_vertex].vertex];
+        Vector target_vector = target_normal;
+        
+        if ( ! target_normal.is_oriented() )
+        {
+          //             ->                        ->
+          // Orient target_normal parallel to source_normal
+          double normals_dot = source_vector * target_vector;
+          if (normals_dot < 0) {
+            //CGAL_TRACE("    flip %d\n", (int)target_vertex);
+            target_vector = -target_vector;
+          }
 
-        double dot = vec1 * vec2;
-
-        //CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): dot=%1.3lf\n",
-        //           (int)vtx1, vec1.x(),vec1.y(),vec1.z(),
-        //           (int)vtx2, vec2.x(),vec2.y(),vec2.z(),
-        //           dot);
-
-        //           ->                 ->
-        // Orient normal2 parallel to normal1
-        if (dot < 0) {
-            //CGAL_TRACE("    flip %d\n", (int)vtx2);
-            vec2 = -vec2;
+          // Is orientation robust?
+          bool oriented = source_normal.is_oriented() &&
+                          (std::abs(normals_dot) >= std::cos(m_angle_max)); // oriented iff angle <= m_angle_max
+          target_normal = Normal(target_vector, oriented);
         }
-
-        // Is orientation robust?
-        bool oriented = normal1.is_oriented() &&
-                        (std::abs(dot) >= std::cos(m_angle_max)); // oriented iff angle <= m_angle_max
-        normal2 = Normal(vec2, oriented);
     }
-
+    
 // Data
+// Implementation note: boost::breadth_first_search() makes copies of this object => data must be constant or shared.
 private:
-    double m_angle_max; ///< max angle to propagate the normals orientation (radians)
+    const double m_angle_max; ///< max angle to propagate the normals orientation (radians).
 };
 
-
-} /* namespace CGALi */ } /* namespace orient_normals_mst_3 */
-
-
-// ----------------------------------------------------------------------------
-// Public section
-// ----------------------------------------------------------------------------
-
-/// Orient the normal of the top point of a point set towards +Z axis
-/// (except if it is already oriented).
+/// If the point set contains points with an oriented normal, find one.
+/// Else, orient the normal of the vertex with maximum Z towards +Z axis.
 ///
 /// Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
@@ -228,11 +184,11 @@ private:
 /// - VertexPointMap is a model of boost::readable_property_map.
 /// - VertexNormalMap is a model of boost::lvalue_property_map.
 ///
-/// @return the top point
+/// @return the top point.
 
 template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap>
 VertexIterator
-orient_top_point_normal_3(
+find_source_mst_3(
     VertexIterator first, ///< first input vertex
     VertexIterator beyond, ///< past-the-end input vertex
     VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index
@@ -240,9 +196,6 @@ orient_top_point_normal_3(
     VertexNormalMap vertex_normal_map) ///< property map VertexIterator -> Normal (in and out)
 {
     CGAL_TRACE("  orient_highest_point_normal_3()\n");
-
-    // Bring private stuff to scope
-    using namespace CGALi::orient_normals_mst_3;
 
     // Input mesh's types
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
@@ -252,20 +205,40 @@ orient_top_point_normal_3(
     // Precondition: at least one element in the container.
     CGAL_surface_reconstruction_precondition(first != beyond);
 
-    // Find vertex with maximum Z
-    double z_max = -1e30;
-    VertexIterator source_vertex = first; // 'first' initial value is just to workaround a gcc warning
-    for (VertexIterator it = first; it != beyond; it++)
+    // If the point set contains points with an oriented normal, find top one.
+    // Else, find top point.
+    // 
+    // Invariant: among traversed vertices, top_vertex is 
+    //            the top vertex with an oriented normal if at least one was traversed, 
+    //            else the top vertex.
+    VertexIterator top_vertex = first; 
+    double top_z = get(vertex_point_map,first).z(); // top_vertex's Z coordinate
+    bool top_normal_is_oriented = vertex_normal_map[top_vertex].is_oriented();
+    for (VertexIterator v = ++first; v != beyond; v++)
     {
-        double z = get(vertex_point_map,it).z();
-        if (z_max < z) {
-            z_max = z;
-            source_vertex = it;
+      double z = get(vertex_point_map,v).z();
+      bool normal_is_oriented = vertex_normal_map[v].is_oriented();
+      if (top_normal_is_oriented)
+      {
+        if (normal_is_oriented && top_z < z) {
+            top_vertex = v;
+            top_z = z;
+            top_normal_is_oriented = normal_is_oriented;
         }
+      }
+      else 
+      {
+        if (normal_is_oriented || top_z < z) {
+            top_vertex = v;
+            top_z = z;
+            top_normal_is_oriented = normal_is_oriented;
+        }
+      }
     }
+    //CGAL_TRACE_STREAM << "  Top vertex index = " << get(vertex_index_map,top_vertex) << std::endl;
 
     // Orient its normal towards +Z axis
-    Normal& normal = vertex_normal_map[source_vertex];
+    Normal& normal = vertex_normal_map[top_vertex];
     if ( ! normal.is_oriented() )
     {
       const Vector Z(0, 0, 1);
@@ -277,7 +250,7 @@ orient_top_point_normal_3(
       normal = Normal(vec, true /* oriented */);
     }
 
-    return source_vertex;
+    return top_vertex;
 }
 
 /// Iterate over input points and create Riemannian Graph:
@@ -295,7 +268,7 @@ orient_top_point_normal_3(
 /// - KNN >= 2.
 
 template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap>
-CGALi::orient_normals_mst_3::Riemannian_graph
+Riemannian_graph<VertexIterator>
 create_riemannian_graph(
     VertexIterator first, ///< first input vertex
     VertexIterator beyond, ///< past-the-end input vertex
@@ -304,9 +277,6 @@ create_riemannian_graph(
     VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
     unsigned int KNN) ///< number of neighbors
 {
-    // Bring private stuff to scope
-    using namespace CGALi::orient_normals_mst_3;
-
     // Input mesh's types
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
@@ -321,6 +291,7 @@ create_riemannian_graph(
     typedef typename Neighbor_search::iterator Search_iterator;
 
     // Riemannian_graph types
+    typedef Riemannian_graph<VertexIterator> Riemannian_graph;
     typedef boost::property_map<Riemannian_graph, boost::edge_weight_t>::type Riemannian_graph_weight_map;
 
     // Precondition: at least one element in the container.
@@ -355,13 +326,21 @@ create_riemannian_graph(
 
     // Iterate over input points and create Riemannian Graph:
     // - vertices are numbered like the input vertices' index.
-    // - vertices are empty.
+    // - vertices contain the corresponding input vertex handle.
     // - we add the edge (i, j) if either vertex i is in the KNN-neighborhood of vertex j,
     //   or vertex j is in the KNN-neighborhood of vertex i.
-    Riemannian_graph riemannian_graph(num_input_vertices);
-    Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
+    Riemannian_graph riemannian_graph;
+    //
+    // add vertices
+    for (VertexIterator it = first; it != beyond; it++)
+    {
+        typename Riemannian_graph::vertex_descriptor v = add_vertex(riemannian_graph);
+        CGAL_surface_reconstruction_assertion(v == get(vertex_index_map,it));
+        riemannian_graph[v].vertex = it;
+    }
     //
     // add edges
+    Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
     for (VertexIterator it = first; it != beyond; it++)
     {
         unsigned int it_index = get(vertex_index_map,it);
@@ -413,17 +392,10 @@ create_riemannian_graph(
     return riemannian_graph;
 }
 
-/// Propagate the orientation of a source normal in a point set
-/// using a minimum spanning tree as described in
-/// "Hoppe, DeRose, Duchamp, McDonald, Stuetzle,
-/// Surface reconstruction from unorganized points,
-/// ACM SIGGRAPH Computer Graphics, v.26 n.2, p.71-78, July 1992".
-///
-/// This variant:
-/// - does not orient normals that are already oriented.
-/// - does not propagate the orientation if the angle between 2 normals > angle_max.
-/// - expects a source vertex (with an oriented normal).
-/// - traverses the point set once.
+/// Compute Minimum Spanning Tree and store it in a Boost graph:
+/// - vertices are numbered like the input vertices' index.
+/// - vertices contain the corresponding input vertex handle.
+/// - we add the edge (predecessor[i], i) for each element of the MST.
 ///
 /// Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
@@ -431,20 +403,18 @@ create_riemannian_graph(
 /// - VertexPointMap is a model of boost::readable_property_map.
 /// - VertexNormalMap is a model of boost::lvalue_property_map.
 /// - Normals must be unit vectors.
-/// - KNN >= 2.
-/// - 0 < angle_max <= PI/2.
+///
+/// @return the number of un-oriented normals.
 
 template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap>
-void
-orient_normals_minimum_spanning_tree_3(
+MST_graph<VertexIterator, VertexNormalMap>
+create_mst_graph(
     VertexIterator first, ///< first input vertex
     VertexIterator beyond, ///< past-the-end input vertex
     VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index
     VertexPointMap vertex_point_map, ///< property map VertexIterator -> Point_3
     VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
-    unsigned int KNN, ///< number of neighbors
-    const CGALi::orient_normals_mst_3::Riemannian_graph& riemannian_graph, ///< graph connecting each vertex to its KNN
-    double angle_max, ///< max angle to propagate the normals orientation (radians)
+    const Riemannian_graph<VertexIterator>& riemannian_graph, ///< graph connecting each vertex to its KNN
     VertexIterator source_vertex) ///< source vertex (with an oriented normal)
 {
     // Bring private stuff to scope
@@ -456,6 +426,7 @@ orient_normals_minimum_spanning_tree_3(
     typedef typename Normal::Vector Vector;
 
     // Riemannian_graph types
+    typedef Riemannian_graph<VertexIterator> Riemannian_graph;
     typedef boost::property_map<Riemannian_graph, boost::edge_weight_t>::const_type Riemannian_graph_weight_map;
 
     // MST_graph types
@@ -512,18 +483,17 @@ orient_normals_minimum_spanning_tree_3(
         }
     }
 
-    // Recover RAM
-    predecessor.clear();
-
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("  Call boost::breadth_first_search()\n");
-
-    // Orient normals
-    Propagate_normal_orientation<VertexIterator, VertexNormalMap> orientation_rule(angle_max);
-    boost::breadth_first_search(mst_graph,
-                                boost::vertex(source_vertex_index, mst_graph), // source
-                                visitor(boost::make_bfs_visitor(orientation_rule)));
+    return mst_graph;
 }
+
+
+} /* namespace CGALi */ } /* namespace orient_normals_mst_3 */
+
+
+// ----------------------------------------------------------------------------
+// Public section
+// ----------------------------------------------------------------------------
+
 
 /// Orient the normals of a point set using the method described in
 /// "Hoppe, DeRose, Duchamp, McDonald, Stuetzle,
@@ -540,9 +510,11 @@ orient_normals_minimum_spanning_tree_3(
 /// - VertexNormalMap is a model of boost::lvalue_property_map.
 /// - Normals must be unit vectors.
 /// - KNN >= 2.
+///
+/// @return the number of un-oriented normals.
 
 template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap>
-void
+unsigned int
 orient_normals_minimum_spanning_tree_3(
     VertexIterator first, ///< first input vertex
     VertexIterator beyond, ///< past-the-end input vertex
@@ -551,49 +523,10 @@ orient_normals_minimum_spanning_tree_3(
     VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
     unsigned int KNN) ///< number of neighbors
 {
-    CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
-
-    // Bring private stuff to scope
-    using namespace CGALi::orient_normals_mst_3;
-
-    // Input mesh's types
-    typedef typename boost::property_traits<VertexPointMap>::value_type Point;
-    typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
-    typedef typename Normal::Vector Vector;
-
-    // Precondition: at least one element in the container.
-    CGAL_surface_reconstruction_precondition(first != beyond);
-
-    // Precondition: at least 2 nearest neighbors
-    CGAL_surface_reconstruction_precondition(KNN >= 2);
-
-    // Orient source normal: the normal of the vertex
-    // with maximum Z is oriented towards +Z axis.
-    VertexIterator source_vertex
-      = orient_top_point_normal_3(first, beyond,
-                                  vertex_index_map, vertex_point_map, vertex_normal_map);
-
-    // Iterate over input points and create Riemannian Graph:
-    // - vertices are numbered like the input vertices' index.
-    // - vertices are empty.
-    // - we add the edge (i, j) if either vertex i is in the KNN-neighborhood of vertex j,
-    //   or vertex j is in the KNN-neighborhood of vertex i.
-    Riemannian_graph riemannian_graph
-      = create_riemannian_graph(first, beyond,
-                                vertex_index_map, vertex_point_map, vertex_normal_map,
-                                KNN);
-
-    // Create a Minimum Spanning Tree starting at source_vertex
-    // and traverses the point set to propagate its normal's orientation.
-    orient_normals_minimum_spanning_tree_3(first, beyond,
-                                           vertex_index_map, vertex_point_map, vertex_normal_map,
-                                           KNN,
-                                           riemannian_graph,
-                                           M_PI/2.,
-                                           source_vertex);
-
-    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("End of orient_normals_minimum_spanning_tree_3()\n");
+    return orient_normals_minimum_spanning_tree_3(first, beyond,
+                                                  vertex_index_map, vertex_point_map, vertex_normal_map,
+                                                  KNN,
+                                                  M_PI/2.); // always propagate normal orientation
 }
 
 /// Orient the normals of a point set using the method described in
@@ -615,9 +548,11 @@ orient_normals_minimum_spanning_tree_3(
 /// - Normals must be unit vectors.
 /// - KNN >= 2.
 /// - 0 < angle_max <= PI/2.
+///
+/// @return the number of un-oriented normals.
 
 template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap>
-void
+unsigned int
 orient_normals_minimum_spanning_tree_3(
     VertexIterator first, ///< first input vertex
     VertexIterator beyond, ///< past-the-end input vertex
@@ -627,7 +562,7 @@ orient_normals_minimum_spanning_tree_3(
     unsigned int KNN, ///< number of neighbors
     double angle_max) ///< max angle to propagate the normals orientation (radians)
 {
-    CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
+    CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3(angle_max=%lf degrees)\n", angle_max*180.0/M_PI);
 
     // Bring private stuff to scope
     using namespace CGALi::orient_normals_mst_3;
@@ -636,6 +571,12 @@ orient_normals_minimum_spanning_tree_3(
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
     typedef typename Normal::Vector Vector;
+
+    // Riemannian_graph types
+    typedef Riemannian_graph<VertexIterator> Riemannian_graph;
+
+    // MST_graph types
+    typedef MST_graph<VertexIterator, VertexNormalMap> MST_graph;
 
     // Precondition: at least one element in the container.
     CGAL_surface_reconstruction_precondition(first != beyond);
@@ -646,11 +587,11 @@ orient_normals_minimum_spanning_tree_3(
     // Precondition: 0 < angle_max <= PI/2
     CGAL_surface_reconstruction_precondition(0 < angle_max && angle_max <= M_PI/2.);
 
-    // Orient source normal: the normal of the vertex
-    // with maximum Z is oriented towards +Z axis.
+    // If the point set contains points with an oriented normal, find one.
+    // Else, orient the normal of the vertex with maximum Z towards +Z axis.
     VertexIterator source_vertex
-      = orient_top_point_normal_3(first, beyond,
-                                  vertex_index_map, vertex_point_map, vertex_normal_map);
+      = find_source_mst_3(first, beyond,
+                          vertex_index_map, vertex_point_map, vertex_normal_map);
 
     // Iterate over input points and create Riemannian Graph:
     // - vertices are numbered like the input vertices' index.
@@ -663,16 +604,135 @@ orient_normals_minimum_spanning_tree_3(
                                 KNN);
 
     // Create a Minimum Spanning Tree starting at source_vertex
-    // and traverses the point set to propagate its normal's orientation.
-    orient_normals_minimum_spanning_tree_3(first, beyond,
+    MST_graph mst_graph = create_mst_graph(first, beyond,
                                            vertex_index_map, vertex_point_map, vertex_normal_map,
-                                           KNN,
                                            riemannian_graph,
-                                           angle_max,
                                            source_vertex);
-
+                                               
     long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  Call boost::breadth_first_search()\n");
+
+    // Traverse the point set along the MST to propagate source_vertex's orientation
+    Propagate_normal_orientation<VertexIterator, VertexNormalMap> orienter(angle_max);
+    unsigned int source_vertex_index = get(vertex_index_map, source_vertex);
+    boost::breadth_first_search(mst_graph,
+                                boost::vertex(source_vertex_index, mst_graph), // source
+                                visitor(boost::make_bfs_visitor(orienter)));
+                                
+    // Count un-oriented normals
+    unsigned int unoriented_normals = 0;
+    for (VertexIterator it = first; it != beyond; it++)
+        if ( ! vertex_normal_map[it].is_oriented() )
+          unoriented_normals++;
+    CGAL_TRACE("  => %u normals are unoriented\n", unoriented_normals);
+    
+    // At this stage, we have typically:
+    // - 0 unoriented normals if angle_max = PI/2 and KNN is large enough
+    // - <1% of unoriented normals if angle_max = PI/4
+    
+#if 0
+    // Enhanced version of the algorithm: 2nd pass
+    int pass = 1;
+    unsigned int old_unoriented_normals = -1;
+    while (unoriented_normals != 0 && unoriented_normals != old_unoriented_normals && angle_max < M_PI/2.)
+    {
+      /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+      CGAL_TRACE_STREAM << "  pass " << ++pass << "\n";
+      
+      old_unoriented_normals = unoriented_normals;
+
+      // For each unoriented normal
+      for (VertexIterator target_it = first; (target_it != beyond) && (unoriented_normals != 0); target_it++)
+      {
+          Normal& target_normal = vertex_normal_map[target_it];
+          Vector target_vector = target_normal;
+          if ( ! target_normal.is_oriented() )
+          {
+              typedef typename Riemannian_graph::vertex_descriptor vertex_descriptor;
+
+              // Convert target_it to a riemannian_graph vertex target_vertex
+              unsigned int index = get(vertex_index_map, target_it);
+              vertex_descriptor target_vertex = boost::vertex(index, riemannian_graph);
+              
+              // Find neighbor source_vertex which has an oriented normal
+              // and such that the normals angle is minimum.
+              vertex_descriptor source_vertex = -1;
+              double normals_dot_max = 0;
+              boost::graph_traits<Riemannian_graph>::out_edge_iterator e, e_end;
+              for (boost::tie(e, e_end) = boost::out_edges(target_vertex, riemannian_graph); e != e_end; ++e)
+              {
+                // Get neighbor's normal
+                vertex_descriptor s = boost::target(*e, riemannian_graph);
+                Normal& n = vertex_normal_map[riemannian_graph[s].vertex];
+                Vector v = n;
+                double normals_dot = v * target_vector;
+                if ( n.is_oriented() && (std::abs(normals_dot) > normals_dot_max) )
+                {
+                  source_vertex = s;
+                  normals_dot_max = std::abs(normals_dot);
+                }
+              }
+              
+              if (source_vertex != -1) 
+              {
+                //             ->                        ->
+                // Orient target_normal parallel to source_normal
+                Normal& source_normal = vertex_normal_map[riemannian_graph[source_vertex].vertex];
+                Vector source_vector = source_normal;
+                double normals_dot = source_vector * target_vector;
+                if (normals_dot < 0) {
+                  //CGAL_TRACE("    flip %d\n", (int)target_vertex);
+                  target_vector = -target_vector;
+                }
+
+                // Is orientation robust?
+                CGAL_surface_reconstruction_assertion(source_normal.is_oriented());
+                //bool oriented = (std::abs(normals_dot) >= std::cos(angle_max)); // oriented iff angle <= m_angle_max
+                bool oriented = true;
+                target_normal = Normal(target_vector, oriented);
+                
+                // Update the number of unoriented normals
+                if (oriented) 
+                {
+                  //CGAL_TRACE("    orient %d\n", (int)target_vertex);
+                  CGAL_surface_reconstruction_assertion(unoriented_normals > 0);
+                  unoriented_normals--;
+                }
+              }
+          }
+      }                            
+      CGAL_TRACE("  => %u normals are unoriented\n", unoriented_normals);
+    }
+#endif // 0
+
+#if 0
+    // Enhanced version of the algorithm: 2nd pass
+    if (unoriented_normals != 0 && angle_max < M_PI/2.)
+    {
+      long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+      CGAL_TRACE("  2nd pass\n");
+      CGAL_TRACE("  Call boost::breadth_first_search()\n");
+
+      // Traverse the point set along the MST to propagate source_vertex's orientation
+      Propagate_normal_orientation<VertexIterator, VertexNormalMap> orienter(M_PI/2.);
+      unsigned int source_vertex_index = get(vertex_index_map, source_vertex);
+      boost::breadth_first_search(mst_graph,
+                                  boost::vertex(source_vertex_index, mst_graph), // source
+                                  visitor(boost::make_bfs_visitor(orienter)));
+                                  
+      // Count un-oriented normals
+      unoriented_normals = 0;
+      for (VertexIterator it = first; it != beyond; it++)
+          if ( ! vertex_normal_map[it].is_oriented() )
+            unoriented_normals++;
+      CGAL_TRACE("  => %u normals are unoriented\n", unoriented_normals);
+    }
+#endif // 0
+
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("End of orient_normals_minimum_spanning_tree_3()\n");
+    
+    return unoriented_normals;
 }
 
 
