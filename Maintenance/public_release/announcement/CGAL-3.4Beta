@@ -1,12 +1,20 @@
-Subject: CGAL 3.4 Beta Released, Computational Geometry Algorithms Library
+Subject: CGAL 3.4 Beta 1 Released, Computational Geometry Algorithms Library
 Body:
 
-The CGAL Open Source Project is pleased to announce the Release 3.4 Beta of
-CGAL, the Computational Geometry Algorithms Library.
+The CGAL Open Source Project is pleased to announce the Release 3.4 Beta 1 
+of CGAL, the Computational Geometry Algorithms Library.
+
+CGAL-3.4 Beta 1 is the first public testing release. It should provide
+a solid ground to report bugs that need to be tackled before the
+release of the final version of CGAL 3.4 in January 2009.
 
 
-Besides improvements to existing packages, this release offers
-the following new algorithms and data structures.
+An important change from CGAL 3.3 to CGAL 3.4 is the switch
+from a proprietary installation script to cmake. 
+
+
+Besides improvements to existing packages, this release offers the
+following new algorithms and data structures.
 
 
  o Algebraic Foundations
