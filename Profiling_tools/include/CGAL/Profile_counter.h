@@ -35,6 +35,9 @@
 // - Profile_branch_counter which keeps track of 2 counters, aiming at measuring
 //   the ratio corresponding to the number of times a branch is taken.
 //
+// - Profile_branch_counter_3 which keeps track of 3 counters, aiming at measuring
+//   the ratios corresponding to the number of times 2 branches are taken.
+//
 // See also CGAL/Profile_timer.h
 
 // TODO :
@@ -125,6 +128,30 @@ private:
 };
 
 
+struct Profile_branch_counter_3
+{
+    Profile_branch_counter_3(const std::string & ss)
+      : i(0), j(0), k(0), s(ss) {}
+
+    void operator++() { ++i; }
+
+    void increment_branch_1() { ++j; }
+    void increment_branch_2() { ++k; }
+
+    ~Profile_branch_counter_3()
+    {
+        std::cerr << "[CGAL::Profile_branch_counter_3] "
+                  << std::setw(10) << k << " / "
+                  << std::setw(10) << j << " / "
+                  << std::setw(10) << i << " " << s << std::endl;
+    }
+
+private:
+    unsigned int i, j, k;
+    const std::string s;
+};
+
+
 #ifdef CGAL_PROFILE
 #  define CGAL_PROFILER(Y) \
           { static CGAL::Profile_counter tmp(Y); ++tmp; }
@@ -134,11 +161,20 @@ private:
           static CGAL::Profile_branch_counter NAME(Y); ++NAME;
 #  define CGAL_BRANCH_PROFILER_BRANCH(NAME) \
           NAME.increment_branch();
+#  define CGAL_BRANCH_PROFILER_3(Y, NAME) \
+          static CGAL::Profile_branch_counter_3 NAME(Y); ++NAME;
+#  define CGAL_BRANCH_PROFILER_BRANCH_1(NAME) \
+          NAME.increment_branch_1();
+#  define CGAL_BRANCH_PROFILER_BRANCH_2(NAME) \
+          NAME.increment_branch_2();
 #else
 #  define CGAL_PROFILER(Y)
 #  define CGAL_HISTOGRAM_PROFILER(Y, Z)
 #  define CGAL_BRANCH_PROFILER(Y, NAME)
 #  define CGAL_BRANCH_PROFILER_BRANCH(NAME)
+#  define CGAL_BRANCH_PROFILER_3(Y, NAME) 
+#  define CGAL_BRANCH_PROFILER_BRANCH_1(NAME)
+#  define CGAL_BRANCH_PROFILER_BRANCH_2(NAME) 
 #endif
 
 CGAL_END_NAMESPACE

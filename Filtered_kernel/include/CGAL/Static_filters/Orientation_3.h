@@ -59,7 +59,7 @@ public:
   operator()(const Point_3 &p, const Point_3 &q,
 	     const Point_3 &r, const Point_3 &s) const
   {
-      CGAL_PROFILER("Orientation_3 calls");
+      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_3", tmp);
 
       using std::fabs;
 
@@ -74,7 +74,7 @@ public:
           fit_in_double(s.x(), sx) && fit_in_double(s.y(), sy) &&
           fit_in_double(s.z(), sz))
       {
-          CGAL_PROFILER("Orientation_3 semi-static attempts");
+	  CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
           double pqx = qx - px;
           double pqy = qy - py;
@@ -120,7 +120,7 @@ public:
             if (det < -eps) return NEGATIVE;
           }
 
-          CGAL_PROFILER("Orientation_3 semi-static failures");
+	  CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
 
       return Base::operator()(p, q, r, s);

@@ -39,7 +39,7 @@ public:
   operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r,
              const Point_3 &s, const Point_3 &t) const
   {
-      CGAL_PROFILER("Side_of_oriented_sphere_3 calls");
+      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Side_of_oriented_sphere_3", tmp);
 
       using std::fabs;
 
@@ -56,7 +56,7 @@ public:
           fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty) &&
           fit_in_double(t.z(), tz))
       {
-          CGAL_PROFILER("Side_of_oriented_sphere_3 semi-static attempts");
+	  CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
           double ptx = px - tx;
           double pty = py - ty;
@@ -120,7 +120,7 @@ public:
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }
 
-          CGAL_PROFILER("Side_of_oriented_sphere_3 semi-static failures");
+	  CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
       return Base::operator()(p, q, r, s, t);
   }

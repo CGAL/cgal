@@ -39,7 +39,7 @@ public:
   Oriented_side operator()(const Point_2 &p, const Point_2 &q,
 	                   const Point_2 &r, const Point_2 &t) const
   {
-      CGAL_PROFILER("Side_of_oriented_circle_2 calls");
+      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Side_of_oriented_circle_2", tmp);
 
       using std::fabs;
 
@@ -50,7 +50,7 @@ public:
           fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
           fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty))
       {
-          CGAL_PROFILER("Side_of_oriented_circle_2 semi-static attempts");
+	  CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
           double qpx = qx-px;
           double qpy = qy-py;
@@ -93,7 +93,7 @@ public:
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }
 
-          CGAL_PROFILER("Side_of_oriented_circle_2 semi-static failures");
+	  CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
 
       return Base::operator()(p, q, r, t);
