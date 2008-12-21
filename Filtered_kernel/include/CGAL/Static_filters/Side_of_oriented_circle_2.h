@@ -65,7 +65,7 @@ public:
 	  double rqy = ry-qy;
 
           double det = determinant(qpx*tpy - qpy*tpx, tpx*tqx + tpy*tqy,
-                                         qpx*rpy - qpy*rpx, rpx*rqx + rpy*rqy);
+                                   qpx*rpy - qpy*rpx, rpx*rqx + rpy*rqy);
 
           // We compute the semi-static bound.
           double maxx = fabs(qpx);
@@ -81,14 +81,13 @@ public:
 
           if (maxx > maxy)  std::swap(maxx, maxy);
 
-          double eps = 8.8878565762001373e-15 * maxx * maxy * (maxy*maxy);
-
           // Protect against underflow in the computation of eps.
           if (maxx < 1e-73) {
             if (maxx == 0)
               return ON_ORIENTED_BOUNDARY;
           }
           else if (maxy < 1e76) /* sqrt(sqrt(max_double/16 [hadamard])) */ {
+            double eps = 8.8878565762001373e-15 * maxx * maxy * (maxy*maxy);
             if (det > eps)  return ON_POSITIVE_SIDE;
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }

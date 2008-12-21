@@ -96,10 +96,9 @@ public:
           double maxz = fabs(pqz);
           if (maxz < fabs(prz)) maxz = fabs(prz);
           if (maxz < fabs(psz)) maxz = fabs(psz);
-          double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
           double det = determinant(pqx, pqy, pqz,
-                                         prx, pry, prz,
-                                         psx, psy, psz);
+                                   prx, pry, prz,
+                                   psx, psy, psz);
 
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)
@@ -116,6 +115,7 @@ public:
           }
           // Protect against overflow in the computation of det.
           else if (maxz < 1e102) /* cbrt(max_double [hadamard]/4) */ {
+            double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
             if (det > eps)  return POSITIVE;
             if (det < -eps) return NEGATIVE;
           }

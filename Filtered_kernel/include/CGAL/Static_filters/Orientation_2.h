@@ -77,14 +77,13 @@ public:
           double pry = ry - py;
 
           double det = determinant(pqx, pqy,
-                                         prx, pry);
+                                   prx, pry);
 
           // Then semi-static filter.
           double maxx = std::fabs(pqx);
           if (maxx < std::fabs(prx)) maxx = std::fabs(prx);
           double maxy = std::fabs(pqy);
           if (maxy < std::fabs(pry)) maxy = std::fabs(pry);
-          double eps = 8.8872057372592798e-16 * maxx * maxy;
 
           // Sort them
           if (maxx > maxy)  std::swap(maxx, maxy);
@@ -96,6 +95,7 @@ public:
           }
           // Protect against overflow in the computation of det.
           else if (maxy < 1e153) /* sqrt(max_double [hadamard]/2) */ {
+            double eps = 8.8872057372592798e-16 * maxx * maxy;
             if (det > eps)  return POSITIVE;
             if (det < -eps) return NEGATIVE;
           }

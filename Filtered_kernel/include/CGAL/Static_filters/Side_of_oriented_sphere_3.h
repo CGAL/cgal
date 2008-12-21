@@ -101,13 +101,10 @@ public:
           else if (maxy < maxx)
               std::swap(maxx, maxy);
 
-          double eps = 1.2466136531027298e-13 * maxx * maxy * maxz
-                     * (maxz * maxz);
-
           double det = determinant(ptx,pty,ptz,pt2,
-                                         rtx,rty,rtz,rt2,
-                                         qtx,qty,qtz,qt2,
-                                         stx,sty,stz,st2);
+                                   rtx,rty,rtz,rt2,
+                                   qtx,qty,qtz,qt2,
+                                   stx,sty,stz,st2);
 
           // Protect against underflow in the computation of eps.
           if (maxx < 1e-58) /* sqrt^5(min_double/eps) */ {
@@ -116,6 +113,8 @@ public:
           }
           // Protect against overflow in the computation of det.
           else if (maxz < 1e61) /* sqrt^5(max_double/4 [hadamard]) */ {
+            double eps = 1.2466136531027298e-13 * maxx * maxy * maxz
+                       * (maxz * maxz);
             if (det > eps)  return ON_POSITIVE_SIDE;
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }
