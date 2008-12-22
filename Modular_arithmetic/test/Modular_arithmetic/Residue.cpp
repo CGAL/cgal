@@ -10,7 +10,6 @@
 #include <CGAL/FPU.h>
 
 #include <CGAL/Test/_test_algebraic_structure.h>
-#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/number_utils.h>
 
 int main()
@@ -83,10 +82,8 @@ int main()
     //cout << x << endl;
 
     assert(7 == NT::set_current_prime(old_prime));
-
-    typedef CGAL::Arithmetic_kernel AK;
-    typedef AK::Integer Integer; 
-    
+    typedef long Integer; 
+  
     Integer       int_x(7);
     Integer       prime(NT::get_current_prime());
     CGAL::Residue mod_x(7);
