@@ -124,10 +124,7 @@ main( int argc, char **argv) {
 			  lli = find_if(list_of_lines.begin(), 
                                         list_of_lines.end(), 
                                         Lines_eq(number));
-			  out_file << "<A "<< lli->text <<">" << "<img SRC=\""
-                              "cc_index_arrow.gif\" ALT=\"reference\" "
-                              "WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM "
-                              "BORDER=0></A> ";
+			  out_file << "<A " << lli->text << ">&rarr;</A> ";
 			}  
 		      }
 		    } 
