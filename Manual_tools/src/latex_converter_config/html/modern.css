@@ -101,3 +101,9 @@ em.AdvancedBlockLabel  { font-size:10pt; font-style: italic; }
 /* ----------------------------------------------------------------------- */
 pre.Verbatim           { }
 pre.ExampleCode        { background-color: #e8e8e8; }
+
+/* ----------------------------------------------------------------------- */
+/* mathcal uses a diffeerent font        
+/* ----------------------------------------------------------------------- */
+math.cal { font-family: "lucida calligraphy"}
+
