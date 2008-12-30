@@ -103,7 +103,6 @@ pre.Verbatim           { }
 pre.ExampleCode        { background-color: #e8e8e8; }
 
 /* ----------------------------------------------------------------------- */
-/* mathcal uses a diffeerent font        
+/* mathcal uses a different font        
 /* ----------------------------------------------------------------------- */
-math.cal { font-family: "lucida calligraphy"}
-
+span.cal { font-family: "lucida calligraphy"; }
