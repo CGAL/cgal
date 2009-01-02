@@ -339,6 +339,9 @@
 %\newcommand{\TeX}{\lcRawHtml{TeX}}   %% candidates for images
 %\newcommand{\LaTeX}{\lcRawHtml{LaTeX}}
 %\newcommand{\LaTeXe}{\lcRawHtml{LaTeX2e}}
+%\newcommand{\TeX}{\lcRawHtml{T<sub>E</sub>X}}
+%\newcommand{\LaTeX}{\lcRawHtml{L<sup>A</sup>T<sub>E</sub>X}}
+%\newcommand{\LaTeXe}{\lcRawHtml{L<sup>A</sup>T<sub>E</sub>X2&epsilon;}}
 \newcommand{\TeX}{%
 %    \lcRawHtml{<IMG WIDTH=32 HEIGHT=18 ALIGN=TOP SRC="cc_TeX_big.gif">}}
     \lcRawHtml{<IMG ALIGN=BOTTOM SRC="cc_TeX.gif">}}
@@ -922,8 +925,8 @@
 % |     * Variable sized symbols following Table 3.8 page 44 in Lamport.
 % +------------------------------------------------ --------------------------
 \newcommand{\sum}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
-  { <IMG BORDER=0 WIDTH=19 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_sum.gif"> }}%
-  {\lcRawHtml{ &sum; }}}
+  {<span class="big_sym">&sum;</span>}}%
+  {\lcRawHtml{ <span class="sym">&sum;</span> }}}
 \newcommand{\prod}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
   { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_prod.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=11 HEIGHT=24 ALIGN=MIDDLE SRC="cc_prod.gif"> }}}
@@ -1453,8 +1456,8 @@
 % declare TeX compatible \ifmmode (can be used in the ifthen.sty)
 \newcommand{\ifmmode}{\lciMathMode}
 
-\newcommand{\(}{\newcommand{\lciMathMode}{\lcTrue}\lcRawHtml{<MATH><I>}}
-\newcommand{\)}{\newcommand{\lciMathMode}{\lcFalse}\lcRawHtml{</I></MATH>}}
+\newcommand{\(}{\newcommand{\lciMathMode}{\lcTrue}\lcRawHtml{<MATH>}}
+\newcommand{\)}{\newcommand{\lciMathMode}{\lcFalse}\lcRawHtml{</MATH>}}
 \newenvironment{math}{\(}{\)}
 \newcommand{\lciToggleMathMode}{\lciIf{\lciMathMode}{\)}{\(}}
 

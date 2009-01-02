@@ -4,8 +4,8 @@
 /* The default style of the LaTeX-to-HTML converter output.                */
 /*                                                                         */
 /* (c) 2004   Lutz Kettner                                                 */
-/* $Id$                                                       */
-/* $Date$                                            */
+/* $Id$                     */
+/* $Date$                   */
 /* ======================================================================= */
 
 /* ----------------------------------------------------------------------- */
@@ -97,12 +97,22 @@ div.AdvancedBlock      { background-color: #c0d0ff; }
 em.AdvancedBlockLabel  { font-size:10pt; font-style: italic; }
 
 /* ----------------------------------------------------------------------- */
-/* verbatim and example code environments
+/* verbatim and example code environments                                  */
 /* ----------------------------------------------------------------------- */
 pre.Verbatim           { }
 pre.ExampleCode        { background-color: #e8e8e8; }
 
 /* ----------------------------------------------------------------------- */
-/* mathcal uses a different font        
+/* math environment                                                        */
 /* ----------------------------------------------------------------------- */
+math {
+       font-family: serif;
+       font-style: italic;
+       font-size: 120%;
+}
 span.cal { font-family: "lucida calligraphy"; }
+span.sym { font-style: normal; }
+span.big_sym {
+       font-style: normal;
+       font-size: 240%;
+}
