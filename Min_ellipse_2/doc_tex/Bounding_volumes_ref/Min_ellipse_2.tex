@@ -17,8 +17,8 @@ enclosing a finite (multi)set of points in two-dimensional euclidean
 space~$\E_2$.  For a point set $P$ we denote by $me(P)$ the smallest
 ellipse that contains all points of $P$. Note that $me(P)$ can be
 degenerate\lcTex{\ccIndexSubitem[t]{degeneracies}{\ccFont Min_ellipse_2}},
-i.e.~$me(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ if
-$P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$, $me(P)=\{p\}$ if $P=\{p\}$,
+i.e.~$me(P)=\emptyset$ if
+$P=\emptyset$, $me(P)=\{p\}$ if $P=\{p\}$,
 and $me(P) = \{ \mbox{\ccTexHtml{$(1-\lambda)p + \lambda q \mid 0 \leq
     \lambda \leq 1$}{(1-l)p + l q | 0 <= l <= 1}} \}$ if $P=\{p,q\}$.
 
@@ -101,7 +101,7 @@ reconstructing $me(P)$ from a given support set\lcTex{\ccIndexSubitem[t]{support
 \ccConstructor{ Min_ellipse_2( const Traits& traits = Traits());}{
         creates a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to
-        $me(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$, the empty set.
+        $me(\emptyset)$, the empty set.
         \ccPostcond \ccVar\ccc{.is_empty()} = \ccc{true}.}
 
 \ccConstructor{ Min_ellipse_2( const Point&   p,

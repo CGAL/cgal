@@ -18,8 +18,8 @@ finite set of points in $d$-dimensional Euclidean space $\E_d$, where the
 difference $R^2-r^2$ is minimal. For a point set $P$ we denote by $ma(P)$
 the smallest annulus that contains all points of $P$.  Note that $ma(P)$
 can be degenerate\lcTex{\ccIndexSubitem[t]{degeneracies}{\ccFont Min_annulus_d}},
-i.e.~$ma(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ if
-$P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ and $ma(P)=\{p\}$ if
+i.e.~$ma(P)=\emptyset$ if
+$P=\emptyset$ and $ma(P)=\{p\}$ if
 $P=\{p\}$.
 
 An inclusion-minimal subset $S$ of $P$ with $ma(S)=ma(P)$ is called a
@@ -96,7 +96,7 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 \ccConstructor{ Min_annulus_d( const Traits&  traits  = Traits(),
                                int            verbose = 0,
                                std::ostream&  stream  = std::cout);}{
-        initializes \ccVar\ to $ma(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$.}
+        initializes \ccVar\ to $ma(\emptyset)$.}
 
 \ccConstructor{ template < class InputIterator >
                 Min_annulus_d( InputIterator  first,
@@ -276,7 +276,7 @@ unbounded side equals the whole space $\E_d$.
 \ccIndexMemberFunctionGroup{modifiers}
 
 \ccMemberFunction{ void  clear( );}{
-        resets \ccVar\ to $ma(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$.}
+        resets \ccVar\ to $ma(\emptyset)$.}
 
 \ccMemberFunction{ template < class InputIterator >
                    void  set( InputIterator first,

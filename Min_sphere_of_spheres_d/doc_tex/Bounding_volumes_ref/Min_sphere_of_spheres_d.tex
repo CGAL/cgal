@@ -13,8 +13,8 @@ the unique sphere of smallest volume enclosing a finite set of spheres
 in $d$-dimensional Euclidean space $\E_d$.  For a set $S$ of spheres
 we denote by $ms(S)$ the smallest sphere that contains all spheres of
 $S$; we call $ms(S)$ the \emph{minsphere} of $S$. $ms(S)$ can be
-degenerate, i.e., $ms(S)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$,
-if $S=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ and $ms(S)=\{s\}$,
+degenerate, i.e., $ms(S)=\emptyset$,
+if $S=\emptyset$ and $ms(S)=\{s\}$,
 if $S=\{s\}$.  Any sphere in $S$ may be degenerate, too, i.e., any
 sphere from $S$ may be a point.  Also, $S$ may contain several
 copies of the same sphere.
@@ -129,7 +129,7 @@ to access the center coordinates of the minsphere.}
 
 \ccConstructor{ Min_sphere_of_spheres_d(const Traits& traits = Traits());}%
 {creates a variable of type \ccRefName\ and initializes it to
-  $ms(\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}})$.  If the traits
+  $ms(\emptyset)$.  If the traits
   parameter is not supplied, the class \ccc{Traits} must provide a
   default constructor.}
 
@@ -207,7 +207,7 @@ to access the center coordinates of the minsphere.}
 \ccIndexMemberFunctionGroup{modifiers}
 
 \ccMemberFunction{ void clear ();}{
-        resets \ccVar\ to $ms(\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}})$, with $S:= \emptyset$.}
+        resets \ccVar\ to $ms(\emptyset)$, with $S:= \emptyset$.}
 
 \ccUnchecked \ccMemberFunction{ template < class InputIterator > void
   set( InputIterator first, InputIterator last );}{ sets \ccVar\ to

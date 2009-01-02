@@ -18,8 +18,8 @@ enclosing a finite (multi)set of points in two-dimensional Euclidean
 space~$\E_2$.  For a point set $P$ we denote by $mc(P)$ the smallest circle
 that contains all points of $P$. Note that $mc(P)$ can be
 degenerate\lcTex{\ccIndexSubitem[t]{degeneracies}{\ccFont Min_circle_2}},
-i.e.~$mc(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ if
-$P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ and $mc(P)=\{p\}$ if
+i.e.~$mc(P)=\emptyset$ if
+$P=\emptyset$ and $mc(P)=\{p\}$ if
 $P=\{p\}$.
 
 An inclusion-minimal subset $S$ of $P$ with $mc(S)=mc(P)$ is called a
@@ -110,7 +110,7 @@ $S$ of $P$.
 
 \ccConstructor{ Min_circle_2( const Traits&  traits = Traits());}{
         initializes \ccVar\ to
-        $mc(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$, the empty set.
+        $mc(\emptyset)$, the empty set.
         \ccPostcond  \ccVar\ccc{.is_empty()} = \ccc{true}.}
 
 \ccConstructor{ Min_circle_2( const Point&   p,
