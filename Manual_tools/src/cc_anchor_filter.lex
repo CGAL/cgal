@@ -97,8 +97,7 @@ Dictionary
   dict_cc,
   dict_internal;
 
-const string reference_icon = "<IMG SRC=\"cc_ref_up_arrow.gif\" "
-            "ALT=\"reference\" WIDTH=\"10\" HEIGHT=\"10\">";
+const string reference_icon = "&#x261E;"; // Unicode for pointing finger.
 
 string   output_path, reftext;
 ofstream output_file;
