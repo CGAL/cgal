@@ -19,8 +19,7 @@ ellipse that contains all points of $P$. Note that $me(P)$ can be
 degenerate\lcTex{\ccIndexSubitem[t]{degeneracies}{\ccFont Min_ellipse_2}},
 i.e.~$me(P)=\emptyset$ if
 $P=\emptyset$, $me(P)=\{p\}$ if $P=\{p\}$,
-and $me(P) = \{ \mbox{\ccTexHtml{$(1-\lambda)p + \lambda q \mid 0 \leq
-    \lambda \leq 1$}{(1-l)p + l q | 0 <= l <= 1}} \}$ if $P=\{p,q\}$.
+and $me(P) = \{ \mbox{ (1-\lambda)p + \lambda q \mid 0 \leq \lambda \leq 1 } \}$ if $P=\{p,q\}$.
 
 An inclusion-minimal subset $S$ of $P$ with $me(S)=me(P)$ is called a
 \emph{support set}\lcTex{\ccIndexSubitem[t]{support set}{\ccFont Min_ellipse_2}},
@@ -115,8 +114,7 @@ reconstructing $me(P)$ from a given support set\lcTex{\ccIndexSubitem[t]{support
         initializes \ccVar\ to $me(\{p,q\})$,
 \ccTexHtml{\\}{}
                                               the set
-        $\{ \mbox{\ccTexHtml{$(1-\lambda)p + \lambda q \mid
-          0 \leq \lambda \leq 1$}{(1-l)p + l q | 0 <= l <= 1}} \}$.
+        $\{ \mbox{(1-\lambda)p + \lambda q \mid 0 \leq \lambda \leq 1} \}$.
         \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
 
 \ccConstructor{ Min_ellipse_2( const Point&   p1,
