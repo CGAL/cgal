@@ -15,10 +15,8 @@ h : a x + b y + c z + d = 0
 
 The plane splits $\E^3$ in a {\em positive} and a {\em negative side}.
 A point $p$ with Cartesian coordinates $(px, py, pz)$ is on the
-positive side of \ccStyle{h}, iff \ccTexHtml{$a\, px +b\, py +c\, pz +
-  d > 0$}{a px + b py +c pz + d > 0}. It is on the negative side, iff
-\ccTexHtml{$a\, px +b\, py\, +c\, pz + d < 0$}{a px + b py +c pz + d <
-  0}.
+positive side of \ccStyle{h}, iff $a\, px +b\, py +c\, pz + d > 0$.
+It is on the negative side, iff $a\, px +b\, py\, +c\, pz + d < 0$.
 
 \ccCreation
 \ccCreationVariable{h}
@@ -34,9 +32,9 @@ positive side of \ccStyle{h}, iff \ccTexHtml{$a\, px +b\, py +c\, pz +
                        const Kernel::RT &c,
                        const Kernel::RT &d)}
 {creates a plane \ccVar\ defined by the equation
- \ccTexHtml{$a\, px +b\, py +c\, pz + d = 0$}{a px + b py + c pz + d = 0}.
+ $a\, px +b\, py +c\, pz + d = 0$.
 Notice that \ccVar\ is degenerate if 
- \ccTexHtml{$a = b = c = 0$}{a = b = c = 0}.}
+ $a = b = c = 0$.}
 
 \ccConstructor{Plane_3(const Point_3<Kernel> &p,
                        const Point_3<Kernel> &q,
