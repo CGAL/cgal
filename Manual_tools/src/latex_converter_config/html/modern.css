@@ -116,3 +116,13 @@ span.big_sym {
        font-style: normal;
        font-size: 240%;
 }
+
+/* ----------------------------------------------------------------------- */
+/* TeX and LaTeX display (taken from TEX4ht)                               */
+/* ----------------------------------------------------------------------- */
+span.TEX {letter-spacing: -0.125em; }
+span.TEX span.E{ position:relative;top:0.5ex;left:-0.0417em;}
+a span.TEX span.E {text-decoration: none; }
+span.LATEX span.A{ position:relative; top:-0.5ex; left:-0.4em; font-size:85%;}
+span.LATEX span.TEX{ position:relative; left: -0.4em; }
+
