@@ -1,0 +1,27 @@
+README
+======
+
+backport for lenny:
+- debian/changelog:
+  * adjust version suffix from -X to -X~lenny1
+  * adjust suite from unstable to testing
+
+backport for etch:
+- debian/changelog:
+  * adjust version suffix from -X to -X~etch1
+  * adjust suite from unstable to stable
+- debian/compat
+  * adjust from 7 to 5
+- debian/control
+  * adjust debhelper versio from 7 to 5
+  * adjust Standards-Version from 3.8.0 to 3.7.2
+
+tagging:
+svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.3.1-1
+svn copy $SVNROOT/trunk/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.3.1-1~etch1
+svn copy $SVNROOT/trunk/Maintenance/deb/sarge/debian $SVNROOT/tags/debian/3.3.1-0sarge1
+
+or:
+svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.3.1-1
+svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.3.1-1~etch1
+svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/sarge/debian $SVNROOT/tags/debian/3.3.1-0sarge1
