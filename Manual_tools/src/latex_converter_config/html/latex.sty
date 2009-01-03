@@ -1485,14 +1485,12 @@
 % \newcommand{\frac}[2]{\lcRawHtml{<BOX>}#1\lcRawHtml{<OVER>}#2\lcRawHtml{</BOX>}}
 \newcommand{\over}{/}  %% TeX style fraction
 
-\newcommand{\dots}{...}
-\newcommand{\ldots}{...}
-\newcommand{\cdot}{\lcRawHtml{ &middot; }}
-\newcommand{\cdots}{\lcRawHtml{ &middot;&middot;&middot; }}
-\newcommand{\vdots}{\lcRawHtml%
-    {<IMG BORDER=0 WIDTH=2 HEIGHT=14 ALIGN=BOTTOM SRC="cc_vdots.gif"> }}
-\newcommand{\ddots}{\lcRawHtml%
-    {<IMG BORDER=0 WIDTH=16 HEIGHT=10 ALIGN=BOTTOM SRC="cc_ddots.gif"> }}
+\newcommand{\dots}{\lcRawHtml{ &#x0085; }}
+\newcommand{\ldots}{\lcRawHtml{ &#x0085; }}
+\newcommand{\cdot}{\lcRawHtml{ &sdot; }}
+\newcommand{\cdots}{\lcRawHtml{ &#8943; }}
+\newcommand{\vdots}{\lcRawHtml{ &#8942; }}
+\newcommand{\ddots}{\lcRawHtml{ &#8945; }}
 
 \newcommand{\left}{}
 \newcommand{\right}{}
