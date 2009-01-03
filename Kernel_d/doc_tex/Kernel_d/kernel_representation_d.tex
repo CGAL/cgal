@@ -5,41 +5,26 @@ where $d$ is a parameter of our geometry.  Objects in that space are
 sets of points. A common way to represent the points is the use of
 \ccHtmlNoLinksFrom{Cartesian} coordinates, which assumes a reference
 frame (an origin and $d$ orthogonal axes).  In that framework, a point
-is represented by a $d$-tuple
-\ccTexHtml{$(c_0,c_1,\ldots,c_{d-1})$}%
-{<MATH>(c<SUB>0</SUB>,c<SUB>1</SUB>,...,c<SUB>d-1</SUB>)</MATH>},
+is represented by a $d$-tuple $(c_0,c_1,\ldots,c_{d-1})$,
 and so are vectors in the underlying linear space. Each point is
 represented uniquely by such \ccHtmlNoLinksFrom{Cartesian}
 coordinates.
 
 Another way to represent points is by homogeneous coordinates. In that
-framework, a point is represented by a $(d+1)$-tuple
-\ccTexHtml{$(h_0,h_1,\ldots,h_d)$}%
-{<MATH>(h<SUB>0</SUB>,h<SUB>1</SUB>,...,h<SUB>d</SUB>)</MATH>}.
-Via the formulae
-\ccTexHtml{$c_i = h_i/h_d$}%
-{<MATH>c<SUB>i</SUB>=h<SUB>i</SUB>/h<SUB>d</SUB></MATH>},
+framework, a point is represented by a $(d+1)$-tuple $(h_0,h_1,\ldots,h_d)$.
+Via the formulae $c_i = h_i/h_d$,
 the corresponding point with \ccHtmlNoLinksFrom{Cartesian} coordinates
-\ccTexHtml{$(c_0,c_1,\ldots,c_{d-1})$}%
-{<MATH>(c<SUB>0</SUB>,c<SUB>1</SUB>,...,c<SUB>d-1</SUB>)</MATH>}
+$(c_0,c_1,\ldots,c_{d-1})$
 can be computed.  Note that homogeneous coordinates are not unique. 
-For \ccTexHtml{$\lambda\ne 0$}{<MATH>lambda != 0</MATH>},
-the tuples 
-\ccTexHtml{$(h_0,h_1,\ldots,h_d)$}{<MATH>(h<SUB>0</SUB>,h<SUB>1</SUB>
-,...,h<SUB>d</SUB>)</MATH>}
-and 
-\ccTexHtml{$(\lambda\cdot h_0,\lambda\cdot h_1,\ldots,\lambda\cdot 
-h_d)$}{<MATH>(lambda  h<SUB>0</SUB>,lambda  h<SUB>1</SUB>,...,lambda  
-h<SUB>d</SUB>)</MATH>} represent the same point.
+For $\lambda\ne 0$, the tuples $(h_0,h_1,\ldots,h_d)$ and 
+$(\lambda\cdot h_0,\lambda\cdot h_1,\ldots,\lambda\cdot h_d)$
+represent the same point.
 For a point with \ccHtmlNoLinksFrom{Cartesian} coordinates 
-\ccTexHtml{$(c_0,c_1,\ldots,c_{d-1})$}%
-{<MATH>(c<SUB>0</SUB>,c<SUB>1</SUB>,...,c<SUB>d-1</SUB>)</MATH>} a
+$(c_0,c_1,\ldots,c_{d-1})$ a
 possible homogeneous representation is
-\ccTexHtml{$(c_0,c_1,\ldots,c_{d-1},1)$}%
-{<MATH>(c<SUB>0</SUB>,c<SUB>1</SUB>,...,c<SUB>d-1</SUB>,1)</MATH>}.
+$(c_0,c_1,\ldots,c_{d-1},1)$.
 \ccHtmlNoLinksFrom{Homogeneous} coordinates in fact allow to represent 
-objects in a more general space, the projective space
-\ccTexHtml{$\P_d$}{<MATH>P<SUB>d</SUB></MATH>}.
+objects in a more general space, the projective space $\mathbb{P}^d$.
 In \cgal, we do not compute in projective geometry. Rather, we use 
 homogeneous coordinates to avoid division operations,
 since the additional coordinate can serve as a common denominator.
@@ -74,9 +59,8 @@ predicates and constructions.
 For reasons that will become evident later, a representation class
 provides two typenames for number types,
 namely \ccc{R::FT} and \ccc{R::RT} and one typename for the linear
-algebra module \ccc{R::LA}.%
-\ccTexHtml{\footnote{The double colon :: is the \CC\ scope
-    operator.}}{} The type \ccStyle{R::FT} must fulfill the
+algebra module \ccc{R::LA}.
+The type \ccStyle{R::FT} must fulfill the
 requirements on what is called a {\em field type} in \cgal. This
 roughly means that \ccStyle{R::FT} is a type for which operations $+$,
 $-$, $*$ and $/$ are defined with semantics (approximately)
