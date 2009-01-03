@@ -1,0 +1,6 @@
+libCGAL 3 libcgal3
+libCGAL_Core 3 libcgal3
+libCGAL_ImageIO 3 libcgal3
+libCGAL_PDB 3 libcgal3
+libCGAL_Qt3 3 libcgal3
+libCGAL_Qt4 3 libcgal3

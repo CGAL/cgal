@@ -1,4 +1,53 @@
-cgal (3.3.1-1~etch1) stable; urgency=low
+cgal (3.4~beta1-1~etch1) stable; urgency=low
+
+  * New upstream release.
+  * Adapt debian/rules to the new cmake-based build system.
+  * Downgrade LAPACK- and BLAS-related Build-Depends: to Suggests: for
+    libcgal-demo, since it is now possible to configure demos and examples
+    independently of the library.
+
+ -- Joachim Reichel <reichel@debian.org>  Sat, 20 Dec 2008 19:09:13 +0100
+
+cgal (3.3.1-4) unstable; urgency=low
+
+  * Remove fortran-transition.dpatch, update build-library.dpatch:
+    Do not link with -lg2c in configuration tests (Closes: #475721).
+  * Update cgal_create_makefile.dpatch to remove bashisms (Closes: #486045).
+  * Update debian/tests/rounding_modes2.cpp to stop constant propagation.
+  * Update Standards-Version to 3.8.0 (explain in debian/copyright why package
+    is in non-free).
+
+ -- Joachim Reichel <joachim.reichel@gmx.de>  Sun, 15 Jun 2008 22:11:14 +0200
+
+cgal (3.3.1-3) unstable; urgency=low
+
+  * Add patch fortran-transition.dpatch (Closes: #470359), thanks to Kumar
+    Appaiah for the patch.
+  * debian/rules: s/lapack3-dev/liblapack-dev/,
+    s/atlas3-base-dev/libatlas-base-dev/, s/libatlas-3.so/libatlas.so.3gf/ .
+  * Fix manpage w.r.t. makefile vs. cgal.mk (Closes: #466430).
+  * Add second test for FPU rounding modes.
+
+ -- Joachim Reichel <joachim.reichel@gmx.de>  Wed, 19 Mar 2008 20:27:34 +0100
+
+cgal (3.3.1-2) unstable; urgency=low
+
+  * debian/control: Really really drop support for atlas and lapack on arm
+    and m68k, fix atlas and lapack support on other architectures.
+  * debian/control: Extend exclusions for arm to variants armeb and armel
+    (Closes: #460141).
+  * debian/control: Remove virtual dependency liblapack-3.so which is
+    provided by atlas3-base-dev (which does *not* provide
+    /usr/lib/liblapack.so, just /usr/lib/atlas/liblapack.so).
+  * debian/control: Replace virtual dependency libblas-3.so by
+    libatlas-3.so.
+  * Add patch qt-compatibility-headers.dpatch (Closes: #464251).
+  * debian/control: Add Homepage: field, adjust Description: accordingly.
+  * Update Standards-Version to 3.7.3 (no changes needed).
+
+ -- Joachim Reichel <joachim.reichel@gmx.de>  Wed, 06 Feb 2008 18:37:52 +0100
+
+cgal (3.3.1-1) unstable; urgency=low
 
   * New upstream release.
   * Remove patch bugfix-fpu-rounding-mode-alpha.dpatch (included by

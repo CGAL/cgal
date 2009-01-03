@@ -1,3 +1,1 @@
-build-library.dpatch
-cgal-create-makefile.dpatch
-boost-library-name.dpatch
+# currently empty

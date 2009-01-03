@@ -15,16 +15,13 @@ license conditions. The complete documentation in PDF and HTML is available at
 http://www.cgal.org/.
 
 
-CGAL_MAKEFILE
--------------
+Demos and examples
+------------------
 
-The CGAL documentation asks you to set the environment variable CGAL_MAKEFILE
-to the makefile template that was generated during the configuration. This
-makefile template is located at /usr/share/cgal/makefile. The examples and
-demos as well as the script cgal_create_makefile have been modified to use
-/usr/share/cgal/makefile as default. Therefore, it is *not* necessary to set
-CGAL_MAKEFILE (but it does not hurt). If you want to modify the template, then
-you should point CGAL_MAKEFILE to the modified copy of the template.
+Tarballs with demos and examples can be found in /usr/share/doc/libcgal-demo.
+Extract the tarballs somewhere and call "cmake ." to configure the
+demos/examples. Call "make" to build them, either in the top-level directory
+to build all demos/examples (which takes some time and needs quite some disk
+space), or in the subdirectory of the desired demo/exmaple.
 
-
- -- Joachim Reichel <joachim.reichel@gmx.de>  Mon, 22 May 2006 20:46:24 +0200
+ -- Joachim Reichel <reichel@debian.org>  Sat, 20 Dec 2008 19:09:13 +0100
