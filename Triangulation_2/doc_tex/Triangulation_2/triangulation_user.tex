@@ -462,7 +462,7 @@ begins  at  a vertex of the face which
 is given
 as an optional argument  or at an arbitrary vertex of the triangulation
  if no optional argument is given. It takes
-time \ccTexHtml{$O(n)$}{O(n)} in the worst case, but only \ccTexHtml{$O(\sqrt{n})$}{O(sqrt(n))}
+time $O(n)$ in the worst case, but only $O(\sqrt{n})$
 on average if the vertices are distributed uniformly at random.
 The class \ccc{Triangulation_hierarchy_2<Traits,Tds>},
 described in section~\ref{Section_2D_Triangulations_Hierarchy}, 
@@ -473,14 +473,14 @@ Insertion of a point is done by locating a face that contains the
 point, and splitting this face into three new faces.
 If the point falls outside the convex hull, the triangulation
  is restored by flips.  Apart from the location, insertion takes a
-time \ccTexHtml{$O(1)$}{O(1)}. This bound is only an amortized bound
+time $O(1)$. This bound is only an amortized bound
 for points located outside the convex hull.
 
 Removal of a vertex is done by removing all adjacent triangles, and
 re-triangulating the hole. Removal takes a time  at most proportional to
-\ccTexHtml{$d^2$}{d^2}, where
- \ccTexHtml{$d$}{d} is the degree of the removed vertex,
-which is \ccTexHtml{$O(1)$}{O(1)} for a random vertex.
+$d^2$, where
+$d$ is the degree of the removed vertex,
+which is $O(1)$ for a random vertex.
 
 The face, edge, and vertex iterators on finite features
 are derived from their counterparts visiting all (finite and infinite)
@@ -624,23 +624,23 @@ The insertion of a new point in the Delaunay triangulation
 is performed using first the insertion member function
 of the basic triangulation and second 
 performing a sequence of flips to restore the Delaunay property. 
-The number of flips that have to be performed is \ccTexHtml{$O(d)$}{O(d)}
-if the new vertex has degree \ccTexHtml{$d$}{d} in the updated
+The number of flips that have to be performed is $O(d)$
+if the new vertex has degree $d$ in the updated
 Delaunay triangulation. For
 points distributed uniformly at random, 
-each insertion takes time \ccTexHtml{$O(1)$}{O(1)} on
+each insertion takes time $O(1)$ on
 average, once the point has been located in the triangulation.
 
 Removal calls the removal in the triangulation and then re-triangulates
 the hole created in such a way that  the Delaunay criterion is
 satisfied. Removal of a
-vertex of degree \ccTexHtml{$d$}{d} takes time \ccTexHtml{$O(d^2)$}{O(d^2)}.
-The degree $d$ is \ccTexHtml{$O(1)$}{O(1)} for a random
+vertex of degree $d$ takes time $O(d^2)$.
+The degree $d$ is $O(1)$ for a random
 vertex in the triangulation.
 
 After having performed a  point location, the
-nearest neighbor of a point is found in time \ccTexHtml{$O(n)$}{O(n)} in the
-worst case, but in time \ccTexHtml{$O(1)$}{O(1)}
+nearest neighbor of a point is found in time $O(n)$ in the
+worst case, but in time $O(1)$
 for vertices distributed uniformly at random  and any query point. 
 
 

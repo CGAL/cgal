@@ -265,20 +265,20 @@ and additionally tests the Delaunay property. This method is
 \ccHeading{Implementation}
 
 Insertion is implemented by inserting in the triangulation, then
-performing a sequence of Delaunay flips. The number of flips is \ccTexHtml{$O(d)$}{O(d)}
-if the new vertex is of degree \ccTexHtml{$d$}{d} in the new triangulation. For
-points distributed uniformly at random, insertion takes time \ccTexHtml{$O(1)$}{O(1)} on
+performing a sequence of Delaunay flips. The number of flips is $O(d)$
+if the new vertex is of degree $d$ in the new triangulation. For
+points distributed uniformly at random, insertion takes time $O(1)$ on
 average.
 
 Removal calls the removal in the triangulation and then re-triangulates
 the hole in such a way that  the Delaunay criterion is satisfied. Removal of a
-vertex of degree \ccTexHtml{$d$}{d} takes time \ccTexHtml{$O(d^2)$}{O(d^2)}.
-The degree \ccTexHtml{$d$}{d} is \ccTexHtml{$O(1)$}{O(1)} for a random
+vertex of degree $d$ takes time $O(d^2)$.
+The degree $d$ is $O(1)$ for a random
 vertex in the triangulation.
 
 After a point location step, the nearest neighbor 
-is found in time \ccTexHtml{$O(n)$}{O(n)} in the
-worst case, but in time \ccTexHtml{$O(1)$}{O(1)}
+is found in time $O(n)$ in the
+worst case, but in time $O(1)$
 for vertices distributed uniformly at random  and any query point. 
 
 
