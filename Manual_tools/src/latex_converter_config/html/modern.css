@@ -114,7 +114,7 @@ span.cal { font-family: "lucida calligraphy"; }
 span.sym { font-style: normal; }
 span.big_sym {
        font-style: normal;
-       font-size: 240%;
+       font-size: 150%;
 }
 
 sub { font-size: 80%; }
