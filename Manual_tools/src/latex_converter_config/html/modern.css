@@ -116,9 +116,15 @@ span.big_sym {
        font-style: normal;
        font-size: 150%;
 }
+span.bigbig_sym {
+       font-style: normal;
+       font-size: 200%;
+}
 
 sub { font-size: 80%; }
 sup { font-size: 80%; }
+
+tr.frac { font-size: 1% }
 
 /* ----------------------------------------------------------------------- */
 /* TeX and LaTeX display (taken from TEX4ht)                               */

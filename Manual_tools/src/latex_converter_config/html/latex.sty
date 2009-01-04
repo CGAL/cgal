@@ -653,9 +653,9 @@
 % +--------------------------------------------------------------------------
 % |     * Binary operation symbols following Table 3.4 page 42 in Lamport.
 % +--------------------------------------------------------------------------
-\newcommand{\pm}{\lcRawHtml{&plusmn;}}
-\newcommand{\times}{\lcRawHtml{&times;}}
-\newcommand{\div}{\lcRawHtml{&divide;}}
+\newcommand{\pm}{\lcRawHtml{ &plusmn; }}
+\newcommand{\times}{\lcRawHtml{ &times; }}
+\newcommand{\div}{\lcRawHtml{ &divide; }}
 \newcommand{\mp}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_mp.gif"> }}
 \newcommand{\ast}{\lcRawHtml%
@@ -663,7 +663,7 @@
 \newcommand{\star}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=2 ALIGN=BOTTOM SRC="cc_star.gif"> }}
 \newcommand{\circ}{\lcRawHtml{&deg;}}
-\newcommand{\bullet}{\lcRawHtml{&bull;}}
+\newcommand{\bullet}{\lcRawHtml{&bull; }}
 \newcommand{\cap}{\lcRawHtml{ <span class="sym">&cap;</span> }}
 \newcommand{\cup}{\lcRawHtml{ <span class="sym">&cup;</span> }}
 \newcommand{\uplus}{\lcRawHtml%
@@ -697,7 +697,7 @@
     { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_unlhd.gif"> }}
 \newcommand{\unrhd}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_unrhd.gif"> }}
-\newcommand{\oplus}{\lcRawHtml{&oplus;}}
+\newcommand{\oplus}{\lcRawHtml{ <span class="sym">&oplus;</span> }}
 \newcommand{\ominus}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_ominus.gif"> }}
 \newcommand{\otimes}{\lcRawHtml%
@@ -866,8 +866,7 @@
     { <IMG BORDER=0 WIDTH=4 HEIGHT=8 ALIGN=BOTTOM SRC="cc_imath.gif"> }}
 \newcommand{\jmath}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=6 HEIGHT=17 ALIGN=MIDDLE SRC="cc_jmath.gif"> }}
-\newcommand{\ell}{\lcRawHtml%
-    { <IMG BORDER=0 WIDTH=7 HEIGHT=13 ALIGN=BOTTOM SRC="cc_ell.gif"> }}
+\newcommand{\ell}{\lcRawHtml{&#x2113;}}
 \newcommand{\wp}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=17 ALIGN=MIDDLE SRC="cc_wp.gif"> }}
 \newcommand{\Re}{\lcRawHtml%
@@ -915,7 +914,7 @@
 % |     * Variable sized symbols following Table 3.8 page 44 in Lamport.
 % +------------------------------------------------ --------------------------
 \newcommand{\sum}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
-  {<span class="big_sym">&sum;</span>}}%
+  {<span class="bigbig_sym">&sum;</span>}}%
   {\lcRawHtml{<span class="sym">&sum;</span>}}}
 \newcommand{\prod}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
   { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_prod.gif"> }}%
@@ -930,11 +929,11 @@
   { <IMG BORDER=0 WIDTH=12 HEIGHT=44 ALIGN=MIDDLE SRC="cc_big_oint.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=7 HEIGHT=27 ALIGN=MIDDLE SRC="cc_oint.gif"> }}}
 \newcommand{\bigcap}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
-  {<span class="big_sym">&cap;</span>}}%
-  {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigcap.gif"> }}}
+  {<span class="bigbig_sym">&cap;</span>}}%
+  {\lcRawHtml{<span class="big_sym">&cap;</span>}}}
 \newcommand{\bigcup}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
-  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigcup.gif"> }}%
-  {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigcup.gif"> }}}
+  {<span class="bigbig_sym">&cup;</span>}}%
+  {\lcRawHtml{<span class="big_sym">&cup;</span>}}}
 \newcommand{\bigsqcup}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
   { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigsqcup.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigsqcup.gif"> }}}
@@ -966,40 +965,40 @@
 % +--------------------------------------------------------------------------
 % |     * Log-like functions following Table 3.9 page 44 in Lamport.
 % +--------------------------------------------------------------------------
-\newcommand{\tan}{\mbox{tan}}
-\newcommand{\sin}{\mbox{sin}}
-\newcommand{\cos}{\mbox{cos}}
-\newcommand{\arctan}{\mbox{arctan}}
-\newcommand{\arcsin}{\mbox{arcsin}}
-\newcommand{\arccos}{\mbox{arccos}}
-\newcommand{\arg}{\mbox{arg}}
-\newcommand{\cosh}{\mbox{cosh}}
-\newcommand{\sinh}{\mbox{sinh}}
-\newcommand{\cot}{\mbox{cot}}
-\newcommand{\coth}{\mbox{coth}}
-\newcommand{\csc}{\mbox{csc}}
-\newcommand{\deg}{\mbox{deg}}
-\newcommand{\det}{\mbox{det}}
-\newcommand{\dim}{\mbox{dim}}
-\newcommand{\exp}{\mbox{exp}}
-\newcommand{\gcd}{\mbox{gcd}}
-\newcommand{\hom}{\mbox{hom}}
-\newcommand{\inf}{\mbox{inf}}
-\newcommand{\ker}{\mbox{ker}}
-\newcommand{\lg}{\mbox{lg}}
-\newcommand{\lim}{\mbox{lim}}
-\newcommand{\liminf}{\mbox{liminf}}
-\newcommand{\limsup}{\mbox{limsup}}
-\newcommand{\ln}{\mbox{ln}}
-\newcommand{\log}{\mbox{log}}
-\newcommand{\max}{\mbox{max}}
-\newcommand{\min}{\mbox{min}}
-\newcommand{\Pr}{\mbox{Pr}}
-\newcommand{\sec}{\mbox{sec}}
-\newcommand{\sinh}{\mbox{sinh}}
-\newcommand{\sup}{\mbox{sup}}
-\newcommand{\tanh}{\mbox{tanh}}
-\newcommand{\bmod}{\mbox{mod}}
+\newcommand{\tan}{\mbox{tan} }
+\newcommand{\sin}{\mbox{sin} }
+\newcommand{\cos}{\mbox{cos} }
+\newcommand{\arctan}{\mbox{arctan} }
+\newcommand{\arcsin}{\mbox{arcsin} }
+\newcommand{\arccos}{\mbox{arccos} }
+\newcommand{\arg}{\mbox{arg} }
+\newcommand{\cosh}{\mbox{cosh} }
+\newcommand{\sinh}{\mbox{sinh} }
+\newcommand{\cot}{\mbox{cot} }
+\newcommand{\coth}{\mbox{coth} }
+\newcommand{\csc}{\mbox{csc} }
+\newcommand{\deg}{\mbox{deg} }
+\newcommand{\det}{\mbox{det} }
+\newcommand{\dim}{\mbox{dim} }
+\newcommand{\exp}{\mbox{exp} }
+\newcommand{\gcd}{\mbox{gcd} }
+\newcommand{\hom}{\mbox{hom} }
+\newcommand{\inf}{\mbox{inf} }
+\newcommand{\ker}{\mbox{ker} }
+\newcommand{\lg}{\mbox{lg} }
+\newcommand{\lim}{\mbox{lim} }
+\newcommand{\liminf}{\mbox{liminf} }
+\newcommand{\limsup}{\mbox{limsup} }
+\newcommand{\ln}{\mbox{ln} }
+\newcommand{\log}{\mbox{log} }
+\newcommand{\max}{\mbox{max} }
+\newcommand{\min}{\mbox{min} }
+\newcommand{\Pr}{\mbox{Pr} }
+\newcommand{\sec}{\mbox{sec} }
+\newcommand{\sinh}{\mbox{sinh} }
+\newcommand{\sup}{\mbox{sup} }
+\newcommand{\tanh}{\mbox{tanh} }
+\newcommand{\bmod}{\mbox{mod} }
 \newcommand{\pmod}[1]{(\mbox{mod} #1)}
 
 
@@ -1450,9 +1449,9 @@
 \newenvironment{math}{\(}{\)}
 \newcommand{\lciToggleMathMode}{\lciIf{\lciMathMode}{\)}{\(}}
 
-\newcommand{\[}{\lcRawHtml{<P ALIGN=CENTER>
+\newcommand{\[}{\lcRawHtml{<TABLE ALIGN=CENTER><TR><TD NOWRAP>
 }\(\newcommand{\lciMathModeDisplay}{\lcTrue}}
-\newcommand{\]}{\)\newcommand{\lciMathModeDisplay}{\lcFalse}\lcRawHtml{<P>}}
+\newcommand{\]}{\)\newcommand{\lciMathModeDisplay}{\lcFalse}\lcRawHtml{</TABLE>}}
 \newenvironment{displaymath}{\[}{\]}
 
 %% Called for TeX $$ sequence:
@@ -1466,12 +1465,13 @@
 
 \newcommand{\sqrt}[1]{\lcRawHtml{&radic;<span style="text-decoration:overline">}#1\lcRawHtml{</span>}}
 \newcommand{\sqrt@om}{\lcRawHtml{root<SUB>}#1\lcRawHtml{</SUB>}(#2)}
-\newcommand{\frac}[2]{\lcRawHtml{<span class="sym">(</span>}#1\lcRawHtml{<span class="sym">)</span>/<span class="sym">(</span>}#2\lcRawHtml{<span class="sym">)</span>}}
-%\newcommand{\frac}[2]{\lcRawHtml{<TABLE><TR><TD ALIGN=CENTER>}#1\lcRawHtml
-%    {</TD></TR><TR><TD ALIGN=CENTER><hr></TD></TR><TR><TD ALIGN=CENTER>}%
-%    #2\lcRawHtml{</TD></TR></TABLE>}}
-%% correct in HTML 3.2 ?:
-% \newcommand{\frac}[2]{\lcRawHtml{<BOX>}#1\lcRawHtml{<OVER>}#2\lcRawHtml{</BOX>}}
+
+\newcommand{\frac}[2]{\lciIf{\lciMathModeDisplay}
+  {\lcRawHtml{</MATH><TD NOWRAP><TABLE><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP><MATH>}#1%
+   \lcRawHtml{</MATH></TABLE><TR class="frac"><TD ALIGN=CENTER><hr style="color:black" noshade><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP><MATH>}#2%
+   \lcRawHtml{</MATH></TABLE></TABLE><TD NOWRAP><MATH>}}%
+  {\lcRawHtml{<span class="sym">(</span>}#1\lcRawHtml{<span class="sym">)</span>/<span class="sym">(</span>}#2\lcRawHtml{<span class="sym">)</span>}}}
+
 \newcommand{\over}{<span class="sym">/</span>}  %% TeX style fraction
 
 \newcommand{\dots}{\lcRawHtml{ <span class="sym">&#x0085;</span> }}
