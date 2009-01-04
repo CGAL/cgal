@@ -13,18 +13,16 @@ since negative exponents may appear in intermediate results.
 The set of exponent vectors with elementwise 
 addition forms an {\em Abelian Group}. 
 
-Though this class is derived from \ccc{std::vector<int>} the comparison
-is changes such that the lexicographic order starts with the last entry. 
-This reflects the fact that the last entry corresponds 
-to the last/outermost variable of a multivariate polynomial. 
+Beside the constructors \ccClassName\ has almost the same interface as an  
+\ccc{std::vector<int>}. Moreover the comparison is changed such that 
+the lexicographic order starts the comparison at the last entry.  
+This reflects the fact that the last entry corresponds to the 
+outermost variable of a multivariate polynomial. 
 
 %\footnote{Should we add a scalar multiplication? }
 
 
 \ccInclude{CGAL/Exponent_vector.h}
-
-\ccInheritsFrom
-\ccc{std::vector<int>}
 
 \ccIsModel
 
