@@ -73,7 +73,7 @@ maximal dimension of its simplices. \\
 A simplicial complex $T$ is pure if any simplex of $T$
 is included in a simplex of $T$ with maximal dimension. \\
 Two simplexes in $T$ with maximal dimension $d$ are said to be
-adjacent if they share a $(d-1)$ dimensional sub-face.
+adjacent if they share a $d-1$ dimensional sub-face.
 A simplicial complex is connected if the adjacency relation
 defines a connected graph 
 over  the set of simplices of $T$ with maximal dimension. \\
@@ -667,7 +667,7 @@ of this diagram
 
 \subsection{Description\label{Subsection_2D_Triangulations_Regular_Description}}
 \ccIndexMainItem{power diagram}
-Let ${  PW} = \{(p_i, w_i), i = 1, \ldots , n \}$ be a set of 
+Let ${  PW} = \{(p_i, w_i) | i = 1, \ldots , n \}$ be a set of 
 weighted points where each $p_i$ is a point and each $w_i$
 is a scalar called the weight of point $p_i$.
 Alternatively, each weighted point $(p_i, w_i)$ can be regarded
@@ -681,7 +681,7 @@ is less than its power with respect to any other sphere
 in ${  PW}$. In the two-dimensional space,
 the dual of this diagram is a triangulation 
 whose domain covers the convex hull of the set 
-${  P}= \{ p_i, i = 1, \ldots , n \}$ of center points
+${  P}= \{ p_i | i = 1, \ldots , n \}$ of center points
 and whose vertices form a subset of ${  P}$.
 Such a triangulation is called a regular triangulation.
 Three points $p_i, p_j$ and $p_k$ of ${  P}$
@@ -694,8 +694,8 @@ with respect to any other sphere in  ${  PW}$.
 
 Let us defined the power product of two weighted points
 $(p_i, w_i)$ and $(p_j, w_j)$ as:
-\[\Pi(p_i, w_i,p_j, w_j) = p_ip_j ^2 - w_i  - w_j  .\]
-$\Pi(p_i, w_i,p_j, 0)$ is simply the power of point $p_j$
+\[\Pi(p_i, w_i, p_j, w_j) = p_ip_j ^2 - w_i  - w_j  .\]
+$\Pi(p_i, w_i, p_j, 0)$ is simply the power of point $p_j$
 with respect to the sphere $(p_i, w_i)$, and two weighted points 
 are said to be orthogonal if their power product is null.
 The power circle of three weighted points
@@ -746,7 +746,7 @@ of the weighted points set ${  PW}$
 can be obtained as the projection
 on the two dimensional plane of the convex hull of the set of three
 dimensional points 
-${  P'}= \{ (p_i,p_i ^2 - w_i ), i = 1, \ldots , n \}$.
+${  P'}= \{ (p_i,p_i ^2 - w_i ) | i = 1, \ldots , n \}$.
 
 The class \ccc{Regular_triangulation_2<Traits, Tds>}
  is designed to maintain the
