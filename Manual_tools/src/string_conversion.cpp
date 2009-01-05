@@ -70,7 +70,7 @@ const char* html_font_opening[ end_font_array] = {
     "<TT>",
     "<TT>",
     "<VAR>",
-    "<MATH>"
+    "<span class=\"math\">"
 };
 const char* html_font_closing[ end_font_array] = {
     "",
@@ -81,7 +81,7 @@ const char* html_font_closing[ end_font_array] = {
     "</TT>",
     "</TT>",
     "</VAR>",
-    "</MATH>"
+    "</span>"
 };
 
 const int max_tag_size = 20;

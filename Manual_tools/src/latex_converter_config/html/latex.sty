@@ -1444,8 +1444,8 @@
 % declare TeX compatible \ifmmode (can be used in the ifthen.sty)
 \newcommand{\ifmmode}{\lciMathMode}
 
-\newcommand{\(}{\newcommand{\lciMathMode}{\lcTrue}\lcRawHtml{<MATH>}}
-\newcommand{\)}{\newcommand{\lciMathMode}{\lcFalse}\lcRawHtml{</MATH>}}
+\newcommand{\(}{\newcommand{\lciMathMode}{\lcTrue}\lcRawHtml{<span class="math">}}
+\newcommand{\)}{\newcommand{\lciMathMode}{\lcFalse}\lcRawHtml{</span>}}
 \newenvironment{math}{\(}{\)}
 \newcommand{\lciToggleMathMode}{\lciIf{\lciMathMode}{\)}{\(}}
 
@@ -1467,9 +1467,9 @@
 \newcommand{\sqrt@om}{\lcRawHtml{root<SUB>}#1\lcRawHtml{</SUB>}(#2)}
 
 \newcommand{\frac}[2]{\lciIf{\lciMathModeDisplay}
-  {\lcRawHtml{</MATH><TD NOWRAP><TABLE><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP><MATH>}#1%
-   \lcRawHtml{</MATH></TABLE><TR class="frac"><TD ALIGN=CENTER><hr style="color:black" noshade><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP><MATH>}#2%
-   \lcRawHtml{</MATH></TABLE></TABLE><TD NOWRAP><MATH>}}%
+  {\lcRawHtml{</span><TD NOWRAP><TABLE><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP><span class="math">}#1%
+   \lcRawHtml{</span></TABLE><TR class="frac"><TD ALIGN=CENTER><hr style="color:black" noshade><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP><span class="math">}#2%
+   \lcRawHtml{</span></TABLE></TABLE><TD NOWRAP><span class="math">}}%
   {\lcRawHtml{<span class="sym">(</span>}#1\lcRawHtml{<span class="sym">)</span>/<span class="sym">(</span>}#2\lcRawHtml{<span class="sym">)</span>}}}
 
 \newcommand{\over}{<span class="sym">/</span>}  %% TeX style fraction
