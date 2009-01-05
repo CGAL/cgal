@@ -22,8 +22,8 @@ Of course, also more general number types can be used as a ring type
 in a homogeneous kernel class. In some computations, e.g.\ accessing 
 Cartesian coordinates, divisions cannot be avoided. In these computations a 
 second number type, the field type, is used. \cgal\ automatically generates 
-this number type as a \ccStyle{Quotient}\ccTexHtml{, 
-cf.\ Subsection~\ref{Quotient}}{}. For the Cartesian kernels 
+this number type as a \ccc{Quotient}.
+For the Cartesian kernels 
 there is only one number type that is used for all calculations.
 
 The kernel classes provide access to the number types 
