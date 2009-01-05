@@ -602,7 +602,7 @@ public:
     Face_handle face= e.first;
     int index= e.second;
     Face_handle mirror_face = face->neighbor(index);
-    int mirror_index =face->mirror_index(index);
+    int mirror_index =face->neighbor(index)->index(face);
     Edge em(mirror_face,mirror_index);
     CGAL_precondition(mirror_face->neighbor(mirror_index) == face);
 
@@ -664,7 +664,7 @@ public:
     CGAL_assertion(mirror_flipped_edge == TDS_helper::mirror_edge(flipped_edge));
     //CGAL_postcondition(del_.is_face(face));
 
-    CGAL_assertion(mirror_index == face->mirror_index(index));
+    CGAL_assertion(mirror_index == face->nieghbor(index)->index(face));
     CGAL_assertion(mirror_face == face->neighbor(index));
 
     watcher_.post_flip(flipped_edge);
