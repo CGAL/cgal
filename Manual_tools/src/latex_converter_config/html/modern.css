@@ -14,7 +14,7 @@
 
 body {
   background-color: #ffffff;
-  font-family: arial,sans-serif;
+  font-family: arial, sans-serif;
   color:black;
 }
 
@@ -111,14 +111,18 @@ math {
        font-size: 120%;
 }
 span.cal { font-family: "lucida calligraphy"; }
-span.sym { font-style: normal; }
+span.sym {
+       font-family: "Arial Unicode MS", arial, serif;
+       font-style: normal; }
 span.big_sym {
+       font-family: "Arial Unicode MS", arial, serif;
        font-style: normal;
        font-size: 150%;
 }
 span.bigbig_sym {
+       font-family: "Arial Unicode MS", arial, serif;
        font-style: normal;
-       font-size: 170%;
+       font-size: 200%;
 }
 
 sub { font-size: 80%; }
