@@ -18,10 +18,7 @@
 
 \ccDefinition
   
-Figure~\ccTexHtml{\ref{figurePolyOptionalMethods} on page 
-\pageref{figurePolyOptionalMethods}}{}\begin{ccHtmlOnly}
-  <A HREF="#figurePolyOptionalMethods">&#x261E;</A>
-\end{ccHtmlOnly}
+Figure~\ref{figurePolyOptionalMethods}
 depicts the relationship between a halfedge and its incident
 halfedges, vertices, and facets.  A halfedge is an oriented edge
 between two vertices. It is always paired with a halfedge pointing in
@@ -40,14 +37,23 @@ assignments of the form \ccc{h = h->next()->opposite()} cycle
 clockwise around the vertex and traverse all halfedges incident to
 this vertex. Two circulators are provided for these circular orders.
 
-\begin{ccTexOnly}
     \begin{figure}[bht]
+\begin{ccTexOnly}
         \begin{center}
           \parbox{\textwidth}{%
               \includegraphics[width=\textwidth]%
                   {Polyhedron_ref/fig/poly_optional}%
           }
         \end{center}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+    <CENTER>
+    <A HREF="fig/poly_optional.gif">
+        <img src="fig/poly_optional_small.gif" 
+             alt="Class Diagram"></A><BR>
+    </CENTER>
+\end{ccHtmlOnly}
         \caption{The three classes \protect\ccc{Vertex}, 
           \protect\ccc{Halfedge}, and 
           \protect\ccc{Facet} of the polyhedral surface. Member
@@ -55,21 +61,6 @@ this vertex. Two circulators are provided for these circular orders.
           are optionally supported.}
         \label{figurePolyOptionalMethods}
     \end{figure}
-\end{ccTexOnly}
-
-\begin{ccHtmlOnly}
-    <CENTER>
-    <A NAME="figurePolyOptionalMethods">
-    <A HREF="fig/poly_optional.gif">
-        <img src="fig/poly_optional_small.gif" 
-             alt="Class Diagram"></A><BR>
-    <A HREF="fig/poly_optional.gif">Figure:</A>
-    The three classes <I>Vertex</I>, <I>Halfedge</I>, and 
-          <I>Facet</I> of the polyhedral surface. Member
-          functions with shaded background are mandatory. The others
-          are optionally supported.
-    </CENTER>
-\end{ccHtmlOnly}
 
 
 The incidences encoded in \ccc{opposite()} and \ccc{next()} are
