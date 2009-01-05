@@ -26,6 +26,7 @@
 
 #include <set>
 #include <algorithm>
+#include <cassert>
 
 
 /// The Gyroviz_point_3 class represents a 3D point with:
