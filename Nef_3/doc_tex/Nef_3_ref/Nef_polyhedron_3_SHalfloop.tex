@@ -19,10 +19,7 @@
 \ccDefinition
 
 A shalfloop is a great circle on a sphere map. 
-Figure~\ccTexHtml{\ref{figureNef3HalfloopIncidences} on page 
-\pageref{figureNef3HalfloopIncidences}}{}\begin{ccHtmlOnly}
-  <A HREF="#figureNef3HalfedgeIncidences">&#x261E;</A>
-\end{ccHtmlOnly}
+Figure~\ref{figureNef3HalfloopIncidences}
 depicts the relationship between a shalfloop and its incident
 shalfloops, and sfaces on a sphere map.  A shalfloop is 
 an oriented sloop. It is always paired with a 
@@ -30,26 +27,24 @@ shalfloop whose supporting \ccc{Sphere_circle} is pointing in
 the opposite direction. The \ccc{twin()} member function returns
 this shalfloop of opposite orientation.
 
-\begin{ccTexOnly}
     \begin{figure}[bht]
+\begin{ccTexOnly}
         \begin{center}
           \parbox{0.3\textwidth}{%
               \includegraphics[width=0.3\textwidth]{Nef_3_ref/fig/shalfloopB}%
           }
         \end{center}
-        \label{figureNef3HalfloopIncidences}
-    \end{figure}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
     <CENTER>
-    <A NAME="figureNef3SHalfloopIncidences">
     <A HREF="fig/shalfloopB.gif">
         <img src="fig/shalfloopB.gif" 
              alt="Incidences of an SHalfloop"></A><BR>
-    <A HREF="fig/shalfloopB.gif">Figure:</A>
     </CENTER>
 \end{ccHtmlOnly}
+        \label{figureNef3HalfloopIncidences}
+    \end{figure}
 
 A sphere map having a shalfloop models the neighborhood of a vertex which is 
 isolated on a facet. That facet is returned by the member function

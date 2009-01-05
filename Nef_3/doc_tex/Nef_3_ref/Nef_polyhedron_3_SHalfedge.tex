@@ -19,10 +19,7 @@
 \ccDefinition
 
 A shalfedge is a great arc on a sphere map. 
-Figure~\ccTexHtml{\ref{figureNef3HalfedgeIncidences} on page 
-\pageref{figureNef3HalfedgeIncidences}}{}\begin{ccHtmlOnly}
-  <A HREF="#figureNef3HalfedgeIncidences">&#x261E;</A>
-\end{ccHtmlOnly}
+Figure~\ref{figureNef3HalfedgeIncidences}
 depicts the relationship between a shalfedge and its incident
 shalfedges, svertices, and sfaces on a sphere map.  A shalfedge is 
 an oriented sedge between two svertices. It is always paired with a 
@@ -30,26 +27,24 @@ shalfedge pointing in
 the opposite direction. The \ccc{twin()} member function returns
 this shalfedge of opposite orientation.
 
-\begin{ccTexOnly}
     \begin{figure}[bht]
+\begin{ccTexOnly}
         \begin{center}
           \parbox{0.4\textwidth}{%
               \includegraphics[width=0.4\textwidth]{Nef_3_ref/fig/shalfedge}%
           }
         \end{center}
-        \label{figureNef3HalfedgeIncidences}
-    \end{figure}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
     <CENTER>
-    <A NAME="figureNef3HalfedgeIncidences">
     <A HREF="fig/shalfedge.gif">
         <img src="fig/shalfedge.gif" 
              alt="Incidences of an SHalfedge"></A><BR>
-    <A HREF="fig/shalfedge.gif">Figure:</A>
     </CENTER>
 \end{ccHtmlOnly}
+        \label{figureNef3HalfedgeIncidences}
+    \end{figure}
 
 The \ccc{snext()} member function points 
 to the successor shalfedge around this sface while the \ccc{sprev()} member 
@@ -64,11 +59,8 @@ this svertex. The assignment \ccc{se = se->cyclic_adj_succ()} can be
 used as a shortcut.
 
 The role of shalfedges in a facet is illustrated in 
-Figure~\ccTexHtml{\ref{figureNef3FacetIncidences} on page 
-\pageref{figureNef3FacetIncidences}}{}\begin{ccHtmlOnly}
-  <A HREF="#figureNef3FacetIncidences">&#x261E;</A>
-\end{ccHtmlOnly}. The \ccc{facet()} member function returns the facet 
-in which
+Figure~\ref{figureNef3FacetIncidences}.
+The \ccc{facet()} member function returns the facet in which
 the shalfedge is part of one of the facet cycles. The successive assignment of 
 the form \ccc{se = se->next()} cycles counterclockwise around the facet (or a
 hole of the facet).

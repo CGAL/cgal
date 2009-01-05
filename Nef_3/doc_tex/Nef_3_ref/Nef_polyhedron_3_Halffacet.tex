@@ -22,26 +22,24 @@ A halffacet is an oriented, rectilinear bounded part of a plane. The following
 figure depicts the incidences to halfedges, vertices and the notion of facet
 cycles.
 
-\begin{ccTexOnly}
     \begin{figure}[bht]
+\begin{ccTexOnly}
         \begin{center}
           \parbox{0.4\textwidth}{%
               \includegraphics[width=0.4\textwidth]{Nef_3_ref/fig/snc}%
           }
         \end{center}
-        \label{figureNef3FacetIncidences}
-    \end{figure}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
     <CENTER>
-    <A NAME="figureNef3HalffacetIncidences">
     <A HREF="fig/snc.gif">
         <img src="fig/snc.gif" 
              alt="Incidences of an Halffacet"></A><BR>
-    <A HREF="fig/snc.gif">Figure:</A>
     </CENTER>
 \end{ccHtmlOnly}
+        \label{figureNef3FacetIncidences}
+    \end{figure}
 
 The member function \ccc{twin} returns the opposite halffacet, \ccc{incident_volume}
 returns the incident volume. A Halffacet cycle either consists of consecutive
