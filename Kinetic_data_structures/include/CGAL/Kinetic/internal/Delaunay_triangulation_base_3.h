@@ -817,7 +817,7 @@ public:
     CGAL_precondition(k != Point_key());
     unsigned int bin= k.index();
     while (vhs_.size() <= bin) {
-      vhs_.push_back(NULL);
+      vhs_.push_back(Vertex_handle(NULL));
     }
     /*if (vhs_.size() <=bin){
       vhs_.resize(bin+1);
