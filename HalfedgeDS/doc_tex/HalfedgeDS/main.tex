@@ -96,17 +96,13 @@ the old implementation.
 \section{Software Design}
 
 
-\begin{ccTexOnly}
   \begin{figure}
+\begin{ccTexOnly}
     \begin{center}
       \parbox{0.7\textwidth}{%
           \includegraphics[width=0.7\textwidth]{HalfedgeDS/fig/hds_design}%
       }
     \end{center}
-    \caption{Responsibilities of the different layers in the 
-             halfedge data-structure design.}
-    \label{figureHalfedgeDSDesign}
-  \end{figure}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
@@ -114,15 +110,15 @@ the old implementation.
     <A NAME="figureHalfedgeDSDesign">
         <img src="fig/hds_design_col.gif"
          alt="Halfedge Data-Structure Design"><BR>
-    Figure: Responsibilities of the different layers in the 
-            halfedge data-structure design.
     <P>
     </CENTER>
 \end{ccHtmlOnly}
+    \caption{Responsibilities of the different layers in the 
+             halfedge data-structure design.}
+    \label{figureHalfedgeDSDesign}
+  \end{figure}
 
-Figure~\ccTexHtml{\ref{figureHalfedgeDSDesign}}{}\begin{ccHtmlOnly}
-  <A HREF="Chapter_main.html#figureHalfedgeDSDesign">&#x261E;</A>
-\end{ccHtmlOnly}
+Figure~\ref{figureHalfedgeDSDesign}
 illustrates the responsibilities of the three layers of the software
 design, with the \ccc{CGAL::Polyhedron_3} as an example for the top
 layer.  The items provide the space for the information that is
@@ -164,10 +160,8 @@ There are two different models for the \ccc{HalfedgeDS} concept available,
 Therefore we have kept their interface small and factored out common
 functionality into separate helper classes, \ccc{HalfedgeDS_decorator},
 \ccc{HalfedgeDS_const_decorator}, and \ccc{HalfedgeDS_items_decorator},
-which are not shown in
-Figure~\ccTexHtml{\ref{figureHalfedgeDSDesign}}{}\begin{ccHtmlOnly} <A
-HREF="Chapter_main.html#figureHalfedgeDSDesign">&#x261E;</A>
-\end{ccHtmlOnly}, but would be placed at the side of the \ccc{HalfedgeDS}
+which are not shown in Figure~\ref{figureHalfedgeDSDesign},
+but would be placed at the side of the \ccc{HalfedgeDS}
 since they broaden that interface but do not hide it.  These helper
 classes contain operations that are useful to implement the operations
 in the next layer, for example, the polyhedron. They add, for example,

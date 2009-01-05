@@ -60,27 +60,18 @@ incident vertex.  For each face and each vertex an incident halfedge
 is stored.  Reduced variants of the halfedge data structure can omit
 some of these incidences, for example the reference to halfedges in
 vertices or the storage of vertices at all. See 
-Figure~\ccTexHtml{\ref{figureOptionalMethods}}{}\begin{ccHtmlOnly}
-  <A HREF="Concept_HalfedgeDS.html#figureOptionalMethods">&#x261E;</A>
-\end{ccHtmlOnly}
+Figure~\ref{figureOptionalMethods}
 for the incidences, the mandatory and optional member functions
 possible for vertices, halfedges, and faces.
 
-\begin{ccTexOnly}
     \begin{figure}[bht]
+\begin{ccTexOnly}
         \begin{center}
           \parbox{\textwidth}{%
               \includegraphics[width=\textwidth]%
                   {HalfedgeDS_ref/fig/hds_optional}%
           }
         \end{center}
-        \caption{The three classes \protect\ccc{Vertex}, 
-          \protect\ccc{Halfedge}, and 
-          \protect\ccc{Face} of the halfedge data structure. Member
-          functions with shaded background are mandatory. The others
-          are optionally supported.}
-        \label{figureOptionalMethods}
-    \end{figure}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
@@ -89,13 +80,15 @@ possible for vertices, halfedges, and faces.
     <A HREF="fig/hds_optional.gif">
         <img src="fig/hds_optional_small.gif" 
              alt="Class Diagram"></A><BR>
-    <A HREF="fig/hds_optional.gif">Figure:</A>
-    The three classes <I>Vertex</I>, <I>Halfedge</I>, and 
-          <I>Face</I> of the halfedge data structure. Member
-          functions with shaded background are mandatory. The others
-          are optionally supported.
     </CENTER>
 \end{ccHtmlOnly}
+        \caption{The three classes \protect\ccc{Vertex}, 
+          \protect\ccc{Halfedge}, and 
+          \protect\ccc{Face} of the halfedge data structure. Member
+          functions with shaded background are mandatory. The others
+          are optionally supported.}
+        \label{figureOptionalMethods}
+    \end{figure}
 
 A \ccRefName\ organizes the internal storage of its items.  Examples
 are a list-based or a vector-based storage. The \ccRefName\ exhibits
