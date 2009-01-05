@@ -33,27 +33,18 @@ along the open region. A halfedge optionally stores a reference to the
 previous halfedge along the face, a reference to an incident vertex,
 and a reference to an incident face. Type tags indicate whether the
 related member functions are supported.
-Figure~\ccTexHtml{\ref{figureHalfedgeDSOptionalMethods}}{}\begin{ccHtmlOnly}
-  <A HREF="#figureHalfedgeDSOptionalMethods">&#x261E;</A>
-\end{ccHtmlOnly}
+Figure~\ref{figureHalfedgeDSOptionalMethods}
 depicts the relationship between a halfedge and its incident
 halfedges, vertices, and faces.
 
-\begin{ccTexOnly}
     \begin{figure}[bht]
+\begin{ccTexOnly}
         \begin{center}
           \parbox{\textwidth}{%
               \includegraphics[width=\textwidth]%
                   {HalfedgeDS_ref/fig/hds_optional}%
           }
         \end{center}
-        \caption{The three classes \protect\ccc{Vertex}, 
-          \protect\ccc{Halfedge}, and 
-          \protect\ccc{Face} of the halfedge data structure. Member
-          functions with shaded background are mandatory. The others
-          are optionally supported.}
-        \label{figureHalfedgeDSOptionalMethods}
-    \end{figure}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
@@ -62,13 +53,15 @@ halfedges, vertices, and faces.
     <A HREF="fig/hds_optional.gif">
         <img src="fig/hds_optional_small.gif" 
              alt="Class Diagram"></A><BR>
-    <A HREF="fig/hds_optional.gif">Figure:</A>
-    The three classes <I>Vertex</I>, <I>Halfedge</I>, and 
-          <I>Face</I> of the halfedge data structure. Member
-          functions with shaded background are mandatory. The others
-          are optionally supported.
     </CENTER>
 \end{ccHtmlOnly}
+        \caption{The three classes \protect\ccc{Vertex}, 
+          \protect\ccc{Halfedge}, and 
+          \protect\ccc{Face} of the halfedge data structure. Member
+          functions with shaded background are mandatory. The others
+          are optionally supported.}
+        \label{figureHalfedgeDSOptionalMethods}
+    \end{figure}
 
 For the protection of the integrity of the data structure classes such
 as \ccc{CGAL::Polyhedron_3} are allowed to redefine the modifying member
