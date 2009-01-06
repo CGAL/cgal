@@ -417,13 +417,13 @@
     \lciIfEqualExpanded{\lciCounterfootnote}{0}{
         \gdef{\lciFootnotes}{#X1%
         \lcRawHtml{<A NAME="Footnote_#XC3#XC4">&nbsp;<SUP>}#XC2{#XC4}%
-            \lcRawHtml{</SUP>&nbsp;</A></TD><TD VALIGN=TOP>
+            \lcRawHtml{</SUP>&nbsp;</A><TD VALIGN=TOP>
 }#5
 }}%
     {%
-        \gdef{\lciFootnotes}{#X1\lcRawHtml{</TD></TR><TR><TD VALIGN=TOP>}
+        \gdef{\lciFootnotes}{#X1\lcRawHtml{<TR><TD VALIGN=TOP>}
         \lcRawHtml{<A NAME="Footnote_#XC3#XC4">&nbsp;<SUP>}#XC2{#XC4}%
-            \lcRawHtml{</SUP>&nbsp;</A></TD><TD VALIGN=TOP>
+            \lcRawHtml{</SUP>&nbsp;</A><TD VALIGN=TOP>
 }#5
 }}}
 
@@ -431,9 +431,7 @@
 \newcommand{\lciPrintFootnotes}{%
     \lciIfEqualExpanded{\lciCounterfootnote}{0}{}{%
         \lcRawHtml{<P><HR><H3>Footnotes</H3><P><TABLE><TR><TD VALIGN=TOP>
-}\lciFootnotes\lcRawHtml{
-</TD></TR></TABLE>
-}}}
+}\lciFootnotes\lcRawHtml{</TABLE>}}}
 \newcommand{\lciResetFootnotes}{%
     \setcounter{footnote}{0}%
     \gdef{\lciFootnotes}{}}
@@ -1633,7 +1631,7 @@
 
 \newcommand{\marginpar}[1]{%
     \lcRawHtml{<TABLE ALIGN=RIGHT WIDTH=100 BORDER=2><TR><TD>}%
-    #1\lcRawHtml{</TD></TR></TABLE>}}
+    #1\lcRawHtml{</TABLE>}}
 \newcommand{\marginpar@om}{\marginpar{#2}}
 
 \newcommand{\reversemarginpar}{}
@@ -1668,16 +1666,16 @@
     \renewcommand{\\*@o}{\lciTabbingNL}%
 }
 \newcommand{\lciTabbingEnd}{\lcRawHtml{
-</TD></TR></TABLE>
+</TABLE>
 }%% We rely on the scoping rules of definitions in environments to
   % restore the old definitions of \=, \> and \\.
 }
 \newcommand{\lciTabbingNL}{\lcRawHtml{
-    </TD></TR><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+    <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
 }\lciSkipWhiteSpace
 }
 \newcommand{\lciTabbingSkip}{\lcRawHtml{
-        </TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+        <TD ALIGN=LEFT VALIGN=TOP NOWRAP>
 }}
 
 
@@ -1761,9 +1759,7 @@
     \lciIfEqualExpanded{\lcTabularBorder}{0}%
     {%
       \lcRawHtml{
-  <TR>
-    <TD VALIGN=TOP ALIGN=LEFT NOWRAP COLSPAN=#XC1><HR></TD>
-  </TR>}%
+  <TR><TD VALIGN=TOP ALIGN=LEFT NOWRAP COLSPAN=#XC1><HR>}%
     }%
     {}%
     \lciIfEqual{#C2}{\hline}
@@ -1784,21 +1780,15 @@
 }#3}
 
 \newcommand{\lciTabularEnd}{%
-  \lciIfDefined{\lciNoTabularClosing}{}{\lcRawHtml{
-    </TD>
-  </TR>}}
+  \lciIfDefined{\lciNoTabularClosing}{}{}
 \lcRawHtml{</TABLE>
 }%% We rely on the scoping rules of definitions in environments to
   % restore the old definitions of & and \\.
   \gdef\lcTabularBorder{0}%
 }
 
-\newcommand{\lciTabularNL}{\lcRawHtml{
-    </TD>
-  </TR>}\lciTabularContNL}
-
-\newcommand{\lciTabularSkip}{\lcRawHtml{
-    </TD>}\lciTabularCont}
+\newcommand{\lciTabularNL}{\lciTabularContNL}
+\newcommand{\lciTabularSkip}{\lciTabularCont}
 
 \newcommand{\hline}{\lcRawHtml{<HR>}}
 \newcommand{\vline}{}
@@ -1875,9 +1865,9 @@
 }
 
 \newcommand{\bibitem}[1]{\lciFirstBibItem
-    \newcommand{\lciFirstBibItem}{\lcNoLinkEnd\lcRawHtml{</TD></TR>}}%
+    \newcommand{\lciFirstBibItem}{\lcNoLinkEnd}%
     \lcRawHtml{<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-        <A NAME="Biblio_#C1"></A><B>[#C1]</B></TD>
+        <A NAME="Biblio_#C1"></A><B>[#C1]</B>
     <TD ALIGN=LEFT VALIGN=TOP>}%
     \lcNoLinkBegin
 }
@@ -1999,8 +1989,7 @@
 \newcommand{\makebox@om}{\mbox{#2}}
 \newcommand{\makebox@oom}{\mbox{#3}}
 
-\newcommand{\fbox}[1]{\lcRawHtml{<TABLE BORDER=2><TR><TD>
-}#1\lcRawHtml{</TD></TR></TABLE>}}
+\newcommand{\fbox}[1]{\lcRawHtml{<TABLE BORDER=2><TR><TD>}#1\lcRawHtml{</TABLE>}}
 \newcommand{\framebox}[1]{\fbox{#1}}
 \newcommand{\framebox@om}{\fbox{#2}}
 \newcommand{\framebox@oom}{\fbox{#3}}
