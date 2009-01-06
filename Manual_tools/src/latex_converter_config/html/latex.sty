@@ -1690,7 +1690,7 @@
 
 \newenvironment{tabular}{\lciTabularBegin{}}{\lciTabularEnd}
 \newenvironment{tabular*}{\lciTabularBegin}{\lciTabularEnd}
-\newenvironment{array}{\lciTabularBegin{}}{\lciTabularEnd}
+\newenvironment{array}{\lcRawHtml{</span><TD><span class="math">}\lciTabularBegin{}}{\lciTabularEnd\lcRawHtml{</span><TD nowrap="nowrap"><span class="math">}}
 \newenvironment{eqnarray}{\[\lciTabularBegin{}{lll}}{\lciTabularEnd\]}
 \newenvironment{eqnarray*}{\[\lciTabularBegin{}{lll}}{\lciTabularEnd\]}
 \newcommand{lefteqn}[1]{#1}
