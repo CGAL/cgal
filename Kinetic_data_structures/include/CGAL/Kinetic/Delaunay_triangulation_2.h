@@ -664,7 +664,7 @@ public:
     CGAL_assertion(mirror_flipped_edge == TDS_helper::mirror_edge(flipped_edge));
     //CGAL_postcondition(del_.is_face(face));
 
-    CGAL_assertion(mirror_index == face->nieghbor(index)->index(face));
+    CGAL_assertion(mirror_index == face->neighbor(index)->index(face));
     CGAL_assertion(mirror_face == face->neighbor(index));
 
     watcher_.post_flip(flipped_edge);
