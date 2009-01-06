@@ -548,37 +548,7 @@
 % |     * Calligraphic letters
 % +--------------------------------------------------------------------------
 \newcommand{\cal}{\mathcal} % comes from plain TeX
-\newcommand{\mathcal}[1]{\lciScanMathcal #C1@}
-\newcommand{\lciScanMathcal}[1]{%
-  \lciIfEqual{#1}{@}{}{\lciGlueFirstToSecond{\lciMathcal}{#1}\lciScanMathcal}}
-\newcommand{\lciMathcal}{}  % dummy, supporting other chars/macros as argument
-
-\newcommand{\lciMathcalA}{\lcRawHtml {<span class="cal">A</span>}}
-\newcommand{\lciMathcalB}{\lcRawHtml {<span class="cal">B</span>}}
-\newcommand{\lciMathcalC}{\lcRawHtml {<span class="cal">C</span>}}
-\newcommand{\lciMathcalD}{\lcRawHtml {<span class="cal">D</span>}}
-\newcommand{\lciMathcalE}{\lcRawHtml {<span class="cal">E</span>}}
-\newcommand{\lciMathcalF}{\lcRawHtml {<span class="cal">F</span>}}
-\newcommand{\lciMathcalG}{\lcRawHtml {<span class="cal">G</span>}}
-\newcommand{\lciMathcalH}{\lcRawHtml {<span class="cal">H</span>}}
-\newcommand{\lciMathcalI}{\lcRawHtml {<span class="cal">I</span>}}
-\newcommand{\lciMathcalJ}{\lcRawHtml {<span class="cal">J</span>}}
-\newcommand{\lciMathcalK}{\lcRawHtml {<span class="cal">K</span>}}
-\newcommand{\lciMathcalL}{\lcRawHtml {<span class="cal">L</span>}}
-\newcommand{\lciMathcalM}{\lcRawHtml {<span class="cal">M</span>}}
-\newcommand{\lciMathcalN}{\lcRawHtml {<span class="cal">N</span>}}
-\newcommand{\lciMathcalO}{\lcRawHtml {<span class="cal">O</span>}}
-\newcommand{\lciMathcalP}{\lcRawHtml {<span class="cal">P</span>}}
-\newcommand{\lciMathcalQ}{\lcRawHtml {<span class="cal">Q</span>}}
-\newcommand{\lciMathcalR}{\lcRawHtml {<span class="cal">R</span>}}
-\newcommand{\lciMathcalS}{\lcRawHtml {<span class="cal">S</span>}}
-\newcommand{\lciMathcalT}{\lcRawHtml {<span class="cal">T</span>}}
-\newcommand{\lciMathcalU}{\lcRawHtml {<span class="cal">U</span>}}
-\newcommand{\lciMathcalV}{\lcRawHtml {<span class="cal">V</span>}}
-\newcommand{\lciMathcalW}{\lcRawHtml {<span class="cal">W</span>}}
-\newcommand{\lciMathcalX}{\lcRawHtml {<span class="cal">X</span>}}
-\newcommand{\lciMathcalY}{\lcRawHtml {<span class="cal">Y</span>}}
-\newcommand{\lciMathcalZ}{\lcRawHtml {<span class="cal">Z</span>}}
+\newcommand{\mathcal}[1]{\lcRawHtml{<span class="cal">}#1\lcRawHtml{</span>}}
 
 % +--------------------------------------------------------------------------
 % |     * Mathbb letters
