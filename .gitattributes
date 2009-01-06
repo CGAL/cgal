@@ -2389,10 +2389,6 @@ Manual_tools/test/Manual_tools/cgal_test eol=lf
 Manual_tools/test/Manual_tools/html.orig.tgz -text svneol=unset#application/gzip
 Matrix_search/demo/Matrix_search/help/index.html svneol=native#text/html
 Matrix_search/demo/Matrix_search/help/rindex.html svneol=native#text/html
-Matrix_search/doc_tex/Bounding_volumes_ref/MatrixSearch_pcenter1.gif -text svneol=unset#image/gif
-Matrix_search/doc_tex/Bounding_volumes_ref/MatrixSearch_pcenter2.gif -text svneol=unset#image/gif
-Matrix_search/doc_tex/Bounding_volumes_ref/MatrixSearch_pcenter3.gif -text svneol=unset#image/gif
-Matrix_search/doc_tex/Bounding_volumes_ref/MatrixSearch_pcenter4.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Matrix_search/matrix.png -text
 Matrix_search/test/Matrix_search/rectangular_p_center_2_random1_test.cmd eol=lf
 Matrix_search/test/Matrix_search/rectangular_p_center_2_random2_test.cmd eol=lf
