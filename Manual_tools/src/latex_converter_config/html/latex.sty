@@ -1695,8 +1695,8 @@
 %% Args: column format string
 \newcommand{\lciTabularBegin}[2]{
   \lciIfEqual{#1}{}%
-    {\lcRawHtml{<TABLE}}%
-    {\lcRawHtml{<TABLE WIDTH="}\lciToHtmlWidth{#1}\lcRawHtml{"}}%
+    {\lcRawHtml{<TABLE CELLSPACING=5 }}%
+    {\lcRawHtml{<TABLE CELLSPACING=5 WIDTH="}\lciToHtmlWidth{#1}\lcRawHtml{"}}%
   \lciIfEqualExpanded{\lcTabularBorder}{0}%
     {}%
     {\lcRawHtml{ BORDER=}\lcTabularBorder}%
@@ -1748,7 +1748,7 @@
   \lciIfEqual{#C1}{\multicolumn}%
     {\lciTabularMulticolumn}%
     {\lcRawHtml{
-    <TD VALIGN=TOP class="math" }\popTDAttrib\lcRawHtml{>}
+    <TD class="math" }\popTDAttrib\lcRawHtml{>}
 #1%
     }% else next character in table entry
 }
@@ -1759,7 +1759,7 @@
     \lciIfEqualExpanded{\lcTabularBorder}{0}%
     {%
       \lcRawHtml{
-  <TR><TD VALIGN=TOP ALIGN=LEFT NOWRAP COLSPAN=#XC1><HR>}%
+  <TR><TD ALIGN=LEFT NOWRAP COLSPAN=#XC1><HR>}%
     }%
     {}%
     \lciIfEqual{#C2}{\hline}
@@ -1776,7 +1776,7 @@
     \lciIfEqual{#2}{c}{ALIGN=CENTER NOWRAP} {%
     \lciIfEqual{#2}{r}{ALIGN=RIGHT NOWRAP}%
     {ALIGN=LEFT}}}% default alignment.
-    \lcRawHtml{ VALIGN=TOP COLSPAN=#XC1>
+    \lcRawHtml{ COLSPAN=#XC1>
 }#3}
 
 \newcommand{\lciTabularEnd}{%
