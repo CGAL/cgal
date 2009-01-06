@@ -1467,9 +1467,9 @@
 \newcommand{\sqrt@om}{\lcRawHtml{root<SUB>}#1\lcRawHtml{</SUB>}(#2)}
 
 \newcommand{\frac}[2]{\lciIf{\lciMathModeDisplay}
-  {\lcRawHtml{</span><TD NOWRAP><TABLE><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP><span class="math">}#1%
-   \lcRawHtml{</span></TABLE><TR class="frac"><TD ALIGN=CENTER><hr style="color:black" noshade><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP><span class="math">}#2%
-   \lcRawHtml{</span></TABLE></TABLE><TD NOWRAP><span class="math">}}%
+  {\lcRawHtml{<TD NOWRAP><TABLE><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP class="math">}#1%
+   \lcRawHtml{</TABLE><TR class="frac"><TD ALIGN=CENTER><hr style="color:black" noshade><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP class="math">}#2%
+   \lcRawHtml{</TABLE></TABLE><TD NOWRAP class="math">}}%
   {\lcRawHtml{<span class="sym">(</span>}#1\lcRawHtml{<span class="sym">)</span>/<span class="sym">(</span>}#2\lcRawHtml{<span class="sym">)</span>}}}
 
 \newcommand{\over}{<span class="sym">/</span>}  %% TeX style fraction
@@ -1690,7 +1690,7 @@
 
 \newenvironment{tabular}{\lciTabularBegin{}}{\lciTabularEnd}
 \newenvironment{tabular*}{\lciTabularBegin}{\lciTabularEnd}
-\newenvironment{array}{\lcRawHtml{</span><TD><span class="math">}\lciTabularBegin{}}{\lciTabularEnd\lcRawHtml{</span><TD nowrap="nowrap"><span class="math">}}
+\newenvironment{array}{\lcRawHtml{<TD class="math">}\lciTabularBegin{}}{\lciTabularEnd\lcRawHtml{<TD nowrap="nowrap" class="math">}}
 \newenvironment{eqnarray}{\[\lciTabularBegin{}{lll}}{\lciTabularEnd\]}
 \newenvironment{eqnarray*}{\[\lciTabularBegin{}{lll}}{\lciTabularEnd\]}
 \newcommand{lefteqn}[1]{#1}

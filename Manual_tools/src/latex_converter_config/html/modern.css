@@ -105,7 +105,7 @@ pre.ExampleCode        { background-color: #e8e8e8; }
 /* ----------------------------------------------------------------------- */
 /* math environment                                                        */
 /* ----------------------------------------------------------------------- */
-span.math {
+.math {
        font-family: serif;
        font-style: italic;
        font-size: 120%;
