@@ -45,14 +45,14 @@ is depicted in Figure \ref{fig:nn_coords}.
 Various papers (\cite{s-vidt-80}, \cite{f-sodt-90},
 \cite{cgal:p-plcbd-93}, \cite{b-scaps-97}, \cite{hs-vbihc-00}) show that
 the natural neighbor coordinates have the following properties:
-  \begin{itemize}
-  \item[(i)] $\mathbf{x} = \sum_{i=1}^n \lambda_i(\mathbf{x}) \mathbf{p_i}$
+  \begin{enumerate}
+  \item $\mathbf{x} = \sum_{i=1}^n \lambda_i(\mathbf{x}) \mathbf{p_i}$
     (barycentric coordinate property).
-  \item[(ii)] For any $i,j \leq n, \lambda_i(\mathbf{p_j})=
+  \item For any $i,j \leq n, \lambda_i(\mathbf{p_j})=
     \delta_{ij}$, where $\delta_{ij}$ is the Kronecker symbol.
-  \item[(iii)] $\sum_{i=1}^n \lambda_i(\mathbf{x}) = 1$ (partition of unity
+  \item $\sum_{i=1}^n \lambda_i(\mathbf{x}) = 1$ (partition of unity
     property).
-  \end{itemize}
+  \end{enumerate}
   For the case where the query point x is located on the envelope of the convex hull of $\mathcal{P}$,
   the potential Voronoi cell of x becomes infinite and :
 	  
