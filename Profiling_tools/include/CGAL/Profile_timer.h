@@ -31,6 +31,8 @@
 //
 // TODO :
 // - detect and handle recursion nicely (currently it accumulates recursive times).
+// - parallel versions : per-thread and summing on all threads.
+// - Timer vs Real_timer ?
 
 #include <CGAL/config.h>
 #include <iostream>
