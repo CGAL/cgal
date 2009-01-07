@@ -48,7 +48,7 @@ struct Profile_timer
     };
 
     Profile_timer(const std::string & ss)
-      : t(0) {}
+      : t(0), s(ss) {}
 
     ~Profile_timer()
     {
