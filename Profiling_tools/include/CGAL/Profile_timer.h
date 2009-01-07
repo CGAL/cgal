@@ -28,6 +28,9 @@
 //   Note: be careful at recursive functions...
 //
 // See also CGAL/Profile_counter.h
+//
+// TODO :
+// - detect and handle recursion nicely (currently it accumulates recursive times).
 
 #include <CGAL/config.h>
 #include <iostream>
