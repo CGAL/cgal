@@ -94,8 +94,7 @@ int main(int argc, char * argv[])
   FT sm_distance_apss = 0.003; // Upper bound of distance to surface (APSS).
                                // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
                                // LS: was 0.005
-  unsigned int nb_neighbors_apss = 12; // K-nearest neighbors (APSS)
-                                       // LS: was 7
+  unsigned int nb_neighbors_apss = 24; // APSS K-nearest neighbors = 4 rings, as suggested by GG
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;

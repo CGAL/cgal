@@ -169,8 +169,7 @@ CPoissonDoc::CPoissonDoc()
   m_sm_distance_apss = 0.003; // Upper bound of distance to surface (APSS).
                               // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
                               // LS: was 0.005
-  m_nb_neighbors_apss = 12; // K-nearest neighbors = 2 rings (APSS)
-                            // LS: was 7
+  m_nb_neighbors_apss = 24; // APSS K-nearest neighbors = 4 rings, as suggested by GG
 
   // Average Spacing options
   m_nb_neighbors_avg_spacing = 7; // K-nearest neighbors = 1 ring (average spacing)

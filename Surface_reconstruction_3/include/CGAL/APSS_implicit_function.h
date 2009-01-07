@@ -282,12 +282,11 @@ public:
       // Is 'p' close to the surface?
       if (!isValid(m->cached_nearest_neighbor, p))
       {
-        // If 'p' is far from the surface, project it onto its nearest neighbor
+        // If 'p' is far from the surface, project its nearest neighbor onto the surface...
         Vector n;
-        Point pp = p;
-        //project(pp,n,1);
-        pp = m->cached_nearest_neighbor.first;
-        n  = m->cached_nearest_neighbor.first.normal();
+        Point pp = m->cached_nearest_neighbor.first;
+        project(pp,n,1);
+        // ...and return the (signed) distance to the surface
         Vector h = sub(p,pp);
         return length(h) * ( dot(n,h)>0. ? 1. : -1.);
       }
@@ -336,7 +335,7 @@ private:
       Neighbor_search search(*(m->tree), p, m->nofNeighbors);
 
       // if p is far away the input point cloud, start with the closest point.
-      if (!isValid(search,p))
+      if (!isValid(*(search.begin()),p))
       {
         p = search.begin()->first;
         n = search.begin()->first.normal();
@@ -353,7 +352,7 @@ private:
           Vector dir = normalize(sub(source,m->as.center));
           p = add(m->as.center,mul(m->as.radius,dir));
           FT flipN = m->as.u4<0. ? -1. : 1.;
-          if (!isValid(search,p))
+          if (!isValid(*(search.begin()),p))
           {
             // if the closest intersection is far away the input points,
             // then we take the other one.
@@ -362,7 +361,7 @@ private:
           }
           n = mul(flipN,dir);
 
-          if (!isValid(search,p))
+          if (!isValid(*(search.begin()),p))
           {
             std::cout << "Invalid projection\n";
           }
