@@ -1,4 +1,4 @@
-CGAL_URL := $(shell ./get_cgal_trunk_url)
+CGAL_URL := $(shell LANG= LC_ALL= ./get_cgal_trunk_url)
 
 RPM_BUILD_ARCH:=$(shell rpm --showrc | awk '/^build arch/ { print $$4}')
 
