@@ -1,0 +1,80 @@
+\section{Software Design}
+
+\subsection{Points and Normals}
+
+We decided to implement the algorithms of the \\
+\begin{itemize}
+\item Input
+\item Analysis
+\item Processing
+\item Output
+\end{itemize}
+steps as global functions that expect as input and output parameters range iterators over:
+
+\begin{itemize}
+\item 3D points
+\item Normals (orientable 3D vectors)
+\item 3D points with unoriented normals
+\item 3D points with oriented normals
+\end{itemize}
+
+This leads to the next concepts to represent these types:
+
+\begin{itemize}
+\item \ccc{Kernel::Point_3}: 3D position.
+\item \ccc{Kernel::Vector_3}: 3D vector.
+\item \ccc{OrientableNormal_3}: normal vector (oriented or not). Inherits from \ccc{Kernel::Vector_3}.
+\item \ccc{PointWithNormal_3}: inherits from \ccc{Kernel::Point_3} and contains a \ccc{Kernel::Vector_3} normal.
+\item \ccc{PointWithOrientableNormal_3}: inherits from \ccc{Kernel::Point_3} and contains a \ccc{OrientableNormal_3} normal.
+\end{itemize}
+
+We provide several models of points and normals concepts, with different speed/space trade-offs:
+
+\begin{itemize}
+\item \ccc{Point_3<Geom_traits>}: CGAL regular 3D position.
+\item \ccc{Vector_3<Geom_traits>}: CGAL regular 3D vector.
+\item \ccc{Lightweight_vector_3<Geom_traits>}: model of the \ccc{Kernel::Vector_3} concept. 3D vector allocated only if not (0,0,0).
+\item \ccc{Orientable_normal_3<Geom_traits>}: model of the \ccc{OrientableNormal_3} concept.
+Inherits from \ccc{Vector_3<Geom_traits>} and contains an "is normal oriented?" flag.
+\item \ccc{Point_with_normal_3<Geom_traits, Normal_3>}: model of the \ccc{PointWithNormal_3} concept.
+Also model of \ccc{PointWithOrientableNormal_3} if \ccc{Normal_3} is a model of \ccc{OrientableNormal_3}.
+\end{itemize}
+
+
+\subsection{Reconstruction}
+
+The package entry point is the contouring algorithm, CGAL Surface Mesh Generator,
+templated by an implicit function.
+
+We plan to add to this package a Marching Cubes implementation and
+several Delaunay-based reconstruction algorithms.
+As these algorithms would be the entry points of the package and are quite
+different, we plan to make them a set of independent classes or functions
+with no common concept.
+
+We define a ReconstructionImplicitFunction concept that will provide
+a common interface to the Marching Cubes and the Surface Mesh Generator:
+
+\ccRefIdfierPage{ReconstructionImplicitFunction}  \\
+
+Eventually, the \ccc{ImplicitFctDelaunayTriangulation_3} concept defines the interface of a 3D Delaunay triangulation requested by the \ccc{Poisson_implicit_function} class:
+
+\ccRefIdfierPage{ImplicitFctDelaunayTriangulation_3}  \\
+
+
+\subsection{Output}
+
+Ideally, we should define a concept for the output of all reconstruction algorithms.
+This is not obvious as the current implementations have incompatible
+outputs. In the worst case, we will end up with outputs specific to
+each contouring algorithm.
+
+Candidates are:
+
+\begin{itemize}
+\item a polygon soup
+\item an organized surface like a BGL Graph or CGAL Polyhedron
+\item \ccc{SurfaceMeshComplex_2InTriangulation_3} (Surface Mesh Generator's
+native output format)
+\end{itemize}
+

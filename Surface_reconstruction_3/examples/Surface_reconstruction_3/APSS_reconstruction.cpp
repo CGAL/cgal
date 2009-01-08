@@ -29,7 +29,6 @@
 // This package
 #include <CGAL/APSS_implicit_function.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/IO/surface_reconstruction_output.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 #include <CGAL/IO/surface_reconstruction_read_pwn.h>
 

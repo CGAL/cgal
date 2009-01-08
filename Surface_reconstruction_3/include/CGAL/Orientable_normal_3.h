@@ -107,7 +107,7 @@ public:
     //  return ! (*this == that);
     //}
 
-    /// Get (a copy of) the actual vector. 
+    /// Get (a copy of) the actual vector.
     const Vector& get_vector() const
     {
         return *this;

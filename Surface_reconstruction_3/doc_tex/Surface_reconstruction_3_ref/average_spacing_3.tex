@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: average_spacing_3.tex
 % +------------------------------------------------------------------------+
-% | 02.06.2008   Laurent Saboret, Pierre Alliez
+% | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSaveragespacingRev}{$Id$}
@@ -18,6 +18,15 @@
 %% \ccHtmlIndexC[function]{} %% add further index entries
 
 \ccDefinition
+
+\ccc{CGAL::average_spacing_3()} computes the average spacing in a point set from the K nearest neighbors.
+
+The \ccc{CGAL::average_spacing_3()} function exists in three flavors. 
+The complete version applies to a point set and requires the kernel to use for computations. 
+The main version applies to a point set and deduces the kernel from input parameters.
+The low level call applies to a single point.
+
+\ccInclude{CGAL/average_spacing_3.h}
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
@@ -82,8 +91,6 @@ Precondition: KNN $>$= 2.
 
 %END-AUTO(\ccDefinition)
   
-\ccInclude{Surface_reconstruction_3/average_spacing_3.h}
-
 \ccParameters
 
 The full template declarations are:
@@ -113,19 +120,18 @@ FT  \\
 
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Surface_reconstruction_3/average_spacing_3.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
 \begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef Kernel::FT FT;
+typedef Kernel::Point_3 Point;
+std::deque<Point> points = ...;
+int nb_neighbors = 7;
 
-%% \ccIncludeExampleCode{Surface_reconstruction_3/average_spacing_3.C}
+typedef std::deque<Point>::iterator Iterator;
+std::cerr << "Compute average spacing to knn ";
+std::cerr << CGAL::average_spacing_3<Iterator,FT>(points.begin(), points.end(),
+                                                  nb_neighbors) << "\n";
+\end{ccExampleCode}
 
 \end{ccRefFunction}
 

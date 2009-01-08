@@ -49,9 +49,9 @@ template < typename Kernel,
            typename OrientableNormal_3
 >
 OrientableNormal_3
-estimate_normal_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
-                      Tree& tree, ///< KD-tree
-                      const unsigned int KNN)
+estimate_normals_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
+                       Tree& tree, ///< KD-tree
+                       unsigned int KNN) ///< number of neighbors
 {
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
@@ -108,10 +108,10 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-estimate_normals_pca_3(InputIterator first,    ///< input points
+estimate_normals_pca_3(InputIterator first, ///< input points
                        InputIterator beyond,
                        OutputIterator normals, ///< output normals
-                       const unsigned int KNN,   ///< number of neighbors
+                       unsigned int KNN, ///< number of neighbors
                        const Kernel& /*kernel*/)
 {
   CGAL_TRACE("Call estimate_normals_pca_3()\n");
@@ -146,7 +146,7 @@ estimate_normals_pca_3(InputIterator first,    ///< input points
   InputIterator it;
   for(it = first; it != beyond; it++)
   {
-    *normals = estimate_normal_pca_3<Kernel,Tree,Normal>(*it,tree,KNN);
+    *normals = estimate_normals_pca_3<Kernel,Tree,Normal>(*it,tree,KNN);
     normals++;
   }
 
@@ -171,10 +171,10 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-estimate_normals_pca_3(InputIterator first,    ///< input points
+estimate_normals_pca_3(InputIterator first, ///< input points
                        InputIterator beyond,
                        OutputIterator normals, ///< output normals
-                       const unsigned int KNN)   ///< number of neighbors
+                       unsigned int KNN) ///< number of neighbors
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;

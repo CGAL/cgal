@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: remove_outliers_wrt_avg_knn_sq_distance_3.tex
 % +------------------------------------------------------------------------+
-% | 02.06.2008   Laurent Saboret, Pierre Alliez
+% | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSremoveoutlierswrtavgknnsqdistanceRev}{$Id$}
@@ -19,13 +19,21 @@
 
 \ccDefinition
 
+\ccc{CGAL::remove_outliers_wrt_avg_knn_sq_distance_3()} deletes outliers in a point set.
+
+The \ccc{CGAL::remove_outliers_wrt_avg_knn_sq_distance_3()} function exists in four flavors.
+First, the function may modify the input point set or create a copy.
+Second, the function may require the kernel to use for computations, or deduce it from input parameters.
+
+\ccInclude{CGAL/remove_outliers_wrt_avg_knn_sq_distance_3.h}
+
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
 \ccFunction{OutputIterator remove_outliers_wrt_avg_knn_sq_distance_3(InputIterator first, InputIterator beyond, OutputIterator output, unsigned int KNN, const Kernel& , double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
-\item compute average squared distance to the K nearest neighbors,\item percentage of points to remove. This variant requires the kernel.\end{itemize}
+\item compute average squared distance to the K nearest neighbors,\item output (100-\ccc{threshold_percent}) \% best points wrt this distance. This variant requires the kernel.\end{itemize}
 Precondition: KNN $>$= 2.
 }
 \ccGlue
@@ -45,8 +53,9 @@ Precondition: KNN $>$= 2.
 \ccFunction{ForwardIterator remove_outliers_wrt_avg_knn_sq_distance_3(ForwardIterator first, ForwardIterator beyond, unsigned int KNN, const Kernel& , double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
-\item compute average squared distance to the K nearest neighbors,\item percentage of points to remove. This function is mutating the input point set. This variant requires the kernel.\end{itemize}
-Warning: This method modifies the order of points, thus Precondition: KNN $>$= 2.
+\item compute average squared distance to the K nearest neighbors,\item sort the points wrt this distance. This function is mutating the input point set. This variant requires the kernel.\end{itemize}
+Warning: This method modifies the order of points, thus should not be called on sorted containers.
+Precondition: KNN $>$= 2.
 }
 \ccGlue
 \begin{description}
@@ -65,7 +74,7 @@ Warning: This method modifies the order of points, thus Precondition: KNN $>$= 2
 \ccFunction{OutputIterator remove_outliers_wrt_avg_knn_sq_distance_3(InputIterator first, InputIterator beyond, OutputIterator output, unsigned int KNN, double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
-\item compute average squared distance to the K nearest neighbors,\item percentage of points to remove. This variant deduces the kernel from iterator types.\end{itemize}
+\item compute average squared distance to the K nearest neighbors,\item output (100-\ccc{threshold_percent}) \% best points wrt this distance. This variant deduces the kernel from iterator types.\end{itemize}
 Precondition: KNN $>$= 2.
 }
 \ccGlue
@@ -85,8 +94,9 @@ Precondition: KNN $>$= 2.
 \ccFunction{ForwardIterator remove_outliers_wrt_avg_knn_sq_distance_3(ForwardIterator first, ForwardIterator beyond, unsigned int KNN, double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
-\item compute average squared distance to the K nearest neighbors,\item percentage of points to remove. This function is mutating the input point set. This variant deduces the kernel from iterator types.\end{itemize}
-Warning: This method modifies the order of points, thus Precondition: KNN $>$= 2.
+\item compute average squared distance to the K nearest neighbors,\item sort the points wrt this distance. This function is mutating the input point set. This variant deduces the kernel from iterator types.\end{itemize}
+Warning: This method modifies the order of points, thus should not be called on sorted containers.
+Precondition: KNN $>$= 2.
 }
 \ccGlue
 \begin{description}
@@ -104,8 +114,6 @@ Warning: This method modifies the order of points, thus Precondition: KNN $>$= 2
 \ccGlue
 
 %END-AUTO(\ccDefinition)
-  
-\ccInclude{Surface_reconstruction_3/remove_outliers_wrt_avg_knn_sq_distance_3.h}
 
 \ccParameters
 
@@ -142,19 +150,28 @@ ForwardIterator  \\
 
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Surface_reconstruction_3/remove_outliers_wrt_avg_knn_sq_distance_3.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
 \begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef Kernel::Point_3 Point;
+std::deque<Point> points = ...;
+int nb_neighbors = 7;
+double threshold_percent = 50; // percentage of points to remove
 
-%% \ccIncludeExampleCode{Surface_reconstruction_3/remove_outliers_wrt_avg_knn_sq_distance_3.C}
+// put result in output iterator...
+std::deque<Point> output;
+CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(points.begin(), points.end(),
+                                                std::back_inserter(output),
+                                                nb_neighbors,
+                                                threshold_percent);
+
+// ...or use mutating version of the same function
+std::deque<Point>::iterator first_iterator_to_remove =
+  CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(points.begin(), points.end(),
+                                                  nb_neighbors,
+                                                  threshold_percent);
+std::erase(std::remove(first_iterator_to_remove, points.end()), // erase-remove idiom
+           points.end());
+\end{ccExampleCode}
 
 \end{ccRefFunction}
 

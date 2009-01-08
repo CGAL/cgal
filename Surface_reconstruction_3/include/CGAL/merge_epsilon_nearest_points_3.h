@@ -138,7 +138,7 @@ merge_epsilon_nearest_points_3(
 ///
 /// Warning: 
 /// This method modifies the order of points, thus
-//  should not be called on sorted containers.
+/// should not be called on sorted containers.
 ///
 /// Precondition: epsilon > 0.
 ///
@@ -213,7 +213,7 @@ merge_epsilon_nearest_points_3(
 ///
 /// Warning: 
 /// This method modifies the order of points, thus
-//  should not be called on sorted containers.
+/// should not be called on sorted containers.
 ///
 /// Precondition: epsilon > 0.
 ///

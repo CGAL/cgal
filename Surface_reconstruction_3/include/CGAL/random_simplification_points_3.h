@@ -70,7 +70,7 @@ random_simplification_points_3(
 ///
 /// Warning: 
 /// This method modifies the order of points, thus
-//  should not be called on sorted containers.
+/// should not be called on sorted containers.
 ///
 /// @heading Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3.
@@ -82,9 +82,9 @@ template <typename ForwardIterator,
 >
 ForwardIterator
 random_simplification_points_3(
-           ForwardIterator first,   ///< input/output points
+           ForwardIterator first,     ///< input/output points
            ForwardIterator beyond,
-           double threshold_percent,          ///< percentage of points to remove
+           double threshold_percent,  ///< percentage of points to remove
            const Kernel& /*kernel*/)
         
 {
@@ -117,10 +117,10 @@ template <typename InputIterator,
 >
 OutputIterator
 random_simplification_points_3(
-           InputIterator first,   ///< input points
+           InputIterator first,       ///< input points
            InputIterator beyond,
-           OutputIterator output, ///< output points
-           double threshold_percent)        ///< percentage of points to remove
+           OutputIterator output,     ///< output points
+           double threshold_percent)  ///< percentage of points to remove
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
@@ -133,7 +133,7 @@ random_simplification_points_3(
 ///
 /// Warning: 
 /// This method modifies the order of points, thus
-//  should not be called on sorted containers.
+/// should not be called on sorted containers.
 ///
 /// @heading Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3.
@@ -142,9 +142,9 @@ random_simplification_points_3(
 template <typename ForwardIterator>
 ForwardIterator
 random_simplification_points_3(
-       ForwardIterator first,       ///< input/output points
+       ForwardIterator first,     ///< input/output points
        ForwardIterator beyond,
-       double threshold_percent)              ///< percentage of points to remove
+       double threshold_percent)  ///< percentage of points to remove
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;

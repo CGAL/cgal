@@ -246,7 +246,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_output.h"
+				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_output_surface_facets.h"
 				>
 			</File>
 			<File

@@ -29,7 +29,8 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Compute average squared distance to the K nearest neighbors.
+/// Utility function for remove_outliers_wrt_avg_knn_sq_distance_3():
+/// compute average squared distance to the K nearest neighbors.
 ///
 /// Precondition: KNN >= 2.
 ///
@@ -83,7 +84,7 @@ compute_avg_knn_sq_distance_3(
 
 /// Remove outliers:
 /// - compute average squared distance to the K nearest neighbors,
-/// - percentage of points to remove.
+/// - output (100-threshold_percent) % best points wrt this distance.
 /// This variant requires the kernel.
 ///
 /// Precondition: KNN >= 2.
@@ -153,13 +154,13 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 
 /// Remove outliers:
 /// - compute average squared distance to the K nearest neighbors,
-/// - percentage of points to remove.
+/// - sort the points wrt this distance.
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
 ///
 /// Warning: 
 /// This method modifies the order of points, thus
-//  should not be called on sorted containers.
+/// should not be called on sorted containers.
 ///
 /// Precondition: KNN >= 2.
 ///
@@ -231,7 +232,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 
 /// Remove outliers:
 /// - compute average squared distance to the K nearest neighbors,
-/// - percentage of points to remove.
+/// - output (100-threshold_percent) % best points wrt this distance.
 /// This variant deduces the kernel from iterator types.
 ///
 /// Precondition: KNN >= 2.
@@ -259,13 +260,13 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 
 /// Remove outliers:
 /// - compute average squared distance to the K nearest neighbors,
-/// - percentage of points to remove.
+/// - sort the points wrt this distance.
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
 ///
 /// Warning: 
 /// This method modifies the order of points, thus
-//  should not be called on sorted containers.
+/// should not be called on sorted containers.
 ///
 /// Precondition: KNN >= 2.
 ///

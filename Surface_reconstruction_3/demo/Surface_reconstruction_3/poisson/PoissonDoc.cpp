@@ -32,7 +32,7 @@
 #include <CGAL/IO/surface_reconstruction_write_pwn.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 #include <CGAL/IO/surface_reconstruction_write_xyz.h>
-#include <CGAL/IO/surface_reconstruction_output.h>
+#include <CGAL/IO/surface_reconstruction_output_surface_facets.h>
 #include <CGAL/remove_outliers_wrt_avg_knn_sq_distance_3.h>
 #include <CGAL/estimate_normals_jet_fitting_3.h>
 #include <CGAL/smooth_jet_fitting_3.h>
@@ -1169,7 +1169,7 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
 
     // get output surface
     std::deque<Triangle> triangles;
-    CGAL::output_surface_facets(m_surface_mesher_c2t3, std::back_inserter(triangles));
+    CGAL::surface_reconstruction_output_surface_facets(m_surface_mesher_c2t3, std::back_inserter(triangles));
     m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
 
     // Reset contouring value
@@ -1534,7 +1534,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
 
     // get output surface
     std::deque<Triangle> triangles;
-    CGAL::output_surface_facets(m_surface_mesher_c2t3, std::back_inserter(triangles));
+    CGAL::surface_reconstruction_output_surface_facets(m_surface_mesher_c2t3, std::back_inserter(triangles));
     m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
 
     // Record new mode

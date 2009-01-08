@@ -102,11 +102,13 @@ public:
   void invalidate_bounding_box();
 
   /// Insert point in the triangulation.
+  /// Default type is INPUT.
   Vertex_handle insert(const Point& p,
                        unsigned char type = INPUT /* INPUT or STEINER */,
                        Cell_handle start = Cell_handle());
 
   /// Insert points in the triangulation using a spatial sort.
+  /// Default type is INPUT.
   ///
   /// Precondition: the value type of InputIterator must 'Point'.
   ///

@@ -24,14 +24,20 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Get reconstructed surface out of a SurfaceMeshC2T3 object.
-template <class SurfaceMeshC2T3,   ///< Model of SurfaceMeshC2T3.
-          typename OutputIterator> ///< OutputIterator value_type must be Triangle_3.
+/// Get reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
+///
+/// @heading Parameters:
+/// @param SurfaceMeshComplex_2InTriangulation_3 model of the SurfaceMeshComplex_2InTriangulation_3 concept.
+/// @param OutputIterator value_type must be Triangle_3.
+///
+/// @return true on success.
+template <class SurfaceMeshComplex_2InTriangulation_3,
+          typename OutputIterator>
 void
-output_surface_facets(const SurfaceMeshC2T3& c2t3,
-                      OutputIterator output)
+surface_reconstruction_output_surface_facets(const SurfaceMeshComplex_2InTriangulation_3& c2t3, ///< Input surface.
+                                             OutputIterator output) ///< Output triangles soup.
 {
-  typedef typename SurfaceMeshC2T3::Triangulation Tr;
+  typedef typename SurfaceMeshComplex_2InTriangulation_3::Triangulation Tr;
   typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Point Point;

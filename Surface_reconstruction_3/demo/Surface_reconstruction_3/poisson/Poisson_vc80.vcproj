@@ -389,19 +389,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\estimate_normals_3.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\include\CGAL\estimate_normals_jet_fitting_3.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\estimate_normals_pca_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\estimate_normals_poles_3.h"
 				>
 			</File>
 			<File
@@ -477,7 +469,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_output.h"
+				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_output_surface_facets.h"
 				>
 			</File>
 			<File

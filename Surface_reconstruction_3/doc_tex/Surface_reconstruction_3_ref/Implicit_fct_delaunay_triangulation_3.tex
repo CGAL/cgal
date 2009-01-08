@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Implicit_fct_delaunay_triangulation_3.tex
 % +------------------------------------------------------------------------+
-% | 06.09.2007   Laurent Saboret, Pierre Alliez
+% | 06.09.2007   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSImplicitfctdelaunaytriangulationRev}{$Id$}
@@ -25,8 +25,6 @@
 The \ccc{Implicit_fct_delaunay_triangulation_3} class is the default implementation of the \ccc{ImplicitFctDelaunayTriangulation_3} concept. It provides the interface requested by the \ccc{Poisson_implicit_function} class.
 
 CAUTION: \ccc{invalidate_bounding_box}() must be called after modifying the points.
-
-TODO: Test speed if using \ccc{Triangulation_hierarchy_3}
 
 %END-AUTO(\ccDefinition)
 
@@ -276,6 +274,12 @@ Index unconstraint vertices following the order of \ccc{Finite_vertices_iterator
 \ccGlue
 
 %END-AUTO(\ccOperations)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Implicit_fct_delaunay_triangulation_cell_base_3}  \\
+\ccRefIdfierPage{Implicit_fct_delaunay_triangulation_vertex_base_3}  \\
+\ccRefIdfierPage{Poisson_implicit_function}  \\
 
 \end{ccRefClass}
 

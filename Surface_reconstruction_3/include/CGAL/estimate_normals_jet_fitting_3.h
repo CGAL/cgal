@@ -49,10 +49,10 @@ template < typename Kernel,
            typename OrientableNormal_3
 >
 OrientableNormal_3
-estimate_normal_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
-                              Tree& tree, ///< KD-tree
-                              unsigned int KNN,
-                              unsigned int degre_fitting)
+estimate_normals_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
+                               Tree& tree, ///< KD-tree
+                               unsigned int KNN,
+                               unsigned int degre_fitting)
 {
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
@@ -153,7 +153,7 @@ estimate_normals_jet_fitting_3(InputIterator first, ///< input points
   InputIterator it;
   for(it = first; it != beyond; it++)
   {
-    *normals = estimate_normal_jet_fitting_3<Kernel,Tree,Normal>(*it,tree,KNN,degre_fitting);
+    *normals = estimate_normals_jet_fitting_3<Kernel,Tree,Normal>(*it,tree,KNN,degre_fitting);
     normals++;
   }
 

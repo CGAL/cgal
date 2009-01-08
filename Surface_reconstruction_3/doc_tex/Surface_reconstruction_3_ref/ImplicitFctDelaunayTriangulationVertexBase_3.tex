@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: ImplicitFctDelaunayTriangulationVertexBase_3.tex
 % +------------------------------------------------------------------------+
-% | 07.09.2007   Laurent Saboret, Pierre Alliez
+% | 07.09.2007   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSImplicitFctDelaunayTriangulationVertexBaseRev}{$Id$}
@@ -97,7 +97,7 @@ Model of \ccc{Kernel::Vector_3} concept.
 
 \ccMethod{bool constrained() const;}
 {
-is vertex constrained?
+Is vertex constrained?
 }
 \ccGlue
 \ccMethod{bool& constrained();}
@@ -106,7 +106,7 @@ is vertex constrained?
 \ccGlue
 \ccMethod{FT f() const;}
 {
-Get/set the value of the Poisson implicit function.
+Get/set the value of the implicit function.
 }
 \ccGlue
 \ccMethod{FT& f();}
@@ -115,7 +115,7 @@ Get/set the value of the Poisson implicit function.
 \ccGlue
 \ccMethod{unsigned char type() const;}
 {
-Get/set the type = INPUT or STEINER vertex.
+Get/set the type = INPUT or STEINER.
 }
 \ccGlue
 \ccMethod{unsigned char& type();}

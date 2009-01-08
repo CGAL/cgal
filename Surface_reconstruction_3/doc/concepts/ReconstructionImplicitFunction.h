@@ -30,7 +30,9 @@
 /// A model of ReconstructionImplicitFunction is a
 /// Strategy [GHJV95]: it implements a strategy of surface mesh reconstruction.
 ///
-/// @heading Has Models: Poisson_implicit_function<PoissonDelaunayTriangulation_3>
+/// @heading Has Models:
+/// - Poisson_implicit_function<PoissonDelaunayTriangulation_3>
+/// - APSS_implicit_function<Gt>
 
 class ReconstructionImplicitFunction : public Surface_mesher::ImplicitFunction
 {
@@ -51,9 +53,6 @@ public:
 // Public methods
 public:
 
-  ///// Create an empty implicit function.
-  //ReconstructionImplicitFunction();
-
   /// Create an implicit function from a point set.
   ///
   /// Precondition: the value type of InputIterator must be convertible to Point_with_normal.
@@ -62,22 +61,6 @@ public:
   /// @param beyond Past-the-end point to add.
   template < class InputIterator >
   ReconstructionImplicitFunction(InputIterator first, InputIterator beyond);
-
-  ///// Insert points.
-  /////
-  ///// Precondition: the value type of InputIterator must be convertible to Point_with_normal.
-  /////
-  ///// @param first First point to add.
-  ///// @param beyond Past-the-end point to add.
-  ///// @return the number of inserted points.
-  //template < class InputIterator >
-  //int insert(InputIterator first, InputIterator beyond);
-
-  ///// Remove all points.
-  //void clear();
-
-  ///// Get the surface's bounding box.
-  //Iso_cuboid bounding_box() const;
 
   /// Get the surface's bounding sphere.
   Sphere bounding_sphere() const;

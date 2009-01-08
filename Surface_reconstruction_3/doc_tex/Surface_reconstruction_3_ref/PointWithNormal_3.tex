@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: PointWithNormal_3.tex
 % +------------------------------------------------------------------------+
-% | 19.02.2008   Laurent Saboret, Pierre Alliez
+% | 19.02.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSPointWithNormalRev}{$Id$}
@@ -78,15 +78,15 @@ Model of \ccc{Kernel::Vector_3} or of \ccc{OrientableNormal_3}.
 Point is (0,0,0) by default. Normal is (0,0,0) by default.
 }
 \ccGlue
-\ccConstructor{PointWithNormal_3(const Point& point, const Normal& normal = NULL_VECTOR);}
-{
-}
-\ccGlue
 \ccConstructor{PointWithNormal_3(FT x, FT y, FT z, const Normal& normal = NULL_VECTOR);}
 {
 }
 \ccGlue
 \ccConstructor{PointWithNormal_3(RT hx, RT hy, RT hz, RT hw, const Normal& normal = NULL_VECTOR);}
+{
+}
+\ccGlue
+\ccConstructor{PointWithNormal_3(const Point& point, const Normal& normal = NULL_VECTOR);}
 {
 }
 \ccGlue

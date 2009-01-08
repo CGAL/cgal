@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: ReconstructionImplicitFunction.tex
 % +------------------------------------------------------------------------+
-% | 07.09.2007   Laurent Saboret, Pierre Alliez
+% | 07.09.2007   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSReconstructionImplicitFunctionRev}{$Id$}
@@ -23,6 +23,8 @@
 %START-AUTO(\ccDefinition)
 
 ReconstructionImplicitFunction is the concept of implicit function representing a 3D surface used by the \ccc{Surface_reconstruction_3} package. The surface is the zero-level of the implicit function.
+
+The Surface Mesh Generation package makes copies of implicit functions, thus such a class must be lightweight and stateless.
 
 %END-AUTO(\ccDefinition)
 
@@ -147,7 +149,8 @@ Get point inside the surface.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHasModels)
 
-\ccc{Poisson_implicit_function<PoissonDelaunayTriangulation_3>}
+\ccc{Poisson_implicit_function<PoissonDelaunayTriangulation_3>}  \\
+\ccc{APSS_implicit_function<Gt>}
 
 %END-AUTO(\ccHasModels)
 

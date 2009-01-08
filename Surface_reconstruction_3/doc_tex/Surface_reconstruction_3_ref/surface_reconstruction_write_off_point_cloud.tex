@@ -1,0 +1,120 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: surface_reconstruction_write_off_point_cloud.tex
+% +------------------------------------------------------------------------+
+% | 07.01.2009   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Surface_reconstruction_3
+% |
+\RCSdef{\RCSsurfacereconstructionwriteoffpointcloudRev}{$Id$}
+\RCSdefDate{\RCSsurfacereconstructionwriteoffpointcloudDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{surface_reconstruction_write_off_point_cloud}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+\ccc{CGAL::surface_reconstruction_write_off_point_cloud()} saves points (positions + optionally normals) to a .off file (ASCII).
+
+The \ccc{CGAL::surface_reconstruction_write_off_point_cloud()} function exists in two flavors:
+the input can be either a container of \ccc{Point_3} or of \ccc{PointWithNormal_3} points.
+
+\ccInclude{CGAL/surface_reconstruction_write_off_point_cloud.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccFunction{bool surface_reconstruction_write_off_point_cloud(const char * pFilename, InputIterator first, InputIterator beyond);}
+{
+Save points (positions + normals) to a .off file (ASCII).
+}
+\ccGlue
+\begin{description}
+\item[Template Parameters:]
+\begin{description}
+\item[InputIterator]\ccc{value_type} must be a model of the \ccc{PointWithNormal_3} concept.\end{description}
+\end{description}
+\begin{description}
+\item[Returns:]true on success. \end{description}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[first]first input point \item[beyond]past-the-end input point \end{description}
+\end{description}
+\ccGlue
+\ccFunction{bool surface_reconstruction_write_off_point_cloud(const char * pFilename, InputIterator first, InputIterator beyond, bool write_normals);}
+{
+Save points (positions + optionally normals) to a .off file (ASCII).
+}
+\ccGlue
+\begin{description}
+\item[Template Parameters:]
+\begin{description}
+\item[InputIterator]\ccc{value_type} must be a model of \ccc{PointWithNormal_3} if \ccc{write_normals} is true, else a model of \ccc{Kernel::Point_3}.\end{description}
+\end{description}
+\begin{description}
+\item[Returns:]true on success. \end{description}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[first]first input point \item[beyond]past-the-end input point \end{description}
+\end{description}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccParameters
+
+The full template declarations are:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+typename InputIterator$>$  \\
+bool  \\
+\ccc{surface_reconstruction_write_off_point_cloud} (const char $\ast$pFilename, InputIterator first, InputIterator beyond);  \\
+  \\
+template$<$  \\
+typename InputIterator$>$  \\
+bool  \\
+\ccc{surface_reconstruction_write_off_point_cloud} (const char $\ast$pFilename, InputIterator first, InputIterator beyond, bool \ccc{write_normals});  \\
+
+%END-AUTO(\ccParameters)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{surface_reconstruction_read_xyz}  \\
+\ccRefIdfierPage{surface_reconstruction_write_xyz}  \\
+\ccRefIdfierPage{surface_reconstruction_read_off_point_cloud}  \\
+
+\ccExample
+
+\begin{ccExampleCode}
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
+std::deque<Point_with_normal> points;
+char* filename = ...;
+
+// Save the point set to OFF file
+if(!CGAL::surface_reconstruction_write_off_point_cloud(filename,
+                                                       points.begin(), points.end()))
+{
+  std::cerr << "Error: cannot write file " << filename << std::endl;
+  return EXIT_FAILURE;
+}
+\end{ccExampleCode}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -28,6 +28,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+
 /// Smooth one point position using jet fitting on the KNN
 /// nearest neighbors and reprojection onto the jet.
 ///
@@ -150,7 +151,7 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
 ///
 /// Warning: 
 /// This method moves the points, thus
-//  should not be called on containers sorted wrt points position.
+/// should not be called on containers sorted wrt points position.
 ///
 /// Precondition: KNN >= 2.
 ///
@@ -226,7 +227,7 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
 ///
 /// Warning: 
 /// This method moves the points, thus
-//  should not be called on containers sorted wrt points position.
+/// should not be called on containers sorted wrt points position.
 ///
 /// Precondition: KNN >= 2.
 ///

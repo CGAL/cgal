@@ -47,19 +47,19 @@ public:
   ImplicitFctDelaunayTriangulationVertexBase_3(const Point & p, Cell_handle c);
   ImplicitFctDelaunayTriangulationVertexBase_3(Cell_handle c);
 
-  /// is vertex constrained?
+  /// Is vertex constrained?
   bool  constrained() const;
   bool& constrained();
 
-  /// Get/set the value of the Poisson implicit function
+  /// Get/set the value of the implicit function.
   FT  f() const;
   FT& f();
 
-  /// Get/set the type = INPUT or STEINER vertex
+  /// Get/set the type = INPUT or STEINER.
   unsigned char  type() const;
   unsigned char& type();
 
-  /// Get/set the index in matrix
+  /// Get/set the index in matrix.
   unsigned int  index() const;
   unsigned int& index();
 

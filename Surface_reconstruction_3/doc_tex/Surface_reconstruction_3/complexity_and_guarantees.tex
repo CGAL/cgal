@@ -1,0 +1,24 @@
+\section{Complexity and Guarantees}
+
+
+\subsection{Guarantees}
+
+[NOT YET DOCUMENTED]
+
+
+\subsection{Precision}
+
+Delaunay-based Poisson reconstruction solves a linear system with TAUCS
+linear solver, that uses double precision floating point
+numbers.
+
+Algebraic Point Set Surfaces uses a closed form, thus computes exact results, when used with an exact arithmetic.
+
+Anyway, CGAL Surface Mesh Generator contours an implicit surface using dichotomy
+until the expected error is reached, thus the output surface mesh is never exact.
+
+
+\subsection{Algorithmic Complexity}
+
+[NOT YET DOCUMENTED]
+

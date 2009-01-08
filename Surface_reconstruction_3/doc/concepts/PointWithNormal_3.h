@@ -44,11 +44,11 @@ public:
     /// Point is (0,0,0) by default.
     /// Normal is (0,0,0) by default.
     PointWithNormal_3(const Origin& o = ORIGIN);
-    PointWithNormal_3(const Point& point,
-                      const Normal& normal = NULL_VECTOR);
     PointWithNormal_3(FT x, FT y, FT z,
                       const Normal& normal = NULL_VECTOR);
     PointWithNormal_3(RT hx, RT hy, RT hz, RT hw,
+                      const Normal& normal = NULL_VECTOR);
+    PointWithNormal_3(const Point& point,
                       const Normal& normal = NULL_VECTOR);
 
     /// Set position.

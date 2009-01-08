@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: APSS_implicit_function.tex
 % +------------------------------------------------------------------------+
-% | 02.06.2008   Laurent Saboret, Pierre Alliez
+% | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSAPSSimplicitfunctionRev}{$Id$}
@@ -19,10 +19,28 @@
 
 \ccDefinition
 
+% Insert image APSS.jpg/eps
+\begin{center}
+    \label{Surface_reconstruction_3-fig-APSS}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=0.7\textwidth]{Surface_reconstruction_3/APSS} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="70%" border=0 src="../Surface_reconstruction_3/APSS.jpg"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
+        \caption{APSS reconstruction}
+    \end{figure}
+\end{center}
+
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccc{APSS_implicit_function} computes an implicit function that defines a Point Set Surface (PSS) based on moving least squares (MLS) fitting of algebraic spheres. See {\em Algebraic Point Set Surfaces} by Guennebaud and Gross (2007).
+\ccc{APSS_implicit_function} computes an implicit function that defines a Point Set Surface (PSS) based on moving least squares (MLS) fitting of algebraic spheres. See {\em Algebraic Point Set Surfaces} by Guennebaud and Gross \cite{Guennebaud07}.
+
+The Surface Mesh Generation package makes copies of implicit functions, thus such a class must be lightweight and stateless.
 
 %END-AUTO(\ccDefinition)
 
@@ -120,17 +138,18 @@ Kernel's geometric traits.
 \ccConstructor{APSS_implicit_function(InputIterator first, InputIterator beyond, unsigned int k, FT projection_error = 3.16e-4);}
 {
 Create an APSS implicit function from a point set.
-Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal_3}.
+Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
 }
 \ccGlue
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[first]First point of point set. \item[beyond]Past-the-end point of point set. \item[k]Number of nearest neighbours. \item[\ccc{projection_error}]Dichotomy error when projecting point. \end{description}
+\item[first]First point to add. \item[beyond]Past-the-end point to add. \item[k]Number of nearest neighbors. \item[\ccc{projection_error}]Dichotomy error when projecting point. \end{description}
 \end{description}
 \ccGlue
 \ccConstructor{APSS_implicit_function(const APSS_implicit_function<Gt>& other);}
 {
+Copy constructor.
 }
 \ccGlue
 
@@ -143,6 +162,7 @@ Precondition: the value type of InputIterator must be convertible to \ccc{Point_
 
 \ccMethod{APSS_implicit_function& operator=(const APSS_implicit_function<Gt>& other);}
 {
+operator =()
 }
 \ccGlue
 \ccMethod{void setNofNeighbors(unsigned int k);}
@@ -185,21 +205,11 @@ Get point inside the surface.
 
 \ccSeeAlso
 
+\ccRefIdfierPage{Poisson_implicit_function}  \\
+
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the
-\verb|\ccIncludeExampleCode{Surface_reconstruction_3/APSS_implicit_function.C}|
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Surface_reconstruction_3/APSS_implicit_function.C}
+See \ccc{APSS_reconstruction.cpp} example.
 
 \end{ccRefClass}
 

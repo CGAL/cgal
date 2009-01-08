@@ -1,7 +1,6 @@
 Analysis
 - barycenter, len diag of bbox, etc., see centroid() and bounding_box() in PCA component (done)
 - average spacing (KNN) (done)
-- std statistical measures: to be defined
 - lfs estimate (pole approach + arbitrary query points using KNN) (pierre)
 
 Processing

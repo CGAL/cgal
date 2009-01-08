@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: orient_normals_minimum_spanning_tree_3.tex
 % +------------------------------------------------------------------------+
-% | 02.06.2008   Laurent Saboret, Pierre Alliez
+% | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSorientnormalsminimumspanningtreeRev}{$Id$}
@@ -19,30 +19,53 @@
 
 \ccDefinition
 
+\ccc{CGAL::orient_normals_minimum_spanning_tree_3()} orients the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
+The result is an oriented normal vector for each input point/normal.
+
+\ccInclude{CGAL/orient_normals_minimum_spanning_tree_3.h}
+
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{void orient_normals_minimum_spanning_tree_3(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int KNN);}
+\ccFunction{unsigned int orient_normals_minimum_spanning_tree_3(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int KNN);}
 {
-Orient the normals of a point set using the method described in {\em Hoppe, DeRose, Duchamp, McDonald, Stuetzle, Surface reconstruction from unorganized points, ACM SIGGRAPH Computer Graphics, v.26 n.2, p.71-78, July 1992}.
+Orient the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
+This variant implements the original algorithm. Note that it does not orient normals that are already oriented.
 Preconditions:\begin{itemize}
-\item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item Normals must be unit vectors.\item KNN $>$= 2. \end{itemize}
+\item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item Normals must be unit vectors.\item KNN $>$= 2.\end{itemize}
 }
 \ccGlue
+\begin{description}
+\item[Returns:]the number of un-oriented normals. \end{description}
 \begin{description}
 \item[Parameters: ]
 \begin{description}
 \item[first]first input vertex \item[beyond]past-the-end input vertex \item[\ccc{vertex_index_map}]property map VertexIterator -$>$ index \item[\ccc{vertex_point_map}]property map VertexIterator -$>$ \ccc{Point_3} \item[\ccc{vertex_normal_map}]property map VertexIterator -$>$ Normal (in and out) \item[KNN]number of neighbors \end{description}
 \end{description}
 \ccGlue
+\ccFunction{unsigned int orient_normals_minimum_spanning_tree_3(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int KNN, double angle_max);}
+{
+Orient the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
+This is a variant of the original algorithm. It:\begin{itemize}
+\item orients the top point towards +Z axis.\item does not orient normals that are already oriented.\item does not propagate the orientation if the angle between 2 normals $>$ \ccc{angle_max}.\end{itemize}
+Preconditions:\begin{itemize}
+\item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item Normals must be unit vectors.\item KNN $>$= 2.\item 0 $<$ \ccc{angle_max} $<$= PI/2.\end{itemize}
+}
+\ccGlue
+\begin{description}
+\item[Returns:]the number of un-oriented normals. \end{description}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[first]first input vertex \item[beyond]past-the-end input vertex \item[\ccc{vertex_index_map}]property map VertexIterator -$>$ index \item[\ccc{vertex_point_map}]property map VertexIterator -$>$ \ccc{Point_3} \item[\ccc{vertex_normal_map}]property map VertexIterator -$>$ Normal (in and out) \item[KNN]number of neighbors \item[\ccc{angle_max}]max angle to propagate the normals orientation (radians) \end{description}
+\end{description}
+\ccGlue
 
 %END-AUTO(\ccDefinition)
 
-\ccInclude{Surface_reconstruction_3/orient_normals_minimum_spanning_tree_3.h}
-
 \ccParameters
 
-The full template declarations is:
+The full template declarations are:
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccParameters)
@@ -52,26 +75,27 @@ class VertexIterator,   \\
 class VertexPointMap,   \\
 class VertexIndexMap,   \\
 class VertexNormalMap$>$  \\
-void  \\
+unsigned int  \\
 \ccc{orient_normals_minimum_spanning_tree_3} (VertexIterator first, VertexIterator beyond, VertexIndexMap \ccc{vertex_index_map}, VertexPointMap \ccc{vertex_point_map}, VertexNormalMap \ccc{vertex_normal_map}, unsigned int KNN);  \\
+  \\
+template$<$  \\
+class VertexIterator,   \\
+class VertexPointMap,   \\
+class VertexIndexMap,   \\
+class VertexNormalMap$>$  \\
+unsigned int  \\
+\ccc{orient_normals_minimum_spanning_tree_3} (VertexIterator first, VertexIterator beyond, VertexIndexMap \ccc{vertex_index_map}, VertexPointMap \ccc{vertex_point_map}, VertexNormalMap \ccc{vertex_normal_map}, unsigned int KNN, double \ccc{angle_max});  \\
 
 %END-AUTO(\ccParameters)
 
+\ccSeeAlso
+
+\ccRefIdfierPage{estimate_normals_pca_3}  \\
+\ccRefIdfierPage{estimate_normals_jet_fitting_3}  \\
+
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the
-\verb|\ccIncludeExampleCode{Surface_reconstruction_3/orient_normals_minimum_spanning_tree_3.C}|
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Surface_reconstruction_3/orient_normals_minimum_spanning_tree_3.C}
+See \ccc{normal_estimation.cpp} example.
 
 \end{ccRefFunction}
 

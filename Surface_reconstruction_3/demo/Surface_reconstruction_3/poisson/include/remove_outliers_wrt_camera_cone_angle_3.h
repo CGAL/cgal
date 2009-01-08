@@ -116,7 +116,7 @@ remove_outliers_wrt_camera_cone_angle_3(InputIterator first,           ///< inpu
 ///
 /// Warning: 
 /// This method modifies the order of points, thus
-//  should not be called on sorted containers.
+/// should not be called on sorted containers.
 ///
 /// Precondition: min_camera_cone_angle >= 0.
 ///
@@ -178,7 +178,7 @@ remove_outliers_wrt_camera_cone_angle_3(InputIterator first,           ///< inpu
 ///
 /// Warning: 
 /// This method modifies the order of points, thus
-//  should not be called on sorted containers.
+/// should not be called on sorted containers.
 ///
 /// Precondition: min_camera_cone_angle >= 0.
 ///

@@ -189,7 +189,7 @@ public:
     tag = -1;
   }
 
-  /// is vertex constrained?
+  /// Is vertex constrained?
   bool  constrained() const { return m_constrained; }
   bool& constrained()       { return m_constrained; }
 
@@ -197,7 +197,6 @@ public:
   FT  f() const { return m_f; }
   FT& f()       { return m_f; }
 
-	
   /// Get/set average spacing at each input point.
   double  average_spacing() const { return m_average_spacing; }
   double& average_spacing()       { return m_average_spacing; }
@@ -248,8 +247,6 @@ struct Implicit_fct_delaunay_triangulation_default_geom_traits_3 : public BaseGt
 ///
 /// CAUTION: invalidate_bounding_box() must be called
 /// after modifying the points.
-///
-/// TODO: Test speed if using Triangulation_hierarchy_3
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the ImplicitFctDelaunayTriangulation_3 concept.

@@ -495,10 +495,9 @@ create_mst_graph(
 // ----------------------------------------------------------------------------
 
 
-/// Orient the normals of a point set using the method described in
-/// "Hoppe, DeRose, Duchamp, McDonald, Stuetzle,
-/// Surface reconstruction from unorganized points,
-/// ACM SIGGRAPH Computer Graphics, v.26 n.2, p.71-78, July 1992".
+/// Orient the normals of a point set using the method described by
+/// Hoppe, DeRose, Duchamp, McDonald and Stuetzle in
+/// "Surface reconstruction from unorganized points" [Hoppe92].
 ///
 /// This variant implements the original algorithm.
 /// Note that it does not orient normals that are already oriented.
@@ -529,16 +528,14 @@ orient_normals_minimum_spanning_tree_3(
                                                   M_PI/2.); // always propagate normal orientation
 }
 
-/// Orient the normals of a point set using the method described in
-/// "Hoppe, DeRose, Duchamp, McDonald, Stuetzle,
-/// Surface reconstruction from unorganized points,
-/// ACM SIGGRAPH Computer Graphics, v.26 n.2, p.71-78, July 1992".
+/// Orient the normals of a point set using the method described by
+/// Hoppe, DeRose, Duchamp, McDonald and Stuetzle in
+/// "Surface reconstruction from unorganized points" [Hoppe92].
 ///
-/// This is an enhanced version of the original algorithm. It:
+/// This is a variant of the original algorithm. It:
 /// - orients the top point towards +Z axis.
 /// - does not orient normals that are already oriented.
 /// - does not propagate the orientation if the angle between 2 normals > angle_max.
-/// - traverses the point set several times until orientation is over (if compatible with angle_max).
 ///
 /// Preconditions:
 /// - VertexIterator is a model of ForwardIterator.

@@ -27,7 +27,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Save points to .xyz file (positions + normals, ASCII).
+/// Save points (positions + normals) to a .xyz file (ASCII).
 ///
 /// @heading Parameters:
 /// @param InputIterator value_type must be a model of the PointWithNormal_3 concept.
@@ -65,8 +65,7 @@ bool surface_reconstruction_write_xyz(const char* pFilename,
   return true;
 }
 
-/// Save points to .xyz file (positions only, ASCII).
-/// Normals are ignored.
+/// Save points (positions + optionally normals) to a .xyz file (ASCII).
 ///
 /// @heading Parameters:
 /// @param InputIterator value_type must be a model of PointWithNormal_3 if

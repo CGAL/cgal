@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Surface_reconstruction_3/intro.tex
 % +------------------------------------------------------------------------+
-% | 08.22.2005   Laurent Saboret, Pierre Alliez
+% | 06.01.2009   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 % |
@@ -12,65 +12,238 @@
 \ccRefChapter{Surface Reconstruction
 \label{chap:surface_reconstruction_3_ref}}
 
-\ccChapterAuthor{Laurent Saboret \and Pierre Alliez}
+\ccChapterAuthor{Pierre Alliez, Laurent Saboret, Gael Guennebaud}
 
 
-[TODO: replace next paragraph by actual introduction]
+This CGAL package implements some of the state-of-the-art surface
+reconstruction methods. Priority is given to methods
+which take as input unorganized point sets and
+which compute an implicit function.
 
-We propose to elaborate upon a CGAL Package which implements some
-of the state-of-the-art surface reconstruction methods. Priority will
-be given to methods which take as input unorganized point sets and
-which compute an implicit function, although we leave the room to
-Delaunay-based techniques as all building blocks are available in
-CGAL. A common implicit function is an approximate distance function
-to the input points or to an estimate tangent plane, or an indicator
-function.
+The package proposes an interface to the CGAL Surface Mesh Generator.
+
+The input is an unorganized point set, possibly with attributes
+such as unoriented normals, oriented normals.
+
+Since reconstruction methods often require to preprocess a point set
+(e.g. estimate and orient the normals), we provide components devoted
+to this task.
+
+The output can be either an implicit function (ready for evaluation
+by any contouring algorithm), or a surface mesh.
 
 
 \section{Classified Reference Pages}
 
-[TODO: put here the actual concepts and classes list]
 
+\subsection{Concepts}
 
-\ccHeading{Concepts}
+\subsubsection{Points and Normals}
 
-\ccRefIdfierPage{PointWithNormal_3}  \\
-\ccRefIdfierPage{ReconstructionImplicitFunction}  \\
-
-
-\ccHeading{Surface Reconstruction Methods}
-
-This \cgal\ package implements some of
-the state-of-the-art reconstruction methods:
+Functions and classes of this package expect as input and output parameters range iterators over:
 
 \begin{itemize}
-
-\item Delaunay-based Poisson reconstruction algorithm
-
+\item 3D points
+\item Normals (orientable 3D vectors)
+\item 3D points with unoriented normals
+\item 3D points with oriented normals
 \end{itemize}
 
-\ccRefIdfierPage{Poisson_implicit_function<Kernel>}  \\
+This leads to the next concepts to represent these types:
+
+\begin{itemize}
+\item \ccc{Kernel::Point_3}: 3D position.
+\item \ccc{Kernel::Vector_3}: 3D vector.
+\item \ccc{OrientableNormal_3}: normal vector (oriented or not). Inherits from \ccc{Kernel::Vector_3}.
+\item \ccc{PointWithNormal_3}: inherits from \ccc{Kernel::Point_3} and contains a \ccc{Kernel::Vector_3} normal.
+\item \ccc{PointWithOrientableNormal_3}: inherits from \ccc{Kernel::Point_3} and contains a \ccc{OrientableNormal_3} normal.
+\end{itemize}
+
+\subsubsection{Reconstruction}
+
+We define a ReconstructionImplicitFunction concept that will provide
+a common interface to the Marching Cubes and the Surface Mesh Generator:
+
+\ccRefIdfierPage{ReconstructionImplicitFunction}  \\
+
+Eventually, the \ccc{ImplicitFctDelaunayTriangulation_3} concept defines the interface of a 3D Delaunay triangulation requested by the \ccc{Poisson_implicit_function} class:
+
+\ccRefIdfierPage{ImplicitFctDelaunayTriangulation_3}  \\
 
 
-\ccHeading{Output}
+\subsection{Input}
 
-[TODO: put here the output capabilities of the package]
+We provide several models of points and normals concepts, with different speed/space trade-offs:
+
+\begin{itemize}
+\item \ccc{Point_3<Geom_traits>}: CGAL regular 3D position.
+\item \ccc{Vector_3<Geom_traits>}: CGAL regular 3D vector.
+\item \ccc{Lightweight_vector_3<Geom_traits>}: model of the \ccc{Kernel::Vector_3} concept. 3D vector allocated only if not (0,0,0).
+\item \ccc{Orientable_normal_3<Geom_traits>}: model of the \ccc{OrientableNormal_3} concept.
+Inherits from \ccc{Vector_3<Geom_traits>} and contains an "is normal oriented?" flag.
+\item \ccc{Point_with_normal_3<Geom_traits, Normal_3>}: model of the \ccc{PointWithNormal_3} concept.
+Also model of \ccc{PointWithOrientableNormal_3} if \ccc{Normal_3} is a model of \ccc{OrientableNormal_3}.
+\end{itemize}
+
+For convenience, we provide also functions to read point sets from standard file formats:
+
+\begin{itemize}
+\item XYZ
+\item OFF
+\end{itemize}
+
+\ccRefIdfierPage{surface_reconstruction_read_xyz()}  \\
+\ccRefIdfierPage{surface_reconstruction_read_off_point_cloud()}  \\
 
 
-\ccHeading{Checks and Assertions}
+\subsection{Analysis}
 
-[TODO: replace next paragraph by actual pre and post-conditions]
+The purpose of the analysis stage is to compute parameters for the next stages algorithms.
+
+\begin{itemize}
+\item Point set barycenter, bounding box, bounding sphere (provided by CGAL Principal Components Analysis package)
+\item Average spacing to the K nearest neighbors
+\end{itemize}
+
+\ccRefIdfierPage{centroid()}  \\
+\ccRefIdfierPage{bounding_box()}  \\
+\ccRefIdfierPage{average_spacing_3()}  \\
+
+
+\subsection{Processing}
+
+\subsubsection{Outliers Removal Methods}
+
+\begin{itemize}
+\item Outliers removal wrt average squared distance to the K nearest neighbors
+\end{itemize}
+
+\ccRefIdfierPage{remove_outliers_wrt_avg_knn_sq_distance_3()}  \\
+
+
+\subsubsection{Point Set Simplification Methods}
+
+\begin{itemize}
+\item Point set simplification by clustering
+\item Random point set simplification
+\end{itemize}
+
+\ccRefIdfierPage{merge_epsilon_nearest_points_3()}  \\
+\ccRefIdfierPage{random_simplification_points_3()}  \\
+
+
+\subsubsection{Smoothing Methods}
+
+\begin{itemize}
+\item Smoothing via Jet fitting over the K nearest neighbors + reprojection
+\end{itemize}
+
+\ccRefIdfierPage{smooth_jet_fitting_3()}  \\
+
+
+\subsubsection{Normals Estimation Methods}
+
+\begin{itemize}
+\item Normals estimation by Principal Components Analysis over the K nearest neighbors
+\item Normals estimation by Jet fitting over the K nearest neighbors
+\end{itemize}
+
+\ccRefIdfierPage{estimate_normals_jet_fitting_3()}  \\
+\ccRefIdfierPage{estimate_normals_pca_3()}  \\
+
+
+\subsubsection{Normals Orientation Methods}
+
+\begin{itemize}
+\item Normals orientation using a Minimal Spanning Tree \cite{cgal:hddms-srup-92}
+\end{itemize}
+
+\ccRefIdfierPage{orient_normals_minimum_spanning_tree_3()}  \\
+
+
+\subsection{Surface Reconstruction}
+
+\subsubsection{Implicit Functions}
+
+This package implements:
+
+\begin{itemize}
+\item Delaunay-based Poisson reconstruction \cite{Kazhdan06}
+\item Algebraic Point Set Surfaces \cite{Guennebaud07}
+\end{itemize}
+
+\ccRefIdfierPage{Poisson_implicit_function}  \\
+\ccRefIdfierPage{APSS_implicit_function}  \\
+
+
+\subsubsection{Implicit Functions Contouring}
+
+Implicit functions can be contoured to reconstruct a surface by:
+
+\begin{itemize}
+\item CGAL Surface Mesh Generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}
+\end{itemize}
+
+\ccRefIdfierPage{make_surface_mesh()}  \\
+
+The parameter \ccc{Tag} affects the behavior of \ccc{make_surface_mesh()}: \\
+- \ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold
+surface without boundary.\\
+- \ccc{Manifold_with_boundary_tag}: the output mesh is guaranteed to be
+manifold but may have boundaries.\\
+- \ccc{Non_manifold_tag}: the output mesh will be a polygon soup.
+
+
+\subsection{Output}
+
+\subsubsection{Point Set Output}
+
+The output of the processing stage is a point set with normals.
+For convenience, we provide functions to write point sets to standard file formats:
+
+\begin{itemize}
+\item XYZ
+\item OFF
+\end{itemize}
+
+\ccRefIdfierPage{surface_reconstruction_write_off_point_cloud()}  \\
+\ccRefIdfierPage{surface_reconstruction_write_xyz()}  \\
+
+
+\subsubsection{Surface Output}
+
+The surface reconstructed by \ccc{make_surface_mesh()}
+is required to be a model of the concept
+\ccc{SurfaceMeshComplex_2InTriangulation_3},
+a data structure able to represent a two dimensional
+complex embedded in a three dimensional triangulation. \\
+\ccc{SurfaceMeshComplex_2InTriangulation_3} defines the methods to traverse the reconstructed surface.
+
+As examples, we provide functions to:
+
+\begin{itemize}
+\item write the reconstructed surface to standard OFF file format
+\item convert the reconstructed surface to a polygon soup
+\end{itemize}
+
+\ccRefIdfierPage{output_surface_facets_to_off()}  \\
+\ccRefIdfierPage{surface_reconstruction_output_surface_facets()}  \\
+
+
+\subsection{Checks and Assertions}
 
 The package performs the next checks:
 
 \begin{itemize}
 \item Preconditions:
     \begin{itemize}
-    \item ...
+    \item check that the input point set is not empty.
+    \item check that the input point set contains normals.
     \end{itemize}
 \item Postconditions:
     \begin{itemize}
-    \item ...
+    \item check normals estimation and orientation.
+    \item check Poisson reconstruction success.
     \end{itemize}
 \end{itemize}
 

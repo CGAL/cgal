@@ -1,13 +1,18 @@
 Surface Reconstruction
 
-[TODO: replace next paragraph by actual description]
+This CGAL package implements some of the state-of-the-art surface
+reconstruction methods. Priority is given to methods
+which take as input unorganized point sets and
+which compute an implicit function.
 
-We propose to elaborate upon a CGAL Package which
-implements some of the state-of-the-art surface reconstruction
-methods. Priority will be given to methods
-which take as input unorganized point sets and which
-compute an implicit function, although we leave the room
-to Delaunay-based techniques as all building blocks are
-available in CGAL. A common implicit function is an
-approximate distance function to the input points or to an
-estimate tangent plane, or an indicator function.
+The package proposes an interface to the CGAL Surface Mesh Generator.
+
+The input is an unorganized point set, possibly with attributes
+such as unoriented normals, oriented normals.
+
+Since reconstruction methods often require to preprocess a point set
+(e.g. estimate and orient the normals), we provide components devoted
+to this task.
+
+The output can be either an implicit function (ready for evaluation
+by any contouring algorithm), or a surface mesh.

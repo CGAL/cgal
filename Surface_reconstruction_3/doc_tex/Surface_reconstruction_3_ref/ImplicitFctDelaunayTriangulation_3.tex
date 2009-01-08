@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: ImplicitFctDelaunayTriangulation_3.tex
 % +------------------------------------------------------------------------+
-% | 22.02.2008   Laurent Saboret, Pierre Alliez
+% | 22.02.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSImplicitFctDelaunayTriangulationRev}{$Id$}
@@ -186,12 +186,12 @@ Update barycenter, bounding box, bounding sphere and standard deviation. Owner i
 \ccGlue
 \ccMethod{Vertex_handle insert(const Point& p, unsigned char type = INPUT, Cell_handle start = Cell_handle());}
 {
-Insert point in the triangulation.
+Insert point in the triangulation. Default type is INPUT.
 }
 \ccGlue
 \ccMethod{int insert(InputIterator first, InputIterator beyond, unsigned char type = INPUT);}
 {
-Insert points in the triangulation using a spatial sort.
+Insert points in the triangulation using a spatial sort. Default type is INPUT.
 Precondition: the value type of InputIterator must \ccc{Point}.
 }
 \ccGlue

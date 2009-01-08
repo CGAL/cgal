@@ -27,10 +27,13 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Read points (only) from a .xyz file (position + optionally normal, ASCII).
+/// Read points (positions + normals, if available) from a .off file (ASCII).
+///
+/// @heading Parameters:
+/// @param OutputIterator value_type must be a model of the PointWithNormal_3 concept.
+///
 /// @return true on success.
-template <typename OutputIterator> ///< OutputIterator value_type must be
-                                   ///< a model of the PointWithNormal_3 concept.
+template <typename OutputIterator>
 bool surface_reconstruction_read_off_point_cloud(const char* pFilename, OutputIterator output)
 {
   // value_type_traits is a workaround as back_insert_iterator's value_type is void

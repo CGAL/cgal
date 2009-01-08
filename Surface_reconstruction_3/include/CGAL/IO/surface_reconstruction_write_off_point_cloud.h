@@ -27,7 +27,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Save points (only) to .off file (positions + normals, ASCII).
+/// Save points (positions + normals) to a .off file (ASCII).
 ///
 /// @heading Parameters:
 /// @param InputIterator value_type must be a model of the PointWithNormal_3 concept.
@@ -70,8 +70,7 @@ bool surface_reconstruction_write_off_point_cloud(const char* pFilename,
   return true;
 }
 
-/// Save points to .off file (positions only, ASCII).
-/// Normals are ignored.
+/// Save points (positions + optionally normals) to a .off file (ASCII).
 ///
 /// @heading Parameters:
 /// @param InputIterator value_type must be a model of PointWithNormal_3 if

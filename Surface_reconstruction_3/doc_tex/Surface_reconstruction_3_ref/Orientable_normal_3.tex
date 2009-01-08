@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Orientable_normal_3.tex
 % +------------------------------------------------------------------------+
-% | 05.03.2008   Laurent Saboret, Pierre Alliez
+% | 05.03.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSOrientable_normalRev}{$Id$}
@@ -148,7 +148,11 @@ Get (a copy of) the actual vector.
 \ccGlue
 \ccMethod{bool is_oriented() const;}
 {
-Get normal orientation.
+Get/set normal orientation.
+}
+\ccGlue
+\ccMethod{void set_orientation(bool oriented);}
+{
 }
 \ccGlue
 

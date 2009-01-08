@@ -39,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
 /// APSS_implicit_function computes an implicit function
 /// that defines a Point Set Surface (PSS) based on
 /// moving least squares (MLS) fitting of algebraic spheres.
-/// See "Algebraic Point Set Surfaces" by Guennebaud and Gross (2007).
+/// See "Algebraic Point Set Surfaces" by Guennebaud and Gross [Guennebaud07].
 ///
 /// The Surface Mesh Generation package makes copies of implicit functions,
 /// thus such a class must be lightweight and stateless.
@@ -110,10 +110,10 @@ public:
 
   /// Create an APSS implicit function from a point set.
   ///
-  /// Precondition: the value type of InputIterator must be convertible to Point_with_normal_3.
+  /// Precondition: the value type of InputIterator must be convertible to Point_with_normal.
   ///
-  /// @param first First point of point set.
-  /// @param beyond Past-the-end point of point set.
+  /// @param first First point to add.
+  /// @param beyond Past-the-end point to add.
   /// @param k Number of nearest neighbors.
   /// @param projection_error Dichotomy error when projecting point.
   template < class InputIterator >
@@ -123,7 +123,7 @@ public:
   {
     // Allocate smart pointer to data
     m = new Private;
-    
+
     int nb_points = std::distance(first, beyond);
 
     // Number of nearest neighbors

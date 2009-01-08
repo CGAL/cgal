@@ -1,0 +1,97 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: surface_reconstruction_output_surface_facets.tex
+% +------------------------------------------------------------------------+
+% | 07.01.2009   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Surface_reconstruction_3
+% |
+\RCSdef{\RCSsurfacereconstructionoutputsurfacefacetsRev}{$Id$}
+\RCSdefDate{\RCSsurfacereconstructionoutputsurfacefacetsDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{surface_reconstruction_output_surface_facets}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+\ccc{surface_reconstruction_output_surface_facets()} converts a surface reconstructed by \ccc{make_surface_mesh()} to a triangles soup.
+
+\ccInclude{CGAL/surface_reconstruction_output_surface_facets.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccFunction{void surface_reconstruction_output_surface_facets(const SurfaceMeshComplex_2InTriangulation_3& c2t3, OutputIterator output);}
+{
+Get reconstructed surface out of a \ccc{SurfaceMeshComplex_2InTriangulation_3} object.
+}
+\ccGlue
+\begin{description}
+\item[Template Parameters:]
+\begin{description}
+\item[\ccc{SurfaceMeshComplex_2InTriangulation_3}]model of the \ccc{SurfaceMeshComplex_2InTriangulation_3} concept. \item[OutputIterator]\ccc{value_type} must be \ccc{Triangle_3}.\end{description}
+\end{description}
+\begin{description}
+\item[Returns:]true on success. \end{description}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[c2t3]Input surface. \item[output]Output triangles soup. \end{description}
+\end{description}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class \ccc{SurfaceMeshComplex_2InTriangulation_3},   \\
+typename OutputIterator$>$  \\
+void  \\
+\ccc{surface_reconstruction_output_surface_facets} (const \ccc{SurfaceMeshComplex_2InTriangulation_3}\& c2t3, OutputIterator output);  \\
+
+%END-AUTO(\ccParameters)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{output_surface_facets_to_off()}  \\
+
+\ccExample
+
+\begin{ccExampleCode}
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Surface_mesh_default_triangulation_3 STr;
+typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
+typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function> Surface_3;
+typedef Kernel::Triangle_3 Triangle;
+
+Surface_3 surface =...; // Implicit function to contour
+
+// Contour surface
+STr tr; // 3D-Delaunay triangulation
+C2t3 c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
+CGAL::make_surface_mesh(c2t3, surface, ...);
+
+// Convert reconstructed surface to a triangles soup
+std::deque<Triangle> triangles;
+CGAL::surface_reconstruction_output_surface_facets(c2t3, std::back_inserter(triangles));
+\end{ccExampleCode}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -29,7 +29,6 @@
 // This package
 #include <CGAL/Poisson_implicit_function.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/IO/surface_reconstruction_output.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 #include <CGAL/IO/surface_reconstruction_read_pwn.h>
 
@@ -212,7 +211,7 @@ int main(int argc, char * argv[])
     // Insert vertices and normals in triangulation.
     Dt3 dt;
     Poisson_implicit_function poisson_function(dt, points.begin(), points.end());
-    
+
     // Recover memory used by points[]
     points.clear();
 

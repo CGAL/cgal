@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: smooth_jet_fitting_3.tex
 % +------------------------------------------------------------------------+
-% | 02.06.2008   Laurent Saboret, Pierre Alliez
+% | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSsmoothjetfittingRev}{$Id$}
@@ -18,6 +18,16 @@
 %% \ccHtmlIndexC[function]{} %% add further index entries
 
 \ccDefinition
+
+\ccc{CGAL::smooth_jet_fitting_3()} smooths a point set using jet fitting on the K nearest neighbors and reprojection onto the jet.
+The default jet is a quadric.
+
+The \ccc{CGAL::smooth_jet_fitting_3()} function exists in five flavors.
+The main call applies to a point set and exists in four flavors: first, the function may modify the input point set or
+create a copy; second, the function may require the kernel to use for computations, or deduce it from input parameters.
+The low level call applies to a single point.
+
+\ccInclude{CGAL/smooth_jet_fitting_3.h}
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
@@ -63,7 +73,8 @@ Precondition: KNN $>$= 2.
 \ccFunction{void smooth_jet_fitting_3(ForwardIterator first, ForwardIterator beyond, unsigned int KNN, const Kernel& , const unsigned int degre_fitting = 2, const unsigned int degree_monge = 2);}
 {
 Smooth a point set using jet fitting on the KNN nearest neighbors and reprojection onto the jet. This function is mutating the input point set. This variant requires the kernel.
-Warning: This method moves the points, thus Precondition: KNN $>$= 2.
+Warning: This method moves the points, thus should not be called on containers sorted wrt points position.
+Precondition: KNN $>$= 2.
 }
 \ccGlue
 \begin{description}
@@ -94,7 +105,8 @@ Precondition: KNN $>$= 2.
 \ccFunction{void smooth_jet_fitting_3(ForwardIterator first, ForwardIterator beyond, unsigned int KNN, const unsigned int degre_fitting = 2, const unsigned int degree_monge = 2);}
 {
 Smooth a point set using jet fitting on the KNN nearest neighbors and reprojection onto the jet. This function is mutating the input point set. This variant deduces the kernel from iterator types.
-Warning: This method moves the points, thus Precondition: KNN $>$= 2.
+Warning: This method moves the points, thus should not be called on containers sorted wrt points position.
+Precondition: KNN $>$= 2.
 }
 \ccGlue
 \begin{description}
@@ -110,8 +122,6 @@ Warning: This method moves the points, thus Precondition: KNN $>$= 2.
 \ccGlue
 
 %END-AUTO(\ccDefinition)
-  
-\ccInclude{Surface_reconstruction_3/smooth_jet_fitting_3.h}
 
 \ccParameters
 
@@ -154,19 +164,22 @@ void  \\
 
 \ccExample
 
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Surface_reconstruction_3/smooth_jet_fitting_3.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
 \begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef Kernel::Point_3 Point;
+std::deque<Point> points = ...;
+int nb_neighbors = 7;
 
-%% \ccIncludeExampleCode{Surface_reconstruction_3/smooth_jet_fitting_3.C}
+// put result in output iterator...
+std::deque<Point> output;
+CGAL::smooth_jet_fitting_3(points.begin(), points.end(),
+                           std::back_inserter(output),
+                           nb_neighbors);
+
+// ...or use mutating version of the same function
+CGAL::smooth_jet_fitting_3(points.begin(), points.end(),
+                           nb_neighbors);
+\end{ccExampleCode}
 
 \end{ccRefFunction}
 

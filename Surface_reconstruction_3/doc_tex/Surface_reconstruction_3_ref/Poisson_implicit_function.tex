@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Poisson_implicit_function.tex
 % +------------------------------------------------------------------------+
-% | 07.09.2007   Laurent Saboret, Pierre Alliez
+% | 07.09.2007   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_3
 % |
 \RCSdef{\RCSPoissonimplicitfunctionRev}{$Id$}
@@ -19,10 +19,33 @@
 
 \ccDefinition
 
+% Insert image poisson.jpg/eps
+\begin{center}
+    \label{Surface_reconstruction_3-fig-poisson}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=0.7\textwidth]{Surface_reconstruction_3/poisson} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="70%" border=0 src="../Surface_reconstruction_3/poisson.jpg"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
+        \caption{Poisson reconstruction}
+    \end{figure}
+\end{center}
+
+Kazhdan, Bolitho and Hoppe described in \cite{Kazhdan06}
+the Poisson Surface Reconstruction algorithm.
+CGAL implements a variant of this algorithm which computes an implicit function
+piecewise-linear in a 3D Delaunay triangulation instead of an octree.
+
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
 \ccc{Poisson_implicit_function} computes an indicator function f() piecewise-linear over the tetrahedra. We solve the Poisson equation Laplacian(f) = divergent(normals field) at each vertex of the triangulation via the TAUCS sparse linear solver. One vertex must be constrained.
+
+The Surface Mesh Generation package makes copies of implicit functions, thus such a class must be lightweight and stateless.
 
 %END-AUTO(\ccDefinition)
 
@@ -227,7 +250,7 @@ Delaunay refinement (break bad tetrahedra, where bad means badly shaped or too b
 \ccGlue
 \ccMethod{void extrapolate_normals();}
 {
-Extrapolate the normals field: compute null normals by averaging neighbour normals.
+Extrapolate the normals field: compute null normals by averaging neighbor normals.
 }
 \ccGlue
 \ccMethod{FT gaussian_function(FT sigma, FT distance);}
@@ -236,7 +259,7 @@ Extrapolate the normals field: compute null normals by averaging neighbour norma
 \ccGlue
 \ccMethod{int extrapolate_normals_using_gaussian_kernel();}
 {
-Extrapolate the normals field:.
+Extrapolate the normals field. Return the number of normals computed.
 }
 \ccGlue
 \ccMethod{bool solve_poisson(double lambda, double * duration_assembly, double * duration_factorization, double * duration_solve, bool is_normalized = false);}
@@ -303,6 +326,17 @@ Get average value of the implicit function over convex hull vertices.
 \ccGlue
 
 %END-AUTO(\ccOperations)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Implicit_fct_delaunay_triangulation_3}  \\
+\ccRefIdfierPage{Implicit_fct_delaunay_triangulation_cell_base_3}  \\
+\ccRefIdfierPage{Implicit_fct_delaunay_triangulation_vertex_base_3}  \\
+\ccRefIdfierPage{APSS_implicit_function}  \\
+
+\ccExample
+
+See \ccc{poisson_reconstruction.cpp} example.
 
 \end{ccRefClass}
 
