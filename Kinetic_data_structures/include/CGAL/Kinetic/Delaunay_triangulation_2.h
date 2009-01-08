@@ -526,7 +526,7 @@ public:
    
 
       if (!was_2d && del_.dimension()==2) {
-	vh->set_neighbors(vh->degree());
+	vh->set_neighbors(del_.degree(vh));
 	has_certificates_=false;
 	set_has_certificates(true, 0); 
       } else if (del_.dimension() == 2) {
@@ -568,7 +568,7 @@ public:
 	}
       }
     } else {
-      vertex_handle(k)->set_neighbors(vh->degree());
+      vertex_handle(k)->set_neighbors(del_.degree(vh));
     }
     watcher_.post_insert_vertex(vh);
     //write(std::cout);
@@ -802,7 +802,7 @@ protected:
   }
 
   void update_neighbors(Vertex_handle vh) {
-    unsigned int deg= vh->degree();
+    unsigned int deg= del_.degree(vh);
     if (deg == vh->neighbors()) return;
     if (deg ==3) {
       vh->set_neighbors(3);
@@ -849,7 +849,7 @@ protected:
   }
 
   bool neighbors_ok(Vertex_handle vh) const {
-    return vh->degree() == vh->neighbors();
+    return del_.degree(vh)== vh->neighbors();
     //(vh->neighbors() == vh->degree() && vh->degree() <6 
     //|| vh->degree() >=5 && vh->neighbors() >=5);
   }
@@ -1076,7 +1076,7 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
        
        if (!neighbors_ok(vit)) {
 	 CGAL_LOG(Log::NONE, "AUDIT FAILURE stored degree is " << vit->neighbors() 
-			  << " and actual is " << vit->degree() << " for " << vit->point() << std::endl);
+                  << " and actual is " << del_.degree(vit) << " for " << vit->point() << std::endl);
 	 CGAL_exactness_assertion(neighbors_ok(vit));
        }
      }
@@ -1093,11 +1093,11 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
 	  found=true;
 	  //int d= vit->degree();
 	  //int d2= vit2->degree();
-	  if (vit->degree() != vit2->degree()) {
+	  if (del_.degree(vit) != del_.degree(vit2)) {
 	    CGAL_LOG(Log::NONE, "AUDIT FAILURE Degrees don't match in: " 
 			     << vit->point() << std::endl);
 	  }
-	  CGAL_exactness_assertion(vit->degree() == vit2->degree());
+	  CGAL_exactness_assertion(del_.degree(vit) == del_.degree(vit2));
 
 
 	}
@@ -1149,13 +1149,13 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
 			 << " front has " << get_directed_edge_label(*fit)
 			 << " and back has " << get_directed_edge_label(TDS_helper::mirror_edge(*fit))<< std::endl);
       }
-      if (TDS_helper::origin(*fit)->degree()==3 || TDS_helper::destination(*fit)->degree()==3) {
+      if (del_.degree(TDS_helper::origin(*fit))==3 || del_.degree(TDS_helper::destination(*fit))==3) {
 	if (get_undirected_edge_label(*fit) != Event_key()) {
 	  CGAL_LOG(Log::NONE, "AUDIT FAILURE certificate on degree 3 edge: " 
 			   << TDS_helper::origin(*fit)->point()
 			   << " " <<  TDS_helper::destination(*fit)->point() 
-			   << TDS_helper::origin(*fit)->degree() <<  " "
-			   << TDS_helper::destination(*fit)->degree() << std::endl);
+                   << del_.degree(TDS_helper::origin(*fit)) <<  " "
+                   << del_.degree(TDS_helper::destination(*fit)) << std::endl);
 	} 
 	CGAL_exactness_assertion(get_undirected_edge_label(*fit) == Event_key());
       } else {
@@ -1164,8 +1164,8 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
 			   << TDS_helper::origin(*fit)->point()
 			   << " " <<  TDS_helper::destination(*fit)->point() << std::endl);
 	  CGAL_LOG(Log::NONE, "AUDIT FAILURE degrees are: " 
-			   << TDS_helper::origin(*fit)->degree()
-			   << " " <<  TDS_helper::destination(*fit)->degree() << std::endl);
+                   << del_.degree(TDS_helper::origin(*fit))
+                   << " " <<  del_.degree(TDS_helper::destination(*fit)) << std::endl);
 	  
 	} 
 	CGAL_exactness_assertion(get_undirected_edge_label(*fit) != Event_key());
