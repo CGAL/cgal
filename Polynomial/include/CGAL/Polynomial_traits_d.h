@@ -1013,7 +1013,7 @@ struct Construct_coefficient_const_iterator_range
                                   Coefficient_const_iterator_range> {
     Coefficient_const_iterator_range      
     operator () (const Polynomial_d& p) const {                                      
-      return make_pair( p.begin(), p.end() );
+      return std::make_pair( p.begin(), p.end() );
     }                                                                          
 };        
                                        
@@ -1022,7 +1022,7 @@ struct Construct_innermost_coefficient_const_iterator_range
                                  Innermost_coefficient_const_iterator_range> {
    Innermost_coefficient_const_iterator_range      
    operator () (const Polynomial_d& p) const {                                      
-     return make_pair(
+     return std::make_pair(
          typename Coefficient_const_flattening::Flatten()(p.end(),p.begin()),
          typename Coefficient_const_flattening::Flatten()(p.end(),p.end()));
    }                                                                          
@@ -1478,7 +1478,7 @@ struct Construct_innermost_coefficient_const_iterator_range
     template <class OutputIterator>
     void operator()( const Polynomial_d& p, OutputIterator oit ) const {
       if(CGAL::is_zero(p)){
-        *oit= make_pair(Exponent_vector(std::vector<int>(d,0)), 
+        *oit= std::make_pair(Exponent_vector(std::vector<int>(d,0)), 
             Innermost_coefficient_type(0));
         oit++;
         return;
