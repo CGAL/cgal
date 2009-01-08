@@ -35,9 +35,6 @@ void remove_separator( string& s);
 
 void wrap_anchor( const string& url, const string& body, ostream& out );
 
-// Small Caps Conversion
-string convert_to_small_caps( string s);
-
 void append_file_to_string( const string& name, string& s);
 void open_file_to_string( const string& name, string& s);
 

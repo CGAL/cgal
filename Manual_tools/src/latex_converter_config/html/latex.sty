@@ -2122,15 +2122,13 @@
 
 \newcommand{\lciFontCloseShape}[1]{%
     \lciIfEqual{}{#1}{}{\lciIfEqual{SC}{#1}{%
-        \lciEndSmallCaps
-    }{%
+        \lcRawHtml{</span>}}{%
         \lcRawHtml{</#C1>}%
     }}}%
 
 \newcommand{\lciFontOpenShape}[1]{%
     \lciIfEqual{}{#1}{}{\lciIfEqual{SC}{#1}{%
-        \lciBeginSmallCaps
-    }{%
+        \lcRawHtml{<span class="textsc">}}{%
         \lcRawHtml{<#C1>}%
     }}}%
 

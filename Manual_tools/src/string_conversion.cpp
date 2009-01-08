@@ -407,36 +407,6 @@ void wrap_anchor( const string& cc_url, const string& cc_body, ostream& out ) {
 }
 
 
-// Small Caps Conversion
-// ===========================
-string convert_to_small_caps( string s) {
-    bool small = false;
-    size_t i = 0;
-    while (  i < s.size()) {
-	char c = s[i];
-	if ( islower(c)) {
-	    s[i] = _toupper(c);
-	    if (! small) {
-		small = true;
-		s.insert( i, "<SMALL>"); 
-		i += 7;
-	    }
-	} else if ( c != SEPARATOR) {
-	    if (small) {
-		small = false;
-		s.insert( i, "</SMALL>"); 
-		i += 8;
-	    }
-	}
-	++i;
-    }
-    if ( small)
-	s.append( "</SMALL>");
-    return s;
-}
-
-
-
 
 // read a file into a string
 // ===========================

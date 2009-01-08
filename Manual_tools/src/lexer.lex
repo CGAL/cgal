@@ -35,7 +35,6 @@ int    old_state = 0;    // Old parser state before param. parsing.
 int number_of_args = 0;
 
 string yy_string;             // Used like yytext, if we need a temp. string.
-bool small_caps_mode = false; // Special treatment of small caps conversion.
 
 // Used to parse {} nested expressions as (La)TeX macro parameters
 // using ParameterMode.
@@ -872,19 +871,6 @@ number          {digit}+
 		    return CHAR;
 		}
 
- /* Small Caps Treatment                   */
- /* -------------------------------------- */
-
-<INITIAL,AllttMode>[\\]lciBeginSmallCaps {
-	            skiplimitedspaces();
-		    small_caps_mode = true;
-		    break;
-}
-<INITIAL,AllttMode>[\\]lciEndSmallCaps {
-	            skiplimitedspaces();
-		    small_caps_mode = false;
-		    break;
-}
 
  /* TeX macro expansion                    */
  /* -------------------------------------- */
@@ -925,11 +911,6 @@ number          {digit}+
   /* Speed up for the usual case of plain text, numbers and spaces */
 
 <INITIAL,AllttMode>[a-zA-Z0-9 \t]+ {
-		    if ( small_caps_mode) {
-			yy_string = convert_to_small_caps( yytext);
-			yylval.text = yy_string.c_str();
-			return STRING;
-		    }
 	            yylval.text = yytext;
 	  	    return STRING;
 }
