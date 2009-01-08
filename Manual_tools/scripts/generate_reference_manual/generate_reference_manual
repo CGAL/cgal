@@ -208,5 +208,11 @@ perl -pi -e 's/\[DMA02\]/\\cite{cgal:dma-ipsm-02}/s' doc_tex/*_ref/*.tex
 perl -pi -e 's/\[LPRM02\]/\\cite{cgal:lprm-lscm-02}/s' doc_tex/*_ref/*.tex
 perl -pi -e 's/\[Tut63\]/\\cite{t-hdg-63}/s' doc_tex/*_ref/*.tex
 perl -pi -e 's/\[EDD\+95\]/\\cite{cgal:eddhls-maam-95}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[Guennebaud07\]/\\cite{Guennebaud07}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[GG07\]/\\cite{Guennebaud07}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[Kazhdan06\]/\\cite{Kazhdan06}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[KBH05\]/\\cite{Kazhdan06}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[Hoppe92\]/\\cite{cgal:hddms-srup-92}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[HDD\+92\]/\\cite{cgal:hddms-srup-92}/s' doc_tex/*_ref/*.tex
 
 exit 0
