@@ -1,4 +1,4 @@
-CGAL_URL := $(shell LANG= LC_ALL= ./get_cgal_trunk_url)
+CGAL_URL := $(shell ./get_cgal_trunk_url)
 
 RPM_BUILD_ARCH:=$(shell rpm --showrc | awk '/^build arch/ { print $$4}')
 
@@ -27,7 +27,7 @@ all:
 #
 #############################################################################
 
-CGAL_MANUAL_REVISION:=$(shell svn info . | awk '/Revision/ {print $$2}')
+CGAL_MANUAL_REVISION:=$(shell LANG= LC_ALL= svn info . | awk '/Revision/ {print $$2}')
 CGAL_MANUAL_RELEASE_NUMBER:=$(shell rpm -q --qf '%{release}\n' --specfile SPECS/CGAL-manual-tools.spec | head -1)
 
 RPM_OPTIONS+= --define "cgal_manual_revision $(CGAL_MANUAL_REVISION)"
