@@ -1,15 +1,15 @@
 \section{Introduction}
 
-This CGAL package implements some
+This \cgal\ package implements some
 of the state-of-the-art surface reconstruction methods. Priority is
 given to methods which take as input unorganized point sets and
 which compute an implicit function, although we leave the room to
 Delaunay-based techniques as all building blocks are available in
-CGAL. A common implicit function is an approximate distance function
+\cgal. A common implicit function is an approximate distance function
 to the input points or to an estimate tangent plane, or an indicator
 function.
 
-The package proposes an interface to the CGAL Surface Mesh Generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05},
+The package proposes an interface to the \cgal\ Surface Mesh Generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05},
 and we leave the room to other surface contouring techniques such
 as the Marching Cubes algorithm~\cite{LC87} and its variants (a
 user may prefer using his favorite contouring algorithm).
@@ -23,7 +23,7 @@ to this task.
 
 The output can be either an implicit function (ready for evaluation
 by any contouring algorithm), or a surface mesh, compatible with the
-BGL Graph concept and CGAL polyhedron when 2-manifold, or represented
+BGL Graph concept and \cgal\ polyhedron when 2-manifold, or represented
 as a polygon soup otherwise.
 
 % Insert image introduction.jpg/eps
@@ -117,7 +117,7 @@ as a polygon soup otherwise.
 \subsubsection{Analysis}
 
 \begin{itemize}
-\item Point set barycenter, bounding box, bounding sphere (provided by CGAL Principal Components Analysis package)
+\item Point set barycenter, bounding box, bounding sphere (provided by \cgal\ Principal Components Analysis package)
 \item Average spacing to the K nearest neighbors
 \end{itemize}
 
@@ -169,7 +169,7 @@ Implicit functions:
 Implicit function contouring:
 
 \begin{itemize}
-\item CGAL Surface Mesh Generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}
+\item \cgal\ Surface Mesh Generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}
 \end{itemize}
 
 

@@ -37,9 +37,9 @@ We provide several models of points and normals concepts, with different speed/s
 
 \begin{itemize}
 \item \ccRefIdfierPage{CGAL::Point_3<Geom_traits>} \\
-CGAL regular 3D position.
+\cgal\ regular 3D position.
 \item \ccRefIdfierPage{CGAL::Vector_3<Geom_traits>} \\
-CGAL regular 3D vector.
+\cgal\ regular 3D vector.
 \item \ccRefIdfierPage{CGAL::Lightweight_vector_3<Geom_traits>} \\
 3D vector allocated only if not (0,0,0).
 Model of the \ccc{Kernel::Vector_3} concept.
@@ -56,7 +56,7 @@ Also model of \ccc{PointWithOrientableNormal_3} if \ccc{Normal_3} is a model of 
 
 \subsection{Reconstruction}
 
-The package entry point is the contouring algorithm, CGAL Surface Mesh Generator,
+The package entry point is the contouring algorithm, \cgal\ Surface Mesh Generator,
 templated by an implicit function.
 
 We plan to add to this package a Marching Cubes implementation and
@@ -86,7 +86,7 @@ Candidates are:
 
 \begin{itemize}
 \item a polygon soup
-\item an organized surface like a BGL Graph or CGAL Polyhedron
+\item an organized surface like a BGL Graph or \cgal\ Polyhedron
 \item \ccc{SurfaceMeshComplex_2InTriangulation_3} (Surface Mesh Generator's
 native output format)
 \end{itemize}

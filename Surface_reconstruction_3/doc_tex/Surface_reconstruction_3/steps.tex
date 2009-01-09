@@ -3,7 +3,7 @@
 Real world reconstruction from scan data is a step by step process:
 
 \begin{itemize}
-\item Scanning and scans alignment => point set with or without normals (not covered by CGAL)
+\item Scanning and scans alignment => point set with or without normals (not covered by \cgal)
 \item Outliers removal (if reconstruction method does not support outliers)
 \item Point set simplification
 \item Smoothing (if reconstruction method does not support noise)
@@ -31,9 +31,9 @@ We provide several models of points and normals concepts, with different speed/s
 
 \begin{itemize}
 \item \ccRefIdfierPage{CGAL::Point_3<Geom_traits>} \\
-CGAL regular 3D position.
+\cgal\ regular 3D position.
 \item \ccRefIdfierPage{CGAL::Vector_3<Geom_traits>} \\
-CGAL regular 3D vector.
+\cgal\ regular 3D vector.
 \item \ccRefIdfierPage{CGAL::Lightweight_vector_3<Geom_traits>} \\
 3D vector allocated only if not (0,0,0).
 \item \ccRefIdfierPage{CGAL::Orientable_normal_3<Geom_traits>} \\
@@ -76,7 +76,7 @@ if(!CGAL::surface_reconstruction_read_off_point_cloud(filename,
 The purpose of the analysis stage is to compute parameters for the next stages algorithms.
 
 \begin{itemize}
-\item Point set barycenter, bounding box, bounding sphere (provided by CGAL Principal Components Analysis package)
+\item Point set barycenter, bounding box, bounding sphere (provided by \cgal\ Principal Components Analysis package)
 \item Average spacing to the K nearest neighbors
 \end{itemize}
 
@@ -314,7 +314,7 @@ This package implements:
 Implicit functions can be contoured to reconstruct a surface by:
 
 \begin{itemize}
-\item CGAL Surface Mesh Generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}
+\item \cgal\ Surface Mesh Generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}
 \end{itemize}
 
 \ccRefIdfierPage{CGAL::make_surface_mesh}  \\

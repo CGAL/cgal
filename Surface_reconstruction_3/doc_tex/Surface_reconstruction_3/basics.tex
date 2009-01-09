@@ -5,7 +5,7 @@
 
 Kazhdan, Bolitho and Hoppe described in \cite{Kazhdan06}
 the Poisson Surface Reconstruction algorithm.
-CGAL implements a variant of this algorithm which computes an implicit function
+\cgal\ implements a variant of this algorithm which computes an implicit function
 piecewise-linear in a 3D Delaunay triangulation instead of an octree.
 
 The outline of this algorithm is:
@@ -18,7 +18,7 @@ badly shaped or too big). The normal of Steiner points is set to zero.
 \item Compute an indicator function f() piecewise-linear over the tetrahedra.
 We solve the Poisson equation Laplacian(f) = divergent(normals field)
 at each vertex of the triangulation via the TAUCS sparse linear solver.
-\item CGAL Surface Mesh Generator extracts the iso-surface {}``f() = median
+\item \cgal\ Surface Mesh Generator extracts the iso-surface {}``f() = median
 of f() over the input points''.
 \end{enumerate}
 
