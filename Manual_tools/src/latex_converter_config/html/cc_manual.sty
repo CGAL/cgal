@@ -428,6 +428,10 @@
                                                %% from parsing spaces
 \newcommand{\ccStyle}{\ccc}
 
+% Add a wrapper around \ccc so that one can chose the URL of the HTML link,
+% instead of the automatic one.
+\newcommand{\cccWithURL}[2]{\lcAnchor{#2}{\lcNoLinkBegin\ccc{#1}\lcNoLinkEnd}}
+
 % +--------------------------------------------------------------------------
 % | \ccDeclaration, \ccHidden, \ccUnchecked
 % +--------------------------------------------------------------------------
