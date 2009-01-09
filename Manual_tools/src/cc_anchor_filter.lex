@@ -58,16 +58,9 @@ class Dictionary {
   typedef hash_map< string, string > Map;
   Map map;
 public:
-  bool add( const string& key, const string& value ) {
-    if( !is_defined( key ) ) {
+  void add( const string& key, const string& value ) {
+    if( !is_defined( key ) )
       map[key] = value;
-      return true;
-    }
-    else {
-      cerr << " internal warning: key [" << key << "] already exists with value \""
-	  << value << "\"" << endl;
-      return false;
-    }
   }
 
   bool is_defined( const string& key ) const {
@@ -404,17 +397,17 @@ int main( int argc, char** argv ) {
 
     //cerr << "type: " << type << " key: [" << key << "] value: [" << value << "]" << endl;
     if( type == "l" ) {
-      dict_labels.add(key,value) || (error_code = 2);
+      dict_labels.add(key,value);
     } else if( type == "lt" ) {
-      dict_labels_text.add(key,value) || (error_code = 2);
+      dict_labels_text.add(key,value);
     } else if ( type == "b" ) {
-      dict_bib.add(key,value) || (error_code = 2);
+      dict_bib.add(key,value);
     } else if ( type == "c" ) {
-      dict_cc.add(key,value) || (error_code = 2);
+      dict_cc.add(key,value);
       //cerr << "c key: [" << key << "] value: [" << value << "]" << endl;
     } else if ( type == "i" ) {
       //cerr << "i key: [" << key << "] value: [" << value << "]" << endl;
-      dict_internal.add(key,value) || (error_code = 2);
+      dict_internal.add(key,value);
     }
   }
 
