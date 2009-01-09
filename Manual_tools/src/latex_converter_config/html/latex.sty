@@ -2017,8 +2017,6 @@
 
 %% A font is a size and style of type. A type style is specified by three
 %% separate components: shape, series and family.
-%% Note: Small Caps is the only exception that needs special treatment
-%%       in the scanner (to make the lower case letters small uppercases).
 
 \newcommand{\lciFontSize}{0}  %% possible values range from \tiny to \Huge.
 
@@ -2071,7 +2069,7 @@
 %% The order of font type changes is size, family, series, and shape.
 %% For each font type change and scope change we always close all
 %% open font scopes in HTML and reopen them according to the new
-%% font type. Matching closing and opening tags will be be discarded.
+%% font type. Matching closing and opening tags will be discarded.
 
 %% Args: old-size, old-family, old-series, old-shape,
 %%       new-size, new-family, new-series, new-shape
