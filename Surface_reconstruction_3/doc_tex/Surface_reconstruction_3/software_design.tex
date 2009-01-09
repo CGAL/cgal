@@ -21,22 +21,35 @@ steps as global functions that expect as input and output parameters range itera
 This leads to the next concepts to represent these types:
 
 \begin{itemize}
-\item \ccc{Kernel::Point_3}: 3D position.
-\item \ccc{Kernel::Vector_3}: 3D vector.
-\item \ccc{OrientableNormal_3}: normal vector (oriented or not). Inherits from \ccc{Kernel::Vector_3}.
-\item \ccc{PointWithNormal_3}: inherits from \ccc{Kernel::Point_3} and contains a \ccc{Kernel::Vector_3} normal.
-\item \ccc{PointWithOrientableNormal_3}: inherits from \ccc{Kernel::Point_3} and contains a \ccc{OrientableNormal_3} normal.
+\item \ccRefIdfierPage{Kernel::Point_3} \\
+3D position.
+\item \ccRefIdfierPage{Kernel::Vector_3} \\
+3D vector.
+\item \ccRefIdfierPage{OrientableNormal_3} \\
+Normal vector (oriented or not). Inherits from \ccc{Kernel::Vector_3}.
+\item \ccRefIdfierPage{PointWithNormal_3} \\
+Inherits from \ccc{Kernel::Point_3} and contains a \ccc{Kernel::Vector_3} normal.
+\item \ccRefIdfierPage{PointWithOrientableNormal_3} \\
+Inherits from \ccc{Kernel::Point_3} and contains a \ccc{OrientableNormal_3} normal.
 \end{itemize}
 
 We provide several models of points and normals concepts, with different speed/space trade-offs:
 
 \begin{itemize}
-\item \ccc{Point_3<Geom_traits>}: CGAL regular 3D position.
-\item \ccc{Vector_3<Geom_traits>}: CGAL regular 3D vector.
-\item \ccc{Lightweight_vector_3<Geom_traits>}: model of the \ccc{Kernel::Vector_3} concept. 3D vector allocated only if not (0,0,0).
-\item \ccc{Orientable_normal_3<Geom_traits>}: model of the \ccc{OrientableNormal_3} concept.
+\item \ccRefIdfierPage{CGAL::Point_3<Geom_traits>} \\
+CGAL regular 3D position.
+\item \ccRefIdfierPage{CGAL::Vector_3<Geom_traits>} \\
+CGAL regular 3D vector.
+\item \ccRefIdfierPage{CGAL::Lightweight_vector_3<Geom_traits>} \\
+3D vector allocated only if not (0,0,0).
+Model of the \ccc{Kernel::Vector_3} concept.
+\item \ccRefIdfierPage{CGAL::Orientable_normal_3<Geom_traits>} \\
+Normal (oriented or not).
+Model of the \ccc{OrientableNormal_3} concept.
 Inherits from \ccc{Vector_3<Geom_traits>} and contains an "is normal oriented?" flag.
-\item \ccc{Point_with_normal_3<Geom_traits, Normal_3>}: model of the \ccc{PointWithNormal_3} concept.
+\item \ccRefIdfierPage{CGAL::Point_with_normal_3<Geom_traits, Normal_3>} \\
+3D position + normal.
+Model of the \ccc{PointWithNormal_3} concept.
 Also model of \ccc{PointWithOrientableNormal_3} if \ccc{Normal_3} is a model of \ccc{OrientableNormal_3}.
 \end{itemize}
 

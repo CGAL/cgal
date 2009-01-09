@@ -30,12 +30,17 @@ Functions and classes of this package expect as input and output parameters rang
 We provide several models of points and normals concepts, with different speed/space trade-offs:
 
 \begin{itemize}
-\item \ccc{Point_3<Geom_traits>}: CGAL regular 3D position.
-\item \ccc{Vector_3<Geom_traits>}: CGAL regular 3D vector.
-\item \ccc{Lightweight_vector_3<Geom_traits>}: 3D vector allocated only if not (0,0,0).
-\item \ccc{Orientable_normal_3<Geom_traits>}: Normal (oriented or not).
+\item \ccRefIdfierPage{CGAL::Point_3<Geom_traits>} \\
+CGAL regular 3D position.
+\item \ccRefIdfierPage{CGAL::Vector_3<Geom_traits>} \\
+CGAL regular 3D vector.
+\item \ccRefIdfierPage{CGAL::Lightweight_vector_3<Geom_traits>} \\
+3D vector allocated only if not (0,0,0).
+\item \ccRefIdfierPage{CGAL::Orientable_normal_3<Geom_traits>} \\
+Normal (oriented or not).
 Inherits from \ccc{Vector_3<Geom_traits>} and contains an "is normal oriented?" flag.
-\item \ccc{Point_with_normal_3<Geom_traits, Normal_3>}: 3D position + normal.
+\item \ccRefIdfierPage{CGAL::Point_with_normal_3<Geom_traits, Normal_3>} \\
+3D position + normal.
 \end{itemize}
 
 For convenience, we provide also functions to read point sets from standard file formats:
@@ -45,8 +50,8 @@ For convenience, we provide also functions to read point sets from standard file
 \item OFF
 \end{itemize}
 
-\ccRefIdfierPage{surface_reconstruction_read_xyz()}  \\
-\ccRefIdfierPage{surface_reconstruction_read_off_point_cloud()}  \\
+\ccRefIdfierPage{CGAL::surface_reconstruction_read_xyz}  \\
+\ccRefIdfierPage{CGAL::surface_reconstruction_read_off_point_cloud}  \\
 
 Example:
 
@@ -75,9 +80,9 @@ The purpose of the analysis stage is to compute parameters for the next stages a
 \item Average spacing to the K nearest neighbors
 \end{itemize}
 
-\ccRefIdfierPage{centroid()}  \\
-\ccRefIdfierPage{bounding_box()}  \\
-\ccRefIdfierPage{average_spacing_3()}  \\
+\ccRefIdfierPage{CGAL::centroid}  \\
+\ccRefIdfierPage{CGAL::bounding_box}  \\
+\ccRefIdfierPage{CGAL::average_spacing_3}  \\
 
 Example:
 
@@ -103,7 +108,7 @@ std::cerr << CGAL::average_spacing_3<Iterator,FT>(points.begin(), points.end(),
 \item Outliers removal wrt average squared distance to the K nearest neighbors
 \end{itemize}
 
-\ccRefIdfierPage{remove_outliers_wrt_avg_knn_sq_distance_3()}  \\
+\ccRefIdfierPage{CGAL::remove_outliers_wrt_avg_knn_sq_distance_3}  \\
 
 % Insert image outliers_removal.jpg/eps
 \begin{center}
@@ -146,8 +151,8 @@ CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(points.begin(), points.end(),
 \item Random point set simplification
 \end{itemize}
 
-\ccRefIdfierPage{merge_epsilon_nearest_points_3()}  \\
-\ccRefIdfierPage{random_simplification_points_3()}  \\
+\ccRefIdfierPage{CGAL::merge_epsilon_nearest_points_3}  \\
+\ccRefIdfierPage{CGAL::random_simplification_points_3}  \\
 
 % Insert image random_simplification.jpg/eps
 \begin{center}
@@ -187,7 +192,7 @@ CGAL::merge_epsilon_nearest_points_3(points.begin(), points.end(),
 \item Smoothing via Jet fitting over the K nearest neighbors + reprojection
 \end{itemize}
 
-\ccRefIdfierPage{smooth_jet_fitting_3()}  \\
+\ccRefIdfierPage{CGAL::smooth_jet_fitting_3}  \\
 
 % Insert image smoothing_jet_fitting.jpg/eps
 \begin{center}
@@ -228,8 +233,8 @@ CGAL::smooth_jet_fitting_3(points.begin(), points.end(),
 \item Normals estimation by Jet fitting over the K nearest neighbors
 \end{itemize}
 
-\ccRefIdfierPage{estimate_normals_jet_fitting_3()}  \\
-\ccRefIdfierPage{estimate_normals_pca_3()}  \\
+\ccRefIdfierPage{CGAL::estimate_normals_jet_fitting_3}  \\
+\ccRefIdfierPage{CGAL::estimate_normals_pca_3}  \\
 
 % Insert image normal_estimation_pca.jpg/eps
 \begin{center}
@@ -254,7 +259,7 @@ CGAL::smooth_jet_fitting_3(points.begin(), points.end(),
 \item Normals orientation using a Minimal Spanning Tree \cite{cgal:hddms-srup-92}
 \end{itemize}
 
-\ccRefIdfierPage{orient_normals_minimum_spanning_tree_3()}  \\
+\ccRefIdfierPage{CGAL::orient_normals_minimum_spanning_tree_3}  \\
 
 % Insert image normals_orientation_mst.jpg/eps
 \begin{center}
@@ -284,8 +289,8 @@ This package implements:
 \item Algebraic Point Set Surfaces \cite{Guennebaud07}
 \end{itemize}
 
-\ccRefIdfierPage{Poisson_implicit_function}  \\
-\ccRefIdfierPage{APSS_implicit_function}  \\
+\ccRefIdfierPage{CGAL::Poisson_implicit_function<ImplicitFctDelaunayTriangulation_3>}  \\
+\ccRefIdfierPage{CGAL::APSS_implicit_function<GeomTraits, PointWithNormal_3>}  \\
 
 % Insert image APSS.jpg/eps
 \begin{center}
@@ -312,7 +317,7 @@ Implicit functions can be contoured to reconstruct a surface by:
 \item CGAL Surface Mesh Generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}
 \end{itemize}
 
-\ccRefIdfierPage{make_surface_mesh()}  \\
+\ccRefIdfierPage{CGAL::make_surface_mesh}  \\
 
 The parameter \ccc{Tag} affects the behavior of \ccc{make_surface_mesh()}: \\
 - \ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold
@@ -350,8 +355,8 @@ For convenience, we provide functions to write point sets to standard file forma
 \item OFF
 \end{itemize}
 
-\ccRefIdfierPage{surface_reconstruction_write_off_point_cloud()}  \\
-\ccRefIdfierPage{surface_reconstruction_write_xyz()}  \\
+\ccRefIdfierPage{CGAL::surface_reconstruction_write_off_point_cloud}  \\
+\ccRefIdfierPage{CGAL::surface_reconstruction_write_xyz}  \\
 
 Example:
 
@@ -387,8 +392,8 @@ As examples, we provide functions to:
 \item convert the reconstructed surface to a polygon soup
 \end{itemize}
 
-\ccRefIdfierPage{output_surface_facets_to_off()}  \\
-\ccRefIdfierPage{surface_reconstruction_output_surface_facets()}  \\
+\ccRefIdfierPage{CGAL::output_surface_facets_to_off}  \\
+\ccRefIdfierPage{CGAL::surface_reconstruction_output_surface_facets}  \\
 
 Example:
 
