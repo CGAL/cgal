@@ -20,6 +20,9 @@ The following functionality has been added or changed:
     It is not possible anymore to set the CONTINUE mode for assertion failures.
     Functions that allow to change the assertion behaviour are now declared in <CGAL/assertions_behaviour.h>.
 
+  - Qt3 based demos are still there but the documentation has been removed as the CGAL::Qt_Widget will be deprecated.
+  - Qt4 based demos use the Qt GraphicsView framework and the libQGLViewer. 
+  
 2 Installation
 
   - install_cgal has been replaced by CMake.
@@ -134,6 +137,9 @@ The following functionality has been added or changed:
 5.5 CGAL and the Qt4 GraphicsView (new package)
 
   - 2D CGAL Kernel objects and many data structures have can be rendered in a QGraphicsView
+    using the Qt4 based GraphicsView framework.  We encourage users to switch from
+    Qt3 to Qt4, removed the manual of the Qt3 related manual pages, as Qt3 support
+    will be dropped starting from the next release.
 
 
 5.6 STL Extensions:
