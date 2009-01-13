@@ -63,7 +63,8 @@ compute_median_knn_sq_distance_3(
     Neighbor_search search(tree,query,KNN+1);
     Search_iterator search_iterator = search.begin();
     unsigned int i;
-    for(i=0;i<(KNN+1);i++)
+    unsigned int KNN_median = KNN/2;
+    for(i=0;i<(KNN_median+1);i++)/*for(i=0;i<(KNN+1);i++)*/
     {
         if(search_iterator == search.end())
             break; // premature ending
@@ -79,10 +80,10 @@ compute_median_knn_sq_distance_3(
        // sq_distance += sqd(*neighbor, query);
     //sq_distance /= FT(points.size());
     
-    if((points.size() & 1) == 1)
-        return sqd(points[points.size()/2], query);
-    else
-        return (sqd(points[points.size()/2],query)+ sqd(points[(points.size()/2)+1], query))/2; 
+    //if((points.size() & 1) == 1)
+        return sqd(points[KNN_median]/*[points.size()/2]*/, query);
+    //else
+    //    return (sqd(points[points.size()/2],query)+ sqd(points[(points.size()/2)+1], query))/2; 
 }
 
 
