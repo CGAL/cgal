@@ -42,18 +42,17 @@
     \lciHtmlFileHeaderX{#1}{\lciExtractHtmlRelease}{\lciInputFilename}{#2}}
 \newcommand{\lciHtmlFileHeaderX}[4]{%
   \lcRawHtml{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<!-- Page automatically generated from latex_to_html converter. -->
+<html lang="en-US"> <head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="generator" content="latex_to_html converter">
 <!-- by cc_extract_html, #XC2 -->
 <!-- LaTeX source file: '#XC3' -->
-<html lang="en-US"> <head>
-<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
 <link href="}\lciOutputUppath\lcRawHtml{latex_to_html.css" rel="STYLESHEET">}
 \lciFileSpecificCSS%
 \lcRawHtml{<title>}#1\lcRawHtml{</title>}%
 #4
 \lcRawHtml{</head>
 <body }\lcBodyAttributes\lcRawHtml{>
-<!-- =================================================================== -->
 
 }}
 
@@ -62,13 +61,13 @@
   \lcRawHtml{<strong>Navigation:</strong>}
 \lciIfEqualExpanded{\lciMainFilename}{\lciCurrentFilename}{}{%
   \lcRawHtml{[internal:Up_chapter_link_}\value{part}\_\value{createdfiles}\lcRawHtml{]}}
-  \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>,&nbsp;
-  <a href="}\lciOutputUppath\lciPkgOverviewFilename\lcRawHtml{">Package Overview</a>,&nbsp;
-  <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>,&nbsp;
-  <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>,&nbsp;
+  \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{contents.html">Table of Contents</A>&nbsp;&nbsp;
+  <a href="}\lciOutputUppath\lciPkgOverviewFilename\lcRawHtml{">Package Overview</a>&nbsp;&nbsp;
+  <a href="}\lciOutputUppath\lcRawHtml{biblio.html">Bibliography</a>&nbsp;&nbsp;
+  <a href="}\lciOutputUppath\lcRawHtml{manual_index.html">Index</a>&nbsp;&nbsp;
   <a href="}\lciOutputUppath\lcRawHtml{title.html">Title Page</a>}
   \lciIfHowToCite{%
-    \lcRawHtml{,&nbsp;<a href="}\lciOutputUppath\lcRawHtml{acknowledge.html">Acknowledging CGAL</a>}%
+    \lcRawHtml{&nbsp;&nbsp;<a href="}\lciOutputUppath\lcRawHtml{acknowledge.html">Acknowledging CGAL</a>}%
   }{}%
 }
 
