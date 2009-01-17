@@ -521,10 +521,10 @@
     % cross linking rules
     \lciPushOutput{anchor}%
     \lcRawHtml{i Next_reference_link_}\thereferencepage%
-    \lcRawHtml{	<div class="NavNext"><hr> <b>Next:</b> <a href="}%
+    \lcRawHtml{	<div class="NavNext"><b>Next:</b> <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}#1\lcRawHtml{</a><hr></div>
+    \lcRawHtml{">}#1\lcRawHtml{</a></div>
 }%
     \lcRawHtml{i Toc_reference_link_}\thereferencepage%
     \lcRawHtml{	<a href="}%

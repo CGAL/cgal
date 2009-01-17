@@ -73,22 +73,22 @@
 
 % Args: none
 \newcommand{\lciHtmlNavigationTop}{%
-  \lcRawHtml{<div class="NavTop"><hr>}
+  \lcRawHtml{<div class="NavTop">}
   \lciHtmlNavigation
-  \lcRawHtml{<hr></div>}
+  \lcRawHtml{</div>}
 }
 
 % Args: none
 \newcommand{\lciHtmlNavigationBottom}{
-  \lcRawHtml{<div class="NavBottom"><hr>}
+  \lcRawHtml{<div class="NavBottom">}
   \lciHtmlNavigation
-  \lcRawHtml{<hr></div>}
+  \lcRawHtml{</div>}
 }
 
 % Args: none
 \newcommand{\lciHtmlFileFooter}{%
   \lcRawHtml{
-<div class="NavAddress"><hr>
+<div class="NavAddress">
 }{\small
 \lciIfEqualExpanded{\lciManualAuthor}{}{}{%
     \lcRawHtmlExpanded{\lciManualAuthor}.}
@@ -96,7 +96,7 @@
     \lcRawHtmlExpanded{\lciManualRelease}.}
 \lciIfEqualExpanded{\lciManualDate}{}{}{%
     \lcRawHtmlExpanded{\lciManualDate}.}}\lcRawHtml{
-<hr></div>
+</div>
 </body>  </html>
 }}
 

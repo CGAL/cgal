@@ -86,10 +86,20 @@ a.TocLinkSubparagraph  {  }
 div.NavBottom,
 div.NavAddress,
 div.NavTOC,
-div.NavTop             { background-color: #ffff90; }
-div.NavNext,
-div.NavPrev            { background-color: #c0ffc0; }
+div.NavTop {
+    background-color: #ffff90;
+    border: solid thin;
+    padding: 0.5em;
+    margin: 0.3em;
+}
 
+div.NavNext,
+div.NavPrev {
+    background-color: #c0ffc0;
+    border: solid thin;
+    padding: 0.5em;
+    margin: 0.3em;
+}
 
 /* ----------------------------------------------------------------------- */
 /* cc_manual.sty                                                           */

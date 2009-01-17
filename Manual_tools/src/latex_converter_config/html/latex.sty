@@ -268,12 +268,12 @@
     % finish table of contents
     \lciPushOutput{toc}
       \lciTocNewLayout{
-        \lcRawHtml{<div class="NavTOC"><hr><h2>Parts</h2><hr></div>}
+        \lcRawHtml{<div class="NavTOC"><h2>Parts</h2></div>}
         \lcRawHtml{<br><table border="0">}
         \lciSavestreamUse{parttoc}
         \lcRawHtmlExpanded{\lciSavestreamBufferparttoc}
         \lcRawHtml{</table><br>}
-        \lcRawHtml{<div class="NavTOC"><hr><h2>Packages</h2><hr></div>}
+        \lcRawHtml{<div class="NavTOC"><h2>Packages</h2></div>}
         \lcRawHtml{<table border="0">}
         \lciSavestreamUse{pkgtoc}
         \lcRawHtmlExpanded{\lciSavestreamBufferpkgtoc}
@@ -1050,10 +1050,10 @@
     % cross linking rules
     \lciPushOutput{anchor}%
     \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{createdfiles}%
-    \lcRawHtml{	<div class="NavNext"><hr> Next chapter: <a href="}%
+    \lcRawHtml{	<div class="NavNext">Next chapter: <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}\lciRemoveNewlines{\lciLocalVariableChapterNameTOC}\lcRawHtml{</a><hr></div>
+    \lcRawHtml{">}\lciRemoveNewlines{\lciLocalVariableChapterNameTOC}\lcRawHtml{</a></div>
 }%
     \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{createdfiles}%
     \lcRawHtml{	<a href="}%
@@ -1115,10 +1115,10 @@
     % cross linking rules
     \lciPushOutput{anchor}%
     \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{createdfiles}%
-    \lcRawHtml{	<div class="NavNext"><hr> Next: <a href="}%
+    \lcRawHtml{	<div class="NavNext">Next: <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}\lciRemoveNewlines{#1}\lcRawHtml{</a><hr></div>}
+    \lcRawHtml{">}\lciRemoveNewlines{#1}\lcRawHtml{</a></div>}
     \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{createdfiles}%
     \lcRawHtml{	<a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
