@@ -84,18 +84,18 @@ indicates whether the item belongs to the represented point set or
 not. The represented polyhedron is the union of the point sets
 represented by the selected items. As an example, a cube is
 represented by 8 vertices, 12 edges, 6 facets, and 2 volumes, where
-one volume represents the interior of the cube and the other the
+one volume represents the interior of the cube and the other volume the
 volume outside of the cube. All of these items are selected, except
-for outer volume.  Read the chapter on 3D Boolean operations on Nef
-polyhedra for more details~\ref{chapterNef3}.
+for the outer volume.  Details can be found in Chapter~\ref{chapterNef3} 
+on 3D Boolean operations on Nef polyhedra.
 
 The function \ccc{convex_decomposition_3} takes one
-\ccc{Nef_polyhedron_3} as input an inserts additional facets into the
+\ccc{Nef_polyhedron_3} as input and inserts additional facets into the
 selected volumes. These additional facets are also selected and
 therefore redundant for the representation of the polyhedron. If some
 of these facets split a volume into two parts, each of the two volumes
 is represented by a separate volume item. The insertion of facets
-stops when all the selected volumes are convex. The modified
+stops when all selected volumes are convex. The modified
 polyhedron is the result of the function
 \ccc{convex_decomposition_3}. Note that the function 
 \ccc{convex_decomposition_3} is restricted to standard kernels. 
@@ -107,7 +107,7 @@ volume. In such a case, we ignore the outer volume in the
 decomposition process.
 
 The convex pieces of the modified polyhedron can be accessed by
-traversing $N$, as described in Section~\ref{subsectionNef_3ShellExploration} of the
+a traversal of $N$, as described in Section~\ref{subsectionNef_3ShellExploration} of the
 user manual pages of the Nef polyhedron, or by converting
 them into separate Nef polyhedra, as illustrated by the example code.
 
