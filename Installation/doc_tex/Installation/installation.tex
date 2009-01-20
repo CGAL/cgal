@@ -190,7 +190,7 @@ depend on the BLAS and LAPACK libraries. Implementations can be found at
 \blaspage\ and \lapackpage. We provides precompiled versions of BLAS and
 LAPACK for Visual~\CC.
                        
-The Surface parametrization package can be speeded up by using the sparse matrix solver \taucs.
+The Surface parametrization package can be accelerated by using the sparse matrix solver \taucs.
 This library can be downloaded from \taucspage. As Visual~\CC\ is not properly
 supported by the \taucs\ project, we provide a precompiled version of
 \taucs.
@@ -383,13 +383,14 @@ are switched \texttt{ON}.
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|l|l|} \hline
-    \textbf{library}       & \textbf{\cmake\ variable}    & \textbf{functionality}                                                & \textbf{dependencies}\\\hline\hline
-    \texttt{CGAL}          & {\em none}                   & Main library                                                          & GMP, MPFR, Boost (headers) and Boost.Thread (library)\\\hline
-    \texttt{CGAL\_Core}    & \texttt{WITH\_CGAL\_Core}    & The CORE library for dealing with algebraic numbers.\footnotemark[15] & GMP and MPFR\\\hline
-    \texttt{CGAL\_Qt3}     & \texttt{WITH\_CGAL\_Qt3}     & \ccc{CGAL::Qt_widget} used by some old Qt3-based demos                & Qt3 and OpenGL\\\hline
-    \texttt{CGAL\_Qt4}     & \texttt{WITH\_CGAL\_Qt4}     & \ccc{CGAL::GraphicsView} used by the Qt4-based demos                  & Qt4 and OpenGL\\\hline
-    \texttt{CGAL\_ImageIO} & \texttt{WITH\_CGAL\_ImageIO} & Utilities to read and write image files in various formats            & OpenGL, ZLib, and VTK (optional)\\\hline
-    \texttt{CGAL\_PDB}     & \texttt{WITH\_CGAL\_PDB}     & \ccc{CGAL::PDB} used to manipulate \texttt{PDB} files                 & {\em none}\\\hline
+    \textbf{library}       & \textbf{\cmake\ variable}    & \textbf{functionality}                                     & \textbf{dependencies}\\\hline\hline
+    \texttt{CGAL}          & {\em none}                   & Main library                                               & GMP, MPFR, Boost (headers)\\
+                           &                              &                                                            & and Boost.Thread (library)\\\hline
+    \texttt{CGAL\_Core}    & \texttt{WITH\_CGAL\_Core}    & The CORE library for algebraic numbers.\footnotemark[15]   & GMP and MPFR\\\hline
+    \texttt{CGAL\_Qt3}     & \texttt{WITH\_CGAL\_Qt3}     & \ccc{CGAL::Qt_widget} used by Qt3-based demos              & Qt3 and OpenGL\\\hline
+    \texttt{CGAL\_Qt4}     & \texttt{WITH\_CGAL\_Qt4}     & \ccc{QGraphicsView} support for Qt4-based demos            & Qt4 and OpenGL\\\hline
+    \texttt{CGAL\_ImageIO} & \texttt{WITH\_CGAL\_ImageIO} & Utilities to read and write image files                    & OpenGL, ZLib, VTK (optional)\\\hline
+    \texttt{CGAL\_PDB}     & \texttt{WITH\_CGAL\_PDB}     & \ccc{CGAL::PDB} used to manipulate \texttt{PDB} files      & {\em none}\\\hline
   \end{tabular}
 \end{center}
 
@@ -493,7 +494,7 @@ make  CGAL  CGAL_ImageIO CGAL_Qt4
 \end{verbatim}
 }
 
-The libraries will all be located in a subdirectory {\tt lib} under {\tt <CMAKE\_BINARY\_DIR>}
+The resulting are placed in the subdirectory {\tt lib} under {\tt <CMAKE\_BINARY\_DIR>}
 (which is \cgaldir\ in case you run an in-source-configuration).
 
 With generators other than {\tt UNIX Makefiles} the resulting build files
@@ -593,7 +594,7 @@ If you use a generator that produces IDE files (for Visual Studio for instance) 
 
 The files are copied into a directory tree relative to the {\em installation directory} determined by the 
 \cmake\ variable \texttt{CMAKE\_INSTALL\_PREFIX}. This variable defaults to {\tt /usr/local} under UNIX-like operating systems
-and {\tt C:\Program Files} under Windows. If you want to install to a different location, you must override that \cmake{}
+and \path'C:\Program Files' under Windows. If you want to install to a different location, you must override that \cmake{}
 variable explicitly {\em at the configuration time} and not when executing the install step.
 
 \end{ccAdvanced}
@@ -687,6 +688,7 @@ indicated differently, all the variables summarized below are \cmake\ variables.
 
 The following boolean variables indicate which \cgal\ components to configure and build. Their values can be ON or OFF.
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|} \hline
@@ -699,6 +701,7 @@ The following boolean variables indicate which \cgal\ components to configure an
   \texttt{WITH\_CGAL\_ImageIO} & ON\\\hline
   \texttt{WITH\_CGAL\_PDB}     & ON\\\hline
 \end{tabular}
+}
 
 \index{cgal!general-config-cmake-flags}\index{cgal configuration cmake variables - flags}
 \subsection{Compiler and Linker Flags}
@@ -714,6 +717,7 @@ the list of flags chosen by \cmake\ for that particular variable.
 The variables that correspond to both debug and release builds are always
 used in conjunction with those for the specific build type.
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|l|} \hline
@@ -723,13 +727,14 @@ used in conjunction with those for the specific build type.
   Linker (static libs) & \texttt{CMAKE\_MODULE\_LINKER\_FLAGS} & \texttt{CMAKE\_MODULE\_LINKER\_FLAGS\_RELEASE} & \texttt{CMAKE\_MODULE\_LINKER\_FLAGS\_DEBUG}\\\hline
   Linker (programs)    & \texttt{CMAKE\_EXE\_LINKER\_FLAGS}    & \texttt{CMAKE\_EXE\_LINKER\_FLAGS\_RELEASE}    & \texttt{CMAKE\_EXE\_LINKER\_FLAGS\_DEBUG}\\\hline
 \end{tabular}
-
+}
 \index{cgal!general-config-cmake-extra-flags}\index{cgal configuration cmake variables - additional flags}
 \subsubsection{Additional Compiler and Linker Flags}
 
 The following variables can be used to {\em add} flags without overriding the ones
 defined by cmake.
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|l|}\hline
@@ -739,10 +744,12 @@ defined by cmake.
   Linker (static libs) & \texttt{CGAL\_MODULE\_LINKER\_FLAGS} & \texttt{CGAL\_MODULE\_LINKER\_FLAGS\_RELEASE} & \texttt{CGAL\_MODULE\_LINKER\_FLAGS\_DEBUG}\\\hline
   Linker (programs)    & \texttt{CGAL\_EXE\_LINKER\_FLAGS}    & \texttt{CGAL\_EXE\_LINKER\_FLAGS\_RELEASE}    & \texttt{CGAL\_EXE\_LINKER\_FLAGS\_DEBUG}\\\hline
 \end{tabular}
+}
 
 \index{cgal!general-config-cmake-vars-misc}\index{cgal configuration cmake variables - miscellaneous}
 \subsection{Miscellaneous Variables}
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|l|} \hline
@@ -751,24 +758,28 @@ defined by cmake.
   \texttt{CMAKE\_CXX\_COMPILER} & Full-path to the executable corresponding to the C++ compiler to use. & CMake         & platform-dependent\\\hline
   \texttt{CXX}                  & Idem                                                                  & Environment   & Idem\\\hline
 \end{tabular}
+}
 
 \index{cgal!general-config-cmake-vars-exe}\index{cgal configuration cmake variables - for programs only}
 \subsubsection{Variables used only when building programs (such as demos or examples)}
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|l|} \hline
   \textbf{Variable}  & \textbf{Description}                                          & \textbf{Type}               & \textbf{Default value}\\\hline\hline
   \texttt{CGAL\_DIR} & Full-path to the binary directory where \cgal\ was configured & Either CMake or Environment & {\em none}\\\hline
 \end{tabular}
+}
 
 \index{cgal!general-config-cmake-vars-dep}\index{cgal configuration cmake variables - dependencies}
 \subsection{Variables providing information about 3rd-party libraries}
 
-The following variables provide information about the availability and location
-of the 3rd party libraries used by \cgal. \cmake\ automatically searches 
-for dependencies so you need to specify these variables if they are given a value 
-ending in \texttt{NOTFOUND} (which indicates that \cmake\ was unable to locate something)
+The following variables provide information about the availability and
+location of the 3rd party libraries used by \cgal. \cmake\ automatically
+searches for dependencies so you need to specify these variables if \cmake\
+was unable to locate something. This is indicated by a value ending in
+\texttt{NOTFOUND}.
 
 Since 3rd-party libraries are system wide, many of the \cmake\ variables listed below can alternatively
 be given as similarly-named environment variables instead. Keep in mind that you must provide one or the
@@ -782,6 +793,7 @@ variable is enough. If it is not, you can specify the header and library
 directories individually. You can also provide the full pathname to a specific compiled library
 if it cannot be found in the library directory or its name is non-standard.
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
@@ -794,6 +806,7 @@ if it cannot be found in the library directory or its name is non-standard.
   \texttt{Boost\_{\em (xyz)}\_LIBRARY\_RELEASE} & Full pathname to a release build of the compiled 'xyz' boost library & CMake\\\hline
   \texttt{Boost\_{\em (xyz)}\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the compiled 'xyz' boost library   & CMake\\\hline
 \end{tabular}
+}
 \footnotetext[16]{The environment variable can be spelled either \texttt{BOOST\_ROOT} or \texttt{BOOSTROOT}}\addtocounter{footnote}{1}
 
 \index{cgal!general-config-cmake-vars-dep-gmp-mpfr}\index{cgal configuration cmake variables - dependencies - gmp, mpfr}
@@ -807,6 +820,7 @@ Thus you would specify \texttt{GMP|MPFR\_LIBRARIES}. In no case you need to spec
 \cgal\ uses both gmp and mpfr, so both need to be supported. If either of them is unavailable the 
 usage of gmp and of mpfr will be disabled.
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
@@ -823,9 +837,11 @@ usage of gmp and of mpfr will be disabled.
   \texttt{MPFR\_LIB\_DIR}       & Idem                                                & Environment\\\hline
   \texttt{MPFR\_LIBRARIES}      & Full pathname of the compiled mpfr library          & CMake\\\hline
 \end{tabular}
+}
 
 Under Linux, the GMPXX is also searched for, and you may specify the following variables:
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
@@ -833,6 +849,7 @@ Under Linux, the GMPXX is also searched for, and you may specify the following v
   \texttt{GMPXX\_INCLUDE\_DIR}  & Directory containing the \texttt{gmpxx.h} file & CMake\\\hline
   \texttt{GMPXX\_LIBRARIES}     & Full pathname of the compiled gmpxx library    & CMake\\\hline
 \end{tabular}
+}
 
 \index{cgal!general-config-cmake-vars-dep-leda}\index{cgal configuration cmake variables - dependencies - leda}
 \subsubsection{LEDA library}
@@ -845,6 +862,7 @@ via \texttt{LEDA\_LIBRARY\_RELEASE} and \texttt{LEDA\_LIBRARY\_DEBUG}.
 
 The variables specifying definitions and flags can be left undefined if they are not needed by LEDA.
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
@@ -858,6 +876,7 @@ The variables specifying definitions and flags can be left undefined if they are
   \texttt{LEDA\_CXX\_FLAGS}       & Compiler flags                                             & Either CMake or Environment\\\hline
   \texttt{LEDA\_LINKER\_FLAGS}    & Linker flags                                               & Either CMake or Environment\\\hline
 \end{tabular}
+}
 
 \index{cgal!general-config-cmake-vars-dep-qt3}\index{cgal configuration cmake variables - dependencies - qt3}
 \subsubsection{Qt3 library}
@@ -866,6 +885,7 @@ In most cases, if Qt3 is not automatically found, setting the \texttt{QTDIR}
 environment variable is sufficient. If it is not, you can specify the directory containing 
 the header files and the full pathnames of the Qt3 libraries.
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
@@ -878,6 +898,7 @@ the header files and the full pathnames of the Qt3 libraries.
   \texttt{QT3\_MOC\_LIBRARY}              & Full pathname to the moc executable of Qt3             & CMake\\\hline
   \texttt{QT3\_UIC\_LIBRARY}              & Full pathname to the uic executable of Qt3             & CMake\\\hline
 \end{tabular}
+}
 
 \index{cgal!general-config-cmake-vars-dep-qt4}\index{cgal configuration cmake variables - dependencies - qt4}
 \subsubsection{Qt4 library}
@@ -889,6 +910,7 @@ environment variable, so that Qt4 \texttt{qmake} tool is in the path, and
 before Qt3 \texttt{qmake} if that one exists. One can alternatively set the
 \cmake\ variable \texttt{QT\_QMAKE\_EXECUTABLE}. The following variables
 should be then assigned automatically by \cmake{}.
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
@@ -900,6 +922,7 @@ should be then assigned automatically by \cmake{}.
   \texttt{QT\_MOC\_LIBRARY}         & Full pathname to the moc executable of Qt4                       & CMake\\\hline
   \texttt{QT\_UIC\_LIBRARY}         & Full pathname to the uic executable of Qt4                       & CMake\\\hline
 \end{tabular}
+}
 \footnotetext[17]{If both release and debug versions are available, this variable contains a list 
 of the following form: '\texttt{optimized;<fullpath-to-release-lib>;debug;<fullpath-to-debug-lib>}', where 
 the '\texttt{optimized}' and '\texttt{debug}' tags should appear verbatim.}\addtocounter{footnote}{1}
@@ -913,6 +936,7 @@ In most cases, if QGLViewer is not automatically found, setting the \texttt{QGLV
 environment variable is sufficient. If it is not, you can specify the directory containing 
 the header files and the full pathnames of the release and debug libraries
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
@@ -922,6 +946,7 @@ the header files and the full pathnames of the release and debug libraries
   \texttt{QGLVIEWER\_LIBRARY\_RELEASE} & Full pathname to a release build of the QGLViewer library    & CMake\\\hline
   \texttt{QGLVIEWER\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the QGLViewer library      & CMake\\\hline
 \end{tabular}
+}
 
 \index{cgal!general-config-cmake-vars-dep-taucs}\index{cgal configuration cmake variables - dependencies - taucs}
 \subsubsection{TAUCS and METIS libraries}
@@ -937,6 +962,7 @@ Thus you would specify \texttt{TAUCS\_LIBRARIES}. In no case you need to specify
 \cgal\ uses both TAUCS and METIS so both need to be supported. If either of them is unavailable the 
 usage of TAUCS-METIS will be disabled.
 
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
@@ -948,6 +974,7 @@ usage of TAUCS-METIS will be disabled.
   \texttt{TAUCS\_LIBRARY}        & Full pathname of the compiled taucs library     & CMake\\\hline
   \texttt{METIS\_LIBRARY}        & Full pathname of the compiled metis library     & CMake\\\hline
 \end{tabular}
+}
 
 \index{cgal!general-config-cmake-vars-dep-blas}\index{cgal configuration cmake variables - dependencies - blas}
 \subsubsection{BLAS and LAPACK libraries}
@@ -963,6 +990,7 @@ Many of the libraries implementing BLAS and LAPACK require the F2C library for F
 If this is needed and not found, you may specify the fullpath of the library in the \texttt{F2C\_LIBRARIES}
 variable. You do not need to provide this, if the BLAS|LAPACK libraries do not need f2c.
  
+{\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
@@ -981,6 +1009,7 @@ variable. You do not need to provide this, if the BLAS|LAPACK libraries do not n
   \texttt{LAPACK\_DEFINITIONS}    & Preprocessor definitions                                                         & CMake\\\hline
   \texttt{F2C\_LIBRARIES}         & Full pathname to the f2c library                                                 & CMake\\\hline
 \end{tabular}
+}
 
 \section{Example} 
 
