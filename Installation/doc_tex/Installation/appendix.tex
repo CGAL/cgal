@@ -36,23 +36,6 @@ The file \texttt{CGAL/compiler\_config.h} is included from
 \texttt{<CGAL/config.h>}.\index{files!\texttt{config.h}}
 which is included by all \cgal\ header files.
 
-\subsection{Standard Header Replacements}
-\index{compilers!missing standard header files} %
-\index{standard header replacements} %
-\index{missing standard header files}
-
-Some compilers do not provide a complete standard library. In
-particular they fail to provide the \texttt{C++} wrappers for files
-from the standard \ccc{C} library, like \texttt{cstddef} for
-\texttt{stddef.h}. The \cgal\ install scripts checks for all standard
-header files and generates a simple wrapper file in the \cgal\ include
-directory for those that are missing. These wrapper files include the
-corresponding \texttt{C} header files. They add all symbols required by
-the \texttt{C++} standard into namespace \ccc{std}. You can turn off
-the additions to namespace \ccc{std} by defining the macro
-\ccc{CGAL_NO_STDC_NAMESPACE}.
-\index{CGAL\_NO\_STDC\_NAMESPACE@\texttt{CGAL\_NO\_STDC\_NAMESPACE}}
-
 \section{Compiler Optimizations\label{sec:compiler-optimisations}}
 \index{compilers!optimization}
 \index{optimization compiler flags}
