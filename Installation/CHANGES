@@ -112,29 +112,20 @@ The following functionality has been added or changed:
 
 5 Data Structures and Algorithms
 
-5.1 3D Minkowski Sum (new package)
-
-  - This package provides a function, which computes the Minkowski sum of two point sets in R^3
-
-5.2 Convex Decomposition of Polyhedra (new package)
-
-  - This package allows to decompose a 3D Nef Polyhedron in convex parts.
-
-
-5.3 3D Triangulations
+5.1 3D Triangulations
 
   - Removed the deprecated functions Cell:mirror_index() and Cell::mirror_vertex().
   - Derecursification of two functions that in some cases lead to stack overflows
 
 
-5.4 3D Nef Polyhedron
+5.2 3D Nef Polyhedron
 
   - n-ary union/intersection
   - intersection with halfspace under standard kernel
   - constructor for polylines
 
 
-5.5 CGAL and the Qt4 GraphicsView (new package)
+5.3 CGAL and the Qt4 GraphicsView (new package)
 
   - 2D CGAL Kernel objects and many data structures have can be rendered in a QGraphicsView
     using the Qt4 based GraphicsView framework.  We encourage users to switch from
@@ -142,7 +133,7 @@ The following functionality has been added or changed:
     will be dropped starting from the next release.
 
 
-5.6 STL Extensions:
+5.4 STL Extensions:
 
   - The functor adaptors for argument binding and composition
     (bind_*, compose, compose_shared, swap_*, negate, along with the helper
@@ -163,7 +154,8 @@ The following functionality has been added or changed:
     techniques.
 
 
-5.7 2D Arrangements
+5.5 2D Arrangements
+
   - Changed the name of the arrangement package from Arrangement_2 to Arrangement_on_surface_2 
     to reflect the potential capabilities of the package to construct and maintain arrangements 
     induced by curves embedded on two dimensional surfaces in three space. Most of these capabilities 
@@ -183,12 +175,14 @@ The following functionality has been added or changed:
     4 functions are now deprecated, and may no longer be supported in future releases. 
 
 
-5.8 Envelopes of Surfaces in 3D
+5.6 Envelopes of Surfaces in 3D
+
   - Fixed a bug in the computation of the envelope of unbounded planes caused by multiple removals 
     of vertices at infinity.
 
 
-5.9 2D Regularized Boolean Set-Operations            
+5.7 2D Regularized Boolean Set-Operations 
+           
   - Fixed a bug in connect_holes() that caused failures when connecting holes touching the outer boundary.
   - Fixed the concept GeneralPolygonSetTraits_2. Introduced two new concepts GpsTraitsGeneralPolygon_2 
     and GpsTraitsGeneralPolygonWithHoles_2. Fixed the definition of the two nested required types Polygon_2 
@@ -199,7 +193,7 @@ The following functionality has been added or changed:
   - Enhanced the BOP demo to use multiple windows.
        
 
-5.10 2D Minkowski Sums
+5.8 2D Minkowski Sums
   - Fixed a few bugs in the approximate offset function, making it robust to highly degenerate inputs.
   - Fixed a bug in the exact Minkowski sum computation when processing degenerate inputs that induce overlapping 
     of contiguous segments in the convolution cycles.
