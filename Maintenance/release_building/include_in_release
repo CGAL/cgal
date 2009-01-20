@@ -19,7 +19,6 @@ Conic_2
 Convex_hull_2
 Convex_hull_3
 Convex_hull_d
-Convex_decomposition_3
 Core
 Developers_manual
 Distance_2
@@ -52,7 +51,6 @@ Manual
 Matrix_search
 Mesh_2
 Minkowski_sum_2
-Minkowski_sum_3
 Min_annulus_d
 Min_circle_2
 Min_ellipse_2
