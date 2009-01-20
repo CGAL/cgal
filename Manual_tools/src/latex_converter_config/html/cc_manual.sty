@@ -425,7 +425,11 @@
 % | \ccStyle
 % +--------------------------------------------------------------------------
 \newcommand{\ccc}[1]{[cccbegin]\lciParseCC{\lciCCStyle 1}{#1}[cccend]}  %% the 1 is a dummy to keep it
-                                               %% from parsing spaces
+                                                                        %% from parsing spaces
+\newcommand{\ccc@om}{\lciParseCC{\cccCont}{#2}{#1}}
+\newcommand{\cccCont}{\cccContX\lciCCParameter}
+\newcommand{\cccContX}[2]{\lcRawHtml{<i>}\ccRef[#X1]{ccRef_#2}\lcRawHtml{</i>}}
+
 \newcommand{\ccStyle}{\ccc}
 
 % Add a wrapper around \ccc so that one can chose the URL of the HTML link,

@@ -1007,7 +1007,7 @@ Reference~Manual}%
 }
 
 % abbreviations
-\newcommand{\ccc}{\ccStyle}
+\newcommand{\ccc}[2][]{\ccStyle{#2}}
 
 % Add a wrapper around \ccc so that one can chose the URL of the HTML link,
 % instead of the automatic one.
@@ -1326,12 +1326,15 @@ Reference~Manual}%
 \newcommand{\ccRefPageNumAtMargin}{}
 \gdef\ccRefPageNumAtMargin{\ccTrue}
 \newcommand{\ccRefPageFill}{\dotfill}
-\newcommand{\ccRefIdfierPage}{\begingroup\ccCatcode\ccRefIdfierPageX}
-\def\ccRefIdfierPageX #1{\endgroup%
+\newcommand{\ccRefIdfierPage}[2][\ccRefIdfierPageDefault]{%
+  \def\ccRefIdfierPageDefault{#2}%
+  \begingroup\ccCatcode\ccRefIdfierPageX{#1}{#2}%
+}
+\def\ccRefIdfierPageX #1#2{\endgroup%
    \ifnum\ccRefPageNumAtMargin=\ccTrue
-      \ccc{#1}\ccRefPageFill \ccRefPage{#1}%
+      \ccc{#2}\ccRefPageFill \ccRefPage{#1}%
    \else
-      \ccc{#1} (pg. \pageref{ccRef_#1})%
+      \ccc{#2} (pg. \pageref{ccRef_#1})%
    \fi
 }
 
