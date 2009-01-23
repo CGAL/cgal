@@ -30,20 +30,20 @@ configure-stamp: patch-stamp
 build: build-stamp
 build-stamp: configure-stamp
 	dh_testdir
-	dh_clean -k
+	dh_prep
 	$(MAKE) -C static
 	$(MAKE) -C shared
-	$(MAKE) -C $(CURDIR)/debian/tests rounding_modes1
-	LD_LIBRARY_PATH=$(CURDIR)/shared/lib $(CURDIR)/debian/tests/rounding_modes1
-	$(MAKE) -C $(CURDIR)/debian/tests rounding_modes2
-	LD_LIBRARY_PATH=$(CURDIR)/shared/lib $(CURDIR)/debian/tests/rounding_modes2
+	$(MAKE) -C debian/tests rounding_modes1
+	LD_LIBRARY_PATH=shared/lib debian/tests/rounding_modes1
+	$(MAKE) -C debian/tests rounding_modes2
+	LD_LIBRARY_PATH=shared/lib debian/tests/rounding_modes2
 	touch build-stamp
 
 clean: clean-patched unpatch
 clean-patched: patch
 	dh_testdir
 	dh_testroot
-	$(MAKE) -C $(CURDIR)/debian/tests clean
+	$(MAKE) -C debian/tests clean
 	rm -fr shared static
 	rm -f build-stamp configure-stamp
 	dh_clean
@@ -51,14 +51,15 @@ clean-patched: patch
 install: build
 	dh_testdir
 	dh_testroot
-#	dh_clean -k
+#	dh_prep
 	dh_installdirs
 
 	$(MAKE) -C static DESTDIR=$(CURDIR)/debian/tmp install
 	$(MAKE) -C shared DESTDIR=$(CURDIR)/debian/tmp install
-	$(MAKE) -C shared DESTDIR=$(CURDIR)/debian/tmp install_FindCGAL
-	mkdir -p $(CURDIR)/debian/tmp/usr/share/cmake-2.6/Modules
-	mv /usr/share/cmake-2.6/Modules/FindCGAL.cmake $(CURDIR)/debian/tmp/usr/share/cmake-2.6/Modules
+
+#	$(MAKE) -C shared DESTDIR=$(CURDIR)/debian/tmp install_FindCGAL
+	mkdir -p debian/tmp/usr/share/cmake-2.6/Modules
+	cp cmake/modules/FindCGAL.cmake debian/tmp/usr/share/cmake-2.6/Modules
 
 	mv debian/tmp/usr/share/doc/CGAL-3.4 debian/tmp/usr/share/doc/cgal
 	mv debian/tmp/usr/share/doc/cgal/CHANGES debian/tmp/usr/share/doc/cgal/changelog

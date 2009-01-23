@@ -4,9 +4,9 @@ Priority: optional
 Maintainer: Joachim Reichel <reichel@debian.org>
 Build-Depends: debhelper (>= 5), dpatch, cmake, libboost-dev,
   libboost-thread-dev, libboost-graph-dev, libboost-program-options-dev,
-  libgmp3-dev, libmpfr-dev, libqt3-mt-dev, libqt4-dev, zlib1g-dev
+  libgmp3-dev, libmpfr-dev, libqt3-mt-dev, libqt4-dev,
+  zlib1g-dev
 Standards-Version: 3.7.2
-Homepage: http://www.cgal.org/
 XS-Autobuild: yes
 
 Package: libcgal3

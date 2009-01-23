@@ -1,4 +1,4 @@
-cgal (3.4~beta1-1) unstable; urgency=low
+cgal (3.4-1) unstable; urgency=low
 
   * New upstream release.
   * Adapt debian/rules to the new cmake-based build system.
@@ -6,7 +6,7 @@ cgal (3.4~beta1-1) unstable; urgency=low
     libcgal-demo, since it is now possible to configure demos and examples
     independently of the library.
 
- -- Joachim Reichel <reichel@debian.org>  Sat, 20 Dec 2008 19:09:13 +0100
+ -- Joachim Reichel <reichel@debian.org>  Thu, 22 Jan 2009 18:39:44 +0100
 
 cgal (3.3.1-4) unstable; urgency=low
 

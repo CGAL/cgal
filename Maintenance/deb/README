@@ -13,15 +13,22 @@ backport for etch:
 - debian/compat
   * adjust from 7 to 5
 - debian/control
-  * adjust debhelper versio from 7 to 5
+  * adjust debhelper version from >= 7 to >= 5
   * adjust Standards-Version from 3.8.0 to 3.7.2
+  * remove libqt4-opengl-dev from Build-Depends
+  * remove Homepage field
+- debian/rules
+  * replace dh_prep by dh_clean -k (twice)
+  * replace cmake-2.6 by cmake-2.4 (twice)
+- debian/libcgal-dev.install
+  * replace cmake-2.6 by cmake-2.4
 
 tagging:
-svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.3.1-1
-svn copy $SVNROOT/trunk/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.3.1-1~etch1
-svn copy $SVNROOT/trunk/Maintenance/deb/sarge/debian $SVNROOT/tags/debian/3.3.1-0sarge1
+svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.4.1-1
+svn copy $SVNROOT/trunk/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.4.1-1~lenny1
+svn copy $SVNROOT/trunk/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.4.1-1~etch1
 
 or:
-svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.3.1-1
-svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.3.1-1~etch1
-svn copy $SVNROOT/branches/CGAL-3.3-branch/Maintenance/deb/sarge/debian $SVNROOT/tags/debian/3.3.1-0sarge1
+svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.4.1-1
+svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.4.1-1~lenny1
+svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.4.1-1~etch1
