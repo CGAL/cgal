@@ -633,45 +633,6 @@ namespace CGAL {
       return false;
     }
 
-  protected:
-
-
-    // Checks restricted Delaunay triangulation
-    bool check_restricted_delaunay () {
-      for (Finite_facets_iterator fit = tr.finite_facets_begin(); fit !=
-	     tr.finite_facets_end(); ++fit) {
-	Facet other_side = mirror_facet(*fit);
-	CGAL_assertion (c2t3.face_status(*fit) ==
-			c2t3.face_status(other_side));
-	//CGAL_assertion (fit->first->is_facet_on_surface (fit->second) ==
-	//		other_side.first->is_facet_on_surface
-	//		(other_side.second));
-	Point center;
-	const bool restr = is_facet_on_surface(*fit, center);
-	const bool restr_bis = is_facet_on_surface(other_side, center);
-	CGAL_assertion (restr == restr_bis);
-	CGAL_assertion ((c2t3.face_status(*fit)
-			 == C2T3::REGULAR) == restr);
-	CGAL_assertion ((c2t3.face_status(other_side)
-			 == C2T3::REGULAR) == restr_bis);
-	//CGAL_assertion (fit->first->is_facet_on_surface (fit->second) ==
-	//		restr);
-	//CGAL_assertion (other_side.first->is_facet_on_surface
-	//		(other_side.second) == restr_bis);
-
-	if ( (c2t3.face_status(*fit) == C2T3::REGULAR) !=
-	    is_facet_on_surface(*fit, center)) {
-	  std::cerr << "Error in restricted Delaunay triangulation: ("
-		    << (c2t3.face_status(*fit) == C2T3::REGULAR)
-		    << "/"
-		    << is_facet_on_surface(*fit, center)
-		    << ")"
-		    << std::endl;
-	  return false;
-	}
-      }
-      return true;
-    }
   public:
     std::string debug_info() const
     {
@@ -722,7 +683,6 @@ namespace CGAL {
     using Mesher_lvl::refine;
     using Mesher_lvl::is_algorithm_done;
     using Mesher_lvl::one_step;
-    using Base::check_restricted_delaunay;
 
     typedef C2T3 Complex_2_in_triangulation_3;
 
@@ -780,7 +740,6 @@ namespace CGAL {
       {
 	scan_triangulation();
 	initialized = true;
-	CGAL_assertion(check_restricted_delaunay());
       }
 
     void refine_mesh () {
@@ -823,8 +782,6 @@ namespace CGAL {
 	}
 	std::cerr << "\ndone.\n";
       }
-
-      CGAL_assertion(check_restricted_delaunay());
 
       initialized = false;
     }
