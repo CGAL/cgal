@@ -38,17 +38,8 @@
 
 #include <CGAL/Surface_mesher/Verbose_flag.h>
 #include <CGAL/Surface_mesher/Types_generators.h>
-#include <CGAL/Profile_counter.h>
-
-#ifdef CGAL_SURFACE_MESHER_PROFILE
-#  define CGAL_SURFACE_MESHER_PROFILER(Y) \
-   { static CGAL::Profile_counter tmp(Y); ++tmp; }
-#  define CGAL_SURFACE_MESHER_HISTOGRAM_PROFILER(Y,Z) \
-   { static CGAL::Profile_histogram_counter tmp(Y); tmp(Z); }
-#else
-#  define CGAL_SURFACE_MESHER_PROFILER(Y)
-#  define CGAL_SURFACE_MESHER_HISTOGRAM_PROFILER(Y,Z)
-#endif
+#include <CGAL/Surface_mesher/Profile_counter.h>
+#include <CGAL/Surface_mesher/Profile_timer.h>
 
 namespace CGAL {
 
@@ -771,7 +762,10 @@ namespace CGAL {
 	++nbsteps;
 	timer.start();
 	while (!is_algorithm_done()) {
-	  one_step (visitor);
+	  {
+	    CGAL_SURFACE_MESHER_TIME_PROFILER("Surface_mesher::one_step()");
+	    one_step (visitor);
+	  }
 	  std::cerr 
 	    << boost::format("\r             \r"
 			     "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")

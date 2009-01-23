@@ -30,6 +30,8 @@
 
 #include <queue>
 
+#include <CGAL/Surface_mesher/Profile_timer.h>
+
 #ifdef CGAL_SURFACE_MESHER_DEBUG_IMPLICIT_ORACLE
 #  define CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
 #endif
@@ -226,6 +228,8 @@ namespace CGAL {
       Object operator()(const Surface_3& surface, Segment_3 s)
       // s is passed by value, because it is clipped below
       {
+	CGAL_SURFACE_MESHER_TIME_PROFILER("Implificit_surface_oracle::Intersect_3::operator()");
+	CGAL_SURFACE_MESHER_PROFILER("Implificit_surface_oracle::Intersect_3::operator()");
         typename GT::Construct_point_on_3 point_on =
           GT().construct_point_on_3_object();
 
