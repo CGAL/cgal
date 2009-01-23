@@ -24,11 +24,11 @@ backport for etch:
   * replace cmake-2.6 by cmake-2.4
 
 tagging:
-svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.4.1-1
-svn copy $SVNROOT/trunk/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.4.1-1~lenny1
-svn copy $SVNROOT/trunk/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.4.1-1~etch1
+svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.4-1
+svn copy $SVNROOT/trunk/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.4-1~lenny1
+svn copy $SVNROOT/trunk/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.4-1~etch1
 
 or:
-svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.4.1-1
-svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.4.1-1~lenny1
-svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.4.1-1~etch1
+svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.4-1
+svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.4-1~lenny1
+svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.4-1~etch1
