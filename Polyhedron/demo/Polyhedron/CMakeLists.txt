@@ -41,12 +41,22 @@ if(QT4_FOUND)
   find_package(QGLViewer )
 endif(QT4_FOUND)
 
-# Find TAUCS (optionnal)
+# Find LAPACK (optional), for curvatures estimation
+find_package(LAPACK)
+
+# Find TAUCS (optionnal), for parametrization
 find_package(TAUCS)
 
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
+
+  if(LAPACK_FOUND)
+    include( ${LAPACK_USE_FILE} )
+    add_definitions(-DCGAL_LAPACK_ENABLED)
+  else(LAPACK_FOUND)
+    message(STATUS "warning: LAPACK is not found. curvatures estimation will not be available.")
+  endif(LAPACK_FOUND)
 
   if(TAUCS_FOUND)
     include( ${TAUCS_USE_FILE} )

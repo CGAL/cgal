@@ -108,12 +108,17 @@ void MainWindow::on_actionDCP_triggered()
 
 #else // #ifdef CGAL_TAUCS_ENABLED 
 
+#include <QMessageBox>
 void MainWindow::on_actionMVC_triggered()
 {
+  QMessageBox::warning(this, "Function not available", "This function is not available. "
+		       "You need to configure TAUCS support.");
 }
 
 void MainWindow::on_actionDCP_triggered()
 {
+  QMessageBox::warning(this, "Function not available", "This function is not available. "
+		       "You need to configure TAUCS support.");
 }
 
 #endif // #ifdef CGAL_TAUCS_ENABLED 

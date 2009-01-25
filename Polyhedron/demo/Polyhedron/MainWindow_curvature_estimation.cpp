@@ -1,3 +1,5 @@
+#ifdef CGAL_LAPACK_ENABLED
+
 #include <QApplication>
 #include "MainWindow.h"
 #include "Scene.h"
@@ -107,3 +109,15 @@ void MainWindow::on_actionEstimateCurvature_triggered()
     QApplication::restoreOverrideCursor();
   }
 }
+
+#else //  CGAL_LAPACK_ENABLED
+
+#include <QMessageBox>
+void MainWindow::on_actionEstimateCurvature_triggered()
+{
+  QMessageBox::warning(this, "Function not available", 
+		       "This function is not available."
+		       " You need to configure LAPACK support.");
+}
+
+#endif // CGAL_LAPACK_ENABLED
