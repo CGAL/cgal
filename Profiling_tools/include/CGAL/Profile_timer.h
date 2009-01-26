@@ -38,14 +38,14 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
-#include <CGAL/Real_timer.h>
+#include <CGAL/Timer.h>
 
 CGAL_BEGIN_NAMESPACE
 
 struct Profile_timer
 {
     class Local {
-        Real_timer rt;
+        Timer rt;
         Profile_timer *p;
     public:
         Local(Profile_timer* p_) : p(p_) { rt.start(); }
