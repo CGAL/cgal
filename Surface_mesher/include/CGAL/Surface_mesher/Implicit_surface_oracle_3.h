@@ -228,8 +228,8 @@ namespace CGAL {
       Object operator()(const Surface_3& surface, Segment_3 s)
       // s is passed by value, because it is clipped below
       {
-	CGAL_SURFACE_MESHER_TIME_PROFILER("Implificit_surface_oracle::Intersect_3::operator()");
-	CGAL_SURFACE_MESHER_PROFILER("Implificit_surface_oracle::Intersect_3::operator()");
+	CGAL_SURFACE_MESHER_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Segment_3)");
+	CGAL_SURFACE_MESHER_TIME_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Segment_3)");
         typename GT::Construct_point_on_3 point_on =
           GT().construct_point_on_3_object();
 
@@ -266,6 +266,8 @@ namespace CGAL {
       } // end operator()(Surface_3, Segment_3)
 
       Object operator()(const Surface_3& surface, const Ray_3& r) {
+	CGAL_SURFACE_MESHER_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Ray_3)");
+	CGAL_SURFACE_MESHER_TIME_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Ray_3)");
         typename Sphere_oracle::Intersect_3 clip =
           Sphere_oracle().intersect_3_object();
 
@@ -284,6 +286,8 @@ namespace CGAL {
       } // end operator()(Surface_3, Ray_3)
 
       Object operator()(const Surface_3& surface, const Line_3& l) {
+	CGAL_SURFACE_MESHER_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Line_3)");
+	CGAL_SURFACE_MESHER_TIME_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Line_3)");
         typename Sphere_oracle::Intersect_3 clip =
           Sphere_oracle().intersect_3_object();
 
@@ -345,8 +349,14 @@ namespace CGAL {
         if(value_at_p1 == value_at_p2)
           return Object();
 
+#ifdef CGAL_SURFACE_MESHER_PROFILE
+	int steps = 0;
+#endif
         while(true)
         {
+#ifdef CGAL_SURFACE_MESHER_PROFILE
+	  ++steps;
+#endif
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
           std::cerr << debug_point(surface, p1) << ", "
                     << debug_point(surface, p2) << "\n";
@@ -368,6 +378,7 @@ namespace CGAL {
                                                          value_at_p2));
 
             visitor.new_point(mid);
+	    CGAL_SURFACE_MESHER_HISTOGRAM_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Segment_3) bissection steps", steps)
             return make_object(mid);
           }
 
