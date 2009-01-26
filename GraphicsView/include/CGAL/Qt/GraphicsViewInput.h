@@ -39,6 +39,11 @@ public:
 signals:
   void generate(CGAL::Object o);
   void modelChanged();
+
+public slots:
+
+  virtual void processInput(CGAL::Object o) {}
+
 };
 
 } // namespace Qt
