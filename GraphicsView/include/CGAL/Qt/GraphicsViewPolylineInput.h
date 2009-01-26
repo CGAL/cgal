@@ -46,7 +46,9 @@ public:
   {
     n_ = n;
   }
-
+  
+  bool eventFilter(QObject *obj, QEvent *event);
+  
 protected:
   // protected constructor
   GraphicsViewPolylineInput_non_templated_base(QObject* parent, 
@@ -62,9 +64,7 @@ protected:
 
   // keyPressEvent returns true iff the event is consummed
   bool keyPressEvent(QKeyEvent *event);
-  
-  bool eventFilter(QObject *obj, QEvent *event);
-  
+
   void rubberbands(const QPointF& p);
 
   virtual void generate_polygon() = 0;
