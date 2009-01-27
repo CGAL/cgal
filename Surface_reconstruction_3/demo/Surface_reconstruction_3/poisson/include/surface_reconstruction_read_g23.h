@@ -199,15 +199,22 @@ bool surface_reconstruction_read_g23(
       char point_3D_label[512];
       double x,y;   
       if (sscanf(pLine, "%d \"%[^\"]\" %lg %lg", &camera_index, point_3D_label, &x,&y) != 4 ||
-          cameras->find(camera_index) == cameras->end() || 
-          gyroviz_points.find(point_3D_label) == gyroviz_points.end())
+          cameras->find(camera_index) == cameras->end())
       {
           std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
           return false;
       }
-      Point_3 camera = (*cameras)[camera_index];
-      Point_2 position_2D(x, y);
-      gyroviz_points[point_3D_label].add_camera_point2_pair( std::make_pair(camera, position_2D) );
+      // TEMPORARY? Skip 2D points not reconstructed in 3D.
+      if (gyroviz_points.find(point_3D_label) == gyroviz_points.end())
+      {
+          //std::cerr << "Skip incorrect 2D point on line " << lineNumber << " of " << pFilename << std::endl;
+      }
+      else
+      {
+          Point_3 camera = (*cameras)[camera_index];
+          Point_2 position_2D(x, y);
+          gyroviz_points[point_3D_label].add_camera_point2_pair( std::make_pair(camera, position_2D) );
+      }
     }
   }
 
