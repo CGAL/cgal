@@ -104,8 +104,15 @@ div.NavPrev {
 /* ----------------------------------------------------------------------- */
 /* cc_manual.sty                                                           */
 /* ----------------------------------------------------------------------- */
-div.AdvancedBlock      { background-color: #c0d0ff; }
-em.AdvancedBlockLabel  { font-size:10pt; font-style: italic; }
+div.AdvancedBlock      {
+    border: solid thin;
+    padding: 1.5em 0em 0em 5px;
+    margin: 1em 0;
+    background-color: #c0d0ff;
+    background-image: url(style/Advanced.gif);
+    background-position: top left;
+    background-repeat: no-repeat;
+}
 
 /* ----------------------------------------------------------------------- */
 /* verbatim and example code environments                                  */

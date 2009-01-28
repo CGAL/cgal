@@ -560,9 +560,11 @@ d
     done
 
     cd $CurrentDir
-    # Copy cascaded style sheet (CSS) file
+    # Copy cascaded style sheet (CSS) file and related images
     # -------------------------------------------------------
-    lgout -n "copying CSS file"
+    lgout -n "copying CSS file and images"
+
+    cp -r ${ConfigHtml}/style ${OutDir}
 
     if [ -r ${TmpDir}/latex_to_html.css ]; then
         cp ${TmpDir}/latex_to_html.css ${OutDir}
