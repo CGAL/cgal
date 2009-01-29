@@ -1,8 +1,11 @@
-\begin{ccRefClass} {Ambient_dimension<T, K = Kernel_traits<T>::Kernel>}
+\begin{ccRefClass}{Ambient_dimension<T, K>}
 
 \ccDefinition
 The class \ccRefName\ allows to retrieve the dimension of the ambient space of
-a type.
+a type \ccc{T} in a kernel \ccc{K}.
+
+\ccParameters
+The parameter \ccc{K} has the default value \ccc{Kernel_traits<T>::Kernel>}.
 
 \ccInclude{CGAL/Dimension.h}
 
@@ -31,6 +34,6 @@ The following retrieves the dimension of a point type.
 \ccSeeAlso
 \ccRefConceptPage{CGAL::Dimension_tag<int dim>} \\
 \ccRefConceptPage{CGAL::Dynamic_dimension_tag} \\
-\ccRefConceptPage{CGAL::Feature_dimension<T, K = Kernel_traits<T>::Kernel>}
+\ccRefConceptPage{CGAL::Feature_dimension<T, K>}
 
 \end{ccRefClass} 
