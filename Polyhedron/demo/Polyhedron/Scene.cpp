@@ -365,7 +365,7 @@ Scene::draw(bool with_names)
   }
 }
 
-// workaround for Qt-4.2 (see below)
+// workaround for Qt-4.2 (see above)
 #undef lighter
 
 void
