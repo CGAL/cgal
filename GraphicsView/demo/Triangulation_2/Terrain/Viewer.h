@@ -27,6 +27,8 @@ public:
 public:
   void draw();
 
+  void gl_draw_vertices();
+
   void gl_draw_surface();
 
   void gl_draw_constraints();

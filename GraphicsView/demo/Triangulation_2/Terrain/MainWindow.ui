@@ -29,12 +29,12 @@
      <x>0</x>
      <y>0</y>
      <width>635</width>
-     <height>19</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
     <property name="title" >
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="actionLoad_New_File" />
     <addaction name="separator" />
@@ -47,10 +47,16 @@
    <property name="text" >
     <string>Quit</string>
    </property>
+   <property name="shortcut" >
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="actionLoad_New_File" >
    <property name="text" >
     <string>Load New File</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+O</string>
    </property>
   </action>
  </widget>

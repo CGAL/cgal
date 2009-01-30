@@ -20,6 +20,10 @@ int main(int argc, char** argv)
   Q_INIT_RESOURCE(Terrain);
   Q_INIT_RESOURCE(CGAL);
   MainWindow mw;
+
+  if(!application.arguments().value(1).isEmpty())
+    mw.open(application.arguments().value(1));
+
   mw.show();
 
   return application.exec();

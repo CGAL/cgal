@@ -60,12 +60,17 @@ Viewer::draw()
 
   if(m_view_surface)
   {
-    ::glEnable(GL_LIGHTING);
     ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
     ::glColor3f(0.2f, 0.2f, 1.f);
     ::glEnable(GL_POLYGON_OFFSET_FILL);
-    ::glPolygonOffset(3.0f,-3.0f);
+    ::glPolygonOffset(3.0f,3.0f);
+
+    ::glDisable(GL_LIGHTING);
+    gl_draw_vertices();
+
+  ::glEnable(GL_LIGHTING);
     gl_draw_surface();
+
     gl_draw_constraints();
 
     if(draw_triangles_edges)
@@ -84,7 +89,7 @@ Viewer::draw()
 
 
 void 
-Viewer::gl_draw_surface()
+Viewer::gl_draw_vertices()
 {
   ::glColor3f(1.0f, 0.0f, 0.0f);
   ::glDisable(GL_LIGHTING);
@@ -98,8 +103,11 @@ Viewer::gl_draw_surface()
   }
   ::glEnd();
   ::glDisable(GL_POINT_SMOOTH);
+}
 
-  ::glEnable(GL_LIGHTING);
+void 
+Viewer::gl_draw_surface()
+{
   ::glBegin(GL_TRIANGLES);
 
   ::glColor3f(0.2f, 1.0f, 0.2f);
@@ -131,14 +139,12 @@ Viewer::gl_draw_constraints()
 {
 
   glDisable(GL_LIGHTING);
-  glDisable(GL_LIGHT0);
-  //glDisable(GL_LIGHT1);
   glEnable(GL_LINE_SMOOTH);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glHint(GL_LINE_SMOOTH_HINT,GL_DONT_CARE);
   glLineWidth(1.5);
-  glColor3f(0.f, 0.8f , 0.f);
+  glColor3f(8.f, 0.0f , 0.f);
   Finite_edges_iterator eit = scene->terrain.finite_edges_begin(),
     eend = scene->terrain.finite_edges_end();
   glBegin(GL_LINES);
