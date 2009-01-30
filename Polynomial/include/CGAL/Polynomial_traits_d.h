@@ -354,7 +354,7 @@ public:
     typedef Exponent_vector         result_type;
     typedef Coefficient_type             argument_type;
     // returns the exponent vector of inner_most_lcoeff. 
-    result_type operator()(const Coefficient_type&){
+    result_type operator()(const Coefficient_type&) const{
       return Exponent_vector();
     }
   };
@@ -1529,7 +1529,7 @@ struct Construct_innermost_coefficient_const_iterator_range
     typedef Polynomial_d              argument_type;
         
     // returns the exponent vector of inner_most_lcoeff. 
-    result_type operator()(const Polynomial_d& polynomial){
+    result_type operator()(const Polynomial_d& polynomial) const{
       typename PTC::Degree_vector degree_vector;
       Exponent_vector result = degree_vector(polynomial.lcoeff());
       result.push_back(polynomial.degree());
