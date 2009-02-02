@@ -1410,6 +1410,19 @@ argument {\em C-idfier}.
   \> \verb+\ccHtmlIndexC{My_point<R>}+
 \end{tabbing}
 
+\section{Math formulas}
+\subsection{Macros to help HTML rendering}
+There are two macros \verb+\ccSum{a}{b}{c}+ and \verb+\ccProd{a}{b}{c}+
+which are simple wrappers for \verb+\sum_{a}^{b}{c}+ and \verb+\prod_{a}^{b}{c}+
+respectively, which help to produce a good rendering of math equations.
+
+\subsection{Equations}
+
+There is also some (partial) support for \verb+\frac+, \verb+\sqrt+...
+
+Notably still missing are \verb+\left|+ and similar constructs for arrays.
+
+
 \section{CGAL Related Macros}
 \subsection{Package Description}
 The HTML version of the CGAL Manual allows to give short descriptions for
