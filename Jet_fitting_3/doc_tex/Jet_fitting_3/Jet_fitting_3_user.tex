@@ -94,8 +94,8 @@ has~:
 %
 \begin{equation}
 z(x,y)=J_{B,d}(x,y) + h.o.t. \ ; \quad 
-J_{B,d}(x,y)=\sum_{k=0}^{k=d}(\sum_{i=0}^{i=k}
-\frac{B_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}).
+J_{B,d}(x,y)=\ccSum{k=0}{d}{(\ccSum{i=0}{i}{
+\frac{B_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}})}.
 \end{equation}
 The degree $d$ polynomial $J_{B,d}$ is the Taylor expansion of the
 function $z$, and is called its {\em $d$-jet}. Notice that a $d$-jet contains
@@ -438,8 +438,8 @@ The fitting process consists of finding the coefficients
 $A_{i,j}$ of the degree $d$ polynomial 
 \begin{equation}
 \label{eq-answer}
-J_{A,d}= \sum_{k=0}^{k=d}(\sum_{i=0}^{i=k}
-\frac{A_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}).
+J_{A,d}= \ccSum{k=0}{d}{(\ccSum{i=0}{k}{
+\frac{A_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}})}.
 \end{equation}
 
 
@@ -585,7 +585,7 @@ We use explicit formula. The implicit equation of the fitted
 polynomial surface in the fitting-basis with origin the point
 $(0,0,A_{0,0})$ is $Q=0$ with
 \begin{equation}
-Q=-w-A_{0,0}  +\sum_{i,j}\frac{A_{i,j}u^iv^j}{i!j!}.
+Q=-w-A_{0,0}  +\ccSum{i,j}{}{\frac{A_{i,j}u^iv^j}{i!j!}}.
 \end{equation}
 %%
 The equation in the Monge basis is obtained by substituting $(u,v,w)$

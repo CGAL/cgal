@@ -18,7 +18,7 @@ $B$ is a parametric curve defined by a sequence of {\em control points}
 $p_0, \ldots, p_n$ as follows:
 \begin{eqnarray*}
 B(t) = \left(X(t), Y(t)\right)
-  = \sum_{k=0}^{n}{p_k \cdot \frac{n!}{k! (n-k)!} \cdot
+  = \ccSum{k=0}{n}{p_k \cdot \frac{n!}{k! (n-k)!} \cdot
                    t^k (1-t)^{n-k}}\ .
 \end{eqnarray*}
 where $t \in [0, 1]$. The degree of the curve is therefore $n$ ---
