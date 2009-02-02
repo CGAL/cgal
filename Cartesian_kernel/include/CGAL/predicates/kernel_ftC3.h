@@ -341,6 +341,7 @@ side_of_oriented_sphereC3(const FT &px, const FT &py, const FT &pz,
                                 rtx,rty,rtz,rt2,
                                 qtx,qty,qtz,qt2,
                                 stx,sty,stz,st2);
+  // Note that the determinant above is det(P,R,Q,S) (Q and R are swapped)!
 }
 
 template <class FT >
