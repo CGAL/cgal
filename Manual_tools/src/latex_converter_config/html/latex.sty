@@ -1954,7 +1954,7 @@
 
 \newcommand{\setlength}[2]{}
 
-\newcommand{\mbox}[1]{\lciIf{\lciMathMode}{${#1}$}{{#1}}}
+\newcommand{\mbox}[1]{\lcRawHtml{<span class="mbox">}{#1}\lcRawHtml{</span>}}
 \newcommand{\makebox}[1]{\mbox{#1}}
 \newcommand{\makebox@om}{\mbox{#2}}
 \newcommand{\makebox@oom}{\mbox{#3}}

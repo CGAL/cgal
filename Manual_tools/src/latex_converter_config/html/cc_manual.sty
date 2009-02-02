@@ -1043,6 +1043,15 @@
   {\lcHtml{</small></small>}}%
 
 
+% --------------------------------------------------
+% Wrappers to help nicer rendering of Math formulas.
+% --------------------------------------------------
+\def\ccSum #1#2#3{
+\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  {<td><table><tr><td><table class="math" cellspacing=0 cellpading=0><tr><td nowrap class="subsup" align="center" valign="bottom">}#2\lcRawHtml{<tr><td class="big_sym" align="center">&sum;<tr><td nowrap class="subsup" align="center" valign="top">}#1\lcRawHtml{</table><td nowrap class="math">}#3\lcRawHtml{</table><td nowrap class="math">}}%
+  {\sum_{#1}^{#2}{#3}}
+}
+
 
 % ___________________________________________________________________________
 % ###########################################################################

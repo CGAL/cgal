@@ -135,25 +135,31 @@ pre.ExampleCode        { background-color: #e8e8e8; }
        font-style: italic;
        font-size: 120%;
 }
-span.cal { font-family: "lucida calligraphy"; }
-span.sym {
+.cal { font-family: "lucida calligraphy"; }
+.sym {
        font-family: "Arial Unicode MS", arial, serif;
        font-style: normal; }
-span.big_sym {
+.big_sym {
        font-family: "Arial Unicode MS", arial, serif;
        font-style: normal;
        font-size: 150%;
 }
-span.bigbig_sym {
+.bigbig_sym {
        font-family: "Arial Unicode MS", arial, serif;
        font-style: normal;
        font-size: 200%;
 }
 
+.subsup { font-size: 70%; }
 sub { font-size: 80%; }
 sup { font-size: 80%; }
 
 tr.frac { font-size: 1% }
+
+.mbox {
+       font-family: arial, sans-serif;
+       font-style: normal;
+}
 
 /* ----------------------------------------------------------------------- */
 /* TeX and LaTeX display (taken from TEX4ht)                               */
