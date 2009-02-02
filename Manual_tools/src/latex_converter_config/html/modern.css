@@ -130,6 +130,8 @@ pre.ExampleCode        { background-color: #e8e8e8; }
 /* ----------------------------------------------------------------------- */
 .math {
        font-family: serif;
+       /* In case of font problem, here is a recommendation I found on the web : */
+       /* font-family: "Unicode Symbols", "Times New Roman", "Apple Symbols", "Arial Unicode MS"; */
        font-style: italic;
        font-size: 120%;
 }
