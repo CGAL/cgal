@@ -514,7 +514,7 @@ the case if and only if there are real coefficients
 $\lambda_1,\ldots,\lambda_n$ such that $p$ is a convex combination of
 $p_1,\ldots,p_n$: 
 \[
-p = \sum_{j=1}^{n}~\lambda_j~p_j, \quad \sum_{j=1}^{n}~\lambda_j = 1,
+p = \ccSum{j=1}{n}{~\lambda_j~p_j}, \quad \ccSum{j=1}{n}{~\lambda_j} = 1,
 \quad \lambda_j \geq 0 \mbox{~for all $j$.}
 \]
 The problem of testing the existence of such $\lambda_j$ can 
@@ -526,11 +526,11 @@ $h_1,\ldots,h_n,h$, we have
 \[q_j = h_j \cdot (p_j \mid 1) \mbox{~for all $j$, and~} q = h \cdot
 (p\mid 1).\] Now, nonnegative $\lambda_1,\ldots,\lambda_n$ are
 suitable coefficients for a convex combination if and only if
-\[\sum_{j=1}^n~ \lambda_j(p_j \mid 1) = (p\mid 1), \]
+\[\ccSum{j=1}{n}{~ \lambda_j(p_j \mid 1)} = (p\mid 1), \]
 equivalently, if there are $\mu_1,\ldots,\mu_n$ 
 (with $\mu_j = \lambda_j \cdot h/{h_j}$ for all $j$) such that
 \[
-\sum_{j=1}^n~\mu_j~q_j = q, \quad \mu_j \geq 0\mbox{~for all $j$}.
+\ccSum{j=1}{n}{~\mu_j~q_j} = q, \quad \mu_j \geq 0\mbox{~for all $j$}.
 \]
 
 The linear program now tests for the existence of nonnegative $\mu_j$

@@ -349,8 +349,8 @@ then $\lambda_i\geq 0$ ($\lambda_i\leq 0$, respectively).
 &&\leq 0 & \mbox{if $l_j=-\infty$.}
 \end{array}
 \]
-\item \[\qplambda^T\qpb \quad<\quad \sum_{j: \qplambda^TA_j <0} \qplambda^TA_j u_j 
-\quad+\quad  \sum_{j: \qplambda^TA_j >0} \qplambda^TA_j l_j.\]
+\item \[\qplambda^T\qpb \quad<\quad \ccSum{j: \qplambda^TA_j <0}{}{ \qplambda^TA_j u_j }
+\quad+\quad  \ccSum{j: \qplambda^TA_j >0}{}{ \qplambda^TA_j l_j}.\]
 \end{enumerate}
 
 {\bf Proof:} Let us assume for the purpose of obtaining a contradiction
@@ -358,10 +358,10 @@ that there is a feasible solution $\qpx$. Then we get
 \[
 \begin{array}{lcll}
 0 &\geq& \qplambda^T(A\qpx -\qpb) &  \mbox{(by $A\qpx\qprel \qpb$ and 1.)} \\
-  &=& \sum_{j: \qplambda^TA_j <0} \qplambda^TA_j x_j 
-\quad+\quad  \sum_{j: \qplambda^TA_j >0} \qplambda^TA_j x_j - \qplambda^T \qpb \\
-  &\geq& \sum_{j: \qplambda^TA_j <0} \qplambda^TA_j u_j 
-\quad+\quad  \sum_{j: \qplambda^TA_j >0} \qplambda^TA_j l_j - \qplambda^T \qpb &
+  &=& \ccSum{j: \qplambda^TA_j <0}{}{ \qplambda^TA_j x_j }
+\quad+\quad  \ccSum{j: \qplambda^TA_j >0}{}{ \qplambda^TA_j x_j} - \qplambda^T \qpb \\
+  &\geq& \ccSum{j: \qplambda^TA_j <0}{}{ \qplambda^TA_j u_j }
+\quad+\quad  \ccSum{j: \qplambda^TA_j >0}{}{ \qplambda^TA_j l_j} - \qplambda^T \qpb &
 \mbox{(by $\qpl\leq \qpx \leq \qpu$ and 2.)} \\
   &>& 0 & \mbox{(by 3.)}, 
 \end{array}
