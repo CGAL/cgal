@@ -128,8 +128,7 @@ public:
       return make_object(res);
     } else {
       std::cerr << "NOT YET IMPLEMENTED: Intersection is not a point" << std::endl;
-      Point_3 res;
-      return make_object(res);
+      return Object();
     }
   }
 #endif
