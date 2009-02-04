@@ -3907,6 +3907,8 @@ Surface_reconstruction_3/examples/Surface_reconstruction_3/poisson_reconstructio
 Surface_reconstruction_3/examples/Surface_reconstruction_3/reconstruction_vc80.sln eol=crlf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/test_all.bat eol=crlf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/test_all.sh eol=lf
+Surface_reconstruction_3/include/CGAL/Neighborhood/knn_point_neighbor_search.h -text
+Surface_reconstruction_3/include/CGAL/Neighborhood/point_kdtree_3.h -text
 Surface_reconstruction_3/include/CGAL/Orientable_normal_3.h -text
 Surface_reconstruction_3/include/CGAL/average_spacing_3.h -text
 Surface_reconstruction_3/include/CGAL/smooth_jet_fitting_3.h -text

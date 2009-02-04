@@ -24,9 +24,15 @@
 #include <vector>
 #include <algorithm>
 
+#define MLS_USE_CUSTOM_KDTREE
+
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/make_surface_mesh.h>
+#ifdef MLS_USE_CUSTOM_KDTREE
+#include "Neighborhood/knn_point_neighbor_search.h"
+#else
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#endif
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 #include <CGAL/Min_sphere_d.h>
@@ -90,6 +96,9 @@ private:
     KdTreeElement(const Point& p, unsigned int id=0)
       : Point_with_normal(p), index(id)
     {}
+    KdTreeElement(const KdTreeElement& other)
+      : Point_with_normal(other), index(other.index)
+    {}
   };
 
   // Helper class for the Kd-tree
@@ -99,9 +108,21 @@ private:
     typedef KdTreeElement Point_3;
   };
 
-  typedef Search_traits_3<KdTreeGT> TreeTraits;
+  class TreeTraits : public Search_traits_3<KdTreeGT>
+  {
+    public:
+      typedef Point PointType;
+  };
+  #ifdef MLS_USE_CUSTOM_KDTREE
+  typedef knn_point_neighbor_search<TreeTraits> Neighbor_search;
+  #else
   typedef Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
+  #endif
   typedef typename Neighbor_search::Tree Tree;
+
+//   typedef Orthogonal_k_neighbor_search<TreeTraits> CNeighbor_search;
+//   typedef typename CNeighbor_search::Tree CTree;
+
   typedef typename Neighbor_search::Point_with_transformed_distance
                                     Point_with_transformed_distance;
 
@@ -136,17 +157,35 @@ public:
     {
       m->treeElements.push_back(KdTreeElement(*it,i));
     }
+    #ifdef MLS_USE_CUSTOM_KDTREE
+    m->tree = new Tree(ConstDataWrapper<Point>(static_cast<const Point*>(&(m->treeElements[0])), m->treeElements.size(), sizeof(KdTreeElement)), &(m->treeElements[0]));
+    #else
     m->tree = new Tree(m->treeElements.begin(), m->treeElements.end());
+    #endif
+//     CTree* ctree = new CTree(m->treeElements.begin(), m->treeElements.end());
 
     // Compute the radius of each point = (distance max to KNN)/2.
     // The union of these balls defines the surface definition domain.
-    m->radii.reserve(nb_points);
-    for (InputIterator it=first ; it != beyond ; ++it)
+    m->radii.resize(nb_points);
+//     for (int y=0; y<40; ++y)
     {
-      Neighbor_search search(*(m->tree), *it, 16); // why 16?
-      FT maxdist2 = (--search.end())->second; // squared distance to furthest neighbor
-      m->radii.push_back(sqrt(maxdist2)/2.);
+      int i=0;
+      for (InputIterator it=first ; it != beyond ; ++it, ++i)
+      {
+        Neighbor_search search(*(m->tree), *it, 16); // why 16?
+        FT maxdist2 = (--search.end())->second; // squared distance to furthest neighbor
+        m->radii[i] = sqrt(maxdist2)/2.;
+
+//         for (typename Neighbor_search::iterator it = search.begin(); it != search.end(); ++it)
+//           std::cout << it->first.index << " ";
+//         std::cout << "\n";
+//         CNeighbor_search csearch(*ctree, *it, 8);
+//         for (typename CNeighbor_search::iterator it = csearch.begin(); it != csearch.end(); ++it)
+//           std::cout << it->first.index << " ";
+//         std::cout << "\n\n";
+      }
     }
+//     exit(0);
 
     // Compute barycenter, bounding box, bounding sphere and standard deviation.
     update_bounding_box(first, beyond);
@@ -487,7 +526,7 @@ private:
 
     AlgebraicSphere() : state(UNDETERMINED) {}
 
-    /** Converts the algebraix sphere to an explicit sphere or plane.
+    /** Converts the algebraic sphere to an explicit sphere or plane.
     */
     void finalize(void) {
       if (fabs(u4)>1e-9)
