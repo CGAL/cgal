@@ -10,12 +10,17 @@ class Viewer : public QGLViewer {
 
   CGAL::Timer timer;
   Scene* scene;
+  bool frame_has_been_spun;
 
   int nr_of_facets;
 public:
   Viewer(QWidget* parent)
     : QGLViewer(parent)
-  {}
+  {
+    setManipulatedFrame(new qglviewer::ManipulatedFrame());
+    connect(manipulatedFrame(), SIGNAL(manipulated()),
+            this, SLOT(frameSpun()));
+  }
 
   void setScene(Scene* scene_)
   {
@@ -33,9 +38,13 @@ public:
 
   void gl_draw_constraints();
 
- public slots :
+public slots :
+  void frameSpun() {
+    frame_has_been_spun = true;
+    updateGL();
+  }
 
- void sceneChanged();
+  void sceneChanged();
    
 };
 

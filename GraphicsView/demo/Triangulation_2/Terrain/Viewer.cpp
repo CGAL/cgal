@@ -21,6 +21,13 @@ Viewer::sceneChanged()
 void
 Viewer::draw()
 {
+  if(frame_has_been_spun) {
+    const qglviewer::Vec vec = manipulatedFrame()->orientation().axis();
+    scene->setNormal(Vector_3(CGAL::to_double(vec.x),
+                              CGAL::to_double(vec.y),
+                              CGAL::to_double(vec.z)));
+    frame_has_been_spun = false;
+  }
 
  // define material
   float	ambient[]  =   { 0.25f,
@@ -99,7 +106,9 @@ Viewer::gl_draw_vertices()
   for(Finite_vertices_iterator it = scene->terrain.finite_vertices_begin();
       it != scene->terrain.finite_vertices_end();
       ++it){
-    ::glVertex3d(it->point().x(), it->point().y(), it->point().z());
+    ::glVertex3d(CGAL::to_double(it->point().x()),
+                 CGAL::to_double(it->point().y()),
+                 CGAL::to_double(it->point().z()));
   }
   ::glEnd();
   ::glDisable(GL_POINT_SMOOTH);
@@ -108,6 +117,8 @@ Viewer::gl_draw_vertices()
 void 
 Viewer::gl_draw_surface()
 {
+  Converter conv;
+
   ::glBegin(GL_TRIANGLES);
 
   ::glColor3f(0.2f, 1.0f, 0.2f);
@@ -116,12 +127,11 @@ Viewer::gl_draw_surface()
       fit != scene->terrain.finite_faces_end();
       ++fit) {
     
-    const Point_3& a = fit->vertex(0)->point();
-    const Point_3& b = fit->vertex(1)->point();
-    const Point_3& c = fit->vertex(2)->point();
-   
-    Vector_3 v = CGAL::unit_normal(a,b,c);
+    const Construction_kernel::Point_3& a = conv(fit->vertex(0)->point());
+    const Construction_kernel::Point_3& b = conv(fit->vertex(1)->point());
+    const Construction_kernel::Point_3& c = conv(fit->vertex(2)->point());
 
+    Construction_kernel::Vector_3 v = CGAL::unit_normal(a,b,c);
 
     ::glNormal3d(v.x(),v.y(),v.z());
     ::glVertex3d(a.x(),a.y(),a.z());
@@ -152,8 +162,8 @@ Viewer::gl_draw_constraints()
     if(scene->terrain.is_constrained(*eit)){
       Point_3 p = eit->first->vertex(Terrain::cw(eit->second))->point();
       Point_3 q = eit->first->vertex(Terrain::ccw(eit->second))->point();
-      glVertex3d(p.x(), p.y(), p.z());
-      glVertex3d(q.x(), q.y(), q.z());
+      glVertex3d(CGAL::to_double(p.x()), CGAL::to_double(p.y()), CGAL::to_double(p.z()));
+      glVertex3d(CGAL::to_double(q.x()), CGAL::to_double(q.y()), CGAL::to_double(q.z()));
     }
   }
   glEnd();

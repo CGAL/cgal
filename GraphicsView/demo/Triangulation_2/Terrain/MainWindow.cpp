@@ -1,9 +1,10 @@
-
 #include "MainWindow.h"
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
 {
   setupUi(this);
+
   this->viewer->setScene(&scene);
   connectActions();
   this->addAboutDemo(":/cgal/help/about_Terrain.html");
@@ -66,31 +67,28 @@ MainWindow::open(const QString& fileName)
   int n;
   ifs >> n;
   Point_3 p;
-  std::vector<Point_3> points;
-  points.resize(n);
+  scene.points.resize(n);
   for(int i=0; i<n; i++){
     ifs >> p;
-    points[i] = p;
+    scene.points[i] = p;
   }
-  scene.bbox = points[0].bbox();
+  scene.bbox = scene.points[0].bbox();
   
   for(int i=0; i<n; i++){
-    scene.bbox = scene.bbox + points[i].bbox();
+    scene.bbox = scene.bbox + scene.points[i].bbox();
   }
-  scene.terrain.insert(points.begin(), points.end());
-
+  scene.polylines.clear();
   while(ifs >> n) {
-    Vertex_handle vh, wh;
-    ifs >> p;
-    vh = scene.terrain.insert(p);
+    std::vector<Point_3> line;
     // read a polyline with n points
-    for(int i=1; i < n; i++){
+    for(int i=0; i < n; i++){
       ifs >> p;
-      wh = scene.terrain.insert(p, vh->face());
-      scene.terrain.insert_constraint(vh, wh);
-      vh = wh;
+      line.push_back(p);
     }
+    scene.polylines.push_back(line);
   }
+
+  scene.refresh();
 
   this->addToRecentFiles(fileName);
   QApplication::restoreOverrideCursor();

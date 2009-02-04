@@ -4,12 +4,8 @@
 #include "typedefs.h"
 #include "ui_MainWindow.h"
 #include <CGAL/Qt/DemosMainWindow.h>
-#include <QSlider>
-#include <QFileDialog>
+
 class QWidget;
-
-
-
 
 class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
 {
