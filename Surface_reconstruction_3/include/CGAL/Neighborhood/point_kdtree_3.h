@@ -11,6 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL: svn+ssh://ggael@scm.gforge.inria.fr/svn/cgal/trunk/Surface_reconstruction_3/include/CGAL/Neighborhood/point_kdtree_3.h $
+// $Id: point_kdtree_3.h 47904 2009-02-04 18:46:54Z ggael $
+//
 //
 // Author(s)     : Gael Guennebaud
 
