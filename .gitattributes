@@ -1595,6 +1595,7 @@ GraphicsView/demo/Triangulation_2/Regular_triangulation_2.qrc -text
 GraphicsView/demo/Triangulation_2/Regular_triangulation_2.ui -text
 GraphicsView/demo/Triangulation_2/Terrain/MainWindow.ui -text
 GraphicsView/demo/Triangulation_2/Terrain/Terrain.qrc -text
+GraphicsView/demo/Triangulation_2/Terrain/data/sixteen-intersections.pap -text
 GraphicsView/demo/Triangulation_2/Terrain/data/sixteen.pap -text
 GraphicsView/demo/Triangulation_2/about_Constrained_Delaunay_triangulation_2.html svneol=native#text/html
 GraphicsView/demo/Triangulation_2/about_Delaunay_triangulation_2.html svneol=native#text/html
