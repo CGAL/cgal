@@ -199,7 +199,7 @@ public:
 #if !NDEBUG
             std::cout << "Res sq_free.." << std::flush;
 #endif
-            Polynomial_2 f1 = CGAL::CGALi::make_square_free(sres_f_fy[0]);
+            Polynomial_2 f1 = CGAL::make_square_free(sres_f_fy[0]);
 #if !NDEBUG
             std::cout << "done" << std::endl;
 #endif            
@@ -213,7 +213,7 @@ public:
             std::cout << "sq_free.." << std::flush;
 #endif
             Polynomial_2 f2 
-                = CGAL::CGALi::make_square_free(f2_non_sq);
+                = CGAL::make_square_free(f2_non_sq);
 #if !NDEBUG
             std::cout << "done" << std::endl;
 #endif
@@ -244,8 +244,8 @@ public:
 #if !NDEBUG
             std::cout << "sq-free.." << std::flush;
 #endif
-            //Polynomial_3 f3 = CGAL::CGALi::make_square_free(curr);
-            Polynomial_2 f3 = CGAL::CGALi::make_square_free(sres_f_fy[i]);
+            //Polynomial_3 f3 = CGAL::make_square_free(curr);
+            Polynomial_2 f3 = CGAL::make_square_free(sres_f_fy[i]);
 
 #if !NDEBUG
             std::cout << "done" << std::endl;
@@ -1664,10 +1664,8 @@ public:
             }
                 
             
-            he_it->second.planar_curve 
-                = CGAL::canonicalize
-                    (CGAL::CGALi::make_square_free
-                        (surface_section) );
+            he_it->second.planar_curve = 
+                CGAL::canonicalize(CGAL::make_square_free(surface_section));
 
             // Now, use Curve analysis for adjacencies
             typename 
@@ -3729,11 +3727,11 @@ public:
                     construct_curve_2_object();
                 bucket_curves.push_back(
                         construct_curve(
-                                CGAL::CGALi::make_square_free(bucket_int_poly) 
+                                CGAL::make_square_free(bucket_int_poly) 
                         )
                 );
 #if !NDEBUG
-                std::cout << "," << CGAL::CGALi::make_square_free(bucket_int_poly) 
+                std::cout << "," << CGAL::make_square_free(bucket_int_poly) 
                           << std::flush;
 #endif
             }

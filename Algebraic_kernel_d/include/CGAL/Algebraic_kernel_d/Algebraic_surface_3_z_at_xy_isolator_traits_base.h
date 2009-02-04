@@ -742,7 +742,7 @@ public:
                         const Polynomial_2& non_square_free_f,
                         bool no_gcd = false) const {
             
-            Polynomial_2 p2 = CGAL::CGALi::make_square_free(non_square_free_f);
+            Polynomial_2 p2 = CGAL::make_square_free(non_square_free_f);
             
             typename 
                 Arrangement_traits_2::Curve_kernel_2::Construct_curve_2
