@@ -5,6 +5,29 @@
 
 
 
+Viewer::Viewer(QWidget* parent) 
+  : QGLViewer(parent), scene(0), frame_has_been_spun(false)
+{
+  setManipulatedFrame(new qglviewer::ManipulatedFrame());
+
+  qglviewer::AxisPlaneConstraint* constraint = new qglviewer::WorldConstraint();
+  constraint->setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
+  manipulatedFrame()->setConstraint(constraint);
+
+  connect(manipulatedFrame(), SIGNAL(modified()),
+          this, SLOT(frameSpun()));
+
+}
+
+Viewer::~Viewer()
+{
+  qglviewer::ManipulatedFrame* frame = manipulatedFrame();
+  qglviewer::Constraint* constraint = frame->constraint();
+  frame->setConstraint(0);
+  setManipulatedFrame(0);
+  delete constraint;
+  delete frame;
+}
 
 void
 Viewer::sceneChanged()
@@ -21,15 +44,37 @@ Viewer::sceneChanged()
 void
 Viewer::draw()
 {
+  using qglviewer::Vec;
+  if(!scene) return;
+
+  const Vec normal = manipulatedFrame()->orientation().axis();
   if(frame_has_been_spun) {
-    const qglviewer::Vec vec = manipulatedFrame()->orientation().axis();
-    scene->setNormal(Vector_3(CGAL::to_double(vec.x),
-                              CGAL::to_double(vec.y),
-                              CGAL::to_double(vec.z)));
+    scene->setNormal(Vector_3(CGAL::to_double(normal.x),
+                              CGAL::to_double(normal.y),
+                              CGAL::to_double(normal.z)));
     frame_has_been_spun = false;
   }
 
- // define material
+  const Bbox_3& bb = scene->bbox;
+  double diameter = std::max(std::max(bb.xmax()-bb.xmin(),
+                                      bb.ymax()-bb.ymin()),
+                             bb.zmax()-bb.zmin());
+  diameter *= std::sqrt(3.);
+  diameter /= 2.;
+
+  Vec center = Vec(static_cast<float>(bb.xmax()+bb.xmin())/2.f,
+                   static_cast<float>(bb.ymax()+bb.ymin())/2.f,
+                   static_cast<float>(bb.zmax()+bb.zmin())/2.f);
+
+  Vec from = center - (static_cast<float>(diameter) * normal);
+  Vec to = center + (static_cast<float>(diameter) * normal);
+
+  // anti-aliasing (if the OpenGL driver permits that)
+  ::glEnable(GL_LINE_SMOOTH);
+
+  ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE); 
+
+  // define material
   float	ambient[]  =   { 0.25f,
                          0.20725f,
                          0.20725f,
@@ -50,6 +95,14 @@ Viewer::draw()
                          1.0f };
   float shininess[] = {  11.264f };
 
+  ::glColor4f(1.f, 0.f, 0.f, 1.f);
+  ::glColorMaterial(GL_FRONT_AND_BACK,  GL_AMBIENT);
+  ::glEnable(GL_COLOR_MATERIAL);
+  ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  ::glEnable(GL_LIGHTING);
+  this->drawArrow(from,  to, static_cast<float>(diameter/500.));
+  ::glDisable(GL_COLOR_MATERIAL);
+
   // apply material
   ::glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT,   ambient);
   ::glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE,   diffuse);
@@ -57,10 +110,6 @@ Viewer::draw()
   ::glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS, shininess);
   ::glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION,  emission);
 
-  // anti-aliasing (if the OpenGL driver permits that)
-  ::glEnable(GL_LINE_SMOOTH);
-
-  ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE); 
   // draw surface mesh
   bool m_view_surface = true;
   bool draw_triangles_edges = true;

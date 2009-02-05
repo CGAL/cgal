@@ -8,19 +8,12 @@
 class Viewer : public QGLViewer {
   Q_OBJECT
 
-  CGAL::Timer timer;
   Scene* scene;
   bool frame_has_been_spun;
 
-  int nr_of_facets;
 public:
-  Viewer(QWidget* parent)
-    : QGLViewer(parent)
-  {
-    setManipulatedFrame(new qglviewer::ManipulatedFrame());
-    connect(manipulatedFrame(), SIGNAL(manipulated()),
-            this, SLOT(frameSpun()));
-  }
+  Viewer(QWidget* parent);
+  ~Viewer();
 
   void setScene(Scene* scene_)
   {
