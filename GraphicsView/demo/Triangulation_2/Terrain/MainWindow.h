@@ -24,7 +24,10 @@ public slots:
   void open(const QString& fileName);
   void open_file();
 
-  signals:
+  void generate_points();
+  void generate_points(const int number_of_points);
+
+signals:
   void sceneChanged();
 };
 

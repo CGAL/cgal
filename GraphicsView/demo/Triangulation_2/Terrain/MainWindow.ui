@@ -40,7 +40,14 @@
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
+   <widget class="QMenu" name="menuEdit" >
+    <property name="title" >
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionGenerate_random_points" />
+   </widget>
    <addaction name="menuFile" />
+   <addaction name="menuEdit" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
   <action name="actionQuit" >
@@ -57,6 +64,11 @@
    </property>
    <property name="shortcut" >
     <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionGenerate_random_points" >
+   <property name="text" >
+    <string>Generate random &amp;points...</string>
    </property>
   </action>
  </widget>

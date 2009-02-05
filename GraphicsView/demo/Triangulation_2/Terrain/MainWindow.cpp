@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include <QFileDialog>
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
 {
@@ -28,6 +29,9 @@ MainWindow::connectActions()
 
   QObject::connect(this->actionQuit, SIGNAL(triggered()), 
 		   qApp, SLOT(quit()));
+
+  connect(actionGenerate_random_points, SIGNAL(triggered()),
+          this, SLOT(generate_points()));
 }
 
 void
@@ -44,6 +48,30 @@ MainWindow::open_file()
   }
 }
 
+void 
+MainWindow::generate_points() {
+  generate_points(QInputDialog::getInteger( this, 
+                                            tr("Insert random points"),
+                                            tr("Number of points:"),
+                                            100, // default value
+                                            0)  // min
+                  );
+}
+
+void
+MainWindow::generate_points(const int n) {
+  const Bbox_3& bb = scene.bbox;
+  for(int i = 0; i < n; ++i) {
+    scene.points.push_back(Point_3(CGAL::default_random.get_double(bb.xmin(),
+                                                                   bb.xmax()),
+                                   CGAL::default_random.get_double(bb.ymin(),
+                                                                   bb.ymax()),
+                                   CGAL::default_random.get_double(bb.zmin(),
+                                                                   bb.zmax())));
+  }
+  scene.refresh();
+  emit (sceneChanged());
+}
 
 /* Yet another file format 
 
