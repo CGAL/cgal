@@ -104,14 +104,15 @@ public:
    * An auxiliary functor used for validity checks.
    */
   typedef Gps_traits_adaptor<Base>                         Traits_adaptor;
-  typedef CGAL::Is_valid_2<Self, Traits_adaptor>           Is_valid_2;
  
+  /*typedef CGAL::Is_valid_2<Self, Traits_adaptor>           Is_valid_2;
   Is_valid_2 is_valid_2_object()
   {
     Traits_adaptor   tr_adp;
-
+ 
     return (Is_valid_2 (*this, tr_adp));
-  }	
+  }*/	
+  
   //Added Functionality from GeneralPolygonWithHoles Concept to the traits. 
 	
   /*A functor for constructing the outer boundary of a polygon with holes*/ 	

@@ -19,6 +19,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Boolean_set_operations_2/Gps_polygon_validation.h>
 #include <CGAL/iterator.h>
 #include <vector>
 #include <iterator>
@@ -42,7 +43,7 @@ bool are_polygons_valid(const std::vector<Polygon_with_holes_2>& vec)
   unsigned int i=0;
   for(; i < vec.size(); ++i)
   {
-    if(!tr.is_valid_2_object()(vec[i]))
+    if(!is_valid_polygon_with_holes(vec[i],tr))
       return false; 
   }
   return true;
@@ -61,7 +62,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1, const T_P2
   {
     out << 1 << std::endl;
     out << res_pgn <<std::endl;
-    if(!tr.is_valid_2_object()(res_pgn))
+    if(!is_valid_polygon_with_holes(res_pgn,tr))
       std::cout<<"warning: invalid polygon was generated\n";
   }
   else
@@ -121,7 +122,7 @@ std::ostream& write_complement_to_file(std::ostream& out, const Polygon_2& pgn)
   out << res_pgn << std::endl;
 
   Traits_2 tr;
-  if(!tr.is_valid_2_object()(res_pgn))
+  if(!is_valid_polygon_with_holes(res_pgn,tr))
     std::cout<<"warning: invalid polygon was generated\n";
 
   return out;
@@ -188,7 +189,7 @@ int main(int argc, char **argv)
   {
     inp1 >> p1;
     out  << p1;
-    if(! tr.is_valid_2_object()(p1))
+    if(! is_valid_polygon(p1,tr))
     {
       std::cout<<"warning: first input polygon is invalid!!!\n";
     }
@@ -197,7 +198,7 @@ int main(int argc, char **argv)
   {
     inp1 >> pwh1;
     out  << pwh1;
-    if(! tr.is_valid_2_object()(pwh1))
+    if(! is_valid_polygon_with_holes(pwh1,tr))
     {
       std::cout<<"warning: first input polygon is invalid!!!\n";
     }
@@ -213,7 +214,7 @@ int main(int argc, char **argv)
   {
     inp2 >> p2;
     out  << p2;
-    if(! tr.is_valid_2_object()(p2))
+    if(!is_valid_polygon(p2,tr))
     {
       std::cout<<"warning: second input polygon is invalid!!!\n";
     }
@@ -222,7 +223,7 @@ int main(int argc, char **argv)
   {
     inp2 >> pwh2;
     out << pwh2;
-    if(! tr.is_valid_2_object()(pwh2))
+    if(! is_valid_polygon_with_holes(pwh2,tr))
     {
       std::cout<<"warning: second input polygon is invalid!!!\n";
     }

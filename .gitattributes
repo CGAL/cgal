@@ -1255,9 +1255,20 @@ Boolean_set_operations_2/test/Boolean_set_operations_2/data/pgn_holes2.dat -text
 Boolean_set_operations_2/test/Boolean_set_operations_2/data/pgn_holes3.dat -text
 Boolean_set_operations_2/test/Boolean_set_operations_2/data/pgn_holes4.dat -text
 Boolean_set_operations_2/test/Boolean_set_operations_2/data/pgn_holes5.dat -text
+Boolean_set_operations_2/test/Boolean_set_operations_2/data/validation/val_test1.dat -text
+Boolean_set_operations_2/test/Boolean_set_operations_2/data/validation/val_test2.dat -text
+Boolean_set_operations_2/test/Boolean_set_operations_2/data/validation/val_test3.dat -text
+Boolean_set_operations_2/test/Boolean_set_operations_2/data/validation/val_test4.dat -text
+Boolean_set_operations_2/test/Boolean_set_operations_2/data/validation/val_test5.dat -text
+Boolean_set_operations_2/test/Boolean_set_operations_2/data/validation/val_test6.dat -text
+Boolean_set_operations_2/test/Boolean_set_operations_2/data/validation/val_test7.dat -text
+Boolean_set_operations_2/test/Boolean_set_operations_2/data/validation/val_test8.dat -text
+Boolean_set_operations_2/test/Boolean_set_operations_2/data/validation/val_test9.dat -text
+Boolean_set_operations_2/test/Boolean_set_operations_2/data/validation/validation_test_output.txt -text
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_agg_op.cmd eol=lf
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_bop.cmd eol=lf
 Boolean_set_operations_2/test/Boolean_set_operations_2/test_connect_holes.cpp -text
+Boolean_set_operations_2/test/Boolean_set_operations_2/test_polygon_validation.cpp -text
 Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.eps -text svneol=unset#application/postscript
 Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.gif -text svneol=unset#image/gif
 Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.pdf -text svneol=unset#application/pdf

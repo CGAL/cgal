@@ -15,6 +15,7 @@
 // $Id$
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+//						 Guy Zucker	<guyzucke@post.tau.ac.il>	
 
 #ifndef CGAL_CONNECT_HOLES_H
 #define CGAL_CONNECT_HOLES_H

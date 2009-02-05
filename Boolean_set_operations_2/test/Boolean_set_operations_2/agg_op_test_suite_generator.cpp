@@ -18,6 +18,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Boolean_set_operations_2/Gps_polygon_validation.h>
 #include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/iterator.h>
 #include <vector>
@@ -48,7 +49,7 @@ bool are_polygons_valid(Vec& vec)
   unsigned int i=0;
   for(; i < vec.size(); ++i)
   {
-    if(!tr.is_valid_2_object()(vec[i]))
+    if(!is_valid_unknown_polygon(vec[i], tr))
       return false; 
   }
   return true;
