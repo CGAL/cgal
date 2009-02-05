@@ -244,247 +244,6 @@ public:
 
 } // end namespace TriangulationProjectionTraitsCartesianFunctors
 
-template <class R>
-class  Intersect_xy_3
-{
-public:
-  typedef typename R::Point_3   Point_3; 
-  typedef typename R::Segment_3 Segment_3;
-  typedef typename R::Point_2   Point_2; 
-  typedef typename R::Vector_2  Vector_2; 
-  typedef typename R::Segment_2 Segment_2;
-  
-  typename R::FT x(const Point_3 &p) const { return p.x(); }
-  typename R::FT y(const Point_3 &p) const { return p.y(); }
-
-  Point_2 project(const Point_3& p)
-  {
-    return Point_2(x(p),y(p));
-  } 
-
-#if USE_ROBUST_INTERSECTIONS
-  Object operator()(const Segment_3& s1, const Segment_3& s2)
-  {
-    typedef typename CGAL::Exact_predicates_exact_constructions_kernel::Point_2 ExactPoint_2;
-    typedef typename CGAL::Exact_predicates_exact_constructions_kernel::Segment_2 ExactSegment_2;
-    
-    
-    
-
-    ExactPoint_2 s1p(s1.source().x(), s1.source().y());
-    ExactPoint_2 t1p(s1.target().x(), s1.target().y());
-    ExactSegment_2 s1_2(s1p, t1p);
-    ExactSegment_2 s2_2(ExactPoint_2(s2.source().x(), s2.source().y()),
-			ExactPoint_2(s2.target().x(), s2.target().y()));
-    Object o = intersection(s1_2,s2_2);
-    ExactPoint_2 pi;
-    if(assign(pi,o)){
-      double l1 = std::sqrt(to_double(squared_distance(s1p,t1p)));
-      double l2 = std::sqrt(to_double(squared_distance(s1p,pi)));
-      double ratio = l2/l1;
-      double z = s1.source().z() + ratio * (s1.target().z() - s1.source().z());
-      Point_3 res(to_double(pi.x()), to_double(pi.y()), z);
-      return make_object(res);
-    } else {
-      std::cerr << "NOT YET IMPLEMENTED: Intersection is not a point" << std::endl;
-      Point_3 res;
-      return make_object(res);
-    }
-  }
-
-#else 
-
-  Object operator()(const Segment_3& s1, const Segment_3& s2)
-  {
-    Point_2 s1p = project(s1.source());
-    Point_2 t1p = project(s1.target());
-    Segment_2 s1_2(s1p, t1p);
-    Segment_2 s2_2(project(s2.source()), project(s2.target()));
-    Object o = intersection(s1_2,s2_2);
-    Point_2 pi;
-    if(assign(pi,o)){
-      double l1 = std::sqrt(to_double(squared_distance(s1p,t1p)));
-      double l2 = std::sqrt(to_double(squared_distance(s1p,pi)));
-      double ratio = l2/l1;
-      Point_3 p = s1.source() + ratio * (s1.target() - s1.source());
-      Point_3 res(pi.x(), pi.y(), p.z());
-      return make_object(res);
-    } else {
-      std::cerr << "NOT YET IMPLEMENTED: Intersection is not a point" << std::endl;
-      return Object();
-    }
-  }
-#endif
-};
-
-template <class R>
-class Compare_distance_xy_3
-{
-public:
-  typedef typename R::Point_3   Point_3; 
-  typedef typename R::Point_2   Point_2;   
-  typedef typename R::FT        RT;
-  typename R::FT x(const Point_3 &p) const { return p.x(); }
-  typename R::FT y(const Point_3 &p) const { return p.y(); }
-
-  Point_2 project(const Point_3& p)
-  {
-    return Point_2(x(p),y(p));
-  }
-
-  Comparison_result operator()(const Point_3& p,const Point_3& q,const Point_3& r)
-  {
-    Point_2 p2 = project(p);
-    Point_2 q2 = project(q);
-    Point_2 r2 = project(r);
-    return compare_distance_to_point(p2,q2,r2);
-  }
-};
-
-
-template <class R>
-class Squared_distance_xy_3
-{
-public:
-  typedef typename R::Point_3   Point_3; 
-  typedef typename R::Point_2   Point_2; 
-  typedef typename R::Line_3    Line_3; 
-  typedef typename R::Line_2    Line_2;
-  typedef typename R::FT        RT;
-  typename R::FT x(const Point_3 &p) const { return p.x(); }
-  typename R::FT y(const Point_3 &p) const { return p.y(); }
-
-  Point_2 project(const Point_3& p)
-  {
-    return Point_2(x(p),y(p));
-  }
-
-  RT operator()(const Line_3& l, const Point_3& p)
-  {
-    Point_2 p2 = project(p);
-    Line_2 l2 = Line_2(project(l.point(0)), project(l.point(1)));
-    return squared_distance(p2, l2);
-  }
-};
-
-// template <class R>
-// class Squared_radius_xy_3
-// {
-// public:
-//   typedef typename R::Point_3   Point_3; 
-//   typedef typename R::Point_2   Point_2; 
-//   typedef typename R::Line_3    Line_3; 
-//   typedef typename R::Line_2    Line_2;
-//   typedef typename R::FT        RT;
-//   typename R::FT x(const Point_3 &p) const { return p.x(); }
-//   typename R::FT y(const Point_3 &p) const { return p.y(); }
-
-//   Point_2 project(const Point_3& p)
-//   {
-//     return Point_2(x(p),y(p));
-//   }
-
-// #if USE_ROBUST_SQUARED_RADIUS
-//   RT operator()(const Point_3& p, const Point_3& q, const Point_3& r)
-//   {
-//     typedef typename CGAL::Exact_predicates_exact_constructions_kernel::Point_2 ExactPoint_2;
-//     typedef typename CGAL::Exact_predicates_exact_constructions_kernel::FT ExactFT;
-//     typedef typename CGAL::Exact_predicates_exact_constructions_kernel::Compute_squared_radius_2 ExactSqRadius_2;
-
-//     ExactPoint_2 pp(p.x(), p.y());
-//     ExactPoint_2 qq(q.x(), q.y());
-//     ExactPoint_2 rr(r.x(), r.y());
-
-//     ExactFT exact_sq_radius = exact_comp_sqradius_2(pp, qq, rr);
-//     return RT(CGAL::to_double(exact_sq_radius));
-//   }
-
-//   RT operator()(const Point_3& p, const Point_3& q)
-//   {
-//     typedef typename CGAL::Exact_predicates_exact_constructions_kernel::Point_2 ExactPoint_2;
-//     typedef typename CGAL::Exact_predicates_exact_constructions_kernel::FT ExactFT;
-//     typedef typename CGAL::Exact_predicates_exact_constructions_kernel::Compute_squared_radius_2 ExactSqRadius_2;
-
-//     ExactPoint_2 pp(p.x(), p.y());
-//     ExactPoint_2 qq(q.x(), q.y());
-
-//     ExactFT exact_sq_radius = exact_comp_sqradius_2(pp, qq);
-//     return RT(CGAL::to_double(exact_sq_radius));
-//   }
-// #else
-//   RT operator()(const Point_3& p, const Point_3& q, const Point_3& r)
-//   {
-//     Point_2 p2 = project(p);
-//     Point_2 q2 = project(q);
-//     Point_2 r2 = project(r);
-//     typename R::Compute_squared_radius_2 = R().compute_squared_radius_2_object();
-//     return squared_radius(p2, q2, r2);
-//   }
-
-//   RT operator()(const Point_3& p, const Point_3& q)
-//   {
-//     Point_2 p2 = project(p);
-//     Point_2 q2 = project(q);
-//     typename R::Compute_squared_radius_2 = R().compute_squared_radius_2_object();
-//     return squared_radius(p2, q2, r2);
-//   }
-// #endif
-// };
-
-namespace TODO {
-
-template <class R>
-class Side_of_oriented_circle_xy_3 
-{
-public:
-  typedef typename R::Point_3     Point; 
-  typename R::FT x(const Point &p) const { return p.x(); }
-  typename R::FT y(const Point &p) const { return p.y(); }
-
-  CGAL::Oriented_side operator() (const Point &p, 
-				  const Point &q,
-				  const Point &r, 
-				  const Point &s) 
-    {
-      typename R::Side_of_oriented_circle_2 side_of_oriented_circle_2 = R().side_of_oriented_circle_2_object();
-#ifdef CGAL_3_2
-
-      return side_of_oriented_circle_2(p,
-				       q,
-				       r,
-				       s);
-#else
-      typename R::Point_2 pp(x(p), y(p)), qq(x(q), y(q)), rr(x(r), y(r)), ss(x(s), y(s));
-      return side_of_oriented_circle_2(pp,
-				       qq,
-				       rr,
-				       ss);
-#endif
-    }
-};
-
-template <class R>
-class Side_of_bounded_circle_xy_3
-{
-public:
-  typedef typename R::Point_3     Point; 
-  typename R::FT x(const Point &p) const { return p.x(); }
-  typename R::FT y(const Point &p) const { return p.y(); }
-
-  CGAL::Oriented_side operator() (const Point &p, 
-				  const Point &q,
-				  const Point &r, 
-				  const Point &s) 
-    {
-      typename R::Side_of_bounded_circle_2 side_of_bounded_circle_2 = R().side_of_bounded_circle_2_object();
-      typename R::Point_2 pp(x(p), y(p)), qq(x(q), y(q)), rr(x(r), y(r)), ss(x(s), y(s));
-      return side_of_bounded_circle_2(pp,
-				      qq,
-				      rr,
-				      ss);
-    }
-};
-} // end namespace TODO
 
 template < class Kernel >
 class Triangulation_2_projection_traits_3
@@ -541,34 +300,6 @@ public:
   typedef typename K::Less_xy_3            Less_x_2;
   typedef typename K::Less_z_3             Less_y_2;
 
-//   class Compare_x_2 {
-//     const Self& traits;
-//   public:
-//     Compare_x_2(const Self& traits_) : traits(traits_) {}
-
-//     Comparison_result operator()(const typename K::Point_3& p,
-// 				 const typename K::Point_3& q) {
-//       if(determinant(p-ORIGIN, q-ORIGIN, traits.normal()) == FT(0))
-// 	return EQUAL;
-//       else
-// 	return typename K::Compare_xy_3()(p,q);
-//     }
-//   };
-
-//   class Compare_y_2 {
-//     const Self& traits;
-//   public:
-//     Compare_y_2(const Self& traits_) : traits(traits_) {}
-
-//     Comparison_result operator()(const typename K::Point_3& p,
-// 				 const typename K::Point_3& q) {
-//       if(collinear(p, q, p+traits.normal()))
-// 	return EQUAL;
-//       else
-// 	return compare_z(p,q);
-//     }
-//   };
-
   typedef typename K::Compare_xy_3                           Compare_x_2;
   typedef typename K::Compare_z_3                            Compare_y_2;
 
@@ -583,13 +314,10 @@ public:
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
   Coplanar_intersect_3<Self>                                 Intersect_2;
-//   typedef Projection_traits::Squared_distance_xy_3<K>         Compute_squared_distance_2;
-//   typedef Projection_traits::Squared_radius_xy_3<K>           Compute_squared_radius_2;
-//   typedef Projection_traits::Compare_distance_xy_3<K>         Compare_distance_2;
+
   typedef typename K::Construct_segment_3  Construct_segment_2;
   typedef typename K::Construct_line_3     Construct_line_2;
   typedef typename K::Construct_triangle_3 Construct_triangle_2;
-//   typedef Intersect_xy_3<K>                Intersect_2;
   
   Less_x_2
   less_x_2_object() const
@@ -602,23 +330,15 @@ public:
   Compare_x_2
   compare_x_2_object() const
   {
-    return Compare_x_2(// *this
-		       );
+    return Compare_x_2();
   }
 
   Compare_y_2
   compare_y_2_object() const
   { 
-    return Compare_y_2(// *this
-		       );
+    return Compare_y_2();
   }
-  
-//   Compare_distance_2
-//   compare_distance_2_object() const
-//   {
-//     return Compare_distance_2();
-//   }
-  
+
   Orientation_2 
   orientation_2_object() const
   {
@@ -643,12 +363,6 @@ public:
     return Intersect_2(*this);
   }
 
-//   Compute_squared_distance_2
-//   compute_squared_distance_2_object () const
-//   {
-//     return Compute_squared_distance_2();
-//   }
-  
   Construct_segment_2  construct_segment_2_object() const
     {return Construct_segment_2();}
   
