@@ -172,7 +172,8 @@ inline std::ostream& operator << (std::ostream& os, const Exponent_vector& ev) {
 CGAL_END_NAMESPACE
 
 namespace std{
-template <> void swap(CGAL::Exponent_vector& ev1, CGAL::Exponent_vector& ev2){
+template <> inline 
+void swap(CGAL::Exponent_vector& ev1, CGAL::Exponent_vector& ev2){
   ev1.swap(ev2);
 }
 
