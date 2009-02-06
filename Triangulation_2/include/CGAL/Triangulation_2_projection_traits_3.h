@@ -21,58 +21,58 @@
 #ifndef CGAL_TRIANGULATION_2_PROJECTION_TRAITS_3_H
 #define CGAL_TRIANGULATION_2_PROJECTION_TRAITS_3_H
 
+#include <CGAL/Profile_timer.h>
+#include <CGAL/intersections.h>
+
 namespace CGAL {
 
 namespace TriangulationProjectionTraitsCartesianFunctors {
 
 template <class Traits>
-class Coplanar_orientation_with_normal_3
+class Projected_orientation_with_normal_3
 {
   // private members
   const Traits& traits;
-  typedef typename Traits::K K;
-  typename K::Construct_vector_3 vector;
 
-  // private type alias
+  // private type aliases
+  typedef typename Traits::K K;
   typedef typename Traits::Point_2 Point;
 public:
-  Coplanar_orientation_with_normal_3(const Traits& traits_)
-    : traits(traits_),
-      vector(traits.kernel().construct_vector_3_object())
+  typedef typename K::Orientation Orientation;
+  typedef Orientation result_type;
+
+  Projected_orientation_with_normal_3(const Traits& traits_)
+    : traits(traits_)
   {
   }
 
   Orientation operator()(const Point& p,
 			 const Point& q,
 			 const Point& r) const
-  {
-    // same as orientation( p, q, r, p + traits.normal() )
-    return enum_cast<Orientation>(CGAL_NTS sign(determinant(vector(p, q),
-							    vector(p, r),
-							    traits.normal())));
+  {    
+    CGAL_TIME_PROFILER("Projected_orientation_with_normal_3");
+    return orientation(q-p, r-p, traits.normal());
   }
-}; // end class Coplanar_orientation_with_normal_3<Traits>
+}; // end class Projected_orientation_with_normal_3<Traits>
 
 template <class Traits>
-class Coplanar_side_of_oriented_circle_with_normal_3
+class Projected_side_of_oriented_circle_with_normal_3
 {
   // private members
   const Traits& traits;
-  typedef typename Traits::K K;
-  typename K::Compute_scalar_product_3 scalar;
-  typename K::Compute_squared_length_3 sq_norm;
-  typename K::Construct_vector_3 vector;
 
   // private types aliases
+  typedef typename Traits::K K;
   typedef typename Traits::Point_2 Point;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::FT FT;
+
 public:
-  Coplanar_side_of_oriented_circle_with_normal_3(const Traits& traits_)
-    : traits(traits_),
-      scalar(traits.kernel().compute_scalar_product_3_object()),
-      sq_norm(traits.kernel().compute_squared_length_3_object()),
-      vector(traits.kernel().construct_vector_3_object())
+  typedef typename K::Oriented_side Oriented_side;
+  typedef Oriented_side result_type;
+
+  Projected_side_of_oriented_circle_with_normal_3(const Traits& traits_)
+    : traits(traits_)
   {
   }
 
@@ -81,101 +81,80 @@ public:
 			   const Point& r,
 			   const Point& t) const
   {
+    CGAL_TIME_PROFILER("Projected_side_of_oriented_circle_with_normal_3")
     const Vector_3& u = traits.normal();
-    const FT u2 = sq_norm(u);
 
-//     const FT tpx = p.x() - t.x();
-//     const FT tpy = p.y() - t.y();
-//     const FT tpz = p.z() - t.z();
-//     const FT tqx = q.x() - t.x();
-//     const FT tqy = q.y() - t.y();
-//     const FT tqz = q.z() - t.z();
-//     const FT trx = r.x() - t.x();
-//     const FT try = r.y() - t.y();
-//     const FT trz = r.z() - t.z();
+    const Vector_3 tp = p - t;
+    const Vector_3 tq = q - t;
+    const Vector_3 tr = r - t;
 
-    const Vector_3 tp = vector(t, p);
-    const Vector_3 tq = vector(t, q);
-    const Vector_3 tr = vector(t, r);
+    const FT tp2 = tp * tp;
+    const FT tq2 = tq * tq;
+    const FT tr2 = tr * tr;
+    const FT u2  =  u * u;
 
-    const FT tp2 = sq_norm(tp);
-    const FT tq2 = sq_norm(tq);
-    const FT tr2 = sq_norm(tr);
+    const FT k_p = tp * u;
+    const FT k_q = tq * u;
+    const FT k_r = tr * u;
 
-    const FT k_p = scalar(tp, u);
-    const FT k_q = scalar(tq, u);
-    const FT k_r = scalar(tr, u);
-
-    return enum_cast<Orientation>
-      (
+    return 
        sign_of_determinant(tp.x(), tp.y(), tp.z(), (tp2 + k_p) * u2 - k_p * k_p,
 			   tr.x(), tr.y(), tr.z(), (tr2 + k_r) * u2 - k_r * k_r,
 			   tq.x(), tq.y(), tq.z(), (tq2 + k_q) * u2 - k_q * k_q,
-  			    u.x(),  u.y(),  u.z(), u2 * u2)
-       );
-    // Note that q and r have been swapped in the determinant above.
+                           u.x(),  u.y(),  u.z(), u2 * u2);
+    // Note that q and r have been swapped in the determinant above, to
+    // inverse its sign.
   }
-}; // end class Coplanar_side_of_oriented_circle_with_normal_3
+}; // end class Projected_side_of_oriented_circle_with_normal_3
 
 template <class Traits>
-class Coplanar_square_distance_to_line_with_normal_3
+class Projected_square_distance_to_line_with_normal_3
 {
   // private members
   const Traits& traits;
-  typedef typename Traits::K K;
-  typename K::Compute_scalar_product_3 scalar;
-  typename K::Compute_squared_length_3 sq_norm;
-  typename K::Construct_cross_product_vector_3 cross;
-  typename K::Construct_vector_3 vector;
   
   // private types aliases
+  typedef typename Traits::K K;
   typedef typename Traits::Point_2 Point;
   typedef typename Traits::Line_2 Line;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::FT FT;
 
 public:
-  Coplanar_square_distance_to_line_with_normal_3(const Traits& traits_)
-    : traits(traits_),
-      scalar(traits.kernel().compute_scalar_product_3_object()),
-      sq_norm(traits.kernel().compute_squared_length_3_object()),
-      cross(traits.kernel().construct_cross_product_vector_3_object()),
-      vector(traits.kernel().construct_vector_3_object())
+  Projected_square_distance_to_line_with_normal_3(const Traits& traits_)
+    : traits(traits_)
   {}
 
   FT operator()(const Line& line, const Point& p)
   {
-    const FT den = sq_norm(cross(traits.normal(),line.to_vector()));
-
-    if(den == FT(0)) {
+    const Vector_3& vl = line.to_vector();
+    const Point& pl = line.point();
+    const Vector_3 v = cross_product(traits.normal(),
+                                     vl);
+    if(v == NULL_VECTOR) {
       // den == 0 if the line is vertical
       // In that case, the distance is the distance to the line
-      return sq_norm(cross(vector(p, line.point()),
-                           line.to_vector()))
-        / sq_norm(line.to_vector());
+      const Vector_3 w = cross_product(pl - p,
+                                       vl);
+      return (w * w) / (vl * vl);
     }
     else {
       const FT det = determinant(traits.normal(), 
-                                 line.to_vector(), 
-                                 vector(p, line.point()));
-      return det * det / den;
+                                 vl, 
+                                 pl - p);
+      return (det * det) / ( v * v );
     }
   }
-}; // end class Coplanar_square_distance_to_line_with_normal_3
+}; // end class Projected_square_distance_to_line_with_normal_3
 
 template <class Traits>
-class Coplanar_intersect_3
+class Projected_intersect_3
 {
   // private members
   const Traits& traits;
-  typedef typename Traits::K K;
-  typename K::Compute_scalar_product_3 scalar;
-  typename K::Compute_squared_length_3 sq_norm;
-  typename K::Construct_cross_product_vector_3 cross;
-  typename K::Construct_vector_3 vector;
-  typename K::Intersect_3 intersect;
   
   // private types aliases
+  typedef typename Traits::K K;
   typedef typename Traits::Point_2 Point;
   typedef typename Traits::Line_2 Line;
   typedef typename Traits::Segment_2 Segment;
@@ -183,29 +162,25 @@ class Coplanar_intersect_3
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::FT FT;
 public:
-  Coplanar_intersect_3(const Traits& traits_)
-    : traits(traits_),
-      scalar(traits.kernel().compute_scalar_product_3_object()),
-      sq_norm(traits.kernel().compute_squared_length_3_object()),
-      cross(traits.kernel().construct_cross_product_vector_3_object()),
-      vector(traits.kernel().construct_vector_3_object()),
-      intersect(traits.kernel().intersect_3_object())
+  Projected_intersect_3(const Traits& traits_)
+    : traits(traits_)
   {}
 
   Object operator()(const Segment& s1, const Segment& s2)
   {
-    const Vector_3 u1 = cross(s1.to_vector(), traits.normal());
+    CGAL_TIME_PROFILER("Projected_intersect_3")
+    const Vector_3 u1 = cross_product(s1.to_vector(), traits.normal());
     if(u1 == NULL_VECTOR)
-      return intersect(s1.supporting_line(), s2);
+      return K().intersect_3_object()(s1.supporting_line(), s2);
 
-    const Vector_3 u2 = cross(s2.to_vector(), traits.normal());
+    const Vector_3 u2 = cross_product(s2.to_vector(), traits.normal());
     if(u2 == NULL_VECTOR)
-      return intersect(s1, s2.supporting_line());
+      return K().intersect_3_object()(s1, s2.supporting_line());
     
     const Plane_3 plane_1(s1.source(), u1);
     const Plane_3 plane_2(s2.source(), u2);
     
-    Object planes_intersection = intersect(plane_1, plane_2);
+    Object planes_intersection = intersection(plane_1, plane_2);
     if(planes_intersection.empty()) {
       std::cerr << "planes_intersection is empty\n";
       return planes_intersection;
@@ -213,11 +188,11 @@ public:
     if(const Line* line = object_cast<Line>(&planes_intersection))
     {
       const Point& pi = line->point(0);
-      if(scalar(cross(traits.normal(), vector(s1.source(), pi)),
-                cross(traits.normal(), vector(s1.target(), pi))) > FT(0)
+      if(cross_product(traits.normal(), pi - s1.source())
+         * cross_product(traits.normal(), pi - s1.target()) > FT(0)
          ||
-         scalar(cross(traits.normal(), vector(s2.source(), pi)),
-                cross(traits.normal(), vector(s2.target(), pi))) > FT(0) )
+         cross_product(traits.normal(), pi - s2.source())
+         * cross_product(traits.normal(), pi - s2.target()) > FT(0) )
       {
         // the intersection of the lines is not inside the segments
         std::cerr << "intersection not inside\n";
@@ -228,8 +203,9 @@ public:
         // Let the plane passing through s1.source() and with normal
         // the cross product of s1.to_vector() and s2.to_vector(). That
         // plane should intersect *l, now.
-        return intersect(*line, Plane_3(s1.source(), cross(s1.to_vector(),
-                                                           s2.to_vector())));
+        return intersection(*line, Plane_3(s1.source(), 
+                                           cross_product(s1.to_vector(),
+                                                         s2.to_vector())));
       }
     }
     if(object_cast<Plane_3>(&planes_intersection))
@@ -240,7 +216,7 @@ public:
     }
     return Object();
   }
-}; // end class Coplanar_intersect_3
+}; // end class Projected_intersect_3
 
 } // end namespace TriangulationProjectionTraitsCartesianFunctors
 
@@ -251,30 +227,18 @@ class Triangulation_2_projection_traits_3
   typedef Triangulation_2_projection_traits_3<Kernel> Self;
 
   typename Kernel::Vector_3 n;
-  Kernel k;
 
 public:
   typedef typename Kernel::Vector_3 Vector_3;
 
 
-  Triangulation_2_projection_traits_3(const Vector_3& n_, 
-				      Kernel k_ = Kernel())
-    : n(n_), k(k_)
+  Triangulation_2_projection_traits_3(const Vector_3& n_)
+    : n(n_)
   {}
 
   const Vector_3& normal() const
   {
     return n;
-  }
-
-  Kernel& kernel()
-  {
-    return k;
-  }
-
-  const Kernel& kernel() const
-  {
-    return k;
   }
 
   Triangulation_2_projection_traits_3(const Self& other)
@@ -304,16 +268,16 @@ public:
   typedef typename K::Compare_z_3                            Compare_y_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
-    Coplanar_orientation_with_normal_3<Self>                 Orientation_2;
+    Projected_orientation_with_normal_3<Self>                Orientation_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
-    Coplanar_side_of_oriented_circle_with_normal_3<Self>     Side_of_oriented_circle_2;
+    Projected_side_of_oriented_circle_with_normal_3<Self>    Side_of_oriented_circle_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
-  Coplanar_square_distance_to_line_with_normal_3<Self>       Compute_squared_distance_2;
+  Projected_square_distance_to_line_with_normal_3<Self>      Compute_squared_distance_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
-  Coplanar_intersect_3<Self>                                 Intersect_2;
+  Projected_intersect_3<Self>                                Intersect_2;
 
   typedef typename K::Construct_segment_3  Construct_segment_2;
   typedef typename K::Construct_line_3     Construct_line_2;
