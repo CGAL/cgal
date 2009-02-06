@@ -97,6 +97,7 @@ protected:
   virtual void drawAll(QPainter *painter);
   void paintVertices(QPainter *painter);
   void paintOneVertex(const typename T::Point& point);
+  virtual void paintVertex(typename T::Vertex_handle vh);
   void updateBoundingBox();
 
   T * t;
@@ -152,7 +153,7 @@ TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
   }
   if(visible_vertices) {
     for (int i=0; i<3; i++) {
-      paintOneVertex(fh->vertex(i)->point());
+      paintVertex(fh->vertex(i));
     }
   }
 }
@@ -202,6 +203,19 @@ TriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
   QMatrix matrix = m_painter->matrix();
   m_painter->resetMatrix();
   m_painter->drawPoint(matrix.map(convert(point)));
+  m_painter->setMatrix(matrix);
+}
+
+template <typename T>
+void 
+TriangulationGraphicsItem<T>::paintVertex(typename T::Vertex_handle vh)
+{
+  Converter<Geom_traits> convert;
+
+  m_painter->setPen(this->verticesPen());
+  QMatrix matrix = m_painter->matrix();
+  m_painter->resetMatrix();
+  m_painter->drawPoint(matrix.map(convert(vh->point())));
   m_painter->setMatrix(matrix);
 }
 
