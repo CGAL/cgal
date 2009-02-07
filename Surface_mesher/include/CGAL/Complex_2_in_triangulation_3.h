@@ -342,6 +342,10 @@ public:
     return face_status(e.first->vertex(e.second), e.first->vertex(e.third));
   }
 
+  Face_status face_status (const Cell_handle c, const int i, const int j) const {
+    return face_status(c->vertex(i), c->vertex(j));
+  }
+
   Face_status face_status (const Vertex_handle& va,
                            const Vertex_handle& vb) const
   {
