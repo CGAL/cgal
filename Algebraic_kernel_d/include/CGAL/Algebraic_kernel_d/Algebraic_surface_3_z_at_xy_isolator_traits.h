@@ -2766,16 +2766,13 @@ public:
 
                 
             } // end of if(v_handle_is_isolated())
-
-
+            
             // Now, look for points adjacent to the vertex where the
             // nk-component changes
 
             bound = _exclude_nk_boundary_points_around_vertex( surface, 
                                                                v_handle, 
                                                                bound);
-
-
             
             typename Isolator_traits::Box v_box 
                 = isolator1.traits().approximation_square(bound);
@@ -3010,14 +3007,15 @@ public:
                 }
 
                 // Now for the face left of the edge
-                Face_const_handle face_handle = edge_it->face();
-
+                Face_const_handle face_handle = he_handle->face();
+                
                 if(facepoints.find(face_handle) == facepoints.end()) {
                     facepoints[face_handle] = High_dim_cell_info_for_vertex();
                 }
+
                 High_dim_cell_info_for_vertex& face_info 
                     = facepoints[face_handle];
-
+                
                 if(! face_info.sample_point) {
                     
                     // Where does the edge sample point come from?
@@ -3038,9 +3036,7 @@ public:
                          box_roots_top);
    
                 }
-                
             }
-            
         }
 
         class Non_coprime_exception {
@@ -4387,7 +4383,7 @@ public:
                 }
                 CGAL_assertion(fp_it != facepoints.end());
                 cell_info = &fp_it->second;
-            } else { // fesature2==CGAL::EDGE
+            } else { // feature2==CGAL::EDGE
                 Halfedgepoints& halfedgepoints = v_it->second.halfedgepoints;
                 
                 CGAL_assertion_code(bool check_edge = )
@@ -4410,7 +4406,6 @@ public:
                 }
                 CGAL_assertion(he_it != halfedgepoints.end());
                 cell_info = &he_it->second;
-                
             }
             
             
@@ -4436,7 +4431,7 @@ public:
                                                     isolator2,
                                                     cell_info) ) {
                         
-                        //No transitivity filter
+                        // No transitivity filter
                         // Sample point known?
                         if(!cell_info->sample_point) {
 #if !NDEBUG
