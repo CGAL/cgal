@@ -1445,6 +1445,9 @@ public:
                        const Surface_3& surface, int sheet, 
                        DcelConstHandle2 to) const {
         
+        CGAL_precondition(_are_identical_or_incident(CGAL::make_object(from),
+                                                     CGAL::make_object(to)));
+
         std::pair< Z_stack, CGAL::Dcel_feature > z_stack_from = 
             z_stack(from, surface);
         std::pair< Z_stack, CGAL::Dcel_feature > z_stack_to = 
@@ -1547,6 +1550,9 @@ public:
             const Surface_3& surface, int sheet, 
             DcelConstHandle2 to) const {
         
+        CGAL_precondition(_are_identical_or_incident(CGAL::make_object(from),
+                                                     CGAL::make_object(to)));
+        
         std::pair< Z_stack, CGAL::Dcel_feature > z_stack_from = 
             z_stack(from, surface);
         std::pair< Z_stack, CGAL::Dcel_feature > z_stack_to = 
@@ -1585,6 +1591,10 @@ public:
                                  const Surface_3& surface,
                                  DcelConstHandle2 to) const {
         
+        CGAL_precondition(_are_identical_or_incident(CGAL::make_object(from),
+                                                     CGAL::make_object(to)));
+        
+
         std::pair< Z_stack, CGAL::Dcel_feature > z_stack_from = 
             z_stack(from, surface);
         std::pair< Z_stack, CGAL::Dcel_feature > z_stack_to = 
@@ -1622,7 +1632,215 @@ public:
         return adj;
     }
 
+
+    CGAL::Adjacencies_3 adjacency(CGAL::Object from, 
+                                  const Surface_3& surface,
+                                  CGAL::Object to) const {
+        
+        CGAL_precondition(_are_identical_or_incident(from, to));
+        
+        Face_const_handle fh1, fh2;
+        Vertex_const_handle vh1, vh2;
+        Halfedge_const_handle heh1, heh2;
+        
+        if (CGAL::assign(fh1, from)) {
+            
+            if (CGAL::assign(fh2, to)) {
+            
+                CGAL_error();
+    
+            } else if (CGAL::assign(heh2, to)) {
+                
+                return adjacency(fh1, surface, heh2);
+
+            } else {
+                
+                CGAL_assertion_code(bool check = )
+                    CGAL::assign(vh2, to);
+                CGAL_assertion(check);
+
+                return adjacency(fh1, surface, vh2);
+                
+            }
+
+        } else if (CGAL::assign(heh1, from)) {
+                        
+            if (CGAL::assign(fh2, to)) {
+                
+                return adjacency(heh1, surface, fh2);
+
+            } else if (CGAL::assign(heh2, to)) {
+                
+                CGAL_error();
+
+            } else {
+                
+                CGAL_assertion_code(bool check = )
+                    CGAL::assign(vh2, to);
+                CGAL_assertion(check);
+                
+                return adjacency(heh1, surface, vh2);
+            }
+
+        } else {
+            
+            CGAL_assertion_code(bool check = )
+                CGAL::assign(vh1, from);
+            CGAL_assertion(check);
+            
+            if (CGAL::assign(fh2, to)) {
+            
+                return adjacency(vh1, surface, fh2);
+                
+            } else if (CGAL::assign(heh2, to)) {
+                
+                return adjacency(vh1, surface, heh2);
+
+            } else {
+                
+                CGAL_error();
+            }
+
+        }
+    }
+
     //!@}
+    
+private:
+    //!\name Sanity check
+    //!@{
+    
+    //! checks whether two cells are identical or incident
+    bool _are_identical_or_incident(CGAL::Object obj1, CGAL::Object obj2) 
+        const {
+        
+        Face_const_handle fh1, fh2;
+        Vertex_const_handle vh1, vh2;
+        Halfedge_const_handle heh1, heh2;
+        
+        if (CGAL::assign(fh1, obj1)) {
+            // first ist face
+
+            if (CGAL::assign(fh2, obj2)) {
+                // second is face
+
+                return fh1 == fh2;
+                
+            } else if (CGAL::assign(heh2, obj2)) {
+                // second is edge
+
+                return (heh2->face() == fh1) || (heh2->twin()->face() == fh1);
+
+            } else {
+                // second is vertex
+                
+                CGAL_assertion_code(bool check2 = )
+                    CGAL::assign(vh2, obj2);
+                CGAL_assertion(check2);
+
+                if (vh2->is_isolated()) {
+                    return (vh2->face() == fh1);
+                }
+                // else
+                
+                typedef typename 
+                    Restricted_cad_3::Halfedge_around_vertex_const_circulator 
+                    Halfedges_around_vertex_const_iterator;
+                
+                Halfedges_around_vertex_const_iterator edge_it = 
+                    vh2->incident_halfedges();
+                
+                for (int i = 0; 
+                     i < static_cast<int>(vh2->degree()); 
+                     i++, edge_it++ ) {
+                    if (edge_it->face() == fh1) {
+                        return true;
+                    }
+                }
+                
+                return false;
+                
+            }
+
+        } else if (CGAL::assign(heh1, obj1)) {
+            // first is edge
+            
+            if (CGAL::assign(fh2, obj2)) {
+                // second is face
+                
+                return (heh1->face() == fh2) || (heh1->twin()->face() == fh2);
+                
+            } else if (CGAL::assign(heh2, obj2)) {
+                // second is edge
+
+                return (heh1 == heh2) || 
+                    (heh1 == heh2->twin()) || 
+                    (heh1->twin() == heh2);
+                
+            } else {
+                // second is vertex
+
+
+                CGAL_assertion_code(bool check2 = )
+                    CGAL::assign(vh2, obj2);
+                CGAL_assertion(check2);
+                
+                return (vh2 == heh1->target()) || (vh2 == heh1->source());
+            }
+
+        } else {
+            // first is vertex
+
+
+            CGAL_assertion_code(bool check1 = )
+                CGAL::assign(vh1, obj1);
+            CGAL_assertion(check1);
+            
+            if (CGAL::assign(fh2, obj2)) {
+                // second is face
+                
+                typedef typename 
+                    Restricted_cad_3::Halfedge_around_vertex_const_circulator 
+                    Halfedges_around_vertex_const_iterator;
+                
+                if (vh1->is_isolated()) {
+                    return (vh1->face() == fh2);
+                }
+                // else
+                
+                Halfedges_around_vertex_const_iterator edge_it = 
+                    vh1->incident_halfedges();
+                
+                for (int i = 0; 
+                     i < static_cast<int>(vh1->degree()); 
+                     i++, edge_it++ ) {
+                    if (edge_it->face() == fh2) {
+                        return true;
+                    }
+                }
+                
+                return false;
+                
+                
+            } else if (CGAL::assign(heh2, obj2)) {
+                // second is edge
+
+                return (vh1 == heh2->target()) || (vh1 == heh2->source());
+                
+            } else {
+                // second is vertex
+                
+                CGAL_assertion_code(bool check2 =)
+                    CGAL::assign(vh2, obj2);
+                CGAL_assertion(check2);
+                return vh1 == vh2;
+            }
+        }
+    }
+
+    //!@}
+
+public:
     
     // friends
     // for non_const_handle, _insert*, _overlay, halfedge-stuff
