@@ -1,18 +1,3 @@
 benchmarks
 
-include/CGAL/Arr_qdx_topology_traits_2.h
-include/CGAL/Arr_dupin_cyclide_topology_traits_2.h
-include/CGAL/Arr_topology_traits/Arr_dupin_cyclide_batched_pl_helper.h
-include/CGAL/Arr_topology_traits/Arr_dupin_cyclide_construction_helper.h
-include/CGAL/Arr_topology_traits/Arr_dupin_cyclide_insertion_helper.h
-include/CGAL/Arr_topology_traits/Arr_dupin_cyclide_overlay_helper.h
-include/CGAL/Arr_topology_traits/Arr_dupin_cyclide_topology_traits_2_impl.h
-include/CGAL/Arr_topology_traits/Arr_qdx_batched_pl_helper.h
-include/CGAL/Arr_topology_traits/Arr_qdx_construction_helper.h
-include/CGAL/Arr_topology_traits/Arr_qdx_insertion_helper.h
-include/CGAL/Arr_topology_traits/Arr_qdx_overlay_helper.h
-include/CGAL/Arr_topology_traits/Arr_qdx_topology_traits_2_impl.h
 include/CGAL/Arr_topology_traits/Sign_of_path.h
-
-demo/Arrangement_on_surface_2/single_cell_2.cpp
-include/CGAL/Arr_single_cell_2.h
