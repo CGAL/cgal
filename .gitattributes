@@ -1173,14 +1173,6 @@ BGL/test/BGL/data/triangle.off -text svneol=unset#application/octet-stream
 BGL/test/BGL/data/triangular_hole.off -text svneol=unset#application/octet-stream
 BGL/test/BGL/halfedge_graph_traits_Polyhedron_3.cmd eol=lf
 BGL/test/BGL/properties_Polyhedron_3.cmd eol=lf
-Benchmark/doc_tex/Benchmark/Conics_14_1.arr -text
-Benchmark/doc_tex/Benchmark/fig/Conics_14_1.eps -text svneol=unset#application/postscript
-Benchmark/doc_tex/Benchmark/fig/Conics_14_1.gif -text svneol=unset#image/gif
-Benchmark/doc_tex/Benchmark/fig/Conics_14_1.png -text svneol=unset#image/png
-Benchmark/doc_tex/Benchmark/fig/classification.eps -text svneol=unset#application/postscript
-Benchmark/doc_tex/Benchmark/fig/classification.gif -text svneol=unset#image/gif
-Benchmark/doc_tex/Benchmark/fig/classification.pdf -text svneol=unset#application/pdf
-Benchmark/src/Benchmark/benchmark_lexer.l -text
 Benchmark_instances/developer_scripts/cgal_create_bench_webpage -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/Qt_widget_locate_layer.cpp -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations_2.h -text
