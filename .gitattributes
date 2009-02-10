@@ -1173,7 +1173,6 @@ BGL/test/BGL/data/triangle.off -text svneol=unset#application/octet-stream
 BGL/test/BGL/data/triangular_hole.off -text svneol=unset#application/octet-stream
 BGL/test/BGL/halfedge_graph_traits_Polyhedron_3.cmd eol=lf
 BGL/test/BGL/properties_Polyhedron_3.cmd eol=lf
-Benchmark_instances/developer_scripts/cgal_create_bench_webpage -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/Qt_widget_locate_layer.cpp -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations_2.h -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_1.dxf -text svneol=unset#application/octet-stream
