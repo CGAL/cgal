@@ -1,9 +1,0 @@
-Import('dsrenv')
-files=[
-        File( 'file_0.cpp' ),
-        File( 'file_1.cpp' ),
-        File( 'file_2.cpp' ),
-        File( 'file_3.cpp' ),
-        File( 'file_4.cpp' ),
-      ]
-Return('files')

@@ -1,5 +1,0 @@
-Import('dsrenv')
-files=[
-        File( 'sweep.cpp' ),
-      ]
-Return('files')
