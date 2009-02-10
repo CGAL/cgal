@@ -398,6 +398,7 @@ Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/problem.spheres -tex
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/really_simple.spheres -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/simple.spheres -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/two.spheres -text
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/enumerate_triples.cpp -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/interactive_point_insertion.cpp -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/interactive_point_location.cpp -text
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/interactive_ray_shooting.cpp -text
