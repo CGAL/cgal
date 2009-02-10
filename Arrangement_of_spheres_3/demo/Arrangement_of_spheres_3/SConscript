@@ -1,0 +1,17 @@
+Import('dsrenv')
+files=[
+        File( 'enumerate_triples.cpp' ),
+        File( 'interactive_point_insertion.cpp' ),
+        File( 'interactive_point_location.cpp' ),
+        File( 'interactive_ray_shooting.cpp' ),
+        File( 'show_2d.cpp' ),
+        File( 'show_cross_section.cpp' ),
+        File( 'show_slice.cpp' ),
+        File( 'sweep.cpp' ),
+        SConscript( 'data/SConscript' ),
+        SConscript( 'interactive_point_insertion.app/SConscript' ),
+        SConscript( 'show_2d.app/SConscript' ),
+        SConscript( 'show_slice.app/SConscript' ),
+        SConscript( 'sweep.app/SConscript' ),
+      ]
+Return('files')
