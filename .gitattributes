@@ -3115,9 +3115,6 @@ Qt_widget/doc_tex/Qt_widget/triangulation.eps -text svneol=unset#application/pos
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
 Qt_widget/src/CGALQt/CMakeLists.txt -text
-Reconstruction_from_slices_3/examples/Reconstruction_from_slices_3/data/blibli_non_parallele.slc -text
-Reconstruction_from_slices_3/examples/Reconstruction_from_slices_3/data/blibli_parallele.slc -text
-Reconstruction_from_slices_3/examples/Reconstruction_from_slices_3/data/pelvis1_2_3.slc -text
 Ridges_3/doc_tex/Ridges_3/RidgesMechPartDetail.png -text
 Ridges_3/doc_tex/Ridges_3/david_crest.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/david_crest.jpg -text
