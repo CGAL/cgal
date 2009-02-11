@@ -1,4 +1,4 @@
-include $(ROOT)/include/make/comdef.mak
+include $(ROOT)/make/comdef.mak
 
 GIFS = simple.gif
 GIFS+= teaser.gif
@@ -12,14 +12,15 @@ GIFS+= teaser.gif
 # GIFS+= unique.gif
 
 TARGET_GIFS = $(GIFS)
-TARGET_GIFS+= fig_non_strictly_simple.gif
-TARGET_GIFS+= fig_circles_rects.gif
-TARGET_GIFS+= fig_conic_arcs.gif
-TARGET_GIFS+= fig_disks.gif
-TARGET_GIFS+= fig_general_polygon.gif
-TARGET_GIFS+= fig_general_polygon_with_holes.gif
-TARGET_GIFS+= fig_triangles.gif
-TARGET_GIFS+= fig_unique.gif
+TARGET_GIFS+= non_strictly_simple.gif
+TARGET_GIFS+= circles_rects.gif
+TARGET_GIFS+= conic_arcs.gif
+TARGET_GIFS+= disks.gif
+TARGET_GIFS+= general_polygon.gif
+TARGET_GIFS+= general_polygon_with_holes.gif
+TARGET_GIFS+= triangles.gif
+TARGET_GIFS+= unique.gif
+TARGET_GIFS+= simpleDefsExamples.gif
 
 TARGET_PDFS+= $(GIFS:.gif=.pdf)
 TARGET_PDFS+= non_strictly_simple.pdf
@@ -30,6 +31,7 @@ TARGET_PDFS+= general_polygon.pdf
 TARGET_PDFS+= general_polygon_with_holes.pdf
 TARGET_PDFS+= triangles.pdf
 TARGET_PDFS+= unique.pdf
+TARGET_PDFS+= simpleDefsExamples.pdf
 
 TARGET_EPSS = $(TARGET_PDFS:.pdf=.eps)
 
@@ -39,7 +41,7 @@ TARGET2 = $(TARGET_EPSS)
 
 default:: $(TARGET0) $(TARGET1) $(TARGET2)
 
-include $(MAKEINCDIR)/comrul.mak
+include $(MAKEDIR)/comrul.mak
 
 define toeps
 sed -e "s/%%BoundingBox.*$$/`gs -dSAFER -dCompatibilityLevel=1.2 -q -sDEVICE=bbox -dNOPAUSE -dBATCH $(basename $@).ps 2>&1 | tr "\n" "\^"`/" $(basename $@).ps | tr "\^" "\n"
@@ -52,6 +54,10 @@ endef
 
 %.bbox : %.ps
 	gs -dSAFER -dCompatibilityLevel=1.2 -q -sDEVICE=bbox -dNOPAUSE -dBATCH $<
+%.bbox2 : %.dvi
+	dvips -x 2000 -y 2000 -D4000 -P cmz $< -o
+	gs -dSAFER -dCompatibilityLevel=1.2 -q -sDEVICE=bbox -dNOPAUSE -dBATCH $(basename $<).ps
+
 %.gif : %.dvi
 	dvips -x 2000 -y 2000 -D4000 -P cmz $< -o
 	$(toeps) > $(basename $@).eps2 && rm $(basename $@).ps
@@ -68,29 +74,29 @@ endef
 
 .SECONDARY: $(TARGET_PDFS:.pdf=.eps)
 
-fig_non_strictly_simple.dvi: fig_non_strictly_simple.tex
-	latex $<
+# non_strictly_simple.dvi: non_strictly_simple.tex
+#  	latex $<
 
-fig_circles_rects.dvi: fig_circles_rects.tex
-	latex $<
+# circles_rects.dvi: circles_rects.tex
+# 	latex $<
 
-fig_conic_arcs.dvi: fig_conic_arcs.tex
-	latex $<
+# conic_arcs.dvi: conic_arcs.tex
+# 	latex $<
 
-fig_disks.dvi: fig_disks.tex
-	latex $<
+# disks.dvi: disks.tex
+# 	latex $<
 
-fig_general_polygon.dvi: fig_general_polygon.tex
-	latex $<
+# general_polygon.dvi: general_polygon.tex
+# 	latex $<
 
-fig_general_polygon_with_holes.dvi: fig_general_polygon_with_holes.tex
-	latex $<
+# general_polygon_with_holes.dvi: general_polygon_with_holes.tex
+# 	latex $<
 
-fig_triangles.dvi: fig_triangles.tex
-	latex $<
+# triangles.dvi: triangles.tex
+# 	latex $<
 
-fig_unique.dvi: fig_unique.tex
-	latex $<
+# unique.dvi: unique.tex
+# 	latex $<
 
 LDIRT = fig.dvi fig.aux fig.log $(TARGET_PDFS:.pdf=.ps) \
 $(TARGET_GIFS:.gif=.eps2) $(TARGET_GIFS:.gif=.ps) $(TARGET_GIFS:.gif=.dvi) \
