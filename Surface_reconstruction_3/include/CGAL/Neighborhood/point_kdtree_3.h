@@ -245,7 +245,7 @@ public:
   void doQueryK(const PointType& queryPoint, NeighborList& list)
   {
     list.init();
-    list.insert(0xffffffff, std::numeric_limits<float>::max());
+    list.insert(0xffffffff, (std::numeric_limits<float>::max)());
 
     mNodeStack[0].nodeId = 0;
     mNodeStack[0].sq = 0.f;
