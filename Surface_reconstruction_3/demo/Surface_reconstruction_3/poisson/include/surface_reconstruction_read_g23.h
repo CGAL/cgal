@@ -82,12 +82,15 @@ bool surface_reconstruction_read_g23(
 
   int version;
   long positions_2D_count = -1, positions_3D_count = -1, cameras_count = -1; // number of points and cameras in the file
-  int lineNumber = 0; // current line number
-  char pLine[4096]; // current line buffer
   std::map<std::string, Gyroviz_point> gyroviz_points; // container of (labelled) 3D points + camera/2D point pairs
   
   *movie_file_name = "";
   
+  int lineNumber = 0; // current line number
+  char pLine[4096]; // current line buffer
+  std::map<std::string, Gyroviz_point>::iterator previous_point_3D; // cache of the previous 3D point read
+  std::string previous_point_3D_label;                              //                  ""
+
   while(fgets(pLine,sizeof(pLine),pFile) != NULL)
   {
     lineNumber++;
@@ -190,7 +193,7 @@ bool surface_reconstruction_read_g23(
       gyroviz_points[point_3D_label] = position_3D;
     }
 
-    // Read 2D points + camera indices + 3D points indices on remaining lines
+	// Read 2D points + camera indices + 3D points indices on remaining lines
     else 
     {
       // Read camera index, 3D point label (with double quotes) and 2D position...
@@ -204,8 +207,19 @@ bool surface_reconstruction_read_g23(
           std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
           return false;
       }
+	  // Find 3D point in cache or map. Update cache.
+	  std::map<std::string, Gyroviz_point>::iterator point_3D;
+	  if (previous_point_3D_label == std::string(point_3D_label))
+	  {
+		point_3D = previous_point_3D;
+	  }
+	  else
+	  {
+		point_3D = previous_point_3D = gyroviz_points.find(point_3D_label);
+		previous_point_3D_label = point_3D_label;
+	  }
       // TEMPORARY? Skip 2D points not reconstructed in 3D.
-      if (gyroviz_points.find(point_3D_label) == gyroviz_points.end())
+      if (point_3D == gyroviz_points.end())
       {
           //std::cerr << "Skip incorrect 2D point on line " << lineNumber << " of " << pFilename << std::endl;
       }
@@ -213,7 +227,7 @@ bool surface_reconstruction_read_g23(
       {
           Point_3 camera = (*cameras)[camera_index];
           Point_2 position_2D(x, y);
-          gyroviz_points[point_3D_label].add_camera_point2_pair( std::make_pair(camera, position_2D) );
+          point_3D->second.add_camera_point2_pair( std::make_pair(camera, position_2D) );
       }
     }
   }
