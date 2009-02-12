@@ -24,6 +24,8 @@ T3
   cf Polyhedron_3, file I/O.
 
 Delaunay
+- Put side_of_bounded_sphere_3 into the DelaunayTriangulationTraits_3 as
+  it is used in the is_Gabriel tests
 - dual(vertex) -> Polyhedron_3
 - faire en sorte que les types line, ray, etc Voronoi ne soient plus
   qu'optionnels dans la traits, et requis seulement si les fonctions 
