@@ -4010,44 +4010,6 @@ Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.pdf -text
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.eps -text svneol=unset#application/postscript
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.pdf -text svneol=unset#application/pdf
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/bitangent.eps -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/bitangent.gif -text svneol=unset#image/gif
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/bitangent.pdf -text svneol=unset#application/pdf
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/configuration.eps -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/configuration.gif -text svneol=unset#image/gif
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/configuration.pdf -text svneol=unset#application/pdf
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/constraint-edge.eps -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/constraint-edge.gif -text svneol=unset#image/gif
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/constraint-edge.pdf -text svneol=unset#application/pdf
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/design.eps -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/design.gif -text svneol=unset#image/gif
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/design.pdf -text svneol=unset#application/pdf
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/edge-face.eps -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/edge-face.gif -text svneol=unset#image/gif
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/edge-face.pdf -text svneol=unset#application/pdf
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/edge-vertex.eps -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/edge-vertex.gif -text svneol=unset#image/gif
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/edge-vertex.pdf -text svneol=unset#application/pdf
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/halfedge.ips -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/hds_design.ips -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/loop.ips -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/order.eps -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/order.gif -text svneol=unset#image/gif
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/order.pdf -text svneol=unset#application/pdf
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/perturbation.eps -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/perturbation.gif -text svneol=unset#image/gif
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/perturbation.pdf -text svneol=unset#application/pdf
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/points.eps -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/points.gif -text svneol=unset#image/gif
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/points.pdf -text svneol=unset#application/pdf
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/vis-complex.eps -text svneol=unset#application/postscript
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/vis-complex.gif -text svneol=unset#image/gif
-Visibility_complex_2/doc_tex/Visibility_complex_2/fig/vis-complex.pdf -text svneol=unset#application/pdf
-Visibility_complex_2/examples/Visibility_complex_2/data/circle.d -text
-Visibility_complex_2/examples/Visibility_complex_2/data/ellipse.d -text
-Visibility_complex_2/examples/Visibility_complex_2/data/point.d -text
-Visibility_complex_2/examples/Visibility_complex_2/data/poly.d -text
-Visibility_complex_2/examples/Visibility_complex_2/data/segment.d -text
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
 iostream/doc_tex/IOstream/io.png -text
 iostream/test/iostream/data/io.cin -text
