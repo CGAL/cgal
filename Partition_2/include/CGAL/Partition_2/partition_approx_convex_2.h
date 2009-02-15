@@ -149,7 +149,8 @@ OutputIterator partition_approx_convex_2(InputIterator first,
    Circulator c(polygon.begin(), polygon.end());
    Circulator next(polygon.begin(), polygon.end());
 
-   Constrained_tri_2 triangles;
+   Gt gt_traits(traits);
+   Constrained_tri_2 triangles(gt_traits);
    
    do 
    {
