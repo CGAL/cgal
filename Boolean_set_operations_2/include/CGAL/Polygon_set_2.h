@@ -40,6 +40,7 @@ class Polygon_set_2 :
 private:
   typedef General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter>, Dcel_>
                                                           Base;
+  typedef typename Base::Base                             Base_of_base;
   typedef Polygon_set_2<Kernel, Containter, Dcel_>        Self;
 
 public:
@@ -237,9 +238,9 @@ public:
 
 private:
 
-  inline const Base& base(const Self& other) const
+  inline const Base_of_base& base(const Self& other) const
   {
-    return (static_cast<const Base&>(other));
+    return (static_cast<const Base_of_base&>(other));
   }
 
 };

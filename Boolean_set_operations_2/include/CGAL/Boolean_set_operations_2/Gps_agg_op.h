@@ -16,9 +16,21 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
 
 #ifndef CGAL_GPS_AGG_OP_H
 #define CGAL_GPS_AGG_OP_H
+
+/*!
+  \file   Gps_agg_op.h
+  \brief  The class Gps_agg_op is responsible for aggregated Boolean set 
+          operations depending on a visitor template parameter.
+          It uses the sweep-line algorithm from the arrangement packages
+          to overlay all the polygon sets, and then it uses a BFS that 
+          determines which of the faces is contained in the result using
+          the visitor.
+*/
+
 
 #include <CGAL/Boolean_set_operations_2/Gps_agg_meta_traits.h>
 #include <CGAL/Boolean_set_operations_2/Gps_agg_op_sweep.h>
@@ -38,7 +50,7 @@ template <class Arrangement_, class Bfs_visitor_>
 class Gps_agg_op
 {
   typedef Arrangement_                                Arrangement_2;
-  typedef typename Arrangement_2::Traits_2            Traits_2;
+  typedef typename Arrangement_2::Geometry_traits_2   Traits_2;
   typedef typename Traits_2::Curve_const_iterator     Curve_const_iterator;
   typedef Gps_agg_meta_traits<Arrangement_2>          Meta_traits;
   typedef typename Meta_traits::Curve_data            Curve_data;
@@ -120,8 +132,10 @@ public:
 
     for (i = lower; i <= upper; i += jump, ++n_pgn)
     {
+      // The BFS scan (after the loop) starts in the reference face,
+      // so we count the number of polygons that contain the reference face.
       Arrangement_2* arr = (arr_vec[i]).first;
-      if (arr->unbounded_face()->contained())
+      if (arr->reference_face()->contained())
         ++n_inf_pgn;
 
       Edge_iterator  itr = arr->edges_begin();
@@ -144,9 +158,9 @@ public:
                         lower, upper, jump,
                         arr_vec);
 
-    m_faces_hash[m_arr->unbounded_face()] = n_inf_pgn; 
+    m_faces_hash[m_arr->reference_face()] = n_inf_pgn; 
     Bfs_visitor visitor(&m_edges_hash, &m_faces_hash, n_pgn);
-    visitor.visit_ubf(m_arr->unbounded_face(), n_inf_pgn);
+    visitor.visit_ubf(m_arr->faces_begin(), n_inf_pgn);
     Bfs_scanner scanner(visitor);
     scanner.scan(*m_arr);
     visitor.after_scan(*m_arr);

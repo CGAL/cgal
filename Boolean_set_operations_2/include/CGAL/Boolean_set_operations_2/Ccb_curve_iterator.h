@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
    public:
 
      typedef Arrangement_                            Arrangement;
-     typedef typename Arrangement::Traits_2          Traits;
+     typedef typename Arrangement::Geometry_traits_2 Traits;
      typedef Ccb_curve_iterator<Arrangement>         Self;
      typedef typename Arrangement::Ccb_halfedge_const_circulator
                                                      Ccb_halfedge_const_circulator;

@@ -100,12 +100,12 @@ public:
 
 template <class Arrangement_>
 class Gps_agg_meta_traits :
-  public Gps_traits_decorator<typename Arrangement_::Traits_2,
+  public Gps_traits_decorator<typename Arrangement_::Geometry_traits_2,
                               Gps_agg_curve_data<Arrangement_>,
                               Point_with_vertex<Arrangement_> >
 {
   typedef Arrangement_                            Arrangement;
-  typedef typename Arrangement::Traits_2          Traits;
+  typedef typename Arrangement::Geometry_traits_2 Traits;
 
   typedef typename Traits::X_monotone_curve_2     Base_X_monotone_curve_2;
   typedef typename Traits::Point_2                Base_Point_2;

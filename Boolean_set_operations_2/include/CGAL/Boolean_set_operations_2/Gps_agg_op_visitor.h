@@ -119,7 +119,7 @@ private:
       ((Arr_halfedge_direction)he->direction() == ARR_LEFT_TO_RIGHT) ? SMALLER : LARGER;
 
     const Comparison_result cv_dir =
-      this->m_arr_access.arrangement().traits()->
+      this->m_arr_access.arrangement().geometry_traits()->
             compare_endpoints_xy_2_object()(cv);
 
     if (he_dir == cv_dir)

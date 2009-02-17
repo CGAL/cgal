@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
 
 #ifndef CGAL_GPS_BPS_BASE_VISITOR_H
 #define CGAL_GPS_BPS_BASE_VISITOR_H
@@ -24,7 +25,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Arrangement_>
+//! Gps_bfs_base_visitor
+/*! This is a base class for all visitors that are responsible for merging
+    polygon sets.
+    We use DerivedVisitor for static polymorphism for using contained_criteria
+    which determines if we should mark the face as contained given the inside
+    count of the face.
+*/
+template <class Arrangement_, class DerivedVisitor>
 class Gps_bfs_base_visitor
 {
   typedef  Arrangement_                                  Arrangement;
@@ -50,23 +58,38 @@ public:
   {}
 
 
-  void flip_face(Face_iterator f1, Face_iterator f2, Halfedge_iterator he)
+    //! discovered_face
+/*! discovered_face is called by Gps_bfs_scanner when it reveals a new face 
+    during a BFS scan. In the BFS traversal we are going from old_face to 
+    new_face throught the half-edge he.
+  \param old_face The face that was already revealed
+  \param new_face The face that we have just now revealed
+  \param he The half-edge that is used to traverse between them.
+*/
+  void discovered_face(Face_iterator old_face, 
+                       Face_iterator new_face, 
+                       Halfedge_iterator he)
   {
-    CGAL_assertion(m_edges_hash->is_defined(he) && 
-                   m_edges_hash->is_defined(he->twin()) &&
-                   m_faces_hash->is_defined(f1) &&
-                   !m_faces_hash->is_defined(f2));
+    unsigned int ic = compute_ic(old_face, new_face, he);
 
-    // IC of f2 (inside counter)
-    unsigned int ic_f2 = 
-      (*m_faces_hash)[f1] - (*m_edges_hash)[he] + (*m_edges_hash)[he->twin()];
-    (*m_faces_hash)[f2] = ic_f2;
+    if (static_cast<DerivedVisitor*>(this)->contained_criteria(ic))
+      new_face->set_contained(true);
+  }
+
+  // mark the unbounded_face (true iff contained)
+  void visit_ubf(Face_iterator ubf, unsigned int ubf_ic)
+  {
+    CGAL_assertion(ubf->number_of_outer_ccbs() == 0);
+    if(static_cast<DerivedVisitor*>(this)->contained_criteria(ubf_ic))
+      ubf->set_contained(true);
   }
 
 protected:
 
   // compute the inside count of a face
-  unsigned int compute_ic(Face_iterator f1, Face_iterator f2, Halfedge_iterator he)
+  unsigned int compute_ic(Face_iterator f1, 
+                          Face_iterator f2, 
+                          Halfedge_iterator he)
   {
     CGAL_assertion(m_edges_hash->is_defined(he) && 
                    m_edges_hash->is_defined(he->twin()) &&
@@ -75,7 +98,7 @@ protected:
     unsigned int ic_f2 = 
       (*m_faces_hash)[f1] - (*m_edges_hash)[he] + (*m_edges_hash)[he->twin()];
     (*m_faces_hash)[f2] = ic_f2;
-
+    
     return (ic_f2);
   }
 };
