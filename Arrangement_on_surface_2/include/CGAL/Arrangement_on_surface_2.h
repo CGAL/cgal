@@ -1184,6 +1184,29 @@ public:
                                  _dcel().faces_end(),
                                  _Is_valid_face (&top_traits))); 
   }
+
+  //! reference_face (const version).
+  /*! The function returns a reference face of the arrangement.
+      All reference faces of arrangements of the same type have a common 
+      point.
+      \return A const handle to the reference face.
+  */
+  Face_const_handle reference_face() const
+  {
+    return _const_handle_for(this->topology_traits()->reference_face());
+  }
+  
+  //! reference_face (non-const version).
+  /*! The function returns a reference face of the arrangement.
+      All reference faces of arrangements of the same type have a common 
+      point.
+      \return A handle to the reference face.
+  */
+  Face_handle reference_face()
+  {
+    return _handle_for(this->topology_traits()->reference_face());
+  }
+
   //@}
 
   /// \name Casting away constness for handle types.

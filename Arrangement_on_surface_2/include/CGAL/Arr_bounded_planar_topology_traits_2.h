@@ -516,6 +516,28 @@ public:
     return (NULL);
   }
 
+    //! reference_face (const version).
+  /*! The function returns a reference face of the arrangement.
+      All reference faces of arrangements of the same type have a common
+      point.
+      \return A pointer to the reference face.
+  */
+  const Face* reference_face() const
+  {
+    return unbounded_face();
+  }
+ 
+  //! reference_face (non-const version).
+  /*! The function returns a reference face of the arrangement.
+      All reference faces of arrangements of the same type have a common
+      point.
+      \return A pointer to the reference face.
+  */
+  Face* reference_face()
+  {
+    return unbounded_face();
+  }
+
   //@}
 
   /// \name Additional accessors, specialized for this topology-traits class.

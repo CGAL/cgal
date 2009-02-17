@@ -703,6 +703,29 @@ public:
    * \return One of the pair of halfedges that form the merged edge.
    */
   Halfedge * erase_redundant_vertex(Vertex * v);
+
+  //! reference_face (const version).
+  /*! The function returns a reference face of the arrangement.
+      All reference faces of arrangements of the same type have a common 
+      point.
+      \return A pointer to the reference face.
+  */
+  const Face* reference_face() const
+  {
+    return spherical_face();
+  }
+  
+  //! reference_face (non-const version).
+  /*! The function returns a reference face of the arrangement.
+      All reference faces of arrangements of the same type have a common 
+      point.
+      \return A pointer to the reference face.
+  */
+  Face* reference_face()
+  {
+    return spherical_face();
+  }
+  
   //@}
 
 protected:

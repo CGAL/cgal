@@ -527,6 +527,31 @@ public:
    * \return One of the pair of halfedges that form the merged edge.
    */
   Halfedge* erase_redundant_vertex (Vertex *v);
+
+    //! reference_face (const version).
+  /*! The function returns a reference face of the arrangement.
+      All reference faces of arrangements of the same type have a common
+      point.
+      \return A pointer to the reference face.
+  */
+  const Face* reference_face() const
+  {
+    CGAL_error_msg("not implemented.");
+    return NULL;
+  }
+ 
+  //! reference_face (non-const version).
+  /*! The function returns a reference face of the arrangement.
+      All reference faces of arrangements of the same type have a common
+      point.
+      \return A pointer to the reference face.
+  */
+  Face* reference_face()
+  {
+    CGAL_error_msg("not implemented.");
+    return NULL;
+  }
+
   //@}
 
   /// \name Additional accessors, specialized for this topology-traits class.
