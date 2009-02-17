@@ -234,8 +234,9 @@ if [ -n "$DO_PUBLIC" ]; then
     cd ..
 
     cp -a ${SOURCES_DIR}/Installation/doc_tex .
+    cp -a ${SOURCES_DIR}/Manual/doc_tex/Manual doc_tex
     pushd doc_tex
-    "${CGAL_MANUAL}" -html installation_manual
+    "${CGAL_MANUAL}" -v -html installation_manual
     popd
     cp -a doc_html/* ${public_release_name}/doc_html
     tar -cf "${public_release_name}.tar" "${public_release_name}"
