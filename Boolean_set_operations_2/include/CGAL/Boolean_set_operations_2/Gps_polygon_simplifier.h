@@ -39,7 +39,7 @@ template <class Arrangement_>
 class Gps_polygon_simplifier
 {
   typedef Arrangement_                                Arrangement_2;
-  typedef typename Arrangement_2::Traits_2            Traits_2;
+  typedef typename Arrangement_2::Geometry_traits_2   Traits_2;
   typedef typename Traits_2::Curve_const_iterator     Curve_const_iterator;
   typedef typename Traits_2::Polygon_2                Polygon_2;
   typedef typename Traits_2::Polygon_with_holes_2     Polygon_with_holes_2;
