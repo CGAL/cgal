@@ -106,6 +106,10 @@ Kernel's geometric traits.
 {
 }
 \ccGlue
+\ccNestedType{Vector}
+{
+}
+\ccGlue
 \ccNestedType{Iso_cuboid}
 {
 }
@@ -116,14 +120,12 @@ Kernel's geometric traits.
 \ccGlue
 \ccNestedType{Point_with_normal}
 {
+== \ccc{Point_with_normal_3<Gt>} (compact representation)
 }
 \ccGlue
 \ccNestedType{Normal}
 {
-}
-\ccGlue
-\ccNestedType{Vector}
-{
+== \ccc{Vector_3}
 }
 \ccGlue
 
@@ -138,7 +140,7 @@ Kernel's geometric traits.
 \ccConstructor{APSS_implicit_function(InputIterator first, InputIterator beyond, unsigned int k, FT projection_error = 3.16e-4);}
 {
 Create an APSS implicit function from a point set.
-Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
+Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal_3}.
 }
 \ccGlue
 \begin{description}

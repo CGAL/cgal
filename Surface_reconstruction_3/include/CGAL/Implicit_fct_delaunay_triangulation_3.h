@@ -164,7 +164,7 @@ public:
     m_index = 0;
     m_average_spacing = 0.0;
     m_tag = -1;
-	
+
   }
 
   Implicit_fct_delaunay_triangulation_vertex_base_3(const Point& p, Cell_handle c)
@@ -227,9 +227,9 @@ private:
 }; // end of Implicit_fct_delaunay_triangulation_vertex_base_3
 
 
-/// Helper class: 
+/// Helper class:
 /// Implicit_fct_delaunay_triangulation_default_geom_traits_3
-/// changes in a geometric traits class the Point_3 type to 
+/// changes in a geometric traits class the Point_3 type to
 /// a lightweight model of PointWithNormal_3.
 ///
 /// @heading Parameters:
@@ -476,7 +476,7 @@ public:
                        Cell_handle start = Cell_handle())
   {
     Vertex_handle v = Base::insert(p, start);
-    
+
     v->type() = type;
     invalidate_bounding_box();
 
@@ -486,7 +486,7 @@ public:
   /// Insert points in the triangulation using a spatial sort.
   /// Default type is INPUT.
   ///
-  /// Precondition: the value type of InputIterator must 'Point'.
+  /// Precondition: the value type of InputIterator must be 'Point'.
   ///
   /// @param first First point to add to pdt.
   /// @param beyond Past-the-end point to add to pdt.
@@ -524,13 +524,13 @@ public:
                  unsigned char type = STEINER /* INPUT or STEINER */)
   {
       Vertex_handle v = Base::insert_in_hole(p, cell_begin, cell_end, begin, i);
-      
+
       v->type() = type;
       invalidate_bounding_box();
-      
+
       return v;
   }
- 
+
   /// Index all (finite) vertices following the order of Finite_vertices_iterator.
   /// @return the number of (finite) vertices.
   unsigned int index_vertices()
