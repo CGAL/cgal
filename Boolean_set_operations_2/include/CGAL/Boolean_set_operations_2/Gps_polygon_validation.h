@@ -21,19 +21,22 @@
 #ifndef CGAL_GPS_POLYGON_VALIDATION_2_H
 #define CGAL_GPS_POLYGON_VALIDATION_2_H
 
+#include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
+#include <CGAL/Boolean_set_operations_2/Gps_default_dcel.h>
+#include <CGAL/Boolean_set_operations_2/GPS_on_surface_base_2.h>
+
+#include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_empty_visitor.h>
-#include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
-#include <CGAL/Boolean_set_operations_2/Gps_default_dcel.h>
-#include <CGAL/General_polygon_set_2.h>
+#include <CGAL/Arr_default_overlay_traits.h>
+#include <CGAL/Arr_naive_point_location.h>
+
+
+#include <iostream>
 #include <list>
 #include <iterator>
-#include <CGAL/Arr_naive_point_location.h>
-#include <iostream>
-
-#include <CGAL/Arr_default_overlay_traits.h>
 
 #define CGAL_GPS_POLYGON_VALIDATION_2_TYPEDEF                           \
   typedef Gps_traits_adaptor<Traits_2>              Traits_adapter_2;   \
@@ -293,17 +296,24 @@ bool is_closed_polygon_with_holes(const typename Traits_2::Polygon_with_holes_2&
 }
 
 //templated point location version
-template<typename Traits_2, class PointLocation>
+template<class Traits_2, class PointLocation>
 bool is_crossover_outer_boundary(const typename Traits_2::Polygon_with_holes_2& pgn, Traits_2 traits, PointLocation& pl  ) {
   CGAL_GPS_POLYGON_VALIDATION_2_TYPEDEF  
     typedef typename Traits_2::Point_2                 Point_2;
   typedef typename Traits_2::Compare_endpoints_xy_2  Compare_endpoints_xy_2;
   typedef typename Traits_2::Construct_min_vertex_2  Construct_min_vertex_2; 
   typedef typename Traits_2::Construct_max_vertex_2  Construct_max_vertex_2;
-  typedef CGAL::Gps_default_dcel<Traits_2>  							dcel;    
-  typedef CGAL::General_polygon_set_2<Traits_2, dcel>  			Polygon_set_2;
+  typedef CGAL::Gps_default_dcel<Traits_2>  	     Dcel;
+
+  // IMPORTATNT! TODO!
+  // Currently the topology traits is the bounded planar traits. This
+  // should be replaced with a templated topology traits!
+  typedef typename Default_planar_topology<Traits_2, Dcel, 
+    typename Traits_2::Boundary_category>::Traits     Topology_traits;
+  typedef CGAL::GPS_on_surface_base_2<Traits_2, Topology_traits> 
+    Polygon_set_2;
   typedef typename Traits_2::Polygon_with_holes_2							Polygon_with_holes_2;
-  typedef typename Polygon_set_2::Arrangement_2										Arrangement_2;
+  typedef typename Polygon_set_2::Arrangement_on_surface_2       Arrangement_2;
   typedef typename Arrangement_2::Halfedge_handle                Halfedge_handle;
   typedef typename Arrangement_2::Vertex_handle               Vertex_handle;
   typedef typename Arrangement_2::Vertex_const_handle               Vertex_const_handle;
@@ -402,8 +412,15 @@ bool is_crossover_outer_boundary(
   const typename Traits_2::Polygon_with_holes_2& pgn, Traits_2 traits ) {
 
   typedef CGAL::Gps_default_dcel<Traits_2>                      Dcel;
-  typedef CGAL::General_polygon_set_2<Traits_2, Dcel>           Polygon_set_2;
-  typedef typename Polygon_set_2::Arrangement_2			Arrangement_2;
+  // IMPORTATNT! TODO!
+  // Currently the topology traits is the bounded planar traits. This
+  // should be replaced with a templated topology traits!
+  typedef typename Default_planar_topology<Traits_2, Dcel, 
+    typename Traits_2::Boundary_category>::Traits     Topology_traits;
+
+  typedef CGAL::GPS_on_surface_base_2<Traits_2, Topology_traits> 
+    Polygon_set_2;
+  typedef typename Polygon_set_2::Arrangement_on_surface_2      Arrangement_2;
   typedef CGAL::Arr_naive_point_location<Arrangement_2>         Naive_pl;
 
   Naive_pl pl;
@@ -513,8 +530,15 @@ bool are_holes_and_boundary_pairwise_disjoint(const typename Traits_2::Polygon_w
 {
   CGAL_GPS_POLYGON_VALIDATION_2_TYPEDEF
 
-    typedef CGAL::Gps_default_dcel<Traits_2>  							dcel;    
-  typedef CGAL::General_polygon_set_2<Traits_2, dcel>  			Polygon_set_2;
+    typedef CGAL::Gps_default_dcel<Traits_2>  	     Dcel;
+  // IMPORTATNT! TODO!
+  // Currently the topology traits is the bounded planar traits. This
+  // should be replaced with a templated topology traits!
+  typedef typename Default_planar_topology<Traits_2, Dcel, 
+    typename Traits_2::Boundary_category>::Traits     Topology_traits;
+
+  typedef CGAL::GPS_on_surface_base_2<Traits_2, Topology_traits> 
+    Polygon_set_2;
   typedef typename Polygon_set_2::Size									Size;
   typedef  typename Traits_2::Polygon_2                         Polygon_2;
   typedef typename Traits_2::Polygon_with_holes_2					Polygon_with_holes_2;
@@ -528,7 +552,8 @@ bool are_holes_and_boundary_pairwise_disjoint(const typename Traits_2::Polygon_w
     Construct_vertex_2;
   typedef Gps_polygon_validation_visitor<Traits_2>  Visitor;
   typedef Sweep_line_2<Traits_2, Visitor>           Sweep_line ;
-  typedef typename Polygon_set_2::Arrangement_2										Arrangement_2;
+  typedef typename Polygon_set_2::Arrangement_on_surface_2
+    Arrangement_2;
     
   /*  Should be perfored more efficeintly  than using sweep and than difference().*/
     
@@ -677,14 +702,14 @@ bool is_valid_polygon_with_holes(const typename Traits_2::Polygon_with_holes_2& 
 
 template <typename Traits_2>
 bool is_valid_unknown_polygon(const typename Traits_2::Polygon_with_holes_2& pgn, 
-                              Traits_2 traits)
+                              Traits_2& traits)
 {
   return is_valid_polygon_with_holes(pgn, traits);
 }
   
 template <typename Traits_2>
 bool is_valid_unknown_polygon(const typename Traits_2::Polygon_2& pgn,
-                              Traits_2 traits)
+                              Traits_2& traits)
 {
   return is_valid_polygon(pgn, traits);
 }

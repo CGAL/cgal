@@ -11,18 +11,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL:
+// $Id: 
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 //                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
+//                 Guy Zucker <guyzucke@post.tau.ac.il> 
 
-#ifndef CGAL_GPS_UTILS_H
-#define CGAL_GPS_UTILS_H
+#ifndef CGAL_GPS_ON_SURFACE_BASE_2_IMPL_H
+#define CGAL_GPS_ON_SURFACE_BASE_2_IMPL_H
 
-#include <CGAL/Unique_hash_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/circulator.h> 
@@ -30,9 +30,10 @@
 #include <CGAL/Arr_accessor.h>
 
 #include <queue>
+#include <list>
 
-template <class Traits_, class TopTraits_>
-void General_polygon_set_on_surface_2<Traits_, TopTraits_>::
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+void GPS_on_surface_base_2<Traits_, TopTraits_,ValidationPolicy>::
 construct_polygon(Ccb_halfedge_const_circulator ccb, Polygon_2 & pgn,
                   Traits_ * tr)
 {
@@ -146,7 +147,7 @@ public:
   {
   	 
     Polygon_2 pgn_boundary;
-    General_polygon_set_on_surface_2<Gps_traits, Gps_top_traits>::
+    GPS_on_surface_base_2<Gps_traits, Gps_top_traits>::
       construct_polygon(ccb, pgn_boundary, m_traits);
 
     Ccb_halfedge_const_circulator ccb_end = ccb;
@@ -201,7 +202,7 @@ public:
              oci != f->outer_ccbs_end(); ++oci)
         {
           m_pgn_holes.push_back(Polygon_2());
-          General_polygon_set_on_surface_2<Gps_traits, Gps_top_traits>::
+          GPS_on_surface_base_2<Gps_traits, Gps_top_traits>::
             construct_polygon(*oci, m_pgn_holes.back(), m_traits);
         }
         
@@ -241,7 +242,7 @@ public:
           CGAL_assertion(!he->twin()->face()->contained());
          
           m_pgn_holes.push_back(Polygon_2());
-          General_polygon_set_on_surface_2<Gps_traits, Gps_top_traits>::
+          GPS_on_surface_base_2<Gps_traits, Gps_top_traits>::
             construct_polygon(he->twin()->face()->outer_ccb(),
                               m_pgn_holes.back(), m_traits);
           m_holes_q.push(he->twin()->face());
@@ -315,8 +316,8 @@ public:
              completely disjoint from the arrangement
   \param arr The arrangement to insert the polygon to.
 */
-template <class Traits_, class TopTraits_>
-void General_polygon_set_on_surface_2<Traits_, TopTraits_>::
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+void GPS_on_surface_base_2<Traits_, TopTraits_,ValidationPolicy>::
 _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
 {
   typedef Arr_accessor<Arrangement_on_surface_2>                  Arr_accessor;
@@ -426,26 +427,26 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
 }
 
 
-template <class Traits_, class TopTraits_>
-template<class PolygonIter >
-void General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-insert(PolygonIter p_begin, PolygonIter p_end)
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  template<class PolygonIter >
+  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  insert(PolygonIter p_begin, PolygonIter p_end)
 {
   typename std::iterator_traits<PolygonIter>::value_type pgn;
   //check validity of all polygons    
   for( ; p_begin != p_end; ++p_begin)
   {
-    CGAL_precondition(is_valid_unknown_polygon(*p_begin, *m_traits));
+    ValidationPolicy::is_valid(*p_begin, *m_traits);
   }
 
   _insert(p_begin, p_end, pgn);
 }
 
-template <class Traits_, class TopTraits_>
-template<class PolygonIter, class PolygonWithHolesIter>
-void General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-insert(PolygonIter p_begin, PolygonIter p_end,
-       PolygonWithHolesIter pwh_begin, PolygonWithHolesIter pwh_end)
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  template<class PolygonIter, class PolygonWithHolesIter>
+  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  insert(PolygonIter p_begin, PolygonIter p_end,
+         PolygonWithHolesIter pwh_begin, PolygonWithHolesIter pwh_end)
 {
   typedef std::list<X_monotone_curve_2>                  XCurveList;
   typedef Init_faces_visitor<Arrangement_on_surface_2>              My_visitor;
@@ -455,16 +456,16 @@ insert(PolygonIter p_begin, PolygonIter p_end,
   
   for( ; p_begin != p_end; ++p_begin)
   {
-      CGAL_precondition(is_valid_polygon(*p_begin, *m_traits));
+    ValidationPolicy::is_valid(*p_begin, *m_traits);
     _construct_curves(*p_begin, std::back_inserter(xcurve_list));
   }
 
   bool is_unbounded = false;
   for( ; pwh_begin != pwh_end; ++pwh_begin)
   {
-    CGAL_precondition(is_valid_polygon_with_holes(*pwh_begin, *m_traits));
-     is_unbounded = (is_unbounded || m_traits->construct_is_unbounded_object()(*pwh_begin));
-   // is_unbounded = (is_unbounded || pwh_begin->is_unbounded());
+    ValidationPolicy::is_valid(*pwh_begin, *m_traits);
+    is_unbounded = (is_unbounded || m_traits->construct_is_unbounded_object()(*pwh_begin));
+    // is_unbounded = (is_unbounded || pwh_begin->is_unbounded());
     _construct_curves(*pwh_begin, std::back_inserter(xcurve_list));
   }
   insert_non_intersecting_curves(*m_arr, xcurve_list.begin(), xcurve_list.end());
@@ -486,21 +487,21 @@ insert(PolygonIter p_begin, PolygonIter p_end,
 }
 
 //insert a range of simple polygons to the arrangement
-template <class Traits_, class TopTraits_>
-template<class PolygonIter>
-void General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-_insert(PolygonIter p_begin, PolygonIter p_end, Polygon_2 & /*pgn*/)
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  template<class PolygonIter>
+  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  _insert(PolygonIter p_begin, PolygonIter p_end, Polygon_2 & /*pgn*/)
 {  
   for(PolygonIter pitr = p_begin; pitr != p_end; ++pitr)
   {
-        this->_insert(*pitr, *m_arr);
+    this->_insert(*pitr, *m_arr);
   }
 }
 
-template <class Traits_, class TopTraits_>
-template<class PolygonIter>
-void General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-_insert(PolygonIter p_begin, PolygonIter p_end, Polygon_with_holes_2 & /*pgn*/)
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  template<class PolygonIter>
+  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  _insert(PolygonIter p_begin, PolygonIter p_end, Polygon_with_holes_2 & /*pgn*/)
 {  
   typedef std::list<X_monotone_curve_2>                  XCurveList;
   typedef Init_faces_visitor<Arrangement_on_surface_2>              My_visitor;
@@ -510,7 +511,7 @@ _insert(PolygonIter p_begin, PolygonIter p_end, Polygon_with_holes_2 & /*pgn*/)
   bool is_unbounded = false;
   for( ; p_begin != p_end; ++p_begin)
   {
-     // is_unbounded = (is_unbounded || p_begin->is_unbounded());
+    // is_unbounded = (is_unbounded || p_begin->is_unbounded());
     is_unbounded = (is_unbounded || m_traits->construct_is_unbounded_object()(*p_begin));  
     _construct_curves(*p_begin, std::back_inserter(xcurve_list));
 
@@ -535,15 +536,15 @@ _insert(PolygonIter p_begin, PolygonIter p_end, Polygon_with_holes_2 & /*pgn*/)
 
 //insert non-sipmle poloygons with holes (non incident edges may have
 // common vertex,  but they dont intersect at their interior
-template <class Traits_, class TopTraits_>
-void General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-_insert(const Polygon_with_holes_2 & pgn, Arrangement_on_surface_2 & arr)
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  _insert(const Polygon_with_holes_2 & pgn, Arrangement_on_surface_2 & arr)
 {
-  //not needed gps.insert(PWH) has the precondition
- // CGAL_precondition(is_valid_polygon_with_holes(pgn, *m_traits));
+  ValidationPolicy::is_valid(pgn, *m_traits);
+
   typedef std::list<X_monotone_curve_2>                  XCurveList;
-  typedef Init_faces_visitor<Arrangement_on_surface_2>              My_visitor;
-  typedef Gps_bfs_scanner<Arrangement_on_surface_2, My_visitor>     Arr_bfs_scanner;
+  typedef Init_faces_visitor<Arrangement_on_surface_2>          My_visitor;
+  typedef Gps_bfs_scanner<Arrangement_on_surface_2, My_visitor> Arr_bfs_scanner;
 
   XCurveList xcurve_list;
   _construct_curves(pgn, std::back_inserter(xcurve_list));
@@ -566,30 +567,30 @@ _insert(const Polygon_with_holes_2 & pgn, Arrangement_on_surface_2 & arr)
   _reset_faces(&arr);
 }
 
-template <class Traits_, class TopTraits_>
-template <class OutputIterator>
-void 
-General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-_construct_curves(const Polygon_2 & pgn, OutputIterator oi)
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  template <class OutputIterator>
+  void 
+  GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  _construct_curves(const Polygon_2 & pgn, OutputIterator oi)
 {
-    std::pair<Curve_const_iterator,
-              Curve_const_iterator> itr_pair =
-              m_traits->construct_curves_2_object()(pgn);
-    std::copy (itr_pair.first, itr_pair.second, oi);
+  std::pair<Curve_const_iterator,
+    Curve_const_iterator> itr_pair =
+    m_traits->construct_curves_2_object()(pgn);
+  std::copy (itr_pair.first, itr_pair.second, oi);
 }
 
-template <class Traits_, class TopTraits_>
-template <class OutputIterator>
-void General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-_construct_curves(const Polygon_with_holes_2 & pgn, OutputIterator oi)
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  template <class OutputIterator>
+  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  _construct_curves(const Polygon_with_holes_2 & pgn, OutputIterator oi)
 {
   //if (!pgn.is_unbounded())
   if (!m_traits->construct_is_unbounded_object()(pgn))
   {
     const Polygon_2& pgn_boundary = m_traits->construct_outer_boundary_object ()(pgn);
     std::pair<Curve_const_iterator,
-              Curve_const_iterator> itr_pair = 
-              m_traits->construct_curves_2_object()(pgn_boundary);
+      Curve_const_iterator> itr_pair = 
+      m_traits->construct_curves_2_object()(pgn_boundary);
     std::copy (itr_pair.first, itr_pair.second, oi);
   }
   std::pair<GP_Holes_const_iterator, GP_Holes_const_iterator> hpair = 
@@ -599,17 +600,17 @@ _construct_curves(const Polygon_with_holes_2 & pgn, OutputIterator oi)
   {
     const Polygon_2& pgn_hole = *hit;
     std::pair<Curve_const_iterator,
-              Curve_const_iterator> itr_pair =
-              m_traits->construct_curves_2_object()(pgn_hole);
+      Curve_const_iterator> itr_pair =
+      m_traits->construct_curves_2_object()(pgn_hole);
     std::copy (itr_pair.first, itr_pair.second, oi);
   }
 }
 
-template <class Traits_, class TopTraits_>
-template <class OutputIterator>
-OutputIterator
-General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-polygons_with_holes(OutputIterator out) const
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  template <class OutputIterator>
+  OutputIterator
+  GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  polygons_with_holes(OutputIterator out) const
 {
   typedef Arr_bfs_scanner<Arrangement_on_surface_2, OutputIterator>     Arr_bfs_scanner;
   Arr_bfs_scanner scanner(this->m_traits, out);
@@ -618,10 +619,10 @@ polygons_with_holes(OutputIterator out) const
 }
 
 
-template <class Traits_, class TopTraits_>
-typename General_polygon_set_on_surface_2<Traits_, TopTraits_>::Size 
-General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-number_of_polygons_with_holes() const
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  typename GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::Size 
+  GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  number_of_polygons_with_holes() const
 {
  
   typedef Arr_bfs_scanner<Arrangement_on_surface_2, Counting_output_iterator>
@@ -634,9 +635,9 @@ number_of_polygons_with_holes() const
 }
 
 
-template <class Traits_, class TopTraits_>
-bool General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-locate(const Point_2& q, Polygon_with_holes_2& pgn) const
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  bool GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  locate(const Point_2& q, Polygon_with_holes_2& pgn) const
 {
   Point_location pl(*m_arr);
 
@@ -710,10 +711,10 @@ locate(const Point_2& q, Polygon_with_holes_2& pgn) const
   return true;
 }
 
-template <class Traits_, class TopTraits_>
-typename General_polygon_set_on_surface_2<Traits_, TopTraits_>::Ccb_halfedge_const_circulator
-General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-get_boundary_of_polygon(Face_const_iterator f) const
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  typename GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::Ccb_halfedge_const_circulator
+  GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  get_boundary_of_polygon(Face_const_iterator f) const
 {
   CGAL_assertion(!f->visited());
   f->set_visited(true);
@@ -751,9 +752,9 @@ get_boundary_of_polygon(Face_const_iterator f) const
   
 }
 
-template <class Traits_, class TopTraits_>
-bool General_polygon_set_on_surface_2<Traits_, TopTraits_>::
-is_hole_of_face(Face_const_handle f, Halfedge_const_handle he) const
+template <class Traits_, class TopTraits_, class ValidationPolicy>
+  bool GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  is_hole_of_face(Face_const_handle f, Halfedge_const_handle he) const
 {
   Inner_ccb_const_iterator   holes_it;
   for (holes_it = f->inner_ccbs_begin(); 
@@ -776,4 +777,4 @@ is_hole_of_face(Face_const_handle f, Halfedge_const_handle he) const
   return false;
 }
 
-#endif
+#endif // CGAL_GPS_UTILS_H
