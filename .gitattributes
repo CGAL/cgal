@@ -1173,7 +1173,7 @@ Boolean_set_operations_2/examples/Boolean_set_operations_2/char_g.dat -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/char_m.dat -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/pgn_holes.dat -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/test.dxf -text svneol=unset#application/octet-stream
-Boolean_set_operations_2/include/CGAL/Boolean_set_operations_2/GPS_on_surface_base_2.h -text
+Boolean_set_operations_2/include/CGAL/Boolean_set_operations_2/Gps_on_surface_base_2.h -text
 Boolean_set_operations_2/include/CGAL/General_polygon_set_on_surface_2.h -text
 Boolean_set_operations_2/test/Boolean_set_operations_2/data/pgn_holes1.dat -text
 Boolean_set_operations_2/test/Boolean_set_operations_2/data/pgn_holes2.dat -text

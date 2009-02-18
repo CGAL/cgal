@@ -41,7 +41,7 @@
 #include <CGAL/Boolean_set_operations_2/Ccb_curve_iterator.h>
 
 /*!
-  \file   GPS_on_surface_base_2.h
+  \file   Gps_on_surface_base_2.h
   \brief  A class that allows Boolean set operations.
   This class is the base class for General_polygon_set_on_surface_2 and 
   recieves extra template parameter which allows different validation 
@@ -76,7 +76,7 @@ namespace Boolean_set_operation_2_internal
 template <class Traits_, class TopTraits_, 
           class ValidationPolicy = 
           Boolean_set_operation_2_internal::NoValidationPolicy>
-class GPS_on_surface_base_2
+class Gps_on_surface_base_2
 {
 public:
   typedef Traits_                                      Traits_2;
@@ -90,7 +90,7 @@ public:
 private:
   typedef Arrangement_on_surface_2                     Aos_2;
 
-  typedef GPS_on_surface_base_2 <
+  typedef Gps_on_surface_base_2 <
     Traits_2, Topology_traits, ValidationPolicy>       Self;
   typedef typename Traits_2::Point_2                   Point_2;
   typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
@@ -150,7 +150,7 @@ protected:
 public:
 
   // default costructor
-  GPS_on_surface_base_2() : m_traits(new Traits_2()),
+  Gps_on_surface_base_2() : m_traits(new Traits_2()),
                             m_traits_adaptor(*m_traits),
                             m_traits_owner(true),
                             m_arr(new Aos_2(m_traits))       
@@ -158,14 +158,14 @@ public:
 
 
   // constructor with traits object
-  GPS_on_surface_base_2(Traits_2& tr) : m_traits(&tr),
+  Gps_on_surface_base_2(Traits_2& tr) : m_traits(&tr),
                                         m_traits_adaptor(*m_traits),
                                         m_traits_owner(false),
                                         m_arr(new Aos_2(m_traits)) 
   {}
 
 
-  GPS_on_surface_base_2(const Self& ps) :
+  Gps_on_surface_base_2(const Self& ps) :
     m_traits(new Traits_2(*(ps.m_traits))),
     m_traits_adaptor(*m_traits),
     m_traits_owner(true),
@@ -173,7 +173,7 @@ public:
   {}
 
   
-  GPS_on_surface_base_2& operator=(const Self& ps)
+  Gps_on_surface_base_2& operator=(const Self& ps)
   {
     if (this == &ps)
       return (*this);
@@ -189,7 +189,7 @@ public:
   }
 
 
-  explicit GPS_on_surface_base_2(const Polygon_2& pgn) : 
+  explicit Gps_on_surface_base_2(const Polygon_2& pgn) : 
     m_traits(new Traits_2()),
     m_traits_adaptor(*m_traits),
     m_traits_owner(true),
@@ -199,7 +199,7 @@ public:
     _insert(pgn, *m_arr);
   }
 
-  explicit GPS_on_surface_base_2(const Polygon_with_holes_2& pgn_with_holes): 
+  explicit Gps_on_surface_base_2(const Polygon_with_holes_2& pgn_with_holes): 
     m_traits(new Traits_2()),
     m_traits_adaptor(*m_traits),
     m_traits_owner(true),
@@ -210,7 +210,7 @@ public:
   }
 
 protected:
-  GPS_on_surface_base_2(Aos_2* arr) : m_traits(new Traits_2()),
+  Gps_on_surface_base_2(Aos_2* arr) : m_traits(new Traits_2()),
                                               m_traits_adaptor(*m_traits),
                                               m_traits_owner(true),
                                               m_arr(arr)
@@ -218,7 +218,7 @@ protected:
 
 public:
   //destructor
-  virtual ~GPS_on_surface_base_2()
+  virtual ~Gps_on_surface_base_2()
   {
     delete m_arr;
 
@@ -273,7 +273,7 @@ public:
     return (do_intersect(other));
   }
 
-  //test for intersection with another GPS_on_surface_base_2 object
+  //test for intersection with another Gps_on_surface_base_2 object
   bool do_intersect(const Self& other) const
   {
     if (this->is_empty() || other.is_empty())
@@ -321,7 +321,7 @@ public:
     _intersection(pgn);
   }
 
-  //intersection with another GPS_on_surface_base_2 object
+  //intersection with another Gps_on_surface_base_2 object
   void intersection(const Self& other)
   {
     _intersection(other);
@@ -348,7 +348,7 @@ public:
     _join(pgn);
   }
 
-  //join with another GPS_on_surface_base_2 object
+  //join with another Gps_on_surface_base_2 object
   void join(const Self& other)
   {
     _join(other);
@@ -374,7 +374,7 @@ public:
     _difference(pgn);
   }
   
-  //difference with another GPS_on_surface_base_2 object
+  //difference with another Gps_on_surface_base_2 object
   void difference (const Self& other)
   {
     _difference(other);
@@ -401,7 +401,7 @@ public:
     _symmetric_difference(pgn);
   }
 
-  //symmetric_difference with another GPS_on_surface_base_2 object
+  //symmetric_difference with another Gps_on_surface_base_2 object
   void symmetric_difference(const Self& other)
   {
     _symmetric_difference(other);
@@ -1380,7 +1380,7 @@ protected:
   
 };
 
-#include <CGAL/Boolean_set_operations_2/GPS_on_surface_base_2_impl.h>
+#include <CGAL/Boolean_set_operations_2/Gps_on_surface_base_2_impl.h>
 
 CGAL_END_NAMESPACE
 

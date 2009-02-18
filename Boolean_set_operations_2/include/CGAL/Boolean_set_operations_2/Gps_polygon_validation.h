@@ -23,7 +23,7 @@
 
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_default_dcel.h>
-#include <CGAL/Boolean_set_operations_2/GPS_on_surface_base_2.h>
+#include <CGAL/Boolean_set_operations_2/Gps_on_surface_base_2.h>
 
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
 #include <CGAL/Sweep_line_2.h>
@@ -310,7 +310,7 @@ bool is_crossover_outer_boundary(const typename Traits_2::Polygon_with_holes_2& 
   // should be replaced with a templated topology traits!
   typedef typename Default_planar_topology<Traits_2, Dcel, 
     typename Traits_2::Boundary_category>::Traits     Topology_traits;
-  typedef CGAL::GPS_on_surface_base_2<Traits_2, Topology_traits> 
+  typedef CGAL::Gps_on_surface_base_2<Traits_2, Topology_traits> 
     Polygon_set_2;
   typedef typename Traits_2::Polygon_with_holes_2							Polygon_with_holes_2;
   typedef typename Polygon_set_2::Arrangement_on_surface_2       Arrangement_2;
@@ -418,7 +418,7 @@ bool is_crossover_outer_boundary(
   typedef typename Default_planar_topology<Traits_2, Dcel, 
     typename Traits_2::Boundary_category>::Traits     Topology_traits;
 
-  typedef CGAL::GPS_on_surface_base_2<Traits_2, Topology_traits> 
+  typedef CGAL::Gps_on_surface_base_2<Traits_2, Topology_traits> 
     Polygon_set_2;
   typedef typename Polygon_set_2::Arrangement_on_surface_2      Arrangement_2;
   typedef CGAL::Arr_naive_point_location<Arrangement_2>         Naive_pl;
@@ -537,7 +537,7 @@ bool are_holes_and_boundary_pairwise_disjoint(const typename Traits_2::Polygon_w
   typedef typename Default_planar_topology<Traits_2, Dcel, 
     typename Traits_2::Boundary_category>::Traits     Topology_traits;
 
-  typedef CGAL::GPS_on_surface_base_2<Traits_2, Topology_traits> 
+  typedef CGAL::Gps_on_surface_base_2<Traits_2, Topology_traits> 
     Polygon_set_2;
   typedef typename Polygon_set_2::Size									Size;
   typedef  typename Traits_2::Polygon_2                         Polygon_2;

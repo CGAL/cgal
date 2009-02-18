@@ -33,7 +33,7 @@
 #include <list>
 
 template <class Traits_, class TopTraits_, class ValidationPolicy>
-void GPS_on_surface_base_2<Traits_, TopTraits_,ValidationPolicy>::
+void Gps_on_surface_base_2<Traits_, TopTraits_,ValidationPolicy>::
 construct_polygon(Ccb_halfedge_const_circulator ccb, Polygon_2 & pgn,
                   Traits_ * tr)
 {
@@ -147,7 +147,7 @@ public:
   {
   	 
     Polygon_2 pgn_boundary;
-    GPS_on_surface_base_2<Gps_traits, Gps_top_traits>::
+    Gps_on_surface_base_2<Gps_traits, Gps_top_traits>::
       construct_polygon(ccb, pgn_boundary, m_traits);
 
     Ccb_halfedge_const_circulator ccb_end = ccb;
@@ -202,7 +202,7 @@ public:
              oci != f->outer_ccbs_end(); ++oci)
         {
           m_pgn_holes.push_back(Polygon_2());
-          GPS_on_surface_base_2<Gps_traits, Gps_top_traits>::
+          Gps_on_surface_base_2<Gps_traits, Gps_top_traits>::
             construct_polygon(*oci, m_pgn_holes.back(), m_traits);
         }
         
@@ -242,7 +242,7 @@ public:
           CGAL_assertion(!he->twin()->face()->contained());
          
           m_pgn_holes.push_back(Polygon_2());
-          GPS_on_surface_base_2<Gps_traits, Gps_top_traits>::
+          Gps_on_surface_base_2<Gps_traits, Gps_top_traits>::
             construct_polygon(he->twin()->face()->outer_ccb(),
                               m_pgn_holes.back(), m_traits);
           m_holes_q.push(he->twin()->face());
@@ -317,7 +317,7 @@ public:
   \param arr The arrangement to insert the polygon to.
 */
 template <class Traits_, class TopTraits_, class ValidationPolicy>
-void GPS_on_surface_base_2<Traits_, TopTraits_,ValidationPolicy>::
+void Gps_on_surface_base_2<Traits_, TopTraits_,ValidationPolicy>::
 _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
 {
   typedef Arr_accessor<Arrangement_on_surface_2>                  Arr_accessor;
@@ -429,7 +429,7 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
 
 template <class Traits_, class TopTraits_, class ValidationPolicy>
   template<class PolygonIter >
-  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  void Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   insert(PolygonIter p_begin, PolygonIter p_end)
 {
   typename std::iterator_traits<PolygonIter>::value_type pgn;
@@ -444,7 +444,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 
 template <class Traits_, class TopTraits_, class ValidationPolicy>
   template<class PolygonIter, class PolygonWithHolesIter>
-  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  void Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   insert(PolygonIter p_begin, PolygonIter p_end,
          PolygonWithHolesIter pwh_begin, PolygonWithHolesIter pwh_end)
 {
@@ -489,7 +489,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 //insert a range of simple polygons to the arrangement
 template <class Traits_, class TopTraits_, class ValidationPolicy>
   template<class PolygonIter>
-  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  void Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   _insert(PolygonIter p_begin, PolygonIter p_end, Polygon_2 & /*pgn*/)
 {  
   for(PolygonIter pitr = p_begin; pitr != p_end; ++pitr)
@@ -500,7 +500,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 
 template <class Traits_, class TopTraits_, class ValidationPolicy>
   template<class PolygonIter>
-  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  void Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   _insert(PolygonIter p_begin, PolygonIter p_end, Polygon_with_holes_2 & /*pgn*/)
 {  
   typedef std::list<X_monotone_curve_2>                  XCurveList;
@@ -537,7 +537,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 //insert non-sipmle poloygons with holes (non incident edges may have
 // common vertex,  but they dont intersect at their interior
 template <class Traits_, class TopTraits_, class ValidationPolicy>
-  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  void Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   _insert(const Polygon_with_holes_2 & pgn, Arrangement_on_surface_2 & arr)
 {
   ValidationPolicy::is_valid(pgn, *m_traits);
@@ -570,7 +570,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 template <class Traits_, class TopTraits_, class ValidationPolicy>
   template <class OutputIterator>
   void 
-  GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   _construct_curves(const Polygon_2 & pgn, OutputIterator oi)
 {
   std::pair<Curve_const_iterator,
@@ -581,7 +581,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 
 template <class Traits_, class TopTraits_, class ValidationPolicy>
   template <class OutputIterator>
-  void GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  void Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   _construct_curves(const Polygon_with_holes_2 & pgn, OutputIterator oi)
 {
   //if (!pgn.is_unbounded())
@@ -609,7 +609,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 template <class Traits_, class TopTraits_, class ValidationPolicy>
   template <class OutputIterator>
   OutputIterator
-  GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   polygons_with_holes(OutputIterator out) const
 {
   typedef Arr_bfs_scanner<Arrangement_on_surface_2, OutputIterator>     Arr_bfs_scanner;
@@ -620,8 +620,8 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 
 
 template <class Traits_, class TopTraits_, class ValidationPolicy>
-  typename GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::Size 
-  GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  typename Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::Size 
+  Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   number_of_polygons_with_holes() const
 {
  
@@ -636,7 +636,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 
 
 template <class Traits_, class TopTraits_, class ValidationPolicy>
-  bool GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  bool Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   locate(const Point_2& q, Polygon_with_holes_2& pgn) const
 {
   Point_location pl(*m_arr);
@@ -712,8 +712,8 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 }
 
 template <class Traits_, class TopTraits_, class ValidationPolicy>
-  typename GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::Ccb_halfedge_const_circulator
-  GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  typename Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::Ccb_halfedge_const_circulator
+  Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   get_boundary_of_polygon(Face_const_iterator f) const
 {
   CGAL_assertion(!f->visited());
@@ -753,7 +753,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 }
 
 template <class Traits_, class TopTraits_, class ValidationPolicy>
-  bool GPS_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
+  bool Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   is_hole_of_face(Face_const_handle f, Halfedge_const_handle he) const
 {
   Inner_ccb_const_iterator   holes_it;

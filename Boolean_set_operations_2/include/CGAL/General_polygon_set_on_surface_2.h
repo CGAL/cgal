@@ -22,7 +22,7 @@
 #ifndef CGAL_GENERAL_POLYGON_SET_ON_SURFACE_2_H
 #define CGAL_GENERAL_POLYGON_SET_ON_SURFACE_2_H
 
-#include <CGAL/Boolean_set_operations_2/GPS_on_surface_base_2.h>
+#include <CGAL/Boolean_set_operations_2/Gps_on_surface_base_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_polygon_validation.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -35,7 +35,7 @@ namespace Boolean_set_operation_2_internal
    /*! is_valid - Checks if a Traits::Polygon_2 OR 
        Traits::Polygon_with_holes_2 are valid.
        This validation policy checks that polygons are valid in a 
-       CGAL_precondition macro. We inherit from GPS_on_surface_base_2
+       CGAL_precondition macro. We inherit from Gps_on_surface_base_2
        and use preconditions to validate the input polygons.
    */ 
     template <class Polygon, class Traits>
@@ -49,19 +49,19 @@ namespace Boolean_set_operation_2_internal
 
 // General_polygon_set_on_surface_2
 /*
-  This class is derived from GPS_on_surface_base_2.
+  This class is derived from Gps_on_surface_base_2.
   It enforces the validation conditions for general polygons, and is therefore
   the basic implementation that should be used by the user
 */
 template <class Traits_, class TopTraits_>
   class General_polygon_set_on_surface_2 : 
-  public GPS_on_surface_base_2<Traits_, TopTraits_, 
+  public Gps_on_surface_base_2<Traits_, TopTraits_, 
                  Boolean_set_operation_2_internal::PreconditionValidationPolicy>
 {
 protected:
   typedef Traits_                                                   Traits_2;
   typedef General_polygon_set_on_surface_2<Traits_2, TopTraits_>    Self;
-  typedef GPS_on_surface_base_2<Traits_2, TopTraits_, 
+  typedef Gps_on_surface_base_2<Traits_2, TopTraits_, 
    Boolean_set_operation_2_internal::PreconditionValidationPolicy>  Base;
 
 public:
