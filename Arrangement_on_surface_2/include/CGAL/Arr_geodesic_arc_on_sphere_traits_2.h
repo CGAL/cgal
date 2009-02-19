@@ -2710,8 +2710,8 @@ public:
   Arr_x_monotone_geodesic_arc_on_sphere_3 opposite() const
   {
     Arr_x_monotone_geodesic_arc_on_sphere_3 opp;
-    opp.m_sourse = this->m_target;
-    opp.m_target = this->m_sourse;
+    opp.m_source = this->m_target;
+    opp.m_target = this->m_source;
     opp.m_normal = this->m_normal;
     opp.m_is_directed_right = !(this->is_directed_right());
     opp.m_is_vertical = this->is_vertical();
