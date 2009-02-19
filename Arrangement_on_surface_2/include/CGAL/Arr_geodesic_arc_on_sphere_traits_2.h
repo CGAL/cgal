@@ -2797,8 +2797,6 @@ public:
          is_vertical, is_directed_right, is_full, is_degenerate, is_empty),
     m_is_x_monotone(is_x_monotone)
   {
-    CGAL_precondition_code(typename Kernel::Point_3 point = ORIGIN);
-    CGAL_precondition(this->has_on(point));
     CGAL_precondition(this->has_on(src));
     CGAL_precondition(this->has_on(trg));
   }
@@ -2927,8 +2925,6 @@ public:
 
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
-    CGAL_precondition_code(typename Kernel::Point_3 point = ORIGIN);
-    CGAL_precondition(this->has_on(point));
     CGAL_precondition(this->has_on(source));
     CGAL_precondition(this->has_on(target));
 
