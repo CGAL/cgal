@@ -226,6 +226,22 @@ public:
       delete m_traits;
   }
 
+  void simplify(const Polygon_2& pgn, Polygon_with_holes_2& res)
+  {
+    typedef Gps_polygon_simplifier<Aos_2>  Simplifier;
+
+    Aos_2*  arr = new Aos_2();
+
+    Simplifier simp(*arr, *m_traits);
+    simp.simplify(pgn);
+    _remove_redundant_edges(arr);
+    Self gps(arr);
+    gps._reset_faces();
+  
+    typedef Oneset_iterator<Polygon_with_holes_2>    OutputItr;
+    OutputItr oi (res);
+    gps.polygons_with_holes(oi);
+  }
 
   // insert a simple polygon
   void insert(const Polygon_2& pgn)

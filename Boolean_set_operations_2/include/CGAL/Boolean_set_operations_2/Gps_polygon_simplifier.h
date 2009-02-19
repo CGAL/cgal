@@ -51,6 +51,7 @@ class Gps_polygon_simplifier
   typedef typename Arrangement_2::Halfedge_handle     Halfedge_handle;
   typedef typename Arrangement_2::Halfedge_iterator   Halfedge_iterator;
   typedef typename Arrangement_2::Face_handle         Face_handle;
+  typedef typename Arrangement_2::Face_iterator       Face_iterator;
   typedef typename Arrangement_2::Edge_iterator       Edge_iterator;
   typedef typename Arrangement_2::Vertex_handle       Vertex_handle;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
@@ -119,9 +120,18 @@ public:
    
     m_sweep_line.sweep(curves_list.begin(), curves_list.end());
 
-    m_faces_hash[m_arr->unbounded_face()] = 0; 
+    // we use the first face with out outer ccbs. This assumpsion should
+    // be fixed when we can make a face with no outer ccb to a face with
+    // outer ccb.
+    Face_iterator it;
+    for (it = m_arr->faces_begin(); it != m_arr->faces_end(); ++it)
+      if (it->number_of_outer_ccbs() == 0)
+        break;
+    CGAL_assertion(it != m_arr->faces_end());
+   
+    m_faces_hash[it] = 0; 
     Bfs_visitor visitor(&m_edges_hash, &m_faces_hash, 1);
-    visitor.visit_ubf(m_arr->unbounded_face(), 0);
+    visitor.visit_ubf(it, 0);
     Bfs_scanner scanner(visitor);
     scanner.scan(*m_arr);
     visitor.after_scan(*m_arr);
