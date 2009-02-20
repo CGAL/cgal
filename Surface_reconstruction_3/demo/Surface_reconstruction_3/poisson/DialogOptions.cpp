@@ -25,7 +25,7 @@ CDialogOptions::CDialogOptions(CWnd* pParent /*=NULL*/)
     , m_contouring_value(0)
     , m_lambda(0)
     , m_nb_neighbors_avg_spacing(0)
-    , m_nb_neighbors_outliers_removal(0)
+    , m_nb_neighbors_outlier_removal(0)
     , m_nb_neighbors_smooth_jet_fitting(0)
     , m_nb_neighbors_pca_normals(0)
     , m_nb_neighbors_jet_fitting_normals(0)
@@ -62,7 +62,7 @@ void CDialogOptions::DoDataExchange(CDataExchange* pDX)
     DDX_Text(pDX,IDC_EDIT_CONTOURING_VALUE,m_contouring_value);
     DDX_Text(pDX,IDC_EDIT_LAMBDA,m_lambda);
     DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_AVG_SPACING,m_nb_neighbors_avg_spacing);
-    DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_OUTLIERS_REMOVAL,m_nb_neighbors_outliers_removal);
+    DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_OUTLIER_REMOVAL,m_nb_neighbors_outlier_removal);
     DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_SMOOTH_JET_FITTING,m_nb_neighbors_smooth_jet_fitting);
     DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_PCA_NORMALS,m_nb_neighbors_pca_normals);
     DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_JET_FITTING_NORMALS,m_nb_neighbors_jet_fitting_normals);

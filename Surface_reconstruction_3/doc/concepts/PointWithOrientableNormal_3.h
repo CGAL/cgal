@@ -26,7 +26,7 @@
 /// normal type is a model of OrientableNormal_3.
 ///
 /// @heading Has Models:
-/// - Point_with_normal_3<Geom_traits, Normal_3> if Normal_3 is a model of OrientableNormal_3.
+/// - Point_with_normal_3<GeomTraits, Normal_3> if Normal_3 is a model of OrientableNormal_3.
 
 class PointWithOrientableNormal_3 
   : public PointWithNormal_3,

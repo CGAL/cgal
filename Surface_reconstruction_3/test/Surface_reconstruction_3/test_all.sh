@@ -1,14 +1,23 @@
 #!/bin/bash
 
-############################################################
 # This application is a cross-platform version of cgal_test.
-# Applications must be already compiled.
-############################################################
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - applications must be already compiled
 
 ERRORFILE=error.txt
 
-# Find executable name (different on Windows and Unix)
-# ----------------------------------------------------
+#---------------------------------------------------------------------#
+#                   find_executable <target>
+#                   (different on Windows and Unix)
+#---------------------------------------------------------------------#
+
 find_executable()
 {
     PARAM_APPLICATION=""
@@ -20,53 +29,64 @@ find_executable()
     echo "$PARAM_APPLICATION"
 }
 
-# run 1 test
-# ----------
+#---------------------------------------------------------------------#
+#                    run <target>
+#---------------------------------------------------------------------#
+
 run()
 {
     # Find exe
     COMMAND="`find_executable $1`"
-    if [ -z "$COMMAND" ]; then
-        echo "Cannot find $1 executable"
-        exit 1
-    fi
+    if [ -f "$COMMAND" ]; then
+      # Add params
+      if [ -f $1.cmd ] ; then
+          COMMAND="$COMMAND `cat $1.cmd`"
+      fi
+      if [ -f $1.cin ] ; then
+          COMMAND="cat $1.cin | $COMMAND"
+      fi
 
-    # Add params
-    if [ -f $1.cmd ] ; then
-        COMMAND="$COMMAND `cat $1.cmd`"
-    fi
-    if [ -f $1.cin ] ; then
-        COMMAND="cat $1.cin | $COMMAND"
-    fi
-
-    # Run
-    echo "------------------------------------------------------------------"
-    echo "- Executing $1"
-    echo "------------------------------------------------------------------"
-    echo
-    if eval $COMMAND 2>&1 ; then
-        echo "   successful execution   of $1" >> $ERRORFILE
+      # Run
+      echo "------------------------------------------------------------------"
+      echo "- Executing $1"
+      echo "------------------------------------------------------------------"
+      echo
+      ulimit -t 3600 2> /dev/null
+      if eval $COMMAND 2>&1 ; then
+          echo "   successful execution   of $1" >> $ERRORFILE
+      else
+          echo "   ERROR:     execution   of $1" >> $ERRORFILE
+      fi
     else
-        echo "   ERROR:     execution   of $1" >> $ERRORFILE
+      echo   "   ERROR:     not executed   $1" >> $ERRORFILE
     fi
-    echo
 }
 
-# main
-# ----
 
+#---------------------------------------------------------------------#
+#                    main
+#---------------------------------------------------------------------#
+
+# start redirection to log file
 (
 
-# remove the previous error file
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
 rm -f $ERRORFILE
 touch $ERRORFILE
 
-# run the tests
+#---------------------------------------------------------------------#
+#                    run the tests
+#---------------------------------------------------------------------#
+
 if [ $# -ne 0 ] ; then
   for file in $* ; do
     run $file
   done
 else
+  echo "Run all tests."
   run analysis_test
   run APSS_reconstruction_test
   run normal_estimation_test
@@ -75,7 +95,10 @@ else
   run smoothing_test
 fi
 
-# Recap results
+#---------------------------------------------------------------------#
+#                   Recap results
+#---------------------------------------------------------------------#
+
 echo "------------------------------------------------------------------"
 echo "- Results"
 echo "------------------------------------------------------------------"

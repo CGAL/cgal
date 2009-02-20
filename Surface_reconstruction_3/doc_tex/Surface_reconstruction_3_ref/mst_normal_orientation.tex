@@ -1,0 +1,107 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: mst_normal_orientation.tex
+% +------------------------------------------------------------------------+
+% | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Surface_reconstruction_3
+% |
+\RCSdef{\RCSmstnormalorientationRev}{$Id$}
+\RCSdefDate{\RCSmstnormalorientationDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{mst_normal_orientation}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+\ccc{CGAL::mst_normal_orientation()} orients the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
+The result is an oriented normal vector for each input point/normal.
+
+\ccInclude{CGAL/mst_normal_orientation.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccFunction{unsigned int mst_normal_orientation(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int KNN);}
+{
+Orient the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
+This variant implements the original algorithm. Note that it does not orient normals that are already oriented.
+Preconditions:\begin{itemize}
+\item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item Normals must be unit vectors.\item KNN $>$= 2.\end{itemize}
+}
+\ccGlue
+\begin{description}
+\item[Returns:]the number of un-oriented normals. \end{description}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[first]first input vertex \item[beyond]past-the-end input vertex \item[\ccc{vertex_index_map}]property map VertexIterator -$>$ index \item[\ccc{vertex_point_map}]property map VertexIterator -$>$ \ccc{Point_3} \item[\ccc{vertex_normal_map}]property map VertexIterator -$>$ Normal (in and out) \item[KNN]number of neighbors \end{description}
+\end{description}
+\ccGlue
+\ccFunction{unsigned int mst_normal_orientation(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int KNN, double angle_max);}
+{
+Orient the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
+This is a variant of the original algorithm. It:\begin{itemize}
+\item orients the top point towards +Z axis.\item does not orient normals that are already oriented.\item does not propagate the orientation if the angle between 2 normals $>$ \ccc{angle_max}.\end{itemize}
+Preconditions:\begin{itemize}
+\item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item Normals must be unit vectors.\item KNN $>$= 2.\item 0 $<$ \ccc{angle_max} $<$= PI/2.\end{itemize}
+}
+\ccGlue
+\begin{description}
+\item[Returns:]the number of un-oriented normals. \end{description}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[first]first input vertex \item[beyond]past-the-end input vertex \item[\ccc{vertex_index_map}]property map VertexIterator -$>$ index \item[\ccc{vertex_point_map}]property map VertexIterator -$>$ \ccc{Point_3} \item[\ccc{vertex_normal_map}]property map VertexIterator -$>$ Normal (in and out) \item[KNN]number of neighbors \item[\ccc{angle_max}]max angle to propagate the normal orientation (radians) \end{description}
+\end{description}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccParameters
+
+The full template declarations are:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class VertexIterator,   \\
+class VertexPointMap,   \\
+class VertexIndexMap,   \\
+class VertexNormalMap$>$  \\
+unsigned int  \\
+\ccc{mst_normal_orientation} (VertexIterator first, VertexIterator beyond, VertexIndexMap \ccc{vertex_index_map}, VertexPointMap \ccc{vertex_point_map}, VertexNormalMap \ccc{vertex_normal_map}, unsigned int KNN);  \\
+  \\
+template$<$  \\
+class VertexIterator,   \\
+class VertexPointMap,   \\
+class VertexIndexMap,   \\
+class VertexNormalMap$>$  \\
+unsigned int  \\
+\ccc{mst_normal_orientation} (VertexIterator first, VertexIterator beyond, VertexIndexMap \ccc{vertex_index_map}, VertexPointMap \ccc{vertex_point_map}, VertexNormalMap \ccc{vertex_normal_map}, unsigned int KNN, double \ccc{angle_max});  \\
+
+%END-AUTO(\ccParameters)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::pca_normal_estimation}  \\
+\ccRefIdfierPage{CGAL::jet_normal_estimation}  \\
+
+\ccExample
+
+\ccIncludeExampleCode{Surface_reconstruction_3/pca_normal_estimation_example.cpp}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

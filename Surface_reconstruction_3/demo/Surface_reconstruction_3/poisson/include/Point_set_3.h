@@ -25,7 +25,7 @@
 /// - OpenGL rendering
 /// - bounding box
 /// 
-/// CAUTION: invalidate_bounding_box() must be called 
+/// CAUTION: invalidate_bounds() must be called 
 /// after modifying the points.
 /// 
 /// @heading Parameters:
@@ -162,14 +162,14 @@ public:
           end());    
 
     m_nb_selected_points = 0;
-    invalidate_bounding_box();
+    invalidate_bounds();
   } 
 
   /// Get the bounding box.
   Iso_cuboid bounding_box() const
   {
     if (!m_bounding_box_is_valid)
-      update_bounding_box();
+      update_bounds();
 
     return m_bounding_box;
   }
@@ -178,7 +178,7 @@ public:
   Sphere bounding_sphere() const
   {
     if (!m_bounding_box_is_valid)
-      update_bounding_box();
+      update_bounds();
 
     return m_bounding_sphere;
   }
@@ -187,7 +187,7 @@ public:
   Point barycenter() const
   {
     if (!m_bounding_box_is_valid)
-      update_bounding_box();
+      update_bounds();
 
     return m_barycenter;
   }
@@ -196,7 +196,7 @@ public:
   FT diameter_standard_deviation() const
   {
     if (!m_bounding_box_is_valid)
-      update_bounding_box();
+      update_bounds();
 
     return m_diameter_standard_deviation;
   }
@@ -206,7 +206,7 @@ public:
   Sphere region_of_interest() const
   {
     if (!m_bounding_box_is_valid)
-      update_bounding_box();
+      update_bounds();
 
     // A good candidate is a sphere containing the dense region of the point cloud:
     // - center point is barycenter
@@ -217,7 +217,7 @@ public:
 
   /// Update barycenter, bounding box, bounding sphere and standard deviation.
   /// Owner is responsible to call this function after modifying the triangulation.
-  void invalidate_bounding_box()
+  void invalidate_bounds()
   {
     m_bounding_box_is_valid = false;
   }
@@ -369,7 +369,7 @@ public:
 private:
 
   /// Recompute barycenter, bounding box, bounding sphere and standard deviation.
-  void update_bounding_box() const
+  void update_bounds() const
   {
     if (begin() == end())
       return;

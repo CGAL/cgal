@@ -3723,46 +3723,54 @@ Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/res/Toolbar.bmp -
 Surface_reconstruction_3/doc/reconstruction.pdf -text svneol=unset#application/pdf
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/APSS.eps -text svneol=unset#application/postscript
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/APSS.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/clustering.eps -text svneol=unset#application/postscript
-Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/clustering.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/fig/reconstruction.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/fig/reconstructionDetail.png -text svneol=unset#image/png
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/introduction.eps -text svneol=unset#application/postscript
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/introduction.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/normal_estimation_pca.eps -text svneol=unset#application/postscript
-Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/normal_estimation_pca.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/normals_orientation_mst.eps -text svneol=unset#application/postscript
-Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/normals_orientation_mst.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/outliers_removal.eps -text svneol=unset#application/postscript
-Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/outliers_removal.jpg -text svneol=unset#image/jpeg
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/jet_smoothing.eps -text svneol=unset#application/postscript
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/jet_smoothing.jpg -text svneol=unset#image/jpeg
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/merge_simplification.eps -text svneol=unset#application/postscript
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/merge_simplification.jpg -text svneol=unset#image/jpeg
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/mst_normal_orientation.eps -text svneol=unset#application/postscript
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/mst_normal_orientation.jpg -text svneol=unset#image/jpeg
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/outlier_removal.eps -text svneol=unset#application/postscript
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/outlier_removal.jpg -text svneol=unset#image/jpeg
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/pca_normal_estimation.eps -text svneol=unset#application/postscript
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/pca_normal_estimation.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/poisson.eps -text svneol=unset#application/postscript
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/poisson.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/random_simplification.eps -text svneol=unset#application/postscript
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/random_simplification.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/smoothing_jet_fitting.eps -text svneol=unset#application/postscript
-Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/smoothing_jet_fitting.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_3/examples/Surface_reconstruction_3/APSS_reconstruction.cmd eol=lf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/APSS_reconstruction_vc80.vcproj eol=crlf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/normal_estimation_vc80.vcproj eol=crlf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/poisson_reconstruction_vc80.vcproj eol=crlf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/average_spacing_example.cmd eol=lf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/examples/Surface_reconstruction_3/data/camel.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_3/examples/Surface_reconstruction_3/data/oni.xyz -text
 Surface_reconstruction_3/examples/Surface_reconstruction_3/data/sphere_20k.xyz -text
+Surface_reconstruction_3/examples/Surface_reconstruction_3/jet_smoothing_example.cmd eol=lf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/normal_estimation.cmd eol=lf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/outlier_removal_example.cmd eol=lf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/pca_normal_estimation_example.cmd eol=lf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/poisson_reconstruction.cmd eol=lf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/poisson_reconstruction_example.cmd eol=lf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/random_simplification_example.cmd eol=lf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/reconstruction_vc80.sln eol=crlf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/surface_reconstruction_read_write_xyz_example.cmd eol=lf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/test_all.bat eol=crlf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/test_all.sh eol=lf
 Surface_reconstruction_3/include/CGAL/Neighborhood/knn_point_neighbor_search.h -text
 Surface_reconstruction_3/include/CGAL/Neighborhood/point_kdtree_3.h -text
 Surface_reconstruction_3/include/CGAL/Orientable_normal_3.h -text
 Surface_reconstruction_3/include/CGAL/average_spacing_3.h -text
-Surface_reconstruction_3/include/CGAL/smooth_jet_fitting_3.h -text
+Surface_reconstruction_3/include/CGAL/jet_smoothing_3.h -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/APSS_reconstruction_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/APSS_reconstruction_test_vc80.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/analysis_test_vc80.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/normal_estimation_test_vc80.vcproj eol=crlf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/outliers_removal_test_vc80.vcproj eol=crlf
+Surface_reconstruction_3/test/Surface_reconstruction_3/VC/outlier_removal_test_vc80.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/poisson_reconstruction_test_vc80.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/smoothing_test_vc80.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cmd eol=lf
@@ -3772,7 +3780,7 @@ Surface_reconstruction_3/test/Surface_reconstruction_3/data/oni.pwn -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/polygirl.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere_20k.xyz -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/normal_estimation_test.cmd eol=lf
-Surface_reconstruction_3/test/Surface_reconstruction_3/outliers_removal_test.cmd eol=lf
+Surface_reconstruction_3/test/Surface_reconstruction_3/outlier_removal_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/poisson_reconstruction_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/reconstruction_test_vc80.sln eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/smoothing_test.cmd eol=lf

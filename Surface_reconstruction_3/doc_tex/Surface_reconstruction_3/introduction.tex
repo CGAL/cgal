@@ -6,6 +6,22 @@ More specifically, the input is an unorganized point set, possibly with attribut
 
 The core surface reconstruction algorithms consist of computing implicit functions which are either an approximate signed distance function to the inferred surface (Algebraic Point Set Surface - referred to as APSS in the sequel) or an approximate indicator function of the inferred solid (Poisson Surface Reconstruction - referred to as Poisson). Another distinction between the APSS and Poisson algorithms lies into the fact that APSS evaluates the function on the fly at any point location while Poisson requires solving for the implicit function before evaluation. The component is structured along a surface reconstruction pipeline that we now detail. 
 
+% Insert image introduction.jpg/eps
+\begin{center}
+    \label{Surface_reconstruction_3-fig-introduction}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=0.9\textwidth]{Surface_reconstruction_3/introduction} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="90%" border=0 src="./introduction.jpg"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
+        \caption{Surface reconstruction from point set}
+    \end{figure}
+\end{center}
+
 \subsection{Pipeline}
 
 \subsubsection{Input}
@@ -27,40 +43,40 @@ The core surface reconstruction algorithms consist of computing implicit functio
 
 \subsubsection{Processing}
 
-Outliers removal methods:
+Outlier removal:
 
 \begin{itemize}
-\item Outliers removal wrt average squared distance to the K nearest neighbors
+\item Outlier removal wrt average squared distance to the K nearest neighbors
 \end{itemize}
 
-Point set simplification methods:
+Point set simplification:
 
 \begin{itemize}
 \item Point set simplification by clustering
 \item Random point set simplification
 \end{itemize}
 
-Smoothing methods:
+Smoothing:
 
 \begin{itemize}
 \item Smoothing via Jet fitting over the K nearest neighbors + reprojection
 \end{itemize}
 
-Normals estimation methods:
+Normal estimation:
 
 \begin{itemize}
-\item Normals estimation by Principal Components Analysis over the K nearest neighbors
-\item Normals estimation by Jet fitting over the K nearest neighbors
+\item Normal estimation by Principal Components Analysis over the K nearest neighbors
+\item Normal estimation by Jet fitting over the K nearest neighbors
 \end{itemize}
 
-Normals orientation methods:
+Normal orientation:
 
 \begin{itemize}
-\item Normals orientation using a Minimal Spanning Tree \cite{cgal:hddms-srup-92}
+\item Normal orientation using a Minimal Spanning Tree \cite{cgal:hddms-srup-92}
 \end{itemize}
 
 
-\subsubsection{Surface Reconstruction Methods}
+\subsubsection{Surface Reconstruction}
 
 Implicit functions:
 

@@ -38,7 +38,7 @@ class Arcball
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-1.,1.,-1.,1.,-1000.,1000.); // LS: near/far was -40./40.
+    glOrtho(-1.,1.,-1.,1.,-1000.,1000.); 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -58,10 +58,10 @@ class Arcball
     glViewport(0, 0, x, y);
     if (x<y){
       side = x/2;
-      glOrtho(-1., 1., -r, r, -1000., 1000.); // LS: near/far was -40./40.
+      glOrtho(-1., 1., -r, r, -1000., 1000.); 
     }
     else {
-      glOrtho(-1./r, 1./r, -1., 1., -1000., 1000.); // LS: near/far was -40./40.
+      glOrtho(-1./r, 1./r, -1., 1., -1000., 1000.); 
       side = y/2;
     }
     xside = x/2;

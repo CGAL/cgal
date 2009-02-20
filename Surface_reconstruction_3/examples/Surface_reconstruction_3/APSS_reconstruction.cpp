@@ -1,10 +1,5 @@
 // APSS_reconstruction.cpp
 
-
-// ----------------------------------------------------------------------------
-// USAGE EXAMPLES
-// ----------------------------------------------------------------------------
-
 //----------------------------------------------------------
 // APSS reconstruction method:
 // Read a point set or a mesh's set of vertices, reconstruct a surface,
@@ -21,13 +16,11 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
-
-//Warning: crash when using #define CGAL_C2T3_USE_POLYHEDRON
 #define CGAL_C2T3_USE_FILE_WRITER_OFF
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 // This package
-#include <CGAL/APSS_implicit_function.h>
+#include <CGAL/APSS_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 #include <CGAL/IO/surface_reconstruction_read_pwn.h>
@@ -35,7 +28,7 @@
 // This test
 #include "enriched_polyhedron.h"
 
-// STL stuff
+// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -44,7 +37,7 @@
 
 
 // ----------------------------------------------------------------------------
-// Private types
+// Types
 // ----------------------------------------------------------------------------
 
 // kernel
@@ -58,12 +51,12 @@ typedef Kernel::Sphere_3 Sphere;
 typedef std::deque<Point_with_normal> PointList;
 
 // APSS implicit function
-typedef CGAL::APSS_implicit_function<Kernel> APSS_implicit_function;
+typedef CGAL::APSS_reconstruction_function<Kernel> APSS_reconstruction_function;
 
 // Surface mesher
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function> Surface_3;
+typedef CGAL::Implicit_surface_3<Kernel, APSS_reconstruction_function> Surface_3;
 
 
 // ----------------------------------------------------------------------------
@@ -103,7 +96,6 @@ int main(int argc, char * argv[])
     FT sm_error_bound_apss = 1e-3;
     FT sm_distance_apss = 0.003; // Upper bound of distance to surface (APSS).
                                  // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
-                                 // LS: was 0.005
     unsigned int nb_neighbors_apss = 24; // APSS K-nearest neighbors = 4 rings, as suggested by GG
 
     // decode parameters
@@ -215,8 +207,8 @@ int main(int argc, char * argv[])
     std::cerr << "Compute APSS implicit function (knn=" << nb_neighbors_apss << ")...\n";
 
     // Create implicit function
-    APSS_implicit_function apss_function(points.begin(), points.end(),
-                                         nb_neighbors_apss);
+    APSS_reconstruction_function apss_function(points.begin(), points.end(),
+                                               nb_neighbors_apss);
 
     // Recover memory used by points[]
     points.clear();

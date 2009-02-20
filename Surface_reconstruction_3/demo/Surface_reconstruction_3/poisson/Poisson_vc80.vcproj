@@ -45,7 +45,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm900"
+				AdditionalOptions="/Zm900 /bigobj"
 				Optimization="0"
 				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\Spatial_searching\include;..\..\..\..\Jet_fitting_3\include;..\..\..\..\Profiling_tools\include;..\..\..\..\Surface_mesh_parameterization\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;DEBUG_TRACE"
@@ -110,98 +110,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
-			UseOfMFC="2"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="false"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm900"
-				Optimization="2"
-				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\Spatial_searching\include;..\..\..\..\Jet_fitting_3\include;..\..\..\..\Profiling_tools\include;..\..\..\..\Surface_mesh_parameterization\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
-				PreprocessorDefinitions="WIN32;CGAL_NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;DEBUG_TRACE"
-				MinimalRebuild="false"
-				ExceptionHandling="2"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="true"
-				ProgramDataBaseFileName="$(IntDir)\$(ProjectName).pdb"
-				WarningLevel="2"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="0"
-				DisableSpecificWarnings="4267;4311;4800;4503;4244;4345;4996"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				AdditionalIncludeDirectories="$(IntDir)"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib Psapi.lib"
-				OutputFile="$(OutDir)/$(ProjectName).exe"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;"
-				GenerateDebugInformation="false"
-				SubSystem="2"
-				StackReserveSize="2097152"
-				LargeAddressAware="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug|x64"
 			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
@@ -229,7 +137,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm900"
+				AdditionalOptions="/Zm900 /bigobj"
 				Optimization="0"
 				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\Spatial_searching\include;..\..\..\..\Jet_fitting_3\include;..\..\..\..\Profiling_tools\include;..\..\..\..\Surface_mesh_parameterization\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;DEBUG_TRACE"
@@ -294,6 +202,98 @@
 			/>
 		</Configuration>
 		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			UseOfMFC="2"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="false"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm900 /bigobj"
+				Optimization="2"
+				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\Spatial_searching\include;..\..\..\..\Jet_fitting_3\include;..\..\..\..\Profiling_tools\include;..\..\..\..\Surface_mesh_parameterization\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
+				PreprocessorDefinitions="WIN32;CGAL_NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;DEBUG_TRACE"
+				MinimalRebuild="false"
+				ExceptionHandling="2"
+				RuntimeLibrary="2"
+				RuntimeTypeInfo="true"
+				ProgramDataBaseFileName="$(IntDir)\$(ProjectName).pdb"
+				WarningLevel="2"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="0"
+				DisableSpecificWarnings="4267;4311;4800;4503;4244;4345;4996"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				AdditionalIncludeDirectories="$(IntDir)"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="opengl32.lib glu32.lib Psapi.lib"
+				OutputFile="$(OutDir)/$(ProjectName).exe"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;"
+				GenerateDebugInformation="false"
+				SubSystem="2"
+				StackReserveSize="2097152"
+				LargeAddressAware="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
 			Name="Release|x64"
 			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
@@ -322,7 +322,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm900"
+				AdditionalOptions="/Zm900 /bigobj"
 				Optimization="2"
 				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\Spatial_searching\include;..\..\..\..\Jet_fitting_3\include;..\..\..\..\Profiling_tools\include;..\..\..\..\Surface_mesh_parameterization\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
 				PreprocessorDefinitions="WIN32;CGAL_NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_HAS_ITERATOR_DEBUGGING=0;CGAL_USE_GMP;DEBUG_TRACE"
@@ -435,7 +435,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Debug|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -443,7 +443,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|x64"
+					Name="Release|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -498,7 +498,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\orient_normals_wrt_cameras_3.h"
+				RelativePath=".\include\normal_orientation_wrt_cameras.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\outlier_removal_wrt_camera_cone_angle_3.h"
 				>
 			</File>
 			<File
@@ -523,10 +527,6 @@
 			</File>
 			<File
 				RelativePath=".\include\RedirectIOToConsole.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\remove_outliers_wrt_camera_cone_angle_3.h"
 				>
 			</File>
 			<File
@@ -585,7 +585,7 @@
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
-				RelativePath="..\..\..\include\CGAL\APSS_implicit_function.h"
+				RelativePath="..\..\..\include\CGAL\APSS_reconstruction_function.h"
 				>
 			</File>
 			<File
@@ -593,19 +593,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\estimate_normals_jet_fitting_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\estimate_normals_pca_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\Implicit_fct_delaunay_triangulation_3.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\include\CGAL\Iso_cuboid_oracle_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\jet_normal_estimation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\jet_smoothing_3.h"
 				>
 			</File>
 			<File
@@ -617,15 +613,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\merge_epsilon_nearest_points_3.h"
+				RelativePath="..\..\..\include\CGAL\merge_simplification_3.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\orient_normals_minimum_spanning_tree_3.h"
+				RelativePath="..\..\..\include\CGAL\mst_normal_orientation.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\Orientable_normal_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\outlier_removal_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\pca_normal_estimation.h"
 				>
 			</File>
 			<File
@@ -637,7 +641,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\Poisson_implicit_function.h"
+				RelativePath="..\..\..\include\CGAL\Poisson_reconstruction_function.h"
 				>
 			</File>
 			<File
@@ -645,7 +649,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\radial_normals_orientation_3.h"
+				RelativePath="..\..\..\include\CGAL\radial_normal_orientation_3.h"
 				>
 			</File>
 			<File
@@ -653,19 +657,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\random_simplification_points_3.h"
+				RelativePath="..\..\..\include\CGAL\random_simplification_3.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\remove_outliers_wrt_avg_knn_sq_distance_3.h"
+				RelativePath="..\..\..\include\CGAL\Reconstruction_triangulation_3.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\Search_traits_vertex_handle_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\smooth_jet_fitting_3.h"
 				>
 			</File>
 			<File
@@ -717,18 +717,6 @@
 			Name="Concepts"
 			>
 			<File
-				RelativePath="..\..\..\doc\concepts\ImplicitFctDelaunayTriangulation_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\doc\concepts\ImplicitFctDelaunayTriangulationCellBase_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\doc\concepts\ImplicitFctDelaunayTriangulationVertexBase_3.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\doc\concepts\OrientableNormal_3.h"
 				>
 			</File>
@@ -741,7 +729,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\doc\concepts\ReconstructionImplicitFunction.h"
+				RelativePath="..\..\..\doc\concepts\ReconstructionCellBase_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\doc\concepts\ReconstructionTriangulation_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\doc\concepts\ReconstructionVertexBase_3.h"
 				>
 			</File>
 		</Filter>
@@ -757,7 +753,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release|Win32"
+				Name="Debug|x64"
 				ExcludedFromBuild="true"
 				>
 				<Tool
@@ -765,7 +761,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Debug|x64"
+				Name="Release|Win32"
 				ExcludedFromBuild="true"
 				>
 				<Tool

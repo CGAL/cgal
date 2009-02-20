@@ -72,7 +72,7 @@ void  \\
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function> Surface_3;
+typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 typedef Kernel::Triangle_3 Triangle;
 
 Surface_3 surface =...; // Implicit function to contour

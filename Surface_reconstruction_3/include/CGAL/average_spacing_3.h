@@ -1,4 +1,4 @@
-// Copyright (c) 2007-08  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:
-// $Id:
+// $URL$
+// $Id$
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
@@ -26,6 +26,12 @@
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
+
+
+// ----------------------------------------------------------------------------
+// Private section
+// ----------------------------------------------------------------------------
+namespace CGALi { 
 
 
 /// Compute average spacing of one query point from K nearest neighbors.
@@ -77,6 +83,14 @@ average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose spa
 }
 
 
+} /* namespace CGALi */
+
+
+// ----------------------------------------------------------------------------
+// Public section
+// ----------------------------------------------------------------------------
+
+
 /// Compute average spacing from K nearest neighbors.
 /// This variant requires the kernel.
 ///
@@ -120,7 +134,7 @@ average_spacing_3(InputIterator first,    ///< input points
   InputIterator it;
   for(it = first; it != beyond; it++)
   {
-    sum_spacings += average_spacing_3<Kernel,Tree>(*it,tree,KNN);
+    sum_spacings += CGALi::average_spacing_3<Kernel,Tree>(*it,tree,KNN);
     nb_points++;
   }
 

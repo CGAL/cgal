@@ -1,14 +1,10 @@
 // poisson_reconstruction.cpp
 
-
-// ----------------------------------------------------------------------------
-// USAGE EXAMPLES
-// ----------------------------------------------------------------------------
-
 //----------------------------------------------------------
-// Poisson Delaunay Reconstruction method
-// Read a point set or a mesh's set of vertices, reconstruct a surface,
+// Poisson Delaunay Reconstruction method.
+// Read a point set or a mesh's set of vertices, reconstruct a surface using Poisson,
 // and save the surface.
+// Output format is .off.
 //----------------------------------------------------------
 // poisson_reconstruction file_in file_out [options]
 
@@ -21,13 +17,11 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
-
-//Warning: crash when using #define CGAL_C2T3_USE_POLYHEDRON
 #define CGAL_C2T3_USE_FILE_WRITER_OFF
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 // This package
-#include <CGAL/Poisson_implicit_function.h>
+#include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 #include <CGAL/IO/surface_reconstruction_read_pwn.h>
@@ -35,7 +29,7 @@
 // This test
 #include "enriched_polyhedron.h"
 
-// STL stuff
+// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -44,7 +38,7 @@
 
 
 // ----------------------------------------------------------------------------
-// Private types
+// Types
 // ----------------------------------------------------------------------------
 
 // kernel
@@ -58,13 +52,13 @@ typedef Kernel::Sphere_3 Sphere;
 typedef std::deque<Point_with_normal> PointList;
 
 // Poisson's Delaunay triangulation 3 and implicit function
-typedef CGAL::Implicit_fct_delaunay_triangulation_3<Kernel> Dt3;
-typedef CGAL::Poisson_implicit_function<Kernel, Dt3> Poisson_implicit_function;
+typedef CGAL::Reconstruction_triangulation_3<Kernel> Dt3;
+typedef CGAL::Poisson_reconstruction_function<Kernel, Dt3> Poisson_reconstruction_function;
 
 // Surface mesher
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function> Surface_3;
+typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
 
 // ----------------------------------------------------------------------------
@@ -81,9 +75,9 @@ int main(int argc, char * argv[])
     //***************************************
 
     // usage
-    if (argc<3)
+    if (argc-1 < 2)
     {
-      std::cerr << "Read a point set or a mesh's set of vertices, reconstruct a surface,\n";
+      std::cerr << "Read a point set or a mesh's set of vertices, reconstruct a surface using Poisson,\n";
       std::cerr << "and save the surface.\n";
       std::cerr << "\n";
       std::cerr << "Usage: " << argv[0] << " file_in file_out [options]\n";
@@ -97,7 +91,7 @@ int main(int argc, char * argv[])
 
     // Poisson options
     FT sm_angle_poisson = 20.0; // theorical guaranty if angle >= 30, but slower
-    FT sm_radius_poisson = 0.1; // as suggested by LR
+    FT sm_radius_poisson = 0.1;
     FT sm_error_bound_poisson = 1e-3;
     FT sm_distance_poisson = 0.002; // upper bound of distance to surface (Poisson)
 
@@ -210,7 +204,7 @@ int main(int argc, char * argv[])
     // Create implicit function and triangulation.
     // Insert vertices and normals in triangulation.
     Dt3 dt;
-    Poisson_implicit_function poisson_function(dt, points.begin(), points.end());
+    Poisson_reconstruction_function poisson_function(dt, points.begin(), points.end());
 
     // Recover memory used by points[]
     points.clear();

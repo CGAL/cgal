@@ -585,6 +585,7 @@ Surface_reconstruction_3/examples/Surface_reconstruction_3/normal_estimation
 Surface_reconstruction_3/examples/Surface_reconstruction_3/normal_estimation.cpp.mst
 Surface_reconstruction_3/examples/Surface_reconstruction_3/poisson_reconstruction
 Surface_reconstruction_3/examples/Surface_reconstruction_3/release
+Surface_reconstruction_3/examples/Surface_reconstruction_3/sphere_20k_copy.xyz
 Surface_reconstruction_3/include/CGAL/*.Taucs_symmetric_solver_traits
 Surface_reconstruction_3/include/CGAL/*.object_pool
 Surface_reconstruction_3/include/CGAL/*.pool

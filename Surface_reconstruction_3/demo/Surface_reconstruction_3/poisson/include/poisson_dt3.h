@@ -2,7 +2,7 @@
 #define POISSON_DT3_H
 
 // CGAL
-#include <CGAL/Implicit_fct_delaunay_triangulation_3.h>
+#include <CGAL/Reconstruction_triangulation_3.h>
 
 // STL
 #include <vector>
@@ -11,35 +11,35 @@
 
 
 /// The Poisson_dt3 class is a 3D triangulation class that provides:
-/// - the interface requested by the Poisson_implicit_function class
+/// - the interface requested by the Poisson_reconstruction_function class
 /// - OpenGL rendering
 ///
 /// @heading Is Model for the Concepts: 
-/// Model of the ImplicitFctDelaunayTriangulation_3 concept.
+/// Model of the ReconstructionTriangulation_3 concept.
 ///
 /// @heading Parameters:
-/// @param BaseGt   Kernel's regular geometric traits.
+/// @param BaseGt   Kernel's geometric traits.
 /// @param Gt       Geometric traits class / Point_3 is a model of PointWithNormal_3.
 /// @param Tds      Model of TriangulationDataStructure_3. The cell base class must be
-/// a model of ImplicitFctDelaunayTriangulationCellBase_3 and the vertex base class
-/// must be a model of ImplicitFctDelaunayTriangulationVertexBase_3.
+/// a model of ReconstructionCellBase_3 and the vertex base class
+/// must be a model of ReconstructionVertexBase_3.
 
 template <class BaseGt,
-          class Gt = CGAL::Implicit_fct_delaunay_triangulation_default_geom_traits_3<BaseGt>,
-          class Tds = CGAL::Triangulation_data_structure_3<CGAL::Implicit_fct_delaunay_triangulation_vertex_base_3<Gt>,
-                                                           CGAL::Implicit_fct_delaunay_triangulation_cell_base_3<Gt> > >
-class Poisson_dt3 : public CGAL::Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds>
+          class Gt = CGAL::Reconstruction_triangulation_default_geom_traits_3<BaseGt>,
+          class Tds = CGAL::Triangulation_data_structure_3<CGAL::Reconstruction_vertex_base_3<Gt>,
+                                                           CGAL::Reconstruction_cell_base_3<Gt> > >
+class Poisson_dt3 : public CGAL::Reconstruction_triangulation_3<BaseGt,Gt,Tds>
 {
 // Private types
 private:
 
   // Base class
-  typedef CGAL::Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds> Base;
+  typedef CGAL::Reconstruction_triangulation_3<BaseGt,Gt,Tds> Base;
 
 // Public types
 public:
 
-  // Repeat Implicit_fct_delaunay_triangulation_3 public types
+  // Repeat Reconstruction_triangulation_3 public types
   /// @cond SKIP_IN_MANUAL
   typedef Tds Triangulation_data_structure;
   typedef Gt  Geom_traits; ///< Geometric traits class / Point_3 is a model of PointWithNormal_3.

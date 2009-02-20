@@ -23,7 +23,7 @@
 /// - a normal (oriented).
 ///
 /// @heading Has Models:
-/// - Point_with_normal_3<Geom_traits, Normal_3>
+/// - Point_with_normal_3<GeomTraits, Normal_3>
 
 class PointWithNormal_3 
   : public Kernel::Point_3,

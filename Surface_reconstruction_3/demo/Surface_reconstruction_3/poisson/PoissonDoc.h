@@ -5,6 +5,7 @@
 #define _DOC_
 #pragma once
 
+
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh_vertex_base_3.h>
@@ -13,14 +14,15 @@
 
 // This package
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/Poisson_implicit_function.h>
-#include <CGAL/APSS_implicit_function.h>
+#include <CGAL/Poisson_reconstruction_function.h>
+#include <CGAL/APSS_reconstruction_function.h>
 
 // This demo
 #include "poisson_dt3.h"
 #include "UI_point_3.h"
 #include "Point_set_3.h"
 #include "Triangular_surface_3.h"
+
 
 // kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -45,10 +47,10 @@ typedef UI_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
 
 // Poisson's 3D Delaunay triangulation and implicit function
 typedef Poisson_dt3<Kernel> Dt3;
-typedef CGAL::Poisson_implicit_function<Kernel, Dt3> Poisson_implicit_function;
+typedef CGAL::Poisson_reconstruction_function<Kernel, Dt3> Poisson_reconstruction_function;
 
 // APSS implicit function
-typedef CGAL::APSS_implicit_function<Kernel> APSS_implicit_function;
+typedef CGAL::APSS_reconstruction_function<Kernel> APSS_reconstruction_function;
 
 // Surface mesh generator 
 typedef CGAL::Surface_mesh_vertex_base_3<Kernel> SVb;
@@ -93,13 +95,13 @@ private:
     Point_set m_points;
 
     // Poisson implicit function
-    Poisson_implicit_function* m_poisson_function; // Poisson implicit function
+    Poisson_reconstruction_function* m_poisson_function; // Poisson implicit function
     Dt3* m_poisson_dt; // The Poisson equation is solved on the vertices of m_poisson_dt
     bool m_triangulation_refined; // Is Delaunay refinement applied?
     bool m_poisson_solved; // Is the Poisson equation solved?
 
     // - APSS implicit function
-    APSS_implicit_function* m_apss_function;
+    APSS_reconstruction_function* m_apss_function;
 
     // Surface mesher 
     STr m_surface_mesher_dt; // 3D-Delaunay triangulation
@@ -141,7 +143,7 @@ private:
     // Outlier removal
     double m_min_cameras_cone_angle; // min angle of camera's cone (degrees)
     double m_threshold_percent_avg_knn_sq_dst; // percentage of outliers to remove
-	double m_nb_neighbors_outliers_removal; // K-nearest neighbors (outliers_removal)
+	double m_nb_neighbors_outlier_removal; // K-nearest neighbors (outlier_removal)
 
     // Point set simplification
     double m_clustering_step; // Grid's step for simplification by clustering 
@@ -157,11 +159,11 @@ public:
     const Point_set* points() const { return &m_points; }
     //
     // - as Poisson implicit function
-    const Poisson_implicit_function* poisson_function() const 
+    const Poisson_reconstruction_function* poisson_function() const 
     { return m_poisson_function; }
     //
     // - as APSS implicit function
-    const APSS_implicit_function* apss_function() const 
+    const APSS_reconstruction_function* apss_function() const 
     { return m_apss_function; }
     //
     // The current edit mode indicates which form is valid.
@@ -190,12 +192,12 @@ private:
     // Check the accuracy of normals direction estimation.
     // If original normals are available, compare with them and select normals with large deviation.
     // @return true on success.
-    bool verify_normals_direction();
-    // Check the accuracy of normals orientation.
+    bool verify_normal_direction();
+    // Check the accuracy of normal orientation.
     // Count and select non-oriented normals.
     // If original normals are available, compare with them and select flipped normals.
     // @return true on success.
-    bool verify_normals_orientation();
+    bool verify_normal_orientation();
 
 // MFC generated
 public:
@@ -253,10 +255,10 @@ public:
     afx_msg void OnUpdateReconstructionDelaunayRefinement(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsRefineInShell(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsExtrapolateNormals(CCmdUI *pCmdUI);
-    afx_msg void OnAlgorithmsOutliersRemovalWrtCamerasConeAngle();
-    afx_msg void OnUpdateAlgorithmsOutliersRemovalWrtCamerasConeAngle(CCmdUI *pCmdUI);
-    afx_msg void OnOutliersRemovalWrtAvgKnnSqDist();
-    afx_msg void OnUpdateOutliersRemovalWrtAvgKnnSqDist(CCmdUI *pCmdUI);
+    afx_msg void OnAlgorithmsOutlierRemovalWrtCamerasConeAngle();
+    afx_msg void OnUpdateAlgorithmsOutlierRemovalWrtCamerasConeAngle(CCmdUI *pCmdUI);
+    afx_msg void OnOutlierRemoval();
+    afx_msg void OnUpdateOutlierRemoval(CCmdUI *pCmdUI);
     afx_msg void OnAnalysisAverageSpacing();
     afx_msg void OnOneStepPoissonReconstruction();
     afx_msg void OnUpdateOneStepPoissonReconstruction(CCmdUI *pCmdUI);
@@ -272,8 +274,8 @@ public:
     afx_msg void OnPointCloudSimplificationRandom();
     afx_msg void OnUpdatePointCloudSimplificationByClustering(CCmdUI *pCmdUI);
     afx_msg void OnUpdatePointCloudSimplificationRandom(CCmdUI *pCmdUI);
-    afx_msg void OnRadialNormalsOrientation();
-    afx_msg void OnUpdateRadialNormalsOrientation(CCmdUI *pCmdUI);
+    afx_msg void OnRadialNormalOrientation();
+    afx_msg void OnUpdateRadialNormalOrientation(CCmdUI *pCmdUI);
     afx_msg void OnFlipNormals();
     afx_msg void OnUpdateFlipNormals(CCmdUI *pCmdUI);
     afx_msg void OnUpdateStepExtrapolatenormalsusinggaussiankernels(CCmdUI *pCmdUI);

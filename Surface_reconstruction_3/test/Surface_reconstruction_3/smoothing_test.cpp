@@ -1,27 +1,20 @@
 // smoothing_test.cpp
 
-// ----------------------------------------------------------------------------
-// USAGE EXAMPLES
-// ----------------------------------------------------------------------------
-
 //----------------------------------------------------------
-// Test the smoothing methods
-// Input files are .xyz
-// No output
+// Test the smoothing methods:
+// For each input point set, smooth it.
+// Input format is .xyz.
+// No output.
 //----------------------------------------------------------
 // smoothing_test points1.xyz points2.xyz...
 
 
-// CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
-
-// This package
-#include <CGAL/smooth_jet_fitting_3.h>
+#include <CGAL/jet_smoothing_3.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
-// STL stuff
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -30,7 +23,7 @@
 
 
 // ----------------------------------------------------------------------------
-// Private types
+// Types
 // ----------------------------------------------------------------------------
 
 // kernel
@@ -41,7 +34,7 @@ typedef Kernel::Vector_3 Vector;
 
 
 // ----------------------------------------------------------------------------
-// Private functions
+// Tests
 // ----------------------------------------------------------------------------
 
 void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
@@ -60,13 +53,13 @@ void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
             << nb_neighbors_smooth_jet_fitting << "%=" << nb_neighbors << ")...\n";
 
   std::deque<Point> output;
-  CGAL::smooth_jet_fitting_3(points.begin(), points.end(),
-                             std::back_inserter(output),
-                             nb_neighbors);
+  CGAL::jet_smoothing_3(points.begin(), points.end(),
+                        std::back_inserter(output),
+                        nb_neighbors);
 
   // mutating version of the same function
-  CGAL::smooth_jet_fitting_3(points.begin(), points.end(),
-                             nb_neighbors);
+  CGAL::jet_smoothing_3(points.begin(), points.end(),
+                        nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
@@ -82,13 +75,20 @@ void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
 int main(int argc, char * argv[])
 {
   std::cerr << "Smoothing test" << std::endl;
-  std::cerr << "No output" << std::endl;
 
+  //***************************************
   // decode parameters
+  //***************************************
+
+  // usage
   if(argc < 2)
   {
-    std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz..." << std::endl;
-    return EXIT_FAILURE;
+      std::cerr << "For each input point set, smooth it.\n";
+      std::cerr << "\n";
+      std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz..." << std::endl;
+      std::cerr << "Input file format is .xyz.\n";
+      std::cerr << "No output" << std::endl;
+      return EXIT_FAILURE;
   }
 
   // Smoothing options
@@ -102,22 +102,35 @@ int main(int argc, char * argv[])
   {
     std::cerr << std::endl;
 
+    //***************************************
     // Load point set
+    //***************************************
+
+    // File name is:
+    std::string input_filename  = argv[i];
+
     std::deque<Point> points;
+
     std::cerr << "Open " << argv[i] << " for reading...";
-    if(CGAL::surface_reconstruction_read_xyz(argv[i],
+    if(CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
                                              std::back_inserter(points),
                                              false /*skip normals*/))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
-
-      test_smooth_jet_fitting(points, nb_neighbors_smooth_jet_fitting);
     }
     else
     {
-      std::cerr << "Error: cannot read file " << argv[i] << std::endl;
+      std::cerr << "Error: cannot read file " << input_filename << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
+      continue;
     }
+
+    //***************************************
+    // Test
+    //***************************************
+      
+    test_smooth_jet_fitting(points, nb_neighbors_smooth_jet_fitting);
+
   } // for each input file
 
   std::cerr << std::endl;
@@ -126,3 +139,4 @@ int main(int argc, char * argv[])
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }
+

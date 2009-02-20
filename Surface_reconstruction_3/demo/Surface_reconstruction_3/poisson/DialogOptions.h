@@ -35,7 +35,7 @@ public:
 	double m_contouring_value; // Poisson contouring value (TEST)
 	double m_lambda; // laplacian smoothing
 	unsigned int m_nb_neighbors_avg_spacing; // K-nearest neighbors (average spacing)
-	double m_nb_neighbors_outliers_removal; // K-nearest neighbors (outliers_removal)
+	double m_nb_neighbors_outlier_removal; // K-nearest neighbors (outlier_removal)
 	double m_nb_neighbors_smooth_jet_fitting; // K-nearest neighbors (smooth points by Jet Fitting)
 	double m_nb_neighbors_pca_normals; // K-nearest neighbors (estimate normals by PCA)
 	double m_nb_neighbors_jet_fitting_normals; // K-nearest neighbors (estimate normals by Jet Fitting)

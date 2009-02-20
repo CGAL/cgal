@@ -21,7 +21,7 @@
 /// The OrientableNormal_3 concept represents a normal vector (oriented or not).
 ///
 /// @heading Has Models:
-/// - Orientable_normal_3<Geom_traits>
+/// - Orientable_normal_3<GeomTraits>
 
 class OrientableNormal_3
   : public Kernel::Vector_3,
