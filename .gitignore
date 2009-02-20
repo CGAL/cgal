@@ -106,6 +106,7 @@ Jet_fitting_3/examples/Jet_fitting_3/*.vcproj
 Jet_fitting_3/examples/Jet_fitting_3/Makefile
 Jet_fitting_3/examples/Jet_fitting_3/Mesh_estimation
 Jet_fitting_3/examples/Jet_fitting_3/Single_estimation
+Jet_fitting_3/examples/Jet_fitting_3/VC
 Jet_fitting_3/test/Jet_fitting_3/*.exe
 Jet_fitting_3/test/Jet_fitting_3/*.sln
 Jet_fitting_3/test/Jet_fitting_3/*.vcproj
