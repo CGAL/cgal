@@ -41,6 +41,7 @@ public:
   {
     mElements = 0;
     mMaxSize = 0;
+    mpOffsetedElements = NULL;
   }
 
   inline void setMaxSize(int maxSize)

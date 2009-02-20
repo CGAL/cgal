@@ -32,25 +32,6 @@ The main version applies to a point set and deduces the kernel from input parame
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{OrientableNormal_3 jet_normal_estimation(const typename Kernel::Point_3& query, Tree& tree, unsigned int KNN, unsigned int degre_fitting);}
-{
-Estimate normal direction using jet fitting on the K nearest neighbors.
-Precondition: KNN $>$= 2.
-}
-\ccGlue
-\begin{description}
-\item[Template Parameters:]
-\begin{description}
-\item[Kernel]Geometric traits class. \item[Tree]KD-tree. \item[\ccc{OrientableNormal_3}]Type of return value.\end{description}
-\end{description}
-\begin{description}
-\item[Returns:]Computed normal, model of \ccc{OrientableNormal_3}. \end{description}
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[query]3D point whose normal we want to compute \item[tree]KD-tree \end{description}
-\end{description}
-\ccGlue
 \ccFunction{OutputIterator jet_normal_estimation(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int KNN, const Kernel& , unsigned int degre_fitting);}
 {
 Estimate normal directions using jet fitting on the KNN nearest neighbors. This variant requires the kernel.
@@ -99,13 +80,6 @@ The full template declarations are:
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccParameters)
 
-template$<$  \\
-typename Kernel,   \\
-typename Tree,   \\
-typename \ccc{OrientableNormal_3}$>$  \\
-\ccc{OrientableNormal_3}  \\
-\ccc{jet_normal_estimation} (const typename \ccc{Kernel::Point_3}\& query, Tree\& tree, unsigned int KNN, unsigned int \ccc{degre_fitting});  \\
-  \\
 template$<$  \\
 typename InputIterator,   \\
 typename OutputIterator,   \\

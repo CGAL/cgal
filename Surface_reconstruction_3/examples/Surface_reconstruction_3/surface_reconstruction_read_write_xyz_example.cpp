@@ -74,12 +74,6 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    // Poisson options
-    FT sm_angle_poisson = 20.0; // theorical guaranty if angle >= 30, but slower
-    FT sm_radius_poisson = 0.1;
-    FT sm_error_bound_poisson = 1e-3;
-    FT sm_distance_poisson = 0.002; // upper bound of distance to surface (Poisson)
-
     // File names are:
     std::string input_filename  = argv[1];
     std::string output_filename = argv[2];
@@ -93,7 +87,7 @@ int main(int argc, char * argv[])
     // Read the point set file in points[]
     std::cerr << "Open " << input_filename << " for reading...";
     if(CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
-                                             std::back_inserter(points), 
+                                             std::back_inserter(points),
                                              false /*skip normals*/))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
