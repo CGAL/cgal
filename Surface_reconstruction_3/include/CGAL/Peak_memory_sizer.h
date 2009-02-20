@@ -44,57 +44,79 @@ struct Peak_memory_sizer : public Memory_sizer
     size_type peak_resident_size() const { return get_peak_memory(false); }
 
     /// Get the number of large free memory blocks.
-    size_type count_free_memory_blocks(size_type min_block_size) const
+    size_type count_free_memory_blocks(size_type block_size) const
     {
-        // Allocate all memory blocks >= min_block_size
-        std::deque<void*> blocks;
-        void* block;
-        while ((block = malloc(min_block_size)) != NULL)
-          blocks.push_back(block);
+      double m_sys; /* physical system memory size */
+      double m; /* allocated memory */
+      double m_max; /* malloc test limit */
 
-        // Return value
-        size_type count = blocks.size();
+      /* get physical system memory size */
+      m_sys = taucs_system_memory_size();
+
+      /* LS 2007: if m_sys is meaningful, then we limit malloc test by 0.75*m_sys */
+      /*          to avoid an infinite loop on Linux (malloc() never returns NULL */
+      /*          due to "optimistic memory allocation")                          */
+      if (m_sys > 0)
+        m_max = floor(0.75 * m_sys);
+      else
+        m_max = DBL_MAX;
+
+      // Allocate all memory blocks >= block_size
+      // while keeping the total memory allocated <= m_max.
+      m = 0;
+      std::deque<void*> blocks;
+      void* block;
+      while ( (m + block_size <= m_max) /* m_max not reached */
+        && ((block = malloc(block_size)) != NULL) )
+      {
+        m += block_size;
+        //CGAL_TRACE("allocated large memory blocks up to %.0lf Mb\n", m / 1048576.0);
+        blocks.push_back(block);
+      }
+
+      // Return value
+      size_type count = blocks.size();
 
         // Free large memory blocks
         for (size_type i=0; i<count; i++)
           free(blocks[i]);
 
-        return count;
+      //CGAL_TRACE("%ld large blocks are free\n", count);
+      return count;
     }
 
     /// Give size of largest block available for allocation.
     // (based on taucs_available_memory_size() by S. Toledo)
     size_t largest_free_block() const
     {
-      double m_sys;
-      double m,m_low,m_high,m_tol;
+#ifdef _WIN64
+  // TEMPORARY HACK to avoid an infinite loop in malloc(2 Gb) in Poisson MFC demo on Windows XP 64 bits!
+  // Note: the code works fine under the debugger!
+  return 0;
+#endif
+
+      double m_sys; /* physical system memory size */
+      double m, /* allocated memory */
+             m_low,m_high,m_tol; /* memory range */
       char*  p;
-      double m_max;
+      double m_max; /* malloc test limit */
 
-      // Limit malloc test to avoid an infinite loop on Linux
-      // (malloc() never returns null due to "optimistic memory allocation").
+      /* get physical system memory size */
+      m_sys = taucs_system_memory_size();
 
-      int is_32_bits = (sizeof(void*) == 4);
-      if (is_32_bits)
-      {
-        m_max = 4294967296.0; // 4 GB
-      }
+      /* LS 2007: if m_sys is meaningful, then we limit malloc test by 0.75*m_sys */
+      /*          to avoid an infinite loop on Linux (malloc() never returns NULL */
+      /*          due to "optimistic memory allocation")                          */
+      if (m_sys > 0)
+        m_max = floor(0.75 * m_sys);
       else
-      {
-        // Limit malloc test by physical system memory size.
-        // TODO: replace m_sys by virtual address space limit?
-        m_sys = taucs_system_memory_size();
-        if (m_sys > 0)
-          m_max = m_sys;
-        else
-          m_max = DBL_MAX;
-      }
+        m_max = DBL_MAX;
 
       /* malloc test */
 
       m = 1048576.0;
 
-      while ( (m < m_max-1) /* m_max not reached */
+      while ( (m < m_max) /* m_max not reached */
            && ((p=(char*) malloc( (size_t) (std::min)(m_max,m*2.0) )) != NULL) ) {
          //CGAL_TRACE("largest_free_block: %.0lf Mb\n", (std::min)(m_max,m*2.0) / 1048576.0);
         free(p);
@@ -136,8 +158,8 @@ private:
     HANDLE hProcess;
     PROCESS_MEMORY_COUNTERS pmc;
     hProcess = OpenProcess(  PROCESS_QUERY_INFORMATION |
-                                    PROCESS_VM_READ,
-                                    FALSE, pid );
+                             PROCESS_VM_READ,
+                             FALSE, pid );
     if ( GetProcessMemoryInfo( hProcess, &pmc, sizeof(pmc)) )
     {
 //CGAL_TRACE("    Peak_memory_sizer: WorkingSetSize=%ld Mb\n",              pmc.WorkingSetSize>>20);
