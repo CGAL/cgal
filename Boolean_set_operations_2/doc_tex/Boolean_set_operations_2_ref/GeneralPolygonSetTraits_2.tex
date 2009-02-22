@@ -43,30 +43,6 @@ $x$-monotone curves. It uses the operator\\
                        Polygon_2 & pgn)}, \\
  parameterized by the \ccc{InputIterator} type.}
 
-\ccNestedType{Construct_curves_2}
-{a functor that returns a pair that consists of the begin and
- past-the-end iterators of the $x$ monotone curves of the boundary of
- a given general polygon. It uses the operator\\
- \ccc{std:pair<Curve_const_iterator, Curve_const_iterator>
-  operator() (const Polygon_2 & pgn)}.}
-
-\ccNestedType{Is_valid_2}
-{provides the operators~: \\
- \ccc{bool operator() (Polygon_2 & pgn)} \\
- which returns \ccc{true} if the \ccc{pgn} is valid, and \ccc{false}
- otherwise; \\ and~: \\
- \ccc{bool operator() (Polygon_with_holes_2 & pgn_with_holes)} \\
- which returns \ccc{true} if \ccc{pgn_with_holes} 
- is valid, and \ccc{false} otherwise.
- A polygon of type \ccc{Polygon_2} is valid, if it is strictly simple 
- and oriented counterclockwise.
- A polygon of type \ccc{Polygon_with_holes_2} is valid, 
- if its outer boundary is simple and oriented counterclockwise, and each one of 
- its holes is a strictly simple polygon that oriented clockwise, contained inside its outer 
- boundary, and they are all together pairwise disjoint,
- except perhaps at the vertices.\\
- This functionality is used to verify precondition of some of the operations.}
-
 \ccNestedType{Construct_general_polygon_with_holes_2}{a functor that constructs a general polygon with holes from a general polygon and, optionally, a range of holes. It uses the operator\\
  \ccc{void operator() (const General_polygon_2& pgn_boundary)} or \\
 \ccc{void operator() (const General_polygon_2& pgn_boundary, HolesInputIterator h_begin, HolesInputIterator h_end)} parameterized by the \ccc{HolesInputIterator} type.}
@@ -100,9 +76,6 @@ $x$-monotone curves. It uses the operator\\
 
 \ccMethod{Construct_curves_2 construct_curves_2_object();}
 {returns a functor that obtains the curves of a polygon.}
-
-\ccMethod{Is_valid_2 is_valid_2_object();}
-{returns a functor that checks the validity of a polygon.}
 
 \ccMethod{Construct_general_polygon_with_holes_2 construct_polygon_with_holes_2_object() const;}
 {returns a functor that constructs a polygon with holes.}

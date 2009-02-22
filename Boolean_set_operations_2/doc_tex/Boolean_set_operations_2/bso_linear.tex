@@ -34,7 +34,7 @@ The basic components of our package are the free (global) functions
 \ccc{complement()} that accepts a single \ccc{Polygon_2} object, and
 \ccc{intersection()}, \ccc{join()},\footnote{The function that
 computes the union of two polygons is called \ccc{join()}, since
-the word \ccc{union} is reserved in \CC.}, \ccc{difference()},
+the word \ccc{union} is reserved in \CC.} \ccc{difference()},
 \ccc{symmetric_difference()} and the predicate \ccc{do_intersect()}
 that accept two \ccc{Polygon_2} objects as their input. We explain how
 these functions should be used throught several examples in the
@@ -91,21 +91,21 @@ which is located in the header file \ccc{print_utils.h}.
 \label{fig:simple}
 \begin{ccHtmlOnly}
   <p><center>
-    <img src="./fig/simple.gif" border=0 alt="Operations on Strictly
+    <img src="./fig/simple.gif" border=0 alt="Operations on 
     simple polygons">
   </center>
 \end{ccHtmlOnly}
-\caption{Operations on strictly simple polygons. (a)~The union of two
+\caption{Operations on simple polygons. (a)~The union of two
 polygons, resulting in a point set whose outer boundary is defined by
 a simple polygon and contains a polygonal hole in its interior. (b)~The
 intersection (darkly shaded) of two polygons (lightly shaded), resulting
-in two disjoint polygons. (c)~The complement (darkly shaded) of a strictly
+in two disjoint polygons. (c)~The complement (darkly shaded) of a
 simple polygon (lightly shaded).} 
 \end{figure}
 
-In many cases a binary operation that operates on two strictly simple
-polygons that have no holes may result in a set of polygon that
-contains holes in their interior (see Figure~\ref{fig:simple}~(a)), 
+In many cases a binary operation that operates on two simple
+polygons that have no holes may result in a set of polygons that
+contain holes in their interior (see Figure~\ref{fig:simple}~(a)), 
 or a set of disjoint polygons (see Figure~\ref{fig:simple}~(b); a similar
 set may result from the union, or the symmetric difference, of two disjoint
 polygons). Moreover, the complement of a simple polygon is an unbounded set
@@ -113,12 +113,12 @@ that contains a hole; see Figure~\ref{fig:simple}~(c).
 
 Regular sets are closed under regularized Boolean set-operations.
 These operations accept as input, and may result as output, polygons
-with holes. A {\em polygon with holes} represents a point set that may
+with holes. 
+A {\em polygon with holes} represents a point set that may
 be bounded or unbounded. In case of a bounded set, its {\em outer
-boundary} is represented as a simple (but not necessarily strictly
-simple) polygon, whose vertices are oriented in a counterclockwise
+boundary} is represented as a relatively simple (but not necessarily simple) polygon, whose vertices are oriented in a counterclockwise
 order around the interior of the set. In addition, the set may contain
-{\em holes}, where each hole is represented as a strictly simple
+{\em holes}, where each hole is represented as a simple
 polygon, whose vertices are oriented in a clockwise order around the
 interior of the hole. Note that an unbounded polygon without holes
 spans the entire plane. Vertices of holes may coincide with vertices
@@ -218,14 +218,14 @@ set, unless of course the two input polygons are completely disjoint. In
 the latter case $P \cup Q$ trivially consists of the two input polygons.
 The free function \ccc{join(P, Q, R)} therefore returns a Boolean value
 indicating whether $P \cap Q \neq \emptyset$. If the two polygons are not
-disjoint, it assignes the a polygon with holes object $R$ (which it
+disjoint, it assigns the polygon with holes object $R$ (which it
 accepts by reference) with the union of the regularized union operation
 $P \cup Q$.
 \item The other three functions, namely \ccc{intersection(P, Q, oi)}, 
 \ccc{difference(P, Q, oi)} and \ccc{symmetric_difference(P, Q, oi)}, all
 have a similar interface. As the result of these operation may consist
 of several disconnected components, they all accept an output iterator
-\ccc{oi}, whose value type is \ccc{Polygon_with_holes_2}, and add the
+\ccc{oi}, whose value type is \ccc{Polygon_with_holes_2}, and adds the
 output polygons to its associated container.
 \end{itemize}
 
@@ -245,14 +245,14 @@ the header file \ccc{print_utils.h} under the examples folder.
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \subsubsection{Operations on Polygons with Holes\label{bso_sssec:pwh_bops}}
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Having introduced polygons with holes and explained how the free functions
-output such objects, it is only natural to perform operations on sets that
-are represented as polygon with holes, rather than simple polygons.
-Indeed, the Boolean set-operations package provides overriden free functions
+We have demonstrated that free functions that perform boolean set operations on simple polygons may output polygons with holes. In addition to these functions, the Boolean set-operations package provides the following overriden free functions that accept
+\ccc{General_polygon_with_holes_2} objects as their input - 
+%Having introduced polygons with holes and explained how the free functions
+%output such objects, it is only natural to perform operations on sets that
+%are represented as polygon with holes, rather than simple polygons.
+%Indeed, the Boolean set-operations package provides overriden free functions
 \ccc{complement()}, \ccc{intersection()}, \ccc{join()}, \ccc{difference()},
-\ccc{symmetric_difference()} and \ccc{do_intersect()} that accept
-\ccc{General_polygon_with_holes_2} objects as their input. The prototypes of
+\ccc{symmetric_difference()} and \ccc{do_intersect()}  The prototypes of
 most functions is the same as of their simpler counterparts that operate
 on simple polygons. The only exception is \ccc{complement(P, oi)}, which
 outputs a range of polygons with holes that represents the complement

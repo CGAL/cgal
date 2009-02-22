@@ -10,7 +10,7 @@
 %=======
 
 \ccNestedType{X_monotone_curve_2}{represents a planar (weakly) $x$-monotone
-  curve. The type of the geometric mapping of the polygonal edges.}
+  curve. The type of the geometric mapping of the polygonal edges. It must model the concept ArrTraits::XMonotoneCurve\_2.}
 
 \ccNestedType{Curve_iterator}{an iterator over the geometric mapping of the 
 polygon edges. Its value type is \ccc{X_monotone_curve_2}.}
@@ -86,7 +86,7 @@ The value type of \ccc{Iterator} must be \ccc{X_monotone_curve_2}.
 \ccHasModels
 % ==========
 \ccc{CGAL::General_polygon_2<ArrTraits>} \\
-\ccc{CGAL::Polygon_2<PolygonTraits_2, Container>}
+
 
 \end{ccRefConcept}
 

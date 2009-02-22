@@ -59,7 +59,7 @@ endef
 	gs -dSAFER -dCompatibilityLevel=1.2 -q -sDEVICE=bbox -dNOPAUSE -dBATCH $(basename $<).ps
 
 %.gif : %.dvi
-	dvips -x 2000 -y 2000 -D4000 -P cmz $< -o
+	dvips  -T 17in,11in -x 2000 -y 2000 -D4000 -P cmz $< -o
 	$(toeps) > $(basename $@).eps2 && rm $(basename $@).ps
 	convert -interlace Line -transparent White $(basename $@).eps2 $@;
 
