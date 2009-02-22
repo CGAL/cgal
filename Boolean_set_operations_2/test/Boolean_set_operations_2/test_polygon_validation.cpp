@@ -23,24 +23,16 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gps_segment_traits_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
-#include <list>
 #include <CGAL/Boolean_set_operations_2/Gps_polygon_validation.h> 
-#include <CGAL/General_polygon_set_2.h> 
 #include <iterator>
 #include <string>
 #include <sstream>
 #include <iostream>
 
 typedef CGAL::Cartesian<Number_type>               Kernel;
-typedef Kernel::Point_2                            Point_2;
-typedef Kernel::Circle_2                           Circle_2;
 typedef CGAL::Gps_segment_traits_2<Kernel>       	Traits_2;
-typedef CGAL::General_polygon_set_2<Traits_2>      Polygon_set_2;
 typedef Traits_2::Polygon_2                        Polygon_2;
 typedef Traits_2::Polygon_with_holes_2             Polygon_with_holes_2;
-typedef CGAL::Arr_segment_traits_2<Kernel>         Base;
-typedef CGAL::Gps_traits_adaptor<Base>             Traits_adaptor;
-typedef std::list<Polygon_with_holes_2>            Pwh_list_2;
 
 /*test files:
 
