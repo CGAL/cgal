@@ -540,7 +540,8 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   void Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   _insert(const Polygon_with_holes_2 & pgn, Arrangement_on_surface_2 & arr)
 {
-  ValidationPolicy::is_valid(pgn, *m_traits);
+ // inner function not exposed to user - no validation 
+ // ValidationPolicy::is_valid(pgn, *m_traits);
 
   typedef std::list<X_monotone_curve_2>                  XCurveList;
   typedef Init_faces_visitor<Arrangement_on_surface_2>          My_visitor;
@@ -731,7 +732,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   if (f->number_of_outer_ccbs() > 1)
     CGAL_error_msg("Not implemented yet.");
   
-  Ccb_halfedge_const_circulator ccb_end = *f->outer_ccbs_begin();
+  Ccb_halfedge_const_circulator ccb_end = *(f->outer_ccbs_begin());
   Ccb_halfedge_const_circulator ccb_circ = ccb_end;
   do
   { 

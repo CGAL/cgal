@@ -69,7 +69,7 @@ public:
   typedef typename Arrangement_2::Inner_ccb_const_iterator										Inner_ccb_const_iterator;
 
   /*red faces source is the arrangement of holes. The blue faces (face) are caused by the PWH's outer boundary*/
-  virtual void create_face(Face_handle_A red_face, Face_handle_B blue_face, Face_handle_R r_face) {    
+  virtual void create_face(Face_handle_A red_face, Face_handle_B blue_face, Face_handle_R /*r_face*/) {    
     if ((red_face->contained()==true) && (blue_face->contained()==false)) {
       hole_overlap=true;			
     }
@@ -526,7 +526,7 @@ bool has_valid_orientation_polygon_with_holes (const typename Traits_2::Polygon_
 
 */
 template <class Traits_2>
-bool are_holes_and_boundary_pairwise_disjoint(const typename Traits_2::Polygon_with_holes_2& pwh, Traits_2 traits)
+bool are_holes_and_boundary_pairwise_disjoint(const typename Traits_2::Polygon_with_holes_2& pwh, Traits_2& traits)
 {
   CGAL_GPS_POLYGON_VALIDATION_2_TYPEDEF
 
@@ -547,7 +547,7 @@ bool are_holes_and_boundary_pairwise_disjoint(const typename Traits_2::Polygon_w
   typedef std::pair<Curve_const_iterator,
     Curve_const_iterator>           Cci_pair;
   typedef typename Traits_2::Construct_curves_2     Construct_curves_2;
-
+  typedef typename Traits_2::Construct_general_polygon_with_holes_2       Construct_polygon_with_holes_2;
   typedef typename Traits_adapter_2::Construct_vertex_2
     Construct_vertex_2;
   typedef Gps_polygon_validation_visitor<Traits_2>  Visitor;
@@ -590,7 +590,9 @@ bool are_holes_and_boundary_pairwise_disjoint(const typename Traits_2::Polygon_w
       
   Polygon_set_2 gps(traits);
   //check for 2D  intersections of holes (holes must be disjoint except for vertices)     
-  Size num_of_holes=0;     
+  Size num_of_holes=0;
+  //functors for creating a pwh needed for inserting pgns into the arrangement quickly 
+  Construct_polygon_with_holes_2 construct_pwh_functor = traits.construct_polygon_with_holes_2_object () ;     
   for (hoit = pwh.holes_begin(); hoit != pwh.holes_end(); ++hoit) {
     Polygon_2 hole(*hoit);
     hole.reverse_orientation();
@@ -603,7 +605,9 @@ bool are_holes_and_boundary_pairwise_disjoint(const typename Traits_2::Polygon_w
       /*to use gps.insert(hole) it is required that the set coponents and the new holes  do not intersect.
         because the sweep detects shared edges and the do_intersect query detects 2D intersections we can safely use
         the insert(pwh) function whose performance is better than the join(pgn)*/
-      Polygon_with_holes_2 empty_pwh(hole);
+        Polygon_with_holes_2 empty_pwh = construct_pwh_functor(hole);
+        //traits.Construct_general_polygon_with_holes_2 (hole);
+  //    Polygon_with_holes_2 empty_pwh(hole);
       gps.insert(empty_pwh);
       num_of_holes++;
     }
@@ -614,7 +618,7 @@ bool are_holes_and_boundary_pairwise_disjoint(const typename Traits_2::Polygon_w
     return false;
   */
   //check for intersection of holes with the outer boundary
-  Hole_const_iterator fit;
+
 
   /*outer boundary can be relatively simple. Execution of 
     do_intersect(hole, boundary) or difference(hole,boundary) relies on
@@ -624,8 +628,8 @@ bool are_holes_and_boundary_pairwise_disjoint(const typename Traits_2::Polygon_w
     relative simplicity and orientation. Therefore it is safe to assume the 
     outer boundary is  valid PWH with no holes. We can't assume it is a valid
     (simple) polygon. */       
-  Polygon_with_holes_2 boundary(pwh.outer_boundary(), fit, fit);     
-
+  //Polygon_with_holes_2 boundary(pwh.outer_boundary(), fit, fit);     
+ Polygon_with_holes_2 boundary =  construct_pwh_functor (pwh.outer_boundary());
   // Unbounded outer boundaries contain all the holes and the holes were checked
   // and are OK.
   if (boundary.is_unbounded()) 
