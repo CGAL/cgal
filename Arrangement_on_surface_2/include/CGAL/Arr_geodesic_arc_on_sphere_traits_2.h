@@ -27,7 +27,7 @@
  * as a geometry traits class for the arrangement on surface package.
  */
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/tags.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Arr_tags.h>
