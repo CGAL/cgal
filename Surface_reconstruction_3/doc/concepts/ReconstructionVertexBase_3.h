@@ -19,7 +19,11 @@
 
 /// The ReconstructionVertexBase_3 concept defines the interface
 /// of the vertex class of the ReconstructionTriangulation_3 concept.
-/// It provides the interface requested by the Poisson_reconstruction_function class.
+/// It provides the interface requested by the Poisson_reconstruction_function class:
+/// - Each vertex owns a normal vector.
+/// - A vertex is either an input point or a Steiner point added by Delaunay refinement.
+/// - In order to solve a linear system over the triangulation, a vertex may be constrained
+/// or not, and has a unique index.
 ///
 /// @heading Has Models:
 /// Reconstruction_vertex_base_3<GeomTraits, TriangulationVertexBase_3>
@@ -53,6 +57,10 @@ public:
   /// Get/set the value of the implicit function.
   FT  f() const;
   FT& f();
+
+  /// Get/set average spacing at each input point.
+  double  average_spacing() const;
+  double& average_spacing();
 
   /// Get/set the type = INPUT or STEINER.
   unsigned char  type() const;

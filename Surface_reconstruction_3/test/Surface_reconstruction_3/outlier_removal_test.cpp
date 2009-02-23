@@ -8,7 +8,6 @@
 //----------------------------------------------------------
 // outlier_removal_test points1.xyz points2.xyz...
 
-
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
@@ -19,7 +18,6 @@
 #include <CGAL/outlier_removal_3.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
-// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -33,6 +31,8 @@
 
 // kernel
 typedef CGAL::Simple_cartesian<float> Kernel;
+
+// Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 
@@ -140,7 +140,7 @@ int main(int argc, char * argv[])
     //***************************************
     // Test
     //***************************************
-      
+
     test_avg_knn_sq_distance(points, nb_neighbors_outlier_removal, threshold_percent_avg_knn_sq_dst);
 
   } // for each input file

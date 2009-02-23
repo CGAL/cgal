@@ -20,9 +20,15 @@
 /// The ReconstructionTriangulation_3 concept defines
 /// the interface of a 3D Delaunay triangulation
 /// requested by the Poisson_reconstruction_function class.
-/// The cell base class must be a model of
-/// ReconstructionCellBase_3 and the vertex base class
+/// The cell class must be a model of
+/// ReconstructionCellBase_3 and the vertex class
 /// must be a model of ReconstructionVertexBase_3.
+///
+/// It provides the interface requested by the Poisson_reconstruction_function class:
+/// - Each vertex owns a normal vector.
+/// - A vertex is either an input point or a Steiner point added by Delaunay refinement.
+/// - In order to solve a linear system over the triangulation, a vertex may be constrained
+/// or not, and has a unique index.
 ///
 /// CAUTION: invalidate_bounds() must be called
 /// after modifying the points.
@@ -109,7 +115,7 @@ public:
   /// Insert points in the triangulation using a spatial sort.
   /// Default type is INPUT.
   ///
-  /// Precondition: the value type of InputIterator must 'Point'.
+  /// Precondition: the value type of InputIterator must be 'Point'.
   ///
   /// @param first First point to add to pdt.
   /// @param beyond Past-the-end point to add to pdt.
@@ -117,6 +123,14 @@ public:
   template < class InputIterator >
   int insert(InputIterator first, InputIterator beyond,
              unsigned char type = INPUT /* INPUT or STEINER */);
+
+  /// Delaunay refinement callback:
+  /// insert STEINER point in the triangulation.
+  template <class CellIt>
+  Vertex_handle
+  insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
+	         Cell_handle begin, int i,
+                 unsigned char type = STEINER /* INPUT or STEINER */);
 
   /// Index all (finite) vertices following the order of Finite_vertices_iterator.
   /// @return the number of (finite) vertices.

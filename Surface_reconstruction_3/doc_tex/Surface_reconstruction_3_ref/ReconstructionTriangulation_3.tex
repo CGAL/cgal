@@ -22,7 +22,11 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The \ccc{ReconstructionTriangulation_3} concept defines the interface of a 3D Delaunay triangulation requested by the \ccc{Poisson_reconstruction_function} class. The cell base class must be a model of \ccc{ReconstructionCellBase_3} and the vertex base class must be a model of \ccc{ReconstructionVertexBase_3}.
+The \ccc{ReconstructionTriangulation_3} concept defines the interface of a 3D Delaunay triangulation requested by the \ccc{Poisson_reconstruction_function} class. The cell class must be a model of \ccc{ReconstructionCellBase_3} and the vertex class must be a model of \ccc{ReconstructionVertexBase_3}.
+
+It provides the interface requested by the \ccc{Poisson_reconstruction_function} class:\begin{itemize}
+\item Each vertex owns a normal vector.\item A vertex is either an input point or a Steiner point added by Delaunay refinement.\item In order to solve a linear system over the triangulation, a vertex may be constrained or not, and has a unique index.\end{itemize}
+
 
 CAUTION: \ccc{invalidate_bounds}() must be called after modifying the points.
 
@@ -192,7 +196,7 @@ Insert point in the triangulation. Default type is INPUT.
 \ccMethod{int insert(InputIterator first, InputIterator beyond, unsigned char type = INPUT);}
 {
 Insert points in the triangulation using a spatial sort. Default type is INPUT.
-Precondition: the value type of InputIterator must \ccc{Point}.
+Precondition: the value type of InputIterator must be \ccc{Point}.
 }
 \ccGlue
 \begin{description}
@@ -203,9 +207,9 @@ Precondition: the value type of InputIterator must \ccc{Point}.
 \begin{description}
 \item[Returns:]the number of inserted points. \end{description}
 \ccGlue
-\ccMethod{unsigned int index_vertices();}
+\ccMethod{Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end, Cell_handle begin, int i, unsigned char type = STEINER);}
 {
-Index all (finite) vertices following the order of \ccc{Finite_vertices_iterator}.
+Delaunay refinement callback: insert STEINER point in the triangulation. Index all (finite) vertices following the order of \ccc{Finite_vertices_iterator}.
 }
 \ccGlue
 \begin{description}

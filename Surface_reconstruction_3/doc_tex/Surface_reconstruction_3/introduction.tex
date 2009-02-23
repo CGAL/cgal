@@ -4,7 +4,7 @@ This \cgal\ component implements two surface reconstruction methods which take a
 
 More specifically, the input is an unorganized point set, possibly with attributes such as unoriented normals or oriented normals. This point set can be analyzed to measure common statistics quantities and bounding volumes such as average spacing, centroid, bounding box and bounding sphere. We can furthermore pre-processed the point set before reconstruction with dedicated functions devoted to reduction, smoothing, outlier removal, normal estimation and normal orientation.\\
 
-The core surface reconstruction algorithms consist of computing implicit functions which are either an approximate signed distance function to the inferred surface (Algebraic Point Set Surface - referred to as APSS in the sequel) or an approximate indicator function of the inferred solid (Poisson Surface Reconstruction - referred to as Poisson). Another distinction between the APSS and Poisson algorithms lies into the fact that APSS evaluates the function on the fly at any point location while Poisson requires solving for the implicit function before evaluation. The component is structured along a surface reconstruction pipeline that we now detail. 
+The core surface reconstruction algorithms consist of computing implicit functions which are either an approximate signed distance function to the inferred surface (Algebraic Point Set Surface - referred to as APSS in the sequel) or an approximate indicator function of the inferred solid (Poisson Surface Reconstruction - referred to as Poisson). Another distinction between the APSS and Poisson algorithms lies into the fact that APSS evaluates the function on the fly at any point location while Poisson requires solving for the implicit function before evaluation. The component is structured along a surface reconstruction pipeline that we now detail.
 
 % Insert image introduction.jpg/eps
 \begin{center}
@@ -18,7 +18,7 @@ The core surface reconstruction algorithms consist of computing implicit functio
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[h]
-        \caption{Surface reconstruction from point set}
+        \caption{APSS surface reconstruction from 275K points sampled on an elephant (Minolta laser scanner)}
     \end{figure}
 \end{center}
 
@@ -36,7 +36,7 @@ The core surface reconstruction algorithms consist of computing implicit functio
 \subsubsection{Analysis}
 
 \begin{itemize}
-\item Point set barycenter, bounding box, bounding sphere (provided by \cgal\ Principal Components Analysis package)
+\item Point set barycenter, bounding box, bounding sphere (provided by other \cgal\ packages)
 \item Average spacing to the K nearest neighbors
 \end{itemize}
 

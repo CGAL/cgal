@@ -7,7 +7,6 @@
 //----------------------------------------------------------
 // APSS_reconstruction_test mesh1.off point_set2.xyz...
 
-
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
@@ -23,10 +22,8 @@
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 #include <CGAL/IO/surface_reconstruction_read_pwn.h>
 
-// This test
 #include "enriched_polyhedron.h"
 
-// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -40,12 +37,13 @@
 
 // kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+
+// Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
-
 typedef std::deque<Point_with_normal> PointList;
 
 // APSS implicit function
@@ -63,7 +61,6 @@ typedef CGAL::Implicit_surface_3<Kernel, APSS_reconstruction_function> Surface_3
 
 int main(int argc, char * argv[])
 {
-  std::cerr << "RECONSTRUCTION" << std::endl;
   std::cerr << "Test the APSS reconstruction method" << std::endl;
 
   //***************************************

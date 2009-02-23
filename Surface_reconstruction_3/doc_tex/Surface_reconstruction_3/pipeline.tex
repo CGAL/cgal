@@ -3,7 +3,7 @@
 Real world reconstruction from scan data is a step by step process:
 
 \begin{itemize}
-\item Scanning and scans alignment => point set with or without normals (not covered by \cgal)
+\item Scanning and scans alignment produce a point set with or without normals (not covered by \cgal)
 \item Outlier removal (if reconstruction method does not support outliers)
 \item Point set simplification
 \item Smoothing (if reconstruction method does not support noise)
@@ -14,6 +14,22 @@ Real world reconstruction from scan data is a step by step process:
 This package provides algorithms for each step above.
 
 A GUI demo (Windows only) allows to test each algorithm.
+
+% Insert image pipeline.jpg/eps
+\begin{center}
+    \label{Surface_reconstruction_3-fig-pipeline}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_3/pipeline} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="70%" border=0 src="./pipeline.jpg"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
+        \caption{Reconstruction pipeline}
+    \end{figure}
+\end{center}
 
 
 \subsection{Input}
@@ -63,9 +79,11 @@ Example:
 The purpose of the analysis stage is to compute parameters for the next stages algorithms.
 
 \begin{itemize}
-\item Point set barycenter, bounding box, bounding sphere (provided by \cgal\ Principal Components Analysis package)
-\item Average spacing to the K nearest neighbors
+\item Point set barycenter, bounding box, bounding sphere (provided by other \cgal\ packages).
+\item Average spacing to the K nearest neighbors.
 \end{itemize}
+
+\ccc{CGAL::average_spacing_3()} computes the average spacing in a point set from the K nearest neighbors.
 
 \ccRefIdfierPage{CGAL::centroid}  \\
 \ccRefIdfierPage{CGAL::bounding_box}  \\
@@ -84,23 +102,26 @@ Example:
 \item Outlier removal wrt average squared distance to the K nearest neighbors
 \end{itemize}
 
+\ccc{CGAL::outlier_removal_3()} deletes outliers in a point set. It sorts points
+wrt average squared distance to the K nearest neighbors, then delete the worst ones.
+
 \ccRefIdfierPage{CGAL::outlier_removal_3}  \\
 
-% Insert image outlier_removal.jpg/eps
-\begin{center}
-    \label{Surface_reconstruction_3-fig-outlier_removal}
-    % Image
-    \begin{ccTexOnly}
-        \includegraphics[width=0.9\textwidth]{Surface_reconstruction_3/outlier_removal} % omit .eps suffix
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img width="90%" border=0 src="./outlier_removal.jpg"><P>
-    \end{ccHtmlOnly}
-    % Title
-    \begin{figure}[h]
-        \caption{Outlier removal}
-    \end{figure}
-\end{center}
+% % Insert image outlier_removal.jpg/eps
+% \begin{center}
+%     \label{Surface_reconstruction_3-fig-outlier_removal}
+%     % Image
+%     \begin{ccTexOnly}
+%         \includegraphics[width=0.9\textwidth]{Surface_reconstruction_3/outlier_removal} % omit .eps suffix
+%     \end{ccTexOnly}
+%     \begin{ccHtmlOnly}
+%         <img width="90%" border=0 src="./outlier_removal.jpg"><P>
+%     \end{ccHtmlOnly}
+%     % Title
+%     \begin{figure}[h]
+%         \caption{Outlier removal}
+%     \end{figure}
+% \end{center}
 
 Example:
 
@@ -114,22 +135,26 @@ Example:
 \item Random point set simplification
 \end{itemize}
 
+\ccc{CGAL::merge_simplification_3()} merges close points of a point set: its merges points which belong to the same cell of a grid.
+
+\ccc{CGAL::random_simplification_3()} deletes randomly points in a point set.
+
 \ccRefIdfierPage{CGAL::merge_simplification_3}  \\
 \ccRefIdfierPage{CGAL::random_simplification_3}  \\
 
-% Insert image random_simplification.jpg/eps
+% Insert image merge_simplification.jpg/eps
 \begin{center}
-    \label{Surface_reconstruction_3-fig-random_simplification}
+    \label{Surface_reconstruction_3-fig-merge_simplification}
     % Image
     \begin{ccTexOnly}
-        \includegraphics[width=0.9\textwidth]{Surface_reconstruction_3/random_simplification} % omit .eps suffix
+        \includegraphics[width=0.7\textwidth]{Surface_reconstruction_3/merge_simplification} % omit .eps suffix
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="90%" border=0 src="./random_simplification.jpg"><P>
+        <img width="100%" border=0 src="../Surface_reconstruction_3/merge_simplification.jpg"><P>
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[h]
-        \caption{Random point set simplification}
+        \caption{Point set simplification by clustering. Notice that points to be removed (in red) belong to tight dotted lines.}
     \end{figure}
 \end{center}
 
@@ -146,21 +171,21 @@ Example:
 
 \ccRefIdfierPage{CGAL::jet_smoothing_3}  \\
 
-% Insert image jet_smoothing.jpg/eps
-\begin{center}
-    \label{Surface_reconstruction_3-fig-jet_smoothing}
-    % Image
-    \begin{ccTexOnly}
-        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_3/jet_smoothing} % omit .eps suffix
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img width="100%" border=0 src="./jet_smoothing.jpg"><P>
-    \end{ccHtmlOnly}
-    % Title
-    \begin{figure}[h]
-        \caption{Point set smoothing}
-    \end{figure}
-\end{center}
+% % Insert image jet_smoothing.jpg/eps
+% \begin{center}
+%     \label{Surface_reconstruction_3-fig-jet_smoothing}
+%     % Image
+%     \begin{ccTexOnly}
+%         \includegraphics[width=1.0\textwidth]{Surface_reconstruction_3/jet_smoothing} % omit .eps suffix
+%     \end{ccTexOnly}
+%     \begin{ccHtmlOnly}
+%         <img width="100%" border=0 src="./jet_smoothing.jpg"><P>
+%     \end{ccHtmlOnly}
+%     % Title
+%     \begin{figure}[h]
+%         \caption{Point set smoothing}
+%     \end{figure}
+% \end{center}
 
 Example:
 
@@ -174,24 +199,31 @@ Example:
 \item Normal estimation by Jet fitting over the K nearest neighbors
 \end{itemize}
 
-\ccRefIdfierPage{CGAL::jet_normal_estimation}  \\
-\ccRefIdfierPage{CGAL::pca_normal_estimation}  \\
+\ccc{CGAL::jet_normal_estimation()} estimates normals direction of a point set using jet fitting on the K nearest neighbors.
+The default jet is a quadric.
 
-% Insert image pca_normal_estimation.jpg/eps
-\begin{center}
-    \label{Surface_reconstruction_3-fig-pca_normal_estimation}
-    % Image
-    \begin{ccTexOnly}
-        \includegraphics[width=0.9\textwidth]{Surface_reconstruction_3/pca_normal_estimation} % omit .eps suffix
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img width="90%" border=0 src="./pca_normal_estimation.jpg"><P>
-    \end{ccHtmlOnly}
-    % Title
-    \begin{figure}[h]
-        \caption{Normal estimation by Principal Components Analysis}
-    \end{figure}
-\end{center}
+\ccc{CGAL::pca_normal_estimation()} estimates normals direction of a point set using linear least squares fitting of a plane on the K nearest neighbors.
+
+In both cases, the result is an unoriented normal vector for each input point.
+
+\ccRefIdfierPage{CGAL::pca_normal_estimation}  \\
+\ccRefIdfierPage{CGAL::jet_normal_estimation}  \\
+
+% % Insert image pca_normal_estimation.jpg/eps
+% \begin{center}
+%     \label{Surface_reconstruction_3-fig-pca_normal_estimation}
+%     % Image
+%     \begin{ccTexOnly}
+%         \includegraphics[width=0.9\textwidth]{Surface_reconstruction_3/pca_normal_estimation} % omit .eps suffix
+%     \end{ccTexOnly}
+%     \begin{ccHtmlOnly}
+%         <img width="90%" border=0 src="./pca_normal_estimation.jpg"><P>
+%     \end{ccHtmlOnly}
+%     % Title
+%     \begin{figure}[h]
+%         \caption{Normal estimation by Principal Components Analysis}
+%     \end{figure}
+% \end{center}
 
 Example:
 
@@ -203,6 +235,9 @@ Example:
 \begin{itemize}
 \item Normal orientation using a Minimal Spanning Tree \cite{cgal:hddms-srup-92}
 \end{itemize}
+
+\ccc{CGAL::mst_normal_orientation()} orients the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
+The result is an oriented normal vector for each input point/normal.
 
 \ccRefIdfierPage{CGAL::mst_normal_orientation}  \\
 

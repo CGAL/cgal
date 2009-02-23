@@ -11,7 +11,6 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 
-// STL
 #include <list>
 
 // Forward declarations
@@ -125,9 +124,9 @@ struct Enriched_items : public CGAL::Polyhedron_items_3
 
 
 // Enriched polyhedron
-template <class PolyhedronTraits_3, 
+template <class PolyhedronTraits_3,
           class PolyhedronItems_3 = Enriched_items>
-class Enriched_polyhedron 
+class Enriched_polyhedron
   : public CGAL::Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3>
 {
   // Private types
@@ -142,7 +141,7 @@ private:
     typedef typename PolyhedronTraits_3::Triangle_3 Triangle;
     typedef Triangle                              result_type;
     typedef typename PolyhedronTraits_3::Point_3  Point;
-    
+
     Triangle operator()(const Node& f) const {
         Halfedge_const_handle he = f.halfedge();
         const Point& a = he->vertex()->point();
@@ -183,8 +182,8 @@ public:
   typedef typename Base::Halfedge_around_vertex_const_circulator  Halfedge_around_vertex_const_circulator;
 
   // Iterator over triangles
-  typedef CGAL::Iterator_project<Facet_const_iterator, Project_triangle<Facet> >  
-                                                                  Triangle_const_iterator;      
+  typedef CGAL::Iterator_project<Facet_const_iterator, Project_triangle<Facet> >
+                                                                  Triangle_const_iterator;
 
 public :
 

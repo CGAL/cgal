@@ -8,10 +8,12 @@
 //----------------------------------------------------------
 // smoothing_test points1.xyz points2.xyz...
 
-
+// CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+
+// This package
 #include <CGAL/jet_smoothing_3.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
@@ -28,6 +30,8 @@
 
 // kernel
 typedef CGAL::Simple_cartesian<double> Kernel;
+
+// Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;

@@ -11,7 +11,6 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 
-// STL
 #include <list>
 
 // Forward declarations
@@ -125,9 +124,9 @@ struct Enriched_items : public CGAL::Polyhedron_items_3
 
 
 // Enriched polyhedron
-template <class PolyhedronTraits_3, 
+template <class PolyhedronTraits_3,
           class PolyhedronItems_3 = Enriched_items>
-class Enriched_polyhedron 
+class Enriched_polyhedron
   : public CGAL::Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3>
 {
   // Private types

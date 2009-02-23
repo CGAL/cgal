@@ -223,8 +223,7 @@ Get the region of interest, ignoring the outliers. This method is used to define
 {
 You should call \ccc{compute_implicit_function}() once when points insertion is over. It computes the Poisson indicator function f() at each vertex of the triangulation by:\begin{itemize}
 \item applying a Delaunay refinement to define the function inside and outside the surface.\item solving the Poisson equation Laplacian(f) = divergent(normals field) at each vertex of the triangulation via the TAUCS sparse linear solver. One vertex must be constrained.\item shifting and orienting f() such that f() = 0 on the input points, and f() $<$ 0 inside the surface.\end{itemize}
-Return false on error. TODO: add parameters to \ccc{compute_implicit_function}()?
-Compute the Poisson indicator function f() at each vertex of the triangulation.
+Return false on error.
 }
 \ccGlue
 \ccMethod{void average_spacing_avg_knn_sq_distance_3();}

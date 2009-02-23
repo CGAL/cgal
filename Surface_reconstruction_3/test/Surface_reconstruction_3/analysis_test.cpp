@@ -8,7 +8,6 @@
 //----------------------------------------------------------
 // analysis_test points1.xyz points2.xyz...
 
-
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
@@ -18,7 +17,6 @@
 #include <CGAL/average_spacing_3.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
-// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -32,6 +30,8 @@
 
 // kernel
 typedef CGAL::Simple_cartesian<float> Kernel;
+
+// Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 
@@ -49,7 +49,7 @@ void test_average_spacing(std::deque<Point>& points, // input point set
   typedef std::deque<Point>::iterator Iterator;
   std::cerr << CGAL::average_spacing_3<Iterator,FT>(points.begin(), points.end(),
                                                     nb_neighbors_avg_spacing) << "\n";
-  
+
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
@@ -117,7 +117,7 @@ int main(int argc, char * argv[])
     //***************************************
     // Test
     //***************************************
-      
+
     test_average_spacing(points,nb_neighbors_avg_spacing);
 
   } // for each input file

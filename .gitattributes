@@ -3741,6 +3741,8 @@ Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/outlier_removal.eps -t
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/outlier_removal.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/pca_normal_estimation.eps -text svneol=unset#application/postscript
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/pca_normal_estimation.jpg -text svneol=unset#image/jpeg
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/pipeline.eps -text svneol=unset#application/postscript
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/pipeline.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/poisson.eps -text svneol=unset#application/postscript
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/poisson.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/random_simplification.eps -text svneol=unset#application/postscript

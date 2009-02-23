@@ -22,7 +22,9 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The \ccc{ReconstructionVertexBase_3} concept defines the interface of the vertex class of the \ccc{ReconstructionTriangulation_3} concept. It provides the interface requested by the \ccc{Poisson_reconstruction_function} class.
+The \ccc{ReconstructionVertexBase_3} concept defines the interface of the vertex class of the \ccc{ReconstructionTriangulation_3} concept. It provides the interface requested by the \ccc{Poisson_reconstruction_function} class:\begin{itemize}
+\item Each vertex owns a normal vector.\item A vertex is either an input point or a Steiner point added by Delaunay refinement.\item In order to solve a linear system over the triangulation, a vertex may be constrained or not, and has a unique index.\end{itemize}
+
 
 
 Precondition: The geometric traits class 's \ccc{Point_3} type must be a model of \ccc{PointWithNormal_3}.
@@ -110,6 +112,15 @@ Get/set the value of the implicit function.
 }
 \ccGlue
 \ccMethod{FT& f();}
+{
+}
+\ccGlue
+\ccMethod{double average_spacing() const;}
+{
+Get/set average spacing at each input point.
+}
+\ccGlue
+\ccMethod{double& average_spacing();}
 {
 }
 \ccGlue

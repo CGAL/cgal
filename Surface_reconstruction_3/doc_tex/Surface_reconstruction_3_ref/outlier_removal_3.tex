@@ -19,7 +19,8 @@
 
 \ccDefinition
 
-\ccc{CGAL::outlier_removal_3()} deletes outliers in a point set.
+\ccc{CGAL::outlier_removal_3()} deletes outliers in a point set. It sorts points
+wrt average squared distance to the K nearest neighbors, then delete the worst ones.
 
 The \ccc{CGAL::outlier_removal_3()} function exists in four flavors.
 First, the function may modify the input point set or create a copy.

@@ -4,9 +4,9 @@
 // APSS reconstruction method:
 // Read a point set or a mesh's set of vertices, reconstruct a surface,
 // and save the surface.
+// Output format is .off.
 //----------------------------------------------------------
 // APSS_reconstruction file_in file_out [options]
-
 
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -25,10 +25,8 @@
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 #include <CGAL/IO/surface_reconstruction_read_pwn.h>
 
-// This test
 #include "enriched_polyhedron.h"
 
-// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -42,12 +40,13 @@
 
 // kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+
+// Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
-
 typedef std::deque<Point_with_normal> PointList;
 
 // APSS implicit function
@@ -65,7 +64,6 @@ typedef CGAL::Implicit_surface_3<Kernel, APSS_reconstruction_function> Surface_3
 
 int main(int argc, char * argv[])
 {
-    std::cerr << "RECONSTRUCTION" << std::endl;
     std::cerr << "APSS reconstruction method." << std::endl;
 
     //***************************************

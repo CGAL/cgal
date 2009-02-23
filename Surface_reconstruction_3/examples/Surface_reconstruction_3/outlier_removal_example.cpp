@@ -8,7 +8,6 @@
 //----------------------------------------------------------
 // outlier_removal_example point_set.xyz
 
-
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -16,7 +15,6 @@
 #include <CGAL/outlier_removal_3.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
-// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -30,6 +28,8 @@
 
 // kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+
+// Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 
@@ -103,7 +103,7 @@ int main(int argc, char * argv[])
     // Read the point set file in points[]
     std::cerr << "Open " << input_filename << " for reading...";
     if(CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
-                                             std::back_inserter(points), 
+                                             std::back_inserter(points),
                                              false /*skip normals*/))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
@@ -117,7 +117,7 @@ int main(int argc, char * argv[])
     //***************************************
     // Test
     //***************************************
-      
+
     test_avg_knn_sq_distance(points, nb_neighbors_outlier_removal, threshold_percent_avg_knn_sq_dst);
 
     return EXIT_SUCCESS;

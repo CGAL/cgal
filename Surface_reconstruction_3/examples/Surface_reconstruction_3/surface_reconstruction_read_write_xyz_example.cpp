@@ -7,7 +7,6 @@
 //----------------------------------------------------------
 // surface_reconstruction_read_write_xyz_example in_point_set.xyz out_point_set.xyz
 
-
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
@@ -20,7 +19,6 @@
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 #include <CGAL/IO/surface_reconstruction_write_xyz.h>
 
-// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -34,22 +32,13 @@
 
 // kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+
+// Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
-typedef Kernel::Sphere_3 Sphere;
-
 typedef std::deque<Point_with_normal> PointList;
-
-// Poisson's Delaunay triangulation 3 and implicit function
-typedef CGAL::Reconstruction_triangulation_3<Kernel> Dt3;
-typedef CGAL::Poisson_reconstruction_function<Kernel, Dt3> Poisson_reconstruction_function;
-
-// Surface mesher
-typedef CGAL::Surface_mesh_default_triangulation_3 STr;
-typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
 
 // ----------------------------------------------------------------------------

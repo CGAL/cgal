@@ -2,13 +2,12 @@
 
 //----------------------------------------------------------
 // Poisson Delaunay Reconstruction method.
-// Read a point set, reconstruct a surface using Poisson, 
+// Read a point set, reconstruct a surface using Poisson,
 // and save the surface.
-// Input format is .xyz.
+// Input format is .xyz (with normals).
 // Output format is .off.
 //----------------------------------------------------------
 // poisson_reconstruction_example file_in.xyz file_out.off
-
 
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -23,7 +22,6 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
-// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -37,12 +35,12 @@
 
 // kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+
+// Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
-typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
-
 typedef std::deque<Point_with_normal> PointList;
 
 // Poisson's Delaunay triangulation 3 and implicit function
@@ -61,7 +59,6 @@ typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surfac
 
 int main(int argc, char * argv[])
 {
-    std::cerr << "RECONSTRUCTION" << std::endl;
     std::cerr << "Poisson Delaunay Reconstruction method" << std::endl;
 
     //***************************************
@@ -75,7 +72,7 @@ int main(int argc, char * argv[])
       std::cerr << "and save the surface.\n";
       std::cerr << "\n";
       std::cerr << "Usage: " << argv[0] << " file_in.xyz file_out.off" << std::endl;
-      std::cerr << "Input file format is .xyz.\n";
+      std::cerr << "Input format is .xyz (with normals).\n";
       std::cerr << "Output file format is .off.\n";
       return EXIT_FAILURE;
     }
@@ -96,43 +93,16 @@ int main(int argc, char * argv[])
 
     PointList points;
 
-    std::string extension = input_filename.substr(input_filename.find_last_of('.'));
-    if (extension == ".xyz" || extension == ".XYZ")
+    // Read the point set file in points[]
+    std::cerr << "Open " << input_filename << " for reading...";
+    if(CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
+                                             std::back_inserter(points)))
     {
-      // Read the point set file in points[]
-      if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
-                                                std::back_inserter(points)))
-      {
-        std::cerr << "Error: cannot read file " << input_filename << std::endl;
-        return EXIT_FAILURE;
-      }
+      std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }
     else
     {
       std::cerr << "Error: cannot read file " << input_filename << std::endl;
-      return EXIT_FAILURE;
-    }
-
-    // Print status
-    int nb_vertices = points.size();
-    std::cerr << "Read file " << input_filename << ": " << nb_vertices << " vertices"
-                                                        << std::endl;
-
-    //***************************************
-    // Check requirements
-    //***************************************
-
-    if (nb_vertices == 0)
-    {
-      std::cerr << "Error: empty file" << std::endl;
-      return EXIT_FAILURE;
-    }
-
-    assert(points.begin() != points.end());
-    bool points_have_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
-    if ( ! points_have_normals )
-    {
-      std::cerr << "Input point set not supported: this reconstruction method requires oriented normals" << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -159,17 +129,11 @@ int main(int argc, char * argv[])
 
     std::cerr << "Surface meshing...\n";
 
-    STr tr; // 3D-Delaunay triangulation
+    STr tr; // 3D-Delaunay triangulation for Surface Mesher
     C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
 
     // Get inner point
     Point inner_point = poisson_function.get_inner_point();
-    FT inner_point_value = poisson_function(inner_point);
-    if(inner_point_value >= 0.0)
-    {
-      std::cerr << "Error: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
-      return EXIT_FAILURE;
-    }
 
     // Get implicit surface's radius
     Sphere bounding_sphere = poisson_function.bounding_sphere();

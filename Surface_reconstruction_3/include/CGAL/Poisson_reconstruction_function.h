@@ -288,7 +288,6 @@ public:
   ///   and f() < 0 inside the surface.
   ///
   /// Return false on error.
-  /// TODO: add parameters to compute_implicit_function()?
   bool compute_implicit_function()
   {
     CGAL::Timer task_timer; task_timer.start();
@@ -315,8 +314,8 @@ public:
 
     CGAL_TRACE_STREAM << "Solve Poisson equation...\n";
 
-    /// Compute the Poisson indicator function f()
-    /// at each vertex of the triangulation.
+    // Compute the Poisson indicator function f()
+    // at each vertex of the triangulation.
     double lambda = 0.1;
     double duration_assembly, duration_factorization, duration_solve;
     if (!solve_poisson(lambda, &duration_assembly, &duration_factorization, &duration_solve))
@@ -355,7 +354,7 @@ public:
 		  sq_distance = sq_distance +  distance(*it,v)*distance(*it,v);
 		  counter++;
 	  }
-	  
+
 	  v->average_spacing() = std::sqrt(sq_distance/counter);
 	}
   }
@@ -580,7 +579,7 @@ public:
         }
       }
     }
-    
+
     return counter;
   }
 
@@ -1089,7 +1088,7 @@ private:
     m_dt.incident_cells(v,std::back_inserter(cells));
     if(cells.size() == 0)
       return 0.0;
-      
+
 	FT length = 100000;
 	int counter = 0;
     FT div = 0.0;
@@ -1132,7 +1131,7 @@ private:
     return div;
   }
 
- FT mesh_size(Vertex_handle v) 
+ FT mesh_size(Vertex_handle v)
  {
    std::vector<Cell_handle> cells;
    int counter = 0;
@@ -1140,7 +1139,7 @@ private:
    m_dt.incident_cells(v,std::back_inserter(cells));
    if(cells.size() == 0)
      return 0.0;
-     
+
    typename std::vector<Cell_handle>::iterator it;
    for(it = cells.begin(); it != cells.end(); it++)
    {

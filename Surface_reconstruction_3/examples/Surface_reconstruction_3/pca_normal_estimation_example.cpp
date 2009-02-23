@@ -8,7 +8,6 @@
 //----------------------------------------------------------
 // pca_normal_estimation_example point_set.xyz
 
-
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/boost/graph/properties.h>
@@ -20,7 +19,6 @@
 #include <CGAL/Orientable_normal_3.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
-// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -34,12 +32,13 @@
 
 // kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+
+// Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::Orientable_normal_3<Kernel> Orientable_normal; // normal vector + orientation
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // position + normal vector
-
 typedef std::deque<Point_with_normal> PointList;
 
 
@@ -80,7 +79,7 @@ void test_mst_normal_orientation(const PointList& points, // input point set
   std::deque<Orientable_normal>::iterator n;
   for (n = computed_normals.begin(); n != computed_normals.end(); n++)
     n->set_orientation(false);
-  
+
   // mst_normal_orientation() requires an iterator over points
   // + property maps to access each point's index, position and normal.
   // We use the points index as iterator.
@@ -135,7 +134,7 @@ int main(int argc, char * argv[])
     // Read the point set file in points[]
     std::cerr << "Open " << input_filename << " for reading...";
     if(CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
-                                             std::back_inserter(points), 
+                                             std::back_inserter(points),
                                              false /*skip normals*/))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;

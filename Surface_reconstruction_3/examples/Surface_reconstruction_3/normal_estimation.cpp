@@ -8,9 +8,8 @@
 //----------------------------------------------------------
 // normal_estimation file_in file_out [options]
 
-
 // CGAL
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/boost/graph/properties.h>
@@ -27,10 +26,8 @@
 #include <CGAL/IO/surface_reconstruction_write_xyz.h>
 #include <CGAL/IO/surface_reconstruction_write_pwn.h>
 
-// This test
 #include "enriched_polyhedron.h"
 
-// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -47,13 +44,14 @@
 // ----------------------------------------------------------------------------
 
 // kernel
-typedef CGAL::Simple_cartesian<float> Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+
+// Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::Orientable_normal_3<Kernel> Orientable_normal; // normal vector + orientation
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // position + normal vector
-
 typedef std::deque<Point_with_normal> PointList;
 
 
@@ -68,7 +66,7 @@ bool verify_normal_direction(const PointList& points, // input point set
                              const std::deque<Orientable_normal>& computed_normals) // estimated normals
 {
   bool success = true;
-  
+
   assert(points.begin() != points.end());
   bool points_have_original_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
   if (points_have_original_normals)
@@ -195,7 +193,7 @@ bool verify_normal_orientation(const PointList& points, // input point set
                                 const std::deque<Orientable_normal>& computed_normals) // oriented normals
 {
   bool success = true;
-  
+
   // Count non-oriented normals
   int unoriented_normals = 0;
   std::deque<Orientable_normal>::const_iterator n;
@@ -266,7 +264,7 @@ bool test_mst_normal_orientation(const PointList& points, // input point set
   std::deque<Orientable_normal>::iterator n;
   for (n = computed_normals.begin(); n != computed_normals.end(); n++)
     n->set_orientation(false);
-  
+
   // mst_normal_orientation() requires an iterator over points
   // + property maps to access each point's index, position and normal.
   // We use the points index as iterator.

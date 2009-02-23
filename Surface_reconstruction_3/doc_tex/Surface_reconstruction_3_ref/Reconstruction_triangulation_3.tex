@@ -22,7 +22,11 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The \ccc{Reconstruction_triangulation_3} class is the default implementation of the \ccc{ReconstructionTriangulation_3} concept. It provides the interface requested by the \ccc{Poisson_reconstruction_function} class.
+The \ccc{Reconstruction_triangulation_3} class is the default implementation of the \ccc{ReconstructionTriangulation_3} concept. The cell class must be a model of \ccc{ReconstructionCellBase_3} and the vertex class must be a model of \ccc{ReconstructionVertexBase_3}.
+
+It provides the interface requested by the \ccc{Poisson_reconstruction_function} class:\begin{itemize}
+\item Each vertex owns a normal vector.\item A vertex is either an input point or a Steiner point added by Delaunay refinement.\item In order to solve a linear system over the triangulation, a vertex may be constrained or not, and has a unique index.\end{itemize}
+
 
 CAUTION: \ccc{invalidate_bounds}() must be called after modifying the points.
 
@@ -51,7 +55,7 @@ class \ccc{Reconstruction_triangulation_3};
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[BaseGt]Kernel's geometric traits. \item[Gt]Geometric traits class / \ccc{Point_3} is a model of \ccc{PointWithNormal_3}. \item[Tds]Model of \ccc{TriangulationDataStructure_3}. The cell base class must be a model of \ccc{ReconstructionCellBase_3} and the vertex base class must be a model of \ccc{ReconstructionVertexBase_3}. \end{description}
+\item[BaseGt]Kernel's geometric traits. \item[Gt]Geometric traits class / \ccc{Point_3} is a model of \ccc{PointWithNormal_3}. \item[Tds]Model of \ccc{TriangulationDataStructure_3}. The cell class must be a model of \ccc{ReconstructionCellBase_3} and the vertex class must be a model of \ccc{ReconstructionVertexBase_3}. \end{description}
 \end{description}
 
 %END-AUTO(\ccParameters)
@@ -143,6 +147,36 @@ Point type.
 \ccVariable{const unsigned char STEINER = 1;}
 {
 [static] \\
+}
+\ccGlue
+\ccVariable{Iso_cuboid m_bounding_box;}
+{
+[mutable] \\
+}
+\ccGlue
+\ccVariable{Iso_cuboid m_input_points_bounding_box;}
+{
+[mutable] \\
+}
+\ccGlue
+\ccVariable{Sphere m_bounding_sphere;}
+{
+[mutable] \\
+}
+\ccGlue
+\ccVariable{Sphere m_input_points_bounding_sphere;}
+{
+[mutable] \\
+}
+\ccGlue
+\ccVariable{Point m_barycenter;}
+{
+[mutable] \\
+}
+\ccGlue
+\ccVariable{FT m_diameter_standard_deviation;}
+{
+[mutable] \\
 }
 \ccGlue
 
@@ -255,22 +289,6 @@ Precondition: the value type of InputIterator must be \ccc{Point}.
 {
 Delaunay refinement callback: insert STEINER point in the triangulation.
 }
-\ccGlue
-\ccMethod{unsigned int index_vertices();}
-{
-Index all (finite) vertices following the order of \ccc{Finite_vertices_iterator}.
-}
-\ccGlue
-\begin{description}
-\item[Returns:]the number of (finite) vertices. \end{description}
-\ccGlue
-\ccMethod{unsigned int index_unconstrained_vertices();}
-{
-Index unconstraint vertices following the order of \ccc{Finite_vertices_iterator}.
-}
-\ccGlue
-\begin{description}
-\item[Returns:]the number of unconstraint vertices. \end{description}
 \ccGlue
 
 %END-AUTO(\ccOperations)

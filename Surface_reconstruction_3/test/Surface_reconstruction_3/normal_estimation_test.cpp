@@ -8,7 +8,6 @@
 //----------------------------------------------------------
 // normal_estimation_test points1.xyz points2.xyz...
 
-
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
@@ -22,7 +21,6 @@
 #include <CGAL/Orientable_normal_3.h>
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
-// STL
 #include <deque>
 #include <iostream>
 #include <cstdlib>
@@ -113,7 +111,7 @@ bool verify_normal_orientation(const PointList& points, // input point set
                                 const std::deque<Orientable_normal>& computed_normals) // oriented normals
 {
   bool success = true;
-  
+
   // Count non-oriented normals
   int unoriented_normals = 0;
   std::deque<Orientable_normal>::const_iterator n;
@@ -152,7 +150,7 @@ bool test_mst_normal_orientation(const PointList& points, // input point set
   std::deque<Orientable_normal>::iterator n;
   for (n = computed_normals.begin(); n != computed_normals.end(); n++)
     n->set_orientation(false);
-  
+
   // mst_normal_orientation() requires an iterator over points
   // + property maps to access each point's index, position and normal.
   // We use the points index as iterator.
