@@ -89,13 +89,14 @@ OutputIterator decompose
   Vertex_const_handle         iso_v;
 
   i = 0;
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit, ++i)
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
   {
     // Associate isolated point with the vertex that represents it.
     if (vit->is_isolated())
     {
       iso_v = vit;
       iso_pts_vec[i] = Vd_point_2 (vit->point(), iso_v);
+      ++i;
     }
   }
 
