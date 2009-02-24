@@ -1,4 +1,5 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETHZ (Suisse).
+// Copyrigth (c) 2009  GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -20,11 +21,15 @@
 #ifndef CGAL_AABB_TREE_H
 #define CGAL_AABB_TREE_H
 
+#include <vector>
 #include <list>
 #include <stack>
 #include <CGAL/AABB_tree/AABB_node.h>
+#include <boost/mpl/vector.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/mpl/contains.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Kernel, class Input, class PSC>
 class AABB_tree
@@ -103,11 +108,18 @@ public:
 
   // --------------------RAY/SEGMENT ORACLES----------------------//
 
-  bool first_intersection(const Ray& ray,
-                          Point_with_input& pwh)
+  typedef boost::mpl::vector<Ray, Segment, Line> Allowed_query_types;
+
+  template <class T>
+  typename boost::enable_if<
+    typename boost::mpl::contains<Allowed_query_types,
+                                  T>::type,
+    bool>::type
+  first_intersection(const T& x,
+                     Point_with_input& pwh)
   {
     std::pair<bool,Point_with_input> result;
-    m_root->first_intersection(ray, result, m_data.size());
+    m_root->first_intersection(x, result, m_data.size());
     if(result.first)
     {
       pwh = result.second;
@@ -116,33 +128,8 @@ public:
     return false;
   }
 
-  bool first_intersection(const Segment& seg,
-                          Point_with_input& pwh)
-  {
-    std::pair<bool,Point_with_input> result;
-    m_root->first_intersection(seg, result, m_data.size());
-    if(result.first)
-    {
-      pwh = result.second;
-      return true;
-    }
-    return false;
-  }
+}; // end class AABB_tree
 
-  bool first_intersection(const Line& line,
-                          Point_with_input& pwh)
-  {
-    std::pair<bool,Point_with_input> result;
-    m_root->first_intersection(line, result, m_data.size());
-    if(result.first)
-    {
-      pwh = result.second;
-      return true;
-    }
-    return false;
-  }
-};
-
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_AABB_TREE_H
