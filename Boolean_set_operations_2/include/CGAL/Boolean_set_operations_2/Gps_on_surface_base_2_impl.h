@@ -731,8 +731,11 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   // will have only one outer ccb.
   if (f->number_of_outer_ccbs() > 1)
     CGAL_error_msg("Not implemented yet.");
-  
-  Ccb_halfedge_const_circulator ccb_end = *(f->outer_ccbs_begin());
+
+	// Some compilers (VC 9) do not like that we directly access the ccb_circ. So we have 
+	// to pass through the iterator.  
+  Outer_ccb_const_iterator oci_temp = f->outer_ccbs_begin();
+  Ccb_halfedge_const_circulator ccb_end = *oci_temp;
   Ccb_halfedge_const_circulator ccb_circ = ccb_end;
   do
   { 
