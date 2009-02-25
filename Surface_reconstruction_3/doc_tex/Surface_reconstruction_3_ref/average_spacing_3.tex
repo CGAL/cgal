@@ -30,7 +30,7 @@ The main version deduces the kernel from input parameters.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{Kernel::FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int KNN, const Kernel& );}
+\ccFunction{template<typename InputIterator, typename Kernel> Kernel::FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int KNN, const Kernel& );}
 {
 Compute average spacing from K nearest neighbors. This variant requires the kernel.
 \ccPrecond KNN $>$= 2.
@@ -43,7 +43,7 @@ Compute average spacing from K nearest neighbors. This variant requires the kern
 \item \ccc{first}: input points \item \ccc{KNN}: number of neighbors \end{description}
 }
 \ccGlue
-\ccFunction{FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int KNN);}
+\ccFunction{template<typename InputIterator, typename FT> FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int KNN);}
 {
 Compute average spacing from K nearest neighbors. This variant deduces the kernel from iterator types.
 \ccPrecond KNN $>$= 2.

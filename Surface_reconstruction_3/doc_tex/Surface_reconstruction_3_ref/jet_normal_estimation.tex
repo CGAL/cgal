@@ -32,7 +32,7 @@ The main version deduces the kernel from input parameters.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{OutputIterator jet_normal_estimation(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int KNN, const Kernel& , unsigned int degre_fitting);}
+\ccFunction{template<typename InputIterator, typename OutputIterator, typename Kernel> OutputIterator jet_normal_estimation(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int KNN, const Kernel& , unsigned int degre_fitting);}
 {
 Estimate normal directions using jet fitting on the KNN nearest neighbors. This variant requires the kernel.
 \ccPrecond KNN $>$= 2.
@@ -45,7 +45,7 @@ Estimate normal directions using jet fitting on the KNN nearest neighbors. This 
 \item \ccc{first}: input points \item \ccc{normals}: output normals \item \ccc{KNN}: number of neighbors \end{description}
 }
 \ccGlue
-\ccFunction{OutputIterator jet_normal_estimation(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int KNN, unsigned int degre_fitting = 2);}
+\ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator jet_normal_estimation(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int KNN, unsigned int degre_fitting = 2);}
 {
 Estimate normal directions using jet fitting on the KNN nearest neighbors. This variant deduces the kernel from iterator types.
 \ccPrecond KNN $>$= 2.

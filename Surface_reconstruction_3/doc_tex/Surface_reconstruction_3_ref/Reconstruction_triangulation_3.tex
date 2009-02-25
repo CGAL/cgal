@@ -239,7 +239,7 @@ Update barycenter, bounding box, bounding sphere and standard deviation. Owner i
 Insert point in the triangulation. Default type is INPUT.
 }
 \ccGlue
-\ccMethod{int insert(InputIterator first, InputIterator beyond, unsigned char type = INPUT);}
+\ccMethod{template<class InputIterator> int insert(InputIterator first, InputIterator beyond, unsigned char type = INPUT);}
 {
 Insert points in the triangulation using a spatial sort. Default type is INPUT.
 \ccPrecond the value type of InputIterator must be \ccc{Point}.
@@ -249,7 +249,7 @@ Insert points in the triangulation using a spatial sort. Default type is INPUT.
 \ccCommentHeading{Returns} the number of inserted points.
 }
 \ccGlue
-\ccMethod{Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end, Cell_handle begin, int i, unsigned char type = STEINER);}
+\ccMethod{template<class CellIt> Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end, Cell_handle begin, int i, unsigned char type = STEINER);}
 {
 Delaunay refinement callback: insert STEINER point in the triangulation.
 }

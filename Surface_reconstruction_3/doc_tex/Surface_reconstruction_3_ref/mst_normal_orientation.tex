@@ -27,7 +27,7 @@ The result is an oriented normal vector for each input point/normal.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{unsigned int mst_normal_orientation(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int KNN);}
+\ccFunction{template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap> unsigned int mst_normal_orientation(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int KNN);}
 {
 Orient the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
 This variant implements the original algorithm. Note that it does not orient normals that are already oriented.
@@ -39,7 +39,7 @@ This variant implements the original algorithm. Note that it does not orient nor
 \item \ccc{first}: first input vertex \item \ccc{beyond}: past-the-end input vertex \item \ccc{vertex_index_map}: property map VertexIterator -$>$ index \item \ccc{vertex_point_map}: property map VertexIterator -$>$ \ccc{Point_3} \item \ccc{vertex_normal_map}: property map VertexIterator -$>$ Normal (in and out) \item \ccc{KNN}: number of neighbors \end{description}
 }
 \ccGlue
-\ccFunction{unsigned int mst_normal_orientation(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int KNN, double angle_max);}
+\ccFunction{template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap> unsigned int mst_normal_orientation(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int KNN, double angle_max);}
 {
 Orient the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
 This is a variant of the original algorithm. It:\begin{itemize}

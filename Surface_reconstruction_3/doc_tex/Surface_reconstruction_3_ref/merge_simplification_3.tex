@@ -30,7 +30,7 @@ Second, the function may require the kernel to use for computations, or deduce i
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{OutputIterator merge_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double epsilon, const Kernel& );}
+\ccFunction{template<typename InputIterator, typename OutputIterator, typename Kernel> OutputIterator merge_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double epsilon, const Kernel& );}
 {
 Merge points which belong to the same cell of a grid of cell size = epsilon. This variant requires the kernel.
 \ccPrecond epsilon $>$ 0.
@@ -43,7 +43,7 @@ Merge points which belong to the same cell of a grid of cell size = epsilon. Thi
 \item \ccc{first}: input points \item \ccc{output}: output points \item \ccc{epsilon}: tolerance value when comparing 3D points \end{description}
 }
 \ccGlue
-\ccFunction{ForwardIterator merge_simplification_3(ForwardIterator first, ForwardIterator beyond, double epsilon, const Kernel& );}
+\ccFunction{template<typename ForwardIterator, typename Kernel> ForwardIterator merge_simplification_3(ForwardIterator first, ForwardIterator beyond, double epsilon, const Kernel& );}
 {
 Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant requires the kernel.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
@@ -57,7 +57,7 @@ Warning: This method modifies the order of points, thus should not be called on 
 \item \ccc{first}: input/output points \item \ccc{epsilon}: tolerance value when comparing 3D points \end{description}
 }
 \ccGlue
-\ccFunction{OutputIterator merge_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double epsilon);}
+\ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator merge_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double epsilon);}
 {
 Merge points which belong to the same cell of a grid of cell size = epsilon. This variant deduces the kernel from iterator types.
 \ccPrecond epsilon $>$ 0.
@@ -70,7 +70,7 @@ Merge points which belong to the same cell of a grid of cell size = epsilon. Thi
 \item \ccc{first}: input points \item \ccc{output}: output points \item \ccc{epsilon}: tolerance value when comparing 3D points \end{description}
 }
 \ccGlue
-\ccFunction{ForwardIterator merge_simplification_3(ForwardIterator first, ForwardIterator beyond, double epsilon);}
+\ccFunction{template<typename ForwardIterator> ForwardIterator merge_simplification_3(ForwardIterator first, ForwardIterator beyond, double epsilon);}
 {
 Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant deduces the kernel from iterator types.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.

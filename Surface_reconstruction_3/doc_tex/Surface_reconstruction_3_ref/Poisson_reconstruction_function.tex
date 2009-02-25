@@ -151,7 +151,7 @@ Create a Poisson indicator function f() piecewise-linear over the tetrahedra of 
 \item \ccc{pdt}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \end{description}
 }
 \ccGlue
-\ccConstructor{template<class InputIterator>Poisson_reconstruction_function(Triangulation& pdt, InputIterator first, InputIterator beyond);}
+\ccConstructor{template<class InputIterator> Poisson_reconstruction_function(Triangulation& pdt, InputIterator first, InputIterator beyond);}
 {
 Create an implicit function from a point set. Insert the first...beyond point set into pdt and create a Poisson indicator function f() piecewise-linear over the tetrahedra of pdt.
 \ccPrecond the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
@@ -168,7 +168,7 @@ Create an implicit function from a point set. Insert the first...beyond point se
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{template<class InputIterator>int insert(InputIterator first, InputIterator beyond);}
+\ccMethod{template<class InputIterator> int insert(InputIterator first, InputIterator beyond);}
 {
 Insert points.
 \ccPrecond the value type of InputIterator must be convertible to \ccc{Point_with_normal}.

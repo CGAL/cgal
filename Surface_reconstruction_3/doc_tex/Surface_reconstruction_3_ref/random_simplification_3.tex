@@ -30,7 +30,7 @@ Second, the function may require the kernel to use for computations, or deduce i
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{OutputIterator random_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double threshold_percent, const Kernel& );}
+\ccFunction{template<typename InputIterator, typename OutputIterator, typename Kernel> OutputIterator random_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double threshold_percent, const Kernel& );}
 {
 Delete random points. This variant requires the kernel.
 \ccCommentHeading{Template Parameters}
@@ -42,7 +42,7 @@ Delete random points. This variant requires the kernel.
 \item \ccc{first}: input points \item \ccc{output}: output points \item \ccc{threshold_percent}: percentage of points to remove \end{description}
 }
 \ccGlue
-\ccFunction{ForwardIterator random_simplification_3(ForwardIterator first, ForwardIterator beyond, double threshold_percent, const Kernel& );}
+\ccFunction{template<typename ForwardIterator, typename Kernel> ForwardIterator random_simplification_3(ForwardIterator first, ForwardIterator beyond, double threshold_percent, const Kernel& );}
 {
 Delete random points. This function is mutating the input point set. This variant requires the kernel.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
@@ -55,7 +55,7 @@ Warning: This method modifies the order of points, thus should not be called on 
 \item \ccc{first}: input/output points \item \ccc{threshold_percent}: percentage of points to remove \end{description}
 }
 \ccGlue
-\ccFunction{OutputIterator random_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double threshold_percent);}
+\ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator random_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double threshold_percent);}
 {
 Delete random points. This variant deduces the kernel from iterator types.
 \ccCommentHeading{Template Parameters}
@@ -67,7 +67,7 @@ Delete random points. This variant deduces the kernel from iterator types.
 \item \ccc{first}: input points \item \ccc{output}: output points \item \ccc{threshold_percent}: percentage of points to remove \end{description}
 }
 \ccGlue
-\ccFunction{ForwardIterator random_simplification_3(ForwardIterator first, ForwardIterator beyond, double threshold_percent);}
+\ccFunction{template<typename ForwardIterator> ForwardIterator random_simplification_3(ForwardIterator first, ForwardIterator beyond, double threshold_percent);}
 {
 Delete random points. This function is mutating the input point set. This variant deduces the kernel from iterator types.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
