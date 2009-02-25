@@ -44,11 +44,9 @@ template$<$  \\
 class Gt$>$   \\
 class \ccc{APSS_reconstruction_function};
 
+\ccCommentHeading{Parameters}
 \begin{description}
-\item[Parameters:]
-\begin{description}
-\item[Gt]Geometric traits class. \end{description}
-\end{description}
+\item \ccc{Gt}: Geometric traits class. \end{description}
 
 %END-AUTO(\ccParameters)
 
@@ -102,7 +100,7 @@ Kernel's geometric traits.
 \ccGlue
 \ccNestedType{Point_with_normal}
 {
-== \ccc{Point_with_normal_3<Gt>} (compact representation)
+== \ccc{Point_with_normal_3<Gt>}
 }
 \ccGlue
 \ccNestedType{Normal}
@@ -122,14 +120,11 @@ Kernel's geometric traits.
 \ccConstructor{APSS_reconstruction_function(InputIterator first, InputIterator beyond, unsigned int k, FT projection_error = 3.16e-4);}
 {
 Create an APSS implicit function from a point set.
-Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal_3}.
+\ccPrecond the value type of InputIterator must be convertible to \ccc{Point_with_normal_3}.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{first}: First point to add. \item \ccc{beyond}: Past-the-end point to add. \item \ccc{k}: Number of nearest neighbors. \item \ccc{projection_error}: Dichotomy error when projecting point. \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[first]First point to add. \item[beyond]Past-the-end point to add. \item[k]Number of nearest neighbors. \item[\ccc{projection_error}]Dichotomy error when projecting point. \end{description}
-\end{description}
 \ccGlue
 \ccConstructor{APSS_reconstruction_function(const APSS_reconstruction_function<Gt>& other);}
 {

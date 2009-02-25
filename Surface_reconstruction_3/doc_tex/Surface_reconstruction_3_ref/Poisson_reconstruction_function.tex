@@ -66,11 +66,9 @@ class Gt,   \\
 class \ccc{ReconstructionTriangulation_3}$>$   \\
 class \ccc{Poisson_reconstruction_function};
 
+\ccCommentHeading{Parameters}
 \begin{description}
-\item[Parameters:]
-\begin{description}
-\item[Gt]Geometric traits class \item[\ccc{ReconstructionTriangulation_3}]3D Delaunay triangulation, model of \ccc{ReconstructionTriangulation_3} concept. \end{description}
-\end{description}
+\item \ccc{Gt}: Geometric traits class \item \ccc{ReconstructionTriangulation_3}: 3D Delaunay triangulation, model of \ccc{ReconstructionTriangulation_3} concept. \end{description}
 
 %END-AUTO(\ccParameters)
 
@@ -148,25 +146,19 @@ Model of \ccc{Kernel::Vector_3} concept.
 \ccConstructor{Poisson_reconstruction_function(Triangulation& pdt);}
 {
 Create a Poisson indicator function f() piecewise-linear over the tetrahedra of pdt. If pdt is empty, create an empty implicit function.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{pdt}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[pdt]\ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \end{description}
-\end{description}
 \ccGlue
 \ccConstructor{template<class InputIterator>Poisson_reconstruction_function(Triangulation& pdt, InputIterator first, InputIterator beyond);}
 {
 Create an implicit function from a point set. Insert the first...beyond point set into pdt and create a Poisson indicator function f() piecewise-linear over the tetrahedra of pdt.
-Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
+\ccPrecond the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{pdt}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \item \ccc{first}: First point to add. \item \ccc{beyond}: Past-the-end point to add. \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[pdt]\ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \item[first]First point to add. \item[beyond]Past-the-end point to add. \end{description}
-\end{description}
 \ccGlue
 
 %END-AUTO(\ccCreation)
@@ -179,16 +171,12 @@ Precondition: the value type of InputIterator must be convertible to \ccc{Point_
 \ccMethod{template<class InputIterator>int insert(InputIterator first, InputIterator beyond);}
 {
 Insert points.
-Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
+\ccPrecond the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{first}: First point to add. \item \ccc{beyond}: Past-the-end point to add. \end{description}
+\ccCommentHeading{Returns} the number of inserted points.
 }
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[first]First point to add. \item[beyond]Past-the-end point to add. \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]the number of inserted points. \end{description}
 \ccGlue
 \ccMethod{void clear();}
 {
@@ -233,13 +221,10 @@ Return false on error.
 \ccMethod{unsigned int delaunay_refinement(FT radius_edge_ratio_bound, FT cell_radius_bound, unsigned int max_vertices, FT enlarge_ratio);}
 {
 Delaunay refinement (break bad tetrahedra, where bad means badly shaped or too big). The normal of Steiner points is set to zero. Return the number of vertices inserted.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{radius_edge_ratio_bound}: radius edge ratio bound (ignored if zero) \item \ccc{cell_radius_bound}: cell radius bound (ignored if zero) \item \ccc{max_vertices}: number of vertices bound \item \ccc{enlarge_ratio}: bounding box enlarge ratio \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[\ccc{radius_edge_ratio_bound}]radius edge ratio bound (ignored if zero) \item[\ccc{cell_radius_bound}]cell radius bound (ignored if zero) \item[\ccc{max_vertices}]number of vertices bound \item[\ccc{enlarge_ratio}]bounding box enlarge ratio \end{description}
-\end{description}
 \ccGlue
 \ccMethod{unsigned int delaunay_refinement_shell(FT size_shell, FT sizing, unsigned int max_vertices);}
 {

@@ -29,12 +29,12 @@ CGAL_BEGIN_NAMESPACE
 
 /// Save points (positions + normals) to a .off file (ASCII).
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type must be a model of the PointWithNormal_3 concept.
 ///
 /// @return true on success.
 template <typename InputIterator>
-bool surface_reconstruction_write_off_point_cloud(const char* pFilename, 
+bool surface_reconstruction_write_off_point_cloud(const char* pFilename,
                                                   InputIterator first,    ///< first input point
                                                   InputIterator beyond)   ///< past-the-end input point
 {
@@ -72,13 +72,13 @@ bool surface_reconstruction_write_off_point_cloud(const char* pFilename,
 
 /// Save points (positions + optionally normals) to a .off file (ASCII).
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type must be a model of PointWithNormal_3 if
 /// write_normals is true, else a model of Kernel::Point_3.
 ///
 /// @return true on success.
 template <typename InputIterator>
-bool surface_reconstruction_write_off_point_cloud(const char* pFilename, 
+bool surface_reconstruction_write_off_point_cloud(const char* pFilename,
                                                   InputIterator first,    ///< first input point
                                                   InputIterator beyond,   ///< past-the-end input point
                                                   bool write_normals)
@@ -90,7 +90,7 @@ bool surface_reconstruction_write_off_point_cloud(const char* pFilename,
   else
   {
     // model of Kernel::Point_3
-    typedef typename std::iterator_traits<InputIterator>::value_type Point; 
+    typedef typename std::iterator_traits<InputIterator>::value_type Point;
 
     CGAL_precondition(pFilename != NULL);
     CGAL_surface_reconstruction_precondition(first != beyond);

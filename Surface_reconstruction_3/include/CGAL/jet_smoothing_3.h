@@ -32,15 +32,15 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi { 
+namespace CGALi {
 
 
 /// Smooth one point position using jet fitting on the KNN
 /// nearest neighbors and reprojection onto the jet.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param Kernel Geometric traits class.
 /// @param Tree KD-tree.
 ///
@@ -105,9 +105,9 @@ jet_smoothing_3(const typename Kernel::Point_3& query, ///< 3D point to project
 /// nearest neighbors and reprojection onto the jet.
 /// This variant requires the kernel.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type convertible to Point_3.
 /// @param OutputIterator value_type convertible to Point_3.
 /// @param Kernel Geometric traits class.
@@ -155,7 +155,7 @@ jet_smoothing_3(InputIterator first,    ///< input points
     (Point_3&)(point) = CGALi::jet_smoothing_3<Kernel>(*it,tree,KNN,degre_fitting,degree_monge);
     *output++ = point;
   }
-    
+
   return output;
 }
 
@@ -164,13 +164,13 @@ jet_smoothing_3(InputIterator first,    ///< input points
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
 ///
-/// Warning: 
+/// Warning:
 /// This method moves the points, thus
 /// should not be called on containers sorted wrt points position.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param ForwardIterator value_type convertible to Point_3.
 /// @param Kernel Geometric traits class.
 template <typename ForwardIterator,
@@ -216,7 +216,7 @@ jet_smoothing_3(ForwardIterator first,     ///< input/output points
 /// nearest neighbors and reprojection onto the jet.
 /// This variant deduces the kernel from iterator types.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
@@ -240,13 +240,13 @@ jet_smoothing_3(InputIterator first,    ///< input points
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
 ///
-/// Warning: 
+/// Warning:
 /// This method moves the points, thus
 /// should not be called on containers sorted wrt points position.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param ForwardIterator value_type convertible to Point_3.
 template <typename ForwardIterator>
 void

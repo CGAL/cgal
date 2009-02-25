@@ -37,15 +37,15 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi { 
+namespace CGALi {
 
 
 /// Estimate normal direction using linear least
 /// squares fitting of a plane on the K nearest neighbors.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param Kernel Geometric traits class.
 /// @param Tree KD-tree.
 /// @param OrientableNormal_3 Type of return value.
@@ -110,9 +110,9 @@ pca_normal_estimation(const typename Kernel::Point_3& query, ///< 3D point whose
 /// squares fitting of a plane on the K nearest neighbors.
 /// This variant requires the kernel.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type is Point_3.
 /// @param OutputIterator value_type is Point_3.
 /// @param Kernel Geometric traits class.
@@ -175,9 +175,9 @@ pca_normal_estimation(InputIterator first, ///< input points
 /// squares fitting of a plane on the K nearest neighbors.
 /// This variant deduces the kernel from iterator types.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type is Point_3.
 /// @param OutputIterator value_type is Point_3.
 ///

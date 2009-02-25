@@ -35,65 +35,31 @@ The main version deduces the kernel from input parameters.
 \ccFunction{OutputIterator jet_normal_estimation(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int KNN, const Kernel& , unsigned int degre_fitting);}
 {
 Estimate normal directions using jet fitting on the KNN nearest neighbors. This variant requires the kernel.
-Precondition: KNN $>$= 2.
+\ccPrecond KNN $>$= 2.
+\ccCommentHeading{Template Parameters}
+\begin{description}
+\item \ccc{InputIterator}: \ccc{value_type} is \ccc{Point_3}. \item \ccc{OutputIterator}: \ccc{value_type} is \ccc{Point_3}. \item \ccc{Kernel}: Geometric traits class.\end{description}
+\ccCommentHeading{Returns} past-the-end output iterator.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{first}: input points \item \ccc{normals}: output normals \item \ccc{KNN}: number of neighbors \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Template Parameters:]
-\begin{description}
-\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[OutputIterator]\ccc{value_type} is \ccc{Point_3}. \item[Kernel]Geometric traits class.\end{description}
-\end{description}
-\begin{description}
-\item[Returns:]past-the-end output iterator. \end{description}
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[first]input points \item[normals]output normals \item[KNN]number of neighbors \end{description}
-\end{description}
 \ccGlue
 \ccFunction{OutputIterator jet_normal_estimation(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int KNN, unsigned int degre_fitting = 2);}
 {
 Estimate normal directions using jet fitting on the KNN nearest neighbors. This variant deduces the kernel from iterator types.
-Precondition: KNN $>$= 2.
+\ccPrecond KNN $>$= 2.
+\ccCommentHeading{Template Parameters}
+\begin{description}
+\item \ccc{InputIterator}: \ccc{value_type} is \ccc{Point_3}. \item \ccc{OutputIterator}: \ccc{value_type} is \ccc{Point_3}.\end{description}
+\ccCommentHeading{Returns} past-the-end output iterator.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{first}: input points \item \ccc{normals}: output normals \item \ccc{KNN}: number of neighbors \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Template Parameters:]
-\begin{description}
-\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[OutputIterator]\ccc{value_type} is \ccc{Point_3}.\end{description}
-\end{description}
-\begin{description}
-\item[Returns:]past-the-end output iterator. \end{description}
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[first]input points \item[normals]output normals \item[KNN]number of neighbors \end{description}
-\end{description}
 \ccGlue
 
 %END-AUTO(\ccDefinition)
-
-\ccParameters
-
-The full template declarations are:
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccParameters)
-
-template$<$  \\
-typename InputIterator,   \\
-typename OutputIterator,   \\
-typename Kernel$>$  \\
-OutputIterator  \\
-\ccc{jet_normal_estimation} (InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int KNN, const Kernel\& , unsigned int \ccc{degre_fitting});  \\
-  \\
-template$<$  \\
-typename InputIterator,   \\
-typename OutputIterator$>$  \\
-OutputIterator  \\
-\ccc{jet_normal_estimation} (InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int KNN, unsigned int \ccc{degre_fitting}=2);  \\
-
-%END-AUTO(\ccParameters)
 
 \ccSeeAlso
 

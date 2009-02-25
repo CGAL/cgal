@@ -26,7 +26,7 @@ CGAL_BEGIN_NAMESPACE
 
 /// Get reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param SurfaceMeshComplex_2InTriangulation_3 model of the SurfaceMeshComplex_2InTriangulation_3 concept.
 /// @param OutputIterator value_type must be Triangle_3.
 ///

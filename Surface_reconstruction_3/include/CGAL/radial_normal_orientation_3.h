@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 /// Normals are oriented towards exterior of the point set.
 /// This very fast method is intended to convex objects.
 ///
-/// Preconditions:
+/// @commentheading Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
 /// - VertexIndexMap is a model of boost::readable_property_map.
 /// - VertexPointMap is a model of boost::readable_property_map.

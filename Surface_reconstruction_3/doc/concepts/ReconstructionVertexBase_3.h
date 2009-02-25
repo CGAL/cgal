@@ -28,7 +28,7 @@
 /// @heading Has Models:
 /// Reconstruction_vertex_base_3<GeomTraits, TriangulationVertexBase_3>
 ///
-/// Precondition:
+/// @commentheading Precondition:
 /// The geometric traits class 's Point_3 type must be a model of PointWithNormal_3.
 
 class ReconstructionVertexBase_3 : public DelaunayTriangulationVertexBase_3,

@@ -70,7 +70,7 @@ public:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  typedef Point_with_normal_3<Gt> Point_with_normal; ///< == Point_with_normal_3<Gt> (compact representation)
+  typedef Point_with_normal_3<Gt> Point_with_normal; ///< == Point_with_normal_3<Gt>
   typedef typename Point_with_normal::Normal Normal; ///< == Vector_3
 
 // Private types
@@ -127,7 +127,8 @@ public:
 
   /// Create an APSS implicit function from a point set.
   ///
-  /// Precondition: the value type of InputIterator must be convertible to Point_with_normal_3.
+  /// @commentheading Precondition:
+  /// the value type of InputIterator must be convertible to Point_with_normal_3.
   ///
   /// @param first First point to add.
   /// @param beyond Past-the-end point to add.

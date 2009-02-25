@@ -48,7 +48,8 @@ private:
 public:
   K_nearest_neighbor() {}
 
-  /// Precondition: InputIterator value_type must be convertible to Point_vertex_handle_3.
+  /// @commentheading Precondition: 
+  /// InputIterator value_type must be convertible to Point_vertex_handle_3.
   template <class InputIterator>
   K_nearest_neighbor(InputIterator first, InputIterator beyond)
   {
@@ -57,7 +58,8 @@ public:
 
   /// Default copy constructor, operator =() and destructor are fine.
 
-  /// Precondition: InputIterator value_type must be convertible to Point_vertex_handle_3.
+  /// @commentheading Precondition: 
+  /// InputIterator value_type must be convertible to Point_vertex_handle_3.
   template <class InputIterator>
   void insert(InputIterator first, InputIterator beyond)
   {

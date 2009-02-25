@@ -79,7 +79,7 @@ public:
 
   /// Insert range of triangles.
   ///
-  /// Precondition: the value type of InputIterator must 'Triangle'.
+  /// @commentheading Precondition: the value type of InputIterator must 'Triangle'.
   ///
   /// @param first First triangle to add.
   /// @param beyond Past-the-end triangle to add.

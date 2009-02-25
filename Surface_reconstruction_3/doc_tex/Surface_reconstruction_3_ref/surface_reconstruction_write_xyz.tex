@@ -32,60 +32,29 @@ the input can be either a container of \ccc{Point_3} or of \ccc{PointWithNormal_
 \ccFunction{bool surface_reconstruction_write_xyz(const char * pFilename, InputIterator first, InputIterator beyond);}
 {
 Save points (positions + normals) to a .xyz file (ASCII).
+\ccCommentHeading{Template Parameters}
+\begin{description}
+\item \ccc{InputIterator}: \ccc{value_type} must be a model of the \ccc{PointWithNormal_3} concept.\end{description}
+\ccCommentHeading{Returns} true on success.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{first}: first input point \item \ccc{beyond}: past-the-end input point \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Template Parameters:]
-\begin{description}
-\item[InputIterator]\ccc{value_type} must be a model of the \ccc{PointWithNormal_3} concept.\end{description}
-\end{description}
-\begin{description}
-\item[Returns:]true on success. \end{description}
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[first]first input point \item[beyond]past-the-end input point \end{description}
-\end{description}
 \ccGlue
 \ccFunction{bool surface_reconstruction_write_xyz(const char * pFilename, InputIterator first, InputIterator beyond, bool write_normals);}
 {
 Save points (positions + optionally normals) to a .xyz file (ASCII).
+\ccCommentHeading{Template Parameters}
+\begin{description}
+\item \ccc{InputIterator}: \ccc{value_type} must be a model of \ccc{PointWithNormal_3} if \ccc{write_normals} is true, else a model of \ccc{Kernel::Point_3}.\end{description}
+\ccCommentHeading{Returns} true on success.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{first}: first input point \item \ccc{beyond}: past-the-end input point \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Template Parameters:]
-\begin{description}
-\item[InputIterator]\ccc{value_type} must be a model of \ccc{PointWithNormal_3} if \ccc{write_normals} is true, else a model of \ccc{Kernel::Point_3}.\end{description}
-\end{description}
-\begin{description}
-\item[Returns:]true on success. \end{description}
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[first]first input point \item[beyond]past-the-end input point \end{description}
-\end{description}
 \ccGlue
 
 %END-AUTO(\ccDefinition)
-
-\ccParameters
-
-The full template declarations are:
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccParameters)
-
-template$<$  \\
-typename InputIterator$>$  \\
-bool  \\
-\ccc{surface_reconstruction_write_xyz} (const char $\ast$pFilename, InputIterator first, InputIterator beyond);  \\
-  \\
-template$<$  \\
-typename InputIterator$>$  \\
-bool  \\
-\ccc{surface_reconstruction_write_xyz} (const char $\ast$pFilename, InputIterator first, InputIterator beyond, bool \ccc{write_normals});  \\
-
-%END-AUTO(\ccParameters)
 
 \ccSeeAlso
 

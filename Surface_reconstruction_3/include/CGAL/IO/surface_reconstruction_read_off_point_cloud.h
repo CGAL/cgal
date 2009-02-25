@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 
 /// Read points (positions + normals, if available) from a .off file (ASCII).
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param OutputIterator value_type must be a model of the PointWithNormal_3 concept.
 ///
 /// @return true on success.
@@ -72,9 +72,9 @@ bool surface_reconstruction_read_off_point_cloud(const char* pFilename, OutputIt
         std::cerr << "Incorrect file format line " << lineNumber << " of " << pFilename;
         return false;
       }
-    }    
+    }
 
-    // Read number of points on 2nd line    
+    // Read number of points on 2nd line
     else if (lineNumber == 2)
     {
       if (sscanf(pLine,"%ld %ld %ld",&pointsCount,&facesCount,&edgesCount) != 3)
@@ -82,7 +82,7 @@ bool surface_reconstruction_read_off_point_cloud(const char* pFilename, OutputIt
         std::cerr << "Error line " << lineNumber << " of " << pFilename;
         return false;
       }
-    }        
+    }
 
     // Read 3D points on next lines
     else if (pointsRead < pointsCount)

@@ -499,7 +499,7 @@ public:
   /// Insert points in the triangulation using a spatial sort.
   /// Default type is INPUT.
   ///
-  /// Precondition: the value type of InputIterator must be 'Point'.
+  /// @commentheading Precondition: the value type of InputIterator must be 'Point'.
   ///
   /// @param first First point to add to pdt.
   /// @param beyond Past-the-end point to add to pdt.
@@ -544,8 +544,8 @@ public:
       return v;
   }
 
-  /// Index all (finite) vertices following the order of Finite_vertices_iterator.
-  /// @return the number of (finite) vertices.
+  /// Index all finite vertices following the order of Finite_vertices_iterator.
+  /// @return the number of finite vertices.
   unsigned int index_vertices()
   {
     unsigned int index = 0;

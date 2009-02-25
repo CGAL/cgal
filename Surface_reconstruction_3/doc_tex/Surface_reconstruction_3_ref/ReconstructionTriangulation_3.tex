@@ -196,32 +196,29 @@ Insert point in the triangulation. Default type is INPUT.
 \ccMethod{int insert(InputIterator first, InputIterator beyond, unsigned char type = INPUT);}
 {
 Insert points in the triangulation using a spatial sort. Default type is INPUT.
-Precondition: the value type of InputIterator must be \ccc{Point}.
+\ccPrecond the value type of InputIterator must be \ccc{Point}.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{first}: First point to add to pdt. \item \ccc{beyond}: Past-the-end point to add to pdt. \end{description}
+\ccCommentHeading{Returns} the number of inserted points.
 }
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[first]First point to add to pdt. \item[beyond]Past-the-end point to add to pdt. \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]the number of inserted points. \end{description}
 \ccGlue
 \ccMethod{Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end, Cell_handle begin, int i, unsigned char type = STEINER);}
 {
-Delaunay refinement callback: insert STEINER point in the triangulation. Index all (finite) vertices following the order of \ccc{Finite_vertices_iterator}.
+Delaunay refinement callback: insert STEINER point in the triangulation.
 }
 \ccGlue
-\begin{description}
-\item[Returns:]the number of (finite) vertices. \end{description}
+\ccMethod{unsigned int index_vertices();}
+{
+Index all finite vertices following the order of \ccc{Finite_vertices_iterator}.
+\ccCommentHeading{Returns} the number of finite vertices.
+}
 \ccGlue
 \ccMethod{unsigned int index_unconstrained_vertices();}
 {
 Index unconstraint vertices following the order of \ccc{Finite_vertices_iterator}.
+\ccCommentHeading{Returns} the number of unconstraint vertices.
 }
-\ccGlue
-\begin{description}
-\item[Returns:]the number of unconstraint vertices. \end{description}
 \ccGlue
 
 %END-AUTO(\ccOperations)

@@ -114,7 +114,7 @@ public:
 /// - does not orient normals that are already oriented.
 /// - does not propagate the orientation if the angle between 2 normals > angle_max.
 ///
-/// Preconditions:
+/// @commentheading Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
 /// - VertexNormalMap is a model of boost::lvalue_property_map.
 /// - Normals must be unit vectors.
@@ -178,7 +178,7 @@ private:
 /// If the point set contains points with an oriented normal, find one.
 /// Else, orient the normal of the vertex with maximum Z towards +Z axis.
 ///
-/// Preconditions:
+/// @commentheading Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
 /// - VertexIndexMap is a model of boost::readable_property_map.
 /// - VertexPointMap is a model of boost::readable_property_map.
@@ -259,7 +259,7 @@ find_source_mst_3(
 /// - we add the edge (i, j) if either vertex i is in the KNN-neighborhood of vertex j,
 ///   or vertex j is in the KNN-neighborhood of vertex i.
 ///
-/// Preconditions:
+/// @commentheading Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
 /// - VertexIndexMap is a model of boost::readable_property_map.
 /// - VertexPointMap is a model of boost::readable_property_map.
@@ -397,7 +397,7 @@ create_riemannian_graph(
 /// - vertices contain the corresponding input vertex handle.
 /// - we add the edge (predecessor[i], i) for each element of the MST.
 ///
-/// Preconditions:
+/// @commentheading Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
 /// - VertexIndexMap is a model of boost::readable_property_map.
 /// - VertexPointMap is a model of boost::readable_property_map.
@@ -502,7 +502,7 @@ create_mst_graph(
 /// This variant implements the original algorithm.
 /// Note that it does not orient normals that are already oriented.
 ///
-/// Preconditions:
+/// @commentheading Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
 /// - VertexIndexMap is a model of boost::readable_property_map.
 /// - VertexPointMap is a model of boost::readable_property_map.
@@ -537,7 +537,7 @@ mst_normal_orientation(
 /// - does not orient normals that are already oriented.
 /// - does not propagate the orientation if the angle between 2 normals > angle_max.
 ///
-/// Preconditions:
+/// @commentheading Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
 /// - VertexIndexMap is a model of boost::readable_property_map.
 /// - VertexPointMap is a model of boost::readable_property_map.

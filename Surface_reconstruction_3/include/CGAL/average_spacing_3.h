@@ -31,14 +31,14 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi { 
+namespace CGALi {
 
 
 /// Compute average spacing of one query point from K nearest neighbors.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param Kernel Geometric traits class.
 /// @param Tree KD-tree.
 ///
@@ -94,9 +94,9 @@ average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose spa
 /// Compute average spacing from K nearest neighbors.
 /// This variant requires the kernel.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type is Point_3.
 /// @param Kernel Geometric traits class.
 ///
@@ -145,13 +145,13 @@ average_spacing_3(InputIterator first,    ///< input points
 /// Compute average spacing from K nearest neighbors.
 /// This variant deduces the kernel from iterator types.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type is Point_3.
 /// @param FT number type.
 ///
-/// @return average spacing (scalar)
+/// @return average spacing (scalar).
 template < typename InputIterator,
            typename FT
 >

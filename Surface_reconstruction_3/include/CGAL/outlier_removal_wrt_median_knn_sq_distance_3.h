@@ -38,9 +38,9 @@ namespace CGALi {
 /// Utility function for outlier_removal_wrt_median_knn_sq_distance_3():
 /// Compute median squared distance to the K nearest neighbors.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param Kernel Geometric traits class.
 /// @param Tree KD-tree.
 ///
@@ -86,11 +86,11 @@ compute_median_knn_sq_distance_3(
     //for(typename std::vector<Point>::iterator neighbor = points.begin(); neighbor != points.end(); neighbor++)
        // sq_distance += sqd(*neighbor, query);
     //sq_distance /= FT(points.size());
-    
+
     //if((points.size() & 1) == 1)
         return sqd(points[KNN_median]/*[points.size()/2]*/, query);
     //else
-    //    return (sqd(points[points.size()/2],query)+ sqd(points[(points.size()/2)+1], query))/2; 
+    //    return (sqd(points[points.size()/2],query)+ sqd(points[(points.size()/2)+1], query))/2;
 }
 
 
@@ -140,7 +140,7 @@ compute_median_knn_sq_distance_3(
 //      FT sq_distance = compute_median_knn_sq_distance_3<Kernel>(*point_it,tree,KNN);
 //      sorted_points.insert( std::make_pair(sq_distance,*point_it) );
 //    }
-//    
+//
 //    output = std::copy(sorted_points.begin(), sorted_points.end(), output);
 //    return output;
 //}
@@ -159,9 +159,9 @@ compute_median_knn_sq_distance_3(
 /// - output (100-threshold_percent) % best points wrt this distance.
 /// This variant requires the kernel.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type must be convertible to OutputIterator's value_type.
 /// @param OutputIterator value_type must be convertible to Point_3.
 /// @param Kernel Geometric traits class.
@@ -215,8 +215,8 @@ outlier_removal_wrt_median_knn_sq_distance_3(
     int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
     typename std::multimap<FT,Point>::iterator src;
     int index;
-    for (src = sorted_points.begin(), index = 0; 
-         index < first_index_to_remove; 
+    for (src = sorted_points.begin(), index = 0;
+         index < first_index_to_remove;
          ++src, ++index)
     {
       *output++ = src->second;
@@ -230,13 +230,13 @@ outlier_removal_wrt_median_knn_sq_distance_3(
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
 ///
-/// Warning: 
+/// Warning:
 /// This method modifies the order of points, thus
 /// should not be called on sorted containers.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3.
 /// @param Kernel Geometric traits class.
 ///
@@ -282,7 +282,7 @@ outlier_removal_wrt_median_knn_sq_distance_3(
       FT sq_distance = CGALi::compute_median_knn_sq_distance_3<Kernel>(*point_it,tree,KNN);
       sorted_points.insert( std::make_pair(sq_distance,*point_it) );
     }
-    
+
     // Replace [first, beyond) range by the multimap content.
     // Return the iterator after the (100-threshold_percent) % best points.
     ForwardIterator first_iterator_to_remove = beyond;
@@ -290,8 +290,8 @@ outlier_removal_wrt_median_knn_sq_distance_3(
     int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
     typename std::multimap<FT,Point>::iterator src;
     int index;
-    for (src = sorted_points.begin(), index = 0; 
-         src != sorted_points.end(); 
+    for (src = sorted_points.begin(), index = 0;
+         src != sorted_points.end();
          ++src, ++index)
     {
       *dst++ = src->second;
@@ -307,9 +307,9 @@ outlier_removal_wrt_median_knn_sq_distance_3(
 /// - output (100-threshold_percent) % best points wrt this distance.
 /// This variant deduces the kernel from iterator types.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type must be convertible to OutputIterator's value_type.
 /// @param OutputIterator value_type must be convertible to Point_3.
 ///
@@ -336,13 +336,13 @@ outlier_removal_wrt_median_knn_sq_distance_3(
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
 ///
-/// Warning: 
+/// Warning:
 /// This method modifies the order of points, thus
 /// should not be called on sorted containers.
 ///
-/// Precondition: KNN >= 2.
+/// @commentheading Precondition: KNN >= 2.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3.
 ///
 /// @return First iterator to remove (see erase-remove idiom).

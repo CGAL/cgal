@@ -190,10 +190,10 @@ public:
 /// bad means badly shaped or too big).
 /// @return the number of vertices inserted.
 ///
-/// Precondition:
+/// @commentheading Precondition:
 /// convergence is guaranteed if radius_edge_ratio_bound >= 1.0.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param Tr 3D Delaunay triangulation.
 /// @param Surface Sphere_3 or Iso_cuboid_3.
 template <typename Tr,

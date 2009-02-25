@@ -33,64 +33,31 @@ The main version deduces the kernel from input parameters.
 \ccFunction{Kernel::FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int KNN, const Kernel& );}
 {
 Compute average spacing from K nearest neighbors. This variant requires the kernel.
-Precondition: KNN $>$= 2.
+\ccPrecond KNN $>$= 2.
+\ccCommentHeading{Template Parameters}
+\begin{description}
+\item \ccc{InputIterator}: \ccc{value_type} is \ccc{Point_3}. \item \ccc{Kernel}: Geometric traits class.\end{description}
+\ccCommentHeading{Returns} average spacing (scalar).
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{first}: input points \item \ccc{KNN}: number of neighbors \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Template Parameters:]
-\begin{description}
-\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[Kernel]Geometric traits class.\end{description}
-\end{description}
-\begin{description}
-\item[Returns:]average spacing (scalar). \end{description}
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[first]input points \item[KNN]number of neighbors \end{description}
-\end{description}
 \ccGlue
 \ccFunction{FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int KNN);}
 {
 Compute average spacing from K nearest neighbors. This variant deduces the kernel from iterator types.
-Precondition: KNN $>$= 2.
+\ccPrecond KNN $>$= 2.
+\ccCommentHeading{Template Parameters}
+\begin{description}
+\item \ccc{InputIterator}: \ccc{value_type} is \ccc{Point_3}. \item \ccc{FT}: number type.\end{description}
+\ccCommentHeading{Returns} average spacing (scalar).
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{first}: input points \item \ccc{KNN}: number of neighbors \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Template Parameters:]
-\begin{description}
-\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[FT]number type.\end{description}
-\end{description}
-\begin{description}
-\item[Returns:]average spacing (scalar) \end{description}
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[first]input points \item[KNN]number of neighbors \end{description}
-\end{description}
 \ccGlue
 
 %END-AUTO(\ccDefinition)
-
-\ccParameters
-
-The full template declarations are:
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccParameters)
-
-template$<$  \\
-typename InputIterator,   \\
-typename Kernel$>$  \\
-\ccc{Kernel::FT}  \\
-\ccc{average_spacing_3} (InputIterator first, InputIterator beyond, unsigned int KNN, const Kernel\& );  \\
-  \\
-template$<$  \\
-typename InputIterator,   \\
-typename FT$>$  \\
-FT  \\
-\ccc{average_spacing_3} (InputIterator first, InputIterator beyond, unsigned int KNN);  \\
-
-%END-AUTO(\ccParameters)
 
 \ccExample
 

@@ -31,12 +31,12 @@ CGAL_BEGIN_NAMESPACE
 
 /// Read points (positions + normals, if available) from a .xyz file (ASCII).
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param OutputIterator value_type must be a model of the PointWithNormal_3 concept.
 ///
 /// @return true on success.
 template <typename OutputIterator>
-bool surface_reconstruction_read_xyz(const char* pFilename, 
+bool surface_reconstruction_read_xyz(const char* pFilename,
                                      OutputIterator output)
 {
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
@@ -99,17 +99,17 @@ bool surface_reconstruction_read_xyz(const char* pFilename,
 /// Read points (positions only) from a .xyz file (ASCII).
 /// Normals are ignored.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param OutputIterator value_type must be Point_3.
 ///
 /// @return true on success.
 template <typename OutputIterator>
-bool surface_reconstruction_read_xyz(const char* pFilename, 
-                                     OutputIterator output, 
+bool surface_reconstruction_read_xyz(const char* pFilename,
+                                     OutputIterator output,
                                      bool read_normals /* must be false */)
 {
   CGAL_surface_reconstruction_assertion(read_normals == false);
-  
+
   typedef typename value_type_traits<OutputIterator>::type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   typedef typename CGAL::Point_with_normal_3<Kernel> Point_with_normal;
@@ -120,7 +120,7 @@ bool surface_reconstruction_read_xyz(const char* pFilename,
   {
     // copy to Point_3 container, removing normals
     std::copy(pwns.begin(), pwns.end(), output);
-    
+
     return true;
   }
   else

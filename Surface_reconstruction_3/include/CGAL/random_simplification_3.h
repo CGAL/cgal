@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 /// Delete random points.
 /// This variant requires the kernel.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type must be convertible to OutputIterator's value_type.
 /// @param OutputIterator value_type must be convertible to Point_3.
 /// @param Kernel Geometric traits class.
@@ -45,7 +45,7 @@ random_simplification_3(
           InputIterator beyond,
           OutputIterator output,    ///< output points
           double threshold_percent, ///< percentage of points to remove
-          const Kernel& /*kernel*/)          
+          const Kernel& /*kernel*/)
 {
     typedef typename std::iterator_traits<InputIterator>::value_type Point;
 
@@ -68,11 +68,11 @@ random_simplification_3(
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
 ///
-/// Warning: 
+/// Warning:
 /// This method modifies the order of points, thus
 /// should not be called on sorted containers.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3.
 /// @param Kernel Geometric traits class.
 ///
@@ -86,7 +86,6 @@ random_simplification_3(
            ForwardIterator beyond,
            double threshold_percent,  ///< percentage of points to remove
            const Kernel& /*kernel*/)
-        
 {
     typedef typename std::iterator_traits<ForwardIterator>::value_type Point;
 
@@ -100,14 +99,14 @@ random_simplification_3(
     int first_index_to_remove = int(double(nb_points) * ((100.0-threshold_percent)/100.0));
     ForwardIterator first_iterator_to_remove = first;
     std::advance(first_iterator_to_remove, first_index_to_remove);
-    
+
     return first_iterator_to_remove;
 }
 
 /// Delete random points.
 /// This variant deduces the kernel from iterator types.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type must be convertible to OutputIterator's value_type.
 /// @param OutputIterator value_type must be convertible to Point_3.
 ///
@@ -131,11 +130,11 @@ random_simplification_3(
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
 ///
-/// Warning: 
+/// Warning:
 /// This method modifies the order of points, thus
 /// should not be called on sorted containers.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3.
 ///
 /// @return First iterator to remove (see erase-remove idiom).

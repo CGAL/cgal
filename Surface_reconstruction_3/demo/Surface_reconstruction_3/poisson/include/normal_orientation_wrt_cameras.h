@@ -72,7 +72,7 @@ normal_orientation_wrt_cameras(const typename Gt::Point_3& p, ///< 3D point posi
 /// w.r.t. the position of cameras
 /// that reconstructed the points by photogrammetry.
 ///
-/// Preconditions:
+/// @commentheading Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
 /// - VertexPointMap is a model of boost::readable_property_map.
 /// - VertexNormalMap is a model of boost::lvalue_property_map.

@@ -208,7 +208,8 @@ public:
   /// create a Poisson indicator function f() piecewise-linear
   /// over the tetrahedra of pdt.
   ///
-  /// Precondition: the value type of InputIterator must be convertible to Point_with_normal.
+  /// @commentheading Precondition: 
+  /// the value type of InputIterator must be convertible to Point_with_normal.
   ///
   /// @param pdt ReconstructionTriangulation_3 base of the Poisson indicator function.
   /// @param first First point to add.
@@ -223,7 +224,8 @@ public:
 
   /// Insert points.
   ///
-  /// Precondition: the value type of InputIterator must be convertible to Point_with_normal.
+  /// @commentheading Precondition: 
+  /// the value type of InputIterator must be convertible to Point_with_normal.
   ///
   /// @param first First point to add.
   /// @param beyond Past-the-end point to add.

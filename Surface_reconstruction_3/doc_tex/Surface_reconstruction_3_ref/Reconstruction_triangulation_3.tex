@@ -52,11 +52,9 @@ class Gt = \ccc{Reconstruction_triangulation_default_geom_traits_3<BaseGt>},   \
 class Tds = \ccc{Triangulation_data_structure_3<Reconstruction_vertex_base_3<Gt>}, \ccc{Reconstruction_cell_base_3<Gt>} $>$$>$   \\
 class \ccc{Reconstruction_triangulation_3};
 
+\ccCommentHeading{Parameters}
 \begin{description}
-\item[Parameters:]
-\begin{description}
-\item[BaseGt]Kernel's geometric traits. \item[Gt]Geometric traits class / \ccc{Point_3} is a model of \ccc{PointWithNormal_3}. \item[Tds]Model of \ccc{TriangulationDataStructure_3}. The cell class must be a model of \ccc{ReconstructionCellBase_3} and the vertex class must be a model of \ccc{ReconstructionVertexBase_3}. \end{description}
-\end{description}
+\item \ccc{BaseGt}: Kernel's geometric traits. \item \ccc{Gt}: Geometric traits class / \ccc{Point_3} is a model of \ccc{PointWithNormal_3}. \item \ccc{Tds}: Model of \ccc{TriangulationDataStructure_3}. The cell class must be a model of \ccc{ReconstructionCellBase_3} and the vertex class must be a model of \ccc{ReconstructionVertexBase_3}. \end{description}
 
 %END-AUTO(\ccParameters)
 
@@ -147,36 +145,6 @@ Point type.
 \ccVariable{const unsigned char STEINER = 1;}
 {
 [static] \\
-}
-\ccGlue
-\ccVariable{Iso_cuboid m_bounding_box;}
-{
-[mutable] \\
-}
-\ccGlue
-\ccVariable{Iso_cuboid m_input_points_bounding_box;}
-{
-[mutable] \\
-}
-\ccGlue
-\ccVariable{Sphere m_bounding_sphere;}
-{
-[mutable] \\
-}
-\ccGlue
-\ccVariable{Sphere m_input_points_bounding_sphere;}
-{
-[mutable] \\
-}
-\ccGlue
-\ccVariable{Point m_barycenter;}
-{
-[mutable] \\
-}
-\ccGlue
-\ccVariable{FT m_diameter_standard_deviation;}
-{
-[mutable] \\
 }
 \ccGlue
 
@@ -274,20 +242,28 @@ Insert point in the triangulation. Default type is INPUT.
 \ccMethod{int insert(InputIterator first, InputIterator beyond, unsigned char type = INPUT);}
 {
 Insert points in the triangulation using a spatial sort. Default type is INPUT.
-Precondition: the value type of InputIterator must be \ccc{Point}.
+\ccPrecond the value type of InputIterator must be \ccc{Point}.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{first}: First point to add to pdt. \item \ccc{beyond}: Past-the-end point to add to pdt. \end{description}
+\ccCommentHeading{Returns} the number of inserted points.
 }
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[first]First point to add to pdt. \item[beyond]Past-the-end point to add to pdt. \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]the number of inserted points. \end{description}
 \ccGlue
 \ccMethod{Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end, Cell_handle begin, int i, unsigned char type = STEINER);}
 {
 Delaunay refinement callback: insert STEINER point in the triangulation.
+}
+\ccGlue
+\ccMethod{unsigned int index_vertices();}
+{
+Index all finite vertices following the order of \ccc{Finite_vertices_iterator}.
+\ccCommentHeading{Returns} the number of finite vertices.
+}
+\ccGlue
+\ccMethod{unsigned int index_unconstrained_vertices();}
+{
+Index unconstraint vertices following the order of \ccc{Finite_vertices_iterator}.
+\ccCommentHeading{Returns} the number of unconstraint vertices.
 }
 \ccGlue
 

@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi { 
+namespace CGALi {
 
 
 /// Utility class for merge_simplification_3():
@@ -85,8 +85,8 @@ private:
 /// 3D points set which allows at most 1 point per cell
 /// of a grid of cell size = epsilon.
 ///
-/// Warning: 
-/// This class is a container sorted wrt points position 
+/// Warning:
+/// This class is a container sorted wrt points position
 /// => you should not modify directly the order or the position of points.
 
 template <class Point_3>
@@ -113,9 +113,9 @@ public:
 /// Merge points which belong to the same cell of a grid of cell size = epsilon.
 /// This variant requires the kernel.
 ///
-/// Precondition: epsilon > 0.
+/// @commentheading Precondition: epsilon > 0.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type must be convertible to OutputIterator's value_type.
 /// @param OutputIterator value_type must be convertible to Point_3.
 /// @param Kernel Geometric traits class.
@@ -131,7 +131,7 @@ merge_simplification_3(
           InputIterator beyond,
           OutputIterator output,    ///< output points
           double epsilon,           ///< tolerance value when comparing 3D points
-          const Kernel& /*kernel*/)          
+          const Kernel& /*kernel*/)
 {
     typedef typename std::iterator_traits<InputIterator>::value_type Point;
 
@@ -150,13 +150,13 @@ merge_simplification_3(
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
 ///
-/// Warning: 
+/// Warning:
 /// This method modifies the order of points, thus
 /// should not be called on sorted containers.
 ///
-/// Precondition: epsilon > 0.
+/// @commentheading Precondition: epsilon > 0.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3.
 /// @param Kernel Geometric traits class.
 ///
@@ -170,7 +170,7 @@ merge_simplification_3(
            ForwardIterator beyond,
            double epsilon,          ///< tolerance value when comparing 3D points
            const Kernel& /*kernel*/)
-        
+
 {
     typedef typename std::iterator_traits<ForwardIterator>::value_type Point;
 
@@ -189,19 +189,19 @@ merge_simplification_3(
     }
 
     // Replace [first, beyond) range by the content of points_to_keep, then points_to_remove.
-    ForwardIterator first_iterator_to_remove = 
+    ForwardIterator first_iterator_to_remove =
     std::copy(points_to_keep.begin(), points_to_keep.end(), first);
     std::copy(points_to_remove.begin(), points_to_remove.end(), first_iterator_to_remove);
-    
+
     return first_iterator_to_remove;
 }
 
 /// Merge points which belong to the same cell of a grid of cell size = epsilon.
 /// This variant deduces the kernel from iterator types.
 ///
-/// Precondition: epsilon > 0.
+/// @commentheading Precondition: epsilon > 0.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param InputIterator value_type must be convertible to OutputIterator's value_type.
 /// @param OutputIterator value_type must be convertible to Point_3.
 ///
@@ -225,13 +225,13 @@ merge_simplification_3(
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
 ///
-/// Warning: 
+/// Warning:
 /// This method modifies the order of points, thus
 /// should not be called on sorted containers.
 ///
-/// Precondition: epsilon > 0.
+/// @commentheading Precondition: epsilon > 0.
 ///
-/// @heading Parameters:
+/// @commentheading Template Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3.
 ///
 /// @return First iterator to remove (see erase-remove idiom).

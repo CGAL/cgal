@@ -29,38 +29,17 @@
 \ccFunction{void surface_reconstruction_output_surface_facets(const SurfaceMeshComplex_2InTriangulation_3& c2t3, OutputIterator output);}
 {
 Get reconstructed surface out of a \ccc{SurfaceMeshComplex_2InTriangulation_3} object.
+\ccCommentHeading{Template Parameters}
+\begin{description}
+\item \ccc{SurfaceMeshComplex_2InTriangulation_3}: model of the \ccc{SurfaceMeshComplex_2InTriangulation_3} concept. \item \ccc{OutputIterator}: \ccc{value_type} must be \ccc{Triangle_3}.\end{description}
+\ccCommentHeading{Returns} true on success.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{c2t3}: Input surface. \item \ccc{output}: Output triangles soup. \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Template Parameters:]
-\begin{description}
-\item[\ccc{SurfaceMeshComplex_2InTriangulation_3}]model of the \ccc{SurfaceMeshComplex_2InTriangulation_3} concept. \item[OutputIterator]\ccc{value_type} must be \ccc{Triangle_3}.\end{description}
-\end{description}
-\begin{description}
-\item[Returns:]true on success. \end{description}
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[c2t3]Input surface. \item[output]Output triangles soup. \end{description}
-\end{description}
 \ccGlue
 
 %END-AUTO(\ccDefinition)
-
-\ccParameters
-
-The full template declaration is:
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccParameters)
-
-template$<$  \\
-class \ccc{SurfaceMeshComplex_2InTriangulation_3},   \\
-typename OutputIterator$>$  \\
-void  \\
-\ccc{surface_reconstruction_output_surface_facets} (const \ccc{SurfaceMeshComplex_2InTriangulation_3}\& c2t3, OutputIterator output);  \\
-
-%END-AUTO(\ccParameters)
 
 \ccSeeAlso
 
