@@ -57,7 +57,8 @@ OutputIterator decompose
   typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-
+  typedef typename Arrangement_2::X_monotone_curve_2 X_monotone_curve_2;
+    typedef typename Arrangement_2::Point_2 Point_2;
   typedef typename Vd_visitor::Traits_2                 Vd_traits_2;
   typedef typename Vd_traits_2::X_monotone_curve_2      Vd_x_monotone_curve_2;
   typedef typename Vd_traits_2::Point_2                 Vd_point_2;
@@ -78,8 +79,10 @@ OutputIterator decompose
       he = eit;
     else
       he = eit->twin();
-
-    xcurves_vec[i] = Vd_x_monotone_curve_2 (eit->curve(), he);
+    //attempt to solve compile problem in one of the tests. created the tmp_curve 
+    //instead of passing eit->curve() as a parmeter to the function    
+    X_monotone_curve_2 tmp_curve = eit->curve();
+    xcurves_vec[i] = Vd_x_monotone_curve_2 (tmp_curve, he);
   }
 
   // Go over all isolated vertices and collect their points. To each point
@@ -95,7 +98,10 @@ OutputIterator decompose
     if (vit->is_isolated())
     {
       iso_v = vit;
-      iso_pts_vec[i] = Vd_point_2 (vit->point(), iso_v);
+      //attempt to solve compile problem in one of the tests. created the tmp_curve 
+      //instead of passing eit->curve() as a parmeter to the function  
+      Point_2 tmp_point = vit->point();
+      iso_pts_vec[i] = Vd_point_2 (tmp_point, iso_v);
       ++i;
     }
   }
