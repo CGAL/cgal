@@ -36,7 +36,7 @@ void MainWindow::parameterize(const Parameterization_method method)
   typedef CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron> Adaptor;
   Adaptor adaptor(*pMesh);  
 
-  bool success;
+  bool success = false;
   switch(method)
   {
   case PARAM_MVC:
