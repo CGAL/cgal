@@ -108,8 +108,11 @@ public:
 
   // --------------------RAY/SEGMENT ORACLES----------------------//
 
-  typedef boost::mpl::vector<Ray, Segment, Line> Allowed_query_types;
+  typedef boost::mpl::vector<Ray, Line, Segment> Allowed_query_types;
 
+  // The following function template is restricted to that T can only be in
+  // {Ray, Line, Segment}. It return type is bool.
+  // The trick uses enable_if and the Boost MPL.
   template <class T>
   typename boost::enable_if<
     typename boost::mpl::contains<Allowed_query_types,
