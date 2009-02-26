@@ -143,37 +143,41 @@ public:
   // general traversal query, the traits class allows to use it for the various 
   // traversal methods we need: listing, counting, detecting intersections, drawing the boxes.
 
-  template<class Traits, class QueryType, class ResultType>
+  template<class Traits, class QueryType>
   void traversal(const QueryType& query,
-    ResultType& result,
-    int nb_primitives)
+    Traits& traits,
+    const int nb_primitives)
   {
-    Traits traits(result);
-    bool left_test;
     switch(nb_primitives)
     {
     case 2:
-      left_test = traits.intersection(query, *static_cast<Input*>(m_left_child));
-      if((! left_test) || (traits.go_further()))
-	traits.intersection(query, *static_cast<Input*>(m_right_child));
+      {
+        const bool left_test =
+          traits.intersection(query, *static_cast<Input*>(m_left_child));
+        if((! left_test) || (traits.go_further()))
+          traits.intersection(query, *static_cast<Input*>(m_right_child));
+      }
       break;
     case 3:
-      left_test = traits.intersection(query, *static_cast<Input*>(m_left_child));
-      if((! left_test) || (traits.go_further()))
-	if(traits.do_intersect(query, *static_cast<Node*>(m_right_child)))
-	  static_cast<Node*>(m_right_child)->traversal<Traits>(query, result, 2);
-      break;
+      {
+        const bool left_test =
+          traits.intersection(query, *static_cast<Input*>(m_left_child));
+        if((! left_test) || (traits.go_further()))
+          if(traits.do_intersect(query, *static_cast<Node*>(m_right_child)))
+            static_cast<Node*>(m_right_child)->traversal<Traits>(query, traits, 2);
+        break;
+      }
     default:
       if(traits.do_intersect(query, *static_cast<Node*>(m_left_child)))
       {
-	static_cast<Node*>(m_left_child)->traversal<Traits>(query, result, nb_primitives/2);
+	static_cast<Node*>(m_left_child)->traversal<Traits>(query, traits, nb_primitives/2);
 	if(traits.go_further())
 	  if(traits.do_intersect(query, *static_cast<Node*>(m_right_child)))
-	    static_cast<Node*>(m_right_child)->traversal<Traits>(query, result, nb_primitives - nb_primitives/2);
+	    static_cast<Node*>(m_right_child)->traversal<Traits>(query, traits, nb_primitives - nb_primitives/2);
       }
       else
 	if(traits.do_intersect(query, *static_cast<Node*>(m_right_child)))
-	  static_cast<Node*>(m_right_child)->traversal<Traits>(query, result, nb_primitives - nb_primitives/2);
+	  static_cast<Node*>(m_right_child)->traversal<Traits>(query, traits, nb_primitives - nb_primitives/2);
     }
   }
 
@@ -276,49 +280,6 @@ private:
   FT zsize() { return m_bbox.zmax() - m_bbox.zmin(); }
 
 public:
-  // -----------------------------------------------------------//
-  // -------------------QUERY FUNCTIONS-------------------------//
-  // -----------------------------------------------------------//
-
-  // compute the first intersection encountered.
-  // nb_primitives = number of primitives contained in this node.
-  template<class QueryType, class ResultType>
-  void first_intersection(const QueryType& q,
-    ResultType& result, 
-    int nb_primitives)
-  {
-    traversal<First_intersection_traits<QueryType, ResultType> >(q, result, nb_primitives);
-  }
-
-  template<class QueryType, class ResultType>
-  class First_intersection_traits
-  {
-  private:
-    ResultType& r;
-  public:
-    bool go_further() const
-    {
-      return !r.first;
-    }
-    First_intersection_traits(ResultType& result) : r(result) {}
-
-    bool intersection(const QueryType& q, const Input& i)
-    {
-      ResultType result;
-      if(Node::intersection(q, i, result.second))
-      {
-	r.first = true;
-	r.second = result.second;
-	return true;
-      }
-      return false;
-    }
-    bool do_intersect(const QueryType& q, const Node& node) const
-    {
-      return Node::do_intersect(q, node);
-    }
-  };
-
   // HELPER FUNCTION of all predicates below
   static Triangle triangle(Input f)
   {

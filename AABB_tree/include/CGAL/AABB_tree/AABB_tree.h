@@ -106,7 +106,36 @@ public:
     return m_data.size() < 2; // TODO: change this requirement to < 1
   }
 
-  // --------------------RAY/SEGMENT ORACLES----------------------//
+  // --------------------QUERY FUNCTIONS----------------------//
+
+  template<class QueryType, class ResultType>
+  class First_intersection_traits
+  {
+  private:
+    ResultType& r;
+  public:
+    bool go_further() const
+    {
+      return !r.first;
+    }
+    First_intersection_traits(ResultType& result) : r(result) {}
+
+    bool intersection(const QueryType& q, const Input& i)
+    {
+      ResultType result;
+      if(Node::intersection(q, i, result.second))
+      {
+	r.first = true;
+	r.second = result.second;
+	return true;
+      }
+      return false;
+    }
+    bool do_intersect(const QueryType& q, const Node& node) const
+    {
+      return Node::do_intersect(q, node);
+    }
+  };
 
   typedef boost::mpl::vector<Ray, Line, Segment> Allowed_query_types;
 
@@ -121,8 +150,12 @@ public:
   first_intersection(const T& x,
                      Point_with_input& pwh)
   {
-    std::pair<bool,Point_with_input> result;
-    m_root->first_intersection(x, result, m_data.size());
+    typedef std::pair<bool,Point_with_input> Result_type;
+    typedef First_intersection_traits<T, Result_type> Traits;
+
+    Result_type result;
+    Traits traits(result);
+    m_root->template traversal<Traits,T>(x, traits, m_data.size());
     if(result.first)
     {
       pwh = result.second;
