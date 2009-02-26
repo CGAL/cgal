@@ -276,7 +276,9 @@ private:
   FT zsize() { return m_bbox.zmax() - m_bbox.zmin(); }
 
 public:
-
+  // -----------------------------------------------------------//
+  // -------------------QUERY FUNCTIONS-------------------------//
+  // -----------------------------------------------------------//
 
   // compute the first intersection encountered.
   // nb_primitives = number of primitives contained in this node.
@@ -316,6 +318,16 @@ public:
       return Node::do_intersect(q, node);
     }
   };
+
+  // HELPER FUNCTION of all predicates below
+  static Triangle triangle(Input f)
+  {
+    Converter convert;
+    const PSC_point a = f->halfedge()->vertex()->point();
+    const PSC_point b = f->halfedge()->next()->vertex()->point();
+    const PSC_point c = f->halfedge()->next()->next()->vertex()->point();
+    return convert(PSC_triangle(a,b,c));
+  }
 
   // -----------------------------------------------------------//
   // -----------------------LINE ORACLES-------------------------//
@@ -385,15 +397,6 @@ public:
       return true;
     }
     return false;
-  }
-
-  static Triangle triangle(Input f)
-  {
-    Converter convert;
-    const PSC_point a = f->halfedge()->vertex()->point();
-    const PSC_point b = f->halfedge()->next()->vertex()->point();
-    const PSC_point c = f->halfedge()->next()->next()->vertex()->point();
-    return convert(PSC_triangle(a,b,c));
   }
 
   static bool do_intersect(const Segment& segment, Input f)
