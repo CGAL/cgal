@@ -38,7 +38,7 @@ namespace CGALi {
 /// Smooth one point position using jet fitting on the KNN
 /// nearest neighbors and reprojection onto the jet.
 ///
-/// @commentheading Precondition: KNN >= 2.
+/// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
 /// @param Kernel Geometric traits class.
@@ -50,7 +50,7 @@ template <typename Kernel,
 typename Kernel::Point_3
 jet_smoothing_3(const typename Kernel::Point_3& query, ///< 3D point to project
                 Tree& tree, ///< KD-tree
-                const unsigned int KNN,
+                const unsigned int k,
                 const unsigned int degre_fitting,
                 const unsigned int degree_monge)
 {
@@ -66,15 +66,15 @@ jet_smoothing_3(const typename Kernel::Point_3& query, ///< 3D point to project
   typedef typename CGAL::Monge_via_jet_fitting<Kernel> Monge_jet_fitting;
   typedef typename Monge_jet_fitting::Monge_form Monge_form;
 
-  // Gather set of (KNN+1) neighboring points.
-  // Performs KNN + 1 queries (if unique the query point is
-  // output first). Search may be aborted when KNN is greater
+  // Gather set of (k+1) neighboring points.
+  // Performs k + 1 queries (if unique the query point is
+  // output first). Search may be aborted when k is greater
   // than number of input points.
-  std::vector<Point_3> points; points.reserve(KNN+1);
-  Neighbor_search search(tree,query,KNN+1);
+  std::vector<Point_3> points; points.reserve(k+1);
+  Neighbor_search search(tree,query,k+1);
   Search_iterator search_iterator = search.begin();
   unsigned int i;
-  for(i=0;i<(KNN+1);i++)
+  for(i=0;i<(k+1);i++)
   {
     if(search_iterator == search.end())
       break; // premature ending
@@ -101,11 +101,11 @@ jet_smoothing_3(const typename Kernel::Point_3& query, ///< 3D point to project
 // ----------------------------------------------------------------------------
 
 
-/// Smooth a point set using jet fitting on the KNN
+/// Smooth a point set using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
 /// This variant requires the kernel.
 ///
-/// @commentheading Precondition: KNN >= 2.
+/// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
 /// @param InputIterator value_type convertible to Point_3.
@@ -121,7 +121,7 @@ OutputIterator
 jet_smoothing_3(InputIterator first,    ///< input points
                 InputIterator beyond,
                 OutputIterator output,  ///< output points
-                const unsigned int KNN, ///< number of neighbors
+                const unsigned int k, ///< number of neighbors
                 const Kernel& /*kernel*/,
                 const unsigned int degre_fitting = 2,
                 const unsigned int degree_monge = 2)
@@ -142,7 +142,7 @@ jet_smoothing_3(InputIterator first,    ///< input points
   CGAL_precondition(first != beyond);
 
   // precondition: at least 2 nearest neighbors
-  CGAL_precondition(KNN >= 2);
+  CGAL_precondition(k >= 2);
 
   // instanciate a KD-tree search
   Tree tree(first,beyond);
@@ -152,14 +152,14 @@ jet_smoothing_3(InputIterator first,    ///< input points
   for(InputIterator it = first; it != beyond; it++)
   {
     Input_point_3 point = *it;
-    (Point_3&)(point) = CGALi::jet_smoothing_3<Kernel>(*it,tree,KNN,degre_fitting,degree_monge);
+    (Point_3&)(point) = CGALi::jet_smoothing_3<Kernel>(*it,tree,k,degre_fitting,degree_monge);
     *output++ = point;
   }
 
   return output;
 }
 
-/// Smooth a point set using jet fitting on the KNN
+/// Smooth a point set using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
@@ -168,7 +168,7 @@ jet_smoothing_3(InputIterator first,    ///< input points
 /// This method moves the points, thus
 /// should not be called on containers sorted wrt points position.
 ///
-/// @commentheading Precondition: KNN >= 2.
+/// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
 /// @param ForwardIterator value_type convertible to Point_3.
@@ -178,7 +178,7 @@ template <typename ForwardIterator,
 void
 jet_smoothing_3(ForwardIterator first,     ///< input/output points
                 ForwardIterator beyond,
-                unsigned int KNN,          ///< number of neighbors
+                unsigned int k,          ///< number of neighbors
                 const Kernel& /*kernel*/,
                 const unsigned int degre_fitting = 2,
                 const unsigned int degree_monge = 2)
@@ -199,7 +199,7 @@ jet_smoothing_3(ForwardIterator first,     ///< input/output points
   CGAL_precondition(first != beyond);
 
   // precondition: at least 2 nearest neighbors
-  CGAL_precondition(KNN >= 2);
+  CGAL_precondition(k >= 2);
 
   // instanciate a KD-tree search
   Tree tree(first,beyond);
@@ -208,15 +208,15 @@ jet_smoothing_3(ForwardIterator first,     ///< input/output points
   // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
   ForwardIterator it;
   for(it = first; it != beyond; it++)
-    (Point_3&)(*it) = CGALi::jet_smoothing_3<Kernel>(*it,tree,KNN,degre_fitting,degree_monge);
+    (Point_3&)(*it) = CGALi::jet_smoothing_3<Kernel>(*it,tree,k,degre_fitting,degree_monge);
 }
 
 
-/// Smooth a point set using jet fitting on the KNN
-/// nearest neighbors and reprojection onto the jet.
+/// Smooths points by fitting jet surfaces over their k
+/// nearest neighbors and projecting onto the jets.
 /// This variant deduces the kernel from iterator types.
 ///
-/// @commentheading Precondition: KNN >= 2.
+/// @commentheading Precondition: k >= 2.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
@@ -226,25 +226,25 @@ OutputIterator
 jet_smoothing_3(InputIterator first,    ///< input points
                 InputIterator beyond,
                 OutputIterator output, ///< output points
-                unsigned int KNN,      ///< number of neighbors
+                unsigned int k,      ///< number of neighbors
                 const unsigned int degre_fitting = 2,
                 const unsigned int degree_monge = 2)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Input_point_3;
   typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  return jet_smoothing_3(first,beyond,output,KNN,Kernel(),degre_fitting,degree_monge);
+  return jet_smoothing_3(first,beyond,output,k,Kernel(),degre_fitting,degree_monge);
 }
 
-/// Smooth a point set using jet fitting on the KNN
-/// nearest neighbors and reprojection onto the jet.
+/// Smooths points by fitting jet surfaces over their k
+/// nearest neighbors and projecting onto the jets.
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
 ///
 /// Warning:
-/// This method moves the points, thus
-/// should not be called on containers sorted wrt points position.
+/// As this method relocates the points, it
+/// should not be called on containers sorted w.r.t. point locations.
 ///
-/// @commentheading Precondition: KNN >= 2.
+/// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
 /// @param ForwardIterator value_type convertible to Point_3.
@@ -252,13 +252,13 @@ template <typename ForwardIterator>
 void
 jet_smoothing_3(ForwardIterator first,     ///< input/output points
                 ForwardIterator beyond,
-                unsigned int KNN,          ///< number of neighbors
+                unsigned int k,          ///< number of neighbors
                 const unsigned int degre_fitting = 2,
                 const unsigned int degree_monge = 2)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
   typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  jet_smoothing_3(first,beyond,KNN,Kernel(),degre_fitting,degree_monge);
+  jet_smoothing_3(first,beyond,k,Kernel(),degre_fitting,degree_monge);
 }
 
 

@@ -19,8 +19,7 @@
 
 \ccDefinition
 
-\ccc{CGAL::mst_normal_orientation()} orients the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
-The result is an oriented normal vector for each input point/normal.
+\ccc{CGAL::mst_normal_orientation()} orients the normals of a point set using the propagation of a seed orientation through a minimum spanning tree of the Riemannian graph \cite{cgal:hddms-srup-92}. The result is an oriented normal vector for each input point/normal.
 
 \ccInclude{CGAL/mst_normal_orientation.h}
 

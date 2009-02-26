@@ -35,10 +35,7 @@
     \end{figure}
 \end{center}
 
-Kazhdan, Bolitho and Hoppe described in \cite{Kazhdan06}
-the Poisson Surface Reconstruction algorithm.
-\cgal\ implements a variant of this algorithm which computes an implicit function
-piecewise-linear in a 3D Delaunay triangulation instead of an octree.
+Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm \cite{Kazhdan06}. Given a set of 3D points with oriented normals (denoted oriented points in the sequel) sampled on the boundary of a 3D solid, this method solves for an approximate indicator function of the inferred solid, whose gradient best matches the input normals. The output scalar function, represented in an adaptive octree, is then iso-contoured using an adaptive marching cubes. \cgal\ implements a variant of this algorithm which solves for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree. 
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)

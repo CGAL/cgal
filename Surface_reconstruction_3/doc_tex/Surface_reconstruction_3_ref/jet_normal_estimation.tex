@@ -19,13 +19,7 @@
 
 \ccDefinition
 
-\ccc{CGAL::jet_normal_estimation()} estimates normals direction of a point set using jet fitting on the K nearest neighbors.
-The default jet is a quadric.
-The result is an unoriented normal vector for each input point.
-
-The \ccc{CGAL::jet_normal_estimation()} function exists in two flavors.
-The complete version requires the kernel to use for computations.
-The main version deduces the kernel from input parameters.
+\ccc{CGAL::jet_normal_estimation()} estimates normal directions of all points from the input set by fitting jet surfaces over the $k$ nearest neighbors. The default jet surface is a quadric, and the result is an unoriented normal vector for each input point. The complete version of this function requires the kernel, while another deduces it from the input data.
 
 \ccInclude{CGAL/jet_normal_estimation.h}
 

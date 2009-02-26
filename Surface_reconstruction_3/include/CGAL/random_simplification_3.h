@@ -26,7 +26,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Delete random points.
+/// Randomly deletes a user-specified fraction of the input points.
 /// This variant requires the kernel.
 ///
 /// @commentheading Template Parameters:
@@ -64,7 +64,7 @@ random_simplification_3(
     return output;
 }
 
-/// Delete random points.
+/// Randomly deletes a user-specified fraction of the input points.
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
 ///
@@ -103,7 +103,7 @@ random_simplification_3(
     return first_iterator_to_remove;
 }
 
-/// Delete random points.
+/// Randomly deletes a user-specified fraction of the input points.
 /// This variant deduces the kernel from iterator types.
 ///
 /// @commentheading Template Parameters:
@@ -126,7 +126,7 @@ random_simplification_3(
   return random_simplification_3(first,beyond,output,threshold_percent,Kernel());
 }
 
-/// Delete random points.
+/// Randomly deletes a user-specified fraction of the input points.
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
 ///

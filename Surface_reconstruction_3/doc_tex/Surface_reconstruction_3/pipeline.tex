@@ -132,10 +132,7 @@ Example:
 
 Two functions are provided to simplify the input point set.
 
-\ccc{CGAL::merge_simplification_3()} iteratively merges pairs of closest points from the input point set until a user-specified fraction of points is deleted.
-
-% I do not think this is what is implemented.
-% its merges points which belong to the same cell of a grid.
+\ccc{CGAL::merge_simplification_3()} iteratively merges pairs of points which are epsilon-closed.
 
 \ccc{CGAL::random_simplification_3()} randomly deletes a user-specified fraction of points from the input point set.
 

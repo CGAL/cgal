@@ -19,11 +19,7 @@
 
 \ccDefinition
 
-\ccc{CGAL::jet_smoothing_3()} smooths a point set using jet fitting on the K nearest neighbors and reprojection onto the jet.
-The default jet is a quadric.
-
-The \ccc{CGAL::jet_smoothing_3()} function exists in four flavors: first, the function may modify the input point set or
-create a copy; second, the function may require the kernel to use for computations, or deduce it from input parameters.
+\ccc{CGAL::jet_smoothing_3()} smooths a point set by fitting for each point a jet surface and projecting it onto the jet. The default jet surfaces are quadrics. The function exists in four variants: it may either alter (mutate) the input point set or create a copy; and it may either require a kernel or deduce it from input data.
 
 \ccInclude{CGAL/jet_smoothing_3.h}
 

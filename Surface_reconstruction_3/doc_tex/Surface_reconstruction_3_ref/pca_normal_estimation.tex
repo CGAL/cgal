@@ -19,12 +19,7 @@
 
 \ccDefinition
 
-\ccc{CGAL::pca_normal_estimation()} estimates normals direction of a point set using linear least squares fitting of a plane on the K nearest neighbors.
-The result is an unoriented normal vector for each input point.
-
-The \ccc{CGAL::pca_normal_estimation()} function exists in two flavors.
-The complete version requires the kernel to use for computations.
-The main version deduces the kernel from input parameters.
+\ccc{CGAL::pca_normal_estimation()} estimates normal directions at all points from an input point set by linear least squares fitting of a plane over their k nearest neighbors. The result is an unoriented normal vector for each input point. The function exists in two flavors: it may either require a kernel or deduces it from the input data.
 
 \ccInclude{CGAL/pca_normal_estimation.h}
 

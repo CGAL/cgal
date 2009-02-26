@@ -529,7 +529,7 @@ mst_normal_orientation(
 }
 
 /// Orient the normals of a point set using the method described by
-/// Hoppe, DeRose, Duchamp, McDonald and Stuetzle in
+/// Hoppe et al. in
 /// "Surface reconstruction from unorganized points" [Hoppe92].
 ///
 /// This is a variant of the original algorithm. It:

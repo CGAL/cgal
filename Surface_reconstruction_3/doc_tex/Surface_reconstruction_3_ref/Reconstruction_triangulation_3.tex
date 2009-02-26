@@ -22,7 +22,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The \ccc{Reconstruction_triangulation_3} class is the default implementation of the \ccc{ReconstructionTriangulation_3} concept. The cell class must be a model of \ccc{ReconstructionCellBase_3} and the vertex class must be a model of \ccc{ReconstructionVertexBase_3}.
+The \ccc{Reconstruction_triangulation_3} class is the default implementation of the \ccc{ReconstructionTriangulation_3} concept. The vertex class must be a model of \ccc{ReconstructionVertexBase_3}.
 
 It provides the interface requested by the \ccc{Poisson_reconstruction_function} class:\begin{itemize}
 \item Each vertex owns a normal vector.\item A vertex is either an input point or a Steiner point added by Delaunay refinement.\item In order to solve a linear system over the triangulation, a vertex may be constrained or not, and has a unique index.\end{itemize}
@@ -271,7 +271,6 @@ Index unconstraint vertices following the order of \ccc{Finite_vertices_iterator
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Reconstruction_cell_base_3<GeomTraits, TriangulationCellBase_3>}  \\
 \ccRefIdfierPage{CGAL::Reconstruction_vertex_base_3<GeomTraits, TriangulationVertexBase_3>}  \\
 \ccRefIdfierPage{CGAL::Poisson_reconstruction_function<GeomTraits, ReconstructionTriangulation_3>}  \\
 

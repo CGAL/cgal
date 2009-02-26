@@ -30,7 +30,8 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// Utility class for poisson_refinement_3():
-/// implements Delaunay refinement (break bad tetrahedra, where
+/// implements Delaunay refinement in a loose bounding 
+/// box of point set (break bad tetrahedra, where
 /// bad means badly shaped or too big).
 ///
 /// This class must be derived to inherit from Mesher_level.
@@ -186,7 +187,8 @@ public:
 }; // end class Poisson_mesher_level
 
 
-/// Delaunay refinement (break bad tetrahedra, where
+/// Delaunay refinement in a loose bounding box
+/// of input point set (break bad tetrahedra, where
 /// bad means badly shaped or too big).
 /// @return the number of vertices inserted.
 ///

@@ -19,11 +19,9 @@
 
 \ccDefinition
 
-\ccc{CGAL::average_spacing_3()} computes the average spacing in a point set from the K nearest neighbors.
+\ccc{CGAL::average_spacing_3()} computes the average spacing of all points from the input set to their $k$ nearest neighbors. One version of this function requires a traits class. Another deduces it from the input data points. 
 
-The \ccc{CGAL::average_spacing_3()} function exists in two flavors.
-The complete version requires the kernel to use for computations.
-The main version deduces the kernel from input parameters.
+% question: can it take oriented points as well?
 
 \ccInclude{CGAL/average_spacing_3.h}
 
