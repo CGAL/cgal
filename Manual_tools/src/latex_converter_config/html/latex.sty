@@ -235,7 +235,7 @@
     % prepare main HTML file
     \lciHtmlFileHeader{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
       \lciMainRootname}
-      
+
     \lciHtmlNavigationTop
 
     \lciSavestreamOpen{packages.html}
@@ -256,9 +256,9 @@
       \lcRawHtml{<h1>Package Overview</h1>}
       \lcRawHtml{<br><table border="0">}
     \lciPopOutput%
-    
+
     \lciIfHowToCite{\lcHtmlHowToCite}{}
-    
+
     \lciPushOutput{comments}%
 \lcRawHtml{<manual_tools_output>}
 \lciPopOutput%
@@ -358,6 +358,7 @@
 \newcommand{\baselineskip}{\lciSkipNonWhiteSpace}
 \newcommand{\baselinestretch}{\lciSkipNonWhiteSpace}
 \newcommand{\parskip}{\lciSkipNonWhiteSpace}
+\newcommand{\itemsep}{\lciSkipNonWhiteSpace}
 
 \newcommand{\textheight}{\lciSkipNonWhiteSpace}
 \newcommand{\topmargin}{\lciSkipNonWhiteSpace}
