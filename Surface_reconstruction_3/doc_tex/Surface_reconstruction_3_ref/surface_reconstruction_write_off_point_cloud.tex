@@ -33,8 +33,7 @@ the input can be either a container of \ccc{Point_3} or of \ccc{PointWithNormal_
 {
 Save points (positions + normals) to a .off file (ASCII).
 \ccCommentHeading{Template Parameters}
-\begin{description}
-\item \ccc{InputIterator}: \ccc{value_type} must be a model of the \ccc{PointWithNormal_3} concept.\end{description}
+\ccc{InputIterator}: \ccc{value_type} must be a model of the \ccc{PointWithNormal_3} concept.
 \ccCommentHeading{Returns} true on success.
 \ccCommentHeading{Parameters}
 \begin{description}
@@ -45,8 +44,7 @@ Save points (positions + normals) to a .off file (ASCII).
 {
 Save points (positions + optionally normals) to a .off file (ASCII).
 \ccCommentHeading{Template Parameters}
-\begin{description}
-\item \ccc{InputIterator}: \ccc{value_type} must be a model of \ccc{PointWithNormal_3} if \ccc{write_normals} is true, else a model of \ccc{Kernel::Point_3}.\end{description}
+\ccc{InputIterator}: \ccc{value_type} must be a model of \ccc{PointWithNormal_3} if \ccc{write_normals} is true, else a model of \ccc{Kernel::Point_3}.
 \ccCommentHeading{Returns} true on success.
 \ccCommentHeading{Parameters}
 \begin{description}

@@ -31,7 +31,7 @@ The result is an oriented normal vector for each input point/normal.
 {
 Orient the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
 This variant implements the original algorithm. Note that it does not orient normals that are already oriented.
-\ccPrecond\begin{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
 \item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item Normals must be unit vectors.\item KNN $>$= 2.\end{itemize}
 \ccCommentHeading{Returns} the number of un-oriented normals.
 \ccCommentHeading{Parameters}
@@ -44,7 +44,7 @@ This variant implements the original algorithm. Note that it does not orient nor
 Orient the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
 This is a variant of the original algorithm. It:\begin{itemize}
 \item orients the top point towards +Z axis.\item does not orient normals that are already oriented.\item does not propagate the orientation if the angle between 2 normals $>$ \ccc{angle_max}.\end{itemize}
-\ccPrecond\begin{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
 \item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item Normals must be unit vectors.\item KNN $>$= 2.\item 0 $<$ \ccc{angle_max} $<$= PI/2.\end{itemize}
 \ccCommentHeading{Returns} the number of un-oriented normals.
 \ccCommentHeading{Parameters}

@@ -33,8 +33,7 @@ the output can be either a container of \ccc{Point_3} or of \ccc{PointWithNormal
 {
 Read points (positions + normals, if available) from a .xyz file (ASCII).
 \ccCommentHeading{Template Parameters}
-\begin{description}
-\item \ccc{OutputIterator}: \ccc{value_type} must be a model of the \ccc{PointWithNormal_3} concept.\end{description}
+\ccc{OutputIterator}: \ccc{value_type} must be a model of the \ccc{PointWithNormal_3} concept.
 \ccCommentHeading{Returns} true on success.
 }
 \ccGlue
@@ -42,8 +41,7 @@ Read points (positions + normals, if available) from a .xyz file (ASCII).
 {
 Read points (positions only) from a .xyz file (ASCII). Normals are ignored.
 \ccCommentHeading{Template Parameters}
-\begin{description}
-\item \ccc{OutputIterator}: \ccc{value_type} must be \ccc{Point_3}.\end{description}
+\ccc{OutputIterator}: \ccc{value_type} must be \ccc{Point_3}.
 \ccCommentHeading{Returns} true on success.
 }
 \ccGlue
