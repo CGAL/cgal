@@ -248,14 +248,16 @@ private:
     return centroid(f1).z() < centroid(f2).z();
   }
 
+  enum Axis { CGAL_AXIS_X = 0, CGAL_AXIS_Y, CGAL_AXIS_Z};
+
   void sort_primitives(Iterator a, Iterator b)
   {
     switch(longest_axis())
     {
-    case 0: // sort along x
+    case CGAL_AXIS_X: // sort along x
       std::sort(a,b,lower_x<Input>);
       break;
-    case 1: // sort along y
+    case CGAL_AXIS_Y: // sort along y
       std::sort(a,b,lower_y<Input>);
       break;
     default: // sort along z
@@ -264,21 +266,37 @@ private:
   }
 
   // Return the node's longest axis as 0 (X), 1 (Y) or 2 (Z)
-  int longest_axis()
+  Axis longest_axis()
   {
-    FT max_size = (std::max)(xsize(),(std::max)(ysize(),zsize()));
-    if(max_size == xsize())
-      return 0; // axis along x
-    if(max_size == ysize())
-      return 1; // axis along y
-    return 2; // axis along z
+    const double dx = xsize();
+    const double dy = xsize();
+    const double dz = xsize();
+    if(dx>=dy) {
+      if(dx>=dz) {
+        return CGAL_AXIS_X; // axis along x
+      }
+      else {//  dz>dx and dx>=dy
+        return CGAL_AXIS_Z;
+      }
+    }
+    else { // dy>dx
+      if(dy>=dz) {
+        return CGAL_AXIS_Y;
+      }
+      else { // dz>dy and dy>dx 
+        return CGAL_AXIS_Z;
+      }
+    }
   }
 
   // size of bounding box along each axis
-  FT xsize() { return m_bbox.xmax() - m_bbox.xmin(); }
-  FT ysize() { return m_bbox.ymax() - m_bbox.ymin(); }
-  FT zsize() { return m_bbox.zmax() - m_bbox.zmin(); }
+  double xsize() const { return m_bbox.xmax() - m_bbox.xmin(); }
+  double ysize() const { return m_bbox.ymax() - m_bbox.ymin(); }
+  double zsize() const { return m_bbox.zmax() - m_bbox.zmin(); }
 
+  double max_lenght() const { 
+    return (std::max)(xsize(),(std::max)(ysize(),zsize()));
+  }
 public:
   // HELPER FUNCTION of all predicates below
   static Triangle triangle(Input f)
