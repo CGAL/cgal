@@ -82,7 +82,7 @@ public:
     if(!empty())
     {
       m_root = new Node[m_data.size()-1]();
-      m_root->expand(psc, m_data.begin(),m_data.end(), m_data.size());
+      m_root->expand(m_data.begin(),m_data.end(), m_data.size());
       return true;
     }
     return false;

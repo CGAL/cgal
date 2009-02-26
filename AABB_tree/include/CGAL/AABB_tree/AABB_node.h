@@ -119,7 +119,7 @@ private:
   }
 
   // compute bbox for iterator range of input primitives
-  Bbox bbox(const PSC& psc, Iterator a, Iterator b)
+  Bbox bbox(Iterator a, Iterator b)
   {
     Bbox bbox = compute_bbox(*a);
     for(++a; a != b; ++a)
@@ -132,9 +132,9 @@ public:
   // builds the tree by recursive expansion.
   // [a,b[ is the range of primitives to be added to the tree.
   // 'range' is the length of this range.
-  void expand(const PSC& psc, Iterator a, Iterator b, int range)
+  void expand(Iterator a, Iterator b, int range)
   {
-    m_bbox = bbox(psc, a, b);
+    m_bbox = bbox(a, b);
 
     // sort primitives along longest axis aabb
     sort_primitives(a, b);
@@ -148,13 +148,13 @@ public:
     case 3:
       m_left_child = &(*a);
       m_right_child = static_cast<Node*>(this)+1;
-      static_cast<Node*>(m_right_child)->expand(psc, a+1, b, 2);	
+      static_cast<Node*>(m_right_child)->expand(a+1, b, 2);	
       break;
     default:
       m_left_child = static_cast<Node*>(this)+1;
       m_right_child = (static_cast<Node*>(this))+(range/2);
-      static_cast<Node*>(m_left_child)->expand(psc, a, a+range/2, range/2);
-      static_cast<Node*>(m_right_child)->expand(psc, a+range/2, b, range - range/2);				
+      static_cast<Node*>(m_left_child)->expand(a, a+range/2, range/2);
+      static_cast<Node*>(m_right_child)->expand(a+range/2, b, range - range/2);				
     }
   }
 
