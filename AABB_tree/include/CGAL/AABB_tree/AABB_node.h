@@ -254,7 +254,7 @@ public:
   private:
     ResultType& r;
   public:
-    bool go_further()
+    bool go_further() const
     {
       return !r.first;
     }
@@ -271,7 +271,7 @@ public:
       }
       return false;
     }
-    bool do_intersect(const QueryType& q, const Node& node)
+    bool do_intersect(const QueryType& q, const Node& node) const
     {
       return Node::do_intersect(q, node);
     }
