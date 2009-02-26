@@ -1,19 +1,21 @@
 \section{Pipeline}
 
-Real world reconstruction from scan data is a step by step process:
+Surface reconstruction from measurement data is often a step by step process:
 
 \begin{itemize}
-\item Scanning and scans alignment produce a point set with or without normals (not covered by \cgal)
-\item Outlier removal (if reconstruction method does not support outliers)
-\item Point set simplification
-\item Smoothing (if reconstruction method does not support noise)
-\item Normal estimation and orientation (if not provided by scanner)
-\item Surface reconstruction
+\item Scanning and scan alignment produce a set of points
+      or points with normals. Alignment is not yet
+      covered by \cgal.
+\item Outlier removal for reconstruction methods which
+      are not resilient to outliers.
+\item Simplification to reduce the number of input points.
+\item Smoothing to reduce noise in the input data.
+\item Normal estimation and orientation when the normals
+      are not already provided by the acquisition device.
+\item Surface reconstruction.
 \end{itemize}
 
-This package provides algorithms for each step above.
-
-A GUI demo (Windows only) allows to test each algorithm.
+This component provides algorithms for all steps listed above, except alignment. A demo running on Windows is currently provided, and we will elaborate soon upon a new point set demo based on QT4 and QGlViewer.
 
 % Insert image pipeline.jpg/eps
 \begin{center}
@@ -27,14 +29,14 @@ A GUI demo (Windows only) allows to test each algorithm.
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[h]
-        \caption{Reconstruction pipeline}
+        \caption{Surface reconstruction pipeline.}
     \end{figure}
 \end{center}
 
 
 \subsection{Input}
 
-Functions and classes of this package expect as input and output parameters range iterators over:
+Functions and classes of this component expect as input and output parameters range iterators over:
 
 \begin{itemize}
 \item 3D points
@@ -59,7 +61,7 @@ Inherits from \ccc{Vector_3<GeomTraits>} and contains an "is normal oriented?" f
 3D position + normal.
 \end{itemize}
 
-For convenience, we provide also functions to read point sets from standard file formats:
+In addition, we provide convenient functions to read point sets from standard file formats:
 
 \begin{itemize}
 \item XYZ
@@ -76,17 +78,18 @@ Example:
 
 \subsection{Analysis}
 
-The purpose of the analysis stage is to compute parameters for the next stages algorithms.
-
+The purpose of the analysis stage is to measure common statistics and bounding volumes over the input points so as to automatically determine parameters for subsequent stages downstream along the pipeline:
 \begin{itemize}
-\item Point set barycenter, bounding box, bounding sphere (provided by other \cgal\ packages).
-\item Average spacing to the K nearest neighbors.
+  \item Point set barycenter, bounding box,
+        bounding sphere (provided by other \cgal\ components).
+  \item Average spacing to the $k$ nearest neighbors.
 \end{itemize}
 
-\ccc{CGAL::average_spacing_3()} computes the average spacing in a point set from the K nearest neighbors.
+\ccc{CGAL::average_spacing_3()} computes the average spacing of all input points to their $k$ nearest neighbors.
 
 \ccRefIdfierPage{CGAL::centroid}  \\
 \ccRefIdfierPage{CGAL::bounding_box}  \\
+\ccRefIdfierPage{CGAL::bounding_sphere}  \\
 \ccRefIdfierPage{CGAL::average_spacing_3}  \\
 
 Example:
@@ -96,14 +99,11 @@ Example:
 
 \subsection{Processing}
 
+Processing refers to all algorithms which alter the input points so as to remove outliers, reduce noise by smoothing, and simplify.
+
 \subsubsection{Outlier Removal}
 
-\begin{itemize}
-\item Outlier removal wrt average squared distance to the K nearest neighbors
-\end{itemize}
-
-\ccc{CGAL::outlier_removal_3()} deletes outliers in a point set. It sorts points
-wrt average squared distance to the K nearest neighbors, then delete the worst ones.
+Function \ccc{CGAL::outlier_removal_3()} deletes a user-specified fraction of outliers from the input point set. More specifically, it sorts the input points in increasing order of average squared distances to the $k$ nearest neighbors and deletes the points with largest value.
 
 \ccRefIdfierPage{CGAL::outlier_removal_3}  \\
 
@@ -130,14 +130,14 @@ Example:
 
 \subsubsection{Simplification}
 
-\begin{itemize}
-\item Point set simplification by clustering
-\item Random point set simplification
-\end{itemize}
+Two functions are provided to simplify the input point set.
 
-\ccc{CGAL::merge_simplification_3()} merges close points of a point set: its merges points which belong to the same cell of a grid.
+\ccc{CGAL::merge_simplification_3()} iteratively merges pairs of closest points from the input point set until a user-specified fraction of points is deleted.
 
-\ccc{CGAL::random_simplification_3()} deletes randomly points in a point set.
+% I do not think this is what is implemented.
+% its merges points which belong to the same cell of a grid.
+
+\ccc{CGAL::random_simplification_3()} randomly deletes a user-specified fraction of points from the input point set.
 
 \ccRefIdfierPage{CGAL::merge_simplification_3}  \\
 \ccRefIdfierPage{CGAL::random_simplification_3}  \\
@@ -154,7 +154,9 @@ Example:
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[h]
-        \caption{Point set simplification by clustering. Notice that points to be removed (in red) belong to tight dotted lines.}
+        \caption{Point set simplification by merging. 
+                 Left: input point set.
+                 Right: removed points are depicted in red.}
     \end{figure}
 \end{center}
 
@@ -165,11 +167,7 @@ Example:
 
 \subsubsection{Smoothing}
 
-\begin{itemize}
-\item Smoothing via Jet fitting over the K nearest neighbors + reprojection
-\end{itemize}
-
-\ccRefIdfierPage{CGAL::jet_smoothing_3}  \\
+Function \ccRefIdfierPage{CGAL::jet_smoothing_3} smooths the input point set by projecting each point onto a smooth parametric surface patch (so-called jet surface) fitted over the $k$ nearest neighbors. \\
 
 % % Insert image jet_smoothing.jpg/eps
 % \begin{center}
@@ -194,17 +192,12 @@ Example:
 
 \subsubsection{Normal Estimation}
 
-\begin{itemize}
-\item Normal estimation by Principal Components Analysis over the K nearest neighbors
-\item Normal estimation by Jet fitting over the K nearest neighbors
-\end{itemize}
+Two functions are provided to estimate the normal direction of the inferred surface at each point from the input point set. In both cases, the result is an unoriented normal vector for each input point.
 
-\ccc{CGAL::jet_normal_estimation()} estimates normals direction of a point set using jet fitting on the K nearest neighbors.
-The default jet is a quadric.
+Function \ccc{CGAL::jet_normal_estimation()} estimates the normal direction at each point from the set by fitting a jet surface over its $k$ nearest neighbors. The default jet is a quadric surface.
 
-\ccc{CGAL::pca_normal_estimation()} estimates normals direction of a point set using linear least squares fitting of a plane on the K nearest neighbors.
+Function \ccc{CGAL::pca_normal_estimation()} estimates hte normal direction at each point from the set by linear least squares fitting of a plane over its $k$ nearest neighbors.
 
-In both cases, the result is an unoriented normal vector for each input point.
 
 \ccRefIdfierPage{CGAL::pca_normal_estimation}  \\
 \ccRefIdfierPage{CGAL::jet_normal_estimation}  \\
@@ -232,12 +225,7 @@ Example:
 
 \subsubsection{Normal Orientation}
 
-\begin{itemize}
-\item Normal orientation using a Minimal Spanning Tree \cite{cgal:hddms-srup-92}
-\end{itemize}
-
-\ccc{CGAL::mst_normal_orientation()} orients the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
-The result is an oriented normal vector for each input point/normal.
+Function \ccc{CGAL::mst_normal_orientation()} orients the normals of a set of points with (unoriented) normals using the method described by Hoppe et al. in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}. More specifically, this method constructs a Riemannian graph over the input points and propagates a seed normal orientation within a minimum spanning tree computed over the graph with the Boost graph library. The result is an oriented normal vector for each input point/normal.
 
 \ccRefIdfierPage{CGAL::mst_normal_orientation}  \\
 
@@ -257,20 +245,23 @@ The result is an oriented normal vector for each input point/normal.
     \end{figure}
 \end{center}
 
-Example:
-
-See \ccc{pca_normal_estimation_example.cpp} example above.
-
+Example: see \ccc{pca_normal_estimation_example.cpp} example above.
 
 \subsection{Surface Reconstruction}
 
-\subsubsection{Implicit Functions}
-
-This package implements:
-
+The two surface reconstruction methods fall into the category of the implicit surface reconstruction approaches in the sense that they both compute a scalar function whose iso-surface approximates the input oriented points.
 \begin{itemize}
-\item Delaunay-based Poisson reconstruction \cite{Kazhdan06}
-\item Algebraic Point Set Surfaces \cite{Guennebaud07}
+\item Delaunay-based Poisson reconstruction inspired
+      from \cite{Kazhdan06}. This method solves for
+      an approximate indicator function of the inferred
+      solid. The solving stage must be done once for all 
+      before iso-contouring. % refer to basics?
+\item Algebraic point set surfaces \cite{Guennebaud07}.
+      This method falls into the category of so-called
+      point set surfaces, where the approximate
+      signed distance function to the inferred surface
+      can be evaluated at any query point and on the fly
+      during iso-contouring.
 \end{itemize}
 
 \ccRefIdfierPage{CGAL::Poisson_reconstruction_function<GeomTraits, ReconstructionTriangulation_3>}  \\
@@ -288,30 +279,24 @@ This package implements:
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[h]
-        \caption{APSS reconstruction}
+        \caption{APSS reconstruction.
+        Left: points with oriented normals.
+        Right: reconstructed surface mesh.}
+        % later in the middle: computed function
     \end{figure}
 \end{center}
 
 
-\subsubsection{Implicit Functions Contouring}
-
-Implicit functions can be contoured to reconstruct a surface by:
-
-\begin{itemize}
-\item \cgal\ Surface Mesh Generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}
-\end{itemize}
+The computed ``implicit'' functions can be iso-contoured to reconstruct a surface by using the \cgal\ surface mesh generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}.
 
 \ccRefIdfierPage{CGAL::make_surface_mesh}  \\
 
 The parameter \ccc{Tag} affects the behavior of \ccc{make_surface_mesh()}: \\
-- \ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold
-surface without boundary.\\
-- \ccc{Manifold_with_boundary_tag}: the output mesh is guaranteed to be
-manifold but may have boundaries.\\
-- \ccc{Non_manifold_tag}: the output mesh will be a polygon soup.
+- \ccc{Manifold_tag}: the output mesh is guaranteed to be a  manifold surface without boundary.\\
+- \ccc{Manifold_with_boundary_tag}: the output mesh is guaranteed to be manifold and may have boundaries.\\
+- \ccc{Non_manifold_tag}: the output mesh has no guarantee and hence is outputted as a polygon soup.
 
 Example:
-
 See \ccc{poisson_reconstruction_example.cpp} example above.
 
 
@@ -321,7 +306,6 @@ See \ccc{poisson_reconstruction_example.cpp} example above.
 
 The output of the processing stage is a point set with normals.
 For convenience, we provide functions to write point sets to standard file formats:
-
 \begin{itemize}
 \item XYZ
 \item OFF
@@ -340,15 +324,18 @@ See \ccc{surface_reconstruction_read_write_xyz_example.cpp} example above.
 The surface reconstructed by \ccc{make_surface_mesh()}
 is required to be a model of the concept
 \ccc{SurfaceMeshComplex_2InTriangulation_3},
-a data structure able to represent a two dimensional
-complex embedded in a three dimensional triangulation. \\
+a data structure devised to represent a two dimensional
+complex embedded into a three dimensional triangulation.\\
+
 \ccc{SurfaceMeshComplex_2InTriangulation_3} defines the methods to traverse the reconstructed surface.
 
 As examples, we provide functions to:
 
 \begin{itemize}
-\item write the reconstructed surface to standard OFF file format
-\item convert the reconstructed surface to a polygon soup
+\item Write the reconstructed surface mesh to the 
+      OFF file format.
+\item Convert the reconstructed surface mesh to a
+      polygon soup.
 \end{itemize}
 
 \ccRefIdfierPage{CGAL::output_surface_facets_to_off}  \\

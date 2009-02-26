@@ -3,36 +3,9 @@
 
 \subsection{Poisson Reconstruction Overview}
 
-Kazhdan, Bolitho and Hoppe described in \cite{Kazhdan06}
-the Poisson Surface Reconstruction algorithm.
-\cgal\ implements a variant of this algorithm which computes an implicit function
-piecewise-linear in a 3D Delaunay triangulation instead of an octree.
+Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm \cite{Kazhdan06}. Given a set of 3D points with oriented normals (denoted oriented points in the sequel) sampled on the boundary of a 3D solid, this method solves for an approximate indicator function of the inferred solid, whose gradient best matches the input normals. The output scalar function, represented in an adaptive octree, is then iso-contoured using an adaptive marching cubes.\\
 
-This algorithm takes as input a 3D point set with oriented normals.
-First, it builds a Delaunay triangulation and refines it (breaks bad tetrahedra, where {}``bad'' means
-badly shaped or too big). The normal of Steiner points is set to zero.
-Then it computes an indicator function f() piecewise-linear over the tetrahedra.
-We solve the Poisson equation Laplacian(f) = divergent(normals field)
-at each vertex of the triangulation via the TAUCS sparse linear solver.
-Eventually, \cgal\ Surface Mesh Generator extracts the iso-surface {}``f() = median
-of f() over the input points''.
-
-% % Insert image poisson.jpg/eps
-% \begin{center}
-%     \label{Surface_reconstruction_3-fig-poisson}
-%     % Image
-%     \begin{ccTexOnly}
-%         \includegraphics[width=0.9\textwidth]{Surface_reconstruction_3/poisson} % omit .eps suffix
-%     \end{ccTexOnly}
-%     \begin{ccHtmlOnly}
-%         <img width="90%" border=0 src="./poisson.jpg"><P>
-%     \end{ccHtmlOnly}
-%     % Title
-%     \begin{figure}[h]
-%         \caption{Poisson reconstruction of the Bimba point set (from scanner)}
-%     \end{figure}
-% \end{center}
-
+\cgal\ implements a variant of this algorithm which solves for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree. The algorithm takes as input a set of 3D oriented points. It builds a 3D Delaunay triangulation from these points and refines it by Delaunay refinement so as to remove all badly shaped (non isotropic) tetrahedra and to tessellate a loose bounding box of the input oriented points. The normal of each Steiner point added during refinement is set to zero. It then solves for a scalar indicator function $f$ represented as a piecewise linear function over the refined triangulation. More specifically, it solves for the Poisson equation  $\Delta f = div(\mathbf{n})$ at each vertex of the triangulation using a sparse linear solver. Eventually, the \cgal\ surface mesh generator extracts an isosurface with function value set by default to be the median value of $f$ at all input points.
 
 \subsection{Poisson Reconstruction API}
 
@@ -53,48 +26,55 @@ The main constructor is:
 
 \ccFunction{template<class InputIterator> Poisson_reconstruction_function(ReconstructionTriangulation_3& pdt, InputIterator first, InputIterator beyond);}
 {
-Create an implicit function from a point set. Insert the first...beyond point set into pdt and create a Poisson indicator function f() piecewise-linear over the tetrahedra of pdt.
+Creates a scalar function from a set of oriented points. Inserts the iterator range first...beyond into the triangulation pdt, refines it and solves for a piecewise linear scalar function which gradient best matches the input normals.
 Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
 }
 \ccGlue
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[pdt]\ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \item[first]First point to add. \item[beyond]Past-the-end point to add. \end{description}
+\item[pdt]\ccc{ReconstructionTriangulation_3} base of the Poisson indicator function.
+\item[first] First oriented point to add.
+\item[beyond] Past-the-end oriented point to add. \end{description}
 \end{description}
 
 The main methods are:
 
 \ccFunction{bool compute_implicit_function();}
 {
-You should call \ccc{compute_implicit_function}() once when points insertion is over. It computes the Poisson indicator function f() at each vertex of the triangulation by:\begin{itemize}
-\item applying a Delaunay refinement to define the function inside and outside the surface.\item solving the Poisson equation Laplacian(f) = divergent(normals field) at each vertex of the triangulation via the TAUCS sparse linear solver. One vertex must be constrained.\item shifting and orienting f() such that f() = 0 on the input points, and f() $<$ 0 inside the surface.\end{itemize}
-Return false on error.
+The function \ccc{compute_implicit_function}() must be called after each insertion of oriented points. It computes the piecewise linear scalar function $f$ by:
+\begin{itemize}
+\item applying Delaunay refinement.
+\item solving for $f$ at each vertex of the triangulation with a sparse linear solver. 
+\item shifting and orienting $f$ such that $f=0$ at all input points and $f<0$ inside the inferred surface.
+\end{itemize}
+Returns false on error.
 }
 \ccGlue
-\ccFunction{FT f(const Point& p) const;}
+\ccFunction{FT value(const Point& p) const;}
 {
-Evaluate implicit function for any 3D point.
+Evaluates the implicit function at a given 3D query point.
 }
 \ccGlue
 \ccFunction{Point get_inner_point() const;}
 {
-Get point inside the surface.
+Returns a point located inside the inferred surface.
 }
 \ccFunction{Sphere bounding_sphere() const;}
 {
-Get the surface's bounding sphere.
+Returns a sphere bounding the inferred surface.
 }
 
-See details in  \\
+See details in \\
 \ccRefIdfierPage{CGAL::Poisson_reconstruction_function<GeomTraits, ReconstructionTriangulation_3>}
 
 
 \subsection{Poisson Reconstruction Example}
 
-\ccc{poisson_reconstruction_example.cpp} reads a point set, creates a Poisson implicit function
-and reconstructs a surface.
+\ccc{poisson_reconstruction_example.cpp} reads a point set, creates a Poisson implicit function and reconstructs a surface.
 
+% I feel like we should further simplify it by providing
+% just a list of oriented points.
 \ccIncludeExampleCode{Surface_reconstruction_3/poisson_reconstruction_example.cpp}
 
 
