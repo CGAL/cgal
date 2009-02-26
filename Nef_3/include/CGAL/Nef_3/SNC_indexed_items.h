@@ -105,7 +105,7 @@ class SNC_indexed_items {
       : Base(sl), index(0), 
       ifacet(sl.ifacet), init_ifacet(sl.init_ifacet) {}
     SHalfloop<Refs>& operator=(const SHalfloop<Refs>& sl) {
-      (Base) *this = (Base) sl;
+      (Base&) *this = (Base) sl;
       index = sl.index;
       ifacet = sl.ifacet;
       init_ifacet = sl.init_ifacet;
@@ -139,7 +139,7 @@ class SNC_indexed_items {
       : Base(se), index(se.index), index2(se.index2), 
       ifacet(se.ifacet), init_ifacet(se.init_ifacet) {}
     SHalfedge<Refs>& operator=(const SHalfedge<Refs>& se) { 
-      (Base) *this = (Base) se;
+      (Base&) *this = (Base) se;
       index = se.index;
       index2 = se.index2;
       ifacet = se.ifacet;
@@ -177,7 +177,7 @@ class SNC_indexed_items {
     SVertex(Mark m) : Base(m), index(0) {}
     SVertex(const SVertex<Refs>& sv) : Base(sv) { index = sv.index; }
     SVertex<Refs>& operator=(const SVertex<Refs>& sv) {
-      (Base) *this = (Base) sv;
+      (Base&) *this = (Base) sv;
       index = sv.index;
       return *this;
     }

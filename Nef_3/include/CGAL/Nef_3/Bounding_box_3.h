@@ -72,7 +72,7 @@ public:
       Base::extend(q);
     else {
       initialized = true;
-      (Base) *this = Base(q,q);
+      (Base&) *this = Base(q,q);
     }
   }
 
