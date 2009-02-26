@@ -34,7 +34,7 @@
 #include <CGAL/AABB_tree/Line_3_Bbox_3_do_intersect.h>
 #include <CGAL/AABB_tree/Sphere_3_Bbox_do_intersect.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Kernel, class Input, class PSC>
 class AABB_node
@@ -462,7 +462,7 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_AABB_NODE_H
 
