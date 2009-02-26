@@ -157,7 +157,7 @@ public:
     /// describes the border of a topological disc. This border may be an actual
     /// border of the mesh or a virtual border.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
     ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
     /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
@@ -600,7 +600,7 @@ private:
     /// w.r.t. the first_seam_vertex -> end_seam_vertex border
     /// (outer seam edges are marked BORDER).
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
     ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
     /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
@@ -694,7 +694,7 @@ private:
     /// Set the seaming flag of inner vertices and edges to INNER
     /// by filling the topological disk.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - Inner vertices are marked as OUTER, seam vertices as BORDER.
     /// - Inner edges are marked as OUTER,
     ///   outer seam edges as BORDER, inner seam edges as INNER.
@@ -746,7 +746,7 @@ private:
 
     // Check that the seam is valid, i.e. that the cut mesh is 2-manifold.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
     ///   i.e. Parameterization_mesh_patch_3 will export the "right" of the seam.
     /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
@@ -841,7 +841,7 @@ private:
 
     /// Create a patch vertex from an adaptor vertex + one of its neighbors.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - adaptor_neighbor is a neighbor of adaptor_vertex.
     /// - (adaptor_vertex, adaptor_neighbor) must NOT be a seam (non-oriented) edge.
     Vertex_const_handle get_decorated_vertex_from_inner_edge(
@@ -903,7 +903,7 @@ private:
     /// Create a patch vertex from a border/seam adaptor vertex
     /// + one of its neighbors on the seam.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - adaptor_vertex is a border/seam vertex.
     /// - [first_cw_neighbor, last_cw_neighbor] defines the range
     ///   of the valid neighbors of adaptor_vertex (included) or are NULL.

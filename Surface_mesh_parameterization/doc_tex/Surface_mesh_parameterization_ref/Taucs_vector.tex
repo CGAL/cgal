@@ -97,7 +97,7 @@ Copy constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{Taucs_vector& operator=(const Taucs_vector<T>& toCopy);}
+\ccMethod{Taucs_vector& operator =(const Taucs_vector<T>& toCopy);}
 {
 operator =()
 }
@@ -110,7 +110,7 @@ Return the vector's number of coefficients.
 \ccMethod{T operator[](int i) const;}
 {
 Read/write access to a vector coefficient.
-Preconditions: 0 $<$= i $<$ dimension().
+\ccCommentHeading{Preconditions} 0 $<$= i $<$ dimension().
 }
 \ccGlue
 \ccMethod{T& operator[](int i);}

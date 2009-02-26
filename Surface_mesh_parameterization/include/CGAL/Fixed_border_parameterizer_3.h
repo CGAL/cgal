@@ -151,7 +151,7 @@ public:
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - 'mesh' must be a surface with one connected component.
     /// - 'mesh' must be a triangular mesh.
     /// - the mesh border must be mapped onto a convex polygon.
@@ -169,7 +169,7 @@ protected:
     /// Fill the border vertices' lines in both linear systems:
     /// "u = constant" and "v = constant".
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - vertices must be indexed.
     /// - A, Bu and Bv must be allocated.
     /// - border vertices must be parameterized.
@@ -187,7 +187,7 @@ protected:
     /// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
     /// - compute w_ii = - sum of w_ijs.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - vertices must be indexed.
     /// - vertex i musn't be already parameterized.
     /// - line i of A must contain only zeros.

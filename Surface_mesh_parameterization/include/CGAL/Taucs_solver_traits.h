@@ -84,7 +84,7 @@ public:
     /// Solve the sparse linear system "A*X = B".
     /// Return true on success. The solution is then (1/D) * X.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - A.row_dimension()    == B.dimension().
     /// - A.column_dimension() == X.dimension().
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
@@ -209,7 +209,7 @@ public:
     /// Solve the sparse linear system "A*X = B".
     /// Return true on success. The solution is then (1/D) * X.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - A.row_dimension()    == B.dimension().
     /// - A.column_dimension() == X.dimension().
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)

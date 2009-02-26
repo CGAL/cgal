@@ -114,13 +114,10 @@ Export \ccc{SparseLinearAlgebraTraits_d} template parameter.
 \ccConstructor{Fixed_border_parameterizer_3(Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
 {
 Constructor.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{border_param}: Object that maps the surface's border to 2D space \item \ccc{sparse_la}: Traits object to access a sparse linear system \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[\ccc{border_param}]Object that maps the surface's border to 2D space \item[\ccc{sparse_la}]Traits object to access a sparse linear system \end{description}
-\end{description}
 \ccGlue
 
 %END-AUTO(\ccCreation)
@@ -135,7 +132,7 @@ Constructor.
 {
 [virtual] \\
 Compute a one-to-one mapping from a triangular 3D surface \ccc{mesh} to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
-Preconditions:\begin{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
 \item \ccc{mesh} must be a surface with one connected component.\item \ccc{mesh} must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
 }
 \ccGlue
@@ -150,7 +147,7 @@ Check parameterize() preconditions:\begin{itemize}
 {
 [protected] \\
 Initialize A, Bu and Bv after border parameterization. Fill the border vertices' lines in both linear systems: {\em u = constant} and {\em v = constant}.
-Preconditions:\begin{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
 \item vertices must be indexed.\item A, Bu and Bv must be allocated.\item border vertices must be parameterized. \end{itemize}
 }
 \ccGlue
@@ -165,7 +162,7 @@ Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i. 
 [protected, virtual] \\
 Compute the line i of matrix A for i inner vertex:\begin{itemize}
 \item call \ccc{compute_w_ij}() to compute the A coefficient \ccc{w_ij} for each neighbor \ccc{v_j}.\item compute \ccc{w_ii} = - sum of \ccc{w_ijs}.\end{itemize}
-Preconditions:\begin{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
 \item vertices must be indexed.\item vertex i musn't be already parameterized.\item line i of A must contain only zeros. \end{itemize}
 }
 \ccGlue

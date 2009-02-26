@@ -74,7 +74,7 @@ Copy constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{Vector& operator=(const Vector& toCopy);}
+\ccMethod{Vector& operator =(const Vector& toCopy);}
 {
 operator =()
 }
@@ -87,7 +87,7 @@ Return the vector's number of coefficients.
 \ccMethod{NT operator[](int row) const;}
 {
 Read/write access to a vector coefficient.
-Precondition: 0 $<$= row $<$ dimension().
+\ccPrecond 0 $<$= row $<$ dimension().
 }
 \ccGlue
 \ccMethod{NT& operator[](int row);}

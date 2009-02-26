@@ -89,13 +89,10 @@ class \ccc{Taucs_symmetric_solver_traits};
 \ccConstructor{Taucs_symmetric_solver_traits(const char * options[] = NULL, const void * arguments[] = NULL);}
 {
 Create a TAUCS sparse linear solver for symmetric positive definite matrices. The default solver is the Multifrontal Supernodal Cholesky Factorization. See \ccc{taucs_linsolve}() documentation for the meaning of the \ccc{options} and \ccc{arguments} parameters.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{options}: must be persistent \item \ccc{arguments}: must be persistent \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[options]must be persistent \item[arguments]must be persistent \end{description}
-\end{description}
 \ccGlue
 
 %END-AUTO(\ccCreation)
@@ -109,7 +106,7 @@ Create a TAUCS sparse linear solver for symmetric positive definite matrices. Th
 \ccMethod{bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);}
 {
 Solve the sparse linear system {\em A$\ast$X = B}. Return true on success. The solution is then (1/D) $\ast$ X.
-Preconditions:\begin{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
 \item A.\ccc{row_dimension}() == B.dimension().\item A.\ccc{column_dimension}() == X.dimension(). \end{itemize}
 }
 \ccGlue

@@ -113,13 +113,10 @@ Export \ccc{SparseLinearAlgebraTraits_d} template parameter.
 \ccConstructor{LSCM_parameterizer_3(Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
 {
 Constructor.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{border_param}: Object that maps the surface's border to 2D space \item \ccc{sparse_la}: Traits object to access a sparse linear system \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[\ccc{border_param}]Object that maps the surface's border to 2D space \item[\ccc{sparse_la}]Traits object to access a sparse linear system \end{description}
-\end{description}
 \ccGlue
 
 %END-AUTO(\ccCreation)
@@ -134,7 +131,7 @@ Constructor.
 {
 [virtual] \\
 Compute a one-to-one mapping from a triangular 3D surface \ccc{mesh} to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
-Preconditions:\begin{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
 \item \ccc{mesh} must be a surface with one connected component.\item \ccc{mesh} must be a triangular mesh. \end{itemize}
 }
 \ccGlue

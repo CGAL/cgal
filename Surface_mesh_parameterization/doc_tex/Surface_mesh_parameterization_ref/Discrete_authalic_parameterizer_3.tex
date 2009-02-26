@@ -88,13 +88,6 @@ class \ccc{Discrete_authalic_parameterizer_3};
 %END-AUTO(\ccParameters)
 
 
-\ccTypes
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccTypes)
-%END-AUTO(\ccTypes)
-
-
 \ccCreation
 \ccCreationVariable{param}  %% variable name used by \ccMethod below
 
@@ -104,13 +97,10 @@ class \ccc{Discrete_authalic_parameterizer_3};
 \ccConstructor{Discrete_authalic_parameterizer_3(Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
 {
 Constructor.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{border_param}: Object that maps the surface's border to 2D space. \item \ccc{sparse_la}: Traits object to access a sparse linear system. \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[\ccc{border_param}]Object that maps the surface's border to 2D space. \item[\ccc{sparse_la}]Traits object to access a sparse linear system. \end{description}
-\end{description}
 \ccGlue
 
 %END-AUTO(\ccCreation)

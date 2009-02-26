@@ -23,7 +23,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The class \ccc{Taucs_symmetric_matrix} is a C++ wrapper around a TAUCS $\ast$symmetric$\ast$ matrix (type \ccc{taucs_ccs_matrix}).
+The class \ccc{Taucs_symmetric_matrix} is a C++ wrapper around a TAUCS {\bf symmetric} matrix (type \ccc{taucs_ccs_matrix}).
 
 Symmetric matrices store only the lower triangle.
 
@@ -68,6 +68,9 @@ template$<$  \\
 class T$>$   \\
 struct \ccc{Taucs_symmetric_matrix};
 
+\ccCommentHeading{Parameters}
+\ccc{T}: Number type. Tested with T = \ccc{taucs_single} or \ccc{taucs_double}. May also work with T = \ccc{taucs_dcomplex} and \ccc{taucs_scomplex}.
+
 %END-AUTO(\ccParameters)
 
 
@@ -92,35 +95,22 @@ struct \ccc{Taucs_symmetric_matrix};
 
 \ccConstructor{Taucs_symmetric_matrix(int dim);}
 {
-Create a square SYMMETRIC matrix initialized with zeros. The max number of non 0 elements in the matrix is automatically computed.
+Create a square {\bf symmetric} matrix initialized with zeros.
+\ccCommentHeading{Parameters}
+\ccc{dim}: Matrix dimension. 
 }
-\ccGlue
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[dim]Matrix dimension. \end{description}
-\end{description}
 \ccGlue
 \ccConstructor{Taucs_symmetric_matrix(int rows, int columns);}
 {
-Create a square SYMMETRIC matrix initialized with zeros.
+Create a square {\bf symmetric} matrix initialized with zeros.
+\ccPrecond rows == columns.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{rows}: Number of rows. \item \ccc{columns}: Number of columns. \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[rows]Matrix dimensions. \end{description}
-\end{description}
 \ccGlue
 
 %END-AUTO(\ccCreation)
-
-
-\ccOperations
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccOperations)
-%END-AUTO(\ccOperations)
 
 
 \ccSeeAlso

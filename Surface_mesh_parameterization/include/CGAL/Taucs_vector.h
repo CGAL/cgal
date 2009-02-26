@@ -87,7 +87,7 @@ public:
 
     /// Read/write access to a vector coefficient.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// 0 <= i < dimension().
     T operator[](int i) const {
         CGAL_precondition(i < m_dimension);

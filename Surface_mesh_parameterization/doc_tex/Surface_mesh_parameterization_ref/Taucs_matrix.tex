@@ -58,6 +58,9 @@ template$<$  \\
 class T$>$   \\
 struct \ccc{Taucs_matrix};
 
+\ccCommentHeading{Parameters}
+\ccc{T}: Number type. Tested with T = \ccc{taucs_single} or \ccc{taucs_double}. May also work with T = \ccc{taucs_dcomplex} and \ccc{taucs_scomplex}.
+
 %END-AUTO(\ccParameters)
 
 
@@ -83,24 +86,19 @@ struct \ccc{Taucs_matrix};
 \ccConstructor{Taucs_matrix(int dim, bool is_symmetric = false);}
 {
 Create a square matrix initialized with zeros.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{dim}: Matrix dimension. \item \ccc{is_symmetric}: Symmetric/hermitian? \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[dim]Matrix dimension. \item[\ccc{is_symmetric}]Symmetric/hermitian? \end{description}
-\end{description}
 \ccGlue
 \ccConstructor{Taucs_matrix(int rows, int columns, bool is_symmetric = false);}
 {
 Create a rectangular matrix initialized with zeros.
+\ccPrecond rows == columns if \ccc{is_symmetric} is true.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{rows}: Number of rows. \item \ccc{columns}: Number of columns. \item \ccc{is_symmetric}: Symmetric/hermitian? \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters: ]
-\begin{description}
-\item[rows]Matrix dimensions. \item[\ccc{is_symmetric}]Symmetric/hermitian? \end{description}
-\end{description}
 \ccGlue
 
 %END-AUTO(\ccCreation)
@@ -124,7 +122,7 @@ Return the matrix number of columns.
 \ccMethod{T get_coef(int i, int j) const;}
 {
 Read access to a matrix coefficient.
-Preconditions:\begin{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
 \item 0 $<$= i $<$ \ccc{row_dimension}().\item 0 $<$= j $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue
@@ -133,7 +131,7 @@ Preconditions:\begin{itemize}
 Write access to a matrix coefficient: \ccc{a_ij} $<$- val.
 Optimizations:\begin{itemize}
 \item For symmetric matrices, \ccc{Taucs_matrix} stores only the lower triangle \ccc{set_coef}() does nothing if (i, j) belongs to the upper triangle.\item Caller can optimize this call by setting \ccc{new_coef} to true if the coefficient does not already exist in the matrix.\end{itemize}
-Preconditions:\begin{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
 \item 0 $<$= i $<$ \ccc{row_dimension}().\item 0 $<$= j $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue
@@ -141,7 +139,7 @@ Preconditions:\begin{itemize}
 {
 Write access to a matrix coefficient: \ccc{a_ij} $<$- \ccc{a_ij} + val.
 Optimization: For symmetric matrices, \ccc{Taucs_matrix} stores only the lower triangle \ccc{add_coef}() does nothing if (i, j) belongs to the upper triangle.
-Preconditions:\begin{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
 \item 0 $<$= i $<$ \ccc{row_dimension}().\item 0 $<$= j $<$ \ccc{column_dimension}(). \end{itemize}
 }
 \ccGlue

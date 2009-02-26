@@ -370,9 +370,9 @@ public:
     }
 
 private:
-    /// Update the inherited vertex handle
+    /// Update the inherited vertex handle.
     ///
-    /// Precondition: m_adaptor_circulator and m_center are valid
+    /// @commentheading Precondition: m_adaptor_circulator and m_center are valid.
     void update_inherited_handle()
     {
         Vertex_handle current_decorated_vertex = NULL;
@@ -566,9 +566,9 @@ public:
     }
 
 private:
-    /// Update the inherited vertex handle
+    /// Update the inherited vertex handle.
     ///
-    /// Precondition: m_adaptor_circulator is valid
+    /// @commentheading Precondition: m_adaptor_circulator is valid.
     void update_inherited_handle()
     {
         Vertex_handle current_decorated_vertex = NULL;

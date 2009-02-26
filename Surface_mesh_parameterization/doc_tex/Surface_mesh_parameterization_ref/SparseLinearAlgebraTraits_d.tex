@@ -82,7 +82,7 @@ Default constructor.
 \ccMethod{bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);}
 {
 Solve the sparse linear system {\em A$\ast$X = B}. Return true on success. The solution is then (1/D) $\ast$ X.
-Preconditions:\begin{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
 \item A.\ccc{row_dimension}() == B.dimension().\item A.\ccc{column_dimension}() == X.dimension(). \end{itemize}
 }
 \ccGlue

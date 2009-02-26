@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 /// The mapping is piecewise linear on the input mesh triangles.
 /// The result is a (u,v) pair of parameter coordinates for each vertex of the input mesh.
 ///
-/// Preconditions:
+/// @commentheading Preconditions:
 /// - 'mesh' must be a surface with one connected component.
 /// - 'mesh' must be a triangular mesh.
 ///
@@ -53,7 +53,7 @@ parameterize(ParameterizationMesh_3& mesh)  ///< 3D mesh, model of Parameterizat
 /// One-to-one mapping may be guaranteed or
 /// not, depending on the chosen ParametizerTraits_3 algorithm.
 ///
-/// Preconditions:
+/// @commentheading Preconditions:
 /// - 'mesh' must be a surface with one connected component.
 /// - 'mesh' must be a triangular mesh.
 /// - the mesh border must be mapped onto a convex polygon

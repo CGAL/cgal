@@ -51,7 +51,7 @@ public:
 
     /// Read/write access to a vector coefficient.
     ///
-    /// Precondition: 0 <= row < dimension().
+    /// @commentheading Precondition: 0 <= row < dimension().
     NT  operator[] (int row) const;
     NT&  operator[] (int row);
 };

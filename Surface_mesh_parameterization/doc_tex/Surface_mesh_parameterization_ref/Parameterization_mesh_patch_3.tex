@@ -68,11 +68,8 @@ template$<$  \\
 class \ccc{ParameterizationPatchableMesh_3}$>$   \\
 class \ccc{Parameterization_mesh_patch_3};
 
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[\ccc{ParameterizationPatchableMesh_3}]3D surface mesh. \end{description}
-\end{description}
+\ccCommentHeading{Parameters}
+\ccc{ParameterizationPatchableMesh_3}: 3D surface mesh.
 
 %END-AUTO(\ccParameters)
 
@@ -221,11 +218,11 @@ The decorated mesh.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccConstructor{template<class InputIterator>Parameterization_mesh_patch_3(Adaptor& mesh, InputIterator first_seam_vertex, InputIterator end_seam_vertex);}
+\ccConstructor{template<class InputIterator> Parameterization_mesh_patch_3(Adaptor& mesh, InputIterator first_seam_vertex, InputIterator end_seam_vertex);}
 {
 Create a Decorator for an existing \ccc{ParameterizationPatchableMesh_3} mesh. The input mesh can be of any genus, but it has to come with a {\em seam} that describes the border of a topological disc. This border may be an actual border of the mesh or a virtual border.
-Preconditions:\begin{itemize}
-\item \ccc{first_seam_vertex} -$>$ \ccc{end_seam_vertex} defines the outer seam, i.e. \ccc{Parameterization_mesh_patch_3} will export the {\em right} of the seam.\item The {\em seam} is given as a container of \ccc{Adaptor::Vertex_handle} elements.\item The {\em seam} is implicitely a loop. The first vertex should $\ast$not$\ast$ be duplicated at the end. \end{itemize}
+\ccCommentHeading{Preconditions}\begin{itemize}
+\item \ccc{first_seam_vertex} -$>$ \ccc{end_seam_vertex} defines the outer seam, i.e. \ccc{Parameterization_mesh_patch_3} will export the {\em right} of the seam.\item The {\em seam} is given as a container of \ccc{Adaptor::Vertex_handle} elements.\item The {\em seam} is implicitely a loop. The first vertex should {\bf not} be duplicated at the end. \end{itemize}
 }
 \ccGlue
 
@@ -243,10 +240,8 @@ non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle
 
 \ccMethod{Adaptor& get_decorated_mesh();}
 {
+\ccCommentHeading{Returns} the decorated mesh.
 }
-\ccGlue
-\begin{description}
-\item[Returns:]the decorated mesh. \end{description}
 \ccGlue
 \ccMethod{const Adaptor& get_decorated_mesh() const;}
 {
@@ -308,15 +303,10 @@ Get iterator over past-the-end vertex of mesh's main border (aka {\em seam}).
 \ccGlue
 \ccMethod{std::list<Vertex_handle> get_border(Vertex_handle seed_vertex);}
 {
+\ccCommentHeading{Returns} the border containing \ccc{seed_vertex} (or an empty list if not found).
+\ccCommentHeading{Parameters}
+\ccc{seed_vertex}: a border vertex. 
 }
-\ccGlue
-\begin{description}
-\item[Returns:]the border containing \ccc{seed_vertex} (or an empty list if not found). \end{description}
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[\ccc{seed_vertex}]a border vertex. \end{description}
-\end{description}
 \ccGlue
 \ccMethod{Facet_iterator mesh_facets_begin();}
 {

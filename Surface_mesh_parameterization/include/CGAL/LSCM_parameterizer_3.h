@@ -148,7 +148,7 @@ public:
     /// The mapping is linear by pieces (linear in each triangle).
     /// The result is the (u,v) pair image of each vertex of the 3D surface.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - 'mesh' must be a surface with one connected component.
     /// - 'mesh' must be a triangular mesh.
     virtual Error_code  parameterize(Adaptor& mesh);
@@ -163,7 +163,7 @@ private:
     /// Initialize "A*X = B" linear system after
     /// (at least two) border vertices are parameterized.
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - vertices must be indexed.
     /// - X and B must be allocated and empty.
     /// - (at least two) border vertices must be parameterized.
@@ -178,7 +178,7 @@ private:
 
     /// Create two lines in the linear system per triangle (one for u, one for v).
     ///
-    /// Preconditions:
+    /// @commentheading Preconditions:
     /// - vertices must be indexed.
     Error_code setup_triangle_relations(LeastSquaresSolver& solver,
                                         const Adaptor& mesh,
