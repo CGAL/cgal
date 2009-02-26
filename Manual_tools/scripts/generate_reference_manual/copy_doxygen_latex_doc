@@ -62,6 +62,7 @@ my %heading_names = (
 # Conversion table from clear text to \ccCommentHeading macros
 my %comment_heading_names = (
     '\ccCommentHeading{Precondition}' => '\ccPrecond',
+#     '\ccCommentHeading{Preconditions}' => '\ccPrecond',
 );
 
 # Warning sentence before automatically generated sections
@@ -223,12 +224,15 @@ sub doxygen_latex_to_latex
     # Add a \n before (parameters) descriptions to ease parsing
     $buf =~ s/\n?\\begin\{Desc\}/\n\\begin\{Desc\}/smg;
 
-    # Use a canonic style "type& variable" for references to ease parsing
-    $buf =~ s/([\w\>]+)\s*&\s*/$1& /g;
+    # Use a canonic style to ease parsing
+    $buf =~ s/([\w\>]+)\s*&\s*/$1& /g;          # Use a canonic style "type& variable" for references
+    $buf =~ s/(\w)=/$1 =/g;                     # Use a canonic style for default parameters
+    $buf =~ s/=(\w)/= $1/g;                     #                    ""
     $buf =~ s/Constructor& Destructor/Constructor & Destructor/g;
+    $buf =~ s/\\item\[(.*?): +\]/\\item\[$1:\]/g;
 
-    # "Desc" is a doxygen style based on "description",
-    # "CompactItemize" is a doxygen style based on "itemize"
+    # "Desc" is a doxygen style based on "description".
+    # "CompactItemize" is a doxygen style based on "itemize".
     $buf =~ s/\{Desc\}/\{description\}/g;
     $buf =~ s/\{CompactItemize\}/\{itemize\}/g;
 
@@ -239,7 +243,7 @@ sub doxygen_latex_to_latex
 
 # Mangle C++ code for latex.
 # Wrap words surrounded by simple quotes and C++ names (types/functions/variables) by \ccc{}.
-# Emphasize words surrounded by double quotes using \em [L. Saboret's extension].
+# Emphasize words surrounded by double quotes using \em, by stars using \bf [L. Saboret's extension].
 # See latex_unmangle() above.
 # Param: the buffer to format
 # Return value: the formatted buffer
@@ -255,7 +259,7 @@ sub latex_mangle
     $buf =~ s/\\ccSubHeading\{/\\subsubsection\{/g;
 
     # Wrap words surrounded by simple quotes by \ccc{} [L. Saboret's extension].
-    # We add carriage returns around \ccc{} for next line by line substitutions.
+    # We add carriage returns around \ccc{} for the line by line substitution below.
     $buf =~ s/\'(((::|\w)+(<.*?>)?)+)\'/\n\\ccc{$1\}\n/g;
 
     # \ccInclude, \ccHeading, \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
@@ -267,7 +271,7 @@ sub latex_mangle
     foreach $line (@lines) {
         # if first curly braces pair of a cgal_manual macro
         if ($line =~ /\\(ccInclude|ccHeading|ccSubHeading|ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/
-             || $line =~ /\\ccc/)
+         || $line =~ /\\ccc/)
         {
             # nothing to do
         }
@@ -278,8 +282,12 @@ sub latex_mangle
         else
         {
             # Wrap C++ types, including template params, by \ccc{}.
-            # We add carriage returns around \ccc{} for next line by line substitution.
+            # We add carriage returns around \ccc{} for the line by line substitution below.
             $line =~ s/((\w*(_|::)\w*(<.*?>)?)+)/\n\\ccc{$1\}\n/g;
+
+            # Emphasize words surrounded by double quotes using \em, by stars using \bf [L. Saboret's extension].
+            $line =~ s/"(.*?)"/\{\\em $1\}/g;
+            $line =~ s/\*(\w*?)\*/\{\\bf $1\}/g;
         }
         $buf = $buf . $line . "\n";             # concat lines back to $buf
     }
@@ -295,10 +303,12 @@ sub latex_mangle
         if ($line =~ /\\(ccInclude|ccHeading|ccSubHeading|ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/
          || $line =~ /\\ccc/)
         {
-            # Remove extra spaces to please cgal_manual
-            $line =~ s/< (.*?) >/<$1>/g;
+            # Add/remove extra spaces to please cgal_manual
+            $line =~ s/>(\w)/> $1/g;           # add space after template parameters
+            $line =~ s/< (.*?) >/<$1>/g;       # remove spaces within template parameters
             $line =~ s/ & /& /g;
             $line =~ s/ \(/\(/g;
+            $line =~ s/ +/ /g;                 # avoid consecutive spaces
         }
         # else: wrap C++ code for latex
         else
@@ -316,9 +326,6 @@ sub latex_mangle
 
     # Remove extra carriage returns around \ccc{} expressions
     $buf =~ s/\n(\\ccc{.*?\})\n/$1/smg;
-
-    # Emphasize words surrounded by double quotes using \em [L. Saboret's extension].
-    $buf =~ s/"(.*?)"/\{\\em $1\}/smg;
 
     # Return the formatted string
     return $buf;
@@ -351,14 +358,14 @@ sub remove_blank_lines_in_macros
 }
 
 
-# If $buffer matches the function $pattern, return $buffer, else return an empty string
+# If $buf matches the function $pattern, return $buf, else return an empty string
 sub keep_only_if_function
 {
-    my $buffer = shift;
+    my $buf = shift;
     my $pattern = shift;
 
-    if ($buffer =~ /\\paragraph\{.*\b\Q$pattern\E\b.*\}/) {
-        return $buffer;
+    if ($buf =~ /\\paragraph\{.*\b\Q$pattern\E\b.*\}/) {
+        return $buf;
     } else {
         return "";
     }
@@ -385,14 +392,14 @@ sub convert_heading_name
 }
 
 
-# Convert clear text to \ccCommentHeading macros
-# Param: macro name in doxygen latex doc, of the form "CommentHeading ...:"
-# Return value: the formatted macro name
+# Convert clear text to \ccCommentHeading macros.
+# Param: macro name in doxygen latex doc, of the form "CommentHeading ...:".
+# Return value: the formatted macro name.
 sub convert_comment_heading_name
 {
     my $heading = shift;
 
-    # Convert to \ccHeading or \subsubsection
+    # Convert to \ccCommentHeading
     $heading =~ s/^CommentHeading (.*?):$/\\ccCommentHeading\{$1\}/;
 
     # Use CGAL Manual shortcut if available
@@ -404,11 +411,67 @@ sub convert_comment_heading_name
 }
 
 
+# Flatten lists with only 1 item.
+# Param: list in doxygen latex doc, of the form "\begin{description}...\end{description}".
+# Return value: the list flattened or not.
+sub flatten_one_item_list
+{
+    my $buf = shift;
+
+    # Count the occurences of \item in the list
+    my $count = 0;
+    while ($buf =~ /\\item/g) { $count = $count + 1; }
+
+    # Flatten the list if 1 item
+    if ($count == 1)
+    {
+        $buf =~ s/\\begin\{description\}\s*\\item\s*(.*)\\end\{description\}/$1/sm;
+    }
+
+    return $buf;
+}
+
+
+# Convert @commentheading sections to \ccCommentHeading calls [L. Saboret + S. Hornus extension].
+# Format (parameters) descriptions.
+# Param: the buffer to format
+# Return value: the formatted buffer
+sub format_comment_headings
+{
+    # Get parameter: buffer containing a doxygen-generated latex file
+    my $buf = shift;
+
+    # Convert @commentheading sections to \ccCommentHeading calls [L. Saboret + S. Hornus extension].
+    # - @commentheading is in fact an alias to "CommentHeading".
+    # - the macro name starts at "CommentHeading" and ends with ":".
+    $buf =~ s/(CommentHeading.*?:)/convert_comment_heading_name($1)/smge;
+
+    # By default, doxygen uses "Parameters" as parameter list title.
+    # We allow to change it with an @commentheading command right before the list [L. Saboret extension].
+    $buf =~ s/\\ccCommentHeading\{([^\}]*)\}\s*(\\begin\{description\}\s*\\item)\[Parameters:\]/$2\[$1:\]/smg;
+
+    # Convert parameters and return value descriptions to \ccCommentHeading to minimize length and identation
+    $buf =~ s/\\begin\{description\}\s*\\item\[(Returns):\]\s*(.*?)\s*\\end\{description\}/\\ccCommentHeading\{$1\} $2/smg;
+    $buf =~ s/\\begin\{description\}\s*\\item\[(.*?):\]\s*(\\begin\{description\}.*?\\end\{description\})\s*\\end\{description\}/\\ccCommentHeading\{$1\}\n$2/smg;
+
+    # Replace list items in bold (ie with square brackets around item) by italics.
+    # Note: latex_mangle() will replace simple quotes by \ccc{}.
+    $buf =~ s/\\item\[(.*?)\]/\\item '$1': /g;
+
+    # Flatten lists with only 1 item (to save space and avoid a cgal_manual bug
+    # with 1-item lists inside the second curly braces pair of \ccXXX expressions).
+    $buf =~ s/(\\begin\{description\}.*?\\end\{description\})/flatten_one_item_list($1)/smge;
+
+    # Return the formatted string
+    return $buf;
+}
+
+
 # L. Saboret's formatting extensions:
 # Extract @headings sections from \Definition section.
 # Param: the buffer to format
 # Return value: the formatted buffer
-sub extented_format_headings
+sub format_headings_ex
 {
     # Get parameter: buffer containing a doxygen-generated latex file
     my $buf = shift;
@@ -515,10 +578,10 @@ sub format_curly_brace_pairs_expressions
     $buf =~ s/\\\{/&\#123\;/g;
     $buf =~ s/\\\}/&\#125\;/g;
 
-    # Close curly braces pairs
-    # Note: cgal_manual does not understand lists inside the second curly braces pair
-    # of \ccXXX expressions => we put them after
-    $buf =~ s/\{([^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/\{$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
+    # Close curly braces pairs.
+#     # Note: cgal_manual does not understand lists inside the second curly braces pair
+#     # of \ccXXX expressions => we put them after.
+#     $buf =~ s/\{([^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/\{$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
     $buf =~ s/\{([^\}]*?)(\n+)\\cc/\{$1\n\}\n\\ccGlue$2\\cc/smg;
 
     # Restore brackets:
@@ -572,8 +635,11 @@ sub format_doxygen_class_doc
     # Remove formatting specific to doxygen
     $buf = doxygen_latex_to_latex($buf);
 
+    # Remove CGAL:: prefix (implicit)
+    $buf =~ s/CGAL::(\w+)/$1/g;
+
     # Remove blank lines in the second curly braces pair of macros,
-    # that cgal_manual does not understand
+    # that cgal_manual does not understand.
     $buf = remove_blank_lines_in_macros($buf);
 
     # Rename (for a class/struct) or delete (for a concept) the include file
@@ -609,22 +675,22 @@ sub format_doxygen_class_doc
     if ($buf =~ s/\\subsubsection\*\{(template.*)\}\n//)
     {
         # extract template params from \subsubsection* line
-        my $parameters = $1;
+        my $full_template_declarations = $1;
 
         # Split template declaration(s) on several lines
-        $parameters =~ s/(template<|, |> )(class|struct|typename)/$1\n$2/g; # add \n before each param
-        $parameters =~ s/(class|struct) (\w+::)*\Q$className\E.*/$1 $className;/g;
+        $full_template_declarations =~ s/(template<|, |> )(class|struct|typename)/$1\n$2/g; # add \n before each param
+        $full_template_declarations =~ s/(class|struct) (\w+::)*\Q$className\E.*/$1 $className;/g;
                                                 # keep only class/struct/concept name on last line
-        $parameters =~ s/\n/  \\\\\n/smg;       # add \\ at the end of each line to force EOL
-        $parameters =~ s/^ *\\\\\n//smg;        #                ""
+        $full_template_declarations =~ s/\n/  \\\\\n/smg;       # add \\ at the end of each line to force EOL
+        $full_template_declarations =~ s/^ *\\\\\n//smg;        #                ""
 
         # Insert template params at the beginning of \ccParameters section
-        $buf =~ s/\\ccParameters\n/\\ccParameters\n\n$parameters\n/;
+        $buf =~ s/\\ccParameters\n/\\ccParameters\n\n$full_template_declarations\n/;
     }
 
     # L. Saboret's formatting extensions:
     # Extract @headings sections from \Definition section.
-    $buf = extented_format_headings($buf);
+    $buf = format_headings_ex($buf);
 
     # L. Saboret's formatting extensions:
     # Move subheadings from brief to detailed section
@@ -707,17 +773,12 @@ sub format_doxygen_class_doc
     # Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable expressions
     $buf = format_curly_brace_pairs_expressions($className, "class/struct/concept", $buf);
 
-    # Convert @commentheading sections [L. Saboret + S. Hornus extension]
-    # - @commentheading is in fact an alias to "CommentHeading".
-    # - the macro name starts at "CommentHeading" and ends with ":".
-    $buf =~ s/(CommentHeading.*?:)/convert_comment_heading_name($1)/smge;
-
-    # Remove CGAL:: prefix (implicit)
-    $buf =~ s/CGAL::(\w+)/$1/g;
+    # Convert @commentheading sections to \ccCommentHeading calls [L. Saboret + S. Hornus extension].
+    # Format (parameters) descriptions.
+    $buf = format_comment_headings($buf);
 
     # Mangle C++ code for latex.
     # Wrap words surrounded by simple quotes and C++ names (types/functions/variables) by \ccc{}.
-    # Emphasize words surrounded by double quotes using \em [L. Saboret's extension].
     $buf = latex_mangle($buf);
 
     # Remove brief documentation
@@ -755,6 +816,9 @@ sub format_doxygen_function_doc
     # Remove formatting specific to doxygen
     $buf = doxygen_latex_to_latex($buf);
 
+    # Remove CGAL:: prefix (implicit)
+    $buf =~ s/CGAL::(\w+)/$1/g;
+
     # Remove blank lines in the second curly braces pair of macros,
     # that cgal_manual does not understand
     $buf = remove_blank_lines_in_macros($buf);
@@ -767,36 +831,35 @@ sub format_doxygen_function_doc
     $buf =~ s/(\\paragraph\{.*?\(\(end\)\))/keep_only_if_function($1, $functionName)/smge; # remove other functions
     $buf =~ s/\(\(end\)\)//g; # remove markers
 
-    # Format "Heading Parameters:" comments [L. Saboret extension]
-    $buf =~ s/\bHeading Parameters:\s*(\\begin\{description\}\s*\\item)\[Parameters:\]/$1\[Template Parameters:\]/smg;
+    # Ignore "@heading Parameters:" command in a function (backward compatibility).
+    # Note: @heading is in fact an alias to "Heading".
+    if ($buf =~ s/\bHeading Parameters:\s*//smg)
+    {
+        print "  WARNING: ignore '\@heading Parameters' in function $functionName\n";
+    }
 
-    # Insert \ccParameters section before \ccSeeAlso
-    # (from brief section)
+    # Copy full template declarations from brief section
     if ($buf =~ s/\\subsubsection\*\{Functions\}\n\\begin\{itemize\}\n(.*?)\\end\{itemize\}//sm)
     {
-        # extract template params from \subsubsection*{Functions} section
-        my $parameters = $1;
+        # extract full template declarations from \subsubsection*{Functions} section
+        my $full_template_declarations = $1;
 
-        # Keep only lines declaring the $functionName template(s)
-        @lines = ($parameters =~ /^.*\b\Q$functionName\E\b.*$/mg);
-        $parameters = join("\n", @lines);
-
-        # Split template declaration(s) on several lines
-        $parameters =~ s/(template<|, |> )(class|struct|typename)/$1\n$2/g; # add \n before each param
-        $parameters =~ s/(template\s*<.*?>)\s*/$1\n/smg;
-                                                # keep return type on separate line
-        $parameters =~ s/\s*\b\Q$functionName\E\b(.*)/\n$functionName$1;\n/g;
-                                                # keep function name on separate line
-        $parameters =~ s/\n/  \\\\\n/smg;       # add \\ at the end of each line to force EOL
-        #$parameters =~ s/^ *\\\\\n//smg;        #                ""
-
-        # insert $parameters before \ccSeeAlso
-        $buf =~ s/\\ccSeeAlso/\\ccParameters\n\n$parameters\n\n\n\\ccSeeAlso/sm;
+        # Split $full_template_declarations to have 1 declaration per line
+        # and keep only lines declaring $functionName.
+        @lines = ($full_template_declarations =~ /^.*\b\Q$functionName\E\b.*$/mg);
+        foreach my $line (@lines) {
+            # Replace in $buf the short function declaration by the full template one
+            if ($line =~ /^(.*)\b(\Q$functionName\E\b.*)$/) {
+                my $template_params = $1;
+                my $short_declaration = $2;
+                $buf =~ s/\\paragraph\{.*?\Q$short_declaration\E.*?\}/\\paragraph\{$template_params $short_declaration\}/;
+            }
+        }
     }
 
     # L. Saboret's formatting extensions:
     # Extract @headings sections from \Definition section.
-    $buf = extented_format_headings($buf);
+    $buf = format_headings_ex($buf);
 
     # Rename \ccDefinition title
     $buf =~ s/\\subsubsection\{Function Documentation\}/\\ccDefinition\n/;
@@ -807,17 +870,12 @@ sub format_doxygen_function_doc
     # Rename \ccFunction expressions
     $buf = format_curly_brace_pairs_expressions($functionName, "function", $buf);
 
-    # Convert @commentheading sections [L. Saboret + S. Hornus extension].
-    # - @commentheading is in fact an alias to "CommentHeading".
-    # - the macro name starts at "CommentHeading" and ends with ":".
-    $buf =~ s/(CommentHeading.*?:)/convert_comment_heading_name($1)/smge;
-
-    # Remove CGAL:: prefix (implicit)
-    $buf =~ s/CGAL::(\w+)/$1/g;
+    # Convert @commentheading sections to \ccCommentHeading calls [L. Saboret + S. Hornus extension].
+    # Format (parameters) descriptions.
+    $buf = format_comment_headings($buf);
 
     # Mangle C++ code for latex.
     # Wrap words surrounded by simple quotes and C++ names (types/functions/variables) by \ccc{}.
-    # Emphasize words surrounded by double quotes using \em [L. Saboret's extension].
     $buf = latex_mangle($buf);
 
     # Remove brief documentation
@@ -844,7 +902,6 @@ sub insert_manual_section
     my $doxy_buf = shift;
     # - section's title
     my $title = shift;
-# trace "call insert_manual_section($title)\n";
 
 # Uncomment the next line to test that obsolete sections are properly *emptied*
 # $doxy_buf = "";
@@ -855,7 +912,6 @@ sub insert_manual_section
     # Extract $title section content from $doxy_buf
     my $section = "";
     if ($doxy_buf =~ /^\s*\Q$title\E(.*?)\s+$all_titles_pattern/sm) {
-# trace "  1: section exists in doxygen-generated latex file\n";
         $section = $1;
         $section =~ s/^\s+//s;                  # Remove heading & trailing spaces
         $section =~ s/\s+$//s;                  # and extra carriage returns
@@ -866,7 +922,6 @@ sub insert_manual_section
     # If $cgal_buf doesn't already contain the %START-AUTO($title)..%END-AUTO($title) section, add it.
     if ($section ne "")
     {
-# trace "  2: section is not empty\n";
         # Special case: \ccInclude section is a one-line macro
         if ($title eq '\ccInclude') {
           $section = '\ccInclude' . $section;
@@ -881,30 +936,24 @@ sub insert_manual_section
         # If %START-AUTO..%END-AUTO section exists, replace it
         if ($cgal_buf =~ s/$warning*\s*%START-AUTO\(\Q$title\E\).*?%END-AUTO\(\Q$title\E\)/$section/sm)
         {
-# trace "  2.0\n";
             print_verbose "  Update section $title\n";
         }
         else  # Else, insert a new %START-AUTO..%END-AUTO section
         {
-# trace "  2.1\n";
             my $success = 0;                # Successful insertion?
 
             # Special case: \ccInclude section is a one-line macro
             if ($title eq '\ccInclude')
             {
-# trace "  2.1.1\n";
               # If \ccInclude{.*?} macro exists, *replace* it by %START-AUTO..%END-AUTO section
               if ($cgal_buf =~ s/^(\s*)\Q$title\E\{.*?\}/$1$section/sm) {
-# trace "  2.1.1.1: replace \ccInclude{.*?} by %START-AUTO..%END-AUTO section\n";
                   $success = 1;
               }
             }
             else # if not \ccInclude
             {
-# trace "  2.1.2\n";
               # If section's title exists, *append* %START-AUTO..%END-AUTO section after it.
               if ($cgal_buf =~ s/^(\s*\Q$title\E.*?)(\s*$all_titles_pattern(\s|\b))/$1\n\n$section$2/sm) {
-# trace "  2.1.2.1: append %START-AUTO..%END-AUTO section after title\n";
                   $success = 1;
               } else {
                   # Else, insert title + %START-AUTO..%END-AUTO section before
@@ -913,7 +962,6 @@ sub insert_manual_section
                   foreach my $t (@known_section_titles) {
                       if ($after_title) {
                         if ($cgal_buf =~ s/(\s+)(\Q$t\E\b)/$1$title$title_extra\n\n$section$1$2/sm) {
-# trace "  2.1.2.2: insert title + %START-AUTO..%END-AUTO section before $t\n";
                               $success = 1;
                               last;
                           }
@@ -923,7 +971,6 @@ sub insert_manual_section
 
                   # Else, insert title + %START-AUTO..%END-AUTO section at the end of the buffer
                   unless ($success) {
-# trace "  2.1.2.3: insert title + %START-AUTO..%END-AUTO section at the end of the buffer\n";
                       $success = ($cgal_buf =~ s/(\s+)(\\end\{ccRef)/$1$title$title_extra\n\n$section$1$2/sm);
                   }
               }
@@ -937,14 +984,13 @@ sub insert_manual_section
     # If $section is empty, empty %START-AUTO($title)..%END-AUTO($title) section in $cgal_buf
     else
     {
-# trace "  3\n";
         $section = "$warning\n%START-AUTO($title)\n%END-AUTO($title)";
 
         # If %START-AUTO..%END-AUTO section exists, empty it
         if ($cgal_buf =~ s/$warning*\s*%START-AUTO\(\Q$title\E\).*?%END-AUTO\(\Q$title\E\)/$section/sm)
         {
             # Notify user
-            print_verbose "  WARNING: section $title is empty!\n";
+            print "  WARNING: section $title is empty!\n" unless ($title eq '\ccCreation');
         }
     }
 
