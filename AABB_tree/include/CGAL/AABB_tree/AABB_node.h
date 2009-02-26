@@ -1,4 +1,3 @@
-
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETHZ (Suisse).
 // All rights reserved.
 //
@@ -337,7 +336,7 @@ public:
   }
 
   static bool intersection(const Line& line, 
-    const typename PSC::Facet_handle& f, 
+    const Input& f, 
     Point_with_input& p)
   {
     Point p_alone;
@@ -347,12 +346,6 @@ public:
       return true;
     }
     return false;
-  }
-
-  static bool do_intersect(const Line& line, 
-    const typename PSC::Facet_handle& f)
-  {
-    return PSC::do_intersect(line, f);
   }
 
   static bool do_intersect(const Line& line,
@@ -382,7 +375,7 @@ public:
   }
 
   static bool intersection(const Segment& segment, 
-    const typename PSC::Facet_handle& f, 
+    const Input& f, 
     Point_with_input& p)
   {
     Point p_alone;
@@ -433,7 +426,7 @@ public:
   }
 
   static bool intersection(const Ray& ray, 
-    const typename PSC::Facet_handle& f, 
+    const Input& f, 
     Point_with_input& p)
   {
     Point p_alone;
@@ -443,12 +436,6 @@ public:
       return true;
     }
     return false;
-  }
-
-  static bool do_intersect(const Ray& ray, 
-    const typename PSC::Facet_handle& f)
-  {
-    return PSC::do_intersect(ray, f);
   }
 
   static bool do_intersect(const Ray& ray,
