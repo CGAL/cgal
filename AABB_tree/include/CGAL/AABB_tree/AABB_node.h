@@ -88,46 +88,10 @@ public:
 
   ~AABB_node() {}
 
-  // deletes the whole subtree rooted at this node (except this node, of course).
-  // nb_primitives = number of primitives contained in this node.
-  void cleanup_recurse(int nb_primitives)
-  {
-    switch(nb_primitives)
-    {
-    case 2:
-      break;
-    case 3:
-      delete static_cast<Node*>(m_right_child); m_right_child = NULL;
-      break;
-    default:
-      static_cast<Node*>(m_left_child)->cleanup_recurse(nb_primitives/2);
-      static_cast<Node*>(m_right_child)->cleanup_recurse(nb_primitives - nb_primitives/2);
-      delete static_cast<Node*>(m_left_child); m_left_child = NULL;
-      delete static_cast<Node*>(m_right_child); m_right_child = NULL;
-    }
-  }
 
-private:
-
-  // compute bbox for one input primitive
-  Bbox compute_bbox(Input f)
-  {
-    const PSC_point a = f->halfedge()->vertex()->point();
-    const PSC_point b = f->halfedge()->next()->vertex()->point();
-    const PSC_point c = f->halfedge()->next()->next()->vertex()->point();
-    return a.bbox() + b.bbox() + c.bbox();
-  }
-
-  // compute bbox for iterator range of input primitives
-  Bbox bbox(Iterator a, Iterator b)
-  {
-    Bbox bbox = compute_bbox(*a);
-    for(++a; a != b; ++a)
-      bbox = bbox + compute_bbox(*a);
-    return bbox;
-  }
-
-public:
+  // -----------------------------------------------------------//
+  // -----------------RECURSIVE MEMBER FUNCTIONS----------------//
+  // -----------------------------------------------------------//
 
   // builds the tree by recursive expansion.
   // [a,b[ is the range of primitives to be added to the tree.
@@ -158,7 +122,84 @@ public:
     }
   }
 
+  // deletes the whole subtree rooted at this node (except this node, of course).
+  // nb_primitives = number of primitives contained in this node.
+  void cleanup_recurse(int nb_primitives)
+  {
+    switch(nb_primitives)
+    {
+    case 2:
+      break;
+    case 3:
+      delete static_cast<Node*>(m_right_child); m_right_child = NULL;
+      break;
+    default:
+      static_cast<Node*>(m_left_child)->cleanup_recurse(nb_primitives/2);
+      static_cast<Node*>(m_right_child)->cleanup_recurse(nb_primitives - nb_primitives/2);
+      delete static_cast<Node*>(m_left_child); m_left_child = NULL;
+      delete static_cast<Node*>(m_right_child); m_right_child = NULL;
+    }
+  }
+
+  // general traversal query, the traits class allows to use it for the various 
+  // traversal methods we need: listing, counting, detecting intersections, drawing the boxes.
+
+  template<class Traits, class QueryType, class ResultType>
+  void traversal(const QueryType& query,
+    ResultType& result,
+    int nb_primitives)
+  {
+    Traits traits(result);
+    bool left_test;
+    switch(nb_primitives)
+    {
+    case 2:
+      left_test = traits.intersection(query, *static_cast<Input*>(m_left_child));
+      if((! left_test) || (traits.go_further()))
+	traits.intersection(query, *static_cast<Input*>(m_right_child));
+      break;
+    case 3:
+      left_test = traits.intersection(query, *static_cast<Input*>(m_left_child));
+      if((! left_test) || (traits.go_further()))
+	if(traits.do_intersect(query, *static_cast<Node*>(m_right_child)))
+	  static_cast<Node*>(m_right_child)->traversal<Traits>(query, result, 2);
+      break;
+    default:
+      if(traits.do_intersect(query, *static_cast<Node*>(m_left_child)))
+      {
+	static_cast<Node*>(m_left_child)->traversal<Traits>(query, result, nb_primitives/2);
+	if(traits.go_further())
+	  if(traits.do_intersect(query, *static_cast<Node*>(m_right_child)))
+	    static_cast<Node*>(m_right_child)->traversal<Traits>(query, result, nb_primitives - nb_primitives/2);
+      }
+      else
+	if(traits.do_intersect(query, *static_cast<Node*>(m_right_child)))
+	  static_cast<Node*>(m_right_child)->traversal<Traits>(query, result, nb_primitives - nb_primitives/2);
+    }
+  }
+
+
 private:
+
+  // DEPENDENCIES OF 'expand'
+
+  // compute bbox for one input primitive
+  Bbox compute_bbox(Input f)
+  {
+    const PSC_point a = f->halfedge()->vertex()->point();
+    const PSC_point b = f->halfedge()->next()->vertex()->point();
+    const PSC_point c = f->halfedge()->next()->next()->vertex()->point();
+    return a.bbox() + b.bbox() + c.bbox();
+  }
+
+  // compute bbox for iterator range of input primitives
+  Bbox bbox(Iterator a, Iterator b)
+  {
+    Bbox bbox = compute_bbox(*a);
+    for(++a; a != b; ++a)
+      bbox = bbox + compute_bbox(*a);
+    return bbox;
+  }
 
   static Point centroid(Input f)
   {
@@ -415,51 +456,6 @@ public:
   {
     return CGAL::do_intersect(ray, node.m_bbox);
   }
-
-
-
-  // -----------------------------------------------------------//
-  // ----------------------GENERAL QUERY------------------------//
-  // -----------------------------------------------------------//
-
-  // general traversal query, the traits class allows to use it for the various 
-  // traversal methods we need: listing, counting, detecting intersections, drawing the boxes.
-
-  template<class Traits, class QueryType, class ResultType>
-  void traversal(const QueryType& query,
-    ResultType& result,
-    int nb_primitives)
-  {
-    Traits traits(result);
-    bool left_test;
-    switch(nb_primitives)
-    {
-    case 2:
-      left_test = traits.intersection(query, *static_cast<Input*>(m_left_child));
-      if((! left_test) || (traits.go_further()))
-	traits.intersection(query, *static_cast<Input*>(m_right_child));
-      break;
-    case 3:
-      left_test = traits.intersection(query, *static_cast<Input*>(m_left_child));
-      if((! left_test) || (traits.go_further()))
-	if(traits.do_intersect(query, *static_cast<Node*>(m_right_child)))
-	  static_cast<Node*>(m_right_child)->traversal<Traits>(query, result, 2);
-      break;
-    default:
-      if(traits.do_intersect(query, *static_cast<Node*>(m_left_child)))
-      {
-	static_cast<Node*>(m_left_child)->traversal<Traits>(query, result, nb_primitives/2);
-	if(traits.go_further())
-	  if(traits.do_intersect(query, *static_cast<Node*>(m_right_child)))
-	    static_cast<Node*>(m_right_child)->traversal<Traits>(query, result, nb_primitives - nb_primitives/2);
-      }
-      else
-	if(traits.do_intersect(query, *static_cast<Node*>(m_right_child)))
-	  static_cast<Node*>(m_right_child)->traversal<Traits>(query, result, nb_primitives - nb_primitives/2);
-    }
-  }
-
-
 };
 
 } // end namespace CGAL
