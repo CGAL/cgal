@@ -599,7 +599,6 @@ assemble_covariance_matrix_3(InputIterator first,
   covariance[3] += mass * (-1.0 * c.z() * c.x());
   covariance[4] += mass * (-1.0 * c.z() * c.y());
   covariance[5] += mass * (-1.0 * c.z() * c.z());
-
 }
 
 // assemble covariance matrix from a segment set 
@@ -705,9 +704,16 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
   FT eigen_vectors[9];
   eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
 
-  // check unicity and build fitting line accordingly
-  if(eigen_values[0] != eigen_values[1] &&
-     eigen_values[0] != eigen_values[2])
+  // degenerate case (three similar eigenvalues)
+  if(eigen_values[0] == eigen_values[1] &&
+     eigen_values[0] == eigen_values[2])
+  {
+    // assemble a default horizontal plane that goes
+    // through the centroid.
+    plane = Plane(c,Vector(0.0,0.0,1.0));
+    return (FT)0.0;
+  } 
+  else
   {
     // regular case
     Vector normal(eigen_vectors[6],
@@ -716,14 +722,6 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
     plane = Plane(c,normal);
     return (FT)1.0 - eigen_values[2] / eigen_values[0];
   } // end regular case
-  else
-  {
-    // isotropic case (infinite number of directions)
-    // by default: assemble a horizontal plane that goes
-    // through the centroid.
-    plane = Plane(c,Vector(0.0,0.0,1.0));
-    return (FT)0.0;
-  } 
 }
 
 // compute the eigen values and vectors of the covariance 
@@ -749,21 +747,21 @@ fitting_line_3(const typename K::FT covariance[6], // covariance matrix
   FT eigen_vectors[9];
   eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
 
-  // check unicity and build fitting line accordingly
-  if(eigen_values[0] != eigen_values[1])
+    // isotropic case (infinite number of directions)
+  if(eigen_values[0] == eigen_values[1] && 
+     eigen_values[0] == eigen_values[2])
+  {
+    // assemble a default line along x axis which goes
+    // through the centroid.
+    line = Line(c,Vector(1.0,0.0,0.0));
+    return (FT)0.0;
+  }
+  else
   {
     // regular case
     Vector direction(eigen_vectors[0],eigen_vectors[1],eigen_vectors[2]);
     line = Line(c,direction);
     return (FT)1.0 - eigen_values[1] / eigen_values[0];
-  } // end regular case
-  else
-  {
-    // isotropic case (infinite number of directions)
-    // by default: assemble a horizontal plane that goes
-    // through the centroid.
-    line = Line(c,Vector(1.0,0.0,0.0));
-    return (FT)0.0;
   } 
 }
 
