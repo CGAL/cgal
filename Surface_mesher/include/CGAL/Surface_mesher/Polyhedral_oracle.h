@@ -25,6 +25,7 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
+#include <CGAL/Surface_mesher/Has_edges.h>
 
 namespace CGAL {
   namespace Surface_mesher {
