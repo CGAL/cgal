@@ -61,7 +61,7 @@ bool test_pca_normal_estimation(const PointList& points, // input point set
   if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
-  std::cerr << "Estimate Normals Direction by PCA (knn="
+  std::cerr << "Estimate Normals Direction by PCA (k="
             << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
 
   CGAL::pca_normal_estimation(points.begin(), points.end(),
@@ -91,7 +91,7 @@ bool test_jet_normal_estimation(const PointList& points, // input point set
   if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
-  std::cerr << "Estimate Normals Direction by Jet Fitting (knn="
+  std::cerr << "Estimate Normals Direction by Jet Fitting (k="
             << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
 
   CGAL::jet_normal_estimation(points.begin(), points.end(),
@@ -143,7 +143,7 @@ bool test_mst_normal_orientation(const PointList& points, // input point set
                                  std::deque<Orientable_normal>& computed_normals, // normals to orient
                                  unsigned int nb_neighbors_mst) // number of neighbors
 {
-  std::cerr << "Orient Normals with a Minimum Spanning Tree (knn="<< nb_neighbors_mst << ")...\n";
+  std::cerr << "Orient Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
   // Mark all normals as unoriented

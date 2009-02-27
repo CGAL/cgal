@@ -38,7 +38,7 @@ Remove outliers:\begin{itemize}
 \ccCommentHeading{Returns} past-the-end output iterator.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: input points \item \ccc{output}: output points \item \ccc{k}: number of neighbors \item \ccc{threshold_percent}: percentage of points to remove \end{description}
+\item \ccc{first}: iterator over the first input point \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{output}: iterator over the first output point \item \ccc{k}: number of neighbors \item \ccc{threshold_percent}: percentage of points to remove \end{description}
 }
 \ccGlue
 \ccFunction{template<typename ForwardIterator, typename Kernel> ForwardIterator outlier_removal_3(ForwardIterator first, ForwardIterator beyond, unsigned int k, const Kernel& , double threshold_percent);}
@@ -53,7 +53,7 @@ Warning: This method modifies the order of points, thus should not be called on 
 \ccCommentHeading{Returns} First iterator to remove (see erase-remove idiom).
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: input/output points \item \ccc{k}: number of neighbors \item \ccc{threshold_percent}: percentage of points to remove \end{description}
+\item \ccc{first}: iterator over the first input/output point \item \ccc{beyond}: past-the-end iterator \item \ccc{k}: number of neighbors \item \ccc{threshold_percent}: percentage of points to remove \end{description}
 }
 \ccGlue
 \ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator outlier_removal_3(InputIterator first, InputIterator beyond, OutputIterator output, unsigned int k, double threshold_percent);}
@@ -67,7 +67,7 @@ Remove outliers:\begin{itemize}
 \ccCommentHeading{Returns} past-the-end output iterator.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: first iterator over input points \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{output}: output points \item \ccc{k}: number of neighbors \item \ccc{threshold_percent}: percentage of points to remove \end{description}
+\item \ccc{first}: iterator over the first input point \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{output}: iterator over the first output point \item \ccc{k}: number of neighbors \item \ccc{threshold_percent}: percentage of points to remove \end{description}
 }
 \ccGlue
 \ccFunction{template<typename ForwardIterator> ForwardIterator outlier_removal_3(ForwardIterator first, ForwardIterator beyond, unsigned int k, double threshold_percent);}
@@ -81,7 +81,7 @@ Warning: This method modifies the order of points, thus should not be called on 
 \ccCommentHeading{Returns} First iterator to remove (see erase-remove idiom).
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: input/output points \item \ccc{k}: number of neighbors \item \ccc{threshold_percent}: percentage of points to remove \end{description}
+\item \ccc{first}: iterator over the first input/output point \item \ccc{beyond}: past-the-end iterator \item \ccc{k}: number of neighbors \item \ccc{threshold_percent}: percentage of points to remove \end{description}
 }
 \ccGlue
 

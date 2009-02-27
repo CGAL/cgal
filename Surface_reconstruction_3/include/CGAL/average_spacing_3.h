@@ -48,7 +48,7 @@ template < typename Kernel,
 typename Kernel::FT
 average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose spacing we want to compute
                   Tree& tree,                            ///< KD-tree
-                  unsigned int k)                      ///< number of neighbors
+                  unsigned int k)                        ///< number of neighbors
 {
   // basic geometric types
   typedef typename Kernel::FT FT;
@@ -105,10 +105,10 @@ template <typename InputIterator,
           typename Kernel
 >
 typename Kernel::FT
-average_spacing_3(InputIterator first,    ///< first iterator over input points
+average_spacing_3(InputIterator first,    ///< iterator over the first input point
                   InputIterator beyond,   ///< past-the-end iterator over input points
-                  unsigned int k,       ///< number of neighbors
-                  const Kernel& /*kernel*/)
+                  unsigned int k,         ///< number of neighbors
+                  const Kernel& )         ///< kernel
 {
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
@@ -156,9 +156,9 @@ template < typename InputIterator,
            typename FT
 >
 FT
-average_spacing_3(InputIterator first,    ///< first iterator over input points
+average_spacing_3(InputIterator first,    ///< iterator over the first input point
                   InputIterator beyond,   ///< past-the-end iterator over input points
-                  unsigned int k)       ///< number of neighbors
+                  unsigned int k)         ///< number of neighbors
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;

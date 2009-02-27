@@ -37,12 +37,12 @@ template <typename InputIterator,
 >
 OutputIterator
 merge_simplification_nearest_points_3(
-          InputIterator first,      ///< input points
-          InputIterator beyond,
-          OutputIterator output,    ///< output points
-          unsigned int KNN,         ///< number of neighbors
+          InputIterator first,      ///< iterator over the first input point
+          InputIterator beyond,     ///< past-the-end iterator over input points
+          OutputIterator output,    ///< iterator over the first output point
+          unsigned int k,           ///< number of neighbors
           double epsilon,           ///< tolerance value when comparing 3D points
-          const Kernel& /*kernel*/)       
+          const Kernel& )           ///< kernel       
 {
     // geometric types
     typedef typename Kernel::FT FT;
@@ -57,7 +57,7 @@ merge_simplification_nearest_points_3(
     
     // preconditions
     CGAL_precondition(first != beyond);
-    CGAL_precondition(KNN >= 1);
+    CGAL_precondition(k >= 1);
     CGAL_precondition(epsilon > 0);
 
     // instanciate a KD-tree search
@@ -71,12 +71,12 @@ merge_simplification_nearest_points_3(
     
     for (InputIterator it=first ; it != beyond ; it++)
     {
-        std::vector<Point> points; points.reserve(KNN+1);
-        Neighbor_search search(tree,*it,KNN+1);
+        std::vector<Point> points; points.reserve(k+1);
+        Neighbor_search search(tree,*it,k+1);
         Search_iterator search_iterator = search.begin();
         unsigned int i;
 
-        for(i=0;i<(KNN+1);i++)
+        for(i=0;i<(k+1);i++)
         {
             if(search_iterator == search.end())
                 break; // premature ending
@@ -107,15 +107,15 @@ template <typename InputIterator,
 >
 OutputIterator
 merge_simplification_nearest_points_3(
-          InputIterator first,      ///< input points
-          InputIterator beyond,
-          OutputIterator output,    ///< output points
-          unsigned int KNN,         ///< number of neighbors
+          InputIterator first,      ///< iterator over the first input point
+          InputIterator beyond,     ///< past-the-end iterator over input points
+          OutputIterator output,    ///< iterator over the first output point
+          unsigned int k,           ///< number of neighbors
           double epsilon)           ///< tolerance value when comparing 3D points
 {
     typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
     typedef typename CGAL::Kernel_traits<Value_type>::Kernel Kernel;
-    return merge_simplification_nearest_points_3(first,beyond,output,KNN,epsilon,Kernel());
+    return merge_simplification_nearest_points_3(first,beyond,output,k,epsilon,Kernel());
 }
 
 

@@ -58,15 +58,6 @@ Model of the ImplicitFunction concept.
 
 %END-AUTO(\ccIsModel)
 
-\ccHeading{Design Pattern}
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccHeading{Design Pattern})
-
-A model of ImplicitFunction is a Strategy \cite{cgal:ghjv-dpero-95}: it implements a strategy of surface mesh reconstruction.
-
-%END-AUTO(\ccHeading{Design Pattern})
-
 \ccTypes
 
 % The section below is automatically generated. Do not edit!
@@ -154,7 +145,7 @@ Get the bounding box.
 \ccGlue
 \ccMethod{const Sphere& bounding_sphere() const;}
 {
-Get the surface's bounding sphere.
+Returns a sphere bounding the inferred surface.
 }
 \ccGlue
 \ccMethod{Sphere region_of_interest() const;}
@@ -170,7 +161,7 @@ Evaluate implicit function for any 3D point.
 \ccGlue
 \ccMethod{Point get_inner_point() const;}
 {
-Get point inside the surface.
+Returns a point located inside the inferred surface.
 }
 \ccGlue
 

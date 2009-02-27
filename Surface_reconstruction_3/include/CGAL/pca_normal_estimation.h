@@ -123,11 +123,11 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-pca_normal_estimation(InputIterator first, ///< input points
-                      InputIterator beyond,
+pca_normal_estimation(InputIterator first, ///< iterator over the first input point
+                      InputIterator beyond, ///< past-the-end iterator over input points
                       OutputIterator normals, ///< output normals
                       unsigned int k, ///< number of neighbors
-                      const Kernel& /*kernel*/)
+                      const Kernel& ) ///< kernel
 {
   CGAL_TRACE("Call pca_normal_estimation()\n");
 
@@ -186,8 +186,8 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-pca_normal_estimation(InputIterator first, ///< input points
-                      InputIterator beyond,
+pca_normal_estimation(InputIterator first, ///< iterator over the first input point
+                      InputIterator beyond, ///< past-the-end iterator over input points
                       OutputIterator normals, ///< output normals
                       unsigned int k) ///< number of neighbors
 {

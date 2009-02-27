@@ -54,8 +54,8 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
   if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
-  std::cerr << "Remove outliers wrt average squared distance to knn (remove "
-            << threshold_percent_avg_knn_sq_dst << "%, knn="
+  std::cerr << "Remove outliers wrt average squared distance to k nearest neighbors (remove "
+            << threshold_percent_avg_knn_sq_dst << "%, k="
             << nb_neighbors_outlier_removal << "%=" << nb_neighbors << ")...\n";
 
   std::deque<Point> output;

@@ -1,4 +1,3 @@
-// CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/jet_smoothing_3.h>
 
@@ -6,7 +5,6 @@
 
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 
 int main(void)

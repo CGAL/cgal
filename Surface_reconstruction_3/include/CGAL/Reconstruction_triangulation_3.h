@@ -410,7 +410,7 @@ public:
       return Input_vertices_iterator(finite_vertices_end(), Is_steiner_point());
   }
 
-  /// Get first iterator over input points.
+  /// Get iterator over the first input point.
   Input_point_iterator input_points_begin() const
   {
       return Input_point_iterator(input_vertices_begin());

@@ -19,7 +19,8 @@
 
 \ccDefinition
 
-\ccc{CGAL::average_spacing_3()} computes the average spacing of all points from the input set to their $k$ nearest neighbors. One version of this function requires a traits class. Another deduces it from the input data points. 
+\ccc{CGAL::average_spacing_3()} computes the average spacing of all points from the input set to their $k$ nearest neighbors.
+One version of this function requires a traits class. Another deduces it from the input data points.
 
 % question: can it take oriented points as well?
 
@@ -38,7 +39,7 @@ Compute average spacing from k nearest neighbors. This variant requires the kern
 \ccCommentHeading{Returns} average spacing (scalar).
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: first iterator over input points \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{k}: number of neighbors \end{description}
+\item \ccc{first}: iterator over the first input point \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{k}: number of neighbors \end{description}
 }
 \ccGlue
 \ccFunction{template<typename InputIterator, typename FT> FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int k);}
@@ -51,7 +52,7 @@ Compute average spacing from k nearest neighbors. This variant deduces the kerne
 \ccCommentHeading{Returns} average spacing (scalar).
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: first iterator over input points \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{k}: number of neighbors \end{description}
+\item \ccc{first}: iterator over the first input point \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{k}: number of neighbors \end{description}
 }
 \ccGlue
 

@@ -256,8 +256,8 @@ find_source_mst_3(
 /// Iterate over input points and create Riemannian Graph:
 /// - vertices are numbered like the input vertices' index.
 /// - vertices are empty.
-/// - we add the edge (i, j) if either vertex i is in the KNN-neighborhood of vertex j,
-///   or vertex j is in the KNN-neighborhood of vertex i.
+/// - we add the edge (i, j) if either vertex i is in the k-neighborhood of vertex j,
+///   or vertex j is in the k-neighborhood of vertex i.
 ///
 /// @commentheading Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
@@ -265,7 +265,7 @@ find_source_mst_3(
 /// - VertexPointMap is a model of boost::readable_property_map.
 /// - VertexNormalMap is a model of boost::lvalue_property_map.
 /// - Normals must be unit vectors.
-/// - KNN >= 2.
+/// - k >= 2.
 
 template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap>
 Riemannian_graph<VertexIterator>
@@ -275,7 +275,7 @@ create_riemannian_graph(
     VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index
     VertexPointMap vertex_point_map, ///< property map VertexIterator -> Point_3
     VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
-    unsigned int KNN) ///< number of neighbors
+    unsigned int k) ///< number of neighbors
 {
     // Input mesh's types
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
@@ -298,7 +298,7 @@ create_riemannian_graph(
     CGAL_surface_reconstruction_precondition(first != beyond);
 
     // Precondition: at least 2 nearest neighbors
-    CGAL_surface_reconstruction_precondition(KNN >= 2);
+    CGAL_surface_reconstruction_precondition(k >= 2);
 
     // Number of input vertices
     const int num_input_vertices = distance(first, beyond);
@@ -327,8 +327,8 @@ create_riemannian_graph(
     // Iterate over input points and create Riemannian Graph:
     // - vertices are numbered like the input vertices' index.
     // - vertices contain the corresponding input vertex handle.
-    // - we add the edge (i, j) if either vertex i is in the KNN-neighborhood of vertex j,
-    //   or vertex j is in the KNN-neighborhood of vertex i.
+    // - we add the edge (i, j) if either vertex i is in the k-neighborhood of vertex j,
+    //   or vertex j is in the k-neighborhood of vertex i.
     Riemannian_graph riemannian_graph;
     //
     // add vertices
@@ -346,15 +346,15 @@ create_riemannian_graph(
         unsigned int it_index = get(vertex_index_map,it);
         Vector it_normal_vector = vertex_normal_map[it];
 
-        // Gather set of (KNN+1) neighboring points.
-        // Perform KNN+1 queries (as in point set, the query point is
-        // output first). Search may be aborted when KNN is greater
+        // Gather set of (k+1) neighboring points.
+        // Perform k+1 queries (as in point set, the query point is
+        // output first). Search may be aborted when k is greater
         // than number of input points.
         Point point = get(vertex_point_map, it);
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
-        Neighbor_search search(*tree, point_wrapper, KNN+1);
+        Neighbor_search search(*tree, point_wrapper, k+1);
         Search_iterator search_iterator = search.begin();
-        for(unsigned int i=0;i<(KNN+1);i++)
+        for(unsigned int i=0;i<(k+1);i++)
         {
             if(search_iterator == search.end())
                 break; // premature ending
@@ -414,7 +414,7 @@ create_mst_graph(
     VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index
     VertexPointMap vertex_point_map, ///< property map VertexIterator -> Point_3
     VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
-    const Riemannian_graph<VertexIterator>& riemannian_graph, ///< graph connecting each vertex to its KNN
+    const Riemannian_graph<VertexIterator>& riemannian_graph, ///< graph connecting each vertex to its k
     VertexIterator source_vertex) ///< source vertex (with an oriented normal)
 {
     // Bring private stuff to scope
@@ -508,7 +508,7 @@ create_mst_graph(
 /// - VertexPointMap is a model of boost::readable_property_map.
 /// - VertexNormalMap is a model of boost::lvalue_property_map.
 /// - Normals must be unit vectors.
-/// - KNN >= 2.
+/// - k >= 2.
 ///
 /// @return the number of un-oriented normals.
 
@@ -520,11 +520,11 @@ mst_normal_orientation(
     VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index
     VertexPointMap vertex_point_map, ///< property map VertexIterator -> Point_3
     VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
-    unsigned int KNN) ///< number of neighbors
+    unsigned int k) ///< number of neighbors
 {
     return mst_normal_orientation(first, beyond,
                                   vertex_index_map, vertex_point_map, vertex_normal_map,
-                                  KNN,
+                                  k,
                                   M_PI/2.); // always propagate normal orientation
 }
 
@@ -543,7 +543,7 @@ mst_normal_orientation(
 /// - VertexPointMap is a model of boost::readable_property_map.
 /// - VertexNormalMap is a model of boost::lvalue_property_map.
 /// - Normals must be unit vectors.
-/// - KNN >= 2.
+/// - k >= 2.
 /// - 0 < angle_max <= PI/2.
 ///
 /// @return the number of un-oriented normals.
@@ -556,7 +556,7 @@ mst_normal_orientation(
     VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index
     VertexPointMap vertex_point_map, ///< property map VertexIterator -> Point_3
     VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
-    unsigned int KNN, ///< number of neighbors
+    unsigned int k, ///< number of neighbors
     double angle_max) ///< max angle to propagate the normal orientation (radians)
 {
     CGAL_TRACE("Call mst_normal_orientation(angle_max=%lf degrees)\n", angle_max*180.0/M_PI);
@@ -579,7 +579,7 @@ mst_normal_orientation(
     CGAL_surface_reconstruction_precondition(first != beyond);
 
     // Precondition: at least 2 nearest neighbors
-    CGAL_surface_reconstruction_precondition(KNN >= 2);
+    CGAL_surface_reconstruction_precondition(k >= 2);
 
     // Precondition: 0 < angle_max <= PI/2
     CGAL_surface_reconstruction_precondition(0 < angle_max && angle_max <= M_PI/2.);
@@ -593,12 +593,12 @@ mst_normal_orientation(
     // Iterate over input points and create Riemannian Graph:
     // - vertices are numbered like the input vertices' index.
     // - vertices are empty.
-    // - we add the edge (i, j) if either vertex i is in the KNN-neighborhood of vertex j,
-    //   or vertex j is in the KNN-neighborhood of vertex i.
+    // - we add the edge (i, j) if either vertex i is in the k-neighborhood of vertex j,
+    //   or vertex j is in the k-neighborhood of vertex i.
     Riemannian_graph riemannian_graph
       = create_riemannian_graph(first, beyond,
                                 vertex_index_map, vertex_point_map, vertex_normal_map,
-                                KNN);
+                                k);
 
     // Create a Minimum Spanning Tree starting at source_vertex
     MST_graph mst_graph = create_mst_graph(first, beyond,
@@ -624,7 +624,7 @@ mst_normal_orientation(
     CGAL_TRACE("  => %u normals are unoriented\n", unoriented_normals);
 
     // At this stage, we have typically:
-    // - 0 unoriented normals if angle_max = PI/2 and KNN is large enough
+    // - 0 unoriented normals if angle_max = PI/2 and k is large enough
     // - <1% of unoriented normals if angle_max = PI/4
 
 #if 0

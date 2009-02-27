@@ -128,8 +128,8 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-jet_normal_estimation(InputIterator first, ///< input points
-                      InputIterator beyond,
+jet_normal_estimation(InputIterator first, ///< iterator over the first input point
+                      InputIterator beyond, ///< past-the-end iterator over input points
                       OutputIterator normals, ///< output normals
                       unsigned int k, ///< number of neighbors
                       const Kernel& /*kernel*/,
@@ -192,8 +192,8 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-jet_normal_estimation(InputIterator first, ///< input points
-                      InputIterator beyond,
+jet_normal_estimation(InputIterator first, ///< iterator over the first input point
+                      InputIterator beyond, ///< past-the-end iterator over input points
                       OutputIterator normals, ///< output normals
                       unsigned int k, ///< number of neighbors
                       unsigned int degre_fitting = 2)

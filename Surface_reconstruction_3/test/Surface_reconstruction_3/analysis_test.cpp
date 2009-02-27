@@ -43,7 +43,7 @@ typedef Kernel::Point_3 Point;
 void test_average_spacing(std::deque<Point>& points, // input point set
                           unsigned int nb_neighbors_avg_spacing) // number of neighbors
 {
-  std::cerr << "Compute average spacing to knn (knn="<< nb_neighbors_avg_spacing << ")... ";
+  std::cerr << "Compute average spacing to k nearest neighbors (k="<< nb_neighbors_avg_spacing << ")... ";
   CGAL::Timer task_timer; task_timer.start();
 
   typedef std::deque<Point>::iterator Iterator;

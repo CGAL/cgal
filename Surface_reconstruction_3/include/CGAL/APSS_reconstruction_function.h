@@ -49,10 +49,6 @@ CGAL_BEGIN_NAMESPACE
 /// @heading Is Model for the Concepts:
 /// Model of the ImplicitFunction concept.
 ///
-/// @heading Design Pattern:
-/// A model of ImplicitFunction is a
-/// Strategy [GHJV95]: it implements a strategy of surface mesh reconstruction.
-///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
 
@@ -161,7 +157,7 @@ public:
     #endif
 //     CTree* ctree = new CTree(m->treeElements.begin(), m->treeElements.end());
 
-    // Compute the radius of each point = (distance max to KNN)/2.
+    // Compute the radius of each point = (distance max to k nearest neighbors)/2.
     // The union of these balls defines the surface definition domain.
     m->radii.resize(nb_points);
 //     for (int y=0; y<40; ++y)
@@ -220,7 +216,7 @@ public:
     return m->bounding_box;
   }
 
-  /// Get the surface's bounding sphere.
+  /// Returns a sphere bounding the inferred surface.
   const Sphere& bounding_sphere() const
   {
     return m->bounding_sphere;
@@ -333,7 +329,7 @@ public:
     return m->as.euclideanDistance(p);
   }
 
-  /// Get point inside the surface.
+  /// Returns a point located inside the inferred surface.
   Point get_inner_point() const
   {
     return m->inner_point;

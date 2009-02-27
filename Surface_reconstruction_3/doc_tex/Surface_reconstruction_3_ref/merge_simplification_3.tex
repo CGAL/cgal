@@ -36,7 +36,7 @@ Merge points which belong to the same cell of a grid of cell size = epsilon. Thi
 \ccCommentHeading{Returns} past-the-end output iterator.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: input points \item \ccc{output}: output points \item \ccc{epsilon}: tolerance value when comparing 3D points \end{description}
+\item \ccc{first}: iterator over the first input point \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{output}: iterator over the first output point \item \ccc{epsilon}: tolerance value when comparing 3D points \end{description}
 }
 \ccGlue
 \ccFunction{template<typename ForwardIterator, typename Kernel> ForwardIterator merge_simplification_3(ForwardIterator first, ForwardIterator beyond, double epsilon, const Kernel& );}
@@ -50,7 +50,7 @@ Warning: This method modifies the order of points, thus should not be called on 
 \ccCommentHeading{Returns} First iterator to remove (see erase-remove idiom).
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: input/output points \item \ccc{epsilon}: tolerance value when comparing 3D points \end{description}
+\item \ccc{first}: iterator over the first input/output point \item \ccc{beyond}: past-the-end iterator \item \ccc{epsilon}: tolerance value when comparing 3D points \end{description}
 }
 \ccGlue
 \ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator merge_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double epsilon);}
@@ -63,7 +63,7 @@ Merge points which belong to the same cell of a grid of cell size = epsilon. Thi
 \ccCommentHeading{Returns} past-the-end output iterator.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: input points \item \ccc{output}: output points \item \ccc{epsilon}: tolerance value when comparing 3D points \end{description}
+\item \ccc{first}: iterator over the first input point \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{output}: iterator over the first output point \item \ccc{epsilon}: tolerance value when comparing 3D points \end{description}
 }
 \ccGlue
 \ccFunction{template<typename ForwardIterator> ForwardIterator merge_simplification_3(ForwardIterator first, ForwardIterator beyond, double epsilon);}
@@ -76,7 +76,7 @@ Warning: This method modifies the order of points, thus should not be called on 
 \ccCommentHeading{Returns} First iterator to remove (see erase-remove idiom).
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: input/output points \item \ccc{epsilon}: tolerance value when comparing 3D points \end{description}
+\item \ccc{first}: iterator over the first input/output point \item \ccc{beyond}: past-the-end iterator \item \ccc{epsilon}: tolerance value when comparing 3D points \end{description}
 }
 \ccGlue
 

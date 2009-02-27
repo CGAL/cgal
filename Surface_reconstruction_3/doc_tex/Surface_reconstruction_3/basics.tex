@@ -3,9 +3,23 @@
 
 \subsection{Poisson Reconstruction Overview}
 
-Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm \cite{Kazhdan06}. Given a set of 3D points with oriented normals (denoted oriented points in the sequel) sampled on the boundary of a 3D solid, this method solves for an approximate indicator function of the inferred solid, whose gradient best matches the input normals. The output scalar function, represented in an adaptive octree, is then iso-contoured using an adaptive marching cubes.\\
+Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm \cite{Kazhdan06}.
+Given a set of 3D points with oriented normals (denoted oriented points in the sequel)
+sampled on the boundary of a 3D solid, this method solves for an approximate indicator function of the inferred solid,
+whose gradient best matches the input normals. The output scalar function, represented in an adaptive octree,
+is then iso-contoured using an adaptive marching cubes.\\
 
-\cgal\ implements a variant of this algorithm which solves for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree. The algorithm takes as input a set of 3D oriented points. It builds a 3D Delaunay triangulation from these points and refines it by Delaunay refinement so as to remove all badly shaped (non isotropic) tetrahedra and to tessellate a loose bounding box of the input oriented points. The normal of each Steiner point added during refinement is set to zero. It then solves for a scalar indicator function $f$ represented as a piecewise linear function over the refined triangulation. More specifically, it solves for the Poisson equation  $\Delta f = div(\mathbf{n})$ at each vertex of the triangulation using a sparse linear solver. Eventually, the \cgal\ surface mesh generator extracts an isosurface with function value set by default to be the median value of $f$ at all input points.
+\cgal\ implements a variant of this algorithm which solves for a piecewise linear function
+on a 3D Delaunay triangulation instead of an adaptive octree.
+The algorithm takes as input a set of 3D oriented points.
+It builds a 3D Delaunay triangulation from these points and refines it by Delaunay refinement
+so as to remove all badly shaped (non isotropic) tetrahedra and to tessellate a loose bounding box
+of the input oriented points. The normal of each Steiner point added during refinement is set to zero.
+It then solves for a scalar indicator function $f$ represented as a piecewise linear function over the refined triangulation.
+More specifically, it solves for the Poisson equation  $\Delta f = div(\mathbf{n})$ at each vertex of the triangulation
+using a sparse linear solver.
+Eventually, the \cgal\ surface mesh generator extracts an isosurface with function value set by default
+to be the median value of $f$ at all input points.
 
 \subsection{Poisson Reconstruction API}
 
@@ -16,27 +30,20 @@ class Gt,   \\
 class \ccc{ReconstructionTriangulation_3}$>$   \\
 class \ccc{Poisson_reconstruction_function};
 \ccGlue
+\ccCommentHeading{Parameters}
 \begin{description}
-\item[Parameters:]
-\begin{description}
-\item[Gt]Geometric traits class \item[\ccc{ReconstructionTriangulation_3}]3D Delaunay triangulation, model of \ccc{ReconstructionTriangulation_3} concept. \end{description}
-\end{description}
+\item \ccc{Gt}: Geometric traits class \item \ccc{ReconstructionTriangulation_3}: 3D Delaunay triangulation, model of \ccc{ReconstructionTriangulation_3} concept. \end{description}
 
 The main constructor is:
 
 \ccFunction{template<class InputIterator> Poisson_reconstruction_function(ReconstructionTriangulation_3& pdt, InputIterator first, InputIterator beyond);}
 {
 Creates a scalar function from a set of oriented points. Inserts the iterator range first...beyond into the triangulation pdt, refines it and solves for a piecewise linear scalar function which gradient best matches the input normals.
-Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
+\ccPrecond the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{pdt}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \item \ccc{first}: First point to add. \item \ccc{beyond}: Past-the-end point to add. \end{description}
 }
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[pdt]\ccc{ReconstructionTriangulation_3} base of the Poisson indicator function.
-\item[first] First oriented point to add.
-\item[beyond] Past-the-end oriented point to add. \end{description}
-\end{description}
 
 The main methods are:
 
@@ -45,7 +52,7 @@ The main methods are:
 The function \ccc{compute_implicit_function}() must be called after each insertion of oriented points. It computes the piecewise linear scalar function $f$ by:
 \begin{itemize}
 \item applying Delaunay refinement.
-\item solving for $f$ at each vertex of the triangulation with a sparse linear solver. 
+\item solving for $f$ at each vertex of the triangulation with a sparse linear solver.
 \item shifting and orienting $f$ such that $f=0$ at all input points and $f<0$ inside the inferred surface.
 \end{itemize}
 Returns false on error.

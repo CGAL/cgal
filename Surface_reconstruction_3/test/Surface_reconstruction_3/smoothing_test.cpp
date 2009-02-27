@@ -53,7 +53,7 @@ void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
   if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
-  std::cerr << "Smooth Point Set (knn="
+  std::cerr << "Smooth Point Set (k="
             << nb_neighbors_smooth_jet_fitting << "%=" << nb_neighbors << ")...\n";
 
   std::deque<Point> output;

@@ -36,7 +36,7 @@ Estimate normal directions by linear least squares fitting of a plane over the k
 \ccCommentHeading{Returns} past-the-end output iterator.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: input points \item \ccc{normals}: output normals \item \ccc{k}: number of neighbors \end{description}
+\item \ccc{first}: iterator over the first input point \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{normals}: output normals \item \ccc{k}: number of neighbors \end{description}
 }
 \ccGlue
 \ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator pca_normal_estimation(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int k);}
@@ -49,7 +49,7 @@ Estimate normal directions by linear least squares fitting of a plane over the k
 \ccCommentHeading{Returns} past-the-end output iterator.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: input points \item \ccc{normals}: output normals \item \ccc{k}: number of neighbors \end{description}
+\item \ccc{first}: iterator over the first input point \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{normals}: output normals \item \ccc{k}: number of neighbors \end{description}
 }
 \ccGlue
 

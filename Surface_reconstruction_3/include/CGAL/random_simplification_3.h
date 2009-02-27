@@ -41,11 +41,11 @@ template <typename InputIterator,
 >
 OutputIterator
 random_simplification_3(
-          InputIterator first,      ///< input points
-          InputIterator beyond,
-          OutputIterator output,    ///< output points
+          InputIterator first,      ///< iterator over the first input point
+          InputIterator beyond,     ///< past-the-end iterator over input points
+          OutputIterator output,    ///< iterator over the first output point
           double threshold_percent, ///< percentage of points to remove
-          const Kernel& /*kernel*/)
+          const Kernel& )           ///< kernel
 {
     typedef typename std::iterator_traits<InputIterator>::value_type Point;
 
@@ -82,10 +82,10 @@ template <typename ForwardIterator,
 >
 ForwardIterator
 random_simplification_3(
-           ForwardIterator first,     ///< input/output points
-           ForwardIterator beyond,
+           ForwardIterator first,     ///< iterator over the first input/output point
+           ForwardIterator beyond,    ///< past-the-end iterator
            double threshold_percent,  ///< percentage of points to remove
-           const Kernel& /*kernel*/)
+           const Kernel& ) ///< kernel
 {
     typedef typename std::iterator_traits<ForwardIterator>::value_type Point;
 
@@ -116,9 +116,9 @@ template <typename InputIterator,
 >
 OutputIterator
 random_simplification_3(
-           InputIterator first,       ///< input points
-           InputIterator beyond,
-           OutputIterator output,     ///< output points
+           InputIterator first,       ///< iterator over the first input point
+           InputIterator beyond,      ///< past-the-end iterator over input points
+           OutputIterator output,     ///< iterator over the first output point
            double threshold_percent)  ///< percentage of points to remove
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
@@ -141,8 +141,8 @@ random_simplification_3(
 template <typename ForwardIterator>
 ForwardIterator
 random_simplification_3(
-       ForwardIterator first,     ///< input/output points
-       ForwardIterator beyond,
+       ForwardIterator first,     ///< iterator over the first input/output point
+       ForwardIterator beyond,    ///< past-the-end iterator
        double threshold_percent)  ///< percentage of points to remove
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;

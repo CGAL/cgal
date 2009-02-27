@@ -51,7 +51,7 @@ typename Kernel::FT
 compute_avg_k_sq_distance_3(
                      const typename Kernel::Point_3& query, ///< 3D point to project
                      Tree& tree,                            ///< KD-tree
-                     unsigned int k)                      ///< number of neighbors
+                     unsigned int k)                        ///< number of neighbors
 {
     // geometric types
     typedef typename Kernel::FT FT;
@@ -116,10 +116,10 @@ template <typename InputIterator,
 >
 OutputIterator
 outlier_removal_3(
-           InputIterator first,       ///< input points
-           InputIterator beyond,
-           OutputIterator output,     ///< output points
-           unsigned int k,          ///< number of neighbors
+           InputIterator first,       ///< iterator over the first input point
+           InputIterator beyond,      ///< past-the-end iterator over input points
+           OutputIterator output,     ///< iterator over the first output point
+           unsigned int k,            ///< number of neighbors
            const Kernel& /*kernel*/,
            double threshold_percent)  ///< percentage of points to remove
 {
@@ -189,9 +189,9 @@ template <typename ForwardIterator,
 >
 ForwardIterator
 outlier_removal_3(
-           ForwardIterator first,     ///< input/output points
-           ForwardIterator beyond,
-           unsigned int k,          ///< number of neighbors
+           ForwardIterator first,     ///< iterator over the first input/output point
+           ForwardIterator beyond,    ///< past-the-end iterator
+           unsigned int k,            ///< number of neighbors
            const Kernel& /*kernel*/,
            double threshold_percent)  ///< percentage of points to remove
 {
@@ -262,10 +262,10 @@ template <typename InputIterator,
 >
 OutputIterator
 outlier_removal_3(
-           InputIterator first,       ///< first iterator over input points
+           InputIterator first,       ///< iterator over the first input point
            InputIterator beyond,      ///< past-the-end iterator over input points
-           OutputIterator output,     ///< output points
-           unsigned int k,          ///< number of neighbors
+           OutputIterator output,     ///< iterator over the first output point
+           unsigned int k,            ///< number of neighbors
            double threshold_percent)  ///< percentage of points to remove
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
@@ -292,9 +292,9 @@ outlier_removal_3(
 template <typename ForwardIterator>
 ForwardIterator
 outlier_removal_3(
-           ForwardIterator first,     ///< input/output points
-           ForwardIterator beyond,
-           unsigned int k,          ///< number of neighbors
+           ForwardIterator first,     ///< iterator over the first input/output point
+           ForwardIterator beyond,    ///< past-the-end iterator
+           unsigned int k,            ///< number of neighbors
            double threshold_percent)  ///< percentage of points to remove
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;

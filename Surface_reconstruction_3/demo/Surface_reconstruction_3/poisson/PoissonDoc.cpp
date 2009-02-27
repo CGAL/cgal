@@ -725,7 +725,7 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
   if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Estimate Normals Direction by PCA (knn=%.2lf%%=%d)...",
+  status_message("Estimate Normals Direction by PCA (k=%.2lf%%=%d)...",
                  m_nb_neighbors_pca_normals, nb_neighbors);
 
   CGAL::pca_normal_estimation(m_points.begin(), m_points.end(),
@@ -761,7 +761,7 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
   if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Estimate Normals Direction by Jet Fitting (knn=%.2lf%%=%d)...",
+  status_message("Estimate Normals Direction by Jet Fitting (k=%.2lf%%=%d)...",
                  m_nb_neighbors_jet_fitting_normals, nb_neighbors);
 
   CGAL::jet_normal_estimation(m_points.begin(), m_points.end(),
@@ -853,7 +853,7 @@ bool CPoissonDoc::verify_normal_orientation()
 void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
 {
   BeginWaitCursor();
-  status_message("Orient Normals with a Minimum Spanning Tree (knn=%d)...", m_nb_neighbors_mst);
+  status_message("Orient Normals with a Minimum Spanning Tree (k=%d)...", m_nb_neighbors_mst);
   CGAL::Timer task_timer; task_timer.start();
   
   // Mark all normals as unoriented
@@ -1254,7 +1254,7 @@ void CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting()
   if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Smooth Point Set (knn=%.2lf%%=%d)...",
+  status_message("Smooth Point Set (k=%.2lf%%=%d)...",
                  m_nb_neighbors_smooth_jet_fitting, nb_neighbors);
 
   // Smooth points in m_points[]
@@ -1420,7 +1420,7 @@ void CPoissonDoc::OnOutlierRemoval()
   if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Remove outliers wrt average squared distance to knn (remove %.2lf%%, knn=%.2lf%%=%d)...",
+  status_message("Remove outliers wrt average squared distance to k nearest neighbors (remove %.2lf%%, k=%.2lf%%=%d)...",
                  m_threshold_percent_avg_knn_sq_dst, m_nb_neighbors_outlier_removal, nb_neighbors);
 
   // Select points to delete
@@ -1432,7 +1432,7 @@ void CPoissonDoc::OnOutlierRemoval()
             m_threshold_percent_avg_knn_sq_dst);
   m_points.select(first_iterator_to_remove, m_points.end(), true);
 
-  status_message("Remove outliers wrt average squared distance to knn...done (%.2lf s)", task_timer.time());
+  status_message("Remove outliers wrt average squared distance to k nearest neighbors...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1446,7 +1446,7 @@ void CPoissonDoc::OnUpdateOutlierRemoval(CCmdUI *pCmdUI)
 void CPoissonDoc::OnAnalysisAverageSpacing()
 {
   BeginWaitCursor();
-  status_message("Compute average spacing to knn (knn=%d)...", m_nb_neighbors_avg_spacing);
+  status_message("Compute average spacing to k nearest neighbors (k=%d)...", m_nb_neighbors_avg_spacing);
   CGAL::Timer task_timer; task_timer.start();
 
   double value = CGAL::average_spacing_3(m_points.begin(),
@@ -1457,7 +1457,7 @@ void CPoissonDoc::OnAnalysisAverageSpacing()
   // write message in message box
   prompt_message("Average spacing: %lf", value);
 
-  status_message("Compute average spacing to knn...done: %lf (%.2lf s)", value, task_timer.time());
+  status_message("Compute average spacing to k nearest neighbors...done: %lf (%.2lf s)", value, task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1484,7 +1484,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     m_surface.clear();
 
     // Create implicit function
-    CGAL_TRACE_STREAM << "  Compute APSS implicit function (knn="<<m_nb_neighbors_apss << ")\n";
+    CGAL_TRACE_STREAM << "  Compute APSS implicit function (k="<<m_nb_neighbors_apss << ")\n";
     m_apss_function = new APSS_reconstruction_function(m_points.begin(), m_points.end(),
                                                        m_nb_neighbors_apss);
 

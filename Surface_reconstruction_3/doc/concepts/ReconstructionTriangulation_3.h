@@ -79,7 +79,7 @@ public:
   /// Get past-the-end iterator over input vertices.
   Input_vertices_iterator input_vertices_end() const;
 
-  /// Get first iterator over input points.
+  /// Get iterator over the first input point.
   Input_point_iterator input_points_begin() const;
   /// Get past-the-end iterator over input points.
   Input_point_iterator input_points_end() const;

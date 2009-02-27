@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 
-/// Smooth one point position using jet fitting on the KNN
+/// Smooth one point position using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
 ///
 /// @commentheading Precondition: k >= 2.
@@ -118,10 +118,10 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-jet_smoothing_3(InputIterator first,    ///< input points
-                InputIterator beyond,
-                OutputIterator output,  ///< output points
-                const unsigned int k, ///< number of neighbors
+jet_smoothing_3(InputIterator first,    ///< iterator over the first input point
+                InputIterator beyond,   ///< past-the-end iterator over input points
+                OutputIterator output,  ///< iterator over the first output point
+                const unsigned int k,   ///< number of neighbors
                 const Kernel& /*kernel*/,
                 const unsigned int degre_fitting = 2,
                 const unsigned int degree_monge = 2)
@@ -176,9 +176,9 @@ jet_smoothing_3(InputIterator first,    ///< input points
 template <typename ForwardIterator,
           typename Kernel>
 void
-jet_smoothing_3(ForwardIterator first,     ///< input/output points
-                ForwardIterator beyond,
-                unsigned int k,          ///< number of neighbors
+jet_smoothing_3(ForwardIterator first,     ///< iterator over the first input/output point
+                ForwardIterator beyond,    ///< past-the-end iterator
+                unsigned int k,            ///< number of neighbors
                 const Kernel& /*kernel*/,
                 const unsigned int degre_fitting = 2,
                 const unsigned int degree_monge = 2)
@@ -223,10 +223,10 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-jet_smoothing_3(InputIterator first,    ///< input points
-                InputIterator beyond,
-                OutputIterator output, ///< output points
-                unsigned int k,      ///< number of neighbors
+jet_smoothing_3(InputIterator first, ///< iterator over the first input point
+                InputIterator beyond, ///< past-the-end iterator over input points
+                OutputIterator output, ///< iterator over the first output point
+                unsigned int k, ///< number of neighbors
                 const unsigned int degre_fitting = 2,
                 const unsigned int degree_monge = 2)
 {
@@ -250,9 +250,9 @@ jet_smoothing_3(InputIterator first,    ///< input points
 /// @param ForwardIterator value_type convertible to Point_3.
 template <typename ForwardIterator>
 void
-jet_smoothing_3(ForwardIterator first,     ///< input/output points
-                ForwardIterator beyond,
-                unsigned int k,          ///< number of neighbors
+jet_smoothing_3(ForwardIterator first, ///< iterator over the first input/output point
+                ForwardIterator beyond, ///< past-the-end iterator
+                unsigned int k, ///< number of neighbors
                 const unsigned int degre_fitting = 2,
                 const unsigned int degree_monge = 2)
 {

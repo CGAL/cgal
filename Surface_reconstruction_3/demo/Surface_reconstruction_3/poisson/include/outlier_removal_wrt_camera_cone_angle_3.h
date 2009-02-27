@@ -86,11 +86,11 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-outlier_removal_wrt_camera_cone_angle_3(InputIterator first,           ///< input points
-                                        InputIterator beyond,
-                                        OutputIterator output,         ///< output points
+outlier_removal_wrt_camera_cone_angle_3(InputIterator first,           ///< iterator over the first input point
+                                        InputIterator beyond,          ///< past-the-end iterator over input points
+                                        OutputIterator output,         ///< iterator over the first output point
                                         double min_camera_cone_angle,  ///< min angle of camera's cone (radians)
-                                        const Kernel& /*kernel*/)
+                                        const Kernel& )                ///< kernel
 {
     // geometric types
     typedef typename Kernel::FT                FT;
@@ -129,10 +129,10 @@ template <typename ForwardIterator,
           typename Kernel
 >
 ForwardIterator
-outlier_removal_wrt_camera_cone_angle_3(ForwardIterator first,         ///< input/output points
-                                        ForwardIterator beyond,
+outlier_removal_wrt_camera_cone_angle_3(ForwardIterator first,         ///< iterator over the first input/output point
+                                        ForwardIterator beyond,        ///< past-the-end iterator
                                         double min_camera_cone_angle,  ///< min angle of camera's cone (radians)
-                                        const Kernel& /*kernel*/)
+                                        const Kernel& )                ///< kernel
 {
     // geometric types
     typedef typename Kernel::FT                FT;
@@ -162,9 +162,9 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-outlier_removal_wrt_camera_cone_angle_3(InputIterator first,           ///< input points
-                                        InputIterator beyond,
-                                        OutputIterator output,         ///< output points
+outlier_removal_wrt_camera_cone_angle_3(InputIterator first,           ///< iterator over the first input point
+                                        InputIterator beyond,          ///< past-the-end iterator over input points
+                                        OutputIterator output,         ///< iterator over the first output point
                                         double min_camera_cone_angle)  ///< min angle of camera's cone (radians)
 {
     typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
@@ -188,8 +188,8 @@ outlier_removal_wrt_camera_cone_angle_3(InputIterator first,           ///< inpu
 /// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>
 ForwardIterator
-outlier_removal_wrt_camera_cone_angle_3(ForwardIterator first,         ///< input/output points
-                                        ForwardIterator beyond,
+outlier_removal_wrt_camera_cone_angle_3(ForwardIterator first,         ///< iterator over the first input/output point
+                                        ForwardIterator beyond,        ///< past-the-end iterator
                                         double min_camera_cone_angle)  ///< min angle of camera's cone (radians)
 {
     typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;

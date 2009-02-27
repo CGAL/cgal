@@ -194,7 +194,7 @@ int main(int argc, char * argv[])
     // Compute implicit function
     //***************************************
 
-    std::cerr << "Compute APSS implicit function (knn=" << nb_neighbors_apss << ")...\n";
+    std::cerr << "Compute APSS implicit function (k=" << nb_neighbors_apss << ")...\n";
 
     // Create implicit function
     APSS_reconstruction_function apss_function(points.begin(), points.end(),

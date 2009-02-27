@@ -111,10 +111,6 @@ public:
 /// @heading Is Model for the Concepts:
 /// Model of the ImplicitFunction concept.
 ///
-/// @heading Design Pattern:
-/// A model of ImplicitFunction is a
-/// Strategy [GHJV95]: it implements a strategy of surface mesh reconstruction.
-///
 /// @heading Parameters:
 /// @param Gt Geometric traits class
 /// @param ReconstructionTriangulation_3 3D Delaunay triangulation,
@@ -193,29 +189,31 @@ private:
 // Public methods
 public:
 
-  /// Create a Poisson indicator function f() piecewise-linear
-  /// over the tetrahedra of pdt.
+  /// Creates a scalar function from a set of oriented points.
+  /// Inserts the iterator range first...beyond into the triangulation pdt,
+  /// refines it and solves for a piecewise linear scalar function
+  /// which gradient best matches the input normals.
   /// If pdt is empty, create an empty implicit function.
   ///
   /// @param pdt ReconstructionTriangulation_3 base of the Poisson indicator function.
-  Poisson_reconstruction_function(Triangulation& pdt)
+  Poisson_reconstruction_function(ReconstructionTriangulation_3& pdt)
   : m_dt(pdt)
   {
   }
 
-  /// Create an implicit function from a point set.
-  /// Insert the first...beyond point set into pdt and
-  /// create a Poisson indicator function f() piecewise-linear
-  /// over the tetrahedra of pdt.
+  /// Creates a scalar function from a set of oriented points.
+  /// Inserts the iterator range first...beyond into the triangulation pdt,
+  /// refines it and solves for a piecewise linear scalar function
+  /// which gradient best matches the input normals.
   ///
-  /// @commentheading Precondition: 
+  /// @commentheading Precondition:
   /// the value type of InputIterator must be convertible to Point_with_normal.
   ///
   /// @param pdt ReconstructionTriangulation_3 base of the Poisson indicator function.
   /// @param first First point to add.
   /// @param beyond Past-the-end point to add.
   template < class InputIterator >
-  Poisson_reconstruction_function(Triangulation& pdt,
+  Poisson_reconstruction_function(ReconstructionTriangulation_3& pdt,
                                   InputIterator first, InputIterator beyond)
   : m_dt(pdt)
   {
@@ -224,7 +222,7 @@ public:
 
   /// Insert points.
   ///
-  /// @commentheading Precondition: 
+  /// @commentheading Precondition:
   /// the value type of InputIterator must be convertible to Point_with_normal.
   ///
   /// @param first First point to add.
@@ -243,22 +241,22 @@ public:
   }
 
   /// Get embedded triangulation.
-  Triangulation& triangulation()
+  ReconstructionTriangulation_3& triangulation()
   {
     return m_dt;
   }
-  const Triangulation& triangulation() const
+  const ReconstructionTriangulation_3& triangulation() const
   {
     return m_dt;
   }
 
-  /// Get the surface's bounding box.
+  /// Returns a bounding box of the inferred surface.
   Iso_cuboid bounding_box() const
   {
     return m_dt.input_points_bounding_box();
   }
 
-  /// Get the surface's bounding sphere.
+  /// Returns a sphere bounding the inferred surface.
   Sphere bounding_sphere() const
   {
     return m_dt.input_points_bounding_sphere();
@@ -277,19 +275,14 @@ public:
     return Sphere(barycenter, radius*radius);
   }
 
-  /// You should call compute_implicit_function() once when points insertion is over.
-  /// It computes the Poisson indicator function f()
-  /// at each vertex of the triangulation by:
-  /// - applying a Delaunay refinement to define the function
-  ///   inside and outside the surface.
-  /// - solving the Poisson equation
-  ///   Laplacian(f) = divergent(normals field) at each vertex
-  ///   of the triangulation via the TAUCS sparse linear
-  ///   solver. One vertex must be constrained.
-  /// - shifting and orienting f() such that f() = 0 on the input points,
-  ///   and f() < 0 inside the surface.
+  /// The function \ccc{compute_implicit_function}() must be called
+  /// after each insertion of oriented points.
+  /// It computes the piecewise linear scalar function 'f' by:
+  /// - applying Delaunay refinement.
+  /// - solving for 'f' at each vertex of the triangulation with a sparse linear solver.
+  /// - shifting and orienting 'f' such that 'f=0' at all input points and 'f<0' inside the inferred surface.
   ///
-  /// Return false on error.
+  /// Returns false on error.
   bool compute_implicit_function()
   {
     CGAL::Timer task_timer; task_timer.start();
@@ -764,7 +757,7 @@ public:
     return sink_value;
   }
 
-  /// Evaluate implicit function for any 3D point.
+  /// Evaluates the implicit function at a given 3D query point.
   FT f(const Point& p) const
   {
     m_hint = m_dt.locate(p,m_hint);
@@ -785,13 +778,13 @@ public:
 
   /// [ImplicitFunction interface]
   ///
-  /// Evaluate implicit function for any 3D point.
+  /// Evaluates the implicit function at a given 3D query point.
   FT operator()(const Point& p) const
   {
     return f(p);
   }
 
-  /// Get point inside the surface.
+  /// Returns a point located inside the inferred surface.
   Point get_inner_point() const
   {
     // Get point / the implicit function is minimum
