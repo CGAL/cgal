@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi { 
 
 
-/// Utility function for outlier_removal_wrt_median_k_sq_distance_3():
+/// Utility function for outlier_removal_wrt_median_knn_sq_distance_3():
 /// Compute median squared distance to the K nearest neighbors.
 ///
 /// @commentheading Precondition: k >= 2.
@@ -48,7 +48,7 @@ namespace CGALi {
 template < typename Kernel,
            typename Tree >
 typename Kernel::FT
-compute_median_k_sq_distance_3(
+compute_median_knn_sq_distance_3(
                      const typename Kernel::Point_3& query, ///< 3D point to project
                      Tree& tree,                            ///< KD-tree
                      unsigned int k)                        ///< number of neighbors
@@ -102,7 +102,7 @@ compute_median_k_sq_distance_3(
 //          typename Kernel
 //>
 //OutputIterator
-//outliers_distribution_wrt_median_k_sq_distance_3(
+//outliers_distribution_wrt_median_knn_sq_distance_3(
 //                     InputIterator first,       ///< iterator over the first input point
 //                     InputIterator beyond,      ///< past-the-end iterator over input points
 //                     OutputIterator output,     ///< iterator over the first output point
@@ -137,7 +137,7 @@ compute_median_k_sq_distance_3(
 //    std::multimap<FT,Point> sorted_points;
 //    for(InputIterator point_it = first; point_it != beyond; point_it++)
 //    {
-//      FT sq_distance = compute_median_k_sq_distance_3<Kernel>(*point_it,tree,k);
+//      FT sq_distance = compute_median_knn_sq_distance_3<Kernel>(*point_it,tree,k);
 //      sorted_points.insert( std::make_pair(sq_distance,*point_it) );
 //    }
 //
@@ -172,7 +172,7 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-outlier_removal_wrt_median_k_sq_distance_3(
+outlier_removal_wrt_median_knn_sq_distance_3(
                      InputIterator first,       ///< iterator over the first input point
                      InputIterator beyond,      ///< past-the-end iterator over input points
                      OutputIterator output,     ///< iterator over the first output point
@@ -207,7 +207,7 @@ outlier_removal_wrt_median_k_sq_distance_3(
     std::multimap<FT,Point> sorted_points;
     for(InputIterator point_it = first; point_it != beyond; point_it++)
     {
-      FT sq_distance = CGALi::compute_median_k_sq_distance_3<Kernel>(*point_it,tree,k);
+      FT sq_distance = CGALi::compute_median_knn_sq_distance_3<Kernel>(*point_it,tree,k);
       sorted_points.insert( std::make_pair(sq_distance,*point_it) );
     }
 
@@ -245,7 +245,7 @@ template <typename ForwardIterator,
           typename Kernel
 >
 ForwardIterator
-outlier_removal_wrt_median_k_sq_distance_3(
+outlier_removal_wrt_median_knn_sq_distance_3(
                      ForwardIterator first,     ///< iterator over the first input/output point
                      ForwardIterator beyond,    ///< past-the-end iterator
                      unsigned int k,            ///< number of neighbors
@@ -279,7 +279,7 @@ outlier_removal_wrt_median_k_sq_distance_3(
     std::multimap<FT,Point> sorted_points;
     for(ForwardIterator point_it = first; point_it != beyond; point_it++)
     {
-      FT sq_distance = CGALi::compute_median_k_sq_distance_3<Kernel>(*point_it,tree,k);
+      FT sq_distance = CGALi::compute_median_knn_sq_distance_3<Kernel>(*point_it,tree,k);
       sorted_points.insert( std::make_pair(sq_distance,*point_it) );
     }
 
@@ -318,7 +318,7 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-outlier_removal_wrt_median_k_sq_distance_3(
+outlier_removal_wrt_median_knn_sq_distance_3(
                      InputIterator first,       ///< iterator over the first input point
                      InputIterator beyond,      ///< past-the-end iterator over input points
                      OutputIterator output,     ///< iterator over the first output point
@@ -327,7 +327,7 @@ outlier_removal_wrt_median_k_sq_distance_3(
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return outlier_removal_wrt_median_k_sq_distance_3(first,beyond,output,k,Kernel(),threshold_percent);
+  return outlier_removal_wrt_median_knn_sq_distance_3(first,beyond,output,k,Kernel(),threshold_percent);
 }
 
 /// Remove outliers:
@@ -348,7 +348,7 @@ outlier_removal_wrt_median_k_sq_distance_3(
 /// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>
 ForwardIterator
-outlier_removal_wrt_median_k_sq_distance_3(
+outlier_removal_wrt_median_knn_sq_distance_3(
                      ForwardIterator first,     ///< iterator over the first input/output point
                      ForwardIterator beyond,    ///< past-the-end iterator
                      unsigned int k,            ///< number of neighbors
@@ -356,7 +356,7 @@ outlier_removal_wrt_median_k_sq_distance_3(
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return outlier_removal_wrt_median_k_sq_distance_3(first,beyond,k,Kernel(),threshold_percent);
+  return outlier_removal_wrt_median_knn_sq_distance_3(first,beyond,k,Kernel(),threshold_percent);
 }
 
 

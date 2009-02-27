@@ -48,7 +48,7 @@ namespace CGALi {
 template < typename Kernel,
            typename Tree >
 typename Kernel::FT
-compute_avg_k_sq_distance_3(
+compute_avg_knn_sq_distance_3(
                      const typename Kernel::Point_3& query, ///< 3D point to project
                      Tree& tree,                            ///< KD-tree
                      unsigned int k)                        ///< number of neighbors
@@ -150,7 +150,7 @@ outlier_removal_3(
     std::multimap<FT,Point> sorted_points;
     for(InputIterator point_it = first; point_it != beyond; point_it++)
     {
-      FT sq_distance = CGALi::compute_avg_k_sq_distance_3<Kernel>(*point_it,tree,k);
+      FT sq_distance = CGALi::compute_avg_knn_sq_distance_3<Kernel>(*point_it,tree,k);
       sorted_points.insert( std::make_pair(sq_distance,*point_it) );
     }
 
@@ -222,7 +222,7 @@ outlier_removal_3(
     std::multimap<FT,Point> sorted_points;
     for(ForwardIterator point_it = first; point_it != beyond; point_it++)
     {
-      FT sq_distance = CGALi::compute_avg_k_sq_distance_3<Kernel>(*point_it,tree,k);
+      FT sq_distance = CGALi::compute_avg_knn_sq_distance_3<Kernel>(*point_it,tree,k);
       sorted_points.insert( std::make_pair(sq_distance,*point_it) );
     }
 
