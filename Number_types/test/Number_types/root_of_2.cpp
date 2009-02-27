@@ -172,8 +172,8 @@ test_to_interval(const Root &r1)
   std::pair<double, double> the_interval = CGAL_NTS to_interval(r1);
   if(!((to_double(r1) >= the_interval.first) && (to_double(r1) <= the_interval.second))) {
     std::cout << bracket<RT>()(r1,2) << " " << bracket<RT>()(r1,1) << " " << bracket<RT>()(r1,0) << " " << is_smaller_helper(r1) << std::endl; 
-    std::cout << setprecision (18) << to_double(r1) << std::endl;
-    std::cout << "[" << setprecision (18) << the_interval.first << "," << setprecision (18) << the_interval.second << "]";
+    std::cout << std::setprecision (18) << to_double(r1) << std::endl;
+    std::cout << "[" << std::setprecision (18) << the_interval.first << "," << std::setprecision (18) << the_interval.second << "]";
   }
   return (to_double(r1) >= the_interval.first) && (to_double(r1) <= the_interval.second);
 }
