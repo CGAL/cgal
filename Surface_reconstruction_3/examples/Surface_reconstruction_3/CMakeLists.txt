@@ -8,13 +8,17 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
  
+if ( COMMAND cmake_policy )
+  cmake_policy( SET CMP0003 NEW )  
+endif()
+ 
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
 
-  include( CreateSingleSourceCGALProgram )
+  include( CGAL_CreateSingleSourceCGALProgram )
 
   include_directories (BEFORE include)
   include_directories (BEFORE ../../include)
