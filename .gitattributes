@@ -2721,6 +2721,7 @@ Polyhedron/demo/Polyhedron/data/ellipsoid.off -text svneol=unset#application/oct
 Polyhedron/demo/Polyhedron/data/fandisk.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/femur.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/handle.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/icosahedron.off -text
 Polyhedron/demo/Polyhedron/data/joint.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/knot1.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/knot2.off -text svneol=unset#application/octet-stream
