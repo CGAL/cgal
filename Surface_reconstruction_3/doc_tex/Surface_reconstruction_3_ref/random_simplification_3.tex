@@ -28,7 +28,7 @@
 
 \ccFunction{template<typename InputIterator, typename OutputIterator, typename Kernel> OutputIterator random_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double threshold_percent, const Kernel& );}
 {
-Delete random points. This variant requires the kernel.
+Randomly deletes a user-specified fraction of the input points. This variant requires the kernel.
 \ccCommentHeading{Template Parameters}
 \begin{description}
 \item \ccc{InputIterator}: \ccc{value_type} must be convertible to OutputIterator's \ccc{value_type}. \item \ccc{OutputIterator}: \ccc{value_type} must be convertible to \ccc{Point_3}. \item \ccc{Kernel}: Geometric traits class.\end{description}
@@ -40,7 +40,7 @@ Delete random points. This variant requires the kernel.
 \ccGlue
 \ccFunction{template<typename ForwardIterator, typename Kernel> ForwardIterator random_simplification_3(ForwardIterator first, ForwardIterator beyond, double threshold_percent, const Kernel& );}
 {
-Delete random points. This function is mutating the input point set. This variant requires the kernel.
+Randomly deletes a user-specified fraction of the input points. This function is mutating the input point set. This variant requires the kernel.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
 \ccCommentHeading{Template Parameters}
 \begin{description}
@@ -53,7 +53,7 @@ Warning: This method modifies the order of points, thus should not be called on 
 \ccGlue
 \ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator random_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double threshold_percent);}
 {
-Delete random points. This variant deduces the kernel from iterator types.
+Randomly deletes a user-specified fraction of the input points. This variant deduces the kernel from iterator types.
 \ccCommentHeading{Template Parameters}
 \begin{description}
 \item \ccc{InputIterator}: \ccc{value_type} must be convertible to OutputIterator's \ccc{value_type}. \item \ccc{OutputIterator}: \ccc{value_type} must be convertible to \ccc{Point_3}.\end{description}
@@ -65,7 +65,7 @@ Delete random points. This variant deduces the kernel from iterator types.
 \ccGlue
 \ccFunction{template<typename ForwardIterator> ForwardIterator random_simplification_3(ForwardIterator first, ForwardIterator beyond, double threshold_percent);}
 {
-Delete random points. This function is mutating the input point set. This variant deduces the kernel from iterator types.
+Randomly deletes a user-specified fraction of the input points. This function is mutating the input point set. This variant deduces the kernel from iterator types.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
 \ccCommentHeading{Template Parameters}
 \ccc{ForwardIterator}: \ccc{value_type} must be convertible to \ccc{Point_3}.

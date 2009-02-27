@@ -28,30 +28,30 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{template<typename InputIterator, typename Kernel> Kernel::FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int KNN, const Kernel& );}
+\ccFunction{template<typename InputIterator, typename Kernel> Kernel::FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int k, const Kernel& );}
 {
-Compute average spacing from K nearest neighbors. This variant requires the kernel.
-\ccPrecond KNN $>$= 2.
+Compute average spacing from k nearest neighbors. This variant requires the kernel.
+\ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}
 \begin{description}
 \item \ccc{InputIterator}: \ccc{value_type} is \ccc{Point_3}. \item \ccc{Kernel}: Geometric traits class.\end{description}
 \ccCommentHeading{Returns} average spacing (scalar).
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: input points \item \ccc{KNN}: number of neighbors \end{description}
+\item \ccc{first}: first iterator over input points \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{k}: number of neighbors \end{description}
 }
 \ccGlue
-\ccFunction{template<typename InputIterator, typename FT> FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int KNN);}
+\ccFunction{template<typename InputIterator, typename FT> FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int k);}
 {
-Compute average spacing from K nearest neighbors. This variant deduces the kernel from iterator types.
-\ccPrecond KNN $>$= 2.
+Compute average spacing from k nearest neighbors. This variant deduces the kernel from iterator types.
+\ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}
 \begin{description}
 \item \ccc{InputIterator}: \ccc{value_type} is \ccc{Point_3}. \item \ccc{FT}: number type.\end{description}
 \ccCommentHeading{Returns} average spacing (scalar).
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: input points \item \ccc{KNN}: number of neighbors \end{description}
+\item \ccc{first}: first iterator over input points \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{k}: number of neighbors \end{description}
 }
 \ccGlue
 

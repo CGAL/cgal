@@ -28,7 +28,7 @@
 
 \ccFunction{template<typename InputIterator, typename OutputIterator, typename Kernel> OutputIterator merge_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double epsilon, const Kernel& );}
 {
-Iteratively merges pairs of points which are epsilon closed. This variant requires the kernel.
+Merge points which belong to the same cell of a grid of cell size = epsilon. This variant requires the kernel.
 \ccPrecond epsilon $>$ 0.
 \ccCommentHeading{Template Parameters}
 \begin{description}
@@ -41,7 +41,7 @@ Iteratively merges pairs of points which are epsilon closed. This variant requir
 \ccGlue
 \ccFunction{template<typename ForwardIterator, typename Kernel> ForwardIterator merge_simplification_3(ForwardIterator first, ForwardIterator beyond, double epsilon, const Kernel& );}
 {
-Iteratively merges pairs of points which are epsilon closed.  This function is mutating the input point set. This variant requires the kernel.
+Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant requires the kernel.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
 \ccPrecond epsilon $>$ 0.
 \ccCommentHeading{Template Parameters}
@@ -55,7 +55,7 @@ Warning: This method modifies the order of points, thus should not be called on 
 \ccGlue
 \ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator merge_simplification_3(InputIterator first, InputIterator beyond, OutputIterator output, double epsilon);}
 {
-Iteratively merges pairs of points which are epsilon closed.  This variant deduces the kernel from iterator types.
+Merge points which belong to the same cell of a grid of cell size = epsilon. This variant deduces the kernel from iterator types.
 \ccPrecond epsilon $>$ 0.
 \ccCommentHeading{Template Parameters}
 \begin{description}
@@ -68,7 +68,7 @@ Iteratively merges pairs of points which are epsilon closed.  This variant deduc
 \ccGlue
 \ccFunction{template<typename ForwardIterator> ForwardIterator merge_simplification_3(ForwardIterator first, ForwardIterator beyond, double epsilon);}
 {
-Iteratively merges pairs of points which are epsilon closed.  This function is mutating the input point set. This variant deduces the kernel from iterator types.
+Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant deduces the kernel from iterator types.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
 \ccPrecond epsilon $>$ 0.
 \ccCommentHeading{Template Parameters}

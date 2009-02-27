@@ -40,7 +40,7 @@ This variant implements the original algorithm. Note that it does not orient nor
 \ccGlue
 \ccFunction{template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap> unsigned int mst_normal_orientation(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int KNN, double angle_max);}
 {
-Orient the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
+Orient the normals of a point set using the method described by Hoppe et al. in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
 This is a variant of the original algorithm. It:\begin{itemize}
 \item orients the top point towards +Z axis.\item does not orient normals that are already oriented.\item does not propagate the orientation if the angle between 2 normals $>$ \ccc{angle_max}.\end{itemize}
 \ccCommentHeading{Preconditions}\begin{itemize}
