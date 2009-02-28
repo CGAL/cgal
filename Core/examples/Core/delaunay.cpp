@@ -1,5 +1,3 @@
-#define CORE_NO_AUTOMATIC_NAMESPACE 1
-
 
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Simple_cartesian.h>

@@ -67,10 +67,6 @@ typedef long machine_long;
 #   include <CGAL/CORE/Expr.h>
 #endif
 
-#ifndef CORE_NO_AUTOMATIC_NAMESPACE
-using namespace CORE;
-#endif
-
 #endif // _CORE_CORE_H_
 
 
