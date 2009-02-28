@@ -21,7 +21,7 @@ Bbox_2 bbox_2 ( Polygon_with_holes_2<K> const& aPolyWH )
 }
 
 template<class K>
-void dump_to_eps( CGAL::Polygon_2<K> const& aPoly, char const* aType, double aScale, ostream& rOut )
+void dump_to_eps( CGAL::Polygon_2<K> const& aPoly, char const* aType, double aScale, std::ostream& rOut )
 {
   typedef typename CGAL::Polygon_2<K>::const_iterator vertex_const_iterator ;
     
@@ -33,7 +33,7 @@ void dump_to_eps( CGAL::Polygon_2<K> const& aPoly, char const* aType, double aSc
   {
     vertex_const_iterator next = curr == last ? begin : curr + 1 ;
     
-    rOut << aType << endl
+    rOut << aType << std::endl
          << aScale * curr->x() 
          << " " 
          << aScale * curr->y()
@@ -46,7 +46,7 @@ void dump_to_eps( CGAL::Polygon_2<K> const& aPoly, char const* aType, double aSc
 }
 
 template<class K>
-void dump_to_eps( CGAL::Polygon_with_holes_2<K> const& aPWH, char const* aType, double aScale, ostream& rOut )
+void dump_to_eps( CGAL::Polygon_with_holes_2<K> const& aPWH, char const* aType, double aScale, std::ostream& rOut )
 {
   dump_to_eps(aPWH.outer_boundary(), aType, aScale, rOut ) ;
       
@@ -58,7 +58,7 @@ void dump_to_eps( CGAL::Polygon_with_holes_2<K> const& aPWH, char const* aType, 
 }
 
 template<class K>
-void dump_to_eps( CGAL::Straight_skeleton_2<K> const& aSkeleton, char const* aType, double aScale, ostream& rOut )
+void dump_to_eps( CGAL::Straight_skeleton_2<K> const& aSkeleton, char const* aType, double aScale, std::ostream& rOut )
 {
   typedef typename CGAL::Straight_skeleton_2<K>::Halfedge_const_iterator Halfedge_const_iterator ;
   typedef typename CGAL::Straight_skeleton_2<K>::Halfedge_const_handle   Halfedge_const_handle ;
