@@ -80,16 +80,16 @@ int main(int, char *[]){
     
     CORE::Polynomial<CORE::BigFloat> p(8, cs);
     //std::cout << p << std::endl;
-    Polynomial<CORE::BigFloat> temp(p);
+    CORE::Polynomial<CORE::BigFloat> temp(p);
     //std::cout << temp << std::endl;
-    Polynomial<CORE::BigFloat> pp=p;
+    CORE::Polynomial<CORE::BigFloat> pp=p;
     pp.differentiate(); 
     //std::cout << pp << std::endl;
-    Polynomial<CORE::BigFloat> pg = gcd(p, temp.differentiate());
+    CORE::Polynomial<CORE::BigFloat> pg = gcd(p, temp.differentiate());
     
     CORE::BigFloat c;
-    Polynomial<CORE::BigFloat> prem=p;
-    Polynomial<CORE::BigFloat> pquo= prem.pseudoRemainder(pp, c);
+    CORE::Polynomial<CORE::BigFloat> prem=p;
+    CORE::Polynomial<CORE::BigFloat> pquo= prem.pseudoRemainder(pp, c);
     std::cout << "p: " << p << std::endl;
     std::cout << "pp: " << pp << std::endl;
     std::cout << "prem: " << prem << std::endl;
