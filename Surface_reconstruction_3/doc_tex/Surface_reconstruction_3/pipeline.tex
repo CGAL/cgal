@@ -1,6 +1,6 @@
 \section{Pipeline}
 
-Surface reconstruction from measurement data is often a step by step process:
+Surface reconstruction from measurement data is a sequential process:
 
 \begin{itemize}
 \item Scanning and scan alignment produce a set of points
@@ -15,8 +15,7 @@ Surface reconstruction from measurement data is often a step by step process:
 \item Surface reconstruction.
 \end{itemize}
 
-This component provides algorithms for all steps listed above, except alignment.
-A demo running on Windows is currently provided, and we will elaborate soon upon a new point set demo based on QT4 and QGlViewer.
+This component provides algorithms for all steps listed above except alignment. A demo running on Windows is currently provided, and will be replaced soon by a complete point set demo based on QT4 and QGlViewer.
 
 % Insert image pipeline.jpg/eps
 \begin{center}
@@ -46,7 +45,7 @@ Functions and classes of this component expect as input and output parameters ra
 \item 3D points with oriented normals
 \end{itemize}
 
-We provide several models of points and normals concepts, with different speed/space trade-offs:
+We provide several models of point and normal concepts, with different speed/space trade-offs:
 
 \begin{itemize}
 \item \ccRefIdfierPage{CGAL::Point_3<GeomTraits>} \\
@@ -54,15 +53,14 @@ We provide several models of points and normals concepts, with different speed/s
 \item \ccRefIdfierPage{CGAL::Vector_3<GeomTraits>} \\
 \cgal\ 3D vector.
 \item \ccRefIdfierPage{CGAL::Lightweight_vector_3<GeomTraits>} \\
-3D vector allocated only if not (0,0,0).
+3D vector allocated only if not null.
 \item \ccRefIdfierPage{CGAL::Orientable_normal_3<GeomTraits>} \\
-Normal (oriented or not).
-Inherits from \ccc{Vector_3<GeomTraits>} and contains an "is normal oriented?" flag.
+Normal (oriented or not). Inherits from \ccc{Vector_3<GeomTraits>} and contains an additional orientation flag.
 \item \ccRefIdfierPage{CGAL::Point_with_normal_3<GeomTraits, Normal_3>} \\
-3D position + normal.
+3D point location plus normal.
 \end{itemize}
 
-In addition, we provide convenient functions to read point sets from standard file formats:
+We provide convenient functions to read point sets from standard file formats:
 
 \begin{itemize}
 \item XYZ
@@ -79,8 +77,7 @@ Example:
 
 \subsection{Analysis}
 
-The purpose of the analysis stage is to measure common statistics and bounding volumes over the input points
-so as to automatically determine parameters for subsequent stages downstream along the pipeline:
+The purpose of the analysis stage is to measure common statistics and bounding volumes over the input points so as to automatically determine parameters for subsequent stages downstream along the pipeline:
 \begin{itemize}
   \item Point set barycenter, bounding box,
         bounding sphere (provided by other \cgal\ components).
@@ -101,13 +98,11 @@ Example:
 
 \subsection{Processing}
 
-Processing refers to all algorithms which alter the input points so as to remove outliers, reduce noise by smoothing, and simplify.
+Processing refers to all algorithms which alter the input points so as to remove outliers, to reduce noise by smoothing, and to simplify.
 
 \subsubsection{Outlier Removal}
 
-Function \ccc{CGAL::outlier_removal_3()} deletes a user-specified fraction of outliers from the input point set.
-More specifically, it sorts the input points in increasing order of average squared distances to the $k$ nearest neighbors
-and deletes the points with largest value.
+Function \ccc{CGAL::outlier_removal_3()} deletes a user-specified fraction of outliers from the input point set. More specifically, it sorts the input points in increasing order of average squared distances to the $k$ nearest neighbors and deletes the points with largest value.
 
 \emph{Note to the reviewers: we will add a function in the analysis section which displays in the console the distribution of such average squared distance so as to help the user picking an appropriate fraction value.}
 
@@ -167,11 +162,9 @@ Example:
 
 \ccIncludeExampleCode{Surface_reconstruction_3/random_simplification_example.cpp}
 
-
 \subsubsection{Smoothing}
 
-Function \ccRefIdfierPage{CGAL::jet_smoothing_3} smooths the input point set by projecting each point
-onto a smooth parametric surface patch (so-called jet surface) fitted over the $k$ nearest neighbors. \\
+Function \ccRefIdfierPage{CGAL::jet_smoothing_3} smooths the input point set by projecting each point onto a smooth parametric surface patch (so-called jet surface) fitted over the $k$ nearest neighbors. \\
 
 % % Insert image jet_smoothing.jpg/eps
 % \begin{center}
@@ -196,14 +189,11 @@ Example:
 
 \subsubsection{Normal Estimation}
 
-Two functions are provided to estimate the normal direction of the inferred surface at each point from the input point set.
-In both cases, the result is an unoriented normal vector for each input point.
+Two functions are provided to estimate the normal direction of the inferred surface at each point from the input point set. In both cases, the result is an unoriented normal vector for each input point.
 
-Function \ccc{CGAL::jet_normal_estimation()} estimates the normal direction at each point from the set
-by fitting a jet surface over its $k$ nearest neighbors. The default jet is a quadric surface.
+Function \ccc{CGAL::jet_normal_estimation()} estimates the normal direction at each point from the set by fitting a jet surface over its $k$ nearest neighbors. The default jet is a quadric surface.
 
-Function \ccc{CGAL::pca_normal_estimation()} estimates hte normal direction at each point from the set
-by linear least squares fitting of a plane over its $k$ nearest neighbors.
+Function \ccc{CGAL::pca_normal_estimation()} estimates the normal direction at each point from the set by linear least squares fitting of a plane over its $k$ nearest neighbors.
 
 \ccRefIdfierPage{CGAL::pca_normal_estimation}  \\
 \ccRefIdfierPage{CGAL::jet_normal_estimation}  \\
@@ -231,11 +221,7 @@ Example:
 
 \subsubsection{Normal Orientation}
 
-Function \ccc{CGAL::mst_normal_orientation()} orients the normals of a set of points with (unoriented) normals
-using the method described by Hoppe et al. in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
-More specifically, this method constructs a Riemannian graph over the input points and
-propagates a seed normal orientation within a minimum spanning tree computed over the graph with the Boost graph library.
-The result is an oriented normal vector for each input point/normal.
+Function \ccc{CGAL::mst_normal_orientation()} orients the normals of a set of points with (unoriented) normals using the method described by Hoppe et al. in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}. More specifically, this method constructs a Riemannian graph over the input points and propagates a seed normal orientation within a minimum spanning tree computed over the graph with the Boost graph library. The result is an oriented normal vector for each input point/normal.
 
 \ccRefIdfierPage{CGAL::mst_normal_orientation}  \\
 
@@ -270,7 +256,7 @@ The two surface reconstruction methods fall into the category of the implicit su
       This method falls into the category of so-called
       point set surfaces, where the approximate
       signed distance function to the inferred surface
-      can be evaluated at any query point and on the fly
+      can be evaluated at any query point, on the fly
       during iso-contouring.
 \end{itemize}
 
@@ -296,13 +282,12 @@ The two surface reconstruction methods fall into the category of the implicit su
     \end{figure}
 \end{center}
 
-
-The computed ``implicit'' functions can be iso-contoured to reconstruct a surface by using the \cgal\ surface mesh generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}.
+The computed implicit functions can be iso-contoured to reconstruct a surface by using the \cgal\ surface mesh generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}.
 
 \ccRefIdfierPage{CGAL::make_surface_mesh}  \\
 
 The parameter \ccc{Tag} affects the behavior of \ccc{make_surface_mesh()}: \\
-- \ccc{Manifold_tag}: the output mesh is guaranteed to be a  manifold surface without boundary.\\
+- \ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold surface without boundary.\\
 - \ccc{Manifold_with_boundary_tag}: the output mesh is guaranteed to be manifold and may have boundaries.\\
 - \ccc{Non_manifold_tag}: the output mesh has no guarantee and hence is outputted as a polygon soup.
 
@@ -314,8 +299,7 @@ See \ccc{poisson_reconstruction_example.cpp} example above.
 
 \subsubsection{Point Set Output}
 
-The output of the processing stage is a point set with normals.
-For convenience, we provide functions to write point sets to standard file formats:
+The output to the processing stage is a point set with normals. For convenience, we provide functions to write point sets to standard file formats:
 \begin{itemize}
 \item XYZ
 \item OFF
@@ -331,11 +315,7 @@ See \ccc{surface_reconstruction_read_write_xyz_example.cpp} example above.
 
 \subsubsection{Surface Output}
 
-The surface reconstructed by \ccc{make_surface_mesh()}
-is required to be a model of the concept
-\ccc{SurfaceMeshComplex_2InTriangulation_3},
-a data structure devised to represent a two dimensional
-complex embedded into a three dimensional triangulation.\\
+The surface reconstructed by \ccc{make_surface_mesh()} is required to be a model of the concept \ccc{SurfaceMeshComplex_2InTriangulation_3}, a data structure devised to represent a two dimensional complex embedded into a three dimensional triangulation.\\
 
 \ccc{SurfaceMeshComplex_2InTriangulation_3} defines the methods to traverse the reconstructed surface.
 
@@ -354,9 +334,3 @@ As examples, we provide functions to:
 Example:
 
 See \ccc{poisson_reconstruction_example.cpp} example above.
-
-
-
-
-
-
