@@ -1,4 +1,5 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETHZ (Suisse).
+// Copyrigth (c) 2009  GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -24,6 +25,10 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>
 #include <vector>
+
+#include <boost/mpl/vector.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/mpl/contains.hpp>
 
 #include <CGAL/AABB_tree/Ray_3_Bbox_3_do_intersect.h>
 #include <CGAL/AABB_tree/Bbox_3_Bbox_3_do_intersect.h>
@@ -345,32 +350,51 @@ public:
     return CGAL::do_intersect(line, node.m_bbox);
   }
 
-
-
   // -----------------------------------------------------------//
-  // -----------------------SEGMENT ORACLES-------------------------//
+  // -----------------------GENERIC ORACLES---------------------//
   // -----------------------------------------------------------//
+  // In the following, Query can be any of Plane, Ray, Line, or Segment.
+  
+  typedef boost::mpl::vector<Plane, Ray, Line, Segment> Allowed_query_types;
 
-  static bool intersection(const Segment& segment,
-    Input f,
-    Point& result)
+  // The following function template is restricted to that Query can only be in
+  // {Ray, Line, Segment}. It return type is bool.
+  // The trick uses enable_if and the Boost MPL.
+  template <class Query>
+  static
+  typename boost::enable_if<
+    typename boost::mpl::contains<Allowed_query_types,
+                                  Query>::type,
+    bool>::type
+  intersection(const Query& query,
+               Input f,
+               Point& result)
   {
     Triangle t = triangle(f);
-    if(CGAL::do_intersect(t,segment)) 
+    if(CGAL::do_intersect(t, query)) 
     {
-      CGAL::Object inter = CGAL::intersection(t.supporting_plane(),segment);
+      CGAL::Object inter = CGAL::intersection(t.supporting_plane(), query);
       if(CGAL::assign(result, inter))
 	return true;
     }
     return false;
   }
 
-  static bool intersection(const Segment& segment, 
+  // The following function template is restricted to that Query can only be in
+  // {Ray, Line, Segment}. It return type is bool.
+  // The trick uses enable_if and the Boost MPL.
+  template <class Query>
+  static
+  typename boost::enable_if<
+    typename boost::mpl::contains<Allowed_query_types,
+                                  Query>::type,
+    bool>::type
+  intersection(const Query& query, 
     const Input& f, 
     Point_with_input& p)
   {
     Point p_alone;
-    if(Node::intersection(segment, f, p_alone))
+    if(Node::intersection(query, f, p_alone))
     {
       p = Point_with_input(p_alone, f);
       return true;
@@ -378,54 +402,36 @@ public:
     return false;
   }
 
-  static bool do_intersect(const Segment& segment, Input f)
+  // The following function template is restricted to that Query can only be in
+  // {Ray, Line, Segment}. It return type is bool.
+  // The trick uses enable_if and the Boost MPL.
+  template <class Query>
+  static
+  typename boost::enable_if<
+    typename boost::mpl::contains<Allowed_query_types,
+                                  Query>::type,
+    bool>::type
+  do_intersect(const Query& query, Input f)
   {
-    return CGAL::do_intersect(triangle(f),segment);
+    return CGAL::do_intersect(triangle(f), query);
   }
 
-  static bool do_intersect(const Segment& segment,
+  // The following function template is restricted to that Query can only be in
+  // {Ray, Line, Segment}. It return type is bool.
+  // The trick uses enable_if and the Boost MPL.
+  template <class Query>
+  static
+  typename boost::enable_if<
+    typename boost::mpl::contains<Allowed_query_types,
+                                  Query>::type,
+    bool>::type
+  do_intersect(const Query& query,
     const Node& node)
   {
-    return CGAL::do_intersect(segment, node.m_bbox);
+    return CGAL::do_intersect(query, node.m_bbox);
   }
 
-  // -----------------------------------------------------------//
-  // -----------------------RAY ORACLES-------------------------//
-  // -----------------------------------------------------------//
-
-  static bool intersection(const Ray& ray,
-    Input f,
-    Point& result)
-  {
-    Triangle t = triangle(f);
-    if(CGAL::do_intersect(t,ray)) 
-    {
-      CGAL::Object inter = CGAL::intersection(t.supporting_plane(),ray);
-      if(CGAL::assign(result, inter))
-	return true;
-    }
-    return false;
-  }
-
-  static bool intersection(const Ray& ray, 
-    const Input& f, 
-    Point_with_input& p)
-  {
-    Point p_alone;
-    if(Node::intersection(ray, f, p_alone))
-    {
-      p = Point_with_input(p_alone, f);
-      return true;
-    }
-    return false;
-  }
-
-  static bool do_intersect(const Ray& ray,
-    const Node& node)
-  {
-    return CGAL::do_intersect(ray, node.m_bbox);
-  }
-};
+}; // end class template AABB_node
 
 } // end namespace CGAL
 
