@@ -134,6 +134,10 @@
   (like \ccc{NULL} for pointers).  This makes them suitable for use in
   geometric graphs like handles to vertices in triangulations.
 
+  In addition, in a way inspired from the Boost.Intrusive containers, it is
+  possible to construct iterators from references to values in containers
+  using the \ccc{iterator_to} and \ccc{s_iterator_to} functions.
+
   \ccInclude{CGAL/Compact_container.h}
 
   %% +-----------------------------------+
@@ -226,6 +230,15 @@
   \ccGlue\ccMethod{const_reverse_iterator rbegin() const;}{}
   \ccGlue\ccMethod{reverse_iterator rend();}{}
   \ccGlue\ccMethod{const_reverse_iterator rend() const;}{}
+
+  \ccMethod{iterator iterator_to(reference value) const;}
+  {returns an iterator which points to \ccc{value};}
+  \ccGlue\ccMethod{const_iterator iterator_to(const_reference value) const;}
+  {returns an iterator which points to \ccc{value};}
+  \ccMethod{static iterator s_iterator_to(reference value);}
+  {returns an iterator which points to \ccc{value};}
+  \ccGlue\ccMethod{static const_iterator s_iterator_to(const_reference value);}
+  {returns an iterator which points to \ccc{value};}
   \def\ccTagRmTrailingConst{\ccTrue}
 
   \ccMethod{bool empty() const;}

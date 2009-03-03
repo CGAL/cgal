@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004,2007,2008  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2007-2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -196,6 +196,12 @@ public:
   rbegin() const { return const_reverse_iterator(end()); }
   const_reverse_iterator
   rend()   const { return const_reverse_iterator(begin()); }
+
+  // Boost.Intrusive interface
+  iterator       iterator_to(reference value) const { return &value; }
+  const_iterator iterator_to(const_reference value) const { return &value; }
+  static iterator       s_iterator_to(reference value) { return &value; }
+  static const_iterator s_iterator_to(const_reference value) { return &value; }
 
   // Special insert methods that construct the objects in place
   // (just forward the arguments to the constructor, to optimize a copy).

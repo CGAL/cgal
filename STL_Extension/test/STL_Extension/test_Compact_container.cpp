@@ -193,6 +193,18 @@ void test(const Cont &)
   assert(c9.size() == v1.size());
   assert(c9 == c10);
 
+
+  typename Cont::iterator it = c9.iterator_to(*c9.begin());
+  assert(it == c9.begin());
+  typename Cont::const_iterator cit = c9.iterator_to(const_cast<typename Cont::const_reference>(*c9.begin()));
+  assert(cit == c9.begin());
+
+  typename Cont::iterator s_it = Cont::s_iterator_to(*c9.begin());
+  assert(s_it == c9.begin());
+  typename Cont::const_iterator s_cit = Cont::s_iterator_to(const_cast<typename Cont::const_reference>(*c9.begin()));
+  assert(s_cit == c9.begin());
+
+
   c10 = Cont();
 
   assert(check_empty(c10));
