@@ -257,20 +257,20 @@ template <typename Traits_2>
 bool is_valid_polygon(const typename Traits_2::Polygon_2& pgn,Traits_2 traits)
 {
   bool closed = is_closed_polygon(pgn,traits);
-  CGAL_warning_msg (closed,
-                    "The polygon's boundary is not closed.");
+  //CGAL_warning_msg (closed,
+ //               "The polygon's boundary is not closed.");
   if (! closed)
     return (false);
 
   bool simple = is_simple_polygon(pgn,traits);
-  CGAL_warning_msg (simple,
-                    "The polygon is not simple.");  
+  //CGAL_warning_msg (simple,
+ //                   "The polygon is not simple.");  
   if (!simple)
     return (false);   
 
   bool valid_orientation = has_valid_orientation_polygon(pgn,traits);
-  CGAL_warning_msg (valid_orientation,
-                    "The polygon has a wrong orientation.");
+  //CGAL_warning_msg (valid_orientation,
+  //                  "The polygon has a wrong orientation.");
   if (! valid_orientation)
     return (false);
 
@@ -672,32 +672,32 @@ template <typename Traits_2>
 bool is_valid_polygon_with_holes(const typename Traits_2::Polygon_with_holes_2& pgn, Traits_2 traits)
 {
   bool closed = is_closed_polygon_with_holes(pgn,traits);
-  CGAL_warning_msg (closed, 
-                    "The polygon's boundary or one of it's holes is not closed.");
+  //CGAL_warning_msg (closed, 
+  //                  "The polygon's boundary or one of it's holes is not closed.");
   if (! closed)
     return (false);
       
   bool relatively_simple = is_relatively_simple_polygon_with_holes(pgn,traits);
-  CGAL_warning_msg (relatively_simple,
-                    "The polygon is not relatively simple.");
+  //CGAL_warning_msg (relatively_simple,
+  //                  "The polygon is not relatively simple.");
   if (! relatively_simple)
     return (false);
     
   bool no_cross = is_crossover_outer_boundary(pgn, traits);
-  CGAL_warning_msg (no_cross,
-                    "The polygon has a crossover.");
+  //CGAL_warning_msg (no_cross,
+  //                  "The polygon has a crossover.");
   if (!no_cross)
     return (false);
           
   bool valid_orientation = has_valid_orientation_polygon_with_holes(pgn,traits);
-  CGAL_warning_msg (valid_orientation,
-                    "The polygon has a wrong orientation.");
+  //CGAL_warning_msg (valid_orientation,
+  //                  "The polygon has a wrong orientation.");
   if (! valid_orientation)
     return (false);
     
   bool holes_disjoint = are_holes_and_boundary_pairwise_disjoint(pgn,traits);
-  CGAL_warning_msg (holes_disjoint,
-                    "Holes of the PWH intersect amongst themselves or with outer boundary");
+  //CGAL_warning_msg (holes_disjoint,
+  //                  "Holes of the PWH intersect amongst themselves or with outer boundary");
   if (! holes_disjoint)
     return false;
       
