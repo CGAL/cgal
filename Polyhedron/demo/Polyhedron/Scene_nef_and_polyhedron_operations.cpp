@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Polyhedron_type.h"
+#include "Textured_polyhedron_type.h"
 #include "Nef_type.h"
 
 Scene::Bbox Scene::bbox()

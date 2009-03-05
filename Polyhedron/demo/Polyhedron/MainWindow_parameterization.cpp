@@ -108,6 +108,7 @@ void MainWindow::on_actionDCP_triggered()
 
 #else // #ifdef CGAL_TAUCS_ENABLED 
 
+#include "MainWindow.h"
 #include <QMessageBox>
 void MainWindow::on_actionMVC_triggered()
 {

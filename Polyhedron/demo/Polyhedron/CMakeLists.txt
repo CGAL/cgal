@@ -89,7 +89,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       Scene_nef_polyhedron_operations.cpp
       Scene_polyhedron_operations.cpp
       Scene_nef_and_polyhedron_operations.cpp
+      Scene_tex_polyhedron_operations.cpp
       Scene_rendering.cpp
+      Scene_tex_rendering.cpp
       Scene_nef_rendering.cpp
       MainWindow_boolean_operations.cpp
       MainWindow_convex_hull.cpp

@@ -1,3 +1,5 @@
+#include "Polyhedron_type.h"
+#include "Textured_polyhedron_type.h"
 #include "Scene.h"
 
 #include <iostream>
