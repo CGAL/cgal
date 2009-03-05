@@ -198,10 +198,18 @@ public:
   rend()   const { return const_reverse_iterator(begin()); }
 
   // Boost.Intrusive interface
-  iterator       iterator_to(reference value) const { return &value; }
-  const_iterator iterator_to(const_reference value) const { return &value; }
-  static iterator       s_iterator_to(reference value) { return &value; }
-  static const_iterator s_iterator_to(const_reference value) { return &value; }
+  iterator iterator_to(reference value) const {
+    return iterator(&value, 0);
+  }
+  const_iterator iterator_to(const_reference value) const {
+    return const_iterator(&value, 0);
+  }
+  static iterator s_iterator_to(reference value) {
+    return iterator(&value, 0);
+  }
+  static const_iterator s_iterator_to(const_reference value) {
+    return const_iterator(&value, 0);
+  }
 
   // Special insert methods that construct the objects in place
   // (just forward the arguments to the constructor, to optimize a copy).
