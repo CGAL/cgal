@@ -81,13 +81,6 @@ GraphicsView/demo/Triangulation_2/Constrained_Delaunay_triangulation_2
 GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2
 GraphicsView/demo/Triangulation_2/Makefile
 GraphicsView/demo/Triangulation_2/Regular_triangulation_2
-GraphicsView/demo/Triangulation_2/Terrain/*.exe
-GraphicsView/demo/Triangulation_2/Terrain/*.sln
-GraphicsView/demo/Triangulation_2/Terrain/*.vcproj
-GraphicsView/demo/Triangulation_2/Terrain/Makefile
-GraphicsView/demo/Triangulation_2/Terrain/Terrain
-GraphicsView/demo/Triangulation_2/Terrain/qrc_*.cxx
-GraphicsView/demo/Triangulation_2/Terrain/ui_*.h
 GraphicsView/demo/Triangulation_2/qrc_*.cxx
 GraphicsView/demo/Triangulation_2/ui_*.h
 GraphicsView/doc_tex/GraphicsView.tex
