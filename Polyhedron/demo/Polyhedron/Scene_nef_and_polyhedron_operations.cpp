@@ -1,7 +1,10 @@
+#include "config.h"
 #include "Scene.h"
 #include "Polyhedron_type.h"
 #include "Textured_polyhedron_type.h"
-#include "Nef_type.h"
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
+#  include "Nef_type.h"
+#endif
 
 Scene::Bbox Scene::bbox()
 {
@@ -22,12 +25,14 @@ Scene::Bbox Scene::bbox()
 	bbox = CGAL::Bbox_3(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
         break;
       }
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
       case NEF_ENTRY:
       {
 	Nef_polyhedron* nef_p = boost::get<Nef_polyhedron*>(polyhedra.begin()->polyhedron_ptr);
 	bbox = nef_p->vertices_begin()->point().bbox();
         break;
       }
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF
       case TEX_POLYHEDRON_ENTRY:
       {
 	Textured_polyhedron* poly = boost::get<Textured_polyhedron*>(polyhedra.begin()->polyhedron_ptr);
@@ -51,6 +56,7 @@ Scene::Bbox Scene::bbox()
 	    bbox = bbox + it->bbox();
 	  break;
 	}
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
       case NEF_ENTRY:
 	{
 	  Nef_polyhedron* nef_p = boost::get<Nef_polyhedron*>(poly_it->polyhedron_ptr);
@@ -60,6 +66,7 @@ Scene::Bbox Scene::bbox()
 	    bbox = bbox + it->point().bbox();
 	  break;
 	}
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF
       case TEX_POLYHEDRON_ENTRY:
 	{
 	  Textured_polyhedron* poly = boost::get<Textured_polyhedron*>(poly_it->polyhedron_ptr);
@@ -75,3 +82,4 @@ Scene::Bbox Scene::bbox()
       bbox.xmax(),bbox.ymax(),bbox.zmax());
   }
 }
+

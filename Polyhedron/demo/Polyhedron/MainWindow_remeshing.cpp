@@ -1,6 +1,8 @@
 #define CGAL_SURFACE_MESHER_VERBOSE 0
 #undef CGAL_SURFACE_MESHER_VERBOSE
 
+#include "config.h"
+#ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include <QApplication>
 
 #include <CGAL/AABB_tree/AABB_polyhedral_oracle.h>
@@ -142,3 +144,5 @@ void MainWindow::on_actionRemeshing_triggered()
     QApplication::restoreOverrideCursor();
   }
 }
+
+#endif // CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER

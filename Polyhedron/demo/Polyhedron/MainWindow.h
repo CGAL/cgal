@@ -1,5 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+#include "config.h"
 
 #include <QtOpenGL/qgl.h>
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -75,9 +76,11 @@ protected slots:
   void on_actionSqrt3_triggered();
 
   // Boolean operations, in MainWindow_boolean_operations.cpp
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
   void on_actionUnion_triggered();
   void on_actionDifference_triggered();
   void on_actionIntersection_triggered();
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF
 
   // curvature estimation, in MainWindow_curvature_estimation.cpp
   void on_actionEstimateCurvature_triggered();
@@ -89,8 +92,10 @@ protected slots:
   // self intersection, in MainWindow_self_intersection.cpp
   void on_actionSelfIntersection_triggered();
 
+#ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
   // remeshing, in MainWindow_remeshing.cpp
   void on_actionRemeshing_triggered();
+#endif // CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 
 
 protected:

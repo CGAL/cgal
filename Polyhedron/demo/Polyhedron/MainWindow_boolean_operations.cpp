@@ -1,3 +1,5 @@
+#include "config.h"
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
 #include <QApplication>
 #include <QTime>
 
@@ -211,3 +213,4 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
   QApplication::restoreOverrideCursor();
 }
 
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF

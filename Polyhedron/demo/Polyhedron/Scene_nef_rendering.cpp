@@ -1,3 +1,5 @@
+#include "config.h"
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
 #include "Nef_type.h"
 #include <CGAL/Nef_S2/OGL_base_object.h>
 #include <CGAL/Nef_3/OGL_helper.h>
@@ -204,3 +206,4 @@ void gl_render_nef_vertices(Nef_polyhedron* p)
 	      << ::gluErrorString(gl_error) << "\n";
   }
 }
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF

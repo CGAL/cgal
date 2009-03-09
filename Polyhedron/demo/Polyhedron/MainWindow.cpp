@@ -1,3 +1,4 @@
+#include "config.h"
 #include "MainWindow.h"
 #include "Scene.h"
 #include <CGAL/Qt/debug.h>
@@ -89,6 +90,17 @@ MainWindow::MainWindow(QWidget* parent)
   // Same with "removeButton" and "duplicateButton"
   ui->removeButton->setDefaultAction(ui->actionErasePolyhedron);
   ui->duplicateButton->setDefaultAction(ui->actionDuplicatePolyhedron);
+
+#ifndef CGAL_POLYHEDRON_DEMO_USE_NEF
+  ui->actionUnion->setVisible(false);
+  ui->actionIntersection->setVisible(false);
+  ui->actionDifference->setVisible(false);
+  ui->menu_Boolean_operations->menuAction()->setVisible(false);
+#endif // #ifndef CGAL_POLYHEDRON_DEMO_USE_NEF
+
+#ifndef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
+  ui->actionRemeshing->setVisible(false);
+#endif // #ifndef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 
   // Connect actionQuit (Ctrl+Q) and qApp->quit()
   connect(ui->actionQuit, SIGNAL(triggered()),

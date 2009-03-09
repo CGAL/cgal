@@ -1,3 +1,5 @@
+#include "config.h"
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
 #include "Scene.h"
 #include "Nef_type.h"
 
@@ -36,3 +38,4 @@ QString Scene::nefPolyhedronToolTip(int index) const
     .arg(polyhedra[index].color.name())
     .arg(poly->number_of_volumes());
 }
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF

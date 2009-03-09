@@ -1,3 +1,4 @@
+#include "config.h"
 #include "Polyhedron_type.h"
 #include "Textured_polyhedron_type.h"
 #include "Scene.h"
@@ -91,6 +92,7 @@ Scene::destroy_entry_ptr(Polyhedron_ptr ptr)
       this->destroy_tex_polyhedron(*p);
       break;
     }
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
   case NEF_ENTRY:
     {
       Nef_polyhedron** p = boost::get<Nef_polyhedron*>(&ptr);
@@ -98,6 +100,7 @@ Scene::destroy_entry_ptr(Polyhedron_ptr ptr)
       this->destroy_nef_polyhedron(*p);
       break;
     }
+#endif
   }
 }
 
@@ -217,6 +220,7 @@ void Scene::addTexPolyhedron(Textured_polyhedron* p,
   addEntry(p, name, color, activated, mode);
 }
 
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
 void Scene::addNefPolyhedron(Nef_polyhedron* p,
 			     QString name,
 			     QColor color,
@@ -225,6 +229,7 @@ void Scene::addNefPolyhedron(Nef_polyhedron* p,
 {
   addEntry(p, name, color, activated, mode);
 }
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF
 
 int
 Scene::erase(int polyhedron_index)
@@ -252,8 +257,10 @@ Scene::copy_polyhedron_ptr(Polyhedron_ptr ptr)
 {
   switch(ptr.which())
   {
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
   case NEF_ENTRY:
     return copy_nef_polyhedron(boost::get<Nef_polyhedron*>(ptr));
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF
   case TEX_POLYHEDRON_ENTRY:
     return copy_tex_polyhedron(boost::get<Textured_polyhedron*>(ptr));
   default: // POLYHEDRON_ENTRY
@@ -352,10 +359,12 @@ Scene::draw(bool with_names)
 
 	switch(entry.polyhedron_ptr.which())
 	{
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
 	case NEF_ENTRY:
 	  CGALglcolor(Qt::black);
 	  gl_render_nef_edges(boost::get<Nef_polyhedron*>(entry.polyhedron_ptr));
 	  break;
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF
 	case POLYHEDRON_ENTRY:
 	  draw(entry);
 	}
@@ -398,6 +407,7 @@ void Scene::gl_render_facets(Polyhedron_ptr ptr)
 {
   switch(ptr.which())
   {
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
   case NEF_ENTRY:
     {
       Nef_polyhedron* p = boost::get<Nef_polyhedron*>(ptr);
@@ -409,6 +419,7 @@ void Scene::gl_render_facets(Polyhedron_ptr ptr)
       glEnable(GL_LIGHTING);
       break;
     }
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF
   case POLYHEDRON_ENTRY:
     {
       Polyhedron* p = boost::get<Polyhedron*>(ptr);
@@ -451,8 +462,10 @@ Scene::data(const QModelIndex &index, int role) const
     {
     case POLYHEDRON_ENTRY:
       return polyhedronToolTip(index.row());
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
     case NEF_ENTRY:
       return nefPolyhedronToolTip(index.row());
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF
     case TEX_POLYHEDRON_ENTRY:
       return texPolyhedronToolTip(index.row());
     }

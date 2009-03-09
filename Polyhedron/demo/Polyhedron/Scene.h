@@ -1,5 +1,6 @@
 #ifndef SCENE_H
 #define SCENE_H
+#include "config.h"
 
 #include <QtOpenGL/qgl.h>
 #include <QAbstractListModel>
@@ -59,11 +60,13 @@ public:
                      bool activated = true,
                      RenderingMode mode = Fill);
 
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
   void addNefPolyhedron(Nef_polyhedron* p,
 			QString name,
 			QColor color = defaultColor,
 			bool activated = true,
 			RenderingMode mode = Fill);
+#endif
 
   int open(QString);  // Returns the index of the new polyhedra (-1 if
                       // error)
@@ -177,10 +180,12 @@ private:
 
   // functions that need to know the type Nef_polyhedron
   // defined in Scene_nef_polyhedron_operations.cpp
+#ifdef CGAL_POLYHEDRON_DEMO_USE_NEF
   QString nefPolyhedronToolTip(int index) const;
   Nef_polyhedron* new_nef_polyhedron();
   Nef_polyhedron* copy_nef_polyhedron(Nef_polyhedron* poly);
   void destroy_nef_polyhedron(Nef_polyhedron*);
+#endif // CGAL_POLYHEDRON_DEMO_USE_NEF
 
   // functions defined in Scene_Textured_polyhedron_operations.cpp
   QString texPolyhedronToolTip(int index) const;
