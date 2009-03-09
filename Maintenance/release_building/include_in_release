@@ -98,6 +98,7 @@ Subdivision_method_3
 Surface_mesher
 Surface_mesh_parameterization
 Surface_mesh_simplification
+Surface_reconstruction_3
 Testsuite
 Trapezoidal_decomposition
 Triangulation_2
