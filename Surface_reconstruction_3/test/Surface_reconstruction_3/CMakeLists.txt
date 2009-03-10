@@ -18,10 +18,9 @@ find_package(CGAL QUIET COMPONENTS Core )
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
-
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  # Optimization for applications dealing with large data
+  # VisualC++ optimization for applications dealing with large data
   if (MSVC)
     # Use /EHa option to catch stack overflows.
     # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
@@ -51,12 +50,28 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "APSS_reconstruction_test.cpp" )
   create_single_source_cgal_program( "outlier_removal_test.cpp" )
 
-  # Executables that require BLAS and LAPACK
+  # Link with BLAS, LAPACK and TAUCS (optional)
+  find_package(TAUCS)
+  if(TAUCS_FOUND)
+
+    include( ${TAUCS_USE_FILE} )
+
+    # Executables that require TAUCS (thus BLAS and LAPACK)
+    create_single_source_cgal_program( "poisson_reconstruction_test.cpp" )
+
+  else(TAUCS_FOUND)
+
+    message(STATUS "NOTICE: Some of the executables in this directory need the TAUCS library and will not be compiled.")
+
+  endif(TAUCS_FOUND)
+
+  # Link with BLAS and LAPACK only (optional)
   find_package(LAPACK)
   if(LAPACK_FOUND)
 
     include( ${LAPACK_USE_FILE} )
 
+    # Executables that require only BLAS and LAPACK
     create_single_source_cgal_program( "normal_estimation_test.cpp" )
     create_single_source_cgal_program( "smoothing_test.cpp" )
 
@@ -65,20 +80,6 @@ if ( CGAL_FOUND )
     message(STATUS "NOTICE: Some of the executables in this directory need the LAPACK library and will not be compiled.")
 
   endif(LAPACK_FOUND)
-
-  # Executables that require BLAS, LAPACK and TAUCS 
-  find_package(TAUCS)
-  if(TAUCS_FOUND)
-
-    include( ${TAUCS_USE_FILE} )
-
-    create_single_source_cgal_program( "poisson_reconstruction_test.cpp" )
-
-  else(TAUCS_FOUND)
-
-    message(STATUS "NOTICE: Some of the executables in this directory need the TAUCS library and will not be compiled.")
-
-  endif(TAUCS_FOUND)
 
 else()
   

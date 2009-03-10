@@ -18,10 +18,9 @@ find_package(CGAL QUIET COMPONENTS Core )
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
-
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  # Optimization for applications dealing with large data
+  # VisualC++ optimization for applications dealing with large data
   if (MSVC)
     # Use /EHa option to catch stack overflows.
     # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
@@ -57,27 +56,13 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "random_simplification_example.cpp" )
   create_single_source_cgal_program( "surface_reconstruction_read_write_xyz_example.cpp" )
 
-  # Executables that require BLAS and LAPACK
-  find_package(LAPACK)
-  if(LAPACK_FOUND)
-
-    include( ${LAPACK_USE_FILE} )
-
-    create_single_source_cgal_program( "jet_smoothing_example.cpp" )
-    create_single_source_cgal_program( "normal_estimation.cpp" )
-
-  else(LAPACK_FOUND)
-
-    message(STATUS "NOTICE: Some of the executables in this directory need the LAPACK library and will not be compiled.")
-
-  endif(LAPACK_FOUND)
-
-  # Executables that require BLAS, LAPACK and TAUCS 
+  # Link with BLAS, LAPACK and TAUCS (optional)
   find_package(TAUCS)
   if(TAUCS_FOUND)
 
     include( ${TAUCS_USE_FILE} )
 
+    # Executables that require TAUCS (thus BLAS and LAPACK)
     create_single_source_cgal_program( "poisson_reconstruction.cpp" )
     create_single_source_cgal_program( "poisson_reconstruction_example.cpp" )
 
@@ -86,6 +71,22 @@ if ( CGAL_FOUND )
     message(STATUS "NOTICE: Some of the executables in this directory need the TAUCS library and will not be compiled.")
 
   endif(TAUCS_FOUND)
+
+  # Link with BLAS and LAPACK only (optional)
+  find_package(LAPACK)
+  if(LAPACK_FOUND)
+
+    include( ${LAPACK_USE_FILE} )
+
+    # Executables that require only BLAS and LAPACK
+    create_single_source_cgal_program( "jet_smoothing_example.cpp" )
+    create_single_source_cgal_program( "normal_estimation.cpp" )
+
+  else(LAPACK_FOUND)
+
+    message(STATUS "NOTICE: Some of the executables in this directory need the LAPACK library and will not be compiled.")
+
+  endif(LAPACK_FOUND)
 
 else()
   
