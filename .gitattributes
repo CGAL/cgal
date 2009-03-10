@@ -3711,8 +3711,6 @@ Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text
 Surface_mesher/test/Surface_mesher/combined_spheres.cin -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/PoissonDoc.cpp -text
-Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc80.sln eol=crlf
-Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc80.vcproj eol=crlf
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/camel.pwn -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/oni.pwn -text
@@ -3745,23 +3743,12 @@ Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/poisson.jpg -text svne
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/random_simplification.eps -text svneol=unset#application/postscript
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/random_simplification.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_3/examples/Surface_reconstruction_3/APSS_reconstruction.cmd eol=lf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/APSS_reconstruction_vc80.vcproj eol=crlf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/average_spacing_example_vc80.vcproj eol=crlf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/jet_smoothing_example_vc80.vcproj eol=crlf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/normal_estimation_vc80.vcproj eol=crlf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/outlier_removal_example_vc80.vcproj eol=crlf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/pca_normal_estimation_example_vc80.vcproj eol=crlf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/poisson_reconstruction_example_vc80.vcproj eol=crlf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/poisson_reconstruction_vc80.vcproj eol=crlf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/random_simplification_example_vc80.vcproj eol=crlf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/surface_reconstruction_read_write_xyz_example_vc80.vcproj eol=crlf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/examples/Surface_reconstruction_3/data/camel.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/examples/Surface_reconstruction_3/data/oni.xyz -text
 Surface_reconstruction_3/examples/Surface_reconstruction_3/data/sphere_20k.xyz -text
 Surface_reconstruction_3/examples/Surface_reconstruction_3/normal_estimation.cmd eol=lf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/poisson_reconstruction.cmd eol=lf
-Surface_reconstruction_3/examples/Surface_reconstruction_3/reconstruction_vc80.sln eol=crlf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/test_all.bat eol=crlf
 Surface_reconstruction_3/examples/Surface_reconstruction_3/test_all.sh eol=lf
 Surface_reconstruction_3/include/CGAL/Neighborhood/knn_point_neighbor_search.h -text
@@ -3770,12 +3757,6 @@ Surface_reconstruction_3/include/CGAL/Orientable_normal_3.h -text
 Surface_reconstruction_3/include/CGAL/average_spacing_3.h -text
 Surface_reconstruction_3/include/CGAL/jet_smoothing_3.h -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/APSS_reconstruction_test.cmd eol=lf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/APSS_reconstruction_test_vc80.vcproj eol=crlf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/analysis_test_vc80.vcproj eol=crlf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/normal_estimation_test_vc80.vcproj eol=crlf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/outlier_removal_test_vc80.vcproj eol=crlf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/poisson_reconstruction_test_vc80.vcproj eol=crlf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/smoothing_test_vc80.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cpp -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
@@ -3785,7 +3766,6 @@ Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere_20k.xyz -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/normal_estimation_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/outlier_removal_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/poisson_reconstruction_test.cmd eol=lf
-Surface_reconstruction_3/test/Surface_reconstruction_3/reconstruction_test_vc80.sln eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/smoothing_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/smoothing_test.cpp -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/test_all.bat eol=crlf
