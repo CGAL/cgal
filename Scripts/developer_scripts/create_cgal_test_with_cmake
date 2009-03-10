@@ -90,7 +90,7 @@ compile_and_run()
   echo "Compiling \$1 ... "
   SUCCES="y"
   
-  if eval '\${MAKE_CMD} VERBOSE=1 -fMakefile \$1' ; then
+  if eval '\${MAKE_CMD} VERBOSE=ON -fMakefile \$1' ; then
     echo "   succesful compilation of \$1" >> \$ERRORFILE
   else
     echo "   ERROR:    compilation of \$1" >> \$ERRORFILE
