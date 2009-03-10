@@ -11,38 +11,50 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )
 endif()
-
+ 
+# Find CGAL
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
-  # Optimization for applications dealing with large data
+  include( ${CGAL_USE_FILE} )
+  include( CGAL_CreateSingleSourceCGALProgram )
+
+  # VisualC++ optimization for applications dealing with large data
   if (MSVC)
     # Use /EHa option to catch stack overflows.
     # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
-    SET (CGAL_CXX_FLAGS_INIT "/DWIN32 /D_WINDOWS /W2 /Zm1000 /EHa /GR")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
 
     # Allow Windows applications to use up to 3GB of RAM
-    SET (CGAL_EXE_LINKER_FLAGS_INIT "${CGAL_EXE_LINKER_FLAGS_INIT} /LARGEADDRESSAWARE")
+    SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
 
     # Turn off stupid VC++ warnings
-    SET (CGAL_CXX_FLAGS_INIT "${CGAL_CXX_FLAGS_INIT} /wd4267 /wd4311 /wd4800 /wd4503 /wd4244 /wd4345")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4267 /wd4311 /wd4800 /wd4503 /wd4244 /wd4345 /wd4996 /wd4396 /wd4018")
+    
+    # Speed up debugger
+    SET (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_HAS_ITERATOR_DEBUGGING=0")
 
-    # Speed up VC++ debugger
-    SET (CGAL_CXX_FLAGS_DEBUG_INIT "${CGAL_CXX_FLAGS_DEBUG_INIT} /D_HAS_ITERATOR_DEBUGGING=0")
+    # Print new compilation options
+    message( STATUS "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'" )
+    message( STATUS "USING DEBUG EXEFLAGS   = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}'" )
+    message( STATUS "USING RELEASE CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}'" )
+    message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
   endif()
 
   # g++ 4.1 creates an infinite loop in Surface_mesh_parameterization
   # if strict-aliasing optimization is on (implied by -O2, -O3 and -Os).
   if (CMAKE_COMPILER_IS_GNUCXX)
-    SET (CGAL_CXX_FLAGS_RELEASE_INIT "${CGAL_CXX_FLAGS_RELEASE_INIT} -fno-strict-aliasing")
-    SET (CGAL_CXX_FLAGS_DEBUG_INIT   "${CGAL_CXX_FLAGS_DEBUG_INIT}   -fno-strict-aliasing")
+    SET (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-strict-aliasing")
+    SET (CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -fno-strict-aliasing")
+
+    # Print compilation options
+    string( TOUPPER "${CMAKE_BUILD_TYPE}" CGAL_BUILD_TYPE_UPPER )
+    message( STATUS "USING CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CGAL_BUILD_TYPE_UPPER}}'" )
+    message( STATUS "USING EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${CGAL_BUILD_TYPE_UPPER}}'" )
   endif()
 
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
+  include_directories (BEFORE ../../include)
   include_directories (BEFORE include)
 
   # Link with BLAS, LAPACK and TAUCS (optional)
@@ -57,6 +69,7 @@ if ( CGAL_FOUND )
 
   endif(TAUCS_FOUND)
 
+  # Executable that can use TAUCS or not, depending on the macro CGAL_USE_TAUCS
   create_single_source_cgal_program( "extensive_parameterization_test.cpp" )
 
 else()
