@@ -1,3 +1,6 @@
+if ( NOT CGAL_SETUP_FLAGS_INCLUDED )
+  set( CGAL_SETUP_FLAGS_INCLUDED 1 )
+
 #
 # Set CGAL_DONT_OVERRIDE_CMAKE_FLAGS to TRUE if you need to prevent the CGAL configuration to
 # override the flags used to build the libraries
@@ -74,4 +77,5 @@ else()
   message( STATUS "USING EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${CGAL_BUILD_TYPE_UPPER}}'" )
 endif()
 
+endif()
 

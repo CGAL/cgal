@@ -14,11 +14,8 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   set(USE_CGAL_FILE_INCLUDED 1)
 
   include(CGAL_Common)
-  
-  if ( CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL )
-    include(CGAL_SetupFlags)
-    include(CGAL_GeneratorSpecificSettings)
-  endif()
+  include(CGAL_SetupFlags)
+  include(CGAL_GeneratorSpecificSettings)
   
   set( CGAL_LIBRARIES )
 
