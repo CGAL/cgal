@@ -58,12 +58,12 @@ that return constant handles, iterators or circulators:
 \ccMethod{bool target_at_infinity();}
     {returns whether the target vertex of \ccVar{} lies at infinity.}
 
-\ccMethod{Comparison_result direction() const;}
-    {returns the direction of the halfedge: \ccc{SMALLER} if \ccVar{}'s
-     source vertex is lexicographically smaller than it target (so the
-     halfedge is directed from left to right), and \ccc{LARGER} if it is
-     lexicographically larger than the target (so the halfedge is directed
-     from right to left).}
+\ccMethod{Arr_halfedge_direction direction() const;}
+    {returns the direction of the halfedge: \ccc{ARR_LEFT_TO_RIGHT} if
+      \ccVar{}'s source vertex is lexicographically smaller than it
+      target (so the halfedge is directed from left to right), and
+      \ccc{ARR_RIGHT_TO_LEFT} if it is lexicographically larger than
+      the target (so the halfedge is directed from right to left).}
 
 \ccMethod{Face_handle face();}
     {returns the face that \ccVar{} is incident to (The face lies to

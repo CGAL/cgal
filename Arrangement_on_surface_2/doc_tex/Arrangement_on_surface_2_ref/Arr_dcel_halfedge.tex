@@ -51,10 +51,11 @@ the same curve.
 \ccAccessFunctions
 %=================
 
-\ccMethod{Comparison_result direction() const;}
-    {returns \ccc{SMALLER} if \ccVar{}'s source vertex is lexicographically
-     smaller than it target, and \ccc{LARGER} if it is lexicographically
-     larger than the target.}
+\ccMethod{Arr_halfedge_direction direction() const;}
+    {returns \ccc{ARR_LEFT_TO_RIGHT} if \ccVar{}'s source vertex is
+      lexicographically smaller than it target, and
+      \ccc{ARR_RIGHT_TO_LEFT} if it is lexicographically larger than
+      the target.}
 
 \ccMethod{bool is_on_hole() const;}
     {determines whether the \ccVar{} lies on an outer CCB of a bounded face,
@@ -97,12 +98,11 @@ pointers or references:
 \ccMethod{void set_opposite (Halfedge* opp);}
     {sets the opposite halfedge.}
 
-\ccMethod{void set_direction (Comparison_result dir);}
+\ccMethod{void set_direction (Arr_halfedge_direction dir);}
     {sets the lexicographical order between \ccVar{}'s source and target
-     vertices to be \ccc{dir}. The direction of the opposite halfedge is
-     also set to the opposite direction.
-     \ccPrecond{\ccc{dir} is either \ccc{SMALLER} or \ccc{LARGER}
-                (and not \ccc{EQUAL}).}}
+     vertices to be \ccc{dir}.
+     The direction of the opposite halfedge is also set to the
+     opposite direction.}
 
 \ccMethod{void set_prev (Halfedge* prev);}
     {sets the previous halfedge of \ccVar{} along the chain,
