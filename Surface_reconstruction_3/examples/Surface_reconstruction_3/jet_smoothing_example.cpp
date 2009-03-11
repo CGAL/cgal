@@ -18,10 +18,11 @@ int main(void)
     points.push_back(Point( 0.1,-0.1, 0.00));
     points.push_back(Point( 0.1, 0.2, 0.01));
     points.push_back(Point( 0.2, 0.0, 0.02));
+    points.push_back(Point( 0.2, 0.1, 0.00));
 
     // smoothing
     std::deque<Point> output;
-    const unsigned int nb_neighbors = 5;
+    const unsigned int nb_neighbors = 7;
     CGAL::jet_smoothing_3(points.begin(),points.end(),std::back_inserter(output),nb_neighbors);
 
     return EXIT_SUCCESS;
