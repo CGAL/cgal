@@ -1126,6 +1126,7 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/mink_sum.bmp -text 
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/refresh.bmp -text svneol=unset#image/bmp
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/symm_diff.bmp -text svneol=unset#image/bmp
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/union.bmp -text svneol=unset#image/bmp
+Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/bso_def.tex -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/Boolean_set_operations_2.png -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#image/gif
