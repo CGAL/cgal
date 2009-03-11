@@ -955,6 +955,12 @@ public:
     return (_target);
   }
 
+  /*! True if the arc is directed right, false otherwise. */
+  inline bool is_directed_right () const
+  {
+    return ((_info & IS_DIRECTED_RIGHT_MASK) != 0);
+  }
+
   /*! Get the left endpoint of the arc. */
   inline const Point_2& left () const
   {
