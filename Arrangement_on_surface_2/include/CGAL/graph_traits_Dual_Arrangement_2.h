@@ -300,6 +300,18 @@ public:
     p_arr (const_cast<Arrangement_on_surface_2 *> (&arr))
   {}
 
+  /*! Get the primal arrangement (const version). */
+  const Arrangement_on_surface_2* arrangement () const
+  {
+    return (p_arr);
+  }
+
+  /*! Get the primal arrangement (non-const version). */
+  Arrangement_on_surface_2* arrangement ()
+  {
+    return (p_arr);
+  }
+
   /*! Get the number of vertices (face of the primal arrangement). */
   Size number_of_vertices () const
   {
