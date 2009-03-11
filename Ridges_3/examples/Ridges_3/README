@@ -51,7 +51,3 @@ EXAMPLES
 ---------------------------------------------------------
 ./Compute_Ridges_Umbilics -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -a4 -t3 -v0 
 
-visu with:
-
- ../../demo/Ridges_3/ridges_viewer data/poly2x^2+y^2-0.062500.off  data/data_poly2x^2+y^2-0.062500.offRIDGES-d4-m4-t3-a4-p0.4ogl.txt 0 0
-
