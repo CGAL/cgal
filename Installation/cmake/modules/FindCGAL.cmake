@@ -11,7 +11,7 @@
 #
 
 # Construct consitent error messages for use below.
-set(CGAL_DIR_DESCRIPTION "directory containing CGALConfig.cmake. This is either the binary directory where CGAL was configured or PREFIX/lib/CGAL-3.4 for an installation.")
+set(CGAL_DIR_DESCRIPTION "directory containing CGALConfig.cmake. This is either the binary directory where CGAL was configured or PREFIX/lib/CGAL for an installation.")
 set(CGAL_DIR_MESSAGE     "CGAL not found.  Set the CGAL_DIR cmake variable or environment variable to the ${CGAL_DIR_DESCRIPTION}")
  
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
@@ -32,7 +32,7 @@ if ( NOT CGAL_DIR )
   
   foreach(dir ${CGAL_DIR_SEARCH2})
   
-    set(CGAL_DIR_SEARCH ${CGAL_DIR_SEARCH} ${dir}/../lib/CGAL-3.4 )
+    set(CGAL_DIR_SEARCH ${CGAL_DIR_SEARCH} ${dir}/../lib/CGAL )
       
   endforeach()
 
@@ -49,8 +49,8 @@ if ( NOT CGAL_DIR )
     ${CGAL_DIR_SEARCH}
 
     # Look in standard UNIX install locations.
-    /usr/local/lib/CGAL-3.4
-    /usr/lib/CGAL-3.4
+    /usr/local/lib/CGAL
+    /usr/lib/CGAL
 
     # Read from the CMakeSetup registry entries.  It is likely that
     # CGAL will have been recently built.
