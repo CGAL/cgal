@@ -1,0 +1,636 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Anglais (États-Unis) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\Poisson.ico"
+IDR_PoissonTYPE         ICON                    "res\\PoissonDoc.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE_AS
+    BUTTON      ID_FILE_SAVE_SURFACE
+    SEPARATOR
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_MODE_POINT_SET
+    BUTTON      ID_MODE_POISSON
+    BUTTON      ID_MODE_APSS
+    SEPARATOR
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About Poisson...",           ID_APP_ABOUT
+    END
+END
+
+IDR_PoissonTYPE MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "Save input point set &as...\tCtrl+S", ID_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        POPUP "Mode"
+        BEGIN
+            MENUITEM "Point Set",                   ID_MODE_POINT_SET
+            MENUITEM "Poisson",                     ID_MODE_POISSON
+            MENUITEM "APSS",                        ID_MODE_APSS
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+        MENUITEM SEPARATOR
+        MENUITEM "Delete\tDel",                 ID_EDIT_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "Options...\tO",               ID_EDIT_OPTIONS
+    END
+    POPUP "&Analysis"
+    BEGIN
+        MENUITEM "Average spacing",             ID_ANALYSIS_AVERAGE_SPACING
+    END
+    POPUP "&Processing"
+    BEGIN
+        MENUITEM "Reset selection",             ID_EDIT_RESET_SELECTION
+        MENUITEM SEPARATOR
+        MENUITEM "Point Cloud Simplification (clustering)", ID_POINT_CLOUD_SIMPLIFICATION_BY_CLUSTERING
+        MENUITEM "Point Cloud Simplification (random)", ID_POINT_CLOUD_SIMPLIFICATION_RANDOM
+        MENUITEM SEPARATOR
+        MENUITEM "Outlier Removal wrt Cameras Cone Angle (Gyroviz)", ID_ALGORITHMS_OUTLIER_REMOVAL_WRT_CAMERAS_CONE_ANGLE
+        MENUITEM "Outlier Removal wrt Distance", ID_ALGORITHMS_OUTLIER_REMOVAL
+        MENUITEM SEPARATOR
+        MENUITEM "Smooth using Jet Fitting",    ID_ALGORITHMS_SMOOTHUSINGJETFITTING
+        MENUITEM SEPARATOR
+        MENUITEM "Estimate Normals Direction by PCA", ID_ALGORITHMS_ESTIMATENORMALSBYPCA
+        MENUITEM "Estimate Normals Direction by Jet Fitting", ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING
+        MENUITEM SEPARATOR
+        MENUITEM "Orient Normals with Minimum Spanning Tree", ID_ALGORITHMS_ORIENTNORMALSMST
+        MENUITEM "Orient Normals w.r.t. Cameras (Gyroviz)", ID_ALGORITHMS_ORIENTNORMALSCAMERAS
+        MENUITEM "Radial Normal Orientation",  ID_RADIAL_NORMAL_ORIENTATION
+        MENUITEM "Flip Normals",                ID_FLIP_NORMALS
+    END
+    POPUP "&Reconstruction"
+    BEGIN
+        MENUITEM "1-step Poisson reconstruction\tP", ID_ONE_STEP_POISSON_RECONSTRUCTION
+        MENUITEM "1-step Poisson reconstruction with Normalized Divergence", ID_RECONSTRUCTION_ONE_STEP_NORMALIZED
+        POPUP "Step-by-step Poisson reconstruction"
+        BEGIN
+            MENUITEM "Create Poisson Delaunay Triangulation\t1", ID_CREATE_POISSON_TRIANGULATION
+            MENUITEM SEPARATOR
+            MENUITEM "Calculate average spacing",   ID_STEP_CALCULATEAVERAGESPACING
+            MENUITEM SEPARATOR
+            MENUITEM "Delaunay refinement\t2",      ID_RECONSTRUCTION_DELAUNAYREFINEMENT
+            MENUITEM "Delaunay refinement in shell", ID_ALGORITHMS_REFINEINSHELL
+            MENUITEM SEPARATOR
+            MENUITEM "Extrapolate normals\t3",      ID_ALGORITHMS_EXTRAPOLATENORMALS
+            MENUITEM "Extrapolate Normals using gaussian kernels", ID_STEP_EXTRAPOLATENORMALSUSINGGAUSSIANKERNELS
+            MENUITEM SEPARATOR
+            MENUITEM "Solve Poisson Equation\t4",   ID_RECONSTRUCTION_POISSON
+            MENUITEM "Solve Poisson Equation With Normalized Divergence", ID_RECONSTRUCTION_POISSON_NORMALIZED
+            MENUITEM "Poisson Statistics",          ID_ALGORITHMS_POISSONSTATISTICS
+            MENUITEM SEPARATOR
+            MENUITEM "Surface Meshing\t5",          ID_RECONSTRUCTION_POISSON_SURFACE_MESHING
+            MENUITEM "Marching Tet Contouring\t6",  ID_ALGORITHMS_MARCHINGTETCONTOURING
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "APSS reconstruction\tA",      ID_RECONSTRUCTION_APSS_RECONSTRUCTION
+        MENUITEM SEPARATOR
+        MENUITEM "Save reconstructed surface as...", ID_FILE_SAVE_SURFACE
+    END
+    POPUP "&Render"
+    BEGIN
+        MENUITEM "Vertices\tShift+V",           ID_RENDER_POINTS
+        MENUITEM "Normals\tShift+N",            ID_RENDER_NORMALS
+        MENUITEM "Original Normals\tShift+O",   ID_RENDER_ORIGINAL_NORMALS
+        MENUITEM "Delaunay edges\tShift+D",     ID_RENDER_DELAUNAYEDGES
+        MENUITEM "Reconstructed Surface\tShift+S", ID_RENDER_SURFACE
+        MENUITEM "Marching tet Contour\tShift+C", ID_RENDER_CONTOUR
+        MENUITEM SEPARATOR
+        POPUP "Arcball"
+        BEGIN
+            MENUITEM "Reset",                       ID_ARCBALL_RESET
+            MENUITEM "View sphere\tShift+A",        ID_RENDER_ARCBALL
+        END
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&New Window",                 ID_WINDOW_NEW
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About Poisson...",           ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS 
+BEGIN
+    VK_NUMPAD3,     ID_ALGORITHMS_EXTRAPOLATENORMALS, VIRTKEY, NOINVERT
+    VK_NUMPAD6,     ID_ALGORITHMS_MARCHINGTETCONTOURING, VIRTKEY, NOINVERT
+    VK_NUMPAD1,     ID_CREATE_POISSON_TRIANGULATION, VIRTKEY, NOINVERT
+    VK_DELETE,      ID_EDIT_DELETE,         VIRTKEY, NOINVERT
+    "O",            ID_EDIT_OPTIONS,        VIRTKEY, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE_AS,        VIRTKEY, CONTROL, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    "P",            ID_ONE_STEP_POISSON_RECONSTRUCTION, VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    "A",            ID_RECONSTRUCTION_APSS_RECONSTRUCTION, VIRTKEY, NOINVERT
+    VK_NUMPAD2,     ID_RECONSTRUCTION_DELAUNAYREFINEMENT, VIRTKEY, NOINVERT
+    VK_NUMPAD4,     ID_RECONSTRUCTION_POISSON, VIRTKEY, NOINVERT
+    VK_NUMPAD5,     ID_RECONSTRUCTION_POISSON_SURFACE_MESHING, VIRTKEY, NOINVERT
+    "A",            ID_RENDER_ARCBALL,      VIRTKEY, SHIFT, NOINVERT
+    "C",            ID_RENDER_CONTOUR,      VIRTKEY, SHIFT, NOINVERT
+    "D",            ID_RENDER_DELAUNAYEDGES, VIRTKEY, SHIFT, NOINVERT
+    "N",            ID_RENDER_NORMALS,      VIRTKEY, SHIFT, NOINVERT
+    "V",            ID_RENDER_POINTS,       VIRTKEY, SHIFT, NOINVERT
+    "S",            ID_RENDER_SURFACE,      VIRTKEY, SHIFT, NOINVERT
+    "O",            ID_RENDER_ORIGINAL_NORMALS, VIRTKEY, SHIFT, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Poisson"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "Poisson Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2007",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", "INRIA"
+            VALUE "FileDescription", "Poisson executable"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "Poisson.exe"
+            VALUE "LegalCopyright", "(c) 2008 INRIA.  All rights reserved."
+            VALUE "OriginalFilename", "Poisson.exe"
+            VALUE "ProductName", "Poisson surface reconstruction demo"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           "CGAL - Poisson Reconstruction"
+    IDR_PoissonTYPE         "\nPoisson\nPoisson\nPoint Sets (*.pwn;*.xyz;*.off;*.pnb;*.g23;*.pwc)\n.pwn;.xyz;.off;.pnb;.g23;.pwc\nPoisson.Document\nPoisson.Document"
+    IDS_MESSAGE0            "----------------------"
+    IDS_MESSAGE1            "---------------------"
+    IDS_MESSAGE2            "------------------------"
+    IDS_MESSAGE3            "---------------------"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "Poisson"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_NEW             "Create a new document\nNew"
+    ID_FILE_OPEN            "Open an existing document\nOpen"
+    ID_FILE_CLOSE           "Close the active document\nClose"
+    ID_FILE_SAVE            "Save the active document\nSave"
+    ID_FILE_SAVE_AS         "Save input point set as...\nSave point set"
+    ID_FILE_PAGE_SETUP      "Change the printing options\nPage Setup"
+    ID_FILE_PRINT_SETUP     "Change the printer and printing options\nPrint Setup"
+    ID_FILE_PRINT           "Print the active document\nPrint"
+    ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "Open this document"
+    ID_FILE_MRU_FILE2       "Open this document"
+    ID_FILE_MRU_FILE3       "Open this document"
+    ID_FILE_MRU_FILE4       "Open this document"
+    ID_FILE_MRU_FILE5       "Open this document"
+    ID_FILE_MRU_FILE6       "Open this document"
+    ID_FILE_MRU_FILE7       "Open this document"
+    ID_FILE_MRU_FILE8       "Open this document"
+    ID_FILE_MRU_FILE9       "Open this document"
+    ID_FILE_MRU_FILE10      "Open this document"
+    ID_FILE_MRU_FILE11      "Open this document"
+    ID_FILE_MRU_FILE12      "Open this document"
+    ID_FILE_MRU_FILE13      "Open this document"
+    ID_FILE_MRU_FILE14      "Open this document"
+    ID_FILE_MRU_FILE15      "Open this document"
+    ID_FILE_MRU_FILE16      "Open this document"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
+    ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
+    ID_WINDOW_CASCADE       "Arrange windows so they overlap\nCascade Windows"
+    ID_WINDOW_TILE_HORZ     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_TILE_VERT     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+    AFX_IDS_MDICHILD        "Activate this window"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_SAVE_SURFACE    "Save reconstructed surface as...\nSave surface"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_MODE_POINT_SET       "Edit point set\nPoint Set mode"
+    ID_MODE_POISSON         "Create Poisson Delaunay triangulation\nPoisson mode"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_MODE_APSS            "APSS reconstruction\nAPSS mode"
+END
+
+#endif    // Anglais (États-Unis) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Français (France) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG_OPTIONS DIALOGEX 0, 0, 514, 346
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Options"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,396,318,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,450,318,50,14
+    GROUPBOX        "APSS",IDC_STATIC,348,13,156,173
+    LTEXT           "Min Angle",IDC_STATIC,366,91,72,8
+    LTEXT           "Max Triangle Size",IDC_STATIC,366,112,72,8
+    LTEXT           "Distance to Surface",IDC_STATIC,201,239,71,8
+    EDITTEXT        IDC_EDIT_SM_ANGLE_APSS,444,87,30,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_SM_RADIUS_APSS,444,108,30,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_SM_DISTANCE_POISSON,278,235,30,12,ES_AUTOHSCROLL
+    GROUPBOX        "Poisson",IDC_STATIC,180,13,157,277
+    LTEXT           "Shell size",IDC_STATIC,200,40,48,8
+    LTEXT           "Sizing",IDC_STATIC,200,63,48,8
+    LTEXT           "Max #Steiner",IDC_STATIC,200,86,44,8
+    EDITTEXT        IDC_EDIT_DR_SHELL_SIZE,277,36,30,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_DR_SIZING,277,59,30,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_DR_MAXV,277,82,30,12,ES_AUTOHSCROLL
+    LTEXT           "Contouring Value",IDC_STATIC,200,150,55,8
+    EDITTEXT        IDC_EDIT_CONTOURING_VALUE,277,146,30,12,ES_AUTOHSCROLL
+    LTEXT           "Number of Neighbours",IDC_STATIC,18,29,103,8
+    EDITTEXT        IDC_EDIT_NB_NEIGHBORS_AVG_SPACING,117,25,30,12,ES_AUTOHSCROLL
+    GROUPBOX        "Outlier Removal",IDC_STATIC,12,53,156,85
+    LTEXT           "Min Cameras Angle",IDC_STATIC,18,71,84,8
+    EDITTEXT        IDC_EDIT_MIN_CAMERAS_CONE_ANGLE,117,67,30,12,ES_AUTOHSCROLL
+    LTEXT           "Outliers to Remove/Distance",IDC_STATIC,18,94,102,8
+    EDITTEXT        IDC_EDIT_AVG_KNN_SQ_DST_PERCENTAGE,117,90,30,12,ES_AUTOHSCROLL
+    GROUPBOX        "Average Spacing",IDC_STATIC,11,13,156,35
+    LTEXT           "Dichotomy Error",IDC_STATIC,366,156,72,8
+    EDITTEXT        IDC_EDIT_SM_ERROR_BOUND_APSS,444,152,30,12,ES_AUTOHSCROLL
+    LTEXT           "Distance to Surface",IDC_STATIC,366,132,72,8
+    EDITTEXT        IDC_EDIT_SM_DISTANCE_APSS,444,128,30,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_LAMBDA,277,125,30,12,ES_AUTOHSCROLL
+    LTEXT           "Lambda",IDC_STATIC,200,129,60,8
+    GROUPBOX        "Simplification",IDC_STATIC,12,144,156,60
+    LTEXT           "Clustering Grid Step",IDC_STATIC,18,160,102,8
+    EDITTEXT        IDC_EDIT_CLUSTERING_STEP,117,156,30,12,ES_AUTOHSCROLL
+    LTEXT           "Points to Remove Randomly",IDC_STATIC,18,185,102,8
+    EDITTEXT        IDC_EDIT_RANDOM_SIMPLIFICATION_PERCENTAGE,117,181,30,12,ES_AUTOHSCROLL
+    LTEXT           "Number of Neighbours",IDC_STATIC,18,118,103,8
+    EDITTEXT        IDC_EDIT_NB_NEIGHBORS_OUTLIER_REMOVAL,117,114,30,12,ES_AUTOHSCROLL
+    GROUPBOX        "Normals",IDC_STATIC,12,253,156,80
+    LTEXT           "PCA #Neighbours",IDC_STATIC,18,269,103,8
+    EDITTEXT        IDC_EDIT_NB_NEIGHBORS_PCA_NORMALS,117,265,30,12,ES_AUTOHSCROLL
+    LTEXT           "Jet Fitting #Neighbours",IDC_STATIC,18,291,103,8
+    EDITTEXT        IDC_EDIT_NB_NEIGHBORS_JET_FITTING_NORMALS,117,287,30,12,ES_AUTOHSCROLL
+    LTEXT           "MST #Neighbours",IDC_STATIC,18,314,103,8
+    EDITTEXT        IDC_EDIT_NB_NEIGHBORS_MST,117,310,30,12,ES_AUTOHSCROLL
+    LTEXT           "Min Angle",IDC_STATIC,201,195,71,8
+    LTEXT           "Max Triangle Size",IDC_STATIC,201,217,77,8
+    EDITTEXT        IDC_EDIT_SM_ANGLE_POISSON,278,191,30,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_SM_RADIUS_POISSON,278,213,30,12,ES_AUTOHSCROLL
+    LTEXT           "Dichotomy Error",IDC_STATIC,201,261,52,8
+    EDITTEXT        IDC_EDIT_SM_ERROR_BOUND_POISSON,278,257,30,12,ES_AUTOHSCROLL
+    GROUPBOX        "Delaunay Refinement",IDC_STATIC,189,23,138,83
+    GROUPBOX        "Implicit Function",IDC_STATIC,189,113,138,55
+    GROUPBOX        "Surface Mesh Generator",IDC_STATIC,189,176,138,105
+    GROUPBOX        "Surface Mesh Generator",IDC_STATIC,357,69,138,105
+    GROUPBOX        "Implicit Function",IDC_STATIC,357,27,138,35
+    LTEXT           "Number of Neighbours",IDC_STATIC,366,46,72,8
+    EDITTEXT        IDC_EDIT_NB_NEIGHBORS_APSS,444,42,30,12,ES_AUTOHSCROLL
+    LTEXT           "%",IDC_STATIC,150,94,8,8
+    LTEXT           "deg",IDC_STATIC,150,71,13,8
+    LTEXT           "%",IDC_STATIC,150,269,8,8
+    LTEXT           "%",IDC_STATIC,150,291,8,8
+    LTEXT           "%",IDC_STATIC,150,185,8,8
+    LTEXT           "%",IDC_STATIC,150,118,8,8
+    LTEXT           "deg",IDC_STATIC,312,195,13,8
+    LTEXT           "deg",IDC_STATIC,477,91,13,8
+    LTEXT           "Number of Neighbours",IDC_STATIC,19,227,103,8
+    EDITTEXT        IDC_EDIT_NB_NEIGHBORS_SMOOTH_JET_FITTING,117,223,30,12,ES_AUTOHSCROLL
+    GROUPBOX        "Smoothing",IDC_STATIC,12,211,156,35
+    LTEXT           "%",IDC_STATIC,150,227,8,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_DIALOG_OPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 507
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 339
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#include ""res\\Poisson.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#include ""afxprint.rc""       // printing/print preview resources\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Français (France) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#include "res\Poisson.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#include "afxprint.rc"       // printing/print preview resources
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
