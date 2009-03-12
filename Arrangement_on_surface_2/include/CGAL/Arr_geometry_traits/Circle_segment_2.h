@@ -956,7 +956,7 @@ public:
   }
 
   /*! True if the arc is directed right, false otherwise. */
-  inline bool is_directed_right () const
+  bool is_directed_right () const
   {
     return ((_info & IS_DIRECTED_RIGHT_MASK) != 0);
   }
@@ -1324,14 +1324,6 @@ public:
 
     return;
   }
-
-
-  /*! return true iff the arc is directed right lexicoraphically. */
-  bool is_directed_right() const
-  {
-    return ((_info & IS_DIRECTED_RIGHT_MASK) != 0);
-  }
-
 
   /*! construct an opposite arc. */
   Self construct_opposite() const
