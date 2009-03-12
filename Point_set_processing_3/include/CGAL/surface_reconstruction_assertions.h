@@ -20,7 +20,7 @@
 // Generated from script create_assertions.sh
 
 /// @file surface_reconstruction_assertions.h
-/// Define checking macros for the Surface_reconstruction_3 package
+/// Define checking macros for the Point_set_processing_3 package
 
 #include <CGAL/assertions.h>
 

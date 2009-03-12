@@ -1,0 +1,174 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Point_with_normal_3.tex
+% +------------------------------------------------------------------------+
+% | 19.02.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Point_set_processing_3
+% |
+\RCSdef{\RCSPointwithnormalRev}{$Id$}
+\RCSdefDate{\RCSPointwithnormalDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Point_with_normal_3<GeomTraits, Normal_3>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The \ccc{Point_with_normal_3} class represents a 3D point with:\begin{itemize}
+\item a position,\item a normal (orientable or always oriented).\end{itemize}
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Point_with_normal_3.h}
+
+%END-AUTO(\ccInclude)
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class Gt,   \\
+class \ccc{Normal_3} = typename \ccc{Gt::Vector_3}$>$   \\
+class \ccc{Point_with_normal_3};
+
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{Gt}: Kernel's geometric traits. \item \ccc{Normal_3}: Model of \ccc{Kernel::Vector_3} or of \ccc{OrientableNormal_3}. \end{description}
+
+%END-AUTO(\ccParameters)
+
+\ccInheritsFrom
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInheritsFrom)
+
+\ccc{Gt::Point_3}
+
+%END-AUTO(\ccInheritsFrom)
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+\begin{itemize}
+\item Model of the \ccc{PointWithNormal_3} concept.\item Model of the \ccc{PointWithOrientableNormal_3} if \ccc{Normal_3} is a model of \ccc{OrientableNormal_3} concept.\end{itemize}
+
+%END-AUTO(\ccIsModel)
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Geom_traits}
+{
+Kernel's geometric traits.
+}
+\ccGlue
+\ccNestedType{FT}
+{
+}
+\ccGlue
+\ccNestedType{RT}
+{
+}
+\ccGlue
+\ccNestedType{Point}
+{
+Kernel's \ccc{Point_3} class.
+}
+\ccGlue
+\ccNestedType{Normal}
+{
+Model of \ccc{Kernel::Vector_3} or of \ccc{OrientableNormal_3}.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{pwn}  %% variable name for \ccMethod calls below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Point_with_normal_3(const Origin& o = ORIGIN);}
+{
+Point is (0,0,0) by default. Normal is (0,0,0) by default. Normal is oriented by default.
+}
+\ccGlue
+\ccConstructor{Point_with_normal_3(FT x, FT y, FT z, const Normal& normal = NULL_VECTOR);}
+{
+}
+\ccGlue
+\ccConstructor{Point_with_normal_3(RT hx, RT hy, RT hz, RT hw, const Normal& normal = NULL_VECTOR);}
+{
+}
+\ccGlue
+\ccConstructor{Point_with_normal_3(const Point& point, const Normal& normal = NULL_VECTOR);}
+{
+}
+\ccGlue
+\ccConstructor{Point_with_normal_3(const Point_with_normal_3<Gt, Normal_3>& pwn);}
+{
+Copy constructor.
+}
+\ccGlue
+\ccConstructor{template<class K, class N> Point_with_normal_3(const Point_with_normal_3<K, N>& pwn);}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Point_with_normal_3& operator =(const Point_with_normal_3<Gt, Normal_3>& pwn);}
+{
+Operator =().
+}
+\ccGlue
+\ccMethod{void set_position(const Point& point);}
+{
+Set position.
+}
+\ccGlue
+\ccMethod{const Normal& normal() const;}
+{
+Get/set normal.
+}
+\ccGlue
+\ccMethod{Normal& normal();}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
