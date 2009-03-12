@@ -52,7 +52,7 @@ typedef CGAL::Poisson_reconstruction_function<Kernel, Dt3> Poisson_reconstructio
 // APSS implicit function
 typedef CGAL::APSS_reconstruction_function<Kernel> APSS_reconstruction_function;
 
-// Surface mesh generator 
+// Surface mesh generator
 typedef CGAL::Surface_mesh_vertex_base_3<Kernel> SVb;
 typedef CGAL::Surface_mesh_cell_base_3<Kernel> SCb;
 typedef CGAL::Triangulation_data_structure_3<SVb, SCb> STds;
@@ -70,7 +70,7 @@ typedef Triangular_surface_3<Kernel> Triangular_surface;
 // - the m_poisson_dt 3D triangulation used by the m_poisson_function implicit function
 //   (in fact, the points in m_poisson_dt are a non editable copy of m_points[]).
 //
-// Only 1 form is visible on screen and editable at a given time. 
+// Only 1 form is visible on screen and editable at a given time.
 // This is controlled by m_edit_mode.
 //
 class CPoissonDoc : public CDocument
@@ -103,7 +103,7 @@ private:
     // - APSS implicit function
     APSS_reconstruction_function* m_apss_function;
 
-    // Surface mesher 
+    // Surface mesher
     STr m_surface_mesher_dt; // 3D-Delaunay triangulation
     C2t3 m_surface_mesher_c2t3; // 2D-complex in m_surface_mesher_dt
     Triangular_surface m_surface; // Surface reconstructed by Surface mesher
@@ -127,7 +127,7 @@ private:
 	double m_sm_error_bound_apss; // error bound to stop dichotomy (APSS)
 	double m_sm_radius_apss; // upper bound of Delaunay balls radii (APSS)
 	double m_sm_angle_apss; // lower bound of facets angles (degrees) (APSS)
-	unsigned int m_nb_neighbors_apss; // K-nearest neighbors (APSS)
+	unsigned int m_nb_neighbors_apss; // #neighbors to compute APPS sphere fitting
 
     // Average Spacing options
 	unsigned int m_nb_neighbors_avg_spacing; // K-nearest neighbors (average spacing)
@@ -146,7 +146,7 @@ private:
 	double m_nb_neighbors_outlier_removal; // K-nearest neighbors (outlier_removal)
 
     // Point set simplification
-    double m_clustering_step; // Grid's step for simplification by clustering 
+    double m_clustering_step; // Grid's step for simplification by clustering
     double m_random_simplification_percentage; // percentage of random points to remove
 
 // Public methods
@@ -159,11 +159,11 @@ public:
     const Point_set* points() const { return &m_points; }
     //
     // - as Poisson implicit function
-    const Poisson_reconstruction_function* poisson_function() const 
+    const Poisson_reconstruction_function* poisson_function() const
     { return m_poisson_function; }
     //
     // - as APSS implicit function
-    const APSS_reconstruction_function* apss_function() const 
+    const APSS_reconstruction_function* apss_function() const
     { return m_apss_function; }
     //
     // The current edit mode indicates which form is valid.
@@ -181,7 +181,7 @@ private:
     // Update the number of vertices and tetrahedra in the status bar
     // and write them to cerr.
     void update_status();
-    // Write user message in status bar and cerr	
+    // Write user message in status bar and cerr
     void status_message(char* fmt,...);
     // Write user message in message box and cerr
     void prompt_message(char* fmt,...);

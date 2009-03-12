@@ -150,10 +150,10 @@ CPoissonDoc::CPoissonDoc()
   m_poisson_solved = false; // Need to solve Poisson equation
 
   // Poisson options
-  m_sm_angle_poisson = 20.0; // theorical guaranty if angle >= 30, but slower
-  m_sm_radius_poisson = 0.1; // as suggested by LR
-  m_sm_error_bound_poisson = 1e-3;
-  m_sm_distance_poisson = 0.002; // upper bound of distance to surface (Poisson)
+  m_sm_angle_poisson = 20.0; // Theorical guaranty if angle >= 30, but slower
+  m_sm_radius_poisson = 0.1; // Upper bound of Delaunay balls radii. 0.1 is fine (LR).
+  m_sm_error_bound_poisson = 1e-3; // Default value 1e-3 is fine.
+  m_sm_distance_poisson = 0.002; // Upper bound of distance to surface (Poisson). 0.004 = fast, 0.002 = smooth.
   m_dr_shell_size = 0.01; // 3 Delaunay refinement options
   m_dr_sizing = 0.5 * m_dr_shell_size;
   m_dr_max_vertices = (unsigned int)5e6;
@@ -161,12 +161,12 @@ CPoissonDoc::CPoissonDoc()
   m_lambda = 0.1; // laplacian smoothing
 
   // APSS options
-  m_sm_angle_apss = 20.0; // theorical guaranty if angle >= 30, but slower
-  m_sm_radius_apss = 0.1; // as suggested by LR
-  m_sm_error_bound_apss = 1e-3;
-  m_sm_distance_apss = 0.003; // Upper bound of distance to surface (APSS).
+  m_sm_angle_apss = 20.0; // Theorical guaranty if angle >= 30, but slower
+  m_sm_radius_apss = 0.1; // Upper bound of Delaunay balls radii. 0.1 is fine (LR).
+  m_sm_error_bound_apss = 1e-3; // Default value 1e-3 is fine.
+  m_sm_distance_apss = 0.003; // Upper bound of distance to surface (APSS). 0.006 = fast, 0.003 = smooth.
                               // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
-  m_nb_neighbors_apss = 24; // APSS K-nearest neighbors = 4 rings, as suggested by GG
+  m_nb_neighbors_apss = 24; // #neighbors to compute APPS sphere fitting. 12 = fast, 24 = robust (GG).
 
   // Average Spacing options
   m_nb_neighbors_avg_spacing = 7; // K-nearest neighbors = 1 ring (average spacing)
@@ -651,7 +651,7 @@ void CPoissonDoc::OnEditOptions()
 bool CPoissonDoc::verify_normal_direction()
 {
   bool success = true;
-  
+
   m_points.select(m_points.begin(), m_points.end(), false);
 
   assert(m_points.begin() != m_points.end());
@@ -790,7 +790,7 @@ void CPoissonDoc::OnUpdateAlgorithmsEstimateNormalByJetFitting(CCmdUI *pCmdUI)
 bool CPoissonDoc::verify_normal_orientation()
 {
   bool success = true;
-  
+
   m_points.select(m_points.begin(), m_points.end(), false);
 
   // Count and select non-oriented normals
@@ -855,7 +855,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
   BeginWaitCursor();
   status_message("Orient Normals with a Minimum Spanning Tree (k=%d)...", m_nb_neighbors_mst);
   CGAL::Timer task_timer; task_timer.start();
-  
+
   // Mark all normals as unoriented
   for (Point_set::iterator p = m_points.begin(); p != m_points.end(); p++)
     p->normal().set_orientation(false);
@@ -1712,7 +1712,7 @@ void CPoissonDoc::OnRadialNormalOrientation()
                                     get(boost::vertex_normal, m_points));
 
   status_message("Radial Normal Orientation...done (%.2lf s)", task_timer.time());
-  
+
   // Check the accuracy of normal orientation.
   // If original normals are available, compare with them.
   verify_normal_orientation();

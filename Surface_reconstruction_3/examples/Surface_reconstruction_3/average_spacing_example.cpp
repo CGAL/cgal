@@ -3,6 +3,7 @@
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
 #include <deque>
+#include <iostream>
 
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -25,6 +26,7 @@ int main(void)
     typedef std::deque<Point>::iterator Iterator;
     FT average_spacing = CGAL::average_spacing_3<Iterator,FT>(points.begin(), points.end(),
                                                               nb_neighbors);
+    std::cout << "Average spacing = " << average_spacing << std::endl;
 
     return EXIT_SUCCESS;
 }

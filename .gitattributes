@@ -3763,7 +3763,7 @@ Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cpp -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/oni.pwn -text
-Surface_reconstruction_3/test/Surface_reconstruction_3/data/polygirl.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_3/test/Surface_reconstruction_3/data/robocat_deci.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere_20k.xyz -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/normal_estimation_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/outlier_removal_test.cmd eol=lf
