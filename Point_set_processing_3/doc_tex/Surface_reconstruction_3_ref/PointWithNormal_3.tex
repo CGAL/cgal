@@ -1,0 +1,134 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PointWithNormal_3.tex
+% +------------------------------------------------------------------------+
+% | 19.02.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Surface_reconstruction_3
+% |
+\RCSdef{\RCSPointWithNormalRev}{$Id$}
+\RCSdefDate{\RCSPointWithNormalDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{PointWithNormal_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+A \ccc{PointWithNormal_3} concept represents a 3D point with:\begin{itemize}
+\item a position\item a normal (oriented).\end{itemize}
+
+%END-AUTO(\ccDefinition)
+
+\ccRefines
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccRefines)
+
+\ccc{Kernel::Point_3}, DefaultConstructible, CopyConstructible, Assignable, and EqualityComparable
+
+%END-AUTO(\ccRefines)
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Geom_traits}
+{
+Kernel's geometric traits.
+}
+\ccGlue
+\ccNestedType{FT}
+{
+}
+\ccGlue
+\ccNestedType{RT}
+{
+}
+\ccGlue
+\ccNestedType{Point}
+{
+Kernel's \ccc{Point_3} class.
+}
+\ccGlue
+\ccNestedType{Normal}
+{
+Model of \ccc{Kernel::Vector_3} or of \ccc{OrientableNormal_3}.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{pwn}  %% variable name for \ccMethod below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{PointWithNormal_3(const Origin& o = ORIGIN);}
+{
+Point is (0,0,0) by default. Normal is (0,0,0) by default.
+}
+\ccGlue
+\ccConstructor{PointWithNormal_3(FT x, FT y, FT z, const Normal& normal = NULL_VECTOR);}
+{
+}
+\ccGlue
+\ccConstructor{PointWithNormal_3(RT hx, RT hy, RT hz, RT hw, const Normal& normal = NULL_VECTOR);}
+{
+}
+\ccGlue
+\ccConstructor{PointWithNormal_3(const Point& point, const Normal& normal = NULL_VECTOR);}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{void set_position(const Point& point);}
+{
+Set position.
+}
+\ccGlue
+\ccMethod{const Normal& normal() const;}
+{
+Get/set normal.
+}
+\ccGlue
+\ccMethod{Normal& normal();}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+\ccc{Point_with_normal_3<GeomTraits, Normal_3>}
+
+%END-AUTO(\ccHasModels)
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

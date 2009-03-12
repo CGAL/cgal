@@ -1,0 +1,171 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Orientable_normal_3.tex
+% +------------------------------------------------------------------------+
+% | 05.03.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Surface_reconstruction_3
+% |
+\RCSdef{\RCSOrientable_normalRev}{$Id$}
+\RCSdefDate{\RCSOrientable_normalDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Orientable_normal_3<GeomTraits>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Orientable_normal_3.h}
+
+%END-AUTO(\ccInclude)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The \ccc{Orientable_normal_3} class represents a normal vector (oriented or not).
+
+%END-AUTO(\ccDefinition)
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class Gt$>$   \\
+class \ccc{Orientable_normal_3};
+
+\ccCommentHeading{Parameters}
+\ccc{Gt}: Kernel's geometric traits.
+
+%END-AUTO(\ccParameters)
+
+\ccInheritsFrom
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInheritsFrom)
+
+\ccc{Gt::Vector_3}
+
+%END-AUTO(\ccInheritsFrom)
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{OrientableNormal_3} concept.
+
+%END-AUTO(\ccIsModel)
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Geom_traits}
+{
+Kernel's geometric traits.
+}
+\ccGlue
+\ccNestedType{FT}
+{
+}
+\ccGlue
+\ccNestedType{RT}
+{
+}
+\ccGlue
+\ccNestedType{Vector}
+{
+Kernel's \ccc{Vector_3} class.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{n}  %% variable name for \ccMethod calls below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Orientable_normal_3(Null_vector = NULL_VECTOR, bool oriented = true);}
+{
+Normal vector is (0,0,0) by default. Normal is oriented by default.
+}
+\ccGlue
+\ccConstructor{Orientable_normal_3(const Vector& vector, bool oriented = true);}
+{
+}
+\ccGlue
+\ccConstructor{Orientable_normal_3(FT x, FT y, FT z, bool oriented = true);}
+{
+}
+\ccGlue
+\ccConstructor{Orientable_normal_3(RT hx, RT hy, RT hz, RT hw, bool oriented = true);}
+{
+}
+\ccGlue
+\ccConstructor{Orientable_normal_3(const Orientable_normal_3<Gt>& that);}
+{
+Copy constructor.
+}
+\ccGlue
+\ccConstructor{template<class K> Orientable_normal_3(const Orientable_normal_3<K>& that);}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Orientable_normal_3& operator =(const Orientable_normal_3<Gt>& that);}
+{
+Operator =().
+}
+\ccGlue
+\ccMethod{const Vector& get_vector() const;}
+{
+Get (a copy of) the actual vector.
+}
+\ccGlue
+\ccMethod{bool is_oriented() const;}
+{
+Get/set normal orientation.
+}
+\ccGlue
+\ccMethod{void set_orientation(bool oriented);}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Vector_3<GeomTraits>} \\
+\ccRefIdfierPage{CGAL::Lightweight_vector_3<GeomTraits>} \\
+\ccRefIdfierPage{CGAL::Point_with_normal_3<GeomTraits, Normal_3>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
