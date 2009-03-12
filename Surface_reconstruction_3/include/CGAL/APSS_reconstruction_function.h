@@ -166,7 +166,8 @@ public:
       for (InputIterator it=first ; it != beyond ; ++it, ++i)
       {
         Neighbor_search search(*(m->tree), *it, 16); // why 16?
-        FT maxdist2 = (--search.end())->second; // squared distance to furthest neighbor
+        typename Neighbor_search::iterator last=search.end(); --last;
+        FT maxdist2 = last->second; // squared distance to furthest neighbor
         m->radii[i] = sqrt(maxdist2)/2.;
 
 //         for (typename Neighbor_search::iterator it = search.begin(); it != search.end(); ++it)
@@ -240,7 +241,8 @@ private:
   */
   void fit(const Neighbor_search& search) const
   {
-    FT r2 = (--search.end())->second; // squared distance to furthest neighbor
+    typename Neighbor_search::iterator last=search.end(); --last;
+    FT r2 = last->second; // squared distance to furthest neighbor
 
     Vector sumP(0,0,0);
     Vector sumN(0,0,0);
