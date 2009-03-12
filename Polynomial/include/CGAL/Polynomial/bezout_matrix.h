@@ -75,9 +75,6 @@ template <class NT>
 typename CGALi::Simple_matrix< NT >
 hybrid_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g, int sub = 0)
 {
-    /* NOTE TO PROGRAMMERS:
-     * Please look at bezout_matrix.mpl before touching this!
-     */
 
     typedef typename CGALi::Simple_matrix<NT> Matrix;
 
@@ -229,7 +226,6 @@ NT hybrid_bezout_subresultant(
         CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g, int sub = 0
 ) { 
     typedef CGALi::Simple_matrix<NT> Matrix;
-//    typedef typename LA::Det Det;
 
     CGAL_precondition((f.degree() >= 0));
     CGAL_precondition((g.degree() >= 0));
