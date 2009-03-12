@@ -87,16 +87,12 @@ if [ $# -ne 0 ] ; then
   done
 else
   echo "Run all tests."
-  run APSS_reconstruction
-  run average_spacing_example
-  run jet_smoothing_example
-  run normal_estimation
-  run outlier_removal_example
-  run pca_normal_estimation_example
-  run poisson_reconstruction
-  run poisson_reconstruction_example
-  run random_simplification_example
-  run surface_reconstruction_read_write_xyz_example
+  run analysis_test
+  run APSS_reconstruction_test
+  run normal_estimation_test
+  run outlier_removal_test
+  run poisson_reconstruction_test
+  run smoothing_test
 fi
 
 #---------------------------------------------------------------------#
@@ -111,5 +107,5 @@ cat $ERRORFILE
 echo
 rm -f $ERRORFILE
 
-) 2>&1 | tee test_all.log
+) 2>&1 | tee quick_test_suite.log
 

@@ -108,5 +108,5 @@ cat $ERRORFILE
 echo
 rm -f $ERRORFILE
 
-) 2>&1 | tee test_all.log
+) 2>&1 | tee quick_test_suite.log
 
