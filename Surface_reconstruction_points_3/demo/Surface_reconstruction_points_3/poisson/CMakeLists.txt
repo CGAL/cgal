@@ -27,8 +27,6 @@ endif()
 # This demo requires OpenGL
 find_package(OpenGL)
 if(OPENGL_FOUND)
-  #get_dependency_version(OPENGL OpenGL)
-  
   message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
   include_directories ( ${OPENGL_INCLUDE_DIR} )
 
@@ -47,7 +45,7 @@ endif()
 
 if(CGAL_FOUND AND MSVC AND OPENGL_FOUND AND TAUCS_FOUND)
 
-  # Optimization for applications dealing with large data
+  # VisualC++ optimization for applications dealing with large data
   if (MSVC)
     # Use /EHa option to catch stack overflows.
     # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
@@ -69,6 +67,7 @@ if(CGAL_FOUND AND MSVC AND OPENGL_FOUND AND TAUCS_FOUND)
     message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
   endif()
 
+  include_directories (BEFORE ../../../../Point_set_processing_3/include/)
   include_directories (BEFORE ../../../include)
   include_directories (BEFORE include)
   
