@@ -7,11 +7,11 @@ project( Point_set_processing_3_test )
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
- 
+
 if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
+  cmake_policy( SET CMP0003 NEW )
 endif()
- 
+
 # Find CGAL
 find_package(CGAL QUIET COMPONENTS Core )
 
@@ -23,7 +23,6 @@ if ( CGAL_FOUND )
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
     # Use /EHa option to catch stack overflows.
-    # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
 
     # Allow Windows applications to use up to 3GB of RAM
@@ -31,7 +30,7 @@ if ( CGAL_FOUND )
 
     # Turn off stupid VC++ warnings
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4267 /wd4311 /wd4800 /wd4503 /wd4244 /wd4345 /wd4996 /wd4396 /wd4018")
-    
+
     # Speed up debugger
     SET (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_HAS_ITERATOR_DEBUGGING=0")
 
@@ -45,33 +44,17 @@ if ( CGAL_FOUND )
   include_directories (BEFORE ../../include)
   include_directories (BEFORE include)
 
-  # Executables that do *not* require BLAS, LAPACK nor TAUCS
+  # Executables that do *not* require LAPACK
   create_single_source_cgal_program( "analysis_test.cpp" )
-  create_single_source_cgal_program( "APSS_reconstruction_test.cpp" )
   create_single_source_cgal_program( "outlier_removal_test.cpp" )
 
-  # Link with BLAS, LAPACK and TAUCS (optional)
-  find_package(TAUCS)
-  if(TAUCS_FOUND)
-
-    include( ${TAUCS_USE_FILE} )
-
-    # Executables that require TAUCS (thus BLAS and LAPACK)
-    create_single_source_cgal_program( "poisson_reconstruction_test.cpp" )
-
-  else(TAUCS_FOUND)
-
-    message(STATUS "NOTICE: Some of the executables in this directory need the TAUCS library and will not be compiled.")
-
-  endif(TAUCS_FOUND)
-
-  # Link with BLAS and LAPACK only (optional)
+  # Link with BLAS and LAPACK (optional)
   find_package(LAPACK)
   if(LAPACK_FOUND)
 
     include( ${LAPACK_USE_FILE} )
 
-    # Executables that require only BLAS and LAPACK
+    # Executables that require BLAS and LAPACK
     create_single_source_cgal_program( "normal_estimation_test.cpp" )
     create_single_source_cgal_program( "smoothing_test.cpp" )
 
@@ -82,8 +65,8 @@ if ( CGAL_FOUND )
   endif(LAPACK_FOUND)
 
 else()
-  
+
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

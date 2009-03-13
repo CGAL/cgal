@@ -6,7 +6,7 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/IO/surface_reconstruction_read_xyz.h>
+#include <CGAL/IO/read_xyz_point_set.h>
 
 #include <deque>
 #include <fstream>
@@ -28,8 +28,8 @@ int main(void)
 {
     // Read a .xyz point set file in points[]
     PointList points;
-    if (!CGAL::surface_reconstruction_read_xyz("data/oni.xyz",
-                                               std::back_inserter(points)))
+    if (!CGAL::read_xyz_point_set("data/oni.xyz",
+                                  std::back_inserter(points)))
     {
       return EXIT_FAILURE;
     }

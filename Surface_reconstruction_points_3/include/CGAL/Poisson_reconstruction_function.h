@@ -34,7 +34,7 @@
 #include <CGAL/taucs_solver.h>
 #include <CGAL/k_nearest_neighbor.h>
 #include <CGAL/centroid.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/surface_reconstruction_points_assertions.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Peak_memory_sizer.h>
 #include <CGAL/poisson_refinement_3.h>
@@ -1264,7 +1264,7 @@ private:
 
     if(voronoi_points.size() < 3)
     {
-      CGAL_surface_reconstruction_assertion(false);
+      CGAL_surface_reconstruction_points_assertion(false);
       return 0.0;
     }
 
@@ -1341,7 +1341,7 @@ private:
   // Get indices different from i and j
   void other_two_indices(int i, int j, int* k, int* l)
   {
-    CGAL_surface_reconstruction_assertion(i != j);
+    CGAL_surface_reconstruction_points_assertion(i != j);
     bool k_done = false;
     bool l_done = false;
     for(int index=0;index<4;index++)
@@ -1360,8 +1360,8 @@ private:
         }
       }
     }
-    CGAL_surface_reconstruction_assertion(k_done);
-    CGAL_surface_reconstruction_assertion(l_done);
+    CGAL_surface_reconstruction_points_assertion(k_done);
+    CGAL_surface_reconstruction_points_assertion(l_done);
   }
 
   // Assemble vi's row of the linear system A*X=B
@@ -1419,7 +1419,7 @@ private:
       success = m_dt.is_edge(vi,vj,cell,i1,i2);
     else
       success = m_dt.is_edge(vj,vi,cell,i1,i2);
-    CGAL_surface_reconstruction_assertion(success);
+    CGAL_surface_reconstruction_points_assertion(success);
     return Edge(cell,i1,i2);
   }
 

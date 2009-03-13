@@ -21,7 +21,7 @@
 
 #include <CGAL/Orientable_normal_3.h>
 #include <CGAL/Memory_sizer.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/point_set_processing_assertions.h>
 
 #include <math.h>
 #ifndef M_PI
@@ -60,7 +60,7 @@ radial_normal_orientation_3(VertexIterator first, ///< first input vertex
     typedef typename Geom_traits::FT FT;
 
     // Precondition: at least one element in the container.
-    CGAL_surface_reconstruction_precondition(first != beyond);
+    CGAL_point_set_processing_precondition(first != beyond);
     
     // Find points barycenter.
     // Note: We should use CGAL::centroid() from PCA component.

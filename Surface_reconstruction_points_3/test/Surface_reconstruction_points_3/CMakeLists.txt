@@ -7,11 +7,11 @@ project( Surface_reconstruction_points_3_test )
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
- 
+
 if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
+  cmake_policy( SET CMP0003 NEW )
 endif()
- 
+
 # Find CGAL
 find_package(CGAL QUIET COMPONENTS Core )
 
@@ -31,7 +31,7 @@ if ( CGAL_FOUND )
 
     # Turn off stupid VC++ warnings
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4267 /wd4311 /wd4800 /wd4503 /wd4244 /wd4345 /wd4996 /wd4396 /wd4018")
-    
+
     # Speed up debugger
     SET (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_HAS_ITERATOR_DEBUGGING=0")
 
@@ -42,13 +42,12 @@ if ( CGAL_FOUND )
     message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
   endif()
 
+  include_directories (BEFORE ../../../Point_set_processing_3/include/)
   include_directories (BEFORE ../../include)
   include_directories (BEFORE include)
 
   # Executables that do *not* require BLAS, LAPACK nor TAUCS
-  create_single_source_cgal_program( "analysis_test.cpp" )
   create_single_source_cgal_program( "APSS_reconstruction_test.cpp" )
-  create_single_source_cgal_program( "outlier_removal_test.cpp" )
 
   # Link with BLAS, LAPACK and TAUCS (optional)
   find_package(TAUCS)
@@ -65,25 +64,9 @@ if ( CGAL_FOUND )
 
   endif(TAUCS_FOUND)
 
-  # Link with BLAS and LAPACK only (optional)
-  find_package(LAPACK)
-  if(LAPACK_FOUND)
-
-    include( ${LAPACK_USE_FILE} )
-
-    # Executables that require only BLAS and LAPACK
-    create_single_source_cgal_program( "normal_estimation_test.cpp" )
-    create_single_source_cgal_program( "smoothing_test.cpp" )
-
-  else(LAPACK_FOUND)
-
-    message(STATUS "NOTICE: Some of the executables in this directory need the LAPACK library and will not be compiled.")
-
-  endif(LAPACK_FOUND)
-
 else()
-  
+
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

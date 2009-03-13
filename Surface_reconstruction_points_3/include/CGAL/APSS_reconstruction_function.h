@@ -28,7 +28,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/make_surface_mesh.h>
 #ifdef MLS_USE_CUSTOM_KDTREE
-#include "Neighborhood/knn_point_neighbor_search.h"
+#include <CGAL/Neighborhood/knn_point_neighbor_search.h>
 #else
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #endif
@@ -36,7 +36,7 @@
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/surface_reconstruction_points_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 

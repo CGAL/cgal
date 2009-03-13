@@ -24,7 +24,7 @@
 #include <CGAL/Mesh_3/Refine_tets.h>
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Iso_cuboid_oracle_3.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/surface_reconstruction_points_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -23,7 +23,7 @@
 
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Lightweight_vector_3.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/surface_reconstruction_points_assertions.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Min_sphere_d.h>

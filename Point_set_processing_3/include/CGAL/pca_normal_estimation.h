@@ -25,7 +25,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Orientable_normal_3.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Memory_sizer.h>
 
 #include <iterator>
@@ -86,7 +86,7 @@ pca_normal_estimation(const typename Kernel::Point_3& query, ///< 3D point whose
     points.push_back(search_iterator->first);
     search_iterator++;
   }
-  CGAL_surface_reconstruction_precondition(points.size() >= 1);
+  CGAL_point_set_processing_precondition(points.size() >= 1);
 
   // performs plane fitting by point-based PCA
   Plane plane;
@@ -142,10 +142,10 @@ pca_normal_estimation(InputIterator first, ///< iterator over the first input po
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_surface_reconstruction_precondition(first != beyond);
+  CGAL_point_set_processing_precondition(first != beyond);
 
   // precondition: at least 2 nearest neighbors
-  CGAL_surface_reconstruction_precondition(k >= 2);
+  CGAL_point_set_processing_precondition(k >= 2);
 
   long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Create KD-tree\n");

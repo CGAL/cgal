@@ -1,0 +1,70 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: read_off_point_set.tex
+% +------------------------------------------------------------------------+
+% | 07.01.2009   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Point_set_processing_3
+% |
+\RCSdef{\RCSreadoffpointsetRev}{$Id$}
+\RCSdefDate{\RCSreadoffpointsetDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{read_off_point_set}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+\ccc{CGAL::read_off_point_set()} reads points (positions + normals, if available) from a .off file (ASCII).
+Faces are ignored.
+
+\ccInclude{CGAL/read_off_point_set.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccFunction{bool read_off_point_set(const char * pFilename, OutputIterator output);}
+{
+Read points (positions + normals, if available) from a .off file (ASCII).
+\ccCommentHeading{Template Parameters}
+\ccc{OutputIterator}: \ccc{value_type} must be a model of the \ccc{PointWithNormal_3} concept.
+\ccCommentHeading{Returns} true on success.
+}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::read_xyz_point_set}  \\
+\ccRefIdfierPage{CGAL::write_xyz_point_set}  \\
+\ccRefIdfierPage{CGAL::write_off_point_set}  \\
+
+\ccExample
+
+\begin{ccExampleCode}
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
+std::deque<Point_with_normal> points;
+char* filename = ...;
+
+// Read the point set file in points[]
+if(!CGAL::read_off_point_set(filename, std::back_inserter(points)))
+{
+  std::cerr << "Error: cannot read file " << filename << std::endl;
+  return EXIT_FAILURE;
+}
+\end{ccExampleCode}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

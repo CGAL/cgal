@@ -87,12 +87,8 @@ if [ $# -ne 0 ] ; then
   done
 else
   echo "Run all tests."
-  run analysis_test
   run APSS_reconstruction_test
-  run normal_estimation_test
-  run outlier_removal_test
   run poisson_reconstruction_test
-  run smoothing_test
 fi
 
 #---------------------------------------------------------------------#

@@ -1,4 +1,4 @@
-Surface Reconstruction
+Point Set Processing
 
 Pierre Alliez, Laurent Saboret, Gael Guennebaud, Mariette Yvinec
 

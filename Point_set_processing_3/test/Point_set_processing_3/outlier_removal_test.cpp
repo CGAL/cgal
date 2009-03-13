@@ -16,7 +16,7 @@
 
 // This package
 #include <CGAL/outlier_removal_3.h>
-#include <CGAL/IO/surface_reconstruction_read_xyz.h>
+#include <CGAL/IO/read_xyz_point_set.h>
 
 #include <deque>
 #include <iostream>
@@ -124,9 +124,9 @@ int main(int argc, char * argv[])
     std::deque<Point> points;
 
     std::cerr << "Open " << argv[i] << " for reading...";
-    if(CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
-                                             std::back_inserter(points),
-                                             false /*skip normals*/))
+    if(CGAL::read_xyz_point_set(input_filename.c_str(),
+                                std::back_inserter(points),
+                                false /*skip normals*/))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }

@@ -23,7 +23,7 @@
 
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Taucs_fix.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/surface_reconstruction_points_assertions.h>
 
 #include <deque>
 #include <cmath>

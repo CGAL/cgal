@@ -21,10 +21,10 @@
 #include <CGAL/mst_normal_orientation.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Orientable_normal_3.h>
-#include <CGAL/IO/surface_reconstruction_read_xyz.h>
-#include <CGAL/IO/surface_reconstruction_read_pwn.h>
-#include <CGAL/IO/surface_reconstruction_write_xyz.h>
-#include <CGAL/IO/surface_reconstruction_write_pwn.h>
+#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/read_pwn_point_set.h>
+#include <CGAL/IO/write_xyz_point_set.h>
+#include <CGAL/IO/write_pwn_point_set.h>
 
 #include "enriched_polyhedron.h"
 
@@ -399,8 +399,8 @@ int main(int argc, char * argv[])
     else if (extension == ".xyz" || extension == ".XYZ")
     {
       // Read the point set file in points[]
-      if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
-                                                std::back_inserter(points)))
+      if(!CGAL::read_xyz_point_set(input_filename.c_str(),
+                                   std::back_inserter(points)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -409,8 +409,8 @@ int main(int argc, char * argv[])
     else if (extension == ".pwn" || extension == ".PWN")
     {
       // Read the point set file in points[]
-      if(!CGAL::surface_reconstruction_read_pwn(input_filename.c_str(),
-                                                std::back_inserter(points)))
+      if(!CGAL::read_pwn_point_set(input_filename.c_str(),
+                                   std::back_inserter(points)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -480,8 +480,8 @@ int main(int argc, char * argv[])
     /*std::string*/ extension = output_filename.substr(output_filename.find_last_of('.'));
     if (extension == ".pwn" || extension == ".PWN")
     {
-      if( ! CGAL::surface_reconstruction_write_pwn(output_filename.c_str(),
-                                                   points.begin(), points.end()) )
+      if( ! CGAL::write_pwn_point_set(output_filename.c_str(),
+                                      points.begin(), points.end()) )
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;
@@ -489,8 +489,8 @@ int main(int argc, char * argv[])
     }
     else if (extension == ".xyz" || extension == ".XYZ")
     {
-      if( ! CGAL::surface_reconstruction_write_xyz(output_filename.c_str(),
-                                                   points.begin(), points.end()) )
+      if( ! CGAL::write_xyz_point_set(output_filename.c_str(),
+                                      points.begin(), points.end()) )
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;

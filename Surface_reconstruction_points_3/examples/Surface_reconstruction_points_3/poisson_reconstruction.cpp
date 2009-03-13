@@ -22,8 +22,8 @@
 // This package
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/IO/surface_reconstruction_read_xyz.h>
-#include <CGAL/IO/surface_reconstruction_read_pwn.h>
+#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/read_pwn_point_set.h>
 
 #include "enriched_polyhedron.h"
 
@@ -142,8 +142,8 @@ int main(int argc, char * argv[])
     else if (extension == ".xyz" || extension == ".XYZ")
     {
       // Read the point set file in points[]
-      if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
-                                                std::back_inserter(points)))
+      if(!CGAL::read_xyz_point_set(input_filename.c_str(),
+                                   std::back_inserter(points)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -152,8 +152,8 @@ int main(int argc, char * argv[])
     else if (extension == ".pwn" || extension == ".PWN")
     {
       // Read the point set file in points[]
-      if(!CGAL::surface_reconstruction_read_pwn(input_filename.c_str(),
-                                                std::back_inserter(points)))
+      if(!CGAL::read_pwn_point_set(input_filename.c_str(),
+                                   std::back_inserter(points)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;

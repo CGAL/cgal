@@ -20,7 +20,7 @@
 #define CGAL_TAUCS_SOLVER_H
 
 #include <CGAL/Taucs_fix.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/surface_reconstruction_points_assertions.h>
 
 // Uncomment the next line to see libraries selected by auto-link
 //#define CGAL_LIB_DIAGNOSTIC
@@ -104,7 +104,7 @@ public:
       colptr.push_back((int)values.size());
       row_index = (int)colptr.size()-1;
     }
-    CGAL_surface_reconstruction_assertion(row_index <= n_rows);
+    CGAL_surface_reconstruction_points_assertion(row_index <= n_rows);
   }
 
   void add_value(int _i, T _val)
@@ -128,7 +128,7 @@ public:
       colptr.push_back((int)values.size());
       row_index = (int)(colptr.size()-1);
     }
-    CGAL_surface_reconstruction_assertion(row_index <= n_rows + 1);
+    CGAL_surface_reconstruction_points_assertion(row_index <= n_rows + 1);
   }
 
   bool factorize(bool _use_supernodal = true)
@@ -142,11 +142,11 @@ public:
     // delete old matrices
     delete_matrices();
 
-    CGAL_surface_reconstruction_assertion(perm == NULL);
-    CGAL_surface_reconstruction_assertion(invperm == NULL);
-    CGAL_surface_reconstruction_assertion(PAP == NULL);
-    CGAL_surface_reconstruction_assertion(SL == NULL);
-    CGAL_surface_reconstruction_assertion(L == NULL);
+    CGAL_surface_reconstruction_points_assertion(perm == NULL);
+    CGAL_surface_reconstruction_points_assertion(invperm == NULL);
+    CGAL_surface_reconstruction_points_assertion(PAP == NULL);
+    CGAL_surface_reconstruction_points_assertion(SL == NULL);
+    CGAL_surface_reconstruction_points_assertion(L == NULL);
 
     finalize_matrix();
 
@@ -195,10 +195,10 @@ public:
     // delete old matrices
     delete_matrices();
 
-    CGAL_surface_reconstruction_assertion(perm == NULL);
-    CGAL_surface_reconstruction_assertion(invperm == NULL);
-    CGAL_surface_reconstruction_assertion(PAP == NULL);
-    CGAL_surface_reconstruction_assertion(m_io_handle == NULL);
+    CGAL_surface_reconstruction_points_assertion(perm == NULL);
+    CGAL_surface_reconstruction_points_assertion(invperm == NULL);
+    CGAL_surface_reconstruction_points_assertion(PAP == NULL);
+    CGAL_surface_reconstruction_points_assertion(m_io_handle == NULL);
 
     finalize_matrix();
 
@@ -225,7 +225,7 @@ public:
 
     // out-of-core Cholesky factorization
     char* matrixfile = tempnam(NULL, "taucs.L");
-    CGAL_surface_reconstruction_assertion(matrixfile != NULL);
+    CGAL_surface_reconstruction_points_assertion(matrixfile != NULL);
     try {
       m_io_handle = taucs_io_create_multifile(matrixfile);
     }
@@ -368,7 +368,7 @@ public:
              const unsigned int dim)
   {
     const unsigned int N = A.n;
-    CGAL_surface_reconstruction_assertion(dim >= 1);
+    CGAL_surface_reconstruction_points_assertion(dim >= 1);
 
     if (N != b.size()/dim || N != x.size()/dim)
     {

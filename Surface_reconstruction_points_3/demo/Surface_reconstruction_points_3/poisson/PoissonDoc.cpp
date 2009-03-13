@@ -7,8 +7,8 @@
 #include "DialogOptions.h"
 #include "PoissonDoc.h"
 #include "enriched_polyhedron.h"
-#include "surface_reconstruction_read_pwc.h"
-#include "surface_reconstruction_read_g23.h"
+#include "read_pwc_point_set.h"
+#include "read_g23_point_set.h"
 #include "outlier_removal_wrt_camera_cone_angle_3.h"
 #include "normal_orientation_wrt_cameras.h"
 
@@ -23,13 +23,13 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 // This package
-#include <CGAL/IO/surface_reconstruction_read_off_point_cloud.h>
-#include <CGAL/IO/surface_reconstruction_write_off_point_cloud.h>
-#include <CGAL/IO/surface_reconstruction_read_pnb.h>
-#include <CGAL/IO/surface_reconstruction_read_pwn.h>
-#include <CGAL/IO/surface_reconstruction_write_pwn.h>
-#include <CGAL/IO/surface_reconstruction_read_xyz.h>
-#include <CGAL/IO/surface_reconstruction_write_xyz.h>
+#include <CGAL/IO/read_off_point_set.h>
+#include <CGAL/IO/write_off_point_set.h>
+#include <CGAL/IO/read_pnb_point_set.h>
+#include <CGAL/IO/read_pwn_point_set.h>
+#include <CGAL/IO/write_pwn_point_set.h>
+#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/write_xyz_point_set.h>
 #include <CGAL/IO/surface_reconstruction_output_surface_facets.h>
 #include <CGAL/outlier_removal_3.h>
 #include <CGAL/jet_normal_estimation.h>
@@ -41,7 +41,7 @@
 #include <CGAL/random_simplification_3.h>
 #include <CGAL/radial_normal_orientation_3.h>
 #include <CGAL/Peak_memory_sizer.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/surface_reconstruction_points_assertions.h>
 
 // STL
 #include <deque>
@@ -275,8 +275,8 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     }
     else // Read OFF file as a point cloud
     {
-      if( ! CGAL::surface_reconstruction_read_off_point_cloud(lpszPathName,
-                                                              std::back_inserter(m_points)) )
+      if( ! CGAL::read_off_point_set(lpszPathName,
+                                     std::back_inserter(m_points)) )
       {
         prompt_message("Unable to read file");
         return FALSE;
@@ -286,8 +286,8 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   // if .pwn extension
   else if(extension.CompareNoCase(".pwn") == 0)
   {
-    if( ! CGAL::surface_reconstruction_read_pwn(lpszPathName,
-                                                std::back_inserter(m_points)) )
+    if( ! CGAL::read_pwn_point_set(lpszPathName,
+                                   std::back_inserter(m_points)) )
     {
       prompt_message("Unable to read file");
       return FALSE;
@@ -296,8 +296,8 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   // if .xyz extension
   else if(extension.CompareNoCase(".xyz") == 0)
   {
-    if( ! CGAL::surface_reconstruction_read_xyz(lpszPathName,
-                                                std::back_inserter(m_points)) )
+    if( ! CGAL::read_xyz_point_set(lpszPathName,
+                                   std::back_inserter(m_points)) )
     {
       prompt_message("Unable to read file");
       return FALSE;
@@ -307,8 +307,8 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   // if .pnb extension
   else if(extension.CompareNoCase(".pnb") == 0)
   {
-    if( ! CGAL::surface_reconstruction_read_pnb(lpszPathName,
-                                                std::back_inserter(m_points)) )
+    if( ! CGAL::read_pnb_point_set(lpszPathName,
+                                   std::back_inserter(m_points)) )
     {
       prompt_message("Unable to read file");
       return FALSE;
@@ -318,9 +318,9 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   else if (extension.CompareNoCase(".pwc") == 0)
   {
     std::deque<Point> cameras; // temporary container of cameras to read
-    if( ! surface_reconstruction_read_pwc(lpszPathName,
-                                          std::back_inserter(m_points),
-                                          std::back_inserter(cameras)) )
+    if( ! read_pwc_point_set(lpszPathName,
+                             std::back_inserter(m_points),
+                             std::back_inserter(cameras)) )
     {
       prompt_message("Unable to read file");
       return FALSE;
@@ -331,10 +331,10 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   {
     std::string movie_file_name;
     std::map<int,Point> cameras; // (indexed) cameras
-    if( ! surface_reconstruction_read_g23<Point>(lpszPathName,
-                                                 std::back_inserter(m_points),
-                                                 &cameras,
-                                                 &movie_file_name) )
+    if( ! read_g23_point_set<Point>(lpszPathName,
+                                    std::back_inserter(m_points),
+                                    &cameras,
+                                    &movie_file_name) )
     {
       prompt_message("Unable to read file");
       return FALSE;
@@ -398,8 +398,8 @@ void CPoissonDoc::OnFileSaveAs()
     // if .pwn extension
     if(extension.CompareNoCase(".pwn") == 0)
     {
-      if( ! CGAL::surface_reconstruction_write_pwn(dlgExport.m_ofn.lpstrFile,
-                                                   m_points.begin(), m_points.end()) )
+      if( ! CGAL::write_pwn_point_set(dlgExport.m_ofn.lpstrFile,
+                                      m_points.begin(), m_points.end()) )
       {
         prompt_message("Unable to save file");
         return;
@@ -408,9 +408,9 @@ void CPoissonDoc::OnFileSaveAs()
     // if .xyz extension
     else if(extension.CompareNoCase(".xyz") == 0)
     {
-      if( ! CGAL::surface_reconstruction_write_xyz(dlgExport.m_ofn.lpstrFile,
-                                                   m_points.begin(), m_points.end(),
-                                                   points_have_normals) )
+      if( ! CGAL::write_xyz_point_set(dlgExport.m_ofn.lpstrFile,
+                                      m_points.begin(), m_points.end(),
+                                      points_have_normals) )
       {
         prompt_message("Unable to save file");
         return;
@@ -419,8 +419,8 @@ void CPoissonDoc::OnFileSaveAs()
     // if .off extension
     else if(extension.CompareNoCase(".off") == 0)
     {
-      if( ! CGAL::surface_reconstruction_write_off_point_cloud(dlgExport.m_ofn.lpstrFile,
-                                                               m_points.begin(), m_points.end()) )
+      if( ! CGAL::write_off_point_set(dlgExport.m_ofn.lpstrFile,
+                                      m_points.begin(), m_points.end()) )
       {
         prompt_message("Unable to save file");
         return;

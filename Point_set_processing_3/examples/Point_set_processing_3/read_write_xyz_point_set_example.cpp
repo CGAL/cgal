@@ -1,19 +1,19 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/average_spacing_3.h>
+#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/write_xyz_point_set.h>
 
 #include <deque>
-#include <iostream>
 
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::FT FT;
-typedef Kernel::Point_3 Point;
+typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
+typedef std::deque<Point_with_normal> PointList;
 
 int main(void)
 {
     // Read a .xyz point set file in points[]
-    std::deque<Point> points;
+    PointList points;
     if (!CGAL::read_xyz_point_set("data/sphere_20k.xyz",
                                   std::back_inserter(points),
                                   false /*skip normals*/))
@@ -21,12 +21,12 @@ int main(void)
       return EXIT_FAILURE;
     }
 
-    // Average Spacing
-    const unsigned int nb_neighbors = 7;
-    typedef std::deque<Point>::iterator Iterator;
-    FT average_spacing = CGAL::average_spacing_3<Iterator,FT>(points.begin(), points.end(),
-                                                              nb_neighbors);
-    std::cout << "Average spacing = " << average_spacing << std::endl;
+    // Save point set
+    if(!CGAL::write_xyz_point_set("sphere_20k_copy.xyz",
+                                  points.begin(), points.end()))
+    {
+      return EXIT_FAILURE;
+    }
 
     return EXIT_SUCCESS;
 }

@@ -4,7 +4,7 @@
 #include <CGAL/mst_normal_orientation.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Orientable_normal_3.h>
-#include <CGAL/IO/surface_reconstruction_read_xyz.h>
+#include <CGAL/IO/read_xyz_point_set.h>
 
 #include <deque>
 
@@ -18,9 +18,9 @@ int main(void)
 {
     // Read a .xyz point set file in points[]
     PointList points;
-    if (!CGAL::surface_reconstruction_read_xyz("data/sphere_20k.xyz",
-                                               std::back_inserter(points),
-                                               false /*skip normals*/))
+    if (!CGAL::read_xyz_point_set("data/sphere_20k.xyz",
+                                  std::back_inserter(points),
+                                  false /*skip normals*/))
     {
       return EXIT_FAILURE;
     }

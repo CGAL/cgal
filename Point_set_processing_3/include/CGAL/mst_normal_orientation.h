@@ -24,7 +24,7 @@
 #include <CGAL/Search_traits_vertex_handle_3.h>
 #include <CGAL/Orientable_normal_3.h>
 #include <CGAL/Memory_sizer.h>
-#include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/point_set_processing_assertions.h>
 
 #include <iterator>
 #include <list>
@@ -132,7 +132,7 @@ struct Propagate_normal_orientation
     : m_angle_max(angle_max)
     {
         // Precondition: 0 < angle_max <= PI/2
-        CGAL_surface_reconstruction_precondition(0 < angle_max && angle_max <= M_PI/2.);
+        CGAL_point_set_processing_precondition(0 < angle_max && angle_max <= M_PI/2.);
     }
 
     template <class Edge>
@@ -203,7 +203,7 @@ find_source_mst_3(
     typedef typename Normal::Vector Vector;
 
     // Precondition: at least one element in the container.
-    CGAL_surface_reconstruction_precondition(first != beyond);
+    CGAL_point_set_processing_precondition(first != beyond);
 
     // If the point set contains points with an oriented normal, find top one.
     // Else, find top point.
@@ -295,10 +295,10 @@ create_riemannian_graph(
     typedef typename boost::property_map<Riemannian_graph, boost::edge_weight_t>::type Riemannian_graph_weight_map;
 
     // Precondition: at least one element in the container.
-    CGAL_surface_reconstruction_precondition(first != beyond);
+    CGAL_point_set_processing_precondition(first != beyond);
 
     // Precondition: at least 2 nearest neighbors
-    CGAL_surface_reconstruction_precondition(k >= 2);
+    CGAL_point_set_processing_precondition(k >= 2);
 
     // Number of input vertices
     const int num_input_vertices = distance(first, beyond);
@@ -335,7 +335,7 @@ create_riemannian_graph(
     for (VertexIterator it = first; it != beyond; it++)
     {
         typename Riemannian_graph::vertex_descriptor v = add_vertex(riemannian_graph);
-        CGAL_surface_reconstruction_assertion(v == get(vertex_index_map,it));
+        CGAL_point_set_processing_assertion(v == get(vertex_index_map,it));
         riemannian_graph[v].vertex = it;
     }
     //
@@ -369,7 +369,7 @@ create_riemannian_graph(
                 boost::tie(e, inserted) = boost::add_edge(boost::vertex(it_index, riemannian_graph),
                                                           boost::vertex(neighbor_index, riemannian_graph),
                                                           riemannian_graph);
-                CGAL_surface_reconstruction_assertion(inserted);
+                CGAL_point_set_processing_assertion(inserted);
 
                 //                               ->        ->
                 // Compute edge weight = 1 - | normal1 * normal2 |
@@ -433,10 +433,10 @@ create_mst_graph(
     typedef CGALi::MST_graph<VertexIterator, VertexNormalMap> MST_graph;
 
     // Precondition: at least one element in the container.
-    CGAL_surface_reconstruction_precondition(first != beyond);
+    CGAL_point_set_processing_precondition(first != beyond);
 
     // Precondition: the source vertex's normal must be oriented.
-    CGAL_surface_reconstruction_precondition(vertex_normal_map[source_vertex].is_oriented());
+    CGAL_point_set_processing_precondition(vertex_normal_map[source_vertex].is_oriented());
 
     // Number of input vertices
     const int num_input_vertices = boost::num_vertices(riemannian_graph);
@@ -466,7 +466,7 @@ create_mst_graph(
     for (VertexIterator it = first; it != beyond; it++)
     {
         typename MST_graph::vertex_descriptor v = add_vertex(mst_graph);
-        CGAL_surface_reconstruction_assertion(v == get(vertex_index_map,it));
+        CGAL_point_set_processing_assertion(v == get(vertex_index_map,it));
         mst_graph[v].vertex = it;
     }
     // add edges
@@ -475,7 +475,7 @@ create_mst_graph(
         if (i != predecessor[i])
         {
             // check that bi-directed graph is useless
-            CGAL_surface_reconstruction_assertion(predecessor[predecessor[i]] != i);
+            CGAL_point_set_processing_assertion(predecessor[predecessor[i]] != i);
 
             boost::add_edge(boost::vertex(predecessor[i], mst_graph),
                             boost::vertex(i,     mst_graph),
@@ -576,13 +576,13 @@ mst_normal_orientation(
     typedef MST_graph<VertexIterator, VertexNormalMap> MST_graph;
 
     // Precondition: at least one element in the container.
-    CGAL_surface_reconstruction_precondition(first != beyond);
+    CGAL_point_set_processing_precondition(first != beyond);
 
     // Precondition: at least 2 nearest neighbors
-    CGAL_surface_reconstruction_precondition(k >= 2);
+    CGAL_point_set_processing_precondition(k >= 2);
 
     // Precondition: 0 < angle_max <= PI/2
-    CGAL_surface_reconstruction_precondition(0 < angle_max && angle_max <= M_PI/2.);
+    CGAL_point_set_processing_precondition(0 < angle_max && angle_max <= M_PI/2.);
 
     // If the point set contains points with an oriented normal, find one.
     // Else, orient the normal of the vertex with maximum Z towards +Z axis.
@@ -683,7 +683,7 @@ mst_normal_orientation(
                 }
 
                 // Is orientation robust?
-                CGAL_surface_reconstruction_assertion(source_normal.is_oriented());
+                CGAL_point_set_processing_assertion(source_normal.is_oriented());
                 //bool oriented = (std::abs(normals_dot) >= std::cos(angle_max)); // oriented iff angle <= m_angle_max
                 bool oriented = true;
                 target_normal = Normal(target_vector, oriented);
@@ -692,7 +692,7 @@ mst_normal_orientation(
                 if (oriented)
                 {
                   //CGAL_TRACE("    orient %d\n", (int)target_vertex);
-                  CGAL_surface_reconstruction_assertion(unoriented_normals > 0);
+                  CGAL_point_set_processing_assertion(unoriented_normals > 0);
                   unoriented_normals--;
                 }
               }
