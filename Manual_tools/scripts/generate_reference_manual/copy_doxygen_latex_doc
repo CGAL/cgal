@@ -462,6 +462,9 @@ sub format_comment_headings
     # with 1-item lists inside the second curly braces pair of \ccXXX expressions).
     $buf =~ s/(\\begin\{description\}.*?\\end\{description\})/flatten_one_item_list($1)/smge;
 
+#     # Set vertical spacing = 0 in (parameters) descriptions (prettier)
+#     $buf =~ s/\\begin\{description\}(.*?)\\end\{description\}/\\ccGlue\n\\begin\{description\}\\itemsep=0pt\\parskip=0pt$1\\end\{description\}/smg;
+
     # Return the formatted string
     return $buf;
 }
