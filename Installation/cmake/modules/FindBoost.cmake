@@ -105,6 +105,7 @@ if (Boost_FIND_VERSION_EXACT)
   endif (Boost_FIND_VERSION_PATCH)
 else (Boost_FIND_VERSION_EXACT)
   set( _boost_TEST_VERSIONS ${Boost_ADDITIONAL_VERSIONS} 
+    "1.45.0" "1.44.0" "1.43.0" "1.42.0" "1.41.0" "1.40.0" "1.39.0" "1.38.0" "1.37.0"  
     "1.36.1" "1.36.0" "1.35.1" "1.35.0" "1.35" "1.34.1" "1.34.0" "1.34" "1.33.1"
     "1.33.0" "1.33" )
 endif (Boost_FIND_VERSION_EXACT)
