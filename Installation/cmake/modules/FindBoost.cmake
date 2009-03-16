@@ -166,6 +166,9 @@
 # Adapted for CGAL (wwww.cgal.org) by fernando.cacciola@geometryfactory.com, 2009
 #
 
+include( CGAL_VersionUtils )
+
+
 #-------------------------------------------------------------------------------
 #  FindBoost functions & macros
 #
@@ -218,10 +221,11 @@ MACRO (_Boost_ADJUST_LIB_VARS basename)
       # Boost_LIBRARY_DIRS
       FOREACH(_boost_my_lib ${Boost_${basename}_LIBRARY})
         GET_FILENAME_COMPONENT(_boost_my_lib_path "${_boost_my_lib}" PATH)
-        LIST(APPEND Boost_LIBRARY_DIRS ${_boost_my_lib_path})
+        if ( NOT "${_boost_my_lib_path}" STREQUAL "" )
+          LIST(APPEND Boost_LIBRARY_DIRS ${_boost_my_lib_path})
+        endif()
       ENDFOREACH()
-      LIST(REMOVE_DUPLICATES Boost_LIBRARY_DIRS)
-
+      
       set(Boost_LIBRARY_DIRS ${Boost_LIBRARY_DIRS} CACHE FILEPATH "Boost library directory")
       SET(Boost_${basename}_FOUND ON CACHE INTERNAL "Whether the Boost ${basename} library found")
     ENDIF(Boost_${basename}_LIBRARY)
@@ -288,13 +292,17 @@ else(Boost_FIND_VERSION_EXACT)
     set(_Boost_FIND_VERSION_SHORT "${Boost_FIND_VERSION_MAJOR}.${Boost_FIND_VERSION_MINOR}")
     # Select acceptable versions.
     foreach(version ${_Boost_KNOWN_VERSIONS})
-      if(NOT "${version}" VERSION_LESS "${Boost_FIND_VERSION}")
+      IS_VERSION_LESS( "${version}" "${Boost_FIND_VERSION}" _Boost_IS_VERSION_LESS )
+      if(NOT _Boost_IS_VERSION_LESS )
         # This version is high enough.
         list(APPEND _boost_TEST_VERSIONS "${version}")
-      elseif("${version}.99" VERSION_EQUAL "${_Boost_FIND_VERSION_SHORT}.99")
-        # This version is a short-form for the requested version with
-        # the patch level dropped.
-        list(APPEND _boost_TEST_VERSIONS "${version}")
+      else()
+        IS_VERSION_EQUAL( "${version}" "${_Boost_FIND_VERSION_SHORT}" _Boost_IS_VERSION_EQUAL )
+        if( _Boost_IS_VERSION_EQUAL )
+          # This version is a short-form for the requested version with
+          # the patch level dropped.
+          list(APPEND _boost_TEST_VERSIONS "${version}")
+        endif()
       endif()
     endforeach(version)
   else(Boost_FIND_VERSION)
@@ -568,7 +576,9 @@ ELSE (_boost_IN_CACHE)
         set (_boost_COMPILER "-il")
       endif()
     elseif (MINGW)
-      if(${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} VERSION_LESS 1.34)
+    
+      IS_VERSION_LESS( "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}" "1.34" _Boost_IS_VERSION_LESS )
+      if( _Boost_IS_VERSION_LESS )
           SET(_boost_COMPILER "-mgw") # no GCC version encoding prior to 1.34
       else()
         _Boost_COMPILER_DUMPVERSION(_boost_COMPILER_VERSION)
@@ -576,7 +586,8 @@ ELSE (_boost_IN_CACHE)
       endif()
     elseif (UNIX)
       if (CMAKE_COMPILER_IS_GNUCXX)
-        if(${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} VERSION_LESS 1.34)
+        IS_VERSION_LESS( "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}" "1.34" _Boost_IS_VERSION_LESS )
+        if( _Boost_IS_VERSION_LESS )
           SET(_boost_COMPILER "-gcc") # no GCC version encoding prior to 1.34
         else()
           _Boost_COMPILER_DUMPVERSION(_boost_COMPILER_VERSION)
