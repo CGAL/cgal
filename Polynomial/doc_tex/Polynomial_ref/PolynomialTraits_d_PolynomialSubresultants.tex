@@ -1,0 +1,55 @@
+\begin{ccRefConcept}{PolynomialTraits_d::PolynomialSubresultants}
+\ccDefinition
+
+Computes the polynomial subresultant of two polynomials $p$ and $q$ of 
+type \ccc{PolynomialTraits_d::Polynomial_d} with respect to outermost variable.
+Let $p=\sum_{i=0}^n p_i t^i$ and $q\sum_{i=0}^m q_i t^i$, where $t$
+is the outermost variable.
+The $i$th subresultant (with $i=0,\ldots,\min\{n,m\}$) is defined by
+\begin{eqnarray*}
+\mathrm{Sres}_i(p,q)&=&\det \left(\begin{array}{cccccc}
+p_n & \ldots &\ldots& p_{2i-m+2}&t^{m-i-1}p \\
+&\ddots&&\vdots&\vdots\\
+&p_n&\ldots&p_{i+1}&p\\
+q_m & \ldots &\ldots & q_{2i-n+2}&t^{n-i-1}q \\
+&\ddots&&\vdots&\vdots\\
+&q_m&\ldots&q_{i+1}&q
+\end{array}\right)
+\end{eqnarray*}
+In the exceptional case that $n=m$, $\mathrm{Sres_n}$ is set to $q$.
+
+The result is written in an output range, starting with the $0$th subresultant
+$\mathrm{Sres}_0(p,q)$
+(aka as the resultant of $p$ and $q$).
+
+A default implementation for the case that 
+\ccc{Polynomial_traits_d::Coefficient_type} 
+is a model of \ccc{CGAL::Integral_domain_without_division}
+is provided by the function \ccc{CGAL::polynomial_subresultants}.
+
+\ccOperations
+\ccMethod{template<typename OutputIterator>
+        OutputIterator operator()(Polynomial_d   p,
+                                  Polynomial_d   q,
+                                  OutputIterator out);}
+         { computes the polynomial subresultants of $p$ and $q$, 
+           with respect to the outermost variable. Each element is of type
+           \ccc{PolynomialTraits_d::Polynomial_d}.}
+
+\ccMethod{template<typename OutputIterator>
+        OutputIterator operator()(Polynomial_d   p,
+                                  Polynomial_d   q,
+                                  OutputIterator out,
+                                  int i);}
+         { computes the polynomial subresultants of $p$ and $q$, 
+           with respect to the variable $x_i$.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{CGAL::polynomial_subresultants}\\
+
+\end{ccRefConcept}

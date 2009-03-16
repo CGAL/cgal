@@ -1,5 +1,21 @@
-\begin{ccRefConcept}{PolynomialTraits_d::Sturm_habicht_sequence_with_cofactors}
+\begin{ccRefConcept}{PolynomialTraits_d::SturmHabichtSequenceWithCofactors}
 \ccDefinition
+
+Computes the Sturm-Habicht polynomials of a polynomial $f$ of degree $n$, 
+as defined in the documentation of \ccc{PolynomialTraits_d::SturmHabichtSequence}.
+Moreover, for $\mathrm{Stha}_i(f)$, polynomials $u_i$ and $v_i$
+with $\deg u_i\leq n-i-2$ and $\deg v_i\leq n-i-1$ are computed 
+such that $\mathrm{Sres}_i(p,q)=u_i f + v_i f'$. $u_i$ and $v_i$ are called
+the \emph{cofactors} of $\mathrm{Stha}_i(f)$.
+ 
+The result is written in three output ranges, each of length $\min\{n,m\}+1$, 
+starting with the $0$th Sturm-Habicht polynomial $\mathrm{Stha_0(f)}$ 
+and the corresponding cofactors.
+
+A default implementation for the case that 
+\ccc{Polynomial_traits_d::Coefficient_type} 
+is a model of \ccc{CGAL::Integral_division}
+is provided by the function \ccc{CGAL::sturm_habicht_sequence_with_cofactors}.
 
 Computes the Sturm-Habicht sequence of a polynomials $f$ of type 
 \ccc{PolynomialTraits_d::Polynomial_d} with respect a certain variable $x_i$.
@@ -37,5 +53,7 @@ with the property that {\tt stha[i] == co\_f[i] f + co\_fx[i] f'}.
 
 \ccRefIdfierPage{Polynomial_d}\\
 \ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::SturmHabichtSequence}\\
+\ccRefIdfierPage{CGAL::sturm_habicht_sequence_with_cofactors}\\
 
 \end{ccRefConcept}
