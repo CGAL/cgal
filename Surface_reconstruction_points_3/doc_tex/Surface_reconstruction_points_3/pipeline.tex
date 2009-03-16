@@ -15,9 +15,9 @@ Surface Reconstruction from Point Sets is a sequential process:
 \item Surface reconstruction.
 \end{itemize}
 
-This component provides algorithms for all steps listed above except alignment.
-\ccc{Point_set_processing_3} package provides outlier removal, simplification, smoothing,
-normal estimation and orientation.
+\cgal\ provides algorithms for all steps listed above except alignment.\\
+Chapter \ccc{Point_set_processing_3} \ref{chap:point_set_processing_3} describes outlier removal, simplification, smoothing,
+normal estimation and orientation.\\
 This package provides surface reconstruction using \cgal\ Surface Mesh Generator.
 
 A demo running on Windows is currently provided,
@@ -43,8 +43,9 @@ It features all steps listed above except alignment.
 
 \subsection{Input and Preprocessing}
 
-This component expect as input and output parameters range iterators over 3D points with oriented normals.
-See \ccc{Point_set_processing_3} documentation to read point sets from file and preprocess them.
+This component expect as input parameters range iterators over 3D points with oriented normals.
+
+See Chapter \ccc{Point_set_processing_3} \ref{chap:point_set_processing_3} to read point sets from files and preprocess them.
 
 
 \subsection{Surface Reconstruction}
@@ -79,10 +80,9 @@ The two surface reconstruction methods fall into the category of the implicit su
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[h]
-        \caption{APSS reconstruction.
-        Left: points with oriented normals.
-        Right: reconstructed surface mesh.}
-        % later in the middle: computed function
+        \caption{APSS surface reconstruction from 10K
+                 points sampled with a Minolta laser scanner.}
+        % later: add computed function
     \end{figure}
 \end{center}
 

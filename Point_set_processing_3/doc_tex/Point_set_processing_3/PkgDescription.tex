@@ -1,22 +1,14 @@
 \begin{ccPkgDescription}{Point Set Processing\label{Pkg:PointSetProcessing}}
 \ccPkgHowToCiteCgal{cgal:sal-pptsm2-08}
 \ccPkgSummary{
-This \cgal\ package implements some of the state-of-the-art surface
-reconstruction methods. Priority is given to methods
-which take as input unorganized point sets and
-which compute an implicit function.
+This \cgal\ component implements methods to analyze and process unorganized point sets.
 
-The package proposes an interface to the \cgal\ Surface Mesh Generator.
+The input is an unorganized point set, possibly with attributes such as unoriented or oriented normals.
 
-The input is an unorganized point set, possibly with attributes
-such as unoriented normals, oriented normals.
+This point set can be analyzed to measure common statistics quantities and bounding volumes such as average spacing, centroid, bounding box and bounding sphere.
+We can furthermore process the point set with functions devoted to simplification, outlier removal, smoothing, normal estimation and normal orientation.
 
-Since reconstruction methods often require to preprocess a point set
-(e.g. estimate and orient the normals), we provide components devoted
-to this task.
-
-The output can be either an implicit function (ready for evaluation
-by any contouring algorithm), or a surface mesh.
+The output is a point set with normals.
 }
 
 \ccPkgDependsOn{\ccThirdPartyLapack}
