@@ -153,7 +153,7 @@ CPoissonDoc::CPoissonDoc()
   m_sm_angle_poisson = 20.0; // Theorical guaranty if angle >= 30, but slower
   m_sm_radius_poisson = 0.1; // Upper bound of Delaunay balls radii. 0.1 is fine (LR).
   m_sm_error_bound_poisson = 1e-3; // Default value 1e-3 is fine.
-  m_sm_distance_poisson = 0.002; // Upper bound of distance to surface (Poisson). 0.004 = fast, 0.002 = smooth.
+  m_sm_distance_poisson = 0.002; // Upper bound of distance to surface (Poisson). 0.01 = fast, 0.002 = smooth.
   m_dr_shell_size = 0.01; // 3 Delaunay refinement options
   m_dr_sizing = 0.5 * m_dr_shell_size;
   m_dr_max_vertices = (unsigned int)5e6;
@@ -164,7 +164,7 @@ CPoissonDoc::CPoissonDoc()
   m_sm_angle_apss = 20.0; // Theorical guaranty if angle >= 30, but slower
   m_sm_radius_apss = 0.1; // Upper bound of Delaunay balls radii. 0.1 is fine (LR).
   m_sm_error_bound_apss = 1e-3; // Default value 1e-3 is fine.
-  m_sm_distance_apss = 0.003; // Upper bound of distance to surface (APSS). 0.006 = fast, 0.003 = smooth.
+  m_sm_distance_apss = 0.003; // Upper bound of distance to surface (APSS). 0.015 = fast, 0.003 = smooth.
                               // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
   m_nb_neighbors_apss = 24; // #neighbors to compute APPS sphere fitting. 12 = fast, 24 = robust (GG).
 

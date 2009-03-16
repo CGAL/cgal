@@ -90,7 +90,7 @@ int main(int argc, char * argv[])
     FT sm_angle_poisson = 20.0; // Theorical guaranty if angle >= 30, but slower
     FT sm_radius_poisson = 0.1; // Upper bound of Delaunay balls radii. 0.1 is fine (LR).
     FT sm_error_bound_poisson = 1e-3; // Default value 1e-3 is fine.
-    FT sm_distance_poisson = 0.002; // Upper bound of distance to surface (Poisson). 0.004 = fast, 0.002 = smooth.
+    FT sm_distance_poisson = 0.002; // Upper bound of distance to surface (Poisson). 0.01 = fast, 0.002 = smooth.
 
     // decode parameters
     std::string input_filename  = argv[1];

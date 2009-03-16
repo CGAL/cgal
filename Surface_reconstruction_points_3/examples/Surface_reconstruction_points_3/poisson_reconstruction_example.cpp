@@ -37,7 +37,7 @@ int main(void)
     // Poisson options
     FT sm_angle_poisson = 20.0; // Theorical guaranty if angle >= 30, but slower
     FT sm_radius_poisson = 0.1; // Upper bound of Delaunay balls radii. 0.1 is fine (LR).
-    FT sm_distance_poisson = 0.004; // Upper bound of distance to surface (Poisson). 0.004 = fast, 0.002 = smooth.
+    FT sm_distance_poisson = 0.01; // Upper bound of distance to surface (Poisson). 0.01 = fast, 0.002 = smooth.
 
     // Create implicit function.
     // Create 3D-Delaunay triangulation for the implicit function and insert vertices.

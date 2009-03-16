@@ -92,7 +92,7 @@ int main(int argc, char * argv[])
     FT sm_angle_apss = 20.0; // Theorical guaranty if angle >= 30, but slower
     FT sm_radius_apss = 0.1; // Upper bound of Delaunay balls radii. 0.1 is fine (LR).
     FT sm_error_bound_apss = 1e-3; // Default value 1e-3 is fine.
-    FT sm_distance_apss = 0.003; // Upper bound of distance to surface (APSS). 0.006 = fast, 0.003 = smooth.
+    FT sm_distance_apss = 0.003; // Upper bound of distance to surface (APSS). 0.015 = fast, 0.003 = smooth.
                                  // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
     unsigned int nb_neighbors_apss = 24; // #neighbors to compute APPS sphere fitting. 12 = fast, 24 = robust (GG).
 
