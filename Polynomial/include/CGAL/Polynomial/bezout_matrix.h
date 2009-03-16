@@ -28,7 +28,7 @@
 #include <algorithm>
 
 #include <CGAL/basic.h>
-#include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial/determinant.h>
 
 #include <vector>
@@ -71,19 +71,25 @@ namespace CGALi {
  *  Subresultants and Their Applications. AAECC 15, 233-266 (2004)
  *
  */
-template <class NT>
-typename CGALi::Simple_matrix< NT >
-hybrid_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g, int sub = 0)
+template <typename Polynomial_traits_d>
+typename CGALi::Simple_matrix< typename Polynomial_traits_d::Coefficient_type >
+hybrid_bezout_matrix(typename Polynomial_traits_d::Polynomial_d f, 
+                     typename Polynomial_traits_d::Polynomial_d g, 
+                     int sub = 0)
 {
+
+    typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
+    typedef typename Polynomial_traits_d::Coefficient_type NT;
+    typename Polynomial_traits_d::Degree degree;
+    typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
+    typename Polynomial_traits_d::Get_coefficient coeff;
 
     typedef typename CGALi::Simple_matrix<NT> Matrix;
 
-    int n = f.degree();
-    int m = g.degree();
-    CGAL_precondition((n >= 0) && !f.is_zero());
-    CGAL_precondition((m >= 0) && !g.is_zero());
-    // we don't know whether this matrix construction works 
-    // for sub = min(m,n) > 0
+    int n = degree(f);
+    int m = degree(g);
+    CGAL_precondition((n >= 0) && !is_zero(f));
+    CGAL_precondition((m >= 0) && !is_zero(g));
     CGAL_precondition(n > sub || sub == 0);
     CGAL_precondition(m > sub || sub == 0);
 
@@ -103,13 +109,13 @@ hybrid_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g, int sub = 0)
             for (k = 0; k <= i-1; k++) {
                 l = n+i-j-k;
                 if ((l <= n) and (l >= n-(m-i))) {
-                    s += f[l] * g[k];
+                    s += coeff(f,l) * coeff(g,k);
                 }
             }
             for (k = 0; k <= n-(m-i+1); k++) {
                 l = n+i-j-k;
                 if ((l <= m) and (l >= i)) {
-                    s -= f[k] * g[l];
+                    s -= coeff(f,k) * coeff(g,l);
                 }
             }
             B[i-sub-1][j-1] = s;
@@ -117,7 +123,7 @@ hybrid_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g, int sub = 0)
     }
     for (i = std::max(m+1, 1+sub); i <= n; i++) {
         for (j = i-m; j <= std::min(i, n-sub); j++) {
-            B[i-sub-1][j-1] = g[i-j];
+            B[i-sub-1][j-1] = coeff(g,i-j);
         }
     }
 
@@ -135,20 +141,32 @@ hybrid_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g, int sub = 0)
  *  Its determinant is the resultant of \e f and \e g, maybe up to sign.
  *
  */
-template <class NT>
-typename CGALi::Simple_matrix<NT>
-symmetric_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g,int sub=0)
+template <typename Polynomial_traits_d>
+typename CGALi::Simple_matrix<typename Polynomial_traits_d::Coefficient_type>
+symmetric_bezout_matrix
+    (typename Polynomial_traits_d::Polynomial_d f, 
+     typename Polynomial_traits_d::Polynomial_d g, 
+     int sub = 0)
 {
+
+    
 
   // Note: The algorithm is taken from:
   // Chionh, Zhang, Goldman: Fast Computation of the Bezout and Dixon Resultant
   // Matrices. J.Symbolic Computation 33, 13-29 (2002)
+    
+    typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
+    typedef typename Polynomial_traits_d::Coefficient_type NT;
+    typename Polynomial_traits_d::Degree degree;
+    typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
+    typename Polynomial_traits_d::Get_coefficient coeff;
+
     typedef typename CGALi::Simple_matrix<NT> Matrix;
 
-    int n = f.degree();
-    int m = g.degree();
-    CGAL_precondition((n >= 0) && !f.is_zero());
-    CGAL_precondition((m >= 0) && !g.is_zero());
+    int n = degree(f);
+    int m = degree(g);
+    CGAL_precondition((n >= 0) && !is_zero(f));
+    CGAL_precondition((m >= 0) && !is_zero(g));
 
     int i,j,stop;
 
@@ -168,8 +186,8 @@ symmetric_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g,int sub=0)
     // 1st step: Initialisation
     for(i=0;i<d;i++) {
       for(j=i;j<d;j++) {
-	sum1 = ((j+sub)+1>m) ? NT(0) : -f[(i+sub)]*g[(j+sub)+1];
-	sum2 =  ((i+sub)>m)  ? NT(0) : g[(i+sub)]*f[(j+sub)+1];
+        sum1 = ((j+sub)+1>m) ? NT(0) : -coeff(f,i+sub)*coeff(g,(j+sub)+1);
+	sum2 =  ((i+sub)>m)  ? NT(0) :  coeff(g,i+sub)*coeff(f,(j+sub)+1);
 	B[i][j]=sum1+sum2;
       }
     }
@@ -180,8 +198,10 @@ symmetric_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g,int sub=0)
     for(i=0;i<d-1;i++) {
       stop = (sub<d-1-i) ? sub : d-i-1;
       for(j=1;j<=stop;j++) {
-	sum1 = ((i+sub+j)+1>m) ? NT(0) : -f[(sub-j)]*g[(i+sub+j)+1];
-	sum2 =  ((sub-j)>m)  ? NT(0) : g[(sub-j)]*f[(i+sub+j)+1];
+          sum1 = ((i+sub+j)+1>m) ? NT(0) 
+                                 : -coeff(f,sub-j)*coeff(g,(i+sub+j)+1);
+          sum2 =  ((sub-j)>m)    ? NT(0) 
+                                 : coeff(g,sub-j)*coeff(f,(i+sub+j)+1);
 	
 	B[0][i]+=sum1+sum2;
       }
@@ -221,18 +241,26 @@ symmetric_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g,int sub=0)
  *  which computes the resultant from a subresultant remainder sequence.
  *  See also \c CGAL::sylvester_subresultant().
  */
-template <class NT>
-NT hybrid_bezout_subresultant(
-        CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g, int sub = 0
+template <class Polynomial_traits_d>
+typename Polynomial_traits_d::Coefficient_type hybrid_bezout_subresultant(
+        typename Polynomial_traits_d::Polynomial_d f, 
+        typename Polynomial_traits_d::Polynomial_d g, 
+        int sub = 0
 ) { 
+
+    typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
+    typedef typename Polynomial_traits_d::Coefficient_type NT;
+    typename Polynomial_traits_d::Degree degree;
+    typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
+    
     typedef CGALi::Simple_matrix<NT> Matrix;
 
-    CGAL_precondition((f.degree() >= 0));
-    CGAL_precondition((g.degree() >= 0));
+    CGAL_precondition((degree(f) >= 0));
+    CGAL_precondition((degree(g) >= 0));
     
-    if (f.is_zero() || g.is_zero()) return NT(0);
+    if (is_zero(f) || is_zero(g)) return NT(0);
     
-    Matrix S = hybrid_bezout_matrix(f, g, sub);
+    Matrix S = hybrid_bezout_matrix<Polynomial_traits_d>(f, g, sub);
     CGAL_assertion(S.row_dimension() == S.column_dimension());
     if (S.row_dimension() == 0) {
         return NT(1);
@@ -246,11 +274,11 @@ NT hybrid_bezout_subresultant(
 // degrees of f and g
 template<class InputIterator,class OutputIterator,class NT>
 void symmetric_minors_to_subresultants(InputIterator in,
-					   OutputIterator out,
-					   NT divisor,
-					   int n,
-				           int m,
-					   bool swapped) {
+                                       OutputIterator out,
+                                       NT divisor,
+                                       int n,
+                                       int m,
+                                       bool swapped) {
   
     typename CGAL::Algebraic_structure_traits<NT>::Integral_division idiv;
     
@@ -277,15 +305,23 @@ void symmetric_minors_to_subresultants(InputIterator in,
  * determinant
  * See also \c CGAL::minors_berkowitz
  */
-template<class NT,class OutputIterator>
+template<class Polynomial_traits_d,class OutputIterator>
 OutputIterator symmetric_bezout_subresultants(
-	   CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g,OutputIterator sres)
+	   typename Polynomial_traits_d::Polynomial_d f, 
+           typename Polynomial_traits_d::Polynomial_d g,
+           OutputIterator sres)
 {
-   
+
+    typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
+    typedef typename Polynomial_traits_d::Coefficient_type NT;
+    typename Polynomial_traits_d::Degree degree;
+    typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
+    typename Polynomial_traits_d::Leading_coefficient lcoeff;
+
     typedef typename CGALi::Simple_matrix<NT> Matrix;
     
-    int n = f.degree();
-    int m = g.degree();
+    int n = degree(f);
+    int m = degree(g);
     
     bool swapped=false;
 
@@ -296,11 +332,11 @@ OutputIterator symmetric_bezout_subresultants(
       
     }
 
-    Matrix B = symmetric_bezout_matrix(f,g);
+    Matrix B = symmetric_bezout_matrix<Polynomial_traits_d>(f,g);
     
     // Compute a_0^{n-m}
 
-    NT divisor=ipower(f.lcoeff(),n-m);
+    NT divisor=ipower(lcoeff(f),n-m);
     
     std::vector<NT> minors;
     minors_berkowitz(B,std::back_inserter(minors),n,m);
@@ -314,15 +350,20 @@ OutputIterator symmetric_bezout_subresultants(
  * Return a modified version of the hybrid bezout matrix such that the minors
  * from the last k rows and columns give the subresultants
  */
-template<class NT>
-typename CGALi::Simple_matrix<NT> modified_hybrid_bezout_matrix(
-					   CGAL::Polynomial<NT> f,
-					   CGAL::Polynomial<NT> g)
-{
+template<class Polynomial_traits_d>
+typename CGALi::Simple_matrix<typename Polynomial_traits_d::Coefficient_type>
+modified_hybrid_bezout_matrix
+    (typename Polynomial_traits_d::Polynomial_d f,
+     typename Polynomial_traits_d::Polynomial_d g) {
+
+    typedef typename Polynomial_traits_d::Coefficient_type NT;
+
     typedef typename CGALi::Simple_matrix<NT> Matrix;
     
-    int n = f.degree();
-    int m = g.degree();
+    typename Polynomial_traits_d::Degree degree;
+
+    int n = degree(f);
+    int m = degree(g);
     
     int i,j;
 
@@ -334,7 +375,7 @@ typename CGALi::Simple_matrix<NT> modified_hybrid_bezout_matrix(
       swapped=true;
     }
     
-    Matrix B = CGAL::CGALi::hybrid_bezout_matrix(f,g);
+    Matrix B = CGAL::CGALi::hybrid_bezout_matrix<Polynomial_traits_d>(f,g);
 
 
     // swap columns
@@ -366,16 +407,23 @@ typename CGALi::Simple_matrix<NT> modified_hybrid_bezout_matrix(
  * determinant
  * See also \c CGAL::minors_berkowitz
  */
-template<class NT,class OutputIterator>
+template<class Polynomial_traits_d,class OutputIterator>
 OutputIterator hybrid_bezout_subresultants(
-	   CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g,OutputIterator sres) 
+	   typename Polynomial_traits_d::Polynomial_d f, 
+           typename Polynomial_traits_d::Polynomial_d g,
+           OutputIterator sres) 
   {
+
+    typedef typename Polynomial_traits_d::Coefficient_type NT;
+    typename Polynomial_traits_d::Degree degree;
+
     typedef typename CGALi::Simple_matrix<NT> Matrix;
     
-    int n = f.degree();
-    int m = g.degree();
+    int n = degree(f);
+    int m = degree(g);
 
-    Matrix B = CGAL::CGALi::modified_hybrid_bezout_matrix(f,g);
+    Matrix B = CGAL::CGALi::modified_hybrid_bezout_matrix<Polynomial_traits_d>
+        (f,g);
 
     if(n<m) {
       std::swap(n,m);
@@ -470,20 +518,25 @@ OutputIterator hybrid_bezout_subresultants(
  * These coefficients are computed as special minors of the hybrid Bezout matrix.
  * See also \c CGAL::minors_berkowitz
  */
-template<class NT>
-typename CGALi::Simple_matrix< NT> polynomial_subresultant_matrix(
-                                               CGAL::Polynomial<NT> f,
-					       CGAL::Polynomial<NT> g,
-					       int d) {
-    CGAL_precondition(f.degree()>=0);
-    CGAL_precondition(g.degree()>=0);
+template<typename Polynomial_traits_d>
+typename CGALi::Simple_matrix<typename Polynomial_traits_d::Coefficient_type> 
+polynomial_subresultant_matrix(typename Polynomial_traits_d::Polynomial_d f,
+			       typename Polynomial_traits_d::Polynomial_d g,
+                               int d=0) {
+
+    typedef typename Polynomial_traits_d::Coefficient_type NT;
+    typename Polynomial_traits_d::Degree degree;
+    typename Polynomial_traits_d::Leading_coefficient lcoeff;
+
+    int n = degree(f);
+    int m = degree(g);
+
+    CGAL_precondition(n>=0);
+    CGAL_precondition(m>=0);
     CGAL_precondition(d>=0);
 
-    typedef typename CGALi::Simple_matrix<NT> Matrix;
+    typedef CGALi::Simple_matrix<NT> Matrix;
    
-    int n = f.degree();
-    int m = g.degree();
-    
     bool swapped=false;
 
     if(n < m) {
@@ -497,7 +550,7 @@ typename CGALi::Simple_matrix< NT> polynomial_subresultant_matrix(
     };
 
 
-    Matrix B = CGAL::CGALi::symmetric_bezout_matrix(f,g);
+    Matrix B = CGAL::CGALi::symmetric_bezout_matrix<Polynomial_traits_d>(f,g);
 
     // For easier notation, we swap all entries:
     CGALi::swap_entries<NT>(B);
@@ -538,7 +591,7 @@ typename CGALi::Simple_matrix< NT> polynomial_subresultant_matrix(
 
     typename CGAL::Algebraic_structure_traits<NT>::Integral_division idiv;
 
-    NT divisor = ipower(f.lcoeff(),n-m); 
+    NT divisor = ipower(lcoeff(f),n-m); 
 
     // Divide through the divisor and set the correct sign
     for(int i=0;i<m;i++) {

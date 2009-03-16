@@ -24,64 +24,17 @@
 template<typename ArithmeticKernel> void test_routine() {
 
   // All results are computed with the sres_stha.mpl worksheet
-    typedef typename ArithmeticKernel::Integer NT;
+  typedef typename ArithmeticKernel::Integer NT;
   typedef CGAL::Polynomial<NT> PNT_1;
+  typedef CGAL::Polynomial_traits_d<PNT_1> PNT_1_traits;
   typedef CGAL::Polynomial<PNT_1> PNT_2;
+  typedef CGAL::Polynomial_traits_d<PNT_2> PNT_2_traits;
   
   { // test for the principal Sturm-Habicht sequence
     // f=x^3*(x+1)*(x-1)*(x-2)^2
     PNT_1 f(NT(0),NT(0),NT(0),NT(-4),NT(4),NT(3),NT(-4),NT(1));
     std::vector<NT> stha;
-    CGAL::CGALi::principal_sturm_habicht_sequence(f,std::back_inserter(stha));
-        
-    assert(stha.size()==8);
-    assert(stha[0] == NT(0));
-    assert(stha[1] == NT(0));
-    assert(stha[2] == NT(0));
-    assert(stha[3] == NT(864));
-    assert(stha[4] == NT(324));
-    assert(stha[5] == NT(54));
-    assert(stha[6] == NT(7));
-    assert(stha[7] == NT(1));
-    assert(CGAL::CGALi::stha_count_number_of_real_roots<NT>
-             (stha.begin(),stha.end()) == 4);
-    
-    stha.clear();
-    
-    CGAL::CGALi::prs_principal_sturm_habicht_sequence(f,std::back_inserter(stha));
-        
-    assert(stha.size()==8);
-    assert(stha[0] == NT(0));
-    assert(stha[1] == NT(0));
-    assert(stha[2] == NT(0));
-    assert(stha[3] == NT(864));
-    assert(stha[4] == NT(324));
-    assert(stha[5] == NT(54));
-    assert(stha[6] == NT(7));
-    assert(stha[7] == NT(1));
-    assert(CGAL::CGALi::stha_count_number_of_real_roots<NT>
-             (stha.begin(),stha.end()) == 4);
-
-    stha.clear();
-    
-    CGAL::CGALi::bezout_principal_sturm_habicht_sequence(f,std::back_inserter(stha));
-        
-    assert(stha.size()==8);
-    assert(stha[0] == NT(0));
-    assert(stha[1] == NT(0));
-    assert(stha[2] == NT(0));
-    assert(stha[3] == NT(864));
-    assert(stha[4] == NT(324));
-    assert(stha[5] == NT(54));
-    assert(stha[6] == NT(7));
-    assert(stha[7] == NT(1));
-    assert(CGAL::CGALi::stha_count_number_of_real_roots<NT>
-             (stha.begin(),stha.end()) == 4);
-
-    stha.clear();
-
-    typename 
-        CGAL::Polynomial_traits_d<PNT_1>::Principal_sturm_habicht_sequence()
+    CGAL::principal_sturm_habicht_sequence<PNT_1_traits>
         (f,std::back_inserter(stha));
         
     assert(stha.size()==8);
@@ -93,7 +46,59 @@ template<typename ArithmeticKernel> void test_routine() {
     assert(stha[5] == NT(54));
     assert(stha[6] == NT(7));
     assert(stha[7] == NT(1));
-    assert(CGAL::CGALi::stha_count_number_of_real_roots<NT>
+    assert(CGAL::stha_count_number_of_real_roots
+             (stha.begin(),stha.end()) == 4);
+    
+    stha.clear();
+    
+    CGAL::CGALi::prs_principal_sturm_habicht_sequence<PNT_1_traits>
+        (f,std::back_inserter(stha));
+        
+    assert(stha.size()==8);
+    assert(stha[0] == NT(0));
+    assert(stha[1] == NT(0));
+    assert(stha[2] == NT(0));
+    assert(stha[3] == NT(864));
+    assert(stha[4] == NT(324));
+    assert(stha[5] == NT(54));
+    assert(stha[6] == NT(7));
+    assert(stha[7] == NT(1));
+    assert(CGAL::stha_count_number_of_real_roots
+             (stha.begin(),stha.end()) == 4);
+
+    stha.clear();
+    
+    CGAL::CGALi::bezout_principal_sturm_habicht_sequence<PNT_1_traits>
+        (f,std::back_inserter(stha));
+        
+    assert(stha.size()==8);
+    assert(stha[0] == NT(0));
+    assert(stha[1] == NT(0));
+    assert(stha[2] == NT(0));
+    assert(stha[3] == NT(864));
+    assert(stha[4] == NT(324));
+    assert(stha[5] == NT(54));
+    assert(stha[6] == NT(7));
+    assert(stha[7] == NT(1));
+    assert(CGAL::stha_count_number_of_real_roots
+             (stha.begin(),stha.end()) == 4);
+
+    stha.clear();
+
+    typename 
+        PNT_1_traits::Principal_sturm_habicht_sequence()
+        (f,std::back_inserter(stha));
+        
+    assert(stha.size()==8);
+    assert(stha[0] == NT(0));
+    assert(stha[1] == NT(0));
+    assert(stha[2] == NT(0));
+    assert(stha[3] == NT(864));
+    assert(stha[4] == NT(324));
+    assert(stha[5] == NT(54));
+    assert(stha[6] == NT(7));
+    assert(stha[7] == NT(1));
+    assert(CGAL::stha_count_number_of_real_roots
              (stha.begin(),stha.end()) == 4);
   }
   
@@ -102,7 +107,8 @@ template<typename ArithmeticKernel> void test_routine() {
     PNT_1 f(NT(0),NT(0),NT(1),NT(0),NT(0),NT(0),NT(0),NT(0),NT(1));
 
     std::vector<NT> stha;
-    CGAL::CGALi::principal_sturm_habicht_sequence (f,std::back_inserter(stha));
+    CGAL::principal_sturm_habicht_sequence<PNT_1_traits> 
+        (f,std::back_inserter(stha));
         
     assert(stha.size()==9);
     assert(stha[0] == NT(0));
@@ -114,11 +120,13 @@ template<typename ArithmeticKernel> void test_routine() {
     assert(stha[6] == NT(0));
     assert(stha[7] == NT(8));
     assert(stha[8] == NT(1));
-    assert(CGAL::CGALi::stha_count_number_of_real_roots<NT>(stha.begin(),stha.end()) == 1);
+    assert(CGAL::stha_count_number_of_real_roots
+               (stha.begin(),stha.end()) == 1);
 
     stha.clear();
     
-    CGAL::CGALi::prs_principal_sturm_habicht_sequence (f,std::back_inserter(stha));
+    CGAL::CGALi::prs_principal_sturm_habicht_sequence<PNT_1_traits> 
+        (f,std::back_inserter(stha));
         
     assert(stha.size()==9);
     assert(stha[0] == NT(0));
@@ -130,11 +138,13 @@ template<typename ArithmeticKernel> void test_routine() {
     assert(stha[6] == NT(0));
     assert(stha[7] == NT(8));
     assert(stha[8] == NT(1));
-    assert(CGAL::CGALi::stha_count_number_of_real_roots<NT>(stha.begin(),stha.end()) == 1);
+    assert(CGAL::stha_count_number_of_real_roots
+               (stha.begin(),stha.end()) == 1);
 
     stha.clear();
 
-    CGAL::CGALi::bezout_principal_sturm_habicht_sequence (f,std::back_inserter(stha));
+    CGAL::CGALi::bezout_principal_sturm_habicht_sequence<PNT_1_traits> 
+        (f,std::back_inserter(stha));
         
     assert(stha.size()==9);
     assert(stha[0] == NT(0));
@@ -146,7 +156,8 @@ template<typename ArithmeticKernel> void test_routine() {
     assert(stha[6] == NT(0));
     assert(stha[7] == NT(8));
     assert(stha[8] == NT(1));
-    assert(CGAL::CGALi::stha_count_number_of_real_roots<NT>(stha.begin(),stha.end()) == 1);
+    assert(CGAL::stha_count_number_of_real_roots
+               (stha.begin(),stha.end()) == 1);
     
   }
  
@@ -159,7 +170,8 @@ template<typename ArithmeticKernel> void test_routine() {
 
     std::vector<PNT_1> stha;
 
-    CGAL::CGALi::sturm_habicht_sequence(f,std::back_inserter(stha));
+    CGAL::sturm_habicht_sequence<PNT_1_traits>
+        (f,std::back_inserter(stha));
 
     assert(stha.size()==6);
 
@@ -172,7 +184,7 @@ template<typename ArithmeticKernel> void test_routine() {
 
     stha.clear();
 
-    typename CGAL::Polynomial_traits_d<PNT_1>::Sturm_habicht_sequence()
+    typename PNT_1_traits::Sturm_habicht_sequence()
         (f,std::back_inserter(stha));
 
     assert(stha.size()==6);
@@ -193,12 +205,14 @@ template<typename ArithmeticKernel> void test_routine() {
 
     std::vector<PNT_1> stha_check,stha,co_f,co_fx;
 
-    CGAL::CGALi::sturm_habicht_sequence(f,std::back_inserter(stha_check));
-    CGAL::CGALi::sturm_habicht_sequence_with_cofactors(f,
-                                               std::back_inserter(stha),
-                                               std::back_inserter(co_f),
-                                               std::back_inserter(co_fx)
-                                               );
+    CGAL::sturm_habicht_sequence<PNT_1_traits>
+        (f,std::back_inserter(stha_check));
+    CGAL::sturm_habicht_sequence_with_cofactors<PNT_1_traits>
+        (f,
+         std::back_inserter(stha),
+         std::back_inserter(co_f),
+         std::back_inserter(co_fx)
+        );
     
     int n = static_cast<int>(stha.size());
     assert(n == static_cast<int>(stha_check.size()));
@@ -210,11 +224,11 @@ template<typename ArithmeticKernel> void test_routine() {
     stha.clear();
     co_f.clear();
     co_fx.clear();
-    typename CGAL::Polynomial_traits_d<PNT_1>
-        ::Sturm_habicht_sequence_with_cofactors()(f,
-                                                  std::back_inserter(stha),
-                                                  std::back_inserter(co_f),
-                                                  std::back_inserter(co_fx)
+    typename PNT_1_traits::Sturm_habicht_sequence_with_cofactors()
+        (f,
+         std::back_inserter(stha),
+         std::back_inserter(co_f),
+         std::back_inserter(co_fx)
         );
     
     n = static_cast<int>(stha.size());
@@ -234,12 +248,14 @@ template<typename ArithmeticKernel> void test_routine() {
     std::vector<PNT_1> stha_check,stha,co_f,co_fx;
 
 
-    CGAL::CGALi::sturm_habicht_sequence(f,std::back_inserter(stha_check));
-    CGAL::CGALi::sturm_habicht_sequence_with_cofactors(f,
-                                               std::back_inserter(stha),
-                                               std::back_inserter(co_f),
-                                               std::back_inserter(co_fx)
-                                               );
+    CGAL::sturm_habicht_sequence<PNT_1_traits>
+        (f,std::back_inserter(stha_check));
+    CGAL::sturm_habicht_sequence_with_cofactors<PNT_1_traits>
+        (f,
+         std::back_inserter(stha),
+         std::back_inserter(co_f),
+         std::back_inserter(co_fx)
+        );
     
     int n = static_cast<int>(stha.size());
     assert(n == static_cast<int>(stha_check.size()));
@@ -259,8 +275,8 @@ template<typename ArithmeticKernel> void test_routine() {
 
     {
       std::vector<PNT_1> stha,costha;
-      CGAL::CGALi::first_two_sturm_habicht_coefficients(f,std::back_inserter(stha),
-                                                std::back_inserter(costha));
+      CGAL::CGALi::first_two_sturm_habicht_coefficients<PNT_2_traits>
+          (f,std::back_inserter(stha),std::back_inserter(costha));
       
       assert(stha.size()==5);
       assert(costha.size()==4);
@@ -286,8 +302,8 @@ template<typename ArithmeticKernel> void test_routine() {
     }
     {
       std::vector<PNT_1> stha,costha;
-      CGAL::CGALi::prs_first_two_sturm_habicht_coefficients(f,std::back_inserter(stha),
-                                                   std::back_inserter(costha));
+      CGAL::CGALi::prs_first_two_sturm_habicht_coefficients<PNT_2_traits>
+          (f,std::back_inserter(stha),std::back_inserter(costha));
       
       assert(stha.size()==5);
       assert(costha.size()==4);
@@ -313,7 +329,7 @@ template<typename ArithmeticKernel> void test_routine() {
     }
     {
       std::vector<PNT_1> stha,costha;
-      CGAL::CGALi::bezout_first_two_sturm_habicht_coefficients
+      CGAL::CGALi::bezout_first_two_sturm_habicht_coefficients<PNT_2_traits>
         (f,std::back_inserter(stha),
          std::back_inserter(costha));
       

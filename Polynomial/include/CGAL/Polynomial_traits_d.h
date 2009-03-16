@@ -37,8 +37,8 @@
 #include <CGAL/Polynomial/modular_filter.h>
 #include <CGAL/extended_euclidean_algorithm.h>
 #include <CGAL/Polynomial/resultant.h>
-//#include <CGAL/Polynomial/subresultants.h>          // not in release 3.4 
-//#include <CGAL/Polynomial/sturm_habicht_sequence.h> // not in release 3.4 
+#include <CGAL/Polynomial/subresultants.h>          // not in release 3.4 
+#include <CGAL/Polynomial/sturm_habicht_sequence.h> // not in release 3.4 
 
 
 #define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                          \
@@ -1379,98 +1379,118 @@ struct Construct_innermost_coefficient_const_iterator_range
     }  
   };
 
-  /* 
   // Polynomial subresultants (aka subresultant polynomials)
   struct Polynomial_subresultants {
   
-  template<typename OutputIterator>
-  OutputIterator operator()(
-  const Polynomial_d& p, 
-  const Polynomial_d& q,
-  OutputIterator out,
-  int i = (d-1) ) const {
-  if(i == (d-1) )
-  return CGAL::CGALi::polynomial_subresultants(p,q,out);
-  else
-  return CGAL::CGALi::polynomial_subresultants(Move()(p,i),
-  Move()(q,i),
-  out);
-  }  
+    template<typename OutputIterator>
+    OutputIterator operator()(
+      const Polynomial_d& p, 
+      const Polynomial_d& q,
+      OutputIterator out,
+      int i = (d-1) ) const {
+        if(i == (d-1) )
+          return CGAL::polynomial_subresultants<PT>(p,q,out);
+        else
+          return CGAL::polynomial_subresultants<PT>(Move()(p,i),
+                                                    Move()(q,i),
+                                                    out);
+    }  
   };
 
   // principal subresultants (aka scalar subresultants)
   struct Principal_subresultants {
         
-  template<typename OutputIterator>
-  OutputIterator operator()(
-  const Polynomial_d& p, 
-  const Polynomial_d& q,
-  OutputIterator out,
-  int i = (d-1) ) const {
-  if(i == (d-1) )
-  return CGAL::CGALi::principal_subresultants(p,q,out);
-  else
-  return CGAL::CGALi::principal_subresultants(Move()(p,i),
-  Move()(q,i),
-  out);
-  }  
+    template<typename OutputIterator>
+    OutputIterator operator()(
+      const Polynomial_d& p, 
+      const Polynomial_d& q,
+      OutputIterator out,
+      int i = (d-1) ) const {
+        if(i == (d-1) )
+          return CGAL::principal_subresultants<PT>(p,q,out);
+        else
+          return CGAL::principal_subresultants<PT>(Move()(p,i),
+                                                   Move()(q,i),
+                                                   out);
+    }  
+  };
+
+  // Subresultants with cofactors
+  struct Polynomial_subresultants_with_cofactors {
+    
+    template<typename OutputIterator1,
+             typename OutputIterator2,
+             typename OutputIterator3>
+    OutputIterator1 operator()(
+      const Polynomial_d& p, 
+      const Polynomial_d& q, 
+      OutputIterator1 out_sres,
+      OutputIterator2 out_co_p,
+      OutputIterator3 out_co_q,
+      int i = (d-1) ) const {
+        if(i == (d-1) )
+            return CGAL::polynomial_subresultants_with_cofactors<PT>
+                (p,q,out_sres,out_co_p,out_co_q);
+        else
+            return CGAL::polynomial_subresultants_with_cofactors<PT>
+                (Move()(p,i),Move()(q,i),out_sres,out_co_p,out_co_q);
+    }  
   };
 
   // Sturm-Habicht sequence (aka signed subresultant sequence)
   struct Sturm_habicht_sequence {
         
-  template<typename OutputIterator>
-  OutputIterator operator()(
-  const Polynomial_d& p, 
-  OutputIterator out,
-  int i = (d-1) ) const {
-  if(i == (d-1) )
-  return CGAL::CGALi::sturm_habicht_sequence(p,out);
-  else
-  return CGAL::CGALi::sturm_habicht_sequence(Move()(p,i),
-  out);
-  }  
+    template<typename OutputIterator>
+    OutputIterator operator()(
+      const Polynomial_d& p, 
+      OutputIterator out,
+      int i = (d-1) ) const {
+        if(i == (d-1) )
+          return CGAL::sturm_habicht_sequence<PT>(p,out);
+        else
+          return CGAL::sturm_habicht_sequence<PT>(Move()(p,i),
+                                                         out);
+    }  
   };
 
   //       Sturm-Habicht sequence with cofactors
   struct Sturm_habicht_sequence_with_cofactors {
-  template<typename OutputIterator1,
-  typename OutputIterator2,
-  typename OutputIterator3>
-  OutputIterator1 operator()(
-  const Polynomial_d& p, 
-  OutputIterator1 out_stha,
-  OutputIterator2 out_f,
-  OutputIterator3 out_fx,
-  int i = (d-1) ) const {
-  if(i == (d-1) )
-  return CGAL::CGALi::sturm_habicht_sequence_with_cofactors
-  (p,out_stha,out_f,out_fx);
-  else
-  return CGAL::CGALi::sturm_habicht_sequence_with_cofactors
-  (Move()(p,i),out_stha,out_f,out_fx);
-  }  
+  
+    template<typename OutputIterator1,
+             typename OutputIterator2,
+             typename OutputIterator3>
+    OutputIterator1 operator()(
+      const Polynomial_d& p, 
+      OutputIterator1 out_stha,
+      OutputIterator2 out_f,
+      OutputIterator3 out_fx,
+      int i = (d-1) ) const {
+        if(i == (d-1) )
+          return CGAL::sturm_habicht_sequence_with_cofactors<PT>
+              (p,out_stha,out_f,out_fx);
+        else
+          return CGAL::sturm_habicht_sequence_with_cofactors<PT>
+              (Move()(p,i),out_stha,out_f,out_fx);
+    }  
   };
     
   //       Principal Sturm-Habicht sequence (formal leading coefficients
   //       of Sturm-Habicht sequence)
   struct Principal_sturm_habicht_sequence {
         
-  template<typename OutputIterator>
-  OutputIterator operator()(
-  const Polynomial_d& p, 
-  OutputIterator out,
-  int i = (d-1) ) const {
-  if(i == (d-1) )
-  return CGAL::CGALi::principal_sturm_habicht_sequence(p,out);
-  else
-  return CGAL::CGALi::principal_sturm_habicht_sequence
-  (Move()(p,i),out);
-  }  
+    template<typename OutputIterator>
+    OutputIterator operator()(
+      const Polynomial_d& p, 
+      OutputIterator out,
+      int i = (d-1) ) const {
+        if(i == (d-1) )
+          return CGAL::principal_sturm_habicht_sequence<PT>(p,out);
+        else
+          return CGAL::principal_sturm_habicht_sequence<PT>
+              (Move()(p,i),out);
+    }  
   };
 
-  */
-  
   struct Monomial_representation {      
     typedef std::pair< Exponent_vector, Innermost_coefficient_type >
     Exponents_coeff_pair;       

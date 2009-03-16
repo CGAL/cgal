@@ -80,50 +80,6 @@ inline int square_free_factorize_for_regular_polynomial(const Polynomial<Coeff>&
 template <class NT> inline bool may_have_multiple_factor( const Polynomial<NT>&);
 template <class NT> inline bool may_have_common_factor(const Polynomial<NT>&,const Polynomial<NT>&);
 
-template< class Coeff >
-struct Simple_matrix;
-
-template<class NT>
-CGALi::Simple_matrix<NT> polynomial_subresultant_matrix(
-                                               CGAL::Polynomial<NT> f,
-					       CGAL::Polynomial<NT> g,
-					       int d=0);
-
-
-template <typename OutputIterator, typename NT> inline
-    OutputIterator polynomial_subresultants(CGAL::Polynomial<NT> A, CGAL::Polynomial<NT> B,
-                                            OutputIterator out);
-template <typename OutputIterator, typename NT> inline
-    OutputIterator principal_subresultants(CGAL::Polynomial<NT> A, CGAL::Polynomial<NT> B,
-                                            OutputIterator out);
-
-template <typename OutputIterator, typename NT > inline
-      OutputIterator principal_sturm_habicht_sequence(CGAL::Polynomial<NT> A, 
-                                                      OutputIterator out);
-
-template<typename NT,
-    typename OutputIterator1, 
-    typename OutputIterator2,
-    typename OutputIterator3>
-    OutputIterator1 prs_subresultants_with_cofactors(CGAL::Polynomial<NT> P,
-                                                     CGAL::Polynomial<NT> Q,
-                                                     OutputIterator1 sres_out,
-                                                     OutputIterator2 coP_out,
-                                                     OutputIterator3 coQ_out);
-
-
-template<typename OutputIterator, typename NT> OutputIterator
-    sturm_habicht_sequence(CGAL::Polynomial<NT> P, OutputIterator out);
-
-  template<typename OutputIterator1,
-    typename OutputIterator2,
-    typename OutputIterator3,
-    typename NT> OutputIterator1
-    sturm_habicht_sequence_with_cofactors(CGAL::Polynomial<NT> P, 
-                                          OutputIterator1 out_stha,
-                                          OutputIterator2 out_f,
-                                          OutputIterator3 out_fx);
-
 // eliminates outermost variable
 template <class Coeff> 
 inline Coeff resultant( 
@@ -134,7 +90,66 @@ inline Coeff resultant_(
     const CGAL::Polynomial<Coeff>&, const CGAL::Polynomial<Coeff>&);
   
 
+
+template< class Coeff >
+struct Simple_matrix;
+
+template<class NT>
+CGALi::Simple_matrix<NT> polynomial_subresultant_matrix(
+                                               CGAL::Polynomial<NT> f,
+					       CGAL::Polynomial<NT> g,
+					       int d=0);
+
 } // namespace CGALi
+
+
+template <typename Polynomial_traits_d,typename OutputIterator> inline
+OutputIterator polynomial_subresultants
+(typename Polynomial_traits_d::Polynomial_d A, 
+ typename Polynomial_traits_d::Polynomial_d B,
+ OutputIterator out);
+
+
+template <typename Polynomial_traits_d,typename OutputIterator> inline
+OutputIterator principal_subresultants
+(typename Polynomial_traits_d::Polynomial_d A, 
+ typename Polynomial_traits_d::Polynomial_d B,
+ OutputIterator out);
+
+template<typename Polynomial_traits_d,
+    typename OutputIterator1, 
+    typename OutputIterator2,
+    typename OutputIterator3>
+OutputIterator1 polynomial_subresultants_with_cofactors
+(typename Polynomial_traits_d::Polynomial_d P,
+ typename Polynomial_traits_d::Polynomial_d Q,
+ OutputIterator1 sres_out,
+ OutputIterator2 coP_out,
+ OutputIterator3 coQ_out);
+
+
+template <typename Polynomial_traits_d,typename OutputIterator> inline
+OutputIterator
+principal_sturm_habicht_sequence
+(typename Polynomial_traits_d::Polynomial_d A, 
+ OutputIterator out);
+
+
+
+template<typename Polynomial_traits_d,typename OutputIterator> OutputIterator
+sturm_habicht_sequence(typename Polynomial_traits_d::Polynomial_d P, 
+                       OutputIterator out);
+
+template<typename Polynomial_traits_d,
+    typename OutputIterator1,
+    typename OutputIterator2,
+    typename OutputIterator3> 
+OutputIterator1
+sturm_habicht_sequence_with_cofactors
+(typename Polynomial_traits_d::Polynomial_d P,
+       OutputIterator1 out_stha,
+ OutputIterator2 out_f,
+ OutputIterator3 out_fx);
 
 
 
