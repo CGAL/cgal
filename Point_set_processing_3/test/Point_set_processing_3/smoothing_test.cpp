@@ -115,7 +115,8 @@ int main(int argc, char * argv[])
 
     std::deque<Point> points;
 
-    std::cerr << "Open " << argv[i] << " for reading...";
+    // Read the point set file in points[]
+    std::cerr << "Open " << argv[i] << " for reading..." << std::endl;
     if(CGAL::read_xyz_point_set(input_filename.c_str(),
                                 std::back_inserter(points),
                                 false /*skip normals*/))

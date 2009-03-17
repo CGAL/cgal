@@ -2733,7 +2733,7 @@ Point_set_processing_3/test/Point_set_processing_3/analysis_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/analysis_test.cpp -text
 Point_set_processing_3/test/Point_set_processing_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Point_set_processing_3/test/Point_set_processing_3/data/oni.pwn -text
-Point_set_processing_3/test/Point_set_processing_3/data/robocat_deci.off -text svneol=unset#application/octet-stream
+Point_set_processing_3/test/Point_set_processing_3/data/sphere926.pwn -text
 Point_set_processing_3/test/Point_set_processing_3/data/sphere_20k.xyz -text
 Point_set_processing_3/test/Point_set_processing_3/normal_estimation_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/outlier_removal_test.cmd eol=lf

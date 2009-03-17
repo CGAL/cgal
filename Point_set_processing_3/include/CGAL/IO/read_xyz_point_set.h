@@ -51,7 +51,7 @@ bool read_xyz_point_set(const char* pFilename,
   FILE *pFile = fopen(pFilename,"rt");
   if(pFile == NULL)
   {
-    std::cerr << "Error: cannot open " << pFilename;
+    std::cerr << "Error: cannot open " << pFilename << std::endl;
     return false;
   }
 
@@ -87,7 +87,7 @@ bool read_xyz_point_set(const char* pFilename,
     }
     else
     {
-      std::cerr << "Error line " << lineNumber << " of " << pFilename;
+      std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
       return false;
     }
   }

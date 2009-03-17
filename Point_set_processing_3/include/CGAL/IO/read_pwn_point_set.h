@@ -45,7 +45,7 @@ bool read_pwn_point_set(const char* pFilename, OutputIterator output)
   FILE *pFile = fopen(pFilename,"rt");
   if(pFile == NULL)
   {
-    std::cerr << "Error: cannot open " << pFilename;
+    std::cerr << "Error: cannot open " << pFilename << std::endl;
     return false;
   }
 

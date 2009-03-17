@@ -48,7 +48,7 @@ bool read_off_point_set(const char* pFilename, OutputIterator output)
   FILE *pFile = fopen(pFilename,"rt");
   if(pFile == NULL)
   {
-    std::cerr << "Error: cannot open " << pFilename;
+    std::cerr << "Error: cannot open " << pFilename << std::endl;
     return false;
   }
 
@@ -69,7 +69,7 @@ bool read_off_point_set(const char* pFilename, OutputIterator output)
         || (strcmp(signature, "OFF") != 0 && strcmp(signature, "NOFF") != 0) )
       {
         // if unsupported file format
-        std::cerr << "Incorrect file format line " << lineNumber << " of " << pFilename;
+        std::cerr << "Incorrect file format line " << lineNumber << " of " << pFilename << std::endl;
         return false;
       }
     }
@@ -79,7 +79,7 @@ bool read_off_point_set(const char* pFilename, OutputIterator output)
     {
       if (sscanf(pLine,"%ld %ld %ld",&pointsCount,&facesCount,&edgesCount) != 3)
       {
-        std::cerr << "Error line " << lineNumber << " of " << pFilename;
+        std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
         return false;
       }
     }
