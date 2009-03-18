@@ -181,8 +181,8 @@ public:
     Polyhedron_ex&       get_adapted_mesh()       { return m_polyhedron; }
     const Polyhedron_ex& get_adapted_mesh() const { return m_polyhedron; }
 
-    // Get halfedge from source and target vertices
-    // Will assert if such an halfedge doesn't exist
+    // Get halfedge from source and target vertices.
+    // Will assert if such a halfedge doesn't exist.
     Halfedge_const_handle get_halfedge(
         Vertex_const_handle source, Vertex_const_handle target) const
     {

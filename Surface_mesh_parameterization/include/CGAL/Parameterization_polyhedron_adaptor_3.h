@@ -340,7 +340,7 @@ public:
     const Polyhedron& get_adapted_mesh() const { return m_polyhedron; }
 
     /// Get halfedge from source and target vertices.
-    /// Will assert if such an halfedge doesn't exist.
+    /// Will assert if such a halfedge doesn't exist.
     typename Polyhedron::Halfedge_const_handle get_halfedge(
         Vertex_const_handle source, Vertex_const_handle target) const
     {
