@@ -616,6 +616,23 @@ CGAL_BEGIN_NAMESPACE
             (P,Q,sres_out,coP_out,coQ_out);
     }
 
+    template<typename Polynomial_traits_d,
+      typename OutputIterator1, 
+      typename OutputIterator2,
+      typename OutputIterator3>
+      OutputIterator1 polynomial_subresultants_with_cofactors_
+      (typename Polynomial_traits_d::Polynomial_d P,
+       typename Polynomial_traits_d::Polynomial_d Q,
+       OutputIterator1 sres_out,
+       OutputIterator2 coP_out,
+       OutputIterator3 coQ_out,
+       CGAL::Integral_domain_without_division_tag) {
+        // polynomial_subresultants_with_cofactors requires 
+        // a model of IntegralDomain as coefficient type;
+        BOOST_STATIC_ASSERT(sizeof(Polynomial_traits_d)==0);
+        return sres_out;
+    }
+
   template<typename Polynomial_traits_d,
     typename OutputIterator1, 
     typename OutputIterator2,
