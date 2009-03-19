@@ -817,11 +817,11 @@ The computation method depends on the algebraic category of
 \ccc{PolynomialTraits_d::Coefficient_type}.
 if it models \ccc{CGAL::IntegralDomain}, 
 the subresultants are computed
-by a pseudo-division approach~\cite{ducos-optimizations}. 
+by a pseudo-division approach~\cite{d-osa-00}. 
 If they only model a
 \ccc{CGAL::IntegralDomainWithoutDivision}, the subresultants
 are computed by evaluating the determinants directly, avoiding divisions
-completely~\cite{kerber-division}.
+completely~\cite{k-dfcosubm-09}.
 
 \ccOperations
 \ccFunction{template<typename Polynomial_traits_d,typename OutputIterator>
