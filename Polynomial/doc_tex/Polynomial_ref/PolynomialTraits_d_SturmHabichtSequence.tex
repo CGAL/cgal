@@ -1,4 +1,7 @@
 \begin{ccRefConcept}{PolynomialTraits_d::SturmHabichtSequence}
+
+\textbf{Note:} This functor is optional!
+
 \ccDefinition
 
 Computes the Sturm-Habicht sequence 
@@ -26,7 +29,7 @@ the discriminant of $f$ up to a multiple of the leading coefficient)
 
 A default implementation for the case that 
 \ccc{Polynomial_traits_d::Coefficient_type} 
-is a model of \ccc{CGAL::Integral_domain_without_division}
+is a model of \ccc{CGAL::IntegralDomainWithoutDivision}
 is provided by the function \ccc{CGAL::sturm_habicht_sequence}.
 
 \ccCreationVariable{fo}

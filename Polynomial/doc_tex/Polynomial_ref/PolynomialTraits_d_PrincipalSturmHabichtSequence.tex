@@ -1,4 +1,7 @@
 \begin{ccRefConcept}{PolynomialTraits_d::PrincipalSturmHabichtSequence}
+
+\textbf{Note:} This functor is optional!
+
 \ccDefinition
 
 Computes the principal leading coefficients of the Sturm-Habicht sequence 
@@ -17,7 +20,7 @@ the polynomial~$f$.
 
 A default implementation for the case that 
 \ccc{Polynomial_traits_d::Coefficient_type} 
-is a model of \ccc{CGAL::Integral_domain_without_division}
+is a model of \ccc{CGAL::IntegralDomainWithoutDivision}
 is provided by the function \ccc{CGAL::principal_sturm_habicht_sequence}.
 
 \ccOperations

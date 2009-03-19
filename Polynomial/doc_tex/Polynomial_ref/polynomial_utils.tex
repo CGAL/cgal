@@ -811,15 +811,15 @@ Computes the polynomial subresultants
 of two polynomials, defined as in the concept 
 \ccc{Polynomial_traits_d::PolynomialSubresultants}, 
 if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::Integral_domain_without_division}.
+is at least a model of \ccc{CGAL::IntegralDomainWithoutDivision}.
 
 The computation method depends on the algebraic category of
 \ccc{PolynomialTraits_d::Coefficient_type}.
-if it models \ccc{CGAL::Integral_division}, 
+if it models \ccc{CGAL::IntegralDomain}, 
 the subresultants are computed
 by a pseudo-division approach~\cite{ducos-optimizations}. 
 If they only model a
-\ccc{CGAL::Integral_domain_without_division}, the subresultants
+\ccc{CGAL::IntegralDomainWithoutDivision}, the subresultants
 are computed by evaluating the determinants directly, avoiding divisions
 completely~\cite{kerber-division}.
 
@@ -846,7 +846,7 @@ Computes the polynomial subresultants
 of two polynomials and their cofactors, defined as in the concept 
 \ccc{Polynomial_traits_d::PolynomialSubresultantsWithCofactors}, 
 if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::Integral_division}.
+is at least a model of \ccc{CGAL::IntegralDomain}.
 
 \ccOperations
 \ccFunction{template<typename Polynomial_traits_d,
@@ -879,7 +879,7 @@ Computes the principal subresultants
 of two polynomials, defined as in the concept 
 \ccc{Polynomial_traits_d::PrincipalSubresultants}, 
 if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::Integral_domain_without_division}.
+is at least a model of \ccc{CGAL::IntegralDomainWithoutDivision}.
 
 \ccOperations
 \ccFunction{template<typename Polynomial_traits_d,typename OutputIterator>
@@ -904,7 +904,7 @@ Computes the Sturm-Habicht-polynomials
 of a polynomial, defined as in the concept 
 \ccc{Polynomial_traits_d::SturmHabichtSequence}, 
 if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::Integral_domain_without_division}.
+is at least a model of \ccc{CGAL::IntegralDomainWithoutDivision}.
 
 The computation works simply by calling \ccc{CGAL::polynomial_subresultants},
 and adjusting the signs.
@@ -931,7 +931,7 @@ Computes the Sturm-Habicht-sequence of a polynomial
 and its cofactors, defined as in the concept 
 \ccc{Polynomial_traits_d::SturmHabichtSequenceWithCofactors}, 
 if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::Integral_division}.
+is at least a model of \ccc{CGAL::IntegralDomain}.
 
 \ccOperations
 \ccFunction{template<typename Polynomial_traits_d,
@@ -964,7 +964,7 @@ Computes the principal Sturm-Habicht coefficients
 of a polynomial, defined as in the concept 
 \ccc{Polynomial_traits_d::PrincipalSturmHabichtSequence}, 
 if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::Integral_domain_without_division}.
+is at least a model of \ccc{CGAL::IntegralDomainWithoutDivision}.
 
 \ccOperations
 \ccFunction{  template <typename Polynomial_traits_d,typename OutputIterator> inline
