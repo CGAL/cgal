@@ -20,11 +20,6 @@ A default implementation for the case that
 is a model of \ccc{CGAL::IntegralDomain}
 is provided by the function \ccc{CGAL::sturm_habicht_sequence_with_cofactors}.
 
-Computes the Sturm-Habicht sequence of a polynomials $f$ of type 
-\ccc{PolynomialTraits_d::Polynomial_d} with respect a certain variable $x_i$.
-Additionally, it computes two ranges of cofactors, {\tt co\_f} and {\tt co\_fx}
-with the property that {\tt stha[i] == co\_f[i] f + co\_fx[i] f'}.
-
 \ccCreationVariable{fo}
 \ccOperations
 \ccMethod{template< typename OutputIterator1,

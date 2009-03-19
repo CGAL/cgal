@@ -6,9 +6,13 @@
 
 Computes the polynomial subresultant of two polynomials $p$ and $q$ of 
 type \ccc{PolynomialTraits_d::Polynomial_d} with respect to outermost variable.
-Let $p=\sum_{i=0}^n p_i t^i$ and $q\sum_{i=0}^m q_i t^i$, where $t$
+Let 
+$p=\sum_{i=0}^{n} p_i t^i$ and 
+$q=\sum_{i=0}^{m} q_i t^i$, where $t$
 is the outermost variable.
 The $i$th subresultant (with $i=0,\ldots,\min\{n,m\}$) is defined by
+
+\begin{ccTexOnly}
 \begin{eqnarray*}
 \mathrm{Sres}_i(p,q)&=&\det \left(\begin{array}{cccccc}
 p_n & \ldots &\ldots& p_{2i-m+2}&t^{m-i-1}p \\
@@ -19,6 +23,14 @@ q_m & \ldots &\ldots & q_{2i-n+2}&t^{n-i-1}q \\
 &q_m&\ldots&q_{i+1}&q
 \end{array}\right)
 \end{eqnarray*}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<IMG BORDER=0 SRC="./subresultant_def.gif" ALIGN=middle ALT="Subresultants">
+</CENTER>
+\end{ccHtmlOnly}
+
 In the exceptional case that $n=m$, $\mathrm{Sres_n}$ is set to $q$.
 
 The result is written in an output range, starting with the $0$th subresultant
