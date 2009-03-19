@@ -420,7 +420,7 @@ void test_routine() {
     std::vector<Poly_int1> sres_check,sres,coP,coQ;
     CGAL::CGALi::prs_polynomial_subresultants<Poly_int1_traits>
       (f,g,std::back_inserter(sres_check));
-    CGAL::CGALi::prs_subresultants_with_cofactors<Poly_int1_traits>
+    CGAL::polynomial_subresultants_with_cofactors<Poly_int1_traits>
       (f,g,
        std::back_inserter(sres), 
        std::back_inserter(coP),
@@ -441,7 +441,7 @@ void test_routine() {
       std::vector<Poly_int3> sres_check,sres,coP,coQ;
       CGAL::CGALi::prs_polynomial_subresultants<Poly_int3_traits>
           (f,g,std::back_inserter(sres_check));
-      CGAL::CGALi::prs_subresultants_with_cofactors<Poly_int3_traits>
+      CGAL::polynomial_subresultants_with_cofactors<Poly_int3_traits>
           (f,g,
            std::back_inserter(sres), 
            std::back_inserter(coP),
@@ -460,7 +460,7 @@ void test_routine() {
     std::vector<Poly_int2> sres_check,sres,coP,coQ;
     CGAL::CGALi::prs_polynomial_subresultants<Poly_int2_traits>
       (f,g,std::back_inserter(sres_check));
-    CGAL::CGALi::prs_subresultants_with_cofactors<Poly_int2_traits>
+    CGAL::polynomial_subresultants_with_cofactors<Poly_int2_traits>
       (f,g,
        std::back_inserter(sres), 
        std::back_inserter(coP),
