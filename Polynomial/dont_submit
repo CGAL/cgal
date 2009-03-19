@@ -3,11 +3,6 @@ test/Polynomial/polynomial_functions.cpp
 
 include/CGAL/Polynomial/polynomial_gcd_ntl.h
 
-include/CGAL/Polynomial/subresultants.h
-include/CGAL/Polynomial/sturm_habicht_sequence.h
-test/Polynomial/subresultants.cpp
-test/Polynomial/sturm_habicht_sequence.cpp
-
 include/CGAL/Polynomial/wang.h
 include/CGAL/Polynomial/Wang_traits.h
 
