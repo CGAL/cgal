@@ -2885,6 +2885,7 @@ Polynomial/examples/Polynomial/coefficient_access.cpp -text
 Polynomial/examples/Polynomial/construction.cpp -text
 Polynomial/examples/Polynomial/degree.cpp -text
 Polynomial/examples/Polynomial/gcd_up_to_constant_factor.cpp -text
+Polynomial/examples/Polynomial/subresultants.cpp -text
 Polynomial/examples/Polynomial/substitute.cpp -text
 Polynomial/examples/Polynomial/swap_move.cpp -text
 Polynomial/include/CGAL/Polynomial/Coercion_traits.h -text
