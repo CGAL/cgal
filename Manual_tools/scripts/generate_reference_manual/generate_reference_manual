@@ -1,11 +1,31 @@
 #!/bin/bash
 
 # Goal   : Generate automatically (most of) the Reference Manual of a CGAL package
-# Author : Laurent Saboret, INRIA, 2005-2008
+# Author : Laurent Saboret, INRIA, 2005-2009
+# $Id:$
+# URL:$
 # ------------------------------------------
 
-# Print usage and quit
-usage ()
+
+# Print short help and quit
+# -------------------------
+print_short_help ()
+{
+echo "\
+Usage:
+generate_reference_manual [options] -I /path/to/CGAL/include /path/to/package
+    -h, --help      Print detailed help
+    -v, --verbose   Verbose mode
+    -d, --debug     Debug mode
+"
+
+exit 1
+}
+
+
+# Print long help and quit
+# ------------------------
+print_long_help ()
 {
     echo ""
 
@@ -21,15 +41,15 @@ usage ()
 }
 
 
-#######
+#
 # Main
-#######
+# ----
 
 # Turn traces on
 # set -x
 
 # Version
-echo "generate_reference_manual version 1.1."
+echo "generate_reference_manual version 1.1.1"
 
 # Global variables
 PACKAGE_ROOT_FOLDER="" # Package's root folder
@@ -44,8 +64,8 @@ VERBOSE=0 # Verbose mode?
 while [ "${1}" ]
 do
     case "${1}" in
-    -h|--help) # If usage
-        usage
+    -h|--help) # If request for help
+        print_long_help
         ;;
     -f|--force) # Ignore obsolete option --force
         ;;
@@ -60,12 +80,12 @@ do
     -I|--include) # If -I
         shift
         if [ ! "${1}" ]; then # If no argument after -I
-            usage
+            print_short_help
         fi
         INCLUDE_PATH="${INCLUDE_PATH} ${1}"
         ;;
     -*) # If unknown parameter
-        usage
+        print_short_help
         ;;
     * ) # Else: package's root folder
         PACKAGE_ROOT_FOLDER="${1}"
@@ -76,7 +96,7 @@ done
 
 # Check parameters
 if [[ ! "${PACKAGE_ROOT_FOLDER}" || ! "${INCLUDE_PATH}" ]]; then
-    usage
+    print_short_help
 fi
 
 # Test if doxygen is installed
@@ -101,10 +121,10 @@ if [[ $? != 0 ]]; then
 fi
 
 # Goto package's root folder
-if [[ -d "${PACKAGE_ROOT_FOLDER}" ]]; then
+if [[ -d "${PACKAGE_ROOT_FOLDER}" && -d "${PACKAGE_ROOT_FOLDER}/doc_tex" ]]; then
     cd "${PACKAGE_ROOT_FOLDER}"
 else
-    echo "ERROR: folder ${PACKAGE_ROOT_FOLDER} does not exist"
+    echo "ERROR: folder ${PACKAGE_ROOT_FOLDER}/doc_tex does not exist"
     exit 1
 fi
 
@@ -147,15 +167,15 @@ do
 
         for item in $items
         do
-            # Extract scope of ${item} indicated in ${cgal_doc}.
-            # It may be either a namespace or a class name.
-            scope=`echo $item | perl -e 'while (<>) {if (m/\[(.*?)\]/) {print "$1\n";}}'`
-            item=`echo $item | perl -p -e 's/^\[.*?\]//'` # remove namespace
+            # Extract scope (namespace or a class name) of ${item} indicated in ${cgal_doc}.
+            # The scope may be surrounded by square braquets.
+            scope=`echo $item | perl -e 'while (<>) {if (m/\[?(.*::)/) {print "$1\n";}}'`
+            item=`echo $item | perl -p -e 's/.*::\]?//'` # remove namespace
 
             # Find the file containing the doxygen-generated documentation.
             # We search in CGAL namespace and in the global scope (e.g. for concepts).
             doxygen_doc=""
-            for namespace in "$scope" "CGAL::$scope" "CGAL::" ""
+            for namespace in "$scope" "CGAL::$scope"
             do
                 # Mangled item and namespace names in individual doxygen output files
                 item_base_file_name=`echo "${item}" | sed 's/_/__/g'`
@@ -187,13 +207,19 @@ do
             # Insert the doxygen-generated documentation into ${cgal_doc}
             if [[ -f "${doxygen_doc}" ]]; then
                 if [[ $DEBUG == 0 ]]; then
-                    echo "* ${item}"
+                  if [[ $VERBOSE == 0 ]]; then
+                    echo "Extract ${scope}${item} documentation"
+                  else
+                    doc_html=`basename ${doxygen_doc} | sed 's/\.tex/.html/'`
+                    doc_html="doc_doxygen/html/${doc_html}"
+                    echo "Extract ${scope}${item} documentation (see `basename ${cgal_doc}` and `pwd`/${doc_html})"
+                  fi
                 else
-                    echo copy_doxygen_latex_doc ${COPY_DOXYGEN_LATEX_DOC_ARGS} "${item}" "`pwd`/${doxygen_doc}" "`pwd`/${cgal_doc}"
+                  echo copy_doxygen_latex_doc ${COPY_DOXYGEN_LATEX_DOC_ARGS} "${item}" "`pwd`/${doxygen_doc}" "`pwd`/${cgal_doc}"
                 fi
                 copy_doxygen_latex_doc ${COPY_DOXYGEN_LATEX_DOC_ARGS} "${item}" "${doxygen_doc}" "${cgal_doc}"
             else
-                echo "ERROR: cannot find doxygen documentation for ${scope}${item} (documented in ${cgal_doc})"
+                echo "ERROR: cannot find doxygen documentation for ${scope}${item} (see `basename ${cgal_doc}`)"
             fi
         done
     fi

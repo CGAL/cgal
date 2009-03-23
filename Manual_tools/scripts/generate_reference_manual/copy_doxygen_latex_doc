@@ -38,7 +38,7 @@ my @placeholders = (
     'ThisConcept \\\\\\\\',
     'ThatConcept',
     '\\\\ccNestedType\{TYPE\}\{some nested types\}',
-    '\\\\ccConstructor\{\w+\(\);\}\{default constructor\.\}',
+    '\\\\ccConstructor\{.*?;\}\{[Dd]efault constructor\.\}',
     '\\\\ccMethod\{void foo\(\);\}\{some member functions\}',
     '\\\\ccc\{[Ss]ome_\w+\}[,\.]',
     '[Ss]ome(\\\\_\w+)+[,\.]',
@@ -226,8 +226,9 @@ sub doxygen_latex_to_latex
 
     # Use a canonic style to ease parsing
     $buf =~ s/([\w\>]+)\s*&\s*/$1& /g;          # Use a canonic style "type& variable" for references
-    $buf =~ s/(\w)=/$1 =/g;                     # Use a canonic style for default parameters
+    $buf =~ s/(\w)=/$1 =/g;                     # Use a canonic style "variable = default" for default parameters
     $buf =~ s/=(\w)/= $1/g;                     #                    ""
+    $buf =~ s/<\s*(.*?)\s*>/<$1>/g;             # Use a canonic style "type<parameters>" for template parameters
     $buf =~ s/Constructor& Destructor/Constructor & Destructor/g;
     $buf =~ s/\\item\[(.*?): +\]/\\item\[$1:\]/g;
 
@@ -411,7 +412,7 @@ sub convert_comment_heading_name
 }
 
 
-# Flatten lists with only 1 item.
+# Flatten a list if it contains only 1 item.
 # Param: list in doxygen latex doc, of the form "\begin{description}...\end{description}".
 # Return value: the list flattened or not.
 sub flatten_one_item_list
@@ -537,14 +538,14 @@ sub format_headings_ex
 
 # Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable and \ccFunction expressions.
 # Params:
-# - concept/struct/class/... to document (without namespace)
+# - concept/struct/class/... to document (without namespace nor template parameters)
 # - type of the item to document: "class/struct/concept" or "function"
 # - buffer containing a doxygen-generated latex file
 # Return value: the formatted buffer
 sub format_curly_brace_pairs_expressions
 {
     # Get parameters:
-    # - concept/struct/class/... to document (without namespace)
+    # - concept/struct/class/... to document (without namespace nor template parameters)
     my $item_to_document = shift;
     # - type of the item to document: "class/struct/concept" or "function"
     my $item_type = shift;
@@ -611,16 +612,34 @@ sub format_curly_brace_pairs_expressions
 }
 
 
+# Convert a list of include files to \ccInclude command(s).
+# Param: list in doxygen latex doc, of the form "\begin{itemize}...\end{itemize}".
+# Return value: the \ccInclude command(s) separated by new lines.
+sub convert_include_file
+{
+    my $buf = shift;
+
+    # Convert heading aand trailing
+    $buf =~ s/\\begin\{itemize\}\s*(.*?)\s*\\end\{itemize\}/$1/sm;
+
+    # Convert list items. The last one does not get a \n.
+    while ($buf =~ s/\\item\s*include\/(.*?)(\\item)/\\ccInclude\{$1\}\n$2/sm) {}
+    $buf =~ s/\\item\s*include\/(.*)/\\ccInclude\{$1\}/sm;
+
+    return $buf;
+}
+
+
 # Format a buffer containing a doxygen-generated documentation of a class/struct/concept,
 # in latex, to match CGAL Reference Manual's format.
 # Params:
-# - class/struct/concept name (without namespace)
+# - class/struct/concept name (without namespace nor template parameters)
 # - buffer containing a doxygen-generated latex file
 # Return value: the formatted buffer
 sub format_doxygen_class_doc
 {
     # Get parameters:
-    # - class/struct/concept name (without namespace)
+    # - class/struct/concept name (without namespace nor template parameters)
     my $className = shift;
     # - buffer containing a doxygen-generated latex file
     my $buf = shift;
@@ -648,7 +667,8 @@ sub format_doxygen_class_doc
     # Rename (for a class/struct) or delete (for a concept) the include file
     # and insert \ccSeeAlso title at the end of the document.
     my $is_concept = 0;
-    unless ($buf =~ s/^The documentation.*?include\/(.*?)\\end\{itemize\}/\n\n\\ccInclude\{$1\}\n\n\n\\ccSeeAlso\n\n\n/sm)
+    unless ($buf =~ s/^The documentation.*?(\\begin\{itemize\}.*?include\/.*?\\end\{itemize\})/
+                      "\n\n" . convert_include_file($1) . "\n\n\n\\ccSeeAlso\n\n\n"/sme)
     {
       $is_concept = 1;
       $buf =~ s/The documentation for this.*/\n\n\\ccSeeAlso\n\n\n/sm;
@@ -738,7 +758,8 @@ sub format_doxygen_class_doc
             my $method = $2;
 
             # insert $template_params before $method in detailed section
-            $buf =~ s/\\paragraph\{\Q$method\E\}/\\paragraph\{$template_params$method\}/;
+            $buf =~ s/\\paragraph\{\Q$method\E\}/\\paragraph\{$template_params$method\}/
+              or warn "INTERNAL ERROR: cannot extract template parameters of $method";
         }
     }
 
@@ -795,13 +816,13 @@ sub format_doxygen_class_doc
 # Format a buffer containing a doxygen-generated documentation of
 # a function, in latex, to match CGAL Reference Manual's format.
 # Params:
-# - function name (without namespace)
+# - function name (without namespace nor template parameters)
 # - buffer containing a doxygen-generated latex file
 # Return value: the formatted buffer
 sub format_doxygen_function_doc
 {
     # Get parameters:
-    # - function name (without namespace)
+    # - function name (without namespace nor template parameters)
     my $functionName = shift;
     # - buffer containing a doxygen-generated latex file
     my $buf = shift;
@@ -906,30 +927,33 @@ sub insert_manual_section
     # - section's title
     my $title = shift;
 
-# Uncomment the next line to test that obsolete sections are properly *emptied*
-# $doxy_buf = "";
+    # Uncomment the next line to test that obsolete sections are properly *emptied*
+    # $doxy_buf = "";
 
     # Construct a pattern that matches any section title
     my $all_titles_pattern = get_any_section_title_pattern();
 
-    # Extract $title section content from $doxy_buf
+    # Extract $title section content from $doxy_buf:
     my $section = "";
-    if ($doxy_buf =~ /^\s*\Q$title\E(.*?)\s+$all_titles_pattern/sm) {
-        $section = $1;
-        $section =~ s/^\s+//s;                  # Remove heading & trailing spaces
-        $section =~ s/\s+$//s;                  # and extra carriage returns
+    #
+    # Special case: if one-line macro like \ccInclude
+    if ($title eq '\ccInclude') {
+      while ($doxy_buf =~ /^\s*(\Q$title\E\{.*?\})/smg) {
+          $section = "$section\n$1";
+      }
     }
+    # General case
+    elsif ($doxy_buf =~ /^\s*\Q$title\E(.*?)\s+$all_titles_pattern/sm) {
+        $section = $1;
+    }
+    $section =~ s/^\s+//s;                  # Remove heading & trailing spaces
+    $section =~ s/\s+$//s;                  # and extra carriage returns.
 
     # If $section is not empty, copy it to $cgal_buf.
     # If $cgal_buf doesn't already contain $title, add it.
     # If $cgal_buf doesn't already contain the %START-AUTO($title)..%END-AUTO($title) section, add it.
     if ($section ne "")
     {
-        # Special case: \ccInclude section is a one-line macro
-        if ($title eq '\ccInclude') {
-          $section = '\ccInclude' . $section;
-        }
-
         # Add $warning\n%START-AUTO($title)..%END-AUTO($title) around $section
         $section = "$warning\n%START-AUTO($title)\n\n" . $section . "\n\n%END-AUTO($title)";
 
@@ -1004,7 +1028,7 @@ sub insert_manual_section
 
 # Insert doxygen-generated documentation in CGAL Reference Manual's buffer
 # Params:
-# - Concept/struct/class/... to document
+# - Concept/struct/class/... to document (without namespace nor template parameters)
 # - buffer containing a CGAL Reference Manual template
 # - buffer containing a doxygen-generated latex file reformated for CGAL
 # - Insert missing %START-AUTO..%END-AUTO sections?
@@ -1012,19 +1036,19 @@ sub insert_manual_section
 sub merge_manuals
 {
     # Get parameters:
-    # - Concept/struct/class/... to document
+    # - Concept/struct/class/... to document (without namespace nor template parameters)
     my $item_to_document = shift;
     # - buffer containing a CGAL Reference Manual template
     my $cgal_buf = shift;
     # - buffer containing a doxygen-generated latex file reformated for CGAL
     my $doxy_buf = shift;
 
-# Uncomment the next lines to test that obsolete sections are properly *created*
-# $cgal_buf =~ s/$warning\s%START-AUTO\(\\ccInclude\)\s*(\\ccInclude\{.*?\}\s)\s*%END-AUTO\(\\ccInclude\)\s*/$1/smg;
-# $cgal_buf =~ s/$warning\s%START-AUTO\(.*?\).*?%END-AUTO\(.*?\)\s*//smg;
+    # Uncomment the next lines to test that automatic sections are properly *created*
+    # $cgal_buf =~ s/$warning\s%START-AUTO\(\\ccInclude\)\s*(\\ccInclude\{.*?\}\s)\s*%END-AUTO\(\\ccInclude\)\s*/$1/smg;
+    # $cgal_buf =~ s/$warning\s%START-AUTO\(.*?\).*?%END-AUTO\(.*?\)\s*//smg;
 
     # Extract from $cgal_buf the part about $item_to_document
-    if ($cgal_buf =~ s/(.*)(^\s*\\begin\{ccRef.*?\s*\{$item_to_document[\s<\}].*?\\end\{ccRef.*?\}\s*)(.*)//sm)
+    if ($cgal_buf =~ s/(.*)(^\s*\\begin\{ccRef.*?\b$item_to_document[\s<\}].*?\\end\{ccRef.*?\}\s*)(.*)//sm)
     {
         my $start            = $1;
         my $part_to_document = $2;
@@ -1055,6 +1079,10 @@ sub merge_manuals
         # Insert back $part_to_document in the buffer
         $cgal_buf = $start . $part_to_document . $end;
     }
+    else
+    {
+        warn "INTERNAL ERROR: cannot insert doxygen-generated documentation in CGAL Reference Manual";
+    }
 
     # Return updated CGAL buffer
     return $cgal_buf;
@@ -1068,10 +1096,11 @@ print <<"END_USAGE";
 copy_doxygen_latex_doc extracts a documentation from a doxygen-generated latex file and inserts it in a CGAL Reference Manual's latex file.
 
 Usage:
-copy_doxygen_latex_doc [options] item_to_document doxygen_generated_documentation.tex template_manual.tex
-    -h, --help      Print this help
-    -v, --verbose   Verbose mode
-    -d, --debug     Debug mode
+copy_doxygen_latex_doc [options] item_to_document doxygen_generated_documentation.tex reference_manual.tex
+    item_to_document    Concept/struct/class/... to document (without namespace nor template parameters)
+    -h, --help          Print this help
+    -v, --verbose       Verbose mode
+    -d, --debug         Debug mode
 
 See generate_reference_manual usage for details.
 END_USAGE
@@ -1085,7 +1114,7 @@ exit;
 #######
 
 # Variables
-my $item_to_document = undef;                   # Concept/struct/class/... to document
+my $item_to_document = undef;                   # Concept/struct/class/... to document (without namespace nor template parameters)
 my $doxygen_generated_file = undef;             # Input file
 my $cgal_manual_file = undef;                   # Output file
 
