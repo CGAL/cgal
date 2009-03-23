@@ -46,6 +46,9 @@ if ( CGAL_FOUND )
   include_directories (BEFORE ../../include)
   include_directories (BEFORE include)
 
+  # Temporary debugging stuff
+  ADD_DEFINITIONS( "-DDEBUG_TRACE=2" )
+
   # Executables that do *not* require BLAS, LAPACK nor TAUCS
   create_single_source_cgal_program( "APSS_reconstruction_test.cpp" )
 
