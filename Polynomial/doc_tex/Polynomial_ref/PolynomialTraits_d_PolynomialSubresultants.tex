@@ -7,10 +7,10 @@
 Computes the polynomial subresultant of two polynomials $p$ and $q$ of 
 type \ccc{PolynomialTraits_d::Polynomial_d} with respect to outermost variable.
 Let 
-$p=\sum_{i=0}^{n} p_i t^i$ and 
-$q=\sum_{i=0}^{m} q_i t^i$, where $t$
+$p=\ccSum{i=0,\ldots,n}{} p_i t^i$ and 
+$q=\ccSum{i=0,\ldots,m}{} q_i t^i$, where $t$
 is the outermost variable.
-The $i$th subresultant (with $i=0,\ldots,\min\{n,m\}$) is defined by
+The $i$-th subresultant (with $i=0,\ldots,\min\{n,m\}$) is defined by
 
 \begin{ccTexOnly}
 \begin{eqnarray*}
@@ -33,7 +33,7 @@ q_m & \ldots &\ldots & q_{2i-n+2}&t^{n-i-1}q \\
 
 In the exceptional case that $n=m$, $\mathrm{Sres_n}$ is set to $q$.
 
-The result is written in an output range, starting with the $0$th subresultant
+The result is written in an output range, starting with the $0$-th subresultant
 $\mathrm{Sres}_0(p,q)$
 (aka as the resultant of $p$ and $q$).
 
@@ -42,8 +42,10 @@ A default implementation for the case that
 is a model of \ccc{CGAL::Integral_domain_without_division}
 is provided by the function \ccc{CGAL::polynomial_subresultants}.
 
+\ccCreationVariable{fo}
+
 \ccOperations
-\ccMethod{template<typename OutputIterator>
+\ccMethod{template<typename OutputIterator> 
         OutputIterator operator()(Polynomial_d   p,
                                   Polynomial_d   q,
                                   OutputIterator out);}

@@ -13,7 +13,7 @@ of $f$ and its derivative $f':=\frac{\partial f}{\partial x_i}$
 with respect to $x_i$. The implementation is based on the following definition:
 
 Let $n:=\deg f$ and $\delta_k:=(-1)^{k(k+1)/2}$. 
-For $k\in\{0,\ldots,n\}$, the {\it $k$th Sturm-Habicht polynomial} 
+For $k\in\{0,\ldots,n\}$, the {\it $k$-th Sturm-Habicht polynomial} 
 of $f$ is defined as:
 
 \begin{ccTexOnly}
@@ -34,7 +34,7 @@ where $\mathrm{Sres}_k(f,f')$ is defined
 as in the concept \ccc{PolynomialTraits_d::PolynomialSubresultants}.
 
 The result is written in an output range, 
-starting with the $0$th Sturm-Habicht polynomial (which is equal to
+starting with the $0$-th Sturm-Habicht polynomial (which is equal to
 the discriminant of $f$ up to a multiple of the leading coefficient)
 
 A default implementation for the case that 

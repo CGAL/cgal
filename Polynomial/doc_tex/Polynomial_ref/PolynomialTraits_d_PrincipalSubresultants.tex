@@ -7,13 +7,13 @@
 Computes the principal subresultant of two polynomials $p$ and $q$ of 
 type \ccc{PolynomialTraits_d::Coefficient_type} 
 with respect to the outermost variable.
-The $i$th principal subresultant, $\mathrm{sres}_i(p,q)$,
-is defined as the coefficient at $t^i$ of the $i$th polynomial
+The $i$-th principal subresultant, $\mathrm{sres}_i(p,q)$,
+is defined as the coefficient at $t^i$ of the $i$-th polynomial
 subresultant $\mathrm{Sres}_i(p,q)$. Thus, it is either the leading
 coefficient of $\mathrm{Sres}_i$, or zero in the case where its degree is 
 below $i$.
 
-The result is written in an output range, starting with the $0$th subresultant
+The result is written in an output range, starting with the $0$-th subresultant
 $\mathrm{sres}_0(p,q)$
 ,aka as the resultant of $p$ and $q$.
 (Note that $\mathrm{sres}_0(p,q)=\mathrm{Sres}_0(p,q)$ by definition)
@@ -22,6 +22,8 @@ A default implementation for the case that
 \ccc{Polynomial_traits_d::Coefficient_type} 
 is a model of \ccc{CGAL::IntegralDomainWithoutDivision}
 is provided by the function \ccc{CGAL::principal_subresultants}.
+
+\ccCreationVariable{fo}
 
 \ccOperations
 \ccMethod{template<typename OutputIterator>
