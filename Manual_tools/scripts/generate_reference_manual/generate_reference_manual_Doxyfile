@@ -178,11 +178,11 @@ MAN_LINKS              = NO
 #---------------------------------------------------------------------------
 # configuration options related to the XML output
 #---------------------------------------------------------------------------
-GENERATE_XML           = NO
+GENERATE_XML           = YES
 XML_OUTPUT             = xml
 XML_SCHEMA             =
 XML_DTD                =
-XML_PROGRAMLISTING     = YES
+XML_PROGRAMLISTING     = NO
 #---------------------------------------------------------------------------
 # configuration options for the AutoGen Definitions output
 #---------------------------------------------------------------------------
@@ -203,21 +203,8 @@ EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = CGAL_INCLUDE_PATH
 INCLUDE_FILE_PATTERNS  =
-PREDEFINED             = CGAL_USE_TAUCS \
-                         CGAL_USE_CORE \
-                         CGAL_USE_F2C \
-                         CGAL_USE_BOOST_BIMAP \
-                         CGAL_USE_GEOMVIEW \
-                         CGAL_USE_GMP \
-                         CGAL_USE_GMPXX \
-                         CGAL_USE_GSL \
-                         CGAL_USE_LEDA \
-                         CGAL_USE_QT \
-                         CGAL_TRIANGULATION_SHORT_NAMES_3_H \
-                         CGAL_APOLLONIUS_GRAPH_2_SHORT_NAMES_2_H \
-                         CGAL_SEGMENT_DELAUNAY_GRAPH_2_SHORT_NAMES_2_H \
-                         CGAL_TRIANGULATION_SHORT_NAMES_2_H \
-                         CGAL_VORONOI_DIAGRAM_2_SHORT_NAMES_2_H
+PREDEFINED             = "CGAL_BEGIN_NAMESPACE=namespace CGAL {" \
+                         "CGAL_END_NAMESPACE=}"
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
