@@ -709,7 +709,7 @@ addback(Ridge_line* ridge_line, const Halfedge_const_handle he,
   FT coord_cur = ( --(ridge_line->line()->end()) )->second;//bary_coord(he_cur);
   FT coord = bary_coord(he,r_type);
   Vertex_const_handle v_p = he->opposite()->vertex(), v_q = he->vertex(),
-    v_p_cur = he_cur->opposite()->vertex(), v_q_cur = he->vertex(); // he: p->q
+    v_p_cur = he_cur->opposite()->vertex(), v_q_cur = he_cur->vertex(); // he: p->q
   Vector_3 segment = CGAL::barycenter(v_p->point(), coord, v_q->point()) -
                      CGAL::barycenter(v_p_cur->point(), coord_cur, v_q_cur->point());
 
@@ -752,7 +752,7 @@ addfront(Ridge_line* ridge_line,
   FT coord_cur = ( ridge_line->line()->begin() )->second;
   FT coord = bary_coord(he,r_type);
   Vertex_const_handle v_p = he->opposite()->vertex(), v_q = he->vertex(),
-    v_p_cur = he_cur->opposite()->vertex(), v_q_cur = he->vertex(); // he: p->q
+    v_p_cur = he_cur->opposite()->vertex(), v_q_cur = he_cur->vertex(); // he: p->q
   Vector_3 segment = CGAL::barycenter(v_p->point(), coord, v_q->point()) -
                      CGAL::barycenter(v_p_cur->point(), coord_cur, v_q_cur->point());
 
