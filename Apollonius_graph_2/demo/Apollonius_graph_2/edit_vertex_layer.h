@@ -72,7 +72,6 @@ signals:
   void apollonius_graph_changed();
 };
 
-#include "edit_vertex_layer.moc"
 
 
 template <class AG>

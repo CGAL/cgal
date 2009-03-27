@@ -45,6 +45,7 @@
 #include "qt_file_toolbar.h"
 #include "qt_layers_toolbar.h"
 #include "qt_layers.h"
+#include "edit_vertex_layer.h"
 
 
 //************************************
@@ -519,6 +520,7 @@ private slots:
 
 };
 
+#include "edit_vertex_layer.moc"
 #include "qt_file_toolbar.moc"
 #include "qt_layers_toolbar.moc"
 #include "apollonius_graph_2.moc"
