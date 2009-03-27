@@ -34,7 +34,7 @@ CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 //--------------------------------------------------------------------
 
 template < class K, class MTag >
-class Finite_edge_interior_conflict8
+class Inside_Voronoi_quadrilateral8
 {
 public:
   typedef K                                 Kernel;
@@ -312,6 +312,145 @@ public:
 //--------------------------------------------------------------------
 
 template < class K, class MTag >
+class Finite_edge_interior_conflict8
+{
+public:
+  typedef MTag                              Method_tag;
+
+  typedef typename K::Site_2                Site_2;
+  typedef Weighted_point_inverter_2<K>      Weighted_point_inverter;
+  typedef Inverted_weighted_point_2<K>      Inverted_weighted_point;
+  typedef Voronoi_radius_2<K>               Voronoi_radius;
+  typedef Voronoi_circle_2<K>               Voronoi_circle;
+  typedef Bitangent_line_2<K>               Bitangent_line;
+  typedef typename K::FT                    FT;
+  typedef typename K::Sign                  Sign;
+  typedef typename K::Bounded_side          Bounded_side;
+  typedef typename K::Comparison_result     Comparison_result;
+
+  typedef Bounded_side_of_CCW_circle_2<K>   Bounded_side_of_CCW_circle;
+
+  typedef Sign_of_distance_from_bitangent_line_2<K>
+                                     Sign_of_distance_from_bitangent_line;
+
+  typedef Sign_of_distance_from_CCW_circle_2<K>
+                                         Sign_of_distance_from_CCW_circle;
+
+public:
+  bool
+  operator()(const Site_2& p1,
+	     const Site_2& p2,
+	     const Site_2& p3,
+	     const Site_2& p4,
+	     const Site_2& q, bool b, const Method_tag& tag) const
+  {
+    typedef Inside_Voronoi_quadrilateral8<K,Method_tag> Inside_quadrilateral;
+
+#ifdef AG2_PROFILE_PREDICATES
+      ag2_predicate_profiler::shadow_region_type_counter++;
+#endif
+    //
+    Weighted_point_inverter inverter(p1);
+    Inverted_weighted_point u2 = inverter(p2);
+    Inverted_weighted_point v = inverter(q);
+    //
+    Voronoi_radius vr_12q(u2, v);
+    Voronoi_radius vr_1q2 = vr_12q.get_symmetric();
+
+    Bounded_side bs1 = Bounded_side_of_CCW_circle()(vr_12q, tag );
+    Bounded_side bs2 = Bounded_side_of_CCW_circle()(vr_1q2, tag );
+
+    bool is_bs1 = (bs1 == ON_UNBOUNDED_SIDE);
+    bool is_bs2 = (bs2 == ON_UNBOUNDED_SIDE);
+
+    // both the ccw and cw circles do not exist
+    if ( !is_bs1 && !is_bs2 ) {
+      return b;
+    }
+
+    // the ccw circle exists but not the cw
+    if ( is_bs1 && !is_bs2 ) {
+      return b;
+    }
+
+    // the cw circle exists but not the ccw
+    if ( !is_bs1 && is_bs2 ) {
+      return b;
+    }
+
+
+    // both circles exist
+
+    // check whether the shadow region is connected, i.e., wether it is
+    // of the form (a, b) or (-oo, a) U (b, +oo)
+    Bitangent_line bl_12(p1, p2);
+
+    Sign stc =
+      Sign_of_distance_from_bitangent_line()(bl_12, q, tag);
+
+    CGAL_assertion( stc != ZERO );
+    bool is_shadow_region_connected = (stc == POSITIVE);
+
+    if ( is_shadow_region_connected ) {
+      if ( b ) { return true; }
+
+#if 0
+      Inverted_weighted_point u3 = inverter(p3);
+      Bitangent_line blinv_23(u2, u3);
+
+      Voronoi_circle vc_123(blinv_23);
+      Voronoi_circle vc_12q(vr_12q);
+
+
+      Comparison_result r =
+	Order_on_finite_bisector()(vc_123, vc_12q, p1, p2, tag);
+
+      if ( r != SMALLER ) { return false; }
+
+      Inverted_weighted_point u4 = inverter(p4);
+      Bitangent_line blinv_42(u4, u2);
+
+      Voronoi_circle vc_142(blinv_42);
+      Voronoi_circle vc_1q2(vr_1q2);
+      r = Order_on_finite_bisector()(vc_142, vc_1q2, p1, p2, tag);
+
+      return ( r == LARGER );
+#else
+      return Inside_quadrilateral()(p1, p2, p3, p4, q, b, tag);
+#endif
+    }
+
+    // the shadow region is of the form (-oo, a) U (b, +oo)
+    if ( !b ) { return false; }
+
+#if 0
+    Inverted_weighted_point u3 = inverter(p3);
+    Bitangent_line blinv_23(u2, u3);
+
+    Voronoi_circle vc_123(blinv_23);
+    Voronoi_circle vc_1q2(vr_1q2);
+    Comparison_result r =
+      Order_on_finite_bisector()(vc_123, vc_1q2, p1, p2, tag);
+
+    if ( r != SMALLER ) { return true; }
+
+    Inverted_weighted_point u4 = inverter(p4);
+    Bitangent_line blinv_42(u4, u2);
+
+    Voronoi_circle vc_142(blinv_42);
+    Voronoi_circle vc_12q(vr_12q);
+    r = Order_on_finite_bisector()(vc_142, vc_12q, p1, p2, tag);
+
+    return ( r != LARGER );
+#else
+    return Inside_quadrilateral()(p1, p2, p3, p4, q, b, tag);
+#endif
+  }
+};
+
+//--------------------------------------------------------------------
+
+template < class K, class MTag >
 class Finite_edge_interior_conflict_degenerated8
 {
 public:
@@ -443,6 +582,7 @@ public:
     return sA * CGAL::sign(C - CGAL::square(B));
   }
 
+  template<class Method_tag>
   Orientation
   orientation_wrt_bitangent_perp(const Site_2& p1, const Site_2& p2,
 				 const Site_2& q1, const Site_2& q2,
