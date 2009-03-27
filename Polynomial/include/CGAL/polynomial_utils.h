@@ -276,6 +276,66 @@ scale_homogeneous(const Polynomial_d& f,
 // Resultant
 CGAL_BINARY_POLY_FUNCTION(Resultant,resultant);
 
+template <typename Polynomial_d,typename OutputIterator> inline
+OutputIterator polynomial_subresultants
+(Polynomial_d p, Polynomial_d q, OutputIterator out) {
+    typedef Polynomial_traits_d<Polynomial_d> PT;
+    return typename PT::Polynomial_subresultants() (p, q, out);
+}   
+
+template <typename Polynomial_d,typename OutputIterator> inline
+OutputIterator principal_subresultants
+(Polynomial_d p, Polynomial_d q, OutputIterator out) {
+    typedef Polynomial_traits_d<Polynomial_d> PT;
+    return typename PT::Principal_subresultants() (p, q, out);
+}   
+
+template<typename Polynomial_d,
+    typename OutputIterator1, 
+    typename OutputIterator2,
+    typename OutputIterator3> inline
+OutputIterator1 polynomial_subresultants_with_cofactors
+(Polynomial_d p,
+ Polynomial_d q,
+ OutputIterator1 sres_out,
+ OutputIterator2 coP_out,
+ OutputIterator3 coQ_out) {
+    typedef Polynomial_traits_d<Polynomial_d> PT;
+    return typename PT::Polynomial_subresultants_with_cofactors() 
+        (p, q, sres_out, coP_out, coQ_out);
+}
+
+
+template <typename Polynomial_d,typename OutputIterator> inline
+OutputIterator
+principal_sturm_habicht_sequence
+(Polynomial_d f, OutputIterator out){
+    typedef Polynomial_traits_d<Polynomial_d> PT;
+    return typename PT::Principal_sturm_habicht_sequence() (f, out);
+}
+  
+template<typename Polynomial_d,typename OutputIterator> OutputIterator
+sturm_habicht_sequence(Polynomial_d f,OutputIterator out) {
+    typedef Polynomial_traits_d<Polynomial_d> PT;
+    return typename PT::Sturm_habicht_sequence() (f, out);
+}
+
+template<typename Polynomial_d,
+    typename OutputIterator1,
+    typename OutputIterator2,
+    typename OutputIterator3> 
+OutputIterator1
+sturm_habicht_sequence_with_cofactors
+(Polynomial_d f,
+ OutputIterator1 stha_out,
+ OutputIterator2 cof_out,
+ OutputIterator3 cofx_out) {
+    typedef Polynomial_traits_d<Polynomial_d> PT;
+    return typename PT::Sturm_habicht_sequence_with_cofactors() 
+        (f, stha_out, cof_out, cofx_out);
+}
+
+
 // TODO: REMOVE function below 
 
 // sign() forwarded to the sign() member function

@@ -60,8 +60,7 @@ void test_routine() {
     CGAL_assertion(sres[1]==Poly_int1(Integer(602925),Integer(657683)));
     CGAL_assertion(sres[0]==Poly_int1(Integer(4474810)));
     sres.clear();
-    CGAL::polynomial_subresultants<Poly_int1_traits>
-        (f,g,std::back_inserter(sres));
+    CGAL::polynomial_subresultants(f,g,std::back_inserter(sres));
     CGAL_assertion(sres.size()==5);
     CGAL_assertion(sres[4]==Integer(25)*g);
     CGAL_assertion(sres[3]==Poly_int1(-3125,-1768,4970,-9451));
@@ -96,8 +95,7 @@ void test_routine() {
     CGAL_assertion(psres[1]==657683);
     CGAL_assertion(psres[0]==4474810);
     psres.clear();
-    CGAL::principal_subresultants<Poly_int1_traits>
-        (f,g,std::back_inserter(psres));
+    CGAL::principal_subresultants(f,g,std::back_inserter(psres));
     CGAL_assertion(psres.size()==5);
     CGAL_assertion(psres[4]==125);
     CGAL_assertion(psres[3]==-9451);
@@ -184,8 +182,7 @@ void test_routine() {
     CGAL_assertion(sres[1]==Poly_rat1(Rational(602925),Rational(657683)));
     CGAL_assertion(sres[0]==Poly_rat1(Rational(4474810)));
     sres.clear();
-    CGAL::polynomial_subresultants<Poly_rat1_traits>
-        (f,g,std::back_inserter(sres));
+    CGAL::polynomial_subresultants(f,g,std::back_inserter(sres));
     CGAL_assertion(sres.size()==5);
     CGAL_assertion(sres[4]==Rational(25)*g);
     CGAL_assertion(sres[3]==Poly_rat1(-3125,-1768,4970,-9451));
@@ -211,8 +208,7 @@ void test_routine() {
     CGAL_assertion(psres[1]==657683);
     CGAL_assertion(psres[0]==4474810);
     psres.clear();
-    CGAL::principal_subresultants<Poly_rat1_traits>
-        (f,g,std::back_inserter(psres));
+    CGAL::principal_subresultants(f,g,std::back_inserter(psres));
     CGAL_assertion(psres.size()==5);
     CGAL_assertion(psres[4]==125);
     CGAL_assertion(psres[3]==-9451);
@@ -251,8 +247,7 @@ void test_routine() {
     CGAL_assertion(sres[1]==from_string<Poly_int2>("P[0(0,P[9(0,576000)(1,172800000)(2,5326400000)(3,-158512000000)(4,-5164000000000)(5,24705600000000)(6,615472000000000)(7,912480000000000)(8,-9864000000000000)(9,10800000000000000)])]"));
     CGAL_assertion(sres[0]==from_string<Poly_int2>("P[0(0,P[16(0,20736)(1,11197440)(2,1559232000)(3,5760000)(4,-3426163040000)(5,-9736288000000)(6,2377866144000000)(7,-1780931200000000)(8,-427278798400000000)(9,-507616640000000000)(10,31454608000000000000)(11,83909222400000000000)(12,-697197584000000000000)(13,-919113600000000000000)(14,9138960000000000000000)(15,-15336000000000000000000)(16,8100000000000000000000)])]"));
     sres.clear();
-    CGAL::polynomial_subresultants<Poly_int2_traits>
-        (f,g,std::back_inserter(sres));
+    CGAL::polynomial_subresultants(f,g,std::back_inserter(sres));
     CGAL_assertion(sres.size()==5);
     // Computed with MAPLE
     CGAL_assertion(sres[4]==g);
@@ -420,7 +415,7 @@ void test_routine() {
     std::vector<Poly_int1> sres_check,sres,coP,coQ;
     CGAL::CGALi::prs_polynomial_subresultants<Poly_int1_traits>
       (f,g,std::back_inserter(sres_check));
-    CGAL::polynomial_subresultants_with_cofactors<Poly_int1_traits>
+    CGAL::polynomial_subresultants_with_cofactors
       (f,g,
        std::back_inserter(sres), 
        std::back_inserter(coP),
@@ -441,7 +436,7 @@ void test_routine() {
       std::vector<Poly_int3> sres_check,sres,coP,coQ;
       CGAL::CGALi::prs_polynomial_subresultants<Poly_int3_traits>
           (f,g,std::back_inserter(sres_check));
-      CGAL::polynomial_subresultants_with_cofactors<Poly_int3_traits>
+      CGAL::polynomial_subresultants_with_cofactors
           (f,g,
            std::back_inserter(sres), 
            std::back_inserter(coP),
@@ -460,7 +455,7 @@ void test_routine() {
     std::vector<Poly_int2> sres_check,sres,coP,coQ;
     CGAL::CGALi::prs_polynomial_subresultants<Poly_int2_traits>
       (f,g,std::back_inserter(sres_check));
-    CGAL::polynomial_subresultants_with_cofactors<Poly_int2_traits>
+    CGAL::polynomial_subresultants_with_cofactors
       (f,g,
        std::back_inserter(sres), 
        std::back_inserter(coP),

@@ -1389,9 +1389,9 @@ struct Construct_innermost_coefficient_const_iterator_range
       OutputIterator out,
       int i = (d-1) ) const {
         if(i == (d-1) )
-          return CGAL::polynomial_subresultants<PT>(p,q,out);
+          return CGAL::CGALi::polynomial_subresultants<PT>(p,q,out);
         else
-          return CGAL::polynomial_subresultants<PT>(Move()(p,i),
+          return CGAL::CGALi::polynomial_subresultants<PT>(Move()(p,i),
                                                     Move()(q,i),
                                                     out);
     }  
@@ -1407,11 +1407,11 @@ struct Construct_innermost_coefficient_const_iterator_range
       OutputIterator out,
       int i = (d-1) ) const {
         if(i == (d-1) )
-          return CGAL::principal_subresultants<PT>(p,q,out);
+          return CGAL::CGALi::principal_subresultants<PT>(p,q,out);
         else
-          return CGAL::principal_subresultants<PT>(Move()(p,i),
-                                                   Move()(q,i),
-                                                   out);
+          return CGAL::CGALi::principal_subresultants<PT>(Move()(p,i),
+                                                          Move()(q,i),
+                                                          out);
     }  
   };
 
@@ -1429,10 +1429,10 @@ struct Construct_innermost_coefficient_const_iterator_range
       OutputIterator3 out_co_q,
       int i = (d-1) ) const {
         if(i == (d-1) )
-            return CGAL::polynomial_subresultants_with_cofactors<PT>
+            return CGAL::CGALi::polynomial_subresultants_with_cofactors<PT>
                 (p,q,out_sres,out_co_p,out_co_q);
         else
-            return CGAL::polynomial_subresultants_with_cofactors<PT>
+            return CGAL::CGALi::polynomial_subresultants_with_cofactors<PT>
                 (Move()(p,i),Move()(q,i),out_sres,out_co_p,out_co_q);
     }  
   };
@@ -1446,9 +1446,9 @@ struct Construct_innermost_coefficient_const_iterator_range
       OutputIterator out,
       int i = (d-1) ) const {
         if(i == (d-1) )
-          return CGAL::sturm_habicht_sequence<PT>(p,out);
+          return CGAL::CGALi::sturm_habicht_sequence<PT>(p,out);
         else
-          return CGAL::sturm_habicht_sequence<PT>(Move()(p,i),
+          return CGAL::CGALi::sturm_habicht_sequence<PT>(Move()(p,i),
                                                          out);
     }  
   };
@@ -1466,10 +1466,10 @@ struct Construct_innermost_coefficient_const_iterator_range
       OutputIterator3 out_fx,
       int i = (d-1) ) const {
         if(i == (d-1) )
-          return CGAL::sturm_habicht_sequence_with_cofactors<PT>
+          return CGAL::CGALi::sturm_habicht_sequence_with_cofactors<PT>
               (p,out_stha,out_f,out_fx);
         else
-          return CGAL::sturm_habicht_sequence_with_cofactors<PT>
+          return CGAL::CGALi::sturm_habicht_sequence_with_cofactors<PT>
               (Move()(p,i),out_stha,out_f,out_fx);
     }  
   };
@@ -1484,9 +1484,9 @@ struct Construct_innermost_coefficient_const_iterator_range
       OutputIterator out,
       int i = (d-1) ) const {
         if(i == (d-1) )
-          return CGAL::principal_sturm_habicht_sequence<PT>(p,out);
+          return CGAL::CGALi::principal_sturm_habicht_sequence<PT>(p,out);
         else
-          return CGAL::principal_sturm_habicht_sequence<PT>
+          return CGAL::CGALi::principal_sturm_habicht_sequence<PT>
               (Move()(p,i),out);
     }  
   };

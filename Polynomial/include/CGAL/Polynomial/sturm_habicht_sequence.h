@@ -55,7 +55,7 @@ namespace CGALi {
     typename Polynomial_traits_d::Degree degree;
 
     std::vector<typename Polynomial_traits_d::Polynomial_d> stha;
-    CGAL::sturm_habicht_sequence<Polynomial_traits_d>
+    CGAL::CGALi::sturm_habicht_sequence<Polynomial_traits_d>
         (P,std::back_inserter(stha));
     for(int i=0; i<static_cast<int>(stha.size()); i++) {
       int d = degree(stha[i]);
@@ -305,7 +305,7 @@ namespace CGALi {
           <Polynomial_traits_d> (A,pstha,copstha);
   }
 
-} // namespace CGALi
+
     
 
   /*! 
@@ -340,7 +340,7 @@ namespace CGALi {
 
     std::vector<Polynomial> stha;
     
-    CGAL::polynomial_subresultants<Polynomial_traits_d>
+    CGAL::CGALi::polynomial_subresultants<Polynomial_traits_d>
         (P,P_x,std::back_inserter(stha));
     stha.push_back(P);
 
@@ -382,7 +382,7 @@ template<typename Polynomial_traits_d,
 
     std::vector<Polynomial> stha,co_f,co_fx;
     
-    CGAL::polynomial_subresultants_with_cofactors<Polynomial_traits_d>
+    CGAL::CGALi::polynomial_subresultants_with_cofactors<Polynomial_traits_d>
         (P,P_x,
          std::back_inserter(stha),
          std::back_inserter(co_f),
@@ -408,6 +408,8 @@ template<typename Polynomial_traits_d,
     
     return stha_out;
   }
+
+} // namespace CGALi
 
 
   /*! 

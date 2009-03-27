@@ -100,9 +100,6 @@ CGALi::Simple_matrix<NT> polynomial_subresultant_matrix(
 					       CGAL::Polynomial<NT> g,
 					       int d=0);
 
-} // namespace CGALi
-
-
 template <typename Polynomial_traits_d,typename OutputIterator> inline
 OutputIterator polynomial_subresultants
 (typename Polynomial_traits_d::Polynomial_d A, 
@@ -151,6 +148,7 @@ sturm_habicht_sequence_with_cofactors
  OutputIterator2 out_f,
  OutputIterator3 out_fx);
 
+} // namespace CGALi
 
 
 } // namespace CGAL

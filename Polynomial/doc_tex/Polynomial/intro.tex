@@ -385,25 +385,7 @@ cofactors, and for the principal Sturm-Habicht coefficients exist.
 \item \ccc{PolynomialTraits_d::PrincipalSturmHabichtSequence}
 \end{itemize}
 %
-With the exception of \ccc{PolynomialTraits_d::Resultant},
-all these functors are only optional -- however, if the coefficient type
-is at least a model of \ccc{Integral_domain_without_division},
-one can simply call the corresponding functions
-\begin{itemize}
-\item \ccc{CGAL::polynomial_subresultants}\ccGlue
-\item \ccc{CGAL::principal_subresultants}\ccGlue
-\item \ccc{CGAL::sturm_habicht_sequence}\ccGlue
-\item \ccc{CGAL::principal_sturm_habicht_sequence}
-\end{itemize}
-to realize valid models. If the coefficient type models \ccc{Integral_domain},
-the functions
-\begin{itemize}
-\item \ccc{CGAL::polynomial_subresultants_with_cofactors}\ccGlue
-\item \ccc{CGAL::sturm_habicht_sequence_with_cofactors}
-\end{itemize}
-can be used for models of the remaining functors.
-
-The principal Sturm-Habicht coefficients allow to count the number of
+The principal Sturm-Habicht sequence allows to count the number of
 real roots of a polynomial using the function
 \begin{itemize}
 \item \ccc{CGAL::stha_count_number_of_real_roots}.

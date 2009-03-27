@@ -34,7 +34,7 @@ template<typename ArithmeticKernel> void test_routine() {
     // f=x^3*(x+1)*(x-1)*(x-2)^2
     PNT_1 f(NT(0),NT(0),NT(0),NT(-4),NT(4),NT(3),NT(-4),NT(1));
     std::vector<NT> stha;
-    CGAL::principal_sturm_habicht_sequence<PNT_1_traits>
+    CGAL::principal_sturm_habicht_sequence
         (f,std::back_inserter(stha));
         
     assert(stha.size()==8);
@@ -107,7 +107,7 @@ template<typename ArithmeticKernel> void test_routine() {
     PNT_1 f(NT(0),NT(0),NT(1),NT(0),NT(0),NT(0),NT(0),NT(0),NT(1));
 
     std::vector<NT> stha;
-    CGAL::principal_sturm_habicht_sequence<PNT_1_traits> 
+    CGAL::principal_sturm_habicht_sequence
         (f,std::back_inserter(stha));
         
     assert(stha.size()==9);
@@ -170,7 +170,7 @@ template<typename ArithmeticKernel> void test_routine() {
 
     std::vector<PNT_1> stha;
 
-    CGAL::sturm_habicht_sequence<PNT_1_traits>
+    CGAL::sturm_habicht_sequence
         (f,std::back_inserter(stha));
 
     assert(stha.size()==6);
@@ -205,9 +205,9 @@ template<typename ArithmeticKernel> void test_routine() {
 
     std::vector<PNT_1> stha_check,stha,co_f,co_fx;
 
-    CGAL::sturm_habicht_sequence<PNT_1_traits>
+    CGAL::sturm_habicht_sequence
         (f,std::back_inserter(stha_check));
-    CGAL::sturm_habicht_sequence_with_cofactors<PNT_1_traits>
+    CGAL::sturm_habicht_sequence_with_cofactors
         (f,
          std::back_inserter(stha),
          std::back_inserter(co_f),
@@ -248,9 +248,9 @@ template<typename ArithmeticKernel> void test_routine() {
     std::vector<PNT_1> stha_check,stha,co_f,co_fx;
 
 
-    CGAL::sturm_habicht_sequence<PNT_1_traits>
+    CGAL::sturm_habicht_sequence
         (f,std::back_inserter(stha_check));
-    CGAL::sturm_habicht_sequence_with_cofactors<PNT_1_traits>
+    CGAL::sturm_habicht_sequence_with_cofactors
         (f,
          std::back_inserter(stha),
          std::back_inserter(co_f),

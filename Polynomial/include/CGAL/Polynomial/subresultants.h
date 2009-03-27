@@ -653,8 +653,6 @@ CGAL_BEGIN_NAMESPACE
           (P,Q,sres_out,coP_out,coQ_out,Algebraic_category());
   }
 
-  } // namespace CGALi
-    
   /*! \relates CGAL::Polynomial
    *  \brief compute the polynomial subresultants of the polynomials 
    *  \c A and \c B
@@ -716,6 +714,7 @@ CGAL_BEGIN_NAMESPACE
           <Polynomial_traits_d> (p,q,sres_out,coP_out,coQ_out);
   }
 
+} // namespace CGALi
 
 CGAL_END_NAMESPACE
 

@@ -806,32 +806,19 @@ Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Resultant}.
 % polynomial_subresultants
 \begin{ccRefFunction}{polynomial_subresultants}
 \ccDefinition
-
-Computes the polynomial subresultants
-of two polynomials, defined as in the concept 
-\ccc{Polynomial_traits_d::PolynomialSubresultants}, 
-if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::IntegralDomainWithoutDivision}.
-
-The computation method depends on the algebraic category of
-\ccc{PolynomialTraits_d::Coefficient_type}.
-if it models \ccc{CGAL::IntegralDomain}, 
-the subresultants are computed
-by a pseudo-division approach~\cite{d-osa-00}. 
-If they only model a
-\ccc{CGAL::IntegralDomainWithoutDivision}, the subresultants
-are computed by evaluating the determinants directly, avoiding divisions
-completely~\cite{k-dfcosubm-09}.
-
-\ccOperations
-\ccFunction{template<typename Polynomial_traits_d,typename OutputIterator>
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::PolynomialSubresultants}. \\ \\ 
+\ccInclude{CGAL/polynomial_utils.h}\\ \\
+\ccFunction{template<typename Polynomial_d,typename OutputIterator>
         OutputIterator polynomial_subresultants
-            (typename Polynomial_traits_d::Polynomial_d   p,
-             typename Polynomial_traits_d::Polynomial_d   q,
+            (Polynomial_d   p,
+             Polynomial_d   q,
              OutputIterator out);}
          { computes the polynomial subresultants of $p$ and $q$, 
            with respect to the outermost variable. Each element is of type
-           \ccc{PolynomialTraits_d::Polynomial_d}.}
+           \ccc{Polynomial_d}.}
 \ccSeeAlso
 \ccRefConceptPage{Polynomial_d}\\
 \ccRefConceptPage{PolynomialTraits_d}\\
@@ -841,21 +828,18 @@ completely~\cite{k-dfcosubm-09}.
 % polynomial_subresultants_with_cofactors
 \begin{ccRefFunction}{polynomial_subresultants_with_cofactors}
 \ccDefinition
-
-Computes the polynomial subresultants
-of two polynomials and their cofactors, defined as in the concept 
-\ccc{Polynomial_traits_d::PolynomialSubresultantsWithCofactors}, 
-if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::IntegralDomain}.
-
-\ccOperations
-\ccFunction{template<typename Polynomial_traits_d,
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::PolynomialSubresultantsWithCofactors}. \\ \\ 
+\ccInclude{CGAL/polynomial_utils.h}\\ \\
+\ccFunction{template<typename Polynomial_d,
     typename OutputIterator1, 
     typename OutputIterator2,
     typename OutputIterator3>
     OutputIterator1 polynomial_subresultants_with_cofactors
-      (typename Polynomial_traits_d::Polynomial_d p,
-       typename Polynomial_traits_d::Polynomial_d q,
+      (Polynomial_d p,
+       Polynomial_d q,
        OutputIterator1 sres_out,
        OutputIterator2 coP_out,
        OutputIterator3 coQ_out);}
@@ -863,7 +847,7 @@ is at least a model of \ccc{CGAL::IntegralDomain}.
            \ccc{sres_out}, with respect to the outermost variable, and
            the cofactors for $P$, \ccc{coP_out} and $Q$, \ccc{coQ_out}. 
            The elements  of each output range are of type
-           \ccc{PolynomialTraits_d::Polynomial_d}.}
+           \ccc{Polynomial_d}.}
 \ccSeeAlso
 \ccRefConceptPage{Polynomial_d}\\
 \ccRefConceptPage{PolynomialTraits_d}\\
@@ -874,22 +858,19 @@ is at least a model of \ccc{CGAL::IntegralDomain}.
 % principal_subresultants
 \begin{ccRefFunction}{principal_subresultants}
 \ccDefinition
-
-Computes the principal subresultants
-of two polynomials, defined as in the concept 
-\ccc{Polynomial_traits_d::PrincipalSubresultants}, 
-if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::IntegralDomainWithoutDivision}.
-
-\ccOperations
-\ccFunction{template<typename Polynomial_traits_d,typename OutputIterator>
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::PrincipalSubresultants}. \\ \\ 
+\ccInclude{CGAL/polynomial_utils.h}\\ \\
+\ccFunction{template<typename Polynomial_d,typename OutputIterator>
         OutputIterator principal_subresultants
-            (typename Polynomial_traits_d::Polynomial_d   p,
-             typename Polynomial_traits_d::Polynomial_d   q,
+            (Polynomial_d   p,
+             Polynomial_d   q,
              OutputIterator out);}
          { computes the principal subresultants of $p$ and $q$, 
            with respect to the outermost variable. Each element is of type
-           \ccc{PolynomialTraits_d::Coefficient_type}.}
+           \ccc{Polynomial_traits_d<Polynomial_d>::Coefficient_type}.}
 \ccSeeAlso
 \ccRefConceptPage{Polynomial_d}\\
 \ccRefConceptPage{PolynomialTraits_d}\\
@@ -899,48 +880,38 @@ is at least a model of \ccc{CGAL::IntegralDomainWithoutDivision}.
 % sturm_habicht_sequence
 \begin{ccRefFunction}{sturm_habicht_sequence}
 \ccDefinition
-
-Computes the Sturm-Habicht-polynomials
-of a polynomial, defined as in the concept 
-\ccc{Polynomial_traits_d::SturmHabichtSequence}, 
-if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::IntegralDomainWithoutDivision}.
-
-The computation works simply by calling \ccc{CGAL::polynomial_subresultants},
-and adjusting the signs.
-
-\ccOperations
-\ccFunction{template<typename Polynomial_traits_d,typename OutputIterator> OutputIterator
-    sturm_habicht_sequence(typename Polynomial_traits_d::Polynomial_d f, 
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::SturmHabichtSequence}. \\ \\ 
+\ccInclude{CGAL/polynomial_utils.h}\\ \\
+\ccFunction{template<typename Polynomial_d,typename OutputIterator> OutputIterator
+    sturm_habicht_sequence(Polynomial_d f, 
                            OutputIterator out);}
          { computes the Sturm-Habicht-sequence of $f$
            with respect to the outermost variable. Each element is of type
-           \ccc{PolynomialTraits_d::Polynomial_d}.}
+           \ccc{Polynomial_d}.}
 \ccSeeAlso
 \ccRefConceptPage{Polynomial_d}\\
 \ccRefConceptPage{PolynomialTraits_d}\\
 \ccRefConceptPage{PolynomialTraits_d::SturmHabichtSequence}\\
-\ccRefIdfierPage{CGAL::polynomial_subresultants}\\
 \end{ccRefFunction}
 
 % sturm_habicht_sequence_with_cofactors
 \begin{ccRefFunction}{sturm_habicht_sequence_with_cofactors}
 \ccDefinition
-
-Computes the Sturm-Habicht-sequence of a polynomial
-and its cofactors, defined as in the concept 
-\ccc{Polynomial_traits_d::SturmHabichtSequenceWithCofactors}, 
-if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::IntegralDomain}.
-
-\ccOperations
-\ccFunction{template<typename Polynomial_traits_d,
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::SturmHabichtSequenceWithCofactors}. \\ \\ 
+\ccInclude{CGAL/polynomial_utils.h}\\ \\
+\ccFunction{template<typename Polynomial_d,
     typename OutputIterator1,
     typename OutputIterator2,
     typename OutputIterator3> 
     OutputIterator1
     sturm_habicht_sequence_with_cofactors
-      (typename Polynomial_traits_d::Polynomial_d f,
+      (Polynomial_d f,
        OutputIterator1 stha_out,
        OutputIterator2 cof_out,
        OutputIterator3 cofx_out);}
@@ -948,7 +919,7 @@ is at least a model of \ccc{CGAL::IntegralDomain}.
            \ccc{stha_out}, with respect to the outermost variable, and
            the cofactors for $f$, \ccc{cof_out} and $f'$, \ccc{cofx_out}. 
            The elements  of each output range are of type
-           \ccc{PolynomialTraits_d::Polynomial_d}.}
+           \ccc{Polynomial_d}.}
 \ccSeeAlso
 \ccRefConceptPage{Polynomial_d}\\
 \ccRefConceptPage{PolynomialTraits_d}\\
@@ -956,25 +927,22 @@ is at least a model of \ccc{CGAL::IntegralDomain}.
 \end{ccRefFunction}
 
 
-% principal_subresultants
+% principal_sturm_habicht_sequence
 \begin{ccRefFunction}{principal_sturm_habicht_sequence}
 \ccDefinition
-
-Computes the principal Sturm-Habicht coefficients
-of a polynomial, defined as in the concept 
-\ccc{Polynomial_traits_d::PrincipalSturmHabichtSequence}, 
-if \ccc{PolynomialTraits_d::Coefficient_type}
-is at least a model of \ccc{CGAL::IntegralDomainWithoutDivision}.
-
-\ccOperations
-\ccFunction{  template <typename Polynomial_traits_d,typename OutputIterator> inline
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::PrincipalSturmHabichtSequence}. \\ \\ 
+\ccInclude{CGAL/polynomial_utils.h}\\ \\
+\ccFunction{  template <typename Polynomial_d,typename OutputIterator> inline
     OutputIterator
     principal_sturm_habicht_sequence
-      (typename Polynomial_traits_d::Polynomial_d A, 
+      (typename Polynomial_d f, 
        OutputIterator out);}
          { computes the principal Sturm-Habicht coefficients of $f$
            with respect to the outermost variable. Each element is of type
-           \ccc{PolynomialTraits_d::Coefficient_type}.}
+           \ccc{Polynomial_traits_d<Polynomial_d>::Coefficient_type}.}
 \ccSeeAlso
 \ccRefConceptPage{Polynomial_d}\\
 \ccRefConceptPage{PolynomialTraits_d}\\
