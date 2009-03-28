@@ -38,7 +38,7 @@ int main() {
   CGAL::convex_decomposition_3(N);
   std::list<Polyhedron_3> convex_parts;
   
-  // the first volumes is the outer volume, which is 
+  // the first volume is the outer volume, which is 
   // ignored in the decomposition
   Volume_const_iterator ci = ++N.volumes_begin();
   for( ; ci != N.volumes_end(); ++ci) {
