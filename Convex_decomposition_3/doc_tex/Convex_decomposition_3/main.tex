@@ -45,27 +45,28 @@ optimal~\cite{c-cpplb-84}.
   \begin{ccHtmlOnly}
     <p><center>
     <img src="./fig/two_cubes.gif" border=0 alt="decomposition
-    example">
+    example" width=250>&nbsp;&nbsp;&nbsp;&nbsp;
     <img src="./fig/two_cubes_cylindrical.gif" border=0 alt="decomposition
-    after first step">
-    <img src="./fig/two_cubes_vertical.gif" border=0 alt="final decomposition">
+    after first step" width=250>&nbsp;&nbsp;&nbsp;
+    <img src="./fig/two_cubes_vertical.gif" border=0 alt="final
+    decomposition" width=250>
     </center>
   \end{ccHtmlOnly}
-  \caption{Vertical decomposition based on the insertion of walls 
+  \caption{Vertical decomposition based on the insertion of vertical facets 
 	   (viewed from the top). Left: Non-convex polyhedron. Middle:
-	   Non-vertical relfex edges have been resolved. Right: Vertical
-           reflex edges have been resolved. The cells are convex.}
+	   Non-vertical reflex edges have been resolved. Right: Vertical
+           reflex edges have been resolved. The sub-volumes are convex.}
   \label{fig:verticalDecomposition}
 \end{figure}
 
 Our decomposition runs in two steps. In the first step, each
 non-vertical reflex edge $e$ is resolved by insertion of vertical
-facets $W(e)$ through $e$. In the second step, we do the same with the
+facets through $e$. In the second step, we do the same with the
 vertical reflex edges. Figure~\ref{fig:verticalDecomposition}
 illustrates the two steps.
 
 The worst-case running time of our implementation is
-$O(n^2r^4\sqrt[3]{nr^2}\log{nr})$, where $n$ is the complexity of the
+$O(n^2r^4\sqrt[3]{nr^2}\log{(nr)})$, where $n$ is the complexity of the
 polyhedron and $r$ is the number of reflex edges. But this running
 time is very pessimistic. Assuming that every inserted facet has
 complexity $O(n)$ and that ray shooting queries run in logarithmic
@@ -77,37 +78,42 @@ bounded polyhedra. An extension to unbounded polyhedra is planned.
 % +------------------------------------------------------------------------+
 \section{Interface and Usage}
 
-A \ccc{Nef_polyhedron_3} represents a subdivision of the
+An instance of \ccc{Nef_polyhedron_3} represents a subdivision of the
 three-dimensional space into vertices, edges, facets, and
-volumes. Each of these items contains set-selection mark, which
-indicates whether the item belongs to the represented point set or
-not. The represented polyhedron is the union of the point sets
-represented by the selected items. As an example, a cube is
-represented by 8 vertices, 12 edges, 6 facets, and 2 volumes, where
-one volume represents the interior of the cube and the other the
-volume outside of the cube. All of these items are selected, except
-for outer volume.  Read the chapter on 3D Boolean operations on Nef
-polyhedra for more details~\ref{chapterNef3}.
+volumes. Some of these items form the polyhedron (selected), while
+others represent the outer volume or holes within the polyhedron
+(unselected). As an example, the unit cube is the point set
+$[0,1]^3$. The smallest subdivision that represents the unit cube has
+8 vertices, 12 edges, 6 facets, and 2 volumes. The volumes enclosed by
+the vertices, edges, and facets is the interior of the cube and
+therefore selected. The volume outside the cube does not belong to it
+and is therefore unselected. The vertices, edges, and facets---also
+denoted as boundary items---are needed to separate the two volumes,
+but are also useful for representing topological properties. In case
+of the (closed) unit cube the boundary items are part of the
+polyhedron and therefore selected, but in case of the open unit cube
+$[0,1)$^3 they are unselected. Each item has its own selection mark,
+which allows the correct representation of Nef polyhedra, which are
+closed under Boolean and topological operations. Details can be found
+in the chapter on 3D Boolean operations on Nef polyhedra for more
+details~\ref{chapterNef3}.
 
-The function \ccc{convex_decomposition_3} takes one
-\ccc{Nef_polyhedron_3} as input an inserts additional facets into the
-selected volumes. These additional facets are also selected and
-therefore redundant for the representation of the polyhedron. If some
-of these facets split a volume into two parts, each of the two volumes
-is represented by a separate volume item. The insertion of facets
-stops when all the selected volumes are convex. The modified
-polyhedron is the result of the function
-\ccc{convex_decomposition_3}. Note that the function 
-\ccc{convex_decomposition_3} is restricted to standard kernels. 
-The extended kernels, which allow the representation of polyhedra with
-an infinite boundary (e.g. halfspaces) only add further unbounded
-polyhedra to the domain of representable polyhedra. Using a standard
-kernel, unbounded polyhedra can be identified by the selected outer
-volume. In such a case, we ignore the outer volume in the
-decomposition process.
+Usually, an instance of \ccc{Nef_polyhedron_3} does not contain any
+redundant items. However, the function \ccc{convex_decomposition_3}
+subdivides selected volumes of a given \ccc{Nef_polyhedron_3} by
+selected facets. These additional facets are therefore redundant,
+i.e., their insertion alters the representation of the polyhedron, but
+not the polyhedron itself. 
 
-The convex pieces of the modified polyhedron can be accessed by
-traversing $N$~\ref{subsectionNef_3ShellExploration}, or by converting
-them into separate Nef polyhedra, as illustrated by the example code.
+When \ccc{convex_decomposition_3} resolved all reflex edges, the
+selected sub-volumes have become convex. Each of them is represented
+by a separate volume item and can therefore be traversed
+separately~\ref{subsectionNef_3ShellExploration}. Another possibility
+of accessing the convex pieces is to convert them into separate Nef
+polyhedra, as illustrated by the example code.
+
+Note that due to the restriction to bounded polyhedra, the use of
+extended kernels is unnecessary and expensive. We therefore do not
+support the use of extended kernels in the convex decomposition.
 
 \ccIncludeExampleCode{Convex_decomposition_3/list_of_convex_parts.cpp}

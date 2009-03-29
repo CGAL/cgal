@@ -16,15 +16,21 @@
 
 \ccDefinition
 
-This function takes a \ccc{Nef_polyhedron_3} $N$ and inserts
-additional facets, such that each bounded marked volume (the outer
-volume is unbouned) is subdivided into convex pieces. At the moment
-the function is restricted to the decomposition of bounded
-polyhedra. If the input polyhedron is unbounded, i.e., the outer
-volume is part of the polyhedron, then this volume is ignored during
-the decomposition process.
+The function \ccc{convex_decomposition_3} inserts additional facets
+into the given \ccc{Nef_polyhedron_3} $N$, such that each bounded
+marked volume (the outer volume is unbouned) is subdivided into convex
+pieces.
 
 \ccGlobalFunction{void convex_decomposition_3(Nef_polyhedron_3& N);}
+
+\ccPrecond
+
+The polyhedron $N$ is bounded. Otherwise, the outer volume is ignored.
+
+\ccPostcond
+
+If the polyhedron $N$ is non-convex, it is altered to represent the
+convex decomposition.
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\ 
