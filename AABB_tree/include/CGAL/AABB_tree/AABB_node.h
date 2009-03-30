@@ -16,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     :  Camille Wormser, Jane Tournois, Pierre Alliez
+// Author(s)     :  Camille Wormser, Jane Tournois, Pierre Alliez, Laurent Rineau
 
 #ifndef CGAL_AABB_NODE_H
 #define CGAL_AABB_NODE_H
@@ -37,6 +37,8 @@
 #include <CGAL/AABB_tree/Triangle_3_Bbox_3_do_intersect.h>
 #include <CGAL/AABB_tree/Line_3_Bbox_3_do_intersect.h>
 #include <CGAL/AABB_tree/Sphere_3_Bbox_do_intersect.h>
+#include <CGAL/AABB_tree/Triangle_3_segment_3_intersection.h>
+#include <CGAL/AABB_tree/Triangle_3_ray_3_intersection.h>
 
 namespace CGAL {
 
@@ -92,7 +94,7 @@ public:
 
   ~AABB_node() {}
 
-
+  Bbox bbox() const { return m_bbox; }
   // -----------------------------------------------------------//
   // -----------------RECURSIVE MEMBER FUNCTIONS----------------//
   // -----------------------------------------------------------//
@@ -151,7 +153,7 @@ public:
   template<class Traits, class QueryType>
   void traversal(const QueryType& query,
     Traits& traits,
-    const int nb_primitives)
+    const int nb_primitives) const
   {
     switch(nb_primitives)
     {
@@ -360,7 +362,7 @@ public:
   // The following function template is restricted to that Query can only be in
   // {Ray, Line, Segment}. It return type is bool.
   // The trick uses enable_if and the Boost MPL.
-  template <class Query>
+  template <class Query, class Result>
   static
   typename boost::enable_if<
     typename boost::mpl::contains<Allowed_query_types,
@@ -368,12 +370,12 @@ public:
     bool>::type
   intersection(const Query& query,
                Input f,
-               Point& result)
+               Result& result)
   {
     Triangle t = triangle(f);
     if(CGAL::do_intersect(t, query)) 
     {
-      CGAL::Object inter = CGAL::intersection(t.supporting_plane(), query);
+      CGAL::Object inter = CGAL::intersection(t, query);
       if(CGAL::assign(result, inter))
 	return true;
     }

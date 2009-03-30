@@ -1,4 +1,5 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETHZ (Suisse).
+// Copyrigth (c) 2009  GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -20,11 +21,12 @@
 #ifndef CGAL_AABB_POLYHEDRAL_ORACLE_H
 #define CGAL_AABB_POLYHEDRAL_ORACLE_H
 
-#include <boost/static_warning.hpp>
 #include <utility>
 #include <CGAL/iterator.h>
 
+#include <CGAL/point_generators_3.h>
 #include <CGAL/AABB_tree/AABB_tree.h>
+#include <boost/shared_ptr.hpp>
 
 namespace CGAL {
 
@@ -44,28 +46,28 @@ namespace CGAL {
     typedef Self Surface_3;
 
     // AABB tree
-    typedef AABB_tree<AABBTree_kernel,typename Polyhedron::Facet_handle,Polyhedron> Tree;
+    typedef AABB_tree<AABBTree_kernel,typename Polyhedron::Facet_const_handle,Polyhedron> Tree;
     typedef typename Tree::Point_with_input Point_with_facet_handle;
     typedef CGAL::Cartesian_converter<Kernel,AABBTree_kernel> Converter;
     typedef CGAL::Cartesian_converter<AABBTree_kernel,Kernel> BConverter;
-    Tree *m_pTree;
+
+    typedef boost::shared_ptr<Tree> Tree_shared_ptr;
+    Tree_shared_ptr m_pTree;
 
   public:
-    Tree* tree() const { return m_pTree; }
+    Tree* tree() const { return m_pTree.get(); }
 
   public:
     // Surface constructor
-    AABB_polyhedral_oracle()
+    AABB_polyhedral_oracle(const Polyhedron& poly)
     {
-      m_pTree = NULL;
+      m_pTree = Tree_shared_ptr(new Tree);
+      tree()->build_faces(poly);
     }
-    AABB_polyhedral_oracle(Tree *pTree)
-    {
-      m_pTree = pTree;
-    }
+
     AABB_polyhedral_oracle(const AABB_polyhedral_oracle& oracle)
     {
-      m_pTree = oracle.tree();
+      m_pTree = oracle.m_pTree;
     }
 
     class Intersect_3;
@@ -149,8 +151,32 @@ namespace CGAL {
     template <class P>
     bool is_in_volume(const Surface_3& surface, const P& p)
     {
-      std::cout << "call is in volume: empty function" << std::endl;
-      return true;
+      const Bbox_3 bbox = surface.tree()->bbox();
+      if(p.x() < bbox.xmin() || p.x() > bbox.xmax())
+        return false;
+      if(p.y() < bbox.ymin() || p.y() > bbox.ymax())
+        return false;
+      if(p.z() < bbox.zmin() || p.z() > bbox.zmax())
+        return false;
+
+      const double diameter = surface.tree()->max_bbox_lenght() * 2;
+
+      typename CGAL::Random_points_on_sphere_3<Point_3> random_point(FT(1));
+      typename Kernel::Construct_vector_3 vector =
+        Kernel().construct_vector_3_object();
+      typename Kernel::Construct_segment_3 segment =
+        Kernel().construct_segment_3_object();
+      typename Kernel::Construct_translated_point_3 translate =
+        Kernel().construct_translated_point_3_object();
+      typename Kernel::Construct_scaled_vector_3 scale = 
+        Kernel().construct_scaled_vector_3_object();
+
+      return (surface.tree()->count_intersections(segment(p, 
+                                                          translate(p, 
+                                                                    scale(vector(ORIGIN,
+                                                                                 *random_point),
+                                                                          diameter))))
+              % 2) == 1;
     }
   }; // end class AABB_polyhedral_oracle
 

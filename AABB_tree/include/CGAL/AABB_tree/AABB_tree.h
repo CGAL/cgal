@@ -22,8 +22,7 @@
 #define CGAL_AABB_TREE_H
 
 #include <vector>
-#include <list>
-#include <stack>
+#include <iterator>
 #include <CGAL/AABB_tree/AABB_node.h>
 #include <boost/mpl/vector.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -75,7 +74,7 @@ public:
   }
 
   // build tree when input = face_handle
-  bool build_faces(PSC& psc)
+  bool build_faces(const PSC& psc)
   {
     cleanup();
     set_face_data(psc);
@@ -90,16 +89,29 @@ public:
 
 private:
 
-  void set_face_data(PSC& psc)
+  void set_face_data(const PSC& psc)
   {
     unsigned int nbf = psc.size_of_facets();
     m_data.reserve(nbf);
-    typename PSC::Facet_iterator f;
+    typename PSC::Facet_const_iterator f;
     for(f = psc.facets_begin(); f != psc.facets_end(); f++)
       m_data.push_back(f);
   }
 
 public:
+  Bbox_3 bbox() const
+  {
+    return m_root->bbox();
+  }
+
+  size_t size() const {
+    return m_data.size();
+  }
+
+  double max_bbox_lenght() const
+  {
+    return m_root->max_lenght();
+  }
 
   bool empty()
   {
@@ -107,6 +119,14 @@ public:
   }
 
   // --------------------QUERY FUNCTIONS----------------------//
+
+  // generic traversal
+  template <class T, class Traits>
+  void traversal(const T& x, Traits& traits) const
+  {
+    m_root->template traversal<Traits,T>(x, traits, m_data.size());
+  }
+
 
   template<class QueryType, class ResultType>
   class First_intersection_traits
@@ -137,7 +157,7 @@ public:
     }
   };
 
-  typedef boost::mpl::vector<Ray, Line, Segment> Allowed_query_types;
+  typedef boost::mpl::vector<Plane, Ray, Line, Segment> Allowed_query_types;
 
   // The following function template is restricted to that T can only be in
   // {Ray, Line, Segment}. It return type is bool.
@@ -164,6 +184,95 @@ public:
     return false;
   }
 
+  template<class QueryType, class Output_iterator, class Value_type>
+  class Listing_traits
+  {
+//     typedef typename std::iterator_traits<Output_iterator>::value_type
+//     Pt;
+    typedef Value_type Pt;
+  private:
+    Output_iterator& out_it;
+  public:
+    bool go_further()
+    {
+      return true;
+    }
+    Listing_traits(Output_iterator& out_it_) : out_it(out_it_) {}
+    bool intersection(const QueryType& q, const Input& i)
+    {
+      Pt p;
+      if(Node::intersection(q, i, p))
+      {
+        *out_it++ = p;
+        return true;
+      }
+      return false;
+    }
+    bool do_intersect(const QueryType& q, const Node& node)
+    {
+      return Node::do_intersect(q, node);
+    }
+  }; // end class Listing_traits<QueryType,Container>
+
+  // The following function template is restricted to that T can only be in
+  // {Ray, Line, Segment}. It return type is Output_iterator&.
+  // The trick uses enable_if and the Boost MPL.
+  template <class Value_type, class T, typename Output_iterator>
+  typename boost::enable_if<
+    typename boost::mpl::contains<Allowed_query_types,
+                                  T>::type,
+    Output_iterator>::type
+  all_intersection(const T& x,
+                   Output_iterator out)
+  {
+    typedef Listing_traits<T, Output_iterator, Value_type> Traits;
+
+    Traits traits(out);
+    m_root->template traversal<Traits,T>(x, traits, m_data.size());
+    return out;
+  }
+
+  template <class Value_type>
+  class Counting_iterator {
+    typedef Counting_iterator<Value_type> Self;
+    int& i;
+  public:
+    Counting_iterator(int& i_) : i(i_) {};
+
+    struct Proxy {
+      Proxy& operator=(const Value_type&) {};
+    };
+
+    Proxy operator*() {
+      return Proxy();
+    }
+
+    Self& operator++() {
+      ++i;
+    }
+
+    Self& operator++(int) {
+      ++i;
+    }
+  };
+
+  // The following function template is restricted to that T can only be in
+  // {Ray, Line, Segment}. It return type is int.
+  // The trick uses enable_if and the Boost MPL.
+//   template <class T>
+//   typename boost::enable_if<
+//     typename boost::mpl::contains<Allowed_query_types,
+//                                   T>::type,
+//     int>::type
+//   count_intersections(const T& x)
+//   {
+//     typedef Listing_traits<T, Counting_iterator<Point> > Traits;
+//     int result;
+//     Counting_iterator<Point> counting_it(result);
+//     Traits traits(counting_it);
+//     m_root->template traversal<Traits,T>(x, traits, m_data.size());
+//     return result ;
+//   }
 }; // end class AABB_tree
 
 } // end namespace CGAL
