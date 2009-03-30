@@ -23,6 +23,7 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_polyhedron_builder.h>
 
+#include <CGAL/Timer.h>
 #include <QTime>
 #include <QInputDialog>
 
@@ -91,21 +92,17 @@ void MainWindow::on_actionRemeshing_triggered()
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // AABB tree
-    QTime time;
-    time.start();
+    CGAL::Timer timer;
+    timer.reset();
     std::cout << "Build AABB tree...";
     typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel; 
-    typedef CGAL::AABB_tree<Simple_cartesian_kernel,Polyhedron::Facet_handle,Polyhedron> Tree;
-    Tree tree;
-    tree.build_faces(*pMesh);
-    std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
-
     // input surface
     typedef CGAL::AABB_polyhedral_oracle<Polyhedron,GT,Simple_cartesian_kernel> Input_surface;
-    Input_surface input(&tree);
+    Input_surface input(*pMesh);
+    std::cout << "done (" << timer.time() << " ms)" << std::endl;
 
     // initial point set
-    time.start();
+    timer.reset();
     std::cout << "Insert initial point set...";
     unsigned int nb_initial_points = 10;
     Polyhedron::Point_iterator it;
@@ -116,13 +113,13 @@ void MainWindow::on_actionRemeshing_triggered()
         it != pMesh->points_end(), i < nb_initial_points;
 	it++, i++)
       tr.insert(convert(*it));
-    std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+    std::cout << "done (" << timer.time() << " ms)" << std::endl;
 
     // remesh
-    time.start();
+    timer.reset();
     std::cout << "Remesh...";
-    CGAL::make_surface_mesh(c2t3, input, facets_criteria, CGAL::Manifold_with_boundary_tag());
-    std::cout << "done (" << time.elapsed() << " ms, " << tr.number_of_vertices() << " vertices)" << std::endl;
+    CGAL::make_surface_mesh(c2t3, input, input, facets_criteria, CGAL::Manifold_with_boundary_tag());
+    std::cout << "done (" << timer.time() << " ms, " << tr.number_of_vertices() << " vertices)" << std::endl;
 
     if(tr.number_of_vertices() > 0)
     {
