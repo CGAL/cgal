@@ -22,6 +22,7 @@
 #define CGAL_PLANE_3_BBOX_3_DO_INTERSECT_H
 
 #include <CGAL/Plane_3.h>
+#include <CGAL/Bbox_3.h>
 
 // Opcode like
 
@@ -37,30 +38,30 @@ namespace CGALi {
   {
     if(p.x() > 0) {
       if(p.y() > 0) {
-	if(p.z() > 0) { p_min = K::Point_3(bbox.xmin(), bbox.ymin(),bbox.zmin()); 
-	p_max = K::Point_3(bbox.xmax(), bbox.ymax(),bbox.zmax());}
-	else {							     p_min = K::Point_3(bbox.xmin(), bbox.ymin(),bbox.zmax()); 
-	p_max = K::Point_3(bbox.xmax(), bbox.ymax(),bbox.zmin());}
+	if(p.z() > 0) { p_min = typename K::Point_3(bbox.xmin(), bbox.ymin(),bbox.zmin()); 
+	p_max = typename K::Point_3(bbox.xmax(), bbox.ymax(),bbox.zmax());}
+	else {							     p_min = typename K::Point_3(bbox.xmin(), bbox.ymin(),bbox.zmax()); 
+	p_max = typename K::Point_3(bbox.xmax(), bbox.ymax(),bbox.zmin());}
       }
       else {
-	if(p.z() > 0) { p_min = K::Point_3(bbox.xmin(), bbox.ymax(),bbox.zmin()); 
-	p_max = K::Point_3(bbox.xmax(), bbox.ymin(),bbox.zmax());}
-	else {					         p_min = K::Point_3(bbox.xmin(), bbox.ymax(),bbox.zmax()); 
-	p_max = K::Point_3(bbox.xmax(), bbox.ymin(),bbox.zmin());}
+	if(p.z() > 0) { p_min = typename K::Point_3(bbox.xmin(), bbox.ymax(),bbox.zmin()); 
+	p_max = typename K::Point_3(bbox.xmax(), bbox.ymin(),bbox.zmax());}
+	else {					         p_min = typename K::Point_3(bbox.xmin(), bbox.ymax(),bbox.zmax()); 
+	p_max = typename K::Point_3(bbox.xmax(), bbox.ymin(),bbox.zmin());}
       }
     }
     else {
       if(p.y() > 0) {
-	if(p.z() > 0) { p_min = K::Point_3(bbox.xmax(), bbox.ymin(),bbox.zmin()); 
-	p_max = K::Point_3(bbox.xmin(), bbox.ymax(),bbox.zmax());}
-	else {					         p_min = K::Point_3(bbox.xmax(), bbox.ymin(),bbox.zmax()); 
-	p_max = K::Point_3(bbox.xmin(), bbox.ymax(),bbox.zmin());}
+	if(p.z() > 0) { p_min = typename K::Point_3(bbox.xmax(), bbox.ymin(),bbox.zmin()); 
+	p_max = typename K::Point_3(bbox.xmin(), bbox.ymax(),bbox.zmax());}
+	else {					         p_min = typename K::Point_3(bbox.xmax(), bbox.ymin(),bbox.zmax()); 
+	p_max = typename K::Point_3(bbox.xmin(), bbox.ymax(),bbox.zmin());}
       }
       else {
-	if(p.z() > 0) { p_min = K::Point_3(bbox.xmax(), bbox.ymax(),bbox.zmin()); 
-	p_max = K::Point_3(bbox.xmin(), bbox.ymin(),bbox.zmax());}
-	else {					         p_min = K::Point_3(bbox.xmax(), bbox.ymax(),bbox.zmax()); 
-	p_max = K::Point_3(bbox.xmin(), bbox.ymin(),bbox.zmin());}
+	if(p.z() > 0) { p_min = typename K::Point_3(bbox.xmax(), bbox.ymax(),bbox.zmin()); 
+	p_max = typename K::Point_3(bbox.xmin(), bbox.ymin(),bbox.zmax());}
+	else {					         p_min = typename K::Point_3(bbox.xmax(), bbox.ymax(),bbox.zmax()); 
+	p_max = typename K::Point_3(bbox.xmin(), bbox.ymin(),bbox.zmin());}
       }
     }
   }
