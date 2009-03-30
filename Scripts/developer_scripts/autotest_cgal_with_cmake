@@ -96,7 +96,7 @@ SHOW_PROGRESS=""
 LIST_TEST_PACKAGES="${CGAL_ROOT}/list_test_packages"
 
 # ----------------------------------------------------------------------------------------
-# write to logfile 
+# write to logfile
 # $1 = logfile
 # ----------------------------------------------------------------------------------------
 log()
@@ -160,14 +160,14 @@ is_in_list()
 {
   ELEMENT=${1}
   LIST=${2}
-  
+
   for E in ${LIST} ; do
     if [ "${E}" = "${ELEMENT}" ] ; then
       return 0
     fi
-  done  
+  done
 
-  return 1 
+  return 1
 }
 
 # ----------------------------------------------------------------------------------------
@@ -241,7 +241,7 @@ get_cgal()
     CGAL_LOCATION="${CGAL_URL}/${i}";
     CGAL_ZIPFILE="${i}";
   done
-    
+
   CGAL_RELEASE_ID=`echo $CGAL_ZIPFILE | sed "s/.tar.gz//"`
   if [ ! "${CGAL_RELEASE_ID}" = "${CGAL_ZIPFILE}" ]; then
     USE_TARGZ="y"
@@ -251,10 +251,10 @@ get_cgal()
       USE_TARBZ="y"
     fi
   fi
-  
+
   log "${ACTUAL_LOGFILE}" "CGAL_ZIPFILE    = ${CGAL_ZIPFILE}"
   log "${ACTUAL_LOGFILE}" "CGAL_RELEASE_ID = ${CGAL_RELEASE_ID}"
-  
+
   log "${ACTUAL_LOGFILE}" "getting CGAL"
   rm -f "${CGAL_ZIPFILE}"
   if [ -n "${USE_CURL}" ]; then
@@ -275,28 +275,34 @@ get_cgal()
 unzip_cgal()
 {
   cd "${CGAL_ROOT}"
-  
+
   log "${ACTUAL_LOGFILE}" "unzipping CGAL"
   if [ "${USE_TARGZ}" = "y" ]; then
     DECOMPRESSOR="${GUNZIP}"
     log_done "${ACTUAL_LOGFILE}"
   fi
-  
+
   if [ "${USE_TARBZ}" = "y" ]; then
     DECOMPRESSOR="bunzip2"
   fi
-  
+
   log "${ACTUAL_LOGFILE}" "untarring CGAL"
   ${DECOMPRESSOR} -c "${CGAL_ZIPFILE}" | ${TAR} xf - >> "${ACTUAL_LOGFILE}" 2>&1
   if [ ${?} != 0 ]; then
     error "Could not untar CGAL"
   fi
-    
+
   # check, if CGAL_DIR exists
   if [ -d "${CGAL_ROOT}/${CGAL_RELEASE_ID}" ]; then
+    # Reset CGAL-I symlink
     log "${ACTUAL_LOGFILE}" "Resetting CGAL-I symlink to ${CGAL_ROOT}/${CGAL_RELEASE_ID}"
     rm -f CGAL-I
     ln -s "${CGAL_ROOT}/${CGAL_RELEASE_ID}" CGAL-I
+    # Reset CGAL-3.x-I symlink
+    CGAL_RELEASE=`echo "${CGAL_RELEASE_ID}" | sed 's/I.*/I/'`
+    log "${ACTUAL_LOGFILE}" "Resetting ${CGAL_RELEASE} symlink to ${CGAL_ROOT}/${CGAL_RELEASE_ID}"
+    rm -f "${CGAL_RELEASE}"
+    ln -s "${CGAL_ROOT}/${CGAL_RELEASE_ID}" "${CGAL_RELEASE}"
   else
     error "directory ${CGAL_ROOT}/${CGAL_RELEASE_ID} does not exist"
   fi
@@ -306,7 +312,7 @@ unzip_cgal()
 
 
 # ----------------------------------------------------------------------------------------
-# Uniquely adds $1 to the global, space-separated list $PLATFORMS 
+# Uniquely adds $1 to the global, space-separated list $PLATFORMS
 # (if it is not in the list already)
 # ----------------------------------------------------------------------------------------
 add_to_platforms()
@@ -329,7 +335,7 @@ collect_all_reference_platforms()
       if [ -d "${PLATFORM}" ]; then
         add_to_platforms "${PLATFORM}"
       fi
-    done   
+    done
   else
     log "${ACTUAL_LOGFILE}" "WARNING: Invalid reference platforms directory: ${REFERENCE_PLATFORMS_DIR}"
   fi
@@ -345,7 +351,7 @@ collect_all_current_platforms()
   cd "${1}"
   for PLATFORM in * ; do
     if [ -d "${PLATFORM}" ]; then
-      PLATFORMS="${PLATFORMS} ${PLATFORM}"  
+      PLATFORMS="${PLATFORMS} ${PLATFORM}"
     fi
   done
 }
@@ -362,7 +368,7 @@ build_platforms_list()
     if [ "${LOCAL_PLATFORM}" = "all" ] ; then
       USE_REFERENCE_PLATFORMS='y'
     else
-      add_to_platforms "${LOCAL_PLATFORM}" 
+      add_to_platforms "${LOCAL_PLATFORM}"
     fi
   done
 }
@@ -375,53 +381,53 @@ setup_dirs()
 {
   # dir for the actual release
   CGAL_DIR=${CGAL_ROOT}/CGAL-I
-  
+
   CGAL_TEST_DIR=${CGAL_DIR}/test
 
   if [ ! -d "${CGAL_DIR}/cmake" ]; then
     mkdir "${CGAL_DIR}/cmake"
     log "${ACTUAL_LOGFILE}" "Creating ${CGAL_DIR}/cmake"
   fi
-  
+
   if [ ! -d "${CGAL_DIR}/cmake/platforms" ]; then
     mkdir "${CGAL_DIR}/cmake/platforms"
     log "${ACTUAL_LOGFILE}" "Creating ${CGAL_DIR}/cmake/platforms"
   fi
-  
+
   CGAL_BINARY_DIR_BASE=${CGAL_DIR}/cmake/platforms
 
   CGAL_RELEASE_DIR=`readlink "${CGAL_DIR}"`
-  
+
   CGAL_RELEASE_ID=`basename "${CGAL_RELEASE_DIR}"`
-  
+
   log "${ACTUAL_LOGFILE}" "Release to test ${CGAL_RELEASE_DIR}"
   log "${ACTUAL_LOGFILE}" "CGAL_RELEASE_ID=${CGAL_RELEASE_ID}"
-    
+
   if [ ! -r "${LOGS_DIR}" ]; then
     mkdir "$LOGS_DIR"
   fi
 
   #
   # Collects the list of platform directories to build and test on
-  # 
+  #
   # The global variable PLATFORMS contains all the platform directories for all hosts
   # as indicated in .autocgalrc.
-  # If .autocgalrc says "all" in any entry for BUILD_ON_* or COMPILERS_*, the platform 
+  # If .autocgalrc says "all" in any entry for BUILD_ON_* or COMPILERS_*, the platform
   # directories existing in the reference release are added to $PLATFORMS
   #
   PLATFORMS=""
 
   for HOST in ${BUILD_HOSTS}; do
 
-    build_platforms_list "`value_of BUILD_ON_${HOST}`"   
-    build_platforms_list "`value_of COMPILERS_${HOST}`"   
-    
+    build_platforms_list "`value_of BUILD_ON_${HOST}`"
+    build_platforms_list "`value_of COMPILERS_${HOST}`"
+
   done
-  
+
   if [ -n "${USE_REFERENCE_PLATFORMS}" ]; then
     collect_all_reference_platforms
   fi
-  
+
 
   for PLATFORM in ${PLATFORMS}; do
 
@@ -431,8 +437,8 @@ setup_dirs()
       log "${ACTUAL_LOGFILE}" "Creating platform directory ${CGAL_BINARY_DIR}"
       mkdir "${CGAL_BINARY_DIR}"
     fi
-    
-  done  
+
+  done
 }
 
 
@@ -442,9 +448,9 @@ setup_dirs()
 copy_old_stuff()
 {
   if [ -d "${REFERENCE_PLATFORMS_DIR}" ]; then
-  
+
     cd "${CGAL_BINARY_DIR_BASE}"
-    
+
     for PLATFORM in * ; do
       if [ -d "${PLATFORM}" ]; then
 
@@ -455,7 +461,7 @@ copy_old_stuff()
         fi
       fi
     done
-    
+
   fi
 }
 
@@ -466,42 +472,42 @@ copy_old_stuff()
 build_cgal_on_host()
 {
   HOST=${1}
-  
+
   PLATFORMS="`value_of BUILD_ON_${HOST}`"
 
-  
+
   if [ -z "${PLATFORMS}" ]; then
     PLATFORMS=`value_of COMPILERS_${HOST}`
   fi
-  
+
   if [ "${PLATFORMS}" = "all" ]; then
     collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
   fi
-  
+
   if [ -n "${PLATFORMS}" ]; then
-  
+
     for PLATFORM in ${PLATFORMS} ; do
-      
+
       CGAL_BINARY_DIR="${CGAL_BINARY_DIR_BASE}/${PLATFORM}"
-      
+
       if [ -d "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}" ] ; then
         CGAL_REFERENCE_CACHE_DIR="${REFERENCE_PLATFORMS_DIR}/${PLATFORM}"
       else
         CGAL_REFERENCE_CACHE_DIR=""
       fi
-      
+
       log "${ACTUAL_LOGFILE}" "Building cgal libs on host ${HOST} and platform ${PLATFORM}\nUnder ${CGAL_BINARY_DIR}\nUsing reference cache directory ${CGAL_REFERENCE_CACHE_DIR}"
-      
+
       if [ -f "${CGAL_BINARY_DIR}/localbuildscript" ] ; then
         log "${ACTUAL_LOGFILE}" "WARNING! Already built on platform ${PLATFORM}."
       else
-      
+
         if [ -f "${CGAL_BINARY_DIR}/setup" ]; then
           cp "${CGAL_BINARY_DIR}/setup" "${CGAL_BINARY_DIR}/localbuildscript"
         else
           rm -f "${CGAL_BINARY_DIR}/localbuildscript"
         fi
-      
+
         cat >> "${CGAL_BINARY_DIR}/localbuildscript" <<EOF
 CGAL_BINARY_DIR='${CGAL_BINARY_DIR}';
 CMAKE_GENERATOR='${CMAKE_GENERATOR}';
@@ -515,7 +521,7 @@ cd '${CGAL_BINARY_DIR}';
 cmake '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
                            -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
                            VERBOSE=1 \\
-                           ../../..; 
+                           ../../..;
 ${MAKE_CMD} VERBOSE=ON -k -fMakefile  CGAL CGAL_Core CGAL_PDB CGAL_ImageIO CGAL_Qt3 CGAL_Qt4 ;
 cd ..;
 EOF
@@ -525,15 +531,15 @@ EOF
         else
           remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" > "${ACTUAL_LOGFILE}.build.${PLATFORM}" 2>&1
         fi
-                               
+
         cp "${ACTUAL_LOGFILE}.build.${PLATFORM}" "${CGAL_BINARY_DIR}/installation.log"
       fi
-        
+
     done
   else
     error "There are no platform directories under ${CGAL_BINARY_DIR_BASE} to test! "
   fi
-      
+
 }
 
 
@@ -547,7 +553,7 @@ build_cgal()
   done
 
   # NOTE: At this point PWD is in the last platform directory where CGAL was built
-  
+
   log_done "${ACTUAL_LOGFILE}"
   cp "${ACTUAL_LOGFILE}" "${CGAL_BINARY_DIR_BASE}/installation.log"
   ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}"
@@ -564,7 +570,7 @@ run_test_on_host_and_platform()
 {
   HOST=${1}
   PLATFORM=${2}
-  
+
   NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${HOST}`"
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
   cd "${CGAL_BINARY_DIR}"
@@ -574,7 +580,7 @@ run_test_on_host_and_platform()
   else
     MAKE_OPTS="-j ${NUMBER_OF_PROCESSORS}"
   fi
-  
+
   if [ -f "${CGAL_BINARY_DIR}/localtestscript" ]; then
     log "${ACTUAL_LOGFILE}" "WARNING! Already tested on platform ${PLATFORM}."
   else
@@ -583,8 +589,8 @@ run_test_on_host_and_platform()
     else
       rm -f "${CGAL_BINARY_DIR}/localtestscript"
     fi
-    
-    for file in "${CGAL_BINARY_DIR}/localtestscript" "${CGAL_BINARY_DIR}/localtestscript-redo-results-collection"; do 
+
+    for file in "${CGAL_BINARY_DIR}/localtestscript" "${CGAL_BINARY_DIR}/localtestscript-redo-results-collection"; do
       cat >> "$file" <<EOF
 CGAL_TESTER='${CGAL_TESTER}';
 CGAL_TESTER_NAME='${CGAL_TESTER_NAME}';
@@ -616,20 +622,20 @@ rm -rf '${CGAL_BINARY_DIR}/test';
 if [ -f '${LIST_TEST_PACKAGES}' ]; then
 
   mkdir '${CGAL_BINARY_DIR}/test'
-  
+
   cp '${CGAL_TEST_DIR}/collect_cgal_testresults_from_cmake' '${CGAL_BINARY_DIR}/test'
   cp '${CGAL_TEST_DIR}/makefile2'                           '${CGAL_BINARY_DIR}/test'
   cp '${CGAL_TEST_DIR}/run_testsuite_with_cmake'            '${CGAL_BINARY_DIR}/test'
 
   for PACKAGE in \`source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}'\`; do
-  
+
     if [ -d "${CGAL_TEST_DIR}/\${PACKAGE}" ]; then
       mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
       cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
     fi
-    
+
   done
-    
+
 else
   cp -r '${CGAL_TEST_DIR}' '${CGAL_BINARY_DIR}/test';
 fi
@@ -638,7 +644,7 @@ cd '${CGAL_BINARY_DIR}/test';
 [ -n "${ULIMIT_OPTIONS}" ] && ulimit ${ULIMIT_OPTIONS};
 nice ${NICE_OPTIONS} make ${MAKE_OPTS} -k -fmakefile2;
 EOF
-    for file in "${CGAL_BINARY_DIR}/localtestscript" "${CGAL_BINARY_DIR}/localtestscript-redo-results-collection"; do 
+    for file in "${CGAL_BINARY_DIR}/localtestscript" "${CGAL_BINARY_DIR}/localtestscript-redo-results-collection"; do
       cat >> "$file" <<EOF
 echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
@@ -656,15 +662,15 @@ EOF
 
 
     chmod ugo+x "${CGAL_BINARY_DIR}"/localtestscript*
-    
+
     if [ -n "${SHOW_PROGRESS}" ]; then
       remote_command ${HOST} "${CGAL_BINARY_DIR}/localtestscript" | tee "${ACTUAL_LOGFILE}.test.${PLATFORM}" 2>&1
     else
       remote_command ${HOST} "${CGAL_BINARY_DIR}/localtestscript" > "${ACTUAL_LOGFILE}.test.${PLATFORM}" 2>&1
     fi
-    
+
     log_done "${ACTUAL_LOGFILE}.test.${PLATFORM}"
-    
+
   fi
 }
 
@@ -682,12 +688,12 @@ publish_results()
 
   # If this file does not exist results collection failed. Fake a results so this fact is itself reported
   if [ ! -f "results_${CGAL_TESTER}_${PLATFORM}.txt" ]; then
-    log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Results collection for tester ${CGAL_TESTER} and platform ${PLATFORM} failed!" 
-    echo "Results collection failed!" >> "results_${CGAL_TESTER}_${PLATFORM}.txt" 
+    log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Results collection for tester ${CGAL_TESTER} and platform ${PLATFORM} failed!"
+    echo "Results collection failed!" >> "results_${CGAL_TESTER}_${PLATFORM}.txt"
     ${TAR} cf "results_${CGAL_TESTER}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.txt"
     ${COMPRESSOR} -9f "results_${CGAL_TESTER}_${PLATFORM}.tar"
   fi
-  
+
   ${TAR} cf "test_results-${HOST}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.tar.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt"
   ${COMPRESSOR} -9f "test_results-${HOST}_${PLATFORM}.tar"
   COMPILER=`printf "%s" "$2" | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
@@ -697,17 +703,17 @@ publish_results()
   mv "${ACTUAL_LOGFILE}.test.${PLATFORM}.gz" "${LOGS_DIR}/${LOGFILENAME}"
 
   log "${ACTUAL_LOGFILE}" "Test results: ${CGAL_TEST_DIR}/test_results-${HOST}_${PLATFORM}.tar.gz"
-  
+
   if [ -z "${DO_NOT_UPLOAD}" ]; then
     put_on_web "test_results-${HOST}_${PLATFORM}.tar.gz" "${FILENAME}"
-  fi       
+  fi
 
   #
   # notify the CGAL world
   #
   if [ ! "${MAIL_ADDRESS}" = "must_be_set_in_.autocgalrc" ]; then
     for i in ${MAIL_ADDRESS}; do
-      echo "Notifying ${i} about autotest finished." 
+      echo "Notifying ${i} about autotest finished."
       printf "result collection::\n${FILENAME}\n" | ${SENDMAIL} -s "autohandle" ${i}
     done
   fi
@@ -719,13 +725,13 @@ publish_results()
 run_test_on_host()
 {
   HOST=${1}
-  
+
   PLATFORMS=`value_of COMPILERS_${HOST}`
-  
+
   if [ "${PLATFORMS}" = "all" ]; then
     collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
   fi
-  
+
   for PLATFORM in ${PLATFORMS}; do
     run_test_on_host_and_platform "${HOST}" "${PLATFORM}"
     publish_results "${HOST}" "${PLATFORM}"
@@ -741,7 +747,7 @@ run_test()
   if [ -n "${CONSOLE_OUTPUT}" ]; then
       printf "\n-------------------------------------------------------\n"
   fi
-  
+
   for HOST in ${BUILD_HOSTS}; do
     run_test_on_host ${HOST} &
   done
@@ -755,7 +761,7 @@ run_test()
 put_on_web()
 {
   log "${ACTUAL_LOGFILE}" "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
-  
+
   "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION/$2" >> "${ACTUAL_LOGFILE}" 2>&1
 }
 
@@ -774,7 +780,7 @@ do
     echo "Using latest unzipped release instead of getting a new one from the server"
     USE_LATEST_UNZIPPED="y"
   fi
-  
+
   if [ "$arg" = "-l" ]; then
     echo "Not uploading results to dashboard"
     DO_NOT_UPLOAD="y"
@@ -784,7 +790,7 @@ do
     echo "Not testsuite will be launched. Compilation only."
     DO_NOT_TEST="y"
   fi
-  
+
   if [ "$arg" = "-s" ]; then
     echo "Showing progress."
     SHOW_PROGRESS="y"
@@ -836,7 +842,7 @@ fi
 
 # Detects cygwin
 if uname | grep -q "CYGWIN"; then
-  log "${ACTUAL_LOGFILE}" "Cygwin detected, using nmake" 
+  log "${ACTUAL_LOGFILE}" "Cygwin detected, using nmake"
   CMAKE_GENERATOR='-GNMake Makefiles'
   MAKE_CMD='nmake'
   IS_CYGWIN='y'
@@ -880,17 +886,17 @@ fi
 setup_dirs
 
 copy_old_stuff
-  
+
 build_cgal
 
 if [ "${BUILD_HOSTS}" = "localhost" ]; then
   TEXT="`value_of COMPILERS_localhost`"
   if [ -z "${TEXT}" ]; then
-    printf "Skipping testing phase.\n" 
+    printf "Skipping testing phase.\n"
     DO_NOT_TEST="y"
   fi
 fi
-      
+
 if [ -z "${DO_NOT_TEST}" ]; then
   run_test
 fi
