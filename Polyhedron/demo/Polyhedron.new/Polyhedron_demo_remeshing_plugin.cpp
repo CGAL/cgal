@@ -19,15 +19,14 @@ Polyhedron* cgal_code_remesh(const Polyhedron*,
 
 class Polyhedron_demo_remeshing_plugin : 
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  protected Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface);
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
-    scene = scene_interface;
-    mw = mainWindow;
+    this->scene = scene_interface;
+    this->mw = mainWindow;
     actionRemeshing = this->getActionFromMainWindow(mw, "actionRemeshing");
     if(actionRemeshing) {
       connect(actionRemeshing, SIGNAL(triggered()),

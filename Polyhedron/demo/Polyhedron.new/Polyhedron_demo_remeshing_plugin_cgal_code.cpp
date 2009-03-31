@@ -1,3 +1,6 @@
+#include <CGAL/AABB_tree/Triangle_3_segment_3_intersection.h>
+#include <CGAL/AABB_tree/Triangle_3_ray_3_intersection.h>
+
 #include "Polyhedron_type.h"
 
 #include <CGAL/AABB_tree/AABB_polyhedral_oracle.h>

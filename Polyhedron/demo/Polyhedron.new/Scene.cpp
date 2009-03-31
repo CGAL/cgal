@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QColorDialog>
 #include <QApplication>
+#include <QPointer>
 
 namespace {
   void CGALglcolor(QColor c)
@@ -402,9 +403,9 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     if (event->type() == QEvent::MouseButtonPress) {
       QColor color = 
         QColorDialog::getColor(model->data(index).value<QColor>(),
-                               0,
+                               0/*,
                                tr("Select color"),
-                               QColorDialog::ShowAlphaChannel);
+                               QColorDialog::ShowAlphaChannel*/);
       if (color.isValid()) {
 	model->setData(index, color );
       }

@@ -13,7 +13,9 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-foreach(INCDIR ./include ../../../AABB_tree/include ../../../STL_Extension/include ../../../GraphicsView/include ../../../Surface_mesher/include ../../../filtered_kernel/include )
+set(CGAL_SVN_TRUNK ../../..)
+
+foreach(INCDIR ./include ${CGAL_SVN_TRUNK}/AABB_tree/include ${CGAL_SVN_TRUNK}/STL_Extension/include ${CGAL_SVN_TRUNK}/GraphicsView/include ${CGAL_SVN_TRUNK}/Profiling_tools/include)
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
     include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
   endif()
@@ -94,21 +96,21 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp Scene_plane_item.moc)
-  target_link_libraries(scene_basic_objects scene_item)
+  target_link_libraries(scene_basic_objects scene_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
   add_library(scene_polyhedron_item SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
   target_link_libraries(scene_polyhedron_item scene_item)
-  
+
   add_library(polygon_soup SHARED
     Scene_polygon_soup.cpp Scene_polygon_soup.moc)
   target_link_libraries(polygon_soup scene_item)
-  
+
   add_library(scene_nef_polyhedron_item SHARED
     Scene_nef_polyhedron_item.cpp Scene_nef_polyhedron_item.moc
     Scene_nef_rendering.cpp)
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
-  
+
   add_definitions(-DQT_STATICPLUGIN)
 #  if(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
     add_definitions(-DUSE_FORWARD_DECL)
@@ -153,7 +155,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # PLUGINS #
   ###########
   remove_definitions(-DQT_STATICPLUGIN)
-  
+
   macro(polyhedron_demo_plugin plugin_name plugin_implementation_base_name)
     list_split(option ARGN_TAIL ${ARGN} )
     if(NOT ${option} STREQUAL "EXCLUDE_FROM_ALL")
@@ -174,7 +176,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   endmacro(polyhedron_demo_plugin)
 
-  polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin EXCLUDE_FROM_ALL Polyhedron_demo_remeshing_plugin_cgal_code.cpp)
+  polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin Polyhedron_demo_remeshing_plugin_cgal_code.cpp)
   target_link_libraries(remeshing_plugin scene_polyhedron_item)
 
   polyhedron_demo_plugin(inside_out_plugin Polyhedron_demo_inside_out_plugin)

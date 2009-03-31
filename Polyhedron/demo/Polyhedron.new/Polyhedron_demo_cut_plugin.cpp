@@ -80,7 +80,7 @@ public:
     if(isEmpty())
       return Bbox();
     CGAL::Bbox_3 bbox = edges.begin()->bbox();
-    for(ssize_t i = 1, end = edges.size(); i < end; ++i) {
+    for(size_t i = 1, end = edges.size(); i < end; ++i) {
       bbox = bbox + edges[i].bbox();
     }
     return Bbox(bbox.xmin(),
@@ -114,7 +114,7 @@ public:
 
   void draw_edges() const {
     ::glBegin(GL_LINES);
-    for(ssize_t i = 0, end = edges.size();
+    for(size_t i = 0, end = edges.size();
         i < end; ++i)
     {
       const Simple_cartesian_kernel::Point_3& a = edges[i].source();
