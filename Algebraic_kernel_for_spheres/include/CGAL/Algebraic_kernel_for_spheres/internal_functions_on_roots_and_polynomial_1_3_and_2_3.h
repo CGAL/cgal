@@ -247,9 +247,9 @@ namespace CGAL {
     const Root_of_2 t2 = make_root_of_2(alpha,FT(1),gama);
 
     bool first_t1 = true;
-    Sign sign_a1 = sign(p.a1());
-    Sign sign_a2 = sign(p.a2());
-    Sign sign_a3 = sign(p.a3());
+    Sign sign_a1 = static_cast<Sign> (sign(p.a1()));
+    Sign sign_a2 = static_cast<Sign> (sign(p.a2()));
+    Sign sign_a3 = static_cast<Sign> (sign(p.a3()));
     if(sign_a1 == ZERO) {
       if(sign_a2 == ZERO) {
         first_t1 = (sign_a3 == POSITIVE);
