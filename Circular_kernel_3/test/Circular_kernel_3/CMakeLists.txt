@@ -33,6 +33,7 @@ create_single_source_cgal_program( "test_Spherical_kernel_basics.cpp" )
 create_single_source_cgal_program( "test_Exact_spherical_kernel.cpp" )
 create_single_source_cgal_program( "test_Lazy_Spherical_kernel.cpp" )
 create_single_source_cgal_program( "test_Lazy_spherical_kernel_basics.cpp" )
+create_single_source_cgal_program( "test_Spherical_kernel_with_core.cpp" )
 
 else()
   

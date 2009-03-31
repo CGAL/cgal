@@ -2203,22 +2203,22 @@ void _test_bbox(const typename SK::Circle_3 &c)
 
 	Circular_arc_point_3 ex1, ex2, ey1, ey2, ez1, ez2;
 
-  if(is_zero(c.supporting_plane().b()) &&
-		is_zero(c.supporting_plane().c())) ex2 = ex1 = c.center();
+  if((c.supporting_plane().b() == 0) &&
+		 (c.supporting_plane().c() == 0)) ex2 = ex1 = c.center();
 	else {
     ex1 = x_extremal_point(c, true);
     ex2 = x_extremal_point(c, false);
   }
 
-  if(is_zero(c.supporting_plane().a()) &&
-		is_zero(c.supporting_plane().c())) ey2 = ey1 = c.center();
+  if((c.supporting_plane().a() == 0) &&
+		(c.supporting_plane().c() == 0)) ey2 = ey1 = c.center();
 	else {
     ey1 = y_extremal_point(c, true);
     ey2 = y_extremal_point(c, false);
   }
 
-  if(is_zero(c.supporting_plane().a()) &&
-		is_zero(c.supporting_plane().b())) ez2 = ez1 = c.center();
+  if((c.supporting_plane().a() == 0) &&
+		(c.supporting_plane().b() == 0)) ez2 = ez1 = c.center();
   else {
 	  ez1 = z_extremal_point(c, true);
     ez2 = z_extremal_point(c, false);
