@@ -275,7 +275,7 @@ public:
     return Sphere(barycenter, radius*radius);
   }
 
-  /// The function \ccc{compute_implicit_function}() must be called
+  /// The function compute_implicit_function() must be called
   /// after each insertion of oriented points.
   /// It computes the piecewise linear scalar function 'f' by:
   /// - applying Delaunay refinement.
