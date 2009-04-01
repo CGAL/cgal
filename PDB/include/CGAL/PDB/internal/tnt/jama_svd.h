@@ -13,8 +13,8 @@
 #include <cmath>
 // for abs() below
 
-CGAL_JAMA_BEGIN_NAMESPACE
-using namespace CGAL_TNT_NS;
+namespace CGAL { namespace PDB { namespace JAMA {
+using namespace CGAL::PDB::TNT;
 
 
    /** Singular Value Decomposition.
@@ -532,6 +532,6 @@ class SVD
    }
 };
 
-CGAL_JAMA_END_NAMESPACE
+}}}
 #endif
 // JAMA_SVD_H

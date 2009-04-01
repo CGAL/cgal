@@ -25,7 +25,7 @@
 #include <cassert>
 #include "tnt_array1d.h"
 
-CGAL_TNT_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace TNT {
 
 
 
@@ -227,5 +227,5 @@ Array1D<T>&  operator/=(Array1D<T> &A, const Array1D<T> &B)
 
 
 
-CGAL_TNT_END_NAMESPACE
+}}}
 #endif

@@ -5,7 +5,7 @@
 #include <algorithm>
 //for min(), max() below
 
-CGAL_JAMA_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace JAMA {
 
 
    /** LU Decomposition.
@@ -310,6 +310,6 @@ class LU
 
 }; /* class LU */
 
-CGAL_JAMA_END_NAMESPACE
+}}}
 #endif
 /* JAMA_LU_H */

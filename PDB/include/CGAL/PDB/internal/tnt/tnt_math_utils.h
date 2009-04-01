@@ -5,7 +5,7 @@
 #include <cmath>
 
 
-CGAL_TNT_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace TNT {
 
 /**
 	@returns hypotenuse of real (non-complex) scalars a and b by 
@@ -27,7 +27,7 @@ Real hypot(const Real &a, const Real &b)
 	}
 }
 
-CGAL_TNT_END_NAMESPACE
+}}}
 
 #endif
 /* MATH_UTILS_H */

@@ -38,11 +38,11 @@
 #define CGAL_TNT_SUBSCRIPT_TYPE int
 #endif*/
 
-CGAL_TNT_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace TNT {
 
     typedef int Subscript;
 
-CGAL_TNT_END_NAMESPACE
+}}}
 // () indexing in TNT means 1-offset, i.e. x(1) and A(1,1) are the
 // first elements.  This offset is left as a macro for future
 // purposes, but should not be changed in the current release.

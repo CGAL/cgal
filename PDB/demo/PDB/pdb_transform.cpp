@@ -19,6 +19,7 @@
    MA 02110-1301, USA. */
 
 #include <CGAL/PDB/PDB.h>
+#include <CGAL/PDB/range.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <cstdlib>
@@ -37,6 +38,7 @@
 
 
 int main(int argc, char *argv[]){
+  using namespace CGAL::PDB;
   std::string input_file, output_file;
   bool print_help=false;
   bool verbose=false;
@@ -91,11 +93,11 @@ int main(int argc, char *argv[]){
       return EXIT_FAILURE;
     }
   }
-  CGAL::Aff_transformation_3<CGAL::PDB::Kernel> 
+  CGAL::Aff_transformation_3<Kernel> 
     t(c[0][0], c[0][1], c[0][2], c[0][3],
       c[1][0], c[1][1], c[1][2], c[1][3],
       c[2][0], c[2][1], c[2][2], c[2][3]);
-  CGAL::PDB::Kernel::Point_3 pt(0,0,1);
+  Kernel::Point_3 pt(0,0,1);
   // std::cout << t(pt) << std::endl;
  
    
@@ -111,33 +113,24 @@ int main(int argc, char *argv[]){
     return EXIT_FAILURE;
   }
 
-  CGAL::PDB::PDB pdb(in, verbose);
+  PDB pdb(in, verbose);
 
-  if (verbose) std::cout << "Input PDB has " << pdb.number_of_models() << " models." << std::endl;
+  if (verbose) std::cout << "Input PDB has " << pdb.models().size() << " models." << std::endl;
  
-  for (CGAL::PDB::PDB::Model_iterator it= pdb.models_begin(); 
-       it != pdb.models_end(); ++it) {
-    CGAL::PDB::Model &m= it->model();
-    std::cout << "Model " << it->key() << " has " << m.number_of_chains() 
+
+  CGAL_PDB_FOREACH(PDB::Model_pair &m, pdb.models()) {
+    std::cout << "Model " << m.key() << " has " << m.model().chains().size() 
               << " chains."<< std::endl;
-    for (CGAL::PDB::Model::Chain_iterator cit= m.chains_begin();
-         cit != m.chains_end(); ++cit){
-      CGAL::PDB::Chain &p= cit->chain();
-      for (CGAL::PDB::Chain::Monomer_iterator rit= p.monomers_begin(); 
-           rit != p.monomers_end(); ++rit){
-	for (CGAL::PDB::Monomer::Atom_iterator ait
-               = rit->monomer().atoms_begin(); 
-             ait != rit->monomer().atoms_end(); ++ait){
-	  ait->atom().set_point(t(ait->atom().point()));
+    CGAL_PDB_FOREACH(Chain &c, make_chain_range(m.model().chains())) {
+      CGAL_PDB_FOREACH(Monomer &r, make_monomer_range(c.monomers())) {
+        CGAL_PDB_FOREACH(Atom &a, make_atom_range(r.atoms())) {
+	  a.set_point(t(a.point()));
 	}
       }
     }
-    for (CGAL::PDB::Model::Heterogen_iterator it= m.heterogens_begin();
-         it != m.heterogens_end(); ++it) {
-      for (CGAL::PDB::Heterogen::Atom_iterator ait
-             = it->heterogen().atoms_begin(); 
-           ait != it->heterogen().atoms_end(); ++ait) {
-        ait->atom().set_point(t(ait->atom().point()));
+    CGAL_PDB_FOREACH(Heterogen &h, make_heterogen_range(m.model().heterogens())) {
+      CGAL_PDB_FOREACH(Atom &a, make_atom_range(h.atoms())) {
+        a.set_point(t(a.point()));
       }
     }
   }

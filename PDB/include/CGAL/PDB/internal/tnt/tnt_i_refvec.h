@@ -26,7 +26,7 @@
 #include <iostream>
 
 
-CGAL_TNT_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace TNT {
 
 /*
 	Internal representation of ref-counted array.  The TNT
@@ -226,7 +226,7 @@ i_refvec<T>::~i_refvec()
 
 
 
-CGAL_TNT_END_NAMESPACE
+}}}
 
 #endif
 /* TNT_I_REFVEC_H */

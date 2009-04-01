@@ -6,7 +6,7 @@
 #include <string>
 #include <CGAL/Tools/Log.h>
 
-CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace PDB { namespace internal {
   class Error_logger {
   public:
     Error_logger():enabled_(true){}
@@ -34,5 +34,5 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
 
   extern Error_logger error_logger;
 
-CGAL_PDB_END_INTERNAL_NAMESPACE
+}}}
 #endif

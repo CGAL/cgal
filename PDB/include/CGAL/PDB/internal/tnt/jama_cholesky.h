@@ -5,9 +5,9 @@
 #include "math.h"
 	/* needed for sqrt() below. */
 
-CGAL_JAMA_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace JAMA {
 
-using namespace CGAL_TNT_NS;
+using namespace CGAL::PDB::TNT;
 
 /** 
    <P>
@@ -249,6 +249,6 @@ Array2D<Real> Cholesky<Real>::solve(const Array2D<Real> &B)
 	return X;
 }
 
-CGAL_JAMA_END_NAMESPACE
+}}}
 #endif
 // JAMA_CHOLESKY_H

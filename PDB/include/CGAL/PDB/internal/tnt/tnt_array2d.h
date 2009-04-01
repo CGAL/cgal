@@ -27,7 +27,7 @@
 
 
 #include "tnt_array1d.h"
-CGAL_TNT_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace TNT {
 
 
 template <class T>
@@ -303,7 +303,7 @@ inline int Array2D<T>::ref_count_dim1()
 
 
 
-CGAL_TNT_END_NAMESPACE
+}}}
 #endif
 /* TNT_ARRAY2D_H */
 

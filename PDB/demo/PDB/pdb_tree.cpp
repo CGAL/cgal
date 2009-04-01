@@ -1,4 +1,5 @@
 #include <CGAL/PDB/PDB.h>
+#include <CGAL/PDB/range.h>
 #include <boost/program_options.hpp>
 #include <fstream>
 
@@ -37,18 +38,19 @@ int main(int argc, char *argv[]) {
 
   using namespace CGAL::PDB;
   std::ifstream in(input_file.c_str());
-  PDB pdb(in, verbose);;
-  for (PDB::Model_iterator it= pdb.models_begin(); it != pdb.models_end(); ++it){
-    std::cout << "Model " << it->key() << ":" << std::endl;
-    for (Model::Chain_iterator cit= it->model().chains_begin(); 
-	 cit != it->model().chains_end(); ++cit) {
-      std::cout << " Chain: " << static_cast<char>(cit->key().index());
-      if (!cit->chain().name().empty()) {
-	std::cout << cit->chain().name();
+  PDB pdb(in, verbose);
+  CGAL_PDB_FOREACH(PDB::Model_pair m,
+                pdb.models()) {
+    std::cout << "Model " << m.key() << ":" << std::endl;
+    CGAL_PDB_FOREACH(Model::Chain_pair c,
+                  m.model().chains()) {
+      std::cout << " Chain: " << static_cast<char>(c.key().index());
+      if (!c.chain().name().empty()) {
+	std::cout << c.chain().name();
       }
       std::cout << std::endl;
-      std::cout << "  " << cit->chain().number_of_atoms() << " atoms" << std::endl;
-      std::cout << "  " << cit->chain().number_of_bonds() << " bonds" << std::endl;
+      std::cout << "  " << CGAL::PDB::size(c.chain().atoms())<< " atoms" << std::endl;
+      std::cout << "  " << CGAL::PDB::size(c.chain().bonds()) << " bonds" << std::endl;
     }
   }
 

@@ -14,18 +14,22 @@ find_package(CGAL REQUIRED PDB )
 include( ${CGAL_USE_FILE} )
 
 INCLUDE_DIRECTORIES ( BEFORE ./include )
+set(CMAKE_CXX_FLAGS "-g -Wall")
+set(CMAKE_CPP_FLAGS "-I/flute1/home/drussel/fs/include")
 
 if (CGAL_PDB_FOUND )
 
 include(CGAL_CreateSingleSourceCGALProgram)
 
-create_single_source_cgal_program( check_bonds.cpp )
+
+link_libraries(${CGAL_PDB_LIBRARY})
+
 create_single_source_cgal_program( check_heatom.cpp )
 create_single_source_cgal_program( check_pdb.cpp )
 create_single_source_cgal_program( check_protein.cpp )
-create_single_source_cgal_program( check_refine_alignment.cpp )
 create_single_source_cgal_program( check_transform.cpp )
-create_single_source_cgal_program( check_transforms.cpp )
+create_single_source_cgal_program( check_bonds.cpp )
+create_single_source_cgal_program( check_refine_alignment.cpp )
 
 
 

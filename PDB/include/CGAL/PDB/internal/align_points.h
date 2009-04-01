@@ -1,21 +1,21 @@
 #ifndef CGAL_DSR_ALIGN_POINTS_H_
 #define CGAL_DSR_ALIGN_POINTS_H_
 #include <CGAL/PDB/basic.h>
-#include <tnt/tnt_cmat.h>
+#include <CGAL/PDB/internal/tnt/tnt_cmat.h>
 #include <CGAL/PDB/Point.h>
 #include <CGAL/PDB/Transform.h>
 #include <CGAL/PDB/internal/tnt/tnt_array2d.h>
 #include <CGAL/PDB/internal/tnt/tnt_array2d_utils.h>
 #include <CGAL/PDB/internal/tnt/jama_svd.h>
 #include <cassert>
-#include <vector>
+#include <debug/vector>
 #include <iterator>
 
-CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace PDB { namespace internal {
 
 
   template <class T>
-  T det(const CGAL_TNT_NS::Array2D<T>& m) {
+  T det(const CGAL::PDB::TNT::Array2D<T>& m) {
     CGAL_assertion(m.dim1() == 3);
     CGAL_assertion(m.dim2() == 3);
 
@@ -26,8 +26,8 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
 
   // Transpose a matrix
   template <class T>
-  CGAL_TNT_NS::Array2D<T> transpose(const CGAL_TNT_NS::Array2D<T>& m) {
-    CGAL_TNT_NS::Array2D<T> mt(m.dim2(), m.dim1());
+  CGAL::PDB::TNT::Array2D<T> transpose(const CGAL::PDB::TNT::Array2D<T>& m) {
+    CGAL::PDB::TNT::Array2D<T> mt(m.dim2(), m.dim1());
     for (int i = 0; i < m.dim1(); i++) {
       for (int j = 0; j < m.dim2(); j++) {
         mt[j][i] = m[i][j];
@@ -37,7 +37,7 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
   }
 
   template <class InputIterator>
-  CGAL_PDB_NS::Transform transform_taking_first_to_second(InputIterator pBegin, InputIterator pEnd,
+  CGAL::PDB::Transform transform_taking_first_to_second(InputIterator pBegin, InputIterator pEnd,
 						     InputIterator qBegin, InputIterator qEnd) {
     
     // compute the centroid of the points and transform
@@ -46,18 +46,18 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
     typedef typename InputIterator::value_type Point;
     typedef double RT;
 
-    CGAL_PDB_NS::Vector center_p(0,0,0), center_q(0,0,0);
+    CGAL::PDB::Vector center_p(0,0,0), center_q(0,0,0);
     int num_p = 0;
     int num_q = 0;
     for (InputIterator p_it = pBegin; p_it != pEnd; ++p_it) {
       //double x= p_it->x();
-      center_p = center_p+CGAL_PDB_NS::Vector(p_it->x(), p_it->y(), p_it->z());//((*p_it)-CGAL::ORIGIN);
+      center_p = center_p+CGAL::PDB::Vector(p_it->x(), p_it->y(), p_it->z());//((*p_it)-CGAL::ORIGIN);
       num_p++;
     }
     center_p = center_p/num_p;
       
     for (InputIterator q_it = qBegin; q_it != qEnd; ++q_it) {
-      center_q = center_q + CGAL_PDB_NS::Vector(q_it->x(), q_it->y(), q_it->z()); //((*q_it)-CGAL::ORIGIN);
+      center_q = center_q + CGAL::PDB::Vector(q_it->x(), q_it->y(), q_it->z()); //((*q_it)-CGAL::ORIGIN);
       num_q++;
     }
     center_q = center_q/num_q;
@@ -76,7 +76,7 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
       
       
     // covariance matrix
-    CGAL_TNT_NS::Array2D<RT> H(3, 3);
+    CGAL::PDB::TNT::Array2D<RT> H(3, 3);
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
 	H[i][j] = 0;
@@ -90,37 +90,41 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
       }
     }
 
-    CGAL_JAMA_NS::SVD<RT> svd(H);
-    CGAL_TNT_NS::Array2D<RT> U(3, 3), V(3, 3);
+    CGAL::PDB::JAMA::SVD<RT> svd(H);
+    CGAL::PDB::TNT::Array2D<RT> U(3, 3), V(3, 3);
     svd.getU(U);
     svd.getV(V);
 
     // the rotation matrix is R = VU^T
-    CGAL_TNT_NS::Array2D<RT> UT = transpose(U);
-    CGAL_TNT_NS::Array2D<RT> rot(3, 3);
+    CGAL::PDB::TNT::Array2D<RT> UT = transpose(U);
+    CGAL::PDB::TNT::Array2D<RT> rot(3, 3);
     rot = matmult(V, UT);
 
     // check for reflection
     if (det(rot) < 0) {
-      CGAL_TNT_NS::Array2D<RT> VT = transpose(V);
-      CGAL_TNT_NS::Array2D<RT> UVT = matmult(U, VT);
-      CGAL_TNT_NS::Array2D<RT> S(3, 3);
+      CGAL::PDB::TNT::Array2D<RT> VT = transpose(V);
+      CGAL::PDB::TNT::Array2D<RT> UVT = matmult(U, VT);
+      CGAL::PDB::TNT::Array2D<RT> S(3, 3);
       S[0][0] = S[1][1] = 1;
       S[2][2] = det(UVT);
       S[0][1] = S[0][2] = S[1][0] = S[1][2] = S[2][0] = S[2][1] = 0;
       rot = matmult(matmult(U, S), VT);
     }
 
-    CGAL_PDB_NS::Transform xf(rot, Point(0,0,0));
+    CGAL::PDB::Transform xf(rot[0][0], rot[0][1], rot[0][2], 0,
+                              rot[1][0], rot[1][1], rot[1][2], 0,
+                              rot[2][0], rot[2][1], rot[2][2], 0);
+    Vector tr= center_q - xf(center_p);
+    CGAL::PDB::Transform rxf(rot[0][0], rot[0][1], rot[0][2], tr[0],
+                               rot[1][0], rot[1][1], rot[1][2], tr[1],
+                               rot[2][0], rot[2][1], rot[2][2], tr[2]);
    
-    xf.set_translation(center_q - xf(center_p));
-   
-    return xf;
+    return rxf;
   }
 
 
-  inline double structal_score(const dsrpdb::Point& a, const dsrpdb::Point& b) {
-    dsrpdb::Squared_distance sd;
+  inline double structal_score(const Point& a, const Point& b) {
+    Squared_distance sd;
     return 20.0/(1.0+sd(a,b)/5.0);
   }
 
@@ -147,7 +151,7 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
     unsigned int d_0= std::distance(b_0, e_0);
     unsigned int d_1= std::distance(b_1, e_1);
     //typedef std::pair<double, int> DpP;
-    CGAL_TNT_NS::Array2D<DpP> dp_matrix(d_0+2, d_1+2);
+    CGAL::PDB::TNT::Array2D<DpP> dp_matrix(d_0+2, d_1+2);
 
 
     std::vector<int> best_i(d_1+2);
@@ -197,7 +201,7 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
 	    if (v_d >= v_i) best_i[j-1]=0;
 	  }
 
-	  const double eps=.00001;
+	  //const double eps=.00001;
 	  
 	  for (unsigned int k=0; k< i; ++k){
 	    CGAL_assertion(dp_matrix[i-k-1][j-1].first -gap_cost*k +ss <= dp_matrix[i][j].first + eps);
@@ -257,18 +261,18 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
 
 
   template <class ItP, class OItM>
-  CGAL_PDB_NS::Transform refine_alignment(ItP b_0, ItP e_0,
+  CGAL::PDB::Transform refine_alignment(ItP b_0, ItP e_0,
 				     ItP b_1, ItP e_1,
 				     double motion,
 				     OItM m) {
     
-    std::vector<CGAL_PDB_NS::Point> p_0(b_0, e_0), p_1(b_1, e_1);
+    std::vector<CGAL::PDB::Point> p_0(b_0, e_0), p_1(b_1, e_1);
     double dist= std::numeric_limits<double>::infinity();
-    CGAL_PDB_NS::Squared_distance sd;
+    CGAL::PDB::Squared_distance sd;
 
     typedef std::vector<int>::const_iterator ItM;
     std::vector<int> cur_matching(std::distance(b_0, e_0), -1);
-    CGAL_PDB_NS::Transform tr;
+    CGAL::PDB::Transform tr;
     do {
       greedy_matching(p_0.begin(), p_0.end(),
 		      p_1.begin(), p_1.end(),
@@ -277,7 +281,7 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
       /*std::copy(cur_matching.begin(), cur_matching.end(), std::ostream_iterator<int>(std::cout, " "));
 	std::cout << std::endl;*/
 
-      std::vector<CGAL_PDB_NS::Point> cp_0, cp_1;
+      std::vector<CGAL::PDB::Point> cp_0, cp_1;
       {
 	ItP c_0= b_0;
 	for (ItM c_m= cur_matching.begin(); c_m != cur_matching.end(); ++c_m, ++c_0 ){
@@ -295,7 +299,7 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
       double sum_dist=0;
       unsigned int i=0;
       for (ItP c_0=b_0; c_0 != e_0; ++c_0, ++i){
-	dsrpdb::Point pn= tr(*c_0);
+	Point pn= tr(*c_0);
 	sum_dist+= sd(pn, p_0[i]);
 	p_0[i]=pn;
       }
@@ -309,5 +313,5 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
     return tr;
   }
 
-CGAL_PDB_END_INTERNAL_NAMESPACE
+}}}
 #endif

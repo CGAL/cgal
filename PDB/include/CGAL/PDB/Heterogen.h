@@ -25,24 +25,13 @@
 #include <CGAL/PDB/Atom.h>
 #include <CGAL/PDB/small_map.h>
 #include <CGAL/Tools/Label.h>
-#include <vector>
+#include <debug/vector>
 #include <map>
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 
-//! This class defines the value_type of the Atom_iterator
-class Heterogen_Atom_iterator_value_type:
-  public small_map_value_type<std::string,
-                              Atom> {
-  typedef small_map_value_type<std::string, Atom> P;
-public:
-  Heterogen_Atom_iterator_value_type(std::string k,
-                                     const Atom &a=Atom()): P(k,a){}
-  Heterogen_Atom_iterator_value_type(){}
-  const Atom &atom() const {return P::data();}
-  Atom &atom() {return P::data();}
-};
+
 
 /*bool operator<(const std::string &s, 
                const Heterogen_Atom_iterator_value_type &vt) {
@@ -59,10 +48,22 @@ class Heterogen {
   struct Heterogen_type_tag{};
   struct Atom_type_tag{};
 public:
+  //! This class defines the value_type of the Atom_iterator
+  class Atom_pair:
+    public small_map_value_type<std::string,
+                                Atom> {
+    typedef small_map_value_type<std::string, Atom> P;
+  public:
+    Atom_pair(std::string k,
+                                       const Atom &a=Atom()): P(k,a){}
+    Atom_pair(){}
+    const Atom &atom() const {return P::data();}
+    Atom &atom() {return P::data();}
+  };
   typedef std::string Atom_key;
 
  
-  typedef small_map<Heterogen_Atom_iterator_value_type> Atoms;
+  typedef small_map<Atom_pair> AtomsMap;
 
 
   //! Default constructor. Makes and invalid monomer.
@@ -85,22 +86,17 @@ public:
   CGAL_GETNR(char, chain, return chain_;)
   CGAL_SET(char, chain, chain_=k;)
   
+  CGAL_ITERATOR(Atom, atom, AtomsMap::const_iterator,
+                AtomsMap::iterator, 
+                atoms_.begin(),
+                atoms_.end());
 
-  CGAL_CONST_ITERATOR(Atom, atom, Atoms::const_iterator, 
-			  return atoms_.begin(),
-			  return atoms_.end());
-  CGAL_ITERATOR(Atom, atom, Atoms::iterator, 
-			  return atoms_.begin(),
-			  return atoms_.end());
-  
-  CGAL_SIZE(atoms, return atoms_.size());
-
-  CGAL_FIND(Atom, {
-      return atoms_.find(k);
-    });
+  CGAL_FIND(Atom,
+            atoms_.find(k), atoms_.end()
+    );
 
   CGAL_INSERT(Atom, {bonds_.clear(); 
-      return atoms_.insert(Atoms::value_type(k,m));});
+      atoms_.insert(AtomsMap::value_type(k,m));});
 
    //! Write it for debugging
   void dump(std::ostream &out) const;
@@ -118,8 +114,8 @@ public:
 
   //! The Bond_iterator value_type is a pair of these
   class Bond_endpoint {
-    Atom_const_iterator aci_;
-    Bond_endpoint(Atom_const_iterator aci): aci_(aci){}
+    Atom_consts::iterator aci_;
+    Bond_endpoint(Atom_consts::iterator aci): aci_(aci){}
     friend class Heterogen;
   public:
     Bond_endpoint(){}
@@ -138,19 +134,15 @@ public:
   //! Return a list of all the bonds in the monomer
   CGAL_CONST_ITERATOR(Bond, bond, 
                       std::vector<Bond>::const_iterator,
-                      return bonds_.begin(),
-                      return bonds_.end());
-  
-
-  //! The number of atoms present in the monomer
-  CGAL_SIZE(bonds, return bonds_.size());
+                      bonds_.begin(),
+                      bonds_.end());
 
   bool connect(Atom::Index a, Atom::Index b);
 
 private:
 
   /*--------------- Data members-----------------------------------*/
-  Atoms atoms_;
+  AtomsMap atoms_;
   std::vector<Bond> bonds_;
   char chain_;
   std::string type_;
@@ -162,9 +154,8 @@ private:
   This returns the next unused index. 
 */
 inline int index_atoms(const Heterogen &m, int start=0) {
-  for (Heterogen::Atom_const_iterator it= m.atoms_begin();
-       it != m.atoms_end(); ++it) {
-    it->atom().set_index(Atom::Index(start++));
+  CGAL_PDB_FOREACH(Heterogen::Atom_consts::iterator::reference a, m.atoms()) {
+    a.atom().set_index(Atom::Index(start++));
   }
   return start;
 }
@@ -173,5 +164,5 @@ inline int index_atoms(const Heterogen &m, int start=0) {
 CGAL_SWAP(Heterogen);
 CGAL_OUTPUT(Heterogen);
 
-CGAL_PDB_END_NAMESPACE
+}}
 #endif

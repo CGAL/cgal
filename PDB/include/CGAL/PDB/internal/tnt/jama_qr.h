@@ -4,7 +4,7 @@
 #include "tnt_array1d.h"
 #include "tnt_array2d.h"
 #include "tnt_math_utils.h"
-CGAL_JAMA_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace JAMA {
 
 
 /** 
@@ -317,7 +317,7 @@ public:
 };
 
 // namespace JAMA
-CGAL_JAMA_END_NAMESPACE
+}}}
 #endif
 // JAMA_QR__H
 

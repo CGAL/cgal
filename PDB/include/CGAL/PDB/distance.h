@@ -23,43 +23,63 @@
 #define CGAL_DSRPDB_RMS_H
 #include <CGAL/PDB/basic.h>
 #include <CGAL/PDB/Chain.h>
-#include <CGAL/PDB/geometry.h>
 #include <CGAL/PDB/Matrix.h>
 #include <cmath>
-#include <vector>
-CGAL_PDB_BEGIN_NAMESPACE
-//! Compute the cRMS of the collection of Points without alignment
-template <class ItA, class ItB>
-double cRMS(ItA ba, ItA ea, ItB bb, ItB eb) {
-  Squared_distance sd;
-  if (std::distance(ab, ae) != std::distance(bb, be)){
-    CGAL_PDB_INTERNAL_NS::error_logger.new_fatal_error("Protein chains used for computing cRMS must have equal lengths.\n");
-    return std::numeric_traits<double>::infinity();
-  }
+#include <debug/vector>
+namespace CGAL { namespace PDB {
+//! Compute the cRMS of the collection of Points
+template <class RangeA, class RangeB>
+double cRMS(RangeA ra, RangeB rb) {
+  //Squared_distance sd;
+  CGAL_precondition(ra.size() == rb.size());
   double ret=0;
   int num=0;
-  for (It bc= bb, ac= ab; bc != be; ++bc, ++ac){
-    
-    Point pt= Point(*bc);
-    Point tpt= f(pt);
-    ret += sd(*ac, tpt);
-    ++num;
+  {
+    typename RangeB::iterator bc= rb.begin();
+    typename RangeA::iterator ac= ra.begin();
+    for (; bc != rb.end(); ++bc, ++ac){
+      
+      ret += squared_distance(*ac, *bc);
+      ++num;
+    }
+  }
+  return std::sqrt(ret)/ num;
+}
+
+//! Compute the cRMS of the collection of Points after transforming the first
+template <class RangeA, class RangeB>
+double transformed_cRMS(RangeA ra, RangeB rb,
+                        const Transform &tr) {
+  Squared_distance sd;
+  CGAL_precondition(ra.size() == rb.size());
+  double ret=0;
+  int num=0;
+  {
+    typename RangeB::iterator bc= rb.begin();
+    typename RangeA::iterator ac= ra.begin();
+    for (; bc != rb.end(); ++bc, ++ac){
+      
+      ret += squared_distance(tr(*ac), *bc);
+      ++num;
+    }
   }
   return std::sqrt(ret)/ num;
 }
 
 //! Compute the dRMS of the collection of Points without alignment
-template <class ItA, class ItB>
-double dRMS(ItA ba, ItA ea, ItB bb, ItB eb) {
-  CGAL_assertion(std::distance(ba, ea) == std::distance(bb, eb));
+template <class RangeA, class RangeB>
+double dRMS(RangeA ra, RangeB rb) {
+  CGAL_assertion(ra.size()==rb.size());
   double ret=0;
   int count=0;
-  for (It ac= ba, bc= bb; ac != ea; ++ac, ++bc) {
-    for (It ac2= ba, bc2= bb; ac2 != ac; ++ac2, ++bc2) {
-      Vector va= *ac- *ac2;
-      Vector vb= *bc- *bc2;
-      double da= std::sqrt(va*va);
-      double db= std::sqrt(vb*vb);
+  typename RangeA::iterator ac= ra.begin();
+  typename RangeB::iterator bc= rb.begin();
+  for (; ac != ra.end(); ++ac, ++bc) {
+    typename RangeA::iterator ac2= ra.begin();
+    typename RangeB::iterator bc2= rb.begin();
+    for (; ac2 != ac; ++ac2, ++bc2) {
+      double da= std::sqrt((*ac-*ac2).squared_length());
+      double db= std::sqrt((*bc-*bc2).squared_length());
       ret+= (da-db)*(da-db);
       ++count;
     }
@@ -68,15 +88,16 @@ double dRMS(ItA ba, ItA ea, ItB bb, ItB eb) {
 }
 
 //! Return the distance matrix
-template <class ItA, class ItB>
-Matrix distance_matrix(ItA ba, ItA ea, ItB bb, ItB eb) {
-  int dist= std::distance(ab, ae);
-  Matrix ret(std::distance(ba, ea),std::distance(bb, e));
+template <class RangeA, class RangeB>
+Matrix distance_matrix(RangeA ra, RangeB rb) {
+  int dista= std::distance(ra.begin(), ra.end());
+  int distb= std::distance(rb.begin(), rb.end());
+  Matrix ret(dista, distb);
   
   int indi=0;
-  for (ItA ac= ba; ac != ea; ++ac, ++indi){
+  for (typename RangeA::iterator ac= ra.begin(); ac != ra.end(); ++ac, ++indi){
     int indj=0;
-    for (ItB ac2= bb; ac2!= eb; ++ac2, ++indj){
+    for (typename RangeB::iterator ac2= rb.begin(); ac2!= rb.end(); ++ac2, ++indj){
       Vector dif= *ac- *ac2;
       //std::cout << dif << std::endl;
       double d= std::sqrt(dif*dif);
@@ -87,5 +108,13 @@ Matrix distance_matrix(ItA ba, ItA ea, ItB bb, ItB eb) {
   return ret;
 }
 
-CGAL_PDB_END_NAMESPACE
+//! Return the distance matrix
+template <class Range>
+Matrix distance_matrix(Range r) {
+    return distance_matrix(r,r);
+}
+
+
+
+}}
 #endif

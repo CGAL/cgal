@@ -162,7 +162,7 @@ int main(int argc, char *argv[]){
     std::cerr << "Error opening input file " << input_file << std::endl;
     return EXIT_FAILURE;
   }
-  using namespace CGAL_PDB_NS;
+  using namespace CGAL::PDB;
 
   //= new char[strlen(argv[2]+1000)];
   PDB pdb(in, verbose);
@@ -170,59 +170,58 @@ int main(int argc, char *argv[]){
   std::map<std::string, PDB > outputs;
 
   if (split_chains || split_models) {
-    for (PDB::Model_const_iterator it= pdb.models_begin(); it != pdb.models_end(); ++it) {
+    CGAL_PDB_FOREACH(PDB::Models::iterator::reference m, pdb.models()) {
       if (split_models && !split_chains){
 	PDB out;
-	out.insert(PDB::Model_key(0), it->model());
-	outputs[make_fname(output_template, it->key().index(),
+	out.insert(PDB::Model_key(0), m.model());
+	outputs[make_fname(output_template, m.key().index(),
 			   '-', std::string(), skip_empty_fields)]= out;
       } else {
-	for (Model::Chain_const_iterator cit= it->model().chains_begin();
-	     cit != it->model().chains_end(); ++cit) {
+        CGAL_PDB_FOREACH(Model::Chains::iterator::reference c, m.model().chains()) {
 	  std::string name;
 	  if (split_models) {
-	    name= make_fname(output_template, it->key().index(), cit->key().index(),
-			     cit->chain().name(), skip_empty_fields);
+	    name= make_fname(output_template, m.key().index(), c.key().index(),
+			     c.chain().name(), skip_empty_fields);
 	  } else {
-	    name= make_fname(output_template, -1, cit->key().index(),
-			     cit->chain().name(), skip_empty_fields);
+	    name= make_fname(output_template, -1, c.key().index(),
+			     c.chain().name(), skip_empty_fields);
 	  }
 	  Model model;
-	  model.insert(cit->key(), cit->chain());
-	  outputs[name].insert(it->key(), model);
+	  model.insert(c.key(), c.chain());
+	  outputs[name].insert(m.key(), model);
 	}
 
-	for (Model::Heterogen_const_iterator cit= it->model().heterogens_begin();
-	     cit != it->model().heterogens_end(); ++cit) {
+        CGAL_PDB_FOREACH(Model::Heterogens::iterator::reference h,
+                      m.model().heterogens()) {
           std::string fname;
           std::string name;
           if (split_heterogens) {
-            name= cit->key().name();
+            name= h.key().name();
           } else {
-            char c= cit->heterogen().chain();
-            if (it->model().find(CGAL::PDB::Model::Chain_key(c)) != it->model().chains_end()) {
-              name = it->model().find(CGAL::PDB::Model::Chain_key(c))->chain().name();
+            char c= h.heterogen().chain();
+            if (m.model().contains(CGAL::PDB::Model::Chain_key(c))) {
+              name = m.model().get(CGAL::PDB::Model::Chain_key(c)).chain().name();
             }
           }
 	  if (split_models) {
-	    fname= make_fname(output_template, it->key().index(), cit->heterogen().chain(),
+	    fname= make_fname(output_template, m.key().index(), h.heterogen().chain(),
                               name, skip_empty_fields);
 	  } else {
-	    fname= make_fname(output_template, -1, cit->heterogen().chain(),
+	    fname= make_fname(output_template, -1, h.heterogen().chain(),
                               name, skip_empty_fields);
 	  }
           PDB::Model_key mk;
           if (split_models) {
             mk= PDB::Model_key(0);
           } else {
-            mk= it->key();
+            mk= m.key();
           }
-          if (outputs[fname].find(mk) == outputs[fname].models_end()) {
+          if (!outputs[fname].contains(mk)) {
             Model model;
-            model.insert(cit->key(), cit->heterogen());
+            model.insert(h.key(), h.heterogen());
             outputs[fname].insert(mk, model);
           } else {
-            outputs[fname].find(mk)->model().insert(cit->key(), cit->heterogen());
+            outputs[fname].get(mk).model().insert(h.key(), h.heterogen());
           }
         }
       }
@@ -241,7 +240,7 @@ int main(int argc, char *argv[]){
     }
     std::cout << "Writing file " << it->first << std::endl;
     if (!strip_headers) {
-      it->second.set_header(pdb.headers_begin(), pdb.headers_end());
+      it->second.set_header(pdb.headers().begin(), pdb.headers().end());
     }
     it->second.write(out);
   }

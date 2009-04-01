@@ -25,10 +25,10 @@
 #include <CGAL/PDB/Atom.h>
 #include <CGAL/PDB/small_map.h>
 #include <CGAL/Tools/Label.h>
-#include <vector>
+#include <debug/vector>
 #include <map>
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 
 //! The class representing a residue or nucleotide.
@@ -113,15 +113,15 @@ public:
 
 
   //! This class defines the value_type of the Atom_iterator
-  class Atom_iterator_value_type: public small_map_value_type<Atom_key, Atom> {
+  class Atom_pair: public small_map_value_type<Atom_key, Atom> {
     typedef small_map_value_type<Atom_key, Atom> P;
   public:
-    Atom_iterator_value_type(Atom_key k, const Atom &a=Atom()): P(k,a){}
-    Atom_iterator_value_type(){}
+    Atom_pair(Atom_key k, const Atom &a=Atom()): P(k,a){}
+    Atom_pair(){}
     const Atom &atom() const {return P::data();}
     Atom &atom() {return P::data();}
   };
-  typedef small_map<Atom_iterator_value_type> Atoms;
+  typedef small_map<Atom_pair> AtomsMap;
 
 
   //! Default constructor. Makes and invalid monomer.
@@ -141,24 +141,18 @@ public:
     return label_;
   }
 
+  CGAL_ITERATOR(Atom, atom,  AtomsMap::const_iterator,
+                AtomsMap::iterator, 
+                atoms_.begin(),
+		atoms_.end());
 
- 
+  CGAL_FIND(Atom,
+            atoms_.find(fix_atom_key(k)),
+            atoms_.end());
 
-  CGAL_CONST_ITERATOR(Atom, atom, Atoms::const_iterator, 
-			  return atoms_.begin(),
-			  return atoms_.end());
-  CGAL_ITERATOR(Atom, atom, Atoms::iterator, 
-			  return atoms_.begin(),
-			  return atoms_.end());
-  
-  CGAL_SIZE(atoms, return atoms_.size());
+  CGAL_INSERT(Atom, insert_internal(k,m));
 
-  CGAL_FIND(Atom, Atom_key al= fix_atom_key(k);
-		return atoms_.find(al));
-
-  CGAL_INSERT(Atom, return insert_internal(k,m));
-
-  Atom_iterator insert_internal(Atom_key k, const Atom &a);
+  Monomer::Atoms::iterator insert_internal(Atom_key k, const Atom &a);
 
   //! Return true if monomer of this type can have atoms of that type
   bool can_have_atom(Atom_key al) const;
@@ -191,8 +185,8 @@ public:
 
  //! The Bond_iterator value_type is a pair of these
   class Bond_endpoint {
-    Atom_const_iterator aci_;
-    Bond_endpoint(Atom_const_iterator aci): aci_(aci){}
+    Atoms::const_iterator aci_;
+    Bond_endpoint(Atoms::const_iterator aci): aci_(aci){}
     friend class Monomer;
   public:
     Bond_endpoint(){}
@@ -210,13 +204,9 @@ public:
 
   //! Return a list of all the bonds in the monomer
   CGAL_CONST_ITERATOR(Bond, bond, 
-			  std::vector<Bond>::const_iterator,
-			  return bonds_.begin(),
-			  return bonds_.end());
-
-
-  //! The number of atoms present in the monomer
-  CGAL_SIZE(bonds, return bonds_.size());
+                      std::vector<Bond>::const_iterator,
+                      bonds_.begin(),
+                      bonds_.end());
 
 
   //! Return a point representing the sidechain
@@ -240,25 +230,25 @@ public:
 
 
   //! Return the label of the first atom along the backbone in this monomer
-  Atom_const_iterator front_atom() const {
+  Atom_consts::const_iterator front_atom() const {
     if (is_amino_acid()) return find(AL_N);
-    else return atoms_end();
+    else return atoms().end();
   }
   //! Return the label of the last atom along the backbone in this monomer
-  Atom_const_iterator back_atom() const {
+  Atom_consts::const_iterator back_atom() const {
     if (is_amino_acid()) return find(AL_C);
-    else return atoms_end();
+    else return atoms().end();
   }
 
   //! Return the label of the first atom along the backbone in this monomer
-  Atom_iterator front_atom() {
+  Atoms::iterator front_atom() {
     if (is_amino_acid()) return find(AL_N);
-    else return atoms_end();
+    else return atoms().end();
   }
   //! Return the label of the last atom along the backbone in this monomer
-  Atom_iterator back_atom() {
+  Atoms::iterator back_atom() {
     if (is_amino_acid()) return find(AL_C);
-    else return atoms_end();
+    else return atoms().end();
   }
 
   //----- Static functions
@@ -288,7 +278,7 @@ private:
   Atom_key fix_atom_key(Atom_key atom_label) const;
 
   /*--------------- Data members-----------------------------------*/
-  Atoms atoms_;
+  AtomsMap atoms_;
   std::vector<Bond> bonds_;
   Type label_;
 };
@@ -299,8 +289,8 @@ private:
   This returns the next unused index. 
 */
 inline int index_atoms(const Monomer &m, int start=0) {
-  for (Monomer::Atom_const_iterator it= m.atoms_begin(); it != m.atoms_end(); ++it) {
-    it->atom().set_index(Atom::Index(start++));
+  CGAL_PDB_FOREACH(const Monomer::Atom_pair& a, m.atoms()) {
+    a.atom().set_index(Atom::Index(start++));
   }
   return start;
 }
@@ -309,5 +299,5 @@ inline int index_atoms(const Monomer &m, int start=0) {
 CGAL_SWAP(Monomer);
 CGAL_OUTPUT(Monomer);
 
-CGAL_PDB_END_NAMESPACE
+}}
 #endif

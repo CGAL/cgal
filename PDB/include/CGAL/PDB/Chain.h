@@ -27,14 +27,14 @@
 #include <CGAL/PDB/Monomer.h>
 #include <CGAL/PDB/small_map.h>
 #include <iostream>
-#include <vector>
+#include <debug/vector>
 #include <iterator>
 #include <cassert>
 #include <CGAL/PDB/internal/dummies.h>
 #include <CGAL/PDB/internal/Nested_iterator.h>
 #include <boost/tuple/tuple.hpp>
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 /*!
   \file Chain.h 
@@ -60,29 +60,25 @@ public:
   typedef CGAL::Label<IR_tag> IR_key;
 
   //! The value_type returned by the Monomer_iterators
-  class Monomer_iterator_value_type: public small_map_value_type<Monomer_key, Monomer> {
+  class Monomer_pair: public small_map_value_type<Monomer_key, Monomer> {
     typedef small_map_value_type<Monomer_key, Monomer> P;
   public:
-    Monomer_iterator_value_type(Monomer_key k, Monomer a): P(k,a){}
-    Monomer_iterator_value_type(Monomer_key k): P(k){}
-    Monomer_iterator_value_type(){}
+    Monomer_pair(Monomer_key k, Monomer a): P(k,a){}
+    Monomer_pair(Monomer_key k): P(k){}
+    Monomer_pair(){}
     const Monomer &monomer() const {return P::data();}
     Monomer &monomer() {return P::data();}
   };
 
-  typedef small_map<Monomer_iterator_value_type> Container;
+  typedef small_map<Monomer_pair> Container;
   
   //! Default
   Chain();
 
-  CGAL_ITERATOR(Monomer, monomer, Container::iterator,
-		    return residues_.begin(),
-		    return residues_.end());
-  CGAL_CONST_ITERATOR(Monomer, monomer, Container::const_iterator,
-			  return residues_.begin(),
-			  return residues_.end());
-  
-  CGAL_SIZE(monomers, return residues_.size());
+  CGAL_ITERATOR(Monomer, monomer, Container::const_iterator,
+                Container::iterator,
+                residues_.begin(),
+		residues_.end());
 
 
   //! A unique identified of an atom in the chain
@@ -122,7 +118,7 @@ public:
   //! A chemical bond within the protein
   typedef std::pair<Bond_endpoint, Bond_endpoint> Bond; 
 
-  CGAL_INSERT(Monomer,  return insert_internal(k,m));
+  CGAL_INSERT(Monomer, insert_internal(k,m));
 
   class Atom_iterator_value_type {
       Atom_key index_;
@@ -146,19 +142,19 @@ public:
 private:
 
   //! \cond
-  Monomer_iterator insert_internal(Monomer_key k, const Monomer &m);
+  Monomers::iterator insert_internal(Monomer_key k, const Monomer &m);
 
   struct Iterator_traits {
-    typedef Monomer_iterator Outer_it;
-    typedef Monomer::Atom_iterator Inner_it;
+    typedef Monomers Outer;
+    typedef Monomer::Atoms Inner;
     typedef Atom_iterator_value_type value_type;
-    struct Inner_range{
-      std::pair<Inner_it, Inner_it> operator()(Outer_it it) const {
-	return std::make_pair(it->monomer().atoms_begin(), it->monomer().atoms_end());
+    struct Get_inner{
+      Inner operator()(Outer::iterator it) const {
+	return it->monomer().atoms();
       }
     };
     struct Make_value{
-      value_type operator()(Outer_it oit, Inner_it iit) const {
+      value_type operator()(Outer::iterator oit, Inner::iterator iit) const {
 	return value_type(Atom_key(oit->key(), iit->key()), &iit->atom());
       }
     };
@@ -166,16 +162,16 @@ private:
 
 
   struct Iterator_const_traits {
-    typedef Monomer_const_iterator Outer_it;
-    typedef Monomer::Atom_const_iterator Inner_it;
+    typedef Monomer_consts Outer;
+    typedef Monomer::Atom_consts Inner;
     typedef Atom_const_iterator_value_type value_type;
-    struct Inner_range{
-      boost::tuple<Inner_it, Inner_it> operator()(Outer_it it) const {
-	return boost::make_tuple(it->monomer().atoms_begin(), it->monomer().atoms_end());
+    struct Get_inner{
+      Inner operator()(Outer::iterator it) const {
+	return it->monomer().atoms();
       }
     };
     struct Make_value{
-      value_type operator()(Outer_it oit, Inner_it iit) const {
+      value_type operator()(Outer::iterator oit, Inner::iterator iit) const {
 	return value_type(Atom_key(oit->key(), iit->key()), &iit->atom());
       }
     };
@@ -185,15 +181,11 @@ public:
   
   
   //! An iterator to iterate through all the atoms of the protein  
-  CGAL_ITERATOR(Atom, atom, 
-		    internal::Nested_iterator<Iterator_traits >,
-		    return Atom_iterator(residues_.begin(), residues_.end()),
-		    return Atom_iterator(residues_.end(), residues_.end()));
-  //! An iterator to iterate through all the atoms of the protein  
-  CGAL_CONST_ITERATOR(Atom, atom, 
-			  internal::Nested_iterator<Iterator_const_traits >,
-			  return Atom_const_iterator(residues_.begin(), residues_.end()),
-			  return Atom_const_iterator(residues_.end(), residues_.end()));
+  CGAL_ITERATOR(Atom, atom,
+                internal::Nested_iterator<Iterator_const_traits >,
+                internal::Nested_iterator<Iterator_traits >,
+                boost::make_iterator_range(residues_.begin(), residues_.end()),
+                boost::make_iterator_range(residues_.end(), residues_.end()));
 
   
   //! This is non-const time.
@@ -222,13 +214,13 @@ public:
 	between_=false;
 	++rit_;
 	if (rit_ != rend_) {
-	  ait_= rit_->monomer().bonds_begin();
+	  ait_= rit_->monomer().bonds().begin();
 	  make_bond();
 	}
       } else {
 	++ait_;
-	if (ait_== rit_->monomer().bonds_end()) {
-	  Monomer_const_iterator nrit= rit_;
+	if (ait_== rit_->monomer().bonds().end()) {
+          Monomer_consts::iterator nrit= rit_;
 	  ++nrit;
 	  between_=true;
 	  if (nrit == rend_ 
@@ -256,7 +248,13 @@ public:
 
     CGAL_COPY_CONSTRUCTOR(Bond_it);
 
-  
+    Bond_it(Monomer_consts r): rit_(r.begin()), rend_(r.end()), 
+				       between_(false){
+      if (!r.empty()) {
+	ait_= rit_->monomer().bonds().begin();
+	make_bond();
+      }
+    }
   private:
     void copy_from(const Bond_it &o) {
       rit_= o.rit_;
@@ -266,15 +264,6 @@ public:
 	ret_= o.ret_;
       }
       between_= o.between_;
-    }
-
-    Bond_it(Monomer_const_iterator b, 
-	    Monomer_const_iterator e): rit_(b), rend_(e), 
-				       between_(false){
-      if (b != e) {
-	ait_= rit_->monomer().bonds_begin();
-	make_bond();
-      }
     }
 
     void make_bond() {
@@ -292,16 +281,16 @@ public:
       } 
     }
 
-    Monomer_const_iterator rit_, rend_;
-    Monomer::Bond_const_iterator ait_;
+    Monomer_consts::iterator rit_, rend_;
+    Monomer::Bonds::const_iterator ait_;
     bool between_;
     Bond ret_;
   };
   //! \endcond
 
   CGAL_CONST_ITERATOR(Bond, bond, Bond_it,
-			  return Bond_const_iterator(residues_.begin(), residues_.end()),
-			  return Bond_const_iterator(residues_.end(), residues_.end()));
+                      boost::make_iterator_range(residues_.begin(), residues_.end()),
+                      boost::make_iterator_range(residues_.end(), residues_.end()));
  
 
   //! This is non-const time.
@@ -334,7 +323,7 @@ public:
   //! Dump as human readable.
   std::ostream& write(std::ostream &out) const{dump(out); return out;}
 
-  CGAL_FIND(Monomer, return residues_.find(k));
+  CGAL_FIND(Monomer, residues_.find(k), residues_.end());
 
   /*const Atom &atom(unsigned int i) const {
     for (Const_residues_iterator it = residues_begin(); it != residues_.end(); ++it){
@@ -377,11 +366,11 @@ CGAL_OUTPUT(Chain);
   This returns the next unused index. 
 */
 inline int index_atoms(const Chain &c, int start=0) {
-  for (Chain::Monomer_const_iterator it= c.monomers_begin(); it != c.monomers_end(); ++it) {
-    start= index_atoms(it->monomer(), start);
+  CGAL_PDB_FOREACH(Chain::Monomer_consts::iterator::reference m, c.monomers()) {
+    start= index_atoms(m.monomer(), start);
   }
   return start;
 }
-CGAL_PDB_END_NAMESPACE
+}}
 
 #endif

@@ -1,33 +1,32 @@
 #include <CGAL/PDB/PDB.h>
-#include <CGAL/PDB/iterator.h>
+#include <CGAL/PDB/range.h>
 #include <fstream>
 
-
+template <class Vector, class Range>
+void insert(Vector &v, Range r) {
+  v.insert(v.end(), r.begin(), r.end());
+}
 
 int main(int, char *[]) {
   std::ifstream in("data/simple.pdb");
   CGAL::PDB::PDB pdb(in);
-  CGAL::PDB::Model m=pdb.models_begin()->model();
-  CGAL::PDB::Chain c=m.chains_begin()->chain();
+  CGAL::PDB::Model m=pdb.models().begin()->model();
+  CGAL::PDB::Chain c=m.chains().begin()->chain();
   // all of these can be run on the Model or on the Chain (or Monomer)
   {
     // get all spheres
     typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
     K k;
     std::vector<K::Sphere_3> points;
-    points.insert(points.end(),
-		  CGAL::PDB::make_sphere_3_iterator(CGAL::PDB::make_atom_iterator(m.atoms_begin()), k),
-		  CGAL::PDB::make_sphere_3_iterator(CGAL::PDB::make_atom_iterator(m.atoms_end()), k)
-		  );
+    insert(points, CGAL::PDB::make_sphere_3_range(CGAL::PDB::make_atom_range(m.atoms()), k));
     std::cout << points.size() << std::endl;
   }
   {
     // get backbone points
     std::vector<CGAL::PDB::Point> points;
-    points.insert(points.end(),
-		  CGAL::PDB::make_point_iterator(CGAL::PDB::make_atom_iterator(CGAL::PDB::make_backbone_iterator(m.atoms_begin(), m.atoms_end()))),
-		  CGAL::PDB::make_point_iterator(CGAL::PDB::make_atom_iterator(CGAL::PDB::make_backbone_iterator(m.atoms_end(), m.atoms_end())))
-		  );
+    insert(points,
+           CGAL::PDB::make_point_range(CGAL::PDB::make_atom_range(CGAL::PDB::make_backbone_range(m.atoms())))
+           );
     std::cout << points.size() << std::endl;
   }
   {
@@ -35,12 +34,10 @@ int main(int, char *[]) {
     CGAL::PDB::index_atoms(c);
     std::vector<CGAL::PDB::Point> points;
     std::vector<std::pair<unsigned int, unsigned int> > bonds;
-    points.insert(points.end(),
-		  CGAL::PDB::make_point_iterator(CGAL::PDB::make_atom_iterator(c.atoms_begin())),
-		  CGAL::PDB::make_point_iterator(CGAL::PDB::make_atom_iterator(c.atoms_end())));
-    bonds.insert(bonds.end(),
-		 CGAL::PDB::make_bond_indices_iterator(c.bonds_begin()),
-		 CGAL::PDB::make_bond_indices_iterator(c.bonds_end()));
+    insert(points,
+           CGAL::PDB::make_point_range(CGAL::PDB::make_atom_range(c.atoms())));
+    insert(bonds,
+           CGAL::PDB::make_bond_indices_range(c.bonds()));
     for (unsigned int i=0; i< bonds.size(); ++i) {
       CGAL_assertion(bonds[i].first < points.size());
       CGAL_assertion(bonds[i].second < points.size());

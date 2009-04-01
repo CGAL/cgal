@@ -4,28 +4,30 @@
 #include <CGAL/Tools/utility_macros.h>
 #include <CGAL/Tools/Log.h>
 
-#define CGAL_PDB_BEGIN_NAMESPACE CGAL_BEGIN_NAMESPACE namespace PDB{
-#define CGAL_PDB_END_NAMESPACE CGAL_END_NAMESPACE }
-#define CGAL_PDB_NS CGAL::PDB
 
-#define CGAL_PDB_BEGIN_INTERNAL_NAMESPACE CGAL_PDB_BEGIN_NAMESPACE namespace internal{
-#define CGAL_PDB_END_INTERNAL_NAMESPACE CGAL_PDB_END_NAMESPACE }
-#define CGAL_PDB_INTERNAL_NS CGAL::PDB::internal
+#include <boost/version.hpp>
+#if BOOST_VERSION < 103400
+#include <CGAL/PDB/internal/foreach.h>
+#else
+#include <boost/foreach.hpp>
+#define CGAL_PDB_FOREACH(a,b) BOOST_FOREACH(a,b)
+#endif
 
-#define CGAL_TNT_BEGIN_NAMESPACE CGAL_BEGIN_NAMESPACE namespace TNT {
-#define CGAL_TNT_END_NAMESPACE CGAL_END_NAMESPACE }
-#define CGAL_TNT_NS CGAL::TNT
-
-#define CGAL_JAMA_BEGIN_NAMESPACE CGAL_BEGIN_NAMESPACE namespace JAMA {
-#define CGAL_JAMA_END_NAMESPACE CGAL_END_NAMESPACE }
-#define CGAL_JAMA_NS CGAL::JAMA
-
-
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL {
 //! All exposed classes are put in this namespace.
 namespace PDB {
 }
-CGAL_END_NAMESPACE
+}
+
+
+namespace internal {
+  template <class T>
+  struct EchoType {
+    typedef T type;
+  };
+  template <class T>
+  EchoType<T> get_type(T){return EchoType<T>();}
+}
 
 
 #endif

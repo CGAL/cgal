@@ -25,8 +25,9 @@
 #include <CGAL/Tools/Label.h>
 #include <CGAL/PDB/Transform.h>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/range.hpp>
 #include <string> 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 //! A class repesenting an atom.
 class Atom {
 public:
@@ -40,7 +41,8 @@ public:
  
   //inline Atom_label label() const;
   //! Cartesian coordinates (x,y,z) for the atom.
-  CGAL_GETSET(Point, point, coordinates_);
+  const Point &point() const {return coordinates_;}
+  void set_point(const Point &pt) {coordinates_=pt;}
 
   /*inline Point &cartesian_coords() {
     return coordinates_;
@@ -137,50 +139,6 @@ inline int index_atoms(It b, It e, int start=0) {
 
 
 
-
-//! Take an Atom and return the Atom::point()
-/*!
- */
-struct Point_from_atom {
-  typedef Point result_type;
- 
-  const result_type& operator()(const Atom& a) const {
-    return a.point();
-  }
-};
-
-//! Returns an interator which takes an Atom and return the coordinates
-/*!
-  The iterator value_type should be an Atom.
-
- */
-template <class It>
-boost::transform_iterator<Point_from_atom, It>
-make_point_iterator(It it) {
-  return boost::make_transform_iterator(it, Point_from_atom());
-}
-
-//! Take an Atom and return the Atom::index()
-/*!
- */
-struct Index_from_atom {
-  typedef Atom::Index result_type;
-  
-  const result_type& operator()(const Atom& a) const {
-    return a.index();
-  }
-};
-//! Returns an interator which takes an Atom and return the Atom::index()
-/*!
-  The iterator value_type should be an Atom.
-
- */
-template <class It>
-boost::transform_iterator<Index_from_atom, It>
-make_index_iterator(It it) {
-  return boost::make_transform_iterator(it, Index_from_atom());
-}
-
 //! Take an Atom and return the a K::Weighted_point
 /*!
  */
@@ -200,10 +158,11 @@ struct Weighted_point_from_atom {
 /*!
   The iterator value_type should be an Atom.
  */
-template <class It, class K>
-boost::transform_iterator<Weighted_point_from_atom<K>, It>
-make_weighted_point_iterator(It it, K) {
-  return boost::make_transform_iterator(it, Weighted_point_from_atom<K>());
+template <class Range, class K>
+boost::iterator_range<boost::transform_iterator<Weighted_point_from_atom<K>, typename Range::iterator> >
+make_weighted_point_range(Range r, K) {
+  return boost::make_iterator_range(boost::make_transform_iterator(r.begin(), Weighted_point_from_atom<K>()),
+                                    boost::make_transform_iterator(r.end(), Weighted_point_from_atom<K>()));
 }
 
 //! Take an Atom and return the a K::Sphere_3
@@ -223,10 +182,11 @@ struct Sphere_3_from_atom {
 //! Take an Atom and return the a K::Sphere_3
 /*!
  */
-template <class It, class K>
-boost::transform_iterator<Sphere_3_from_atom<K>, It>
-make_sphere_3_iterator(It it, K) {
-  return boost::make_transform_iterator(it, Sphere_3_from_atom<K>());
+template <class Range, class K>
+boost::iterator_range<boost::transform_iterator<Sphere_3_from_atom<K>, typename Range::iterator> >
+make_sphere_3_range(Range r, K) {
+  return boost::make_iterator_range( boost::make_transform_iterator(r.begin(), Sphere_3_from_atom<K>()),
+                                     boost::make_transform_iterator(r.end(), Sphere_3_from_atom<K>()));
 }
 
 
@@ -241,5 +201,5 @@ public:
 };
 
 
-CGAL_PDB_END_NAMESPACE
+}}
 #endif

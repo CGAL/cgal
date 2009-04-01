@@ -4,14 +4,16 @@
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/assertions.h>
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 namespace internal {
   //! An iterator through the atoms of a CGAL::PDB::Chain.
   template <class T>
   class Nested_iterator {
     typedef Nested_iterator<T> This;
     typedef typename T::Make_value Make_value;
-    typedef typename T::Inner_range Inner_range;
+    typedef typename T::Get_inner Get_inner;
+    typedef typename T::Inner Inner;
+    typedef typename T::Outer Outer;
   public:
     typedef typename T::value_type value_type;
     typedef std::forward_iterator_tag iterator_category;
@@ -36,7 +38,9 @@ namespace internal {
 	if (rit_== rend_) {
           break;
         }
-        boost::tie(ait_, aend_) = Inner_range()(rit_);
+	Inner in= Get_inner()(rit_);
+        ait_=in.begin();
+        aend_= in.end();
       }
       if (rit_ != rend_) {
 	ret_=Make_value()(rit_, ait_);
@@ -70,10 +74,12 @@ namespace internal {
       return *this;
     }
 
-      Nested_iterator(typename T::Outer_it b, 
-		    typename T::Outer_it e): rit_(b), rend_(e){
-      if (b != e) {
-	boost::tie(ait_, aend_) = Inner_range()(rit_);
+    template <class R>
+    Nested_iterator(R r): rit_(r.begin()), rend_(r.end()){
+      if (!r.empty()) {
+	Inner in= Get_inner()(rit_);
+        ait_=in.begin();
+        aend_= in.end();
 	//typename boost::tuple_element<1, value_type>::type st=ait_->second;
 	ret_= Make_value()(rit_, ait_);
       }
@@ -93,10 +99,10 @@ namespace internal {
 
   
     
-    typename T::Outer_it rit_, rend_;
-    typename T::Inner_it ait_, aend_;
+    typename T::Outer::iterator rit_, rend_;
+    typename T::Inner::iterator ait_, aend_;
     value_type ret_; 
   };
 }
-CGAL_PDB_END_NAMESPACE
+}}
 #endif

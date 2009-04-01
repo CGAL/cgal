@@ -12,7 +12,7 @@
 #include <cmath>
 // for abs() below
 
-CGAL_JAMA_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace JAMA {
 
 
 /** 
@@ -1020,7 +1020,7 @@ public:
    }
 };
 
-CGAL_JAMA_END_NAMESPACE
+}}}
 
 #endif
 // JAMA_EIG_H

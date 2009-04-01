@@ -11,13 +11,18 @@ if ( COMMAND cmake_policy )
 endif()
 
 find_package(CGAL COMPONENTS PDB )
+find_package(ImageMagick COMPONENTS Magick++)
 include( ${CGAL_USE_FILE} )
 
 find_package ( Boost COMPONENTS program_options )
 
+
+link_directories (${PACKAGE_ROOT}/../CGALPDB/src/CGALPDB)
+
+
 if (CGAL_PDB_FOUND  AND  Boost_PROGRAM_OPTIONS_FOUND )
 
-  link_libraries(${Boost_LIBRARIES})
+  link_libraries(${Boost_LIBRARIES} ${CGAL_PDB_LIBRARY})
 
   include(CGAL_CreateSingleSourceCGALProgram)
 
@@ -27,6 +32,16 @@ if (CGAL_PDB_FOUND  AND  Boost_PROGRAM_OPTIONS_FOUND )
   create_single_source_cgal_program( pdb_transform.cpp )
   create_single_source_cgal_program( pdb_tree.cpp )
   create_single_source_cgal_program( pdb_info.cpp )
+
+  if (ImageMagick_Magick++_FOUND)
+      include_directories(${ImageMagick_INCLUDE_DIRS})
+      link_libraries(${ImageMagick_LIBRARIES})
+      message(STATUS "ImageMagic headers found at "${ImageMagick_INCLUDE_DIRS})
+      create_single_source_cgal_program( pdb_distance_matrix.cpp )
+  else()
+
+     message(STATUS "NOTICE: The distance matrix demo requires ImageMagick, and will not be compiled.")
+  endif()
 
 else()
 

@@ -20,7 +20,8 @@
 
 #include <CGAL/PDB/PDB.h>
 #include <CGAL/PDB/distance.h>
-#include <CGAL/PDB/iterator.h>
+#include <CGAL/PDB/range.h>
+#include <boost/foreach.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -89,29 +90,24 @@ int main(int argc, char *argv[]){
 
   PDB pdb(in, verbose);
 
-  if (verbose) std::cout << "Input PDB has " << pdb.number_of_models() << " models." << std::endl;
-  if (pdb.number_of_models() != 1){
+  if (verbose) std::cout << "Input PDB has " << pdb.models().size() << " models." << std::endl;
+  if (pdb.models().size() != 1){
     std::cout << "Attempting to write multiple image files: assuming the output argument has a %d in it.\n";
   }
 
-  for (PDB::Model_iterator mit= pdb.models_begin(); mit != pdb.models_end(); ++mit){
-    Model &m= mit->model();
+  CGAL_PDB_FOREACH(PDB::Model_pair& m, pdb.models()) {
     Matrix arr;
     if (all_atoms) {
-      arr= distance_matrix(make_point_iterator(make_atom_iterator(m.atoms_begin())),
-                           make_point_iterator(make_atom_iterator(m.atoms_end())));
+      arr= distance_matrix(make_point_range(make_atom_range(m.model().atoms())));
     } else {
-      arr= distance_matrix(make_point_iterator(make_atom_iterator(make_ca_iterator(m.atoms_begin(),
-                                                                                   m.atoms_end()))),
-                           make_point_iterator(make_atom_iterator(make_ca_iterator(m.atoms_end(),
-                                                                                   m.atoms_end()))));
+      arr= distance_matrix(make_point_range(make_atom_range(make_ca_range(m.model().atoms()))));
     }
 
     if (!output_file.empty()) {
 
       char buf[100000];
-      if (pdb.number_of_models() != 1){
-	sprintf(buf, output_file.c_str(), mit->key().index());
+      if (pdb.models().size() != 1){
+	sprintf(buf, output_file.c_str(), m.key().index());
       } else {
 	sprintf(buf, output_file.c_str());
       }

@@ -2603,9 +2603,8 @@ Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.pdf -text svneol=unset
 Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.pdf -text svneol=unset#application/pdf
-PDB/demo/PDB/makefile -text
 PDB/demo/PDB/pdb_cat.cpp -text
-PDB/demo/PDB/pdb_distance_matrix.cc -text
+PDB/demo/PDB/pdb_distance_matrix.cpp -text
 PDB/demo/PDB/pdb_echo.cpp -text
 PDB/demo/PDB/pdb_info.cpp -text
 PDB/demo/PDB/pdb_split.cpp -text
@@ -2630,8 +2629,9 @@ PDB/include/CGAL/PDB/distance.h -text
 PDB/include/CGAL/PDB/internal/Error_logger.h -text
 PDB/include/CGAL/PDB/internal/Monomer_data.h -text
 PDB/include/CGAL/PDB/internal/Nested_iterator.h -text
-PDB/include/CGAL/PDB/internal/align_points.out.h -text
+PDB/include/CGAL/PDB/internal/align_points.h -text
 PDB/include/CGAL/PDB/internal/dummies.h -text
+PDB/include/CGAL/PDB/internal/foreach.hpp -text
 PDB/include/CGAL/PDB/internal/pdb_utils.h -text
 PDB/include/CGAL/PDB/internal/tnt/jama_cholesky.h -text
 PDB/include/CGAL/PDB/internal/tnt/jama_eig.h -text
@@ -2647,7 +2647,7 @@ PDB/include/CGAL/PDB/internal/tnt/tnt_i_refvec.h -text
 PDB/include/CGAL/PDB/internal/tnt/tnt_math_utils.h -text
 PDB/include/CGAL/PDB/internal/tnt/tnt_subscript.h -text
 PDB/include/CGAL/PDB/internal/tnt/tnt_vec.h -text
-PDB/include/CGAL/PDB/iterator.h -text
+PDB/include/CGAL/PDB/range.h -text
 PDB/include/CGAL/PDB/small_map.h -text
 PDB/package_info/PDB/maintainer -text
 PDB/src/CGALPDB/Atom.cpp -text
@@ -2664,10 +2664,13 @@ PDB/src/CGALPDB/align.cpp -text
 PDB/src/CGALPDB/all_files.cpp -text
 PDB/src/CGALPDB/pdb_utils.cpp -text
 PDB/test/PDB/check_atom_hetatom.cpp -text
+PDB/test/PDB/check_bonds.cpp -text
 PDB/test/PDB/check_hetatom.cpp -text
 PDB/test/PDB/check_iterators.cpp -text
 PDB/test/PDB/check_pdb.cpp -text
+PDB/test/PDB/check_refine_alignment.cpp -text
 PDB/test/PDB/check_small_map.cpp -text
+PDB/test/PDB/check_transform.cpp -text
 PDB/test/PDB/data/check_atom_hetatom.pdb -text
 PDB/test/PDB/data/check_bonds.pdb -text
 PDB/test/PDB/data/check_hetatom.check_out.pdb -text

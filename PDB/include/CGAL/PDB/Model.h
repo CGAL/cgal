@@ -22,11 +22,11 @@
 #define DSR_MODEL_H_
 #include <CGAL/PDB/Chain.h>
 #include <CGAL/PDB/Heterogen.h>
-#include <vector>
+#include <debug/vector>
 #include <string>
 #include <boost/tuple/tuple.hpp>
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 class PDB;
 
@@ -53,13 +53,13 @@ public:
 class Model {
   typedef Model This;
   friend class PDB;
-
-  CGAL_SMALL_MAP_VALUE_TYPE(Model_vt, CGAL::Label<Model>, Chain, chain); 
-  CGAL_SMALL_MAP_VALUE_TYPE(Heterogen_vt, CGAL::PDB::Heterogen_key,
+public:
+  CGAL_SMALL_MAP_VALUE_TYPE(Chain_pair, CGAL::Label<Model>, Chain, chain); 
+  CGAL_SMALL_MAP_VALUE_TYPE(Heterogen_pair, CGAL::PDB::Heterogen_key,
                             Heterogen, heterogen); 
-
-  typedef small_map<Model_vt> Chains; 
-  typedef small_map<Heterogen_vt> Heterogens; 
+private:
+  typedef small_map<Chain_pair> ChainsMap; 
+  typedef small_map<Heterogen_pair> HeterogensMap; 
 public:
   //! Construct an empty model
   Model();
@@ -80,41 +80,26 @@ public:
 
 
   //! Iterator through the chains
-  CGAL_ITERATOR(Chain, chain, Chains::iterator, 
-                return chains_.begin(), return chains_.end());
-
- //! Iterator through the chains
-  CGAL_CONST_ITERATOR(Chain, chain, Chains::const_iterator, 
-                      return chains_.begin(), return chains_.end());
+  CGAL_ITERATOR(Chain, chain, ChainsMap::const_iterator, ChainsMap::iterator, 
+                chains_.begin(), chains_.end());
 
 
-  //! get the chain identified by c
-  CGAL_FIND(Chain, return chains_.find(k));
+  //! get the chain identified by k
+  CGAL_FIND(Chain, chains_.find(k), chains_.end());
 
-  CGAL_INSERT(Chain, return chains_.insert(Chains::value_type(k, m)););
+  CGAL_INSERT(Chain, chains_.insert(ChainsMap::value_type(k, m)););
 
-  CGAL_SIZE(chains, return chains_.size());
-  CGAL_SIZE(heterogens, return heterogens_.size());
-
-
-  //! An iterator through CGAL::PDB::Atom values for the HETATM records.
-  CGAL_CONST_ITERATOR(Heterogen, heterogen, 
-                      Heterogens::const_iterator,
-                      return heterogens_.begin(),
-                      return heterogens_.end());
-  
-  //! An iterator through CGAL::PDB::Atom values for the HETATM records.
+  //! An iterator through the heterogen objects.
   CGAL_ITERATOR(Heterogen, heterogen, 
-                Heterogens::iterator,
-                return heterogens_.begin(),
-                return heterogens_.end());
+                HeterogensMap::const_iterator, HeterogensMap::iterator,
+                heterogens_.begin(),
+                heterogens_.end());
 
-  //! get the chain identified by c
-  CGAL_FIND(Heterogen, return heterogens_.find(k));
+  //! get the chain identified by k
+  CGAL_FIND(Heterogen, heterogens_.find(k), heterogens_.end());
 
-  CGAL_INSERT(Heterogen, return heterogens_.insert(Heterogens::value_type(k, m)););
+  CGAL_INSERT(Heterogen, heterogens_.insert(HeterogensMap::value_type(k, m)););
 
-  CGAL_SIZE(heterogen, return heterogens_.size());
 
   //! A unique identified of an atom in the Model
   struct Atom_key: public boost::tuple<Chain_key, Chain::Monomer_key, 
@@ -180,16 +165,16 @@ public:
 protected:
   //! \cond
  struct Iterator_traits {
-    typedef Chain_iterator Outer_it;
-    typedef Chain::Atom_iterator Inner_it;
+   typedef Chains Outer;
+   typedef Chain::Atoms Inner;
    typedef Atom_iterator_value_type value_type;
-    struct Inner_range{
-      std::pair<Inner_it, Inner_it> operator()(Outer_it it) const {
-	return std::make_pair(it->chain().atoms_begin(), it->chain().atoms_end());
+    struct Get_inner {
+      Inner operator()(Outer::iterator it) const {
+	return it->chain().atoms();
       }
     };
     struct Make_value{
-      value_type operator()(Outer_it oit, Inner_it iit) const {
+      value_type operator()(Outer::iterator oit, Inner::iterator iit) const {
 	return value_type(Atom_key(oit->key(), iit->key().monomer_key(),
 				   iit->key().atom_key()), &iit->atom());
       }
@@ -198,16 +183,16 @@ protected:
 
 
   struct Iterator_const_traits {
-    typedef Chain_const_iterator Outer_it;
-    typedef Chain::Atom_const_iterator Inner_it;
+    typedef Chain_consts Outer;
+    typedef Chain::Atom_consts Inner;
     typedef Atom_const_iterator_value_type value_type;
-   struct Inner_range{
-      std::pair<Inner_it, Inner_it> operator()(Outer_it it) const {
-	return std::make_pair(it->chain().atoms_begin(), it->chain().atoms_end());
+   struct Get_inner{
+     Inner operator()(Outer::iterator it) const {
+       return it->chain().atoms();
       }
     };
     struct Make_value{
-      value_type operator()(Outer_it oit, Inner_it iit) const {
+      value_type operator()(Outer::iterator oit, Inner::iterator iit) const {
 	return value_type(Atom_key(oit->key(), iit->key().monomer_key(),
 				   iit->key().atom_key()), &iit->atom());
       }
@@ -217,15 +202,10 @@ protected:
 public:
  //! An iterator to iterate through all the atoms of the protein  
   CGAL_ITERATOR(Atom, atom, 
-		    internal::Nested_iterator<Iterator_traits >,
-		    return Atom_iterator(chains_.begin(), chains_.end()),
-		    return Atom_iterator(chains_.end(), chains_.end()));
-  //! An iterator to iterate through all the atoms of the protein  
-  CGAL_CONST_ITERATOR(Atom, atom, 
-		    internal::Nested_iterator<Iterator_const_traits >,
-		    return Atom_const_iterator(chains_.begin(), chains_.end()),
-		    return Atom_const_iterator(chains_.end(), chains_.end()));
-
+                internal::Nested_iterator<Iterator_const_traits >,
+                internal::Nested_iterator<Iterator_traits >,
+                boost::make_iterator_range(chains_.begin(), chains_.end()),
+                boost::make_iterator_range(chains_.end(), chains_.end()));
 
   //! \cond
   class Bond_it {
@@ -246,10 +226,10 @@ public:
     }
     Bond_it operator++() {
       ++ait_;
-      while (ait_== rit_->chain().bonds_end()) {
+      while (ait_== rit_->chain().bonds().end()) {
 	++rit_;
 	if (rit_!= rend_) {
-	  ait_= rit_->chain().bonds_begin();
+	  ait_= rit_->chain().bonds().begin();
 	} else {
 	  return *this;
 	}
@@ -269,6 +249,13 @@ public:
 
     CGAL_COPY_CONSTRUCTOR(Bond_it);
 
+    Bond_it(Chain_consts r): rit_(r.begin()), rend_(r.end()){
+      if (!r.empty()) {
+	ait_= rit_->chain().bonds().begin();
+	make_bond();
+      }
+    }
+
   
   protected:
     void copy_from(const Bond_it &o) {
@@ -280,14 +267,7 @@ public:
       }
     }
 
-    Bond_it(Chain_const_iterator b, 
-	    Chain_const_iterator e): rit_(b), rend_(e){
-      if (b != e) {
-	ait_= rit_->chain().bonds_begin();
-	make_bond();
-      }
-    }
-
+   
     void make_bond() {
       ret_= Bond(Bond_endpoint(Atom_key(rit_->key(), 
 					ait_->first.key().monomer_key(),
@@ -299,17 +279,17 @@ public:
 			       &ait_->second.atom())); 
     }
 
-    Chain_const_iterator rit_, rend_;
-    Chain::Bond_const_iterator ait_;
+    Chain_consts::iterator rit_, rend_;
+    Chain::Bonds::iterator ait_;
     Bond ret_;
   };
   //! \endcond
 
   CGAL_CONST_ITERATOR(Bond, bond, Bond_it,
-			  return Bond_const_iterator(chains_.begin(),
-						     chains_.end()),
-			  return Bond_const_iterator(chains_.end(), 
-						     chains_.end()));
+                      boost::make_iterator_range(chains_.begin(),
+                                                 chains_.end()),
+                      boost::make_iterator_range(chains_.end(), 
+                                                 chains_.end()));
  
 
 private:
@@ -324,8 +304,8 @@ private:
                    char segID[], char element[], char charge[]);
 
   std::vector<std::string> extra_;
-  Chains chains_;
-  Heterogens heterogens_;
+  ChainsMap chains_;
+  HeterogensMap heterogens_;
 };
 
 CGAL_SWAP(Model);
@@ -337,11 +317,11 @@ CGAL_OUTPUT(Model);
   This returns the next unused index. 
 */
 inline int index_atoms(const Model &c, int start=0) {
-  for (Model::Chain_const_iterator it= c.chains_begin(); it != c.chains_end(); ++it) {
-    start= index_atoms(it->chain(), start);
+  CGAL_PDB_FOREACH(Model::Chain_consts::iterator::reference cc, c.chains()) {
+    start= index_atoms(cc.chain(), start);
   }
   return start;
 }
 
-CGAL_PDB_END_NAMESPACE
+}}
 #endif

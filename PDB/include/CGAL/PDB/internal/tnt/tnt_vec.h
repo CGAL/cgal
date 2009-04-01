@@ -28,7 +28,7 @@
 #include <iostream>
 #include <sstream>
 
-CGAL_TNT_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace TNT {
 
 
 /**
@@ -398,6 +398,6 @@ T dot_prod(const Vector<T> &A, const Vector<T> &B)
     return sum;
 }
 
-CGAL_TNT_END_NAMESPACE
+}}}
 #endif
 // TNT_VEC_H

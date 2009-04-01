@@ -6,7 +6,7 @@
 #include <CGAL/PDB/Transform.h>
 #include <iostream>
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 //! \cond
 class Quaternion {
 protected:
@@ -82,5 +82,5 @@ inline std::ostream &operator<<(std::ostream &out, const Quaternion &q) {
 }
 
 //! \endcond
-CGAL_PDB_END_NAMESPACE
+}}
 #endif

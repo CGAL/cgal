@@ -27,7 +27,7 @@
 #include "tnt_i_refvec.h"
 
 
-CGAL_TNT_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace TNT {
 
 
 template <class T>
@@ -266,7 +266,7 @@ void Array1D<T>::copy_(T* p, const T* q, int len) const
 }
 
 
-CGAL_TNT_END_NAMESPACE
+}}}
 #endif
 /* TNT_ARRAY1D_H */
 

@@ -3,7 +3,7 @@
 #include <CGAL/PDB/basic.h>
 #include <CGAL/PDB/Monomer.h>
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
   //! This namespace holds the data for initializating residue data.
   /*!
@@ -87,5 +87,5 @@ CGAL_PDB_BEGIN_NAMESPACE
  
 
   }
-CGAL_PDB_END_NAMESPACE
+}}
 #endif

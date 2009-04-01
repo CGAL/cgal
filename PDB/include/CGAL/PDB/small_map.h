@@ -22,10 +22,10 @@
 #ifndef CGAL_DSR_PDB_SMALL_MAP_H
 #define CGAL_DSR_PDB_SMALL_MAP_H
 #include <CGAL/PDB/basic.h>
-#include <vector>
+#include <debug/vector>
 #include <algorithm>
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 template <class K, class D>
 class small_map_value_type {
@@ -90,7 +90,7 @@ bool operator< (const K& k, const small_map_value_type<K,D>& sm)
   }
 
 
-/*CGAL_PDB_END_NAMESPACE
+/*}}
 
 CGAL_BEGIN_NAMESPACE
 template <class K, class D>
@@ -100,7 +100,7 @@ CGAL::Comparison_result compare(const PDB::small_map_value_type<K,D> &a,
 }
 CGAL_END_NAMESPACE
 
-CGAL_PDB_BEGIN_NAMESPACE*/
+namespace CGAL { namespace PDB {*/
 /*template <class K, class D>
 bool operator<(K k, const small_map_value_type<K,D> &vk) {
   return k < vk.key();
@@ -263,17 +263,17 @@ inline void swap(small_map<C> &a, small_map<C> &b) {
   a.swap_with(b);
 }
 
-CGAL_PDB_END_NAMESPACE
+}}
 
 
 namespace std{
   /*template <class K, class D>
-  bool operator<(K k, const CGAL_PDB_NS::small_map_value_type<K,D> &vk) {
+  bool operator<(K k, const CGAL::PDB::small_map_value_type<K,D> &vk) {
     return k < vk.key();
   }
 
   template <class K, class D>
-  bool operator>(K k, const CGAL_PDB_NS::small_map_value_type<K,D> &vk) {
+  bool operator>(K k, const CGAL::PDB::small_map_value_type<K,D> &vk) {
     return k > vk.key();
     }*/
 

@@ -24,7 +24,7 @@
 #include <cstdlib>
 #include <cassert>
 
-CGAL_TNT_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace TNT {
 
 
 
@@ -282,5 +282,5 @@ Array2D<T> matmult(const Array2D<T> &A, const Array2D<T> &B)
 
 }
 
-CGAL_TNT_END_NAMESPACE
+}}}
 #endif

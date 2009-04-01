@@ -32,7 +32,7 @@
 #include <sstream>
 
 
-CGAL_TNT_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB { namespace TNT {
 
 
 
@@ -575,6 +575,6 @@ inline Vector<T> operator*(const Matrix<T>  &A, const Vector<T> &x)
     return matmult(A,x);
 }
 
-CGAL_TNT_END_NAMESPACE
+}}}
 #endif
 // CMAT_H

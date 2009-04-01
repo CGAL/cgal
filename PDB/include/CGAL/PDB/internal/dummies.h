@@ -4,12 +4,12 @@
 #include <CGAL/PDB/Atom.h>
 #include <CGAL/PDB/Monomer.h>
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 namespace internal {
   extern Monomer dummy_residue;
   extern Atom dummy_atom;
 
 };
-CGAL_PDB_END_NAMESPACE
+}}
 
 #endif

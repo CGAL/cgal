@@ -27,19 +27,22 @@
 #include <CGAL/PDB/Model.h>
 #include <CGAL/PDB/small_map.h>
 #include <iostream>
-#include <vector>
+#include <debug/vector>
 #include <CGAL/PDB/internal/Nested_iterator.h>
 
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
+
 
 //! A class for representing a whole PDB file with possibly several models.
 /*!  See pdb_split.cpp for an example manipulating a PDB by splitting
   it into parts.
 */
 class PDB {
-  CGAL_SMALL_MAP_VALUE_TYPE(Model_vt, Label<PDB>, Model, model);
-  typedef small_map<Model_vt> Models;
+public:
+  CGAL_SMALL_MAP_VALUE_TYPE(Model_pair, Label<PDB>, Model, model);
+private:
+  typedef small_map<Model_pair> ModelsMap;
 public:
   //! Read a pdb file from the stream
   /*!  The optional bool controls whether errors (such as unparsable
@@ -55,12 +58,7 @@ public:
   //! Write a pdb file to the stream
   std::ostream& write(std::ostream &out) const;
 
- 
-  
-  //! Return the number of models. 
-  CGAL_SIZE(models, return models_.size());
-
-  //! add a model with an automatically chosen number
+   //! add a model with an automatically chosen number
   Model_key push_back(const Model &m);
 
   //! check if there are no models
@@ -90,24 +88,19 @@ public:
   //! An iterator through the unparsed std::string lines of the header of the PDB.
   CGAL_CONST_ITERATOR(Header, header, 
 		      std::vector<std::string>::const_iterator,
-		      return header_.begin(),
-		      return header_.end());
+		      header_.begin(),
+		      header_.end());
 
   //! An iterator through the Model objects in the PDB
-  CGAL_ITERATOR(Model, model, Models::iterator, 
-		return models_.begin(),
-		return models_.end());
-
-  //! An iterator through the Model objects in the PDB
-  CGAL_CONST_ITERATOR(Model, model, Models::const_iterator, 
-		return models_.begin(),
-		return models_.end());
+  CGAL_ITERATOR(Model, model, ModelsMap::const_iterator, ModelsMap::iterator, 
+		models_.begin(),
+		models_.end());
 
   //! Find a Model with the given key, return models_end() if none is found
-  CGAL_FIND(Model, return models_.find(k));
+  CGAL_FIND(Model, models_.find(k), models_.end());
 
   //! Add a model (or change an existing one).
-  CGAL_INSERT(Model, return models_.insert(Models::value_type(k,m)));
+  CGAL_INSERT(Model, models_.insert(ModelsMap::value_type(k,m)));
 
 
   class Chain_iterator_value_type {
@@ -131,16 +124,16 @@ public:
 protected:
   //! \cond
   struct Iterator_traits {
-    typedef Model_iterator Outer_it;
-    typedef Model::Chain_iterator Inner_it;
+    typedef Models  Outer;
+    typedef Model::Chains Inner;
     typedef Chain_iterator_value_type value_type;
-    struct Inner_range{
-      std::pair<Inner_it, Inner_it> operator()(Outer_it it) const {
-	return std::make_pair(it->model().chains_begin(), it->model().chains_end());
+    struct Get_inner{
+      Inner operator()(Outer::iterator it) const {
+	return it->model().chains();
       }
     };
     struct Make_value{
-      value_type operator()(Outer_it oit, Inner_it iit) const {
+      value_type operator()(Outer::iterator oit, Inner::iterator iit) const {
 	return value_type(Chain_key(oit->key(), iit->key()), &iit->chain());
       }
     };
@@ -148,16 +141,16 @@ protected:
 
 
   struct Iterator_const_traits {
-    typedef Model_const_iterator Outer_it;
-    typedef Model::Chain_const_iterator Inner_it;
+    typedef Model_consts Outer;
+    typedef Model::Chain_consts Inner;
     typedef Chain_const_iterator_value_type value_type;
-    struct Inner_range{
-      std::pair<Inner_it, Inner_it> operator()(Outer_it it) const {
-	return std::make_pair(it->model().chains_begin(), it->model().chains_end());
+    struct Get_inner{
+      Inner operator()(Outer::iterator it) const {
+	return it->model().chains();
       }
     };
     struct Make_value{
-      value_type operator()(Outer_it oit, Inner_it iit) const {
+      value_type operator()(Outer::iterator oit, Inner::iterator iit) const {
 	return value_type(Chain_key(oit->key(), iit->key()), &iit->chain());
       }
     };
@@ -167,17 +160,10 @@ public:
  
   //! An iterator through the CGAL::PDB::Chain objects contained in the PDB.
   CGAL_ITERATOR(Chain, chain,
-		internal::Nested_iterator<Iterator_traits>,  
-		return Chain_iterator(models_begin(), models_end()),
-		return Chain_iterator(models_begin(), models_end()));
-  
-  //! An iterator through the CGAL::PDB::Chain objects contained in the PDB.
-  CGAL_CONST_ITERATOR(Chain, chain,
-		      internal::Nested_iterator<Iterator_const_traits>,  
-		      return Chain_const_iterator(models_begin(), models_end()),
-		      return Chain_const_iterator(models_begin(), models_end()));
-
-
+                internal::Nested_iterator<Iterator_const_traits>,
+		internal::Nested_iterator<Iterator_traits>,
+                models(),
+                boost::make_iterator_range(models().end(),models().end()));
  
 
 private:
@@ -185,7 +171,7 @@ private:
   void build_heterogens();
 
   std::vector<std::string> header_;
-  Models models_;
+  ModelsMap models_;
   std::vector<std::pair<int, int> > connections_;
 };
 
@@ -195,8 +181,8 @@ private:
   This returns the next unused index. 
 */
 inline int index_atoms(const PDB &c, int start=0) {
-  for (PDB::Model_const_iterator it= c.models_begin(); it != c.models_end(); ++it) {
-    start= index_atoms(it->model(), start);
+  CGAL_PDB_FOREACH(PDB::Model_consts::iterator::reference m, c.models()) {
+    start= index_atoms(m.model(), start);
   }
   return start;
 }
@@ -205,5 +191,5 @@ CGAL_OUTPUT(PDB);
 
 CGAL_SWAP(PDB);
 
-CGAL_PDB_END_NAMESPACE
+}}
 #endif

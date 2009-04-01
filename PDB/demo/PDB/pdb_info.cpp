@@ -36,6 +36,7 @@
 
 
 int main(int argc, char *argv[]){
+  using namespace CGAL::PDB;
   std::string output_file;
   std::vector<std::string> input_files;
   bool print_help=false;
@@ -73,31 +74,27 @@ int main(int argc, char *argv[]){
   input_files.pop_back();
 
   
-  CGAL::PDB::PDB outpdb;
+  PDB outpdb;
 
-  outpdb.insert(CGAL::PDB::PDB::Model_key(0), CGAL::PDB::Model());
-  outpdb.find(CGAL::PDB::PDB::Model_key(0))->model();
+  outpdb.insert(PDB::Model_key(0), Model());
+  outpdb.find(PDB::Model_key(0))->model();
   for (unsigned int i=0; i < input_files.size(); ++i){
     std::ifstream in(input_files[i].c_str());
     if (!in){
       std::cerr << "Error opening input file " << input_files[i] << std::endl;
       continue;
     }
-    CGAL::PDB::PDB inpdb(in, verbose);
+    PDB inpdb(in, verbose);
     std::cout << "File " << input_files[i] 
-              << " " << inpdb.number_of_models() << " models" << std::endl;
-    for (CGAL::PDB::PDB::Model_iterator mit= inpdb.models_begin(); 
-         mit != inpdb.models_end(); ++mit){
-      const CGAL::PDB::Model &m= mit->model();
-      for (CGAL::PDB::Model::Chain_const_iterator cit= m.chains_begin();
-           cit != m.chains_end(); ++cit) {
-       
+              << " " << inpdb.models().size() << " models" << std::endl;
+    
+    CGAL_PDB_FOREACH(const PDB::Model_pair& m, inpdb.models()) {
+      std::cout << "Model " << m.key() << std::endl;
+      CGAL_PDB_FOREACH(const Model::Chain_pair &c,
+                    m.model().chains()) {
+        std::cout << " Chain " << c.key() << " has " << c.chain().monomers().size()
+                  << " residues" << std::endl;
       }
-      for (CGAL::PDB::Model::Heterogen_const_iterator cit= m.heterogens_begin(); 
-           cit != m.heterogens_end(); ++cit) {
-        
-      }
-      
     }
   }
 

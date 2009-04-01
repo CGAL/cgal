@@ -22,7 +22,7 @@ MA 02110-1301, USA. */
 #define CGAL_DSR_PDB_UTILS_H
 #include <CGAL/PDB/basic.h>
 
-CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace PDB { namespace internal {
 typedef enum Line_type {HEADER, DBREF, COMPND, SEQRES, ATOM, HETATM, MASTER,
 			ENDMDL, OTHER, TER, MODEL, CONECT, END} Line_type;
   
@@ -32,5 +32,5 @@ typedef enum Line_type {HEADER, DBREF, COMPND, SEQRES, ATOM, HETATM, MASTER,
   extern const char atom_line_oformat_[];
   extern const char hetatom_line_oformat_[];
 
-CGAL_PDB_END_INTERNAL_NAMESPACE
+}}}
 #endif
