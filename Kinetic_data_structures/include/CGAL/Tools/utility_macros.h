@@ -60,32 +60,63 @@
     return t.write(out);						\
   }
 
-#define CGAL_ITERATOR(uc_name, lc_name, it_type, bexpr, eexpr)		\
-  typedef it_type uc_name##_iterator;					\
-  uc_name##_iterator lc_name##s_begin() {bexpr;}			\
-  uc_name##_iterator lc_name##s_end() {eexpr;} 
+#define CGAL_ITERATOR(uc_name, lc_name, const_it_type,it_type, bexpr, eexpr) \
+  typedef boost::iterator_range<it_type> uc_name##s;                     \
+  uc_name##s lc_name##s() {                                             \
+    return uc_name##s(it_type(bexpr), it_type(eexpr));                  \
+  }                                                                     \
+  typedef boost::iterator_range<const_it_type> uc_name##_consts;        \
+  uc_name##_consts lc_name##s() const {                                 \
+    return uc_name##_consts(const_it_type(bexpr), const_it_type(eexpr)); \
+  }
+
 
 #define CGAL_CONST_ITERATOR(uc_name, lc_name, it_type, bexpr, eexpr)	\
-  typedef it_type uc_name##_const_iterator;				\
-  uc_name##_const_iterator lc_name##s_begin() const {bexpr;}		\
-  uc_name##_const_iterator lc_name##s_end() const {eexpr;} 
-
-#define CGAL_FIND(ucname, expr)					\
-  ucname##_const_iterator find(ucname##_key k) const {expr;}	\
-  ucname##_iterator find(ucname##_key k) {expr;} 
+  typedef boost::iterator_range<it_type> uc_name##s;                    \
+  uc_name##s lc_name##s() const {                                       \
+    return uc_name##s(bexpr, eexpr);                                    \
+  }
 
 
-#define CGAL_CONST_FIND(ucname, expr)					\
-  ucname##_const_iterator find(ucname##_key k) const {expr;}	
+
+#define CGAL_CONST_FIND(ucname, fexpr, expr)                       \
+  bool contains(ucname##_key k) const {                            \
+    return fexpr != eexpr;                                         \
+  }                                                                \
+  ucname##s::iterator::value_type get(ucname##_key k) const {      \
+    CGAL_assertion(contains(k));                                   \
+    return *fexpr;                                                 \
+  }                                                                \
+  ucname##s::const_iterator find(ucname##_key k) {                 \
+    return fexpr;                                                  \
+  }
+
+#define CGAL_FIND(ucname, fexpr, eexpr)                         \
+  bool contains(ucname##_key k) const {                         \
+    return fexpr != eexpr;                                      \
+  }                                                             \
+  ucname##s::iterator::reference get(ucname##_key k) {          \
+    CGAL_assertion(contains(k));                                \
+    return *fexpr;                                              \
+  }                                                             \
+  ucname##s::iterator find(ucname##_key k) {                    \
+    return fexpr;                                               \
+  }                                                             \
+  ucname##_consts::const_iterator::value_type get(ucname##_key k) const {      \
+    CGAL_assertion(contains(k));                                   \
+    return *fexpr;                                                 \
+  }                                                                \
+  ucname##_consts::const_iterator find(ucname##_key k) const {           \
+    return fexpr;                                                  \
+  }
+
+
 
 #define CGAL_INSERT(ucname, expr)					\
-  ucname##_iterator insert(ucname##_key k, const ucname &m) {expr;} 
+  void insert(ucname##_key k, const ucname &m) {expr;} 
 
 #define CGAL_INSERTNK(ucname, expr)			\
-  ucname##_iterator insert(const ucname &m) {expr;} 
-
-#define CGAL_SIZE(lcname, expr)			\
-  size_t number_of_##lcname() const {expr;} 
+  void insert(const ucname &m) {expr;} 
 
 #define CGAL_SWAP(type)				\
   inline void swap(type &a, type &b) {		\
