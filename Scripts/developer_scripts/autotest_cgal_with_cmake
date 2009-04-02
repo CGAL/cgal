@@ -787,7 +787,7 @@ do
   fi
 
   if [ "$arg" = "-n" ]; then
-    echo "Not testsuite will be launched. Compilation only."
+    # echo "No testsuite will be launched. Installation only."
     DO_NOT_TEST="y"
   fi
 
@@ -891,9 +891,11 @@ build_cgal
 
 if [ "${BUILD_HOSTS}" = "localhost" ]; then
   TEXT="`value_of COMPILERS_localhost`"
-  if [ -z "${TEXT}" ]; then
-    printf "Skipping testing phase.\n"
-    DO_NOT_TEST="y"
+  if [ -z "${DO_NOT_TEST}" ]; then
+    if [ -z "${TEXT}" ]; then
+	    printf "Skipping testing phase (use the -n option to remove this message).\n"
+      DO_NOT_TEST="y"
+    fi
   fi
 fi
 
