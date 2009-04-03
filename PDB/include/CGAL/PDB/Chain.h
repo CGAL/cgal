@@ -120,24 +120,24 @@ public:
 
   CGAL_INSERT(Monomer, insert_internal(k,m));
 
-  class Atom_iterator_value_type {
+  class Atom_pair: public small_map_value_type<Atom_key, Atom> {
       Atom_key index_;
       Atom *atom_;
     public:
-      Atom_iterator_value_type(Atom_key f, Atom* s): index_(f), atom_(s){}
+      Atom_pair(Atom_key f, Atom* s): index_(f), atom_(s){}
       Atom_key key() const {return index_;}
       Atom &atom() const {return *atom_;}
-      Atom_iterator_value_type():atom_(NULL){}
+      Atom_pair():atom_(NULL){}
     };
 
-  class Atom_const_iterator_value_type {
+  class Atom_const_pair: public small_map_value_type<Atom_key, Atom> {
     Atom_key index_;
     const Atom *atom_;
   public:
-    Atom_const_iterator_value_type(Atom_key f, const Atom* s): index_(f), atom_(s){}
+    Atom_const_pair(Atom_key f, const Atom* s): index_(f), atom_(s){}
     Atom_key key() const {return index_;}
     const Atom &atom() const {return *atom_;}
-    Atom_const_iterator_value_type():atom_(NULL){}
+    Atom_const_pair():atom_(NULL){}
   };
 private:
 
@@ -147,14 +147,15 @@ private:
   struct Iterator_traits {
     typedef Monomers Outer;
     typedef Monomer::Atoms Inner;
-    typedef Atom_iterator_value_type value_type;
+    typedef Atom_pair value_type;
     struct Get_inner{
       Inner operator()(Outer::iterator it) const {
 	return it->monomer().atoms();
       }
     };
     struct Make_value{
-      value_type operator()(Outer::iterator oit, Inner::iterator iit) const {
+      value_type operator()(Outer::iterator oit,
+                            Inner::iterator iit) const {
 	return value_type(Atom_key(oit->key(), iit->key()), &iit->atom());
       }
     };
@@ -164,14 +165,15 @@ private:
   struct Iterator_const_traits {
     typedef Monomer_consts Outer;
     typedef Monomer::Atom_consts Inner;
-    typedef Atom_const_iterator_value_type value_type;
+    typedef Atom_const_pair value_type;
     struct Get_inner{
       Inner operator()(Outer::iterator it) const {
 	return it->monomer().atoms();
       }
     };
     struct Make_value{
-      value_type operator()(Outer::iterator oit, Inner::iterator iit) const {
+      value_type operator()(Outer::iterator oit,
+                            Inner::iterator iit) const {
 	return value_type(Atom_key(oit->key(), iit->key()), &iit->atom());
       }
     };

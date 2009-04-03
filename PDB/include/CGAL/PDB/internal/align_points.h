@@ -4,152 +4,27 @@
 #include <CGAL/PDB/internal/tnt/tnt_cmat.h>
 #include <CGAL/PDB/Point.h>
 #include <CGAL/PDB/Transform.h>
+#include <CGAL/PDB/align.h>
 #include <CGAL/PDB/internal/tnt/tnt_array2d.h>
 #include <CGAL/PDB/internal/tnt/tnt_array2d_utils.h>
 #include <CGAL/PDB/internal/tnt/jama_svd.h>
 #include <cassert>
 #include <debug/vector>
 #include <iterator>
+#include <boost/range.hpp>
 
 namespace CGAL { namespace PDB { namespace internal {
 
 
-  template <class T>
-  T det(const CGAL::PDB::TNT::Array2D<T>& m) {
-    CGAL_assertion(m.dim1() == 3);
-    CGAL_assertion(m.dim2() == 3);
-
-    return (m[0][0]*(m[1][1]*m[2][2] - m[1][2]*m[2][1]) -
-            m[0][1]*(m[1][0]*m[2][2] - m[1][2]*m[2][0]) +
-            m[0][2]*(m[1][0]*m[2][1] - m[1][1]*m[2][0]));
-  }
-
-  // Transpose a matrix
-  template <class T>
-  CGAL::PDB::TNT::Array2D<T> transpose(const CGAL::PDB::TNT::Array2D<T>& m) {
-    CGAL::PDB::TNT::Array2D<T> mt(m.dim2(), m.dim1());
-    for (int i = 0; i < m.dim1(); i++) {
-      for (int j = 0; j < m.dim2(); j++) {
-        mt[j][i] = m[i][j];
-      }
-    }
-    return mt;
-  }
-
-  template <class InputIterator>
-  CGAL::PDB::Transform transform_taking_first_to_second(InputIterator pBegin, InputIterator pEnd,
-						     InputIterator qBegin, InputIterator qEnd) {
-    
-    // compute the centroid of the points and transform
-    // pointsets so that their centroids coinside
-      
-    typedef typename InputIterator::value_type Point;
-    typedef double RT;
-
-    CGAL::PDB::Vector center_p(0,0,0), center_q(0,0,0);
-    int num_p = 0;
-    int num_q = 0;
-    for (InputIterator p_it = pBegin; p_it != pEnd; ++p_it) {
-      //double x= p_it->x();
-      center_p = center_p+CGAL::PDB::Vector(p_it->x(), p_it->y(), p_it->z());//((*p_it)-CGAL::ORIGIN);
-      num_p++;
-    }
-    center_p = center_p/num_p;
-      
-    for (InputIterator q_it = qBegin; q_it != qEnd; ++q_it) {
-      center_q = center_q + CGAL::PDB::Vector(q_it->x(), q_it->y(), q_it->z()); //((*q_it)-CGAL::ORIGIN);
-      num_q++;
-    }
-    center_q = center_q/num_q;
-      
-    CGAL_assertion(num_p == num_q);
-      
-    std::vector<Point> p_shifted, q_shifted;
-    p_shifted.reserve(num_p);
-    q_shifted.reserve(num_q);
-    for (InputIterator p_it = pBegin; p_it != pEnd; ++p_it) {
-      p_shifted.push_back((*p_it) - center_p);
-    }
-    for (InputIterator q_it = qBegin; q_it != qEnd; ++q_it) {
-      q_shifted.push_back((*q_it) - center_q);
-    }
-      
-      
-    // covariance matrix
-    CGAL::PDB::TNT::Array2D<RT> H(3, 3);
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-	H[i][j] = 0;
-      }
-    }
-    for (int i = 0; i < num_p; i++) {
-      for (int j = 0; j < 3; j++) {
-	for (int k = 0; k < 3; k++) {
-	  H[j][k] += p_shifted[i][j]*q_shifted[i][k];
-	}
-      }
-    }
-
-    CGAL::PDB::JAMA::SVD<RT> svd(H);
-    CGAL::PDB::TNT::Array2D<RT> U(3, 3), V(3, 3);
-    svd.getU(U);
-    svd.getV(V);
-
-    // the rotation matrix is R = VU^T
-    CGAL::PDB::TNT::Array2D<RT> UT = transpose(U);
-    CGAL::PDB::TNT::Array2D<RT> rot(3, 3);
-    rot = matmult(V, UT);
-
-    // check for reflection
-    if (det(rot) < 0) {
-      CGAL::PDB::TNT::Array2D<RT> VT = transpose(V);
-      CGAL::PDB::TNT::Array2D<RT> UVT = matmult(U, VT);
-      CGAL::PDB::TNT::Array2D<RT> S(3, 3);
-      S[0][0] = S[1][1] = 1;
-      S[2][2] = det(UVT);
-      S[0][1] = S[0][2] = S[1][0] = S[1][2] = S[2][0] = S[2][1] = 0;
-      rot = matmult(matmult(U, S), VT);
-    }
-
-    CGAL::PDB::Transform xf(rot[0][0], rot[0][1], rot[0][2], 0,
-                              rot[1][0], rot[1][1], rot[1][2], 0,
-                              rot[2][0], rot[2][1], rot[2][2], 0);
-    Vector tr= center_q - xf(center_p);
-    CGAL::PDB::Transform rxf(rot[0][0], rot[0][1], rot[0][2], tr[0],
-                               rot[1][0], rot[1][1], rot[1][2], tr[1],
-                               rot[2][0], rot[2][1], rot[2][2], tr[2]);
-   
-    return rxf;
-  }
-
-
-  inline double structal_score(const Point& a, const Point& b) {
-    Squared_distance sd;
-    return 20.0/(1.0+sd(a,b)/5.0);
-  }
-
-  inline double gap_score() {
-    return -10.0;
-  }
-
-  struct DpP {
-    double first;
-    int second;
-    DpP(double d, int s): first(d), second(s){}
-    DpP(): first(-1), second(-3){}
-  };
-
-  inline std::ostream &operator<<(std::ostream &o, DpP p){
-    return o << "(" << p.first << " " << p.second << ")";
-  }
-
-  template <class ItP, class ItM>
-  void greedy_matching(ItP b_0, ItP e_0,
-		       ItP b_1, ItP e_1,
-		       ItM b_m, ItM e_m) {
+ 
+ template <class Range0, class Range1, class RangeM>
+  void greedy_matching(const Range0& r0,
+                       const Range1& r1,
+		       RangeM& rm) {
     const double gap_cost=10.0;
-    unsigned int d_0= std::distance(b_0, e_0);
-    unsigned int d_1= std::distance(b_1, e_1);
+    unsigned int d_0= std::distance(r0.begin(), r0.end());
+    unsigned int d_1= std::distance(r1.begin(), r1.end());
+    CGAL_assertion(!r0.empty() && !r1.empty());
     //typedef std::pair<double, int> DpP;
     CGAL::PDB::TNT::Array2D<DpP> dp_matrix(d_0+2, d_1+2);
 
@@ -171,13 +46,13 @@ namespace CGAL { namespace PDB { namespace internal {
     dp_matrix[d_0+1][0]=DpP(-gap_cost*d_0, 0);
     
     {
-      ItP c_0=b_0;
+      typename Range0::const_iterator c_0=r0.begin();
       for (unsigned int i=1; i< d_0+2; ++i, ++c_0){
-	ItP c_1= b_1;
+        typename Range1::const_iterator c_1=r1.begin();
 	best_j= 0;
 	for (unsigned int j=1; j< d_1+2; ++j, ++c_1){
 	  double ss;
-	  if (c_0== e_0 || c_1==e_1) {
+	  if (c_0== r0.end() || c_1==r1.end()) {
 	    ss= 0;
 	  } else {
 	    ss= structal_score(*c_0, *c_1);
@@ -201,7 +76,7 @@ namespace CGAL { namespace PDB { namespace internal {
 	    if (v_d >= v_i) best_i[j-1]=0;
 	  }
 
-	  //const double eps=.00001;
+	  const double eps=.00001;
 	  
 	  for (unsigned int k=0; k< i; ++k){
 	    CGAL_assertion(dp_matrix[i-k-1][j-1].first -gap_cost*k +ss <= dp_matrix[i][j].first + eps);
@@ -230,7 +105,7 @@ namespace CGAL { namespace PDB { namespace internal {
     {
       unsigned int i=d_0+1, j= d_1+1;
      
-      ItM c_m= e_m; //--c_m;
+      typename RangeM::iterator c_m= rm.end(); //--c_m;
       //bool set=false;
       while (i >0 && j > 0) {
 	if (dp_matrix[i][j].second ==0){
@@ -248,42 +123,41 @@ namespace CGAL { namespace PDB { namespace internal {
 	--j;
 
 	if (i==0 || j==0) break;
-	CGAL_assertion(c_m != b_m);
+	CGAL_assertion(c_m != rm.begin());
 	--c_m;
 	CGAL_assertion(j < d_1+1);
 	CGAL_assertion(i < d_0+1);
 	*c_m=j-1;
-	//std::cout << i << " " << j << std::endl;
       }
     }
   }
 
 
 
-  template <class ItP, class OItM>
-  CGAL::PDB::Transform refine_alignment(ItP b_0, ItP e_0,
-				     ItP b_1, ItP e_1,
-				     double motion,
-				     OItM m) {
-    
-    std::vector<CGAL::PDB::Point> p_0(b_0, e_0), p_1(b_1, e_1);
+  template <class Range, class OItM>
+  CGAL::PDB::Transform refine_alignment(Range r0,
+                                        Range r1,
+                                        double motion,
+                                        OItM m) {
+    CGAL_precondition(!r0.empty());
+    CGAL_precondition(!r1.empty());
+    std::vector<CGAL::PDB::Point> p_0(r0.begin(), r0.end()),
+      p_1(r1.begin(), r1.end());
     double dist= std::numeric_limits<double>::infinity();
-    CGAL::PDB::Squared_distance sd;
 
     typedef std::vector<int>::const_iterator ItM;
-    std::vector<int> cur_matching(std::distance(b_0, e_0), -1);
+    std::vector<int> cur_matching(std::distance(r0.begin(), r0.end()), -1);
     CGAL::PDB::Transform tr;
     do {
-      greedy_matching(p_0.begin(), p_0.end(),
-		      p_1.begin(), p_1.end(),
-		      cur_matching.begin(), cur_matching.end());
+      greedy_matching(p_0, p_1,
+		      cur_matching);
 
       /*std::copy(cur_matching.begin(), cur_matching.end(), std::ostream_iterator<int>(std::cout, " "));
 	std::cout << std::endl;*/
 
       std::vector<CGAL::PDB::Point> cp_0, cp_1;
       {
-	ItP c_0= b_0;
+	typename Range::iterator c_0= r0.begin();
 	for (ItM c_m= cur_matching.begin(); c_m != cur_matching.end(); ++c_m, ++c_0 ){
 	  if (*c_m != -1){
 	    cp_0.push_back(*c_0);
@@ -292,21 +166,25 @@ namespace CGAL { namespace PDB { namespace internal {
 	}
       }
       
-      tr = transform_taking_first_to_second(cp_0.begin(),cp_0.end(),
-					cp_1.begin(), cp_1.end());
+      tr = transform_taking_first_to_second(cp_0,
+                                            cp_1);
       //std::cout << tr << std::endl;
 
       double sum_dist=0;
       unsigned int i=0;
-      for (ItP c_0=b_0; c_0 != e_0; ++c_0, ++i){
+      for (typename Range::iterator c_0=r0.begin(); c_0 != r0.end(); ++c_0, ++i){
 	Point pn= tr(*c_0);
-	sum_dist+= sd(pn, p_0[i]);
+	double csd= squared_distance(pn, p_0[i]);
+        std::cout << csd << " " << pn << " " << p_0[i] 
+                  << " " << *c_0 << std::endl;
+        CGAL_assertion(csd >=0);
+        sum_dist+=csd;
 	p_0[i]=pn;
       }
 
-      dist=std::sqrt(sum_dist)/std::distance(b_0, e_0);
+      dist=std::sqrt(sum_dist)/std::distance(r0.begin(), r0.end());
 
-      std::cout << "Moved " << dist << std::endl;
+      std::cout << "Moved " << dist << " (" << sum_dist << ")" << std::endl;
 
     } while (dist > motion);
     std::copy(cur_matching.begin(), cur_matching.end(), m);

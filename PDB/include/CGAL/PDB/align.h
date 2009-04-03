@@ -13,8 +13,7 @@ namespace CGAL { namespace PDB {
 //! \cond
 inline double structal_score(const CGAL::PDB::Point& a, 
 			     const CGAL::PDB::Point& b) {
-  CGAL::PDB::Squared_distance sd;
-  return 20.0/(1.0+sd(a,b)*5.0);
+  return 20.0/(1.0+squared_distance(a,b)*5.0);
 }
 
 inline double gap_score() {
@@ -47,6 +46,7 @@ template <class RP, class RQ>
 Transform transform_taking_first_to_second(RP rp, RQ rq){
   CGAL_assertion(std::distance(rp.begin(), rp.end())
                  == std::distance(rq.begin(), rq.end()));
+  CGAL_precondition(!rp.empty());
   // compute the centroid of the points and transform
   // pointsets so that their centroids coinside
       
@@ -68,7 +68,7 @@ Transform transform_taking_first_to_second(RP rp, RQ rq){
     num_q++;
   }
   center_q = center_q/num_q;
-      
+  std::cout << center_p << " " << center_q << std::endl;
   CGAL_assertion(num_p == num_q);
       
   std::vector<Point> p_shifted, q_shifted;
@@ -117,7 +117,7 @@ Transform transform_taking_first_to_second(RP rp, RQ rq){
     S[0][1] = S[0][2] = S[1][0] = S[1][2] = S[2][0] = S[2][1] = 0;
     rot = matmult(matmult(U, S), VT);
   }
-  
+  std::cout << rot << std::endl;
   Transform xf(rot[0][0], rot[0][1], rot[0][2],
 	       rot[1][0], rot[1][1], rot[1][2],
 	       rot[2][0], rot[2][1], rot[2][2]);

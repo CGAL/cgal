@@ -27,30 +27,14 @@
 #include <cmath>
 #include <debug/vector>
 namespace CGAL { namespace PDB {
-//! Compute the cRMS of the collection of Points
-template <class RangeA, class RangeB>
-double cRMS(RangeA ra, RangeB rb) {
-  //Squared_distance sd;
-  CGAL_precondition(ra.size() == rb.size());
-  double ret=0;
-  int num=0;
-  {
-    typename RangeB::iterator bc= rb.begin();
-    typename RangeA::iterator ac= ra.begin();
-    for (; bc != rb.end(); ++bc, ++ac){
-      
-      ret += squared_distance(*ac, *bc);
-      ++num;
-    }
-  }
-  return std::sqrt(ret)/ num;
-}
+
 
 //! Compute the cRMS of the collection of Points after transforming the first
 template <class RangeA, class RangeB>
-double transformed_cRMS(RangeA ra, RangeB rb,
-                        const Transform &tr) {
-  Squared_distance sd;
+double cRMS(const RangeA& ra, const RangeB& rb,
+            const Transform &tr=Transform(1,0,0,0,
+                                          0,1,0,0,
+                                          0,0,1,0)) {
   CGAL_precondition(ra.size() == rb.size());
   double ret=0;
   int num=0;
@@ -58,13 +42,17 @@ double transformed_cRMS(RangeA ra, RangeB rb,
     typename RangeB::iterator bc= rb.begin();
     typename RangeA::iterator ac= ra.begin();
     for (; bc != rb.end(); ++bc, ++ac){
-      
-      ret += squared_distance(tr(*ac), *bc);
+      //std::cout << *ac << " " << *bc << std::endl;
+      double cd= squared_distance(tr(*ac), *bc);
+      //std::cout << cd << std::endl;
+      ret+=cd;
       ++num;
     }
   }
-  return std::sqrt(ret)/ num;
+  return std::sqrt(ret/ num);
 }
+
+
 
 //! Compute the dRMS of the collection of Points without alignment
 template <class RangeA, class RangeB>
