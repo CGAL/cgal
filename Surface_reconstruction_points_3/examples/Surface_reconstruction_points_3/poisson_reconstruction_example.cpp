@@ -28,7 +28,9 @@ int main(void)
 {
     // Read a .xyz point set file in points[]
     PointList points;
-    if (!CGAL::read_xyz_point_set("data/oni.xyz",
+    std::ifstream stream("data/oni.xyz");
+    if (!stream || 
+        !CGAL::read_xyz_point_set(stream,
                                   std::back_inserter(points)))
     {
       return EXIT_FAILURE;

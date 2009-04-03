@@ -25,9 +25,6 @@
 // This package
 #include <CGAL/IO/read_off_point_set.h>
 #include <CGAL/IO/write_off_point_set.h>
-#include <CGAL/IO/read_pnb_point_set.h>
-#include <CGAL/IO/read_pwn_point_set.h>
-#include <CGAL/IO/write_pwn_point_set.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 #include <CGAL/IO/write_xyz_point_set.h>
 #include <CGAL/IO/surface_reconstruction_output_surface_facets.h>
@@ -47,7 +44,6 @@
 #include <deque>
 #include <vector>
 #include <iterator>
-#include <iostream>
 #include <fstream>
 #include <cassert>
 #include <math.h>
@@ -275,7 +271,9 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     }
     else // Read OFF file as a point cloud
     {
-      if( ! CGAL::read_off_point_set(lpszPathName,
+      std::ifstream stream(lpszPathName);
+      if( ! stream || 
+          ! CGAL::read_off_point_set(stream,
                                      std::back_inserter(m_points)) )
       {
         prompt_message("Unable to read file");
@@ -283,31 +281,13 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
       }
     }
   }
-  // if .pwn extension
-  else if(extension.CompareNoCase(".pwn") == 0)
+  // if .pwn or .xyz extension
+  else if(extension.CompareNoCase(".pwn") == 0 ||
+          extension.CompareNoCase(".xyz") == 0)
   {
-    if( ! CGAL::read_pwn_point_set(lpszPathName,
-                                   std::back_inserter(m_points)) )
-    {
-      prompt_message("Unable to read file");
-      return FALSE;
-    }
-  }
-  // if .xyz extension
-  else if(extension.CompareNoCase(".xyz") == 0)
-  {
-    if( ! CGAL::read_xyz_point_set(lpszPathName,
-                                   std::back_inserter(m_points)) )
-    {
-      prompt_message("Unable to read file");
-      return FALSE;
-    }
-    //
-  }
-  // if .pnb extension
-  else if(extension.CompareNoCase(".pnb") == 0)
-  {
-    if( ! CGAL::read_pnb_point_set(lpszPathName,
+    std::ifstream stream(lpszPathName);
+    if( ! stream || 
+        ! CGAL::read_xyz_point_set(stream,
                                    std::back_inserter(m_points)) )
     {
       prompt_message("Unable to read file");
@@ -394,23 +374,18 @@ void CPoissonDoc::OnFileSaveAs()
     // Save normals?
     assert(m_points.begin() != m_points.end());
     bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
+    bool save_normals = points_have_normals || 
+                        extension.CompareNoCase(".pwn"); // pwn means "point with normal"
 
-    // if .pwn extension
-    if(extension.CompareNoCase(".pwn") == 0)
+    // if .pwn or .xyz extension
+    if(extension.CompareNoCase(".pwn") == 0 ||
+       extension.CompareNoCase(".xyz") == 0)
     {
-      if( ! CGAL::write_pwn_point_set(dlgExport.m_ofn.lpstrFile,
-                                      m_points.begin(), m_points.end()) )
-      {
-        prompt_message("Unable to save file");
-        return;
-      }
-    }
-    // if .xyz extension
-    else if(extension.CompareNoCase(".xyz") == 0)
-    {
-      if( ! CGAL::write_xyz_point_set(dlgExport.m_ofn.lpstrFile,
+      std::ofstream stream(dlgExport.m_ofn.lpstrFile);
+      if( ! stream || 
+          ! CGAL::write_xyz_point_set(stream,
                                       m_points.begin(), m_points.end(),
-                                      points_have_normals) )
+                                      save_normals) )
       {
         prompt_message("Unable to save file");
         return;
@@ -419,7 +394,9 @@ void CPoissonDoc::OnFileSaveAs()
     // if .off extension
     else if(extension.CompareNoCase(".off") == 0)
     {
-      if( ! CGAL::write_off_point_set(dlgExport.m_ofn.lpstrFile,
+      std::ofstream stream(dlgExport.m_ofn.lpstrFile);
+      if( ! stream || 
+          ! CGAL::write_off_point_set(stream,
                                       m_points.begin(), m_points.end()) )
       {
         prompt_message("Unable to save file");

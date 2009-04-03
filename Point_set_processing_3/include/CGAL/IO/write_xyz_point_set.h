@@ -21,7 +21,7 @@
 
 #include <CGAL/point_set_processing_assertions.h>
 
-#include <stdio.h>
+#include <iostream>
 #include <iterator>
 
 CGAL_BEGIN_NAMESPACE
@@ -34,9 +34,9 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// @return true on success.
 template <typename InputIterator>
-bool write_xyz_point_set(const char* pFilename,  ///< output file
-                         InputIterator first,    ///< first input point
-                         InputIterator beyond)   ///< past-the-end input point
+bool write_xyz_point_set(std::ostream& stream, ///< output stream.
+                         InputIterator first, ///< first input point.
+                         InputIterator beyond) ///< past-the-end input point.
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Point_with_normal;
 
@@ -44,25 +44,23 @@ bool write_xyz_point_set(const char* pFilename,  ///< output file
   typedef typename Geom_traits::Point_3 Point;
   typedef typename Geom_traits::Vector_3 Vector;
 
-  CGAL_precondition(pFilename != NULL);
   CGAL_point_set_processing_precondition(first != beyond);
 
-  FILE *pFile = fopen(pFilename,"wt");
-  if(pFile == NULL)
+  if(!stream)
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
     return false;
+  }
 
   // Write positions + normals
   for(InputIterator it = first; it != beyond; it++)
   {
     const Point& p = *it;
     const Vector& n = it->normal();
-    fprintf(pFile,"%lf %lf %lf %lf %lf %lf\n",
-                  p.x(),p.y(),p.z(),
-                  n.x(),n.y(),n.z());
+    stream << p << " " << n << std::endl;
   }
 
-  fclose(pFile);
-  return true;
+  return ! stream.fail();
 }
 
 /// Save points (positions + optionally normals) to a .xyz file (ASCII).
@@ -73,37 +71,36 @@ bool write_xyz_point_set(const char* pFilename,  ///< output file
 ///
 /// @return true on success.
 template <typename InputIterator>
-bool write_xyz_point_set(const char* pFilename,  ///< output file
-                         InputIterator first,    ///< first input point
-                         InputIterator beyond,   ///< past-the-end input point
+bool write_xyz_point_set(std::ostream& stream, ///< output stream.
+                         InputIterator first, ///< first input point.
+                         InputIterator beyond,   ///< past-the-end input point.
                          bool write_normals)
 {
   if(write_normals)
   {
-    return write_xyz_point_set(pFilename, first, beyond);
+    return write_xyz_point_set(stream, first, beyond);
   }
   else
   {
     // model of Kernel::Point_3
     typedef typename std::iterator_traits<InputIterator>::value_type Point;
 
-    CGAL_precondition(pFilename != NULL);
     CGAL_point_set_processing_precondition(first != beyond);
 
-    FILE *pFile = fopen(pFilename,"wt");
-    if(pFile == NULL)
+    if(!stream)
+    {
+      std::cerr << "Error: cannot open file" << std::endl;
       return false;
+    }
 
     // Write positions
     for(InputIterator it = first; it != beyond; it++)
     {
       const Point& p = *it;
-      fprintf(pFile,"%lf %lf %lf\n",
-                    p.x(),p.y(),p.z());
+      stream << p << std::endl;
     }
 
-    fclose(pFile);
-    return true;
+    return ! stream.fail();
   }
 }
 

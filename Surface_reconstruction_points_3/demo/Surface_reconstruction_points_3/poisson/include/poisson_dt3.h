@@ -7,7 +7,7 @@
 // STL
 #include <vector>
 #include <algorithm>
-#include <GL/gl.h>
+#include <CGAL/gl.h>
 
 
 /// The Poisson_dt3 class is a 3D triangulation class that provides:

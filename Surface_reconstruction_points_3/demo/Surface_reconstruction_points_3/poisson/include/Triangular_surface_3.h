@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <vector>
 #include <deque>
-#include <GL/gl.h>
+#include <CGAL/gl.h>
 
 
 /// The Triangular_surface_3 class is array of triangles + normals 

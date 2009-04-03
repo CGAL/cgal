@@ -92,8 +92,7 @@ public:
 public:
 
     /// Point is (0,0,0) by default.
-    /// Normal is (0,0,0) by default.
-    /// Normal is oriented by default.
+    /// Normal is (0,0,0) and is oriented by default.
     /// Camera list is empty by default.
     Gyroviz_point_3(const CGAL::Origin& o = CGAL::ORIGIN)
     : Base(o)
@@ -167,14 +166,6 @@ public:
     }
 
     // Inherited operators ==() and !=() are fine.
-    //bool operator==(const Gyroviz_point_3& that)
-    //{ 
-    //  return Base::operator==(that); 
-    //}
-    //bool operator!=(const Gyroviz_point_3& that)
-    //{ 
-    //  return ! (*this == that); 
-    //}
 
     /// Get camera/2D point pairs.
     const Camera_point2_map& camera_point2_pairs() const 

@@ -23,10 +23,8 @@
 #include <CGAL/Orientable_normal_3.h>
 #include <CGAL/IO/read_off_point_set.h>
 #include <CGAL/IO/read_xyz_point_set.h>
-#include <CGAL/IO/read_pwn_point_set.h>
 
 #include <deque>
-#include <iostream>
 #include <cstdlib>
 #include <fstream>
 #include <cassert>
@@ -328,25 +326,27 @@ int main(int argc, char * argv[])
     // File name is:
     std::string input_filename  = argv[i];
 
+    // Read the point set file in points[].
     PointList points;
-
-    // Read the point set file in points[]
     std::cerr << "Open " << argv[i] << " for reading..." << std::endl;
+
+    // If OFF file format
     bool success = false;
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
-      success = CGAL::read_off_point_set(input_filename.c_str(),
+      std::ifstream stream(input_filename.c_str());
+      success = stream && 
+                CGAL::read_off_point_set(stream,
                                          std::back_inserter(points));
     }
-    else if (extension == ".xyz" || extension == ".XYZ")
+    // If XYZ file format
+    else if (extension == ".xyz" || extension == ".XYZ" ||
+             extension == ".pwn" || extension == ".PWN")
     {
-      success = CGAL::read_xyz_point_set(input_filename.c_str(),
-                                         std::back_inserter(points));
-    }
-    else if (extension == ".pwn" || extension == ".PWN")
-    {
-      success = CGAL::read_pwn_point_set(input_filename.c_str(),
+      std::ifstream stream(input_filename.c_str());
+      success = stream && 
+                CGAL::read_xyz_point_set(stream,
                                          std::back_inserter(points));
     }
     if (success)

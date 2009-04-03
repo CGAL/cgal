@@ -18,7 +18,6 @@
 #include <CGAL/IO/read_xyz_point_set.h>
 
 #include <deque>
-#include <iostream>
 #include <cstdlib>
 #include <fstream>
 #include <cassert>
@@ -113,11 +112,14 @@ int main(int argc, char * argv[])
     // File name is:
     std::string input_filename  = argv[i];
 
+    // Read the point set file in points[].
     std::deque<Point> points;
+    std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
-    // Read the point set file in points[]
-    std::cerr << "Open " << argv[i] << " for reading..." << std::endl;
-    if(CGAL::read_xyz_point_set(input_filename.c_str(),
+    // If XYZ file format:
+    std::ifstream stream(input_filename.c_str());
+    if(stream &&
+       CGAL::read_xyz_point_set(stream,
                                 std::back_inserter(points),
                                 false /*skip normals*/))
     {

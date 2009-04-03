@@ -24,7 +24,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 
 #include <deque>
-#include <stdio.h>
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,8 +36,8 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// @return true on success.
 template <typename OutputIterator>
-bool read_xyz_point_set(const char* pFilename,
-                        OutputIterator output)
+bool read_xyz_point_set(std::istream& stream, ///< input stream.
+                        OutputIterator output) ///< output iterator.
 {
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   typedef typename value_type_traits<OutputIterator>::type Point_with_normal;
@@ -46,27 +46,24 @@ bool read_xyz_point_set(const char* pFilename,
   typedef typename Geom_traits::Point_3 Point;
   typedef typename Geom_traits::Vector_3 Vector;
 
-  CGAL_precondition(pFilename != NULL);
-
-  FILE *pFile = fopen(pFilename,"rt");
-  if(pFile == NULL)
+  if(!stream)
   {
-    std::cerr << "Error: cannot open " << pFilename << std::endl;
+    std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
 
   // scan points
+  long pointsCount; // number of points in file
   int lineNumber = 0;
-  char pLine[4096];
-  while(fgets(pLine,4096,pFile))
+  std::string line;
+  while(getline(stream,line))
   {
     lineNumber++;
 
     // Read position + normal...
     double x,y,z;
     double nx,ny,nz;
-    long pointsCount;
-    if(sscanf(pLine,"%lg %lg %lg %lg %lg %lg",&x,&y,&z,&nx,&ny,&nz) == 6)
+    if (std::istringstream(line) >> x >> y >> z >> nx >> ny >> nz)
     {
       Point point(x,y,z);
       Vector normal(nx,ny,nz);
@@ -74,25 +71,24 @@ bool read_xyz_point_set(const char* pFilename,
       output++;
     }
     // ...or read only position...
-    else if(sscanf(pLine,"%lg %lg %lg",&x,&y,&z) == 3)
+    else if (std::istringstream(line) >> x >> y >> z)
     {
       Point point(x,y,z);
       *output = point;
       output++;
     }
     // ...or skip number of points (optional)
-    else if (lineNumber == 1 && sscanf(pLine,"%ld",&pointsCount) == 1)
+    else if (lineNumber == 1 && std::istringstream(line) >> pointsCount)
     {
       continue;
     }
     else
     {
-      std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
+      std::cerr << "Error line " << lineNumber << " of file" << std::endl;
       return false;
     }
   }
 
-  fclose(pFile);
   return true;
 }
 
@@ -104,9 +100,9 @@ bool read_xyz_point_set(const char* pFilename,
 ///
 /// @return true on success.
 template <typename OutputIterator>
-bool read_xyz_point_set(const char* pFilename,
-                        OutputIterator output,
-                        bool read_normals /* must be false */)
+bool read_xyz_point_set(std::istream& stream, ///< input stream.
+                        OutputIterator output, ///< output iterator.
+                        bool read_normals) ///<  must be false.
 {
   CGAL_point_set_processing_assertion(read_normals == false);
 
@@ -116,7 +112,7 @@ bool read_xyz_point_set(const char* pFilename,
 
   // Read file in temporary Point_with_normal_3 container
   std::deque<Point_with_normal> pwns;
-  if (read_xyz_point_set(pFilename, std::back_inserter(pwns)))
+  if (read_xyz_point_set(stream, std::back_inserter(pwns)))
   {
     // copy to Point_3 container, removing normals
     std::copy(pwns.begin(), pwns.end(), output);

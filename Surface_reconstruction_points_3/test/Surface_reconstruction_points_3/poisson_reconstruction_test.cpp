@@ -20,12 +20,11 @@
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_point_set.h>
-#include <CGAL/IO/read_pwn_point_set.h>
+#include <CGAL/IO/read_xyz_point_set.h>
 
 #include "enriched_polyhedron.h"
 
 #include <deque>
-#include <iostream>
 #include <cstdlib>
 #include <fstream>
 #include <cassert>
@@ -104,6 +103,7 @@ int main(int argc, char * argv[])
 
     PointList points;
 
+    // If OFF file format
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
@@ -131,21 +131,14 @@ int main(int argc, char * argv[])
         points.push_back(Point_with_normal(p,n));
       }
     }
-    else if (extension == ".xyz" || extension == ".XYZ")
+    // If XYZ file format
+    else if (extension == ".xyz" || extension == ".XYZ" ||
+             extension == ".pwn" || extension == ".PWN")
     {
       // Read the point set file in points[]
-      if(!CGAL::read_xyz_point_set(input_filename.c_str(),
-                                   std::back_inserter(points)))
-      {
-        std::cerr << "Error: cannot read file " << input_filename << std::endl;
-        accumulated_fatal_err = EXIT_FAILURE;
-        continue;
-      }
-    }
-    else if (extension == ".pwn" || extension == ".PWN")
-    {
-      // Read the point set file in points[]
-      if(!CGAL::read_pwn_point_set(input_filename.c_str(),
+      std::ifstream stream(input_filename.c_str());
+      if(!stream || 
+         !CGAL::read_xyz_point_set(stream,
                                    std::back_inserter(points)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
@@ -209,6 +202,7 @@ int main(int argc, char * argv[])
                                           << (memory>>20) << " Mb allocated"
                                           << std::endl;
     task_timer.reset();
+
     std::cerr << "Compute implicit function...\n";
 
     /// Compute the Poisson indicator function f()
@@ -233,7 +227,7 @@ int main(int argc, char * argv[])
 
     std::cerr << "Surface meshing...\n";
 
-    STr tr; // 3D-Delaunay triangulation
+    STr tr; // 3D-Delaunay triangulation for Surface Mesher
     C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
 
     // Get inner point

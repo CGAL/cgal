@@ -21,6 +21,7 @@
 #define CGAL_RANDOM_ACCESS_ITERATOR_INDEX_PMAP_H
 
 #include <boost/property_map.hpp>
+#include <boost/graph/properties.hpp>
 
 #include <vector>
 #include <deque>

@@ -10,6 +10,9 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
  
+include_directories (BEFORE ../../../../Point_set_processing_3/include/)
+include_directories( BEFORE ./ ./include ../../../include )
+  
 # Find CGAL
 find_package(CGAL)
 if ( CGAL_FOUND )
@@ -67,10 +70,6 @@ if(CGAL_FOUND AND MSVC AND OPENGL_FOUND AND TAUCS_FOUND)
     message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
   endif()
 
-  include_directories (BEFORE ../../../../Point_set_processing_3/include/)
-  include_directories (BEFORE ../../../include)
-  include_directories (BEFORE include)
-  
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 

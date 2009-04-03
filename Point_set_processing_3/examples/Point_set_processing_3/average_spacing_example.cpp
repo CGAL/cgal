@@ -3,7 +3,7 @@
 #include <CGAL/IO/read_xyz_point_set.h>
 
 #include <deque>
-#include <iostream>
+#include <fstream>
 
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -14,7 +14,9 @@ int main(void)
 {
     // Read a .xyz point set file in points[]
     std::deque<Point> points;
-    if (!CGAL::read_xyz_point_set("data/sphere_20k.xyz",
+    std::ifstream stream("data/sphere_20k.xyz");
+    if (!stream || 
+        !CGAL::read_xyz_point_set(stream,
                                   std::back_inserter(points),
                                   false /*skip normals*/))
     {

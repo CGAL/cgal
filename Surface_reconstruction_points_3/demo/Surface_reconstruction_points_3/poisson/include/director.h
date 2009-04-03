@@ -8,8 +8,6 @@
 #define DIRECTOR_H
 
 #include <math.h>
-#include <stdio.h>
-#include <iostream>
 
 class Director {
  private:

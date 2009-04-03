@@ -23,14 +23,11 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Orientable_normal_3.h>
 #include <CGAL/IO/read_xyz_point_set.h>
-#include <CGAL/IO/read_pwn_point_set.h>
 #include <CGAL/IO/write_xyz_point_set.h>
-#include <CGAL/IO/write_pwn_point_set.h>
 
 #include "enriched_polyhedron.h"
 
 #include <deque>
-#include <iostream>
 #include <cstdlib>
 #include <fstream>
 #include <cassert>
@@ -224,6 +221,7 @@ int main(int argc, char * argv[])
 
     PointList points;
 
+    // If OFF file format
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
@@ -250,20 +248,14 @@ int main(int argc, char * argv[])
         points.push_back(Point_with_normal(p,n));
       }
     }
-    else if (extension == ".xyz" || extension == ".XYZ")
+    // If XYZ file format
+    else if (extension == ".xyz" || extension == ".XYZ" ||
+             extension == ".pwn" || extension == ".PWN")
     {
       // Read the point set file in points[]
-      if(!CGAL::read_xyz_point_set(input_filename.c_str(),
-                                   std::back_inserter(points)))
-      {
-        std::cerr << "Error: cannot read file " << input_filename << std::endl;
-        return EXIT_FAILURE;
-      }
-    }
-    else if (extension == ".pwn" || extension == ".PWN")
-    {
-      // Read the point set file in points[]
-      if(!CGAL::read_pwn_point_set(input_filename.c_str(),
+      std::ifstream stream(input_filename.c_str());
+      if(!stream || 
+         !CGAL::read_xyz_point_set(stream,
                                    std::back_inserter(points)))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
@@ -323,20 +315,15 @@ int main(int argc, char * argv[])
 
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
 
+    // If XYZ file format
     /*std::string*/ extension = output_filename.substr(output_filename.find_last_of('.'));
-    if (extension == ".pwn" || extension == ".PWN")
+    if (extension == ".xyz" || extension == ".XYZ" ||
+        extension == ".pwn" || extension == ".PWN")
     {
-      if( ! CGAL::write_pwn_point_set(output_filename.c_str(),
-                                      points.begin(), points.end()) )
-      {
-        std::cerr << "Error: cannot write file " << output_filename << std::endl;
-        return EXIT_FAILURE;
-      }
-    }
-    else if (extension == ".xyz" || extension == ".XYZ")
-    {
-      if( ! CGAL::write_xyz_point_set(output_filename.c_str(),
-                                      points.begin(), points.end()) )
+      std::ofstream stream(output_filename.c_str());
+      if (!stream || 
+          !CGAL::write_xyz_point_set(stream,
+                                     points.begin(), points.end()) )
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;

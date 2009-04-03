@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <deque>
-#include <GL/gl.h>
+#include <CGAL/gl.h>
 
 
 /// The Point_set_3 class is array of points + normals of type 

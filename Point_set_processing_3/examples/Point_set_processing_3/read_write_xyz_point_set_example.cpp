@@ -4,6 +4,7 @@
 #include <CGAL/IO/write_xyz_point_set.h>
 
 #include <deque>
+#include <fstream>
 
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -14,7 +15,9 @@ int main(void)
 {
     // Read a .xyz point set file in points[]
     PointList points;
-    if (!CGAL::read_xyz_point_set("data/sphere_20k.xyz",
+    std::ifstream in("data/sphere_20k.xyz");
+    if (!in || 
+        !CGAL::read_xyz_point_set(in,
                                   std::back_inserter(points),
                                   false /*skip normals*/))
     {
@@ -22,8 +25,10 @@ int main(void)
     }
 
     // Save point set
-    if(!CGAL::write_xyz_point_set("sphere_20k_copy.xyz",
-                                  points.begin(), points.end()))
+    std::ofstream out("sphere_20k_copy.xyz");
+    if (!out || 
+        !CGAL::write_xyz_point_set(out,
+                                   points.begin(), points.end()))
     {
       return EXIT_FAILURE;
     }
