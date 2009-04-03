@@ -25,6 +25,8 @@
 
 #include <deque>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 CGAL_BEGIN_NAMESPACE
 
