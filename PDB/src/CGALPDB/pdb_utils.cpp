@@ -24,7 +24,7 @@ MA 02110-1301, USA. */
 #include <iostream>
 #include <set>
 #include <CGAL/PDB/internal/Error_logger.h>
-CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace PDB { namespace internal {
 
   //ATOM    812  OG ASER   106       -.072  22.447  10.384   .50 11.73      1ECD 918
   //ATOM     60  O   SER L   9     -26.231  10.210  -4.537  1.00 26.25      7FAB 160
@@ -68,4 +68,4 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
       return OTHER;
     }
   }
-CGAL_PDB_END_INTERNAL_NAMESPACE
+}}}

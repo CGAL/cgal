@@ -29,7 +29,7 @@
 
 using std::sscanf;
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 /*static unsigned int  getSequenceNumber (const char* line)
 {
@@ -66,7 +66,7 @@ void Model::process_hetatom(const char *line) {
   char element[3]={'\0','\0','\0'};
   char charge[3]={'\0','\0','\0'};
   // What field is missing?
-  int numscan= sscanf(line, CGAL_PDB_INTERNAL_NS::hetatom_line_iformat_,
+  int numscan= sscanf(line, internal::hetatom_line_iformat_,
                       //"ATOM  %5d%4s%1c%3s%1c%4d%1c%8f%8f%8f%6f%6f%4s%2s%2s",
                       &snum, name, &alt, resname, &chain, &resnum, &insertion_residue_code,
                       &x,&y,&z, &occupancy, &tempFactor, segID, element, charge);
@@ -101,7 +101,7 @@ void Model::add_hetatom(int numscan, int snum, char name[], char /* alt */,
   
   std::string rname(resname);
   Heterogen_key hk(resname, resnum);
-  if (heterogens_[hk].find(name) != heterogens_[hk].atoms_end()) {
+  if (heterogens_[hk].contains(name)) {
     CGAL_LOG(Log::LOTS, "Duplicate atom in heterogen " << name << std::endl);
   } else {
     heterogens_[hk].insert(name, a);
@@ -126,7 +126,7 @@ void Model::process_atom(const char *line) {
   char segID[5]={'\0','\0','\0','\0','\0'};
   char element[3]={'\0','\0','\0'};
   char charge[3]={'\0','\0','\0'};
-  int numscan= sscanf(line, CGAL_PDB_INTERNAL_NS::atom_line_iformat_,
+  int numscan= sscanf(line, internal::atom_line_iformat_,
                       //"ATOM  %5d%4s%1c%3s%1c%4d%1c%8f%8f%8f%6f%6f%4s%2s%2s",
                       &snum, name, &alt, resname, &chain, &resnum,
                       &insertion_residue_code,
@@ -159,7 +159,7 @@ void Model::process_atom(const char *line) {
   if (resnum < 0) {
     std::ostringstream oss;
     oss << "Got negative residue index on line " << line;
-    CGAL_PDB_INTERNAL_NS::error_logger.new_warning(oss.str().c_str());
+    internal::error_logger.new_warning(oss.str().c_str());
     return;
   }
 
@@ -185,7 +185,7 @@ void Model::process_atom(const char *line) {
         std::string nm(line, 17, 3);
         Monomer::Type rl= Monomer::type(resname);
         Monomer m(rl);
-        Chain::Monomer_iterator mit= curchain.residues_.insert(Chain::Container::value_type(resindex, m));
+        Chain::Monomers::iterator mit= curchain.residues_.insert(Chain::Container::value_type(resindex, m));
         cur_residue= &mit->monomer();
         CGAL_assertion(mit->key()== resindex);
         //residues_[resindex]=m;
@@ -227,15 +227,10 @@ void Model::process_atom(const char *line) {
           << Monomer::type_string(cur_residue->type())
           << " got " << Monomer::type_string(Monomer::type(resname))
           << " on line:\n" << line << std::endl;
-      CGAL_PDB_INTERNAL_NS::error_logger.new_fatal_error(oss.str().c_str());
+      internal::error_logger.new_fatal_error(oss.str().c_str());
     }
     //assert(cur_residue->type() == Residue::type(resname));
-    Monomer::Atom_iterator rit= cur_residue->insert(al, a);
-    if (rit == cur_residue->atoms_end()) {
-      std::ostringstream oss;
-      oss << "Error adding atom to residue " <<  resindex << std::endl;
-      CGAL_PDB_INTERNAL_NS::error_logger.new_warning(oss.str().c_str());
-    }
+    cur_residue->insert(al, a);
     
     //residue(resnum-1)->set_coords (al, Point(x,y,z));
     //residue(resnum-1)->set_index(al, snum);
@@ -249,16 +244,16 @@ void Model::process_atom(const char *line) {
 }
 
 void Model::process_line(const char *line) {
-  CGAL_PDB_INTERNAL_NS::Line_type lt= CGAL_PDB_INTERNAL_NS::line_type(line);
-  if (lt== CGAL_PDB_INTERNAL_NS::ATOM) {
+  internal::Line_type lt= internal::line_type(line);
+  if (lt== internal::ATOM) {
     process_atom(line);
-  } else if (lt == CGAL_PDB_INTERNAL_NS::TER) {
+  } else if (lt == internal::TER) {
     //CGAL_assertion(!chains_.empty());
     //chains_.back().process_line(line);
-  } else if (lt== CGAL_PDB_INTERNAL_NS::HETATM){
+  } else if (lt== internal::HETATM){
     process_hetatom(line);
 
-  } else if (lt== CGAL_PDB_INTERNAL_NS::ENDMDL){
+  } else if (lt== internal::ENDMDL){
       
   }
 }
@@ -267,18 +262,17 @@ void Model::write(int model_index, std::ostream &out) const {
   
   out << boost::format("MODEL %8d         ") % model_index << std::endl;
   int index=1;
-  for (Chain_const_iterator it= chains_.begin(); it != chains_.end(); ++it){
-    index= it->chain().write(it->key().index(), index, out);
+  CGAL_PDB_FOREACH(const Chain_pair& c, chains()) {
+    index= c.chain().write(c.key().index(), index, out);
   }
   for (unsigned int i=0; i< extra_.size(); ++i){
     out << extra_[i] << std::endl;
   }
-  for (Heterogen_const_iterator it= heterogens_begin(); it != heterogens_end();
-       ++it){
-    index= it->heterogen().write(it->key().name(), it->key().number(),
+  CGAL_PDB_FOREACH(const Heterogen_pair& h, heterogens()) {
+    index= h.heterogen().write(h.key().name(), h.key().number(),
                                  index, out);
   }
   out << "ENDMDL                       " << std::endl;
 }
 
-CGAL_PDB_END_NAMESPACE
+}}

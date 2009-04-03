@@ -1,7 +1,7 @@
 #include <CGAL/PDB/internal/Error_logger.h>
 #include <cstdlib>
 #include <cassert>
-CGAL_PDB_BEGIN_INTERNAL_NAMESPACE 
+namespace CGAL { namespace PDB { namespace internal { 
 
   Error_logger error_logger;
 
@@ -48,4 +48,4 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
     }
     warnings_.clear();
   }
-CGAL_PDB_END_INTERNAL_NAMESPACE
+}}}

@@ -1,6 +1,6 @@
 #include <CGAL/PDB/Quaternion.h>
 #include <CGAL/PDB/Transform.h>
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 /*Quaternion::Quaternion(const double m[3][3]){
 
@@ -105,4 +105,4 @@ Transform Quaternion::transform(Vector translation) const {
   return ret;
 }
 
-CGAL_PDB_END_NAMESPACE
+}}

@@ -30,7 +30,7 @@
 
 #include <sstream>
 #include <cstdio>
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 
 void Heterogen::copy_from(const Heterogen &o) {
@@ -40,10 +40,10 @@ void Heterogen::copy_from(const Heterogen &o) {
   for (unsigned int i=0; i< o.bonds_.size(); ++i) {
     std::string nma=o.bonds_[i].first.key();
     std::string nmb=o.bonds_[i].second.key();
-    Atom_const_iterator ita=find(nma);
-    Atom_const_iterator itb=find(nmb);
-    CGAL_assertion(ita != atoms_end());
-    CGAL_assertion(itb != atoms_end());
+    Atom_consts::iterator ita=find(nma);
+    Atom_consts::iterator itb=find(nmb);
+    CGAL_assertion(ita != atoms().end());
+    CGAL_assertion(itb != atoms().end());
     // needed due to idiotic C++ syntax
     Bond_endpoint bea(ita);
     Bond_endpoint beb(itb);
@@ -55,9 +55,9 @@ void Heterogen::copy_from(const Heterogen &o) {
 
 
 bool Heterogen::connect(Atom::Index a, Atom::Index b) {
-  Atom_iterator ita=atoms_end(), itb= atoms_end();
+  Atoms::iterator ita=atoms().end(), itb= atoms().end();
   if (b < a) std::swap(a,b);
-  for (Atom_iterator it= atoms_begin(); it != atoms_end(); ++it) {
+  for (Atoms::iterator it= atoms().begin(); it != atoms().end(); ++it) {
     if (it->atom().index() == a) {
       ita= it;
     }
@@ -65,8 +65,8 @@ bool Heterogen::connect(Atom::Index a, Atom::Index b) {
       itb= it;
     }
   }
-  if (ita == atoms_end()) return false;
-  if (itb == atoms_end()) return false;
+  if (ita == atoms().end()) return false;
+  if (itb == atoms().end()) return false;
   for (unsigned int i=0; i< bonds_.size(); ++i) {
     if (bonds_[i].first.key() == ita->key() 
         && bonds_[i].second.key() == itb->key()){
@@ -94,16 +94,16 @@ void Heterogen::dump(std::ostream & /* out */ ) const {
 
 int Heterogen::write(std::string name, int num, 
                      int start_index, std::ostream &out) const {
-  for (Atoms::const_iterator it= atoms_.begin(); it != atoms_.end(); ++it) {
-    Atom_key al= it->key();
+  CGAL_PDB_FOREACH(const Atom_pair &aa, atoms()) {
+    Atom_key al= aa.key();
     //Point pt= res->cartesian_coords(al);
-    const Atom &a= it->atom();
+    const Atom &a= aa.atom();
     a.set_index(Atom::Index(start_index));
     Point pt = a.point();
     //char chain=' ';
 
     //"HETATM%5d %4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s";
-    out << boost::format(CGAL_PDB_INTERNAL_NS::hetatom_line_oformat_)
+    out << boost::format(internal::hetatom_line_oformat_)
       % (start_index++) % al.c_str()
       % name.c_str() % num
       % pt.x() % pt.y() % pt.z() % a.occupancy() % a.temperature_factor()
@@ -138,4 +138,4 @@ Heterogen::Heterogen(std::string name): atoms_(20), type_(name){
 
 
 
-CGAL_PDB_END_NAMESPACE
+}}

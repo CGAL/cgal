@@ -27,7 +27,7 @@
 #include <sstream>
 #include <cstdio>
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 //Residue dummy_residue;
 //Atom dummy_atom;
 
@@ -52,11 +52,10 @@ int Chain::write(char chain, int start_index, std::ostream &out) const {
   //    int anum=1;
   Monomer_key last_resindex;
   Monomer::Type last_type= Monomer::INV;
-  for (Monomer_const_iterator it = monomers_begin(); it != monomers_end(); ++it) {
-    const Monomer &res= it->monomer();
+  CGAL_PDB_FOREACH(Monomer_pair r, monomers()) {
     //Residue::Label rl =  res.label();
     //residues_[i]->atoms();
-    start_index= res.write(chain, it->key().index(), ' ', start_index, out);
+    start_index= r.monomer().write(chain, r.key().index(), ' ', start_index, out);
     
     /*IR_Map::const_iterator irit= insert_residues_.find(it->key());
     if (irit!= insert_residues_.end()) {
@@ -68,8 +67,8 @@ int Chain::write(char chain, int start_index, std::ostream &out) const {
                            ir->key().index(), start_index, out);
       }
       }*/
-    last_resindex= it->key();
-    last_type= it->data().type();
+    last_resindex= r.key();
+    last_type= r.data().type();
   }
   const char *terformat="TER   %5d      %3s %c %3d%c";
   if (!residues_.empty()) {
@@ -88,22 +87,6 @@ std::vector<Monomer::Type> Chain::sequence() const{
   }
   return ret;
 }
-
-unsigned int Chain::number_of_atoms() const {
-  unsigned int ret=0;
-  for (Container::const_iterator it= residues_.begin(); it != residues_.end(); ++it){
-    ret += it->monomer().number_of_atoms();
-  }
-  return ret;
-}
-unsigned int Chain::number_of_bonds() const {
-  unsigned int ret=0;
-  for (Container::const_iterator it= residues_.begin(); it != residues_.end(); ++it){
-    ret += it->monomer().number_of_bonds();
-  }
-  return ret;
-}
-
 
 void Chain::swap_with(Chain &o) {
   std::swap(residues_, o.residues_);
@@ -127,19 +110,19 @@ void Chain::set_has_bonds(bool tf) {
   }
 }
 
-Chain::Monomer_iterator Chain::insert_internal(Monomer_key k, const Monomer &m) {
+Chain::Monomers::iterator Chain::insert_internal(Monomer_key k, const Monomer &m) {
   if (residues_.find(k) != residues_.end()){
     std::ostringstream eout;
     eout << "Warning, newly added residue has index "<< k
 	 << " which already exists.";
-    CGAL_PDB_INTERNAL_NS::error_logger.new_warning(eout.str().c_str());
+    internal::error_logger.new_warning(eout.str().c_str());
   }
   return residues_.insert(Container::value_type(k,m));
 }
 
 bool Chain::has_bonds() const {
-  for (Monomer_const_iterator it= monomers_begin();
-       it != monomers_end(); ++it){
+  for (Monomer_consts::iterator it= monomers().begin(); it != monomers().end();
+       ++it){
     if (!it->monomer().has_bonds()) return false;
   }
   return true;
@@ -339,4 +322,4 @@ Residue& Chain::residue_containing_atom(Atom::Index atom_index) {
   }*/
 
 
-CGAL_PDB_END_NAMESPACE
+}}

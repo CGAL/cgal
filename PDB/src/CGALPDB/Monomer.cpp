@@ -32,7 +32,7 @@
 
 using std::sscanf;
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 void Monomer::set_has_bonds(bool tf) {
   typedef Monomer_data::Possible_bond Possible_bond;
@@ -42,8 +42,8 @@ void Monomer::set_has_bonds(bool tf) {
   } else {
     const std::vector<Possible_bond >& bonds= Monomer_data::amino_acid_data_[type()].bonds;
     for (unsigned int i=0; i< bonds.size(); ++i){
-      Atom_const_iterator itf= find(bonds[i].first);
-      Atom_const_iterator its= find(bonds[i].second);
+      Atoms::iterator itf= find(bonds[i].first);
+      Atoms::iterator its= find(bonds[i].second);
       if ( itf != atoms_.end() && its != atoms_.end()){
 	bonds_.push_back(Bond(Bond_endpoint(itf),
 			      Bond_endpoint(its)));
@@ -99,29 +99,29 @@ void Monomer::erase_atom(Monomer::Atom_key al) {
 
 
 
-Monomer::Atom_iterator Monomer::insert_internal(Atom_key ial, const Atom &a) {
+Monomer::Atoms::iterator Monomer::insert_internal(Atom_key ial, const Atom &a) {
   Monomer::Atom_key al= Monomer_data::fix_atom_label(label_, ial);
   if (!can_have_atom(al)){
-    CGAL_PDB_INTERNAL_NS::error_logger.new_warning((std::string("Trying to set invalid atom ")
+    internal::error_logger.new_warning((std::string("Trying to set invalid atom ")
 						    + atom_key_string(ial) 
 						    + " on a residue of type "
 						    + type_string(label_)).c_str());
-    return atoms_end();
+    return atoms().end();
   }
   if (al == AL_INVALID) {
-    return atoms_end();
+    return atoms().end();
   }
   if (atoms_.find(al) != atoms_.end()) {
-    CGAL_PDB_INTERNAL_NS::error_logger.new_warning((std::string("Duplicate atoms ")
+    internal::error_logger.new_warning((std::string("Duplicate atoms ")
 						    + atom_key_string(ial) 
 						    + " on a residue of type "
 						    + type_string(label_)).c_str());
-    return atoms_end();
+    return atoms().end();
   }
   //assert(atoms_.find(al)== atoms_.end());
   //bonds_.clear();
 
-  Atom_iterator ret= atoms_.insert(Atoms::value_type(al,a));
+  Atoms::iterator ret= atoms_.insert(Atoms::value_type(al,a));
   // This is a bit evil, I haven't figured out a better way though.
   ret->atom().set_type(element(al));
   if (has_bonds()){
@@ -150,7 +150,7 @@ void Monomer::dump(std::ostream &out) const {
   for (unsigned int i=0; i< valid_atoms.size(); ++i){
     Monomer::Atom_key al= valid_atoms[i];
     out << Monomer::atom_key_string(al); //Monomer::write_atom_label(al, out);
-    if (find(al) != atoms_end()){
+    if (contains(al)){
       out << " (" << find(al)->atom().point().x() << ", " 
 	  << find(al)->atom().point().y() << ", "
 	  << find(al)->atom().point().z() << ") " << std::endl;
@@ -163,15 +163,14 @@ void Monomer::dump(std::ostream &out) const {
 int Monomer::write(char chain, int monomer_index,
 		   char insertion_residue_code, int start_index, std::ostream &out) const {
   
- 
-  for (Atoms::const_iterator it= atoms_.begin(); it != atoms_.end(); ++it) {
-    Atom_key al= it->key();
+  CGAL_PDB_FOREACH(const Atom_pair &aa, atoms()) {
+    Atom_key al= aa.key();
     //Point pt= res->cartesian_coords(al);
-    const Atom &a= it->atom();
+    const Atom &a= aa.atom();
     Point pt = a.point();
     char alt=' ';
     //char chain=' ';
-    out << boost::format(CGAL_PDB_INTERNAL_NS::atom_line_oformat_)
+    out << boost::format(internal::atom_line_oformat_)
       % (start_index++) % Monomer::atom_key_string(al).c_str() % alt 
       % Monomer::type_string(type()).c_str() % chain % monomer_index % insertion_residue_code
       % pt.x() % pt.y() % pt.z() % a.occupancy() % a.temperature_factor() % a.segment_id().c_str()
@@ -231,7 +230,7 @@ Monomer::Atom_key Monomer::atom_key(const char *nm) {
       return Monomer_data::clean_atom_name_data_[i].l;
     }
   }
-  CGAL_PDB_INTERNAL_NS::error_logger.new_warning(std::string(s + " is not a known atom type.").c_str());;
+  internal::error_logger.new_warning(std::string(s + " is not a known atom type.").c_str());;
   return Monomer::AL_OTHER;
 }
 
@@ -246,7 +245,7 @@ Atom::Type Monomer::element(Atom_key al){
       return Monomer_data::atom_name_data_[i].t;
     }
   }
-  CGAL_PDB_INTERNAL_NS::error_logger.new_internal_error("Unknown element label ");
+  internal::error_logger.new_internal_error("Unknown element label ");
   return Atom::INVALID;
 }
 
@@ -264,7 +263,7 @@ std::string Monomer::atom_key_string(Atom_key al) {
 
   std::ostringstream oss;
   oss << "Unknown atom label: " << al << " returning UNKN";
-  CGAL_PDB_INTERNAL_NS::error_logger.new_warning(oss.str().c_str());
+  internal::error_logger.new_warning(oss.str().c_str());
 
   return "UNKN";
 }
@@ -354,4 +353,4 @@ std::string Monomer::type_string(Monomer::Type rl){
   }
     
 }
-CGAL_PDB_END_NAMESPACE
+}}

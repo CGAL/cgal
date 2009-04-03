@@ -23,7 +23,7 @@
 #include <cstring>
 #include <sstream>
 #include <limits>
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 static double nan__=std::numeric_limits<double>::signaling_NaN();
 
@@ -43,9 +43,9 @@ Atom::Type Atom::string_to_type(const char *cp) {
   else {
     std::ostringstream em;
     em << "Couldn't parse atom type of " << cp;
-    CGAL_PDB_INTERNAL_NS::error_logger.new_warning(em.str().c_str());
+    internal::error_logger.new_warning(em.str().c_str());
     return INVALID;
   }
 }
 
-CGAL_PDB_END_NAMESPACE
+}}

@@ -22,7 +22,7 @@
 #include <CGAL/PDB/internal/Monomer_data.h>
 #include <cassert>
 #include <cstdio>
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 namespace Monomer_data {
   bool amino_acid_initialized_=false;
@@ -890,4 +890,4 @@ namespace Monomer_data {
 
 }
 
-CGAL_PDB_END_NAMESPACE
+}}

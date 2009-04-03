@@ -25,7 +25,7 @@
 #include <cctype>
 #include <cstdio>
 
-CGAL_PDB_BEGIN_NAMESPACE
+namespace CGAL { namespace PDB {
 
 PDB::PDB(std::istream &in, bool print_errors) {
   load(in, print_errors);
@@ -36,7 +36,7 @@ PDB::~PDB(){}
 void PDB::load(std::istream &in, bool print_errors){
   char line[600];
   
-  CGAL_PDB_INTERNAL_NS::error_logger.set_is_output(print_errors);
+  internal::error_logger.set_is_output(print_errors);
   std::map<char, std::string> names;
   std::string last_name;
   Model_key cur_model(1);
@@ -44,10 +44,10 @@ void PDB::load(std::istream &in, bool print_errors){
   char dummy_char;
   while (in.getline (line, 600)) {
       
-    CGAL_PDB_INTERNAL_NS::Line_type lt= CGAL_PDB_INTERNAL_NS::line_type(line);
-    if (lt== CGAL_PDB_INTERNAL_NS::HEADER) {
+    internal::Line_type lt= internal::line_type(line);
+    if (lt== internal::HEADER) {
       header_.push_back(std::string(line));
-    } if (lt == CGAL_PDB_INTERNAL_NS::CONECT) {
+    } if (lt == internal::CONECT) {
       // do something
       std::istringstream iss(line+6);
       int base;
@@ -66,7 +66,7 @@ void PDB::load(std::istream &in, bool print_errors){
 	  connections_.push_back(std::make_pair(base, o));
 	}
       } while (true);
-    } else if (lt == CGAL_PDB_INTERNAL_NS::COMPND) {
+    } else if (lt == internal::COMPND) {
       header_.push_back(std::string(line));
       int ti;
       char dummychain;
@@ -103,47 +103,47 @@ void PDB::load(std::istream &in, bool print_errors){
 	}
 	last_name= std::string(line+offset);
       }
-    } else if (lt== CGAL_PDB_INTERNAL_NS::DBREF){
+    } else if (lt== internal::DBREF){
       header_.push_back(std::string(line));
-    } else if (lt== CGAL_PDB_INTERNAL_NS::SEQRES){
+    } else if (lt== internal::SEQRES){
       header_.push_back(std::string(line));
-    } else if (lt== CGAL_PDB_INTERNAL_NS::MODEL) {
+    } else if (lt== internal::MODEL) {
       int mnum=0;
       char buf[81];
       std::sscanf(line, "%s %d", buf, &mnum);
       //new_model(Model_key(mnum), Model());
       cur_model= Model_key(mnum);
       done_with_model=false;
-    } else if (  lt== CGAL_PDB_INTERNAL_NS::HETATM 
-		 || lt== CGAL_PDB_INTERNAL_NS::ATOM ) {
+    } else if (  lt== internal::HETATM 
+		 || lt== internal::ATOM ) {
       if (done_with_model) {
         // charlie carter hack
         cur_model= Model_key(cur_model.index()+1);
         done_with_model=false;
       }
       models_[cur_model].process_line(line);
-    } else if (lt== CGAL_PDB_INTERNAL_NS::TER){
+    } else if (lt== internal::TER){
       models_[cur_model].process_line(line);
-    } else if (lt== CGAL_PDB_INTERNAL_NS::ENDMDL){
+    } else if (lt== internal::ENDMDL){
       done_with_model=true;
       models_[cur_model].process_line(line);
-    } else if (lt== CGAL_PDB_INTERNAL_NS::MASTER){
-    } else if (lt == CGAL_PDB_INTERNAL_NS::END){
+    } else if (lt== internal::MASTER){
+    } else if (lt == internal::END){
     }
   }
 
-  for (Model_iterator it= models_begin(); it != models_end(); ++it){
-    for (Model::Chain_iterator cit = it->model().chains_begin(); cit != it->model().chains_end(); ++cit){
-      cit->chain().set_has_bonds(true);
-      if (names.find(cit->key().index()) != names.end()) {
-	cit->chain().set_name(names[cit->key().index()]);
+  CGAL_PDB_FOREACH(Model_pair &m, models()) {
+    CGAL_PDB_FOREACH(Model::Chain_pair &c, m.model().chains()) {
+      c.chain().set_has_bonds(true);
+      if (names.find(c.key().index()) != names.end()) {
+	c.chain().set_name(names[c.key().index()]);
       }
     }
   }
   
   build_heterogens();
   
-  CGAL_PDB_INTERNAL_NS::error_logger.dump();
+  internal::error_logger.dump();
 }
 
 
@@ -160,12 +160,10 @@ void PDB::build_heterogens() {
   for (unsigned int i=0; i< connections_.size(); ++i) {
     int a= connections_[i].first;
     int b= connections_[i].second;
-    for (Model_iterator it= models_begin(); it != models_end(); ++it) {
+    CGAL_PDB_FOREACH(Model_pair &m, models()) {
       bool found=false;
-      for (Model::Heterogen_iterator hit 
-             = it->model().heterogens_begin();
-           hit != it->model().heterogens_end(); ++hit) {
-        if (hit->heterogen().connect(Atom::Index(a), Atom::Index(b))) {
+      CGAL_PDB_FOREACH(Model::Heterogen_pair &h, m.model().heterogens()) {
+        if (h.heterogen().connect(Atom::Index(a), Atom::Index(b))) {
           found=true;
           break;
         }
@@ -183,8 +181,8 @@ std::ostream& PDB::write(std::ostream &out) const {
   for (unsigned int i=0; i< header_.size(); ++i){
     out << header_[i] << std::endl;
   }
-  for (Model_const_iterator it = models_begin(); it != models_end(); ++it){
-    it->model().write(it->key().index(), out);
+  CGAL_PDB_FOREACH(const Model_pair &m, models()) {
+    m.model().write(m.key().index(), out);
   }
   out << "END   \n";
   return out;
@@ -198,4 +196,4 @@ PDB::Model_key PDB::push_back(const Model &m) {
   return k;
 }
 
-CGAL_PDB_END_NAMESPACE
+}}
