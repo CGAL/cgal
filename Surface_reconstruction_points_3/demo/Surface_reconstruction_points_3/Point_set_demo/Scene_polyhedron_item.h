@@ -3,7 +3,7 @@
 
 #include "Scene_polyhedron_item_config.h"
 #include "Scene_item_with_display_list.h"
-#include "Polyhedron_type_fwd.h"
+#include "Point_set_demo_types_fwd.h"
 #include <iostream>
 
 class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item 

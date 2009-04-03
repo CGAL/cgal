@@ -1,7 +1,7 @@
 #include <QApplication>
 #include "Scene_polyhedron_item.h"
 #include "Scene_plane_item.h"
-#include "Polyhedron_type.h"
+#include "Point_set_demo_types.h"
 
 #include "Point_set_demo_plugin_helper.h"
 #include "Point_set_demo_plugin_interface.h"
@@ -22,17 +22,17 @@ class Point_set_demo_pca_plugin :
 public:
   // used by Point_set_demo_plugin_helper
   QStringList actionsNames() const {
-    return QStringList() << "actionFitPlane"
-                         << "actionFitLine";
+    return QStringList() << "actionBoundingBox"
+                         << "actionBoundingSphere";
   }
 
 public slots:
-  void on_actionFitPlane_triggered();
-  void on_actionFitLine_triggered();
+  void on_actionBoundingBox_triggered();
+  void on_actionBoundingSphere_triggered();
 
 }; // end Point_set_demo_pca_plugin
 
-void Point_set_demo_pca_plugin::on_actionFitPlane_triggered()
+void Point_set_demo_pca_plugin::on_actionBoundingBox_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   
@@ -56,23 +56,23 @@ void Point_set_demo_pca_plugin::on_actionFitPlane_triggered()
       triangles.push_back(Triangle(a,b,c));
     }
 
-    // fit plane to triangles
+    // Compute bounding box
     Plane plane;
-    std::cout << "Fit plane...";
+    std::cout << "Compute bounding box...";
     CGAL::linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<2>());
     std::cout << "ok" << std::endl;
 
     // compute centroid
     Point center_of_mass = CGAL::centroid(triangles.begin(),triangles.end());
 
-    // add best fit plane 
+    // add bounding box to scene 
     Scene_plane_item* new_item = new Scene_plane_item(this->scene);
     new_item->setPosition(center_of_mass.x(),
                           center_of_mass.y(),
                           center_of_mass.z());
     const Vector& normal = plane.orthogonal_vector();
     new_item->setNormal(normal.x(), normal.y(), normal.z());
-    new_item->setName(tr("%1 (plane fit)").arg(item->name()));
+    new_item->setName(tr("%1 (bounding box)").arg(item->name()));
     new_item->setColor(Qt::magenta);
     new_item->setRenderingMode(item->renderingMode());
     scene->addItem(new_item);
@@ -81,7 +81,7 @@ void Point_set_demo_pca_plugin::on_actionFitPlane_triggered()
   }
 }
 
-void Point_set_demo_pca_plugin::on_actionFitLine_triggered()
+void Point_set_demo_pca_plugin::on_actionBoundingSphere_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   
@@ -105,9 +105,9 @@ void Point_set_demo_pca_plugin::on_actionFitLine_triggered()
       triangles.push_back(Triangle(a,b,c));
     }
 
-    // fit line to triangles
+    // Compute bounding sphere
     Line line;
-    std::cout << "Fit line...";
+    std::cout << "Compute bounding sphere...";
     CGAL::linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,CGAL::Dimension_tag<2>());
     std::cout << "ok" << std::endl;
 
@@ -150,13 +150,13 @@ void Point_set_demo_pca_plugin::on_actionFitLine_triggered()
     points[6] = b - u1;
     points[7] = b - u2;
 
-    // add best fit line as new polyhedron bar
+    // add bounding sphere as new polyhedron
     Polyhedron *pFit = new Polyhedron;
     Make_bar<Polyhedron,Kernel> bar;
     bar.run(points,*pFit);
 
     Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pFit);
-    new_item->setName(tr("%1 (line fit)").arg(item->name()));
+    new_item->setName(tr("%1 (bounding sphere)").arg(item->name()));
     new_item->setColor(Qt::magenta);
     new_item->setRenderingMode(item->renderingMode());
     scene->addItem(new_item);

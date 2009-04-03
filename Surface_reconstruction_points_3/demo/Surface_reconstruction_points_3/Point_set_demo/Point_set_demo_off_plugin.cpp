@@ -1,6 +1,6 @@
 #include "Scene_polyhedron_item.h"
-#include "Scene_polygon_soup.h"
-#include "Polyhedron_type.h"
+#include "Point_set_scene_item.h"
+#include "Point_set_demo_types.h"
 
 #include "Point_set_demo_io_plugin_interface.h"
 #include <fstream>
@@ -32,25 +32,29 @@ bool Point_set_demo_off_plugin::canLoad() const {
 
 Scene_item* 
 Point_set_demo_off_plugin::load(QFileInfo fileinfo) {
-  std::ifstream in(fileinfo.filePath().toUtf8());
 
+  // Open file
+  std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in)
     std::cerr << "Error!\n";
+    
+  // Try to read .off in a polyhedron
   Scene_polyhedron_item* item = new Scene_polyhedron_item();
   item->setName(fileinfo.baseName());
-
   if(!item->load(in))
   {
     delete item;
-    Scene_polygon_soup* soup_item = new Scene_polygon_soup;
-    soup_item->setName(fileinfo.baseName());
+
+    // Try to read .off in a point set
+    Point_set_scene_item* point_set_item = new Point_set_scene_item;
+    point_set_item->setName(fileinfo.baseName());
     in.close();
     std::ifstream in2(fileinfo.filePath().toUtf8());
-    if(!soup_item->load(in2)) {
-      delete soup_item;
+    if(!point_set_item->read_off_point_set(in2)) {
+      delete point_set_item;
       return 0;
     }
-    return soup_item;
+    return point_set_item;
   }
 
   return item;
@@ -58,23 +62,25 @@ Point_set_demo_off_plugin::load(QFileInfo fileinfo) {
 
 bool Point_set_demo_off_plugin::canSave(const Scene_item* item)
 {
+  // This plugin supports polyhedrons and point sets
   return qobject_cast<const Scene_polyhedron_item*>(item) ||
-    qobject_cast<const Scene_polygon_soup*>(item);
+         qobject_cast<const Point_set_scene_item*>(item);
 }
 
 bool Point_set_demo_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
 {
+  // This plugin supports polyhedrons and point sets
   const Scene_polyhedron_item* poly_item = 
     qobject_cast<const Scene_polyhedron_item*>(item);
-  const Scene_polygon_soup* soup_item = 
-    qobject_cast<const Scene_polygon_soup*>(item);
-
-  if(!poly_item && !soup_item)
+  const Point_set_scene_item* point_set_item = 
+    qobject_cast<const Point_set_scene_item*>(item);
+  if(!poly_item && !point_set_item)
     return false;
+
   std::ofstream out(fileinfo.filePath().toUtf8());
 
   return (poly_item && poly_item->save(out)) || 
-    (soup_item && soup_item->save(out));
+         (point_set_item && point_set_item->write_off_point_set(out));
 }
 
 #include <QtPlugin>

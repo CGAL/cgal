@@ -60,12 +60,15 @@ public:
   virtual Scene_item* item(Item_id) const = 0;
   virtual Item_id mainSelectionIndex() const = 0;
 
+  // Get scene bounding box
   virtual Bbox bbox() const = 0;
   virtual double len_diagonal() const = 0;
 
 public:
+  // Notify the scene that an item was modified
   virtual void itemChanged(Item_id i) = 0; 
   virtual void itemChanged(Scene_item*) = 0;
+  
 }; // end interface Scene_interface
 
 

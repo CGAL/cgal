@@ -3,8 +3,7 @@
 #include <QStringList>
 
 #include "Scene_polyhedron_item.h"
-#include "Scene_polygon_soup.h"
-#include "Polyhedron_type.h"
+#include "Point_set_demo_types.h"
 
 #include "Point_set_demo_plugin_helper.h"
 #include "Point_set_demo_plugin_interface.h"
@@ -33,23 +32,15 @@ void Point_set_demo_inside_out_plugin::on_actionInsideOut_triggered()
   Scene_polyhedron_item* poly_item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
-  Scene_polygon_soup* soup_item = 
-    qobject_cast<Scene_polygon_soup*>(scene->item(index));
-
-  if(poly_item || soup_item)
+  if(poly_item)
   {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    if(poly_item) {
-      Polyhedron* pMesh = poly_item->polyhedron();
-      if(!pMesh) return;
-  
-      // inside out
-      pMesh->inside_out();
-    }
-    else {
-      soup_item->inside_out();
-    }
+    Polyhedron* pMesh = poly_item->polyhedron();
+    if(!pMesh) return;
+
+    // inside out
+    pMesh->inside_out();
 
     // update scene
     scene->itemChanged(index);

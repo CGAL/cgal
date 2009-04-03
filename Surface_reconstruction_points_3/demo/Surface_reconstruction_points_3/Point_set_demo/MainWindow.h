@@ -19,7 +19,7 @@ namespace Ui {
   class MainWindow;
 }
 
-#include "Polyhedron_type_fwd.h"
+#include "Point_set_demo_types_fwd.h"
 
 #include "Messages_interface.h"
 
@@ -37,12 +37,12 @@ public slots:
   void updateViewerBBox();
   void open(QString filename);
 
-  void selectPolyhedron(int i);
+  void selectSceneItem(int i);
 
   void setAddKeyFrameKeyboardModifiers(Qt::KeyboardModifiers);
 
   void clearMenu(QMenu*);
-  void enableAction(QAction*);
+  void addAction(QAction*);
 
   void information(QString);
   void warning(QString);
@@ -58,15 +58,15 @@ protected slots:
   void writeSettings();
 
   // load, erase, duplicate
-  void on_actionEraseAll_triggered();
-  void on_actionLoadPolyhedron_triggered();
-  bool on_actionErasePolyhedron_triggered();
-  void on_actionDuplicatePolyhedron_triggered();
+  void on_actionFileCloseAll_triggered();
+  void on_actionFileOpen_triggered();
+  bool on_actionFileClose_triggered();
+  void on_actionDuplicate_triggered();
 
   // Show/Hide
   void on_actionShowHide_triggered();
 
-  // save selected polyhedron as...
+  // save as...
   void on_actionSaveAs_triggered(); 
 
 protected:
@@ -79,10 +79,9 @@ protected:
   void dropEvent(QDropEvent *event);
   void closeEvent(QCloseEvent *event);
 
-  bool onePolygonIsSelected() const;
-  int getSelectedPolygonIndex() const;
+  bool oneSceneItemIsSelected() const;
+  int getSelectedSceneItemIndex() const;
 
-  Polyhedron* getSelectedPolygon();
 private:
   QString strippedName(const QString &fullFileName);
 

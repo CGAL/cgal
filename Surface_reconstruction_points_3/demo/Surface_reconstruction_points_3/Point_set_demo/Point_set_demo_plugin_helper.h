@@ -18,12 +18,19 @@ class SCENE_ITEM_EXPORT Point_set_demo_plugin_helper
   : public Point_set_demo_plugin_interface
 {
 public:
+  // get action object from its name
   static QAction* getActionFromMainWindow(QMainWindow*, QString action_name);
+  
+  // Init plugin
   virtual void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
+  
+  // Get list of actions supported by this plugin
   virtual QStringList actionsNames() const;
   virtual QList<QAction*> actions() const;
 
+  // Auto-connect actions to slots. Called by init().
   void autoConnectActions();
+  
 protected:
   QMap<QString, QAction*> actions_map;
   Scene_interface* scene;

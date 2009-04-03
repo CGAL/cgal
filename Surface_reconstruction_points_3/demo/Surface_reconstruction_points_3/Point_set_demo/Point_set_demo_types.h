@@ -1,5 +1,5 @@
-#ifndef POLYHEDRON_TYPE_H
-#define POLYHEDRON_TYPE_H
+#ifndef POINT_SET_DEMO_TYPES_H
+#define POINT_SET_DEMO_TYPES_H
 
 // CGAL
 // kernel
@@ -10,7 +10,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 // surface mesh
 #include <CGAL/Polyhedron_3.h>
 
-#include "Polyhedron_type_fwd.h"
+#include "Point_set_demo_types_fwd.h"
 
 typedef Kernel::FT FT;
 typedef Kernel::Line_3 Line;
@@ -23,4 +23,4 @@ typedef Kernel::Iso_cuboid_3 Iso_cuboid;
 
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
-#endif // POLYHEDRON_TYPE_H
+#endif // POINT_SET_DEMO_TYPES_H

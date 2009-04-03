@@ -10,6 +10,7 @@ namespace qglviewer {
   class ManipulatedFrame;
 }
 
+// This class represents an object in the OpenGL scene
 class SCENE_ITEM_EXPORT Scene_item : public QObject {
   Q_OBJECT
   Q_PROPERTY(QColor color READ color WRITE setColor);
@@ -29,11 +30,12 @@ public:
       visible_(true),
       rendering_mode(Fill)
   {};
-
   virtual ~Scene_item();
-  
   virtual Scene_item* clone() const = 0;
+
+  // OpenGL drawing (flat)
   virtual void draw() const = 0;
+  // OpenGL drawing (wireframe)
   virtual void draw_edges() const { draw(); }
 
   // Functions for displaying meta-data of the item
@@ -49,9 +51,7 @@ public:
   virtual bool manipulatable() const { return false; }
   virtual ManipulatedFrame* manipulatedFrame() { return 0; }
 
-  //
   // The four basic properties
-  //
   virtual QColor color() const { return color_; }
   virtual QString name() const { return name_; }
   virtual bool visible() const { return visible_; }
@@ -62,16 +62,19 @@ public slots:
   // (either the properties or internal data)
   virtual void changed() {}
 
+  // The four basic properties
   virtual void setColor(QColor c) { color_ = c; }
   virtual void setName(QString n) { name_ = n; }
   virtual void setVisible(bool b) { visible_ = b; }
   virtual void setRenderingMode(RenderingMode m) { rendering_mode = m; }
 
 protected:
+  // The four basic properties
   QString name_;
   QColor color_;
   bool visible_;
   RenderingMode rendering_mode;
+
 }; // end class Scene_item
 
 #endif // SCENE_ITEM_H

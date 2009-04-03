@@ -19,9 +19,10 @@ foreach(INCDIR ../../../../AABB_tree/include ../../../../STL_Extension/include .
   endif()
 endforeach()
 
+include_directories (BEFORE ../../../../Point_set_processing_3/include/)
 include_directories( BEFORE ./ ./include ../../../include )
 
-# Find CGAL and CGAL Qt4
+# Find CGAL and CGALQt4 libraries
 find_package(CGAL COMPONENTS Qt4)
 include( ${CGAL_USE_FILE} )
 
@@ -82,7 +83,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   qt4_automoc(Scene_item.cpp
               Scene_plane_item.cpp
-              Scene_polygon_soup.cpp 
+              Point_set_scene_item.cpp 
               Scene_polyhedron_item.cpp)
 
   # AUXILIARY LIBRARIES
@@ -99,9 +100,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
   target_link_libraries(scene_polyhedron_item scene_item)
 
-  add_library(polygon_soup SHARED
-    Scene_polygon_soup.cpp Scene_polygon_soup.moc)
-  target_link_libraries(polygon_soup scene_item)
+  add_library(point_set SHARED
+    Point_set_scene_item.cpp Point_set_scene_item.moc)
+  target_link_libraries(point_set scene_item)
 
   add_definitions(-DQT_STATICPLUGIN)
 #  if(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
@@ -169,10 +170,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(remeshing_plugin scene_polyhedron_item)
 
   polyhedron_demo_plugin(inside_out_plugin Point_set_demo_inside_out_plugin)
-  target_link_libraries(inside_out_plugin scene_polyhedron_item polygon_soup)
+  target_link_libraries(inside_out_plugin scene_polyhedron_item point_set)
 
   polyhedron_demo_plugin(off_plugin Point_set_demo_off_plugin)
-  target_link_libraries(off_plugin scene_polyhedron_item polygon_soup)
+  target_link_libraries(off_plugin scene_polyhedron_item point_set)
 
   polyhedron_demo_plugin(convex_hull_plugin Point_set_demo_convex_hull_plugin)
   target_link_libraries(convex_hull_plugin scene_polyhedron_item)
@@ -182,8 +183,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(mesh_simplification_plugin Point_set_demo_mesh_simplification_plugin)
   target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
-
-  polyhedron_demo_plugin(trivial_plugin Point_set_demo_trivial_plugin)
 
   polyhedron_demo_plugin(cut_plugin Point_set_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)

@@ -3,7 +3,7 @@
 #ifndef UI_POINT_3_H
 #define UI_POINT_3_H
 
-#include <Gyroviz_point_3.h>
+#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Orientable_normal_3.h>
 #include <CGAL/Iterator_project.h>
 
@@ -16,7 +16,6 @@
 /// - a position,
 /// - a normal (oriented or not),
 /// - an original normal (optional, always oriented),
-/// - a list of camera/2D point pairs used to reconstruct the point from images,
 /// - a selection flag.
 ///
 /// @heading Is Model for the Concepts: 
@@ -27,13 +26,13 @@
 
 template<class Gt>
 class UI_point_3 
-  : public Gyroviz_point_3<Gt>
+  : public CGAL::Point_with_normal_3<Gt, CGAL::Orientable_normal_3<Gt> >
 {
 // Private types
 private:
 
     // Base class
-    typedef Gyroviz_point_3<Gt> Base;
+    typedef CGAL::Point_with_normal_3<Gt, CGAL::Orientable_normal_3<Gt> > Base;
 
 // Public types
 public:
@@ -55,7 +54,6 @@ public:
 
     /// Point is (0,0,0) by default.
     /// Normal is (0,0,0) and is oriented by default.
-    /// Camera list is empty by default.
     UI_point_3(const CGAL::Origin& o = CGAL::ORIGIN)
     : Base(o)
     {
@@ -85,29 +83,6 @@ public:
     {
       m_is_selected = false;
     }
-    template <class K>
-    UI_point_3(const Gyroviz_point_3<K>& gpt)
-    : Base(gpt)
-    {
-      m_is_selected = false;
-    }
-    template < class InputIterator >
-    UI_point_3(const Point_3& point,
-               InputIterator first_camera_point2_pair, 
-               InputIterator beyond_camera_point2_pair)
-    : Base(point, first_camera_point2_pair, beyond_camera_point2_pair)
-    {
-      m_is_selected = false;
-    }
-    template < class InputIterator >
-    UI_point_3(const Point_3& point,
-               const Normal& normal,
-               InputIterator first_camera_point2_pair, 
-               InputIterator beyond_camera_point2_pair)
-    : Base(point, normal, first_camera_point2_pair, beyond_camera_point2_pair)
-    {
-      m_is_selected = false;
-    }
 
     /// Copy constructor
     UI_point_3(const UI_point_3& gpt)
@@ -130,12 +105,6 @@ public:
       m_is_selected = gpt.m_is_selected;
       m_original_normal = gpt.m_original_normal;
       return *this;
-    }
-
-    /// Merge points, including lists of camera/2D point pairs.
-    void merge(const UI_point_3& gpt)
-    { 
-      Base::merge(gpt); 
     }
 
     // Inherited operators ==() and !=() are fine.

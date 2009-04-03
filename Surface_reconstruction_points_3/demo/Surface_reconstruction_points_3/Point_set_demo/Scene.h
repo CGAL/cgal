@@ -58,6 +58,8 @@ public:
   void draw();
   void drawWithNames();
 
+  // Get scene bounding box
+  Bbox bbox() const;
   double len_diagonal() const
   {
     Bbox box = bbox();
@@ -66,8 +68,6 @@ public:
     double dz = box.zmax - box.zmin;
     return std::sqrt(dx*dx + dy*dy + dz*dz);
   }
-
-  Bbox bbox() const;
 
   // QAbstractItemModel functions
   int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
@@ -79,7 +79,9 @@ public:
 
   // auxiliary public function for QMainWindow
   QItemSelection createSelection(int i);
+
 public slots:
+  // Notify the scene that an item was modified
   void itemChanged(Item_id i); 
   void itemChanged(Scene_item*);
 

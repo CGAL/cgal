@@ -92,7 +92,7 @@ MainWindow::MainWindow(QWidget* parent)
           this, SLOT(selectionChanged()));
 
   connect(viewer, SIGNAL(selected(int)),
-          this, SLOT(selectPolyhedron(int)));
+          this, SLOT(selectSceneItem(int)));
 
   connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
@@ -113,11 +113,11 @@ MainWindow::MainWindow(QWidget* parent)
   this->addAboutCGAL();
   this->addAboutDemo(":/cgal/Point_set_demo/about.html");
 
-  // Connect the button "addButton" with actionLoadPolyhedron
-  ui->addButton->setDefaultAction(ui->actionLoadPolyhedron);
+  // Connect the button "addButton" with actionFileOpen
+  ui->addButton->setDefaultAction(ui->actionFileOpen);
   // Same with "removeButton" and "duplicateButton"
-  ui->removeButton->setDefaultAction(ui->actionErasePolyhedron);
-  ui->duplicateButton->setDefaultAction(ui->actionDuplicatePolyhedron);
+  ui->removeButton->setDefaultAction(ui->actionFileClose);
+  ui->duplicateButton->setDefaultAction(ui->actionDuplicate);
 
   // Connect actionQuit (Ctrl+Q) and qApp->quit()
   connect(ui->actionQuit, SIGNAL(triggered()),
@@ -130,7 +130,6 @@ MainWindow::MainWindow(QWidget* parent)
 
   // Reset the "Operation menu"
   clearMenu(ui->menuOperations);
-//   enableAction(ui->actionInsideOut);
 
   // Load plugins, and re-enable actions that need it.
   loadPlugins();
@@ -172,12 +171,16 @@ bool MainWindow::initPlugin(QObject* obj)
   Point_set_demo_plugin_interface* plugin =
     qobject_cast<Point_set_demo_plugin_interface*>(obj);
   if(plugin) {
+    // Call plugin's init() method
     plugin->init(this, this->scene, this);
+
     Q_FOREACH(QAction* action, plugin->actions()) {
+      // If action does not belong to the menus, add it to "Operations" menu
       if(!childs.contains(action)) {
         ui->menuOperations->addAction(action);
       }
-        enableAction(action);
+      // Show and enable menu item
+      addAction(action);
     }
     return true;
   }
@@ -211,7 +214,7 @@ void MainWindow::clearMenu(QMenu* menu)
   menu->menuAction()->setEnabled(false);
 }
 
-void MainWindow::enableAction(QAction* action)
+void MainWindow::addAction(QAction* action)
 {
   if(!action) return;
 
@@ -225,7 +228,7 @@ void MainWindow::enableAction(QAction* action)
     QMenu* menu = qobject_cast<QMenu*>(widget);
     if(menu)
     {
-      enableAction(menu->menuAction());
+      addAction(menu->menuAction());
     }
   }
 }
@@ -309,7 +312,7 @@ void MainWindow::open(QString filename)
       settings.setValue("OFF open directory",
                         fileinfo.absoluteDir().absolutePath());
       this->addToRecentFiles(filename);
-      selectPolyhedron(index);
+      selectSceneItem(index);
     }
     else {
       QMessageBox::critical(this,
@@ -326,7 +329,7 @@ void MainWindow::open(QString filename)
   }
 }
 
-void MainWindow::selectPolyhedron(int i)
+void MainWindow::selectSceneItem(int i)
 {
   if(i < 0) return;
   if((unsigned int)i >= scene->numberOfEntries()) return;
@@ -335,7 +338,7 @@ void MainWindow::selectPolyhedron(int i)
                                      QItemSelectionModel::ClearAndSelect);
 }
 
-int MainWindow::getSelectedPolygonIndex() const
+int MainWindow::getSelectedSceneItemIndex() const
 {
   QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
   if(selectedRows.empty())
@@ -346,8 +349,8 @@ int MainWindow::getSelectedPolygonIndex() const
 
 void MainWindow::selectionChanged()
 {
-  scene->setSelectedItem(getSelectedPolygonIndex());
-  Scene_item* item = scene->item(getSelectedPolygonIndex());
+  scene->setSelectedItem(getSelectedSceneItemIndex());
+  Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item->manipulatable()) {
     viewer->setManipulatedFrame(item->manipulatedFrame());
     connect(viewer->manipulatedFrame(), SIGNAL(modified()),
@@ -361,7 +364,7 @@ void MainWindow::selectionChanged()
 }
 
 void MainWindow::updateInfo() {
-  Scene_item* item = scene->item(getSelectedPolygonIndex());
+  Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item)
     ui->infoLabel->setText(item->toolTip());
   else 
@@ -390,7 +393,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
-void MainWindow::on_actionLoadPolyhedron_triggered()
+void MainWindow::on_actionFileOpen_triggered()
 {
   QStringList filters;
   Q_FOREACH(Point_set_demo_io_plugin_interface* plugin, io_plugins) {
@@ -405,7 +408,7 @@ void MainWindow::on_actionLoadPolyhedron_triggered()
                                      QDir::current().dirName()).toString();
   QStringList filenames = 
     QFileDialog::getOpenFileNames(this,
-                                  tr("Load polyhedron..."),
+                                  tr("Open File..."),
                                   directory,
                                   filters.join(";;"));
   if(!filenames.isEmpty()) {
@@ -420,7 +423,7 @@ void MainWindow::on_actionSaveAs_triggered()
   QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
   if(selectedRows.size() != 1)
     return;
-  Scene_item* item = scene->item(getSelectedPolygonIndex());
+  Scene_item* item = scene->item(getSelectedSceneItemIndex());
 
   if(!item)
     return;
@@ -445,7 +448,7 @@ void MainWindow::on_actionSaveAs_triggered()
 
   QString filename = 
     QFileDialog::getSaveFileName(this,
-                                 tr("Save polyhedron..."),
+                                 tr("Save to File..."),
                                  QString(),
                                  tr("OFF files (*.off)\n"
                                     "All files (*)"));
@@ -466,23 +469,23 @@ void MainWindow::on_actionSaveAs_triggered()
   }
 }
 
-bool MainWindow::on_actionErasePolyhedron_triggered()
+bool MainWindow::on_actionFileClose_triggered()
 {
-  int index = scene->erase(getSelectedPolygonIndex());
-  selectPolyhedron(index);
+  int index = scene->erase(getSelectedSceneItemIndex());
+  selectSceneItem(index);
   return index >= 0;
 }
 
-void MainWindow::on_actionEraseAll_triggered()
+void MainWindow::on_actionFileCloseAll_triggered()
 {
-  while(on_actionErasePolyhedron_triggered()) {
+  while(on_actionFileClose_triggered()) {
   }
 }
 
-void MainWindow::on_actionDuplicatePolyhedron_triggered()
+void MainWindow::on_actionDuplicate_triggered()
 {
-  int index = scene->duplicate(getSelectedPolygonIndex());
-  selectPolyhedron(index);
+  int index = scene->duplicate(getSelectedSceneItemIndex());
+  selectSceneItem(index);
 }
 
 void MainWindow::on_actionShowHide_triggered()

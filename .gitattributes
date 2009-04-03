@@ -3814,14 +3814,14 @@ Surface_mesher/find_non_debug_macros -text
 Surface_mesher/test/Surface_mesher/combined_spheres.cin -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/MainWindow.ui -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/Point_set_demo.qrc -text
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/ChineseDragon-points.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/camel.pwn -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/fandisk.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/lion-head.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/mushroom.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/oni.pwn -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/rotor.off -text svneol=unset#application/octet-stream
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/sphere926.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/sphere926.xyz -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/tripod.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/turbine.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/resources/about.html svneol=native#text/html
@@ -3835,10 +3835,11 @@ Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_d
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/resources/plus.png -text svneol=unset#image/png
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/resources/simplification.png -text svneol=unset#image/png
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/PoissonDoc.cpp -text
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/ChineseDragon-points.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/camel.pwn -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/oni.pwn -text
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/sphere926.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/rotor.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/sphere926.xyz -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/include/Gyroviz_point_3.h -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/res/Poisson.ico -text svneol=unset#image/x-icon
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/res/PoissonDoc.ico -text svneol=unset#image/x-icon

@@ -2,7 +2,7 @@
 #include "Point_set_demo_plugin_interface.h"
 
 #include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
+#include "Point_set_demo_types.h"
 
 #include <QApplication>
 #include <QMainWindow>

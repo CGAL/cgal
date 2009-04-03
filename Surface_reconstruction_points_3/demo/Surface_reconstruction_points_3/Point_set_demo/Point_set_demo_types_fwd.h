@@ -39,7 +39,7 @@ typedef CGAL::Polyhedron_3<Kernel,
                            CGAL::HalfedgeDS_default,
                            std::allocator<int> > Polyhedron;
 #else // USE_FORWARD_DECL
-#include "Polyhedron_type.h"
+#include "Point_set_demo_types.h"
 #endif // USE_FORWARD_DECL
 
 #endif // POLYHEDRON_TYPE_FWD_H

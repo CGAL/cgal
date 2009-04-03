@@ -19,7 +19,7 @@
 
 /// The Point_set_3 class is array of points + normals of type 
 /// Point_with_normal_3<Gt, Orientable_normal_3<Gt> > (in fact 
-/// UI_point_3 to support algorithms specific to Gyroviz and selection flag). 
+/// UI_point_3 to support a selection flag). 
 /// It provides:
 /// - accessors: points and normals iterators, property maps
 /// - OpenGL rendering
@@ -68,9 +68,8 @@ public:
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   /// Type of points in Point_set_3
-  typedef UI_point_3<Gt> UI_point; ///< Position + normal + cameras + selection flag
-  // Its superclasses:
-  typedef Gyroviz_point_3<Gt> Gyroviz_point; ///< Position + normal + cameras
+  typedef UI_point_3<Gt> UI_point; ///< Position + normal + selection flag
+  // Its superclass:
   typedef typename UI_point::Point_with_normal Point_with_normal; ///< Position + normal
   
   // Type of points normal
@@ -490,45 +489,6 @@ Point_set_vertex_normal_map<Gt>
 get(boost::vertex_normal_t, const Point_set_3<Gt>& points) 
 {
   Point_set_vertex_normal_map<Gt> aMap(points);
-  return aMap;
-}
-
-
-/// Helper class: type of the "vertex_cameras" property map
-/// of a Point_set_3 object.
-template <class Gt>
-class Point_set_vertex_cameras_const_map 
-{
-public:
-  typedef Point_set_3<Gt> Point_set;
-  typedef typename Point_set::UI_point::Camera_const_iterator 
-    Camera_const_iterator;  
-
-  // Property maps required types
-  typedef boost::readable_property_map_tag          category;
-  typedef std::pair<Camera_const_iterator,Camera_const_iterator>  
-    value_type;
-  typedef value_type                                reference;
-  typedef typename Point_set::Point_const_iterator  key_type;
-
-  Point_set_vertex_cameras_const_map(const Point_set&) {}
-
-  /// Free function to access the map elements.
-  friend inline
-    reference get(const Point_set_vertex_cameras_const_map&, key_type p)
-  {
-    return std::make_pair(p->cameras_begin(), p->cameras_end());
-  }
-};
-
-/// Free function to get the "vertex_cameras" property map
-/// of a Point_set_3 object.
-template <class Gt>
-inline
-Point_set_vertex_cameras_const_map<Gt> 
-get(boost::vertex_cameras_t, const Point_set_3<Gt>& points) 
-{
-  Point_set_vertex_cameras_const_map<Gt> aMap(points);
   return aMap;
 }
 

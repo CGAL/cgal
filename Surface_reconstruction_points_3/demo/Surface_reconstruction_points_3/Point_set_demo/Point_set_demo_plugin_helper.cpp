@@ -39,6 +39,7 @@ Point_set_demo_plugin_helper::actions() const
   return actions_map.values();
 }
 
+// Auto-connect actions to slots
 void Point_set_demo_plugin_helper::autoConnectActions()
 {
   QObject* thisObject = dynamic_cast<QObject*>(this);

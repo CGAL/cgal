@@ -1,5 +1,5 @@
 #include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
+#include "Point_set_demo_types.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <QObject>
@@ -43,7 +43,7 @@ bool
 Scene_polyhedron_item::load(std::istream& in)
 {
   in >> *poly;
-  return in;
+  return in && !isEmpty();
 }
 
 bool 
