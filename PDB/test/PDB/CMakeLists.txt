@@ -14,7 +14,7 @@ find_package(CGAL REQUIRED PDB )
 include( ${CGAL_USE_FILE} )
 
 INCLUDE_DIRECTORIES ( BEFORE ./include )
-set(CMAKE_CXX_FLAGS "-g -Wall")
+set(CMAKE_CXX_FLAGS "-g -Wall -frounding-math")
 set(CMAKE_CPP_FLAGS "-I/flute1/home/drussel/fs/include")
 
 if (CGAL_PDB_FOUND )

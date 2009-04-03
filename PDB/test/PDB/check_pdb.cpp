@@ -63,8 +63,8 @@ int main(int , char *[]){
       totaL_atoms += CGAL::PDB::size(c.chain().atoms());
       total_bonds += CGAL::PDB::size(c.chain().bonds());
     }
-    assert(CGAL::PDB::size(m.atoms()) == totaL_atoms);
-    assert(CGAL::PDB::(m.bonds()) == total_bonds);
+    assert(CGAL::PDB::size(m.model().atoms()) == totaL_atoms);
+    assert(CGAL::PDB::size(m.model().bonds()) == total_bonds);
   }
 	
   p.write(of);

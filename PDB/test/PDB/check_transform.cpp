@@ -30,8 +30,7 @@ int main(int argc, char *argv[]){
   using namespace CGAL::PDB;
   //dsr::Residue res= dsr::Residue(dsr::Residue::VAL);
   //res.write(std::cout);
-  assert(argc==2);
-  std::ifstream in(argv[1]);
+  std::ifstream in("data/check_refine_alignment_0.pdb");
   PDB p(in);
   
   std::cout << "There are " << p.models().size() << " models." << std::endl;
@@ -39,16 +38,35 @@ int main(int argc, char *argv[]){
   CGAL_PDB_FOREACH(PDB::Model_pair &m, p.models()) {
     std::cout << "Model " << m.key() << " has " << m.model().chains().size() << " chains" << std::endl;
     CGAL_PDB_FOREACH(Chain &c, make_chain_range(m.model().chains())) {
-        Transform tr(0.309976, 0.851651, -0.422618,4,
+      /*Transform tr(0.309976, 0.851651, -0.422618,4,
                      -0.741526, 0.494764, 0.453154,5,
-                     0.595025, 0.172916, 0.78488,6);
+                     0.595025, 0.172916, 0.78488,6);*/
+      Transform tr(1,0,0,1,
+                   0,1,0,0,
+                   0,0,1,0);
+      write(tr);
+      Point pt(1,2,3);
+      std::cout << pt << std::endl;
+      std::cout << tr(pt) << std::endl;
+      
+      Chain mc= c;
+    
+      //CGAL_PDB_FOREACH(Monomer &r, make_monomer_range(mc.monomers())) {
+      CGAL_PDB_FOREACH(Atom &a, make_atom_range(mc.atoms())) {
+        a.set_point(tr(a.point()));
+      }
+      //}
+      double di= CGAL::squared_distance(mc.atoms().begin()->atom().point(),
+                                        c.atoms().begin()->atom().point());
+      std::cout<< "moved distance is " << di << std::endl;
+      double di2= CGAL::squared_distance(*make_point_range(make_atom_range(mc.atoms())).begin(),
+                                         *make_point_range(make_atom_range(c.atoms())).begin());
+      std::cout<< "moved distance2 is " << di2 << std::endl;
+      
 
-        Chain mc= c;
-        CGAL_PDB_FOREACH(Monomer &r, make_monomer_range(mc.monomers())) {
-          CGAL_PDB_FOREACH(Atom &a, make_atom_range(r.atoms())) {
-            a.set_point(tr(a.point()));
-          }
-        }
+        double err= cRMS(make_point_range(make_atom_range(c.atoms())),
+                         make_point_range(make_atom_range(mc.atoms())));
+        std::cout << "Err: " << err << std::endl;
 
         Transform trp= transform_taking_first_to_second( make_point_range(make_atom_range(c.atoms())), make_point_range(make_atom_range(mc.atoms())));
 
@@ -59,12 +77,18 @@ int main(int argc, char *argv[]){
           }
         }
         CGAL_assertion(mdiff<.1);
+        write(trp);
+ 
+        err= cRMS(make_point_range(make_atom_range(c.atoms())),
+                  make_point_range(make_atom_range(mc.atoms())));
+        std::cout << "Err: " << err << std::endl;
 
-        apply(make_atom_range(mc.atoms()), Transform_atom(trp));
+        for_each(make_atom_range(c.atoms()), Transform_atom(trp));
 
-        double err= cRMS(make_point_range(make_atom_range(c.atoms())), make_point_range(make_atom_range(mc.atoms())));
+        err= cRMS(make_point_range(make_atom_range(c.atoms())),
+                  make_point_range(make_atom_range(mc.atoms())));
+        std::cout << "Final err: " << err << std::endl;
         CGAL_assertion(err < 1e-5);
-        std::cout << err << std::endl;
     }
   }
 

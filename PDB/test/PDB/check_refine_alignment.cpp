@@ -31,8 +31,8 @@ int main(int, char *[]){
 
     std::vector<int> match;
     CGAL::PDB::Transform tro
-      = CGAL::PDB::internal::refine_alignment(hairpin.begin(), hairpin.end(),
-                                              trp.begin(), trp.end(),
+      = CGAL::PDB::internal::refine_alignment(hairpin,
+                                              trp,
                                               .25,
                                               std::back_inserter(match));
     //std::cout << tr << std::endl;
@@ -49,9 +49,9 @@ int main(int, char *[]){
     std::cout << hairpin_2[0] << std::endl;
 
     std::vector<int> match(hairpin.size(), -1);
-    CGAL::PDB::internal::greedy_matching(hairpin.begin(), hairpin.end(),
-				     hairpin_2.begin(), hairpin_2.end(),
-				     match.begin(), match.end());
+    CGAL::PDB::internal::greedy_matching(hairpin,
+                                         hairpin_2,
+                                         match);
     std::copy(match.begin(), match.end(), std::ostream_iterator<int>(std::cout, " "));
     std::cout << std::endl;
   }
