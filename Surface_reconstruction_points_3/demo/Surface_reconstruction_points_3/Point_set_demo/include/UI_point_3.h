@@ -11,21 +11,21 @@
 #include <algorithm>
 
 
-/// The UI_point_3 class represents a 3D point in Surface_reconstruction_points_3 demo. 
+/// The UI_point_3 class represents a 3D point in Surface_reconstruction_points_3 demo.
 /// It contains:
 /// - a position,
 /// - a normal (oriented or not),
 /// - an original normal (optional, always oriented),
 /// - a selection flag.
 ///
-/// @heading Is Model for the Concepts: 
+/// @heading Is Model for the Concepts:
 /// Model of the PointWithOrientableNormal_3 concept.
 ///
 /// @heading Parameters:
 /// @param Gt   Kernel's geometric traits.
 
 template<class Gt>
-class UI_point_3 
+class UI_point_3
   : public CGAL::Point_with_normal_3<Gt, CGAL::Orientable_normal_3<Gt> >
 {
 // Private types
@@ -78,32 +78,32 @@ public:
       m_is_selected = false;
     }
     template <class K, class N>
-    UI_point_3(const Point_with_normal_3<K,N>& pwn)
+    UI_point_3(const CGAL::Point_with_normal_3<K,N>& pwn)
     : Base(pwn)
     {
       m_is_selected = false;
     }
 
     /// Copy constructor
-    UI_point_3(const UI_point_3& gpt)
-    : Base(gpt)
+    UI_point_3(const UI_point_3& upt)
+    : Base(upt)
     {
-      m_is_selected = gpt.m_is_selected;
-      m_original_normal = gpt.m_original_normal;
+      m_is_selected = upt.m_is_selected;
+      m_original_normal = upt.m_original_normal;
     }
     template<class K>
-    UI_point_3(const UI_point_3<K>& gpt)
-    : Base(gpt)
+    UI_point_3(const UI_point_3<K>& upt)
+    : Base(upt)
     {
-      m_is_selected = gpt.is_selected();
-      m_original_normal = gpt.m_original_normal;
+      m_is_selected = upt.is_selected();
+      m_original_normal = upt.m_original_normal;
     }
     /// Operator =()
-    UI_point_3& operator=(const UI_point_3& gpt)
+    UI_point_3& operator=(const UI_point_3& upt)
     {
-      Base::operator=(gpt);
-      m_is_selected = gpt.m_is_selected;
-      m_original_normal = gpt.m_original_normal;
+      Base::operator=(upt);
+      m_is_selected = upt.m_is_selected;
+      m_original_normal = upt.m_original_normal;
       return *this;
     }
 
