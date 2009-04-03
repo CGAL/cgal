@@ -40,14 +40,14 @@ namespace CGALi {
     typename K::FT d, distance = 0;
     for(int i = 0; i < 3; ++i)
     {
-      if(sphere.center()[i] < bbox.min(i))
+      if(sphere.center()[i] < bbox.(min)(i))
       {
-	d = bbox.min(i) - sphere.center()[i];
+	d = bbox.(min)(i) - sphere.center()[i];
 	distance += d*d;
       }
-      else if(sphere.center()[i] > bbox.max(i))
+      else if(sphere.center()[i] > bbox.(max)(i))
       {
-	d = sphere.center()[i] - bbox.max(i);
+	d = sphere.center()[i] - bbox.(max)(i);
 	distance += d*d;
       }
     }
