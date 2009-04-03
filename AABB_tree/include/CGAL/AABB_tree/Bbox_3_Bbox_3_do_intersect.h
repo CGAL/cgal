@@ -32,7 +32,7 @@ namespace CGALi {
     const K& kernel)
   {
     for(int i = 0; i < 3; ++i)
-      if(c1.(max)(i) < c2.(min)(i) || c1.(min)(i) > c2.(max)(i))
+      if(c1.max(i) < c2.min(i) || c1.min(i) > c2.max(i))
 	return false;
     return true;
   }
