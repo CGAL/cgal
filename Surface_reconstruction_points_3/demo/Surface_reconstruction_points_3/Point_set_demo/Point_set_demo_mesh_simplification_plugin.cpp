@@ -1,5 +1,5 @@
-#include "Point_set_demo_plugin_helper.h"
-#include "Point_set_demo_plugin_interface.h"
+#include "Polyhedron_demo_plugin_helper.h"
+#include "Polyhedron_demo_plugin_interface.h"
 
 #include "Scene_polyhedron_item.h"
 #include "Point_set_demo_types.h"
@@ -15,13 +15,13 @@
 
 class Point_set_demo_mesh_simplification_plugin : 
   public QObject,
-  public Point_set_demo_plugin_helper
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Point_set_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface);
 
 public:
-  // used by Point_set_demo_plugin_helper
+  // used by Polyhedron_demo_plugin_helper
   QStringList actionsNames() const {
     return QStringList() << "actionSimplify";
   }

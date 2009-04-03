@@ -11,6 +11,8 @@
 
 #include <cmath>
 
+#include "Point_set_demo_types.h"
+
 class SCENE_BASIC_OBJECTS_EXPORT Scene_plane_item 
   : public Scene_item
 {
@@ -24,6 +26,7 @@ public:
       can_clone(true),
       frame(new ManipulatedFrame())
   {
+    setNormal(0., 0., 1.);
   }
 
   ~Scene_plane_item() {
@@ -83,14 +86,7 @@ public:
   }
 
   void draw() const {
-    const Bbox& bbox = scene->bbox();
-    const double& xdelta = bbox.xmax-bbox.xmin;
-    const double& ydelta = bbox.ymax-bbox.ymin;
-    const double& zdelta = bbox.zmax-bbox.zmin;
-    double diag = std::sqrt(xdelta*xdelta + 
-                            ydelta*ydelta +
-                            zdelta*zdelta);
-    diag *= 0.7;
+    const double diag = scene_diag();
     ::glPushMatrix();
     ::glMultMatrixd(frame->matrix());
     GLboolean lighting;
@@ -108,17 +104,29 @@ public:
   };
 
   void draw_edges() const {
+    ::glPushMatrix();
+    ::glMultMatrixd(frame->matrix());
+    QGLViewer::drawGrid((float)scene_diag());
+    ::glPopMatrix();
+  }
+
+  Plane_3 plane() const {
+    const qglviewer::Vec& pos = frame->position();
+    const qglviewer::Vec& n = 
+      frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+    return Plane_3(n[0], n[1],  n[2], - n * pos);
+  }
+
+private:
+  double scene_diag() const {
     const Bbox& bbox = scene->bbox();
     const double& xdelta = bbox.xmax-bbox.xmin;
     const double& ydelta = bbox.ymax-bbox.ymin;
     const double& zdelta = bbox.zmax-bbox.zmin;
     const double diag = std::sqrt(xdelta*xdelta + 
-                                  ydelta*ydelta +
-                                  zdelta*zdelta);
-    ::glPushMatrix();
-    ::glMultMatrixd(frame->matrix());
-    QGLViewer::drawGrid((float)diag*0.7f);
-    ::glPopMatrix();
+                            ydelta*ydelta +
+                            zdelta*zdelta);
+    return diag * 0.7;
   }
 
 public slots:

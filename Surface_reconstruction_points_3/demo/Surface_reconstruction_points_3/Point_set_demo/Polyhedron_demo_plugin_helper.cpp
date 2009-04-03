@@ -1,4 +1,4 @@
-#include "Point_set_demo_plugin_helper.h"
+#include "Polyhedron_demo_plugin_helper.h"
 #include <QMainWindow>
 #include <QAction>
 #include <QMetaObject>
@@ -8,7 +8,7 @@
 #include <QSet>
 
 QAction*
-Point_set_demo_plugin_helper::
+Polyhedron_demo_plugin_helper::
 getActionFromMainWindow(QMainWindow* mw,
                         QString action_name)
 {
@@ -16,13 +16,13 @@ getActionFromMainWindow(QMainWindow* mw,
 }
 
 QStringList 
-Point_set_demo_plugin_helper::actionsNames() const
+Polyhedron_demo_plugin_helper::actionsNames() const
 {
   return QStringList();
 }
 
 void
-Point_set_demo_plugin_helper::
+Polyhedron_demo_plugin_helper::
 init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
   mw = mainWindow;
   scene = scene_interface;
@@ -34,13 +34,13 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
 }
 
 QList<QAction*> 
-Point_set_demo_plugin_helper::actions() const
+Polyhedron_demo_plugin_helper::actions() const
 {
   return actions_map.values();
 }
 
 // Auto-connect actions to slots
-void Point_set_demo_plugin_helper::autoConnectActions()
+void Polyhedron_demo_plugin_helper::autoConnectActions()
 {
   QObject* thisObject = dynamic_cast<QObject*>(this);
   if(!thisObject)

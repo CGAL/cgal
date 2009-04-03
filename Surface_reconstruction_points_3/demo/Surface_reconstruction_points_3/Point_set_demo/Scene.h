@@ -102,6 +102,7 @@ public slots:
 signals:
   void updated_bbox();
   void updated();
+  void itemAboutToBeDestroyed(Scene_item*);
 
 private:
   void draw_aux(bool with_names);

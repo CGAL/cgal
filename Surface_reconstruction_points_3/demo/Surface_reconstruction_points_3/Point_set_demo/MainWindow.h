@@ -13,7 +13,9 @@ class Scene;
 class Viewer;
 class QTreeView;
 class QMenu;
-class Point_set_demo_io_plugin_interface;
+class Polyhedron_demo_io_plugin_interface;
+
+class Scene_item;
 
 namespace Ui {
   class MainWindow;
@@ -51,6 +53,7 @@ public slots:
 protected slots:
   void selectionChanged();
   void updateInfo();
+  void removeManipulatedFrame(Scene_item*);
 
   // settings
   void quit();
@@ -89,7 +92,7 @@ private:
   Viewer* viewer;
   QTreeView* treeView;
   Ui::MainWindow* ui;
-  QVector<Point_set_demo_io_plugin_interface*> io_plugins;
+  QVector<Polyhedron_demo_io_plugin_interface*> io_plugins;
 };
 
 #endif // ifndef MAINWINDOW_H

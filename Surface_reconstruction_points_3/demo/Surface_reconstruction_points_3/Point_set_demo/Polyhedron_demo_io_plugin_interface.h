@@ -1,12 +1,12 @@
-#ifndef POINT_SET_DEMO_IO_PLUGIN_INTERFACE_H
-#define POINT_SET_DEMO_IO_PLUGIN_INTERFACE_H
+#ifndef POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H
+#define POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H
 
 #include <QFileInfo>
 #include <QStringList>
 
 class Scene_item;
 
-class Point_set_demo_io_plugin_interface 
+class Polyhedron_demo_io_plugin_interface 
 {
 public:
   virtual QStringList nameFilters() const = 0;
@@ -18,7 +18,7 @@ public:
   virtual bool save(const Scene_item*, QFileInfo fileinfo) = 0;
 };
 
-Q_DECLARE_INTERFACE(Point_set_demo_io_plugin_interface,
-                    "org.cgal.PointSetDemo.IOPluginInterface/1.0")
+Q_DECLARE_INTERFACE(Polyhedron_demo_io_plugin_interface,
+                    "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
-#endif // POINT_SET_DEMO_IO_PLUGIN_INTERFACE_H
+#endif // POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H

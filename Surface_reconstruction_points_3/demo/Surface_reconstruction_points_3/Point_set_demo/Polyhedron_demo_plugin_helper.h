@@ -1,5 +1,5 @@
-#ifndef POINT_SET_DEMO_OPERATION_HELPER_H
-#define POINT_SET_DEMO_OPERATION_HELPER_H
+#ifndef POLYHEDRON_DEMO_OPERATION_HELPER_H
+#define POLYHEDRON_DEMO_OPERATION_HELPER_H
 
 #include "Scene_item_config.h" //defines SCENE_ITEM_EXPORT
 
@@ -12,10 +12,10 @@ struct QMetaObject;
 class QMainWindow;
 class Scene_interface;
 
-#include "Point_set_demo_plugin_interface.h"
+#include "Polyhedron_demo_plugin_interface.h"
 
-class SCENE_ITEM_EXPORT Point_set_demo_plugin_helper
-  : public Point_set_demo_plugin_interface
+class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
+  : public Polyhedron_demo_plugin_interface
 {
 public:
   // get action object from its name
@@ -37,4 +37,4 @@ protected:
   QMainWindow* mw;
 };
 
-#endif // POINT_SET_DEMO_OPERATION_HELPER_H
+#endif // POLYHEDRON_DEMO_OPERATION_HELPER_H

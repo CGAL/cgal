@@ -6,20 +6,20 @@
 #include "Scene_polyhedron_item.h"
 #include "Point_set_demo_types.h"
 
-#include "Point_set_demo_plugin_helper.h"
-#include "Point_set_demo_plugin_interface.h"
+#include "Polyhedron_demo_plugin_helper.h"
+#include "Polyhedron_demo_plugin_interface.h"
 
 #include <CGAL/convex_hull_3.h>
 
 class Point_set_demo_convex_hull_plugin : 
   public QObject,
-  public Point_set_demo_plugin_helper
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Point_set_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface);
 
 public:
-  // used by Point_set_demo_plugin_helper
+  // used by Polyhedron_demo_plugin_helper
   QStringList actionsNames() const {
     return QStringList() << "actionConvexHull";
   }

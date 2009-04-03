@@ -19,8 +19,8 @@
 #include <QMessageBox>
 #include <QScrollBar>
 
-#include "Point_set_demo_plugin_interface.h"
-#include "Point_set_demo_io_plugin_interface.h"
+#include "Polyhedron_demo_plugin_interface.h"
+#include "Polyhedron_demo_io_plugin_interface.h"
 
 #include "ui_MainWindow.h"
 
@@ -79,6 +79,9 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(scene, SIGNAL(updated()),
           viewer, SLOT(update()));
+
+  connect(scene, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
+          this, SLOT(removeManipulatedFrame(Scene_item*)));
 
   connect(scene, SIGNAL(updated_bbox()),
           this, SLOT(updateViewerBBox()));
@@ -168,8 +171,8 @@ void MainWindow::loadPlugins()
 bool MainWindow::initPlugin(QObject* obj)
 {
   QObjectList childs = this->children();
-  Point_set_demo_plugin_interface* plugin =
-    qobject_cast<Point_set_demo_plugin_interface*>(obj);
+  Polyhedron_demo_plugin_interface* plugin =
+    qobject_cast<Polyhedron_demo_plugin_interface*>(obj);
   if(plugin) {
     // Call plugin's init() method
     plugin->init(this, this->scene, this);
@@ -190,8 +193,8 @@ bool MainWindow::initPlugin(QObject* obj)
 
 bool MainWindow::initIOPlugin(QObject* obj)
 {
-  Point_set_demo_io_plugin_interface* plugin =
-    qobject_cast<Point_set_demo_io_plugin_interface*>(obj);
+  Polyhedron_demo_io_plugin_interface* plugin =
+    qobject_cast<Polyhedron_demo_io_plugin_interface*>(obj);
   if(plugin) {
 //     std::cerr << "I/O plugin\n";
     io_plugins << plugin;
@@ -298,7 +301,7 @@ void MainWindow::open(QString filename)
   QFileInfo fileinfo(filename);
   Scene_item* item = 0;
   if(fileinfo.isFile() && fileinfo.isReadable()) {
-    Q_FOREACH(Point_set_demo_io_plugin_interface* plugin, 
+    Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, 
               io_plugins)
     {
       if(plugin->canLoad()) {
@@ -356,11 +359,16 @@ void MainWindow::selectionChanged()
     connect(viewer->manipulatedFrame(), SIGNAL(modified()),
             this, SLOT(updateInfo()));
   }
-  else {
-    viewer->setManipulatedFrame(0);
-  }
   
   viewer->updateGL();
+}
+
+void MainWindow::removeManipulatedFrame(Scene_item* item)
+{
+  if(item->manipulatable() &&
+     item->manipulatedFrame() == viewer->manipulatedFrame()) {
+    viewer->setManipulatedFrame(0);
+  }
 }
 
 void MainWindow::updateInfo() {
@@ -396,7 +404,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::on_actionFileOpen_triggered()
 {
   QStringList filters;
-  Q_FOREACH(Point_set_demo_io_plugin_interface* plugin, io_plugins) {
+  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(plugin->canLoad()) {
       filters += plugin->nameFilters();
     }
@@ -428,9 +436,9 @@ void MainWindow::on_actionSaveAs_triggered()
   if(!item)
     return;
 
-  QVector<Point_set_demo_io_plugin_interface*> canSavePlugins;
+  QVector<Polyhedron_demo_io_plugin_interface*> canSavePlugins;
   QStringList filters;
-  Q_FOREACH(Point_set_demo_io_plugin_interface* plugin, io_plugins) {
+  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(plugin->canSave(item)) {
       canSavePlugins << plugin;
       filters += plugin->nameFilters();
@@ -462,7 +470,7 @@ void MainWindow::on_actionSaveAs_triggered()
      QMessageBox::Yes)
   {
 
-    Q_FOREACH(Point_set_demo_io_plugin_interface* plugin, canSavePlugins) {
+    Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, canSavePlugins) {
       if(plugin->save(item, fileinfo))
         break;
     }

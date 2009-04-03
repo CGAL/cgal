@@ -3,7 +3,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <QObject>
-#include <gl_render.h>
+#include <CGAL/gl_render.h>
 
 Scene_polyhedron_item::Scene_polyhedron_item()
   : Scene_item_with_display_list(),

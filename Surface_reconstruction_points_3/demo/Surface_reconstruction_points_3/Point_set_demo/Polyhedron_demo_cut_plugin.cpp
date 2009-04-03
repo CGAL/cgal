@@ -6,7 +6,7 @@
 #include "Scene_item_with_display_list.h"
 #include "Scene_plane_item.h"
 #include "Scene_polyhedron_item.h"
-#include "Point_set_demo_plugin_interface.h"
+#include "Polyhedron_demo_plugin_interface.h"
 #include <CGAL/gl.h>
 
 #include <CGAL/bounding_box.h>
@@ -19,6 +19,7 @@
 
 #include <QAction>
 #include <QMainWindow>
+#include <QApplication>
 
 typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel; 
 
@@ -130,15 +131,15 @@ public:
 }; // end class Scene_edges_item
 
 
-class Point_set_demo_cut_plugin : 
+class Polyhedron_demo_cut_plugin : 
   public QObject,
-  public Point_set_demo_plugin_interface
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Point_set_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface);
 
 public:
-  Point_set_demo_cut_plugin() : QObject(), edges_item(0) {
+  Polyhedron_demo_cut_plugin() : QObject(), edges_item(0) {
   }
 
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface,
@@ -162,9 +163,9 @@ private:
 
   typedef std::map<QObject*,  AABB_tree> Trees;
   Trees trees;
-}; // end Point_set_demo_cut_plugin
+}; // end Polyhedron_demo_cut_plugin
 
-void Point_set_demo_cut_plugin::init(QMainWindow* mainWindow,
+void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
                                       Scene_interface* scene_interface,
                                       Messages_interface* m)
 {
@@ -175,16 +176,17 @@ void Point_set_demo_cut_plugin::init(QMainWindow* mainWindow,
           this, SLOT(createCutPlane()));
 }
 
-QList<QAction*> Point_set_demo_cut_plugin::actions() const {
+QList<QAction*> Polyhedron_demo_cut_plugin::actions() const {
   return QList<QAction*>() << actionCreateCutPlane;
 }
 
-void Point_set_demo_cut_plugin::createCutPlane() {
+void Polyhedron_demo_cut_plugin::createCutPlane() {
   plane_item = new Scene_plane_item(scene);
   const Scene_interface::Bbox& bbox = scene->bbox();
   plane_item->setPosition((bbox.xmin+bbox.xmax)/2.f,
                           (bbox.ymin+bbox.ymax)/2.f,
                           (bbox.zmin+bbox.zmax)/2.f);
+  plane_item->setNormal(0., 0., 1.);
   connect(plane_item, SIGNAL(destroyed()),
           this, SLOT(enableAction()));
   plane_item->setManipulatable(true);
@@ -197,7 +199,8 @@ void Point_set_demo_cut_plugin::createCutPlane() {
   actionCreateCutPlane->setEnabled(false);
 }
 
-void Point_set_demo_cut_plugin::cut() {
+void Polyhedron_demo_cut_plugin::cut() {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   if(!edges_item) {
     edges_item = new Scene_edges_item;
     edges_item->setName("Edges of the cut");
@@ -207,8 +210,10 @@ void Point_set_demo_cut_plugin::cut() {
     scene->addItem(edges_item);
   }
   const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
-  const qglviewer::Vec& n = plane_item->manipulatedFrame()->orientation().axis(); 
+  const qglviewer::Vec& n =
+    plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
   Simple_cartesian_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
+  std::cerr << plane << std::endl;
   edges_item->edges.clear();
   QTime time;
   time.start();
@@ -223,6 +228,7 @@ void Point_set_demo_cut_plugin::cut() {
       Scene_aabb_item* aabb_item = new Scene_aabb_item(it->second);
       aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
       aabb_item->setRenderingMode(Wireframe);
+      aabb_item->setVisible(false);
       scene->addItem(aabb_item);
       std::cerr << "size: " << it->second.size() << std::endl;
     }
@@ -233,12 +239,13 @@ void Point_set_demo_cut_plugin::cut() {
   }
   messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
   scene->itemChanged(edges_item);
+  QApplication::restoreOverrideCursor();
 }
 
-void Point_set_demo_cut_plugin::enableAction() {
+void Polyhedron_demo_cut_plugin::enableAction() {
   actionCreateCutPlane->setEnabled(true);
 }
 
-Q_EXPORT_PLUGIN2(Point_set_demo_cut_plugin, Point_set_demo_cut_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_cut_plugin, Polyhedron_demo_cut_plugin);
 
-#include "Point_set_demo_cut_plugin.moc"
+#include "Polyhedron_demo_cut_plugin.moc"

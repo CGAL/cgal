@@ -3,24 +3,24 @@
 #include "Scene_plane_item.h"
 #include "Point_set_demo_types.h"
 
-#include "Point_set_demo_plugin_helper.h"
-#include "Point_set_demo_plugin_interface.h"
+#include "Polyhedron_demo_plugin_helper.h"
+#include "Polyhedron_demo_plugin_interface.h"
 
 #include <CGAL/centroid.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
-#include <Make_bar.h> // output for line fitting
+#include <CGAL/Make_bar.h> // output for line fitting
 
 class Point_set_demo_pca_plugin : 
   public QObject,
-  public Point_set_demo_plugin_helper
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Point_set_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface);
 
 public:
-  // used by Point_set_demo_plugin_helper
+  // used by Polyhedron_demo_plugin_helper
   QStringList actionsNames() const {
     return QStringList() << "actionBoundingBox"
                          << "actionBoundingSphere";

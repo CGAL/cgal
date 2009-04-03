@@ -1,7 +1,6 @@
 #include "config.h"
-#ifdef CGAL_POINT_SET_DEMO_USE_SURFACE_MESHER
-#include "Point_set_demo_plugin_helper.h"
-#include "Point_set_demo_plugin_interface.h"
+#include "Polyhedron_demo_plugin_helper.h"
+#include "Polyhedron_demo_plugin_interface.h"
 
 #include <QObject>
 #include <QAction>
@@ -19,10 +18,10 @@ Polyhedron* cgal_code_remesh(const Polyhedron*,
 
 class Point_set_demo_remeshing_plugin : 
   public QObject,
-  protected Point_set_demo_plugin_helper
+  protected Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Point_set_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface);
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
     this->scene = scene_interface;
@@ -120,5 +119,3 @@ void Point_set_demo_remeshing_plugin::remesh()
 Q_EXPORT_PLUGIN2(Point_set_demo_remeshing_plugin, Point_set_demo_remeshing_plugin);
 
 #include "Point_set_demo_remeshing_plugin.moc"
-
-#endif // CGAL_POINT_SET_DEMO_USE_SURFACE_MESHER

@@ -43,6 +43,7 @@ Scene::erase(int index)
     return -1;
 
   Scene_item* item = entries[index];
+  emit itemAboutToBeDestroyed(item);
   delete item;
   entries.removeAt(index);
 

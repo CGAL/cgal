@@ -2,15 +2,15 @@
 #include "Point_set_scene_item.h"
 #include "Point_set_demo_types.h"
 
-#include "Point_set_demo_io_plugin_interface.h"
+#include "Polyhedron_demo_io_plugin_interface.h"
 #include <fstream>
 
 class Point_set_demo_off_plugin :
   public QObject,
-  public Point_set_demo_io_plugin_interface
+  public Polyhedron_demo_io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Point_set_demo_io_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_io_plugin_interface);
 
 public:
   QStringList nameFilters() const;

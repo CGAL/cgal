@@ -20,6 +20,7 @@ typedef Kernel::Sphere_3 Sphere;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid;
+typedef Kernel::Plane_3 Plane_3;
 
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 

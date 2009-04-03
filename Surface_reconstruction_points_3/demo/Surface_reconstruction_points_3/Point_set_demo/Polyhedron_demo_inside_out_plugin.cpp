@@ -5,27 +5,27 @@
 #include "Scene_polyhedron_item.h"
 #include "Point_set_demo_types.h"
 
-#include "Point_set_demo_plugin_helper.h"
-#include "Point_set_demo_plugin_interface.h"
+#include "Polyhedron_demo_plugin_helper.h"
+#include "Polyhedron_demo_plugin_interface.h"
 
-class Point_set_demo_inside_out_plugin : 
+class Polyhedron_demo_inside_out_plugin : 
   public QObject,
-  public Point_set_demo_plugin_helper
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Point_set_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface);
 
 public:
-  // used by Point_set_demo_plugin_helper
+  // used by Polyhedron_demo_plugin_helper
   QStringList actionsNames() const {
     return QStringList() << "actionInsideOut";
   }
 public slots:
   void on_actionInsideOut_triggered();
 
-}; // end Point_set_demo_inside_out_plugin
+}; // end Polyhedron_demo_inside_out_plugin
 
-void Point_set_demo_inside_out_plugin::on_actionInsideOut_triggered()
+void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   
@@ -50,6 +50,6 @@ void Point_set_demo_inside_out_plugin::on_actionInsideOut_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(Point_set_demo_inside_out_plugin, Point_set_demo_inside_out_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_inside_out_plugin, Polyhedron_demo_inside_out_plugin);
 
-#include "Point_set_demo_inside_out_plugin.moc"
+#include "Polyhedron_demo_inside_out_plugin.moc"

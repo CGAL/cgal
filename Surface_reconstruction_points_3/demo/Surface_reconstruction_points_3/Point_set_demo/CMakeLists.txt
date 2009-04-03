@@ -22,7 +22,7 @@ endforeach()
 include_directories (BEFORE ../../../../Point_set_processing_3/include/)
 include_directories( BEFORE ./ ./include ../../../include )
 
-# Find CGAL and CGALQt4 libraries
+# Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)
 include( ${CGAL_USE_FILE} )
 
@@ -90,7 +90,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(scene_item SHARED
     Scene_item.cpp Scene_item.moc
     Scene_item_with_display_list.cpp
-    Point_set_demo_plugin_helper.cpp)
+    Polyhedron_demo_plugin_helper.cpp)
 
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp Scene_plane_item.moc)
@@ -169,7 +169,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(remeshing_plugin Point_set_demo_remeshing_plugin Point_set_demo_remeshing_plugin_cgal_code.cpp)
   target_link_libraries(remeshing_plugin scene_polyhedron_item)
 
-  polyhedron_demo_plugin(inside_out_plugin Point_set_demo_inside_out_plugin)
+  polyhedron_demo_plugin(inside_out_plugin Polyhedron_demo_inside_out_plugin)
   target_link_libraries(inside_out_plugin scene_polyhedron_item point_set)
 
   polyhedron_demo_plugin(off_plugin Point_set_demo_off_plugin)
@@ -184,7 +184,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(mesh_simplification_plugin Point_set_demo_mesh_simplification_plugin)
   target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
 
-  polyhedron_demo_plugin(cut_plugin Point_set_demo_cut_plugin)
+  polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
