@@ -63,21 +63,13 @@ int main(int argc, char *argv[]){
   boost::program_options::notify(vm);
 
     
-  if (input_files.size() <2 || print_help) {
-    std::cout << "Concatenate a bunch of pdb files into one pdb file with many models.\n";
-    std::cout << "usage: " << argv[0] << " input-pdb-0 input-pdb-1 ... output-pdb\n";
+  if (input_files.size() <1 || print_help) {
+    std::cout << "Print info about a pdb file.\n";
+    std::cout << "usage: " << argv[0] << " input-pdb-0 input-pdb-1 ... \n";
     std::cout << o << "\n";
     return EXIT_FAILURE;
   }
 
-  output_file=input_files.back();
-  input_files.pop_back();
-
-  
-  PDB outpdb;
-
-  outpdb.insert(PDB::Model_key(0), Model());
-  outpdb.find(PDB::Model_key(0))->model();
   for (unsigned int i=0; i < input_files.size(); ++i){
     std::ifstream in(input_files[i].c_str());
     if (!in){
@@ -91,7 +83,7 @@ int main(int argc, char *argv[]){
     CGAL_PDB_FOREACH(const PDB::Model_pair& m, inpdb.models()) {
       std::cout << "Model " << m.key() << std::endl;
       CGAL_PDB_FOREACH(const Model::Chain_pair &c,
-                    m.model().chains()) {
+                       m.model().chains()) {
         std::cout << " Chain " << c.key() << " has " << c.chain().monomers().size()
                   << " residues" << std::endl;
       }

@@ -87,14 +87,14 @@ int main(int argc, char *argv[]){
     }
     CGAL::PDB::PDB inpdb(in, verbose);
     
-    CGAL_PDB_FOREACH(const CGAL::PDB::Model &m, make_model_range(inpdb.models())) {
-      /*CGAL_PDB_FOREACH(const CGAL::PDB::Chain &c, make_chain_range(m.chains())) {
+    CGAL_PDB_FOREACH( CGAL::PDB::Model &m, make_model_range(inpdb.models())) {
+      CGAL_PDB_FOREACH( CGAL::PDB::Chain &c, make_chain_range(m.chains())) {
         outm.insert(CGAL::PDB::Model::Chain_key(next_chain), c);
         ++next_chain;
       }
       CGAL_PDB_FOREACH(const CGAL::PDB::Model::Heterogen_consts::iterator::reference h, m.heterogens()) {
         outm.insert(h.key(), h.heterogen());
-        }*/
+      }
       
     }
   }

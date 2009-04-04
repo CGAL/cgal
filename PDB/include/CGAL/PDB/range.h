@@ -56,14 +56,14 @@ const F& for_each(Range& r, const F &f) {
 #define CGAL_PDB_GET_MAP(ucname, lcname)                \
     template <class From>                               \
     struct Get_##lcname {                               \
-      typedef ucname& result_type;     \
+      typedef ucname& result_type;                      \
       result_type operator()(From v) const {            \
         return v.lcname();                              \
       }                                                 \
     };                                                  \
     template <class From2>                               \
     struct Get_##lcname<const From2> {                   \
-      typedef const ucname& result_type;         \
+      typedef const ucname& result_type;                       \
       result_type operator()(From2 v) const {                 \
         return v.lcname();                              \
       }                                                 \
@@ -102,20 +102,20 @@ struct Get_key {
 #define CGAL_PDB_MAKE_RANGE(ucname, lcname)             \
     template <class Range>                                              \
     boost::iterator_range<boost::transform_iterator< Get_##lcname<typename Range::iterator::reference> , typename Range::iterator> > \
-    make_##lcname##_range(const Range& r){                                     \
-    typedef boost::transform_iterator<Get_##lcname<typename Range::iterator::reference>, typename Range::iterator> Tr; \
-    return boost::make_iterator_range(Tr(r.begin(), Get_##lcname<typename Range::iterator::reference>()),        \
-                                      Tr(r.end(), Get_##lcname<typename Range::iterator::reference>()));            \
-  }                                             \
-   template <class Range>                                              \
+    make_##lcname##_range(const Range& r){                              \
+      typedef boost::transform_iterator<Get_##lcname<typename Range::iterator::reference>, typename Range::iterator> Tr; \
+      return boost::make_iterator_range(Tr(r.begin(), Get_##lcname<typename Range::iterator::reference>()), \
+                                        Tr(r.end(), Get_##lcname<typename Range::iterator::reference>())); \
+    }                                                                   \
+    template <class Range>                                              \
     boost::iterator_range<boost::transform_iterator< Get_##lcname<typename Range::iterator::reference> , typename Range::iterator> > \
-    make_##lcname##_range(Range& r){                                     \
-    typedef boost::transform_iterator<Get_##lcname<typename Range::iterator::reference>, typename Range::iterator> Tr; \
-    return boost::make_iterator_range(Tr(r.begin(), Get_##lcname<typename Range::iterator::reference>()),        \
-                                      Tr(r.end(), Get_##lcname<typename Range::iterator::reference>()));            \
-  }                                             \
-
-
+    make_##lcname##_range(Range& r){                                    \
+      typedef boost::transform_iterator<Get_##lcname<typename Range::iterator::reference>, typename Range::iterator> Tr; \
+      return boost::make_iterator_range(Tr(r.begin(), Get_##lcname<typename Range::iterator::reference>()), \
+                                        Tr(r.end(), Get_##lcname<typename Range::iterator::reference>())); \
+    }                                                                   \
+    
+    
 CGAL_PDB_MAKE_RANGE(Atom, atom);
 CGAL_PDB_MAKE_RANGE(Monomer, monomer);
 CGAL_PDB_MAKE_RANGE(Chain, chain);
