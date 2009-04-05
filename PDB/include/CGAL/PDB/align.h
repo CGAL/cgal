@@ -6,7 +6,6 @@
 #include <CGAL/PDB/internal/tnt/tnt_array2d.h>
 #include <CGAL/PDB/internal/tnt/jama_svd.h>
 #include <CGAL/PDB/Matrix.h>
-#include <boost/foreach.hpp>
 
 namespace CGAL { namespace PDB {
 

@@ -26,7 +26,6 @@
 #include <cctype>
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
-#include <boost/foreach.hpp>
 #include <sstream>
 
 /*!

@@ -21,7 +21,6 @@
 #include <CGAL/PDB/PDB.h>
 #include <CGAL/PDB/distance.h>
 #include <CGAL/PDB/range.h>
-#include <boost/foreach.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
