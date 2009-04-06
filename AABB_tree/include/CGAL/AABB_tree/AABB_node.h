@@ -301,10 +301,11 @@ private:
   double ysize() const { return m_bbox.ymax() - m_bbox.ymin(); }
   double zsize() const { return m_bbox.zmax() - m_bbox.zmin(); }
 
+public:
   double max_lenght() const { 
     return (std::max)(xsize(),(std::max)(ysize(),zsize()));
   }
-public:
+
   // HELPER FUNCTION of all predicates below
   static Triangle triangle(Input f)
   {
