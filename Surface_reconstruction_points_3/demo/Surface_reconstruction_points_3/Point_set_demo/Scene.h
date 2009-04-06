@@ -45,7 +45,10 @@ public:
                       // one that is erased, or just after. Returns -1 if
                       // the list is empty.
 
-  int duplicate(int); // Returns the index of the new polyhedra
+  // Duplicate a scene item. Return the ID of the new item (-1 on error).
+  Item_id duplicate(Item_id index); 
+  // Convert a polyhedron to a point set. Return the ID of the new item (-1 on error).
+  Item_id convertToPointSet(Item_id index);
 
   // Accessors (getters)
   size_t numberOfEntries() const;

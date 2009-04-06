@@ -1,6 +1,8 @@
 #include "config.h"
 #include "Scene.h"
 #include "Scene_item.h"
+#include "Scene_polyhedron_item.h"
+#include "Point_set_scene_item.h"
 
 #include <QString>
 #include <QGLWidget>
@@ -79,6 +81,8 @@ Scene::numberOfEntries() const
   return entries.size();
 }
 
+// Duplicate a scene item.
+// Return the ID of the new item (-1 on error).
 Scene::Item_id
 Scene::duplicate(Item_id index)
 {
@@ -89,6 +93,35 @@ Scene::duplicate(Item_id index)
   Scene_item* new_item = item->clone();
   if(new_item) {
     new_item->setName(tr("%1 (copy)").arg(item->name()));
+    new_item->setColor(item->color());
+    new_item->setVisible(item->visible());
+    addItem(new_item);
+    return entries.size() - 1;
+  }
+  else
+    return -1;
+}
+
+// Convert a polyhedron to a point set.
+// Return the ID of the new item (-1 on error).
+Scene::Item_id 
+Scene::convertToPointSet(Item_id index)
+{
+  // Check index
+  if(index < 0 || index >= entries.size())
+    return -1;
+
+  // Check if scene item is a polyhedron
+  const Scene_item* item = entries[index];
+  const Scene_polyhedron_item* poly_item = 
+    qobject_cast<const Scene_polyhedron_item*>(item);
+  if(poly_item == NULL || poly_item->polyhedron() == NULL)
+    return -1;
+
+  // Convert polyhedron to a point set
+  Point_set_scene_item* new_item = new Point_set_scene_item(*poly_item->polyhedron());
+  if(new_item) {
+    new_item->setName(tr("%1 (point set)").arg(item->name()));
     new_item->setColor(item->color());
     new_item->setVisible(item->visible());
     addItem(new_item);

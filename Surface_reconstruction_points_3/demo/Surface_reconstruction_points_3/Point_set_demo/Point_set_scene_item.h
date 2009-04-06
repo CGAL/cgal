@@ -2,9 +2,8 @@
 #define POINT_SET_ITEM_H
 
 #include "Point_set_scene_item_config.h"
-#include "Point_set_3.h"
 #include "Scene_item_with_display_list.h"
-#include "Point_set_demo_types.h"
+#include "Point_set_demo_types_fwd.h"
 
 #include <iostream>
 
@@ -18,6 +17,7 @@ class POINT_SET_ITEM_EXPORT Point_set_scene_item
 public:  
   Point_set_scene_item();
   Point_set_scene_item(const Point_set_scene_item& toCopy);
+  Point_set_scene_item(const Polyhedron& p);
   ~Point_set_scene_item();
   Point_set_scene_item* clone() const;
   
@@ -27,11 +27,15 @@ public:
   bool read_xyz_point_set(std::istream& in);
   bool write_xyz_point_set(std::ostream& out) const;
 
-  // Functions for displaying meta-data of the item
+  // Function for displaying meta-data of the item
   virtual QString toolTip() const;
 
   // OpenGL drawing
   virtual void direct_draw() const;
+
+  // Get wrapped point set
+  Point_set*       point_set();
+  const Point_set* point_set() const;
 
   // Get dimensions
   bool isFinite() const { return true; }
@@ -40,7 +44,7 @@ public:
 
 // Data
 private:
-  Point_set_3<Kernel> m_points;
+  Point_set* m_points;
   
 }; // end class Point_set_scene_item
 

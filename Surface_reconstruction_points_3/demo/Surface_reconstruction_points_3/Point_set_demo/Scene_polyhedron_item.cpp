@@ -1,5 +1,6 @@
 #include "Scene_polyhedron_item.h"
 #include "Point_set_demo_types.h"
+
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <QObject>
@@ -83,9 +84,9 @@ Scene_polyhedron_item::direct_draw() const {
 }
 
 Polyhedron* 
-Scene_polyhedron_item::polyhedron() {
-  return poly;
-}
+Scene_polyhedron_item::polyhedron()       { return poly; }
+const Polyhedron* 
+Scene_polyhedron_item::polyhedron() const { return poly; }
 
 bool
 Scene_polyhedron_item::isEmpty() const {

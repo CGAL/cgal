@@ -65,8 +65,10 @@
     <property name="title" >
      <string>&amp;Edit</string>
     </property>
-    <addaction name="actionDuplicate" />
     <addaction name="actionShowHide" />
+    <addaction name="separator" />
+    <addaction name="actionDuplicate" />
+    <addaction name="actionConvertToPointSet" />
    </widget>
    <widget class="QMenu" name="menuOperations" >
     <property name="title" >
@@ -413,6 +415,14 @@
    </property>
    <property name="text" >
     <string>Draw two sides</string>
+   </property>
+  </action>
+  <action name="actionConvertToPointSet" >
+   <property name="text" >
+    <string>Convert to Point Set</string>
+   </property>
+   <property name="toolTip" >
+    <string>Convert Mesh to Point Set</string>
    </property>
   </action>
  </widget>

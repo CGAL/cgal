@@ -1,13 +1,13 @@
 #ifndef POLYHEDRON_TYPE_FWD_H
 #define POLYHEDRON_TYPE_FWD_H
 
-
 #include <memory>
+
 
 #ifdef USE_FORWARD_DECL
 
-
 namespace CGAL {
+
   template <class CK>
   struct Filtered_kernel;
 
@@ -30,16 +30,27 @@ namespace CGAL {
              class Alloc
              >
   class Polyhedron_3;
+  
 } // end namespace CGAL
 
+// kernel
 typedef CGAL::Filtered_kernel< CGAL::Simple_cartesian<double> > Kernel;
 
+// surface mesh
 typedef CGAL::Polyhedron_3<Kernel,
                            CGAL::Polyhedron_items_3,
                            CGAL::HalfedgeDS_default,
                            std::allocator<int> > Polyhedron;
+
+// point set
+template <class Gt> class Point_set_3;
+typedef Point_set_3<Kernel> Point_set;
+                           
 #else // USE_FORWARD_DECL
+
 #include "Point_set_demo_types.h"
+
 #endif // USE_FORWARD_DECL
+
 
 #endif // POLYHEDRON_TYPE_FWD_H

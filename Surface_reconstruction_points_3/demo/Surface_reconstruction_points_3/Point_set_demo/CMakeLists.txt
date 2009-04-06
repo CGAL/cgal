@@ -105,6 +105,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(point_set scene_item)
 
   add_definitions(-DQT_STATICPLUGIN)
+  
 #  if(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
     add_definitions(-DUSE_FORWARD_DECL)
     add_executable  ( Point_set_demo MainWindow.cpp
@@ -135,8 +136,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Point_set_demo ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
-  # Link with the scene_item library.
-#  target_link_libraries( Point_set_demo scene_item )
+  # Link with the scene_item libraries
+  target_link_libraries( Point_set_demo scene_item scene_polyhedron_item point_set )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Point_set_demo )
 

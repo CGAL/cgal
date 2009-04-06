@@ -65,6 +65,7 @@ protected slots:
   void on_actionFileOpen_triggered();
   bool on_actionFileClose_triggered();
   void on_actionDuplicate_triggered();
+  void on_actionConvertToPointSet_triggered();
 
   // Show/Hide
   void on_actionShowHide_triggered();

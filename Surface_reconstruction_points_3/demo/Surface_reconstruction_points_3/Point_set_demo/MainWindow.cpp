@@ -496,6 +496,12 @@ void MainWindow::on_actionDuplicate_triggered()
   selectSceneItem(index);
 }
 
+void MainWindow::on_actionConvertToPointSet_triggered()
+{
+  int index = scene->convertToPointSet(getSelectedSceneItemIndex());
+  selectSceneItem(index);
+}
+
 void MainWindow::on_actionShowHide_triggered()
 {
   Q_FOREACH(QModelIndex index, treeView->selectionModel()->selectedRows())
