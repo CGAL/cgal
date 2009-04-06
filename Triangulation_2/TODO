@@ -1,3 +1,14 @@
+6 avril 2009
+-Triangulation d'une region polygonale :
+insister dans la doc sur le fait que la triangulation remplit l'enveloppe convexe
+et  montrer comment les traiter  les regions polygonales  en  marquant les faces.
+Ajouter un example dans le user manuel,
+ou modifier l'example des triangulation avec colored face
+pour montrer comment on peut marquer les faces
+interieures a un domaine
+
+
+
 - regarder le bug dans la test suite de TriangulationContrainte
  revele par le lzigzag locate
   semble venir de find_conflicts 
