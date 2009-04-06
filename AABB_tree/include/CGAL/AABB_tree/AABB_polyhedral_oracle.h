@@ -171,11 +171,13 @@ namespace CGAL {
       typename Kernel::Construct_scaled_vector_3 scale = 
         Kernel().construct_scaled_vector_3_object();
 
-      return (surface.tree()->count_intersections(segment(p, 
-                                                          translate(p, 
-                                                                    scale(vector(ORIGIN,
-                                                                                 *random_point),
-                                                                          diameter))))
+      const Segment_3 seg =  
+        segment(p, translate(p, 
+                             scale(vector(ORIGIN,
+                                          *random_point),
+                                   diameter)));
+      Converter convert;
+      return (surface.tree()->count_intersections(convert(seg))
               % 2) == 1;
     }
   }; // end class AABB_polyhedral_oracle
