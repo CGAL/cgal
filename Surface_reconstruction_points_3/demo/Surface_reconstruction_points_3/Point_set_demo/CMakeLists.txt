@@ -175,6 +175,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(off_plugin Point_set_demo_off_plugin)
   target_link_libraries(off_plugin scene_polyhedron_item point_set)
 
+  polyhedron_demo_plugin(xyz_plugin Point_set_demo_xyz_plugin)
+  target_link_libraries(xyz_plugin scene_polyhedron_item point_set)
+
   polyhedron_demo_plugin(convex_hull_plugin Point_set_demo_convex_hull_plugin)
   target_link_libraries(convex_hull_plugin scene_polyhedron_item)
 

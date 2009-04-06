@@ -35,8 +35,10 @@ Point_set_demo_off_plugin::load(QFileInfo fileinfo) {
 
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
-  if(!in)
-    std::cerr << "Error!\n";
+  if(!in) {
+    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+    return NULL;
+  }
     
   // Try to read .off in a polyhedron
   Scene_polyhedron_item* item = new Scene_polyhedron_item();

@@ -55,8 +55,8 @@ public:
 
   // Repeat base class' types
   /// @cond SKIP_IN_MANUAL
-  using Base::iterator;
-  using Base::const_iterator;
+  typedef typename Base::iterator iterator;
+  typedef typename Base::const_iterator const_iterator;
   /// @endcond
 
   // Classic CGAL geometric types
@@ -77,8 +77,8 @@ public:
   typedef typename UI_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
 
   // Iterator over Point_3 points
-  typedef std::deque<UI_point>::iterator        Point_iterator;      
-  typedef std::deque<UI_point>::const_iterator  Point_const_iterator;      
+  typedef typename std::deque<UI_point>::iterator        Point_iterator;
+  typedef typename std::deque<UI_point>::const_iterator  Point_const_iterator;
 
   // Iterator over normals
   typedef CGAL::Iterator_project<iterator, 

@@ -80,7 +80,7 @@ public:
       m_is_selected = false;
     }
     template <class K, class N>
-    UI_point_3(const Point_with_normal_3<K,N>& pwn)
+    UI_point_3(const CGAL::Point_with_normal_3<K,N>& pwn)
     : Base(pwn)
     {
       m_is_selected = false;
@@ -110,32 +110,32 @@ public:
     }
 
     /// Copy constructor
-    UI_point_3(const UI_point_3& gpt)
-    : Base(gpt)
+    UI_point_3(const UI_point_3& upt)
+    : Base(upt)
     {
-      m_is_selected = gpt.m_is_selected;
-      m_original_normal = gpt.m_original_normal;
+      m_is_selected = upt.m_is_selected;
+      m_original_normal = upt.m_original_normal;
     }
     template<class K>
-    UI_point_3(const UI_point_3<K>& gpt)
-    : Base(gpt)
+    UI_point_3(const UI_point_3<K>& upt)
+    : Base(upt)
     {
-      m_is_selected = gpt.is_selected();
-      m_original_normal = gpt.m_original_normal;
+      m_is_selected = upt.is_selected();
+      m_original_normal = upt.m_original_normal;
     }
     /// Operator =()
-    UI_point_3& operator=(const UI_point_3& gpt)
+    UI_point_3& operator=(const UI_point_3& upt)
     {
-      Base::operator=(gpt);
-      m_is_selected = gpt.m_is_selected;
-      m_original_normal = gpt.m_original_normal;
+      Base::operator=(upt);
+      m_is_selected = upt.m_is_selected;
+      m_original_normal = upt.m_original_normal;
       return *this;
     }
 
     /// Merge points, including lists of camera/2D point pairs.
-    void merge(const UI_point_3& gpt)
+    void merge(const UI_point_3& upt)
     { 
-      Base::merge(gpt); 
+      Base::merge(upt); 
     }
 
     // Inherited operators ==() and !=() are fine.

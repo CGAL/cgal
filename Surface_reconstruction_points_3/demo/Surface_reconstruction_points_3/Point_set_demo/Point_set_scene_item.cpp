@@ -38,31 +38,39 @@ Point_set_scene_item::clone() const
 }
 
 // Load point set from .OFF file
-bool Point_set_scene_item::read_off_point_set(std::istream& stream)
+bool 
+Point_set_scene_item::read_off_point_set(std::istream& in)
 {
   m_points.clear();
-  return CGAL::read_off_point_set(stream, std::back_inserter(m_points));
+  return in &&
+         CGAL::read_off_point_set(in, std::back_inserter(m_points)) &&
+         !isEmpty();
 }
 
 // Write point set to .OFF file
-bool Point_set_scene_item::write_off_point_set(std::ostream& stream) const
+bool 
+Point_set_scene_item::write_off_point_set(std::ostream& out) const
 {
-  return stream && 
-         CGAL::write_off_point_set(stream, m_points.begin(), m_points.end());
+  return out && !isEmpty() && 
+         CGAL::write_off_point_set(out, m_points.begin(), m_points.end());
 }
 
 // Load point set from .XYZ file
-bool Point_set_scene_item::read_xyz_point_set(std::istream& stream)
+bool 
+Point_set_scene_item::read_xyz_point_set(std::istream& in)
 {
   m_points.clear();
-  return CGAL::read_xyz_point_set(stream, std::back_inserter(m_points));
+  return in &&
+         CGAL::read_xyz_point_set(in, std::back_inserter(m_points)) && 
+         !isEmpty();
 }
 
 // Write point set to .XYZ file
-bool Point_set_scene_item::write_xyz_point_set(std::ostream& stream) const
+bool 
+Point_set_scene_item::write_xyz_point_set(std::ostream& out) const
 {
-  return stream && 
-         CGAL::write_xyz_point_set(stream, m_points.begin(), m_points.end());
+  return out && !isEmpty() && 
+         CGAL::write_xyz_point_set(out, m_points.begin(), m_points.end());
 }
 
 QString 

@@ -15,7 +15,6 @@
 /// It contains:
 /// - a position,
 /// - a normal (oriented or not),
-/// - an original normal (optional, always oriented),
 /// - a selection flag.
 ///
 /// @heading Is Model for the Concepts:
@@ -89,21 +88,18 @@ public:
     : Base(upt)
     {
       m_is_selected = upt.m_is_selected;
-      m_original_normal = upt.m_original_normal;
     }
     template<class K>
     UI_point_3(const UI_point_3<K>& upt)
     : Base(upt)
     {
       m_is_selected = upt.is_selected();
-      m_original_normal = upt.m_original_normal;
     }
     /// Operator =()
     UI_point_3& operator=(const UI_point_3& upt)
     {
       Base::operator=(upt);
       m_is_selected = upt.m_is_selected;
-      m_original_normal = upt.m_original_normal;
       return *this;
     }
 
@@ -113,18 +109,11 @@ public:
     bool is_selected() const { return m_is_selected; }
     void select(bool is_selected=true) { m_is_selected = is_selected; }
 
-    /// Get/set *original* normal.
-    const Vector_3& original_normal() const { return m_original_normal; }
-    Vector_3&       original_normal()       { return m_original_normal; }
-
 // Data
 private:
 
     // Selection flag.
     bool m_is_selected;
-
-    /// *Original* normal.
-    Vector_3  m_original_normal;
 };
 
 
