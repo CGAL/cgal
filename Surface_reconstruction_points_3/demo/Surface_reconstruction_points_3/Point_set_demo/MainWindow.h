@@ -82,7 +82,6 @@ protected:
   void dropEvent(QDropEvent *event);
   void closeEvent(QCloseEvent *event);
 
-  bool oneSceneItemIsSelected() const;
   int getSelectedSceneItemIndex() const;
 
 private:
