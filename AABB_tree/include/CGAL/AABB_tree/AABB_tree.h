@@ -108,9 +108,9 @@ public:
     return m_data.size();
   }
 
-  double max_bbox_lenght() const
+  double max_bbox_length() const
   {
-    return m_root->max_lenght();
+    return m_root->max_length();
   }
 
   bool empty()

@@ -159,7 +159,7 @@ namespace CGAL {
       if(p.z() < bbox.zmin() || p.z() > bbox.zmax())
         return false;
 
-      const double diameter = surface.tree()->max_bbox_lenght() * 2;
+      const double diameter = surface.tree()->max_bbox_length() * 2;
 
       typename CGAL::Random_points_on_sphere_3<Point_3> random_point(FT(1));
       typename Kernel::Construct_vector_3 vector =

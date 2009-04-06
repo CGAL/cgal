@@ -302,7 +302,7 @@ private:
   double zsize() const { return m_bbox.zmax() - m_bbox.zmin(); }
 
 public:
-  double max_lenght() const { 
+  double max_length() const { 
     return (std::max)(xsize(),(std::max)(ysize(),zsize()));
   }
 
