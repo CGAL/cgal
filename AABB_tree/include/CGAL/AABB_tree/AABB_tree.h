@@ -240,7 +240,7 @@ public:
     Counting_iterator(int& i_) : i(i_) {};
 
     struct Proxy {
-      Proxy& operator=(const Value_type&) {};
+      Proxy& operator=(const Value_type&) { return *this; };
     };
 
     Proxy operator*() {
@@ -249,30 +249,32 @@ public:
 
     Self& operator++() {
       ++i;
+      return *this;
     }
 
     Self& operator++(int) {
       ++i;
+      return *this;
     }
   };
 
   // The following function template is restricted to that T can only be in
   // {Ray, Line, Segment}. It return type is int.
   // The trick uses enable_if and the Boost MPL.
-//   template <class T>
-//   typename boost::enable_if<
-//     typename boost::mpl::contains<Allowed_query_types,
-//                                   T>::type,
-//     int>::type
-//   count_intersections(const T& x)
-//   {
-//     typedef Listing_traits<T, Counting_iterator<Point> > Traits;
-//     int result;
-//     Counting_iterator<Point> counting_it(result);
-//     Traits traits(counting_it);
-//     m_root->template traversal<Traits,T>(x, traits, m_data.size());
-//     return result ;
-//   }
+  template <class T>
+  typename boost::enable_if<
+    typename boost::mpl::contains<Allowed_query_types,
+                                  T>::type,
+    int>::type
+  count_intersections(const T& x)
+  {
+    typedef Listing_traits<T, Counting_iterator<Point>, Point> Traits;
+    int result = 0;
+    Counting_iterator<Point> counting_it(result);
+    Traits traits(counting_it);
+    m_root->template traversal<Traits,T>(x, traits, m_data.size());
+    return result ;
+  }
 }; // end class AABB_tree
 
 } // end namespace CGAL
