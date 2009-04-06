@@ -124,3 +124,6 @@ foreach( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )
   check_cgal_component("_${CGAL_COMPONENT}")
 endforeach()
 
+# Starting with cmake 2.6.3, CGAL_FIND_COMPONENTS is cleared out when find_package returns.
+# But we need it within UseCGAL.cmake, so we save it aside into another variable
+set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )

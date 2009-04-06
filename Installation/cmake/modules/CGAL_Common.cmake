@@ -17,9 +17,20 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   if (NOT CMAKE_ROOT)
     message( FATAL_ERROR "CMAKE_ROOT enviroment variable not set. It should point to the directory where CMake is installed.")
   endif()
-  
+
+  # CMAKE_VERSION was introduced in 2.6.3 so we use it to detect the fact
+  if ( CMAKE_VERSION )
+    set( CMAKE_2_6_3_OR_ABOVE TRUE )
+  else()
+    set( CMAKE_2_6_3_OR_ABOVE FALSE )
+  endif()
+    
   if ( COMMAND cmake_policy )
+    cmake_policy( VERSION 2.6.2 )  
     cmake_policy( SET CMP0007 OLD )  
+    if ( CMAKE_2_6_3_OR_ABOVE )
+      cmake_policy( SET CMP0011 OLD )  
+    endif()
   endif()
   
   if ( "${BUILD_SHARED_LIBS}" STREQUAL "" )
@@ -52,4 +63,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
 
   set(CMAKE_COLORMAKEFILE ON)
   
+  # Needed by the testsuite results parser
+  set(CMAKE_VERBOSE_MAKEFILE ON)
+
 endif()

@@ -14,12 +14,15 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   set(USE_CGAL_FILE_INCLUDED 1)
 
   include(CGAL_Common)
-  include(CGAL_SetupFlags)
-  include(CGAL_GeneratorSpecificSettings)
+  
+  if ( CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL )
+    include(CGAL_SetupFlags)
+    include(CGAL_GeneratorSpecificSettings)
+  endif()
   
   set( CGAL_LIBRARIES )
 
-  foreach ( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )
+  foreach ( CGAL_COMPONENT ${CGAL_REQUESTED_COMPONENTS} )
     
     add_to_list( CGAL_LIBRARIES            ${CGAL_${CGAL_COMPONENT}_LIBRARY}              )
     add_to_list( CGAL_3RD_PARTY_LIBRARIES  ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES}  )
