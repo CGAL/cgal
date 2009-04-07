@@ -1,5 +1,5 @@
 #include "Scene_polyhedron_item.h"
-#include "Point_set_demo_types.h"
+#include "Polyhedron_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <QObject>

@@ -21,7 +21,7 @@ namespace Ui {
   class MainWindow;
 }
 
-#include "Point_set_demo_types_fwd.h"
+#include "Polyhedron_type_fwd.h"
 
 #include "Messages_interface.h"
 

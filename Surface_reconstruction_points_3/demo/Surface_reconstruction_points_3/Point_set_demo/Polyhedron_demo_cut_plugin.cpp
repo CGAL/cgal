@@ -11,7 +11,7 @@
 
 #include <CGAL/bounding_box.h>
 
-#include "Point_set_demo_types.h"
+#include "Polyhedron_type.h"
 #include <CGAL/AABB_tree/AABB_tree.h>
 #include <CGAL/AABB_tree/Drawing_traits.h>
 

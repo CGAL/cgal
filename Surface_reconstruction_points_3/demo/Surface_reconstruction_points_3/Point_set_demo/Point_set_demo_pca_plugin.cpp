@@ -1,7 +1,7 @@
 #include <QApplication>
 #include "Scene_polyhedron_item.h"
 #include "Scene_plane_item.h"
-#include "Point_set_demo_types.h"
+#include "Polyhedron_type.h"
 
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"

@@ -1,5 +1,5 @@
 #include "Point_set_scene_item.h"
-#include "Point_set_demo_types.h"
+#include "Polyhedron_type.h"
 #include <CGAL/compute_normal.h>
 
 #include <CGAL/IO/read_off_point_set.h>

@@ -1,14 +1,9 @@
-#ifndef POINT_SET_DEMO_TYPES_H
-#define POINT_SET_DEMO_TYPES_H
+#ifndef KERNEL_TYPE_H
+#define KERNEL_TYPE_H
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
-#include "Point_set_3.h"
 
-#include "Point_set_demo_types_fwd.h"
-
-
-// kernel
+// (Main) CGAL kernel used by this demo
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 // simple geometric types
@@ -22,13 +17,4 @@ typedef Kernel::Triangle_3 Triangle;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid;
 typedef Kernel::Plane_3 Plane_3;
 
-// surface mesh
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-
-// point set
-typedef Point_set_3<Kernel> Point_set;
-// type of points in Point_set_3
-typedef Point_set::UI_point UI_point; // Position + normal + selection flag
-
-
-#endif // POINT_SET_DEMO_TYPES_H
+#endif // KERNEL_TYPE_H

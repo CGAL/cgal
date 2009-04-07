@@ -3,7 +3,7 @@
 
 #include "Scene_polyhedron_item_config.h"
 #include "Scene_item_with_display_list.h"
-#include "Point_set_demo_types_fwd.h"
+#include "Polyhedron_type_fwd.h"
 #include <iostream>
 
 // This class represents a polyhedron in the OpenGL scene

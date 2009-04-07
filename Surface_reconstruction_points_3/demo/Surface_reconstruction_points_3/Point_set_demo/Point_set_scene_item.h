@@ -3,9 +3,16 @@
 
 #include "Point_set_scene_item_config.h"
 #include "Scene_item_with_display_list.h"
-#include "Point_set_demo_types_fwd.h"
+#include "Polyhedron_type_fwd.h"
+#include "Kernel_type.h"
+#include "Point_set_3.h"
 
 #include <iostream>
+
+
+// point set
+typedef Point_set_3<Kernel> Point_set;
+typedef Point_set::UI_point UI_point; // type of points in Point_set_3
 
 
 // This class represents a point set in the OpenGL scene

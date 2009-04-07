@@ -11,7 +11,7 @@
 
 #include <cmath>
 
-#include "Point_set_demo_types.h"
+#include "Kernel_type.h"
 
 class SCENE_BASIC_OBJECTS_EXPORT Scene_plane_item 
   : public Scene_item

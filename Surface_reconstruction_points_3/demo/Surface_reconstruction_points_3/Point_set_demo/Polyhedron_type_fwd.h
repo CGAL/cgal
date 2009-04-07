@@ -3,7 +3,6 @@
 
 #include <memory>
 
-
 #ifdef USE_FORWARD_DECL
 
 namespace CGAL {
@@ -42,15 +41,10 @@ typedef CGAL::Polyhedron_3<Kernel,
                            CGAL::HalfedgeDS_default,
                            std::allocator<int> > Polyhedron;
 
-// point set
-template <class Gt> class Point_set_3;
-typedef Point_set_3<Kernel> Point_set;
-                           
 #else // USE_FORWARD_DECL
 
-#include "Point_set_demo_types.h"
+#include "Polyhedron_type.h"
 
 #endif // USE_FORWARD_DECL
-
 
 #endif // POLYHEDRON_TYPE_FWD_H
