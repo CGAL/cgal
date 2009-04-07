@@ -13,13 +13,14 @@ public:
 //   Scene_item_with_display_list(const Scene_item_with_display_list&);
   ~Scene_item_with_display_list();
 
-  // OpenGL drawing
+  // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   virtual void direct_draw() const = 0;
+  // OpenGL drawing using a display list
   virtual void draw() const; 
 
 public slots:
   // Call that once you have finished changing something in the item
-  // (either the properties or internal data)
+  // (either the properties or internal data).
   virtual void changed();
 
 private:

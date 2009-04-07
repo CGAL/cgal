@@ -30,8 +30,12 @@ public:
   // Function for displaying meta-data of the item
   virtual QString toolTip() const;
 
-  // OpenGL drawing
+  // Indicate if rendering mode is supported
+  virtual bool supportsRenderingMode(RenderingMode m) const { return m==Points || m==PointsPlusNormals; }
+  // Points OpenGL drawing in a display list
   virtual void direct_draw() const;
+  // Normals OpenGL drawing
+  virtual void draw_normals() const;
 
   // Get wrapped point set
   Point_set*       point_set();

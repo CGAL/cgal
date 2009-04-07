@@ -7,11 +7,17 @@
 
 class Scene_item;
 
-enum RenderingMode { Fill = 0, 
+// OpenGL rendering mode
+enum RenderingMode { Points = 0, 
+                     PointsPlusNormals,
                      Wireframe, 
-                     LastRenderingMode = Wireframe,
-                     NumberOfRenderingMode = Wireframe+1};
+                     Flat,
+                     FlatPlusEdges,
+                     Gouraud,
+                     LastRenderingMode = Gouraud,
+                     NumberOfRenderingMode = LastRenderingMode+1 };
 
+// Interface of Scene class exported to plugins
 class Scene_interface {
 public:
   struct Bbox {

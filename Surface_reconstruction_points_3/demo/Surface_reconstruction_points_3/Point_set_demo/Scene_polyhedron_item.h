@@ -4,7 +4,6 @@
 #include "Scene_polyhedron_item_config.h"
 #include "Scene_item_with_display_list.h"
 #include "Point_set_demo_types_fwd.h"
-
 #include <iostream>
 
 // This class represents a polyhedron in the OpenGL scene
@@ -27,7 +26,9 @@ public:
   // Function for displaying meta-data of the item
   virtual QString toolTip() const;
 
-  // OpenGL drawing
+  // Indicate if rendering mode is supported
+  virtual bool supportsRenderingMode(RenderingMode m) const { return m != PointsPlusNormals; }
+  // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   virtual void direct_draw() const;
 
   // Get wrapped polyhedron

@@ -22,8 +22,7 @@ namespace {
 
 Scene::Scene(QObject* parent)
   : QAbstractListModel(parent),
-    selected_item(-1),
-    viewEdges(true)
+    selected_item(-1)
 {
 }
 
@@ -154,6 +153,7 @@ Scene::drawWithNames()
 void 
 Scene::draw_aux(bool with_names)
 {
+  // Flat/Gouraud OpenGL drawing
   for(int index = 0; index < entries.size(); ++index)
   {
     if(with_names) {
@@ -162,14 +162,20 @@ Scene::draw_aux(bool with_names)
     Scene_item& item = *entries[index];
     if(item.visible())
     {
-      if(item.renderingMode() == Fill)
+      if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
       {
 	::glEnable(GL_LIGHTING);
 	::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+        ::glPointSize(2.f);
+        ::glLineWidth(1.0f);
 	if(index == selected_item)
 	  CGALglcolor(item.color().lighter(120));
 	else
 	  CGALglcolor(item.color());
+	if(item.renderingMode() == Gouraud)
+	  ::glShadeModel(GL_SMOOTH);
+	else
+	  ::glShadeModel(GL_FLAT);
 
         item.draw();
       }
@@ -178,6 +184,8 @@ Scene::draw_aux(bool with_names)
       ::glPopName();
     }
   }
+
+  // Wireframe OpenGL drawing
   for(int index = 0; index < entries.size(); ++index)
   {
     if(with_names) {
@@ -186,16 +194,74 @@ Scene::draw_aux(bool with_names)
     Scene_item& item = *entries[index];
     if(item.visible())
     {
-      if(viewEdges || item.renderingMode() == Wireframe)
+      if(item.renderingMode() == FlatPlusEdges || item.renderingMode() == Wireframe)
       {
         ::glDisable(GL_LIGHTING);
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        ::glPointSize(2.f);
+        ::glLineWidth(1.0f);
         if(index == selected_item)
           CGALglcolor(Qt::black);
         else
           CGALglcolor(item.color().lighter(50));
         
         item.draw_edges();
+      }
+      if(with_names) {
+        ::glPopName();
+      }
+    }
+  }
+
+  // Points OpenGL drawing
+  for(int index = 0; index < entries.size(); ++index)
+  {
+    if(with_names) {
+      ::glPushName(index);
+    }
+    Scene_item& item = *entries[index];
+    if(item.visible())
+    {
+      if(item.renderingMode() == Points || item.renderingMode() == PointsPlusNormals)
+      {
+        ::glDisable(GL_LIGHTING);
+        ::glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+        ::glPointSize(2.f);
+        ::glLineWidth(1.0f);
+        if(index == selected_item)
+          CGALglcolor(Qt::black);
+        else
+          CGALglcolor(item.color().lighter(50));
+        
+        item.draw_points();
+      }
+      if(with_names) {
+        ::glPopName();
+      }
+    }
+  }
+
+  // Normals OpenGL drawing
+  for(int index = 0; index < entries.size(); ++index)
+  {
+    if(with_names) {
+      ::glPushName(index);
+    }
+    Scene_item& item = *entries[index];
+    if(item.visible())
+    {
+      if(item.renderingMode() == PointsPlusNormals)
+      {
+        ::glDisable(GL_LIGHTING);
+        ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        ::glPointSize(2.f);
+        ::glLineWidth(1.0f);
+	if(index == selected_item)
+	  CGALglcolor(item.color().lighter(120));
+	else
+	  CGALglcolor(item.color());
+        
+        item.draw_normals();
       }
       if(with_names) {
         ::glPopName();
@@ -254,9 +320,7 @@ Scene::data(const QModelIndex &index, int role) const
     break;
   case RenderingModeColumn:
     if(role == ::Qt::DisplayRole) {
-      if(entries.value(index.row())->renderingMode() == Wireframe)
-	return tr("wire");
-      else return tr("fill");
+      return entries.value(index.row())->renderingModeName();
     }
     else if(role == ::Qt::EditRole) {
       return static_cast<int>(entries.value(index.row())->renderingMode());
@@ -300,7 +364,7 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
     }
     else if(role == ::Qt::ToolTipRole) {
       if(section == RenderingModeColumn) {
-	return tr("Rendering mode (fill/fireframe)");
+	return tr("Rendering mode (points/points+normals/wireframe/flat/flat+edges/Gouraud)");
       }
     }
   }
@@ -335,21 +399,32 @@ Scene::setData(const QModelIndex &index,
   {
   case NameColumn:
     item->setName(value.toString());
+    item->changed();
     emit dataChanged(index, index);
     return true;
     break;
   case ColorColumn:
     item->setColor(value.value<QColor>());
+    item->changed();
     emit dataChanged(index, index);
     return true;
     break;
   case RenderingModeColumn:
-    item->setRenderingMode(static_cast<RenderingMode>(value.toInt()));
+  {
+    RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
+    // Find next supported rendering mode
+    while ( ! item->supportsRenderingMode(rendering_mode) ) {
+      rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
+    }
+    item->setRenderingMode(rendering_mode);
+    item->changed();
     emit dataChanged(index, index);
     return true;
     break;
+  }
   case VisibleColumn:
     item->setVisible(value.toBool());
+    item->changed();
     emit dataChanged(index, index);
     return true;
   default:
@@ -424,12 +499,10 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     break;
   case Scene::RenderingModeColumn:
     if (event->type() == QEvent::MouseButtonPress) {
-      RenderingMode rendering_mode = 
-	static_cast<RenderingMode>(model->data(index, ::Qt::EditRole).toInt());
-      if(rendering_mode == Wireframe)
-	model->setData(index, static_cast<int>(Fill));
-      else 
-	model->setData(index, static_cast<int>(Wireframe));
+      // Switch rendering mode
+      /*RenderingMode*/int rendering_mode = model->data(index, ::Qt::EditRole).toInt();
+      rendering_mode = (rendering_mode+1) % NumberOfRenderingMode;
+      model->setData(index, rendering_mode);
     }
     else if(event->type() == QEvent::MouseButtonDblClick) {
       return true; // block double-click

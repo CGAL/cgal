@@ -1,6 +1,5 @@
 #include "Scene_polyhedron_item.h"
 #include "Point_set_demo_types.h"
-
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <QObject>
@@ -52,8 +51,6 @@ Scene_polyhedron_item::load(std::istream& in)
 bool 
 Scene_polyhedron_item::save(std::ostream& out) const
 {
-  if (isEmpty())
-    return false;
   out << *poly;
   return out;
 }
@@ -72,14 +69,12 @@ Scene_polyhedron_item::toolTip() const
     .arg(poly->size_of_vertices())
     .arg(poly->size_of_halfedges()/2)
     .arg(poly->size_of_facets())
-    .arg(this->renderingMode() == Wireframe ?
-         "wireframe" :
-         "fill")
+    .arg(this->renderingModeName())
     .arg(this->color().name());
 }
 
-void
-Scene_polyhedron_item::direct_draw() const {
+// Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
+void Scene_polyhedron_item::direct_draw() const {
   gl_render_facets(*poly);
 }
 

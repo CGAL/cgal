@@ -21,15 +21,15 @@ void gl_render_facets(Polyhedron& polyhedron)
   {
     ::glBegin(GL_POLYGON);
 
-    // compute normal
-    Vector n = compute_facet_normal<Facet,Kernel>(*f);
-    ::glNormal3d(n.x(),n.y(),n.z());
-
     // revolve around current face to get vertices
     HF_circulator he = f->facet_begin();
     HF_circulator end = he;
     CGAL_For_all(he,end)
     {
+      // compute normal
+      Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*he->vertex());
+      ::glNormal3d(n.x(),n.y(),n.z());
+
       const Point& p = he->vertex()->point();
       ::glVertex3d(p.x(),p.y(),p.z());
     }

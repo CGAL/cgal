@@ -2,11 +2,11 @@
 #define _COMPUTE_NORMAL_
 
 template <class Facet, class Kernel>
-typename Kernel::Vector_3 compute_facet_normal(Facet& f)
+typename Kernel::Vector_3 compute_facet_normal(const Facet& f)
 {
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
-  typedef typename Facet::Halfedge_around_facet_circulator HF_circulator;
+  typedef typename Facet::Halfedge_around_facet_const_circulator HF_circulator;
   Vector normal = CGAL::NULL_VECTOR;
   HF_circulator he = f.facet_begin();
   HF_circulator end = he;
@@ -22,11 +22,11 @@ typename Kernel::Vector_3 compute_facet_normal(Facet& f)
 }
 
 template <class Vertex, class Kernel>
-typename Kernel::Vector_3 compute_vertex_normal(Vertex& v)
+typename Kernel::Vector_3 compute_vertex_normal(const Vertex& v)
 {
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
-  typedef typename Vertex::Halfedge_around_vertex_circulator HV_circulator;
+  typedef typename Vertex::Halfedge_around_vertex_const_circulator HV_circulator;
   typedef typename Vertex::Facet Facet;
   Vector normal = CGAL::NULL_VECTOR;
   HV_circulator he = v.vertex_begin();

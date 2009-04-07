@@ -55,13 +55,17 @@ public:
          "<i>AABB_tree</i></p>"
          "<p>Number of nodes: %4</p>")
       .arg(this->name())
-      .arg(this->renderingMode() == Wireframe ?
-           "wireframe" :
-           "fill")
+      .arg(this->renderingModeName())
       .arg(this->color().name())
       .arg(tree.size());
   }
 
+  // Indicate if rendering mode is supported
+  bool supportsRenderingMode(RenderingMode m) const {
+    return (m == Wireframe); 
+  }
+
+  // Wireframe OpenGL drawing in a display list
   void direct_draw() const {
     CGAL::AABB::Drawing_traits traits;
     tree.traversal(0, traits);
@@ -104,15 +108,20 @@ public:
          "<i>Edges</i></p>"
          "<p>Number of edges: %4</p>")
       .arg(this->name())
-      .arg(this->renderingMode() == Wireframe ?
-           "wireframe" :
-           "fill")
+      .arg(this->renderingModeName())
       .arg(this->color().name())
       .arg(edges.size());
   }
 
+  // Indicate if rendering mode is supported
+  bool supportsRenderingMode(RenderingMode m) const { 
+    return (m == Wireframe); 
+  }
+
+  // Flat/Gouraud OpenGL drawing
   void draw() const {}
 
+  // Wireframe OpenGL drawing
   void draw_edges() const {
     ::glBegin(GL_LINES);
     for(size_t i = 0, end = edges.size();

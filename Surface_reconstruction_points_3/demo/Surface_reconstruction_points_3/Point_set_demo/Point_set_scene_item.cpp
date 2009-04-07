@@ -1,5 +1,7 @@
 #include "Point_set_scene_item.h"
 #include "Point_set_demo_types.h"
+#include <CGAL/compute_normal.h>
+
 #include <CGAL/IO/read_off_point_set.h>
 #include <CGAL/IO/write_off_point_set.h>
 #include <CGAL/IO/read_xyz_point_set.h>
@@ -13,62 +15,11 @@
 #include <boost/array.hpp>
 
 
-// ----------------------------------------------------------------------------
-// Private functions
-// ----------------------------------------------------------------------------
-
-// compute polyhedron facet's normal
-static Vector compute_facet_normal(Polyhedron::Facet_const_handle f)
-{
-  Vector sum = CGAL::NULL_VECTOR;
-  Polyhedron::Halfedge_around_facet_const_circulator h = f->facet_begin();
-  do
-  {
-    Vector normal = CGAL::cross_product(
-      h->next()->vertex()->point() - h->vertex()->point(),
-      h->next()->next()->vertex()->point() - h->next()->vertex()->point());
-    double sqnorm = normal * normal;
-    if(sqnorm != 0)
-      normal = normal / (double)std::sqrt(sqnorm);
-    sum = sum + normal;
-  }
-  while(++h != f->facet_begin());
-  
-  // Normalize 'sum'
-  double sqnorm = sum * sum; // dot product
-  if(sqnorm != 0.0)
-    sum = sum / std::sqrt(sqnorm);
-
-  return sum;
-}
-
-// compute polyhedron vertex's normal from connectivity
-static Vector compute_vertex_normal(Polyhedron::Vertex_const_handle v)
-{
-  Vector normal = CGAL::NULL_VECTOR;
-  Polyhedron::Halfedge_around_vertex_const_circulator pHalfedge = v->vertex_begin(),
-                                                      end = pHalfedge;
-  CGAL_For_all(pHalfedge,end)
-    if(!pHalfedge->is_border())
-      normal = normal + compute_facet_normal(pHalfedge->facet());
-      
-  // Normalize 'normal'
-  double sqnorm = normal * normal;
-  if(sqnorm != 0.0)
-    normal = normal / std::sqrt(sqnorm);
-  
-  return normal;
-}
-
-
-// ----------------------------------------------------------------------------
-// Class Point_set_scene_item
-// ----------------------------------------------------------------------------
-
 Point_set_scene_item::Point_set_scene_item()
   : Scene_item_with_display_list(),
     m_points(new Point_set)
 {
+  setRenderingMode(PointsPlusNormals);
 }
 
 // Copy constructor
@@ -76,6 +27,7 @@ Point_set_scene_item::Point_set_scene_item(const Point_set_scene_item& toCopy)
   : Scene_item_with_display_list(), // do not call superclass' copy constructor
     m_points(new Point_set(*toCopy.m_points))
 {
+  setRenderingMode(PointsPlusNormals);
 }
 
 // Convert polyhedron to point set
@@ -89,10 +41,11 @@ Point_set_scene_item::Point_set_scene_item(const Polyhedron& input_mesh)
   for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
   {
     Point p = v->point();
-    Vector n = compute_vertex_normal(v);
+    Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
     m_points->push_back(UI_point(p,n));
   }
 
+  setRenderingMode(PointsPlusNormals);
 }
 
 Point_set_scene_item::~Point_set_scene_item()
@@ -109,8 +62,7 @@ Point_set_scene_item::clone() const
 }
 
 // Load point set from .OFF file
-bool 
-Point_set_scene_item::read_off_point_set(std::istream& in)
+bool Point_set_scene_item::read_off_point_set(std::istream& in)
 {
   Q_ASSERT(m_points != NULL);
   
@@ -121,19 +73,16 @@ Point_set_scene_item::read_off_point_set(std::istream& in)
 }
 
 // Write point set to .OFF file
-bool 
-Point_set_scene_item::write_off_point_set(std::ostream& out) const
+bool Point_set_scene_item::write_off_point_set(std::ostream& out) const
 {
   Q_ASSERT(m_points != NULL);
 
   return out && 
-         !isEmpty() && 
          CGAL::write_off_point_set(out, m_points->begin(), m_points->end());
 }
 
 // Load point set from .XYZ file
-bool 
-Point_set_scene_item::read_xyz_point_set(std::istream& in)
+bool Point_set_scene_item::read_xyz_point_set(std::istream& in)
 {
   Q_ASSERT(m_points != NULL);
   
@@ -144,13 +93,11 @@ Point_set_scene_item::read_xyz_point_set(std::istream& in)
 }
 
 // Write point set to .XYZ file
-bool 
-Point_set_scene_item::write_xyz_point_set(std::ostream& out) const
+bool Point_set_scene_item::write_xyz_point_set(std::ostream& out) const
 {
   Q_ASSERT(m_points != NULL);
   
   return out && 
-         !isEmpty() && 
          CGAL::write_xyz_point_set(out, m_points->begin(), m_points->end());
 }
 
@@ -167,25 +114,29 @@ Point_set_scene_item::toolTip() const
     .arg(color().name());
 }
 
-void
-Point_set_scene_item::direct_draw() const 
+// Points OpenGL drawing in a display list
+void Point_set_scene_item::direct_draw() const 
 {
   Q_ASSERT(m_points != NULL);
 
-  Sphere region_of_interest = m_points->region_of_interest();
-
   // Draw points
-  m_points->gl_draw_vertices(color().red(),color().blue(),color().green(), 
-                             2.0f /*size*/);
-                            
+  m_points->gl_draw_vertices();
+}
+
+// Normals OpenGL drawing
+void Point_set_scene_item::draw_normals() const
+{
+  Q_ASSERT(m_points != NULL);
+
   // Draw normals
   bool points_have_normals = (m_points->begin() != m_points->end() &&
                               m_points->begin()->normal() != CGAL::NULL_VECTOR);
   if(points_have_normals)
   {
-    float normal_length = (float)sqrt(region_of_interest.squared_radius() / 10000.);
-    m_points->gl_draw_normals(0,255,0 /*green*/, 
-                              normal_length);
+    Sphere region_of_interest = m_points->region_of_interest();
+    float normal_length = (float)sqrt(region_of_interest.squared_radius() / 1000.);
+    
+    m_points->gl_draw_normals(normal_length);
   }
 }
 

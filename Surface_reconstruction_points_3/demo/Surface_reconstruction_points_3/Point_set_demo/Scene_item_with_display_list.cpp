@@ -20,6 +20,7 @@ Scene_item_with_display_list::~Scene_item_with_display_list()
   }
 }
 
+// Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_item_with_display_list::draw() const
 {
   if(!display_list_built)
@@ -32,13 +33,14 @@ void Scene_item_with_display_list::draw() const
         return;
       }
     }
-    // draw the mesh in a display list
+    // draw the item in a display list
     ::glNewList(display_list,GL_COMPILE_AND_EXECUTE);
     direct_draw();
     ::glEndList();
     display_list_built = true;
   }
   else {
+    // draw using the display list
     ::glCallList(display_list);
   }
 }

@@ -28,15 +28,21 @@ public:
     : name_("unamed"),
       color_(defaultColor),
       visible_(true),
-      rendering_mode(Fill)
+      rendering_mode(FlatPlusEdges)
   {};
   virtual ~Scene_item();
   virtual Scene_item* clone() const = 0;
 
-  // OpenGL drawing (flat)
+  // Indicate if rendering mode is supported
+  virtual bool supportsRenderingMode(RenderingMode m) const = 0;
+  // Flat/Gouraud OpenGL drawing
   virtual void draw() const = 0;
-  // OpenGL drawing (wireframe)
+  // Wireframe OpenGL drawing
   virtual void draw_edges() const { draw(); }
+  // Points OpenGL drawing
+  virtual void draw_points() const { draw(); }
+  // Normals OpenGL drawing
+  virtual void draw_normals() const {}
 
   // Functions for displaying meta-data of the item
   virtual QString toolTip() const = 0;
@@ -51,22 +57,26 @@ public:
   virtual bool manipulatable() const { return false; }
   virtual ManipulatedFrame* manipulatedFrame() { return 0; }
 
-  // The four basic properties
+  // Getters for the four basic properties
   virtual QColor color() const { return color_; }
   virtual QString name() const { return name_; }
   virtual bool visible() const { return visible_; }
   virtual RenderingMode renderingMode() const { return rendering_mode; }
+  virtual QString renderingModeName() const; // Rendering mode as a human readable string
 
 public slots:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
   virtual void changed() {}
 
-  // The four basic properties
+  // Setters for the four basic properties
   virtual void setColor(QColor c) { color_ = c; }
   virtual void setName(QString n) { name_ = n; }
   virtual void setVisible(bool b) { visible_ = b; }
-  virtual void setRenderingMode(RenderingMode m) { rendering_mode = m; }
+  virtual void setRenderingMode(RenderingMode m) { 
+    if (supportsRenderingMode(m))
+      rendering_mode = m; 
+  }
 
 protected:
   // The four basic properties

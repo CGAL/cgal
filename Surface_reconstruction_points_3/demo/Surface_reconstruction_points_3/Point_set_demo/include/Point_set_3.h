@@ -222,29 +222,12 @@ public:
   }
 
   // Draw points using OpenGL calls.
-  void gl_draw_vertices(unsigned char r, unsigned char g, unsigned char b,
-                        float point_size) const
+  // Preconditions: OpenGL point size and color must be set.
+  void gl_draw_vertices() const
   {
-    // Draw *selected* points
-    if (m_nb_selected_points > 0)
-    {
-      ::glPointSize(point_size*2.f);  // selected => bigger
-      ::glColor3ub(255,0,0);         // selected => red
-      ::glBegin(GL_POINTS);
-      for (const_iterator it = begin(); it != end(); it++)
-      {
-        const UI_point& p = *it;
-        if (p.is_selected())
-          ::glVertex3d(p.x(), p.y(), p.z());
-      }
-      ::glEnd();
-    }
-
     // Draw *non-selected* points
     if (m_nb_selected_points < size())
     {
-      ::glPointSize(point_size);
-      ::glColor3ub(r,g,b);
       ::glBegin(GL_POINTS);
       for (const_iterator it = begin(); it != end(); it++)
       {
@@ -254,38 +237,31 @@ public:
       }
       ::glEnd();
     }
-  }
 
-  // Draw normals using OpenGL calls.
-  void gl_draw_normals(unsigned char r, unsigned char g, unsigned char b,
-                       float scale = 1.0, float line_width = 1.0) const
-  {
-    // Draw normals of *selected* points
+    // Draw *selected* points
     if (m_nb_selected_points > 0)
     {
+      ::glPointSize(4.f);    // selected => bigger
       ::glColor3ub(255,0,0); // selected => red
-      ::glLineWidth(line_width);
-      ::glBegin(GL_LINES);
+      ::glBegin(GL_POINTS);
       for (const_iterator it = begin(); it != end(); it++)
       {
         const UI_point& p = *it;
-        const Normal& n = p.normal();
         if (p.is_selected())
-        {
-          Point q = p + scale * n;
-          ::glVertex3d(p.x(),p.y(),p.z());
-          ::glVertex3d(q.x(),q.y(),q.z());
-        }
+          ::glVertex3d(p.x(), p.y(), p.z());
       }
       ::glEnd();
     }
+  }
 
+  // Draw normals using OpenGL calls.
+  // Preconditions: OpenGL line width and color must be set.
+  void gl_draw_normals(float scale = 1.0) const // scale applied to normal length
+  {
     // Draw normals of *non-selected* points
     if (m_nb_selected_points < size())
     {
       // Draw *oriented* normals
-      ::glColor3ub(r,g,b);
-      ::glLineWidth(line_width);
       ::glBegin(GL_LINES);
       for (const_iterator it = begin(); it != end(); it++)
       {
@@ -302,7 +278,6 @@ public:
 
       // Draw *non-oriented* normals
       ::glColor3ub(245,184,0);       // non oriented => orange
-      //::glLineWidth(line_width*1.5); // orange is light color
       ::glBegin(GL_LINES);
       for (const_iterator it = begin(); it != end(); it++)
       {
@@ -317,43 +292,17 @@ public:
       }
       ::glEnd();
     }
-  }
 
-  // Draw *original* normals using OpenGL calls.
-  void gl_draw_original_normals(unsigned char r, unsigned char g, unsigned char b,
-                                float scale = 1.0, float line_width = 1.0) const
-  {
-    // Draw original normals of *selected* points (always oriented)
+    // Draw normals of *selected* points
     if (m_nb_selected_points > 0)
     {
-      ::glColor3ub(r,g,b);
-      ::glLineWidth(line_width*2.);  // selected => bigger
+      ::glColor3ub(255,0,0); // selected => red
       ::glBegin(GL_LINES);
       for (const_iterator it = begin(); it != end(); it++)
       {
         const UI_point& p = *it;
-        const Vector& n = p.original_normal();
+        const Normal& n = p.normal();
         if (p.is_selected())
-        {
-          Point q = p + scale * n;
-          ::glVertex3d(p.x(),p.y(),p.z());
-          ::glVertex3d(q.x(),q.y(),q.z());
-        }
-      }
-      ::glEnd();
-    }
-
-    // Draw original normals of *non-selected* points (always oriented)
-    if (m_nb_selected_points < size())
-    {
-      ::glColor3ub(r,g,b);
-      ::glLineWidth(line_width);
-      ::glBegin(GL_LINES);
-      for (const_iterator it = begin(); it != end(); it++)
-      {
-        const UI_point& p = *it;
-        const Vector& n = p.original_normal();
-        if ( ! p.is_selected() )
         {
           Point q = p + scale * n;
           ::glVertex3d(p.x(),p.y(),p.z());

@@ -106,12 +106,6 @@ MainWindow::MainWindow(QWidget* parent)
   // enable anti-aliasing by default
   ui->actionAntiAliasing->setChecked(true);
 
-  connect(ui->actionViewEdges, SIGNAL(toggled(bool)),
-          scene, SLOT(setViewEdges(bool)));
-
-  // enable "view edges" by default
-  ui->actionViewEdges->setChecked(true);
-
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
   this->addAboutDemo(":/cgal/Point_set_demo/about.html");
@@ -354,7 +348,7 @@ void MainWindow::selectionChanged()
 {
   scene->setSelectedItem(getSelectedSceneItemIndex());
   Scene_item* item = scene->item(getSelectedSceneItemIndex());
-  if(item->manipulatable()) {
+  if(item != NULL && item->manipulatable()) {
     viewer->setManipulatedFrame(item->manipulatedFrame());
     connect(viewer->manipulatedFrame(), SIGNAL(modified()),
             this, SLOT(updateInfo()));

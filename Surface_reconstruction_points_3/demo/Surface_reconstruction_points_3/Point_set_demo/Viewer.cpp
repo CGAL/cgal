@@ -45,7 +45,7 @@ void Viewer::draw_aux(bool with_names)
     return;
 
   ::glLineWidth(1.0f);
-  ::glPointSize(10.f);
+  ::glPointSize(2.f);
   ::glEnable(GL_POLYGON_OFFSET_FILL);
   ::glPolygonOffset(1.0f,1.0f);
   ::glClearColor(1.0f,1.0f,1.0f,0.0f);

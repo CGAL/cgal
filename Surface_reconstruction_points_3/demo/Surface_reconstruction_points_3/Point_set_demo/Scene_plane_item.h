@@ -65,9 +65,7 @@ public:
     return
       tr("<p><b>%1</b> (mode: %2, color: %3)<br />")
       .arg(this->name())
-      .arg(this->renderingMode() == Wireframe ?
-           "wireframe" :
-           "fill")
+      .arg(this->renderingModeName())
       .arg(this->color().name())
 
       +
@@ -85,6 +83,12 @@ public:
       .arg(manipulable?tr("true"):tr("false"));
   }
 
+  // Indicate if rendering mode is supported
+  bool supportsRenderingMode(RenderingMode m) const {
+    return (m == Wireframe || m == Flat); 
+  }
+
+  // Flat OpenGL drawing
   void draw() const {
     const double diag = scene_diag();
     ::glPushMatrix();
@@ -103,6 +107,7 @@ public:
     ::glPopMatrix();
   };
 
+  // Wireframe OpenGL drawing
   void draw_edges() const {
     ::glPushMatrix();
     ::glMultMatrixd(frame->matrix());

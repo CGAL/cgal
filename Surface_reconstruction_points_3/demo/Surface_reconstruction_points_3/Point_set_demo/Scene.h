@@ -93,12 +93,6 @@ public slots:
     selected_item = i;
   };
 
-  void setViewEdges(bool b) 
-  {
-    viewEdges = b;
-    emit updated();
-  }
-
   // Accessors (setters)
   void setItemVisible(int, bool b);
 
@@ -112,7 +106,7 @@ private:
   typedef QList<Scene_item*> Entries;
   Entries entries;
   int selected_item;
-  bool viewEdges;
+
 }; // end class Scene
 
 class SceneDelegate : public QItemDelegate
