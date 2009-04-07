@@ -26,7 +26,6 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   endif()
     
   if ( COMMAND cmake_policy )
-    cmake_policy( VERSION 2.6.2 )  
     cmake_policy( SET CMP0007 OLD )  
     if ( CMAKE_2_6_3_OR_ABOVE )
       cmake_policy( SET CMP0011 OLD )  
