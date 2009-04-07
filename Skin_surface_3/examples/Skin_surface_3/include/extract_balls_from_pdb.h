@@ -12,6 +12,11 @@
 #include <CGAL/PDB/iterator.h>
 #include <fstream>
 
+template <class Range, class OIt>
+void copy(Range r, OIt out) {
+  std::copy(r.begin(), r.end(), out);
+}
+
 template <class Traits, class OutputIterator>
 void extract_balls_from_pdb(const char *filename, 
 			    Traits const &t,
@@ -24,15 +29,13 @@ void extract_balls_from_pdb(const char *filename,
   }
 
   CGAL::PDB::PDB pdb(in);
-  CGAL::PDB::Model m=pdb.models_begin()->model();
-  CGAL::PDB::Chain c=m.chains_begin()->chain();
+  CGAL::PDB::Model m=pdb.models().begin()->model();
+  CGAL::PDB::Chain c=m.chains().begin()->chain();
   // get all weighted_points
     
-  std::copy
-    (CGAL::PDB::make_weighted_point_iterator(CGAL::PDB::make_atom_iterator
-					     (m.atoms_begin()), t),
-     CGAL::PDB::make_weighted_point_iterator(CGAL::PDB::make_atom_iterator
-					     (m.atoms_end()), t),
+  copy
+    (CGAL::PDB::make_weighted_point_range(CGAL::PDB::make_atom_range
+                                          (m.atoms()), t),
      weighted_points);
 }
 			    
