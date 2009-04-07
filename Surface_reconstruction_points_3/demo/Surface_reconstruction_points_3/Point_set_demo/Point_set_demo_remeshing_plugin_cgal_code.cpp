@@ -38,16 +38,16 @@ Polyhedron* cgal_code_remesh(const Polyhedron* pMesh,
   // AABB tree
   CGAL::Timer timer;
   timer.start();
-  std::cout << "Build AABB tree...";
+  std::cerr << "Build AABB tree...";
   typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel; 
   // input surface
   typedef CGAL::AABB_polyhedral_oracle<Polyhedron,GT,Simple_cartesian_kernel> Input_surface;
   Input_surface input(*pMesh);
-  std::cout << "done (" << timer.time() << " ms)" << std::endl;
+  std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
   // initial point set
   timer.reset();
-  std::cout << "Insert initial point set...";
+  std::cerr << "Insert initial point set...";
   unsigned int nb_initial_points = 10;
   Polyhedron::Point_const_iterator it;
   typedef CGAL::Cartesian_converter<Kernel,GT> Converter;
@@ -57,13 +57,13 @@ Polyhedron* cgal_code_remesh(const Polyhedron* pMesh,
       it != pMesh->points_end(), i < nb_initial_points;
       it++, i++)
     triangulation.insert(convert(*it));
-  std::cout << "done (" << timer.time() << " ms)" << std::endl;
+  std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
   // remesh
   timer.reset();
-  std::cout << "Remesh...";
+  std::cerr << "Remesh...";
   CGAL::make_surface_mesh(c2t3, input, input, facets_criteria, CGAL::Manifold_with_boundary_tag());
-  std::cout << "done (" << timer.time() << " ms, " << triangulation.number_of_vertices() << " vertices)" << std::endl;
+  std::cerr << "done (" << timer.time() << " ms, " << triangulation.number_of_vertices() << " vertices)" << std::endl;
 
   if(triangulation.number_of_vertices() > 0)
   {
