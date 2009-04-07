@@ -27,7 +27,7 @@ void gl_render_facets(Polyhedron& polyhedron)
     CGAL_For_all(he,end)
     {
       // compute normal
-      Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*he->vertex());
+      Vector n = compute_vertex_normal<typename Polyhedron::Vertex,Kernel>(*he->vertex());
       ::glNormal3d(n.x(),n.y(),n.z());
 
       const Point& p = he->vertex()->point();
