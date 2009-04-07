@@ -33,14 +33,14 @@ int main(int , char *[]){
   //p.write(std::cout);
   std::ostringstream of;
   
-  std::cout << "There are " << p.number_of_models() << " models." << std::endl;
+  std::cout << "There are " << p.models().size() << " models." << std::endl;
   CGAL_PDB_FOREACH(const CGAL::PDB::PDB::Model_pair &m,
 		           p.models()) {
     std::cout << "Model " << m.key() << " has " << m.model().chains().size() 
 	      << " chains" << " and " << m.model().heterogens().size() 
 	      << " HETATMS" << std::endl;
     CGAL_PDB_FOREACH(const CGAL::PDB::Model::Chain_pair &c,
-					 m.chains()) {
+					 m.model().chains()) {
 	std::cout << "Chain " << c.key() << " has " 
 		<< c.chain().monomers().size() << " residues" << std::endl;
     }

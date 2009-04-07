@@ -22,12 +22,14 @@ include(CGAL_CreateSingleSourceCGALProgram)
 
 link_libraries(${CGAL_PDB_LIBRARY})
 
-create_single_source_cgal_program( check_heatom.cpp )
-create_single_source_cgal_program( check_pdb.cpp )
-create_single_source_cgal_program( check_protein.cpp )
-create_single_source_cgal_program( check_transform.cpp )
-create_single_source_cgal_program( check_bonds.cpp )
-create_single_source_cgal_program( check_refine_alignment.cpp )
+create_single_source_cgal_program(check_atom_hetatom.cpp)
+create_single_source_cgal_program(check_bonds.cpp)
+create_single_source_cgal_program(check_hetatom.cpp)
+create_single_source_cgal_program(check_iterators.cpp)
+create_single_source_cgal_program(check_pdb.cpp)
+create_single_source_cgal_program(check_refine_alignment.cpp)
+create_single_source_cgal_program(check_small_map.cpp)
+create_single_source_cgal_program(check_transform.cpp)
 
 
 

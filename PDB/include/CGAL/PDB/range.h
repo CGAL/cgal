@@ -85,7 +85,7 @@ struct Get_point {
 
 template <class A>
 struct Get_index {
-  typedef unsigned int result_type;
+  typedef Atom::Index result_type;
   result_type operator()(A a) const {
     return a.index();
   }

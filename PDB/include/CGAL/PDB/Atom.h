@@ -129,14 +129,21 @@ inline bool Atom::operator!=(const Atom &o) const {
 /*!
   This returns the next unused index. 
 */
-template <class It>
-inline int index_atoms(It b, It e, int start=0) {
-  for (; b != e; ++b) {
-    b->atom().set_index(Atom::Index(start++));
+template <class Range>
+inline int index_atoms(Range &r, int start=0) {
+  for (typename Range::iterator c=r.begin(); c!= r.end(); ++c) {
+    c->atom().set_index(Atom::Index(start++));
   }
   return start;
 }
 
+template <class Range>
+inline int index_atoms(Range r, int start=0) {
+	  for (typename Range::iterator c=r.begin(); c!= r.end(); ++c) {
+		      c->atom().set_index(Atom::Index(start++));
+			    }
+	    return start;
+}
 
 
 //! Take an Atom and return the a K::Weighted_point

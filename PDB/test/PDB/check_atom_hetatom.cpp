@@ -34,18 +34,17 @@ int main(int , char *[]){
   //p.write(std::cout);
   std::ostringstream of;
   
-  std::cout << "There are " << p.number_of_models() << " models." << std::endl;
+  std::cout << "There are " << p.models().size() << " models." << std::endl;
   
-  for (CGAL::PDB::PDB::Model_iterator it= p.models_begin();
-       it != p.models_end(); ++it){
-    const CGAL::PDB::Model &m= it->model();
-    std::cout << "Model " << it->key() << " has " << m.number_of_chains() 
-	      << " chains" << " and " << m.number_of_heterogens() 
+  CGAL_PDB_FOREACH(const CGAL::PDB::PDB::Model_pair& m,
+		           p.models()) {
+    std::cout << "Model " << m.key() << " has " << m.model().chains().size() 
+	      << " chains" << " and " << m.model().heterogens().size() 
 	      << " heterogens" << std::endl;
-    for (CGAL::PDB::Model::Chain_const_iterator it = m.chains_begin();
-	 it != m.chains_end(); ++it) {
-      std::cout << "Chain " << it->key() << " has " 
-		<< it->chain().number_of_monomers() << " residues" << std::endl;
+    CGAL_PDB_FOREACH(const CGAL::PDB::Model::Chain_pair &c,
+					m.model().chains()) {
+	std::cout << "Chain " << c.key() << " has " 
+		<< c.chain().monomers().size() << " residues" << std::endl;
     }
   }
   p.write(of);
