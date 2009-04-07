@@ -220,7 +220,7 @@ namespace Surface_mesher {
 	const FT sq_norm_middle_vector = sq_length(middle_vector);
 
 #ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INTERSECTION
-	std::cerr << ::boost::format("lenghts=%1%, %2%, %3%\n")
+	std::cerr << ::boost::format("lengths=%1%, %2%, %3%\n")
 	  % sq_norm_first_vector
 	  % sq_norm_middle_vector
 	  % sq_norm_second_vector;

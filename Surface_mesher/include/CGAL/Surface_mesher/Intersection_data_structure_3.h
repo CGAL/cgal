@@ -180,7 +180,7 @@ public:
     return bounding_box;
   }
 
-  double max_lenght() const
+  double max_length() const
   {
     return max_width;
   }

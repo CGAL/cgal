@@ -245,7 +245,7 @@ public:
     std::pair<bool, int> result = std::make_pair(false, 0);
 
     // upper bound of the diameter of the bounding box
-    const FT& diameter = 2*FT(surface.subfacets_tree_ptr->max_lenght());
+    const FT& diameter = 2*FT(surface.subfacets_tree_ptr->max_length());
     while(! result.first)
     {
       result = surface.subfacets_tree_ptr->

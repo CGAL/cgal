@@ -854,12 +854,12 @@ public:
       connect(pbMeshStep, SIGNAL(clicked()), this,
               SLOT(refineMeshStep()));
 
-      QSpinBox *sbStepLenght =
+      QSpinBox *sbStepLength =
         new QSpinBox(1, INT_MAX, 1, toolBarAdvanced);
-      sbStepLenght->setValue(1);
-      step_lenght = 1;
-      connect(sbStepLenght, SIGNAL(valueChanged(int)),
-              this, SLOT(updateStepLenght(int)));
+      sbStepLength->setValue(1);
+      step_length = 1;
+      connect(sbStepLength, SIGNAL(valueChanged(int)),
+              this, SLOT(updateStepLength(int)));
 
       timer = new QTimer(this);
       connect(timer, SIGNAL(timeout()),
@@ -1167,7 +1167,7 @@ public slots:
 
   void refineMeshStep()
     {
-      int counter = step_lenght;
+      int counter = step_length;
       if(mesher == 0)
         {
           mesher = create_mesher();
@@ -1196,9 +1196,9 @@ public slots:
         timer->start(timer_interval);
     }
 
-  void updateStepLenght(int i)
+  void updateStepLength(int i)
     {
-      step_lenght = i;
+      step_length = i;
       QString s;
       s = "Mesh " + QString::number(i) + " step";
       if(i > 1)
@@ -1498,7 +1498,7 @@ private:
   QPushButton* pbShowBadFaces;
   QToolBar *toolBarAdvanced;
   int timer_interval;
-  int step_lenght;
+  int step_length;
 };
 
 const QString MyWindow::my_filters =

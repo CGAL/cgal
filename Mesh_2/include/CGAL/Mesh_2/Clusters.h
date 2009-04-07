@@ -57,7 +57,7 @@ class Clusters
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Geom_traits::FT FT;
   typedef FT      Squared_length; /**<This typedef is used to remind that
-                                     the lenght is squared. */
+                                     the length is squared. */
   typedef typename Tr::Edge_circulator Edge_circulator;
   
   /**
