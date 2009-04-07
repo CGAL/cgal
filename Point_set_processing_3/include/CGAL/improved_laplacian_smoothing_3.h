@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi {
+namespace improved_laplacian_smoothing_i {
 
 
 // Item in the Kd-tree: position (Point_3) + index
@@ -71,8 +71,8 @@ public:
 };
 
 /* Usage:
-  typedef CGALi::KdTreeElement<Kernel> KdTreeElement;
-  typedef CGALi::KdTreeTraits<Kernel> Tree_traits;
+  typedef improved_laplacian_smoothing_i::KdTreeElement<Kernel> KdTreeElement;
+  typedef improved_laplacian_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Search_iterator;
@@ -103,7 +103,7 @@ laplacian_smoothing_3(
 
   // types for K nearest neighbors search
   //typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef CGALi::KdTreeTraits<Kernel> Tree_traits;
+  typedef improved_laplacian_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -154,7 +154,7 @@ improved_laplacian_smoothing_3(
 
   // types for K nearest neighbors search
   //typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef CGALi::KdTreeTraits<Kernel> Tree_traits;
+  typedef improved_laplacian_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -174,7 +174,7 @@ improved_laplacian_smoothing_3(
 }
 
 
-} /* namespace CGALi */
+} /* namespace improved_laplacian_smoothing_i */
 
 
 // ----------------------------------------------------------------------------
@@ -216,8 +216,8 @@ improved_laplacian_smoothing_3(
 
   // types for K nearest neighbors search structure
   //typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef CGALi::KdTreeElement<Kernel> KdTreeElement;
-  typedef CGALi::KdTreeTraits<Kernel> Tree_traits;
+  typedef improved_laplacian_smoothing_i::KdTreeElement<Kernel> KdTreeElement;
+  typedef improved_laplacian_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Search_iterator;
@@ -231,43 +231,47 @@ improved_laplacian_smoothing_3(
   CGAL_precondition(k >= 2);
 
   unsigned int i; // point index
+  InputIterator it; // point iterator
+  
+  // Number of input points
+  int nb_points = std::distance(first, beyond);
 
   // Create kd-tree
   //Tree tree(first,beyond);
   std::vector<KdTreeElement> treeElements;
-  for (InputIterator it = first, i=0 ; it != beyond ; ++it,++i)
+  for (it = first, i=0 ; it != beyond ; ++it,++i)
   {
     treeElements.push_back(KdTreeElement(*it,i));
   }
   Tree tree(treeElements.begin(), treeElements.end());
   
-  std::vector<Point_3>  p; // positions at step iter_n
-  std::vector<Vector_3> b; // ...
+  std::vector<Point_3>  p(nb_points); // positions at step iter_n
+  std::vector<Vector_3> b(nb_points); // ...
 
-  for(InputIterator it = first, i=0; it != beyond; it++, ++i)
+  for(it = first, i=0; it != beyond; it++, ++i)
       p[i] = *it; 
 
   for(int iter_n = 0; iter_n < iter_number ; ++iter_n)
   {
       // Iterate over input points, compute (original) Laplacian smooth and b[].
-      for(InputIterator it = first, i=0; it != beyond; it++, ++i)
+      for(it = first, i=0; it != beyond; it++, ++i)
       { 
-          Point_3 np = CGALi::laplacian_smoothing_3<Kernel>(*it,tree,k);
+          Point_3 np = improved_laplacian_smoothing_i::laplacian_smoothing_3<Kernel>(*it,tree,k);
           b[i]       = alpha*(np - *it) + (1-alpha)*(np - p[i]);
           p[i]       = np;
       }
 
       // Iterate over input points, compute and output smooth points.
       // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
-      for(InputIterator it = first, i=0; it != beyond; it++, ++i)
+      for(it = first, i=0; it != beyond; it++, ++i)
       {  
-          p[i] = CGALi::improved_laplacian_smoothing_3<Kernel>(p[i],b[i],tree,b,k,beta);
+          p[i] = improved_laplacian_smoothing_i::improved_laplacian_smoothing_3<Kernel>(p[i],b[i],tree,b,k,beta);
       }
   }
 
   // Iterate over input points and output smooth points.
   // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
-  for(InputIterator it = first, i=0; it != beyond; it++, ++i)
+  for(it = first, i=0; it != beyond; it++, ++i)
   {  
     Input_point_3 point = *it;
     (Point_3&)(point) = p[i];
@@ -310,8 +314,8 @@ improved_laplacian_smoothing_3(
 
   // types for K nearest neighbors search structure
   //typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef CGALi::KdTreeElement<Kernel> KdTreeElement;
-  typedef CGALi::KdTreeTraits<Kernel> Tree_traits;
+  typedef improved_laplacian_smoothing_i::KdTreeElement<Kernel> KdTreeElement;
+  typedef improved_laplacian_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Search_iterator;
@@ -350,7 +354,7 @@ improved_laplacian_smoothing_3(
       // Iterate over input points, compute (original) Laplacian smooth and b[].
       for(it = first, i=0; it != beyond; it++, ++i)
       { 
-          Point_3 np = CGALi::laplacian_smoothing_3<Kernel>(*it,tree,k);
+          Point_3 np = improved_laplacian_smoothing_i::laplacian_smoothing_3<Kernel>(*it,tree,k);
           b[i]       = alpha*(np - *it) + (1-alpha)*(np - p[i]);
           p[i]       = np;
       }
@@ -359,7 +363,7 @@ improved_laplacian_smoothing_3(
       // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
       for(it = first, i=0; it != beyond; it++, ++i)
       {  
-          p[i] = CGALi::improved_laplacian_smoothing_3<Kernel>(p[i],b[i],tree,b,k,beta);
+          p[i] = improved_laplacian_smoothing_i::improved_laplacian_smoothing_3<Kernel>(p[i],b[i],tree,b,k,beta);
       }
   }
 
