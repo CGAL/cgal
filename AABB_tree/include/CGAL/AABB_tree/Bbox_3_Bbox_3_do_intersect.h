@@ -20,6 +20,11 @@
 #ifndef CGAL_BBOX_3_BBOX_3_DO_INTERSECT_H
 #define CGAL_BBOX_3_BBOX_3_DO_INTERSECT_H
 
+// Turn off Visual C++ warning
+#ifdef _MSC_VER
+#pragma warning ( disable : 4003 )
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
