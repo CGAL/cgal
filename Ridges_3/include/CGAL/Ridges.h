@@ -47,7 +47,7 @@ enum Ridge_order {Ridge_order_3 = 3, Ridge_order_4 = 4};
 //Ridge_line : a connected sequence of edges of a
 //TriangularPolyhedralSurface crossed by a
 //ridge (with a barycentric coordinate to compute the crossing point),
-//with a Ridge_type and weigths : strength and sharpness. Note
+//with a Ridge_type and weights : strength and sharpness. Note
 //sharpness is only available (more precisely only meaningful)
 //if the Ridge_approximation has
 //been computed with the Ridge_order Ridge_order_4.
@@ -312,7 +312,7 @@ class Ridge_approximation
 		       const Ridge_type r_type);
   //When the line is extended with a he, the bary coord of the
   //crossing point is computed, the pair (he,coord) is added and the
-  //weigths are updated 
+  //weights are updated 
   void addback(Ridge_line* ridge_line, 
 	       const Halfedge_const_handle he, 
 	       const Ridge_type r_type);
