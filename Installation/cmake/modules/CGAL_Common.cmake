@@ -62,7 +62,4 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
 
   set(CMAKE_COLORMAKEFILE ON)
   
-  # Needed by the testsuite results parser
-  set(CMAKE_VERBOSE_MAKEFILE ON)
-
 endif()
