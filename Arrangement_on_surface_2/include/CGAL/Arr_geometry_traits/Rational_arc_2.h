@@ -1881,9 +1881,9 @@ protected:
   }
 
   /*!
-   * Check if the underlying rational fucntion is the same in the given arc.
+   * Check if the underlying rational function is the same in the given arc.
    * \param arc The given arc.
-   * \return (true) if arc's underlying rational fucntion is the same
+   * \return (true) if arc's underlying rational function is the same
    *         as of *this; (false) otherwise.
    */
   bool _has_same_base (const Self& arc) const

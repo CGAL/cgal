@@ -113,7 +113,7 @@ protected:
 
 public:
 
-  /// \name Construction and destruction fucntions.
+  /// \name Construction and destruction functions.
   //@{
 
   /*!

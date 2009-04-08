@@ -17,7 +17,7 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
-#if ! (CGAL_CARTESIAN_MATRIX_H)
+#ifndef CGAL_CARTESIAN_MATRIX_H
 #define CGAL_CARTESIAN_MATRIX_H 1
 
 #include <CGAL/basic.h>

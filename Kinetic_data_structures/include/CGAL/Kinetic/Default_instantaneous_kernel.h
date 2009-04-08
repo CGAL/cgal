@@ -19,7 +19,8 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 #ifndef CGAL_CARTESIAN_DEFAULT_INSTANTANEOUS_KERNEL_H
-#define  CGAL_CARTESIAN_DEFAULT_INSTANTANEOUS_KERNEL_H
+#define CGAL_CARTESIAN_DEFAULT_INSTANTANEOUS_KERNEL_H
+
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/internal/Instantaneous_adaptor.h>
 #include <CGAL/Simple_cartesian.h>
