@@ -89,8 +89,8 @@ int main(int argc, char *argv[]){
 
   PDB pdb(in, verbose);
 
-  if (verbose) std::cout << "Input PDB has " << pdb.models().size() << " models." << std::endl;
-  if (pdb.models().size() != 1){
+  if (verbose) std::cout << "Input PDB has " << CGAL::PDB::distance(pdb.models()) << " models." << std::endl;
+  if (CGAL::PDB::distance(pdb.models()) != 1){
     std::cout << "Attempting to write multiple image files: assuming the output argument has a %d in it.\n";
   }
 
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]){
     if (!output_file.empty()) {
 
       char buf[100000];
-      if (pdb.models().size() != 1){
+      if (CGAL::PDB::distance(pdb.models()) != 1){
 	sprintf(buf, output_file.c_str(), m.key().index());
       } else {
 	sprintf(buf, output_file.c_str());

@@ -19,6 +19,7 @@
    MA 02110-1301, USA. */
 
 #include <CGAL/PDB/PDB.h>
+#include <CGAL/PDB/range.h>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -78,13 +79,14 @@ int main(int argc, char *argv[]){
     }
     PDB inpdb(in, verbose);
     std::cout << "File " << input_files[i] 
-              << " " << inpdb.models().size() << " models" << std::endl;
+              << " " << CGAL::PDB::distance(inpdb.models()) << " models" << std::endl;
     
     CGAL_PDB_FOREACH(const PDB::Model_pair& m, inpdb.models()) {
       std::cout << "Model " << m.key() << std::endl;
       CGAL_PDB_FOREACH(const Model::Chain_pair &c,
                        m.model().chains()) {
-        std::cout << " Chain " << c.key() << " has " << c.chain().monomers().size()
+        std::cout << " Chain " << c.key() << " has "
+                  << CGAL::PDB::distance(c.chain().monomers())
                   << " residues" << std::endl;
       }
     }

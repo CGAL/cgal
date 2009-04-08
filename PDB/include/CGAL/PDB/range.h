@@ -137,7 +137,7 @@ struct Get_bond_indices {
 //! Return an iterator range which returns a pair of indices for a bond
 template <class Range>
 internal::rangelib::transformed_range<Range, Get_bond_indices>
-make_bond_indices_range(const Range &r){
+make_bond_indices_range(Range r){
   return internal::rangelib::transformed(r,Get_bond_indices());
 }
 
@@ -157,7 +157,7 @@ struct Is_backbone {
 //! Return an iterator range which returns skips non-backbone atoms
 template <class Range>
 internal::rangelib::filtered_range<Range, Is_backbone>
-make_backbone_range(const Range& r){
+make_backbone_range(Range r){
   return internal::rangelib::filtered(r, Is_backbone());
 }
 
@@ -173,7 +173,7 @@ struct Is_CA {
 //! Return an iterator range which returns skips non-backbone atoms
 template <class Range>
 internal::rangelib::filtered_range<Range, Is_CA>
-make_backbone_range(const Range& r){
+make_ca_range(Range r){
   return internal::rangelib::filtered(r, Is_CA());
 }
 
@@ -211,7 +211,7 @@ struct Is_ok_bond {
 //! Return an iterator range which returns skips non-backbone atoms
     template <class Range, class OKA>
 internal::rangelib::filtered_range<Range, Is_ok_bond<OKA> >
-make_backbone_range(OKA oka, const Range& r){
+make_backbone_range(OKA oka, Range r){
   return internal::rangelib::filtered(r, Is_ok_bond<OKA>(oka));
 }
 

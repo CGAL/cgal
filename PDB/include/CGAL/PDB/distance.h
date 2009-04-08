@@ -24,6 +24,7 @@
 #include <CGAL/PDB/basic.h>
 #include <CGAL/PDB/Chain.h>
 #include <CGAL/PDB/Matrix.h>
+#include <CGAL/PDB/range.h>
 #include <cmath>
 #include <debug/vector>
 namespace CGAL { namespace PDB {

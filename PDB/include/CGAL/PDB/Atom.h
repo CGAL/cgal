@@ -124,19 +124,10 @@ inline bool Atom::operator!=(const Atom &o) const {
 }
 
 
-
 //! Assign unique indices to all atoms in the sequence, starting at optional start value
 /*!
   This returns the next unused index. 
 */
-template <class Range>
-inline int index_atoms(Range &r, int start=0) {
-  for (typename Range::iterator c=r.begin(); c!= r.end(); ++c) {
-    c->atom().set_index(Atom::Index(start++));
-  }
-  return start;
-}
-
 template <class Range>
 inline int index_atoms(Range r, int start=0) {
 	  for (typename Range::iterator c=r.begin(); c!= r.end(); ++c) {

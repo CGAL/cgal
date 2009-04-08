@@ -49,8 +49,8 @@ int main(int argc, char *argv[]) {
 	std::cout << c.chain().name();
       }
       std::cout << std::endl;
-      std::cout << "  " << CGAL::PDB::size(c.chain().atoms())<< " atoms" << std::endl;
-      std::cout << "  " << CGAL::PDB::size(c.chain().bonds()) << " bonds" << std::endl;
+      std::cout << "  " << CGAL::PDB::distance(c.chain().atoms())<< " atoms" << std::endl;
+      std::cout << "  " << CGAL::PDB::distance(c.chain().bonds()) << " bonds" << std::endl;
     }
   }
 

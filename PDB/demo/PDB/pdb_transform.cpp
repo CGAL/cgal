@@ -115,11 +115,11 @@ int main(int argc, char *argv[]){
 
   PDB pdb(in, verbose);
 
-  if (verbose) std::cout << "Input PDB has " << pdb.models().size() << " models." << std::endl;
+  if (verbose) std::cout << "Input PDB has " << CGAL::PDB::distance(pdb.models()) << " models." << std::endl;
  
 
   CGAL_PDB_FOREACH(PDB::Model_pair &m, pdb.models()) {
-    std::cout << "Model " << m.key() << " has " << m.model().chains().size() 
+    std::cout << "Model " << m.key() << " has " << CGAL::PDB::distance(m.model().chains()) 
               << " chains."<< std::endl;
     CGAL_PDB_FOREACH(Chain &c, make_chain_range(m.model().chains())) {
       CGAL_PDB_FOREACH(Monomer &r, make_monomer_range(c.monomers())) {
