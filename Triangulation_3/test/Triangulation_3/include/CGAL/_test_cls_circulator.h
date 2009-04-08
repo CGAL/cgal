@@ -110,13 +110,18 @@ _test_circulator( const Triangulation &T )
 //     }
 
   std::vector<Cell_handle> cells;
+  std::vector<Vertex_handle > vertices_old;
   std::vector<Vertex_handle > vertices;
   std::vector<Facet > facets;
 
   Vertex_handle vh = T.vertices_begin();
 
   T.incident_cells(vh, std::back_inserter(cells));
-  T.incident_vertices(vh, std::back_inserter(vertices));
+  // old name (up to CGAL 3.4)
+  // kept for backwards compatibility but not documented
+  T.incident_vertices(vh, std::back_inserter(vertices_old));
+  // correct name 
+  T.adjacent_vertices(vh, std::back_inserter(vertices));
   T.incident_facets(vh, std::back_inserter(facets));
 
   for(typename std::vector<Cell_handle>::const_iterator cit = cells.begin(),

@@ -713,6 +713,7 @@ _test_cls_triangulation_3(const Triangulation &)
     for(int k = 0; k < 2; ++k) {
     std::cout << "      with triangulation " << k + 1 << ": ";
 
+    std::vector<Vertex_handle> f_vertices_old;
     std::vector<Vertex_handle> f_vertices;
     std::vector<Edge> f_edges;
     std::vector<Facet> f_facets;
@@ -725,7 +726,11 @@ _test_cls_triangulation_3(const Triangulation &)
     
     for(Finite_vertices_iterator i = T2[k]->finite_vertices_begin();
 	i != T2[k]->finite_vertices_end(); ++i) {
-      T2[k]->finite_incident_vertices(i, std::back_inserter(f_vertices));
+      // old name (up to CGAL 3.4)
+      // kept for backwards compatibility but not documented
+      T2[k]->finite_incident_vertices(i, std::back_inserter(f_vertices_old));
+      // correct name 
+      T2[k]->finite_adjacent_vertices(i, std::back_inserter(f_vertices));
       T2[k]->finite_incident_edges(i, std::back_inserter(f_edges));
       T2[k]->finite_incident_facets(i, std::back_inserter(f_facets));
       T2[k]->finite_incident_cells(i, std::back_inserter(f_cells));
@@ -744,6 +749,7 @@ _test_cls_triangulation_3(const Triangulation &)
     }
 
     // incidences
+    assert(f_edges.size() == f_vertices_old.size());
     assert(f_edges.size() == f_vertices.size());
     assert(2*nb_f_edges == f_edges.size());
     assert(3*nb_f_facets == f_facets.size());
@@ -770,6 +776,7 @@ _test_cls_triangulation_3(const Triangulation &)
   for(int k = 0; k < 6; ++k) {
     std::cout << "      with triangulation " << k + 1 << ": ";
 
+    std::vector<Vertex_handle> f_vertices_old;
     std::vector<Vertex_handle> f_vertices;
     std::vector<Edge> f_edges;
     std::vector<Facet> f_facets;
@@ -782,7 +789,11 @@ _test_cls_triangulation_3(const Triangulation &)
     
     for(Finite_vertices_iterator i = T3[k]->finite_vertices_begin();
 	i != T3[k]->finite_vertices_end(); ++i) {
-      T3[k]->finite_incident_vertices(i, std::back_inserter(f_vertices));
+      // old name (up to CGAL 3.4)
+      // kept for backwards compatibility but not documented
+      T3[k]->finite_incident_vertices(i, std::back_inserter(f_vertices_old));
+      // correct name 
+      T3[k]->finite_adjacent_vertices(i, std::back_inserter(f_vertices));
       T3[k]->finite_incident_edges(i, std::back_inserter(f_edges));
       T3[k]->finite_incident_facets(i, std::back_inserter(f_facets));
       T3[k]->finite_incident_cells(i, std::back_inserter(f_cells));
@@ -807,6 +818,7 @@ _test_cls_triangulation_3(const Triangulation &)
     }
     
     // incidences
+    assert(f_edges.size() == f_vertices_old.size());
     assert(f_edges.size() == f_vertices.size());
     assert(2*nb_f_edges == f_edges.size());
     assert(3*nb_f_facets == f_facets.size());

@@ -27,10 +27,18 @@ $\R^3$ is advised to read Chapter~\ref{chapter-Triangulation3}.
 \section{Representation\label{TDS3-sec-intro}}
 
 In \cgal, a 3D triangulation data structure is a
-container of cells ($3$-faces) and vertices ($0$-faces). Each cell gives
-access to its four incident vertices and to its four adjacent
-cells. Each vertex gives direct access to one of its incident cells, which is 
-sufficient to retrieve all the incident cells when needed.
+container of cells ($3$-faces) and vertices ($0$-faces). 
+
+Following the standard vocabulary of simplicial complexes, an $i$-face
+$f_i$ and a $j$-face $f_j$ $(0 \leq j < i \leq 3)$ are said to be
+\textit{incident} in the triangulation if $f_j$ is a (sub)face of $f_i$, and
+two $i$-faces $(0 \leq i \leq 3)$ are said to be \textit{adjacent} if
+they share a commun incident (sub)face.
+
+Each cell gives access to its four incident vertices and to its four
+adjacent cells. Each vertex gives direct access to one of its incident
+cells, which is sufficient to retrieve all the incident cells when
+needed.
 
 The four vertices of a cell are indexed with 0, 1, 2 and 3.  The
 neighbors of a cell are also indexed with 0, 1, 2, 3 

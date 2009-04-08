@@ -836,7 +836,7 @@ public:
   
   template <class Filter, class OutputIterator>
   OutputIterator
-  incident_vertices(Vertex_handle v, OutputIterator vertices, Filter f = Filter()) const
+  adjacent_vertices(Vertex_handle v, OutputIterator vertices, Filter f = Filter()) const
   {
     CGAL_triangulation_precondition( v != Vertex_handle() );
     CGAL_triangulation_precondition( dimension() >= -1 );
@@ -864,11 +864,20 @@ public:
     OutputIterator>(v, vertices, f);
   }
 
+  // old name - kept for backwards compatibility but not documented
   template <class OutputIterator>
   OutputIterator
   incident_vertices(Vertex_handle v, OutputIterator vertices) const
   {
-    return incident_vertices<False_filter>(v, vertices);
+    return adjacent_vertices<False_filter>(v, vertices);
+  }
+
+  // correct name
+  template <class OutputIterator>
+  OutputIterator
+  adjacent_vertices(Vertex_handle v, OutputIterator vertices) const
+  {
+    return adjacent_vertices<False_filter>(v, vertices);
   }
   
   template <class Visitor, class OutputIterator, class Filter>  
@@ -2496,7 +2505,7 @@ Triangulation_data_structure_3<Vb,Cb>::
 degree(const Vertex_handle& v) const
 {
     std::size_t res;
-    incident_vertices(v, Counting_output_iterator(&res));
+    adjacent_vertices(v, Counting_output_iterator(&res));
     return res;
 }
 

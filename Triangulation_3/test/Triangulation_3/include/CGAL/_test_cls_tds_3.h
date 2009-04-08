@@ -141,8 +141,25 @@ _test_cls_tds_3( const Tds &)
     for ( i=0; i<4; i++ ) {
       assert(tds6.is_valid());
       assert(tds6.is_cell(*ccit));
-      std::set< Vertex_handle > set_of_vertices;
+      // old name (up to CGAL 3.4)
+      // kept for backwards compatibility but not documented
+      std::set< Vertex_handle > set_of_vertices_old;
       tds6.incident_vertices( (*ccit)->vertex(i),
+                              std::inserter(set_of_vertices_old,
+                                            set_of_vertices_old.begin() ) );
+      if ( set_of_vertices_old.find(tds6.mirror_vertex(*ccit, i)) 
+	   == set_of_vertices_old.end() ) {
+	nbflips++;
+	tds6.flip_flippable( *ccit, i );
+	assert(tds6.is_valid());
+// 	if ( tds6.flip( cit, i ) ) {
+// 	  tds6.is_valid(true);
+// 	  nbflips++;
+// 	}
+      }
+      // correct name 
+      std::set< Vertex_handle > set_of_vertices;
+      tds6.adjacent_vertices( (*ccit)->vertex(i),
                               std::inserter(set_of_vertices,
                                             set_of_vertices.begin() ) );
       if ( set_of_vertices.find(tds6.mirror_vertex(*ccit, i)) 
@@ -161,14 +178,23 @@ _test_cls_tds_3( const Tds &)
   for (typename std::vector<Cell_handle>::const_iterator ccit = Cell_v.begin();
        ccit != Cell_v.end(); ++ccit) {
     for ( i=0; i<4; i++ ) {
-      std::vector< Vertex_handle > vector_of_vertices;
+       std::vector< Vertex_handle > vector_of_vertices_old;
+     std::vector< Vertex_handle > vector_of_vertices;
       std::vector< Edge > vector_of_edges;
 
-      tds6.incident_vertices( (*ccit)->vertex(i), std::back_inserter(vector_of_vertices));
+      // old name (up to CGAL 3.4)
+      // kept for backwards compatibility but not documented
+      tds6.incident_vertices
+	( (*ccit)->vertex(i), std::back_inserter(vector_of_vertices_old));
+      // correct name 
+      tds6.adjacent_vertices
+	( (*ccit)->vertex(i), std::back_inserter(vector_of_vertices));
 
-      tds6.incident_edges( (*ccit)->vertex(i), std::back_inserter(vector_of_edges));
+      tds6.incident_edges
+	( (*ccit)->vertex(i), std::back_inserter(vector_of_edges));
 
-	  assert(vector_of_edges.size() == vector_of_vertices.size());
+      assert(vector_of_edges.size() == vector_of_vertices_old.size());
+      assert(vector_of_edges.size() == vector_of_vertices.size());
     }
   }
 

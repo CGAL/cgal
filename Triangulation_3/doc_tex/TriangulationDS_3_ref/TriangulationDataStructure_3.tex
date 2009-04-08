@@ -21,8 +21,15 @@
 3D-triangulation data structures are meant to maintain the
 combinatorial information for 3D-geometric triangulations.
 
-In \cgal, a triangulation data structure is a
-container of cells ($3$-faces) and vertices ($0$-faces). Each cell gives
+In \cgal, a triangulation data structure is a container of cells
+($3$-faces) and vertices ($0$-faces). Following the standard
+vocabulary of simplicial complexes, an $i$-face $f_i$ and a $j$-face
+$f_j$ $(0 \leq j < i \leq 3)$ are said to be \textit{incident} in the
+triangulation if $f_j$ is a (sub)face of $f_i$, and two $i$-faces $(0
+\leq i \leq 3)$ are said to be \textit{adjacent} if they share a
+commun incident (sub)face.
+
+Each cell gives
 access to its four incident vertices and to its four adjacent
 cells. Each vertex gives direct access to one of its incident cells, which is 
 sufficient to retrieve all the incident cells when needed.
@@ -598,8 +605,8 @@ output iterator \ccc{edges}. Returns the resulting output iterator.
 
 \ccMethod{template <class OutputIterator>
           OutputIterator
-          incident_vertices(Vertex_handle v, OutputIterator vertices) const;}
-{Copies the \ccc{Vertex_handle}s of all vertices incident to \ccc{v} to the
+          adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;}
+{Copies the \ccc{Vertex_handle}s of all vertices adjacent to \ccc{v} to the
 output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<0$, then do
 nothing.  Returns the resulting output iterator.
 \ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}

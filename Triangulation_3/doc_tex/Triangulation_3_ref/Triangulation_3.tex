@@ -928,16 +928,16 @@ output iterator \ccc{edges}. Returns the resulting output iterator.
 
 \ccMethod{template <class OutputIterator>
           OutputIterator
-          incident_vertices(Vertex_handle v, OutputIterator vertices) const;}
-{Copies the \ccc{Vertex_handle}s of all vertices incident to \ccc{v} to the
+          adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;}
+{Copies the \ccc{Vertex_handle}s of all vertices adjacent to \ccc{v} to the
 output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<0$, then do
 nothing.  Returns the resulting output iterator.
 \ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
 
 \ccMethod{template <class OutputIterator>
           OutputIterator
-          finite_incident_vertices(Vertex_handle v, OutputIterator vertices) const;}
-{Copies the \ccc{Vertex_handle}s of all finite vertices incident to \ccc{v} to the
+          finite_adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;}
+{Copies the \ccc{Vertex_handle}s of all finite vertices adjacent to \ccc{v} to the
 output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<0$, then do
 nothing.  Returns the resulting output iterator.
 \ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}

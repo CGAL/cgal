@@ -1025,18 +1025,38 @@ public:
     return _tds.incident_facets(v, facets, Finite_filter(this));
   }
 
+  // old name (up to CGAL 3.4)
+  // kept for backwards compatibility but not documented
   template <class OutputIterator>
   OutputIterator
   incident_vertices(Vertex_handle v, OutputIterator vertices) const
   {
-    return _tds.incident_vertices(v, vertices);
+    return _tds.adjacent_vertices(v, vertices);
   }
 
+  // correct name 
+  template <class OutputIterator>
+  OutputIterator
+  adjacent_vertices(Vertex_handle v, OutputIterator vertices) const
+  {
+    return _tds.adjacent_vertices(v, vertices);
+  }
+
+  // old name (up to CGAL 3.4)
+  // kept for backwards compatibility but not documented
   template <class OutputIterator>
   OutputIterator
   finite_incident_vertices(Vertex_handle v, OutputIterator vertices) const
   {
-    return _tds.incident_vertices(v, vertices, Finite_filter(this));
+    return _tds.adjacent_vertices(v, vertices, Finite_filter(this));
+  }
+
+  // correct name 
+  template <class OutputIterator>
+  OutputIterator
+  finite_adjacent_vertices(Vertex_handle v, OutputIterator vertices) const
+  {
+    return _tds.adjacent_vertices(v, vertices, Finite_filter(this));
   }
 
   template <class OutputIterator>
@@ -3085,7 +3105,7 @@ remove_3D(Vertex_handle v, VertexRemover &remover)
   std::vector<Vertex_handle> vertices;
   vertices.reserve(64);
 
-  incident_vertices(v, std::back_inserter(vertices));
+  adjacent_vertices(v, std::back_inserter(vertices));
 
   // create a Delaunay triangulation of the points on the boundary
   // and make a map from the vertices in remover.tmp towards the vertices
