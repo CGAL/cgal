@@ -83,7 +83,7 @@ int main(int argc, char *argv[]){
                   make_point_range(make_atom_range(mc.atoms())));
         std::cout << "Err: " << err << std::endl;
 
-        for_each(make_atom_range(c.atoms()), Transform_atom(trp));
+        CGAL::PDB::for_each(make_atom_range(c.atoms()), Transform_atom(trp));
 
         err= cRMS(make_point_range(make_atom_range(c.atoms())),
                   make_point_range(make_atom_range(mc.atoms())));

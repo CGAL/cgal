@@ -46,9 +46,9 @@ int main(int , char *[]){
     std::cout << "Model " << m.key() << " has " 
 	      << m.model().chains().size() << " chains" << std::endl;
 	
-    unsigned int na= CGAL::PDB::size(m.model().atoms());
+    unsigned int na= CGAL::PDB::distance(m.model().atoms());
     std::cout << "There are " << na << " atoms" << std::endl;
-    unsigned int nb= CGAL::PDB::size(m.model().bonds());
+    unsigned int nb= CGAL::PDB::distance(m.model().bonds());
     std::cout << "There are " << nb << " bonds" << std::endl;
 
     assert(na==1059);
@@ -60,11 +60,11 @@ int main(int , char *[]){
       std::cout << "Chain " << c.key() << " has " 
 		<<c.chain().monomers().size() << " residues" 
 		<< std::endl;
-      totaL_atoms += CGAL::PDB::size(c.chain().atoms());
-      total_bonds += CGAL::PDB::size(c.chain().bonds());
+      totaL_atoms += CGAL::PDB::distance(c.chain().atoms());
+      total_bonds += CGAL::PDB::distance(c.chain().bonds());
     }
-    assert(CGAL::PDB::size(m.model().atoms()) == totaL_atoms);
-    assert(CGAL::PDB::size(m.model().bonds()) == total_bonds);
+    assert(CGAL::PDB::distance(m.model().atoms()) == totaL_atoms);
+    assert(CGAL::PDB::distance(m.model().bonds()) == total_bonds);
   }
 	
   p.write(of);

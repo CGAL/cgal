@@ -12,8 +12,11 @@ int main(int, char *[]){
   //helix.dump(std::cout);
   std::vector<CGAL::PDB::Point> points;
   std::vector<CGAL::PDB::Chain::Bond> bonds;
-  unsigned int ptsz=CGAL::PDB::size(helix.atoms());
-  unsigned int bsz=CGAL::PDB::size(helix.bonds());
+  unsigned int ptsz=CGAL::PDB::distance(helix.atoms());
+  unsigned int bsz= CGAL::PDB::distance(helix.bonds());
+  CGAL_PDB_FOREACH(CGAL::PDB::Chain::Atom_pair k,
+                   helix.atoms()) {
+  }
   CGAL_PDB_FOREACH(CGAL::PDB::Chain::Atom_key k,
                    CGAL::PDB::make_key_range(helix.atoms())) {
     std::cout << k.atom_key() << " " << k.monomer_key() << std::endl;
