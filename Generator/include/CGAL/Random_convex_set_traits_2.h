@@ -21,7 +21,7 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
-#if ! (CGAL_RANDOM_CONVEX_SET_TRAITS_2_H)
+#ifndef CGAL_RANDOM_CONVEX_SET_TRAITS_2_H
 #define CGAL_RANDOM_CONVEX_SET_TRAITS_2_H 1
 
 #include <CGAL/Point_2.h>

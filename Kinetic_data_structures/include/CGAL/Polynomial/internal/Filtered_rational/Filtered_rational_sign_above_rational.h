@@ -18,7 +18,7 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_POLYNOMIAL_INTERNAL_FILTERNAL_SIGN_ABOVE_RATIONAL_H
+#ifndef CGAL_POLYNOMIAL_INTERNAL_FILTERED_SIGN_ABOVE_RATIONAL_H
 #define CGAL_POLYNOMIAL_INTERNAL_FILTERED_SIGN_ABOVE_RATIONAL_H
 
 #include <CGAL/Polynomial/basic.h>

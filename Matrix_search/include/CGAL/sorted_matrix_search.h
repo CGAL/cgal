@@ -17,9 +17,8 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
-#if ! (CGAL_SORTED_MATRIX_SEARCH_H)
+#ifndef CGAL_SORTED_MATRIX_SEARCH_H
 #define CGAL_SORTED_MATRIX_SEARCH_H 1
-
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>

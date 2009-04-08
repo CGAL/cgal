@@ -17,7 +17,7 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
-#if ! (CGAL_MONOTONE_MATRIX_SEARCH_H)
+#ifndef CGAL_MONOTONE_MATRIX_SEARCH_H
 #define CGAL_MONOTONE_MATRIX_SEARCH_H 1
 
 #include <CGAL/Optimisation/assertions.h>

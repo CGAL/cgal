@@ -19,7 +19,7 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 #ifndef CGAL_POLYNOMIAL_INTERNAL_SUBRESULTANT_STURM_SEQUENCE_H
-#define CGAL_POLYNOMIAL_INTERNAL_SSUBRESULTANT_STURM_SEQUENCE_H
+#define CGAL_POLYNOMIAL_INTERNAL_SUBRESULTANT_STURM_SEQUENCE_H
 
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/Sign_variations_counter.h>
@@ -142,4 +142,5 @@ class Subresultant_Sturm_sequence
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
-#endif                                            // CGAL_POLYNOMIAL_INTERNAL_SUBRESULTANT_STURM_SEQUENCE_H
+
+#endif // CGAL_POLYNOMIAL_INTERNAL_SUBRESULTANT_STURM_SEQUENCE_H

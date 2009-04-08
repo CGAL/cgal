@@ -17,7 +17,7 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
-#if ! (CGAL_EXTREMAL_POLYGON_TRAITS_2_H)
+#ifndef CGAL_EXTREMAL_POLYGON_TRAITS_2_H
 #define CGAL_EXTREMAL_POLYGON_TRAITS_2_H 1
 
 #include <CGAL/Optimisation/assertions.h>

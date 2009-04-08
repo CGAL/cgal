@@ -17,16 +17,12 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
-#if ! (CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H)
+#ifndef CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H
 #define CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H 1
-
-
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/basic_constructions_2.h>
-
-
 
 CGAL_BEGIN_NAMESPACE
 

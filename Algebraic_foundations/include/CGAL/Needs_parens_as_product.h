@@ -21,7 +21,7 @@
 // =============================================================================
 
 #ifndef CGAL_NEEDS_PARENTHESES_AS_PRODUCT_H
-#define  CGAL_NEEDS_PARENTHESES_AS_PRODUCT_H
+#define CGAL_NEEDS_PARENTHESES_AS_PRODUCT_H
 
 #include <CGAL/IO/io.h>
  

@@ -16,8 +16,10 @@
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
+
 #ifndef CGAL_PM_PERSISTENT_PL_H
-#define CGAL_PM_PM_PERSISTENT_PL_H
+#define CGAL_PM_PERSISTENT_PL_H
+
 #include <CGAL/Nef_2/gen_point_location.h>
 
 template <typename PMPL>
@@ -199,4 +201,3 @@ struct PM_persistent_PL_traits
 
 
 #endif // CGAL_PM_PM_PERSISTENT_PL_H
-
