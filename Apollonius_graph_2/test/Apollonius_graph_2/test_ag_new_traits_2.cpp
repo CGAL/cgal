@@ -8,7 +8,7 @@
 
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
-#include <CGAL/Apollonius_graph_2/new_traits/Apollonius_graph_new_traits_2.h>
+#include <CGAL/Apollonius_graph_2/Delage_traits/Apollonius_graph_new_traits_2.h>
 
 typedef CGAL::Sign Sign;
 
