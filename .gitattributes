@@ -2631,7 +2631,7 @@ PDB/include/CGAL/PDB/internal/Monomer_data.h -text
 PDB/include/CGAL/PDB/internal/Nested_iterator.h -text
 PDB/include/CGAL/PDB/internal/align_points.h -text
 PDB/include/CGAL/PDB/internal/dummies.h -text
-PDB/include/CGAL/PDB/internal/foreach.hpp -text
+PDB/include/CGAL/PDB/internal/foreach.h -text
 PDB/include/CGAL/PDB/internal/pdb_utils.h -text
 PDB/include/CGAL/PDB/internal/tnt/jama_cholesky.h -text
 PDB/include/CGAL/PDB/internal/tnt/jama_eig.h -text
