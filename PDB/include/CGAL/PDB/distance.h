@@ -35,8 +35,8 @@ double cRMS(const RangeA& ra, const RangeB& rb,
             const Transform &tr=Transform(1,0,0,0,
                                           0,1,0,0,
                                           0,0,1,0)) {
-  CGAL_precondition(std::distance(ra.begin(), ra.end())
-                    == std::distance(rb.begin(), rb.end());
+  CGAL_precondition(CGAL::PDB::distance(ra) == CGAL::PDB::distance(rb));
+
   double ret=0;
   int num=0;
   {

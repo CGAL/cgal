@@ -24,35 +24,28 @@
 #include <CGAL/PDB/Point.h>
 #include <CGAL/PDB/Chain.h>
 #include <CGAL/PDB/Monomer.h>
+#include <CGAL/PDB/Heterogen.h>
+#include <CGAL/PDB/PDB.h>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/range.hpp>
+#include <CGAL/PDB/internal/rangelib/filter.hpp>
+#include <CGAL/PDB/internal/rangelib/transform.hpp>
+#include <CGAL/PDB/internal/rangelib/algo.hpp>
 #include <algorithm>
 
 
 namespace CGAL { namespace PDB {
 
+    using internal::rangelib::rng::for_each;
+    using internal::rangelib::rng::copy;
+
+//! boost changes from size to distance a 1.34, so use this
 template <class Range>
-unsigned int size(Range r) {
+unsigned int distance(const Range &r) {
   return std::distance(r.begin(), r.end());
 }
-
-template <class Range, class F>
-const F& for_each(const Range& r, const F &f) {
-  CGAL_PDB_FOREACH(typename Range::iterator::reference v, r) {
-    f(v);
-  }
-  return f;
-}
-template <class Range, class F>
-const F& for_each(Range& r, const F &f) {
-  CGAL_PDB_FOREACH(typename Range::iterator::reference v, r) {
-    f(v);
-  }
-  return f;
-}
-
-
+    
 #define CGAL_PDB_GET_MAP(ucname, lcname)                \
     template <class From>                               \
     struct Get_##lcname {                               \
@@ -63,7 +56,7 @@ const F& for_each(Range& r, const F &f) {
     };                                                  \
     template <class From2>                               \
     struct Get_##lcname<const From2> {                   \
-      typedef const ucname& result_type;                       \
+      typedef const ucname& result_type;                      \
       result_type operator()(From2 v) const {                 \
         return v.lcname();                              \
       }                                                 \
@@ -94,28 +87,27 @@ struct Get_index {
 template <class A>
 struct Get_key {
   typedef typename A::Key result_type;
-  result_type operator()(A a) const {
+  result_type operator()(const A& a) const {
     return a.key();
   }
 };
 
 #define CGAL_PDB_MAKE_RANGE(ucname, lcname)             \
     template <class Range>                                              \
-    boost::iterator_range<boost::transform_iterator< Get_##lcname<typename Range::iterator::reference> , typename Range::iterator> > \
-    make_##lcname##_range(const Range& r){                              \
-      typedef boost::transform_iterator<Get_##lcname<typename Range::iterator::reference>, typename Range::iterator> Tr; \
-      return boost::make_iterator_range(Tr(r.begin(), Get_##lcname<typename Range::iterator::reference>()), \
-                                        Tr(r.end(), Get_##lcname<typename Range::iterator::reference>())); \
+    internal::rangelib::transformed_range<Range, Get_##lcname<typename Range::iterator::reference> > \
+    make_##lcname##_range( Range r){                                   \
+      return internal::rangelib::transformed(r, Get_##lcname<typename Range::iterator::reference>()); \
     }                                                                   \
+
+    
+    /**
     template <class Range>                                              \
-    boost::iterator_range<boost::transform_iterator< Get_##lcname<typename Range::iterator::reference> , typename Range::iterator> > \
-    make_##lcname##_range(Range& r){                                    \
-      typedef boost::transform_iterator<Get_##lcname<typename Range::iterator::reference>, typename Range::iterator> Tr; \
-      return boost::make_iterator_range(Tr(r.begin(), Get_##lcname<typename Range::iterator::reference>()), \
-                                        Tr(r.end(), Get_##lcname<typename Range::iterator::reference>())); \
+    internal::rangelib::transformed_range<Range, Get_##lcname<const typename Range::iterator::reference> > \
+    make_##lcname##_range(const Range& r){                                    \
+      return internal::rangelib::transformed(r, Get_##lcname<const typename Range::iterator::reference>()); \
     }                                                                   \
-    
-    
+
+     */
 CGAL_PDB_MAKE_RANGE(Atom, atom);
 CGAL_PDB_MAKE_RANGE(Monomer, monomer);
 CGAL_PDB_MAKE_RANGE(Chain, chain);
@@ -144,11 +136,9 @@ struct Get_bond_indices {
 
 //! Return an iterator range which returns a pair of indices for a bond
 template <class Range>
-boost::iterator_range<boost::transform_iterator<Get_bond_indices, typename Range::iterator> >
+internal::rangelib::transformed_range<Range, Get_bond_indices>
 make_bond_indices_range(const Range &r){
-  typedef boost::transform_iterator<Get_bond_indices, typename Range::iterator> Tr;
-  return boost::make_iterator_range(Tr(r.begin(),Get_bond_indices()),
-                                    Tr(r.end(), Get_bond_indices()));
+  return internal::rangelib::transformed(r,Get_bond_indices());
 }
 
 
@@ -166,12 +156,9 @@ struct Is_backbone {
 
 //! Return an iterator range which returns skips non-backbone atoms
 template <class Range>
-boost::iterator_range<boost::filter_iterator<Is_backbone, typename Range::iterator> >
+internal::rangelib::filtered_range<Range, Is_backbone>
 make_backbone_range(const Range& r){
-  return boost::make_iterator_range(boost::make_filter_iterator(Is_backbone(), 
-                                                                r.begin(), r.end()),
-                                    boost::make_filter_iterator(Is_backbone(), 
-                                                                r.end(), r.end()));                                 
+  return internal::rangelib::filtered(r, Is_backbone());
 }
 
 //! Return true if an atom is a AC.
@@ -185,15 +172,11 @@ struct Is_CA {
 
 //! Return an iterator range which returns skips non-backbone atoms
 template <class Range>
-boost::iterator_range<boost::filter_iterator<Is_CA, typename Range::iterator> >
-make_ca_range(const Range& r){
-  return boost::make_iterator_range(boost::make_filter_iterator(Is_CA(), 
-                                                                r.begin(),
-                                                                r.end()),
-                                    boost::make_filter_iterator(Is_CA(), 
-                                                                r.end(),
-                                                                r.end()));
+internal::rangelib::filtered_range<Range, Is_CA>
+make_backbone_range(const Range& r){
+  return internal::rangelib::filtered(r, Is_CA());
 }
+
 
 template <class OK_atom>
 struct Is_ok_bond {
@@ -226,13 +209,10 @@ struct Is_ok_bond {
 };
 
 //! Return an iterator range which returns skips non-backbone atoms
-template <class Range, class OKA>
-boost::iterator_range<boost::filter_iterator<Is_ok_bond<OKA> , typename Range::iterator> >
-make_ok_bond_range( OKA oka, const Range& r){
-  return boost::make_iterator_range(boost::make_filter_iterator(Is_ok_bond<OKA>(oka), 
-                                                                r.begin(), r.end()),
-                                    boost::make_filter_iterator(Is_ok_bond<OKA>(oka), 
-                                                                r.end(), r.end()));
+    template <class Range, class OKA>
+internal::rangelib::filtered_range<Range, Is_ok_bond<OKA> >
+make_backbone_range(OKA oka, const Range& r){
+  return internal::rangelib::filtered(r, Is_ok_bond<OKA>(oka));
 }
 
 

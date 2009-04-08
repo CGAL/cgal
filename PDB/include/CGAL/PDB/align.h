@@ -6,6 +6,7 @@
 #include <CGAL/PDB/internal/tnt/tnt_array2d.h>
 #include <CGAL/PDB/internal/tnt/jama_svd.h>
 #include <CGAL/PDB/Matrix.h>
+#include <CGAL/PDB/range.h>
 
 namespace CGAL { namespace PDB {
 
@@ -43,9 +44,8 @@ inline std::ostream &operator<<(std::ostream &o, DpP p){
 */
 template <class RP, class RQ>
 Transform transform_taking_first_to_second(RP rp, RQ rq){
-  CGAL_assertion(std::distance(rp.begin(), rp.end())
-                 == std::distance(rq.begin(), rq.end()));
-  CGAL_precondition(!rp.empty());
+  CGAL_precondition(CGAL::PDB::distance(rp)== CGAL::PDB::distance(rq));
+  CGAL_precondition(CGAL::PDB::distance(rp) != 0);
   // compute the centroid of the points and transform
   // pointsets so that their centroids coinside
       
