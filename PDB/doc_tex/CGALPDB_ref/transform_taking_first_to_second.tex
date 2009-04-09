@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: transform_taking_first_to_second.tex
+% +------------------------------------------------------------------------+
+% | 09.04.2009   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: PDB
+% |
+\RCSdef{\RCStransformtakingfirsttosecondRev}{$Id$}
+\RCSdefDate{\RCStransformtakingfirsttosecondDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}[PDB::]{transform_taking_first_to_second}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccFunction{template<class RP, class RQ> Transform transform_taking_first_to_second(RP rp, RQ rq);}
+{
+This computes the optimal rigid transform minimizing the least squares distance between the point sets defined by the two ranges. The two point sets must have equal size (since the points are taken to be in one-to-one correspondence.
+The \ccc{value_types} of RA and RB must be both be convertible to \ccc{PDB::Point}. RA and RB must both be Boost.Range ranges.
+}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+  
+\ccInclude{PDB/transform_taking_first_to_second.h}
+
+\ccIsModel
+
+\ccSeeAlso
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{PDB/transform_taking_first_to_second.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{PDB/transform_taking_first_to_second.C}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

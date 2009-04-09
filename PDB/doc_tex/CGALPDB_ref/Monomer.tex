@@ -1,0 +1,483 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Monomer.tex
+% +------------------------------------------------------------------------+
+% | 09.04.2009   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: PDB
+% |
+\RCSdef{\RCSMonomerRev}{$Id$}
+\RCSdefDate{\RCSMonomerDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[PDB::]{Monomer}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The class representing a residue or nucleotide.
+
+All the information concerning atoms and bonds for each monomer is stored here. To add atoms to monomers, new monomers, or bonds to monomers, look in \ccc{Monomer_data}.cpp. There is documentation there of what you need to do.
+
+%END-AUTO(\ccDefinition)
+  
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/PDB/Monomer.h}
+
+%END-AUTO(\ccInclude)
+
+\ccIsModel
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{AtomsMap}
+{
+}
+\ccGlue
+\ccNestedType{Atoms}
+{
+}
+\ccGlue
+\ccNestedType{Atom_consts}
+{
+}
+\ccGlue
+\ccNestedType{Bond}
+{
+A bond between two atoms in a monomer.
+The ints refer the the atom index.
+}
+\ccGlue
+\ccNestedType{Bonds}
+{
+Return a list of all the bonds in the monomer.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+\ccEnum{enum Type { GLY = 0, ALA, VAL, LEU, ILE, SER, THR, CYS, MET, PRO, ASP, ASN, GLU, GLN, LYS, ARG, HIS, PHE, TYR, TRP, ACE, NH2, ADE, URA, CYT, GUA, THY, INV };}
+{
+The labels for the types of residues.
+Note: These values must be packed, start from 0 and end with INV. 
+\ccCommentHeading{Values}
+\begin{description}
+\item[GLY
+]\item[ALA
+]\item[VAL
+]\item[LEU
+]\item[ILE
+]\item[SER
+]\item[THR
+]\item[CYS
+]\item[MET
+]\item[PRO
+]\item[ASP
+]\item[ASN
+]\item[GLU
+]\item[GLN
+]\item[LYS
+]\item[ARG
+]\item[HIS
+]\item[PHE
+]\item[TYR
+]\item[TRP
+]\item[ACE
+]\item[NH2
+]\item[ADE
+]\item[URA
+]\item[CYT
+]\item[GUA
+]\item[THY
+]\item[INV
+]\end{description}
+}
+\ccGlue
+\ccEnum{enum Atom_key { AL_OTHER, AL_INVALID, AL_N, AL_CA, AL_C, AL_O, AL_H, AL_1H, AL_2H, AL_3H, AL_HA, AL_1HA, AL_2HA, AL_CB, AL_HB, AL_1HB, AL_2HB, AL_3HB, AL_OXT, AL_CH3, AL_CG, AL_CG1, AL_CG2, AL_HG, AL_1HG, AL_2HG, AL_1HG1, AL_2HG1, AL_3HG1, AL_1HG2, AL_2HG2, AL_3HG2, AL_OG, AL_OG1, AL_SG, AL_CD, AL_CD1, AL_CD2, AL_HD, AL_1HD, AL_2HD, AL_3HD, AL_1HD1, AL_2HD1, AL_3HD1, AL_1HD2, AL_2HD2, AL_3HD2, AL_SD, AL_OD1, AL_OD2, AL_ND1, AL_ND2, AL_CE, AL_CE1, AL_CE2, AL_CE3, AL_HE, AL_1HE, AL_2HE, AL_3HE, AL_1HE2, AL_2HE2, AL_OE1, AL_OE2, AL_NE, AL_NE1, AL_NE2, AL_CZ, AL_CZ2, AL_CZ3, AL_NZ, AL_HZ, AL_1HZ, AL_2HZ, AL_3HZ, AL_CH2, AL_NH1, AL_NH2, AL_OH, AL_HH, AL_1HH1, AL_2HH1, AL_HH2, AL_1HH2, AL_2HH2, AL_1HH3, AL_2HH3, AL_3HH3, AL_P, AL_OP1, AL_OP2, AL_O5p, AL_C5p, AL_H5p, AL_H5pp, AL_C4p, AL_H4p, AL_O4p, AL_C1p, AL_H1p, AL_C3p, AL_H3p, AL_O3p, AL_C2p, AL_H2p, AL_H2pp, AL_O2p, AL_HO2p, AL_N9, AL_C8, AL_H8, AL_N7, AL_C5, AL_C4, AL_N3, AL_C2, AL_H2, AL_N1, AL_C6, AL_N6, AL_H61, AL_H62, AL_O6, AL_H1, AL_N2, AL_H21, AL_H22, AL_H6, AL_H5, AL_O2, AL_N4, AL_H41, AL_H42, AL_H3, AL_O4, AL_C7, AL_H71, AL_H72, AL_H73, AL_LAST_LABEL };}
+{
+The labels of atoms within residues.
+These are the labels for each atom in each residue. The identifiers are attempting to following the PDB specs. Feel free to add more if needed.
+\ccc{AL_N} must be before \ccc{AL_CA} which must be before \ccc{AL_C} to get the backbone order correct.
+\ccCommentHeading{Values}
+\begin{description}
+\item[\ccc{AL_OTHER}
+]\item[\ccc{AL_INVALID}
+]\item[\ccc{AL_N}
+]\item[\ccc{AL_CA}
+]\item[\ccc{AL_C}
+]\item[\ccc{AL_O}
+]\item[\ccc{AL_H}
+]\item[\ccc{AL_1H}
+]\item[\ccc{AL_2H}
+]\item[\ccc{AL_3H}
+]\item[\ccc{AL_HA}
+]\item[\ccc{AL_1HA}
+]\item[\ccc{AL_2HA}
+]\item[\ccc{AL_CB}
+]\item[\ccc{AL_HB}
+]\item[\ccc{AL_1HB}
+]\item[\ccc{AL_2HB}
+]\item[\ccc{AL_3HB}
+]\item[\ccc{AL_OXT}
+]\item[\ccc{AL_CH3}
+]\item[\ccc{AL_CG}
+]\item[\ccc{AL_CG1}
+]\item[\ccc{AL_CG2}
+]\item[\ccc{AL_HG}
+]\item[\ccc{AL_1HG}
+]\item[\ccc{AL_2HG}
+]\item[\ccc{AL_1HG1}
+]\item[\ccc{AL_2HG1}
+]\item[\ccc{AL_3HG1}
+]\item[\ccc{AL_1HG2}
+]\item[\ccc{AL_2HG2}
+]\item[\ccc{AL_3HG2}
+]\item[\ccc{AL_OG}
+]\item[\ccc{AL_OG1}
+]\item[\ccc{AL_SG}
+]\item[\ccc{AL_CD}
+]\item[\ccc{AL_CD1}
+]\item[\ccc{AL_CD2}
+]\item[\ccc{AL_HD}
+]\item[\ccc{AL_1HD}
+]\item[\ccc{AL_2HD}
+]\item[\ccc{AL_3HD}
+]\item[\ccc{AL_1HD1}
+]\item[\ccc{AL_2HD1}
+]\item[\ccc{AL_3HD1}
+]\item[\ccc{AL_1HD2}
+]\item[\ccc{AL_2HD2}
+]\item[\ccc{AL_3HD2}
+]\item[\ccc{AL_SD}
+]\item[\ccc{AL_OD1}
+]\item[\ccc{AL_OD2}
+]\item[\ccc{AL_ND1}
+]\item[\ccc{AL_ND2}
+]\item[\ccc{AL_CE}
+]\item[\ccc{AL_CE1}
+]\item[\ccc{AL_CE2}
+]\item[\ccc{AL_CE3}
+]\item[\ccc{AL_HE}
+]\item[\ccc{AL_1HE}
+]\item[\ccc{AL_2HE}
+]\item[\ccc{AL_3HE}
+]\item[\ccc{AL_1HE2}
+]\item[\ccc{AL_2HE2}
+]\item[\ccc{AL_OE1}
+]\item[\ccc{AL_OE2}
+]\item[\ccc{AL_NE}
+]\item[\ccc{AL_NE1}
+]\item[\ccc{AL_NE2}
+]\item[\ccc{AL_CZ}
+]\item[\ccc{AL_CZ2}
+]\item[\ccc{AL_CZ3}
+]\item[\ccc{AL_NZ}
+]\item[\ccc{AL_HZ}
+]\item[\ccc{AL_1HZ}
+]\item[\ccc{AL_2HZ}
+]\item[\ccc{AL_3HZ}
+]\item[\ccc{AL_CH2}
+]\item[\ccc{AL_NH1}
+]\item[\ccc{AL_NH2}
+]\item[\ccc{AL_OH}
+]\item[\ccc{AL_HH}
+]\item[\ccc{AL_1HH1}
+]\item[\ccc{AL_2HH1}
+]\item[\ccc{AL_HH2}
+]\item[\ccc{AL_1HH2}
+]\item[\ccc{AL_2HH2}
+]\item[\ccc{AL_1HH3}
+]\item[\ccc{AL_2HH3}
+]\item[\ccc{AL_3HH3}
+]\item[\ccc{AL_P}
+]\item[\ccc{AL_OP1}
+]\item[\ccc{AL_OP2}
+]\item[\ccc{AL_O5p}
+]\item[\ccc{AL_C5p}
+]\item[\ccc{AL_H5p}
+]\item[\ccc{AL_H5pp}
+]\item[\ccc{AL_C4p}
+]\item[\ccc{AL_H4p}
+]\item[\ccc{AL_O4p}
+]\item[\ccc{AL_C1p}
+]\item[\ccc{AL_H1p}
+]\item[\ccc{AL_C3p}
+]\item[\ccc{AL_H3p}
+]\item[\ccc{AL_O3p}
+]\item[\ccc{AL_C2p}
+]\item[\ccc{AL_H2p}
+]\item[\ccc{AL_H2pp}
+]\item[\ccc{AL_O2p}
+]\item[\ccc{AL_HO2p}
+]\item[\ccc{AL_N9}
+]\item[\ccc{AL_C8}
+]\item[\ccc{AL_H8}
+]\item[\ccc{AL_N7}
+]\item[\ccc{AL_C5}
+]\item[\ccc{AL_C4}
+]\item[\ccc{AL_N3}
+]\item[\ccc{AL_C2}
+]\item[\ccc{AL_H2}
+]\item[\ccc{AL_N1}
+]\item[\ccc{AL_C6}
+]\item[\ccc{AL_N6}
+]\item[\ccc{AL_H61}
+]\item[\ccc{AL_H62}
+]\item[\ccc{AL_O6}
+]\item[\ccc{AL_H1}
+]\item[\ccc{AL_N2}
+]\item[\ccc{AL_H21}
+]\item[\ccc{AL_H22}
+]\item[\ccc{AL_H6}
+]\item[\ccc{AL_H5}
+]\item[\ccc{AL_O2}
+]\item[\ccc{AL_N4}
+]\item[\ccc{AL_H41}
+]\item[\ccc{AL_H42}
+]\item[\ccc{AL_H3}
+]\item[\ccc{AL_O4}
+]\item[\ccc{AL_C7}
+]\item[\ccc{AL_H71}
+]\item[\ccc{AL_H72}
+]\item[\ccc{AL_H73}
+]\item[\ccc{AL_LAST_LABEL}
+]\end{description}
+}
+\ccGlue
+
+%END-AUTO(\ccConstants)
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Monomer();}
+{
+Default constructor. Makes and invalid monomer.
+}
+\ccGlue
+\ccConstructor{Monomer(Type al);}
+{
+Make a monomer of a given type.
+}
+\ccGlue
+\ccConstructor{Monomer(const Monomer& o);}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Monomer& operator =(const Monomer& o);}
+{
+}
+\ccGlue
+\ccMethod{void copy_from(const Monomer& o);}
+{
+}
+\ccGlue
+\ccMethod{void swap_with(Monomer& o);}
+{
+}
+\ccGlue
+\ccMethod{Type type() const;}
+{
+The label for the monomer.
+}
+\ccGlue
+\ccMethod{Atoms atoms();}
+{
+}
+\ccGlue
+\ccMethod{Atom_consts atoms() const;}
+{
+}
+\ccGlue
+\ccMethod{bool contains(Atom_key k) const;}
+{
+}
+\ccGlue
+\ccMethod{Atoms::iterator::reference get(Atom_key k);}
+{
+}
+\ccGlue
+\ccMethod{Atoms::iterator find(Atom_key k);}
+{
+}
+\ccGlue
+\ccMethod{Atom_consts::const_iterator::value_type get(Atom_key k) const;}
+{
+}
+\ccGlue
+\ccMethod{Atom_consts::const_iterator find(Atom_key k) const;}
+{
+}
+\ccGlue
+\ccMethod{void insert(Atom_key k, const Atom& m);}
+{
+}
+\ccGlue
+\ccMethod{Monomer::Atoms::iterator insert_internal(Atom_key k, const Atom& a);}
+{
+}
+\ccGlue
+\ccMethod{bool can_have_atom(Atom_key al) const;}
+{
+Return true if monomer of this type can have atoms of that type.
+}
+\ccGlue
+\ccMethod{void set_atom_from_string(const char * str, const Atom& a);}
+{
+Set an atom using a string as a key.
+}
+\ccGlue
+\ccMethod{void erase_atom(Atom_key al);}
+{
+Remove an atom from the monomer.
+}
+\ccGlue
+\ccMethod{void dump(std::ostream& out) const;}
+{
+Write it for debugging.
+}
+\ccGlue
+\ccMethod{std::ostream& write(std::ostream& out) const;}
+{
+Write it for debugging.
+}
+\ccGlue
+\ccMethod{int write(char chain, int monomer_index, char insert_code, int start_index, std::ostream& out) const;}
+{
+Write the lines for a pdb file.
+Indices start at the \ccc{start_index} and the new \ccc{start_index} is returned.
+}
+\ccGlue
+\ccMethod{Bonds bonds() const;}
+{
+}
+\ccGlue
+\ccMethod{Point sidechain_point() const;}
+{
+Return a point representing the sidechain.
+If the sidechain is empty this returns the CA location. Otherwise it returns the location of some atom or the average of some atom locations.
+}
+\ccGlue
+\ccMethod{void set_has_bonds(bool tf);}
+{
+Set whether all the inter-atom bonds are present or not.
+This must be true before \ccc{Monomer::bonds_begin}() is called.
+}
+\ccGlue
+\ccMethod{bool has_bonds() const;}
+{
+Return whether this monomer has the inter-atom bonds computed.
+}
+\ccGlue
+\ccMethod{Atom_consts::const_iterator front_atom() const;}
+{
+Return the label of the first atom along the backbone in this monomer.
+}
+\ccGlue
+\ccMethod{Atom_consts::const_iterator back_atom() const;}
+{
+Return the label of the last atom along the backbone in this monomer.
+}
+\ccGlue
+\ccMethod{Atoms::iterator front_atom();}
+{
+Return the label of the first atom along the backbone in this monomer.
+}
+\ccGlue
+\ccMethod{Atoms::iterator back_atom();}
+{
+Return the label of the last atom along the backbone in this monomer.
+}
+\ccGlue
+\ccMethod{static Type type(const std::string& st);}
+{
+[static] \\
+Convert a string for an amino acid type into a tag.
+}
+\ccGlue
+\ccMethod{static std::string type_string(Type rl);}
+{
+[static] \\
+A string so you can write an amino acid type.
+}
+\ccGlue
+\ccMethod{static Atom::Type element(Atom_key al);}
+{
+[static] \\
+Return the element corresponding to an atom label.
+}
+\ccGlue
+\ccMethod{static std::string atom_key_string(Atom_key al);}
+{
+[static] \\
+return the string corresponding to an atom key
+}
+\ccGlue
+\ccMethod{static Atom_key atom_key(const char * c);}
+{
+[static] \\
+Return an atom type from a string.
+Note, this type may be adjusted when the atoms is added to a monomer to address naming inconsistencies.
+}
+\ccGlue
+\ccMethod{bool is_amino_acid() const;}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\ccSeeAlso
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{PDB/Monomer.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{PDB/Monomer.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

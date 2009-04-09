@@ -1,0 +1,231 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Model.tex
+% +------------------------------------------------------------------------+
+% | 09.04.2009   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: PDB
+% |
+\RCSdef{\RCSModelRev}{$Id$}
+\RCSdefDate{\RCSModelDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[PDB::]{Model}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+A class representing a single model from a PDB file.
+
+You can iterator through the chains and soon the heterogens.
+
+%END-AUTO(\ccDefinition)
+  
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/PDB/Model.h}
+
+%END-AUTO(\ccInclude)
+
+\ccIsModel
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Heterogen_key}
+{
+}
+\ccGlue
+\ccNestedType{Chain_key}
+{
+}
+\ccGlue
+\ccNestedType{Chains}
+{
+Iterator through the chains.
+}
+\ccGlue
+\ccNestedType{Chain_consts}
+{
+}
+\ccGlue
+\ccNestedType{Heterogens}
+{
+An iterator through the heterogen objects.
+}
+\ccGlue
+\ccNestedType{Heterogen_consts}
+{
+}
+\ccGlue
+\ccNestedType{Bond}
+{
+A chemical bond within the protein.
+}
+\ccGlue
+\ccNestedType{Atoms}
+{
+An iterator to iterate through all the atoms of the protein
+}
+\ccGlue
+\ccNestedType{Atom_consts}
+{
+}
+\ccGlue
+\ccNestedType{Bonds}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Model();}
+{
+Construct an empty model.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{void swap_with(Model& o);}
+{
+}
+\ccGlue
+\ccMethod{void write(int model_index, std::ostream& out) const;}
+{
+write to a pdb
+}
+\ccGlue
+\ccMethod{std::ostream& write(std::ostream& out) const;}
+{
+write screen
+}
+\ccGlue
+\ccMethod{Chains chains();}
+{
+}
+\ccGlue
+\ccMethod{Chain_consts chains() const;}
+{
+}
+\ccGlue
+\ccMethod{bool contains(Chain_key k) const;}
+{
+get the chain identified by k
+}
+\ccGlue
+\ccMethod{Chains::iterator::reference get(Chain_key k);}
+{
+}
+\ccGlue
+\ccMethod{Chains::iterator find(Chain_key k);}
+{
+}
+\ccGlue
+\ccMethod{Chain_consts::const_iterator::value_type get(Chain_key k) const;}
+{
+}
+\ccGlue
+\ccMethod{Chain_consts::const_iterator find(Chain_key k) const;}
+{
+}
+\ccGlue
+\ccMethod{void insert(Chain_key k, const Chain& m);}
+{
+}
+\ccGlue
+\ccMethod{Heterogens heterogens();}
+{
+}
+\ccGlue
+\ccMethod{Heterogen_consts heterogens() const;}
+{
+}
+\ccGlue
+\ccMethod{bool contains(Heterogen_key k) const;}
+{
+get the chain identified by k
+}
+\ccGlue
+\ccMethod{Heterogens::iterator::reference get(Heterogen_key k);}
+{
+}
+\ccGlue
+\ccMethod{Heterogens::iterator find(Heterogen_key k);}
+{
+}
+\ccGlue
+\ccMethod{Heterogen_consts::const_iterator::value_type get(Heterogen_key k) const;}
+{
+}
+\ccGlue
+\ccMethod{Heterogen_consts::const_iterator find(Heterogen_key k) const;}
+{
+}
+\ccGlue
+\ccMethod{void insert(Heterogen_key k, const Heterogen& m);}
+{
+}
+\ccGlue
+\ccMethod{Atoms atoms();}
+{
+}
+\ccGlue
+\ccMethod{Atom_consts atoms() const;}
+{
+}
+\ccGlue
+\ccMethod{Bonds bonds() const;}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\ccSeeAlso
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{PDB/Model.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{PDB/Model.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
