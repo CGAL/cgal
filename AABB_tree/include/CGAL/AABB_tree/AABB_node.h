@@ -259,16 +259,17 @@ private:
 
   void sort_primitives(Iterator a, Iterator b)
   {
+    Iterator middle = a + (b - a)/2;
     switch(longest_axis())
     {
     case CGAL_AXIS_X: // sort along x
-      std::sort(a,b,lower_x<Input>);
+      std::nth_element(a,middle,b,lower_x<Input>);
       break;
     case CGAL_AXIS_Y: // sort along y
-      std::sort(a,b,lower_y<Input>);
+      std::nth_element(a,middle,b,lower_y<Input>);
       break;
     default: // sort along z
-      std::sort(a,b,lower_z<Input>);
+      std::nth_element(a,middle,b,lower_z<Input>);
     }
   }
 
