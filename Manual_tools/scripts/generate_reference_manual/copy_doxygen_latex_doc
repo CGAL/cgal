@@ -453,7 +453,7 @@ sub format_comment_headings
 
     # Convert function parameters, enum values and return value descriptions to \ccCommentHeading to minimize length and indentation
     $buf =~ s/\\begin\{description\}\s*\\item\[(Returns):\]\s*(.*?)\s*\\end\{description\}/\\ccCommentHeading\{$1\} $2/smg;
-    $buf =~ s/\\begin\{description\}\s*\\item\[(Parameters|Values):\]\s*(\\begin\{description\}.*?\\end\{description\})\s*\\end\{description\}/\\ccCommentHeading\{$1\}\n$2/smg;
+    $buf =~ s/\\begin\{description\}\s*\\item\[(Parameters|Template Parameters|Values):\]\s*(\\begin\{description\}.*?\\end\{description\})\s*\\end\{description\}/\\ccCommentHeading\{$1\}\n$2/smg;
 
     # Replace list items in bold (ie with square brackets around item) by italics.
     # Note: latex_mangle() will replace simple quotes by \ccc{}.
