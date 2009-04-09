@@ -451,19 +451,21 @@ sub format_comment_headings
     # We allow to change it with an @commentheading command right before the list [L. Saboret extension].
     $buf =~ s/\\ccCommentHeading\{([^\}]*)\}\s*(\\begin\{description\}\s*\\item)\[Parameters:\]/$2\[$1:\]/smg;
 
-    # Convert parameters and return value descriptions to \ccCommentHeading to minimize length and identation
+    # Convert function parameters, enum values and return value descriptions to \ccCommentHeading to minimize length and indentation
     $buf =~ s/\\begin\{description\}\s*\\item\[(Returns):\]\s*(.*?)\s*\\end\{description\}/\\ccCommentHeading\{$1\} $2/smg;
-    $buf =~ s/\\begin\{description\}\s*\\item\[(.*?):\]\s*(\\begin\{description\}.*?\\end\{description\})\s*\\end\{description\}/\\ccCommentHeading\{$1\}\n$2/smg;
+    $buf =~ s/\\begin\{description\}\s*\\item\[(Parameters|Values):\]\s*(\\begin\{description\}.*?\\end\{description\})\s*\\end\{description\}/\\ccCommentHeading\{$1\}\n$2/smg;
 
     # Replace list items in bold (ie with square brackets around item) by italics.
     # Note: latex_mangle() will replace simple quotes by \ccc{}.
-    $buf =~ s/\\item\[(.*?)\]/\\item '$1': /g;
+    $buf =~ s/\\item\[(.*?):\]/\\item $1: /g;  # regular list items (end by ':') => no quotes
+    $buf =~ s/\\item\[(.*?)\]/\\item '$1': /g; # parameters => quotes
 
     # Flatten lists with only 1 item (to save space and avoid a cgal_manual bug
     # with 1-item lists inside the second curly braces pair of \ccXXX expressions).
     $buf =~ s/(\\begin\{description\}.*?\\end\{description\})/flatten_one_item_list($1)/smge;
 
-#     # Set vertical spacing = 0 in (parameters) descriptions (prettier)
+    # TODO: Uncomment the next line to set vertical spacing = 0 in parameters descriptions
+    # (=> prettier PDF but ugly Latex).
 #     $buf =~ s/\\begin\{description\}(.*?)\\end\{description\}/\\ccGlue\n\\begin\{description\}\\itemsep=0pt\\parskip=0pt$1\\end\{description\}/smg;
 
     # Return the formatted string
@@ -559,7 +561,7 @@ sub format_curly_brace_pairs_expressions
     {
         $buf =~ s/\\paragraph\{typedef.* (\w+)((\[.*\])?)\}/\\ccNestedType\{$1$2\}\n\{/g;
         $buf =~ s/\\paragraph\{enum\s(.*)\}/\\ccEnum\{enum $1\}\n\{/g;
-        $buf =~ s/\\item\[Enumerator/\\item\[Enumeration values/g;
+        $buf =~ s/\\item\[Enumerator/\\item\[Values/g;
         $buf =~ s/\\paragraph\{\Q$item_to_document\E\s+\((.*)\}/\\ccConstructor\{$item_to_document \($1;\}\n\{/g;
         $buf =~ s/\\paragraph\{(template\s*<.*?>\s*)\Q$item_to_document\E\s+\((.*)\}/\\ccConstructor\{$1$item_to_document \($2;\}\n\{/g;
         $buf =~ s/\\paragraph\{([^\(\)]*?)\}/\\ccVariable\{$1;\}\n\{/g;
