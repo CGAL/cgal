@@ -27,12 +27,26 @@ Faces are ignored.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{bool read_off_point_set(const char * pFilename, OutputIterator output);}
+\ccFunction{template<typename OutputIterator> bool read_off_point_set(std::istream& stream, OutputIterator output);}
 {
-Read points (positions + normals, if available) from a .off file (ASCII).
+Read points (positions + normals, if available) from a .off file (ASCII). Faces are ignored.
 \ccCommentHeading{Template Parameters}
 \ccc{OutputIterator}: \ccc{value_type} must be a model of the \ccc{PointWithNormal_3} concept.
 \ccCommentHeading{Returns} true on success.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{stream}: input stream. \item \ccc{output}: output iterator. \end{description}
+}
+\ccGlue
+\ccFunction{template<typename OutputIterator> bool read_off_point_set(std::istream& stream, OutputIterator output, bool read_normals);}
+{
+Read points (positions only) from a .off file (ASCII). Normals and faces are ignored.
+\ccCommentHeading{Template Parameters}
+\ccc{OutputIterator}: \ccc{value_type} must be \ccc{Point_3}.
+\ccCommentHeading{Returns} true on success.
+\ccCommentHeading{Parameters}
+\begin{description}
+\item \ccc{stream}: input stream. \item \ccc{output}: output iterator. \item \ccc{read_normals}: must be false. \end{description}
 }
 \ccGlue
 

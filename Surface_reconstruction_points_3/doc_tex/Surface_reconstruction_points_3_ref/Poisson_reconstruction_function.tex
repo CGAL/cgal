@@ -200,7 +200,7 @@ Get the region of interest, ignoring the outliers. This method is used to define
 \ccGlue
 \ccMethod{bool compute_implicit_function();}
 {
-The function \{\ccc{compute_implicit_function}\}() must be called after each insertion of oriented points. It computes the piecewise linear scalar function \ccc{f} by:\begin{itemize}
+The function \ccc{compute_implicit_function}() must be called after each insertion of oriented points. It computes the piecewise linear scalar function \ccc{f} by:\begin{itemize}
 \item applying Delaunay refinement.\item solving for \ccc{f} at each vertex of the triangulation with a sparse linear solver.\item shifting and orienting \ccc{f} such that 'f = 0' at all input points and 'f$<$0' inside the inferred surface.\end{itemize}
 Returns false on error.
 }
