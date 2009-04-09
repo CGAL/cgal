@@ -157,14 +157,15 @@ echo ""
 echo "Update the Reference Manual..."
 for cgal_doc in doc_tex/*_ref/*.tex
 do
-    # Skip main.tex and intro.tex
-    if [[ (`basename "${cgal_doc}"` != "main.tex") && \
-          (`basename "${cgal_doc}"` != "intro.tex") ]];
+    # If doc_tex/*_ref/ not empty.
+    # If $cgal_doc is not main.tex or intro.tex.
+    if [[ (-f "$cgal_doc") && \
+          (`basename "${cgal_doc}"` != "main.tex") && \
+          (`basename "${cgal_doc}"` != "intro.tex") ]]
     then
-        # Get the list of classes/structs/functions... documented in "${cgal_doc}"
+        # For each class/struct/function... documented in "${cgal_doc}"
         items=`cat ${cgal_doc} | perl -p -e 's/[ \t]//g' | egrep '^[^%]*\\\\begin\{ccRef' | \
             perl -p -e 's/^[^%]*\\\\begin\{ccRef.*?\}(.*?)\{(.*?)[<}].*/$1$2/g'`
-
         for item in $items
         do
             # Extract scope (namespace or a class name) of ${item} indicated in ${cgal_doc}.
@@ -222,23 +223,23 @@ do
                 echo "ERROR: cannot find doxygen documentation for ${scope}${item} (see `basename ${cgal_doc}`)"
             fi
         done
+
+        # Update citations (hard-coded).
+        # TODO: add here citations for all packages using generate_reference_manual.
+        perl -pi -e 's/\[(GHJV95|GOF95)\]/\\cite{cgal:ghjv-dpero-95}/s' "$cgal_doc"
+        perl -pi -e 's/\[FH05\]/\\cite{cgal:fh-survey-05}/s' "$cgal_doc"
+        perl -pi -e 's/\[Flo03\]/\\cite{cgal:f-mvc-03}/s' "$cgal_doc"
+        perl -pi -e 's/\[DMA02\]/\\cite{cgal:dma-ipsm-02}/s' "$cgal_doc"
+        perl -pi -e 's/\[LPRM02\]/\\cite{cgal:lprm-lscm-02}/s' "$cgal_doc"
+        perl -pi -e 's/\[Tut63\]/\\cite{t-hdg-63}/s' "$cgal_doc"
+        perl -pi -e 's/\[EDD\+95\]/\\cite{cgal:eddhls-maam-95}/s' "$cgal_doc"
+        perl -pi -e 's/\[Guennebaud07\]/\\cite{Guennebaud07}/s' "$cgal_doc"
+        perl -pi -e 's/\[GG07\]/\\cite{Guennebaud07}/s' "$cgal_doc"
+        perl -pi -e 's/\[Kazhdan06\]/\\cite{Kazhdan06}/s' "$cgal_doc"
+        perl -pi -e 's/\[KBH05\]/\\cite{Kazhdan06}/s' "$cgal_doc"
+        perl -pi -e 's/\[Hoppe92\]/\\cite{cgal:hddms-srup-92}/s' "$cgal_doc"
+        perl -pi -e 's/\[HDD\+92\]/\\cite{cgal:hddms-srup-92}/s' "$cgal_doc"
     fi
 done
-
-# Update citations (hard-coded).
-# TODO: add here citations for all packages using generate_reference_manual.
-perl -pi -e 's/\[(GHJV95|GOF95)\]/\\cite{cgal:ghjv-dpero-95}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[FH05\]/\\cite{cgal:fh-survey-05}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[Flo03\]/\\cite{cgal:f-mvc-03}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[DMA02\]/\\cite{cgal:dma-ipsm-02}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[LPRM02\]/\\cite{cgal:lprm-lscm-02}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[Tut63\]/\\cite{t-hdg-63}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[EDD\+95\]/\\cite{cgal:eddhls-maam-95}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[Guennebaud07\]/\\cite{Guennebaud07}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[GG07\]/\\cite{Guennebaud07}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[Kazhdan06\]/\\cite{Kazhdan06}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[KBH05\]/\\cite{Kazhdan06}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[Hoppe92\]/\\cite{cgal:hddms-srup-92}/s' doc_tex/*_ref/*.tex
-perl -pi -e 's/\[HDD\+92\]/\\cite{cgal:hddms-srup-92}/s' doc_tex/*_ref/*.tex
 
 exit 0
