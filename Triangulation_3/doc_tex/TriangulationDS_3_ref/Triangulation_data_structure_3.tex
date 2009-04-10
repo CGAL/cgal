@@ -19,6 +19,11 @@ structure and provides the optional
 geometric functionalities to be used as a parameter for a 
 3D-geometric triangulation (see Chapter~\ref{chapter-Triangulation3}). 
 
+The vertices and cells are stored in two nested containers, which are
+implemented using \ccc{CGAL::Compact_container}.  The class may offer some
+flexibility for the choice of container in the future, in the form of
+additional template parameters.
+
 \ccInclude{CGAL/Triangulation_data_structure_3.h}
 
 \ccParameters
@@ -37,6 +42,35 @@ They have the default values \ccc{Triangulation_ds_vertex_base_3<>} and
 
 The class \ccc{Triangulation_utils_3} defines basic computations on
 indices of vertices and neighbors of cells. 
+
+\begin{ccAdvanced}
+
+\ccCreationVariable{tds}
+
+In addition to the interface documented in the concept, the class offers the
+following types and functions.
+
+\ccTypes
+
+\ccTypedef{typedef CGAL::Compact_container<Vertex> Vertex_container;}{Vertex container type.}
+\ccGlue
+\ccTypedef{typedef CGAL::Compact_container<Cell>   Cell_container;}{Cell container type.}
+
+\ccOperations
+
+\ccMethod{Cell_container & cell_container() const;}
+{Returns a reference to the container of cells.}
+\ccGlue
+\ccMethod{Cell_container & cell_container();}
+{Returns a reference to the container of cells.}
+\ccGlue
+\ccMethod{Vertex_container & vertex_container() const;}
+{Returns a reference to the container of vertices.}
+\ccGlue
+\ccMethod{Vertex_container & vertex_container();}
+{Returns a reference to the container of vertices.}
+
+\end{ccAdvanced}
 
 \ccSeeAlso
 

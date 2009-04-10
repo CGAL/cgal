@@ -29,6 +29,9 @@ template <class Tds>
 void
 _test_cls_tds_3( const Tds &)
 {
+  typedef typename Tds::Vertex_container  Vertex_container;
+  typedef typename Tds::Cell_container    Cell_container;
+
   typedef typename Tds::Vertex            Vertex;
   typedef typename Tds::Cell              Cell;
   typedef typename Tds::Edge              Edge;
@@ -115,6 +118,14 @@ _test_cls_tds_3( const Tds &)
 
   assert(tds3.number_of_vertices()==2);
 
+  // Containers
+  Vertex_container & vertex_c = tds3.vertex_container();
+  Cell_container & cell_c = tds3.cell_container();
+
+  assert(vertex_c.size() == 2);
+  assert(cell_c.size() == 2);
+
+  // Flips
   std::cout << "  Test flip " << std::endl;
   assert(tds6.is_valid());
   Cell_iterator cit, cdone;

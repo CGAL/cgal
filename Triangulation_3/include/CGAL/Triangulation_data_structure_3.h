@@ -69,9 +69,6 @@ public:
 
 private:
 
-  typedef Compact_container<Cell>                       Cell_container;
-  typedef Compact_container<Vertex>                     Vertex_container;
-
   friend class Triangulation_ds_facet_iterator_3<Tds>;
   friend class Triangulation_ds_edge_iterator_3<Tds>;
 
@@ -79,6 +76,9 @@ private:
   friend class Triangulation_ds_facet_circulator_3<Tds>;
 
 public:
+
+  typedef Compact_container<Cell>                  Cell_container;
+  typedef Compact_container<Vertex>                Vertex_container;
 
   typedef typename Cell_container::size_type       size_type;
   typedef typename Cell_container::difference_type difference_type;
@@ -954,6 +954,15 @@ public:
     return Facet(neighbor_cell, opposite_index);
   }
 
+  // We need the const_cast<>s because TDS is not const-correct.
+  Cell_container & cell_container() { return _cell_container; }
+  Cell_container & cell_container() const
+  { return const_cast<Tds*>(this)->_cell_container; }
+
+  Vertex_container & vertex_container() {return _vertex_container;}
+  Vertex_container & vertex_container() const
+  { return const_cast<Tds*>(this)->_vertex_container; }
+
 private:
 
   // Change the orientation of the cell by swapping indices 0 and 1.
@@ -966,15 +975,6 @@ private:
       c->set_neighbor(0, c->neighbor(1));
       c->set_neighbor(1, tmp_c);
   }
-
-  // We need the const_cast<>s because TDS is not const-correct.
-  Cell_container & cell_container() { return _cell_container; }
-  Cell_container & cell_container() const
-  { return const_cast<Tds*>(this)->_cell_container; }
-
-  Vertex_container & vertex_container() {return _vertex_container;}
-  Vertex_container & vertex_container() const
-  { return const_cast<Tds*>(this)->_vertex_container; }
 
   // in dimension i, number of vertices >= i+2 
   // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
