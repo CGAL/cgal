@@ -21,6 +21,7 @@
 #ifndef CGAL_AABB_NODE_H
 #define CGAL_AABB_NODE_H
 
+#include <CGAL/Profile_counter.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>
@@ -66,6 +67,7 @@ public:
   typedef std::pair<Point, Input> Point_with_input;
 
   typedef typename PSC::Traits PSC_kernel;
+  typedef typename PSC_kernel::FT PSC_FT;
   typedef typename PSC_kernel::Point_3 PSC_point;
   typedef typename PSC_kernel::Vector_3 PSC_vector;
   typedef typename PSC_kernel::Triangle_3 PSC_triangle;
@@ -196,6 +198,7 @@ private:
   // compute bbox for one input primitive
   Bbox compute_bbox(Input f)
   {
+    CGAL_PROFILER("Call to AABB_node::compute_bbox(Input)");
     const PSC_point a = f->halfedge()->vertex()->point();
     const PSC_point b = f->halfedge()->next()->vertex()->point();
     const PSC_point c = f->halfedge()->next()->next()->vertex()->point();
@@ -213,6 +216,7 @@ private:
 
   static Point centroid(Input f)
   {
+    CGAL_PROFILER("Call to AABB_node::centroid(Input)");
     const PSC_point a = f->halfedge()->vertex()->point();
     const PSC_point b = f->halfedge()->next()->vertex()->point();
     const PSC_point c = f->halfedge()->next()->next()->vertex()->point();
@@ -244,15 +248,42 @@ private:
 
   static bool lower_x(const Input& f1, const Input& f2)
   {
-    return centroid(f1).x() < centroid(f2).x();
+    CGAL_PROFILER("Call to AABB_node::less_x(Input, Input)");
+    const PSC_FT& ax1 = f1->halfedge()->vertex()->point().x();
+    const PSC_FT& bx1 = f1->halfedge()->next()->vertex()->point().x();
+    const PSC_FT& cx1 = f1->halfedge()->next()->next()->vertex()->point().x();
+
+    const PSC_FT& ax2 = f2->halfedge()->vertex()->point().x();
+    const PSC_FT& bx2 = f2->halfedge()->next()->vertex()->point().x();
+    const PSC_FT& cx2 = f2->halfedge()->next()->next()->vertex()->point().x();
+
+    return (ax1+bx1+cx1) < (ax2+bx2+cx2);
   }
   static bool lower_y(const Input& f1, const Input& f2)
   {
-    return centroid(f1).y() < centroid(f2).y();
+    CGAL_PROFILER("Call to AABB_node::less_y(Input, Input)");
+    const PSC_FT& ay1 = f1->halfedge()->vertex()->point().y();
+    const PSC_FT& by1 = f1->halfedge()->next()->vertex()->point().y();
+    const PSC_FT& cy1 = f1->halfedge()->next()->next()->vertex()->point().y();
+
+    const PSC_FT& ay2 = f2->halfedge()->vertex()->point().y();
+    const PSC_FT& by2 = f2->halfedge()->next()->vertex()->point().y();
+    const PSC_FT& cy2 = f2->halfedge()->next()->next()->vertex()->point().y();
+
+    return (ay1+by1+cy1) < (ay2+by2+cy2);
   }
   static bool lower_z(const Input& f1, const Input& f2)
   {
-    return centroid(f1).z() < centroid(f2).z();
+    CGAL_PROFILER("Call to AABB_node::less_z(Input, Input)");
+    const PSC_FT& az1 = f1->halfedge()->vertex()->point().z();
+    const PSC_FT& bz1 = f1->halfedge()->next()->vertex()->point().z();
+    const PSC_FT& cz1 = f1->halfedge()->next()->next()->vertex()->point().z();
+
+    const PSC_FT& az2 = f2->halfedge()->vertex()->point().z();
+    const PSC_FT& bz2 = f2->halfedge()->next()->vertex()->point().z();
+    const PSC_FT& cz2 = f2->halfedge()->next()->next()->vertex()->point().z();
+
+    return (az1+bz1+cz1) < (az2+bz2+cz2);
   }
 
   enum Axis { CGAL_AXIS_X = 0, CGAL_AXIS_Y, CGAL_AXIS_Z};
