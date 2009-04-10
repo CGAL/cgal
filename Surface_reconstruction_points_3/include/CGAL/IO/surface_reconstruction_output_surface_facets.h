@@ -74,7 +74,7 @@ surface_reconstruction_output_surface_facets(
 
 /// Get reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
 ///
-/// This variant exports the surface as a polyhedron. 
+/// This variant exports the surface as a polyhedron.
 /// It requires the surface to be manifold. For this purpose,
 /// you may call make_surface_mesh() with Manifold_tag or Manifold_with_boundary_tag parameter.
 ///
@@ -84,7 +84,14 @@ surface_reconstruction_output_surface_facets(
 ///
 /// @return true on success.
 template <class SurfaceMeshComplex_2InTriangulation_3,
-          class PolyhedronTraits_3, class PolyhedronItems_3, class HalfedgeDS, class Alloc>
+          class PolyhedronTraits_3,
+          class PolyhedronItems_3,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+          template < class T, class I, class A>
+#endif
+            class HalfedgeDS,
+          class Alloc
+         >
 void
 surface_reconstruction_output_surface_facets(
   const SurfaceMeshComplex_2InTriangulation_3& c2t3, ///< Input surface.
@@ -93,7 +100,7 @@ surface_reconstruction_output_surface_facets(
   typedef SurfaceMeshComplex_2InTriangulation_3 C2t3;
   typedef Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3, HalfedgeDS, Alloc> Polyhedron;
 
-  Complex_2_in_triangulation_3_polyhedron_builder<C2t3, Polyhedron>  builder(c2t3);    
+  Complex_2_in_triangulation_3_polyhedron_builder<C2t3, Polyhedron>  builder(c2t3);
   output_polyhedron.delegate(builder);
 }
 
