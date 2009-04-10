@@ -1,4 +1,4 @@
-// Copyright (c) 2007  INRIA Sophia-Antipolis (France).  All rights reserved.
+// Copyright (c) 2007,2009  INRIA Sophia-Antipolis (France).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -16,33 +16,30 @@
 //
 // Author(s)     : Sylvain Pion
  
-#ifndef CGAL_DEFAULT_ARGUMENT_H
-#define CGAL_DEFAULT_ARGUMENT_H
+#ifndef CGAL_DEFAULT_H
+#define CGAL_DEFAULT_H
 
-// Default_argument is a tag that can be used to shrink mangled names and
+namespace CGAL {
+
+// Default is a tag that can be used to shrink mangled names and
 // error messages in place of the default value of template arguments.
 // It could also be used by users to specify default values to arguments which
 // are not at the end of the argument list.
 // It can also be useful to easily break cyclic dependencies in templates.
-// Maybe we should provide a macro to disable it so as to show the arguments?
-// Maybe we could document it?
 
-// If_default_argument is a helper class which helps using this scheme.
+struct Default
+{
+    template <typename Argument, typename Value>
+    struct Get {
+        typedef Argument type;
+    };
 
-namespace CGAL {
-
-struct Default_argument;
-
-template < typename Argument, typename Default >
-struct If_default_argument {
-    typedef Argument type;
-};
-
-template < typename Default >
-struct If_default_argument <Default_argument, Default> {
-    typedef Default type;
+    template <typename Value>
+    struct Get <Default, Value> {
+        typedef Value type;
+    };
 };
 
 }
 
-#endif // CGAL_DEFAULT_ARGUMENT_H
+#endif // CGAL_DEFAULT_H

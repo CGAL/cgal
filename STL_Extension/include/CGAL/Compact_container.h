@@ -21,7 +21,7 @@
 #define CGAL_COMPACT_CONTAINER_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Default_argument.h>
+#include <CGAL/Default.h>
 
 #include <iterator>
 #include <algorithm>
@@ -109,11 +109,11 @@ namespace CGALi {
   class CC_iterator;
 }
 
-template < class T, class Allocator_ = Default_argument >
+template < class T, class Allocator_ = Default >
 class Compact_container
 {
   typedef Allocator_                                Al;
-  typedef typename If_default_argument<Al, CGAL_ALLOCATOR(T) >::type Allocator;
+  typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
   typedef Compact_container <T, Al>                 Self;
   typedef Compact_container_traits <T>              Traits;
 public:
