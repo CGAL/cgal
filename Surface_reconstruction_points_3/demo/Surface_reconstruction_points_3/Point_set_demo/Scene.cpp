@@ -111,9 +111,9 @@ Scene::convertToPointSet(Item_id index)
     return -1;
 
   // Check if scene item is a polyhedron
-  const Scene_item* item = entries[index];
-  const Scene_polyhedron_item* poly_item = 
-    qobject_cast<const Scene_polyhedron_item*>(item);
+  Scene_item* item = entries[index];
+  Scene_polyhedron_item* poly_item = 
+    qobject_cast<Scene_polyhedron_item*>(item);
   if(poly_item == NULL || poly_item->polyhedron() == NULL)
     return -1;
 
@@ -124,6 +124,11 @@ Scene::convertToPointSet(Item_id index)
     new_item->setColor(item->color());
     new_item->setVisible(item->visible());
     addItem(new_item);
+
+    // Hide polyhedron
+    poly_item->setVisible(false);
+    itemChanged(index);
+
     return entries.size() - 1;
   }
   else

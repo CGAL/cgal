@@ -36,7 +36,7 @@ Point_set_demo_xyz_plugin::load(QFileInfo fileinfo) {
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+    std::cerr << "Error! Cannot open file " << fileinfo.filePath().toStdString() << std::endl;
     return NULL;
   }
 

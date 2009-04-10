@@ -19,12 +19,16 @@
 #ifndef CGAL_SURFACE_RECONSTRUCTION_OUTPUT_H
 #define CGAL_SURFACE_RECONSTRUCTION_OUTPUT_H
 
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Complex_2_in_triangulation_3_polyhedron_builder.h>
 #include <CGAL/value_type_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
 /// Get reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
+///
+/// This variant exports the surface as a triangle soup.
 ///
 /// @commentheading Template Parameters:
 /// @param SurfaceMeshComplex_2InTriangulation_3 model of the SurfaceMeshComplex_2InTriangulation_3 concept.
@@ -34,10 +38,12 @@ CGAL_BEGIN_NAMESPACE
 template <class SurfaceMeshComplex_2InTriangulation_3,
           typename OutputIterator>
 void
-surface_reconstruction_output_surface_facets(const SurfaceMeshComplex_2InTriangulation_3& c2t3, ///< Input surface.
-                                             OutputIterator output) ///< Output triangles soup.
+surface_reconstruction_output_surface_facets(
+  const SurfaceMeshComplex_2InTriangulation_3& c2t3, ///< Input surface.
+  OutputIterator output_iterator) ///< Output iterator.
 {
-  typedef typename SurfaceMeshComplex_2InTriangulation_3::Triangulation Tr;
+  typedef SurfaceMeshComplex_2InTriangulation_3 C2t3;
+  typedef typename C2t3::Triangulation Tr;
   typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Point Point;
@@ -59,10 +65,36 @@ surface_reconstruction_output_surface_facets(const SurfaceMeshComplex_2InTriangu
         if(i != (*fit).second)
           points[index++] = (*fit).first->vertex(i)->point();
 
-      *output = Triangle(points[0],points[1],points[2]);
-      output++;
+      *output_iterator = Triangle(points[0],points[1],points[2]);
+      output_iterator++;
     }
   }
+}
+
+
+/// Get reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
+///
+/// This variant exports the surface as a polyhedron. 
+/// It requires the surface to be manifold. For this purpose,
+/// you may call make_surface_mesh() with Manifold_tag or Manifold_with_boundary_tag parameter.
+///
+/// @commentheading Template Parameters:
+/// @param SurfaceMeshComplex_2InTriangulation_3 model of the SurfaceMeshComplex_2InTriangulation_3 concept.
+/// @param PolyhedronTraits_3, PolyhedronItems_3, HalfedgeDS, Alloc see Polyhedron_3 declaration.
+///
+/// @return true on success.
+template <class SurfaceMeshComplex_2InTriangulation_3,
+          class PolyhedronTraits_3, class PolyhedronItems_3, class HalfedgeDS, class Alloc>
+void
+surface_reconstruction_output_surface_facets(
+  const SurfaceMeshComplex_2InTriangulation_3& c2t3, ///< Input surface.
+  Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3, HalfedgeDS, Alloc>& output_polyhedron) ///< Output polyhedron.
+{
+  typedef SurfaceMeshComplex_2InTriangulation_3 C2t3;
+  typedef Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3, HalfedgeDS, Alloc> Polyhedron;
+
+  Complex_2_in_triangulation_3_polyhedron_builder<C2t3, Polyhedron>  builder(c2t3);    
+  output_polyhedron.delegate(builder);
 }
 
 

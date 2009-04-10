@@ -146,10 +146,9 @@ CPoissonDoc::CPoissonDoc()
   m_poisson_solved = false; // Need to solve Poisson equation
 
   // Poisson options
-  m_sm_angle_poisson = 20.0; // Theorical guaranty if angle >= 30, but slower
-  m_sm_radius_poisson = 0.1; // Upper bound of Delaunay balls radii. 0.1 is fine (LR).
-  m_sm_error_bound_poisson = 1e-3; // Default value 1e-3 is fine.
-  m_sm_distance_poisson = 0.002; // Upper bound of distance to surface (Poisson). 0.01 = fast, 0.002 = smooth.
+  m_sm_angle_poisson = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
+  m_sm_radius_poisson = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
+  m_sm_distance_poisson = 0.002; // Approximation error w.r.t. p.s.r. For Poisson: 0.01 = fast, 0.002 = smooth.
   m_dr_shell_size = 0.01; // 3 Delaunay refinement options
   m_dr_sizing = 0.5 * m_dr_shell_size;
   m_dr_max_vertices = (unsigned int)5e6;
@@ -157,10 +156,9 @@ CPoissonDoc::CPoissonDoc()
   m_lambda = 0.1; // laplacian smoothing
 
   // APSS options
-  m_sm_angle_apss = 20.0; // Theorical guaranty if angle >= 30, but slower
-  m_sm_radius_apss = 0.1; // Upper bound of Delaunay balls radii. 0.1 is fine (LR).
-  m_sm_error_bound_apss = 1e-3; // Default value 1e-3 is fine.
-  m_sm_distance_apss = 0.003; // Upper bound of distance to surface (APSS). 0.015 = fast, 0.003 = smooth.
+  m_sm_angle_apss = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
+  m_sm_radius_apss = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
+  m_sm_distance_apss = 0.003; // Approximation error w.r.t. p.s.r. (APSS). 0.015 = fast, 0.003 = smooth.
                               // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
   m_nb_neighbors_apss = 24; // #neighbors to compute APPS sphere fitting. 12 = fast, 24 = robust (GG).
 
@@ -568,11 +566,9 @@ void CPoissonDoc::OnEditOptions()
   dlg.m_sm_angle_poisson = m_sm_angle_poisson;
   dlg.m_sm_radius_poisson = m_sm_radius_poisson;
   dlg.m_sm_distance_poisson = m_sm_distance_poisson;
-  dlg.m_sm_error_bound_poisson = m_sm_error_bound_poisson;
   dlg.m_sm_angle_apss = m_sm_angle_apss;
   dlg.m_sm_radius_apss = m_sm_radius_apss;
   dlg.m_sm_distance_apss = m_sm_distance_apss;
-  dlg.m_sm_error_bound_apss = m_sm_error_bound_apss;
   dlg.m_dr_sizing = m_dr_sizing;
   dlg.m_dr_shell_size = m_dr_shell_size;
   dlg.m_dr_max_vertices = m_dr_max_vertices;
@@ -595,11 +591,9 @@ void CPoissonDoc::OnEditOptions()
     m_sm_angle_poisson = dlg.m_sm_angle_poisson;
     m_sm_radius_poisson = dlg.m_sm_radius_poisson;
     m_sm_distance_poisson = dlg.m_sm_distance_poisson;
-    m_sm_error_bound_poisson = dlg.m_sm_error_bound_poisson;
     m_sm_angle_apss = dlg.m_sm_angle_apss;
     m_sm_radius_apss = dlg.m_sm_radius_apss;
     m_sm_distance_apss = dlg.m_sm_distance_apss;
-    m_sm_error_bound_apss = dlg.m_sm_error_bound_apss;
     m_dr_sizing = dlg.m_dr_sizing;
     m_dr_shell_size = dlg.m_dr_shell_size;
     m_dr_max_vertices = dlg.m_dr_max_vertices;
@@ -1121,21 +1115,12 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(*m_poisson_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius),
-                      m_sm_error_bound_poisson*size/sm_sphere_radius); // dichotomy stops when segment < m_sm_error_bound_poisson*size
+                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius)); 
 
     // defining meshing criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_poisson,  // lower bound of facets angles (degrees)
-                                                        m_sm_radius_poisson*size,  // upper bound of Delaunay balls radii
-                                                        m_sm_distance_poisson*size); // upper bound of distance to surface
-
-    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound_poisson<<" * point set radius,\n"
-                      << "                    sphere center=("<<sm_sphere_center << "),\n"
-                      << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
-                      << "                    angle="<<m_sm_angle_poisson << " degrees,\n"
-                      << "                    radius="<<m_sm_radius_poisson<<" * p.s.r.,\n"
-                      << "                    distance="<<m_sm_distance_poisson<<" * p.s.r.,\n"
-                      << "                    Manifold_with_boundary_tag)\n";
+    CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_poisson,  // Min triangle angle (degrees)
+                                                        m_sm_radius_poisson*size,  // Max triangle radius
+                                                        m_sm_distance_poisson*size); // Approximation error
 
     // meshing surface
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
@@ -1461,11 +1446,8 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     m_surface.clear();
 
     // Create implicit function
-    CGAL_TRACE_STREAM << "  Compute APSS implicit function (k="<<m_nb_neighbors_apss << ")\n";
     m_apss_function = new APSS_reconstruction_function(m_points.begin(), m_points.end(),
                                                        m_nb_neighbors_apss);
-
-    CGAL_TRACE_STREAM << "  Surface meshing\n";
 
     // Get inner point
     Point inner_point = m_apss_function->get_inner_point();
@@ -1486,21 +1468,12 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(*m_apss_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius),
-                      m_sm_error_bound_apss*size/sm_sphere_radius); // dichotomy stops when segment < m_sm_error_bound_apss*size
+                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius)); 
 
     // defining meshing criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_apss,  // lower bound of facets angles (degrees)
-                                                        m_sm_radius_apss*size,  // upper bound of Delaunay balls radii
-                                                        m_sm_distance_apss*size); // upper bound of distance to surface
-
-    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<m_sm_error_bound_apss<<" * point set radius,\n"
-                      << "                    sphere center=("<<sm_sphere_center << "),\n"
-                      << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
-                      << "                    angle="<<m_sm_angle_apss << " degrees,\n"
-                      << "                    radius="<<m_sm_radius_apss<<" * p.s.r.,\n"
-                      << "                    distance="<<m_sm_distance_apss<<" * p.s.r.,\n"
-                      << "                    Manifold_with_boundary_tag)\n";
+    CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_apss,  // Min triangle angle (degrees)
+                                                        m_sm_radius_apss*size,  // Max triangle radius
+                                                        m_sm_distance_apss*size); // Approximation error
 
     // meshing surface
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());

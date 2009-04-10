@@ -125,8 +125,11 @@ MainWindow::MainWindow(QWidget* parent)
   connect(this, SIGNAL(openRecentFile(QString)),
 	  this, SLOT(open(QString)));
 
-  // Reset the "Operation menu"
-  clearMenu(ui->menuOperations);
+  // Empty the menus implemented by plugins: 
+  // "Analysis", "Processing", "Reconstruction".
+  clearMenu(ui->menuAnalysis);
+  clearMenu(ui->menuProcessing);
+  clearMenu(ui->menuReconstruction);
 
   // Load plugins, and re-enable actions that need it.
   loadPlugins();
@@ -172,9 +175,11 @@ bool MainWindow::initPlugin(QObject* obj)
     plugin->init(this, this->scene, this);
 
     Q_FOREACH(QAction* action, plugin->actions()) {
-      // If action does not belong to the menus, add it to "Operations" menu
+      // If action does not belong to the menus, add it to "Edit" menu.
+      // TODO: implement something less naive.
       if(!childs.contains(action)) {
-        ui->menuOperations->addAction(action);
+        std::cerr << "Add " << action->text().toStdString() << " menu item to the Edit menu\n";
+        ui->menuEdit->addAction(action);
       }
       // Show and enable menu item
       addAction(action);

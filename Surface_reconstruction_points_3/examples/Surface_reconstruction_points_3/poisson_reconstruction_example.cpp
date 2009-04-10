@@ -11,7 +11,7 @@
 #include <deque>
 #include <fstream>
 
-// types
+// Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
@@ -26,6 +26,11 @@ typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surfac
 
 int main(void)
 {
+    // Poisson options
+    FT sm_angle = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
+    FT sm_radius = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
+    FT sm_distance = 0.01; // Approximation error w.r.t. p.s.r. For Poisson: 0.01 = fast, 0.002 = smooth.
+
     // Read a .xyz point set file in points[]
     PointList points;
     std::ifstream stream("data/oni.xyz");
@@ -36,37 +41,34 @@ int main(void)
       return EXIT_FAILURE;
     }
 
-    // Poisson options
-    FT sm_angle_poisson = 20.0; // Theorical guaranty if angle >= 30, but slower
-    FT sm_radius_poisson = 0.1; // Upper bound of Delaunay balls radii. 0.1 is fine (LR).
-    FT sm_distance_poisson = 0.01; // Upper bound of distance to surface (Poisson). 0.01 = fast, 0.002 = smooth.
-
     // Create implicit function.
     // Create 3D-Delaunay triangulation for the implicit function and insert vertices.
     Dt3 dt;
-    Poisson_reconstruction_function poisson_function(dt, points.begin(), points.end());
+    Poisson_reconstruction_function implicit_function(dt, points.begin(), points.end());
 
-    /// Compute the Poisson indicator function f() at each vertex of the triangulation.
-    poisson_function.compute_implicit_function();
+    // Compute the Poisson indicator function f()
+    // at each vertex of the triangulation.
+    if ( ! implicit_function.compute_implicit_function() )
+      return EXIT_FAILURE;
 
     // Get point inside the implicit surface
-    Point inner_point = poisson_function.get_inner_point();
+    Point inner_point = implicit_function.get_inner_point();
 
     // Get implicit surface's radius
-    Sphere bounding_sphere = poisson_function.bounding_sphere();
+    Sphere bounding_sphere = implicit_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
     // defining the surface
     Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
     FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
-    Surface_3 surface(poisson_function,
+    Surface_3 surface(implicit_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
     // defining meshing criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle_poisson,
-                                                        sm_radius_poisson*size,
-                                                        sm_distance_poisson*size);
+    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
+                                                        sm_radius*size,  // Max triangle radius
+                                                        sm_distance*size); // Approximation error
 
     // meshing surface
     STr tr; // 3D-Delaunay triangulation for Surface Mesher

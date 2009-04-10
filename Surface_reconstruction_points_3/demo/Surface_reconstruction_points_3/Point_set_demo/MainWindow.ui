@@ -69,23 +69,6 @@
     <addaction name="actionDuplicate" />
     <addaction name="actionConvertToPointSet" />
    </widget>
-   <widget class="QMenu" name="menuOperations" >
-    <property name="title" >
-     <string>&amp;Operations</string>
-    </property>
-    <widget class="QMenu" name="menuPCA" >
-     <property name="title" >
-      <string>PCA</string>
-     </property>
-     <addaction name="actionBoundingSphere" />
-     <addaction name="actionBoundingBox" />
-    </widget>
-    <addaction name="menuPCA" />
-    <addaction name="actionConvexHull" />
-    <addaction name="actionSimplify" />
-    <addaction name="actionRemeshing" />
-    <addaction name="actionInsideOut" />
-   </widget>
    <widget class="QMenu" name="menuView" >
     <property name="title" >
      <string>&amp;View</string>
@@ -100,9 +83,32 @@
     <addaction name="actionDraw_two_sides" />
     <addaction name="menuDockWindows" />
    </widget>
+   <widget class="QMenu" name="menuAnalysis" >
+    <property name="title" >
+     <string>Analysis</string>
+    </property>
+    <addaction name="actionBoundingBox" />
+    <addaction name="actionBoundingSphere" />
+    <addaction name="actionConvexHull" />
+   </widget>
+   <widget class="QMenu" name="menuProcessing" >
+    <property name="title" >
+     <string>Processing</string>
+    </property>
+    <addaction name="actionSimplify" />
+   </widget>
+   <widget class="QMenu" name="menuReconstruction" >
+    <property name="title" >
+     <string>Reconstruction</string>
+    </property>
+    <addaction name="actionAPSSReconstruction" />
+    <addaction name="actionInsideOut" />
+   </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
-   <addaction name="menuOperations" />
+   <addaction name="menuAnalysis" />
+   <addaction name="menuProcessing" />
+   <addaction name="menuReconstruction" />
    <addaction name="menuView" />
   </widget>
   <widget class="QStatusBar" name="statusbar" >
@@ -391,9 +397,9 @@
     <string>Inside-out</string>
    </property>
   </action>
-  <action name="actionRemeshing" >
+  <action name="actionAPSSReconstruction" >
    <property name="text" >
-    <string>Remeshing</string>
+    <string>APSS Reconstruction</string>
    </property>
   </action>
   <action name="actionDraw_two_sides" >

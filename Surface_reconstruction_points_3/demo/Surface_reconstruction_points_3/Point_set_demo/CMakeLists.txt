@@ -13,13 +13,17 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
+# Use packages improved since CGAL 3.4
 foreach(INCDIR ../../../../AABB_tree/include ../../../../STL_Extension/include ../../../../GraphicsView/include ../../../../Surface_mesher/include ../../../../Filtered_kernel/include ../../../../Profiling_tools/include)
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
     include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
   endif()
 endforeach()
 
+# Require package new since CGAL 3.4
 include_directories (BEFORE ../../../../Point_set_processing_3/include/)
+
+# Include this package's headers first
 include_directories( BEFORE ./ ./include ../../../include )
 
 # Find CGAL and CGAL Qt4
@@ -167,8 +171,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   endmacro(polyhedron_demo_plugin)
 
-  polyhedron_demo_plugin(remeshing_plugin Point_set_demo_remeshing_plugin Point_set_demo_remeshing_plugin_cgal_code.cpp)
-  target_link_libraries(remeshing_plugin scene_polyhedron_item)
+  polyhedron_demo_plugin(APSS_reconstruction_plugin Point_set_demo_APSS_reconstruction_plugin Point_set_demo_APSS_reconstruction_plugin_cgal_code.cpp)
+  target_link_libraries(APSS_reconstruction_plugin scene_polyhedron_item point_set)
 
   polyhedron_demo_plugin(inside_out_plugin Polyhedron_demo_inside_out_plugin)
   target_link_libraries(inside_out_plugin scene_polyhedron_item point_set)

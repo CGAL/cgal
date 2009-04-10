@@ -20,14 +20,12 @@
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_point_set.h>
-#include <CGAL/IO/read_xyz_point_set.h>
 
 #include "enriched_polyhedron.h"
 
 #include <deque>
 #include <cstdlib>
 #include <fstream>
-#include <cassert>
 
 
 // ----------------------------------------------------------------------------
@@ -79,10 +77,9 @@ int main(int argc, char * argv[])
   }
 
   // Poisson options
-  FT sm_angle_poisson = 20.0; // Theorical guaranty if angle >= 30, but slower
-  FT sm_radius_poisson = 0.1; // Upper bound of Delaunay balls radii. 0.1 is fine (LR).
-  FT sm_error_bound_poisson = 1e-3; // Default value 1e-3 is fine.
-  FT sm_distance_poisson = 0.01; // Upper bound of distance to surface (Poisson). 0.01 = fast, 0.002 = smooth.
+  FT sm_angle = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence (PA).
+  FT sm_radius = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine (LR).
+  FT sm_distance = 0.01; // Approximation error w.r.t. p.s.r. For Poisson: 0.01 = fast, 0.002 = smooth (LS).
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -173,7 +170,6 @@ int main(int argc, char * argv[])
       continue;
     }
 
-    assert(points.begin() != points.end());
     bool points_have_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
     if ( ! points_have_normals )
     {
@@ -191,7 +187,7 @@ int main(int argc, char * argv[])
     // Create implicit function and triangulation.
     // Insert vertices and normals in triangulation.
     Dt3 dt;
-    Poisson_reconstruction_function poisson_function(dt, points.begin(), points.end());
+    Poisson_reconstruction_function implicit_function(dt, points.begin(), points.end());
 
     // Recover memory used by points[]
     points.clear();
@@ -207,7 +203,7 @@ int main(int argc, char * argv[])
 
     /// Compute the Poisson indicator function f()
     /// at each vertex of the triangulation.
-    if ( ! poisson_function.compute_implicit_function() )
+    if ( ! implicit_function.compute_implicit_function() )
     {
       std::cerr << "Error: cannot compute implicit function" << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
@@ -227,12 +223,9 @@ int main(int argc, char * argv[])
 
     std::cerr << "Surface meshing...\n";
 
-    STr tr; // 3D-Delaunay triangulation for Surface Mesher
-    C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
-
-    // Get inner point
-    Point inner_point = poisson_function.get_inner_point();
-    FT inner_point_value = poisson_function(inner_point);
+    // Get point inside the implicit surface
+    Point inner_point = implicit_function.get_inner_point();
+    FT inner_point_value = implicit_function(inner_point);
     if(inner_point_value >= 0.0)
     {
       std::cerr << "Error: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
@@ -241,31 +234,31 @@ int main(int argc, char * argv[])
     }
 
     // Get implicit surface's radius
-    Sphere bounding_sphere = poisson_function.bounding_sphere();
+    Sphere bounding_sphere = implicit_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
     // defining the surface
     Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
     FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
-    Surface_3 surface(poisson_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius),
-                      sm_error_bound_poisson*size/sm_sphere_radius); // dichotomy stops when segment < sm_error_bound_poisson*size
+    Surface_3 surface(implicit_function,
+                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
     // defining meshing criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle_poisson,  // lower bound of facets angles (degrees)
-                                                        sm_radius_poisson*size,  // upper bound of Delaunay balls radii
-                                                        sm_distance_poisson*size); // upper bound of distance to surface
+    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
+                                                        sm_radius*size,  // Max triangle radius
+                                                        sm_distance*size); // Approximation error
 
-    CGAL_TRACE_STREAM << "  make_surface_mesh(dichotomy error="<<sm_error_bound_poisson<<" * point set radius,\n"
-                      << "                    sphere center=("<<sm_sphere_center << "),\n"
+    CGAL_TRACE_STREAM << "  make_surface_mesh(sphere center=("<<sm_sphere_center << "),\n"
                       << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
-                      << "                    angle="<<sm_angle_poisson << " degrees,\n"
-                      << "                    radius="<<sm_radius_poisson<<" * p.s.r.,\n"
-                      << "                    distance="<<sm_distance_poisson<<" * p.s.r.,\n"
+                      << "                    angle="<<sm_angle << " degrees,\n"
+                      << "                    radius="<<sm_radius<<" * p.s.r.,\n"
+                      << "                    distance="<<sm_distance<<" * p.s.r.,\n"
                       << "                    Manifold_with_boundary_tag)\n";
 
     // meshing surface
+    STr tr; // 3D-Delaunay triangulation for Surface Mesher
+    C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
     CGAL::make_surface_mesh(surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
 
     // Print status

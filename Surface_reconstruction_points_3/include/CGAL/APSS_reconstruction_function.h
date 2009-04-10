@@ -128,12 +128,10 @@ public:
   ///
   /// @param first First point to add.
   /// @param beyond Past-the-end point to add.
-  /// @param k Number of nearest neighbors.
-  /// @param projection_error Dichotomy error when projecting point.
+  /// @param k #neighbors for APSS sphere fitting.
   template < class InputIterator >
   APSS_reconstruction_function(InputIterator first, InputIterator beyond,
-                               unsigned int k,
-                               FT projection_error = 3.16e-4) // sqrt(1e-7)
+                               unsigned int k)
   {
     // Allocate smart pointer to data
     m = new Private;
@@ -188,7 +186,7 @@ public:
     find_inner_point();
 
     // Dichotomy error when projecting point (squared)
-    m->sqError = projection_error * projection_error * Gt().compute_squared_radius_3_object()(m->bounding_sphere);
+    m->sqError = 1e-7 * Gt().compute_squared_radius_3_object()(m->bounding_sphere);
   }
 
   /// Copy constructor

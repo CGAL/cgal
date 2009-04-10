@@ -20,14 +20,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	double m_sm_distance_poisson; // upper bound of distance to surface (Poisson)
-	double m_sm_error_bound_poisson; // error bound to stop dichotomy (Poisson)
-	double m_sm_radius_poisson; // upper bound of Delaunay balls radii (Poisson)
-	double m_sm_angle_poisson; // lower bound of facets angles (degrees) (Poisson)
-	double m_sm_distance_apss; // upper bound of distance to surface (APSS)
-	double m_sm_error_bound_apss; // error bound to stop dichotomy (APSS)
-	double m_sm_radius_apss; // upper bound of Delaunay balls radii (APSS)
-	double m_sm_angle_apss; // lower bound of facets angles (degrees) (APSS)
+	double m_sm_distance_poisson; // Approximation error w.r.t. point set radius (Poisson)
+	double m_sm_radius_poisson; // Max triangle radius w.r.t. point set radius (Poisson)
+	double m_sm_angle_poisson; // Min triangle angle (degrees) (Poisson)
+	double m_sm_distance_apss; // Approximation error w.r.t. point set radius (APSS)
+	double m_sm_radius_apss; // Max triangle radius w.r.t. point set radius (APSS)
+	double m_sm_angle_apss; // Min triangle angle (degrees) (APSS)
 	unsigned int m_dr_max_vertices;
 	double m_dr_shell_size;
 	double m_dr_sizing;

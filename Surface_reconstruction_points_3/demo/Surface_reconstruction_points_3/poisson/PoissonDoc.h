@@ -112,10 +112,9 @@ private:
     Triangular_surface m_contour;
 
     // Poisson options
-	double m_sm_distance_poisson; // upper bound of distance to surface (Poisson)
-	double m_sm_error_bound_poisson; // error bound to stop dichotomy (Poisson)
-	double m_sm_radius_poisson; // upper bound of Delaunay balls radii (Poisson)
-	double m_sm_angle_poisson; // lower bound of facets angles (degrees) (Poisson)
+    double m_sm_distance_poisson; // Approximation error w.r.t. point set radius (Poisson)
+    double m_sm_radius_poisson; // Max triangle radius w.r.t. point set radius (Poisson)
+    double m_sm_angle_poisson; // Min triangle angle (degrees) (Poisson)
     double m_dr_sizing; // 3 Delaunay refinements options
     double m_dr_shell_size;
     unsigned int m_dr_max_vertices;
@@ -123,27 +122,26 @@ private:
     double m_lambda;  // laplacian smoothing
 
     // APSS options
-	double m_sm_distance_apss; // upper bound of distance to surface (APSS)
-	double m_sm_error_bound_apss; // error bound to stop dichotomy (APSS)
-	double m_sm_radius_apss; // upper bound of Delaunay balls radii (APSS)
-	double m_sm_angle_apss; // lower bound of facets angles (degrees) (APSS)
-	unsigned int m_nb_neighbors_apss; // #neighbors to compute APPS sphere fitting
+    double m_sm_distance_apss; // Approximation error w.r.t. point set radius (APSS)
+    double m_sm_radius_apss; // Max triangle radius w.r.t. point set radius (APSS)
+    double m_sm_angle_apss; // Min triangle angle (degrees) (APSS)
+    unsigned int m_nb_neighbors_apss; // #neighbors to compute APPS sphere fitting
 
     // Average Spacing options
-	unsigned int m_nb_neighbors_avg_spacing; // K-nearest neighbors (average spacing)
+    unsigned int m_nb_neighbors_avg_spacing; // K-nearest neighbors (average spacing)
 
     // Smoothing options
-	double m_nb_neighbors_smooth_jet_fitting; // K-nearest neighbors (smooth points by Jet Fitting)
+    double m_nb_neighbors_smooth_jet_fitting; // K-nearest neighbors (smooth points by Jet Fitting)
 
     // Normals Computing options
-	double m_nb_neighbors_pca_normals; // K-nearest neighbors (estimate normals by PCA)
-	double m_nb_neighbors_jet_fitting_normals; // K-nearest neighbors (estimate normals by Jet Fitting)
-	unsigned int m_nb_neighbors_mst; // K-nearest neighbors (orient normals by MST)
+    double m_nb_neighbors_pca_normals; // K-nearest neighbors (estimate normals by PCA)
+    double m_nb_neighbors_jet_fitting_normals; // K-nearest neighbors (estimate normals by Jet Fitting)
+    unsigned int m_nb_neighbors_mst; // K-nearest neighbors (orient normals by MST)
 
     // Outlier removal
     double m_min_cameras_cone_angle; // min angle of camera's cone (degrees)
     double m_threshold_percent_avg_knn_sq_dst; // percentage of outliers to remove
-	double m_nb_neighbors_outlier_removal; // K-nearest neighbors (outlier_removal)
+    double m_nb_neighbors_outlier_removal; // K-nearest neighbors (outlier_removal)
 
     // Point set simplification
     double m_clustering_step; // Grid's step for simplification by clustering

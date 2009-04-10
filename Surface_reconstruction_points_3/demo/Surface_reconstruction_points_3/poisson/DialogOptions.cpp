@@ -12,11 +12,9 @@ IMPLEMENT_DYNAMIC(CDialogOptions, CDialog)
 CDialogOptions::CDialogOptions(CWnd* pParent /*=NULL*/)
     : CDialog(CDialogOptions::IDD, pParent)
     , m_sm_distance_poisson(0)
-    , m_sm_error_bound_poisson(0)
     , m_sm_radius_poisson(0)
     , m_sm_angle_poisson(0)
     , m_sm_distance_apss(0)
-    , m_sm_error_bound_apss(0)
     , m_sm_radius_apss(0)
     , m_sm_angle_apss(0)
     , m_dr_max_vertices(0)
@@ -51,11 +49,9 @@ void CDialogOptions::DoDataExchange(CDataExchange* pDX)
     DDX_Text(pDX,IDC_EDIT_SM_ANGLE_POISSON,m_sm_angle_poisson);
     DDX_Text(pDX,IDC_EDIT_SM_RADIUS_POISSON,m_sm_radius_poisson);
     DDX_Text(pDX,IDC_EDIT_SM_DISTANCE_POISSON,m_sm_distance_poisson);
-    DDX_Text(pDX,IDC_EDIT_SM_ERROR_BOUND_POISSON,m_sm_error_bound_poisson);
     DDX_Text(pDX,IDC_EDIT_SM_ANGLE_APSS,m_sm_angle_apss);
     DDX_Text(pDX,IDC_EDIT_SM_RADIUS_APSS,m_sm_radius_apss);
     DDX_Text(pDX,IDC_EDIT_SM_DISTANCE_APSS,m_sm_distance_apss);
-    DDX_Text(pDX,IDC_EDIT_SM_ERROR_BOUND_APSS,m_sm_error_bound_apss);
     DDX_Text(pDX,IDC_EDIT_DR_SHELL_SIZE,m_dr_shell_size);
     DDX_Text(pDX,IDC_EDIT_DR_SIZING,m_dr_sizing);
     DDX_Text(pDX,IDC_EDIT_DR_MAXV,m_dr_max_vertices);
