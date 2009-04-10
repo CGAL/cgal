@@ -308,8 +308,8 @@ private:
   Axis longest_axis()
   {
     const double dx = xsize();
-    const double dy = xsize();
-    const double dz = xsize();
+    const double dy = ysize();
+    const double dz = zsize();
     if(dx>=dy) {
       if(dx>=dz) {
         return CGAL_AXIS_X; // axis along x
