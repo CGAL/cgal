@@ -119,8 +119,8 @@ _test_cls_tds_3( const Tds &)
   assert(tds3.number_of_vertices()==2);
 
   // Containers
-  Vertex_container & vertex_c = tds3.vertex_container();
-  Cell_container & cell_c = tds3.cell_container();
+  Vertex_container & vertex_c = tds3.vertices();
+  Cell_container & cell_c = tds3.cells();
 
   assert(vertex_c.size() == 2);
   assert(cell_c.size() == 2);
