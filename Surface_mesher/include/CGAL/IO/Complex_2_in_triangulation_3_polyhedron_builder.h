@@ -28,7 +28,7 @@ namespace CGAL {
 
 template <class C2T3, class Polyhedron_>
 class Complex_2_in_triangulation_3_polyhedron_builder
-  : public CGAL::Modifier_base<typename Polyhedron::HalfedgeDS>
+  : public CGAL::Modifier_base<typename Polyhedron_::HalfedgeDS>
 {
 public:
   typedef C2T3 C2t3;
