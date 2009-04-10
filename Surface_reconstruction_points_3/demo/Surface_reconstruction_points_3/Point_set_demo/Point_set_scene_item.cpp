@@ -40,7 +40,7 @@ Point_set_scene_item::Point_set_scene_item(const Polyhedron& input_mesh)
   Polyhedron::Vertex_const_iterator v;
   for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
   {
-    Point p = v->point();
+    const Point& p = v->point();
     Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
     m_points->push_back(UI_point(p,n));
   }

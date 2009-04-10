@@ -11,6 +11,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
@@ -21,7 +22,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
-#include "enriched_polyhedron.h"
+#include "compute_normal.h"
 
 #include <deque>
 #include <cstdlib>
@@ -102,12 +103,13 @@ int main(int argc, char * argv[])
     PointList points;
 
     // If OFF file format
+    std::cerr << "Open " << input_filename << " for reading..." << std::endl;
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
       // Read the mesh file in a polyhedron
       std::ifstream stream(input_filename.c_str());
-      typedef Enriched_polyhedron<Kernel,Enriched_items> Polyhedron;
+      typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
       Polyhedron input_mesh;
       CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
       if(!stream || !input_mesh.is_valid() || input_mesh.empty())
@@ -117,15 +119,13 @@ int main(int argc, char * argv[])
         continue;
       }
 
-      // Compute vertices' normals from connectivity
-      input_mesh.compute_normals();
-
-      // Convert vertices and normals to PointList
-      Polyhedron::Vertex_iterator v;
+      // Convert Polyhedron vertices to point set.
+      // Compute vertices' normals from connectivity.
+      Polyhedron::Vertex_const_iterator v;
       for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
       {
         const Point& p = v->point();
-        const Vector& n = v->normal();
+        Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
         points.push_back(Point_with_normal(p,n));
       }
     }

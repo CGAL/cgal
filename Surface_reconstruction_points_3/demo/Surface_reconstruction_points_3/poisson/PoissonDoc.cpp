@@ -6,7 +6,7 @@
 #include "Poisson.h"
 #include "DialogOptions.h"
 #include "PoissonDoc.h"
-#include "enriched_polyhedron.h"
+#include "compute_normal.h"
 #include "read_pwc_point_set.h"
 #include "read_g23_point_set.h"
 #include "outlier_removal_wrt_camera_cone_angle_3.h"
@@ -15,6 +15,7 @@
 // CGAL
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/Timer.h>
@@ -242,28 +243,24 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     // Read OFF file as a mesh and compute normals from connectivity
     if (is_mesh)
     {
-      // read file in polyhedron
-      typedef Enriched_polyhedron<Kernel> Polyhedron;
+      // Read the mesh file in a polyhedron
+      std::ifstream stream(lpszPathName);
+      typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
       Polyhedron input_mesh;
-      std::ifstream file_stream(lpszPathName);
-      CGAL::scan_OFF(file_stream, input_mesh, true /* verbose */);
-      if(!file_stream || !input_mesh.is_valid() || input_mesh.empty())
+      CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
+      if(!stream || !input_mesh.is_valid() || input_mesh.empty())
       {
         prompt_message("Unable to read file");
         return FALSE;
       }
 
-      // Compute normals using mesh connectivity
-      input_mesh.compute_normals();
-
-      // Copy points to m_points
-      Polyhedron::Vertex_iterator v;
-      for(v = input_mesh.vertices_begin();
-          v != input_mesh.vertices_end();
-          v++)
+      // Convert Polyhedron vertices to point set.
+      // Compute vertices' normals from connectivity.
+      Polyhedron::Vertex_const_iterator v;
+      for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
       {
         const Point& p = v->point();
-        const Vector& n = v->normal();
+        Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
         m_points.push_back(Point_with_normal(p,n));
       }
     }
