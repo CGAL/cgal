@@ -60,7 +60,7 @@ int main() {
     assert(bbi.size() < atoms.size());
     std::cout << bbi.size() << std::endl;
     std::vector<Bond> bbs;
-	fill(bbs, make_bond_indices_range(make_ok_bond_range(Is_backbone(), p.bonds())));
+	fill(bbs, make_bond_indices_range(make_filtered_bond_range(Is_backbone(), p.bonds())));
     std::cout << bbs.size() << std::endl;
     for (unsigned int i=0; i< bbs.size(); ++i) {
       assert(bbs[i].first < Index(bbi.size()));
