@@ -23,10 +23,44 @@ for the \ccc{TriangulationDataStructure_2} concept.
 It can be used to represent an orientable 2D triangulation
 embedded in a space of any dimension.
 
+The vertices and faces are stored in two nested containers, which are
+implemented using \ccc{CGAL::Compact_container}.  The class may offer some
+flexibility for the choice of container in the future, in the form of
+additional template parameters.
+
 \ccInclude{CGAL/Triangulation_data_structure_2.h}
 
 \ccIsModel
 \ccc{TriangulationDataStructure_2}
+
+\begin{ccAdvanced}
+
+\ccCreationVariable{tds}
+
+In addition to the interface documented in the concept, the class offers the
+following types and functions.
+
+\ccTypes
+
+\ccTypedef{typedef CGAL::Compact_container<Vertex> Vertex_container;}{Vertex container type.}
+\ccGlue
+\ccTypedef{typedef CGAL::Compact_container<Face>   Face_container;}{Face container type.}
+
+\ccOperations
+
+\ccMethod{Face_container & faces() const;}
+{Returns a reference to the container of faces.}
+\ccGlue
+\ccMethod{Face_container & faces();}
+{Returns a reference to the container of faces.}
+\ccGlue
+\ccMethod{Vertex_container & vertices() const;}
+{Returns a reference to the container of vertices.}
+\ccGlue
+\ccMethod{Vertex_container & vertices();}
+{Returns a reference to the container of vertices.}
+
+\end{ccAdvanced}
 
 
 \ccHeading{Modifiers}

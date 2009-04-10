@@ -79,12 +79,12 @@ Triangulation_ds_edge_iterator_2(const Tds * tds)
 {
   edge.second = 0;
   if (_tds->dimension()<= 0) {
-    pos = _tds->face_container().end();       // there is no edge
+    pos = _tds->faces().end();       // there is no edge
     return;
   }
-  pos = _tds->face_container().begin();
+  pos = _tds->faces().begin();
   if (_tds->dimension() == 1) edge.second = 2;
-    while ( pos != _tds->face_container().end()  
+    while ( pos != _tds->faces().end()  
 	  && !associated_edge() ) increment();
 }
 
@@ -93,7 +93,7 @@ Triangulation_ds_edge_iterator_2<Tds> ::
 Triangulation_ds_edge_iterator_2(const Tds * tds, int )
   : _tds(tds) 
 {
-  pos = tds->face_container().end();
+  pos = tds->faces().end();
   edge.second = 0;
   if (_tds->dimension() == 1) {edge.second = 2;}
 }
@@ -151,9 +151,9 @@ Triangulation_ds_edge_iterator_2<Tds> ::
 operator++()
 {
   //CGAL_triangulation_precondition(pos != Iterator_base() && 
-  //			       pos != _tds->face_container().end());
+  //			       pos != _tds->faces().end());
   do     increment();
-  while( pos != _tds->face_container().end() && !associated_edge());
+  while( pos != _tds->faces().end() && !associated_edge());
   return *this;
 }
     

@@ -33,6 +33,8 @@ template <class Tds>
 void
 _test_cls_tds_2( const Tds &)
 {
+  typedef typename Tds::Vertex_container  Vertex_container;
+  typedef typename Tds::Face_container    Face_container;
   
   typedef typename Tds::Vertex            Vertex;
   typedef typename Tds::Face              Face;
@@ -187,6 +189,12 @@ _test_cls_tds_2( const Tds &)
 	 tds4.number_of_faces()== 8 && tds4.number_of_edges()    == 12 &&
 	 tds4.number_of_full_dim_faces() == 8);
 
+  // Containers
+  Vertex_container & vertex_c = tds4.vertices();
+  Face_container & face_c = tds4.faces();
+
+  assert(vertex_c.size() == 6);
+  assert(face_c.size() == 8);
  
    //clear(), swap() and copy_constructor and copy
   std::cout << "    clear, swap, assign and copy " << std::endl;
