@@ -1,0 +1,146 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Atom.tex
+% +------------------------------------------------------------------------+
+% | 10.04.2009   Author
+% | Package: PDB
+% |
+\RCSdef{\RCSAtomRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAtomDate}{$Date: 2007-09-07 08:29:10 -0700 (Fri, 07 Sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[PDB::]{Atom}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+A class repesenting an atom.
+
+%END-AUTO(\ccDefinition)
+  
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/PDB/Atom.h}
+
+%END-AUTO(\ccInclude)
+
+\ccIsModel
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\paragraph[{Index}]{typedef Label$<$Atom$>$ Index}
+
+%END-AUTO(\ccTypes)
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+\paragraph[{Type}]{enum Type}
+The type (element) of an atom. The currently supported types are C,N,H,O,S, INVALID.
+\ccCommentHeading{Values}
+\begin{description}
+\item[INVALID
+]\item[C
+]\item[N
+]\item[H
+]\item[O
+]\item[S
+]\item[P
+]\item[FE
+]\item[PT
+]\end{description}
+
+%END-AUTO(\ccConstants)
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\paragraph[{Atom}]{Atom ()}
+Construct and invalid atom.
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\paragraph[{point}]{const Point\& point () const}
+Cartesian coordinates (x,y,z) for the atom.
+\paragraph[{\ccc{set_point}}]{void \ccc{set_point} (const Point\& pt)}
+\paragraph[{operator ==}]{bool operator == (const Atom\& al) const}
+\paragraph[{operator!=}]{bool operator!= (const Atom\& al) const}
+\paragraph[{occupancy}]{const float\& occupancy () const}
+The PDB occupancy field.
+\paragraph[{\ccc{set_occupancy}}]{void \ccc{set_occupancy} (const float\& k)}
+\paragraph[{\ccc{temperature_factor}}]{const float\& \ccc{temperature_factor} () const}
+The PDB temperature factor field.
+\paragraph[{\ccc{set_temperature_factor}}]{void \ccc{set_temperature_factor} (const float\& k)}
+\paragraph[{\ccc{segment_id}}]{const \ccc{std::string}\& \ccc{segment_id} () const}
+The PDB segment ID char.
+\paragraph[{\ccc{set_segment_id}}]{void \ccc{set_segment_id} (const \ccc{std::string}\& k)}
+\paragraph[{element}]{const \ccc{std::string}\& element () const}
+The PDB element field.
+\paragraph[{\ccc{set_element}}]{void \ccc{set_element} (const \ccc{std::string}\& k)}
+\paragraph[{charge}]{const \ccc{std::string}\& charge () const}
+The PDB charge field.
+\paragraph[{\ccc{set_charge}}]{void \ccc{set_charge} (const \ccc{std::string}\& k)}
+\paragraph[{type}]{const Type\& type () const}
+The type of the atoms (basically what element).
+\paragraph[{\ccc{set_type}}]{void \ccc{set_type} (const Type\& k)}
+\paragraph[{radius}]{const double\& radius () const}
+Returns the van der Waals radius of the atom.
+Values take from the wikipedia so beware.
+\paragraph[{index}]{const Index\& index () const}
+This is a label which identifies an Atom uniquely within some scale.
+The uniqueness is only valid if working within the object which assigned the indices, and if nothing has changed since the corresponding \ccc{index_atoms}() function was called.
+\paragraph[{\ccc{set_index}}]{void \ccc{set_index} (Index i) const}
+note const
+\paragraph[{\ccc{string_to_type}}]{static Type \ccc{string_to_type} (const char $\ast$ c)[static]}
+\paragraph[{\ccc{swap_with}}]{void \ccc{swap_with} (Atom\& o)}
+
+%END-AUTO(\ccOperations)
+
+\ccSeeAlso
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{PDB/Atom.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{PDB/Atom.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

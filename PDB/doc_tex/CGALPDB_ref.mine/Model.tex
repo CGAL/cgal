@@ -1,0 +1,132 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Model.tex
+% +------------------------------------------------------------------------+
+% | 10.04.2009   Author
+% | Package: PDB
+% |
+\RCSdef{\RCSModelRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSModelDate}{$Date: 2007-09-07 08:29:10 -0700 (Fri, 07 Sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[PDB::]{Model}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+A class representing a single model from a PDB file.
+
+You can iterator through the chains and soon the heterogens.
+
+%END-AUTO(\ccDefinition)
+  
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/PDB/Model.h}
+
+%END-AUTO(\ccInclude)
+
+\ccIsModel
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\paragraph[{\ccc{Heterogen_key}}]{typedef \ccc{PDB::Heterogen_key} \ccc{Heterogen_key}}
+\paragraph[{\ccc{Chain_key}}]{typedef Label$<$Model$>$ \ccc{Chain_key}}
+\paragraph[{Chains}]{typedef \ccc{boost::iterator_range<ChainsMap::iterator>} Chains}
+Iterator through the chains.
+\paragraph[{\ccc{Chain_consts}}]{typedef \ccc{boost::iterator_range<ChainsMap::const_iterator>} \ccc{Chain_consts}}
+\paragraph[{Heterogens}]{typedef \ccc{boost::iterator_range<HeterogensMap::iterator>} Heterogens}
+An iterator through the heterogen objects.
+\paragraph[{\ccc{Heterogen_consts}}]{typedef \ccc{boost::iterator_range<HeterogensMap::const_iterator>} \ccc{Heterogen_consts}}
+\paragraph[{Bond}]{typedef \ccc{std::pair<Bond_endpoint, Bond_endpoint>} Bond}
+A chemical bond within the protein.
+\paragraph[{Atoms}]{typedef \ccc{boost::iterator_range<internal::Nested_iterator<Iterator_traits>} $>$ Atoms}
+An iterator to iterate through all the atoms of the protein
+\paragraph[{\ccc{Atom_consts}}]{typedef \ccc{boost::iterator_range<internal::Nested_iterator<Iterator_const_traits>} $>$ \ccc{Atom_consts}}
+\paragraph[{Bonds}]{typedef \ccc{boost::iterator_range<Bond_it>} Bonds}
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\paragraph[{Model}]{Model ()}
+Construct an empty model.
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\paragraph[{\ccc{swap_with}}]{void \ccc{swap_with} (Model\& o)}
+\paragraph[{write}]{void write (int \ccc{model_index}, \ccc{std::ostream}\& out) const}
+write to a pdb
+\paragraph[{write}]{\ccc{std::ostream}\& write (\ccc{std::ostream}\& out) const}
+write screen
+\paragraph[{chains}]{Chains chains ()}
+\paragraph[{chains}]{\ccc{Chain_consts} chains () const}
+\paragraph[{contains}]{bool contains (\ccc{Chain_key} k) const}
+get the chain identified by k
+\paragraph[{get}]{\ccc{Chains::iterator::reference} get (\ccc{Chain_key} k)}
+\paragraph[{find}]{\ccc{Chains::iterator} find (\ccc{Chain_key} k)}
+\paragraph[{get}]{\ccc{Chain_consts::const_iterator::value_type} get (\ccc{Chain_key} k) const}
+\paragraph[{find}]{\ccc{Chain_consts::const_iterator} find (\ccc{Chain_key} k) const}
+\paragraph[{insert}]{void insert (\ccc{Chain_key} k, const Chain\& m)}
+\paragraph[{heterogens}]{Heterogens heterogens ()}
+\paragraph[{heterogens}]{\ccc{Heterogen_consts} heterogens () const}
+\paragraph[{contains}]{bool contains (\ccc{Heterogen_key} k) const}
+get the chain identified by k
+\paragraph[{get}]{\ccc{Heterogens::iterator::reference} get (\ccc{Heterogen_key} k)}
+\paragraph[{find}]{\ccc{Heterogens::iterator} find (\ccc{Heterogen_key} k)}
+\paragraph[{get}]{\ccc{Heterogen_consts::const_iterator::value_type} get (\ccc{Heterogen_key} k) const}
+\paragraph[{find}]{\ccc{Heterogen_consts::const_iterator} find (\ccc{Heterogen_key} k) const}
+\paragraph[{insert}]{void insert (\ccc{Heterogen_key} k, const Heterogen\& m)}
+\paragraph[{atoms}]{Atoms atoms ()}
+\paragraph[{atoms}]{\ccc{Atom_consts} atoms () const}
+\paragraph[{bonds}]{Bonds bonds () const}
+
+%END-AUTO(\ccOperations)
+
+\ccSeeAlso
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{PDB/Model.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{PDB/Model.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

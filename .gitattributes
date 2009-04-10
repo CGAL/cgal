@@ -2610,6 +2610,14 @@ PDB/demo/PDB/pdb_info.cpp -text
 PDB/demo/PDB/pdb_split.cpp -text
 PDB/demo/PDB/pdb_transform.cpp -text
 PDB/demo/PDB/pdb_tree.cpp -text
+PDB/doc_tex/CGALPDB_ref.mine/Atom.tex -text
+PDB/doc_tex/CGALPDB_ref.mine/Chain.tex -text
+PDB/doc_tex/CGALPDB_ref.mine/Model.tex -text
+PDB/doc_tex/CGALPDB_ref.mine/Monomer.tex -text
+PDB/doc_tex/CGALPDB_ref.mine/PDB.tex -text
+PDB/doc_tex/CGALPDB_ref.mine/intro.tex -text
+PDB/doc_tex/CGALPDB_ref.mine/main.aux -text
+PDB/doc_tex/CGALPDB_ref.mine/main.tex -text
 PDB/dont_submit -text
 PDB/examples/PDB/data/simple.pdb -text
 PDB/examples/PDB/extracting_geometry.cpp -text
