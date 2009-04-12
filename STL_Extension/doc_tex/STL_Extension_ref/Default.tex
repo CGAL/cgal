@@ -1,0 +1,45 @@
+\begin{ccRefClass}{Default}
+
+\ccDefinition
+\ccRefName\ is a tag class to be used in a template parameter list, in order to
+indicate that the default value is to be considered.
+
+This is shorter and clearer than actually writing the default type, which may
+sometimes be complicated, and might even change in the future. The \CC\ language
+only provides a possibility when no following argument needs to be non-defaulted.
+
+It can also be useful to shorten compiler error messages and mangled symbol names,
+and also to help define defaults in rare cases that involve circular
+dependencies, by breaking the cycle in a simple way.
+
+Note that there is no magic : this only works if the template class where
+\ccRefName\ is plugged-in takes special care for it, so you should refer to the
+manual of such classes to know whether this possibility is offered.
+
+Beware that, of course, the resulting template type parameterized by \ccRefName\ will
+not formally be the same type as the one parameterized by the actual documented,
+expanded, default.  This may have consequences.
+
+\ccIsModel
+\ccc{DefaultConstructible, CopyConstructible}
+
+\begin{ccAdvanced}
+
+\ccTypes
+
+In order to help the template class writer, \ccRefName\ provides a
+convenient way to extract the desired value for an argument which may be
+defaulted using \ccRefName.
+
+\ccNestedType{template <typename Argument, typename Value> struct Get;}
+{This nested template offers a further nested type \ccc{type} which is either
+equal to \ccc{Argument} if \ccc{Argument} is not \ccRefName\, or
+\ccc{Value} otherwise.}
+
+\end{ccAdvanced}
+
+\ccHeading{Example code}
+
+\ccIncludeExampleCode{STL_Extension/Default.cpp}
+
+\end{ccRefClass} 

@@ -28,6 +28,8 @@ arguments and for composition, functors for projection and creation and
 adaptor classes around iterators and circulators. See also circulators in
 Chapter~\ref{chapterCirculators}.  A class storing polymorphic objects
 is also provided, as well as a class to manage the uncertainty of some values.
+Finally, a class which helps specifying that the default types in template
+parameter lists are desired is also provided.
 
 \section{Doubly-Connected List Managing Items in Place}
 
@@ -133,3 +135,11 @@ but it is important that providers of predicates that are meant to be
 filtered by \ccc{Filtered_predicate}, know about it.
 
 It can also be used in other contexts as well, as it is a general tool.
+
+\section{Default types in template arguments lists}
+
+In \CC, it is possible to specify defaults at the end of a template argument
+list.  Specifying that one wishes to use the default is simply done by omitting
+it.  This is however possible only at the end of the list.  \ccc{CGAL::Default}
+provides a simple mechanism that performs something equivalent anywhere in the
+sequence.
