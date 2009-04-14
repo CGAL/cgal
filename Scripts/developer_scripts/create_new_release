@@ -174,8 +174,8 @@ bugfix_nr=`printf "%1s" "${BUGFIX_NUMBER}" | sed "y/ /0/"`
 release_number="1${major_nr}${minor_nr}${bugfix_nr}${internal_nr}"
 echo "Release number is ${release_number}"
 
-if [ -e "${HTML_DIR}/${release_name}.tar.gz" ]; then
-    echo "\"${HTML_DIR}/${release_name}.tar.gz\" already exists!"
+if [ -n "$DO_IT" -a -e "${HTML_DIR}/${release_name}.tar.gz" ]; then
+    printf "%s\n" "\"${HTML_DIR}/${release_name}.tar.gz\" already exists!"
     exit 1
 fi
 
