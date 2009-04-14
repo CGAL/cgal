@@ -117,7 +117,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
 
     // Convert to polyhedron
     Polyhedron* output_mesh = new Polyhedron;
-    surface_reconstruction_output_surface_facets(surface_mesher_c2t3, *output_mesh);
+    CGAL::surface_reconstruction_output_surface_facets(surface_mesher_c2t3, *output_mesh);
 
     //***************************************
     // Erase small connected components
@@ -126,7 +126,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
     std::cerr << "Erase small connected components...\n";
     
     unsigned int nb_erased_components = 
-      erase_small_polyhedron_connected_components(*output_mesh);
+      CGAL::erase_small_polyhedron_connected_components(*output_mesh);
 
     // Print status
     std::cerr << "Erase small connected components: " << task_timer.time() << " seconds, "
