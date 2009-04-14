@@ -10,7 +10,16 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )
-endif()
+endif(COMMAND cmake_policy)
+
+# Use packages improved since CGAL 3.4
+include_directories (BEFORE ../../../Surface_mesher/include/)
+
+# Require package new since CGAL 3.4
+include_directories (BEFORE ../../../Point_set_processing_3/include/)
+
+# Include this package's headers first
+include_directories (BEFORE . include ../../include)
 
 # Find CGAL
 find_package(CGAL QUIET COMPONENTS Core )
@@ -42,12 +51,8 @@ if ( CGAL_FOUND )
     message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
   endif()
 
-  include_directories (BEFORE ../../../Point_set_processing_3/include/)
-  include_directories (BEFORE ../../include)
-  include_directories (BEFORE include)
-
   # Temporary debugging stuff
-  ADD_DEFINITIONS( "-DDEBUG_TRACE=2" )
+  #ADD_DEFINITIONS( "-DDEBUG_TRACE=2" )
 
   # Executables that do *not* require BLAS, LAPACK nor TAUCS
   create_single_source_cgal_program( "APSS_reconstruction.cpp" )

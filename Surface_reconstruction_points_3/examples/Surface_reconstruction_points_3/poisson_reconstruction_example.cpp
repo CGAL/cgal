@@ -54,14 +54,14 @@ int main(void)
     // Get point inside the implicit surface
     Point inner_point = implicit_function.get_inner_point();
 
-    // Get implicit surface's radius
+    // Get implicit function's radius
     Sphere bounding_sphere = implicit_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
-    // defining the surface
-    Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
-    FT    sm_sphere_radius = 2 * size;
-    sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
+    // defining the implicit surface = implicit function + bounding sphere centered at inner_point
+    Point sm_sphere_center = inner_point;
+    FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
+    sm_sphere_radius *= 1.01; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(implicit_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
@@ -74,6 +74,9 @@ int main(void)
     STr tr; // 3D-Delaunay triangulation for Surface Mesher
     C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
     CGAL::make_surface_mesh(surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
+
+    if(tr.number_of_vertices() == 0)
+      return EXIT_FAILURE;
 
     //***************************************
     // save the mesh

@@ -16,6 +16,7 @@
 // This package
 #include <CGAL/APSS_reconstruction_function.h>
 #include <CGAL/IO/surface_reconstruction_output_surface_facets.h>
+#include <CGAL/polyhedron_connected_components.h>
 
 
 // APSS implicit function
@@ -107,7 +108,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
 
     // Print status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
-                                     << tr.number_of_vertices() << " output vertices, "
+                                     << tr.number_of_vertices() << " output vertices"
                                      << std::endl;
     task_timer.reset();
 
@@ -115,15 +116,24 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
       return NULL;
 
     // Convert to polyhedron
-    Polyhedron* polyhedron = new Polyhedron;
-    surface_reconstruction_output_surface_facets(surface_mesher_c2t3, *polyhedron);
+    Polyhedron* output_mesh = new Polyhedron;
+    surface_reconstruction_output_surface_facets(surface_mesher_c2t3, *output_mesh);
 
     //***************************************
-    // Delete small connected components
+    // Erase small connected components
     //***************************************
 
-    // NYI
+    std::cerr << "Erase small connected components...\n";
     
-    return polyhedron;
+    unsigned int nb_erased_components = 
+      erase_small_polyhedron_connected_components(*output_mesh);
+
+    // Print status
+    std::cerr << "Erase small connected components: " << task_timer.time() << " seconds, "
+                                                      << nb_erased_components << " components erased"
+                                                      << std::endl;
+    task_timer.reset();
+
+    return output_mesh;
 }
 

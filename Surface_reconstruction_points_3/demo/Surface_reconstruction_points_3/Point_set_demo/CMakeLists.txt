@@ -70,6 +70,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     message(STATUS "warning: TAUCS is not found. Poisson reconstruction will not be available.")
   endif(TAUCS_FOUND)
 
+  # Temporary debugging stuff
+  #add_definitions(-DDEBUG_TRACE)
+
   qt4_wrap_ui( UI_FILES MainWindow.ui )
 
   include(AddFileDependencies)

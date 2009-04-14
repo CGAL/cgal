@@ -21,6 +21,8 @@
 #include <CGAL/APSS_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/surface_reconstruction_output_surface_facets.h>
+#include <CGAL/polyhedron_connected_components.h>
 
 #include "compute_normal.h"
 
@@ -43,6 +45,9 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
 typedef std::deque<Point_with_normal> PointList;
+
+// polyhedron
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 // APSS implicit function
 typedef CGAL::APSS_reconstruction_function<Kernel> APSS_reconstruction_function;
@@ -109,7 +114,6 @@ int main(int argc, char * argv[])
     {
       // Read the mesh file in a polyhedron
       std::ifstream stream(input_filename.c_str());
-      typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
       Polyhedron input_mesh;
       CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
       if(!stream || !input_mesh.is_valid() || input_mesh.empty())
@@ -215,14 +219,14 @@ int main(int argc, char * argv[])
       continue;
     }
 
-    // Get implicit surface's radius
+    // Get implicit function's radius
     Sphere bounding_sphere = implicit_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
-    // defining the surface
-    Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
-    FT    sm_sphere_radius = 2 * size;
-    sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
+    // defining the implicit surface = implicit function + bounding sphere centered at inner_point
+    Point sm_sphere_center = inner_point;
+    FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
+    sm_sphere_radius *= 1.01; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(implicit_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
@@ -249,6 +253,32 @@ int main(int argc, char * argv[])
                                      << tr.number_of_vertices() << " output vertices, "
                                      << (memory>>20) << " Mb allocated"
                                      << std::endl;
+    task_timer.reset();
+
+    if(tr.number_of_vertices() == 0) {
+      accumulated_fatal_err = EXIT_FAILURE;
+      continue;
+    }
+
+    // Convert to polyhedron
+    Polyhedron output_mesh;
+    CGAL::surface_reconstruction_output_surface_facets(surface_mesher_c2t3, output_mesh);
+
+    //***************************************
+    // Erase small connected components
+    //***************************************
+
+    std::cerr << "Erase small connected components...\n";
+    
+    unsigned int nb_erased_components = 
+      CGAL::erase_small_polyhedron_connected_components(output_mesh);
+
+    // Print status
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size();
+    std::cerr << "Erase small connected components: " << task_timer.time() << " seconds, "
+                                                      << nb_erased_components << " components erased, "
+                                                      << (memory>>20) << " Mb allocated"
+                                                      << std::endl;
     task_timer.reset();
 
   } // for each input file

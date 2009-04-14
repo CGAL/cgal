@@ -3846,7 +3846,6 @@ Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_d
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/fandisk.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/lion-head.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/mushroom.off -text svneol=unset#application/octet-stream
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/oni.pwn -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/rotor.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/sphere926.xyz -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/tripod.off -text svneol=unset#application/octet-stream

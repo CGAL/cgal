@@ -896,7 +896,8 @@ void CPoissonDoc::OnCreatePoissonTriangulation()
   // Clean up previous mode
   CloseMode();
 
-  // Copy points to m_poisson_dt
+    // Create implicit function.
+    // Create 3D-Delaunay triangulation for the implicit function and insert vertices.
   assert(m_poisson_dt == NULL);
   assert(m_poisson_function == NULL);
   m_poisson_dt = new Dt3;
@@ -1093,7 +1094,7 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     // Apply contouring value defined in Options dialog
     m_poisson_function->set_contouring_value(m_contouring_value);
 
-    // Get inner point
+    // Get point inside the implicit surface
     Point inner_point = m_poisson_function->get_inner_point();
     FT inner_point_value = (*m_poisson_function)(inner_point);
     if(inner_point_value >= 0.0)
@@ -1102,17 +1103,17 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
       return;
     }
 
-    // Get implicit surface's radius
+    // Get implicit function's radius
     Sphere bounding_sphere = m_poisson_function->bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
-    // defining the surface
+    // defining the implicit surface = implicit function + bounding sphere centered at inner_point
     typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
-    Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
-    FT    sm_sphere_radius = 2 * size;
-    sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
+    Point sm_sphere_center = inner_point;
+    FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
+    sm_sphere_radius *= 1.01; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(*m_poisson_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius)); 
+                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
     // defining meshing criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_poisson,  // Min triangle angle (degrees)
@@ -1446,7 +1447,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     m_apss_function = new APSS_reconstruction_function(m_points.begin(), m_points.end(),
                                                        m_nb_neighbors_apss);
 
-    // Get inner point
+    // Get point inside the implicit surface
     Point inner_point = m_apss_function->get_inner_point();
     FT inner_point_value = (*m_apss_function)(inner_point);
     if(inner_point_value >= 0.0)
@@ -1455,15 +1456,15 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
       return;
     }
 
-    // Get implicit surface's radius
+    // Get implicit function's radius
     Sphere bounding_sphere = m_apss_function->bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
-    // defining the surface
+    // defining the implicit surface = implicit function + bounding sphere centered at inner_point
     typedef CGAL::Implicit_surface_3<Kernel, APSS_reconstruction_function> Surface_3;
-    Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
-    FT    sm_sphere_radius = 2 * size;
-    sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
+    Point sm_sphere_center = inner_point;
+    FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
+    sm_sphere_radius *= 1.01; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(*m_apss_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius)); 
 

@@ -44,6 +44,9 @@ typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
 typedef std::deque<Point_with_normal> PointList;
 
+// polyhedron
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+
 // Poisson's Delaunay triangulation 3 and implicit function
 typedef CGAL::Reconstruction_triangulation_3<Kernel> Dt3;
 typedef CGAL::Poisson_reconstruction_function<Kernel, Dt3> Poisson_reconstruction_function;
@@ -108,7 +111,6 @@ int main(int argc, char * argv[])
     {
       // Read the mesh file in a polyhedron
       std::ifstream stream(input_filename.c_str());
-      typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
       Polyhedron input_mesh;
       CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
       if(!stream || !input_mesh.is_valid() || input_mesh.empty())
@@ -184,8 +186,8 @@ int main(int argc, char * argv[])
 
     std::cerr << "Create triangulation...\n";
 
-    // Create implicit function and triangulation.
-    // Insert vertices and normals in triangulation.
+    // Create implicit function.
+    // Create 3D-Delaunay triangulation for the implicit function and insert vertices.
     Dt3 dt;
     Poisson_reconstruction_function implicit_function(dt, points.begin(), points.end());
 
@@ -201,8 +203,8 @@ int main(int argc, char * argv[])
 
     std::cerr << "Compute implicit function...\n";
 
-    /// Compute the Poisson indicator function f()
-    /// at each vertex of the triangulation.
+    // Compute the Poisson indicator function f()
+    // at each vertex of the triangulation.
     if ( ! implicit_function.compute_implicit_function() )
     {
       std::cerr << "Error: cannot compute implicit function" << std::endl;
@@ -233,14 +235,14 @@ int main(int argc, char * argv[])
       continue;
     }
 
-    // Get implicit surface's radius
+    // Get implicit function's radius
     Sphere bounding_sphere = implicit_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
-    // defining the surface
-    Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
-    FT    sm_sphere_radius = 2 * size;
-    sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
+    // defining the implicit surface = implicit function + bounding sphere centered at inner_point
+    Point sm_sphere_center = inner_point;
+    FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
+    sm_sphere_radius *= 1.01; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(implicit_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
@@ -268,6 +270,11 @@ int main(int argc, char * argv[])
                                      << (memory>>20) << " Mb allocated"
                                      << std::endl;
     task_timer.reset();
+
+    if(tr.number_of_vertices() == 0) {
+      accumulated_fatal_err = EXIT_FAILURE;
+      continue;
+    }
 
   } // for each input file
 

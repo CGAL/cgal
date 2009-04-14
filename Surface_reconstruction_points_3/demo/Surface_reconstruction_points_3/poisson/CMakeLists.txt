@@ -8,10 +8,17 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
  
 if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
-endif()
- 
-# Require packages new or improved since CGAL 3.4
-include_directories (BEFORE ../../../../Point_set_processing_3/include/ ../../../../Surface_mesher/include/)
+endif(COMMAND cmake_policy)
+
+# Use packages improved since CGAL 3.4
+foreach(INCDIR ../../../../AABB_tree/include ../../../../STL_Extension/include ../../../../GraphicsView/include ../../../../Surface_mesher/include ../../../../Filtered_kernel/include ../../../../Profiling_tools/include)
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
+    include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
+  endif()
+endforeach()
+
+# Require package new since CGAL 3.4
+include_directories (BEFORE ../../../../Point_set_processing_3/include/)
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../../include )
@@ -74,7 +81,7 @@ if(CGAL_FOUND AND MSVC AND OPENGL_FOUND AND TAUCS_FOUND)
   endif()
 
   # Temporary debugging stuff
-  ADD_DEFINITIONS( "-DDEBUG_TRACE" )
+  #ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 
   # Create Poisson executable
   ADD_EXECUTABLE(Poisson WIN32 ChildFrm.cpp DialogOptions.cpp director.cpp MainFrm.cpp Poisson.cpp PoissonDoc.cpp PoissonView.cpp Poisson.rc)

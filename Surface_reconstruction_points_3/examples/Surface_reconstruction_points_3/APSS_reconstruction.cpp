@@ -16,13 +16,13 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
-#define CGAL_C2T3_USE_FILE_WRITER_OFF
-#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 // This package
 #include <CGAL/APSS_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/surface_reconstruction_output_surface_facets.h>
+#include <CGAL/polyhedron_connected_components.h>
 
 #include "compute_normal.h"
 
@@ -46,6 +46,9 @@ typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
 typedef std::deque<Point_with_normal> PointList;
 
+// polyhedron
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+
 // APSS implicit function
 typedef CGAL::APSS_reconstruction_function<Kernel> APSS_reconstruction_function;
 
@@ -68,7 +71,7 @@ int main(int argc, char * argv[])
     //***************************************
 
     // usage
-    if (argc<3)
+    if (argc-1 < 2)
     {
       std::cerr << "Read a point set or a mesh's set of vertices, reconstruct a surface,\n";
       std::cerr << "and save the surface.\n";
@@ -121,7 +124,6 @@ int main(int argc, char * argv[])
     {
       // Read the mesh file in a polyhedron
       std::ifstream stream(input_filename.c_str());
-      typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
       Polyhedron input_mesh;
       CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
       if(!stream || !input_mesh.is_valid() || input_mesh.empty())
@@ -163,7 +165,7 @@ int main(int argc, char * argv[])
     // Print status
     int nb_vertices = points.size();
     std::cerr << "Read file " << input_filename << ": " << nb_vertices << " vertices, "
-                                                        << task_timer.time() << " seconds, "
+                                                        << task_timer.time() << " seconds"
                                                         << std::endl;
     task_timer.reset();
 
@@ -216,14 +218,14 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    // Get implicit surface's radius
+    // Get implicit function's radius
     Sphere bounding_sphere = implicit_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
-    // defining the surface
-    Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
-    FT    sm_sphere_radius = 2 * size;
-    sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
+    // defining the implicit surface = implicit function + bounding sphere centered at inner_point
+    Point sm_sphere_center = inner_point;
+    FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
+    sm_sphere_radius *= 1.01; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(implicit_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
@@ -239,8 +241,30 @@ int main(int argc, char * argv[])
 
     // Print status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
-                                     << tr.number_of_vertices() << " output vertices, "
+                                     << tr.number_of_vertices() << " output vertices"
                                      << std::endl;
+    task_timer.reset();
+
+    if(tr.number_of_vertices() == 0)
+      return EXIT_FAILURE;
+
+    // Convert to polyhedron
+    Polyhedron output_mesh;
+    surface_reconstruction_output_surface_facets(surface_mesher_c2t3, output_mesh);
+
+    //***************************************
+    // Erase small connected components
+    //***************************************
+
+    std::cerr << "Erase small connected components...\n";
+    
+    unsigned int nb_erased_components = 
+      erase_small_polyhedron_connected_components(output_mesh);
+
+    // Print status
+    std::cerr << "Erase small connected components: " << task_timer.time() << " seconds, "
+                                                      << nb_erased_components << " components erased"
+                                                      << std::endl;
     task_timer.reset();
 
     //***************************************
@@ -250,7 +274,7 @@ int main(int argc, char * argv[])
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
 
     std::ofstream out(output_filename.c_str());
-    CGAL::output_surface_facets_to_off(out, surface_mesher_c2t3);
+    out << output_mesh;
 
     return EXIT_SUCCESS;
 }
