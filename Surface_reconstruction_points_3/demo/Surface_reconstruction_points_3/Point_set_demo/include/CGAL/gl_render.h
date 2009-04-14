@@ -13,6 +13,10 @@ void gl_render_facets(Polyhedron& polyhedron)
   typedef typename Polyhedron::Facet	    Facet;
   typedef typename Polyhedron::Facet_iterator Facet_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator HF_circulator;
+  
+  // Get current shading model
+  GLint shading;
+  ::glGetIntegerv(GL_SHADE_MODEL, &shading);
 
   Facet_iterator f;
   for(f = polyhedron.facets_begin();
@@ -20,15 +24,25 @@ void gl_render_facets(Polyhedron& polyhedron)
     f++)
   {
     ::glBegin(GL_POLYGON);
+    
+    // If Flat shading: 1 normal per polygon
+    if (shading == GL_FLAT)
+    {
+      Vector n = compute_facet_normal<Facet,Kernel>(*f);
+      ::glNormal3d(n.x(),n.y(),n.z());
+    }
 
     // revolve around current face to get vertices
     HF_circulator he = f->facet_begin();
     HF_circulator end = he;
     CGAL_For_all(he,end)
     {
-      // compute normal
-      Vector n = compute_vertex_normal<typename Polyhedron::Vertex,Kernel>(*he->vertex());
-      ::glNormal3d(n.x(),n.y(),n.z());
+      // If Gouraud shading: 1 normal per vertex
+      if (shading == GL_SMOOTH)
+      {
+        Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*he->vertex());
+        ::glNormal3d(n.x(),n.y(),n.z());
+      }
 
       const Point& p = he->vertex()->point();
       ::glVertex3d(p.x(),p.y(),p.z());
