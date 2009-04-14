@@ -44,12 +44,12 @@ enum { tag_free, tag_done };
 /// @commentheading Template Parameters:
 /// @param Polyhedron an instance of CGAL::Polyhedron_3<>.
 ///
-/// @return a list of pairs (component's size (number of vertices), a vertex of the component), 
+/// @return a list of pairs (component's size (number of vertices), a vertex of the component),
 /// ordered by size.
 
-template<class Polyhedron> 
-typename Polyhedron::Vertex_handle 
-get_any_free_vertex(Polyhedron& polyhedron, 
+template<class Polyhedron>
+typename Polyhedron::Vertex_handle
+get_any_free_vertex(Polyhedron& polyhedron,
                     std::map<typename Polyhedron::Vertex*, int>& tags)
 {
     typedef typename Polyhedron::Vertex_handle Vertex_handle;
@@ -66,24 +66,24 @@ get_any_free_vertex(Polyhedron& polyhedron,
     return NULL;
 }
 
-/// Tag a "free" connected component as "done". 
+/// Tag a "free" connected component as "done".
 ///
 /// @commentheading Template Parameters:
 /// @param Polyhedron an instance of CGAL::Polyhedron_3<>.
 ///
 /// @return the size (number of vertices) of the component.
-template<class Polyhedron> 
-unsigned int tag_component(Polyhedron& polyhedron, 
+template<class Polyhedron>
+unsigned int tag_component(Polyhedron& polyhedron,
                            typename Polyhedron::Vertex_handle pSeedVertex,
                            std::map<typename Polyhedron::Vertex*, int>& tags)
 {
     typedef typename Polyhedron::Vertex_handle Vertex_handle;
     typedef typename Polyhedron::Vertex_iterator Vertex_iterator;
-    typedef typename Polyhedron::Halfedge_around_vertex_circulator 
+    typedef typename Polyhedron::Halfedge_around_vertex_circulator
       Halfedge_around_vertex_circulator;
 
     unsigned int number_of_vertices = 0; // size (number of vertices) of the component
-    
+
     std::list<Vertex_handle> vertices;
     vertices.push_front(pSeedVertex);
     while (!vertices.empty())
@@ -110,7 +110,7 @@ unsigned int tag_component(Polyhedron& polyhedron,
                 vertices.push_front(neighbor);
         }
     }
-    
+
     return number_of_vertices;
 }
 
@@ -128,23 +128,23 @@ unsigned int tag_component(Polyhedron& polyhedron,
 /// @commentheading Template Parameters:
 /// @param Polyhedron an instance of CGAL::Polyhedron_3<> that supports vertices.
 ///
-/// @return a list of components expressed as pairs (number of vertices, vertex), 
+/// @return a list of components expressed as pairs (number of vertices, vertex),
 /// ordered by size.
-template<class Polyhedron> 
+template<class Polyhedron>
 std::multimap<unsigned int, typename Polyhedron::Vertex_handle>
 get_polyhedron_connected_components(Polyhedron& polyhedron)
 {
-    // Implementation note: 
+    // Implementation note:
     // We tag vertices instead of halfedges to save a factor 6.
     // The drawback is that we require the Polyhedron_3<> to support vertices.
     // TODO: replace std::map to tag vertices by a property map.
-    Assert_compile_time_tag(Polyhedron::Supports_halfedge_vertex(), Tag_true());
+    Assert_compile_time_tag(typename Polyhedron::Supports_halfedge_vertex(), Tag_true());
     std::map<typename Polyhedron::Vertex*, int> tags;
 
     typedef typename Polyhedron::Vertex_handle Vertex_handle;
     typedef typename Polyhedron::Vertex_iterator Vertex_iterator;
 
-    /// list of all connected components of a polyhedron, ordered by size.
+    // list of all connected components of a polyhedron, ordered by size.
     std::multimap<unsigned int, Vertex_handle> components;
 
     // Tag all mesh vertices as "free".
@@ -165,7 +165,7 @@ get_polyhedron_connected_components(Polyhedron& polyhedron)
         // Add component to (ordered) list
           components.insert(std::make_pair(number_of_vertices, seed_vertex));
     }
-    
+
     return components;
 }
 
@@ -174,31 +174,31 @@ get_polyhedron_connected_components(Polyhedron& polyhedron)
 /// erase all connected components but the largest.
 ///
 /// @commentheading Template Parameters:
-/// @param Polyhedron an instance of CGAL::Polyhedron_3<> that supports 
+/// @param Polyhedron an instance of CGAL::Polyhedron_3<> that supports
 /// vertices and removal operation.
 ///
 /// @return the number of connected components erased.
-template<class Polyhedron> 
+template<class Polyhedron>
 unsigned int
 erase_small_polyhedron_connected_components(Polyhedron& polyhedron)
 {
-    Assert_compile_time_tag(Polyhedron::Supports_removal(), Tag_true());
+    Assert_compile_time_tag(typename Polyhedron::Supports_removal(), Tag_true());
 
     typedef typename Polyhedron::Vertex_handle Vertex_handle;
 
     unsigned int nb_erased_components = 0,
                  nb_isolated_vertices = 0;
-      
+
     // Get list of connected components, ordered by size (number of vertices)
-    std::multimap<unsigned int, Vertex_handle> 
+    std::multimap<unsigned int, Vertex_handle>
       components = CGAL::get_polyhedron_connected_components(polyhedron);
-      
+
     // Erase all connected components but the largest
     while (components.size() > 1)
     {
       unsigned int number_of_vertices = components.begin()->first;
       Vertex_handle vertex = components.begin()->second;
-      
+
       // Remove component from list
       components.erase(components.begin());
 
@@ -207,16 +207,16 @@ erase_small_polyhedron_connected_components(Polyhedron& polyhedron)
         CGAL_TRACE_STREAM << "  Erase connected component (" << number_of_vertices << " vertices)\n";
         polyhedron.erase_connected_component(vertex->halfedge());
         nb_erased_components++;
-      } 
+      }
       else // if isolated vertex
       {
         // TODO: erase isolated vertices?
         // Note: Polyhedron_3 does not export HalfedgeDS::vertices_erase(Vertex_handle v)
-        
+
         nb_isolated_vertices++;
-      } 
+      }
     }
-    
+
     if (nb_isolated_vertices > 0)
       CGAL_TRACE_STREAM << "  Skipped " << nb_isolated_vertices << " isolated vertices\n";
 

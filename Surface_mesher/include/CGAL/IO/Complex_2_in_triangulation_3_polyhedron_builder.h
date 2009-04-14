@@ -49,6 +49,7 @@ public:
 
   void operator()(HDS& hds) {
     typedef typename Tr::Vertex_handle Vertex_handle;
+    typedef typename Tr::Point Point;
     typedef typename Tr::Edge Edge;
     typedef typename Tr::Facet Facet;
     typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
@@ -57,7 +58,7 @@ public:
     const Tr& tr = c2t3.triangulation();
     CGAL::Polyhedron_incremental_builder_3<HDS> builder(hds, true);
     const typename Tr::size_type number_of_facets = c2t3.number_of_facets();
-    builder.begin_surface(tr.number_of_vertices(), 
+    builder.begin_surface(tr.number_of_vertices(),
 			  number_of_facets);
     {
       // Finite vertices coordinates.
@@ -106,7 +107,7 @@ public:
 	  } // end "stack non empty"
 	} // end "oriented_set not full"
 
-      for(typename std::set<Facet>::const_iterator fit = 
+      for(typename std::set<Facet>::const_iterator fit =
 	    oriented_set.begin();
 	  fit != oriented_set.end();
 	  ++fit)
@@ -114,7 +115,7 @@ public:
 	int indices[3];
 	int index = 0;
 	for (int i=0; i<3; i++)
-	  indices[index++] = 
+	  indices[index++] =
 	    V[fit->first->vertex(tr.vertex_triple_index(fit->second, i))];
 	builder.add_facet(indices+0, indices+3);
 	CGAL_assertion_code(++nb_facets);

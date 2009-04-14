@@ -13,7 +13,7 @@ void gl_render_facets(Polyhedron& polyhedron)
   typedef typename Polyhedron::Facet	    Facet;
   typedef typename Polyhedron::Facet_iterator Facet_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator HF_circulator;
-  
+
   // Get current shading model
   GLint shading;
   ::glGetIntegerv(GL_SHADE_MODEL, &shading);
@@ -24,7 +24,7 @@ void gl_render_facets(Polyhedron& polyhedron)
     f++)
   {
     ::glBegin(GL_POLYGON);
-    
+
     // If Flat shading: 1 normal per polygon
     if (shading == GL_FLAT)
     {
@@ -40,7 +40,7 @@ void gl_render_facets(Polyhedron& polyhedron)
       // If Gouraud shading: 1 normal per vertex
       if (shading == GL_SMOOTH)
       {
-        Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*he->vertex());
+        Vector n = compute_vertex_normal<typename Polyhedron::Vertex,Kernel>(*he->vertex());
         ::glNormal3d(n.x(),n.y(),n.z());
       }
 
