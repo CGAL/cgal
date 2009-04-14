@@ -43,9 +43,9 @@ int main() {
     Model &model= pdb.models().begin()->model();
     assert(model.chains().size() != 0);
     Chain &p= model.chains().begin()->chain();
-    unsigned int na= p.atoms().size();
+    unsigned int na= distance(p.atoms());
     //p.write(std::cout);
-    std::cout << "There are " << p.monomers().size() << " residues." 
+    std::cout << "There are " << distance(p.monomers()) << " residues." 
 	      << std::endl;
   
     std::vector<Atom> atoms;
