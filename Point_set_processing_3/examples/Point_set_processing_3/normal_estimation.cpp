@@ -269,7 +269,7 @@ int main(int argc, char * argv[])
     // Print status
     int nb_vertices = points.size();
     std::cerr << "Read file " << input_filename << ": " << nb_vertices << " vertices, "
-                                                        << task_timer.time() << " seconds, "
+                                                        << task_timer.time() << " seconds"
                                                         << std::endl;
     task_timer.reset();
 
