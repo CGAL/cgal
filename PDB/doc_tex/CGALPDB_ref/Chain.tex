@@ -40,18 +40,45 @@ A class representing a single chain of a protein.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccTypes)
 
-\paragraph[{\ccc{Monomer_key}}]{typedef Label$<$Chain$>$ \ccc{Monomer_key}}
+\ccNestedType{Monomer_key}
+{
 The type for storing residue indices in the PDB.
-\paragraph[{\ccc{IR_key}}]{typedef Label$<$\ccc{IR_tag}$>$ \ccc{IR_key}}
-\paragraph[{Container}]{typedef \ccc{small_map<Monomer_pair>} Container}
-\paragraph[{Monomers}]{typedef \ccc{boost::iterator_range<Container::iterator>} Monomers}
-\paragraph[{\ccc{Monomer_consts}}]{typedef \ccc{boost::iterator_range<Container::const_iterator>} \ccc{Monomer_consts}}
-\paragraph[{Bond}]{typedef \ccc{std::pair<Bond_endpoint, Bond_endpoint>} Bond}
+}
+\ccGlue
+\ccNestedType{IR_key}
+{
+}
+\ccGlue
+\ccNestedType{Container}
+{
+}
+\ccGlue
+\ccNestedType{Monomers}
+{
+}
+\ccGlue
+\ccNestedType{Monomer_consts}
+{
+}
+\ccGlue
+\ccNestedType{Bond}
+{
 A chemical bond within the protein.
-\paragraph[{Atoms}]{typedef \ccc{boost::iterator_range<internal::Nested_iterator<Iterator_traits>} $>$ Atoms}
+}
+\ccGlue
+\ccNestedType{Atoms}
+{
 An iterator to iterate through all the atoms of the protein
-\paragraph[{\ccc{Atom_consts}}]{typedef \ccc{boost::iterator_range<internal::Nested_iterator<Iterator_const_traits>} $>$ \ccc{Atom_consts}}
-\paragraph[{Bonds}]{typedef \ccc{boost::iterator_range<Bond_it>} Bonds}
+}
+\ccGlue
+\ccNestedType{Atom_consts}
+{
+}
+\ccGlue
+\ccNestedType{Bonds}
+{
+}
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
@@ -61,8 +88,11 @@ An iterator to iterate through all the atoms of the protein
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\paragraph[{Chain}]{Chain ()}
+\ccConstructor{Chain();}
+{
 Default.
+}
+\ccGlue
 
 %END-AUTO(\ccCreation)
 
@@ -71,38 +101,104 @@ Default.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\paragraph[{monomers}]{Monomers monomers ()}
-\paragraph[{monomers}]{\ccc{Monomer_consts} monomers () const}
-\paragraph[{insert}]{void insert (\ccc{Monomer_key} k, const Monomer\& m)}
-\paragraph[{atoms}]{Atoms atoms ()}
-\paragraph[{atoms}]{\ccc{Atom_consts} atoms () const}
-\paragraph[{\ccc{number_of_atoms}}]{unsigned int \ccc{number_of_atoms} () const}
+\ccMethod{Monomers monomers();}
+{
+}
+\ccGlue
+\ccMethod{Monomer_consts monomers() const;}
+{
+}
+\ccGlue
+\ccMethod{void insert(Monomer_key k, const Monomer& m);}
+{
+}
+\ccGlue
+\ccMethod{Atoms atoms();}
+{
+}
+\ccGlue
+\ccMethod{Atom_consts atoms() const;}
+{
+}
+\ccGlue
+\ccMethod{unsigned int number_of_atoms() const;}
+{
 This is non-const time.
-\paragraph[{bonds}]{Bonds bonds () const}
-\paragraph[{\ccc{number_of_bonds}}]{unsigned int \ccc{number_of_bonds} () const}
+}
+\ccGlue
+\ccMethod{Bonds bonds() const;}
+{
+}
+\ccGlue
+\ccMethod{unsigned int number_of_bonds() const;}
+{
 This is non-const time.
-\paragraph[{sequence}]{\ccc{std::vector<Monomer::Type>} sequence () const}
+}
+\ccGlue
+\ccMethod{std::vector<Monomer::Type> sequence() const;}
+{
 The sequence of residue types.
-\paragraph[{write}]{int write (char chain, int \ccc{start_index}, \ccc{std::ostream}\& out) const}
+}
+\ccGlue
+\ccMethod{int write(char chain, int start_index, std::ostream& out) const;}
+{
 Write as part of pdb file.
-\paragraph[{\ccc{write_pdb}}]{void \ccc{write_pdb} (\ccc{std::ostream}\& out) const}
+}
+\ccGlue
+\ccMethod{void write_pdb(std::ostream& out) const;}
+{
 Write a pdb file.
 See \ccc{check_protein}.cpp for an example of using this to write a pdb file.
-\paragraph[{dump}]{void dump (\ccc{std::ostream}\& out) const}
+}
+\ccGlue
+\ccMethod{void dump(std::ostream& out) const;}
+{
 Dump as human readable.
-\paragraph[{write}]{\ccc{std::ostream}\& write (\ccc{std::ostream}\& out) const}
+}
+\ccGlue
+\ccMethod{std::ostream& write(std::ostream& out) const;}
+{
 Dump as human readable.
-\paragraph[{contains}]{bool contains (\ccc{Monomer_key} k) const}
-\paragraph[{get}]{\ccc{Monomers::iterator::reference} get (\ccc{Monomer_key} k)}
-\paragraph[{find}]{\ccc{Monomers::iterator} find (\ccc{Monomer_key} k)}
-\paragraph[{get}]{\ccc{Monomer_consts::const_iterator::value_type} get (\ccc{Monomer_key} k) const}
-\paragraph[{find}]{\ccc{Monomer_consts::const_iterator} find (\ccc{Monomer_key} k) const}
-\paragraph[{\ccc{has_bonds}}]{bool \ccc{has_bonds} () const}
+}
+\ccGlue
+\ccMethod{bool contains(Monomer_key k) const;}
+{
+}
+\ccGlue
+\ccMethod{Monomers::iterator::reference get(Monomer_key k);}
+{
+}
+\ccGlue
+\ccMethod{Monomers::iterator find(Monomer_key k);}
+{
+}
+\ccGlue
+\ccMethod{Monomer_consts::const_iterator::value_type get(Monomer_key k) const;}
+{
+}
+\ccGlue
+\ccMethod{Monomer_consts::const_iterator find(Monomer_key k) const;}
+{
+}
+\ccGlue
+\ccMethod{bool has_bonds() const;}
+{
 Return whether bonds have been computed for this protein.
-\paragraph[{\ccc{set_has_bonds}}]{void \ccc{set_has_bonds} (bool tf)}
+}
+\ccGlue
+\ccMethod{void set_has_bonds(bool tf);}
+{
 Set whether the protein has bonds or not.
-\paragraph[{name}]{const \ccc{std::string}\& name () const}
-\paragraph[{\ccc{set_name}}]{void \ccc{set_name} (const \ccc{std::string}\& k)}
+}
+\ccGlue
+\ccMethod{const std::string& name() const;}
+{
+}
+\ccGlue
+\ccMethod{void set_name(const std::string& k);}
+{
+}
+\ccGlue
 
 %END-AUTO(\ccOperations)
 
