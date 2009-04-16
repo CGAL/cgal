@@ -1,0 +1,121 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: AABB_tree.tex
+% +------------------------------------------------------------------------+
+% | 21.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSAABBtreeRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAABBtreeDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{AABB_tree<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a data structure for efficient intersection detection and projection. It builds a hierarchy of  axis-aligned bounding boxes from a set of geometric primitives such as 3D triangles, and can received intersection and projection queries, provided that the corresponding predicates are implemented in the traits class. The design is a leafless design, as presented in the Opcode whitepaper http://www.codercorner.com/Opcode.pdf
+
+The template parameter \ccc{Traits} stands for a traits class which must be a model of the concept \ccc{AABBTraits}.
+
+\ccInclude{AABB_tree.h}
+
+%\ccIsModel
+
+%Concept
+
+\ccTypes
+
+
+\ccTypedef{typedef Traits::Primitive  Primitive;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Projection_query  Projection_query;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Projection_return  Projection_return;}{}
+%\ccNestedType{AABB}{some nested types}
+
+\ccCreation
+\ccCreationVariable{aabb}  %% choose variable name
+
+\ccConstructor{AABB_tree();}{Default constructor.}
+\ccConstructor{template < class ConstPrimitiveIterator>
+       AABB_tree( ConstPrimitiveIterator begin, 
+                  ConstPrimitiveIterator end );}
+{Builds the datastructure. Type \ccc{ConstPrimitiveIterator} can be any const iterator on a container of \ccc{Primitive::Data_type} such that \ccc{Primitive} has a constructor taking a \ccc{ConstPrimitiveIterator} as argument.}
+
+
+\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
+\ccMethod{ template <class Query>
+	  bool do_intersect(const Query & q);}
+{ Returns true if the query intersects the primitives, false otherwise. Type \ccc{Query} has to be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}.}
+	
+\ccMethod{template <class Query>
+	  int number_of_intersections(const Query& q );}
+{Returns the number of primitives intersected by the query. Type \ccc{Query} has to be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}.}
+	
+\ccMethod{template <class Query, class OutputIterator>
+	  OutputIterator 
+          intersected_primitives(const Query& q ,
+          OutputIterator out);}
+{Outputs to the iterator the list of the identifiers of intersected primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}.
+The value type of OutputIterator is assumed to be \ccc{Primitive::Id_type}.}
+	
+\ccMethod{ template <class Query, class OutputIterator>
+	  OutputIterator 
+          all_intersections(const Query& q ,
+          OutputIterator out);}
+{Outputs to the iterator the list of intersected geometric primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} and intersection predicates have been defined in \ccc{Traits}. The value type of OutputIterator is assumed to be \ccc{Primitive::Data_type}.}
+
+
+\ccMethod{template <class Query>
+	  bool any_intersection(const Query& q , Intersection_type &);}
+{Returns true if the query intersects the primitives, false otherwise. In the positive, saves the first encountered intersection to the second parameter. Type \ccc{Query} has to be a type for which \ccc{do_intersect} and intersection predicates have been defined in \ccc{Traits}.}
+	
+\ccMethod{Projection_return 
+closest_point(const Projection_query& q, 
+              const Projection_return & hint);} 
+{Returns the point on all inputs primitive which is closest to the query q. Hint is assumed to be any point on the input primitives (the closer hint to q, the faster the query).}
+
+
+
+
+
+
+
+
+\ccSeeAlso
+
+\ccc{AABBTraits}, \\
+\ccc{AABBPrimitive}.
+
+\ccExample
+
+% A short example program.
+% Instead of a short program fragment, a full running program can be
+% included using the 
+% \verb|\ccIncludeExampleCode{Package/AABB_tree.C}| 
+% macro. The program example would be part of the source code distribution and
+% also part of the automatic test suite.
+
+% \begin{ccExampleCode}
+% void your_example_code() {
+% }
+% \end{ccExampleCode}
+
+\ccIncludeExampleCode{AABB_tree/AABB_example.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

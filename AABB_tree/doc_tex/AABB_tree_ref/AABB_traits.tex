@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: AABB_traits_base.tex
+% +------------------------------------------------------------------------+
+% | 21.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSAABBtraitsbaseRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAABBtraitsbaseDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{AABB_traits<GeomTraits,TrianglePrimitive>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the concept \ccc{AABBTraits}. This traits class handle primitives whose geometric types are
+triangular facets. It provides intersection detections and computations for queries of types \ccc{CGAL::Ray_3}, \ccc{CGAL::Line_3} and \ccc{CGAL::Segment_3}, and projection computation for queries of type \ccc{Point_3}.
+
+\ccParameters
+The template parameter \ccc{GeomTraits} provides the geometric types as well as the intersection tests and computations required.
+This type must be a model of the concept \ccc{AABBGeomTraits}.
+
+The template parameter \ccc{TrianglePrimitivee} provides the triangular primitives stored in the AABB tree. This parameter must be a model of the concept \ccc{TrianglePrimitive}.
+
+\ccInclude{AABB_traits.h}
+
+% \ccIsModel
+
+% Concept
+
+\ccTypes
+
+\ccTypedef{GeomTraits::Ray_3  Ray_3;}{Ray query type.}
+\ccTypedef{GeomTraits::Segment_3  Segment_3;}{Segment query type.}
+\ccTypedef{GeomTraits::Line_3 Line_3;}{Line query type.}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+%\ccConstructor{AABB_traits();}{default constructor.}
+
+% \ccOperations
+
+% \ccMethod{void foo();}{some member functions}
+
+\ccSeeAlso
+
+\ccc{AABBTraits},\\
+\ccc{AABB_tree<Traits>}, \\
+\ccc{AABBTrianglePrimitive}
+
+%\ccExample
+
+
+
+% A short example program.
+% Instead of a short program fragment, a full running program can be
+% included using the 
+% \verb|\ccIncludeExampleCode{Package/AABB_traits_base.C}| 
+% macro. The program example would be part of the source code distribution and
+% also part of the automatic test suite.
+
+% \begin{ccExampleCode}
+% void your_example_code() {
+% }
+
+
+%% \ccIncludeExampleCode{Package/AABB_traits_base.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

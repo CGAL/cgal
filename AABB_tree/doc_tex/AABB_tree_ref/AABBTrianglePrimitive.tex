@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: AABBTrianglePrimitive.tex
+% +------------------------------------------------------------------------+
+% | 25.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSAABBTrianglePrimitiveRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAABBTrianglePrimitiveDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{AABBTrianglePrimitive}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirement for the primitive used in the class \ccc{AABB_traits<GeomTraits,TrianglePrimitive>}
+(which implements a model of \ccc{AABBTraits}) when the geometric primitives to be stored in the tree are triangles.
+
+The concept \ccRefName\ refines the concept \ccc{AABBPrimitive}, with \ccc{Data_type} being \ccc{GeomTraits::Triangle_3}.
+
+
+\ccGeneralizes
+
+\ccc{AABBPrimitive}\\
+
+
+\ccTypes
+
+\ccNestedType{Triangle_3}{The type for triangles. This type should match
+the triangle type \ccc{GeomTraits::Triangle_3} provided by the geometric traits.}
+
+\ccCreation
+\ccCreationVariable{primitive}  %% choose variable name
+
+\ccConstructor{AABBTrianglePrimitive(TriangleHandle h);}
+{Constructs a primitive whose triangle is the one h points to.}
+
+\ccOperations
+
+\ccMethod{Triangle_3 triangle();}
+{Builds a triangle from the geometric primitive.}
+
+% \ccHasModels
+
+% \ccc{Some_class},
+% \ccc{Some_other_class}.
+
+\ccSeeAlso
+\ccc{AABBPrimitive}\\
+\ccc{AABB_traits<GeomTraits,TrianglePrimitive>}\\
+
+% \ccExample
+
+% A short example program.
+% Instead of a short program fragment, a full running program can be
+% included using the 
+% \verb|\ccIncludeExampleCode{Package/AABBTrianglePrimitive.C}| 
+% macro. The program example would be part of the source code distribution and
+% also part of the automatic test suite.
+
+% \begin{ccExampleCode}
+% void your_example_code() {
+% }
+% \end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/AABBTrianglePrimitive.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

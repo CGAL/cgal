@@ -1,4 +1,15 @@
 * text=auto !eol
+AABB_tree/doc_tex/AABB_tree/AABB_tree_user.tex -text
+AABB_tree/doc_tex/AABB_tree/PkgDescription.tex -text
+AABB_tree/doc_tex/AABB_tree/main.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/AABBGeomTraits.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/AABBPrimitive.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/AABBTraits.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/AABBTrianglePrimitive.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/AABB_traits.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/AABB_tree.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/intro.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/main.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations.png -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations2.png -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/algebraic_structures.tex -text

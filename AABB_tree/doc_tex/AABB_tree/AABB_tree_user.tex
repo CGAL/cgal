@@ -1,0 +1,23 @@
+\section{Introduction}
+
+\label{AABB_tree_section_intro}
+
+The AABB tree component offers a data structure and algorithms to perform efficient intersection detection and projection of queries against a large set of geometric primitives. Common examples of intersection queries include a 3D ray against a set of 3D triangles, and a 3D plane against a set of 3D segments. A common example of projection query amounts to find the closest point from a 3D point query to a large set of 3D triangles.\\
+
+The data structure takes as input the set of geometric primitives
+which are to be queried for intersection detection and projection.
+From this set, a hierarchy of axis-aligned bounding boxes (AABBs) is built, and used to speed up intersection and projection queries. More specifically, the hierarchy construction is initialized by computing the AABB of the whole set of input primitives. All primitives are then stored along the longest axis of this box, and the primitives are separated into two equal sized sets. This procedure is applied recursively until an AABB contains conceptually only one primitive. In practice the design is a slightly different as the tree is leafless as presented in the OPCODE whitepaper http://www.codercorner.com/Opcode.pdf. An intersection query then traverses the tree by computing intersection tests only with respect to the AABBs during traversal, and with respect to the input primitives at the end of traversal, i.e., in the leafs of the tree. A projection query between, e.g., a point $q$ and a set of triangle primitives is turned into a  \emph{ball} query centered at the query point. The ball then traverses the tree while recursively querying intersections with the AABBs, and computes the closest point $p$ from the query point to the input primitives only when the traversal ends at a leaf of the tree. The ball radius is then shrunk to the distance between p and q for all remaining recursive tree traversals. Efficiency requires providing a small initial ball radius which is guaranteed to intersect the input primitives.\\
+
+The set of geometric primitive stored in the data structure
+may be queried for intersection detection, intersection computation
+and projection with any type of query type, provided that the corresponding predicates and constructors are implemented in the traits class. 
+
+% \section{Interface}
+% \label{AABB_tree_section_interface}
+
+
+\section{Examples}
+\label{AABB_tree_section_examples}
+
+
+\ccIncludeExampleCode{AABB_tree/AABB_example.cpp}

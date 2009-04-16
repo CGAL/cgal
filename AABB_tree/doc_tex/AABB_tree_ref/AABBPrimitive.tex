@@ -1,0 +1,84 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: AABBPrimitive.tex
+% +------------------------------------------------------------------------+
+% | 21.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSAABBPrimitiveRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAABBPrimitiveDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{AABBPrimitive}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements for the primitives stored in the AABB data structure. The concept encapsulates a type for the geometric primitives and an identifier type by which those primitives are referred to. The concept \ccRefName\ also refines the concepts DefaultConstructible and Assignable.
+
+\ccConstructor{AABBPrimitive(Handle h);}
+{Constructs a primitive whose geometric primitive is the one h points to.}
+
+% \ccGeneralizes
+
+% ThisConcept \\
+% ThatConcept
+
+\ccTypes
+
+\ccNestedType{Data_type}{The geometric primitive type.}
+
+\ccNestedType{Id_type}{The type of identifiers by which the primitives are referred to.}
+
+
+\ccCreationVariable{primitive}  %% choose variable name
+\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
+\ccMethod{Data_type get_data();}
+{Returns the geometric data wrapped inside the Primitive.}
+
+\ccMethod{Id_type get_id();}
+{Returns the corresponding identifier. This identifier is only used as a representant for the primitive in the output of the \ccc{AABB_tree} methods.}
+
+% \ccHasModels
+
+% \ccc{AABB_primitive_base<ID>}
+
+
+\ccSeeAlso
+\ccc{AABB_tree<Traits>}
+
+\ccExample
+
+Usually, the \ccc{Primitive} type is a wrapper around a \ccc{Handle}. Assume for instance, that geometric primitives 
+are to be the faces of a mesh stored as a \ccc{CGAL::Polyhedron}, the Primitive type would be a wrapper around the \ccc{Face_handle}  type of the polyhedron. The \ccc{Data_type} would be \ccc{Face},
+ the \ccc{Id_type} would be \ccc{Face_handle}, \ccc{get_data()} would dereference the \ccc{Face_handle}, and \ccc{get_id()} would return the \ccc{Face_handle} itself. 
+
+% A short example program.
+% Instead of a short program fragment, a full running program can be
+% included using the 
+% \verb|\ccIncludeExampleCode{Package/AABBPrimitive.C}| 
+% macro. The program example would be part of the source code distribution and
+% also part of the automatic test suite.
+
+% \begin{ccExampleCode}
+% void your_example_code() {
+% }
+% \end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/AABBPrimitive.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

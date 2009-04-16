@@ -1,0 +1,93 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: AABBGeomTraits.tex
+% +------------------------------------------------------------------------+
+% | 25.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSAABBGeomTraitsRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAABBGeomTraitsDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{AABBGeomTraits}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for the first template parameter of the class \ccc{AABB_traits<GeomTraits, TrianglePrimitive>}. It provides query types as well as predicates and constructors to detect and compute intersections between objects of those query types with the primitives stored in the AABB tree. In addition, it contains query types as well as predicates and constructors to compute projections between a point query and the primitives stored in the AABB tree.
+
+\ccGeneralizes
+
+ThisConcept \\
+ThatConcept
+
+\ccTypes
+
+
+\ccNestedType{Ray_3}{Ray type.}
+\ccGlue
+\ccNestedType{Line_3}{Line type.}
+\ccGlue
+\ccNestedType{Point_3}{Point type.}
+\ccGlue
+\ccNestedType{Plane_3}{Plane type.}
+\ccGlue
+\ccNestedType{Sphere_3}{Sphere type.}
+\ccGlue
+\ccNestedType{Segment_3}{Segment type.}
+\ccGlue
+\ccNestedType{Triangle_3}{Triangle type. This type should match 
+the type \ccc{TrianglePrimitive::Triangle_3}.}
+\ccGlue
+\ccNestedType{Bbox_3}{Bounding box type.}
+
+\ccNestedType{Do_intersect_3} 
+{A functor object to detect intersections between two primitives.
+Provides the operators:
+\ccc{bool operator()(Type_1 type_1, Type_2 type_2);}
+where \ccc{Type_1} and \ccc{Type_2} are relevant types
+among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3}, \ccc{Triangle_3}, \ccc{Sphere_3}, \ccc{Plane_3} and \ccc{Bbox_3} \}. Relevant herein means that a lineic primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box, interior of a sphere), and a solid primitive is tested against another solid primitive (sphere against box, box against box). The operator returns \ccc{true} if \ccc{type_1}  and \ccc{type_2}
+have a non empty intersection.}
+
+\ccNestedType{Intersect_3} 
+{A functor object to construct the intersection between two primitives.
+Provides the operators:
+\ccc{CGAL::Object operator()(Type_1 type_1, Type_2 type_2);}
+where \ccc{Type_1} and \ccc{Type_2} are any relevant types
+among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3},  \ccc{Triangle_3}, \ccc{Sphere_3}, \ccc{Plane_3} and \ccc{Bbox_3}. \}.
+The operator computes a \ccc{CGAL::Object} which is the intersection between the objects \ccc{type_1} and \ccc{type_2}.}
+
+\ccCreation
+\ccCreationVariable{geomtraits}  %% choose variable name
+
+%\ccConstructor{AABBGeomTraits();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{Do_intersect_3 do_intersect_3_object();}
+{Returns the intersection detection functor.}
+
+\ccMethod{Intersect_3 intersect_3_object();}
+{Returns the intersection constructor.}
+
+\ccHasModels
+Any instantiation of \ccc{CGAL::Kernel} is a model of this traits concept.
+
+\ccSeeAlso
+
+\ccc{AABB_traits<GeomTraits,TrianglePrimitive>}.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
