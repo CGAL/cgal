@@ -157,6 +157,9 @@ sub latex_unmangle
     # Avoid tabs and consecutive spaces to ease parsing in the rest of this script
     $buf =~ s/( |\t)+/ /g;
 
+    # Convert buffer back to Doxygen 1.5.5 format
+    $buf =~ s/\\paragraph\[\{.*?\}\]/\\paragraph/g; # remove \paragraph[...] -> \paragraph
+
     # Unmangle comma (,), _, ~, <, >, *, &, [] characters mangled for Latex
     # to get regular C++ code (mangled back at end of script)
     $buf =~ s/, \\\//,/g;                       # , \/ -> ,
@@ -213,8 +216,8 @@ sub doxygen_latex_to_latex
     $buf =~ s/CGAL_\w*_NAMESPACE\s*//g;
 
     # Remove doxygen comments that are not interesting
-    $buf =~ s/Implements \S*(\.| \.)?//g;       # Remove from "Implements" to end of sentence
-    $buf =~ s/Reimplemented from \S*(\.| \.)?//g; # Same thing with "Reimplemented from"
+    $buf =~ s/Implements .*//g;                 # Remove from "Implements" to end of line
+    $buf =~ s/Reimplemented from .*//g;         # Same thing with "Reimplemented from"
     $buf =~ s/Implemented in .*//g;             # Same thing with "Implemented in"
     $buf =~ s/Reimplemented in .*//g;           # Same thing with "Reimplemented in"
     $buf =~ s/\[package\]//g;
@@ -225,6 +228,7 @@ sub doxygen_latex_to_latex
     $buf =~ s/\n?\\begin\{Desc\}/\n\\begin\{Desc\}/smg;
 
     # Use a canonic style to ease parsing
+    $buf =~ s/ *, *([^\\])/, $1/g;              # Use a canonic style "item1, item2" for lists
     $buf =~ s/([\w\>]+)\s*&\s*/$1& /g;          # Use a canonic style "type& variable" for references
     $buf =~ s/(\w)=/$1 =/g;                     # Use a canonic style "variable = default" for default parameters
     $buf =~ s/=(\w)/= $1/g;                     #                    ""
@@ -260,8 +264,10 @@ sub latex_mangle
     $buf =~ s/\\ccSubHeading\{/\\subsubsection\{/g;
 
     # Wrap words surrounded by simple quotes by \ccc{} [L. Saboret's extension].
-    # We add carriage returns around \ccc{} for the line by line substitution below.
-    $buf =~ s/\'(((::|\w)+(<.*?>)?)+)\'/\n\\ccc{$1\}\n/g;
+    $buf =~ s/\'(((::|\w)+(<.*?>)?)+)\'/\\ccc\{$1\}/g;
+
+    # Add carriage returns around \ccc{} for the line by line substitution below.
+    $buf =~ s/(\\ccc\{.*?\})/\n$1\n/g;
 
     # \ccInclude, \ccHeading, \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
     # first curly braces pair must contain plain C++ code.
@@ -455,10 +461,9 @@ sub format_comment_headings
     $buf =~ s/\\begin\{description\}\s*\\item\[(Returns):\]\s*(.*?)\s*\\end\{description\}/\\ccCommentHeading\{$1\} $2/smg;
     $buf =~ s/\\begin\{description\}\s*\\item\[(Parameters|Template Parameters|Values):\]\s*(\\begin\{description\}.*?\\end\{description\})\s*\\end\{description\}/\\ccCommentHeading\{$1\}\n$2/smg;
 
-    # Replace list items in bold (ie with square brackets around item) by italics.
-    # Note: latex_mangle() will replace simple quotes by \ccc{}.
-    $buf =~ s/\\item\[(.*?):\]/\\item $1: /g;  # regular list items (end by ':') => no quotes
-    $buf =~ s/\\item\[(.*?)\]/\\item '$1': /g; # parameters => quotes
+    # Replace list items in bold (ie with square brackets around item) by italics (\ccc macro).
+    $buf =~ s/\\item\[(.*?):\]/\\item $1: /g;         # regular list items (end by ':') => no italics
+    $buf =~ s/\\item\[(.*?)\]/\\item \\ccc\{$1\}: /g; # parameters => italics
 
     # Flatten lists with only 1 item (to save space and avoid a cgal_manual bug
     # with 1-item lists inside the second curly braces pair of \ccXXX expressions).
