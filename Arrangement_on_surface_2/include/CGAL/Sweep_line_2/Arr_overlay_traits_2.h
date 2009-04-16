@@ -719,7 +719,7 @@ public:
                                       Arrangement_blue_2>;
     
   public:
-    Comparison_result operator() (const X_monotone_curve_2 & xcv) const
+    bool operator() (const X_monotone_curve_2 & xcv) const
     {
       return m_base_is_vert (xcv.base());
     }
