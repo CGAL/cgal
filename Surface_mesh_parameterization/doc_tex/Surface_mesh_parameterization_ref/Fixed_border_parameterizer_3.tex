@@ -131,7 +131,7 @@ Constructor.
 \ccMethod{Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code parameterize(Adaptor& mesh);}
 {
 [virtual] \\
-Compute a one-to-one mapping from a triangular 3D surface \ccc{mesh} to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u,v) pair image of each vertex of the 3D surface.
+Compute a one-to-one mapping from a triangular 3D surface \ccc{mesh} to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface.
 \ccCommentHeading{Preconditions}\begin{itemize}
 \item \ccc{mesh} must be a surface with one connected component.\item \ccc{mesh} must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
 }
@@ -169,7 +169,7 @@ Compute the line i of matrix A for i inner vertex:\begin{itemize}
 \ccMethod{void set_mesh_uv_from_system(Adaptor& mesh, const Vector& Xu, const Vector& Xv);}
 {
 [protected] \\
-Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
+Copy Xu and Xv coordinates into the (u, v) pair of each surface vertex.
 }
 \ccGlue
 \ccMethod{Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code check_parameterize_postconditions(const Adaptor& mesh, const Matrix& A, const Vector& Bu, const Vector& Bv);}

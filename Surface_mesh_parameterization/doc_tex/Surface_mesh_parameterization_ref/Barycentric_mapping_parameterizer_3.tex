@@ -28,7 +28,7 @@ The class \ccc{Barycentric_mapping_parameterizer_3} implements Tutte Barycentric
 One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 
 This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameterization algorithm \ccc{Fixed_border_parameterizer_3::parameterize}(). \ccc{Barycentric_mapping_parameterizer_3}:\begin{itemize}
-\item provides default \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense.\item implements \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i,j) coefficient of matrix A for j neighbor vertex of i based on Tutte Barycentric Mapping method.\item implements an optimized version of \ccc{is_one_to_one_mapping}().\end{itemize}
+\item provides default \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense.\item implements \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i based on Tutte Barycentric Mapping method.\item implements an optimized version of \ccc{is_one_to_one_mapping}().\end{itemize}
 
 %END-AUTO(\ccDefinition)
 
@@ -116,7 +116,7 @@ Constructor.
 \ccMethod{virtual NT compute_w_ij(const Adaptor& , Vertex_const_handle, Vertex_around_vertex_const_circulator);}
 {
 [protected, virtual] \\
-Compute \ccc{w_ij} = (i,j) coefficient of matrix A for j neighbor vertex of i.
+Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i.
 Tutte Barycentric Mapping algorithm is the most simple one: \ccc{w_ij} = 1 for j neighbor vertex of i.
 }
 \ccGlue

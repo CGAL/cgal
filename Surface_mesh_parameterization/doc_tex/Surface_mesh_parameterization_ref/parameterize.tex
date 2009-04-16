@@ -36,7 +36,7 @@ of Floater Mean Value Coordinates.
 \ccFunction{template<class ParameterizationMesh_3> Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize(ParameterizationMesh_3& mesh);}
 {
 Compute a one-to-one mapping from a 3D triangle surface \ccc{mesh} to a 2D circle, using Floater Mean Value Coordinates algorithm. A one-to-one mapping is guaranteed.
-The mapping is piecewise linear on the input mesh triangles. The result is a (u,v) pair of parameter coordinates for each vertex of the input mesh.
+The mapping is piecewise linear on the input mesh triangles. The result is a (u, v) pair of parameter coordinates for each vertex of the input mesh.
 \ccCommentHeading{Preconditions}\begin{itemize}
 \item \ccc{mesh} must be a surface with one connected component.\item \ccc{mesh} must be a triangular mesh. \end{itemize}
 \ccCommentHeading{Parameters}
@@ -45,7 +45,7 @@ The mapping is piecewise linear on the input mesh triangles. The result is a (u,
 \ccGlue
 \ccFunction{template<class ParameterizationMesh_3, class ParameterizerTraits_3> Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize(ParameterizationMesh_3& mesh, ParameterizerTraits_3 parameterizer);}
 {
-Compute a one-to-one mapping from a 3D triangle surface \ccc{mesh} to a simple 2D domain. The mapping is piecewise linear on the triangle mesh. The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
+Compute a one-to-one mapping from a 3D triangle surface \ccc{mesh} to a simple 2D domain. The mapping is piecewise linear on the triangle mesh. The result is a pair (u, v) of parameter coordinates for each vertex of the input mesh.
 One-to-one mapping may be guaranteed or not, depending on the chosen \ccc{ParametizerTraits_3} algorithm.
 \ccCommentHeading{Preconditions}\begin{itemize}
 \item \ccc{mesh} must be a surface with one connected component.\item \ccc{mesh} must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon (for fixed border parameterizations). \end{itemize}
