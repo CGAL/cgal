@@ -111,6 +111,10 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
 	    C.create_from_plane(plane, v0->point(),
 				im != OPEN_HALFSPACE, 
 				im != PLANE_ONLY, false);
+      vp->shalfloop()->set_index_facet(dummy_facet);
+      vp->shalfloop()->twin()->set_index_facet(dummy_facet->twin());
+      vp->shalfloop()->set_index(index0);
+      vp->shalfloop()->twin()->set_index(index1);
 	  Vertex_handle vr = 
 	    bo.binop_local_views(v0, vp, BOP, *this->sncp(), A);
 	  this->sncp()->delete_vertex(vp);
