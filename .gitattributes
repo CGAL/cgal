@@ -2,6 +2,8 @@
 AABB_tree/doc_tex/AABB_tree/AABB_tree_user.tex -text
 AABB_tree/doc_tex/AABB_tree/PkgDescription.tex -text
 AABB_tree/doc_tex/AABB_tree/main.tex -text
+AABB_tree/doc_tex/AABB_tree/shark.png -text
+AABB_tree/doc_tex/AABB_tree/shark.ppt -text
 AABB_tree/doc_tex/AABB_tree_ref/AABBGeomTraits.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABBPrimitive.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABBTraits.tex -text
