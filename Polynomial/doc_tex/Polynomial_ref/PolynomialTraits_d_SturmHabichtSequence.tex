@@ -7,7 +7,7 @@
 Computes the Sturm-Habicht sequence 
 (aka the signed subresultant sequence)
 of a polynomials $f$ of type 
-\ccc{PolynomialTraits_d::Polynomial_d} with respect a certain variable $x_i$.
+\ccc{PolynomialTraits_d::Polynomial_d} with respect to a certain variable $x_i$.
 The Sturm-Habicht sequence is similar to the polynomial subresultant sequence
 of $f$ and its derivative $f':=\frac{\partial f}{\partial x_i}$
 with respect to $x_i$. The implementation is based on the following definition:
@@ -35,7 +35,7 @@ as in the concept \ccc{PolynomialTraits_d::PolynomialSubresultants}.
 
 The result is written in an output range, 
 starting with the $0$-th Sturm-Habicht polynomial (which is equal to
-the discriminant of $f$ up to a multiple of the leading coefficient)
+the discriminant of $f$ up to a multiple of the leading coefficient).
 
 \ccCreationVariable{fo}
 \ccOperations
