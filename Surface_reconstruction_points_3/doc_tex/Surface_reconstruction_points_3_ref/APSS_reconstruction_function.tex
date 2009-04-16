@@ -107,13 +107,13 @@ Kernel's geometric traits.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccConstructor{template<class InputIterator> APSS_reconstruction_function(InputIterator first, InputIterator beyond, unsigned int k, FT projection_error = 3.16e-4);}
+\ccConstructor{template<class InputIterator> APSS_reconstruction_function(InputIterator first, InputIterator beyond, unsigned int k);}
 {
 Create an APSS implicit function from a point set.
 \ccPrecond the value type of InputIterator must be convertible to \ccc{Point_with_normal_3}.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: First point to add. \item \ccc{beyond}: Past-the-end point to add. \item \ccc{k}: Number of nearest neighbors. \item \ccc{projection_error}: Dichotomy error when projecting point. \end{description}
+\item \ccc{first}: First point to add. \item \ccc{beyond}: Past-the-end point to add. \item \ccc{k}: neighbors for APSS sphere fitting. \end{description}
 }
 \ccGlue
 \ccConstructor{APSS_reconstruction_function(const APSS_reconstruction_function<Gt>& other);}
@@ -170,6 +170,7 @@ Returns a point located inside the inferred surface.
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Poisson_reconstruction_function<GeomTraits, ReconstructionTriangulation_3>}  \\
+\ccRefIdfierPage{CGAL::erase_small_polyhedron_connected_components<Polyhedron>}  \\
 
 \ccExample
 
