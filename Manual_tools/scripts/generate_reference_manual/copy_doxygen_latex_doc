@@ -545,16 +545,16 @@ sub format_headings_ex
 
 # Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable and \ccFunction expressions.
 # Params:
-# - concept/struct/class/... to document (without namespace nor template parameters)
-# - type of the item to document: "class/struct/concept" or "function"
+# - concept/struct/class/function to document (without namespace nor template parameters)
+# - type of the item to document: "class/struct", "concept" or "function"
 # - buffer containing a doxygen-generated latex file
 # Return value: the formatted buffer
 sub format_curly_brace_pairs_expressions
 {
     # Get parameters:
-    # - concept/struct/class/... to document (without namespace nor template parameters)
+    # - concept/struct/class/function to document (without namespace nor template parameters)
     my $item_to_document = shift;
-    # - type of the item to document: "class/struct/concept" or "function"
+    # - type of the item to document: "class/struct", "concept" or "function"
     my $item_type = shift;
     # - buffer containing a doxygen-generated latex file
     my $buf = shift;
@@ -562,7 +562,7 @@ sub format_curly_brace_pairs_expressions
     # Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable and \ccFunction expressions
     # and open a curly brace for the expression's comment
     # - if class/struct/concept...
-    if ($item_type eq "class/struct/concept")
+    if ($item_type eq "class/struct" || $item_type eq "concept")
     {
         $buf =~ s/\\paragraph\{typedef.* (\w+)((\[.*\])?)\}/\\ccNestedType\{$1$2\}\n\{/g;
         $buf =~ s/\\paragraph\{enum\s(.*)\}/\\ccEnum\{enum $1\}\n\{/g;
@@ -604,8 +604,8 @@ sub format_curly_brace_pairs_expressions
     $buf =~ s/&\#125\;/\\\}/g;
 
     # \ccMethod does not support destructors and there is no \ccDestructor
-    # macro => remove destructors
-    if ($item_type eq "class/struct/concept")
+    # macro => remove destructors.
+    if ($item_type eq "class/struct" || $item_type eq "concept")
     {
         $buf =~ s/\\ccMethod\{.*?~\Q$item_to_document\E\s.*?\}\n\{.*?\}\n\\ccGlue\n//smg;
     }
@@ -642,6 +642,7 @@ sub convert_include_file
 # Params:
 # - class/struct/concept name (without namespace nor template parameters)
 # - buffer containing a doxygen-generated latex file
+# - type of the item to document: "class/struct", "concept" or "function"
 # Return value: the formatted buffer
 sub format_doxygen_class_doc
 {
@@ -650,6 +651,8 @@ sub format_doxygen_class_doc
     my $className = shift;
     # - buffer containing a doxygen-generated latex file
     my $buf = shift;
+    # - type of the item to document: "class/struct", "concept" or "function"
+    my $item_type = shift;
 
     # Construct a pattern that matches any section title
     my $all_titles_pattern = get_any_section_title_pattern();
@@ -664,8 +667,9 @@ sub format_doxygen_class_doc
     # Remove formatting specific to doxygen
     $buf = doxygen_latex_to_latex($buf);
 
-    # Remove CGAL:: prefix (implicit)
+    # Remove CGAL:: and $className:: prefixes (implicit)
     $buf =~ s/CGAL::(\w+)/$1/g;
+    $buf =~ s/$className(<.*?>)?::(\w+)/$2/g;
 
     # Remove blank lines in the second curly braces pair of macros,
     # that cgal_manual does not understand.
@@ -673,12 +677,11 @@ sub format_doxygen_class_doc
 
     # Rename (for a class/struct) or delete (for a concept) the include file
     # and insert \ccSeeAlso title at the end of the document.
-    my $is_concept = 0;
-    unless ($buf =~ s/^The documentation.*?(\\begin\{itemize\}.*?include\/.*?\\end\{itemize\})/
-                      "\n\n" . convert_include_file($1) . "\n\n\n\\ccSeeAlso\n\n\n"/sme)
-    {
-      $is_concept = 1;
-      $buf =~ s/The documentation for this.*/\n\n\\ccSeeAlso\n\n\n/sm;
+    if ($item_type eq "class/struct") {
+        $buf =~ s/^The documentation.*?(\\begin\{itemize\}.*?include\/.*?\\end\{itemize\})/
+                  "\n\n" . convert_include_file($1) . "\n\n\n\\ccSeeAlso\n\n\n"/sme;
+    } else {
+        $buf =~ s/The documentation for this.*/\n\n\\ccSeeAlso\n\n\n/sm;
     }
 
     # Insert \ccInheritsFrom (for a class/struct) or \ccRefines (for a concept) section
@@ -687,7 +690,7 @@ sub format_doxygen_class_doc
     {
         my $superclass = $1;
 
-        if ($is_concept) {
+        if ($item_type eq "concept") {
             $buf =~ s/\\ccSeeAlso/\\ccRefines\n\n$superclass\n\n\n\\ccSeeAlso/sm;
         } else {
             $buf =~ s/\\ccSeeAlso/\\ccInheritsFrom\n\n$superclass\n\n\n\\ccSeeAlso/sm;
@@ -797,12 +800,12 @@ sub format_doxygen_class_doc
 #     # Fallback is \ccHeading{Misc} title
 #     $buf =~ s/\\subsubsection\{.*?\}/\n\n\\ccHeading\{Misc\}\n/;
 
-    # Rename \ccFunction expressions
+    # Rename \ccFunction expressions of related functions
     $buf =~ s/(\\ccHeading\{Related Functions\}.*?$all_titles_pattern)/
               format_curly_brace_pairs_expressions("", "function", $1)/smge;
 
     # Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable expressions
-    $buf = format_curly_brace_pairs_expressions($className, "class/struct/concept", $buf);
+    $buf = format_curly_brace_pairs_expressions($className, $item_type, $buf);
 
     # Convert @commentheading sections to \ccCommentHeading calls [L. Saboret + S. Hornus extension].
     # Format (parameters) descriptions.
@@ -1162,12 +1165,34 @@ my $doxygen_generated_buffer = <DOXYGEN_DOC>;
 close(DOXYGEN_DOC)
     or die "Can\'t close $doxygen_generated_file: $!";
 
+# Read CGAL template Reference Manual
+open(CGAL_MANUAL, "< $cgal_manual_file")
+    or die "Can\'t open $cgal_manual_file: $!";
+undef $/; # set slurp mode
+my $cgal_manual_buffer = <CGAL_MANUAL>;
+close(CGAL_MANUAL)
+    or die "Can\'t close $cgal_manual_file: $!";
+
+# Get type of the item to document: "class/struct", "concept" or "function"
+my $item_type;
+if (($doxygen_generated_file =~ /.*\/class/) or ($doxygen_generated_file =~ /.*\/struct/))
+{
+    if ($cgal_manual_buffer =~ /\\begin\{ccRefConcept\}/) {
+        $item_type = "concept";
+    } else {
+        $item_type = "class/struct";
+    }
+} else {
+    $item_type = "function";
+}
+
 # Format it to match CGAL Reference Manual's format
 my $formated_doxygen_buffer;
 if (($doxygen_generated_file =~ /.*\/class/) or ($doxygen_generated_file =~ /.*\/struct/))
 {
     $formated_doxygen_buffer = format_doxygen_class_doc($item_to_document,
-                                                        $doxygen_generated_buffer);
+                                                        $doxygen_generated_buffer,
+                                                        $item_type);
 } else {
     $formated_doxygen_buffer = format_doxygen_function_doc($item_to_document,
                                                            $doxygen_generated_buffer);
@@ -1192,14 +1217,6 @@ if ($debug)
     copy($cgal_manual_file, $backup)
         or die "Can\'t copy $cgal_manual_file to $backup: $!";
 }
-
-# Read CGAL template Reference Manual
-open(CGAL_MANUAL, "< $cgal_manual_file")
-    or die "Can\'t open $cgal_manual_file: $!";
-undef $/; # set slurp mode
-my $cgal_manual_buffer = <CGAL_MANUAL>;
-close(CGAL_MANUAL)
-    or die "Can\'t close $cgal_manual_file: $!";
 
 # Insert formated doxygen output in CGAL Reference Manual's buffer
 $cgal_manual_buffer = merge_manuals($item_to_document,
