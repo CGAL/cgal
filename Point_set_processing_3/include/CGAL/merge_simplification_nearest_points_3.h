@@ -37,24 +37,24 @@ template <typename InputIterator,
 >
 OutputIterator
 merge_simplification_nearest_points_3(
-          InputIterator first,      ///< iterator over the first input point
-          InputIterator beyond,     ///< past-the-end iterator over input points
-          OutputIterator output,    ///< iterator over the first output point
-          unsigned int k,           ///< number of neighbors
-          double epsilon,           ///< tolerance value when comparing 3D points
-          const Kernel& )           ///< kernel       
+          InputIterator first,      ///< iterator over the first input point.
+          InputIterator beyond,     ///< past-the-end iterator over input points.
+          OutputIterator output,    ///< iterator over the first output point.
+          unsigned int k,           ///< number of neighbors.
+          double epsilon,           ///< tolerance value when comparing 3D points.
+          const Kernel& kernel)     ///< geometric traits.
 {
     // geometric types
     typedef typename Kernel::FT FT;
     typedef typename std::iterator_traits<InputIterator>::value_type Point;
-    
+
 
     // types for K nearest neighbors search
     typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
     typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
     typedef typename Neighbor_search::Tree Tree;
-    typedef typename Neighbor_search::iterator Search_iterator;   
-    
+    typedef typename Neighbor_search::iterator Search_iterator;
+
     // preconditions
     CGAL_precondition(first != beyond);
     CGAL_precondition(k >= 1);
@@ -66,9 +66,9 @@ merge_simplification_nearest_points_3(
     // Merge points which belong to the same cell of a grid of cell size = epsilon.
     // points_to_keep will contain 1 point per cell; the others will be in points_to_remove.
     std::set<Point>   points_to_keep;
-    
+
     typename Kernel::Compute_squared_distance_3 sqd;
-    
+
     for (InputIterator it=first ; it != beyond ; it++)
     {
         std::vector<Point> points; points.reserve(k+1);
@@ -90,11 +90,11 @@ merge_simplification_nearest_points_3(
             {
                 points_to_keep.insert(search_iterator->first);
                 search_iterator++;
-            }      
+            }
         }
         points_to_keep.insert(*it);
     }
-    
+
     // Copy merged points to output
     output = std::copy(points_to_keep.begin(), points_to_keep.end(), output);
     return output;

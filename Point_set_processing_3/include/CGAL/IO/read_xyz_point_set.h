@@ -98,7 +98,7 @@ bool read_xyz_point_set(std::istream& stream, ///< input stream.
 /// Normals are ignored.
 ///
 /// @commentheading Template Parameters:
-/// @param OutputIterator value_type must be Point_3.
+/// @param OutputIterator value_type must be convertible from Point_3<Kernel>.
 ///
 /// @return true on success.
 template <typename OutputIterator>

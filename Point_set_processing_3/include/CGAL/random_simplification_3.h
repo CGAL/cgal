@@ -30,8 +30,8 @@ CGAL_BEGIN_NAMESPACE
 /// This variant requires the kernel.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to OutputIterator's value_type.
-/// @param OutputIterator value_type must be convertible to Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 /// @param Kernel Geometric traits class.
 ///
 /// @return past-the-end output iterator.
@@ -41,11 +41,11 @@ template <typename InputIterator,
 >
 OutputIterator
 random_simplification_3(
-          InputIterator first,      ///< iterator over the first input point
-          InputIterator beyond,     ///< past-the-end iterator over input points
-          OutputIterator output,    ///< iterator over the first output point
-          double threshold_percent, ///< percentage of points to remove
-          const Kernel& )           ///< kernel
+          InputIterator first,      ///< iterator over the first input point.
+          InputIterator beyond,     ///< past-the-end iterator over input points.
+          OutputIterator output,    ///< iterator over the first output point.
+          double threshold_percent, ///< percentage of points to remove.
+          const Kernel& kernel)     ///< geometric traits.
 {
     typedef typename std::iterator_traits<InputIterator>::value_type Point;
 
@@ -73,7 +73,7 @@ random_simplification_3(
 /// should not be called on sorted containers.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 /// @param Kernel Geometric traits class.
 ///
 /// @return First iterator to remove (see erase-remove idiom).
@@ -82,10 +82,10 @@ template <typename ForwardIterator,
 >
 ForwardIterator
 random_simplification_3(
-           ForwardIterator first,     ///< iterator over the first input/output point
-           ForwardIterator beyond,    ///< past-the-end iterator
-           double threshold_percent,  ///< percentage of points to remove
-           const Kernel& ) ///< kernel
+           ForwardIterator first,     ///< iterator over the first input/output point.
+           ForwardIterator beyond,    ///< past-the-end iterator.
+           double threshold_percent,  ///< percentage of points to remove.
+           const Kernel& kernel)      ///< geometric traits.
 {
     typedef typename std::iterator_traits<ForwardIterator>::value_type Point;
 
@@ -107,8 +107,8 @@ random_simplification_3(
 /// This variant deduces the kernel from iterator types.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to OutputIterator's value_type.
-/// @param OutputIterator value_type must be convertible to Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
@@ -135,7 +135,7 @@ random_simplification_3(
 /// should not be called on sorted containers.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 ///
 /// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>

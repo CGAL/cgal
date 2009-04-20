@@ -108,13 +108,15 @@ pca_normal_estimation(const typename Kernel::Point_3& query, ///< 3D point whose
 
 /// Estimate normal directions by linear least
 /// squares fitting of a plane over the k nearest neighbors.
+/// The output normals are marked as unoriented.
+///
 /// This variant requires the kernel.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type is Point_3.
-/// @param OutputIterator value_type is Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be a model of OrientableNormal_3.
 /// @param Kernel Geometric traits class.
 ///
 /// @return past-the-end output iterator.
@@ -123,11 +125,11 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-pca_normal_estimation(InputIterator first, ///< iterator over the first input point
-                      InputIterator beyond, ///< past-the-end iterator over input points
-                      OutputIterator normals, ///< output normals
-                      unsigned int k, ///< number of neighbors
-                      const Kernel& ) ///< kernel
+pca_normal_estimation(InputIterator first, ///< iterator over the first input point.
+                      InputIterator beyond, ///< past-the-end iterator over input points.
+                      OutputIterator normals, ///< output normals.
+                      unsigned int k, ///< number of neighbors.
+                      const Kernel& kernel) ///< geometric traits.
 {
   CGAL_TRACE("Call pca_normal_estimation()\n");
 
@@ -173,23 +175,25 @@ pca_normal_estimation(InputIterator first, ///< iterator over the first input po
 
 /// Estimate normal directions by linear least
 /// squares fitting of a plane over the k nearest neighbors.
+/// The output normals are marked as unoriented.
+///
 /// This variant deduces the kernel from iterator types.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type is Point_3.
-/// @param OutputIterator value_type is Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be a model of OrientableNormal_3.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-pca_normal_estimation(InputIterator first, ///< iterator over the first input point
-                      InputIterator beyond, ///< past-the-end iterator over input points
-                      OutputIterator normals, ///< output normals
-                      unsigned int k) ///< number of neighbors
+pca_normal_estimation(InputIterator first, ///< iterator over the first input point.
+                      InputIterator beyond, ///< past-the-end iterator over input points.
+                      OutputIterator normals, ///< output normals.
+                      unsigned int k) ///< number of neighbors.
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;

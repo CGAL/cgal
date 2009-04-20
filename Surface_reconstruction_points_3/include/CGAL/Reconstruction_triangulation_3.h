@@ -99,10 +99,11 @@ private:
 /// vertex class of the Reconstruction_triangulation_3 class.
 ///
 /// It provides the interface requested by the Poisson_reconstruction_function class:
-/// - Each vertex owns a normal vector.
+/// - Each vertex stores a normal vector.
 /// - A vertex is either an input point or a Steiner point added by Delaunay refinement.
 /// - In order to solve a linear system over the triangulation, a vertex may be constrained
-/// or not, and has a unique index.
+///   or not (i.e. contributes to the right or left member of the linear system),
+///   and has a unique index.
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the ReconstructionVertexBase_3 concept.
@@ -137,14 +138,14 @@ public:
 // data members
 private:
 
-  FT m_f;               // value of the implicit function
-                        // PA: should we make a separate type instead?
-                        // (so that the user can decide to run in float or double mode)
-  bool m_constrained;   // is vertex constrained?
-  unsigned char m_type; // INPUT or STEINER. Default type is INPUT.
+  FT m_f; // value of the implicit function
+          // PA: should we make a separate type instead?
+          //     (so that the user can decide to run in float or double mode)
+  bool m_constrained; // is vertex constrained?
+  unsigned char m_type; // INPUT or STEINER
   unsigned int m_index; // index in matrix
-  double m_average_spacing;   // average spacing
-  int m_tag;
+  double m_average_spacing; // average spacing
+  int m_tag; // general purpose tag
 
 // Public methods
 public:
@@ -194,11 +195,14 @@ public:
     tag = -1;
   }
 
-  /// Is vertex constrained?
+  /// Is vertex constrained, i.e.
+  /// does it contribute to the right or left member of the linear system?
+  /// Default value is false.
   bool  constrained() const { return m_constrained; }
   bool& constrained()       { return m_constrained; }
 
   /// Get/set the value of the implicit function.
+  /// Default value is 0.0.
   FT  f() const { return m_f; }
   FT& f()       { return m_f; }
 
@@ -215,12 +219,13 @@ public:
   unsigned int& index()       { return m_index; }
 
   /// Get/set normal (vector + orientation).
+  /// Default value is null vector.
   const Normal& normal() const { return this->point().normal(); }
   Normal&       normal()       { return this->point().normal(); }
 
-  /// General purpose tag
+  /// General purpose tag.
   int tag() const { return m_tag; }
-  int& tag()       { return m_tag; }
+  int& tag()      { return m_tag; }
 
 // Private methods
 private:
@@ -253,13 +258,14 @@ struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 /// must be a model of ReconstructionVertexBase_3.
 ///
 /// It provides the interface requested by the Poisson_reconstruction_function class:
-/// - Each vertex owns a normal vector.
+/// - Each vertex stores a normal vector.
 /// - A vertex is either an input point or a Steiner point added by Delaunay refinement.
 /// - In order to solve a linear system over the triangulation, a vertex may be constrained
-/// or not, and has a unique index.
+///   or not (i.e. contributes to the right or left member of the linear system),
+///   and has a unique index.
 ///
-/// CAUTION: invalidate_bounds() must be called
-/// after modifying the points.
+/// CAUTION:
+/// User is responsible to call invalidate_bounds() after adding or removing points.
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the ReconstructionTriangulation_3 concept.
@@ -355,8 +361,8 @@ public:
                            Project_normal<Vertex> >  Normal_iterator;
 
   /// Point type
-  static const unsigned char INPUT = 0;
-  static const unsigned char STEINER = 1;
+  enum Point_type { INPUT,     ///< Input point.
+                    STEINER }; ///< Steiner point created by Delaunay refinement.
 
   /// Iterator over input vertices.
   typedef Filter_iterator<Finite_vertices_iterator, Is_steiner_point>
@@ -476,16 +482,16 @@ public:
   }
 
   /// Update barycenter, bounding box, bounding sphere and standard deviation.
-  /// Owner is responsible to call this function after modifying the triangulation.
+  /// User is responsible to call invalidate_bounds() after adding or removing points.
   void invalidate_bounds()
   {
     m_bounding_box_is_valid = false;
   }
 
-  /// Insert point in the triangulation.
+  /// Insert point (model of PointWithNormal_3) in the triangulation.
   /// Default type is INPUT.
   Vertex_handle insert(const Point& p,
-                       unsigned char type = INPUT /* INPUT or STEINER */,
+                       Point_type type = INPUT,
                        Cell_handle start = Cell_handle())
   {
     Vertex_handle v = Base::insert(p, start);
@@ -499,14 +505,15 @@ public:
   /// Insert points in the triangulation using a spatial sort.
   /// Default type is INPUT.
   ///
-  /// @commentheading Precondition: the value type of InputIterator must be 'Point'.
+  /// @commentheading Precondition:
+  /// InputIterator value_type must be convertible to Point_with_normal.
   ///
-  /// @param first First point to add to pdt.
-  /// @param beyond Past-the-end point to add to pdt.
+  /// @param first Iterator over first point to add.
+  /// @param beyond Past-the-end iterator to add.
   /// @return the number of inserted points.
   template < class InputIterator >
   int insert(InputIterator first, InputIterator beyond,
-             unsigned char type = INPUT /* INPUT or STEINER */)
+             Point_type type = INPUT)
   {
     int n = number_of_vertices();
 
@@ -533,8 +540,8 @@ public:
   template <class CellIt>
   Vertex_handle
   insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
-	             Cell_handle begin, int i,
-                 unsigned char type = STEINER /* INPUT or STEINER */)
+	         Cell_handle begin, int i,
+                 Point_type type = STEINER)
   {
       Vertex_handle v = Base::insert_in_hole(p, cell_begin, cell_end, begin, i);
 
@@ -558,8 +565,8 @@ public:
     return index;
   }
 
-  /// Index unconstraint vertices following the order of Finite_vertices_iterator.
-  /// @return the number of unconstraint vertices.
+  /// Index unconstrained vertices following the order of Finite_vertices_iterator.
+  /// @return the number of unconstrained vertices.
   unsigned int index_unconstrained_vertices()
   {
     unsigned int index = 0;

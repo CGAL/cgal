@@ -42,7 +42,7 @@ Read points (positions + normals, if available) from a .off file (ASCII). Faces 
 {
 Read points (positions only) from a .off file (ASCII). Normals and faces are ignored.
 \ccCommentHeading{Template Parameters}
-\ccc{OutputIterator}: \ccc{value_type} must be \ccc{Point_3}.
+\ccc{OutputIterator}: \ccc{value_type} must be convertible from \ccc{Point_3<Kernel>}.
 \ccCommentHeading{Returns} true on success.
 \ccCommentHeading{Parameters}
 \begin{description}

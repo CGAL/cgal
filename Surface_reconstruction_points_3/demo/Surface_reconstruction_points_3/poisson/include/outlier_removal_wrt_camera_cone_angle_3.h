@@ -76,8 +76,8 @@ public:
 /// @commentheading Precondition: min_camera_cone_angle >= 0.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type must be Gyroviz_point_3.
-/// @param OutputIterator value_type must be Gyroviz_point_3.
+/// @param InputIterator value_type must be convertible to Gyroviz_point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 /// @param Kernel Geometric traits class.
 ///
 /// @return past-the-end output iterator.
@@ -121,7 +121,7 @@ outlier_removal_wrt_camera_cone_angle_3(InputIterator first,           ///< iter
 /// @commentheading Precondition: min_camera_cone_angle >= 0.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be Gyroviz_point_3.
+/// @param ForwardIterator value_type must be convertible to Gyroviz_point_3<Kernel>.
 /// @param Kernel Geometric traits class.
 ///
 /// @return First iterator to remove (see erase-remove idiom).
@@ -154,8 +154,8 @@ outlier_removal_wrt_camera_cone_angle_3(ForwardIterator first,         ///< iter
 /// @commentheading Precondition: min_camera_cone_angle >= 0.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type must be Gyroviz_point_3.
-/// @param OutputIterator value_type must be Gyroviz_point_3.
+/// @param InputIterator value_type must be convertible to Gyroviz_point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
@@ -183,7 +183,7 @@ outlier_removal_wrt_camera_cone_angle_3(InputIterator first,           ///< iter
 /// @commentheading Precondition: min_camera_cone_angle >= 0.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be Gyroviz_point_3.
+/// @param ForwardIterator value_type must be convertible to Gyroviz_point_3<Kernel>.
 ///
 /// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>

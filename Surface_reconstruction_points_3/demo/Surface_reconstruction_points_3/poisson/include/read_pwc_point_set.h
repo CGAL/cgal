@@ -14,8 +14,8 @@
 
 /// Read 3D points + cameras from a Gyroviz .pwc file.
 /// @return true on success.
-template <typename GyrovizPointOutputIterator, ///< GyrovizPointOutputIterator value_type must be Gyroviz_point_3
-          typename PointOutputIterator> ///< PointOutputIterator value_type must be Point_3
+template <typename GyrovizPointOutputIterator, ///< GyrovizPointOutputIterator value_type must be convertible from Gyroviz_point_3<Kernel>.
+          typename PointOutputIterator> ///< PointOutputIterator value_type must be convertible from Point_3<Kernel>.
 bool read_pwc_point_set(const char* pFilename,
                         GyrovizPointOutputIterator gyroviz_point_output,
                         PointOutputIterator camera_output)

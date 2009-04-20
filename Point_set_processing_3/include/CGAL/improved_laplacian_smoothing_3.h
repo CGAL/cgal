@@ -108,7 +108,7 @@ laplacian_smoothing_3(
   typedef typename Neighbor_search::iterator Search_iterator;
 
   // Compute Laplacian (centroid) of k neighboring points.
-  // Note: we perform k+1 queries and skip the query point which is output first. 
+  // Note: we perform k+1 queries and skip the query point which is output first.
   // TODO: we should use the functions in PCA component instead.
   Vector_3 v = CGAL::NULL_VECTOR;
   Neighbor_search search(tree,pi,k+1);
@@ -120,9 +120,9 @@ laplacian_smoothing_3(
       const Point_3& p = search_iterator->first;
       v = v + (p - CGAL::ORIGIN);
   }
-  
+
   Point_3 centroid = CGAL::ORIGIN + v / k;
-  
+
   return centroid;
 }
 
@@ -159,7 +159,7 @@ improved_laplacian_smoothing_3(
   typedef typename Neighbor_search::iterator Search_iterator;
 
   // Gather set of k neighboring points and compute the sum of their b[] values.
-  // Note: we perform k+1 queries and skip the query point which is output first. 
+  // Note: we perform k+1 queries and skip the query point which is output first.
   Vector_3 bj_sum;
   Neighbor_search search(tree,pi,k+1);
   Search_iterator search_iterator;
@@ -182,15 +182,15 @@ improved_laplacian_smoothing_3(
 // ----------------------------------------------------------------------------
 
 
-/// Improved Laplacian smoothing (Vollmer et al) 
+/// Improved Laplacian smoothing (Vollmer et al)
 /// on the k nearest neighbors.
 /// This variant requires the kernel.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type convertible to Point_3.
-/// @param OutputIterator value_type convertible to Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 /// @param Kernel Geometric traits class.
 ///
 /// @return past-the-end output iterator.
@@ -200,12 +200,12 @@ template <typename InputIterator,
 >
 OutputIterator
 improved_laplacian_smoothing_3(
-                InputIterator first,    ///< iterator over the first input point
-                InputIterator beyond,   ///< past-the-end iterator over input points
-                OutputIterator output,  ///< iterator over the first output point
-                const unsigned int k,   ///< number of neighbors
-                const unsigned int iter_number,
-                const Kernel& /*kernel*/,
+                InputIterator first,    ///< iterator over the first input point.
+                InputIterator beyond,   ///< past-the-end iterator over input points.
+                OutputIterator output,  ///< iterator over the first output point.
+                const unsigned int k,   ///< number of neighbors.
+                const unsigned int iter_number, ///< number of iterations.
+                const Kernel& kernel,   ///< geometric traits.
                 typename Kernel::FT alpha,
                 typename Kernel::FT beta)
 {
@@ -232,7 +232,7 @@ improved_laplacian_smoothing_3(
 
   unsigned int i; // point index
   InputIterator it; // point iterator
-  
+
   // Number of input points
   int nb_points = std::distance(first, beyond);
 
@@ -244,18 +244,18 @@ improved_laplacian_smoothing_3(
     treeElements.push_back(KdTreeElement(*it,i));
   }
   Tree tree(treeElements.begin(), treeElements.end());
-  
+
   std::vector<Point_3>  p(nb_points); // positions at step iter_n
   std::vector<Vector_3> b(nb_points); // ...
 
   for(it = first, i=0; it != beyond; it++, ++i)
-      p[i] = *it; 
+      p[i] = *it;
 
   for(int iter_n = 0; iter_n < iter_number ; ++iter_n)
   {
       // Iterate over input points, compute (original) Laplacian smooth and b[].
       for(it = first, i=0; it != beyond; it++, ++i)
-      { 
+      {
           Point_3 np = improved_laplacian_smoothing_i::laplacian_smoothing_3<Kernel>(*it,tree,k);
           b[i]       = alpha*(np - *it) + (1-alpha)*(np - p[i]);
           p[i]       = np;
@@ -264,7 +264,7 @@ improved_laplacian_smoothing_3(
       // Iterate over input points, compute and output smooth points.
       // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
       for(it = first, i=0; it != beyond; it++, ++i)
-      {  
+      {
           p[i] = improved_laplacian_smoothing_i::improved_laplacian_smoothing_3<Kernel>(p[i],b[i],tree,b,k,beta);
       }
   }
@@ -272,7 +272,7 @@ improved_laplacian_smoothing_3(
   // Iterate over input points and output smooth points.
   // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
   for(it = first, i=0; it != beyond; it++, ++i)
-  {  
+  {
     Input_point_3 point = *it;
     (Point_3&)(point) = p[i];
     *output++ = point;
@@ -281,7 +281,7 @@ improved_laplacian_smoothing_3(
   return output;
 }
 
-/// Improved Laplacian smoothing (Vollmer et al) 
+/// Improved Laplacian smoothing (Vollmer et al)
 /// on the k nearest neighbors.
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
@@ -293,17 +293,17 @@ improved_laplacian_smoothing_3(
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type convertible to Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 /// @param Kernel Geometric traits class.
 template <typename ForwardIterator,
           typename Kernel>
 void
 improved_laplacian_smoothing_3(
-                ForwardIterator first,     ///< iterator over the first input/output point
-                ForwardIterator beyond,    ///< past-the-end iterator
-                const unsigned int k,   ///< number of neighbors
-                const unsigned int iter_number,
-                const Kernel& /*kernel*/,
+                ForwardIterator first,     ///< iterator over the first input/output point.
+                ForwardIterator beyond,    ///< past-the-end iterator.
+                const unsigned int k,      ///< number of neighbors.
+                const unsigned int iter_number, ///< number of iterations.
+                const Kernel& kernel,      ///< geometric traits.
                 typename Kernel::FT alpha,
                 typename Kernel::FT beta)
 {
@@ -330,7 +330,7 @@ improved_laplacian_smoothing_3(
 
   unsigned int i; // point index
   ForwardIterator it; // point iterator
-  
+
   // Number of input points
   int nb_points = std::distance(first, beyond);
 
@@ -342,18 +342,18 @@ improved_laplacian_smoothing_3(
     treeElements.push_back(KdTreeElement(*it,i));
   }
   Tree tree(treeElements.begin(), treeElements.end());
-  
+
   std::vector<Point_3>  p(nb_points); // positions at step iter_n
   std::vector<Vector_3> b(nb_points); // ...
 
   for(it = first, i=0; it != beyond; it++, ++i)
-      p[i] = *it; 
+      p[i] = *it;
 
   for(int iter_n = 0; iter_n < iter_number ; ++iter_n)
   {
       // Iterate over input points, compute (original) Laplacian smooth and b[].
       for(it = first, i=0; it != beyond; it++, ++i)
-      { 
+      {
           Point_3 np = improved_laplacian_smoothing_i::laplacian_smoothing_3<Kernel>(*it,tree,k);
           b[i]       = alpha*(np - *it) + (1-alpha)*(np - p[i]);
           p[i]       = np;
@@ -362,7 +362,7 @@ improved_laplacian_smoothing_3(
       // Iterate over input points, compute and output smooth points.
       // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
       for(it = first, i=0; it != beyond; it++, ++i)
-      {  
+      {
           p[i] = improved_laplacian_smoothing_i::improved_laplacian_smoothing_3<Kernel>(p[i],b[i],tree,b,k,beta);
       }
   }
@@ -374,11 +374,15 @@ improved_laplacian_smoothing_3(
 }
 
 
-/// Improved Laplacian smoothing (Vollmer et al) 
+/// Improved Laplacian smoothing (Vollmer et al)
 /// on the k nearest neighbors.
 /// This variant deduces the kernel from iterator types.
 ///
 /// @commentheading Precondition: k >= 2.
+///
+/// @commentheading Template Parameters:
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
@@ -386,11 +390,11 @@ template <typename InputIterator,
 >
 OutputIterator
 improved_laplacian_smoothing_3(
-                InputIterator first, ///< iterator over the first input point
-                InputIterator beyond, ///< past-the-end iterator over input points
-                OutputIterator output, ///< iterator over the first output point
-                unsigned int k, ///< number of neighbors
-                const unsigned int iter_number,
+                InputIterator first, ///< iterator over the first input point.
+                InputIterator beyond, ///< past-the-end iterator over input points.
+                OutputIterator output, ///< iterator over the first output point.
+                unsigned int k, ///< number of neighbors.
+                const unsigned int iter_number, ///< number of iterations.
                 double alpha,
                 double beta)
 {
@@ -399,7 +403,7 @@ improved_laplacian_smoothing_3(
   return improved_laplacian_smoothing_3(first,beyond,output,k,iter_number,Kernel(),alpha, beta);
 }
 
-/// Improved Laplacian smoothing (Vollmer et al) 
+/// Improved Laplacian smoothing (Vollmer et al)
 /// on the k nearest neighbors.
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
@@ -411,14 +415,14 @@ improved_laplacian_smoothing_3(
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type convertible to Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 template <typename ForwardIterator>
 void
 improved_laplacian_smoothing_3(
-                ForwardIterator first, ///< iterator over the first input/output point
-                ForwardIterator beyond, ///< past-the-end iterator
-                unsigned int k, ///< number of neighbors
-                const unsigned int iter_number,
+                ForwardIterator first, ///< iterator over the first input/output point.
+                ForwardIterator beyond, ///< past-the-end iterator.
+                unsigned int k, ///< number of neighbors.
+                const unsigned int iter_number, ///< number of iterations.
                 double alpha,
                 double beta)
 {

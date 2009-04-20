@@ -20,10 +20,11 @@
 /// The ReconstructionVertexBase_3 concept defines the interface
 /// of the vertex class of the ReconstructionTriangulation_3 concept.
 /// It provides the interface requested by the Poisson_reconstruction_function class:
-/// - Each vertex owns a normal vector.
+/// - Each vertex stores a normal vector.
 /// - A vertex is either an input point or a Steiner point added by Delaunay refinement.
 /// - In order to solve a linear system over the triangulation, a vertex may be constrained
-/// or not, and has a unique index.
+///   or not (i.e. contributes to the right or left member of the linear system),
+///   and has a unique index.
 ///
 /// @heading Has Models:
 /// Reconstruction_vertex_base_3<GeomTraits, TriangulationVertexBase_3>
@@ -50,11 +51,14 @@ public:
   ReconstructionVertexBase_3(const Point & p, Cell_handle c);
   ReconstructionVertexBase_3(Cell_handle c);
 
-  /// Is vertex constrained?
+  /// Is vertex constrained, i.e.
+  /// does it contribute to the right or left member of the linear system?
+  /// Default value is false.
   bool  constrained() const;
   bool& constrained();
 
   /// Get/set the value of the implicit function.
+  /// Default value is 0.0.
   FT  f() const;
   FT& f();
 
@@ -71,11 +75,13 @@ public:
   unsigned int& index();
 
   /// Get/set normal (vector + orientation).
+  /// Default value is null vector.
   const Normal& normal() const;
   Normal&       normal();
 
-  /// General purpose tag
+  /// General purpose tag.
   int tag() const;
   int& tag();
-};
+
+}; // end of ReconstructionVertexBase_3
 

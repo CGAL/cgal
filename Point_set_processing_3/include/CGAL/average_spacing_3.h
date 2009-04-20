@@ -97,7 +97,7 @@ average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose spa
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type is Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
 /// @param Kernel Geometric traits class.
 ///
 /// @return average spacing (scalar).
@@ -105,10 +105,10 @@ template <typename InputIterator,
           typename Kernel
 >
 typename Kernel::FT
-average_spacing_3(InputIterator first,    ///< iterator over the first input point
-                  InputIterator beyond,   ///< past-the-end iterator over input points
-                  unsigned int k,         ///< number of neighbors
-                  const Kernel& )         ///< kernel
+average_spacing_3(InputIterator first,    ///< iterator over the first input point.
+                  InputIterator beyond,   ///< past-the-end iterator over input points.
+                  unsigned int k,         ///< number of neighbors.
+                  const Kernel& kernel)   ///< geometric traits.
 {
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
@@ -148,7 +148,7 @@ average_spacing_3(InputIterator first,    ///< iterator over the first input poi
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type is Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
 /// @param FT number type.
 ///
 /// @return average spacing (scalar).
@@ -156,9 +156,9 @@ template < typename InputIterator,
            typename FT
 >
 FT
-average_spacing_3(InputIterator first,    ///< iterator over the first input point
-                  InputIterator beyond,   ///< past-the-end iterator over input points
-                  unsigned int k)         ///< number of neighbors
+average_spacing_3(InputIterator first,    ///< iterator over the first input point.
+                  InputIterator beyond,   ///< past-the-end iterator over input points.
+                  unsigned int k)         ///< number of neighbors.
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;

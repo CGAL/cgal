@@ -32,7 +32,7 @@ Get reconstructed surface out of a \ccc{SurfaceMeshComplex_2InTriangulation_3} o
 This variant exports the surface as a triangle soup.
 \ccCommentHeading{Template Parameters}
 \begin{description}
-\item \ccc{SurfaceMeshComplex_2InTriangulation_3}: model of the \ccc{SurfaceMeshComplex_2InTriangulation_3} concept. \item \ccc{OutputIterator}: \ccc{value_type} must be \ccc{Triangle_3}.\end{description}
+\item \ccc{SurfaceMeshComplex_2InTriangulation_3}: model of the \ccc{SurfaceMeshComplex_2InTriangulation_3} concept. \item \ccc{OutputIterator}: \ccc{value_type} must be convertible from \ccc{Triangle_3<Kernel>}.\end{description}
 \ccCommentHeading{Returns} true on success.
 \ccCommentHeading{Parameters}
 \begin{description}

@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi { 
+namespace CGALi {
 
 
 /// Utility function for outlier_removal_3():
@@ -105,8 +105,8 @@ compute_avg_knn_sq_distance_3(
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to OutputIterator's value_type.
-/// @param OutputIterator value_type must be convertible to Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 /// @param Kernel Geometric traits class.
 ///
 /// @return past-the-end output iterator.
@@ -116,12 +116,12 @@ template <typename InputIterator,
 >
 OutputIterator
 outlier_removal_3(
-           InputIterator first,       ///< iterator over the first input point
-           InputIterator beyond,      ///< past-the-end iterator over input points
-           OutputIterator output,     ///< iterator over the first output point
-           unsigned int k,            ///< number of neighbors
-           const Kernel& /*kernel*/,
-           double threshold_percent)  ///< percentage of points to remove
+           InputIterator first,       ///< iterator over the first input point.
+           InputIterator beyond,      ///< past-the-end iterator over input points.
+           OutputIterator output,     ///< iterator over the first output point.
+           unsigned int k,            ///< number of neighbors.
+           const Kernel& kernel,      ///< geometric traits.
+           double threshold_percent)  ///< percentage of points to remove.
 {
     // geometric types
     typedef typename Kernel::FT FT;
@@ -180,7 +180,7 @@ outlier_removal_3(
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 /// @param Kernel Geometric traits class.
 ///
 /// @return First iterator to remove (see erase-remove idiom).
@@ -189,11 +189,11 @@ template <typename ForwardIterator,
 >
 ForwardIterator
 outlier_removal_3(
-           ForwardIterator first,     ///< iterator over the first input/output point
-           ForwardIterator beyond,    ///< past-the-end iterator
-           unsigned int k,            ///< number of neighbors
-           const Kernel& /*kernel*/,
-           double threshold_percent)  ///< percentage of points to remove
+           ForwardIterator first,     ///< iterator over the first input/output point.
+           ForwardIterator beyond,    ///< past-the-end iterator.
+           unsigned int k,            ///< number of neighbors.
+           const Kernel& kernel,      ///< geometric traits.
+           double threshold_percent)  ///< percentage of points to remove.
 {
     // geometric types
     typedef typename Kernel::FT FT;
@@ -253,8 +253,8 @@ outlier_removal_3(
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to OutputIterator's value_type.
-/// @param OutputIterator value_type must be convertible to Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
@@ -286,7 +286,7 @@ outlier_removal_3(
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 ///
 /// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>

@@ -49,7 +49,7 @@
 /// Read 3D points + cameras from a Gyroviz .g23 file.
 ///
 /// @commentheading Template Parameters:
-/// @param GyrovizPointOutputIterator value_type must be Gyroviz_point_3.
+/// @param GyrovizPointOutputIterator value_type must be convertible from Gyroviz_point_3<Kernel>.
 ///
 /// @return true on success.
 template <typename Point_3,

@@ -17,17 +17,17 @@
 #include <CGAL/gl.h>
 
 
-/// The Point_set_3 class is array of points + normals of type 
-/// Point_with_normal_3<Gt, Orientable_normal_3<Gt> > (in fact 
-/// UI_point_3 to support algorithms specific to Gyroviz and selection flag). 
+/// The Point_set_3 class is array of points + normals of type
+/// Point_with_normal_3<Gt, Orientable_normal_3<Gt> > (in fact
+/// UI_point_3 to support algorithms specific to Gyroviz and selection flag).
 /// It provides:
 /// - accessors: points and normals iterators, property maps
 /// - OpenGL rendering
 /// - bounding box
-/// 
-/// CAUTION: invalidate_bounds() must be called 
-/// after modifying the points.
-/// 
+///
+/// CAUTION:
+/// User is responsible to call invalidate_bounds() after adding, moving or removing points.
+///
 /// @heading Parameters:
 /// @param Gt       Geometric traits class.
 
@@ -37,7 +37,7 @@ class Point_set_3 : public std::deque<UI_point_3<Gt> >
 // Private types
 private:
 
-  // Base class 
+  // Base class
   typedef std::deque<UI_point_3<Gt> > Base;
 
   // Auxiliary class to build a normals iterator
@@ -72,7 +72,7 @@ public:
   // Its superclasses:
   typedef Gyroviz_point_3<Gt> Gyroviz_point; ///< Position + normal + cameras
   typedef typename UI_point::Point_with_normal Point_with_normal; ///< Position + normal
-  
+
   // Type of points normal
   typedef typename UI_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
 
@@ -81,25 +81,25 @@ public:
   typedef typename std::deque<UI_point>::const_iterator  Point_const_iterator;
 
   // Iterator over normals
-  typedef CGAL::Iterator_project<iterator, 
-                                 Project_normal<UI_point> >  
-                                                      Normal_iterator;      
-  typedef CGAL::Iterator_project<const_iterator, 
-                                 Project_normal<UI_point> >  
-                                                      Normal_const_iterator;      
+  typedef CGAL::Iterator_project<iterator,
+                                 Project_normal<UI_point> >
+                                                      Normal_iterator;
+  typedef CGAL::Iterator_project<const_iterator,
+                                 Project_normal<UI_point> >
+                                                      Normal_const_iterator;
 
 // Data members
 private:
 
-  // Indicate if m_barycenter, m_bounding_box, m_bounding_sphere and 
+  // Indicate if m_barycenter, m_bounding_box, m_bounding_sphere and
   // m_diameter_standard_deviation below are valid.
   mutable bool m_bounding_box_is_valid;
-  
+
   mutable Iso_cuboid m_bounding_box; // point set's bounding box
   mutable Sphere m_bounding_sphere; // point set's bounding sphere
   mutable Point m_barycenter; // point set's barycenter
   mutable FT m_diameter_standard_deviation; // point set's standard deviation
-  
+
   unsigned int m_nb_selected_points; // number of selected points
 
 // Public methods
@@ -138,32 +138,32 @@ public:
       point->select(is_selected);
       m_nb_selected_points += (is_selected ? 1 : -1);
     }
-  } 
+  }
 
   /// Mark a range of points as selected/not selected.
   ///
-  /// @param first First point to select/unselect.
-  /// @param beyond Past-the-end point to select/unselect.
-  void select(iterator first, iterator beyond, 
+  /// @param first Iterator over first point to select/unselect.
+  /// @param beyond Past-the-end iterator.
+  void select(iterator first, iterator beyond,
               bool is_selected = true)
   {
     for (iterator it = first; it != beyond; it++)
       it->select(is_selected);
-      
-    m_nb_selected_points = std::count_if(begin(), end(), 
+
+    m_nb_selected_points = std::count_if(begin(), end(),
                                          std::mem_fun_ref(&UI_point::is_selected));
-  } 
+  }
 
   /// Delete selected points.
   void delete_selection()
   {
     // erase-remove idiom
     erase(std::remove_if(begin(), end(), std::mem_fun_ref(&UI_point::is_selected)),
-          end());    
+          end());
 
     m_nb_selected_points = 0;
     invalidate_bounds();
-  } 
+  }
 
   /// Get the bounding box.
   Iso_cuboid bounding_box() const
@@ -216,7 +216,7 @@ public:
   }
 
   /// Update barycenter, bounding box, bounding sphere and standard deviation.
-  /// Owner is responsible to call this function after modifying the triangulation.
+  /// User is responsible to call invalidate_bounds() after adding, moving or removing points.
   void invalidate_bounds()
   {
     m_bounding_box_is_valid = false;
@@ -264,7 +264,7 @@ public:
     // Draw normals of *non-selected* points
     if (m_nb_selected_points < size())
     {
-      // Draw *oriented* normals 
+      // Draw *oriented* normals
       ::glColor3ub(r,g,b);
       ::glLineWidth(line_width);
       ::glBegin(GL_LINES);
@@ -281,7 +281,7 @@ public:
       }
       ::glEnd();
 
-      // Draw *non-oriented* normals 
+      // Draw *non-oriented* normals
       ::glColor3ub(245,184,0);       // non oriented => orange
       //::glLineWidth(line_width*1.5); // orange is light color
       ::glBegin(GL_LINES);
@@ -343,7 +343,7 @@ public:
       }
       ::glEnd();
     }
-    
+
     // Draw original normals of *non-selected* points (always oriented)
     if (m_nb_selected_points < size())
     {
@@ -425,11 +425,11 @@ private:
 /// Helper class: type of the "vertex_point" property map
 /// of an Point_set_3 object.
 template <class Gt>
-class Point_set_vertex_point_const_map 
+class Point_set_vertex_point_const_map
 {
 public:
   typedef Point_set_3<Gt> Point_set;
-  typedef typename Gt::Point_3 Point_3;  
+  typedef typename Gt::Point_3 Point_3;
 
   // Property maps required types
   typedef boost::readable_property_map_tag          category;
@@ -440,7 +440,7 @@ public:
   Point_set_vertex_point_const_map(const Point_set&) {}
 
   /// Free function to access the map elements.
-  friend inline 
+  friend inline
   reference get(const Point_set_vertex_point_const_map&, key_type p)
   {
     return *p;
@@ -451,8 +451,8 @@ public:
 /// of an Point_set_3 object.
 template <class Gt>
 inline
-Point_set_vertex_point_const_map<Gt> 
-get(CGAL::vertex_point_t, const Point_set_3<Gt>& points) 
+Point_set_vertex_point_const_map<Gt>
+get(CGAL::vertex_point_t, const Point_set_3<Gt>& points)
 {
   Point_set_vertex_point_const_map<Gt> aMap(points);
   return aMap;
@@ -462,13 +462,13 @@ get(CGAL::vertex_point_t, const Point_set_3<Gt>& points)
 /// Helper class: type of the "vertex_normal" property map
 /// of an Point_set_3 object.
 template <class Gt>
-class Point_set_vertex_normal_map 
-  : public boost::put_get_helper<typename Point_set_3<Gt>::Normal&, 
+class Point_set_vertex_normal_map
+  : public boost::put_get_helper<typename Point_set_3<Gt>::Normal&,
   Point_set_vertex_normal_map<Gt> >
 {
 public:
   typedef Point_set_3<Gt> Point_set;
-  typedef typename Point_set::Normal Normal;  
+  typedef typename Point_set::Normal Normal;
 
   // Property maps required types
   typedef boost::lvalue_property_map_tag            category;
@@ -486,8 +486,8 @@ public:
 /// of an Point_set_3 object.
 template <class Gt>
 inline
-Point_set_vertex_normal_map<Gt> 
-get(boost::vertex_normal_t, const Point_set_3<Gt>& points) 
+Point_set_vertex_normal_map<Gt>
+get(boost::vertex_normal_t, const Point_set_3<Gt>& points)
 {
   Point_set_vertex_normal_map<Gt> aMap(points);
   return aMap;
@@ -497,16 +497,16 @@ get(boost::vertex_normal_t, const Point_set_3<Gt>& points)
 /// Helper class: type of the "vertex_cameras" property map
 /// of a Point_set_3 object.
 template <class Gt>
-class Point_set_vertex_cameras_const_map 
+class Point_set_vertex_cameras_const_map
 {
 public:
   typedef Point_set_3<Gt> Point_set;
-  typedef typename Point_set::UI_point::Camera_const_iterator 
-    Camera_const_iterator;  
+  typedef typename Point_set::UI_point::Camera_const_iterator
+    Camera_const_iterator;
 
   // Property maps required types
   typedef boost::readable_property_map_tag          category;
-  typedef std::pair<Camera_const_iterator,Camera_const_iterator>  
+  typedef std::pair<Camera_const_iterator,Camera_const_iterator>
     value_type;
   typedef value_type                                reference;
   typedef typename Point_set::Point_const_iterator  key_type;
@@ -525,8 +525,8 @@ public:
 /// of a Point_set_3 object.
 template <class Gt>
 inline
-Point_set_vertex_cameras_const_map<Gt> 
-get(boost::vertex_cameras_t, const Point_set_3<Gt>& points) 
+Point_set_vertex_cameras_const_map<Gt>
+get(boost::vertex_cameras_t, const Point_set_3<Gt>& points)
 {
   Point_set_vertex_cameras_const_map<Gt> aMap(points);
   return aMap;

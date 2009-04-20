@@ -98,9 +98,13 @@ Point is (0, 0, 0) by default. Normal is (0, 0, 0) by default.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{void set_position(const Point& point);}
+\ccMethod{const Point& position() const;}
 {
-Set position.
+Get/set position.
+}
+\ccGlue
+\ccMethod{Point& position();}
+{
 }
 \ccGlue
 \ccMethod{const Normal& normal() const;}

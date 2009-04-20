@@ -25,10 +25,10 @@
 The \ccc{Reconstruction_triangulation_3} class is the default implementation of the \ccc{ReconstructionTriangulation_3} concept. The cell class must be a model of \ccc{ReconstructionCellBase_3} and the vertex class must be a model of \ccc{ReconstructionVertexBase_3}.
 
 It provides the interface requested by the \ccc{Poisson_reconstruction_function} class:\begin{itemize}
-\item Each vertex owns a normal vector.\item A vertex is either an input point or a Steiner point added by Delaunay refinement.\item In order to solve a linear system over the triangulation, a vertex may be constrained or not, and has a unique index.\end{itemize}
+\item Each vertex stores a normal vector.\item A vertex is either an input point or a Steiner point added by Delaunay refinement.\item In order to solve a linear system over the triangulation, a vertex may be constrained or not (i.e. contributes to the right or left member of the linear system), and has a unique index.\end{itemize}
 
 
-CAUTION: \ccc{invalidate_bounds}() must be called after modifying the points.
+CAUTION: User is responsible to call \ccc{invalidate_bounds}() after adding or removing points.
 
 %END-AUTO(\ccDefinition)
 
@@ -131,27 +131,25 @@ Iterator over input points.
 
 %END-AUTO(\ccTypes)
 
-\ccHeading{Variables}
+\ccConstants
 
 % The section below is automatically generated. Do not edit!
-%START-AUTO(\ccHeading{Variables})
+%START-AUTO(\ccConstants)
 
-\ccVariable{const unsigned char INPUT = 0;}
+\ccEnum{enum Point_type { INPUT, STEINER };}
 {
-[static] \\
 Point type.
 }
 \ccGlue
-\ccVariable{const unsigned char STEINER = 1;}
-{
-[static] \\
-}
+\ccCommentHeading{Values}
+\begin{description}
+\item \ccc{INPUT}: Input point. \item \ccc{STEINER}: \end{description}
 \ccGlue
 
-%END-AUTO(\ccHeading{Variables})
+%END-AUTO(\ccConstants)
 
 \ccCreation
-\ccCreationVariable{pdt}  %% variable name for \ccMethod calls below
+\ccCreationVariable{tr}  %% variable name for \ccMethod calls below
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
@@ -231,25 +229,25 @@ Get the standard deviation of the distance to barycenter (for all points).
 \ccGlue
 \ccMethod{void invalidate_bounds();}
 {
-Update barycenter, bounding box, bounding sphere and standard deviation. Owner is responsible to call this function after modifying the triangulation.
+Update barycenter, bounding box, bounding sphere and standard deviation. User is responsible to call \ccc{invalidate_bounds}() after adding or removing points.
 }
 \ccGlue
-\ccMethod{Vertex_handle insert(const Point& p, unsigned char type = INPUT, Cell_handle start = Cell_handle());}
+\ccMethod{Vertex_handle insert(const Point& p, Point_type type = INPUT, Cell_handle start = Cell_handle());}
 {
-Insert point in the triangulation. Default type is INPUT.
+Insert point (model of \ccc{PointWithNormal_3}) in the triangulation. Default type is INPUT.
 }
 \ccGlue
-\ccMethod{template<class InputIterator> int insert(InputIterator first, InputIterator beyond, unsigned char type = INPUT);}
+\ccMethod{template<class InputIterator> int insert(InputIterator first, InputIterator beyond, Point_type type = INPUT);}
 {
 Insert points in the triangulation using a spatial sort. Default type is INPUT.
-\ccPrecond the value type of InputIterator must be \ccc{Point}.
+\ccPrecond InputIterator \ccc{value_type} must be convertible to \ccc{Point_with_normal}.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: First point to add to pdt. \item \ccc{beyond}: Past-the-end point to add to pdt. \end{description}
+\item \ccc{first}: Iterator over first point to add. \item \ccc{beyond}: Past-the-end iterator to add. \end{description}
 \ccCommentHeading{Returns} the number of inserted points.
 }
 \ccGlue
-\ccMethod{template<class CellIt> Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end, Cell_handle begin, int i, unsigned char type = STEINER);}
+\ccMethod{template<class CellIt> Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end, Cell_handle begin, int i, Point_type type = STEINER);}
 {
 Delaunay refinement callback: insert STEINER point in the triangulation.
 }
@@ -262,8 +260,8 @@ Index all finite vertices following the order of \ccc{Finite_vertices_iterator}.
 \ccGlue
 \ccMethod{unsigned int index_unconstrained_vertices();}
 {
-Index unconstraint vertices following the order of \ccc{Finite_vertices_iterator}.
-\ccCommentHeading{Returns} the number of unconstraint vertices.
+Index unconstrained vertices following the order of \ccc{Finite_vertices_iterator}.
+\ccCommentHeading{Returns} the number of unconstrained vertices.
 }
 \ccGlue
 

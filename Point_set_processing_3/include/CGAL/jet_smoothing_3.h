@@ -51,7 +51,7 @@ typename Kernel::Point_3
 jet_smoothing_3(const typename Kernel::Point_3& query, ///< 3D point to project
                 Tree& tree, ///< KD-tree
                 const unsigned int k,
-                const unsigned int degre_fitting,
+                const unsigned int degree_fitting,
                 const unsigned int degree_monge)
 {
   // basic geometric types
@@ -86,7 +86,7 @@ jet_smoothing_3(const typename Kernel::Point_3& query, ///< 3D point to project
   // performs jet fitting
   Monge_jet_fitting monge_fit;
   Monge_form monge_form = monge_fit(points.begin(), points.end(),
-                                    degre_fitting, degree_monge);
+                                    degree_fitting, degree_monge);
 
   // output projection of query point onto the jet
   return monge_form.origin();
@@ -108,8 +108,8 @@ jet_smoothing_3(const typename Kernel::Point_3& query, ///< 3D point to project
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type convertible to Point_3.
-/// @param OutputIterator value_type convertible to Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 /// @param Kernel Geometric traits class.
 ///
 /// @return past-the-end output iterator.
@@ -118,12 +118,12 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-jet_smoothing_3(InputIterator first,    ///< iterator over the first input point
-                InputIterator beyond,   ///< past-the-end iterator over input points
-                OutputIterator output,  ///< iterator over the first output point
-                const unsigned int k,   ///< number of neighbors
-                const Kernel& /*kernel*/,
-                const unsigned int degre_fitting = 2,
+jet_smoothing_3(InputIterator first,    ///< iterator over the first input point.
+                InputIterator beyond,   ///< past-the-end iterator over input points.
+                OutputIterator output,  ///< iterator over the first output point.
+                const unsigned int k,   ///< number of neighbors.
+                const Kernel& kernel,   ///< geometric traits.
+                const unsigned int degree_fitting = 2,
                 const unsigned int degree_monge = 2)
 {
   // Point_3 types
@@ -152,7 +152,7 @@ jet_smoothing_3(InputIterator first,    ///< iterator over the first input point
   for(InputIterator it = first; it != beyond; it++)
   {
     Input_point_3 point = *it;
-    (Point_3&)(point) = CGALi::jet_smoothing_3<Kernel>(*it,tree,k,degre_fitting,degree_monge);
+    (Point_3&)(point) = CGALi::jet_smoothing_3<Kernel>(*it,tree,k,degree_fitting,degree_monge);
     *output++ = point;
   }
 
@@ -171,16 +171,16 @@ jet_smoothing_3(InputIterator first,    ///< iterator over the first input point
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type convertible to Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 /// @param Kernel Geometric traits class.
 template <typename ForwardIterator,
           typename Kernel>
 void
-jet_smoothing_3(ForwardIterator first,     ///< iterator over the first input/output point
-                ForwardIterator beyond,    ///< past-the-end iterator
-                unsigned int k,            ///< number of neighbors
-                const Kernel& /*kernel*/,
-                const unsigned int degre_fitting = 2,
+jet_smoothing_3(ForwardIterator first,     ///< iterator over the first input/output point.
+                ForwardIterator beyond,    ///< past-the-end iterator.
+                unsigned int k,            ///< number of neighbors.
+                const Kernel& kernel,      ///< geometric traits.
+                const unsigned int degree_fitting = 2,
                 const unsigned int degree_monge = 2)
 {
   // Point_3 types
@@ -208,7 +208,7 @@ jet_smoothing_3(ForwardIterator first,     ///< iterator over the first input/ou
   // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
   ForwardIterator it;
   for(it = first; it != beyond; it++)
-    (Point_3&)(*it) = CGALi::jet_smoothing_3<Kernel>(*it,tree,k,degre_fitting,degree_monge);
+    (Point_3&)(*it) = CGALi::jet_smoothing_3<Kernel>(*it,tree,k,degree_fitting,degree_monge);
 }
 
 
@@ -217,6 +217,10 @@ jet_smoothing_3(ForwardIterator first,     ///< iterator over the first input/ou
 /// This variant deduces the kernel from iterator types.
 ///
 /// @commentheading Precondition: k >= 2.
+///
+/// @commentheading Template Parameters:
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
@@ -227,12 +231,12 @@ jet_smoothing_3(InputIterator first, ///< iterator over the first input point
                 InputIterator beyond, ///< past-the-end iterator over input points
                 OutputIterator output, ///< iterator over the first output point
                 unsigned int k, ///< number of neighbors
-                const unsigned int degre_fitting = 2,
+                const unsigned int degree_fitting = 2,
                 const unsigned int degree_monge = 2)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Input_point_3;
   typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  return jet_smoothing_3(first,beyond,output,k,Kernel(),degre_fitting,degree_monge);
+  return jet_smoothing_3(first,beyond,output,k,Kernel(),degree_fitting,degree_monge);
 }
 
 /// Smooths points by fitting jet surfaces over their k
@@ -247,18 +251,18 @@ jet_smoothing_3(InputIterator first, ///< iterator over the first input point
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type convertible to Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 template <typename ForwardIterator>
 void
 jet_smoothing_3(ForwardIterator first, ///< iterator over the first input/output point
                 ForwardIterator beyond, ///< past-the-end iterator
                 unsigned int k, ///< number of neighbors
-                const unsigned int degre_fitting = 2,
+                const unsigned int degree_fitting = 2,
                 const unsigned int degree_monge = 2)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
   typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  jet_smoothing_3(first,beyond,k,Kernel(),degre_fitting,degree_monge);
+  jet_smoothing_3(first,beyond,k,Kernel(),degree_fitting,degree_monge);
 }
 
 

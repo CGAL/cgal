@@ -147,9 +147,13 @@ Copy constructor.
 Operator =().
 }
 \ccGlue
-\ccMethod{void set_position(const Point& point);}
+\ccMethod{const Point& position() const;}
 {
-Set position.
+Get/set position.
+}
+\ccGlue
+\ccMethod{Point& position();}
+{
 }
 \ccGlue
 \ccMethod{const Normal& normal() const;}

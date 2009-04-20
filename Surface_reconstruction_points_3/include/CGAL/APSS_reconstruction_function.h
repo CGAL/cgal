@@ -47,7 +47,7 @@ CGAL_BEGIN_NAMESPACE
 /// See "Algebraic Point Set Surfaces" by Guennebaud and Gross [Guennebaud07].
 ///
 /// @heading Is Model for the Concepts:
-/// Model of the ImplicitFunction concept.
+/// Model of the 'ImplicitFunction' concept.
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
@@ -124,10 +124,10 @@ public:
   /// Create an APSS implicit function from a point set.
   ///
   /// @commentheading Precondition:
-  /// the value type of InputIterator must be convertible to Point_with_normal_3.
+  /// InputIterator value_type must be convertible to Point_with_normal.
   ///
-  /// @param first First point to add.
-  /// @param beyond Past-the-end point to add.
+  /// @param first Iterator over first point to add.
+  /// @param beyond Past-the-end iterator to add.
   /// @param k #neighbors for APSS sphere fitting.
   template < class InputIterator >
   APSS_reconstruction_function(InputIterator first, InputIterator beyond,
@@ -282,9 +282,8 @@ private:
 
 public:
 
-  /// [ImplicitFunction interface]
-  ///
   /// Evaluate implicit function for any 3D point.
+  /// ('ImplicitFunction' interface)
   //
   // Implementation note: this function is called a large number of times,
   // thus us heavily optimized. The bottleneck is Neighbor_search's constructor,
@@ -444,8 +443,8 @@ private:
 
   /// Compute barycenter, bounding box, bounding sphere and standard deviation.
   ///
-  /// @param first First point of point set.
-  /// @param beyond Past-the-end point of point set.
+  /// @param first Iterator over first point of point set.
+  /// @param beyond Past-the-end iterator of point set.
   template < class InputIterator >
   void update_bounds(InputIterator first, InputIterator beyond)
   {

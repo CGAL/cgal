@@ -51,8 +51,9 @@ public:
     PointWithNormal_3(const Point& point,
                       const Normal& normal = NULL_VECTOR);
 
-    /// Set position.
-    void set_position(const Point& point);
+    /// Get/set position.
+    const Point& position() const;
+    Point&       position();
 
     /// Get/set normal.
     const Normal& normal() const;

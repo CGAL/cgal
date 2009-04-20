@@ -14,7 +14,7 @@
 /// - the interface requested by the Poisson_reconstruction_function class
 /// - OpenGL rendering
 ///
-/// @heading Is Model for the Concepts: 
+/// @heading Is Model for the Concepts:
 /// Model of the ReconstructionTriangulation_3 concept.
 ///
 /// @heading Parameters:
@@ -74,7 +74,7 @@ public:
   typedef typename Base::Sphere Sphere;
   typedef typename Base::Normal_iterator Normal_iterator;
   /// @endcond
-  
+
   /// The geometric traits class's Point_3 type is a model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
@@ -138,8 +138,8 @@ public:
   }
 
   // Contour a triangular surface via a Marching Cubes style algorithm.
-  // OutputIterator value_type must be Triangle.
-  template <typename OutputIterator> 
+  // OutputIterator value_type must be convertible from Triangle_3<Kernel>.
+  template <typename OutputIterator>
   unsigned int marching_tet(OutputIterator output, ///< output triangles
                             const FT value)
   {
@@ -154,8 +154,8 @@ public:
 private:
 
   // Contour a triangular surface in 'cell' via a Marching Cubes style algorithm.
-  // OutputIterator value_type must be Triangle.
-  template <typename OutputIterator> 
+  // OutputIterator value_type must be convertible from Triangle_3<Kernel>.
+  template <typename OutputIterator>
   unsigned int contour(Cell_handle cell,
                        OutputIterator& output, // notice the '&'
                        const FT value)
@@ -235,7 +235,7 @@ public:
     for(Finite_vertices_iterator v = finite_vertices_begin();
         v != finite_vertices_end();
         v++)
-    { 
+    {
       Normal n = v->normal();
 	  if ( n != CGAL::NULL_VECTOR && v->type() == 0)
       {

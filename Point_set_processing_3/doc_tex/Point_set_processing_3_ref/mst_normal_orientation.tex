@@ -29,26 +29,13 @@
 \ccFunction{template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap> unsigned int mst_normal_orientation(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int k);}
 {
 Orient the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
-This variant implements the original algorithm. Note that it does not orient normals that are already oriented.
+Note that this variant does not orient normals that are already oriented.
 \ccCommentHeading{Preconditions}\begin{itemize}
-\item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item Normals must be unit vectors.\item k $>$= 2.\end{itemize}
+\item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map} with an integral \ccc{value_type}.\item VertexPointMap is a model of \ccc{boost::readable_property_map} with a \ccc{value_type} model of \ccc{Kernel::Point_3}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map} with a \ccc{value_type} model of \ccc{OrientableNormal_3}.\item Normals must be unit vectors.\item k $>$= 2.\end{itemize}
 \ccCommentHeading{Returns} the number of un-oriented normals.
 \ccCommentHeading{Parameters}
 \begin{description}
 \item \ccc{first}: first input vertex \item \ccc{beyond}: past-the-end input vertex \item \ccc{vertex_index_map}: property map VertexIterator -$>$ index \item \ccc{vertex_point_map}: property map VertexIterator -$>$ \ccc{Point_3} \item \ccc{vertex_normal_map}: property map VertexIterator -$>$ Normal (in and out) \item \ccc{k}: number of neighbors \end{description}
-}
-\ccGlue
-\ccFunction{template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap> unsigned int mst_normal_orientation(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int k, double angle_max);}
-{
-Orient the normals of a point set using the method described by Hoppe et al. in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
-This is a variant of the original algorithm. It:\begin{itemize}
-\item orients the top point towards +Z axis.\item does not orient normals that are already oriented.\item does not propagate the orientation if the angle between 2 normals $>$ \ccc{angle_max}.\end{itemize}
-\ccCommentHeading{Preconditions}\begin{itemize}
-\item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item Normals must be unit vectors.\item k $>$= 2.\item 0 $<$ \ccc{angle_max} $<$= PI/2.\end{itemize}
-\ccCommentHeading{Returns} the number of un-oriented normals.
-\ccCommentHeading{Parameters}
-\begin{description}
-\item \ccc{first}: first input vertex \item \ccc{beyond}: past-the-end input vertex \item \ccc{vertex_index_map}: property map VertexIterator -$>$ index \item \ccc{vertex_point_map}: property map VertexIterator -$>$ \ccc{Point_3} \item \ccc{vertex_normal_map}: property map VertexIterator -$>$ Normal (in and out) \item \ccc{k}: number of neighbors \item \ccc{angle_max}: max angle to propagate the normal orientation (radians) \end{description}
 }
 \ccGlue
 

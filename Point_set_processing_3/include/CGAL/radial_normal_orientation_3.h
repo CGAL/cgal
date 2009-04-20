@@ -44,11 +44,11 @@ CGAL_BEGIN_NAMESPACE
 
 template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap>
 void
-radial_normal_orientation_3(VertexIterator first, ///< first input vertex
-                            VertexIterator beyond, ///< past-the-end input vertex
-                            VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index
-                            VertexPointMap vertex_point_map, ///< property map VertexIterator -> Point_3
-                            VertexNormalMap vertex_normal_map) ///< property map VertexIterator -> Normal (in and out)
+radial_normal_orientation_3(VertexIterator first, ///< first input vertex.
+                            VertexIterator beyond, ///< past-the-end input vertex.
+                            VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index.
+                            VertexPointMap vertex_point_map, ///< property map VertexIterator -> Point_3.
+                            VertexNormalMap vertex_normal_map) ///< property map VertexIterator -> Normal (in and out).
 {
     CGAL_TRACE("Call radial_normal_orientation_3()\n");
 
@@ -61,7 +61,7 @@ radial_normal_orientation_3(VertexIterator first, ///< first input vertex
 
     // Precondition: at least one element in the container.
     CGAL_point_set_processing_precondition(first != beyond);
-    
+
     // Find points barycenter.
     // Note: We should use CGAL::centroid() from PCA component.
     //       Unfortunately, it is not compatible with property maps.
@@ -74,7 +74,7 @@ radial_normal_orientation_3(VertexIterator first, ///< first input vertex
       nb_points++;
     }
     Point barycenter = CGAL::ORIGIN + sum / (FT)nb_points;
-    
+
     // Radial orientation of the normals of a point set.
     // Normals are oriented towards exterior of the point set.
     for (VertexIterator it = first; it != beyond; it++)
@@ -100,7 +100,7 @@ radial_normal_orientation_3(VertexIterator first, ///< first input vertex
       bool oriented = (std::abs(dot) > std::cos(80.*M_PI/180.)); // oriented iff angle < 80 degrees
       normal2 = Normal(vec2, oriented);
     }
-    
+
     long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("End of radial_normal_orientation_3()\n");
 }

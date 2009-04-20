@@ -25,8 +25,8 @@
 /// - OpenGL rendering
 /// - bounding box
 ///
-/// CAUTION: invalidate_bounds() must be called
-/// after modifying the points.
+/// CAUTION:
+/// User is responsible to call invalidate_bounds() after adding, moving or removing points.
 ///
 /// @heading Parameters:
 /// @param Gt       Geometric traits class.
@@ -141,8 +141,8 @@ public:
 
   /// Mark a range of points as selected/not selected.
   ///
-  /// @param first First point to select/unselect.
-  /// @param beyond Past-the-end point to select/unselect.
+  /// @param first Iterator over first point to select/unselect.
+  /// @param beyond Past-the-end iterator.
   void select(iterator first, iterator beyond,
               bool is_selected = true)
   {
@@ -215,7 +215,7 @@ public:
   }
 
   /// Update barycenter, bounding box, bounding sphere and standard deviation.
-  /// Owner is responsible to call this function after modifying the triangulation.
+  /// User is responsible to call invalidate_bounds() after adding, moving or removing points.
   void invalidate_bounds()
   {
     m_bounding_box_is_valid = false;

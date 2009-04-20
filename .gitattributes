@@ -3896,8 +3896,6 @@ Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/introduc
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/introduction.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/pipeline.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/pipeline.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/poisson.eps -text svneol=unset#application/postscript
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/poisson.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/APSS_reconstruction.cmd eol=lf
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/data/camel-5kv.xyz -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/data/oni.xyz -text

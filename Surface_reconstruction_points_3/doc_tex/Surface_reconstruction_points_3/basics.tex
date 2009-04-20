@@ -36,13 +36,13 @@ class \ccc{Poisson_reconstruction_function};
 
 The main constructor is:
 
-\ccFunction{template<class InputIterator> Poisson_reconstruction_function(ReconstructionTriangulation_3& pdt, InputIterator first, InputIterator beyond);}
+\ccFunction{template<class InputIterator> Poisson_reconstruction_function(ReconstructionTriangulation_3& tr, InputIterator first, InputIterator beyond);}
 {
-Creates a scalar function from a set of oriented points. Inserts the iterator range first...beyond into the triangulation pdt, refines it and solves for a piecewise linear scalar function which gradient best matches the input normals.
+Creates a scalar function from a set of oriented points. Inserts the iterator range [first, beyond) into the triangulation \ccc{tr}, refines it and solves for a piecewise linear scalar function which gradient best matches the input normals.
 \ccPrecond the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{pdt}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \item \ccc{first}: First point to add. \item \ccc{beyond}: Past-the-end point to add. \end{description}
+\item \ccc{tr}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \item \ccc{first}: Iterator over first point to add to \ccc{tr}. \item \ccc{beyond}: Past-the-end iterator to add to \ccc{tr}. \end{description}
 }
 
 The main methods are:

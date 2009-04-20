@@ -32,7 +32,7 @@
 The \ccc{Reconstruction_vertex_base_3} class is the default vertex class of the \ccc{Reconstruction_triangulation_3} class.
 
 It provides the interface requested by the \ccc{Poisson_reconstruction_function} class:\begin{itemize}
-\item Each vertex owns a normal vector.\item A vertex is either an input point or a Steiner point added by Delaunay refinement.\item In order to solve a linear system over the triangulation, a vertex may be constrained or not, and has a unique index.\end{itemize}
+\item Each vertex stores a normal vector.\item A vertex is either an input point or a Steiner point added by Delaunay refinement.\item In order to solve a linear system over the triangulation, a vertex may be constrained or not (i.e. contributes to the right or left member of the linear system), and has a unique index.\end{itemize}
 
 %END-AUTO(\ccDefinition)
 
@@ -129,7 +129,7 @@ Model of \ccc{Kernel::Vector_3} concept.
 
 \ccMethod{bool constrained() const;}
 {
-Is vertex constrained?
+Is vertex constrained, i.e. does it contribute to the right or left member of the linear system? Default value is false.
 }
 \ccGlue
 \ccMethod{bool& constrained();}
@@ -138,7 +138,7 @@ Is vertex constrained?
 \ccGlue
 \ccMethod{FT f() const;}
 {
-Get/set the value of the implicit function.
+Get/set the value of the implicit function. Default value is 0.0.
 }
 \ccGlue
 \ccMethod{FT& f();}
@@ -174,7 +174,7 @@ Get/set the index in matrix.
 \ccGlue
 \ccMethod{const Normal& normal() const;}
 {
-Get/set normal (vector + orientation).
+Get/set normal (vector + orientation). Default value is null vector.
 }
 \ccGlue
 \ccMethod{Normal& normal();}

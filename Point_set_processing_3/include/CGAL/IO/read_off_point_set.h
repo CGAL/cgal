@@ -123,7 +123,7 @@ bool read_off_point_set(std::istream& stream, ///< input stream.
 /// Normals and faces are ignored.
 ///
 /// @commentheading Template Parameters:
-/// @param OutputIterator value_type must be Point_3.
+/// @param OutputIterator value_type must be convertible from Point_3<Kernel>.
 ///
 /// @return true on success.
 template <typename OutputIterator>
@@ -137,7 +137,7 @@ bool read_off_point_set(std::istream& stream, ///< input stream.
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   typedef typename CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 
-  // Read points (positions + normals, if available) 
+  // Read points (positions + normals, if available)
   // in temporary Point_with_normal_3 container.
   std::deque<Point_with_normal> pwns;
   if (read_off_point_set(stream, std::back_inserter(pwns)))

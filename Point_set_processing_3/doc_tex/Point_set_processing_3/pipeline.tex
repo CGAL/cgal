@@ -1,4 +1,4 @@
-\section{Pipeline}
+\section{Example}
 
 A typical usage of this package is to pre-process a point set before calling a reconstruction method.
 Surface Reconstruction from Point Sets is a sequential process:
@@ -19,7 +19,8 @@ Surface Reconstruction from Point Sets is a sequential process:
 \cgal\ provides algorithms for all steps listed above except alignment.\\
 This package provides outlier removal, simplification, smoothing,
 normal estimation and orientation.\\
-Chapter \ccc{Surface_reconstruction_points_3} \ref{chap:surface_reconstruction_points_3} describes surface reconstruction using \cgal\ Surface Mesh Generator.
+Chapter \ccc{Surface_reconstruction_points_3} \ref{chap:surface_reconstruction_points_3}
+describes surface reconstruction using \cgal\ Surface Mesh Generator.
 
 % Insert image pipeline.jpg/eps
 \begin{center}
@@ -38,7 +39,7 @@ Chapter \ccc{Surface_reconstruction_points_3} \ref{chap:surface_reconstruction_p
 \end{center}
 
 
-\subsection{Input}
+\section{Input}
 
 The algorithms of this component expect as input parameters range iterators over:
 
@@ -49,15 +50,14 @@ The algorithms of this component expect as input parameters range iterators over
 \item 3D points with oriented normals
 \end{itemize}
 
-We provide several models of point and normal concepts, with different speed/space trade-offs:
+These types are described as concepts.
+\cgal\ provides the next classes to implement points and normals:
 
 \begin{itemize}
 \item \ccRefIdfierPage{CGAL::Point_3<GeomTraits>} \\
 \cgal\ 3D position.
 \item \ccRefIdfierPage{CGAL::Vector_3<GeomTraits>} \\
 \cgal\ 3D vector.
-\item \ccRefIdfierPage{CGAL::Lightweight_vector_3<GeomTraits>} \\
-3D vector allocated only if not null.
 \item \ccRefIdfierPage{CGAL::Orientable_normal_3<GeomTraits>} \\
 Normal (oriented or not). Inherits from \ccc{Vector_3<GeomTraits>} and contains an additional orientation flag.
 \item \ccRefIdfierPage{CGAL::Point_with_normal_3<GeomTraits, Normal_3>} \\
@@ -79,9 +79,9 @@ Example:
 \ccIncludeExampleCode{Point_set_processing_3/read_write_xyz_point_set_example.cpp}
 
 
-\subsection{Analysis}
+\section{Analysis}
 
-The purpose of the analysis stage is to measure common statistics and bounding volumes over the input points so as to automatically determine parameters for subsequent stages downstream along the pipeline:
+The purpose of the analysis stage is to measure common statistics and bounding volumes over the input points so as to automatically determine parameters for subsequent stages:
 \begin{itemize}
   \item Point set barycenter, bounding box,
         bounding sphere (provided by other \cgal\ components).
@@ -100,11 +100,7 @@ Example:
 \ccIncludeExampleCode{Point_set_processing_3/average_spacing_example.cpp}
 
 
-\subsection{Processing}
-
-Processing refers to all algorithms which alter the input points so as to remove outliers, to reduce noise by smoothing, and to simplify.
-
-\subsubsection{Outlier Removal}
+\section{Outlier Removal}
 
 Function \ccc{CGAL::outlier_removal_3()} deletes a user-specified fraction of outliers from the input point set. More specifically, it sorts the input points in increasing order of average squared distances to the $k$ nearest neighbors and deletes the points with largest value.
 
@@ -133,13 +129,15 @@ Example:
 \ccIncludeExampleCode{Point_set_processing_3/outlier_removal_example.cpp}
 
 
-\subsubsection{Simplification}
+\section{Simplification}
 
 Two functions are provided to simplify the input point set.
 
-\ccc{CGAL::merge_simplification_3()} iteratively merges pairs of points which are epsilon-closed.
+\ccc{CGAL::merge_simplification_3()} iteratively merges pairs of points which are epsilon-closed.\\
+This algorithm is precise but slower than \ccc{CGAL::random_simplification_3()}.
 
-\ccc{CGAL::random_simplification_3()} randomly deletes a user-specified fraction of points from the input point set.
+\ccc{CGAL::random_simplification_3()} randomly deletes a user-specified fraction of points from the input point set.\\
+This algorithm is very fast.
 
 \ccRefIdfierPage{CGAL::merge_simplification_3}  \\
 \ccRefIdfierPage{CGAL::random_simplification_3}  \\
@@ -166,7 +164,8 @@ Example:
 
 \ccIncludeExampleCode{Point_set_processing_3/random_simplification_example.cpp}
 
-\subsubsection{Smoothing}
+
+\section{Smoothing}
 
 Function \ccRefIdfierPage{CGAL::jet_smoothing_3} smooths the input point set by projecting each point onto a smooth parametric surface patch (so-called jet surface) fitted over the $k$ nearest neighbors. \\
 
@@ -191,13 +190,15 @@ Example:
 \ccIncludeExampleCode{Point_set_processing_3/jet_smoothing_example.cpp}
 
 
-\subsubsection{Normal Estimation}
+\section{Normal Estimation}
 
 Two functions are provided to estimate the normal direction of the inferred surface at each point from the input point set. In both cases, the result is an unoriented normal vector for each input point.
 
-Function \ccc{CGAL::jet_normal_estimation()} estimates the normal direction at each point from the set by fitting a jet surface over its $k$ nearest neighbors. The default jet is a quadric surface.
+Function \ccc{CGAL::jet_normal_estimation()} estimates the normal direction at each point from the set by fitting a jet surface over its $k$ nearest neighbors. The default jet is a quadric surface.\\
+This algorithm is well suited to point sets scattered over curved surfaces.
 
-Function \ccc{CGAL::pca_normal_estimation()} estimates the normal direction at each point from the set by linear least squares fitting of a plane over its $k$ nearest neighbors.
+Function \ccc{CGAL::pca_normal_estimation()} estimates the normal direction at each point from the set by linear least squares fitting of a plane over its $k$ nearest neighbors.\\
+This algorithm is well suited to point sets scattered over plane surfaces. It is much faster than \ccc{CGAL::jet_normal_estimation()}.
 
 \ccRefIdfierPage{CGAL::pca_normal_estimation}  \\
 \ccRefIdfierPage{CGAL::jet_normal_estimation}  \\
@@ -223,7 +224,7 @@ Example:
 \ccIncludeExampleCode{Point_set_processing_3/pca_normal_estimation_example.cpp}
 
 
-\subsubsection{Normal Orientation}
+\section{Normal Orientation}
 
 Function \ccc{CGAL::mst_normal_orientation()} orients the normals of a set of points with (unoriented) normals using the method described by Hoppe et al. in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}. More specifically, this method constructs a Riemannian graph over the input points and propagates a seed normal orientation within a minimum spanning tree computed over the graph with the Boost graph library. The result is an oriented normal vector for each input point/normal.
 
@@ -234,22 +235,24 @@ Function \ccc{CGAL::mst_normal_orientation()} orients the normals of a set of po
     \label{Point_set_processing_3-fig-mst_normal_orientation}
     % Image
     \begin{ccTexOnly}
-        \includegraphics[width=0.9\textwidth]{Point_set_processing_3/mst_normal_orientation} % omit .eps suffix
+        \includegraphics[width=1.0\textwidth]{Point_set_processing_3/mst_normal_orientation} % omit .eps suffix
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="90%" border=0 src="./mst_normal_orientation.jpg"><P>
+        <img width="100%" border=0 src="./mst_normal_orientation.jpg"><P>
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[h]
-        \caption{Normal orientation}
+        \caption{Normal orientation of a cube's normals. Notice the left and bottom normals orientation.}
     \end{figure}
 \end{center}
 
 Example: see \ccc{pca_normal_estimation_example.cpp} example above.
 
-\subsection{Output}
 
-The output of the processing stage is a point set with normals. For convenience, we provide functions to write point sets to standard file formats:
+\section{Output}
+
+The output of the processing stage is a point set with normals.
+For convenience, we provide functions to write point sets to standard file formats:
 \begin{itemize}
 \item XYZ
 \item OFF

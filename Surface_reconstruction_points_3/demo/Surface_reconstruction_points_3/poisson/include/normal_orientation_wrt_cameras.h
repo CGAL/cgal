@@ -74,9 +74,9 @@ normal_orientation_wrt_cameras(const typename Gt::Point_3& p, ///< 3D point posi
 ///
 /// @commentheading Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
-/// - VertexPointMap is a model of boost::readable_property_map.
-/// - VertexNormalMap is a model of boost::lvalue_property_map.
-/// - VertexCamerasMap is a model of boost::readable_property_map.
+/// - VertexIndexMap is a model of boost::readable_property_map with an integral value_type.
+/// - VertexPointMap is a model of boost::readable_property_map with a value_type model of Kernel::Point_3.
+/// - VertexNormalMap is a model of boost::lvalue_property_map with a value_type model of OrientableNormal_3.
 /// - Normals must be unit vectors.
 template < class VertexIterator, class VertexPointMap, class VertexNormalMap, class VertexCamerasMap >
 void

@@ -116,8 +116,8 @@ public:
 /// @commentheading Precondition: epsilon > 0.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to OutputIterator's value_type.
-/// @param OutputIterator value_type must be convertible to Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 /// @param Kernel Geometric traits class.
 ///
 /// @return past-the-end output iterator.
@@ -127,11 +127,11 @@ template <typename InputIterator,
 >
 OutputIterator
 merge_simplification_3(
-          InputIterator first,      ///< iterator over the first input point
-          InputIterator beyond,     ///< past-the-end iterator over input points
-          OutputIterator output,    ///< iterator over the first output point
-          double epsilon,           ///< tolerance value when comparing 3D points
-          const Kernel& )           ///< kernel
+          InputIterator first,      ///< iterator over the first input point.
+          InputIterator beyond,     ///< past-the-end iterator over input points.
+          OutputIterator output,    ///< iterator over the first output point.
+          double epsilon,           ///< tolerance value when comparing 3D points.
+          const Kernel& kernel)     ///< geometric traits.
 {
     typedef typename std::iterator_traits<InputIterator>::value_type Point;
 
@@ -157,7 +157,7 @@ merge_simplification_3(
 /// @commentheading Precondition: epsilon > 0.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 /// @param Kernel Geometric traits class.
 ///
 /// @return First iterator to remove (see erase-remove idiom).
@@ -166,10 +166,10 @@ template <typename ForwardIterator,
 >
 ForwardIterator
 merge_simplification_3(
-           ForwardIterator first,   ///< iterator over the first input/output point
-           ForwardIterator beyond,  ///< past-the-end iterator
-           double epsilon,          ///< tolerance value when comparing 3D points
-           const Kernel& )          ///< kernel
+           ForwardIterator first,   ///< iterator over the first input/output point.
+           ForwardIterator beyond,  ///< past-the-end iterator.
+           double epsilon,          ///< tolerance value when comparing 3D points.
+          const Kernel& kernel)     ///< geometric traits.
 
 {
     typedef typename std::iterator_traits<ForwardIterator>::value_type Point;
@@ -202,8 +202,8 @@ merge_simplification_3(
 /// @commentheading Precondition: epsilon > 0.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to OutputIterator's value_type.
-/// @param OutputIterator value_type must be convertible to Point_3.
+/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
+/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
@@ -211,10 +211,10 @@ template <typename InputIterator,
 >
 OutputIterator
 merge_simplification_3(
-           InputIterator first,   ///< iterator over the first input point
-           InputIterator beyond,  ///< past-the-end iterator over input points
-           OutputIterator output, ///< iterator over the first output point
-           double epsilon)        ///< tolerance value when comparing 3D points
+           InputIterator first,   ///< iterator over the first input point.
+           InputIterator beyond,  ///< past-the-end iterator over input points.
+           OutputIterator output, ///< iterator over the first output point.
+           double epsilon)        ///< tolerance value when comparing 3D points.
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
@@ -232,7 +232,7 @@ merge_simplification_3(
 /// @commentheading Precondition: epsilon > 0.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 ///
 /// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>

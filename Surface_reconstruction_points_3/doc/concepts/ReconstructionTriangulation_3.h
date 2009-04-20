@@ -25,13 +25,14 @@
 /// must be a model of ReconstructionVertexBase_3.
 ///
 /// It provides the interface requested by the Poisson_reconstruction_function class:
-/// - Each vertex owns a normal vector.
+/// - Each vertex stores a normal vector.
 /// - A vertex is either an input point or a Steiner point added by Delaunay refinement.
 /// - In order to solve a linear system over the triangulation, a vertex may be constrained
-/// or not, and has a unique index.
+///   or not (i.e. contributes to the right or left member of the linear system),
+///   and has a unique index.
 ///
-/// CAUTION: invalidate_bounds() must be called
-/// after modifying the points.
+/// CAUTION:
+/// User is responsible to call invalidate_bounds() after adding or removing points.
 ///
 /// @heading Has Models:
 /// Reconstruction_triangulation_3<GeomTraits, TriangulationDataStructure_3>
@@ -57,8 +58,8 @@ public:
   typedef xxx Normal_iterator;
 
   /// Point type
-  static const unsigned char INPUT = 0;
-  static const unsigned char STEINER = 1;
+  enum Point_type { INPUT,     ///< Input point.
+                    STEINER }; ///< Steiner point created by Delaunay refinement.
 
   /// Iterator over input vertices.
   typedef xxx Input_vertices_iterator;
@@ -103,26 +104,27 @@ public:
   FT diameter_standard_deviation() const;
 
   /// Update barycenter, bounding box, bounding sphere and standard deviation.
-  /// Owner is responsible to call this function after modifying the triangulation.
+  /// User is responsible to call invalidate_bounds() after adding or removing points.
   void invalidate_bounds();
 
-  /// Insert point in the triangulation.
+  /// Insert point (model of PointWithNormal_3) in the triangulation.
   /// Default type is INPUT.
   Vertex_handle insert(const Point& p,
-                       unsigned char type = INPUT /* INPUT or STEINER */,
+                       Point_type type = INPUT,
                        Cell_handle start = Cell_handle());
 
   /// Insert points in the triangulation using a spatial sort.
   /// Default type is INPUT.
   ///
-  /// @commentheading Precondition: the value type of InputIterator must be 'Point'.
+  /// @commentheading Precondition:
+  /// InputIterator value_type must be convertible to Point_with_normal.
   ///
-  /// @param first First point to add to pdt.
-  /// @param beyond Past-the-end point to add to pdt.
+  /// @param first Iterator over first point to add.
+  /// @param beyond Past-the-end iterator to add.
   /// @return the number of inserted points.
   template < class InputIterator >
   int insert(InputIterator first, InputIterator beyond,
-             unsigned char type = INPUT /* INPUT or STEINER */);
+             Point_type type = INPUT);
 
   /// Delaunay refinement callback:
   /// insert STEINER point in the triangulation.
@@ -130,14 +132,15 @@ public:
   Vertex_handle
   insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
 	         Cell_handle begin, int i,
-                 unsigned char type = STEINER /* INPUT or STEINER */);
+                 Point_type type = STEINER);
 
   /// Index all finite vertices following the order of Finite_vertices_iterator.
   /// @return the number of finite vertices.
   unsigned int index_vertices();
 
-  /// Index unconstraint vertices following the order of Finite_vertices_iterator.
-  /// @return the number of unconstraint vertices.
+  /// Index unconstrained vertices following the order of Finite_vertices_iterator.
+  /// @return the number of unconstrained vertices.
   unsigned int index_unconstrained_vertices();
-};
+
+}; // end of ReconstructionTriangulation_3
 

@@ -105,11 +105,11 @@ public:
 /// Poisson_reconstruction_function computes an indicator function f() piecewise-linear
 /// over the tetrahedra. We solve the Poisson equation
 /// Laplacian(f) = divergent(normals field) at each vertex
-/// of the triangulation via the TAUCS sparse linear
-/// solver. One vertex must be constrained.
+/// of the triangulation via the TAUCS sparse linear solver.
+/// One vertex outside of the surface will be constrained to a value of 0.0.
 ///
 /// @heading Is Model for the Concepts:
-/// Model of the ImplicitFunction concept.
+/// Model of the 'ImplicitFunction' concept.
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class
@@ -179,7 +179,7 @@ private:
 // thus this class must be lightweight and stateless.
 private:
 
-  Triangulation& m_dt; // f() is pre-computed on vertices of m_dt by solving
+  Triangulation& m_tr; // f() is pre-computed on vertices of m_tr by solving
                        // the Poisson equation Laplacian(f) = divergent(normals field).
 
   // contouring and meshing
@@ -190,32 +190,33 @@ private:
 public:
 
   /// Creates a scalar function from a set of oriented points.
-  /// Inserts the iterator range first...beyond into the triangulation pdt,
+  /// Inserts the iterator range [first, beyond) into the triangulation 'tr',
   /// refines it and solves for a piecewise linear scalar function
   /// which gradient best matches the input normals.
-  /// If pdt is empty, create an empty implicit function.
   ///
-  /// @param pdt ReconstructionTriangulation_3 base of the Poisson indicator function.
-  Poisson_reconstruction_function(ReconstructionTriangulation_3& pdt)
-  : m_dt(pdt)
+  /// If 'tr' is empty, this method creates an empty implicit function.
+  ///
+  /// @param tr ReconstructionTriangulation_3 base of the Poisson indicator function.
+  Poisson_reconstruction_function(ReconstructionTriangulation_3& tr)
+  : m_tr(tr)
   {
   }
 
   /// Creates a scalar function from a set of oriented points.
-  /// Inserts the iterator range first...beyond into the triangulation pdt,
+  /// Inserts the iterator range [first, beyond) into the triangulation 'tr',
   /// refines it and solves for a piecewise linear scalar function
   /// which gradient best matches the input normals.
   ///
   /// @commentheading Precondition:
-  /// the value type of InputIterator must be convertible to Point_with_normal.
+  /// InputIterator value_type must be convertible to Point_with_normal.
   ///
-  /// @param pdt ReconstructionTriangulation_3 base of the Poisson indicator function.
-  /// @param first First point to add.
-  /// @param beyond Past-the-end point to add.
+  /// @param tr ReconstructionTriangulation_3 base of the Poisson indicator function.
+  /// @param first Iterator over first point to add to 'tr'.
+  /// @param beyond Past-the-end iterator to add to 'tr'.
   template < class InputIterator >
-  Poisson_reconstruction_function(ReconstructionTriangulation_3& pdt,
+  Poisson_reconstruction_function(ReconstructionTriangulation_3& tr,
                                   InputIterator first, InputIterator beyond)
-  : m_dt(pdt)
+  : m_tr(tr)
   {
     insert(first, beyond);
   }
@@ -223,43 +224,43 @@ public:
   /// Insert points.
   ///
   /// @commentheading Precondition:
-  /// the value type of InputIterator must be convertible to Point_with_normal.
+  /// InputIterator value_type must be convertible to Point_with_normal.
   ///
-  /// @param first First point to add.
-  /// @param beyond Past-the-end point to add.
+  /// @param first Iterator over first point to add to 'tr'.
+  /// @param beyond Past-the-end iterator to add to 'tr'.
   /// @return the number of inserted points.
   template < class InputIterator >
   int insert(InputIterator first, InputIterator beyond)
   {
-    return m_dt.insert(first, beyond);
+    return m_tr.insert(first, beyond);
   }
 
   /// Remove all points.
   void clear()
   {
-    m_dt.clear();
+    m_tr.clear();
   }
 
   /// Get embedded triangulation.
   ReconstructionTriangulation_3& triangulation()
   {
-    return m_dt;
+    return m_tr;
   }
   const ReconstructionTriangulation_3& triangulation() const
   {
-    return m_dt;
+    return m_tr;
   }
 
   /// Returns a bounding box of the inferred surface.
   Iso_cuboid bounding_box() const
   {
-    return m_dt.input_points_bounding_box();
+    return m_tr.input_points_bounding_box();
   }
 
   /// Returns a sphere bounding the inferred surface.
   Sphere bounding_sphere() const
   {
-    return m_dt.input_points_bounding_sphere();
+    return m_tr.input_points_bounding_sphere();
   }
 
   /// Get the region of interest, ignoring the outliers.
@@ -269,8 +270,8 @@ public:
     // A good candidate is a sphere containing the dense region of the point cloud:
     // - center point is barycenter
     // - Radius is 2 * standard deviation
-    Point barycenter = m_dt.barycenter();
-    FT radius = 2.f * (FT)m_dt.diameter_standard_deviation();
+    Point barycenter = m_tr.barycenter();
+    FT radius = 2.f * (FT)m_tr.diameter_standard_deviation();
 
     return Sphere(barycenter, radius*radius);
   }
@@ -282,7 +283,7 @@ public:
   /// - solving for 'f' at each vertex of the triangulation with a sparse linear solver.
   /// - shifting and orienting 'f' such that 'f=0' at all input points and 'f<0' inside the inferred surface.
   ///
-  /// Returns false on error.
+  /// Returns false if the linear solver fails.
   bool compute_implicit_function()
   {
     CGAL::Timer task_timer; task_timer.start();
@@ -337,12 +338,12 @@ public:
   void average_spacing_avg_knn_sq_distance_3()
   {
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
+    for(v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
 	{
 	  FT sq_distance = 0.0;
 	  int counter = 0;
 	  std::vector<Vertex_handle> v_neighbors;
-	  m_dt.incident_vertices(v,std::back_inserter(v_neighbors));
+	  m_tr.incident_vertices(v,std::back_inserter(v_neighbors));
 	  typename std::vector<Vertex_handle>::iterator it;
 	  for(it = v_neighbors.begin(); it != v_neighbors.end(); it++)
 	  {
@@ -369,13 +370,13 @@ public:
 #define DELAUNAY_REFINEMENT_USE_BOUNDING_BOX
 #ifdef  DELAUNAY_REFINEMENT_USE_BOUNDING_BOX
     Iso_cuboid enlarged_bbox = enlarged_bounding_box(enlarge_ratio);
-    unsigned int nb_vertices_added = poisson_refinement_3(m_dt,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
+    unsigned int nb_vertices_added = poisson_refinement_3(m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
 #else
     Sphere enlarged_bbox = enlarged_bounding_sphere(enlarge_ratio);
-    unsigned int nb_vertices_added = poisson_refinement_3(m_dt,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
+    unsigned int nb_vertices_added = poisson_refinement_3(m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
 #endif
 
-    m_dt.invalidate_bounds();
+    m_tr.invalidate_bounds();
 
     CGAL_TRACE("End of delaunay_refinement()\n");
 
@@ -387,7 +388,7 @@ public:
                                          unsigned int max_vertices)
   {
     // make parameters relative to size
-    Sphere bounding_sphere = m_dt.bounding_sphere();
+    Sphere bounding_sphere = m_tr.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
     size_shell *= size;
     sizing *= size;
@@ -404,8 +405,8 @@ public:
     // push all cells to the queue
     PQueue queue;
     Finite_cells_iterator c;
-    for(c = m_dt.finite_cells_begin();
-        c != m_dt.finite_cells_end();
+    for(c = m_tr.finite_cells_begin();
+        c != m_tr.finite_cells_end();
         c++)
     {
       Point p;
@@ -431,24 +432,24 @@ public:
       Vertex_handle v3 = candidate.v3();
 
       Cell_handle cell = NULL;
-      if(m_dt.is_cell(v0,v1,v2,v3,cell))
+      if(m_tr.is_cell(v0,v1,v2,v3,cell))
       {
-        Point circumcenter = m_dt.dual(cell);
-        Vertex_handle v = m_dt.insert(circumcenter, Triangulation::STEINER);
+        Point circumcenter = m_tr.dual(cell);
+        Vertex_handle v = m_tr.insert(circumcenter, Triangulation::STEINER);
 
         if(nb++ > max_vertices)
           return nb; // premature ending
 
         // iterate over incident cells and feed queue
         std::vector<Cell_handle> cells;
-        m_dt.incident_cells(v,std::back_inserter(cells));
+        m_tr.incident_cells(v,std::back_inserter(cells));
         typename std::vector<Cell_handle>::iterator it;
         for(it = cells.begin();
             it != cells.end();
             it++)
         {
           Cell_handle c = *it;
-          if(m_dt.is_infinite(c))
+          if(m_tr.is_infinite(c))
             continue;
 
           Point p;
@@ -475,7 +476,7 @@ public:
     // Compute extrapolated normals and store them in extrapolated_normals[]
     std::map<Vertex_handle,Normal> extrapolated_normals; // vector + orientation
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
+    for(v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
     {
       if(v->normal() != CGAL::NULL_VECTOR)
         continue;
@@ -483,7 +484,7 @@ public:
       Vector normal = CGAL::NULL_VECTOR;  // normal vector to compute
 
       std::vector<Vertex_handle> vertices;
-      m_dt.incident_vertices(v,std::back_inserter(vertices));
+      m_tr.incident_vertices(v,std::back_inserter(vertices));
       for(typename std::vector<Vertex_handle>::iterator it = vertices.begin();
           it != vertices.end();
           it++)
@@ -500,7 +501,7 @@ public:
     }
 
     // set normals
-    for(v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
+    for(v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
     {
       if(v->normal() != CGAL::NULL_VECTOR)
         continue;
@@ -523,7 +524,7 @@ public:
   {
     int counter = 0;
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
+    for(v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
     {
       if(v->type() == Triangulation::INPUT)
       {
@@ -545,7 +546,7 @@ public:
           }
           // get incident_vertices
           std::vector<Vertex_handle> v_neighbors;
-          m_dt.incident_vertices(v_cur,std::back_inserter(v_neighbors));
+          m_tr.incident_vertices(v_cur,std::back_inserter(v_neighbors));
           typename std::vector<Vertex_handle>::iterator it;
           for(it = v_neighbors.begin(); it != v_neighbors.end(); it++)
           {
@@ -562,7 +563,7 @@ public:
       }
     }
 
-    for(v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
+    for(v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
     {
       if(v->type() != Triangulation::INPUT )
       {
@@ -604,13 +605,13 @@ public:
     CGAL_TRACE("  Create matrix...\n");
 
     // get #variables
-    unsigned int nb_variables = m_dt.index_unconstrained_vertices();
+    unsigned int nb_variables = m_tr.index_unconstrained_vertices();
 
     // at least one vertex must be constrained
-    if(nb_variables == m_dt.number_of_vertices())
+    if(nb_variables == m_tr.number_of_vertices())
     {
       constrain_one_vertex_on_convex_hull();
-      nb_variables = m_dt.index_unconstrained_vertices();
+      nb_variables = m_tr.index_unconstrained_vertices();
     }
 
     // Assemble linear system A*X=B
@@ -619,8 +620,8 @@ public:
     Sparse_vector B(nb_variables);
 
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
+    for(v = m_tr.finite_vertices_begin();
+        v != m_tr.finite_vertices_end();
         v++)
     {
       if(!v->constrained())
@@ -690,7 +691,7 @@ public:
 
     // copy function's values to vertices
     unsigned int index = 0;
-    for (v = m_dt.finite_vertices_begin(); v != m_dt.finite_vertices_end(); v++)
+    for (v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
       if(!v->constrained())
         v->f() = X[index++];
 
@@ -709,8 +710,8 @@ public:
     std::ofstream os("function.mesh");
     Finite_vertices_iterator v;
     int counter = 0;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
+    for(v = m_tr.finite_vertices_begin();
+        v != m_tr.finite_vertices_end();
         v++)
   	{
   		Point& p = v->point();
@@ -722,8 +723,8 @@ public:
        << "3 \n\n"
        << "Vertices\n"
        << counter << " \n";
-    for(v = m_dt.finite_vertices_begin();
-      v != m_dt.finite_vertices_end();
+    for(v = m_tr.finite_vertices_begin();
+      v != m_tr.finite_vertices_end();
       v++)
     {
       Point& p = v->point();
@@ -760,12 +761,12 @@ public:
   /// Evaluates the implicit function at a given 3D query point.
   FT f(const Point& p) const
   {
-    m_hint = m_dt.locate(p,m_hint);
+    m_hint = m_tr.locate(p,m_hint);
 
     if(m_hint == NULL)
       return 1e38;
 
-    if(m_dt.is_infinite(m_hint))
+    if(m_tr.is_infinite(m_hint))
       return 1e38;
 
     FT a,b,c,d;
@@ -776,9 +777,8 @@ public:
            d * m_hint->vertex(3)->f();
   }
 
-  /// [ImplicitFunction interface]
-  ///
   /// Evaluates the implicit function at a given 3D query point.
+  /// ('ImplicitFunction' interface)
   FT operator()(const Point& p) const
   {
     return f(p);
@@ -797,8 +797,8 @@ public:
     FT sum = 0.0;
     unsigned int nb = 0;
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
+    for(v = m_tr.finite_vertices_begin();
+        v != m_tr.finite_vertices_end();
         v++)
     {
       if(v->type() == Triangulation::INPUT)
@@ -821,8 +821,8 @@ public:
   {
     std::deque<FT> values;
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
+    for(v = m_tr.finite_vertices_begin();
+        v != m_tr.finite_vertices_end();
         v++)
       if(v->type() == Triangulation::INPUT)
         values.push_back(v->f());
@@ -845,14 +845,14 @@ public:
   {
     FT min_value = 1e38;
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
+    for(v = m_tr.finite_vertices_begin();
+        v != m_tr.finite_vertices_end();
         v++)
     {
       if(v->type() == Triangulation::INPUT)
         min_value = (std::min)(min_value, v->f());
     }
-    if (m_dt.number_of_vertices() > 0)
+    if (m_tr.number_of_vertices() > 0)
     {
       return min_value;
     }
@@ -868,14 +868,14 @@ public:
   {
     FT max_value = -1e38;
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
+    for(v = m_tr.finite_vertices_begin();
+        v != m_tr.finite_vertices_end();
         v++)
     {
       if(v->type() == Triangulation::INPUT)
         max_value = (std::max)(max_value, v->f());
     }
-    if (m_dt.number_of_vertices() > 0)
+    if (m_tr.number_of_vertices() > 0)
     {
       return max_value;
     }
@@ -891,7 +891,7 @@ public:
   {
     // Get convex hull vertices
     std::vector<Vertex_handle> convex_hull_vertices;
-    m_dt.incident_vertices(m_dt.infinite_vertex(),std::back_inserter(convex_hull_vertices));
+    m_tr.incident_vertices(m_tr.infinite_vertex(),std::back_inserter(convex_hull_vertices));
 
     // Get values of the implicit function over convex hull vertices
     std::deque<FT> values;
@@ -921,7 +921,7 @@ public:
   FT average_value_at_convex_hull() const
   {
     std::vector<Vertex_handle> convex_hull_vertices;
-    m_dt.incident_vertices(m_dt.infinite_vertex(),std::back_inserter(convex_hull_vertices));
+    m_tr.incident_vertices(m_tr.infinite_vertex(),std::back_inserter(convex_hull_vertices));
 
     FT sum = 0.0;
     unsigned int nb = 0;
@@ -979,8 +979,8 @@ private:
     m_sink = CGAL::ORIGIN;
     FT min_f = 1e38;
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
+    for(v = m_tr.finite_vertices_begin();
+        v != m_tr.finite_vertices_end();
         v++)
     {
       if(v->f() < min_f)
@@ -995,8 +995,8 @@ private:
   void shift_f(const FT shift)
   {
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
+    for(v = m_tr.finite_vertices_begin();
+        v != m_tr.finite_vertices_end();
         v++)
       v->f() += shift;
   }
@@ -1004,8 +1004,8 @@ private:
   void flip_f()
   {
     Finite_vertices_iterator v;
-    for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
+    for(v = m_tr.finite_vertices_begin();
+        v != m_tr.finite_vertices_end();
         v++)
       v->f() = -v->f();
   }
@@ -1014,7 +1014,7 @@ private:
   {
     // TODO: return NULL if none and assert
     std::vector<Vertex_handle> vertices;
-    m_dt.incident_vertices(m_dt.infinite_vertex(),std::back_inserter(vertices));
+    m_tr.incident_vertices(m_tr.infinite_vertex(),std::back_inserter(vertices));
     typename std::vector<Vertex_handle>::iterator it = vertices.begin();
     return *it;
   }
@@ -1028,8 +1028,8 @@ private:
 
   //void constrain_input_vertices_on_convex_hull(const FT value = 0.0)
   //{
-  //  for(Finite_vertices_iterator v = m_dt.finite_vertices_begin();
-  //    v != m_dt.finite_vertices_end();
+  //  for(Finite_vertices_iterator v = m_tr.finite_vertices_begin();
+  //    v != m_tr.finite_vertices_end();
   //    v++)
 	 // if (v->type() == Triangulation::INPUT)
 	 // {
@@ -1042,7 +1042,7 @@ private:
   FT div(Vertex_handle v)
   {
     std::vector<Cell_handle> cells;
-    m_dt.incident_cells(v,std::back_inserter(cells));
+    m_tr.incident_cells(v,std::back_inserter(cells));
     if(cells.size() == 0)
       return 0.0;
 
@@ -1051,7 +1051,7 @@ private:
     for(it = cells.begin(); it != cells.end(); it++)
     {
       Cell_handle cell = *it;
-      if(m_dt.is_infinite(cell))
+      if(m_tr.is_infinite(cell))
         continue;
 
       // compute average normal per cell
@@ -1080,7 +1080,7 @@ private:
  FT div_normalized(Vertex_handle v)
   {
     std::vector<Cell_handle> cells;
-    m_dt.incident_cells(v,std::back_inserter(cells));
+    m_tr.incident_cells(v,std::back_inserter(cells));
     if(cells.size() == 0)
       return 0.0;
 
@@ -1091,7 +1091,7 @@ private:
     for(it = cells.begin(); it != cells.end(); it++)
     {
       Cell_handle cell = *it;
-      if(m_dt.is_infinite(cell))
+      if(m_tr.is_infinite(cell))
         continue;
 
       // compute average normal per cell
@@ -1131,7 +1131,7 @@ private:
    std::vector<Cell_handle> cells;
    int counter = 0;
    FT length_total = 100000.0;
-   m_dt.incident_cells(v,std::back_inserter(cells));
+   m_tr.incident_cells(v,std::back_inserter(cells));
    if(cells.size() == 0)
      return 0.0;
 
@@ -1139,7 +1139,7 @@ private:
    for(it = cells.begin(); it != cells.end(); it++)
    {
      Cell_handle cell = *it;
-     if(m_dt.is_infinite(cell))
+     if(m_tr.is_infinite(cell))
        continue;
      int index = cell->index(v);
      const Point& x = cell->vertex(index)->point();
@@ -1228,12 +1228,12 @@ private:
  FT cotan_FEM(Edge& edge)
   {
      FT answer = 0.0;
-     Cell_circulator circ = m_dt.incident_cells(edge);
+     Cell_circulator circ = m_tr.incident_cells(edge);
      Cell_circulator done = circ;
      do
      {
       Cell_handle cell = circ;
-      if(!m_dt.is_infinite(cell))
+      if(!m_tr.is_infinite(cell))
        {
           answer = answer + area_normal_ratio(cell,edge);
        }
@@ -1248,14 +1248,14 @@ private:
   FT area_voronoi_face(Edge& edge)
   {
     // circulate around edge
-    Cell_circulator circ = m_dt.incident_cells(edge);
+    Cell_circulator circ = m_tr.incident_cells(edge);
     Cell_circulator done = circ;
     std::vector<Point> voronoi_points;
     do
     {
       Cell_handle cell = circ;
-      if(!m_dt.is_infinite(cell))
-        voronoi_points.push_back(m_dt.dual(cell));
+      if(!m_tr.is_infinite(cell))
+        voronoi_points.push_back(m_tr.dual(cell));
       else // one infinite tet, switch to another calculation
         return area_voronoi_face_boundary(edge);
       circ++;
@@ -1294,16 +1294,16 @@ private:
     Point m = CGAL::midpoint(pi,pj);
 
     // circulate around each incident cell
-    Cell_circulator circ = m_dt.incident_cells(edge);
+    Cell_circulator circ = m_tr.incident_cells(edge);
     Cell_circulator done = circ;
     do
     {
       Cell_handle cell = circ;
-      if(!m_dt.is_infinite(cell))
+      if(!m_tr.is_infinite(cell))
       {
         // circumcenter of cell
-        Point c = m_dt.dual(cell);
-        Tetrahedron tet = m_dt.tetrahedron(cell);
+        Point c = m_tr.dual(cell);
+        Tetrahedron tet = m_tr.tetrahedron(cell);
 
         int i = cell->index(vi);
         int j = cell->index(vj);
@@ -1375,14 +1375,14 @@ private:
 
     // for each vertex vj neighbor of vi
     std::vector<Vertex_handle> vertices;
-    m_dt.incident_vertices(vi,std::back_inserter(vertices));
+    m_tr.incident_vertices(vi,std::back_inserter(vertices));
     double diagonal = 0.0;
     for(typename std::vector<Vertex_handle>::iterator it = vertices.begin();
         it != vertices.end();
         it++)
     {
       Vertex_handle vj = *it;
-      if(m_dt.is_infinite(vj))
+      if(m_tr.is_infinite(vj))
         continue;
 
       // get corresponding edge
@@ -1416,9 +1416,9 @@ private:
     Cell_handle cell = NULL;
     bool success;
     if(vi->index() > vj->index())
-      success = m_dt.is_edge(vi,vj,cell,i1,i2);
+      success = m_tr.is_edge(vi,vj,cell,i1,i2);
     else
-      success = m_dt.is_edge(vj,vi,cell,i1,i2);
+      success = m_tr.is_edge(vj,vi,cell,i1,i2);
     CGAL_surface_reconstruction_points_assertion(success);
     return Edge(cell,i1,i2);
   }
@@ -1456,8 +1456,8 @@ private:
     // Instanciate a KD-tree search.
     // We have to wrap each input vertex by a Point_vertex_handle_3.
     std::deque<Point_vertex_handle_3> kvertices;
-    for(Finite_vertices_iterator v = m_dt.finite_vertices_begin();
-      v != m_dt.finite_vertices_end();
+    for(Finite_vertices_iterator v = m_tr.finite_vertices_begin();
+      v != m_tr.finite_vertices_end();
       v++)
     {
       if(v->type() != Triangulation::INPUT)
@@ -1481,7 +1481,7 @@ private:
       return false;
 
     // try circumcenter
-    p = m_dt.dual(cell);
+    p = m_tr.dual(cell);
     if(distance_to_input_points(nn_search, p) < size_shell)
       return true;
 
@@ -1507,7 +1507,7 @@ private:
 
   FT circumradius(Cell_handle c) const
   {
-    Point center = m_dt.dual(c);
+    Point center = m_tr.dual(c);
     const Point& p = c->vertex(0)->point();
     return std::sqrt((p-center)*((p-center)));
   }

@@ -104,21 +104,9 @@ public:
       return *this;
     }
 
-    // Inherited operators ==() and !=() are fine.
-    //bool operator==(const Point_with_normal_3& that)
-    //{
-    //  return ((Base&)(*this) == (Base&)that);
-    //}
-    //bool operator!=(const Point_with_normal_3& that)
-    //{
-    //  return ! (*this == that);
-    //}
-
-    /// Set position.
-    void set_position(const Point& point)
-    {
-      Base::operator=(point);
-    }
+    /// Get/set position.
+    const Point& position() const { return *this; }
+    Point&       position()       { return *this; }
 
     /// Get/set normal.
     const Normal& normal() const { return m_normal; }

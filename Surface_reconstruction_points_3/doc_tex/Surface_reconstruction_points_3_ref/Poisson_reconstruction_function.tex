@@ -19,22 +19,6 @@
 
 \ccDefinition
 
-% Insert image poisson.jpg/eps
-\begin{center}
-    \label{Surface_reconstruction_points_3-fig-poisson}
-    % Image
-    \begin{ccTexOnly}
-        \includegraphics[width=0.7\textwidth]{Surface_reconstruction_points_3/poisson} % omit .eps suffix
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img width="70%" border=0 src="../Surface_reconstruction_points_3/poisson.jpg"><P>
-    \end{ccHtmlOnly}
-    % Title
-    \begin{figure}[h]
-        \caption{Poisson reconstruction}
-    \end{figure}
-\end{center}
-
 Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm \cite{Kazhdan06}.
 Given a set of 3D points with oriented normals (denoted oriented points in the sequel) sampled on the boundary of a 3D solid,
 this method solves for an approximate indicator function of the inferred solid, whose gradient best matches the input normals.
@@ -44,7 +28,7 @@ The output scalar function, represented in an adaptive octree, is then iso-conto
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccc{Poisson_reconstruction_function} computes an indicator function f() piecewise-linear over the tetrahedra. We solve the Poisson equation Laplacian(f) = divergent(normals field) at each vertex of the triangulation via the TAUCS sparse linear solver. One vertex must be constrained.
+\ccc{Poisson_reconstruction_function} computes an indicator function f() piecewise-linear over the tetrahedra. We solve the Poisson equation Laplacian(f) = divergent(normals field) at each vertex of the triangulation via the TAUCS sparse linear solver. One vertex outside of the surface will be constrained to a value of 0.0.
 
 %END-AUTO(\ccDefinition)
 
@@ -78,7 +62,7 @@ class \ccc{Poisson_reconstruction_function};
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccIsModel)
 
-Model of the ImplicitFunction concept.
+Model of the \ccc{ImplicitFunction} concept.
 
 %END-AUTO(\ccIsModel)
 
@@ -135,20 +119,21 @@ Model of \ccc{Kernel::Vector_3} concept.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccConstructor{Poisson_reconstruction_function(ReconstructionTriangulation_3& pdt);}
+\ccConstructor{Poisson_reconstruction_function(ReconstructionTriangulation_3& tr);}
 {
-Creates a scalar function from a set of oriented points. Inserts the iterator range first...beyond into the triangulation pdt, refines it and solves for a piecewise linear scalar function which gradient best matches the input normals. If pdt is empty, create an empty implicit function.
+Creates a scalar function from a set of oriented points. Inserts the iterator range [first, beyond) into the triangulation \ccc{tr}, refines it and solves for a piecewise linear scalar function which gradient best matches the input normals.
+If \ccc{tr} is empty, this method creates an empty implicit function.
 \ccCommentHeading{Parameters}
-\ccc{pdt}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. 
+\ccc{tr}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. 
 }
 \ccGlue
-\ccConstructor{template<class InputIterator> Poisson_reconstruction_function(ReconstructionTriangulation_3& pdt, InputIterator first, InputIterator beyond);}
+\ccConstructor{template<class InputIterator> Poisson_reconstruction_function(ReconstructionTriangulation_3& tr, InputIterator first, InputIterator beyond);}
 {
-Creates a scalar function from a set of oriented points. Inserts the iterator range first...beyond into the triangulation pdt, refines it and solves for a piecewise linear scalar function which gradient best matches the input normals.
-\ccPrecond the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
+Creates a scalar function from a set of oriented points. Inserts the iterator range [first, beyond) into the triangulation \ccc{tr}, refines it and solves for a piecewise linear scalar function which gradient best matches the input normals.
+\ccPrecond InputIterator \ccc{value_type} must be convertible to \ccc{Point_with_normal}.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{pdt}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \item \ccc{first}: First point to add. \item \ccc{beyond}: Past-the-end point to add. \end{description}
+\item \ccc{tr}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \item \ccc{first}: Iterator over first point to add to \ccc{tr}. \item \ccc{beyond}: Past-the-end iterator to add to \ccc{tr}. \end{description}
 }
 \ccGlue
 
@@ -162,10 +147,10 @@ Creates a scalar function from a set of oriented points. Inserts the iterator ra
 \ccMethod{template<class InputIterator> int insert(InputIterator first, InputIterator beyond);}
 {
 Insert points.
-\ccPrecond the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
+\ccPrecond InputIterator \ccc{value_type} must be convertible to \ccc{Point_with_normal}.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: First point to add. \item \ccc{beyond}: Past-the-end point to add. \end{description}
+\item \ccc{first}: Iterator over first point to add to \ccc{tr}. \item \ccc{beyond}: Past-the-end iterator to add to \ccc{tr}. \end{description}
 \ccCommentHeading{Returns} the number of inserted points.
 }
 \ccGlue
@@ -202,7 +187,7 @@ Get the region of interest, ignoring the outliers. This method is used to define
 {
 The function \ccc{compute_implicit_function}() must be called after each insertion of oriented points. It computes the piecewise linear scalar function \ccc{f} by:\begin{itemize}
 \item applying Delaunay refinement.\item solving for \ccc{f} at each vertex of the triangulation with a sparse linear solver.\item shifting and orienting \ccc{f} such that 'f = 0' at all input points and 'f$<$0' inside the inferred surface.\end{itemize}
-Returns false on error.
+Returns false if the linear solver fails.
 }
 \ccGlue
 \ccMethod{void average_spacing_avg_knn_sq_distance_3();}
@@ -258,8 +243,7 @@ Evaluates the implicit function at a given 3D query point.
 \ccGlue
 \ccMethod{FT operator()(const Point& p) const;}
 {
-[ImplicitFunction interface]
-Evaluates the implicit function at a given 3D query point.
+Evaluates the implicit function at a given 3D query point. (\ccc{ImplicitFunction} interface)
 }
 \ccGlue
 \ccMethod{Point get_inner_point() const;}
