@@ -462,8 +462,8 @@ sub format_comment_headings
     $buf =~ s/\\begin\{description\}\s*\\item\[(Parameters|Template Parameters|Values):\]\s*(\\begin\{description\}.*?\\end\{description\})\s*\\end\{description\}/\\ccCommentHeading\{$1\}\n$2/smg;
 
     # Replace list items in bold (ie with square brackets around item) by italics (\ccc macro).
-    $buf =~ s/\\item\[(.*?):\]/\\item $1: /g;         # regular list items (end by ':') => no italics
-    $buf =~ s/\\item\[(.*?)\]/\\item \\ccc\{$1\}: /g; # parameters => italics
+    $buf =~ s/\\item\[(.*?):\s*\]/\\item $1: /smg;         # regular list items (end by ':') => no italics
+    $buf =~ s/\\item\[(.*?)\s*\]/\\item \\ccc\{$1\}: /smg; # parameters => italics
 
     # Flatten lists with only 1 item (to save space and avoid a cgal_manual bug
     # with 1-item lists inside the second curly braces pair of \ccXXX expressions).
@@ -482,7 +482,7 @@ sub format_comment_headings
 # Extract @headings sections from \Definition section.
 # Param: the buffer to format
 # Return value: the formatted buffer
-sub format_headings_ex
+sub format_headings
 {
     # Get parameter: buffer containing a doxygen-generated latex file
     my $buf = shift;
@@ -590,10 +590,12 @@ sub format_curly_brace_pairs_expressions
     $buf =~ s/\\\}/&\#125\;/g;
 
     # Close curly braces pairs.
-#     # Note: cgal_manual does not understand lists inside the second curly braces pair
-#     # of \ccXXX expressions => we put them after.
-#     $buf =~ s/\{([^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/\{$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
-    $buf =~ s/\{([^\}]*?)(\n+)\\cc/\{$1\n\}\n\\ccGlue$2\\cc/smg;
+    # Note: Sometimes, cgal_manual does not understand 2 or 3-items lists inside the second curly braces pair
+    # of \ccXXX expressions => we put them after (flatten_one_item_list() takes care of 1-item lists).
+#     $buf =~ s/(\{[^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
+    # TEMPORARY HACK: do it for enums to compile Surface_reconstruction_points_3 manual!!!
+    $buf =~ s/(\\ccEnum\{.*?;}\s*\{[^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
+    $buf =~ s/(\{[^\}]*?)(\n+)\\cc/$1\n\}\n\\ccGlue$2\\cc/smg;
 
     # Restore brackets:
     # - replace \begin((xxx))...\end((xxx)) by \begin{xxx}...\end{xxx}
@@ -723,7 +725,7 @@ sub format_doxygen_class_doc
 
     # L. Saboret's formatting extensions:
     # Extract @headings sections from \Definition section.
-    $buf = format_headings_ex($buf);
+    $buf = format_headings($buf);
 
     # L. Saboret's formatting extensions:
     # Move subheadings from brief to detailed section
@@ -893,7 +895,7 @@ sub format_doxygen_function_doc
 
     # L. Saboret's formatting extensions:
     # Extract @headings sections from \Definition section.
-    $buf = format_headings_ex($buf);
+    $buf = format_headings($buf);
 
     # Rename \ccDefinition title
     $buf =~ s/\\subsubsection\{Function Documentation\}/\\ccDefinition\n/;
