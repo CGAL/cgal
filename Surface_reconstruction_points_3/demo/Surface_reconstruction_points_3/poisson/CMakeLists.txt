@@ -4,21 +4,14 @@ project( Poisson )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true) 
  
 if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif(COMMAND cmake_policy)
 
-# Use packages improved since CGAL 3.4
-foreach(INCDIR ../../../../AABB_tree/include ../../../../STL_Extension/include ../../../../GraphicsView/include ../../../../Surface_mesher/include ../../../../Filtered_kernel/include ../../../../Profiling_tools/include)
-  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
-    include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
-  endif()
-endforeach()
-
-# Require package new since CGAL 3.4
-include_directories (BEFORE ../../../../Point_set_processing_3/include/)
+# Require packages new or improved since CGAL 3.4
+include_directories (BEFORE ../../../../Point_set_processing_3/include  ../../../../Surface_mesher/include)
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../../include )
