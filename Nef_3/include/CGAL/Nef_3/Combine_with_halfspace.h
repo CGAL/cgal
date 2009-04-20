@@ -101,7 +101,6 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
       this->sncp()->new_halffacet_pair(plane, im != OPEN_HALFSPACE);
 
     Binary_operation bo(*this->sncp());
-    if(im != PLANE_ONLY) {
       Vertex_const_iterator v0;
       CGAL_forall_vertices( v0, snc) {
 	Oriented_side os = plane.oriented_side(v0->point());
@@ -118,12 +117,11 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
 	  Vertex_handle vr = 
 	    bo.binop_local_views(v0, vp, BOP, *this->sncp(), A);
 	  this->sncp()->delete_vertex(vp);
-	} else if(os == ON_NEGATIVE_SIDE) {
+	} else if(os == ON_NEGATIVE_SIDE && im != PLANE_ONLY) {
 	  SNC_constructor C(*this->sncp());
 	  Vertex_handle v1 = C.clone_SM(v0);	
 	}
       }
-    }
 
     Halfedge_const_iterator e0;
     CGAL_forall_edges(e0, snc) {
@@ -166,7 +164,7 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
     }
 
     SNC_external_structure es(*this->sncp(), pl);
-    es.build_after_binary_operation(A);
+    es.build_after_binary_operation(A);	
   }
 };
 
