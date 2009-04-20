@@ -199,20 +199,11 @@ Export \ccc{ParameterizationMesh_3} template parameter.
 \ccEnum{enum Error_code { OK, ERROR_EMPTY_MESH, ERROR_NON_TRIANGULAR_MESH, ERROR_NO_TOPOLOGICAL_DISC, ERROR_BORDER_TOO_SHORT, ERROR_NON_CONVEX_BORDER, ERROR_CANNOT_SOLVE_LINEAR_SYSTEM, ERROR_NO_1_TO_1_MAPPING, ERROR_OUT_OF_MEMORY, ERROR_WRONG_PARAMETER };}
 {
 List of errors detected by this package.
+}
+\ccGlue
 \ccCommentHeading{Values}
 \begin{description}
-\item[OK
-]Success. \item[\ccc{ERROR_EMPTY_MESH}
-]Input mesh is empty. \item[\ccc{ERROR_NON_TRIANGULAR_MESH}
-]Input mesh is not triangular. \item[\ccc{ERROR_NO_TOPOLOGICAL_DISC}
-]Input mesh is not a topological disc. \item[\ccc{ERROR_BORDER_TOO_SHORT}
-]This border parameterization requires a longer border. \item[\ccc{ERROR_NON_CONVEX_BORDER}
-]This parameterization method requires a convex border. \item[\ccc{ERROR_CANNOT_SOLVE_LINEAR_SYSTEM}
-]Cannot solve linear system. \item[\ccc{ERROR_NO_1_TO_1_MAPPING}
-]Parameterization failed: no one-to-one mapping. \item[\ccc{ERROR_OUT_OF_MEMORY}
-]Not enough memory. \item[\ccc{ERROR_WRONG_PARAMETER}
-]A method received an unexpected parameter. \end{description}
-}
+\item \ccc{OK}: Success. \item \ccc{ERROR_EMPTY_MESH}: Input mesh is empty. \item \ccc{ERROR_NON_TRIANGULAR_MESH}: Input mesh is not triangular. \item \ccc{ERROR_NO_TOPOLOGICAL_DISC}: Input mesh is not a topological disc. \item \ccc{ERROR_BORDER_TOO_SHORT}: This border parameterization requires a longer border. \item \ccc{ERROR_NON_CONVEX_BORDER}: This parameterization method requires a convex border. \item \ccc{ERROR_CANNOT_SOLVE_LINEAR_SYSTEM}: Cannot solve linear system. \item \ccc{ERROR_NO_1_TO_1_MAPPING}: Parameterization failed: no one-to-one mapping. \item \ccc{ERROR_OUT_OF_MEMORY}: Not enough memory. \item \ccc{ERROR_WRONG_PARAMETER}: A method received an unexpected parameter. \end{description}
 \ccGlue
 
 %END-AUTO(\ccConstants)

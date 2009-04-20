@@ -128,7 +128,7 @@ Constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code parameterize(Adaptor& mesh);}
+\ccMethod{Error_code parameterize(Adaptor& mesh);}
 {
 [virtual] \\
 Compute a one-to-one mapping from a triangular 3D surface \ccc{mesh} to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface.
@@ -136,7 +136,7 @@ Compute a one-to-one mapping from a triangular 3D surface \ccc{mesh} to a piece 
 \item \ccc{mesh} must be a surface with one connected component.\item \ccc{mesh} must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
 }
 \ccGlue
-\ccMethod{Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code check_parameterize_preconditions(Adaptor& mesh);}
+\ccMethod{Error_code check_parameterize_preconditions(Adaptor& mesh);}
 {
 [protected, virtual] \\
 Check parameterize() preconditions:\begin{itemize}
@@ -157,7 +157,7 @@ Initialize A, Bu and Bv after border parameterization. Fill the border vertices'
 Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i. Implementation note: Subclasses must at least implement \ccc{compute_w_ij}().
 }
 \ccGlue
-\ccMethod{Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code setup_inner_vertex_relations(Matrix& A, Vector& Bu, Vector& Bv, const Adaptor& mesh, Vertex_const_handle vertex);}
+\ccMethod{Error_code setup_inner_vertex_relations(Matrix& A, Vector& Bu, Vector& Bv, const Adaptor& mesh, Vertex_const_handle vertex);}
 {
 [protected, virtual] \\
 Compute the line i of matrix A for i inner vertex:\begin{itemize}
@@ -172,7 +172,7 @@ Compute the line i of matrix A for i inner vertex:\begin{itemize}
 Copy Xu and Xv coordinates into the (u, v) pair of each surface vertex.
 }
 \ccGlue
-\ccMethod{Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code check_parameterize_postconditions(const Adaptor& mesh, const Matrix& A, const Vector& Bu, const Vector& Bv);}
+\ccMethod{Error_code check_parameterize_postconditions(const Adaptor& mesh, const Matrix& A, const Vector& Bu, const Vector& Bv);}
 {
 [protected, virtual] \\
 Check parameterize() postconditions:\begin{itemize}
