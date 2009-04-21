@@ -22,7 +22,6 @@
 
 #include <CGAL/basic.h>
 #include <cstdlib>
-#include <CGAL/Voronoi_diagram_2/short_names_2.h>
 
 #define CGAL_VORONOI_DIAGRAM_2_INS CGAL::VoronoiDiagram_2::Internal
 
