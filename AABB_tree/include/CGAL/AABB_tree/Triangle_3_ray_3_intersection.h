@@ -30,6 +30,8 @@ intersection(const typename K::Triangle_3  &t,
 	     const typename K::Ray_3 &r, 
 	     const K& k)
 {
+	// TOFIX: here we assume that we have already tested
+	// do_intersection between the triangle and the ray
   return CGAL::intersection(t.supporting_plane(), 
                             r);
 }
