@@ -22,7 +22,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/number_type_basic.h>
-#include <CGAL/Apollonius_graph_2/short_names_2.h>
 
 #define CGAL_APOLLONIUS_GRAPH_2_NS CGAL::ApolloniusGraph_2
 

@@ -23,8 +23,6 @@
 #include <iostream>
 #include <CGAL/basic.h>
 
-#include <CGAL/Apollonius_graph_2/short_names_2.h>
-
 CGAL_BEGIN_NAMESPACE
 
 

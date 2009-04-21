@@ -17,13 +17,10 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
-
 #ifndef CGAL_APOLLONIUS_GRAPH_HIERARCHY_VERTEX_BASE_2_H
 #define CGAL_APOLLONIUS_GRAPH_HIERARCHY_VERTEX_BASE_2_H
 
 #include <CGAL/basic.h>
-
-#include <CGAL/Apollonius_graph_2/short_names_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

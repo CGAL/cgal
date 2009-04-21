@@ -17,20 +17,15 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
-
-
 #ifndef CGAL_APOLLONIUS_GRAPH_VERTEX_BASE_2_H
 #define CGAL_APOLLONIUS_GRAPH_VERTEX_BASE_2_H
 
 #include <list>
 
-#include <CGAL/Apollonius_graph_2/short_names_2.h>
-
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/triangulation_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
-
 
 template <class AGVB2_Iterator>
 struct Apollonius_graph_vertex_base_nested_iterator_traits
