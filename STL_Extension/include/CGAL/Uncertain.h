@@ -340,6 +340,7 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 // We provide macros CGAL_AND and CGAL_OR, which attempt to emulate their behavior.
 // Key things : do not evaluate expressions twice, and evaluate the right hand side
 // expression only when needed.
+// TODO : C++0x lambdas should be able to help here.
 #ifdef CGAL_CFG_NO_STATEMENT_EXPRESSIONS
 #  define CGAL_AND(X, Y)  ((X) && (Y))
 #  define CGAL_OR(X, Y)   ((X) || (Y))
