@@ -208,8 +208,13 @@ protected:
     SNC_point_locator_default;
   typedef CGAL::Combine_with_halfspace<SNC_structure, SNC_point_locator> 
           Combine_with_halfspace;
- typedef typename Combine_with_halfspace::Intersection_mode Intersection_mode;
- 
+public:
+ enum Intersection_mode { 
+	 CLOSED_HALFSPACE = Combine_with_halfspace::CLOSED_HALFSPACE, 
+     OPEN_HALFSPACE = Combine_with_halfspace::OPEN_HALFSPACE, 
+     PLANE_ONLY = Combine_with_halfspace::PLANE_ONLY};
+
+protected: 
   typedef typename Nef_rep::SM_overlayer        SM_overlayer;
   typedef typename Nef_rep::SM_point_locator    SM_point_locator;
   typedef typename Nef_rep::SNC_simplify        SNC_simplify;
@@ -1336,7 +1341,8 @@ protected:
     SNC_structure rsnc;
     Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
     Combine_with_halfspace cwh(res.snc(), res.pl());
-    cwh.combine_with_halfspace(snc(), plane, _and, im);
+    cwh.combine_with_halfspace(snc(), plane, _and, 
+							   static_cast<typename Combine_with_halfspace::Intersection_mode>(im));
     return res;
   }
 
