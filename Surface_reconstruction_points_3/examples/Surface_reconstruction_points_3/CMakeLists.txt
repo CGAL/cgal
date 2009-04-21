@@ -1,21 +1,17 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
-
+# This is the CMake script for compiling the Surface_reconstruction_points_3 MFC demo.
 
 project( Surface_reconstruction_points_3_example )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true) 
+ 
 if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )
+  cmake_policy( SET CMP0003 NEW )  
 endif(COMMAND cmake_policy)
 
-# Use packages improved since CGAL 3.4
+# Require packages new or improved since CGAL 3.4
 include_directories (BEFORE ../../../Surface_mesher/include/)
-
-# Require package new since CGAL 3.4
 include_directories (BEFORE ../../../Point_set_processing_3/include/)
 
 # Include this package's headers first

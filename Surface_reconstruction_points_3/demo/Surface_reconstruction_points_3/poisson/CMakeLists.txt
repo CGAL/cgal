@@ -11,11 +11,12 @@ if ( COMMAND cmake_policy )
 endif(COMMAND cmake_policy)
 
 # Require packages new or improved since CGAL 3.4
-include_directories (BEFORE ../../../../Point_set_processing_3/include  ../../../../Surface_mesher/include)
+include_directories (BEFORE ../../../../Surface_mesher/include)
+include_directories (BEFORE ../../../../Point_set_processing_3/include)
 
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../../include )
-  
+include_directories (BEFORE . include ../../../include)
+
 # Find CGAL
 find_package(CGAL)
 if ( CGAL_FOUND )
@@ -62,7 +63,7 @@ if(CGAL_FOUND AND MSVC AND OPENGL_FOUND AND TAUCS_FOUND)
 
     # Turn off stupid VC++ warnings
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4267 /wd4311 /wd4800 /wd4503 /wd4244 /wd4345 /wd4996 /wd4396 /wd4018")
-    
+
     # Speed up debugger
     SET (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_HAS_ITERATOR_DEBUGGING=0")
 
