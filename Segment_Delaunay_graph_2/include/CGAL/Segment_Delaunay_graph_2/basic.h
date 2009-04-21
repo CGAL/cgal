@@ -22,8 +22,6 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Segment_Delaunay_graph_2/short_names_2.h>
-
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS \
   CGAL::SegmentDelaunayGraph_2
 
