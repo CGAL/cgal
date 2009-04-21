@@ -16,8 +16,8 @@
 //
 // Author(s) : Laurent Saboret
 
-#ifndef CGAL_RADIAL_NORMAL_ORIENTATION_3_H
-#define CGAL_RADIAL_NORMAL_ORIENTATION_3_H
+#ifndef CGAL_RADIAL_ORIENT_NORMALS_H
+#define CGAL_RADIAL_ORIENT_NORMALS_H
 
 #include <CGAL/Orientable_normal_3.h>
 #include <CGAL/Memory_sizer.h>
@@ -44,13 +44,13 @@ CGAL_BEGIN_NAMESPACE
 
 template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap>
 void
-radial_normal_orientation_3(VertexIterator first, ///< first input vertex.
-                            VertexIterator beyond, ///< past-the-end input vertex.
-                            VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index.
-                            VertexPointMap vertex_point_map, ///< property map VertexIterator -> Point_3.
-                            VertexNormalMap vertex_normal_map) ///< property map VertexIterator -> Normal (in and out).
+radial_orient_normals(VertexIterator first, ///< first input vertex.
+                      VertexIterator beyond, ///< past-the-end input vertex.
+                      VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index.
+                      VertexPointMap vertex_point_map, ///< property map VertexIterator -> Point_3.
+                      VertexNormalMap vertex_normal_map) ///< property map VertexIterator -> Normal (in and out).
 {
-    CGAL_TRACE("Call radial_normal_orientation_3()\n");
+    CGAL_TRACE("Call radial_orient_normals()\n");
 
     // Input mesh's types
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
@@ -102,11 +102,11 @@ radial_normal_orientation_3(VertexIterator first, ///< first input vertex.
     }
 
     long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("End of radial_normal_orientation_3()\n");
+    CGAL_TRACE("End of radial_orient_normals()\n");
 }
 
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_RADIAL_NORMAL_ORIENTATION_3_H
+#endif // CGAL_RADIAL_ORIENT_NORMALS_H
 

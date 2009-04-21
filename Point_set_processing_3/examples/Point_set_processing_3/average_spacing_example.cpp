@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/average_spacing_3.h>
+#include <CGAL/compute_average_spacing.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
 #include <deque>
@@ -26,8 +26,8 @@ int main(void)
     // Average Spacing
     const unsigned int nb_neighbors = 7;
     typedef std::deque<Point>::iterator Iterator;
-    FT average_spacing = CGAL::average_spacing_3<Iterator,FT>(points.begin(), points.end(),
-                                                              nb_neighbors);
+    FT average_spacing = CGAL::compute_average_spacing<Iterator,FT>(points.begin(), points.end(),
+                                                                    nb_neighbors);
     std::cout << "Average spacing = " << average_spacing << std::endl;
 
     return EXIT_SUCCESS;

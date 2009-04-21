@@ -1,34 +1,36 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: jet_normal_estimation.tex
+% | Reference manual page: pca_estimate_normals.tex
 % +------------------------------------------------------------------------+
-% | 19.02.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | 14.02.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Point_set_processing_3
 % |
-\RCSdef{\RCSjetnormalestimationRev}{$Id$}
-\RCSdefDate{\RCSjetnormalestimationDate}{$Date$}
+\RCSdef{\RCSpcanormalestimationRev}{$Id$}
+\RCSdefDate{\RCSpcanormalestimationDate}{$Date$}
 % |
 \ccRefPageBegin
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{jet_normal_estimation}  %% add template arg's if necessary
+\begin{ccRefFunction}{pca_estimate_normals}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[function]{} %% add further index entries
 
 \ccDefinition
 
-\ccc{CGAL::jet_normal_estimation()} estimates normal directions of all points from the input set by fitting jet surfaces over the $k$ nearest neighbors. The default jet surface is a quadric, and the result is an unoriented normal vector for each input point. The complete version of this function requires the kernel, while another deduces it from the input data.
+\ccc{CGAL::pca_estimate_normals()} estimates normal directions at all points from an input point set by linear least squares fitting of a plane over their k nearest neighbors. The result is an unoriented normal vector for each input point.
 
-\ccInclude{CGAL/jet_normal_estimation.h}
+The function exists in two flavors: it may either require a kernel or deduces it from the input data.
+
+\ccInclude{CGAL/pca_estimate_normals.h}
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{template<typename InputIterator, typename OutputIterator, typename Kernel> OutputIterator jet_normal_estimation(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int k, const Kernel& kernel, unsigned int degree_fitting);}
+\ccFunction{template<typename InputIterator, typename OutputIterator, typename Kernel> OutputIterator pca_estimate_normals(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int k, const Kernel& kernel);}
 {
-Estimate normal directions using jet fitting on the k nearest neighbors. The output normals are marked as unoriented.
+Estimate normal directions by linear least squares fitting of a plane over the k nearest neighbors. The output normals are marked as unoriented.
 This variant requires the kernel.
 \ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}
@@ -40,9 +42,10 @@ This variant requires the kernel.
 \item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator over input points. \item \ccc{normals}: output normals. \item \ccc{k}: number of neighbors. \item \ccc{kernel}: geometric traits. \end{description}
 }
 \ccGlue
-\ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator jet_normal_estimation(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int k, unsigned int degree_fitting = 2);}
+\ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator pca_estimate_normals(InputIterator first, InputIterator beyond, OutputIterator normals, unsigned int k);}
 {
-Estimate normal directions using jet fitting on the k nearest neighbors. The output normals are marked as unoriented. This variant deduces the kernel from iterator types.
+Estimate normal directions by linear least squares fitting of a plane over the k nearest neighbors. The output normals are marked as unoriented.
+This variant deduces the kernel from iterator types.
 \ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}
 \begin{description}
@@ -50,7 +53,7 @@ Estimate normal directions using jet fitting on the k nearest neighbors. The out
 \ccCommentHeading{Returns} past-the-end output iterator.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: iterator over the first input point \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{normals}: output normals \item \ccc{k}: number of neighbors \end{description}
+\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator over input points. \item \ccc{normals}: output normals. \item \ccc{k}: number of neighbors. \end{description}
 }
 \ccGlue
 
@@ -58,12 +61,12 @@ Estimate normal directions using jet fitting on the k nearest neighbors. The out
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::pca_normal_estimation}  \\
-\ccRefIdfierPage{CGAL::mst_normal_orientation}  \\
+\ccRefIdfierPage{CGAL::jet_estimate_normals}  \\
+\ccRefIdfierPage{CGAL::mst_orient_normals}  \\
 
 \ccExample
 
-See \ccc{normal_estimation.cpp} example.
+\ccIncludeExampleCode{Point_set_processing_3/pca_estimate_normals_example.cpp}
 
 \end{ccRefFunction}
 

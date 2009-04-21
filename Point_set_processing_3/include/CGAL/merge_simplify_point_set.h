@@ -15,8 +15,8 @@
 //
 // Author(s) : Laurent Saboret and Nader Salman
 
-#ifndef CGAL_MERGE_SIMPLIFICATION_3_H
-#define CGAL_MERGE_SIMPLIFICATION_3_H
+#ifndef CGAL_MERGE_SIMPLIFY_POINT_SET_H
+#define CGAL_MERGE_SIMPLIFY_POINT_SET_H
 
 #include <iterator>
 #include <set>
@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 
-/// Utility class for merge_simplification_3():
+/// Utility class for merge_simplify_point_set():
 /// Less_epsilon_points_3 defines a 3D points order / 2 points are equal
 /// iff they belong to the same cell of a grid of cell size = epsilon.
 template <class Point_3>
@@ -81,7 +81,7 @@ private:
 // ----------------------------------------------------------------------------
 
 
-/// Utility class for merge_simplification_3():
+/// Utility class for merge_simplify_point_set():
 /// 3D points set which allows at most 1 point per cell
 /// of a grid of cell size = epsilon.
 ///
@@ -126,7 +126,7 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-merge_simplification_3(
+merge_simplify_point_set(
           InputIterator first,      ///< iterator over the first input point.
           InputIterator beyond,     ///< past-the-end iterator over input points.
           OutputIterator output,    ///< iterator over the first output point.
@@ -165,11 +165,11 @@ template <typename ForwardIterator,
           typename Kernel
 >
 ForwardIterator
-merge_simplification_3(
+merge_simplify_point_set(
            ForwardIterator first,   ///< iterator over the first input/output point.
            ForwardIterator beyond,  ///< past-the-end iterator.
            double epsilon,          ///< tolerance value when comparing 3D points.
-          const Kernel& kernel)     ///< geometric traits.
+           const Kernel& kernel)    ///< geometric traits.
 
 {
     typedef typename std::iterator_traits<ForwardIterator>::value_type Point;
@@ -210,7 +210,7 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-merge_simplification_3(
+merge_simplify_point_set(
            InputIterator first,   ///< iterator over the first input point.
            InputIterator beyond,  ///< past-the-end iterator over input points.
            OutputIterator output, ///< iterator over the first output point.
@@ -218,7 +218,7 @@ merge_simplification_3(
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return merge_simplification_3(first,beyond,output,epsilon,Kernel());
+  return merge_simplify_point_set(first,beyond,output,epsilon,Kernel());
 }
 
 /// Merge points which belong to the same cell of a grid of cell size = epsilon.
@@ -237,18 +237,18 @@ merge_simplification_3(
 /// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>
 ForwardIterator
-merge_simplification_3(
+merge_simplify_point_set(
        ForwardIterator first,       ///< iterator over the first input/output point
        ForwardIterator beyond,      ///< past-the-end iterator
        double epsilon)              ///< tolerance value when comparing 3D points
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return merge_simplification_3(first,beyond,epsilon,Kernel());
+  return merge_simplify_point_set(first,beyond,epsilon,Kernel());
 }
 
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_MERGE_SIMPLIFICATION_3_H
+#endif // CGAL_MERGE_SIMPLIFY_POINT_SET_H
 

@@ -16,8 +16,8 @@
 //
 // Author(s)     : Laurent RINEAU, Laurent Saboret
 
-#ifndef CGAL_POISSON_REFINEMENT_3_H
-#define CGAL_POISSON_REFINEMENT_3_H
+#ifndef CGAL_POISSON_REFINE_TRIANGULATION_H
+#define CGAL_POISSON_REFINE_TRIANGULATION_H
 
 // CGAL
 #include <CGAL/Mesher_level.h>
@@ -29,7 +29,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Utility class for poisson_refinement_3():
+/// Utility class for poisson_refine_triangulation():
 /// implements Delaunay refinement in a loose bounding 
 /// box of point set (break bad tetrahedra, where
 /// bad means badly shaped or too big).
@@ -148,7 +148,7 @@ private:
 }; // end Poisson_mesher_level_impl_base
 
 
-/// Utility class for poisson_refinement_3():
+/// Utility class for poisson_refine_triangulation():
 /// glue class that inherits from both Mesher_level
 /// and Poisson_mesher_level_impl_base.
 template <typename Tr,
@@ -200,13 +200,14 @@ public:
 /// @param Surface Sphere_3 or Iso_cuboid_3.
 template <typename Tr,
           typename Surface>
-unsigned int poisson_refinement_3(Tr& tr,
-                                  double radius_edge_ratio_bound, ///< radius edge ratio bound (>= 1.0)
-                                  double cell_radius_bound, ///< cell radius bound (ignored if zero)
-                                  unsigned int max_vertices, ///< number of vertices bound (ignored if zero)
-                                  Surface& enlarged_bbox) ///< new bounding sphere or box
+unsigned int poisson_refine_triangulation(
+  Tr& tr,
+  double radius_edge_ratio_bound, ///< radius edge ratio bound (>= 1.0)
+  double cell_radius_bound, ///< cell radius bound (ignored if zero)
+  unsigned int max_vertices, ///< number of vertices bound (ignored if zero)
+  Surface& enlarged_bbox) ///< new bounding sphere or box
 {
-  CGAL_TRACE("Call poisson_refinement_3()\n");
+  CGAL_TRACE("Call poisson_refine_triangulation()\n");
 
   // Convergence is guaranteed if radius_edge_ratio_bound >= 1.0
   CGAL_precondition(radius_edge_ratio_bound >= 1.0);
@@ -240,7 +241,7 @@ unsigned int poisson_refinement_3(Tr& tr,
   CGAL_TRACE("  Max allocation = %ld Mb\n", max_memory>>20);
 
   /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-  CGAL_TRACE("End of poisson_refinement_3()\n");
+  CGAL_TRACE("End of poisson_refine_triangulation()\n");
 
   return (unsigned int) nb_vertices_added;
 }
@@ -248,4 +249,4 @@ unsigned int poisson_refinement_3(Tr& tr,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_POISSON_REFINEMENT_3_H
+#endif // CGAL_POISSON_REFINE_TRIANGULATION_H

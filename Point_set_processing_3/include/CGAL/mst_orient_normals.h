@@ -16,8 +16,8 @@
 //
 // Author(s) : Pierre Alliez and Laurent Saboret and Andreas Fabri
 
-#ifndef CGAL_MST_NORMAL_ORIENTATION_H
-#define CGAL_MST_NORMAL_ORIENTATION_H
+#ifndef CGAL_MST_ORIENT_NORMALS_H
+#define CGAL_MST_ORIENT_NORMALS_H
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -57,7 +57,7 @@ distance(std::size_t _First, std::size_t _Last)
 
 /// Helper class: Riemannian graph.
 ///
-/// This class is used internally by mst_normal_orientation()
+/// This class is used internally by mst_orient_normals()
 /// to encode:
 /// - the adjacency relations of vertices in a K-neighboring
 /// - vertices contain the corresponding input vertex handle
@@ -80,7 +80,7 @@ class Riemannian_graph
 
 /// Helper class: MST graph
 ///
-/// This class is used internally by mst_normal_orientation()
+/// This class is used internally by mst_orient_normals()
 /// to encode:
 /// - the adjacency relations of vertices in a Minimum Spanning Tree
 /// - vertices contain the corresponding input vertex handle
@@ -106,7 +106,7 @@ public:
 
 /// Helper class: Propagate_normal_orientation
 ///
-/// This class is used internally by mst_normal_orientation()
+/// This class is used internally by mst_orient_normals()
 /// to propage the normal orientation, starting from a source vertex
 /// and following the adjacency relations of vertices in a Minimum Spanning Tree.
 ///
@@ -513,7 +513,7 @@ create_mst_graph(
 
 template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap>
 unsigned int
-mst_normal_orientation(
+mst_orient_normals(
     VertexIterator first, ///< first input vertex
     VertexIterator beyond, ///< past-the-end input vertex
     VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index
@@ -521,7 +521,7 @@ mst_normal_orientation(
     VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
     unsigned int k) ///< number of neighbors
 {
-    CGAL_TRACE("Call mst_normal_orientation()\n");
+    CGAL_TRACE("Call mst_orient_normals()\n");
 
     // Bring private stuff to scope
     using namespace CGALi;
@@ -583,7 +583,7 @@ mst_normal_orientation(
     CGAL_TRACE("  => %u normals are unoriented\n", unoriented_normals);
 
     /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("End of mst_normal_orientation()\n");
+    CGAL_TRACE("End of mst_orient_normals()\n");
 
     // At this stage, we have typically 0 unoriented normals if k is large enough
     return unoriented_normals;
@@ -592,5 +592,5 @@ mst_normal_orientation(
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_MST_NORMAL_ORIENTATION_H
+#endif // CGAL_MST_ORIENT_NORMALS_H
 

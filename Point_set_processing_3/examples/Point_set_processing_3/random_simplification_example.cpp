@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/random_simplification_3.h>
+#include <CGAL/random_simplify_point_set.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
 #include <deque>
@@ -25,7 +25,7 @@ int main(void)
     // Random Point Set Simplification options
     const double random_simplification_percentage = 50.0 /* % */; // percentage of outliers to remove
     std::deque<Point> output;
-    CGAL::random_simplification_3(
+    CGAL::random_simplify_point_set(
                     points.begin(), points.end(),
                     std::back_inserter(output),
                     random_simplification_percentage);

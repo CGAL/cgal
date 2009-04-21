@@ -14,7 +14,7 @@
 #include <CGAL/Memory_sizer.h>
 
 // This package
-#include <CGAL/average_spacing_3.h>
+#include <CGAL/compute_average_spacing.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
 #include <deque>
@@ -46,8 +46,8 @@ void test_average_spacing(std::deque<Point>& points, // input point set
   CGAL::Timer task_timer; task_timer.start();
 
   typedef std::deque<Point>::iterator Iterator;
-  std::cerr << CGAL::average_spacing_3<Iterator,FT>(points.begin(), points.end(),
-                                                    nb_neighbors_avg_spacing) << "\n";
+  std::cerr << CGAL::compute_average_spacing<Iterator,FT>(points.begin(), points.end(),
+                                                          nb_neighbors_avg_spacing) << "\n";
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "

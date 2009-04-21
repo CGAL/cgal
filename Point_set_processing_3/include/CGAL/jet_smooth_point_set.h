@@ -16,8 +16,8 @@
 //
 // Author(s) : Pierre Alliez and Marc Pouget
 
-#ifndef CGAL_JET_SMOOTHING_3_H
-#define CGAL_JET_SMOOTHING_3_H
+#ifndef CGAL_JET_SMOOTH_POINT_SET_H
+#define CGAL_JET_SMOOTH_POINT_SET_H
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -48,11 +48,11 @@ namespace CGALi {
 template <typename Kernel,
           typename Tree>
 typename Kernel::Point_3
-jet_smoothing_3(const typename Kernel::Point_3& query, ///< 3D point to project
-                Tree& tree, ///< KD-tree
-                const unsigned int k,
-                const unsigned int degree_fitting,
-                const unsigned int degree_monge)
+jet_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point to project
+                     Tree& tree, ///< KD-tree
+                     const unsigned int k,
+                     const unsigned int degree_fitting,
+                     const unsigned int degree_monge)
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point_3;
@@ -118,13 +118,13 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-jet_smoothing_3(InputIterator first,    ///< iterator over the first input point.
-                InputIterator beyond,   ///< past-the-end iterator over input points.
-                OutputIterator output,  ///< iterator over the first output point.
-                const unsigned int k,   ///< number of neighbors.
-                const Kernel& kernel,   ///< geometric traits.
-                const unsigned int degree_fitting = 2,
-                const unsigned int degree_monge = 2)
+jet_smooth_point_set(InputIterator first,    ///< iterator over the first input point.
+                     InputIterator beyond,   ///< past-the-end iterator over input points.
+                     OutputIterator output,  ///< iterator over the first output point.
+                     const unsigned int k,   ///< number of neighbors.
+                     const Kernel& kernel,   ///< geometric traits.
+                     const unsigned int degree_fitting = 2,
+                     const unsigned int degree_monge = 2)
 {
   // Point_3 types
   typedef typename std::iterator_traits<InputIterator>::value_type Input_point_3;
@@ -152,7 +152,7 @@ jet_smoothing_3(InputIterator first,    ///< iterator over the first input point
   for(InputIterator it = first; it != beyond; it++)
   {
     Input_point_3 point = *it;
-    (Point_3&)(point) = CGALi::jet_smoothing_3<Kernel>(*it,tree,k,degree_fitting,degree_monge);
+    (Point_3&)(point) = CGALi::jet_smooth_point_set<Kernel>(*it,tree,k,degree_fitting,degree_monge);
     *output++ = point;
   }
 
@@ -176,12 +176,12 @@ jet_smoothing_3(InputIterator first,    ///< iterator over the first input point
 template <typename ForwardIterator,
           typename Kernel>
 void
-jet_smoothing_3(ForwardIterator first,     ///< iterator over the first input/output point.
-                ForwardIterator beyond,    ///< past-the-end iterator.
-                unsigned int k,            ///< number of neighbors.
-                const Kernel& kernel,      ///< geometric traits.
-                const unsigned int degree_fitting = 2,
-                const unsigned int degree_monge = 2)
+jet_smooth_point_set(ForwardIterator first,     ///< iterator over the first input/output point.
+                     ForwardIterator beyond,    ///< past-the-end iterator.
+                     unsigned int k,            ///< number of neighbors.
+                     const Kernel& kernel,      ///< geometric traits.
+                     const unsigned int degree_fitting = 2,
+                     const unsigned int degree_monge = 2)
 {
   // Point_3 types
   typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
@@ -208,7 +208,7 @@ jet_smoothing_3(ForwardIterator first,     ///< iterator over the first input/ou
   // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
   ForwardIterator it;
   for(it = first; it != beyond; it++)
-    (Point_3&)(*it) = CGALi::jet_smoothing_3<Kernel>(*it,tree,k,degree_fitting,degree_monge);
+    (Point_3&)(*it) = CGALi::jet_smooth_point_set<Kernel>(*it,tree,k,degree_fitting,degree_monge);
 }
 
 
@@ -227,16 +227,16 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-jet_smoothing_3(InputIterator first, ///< iterator over the first input point
-                InputIterator beyond, ///< past-the-end iterator over input points
-                OutputIterator output, ///< iterator over the first output point
-                unsigned int k, ///< number of neighbors
-                const unsigned int degree_fitting = 2,
-                const unsigned int degree_monge = 2)
+jet_smooth_point_set(InputIterator first, ///< iterator over the first input point
+                     InputIterator beyond, ///< past-the-end iterator over input points
+                     OutputIterator output, ///< iterator over the first output point
+                     unsigned int k, ///< number of neighbors
+                     const unsigned int degree_fitting = 2,
+                     const unsigned int degree_monge = 2)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Input_point_3;
   typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  return jet_smoothing_3(first,beyond,output,k,Kernel(),degree_fitting,degree_monge);
+  return jet_smooth_point_set(first,beyond,output,k,Kernel(),degree_fitting,degree_monge);
 }
 
 /// Smooths points by fitting jet surfaces over their k
@@ -254,19 +254,19 @@ jet_smoothing_3(InputIterator first, ///< iterator over the first input point
 /// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 template <typename ForwardIterator>
 void
-jet_smoothing_3(ForwardIterator first, ///< iterator over the first input/output point
-                ForwardIterator beyond, ///< past-the-end iterator
-                unsigned int k, ///< number of neighbors
-                const unsigned int degree_fitting = 2,
-                const unsigned int degree_monge = 2)
+jet_smooth_point_set(ForwardIterator first, ///< iterator over the first input/output point
+                     ForwardIterator beyond, ///< past-the-end iterator
+                     unsigned int k, ///< number of neighbors
+                     const unsigned int degree_fitting = 2,
+                     const unsigned int degree_monge = 2)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
   typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  jet_smoothing_3(first,beyond,k,Kernel(),degree_fitting,degree_monge);
+  jet_smooth_point_set(first,beyond,k,Kernel(),degree_fitting,degree_monge);
 }
 
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_JET_SMOOTHING_3_H
+#endif // CGAL_JET_SMOOTH_POINT_SET_H
 

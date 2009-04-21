@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/pca_normal_estimation.h>
-#include <CGAL/mst_normal_orientation.h>
+#include <CGAL/pca_estimate_normals.h>
+#include <CGAL/mst_orient_normals.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Orientable_normal_3.h>
 #include <CGAL/IO/read_xyz_point_set.h>
@@ -31,16 +31,16 @@ int main(void)
     // Estimate normals direction.
     std::deque<Orientable_normal> output;
     const int nb_neighbors = 7; // K-nearest neighbors
-    CGAL::pca_normal_estimation(points.begin(), points.end(),
-                                std::back_inserter(output),
-                                nb_neighbors);
+    CGAL::pca_estimate_normals(points.begin(), points.end(),
+                               std::back_inserter(output),
+                               nb_neighbors);
 
     // Orient normals.
-    // mst_normal_orientation() requires an iterator over points
+    // mst_orient_normals() requires an iterator over points
     // + property maps to access each point's index, position and normal.
     // We use the points index as iterator.
     boost::identity_property_map index_id; // identity
-    CGAL::mst_normal_orientation(
+    CGAL::mst_orient_normals(
            (std::size_t)0, points.size(), // use the points index as iterator
            index_id, // index -> index property map = identity
            boost::make_iterator_property_map(points.begin(), index_id), // index -> position prop. map

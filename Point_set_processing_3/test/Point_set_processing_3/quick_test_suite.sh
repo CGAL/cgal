@@ -89,7 +89,7 @@ else
   echo "Run all tests."
   run analysis_test
   run normal_estimation_test
-  run outlier_removal_test
+  run remove_outliers_test
   run smoothing_test
 fi
 

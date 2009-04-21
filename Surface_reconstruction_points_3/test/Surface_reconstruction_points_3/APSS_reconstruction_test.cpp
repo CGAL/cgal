@@ -21,7 +21,7 @@
 #include <CGAL/APSS_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_point_set.h>
-#include <CGAL/IO/surface_reconstruction_output_surface_facets.h>
+#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/polyhedron_connected_components.h>
 
 #include "compute_normal.h"
@@ -262,7 +262,7 @@ int main(int argc, char * argv[])
 
     // Convert to polyhedron
     Polyhedron output_mesh;
-    CGAL::surface_reconstruction_output_surface_facets(surface_mesher_c2t3, output_mesh);
+    CGAL::output_surface_facets_to_polyhedron(surface_mesher_c2t3, output_mesh);
 
     //***************************************
     // Erase small connected components

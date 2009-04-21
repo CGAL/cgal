@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: mst_normal_orientation.tex
+% | Reference manual page: mst_orient_normals.tex
 % +------------------------------------------------------------------------+
 % | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Point_set_processing_3
@@ -12,21 +12,21 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{mst_normal_orientation}  %% add template arg's if necessary
+\begin{ccRefFunction}{mst_orient_normals}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[function]{} %% add further index entries
 
 \ccDefinition
 
-\ccc{CGAL::mst_normal_orientation()} orients the normals of a point set using the propagation of a seed orientation through a minimum spanning tree of the Riemannian graph \cite{cgal:hddms-srup-92}. The result is an oriented normal vector for each input point/normal.
+\ccc{CGAL::mst_orient_normals()} orients the normals of a point set using the propagation of a seed orientation through a minimum spanning tree of the Riemannian graph \cite{cgal:hddms-srup-92}. The result is an oriented normal vector for each input point/normal.
 
-\ccInclude{CGAL/mst_normal_orientation.h}
+\ccInclude{CGAL/mst_orient_normals.h}
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap> unsigned int mst_normal_orientation(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int k);}
+\ccFunction{template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap> unsigned int mst_orient_normals(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int k);}
 {
 Orient the normals of a point set using the method described by Hoppe, DeRose, Duchamp, McDonald and Stuetzle in {\em Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}.
 Note that this variant does not orient normals that are already oriented.
@@ -43,12 +43,12 @@ Note that this variant does not orient normals that are already oriented.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::pca_normal_estimation}  \\
-\ccRefIdfierPage{CGAL::jet_normal_estimation}  \\
+\ccRefIdfierPage{CGAL::pca_estimate_normals}  \\
+\ccRefIdfierPage{CGAL::jet_estimate_normals}  \\
 
 \ccExample
 
-\ccIncludeExampleCode{Point_set_processing_3/pca_normal_estimation_example.cpp}
+\ccIncludeExampleCode{Point_set_processing_3/pca_estimate_normals_example.cpp}
 
 \end{ccRefFunction}
 

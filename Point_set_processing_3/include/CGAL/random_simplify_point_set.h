@@ -15,8 +15,8 @@
 //
 // Author(s) : Laurent Saboret
 
-#ifndef CGAL_RANDOM_SIMPLIFICATION_3_H
-#define CGAL_RANDOM_SIMPLIFICATION_3_H
+#ifndef CGAL_RANDOM_SIMPLIFY_POINT_SET_H
+#define CGAL_RANDOM_SIMPLIFY_POINT_SET_H
 
 #include <iterator>
 #include <set>
@@ -40,7 +40,7 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-random_simplification_3(
+random_simplify_point_set(
           InputIterator first,      ///< iterator over the first input point.
           InputIterator beyond,     ///< past-the-end iterator over input points.
           OutputIterator output,    ///< iterator over the first output point.
@@ -81,7 +81,7 @@ template <typename ForwardIterator,
           typename Kernel
 >
 ForwardIterator
-random_simplification_3(
+random_simplify_point_set(
            ForwardIterator first,     ///< iterator over the first input/output point.
            ForwardIterator beyond,    ///< past-the-end iterator.
            double threshold_percent,  ///< percentage of points to remove.
@@ -115,7 +115,7 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-random_simplification_3(
+random_simplify_point_set(
            InputIterator first,       ///< iterator over the first input point
            InputIterator beyond,      ///< past-the-end iterator over input points
            OutputIterator output,     ///< iterator over the first output point
@@ -123,7 +123,7 @@ random_simplification_3(
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return random_simplification_3(first,beyond,output,threshold_percent,Kernel());
+  return random_simplify_point_set(first,beyond,output,threshold_percent,Kernel());
 }
 
 /// Randomly deletes a user-specified fraction of the input points.
@@ -140,18 +140,18 @@ random_simplification_3(
 /// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>
 ForwardIterator
-random_simplification_3(
+random_simplify_point_set(
        ForwardIterator first,     ///< iterator over the first input/output point
        ForwardIterator beyond,    ///< past-the-end iterator
        double threshold_percent)  ///< percentage of points to remove
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return random_simplification_3(first,beyond,threshold_percent,Kernel());
+  return random_simplify_point_set(first,beyond,threshold_percent,Kernel());
 }
 
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_RANDOM_SIMPLIFICATION_3_H
+#endif // CGAL_RANDOM_SIMPLIFY_POINT_SET_H
 

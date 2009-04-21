@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: outlier_removal_3.tex
+% | Reference manual page: remove_outliers.tex
 % +------------------------------------------------------------------------+
 % | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Point_set_processing_3
@@ -12,7 +12,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{outlier_removal_3}  %% add template arg's if necessary
+\begin{ccRefFunction}{remove_outliers}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[function]{} %% add further index entries
@@ -20,17 +20,17 @@
 \ccDefinition
 
 
-\ccc{CGAL::outlier_removal_3()} deletes a user-specified fraction of outliers from the input point set. More specifically, it sorts the input points in increasing order of average squared distances to the $k$ nearest neighbors and deletes the points with largest value.
+\ccc{CGAL::remove_outliers()} deletes a user-specified fraction of outliers from the input point set. More specifically, it sorts the input points in increasing order of average squared distances to the $k$ nearest neighbors and deletes the points with largest value.
 
 The function exists in four flavors:
 it may either mutate the input point set or create a copy, and may either require the kernel or deduce it from the input data.
 
-\ccInclude{CGAL/outlier_removal_3.h}
+\ccInclude{CGAL/remove_outliers.h}
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{template<typename InputIterator, typename OutputIterator, typename Kernel> OutputIterator outlier_removal_3(InputIterator first, InputIterator beyond, OutputIterator output, unsigned int k, const Kernel& kernel, double threshold_percent);}
+\ccFunction{template<typename InputIterator, typename OutputIterator, typename Kernel> OutputIterator remove_outliers(InputIterator first, InputIterator beyond, OutputIterator output, unsigned int k, const Kernel& kernel, double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
 \item compute average squared distance to the K nearest neighbors,\item output (100-\ccc{threshold_percent}) \% best points wrt this distance. This variant requires the kernel.\end{itemize}
@@ -44,7 +44,7 @@ Remove outliers:\begin{itemize}
 \item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator over input points. \item \ccc{output}: iterator over the first output point. \item \ccc{k}: number of neighbors. \item \ccc{kernel}: geometric traits. \item \ccc{threshold_percent}: percentage of points to remove. \end{description}
 }
 \ccGlue
-\ccFunction{template<typename ForwardIterator, typename Kernel> ForwardIterator outlier_removal_3(ForwardIterator first, ForwardIterator beyond, unsigned int k, const Kernel& kernel, double threshold_percent);}
+\ccFunction{template<typename ForwardIterator, typename Kernel> ForwardIterator remove_outliers(ForwardIterator first, ForwardIterator beyond, unsigned int k, const Kernel& kernel, double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
 \item compute average squared distance to the K nearest neighbors,\item sort the points in increasing order of average distance. This function is mutating the input point set. This variant requires the kernel.\end{itemize}
@@ -59,7 +59,7 @@ Warning: This method modifies the order of points, thus should not be called on 
 \item \ccc{first}: iterator over the first input/output point. \item \ccc{beyond}: past-the-end iterator. \item \ccc{k}: number of neighbors. \item \ccc{kernel}: geometric traits. \item \ccc{threshold_percent}: percentage of points to remove. \end{description}
 }
 \ccGlue
-\ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator outlier_removal_3(InputIterator first, InputIterator beyond, OutputIterator output, unsigned int k, double threshold_percent);}
+\ccFunction{template<typename InputIterator, typename OutputIterator> OutputIterator remove_outliers(InputIterator first, InputIterator beyond, OutputIterator output, unsigned int k, double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
 \item compute average squared distance to the K nearest neighbors,\item output (100-\ccc{threshold_percent}) \% best points wrt this distance. This variant deduces the kernel from iterator types.\end{itemize}
@@ -73,7 +73,7 @@ Remove outliers:\begin{itemize}
 \item \ccc{first}: iterator over the first input point \item \ccc{beyond}: past-the-end iterator over input points \item \ccc{output}: iterator over the first output point \item \ccc{k}: number of neighbors \item \ccc{threshold_percent}: percentage of points to remove \end{description}
 }
 \ccGlue
-\ccFunction{template<typename ForwardIterator> ForwardIterator outlier_removal_3(ForwardIterator first, ForwardIterator beyond, unsigned int k, double threshold_percent);}
+\ccFunction{template<typename ForwardIterator> ForwardIterator remove_outliers(ForwardIterator first, ForwardIterator beyond, unsigned int k, double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
 \item compute average squared distance to the k nearest neighbors,\item sort the points in increasing order of average distance. This function is mutating the input point set. This variant deduces the kernel from iterator types.\end{itemize}
@@ -92,7 +92,7 @@ Warning: This method modifies the order of points, thus should not be called on 
 
 \ccExample
 
-\ccIncludeExampleCode{Point_set_processing_3/outlier_removal_example.cpp}
+\ccIncludeExampleCode{Point_set_processing_3/remove_outliers_example.cpp}
 
 \end{ccRefFunction}
 

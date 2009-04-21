@@ -90,8 +90,8 @@ else
   run average_spacing_example
   run jet_smoothing_example
   run normal_estimation
-  run outlier_removal_example
-  run pca_normal_estimation_example
+  run remove_outliers_example
+  run pca_estimate_normals_example
   run random_simplification_example
   run read_write_xyz_point_set_example
 fi

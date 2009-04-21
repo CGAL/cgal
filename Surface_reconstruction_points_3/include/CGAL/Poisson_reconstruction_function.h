@@ -37,7 +37,7 @@
 #include <CGAL/surface_reconstruction_points_assertions.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Peak_memory_sizer.h>
-#include <CGAL/poisson_refinement_3.h>
+#include <CGAL/poisson_refine_triangulation.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -370,10 +370,10 @@ public:
 #define DELAUNAY_REFINEMENT_USE_BOUNDING_BOX
 #ifdef  DELAUNAY_REFINEMENT_USE_BOUNDING_BOX
     Iso_cuboid enlarged_bbox = enlarged_bounding_box(enlarge_ratio);
-    unsigned int nb_vertices_added = poisson_refinement_3(m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
+    unsigned int nb_vertices_added = poisson_refine_triangulation(m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
 #else
     Sphere enlarged_bbox = enlarged_bounding_sphere(enlarge_ratio);
-    unsigned int nb_vertices_added = poisson_refinement_3(m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
+    unsigned int nb_vertices_added = poisson_refine_triangulation(m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
 #endif
 
     m_tr.invalidate_bounds();

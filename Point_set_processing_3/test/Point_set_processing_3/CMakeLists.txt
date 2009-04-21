@@ -46,7 +46,7 @@ if ( CGAL_FOUND )
 
   # Executables that do *not* require LAPACK
   create_single_source_cgal_program( "analysis_test.cpp" )
-  create_single_source_cgal_program( "outlier_removal_test.cpp" )
+  create_single_source_cgal_program( "remove_outliers_test.cpp" )
 
   # Link with BLAS and LAPACK (optional)
   find_package(LAPACK)

@@ -16,9 +16,9 @@
 #include <CGAL/boost/graph/properties.h>
 
 // This package
-#include <CGAL/pca_normal_estimation.h>
-#include <CGAL/jet_normal_estimation.h>
-#include <CGAL/mst_normal_orientation.h>
+#include <CGAL/pca_estimate_normals.h>
+#include <CGAL/jet_estimate_normals.h>
+#include <CGAL/mst_orient_normals.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Orientable_normal_3.h>
 #include <CGAL/IO/read_off_point_set.h>
@@ -119,9 +119,9 @@ bool verify_normal_direction(const PointList& points, // input point set
 
 // Compute normals direction by Principal Component Analysis
 // @return true on success.
-bool test_pca_normal_estimation(const PointList& points, // input point set
-                                std::deque<Orientable_normal>& computed_normals, // normals to estimate
-                                double nb_neighbors_pca_normals /* % */) // number of neighbors
+bool test_pca_estimate_normals(const PointList& points, // input point set
+                               std::deque<Orientable_normal>& computed_normals, // normals to estimate
+                               double nb_neighbors_pca_normals /* % */) // number of neighbors
 {
   CGAL::Timer task_timer; task_timer.start();
 
@@ -135,9 +135,9 @@ bool test_pca_normal_estimation(const PointList& points, // input point set
   std::cerr << "Estimate Normals Direction by PCA (k="
             << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
 
-  CGAL::pca_normal_estimation(points.begin(), points.end(),
-                              std::back_inserter(computed_normals),
-                              nb_neighbors);
+  CGAL::pca_estimate_normals(points.begin(), points.end(),
+                             std::back_inserter(computed_normals),
+                             nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -151,9 +151,9 @@ bool test_pca_normal_estimation(const PointList& points, // input point set
 
 // Compute normals direction by Jet Fitting
 // @return true on success.
-bool test_jet_normal_estimation(const PointList& points, // input point set
-                                std::deque<Orientable_normal>& computed_normals, // normals to estimate
-                                double nb_neighbors_jet_fitting_normals /* % */) // number of neighbors
+bool test_jet_estimate_normals(const PointList& points, // input point set
+                               std::deque<Orientable_normal>& computed_normals, // normals to estimate
+                               double nb_neighbors_jet_fitting_normals /* % */) // number of neighbors
 {
   CGAL::Timer task_timer; task_timer.start();
 
@@ -167,9 +167,9 @@ bool test_jet_normal_estimation(const PointList& points, // input point set
   std::cerr << "Estimate Normals Direction by Jet Fitting (k="
             << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
 
-  CGAL::jet_normal_estimation(points.begin(), points.end(),
-                              std::back_inserter(computed_normals),
-                              nb_neighbors);
+  CGAL::jet_estimate_normals(points.begin(), points.end(),
+                             std::back_inserter(computed_normals),
+                             nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -248,9 +248,9 @@ bool verify_normal_orientation(const PointList& points, // input point set
 
 // Test Hoppe92 normal orientation using a Minimum Spanning Tree.
 // @return true on success.
-bool test_mst_normal_orientation(const PointList& points, // input point set
-                                 std::deque<Orientable_normal>& computed_normals, // normals to orient
-                                 unsigned int nb_neighbors_mst) // number of neighbors
+bool test_mst_orient_normals(const PointList& points, // input point set
+                             std::deque<Orientable_normal>& computed_normals, // normals to orient
+                             unsigned int nb_neighbors_mst) // number of neighbors
 {
   std::cerr << "Orient Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
@@ -260,11 +260,11 @@ bool test_mst_normal_orientation(const PointList& points, // input point set
   for (n = computed_normals.begin(); n != computed_normals.end(); n++)
     n->set_orientation(false);
 
-  // mst_normal_orientation() requires an iterator over points
+  // mst_orient_normals() requires an iterator over points
   // + property maps to access each point's index, position and normal.
   // We use the points index as iterator.
   boost::identity_property_map index_id; // identity
-  CGAL::mst_normal_orientation(
+  CGAL::mst_orient_normals(
          (std::size_t)0, points.size(), // use the points index as iterator
          index_id, // index -> index property map = identity
          boost::make_iterator_property_map(points.begin(), index_id), // index -> position prop. map
@@ -379,13 +379,13 @@ int main(int argc, char * argv[])
     std::deque<Orientable_normal> computed_normals;
 
     // Estimate normals direction.
-    success = test_pca_normal_estimation(points, computed_normals, nb_neighbors_pca_normals);
+    success = test_pca_estimate_normals(points, computed_normals, nb_neighbors_pca_normals);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 
     // Orient normals.
     // Check normal orientation.
-    success = test_mst_normal_orientation(points, computed_normals, nb_neighbors_mst);
+    success = test_mst_orient_normals(points, computed_normals, nb_neighbors_mst);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 
@@ -396,13 +396,13 @@ int main(int argc, char * argv[])
     computed_normals.clear();
 
     // Estimate normals direction
-    success = test_jet_normal_estimation(points, computed_normals, nb_neighbors_jet_fitting_normals);
+    success = test_jet_estimate_normals(points, computed_normals, nb_neighbors_jet_fitting_normals);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 
     // Orient normals
     // Check normal orientation.
-    success = test_mst_normal_orientation(points, computed_normals, nb_neighbors_mst);
+    success = test_mst_orient_normals(points, computed_normals, nb_neighbors_mst);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 

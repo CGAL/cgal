@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/outlier_removal_3.h>
+#include <CGAL/remove_outliers.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
 #include <deque>
@@ -26,7 +26,7 @@ int main(void)
     const double threshold_percent_avg_knn_sq_dst = 5.0 /* % */; // percentage of outliers to remove
     const int nb_neighbors = 7; // K-nearest neighbors
     std::deque<Point> output;
-    CGAL::outlier_removal_3(
+    CGAL::remove_outliers(
                     points.begin(), points.end(),
                     std::back_inserter(output),
                     nb_neighbors,

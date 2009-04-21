@@ -46,9 +46,9 @@ namespace CGALi {
 template < typename Kernel,
            typename Tree >
 typename Kernel::FT
-average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose spacing we want to compute
-                  Tree& tree,                            ///< KD-tree
-                  unsigned int k)                        ///< number of neighbors
+compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point whose spacing we want to compute
+                        Tree& tree,                            ///< KD-tree
+                        unsigned int k)                        ///< number of neighbors
 {
   // basic geometric types
   typedef typename Kernel::FT FT;
@@ -105,10 +105,10 @@ template <typename InputIterator,
           typename Kernel
 >
 typename Kernel::FT
-average_spacing_3(InputIterator first,    ///< iterator over the first input point.
-                  InputIterator beyond,   ///< past-the-end iterator over input points.
-                  unsigned int k,         ///< number of neighbors.
-                  const Kernel& kernel)   ///< geometric traits.
+compute_average_spacing(InputIterator first,    ///< iterator over the first input point.
+                        InputIterator beyond,   ///< past-the-end iterator over input points.
+                        unsigned int k,         ///< number of neighbors.
+                        const Kernel& kernel)   ///< geometric traits.
 {
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
@@ -134,7 +134,7 @@ average_spacing_3(InputIterator first,    ///< iterator over the first input poi
   InputIterator it;
   for(it = first; it != beyond; it++)
   {
-    sum_spacings += CGALi::average_spacing_3<Kernel,Tree>(*it,tree,k);
+    sum_spacings += CGALi::compute_average_spacing<Kernel,Tree>(*it,tree,k);
     nb_points++;
   }
 
@@ -156,13 +156,13 @@ template < typename InputIterator,
            typename FT
 >
 FT
-average_spacing_3(InputIterator first,    ///< iterator over the first input point.
-                  InputIterator beyond,   ///< past-the-end iterator over input points.
-                  unsigned int k)         ///< number of neighbors.
+compute_average_spacing(InputIterator first,    ///< iterator over the first input point.
+                        InputIterator beyond,   ///< past-the-end iterator over input points.
+                        unsigned int k)         ///< number of neighbors.
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return average_spacing_3(first,beyond,k,Kernel());
+  return compute_average_spacing(first,beyond,k,Kernel());
 }
 
 

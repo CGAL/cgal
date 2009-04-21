@@ -16,8 +16,8 @@
 //
 // Author(s) : Laurent Saboret and Nader Salman and Pierre Alliez
 
-#ifndef CGAL_OUTLIER_REMOVAL_3_H
-#define CGAL_OUTLIER_REMOVAL_3_H
+#ifndef CGAL_REMOVE_OUTLIERS_H
+#define CGAL_REMOVE_OUTLIERS_H
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 
-/// Utility function for outlier_removal_3():
+/// Utility function for remove_outliers():
 /// compute average squared distance to the K nearest neighbors.
 ///
 /// @commentheading Precondition: k >= 2.
@@ -115,7 +115,7 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-outlier_removal_3(
+remove_outliers(
            InputIterator first,       ///< iterator over the first input point.
            InputIterator beyond,      ///< past-the-end iterator over input points.
            OutputIterator output,     ///< iterator over the first output point.
@@ -188,7 +188,7 @@ template <typename ForwardIterator,
           typename Kernel
 >
 ForwardIterator
-outlier_removal_3(
+remove_outliers(
            ForwardIterator first,     ///< iterator over the first input/output point.
            ForwardIterator beyond,    ///< past-the-end iterator.
            unsigned int k,            ///< number of neighbors.
@@ -261,7 +261,7 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-outlier_removal_3(
+remove_outliers(
            InputIterator first,       ///< iterator over the first input point
            InputIterator beyond,      ///< past-the-end iterator over input points
            OutputIterator output,     ///< iterator over the first output point
@@ -270,7 +270,7 @@ outlier_removal_3(
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return outlier_removal_3(first,beyond,output,k,Kernel(),threshold_percent);
+  return remove_outliers(first,beyond,output,k,Kernel(),threshold_percent);
 }
 
 /// Remove outliers:
@@ -291,7 +291,7 @@ outlier_removal_3(
 /// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>
 ForwardIterator
-outlier_removal_3(
+remove_outliers(
            ForwardIterator first,     ///< iterator over the first input/output point
            ForwardIterator beyond,    ///< past-the-end iterator
            unsigned int k,            ///< number of neighbors
@@ -299,11 +299,11 @@ outlier_removal_3(
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return outlier_removal_3(first,beyond,k,Kernel(),threshold_percent);
+  return remove_outliers(first,beyond,k,Kernel(),threshold_percent);
 }
 
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_OUTLIER_REMOVAL_3_H
+#endif // CGAL_REMOVE_OUTLIERS_H
 

@@ -49,8 +49,8 @@ if ( CGAL_FOUND )
 
   # Executables that do *not* require LAPACK
   create_single_source_cgal_program( "average_spacing_example.cpp" )
-  create_single_source_cgal_program( "outlier_removal_example.cpp" )
-  create_single_source_cgal_program( "pca_normal_estimation_example.cpp" )
+  create_single_source_cgal_program( "remove_outliers_example.cpp" )
+  create_single_source_cgal_program( "pca_estimate_normals_example.cpp" )
   create_single_source_cgal_program( "random_simplification_example.cpp" )
   create_single_source_cgal_program( "read_write_xyz_point_set_example.cpp" )
 

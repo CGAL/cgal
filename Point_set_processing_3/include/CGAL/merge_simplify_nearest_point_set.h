@@ -16,8 +16,8 @@
 //
 // Author(s) : Nader Salman
 
-#ifndef CGAL_MERGE_SIMPLIFICATION_NEAREST_POINTS_3_H
-#define CGAL_MERGE_SIMPLIFICATION_NEAREST_POINTS_3_H
+#ifndef CGAL_MERGE_SIMPLIFY_NEAREST_POINT_SET_H
+#define CGAL_MERGE_SIMPLIFY_NEAREST_POINT_SET_H
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -36,7 +36,7 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-merge_simplification_nearest_points_3(
+merge_simplify_nearest_point_set(
           InputIterator first,      ///< iterator over the first input point.
           InputIterator beyond,     ///< past-the-end iterator over input points.
           OutputIterator output,    ///< iterator over the first output point.
@@ -106,7 +106,7 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-merge_simplification_nearest_points_3(
+merge_simplify_nearest_point_set(
           InputIterator first,      ///< iterator over the first input point
           InputIterator beyond,     ///< past-the-end iterator over input points
           OutputIterator output,    ///< iterator over the first output point
@@ -115,11 +115,11 @@ merge_simplification_nearest_points_3(
 {
     typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
     typedef typename CGAL::Kernel_traits<Value_type>::Kernel Kernel;
-    return merge_simplification_nearest_points_3(first,beyond,output,k,epsilon,Kernel());
+    return merge_simplify_nearest_point_set(first,beyond,output,k,epsilon,Kernel());
 }
 
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_MERGE_SIMPLIFICATION_NEAREST_POINTS_3_H
+#endif // CGAL_MERGE_SIMPLIFY_NEAREST_POINT_SET_H
 

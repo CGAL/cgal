@@ -2755,16 +2755,16 @@ Point_set_processing_3/doc_tex/Point_set_processing_3/jet_smoothing.eps -text sv
 Point_set_processing_3/doc_tex/Point_set_processing_3/jet_smoothing.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/merge_simplification.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/merge_simplification.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc_tex/Point_set_processing_3/mst_normal_orientation.eps -text svneol=unset#application/postscript
-Point_set_processing_3/doc_tex/Point_set_processing_3/mst_normal_orientation.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc_tex/Point_set_processing_3/outlier_removal.eps -text svneol=unset#application/postscript
-Point_set_processing_3/doc_tex/Point_set_processing_3/outlier_removal.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc_tex/Point_set_processing_3/pca_normal_estimation.eps -text svneol=unset#application/postscript
-Point_set_processing_3/doc_tex/Point_set_processing_3/pca_normal_estimation.jpg -text svneol=unset#image/jpeg
+Point_set_processing_3/doc_tex/Point_set_processing_3/mst_orient_normals.eps -text svneol=unset#application/postscript
+Point_set_processing_3/doc_tex/Point_set_processing_3/mst_orient_normals.jpg -text svneol=unset#image/jpeg
+Point_set_processing_3/doc_tex/Point_set_processing_3/pca_estimate_normals.eps -text svneol=unset#application/postscript
+Point_set_processing_3/doc_tex/Point_set_processing_3/pca_estimate_normals.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/pipeline.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/pipeline.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/random_simplification.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/random_simplification.jpg -text svneol=unset#image/jpeg
+Point_set_processing_3/doc_tex/Point_set_processing_3/remove_outliers.eps -text svneol=unset#application/postscript
+Point_set_processing_3/doc_tex/Point_set_processing_3/remove_outliers.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/examples/Point_set_processing_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Point_set_processing_3/examples/Point_set_processing_3/data/camel.off -text svneol=unset#application/octet-stream
 Point_set_processing_3/examples/Point_set_processing_3/data/oni.xyz -text
@@ -2775,8 +2775,8 @@ Point_set_processing_3/examples/Point_set_processing_3/quick_test_suite.sh eol=l
 Point_set_processing_3/include/CGAL/Neighborhood/knn_point_neighbor_search.h -text
 Point_set_processing_3/include/CGAL/Neighborhood/point_kdtree_3.h -text
 Point_set_processing_3/include/CGAL/Orientable_normal_3.h -text
-Point_set_processing_3/include/CGAL/average_spacing_3.h -text
-Point_set_processing_3/include/CGAL/jet_smoothing_3.h -text
+Point_set_processing_3/include/CGAL/compute_average_spacing.h -text
+Point_set_processing_3/include/CGAL/jet_smooth_point_set.h -text
 Point_set_processing_3/test/Point_set_processing_3/analysis_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/analysis_test.cpp -text
 Point_set_processing_3/test/Point_set_processing_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
@@ -2784,9 +2784,9 @@ Point_set_processing_3/test/Point_set_processing_3/data/oni.pwn -text
 Point_set_processing_3/test/Point_set_processing_3/data/sphere926.pwn -text
 Point_set_processing_3/test/Point_set_processing_3/data/sphere_20k.xyz -text
 Point_set_processing_3/test/Point_set_processing_3/normal_estimation_test.cmd eol=lf
-Point_set_processing_3/test/Point_set_processing_3/outlier_removal_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/quick_test_suite.bat eol=crlf
 Point_set_processing_3/test/Point_set_processing_3/quick_test_suite.sh eol=lf
+Point_set_processing_3/test/Point_set_processing_3/remove_outliers_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/smoothing_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/smoothing_test.cpp -text
 Polygon/doc_tex/Polygon/pgn_algos.eps -text svneol=unset#application/postscript

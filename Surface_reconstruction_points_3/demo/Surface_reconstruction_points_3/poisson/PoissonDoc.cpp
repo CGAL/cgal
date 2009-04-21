@@ -9,7 +9,7 @@
 #include "compute_normal.h"
 #include "read_pwc_point_set.h"
 #include "read_g23_point_set.h"
-#include "outlier_removal_wrt_camera_cone_angle_3.h"
+#include "remove_outliers_wrt_camera_cone_angle.h"
 #include "normal_orientation_wrt_cameras.h"
 
 // CGAL
@@ -28,16 +28,16 @@
 #include <CGAL/IO/write_off_point_set.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 #include <CGAL/IO/write_xyz_point_set.h>
-#include <CGAL/IO/surface_reconstruction_output_surface_facets.h>
-#include <CGAL/outlier_removal_3.h>
-#include <CGAL/jet_normal_estimation.h>
-#include <CGAL/jet_smoothing_3.h>
-#include <CGAL/pca_normal_estimation.h>
-#include <CGAL/mst_normal_orientation.h>
-#include <CGAL/average_spacing_3.h>
-#include <CGAL/merge_simplification_3.h>
-#include <CGAL/random_simplification_3.h>
-#include <CGAL/radial_normal_orientation_3.h>
+#include <CGAL/IO/output_surface_facets_to_triangle_soup.h>
+#include <CGAL/remove_outliers.h>
+#include <CGAL/jet_estimate_normals.h>
+#include <CGAL/jet_smooth_point_set.h>
+#include <CGAL/pca_estimate_normals.h>
+#include <CGAL/mst_orient_normals.h>
+#include <CGAL/compute_average_spacing.h>
+#include <CGAL/merge_simplify_point_set.h>
+#include <CGAL/random_simplify_point_set.h>
+#include <CGAL/radial_orient_normals.h>
 #include <CGAL/Peak_memory_sizer.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 
@@ -177,7 +177,7 @@ CPoissonDoc::CPoissonDoc()
   // Outlier Removal options
   m_min_cameras_cone_angle = 0.5 /* degrees */; // min angle of camera's cone
   m_threshold_percent_avg_knn_sq_dst = 5.0 /* % */; // percentage of outliers to remove
-  m_nb_neighbors_outlier_removal = 0.05 /* % */; // K-nearest neighbors (outlier removal)
+  m_nb_neighbors_remove_outliers = 0.05 /* % */; // K-nearest neighbors (outlier removal)
 
   // Point Set Simplification options
   m_clustering_step = 0.004; // Grid's step for simplification by clustering
@@ -572,7 +572,7 @@ void CPoissonDoc::OnEditOptions()
   dlg.m_contouring_value = m_contouring_value;
   dlg.m_lambda = m_lambda;
   dlg.m_nb_neighbors_avg_spacing = m_nb_neighbors_avg_spacing;
-  dlg.m_nb_neighbors_outlier_removal = m_nb_neighbors_outlier_removal;
+  dlg.m_nb_neighbors_remove_outliers = m_nb_neighbors_remove_outliers;
   dlg.m_nb_neighbors_smooth_jet_fitting = m_nb_neighbors_smooth_jet_fitting;
   dlg.m_nb_neighbors_pca_normals = m_nb_neighbors_pca_normals;
   dlg.m_nb_neighbors_jet_fitting_normals = m_nb_neighbors_jet_fitting_normals;
@@ -597,7 +597,7 @@ void CPoissonDoc::OnEditOptions()
     m_contouring_value = dlg.m_contouring_value;
     m_lambda = dlg.m_lambda;
     m_nb_neighbors_avg_spacing = dlg.m_nb_neighbors_avg_spacing;
-    m_nb_neighbors_outlier_removal = dlg.m_nb_neighbors_outlier_removal;
+    m_nb_neighbors_remove_outliers = dlg.m_nb_neighbors_remove_outliers;
     m_nb_neighbors_smooth_jet_fitting = dlg.m_nb_neighbors_smooth_jet_fitting;
     m_nb_neighbors_pca_normals = dlg.m_nb_neighbors_pca_normals;
     m_nb_neighbors_jet_fitting_normals = dlg.m_nb_neighbors_jet_fitting_normals;
@@ -696,9 +696,9 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
   status_message("Estimate Normals Direction by PCA (k=%.2lf%%=%d)...",
                  m_nb_neighbors_pca_normals, nb_neighbors);
 
-  CGAL::pca_normal_estimation(m_points.begin(), m_points.end(),
-                              m_points.normals_begin(),
-                              nb_neighbors);
+  CGAL::pca_estimate_normals(m_points.begin(), m_points.end(),
+                             m_points.normals_begin(),
+                             nb_neighbors);
 
   status_message("Estimate Normals Direction by PCA...done (%.2lf s)", task_timer.time());
 
@@ -732,9 +732,9 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
   status_message("Estimate Normals Direction by Jet Fitting (k=%.2lf%%=%d)...",
                  m_nb_neighbors_jet_fitting_normals, nb_neighbors);
 
-  CGAL::jet_normal_estimation(m_points.begin(), m_points.end(),
-                              m_points.normals_begin(),
-                              nb_neighbors);
+  CGAL::jet_estimate_normals(m_points.begin(), m_points.end(),
+                             m_points.normals_begin(),
+                             nb_neighbors);
 
   status_message("Estimate Normals Direction by Jet Fitting...done (%.2lf s)", task_timer.time());
 
@@ -828,11 +828,11 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
   for (Point_set::iterator p = m_points.begin(); p != m_points.end(); p++)
     p->normal().set_orientation(false);
 
-  CGAL::mst_normal_orientation(m_points.begin(), m_points.end(),
-                               get(boost::vertex_index, m_points),
-                               get(CGAL::vertex_point, m_points),
-                               get(boost::vertex_normal, m_points),
-                               m_nb_neighbors_mst);
+  CGAL::mst_orient_normals(m_points.begin(), m_points.end(),
+                           get(boost::vertex_index, m_points),
+                           get(CGAL::vertex_point, m_points),
+                           get(boost::vertex_normal, m_points),
+                           m_nb_neighbors_mst);
 
   status_message("Orient Normals with a Minimum Spanning Tree...done (%.2lf s)", task_timer.time());
 
@@ -1125,7 +1125,7 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
 
     // get output surface
     std::deque<Triangle> triangles;
-    CGAL::surface_reconstruction_output_surface_facets(m_surface_mesher_c2t3, std::back_inserter(triangles));
+    CGAL::output_surface_facets_to_triangle_soup(m_surface_mesher_c2t3, std::back_inserter(triangles));
     m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
 
     // Reset contouring value
@@ -1218,8 +1218,8 @@ void CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting()
                  m_nb_neighbors_smooth_jet_fitting, nb_neighbors);
 
   // Smooth points in m_points[]
-  CGAL::jet_smoothing_3(m_points.begin(), m_points.end(),
-                        nb_neighbors);
+  CGAL::jet_smooth_point_set(m_points.begin(), m_points.end(),
+                             nb_neighbors);
   m_points.invalidate_bounds();
 
   status_message("Smooth Point Set...done (%.2lf s)", task_timer.time());
@@ -1347,7 +1347,7 @@ void CPoissonDoc::OnAlgorithmsOutlierRemovalWrtCamerasConeAngle()
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_iterator_to_remove =
-    outlier_removal_wrt_camera_cone_angle_3(
+    remove_outliers_wrt_camera_cone_angle(
             m_points.begin(), m_points.end(),
             m_min_cameras_cone_angle*M_PI/180.0);
   m_points.select(first_iterator_to_remove, m_points.end(), true);
@@ -1374,19 +1374,19 @@ void CPoissonDoc::OnOutlierRemoval()
   CGAL::Timer task_timer; task_timer.start();
 
   // percentage -> number of neighbors
-  int nb_neighbors = int(double(m_points.size()) * m_nb_neighbors_outlier_removal / 100.0);
+  int nb_neighbors = int(double(m_points.size()) * m_nb_neighbors_remove_outliers / 100.0);
   if (nb_neighbors < 7)
     nb_neighbors = 7;
   if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
   status_message("Remove outliers wrt average squared distance to k nearest neighbors (remove %.2lf%%, k=%.2lf%%=%d)...",
-                 m_threshold_percent_avg_knn_sq_dst, m_nb_neighbors_outlier_removal, nb_neighbors);
+                 m_threshold_percent_avg_knn_sq_dst, m_nb_neighbors_remove_outliers, nb_neighbors);
 
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_iterator_to_remove =
-    CGAL::outlier_removal_3(
+    CGAL::remove_outliers(
             m_points.begin(), m_points.end(),
             nb_neighbors,
             m_threshold_percent_avg_knn_sq_dst);
@@ -1409,10 +1409,10 @@ void CPoissonDoc::OnAnalysisAverageSpacing()
   status_message("Compute average spacing to k nearest neighbors (k=%d)...", m_nb_neighbors_avg_spacing);
   CGAL::Timer task_timer; task_timer.start();
 
-  double value = CGAL::average_spacing_3(m_points.begin(),
-                                         m_points.end(),
-                                         m_nb_neighbors_avg_spacing,
-                                         Kernel());
+  double value = CGAL::compute_average_spacing(m_points.begin(),
+                                               m_points.end(),
+                                               m_nb_neighbors_avg_spacing,
+                                               Kernel());
 
   // write message in message box
   prompt_message("Average spacing: %lf", value);
@@ -1478,7 +1478,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
 
     // get output surface
     std::deque<Triangle> triangles;
-    CGAL::surface_reconstruction_output_surface_facets(m_surface_mesher_c2t3, std::back_inserter(triangles));
+    CGAL::output_surface_facets_to_triangle_soup(m_surface_mesher_c2t3, std::back_inserter(triangles));
     m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
 
     // Record new mode
@@ -1607,7 +1607,7 @@ void CPoissonDoc::OnPointCloudSimplificationByClustering()
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_iterator_to_remove =
-    CGAL::merge_simplification_3(
+    CGAL::merge_simplify_point_set(
             m_points.begin(), m_points.end(),
             m_clustering_step*size);
   m_points.select(first_iterator_to_remove, m_points.end(), true);
@@ -1632,7 +1632,7 @@ void CPoissonDoc::OnPointCloudSimplificationRandom()
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_iterator_to_remove =
-    CGAL::random_simplification_3(
+    CGAL::random_simplify_point_set(
             m_points.begin(), m_points.end(),
             m_random_simplification_percentage);
   m_points.select(first_iterator_to_remove, m_points.end(), true);
@@ -1654,10 +1654,10 @@ void CPoissonDoc::OnRadialNormalOrientation()
   status_message("Radial Normal Orientation...");
   CGAL::Timer task_timer; task_timer.start();
 
-  CGAL::radial_normal_orientation_3(m_points.begin(), m_points.end(),
-                                    get(boost::vertex_index, m_points),
-                                    get(CGAL::vertex_point, m_points),
-                                    get(boost::vertex_normal, m_points));
+  CGAL::radial_orient_normals(m_points.begin(), m_points.end(),
+                              get(boost::vertex_index, m_points),
+                              get(CGAL::vertex_point, m_points),
+                              get(boost::vertex_normal, m_points));
 
   status_message("Radial Normal Orientation...done (%.2lf s)", task_timer.time());
 

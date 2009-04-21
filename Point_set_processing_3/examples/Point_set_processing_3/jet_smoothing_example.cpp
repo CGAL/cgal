@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/jet_smoothing_3.h>
+#include <CGAL/jet_smooth_point_set.h>
 #include <deque>
 
 // types
@@ -23,7 +23,7 @@ int main(void)
     // smoothing
     std::deque<Point> output;
     const unsigned int nb_neighbors = 8;
-    CGAL::jet_smoothing_3(points.begin(),points.end(),std::back_inserter(output),nb_neighbors);
+    CGAL::jet_smooth_point_set(points.begin(),points.end(),std::back_inserter(output),nb_neighbors);
 
     return EXIT_SUCCESS;
 }

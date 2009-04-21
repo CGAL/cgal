@@ -14,7 +14,7 @@
 #include <CGAL/Memory_sizer.h>
 
 // This package
-#include <CGAL/jet_smoothing_3.h>
+#include <CGAL/jet_smooth_point_set.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
 #include <deque>
@@ -56,18 +56,18 @@ void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
             << nb_neighbors_smooth_jet_fitting << "%=" << nb_neighbors << ")...\n";
 
   std::deque<Point> output;
-  CGAL::jet_smoothing_3(points.begin(), points.end(),
-                        std::back_inserter(output),
-                        nb_neighbors);
+  CGAL::jet_smooth_point_set(points.begin(), points.end(),
+                             std::back_inserter(output),
+                             nb_neighbors);
 
   // mutating version of the same function
-  CGAL::jet_smoothing_3(points.begin(), points.end(),
-                        nb_neighbors);
+  CGAL::jet_smooth_point_set(points.begin(), points.end(),
+                             nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
-                        << (memory>>20) << " Mb allocated"
-                        << std::endl;
+                      << (memory>>20) << " Mb allocated"
+                      << std::endl;
 }
 
 

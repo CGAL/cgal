@@ -1,4 +1,4 @@
-// outlier_removal_test.cpp
+// remove_outliers_test.cpp
 
 //----------------------------------------------------------
 // Test the outlier removal methods:
@@ -6,7 +6,7 @@
 // Input format is .xyz.
 // No output.
 //----------------------------------------------------------
-// outlier_removal_test points1.xyz points2.xyz...
+// remove_outliers_test points1.xyz points2.xyz...
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
@@ -15,7 +15,7 @@
 #include <CGAL/boost/graph/properties.h>
 
 // This package
-#include <CGAL/outlier_removal_3.h>
+#include <CGAL/remove_outliers.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
 #include <deque>
@@ -41,13 +41,13 @@ typedef Kernel::Point_3 Point;
 // ----------------------------------------------------------------------------
 
 void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
-                              double nb_neighbors_outlier_removal, // number of neighbors
+                              double nb_neighbors_remove_outliers, // number of neighbors
                               double threshold_percent_avg_knn_sq_dst) // percentage of points to remove
 {
   CGAL::Timer task_timer; task_timer.start();
 
   // percentage -> number of neighbors
-  int nb_neighbors = int(double(points.size()) * nb_neighbors_outlier_removal / 100.0);
+  int nb_neighbors = int(double(points.size()) * nb_neighbors_remove_outliers / 100.0);
   if (nb_neighbors < 7)
     nb_neighbors = 7;
   if ((unsigned int)nb_neighbors > points.size()-1)
@@ -55,20 +55,20 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
 
   std::cerr << "Remove outliers wrt average squared distance to k nearest neighbors (remove "
             << threshold_percent_avg_knn_sq_dst << "%, k="
-            << nb_neighbors_outlier_removal << "%=" << nb_neighbors << ")...\n";
+            << nb_neighbors_remove_outliers << "%=" << nb_neighbors << ")...\n";
 
   std::deque<Point> output;
-  CGAL::outlier_removal_3(
+  CGAL::remove_outliers(
                   points.begin(), points.end(),
                   std::back_inserter(output),
                   nb_neighbors,
                   threshold_percent_avg_knn_sq_dst);
 
   // mutating version of the same function
-  points.erase(CGAL::outlier_removal_3(
-                  points.begin(), points.end(),
-                  nb_neighbors,
-                  threshold_percent_avg_knn_sq_dst),
+  points.erase(CGAL::remove_outliers(
+               points.begin(), points.end(),
+               nb_neighbors,
+               threshold_percent_avg_knn_sq_dst),
                points.end());
 
   long memory = CGAL::Memory_sizer().virtual_size();
@@ -103,7 +103,7 @@ int main(int argc, char * argv[])
 
   // Outlier Removal options
   const double threshold_percent_avg_knn_sq_dst = 5.0 /* % */; // percentage of outliers to remove
-  const double nb_neighbors_outlier_removal = 0.05 /* % */; // K-nearest neighbors (outlier removal)
+  const double nb_neighbors_remove_outliers = 0.05 /* % */; // K-nearest neighbors (outlier removal)
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -144,7 +144,7 @@ int main(int argc, char * argv[])
     // Test
     //***************************************
 
-    test_avg_knn_sq_distance(points, nb_neighbors_outlier_removal, threshold_percent_avg_knn_sq_dst);
+    test_avg_knn_sq_distance(points, nb_neighbors_remove_outliers, threshold_percent_avg_knn_sq_dst);
 
   } // for each input file
 

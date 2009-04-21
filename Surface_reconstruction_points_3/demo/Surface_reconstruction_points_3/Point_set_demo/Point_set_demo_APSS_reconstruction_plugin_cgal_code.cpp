@@ -15,7 +15,7 @@
 
 // This package
 #include <CGAL/APSS_reconstruction_function.h>
-#include <CGAL/IO/surface_reconstruction_output_surface_facets.h>
+#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/polyhedron_connected_components.h>
 
 
@@ -117,7 +117,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
 
     // Convert to polyhedron
     Polyhedron* output_mesh = new Polyhedron;
-    CGAL::surface_reconstruction_output_surface_facets(surface_mesher_c2t3, *output_mesh);
+    CGAL::output_surface_facets_to_polyhedron(surface_mesher_c2t3, *output_mesh);
 
     //***************************************
     // Erase small connected components

@@ -42,7 +42,7 @@ enum { tag_free, tag_done };
 /// Get any vertex with tag == tag_free.
 ///
 /// @commentheading Template Parameters:
-/// @param Polyhedron an instance of CGAL::Polyhedron_3<>.
+/// @param Polyhedron an instance of CGAL::Polyhedron_3<Traits>.
 ///
 /// @return a list of pairs (component's size (number of vertices), a vertex of the component),
 /// ordered by size.
@@ -69,7 +69,7 @@ get_any_free_vertex(Polyhedron& polyhedron,
 /// Tag a "free" connected component as "done".
 ///
 /// @commentheading Template Parameters:
-/// @param Polyhedron an instance of CGAL::Polyhedron_3<>.
+/// @param Polyhedron an instance of CGAL::Polyhedron_3<Traits>.
 ///
 /// @return the size (number of vertices) of the component.
 template<class Polyhedron>
@@ -126,7 +126,7 @@ unsigned int tag_component(Polyhedron& polyhedron,
 /// Compute the list of all connected components of a polyhedron.
 ///
 /// @commentheading Template Parameters:
-/// @param Polyhedron an instance of CGAL::Polyhedron_3<> that supports vertices.
+/// @param Polyhedron an instance of CGAL::Polyhedron_3<Traits> that supports vertices.
 ///
 /// @return a list of components expressed as pairs (number of vertices, vertex),
 /// ordered by size.
@@ -136,7 +136,7 @@ get_polyhedron_connected_components(Polyhedron& polyhedron)
 {
     // Implementation note:
     // We tag vertices instead of halfedges to save a factor 6.
-    // The drawback is that we require the Polyhedron_3<> to support vertices.
+    // The drawback is that we require the Polyhedron_3<Traits> to support vertices.
     // TODO: replace std::map to tag vertices by a property map.
     Assert_compile_time_tag(typename Polyhedron::Supports_halfedge_vertex(), Tag_true());
     std::map<typename Polyhedron::Vertex*, int> tags;
@@ -174,7 +174,7 @@ get_polyhedron_connected_components(Polyhedron& polyhedron)
 /// erase all connected components but the largest.
 ///
 /// @commentheading Template Parameters:
-/// @param Polyhedron an instance of CGAL::Polyhedron_3<> that supports
+/// @param Polyhedron an instance of CGAL::Polyhedron_3<Traits> that supports
 /// vertices and removal operation.
 ///
 /// @return the number of connected components erased.

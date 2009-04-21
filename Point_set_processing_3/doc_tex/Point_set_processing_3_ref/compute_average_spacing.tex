@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: average_spacing_3.tex
+% | Reference manual page: compute_average_spacing.tex
 % +------------------------------------------------------------------------+
 % | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Point_set_processing_3
@@ -12,24 +12,24 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{average_spacing_3}  %% add template arg's if necessary
+\begin{ccRefFunction}{compute_average_spacing}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[function]{} %% add further index entries
 
 \ccDefinition
 
-\ccc{CGAL::average_spacing_3()} computes the average spacing of all points from the input set to their $k$ nearest neighbors.
+\ccc{CGAL::compute_average_spacing()} computes the average spacing of all points from the input set to their $k$ nearest neighbors.
 One version of this function requires a traits class. Another deduces it from the input data points.
 
 % question: can it take oriented points as well?
 
-\ccInclude{CGAL/average_spacing_3.h}
+\ccInclude{CGAL/compute_average_spacing.h}
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{template<typename InputIterator, typename Kernel> Kernel::FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int k, const Kernel& kernel);}
+\ccFunction{template<typename InputIterator, typename Kernel> Kernel::FT compute_average_spacing(InputIterator first, InputIterator beyond, unsigned int k, const Kernel& kernel);}
 {
 Compute average spacing from k nearest neighbors. This variant requires the kernel.
 \ccPrecond k $>$= 2.
@@ -42,7 +42,7 @@ Compute average spacing from k nearest neighbors. This variant requires the kern
 \item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator over input points. \item \ccc{k}: number of neighbors. \item \ccc{kernel}: geometric traits. \end{description}
 }
 \ccGlue
-\ccFunction{template<typename InputIterator, typename FT> FT average_spacing_3(InputIterator first, InputIterator beyond, unsigned int k);}
+\ccFunction{template<typename InputIterator, typename FT> FT compute_average_spacing(InputIterator first, InputIterator beyond, unsigned int k);}
 {
 Compute average spacing from k nearest neighbors. This variant deduces the kernel from iterator types.
 \ccPrecond k $>$= 2.

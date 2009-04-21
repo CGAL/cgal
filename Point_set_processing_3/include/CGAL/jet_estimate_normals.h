@@ -14,16 +14,15 @@
 // $URL$
 // $Id$
 //
-// Author(s) : Pierre Alliez and Laurent Saboret
+// Author(s) : Pierre Alliez and Laurent Saboret and Marc Pouget and Frederic Cazals
 
-#ifndef CGAL_PCA_NORMAL_ESTIMATION_H
-#define CGAL_PCA_NORMAL_ESTIMATION_H
+#ifndef CGAL_JET_ESTIMATE_NORMALS_H
+#define CGAL_JET_ESTIMATE_NORMALS_H
 
-#include <CGAL/Dimension.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/Orientable_normal_3.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Memory_sizer.h>
@@ -40,8 +39,8 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 
-/// Estimate normal direction using linear least
-/// squares fitting of a plane on the K nearest neighbors.
+/// Estimate normal direction using jet fitting
+/// on the k nearest neighbors.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
@@ -56,13 +55,13 @@ template < typename Kernel,
            typename OrientableNormal_3
 >
 OrientableNormal_3
-pca_normal_estimation(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
-                      Tree& tree, ///< KD-tree
-                      unsigned int k) ///< number of neighbors
+jet_estimate_normals(const typename Kernel::Point_3& query, ///< point to compute the normal at
+                     Tree& tree, ///< KD-tree
+                     unsigned int k, ///< number of neighbors
+                     unsigned int degree_fitting)
 {
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
-  typedef typename Kernel::Plane_3  Plane;
   typedef typename Kernel::Vector_3 Vector;
   typedef OrientableNormal_3 Oriented_normal;
 
@@ -70,6 +69,10 @@ pca_normal_estimation(const typename Kernel::Point_3& query, ///< 3D point whose
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
+
+  // types for jet fitting
+  typedef typename CGAL::Monge_via_jet_fitting<Kernel> Monge_jet_fitting;
+  typedef typename Monge_jet_fitting::Monge_form Monge_form;
 
   // Gather set of (k+1) neighboring points.
   // Perform k+1 queries (as in point set, the query point is
@@ -88,12 +91,14 @@ pca_normal_estimation(const typename Kernel::Point_3& query, ///< 3D point whose
   }
   CGAL_point_set_processing_precondition(points.size() >= 1);
 
-  // performs plane fitting by point-based PCA
-  Plane plane;
-  linear_least_squares_fitting_3(points.begin(),points.end(),plane,Dimension_tag<0>());
+  // performs jet fitting
+  Monge_jet_fitting monge_fit;
+  const unsigned int degree_monge = 1; // we seek for normal and not more.
+  Monge_form monge_form = monge_fit(points.begin(), points.end(),
+                                    degree_fitting, degree_monge);
 
-  // output normal vector (already normalized by PCA)
-  return OrientableNormal_3(plane.orthogonal_vector(),
+  // output normal vector (already normalized in monge form)
+  return OrientableNormal_3(monge_form.normal_direction(),
                             false /* not oriented */);
 }
 
@@ -106,8 +111,7 @@ pca_normal_estimation(const typename Kernel::Point_3& query, ///< 3D point whose
 // ----------------------------------------------------------------------------
 
 
-/// Estimate normal directions by linear least
-/// squares fitting of a plane over the k nearest neighbors.
+/// Estimate normal directions using jet fitting on the k nearest neighbors.
 /// The output normals are marked as unoriented.
 ///
 /// This variant requires the kernel.
@@ -125,13 +129,14 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-pca_normal_estimation(InputIterator first, ///< iterator over the first input point.
-                      InputIterator beyond, ///< past-the-end iterator over input points.
-                      OutputIterator normals, ///< output normals.
-                      unsigned int k, ///< number of neighbors.
-                      const Kernel& kernel) ///< geometric traits.
+jet_estimate_normals(InputIterator first, ///< iterator over the first input point.
+                     InputIterator beyond, ///< past-the-end iterator over input points.
+                     OutputIterator normals, ///< output normals.
+                     unsigned int k, ///< number of neighbors.
+                     const Kernel& kernel, ///< geometric traits.
+                     unsigned int degree_fitting)
 {
-  CGAL_TRACE("Call pca_normal_estimation()\n");
+  CGAL_TRACE("Call jet_estimate_normals()\n");
 
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   typedef typename value_type_traits<OutputIterator>::type Normal;
@@ -163,20 +168,18 @@ pca_normal_estimation(InputIterator first, ///< iterator over the first input po
   InputIterator it;
   for(it = first; it != beyond; it++)
   {
-    *normals = CGALi::pca_normal_estimation<Kernel,Tree,Normal>(*it,tree,k);
+    *normals = CGALi::jet_estimate_normals<Kernel,Tree,Normal>(*it,tree,k,degree_fitting);
     normals++;
   }
 
   /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-  CGAL_TRACE("End of pca_normal_estimation()\n");
+  CGAL_TRACE("End of jet_estimate_normals()\n");
 
   return normals;
 }
 
-/// Estimate normal directions by linear least
-/// squares fitting of a plane over the k nearest neighbors.
+/// Estimate normal directions using jet fitting on the k nearest neighbors.
 /// The output normals are marked as unoriented.
-///
 /// This variant deduces the kernel from iterator types.
 ///
 /// @commentheading Precondition: k >= 2.
@@ -190,18 +193,19 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-pca_normal_estimation(InputIterator first, ///< iterator over the first input point.
-                      InputIterator beyond, ///< past-the-end iterator over input points.
-                      OutputIterator normals, ///< output normals.
-                      unsigned int k) ///< number of neighbors.
+jet_estimate_normals(InputIterator first, ///< iterator over the first input point
+                     InputIterator beyond, ///< past-the-end iterator over input points
+                     OutputIterator normals, ///< output normals
+                     unsigned int k, ///< number of neighbors
+                     unsigned int degree_fitting = 2)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return pca_normal_estimation(first,beyond,normals,k,Kernel());
+  return jet_estimate_normals(first,beyond,normals,k,Kernel(),degree_fitting);
 }
 
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_PCA_NORMAL_ESTIMATION_H
+#endif // CGAL_JET_ESTIMATE_NORMALS_H
 

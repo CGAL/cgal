@@ -141,7 +141,7 @@ private:
     // Outlier removal
     double m_min_cameras_cone_angle; // min angle of camera's cone (degrees)
     double m_threshold_percent_avg_knn_sq_dst; // percentage of outliers to remove
-    double m_nb_neighbors_outlier_removal; // K-nearest neighbors (outlier_removal)
+    double m_nb_neighbors_remove_outliers; // K-nearest neighbors (remove_outliers)
 
     // Point set simplification
     double m_clustering_step; // Grid's step for simplification by clustering

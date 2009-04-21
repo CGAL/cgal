@@ -16,8 +16,8 @@
 //
 // Author(s) : Nader Salman and Laurent Saboret
 
-#ifndef CGAL_IMPROVED_LAPLACIAN_SMOOTHING_3_H
-#define CGAL_IMPROVED_LAPLACIAN_SMOOTHING_3_H
+#ifndef CGAL_IMPROVED_LAPLACIAN_SMOOTH_POINT_SET_H
+#define CGAL_IMPROVED_LAPLACIAN_SMOOTH_POINT_SET_H
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -140,7 +140,7 @@ laplacian_smoothing_3(
 template <typename Kernel,
           typename Tree>
 typename Kernel::Point_3
-improved_laplacian_smoothing_3(
+improved_laplacian_smooth_point_set(
                 const typename Kernel::Point_3& pi, ///< 3D point to smooth
                 const typename Kernel::Vector_3& bi, ///< bi movement
                 Tree& tree, ///< KD-tree
@@ -199,7 +199,7 @@ template <typename InputIterator,
           typename Kernel
 >
 OutputIterator
-improved_laplacian_smoothing_3(
+improved_laplacian_smooth_point_set(
                 InputIterator first,    ///< iterator over the first input point.
                 InputIterator beyond,   ///< past-the-end iterator over input points.
                 OutputIterator output,  ///< iterator over the first output point.
@@ -265,7 +265,7 @@ improved_laplacian_smoothing_3(
       // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
       for(it = first, i=0; it != beyond; it++, ++i)
       {
-          p[i] = improved_laplacian_smoothing_i::improved_laplacian_smoothing_3<Kernel>(p[i],b[i],tree,b,k,beta);
+          p[i] = improved_laplacian_smoothing_i::improved_laplacian_smooth_point_set<Kernel>(p[i],b[i],tree,b,k,beta);
       }
   }
 
@@ -298,7 +298,7 @@ improved_laplacian_smoothing_3(
 template <typename ForwardIterator,
           typename Kernel>
 void
-improved_laplacian_smoothing_3(
+improved_laplacian_smooth_point_set(
                 ForwardIterator first,     ///< iterator over the first input/output point.
                 ForwardIterator beyond,    ///< past-the-end iterator.
                 const unsigned int k,      ///< number of neighbors.
@@ -363,7 +363,7 @@ improved_laplacian_smoothing_3(
       // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
       for(it = first, i=0; it != beyond; it++, ++i)
       {
-          p[i] = improved_laplacian_smoothing_i::improved_laplacian_smoothing_3<Kernel>(p[i],b[i],tree,b,k,beta);
+          p[i] = improved_laplacian_smoothing_i::improved_laplacian_smooth_point_set<Kernel>(p[i],b[i],tree,b,k,beta);
       }
   }
 
@@ -389,7 +389,7 @@ template <typename InputIterator,
           typename OutputIterator
 >
 OutputIterator
-improved_laplacian_smoothing_3(
+improved_laplacian_smooth_point_set(
                 InputIterator first, ///< iterator over the first input point.
                 InputIterator beyond, ///< past-the-end iterator over input points.
                 OutputIterator output, ///< iterator over the first output point.
@@ -400,7 +400,7 @@ improved_laplacian_smoothing_3(
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Input_point_3;
   typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  return improved_laplacian_smoothing_3(first,beyond,output,k,iter_number,Kernel(),alpha, beta);
+  return improved_laplacian_smooth_point_set(first,beyond,output,k,iter_number,Kernel(),alpha, beta);
 }
 
 /// Improved Laplacian smoothing (Vollmer et al)
@@ -418,7 +418,7 @@ improved_laplacian_smoothing_3(
 /// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
 template <typename ForwardIterator>
 void
-improved_laplacian_smoothing_3(
+improved_laplacian_smooth_point_set(
                 ForwardIterator first, ///< iterator over the first input/output point.
                 ForwardIterator beyond, ///< past-the-end iterator.
                 unsigned int k, ///< number of neighbors.
@@ -428,11 +428,11 @@ improved_laplacian_smoothing_3(
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
   typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  improved_laplacian_smoothing_3(first,beyond,k,iter_number,Kernel(),alpha, beta);
+  improved_laplacian_smooth_point_set(first,beyond,k,iter_number,Kernel(),alpha, beta);
 }
 
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_IMPROVED_LAPLACIAN_SMOOTHING_3_H
+#endif // CGAL_IMPROVED_LAPLACIAN_SMOOTH_POINT_SET_H
 
