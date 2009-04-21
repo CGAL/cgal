@@ -39,19 +39,6 @@ This variant exports the surface as a triangle soup.
 \item \ccc{c2t3}: Input surface. \item \ccc{output_iterator}: Output iterator. \end{description}
 }
 \ccGlue
-\ccFunction{template<class SurfaceMeshComplex_2InTriangulation_3, class PolyhedronTraits_3, class PolyhedronItems_3, template<class T, class I, class A> class HalfedgeDS, class Alloc> void output_surface_facets_to_triangle_soup(const SurfaceMeshComplex_2InTriangulation_3& c2t3, Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3, HalfedgeDS, Alloc>& output_polyhedron);}
-{
-Get reconstructed surface out of a \ccc{SurfaceMeshComplex_2InTriangulation_3} object.
-This variant exports the surface as a polyhedron. It requires the surface to be manifold. For this purpose, you may call \ccc{make_surface_mesh}() with \ccc{Manifold_tag} or \ccc{Manifold_with_boundary_tag} parameter.
-\ccCommentHeading{Template Parameters}
-\begin{description}
-\item \ccc{SurfaceMeshComplex_2InTriangulation_3}: model of the \ccc{SurfaceMeshComplex_2InTriangulation_3} concept. \item \ccc{PolyhedronTraits_3, PolyhedronItems_3, HalfedgeDS, Alloc}: see \ccc{Polyhedron_3} declaration.\end{description}
-\ccCommentHeading{Returns} true on success.
-\ccCommentHeading{Parameters}
-\begin{description}
-\item \ccc{c2t3}: Input surface. \item \ccc{output_polyhedron}: Output polyhedron. \end{description}
-}
-\ccGlue
 
 %END-AUTO(\ccDefinition)
 
