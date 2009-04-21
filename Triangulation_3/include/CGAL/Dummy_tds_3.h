@@ -21,7 +21,6 @@
 #define CGAL_TRIANGULATION_DUMMY_TDS_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
 

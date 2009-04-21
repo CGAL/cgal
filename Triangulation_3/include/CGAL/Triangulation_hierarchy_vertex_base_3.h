@@ -14,7 +14,6 @@
 // $URL$
 // $Id$
 // 
-//
 // Author(s)     : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
 //                 Sylvain Pion
 
@@ -22,7 +21,6 @@
 #define CGAL_TRIANGULATION_HIERARCHY_VERTEX_BASE_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
 

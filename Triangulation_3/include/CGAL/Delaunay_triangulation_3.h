@@ -19,7 +19,6 @@
 //                 Sylvain Pion
 //                 Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
 
-
 #ifndef CGAL_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_DELAUNAY_TRIANGULATION_3_H
 
@@ -28,7 +27,6 @@
 #include <utility>
 #include <vector>
 
-#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_remove_tds_3.h>
 #include <CGAL/iterator.h>

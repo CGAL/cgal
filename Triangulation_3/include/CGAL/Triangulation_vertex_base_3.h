@@ -13,7 +13,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
@@ -21,7 +20,6 @@
 #define CGAL_TRIANGULATION_VERTEX_BASE_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
 
 CGAL_BEGIN_NAMESPACE

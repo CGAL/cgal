@@ -13,14 +13,12 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
 #ifndef CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
 #define CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
 
-#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/circulator_bases.h>

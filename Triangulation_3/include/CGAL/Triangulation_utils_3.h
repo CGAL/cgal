@@ -13,7 +13,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
@@ -22,7 +21,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_utils_2.h>
 
 CGAL_BEGIN_NAMESPACE

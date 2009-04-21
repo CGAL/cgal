@@ -26,7 +26,6 @@
 
 #include <set>
 
-#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 

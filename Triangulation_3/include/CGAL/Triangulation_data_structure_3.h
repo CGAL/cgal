@@ -13,16 +13,13 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
-//
+
 // combinatorial triangulation of the boundary of a polytope
 // of dimension d in dimension d+1
 // for -1 <= d <= 3
-//
-// ============================================================================
 
 #ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
@@ -38,7 +35,6 @@
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 
-#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
 

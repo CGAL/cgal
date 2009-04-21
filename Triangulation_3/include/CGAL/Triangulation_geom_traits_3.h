@@ -13,14 +13,11 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
 //                 Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//
+
 // geometric traits for a <=3 D triangulation
-//
-// ============================================================================
 
 // OBSOLETE !!!!!!!!!!!!!!!!!
 
@@ -30,7 +27,6 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
 

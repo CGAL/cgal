@@ -13,7 +13,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Sylvain Pion
 //                 Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -23,7 +22,6 @@
 #define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Weighted_point.h>
 #include <CGAL/representation_tags.h>
