@@ -297,27 +297,6 @@ CGAL_DEPRECATED void foo(int i)
 
 \subsection{Various other problems and solutions\label{sec:various_problems}}
 
-%\subsection{The Long-name Problem}
-%\label{sec:long_name_problem}
-%
-%Because of the decisions to avoid using abbreviations in identifiers
-%and to write generic code using template parameters, the names of things
-%in \cgal\ can become a little long.  No, make that very long.
-%While one can argue that 
-%the genericty and readability of the code are good reasons to have such
-%long names, some assemblers and compilers are not so easily convinced; 
-%they have problems 
-%with names that are beyond a certain length. In particular, the Solaris 
-%assembler limit names to about ??? and VC++ truncates names used in
-%debugging to about 250 bytes and, in general, to about 2000 bytes.  
-%For Solaris, the solution is to install the GNU assemblers ({\tt gas}).
-%However, since this is not always possible (and is not a solution for
-%VC++), one should also define a file of abbreviations for those classes
-%where the problems appear.  See the file 
-%\ccAnchor{http://www.cgal.org/Manual/include/CGAL/Triangulation_short_names_2.h}{\texttt{<CGAL/Triangulation\_short\_names\_2.h>}}
-%for an example of such a file.
-%
-
 \begin{description}
 \item[\textbf{Templated member functions}]
 
