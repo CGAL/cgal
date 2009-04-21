@@ -22,7 +22,6 @@
 
 #include <iterator>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names_2.h>
 //#include <CGAL/Triangulation_iterator_adaptator.h>
 
 CGAL_BEGIN_NAMESPACE

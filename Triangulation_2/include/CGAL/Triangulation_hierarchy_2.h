@@ -22,7 +22,6 @@
 #define CGAL_TRIANGULATION_HIERARCHY_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Random.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 #include <map>

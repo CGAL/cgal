@@ -31,7 +31,6 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/Ray_2.h>
 
-#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_hierarchy_2.h>

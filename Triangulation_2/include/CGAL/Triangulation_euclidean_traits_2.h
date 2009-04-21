@@ -30,7 +30,6 @@
 #include <CGAL/distance_predicates_2.h>
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Segment_2_Segment_2_intersection.h>
 
 CGAL_BEGIN_NAMESPACE 

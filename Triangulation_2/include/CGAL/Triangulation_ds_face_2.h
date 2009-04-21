@@ -21,7 +21,6 @@
 #define CGAL_TRIANGULATION_DS_FACE_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_utils_2.h>
 
 CGAL_BEGIN_NAMESPACE 

@@ -31,7 +31,6 @@
 #include <boost/tuple/tuple.hpp>
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_utils_2.h>
  
 #include <CGAL/Compact_container.h>

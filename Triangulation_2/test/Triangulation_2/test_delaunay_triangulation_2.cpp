@@ -24,7 +24,6 @@
 
 #include <CGAL/_test_types.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>

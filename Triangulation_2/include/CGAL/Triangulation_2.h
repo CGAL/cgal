@@ -17,8 +17,6 @@
 //
 // Author(s)     : Olivier Devillers, Mariette Yvinec
 
-
-
 #ifndef CGAL_TRIANGULATION_2_H
 #define CGAL_TRIANGULATION_2_H
 
@@ -33,7 +31,6 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 
-#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
 

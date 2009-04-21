@@ -17,11 +17,9 @@
 //
 // Author(s)     : Mariette Yvinec
 
-
 #ifndef CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XZ_3_H
 #define CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XZ_3_H
 
-#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/triangulation_assertions.h>
 
 #include <CGAL/Point_3.h>

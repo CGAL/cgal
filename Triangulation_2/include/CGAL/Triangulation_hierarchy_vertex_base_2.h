@@ -22,7 +22,6 @@
 #define CGAL_TRIANGULATION_HIERARCHY_VERTEX_BASE_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Triangulation_short_names_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

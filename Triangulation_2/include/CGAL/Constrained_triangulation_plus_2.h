@@ -21,7 +21,6 @@
 #define CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Constraint_hierarchy_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 

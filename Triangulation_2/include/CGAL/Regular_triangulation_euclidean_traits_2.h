@@ -23,7 +23,6 @@
 
 #include <CGAL/Weighted_point.h>
 #include <CGAL/number_utils_classes.h>
-#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Kernel_traits.h>
 

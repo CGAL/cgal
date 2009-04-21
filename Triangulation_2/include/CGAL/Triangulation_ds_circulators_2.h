@@ -25,7 +25,6 @@
 #include <iterator>
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_utils_2.h>
 
 CGAL_BEGIN_NAMESPACE
