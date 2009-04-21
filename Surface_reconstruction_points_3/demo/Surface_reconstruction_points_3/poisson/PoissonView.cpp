@@ -315,7 +315,7 @@ void CPoissonView::OnPaint()
         pDoc->poisson_function()->triangulation().gl_draw_delaunay_edges(0,0,0 /*black*/, 1.0f /*size*/);
 
     // draw normals
-    float normal_length = (float)sqrt(region_of_interest.squared_radius() / 10000.);
+    float normal_length = (float)sqrt(region_of_interest.squared_radius() / 1000.);
     if(m_view_normals && points_have_normals)
     {
       if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
