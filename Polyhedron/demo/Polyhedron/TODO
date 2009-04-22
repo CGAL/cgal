@@ -1,0 +1,4 @@
+- The two following files have not yet been ported to the plugin stuff:
+    MainWindow_curvature_estimation.cpp
+    MainWindow_parameterization.cpp
+
