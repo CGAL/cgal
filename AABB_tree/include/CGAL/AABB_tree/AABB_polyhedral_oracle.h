@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez
 
@@ -26,6 +26,9 @@
 
 #include <CGAL/point_generators_3.h>
 #include <CGAL/AABB_tree/AABB_tree.h>
+#include <CGAL/AABB_tree/AABB_traits.h>
+#include <CGAL/AABB_tree/AABB_triangle_primitive.h>
+
 #include <boost/shared_ptr.hpp>
 
 namespace CGAL {
@@ -46,10 +49,16 @@ namespace CGAL {
     typedef Self Surface_3;
 
     // AABB tree
-    typedef AABB_tree<AABBTree_kernel,typename Polyhedron::Facet_const_handle,Polyhedron> Tree;
-    typedef typename Tree::Point_with_input Point_with_facet_handle;
-    typedef CGAL::Cartesian_converter<Kernel,AABBTree_kernel> Converter;
-    typedef CGAL::Cartesian_converter<AABBTree_kernel,Kernel> BConverter;
+//    typedef AABB_tree<AABBTree_kernel,typename Polyhedron::Facet_const_handle,Polyhedron> Tree;
+//    typedef typename Tree::Point_with_input Point_with_facet_handle;
+//    typedef CGAL::Cartesian_converter<Kernel,AABBTree_kernel> Converter;
+//    typedef CGAL::Cartesian_converter<AABBTree_kernel,Kernel> BConverter;
+    typedef class AABB_triangle_primitive<Kernel, Polyhedron> AABB_primitive;
+    typedef class AABB_traits<Kernel,AABB_primitive> AABB_traits;
+    typedef class AABB_tree<AABB_traits> Tree;
+    typedef typename AABB_traits::Bounding_box Bounding_box;
+
+
 
     typedef boost::shared_ptr<Tree> Tree_shared_ptr;
     Tree_shared_ptr m_pTree;
@@ -61,8 +70,9 @@ namespace CGAL {
     // Surface constructor
     AABB_polyhedral_oracle(const Polyhedron& poly)
     {
-      m_pTree = Tree_shared_ptr(new Tree);
-      tree()->build_faces(poly);
+      m_pTree = Tree_shared_ptr(new Tree(poly.facets_begin(),
+                                         poly.facets_end()));
+      //tree()->build_faces(poly);
     }
 
     AABB_polyhedral_oracle(const AABB_polyhedral_oracle& oracle)
@@ -82,35 +92,63 @@ namespace CGAL {
 
       Object operator()(const Surface_3& surface, const Segment_3& segment) const
       {
-	Converter convert;
-	BConverter bconvert;
-	Point_with_facet_handle pwh;
-	if(surface.tree()->first_intersection(convert(segment),pwh))
-	  return make_object(bconvert(pwh.first));
-	else
-	  return Object();
+        Intersection_point intersect_pt;
+        if ( surface.tree()->any_intersection(segment, intersect_pt) )
+        {
+          return make_object(intersect_pt);
+        }
+        else
+        {
+          return Object();
+        }
+//
+//	Converter convert;
+//	BConverter bconvert;
+//	Point_with_facet_handle pwh;
+//	if(surface.tree()->first_intersection(convert(segment),pwh))
+//	  return make_object(bconvert(pwh.first));
+//	else
+//	  return Object();
       }
 
       Object operator()(const Surface_3& surface, const Ray_3& ray) const
       {
-	Converter convert;
-	BConverter bconvert;
-	Point_with_facet_handle pwh;
-	if(surface.tree()->first_intersection(convert(ray),pwh))
-	  return make_object(bconvert(pwh.first));
-	else
-	  return Object();
+        Intersection_point intersect_pt;
+        if ( surface.tree()->any_intersection(ray, intersect_pt) )
+        {
+          return make_object(intersect_pt);
+        }
+        else
+        {
+          return Object();
+        }
+//	Converter convert;
+//	BConverter bconvert;
+//	Point_with_facet_handle pwh;
+//	if(surface.tree()->first_intersection(convert(ray),pwh))
+//	  return make_object(bconvert(pwh.first));
+//	else
+//	  return Object();
       }
 
       Object operator()(const Surface_3& surface, const Line_3& line) const
       {
-	Converter convert;
-	BConverter bconvert;
-	Point_with_facet_handle pwh;
-	if(surface.tree()->first_intersection(convert(line),pwh))
-	  return make_object(bconvert(pwh.first));
-	else
-	  return Object();
+        Intersection_point intersect_pt;
+        if ( surface.tree()->any_intersection(line, intersect_pt) )
+        {
+          return make_object(intersect_pt);
+        }
+        else
+        {
+          return Object();
+        }
+//	Converter convert;
+//	BConverter bconvert;
+//	Point_with_facet_handle pwh;
+//	if(surface.tree()->first_intersection(convert(line),pwh))
+//	  return make_object(bconvert(pwh.first));
+//	else
+//	  return Object();
       }
     };
 
@@ -132,9 +170,9 @@ namespace CGAL {
       }
 
       template <typename OutputIteratorPoints>
-      OutputIteratorPoints operator() (const Surface_3& surface, 
-	OutputIteratorPoints out, 
-	int n) const 
+      OutputIteratorPoints operator() (const Surface_3& surface,
+	OutputIteratorPoints out,
+	int n) const
       {
 	// TODO (with visitor)
 	std::cout << "AABB_polyhedral_oracle: construct initial point set not implemented" << std::endl;
@@ -151,7 +189,8 @@ namespace CGAL {
     template <class P>
     bool is_in_volume(const Surface_3& surface, const P& p)
     {
-      const Bbox_3 bbox = surface.tree()->bbox();
+      const Bounding_box bbox = surface.tree()->root_bbox();
+//      const Bbox_3 bbox = surface.tree()->bbox();
       if(p.x() < bbox.xmin() || p.x() > bbox.xmax())
         return false;
       if(p.y() < bbox.ymin() || p.y() > bbox.ymax())
@@ -159,7 +198,7 @@ namespace CGAL {
       if(p.z() < bbox.zmin() || p.z() > bbox.zmax())
         return false;
 
-      const double diameter = surface.tree()->max_bbox_length() * 2;
+      const double diameter = max_bbox_length(bbox) * 2;
 
       typename CGAL::Random_points_on_sphere_3<Point_3> random_point(FT(1));
       typename Kernel::Construct_vector_3 vector =
@@ -168,18 +207,29 @@ namespace CGAL {
         Kernel().construct_segment_3_object();
       typename Kernel::Construct_translated_point_3 translate =
         Kernel().construct_translated_point_3_object();
-      typename Kernel::Construct_scaled_vector_3 scale = 
+      typename Kernel::Construct_scaled_vector_3 scale =
         Kernel().construct_scaled_vector_3_object();
 
-      const Segment_3 seg =  
-        segment(p, translate(p, 
+      const Segment_3 seg =
+        segment(p, translate(p,
                              scale(vector(ORIGIN,
                                           *random_point),
                                    diameter)));
-      Converter convert;
-      return (surface.tree()->count_intersections(convert(seg))
+//      Converter convert;
+      return (surface.tree()->number_of_intersections(seg)
               % 2) == 1;
+//      return (surface.tree()->count_intersections(convert(seg))
+//              % 2) == 1;
     }
+
+  private:
+    double max_bbox_length(const Bounding_box& bbox) const
+    {
+      return (std::max)(bbox.xmax()-bbox.xmin(),
+                       (std::max)(bbox.ymax()-bbox.ymin(),
+                                  bbox.zmax()-bbox.zmin()));
+    }
+
   }; // end class AABB_polyhedral_oracle
 
 } // end namespace CGAL

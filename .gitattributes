@@ -14,6 +14,9 @@ AABB_tree/doc_tex/AABB_tree_ref/AABB_tree.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/intro.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/main.tex -text
 AABB_tree/dont_submit -text
+AABB_tree/include/CGAL/AABB_tree/AABB_traits.h -text
+AABB_tree/include/CGAL/AABB_tree/AABB_triangle_primitive.h -text
+AABB_tree/include/CGAL/AABB_tree/Triangle_3_line_3_intersection.h -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations.png -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations2.png -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/algebraic_structures.tex -text

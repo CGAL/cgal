@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     :  Camille Wormser, Jane Tournois, Pierre Alliez
 
@@ -26,21 +26,22 @@
 namespace CGAL {
 namespace AABB {
 
+template<typename Primitive, typename Node>
 struct Drawing_traits
 {
   typedef CGAL::Bbox_3 Bbox;
   bool go_further() { return true; }
-  template <class Input>
-  bool intersection(const int&, const Input& i)
+
+  bool intersection(const int&, const Primitive&)
   {
     //     gl_draw(m_psc.compute_bbox(i));
     return true;
   }
-  template <class Node>
+
   bool do_intersect(const int&, // unused
                     const Node& node)
   {
-    gl_draw(node.bbox());
+    gl_draw(node.bounding_box());
     return true;
   }
 
@@ -82,7 +83,7 @@ struct Drawing_traits
   static void gl_draw_edge(double px, double py, double pz,
                            double qx, double qy, double qz)
   {
-    ::glVertex3d(px,py,pz); 
+    ::glVertex3d(px,py,pz);
     ::glVertex3d(qx,qy,qz);
   }
 }; // Drawing_traits

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     :  Laurent Rineau
 
@@ -21,18 +21,19 @@
 #define CGAL_TRIANGLE_3_RAY_3_INTERSECTION_H
 
 #include <CGAL/kernel_basic.h>
+#include <CGAL/intersections.h>
 
 namespace CGAL {
 namespace CGALi {
 template <class K>
 Object
-intersection(const typename K::Triangle_3  &t, 
-	     const typename K::Ray_3 &r, 
+intersection(const typename K::Triangle_3  &t,
+	     const typename K::Ray_3 &r,
 	     const K& k)
 {
 	// TOFIX: here we assume that we have already tested
 	// do_intersection between the triangle and the ray
-  return CGAL::intersection(t.supporting_plane(), 
+  return CGAL::intersection(t.supporting_plane(),
                             r);
 }
 
@@ -40,8 +41,16 @@ intersection(const typename K::Triangle_3  &t,
 
 template <class K>
 inline
-Object 
+Object
 intersection(const Triangle_3<K> &t, const Ray_3<K> &r)
+{
+  return typename K::Intersect_3()(t, r);
+}
+
+template <class K>
+inline
+Object
+intersection(const Ray_3<K> &r, const Triangle_3<K> &t)
 {
   return typename K::Intersect_3()(t, r);
 }
