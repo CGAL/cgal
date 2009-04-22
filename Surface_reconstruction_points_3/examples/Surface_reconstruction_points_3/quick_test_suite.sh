@@ -67,6 +67,9 @@ run()
 #                    main
 #---------------------------------------------------------------------#
 
+# Backup previous log file
+[ -f quick_test_suite.log ] && mv -f quick_test_suite.log quick_test_suite.log.bak
+
 # start redirection to log file
 (
 
