@@ -2798,55 +2798,55 @@ Polygon/doc_tex/Polygon/pgn_algos.ipe -text svneol=unset#application/postscript
 Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#application/pdf
 Polygon/doc_tex/Polygon/pgn_algos.xml svneol=native#text/xml
 Polygon/doc_tex/Polygon/polygon.png -text
-Polyhedron/demo/Polyhedron/MainWindow.ui -text
-Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
-Polyhedron/demo/Polyhedron/data/anchor.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/bones.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/bull.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/couplingdown.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/cow.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/cross.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/cube.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/dragknob.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/elephant.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/ellipsoid.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/fandisk.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/femur.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/handle.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/icosahedron.off -text
-Polyhedron/demo/Polyhedron/data/joint.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/knot1.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/knot2.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/lion-head.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/man.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/mushroom.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/oblong.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/pinion.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/pipe.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/pyramid.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/retinal.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/rotor.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/sphere.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/spool.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/star.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/translated-cube.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/tripod.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/turbine.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/resources/about.html svneol=native#text/html
-Polyhedron/demo/Polyhedron/resources/boolean-diff.png -text svneol=unset#image/png
-Polyhedron/demo/Polyhedron/resources/boolean-intersection.png -text svneol=unset#image/png
-Polyhedron/demo/Polyhedron/resources/boolean-union.png -text svneol=unset#image/png
-Polyhedron/demo/Polyhedron/resources/check-off.png -text svneol=unset#image/png
-Polyhedron/demo/Polyhedron/resources/check-off.svg -text
-Polyhedron/demo/Polyhedron/resources/check-on.png -text svneol=unset#image/png
-Polyhedron/demo/Polyhedron/resources/check.svg -text
-Polyhedron/demo/Polyhedron/resources/convex-hull.png -text svneol=unset#image/png
-Polyhedron/demo/Polyhedron/resources/editcopy.png -text svneol=unset#image/png
-Polyhedron/demo/Polyhedron/resources/kernel.png -text svneol=unset#image/png
-Polyhedron/demo/Polyhedron/resources/minus.png -text svneol=unset#image/png
-Polyhedron/demo/Polyhedron/resources/plus.png -text svneol=unset#image/png
-Polyhedron/demo/Polyhedron/resources/simplification.png -text svneol=unset#image/png
-Polyhedron/demo/Polyhedron/texture.h -text
+Polyhedron/demo/Polyhedron.old/MainWindow.ui -text
+Polyhedron/demo/Polyhedron.old/Polyhedron_3.qrc -text
+Polyhedron/demo/Polyhedron.old/data/anchor.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/bones.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/bull.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/couplingdown.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/cow.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/cross.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/cube.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/dragknob.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/elephant.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/ellipsoid.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/fandisk.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/femur.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/handle.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/icosahedron.off -text
+Polyhedron/demo/Polyhedron.old/data/joint.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/knot1.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/knot2.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/lion-head.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/man.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/mushroom.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/oblong.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/pinion.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/pipe.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/pyramid.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/retinal.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/rotor.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/sphere.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/spool.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/star.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/translated-cube.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/tripod.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/data/turbine.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron.old/resources/about.html svneol=native#text/html
+Polyhedron/demo/Polyhedron.old/resources/boolean-diff.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron.old/resources/boolean-intersection.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron.old/resources/boolean-union.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron.old/resources/check-off.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron.old/resources/check-off.svg -text
+Polyhedron/demo/Polyhedron.old/resources/check-on.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron.old/resources/check.svg -text
+Polyhedron/demo/Polyhedron.old/resources/convex-hull.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron.old/resources/editcopy.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron.old/resources/kernel.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron.old/resources/minus.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron.old/resources/plus.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron.old/resources/simplification.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron.old/texture.h -text
 Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/euler_center.ips -text svneol=unset#application/postscript
