@@ -2775,8 +2775,7 @@ Point_set_processing_3/examples/Point_set_processing_3/data/sphere_20k.xyz -text
 Point_set_processing_3/examples/Point_set_processing_3/normal_estimation.cmd eol=lf
 Point_set_processing_3/examples/Point_set_processing_3/quick_test_suite.bat eol=crlf
 Point_set_processing_3/examples/Point_set_processing_3/quick_test_suite.sh eol=lf
-Point_set_processing_3/include/CGAL/Neighborhood/knn_point_neighbor_search.h -text
-Point_set_processing_3/include/CGAL/Neighborhood/point_kdtree_3.h -text
+Point_set_processing_3/include/CGAL/Fast_orthogonal_k_neighbor_search.h -text
 Point_set_processing_3/include/CGAL/Orientable_normal_3.h -text
 Point_set_processing_3/include/CGAL/compute_average_spacing.h -text
 Point_set_processing_3/include/CGAL/jet_smooth_point_set.h -text

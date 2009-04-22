@@ -23,15 +23,9 @@
 #include <vector>
 #include <algorithm>
 
-#define MLS_USE_CUSTOM_KDTREE
-
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/make_surface_mesh.h>
-#ifdef MLS_USE_CUSTOM_KDTREE
-#include <CGAL/Neighborhood/knn_point_neighbor_search.h>
-#else
-#include <CGAL/Orthogonal_k_neighbor_search.h>
-#endif
+#include <CGAL/Fast_orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 #include <CGAL/Min_sphere_d.h>
@@ -104,18 +98,11 @@ private:
     public:
       typedef Point PointType;
   };
-  #ifdef MLS_USE_CUSTOM_KDTREE
-  typedef knn_point_neighbor_search<TreeTraits> Neighbor_search;
-  #else
-  typedef Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
-  #endif
+
+  typedef Fast_orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
-
-//   typedef Orthogonal_k_neighbor_search<TreeTraits> CNeighbor_search;
-//   typedef typename CNeighbor_search::Tree CTree;
-
-  typedef typename Neighbor_search::Point_with_transformed_distance
-                                    Point_with_transformed_distance;
+  typedef typename Neighbor_search::Point_ptr_with_transformed_distance
+                                    Point_ptr_with_transformed_distance;
 
 // Public methods
 public:
@@ -134,6 +121,7 @@ public:
   {
     // Allocate smart pointer to data
     m = new Private;
+    m->cached_nearest_neighbor.first = 0;
 
     int nb_points = std::distance(first, beyond);
 
@@ -147,33 +135,19 @@ public:
     {
       m->treeElements.push_back(KdTreeElement(*it,i));
     }
-    #ifdef MLS_USE_CUSTOM_KDTREE
-    m->tree = new Tree(ConstDataWrapper<Point>(static_cast<const Point*>(&(m->treeElements[0])), m->treeElements.size(), sizeof(KdTreeElement)), &(m->treeElements[0]));
-    #else
     m->tree = new Tree(m->treeElements.begin(), m->treeElements.end());
-    #endif
-//     CTree* ctree = new CTree(m->treeElements.begin(), m->treeElements.end());
 
     // Compute the radius of each point = (distance max to k nearest neighbors)/2.
     // The union of these balls defines the surface definition domain.
     m->radii.resize(nb_points);
-//     for (int y=0; y<40; ++y)
+    // FIXME the radii should be computed by another component
     {
       int i=0;
       for (InputIterator it=first ; it != beyond ; ++it, ++i)
       {
-        Neighbor_search search(*(m->tree), *it, 16); // why 16?
-        typename Neighbor_search::iterator last=search.end(); --last;
-        FT maxdist2 = last->second; // squared distance to furthest neighbor
+        Neighbor_search search(*(m->tree), *it, 16);
+        FT maxdist2 = search.begin()->second; // squared distance to furthest neighbor
         m->radii[i] = sqrt(maxdist2)/2.;
-
-//         for (typename Neighbor_search::iterator it = search.begin(); it != search.end(); ++it)
-//           std::cout << it->first.index << " ";
-//         std::cout << "\n";
-//         CNeighbor_search csearch(*ctree, *it, 8);
-//         for (typename CNeighbor_search::iterator it = csearch.begin(); it != csearch.end(); ++it)
-//           std::cout << it->first.index << " ";
-//         std::cout << "\n\n";
       }
     }
 
@@ -222,8 +196,7 @@ private:
   */
   void fit(const Neighbor_search& search) const
   {
-    typename Neighbor_search::iterator last=search.end(); --last;
-    FT r2 = last->second; // squared distance to furthest neighbor
+    FT r2 = search.begin()->second; // squared distance to furthest neighbor
 
     Vector sumP(0,0,0);
     Vector sumN(0,0,0);
@@ -235,8 +208,8 @@ private:
     FT invr2 = 1./r2;
     for (typename Neighbor_search::iterator it = search.begin(); it != search.end(); ++it)
     {
-      Vector p = it->first - CGAL::ORIGIN;
-      const Vector& n = it->first.normal();
+      Vector p = *(it->first) - CGAL::ORIGIN;
+      const Vector& n = it->first->normal();
       FT w = 1. - it->second*invr2;
       w = w*w; w = w*w;
 
@@ -257,9 +230,9 @@ private:
   /** Check whether the point 'p' is close to the input points or not.
       We assume that it's not if it is far from its nearest neighbor.
   */
-  inline bool isValid(const Point_with_transformed_distance& nearest_neighbor, const Point& /* p */) const
+  inline bool isValid(const Point_ptr_with_transformed_distance& nearest_neighbor, const Point& /* p */) const
   {
-      FT r = 2. * m->radii[nearest_neighbor.first.index];
+      FT r = 2. * m->radii[nearest_neighbor.first->index];
       return (r*r > nearest_neighbor.second);
   }
 
@@ -276,8 +249,9 @@ public:
     // Optimization: test first if 'p' is close to one of the neighbors
     //               computed during the previous call.
     typename Geom_traits::Compute_squared_distance_3 sqd;
-    m->cached_nearest_neighbor.second = sqd(p, m->cached_nearest_neighbor.first);
-    if (!isValid(m->cached_nearest_neighbor, p))
+    if (m->cached_nearest_neighbor.first)
+      m->cached_nearest_neighbor.second = sqd(p, *m->cached_nearest_neighbor.first);
+    if (!(m->cached_nearest_neighbor.first && isValid(m->cached_nearest_neighbor, p)))
     {
       // Compute the nearest neighbor and cache it
       KdTreeElement query(p);
@@ -289,7 +263,7 @@ public:
       {
         // If 'p' is far from the surface, project its nearest neighbor onto the surface...
         Vector n;
-        Point pp = m->cached_nearest_neighbor.first;
+        Point pp = *m->cached_nearest_neighbor.first;
         project(pp,n,1);
         // ...and return the (signed) distance to the surface
         Vector h = sub(p,pp);
@@ -297,10 +271,10 @@ public:
       }
     }
 
-    // Compute k nearest neighbors and cache the first one
+    // Compute k nearest neighbors and cache the nearest one
     KdTreeElement query(p);
     Neighbor_search search_knn(*(m->tree), query, m->nofNeighbors);
-    m->cached_nearest_neighbor = *(search_knn.begin());
+    m->cached_nearest_neighbor = search_nearest(search_knn);
 
     // If 'p' is close to the surface, fit an algebraic sphere
     // on a set of neigbors in a Moving Least Square sense.
@@ -318,6 +292,16 @@ public:
 
 // Private methods:
 private:
+
+  const Point_ptr_with_transformed_distance& search_nearest(const Neighbor_search& search) const
+  {
+    typename Neighbor_search::iterator last=search.end(); --last;
+    typename Neighbor_search::iterator nearest_it = last;
+    for (typename Neighbor_search::iterator it = search.begin(); it != last; ++it)
+      if (it->second < nearest_it->second)
+        nearest_it = it;
+    return *nearest_it;
+  }
 
   /** Projects the point p onto the MLS surface.
   */
@@ -339,12 +323,15 @@ private:
 
       Neighbor_search search(*(m->tree), p, m->nofNeighbors);
 
+      // neighbors are not sorted anymore,
+      // let's find the nearest
+      Point_ptr_with_transformed_distance nearest = search_nearest(search);
       // if p is far away the input point cloud, start with the closest point.
-      if (!isValid(*(search.begin()),p))
+      if (!isValid(nearest,p))
       {
-        p = search.begin()->first;
-        n = search.begin()->first.normal();
-        delta2 = search.begin()->second;
+        p = *nearest.first;
+        n =  nearest.first->normal();
+        delta2 = nearest.second;
       }
       else
       {
@@ -357,7 +344,7 @@ private:
           Vector dir = normalize(sub(source,m->as.center));
           p = add(m->as.center,mul(m->as.radius,dir));
           FT flipN = m->as.u4<0. ? -1. : 1.;
-          if (!isValid(*(search.begin()),p))
+          if (!isValid(nearest,p))
           {
             // if the closest intersection is far away the input points,
             // then we take the other one.
@@ -366,7 +353,7 @@ private:
           }
           n = mul(flipN,dir);
 
-          if (!isValid(*(search.begin()),p))
+          if (!isValid(nearest,p))
           {
             std::cout << "Invalid projection\n";
           }
@@ -570,7 +557,7 @@ private:
     unsigned int nofNeighbors; // Number of nearest neighbors
     Point inner_point; // Point inside the surface
     mutable AlgebraicSphere as;
-    mutable Point_with_transformed_distance cached_nearest_neighbor;
+    mutable Point_ptr_with_transformed_distance cached_nearest_neighbor;
     int count; // reference counter
   };
 
