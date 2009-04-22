@@ -118,7 +118,7 @@ public:
 
   void sort()
   {
-//     std::sort(m_data.begin(), m_data.end(), m_comp);
+    std::sort(m_data.begin(), m_data.end(), m_comp);
   }
 
 protected:
@@ -207,7 +207,7 @@ public:
 
   // constructor
   Fast_orthogonal_k_neighbor_search(Tree& tree, const Query_item& q,
-    unsigned int k=1, FT Eps=FT(0.0), const Distance& d=Distance())
+    unsigned int k=1, FT Eps=FT(0.0), bool sorted=false, const Distance& d=Distance())
     : number_of_internal_nodes_visited(0), number_of_leaf_nodes_visited(0), number_of_items_visited(0),
     multiplication_factor(d.transformed_distance(1.0+Eps)), query_object(q),
     total_item_number(tree.size()), pqueue(k), distance_instance(d)
@@ -215,7 +215,8 @@ public:
   {
     distance_to_root = d.min_distance_to_rectangle(q, tree.bounding_box());
     compute_neighbors_orthogonally(tree.root(), distance_to_root);
-    pqueue.sort();
+    if (sorted)
+      pqueue.sort();
   }
 
   // Print statistics of the k_neighbor search process.
@@ -239,21 +240,6 @@ private:
     typename SearchTraits::Cartesian_const_iterator_d query_object_it = construct_it(query_object);
     if (!(N->is_leaf()))
     {
-//       FT new_off = query_object[N->cutting_dimension()] - N->cutting_value();
-//       if (new_off<FT(0.0))
-//       {
-//         compute_neighbors_orthogonally(N->lower(), rd);
-//         rd = new_off*new_off;
-//         if (rd < pqueue.top().second)
-//           compute_neighbors_orthogonally(N->upper(), rd);
-//       }
-//       else
-//       {
-//         compute_neighbors_orthogonally(N->upper(), rd);
-//         rd = new_off*new_off;
-//         if (rd < pqueue.top().second)
-//           compute_neighbors_orthogonally(N->lower(), rd);
-//       }
       number_of_internal_nodes_visited++;
       int new_cut_dim=N->cutting_dimension();
       FT old_off, new_rd;
