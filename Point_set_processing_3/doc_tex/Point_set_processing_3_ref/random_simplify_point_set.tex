@@ -43,7 +43,7 @@ Randomly deletes a user-specified fraction of the input points. This variant req
 \ccGlue
 \ccFunction{template<typename ForwardIterator, typename Kernel> ForwardIterator random_simplify_point_set(ForwardIterator first, ForwardIterator beyond, double threshold_percent, const Kernel& kernel);}
 {
-Randomly deletes a user-specified fraction of the input points. This function is mutating the input point set. This variant requires the kernel.
+Randomly deletes a user-specified fraction of the input points. This variant is mutating the input point set and requires the kernel.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
 \ccCommentHeading{Template Parameters}
 \begin{description}
@@ -68,7 +68,7 @@ Randomly deletes a user-specified fraction of the input points. This variant ded
 \ccGlue
 \ccFunction{template<typename ForwardIterator> ForwardIterator random_simplify_point_set(ForwardIterator first, ForwardIterator beyond, double threshold_percent);}
 {
-Randomly deletes a user-specified fraction of the input points. This function is mutating the input point set. This variant deduces the kernel from iterator types.
+Randomly deletes a user-specified fraction of the input points. This variant is mutating the input point set and deduces the kernel from iterator types.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
 \ccCommentHeading{Template Parameters}
 \ccc{ForwardIterator}: \ccc{value_type} must be convertible to \ccc{Point_3<Kernel>}.

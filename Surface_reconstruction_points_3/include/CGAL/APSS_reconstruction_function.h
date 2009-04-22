@@ -38,7 +38,13 @@ CGAL_BEGIN_NAMESPACE
 /// APSS_reconstruction_function computes an implicit function
 /// that defines a Point Set Surface (PSS) based on
 /// moving least squares (MLS) fitting of algebraic spheres.
+///
 /// See "Algebraic Point Set Surfaces" by Guennebaud and Gross [Guennebaud07].
+///
+/// Note that APSS reconstruction may create small "ghost" connected components
+/// close to the reconstructed surface that you should delete.
+/// For this purpose, you may call erase_small_polyhedron_connected_components()
+/// after make_surface_mesh().
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the 'ImplicitFunction' concept.
@@ -55,12 +61,11 @@ public:
   typedef Gt Geom_traits; ///< Kernel's geometric traits
 
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Point_3 Point;
-  typedef typename Geom_traits::Vector_3 Vector;
+  typedef typename Geom_traits::Point_3 Point; ///< == Point_3<Gt>
+  typedef typename Geom_traits::Vector_3 Vector; ///< == Vector_3<Gt>
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   typedef Point_with_normal_3<Gt> Point_with_normal; ///< == Point_with_normal_3<Gt>
-  typedef typename Point_with_normal::Normal Normal; ///< == Vector_3
 
 // Private types
 private:
@@ -114,7 +119,7 @@ public:
   ///
   /// @param first Iterator over first point.
   /// @param beyond Past-the-end iterator.
-  /// @param k #neighbors for APSS sphere fitting.
+  /// @param k number of neighbors for APSS sphere fitting.
   template < class InputIterator >
   APSS_reconstruction_function(InputIterator first, InputIterator beyond,
                                unsigned int k)
@@ -180,7 +185,7 @@ public:
       delete m;
   }
 
-  /// Set #neighbors for APSS sphere fitting.
+  /// Set number of neighbors for APSS sphere fitting.
   void set_numbers_of_neighbors(unsigned int k) {m->nofNeighbors = k;}
 
   /// Returns a sphere bounding the inferred surface.

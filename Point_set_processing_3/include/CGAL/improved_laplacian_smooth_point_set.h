@@ -283,8 +283,7 @@ improved_laplacian_smooth_point_set(
 
 /// Improved Laplacian smoothing (Vollmer et al)
 /// on the k nearest neighbors.
-/// This function is mutating the input point set.
-/// This variant requires the kernel.
+/// This variant is mutating the input point set and requires the kernel.
 ///
 /// Warning:
 /// This method moves the points, thus
@@ -405,8 +404,7 @@ improved_laplacian_smooth_point_set(
 
 /// Improved Laplacian smoothing (Vollmer et al)
 /// on the k nearest neighbors.
-/// This function is mutating the input point set.
-/// This variant deduces the kernel from iterator types.
+/// This variant is mutating the input point set and deduces the kernel from iterator types.
 ///
 /// Warning:
 /// As this method relocates the points, it

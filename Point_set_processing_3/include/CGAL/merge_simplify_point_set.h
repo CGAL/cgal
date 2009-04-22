@@ -147,8 +147,7 @@ merge_simplify_point_set(
 }
 
 /// Merge points which belong to the same cell of a grid of cell size = epsilon.
-/// This function is mutating the input point set.
-/// This variant requires the kernel.
+/// This variant is mutating the input point set and requires the kernel.
 ///
 /// Warning:
 /// This method modifies the order of points, thus
@@ -222,8 +221,7 @@ merge_simplify_point_set(
 }
 
 /// Merge points which belong to the same cell of a grid of cell size = epsilon.
-/// This function is mutating the input point set.
-/// This variant deduces the kernel from iterator types.
+/// This variant is mutating the input point set and deduces the kernel from iterator types.
 ///
 /// Warning:
 /// This method modifies the order of points, thus

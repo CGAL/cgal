@@ -45,7 +45,7 @@ Merge points which belong to the same cell of a grid of cell size = epsilon. Thi
 \ccGlue
 \ccFunction{template<typename ForwardIterator, typename Kernel> ForwardIterator merge_simplify_point_set(ForwardIterator first, ForwardIterator beyond, double epsilon, const Kernel& kernel);}
 {
-Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant requires the kernel.
+Merge points which belong to the same cell of a grid of cell size = epsilon. This variant is mutating the input point set and requires the kernel.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
 \ccPrecond epsilon $>$ 0.
 \ccCommentHeading{Template Parameters}
@@ -72,7 +72,7 @@ Merge points which belong to the same cell of a grid of cell size = epsilon. Thi
 \ccGlue
 \ccFunction{template<typename ForwardIterator> ForwardIterator merge_simplify_point_set(ForwardIterator first, ForwardIterator beyond, double epsilon);}
 {
-Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant deduces the kernel from iterator types.
+Merge points which belong to the same cell of a grid of cell size = epsilon. This variant is mutating the input point set and deduces the kernel from iterator types.
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
 \ccPrecond epsilon $>$ 0.
 \ccCommentHeading{Template Parameters}

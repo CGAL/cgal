@@ -22,7 +22,9 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccc{Poisson_reconstruction_function} computes an indicator function f() piecewise-linear over the tetrahedra. We solve the Poisson equation Laplacian(f) = divergent(normals field) at each vertex of the triangulation via the TAUCS sparse linear solver. One vertex outside of the surface will be constrained to a value of 0.0.
+Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm \cite{Kazhdan06}. Given a set of 3D points with oriented normals sampled on the boundary of a 3D solid, this method solves for an approximate indicator function of the inferred solid, whose gradient best matches the input normals. The output scalar function, represented in an adaptive octree, is then iso-contoured using an adaptive marching cubes.
+
+\ccc{Poisson_reconstruction_function} implements a variant of this algorithm which solves for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree the TAUCS sparse linear solver. In order to get a unique solution, one vertex outside of the surface is constrained to a value of 0.0.
 
 %END-AUTO(\ccDefinition)
 
@@ -47,7 +49,7 @@ class \ccc{Poisson_reconstruction_function};
 
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{Gt}: Geometric traits class \item \ccc{ReconstructionTriangulation_3}: 3D Delaunay triangulation, model of \ccc{ReconstructionTriangulation_3} concept. \end{description}
+\item \ccc{Gt}: Geometric traits class. \item \ccc{ReconstructionTriangulation_3}: 3D Delaunay triangulation, model of \ccc{ReconstructionTriangulation_3} concept. \end{description}
 
 %END-AUTO(\ccParameters)
 
@@ -83,10 +85,6 @@ Kernel's geometric traits.
 }
 \ccGlue
 \ccNestedType{Vector}
-{
-}
-\ccGlue
-\ccNestedType{Iso_cuboid}
 {
 }
 \ccGlue
@@ -127,7 +125,7 @@ Creates a scalar function from a set of oriented points. Inserts the iterator ra
 \ccPrecond InputIterator \ccc{value_type} must be convertible to \ccc{Point_with_normal}.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{tr}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \item \ccc{first}: Iterator over first point to add to \ccc{tr}. \item \ccc{beyond}: Past-the-end iterator to add to \ccc{tr}. \end{description}
+\item \ccc{tr}: \ccc{ReconstructionTriangulation_3} base of the Poisson indicator function. \item \ccc{first}: Iterator over first point to add. \item \ccc{beyond}: Past-the-end iterator to add. \end{description}
 }
 \ccGlue
 
@@ -144,7 +142,7 @@ Insert points.
 \ccPrecond InputIterator \ccc{value_type} must be convertible to \ccc{Point_with_normal}.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: Iterator over first point to add to \ccc{tr}. \item \ccc{beyond}: Past-the-end iterator to add to \ccc{tr}. \end{description}
+\item \ccc{first}: Iterator over first point to add. \item \ccc{beyond}: Past-the-end iterator to add. \end{description}
 \ccCommentHeading{Returns} the number of inserted points.
 }
 \ccGlue
@@ -162,19 +160,9 @@ Get embedded triangulation.
 {
 }
 \ccGlue
-\ccMethod{Iso_cuboid bounding_box() const;}
-{
-Returns a bounding box of the inferred surface.
-}
-\ccGlue
 \ccMethod{Sphere bounding_sphere() const;}
 {
 Returns a sphere bounding the inferred surface.
-}
-\ccGlue
-\ccMethod{Sphere region_of_interest() const;}
-{
-Get the region of interest, ignoring the outliers. This method is used to define the OpenGL arcball sphere.
 }
 \ccGlue
 \ccMethod{bool compute_implicit_function();}
@@ -184,52 +172,6 @@ The function \ccc{compute_implicit_function}() must be called after each inserti
 Returns false if the linear solver fails.
 }
 \ccGlue
-\ccMethod{void average_spacing_avg_knn_sq_distance_3();}
-{
-}
-\ccGlue
-\ccMethod{unsigned int delaunay_refinement(FT radius_edge_ratio_bound, FT cell_radius_bound, unsigned int max_vertices, FT enlarge_ratio);}
-{
-Delaunay refinement (break bad tetrahedra, where bad means badly shaped or too big). The normal of Steiner points is set to zero. Return the number of vertices inserted.
-\ccCommentHeading{Parameters}
-\begin{description}
-\item \ccc{radius_edge_ratio_bound}: radius edge ratio bound (ignored if zero) \item \ccc{cell_radius_bound}: cell radius bound (ignored if zero) \item \ccc{max_vertices}: number of vertices bound \item \ccc{enlarge_ratio}: bounding box enlarge ratio \end{description}
-}
-\ccGlue
-\ccMethod{unsigned int delaunay_refinement_shell(FT size_shell, FT sizing, unsigned int max_vertices);}
-{
-}
-\ccGlue
-\ccMethod{void extrapolate_normals();}
-{
-Extrapolate the normals field: compute null normals by averaging neighbor normals.
-}
-\ccGlue
-\ccMethod{FT gaussian_function(FT sigma, FT distance);}
-{
-}
-\ccGlue
-\ccMethod{int extrapolate_normals_using_gaussian_kernel();}
-{
-Extrapolate the normals field. Return the number of normals computed.
-}
-\ccGlue
-\ccMethod{bool solve_poisson(double lambda, double * duration_assembly, double * duration_factorization, double * duration_solve, bool is_normalized = false);}
-{
-Poisson reconstruction. Return false on error.
-}
-\ccGlue
-\ccMethod{void SaveAsMeshFile();}
-{
-}
-\ccGlue
-\ccMethod{FT set_contouring_value(FT contouring_value);}
-{
-Shift and orient the implicit function such that:\begin{itemize}
-\item the implicit function = 0 for points / f() = \ccc{contouring_value},\item the implicit function $<$ 0 inside the surface.\end{itemize}
-Return the minimum value of the implicit function.
-}
-\ccGlue
 \ccMethod{FT f(const Point& p) const;}
 {
 Evaluates the implicit function at a given 3D query point.
@@ -237,42 +179,12 @@ Evaluates the implicit function at a given 3D query point.
 \ccGlue
 \ccMethod{FT operator()(const Point& p) const;}
 {
-Evaluates the implicit function at a given 3D query point. (\ccc{ImplicitFunction} interface)
+\ccc{ImplicitFunction} interface: evaluate implicit function for any 3D point.
 }
 \ccGlue
 \ccMethod{Point get_inner_point() const;}
 {
 Returns a point located inside the inferred surface.
-}
-\ccGlue
-\ccMethod{FT average_value_at_input_vertices() const;}
-{
-Get average value of the implicit function over input vertices.
-}
-\ccGlue
-\ccMethod{FT median_value_at_input_vertices() const;}
-{
-Get median value of the implicit function over input vertices.
-}
-\ccGlue
-\ccMethod{FT min_value_at_input_vertices() const;}
-{
-Get min value of the implicit function over input vertices.
-}
-\ccGlue
-\ccMethod{FT max_value_at_input_vertices() const;}
-{
-Get max value of the implicit function over input vertices.
-}
-\ccGlue
-\ccMethod{FT median_value_at_convex_hull() const;}
-{
-Get median value of the implicit function over convex hull vertices.
-}
-\ccGlue
-\ccMethod{FT average_value_at_convex_hull() const;}
-{
-Get average value of the implicit function over convex hull vertices.
 }
 \ccGlue
 
@@ -281,7 +193,6 @@ Get average value of the implicit function over convex hull vertices.
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Reconstruction_triangulation_3<GeomTraits, TriangulationDataStructure_3>}  \\
-\ccRefIdfierPage{CGAL::Reconstruction_cell_base_3<GeomTraits, TriangulationCellBase_3>}  \\
 \ccRefIdfierPage{CGAL::Reconstruction_vertex_base_3<GeomTraits, TriangulationVertexBase_3>}  \\
 \ccRefIdfierPage{CGAL::APSS_reconstruction_function<GeomTraits>}  \\
 

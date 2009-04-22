@@ -47,7 +47,7 @@ Remove outliers:\begin{itemize}
 \ccFunction{template<typename ForwardIterator, typename Kernel> ForwardIterator remove_outliers(ForwardIterator first, ForwardIterator beyond, unsigned int k, const Kernel& kernel, double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
-\item compute average squared distance to the K nearest neighbors,\item sort the points in increasing order of average distance. This function is mutating the input point set. This variant requires the kernel.\end{itemize}
+\item compute average squared distance to the K nearest neighbors,\item sort the points in increasing order of average distance. This variant is mutating the input point set and requires the kernel.\end{itemize}
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
 \ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}
@@ -76,7 +76,7 @@ Remove outliers:\begin{itemize}
 \ccFunction{template<typename ForwardIterator> ForwardIterator remove_outliers(ForwardIterator first, ForwardIterator beyond, unsigned int k, double threshold_percent);}
 {
 Remove outliers:\begin{itemize}
-\item compute average squared distance to the k nearest neighbors,\item sort the points in increasing order of average distance. This function is mutating the input point set. This variant deduces the kernel from iterator types.\end{itemize}
+\item compute average squared distance to the k nearest neighbors,\item sort the points in increasing order of average distance. This variant is mutating the input point set and deduces the kernel from iterator types.\end{itemize}
 Warning: This method modifies the order of points, thus should not be called on sorted containers.
 \ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}

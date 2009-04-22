@@ -32,7 +32,7 @@
 The \ccc{Reconstruction_vertex_base_3} class is the default vertex class of the \ccc{Reconstruction_triangulation_3} class.
 
 It provides the interface requested by the \ccc{Poisson_reconstruction_function} class:\begin{itemize}
-\item Each vertex stores a normal vector.\item A vertex is either an input point or a Steiner point added by Delaunay refinement.\item In order to solve a linear system over the triangulation, a vertex may be constrained or not (i.e. contributes to the right or left member of the linear system), and has a unique index.\end{itemize}
+\item Each vertex stores a normal vector.\item A vertex is either an input point or a Steiner point added by Delaunay refinement.\item In order to solve a linear system over the triangulation, a vertex may be constrained or not (i.e. may contribute to the right or left member of the linear system), and has a unique index.\end{itemize}
 
 %END-AUTO(\ccDefinition)
 
@@ -75,6 +75,11 @@ Model of the \ccc{ReconstructionVertexBase_3} concept.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccTypes)
 
+\ccNestedType{Geom_traits}
+{
+Geometric traits class / \ccc{Point_3} is a model of \ccc{PointWithNormal_3}.
+}
+\ccGlue
 \ccNestedType{FT}
 {
 }
@@ -145,15 +150,6 @@ Get/set the value of the implicit function. Default value is 0.0.
 {
 }
 \ccGlue
-\ccMethod{double average_spacing() const;}
-{
-Get/set average spacing at each input point.
-}
-\ccGlue
-\ccMethod{double& average_spacing();}
-{
-}
-\ccGlue
 \ccMethod{unsigned char type() const;}
 {
 Get/set the type = INPUT or STEINER.
@@ -181,22 +177,12 @@ Get/set normal (vector + orientation). Default value is null vector.
 {
 }
 \ccGlue
-\ccMethod{int tag() const;}
-{
-General purpose tag.
-}
-\ccGlue
-\ccMethod{int& tag();}
-{
-}
-\ccGlue
 
 %END-AUTO(\ccOperations)
 
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Reconstruction_triangulation_3<GeomTraits, TriangulationDataStructure_3>}  \\
-\ccRefIdfierPage{CGAL::Reconstruction_cell_base_3<GeomTraits, TriangulationCellBase_3>}  \\
 \ccRefIdfierPage{CGAL::Poisson_reconstruction_function<GeomTraits, ReconstructionTriangulation_3>}  \\
 
 \end{ccRefClass}

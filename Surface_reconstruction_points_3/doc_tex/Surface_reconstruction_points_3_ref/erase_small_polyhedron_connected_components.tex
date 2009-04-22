@@ -26,7 +26,7 @@
 
 \ccFunction{template<class Polyhedron> unsigned int erase_small_polyhedron_connected_components(Polyhedron& polyhedron);}
 {
-Erase small connected components of a polyhedron: erase all connected components but the largest.
+Erases small connected components of a polyhedron: It calls \ccc{get_polyhedron_connected_components}(), then \ccc{erase_connected_component}() on all connected components but the largest.
 \ccCommentHeading{Template Parameters}
 \ccc{Polyhedron}: an instance of \ccc{Polyhedron_3<Traits>} that supports vertices and removal operation.
 \ccCommentHeading{Returns} the number of connected components erased.

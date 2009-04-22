@@ -19,7 +19,9 @@
 
 \ccDefinition
 
-\ccc{CGAL::jet_smooth_point_set()} smooths a point set by fitting for each point a jet surface and projecting it onto the jet. The default jet surfaces are quadrics. The function exists in four variants: it may either alter (mutate) the input point set or create a copy; and it may either require a kernel or deduce it from input data.
+\ccc{CGAL::jet_smooth_point_set()} smooths a point set by fitting for each point a jet surface and projecting it onto the jet. The default jet surfaces are quadrics.
+
+The function exists in four variants: it may either alter (mutate) the input point set or create a copy; and it may either require a kernel or deduce it from input data.
 
 \ccInclude{CGAL/jet_smooth_point_set.h}
 
@@ -41,7 +43,7 @@ Smooth a point set using jet fitting on the k nearest neighbors and reprojection
 \ccGlue
 \ccFunction{template<typename ForwardIterator, typename Kernel> void jet_smooth_point_set(ForwardIterator first, ForwardIterator beyond, unsigned int k, const Kernel& kernel, const unsigned int degree_fitting = 2, const unsigned int degree_monge = 2);}
 {
-Smooth a point set using jet fitting on the k nearest neighbors and reprojection onto the jet. This function is mutating the input point set. This variant requires the kernel.
+Smooth a point set using jet fitting on the k nearest neighbors and reprojection onto the jet. This variant is mutating the input point set and requires the kernel.
 Warning: This method moves the points, thus should not be called on containers sorted wrt points position.
 \ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}
@@ -67,7 +69,7 @@ Smooths points by fitting jet surfaces over their k nearest neighbors and projec
 \ccGlue
 \ccFunction{template<typename ForwardIterator> void jet_smooth_point_set(ForwardIterator first, ForwardIterator beyond, unsigned int k, const unsigned int degree_fitting = 2, const unsigned int degree_monge = 2);}
 {
-Smooths points by fitting jet surfaces over their k nearest neighbors and projecting onto the jets. This function is mutating the input point set. This variant deduces the kernel from iterator types.
+Smooths points by fitting jet surfaces over their k nearest neighbors and projecting onto the jets. This function is mutating the input point set and deduces the kernel from iterator types.
 Warning: As this method relocates the points, it should not be called on containers sorted w.r.t. point locations.
 \ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}

@@ -161,8 +161,7 @@ jet_smooth_point_set(InputIterator first,    ///< iterator over the first input 
 
 /// Smooth a point set using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
-/// This function is mutating the input point set.
-/// This variant requires the kernel.
+/// This variant is mutating the input point set and requires the kernel.
 ///
 /// Warning:
 /// This method moves the points, thus
@@ -241,8 +240,7 @@ jet_smooth_point_set(InputIterator first, ///< iterator over the first input poi
 
 /// Smooths points by fitting jet surfaces over their k
 /// nearest neighbors and projecting onto the jets.
-/// This function is mutating the input point set.
-/// This variant deduces the kernel from iterator types.
+/// This function is mutating the input point set and deduces the kernel from iterator types.
 ///
 /// Warning:
 /// As this method relocates the points, it

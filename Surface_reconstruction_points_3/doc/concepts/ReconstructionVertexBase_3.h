@@ -50,8 +50,8 @@ public:
 public:
 
   ReconstructionVertexBase_3();
-  ReconstructionVertexBase_3(const Point & p);
-  ReconstructionVertexBase_3(const Point & p, Cell_handle c);
+  ReconstructionVertexBase_3(const Point_with_normal & p);
+  ReconstructionVertexBase_3(const Point_with_normal & p, Cell_handle c);
   ReconstructionVertexBase_3(Cell_handle c);
 
   /// Is vertex constrained, i.e.

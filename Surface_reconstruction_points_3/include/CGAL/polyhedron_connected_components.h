@@ -170,8 +170,9 @@ get_polyhedron_connected_components(Polyhedron& polyhedron)
 }
 
 
-/// Erase small connected components of a polyhedron:
-/// erase all connected components but the largest.
+/// Erases small connected components of a polyhedron:
+/// It calls get_polyhedron_connected_components(), then erase_connected_component()
+/// on all connected components but the largest.
 ///
 /// @commentheading Template Parameters:
 /// @param Polyhedron an instance of CGAL::Polyhedron_3<Traits> that supports

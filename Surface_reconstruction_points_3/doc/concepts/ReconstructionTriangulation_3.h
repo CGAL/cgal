@@ -39,14 +39,13 @@ class ReconstructionTriangulation_3 : public DelaunayTriangulation_3,
 public:
 
   /// Geometric traits class / Point_3 is a model of PointWithNormal_3.
-  typedef Gt  Geom_traits; 
+  typedef Gt  Geom_traits;
 
   // Geometric types
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Vector_3 Vector;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  /// The geometric traits class's Point_3 type is a model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
   typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
@@ -55,7 +54,7 @@ public:
   typedef xxx Normal_iterator;
 
   /// Point type
-  enum Point_type { 
+  enum Point_type {
     INPUT,    ///< Input point.
     STEINER   ///< Steiner point created by Delaunay refinement.
   };
@@ -89,9 +88,9 @@ public:
   /// Get the bounding sphere of input points.
   Sphere input_points_bounding_sphere() const;
 
-  /// Insert point (model of PointWithNormal_3) in the triangulation.
+  /// Insert point in the triangulation.
   /// Default type is INPUT.
-  Vertex_handle insert(const Point& p,
+  Vertex_handle insert(const Point_with_normal& p,
                        Point_type type = INPUT,
                        Cell_handle start = Cell_handle());
 
@@ -112,7 +111,7 @@ public:
   /// insert STEINER point in the triangulation.
   template <class CellIt>
   Vertex_handle
-  insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
+  insert_in_hole(const Point_with_normal & p, CellIt cell_begin, CellIt cell_end,
 	         Cell_handle begin, int i,
                  Point_type type = STEINER);
 

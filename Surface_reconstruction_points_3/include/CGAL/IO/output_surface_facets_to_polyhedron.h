@@ -35,8 +35,6 @@ CGAL_BEGIN_NAMESPACE
 /// @commentheading Template Parameters:
 /// @param SurfaceMeshComplex_2InTriangulation_3 model of the SurfaceMeshComplex_2InTriangulation_3 concept.
 /// @param Polyhedron an instance of CGAL::Polyhedron_3<Traits>.
-///
-/// @return true on success.
 template <class SurfaceMeshComplex_2InTriangulation_3,
           class Polyhedron>
 void

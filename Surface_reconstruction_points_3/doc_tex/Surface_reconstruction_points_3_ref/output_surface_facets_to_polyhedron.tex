@@ -32,8 +32,7 @@ Get reconstructed surface out of a \ccc{SurfaceMeshComplex_2InTriangulation_3} o
 This variant exports the surface as a polyhedron. It requires the surface to be manifold. For this purpose, you may call \ccc{make_surface_mesh}() with \ccc{Manifold_tag} or \ccc{Manifold_with_boundary_tag} parameter.
 \ccCommentHeading{Template Parameters}
 \begin{description}
-\item \ccc{SurfaceMeshComplex_2InTriangulation_3}: model of the \ccc{SurfaceMeshComplex_2InTriangulation_3} concept. \item \ccc{Polyhedron}: an instance of \ccc{Polyhedron_3<Traits>}.\end{description}
-\ccCommentHeading{Returns} true on success.
+\item \ccc{SurfaceMeshComplex_2InTriangulation_3}: model of the \ccc{SurfaceMeshComplex_2InTriangulation_3} concept. \item \ccc{Polyhedron}: an instance of \ccc{Polyhedron_3<Traits>}. \end{description}
 \ccCommentHeading{Parameters}
 \begin{description}
 \item \ccc{c2t3}: Input surface. \item \ccc{output_polyhedron}: Output polyhedron. \end{description}
@@ -45,6 +44,7 @@ This variant exports the surface as a polyhedron. It requires the surface to be 
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::output_surface_facets_to_off}  \\
+\ccRefIdfierPage{CGAL::output_surface_facets_to_triangle_soup}  \\
 
 \ccExample
 

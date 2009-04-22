@@ -37,10 +37,12 @@ private:
 // Public types
 public:
 
+  /// Geometric traits class / Point_3 is a model of PointWithNormal_3.
+  typedef Gt Geom_traits;
+
   // Repeat Reconstruction_triangulation_3 public types
   /// @cond SKIP_IN_MANUAL
   typedef Tds Triangulation_data_structure;
-  typedef Gt  Geom_traits; ///< Geometric traits class / Point_3 is a model of PointWithNormal_3.
   typedef typename Base::Segment      Segment;
   typedef typename Base::Triangle     Triangle;
   typedef typename Base::Tetrahedron  Tetrahedron;
@@ -72,7 +74,6 @@ public:
   typedef typename Base::Normal_iterator Normal_iterator;
   /// @endcond
 
-  /// The geometric traits class's Point_3 type is a model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
   typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.

@@ -22,7 +22,11 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccc{APSS_reconstruction_function} computes an implicit function that defines a Point Set Surface (PSS) based on moving least squares (MLS) fitting of algebraic spheres. See {\em Algebraic Point Set Surfaces} by Guennebaud and Gross \cite{Guennebaud07}.
+\ccc{APSS_reconstruction_function} computes an implicit function that defines a Point Set Surface (PSS) based on moving least squares (MLS) fitting of algebraic spheres.
+
+See {\em Algebraic Point Set Surfaces} by Guennebaud and Gross \cite{Guennebaud07}.
+
+Note that APSS reconstruction may create small {\em ghost} connected components close to the reconstructed surface that you should delete. For this purpose, you may call \ccc{erase_small_polyhedron_connected_components}() after \ccc{make_surface_mesh}().
 
 %END-AUTO(\ccDefinition)
 
@@ -74,14 +78,12 @@ Kernel's geometric traits.
 \ccGlue
 \ccNestedType{Point}
 {
+== \ccc{Point_3<Gt>}
 }
 \ccGlue
 \ccNestedType{Vector}
 {
-}
-\ccGlue
-\ccNestedType{Iso_cuboid}
-{
+== \ccc{Vector_3<Gt>}
 }
 \ccGlue
 \ccNestedType{Sphere}
@@ -95,7 +97,7 @@ Kernel's geometric traits.
 \ccGlue
 \ccNestedType{Normal}
 {
-== \ccc{Vector_3}
+== \ccc{Vector_3<Gt>}
 }
 \ccGlue
 
@@ -109,11 +111,11 @@ Kernel's geometric traits.
 
 \ccConstructor{template<class InputIterator> APSS_reconstruction_function(InputIterator first, InputIterator beyond, unsigned int k);}
 {
-Create an APSS implicit function from a point set.
+Creates an APSS implicit function from a set of oriented points.
 \ccPrecond InputIterator \ccc{value_type} must be convertible to \ccc{Point_with_normal}.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: Iterator over first point to add. \item \ccc{beyond}: Past-the-end iterator to add. \item \ccc{k}: neighbors for APSS sphere fitting. \end{description}
+\item \ccc{first}: Iterator over first point. \item \ccc{beyond}: Past-the-end iterator. \item \ccc{k}: number of neighbors for APSS sphere fitting. \end{description}
 }
 \ccGlue
 \ccConstructor{APSS_reconstruction_function(const APSS_reconstruction_function<Gt>& other);}
@@ -136,11 +138,7 @@ operator =()
 \ccGlue
 \ccMethod{void set_numbers_of_neighbors(unsigned int k);}
 {
-}
-\ccGlue
-\ccMethod{Iso_cuboid bounding_box() const;}
-{
-Get the bounding box.
+Set number of neighbors for APSS sphere fitting.
 }
 \ccGlue
 \ccMethod{const Sphere& bounding_sphere() const;}
@@ -148,14 +146,9 @@ Get the bounding box.
 Returns a sphere bounding the inferred surface.
 }
 \ccGlue
-\ccMethod{Sphere region_of_interest() const;}
-{
-Get the region of interest, ignoring the outliers. This method is used to define the OpenGL arcball sphere.
-}
-\ccGlue
 \ccMethod{FT operator()(const Point& p) const;}
 {
-Evaluate implicit function for any 3D point. (\ccc{ImplicitFunction} interface)
+\ccc{ImplicitFunction} interface: evaluate implicit function for any 3D point.
 }
 \ccGlue
 \ccMethod{Point get_inner_point() const;}

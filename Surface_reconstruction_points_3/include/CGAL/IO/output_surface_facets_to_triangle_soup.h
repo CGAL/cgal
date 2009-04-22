@@ -33,8 +33,6 @@ CGAL_BEGIN_NAMESPACE
 /// @commentheading Template Parameters:
 /// @param SurfaceMeshComplex_2InTriangulation_3 model of the SurfaceMeshComplex_2InTriangulation_3 concept.
 /// @param OutputIterator value_type must be convertible from Triangle_3<Kernel>.
-///
-/// @return true on success.
 template <class SurfaceMeshComplex_2InTriangulation_3,
           typename OutputIterator>
 void

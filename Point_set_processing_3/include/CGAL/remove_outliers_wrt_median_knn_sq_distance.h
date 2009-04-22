@@ -227,8 +227,7 @@ remove_outliers_wrt_median_knn_sq_distance(
 /// Remove outliers:
 /// - compute median squared distance to the K nearest neighbors,
 /// - sort the points in increasing order of computed distance.
-/// This function is mutating the input point set.
-/// This variant requires the kernel.
+/// This variant is mutating the input point set and requires the kernel.
 ///
 /// Warning:
 /// This method modifies the order of points, thus
@@ -333,8 +332,7 @@ remove_outliers_wrt_median_knn_sq_distance(
 /// Remove outliers:
 /// - compute median squared distance to the K nearest neighbors,
 /// - sort the points in increasing order of computed distance.
-/// This function is mutating the input point set.
-/// This variant deduces the kernel from iterator types.
+/// This variant is mutating the input point set and deduces the kernel from iterator types.
 ///
 /// Warning:
 /// This method modifies the order of points, thus

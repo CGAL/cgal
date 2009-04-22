@@ -39,16 +39,16 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm [Kazhdan06].
-/// Given a set of 3D points with oriented normals (denoted oriented points in the sequel) 
-/// sampled on the boundary of a 3D solid, this method solves for an approximate indicator function 
+/// Given a set of 3D points with oriented normals sampled on the boundary of a 3D solid,
+/// this method solves for an approximate indicator function
 /// of the inferred solid, whose gradient best matches the input normals.
-/// The output scalar function, represented in an adaptive octree, is then iso-contoured 
+/// The output scalar function, represented in an adaptive octree, is then iso-contoured
 /// using an adaptive marching cubes.
-/// 
-/// Poisson_reconstruction_function implements a variant of this algorithm which solves 
+///
+/// Poisson_reconstruction_function implements a variant of this algorithm which solves
 /// for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree
 /// the TAUCS sparse linear solver.
-/// One vertex outside of the surface will be constrained to a value of 0.0.
+/// In order to get a unique solution, one vertex outside of the surface is constrained to a value of 0.0.
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the 'ImplicitFunction' concept.
@@ -69,8 +69,8 @@ public:
   typedef Gt Geom_traits; ///< Kernel's geometric traits
 
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Point_3 Point;
-  typedef typename Geom_traits::Vector_3 Vector;
+  typedef typename Geom_traits::Point_3 Point; ///< == Point_3<Gt>
+  typedef typename Geom_traits::Vector_3 Vector; ///< == Vector_3<Gt>
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   typedef typename Triangulation::Point_with_normal Point_with_normal;
@@ -247,7 +247,7 @@ public:
 
     return true;
   }
-  
+
 // TEMPORARY HACK
 /// @cond SKIP_IN_MANUAL
 
@@ -599,7 +599,7 @@ private:
     return div;
   }
 
- FT div_normalized(Vertex_handle v)
+  FT div_normalized(Vertex_handle v)
   {
     std::vector<Cell_handle> cells;
     m_tr.incident_cells(v,std::back_inserter(cells));
