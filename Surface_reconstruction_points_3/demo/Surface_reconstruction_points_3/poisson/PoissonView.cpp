@@ -247,13 +247,7 @@ void CPoissonView::OnPaint()
   assert(pDoc->points()->begin() != pDoc->points()->end());
 
   // Scene's region of interest (= bounding sphere minus outliers)
-  Sphere region_of_interest;
-  if (pDoc->edit_mode() == CPoissonDoc::POINT_SET)
-    region_of_interest = pDoc->points()->region_of_interest();
-  else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-    region_of_interest = pDoc->poisson_function()->region_of_interest();
-  else if (pDoc->edit_mode() == CPoissonDoc::APSS)
-    region_of_interest = pDoc->apss_function()->region_of_interest();
+  Sphere region_of_interest = pDoc->points()->region_of_interest();
 
   // Do points have normals?
   bool points_have_normals = (pDoc->points()->begin()->normal() != CGAL::NULL_VECTOR);

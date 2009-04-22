@@ -21,18 +21,14 @@
 #ifndef CGAL_POISSON_RECONSTRUCTION_FUNCTION_H
 #define CGAL_POISSON_RECONSTRUCTION_FUNCTION_H
 
-#include <queue>
-#include <list>
 #include <vector>
 #include <deque>
 #include <algorithm>
 #include <cmath>
-#include <fstream>
 
 #include <CGAL/Reconstruction_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/taucs_solver.h>
-#include <CGAL/k_nearest_neighbor.h>
 #include <CGAL/centroid.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 #include <CGAL/Memory_sizer.h>
@@ -42,77 +38,23 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// functor for priority queue
-template<class Candidate>
-struct less // read more priority
-{
-  bool operator()(const Candidate& c1,
-                  const Candidate& c2) const
-  {
-    return (c1.score() < c2.score());
-  }
-};
-
-// functor for priority queue
-template<class Candidate>
-struct more // read more priority
-{
-  bool operator()(const Candidate& c1,
-                  const Candidate& c2) const
-  {
-    return (c1.score() > c2.score());
-  }
-};
-
-template <class Handle, class Point>
-class Candidate
-{
-private:
-  Handle m_v0;
-  Handle m_v1;
-  Handle m_v2;
-  Handle m_v3;
-  float m_score;
-
-public:
-
-  Candidate(Handle v0,
-            Handle v1,
-            Handle v2,
-            Handle v3,
-            float score)
-  {
-    m_v0 = v0;
-    m_v1 = v1;
-    m_v2 = v2;
-    m_v3 = v3;
-    m_score = score;
-  }
-  ~Candidate() {}
-
-public:
-
-  float score() const { return m_score; }
-  float& score() { return m_score; }
-
-  Handle v0() { return m_v0; }
-  Handle v1() { return m_v1; }
-  Handle v2() { return m_v2; }
-  Handle v3() { return m_v3; }
-
-};
-
-/// Poisson_reconstruction_function computes an indicator function f() piecewise-linear
-/// over the tetrahedra. We solve the Poisson equation
-/// Laplacian(f) = divergent(normals field) at each vertex
-/// of the triangulation via the TAUCS sparse linear solver.
+/// Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm [Kazhdan06].
+/// Given a set of 3D points with oriented normals (denoted oriented points in the sequel) 
+/// sampled on the boundary of a 3D solid, this method solves for an approximate indicator function 
+/// of the inferred solid, whose gradient best matches the input normals.
+/// The output scalar function, represented in an adaptive octree, is then iso-contoured 
+/// using an adaptive marching cubes.
+/// 
+/// Poisson_reconstruction_function implements a variant of this algorithm which solves 
+/// for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree
+/// the TAUCS sparse linear solver.
 /// One vertex outside of the surface will be constrained to a value of 0.0.
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the 'ImplicitFunction' concept.
 ///
 /// @heading Parameters:
-/// @param Gt Geometric traits class
+/// @param Gt Geometric traits class.
 /// @param ReconstructionTriangulation_3 3D Delaunay triangulation,
 ///        model of ReconstructionTriangulation_3 concept.
 
@@ -129,7 +71,6 @@ public:
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;
   typedef typename Geom_traits::Vector_3 Vector;
-  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   typedef typename Triangulation::Point_with_normal Point_with_normal;
@@ -165,10 +106,6 @@ private:
   typedef typename Triangulation::Finite_edges_iterator    Finite_edges_iterator;
   typedef typename Triangulation::All_cells_iterator       All_cells_iterator;
   typedef typename Triangulation::Locate_type Locate_type;
-
-  // neighbor search
-  typedef typename CGAL::K_nearest_neighbor<Geom_traits,Vertex_handle> K_nearest_neighbor;
-  typedef typename CGAL::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
 
   // TAUCS solver
   typedef Taucs_solver<double>  Solver;
@@ -211,8 +148,8 @@ public:
   /// InputIterator value_type must be convertible to Point_with_normal.
   ///
   /// @param tr ReconstructionTriangulation_3 base of the Poisson indicator function.
-  /// @param first Iterator over first point to add to 'tr'.
-  /// @param beyond Past-the-end iterator to add to 'tr'.
+  /// @param first Iterator over first point to add.
+  /// @param beyond Past-the-end iterator to add.
   template < class InputIterator >
   Poisson_reconstruction_function(ReconstructionTriangulation_3& tr,
                                   InputIterator first, InputIterator beyond)
@@ -226,8 +163,8 @@ public:
   /// @commentheading Precondition:
   /// InputIterator value_type must be convertible to Point_with_normal.
   ///
-  /// @param first Iterator over first point to add to 'tr'.
-  /// @param beyond Past-the-end iterator to add to 'tr'.
+  /// @param first Iterator over first point to add.
+  /// @param beyond Past-the-end iterator to add.
   /// @return the number of inserted points.
   template < class InputIterator >
   int insert(InputIterator first, InputIterator beyond)
@@ -251,29 +188,10 @@ public:
     return m_tr;
   }
 
-  /// Returns a bounding box of the inferred surface.
-  Iso_cuboid bounding_box() const
-  {
-    return m_tr.input_points_bounding_box();
-  }
-
   /// Returns a sphere bounding the inferred surface.
   Sphere bounding_sphere() const
   {
     return m_tr.input_points_bounding_sphere();
-  }
-
-  /// Get the region of interest, ignoring the outliers.
-  /// This method is used to define the OpenGL arcball sphere.
-  Sphere region_of_interest() const
-  {
-    // A good candidate is a sphere containing the dense region of the point cloud:
-    // - center point is barycenter
-    // - Radius is 2 * standard deviation
-    Point barycenter = m_tr.barycenter();
-    FT radius = 2.f * (FT)m_tr.diameter_standard_deviation();
-
-    return Sphere(barycenter, radius*radius);
   }
 
   /// The function compute_implicit_function() must be called
@@ -304,10 +222,6 @@ public:
                                                  << std::endl;
     task_timer.reset();
 
-    // Smooth normals field.
-    // Commented out as it shrinks the reconstructed model.
-    //extrapolate_normals();
-
     CGAL_TRACE_STREAM << "Solve Poisson equation...\n";
 
     // Compute the Poisson indicator function f()
@@ -333,27 +247,9 @@ public:
 
     return true;
   }
-
-  //Calculate and store average spacing at each input point
-  void average_spacing_avg_knn_sq_distance_3()
-  {
-    Finite_vertices_iterator v;
-    for(v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
-	{
-	  FT sq_distance = 0.0;
-	  int counter = 0;
-	  std::vector<Vertex_handle> v_neighbors;
-	  m_tr.incident_vertices(v,std::back_inserter(v_neighbors));
-	  typename std::vector<Vertex_handle>::iterator it;
-	  for(it = v_neighbors.begin(); it != v_neighbors.end(); it++)
-	  {
-		  sq_distance = sq_distance +  distance(*it,v)*distance(*it,v);
-		  counter++;
-	  }
-
-	  v->average_spacing() = std::sqrt(sq_distance/counter);
-	}
-  }
+  
+// TEMPORARY HACK
+/// @cond SKIP_IN_MANUAL
 
   /// Delaunay refinement (break bad tetrahedra, where
   /// bad means badly shaped or too big). The normal of
@@ -367,218 +263,13 @@ public:
     CGAL_TRACE("Call delaunay_refinement(radius_edge_ratio_bound=%lf, cell_radius_bound=%lf, max_vertices=%u, enlarge_ratio=%lf)\n",
                radius_edge_ratio_bound, cell_radius_bound, max_vertices, enlarge_ratio);
 
-#define DELAUNAY_REFINEMENT_USE_BOUNDING_BOX
-#ifdef  DELAUNAY_REFINEMENT_USE_BOUNDING_BOX
-    Iso_cuboid enlarged_bbox = enlarged_bounding_box(enlarge_ratio);
-    unsigned int nb_vertices_added = poisson_refine_triangulation(m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
-#else
     Sphere enlarged_bbox = enlarged_bounding_sphere(enlarge_ratio);
     unsigned int nb_vertices_added = poisson_refine_triangulation(m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
-#endif
-
-    m_tr.invalidate_bounds();
 
     CGAL_TRACE("End of delaunay_refinement()\n");
 
     return nb_vertices_added;
   }
-
-  unsigned int delaunay_refinement_shell(FT size_shell,
-                                         FT sizing,
-                                         unsigned int max_vertices)
-  {
-    // make parameters relative to size
-    Sphere bounding_sphere = m_tr.bounding_sphere();
-    FT size = sqrt(bounding_sphere.squared_radius());
-    size_shell *= size;
-    sizing *= size;
-
-    // neighbor search
-    K_nearest_neighbor nn_search;
-    init_nn_search_shell(nn_search);
-
-    typedef typename CGAL::Candidate<Vertex_handle,Point> Candidate;
-    typedef typename std::priority_queue<Candidate,
-                                         std::vector<Candidate>,
-                                         more<Candidate> > PQueue;
-
-    // push all cells to the queue
-    PQueue queue;
-    Finite_cells_iterator c;
-    for(c = m_tr.finite_cells_begin();
-        c != m_tr.finite_cells_end();
-        c++)
-    {
-      Point p;
-      FT size = 0.0;
-      if(is_refinable(c,nn_search,size_shell,sizing,size,p))
-      {
-        Vertex_handle v0 = c->vertex(0);
-        Vertex_handle v1 = c->vertex(1);
-        Vertex_handle v2 = c->vertex(2);
-        Vertex_handle v3 = c->vertex(3);
-        queue.push(Candidate(v0,v1,v2,v3,(float)size));
-      }
-    }
-
-    unsigned int nb = 0;
-    while(!queue.empty())
-    {
-      Candidate candidate = queue.top();
-      queue.pop();
-      Vertex_handle v0 = candidate.v0();
-      Vertex_handle v1 = candidate.v1();
-      Vertex_handle v2 = candidate.v2();
-      Vertex_handle v3 = candidate.v3();
-
-      Cell_handle cell = NULL;
-      if(m_tr.is_cell(v0,v1,v2,v3,cell))
-      {
-        Point circumcenter = m_tr.dual(cell);
-        Vertex_handle v = m_tr.insert(circumcenter, Triangulation::STEINER);
-
-        if(nb++ > max_vertices)
-          return nb; // premature ending
-
-        // iterate over incident cells and feed queue
-        std::vector<Cell_handle> cells;
-        m_tr.incident_cells(v,std::back_inserter(cells));
-        typename std::vector<Cell_handle>::iterator it;
-        for(it = cells.begin();
-            it != cells.end();
-            it++)
-        {
-          Cell_handle c = *it;
-          if(m_tr.is_infinite(c))
-            continue;
-
-          Point p;
-          FT size = 0.0;
-          if(is_refinable(c,nn_search,size_shell,sizing,size,p))
-          {
-            Vertex_handle v0 = c->vertex(0);
-            Vertex_handle v1 = c->vertex(1);
-            Vertex_handle v2 = c->vertex(2);
-            Vertex_handle v3 = c->vertex(3);
-            queue.push(Candidate(v0,v1,v2,v3,(float)size));
-          }
-        }
-      }
-    }
-
-    return nb;
-  }
-
-  /// Extrapolate the normals field:
-  /// compute null normals by averaging neighbor normals.
-  void extrapolate_normals()
-  {
-    // Compute extrapolated normals and store them in extrapolated_normals[]
-    std::map<Vertex_handle,Normal> extrapolated_normals; // vector + orientation
-    Finite_vertices_iterator v;
-    for(v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
-    {
-      if(v->normal() != CGAL::NULL_VECTOR)
-        continue;
-
-      Vector normal = CGAL::NULL_VECTOR;  // normal vector to compute
-
-      std::vector<Vertex_handle> vertices;
-      m_tr.incident_vertices(v,std::back_inserter(vertices));
-      for(typename std::vector<Vertex_handle>::iterator it = vertices.begin();
-          it != vertices.end();
-          it++)
-      {
-        Vertex_handle nv = *it;
-        normal = normal + nv->normal();
-      }
-
-      FT sq_norm = normal * normal;
-      if(sq_norm > 0.0)
-        normal = normal / std::sqrt(sq_norm);
-
-      extrapolated_normals[v] = Normal(normal);
-    }
-
-    // set normals
-    for(v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
-    {
-      if(v->normal() != CGAL::NULL_VECTOR)
-        continue;
-
-      typename std::map<Vertex_handle,Normal>::iterator it = extrapolated_normals.find(v);
-      if(it != extrapolated_normals.end())
-        v->normal() = extrapolated_normals[v];
-    }
-  }
-
-  FT gaussian_function( FT sigma , FT distance)
-  {
-    FT answer = (1 / std::sqrt(2 * 3.14)) * std::exp(-1 * distance * distance /(2 * sigma * sigma));
-    return answer;
-  }
-
-  /// Extrapolate the normals field.
-  /// Return the number of normals computed.
-  int extrapolate_normals_using_gaussian_kernel()
-  {
-    int counter = 0;
-    Finite_vertices_iterator v;
-    for(v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
-    {
-      if(v->type() == Triangulation::INPUT)
-      {
-        FT limit_distance =  v->average_spacing();
-        std::stack<Vertex_handle> vertices; // use to walk in 3D Delaunay
-        vertices.push(v);
-
-        while(!vertices.empty())
-        {
-          Vertex_handle v_cur = vertices.top();
-          vertices.pop();
-          FT distance_cur = distance(v,v_cur);
-          if (distance_cur > limit_distance)
-            continue;
-          if (v_cur->type() != Triangulation::INPUT)
-          {
-            FT gf = gaussian_function(limit_distance,distance_cur);
-            v_cur->normal() = v_cur->normal() + gf * v->normal();
-          }
-          // get incident_vertices
-          std::vector<Vertex_handle> v_neighbors;
-          m_tr.incident_vertices(v_cur,std::back_inserter(v_neighbors));
-          typename std::vector<Vertex_handle>::iterator it;
-          for(it = v_neighbors.begin(); it != v_neighbors.end(); it++)
-          {
-            Vertex_handle nv = *it;
-            int tag = nv->tag();
-            int index = v_cur->index();
-            if (tag != index)
-            {
-              vertices.push(nv);
-              nv->tag() = index;
-            }
-          }
-        }
-      }
-    }
-
-    for(v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
-    {
-      if(v->type() != Triangulation::INPUT )
-      {
-        FT sq_norm = std::sqrt(v->normal()*v->normal());
-        if(sq_norm > 0.0)
-        {
-          v->normal() = v->normal() / sq_norm;
-          counter++;
-        }
-      }
-    }
-
-    return counter;
-  }
-
 
   /// Poisson reconstruction.
   /// Return false on error.
@@ -704,40 +395,6 @@ public:
     return true;
   }
 
-
-  void SaveAsMeshFile()
-  {
-    std::ofstream os("function.mesh");
-    Finite_vertices_iterator v;
-    int counter = 0;
-    for(v = m_tr.finite_vertices_begin();
-        v != m_tr.finite_vertices_end();
-        v++)
-  	{
-  		Point& p = v->point();
-  		if (std::abs(f(p) - 0) < 0.001)
-  		  counter++;
-  	}
-    os << "MeshVersionFormatted 1\n"
-       << "Dimension\n"
-       << "3 \n\n"
-       << "Vertices\n"
-       << counter << " \n";
-    for(v = m_tr.finite_vertices_begin();
-      v != m_tr.finite_vertices_end();
-      v++)
-    {
-      Point& p = v->point();
-      if (std::abs(f(p) - 0) < 0.01)
-        os << p.x() << " " << p.y() << " " << p.z() << " " << 0 << std::endl;
-    }
-
-    os << "\n" << "End\n";
-
-    os.close();
-  }
-
-
   /// Shift and orient the implicit function such that:
   /// - the implicit function = 0 for points / f() = contouring_value,
   /// - the implicit function < 0 inside the surface.
@@ -758,6 +415,9 @@ public:
     return sink_value;
   }
 
+// TEMPORARY HACK
+/// @endcond
+
   /// Evaluates the implicit function at a given 3D query point.
   FT f(const Point& p) const
   {
@@ -777,8 +437,7 @@ public:
            d * m_hint->vertex(3)->f();
   }
 
-  /// Evaluates the implicit function at a given 3D query point.
-  /// ('ImplicitFunction' interface)
+  /// 'ImplicitFunction' interface: evaluate implicit function for any 3D point.
   FT operator()(const Point& p) const
   {
     return f(p);
@@ -791,32 +450,10 @@ public:
     return m_sink;
   }
 
-  /// Get average value of the implicit function over input vertices.
-  FT average_value_at_input_vertices() const
-  {
-    FT sum = 0.0;
-    unsigned int nb = 0;
-    Finite_vertices_iterator v;
-    for(v = m_tr.finite_vertices_begin();
-        v != m_tr.finite_vertices_end();
-        v++)
-    {
-      if(v->type() == Triangulation::INPUT)
-      {
-        sum += v->f();
-        nb++;
-      }
-    }
-    if(nb > 0)
-      return sum / (FT)nb;
-    else
-    {
-      std::cerr << "Contouring: no input points\n";
-      return (FT)0.0;
-    }
-  }
+// TEMPORARY HACK
+/// @cond SKIP_IN_MANUAL
 
-  /// Get median value of the implicit function over input vertices.
+/// Get median value of the implicit function over input vertices.
   FT median_value_at_input_vertices() const
   {
     std::deque<FT> values;
@@ -840,104 +477,8 @@ public:
     return 0.5 * (values[index] + values[index+1]); // avoids singular cases
   }
 
-  /// Get min value of the implicit function over input vertices.
-  FT min_value_at_input_vertices() const
-  {
-    FT min_value = 1e38;
-    Finite_vertices_iterator v;
-    for(v = m_tr.finite_vertices_begin();
-        v != m_tr.finite_vertices_end();
-        v++)
-    {
-      if(v->type() == Triangulation::INPUT)
-        min_value = (std::min)(min_value, v->f());
-    }
-    if (m_tr.number_of_vertices() > 0)
-    {
-      return min_value;
-    }
-    else
-    {
-      std::cerr << "Contouring: no input points\n";
-      return (FT)0.0;
-    }
-  }
-
-  /// Get max value of the implicit function over input vertices.
-  FT max_value_at_input_vertices() const
-  {
-    FT max_value = -1e38;
-    Finite_vertices_iterator v;
-    for(v = m_tr.finite_vertices_begin();
-        v != m_tr.finite_vertices_end();
-        v++)
-    {
-      if(v->type() == Triangulation::INPUT)
-        max_value = (std::max)(max_value, v->f());
-    }
-    if (m_tr.number_of_vertices() > 0)
-    {
-      return max_value;
-    }
-    else
-    {
-      std::cerr << "Contouring: no input points\n";
-      return (FT)0.0;
-    }
-  }
-
-  /// Get median value of the implicit function over convex hull vertices.
-  FT median_value_at_convex_hull() const
-  {
-    // Get convex hull vertices
-    std::vector<Vertex_handle> convex_hull_vertices;
-    m_tr.incident_vertices(m_tr.infinite_vertex(),std::back_inserter(convex_hull_vertices));
-
-    // Get values of the implicit function over convex hull vertices
-    std::deque<FT> values;
-    typename std::vector<Vertex_handle>::iterator it;
-    for(it = convex_hull_vertices.begin();
-        it != convex_hull_vertices.end();
-        it++)
-    {
-      Vertex_handle v = *it;
-      values.push_back(v->f());
-    }
-
-    int size = values.size();
-    if(size == 0)
-    {
-      std::cerr << "Contouring: no input points\n";
-      return 0.0;
-    }
-
-    std::sort(values.begin(),values.end());
-    int index = size/2;
-    // return values[size/2];
-    return 0.5 * (values[index] + values[index+1]); // avoids singular cases
-  }
-
-  /// Get average value of the implicit function over convex hull vertices.
-  FT average_value_at_convex_hull() const
-  {
-    std::vector<Vertex_handle> convex_hull_vertices;
-    m_tr.incident_vertices(m_tr.infinite_vertex(),std::back_inserter(convex_hull_vertices));
-
-    FT sum = 0.0;
-    unsigned int nb = 0;
-    typename std::vector<Vertex_handle>::iterator it;
-    for(it = convex_hull_vertices.begin();
-        it != convex_hull_vertices.end();
-        it++,nb++)
-    {
-      Vertex_handle v = *it;
-      sum += v->f();
-    }
-    if(nb != 0)
-      return sum / (FT)nb;
-    else
-      return 0.0;
-  }
+// TEMPORARY HACK
+/// @endcond
 
 // Private methods:
 private:
@@ -965,13 +506,6 @@ private:
     b = std::fabs(tb.volume() / v);
     c = std::fabs(tc.volume() / v);
     d = std::fabs(td.volume() / v);
-  }
-
-  FT distance(Vertex_handle v1, Vertex_handle v2) const
-  {
-    const Point& a = v1->point();
-    const Point& b = v2->point();
-    return std::sqrt(CGAL::squared_distance(a,b));
   }
 
   FT find_sink()
@@ -1025,18 +559,6 @@ private:
     v->constrained() = true;
     v->f() = value;
   }
-
-  //void constrain_input_vertices_on_convex_hull(const FT value = 0.0)
-  //{
-  //  for(Finite_vertices_iterator v = m_tr.finite_vertices_begin();
-  //    v != m_tr.finite_vertices_end();
-  //    v++)
-	 // if (v->type() == Triangulation::INPUT)
-	 // {
-		//  v->constrained() = true;
-		//  v->f() = value;
-	 // }
-  //}
 
   // divergent
   FT div(Vertex_handle v)
@@ -1126,33 +648,6 @@ private:
     return div;
   }
 
- FT mesh_size(Vertex_handle v)
- {
-   std::vector<Cell_handle> cells;
-   int counter = 0;
-   FT length_total = 100000.0;
-   m_tr.incident_cells(v,std::back_inserter(cells));
-   if(cells.size() == 0)
-     return 0.0;
-
-   typename std::vector<Cell_handle>::iterator it;
-   for(it = cells.begin(); it != cells.end(); it++)
-   {
-     Cell_handle cell = *it;
-     if(m_tr.is_infinite(cell))
-       continue;
-     int index = cell->index(v);
-     const Point& x = cell->vertex(index)->point();
-     const Point& a = cell->vertex((index+1)%4)->point();
-     const Point& b = cell->vertex((index+2)%4)->point();
-     const Point& c = cell->vertex((index+3)%4)->point();
-     if (length_total > std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c)))
-       length_total = std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c));
-     counter++;
-   }
-   return length_total / 3 ;
- }
-
   Vector cell_normal(Cell_handle cell)
   {
     const Vector& n0 = cell->vertex(0)->normal();
@@ -1180,67 +675,6 @@ private:
     Vector primal = pj - pi;
     FT len_primal = std::sqrt(primal * primal);
     return area_voronoi_face(edge) / len_primal;
-  }
-
- FT area_normal_ratio(Cell_handle cell, Edge& edge)
- {
-      Vertex_handle vi = cell->vertex(edge.second);
-      Vertex_handle vj = cell->vertex(edge.third);
-      int index1 = cell->index(vi);
-      int index2 = cell->index(vj);
-	  Point& p_vi = cell->vertex(index1)->point();
-	  Point& p_vj = cell->vertex(index2)->point();
-	  Point& a = cell->vertex(index1)->point();
-	  Point& c = cell->vertex(index1)->point();
-	  if ((index1+1)%4 == index2)
-	  {
-	   a = cell->vertex((index1+2)%4)->point();
-       c = cell->vertex((index1+3)%4)->point();
-	  }
-	  if ((index1+2)%4 == index2)
-	  {
-	   a = cell->vertex((index1+1)%4)->point();
-       c = cell->vertex((index1+3)%4)->point();
-	  }
-	  if ((index1+3)%4 == index2)
-	  {
-	   a = cell->vertex((index1+1)%4)->point();
-       c = cell->vertex((index1+2)%4)->point();
-	  }
-      Triangle face(p_vi,a,c);
-      FT area = std::sqrt(face.squared_area());
-
-      Vector x = p_vj - a;
-      Vector n1 = CGAL::cross_product(a-c,p_vi-c);
-      FT sq_norm1  = std::sqrt(n1*n1);
-      FT normal = std::abs((x*n1)/sq_norm1);
-
-      Vector n2 = CGAL::cross_product(a-c,p_vj-c);
-      FT sq_norm2  = std::sqrt(n2*n2);
-      FT cos = std::abs(n1 * n2 / (sq_norm1 * sq_norm2));
-
-
-      return (area * cos / normal);
- }
-
-
-
- FT cotan_FEM(Edge& edge)
-  {
-     FT answer = 0.0;
-     Cell_circulator circ = m_tr.incident_cells(edge);
-     Cell_circulator done = circ;
-     do
-     {
-      Cell_handle cell = circ;
-      if(!m_tr.is_infinite(cell))
-       {
-          answer = answer + area_normal_ratio(cell,edge);
-       }
-      else return cotan_geometric(edge);
-     }
-     while ( circ != done);
-    return answer;
   }
 
   // spin around edge
@@ -1388,7 +822,6 @@ private:
       // get corresponding edge
       Edge edge = sorted_edge(vi,vj);
 
-     // double cij = cotan_FEM(edge);
       double cij = cotan_geometric(edge);
       if(vj->constrained())
         B[vi->index()] -= cij * vj->f(); // change rhs
@@ -1423,93 +856,11 @@ private:
     return Edge(cell,i1,i2);
   }
 
-  /// Compute enlarged geometric bounding box of the embedded triangulation.
-  Iso_cuboid enlarged_bounding_box(FT ratio) const
-  {
-    // Get triangulation's bounding box
-    Iso_cuboid bbox = bounding_box();
-
-    // Its center point is:
-    FT mx = 0.5 * (bbox.xmax() + bbox.xmin());
-    FT my = 0.5 * (bbox.ymax() + bbox.ymin());
-    FT mz = 0.5 * (bbox.zmax() + bbox.zmin());
-    Point c(mx,my,mz);
-
-    // Compute enlarged bounding box
-    FT sx = 0.5 * ratio * (bbox.xmax() - bbox.xmin());
-    FT sy = 0.5 * ratio * (bbox.ymax() - bbox.ymin());
-    FT sz = 0.5 * ratio * (bbox.zmax() - bbox.zmin());
-    Point p(c.x() - sx, c.y() - sy, c.z() - sz);
-    Point q(c.x() + sx, c.y() + sy, c.z() + sz);
-    return Iso_cuboid(p,q);
-  }
-
   /// Compute enlarged geometric bounding sphere of the embedded triangulation.
   Sphere enlarged_bounding_sphere(FT ratio) const
   {
     Sphere bbox = bounding_sphere(); // triangulation's bounding sphere
     return Sphere(bbox.center(), bbox.squared_radius() * ratio*ratio);
-  }
-
-  void init_nn_search_shell(K_nearest_neighbor& nn_search)
-  {
-    // Instanciate a KD-tree search.
-    // We have to wrap each input vertex by a Point_vertex_handle_3.
-    std::deque<Point_vertex_handle_3> kvertices;
-    for(Finite_vertices_iterator v = m_tr.finite_vertices_begin();
-      v != m_tr.finite_vertices_end();
-      v++)
-    {
-      if(v->type() != Triangulation::INPUT)
-        continue;
-      const Point& p = v->point();
-      Point_vertex_handle_3 kv(p.x(),p.y(),p.z(),v);
-      kvertices.push_back(kv);
-    }
-    nn_search = K_nearest_neighbor(kvertices.begin(), kvertices.end());
-  }
-
-  bool is_refinable(Cell_handle cell,
-                    K_nearest_neighbor& nn_search,
-                    const FT size_shell,
-                    const FT sizing,
-                    FT& size,
-                    Point& p)
-  {
-    size = circumradius(cell);
-    if(size <= sizing)
-      return false;
-
-    // try circumcenter
-    p = m_tr.dual(cell);
-    if(distance_to_input_points(nn_search, p) < size_shell)
-      return true;
-
-    return false;
-  }
-
-  FT distance_to_input_points(K_nearest_neighbor& nn_search, const Point& p)
-  {
-    // Get nearest neighbor
-    std::list<Vertex_handle> nearest_vertices;
-    nn_search.get_k_nearest_neighbors(p,1,nearest_vertices);
-    Vertex_handle nv = *nearest_vertices.begin();
-    if(nv != NULL)
-      return distance(nv->point(),p);
-    else
-      return 0.0; // default
-  }
-
-  FT distance(const Point& a, const Point& b) const
-  {
-    return std::sqrt(CGAL::squared_distance(a,b));
-  }
-
-  FT circumradius(Cell_handle c) const
-  {
-    Point center = m_tr.dual(c);
-    const Point& p = c->vertex(0)->point();
-    return std::sqrt((p-center)*((p-center)));
   }
 
 }; // end of Poisson_reconstruction_function

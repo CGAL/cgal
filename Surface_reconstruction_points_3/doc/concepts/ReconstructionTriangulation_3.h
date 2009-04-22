@@ -20,19 +20,14 @@
 /// The ReconstructionTriangulation_3 concept defines
 /// the interface of a 3D Delaunay triangulation
 /// requested by the Poisson_reconstruction_function class.
-/// The cell class must be a model of
-/// ReconstructionCellBase_3 and the vertex class
-/// must be a model of ReconstructionVertexBase_3.
+/// The vertex class must be a model of ReconstructionVertexBase_3.
 ///
 /// It provides the interface requested by the Poisson_reconstruction_function class:
 /// - Each vertex stores a normal vector.
 /// - A vertex is either an input point or a Steiner point added by Delaunay refinement.
 /// - In order to solve a linear system over the triangulation, a vertex may be constrained
-///   or not (i.e. contributes to the right or left member of the linear system),
+///   or not (i.e. may contribute to the right or left member of the linear system),
 ///   and has a unique index.
-///
-/// CAUTION:
-/// User is responsible to call invalidate_bounds() after adding or removing points.
 ///
 /// @heading Has Models:
 /// Reconstruction_triangulation_3<GeomTraits, TriangulationDataStructure_3>
@@ -43,10 +38,12 @@ class ReconstructionTriangulation_3 : public DelaunayTriangulation_3,
 // Public types
 public:
 
+  /// Geometric traits class / Point_3 is a model of PointWithNormal_3.
+  typedef Gt  Geom_traits; 
+
   // Geometric types
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Vector_3 Vector;
-  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   /// The geometric traits class's Point_3 type is a model of PointWithNormal_3
@@ -58,8 +55,10 @@ public:
   typedef xxx Normal_iterator;
 
   /// Point type
-  enum Point_type { INPUT,     ///< Input point.
-                    STEINER }; ///< Steiner point created by Delaunay refinement.
+  enum Point_type { 
+    INPUT,    ///< Input point.
+    STEINER   ///< Steiner point created by Delaunay refinement.
+  };
 
   /// Iterator over input vertices.
   typedef xxx Input_vertices_iterator;
@@ -84,28 +83,11 @@ public:
   Input_point_iterator input_points_begin() const;
   /// Get past-the-end iterator over input points.
   Input_point_iterator input_points_end() const;
-  /// Get the bounding box of all points.
-  Iso_cuboid bounding_box() const;
 
-
-  /// Get the bounding box of input points.
-  Iso_cuboid input_points_bounding_box() const;
   /// Get the bounding sphere of all points.
   Sphere bounding_sphere() const;
-
-
   /// Get the bounding sphere of input points.
   Sphere input_points_bounding_sphere() const;
-
-  /// Get the barycenter of all points.
-  Point barycenter() const;
-
-  /// Get the standard deviation of the distance to barycenter (for all points).
-  FT diameter_standard_deviation() const;
-
-  /// Update barycenter, bounding box, bounding sphere and standard deviation.
-  /// User is responsible to call invalidate_bounds() after adding or removing points.
-  void invalidate_bounds();
 
   /// Insert point (model of PointWithNormal_3) in the triangulation.
   /// Default type is INPUT.
@@ -133,10 +115,6 @@ public:
   insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
 	         Cell_handle begin, int i,
                  Point_type type = STEINER);
-
-  /// Index all finite vertices following the order of Finite_vertices_iterator.
-  /// @return the number of finite vertices.
-  unsigned int index_vertices();
 
   /// Index unconstrained vertices following the order of Finite_vertices_iterator.
   /// @return the number of unconstrained vertices.

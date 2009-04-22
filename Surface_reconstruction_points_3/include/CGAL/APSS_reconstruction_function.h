@@ -63,7 +63,6 @@ public:
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;
   typedef typename Geom_traits::Vector_3 Vector;
-  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   typedef Point_with_normal_3<Gt> Point_with_normal; ///< == Point_with_normal_3<Gt>
@@ -121,13 +120,13 @@ private:
 // Public methods
 public:
 
-  /// Create an APSS implicit function from a point set.
+  /// Creates an APSS implicit function from a set of oriented points.
   ///
   /// @commentheading Precondition:
   /// InputIterator value_type must be convertible to Point_with_normal.
   ///
-  /// @param first Iterator over first point to add.
-  /// @param beyond Past-the-end iterator to add.
+  /// @param first Iterator over first point.
+  /// @param beyond Past-the-end iterator.
   /// @param k #neighbors for APSS sphere fitting.
   template < class InputIterator >
   APSS_reconstruction_function(InputIterator first, InputIterator beyond,
@@ -177,10 +176,10 @@ public:
 //         std::cout << "\n\n";
       }
     }
-//     exit(0);
 
-    // Compute barycenter, bounding box, bounding sphere and standard deviation.
-    update_bounds(first, beyond);
+    // Compute bounding sphere
+    Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > ms3(first, beyond);
+    m->bounding_sphere = Sphere(ms3.center(), ms3.squared_radius());
 
     // Find a point inside the surface.
     find_inner_point();
@@ -207,29 +206,13 @@ public:
       delete m;
   }
 
+  /// Set #neighbors for APSS sphere fitting.
   void set_numbers_of_neighbors(unsigned int k) {m->nofNeighbors = k;}
-
-  /// Get the bounding box.
-  Iso_cuboid bounding_box() const
-  {
-    return m->bounding_box;
-  }
 
   /// Returns a sphere bounding the inferred surface.
   const Sphere& bounding_sphere() const
   {
     return m->bounding_sphere;
-  }
-
-  /// Get the region of interest, ignoring the outliers.
-  /// This method is used to define the OpenGL arcball sphere.
-  Sphere region_of_interest() const
-  {
-    // A good candidate is a sphere containing the dense region of the point cloud:
-    // - center point is barycenter
-    // - Radius is 2 * standard deviation
-    FT radius = (FT)2 * (FT)m->diameter_standard_deviation;
-    return Sphere(m->barycenter, radius*radius);
   }
 
 private:
@@ -282,8 +265,7 @@ private:
 
 public:
 
-  /// Evaluate implicit function for any 3D point.
-  /// ('ImplicitFunction' interface)
+  /// 'ImplicitFunction' interface: evaluate implicit function for any 3D point.
   //
   // Implementation note: this function is called a large number of times,
   // thus us heavily optimized. The bottleneck is Neighbor_search's constructor,
@@ -441,61 +423,6 @@ private:
       a.x()*b.y() - a.y()*b.x());
   }
 
-  /// Compute barycenter, bounding box, bounding sphere and standard deviation.
-  ///
-  /// @param first Iterator over first point of point set.
-  /// @param beyond Past-the-end iterator of point set.
-  template < class InputIterator >
-  void update_bounds(InputIterator first, InputIterator beyond)
-  {
-    if (first == beyond)
-      return;
-
-    // Update bounding box and barycenter.
-    // TODO: we should use the functions in PCA component instead.
-    FT xmin,xmax,ymin,ymax,zmin,zmax;
-    xmin = ymin = zmin =  1e38;
-    xmax = ymax = zmax = -1e38;
-    Vector v = CGAL::NULL_VECTOR;
-    FT norm = 0;
-    for (InputIterator it = first; it != beyond; it++)
-    {
-      Point p = *it;
-
-      // update bbox
-      xmin = (std::min)(p.x(),xmin);
-      ymin = (std::min)(p.y(),ymin);
-      zmin = (std::min)(p.z(),zmin);
-      xmax = (std::max)(p.x(),xmax);
-      ymax = (std::max)(p.y(),ymax);
-      zmax = (std::max)(p.z(),zmax);
-
-      // update barycenter
-      v = v + (p - CGAL::ORIGIN);
-      norm += 1;
-    }
-    //
-    Point p(xmin,ymin,zmin);
-    Point q(xmax,ymax,zmax);
-    m->bounding_box = Iso_cuboid(p,q);
-    //
-    m->barycenter = CGAL::ORIGIN + v / norm;
-
-    // sphere of smallest volume enclosing the input points
-    Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > ms3(first, beyond);
-    m->bounding_sphere = Sphere(ms3.center(), ms3.squared_radius());
-
-    // Compute standard deviation of the distance to barycenter
-    typename Geom_traits::Compute_squared_distance_3 sqd;
-    FT sq_radius = 0;
-    for (InputIterator it = first; it != beyond; it++)
-    {
-        sq_radius += sqd(*it, m->barycenter);
-    }
-    sq_radius /= std::distance(first, beyond);
-    m->diameter_standard_deviation = CGAL::sqrt(sq_radius);
-  }
-
 private:
 
   struct AlgebraicSphere {
@@ -638,10 +565,7 @@ private:
     Tree* tree;
     std::vector<KdTreeElement> treeElements;
     std::vector<FT> radii;
-    Iso_cuboid bounding_box; // Points' bounding box
     Sphere bounding_sphere; // Points' bounding sphere
-    Point barycenter; // Points' barycenter
-    FT diameter_standard_deviation; // Standard deviation of the distance to barycenter
     FT sqError; // Dichotomy error when projecting point (squared)
     unsigned int nofNeighbors; // Number of nearest neighbors
     Point inner_point; // Point inside the surface

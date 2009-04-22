@@ -23,7 +23,7 @@
 /// - Each vertex stores a normal vector.
 /// - A vertex is either an input point or a Steiner point added by Delaunay refinement.
 /// - In order to solve a linear system over the triangulation, a vertex may be constrained
-///   or not (i.e. contributes to the right or left member of the linear system),
+///   or not (i.e. may contribute to the right or left member of the linear system),
 ///   and has a unique index.
 ///
 /// @heading Has Models:
@@ -37,6 +37,9 @@ class ReconstructionVertexBase_3 : public DelaunayTriangulationVertexBase_3,
 {
 // Public types
 public:
+
+  /// Geometric traits class / Point_3 is a model of PointWithNormal_3.
+  typedef Gt Geom_traits;
 
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
@@ -62,10 +65,6 @@ public:
   FT  f() const;
   FT& f();
 
-  /// Get/set average spacing at each input point.
-  double  average_spacing() const;
-  double& average_spacing();
-
   /// Get/set the type = INPUT or STEINER.
   unsigned char  type() const;
   unsigned char& type();
@@ -78,10 +77,6 @@ public:
   /// Default value is null vector.
   const Normal& normal() const;
   Normal&       normal();
-
-  /// General purpose tag.
-  int tag() const;
-  int& tag();
 
 }; // end of ReconstructionVertexBase_3
 

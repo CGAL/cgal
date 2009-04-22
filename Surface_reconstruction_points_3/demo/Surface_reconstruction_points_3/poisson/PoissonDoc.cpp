@@ -72,18 +72,8 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_COMMAND(ID_EDIT_RESET_SELECTION, OnEditResetSelection)
     ON_UPDATE_COMMAND_UI(ID_EDIT_RESET_SELECTION, OnUpdateEditResetSelection)
     ON_COMMAND(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, OnReconstructionDelaunayRefinement)
-    ON_COMMAND(ID_RECONSTRUCTION_POISSON, OnReconstructionPoisson)
 	ON_COMMAND(ID_RECONSTRUCTION_POISSON_NORMALIZED, OnReconstructionPoissonNormalized)
-    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_POISSON_NORMALIZED, OnUpdateReconstructionPoissonNormalized)
-    ON_COMMAND(ID_ALGORITHMS_REFINEINSHELL, OnAlgorithmsRefineInShell)
     ON_COMMAND(ID_RECONSTRUCTION_POISSON_SURFACE_MESHING, OnReconstructionPoissonSurfaceMeshing)
-    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_POISSON, OnUpdateReconstructionPoisson)
-    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_POISSON_SURFACE_MESHING, OnUpdateReconstructionPoissonSurfaceMeshing)
-    ON_COMMAND(ID_ALGORITHMS_MARCHINGTETCONTOURING, OnAlgorithmsMarchingTetContouring)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_MARCHINGTETCONTOURING, OnUpdateAlgorithmsMarchingTetContouring)
-    ON_COMMAND(ID_ALGORITHMS_EXTRAPOLATENORMALS, OnAlgorithmsExtrapolatenormals)
-    ON_COMMAND(ID_ALGORITHMS_POISSONSTATISTICS, OnAlgorithmsPoissonStatistics)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_POISSONSTATISTICS, OnUpdateAlgorithmsPoissonStatistics)
     ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALSBYPCA, OnAlgorithmsEstimateNormalsByPCA)
     ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, OnAlgorithmsEstimateNormalsByJetFitting)
     ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSCAMERAS, OnAlgorithmsOrientNormalsWrtCameras)
@@ -100,26 +90,17 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, OnUpdateAlgorithmsEstimateNormalByJetFitting)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ORIENTNORMALSMST, OnUpdateAlgorithmsOrientNormalsWithMST)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ORIENTNORMALSCAMERAS, OnUpdateAlgorithmsOrientNormalsWrtCameras)
-    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, OnUpdateReconstructionDelaunayRefinement)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_REFINEINSHELL, OnUpdateAlgorithmsRefineInShell)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_EXTRAPOLATENORMALS, OnUpdateAlgorithmsExtrapolateNormals)
     ON_COMMAND(ID_ALGORITHMS_OUTLIER_REMOVAL_WRT_CAMERAS_CONE_ANGLE, OnAlgorithmsOutlierRemovalWrtCamerasConeAngle)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_OUTLIER_REMOVAL_WRT_CAMERAS_CONE_ANGLE, OnUpdateAlgorithmsOutlierRemovalWrtCamerasConeAngle)
     ON_COMMAND(ID_ALGORITHMS_OUTLIER_REMOVAL, OnOutlierRemoval)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_OUTLIER_REMOVAL, OnUpdateOutlierRemoval)
     ON_COMMAND(ID_ANALYSIS_AVERAGE_SPACING, OnAnalysisAverageSpacing)
     ON_UPDATE_COMMAND_UI(ID_ANALYSIS_AVERAGE_SPACING, OnUpdateAnalysisAverageSpacing)
-    ON_COMMAND(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnOneStepPoissonReconstruction)
-    ON_UPDATE_COMMAND_UI(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnUpdateOneStepPoissonReconstruction)
 	ON_COMMAND(ID_RECONSTRUCTION_ONE_STEP_NORMALIZED, OnOneStepPoissonReconstructionWithNormalizedDivergence)
     ON_COMMAND(ID_RECONSTRUCTION_APSS_RECONSTRUCTION, OnReconstructionApssReconstruction)
     ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_APSS_RECONSTRUCTION, OnUpdateReconstructionApssReconstruction)
     ON_COMMAND(ID_MODE_APSS, OnModeAPSS)
     ON_UPDATE_COMMAND_UI(ID_MODE_APSS, OnUpdateModeAPSS)
-	ON_COMMAND(ID_RECONSTRUCTION_SAVEAS, OnReconstructionSaveas)
-	ON_COMMAND(ID_STEP_CALCULATEAVERAGESPACING, OnCalculateAverageSpacing)
-	ON_COMMAND(ID_STEP_EXTRAPOLATENORMALSUSINGGAUSSIANKERNELS,OnExtrapolateNormalsUsingGaussianKernel)
-    ON_UPDATE_COMMAND_UI(ID_STEP_EXTRAPOLATENORMALSUSINGGAUSSIANKERNELS, OnUpdateStepExtrapolatenormalsusinggaussiankernels)
     ON_COMMAND(ID_POINT_CLOUD_SIMPLIFICATION_BY_CLUSTERING, OnPointCloudSimplificationByClustering)
     ON_UPDATE_COMMAND_UI(ID_POINT_CLOUD_SIMPLIFICATION_BY_CLUSTERING, OnUpdatePointCloudSimplificationByClustering)
     ON_COMMAND(ID_POINT_CLOUD_SIMPLIFICATION_RANDOM, OnPointCloudSimplificationRandom)
@@ -128,8 +109,7 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_UPDATE_COMMAND_UI(ID_RADIAL_NORMAL_ORIENTATION, OnUpdateRadialNormalOrientation)
     ON_COMMAND(ID_FLIP_NORMALS, OnFlipNormals)
     ON_UPDATE_COMMAND_UI(ID_FLIP_NORMALS, OnUpdateFlipNormals)
-    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_ONE_STEP_NORMALIZED, OnUpdateReconstructionOneStepNormalized)
-    ON_UPDATE_COMMAND_UI(ID_STEP_CALCULATEAVERAGESPACING, OnUpdateStepCalculateaveragespacing)
+    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_ONE_STEP_NORMALIZED, OnUpdateOneStepPoissonReconstructionWithNormalizedDivergence)
 END_MESSAGE_MAP()
 
 
@@ -949,98 +929,6 @@ void CPoissonDoc::OnReconstructionDelaunayRefinement()
   EndWaitCursor();
 }
 
-void CPoissonDoc::OnUpdateReconstructionDelaunayRefinement(CCmdUI *pCmdUI)
-{
-  pCmdUI->Enable(m_edit_mode == POISSON);
-}
-
-// Delaunay refinement in a surface's shell
-void CPoissonDoc::OnAlgorithmsRefineInShell()
-{
-  assert(m_poisson_dt != NULL);
-  assert(m_poisson_function != NULL);
-
-  BeginWaitCursor();
-  status_message("Delaunay refinement in surface shell...");
-  CGAL::Timer task_timer; task_timer.start();
-
-  const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
-  const double enlarge_ratio = 1.5;
-  unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement_shell(m_dr_shell_size,m_dr_sizing,m_dr_max_vertices);
-  m_triangulation_refined = true;
-
-  status_message("Delaunay refinement in surface shell...done (%.2lf s, %d vertices inserted)",
-                 task_timer.time(), nb_vertices_added);
-  update_status();
-  UpdateAllViews(NULL);
-  EndWaitCursor();
-}
-
-void CPoissonDoc::OnUpdateAlgorithmsRefineInShell(CCmdUI *pCmdUI)
-{
-  pCmdUI->Enable(m_edit_mode == POISSON);
-}
-
-// Extrapolate the normals field:
-// compute null normals by averaging neighbor normals.
-void CPoissonDoc::OnAlgorithmsExtrapolatenormals()
-{
-  assert(m_poisson_dt != NULL);
-  assert(m_poisson_function != NULL);
-
-  BeginWaitCursor();
-  status_message("Extrapolate the normals field...");
-  CGAL::Timer task_timer; task_timer.start();
-
-  m_poisson_function->extrapolate_normals();
-
-  status_message("Extrapolate the normals field...done (%.2lf s)", task_timer.time());
-  update_status();
-  UpdateAllViews(NULL);
-  EndWaitCursor();
-}
-
-void CPoissonDoc::OnUpdateAlgorithmsExtrapolateNormals(CCmdUI *pCmdUI)
-{
-  pCmdUI->Enable(m_edit_mode == POISSON && m_triangulation_refined);
-}
-
-// Solve Poisson equation callback
-void CPoissonDoc::OnReconstructionPoisson()
-{
-  assert(m_poisson_dt != NULL);
-  assert(m_poisson_function != NULL);
-
-  BeginWaitCursor();
-  status_message("Solve Poisson equation...");
-  CGAL::Timer task_timer; task_timer.start();
-
-  // Solve Poisson equation such that:
-  // - (*m_poisson_function)() = 0 on the input points,
-  // - (*m_poisson_function)() < 0 inside the surface.
-  double duration_assembly, duration_factorization, duration_solve;
-  m_poisson_solved = m_poisson_function->solve_poisson(m_lambda,
-                                                       &duration_assembly,
-                                                       &duration_factorization,
-                                                       &duration_solve);
-  m_poisson_function->set_contouring_value(m_poisson_function->median_value_at_input_vertices());
-  m_contouring_value = 0.0;
-
-  if (!m_poisson_solved)
-      status_message("Solve Poisson equation...solver failed");
-  else
-      status_message("Solve Poisson equation...done (%.2lf s)", task_timer.time());
-  update_status();
-  UpdateAllViews(NULL);
-  EndWaitCursor();
-}
-
-// Enable "Solve Poisson equation" if Delaunay refinement is applied
-void CPoissonDoc::OnUpdateReconstructionPoisson(CCmdUI *pCmdUI)
-{
-  pCmdUI->Enable(m_edit_mode == POISSON && m_triangulation_refined);
-}
-
 void CPoissonDoc::OnReconstructionPoissonNormalized()
 {
   assert(m_poisson_dt != NULL);
@@ -1069,11 +957,6 @@ void CPoissonDoc::OnReconstructionPoissonNormalized()
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
-}
-
-void CPoissonDoc::OnUpdateReconstructionPoissonNormalized(CCmdUI *pCmdUI)
-{
-  pCmdUI->Enable(m_edit_mode == POISSON && m_triangulation_refined);
 }
 
 // Reconstruction >> Poisson >> Surface Meshing callback
@@ -1137,68 +1020,6 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     update_status();
     UpdateAllViews(NULL);
     EndWaitCursor();
-}
-
-// Enable Reconstruction >> Poisson >> Surface Meshing if Poisson equation is solved
-void CPoissonDoc::OnUpdateReconstructionPoissonSurfaceMeshing(CCmdUI *pCmdUI)
-{
-  pCmdUI->Enable(m_edit_mode == POISSON && m_poisson_solved);
-}
-
-// Marching Tet Contouring callback
-void CPoissonDoc::OnAlgorithmsMarchingTetContouring()
-{
-  assert(m_poisson_dt != NULL);
-  assert(m_poisson_function != NULL);
-
-  BeginWaitCursor();
-  status_message("Marching tet contouring (%3.1lf%%)...", m_contouring_value);
-  CGAL::Timer task_timer; task_timer.start();
-
-  m_contour.clear(); // clear previous call
-
-  std::deque<Triangle> triangles;
-  int nb = m_poisson_dt->marching_tet(std::back_inserter(triangles), m_contouring_value);
-  m_contour.insert(m_contour.end(), triangles.begin(), triangles.end());
-
-  status_message("Marching tet contouring...done (%d triangles, %.2lf s)",
-                 nb, task_timer.time());
-  update_status();
-  UpdateAllViews(NULL);
-  EndWaitCursor();
-}
-
-// Enable "Marching Tet Contouring" if Poisson equation is solved
-void CPoissonDoc::OnUpdateAlgorithmsMarchingTetContouring(CCmdUI *pCmdUI)
-{
-  pCmdUI->Enable(m_edit_mode == POISSON && m_poisson_solved);
-}
-
-void CPoissonDoc::OnAlgorithmsPoissonStatistics()
-{
-  assert(m_poisson_dt != NULL);
-  assert(m_poisson_function != NULL);
-
-  BeginWaitCursor();
-
-  // write message in message box
-  prompt_message(
-    "Poisson implicit function:\n- Median value at input vertices = %lf\n- Average value at input vertices = %lf\n- Min value at input vertices = %lf\n- Max value at input vertices = %lf\n- Median value at convex hull = %lf\n- Average value at convex hull = %lf\n- Min value = %lf",
-    m_poisson_function->median_value_at_input_vertices(),
-    m_poisson_function->average_value_at_input_vertices(),
-    m_poisson_function->min_value_at_input_vertices(),
-    m_poisson_function->max_value_at_input_vertices(),
-    m_poisson_function->median_value_at_convex_hull(),
-    m_poisson_function->average_value_at_convex_hull(),
-    (*m_poisson_function)(m_poisson_function->get_inner_point()));
-
-  EndWaitCursor();
-}
-
-// Enable "Poisson Statistics" if Poisson equation is solved
-void CPoissonDoc::OnUpdateAlgorithmsPoissonStatistics(CCmdUI *pCmdUI)
-{
-  pCmdUI->Enable(m_edit_mode == POISSON && m_poisson_solved);
 }
 
 // Smooth point set using jet fitting + projection
@@ -1282,35 +1103,11 @@ void CPoissonDoc::OnUpdateModePoisson(CCmdUI *pCmdUI)
   pCmdUI->SetCheck(m_edit_mode == POISSON);
 }
 
-// Reconstruction >> Poisson reconstruction callback: call in 1 step:
+// Reconstruction >> Poisson Reconstruction w/ Normalized Divergence callback: 
 // - Create Poisson Delaunay Triangulation
 // - Delaunay refinement
 // - Solve Poisson Equation
 // - Surface Meshing
-void CPoissonDoc::OnOneStepPoissonReconstruction()
-{
-  BeginWaitCursor();
-  status_message("1-step Poisson reconstruction...");
-  CGAL::Timer task_timer; task_timer.start();
-
-  OnCreatePoissonTriangulation();
-  OnReconstructionDelaunayRefinement();
-  if (m_triangulation_refined)
-    OnReconstructionPoisson();
-  if (m_poisson_solved)
-    OnReconstructionPoissonSurfaceMeshing();
-
-  status_message("1-step Poisson reconstruction...done (%.2lf s)", task_timer.time());
-  update_status();
-  UpdateAllViews(NULL);
-  EndWaitCursor();
-}
-
-void CPoissonDoc::OnUpdateOneStepPoissonReconstruction(CCmdUI *pCmdUI)
-{
-  OnUpdateCreatePoissonTriangulation(pCmdUI);
-}
-
 void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
 {
   BeginWaitCursor();
@@ -1318,9 +1115,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   CGAL::Timer task_timer; task_timer.start();
 
   OnCreatePoissonTriangulation();
-  //OnCalculateAverageSpacing();
   OnReconstructionDelaunayRefinement();
-  //OnExtrapolateNormalsUsingGaussianKernel(); // TO TEST
   if (m_triangulation_refined)
     OnReconstructionPoissonNormalized();
   if (m_poisson_solved)
@@ -1332,7 +1127,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   EndWaitCursor();
 }
 
-void CPoissonDoc::OnUpdateReconstructionOneStepNormalized(CCmdUI *pCmdUI)
+void CPoissonDoc::OnUpdateOneStepPoissonReconstructionWithNormalizedDivergence(CCmdUI *pCmdUI)
 {
   OnUpdateCreatePoissonTriangulation(pCmdUI);
 }
@@ -1515,50 +1310,6 @@ void CPoissonDoc::OnUpdateModeAPSS(CCmdUI *pCmdUI)
   pCmdUI->SetCheck(m_edit_mode == APSS);
 }
 
-
-void CPoissonDoc::OnReconstructionSaveas()
-{
-	m_poisson_function->SaveAsMeshFile();
-}
-
-void CPoissonDoc::OnCalculateAverageSpacing()
-{
-  BeginWaitCursor();
-  status_message("Calculating average spacing");
-  CGAL::Timer task_timer; task_timer.start();
-
-  Point_set output;
-  m_poisson_function->average_spacing_avg_knn_sq_distance_3();
-
-  status_message("Average spacing calculated...took %f seconds", task_timer.time());
-  update_status();
-  UpdateAllViews(NULL);
-  EndWaitCursor();
-}
-
-void CPoissonDoc::OnUpdateStepCalculateaveragespacing(CCmdUI *pCmdUI)
-{
-  pCmdUI->Enable(m_edit_mode == POISSON);
-}
-
-void CPoissonDoc::OnExtrapolateNormalsUsingGaussianKernel()
-{
-  BeginWaitCursor();
-  status_message("Extrapolating using gaussian kernel");
-  CGAL::Timer task_timer; task_timer.start();
-
-  int a = m_poisson_function->extrapolate_normals_using_gaussian_kernel();
-
-  status_message("Extrapolating using gaussian kernel...done: %d normals inserted",a);
-  update_status();
-  UpdateAllViews(NULL);
-  EndWaitCursor();
-}
-
-void CPoissonDoc::OnUpdateStepExtrapolatenormalsusinggaussiankernels(CCmdUI *pCmdUI)
-{
-  pCmdUI->Enable(m_edit_mode == POISSON && m_triangulation_refined);
-}
 
 void CPoissonDoc::OnEditDelete()
 {

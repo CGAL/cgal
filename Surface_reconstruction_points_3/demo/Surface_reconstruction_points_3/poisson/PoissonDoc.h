@@ -227,13 +227,9 @@ public:
 	afx_msg void OnReconstructionPoissonNormalized();
     afx_msg void OnAlgorithmsRefineInShell();
     afx_msg void OnReconstructionPoissonSurfaceMeshing();
-    afx_msg void OnUpdateReconstructionPoisson(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateReconstructionPoissonSurfaceMeshing(CCmdUI *pCmdUI);
     afx_msg void OnAlgorithmsMarchingTetContouring();
-    afx_msg void OnUpdateAlgorithmsMarchingTetContouring(CCmdUI *pCmdUI);
     afx_msg void OnAlgorithmsExtrapolatenormals();
     afx_msg void OnAlgorithmsPoissonStatistics();
-    afx_msg void OnUpdateAlgorithmsPoissonStatistics(CCmdUI *pCmdUI);
     afx_msg void OnAlgorithmsEstimateNormalsByPCA();
     afx_msg void OnAlgorithmsEstimateNormalsByJetFitting();
     afx_msg void OnAlgorithmsOrientNormalsWrtCameras();
@@ -250,16 +246,11 @@ public:
     afx_msg void OnUpdateAlgorithmsEstimateNormalByJetFitting(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsOrientNormalsWithMST(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsOrientNormalsWrtCameras(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateReconstructionDelaunayRefinement(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateAlgorithmsRefineInShell(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateAlgorithmsExtrapolateNormals(CCmdUI *pCmdUI);
     afx_msg void OnAlgorithmsOutlierRemovalWrtCamerasConeAngle();
     afx_msg void OnUpdateAlgorithmsOutlierRemovalWrtCamerasConeAngle(CCmdUI *pCmdUI);
     afx_msg void OnOutlierRemoval();
     afx_msg void OnUpdateOutlierRemoval(CCmdUI *pCmdUI);
     afx_msg void OnAnalysisAverageSpacing();
-    afx_msg void OnOneStepPoissonReconstruction();
-    afx_msg void OnUpdateOneStepPoissonReconstruction(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAnalysisAverageSpacing(CCmdUI *pCmdUI);
     afx_msg void OnReconstructionApssReconstruction();
     afx_msg void OnUpdateReconstructionApssReconstruction(CCmdUI *pCmdUI);
@@ -267,7 +258,6 @@ public:
     afx_msg void OnUpdateModeAPSS(CCmdUI *pCmdUI);
 	afx_msg void OnCalculateAverageSpacing();
 	afx_msg void OnExtrapolateNormalsUsingGaussianKernel();
-	afx_msg void OnReconstructionSaveas();
     afx_msg void OnPointCloudSimplificationByClustering();
     afx_msg void OnPointCloudSimplificationRandom();
     afx_msg void OnUpdatePointCloudSimplificationByClustering(CCmdUI *pCmdUI);
@@ -276,10 +266,7 @@ public:
     afx_msg void OnUpdateRadialNormalOrientation(CCmdUI *pCmdUI);
     afx_msg void OnFlipNormals();
     afx_msg void OnUpdateFlipNormals(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateStepExtrapolatenormalsusinggaussiankernels(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateReconstructionPoissonNormalized(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateReconstructionOneStepNormalized(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateStepCalculateaveragespacing(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateOneStepPoissonReconstructionWithNormalizedDivergence(CCmdUI *pCmdUI);
 };
 
 

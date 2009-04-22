@@ -20,14 +20,12 @@
 /// @heading Parameters:
 /// @param BaseGt   Kernel's geometric traits.
 /// @param Gt       Geometric traits class / Point_3 is a model of PointWithNormal_3.
-/// @param Tds      Model of TriangulationDataStructure_3. The cell base class must be
-/// a model of ReconstructionCellBase_3 and the vertex base class
-/// must be a model of ReconstructionVertexBase_3.
+/// @param Tds      Model of TriangulationDataStructure_3. The vertex class
+///                 must be a model of ReconstructionVertexBase_3.
 
 template <class BaseGt,
           class Gt = CGAL::Reconstruction_triangulation_default_geom_traits_3<BaseGt>,
-          class Tds = CGAL::Triangulation_data_structure_3<CGAL::Reconstruction_vertex_base_3<Gt>,
-                                                           CGAL::Reconstruction_cell_base_3<Gt> > >
+          class Tds = CGAL::Triangulation_data_structure_3<CGAL::Reconstruction_vertex_base_3<Gt> > >
 class Poisson_dt3 : public CGAL::Reconstruction_triangulation_3<BaseGt,Gt,Tds>
 {
 // Private types
@@ -70,7 +68,6 @@ public:
   typedef typename Base::Locate_type Locate_type;
   typedef typename Base::FT FT;
   typedef typename Base::Vector Vector;
-  typedef typename Base::Iso_cuboid Iso_cuboid;
   typedef typename Base::Sphere Sphere;
   typedef typename Base::Normal_iterator Normal_iterator;
   /// @endcond
