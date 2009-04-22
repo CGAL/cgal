@@ -1,5 +1,6 @@
 #include <CGAL/AABB_tree/Triangle_3_segment_3_intersection.h>
 #include <CGAL/AABB_tree/Triangle_3_ray_3_intersection.h>
+#include <CGAL/AABB_tree/Triangle_3_line_3_intersection.h>
 
 #include "Polyhedron_type.h"
 
@@ -39,7 +40,7 @@ Polyhedron* cgal_code_remesh(const Polyhedron* pMesh,
   CGAL::Timer timer;
   timer.start();
   std::cerr << "Build AABB tree...";
-  typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel; 
+  typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel;
   // input surface
   typedef CGAL::AABB_polyhedral_oracle<Polyhedron,GT,Simple_cartesian_kernel> Input_surface;
   Input_surface input(*pMesh);

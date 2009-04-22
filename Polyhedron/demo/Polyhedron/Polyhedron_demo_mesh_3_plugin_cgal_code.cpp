@@ -1,5 +1,6 @@
 #include <CGAL/AABB_tree/Triangle_3_segment_3_intersection.h>
 #include <CGAL/AABB_tree/Triangle_3_ray_3_intersection.h>
+#include <CGAL/AABB_tree/Triangle_3_line_3_intersection.h>
 
 #include "Polyhedron_type.h"
 
@@ -128,14 +129,14 @@ public:
   void setPosition(float x, float y, float z) {
     frame->setPosition(x, y, z);
   }
-  
+
   void setNormal(float x, float y, float z) {
     frame->setOrientation(x, y, z, 0.f);
   }
 
   Plane_3 plane() const {
     const qglviewer::Vec& pos = frame->position();
-    const qglviewer::Vec& n = 
+    const qglviewer::Vec& n =
       frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
     return Plane_3(n[0], n[1],  n[2], - n * pos);
   }
@@ -145,9 +146,9 @@ public:
     return triangulation().number_of_vertices() == 0;
   }
 
-  Bbox bbox() const { 
+  Bbox bbox() const {
     if(isEmpty())
-      return Bbox(); 
+      return Bbox();
     else {
       CGAL::Bbox_3 result = triangulation().vertices_begin()->point().bbox();
       for(Tr::Finite_vertices_iterator
@@ -157,7 +158,7 @@ public:
       {
         result = result + vit->point().bbox();
       }
-      return Bbox(result.xmin(), result.ymin(), result.zmin(), 
+      return Bbox(result.xmin(), result.ymin(), result.zmin(),
                   result.xmax(), result.ymax(), result.zmax());
     }
   }
@@ -171,7 +172,7 @@ public:
     for(Tr::Finite_cells_iterator
           cit = triangulation().finite_cells_begin(),
           end = triangulation().finite_cells_end();
-        cit != end; ++cit) 
+        cit != end; ++cit)
     {
       if( cit->is_in_domain() )
         ++number_of_tets;
@@ -186,7 +187,7 @@ public:
   }
 
   // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const { 
+  bool supportsRenderingMode(RenderingMode m) const {
     return (m != Gouraud); // CHECK THIS!
   }
 
@@ -213,7 +214,7 @@ public:
     ::glClipPlane(GL_CLIP_PLANE0, clip_plane);
     ::glEnable(GL_CLIP_PLANE0);
     ::glBegin(GL_TRIANGLES);
-    for(C2t3::Facet_iterator 
+    for(C2t3::Facet_iterator
           fit = c2t3().facets_begin(),
           end = c2t3().facets_end();
         fit != end; ++fit)
@@ -244,7 +245,7 @@ public:
     for(Tr::Finite_cells_iterator
           cit = triangulation().finite_cells_begin(),
           end = triangulation().finite_cells_end();
-        cit != end; ++cit) 
+        cit != end; ++cit)
     {
       if(! cit->is_in_domain() )
         continue;
@@ -298,14 +299,14 @@ public:
   };
 
 private:
-  static void draw_triangle(const Point_3& pa, 
-                            const Point_3& pb, 
+  static void draw_triangle(const Point_3& pa,
+                            const Point_3& pb,
                             const Point_3& pc) {
     My_traits::Vector_3 n = cross_product(pb - pa, pc -pa);
     n = n / CGAL::sqrt(n*n);
-    
+
     ::glNormal3d(n.x(),n.y(),n.z());
-    
+
     ::glVertex3d(pa.x(),pa.y(),pa.z());
     ::glVertex3d(pb.x(),pb.y(),pb.z());
     ::glVertex3d(pc.x(),pc.y(),pc.z());
@@ -316,7 +317,7 @@ private:
     const double& xdelta = bbox.xmax-bbox.xmin;
     const double& ydelta = bbox.ymax-bbox.ymin;
     const double& zdelta = bbox.zmax-bbox.zmin;
-    const double diag = std::sqrt(xdelta*xdelta + 
+    const double diag = std::sqrt(xdelta*xdelta +
                                   ydelta*ydelta +
                                   zdelta*zdelta);
     return diag * 0.7;
@@ -371,7 +372,7 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   CGAL::Timer timer;
   timer.start();
   std::cerr << "Build AABB tree...";
-  typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel; 
+  typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel;
   // input surface
   typedef CGAL::AABB_polyhedral_oracle<Polyhedron,Kernel,Simple_cartesian_kernel> Input_surface;
   Input_surface input(*pMesh);
@@ -395,15 +396,15 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
             << new_item->triangulation().number_of_vertices() << "\n";
 
   typedef CGAL::Volume_mesher_3<
-    C2t3, 
-    Input_surface, 
+    C2t3,
+    Input_surface,
     Facets_criteria,
     Tets_criteria,
     Input_surface
       > Mesher;
 
   Mesher mesher(c2t3, input, facets_criteria, tets_criteria, input);
-    
+
 
   // remesh
   timer.reset();
