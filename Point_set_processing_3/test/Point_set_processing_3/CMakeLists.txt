@@ -1,6 +1,4 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
-
+# This is the CMake script for compiling this folder.
 
 project( Point_set_processing_3_test )
 
@@ -10,7 +8,10 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )
-endif()
+endif(COMMAND cmake_policy)
+
+# Include this package's headers first
+include_directories (BEFORE . include ../../include)
 
 # Find CGAL
 find_package(CGAL QUIET COMPONENTS Core )
@@ -40,9 +41,6 @@ if ( CGAL_FOUND )
     message( STATUS "USING RELEASE CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}'" )
     message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
   endif()
-
-  include_directories (BEFORE ../../include)
-  include_directories (BEFORE include)
 
   # Executables that do *not* require LAPACK
   create_single_source_cgal_program( "analysis_test.cpp" )

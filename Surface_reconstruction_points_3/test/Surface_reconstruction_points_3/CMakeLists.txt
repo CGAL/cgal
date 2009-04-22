@@ -1,13 +1,13 @@
-# This is the CMake script for compiling Surface_reconstruction_points_3 tests.
+# This is the CMake script for compiling this folder.
 
 project( Surface_reconstruction_points_3_test )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true) 
- 
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
 if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
+  cmake_policy( SET CMP0003 NEW )
 endif(COMMAND cmake_policy)
 
 # Require packages new or improved since CGAL 3.4
