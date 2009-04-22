@@ -26,7 +26,8 @@ decomposing both polyhedra into convex pieces, compute pair-wise
 Minkowski sums of the convex pieces, and unite the pair-wise sums.
 
 While it is desirable to have a decomposition into a minimum number of
-pieces, this problem is know to be NP-hard~\cite{c-cpplb-84}. Our
+pieces, this problem is known to be NP-hard~\cite{c-cpplb-84}. Our
+
 implementation decomposes a Nef polyhedron $N$ into $O(r^2)$ convex
 pieces, where $r$ is the number of edges, which have two adjacent
 facets that span an angle of more than 180 degrees with respect to the
@@ -92,7 +93,7 @@ denoted as boundary items---are needed to separate the two volumes,
 but are also useful for representing topological properties. In case
 of the (closed) unit cube the boundary items are part of the
 polyhedron and therefore selected, but in case of the open unit cube
-$[0,1)$^3 they are unselected. Each item has its own selection mark,
+$[0,1)^3$ they are unselected. Each item has its own selection mark,
 which allows the correct representation of Nef polyhedra, which are
 closed under Boolean and topological operations. Details can be found
 in the chapter on 3D Boolean operations on Nef polyhedra for more
