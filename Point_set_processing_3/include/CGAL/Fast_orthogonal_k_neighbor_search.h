@@ -46,7 +46,7 @@ public:
   {}
 
   bounded_priority_queue(int size, const Compare& comp = Compare())
-    : m_data(size), m_comp(comp), m_count(0)
+    : m_count(0), m_data(size), m_comp(comp)
   {}
 
   /** Sets the max number of elements in the queue */
@@ -58,7 +58,7 @@ public:
   }
 
   /** \returns the number of elements in the queue */
-  inline int size() const { return m_count; }
+  inline unsigned int size() const { return m_count; }
 
   /** Removes all elements of the queue. The max size remains unchanged. */
   inline void clear() { m_count = 0; }
@@ -76,7 +76,7 @@ public:
     {
       if (m_comp(x, top()))
       {
-        int j(1), k(2);
+        unsigned int j(1), k(2);
         while (k <= m_count)
         {
           value_type* z = &(data1[k]);
@@ -123,7 +123,7 @@ public:
 
 protected:
 
-  int m_count;
+  unsigned int m_count;
   std::vector<value_type> m_data;
   Compare m_comp;
 };
