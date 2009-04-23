@@ -121,8 +121,8 @@ public:
   Sphere sphere(const Projection_query& center,
                 const Projection_return& hint) const
   {
-    return Sphere(center, GeomTraits().compute_squared_distance_3_object(center,
-                                                                         hint));
+    return Sphere(center, GeomTraits().compute_squared_distance_3_object()
+                                                          (center, hint));
   }
 
   bool intersection(const Sphere& sphere,
@@ -299,23 +299,6 @@ AABB_traits<GT,TP>::intersection(const Query& q,
   Object intersection_obj = CGAL::intersection(pr.data(), q);
 
   return CGAL::assign(intersection, intersection_obj);
-//  if ( const Intersection_type* point =
-//                        object_cast<Intersection_type>(&intersection_obj) )
-//  {
-//    intersection = *point;
-//    return true;
-//  }
-//
-//  // TODO: BERKKKKKKKKKKKKKK
-//  // Workaround for weighted_point (Mesh_3 requirement)
-//  if ( const typename Intersection_type::Point* bare_point =
-//             object_cast<typename Intersection_type::Point>(&intersection_obj) )
-//  {
-//    intersection = *bare_point;
-//    return true;
-//  }
-//
-//  return false;
 }
 
 
