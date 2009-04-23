@@ -1,6 +1,6 @@
 #include <QApplication>
-#include "Scene_polyhedron_item.h"
 #include "Scene_plane_item.h"
+#include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 
 #include "Polyhedron_demo_plugin_helper.h"
@@ -12,7 +12,7 @@
 
 #include <CGAL/Make_bar.h> // output for line fitting
 
-class Point_set_demo_pca_plugin : 
+class Point_set_demo_pca_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -35,8 +35,8 @@ public slots:
 void Point_set_demo_pca_plugin::on_actionBoundingBox_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(item)
@@ -65,7 +65,7 @@ void Point_set_demo_pca_plugin::on_actionBoundingBox_triggered()
     // compute centroid
     Point center_of_mass = CGAL::centroid(triangles.begin(),triangles.end());
 
-    // add bounding box to scene 
+    // add bounding box to scene
     Scene_plane_item* new_item = new Scene_plane_item(this->scene);
     new_item->setPosition(center_of_mass.x(),
                           center_of_mass.y(),
@@ -84,8 +84,8 @@ void Point_set_demo_pca_plugin::on_actionBoundingBox_triggered()
 void Point_set_demo_pca_plugin::on_actionBoundingSphere_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(item)

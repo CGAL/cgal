@@ -8,9 +8,10 @@
 class Scene_item;
 
 // OpenGL rendering mode
-enum RenderingMode { Points = 0, 
+enum RenderingMode { Points = 0,
                      PointsPlusNormals,
-                     Wireframe, 
+                     Splatting,
+                     Wireframe,
                      Flat,
                      FlatPlusEdges,
                      Gouraud,
@@ -72,9 +73,9 @@ public:
 
 public:
   // Notify the scene that an item was modified
-  virtual void itemChanged(Item_id i) = 0; 
+  virtual void itemChanged(Item_id i) = 0;
   virtual void itemChanged(Scene_item*) = 0;
-  
+
 }; // end interface Scene_interface
 
 

@@ -7,10 +7,10 @@
 #include <iostream>
 
 // This class represents a polyhedron in the OpenGL scene
-class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item 
+class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
   : public Scene_item_with_display_list {
   Q_OBJECT
-public:  
+public:
   Scene_polyhedron_item();
 //   Scene_polyhedron_item(const Scene_polyhedron_item&);
   Scene_polyhedron_item(const Polyhedron& p);
@@ -18,7 +18,7 @@ public:
   ~Scene_polyhedron_item();
 
   Scene_polyhedron_item* clone() const;
-  
+
   // IO
   bool load(std::istream& in);
   bool save(std::ostream& out) const;
@@ -27,7 +27,7 @@ public:
   virtual QString toolTip() const;
 
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m != PointsPlusNormals; }
+  virtual bool supportsRenderingMode(RenderingMode m) const;
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   virtual void direct_draw() const;
 

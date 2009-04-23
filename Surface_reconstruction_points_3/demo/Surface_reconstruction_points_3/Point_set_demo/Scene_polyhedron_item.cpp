@@ -34,7 +34,7 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
   delete poly;
 }
 
-Scene_polyhedron_item* 
+Scene_polyhedron_item*
 Scene_polyhedron_item::clone() const {
   return new Scene_polyhedron_item(*poly);
 }
@@ -48,14 +48,14 @@ Scene_polyhedron_item::load(std::istream& in)
 }
 
 // Write polyhedron to .OFF file
-bool 
+bool
 Scene_polyhedron_item::save(std::ostream& out) const
 {
   out << *poly;
   return out;
 }
 
-QString 
+QString
 Scene_polyhedron_item::toolTip() const
 {
   if(!poly)
@@ -73,14 +73,19 @@ Scene_polyhedron_item::toolTip() const
     .arg(this->color().name());
 }
 
+
+bool Scene_polyhedron_item::supportsRenderingMode(RenderingMode m) const {
+  return m != PointsPlusNormals && m != Splatting;
+}
+
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_polyhedron_item::direct_draw() const {
   gl_render_facets(*poly);
 }
 
-Polyhedron* 
+Polyhedron*
 Scene_polyhedron_item::polyhedron()       { return poly; }
-const Polyhedron* 
+const Polyhedron*
 Scene_polyhedron_item::polyhedron() const { return poly; }
 
 bool

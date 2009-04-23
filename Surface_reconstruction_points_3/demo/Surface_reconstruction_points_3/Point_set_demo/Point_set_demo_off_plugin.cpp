@@ -1,5 +1,5 @@
-#include "Scene_polyhedron_item.h"
 #include "Point_set_scene_item.h"
+#include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 
 #include "Polyhedron_demo_io_plugin_interface.h"
@@ -30,7 +30,7 @@ bool Point_set_demo_off_plugin::canLoad() const {
 }
 
 
-Scene_item* 
+Scene_item*
 Point_set_demo_off_plugin::load(QFileInfo fileinfo) {
 
   // Open file
@@ -39,7 +39,7 @@ Point_set_demo_off_plugin::load(QFileInfo fileinfo) {
     std::cerr << "Error! Cannot open file " << fileinfo.filePath().toStdString() << std::endl;
     return NULL;
   }
-    
+
   // Try to read .off in a polyhedron
   Scene_polyhedron_item* item = new Scene_polyhedron_item();
   item->setName(fileinfo.baseName());
@@ -72,16 +72,16 @@ bool Point_set_demo_off_plugin::canSave(const Scene_item* item)
 bool Point_set_demo_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
 {
   // This plugin supports polyhedrons and point sets
-  const Scene_polyhedron_item* poly_item = 
+  const Scene_polyhedron_item* poly_item =
     qobject_cast<const Scene_polyhedron_item*>(item);
-  const Point_set_scene_item* point_set_item = 
+  const Point_set_scene_item* point_set_item =
     qobject_cast<const Point_set_scene_item*>(item);
   if(!poly_item && !point_set_item)
     return false;
 
   std::ofstream out(fileinfo.filePath().toUtf8());
 
-  return (poly_item && poly_item->save(out)) || 
+  return (poly_item && poly_item->save(out)) ||
          (point_set_item && point_set_item->write_off_point_set(out));
 }
 

@@ -7,12 +7,14 @@ Scene_item::~Scene_item() {}
 // Rendering mode as a human readable string
 QString Scene_item::renderingModeName() const
 {
-  switch(renderingMode()) 
+  switch(renderingMode())
   {
     case Points:
       return tr("points");
     case PointsPlusNormals:
       return tr("pts+normals");
+    case Splatting:
+      return tr("splats");
     case Wireframe:
       return tr("wire");
     case Flat:
@@ -25,7 +27,7 @@ QString Scene_item::renderingModeName() const
       Q_ASSERT(false);
       return tr("unknown");
   }
-} 
+}
 
 #include "Scene_item.moc"
 

@@ -86,11 +86,11 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(updated_bbox()),
           this, SLOT(updateViewerBBox()));
 
-  connect(treeView->selectionModel(), 
+  connect(treeView->selectionModel(),
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateInfo()));
 
-  connect(treeView->selectionModel(), 
+  connect(treeView->selectionModel(),
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
 
@@ -125,7 +125,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(this, SIGNAL(openRecentFile(QString)),
 	  this, SLOT(open(QString)));
 
-  // Empty the menus implemented by plugins: 
+  // Empty the menus implemented by plugins:
   // "Analysis", "Processing", "Reconstruction".
   clearMenu(ui->menuAnalysis);
   clearMenu(ui->menuProcessing);
@@ -186,7 +186,7 @@ bool MainWindow::initPlugin(QObject* obj)
     }
     return true;
   }
-  else 
+  else
     return false;
 }
 
@@ -199,7 +199,7 @@ bool MainWindow::initIOPlugin(QObject* obj)
     io_plugins << plugin;
     return true;
   }
-  else 
+  else
     return false;
 }
 
@@ -287,7 +287,7 @@ void MainWindow::updateViewerBBox()
   const double zmax = bbox.zmax;
   // qDebug() << QString("Bounding box: (%1, %2, %3) - (%4, %5, %6)\n")
   // .arg(xmin).arg(ymin).arg(zmin).arg(xmax).arg(ymax).arg(zmax);
-  qglviewer::Vec 
+  qglviewer::Vec
     vec_min(xmin, ymin, zmin),
     vec_max(xmax, ymax, zmax);
   viewer->setSceneBoundingBox(vec_min,
@@ -300,7 +300,7 @@ void MainWindow::open(QString filename)
   QFileInfo fileinfo(filename);
   Scene_item* item = 0;
   if(fileinfo.isFile() && fileinfo.isReadable()) {
-    Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, 
+    Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin,
               io_plugins)
     {
       if(plugin->canLoad()) {
@@ -358,7 +358,7 @@ void MainWindow::selectionChanged()
     connect(viewer->manipulatedFrame(), SIGNAL(modified()),
             this, SLOT(updateInfo()));
   }
-  
+
   viewer->updateGL();
 }
 
@@ -374,7 +374,7 @@ void MainWindow::updateInfo() {
   Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item)
     ui->infoLabel->setText(item->toolTip());
-  else 
+  else
     ui->infoLabel->clear();
 }
 
@@ -413,7 +413,7 @@ void MainWindow::on_actionFileOpen_triggered()
   QSettings settings;
   QString directory = settings.value("OFF open directory",
                                      QDir::current().dirName()).toString();
-  QStringList filenames = 
+  QStringList filenames =
     QFileDialog::getOpenFileNames(this,
                                   tr("Open File..."),
                                   directory,
@@ -453,7 +453,7 @@ void MainWindow::on_actionSaveAs_triggered()
     return;
   }
 
-  QString filename = 
+  QString filename =
     QFileDialog::getSaveFileName(this,
                                  tr("Save to File..."),
                                  QString(),
@@ -465,7 +465,7 @@ void MainWindow::on_actionSaveAs_triggered()
                           tr("File exists"),
                           tr("The file %1 already exists! Continue?")
                           .arg(filename),
-                          QMessageBox::Yes|QMessageBox::No) == 
+                          QMessageBox::Yes|QMessageBox::No) ==
      QMessageBox::Yes)
   {
 

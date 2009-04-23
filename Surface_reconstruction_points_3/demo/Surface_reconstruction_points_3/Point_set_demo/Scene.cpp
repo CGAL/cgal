@@ -1,3 +1,8 @@
+
+#ifdef CGAL_GLEW_ENABLED
+# include "GlSplat/GlSplat.h"
+#endif
+
 #include "config.h"
 #include "Scene.h"
 #include "Scene_item.h"
@@ -24,6 +29,9 @@ Scene::Scene(QObject* parent)
   : QAbstractListModel(parent),
     selected_item(-1)
 {
+  #ifdef CGAL_GLEW_ENABLED
+  mSplatting = new GlSplat::SplatRenderer();
+  #endif
 }
 
 Scene::Item_id
@@ -66,6 +74,9 @@ Scene::~Scene()
     delete item_ptr;
   }
   entries.clear();
+  #ifdef CGAL_GLEW_ENABLED
+  delete mSplatting;
+  #endif
 }
 
 Scene_item*
@@ -103,7 +114,7 @@ Scene::duplicate(Item_id index)
 
 // Convert a polyhedron to a point set.
 // Return the ID of the new item (-1 on error).
-Scene::Item_id 
+Scene::Item_id
 Scene::convertToPointSet(Item_id index)
 {
   // Check index
@@ -112,7 +123,7 @@ Scene::convertToPointSet(Item_id index)
 
   // Check if scene item is a polyhedron
   Scene_item* item = entries[index];
-  Scene_polyhedron_item* poly_item = 
+  Scene_polyhedron_item* poly_item =
     qobject_cast<Scene_polyhedron_item*>(item);
   if(poly_item == NULL || poly_item->polyhedron() == NULL)
     return -1;
@@ -137,6 +148,9 @@ Scene::convertToPointSet(Item_id index)
 
 void Scene::initializeGL()
 {
+  #ifdef CGAL_GLEW_ENABLED
+  mSplatting->init();
+  #endif
 }
 
 // workaround for Qt-4.2.
@@ -144,18 +158,18 @@ void Scene::initializeGL()
 #  define lighter light
 #endif
 
-void 
+void
 Scene::draw()
 {
   draw_aux(false);
 }
-void 
+void
 Scene::drawWithNames()
 {
   draw_aux(true);
 }
 
-void 
+void
 Scene::draw_aux(bool with_names)
 {
   // Flat/Gouraud OpenGL drawing
@@ -169,18 +183,18 @@ Scene::draw_aux(bool with_names)
     {
       if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
       {
-	::glEnable(GL_LIGHTING);
-	::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+        ::glEnable(GL_LIGHTING);
+        ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
         ::glPointSize(2.f);
         ::glLineWidth(1.0f);
-	if(index == selected_item)
-	  CGALglcolor(item.color().lighter(120));
-	else
-	  CGALglcolor(item.color());
-	if(item.renderingMode() == Gouraud)
-	  ::glShadeModel(GL_SMOOTH);
-	else
-	  ::glShadeModel(GL_FLAT);
+        if(index == selected_item)
+          CGALglcolor(item.color().lighter(120));
+        else
+          CGALglcolor(item.color());
+        if(item.renderingMode() == Gouraud)
+          ::glShadeModel(GL_SMOOTH);
+        else
+          ::glShadeModel(GL_FLAT);
 
         item.draw();
       }
@@ -209,7 +223,7 @@ Scene::draw_aux(bool with_names)
           CGALglcolor(Qt::black);
         else
           CGALglcolor(item.color().lighter(50));
-        
+
         item.draw_edges();
       }
       if(with_names) {
@@ -237,7 +251,7 @@ Scene::draw_aux(bool with_names)
           CGALglcolor(Qt::black);
         else
           CGALglcolor(item.color().lighter(50));
-        
+
         item.draw_points();
       }
       if(with_names) {
@@ -245,6 +259,36 @@ Scene::draw_aux(bool with_names)
       }
     }
   }
+
+  #ifdef CGAL_GLEW_ENABLED
+  // Splatting
+  if(mSplatting->isSupported())
+  {
+    mSplatting->beginVisibilityPass();
+    for(int index = 0; index < entries.size(); ++index)
+    {
+      Scene_item& item = *entries[index];
+      if(item.visible() && item.renderingMode() == Splatting)
+      {
+        item.draw_splats();
+      }
+    }
+    mSplatting->beginAttributePass();
+    for(int index = 0; index < entries.size(); ++index)
+    {
+      Scene_item& item = *entries[index];
+      if(item.visible() && item.renderingMode() == Splatting)
+      {
+        if(index == selected_item)
+          CGALglcolor(item.color().lighter(120));
+        else
+          CGALglcolor(item.color());
+        item.draw_splats();
+      }
+    }
+    mSplatting->finalize();
+  }
+  #endif
 
   // Normals OpenGL drawing
   for(int index = 0; index < entries.size(); ++index)
@@ -261,11 +305,11 @@ Scene::draw_aux(bool with_names)
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         ::glPointSize(2.f);
         ::glLineWidth(1.0f);
-	if(index == selected_item)
-	  CGALglcolor(item.color().lighter(120));
-	else
-	  CGALglcolor(item.color());
-        
+        if(index == selected_item)
+          CGALglcolor(item.color().lighter(120));
+        else
+          CGALglcolor(item.color());
+
         item.draw_normals();
       }
       if(with_names) {
@@ -278,7 +322,7 @@ Scene::draw_aux(bool with_names)
 // workaround for Qt-4.2 (see above)
 #undef lighter
 
-int 
+int
 Scene::rowCount(const QModelIndex & parent) const
 {
   if (parent.isValid())
@@ -287,7 +331,7 @@ Scene::rowCount(const QModelIndex & parent) const
     return entries.size();
 }
 
-int 
+int
 Scene::columnCount(const QModelIndex & parent) const
 {
   if (parent.isValid())
@@ -296,7 +340,7 @@ Scene::columnCount(const QModelIndex & parent) const
     return NumberOfColumns;
 }
 
-QVariant 
+QVariant
 Scene::data(const QModelIndex &index, int role) const
 {
   if (!index.isValid())
@@ -344,7 +388,7 @@ Scene::data(const QModelIndex &index, int role) const
   return QVariant();
 }
 
-QVariant 
+QVariant
 Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
 {
   if(orientation == ::Qt::Horizontal)  {
@@ -376,19 +420,19 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
   return QAbstractListModel::headerData(section, orientation, role);
 }
 
-Qt::ItemFlags 
+Qt::ItemFlags
 Scene::flags ( const QModelIndex & index ) const
 {
   if (index.isValid() && index.column() == NameColumn) {
     return QAbstractListModel::flags(index) | ::Qt::ItemIsEditable;
   }
   else {
-    return QAbstractListModel::flags(index); 
+    return QAbstractListModel::flags(index);
   }
 }
 
-bool 
-Scene::setData(const QModelIndex &index, 
+bool
+Scene::setData(const QModelIndex &index,
 	       const QVariant &value,
 	       int role)
 {
@@ -477,7 +521,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
       QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
       if(mouseEvent->button() == ::Qt::LeftButton) {
 	int x = mouseEvent->pos().x() - option.rect.x();
-	if(x >= (option.rect.width() - size)/2 && 
+	if(x >= (option.rect.width() - size)/2 &&
 	  x <= (option.rect.width() + size)/2) {
 	    model->setData(index, ! model->data(index).toBool() );
 	}
@@ -488,7 +532,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     break;
   case Scene::ColorColumn:
     if (event->type() == QEvent::MouseButtonPress) {
-      QColor color = 
+      QColor color =
         QColorDialog::getColor(model->data(index).value<QColor>(),
                                0/*,
                                tr("Select color"),
@@ -568,13 +612,13 @@ Scene::Bbox Scene::bbox() const
 
   bool bbox_initialized = false;
   Bbox bbox;
-  Q_FOREACH(Scene_item* item, entries) 
+  Q_FOREACH(Scene_item* item, entries)
   {
     if(item->isFinite() && !item->isEmpty()) {
       if(bbox_initialized) {
         bbox = bbox + item->bbox();
       }
-      else { 
+      else {
         bbox = item->bbox();
         bbox_initialized = true;
       }

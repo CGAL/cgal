@@ -5,7 +5,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   : QGLViewer(parent),
     scene(0),
     antialiasing(antialiasing),
-    twosides(false)
+    twosides(false),
+    m_isInitialized(false)
 {
   setBackgroundColor(::Qt::white);
 }
@@ -18,13 +19,15 @@ void Viewer::setScene(Scene_draw_interface* scene)
 void Viewer::setAntiAliasing(bool b)
 {
   antialiasing = b;
-  updateGL();
+  if(m_isInitialized)
+    updateGL();
 }
 
 void Viewer::setTwoSides(bool b)
 {
   twosides = b;
-  updateGL();
+  if(m_isInitialized)
+    updateGL();
 }
 
 void Viewer::draw()
@@ -34,6 +37,7 @@ void Viewer::draw()
 
 void Viewer::initializeGL()
 {
+  m_isInitialized = true;
   QGLViewer::initializeGL();
   scene->initializeGL();
 }

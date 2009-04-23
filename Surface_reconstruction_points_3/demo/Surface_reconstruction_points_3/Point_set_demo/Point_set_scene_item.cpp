@@ -55,8 +55,8 @@ Point_set_scene_item::~Point_set_scene_item()
 }
 
 // Duplicate scene item
-Point_set_scene_item* 
-Point_set_scene_item::clone() const 
+Point_set_scene_item*
+Point_set_scene_item::clone() const
 {
   return new Point_set_scene_item(*this);
 }
@@ -65,7 +65,7 @@ Point_set_scene_item::clone() const
 bool Point_set_scene_item::read_off_point_set(std::istream& in)
 {
   Q_ASSERT(m_points != NULL);
-  
+
   m_points->clear();
   return in &&
          CGAL::read_off_point_set(in, std::back_inserter(*m_points)) &&
@@ -77,7 +77,7 @@ bool Point_set_scene_item::write_off_point_set(std::ostream& out) const
 {
   Q_ASSERT(m_points != NULL);
 
-  return out && 
+  return out &&
          CGAL::write_off_point_set(out, m_points->begin(), m_points->end());
 }
 
@@ -85,10 +85,10 @@ bool Point_set_scene_item::write_off_point_set(std::ostream& out) const
 bool Point_set_scene_item::read_xyz_point_set(std::istream& in)
 {
   Q_ASSERT(m_points != NULL);
-  
+
   m_points->clear();
   return in &&
-         CGAL::read_xyz_point_set(in, std::back_inserter(*m_points)) && 
+         CGAL::read_xyz_point_set(in, std::back_inserter(*m_points)) &&
          !isEmpty();
 }
 
@@ -96,12 +96,12 @@ bool Point_set_scene_item::read_xyz_point_set(std::istream& in)
 bool Point_set_scene_item::write_xyz_point_set(std::ostream& out) const
 {
   Q_ASSERT(m_points != NULL);
-  
-  return out && 
+
+  return out &&
          CGAL::write_xyz_point_set(out, m_points->begin(), m_points->end());
 }
 
-QString 
+QString
 Point_set_scene_item::toolTip() const
 {
   Q_ASSERT(m_points != NULL);
@@ -114,8 +114,12 @@ Point_set_scene_item::toolTip() const
     .arg(color().name());
 }
 
+bool Point_set_scene_item::supportsRenderingMode(RenderingMode m) const {
+  return m==Points || m==PointsPlusNormals || m==Splatting;
+}
+
 // Points OpenGL drawing in a display list
-void Point_set_scene_item::direct_draw() const 
+void Point_set_scene_item::direct_draw() const
 {
   Q_ASSERT(m_points != NULL);
 
@@ -135,32 +139,47 @@ void Point_set_scene_item::draw_normals() const
   {
     Sphere region_of_interest = m_points->region_of_interest();
     float normal_length = (float)sqrt(region_of_interest.squared_radius() / 1000.);
-    
+
     m_points->gl_draw_normals(normal_length);
   }
 }
 
-// Get wrapped point set
-Point_set* Point_set_scene_item::point_set() 
-{ 
+void Point_set_scene_item::draw_splats() const
+{
   Q_ASSERT(m_points != NULL);
-  return m_points; 
+
+  // Draw normals
+  bool points_have_normals = (m_points->begin() != m_points->end() &&
+                              m_points->begin()->normal() != CGAL::NULL_VECTOR);
+  bool points_have_radii =   (m_points->begin() != m_points->end() &&
+                              m_points->begin()->radius() != FT(0));
+  if(points_have_normals && points_have_radii)
+  {
+    m_points->gl_draw_splats();
+  }
+}
+
+// Get wrapped point set
+Point_set* Point_set_scene_item::point_set()
+{
+  Q_ASSERT(m_points != NULL);
+  return m_points;
 }
 const Point_set* Point_set_scene_item::point_set() const
-{ 
+{
   Q_ASSERT(m_points != NULL);
-  return m_points; 
+  return m_points;
 }
 
 bool
-Point_set_scene_item::isEmpty() const 
+Point_set_scene_item::isEmpty() const
 {
   Q_ASSERT(m_points != NULL);
   return m_points->empty();
 }
 
 Point_set_scene_item::Bbox
-Point_set_scene_item::bbox() const 
+Point_set_scene_item::bbox() const
 {
   Q_ASSERT(m_points != NULL);
 

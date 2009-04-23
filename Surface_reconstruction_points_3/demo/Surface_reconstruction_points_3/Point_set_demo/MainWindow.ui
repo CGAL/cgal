@@ -90,6 +90,7 @@
     <addaction name="actionBoundingBox" />
     <addaction name="actionBoundingSphere" />
     <addaction name="actionConvexHull" />
+    <addaction name="actionRadiusFromDensity" />
    </widget>
    <widget class="QMenu" name="menuProcessing" >
     <property name="title" >
@@ -400,6 +401,11 @@
   <action name="actionAPSSReconstruction" >
    <property name="text" >
     <string>APSS Reconstruction</string>
+   </property>
+  </action>
+  <action name="actionRadiusFromDensity" >
+   <property name="text" >
+    <string>Point radius from density</string>
    </property>
   </action>
   <action name="actionDraw_two_sides" >

@@ -4,16 +4,17 @@ project( Point_set_demo )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true) 
- 
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
 #option(POINT_SET_DEMO_ENABLE_FORWARD_DECL "In the Point Set demo, enable " OFF)
 #mark_as_advanced(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
 
 if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
+  cmake_policy( SET CMP0003 NEW )
 endif(COMMAND cmake_policy)
 
 # Require packages new or improved since CGAL 3.4
+include_directories (BEFORE ../../../../AABB_tree/include)
 include_directories (BEFORE ../../../../Surface_mesher/include)
 include_directories (BEFORE ../../../../Point_set_processing_3/include)
 
@@ -46,6 +47,10 @@ find_package(LAPACK)
 # Find TAUCS (optionnal), for Poisson
 find_package(TAUCS)
 
+# Find Glew (optionnal), for splatting
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
+find_package(GLEW)
+
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
@@ -63,6 +68,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   else(TAUCS_FOUND)
     message(STATUS "warning: TAUCS is not found. Poisson reconstruction will not be available.")
   endif(TAUCS_FOUND)
+
+  if(GLEW_FOUND)
+    add_definitions(-DCGAL_GLEW_ENABLED)
+  else(GLEW_FOUND)
+    message(STATUS "warning: GLEW is not found. Splatting will not be available.")
+  endif(GLEW_FOUND)
 
   # Temporary debugging stuff
   #add_definitions(-DDEBUG_TRACE)
@@ -84,7 +95,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   qt4_automoc(Scene_item.cpp
               Scene_plane_item.cpp
-              Point_set_scene_item.cpp 
+              Point_set_scene_item.cpp
               Scene_polyhedron_item.cpp)
 
   # AUXILIARY LIBRARIES
@@ -105,8 +116,15 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Point_set_scene_item.cpp Point_set_scene_item.moc)
   target_link_libraries(point_set scene_item)
 
+  if(GLEW_FOUND)
+    qt4_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
+    add_library(gl_splat SHARED
+      GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
+    target_link_libraries(gl_splat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
+  endif(GLEW_FOUND)
+
   add_definitions(-DQT_STATICPLUGIN)
-  
+
 #  if(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
     add_definitions(-DUSE_FORWARD_DECL)
     add_executable  ( Point_set_demo MainWindow.cpp
@@ -136,6 +154,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Point_set_demo ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+
+  if(GLEW_FOUND)
+    target_link_libraries( Point_set_demo gl_splat )
+  endif(GLEW_FOUND)
 
   # Link with the scene_item libraries
   target_link_libraries( Point_set_demo scene_item scene_polyhedron_item point_set )
@@ -188,6 +210,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(mesh_simplification_plugin Point_set_demo_mesh_simplification_plugin)
   target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
+
+  polyhedron_demo_plugin(local_spacing_plugin Point_set_demo_local_spacing_plugin)
+  target_link_libraries(local_spacing_plugin point_set)
 
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)

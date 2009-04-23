@@ -43,6 +43,8 @@ public:
   virtual void draw_points() const { draw(); }
   // Normals OpenGL drawing
   virtual void draw_normals() const {}
+  // Draws oriented points with radius
+  virtual void draw_splats() const {}
 
   // Functions for displaying meta-data of the item
   virtual QString toolTip() const = 0;
@@ -73,9 +75,9 @@ public slots:
   virtual void setColor(QColor c) { color_ = c; }
   virtual void setName(QString n) { name_ = n; }
   virtual void setVisible(bool b) { visible_ = b; }
-  virtual void setRenderingMode(RenderingMode m) { 
+  virtual void setRenderingMode(RenderingMode m) {
     if (supportsRenderingMode(m))
-      rendering_mode = m; 
+      rendering_mode = m;
   }
 
 protected:

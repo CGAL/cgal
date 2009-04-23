@@ -14,12 +14,17 @@
 
 #include <algorithm>
 #include <deque>
-#include <CGAL/gl.h>
 
+#ifdef CGAL_GLEW_ENABLED
+# include <GL/glew.h>
+#else
+# include <CGAL/gl.h>
+#endif
 
 /// The Point_set_3 class is array of points + normals of type
 /// Point_with_normal_3<Gt, Orientable_normal_3<Gt> > (in fact
 /// UI_point_3 to support a selection flag).
+/// It might also store an optional array of radius.
 /// It provides:
 /// - accessors: points and normals iterators, property maps
 /// - OpenGL rendering
@@ -233,7 +238,7 @@ public:
       {
         const UI_point& p = *it;
         if ( ! p.is_selected() )
-          ::glVertex3d(p.x(), p.y(), p.z());
+          ::glVertex3dv(&p.x());
       }
       ::glEnd();
     }
@@ -248,7 +253,7 @@ public:
       {
         const UI_point& p = *it;
         if (p.is_selected())
-          ::glVertex3d(p.x(), p.y(), p.z());
+          ::glVertex3dv(&p.x());
       }
       ::glEnd();
     }
@@ -311,6 +316,25 @@ public:
       }
       ::glEnd();
     }
+  }
+
+  // Draw oriented points with radius using OpenGL calls.
+  // Preconditions: must be used inbetween calls to GlSplat library
+  void gl_draw_splats() const
+  {
+    // TODO add support for selection
+    ::glBegin(GL_POINTS);
+    for (const_iterator it = begin(); it != end(); it++)
+    {
+      const UI_point& p = *it;
+      //::glColor4f(0.5,0.6,0.7,1.);
+      ::glNormal3dv(&p.normal().x());
+      #ifdef CGAL_GLEW_ENABLED
+      ::glMultiTexCoord1d(GL_TEXTURE2, p.radius());
+      #endif
+      ::glVertex3dv(&p.x());
+    }
+    ::glEnd();
   }
 
 // Private methods:

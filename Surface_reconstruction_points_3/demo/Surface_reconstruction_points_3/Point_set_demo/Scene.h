@@ -20,6 +20,7 @@
 
 class QEvent;
 class QMouseEvent;
+namespace GlSplat { class SplatRenderer; }
 
 class Scene  :
   public QAbstractListModel, public Scene_interface, public Scene_draw_interface
@@ -29,9 +30,9 @@ class Scene  :
   friend class SceneDelegate;
 
 public:
-  enum Columns { NameColumn = 0, 
-                 ColorColumn, 
-                 RenderingModeColumn, 
+  enum Columns { NameColumn = 0,
+                 ColorColumn,
+                 RenderingModeColumn,
                  VisibleColumn,
                  LastColumn = VisibleColumn,
                  NumberOfColumns = LastColumn + 1};
@@ -46,7 +47,7 @@ public:
                       // the list is empty.
 
   // Duplicate a scene item. Return the ID of the new item (-1 on error).
-  Item_id duplicate(Item_id index); 
+  Item_id duplicate(Item_id index);
   // Convert a polyhedron to a point set. Return the ID of the new item (-1 on error).
   Item_id convertToPointSet(Item_id index);
 
@@ -85,7 +86,7 @@ public:
 
 public slots:
   // Notify the scene that an item was modified
-  void itemChanged(Item_id i); 
+  void itemChanged(Item_id i);
   void itemChanged(Scene_item*);
 
   void setSelectedItem(Item_id i )
@@ -106,6 +107,9 @@ private:
   typedef QList<Scene_item*> Entries;
   Entries entries;
   int selected_item;
+  #ifdef CGAL_GLEW_ENABLED
+  GlSplat::SplatRenderer* mSplatting;
+  #endif
 
 }; // end class Scene
 

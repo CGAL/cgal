@@ -57,30 +57,35 @@ public:
     : Base(o)
     {
       m_is_selected = false;
+      m_radius = FT(0);
     }
     UI_point_3(FT x, FT y, FT z,
                const Normal& normal = CGAL::NULL_VECTOR)
     : Base(x,y,z,normal)
     {
       m_is_selected = false;
+      m_radius = FT(0);
     }
     UI_point_3(RT hx, RT hy, RT hz, RT hw,
                const Normal& normal = CGAL::NULL_VECTOR)
     : Base(hx,hy,hz,hw,normal)
     {
       m_is_selected = false;
+      m_radius = FT(0);
     }
     UI_point_3(const Point_3& point,
                const Normal& normal = CGAL::NULL_VECTOR)
     : Base(point, normal)
     {
       m_is_selected = false;
+      m_radius = FT(0);
     }
     template <class K, class N>
     UI_point_3(const CGAL::Point_with_normal_3<K,N>& pwn)
     : Base(pwn)
     {
       m_is_selected = false;
+      m_radius = FT(0);
     }
 
     /// Copy constructor
@@ -88,18 +93,21 @@ public:
     : Base(upt)
     {
       m_is_selected = upt.m_is_selected;
+      m_radius = upt.m_radius;
     }
     template<class K>
     UI_point_3(const UI_point_3<K>& upt)
     : Base(upt)
     {
       m_is_selected = upt.is_selected();
+      m_radius = upt.radius();
     }
     /// Operator =()
     UI_point_3& operator=(const UI_point_3& upt)
     {
       Base::operator=(upt);
       m_is_selected = upt.m_is_selected;
+      m_radius = upt.m_radius;
       return *this;
     }
 
@@ -109,8 +117,14 @@ public:
     bool is_selected() const { return m_is_selected; }
     void select(bool is_selected=true) { m_is_selected = is_selected; }
 
+    ///
+    FT radius() const { return m_radius; }
+    FT& radius() { return m_radius; }
+
 // Data
 private:
+
+    FT m_radius;
 
     // Selection flag.
     bool m_is_selected;
