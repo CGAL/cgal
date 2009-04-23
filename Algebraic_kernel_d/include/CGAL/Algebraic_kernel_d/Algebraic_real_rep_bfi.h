@@ -221,9 +221,9 @@ public:
             // and let both numbers decide for the gcd or its complement
             Poly F1,F2,G;
             G = gcd_utcf(polynomial(),y.polynomial()); 
-            F1 = div_utcf(polynomial(),G);
+            F1 = CGAL::integral_division_up_to_constant_factor(polynomial(),G);
             CGAL_postcondition(F1.degree()==polynomial().degree()-G.degree());
-            F2 = div_utcf(y.polynomial(),G);
+            F2 = CGAL::integral_division_up_to_constant_factor(y.polynomial(),G);
             CGAL_postcondition(F2.degree()==y.polynomial().degree()-G.degree());
            
             learn_from(G,F1);
