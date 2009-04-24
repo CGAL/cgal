@@ -19,7 +19,7 @@
 
 \ccDefinition
   
-The class \ccRefName\ is a data structure for efficient intersection detection and projection. It builds a hierarchy of  axis-aligned bounding boxes from a set of geometric primitives such as 3D triangles, and can received intersection and projection queries, provided that the corresponding predicates are implemented in the traits class. The design is a leafless design, as presented in the Opcode whitepaper http://www.codercorner.com/Opcode.pdf
+The class \ccRefName\ is a data structure for efficient intersection detection and projection in 3D. It builds a hierarchy of axis-aligned bounding boxes from a set of 3D geometric objects such as triangles, and can received intersection and projection queries, provided that the corresponding predicates are implemented in the traits class. 
 
 The template parameter \ccc{Traits} stands for a traits class which must be a model of the concept \ccc{AABBTraits}.
 
@@ -31,63 +31,67 @@ The template parameter \ccc{Traits} stands for a traits class which must be a mo
 
 \ccTypes
 
-
-\ccTypedef{typedef Traits::Primitive  Primitive;}{}
+\ccTypedef{typedef Traits::Primitive Primitive;}{Type of input primitives.}
 \ccGlue
-\ccTypedef{typedef Traits::Projection_query  Projection_query;}{}
+\ccTypedef{typedef Traits::Intersection Intersection;}{Type of intersection result.}
 \ccGlue
-\ccTypedef{typedef Traits::Projection_return  Projection_return;}{}
+\ccTypedef{typedef Traits::Projection_query Projection_query;}{Type of projection query.}
+\ccGlue
+\ccTypedef{typedef Traits::Projection Projection;}{Type of projection point result.}
 %\ccNestedType{AABB}{some nested types}
 
 \ccCreation
-\ccCreationVariable{aabb}  %% choose variable name
+\ccCreationVariable{tree}  %% choose variable name
 
 \ccConstructor{AABB_tree();}{Default constructor.}
 \ccConstructor{template < class ConstPrimitiveIterator>
        AABB_tree( ConstPrimitiveIterator begin, 
-                  ConstPrimitiveIterator end );}
-{Builds the datastructure. Type \ccc{ConstPrimitiveIterator} can be any const iterator on a container of \ccc{Primitive::Data_type} such that \ccc{Primitive} has a constructor taking a \ccc{ConstPrimitiveIterator} as argument.}
+                  ConstPrimitiveIterator beyond );}
 
+{Builds the datastructure. Type \ccc{ConstPrimitiveIterator} can be any const iterator on a container of \ccc{Primitive::Data} such that \ccc{Primitive} has a constructor taking a \ccc{ConstPrimitiveIterator} as argument.}
+% Pierre: sounds a bit tricky
 
 \ccOperations
 
-%\ccMethod{void foo();}{some member functions}
+% intersection tests
+
 \ccMethod{ template <class Query>
 	  bool do_intersect(const Query & q);}
-{ Returns true if the query intersects the primitives, false otherwise. Type \ccc{Query} has to be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}.}
+{ Returns \ccc{true} iff the query intersects the primitives. Type \ccc{Query} has to be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}.}
 	
 \ccMethod{template <class Query>
-	  int number_of_intersections(const Query& q );}
+	  size_t number_of_intersections(const Query& q );}
 {Returns the number of primitives intersected by the query. Type \ccc{Query} has to be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}.}
 	
 \ccMethod{template <class Query, class OutputIterator>
-	  OutputIterator 
-          intersected_primitives(const Query& q ,
+	        OutputIterator 
+          all_intersections(const Query& query,
           OutputIterator out);}
-{Outputs to the iterator the list of the identifiers of intersected primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}.
-The value type of OutputIterator is assumed to be \ccc{Primitive::Id_type}.}
-	
-\ccMethod{ template <class Query, class OutputIterator>
-	  OutputIterator 
-          all_intersections(const Query& q ,
-          OutputIterator out);}
-{Outputs to the iterator the list of intersected geometric primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} and intersection predicates have been defined in \ccc{Traits}. The value type of OutputIterator is assumed to be \ccc{Primitive::Data_type}.}
-
+{Outputs to the iterator the list of all intersections between the query and input data. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}. The value type of OutputIterator is assumed to be \ccc{Intersection}.}
 
 \ccMethod{template <class Query>
-	  bool any_intersection(const Query& q , Intersection_type &);}
-{Returns true if the query intersects the primitives, false otherwise. In the positive, saves the first encountered intersection to the second parameter. Type \ccc{Query} has to be a type for which \ccc{do_intersect} and intersection predicates have been defined in \ccc{Traits}.}
+bool any_intersection(const Query& query,
+                      Intersection& intersection);}
+{Returns \ccc{true} iff the query intersects the primitives. In the positive, saves the first encountered intersection to the second parameter. Type \ccc{Query} has to be a type for which \ccc{do_intersect} and intersection predicates have been defined in \ccc{Traits}.}
+
+\ccMethod{template <class Query, class OutputIterator>
+	        OutputIterator 
+          all_intersected_primitives(const Query& query, OutputIterator out);}
+{Outputs to the iterator the list of intersected primitives. This function does not compute the intersection points and is hence faster than the function \ccc{all_intersections}. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}. The value type of OutputIterator is assumed to be \ccc{Primitive}.}
+
 	
-\ccMethod{Projection_return 
-closest_point(const Projection_query& q, 
-              const Projection_return & hint);} 
-{Returns the point on all inputs primitive which is closest to the query q. Hint is assumed to be any point on the input primitives (the closer hint to q, the faster the query).}
+\ccMethod{template <class Query, class OutputIterator>
+	        OutputIterator 
+bool any_intersected_primitive(const Query& query,
+                               Primitive& primitive);}
+{Return \ccc{true} iff the query intersects the primitive. In the positive, saves the first encountered primitive to the second parameter. Type \ccc{Query} has to be a type for which \ccc{do_intersect} and intersection predicates have been defined in \ccc{Traits}.}
 
 
-
-
-
-
+% pierre: to be fully generic Projection could be anything	
+\ccMethod{Projection 
+closest_point(const Projection_query & query, 
+              const Projection & hint);} 
+{Returns the point on all input primitives which is closest to the query \ccc{q}. \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{q}, the faster the query).}
 
 
 \ccSeeAlso

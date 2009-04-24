@@ -33,94 +33,71 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 \ccGlue
 \ccNestedType{Bounding_box}{Bounding box type.}
 \ccGlue
-\ccNestedType{Intersection_type}{Type of intersection.}
+\ccNestedType{Intersection}{Type of intersection.}
 
 The following types are required for projection queries.
 
 \ccNestedType{Sphere}{Sphere type.}
 \ccGlue
-\ccNestedType{Projection_query}{Type for which projection queries are issued, typically a point.}
+\ccNestedType{Projection_query}{Type for which projection queries are issued.}
 \ccGlue
-\ccNestedType{Projection_type}{Type of projection.}
+\ccNestedType{Projection}{Type of projection output.}
 	
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-\ccConstructor{AABBTraits();}{default constructor.}
+\ccConstructor{AABBTraits();}{Default constructor.}
 
 \ccOperations
 
 During the construction of the \ccc{AABB_tree}, the primitives are sorted according to some comparison functions related to the $x$, $y$ or $z$ coordinate axis.
 
 % TODO: replace by sort function (way much faster as we do not have to sort many times)
-%\ccMethod{bool x_less_than(const Primitive & pr1, const Primitive & pr2);}{}
-%\ccGlue
-%\ccMethod{bool y_less_than(const Primitive & pr1, const Primitive & pr2);}{}
-%\ccGlue
-%\ccMethod{bool z_less_than(const Primitive & pr1, const Primitive & pr2);}{}
+\ccMethod{bool x_less_than(const Primitive & pr1, const Primitive & pr2);}{}
+\ccGlue
+\ccMethod{bool y_less_than(const Primitive & pr1, const Primitive & pr2);}{}
+\ccGlue
+\ccMethod{bool z_less_than(const Primitive & pr1, const Primitive & pr2);}{}
 
-
-\ccMethod{Bounding_box compute_bbox(const_primitive_iterator p_begin, const_primitive_iterator p_end);}
-{Returns the bounding box of a set of primitives.}
+\ccMethod{Bounding_box compute_bbox(const_primitive_iterator begin,                                                                 const_primitive_iterator beyond);}
+{Computes and returns the bounding box of a set of primitives.}
 
 The following predicates are required for each type \ccc{Query}
 for which the class \ccc{AABB_tree<Traits>} may receive a query.
 
 \ccMethod{bool do_intersect(const Query & q, const Bounding_box & box);}
-{Returns true if the query intersects the bounding box, false otherwise.}
+{Returns \ccc{true} iff the query intersects the bounding box.}
 \ccGlue	
-\ccMethod{bool do_intersect(const Query & q, const Primitive::Data_type pr);}
-{Returns true if the query intersects the primitive, false otherwise.}
+\ccMethod{bool do_intersect(const Query & q, const Primitive& primitive);}
+{Returns \ccc{true} iff the query intersects the primitive.}
 \ccGlue	
-% TODO: replace return by pair<bool,Intersection_type>
+% TODO: replace return by pair<bool,Intersection>
 \ccMethod{bool intersection(const Query & q, 
-const Primitive::Data_type pr, Intersection_type & intersection);}
-{Returns true if the query intersects the primitive, and false otherwise. In the positive, stores the intersection in the last parameter. }
-
-% PA: I removed this as we intersect a single primitive here, and we assume dealing only with convex primitives.
-% The \ccc{Intersection_type} may be a container for multiple intersections.
-
-
+          const Primitive& primitive, 
+          Intersection & intersection);}
+{Returns \ccc{true} iff the query intersects the primitive. In the positive, stores the intersection in the last parameter. }
 
 The following members are required only if projection queries are issued.
 \ccMethod{Sphere sphere_from_query_and_hint(const Projection_query & center, 
-                                const Projection_return & hint);}
+                                const Projection & hint);}
 {Returns a sphere centered at \ccc{center} and passing through \ccc{hint}.}
 
-% TODO: replace return by pair<bool,Intersection_type>
+% TODO: replace return by pair<bool,Intersection>
 \ccMethod{ bool intersection(const Sphere & sphere, 
-                          const Primitive::Data_type p, 
-                          const Projection_return  & pr);}
-{Returns true if the primitive is intersecting the ball defined as the interior of the sphere, and false otherwise. In the positive, the point of the primitive closest to the center of the sphere is stored in the last parameter.}
+                          const Primitive::Data datum, 
+                          const Projection & projection);}
+{Returns \ccc{true} iff the primitive datum is intersecting the ball defined as the interior of the sphere. In the positive, the point of the primitive closest to the center of the sphere is stored in the last parameter.}
 
-\ccMethod{bool is_smaller(const Sphere & a, const Sphere & b);}{Returns true if sphere $a$ is contained in sphere $b$. Both spheres are assumed to share the same center.}
+\ccMethod{bool is_contained(const Sphere & a, const Sphere & b);}{Returns \ccc{true} iff sphere $a$ is contained in sphere $b$. Both spheres are assumed to share the same center.}
 
 \ccHasModels
 
 \ccc{AABB_traits<GeomTraits,TrianglePrimitive>}.
 
-
 \ccSeeAlso
 \ccc{AABB_traits<GeomTraits,TrianglePrimitive>}\\
 \ccc{AABB_tree<Traits>}
-
-
-% \ccExample
-
-% A short example program.
-% Instead of a short program fragment, a full running program can be
-% included using the 
-% \verb|\ccIncludeExampleCode{Package/AABBTraits.C}| 
-% macro. The program example would be part of the source code distribution and
-% also part of the automatic test suite.
-
-% \begin{ccExampleCode}
-% void your_example_code() {
-% }
-% \end{ccExampleCode}
-
-% %% \ccIncludeExampleCode{Package/AABBTraits.C}
 
 \end{ccRefConcept}
 

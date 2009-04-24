@@ -15,7 +15,7 @@
 // $Id: $
 //
 //
-// Author(s)     : Stéphane Tayeb
+// Author(s) : Stéphane Tayeb
 //
 //******************************************************************************
 // File Description :
@@ -65,7 +65,7 @@ public:
   typedef typename GeomTraits::Point_3 Intersection_type;
   typedef typename GeomTraits::Sphere_3 Sphere;
   typedef typename GeomTraits::Point_3 Projection_query;
-  typedef typename GeomTraits::Point_3 Projection_return;
+  typedef typename GeomTraits::Point_3 Projection_type;
 
 
   /// Constructor
@@ -116,10 +116,8 @@ public:
                     const Primitive& pr,
                     Intersection_type& intersection) const;
 
-//  Sphere sphere_from_query_and_hint(const Projection_query& center,
-//                                    const Projection_return& hint) const;
   Sphere sphere(const Projection_query& center,
-                const Projection_return& hint) const
+                const Projection_type& hint) const
   {
     return Sphere(center, GeomTraits().compute_squared_distance_3_object()
                                                           (center, hint));
@@ -127,7 +125,7 @@ public:
 
   bool intersection(const Sphere& sphere,
                     const Primitive& pr,
-                    Projection_return& projection_return) const;
+                    Projection_type& projection_return) const;
 
   bool is_smaller(const Sphere& a, const Sphere& b) const;
 
@@ -239,8 +237,6 @@ AABB_traits<GT,TP>::sort_primitives(PrimitiveIterator first,
   }
 }
 
-
-
 template<typename GT, typename TP>
 template<typename ConstPrimitiveIterator>
 typename AABB_traits<GT,TP>::Bounding_box
@@ -252,7 +248,6 @@ AABB_traits<GT,TP>::compute_bbox(ConstPrimitiveIterator first,
   {
     bbox = bbox + compute_bbox(*first);
   }
-
   return bbox;
 }
 
@@ -307,7 +302,7 @@ template<typename GT, typename TP>
 bool
 AABB_traits<GT,TP>::intersection(const Sphere& sphere,
                                  const Primitive& pr,
-                                 Projection_return& projected) const
+                                 Projection_type& projected) const
 {
   typedef typename TP::Data_type Triangle_3;
 
@@ -380,7 +375,6 @@ AABB_traits<GT,TP>::longest_axis(const Bounding_box& bbox) const
     }
   }
 }
-
 
 
 template<typename GT, typename TP>

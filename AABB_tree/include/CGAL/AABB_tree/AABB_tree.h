@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     :  Camille Wormser, Jane Tournois, Pierre Alliez
+// Author(s)     :  Camille Wormser, Pierre Alliez, Laurent Rineau, Stephane Tayeb
 
 #ifndef CGAL_AABB_TREE_H
 #define CGAL_AABB_TREE_H
@@ -35,32 +35,31 @@ namespace CGAL {
  *
  *
  */
-template<typename AABBTraits>
+template <typename AABBTraits>
 class AABB_tree
 {
 public:
   /// Traits types
   typedef typename AABBTraits::Primitive Primitive;
-  typedef typename AABBTraits::Projection_query Projection_query;
-  typedef typename AABBTraits::Projection_return Projection_return;
-  typedef typename AABBTraits::Intersection_type Intersection_type;
   typedef typename AABBTraits::Bounding_box Bounding_box;
-
+  typedef typename AABBTraits::Projection_query Projection_query;
+  typedef typename AABBTraits::Projection_type Projection_type;
+  typedef typename AABBTraits::Intersection_type Intersection_type;
 
   /**
    * @brief Constructor
-   * @param first the first primitive to insert
-   * @param last the last primitive to insert
+   * @param first iterator over first primitive to insert
+   * @param beyond past-the-end iterator 
    *
    * Builds the datastructure. Type ConstPrimitiveIterator can be any const
    * iterator on a container of Primitive::id_type such that Primitive has
    * a constructor taking a ConstPrimitiveIterator as argument.
    */
   template<typename ConstPrimitiveIterator>
-  AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator last);
+  AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
   /// Default constructor
-  //AABB_tree() : data_(), p_root_(NULL) {};
+  // AABB_tree() : data_(), p_root_(NULL) {};
 
   /// Non virtual destructor
   ~AABB_tree();
@@ -83,8 +82,8 @@ public:
   bool any_intersection(const Query& q,
                         Intersection_type& intersection) const;
 
-  Projection_return closest_point(const Projection_query& q,
-                                  const Projection_return& hint) const;
+  Projection_type closest_point(const Projection_query& q,
+                                const Projection_type& hint) const;
 
 
   //////////////////////////////////////////////
@@ -244,7 +243,7 @@ private:
   {
   public:
     Projecting_traits(const Projection_query& query,
-                      const Projection_return& hint)
+                      const Projection_type& hint)
       : projection_(hint)
       , center_(query)
       , sphere_(AABBTraits().sphere(query,hint))         { }
@@ -256,7 +255,7 @@ private:
       // We don't use q here because it is embedded in sphere_ and we don't
       // want to compute sphere everytime
 
-      Projection_return projection;
+      Projection_type projection;
       if ( AABBTraits().intersection(sphere_, primitive, projection) )
       {
         const Sphere sphere = AABBTraits().sphere(center_, projection);
@@ -273,17 +272,13 @@ private:
       return AABBTraits().do_intersect(sphere_, node.bounding_box());
     }
 
-    Projection_return projection() const { return projection_; }
+    Projection_type projection() const { return projection_; }
 
   private:
-    Projection_return projection_;
+    Projection_type projection_;
     Projection_query center_;
     Sphere sphere_;
   };
-
-
-private:
-
 
 
 private:
@@ -291,7 +286,6 @@ private:
   std::vector<Primitive> data_;
   // single root node
   Node* p_root_;
-
 
 private:
   // Disabled copy constructor & assignment operator
@@ -301,18 +295,16 @@ private:
 
 };  // end class AABB_tree
 
-
-
 template<typename Tr>
 template<typename ConstPrimitiveIterator>
 AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
-                         ConstPrimitiveIterator last)
+                         ConstPrimitiveIterator beyond)
 : data_()
 , p_root_(NULL)
 {
   // Insert each primitive into tree
   // TODO: get number of elements to reserve space ?
-  while ( first != last )
+  while ( first != beyond )
   {
     data_.push_back(Primitive(first));
     ++first;
@@ -403,9 +395,9 @@ AABB_tree<Tr>::any_intersection(const Query& query,
 
 
 template<typename Tr>
-typename AABB_tree<Tr>::Projection_return
+typename AABB_tree<Tr>::Projection_type
 AABB_tree<Tr>::closest_point(const Projection_query& query,
-                             const Projection_return& hint) const
+                             const Projection_type& hint) const
 {
   Projecting_traits traversal_traits(query,hint);
 

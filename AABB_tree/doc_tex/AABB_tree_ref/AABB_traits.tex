@@ -19,14 +19,12 @@
 
 \ccDefinition
   
-The class \ccRefName\ is a model of the concept \ccc{AABBTraits}. This traits class handle primitives whose geometric types are
-triangular facets. It provides intersection detections and computations for queries of types \ccc{CGAL::Ray_3}, \ccc{CGAL::Line_3} and \ccc{CGAL::Segment_3}, and projection computation for queries of type \ccc{Point_3}.
+The class \ccRefName\ is a model of the concept \ccc{AABBTraits}. This traits class handle primitives whose geometric objects are 3D triangle faces. It provides intersection detections and computations for queries of types \ccc{CGAL::Ray_3}, \ccc{CGAL::Line_3} and \ccc{CGAL::Segment_3}, and projection computations for queries of type \ccc{Point_3}.
 
 \ccParameters
-The template parameter \ccc{GeomTraits} provides the geometric types as well as the intersection tests and computations required.
-This type must be a model of the concept \ccc{AABBGeomTraits}.
+The template parameter \ccc{GeomTraits} provides the geometric types as well as the intersection tests and computations required. This type must be a model of the concept \ccc{AABBGeomTraits}.
 
-The template parameter \ccc{TrianglePrimitivee} provides the triangular primitives stored in the AABB tree. This parameter must be a model of the concept \ccc{TrianglePrimitive}.
+The template parameter \ccc{TrianglePrimitive} provides the triangle primitives stored in the AABB tree. This parameter must be a model of the concept \ccc{TrianglePrimitive}.
 
 \ccInclude{AABB_traits.h}
 
@@ -37,8 +35,8 @@ The template parameter \ccc{TrianglePrimitivee} provides the triangular primitiv
 \ccTypes
 
 \ccTypedef{GeomTraits::Ray_3  Ray_3;}{Ray query type.}
-\ccTypedef{GeomTraits::Segment_3  Segment_3;}{Segment query type.}
 \ccTypedef{GeomTraits::Line_3 Line_3;}{Line query type.}
+\ccTypedef{GeomTraits::Segment_3 Segment_3;}{Segment query type.}
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
@@ -54,24 +52,6 @@ The template parameter \ccc{TrianglePrimitivee} provides the triangular primitiv
 \ccc{AABBTraits},\\
 \ccc{AABB_tree<Traits>}, \\
 \ccc{AABBTrianglePrimitive}
-
-%\ccExample
-
-
-
-% A short example program.
-% Instead of a short program fragment, a full running program can be
-% included using the 
-% \verb|\ccIncludeExampleCode{Package/AABB_traits_base.C}| 
-% macro. The program example would be part of the source code distribution and
-% also part of the automatic test suite.
-
-% \begin{ccExampleCode}
-% void your_example_code() {
-% }
-
-
-%% \ccIncludeExampleCode{Package/AABB_traits_base.C}
 
 \end{ccRefClass}
 
