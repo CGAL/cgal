@@ -28,6 +28,7 @@ AABB_tree/test/AABB_tree/aabb_intersection_test.cpp -text
 AABB_tree/test/AABB_tree/aabb_projection_test.cpp -text
 AABB_tree/test/AABB_tree/data/anchor.off -text
 AABB_tree/test/AABB_tree/data/cube.off -text
+AABB_tree/test/AABB_tree/todo.txt -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations.png -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations2.png -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/algebraic_structures.tex -text

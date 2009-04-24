@@ -25,8 +25,15 @@ The data structure takes as input an iterator range of geometric primitives, whe
 % Examples
 \section{Examples}
 \label{AABB_tree_section_examples}
-\ccIncludeExampleCode{AABB_tree/AABB_polyhedron_facet_example.cpp}
+
+In the following example a set of 3D triangles are stored into a list. The AABB primitive wraps a triangle and an iterator in the list. We computes the number of intersections between a 3D line and the input triangles, and the closest point from a query point to the input triangles.
 \ccIncludeExampleCode{AABB_tree/AABB_triangle_3_example.cpp}
+
+The following example computes the number of intersections between a 3D ray and a set of facets of a triangle polyhedral surface. The AABB primitive wraps a facet handle and generates on the fly a 3D triangle each time its object function is called.
+\ccIncludeExampleCode{AABB_tree/AABB_polyhedron_facet_example.cpp}
+
+The following example computes the number of intersections between a 3D plane and a set of 3D segments. The segments are stored into a list, and the AABB primitive simply wraps a segment and an iterator in the list.
+\ccIncludeExampleCode{AABB_tree/AABB_segment_3_example.cpp}
 
 % Implementation Details
 \section{Implementation Details}

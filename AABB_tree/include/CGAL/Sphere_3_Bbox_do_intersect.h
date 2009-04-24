@@ -42,7 +42,9 @@ namespace CGALi {
     const CGAL::Bbox_3& bbox,
     const K& kernel)
   {
-    typename K::FT d, distance = 0;
+    typedef typename K::FT FT;
+    FT d = (FT)0.0;
+    FT distance = (FT)0.0;
     for(int i = 0; i < 3; ++i)
     {
       if(sphere.center()[i] < bbox.min(i))

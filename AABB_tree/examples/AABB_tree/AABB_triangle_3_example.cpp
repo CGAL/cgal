@@ -31,6 +31,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef K::FT FT;
+typedef K::Ray_3 Ray;
 typedef K::Line_3 Line;
 typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
@@ -78,8 +79,16 @@ int main(void)
         triangles.push_back(Triangle(a,d,c));
 
         Polyhedron_tree tree(triangles.begin(),triangles.end());
-        Line line(a,b);
-        std::cout << tree.number_of_intersections(line) 
+        
+        // counts #intersections
+        Ray ray(a,b);
+        std::cout << tree.number_of_intersections(ray) 
                 << " intersections(s) with ray" << std::endl;
+                
+        // compute closest point
+        Point hint(a);
+        Point query(2.0, 2.0, 2.0);
+        Point closest = tree.closest_point(query,hint);
+        
         return 0;
 }
