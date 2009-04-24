@@ -26,6 +26,7 @@
 #define AABB_TRAITS_H_
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/AABB_intersections.h>
 
 namespace CGAL {
 
@@ -34,7 +35,7 @@ namespace CGAL {
  *
  *
  */
-template<typename GeomTraits, typename Primitive>
+template<typename GeomTraits, typename AABB_primitive>
 class AABB_traits
 {
 public:
@@ -45,10 +46,14 @@ public:
   /// Segment query type
   typedef typename GeomTraits::Segment_3 Segment_3;
 
+  // TODO: delete once "inside..." disappears
+  typedef typename GeomTraits::Triangle_3 Triangle_3;
+
   /// AABBTraits concept types
   typedef typename CGAL::Bbox_3 Bounding_box;
 
-  typedef typename Primitive::Data Data;
+  typedef typename AABB_primitive Primitive;
+  typedef typename AABB_primitive::Object Object;
 
   typedef typename GeomTraits::Sphere_3 Sphere;
   typedef typename GeomTraits::Point_3 Projection;
@@ -121,7 +126,6 @@ private:
   /// Private types
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
-  typedef typename TrianglePrimitive::Triangle_3 Triangle_3;
 
 private:
   /**
@@ -131,7 +135,7 @@ private:
    */
   Bounding_box compute_bbox(const Primitive& pr) const
   {
-    return pr.data().bbox();
+    return pr.object().bbox();
   }
 
   typedef enum { CGAL_AXIS_X = 0,
@@ -144,7 +148,7 @@ private:
 
 private:
   // Disabled copy constructor & assignment operator
-  typedef AABB_traits<GeomTraits, TrianglePrimitive> Self;
+  typedef AABB_traits<GeomTraits, Primitive> Self;
   AABB_traits(const Self& src);
   Self& operator=(const Self& src);
 
@@ -152,59 +156,59 @@ private:
 
 
 
-template<typename GT, typename TP>
+template<typename GT, typename P>
 bool
-AABB_traits<GT,TP>::x_less_than(const Primitive& pr1,
-                                const Primitive& pr2)
+AABB_traits<GT,P>::x_less_than(const P& pr1,
+                                const P& pr2)
 {
-  const FT& ax1 = pr1.data().vertex(0).x();
-  const FT& bx1 = pr1.data().vertex(1).x();
-  const FT& cx1 = pr1.data().vertex(2).x();
+  const FT& ax1 = pr1.object().vertex(0).x();
+  const FT& bx1 = pr1.object().vertex(1).x();
+  const FT& cx1 = pr1.object().vertex(2).x();
 
-  const FT& ax2 = pr2.data().vertex(0).x();
-  const FT& bx2 = pr2.data().vertex(1).x();
-  const FT& cx2 = pr2.data().vertex(2).x();
+  const FT& ax2 = pr2.object().vertex(0).x();
+  const FT& bx2 = pr2.object().vertex(1).x();
+  const FT& cx2 = pr2.object().vertex(2).x();
 
   return (ax1+bx1+cx1) < (ax2+bx2+cx2);
 }
 
-template<typename GT, typename TP>
+template<typename GT, typename P>
 bool
-AABB_traits<GT,TP>::y_less_than(const Primitive& pr1,
-                                const Primitive& pr2)
+AABB_traits<GT,P>::y_less_than(const P& pr1,
+                                const P& pr2)
 {
-  const FT& ay1 = pr1.data().vertex(0).y();
-  const FT& by1 = pr1.data().vertex(1).y();
-  const FT& cy1 = pr1.data().vertex(2).y();
+  const FT& ay1 = pr1.object().vertex(0).y();
+  const FT& by1 = pr1.object().vertex(1).y();
+  const FT& cy1 = pr1.object().vertex(2).y();
 
-  const FT& ay2 = pr2.data().vertex(0).y();
-  const FT& by2 = pr2.data().vertex(1).y();
-  const FT& cy2 = pr2.data().vertex(2).y();
+  const FT& ay2 = pr2.object().vertex(0).y();
+  const FT& by2 = pr2.object().vertex(1).y();
+  const FT& cy2 = pr2.object().vertex(2).y();
 
   return (ay1+by1+cy1) < (ay2+by2+cy2);
 }
 
-template<typename GT, typename TP>
+template<typename GT, typename P>
 bool
-AABB_traits<GT,TP>::z_less_than(const Primitive& pr1,
-                                const Primitive& pr2)
+AABB_traits<GT,P>::z_less_than(const P& pr1,
+                                const P& pr2)
 {
-  const FT& az1 = pr1.data().vertex(0).z();
-  const FT& bz1 = pr1.data().vertex(1).z();
-  const FT& cz1 = pr1.data().vertex(2).z();
+  const FT& az1 = pr1.object().vertex(0).z();
+  const FT& bz1 = pr1.object().vertex(1).z();
+  const FT& cz1 = pr1.object().vertex(2).z();
 
-  const FT& az2 = pr2.data().vertex(0).z();
-  const FT& bz2 = pr2.data().vertex(1).z();
-  const FT& cz2 = pr2.data().vertex(2).z();
+  const FT& az2 = pr2.object().vertex(0).z();
+  const FT& bz2 = pr2.object().vertex(1).z();
+  const FT& cz2 = pr2.object().vertex(2).z();
 
   return (az1+bz1+cz1) < (az2+bz2+cz2);
 }
 
 
-template<typename GT, typename TP>
+template<typename GT, typename P>
 template<typename PrimitiveIterator>
 void
-AABB_traits<GT,TP>::sort_primitives(PrimitiveIterator first,
+AABB_traits<GT,P>::sort_primitives(PrimitiveIterator first,
                                     PrimitiveIterator last,
                                     const Bounding_box& bbox) const
 {
@@ -225,10 +229,10 @@ AABB_traits<GT,TP>::sort_primitives(PrimitiveIterator first,
   }
 }
 
-template<typename GT, typename TP>
+template<typename GT, typename P>
 template<typename ConstPrimitiveIterator>
-typename AABB_traits<GT,TP>::Bounding_box
-AABB_traits<GT,TP>::compute_bbox(ConstPrimitiveIterator first,
+typename AABB_traits<GT,P>::Bounding_box
+AABB_traits<GT,P>::compute_bbox(ConstPrimitiveIterator first,
                                  ConstPrimitiveIterator last) const
 {
   Bounding_box bbox = compute_bbox(*first);
@@ -240,10 +244,10 @@ AABB_traits<GT,TP>::compute_bbox(ConstPrimitiveIterator first,
 }
 
 
-template<typename GT, typename TP>
+template<typename GT, typename P>
 template<typename Query>
 bool
-AABB_traits<GT,TP>::do_intersect(const Query& q,
+AABB_traits<GT,P>::do_intersect(const Query& q,
                                  const Bounding_box& bbox) const
 {
   // AABB tree package call
@@ -252,26 +256,26 @@ AABB_traits<GT,TP>::do_intersect(const Query& q,
 }
 
 
-template<typename GT, typename TP>
+template<typename GT, typename P>
 template<typename Query>
 bool
-AABB_traits<GT,TP>::do_intersect(const Query& q,
-                                 const Primitive& pr) const
+AABB_traits<GT,P>::do_intersect(const Query& q,
+                                 const P& pr) const
 {
-  return GT().do_intersect_3_object()(q, pr.data());
+  return GT().do_intersect_3_object()(q, pr.object());
 }
 
 
-template<typename GT, typename TP>
+template<typename GT, typename P>
 template<typename Query>
 bool
-AABB_traits<GT,TP>::intersection(const Query& q,
-                                 const Primitive& pr,
+AABB_traits<GT,P>::intersection(const Query& q,
+                                 const P& pr,
                                  Intersection& intersection) const
 {
   // TODO: implement a real intersection construction method
   // do_intersect is needed here because we construct intersection between
-  // pr.data().supporting_plane() and q
+  // pr.object().supporting_plane() and q
   if ( ! do_intersect(q,pr) )
   {
     return false;
@@ -279,7 +283,8 @@ AABB_traits<GT,TP>::intersection(const Query& q,
 
   // AABB tree package call
   // TODO: extend kernel
-  Object intersection_obj = CGAL::intersection(pr.data(), q);
+  Object o = pr.object();
+  CGAL::Object intersection_obj = CGAL::intersection(o, q);
 
   return CGAL::assign(intersection, intersection_obj);
 }
@@ -287,15 +292,15 @@ AABB_traits<GT,TP>::intersection(const Query& q,
 
 // PA: CAREFUL: the ad-hoc code here must be removed.
 
-template<typename GT, typename TP>
+template<typename GT, typename P>
 bool
-AABB_traits<GT,TP>::intersection(const Sphere& sphere,
-                                 const Primitive& pr,
+AABB_traits<GT,P>::intersection(const Sphere& sphere,
+                                 const P& pr,
                                  Projection& projected) const
 {
-  typedef typename TP::Data Triangle_3;
+  typedef typename P::Object Triangle_3;
 
-  const Triangle_3 triangle = pr.data();
+  const Triangle_3 triangle = pr.object();
   projected = triangle.supporting_plane().projection(sphere.center());
 
   // If point is projected outside sphere, return false
@@ -318,9 +323,9 @@ AABB_traits<GT,TP>::intersection(const Sphere& sphere,
 }
 
 
-template<typename GT, typename TP>
+template<typename GT, typename P>
 bool
-AABB_traits<GT,TP>::is_smaller(const Sphere& a, const Sphere& b) const
+AABB_traits<GT,P>::is_smaller(const Sphere& a, const Sphere& b) const
 {
   CGAL_precondition(a.center() == b.center());
 
@@ -333,9 +338,9 @@ AABB_traits<GT,TP>::is_smaller(const Sphere& a, const Sphere& b) const
 //-------------------------------------------------------
 // Private methods
 //-------------------------------------------------------
-template<typename GT, typename TP>
-typename AABB_traits<GT,TP>::Axis
-AABB_traits<GT,TP>::longest_axis(const Bounding_box& bbox) const
+template<typename GT, typename P>
+typename AABB_traits<GT,P>::Axis
+AABB_traits<GT,P>::longest_axis(const Bounding_box& bbox) const
 {
   const double dx = bbox.xmax() - bbox.xmin();
   const double dy = bbox.ymax() - bbox.ymin();
@@ -366,9 +371,9 @@ AABB_traits<GT,TP>::longest_axis(const Bounding_box& bbox) const
 }
 
 // PA: ad-hoc code to be removed
-template<typename GT, typename TP>
+template<typename GT, typename P>
 bool
-AABB_traits<GT,TP>::is_inside_triangle_3(Point_3& p,
+AABB_traits<GT,P>::is_inside_triangle_3(Point_3& p,
                                          const Triangle_3& t) const
 {
   typedef typename GT::Vector_3 Vector;

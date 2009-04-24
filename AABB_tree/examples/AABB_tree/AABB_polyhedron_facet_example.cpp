@@ -26,7 +26,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
 #include <CGAL/AABB_tree.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -35,19 +34,21 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef K::FT FT;
 typedef K::Ray_3 Ray;
 typedef K::Point_3 Point;
+typedef K::Vector_3 Vector;
 
 class Polyhedron_triangle_primitive
 {
-        // type
+// types
 public:
         typedef K::Triangle_3 Object; // object type
         typedef Polyhedron::Facet_handle Id; // Id type
 
-        // member data
+// member data
 private:
         Id m_handle; // Facet_handle
         Object m_object; // 3D triangle
 
+public:
         Polyhedron_triangle_primitive(Id handle)
                 : m_handle(handle)
         {
@@ -56,13 +57,13 @@ private:
                 const Point& c = handle->halfedge()->prev()->vertex()->point();
                 m_object = Object(a,b,c);
         }
-public:
-        Object object() { return m_object; }
+        const Object& object() const { return m_object; }
+        Object& object() { return m_object; }
         Id id() { return m_handle; }
 };
 
-typedef AABB_traits<K, Polyhedron_triangle_primitive> AABB_Polyhedron_traits;
-typedef AABB_tree<AABB_Polyhedron_traits> Polyhedron_tree;
+typedef CGAL::AABB_traits<K, Polyhedron_triangle_primitive> AABB_Polyhedron_traits;
+typedef CGAL::AABB_tree<AABB_Polyhedron_traits> Polyhedron_tree;
 
 int main(void)
 {
