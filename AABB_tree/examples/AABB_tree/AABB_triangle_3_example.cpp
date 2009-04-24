@@ -23,7 +23,7 @@
 //******************************************************************************
 
 #include <iostream>
-#include <Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
 #include <CGAL/AABB_tree.h>
@@ -69,6 +69,7 @@ int main(void)
         Point b(0.0, 1.0, 0.0);
         Point c(0.0, 0.0, 1.0);
         Point d(0.0, 0.0, 0.0);
+
         std::list<Triangle> triangles;
         triangles.push_back(Triangle(a,b,c));
         triangles.push_back(Triangle(a,b,d));

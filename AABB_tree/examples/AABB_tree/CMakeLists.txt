@@ -25,6 +25,7 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
   create_single_source_cgal_program("AABB_polyhedron_facet_example.cpp")
+  create_single_source_cgal_program("AABB_triangle_3_example.cpp")
 
 else()
   
