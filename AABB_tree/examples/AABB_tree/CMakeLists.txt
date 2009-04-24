@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project(AABB_example)
+project(AABB_examples)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -23,8 +23,10 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
+  create_single_source_cgal_program("AABB_segment_3_example.cpp")
   create_single_source_cgal_program("AABB_triangle_3_example.cpp")
   create_single_source_cgal_program("AABB_polyhedron_facet_example.cpp")
+
 
 else()
   

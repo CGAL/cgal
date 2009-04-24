@@ -36,9 +36,9 @@ typedef K::Ray_3 Ray;
 typedef K::Point_3 Point;
 typedef K::Vector_3 Vector;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
-typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Polyhedron_triangle_primitive;
-typedef CGAL::AABB_traits<K, Polyhedron_triangle_primitive> AABB_Polyhedron_traits;
-typedef CGAL::AABB_tree<AABB_Polyhedron_traits> Polyhedron_tree;
+typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
+typedef CGAL::AABB_traits<K, Primitive> Traits;
+typedef CGAL::AABB_tree<Traits> Polyhedron_tree;
 
 int main(void)
 {

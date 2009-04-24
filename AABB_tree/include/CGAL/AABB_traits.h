@@ -271,7 +271,7 @@ template<typename Query>
 bool
 AABB_traits<GT,P>::intersection(const Query& q,
                                  const P& pr,
-                                 Intersection& intersection) const
+                                 Intersection& result) const
 {
   // TODO: implement a real intersection construction method
   // do_intersect is needed here because we construct intersection between
@@ -286,7 +286,7 @@ AABB_traits<GT,P>::intersection(const Query& q,
   Object o = pr.object();
   CGAL::Object intersection_obj = CGAL::intersection(o, q);
 
-  return CGAL::assign(intersection, intersection_obj);
+  return CGAL::assign(result, intersection_obj);
 }
 
 

@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project(AABB_example)
+project(AABB_tests)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -16,7 +16,6 @@ endif()
  
 # Find CGAL 
 find_package(CGAL COMPONENTS)
-#include( ${CGAL_USE_FILE} )
 
 if ( CGAL_FOUND )
 
@@ -25,6 +24,7 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
   create_single_source_cgal_program("aabb_intersection_test.cpp")
+  create_single_source_cgal_program("aabb_projection_test.cpp")
 
 else()
   
