@@ -15,7 +15,7 @@
 // $Id: $
 //
 //
-// Author(s) : Stéphane Tayeb
+// Author(s) : Stéphane Tayeb, Pierre Alliez
 //
 //******************************************************************************
 // File Description :
@@ -45,27 +45,26 @@ namespace CGAL {
  *
  *
  */
-template<typename GeomTraits, typename TrianglePrimitive>
+template<typename GeomTraits, typename Primitive>
 class AABB_traits
 {
 public:
   /// Ray query type
   typedef typename GeomTraits::Ray_3 Ray_3;
-  /// Segment query type
-  typedef typename GeomTraits::Segment_3 Segment_3;
   /// Line query type
   typedef typename GeomTraits::Line_3 Line_3;
+  /// Segment query type
+  typedef typename GeomTraits::Segment_3 Segment_3;
 
   /// AABBTraits concept types
   typedef typename CGAL::Bbox_3 Bounding_box;
 
-  typedef TrianglePrimitive Primitive;
-  typedef typename Primitive::Data_type Data_type;
+  typedef typename Primitive::Data Data;
 
-  typedef typename GeomTraits::Point_3 Intersection_type;
   typedef typename GeomTraits::Sphere_3 Sphere;
+  typedef typename GeomTraits::Point_3 Projection;
+  typedef typename GeomTraits::Point_3 Intersection;
   typedef typename GeomTraits::Point_3 Projection_query;
-  typedef typename GeomTraits::Point_3 Projection_type;
 
 
   /// Constructor
@@ -114,10 +113,10 @@ public:
   template<typename Query>
   bool intersection(const Query& q,
                     const Primitive& pr,
-                    Intersection_type& intersection) const;
+                    Intersection& intersection) const;
 
   Sphere sphere(const Projection_query& center,
-                const Projection_type& hint) const
+                const Projection& hint) const
   {
     return Sphere(center, GeomTraits().compute_squared_distance_3_object()
                                                           (center, hint));
@@ -125,7 +124,7 @@ public:
 
   bool intersection(const Sphere& sphere,
                     const Primitive& pr,
-                    Projection_type& projection_return) const;
+                    Projection& projection_return) const;
 
   bool is_smaller(const Sphere& a, const Sphere& b) const;
 
@@ -279,7 +278,7 @@ template<typename Query>
 bool
 AABB_traits<GT,TP>::intersection(const Query& q,
                                  const Primitive& pr,
-                                 Intersection_type& intersection) const
+                                 Intersection& intersection) const
 {
   // TODO: implement a real intersection construction method
   // do_intersect is needed here because we construct intersection between
@@ -302,9 +301,9 @@ template<typename GT, typename TP>
 bool
 AABB_traits<GT,TP>::intersection(const Sphere& sphere,
                                  const Primitive& pr,
-                                 Projection_type& projected) const
+                                 Projection& projected) const
 {
-  typedef typename TP::Data_type Triangle_3;
+  typedef typename TP::Data Triangle_3;
 
   const Triangle_3 triangle = pr.data();
   projected = triangle.supporting_plane().projection(sphere.center());

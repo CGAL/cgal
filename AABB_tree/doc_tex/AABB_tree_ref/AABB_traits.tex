@@ -12,25 +12,21 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{AABB_traits<GeomTraits,TrianglePrimitive>}  %% add template arg's if necessary
+\begin{ccRefClass}{AABB_traits<GeomTraits,Primitive>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The class \ccRefName\ is a model of the concept \ccc{AABBTraits}. This traits class handle primitives whose geometric objects are 3D triangle faces. It provides intersection detections and computations for queries of types \ccc{CGAL::Ray_3}, \ccc{CGAL::Line_3} and \ccc{CGAL::Segment_3}, and projection computations for queries of type \ccc{Point_3}.
+The class \ccRefName\ is a model of the concept \ccc{AABBTraits}. This traits class handles any type of 3D geometric primitives provided that the proper intersection tests and constructions are implemented.
 
 \ccParameters
 The template parameter \ccc{GeomTraits} provides the geometric types as well as the intersection tests and computations required. This type must be a model of the concept \ccc{AABBGeomTraits}.
 
-The template parameter \ccc{TrianglePrimitive} provides the triangle primitives stored in the AABB tree. This parameter must be a model of the concept \ccc{TrianglePrimitive}.
+The template parameter \ccc{Primitive} provides the primitives stored in the AABB tree. This parameter must be a model of the concept \ccc{AABBPrimitive}.
 
 \ccInclude{AABB_traits.h}
-
-% \ccIsModel
-
-% Concept
 
 \ccTypes
 
@@ -44,13 +40,13 @@ The template parameter \ccc{TrianglePrimitive} provides the triangle primitives 
 %\ccConstructor{AABB_traits();}{default constructor.}
 
 % \ccOperations
-
 % \ccMethod{void foo();}{some member functions}
 
 \ccSeeAlso
 
 \ccc{AABBTraits},\\
 \ccc{AABB_tree<Traits>}, \\
+\ccc{AABBPrimitive},\\
 \ccc{AABBTrianglePrimitive}
 
 \end{ccRefClass}

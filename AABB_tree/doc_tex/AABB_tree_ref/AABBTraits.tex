@@ -60,7 +60,7 @@ During the construction of the \ccc{AABB_tree}, the primitives are sorted accord
 \ccGlue
 \ccMethod{bool z_less_than(const Primitive & pr1, const Primitive & pr2);}{}
 
-\ccMethod{Bounding_box compute_bbox(const_primitive_iterator begin,                                                                 const_primitive_iterator beyond);}
+\ccMethod{Bounding_box compute_bbox(const_primitive_iterator begin,                                                const_primitive_iterator beyond);}
 {Computes and returns the bounding box of a set of primitives.}
 
 The following predicates are required for each type \ccc{Query}
@@ -85,9 +85,9 @@ The following members are required only if projection queries are issued.
 
 % TODO: replace return by pair<bool,Intersection>
 \ccMethod{ bool intersection(const Sphere & sphere, 
-                          const Primitive::Data datum, 
+                          const Primitive::Object object, 
                           const Projection & projection);}
-{Returns \ccc{true} iff the primitive datum is intersecting the ball defined as the interior of the sphere. In the positive, the point of the primitive closest to the center of the sphere is stored in the last parameter.}
+{Returns \ccc{true} iff the primitive object is intersecting the ball defined as the interior of the sphere. In the positive, the point of the primitive closest to the center of the sphere is stored in the last parameter.}
 
 \ccMethod{bool is_contained(const Sphere & a, const Sphere & b);}{Returns \ccc{true} iff sphere $a$ is contained in sphere $b$. Both spheres are assumed to share the same center.}
 

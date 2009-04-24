@@ -21,13 +21,11 @@
   
 The concept \ccRefName\ defines the requirements for the first template parameter of the class \ccc{AABB_traits<GeomTraits, TrianglePrimitive>}. It provides query types as well as predicates and constructors to detect and compute intersections between objects of those query types with the primitives stored in the AABB tree. In addition, it contains query types as well as predicates and constructors to compute projections between a point query and the primitives stored in the AABB tree.
 
-\ccGeneralizes
-
-ThisConcept \\
-ThatConcept
+%\ccGeneralizes
+%ThisConcept \\
+%ThatConcept
 
 \ccTypes
-
 
 \ccNestedType{Bbox_3}{Bounding box type.}
 
@@ -46,8 +44,6 @@ Provides the operators:
 \ccCreation
 \ccCreationVariable{geomtraits}  %% choose variable name
 
-%\ccConstructor{AABBGeomTraits();}{default constructor.}
-
 \ccOperations
 
 \ccMethod{Do_intersect_3 do_intersect_3_object();}
@@ -62,7 +58,6 @@ Any instantiation of \ccc{CGAL::Kernel} is a model of this traits concept.
 \ccSeeAlso
 
 \ccc{AABB_traits<GeomTraits,TrianglePrimitive>}.
-
 
 \end{ccRefConcept}
 
