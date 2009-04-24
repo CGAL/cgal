@@ -47,7 +47,6 @@ The template parameter \ccc{Traits} stands for a traits class which must be a mo
 \ccConstructor{template < class ConstPrimitiveIterator>
        AABB_tree( ConstPrimitiveIterator begin, 
                   ConstPrimitiveIterator beyond );}
-
 {Builds the datastructure. Type \ccc{ConstPrimitiveIterator} can be any const iterator on a container of \ccc{Primitive::Object} such that \ccc{Primitive} has a constructor taking a \ccc{ConstPrimitiveIterator} as argument.}
 
 \ccOperations
@@ -80,7 +79,6 @@ bool any_intersection(const Query& query,
 
 	
 \ccMethod{template <class Query, class OutputIterator>
-	        OutputIterator 
 bool any_intersected_primitive(const Query& query,
                                Primitive& primitive);}
 {Return \ccc{true} iff the query intersects the primitive. In the positive, saves the first encountered primitive to the second parameter. Type \ccc{Query} has to be a type for which \ccc{do_intersect} and intersection predicates have been defined in \ccc{Traits}.}
@@ -97,9 +95,6 @@ closest_point(const Projection_query & query,
 
 \ccc{AABBTraits}, \\
 \ccc{AABBPrimitive}.
-
-\ccExample
-\ccIncludeExampleCode{AABB_tree/AABB_example.cpp}
 
 \end{ccRefClass}
 

@@ -27,17 +27,6 @@
 
 #include <CGAL/Bbox_3.h>
 
-#include <CGAL/AABB_tree/Ray_3_Bbox_3_do_intersect.h>
-#include <CGAL/AABB_tree/Bbox_3_Bbox_3_do_intersect.h>
-#include <CGAL/AABB_tree/Segment_3_Bbox_3_do_intersect.h>
-#include <CGAL/AABB_tree/Plane_3_Bbox_3_do_intersect.h>
-#include <CGAL/AABB_tree/Triangle_3_Bbox_3_do_intersect.h>
-#include <CGAL/AABB_tree/Line_3_Bbox_3_do_intersect.h>
-#include <CGAL/AABB_tree/Sphere_3_Bbox_do_intersect.h>
-#include <CGAL/AABB_tree/Triangle_3_segment_3_intersection.h>
-#include <CGAL/AABB_tree/Triangle_3_ray_3_intersection.h>
-
-
 namespace CGAL {
 
 /**

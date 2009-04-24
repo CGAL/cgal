@@ -16,6 +16,7 @@ AABB_tree/doc_tex/AABB_tree_ref/main.tex -text
 AABB_tree/dont_submit -text
 AABB_tree/examples/AABB_tree/AABB_polyhedron_facet_example.cpp -text
 AABB_tree/examples/AABB_tree/AABB_triangle_3_example.cpp -text
+AABB_tree/include/CGAL/AABB_tree/AABB_intersections.h -text
 AABB_tree/include/CGAL/AABB_tree/AABB_polyhedron_triangle_primitive.h -text
 AABB_tree/include/CGAL/AABB_tree/AABB_traits.h -text
 AABB_tree/include/CGAL/AABB_tree/Triangle_3_line_3_intersection.h -text
