@@ -1,0 +1,4 @@
+- load mesh and compare exhaustive tests/computations with aabb tree
+- check correctness for canonical triangle soup
+- check with various kernels
+- report benchs (#queries per sec)
