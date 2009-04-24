@@ -296,6 +296,7 @@ AABB_traits<GT,TP>::intersection(const Query& q,
 }
 
 
+// PA: CAREFUL: the ad-hoc code here must be removed.
 
 template<typename GT, typename TP>
 bool
@@ -375,7 +376,7 @@ AABB_traits<GT,TP>::longest_axis(const Bounding_box& bbox) const
   }
 }
 
-
+// PA: ad-hoc code to be removed
 template<typename GT, typename TP>
 bool
 AABB_traits<GT,TP>::is_inside_triangle_3(Point_3& p,

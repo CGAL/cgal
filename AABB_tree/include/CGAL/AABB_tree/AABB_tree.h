@@ -58,9 +58,6 @@ public:
   template<typename ConstPrimitiveIterator>
   AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
-  /// Default constructor
-  // AABB_tree() : data_(), p_root_(NULL) {};
-
   /// Non virtual destructor
   ~AABB_tree();
 
@@ -71,8 +68,8 @@ public:
   int number_of_intersections(const Query& q) const;
 
   template<typename Query, typename OutputIterator>
-  OutputIterator intersected_primitives(const Query& q,
-                                        OutputIterator out) const;
+  OutputIterator all_intersected_primitives(const Query& q,
+                                            OutputIterator out) const;
 
   template<typename Query, typename OutputIterator>
   OutputIterator all_intersections(const Query& q,
@@ -82,6 +79,10 @@ public:
   bool any_intersection(const Query& q,
                         Intersection_type& intersection) const;
 
+  template<typename Query, typename OutputIterator>
+  bool any_intersected_primitive(const Query& q,
+                                 Primitive& pr) const;
+
   Projection_type closest_point(const Projection_query& q,
                                 const Projection_type& hint) const;
 
@@ -89,7 +90,7 @@ public:
   //////////////////////////////////////////////
   //TODO: document this
   Bounding_box root_bbox() const { return p_root_->bounding_box(); }
-  bool isEmpty() const { return data_.empty(); }
+  bool is_empty() const { return data_.empty(); }
   size_t size() const { return data_.size(); }
 
   /// generic traversal of tree
