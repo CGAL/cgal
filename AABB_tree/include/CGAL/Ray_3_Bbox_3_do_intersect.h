@@ -41,19 +41,17 @@ namespace CGALi {
     parameters[0] = Point(bbox.xmin(), bbox.ymin(), bbox.zmin());
     parameters[1] = Point(bbox.xmax(), bbox.ymax(), bbox.zmax());
 
-
     const Point source = ray.source();
-
     if((parameters[0].x() <= source.x()) && (source.x() <= parameters[1].x()) && 
-      (parameters[0].y() <= source.y()) && (source.y() <= parameters[1].y()) &&
-      (parameters[0].z() <= source.z()) && (source.z() <= parameters[1].z()))
+       (parameters[0].y() <= source.y()) && (source.y() <= parameters[1].y()) &&
+       (parameters[0].z() <= source.z()) && (source.z() <= parameters[1].z()))
       return true;
 
     const Vector direction = ray.to_vector();
     // CAREFUL, when 1.0/0.0, this works only with doubles, not with filtered kernels
-    const Vector inv_direction(1.0/direction.x(),
-      1.0/direction.y(),
-      1.0/direction.z()); 
+    const Vector inv_direction((FT)1.0/direction.x(),
+            (FT)1.0/direction.y(),
+            (FT)1.0/direction.z()); 
     const int sign_x = inv_direction.x() < (FT)0.0;
     const int sign_y = inv_direction.y() < (FT)0.0;
     const int sign_z = inv_direction.z() < (FT)0.0;

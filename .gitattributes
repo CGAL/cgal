@@ -24,9 +24,10 @@ AABB_tree/include/CGAL/AABB_polyhedron_triangle_primitive.h -text
 AABB_tree/include/CGAL/AABB_traits.h -text
 AABB_tree/include/CGAL/Triangle_3_line_3_intersection.h -text
 AABB_tree/test/AABB_tree/CMakeLists.txt -text
-AABB_tree/test/AABB_tree/aabb_intersection_test.cpp -text
+AABB_tree/test/AABB_tree/aabb_intersection_triangle_test.cpp -text
 AABB_tree/test/AABB_tree/aabb_projection_test.cpp -text
 AABB_tree/test/AABB_tree/cleanup.bat -text
+AABB_tree/test/AABB_tree/data/coverrear.off -text
 AABB_tree/test/AABB_tree/data/cube.off -text
 AABB_tree/test/AABB_tree/todo.txt -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations.png -text
