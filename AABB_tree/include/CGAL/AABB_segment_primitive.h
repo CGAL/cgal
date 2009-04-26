@@ -50,9 +50,9 @@ public:
                 m_datum = *it; // copy segment
         }
 public:
-        const Datum& datum() const { return m_datum; }
-        Datum& datum() { return m_datum; }
         Id id() { return m_it; }
+        Datum& datum() { return m_datum; }
+        const Datum& datum() const { return m_datum; }
 
         /// Returns the x/y/z reference coordinate for sorting
         /// here simply the source vertex of the segment

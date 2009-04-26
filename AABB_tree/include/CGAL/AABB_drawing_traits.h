@@ -24,17 +24,15 @@
 #include <CGAL/Bbox_3.h>
 
 namespace CGAL {
-namespace AABB {
 
 template<typename Primitive, typename Node>
-struct Drawing_traits
+struct AABB_drawing_traits
 {
   typedef CGAL::Bbox_3 Bbox;
   bool go_further() { return true; }
 
   bool intersection(const int&, const Primitive&)
   {
-    //     gl_draw(m_psc.compute_bbox(i));
     return true;
   }
 
@@ -86,9 +84,8 @@ struct Drawing_traits
     ::glVertex3d(px,py,pz);
     ::glVertex3d(qx,qy,qz);
   }
-}; // Drawing_traits
+}; // AABB_drawing_traits
 
-} // end namespace AABB_tree
 } // end namespace CGAL
 
 #endif // CGAL_AABB_DRAWING_TRAITS_H

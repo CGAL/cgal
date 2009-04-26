@@ -144,18 +144,23 @@ void test_several_kernels(const char *filename)
     std::cout << std::endl;
     std::cout << "Polyhedron " << filename << std::endl;
 
+    std::cout << std::endl;
     std::cout << "Simple cartesian float kernel" << std::endl;
     test<CGAL::Simple_cartesian<float> >(filename);
 
+    std::cout << std::endl;
     std::cout << "Cartesian float kernel" << std::endl;
     test<CGAL::Cartesian<float> >(filename);
 
+    std::cout << std::endl;
     std::cout << "Simple cartesian double kernel" << std::endl;
     test<CGAL::Simple_cartesian<double> >(filename);
 
+    std::cout << std::endl;
     std::cout << "Cartesian double kernel" << std::endl;
     test<CGAL::Cartesian<double> >(filename);
 
+    std::cout << std::endl;
     std::cout << "Epic kernel" << std::endl;
     test<CGAL::Exact_predicates_inexact_constructions_kernel>(filename);
 }

@@ -271,7 +271,7 @@ namespace CGAL {
                 if ( AABBTraits().intersection(sphere_, primitive, projection) )
                 {
                     const Sphere sphere = AABBTraits().sphere(center_, projection);
-                    if ( AABBTraits().is_smaller(sphere, sphere_) )
+                    if ( AABBTraits().is_contained(sphere, sphere_) )
                     {
                         projection_ = projection;
                         sphere_ = sphere;

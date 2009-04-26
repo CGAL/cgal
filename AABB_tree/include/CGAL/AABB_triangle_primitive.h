@@ -27,32 +27,32 @@
 
 namespace CGAL {
 
-template <class GeomTraits, class Iterator>
-class AABB_triangle_primitive
-{
-public:
+    template <class GeomTraits, class Iterator>
+    class AABB_triangle_primitive
+    {
+    public:
         // types
         typedef Iterator Id; // Id type
         typedef typename GeomTraits::FT FT; // field number type
         typedef typename GeomTraits::Point_3 Point; // point type
         typedef typename GeomTraits::Triangle_3 Datum; // datum type
 
-private:
+    private:
         // member data
         Id m_it; // iterator
         Datum m_datum; // 3D triangle
 
         // constructor
-public:
+    public:
         AABB_triangle_primitive(Id it)
-                : m_it(it)
+            : m_it(it)
         {
-                m_datum = *it; // copy triangle
+            m_datum = *it; // copy triangle
         }
-public:
-        const Datum& datum() const { return m_datum; }
-        Datum& datum() { return m_datum; }
+    public:
         Id id() { return m_it; }
+        Datum& datum() { return m_datum; }
+        const Datum& datum() const { return m_datum; }
 
         /// Returns the x/y/z reference coordinate for sorting
         /// here simply the first vertex of the triangle
@@ -62,7 +62,7 @@ public:
 
         /// Returns a point on the primitive
         Point point_on() const { m_datum.vertex(0); }
-};
+    };
 
 }  // end namespace CGAL
 

@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     :  Camille Wormser, Pierre Alliez, Laurent Rineau, Stephane Tayeb
+// Author(s) : Camille Wormser, Pierre Alliez, Laurent Rineau, Stephane Tayeb
 
 #ifndef CGAL_AABB_NODE_H
 #define CGAL_AABB_NODE_H
@@ -87,12 +87,9 @@ public:
                  Traversal_traits& traits,
                  const int nb_primitives) const;
 
-
 private:
   typedef AABB_node<AABBTraits> Node;
   typedef typename AABBTraits::Primitive Primitive;
-
-
 
   /// Helper functions
   const Node& left_child() const
@@ -113,9 +110,8 @@ private:
   /// bounding box
   Bounding_box m_bbox;
 
-  /// children nodes:
-  /// either pointing towards children (if the children are not leaves)
-  /// or pointing toward input primitives (if the children are leaves).
+  /// children nodes, either pointing towards children (if children are not leaves),
+  /// or pointing toward input primitives (if children are leaves).
   void *m_p_left_child;
   void *m_p_right_child;
 
@@ -154,10 +150,10 @@ AABB_node<Tr>::expand(ConstPrimitiveIterator first,
     break;
   default:
     const int new_range = range/2;
-    m_p_left_child = static_cast<Node*>(this)+1;
-    m_p_right_child = static_cast<Node*>(this)+new_range;
-    left_child().expand(first, first+new_range, new_range);
-    right_child().expand(first+new_range, beyond, range-new_range);
+    m_p_left_child = static_cast<Node*>(this) + 1;
+    m_p_right_child = static_cast<Node*>(this) + new_range;
+    left_child().expand(first, first + new_range, new_range);
+    right_child().expand(first + new_range, beyond, range - new_range);
   }
 }
 
@@ -169,9 +165,6 @@ AABB_node<Tr>::traversal(const Query& query,
                          Traversal_traits& traits,
                          const int nb_primitives) const
 {
-//  CGAL_assertion(NULL!=m_p_left_child);
-//  CGAL_assertion(NULL!=m_p_right_child);
-
   // Recursive traversal
   switch(nb_primitives)
   {

@@ -39,14 +39,12 @@ template<typename GeomTraits, typename AABB_primitive>
 class AABB_traits
 {
 public:
-  /// Ray query type
+  /// query types
   typedef typename GeomTraits::Ray_3 Ray_3;
-  /// Line query type
   typedef typename GeomTraits::Line_3 Line_3;
-  /// Segment query type
   typedef typename GeomTraits::Segment_3 Segment_3;
 
-  // TODO: delete once "inside..." disappears
+  // TOFIX: delete once "inside..." disappears
   typedef typename GeomTraits::Triangle_3 Triangle_3;
 
   /// AABBTraits concept types
@@ -61,18 +59,18 @@ public:
   typedef typename GeomTraits::Point_3 Projection_query;
 
   // types for search tree
-  typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
-  typedef typename GeomTraits::Construct_cartesian_const_iterator_3
-      Construct_cartesian_const_iterator_3;
+  // TOFIX: how can we avoid repeating those?
+  typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
-  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
   typedef typename GeomTraits::Sphere_3 Sphere_3;
+  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename GeomTraits::Construct_center_3 Construct_center_3;
   typedef typename GeomTraits::Construct_iso_cuboid_3 Construct_iso_cuboid_3;
   typedef typename GeomTraits::Construct_min_vertex_3 Construct_min_vertex_3;
   typedef typename GeomTraits::Construct_max_vertex_3 Construct_max_vertex_3;
-  typedef typename GeomTraits::Construct_center_3 Construct_center_3;
   typedef typename GeomTraits::Compute_squared_radius_3 Compute_squared_radius_3;
-  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
+  typedef typename GeomTraits::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_3;
 
   /// Constructor
   AABB_traits() { };
@@ -136,7 +134,7 @@ public:
                     const Primitive& pr,
                     Projection& projection_return) const;
 
-  bool is_smaller(const Sphere& a, const Sphere& b) const;
+  bool is_contained(const Sphere& a, const Sphere& b) const;
 
 private:
   /// Private types
@@ -290,7 +288,7 @@ AABB_traits<GT,P>::intersection(const Sphere& sphere,
 
 template<typename GT, typename P>
 bool
-AABB_traits<GT,P>::is_smaller(const Sphere& a, const Sphere& b) const
+AABB_traits<GT,P>::is_contained(const Sphere& a, const Sphere& b) const
 {
   CGAL_precondition(a.center() == b.center());
 

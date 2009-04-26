@@ -32,7 +32,7 @@ namespace CGAL {
     *
     *
     */
-    template<typename GeomTraits, typename Polyhedron_>
+    template<typename GeomTraits, typename Polyhedron>
     class AABB_polyhedron_edge_primitive
     {
     public:
@@ -40,16 +40,14 @@ namespace CGAL {
         typedef typename GeomTraits::FT FT;
         typedef typename GeomTraits::Point_3 Point;
         typedef typename GeomTraits::Segment_3 Datum;
-        typedef typename Polyhedron_::Edge_const_iterator Id;
+        typedef typename Polyhedron::Halfedge_handle Id;
 
         /// Self
-        typedef AABB_polyhedron_edge_primitive<GeomTraits, Polyhedron_> Self;
+        typedef AABB_polyhedron_edge_primitive<GeomTraits, Polyhedron> Self;
 
-        /// Constructors
-        //AABB_polyhedron_triangle_primitive() { };
-
+        /// Constructor
         AABB_polyhedron_edge_primitive(const Id& handle)
-            : m_handle(handle)  { };
+            : m_halfedge_handle(handle)  { };
 
         // Default copy constructor and assignment operator are ok
 
@@ -59,20 +57,20 @@ namespace CGAL {
         /// Returns by constructing on the fly the geometric datum wrapped by the primitive
         Datum datum() const;
         /// Returns the identifier
-        const Id id() const { return m_handle; }
+        const Id id() const { return m_halfedge_handle; }
 
         /// Returns a point on the primitive
         Point point_on() const;
 
         /// Returns the x/y/z reference coordinate for sorting
         /// here simply one vertex of the triangle
-        const FT xref() const { return m_handle->vertex()->point().x(); }
-        const FT yref() const { return m_handle->vertex()->point().y(); }
-        const FT zref() const { return m_handle->vertex()->point().z(); }
+        const FT xref() const { return m_halfedge_handle->vertex()->point().x(); }
+        const FT yref() const { return m_halfedge_handle->vertex()->point().y(); }
+        const FT zref() const { return m_halfedge_handle->vertex()->point().z(); }
 
     private:
-        /// Halfedge handle
-        Id m_handle;
+        /// Id, here a polyhedron halfedge handle
+        Id m_halfedge_handle;
     };  // end class AABB_polyhedron_edge_primitive
 
 
@@ -81,17 +79,16 @@ namespace CGAL {
         AABB_polyhedron_edge_primitive<GT,P_>::datum() const
     {
         typedef typename GT::Point_3 Point;
-        typedef typename GT::Segment_3 Segment;
-        const Point& a = m_handle->vertex()->point();
-        const Point& b = m_handle->opposite()->vertex()->point();
-        return Datum(a,b);
+        const Point& a = m_halfedge_handle->vertex()->point();
+        const Point& b = m_halfedge_handle->opposite()->vertex()->point();
+        return Datum(a,b); // returns a 3D segment
     }
 
     template<typename GT, typename P_>
     typename AABB_polyhedron_edge_primitive<GT,P_>::Point
         AABB_polyhedron_edge_primitive<GT,P_>::point_on() const
     {
-        return m_handle->vertex()->point();
+        return m_halfedge_handle->vertex()->point();
     }
 
 
