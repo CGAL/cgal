@@ -45,7 +45,7 @@ struct MyLess {
 template <typename Iterator, typename PointPmap >
 void process_point_set(Iterator beg, Iterator end, PointPmap pm)
 {
-  MyLess<std::iterator_traits<Iterator>::value_type,PointPmap> less(pm);
+  MyLess<typename std::iterator_traits<Iterator>::value_type,PointPmap> less(pm);
   std::sort(beg,end,less);
 }
 

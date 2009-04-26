@@ -77,6 +77,13 @@ namespace boost
   {
     return get<N>(k);
   }
+  
+  template <typename Tuple, int N>
+  typename boost::tuples::element<N,Tuple>::type&
+  get(CGAL::nth_of_tuple_property_map<Tuple,N> pm, Tuple& k)
+  {
+    return get<N>(k);
+  }
 
   template <typename Tuple, int N>
   void
