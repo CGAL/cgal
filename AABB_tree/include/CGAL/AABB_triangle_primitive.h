@@ -41,7 +41,7 @@ private:
         Id m_it; // iterator
         Datum m_datum; // 3D triangle
 
-        // cosntructor
+        // constructor
 public:
         AABB_triangle_primitive(Id it)
                 : m_it(it)

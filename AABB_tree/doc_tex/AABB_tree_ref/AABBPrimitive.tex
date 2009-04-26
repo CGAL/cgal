@@ -42,7 +42,7 @@ The concept \ccRefName\ describes the requirements for the primitives stored in 
 {Returns the corresponding identifier. This identifier is only used as a reference for the objects in the output of the \ccc{AABB_tree} methods.}
 
 \ccMethod{FT xref();}
-{Returns the \ccc{x} reference coordinate of the primitive used for sorting the primitives.}
+{Returns the \ccc{x} reference coordinate of the primitive used for sorting the primitives. It can be the x coordinate of either one vertex of the geometric object, or of its centroid, or any other reference point taken on the object.}
 
 \ccMethod{FT yref();}
 {Returns the \ccc{y} reference coordinate of the primitive used for sorting the primitives.}
@@ -58,7 +58,7 @@ The concept \ccRefName\ describes the requirements for the primitives stored in 
 
 \ccExample
 
-Usually, the \ccc{Primitive} type is a wrapper around a \ccc{Handle}. Assume for instance that the input objects are the triangle faces of a mesh stored as a \ccc{CGAL::Polyhedron}, the Primitive type would be a wrapper around the \ccc{Face_handle}  type of the polyhedron. The \ccc{Datum} would be a \ccc{Triangle_3}, the \ccc{Id} would be a \ccc{Face_handle}. \ccc{datum()} would return a \ccc{Triangle_3} either constructed on the fly from the id (stored as face handle) or stored internally. \ccc{id()} would return the \ccc{Face_handle}. 
+The \ccc{Primitive} type can be, e.g., a wrapper around a \ccc{Handle}. Assume for instance that the input objects are the triangle faces of a mesh stored as a \ccc{CGAL::Polyhedron}. The \ccc{Datum} would be a \ccc{Triangle_3} and the \ccc{Id} would be a polyhedron \ccc{Face_handle}. Function \ccc{datum()} can return either a \ccc{Triangle_3} constructed on the fly (memory saving) from the id (face handle) or a \ccc{Triangle_3} stored internally (faster but more memory consuming). 
 
 \end{ccRefConcept}
 

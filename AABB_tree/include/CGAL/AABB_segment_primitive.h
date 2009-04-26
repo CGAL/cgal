@@ -42,10 +42,11 @@ private:
         Datum m_datum; // 3D segment
 
 public:
+        // constructor
         AABB_segment_primitive(Id it)
                 : m_it(it)
         {
-                m_datum = *it; // copy segmetn
+                m_datum = *it; // copy segment
         }
 public:
         const Datum& datum() const { return m_datum; }
