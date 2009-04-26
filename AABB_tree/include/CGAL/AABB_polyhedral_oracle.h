@@ -25,9 +25,9 @@
 #include <CGAL/iterator.h>
 
 #include <CGAL/point_generators_3.h>
-#include <CGAL/AABB_tree/AABB_tree.h>
-#include <CGAL/AABB_tree/AABB_traits.h>
-#include <CGAL/AABB_tree/AABB_triangle_primitive.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -49,9 +49,9 @@ namespace CGAL {
     typedef Self Surface_3;
 
     // AABB tree
-    typedef class AABB_triangle_primitive<Kernel, Polyhedron> AABB_primitive;
-    typedef class AABB_traits<Kernel,AABB_primitive> AABB_traits;
-    typedef class AABB_tree<AABB_traits> Tree;
+    typedef typename AABB_polyhedron_triangle_primitive<Kernel, Polyhedron> AABB_primitive;
+    typedef typename AABB_traits<Kernel,AABB_primitive> AABB_traits;
+    typedef typename AABB_tree<AABB_traits> Tree;
     typedef typename AABB_traits::Bounding_box Bounding_box;
 
     typedef boost::shared_ptr<Tree> Tree_shared_ptr;
@@ -133,7 +133,7 @@ namespace CGAL {
 	OutputIteratorPoints out,
 	int n) const
       {
-	std::cout << "AABB_polyhedral_oracle: empty initial point set" << std::endl;
+	// std::cout << "AABB_polyhedral_oracle: empty initial point set" << std::endl;
 	return out;
       }
     };

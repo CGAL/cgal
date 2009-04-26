@@ -1,7 +1,7 @@
 #include <Qt/qglobal.h>
 
-#include <CGAL/AABB_tree/Plane_3_Bbox_3_do_intersect.h>
-#include <CGAL/AABB_tree/Triangle_3_plane_3_intersection.h>
+#include <CGAL/Plane_3_Bbox_3_do_intersect.h>
+#include <CGAL/Triangle_3_plane_3_intersection.h>
 #include "Messages_interface.h"
 #include "Scene_item_with_display_list.h"
 #include "Scene_plane_item.h"
@@ -12,8 +12,8 @@
 #include <CGAL/bounding_box.h>
 
 #include "Polyhedron_type.h"
-#include <CGAL/AABB_tree/AABB_tree.h>
-#include <CGAL/AABB_tree/Drawing_traits.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/Drawing_traits.h>
 
 #include <QTime>
 
