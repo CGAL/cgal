@@ -32,7 +32,7 @@ int main()
 {
   typedef CGAL::Extended_homogeneous<Integer> EDec;
   typedef EDec::Point_2     EP;
-  typedef EDec::Segment_2   ES;
+  typedef EDec::Segment_2   ESeg;
   typedef EDec::Direction_2 ED;
   typedef EDec::Standard_kernel::Point_2  Point;
   typedef EDec::Standard_kernel::Line_2   Line;
@@ -51,9 +51,9 @@ int main()
   EP epn2 = D.construct_point(ps1,ps4,t2); // vertical up ray
   EP epn3 = D.construct_point(ps1,ps3,t3); // horizontal right ray
   EP epn4 = D.construct_point(Line(2,3,4));
-  ES el1 =  D.construct_segment(D.construct_point(Line(ps1,ps4)),
+  ESeg el1 =  D.construct_segment(D.construct_point(Line(ps1,ps4)),
                                 D.construct_point(Line(ps4,ps1)));
-  ES el2 =  D.construct_segment(D.NW(),D.NE());
+  ESeg el2 =  D.construct_segment(D.NW(),D.NE());
 
   CGAL_TEST(D.type(D.SW())==EDec::SWCORNER);
   CGAL_TEST(D.type(D.NW())==EDec::NWCORNER);
@@ -67,8 +67,8 @@ int main()
   CGAL_TEST(D.standard_line(epn1) == Line(ps4,ps1));
   CGAL_TEST(D.standard_point(eps1) == ps1);
 
-  ES es1 = D.construct_segment(epn1,epn2);
-  ES es2 = D.construct_segment(eps1,eps5);
+  ESeg es1 = D.construct_segment(epn1,epn2);
+  ESeg es2 = D.construct_segment(eps1,eps5);
   CGAL_TEST(D.source(es1) == epn1);
   CGAL_TEST(D.target(es1) == epn2);
   CGAL_TEST(D.orientation(es1,D.construct_point(Point(-1,-2))) > 0 );
@@ -126,8 +126,8 @@ int main()
   CGAL_TEST(D.construct_direction(eps5,D.NE())==ED(RT(1),RT(1)));
   CGAL_TEST(D.construct_direction(eps5,D.SW())==ED(RT(-1),RT(-1)));
 
-  ES upper = D.construct_segment(D.NW(),D.NE()); 
-  ES left  = D.construct_segment(D.SW(),D.NW()); 
+  ESeg upper = D.construct_segment(D.NW(),D.NE()); 
+  ESeg left  = D.construct_segment(D.SW(),D.NW()); 
   EP ep_res = D.intersection(el1,upper);
   CGAL_TEST(ep_res==epn2);
   ep_res = D.intersection(left, upper);
@@ -142,7 +142,7 @@ int main()
 {  
   typedef CGAL::Extended_cartesian<Real> EDec;
   typedef EDec::Point_2     EP;
-  typedef EDec::Segment_2   ES;
+  typedef EDec::Segment_2   ESeg;
   typedef EDec::Direction_2 ED;
   typedef EDec::Standard_kernel::Point_2  Point;
   typedef EDec::Standard_kernel::Line_2   Line;
@@ -161,9 +161,9 @@ int main()
   EP epn2 = D.construct_point(ps1,ps4,t2); // vertical up ray
   EP epn3 = D.construct_point(ps1,ps3,t3); // horizontal right ray
   EP epn4 = D.construct_point(Line(2,3,4));
-  ES el1 =  D.construct_segment(D.construct_point(Line(ps1,ps4)),
+  ESeg el1 =  D.construct_segment(D.construct_point(Line(ps1,ps4)),
                                 D.construct_point(Line(ps4,ps1)));
-  ES el2 =  D.construct_segment(D.NW(),D.NE());
+  ESeg el2 =  D.construct_segment(D.NW(),D.NE());
 
   CGAL_TEST(D.type(D.SW())==EDec::SWCORNER);
   CGAL_TEST(D.type(D.NW())==EDec::NWCORNER);
@@ -177,8 +177,8 @@ int main()
   CGAL_TEST(D.standard_line(epn1) == Line(ps4,ps1));
   CGAL_TEST(D.standard_point(eps1) == ps1);
 
-  ES es1 = D.construct_segment(epn1,epn2);
-  ES es2 = D.construct_segment(eps1,eps5);
+  ESeg es1 = D.construct_segment(epn1,epn2);
+  ESeg es2 = D.construct_segment(eps1,eps5);
   CGAL_TEST(D.source(es1) == epn1);
   CGAL_TEST(D.target(es1) == epn2);
   CGAL_TEST(D.orientation(es1,D.construct_point(Point(-1,-2))) > 0 );
@@ -236,8 +236,8 @@ int main()
   CGAL_TEST(D.construct_direction(eps5,D.NE())==ED(RT(1),RT(1)));
   CGAL_TEST(D.construct_direction(eps5,D.SW())==ED(RT(-1),RT(-1)));
 
-  ES upper = D.construct_segment(D.NW(),D.NE()); 
-  ES left  = D.construct_segment(D.SW(),D.NW()); 
+  ESeg upper = D.construct_segment(D.NW(),D.NE()); 
+  ESeg left  = D.construct_segment(D.SW(),D.NW()); 
   EP ep_res = D.intersection(el1,upper);
   CGAL_TEST(ep_res==epn2);
   ep_res = D.intersection(left, upper);
@@ -249,7 +249,7 @@ int main()
 {
   typedef CGAL::Filtered_extended_homogeneous<Integer> EDec;
   typedef EDec::Point_2     EP;
-  typedef EDec::Segment_2   ES;
+  typedef EDec::Segment_2   ESeg;
   typedef EDec::Direction_2 ED;
   typedef EDec::Standard_kernel::Point_2  Point;
   typedef EDec::Standard_kernel::Line_2   Line;
@@ -268,9 +268,9 @@ int main()
   EP epn2 = D.construct_point(ps1,ps4,t2); // vertical up ray
   EP epn3 = D.construct_point(ps1,ps3,t3); // horizontal right ray
   EP epn4 = D.construct_point(Line(2,3,4));
-  ES el1 =  D.construct_segment(D.construct_point(Line(ps1,ps4)),
+  ESeg el1 =  D.construct_segment(D.construct_point(Line(ps1,ps4)),
                                 D.construct_point(Line(ps4,ps1)));
-  ES el2 =  D.construct_segment(D.NW(),D.NE());
+  ESeg el2 =  D.construct_segment(D.NW(),D.NE());
 
   CGAL_TEST(D.type(D.SW())==EDec::SWCORNER);
   CGAL_TEST(D.type(D.NW())==EDec::NWCORNER);
@@ -284,8 +284,8 @@ int main()
   CGAL_TEST(D.standard_line(epn1) == Line(ps4,ps1));
   CGAL_TEST(D.standard_point(eps1) == ps1);
 
-  ES es1 = D.construct_segment(epn1,epn2);
-  ES es2 = D.construct_segment(eps1,eps5);
+  ESeg es1 = D.construct_segment(epn1,epn2);
+  ESeg es2 = D.construct_segment(eps1,eps5);
   CGAL_TEST(D.source(es1) == epn1);
   CGAL_TEST(D.target(es1) == epn2);
   CGAL_TEST(D.orientation(es1,D.construct_point(Point(-1,-2))) > 0 );
@@ -343,8 +343,8 @@ int main()
   CGAL_TEST(D.construct_direction(eps5,D.NE())==ED(RT(1),RT(1)));
   CGAL_TEST(D.construct_direction(eps5,D.SW())==ED(RT(-1),RT(-1)));
 
-  ES upper = D.construct_segment(D.NW(),D.NE()); 
-  ES left  = D.construct_segment(D.SW(),D.NW()); 
+  ESeg upper = D.construct_segment(D.NW(),D.NE()); 
+  ESeg left  = D.construct_segment(D.SW(),D.NW()); 
   EP ep_res = D.intersection(el1,upper);
   CGAL_TEST(ep_res==epn2);
   ep_res = D.intersection(left, upper);

@@ -613,8 +613,8 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
 
   std::vector<SHalfedge_handle> Edge_of(Segments.size()+1);
   Halffacet_output O(From,Edge_of);
-  Halffacet_sweep FS(typename Halffacet_sweep::INPUT(
-    Segments.begin(),Segments.end()), O, G); FS.sweep();
+  Halffacet_sweep f_s(typename Halffacet_sweep::INPUT(
+    Segments.begin(),Segments.end()), O, G); f_s.sweep();
 
 #ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS
   timer_plane_sweeps.stop();
