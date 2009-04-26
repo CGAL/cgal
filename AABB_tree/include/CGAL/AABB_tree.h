@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     :  Camille Wormser, Pierre Alliez, Laurent Rineau, Stephane Tayeb
+// Author(s) : Camille Wormser, Pierre Alliez, Laurent Rineau, Stephane Tayeb
 
 #ifndef CGAL_AABB_TREE_H
 #define CGAL_AABB_TREE_H
@@ -42,10 +42,10 @@ namespace CGAL {
     public:
         /// Traits types
         typedef typename AABBTraits::Primitive Primitive;
-        typedef typename AABBTraits::Bounding_box Bounding_box;
-        typedef typename AABBTraits::Projection_query Projection_query;
         typedef typename AABBTraits::Projection Projection;
+        typedef typename AABBTraits::Bounding_box Bounding_box;
         typedef typename AABBTraits::Intersection Intersection;
+        typedef typename AABBTraits::Projection_query Projection_query;
     private:
         typedef typename AABB_search_tree<AABBTraits> Search_tree;
 
@@ -69,9 +69,8 @@ namespace CGAL {
         template<typename ConstPointIterator>
         void construct_search_tree(ConstPointIterator first, ConstPointIterator beyond);
 
-        /// Construct internal search tree from a point set taken on 
-        // the internal primitives
-        void construct_search_tree();
+        /// Construct internal search tree from a point set taken on the internal primitives
+        void construct_search_tree(void);
 
         template<typename Query>
         bool do_intersect(const Query& q) const;
@@ -295,17 +294,13 @@ namespace CGAL {
 
 
     private:
-        // member data
-
-        // set of input primitives (halfedge or face handles)
+        // set of input primitives
         std::vector<Primitive> m_data;
         // single root node
         Node* m_p_root;
-        // single root node
-        bool m_search_tree_constructed;
-
-    public:
+        // search KD-tree
         Search_tree m_search_tree;
+        bool m_search_tree_constructed;
 
     private:
         // Disabled copy constructor & assignment operator
@@ -332,9 +327,11 @@ namespace CGAL {
         }
 
         m_p_root = new Node[m_data.size()-1]();
+        CGAL_assertion(m_p_root != NULL);
         m_p_root->expand(m_data.begin(), m_data.end(), m_data.size());
     }
 
+    // constructs the search KD tree from given points
     template<typename Tr>
     template<typename ConstPointIterator>
     void
@@ -345,13 +342,14 @@ namespace CGAL {
         m_search_tree_constructed = true;
     }
 
+    // constructs the search KD tree from interal primitives
     template<typename Tr>
-    void AABB_tree<Tr>::construct_search_tree()
+    void AABB_tree<Tr>::construct_search_tree(void)
     {
         // iterate over primitives to get points on them
         std::list<Projection_query> points;
         std::vector<Primitive>::const_iterator it;
-        for(it = m_data.begin();it != m_data.end();it++)
+        for(it = m_data.begin(); it != m_data.end(); it++)
         {
             const Primitive& pr = *it;
             points.push_back(pr.point_on());
@@ -377,8 +375,6 @@ namespace CGAL {
         this->traversal(query, traversal_traits);
         return traversal_traits.is_intersection_found();
     }
-
-
 
     template<typename Tr>
     template<typename Query>
@@ -435,7 +431,6 @@ namespace CGAL {
         return traversal_traits.is_intersection_found();
     }
 
-
     // closest point with user-specified hint
     template<typename Tr>
     typename AABB_tree<Tr>::Projection
@@ -448,12 +443,13 @@ namespace CGAL {
         return traversal_traits.projection();
     }
 
-    // closest point without hint
+    // closest point without hint, the search KD-tree is queried for the
+    // first nearest neighbor point to get a hint
     template<typename Tr>
     typename AABB_tree<Tr>::Projection
         AABB_tree<Tr>::closest_point(const Projection_query& query) 
     {
-        // construct search tree if needed
+        // construct search KD-tree if needed
         if(!m_search_tree_constructed)
             construct_search_tree();
 

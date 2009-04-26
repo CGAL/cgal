@@ -15,7 +15,7 @@
 // $Id: AABB_tree.h 48894 2009-04-24 14:11:17Z palliez $
 //
 //
-// Author(s)     :  Pierre Alliez
+// Author(s) : Pierre Alliez
 
 #ifndef CGAL_AABB_SEARCH_TREE_H
 #define CGAL_AABB_SEARCH_TREE_H
@@ -25,7 +25,6 @@
 
 namespace CGAL 
 {
-
         template <class Traits>
         class AABB_search_tree
         {
@@ -35,10 +34,8 @@ namespace CGAL
                 typedef typename CGAL::Search_traits_3<Traits> TreeTraits;
                 typedef typename CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
                 typedef typename Neighbor_search::Tree Tree;
-
         private:
                 Tree m_tree;
-
         public:
                 AABB_search_tree() {}
                 ~AABB_search_tree() {}
@@ -51,7 +48,6 @@ namespace CGAL
 
                 Point nearest_point(const Point& query)
                 {
-                        // queries first nearest neighbor
                         Neighbor_search search(m_tree, query, 1);
                         return search.begin()->first;
                 }

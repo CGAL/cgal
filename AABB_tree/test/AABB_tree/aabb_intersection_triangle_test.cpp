@@ -22,93 +22,149 @@
 //
 //******************************************************************************
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
+
 #include <CGAL/Timer.h>
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+template <class Tree, class K>
+void test_all_query_types(Tree& tree)
+{
+    std::cout << "Test all query types" << std::endl;
+
+    typedef K::FT FT;
+    typedef K::Ray_3 Ray;
+    typedef K::Line_3 Line;
+    typedef K::Point_3 Point;
+    typedef K::Vector_3 Vector;
+    typedef K::Segment_3 Segment;
+    typedef Tree::Primitive Primitive;
+    typedef Tree::Intersection Intersection;
+
+    Point p((FT)-0.5, (FT)-0.5, (FT)-0.5);
+    Point q((FT) 0.5, (FT) 0.5, (FT) 0.5);
+    Ray ray(p,q);
+    Ray line(p,q);
+    Ray segment(p,q);
+    bool success = false;
+
+    // do_intersect
+    success = tree.do_intersect(ray); 
+    success = tree.do_intersect(line); 
+    success = tree.do_intersect(segment); 
+
+    // number_of_intersections
+    tree.number_of_intersections(ray); 
+    tree.number_of_intersections(line); 
+    tree.number_of_intersections(segment); 
+
+    // all_intersected_primitives
+    std::list<Primitive> primitives;
+    tree.all_intersected_primitives(ray,std::back_inserter(primitives));
+    tree.all_intersected_primitives(line,std::back_inserter(primitives));
+    tree.all_intersected_primitives(segment,std::back_inserter(primitives));
+
+    // any_intersection
+    Intersection intersection;
+    success = tree.any_intersection(ray,intersection);
+    success = tree.any_intersection(line,intersection);
+    success = tree.any_intersection(segment,intersection);
+
+    // all_intersections
+    std::list<Intersection> intersections;
+    tree.all_intersections(ray,std::back_inserter(intersections));
+    tree.all_intersections(line,std::back_inserter(intersections));
+    tree.all_intersections(segment,std::back_inserter(intersections));
+}
 
 template <class Tree, class Polyhedron, class K>
 void test_speed(Tree& tree, 
                 Polyhedron& polyhedron)
 {
-        typedef K::FT FT;
-        typedef K::Ray_3 Ray;
-        typedef K::Point_3 Point;
-        typedef K::Vector_3 Vector;
+    std::cout << "Test for speed" << std::endl;
+    typedef K::FT FT;
+    typedef K::Ray_3 Ray;
+    typedef K::Point_3 Point;
+    typedef K::Vector_3 Vector;
 
-        CGAL::Timer timer;
-        unsigned int nb = 0;
-        timer.start();
-        Point source((FT)0.0, (FT)0.0, (FT)0.0);
-        Vector vec((FT)0.1, (FT)0.2, (FT)0.3);
-        Ray ray(source, vec);
-        while(timer.time() < 1.0)
-        {
-                tree.do_intersect(ray); 
-                nb++;
-        }
-        double speed = (double)nb / timer.time();
-        std::cout << speed << " intersections/s" << std::endl;
-        timer.stop();
+    CGAL::Timer timer;
+    unsigned int nb = 0;
+    timer.start();
+    Point source((FT)0.0, (FT)0.0, (FT)0.0);
+    Vector vec((FT)0.1, (FT)0.2, (FT)0.3);
+    Ray ray(source, vec);
+    while(timer.time() < 1.0)
+    {
+        tree.do_intersect(ray); 
+        nb++;
+    }
+    double speed = (double)nb / timer.time();
+    std::cout << speed << " intersections/s" << std::endl;
+    timer.stop();
 }
 
 template <class K>
 void test(const char *filename)
 {
-        typedef K::FT FT;
-        typedef K::Ray_3 Ray;
-        typedef K::Point_3 Point;
-        typedef K::Vector_3 Vector;
-        typedef CGAL::Polyhedron_3<K> Polyhedron;
-        typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
-        typedef CGAL::AABB_traits<K, Primitive> Traits;
-        typedef CGAL::AABB_tree<Traits> Tree;
+    typedef K::FT FT;
+    typedef K::Ray_3 Ray;
+    typedef K::Point_3 Point;
+    typedef K::Vector_3 Vector;
+    typedef CGAL::Polyhedron_3<K> Polyhedron;
+    typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
+    typedef CGAL::AABB_traits<K, Primitive> Traits;
+    typedef CGAL::AABB_tree<Traits> Tree;
 
-        Polyhedron polyhedron;
-        std::ifstream ifs(filename);
-        ifs >> polyhedron;
+    // load (triangle) polyhedral surface
+    Polyhedron polyhedron;
+    std::ifstream ifs(filename);
+    ifs >> polyhedron;
 
-        // construct tree without internal KD-tree as we do not query
-        // any projection.
-        Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
+    // construct tree (without internal KD-tree as we do not query any projection).
+    Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
 
-        // TODO
-        // - compare tree tests with exhaustive ones
-        // - query with ray/line/segment
-
-        Point source((FT)0.5, (FT)0.5, (FT)0.5);
-        Ray ray(source, Vector((FT)0.1, (FT)0.2, (FT)0.3));
-        std::cout << tree.number_of_intersections(ray) 
-                << " intersections(s) with ray" << std::endl;
-
-        test_speed<Tree,Polyhedron,K>(tree,polyhedron);
+    // call tests
+    test_all_query_types<Tree,K>(tree);
+    test_speed<Tree,Polyhedron,K>(tree,polyhedron);
 }
 
-void test_kernels(const char *filename)
+void test_several_kernels(const char *filename)
 {
-        std::cout << std::endl;
-        std::cout << "Polyhedron " << filename << std::endl;
+    std::cout << std::endl;
+    std::cout << "Polyhedron " << filename << std::endl;
 
-        std::cout << "Simple cartesian float kernel" << std::endl;
-        test<CGAL::Simple_cartesian<float> >(filename);
+    std::cout << "Simple cartesian float kernel" << std::endl;
+    test<CGAL::Simple_cartesian<float> >(filename);
 
-        std::cout << "Simple cartesian double kernel" << std::endl;
-        test<CGAL::Simple_cartesian<double> >(filename);
+    std::cout << "Cartesian float kernel" << std::endl;
+    test<CGAL::Cartesian<float> >(filename);
 
-        std::cout << "Epic kernel" << std::endl;
-        test<CGAL::Exact_predicates_inexact_constructions_kernel>(filename);
+    std::cout << "Simple cartesian double kernel" << std::endl;
+    test<CGAL::Simple_cartesian<double> >(filename);
+
+    std::cout << "Cartesian double kernel" << std::endl;
+    test<CGAL::Cartesian<double> >(filename);
+
+    std::cout << "Epic kernel" << std::endl;
+    test<CGAL::Exact_predicates_inexact_constructions_kernel>(filename);
 }
 
 int main(void)
 {
-        std::cout << "AABB intersection tests" << std::endl;
-        test_kernels("../data/cube.off");
-        test_kernels("../data/coverrear.off");
-        test_kernels("../data/nested_spheres.off");
-        return 0;
+    std::cout << "AABB intersection tests" << std::endl;
+    test_several_kernels("../data/cube.off");
+    test_several_kernels("../data/coverrear.off");
+    test_several_kernels("../data/nested_spheres.off");
+    return 0;
 }
