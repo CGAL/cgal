@@ -38,7 +38,7 @@ typedef K::Vector_3 Vector;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
-typedef CGAL::AABB_tree<Traits> Polyhedron_tree;
+typedef CGAL::AABB_tree<Traits> Tree;
 
 int main(void)
 {
@@ -49,7 +49,7 @@ int main(void)
         Polyhedron polyhedron;
         polyhedron.make_tetrahedron( p, q, r, s);
 
-        Polyhedron_tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
+        Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
         Point source(0.2, 0.2, 0.2);
         Ray ray(source, Vector(0.1, 0.2, 0.3));
         std::cout << tree.number_of_intersections(ray) 

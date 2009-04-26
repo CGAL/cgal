@@ -40,7 +40,7 @@ typedef K::Triangle_3 Triangle;
 typedef std::list<typename Triangle>::iterator Iterator;
 typedef CGAL::AABB_triangle_primitive<K,Iterator> Primitive;
 typedef CGAL::AABB_traits<typename K, typename Primitive> AABB_triangle_traits;
-typedef CGAL::AABB_tree<typename AABB_triangle_traits> Polyhedron_tree;
+typedef CGAL::AABB_tree<typename AABB_triangle_traits> Tree;
 
 int main(void)
 {
@@ -54,7 +54,7 @@ int main(void)
         triangles.push_back(Triangle(a,b,d));
         triangles.push_back(Triangle(a,d,c));
 
-        Polyhedron_tree tree(triangles.begin(),triangles.end());
+        Tree tree(triangles.begin(),triangles.end());
         
         // counts #intersections
         Ray ray(a,b);

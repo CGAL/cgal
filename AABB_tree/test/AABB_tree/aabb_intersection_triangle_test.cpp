@@ -67,14 +67,14 @@ void test(const char *filename)
         typedef CGAL::Polyhedron_3<K> Polyhedron;
         typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
         typedef CGAL::AABB_traits<K, Primitive> Traits;
-        typedef CGAL::AABB_tree<Traits> Polyhedron_tree;
+        typedef CGAL::AABB_tree<Traits> Tree;
 
         Polyhedron polyhedron;
         std::ifstream ifs(filename);
         ifs >> polyhedron;
 
         // construct tree
-        Polyhedron_tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
+        Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
 
         // TODO
         // - compare tree tests with exhaustive ones
@@ -85,7 +85,7 @@ void test(const char *filename)
         std::cout << tree.number_of_intersections(ray) 
                 << " intersections(s) with ray" << std::endl;
 
-        test_speed<Polyhedron_tree,Polyhedron,K>(tree,polyhedron);
+        test_speed<Tree,Polyhedron,K>(tree,polyhedron);
 }
 
 void test_kernels(const char *filename)
