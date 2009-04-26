@@ -1,1 +1,1 @@
-Static collision model for triangle soups.
+Data structure for efficient intersection and projection.

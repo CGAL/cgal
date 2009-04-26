@@ -35,7 +35,7 @@ typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef K::Plane_3 Plane;
 typedef K::Segment_3 Segment;
-
+typedef K::Triangle_3 Triangle;
 
 typedef std::list<typename Segment>::iterator Iterator;
 typedef CGAL::AABB_segment_primitive<K,Iterator> Primitive;
@@ -55,8 +55,21 @@ int main(void)
         segments.push_back(Segment(c,d));
 
         Tree tree(segments.begin(),segments.end());
+
         Plane plane(a,b,d);
         std::cout << tree.number_of_intersections(plane) 
                 << " intersections(s) with plane" << std::endl;
+
+        Triangle triangle(a,b,c);
+        std::cout << tree.number_of_intersections(triangle) 
+                << " intersections(s) with triangle" << std::endl;
+
+        // TOFIX: following does not compile due to intersection(const Sphere& sphere,
+        // const P& pr,Projection&...function in AABB_traits.h
+
+        //Point hint(a);
+        //Point query(2.0, 2.0, 2.0);
+        //Point closest = tree.closest_point(query,hint);
+
         return 0;
 }

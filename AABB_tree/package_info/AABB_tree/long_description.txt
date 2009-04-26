@@ -1,16 +1,1 @@
-This package implements a collision detection algorithm, using so called AABB trees,
-along the lines of 
-
-@article{terdiman2003ooc,
-  title={{Opcode: Optimized collision detection}},
-  author={Terdiman, P.},
-  year={2003}
-}
-
-This package will not be documented for CGAL-3.4. It is a stripped down version
-of a generic tool (generic in terms of inputs and queries), which is still under 
-development. It is already added to the trunk because it is used by the Polyhedron 
-Demo to efficiently remesh polyhedral surfaces. 
-
-For CGAL-3.5, we hope to integrate the fully generic version, for triangle soups and 
-polylines, with more queries (intersection, projection), parallelism, etc.
+This package implements a hierarchy of axi-aligned bounding boxes (AABBs) for efficient intersection and projection of 3D queries against a set of geometric objects. 
