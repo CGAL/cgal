@@ -38,7 +38,7 @@ class Segment_Delaunay_graph_vertex_base_2
   : public Vb
 {
 private:
-  typedef typename Vb::Triangulation_data_structure  DS;
+  typedef typename Vb::Triangulation_data_structure  D_S;
   typedef Vb                                         Base;
 
 public:
@@ -48,10 +48,10 @@ public:
   typedef typename Storage_traits::Geom_traits     Geom_traits;
   typedef typename Geom_traits::Site_2             Site_2;
   typedef typename Storage_traits::Storage_site_2  Storage_site_2;
-  typedef DS                                       Data_structure;
+  typedef D_S                                       Data_structure;
   
-  typedef typename DS::Face_handle                 Face_handle;
-  typedef typename DS::Vertex_handle               Vertex_handle;
+  typedef typename D_S::Face_handle                 Face_handle;
+  typedef typename D_S::Vertex_handle               Vertex_handle;
 
 
   template < typename DS2 >

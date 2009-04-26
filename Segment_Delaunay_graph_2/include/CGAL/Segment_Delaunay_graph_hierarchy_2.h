@@ -56,21 +56,21 @@ const unsigned int sdg_hierarchy_2__maxlevel = 5;
 template < class Gt,
 	   class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
 	   class STag = Tag_false,
-	   class DS = Triangulation_data_structure_2<
+	   class D_S = Triangulation_data_structure_2<
               Segment_Delaunay_graph_hierarchy_vertex_base_2<
 		Segment_Delaunay_graph_vertex_base_2<ST> >,
               Triangulation_face_base_2<Gt> >,
 	   class LTag = Tag_false>
 class Segment_Delaunay_graph_hierarchy_2
-  : public Segment_Delaunay_graph_2<Gt,ST,DS,LTag>
+  : public Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>
 {
 protected:
-  typedef Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,DS,LTag>  Self;
+  typedef Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>  Self;
 
 public:
   // PUBLIC TYPES
   //-------------
-  typedef Segment_Delaunay_graph_2<Gt,ST,DS,LTag>  Base;
+  typedef Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>  Base;
 
   typedef typename Base::Geom_traits        Geom_traits;
   typedef typename Base::Storage_traits     Storage_traits;
@@ -464,19 +464,19 @@ protected:
 
 
 
-template<class Gt, class STag, class DS, class LTag>
+template<class Gt, class STag, class D_S, class LTag>
 std::istream& operator>>(std::istream& is,
-			 Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS,LTag>&
+			 Segment_Delaunay_graph_hierarchy_2<Gt,STag,D_S,LTag>&
 			 sdgh)
 {
   sdgh.file_input(is);
   return is;
 }
 
-template<class Gt, class STag, class DS, class LTag>
+template<class Gt, class STag, class D_S, class LTag>
 std::ostream& operator<<(std::ostream& os,
 			 const
-			 Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS,LTag>&
+			 Segment_Delaunay_graph_hierarchy_2<Gt,STag,D_S,LTag>&
 			 sdgh)
 {
   sdgh.file_output(os);

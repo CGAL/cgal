@@ -598,7 +598,7 @@ public:
      to the input from either the top side or the bottom side, 
      depending on the up flag.
      preconditions:
-     There exist non degenerate trapezoids between the roots of the input DS's
+     There exist non degenerate trapezoids between the roots of the input D_S's
   */
   In_face_iterator follow_curve(const Data_structure& left_end_point,
                                 const X_curve& cv,
@@ -1732,7 +1732,7 @@ public:
       // Third iteration: generate links in-between trapezoids 
       //  and in-between nodes .
     }
-    DS=htr.find(&*(*td.DS))->second->get_node();
+    D_S=htr.find(&*(*td.D_S))->second->get_node();
   }
   /*
     TODO: Should we add another constructor with non const argument that 
@@ -1743,16 +1743,16 @@ public:
     
 #ifndef CGAL_TD_DEBUG
     
-    CGAL_warning(DS);
-    if (!DS) return;
+    CGAL_warning(D_S);
+    if (!D_S) return;
     
 #else
     
-    CGAL_assertion(DS);
+    CGAL_assertion(D_S);
     
 #endif
     
-    delete DS;
+    delete D_S;
   }
   
   /*  Input:
@@ -1815,9 +1815,9 @@ public:
 
 #ifdef CGAL_TD_DEBUG
     std::cout << "\nTD::insert_in_face_interior(" << cv << ") called with "
-              << (is_valid(*DS) ? "valid" : "invalid") << " data structure"
+              << (is_valid(*D_S) ? "valid" : "invalid") << " data structure"
               <<  std::endl;
-    write(std::cout,*DS,*traits) << std::endl;
+    write(std::cout,*D_S,*traits) << std::endl;
 #endif
 
     if (needs_update_) update();
@@ -2030,9 +2030,9 @@ public:
     number_of_curves_++;
     
 #ifdef CGAL_TD_DEBUG
-    write(std::cout,*DS,*traits) << std::endl;
+    write(std::cout,*D_S,*traits) << std::endl;
     std::cout << "\nTD::insert_in_face_interior() exited with data structure" 
-              << is_valid(*DS) << std::endl;
+              << is_valid(*D_S) << std::endl;
 #endif
     
     return *old_output;
@@ -2060,7 +2060,7 @@ public:
 
   void clear()
   {
-    delete DS;
+    delete D_S;
     init();
   }
 
@@ -2070,9 +2070,9 @@ public:
 
 #ifdef CGAL_TD_DEBUG
     std::cout << "\nTD::remove_in_face_interior(" << cv << ") called with "
-              << (is_valid(*DS) ? "valid" : "invalid") << " data structure"
+              << (is_valid(*D_S) ? "valid" : "invalid") << " data structure"
               <<  std::endl;
-    write(std::cout,*DS,*traits) << std::endl;
+    write(std::cout,*D_S,*traits) << std::endl;
 #endif
 
     if (needs_update_) update();
@@ -2297,8 +2297,8 @@ public:
     
 #ifdef CGAL_TD_DEBUG
     std::cout << "\nTD::remove_in_face_interior() exited with data structure" 
-              << is_valid(*DS) << std::endl;
-    write(std::cout,*DS,*traits) << std::endl;
+              << is_valid(*D_S) << std::endl;
+    write(std::cout,*D_S,*traits) << std::endl;
 #endif
     
   }
@@ -2319,11 +2319,11 @@ public:
 #ifdef CGAL_TD_DEBUG
     
     CGAL_assertion(traits);
-    CGAL_assertion(DS);
+    CGAL_assertion(D_S);
     
 #endif
     
-    Data_structure curr=*DS;
+    Data_structure curr=*D_S;
     
 #ifdef CGAL_TD_DEBUG
     
@@ -2366,7 +2366,7 @@ public:
     // with cases where the source of shoot is a point/curve.
     // reference t_p = locate(p,t);
     
-    Data_structure curr=*DS;
+    Data_structure curr=*D_S;
 #ifdef CGAL_TD_DEBUG
     CGAL_precondition(!!curr);
 #endif
@@ -2453,9 +2453,9 @@ public:
     
 #ifdef CGAL_TD_DEBUG
     std::cout << "\nTD::split_edge(" << cv << "," << cv1 << "," << cv2 
-              << ") called with " << (is_valid(*DS) ? "valid" : "invalid") 
+              << ") called with " << (is_valid(*D_S) ? "valid" : "invalid") 
               << " data structure" <<  std::endl;
-    write(std::cout,*DS,*traits) << std::endl;
+    write(std::cout,*D_S,*traits) << std::endl;
 #endif
     
     if (needs_update_) update();
@@ -2819,8 +2819,8 @@ public:
     
 #ifdef CGAL_TD_DEBUG
     std::cout << "\nTD::split_edge() exited with data structure" 
-              << is_valid(*DS) << std::endl;
-    write(std::cout,*DS,*traits) << std::endl;
+              << is_valid(*D_S) << std::endl;
+    write(std::cout,*D_S,*traits) << std::endl;
 #endif
     
   }
@@ -2833,9 +2833,9 @@ public:
     
 #ifdef CGAL_TD_DEBUG
     std::cout << "\nTD::merge_edge(" << cv1 << "," << cv2 << "," << cv 
-              << ") called with " << (is_valid(*DS) ? "valid" : "invalid") 
+              << ") called with " << (is_valid(*D_S) ? "valid" : "invalid") 
               << " data structure" <<  std::endl;
-    write(std::cout,*DS,*traits) << std::endl;
+    write(std::cout,*D_S,*traits) << std::endl;
 #endif
     
     if (needs_update_) update();
@@ -3072,19 +3072,19 @@ public:
     
 #ifdef CGAL_TD_DEBUG
     std::cout << "\nTD::merge_edge() exited with data structure" 
-              << is_valid(*DS) << std::endl;
-    write(std::cout,*DS,*traits) << std::endl;
+              << is_valid(*D_S) << std::endl;
+    write(std::cout,*D_S,*traits) << std::endl;
 #endif
     
   }
   
   unsigned long size() const
   {
-    return DS->size();
+    return D_S->size();
   }
   unsigned long depth() const
   {
-    return DS->depth();
+    return D_S->depth();
   }  
   unsigned long number_of_curves() const
   {
@@ -3096,7 +3096,7 @@ public:
     
 #ifdef CGAL_TD_DEBUG
     
-    CGAL_assertion(!!*DS);
+    CGAL_assertion(!!*D_S);
     
 #endif
     
@@ -3132,7 +3132,7 @@ public:
   */
   bool is_valid() const
   {
-    return is_valid(*DS);
+    return is_valid(*D_S);
   }
   void debug() const
   {
@@ -3333,7 +3333,7 @@ public:
   }
   
   /* returns a reference to the internal data structure */
-  const Data_structure& data_structure() const {return *DS;}
+  const Data_structure& data_structure() const {return *D_S;}
   
   /* returns a reference to the internal data structure */
   const_Traits_ref get_traits() const {return *traits;}
@@ -3362,7 +3362,7 @@ public:
     return size_threshold=size_th;
   }
 protected:
-  Data_structure* DS;
+  Data_structure* D_S;
   bool needs_update_;
   unsigned long number_of_curves_;
   const_Traits_ptr traits;
@@ -3378,8 +3378,8 @@ private:
   void init()
   {
     // traits may be initialized later
-    DS = new Data_structure(X_trapezoid());
-    (*DS)->set_node(DS);
+    D_S = new Data_structure(X_trapezoid());
+    (*D_S)->set_node(D_S);
     
     
     
@@ -3393,7 +3393,7 @@ private:
     
 #ifdef CGAL_TD_DEBUG
     
-    CGAL_warning(!!*DS);
+    CGAL_warning(!!*D_S);
     
 #endif
     

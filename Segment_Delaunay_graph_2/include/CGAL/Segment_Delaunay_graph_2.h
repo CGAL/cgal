@@ -141,30 +141,30 @@ namespace Internal {
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 
-template<class Gt, class ST, class STag, class DS, class LTag >
+template<class Gt, class ST, class STag, class D_S, class LTag >
 class Segment_Delaunay_graph_hierarchy_2;
 
 
 
 template<class Gt,
 	 class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
-	 class DS = Triangulation_data_structure_2 < 
+	 class D_S = Triangulation_data_structure_2 < 
                 Segment_Delaunay_graph_vertex_base_2<ST>,
                 Triangulation_face_base_2<Gt> >,
 	 class LTag = Tag_false >
 class Segment_Delaunay_graph_2
   : private Triangulation_2<
-          Segment_Delaunay_graph_traits_wrapper_2<Gt>, DS >
+          Segment_Delaunay_graph_traits_wrapper_2<Gt>, D_S >
 {
-  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_true,DS,LTag>;
-  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_false,DS,LTag>;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_true,D_S,LTag>;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_false,D_S,LTag>;
 protected:
   // LOCAL TYPES
   //------------
-  typedef Segment_Delaunay_graph_2<Gt,ST,DS,LTag>       Self;
+  typedef Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>       Self;
 
   typedef Segment_Delaunay_graph_traits_wrapper_2<Gt>   Modified_traits;
-  typedef Triangulation_2<Modified_traits,DS>           DG;
+  typedef Triangulation_2<Modified_traits,D_S>           DG;
   typedef DG                                            Delaunay_graph;
 
   typedef LTag                                          List_tag;
@@ -172,28 +172,28 @@ protected:
 public:
   // PUBLIC TYPES
   //-------------
-  typedef DS                                     Data_structure;
-  typedef DS                                     Triangulation_data_structure;
+  typedef D_S                                     Data_structure;
+  typedef D_S                                     Triangulation_data_structure;
   typedef Gt                                     Geom_traits;
   typedef ST                                     Storage_traits;
   typedef typename Gt::Site_2                    Site_2;
   typedef typename Gt::Point_2                   Point_2;
 
-  typedef typename DS::Edge                      Edge;
-  typedef typename DS::Vertex_handle             Vertex_handle;
-  typedef typename DS::Face_handle               Face_handle;
-  typedef typename DS::Vertex                    Vertex;
-  typedef typename DS::Face                      Face;
+  typedef typename D_S::Edge                      Edge;
+  typedef typename D_S::Vertex_handle             Vertex_handle;
+  typedef typename D_S::Face_handle               Face_handle;
+  typedef typename D_S::Vertex                    Vertex;
+  typedef typename D_S::Face                      Face;
 
-  typedef typename DS::size_type                 size_type;
+  typedef typename D_S::size_type                 size_type;
 
-  typedef typename DS::Vertex_circulator         Vertex_circulator;
-  typedef typename DS::Edge_circulator           Edge_circulator;
-  typedef typename DS::Face_circulator           Face_circulator;
+  typedef typename D_S::Vertex_circulator         Vertex_circulator;
+  typedef typename D_S::Edge_circulator           Edge_circulator;
+  typedef typename D_S::Face_circulator           Face_circulator;
 
-  typedef typename DS::Face_iterator             All_faces_iterator;
-  typedef typename DS::Vertex_iterator           All_vertices_iterator;
-  typedef typename DS::Edge_iterator             All_edges_iterator;
+  typedef typename D_S::Face_iterator             All_faces_iterator;
+  typedef typename D_S::Vertex_iterator           All_vertices_iterator;
+  typedef typename D_S::Edge_iterator             All_edges_iterator;
 
   typedef typename DG::Finite_faces_iterator     Finite_faces_iterator;
   typedef typename DG::Finite_vertices_iterator  Finite_vertices_iterator;
@@ -1695,17 +1695,17 @@ protected:
 }; // Segment_Delaunay_graph_2
 
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class D_S, class LTag>
 std::istream& operator>>(std::istream& is,
-			 Segment_Delaunay_graph_2<Gt,DS,LTag>& sdg)
+			 Segment_Delaunay_graph_2<Gt,D_S,LTag>& sdg)
 {
   sdg.file_input(is);
   return is;
 }
 
-template<class Gt, class DS, class LTag>
+template<class Gt, class D_S, class LTag>
 std::ostream& operator<<(std::ostream& os,
-			 const Segment_Delaunay_graph_2<Gt,DS,LTag>& sdg)
+			 const Segment_Delaunay_graph_2<Gt,D_S,LTag>& sdg)
 {
   sdg.file_output(os);
   return os;

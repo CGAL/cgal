@@ -30,8 +30,8 @@ CGAL_BEGIN_NAMESPACE
 //====================================================================
 
 // copy constructor
-template<class Gt, class ST, class DS, class LTag>
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 Segment_Delaunay_graph_2(const Segment_Delaunay_graph_2& other)
   : DG(other.geom_traits())
 {
@@ -42,9 +42,9 @@ Segment_Delaunay_graph_2(const Segment_Delaunay_graph_2& other)
 }
 
 // assignment operator
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Self&
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Self&
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 operator=(const Self& other)
 {
   if ( this != &other ) {
@@ -65,9 +65,9 @@ operator=(const Self& other)
 // insertion of first three sites
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_first(const Storage_site_2& ss, const Point_2& )
 {
   CGAL_precondition( number_of_vertices() == 0 );
@@ -77,9 +77,9 @@ insert_first(const Storage_site_2& ss, const Point_2& )
   return v;
 }
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_second(const Storage_site_2& ss, const Point_2& p)
 {
   CGAL_precondition( number_of_vertices() == 1 );
@@ -97,18 +97,18 @@ insert_second(const Storage_site_2& ss, const Point_2& p)
   return create_vertex_dim_up(ss);
 }
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_third(const Storage_site_2& ss, const Point_2& p)
 {
   Site_2 t = Site_2::construct_site_2(p);
   return insert_third(t, ss);
 }
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_third(const Site_2& t, const Storage_site_2& ss)
 {
   CGAL_precondition( number_of_vertices() == 2 );
@@ -217,9 +217,9 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_third(const Storage_site_2& ss, Vertex_handle , Vertex_handle )
 {
   CGAL_precondition( number_of_vertices() == 2 );
@@ -247,9 +247,9 @@ insert_third(const Storage_site_2& ss, Vertex_handle , Vertex_handle )
 // insertion of a point
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_point(const Storage_site_2& ss, const Point_2& p, Vertex_handle vnear)
 {
   int n = number_of_vertices();
@@ -266,9 +266,9 @@ insert_point(const Storage_site_2& ss, const Point_2& p, Vertex_handle vnear)
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_point(const Storage_site_2& ss, const Site_2& t,
 	     Vertex_handle vnear)
 {
@@ -346,9 +346,9 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
   return insert_point2(ss, t, vnearest);
 }
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_point2(const Storage_site_2& ss, const Site_2& t,
 	      Vertex_handle vnearest)
 {
@@ -458,9 +458,9 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 // insertion of a point that lies on a segment
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Face_pair
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Face_pair
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 {
   CGAL_precondition( v->is_segment() );
@@ -562,9 +562,9 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
   return Face_pair(f1, f2);
 }
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_triple
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_triple
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 			      Vertex_handle v)
 {
@@ -604,9 +604,9 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   return Vertex_triple(vsx, v1, v2);
 }
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_triple
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_triple
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
 			Vertex_handle v, const Tag_true&)
 {
@@ -652,9 +652,9 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
 //--------------------------------------------------------------------
 // insertion of a segment
 //--------------------------------------------------------------------
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_segment(const Storage_site_2& ss, const Site_2& t, Vertex_handle vnear)
 {
   CGAL_precondition( t.is_segment() );
@@ -684,9 +684,9 @@ insert_segment(const Storage_site_2& ss, const Site_2& t, Vertex_handle vnear)
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 			Vertex_handle vnearest)
 {
@@ -853,9 +853,9 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 //--------------------------------------------------------------------
 // insertion of an intersecting segment
 //--------------------------------------------------------------------
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_intersecting_segment_with_tag(const Storage_site_2& /* ss */,
 				     const Site_2& /* t */, Vertex_handle /* v */,
 				     Tag_false)
@@ -874,9 +874,9 @@ insert_intersecting_segment_with_tag(const Storage_site_2& /* ss */,
   return Vertex_handle();
 }
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 				     const Site_2& t, Vertex_handle v,
 				     Tag_true tag)
@@ -911,9 +911,9 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 initialize_conflict_region(const Face_handle& f, List& l)
 {
 
@@ -925,9 +925,9 @@ initialize_conflict_region(const Face_handle& f, List& l)
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 expand_conflict_region(const Face_handle& f, const Site_2& t,
 		       const Storage_site_2& ss,
 		       List& l, Face_map& fm,
@@ -1044,9 +1044,9 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 // retriangulate conflict region
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 add_bogus_vertex(Edge e, List& l)
 {
   Edge esym = sym_edge(e);
@@ -1080,9 +1080,9 @@ add_bogus_vertex(Edge e, List& l)
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_list
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_list
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 add_bogus_vertices(List& l)
 {
   Vertex_list vertex_list;
@@ -1113,9 +1113,9 @@ add_bogus_vertices(List& l)
   return vertex_list;
 }
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 remove_bogus_vertices(Vertex_list& vl)
 {
   while ( vl.size() > 0 ) {
@@ -1126,9 +1126,9 @@ remove_bogus_vertices(Vertex_list& vl)
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 retriangulate_conflict_region(Vertex_handle v, List& l, 
 			      Face_map& fm)
 {
@@ -1185,9 +1185,9 @@ retriangulate_conflict_region(Vertex_handle v, List& l,
 //====================================================================
 //====================================================================
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 is_star(const Vertex_handle& v) const
 {
   CGAL_precondition( v->storage_site().is_point() );
@@ -1211,9 +1211,9 @@ is_star(const Vertex_handle& v) const
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 is_linear_chain(const Vertex_handle& v0, const Vertex_handle& v1,
 		const Vertex_handle& v2) const
 {
@@ -1247,9 +1247,9 @@ is_linear_chain(const Vertex_handle& v0, const Vertex_handle& v1,
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 is_flippable(const Face_handle& f, int i) const
 {
   CGAL_assertion( !is_infinite(f->vertex( cw(i) )) );
@@ -1277,9 +1277,9 @@ is_flippable(const Face_handle& f, int i) const
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 minimize_degree(const Vertex_handle& v)
 {
   CGAL_precondition ( degree(v) > 3 );
@@ -1312,9 +1312,9 @@ minimize_degree(const Vertex_handle& v)
   } while ( found || fc != fc_start );
 }
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 equalize_degrees(const Vertex_handle& v, Self& small_d,
 		 std::map<Vertex_handle,Vertex_handle>& vmap,
 		 List& l) const
@@ -1433,9 +1433,9 @@ equalize_degrees(const Vertex_handle& v, Self& small_d,
 #endif
 }
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 expand_conflict_region_remove(const Face_handle& f, const Site_2& t,
 			      const Storage_site_2& ss,
 			      List& l, Face_map& fm, Sign_map& sign_map)
@@ -1489,9 +1489,9 @@ expand_conflict_region_remove(const Face_handle& f, const Site_2& t,
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 find_conflict_region_remove(const Vertex_handle& v,
 			    const Vertex_handle& vnearest,
 			    List& l, Face_map& fm, Sign_map&)
@@ -1570,9 +1570,9 @@ find_conflict_region_remove(const Vertex_handle& v,
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::size_type
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::size_type
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 count_faces(const List& l) const
 {
   std::vector<Face_handle> flist;
@@ -1583,9 +1583,9 @@ count_faces(const List& l) const
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 fill_hole(const Self& small_d, const Vertex_handle& v, const List& l,
 	  std::map<Vertex_handle,Vertex_handle>& vmap)
 {
@@ -1718,27 +1718,27 @@ fill_hole(const Self& small_d, const Vertex_handle& v, const List& l,
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 remove_first(const Vertex_handle& v)
 {
   Delaunay_graph::remove_first(v);
   return true;
 }
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 remove_second(const Vertex_handle& v)
 {
   Delaunay_graph::remove_second(v);
   return true;
 }
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 remove_third(const Vertex_handle& v)
 {
   if ( is_degree_2(v) ) {
@@ -1766,9 +1766,9 @@ remove_third(const Vertex_handle& v)
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 compute_small_diagram(const Vertex_handle& v, Self& small_d) const
 {
   Vertex_circulator vc_start = incident_vertices(v);
@@ -1799,9 +1799,9 @@ compute_small_diagram(const Vertex_handle& v, Self& small_d) const
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 compute_vertex_map(const Vertex_handle& v, const Self& small_d,
 		   std::map<Vertex_handle,Vertex_handle>& vmap) const
 {
@@ -1864,9 +1864,9 @@ compute_vertex_map(const Vertex_handle& v, const Self& small_d,
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 remove_degree_d_vertex(const Vertex_handle& v)
 {
 #if 0
@@ -1974,9 +1974,9 @@ remove_degree_d_vertex(const Vertex_handle& v)
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 remove_base(const Vertex_handle& v)
 {
   Storage_site_2 ssv = v->storage_site();
@@ -2025,9 +2025,9 @@ remove_base(const Vertex_handle& v)
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 remove(const Vertex_handle& v)
 {
   CGAL_precondition( !is_infinite(v) );
@@ -2069,9 +2069,9 @@ remove(const Vertex_handle& v)
 // point location
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 nearest_neighbor(const Site_2& p,
 		 Vertex_handle start_vertex) const
 {
@@ -2138,9 +2138,9 @@ nearest_neighbor(const Site_2& p,
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 Sign
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 incircle(const Face_handle& f, const Site_2& q) const
 {
   if ( !is_infinite(f) ) {
@@ -2161,9 +2161,9 @@ incircle(const Face_handle& f, const Site_2& q) const
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 Sign
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 	      const Vertex_handle& v2, const Vertex_handle& v) const
 {
@@ -2191,9 +2191,9 @@ incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 
 
 // this the finite edge interior predicate for a degenerate edge
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 finite_edge_interior(const Face_handle& f, int i, const Site_2& q,
 		     Sign sgn, int) const
 {
@@ -2219,9 +2219,9 @@ finite_edge_interior(const Face_handle& f, int i, const Site_2& q,
   return finite_edge_interior(t1, t2, t3, q, sgn);
 }
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 finite_edge_interior(const Vertex_handle& v1, const Vertex_handle& v2,
 		     const Vertex_handle& v3, const Vertex_handle& v4,
 		     const Vertex_handle& v, Sign sgn, int) const
@@ -2249,9 +2249,9 @@ finite_edge_interior(const Vertex_handle& v1, const Vertex_handle& v2,
   return finite_edge_interior(t1, t2, t3, q, sgn);
 }
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 infinite_edge_interior(const Face_handle& f, int i,
 		       const Site_2& q, Sign sgn) const
 {
@@ -2273,9 +2273,9 @@ infinite_edge_interior(const Face_handle& f, int i,
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 infinite_edge_interior(const Vertex_handle& v1,
 		       const Vertex_handle& v2,
 		       const Vertex_handle& v3,
@@ -2304,9 +2304,9 @@ infinite_edge_interior(const Vertex_handle& v1,
 
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 edge_interior(const Vertex_handle& v1,
 	      const Vertex_handle& v2,
 	      const Vertex_handle& v3,
@@ -2334,9 +2334,9 @@ edge_interior(const Vertex_handle& v1,
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 edge_interior(const Face_handle& f, int i,
 	      const Site_2& q, Sign sgn) const
 {
@@ -2363,9 +2363,9 @@ edge_interior(const Face_handle& f, int i,
 }
 
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Arrangement_type
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Arrangement_type
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 arrangement_type(const Site_2& p, const Site_2& q) const
 {
   typedef typename Geom_traits::Arrangement_type_2  AT2;
@@ -2427,9 +2427,9 @@ arrangement_type(const Site_2& p, const Site_2& q) const
 //--------------------------------------------------------------------
 
 // primal
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 Object
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 primal(const Edge e) const
 {
   typedef typename Gt::Line_2   Line_2;
@@ -2495,8 +2495,8 @@ primal(const Edge e) const
 // validity test method
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
-template<class Gt, class ST, class DS, class LTag>
-bool Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+bool Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 is_valid(bool verbose, int level) const
 {
   if (level < 0) { return true; }
@@ -2560,9 +2560,9 @@ is_valid(bool verbose, int level) const
 //--------------------------------------------------------------------
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 print_error_message() const
 {
   std::cerr << std::endl;
@@ -2582,9 +2582,9 @@ print_error_message() const
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Storage_site_2
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Storage_site_2
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
 		  const Tag_false&)
 {
@@ -2598,9 +2598,9 @@ copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
   }
 }
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Storage_site_2
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Storage_site_2
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
 		  const Tag_true&)
 {
@@ -2644,9 +2644,9 @@ copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
   }
 }
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 copy(Segment_Delaunay_graph_2& other)
 {
   // first copy the point container
@@ -2667,9 +2667,9 @@ copy(Segment_Delaunay_graph_2& other)
   copy(other, hm);
 }
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 copy(Segment_Delaunay_graph_2& other, Handle_map& hm)
 {
   // second, copy the site representation info for the input sites
@@ -2735,9 +2735,9 @@ copy(Segment_Delaunay_graph_2& other, Handle_map& hm)
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 first_endpoint_of_segment(const Vertex_handle& v) const
 {
   CGAL_assertion( v->is_segment() );
@@ -2759,9 +2759,9 @@ first_endpoint_of_segment(const Vertex_handle& v) const
   return Vertex_handle();
 }
 
-template<class Gt, class ST, class DS, class LTag>
-typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+template<class Gt, class ST, class D_S, class LTag>
+typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 second_endpoint_of_segment(const Vertex_handle& v) const
 {
   CGAL_assertion( v->is_segment() );
@@ -2789,9 +2789,9 @@ second_endpoint_of_segment(const Vertex_handle& v) const
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 file_output(std::ostream& os, const Storage_site_2& t,
 	    Point_handle_mapper& P) const
 {
@@ -2870,9 +2870,9 @@ file_output(std::ostream& os, const Storage_site_2& t,
   }
 }
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 file_input(std::istream& is, Storage_site_2& t,
 	   const Point_handle_vector& P, const Tag_false&) const
 {
@@ -2894,9 +2894,9 @@ file_input(std::istream& is, Storage_site_2& t,
   }
 }
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 file_input(std::istream& is, Storage_site_2& t,
 	   const Point_handle_vector& P, const Tag_true&) const
 {
@@ -2946,9 +2946,9 @@ file_input(std::istream& is, Storage_site_2& t,
 
 //--------------------------------------------------------------------
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 file_output(std::ostream& os, Point_handle_mapper& P,
 	    bool print_point_container) const
 {
@@ -3038,9 +3038,9 @@ file_output(std::ostream& os, Point_handle_mapper& P,
 
 
 
-template<class Gt, class ST, class DS, class LTag>
+template<class Gt, class ST, class D_S, class LTag>
 void
-Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 file_input(std::istream& is, bool read_handle_vector,
 	   Point_handle_vector& P)
 {

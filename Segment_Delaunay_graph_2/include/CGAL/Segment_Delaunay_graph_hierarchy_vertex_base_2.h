@@ -32,15 +32,15 @@ class Segment_Delaunay_graph_hierarchy_vertex_base_2
 {
 public:
   typedef Vbb V_Base;
-  typedef typename V_Base::Data_structure     DS;
+  typedef typename V_Base::Data_structure     D_S;
 
   typedef typename V_Base::Site_2             Site_2;
   typedef typename V_Base::Storage_site_2     Storage_site_2;
 
-  typedef DS                                  Data_structure;
+  typedef D_S                                  Data_structure;
 
-  typedef typename DS::Vertex_handle         Vertex_handle;
-  typedef typename DS::Face_handle           Face_handle;
+  typedef typename D_S::Vertex_handle         Vertex_handle;
+  typedef typename D_S::Face_handle           Face_handle;
 
   template < typename DS2 >
   struct Rebind_TDS {
