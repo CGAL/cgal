@@ -44,16 +44,14 @@ void test_speed(Tree& tree,
         CGAL::Timer timer;
         unsigned int nb = 0;
         timer.start();
-        Point source((FT)0.0, (FT)0.0, (FT)0.0);
-        Vector vec((FT)0.1, (FT)0.2, (FT)0.3);
-        Ray ray(source, vec);
+        Point query((FT)0.0, (FT)0.0, (FT)0.0);
         while(timer.time() < 1.0)
         {
-                tree.do_intersect(ray); 
+                Point closest = tree.closest_point(query); 
                 nb++;
         }
         double speed = (double)nb / timer.time();
-        std::cout << speed << " intersections/s" << std::endl;
+        std::cout << speed << " projections/s" << std::endl;
         timer.stop();
 }
 
@@ -73,19 +71,9 @@ void test(const char *filename)
         std::ifstream ifs(filename);
         ifs >> polyhedron;
 
-        // construct tree without internal KD-tree as we do not query
-        // any projection.
+        // construct AABB tree without internal search KD-tree
         Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
-
-        // TODO
-        // - compare tree tests with exhaustive ones
-        // - query with ray/line/segment
-
-        Point source((FT)0.5, (FT)0.5, (FT)0.5);
-        Ray ray(source, Vector((FT)0.1, (FT)0.2, (FT)0.3));
-        std::cout << tree.number_of_intersections(ray) 
-                << " intersections(s) with ray" << std::endl;
-
+        tree.construct_search_tree(polyhedron.points_begin(),polyhedron.points_end());
         test_speed<Tree,Polyhedron,K>(tree,polyhedron);
 }
 
@@ -106,7 +94,7 @@ void test_kernels(const char *filename)
 
 int main(void)
 {
-        std::cout << "AABB intersection tests" << std::endl;
+        std::cout << "AABB projection tests" << std::endl;
         test_kernels("../data/cube.off");
         test_kernels("../data/coverrear.off");
         test_kernels("../data/nested_spheres.off");

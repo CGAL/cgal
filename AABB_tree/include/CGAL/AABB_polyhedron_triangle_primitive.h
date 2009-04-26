@@ -39,6 +39,7 @@ namespace CGAL {
                 /// AABBTrianglePrimitive types
                 typedef typename GeomTraits::FT FT;
                 typedef typename GeomTraits::Triangle_3 Datum;
+                typedef typename GeomTraits::Point_3 Point;
                 typedef typename Polyhedron_::Facet_const_iterator Id;
 
                 /// Self
@@ -57,6 +58,8 @@ namespace CGAL {
 
                 /// Returns by constructing on the fly the geometric datum wrapped by the primitive
                 Datum datum() const;
+
+                Point point_on() const;
 
                 /// Returns the identifier
                 const Id id() const { return m_handle; }
@@ -85,6 +88,14 @@ namespace CGAL {
                 return Datum(a,b,c);
         }
 
+        template<typename GT, typename P_>
+        typename AABB_polyhedron_triangle_primitive<GT,P_>::Point
+                AABB_polyhedron_triangle_primitive<GT,P_>::point_on() const
+        {
+                typedef typename GT::Point_3 Point;
+                typedef typename GT::Triangle_3 Triangle;
+                return m_handle->halfedge()->vertex()->point();
+        }
 
 }  // end namespace CGAL
 

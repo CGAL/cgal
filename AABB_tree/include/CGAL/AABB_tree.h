@@ -24,385 +24,445 @@
 #include <vector>
 #include <iterator>
 #include <CGAL/AABB_node.h>
+#include <CGAL/AABB_search_tree.h>
 #include <boost/mpl/vector.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/contains.hpp>
 
 namespace CGAL {
 
-/**
- * @class AABB_tree
- *
- *
- */
-template <typename AABBTraits>
-class AABB_tree
-{
-public:
-  /// Traits types
-  typedef typename AABBTraits::Primitive Primitive;
-  typedef typename AABBTraits::Bounding_box Bounding_box;
-  typedef typename AABBTraits::Projection_query Projection_query;
-  typedef typename AABBTraits::Projection Projection;
-  typedef typename AABBTraits::Intersection Intersection;
-
-  /**
-   * @brief Constructor
-   * @param first iterator over first primitive to insert
-   * @param beyond past-the-end iterator 
-   *
-   * Builds the datastructure. Type ConstPrimitiveIterator can be any const
-   * iterator on a container of Primitive::id_type such that Primitive has
-   * a constructor taking a ConstPrimitiveIterator as argument.
-   */
-  template<typename ConstPrimitiveIterator>
-  AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
-
-  /// Non virtual destructor
-  ~AABB_tree();
-
-  template<typename Query>
-  bool do_intersect(const Query& q) const;
-
-  template<typename Query>
-  int number_of_intersections(const Query& q) const;
-
-  template<typename Query, typename OutputIterator>
-  OutputIterator all_intersected_primitives(const Query& q,
-                                            OutputIterator out) const;
-
-  template<typename Query, typename OutputIterator>
-  OutputIterator all_intersections(const Query& q,
-                                   OutputIterator out) const;
-
-  template<typename Query>
-  bool any_intersection(const Query& q,
-                        Intersection& intersection) const;
-
-  template<typename Query, typename OutputIterator>
-  bool any_intersected_primitive(const Query& q,
-                                 Primitive& pr) const;
-
-  Projection closest_point(const Projection_query& q,
-                                const Projection& hint) const;
-
-
-  //////////////////////////////////////////////
-  //TODO: document this
-  Bounding_box root_bbox() const { return m_p_root->bounding_box(); }
-  bool is_empty() const { return m_data.empty(); }
-  size_t size() const { return m_data.size(); }
-
-  /// generic traversal of tree
-  template <class Query, class Traversal_traits>
-  void traversal(const Query& q, Traversal_traits& traits) const
-  {
-    m_p_root->template traversal<Traversal_traits,Query>(q, traits, m_data.size());
-  }
-  //////////////////////////////////////////////
-
-private:
-  typedef AABB_node<AABBTraits> Node;
-  typedef typename AABBTraits::Sphere Sphere;
-
-  //-------------------------------------------------------
-  // Traits classes for traversal computation
-  //-------------------------------------------------------
-  /**
-   * @class First_intersection_traits
-   */
-  template<typename Query>
-  class First_intersection_traits
-  {
-  public:
-    First_intersection_traits()
-      : m_is_found(false)
-      , m_result() {}
-
-    bool go_further() const { return !m_is_found; }
-
-    void intersection(const Query& q, const Primitive& primitive)
+    /**
+    * @class AABB_tree
+    *
+    *
+    */
+    template <typename AABBTraits>
+    class AABB_tree
     {
-      m_is_found = AABBTraits().intersection(q, primitive, m_result);
-    }
+    public:
+        /// Traits types
+        typedef typename AABBTraits::Primitive Primitive;
+        typedef typename AABBTraits::Bounding_box Bounding_box;
+        typedef typename AABBTraits::Projection_query Projection_query;
+        typedef typename AABBTraits::Projection Projection;
+        typedef typename AABBTraits::Intersection Intersection;
+    private:
+        typedef typename AABB_search_tree<AABBTraits> Search_tree;
 
-    bool do_intersect(const Query& q, const Node& node) const
-    {
-      return AABBTraits().do_intersect(q, node.bounding_box());
-    }
+    public:
+        /**
+        * @brief Constructor
+        * @param first iterator over first primitive to insert
+        * @param beyond past-the-end iterator 
+        *
+        * Builds the datastructure. Type ConstPrimitiveIterator can be any const
+        * iterator on a container of Primitive::id_type such that Primitive has
+        * a constructor taking a ConstPrimitiveIterator as argument.
+        */
+        template<typename ConstPrimitiveIterator>
+        AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
-    Intersection result() const { return m_result; }
-    bool is_intersection_found() const { return m_is_found; }
+        /// Non virtual destructor
+        ~AABB_tree();
 
-  private:
-    bool m_is_found;
-    Intersection m_result;
-  };
+        /// Construct internal search tree with a given point set
+        template<typename ConstPointIterator>
+        void construct_search_tree(ConstPointIterator first, ConstPointIterator beyond);
 
+        /// Construct internal search tree from a point set taken on 
+        // the internal primitives
+        void construct_search_tree();
 
-  /**
-   * @class Counting_traits
-   */
-  template<typename Query>
-  class Counting_traits
-  {
-  public:
-    Counting_traits()
-      : intersection_()
-      , intersection_nb_(0) {}
+        template<typename Query>
+        bool do_intersect(const Query& q) const;
 
-    bool go_further() const { return true; }
+        template<typename Query>
+        int number_of_intersections(const Query& q) const;
 
-    void intersection(const Query& q, const Primitive& primitive)
-    {
-      if( AABBTraits().intersection(q, primitive, intersection_) )
-      {
-        ++intersection_nb_;
-      }
-    }
+        template<typename Query, typename OutputIterator>
+        OutputIterator all_intersected_primitives(const Query& q,
+            OutputIterator out) const;
 
-    bool do_intersect(const Query& q, const Node& node) const
-    {
-      return AABBTraits().do_intersect(q, node.bounding_box());
-    }
+        template<typename Query, typename OutputIterator>
+        OutputIterator all_intersections(const Query& q,
+            OutputIterator out) const;
 
-    int intersection_number() const { return intersection_nb_; }
+        template<typename Query>
+        bool any_intersection(const Query& q,
+            Intersection& intersection) const;
 
-  private:
-    Intersection intersection_;
-    int intersection_nb_;
-  };
+        template<typename Query, typename OutputIterator>
+        bool any_intersected_primitive(const Query& q,
+            Primitive& pr) const;
 
+        Projection closest_point(const Projection_query& q,
+            const Projection& hint);
+        Projection closest_point(const Projection_query& q);
 
-  /**
-   * @class Listing_intersection_traits
-   */
-  template<typename Query, typename Output_iterator>
-  class Listing_intersection_traits
-  {
-  public:
-    Listing_intersection_traits(Output_iterator out_it)
-      : intersection_()
-      , out_it_(out_it) {}
+        //////////////////////////////////////////////
+        //TODO: document this
+        Bounding_box root_bbox() const { return m_p_root->bounding_box(); }
+        bool is_empty() const { return m_data.empty(); }
+        size_t size() const { return m_data.size(); }
 
-    bool go_further() const { return true; }
-
-    void intersection(const Query& q, const Primitive& primitive)
-    {
-      if( AABBTraits().intersection(q, primitive, intersection_) )
-      {
-        *out_it_++ = intersection_;
-      }
-    }
-
-    bool do_intersect(const Query& q, const Node& node) const
-    {
-      return AABBTraits().do_intersect(q, node.bounding_box());
-    }
-
-  private:
-    Intersection intersection_;
-    Output_iterator out_it_;
-  };
-
-
-  /**
-   * @class Listing_primitive_traits
-   */
-  template<typename Query, typename Output_iterator>
-  class Listing_primitive_traits
-  {
-  public:
-    Listing_primitive_traits(Output_iterator out_it)
-      : intersection_()
-      , out_it_(out_it) {}
-
-    bool go_further() const { return true; }
-
-    void intersection(const Query& q, const Primitive& primitive)
-    {
-      if( AABBTraits().intersection(q, primitive, intersection_) )
-      {
-        *out_it_++ = primitive;
-      }
-    }
-
-    bool do_intersect(const Query& q, const Node& node) const
-    {
-      return AABBTraits().do_intersect(q, node.bounding_box());
-    }
-
-  private:
-    Intersection intersection_;
-    Output_iterator out_it_;
-  };
-
-  /**
-   * @class Projection_traits
-   */
-  class Projecting_traits
-  {
-  public:
-    Projecting_traits(const Projection_query& query,
-                      const Projection& hint)
-      : projection_(hint)
-      , center_(query)
-      , sphere_(AABBTraits().sphere(query,hint))         { }
-
-    bool go_further() const { return true; }
-
-    void intersection(const Projection_query& q, const Primitive& primitive)
-    {
-      // We don't use q here because it is embedded in sphere_ and we don't
-      // want to compute sphere everytime
-
-      Projection projection;
-      if ( AABBTraits().intersection(sphere_, primitive, projection) )
-      {
-        const Sphere sphere = AABBTraits().sphere(center_, projection);
-        if ( AABBTraits().is_smaller(sphere, sphere_) )
+        /// generic traversal of tree
+        template <class Query, class Traversal_traits>
+        void traversal(const Query& q, Traversal_traits& traits) const
         {
-          projection_ = projection;
-          sphere_ = sphere;
+            m_p_root->template traversal<Traversal_traits,Query>(q, traits, m_data.size());
         }
-      }
-    }
+        //////////////////////////////////////////////
 
-    bool do_intersect(const Projection_query& q, const Node& node) const
+    private:
+        typedef AABB_node<AABBTraits> Node;
+        typedef typename AABBTraits::Sphere Sphere;
+
+        //-------------------------------------------------------
+        // Traits classes for traversal computation
+        //-------------------------------------------------------
+        /**
+        * @class First_intersection_traits
+        */
+        template<typename Query>
+        class First_intersection_traits
+        {
+        public:
+            First_intersection_traits()
+                : m_is_found(false)
+                , m_result() {}
+
+            bool go_further() const { return !m_is_found; }
+
+            void intersection(const Query& q, const Primitive& primitive)
+            {
+                m_is_found = AABBTraits().intersection(q, primitive, m_result);
+            }
+
+            bool do_intersect(const Query& q, const Node& node) const
+            {
+                return AABBTraits().do_intersect(q, node.bounding_box());
+            }
+
+            Intersection result() const { return m_result; }
+            bool is_intersection_found() const { return m_is_found; }
+
+        private:
+            bool m_is_found;
+            Intersection m_result;
+        };
+
+
+        /**
+        * @class Counting_traits
+        */
+        template<typename Query>
+        class Counting_traits
+        {
+        public:
+            Counting_traits()
+                : intersection_()
+                , intersection_nb_(0) {}
+
+            bool go_further() const { return true; }
+
+            void intersection(const Query& q, const Primitive& primitive)
+            {
+                if( AABBTraits().intersection(q, primitive, intersection_) )
+                {
+                    ++intersection_nb_;
+                }
+            }
+
+            bool do_intersect(const Query& q, const Node& node) const
+            {
+                return AABBTraits().do_intersect(q, node.bounding_box());
+            }
+
+            int intersection_number() const { return intersection_nb_; }
+
+        private:
+            Intersection intersection_;
+            int intersection_nb_;
+        };
+
+
+        /**
+        * @class Listing_intersection_traits
+        */
+        template<typename Query, typename Output_iterator>
+        class Listing_intersection_traits
+        {
+        public:
+            Listing_intersection_traits(Output_iterator out_it)
+                : intersection_()
+                , out_it_(out_it) {}
+
+            bool go_further() const { return true; }
+
+            void intersection(const Query& q, const Primitive& primitive)
+            {
+                if( AABBTraits().intersection(q, primitive, intersection_) )
+                {
+                    *out_it_++ = intersection_;
+                }
+            }
+
+            bool do_intersect(const Query& q, const Node& node) const
+            {
+                return AABBTraits().do_intersect(q, node.bounding_box());
+            }
+
+        private:
+            Intersection intersection_;
+            Output_iterator out_it_;
+        };
+
+
+        /**
+        * @class Listing_primitive_traits
+        */
+        template<typename Query, typename Output_iterator>
+        class Listing_primitive_traits
+        {
+        public:
+            Listing_primitive_traits(Output_iterator out_it)
+                : intersection_()
+                , out_it_(out_it) {}
+
+            bool go_further() const { return true; }
+
+            void intersection(const Query& q, const Primitive& primitive)
+            {
+                if( AABBTraits().intersection(q, primitive, intersection_) )
+                {
+                    *out_it_++ = primitive;
+                }
+            }
+
+            bool do_intersect(const Query& q, const Node& node) const
+            {
+                return AABBTraits().do_intersect(q, node.bounding_box());
+            }
+
+        private:
+            Intersection intersection_;
+            Output_iterator out_it_;
+        };
+
+        /**
+        * @class Projection_traits
+        */
+        class Projecting_traits
+        {
+        public:
+            Projecting_traits(const Projection_query& query,
+                const Projection& hint)
+                : projection_(hint)
+                , center_(query)
+                , sphere_(AABBTraits().sphere(query,hint))         { }
+
+            bool go_further() const { return true; }
+
+            void intersection(const Projection_query& q, const Primitive& primitive)
+            {
+                // We don't use q here because it is embedded in sphere_ and we don't
+                // want to compute sphere everytime
+
+                Projection projection;
+                if ( AABBTraits().intersection(sphere_, primitive, projection) )
+                {
+                    const Sphere sphere = AABBTraits().sphere(center_, projection);
+                    if ( AABBTraits().is_smaller(sphere, sphere_) )
+                    {
+                        projection_ = projection;
+                        sphere_ = sphere;
+                    }
+                }
+            }
+
+            bool do_intersect(const Projection_query& q, const Node& node) const
+            {
+                return AABBTraits().do_intersect(sphere_, node.bounding_box());
+            }
+
+            Projection projection() const { return projection_; }
+
+        private:
+            Projection projection_;
+            Projection_query center_;
+            Sphere sphere_;
+        };
+
+
+    private:
+        // member data
+
+        // set of input primitives (halfedge or face handles)
+        std::vector<Primitive> m_data;
+        // single root node
+        Node* m_p_root;
+        // single root node
+        bool m_search_tree_constructed;
+
+    public:
+        Search_tree m_search_tree;
+
+    private:
+        // Disabled copy constructor & assignment operator
+        typedef AABB_tree<AABBTraits> Self;
+        AABB_tree(const Self& src);
+        Self& operator=(const Self& src);
+
+    };  // end class AABB_tree
+
+    template<typename Tr>
+    template<typename ConstPrimitiveIterator>
+    AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
+        ConstPrimitiveIterator beyond)
+        : m_data()
+        , m_p_root(NULL)
+        , m_search_tree_constructed(false)
     {
-      return AABBTraits().do_intersect(sphere_, node.bounding_box());
+        // Insert each primitive into tree
+        // TODO: get number of elements to reserve space ?
+        while ( first != beyond )
+        {
+            m_data.push_back(Primitive(first));
+            ++first;
+        }
+
+        m_p_root = new Node[m_data.size()-1]();
+        m_p_root->expand(m_data.begin(), m_data.end(), m_data.size());
     }
 
-    Projection projection() const { return projection_; }
+    template<typename Tr>
+    template<typename ConstPointIterator>
+    void
+        AABB_tree<Tr>::construct_search_tree(ConstPointIterator first,
+        ConstPointIterator beyond)
+    {
+        m_search_tree.init(first, beyond);
+        m_search_tree_constructed = true;
+    }
 
-  private:
-    Projection projection_;
-    Projection_query center_;
-    Sphere sphere_;
-  };
+    template<typename Tr>
+    void AABB_tree<Tr>::construct_search_tree()
+    {
+        // iterate over primitives to get points on them
+        std::list<Projection_query> points;
+        std::vector<Primitive>::const_iterator it;
+        for(it = m_data.begin();it != m_data.end();it++)
+        {
+            const Primitive& pr = *it;
+            points.push_back(pr.point_on());
+        }
+        m_search_tree.init(points.begin(), points.end());
+        m_search_tree_constructed = true;
+    }
 
+    template<typename Tr>
+    AABB_tree<Tr>::~AABB_tree()
+    {
+        delete[] m_p_root;
+    }
 
-private:
-  // set of input primitives (halfedge or face handles)
-  std::vector<Primitive> m_data;
-  // single root node
-  Node* m_p_root;
+    template<typename Tr>
+    template<typename Query>
+    bool
+        AABB_tree<Tr>::do_intersect(const Query& query) const
+    {
+        typedef First_intersection_traits<Query> Traversal_traits;
+        Traversal_traits traversal_traits;
 
-private:
-  // Disabled copy constructor & assignment operator
-  typedef AABB_tree<AABBTraits> Self;
-  AABB_tree(const Self& src);
-  Self& operator=(const Self& src);
-
-};  // end class AABB_tree
-
-template<typename Tr>
-template<typename ConstPrimitiveIterator>
-AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
-                         ConstPrimitiveIterator beyond)
-: m_data()
-, m_p_root(NULL)
-{
-  // Insert each primitive into tree
-  // TODO: get number of elements to reserve space ?
-  while ( first != beyond )
-  {
-    m_data.push_back(Primitive(first));
-    ++first;
-  }
-
-  m_p_root = new Node[m_data.size()-1]();
-  m_p_root->expand(m_data.begin(), m_data.end(), m_data.size());
-}
-
-
-template<typename Tr>
-AABB_tree<Tr>::~AABB_tree()
-{
-  delete[] m_p_root;
-}
-
-
-template<typename Tr>
-template<typename Query>
-bool
-AABB_tree<Tr>::do_intersect(const Query& query) const
-{
-  typedef First_intersection_traits<Query> Traversal_traits;
-  Traversal_traits traversal_traits;
-
-  this->traversal(query, traversal_traits);
-  return traversal_traits.is_intersection_found();
-}
+        this->traversal(query, traversal_traits);
+        return traversal_traits.is_intersection_found();
+    }
 
 
 
-template<typename Tr>
-template<typename Query>
-int
-AABB_tree<Tr>::number_of_intersections(const Query& query) const
-{
-  typedef Counting_traits<Query> Traversal_traits;
-  Traversal_traits traversal_traits;
+    template<typename Tr>
+    template<typename Query>
+    int
+        AABB_tree<Tr>::number_of_intersections(const Query& query) const
+    {
+        typedef Counting_traits<Query> Traversal_traits;
+        Traversal_traits traversal_traits;
 
-  this->traversal(query, traversal_traits);
-  return traversal_traits.intersection_number();
-}
-
-
-template<typename Tr>
-template<typename Query, typename OutputIterator>
-OutputIterator
-AABB_tree<Tr>::all_intersected_primitives(const Query& query,
-                                          OutputIterator out) const
-{
-  typedef Listing_primitive_traits<Query, OutputIterator> Traversal_traits;
-  Traversal_traits traversal_traits(out);
-
-  this->traversal(query, traversal_traits);
-  return out;
-}
-
-template<typename Tr>
-template<typename Query, typename OutputIterator>
-OutputIterator
-AABB_tree<Tr>::all_intersections(const Query& query,
-                                 OutputIterator out) const
-{
-  typedef Listing_intersection_traits<Query, OutputIterator> Traversal_traits;
-  Traversal_traits traversal_traits(out);
-
-  this->traversal(query, traversal_traits);
-  return out;
-}
+        this->traversal(query, traversal_traits);
+        return traversal_traits.intersection_number();
+    }
 
 
-template<typename Tr>
-template<typename Query>
-bool
-AABB_tree<Tr>::any_intersection(const Query& query,
-                                Intersection& intersection) const
-{
-  typedef First_intersection_traits<Query> Traversal_traits;
-  Traversal_traits traversal_traits;
+    template<typename Tr>
+    template<typename Query, typename OutputIterator>
+    OutputIterator
+        AABB_tree<Tr>::all_intersected_primitives(const Query& query,
+        OutputIterator out) const
+    {
+        typedef Listing_primitive_traits<Query, OutputIterator> Traversal_traits;
+        Traversal_traits traversal_traits(out);
 
-  this->traversal(query, traversal_traits);
+        this->traversal(query, traversal_traits);
+        return out;
+    }
 
-  intersection = traversal_traits.result();
-  return traversal_traits.is_intersection_found();
-}
+    template<typename Tr>
+    template<typename Query, typename OutputIterator>
+    OutputIterator
+        AABB_tree<Tr>::all_intersections(const Query& query,
+        OutputIterator out) const
+    {
+        typedef Listing_intersection_traits<Query, OutputIterator> Traversal_traits;
+        Traversal_traits traversal_traits(out);
+
+        this->traversal(query, traversal_traits);
+        return out;
+    }
 
 
-template<typename Tr>
-typename AABB_tree<Tr>::Projection
-AABB_tree<Tr>::closest_point(const Projection_query& query,
-                             const Projection& hint) const
-{
-  Projecting_traits traversal_traits(query,hint);
+    template<typename Tr>
+    template<typename Query>
+    bool
+        AABB_tree<Tr>::any_intersection(const Query& query,
+        Intersection& intersection) const
+    {
+        typedef First_intersection_traits<Query> Traversal_traits;
+        Traversal_traits traversal_traits;
 
-  this->traversal(query, traversal_traits);
-  return traversal_traits.projection();
-}
+        this->traversal(query, traversal_traits);
+
+        intersection = traversal_traits.result();
+        return traversal_traits.is_intersection_found();
+    }
+
+
+    // closest point with user-specified hint
+    template<typename Tr>
+    typename AABB_tree<Tr>::Projection
+        AABB_tree<Tr>::closest_point(const Projection_query& query,
+        const Projection& hint) 
+    {
+        Projecting_traits traversal_traits(query,hint);
+
+        this->traversal(query, traversal_traits);
+        return traversal_traits.projection();
+    }
+
+    // closest point without hint
+    template<typename Tr>
+    typename AABB_tree<Tr>::Projection
+        AABB_tree<Tr>::closest_point(const Projection_query& query) 
+    {
+        // construct search tree if needed
+        if(!m_search_tree_constructed)
+            construct_search_tree();
+
+        Projection_query hint = m_search_tree.nearest_point(query);
+        Projecting_traits traversal_traits(query,hint);
+
+        this->traversal(query, traversal_traits);
+        return traversal_traits.projection();
+    }
 
 
 } // end namespace CGAL

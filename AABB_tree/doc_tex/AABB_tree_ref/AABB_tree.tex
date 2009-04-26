@@ -46,10 +46,19 @@ The template parameter \ccc{Traits} stands for a traits class which must be a mo
 \ccConstructor{AABB_tree();}{Default constructor.}
 \ccConstructor{template < class ConstPrimitiveIterator>
        AABB_tree( ConstPrimitiveIterator begin, 
-                  ConstPrimitiveIterator beyond );}
-{Builds the datastructure. Type \ccc{ConstPrimitiveIterator} can be any const iterator on a container of \ccc{Primitive::Object} such that \ccc{Primitive} has a constructor taking a \ccc{ConstPrimitiveIterator} as argument.}
+                  ConstPrimitiveIterator beyond,
+                  const bool construct_search_tree = true);}
+{Builds the datastructure. Type \ccc{ConstPrimitiveIterator} can be any const iterator on a container of \ccc{Primitive::Object} such that \ccc{Primitive} has a constructor taking a \ccc{ConstPrimitiveIterator} as argument. Flag \ccc{construct_search_tree} indicates if the search KD-tree used to accelerate the projection queries must be computed during the construction of the AABB tree. In the negative the KD-tree is constructed during the first call to a projection query. If no projection queries are issued during the life time of the tree, the user must specify \ccc{false} to save memory and computations. }
 
 \ccOperations
+
+\ccMethod{void construct_search_tree();}
+{ Constructs the internal search KD-tree used to accelerate the projection queries. The points in the search tree are taken from the primitives by calling the function \ccc{point_on} from the primitive.}
+
+\ccMethod{template <class ConstPointIterator>
+void construct_search_tree(ConstPointIterator begin,
+                           ConstPointIterator beyond);}
+{ Constructs the internal search KD-tree used to accelerate the projection queries from a specified point set. }
 
 % intersection tests
 
@@ -88,8 +97,7 @@ bool any_intersected_primitive(const Query& query,
 \ccMethod{Projection 
 closest_point(const Projection_query & query, 
               const Projection & hint);} 
-{Returns the point on all input primitives which is closest to the query \ccc{q}. \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{q}, the faster the query).}
-
+{Returns the point on all input primitives which is closest to the query \ccc{q}. Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{q}, the faster the query). Parameter \ccc{hint} can be omitted. In this case an internal KD-tree data structure storing a point set located onto the input geometric objects is used to efficiently query the nearest hint point from the query.}
 
 \ccSeeAlso
 

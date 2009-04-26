@@ -60,6 +60,19 @@ public:
   typedef typename GeomTraits::Point_3 Intersection;
   typedef typename GeomTraits::Point_3 Projection_query;
 
+  // types for search tree
+  typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
+  typedef typename GeomTraits::Construct_cartesian_const_iterator_3
+      Construct_cartesian_const_iterator_3;
+  typedef typename GeomTraits::Point_3 Point_3;
+  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename GeomTraits::Sphere_3 Sphere_3;
+  typedef typename GeomTraits::Construct_iso_cuboid_3 Construct_iso_cuboid_3;
+  typedef typename GeomTraits::Construct_min_vertex_3 Construct_min_vertex_3;
+  typedef typename GeomTraits::Construct_max_vertex_3 Construct_max_vertex_3;
+  typedef typename GeomTraits::Construct_center_3 Construct_center_3;
+  typedef typename GeomTraits::Compute_squared_radius_3 Compute_squared_radius_3;
+  typedef typename GeomTraits::FT FT;
 
   /// Constructor
   AABB_traits() { };
