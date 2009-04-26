@@ -37,7 +37,8 @@ class AABB_polyhedron_edge_primitive
 {
 public:
   /// AABBTrianglePrimitive types
-  typedef typename GeomTraits::Segment_3 Object;
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Segment_3 Datum;
   typedef typename Polyhedron_::Edge_const_iterator Id;
 
   /// Self
@@ -54,10 +55,16 @@ public:
   /// Destructor
   ~AABB_polyhedron_edge_primitive() {};
 
-  /// Returns by constructing on the fly the geometric object wrapped by the primitive
-  Object object() const;
+  /// Returns by constructing on the fly the geometric datum wrapped by the primitive
+  Datum datum() const;
   /// Returns the identifier
   const Id id() const { return m_handle; }
+
+  /// Returns the x/y/z reference coordinate for sorting
+  /// here simply one vertex of the triangle
+  const FT xref() const { return m_handle->vertex()->point().x(); }
+  const FT yref() const { return m_handle->vertex()->point().y(); }
+  const FT zref() const { return m_handle->vertex()->point().z(); }
 
 private:
   /// Halfedge handle
@@ -66,14 +73,14 @@ private:
 
 
 template<typename GT, typename P_>
-typename AABB_polyhedron_edge_primitive<GT,P_>::Object
-AABB_polyhedron_edge_primitive<GT,P_>::object() const
+typename AABB_polyhedron_edge_primitive<GT,P_>::Datum
+AABB_polyhedron_edge_primitive<GT,P_>::datum() const
 {
   typedef typename GT::Point_3 Point;
   typedef typename GT::Segment_3 Segment;
   const Point& a = m_handle->vertex()->point();
   const Point& b = m_handle->opposite()->vertex()->point();
-  return Object(a,b);
+  return Datum(a,b);
 }
 
 }  // end namespace CGAL

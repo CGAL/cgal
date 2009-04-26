@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     :  Camille Wormser, Jane Tournois, Pierre Alliez, Laurent Rineau
+// Author(s)     :  Camille Wormser, Pierre Alliez, Laurent Rineau, Stephane Tayeb
 
 #ifndef CGAL_AABB_NODE_H
 #define CGAL_AABB_NODE_H
@@ -48,16 +48,16 @@ public:
 
   /// Constructor
   AABB_node()
-    : bbox_()
-    , p_left_child_(NULL)
-    , p_right_child_(NULL)      { };
+    : m_bbox()
+    , m_p_left_child(NULL)
+    , m_p_right_child(NULL)      { };
 
   /// Non virtual Destructor
   /// Do not delete children because the tree hosts and delete them
   ~AABB_node() { };
 
   /// Returns the bounding box of the node
-  Bounding_box bounding_box() const { return bbox_; }
+  Bounding_box bounding_box() const { return m_bbox; }
 
   /**
    * @brief Builds the tree by recursive expansion.
@@ -69,9 +69,8 @@ public:
    */
   template<typename ConstPrimitiveIterator>
   void expand(ConstPrimitiveIterator first,
-              ConstPrimitiveIterator last,
+              ConstPrimitiveIterator beyond,
               const int range);
-
 
   /**
    * @brief General traversal query
@@ -97,28 +96,28 @@ private:
 
   /// Helper functions
   const Node& left_child() const
-                     { return *static_cast<Node*>(p_left_child_); }
+                     { return *static_cast<Node*>(m_p_left_child); }
   const Node& right_child() const
-                     { return *static_cast<Node*>(p_right_child_); }
+                     { return *static_cast<Node*>(m_p_right_child); }
   const Primitive& left_data() const
-                     { return *static_cast<Primitive*>(p_left_child_); }
+                     { return *static_cast<Primitive*>(m_p_left_child); }
   const Primitive& right_data() const
-                     { return *static_cast<Primitive*>(p_right_child_); }
+                     { return *static_cast<Primitive*>(m_p_right_child); }
 
-  Node& left_child() { return *static_cast<Node*>(p_left_child_); }
-  Node& right_child() { return *static_cast<Node*>(p_right_child_); }
-  Primitive& left_data() { return *static_cast<Primitive*>(p_left_child_); }
-  Primitive& right_data() { return *static_cast<Primitive*>(p_right_child_); }
+  Node& left_child() { return *static_cast<Node*>(m_p_left_child); }
+  Node& right_child() { return *static_cast<Node*>(m_p_right_child); }
+  Primitive& left_data() { return *static_cast<Primitive*>(m_p_left_child); }
+  Primitive& right_data() { return *static_cast<Primitive*>(m_p_right_child); }
 
 private:
   /// bounding box
-  Bounding_box bbox_;
+  Bounding_box m_bbox;
 
   /// children nodes:
   /// either pointing towards children (if the children are not leaves)
   /// or pointing toward input primitives (if the children are leaves).
-  void *p_left_child_;
-  void *p_right_child_;
+  void *m_p_left_child;
+  void *m_p_right_child;
 
 private:
   // Disabled copy constructor & assignment operator
@@ -130,37 +129,35 @@ private:
 
 
 
-
-
 template<typename Tr>
 template<typename ConstPrimitiveIterator>
 void
 AABB_node<Tr>::expand(ConstPrimitiveIterator first,
-                      ConstPrimitiveIterator last,
+                      ConstPrimitiveIterator beyond,
                       const int range)
 {
-  bbox_ = Tr().compute_bbox(first, last);
+  m_bbox = Tr().compute_bbox(first, beyond);
 
   // sort primitives along longest axis aabb
-  Tr().sort_primitives(first, last, bbox_);
+  Tr().sort_primitives(first, beyond, m_bbox);
 
   switch(range)
   {
   case 2:
-    p_left_child_ = &(*first);
-    p_right_child_ = &(*(++first));
+    m_p_left_child = &(*first);
+    m_p_right_child = &(*(++first));
     break;
   case 3:
-    p_left_child_ = &(*first);
-    p_right_child_ = static_cast<Node*>(this)+1;
-    right_child().expand(first+1, last, 2);
+    m_p_left_child = &(*first);
+    m_p_right_child = static_cast<Node*>(this)+1;
+    right_child().expand(first+1, beyond, 2);
     break;
   default:
     const int new_range = range/2;
-    p_left_child_ = static_cast<Node*>(this)+1;
-    p_right_child_ = static_cast<Node*>(this)+new_range;
+    m_p_left_child = static_cast<Node*>(this)+1;
+    m_p_right_child = static_cast<Node*>(this)+new_range;
     left_child().expand(first, first+new_range, new_range);
-    right_child().expand(first+new_range, last, range-new_range);
+    right_child().expand(first+new_range, beyond, range-new_range);
   }
 }
 
@@ -172,8 +169,8 @@ AABB_node<Tr>::traversal(const Query& query,
                          Traversal_traits& traits,
                          const int nb_primitives) const
 {
-//  CGAL_assertion(NULL!=p_left_child_);
-//  CGAL_assertion(NULL!=p_right_child_);
+//  CGAL_assertion(NULL!=m_p_left_child);
+//  CGAL_assertion(NULL!=m_p_right_child);
 
   // Recursive traversal
   switch(nb_primitives)
@@ -207,10 +204,6 @@ AABB_node<Tr>::traversal(const Query& query,
     }
   }
 }
-
-
-
-
 
 } // end namespace CGAL
 

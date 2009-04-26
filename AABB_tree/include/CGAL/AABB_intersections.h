@@ -1,4 +1,4 @@
-// PA: this file will move later to the kernel folder
+// TODO: move later to the kernel folder
 
 #include <CGAL/intersections.h>
 #include <CGAL/Ray_3_Bbox_3_do_intersect.h>

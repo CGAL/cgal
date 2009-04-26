@@ -27,6 +27,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_triangle_primitive.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -36,33 +37,8 @@ typedef K::Line_3 Line;
 typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
 
-template <class Iterator>
-class Triangle_primitive
-{
-        // type
-public:
-        typedef K::Triangle_3 Object; // object type
-        typedef Iterator Id; // Id type
-
-        // member data
-private:
-        Id m_it; // iterator
-        Object m_object; // 3D triangle
-
-public:
-        Triangle_primitive(Id it)
-                : m_it(it)
-        {
-                m_object = *it; // copy triangle
-        }
-public:
-        const Object& object() const { return m_object; }
-        Object& object() { return m_object; }
-        Id id() { return m_it; }
-};
-
 typedef std::list<typename Triangle>::iterator Iterator;
-typedef Triangle_primitive<Iterator> Primitive;
+typedef CGAL::AABB_triangle_primitive<K,Iterator> Primitive;
 typedef CGAL::AABB_traits<typename K, typename Primitive> AABB_triangle_traits;
 typedef CGAL::AABB_tree<typename AABB_triangle_traits> Polyhedron_tree;
 

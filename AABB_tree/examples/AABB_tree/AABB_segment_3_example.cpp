@@ -27,6 +27,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_segment_primitive.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -35,33 +36,9 @@ typedef K::Point_3 Point;
 typedef K::Plane_3 Plane;
 typedef K::Segment_3 Segment;
 
-template <class Iterator>
-class Segment_primitive
-{
-        // type
-public:
-        typedef K::Segment_3 Object; // object type
-        typedef Iterator Id; // Id type
-
-        // member data
-private:
-        Id m_it; // iterator
-        Object m_object; // 3D segment
-
-public:
-        Segment_primitive(Id it)
-                : m_it(it)
-        {
-                m_object = *it; // copy segmetn
-        }
-public:
-        const Object& object() const { return m_object; }
-        Object& object() { return m_object; }
-        Id id() { return m_it; }
-};
 
 typedef std::list<typename Segment>::iterator Iterator;
-typedef Segment_primitive<Iterator> Primitive;
+typedef CGAL::AABB_segment_primitive<K,Iterator> Primitive;
 typedef CGAL::AABB_traits<typename K, typename Primitive> Traits;
 typedef CGAL::AABB_tree<typename Traits> Polyhedron_tree;
 
