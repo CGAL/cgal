@@ -40,9 +40,6 @@ The concept \ccRefName\ describes the requirements for the primitives stored in 
 \ccMethod{Datum datum();}
 {Returns the datum (geometric object) wrapped inside the primitive.}
 
-\ccMethod{Point point_on();}
-{Returns a 3D point located on the geometric object wrapped by the primitive. This function is used to construct the KD-tree internal to the AABB tree in order to accelerate projection queries.}
-
 \ccMethod{Id id();}
 {Returns the corresponding identifier. This identifier is only used as a reference for the objects in the output of the \ccc{AABB_tree} methods.}
 
@@ -54,6 +51,9 @@ The concept \ccRefName\ describes the requirements for the primitives stored in 
 
 \ccMethod{FT zref();}
 {Returns the \ccc{z} reference coordinate of the primitive used for sorting the primitives.}
+
+\ccMethod{Point point_on();}
+{Returns a 3D point located on the geometric object wrapped by the primitive. This function is used to construct the search KD-tree internal to the AABB tree in order to accelerate projection queries.}
 
 \ccSeeAlso
 \ccc{AABB_tree<Traits>}
