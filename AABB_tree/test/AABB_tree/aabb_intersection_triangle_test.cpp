@@ -44,7 +44,7 @@ void test_speed(Tree& tree,
         CGAL::Timer timer;
         unsigned int nb = 0;
         timer.start();
-        Point source((FT)0.5, (FT)0.5, (FT)0.5);
+        Point source((FT)0.0, (FT)0.0, (FT)0.0);
         Vector vec((FT)0.1, (FT)0.2, (FT)0.3);
         Ray ray(source, vec);
         while(timer.time() < 1.0)
@@ -108,5 +108,6 @@ int main(void)
         std::cout << "AABB intersection tests" << std::endl;
         test_kernels("../data/cube.off");
         test_kernels("../data/coverrear.off");
+        test_kernels("../data/nested_spheres.off");
         return 0;
 }

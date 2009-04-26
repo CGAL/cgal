@@ -14,12 +14,14 @@ AABB_tree/doc_tex/AABB_tree_ref/AABB_tree.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/intro.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/main.tex -text
 AABB_tree/dont_submit -text
+AABB_tree/examples/AABB_tree/AABB_polyhedron_edge_example.cpp -text
 AABB_tree/examples/AABB_tree/AABB_polyhedron_facet_example.cpp -text
 AABB_tree/examples/AABB_tree/AABB_segment_3_example.cpp -text
 AABB_tree/examples/AABB_tree/AABB_triangle_3_example.cpp -text
 AABB_tree/examples/AABB_tree/CMakeLists.txt -text
 AABB_tree/examples/AABB_tree/cleanup.bat -text
 AABB_tree/include/CGAL/AABB_intersections.h -text
+AABB_tree/include/CGAL/AABB_polyhedron_edge_primitive.h -text
 AABB_tree/include/CGAL/AABB_polyhedron_triangle_primitive.h -text
 AABB_tree/include/CGAL/AABB_traits.h -text
 AABB_tree/include/CGAL/Triangle_3_line_3_intersection.h -text
@@ -29,6 +31,7 @@ AABB_tree/test/AABB_tree/aabb_projection_test.cpp -text
 AABB_tree/test/AABB_tree/cleanup.bat -text
 AABB_tree/test/AABB_tree/data/coverrear.off -text
 AABB_tree/test/AABB_tree/data/cube.off -text
+AABB_tree/test/AABB_tree/data/nested_spheres.off -text
 AABB_tree/test/AABB_tree/todo.txt -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations.png -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations2.png -text

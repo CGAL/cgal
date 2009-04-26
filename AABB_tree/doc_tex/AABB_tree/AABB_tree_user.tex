@@ -35,6 +35,9 @@ The following example computes the number of intersections between a 3D ray and 
 The following example computes the number of intersections between a 3D plane and a set of 3D segments. The segments are stored into a list, and the AABB primitive simply wraps a segment and an iterator in the list.
 \ccIncludeExampleCode{AABB_tree/AABB_segment_3_example.cpp}
 
+The following example computes the number of intersections between a 3D plane and a set of edges of a triangle polyhedral surfaces. The AABB primitive wraps a halfedge handle and generates on the fly a 3D segment each time its object function is called..
+\ccIncludeExampleCode{AABB_tree/AABB_polyhedron_edge_example.cpp}
+
 % Implementation Details
 \section{Implementation Details}
 \label{AABB_tree_section_intro}
