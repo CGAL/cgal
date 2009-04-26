@@ -47,8 +47,8 @@ The template parameter \ccc{Traits} stands for a traits class which must be a mo
 \ccConstructor{template < class ConstPrimitiveIterator>
        AABB_tree( ConstPrimitiveIterator begin, 
                   ConstPrimitiveIterator beyond,
-                  const bool construct_search_tree = true);}
-{Builds the datastructure. Type \ccc{ConstPrimitiveIterator} can be any const iterator on a container of \ccc{Primitive::Object} such that \ccc{Primitive} has a constructor taking a \ccc{ConstPrimitiveIterator} as argument. Flag \ccc{construct_search_tree} indicates if the search KD-tree used to accelerate the projection queries must be computed during the construction of the AABB tree. In the negative the KD-tree is constructed during the first call to a projection query. If no projection queries are issued during the life time of the tree, the user must specify \ccc{false} to save memory and computations. }
+                  const bool construct_search_tree = false);}
+{Builds the datastructure. Type \ccc{ConstPrimitiveIterator} can be any const iterator on a container of \ccc{Primitive::Object} such that \ccc{Primitive} has a constructor taking a \ccc{ConstPrimitiveIterator} as argument. Flag \ccc{construct_search_tree} indicates if the search KD-tree used to accelerate the projection queries must be computed during the construction of the AABB tree. In the negative the KD-tree is constructed during the first call to a projection query. If no projection queries are issued during the life time of the tree, the default \ccc{false} flag saves memory and computations. }
 
 \ccOperations
 

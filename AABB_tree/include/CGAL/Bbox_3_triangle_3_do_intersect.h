@@ -28,7 +28,7 @@
 // a minimal cost (and we use C++ ;).
 
 #include <CGAL/number_utils.h>
-#include "Plane_3_Bbox_3_do_intersect.h"
+#include "Bbox_3_plane_3_do_intersect.h"
 
 // Turn off Visual C++ warning
 #ifdef _MSC_VER

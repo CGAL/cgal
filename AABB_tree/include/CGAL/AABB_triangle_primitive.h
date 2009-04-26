@@ -32,9 +32,10 @@ class AABB_triangle_primitive
 {
 public:
         // types
-        typedef typename GeomTraits::FT FT; // field number type
-        typedef typename GeomTraits::Triangle_3 Datum; // datum type
         typedef Iterator Id; // Id type
+        typedef typename GeomTraits::FT FT; // field number type
+        typedef typename GeomTraits::Point_3 Point; // point type
+        typedef typename GeomTraits::Triangle_3 Datum; // datum type
 
 private:
         // member data
@@ -58,6 +59,9 @@ public:
         const FT xref() const { return m_datum.vertex(0).x(); }
         const FT yref() const { return m_datum.vertex(0).y(); }
         const FT zref() const { return m_datum.vertex(0).z(); }
+
+        /// Returns a point on the primitive
+        Point point_on() const { m_datum.vertex(0); }
 };
 
 }  // end namespace CGAL
