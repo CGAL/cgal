@@ -4,6 +4,11 @@ const QColor Scene_item::defaultColor = QColor(100, 100, 255);
 
 Scene_item::~Scene_item() {}
 
+void Scene_item::itemAboutToBeDestroyed(Scene_item* item) {
+  if(this == item)
+    emit aboutToBeDestroyed();
+}
+
 // Rendering mode as a human readable string
 QString Scene_item::renderingModeName() const
 {

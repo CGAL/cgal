@@ -76,6 +76,11 @@ public slots:
       rendering_mode = m; 
   }
 
+  virtual void itemAboutToBeDestroyed(Scene_item*);
+
+signals:
+  void aboutToBeDestroyed();
+
 protected:
   // The four basic properties
   QString name_;
