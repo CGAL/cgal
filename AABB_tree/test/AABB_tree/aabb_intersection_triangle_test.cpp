@@ -172,5 +172,6 @@ int main(void)
     test_several_kernels("./data/cube.off");
     test_several_kernels("./data/coverrear.off");
     test_several_kernels("./data/nested_spheres.off");
+    test_several_kernels("./data/lucy.off");
     return 0;
 }
