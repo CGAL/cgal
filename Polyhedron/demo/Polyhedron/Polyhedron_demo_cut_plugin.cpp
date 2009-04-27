@@ -1,7 +1,5 @@
 #include <Qt/qglobal.h>
 
-#include <CGAL/Plane_3_Bbox_3_do_intersect.h>
-#include <CGAL/Triangle_3_plane_3_intersection.h>
 #include "Messages_interface.h"
 #include "Scene_item_with_display_list.h"
 #include "Scene_plane_item.h"
@@ -9,11 +7,14 @@
 #include "Polyhedron_demo_plugin_interface.h"
 #include <CGAL/gl.h>
 
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_polyhedron_triangle_primitive.h>
+#include <CGAL/AABB_drawing_traits.h>
+
 #include <CGAL/bounding_box.h>
 
 #include "Polyhedron_type.h"
-#include <CGAL/AABB_tree.h>
-#include <CGAL/Drawing_traits.h>
 
 #include <QTime>
 
@@ -21,11 +22,14 @@
 #include <QMainWindow>
 #include <QApplication>
 
-typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel; 
+typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel;
 
-typedef CGAL::AABB_tree<Simple_cartesian_kernel, 
-                        Polyhedron::Facet_const_handle,
-                        Polyhedron> AABB_tree;
+typedef class CGAL::AABB_polyhedron_triangle_primitive<
+                                    Simple_cartesian_kernel,
+                                    Polyhedron>             AABB_primitive;
+typedef class CGAL::AABB_traits<Simple_cartesian_kernel,
+                                AABB_primitive>             AABB_traits;
+typedef class CGAL::AABB_tree<AABB_traits> AABB_tree;
 
 class Q_DECL_EXPORT Scene_aabb_item : public Scene_item_with_display_list
 {
@@ -34,9 +38,9 @@ public:
   Scene_aabb_item(const AABB_tree& tree_) : tree(tree_) {}
 
   bool isFinite() const { return true; }
-  bool isEmpty() const { return tree.size() == 0; }
-  Bbox bbox() const { 
-    const CGAL::Bbox_3 bbox = tree.bbox();
+  bool isEmpty() const { return tree.is_empty(); }
+  Bbox bbox() const {
+    const CGAL::Bbox_3 bbox = tree.root_bbox();
     return Bbox(bbox.xmin(),
                 bbox.ymin(),
                 bbox.zmin(),
@@ -50,7 +54,7 @@ public:
   }
 
   QString toolTip() const {
-    return 
+    return
       tr("<p><b>%1</b> (mode: %2, color: %3)<br />"
          "<i>AABB_tree</i></p>"
          "<p>Number of nodes: %4</p>")
@@ -62,12 +66,12 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m == Wireframe); 
+    return (m == Wireframe);
   }
 
   // Wireframe OpenGL drawing in a display list
   void direct_draw() const {
-    CGAL::AABB::Drawing_traits traits;
+    CGAL::AABB_drawing_traits<AABB_primitive, CGAL::AABB_node<AABB_traits> > traits;
     tree.traversal(0, traits);
   }
 
@@ -81,7 +85,7 @@ class Q_DECL_EXPORT Scene_edges_item : public Scene_item
 public:
   bool isFinite() const { return true; }
   bool isEmpty() const { return edges.empty(); }
-  Bbox bbox() const { 
+  Bbox bbox() const {
     if(isEmpty())
       return Bbox();
     CGAL::Bbox_3 bbox = edges.begin()->bbox();
@@ -103,7 +107,7 @@ public:
   }
 
   QString toolTip() const {
-    return 
+    return
       tr("<p><b>%1</b> (mode: %2, color: %3)<br />"
          "<i>Edges</i></p>"
          "<p>Number of edges: %4</p>")
@@ -114,8 +118,8 @@ public:
   }
 
   // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const { 
-    return (m == Wireframe); 
+  bool supportsRenderingMode(RenderingMode m) const {
+    return (m == Wireframe);
   }
 
   // Flat/Gouraud OpenGL drawing
@@ -140,7 +144,7 @@ public:
 }; // end class Scene_edges_item
 
 
-class Polyhedron_demo_cut_plugin : 
+class Polyhedron_demo_cut_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface
 {
@@ -170,7 +174,7 @@ private:
   Scene_edges_item* edges_item;
   QAction* actionCreateCutPlane;
 
-  typedef std::map<QObject*,  AABB_tree> Trees;
+  typedef std::map<QObject*,  AABB_tree*> Trees;
   Trees trees;
 }; // end Polyhedron_demo_cut_plugin
 
@@ -208,47 +212,53 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   actionCreateCutPlane->setEnabled(false);
 }
 
+
+// ST 27/04/2009: Function disabled
+// TODO: Fix compilation with AABB_tree 3.5
+
 void Polyhedron_demo_cut_plugin::cut() {
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  if(!edges_item) {
-    edges_item = new Scene_edges_item;
-    edges_item->setName("Edges of the cut");
-    edges_item->setColor(Qt::red);
-    connect(edges_item, SIGNAL(destroyed()),
-            this, SLOT(reset_edges()));
-    scene->addItem(edges_item);
-  }
-  const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
-  const qglviewer::Vec& n =
-    plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
-  Simple_cartesian_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
-  std::cerr << plane << std::endl;
-  edges_item->edges.clear();
-  QTime time;
-  time.start();
-  for(size_t i = 0, end = scene->numberOfEntries(); i < end; ++i) {
-    Scene_item* item = scene->item(i);
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
-    if(!poly_item) continue;
-    Trees::iterator it = trees.find(poly_item);
-    if(it == trees.end()) {
-      it = trees.insert(trees.begin(), std::make_pair(poly_item, AABB_tree()));
-      it->second.build_faces(*poly_item->polyhedron());
-      Scene_aabb_item* aabb_item = new Scene_aabb_item(it->second);
-      aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
-      aabb_item->setRenderingMode(Wireframe);
-      aabb_item->setVisible(false);
-      scene->addItem(aabb_item);
-      std::cerr << "size: " << it->second.size() << std::endl;
-    }
-    if(!CGAL::do_intersect(plane, it->second.bbox()))
-      std::cerr << "no intersection\n";
-    std::cerr << "all_intersection\n";
-    it->second.all_intersection<Simple_cartesian_kernel::Segment_3>(plane, std::back_inserter(edges_item->edges));
-  }
-  messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
-  scene->itemChanged(edges_item);
-  QApplication::restoreOverrideCursor();
+//  QApplication::setOverrideCursor(Qt::WaitCursor);
+//  if(!edges_item) {
+//    edges_item = new Scene_edges_item;
+//    edges_item->setName("Edges of the cut");
+//    edges_item->setColor(Qt::red);
+//    connect(edges_item, SIGNAL(destroyed()),
+//            this, SLOT(reset_edges()));
+//    scene->addItem(edges_item);
+//  }
+//  const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
+//  const qglviewer::Vec& n =
+//    plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+//  Simple_cartesian_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
+//  std::cerr << plane << std::endl;
+//  edges_item->edges.clear();
+//  QTime time;
+//  time.start();
+//  for(size_t i = 0, end = scene->numberOfEntries(); i < end; ++i) {
+//    Scene_item* item = scene->item(i);
+//    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
+//    if(!poly_item) continue;
+//    Trees::iterator it = trees.find(poly_item);
+//    if(it == trees.end()) {
+//      it = trees.insert(trees.begin(),
+//                        std::make_pair(poly_item,
+//                                       new AABB_tree(poly_item->polyhedron()->facets_begin(),
+//                                                     poly_item->polyhedron()->facets_end() )));
+//      Scene_aabb_item* aabb_item = new Scene_aabb_item(*it->second);
+//      aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
+//      aabb_item->setRenderingMode(Wireframe);
+//      aabb_item->setVisible(false);
+//      scene->addItem(aabb_item);
+//      std::cerr << "size: " << it->second->size() << std::endl;
+//    }
+//    if(!CGAL::do_intersect(plane, it->second->root_bbox()))
+//      std::cerr << "no intersection\n";
+//    std::cerr << "all_intersection\n";
+//    //it->second.all_intersection<Simple_cartesian_kernel::Segment_3>(plane, std::back_inserter(edges_item->edges));
+//  }
+//  messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
+//  scene->itemChanged(edges_item);
+//  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_cut_plugin::enableAction() {
