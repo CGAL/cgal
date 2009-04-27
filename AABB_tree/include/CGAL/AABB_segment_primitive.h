@@ -32,7 +32,6 @@ class AABB_segment_primitive
 {
         // type
 public:
-        typedef typename GeomTraits::FT FT; // field number type
         typedef typename GeomTraits::Point_3 Point; // point type
         typedef typename GeomTraits::Segment_3 Datum; // datum type
         typedef Iterator Id; // Id type
@@ -54,15 +53,8 @@ public:
         Datum& datum() { return m_datum; }
         const Datum& datum() const { return m_datum; }
 
-        /// Returns the x/y/z reference coordinate for sorting
-        /// here simply the source vertex of the segment
-        // (could be as well the centroid computed on the fly)
-        const FT xref() const { return m_datum.source().x(); }
-        const FT yref() const { return m_datum.source().y(); }
-        const FT zref() const { return m_datum.source().z(); }
-
         /// Returns a point on the primitive
-        Point point_on() const { m_datum.source(); }
+        Point reference_point() const { return m_datum.source(); }
 };
 
 }  // end namespace CGAL

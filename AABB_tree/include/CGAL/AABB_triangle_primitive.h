@@ -33,7 +33,6 @@ namespace CGAL {
     public:
         // types
         typedef Iterator Id; // Id type
-        typedef typename GeomTraits::FT FT; // field number type
         typedef typename GeomTraits::Point_3 Point; // point type
         typedef typename GeomTraits::Triangle_3 Datum; // datum type
 
@@ -54,14 +53,8 @@ namespace CGAL {
         Datum& datum() { return m_datum; }
         const Datum& datum() const { return m_datum; }
 
-        /// Returns the x/y/z reference coordinate for sorting
-        /// here simply the first vertex of the triangle
-        const FT xref() const { return m_datum.vertex(0).x(); }
-        const FT yref() const { return m_datum.vertex(0).y(); }
-        const FT zref() const { return m_datum.vertex(0).z(); }
-
         /// Returns a point on the primitive
-        Point point_on() const { m_datum.vertex(0); }
+        Point reference_point() const { return m_datum.vertex(0); }
     };
 
 }  // end namespace CGAL

@@ -80,11 +80,11 @@ public:
 
   /// Comparison functions
   static bool x_less_than(const Primitive& pr1, const Primitive& pr2)
-  { return pr1.xref() < pr2.xref(); }
+  { return pr1.reference_point().x() < pr2.reference_point().x(); }
   static bool y_less_than(const Primitive& pr1, const Primitive& pr2)
-  { return pr1.yref() < pr2.yref(); }
+  { return pr1.reference_point().y() < pr2.reference_point().y(); }
   static bool z_less_than(const Primitive& pr1, const Primitive& pr2)
-  { return pr1.zref() < pr2.zref(); }
+  { return pr1.reference_point().z() < pr2.reference_point().z(); }
 
   /// UNDOCUMENTED FEATURE
   /// TODO: see what to do

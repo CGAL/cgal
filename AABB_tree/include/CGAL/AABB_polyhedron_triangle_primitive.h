@@ -37,7 +37,6 @@ namespace CGAL {
     {
     public:
         /// AABBTrianglePrimitive types
-        typedef typename GeomTraits::FT FT;
         typedef typename GeomTraits::Point_3 Point;
         typedef typename GeomTraits::Triangle_3 Datum;
         typedef typename Polyhedron::Facet_handle Id;
@@ -58,16 +57,10 @@ namespace CGAL {
         Datum datum() const;
 
         /// Returns a point on the primitive
-        Point point_on() const;
+        Point reference_point() const;
 
         /// Returns the identifier
         const Id id() const { return m_facet_handle; }
-
-        /// Returns the x/y/z reference coordinate for sorting
-        /// here simply one vertex of the triangle
-        const FT xref() const { return m_facet_handle->halfedge()->vertex()->point().x(); }
-        const FT yref() const { return m_facet_handle->halfedge()->vertex()->point().y(); }
-        const FT zref() const { return m_facet_handle->halfedge()->vertex()->point().z(); }
 
     private:
         /// The id, here a polyhedron facet handle
@@ -88,7 +81,7 @@ namespace CGAL {
 
     template<typename GT, typename P_>
     typename AABB_polyhedron_triangle_primitive<GT,P_>::Point
-        AABB_polyhedron_triangle_primitive<GT,P_>::point_on() const
+        AABB_polyhedron_triangle_primitive<GT,P_>::reference_point() const
     {
         return m_facet_handle->halfedge()->vertex()->point();
     }

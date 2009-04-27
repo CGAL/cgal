@@ -23,8 +23,6 @@ The concept \ccRefName\ describes the requirements for the primitives stored in 
 
 \ccTypes
 
-\ccNestedType{FT}{Field number type.}
-
 \ccNestedType{Point}{3D point type.}
 
 \ccNestedType{Datum}{Type of input datum.}
@@ -43,17 +41,8 @@ The concept \ccRefName\ describes the requirements for the primitives stored in 
 \ccMethod{Id id();}
 {Returns the corresponding identifier. This identifier is only used as a reference for the objects in the output of the \ccc{AABB_tree} methods.}
 
-\ccMethod{FT xref();}
-{Returns the \ccc{x} reference coordinate of the primitive used for sorting the primitives. It can be the x coordinate of either one vertex of the geometric object, or of its centroid, or any other reference point taken on the object.}
-
-\ccMethod{FT yref();}
-{Returns the \ccc{y} reference coordinate of the primitive used for sorting the primitives.}
-
-\ccMethod{FT zref();}
-{Returns the \ccc{z} reference coordinate of the primitive used for sorting the primitives.}
-
-\ccMethod{Point point_on();}
-{Returns a 3D point located on the geometric object wrapped by the primitive. This function is used to construct the search KD-tree internal to the AABB tree in order to accelerate projection queries.}
+\ccMethod{Point reference_point();}
+{Returns a 3D point located on the geometric object wrapped by the primitive. This function is used to sort the primitives during the AABB tree construction and to construct the search KD-tree internal to the AABB tree in order to accelerate projection queries.}
 
 \ccSeeAlso
 \ccc{AABB_tree<Traits>}

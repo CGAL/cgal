@@ -37,7 +37,6 @@ namespace CGAL {
     {
     public:
         /// AABBTrianglePrimitive types
-        typedef typename GeomTraits::FT FT;
         typedef typename GeomTraits::Point_3 Point;
         typedef typename GeomTraits::Segment_3 Datum;
         typedef typename Polyhedron::Halfedge_handle Id;
@@ -60,13 +59,7 @@ namespace CGAL {
         const Id id() const { return m_halfedge_handle; }
 
         /// Returns a point on the primitive
-        Point point_on() const;
-
-        /// Returns the x/y/z reference coordinate for sorting
-        /// here simply one vertex of the triangle
-        const FT xref() const { return m_halfedge_handle->vertex()->point().x(); }
-        const FT yref() const { return m_halfedge_handle->vertex()->point().y(); }
-        const FT zref() const { return m_halfedge_handle->vertex()->point().z(); }
+        Point reference_point() const;
 
     private:
         /// Id, here a polyhedron halfedge handle
@@ -86,7 +79,7 @@ namespace CGAL {
 
     template<typename GT, typename P_>
     typename AABB_polyhedron_edge_primitive<GT,P_>::Point
-        AABB_polyhedron_edge_primitive<GT,P_>::point_on() const
+        AABB_polyhedron_edge_primitive<GT,P_>::reference_point() const
     {
         return m_halfedge_handle->vertex()->point();
     }

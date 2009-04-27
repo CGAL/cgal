@@ -352,7 +352,7 @@ namespace CGAL {
         for(it = m_data.begin(); it != m_data.end(); it++)
         {
             const Primitive& pr = *it;
-            points.push_back(pr.point_on());
+            points.push_back(pr.reference_point());
         }
         m_search_tree.init(points.begin(), points.end());
         m_search_tree_constructed = true;
