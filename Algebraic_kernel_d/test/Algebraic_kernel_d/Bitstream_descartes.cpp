@@ -38,6 +38,8 @@
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_coefficient_kernel.h>
 
+#include <CGAL/Sqrt_extension.h> // used in this file 
+
 template <class AT>
 void test_descartes(){
     typedef typename AT::Integer Integer;
