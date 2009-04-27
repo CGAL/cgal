@@ -27,6 +27,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/AABB_intersections.h>
+#include <CGAL/Kernel/global_functions.h>
 
 namespace CGAL {
 
@@ -50,7 +51,7 @@ public:
   /// AABBTraits concept types
   typedef typename CGAL::Bbox_3 Bounding_box;
 
-  typedef typename AABB_primitive Primitive;
+  typedef AABB_primitive Primitive;
   typedef typename AABB_primitive::Datum Datum;
 
   typedef typename GeomTraits::Sphere_3 Sphere;
@@ -135,11 +136,6 @@ public:
                     Projection& projection_return) const;
 
   bool is_contained(const Sphere& a, const Sphere& b) const;
-
-private:
-  /// Private types
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point_3;
 
 private:
   /**

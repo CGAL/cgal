@@ -37,10 +37,10 @@ typedef K::Line_3 Line;
 typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
 
-typedef std::list<typename Triangle>::iterator Iterator;
+typedef std::list<Triangle>::iterator Iterator;
 typedef CGAL::AABB_triangle_primitive<K,Iterator> Primitive;
-typedef CGAL::AABB_traits<typename K, typename Primitive> AABB_triangle_traits;
-typedef CGAL::AABB_tree<typename AABB_triangle_traits> Tree;
+typedef CGAL::AABB_traits<K, Primitive> AABB_triangle_traits;
+typedef CGAL::AABB_tree<AABB_triangle_traits> Tree;
 
 int main(void)
 {
@@ -55,16 +55,16 @@ int main(void)
         triangles.push_back(Triangle(a,d,c));
 
         Tree tree(triangles.begin(),triangles.end());
-        
+
         // counts #intersections
         Ray ray(a,b);
-        std::cout << tree.number_of_intersections(ray) 
+        std::cout << tree.number_of_intersections(ray)
                 << " intersections(s) with ray" << std::endl;
-                
+
         // compute closest point
         Point hint(a);
         Point query(2.0, 2.0, 2.0);
         Point closest = tree.closest_point(query,hint);
-        
+
         return 0;
 }

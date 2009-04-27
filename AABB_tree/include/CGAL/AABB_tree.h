@@ -47,13 +47,13 @@ namespace CGAL {
         typedef typename AABBTraits::Intersection Intersection;
         typedef typename AABBTraits::Projection_query Projection_query;
     private:
-        typedef typename AABB_search_tree<AABBTraits> Search_tree;
+        typedef AABB_search_tree<AABBTraits> Search_tree;
 
     public:
         /**
         * @brief Constructor
         * @param first iterator over first primitive to insert
-        * @param beyond past-the-end iterator 
+        * @param beyond past-the-end iterator
         *
         * Builds the datastructure. Type ConstPrimitiveIterator can be any const
         * iterator on a container of Primitive::id_type such that Primitive has
@@ -348,7 +348,7 @@ namespace CGAL {
     {
         // iterate over primitives to get points on them
         std::list<Projection_query> points;
-        std::vector<Primitive>::const_iterator it;
+        typename std::vector<Primitive>::const_iterator it;
         for(it = m_data.begin(); it != m_data.end(); it++)
         {
             const Primitive& pr = *it;
@@ -435,7 +435,7 @@ namespace CGAL {
     template<typename Tr>
     typename AABB_tree<Tr>::Projection
         AABB_tree<Tr>::closest_point(const Projection_query& query,
-        const Projection& hint) 
+        const Projection& hint)
     {
         Projecting_traits traversal_traits(query,hint);
 
@@ -447,7 +447,7 @@ namespace CGAL {
     // first nearest neighbor point to get a hint
     template<typename Tr>
     typename AABB_tree<Tr>::Projection
-        AABB_tree<Tr>::closest_point(const Projection_query& query) 
+        AABB_tree<Tr>::closest_point(const Projection_query& query)
     {
         // construct search KD-tree if needed
         if(!m_search_tree_constructed)

@@ -43,14 +43,14 @@ void test_all_query_types(Tree& tree)
 {
     std::cout << "Test all query types" << std::endl;
 
-    typedef K::FT FT;
-    typedef K::Ray_3 Ray;
-    typedef K::Line_3 Line;
-    typedef K::Point_3 Point;
-    typedef K::Vector_3 Vector;
-    typedef K::Segment_3 Segment;
-    typedef Tree::Primitive Primitive;
-    typedef Tree::Intersection Intersection;
+    typedef typename K::FT FT;
+    typedef typename K::Ray_3 Ray;
+    typedef typename K::Line_3 Line;
+    typedef typename K::Point_3 Point;
+    typedef typename K::Vector_3 Vector;
+    typedef typename K::Segment_3 Segment;
+    typedef typename Tree::Primitive Primitive;
+    typedef typename Tree::Intersection Intersection;
 
     Point p((FT)-0.5, (FT)-0.5, (FT)-0.5);
     Point q((FT) 0.5, (FT) 0.5, (FT) 0.5);
@@ -60,14 +60,14 @@ void test_all_query_types(Tree& tree)
     bool success = false;
 
     // do_intersect
-    success = tree.do_intersect(ray); 
-    success = tree.do_intersect(line); 
-    success = tree.do_intersect(segment); 
+    success = tree.do_intersect(ray);
+    success = tree.do_intersect(line);
+    success = tree.do_intersect(segment);
 
     // number_of_intersections
-    tree.number_of_intersections(ray); 
-    tree.number_of_intersections(line); 
-    tree.number_of_intersections(segment); 
+    tree.number_of_intersections(ray);
+    tree.number_of_intersections(line);
+    tree.number_of_intersections(segment);
 
     // all_intersected_primitives
     std::list<Primitive> primitives;
@@ -89,14 +89,14 @@ void test_all_query_types(Tree& tree)
 }
 
 template <class Tree, class Polyhedron, class K>
-void test_speed(Tree& tree, 
+void test_speed(Tree& tree,
                 Polyhedron& polyhedron)
 {
     std::cout << "Test for speed" << std::endl;
-    typedef K::FT FT;
-    typedef K::Ray_3 Ray;
-    typedef K::Point_3 Point;
-    typedef K::Vector_3 Vector;
+    typedef typename K::FT FT;
+    typedef typename K::Ray_3 Ray;
+    typedef typename K::Point_3 Point;
+    typedef typename K::Vector_3 Vector;
 
     CGAL::Timer timer;
     unsigned int nb = 0;
@@ -106,7 +106,7 @@ void test_speed(Tree& tree,
     Ray ray(source, vec);
     while(timer.time() < 1.0)
     {
-        tree.do_intersect(ray); 
+        tree.do_intersect(ray);
         nb++;
     }
     double speed = (double)nb / timer.time();
@@ -117,10 +117,10 @@ void test_speed(Tree& tree,
 template <class K>
 void test(const char *filename)
 {
-    typedef K::FT FT;
-    typedef K::Ray_3 Ray;
-    typedef K::Point_3 Point;
-    typedef K::Vector_3 Vector;
+    typedef typename K::FT FT;
+    typedef typename K::Ray_3 Ray;
+    typedef typename K::Point_3 Point;
+    typedef typename K::Vector_3 Vector;
     typedef CGAL::Polyhedron_3<K> Polyhedron;
     typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
     typedef CGAL::AABB_traits<K, Primitive> Traits;

@@ -33,13 +33,13 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 template <class Tree, class Polyhedron, class K>
-void test_speed(Tree& tree, 
+void test_speed(Tree& tree,
                 Polyhedron& polyhedron)
 {
-        typedef K::FT FT;
-        typedef K::Ray_3 Ray;
-        typedef K::Point_3 Point;
-        typedef K::Vector_3 Vector;
+        typedef typename K::FT FT;
+        typedef typename K::Ray_3 Ray;
+        typedef typename K::Point_3 Point;
+        typedef typename K::Vector_3 Vector;
 
         CGAL::Timer timer;
         unsigned int nb = 0;
@@ -47,7 +47,7 @@ void test_speed(Tree& tree,
         Point query((FT)0.0, (FT)0.0, (FT)0.0);
         while(timer.time() < 1.0)
         {
-                Point closest = tree.closest_point(query); 
+                Point closest = tree.closest_point(query);
                 nb++;
         }
         double speed = (double)nb / timer.time();
@@ -58,10 +58,10 @@ void test_speed(Tree& tree,
 template <class K>
 void test(const char *filename)
 {
-        typedef K::FT FT;
-        typedef K::Ray_3 Ray;
-        typedef K::Point_3 Point;
-        typedef K::Vector_3 Vector;
+        typedef typename K::FT FT;
+        typedef typename K::Ray_3 Ray;
+        typedef typename K::Point_3 Point;
+        typedef typename K::Vector_3 Vector;
         typedef CGAL::Polyhedron_3<K> Polyhedron;
         typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
         typedef CGAL::AABB_traits<K, Primitive> Traits;

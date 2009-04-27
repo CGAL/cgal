@@ -37,10 +37,10 @@ typedef K::Plane_3 Plane;
 typedef K::Segment_3 Segment;
 typedef K::Triangle_3 Triangle;
 
-typedef std::list<typename Segment>::iterator Iterator;
+typedef std::list<Segment>::iterator Iterator;
 typedef CGAL::AABB_segment_primitive<K,Iterator> Primitive;
-typedef CGAL::AABB_traits<typename K, typename Primitive> Traits;
-typedef CGAL::AABB_tree<typename Traits> Tree;
+typedef CGAL::AABB_traits<K, Primitive> Traits;
+typedef CGAL::AABB_tree<Traits> Tree;
 
 int main(void)
 {
@@ -57,11 +57,11 @@ int main(void)
         Tree tree(segments.begin(),segments.end());
 
         Plane plane(a,b,d);
-        std::cout << tree.number_of_intersections(plane) 
+        std::cout << tree.number_of_intersections(plane)
                 << " intersections(s) with plane" << std::endl;
 
         Triangle triangle(a,b,c);
-        std::cout << tree.number_of_intersections(triangle) 
+        std::cout << tree.number_of_intersections(triangle)
                 << " intersections(s) with triangle" << std::endl;
 
         // TOFIX: following does not compile due to intersection(const Sphere& sphere,
