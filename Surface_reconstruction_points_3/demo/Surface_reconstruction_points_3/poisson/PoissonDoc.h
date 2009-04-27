@@ -97,8 +97,6 @@ private:
     // Poisson implicit function
     Poisson_reconstruction_function* m_poisson_function; // Poisson implicit function
     Dt3* m_poisson_dt; // The Poisson equation is solved on the vertices of m_poisson_dt
-    bool m_triangulation_refined; // Is Delaunay refinement applied?
-    bool m_poisson_solved; // Is the Poisson equation solved?
 
     // - APSS implicit function
     APSS_reconstruction_function* m_apss_function;
@@ -108,18 +106,10 @@ private:
     C2t3 m_surface_mesher_c2t3; // 2D-complex in m_surface_mesher_dt
     Triangular_surface m_surface; // Surface reconstructed by Surface mesher
 
-    // Surface reconstructed by marching tet contouring
-    Triangular_surface m_contour;
-
     // Poisson options
     double m_sm_distance_poisson; // Approximation error w.r.t. point set radius (Poisson)
     double m_sm_radius_poisson; // Max triangle radius w.r.t. point set radius (Poisson)
     double m_sm_angle_poisson; // Min triangle angle (degrees) (Poisson)
-    double m_dr_sizing; // 3 Delaunay refinements options
-    double m_dr_shell_size;
-    unsigned int m_dr_max_vertices;
-    double m_contouring_value; // Poisson contouring value (TEST)
-    double m_lambda;  // laplacian smoothing
 
     // APSS options
     double m_sm_distance_apss; // Approximation error w.r.t. point set radius (APSS)
@@ -170,9 +160,6 @@ public:
     // Surface reconstructed by Surface mesher
     const Triangular_surface* surface_mesher_surface() const { return &m_surface; }
 
-    // Surface reconstructed by marching tet contouring
-    const Triangular_surface* marching_tet_countour() const { return &m_contour; }
-
 // Private methods
 private:
 
@@ -221,12 +208,9 @@ public:
     afx_msg void OnUpdateEditDelete(CCmdUI *pCmdUI);
     afx_msg void OnEditResetSelection();
     afx_msg void OnUpdateEditResetSelection(CCmdUI *pCmdUI);
-	afx_msg void OnOneStepPoissonReconstructionWithNormalizedDivergence();
-    afx_msg void OnReconstructionDelaunayRefinement();
+    afx_msg void OnOneStepPoissonReconstructionWithNormalizedDivergence();
     afx_msg void OnReconstructionPoisson();
-	afx_msg void OnReconstructionPoissonNormalized();
     afx_msg void OnAlgorithmsRefineInShell();
-    afx_msg void OnReconstructionPoissonSurfaceMeshing();
     afx_msg void OnAlgorithmsMarchingTetContouring();
     afx_msg void OnAlgorithmsExtrapolatenormals();
     afx_msg void OnAlgorithmsPoissonStatistics();
@@ -239,8 +223,6 @@ public:
     afx_msg void OnUpdateModePointSet(CCmdUI *pCmdUI);
     afx_msg void OnModePoisson();
     afx_msg void OnUpdateModePoisson(CCmdUI *pCmdUI);
-    afx_msg void OnCreatePoissonTriangulation();
-    afx_msg void OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsSmoothUsingJetFitting(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsEstimateNormalsByPCA(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsEstimateNormalByJetFitting(CCmdUI *pCmdUI);

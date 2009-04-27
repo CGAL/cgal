@@ -184,7 +184,7 @@ int main(int argc, char * argv[])
     // Compute implicit function
     //***************************************
 
-    std::cerr << "Create triangulation...\n";
+    std::cerr << "Create Poisson triangulation...\n";
 
     // Create implicit function.
     // Create 3D-Delaunay triangulation for the implicit function and insert vertices.
@@ -196,9 +196,9 @@ int main(int argc, char * argv[])
 
     // Print status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Create triangulation: " << task_timer.time() << " seconds, "
-                                          << (memory>>20) << " Mb allocated"
-                                          << std::endl;
+    std::cerr << "Create Poisson triangulation: " << task_timer.time() << " seconds, "
+                                                  << (memory>>20) << " Mb allocated"
+                                                  << std::endl;
     task_timer.reset();
 
     std::cerr << "Compute implicit function...\n";

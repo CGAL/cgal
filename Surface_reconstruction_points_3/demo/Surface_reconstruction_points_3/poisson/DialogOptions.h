@@ -26,11 +26,6 @@ public:
 	double m_sm_distance_apss; // Approximation error w.r.t. point set radius (APSS)
 	double m_sm_radius_apss; // Max triangle radius w.r.t. point set radius (APSS)
 	double m_sm_angle_apss; // Min triangle angle (degrees) (APSS)
-	unsigned int m_dr_max_vertices;
-	double m_dr_shell_size;
-	double m_dr_sizing;
-	double m_contouring_value; // Poisson contouring value (TEST)
-	double m_lambda; // laplacian smoothing
 	unsigned int m_nb_neighbors_avg_spacing; // K-nearest neighbors (average spacing)
 	double m_nb_neighbors_remove_outliers; // K-nearest neighbors (remove_outliers)
 	double m_nb_neighbors_smooth_jet_fitting; // K-nearest neighbors (smooth points by Jet Fitting)

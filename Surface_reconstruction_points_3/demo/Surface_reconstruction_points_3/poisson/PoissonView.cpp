@@ -320,17 +320,6 @@ void CPoissonView::OnPaint()
     if(m_view_original_normals && points_have_original_normals)
       pDoc->points()->gl_draw_original_normals(128,191,255 /*light blue*/, normal_length);
 
-    // draw surface reconstructed by marching tet
-    if(m_view_contour && pDoc->edit_mode() == CPoissonDoc::POISSON)
-    {
-      static GLfloat grey[4] = {0.9f, 0.9f, 0.9f, 0.0f };
-      ::glEnable(GL_LIGHTING);
-      ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-      ::glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE,grey);
-      ::glColor3ub(0,0,0); /*black*/
-      pDoc->marching_tet_countour()->gl_draw_surface();
-    }
-
     // draw surface reconstructed by Surface Mesher
     if(m_view_surface && 
        (pDoc->edit_mode() == CPoissonDoc::POISSON || pDoc->edit_mode() == CPoissonDoc::APSS))

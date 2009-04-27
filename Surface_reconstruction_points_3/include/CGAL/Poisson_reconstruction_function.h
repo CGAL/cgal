@@ -222,13 +222,12 @@ public:
                                                  << std::endl;
     task_timer.reset();
 
-    CGAL_TRACE_STREAM << "Solve Poisson equation...\n";
+    CGAL_TRACE_STREAM << "Solve Poisson equation with normalized divergence...\n";
 
     // Compute the Poisson indicator function f()
     // at each vertex of the triangulation.
     double lambda = 0.1;
-    double duration_assembly, duration_factorization, duration_solve;
-    if (!solve_poisson(lambda, &duration_assembly, &duration_factorization, &duration_solve))
+    if ( ! solve_poisson(lambda) )
     {
       std::cerr << "Error: cannot solve Poisson equation" << std::endl;
       return false;
@@ -248,8 +247,40 @@ public:
     return true;
   }
 
-// TEMPORARY HACK
-/// @cond SKIP_IN_MANUAL
+  /// Evaluates the implicit function at a given 3D query point.
+  FT f(const Point& p) const
+  {
+    m_hint = m_tr.locate(p,m_hint);
+
+    if(m_hint == NULL)
+      return 1e38;
+
+    if(m_tr.is_infinite(m_hint))
+      return 1e38;
+
+    FT a,b,c,d;
+    barycentric_coordinates(p,m_hint,a,b,c,d);
+    return a * m_hint->vertex(0)->f() +
+           b * m_hint->vertex(1)->f() +
+           c * m_hint->vertex(2)->f() +
+           d * m_hint->vertex(3)->f();
+  }
+
+  /// 'ImplicitFunction' interface: evaluate implicit function for any 3D point.
+  FT operator()(const Point& p) const
+  {
+    return f(p);
+  }
+
+  /// Returns a point located inside the inferred surface.
+  Point get_inner_point() const
+  {
+    // Get point / the implicit function is minimum
+    return m_sink;
+  }
+
+// Private methods:
+private:
 
   /// Delaunay refinement (break bad tetrahedra, where
   /// bad means badly shaped or too big). The normal of
@@ -273,19 +304,15 @@ public:
 
   /// Poisson reconstruction.
   /// Return false on error.
-  bool solve_poisson(double lambda,
-                     double* duration_assembly,
-                     double* duration_factorization,
-                     double* duration_solve,
-                     bool is_normalized = false)
+  bool solve_poisson(double lambda)
   {
     CGAL_TRACE("Call solve_poisson()\n");
 
     double time_init = clock();
 
-    *duration_assembly = 0.0;
-    *duration_factorization = 0.0;
-    *duration_solve = 0.0;
+    double duration_assembly = 0.0;
+    double duration_factorization = 0.0;
+    double duration_solve = 0.0;
 
     long old_max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
 
@@ -317,20 +344,19 @@ public:
     {
       if(!v->constrained())
       {
-        B[v->index()] = is_normalized ? div_normalized(v)
-                                      : div(v); // rhs -> divergent
+        B[v->index()] = div_normalized(v); // rhs -> divergent
         assemble_poisson_row(solver,v,B,lambda);
       }
     }
 
-    *duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
-    CGAL_TRACE("  Create matrix: done (%.2lf s)\n", *duration_assembly);
+    duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
+    CGAL_TRACE("  Create matrix: done (%.2lf s)\n", duration_assembly);
 
     /*
     time_init = clock();
     if(!solver.solve_conjugate_gradient(B,X,10000,1e-15))
       return false;
-    *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
+    duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
     */
 
     CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
@@ -343,8 +369,8 @@ public:
     time_init = clock();
     if(!solver.factorize_ooc())
       return false;
-    *duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
-    CGAL_TRACE("  Choleschy factorization: done (%.2lf s)\n", *duration_factorization);
+    duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
+    CGAL_TRACE("  Choleschy factorization: done (%.2lf s)\n", duration_factorization);
 
     // Print peak memory (Windows only)
     long max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
@@ -361,24 +387,24 @@ public:
     time_init = clock();
     if(!solver.solve_ooc(B,X))
       return false;
-    *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
-    CGAL_TRACE("  Direct solve: done (%.2lf s)\n", *duration_solve);
+    duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
+    CGAL_TRACE("  Direct solve: done (%.2lf s)\n", duration_solve);
 
     /*
     // Choleschy factorization M = L L^T
     time_init = clock();
     if(!solver.factorize(true))
       return false;
-    *duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
+    duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
 
     // Direct solve by forward and backward substitution
     time_init = clock();
     if(!solver.solve(B,X,1))
       return false;
-    *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
+    duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
     */
 
-    CGAL_TRACE("  Choleschy factorization + solve: done (%.2lf s)\n", *duration_factorization + *duration_solve);
+    CGAL_TRACE("  Choleschy factorization + solve: done (%.2lf s)\n", duration_factorization + duration_solve);
 
     // copy function's values to vertices
     unsigned int index = 0;
@@ -415,43 +441,6 @@ public:
     return sink_value;
   }
 
-// TEMPORARY HACK
-/// @endcond
-
-  /// Evaluates the implicit function at a given 3D query point.
-  FT f(const Point& p) const
-  {
-    m_hint = m_tr.locate(p,m_hint);
-
-    if(m_hint == NULL)
-      return 1e38;
-
-    if(m_tr.is_infinite(m_hint))
-      return 1e38;
-
-    FT a,b,c,d;
-    barycentric_coordinates(p,m_hint,a,b,c,d);
-    return a * m_hint->vertex(0)->f() +
-           b * m_hint->vertex(1)->f() +
-           c * m_hint->vertex(2)->f() +
-           d * m_hint->vertex(3)->f();
-  }
-
-  /// 'ImplicitFunction' interface: evaluate implicit function for any 3D point.
-  FT operator()(const Point& p) const
-  {
-    return f(p);
-  }
-
-  /// Returns a point located inside the inferred surface.
-  Point get_inner_point() const
-  {
-    // Get point / the implicit function is minimum
-    return m_sink;
-  }
-
-// TEMPORARY HACK
-/// @cond SKIP_IN_MANUAL
 
 /// Get median value of the implicit function over input vertices.
   FT median_value_at_input_vertices() const
@@ -476,12 +465,6 @@ public:
     // return values[size/2];
     return 0.5 * (values[index] + values[index+1]); // avoids singular cases
   }
-
-// TEMPORARY HACK
-/// @endcond
-
-// Private methods:
-private:
 
   // PA: todo change type (FT)
   // check if this is in CGAL already
@@ -561,44 +544,6 @@ private:
   }
 
   // divergent
-  FT div(Vertex_handle v)
-  {
-    std::vector<Cell_handle> cells;
-    m_tr.incident_cells(v,std::back_inserter(cells));
-    if(cells.size() == 0)
-      return 0.0;
-
-    FT div = 0.0;
-    typename std::vector<Cell_handle>::iterator it;
-    for(it = cells.begin(); it != cells.end(); it++)
-    {
-      Cell_handle cell = *it;
-      if(m_tr.is_infinite(cell))
-        continue;
-
-      // compute average normal per cell
-      Vector n = cell_normal(cell);
-
-      // zero normal - no need to compute anything else
-      if(n == CGAL::NULL_VECTOR)
-        continue;
-
-      // compute n'
-      int index = cell->index(v);
-      const Point& a = cell->vertex((index+1)%4)->point();
-      const Point& b = cell->vertex((index+2)%4)->point();
-      const Point& c = cell->vertex((index+3)%4)->point();
-      Vector nn = (index%2==0) ? CGAL::cross_product(b-a,c-a) : CGAL::cross_product(c-a,b-a);
-      nn = nn / std::sqrt(nn*nn); // normalize
-
-      Triangle face(a,b,c);
-      FT area = std::sqrt(face.squared_area());
-
-      div += n * nn * area;
-    }
-    return div;
-  }
-
   FT div_normalized(Vertex_handle v)
   {
     std::vector<Cell_handle> cells;
@@ -606,8 +551,8 @@ private:
     if(cells.size() == 0)
       return 0.0;
 
-	FT length = 100000;
-	int counter = 0;
+    FT length = 100000;
+    int counter = 0;
     FT div = 0.0;
     typename std::vector<Cell_handle>::iterator it;
     for(it = cells.begin(); it != cells.end(); it++)
@@ -625,26 +570,26 @@ private:
 
       // compute n'
       int index = cell->index(v);
-	  const Point& x = cell->vertex(index)->point();
+      const Point& x = cell->vertex(index)->point();
       const Point& a = cell->vertex((index+1)%4)->point();
       const Point& b = cell->vertex((index+2)%4)->point();
       const Point& c = cell->vertex((index+3)%4)->point();
       Vector nn = (index%2==0) ? CGAL::cross_product(b-a,c-a) : CGAL::cross_product(c-a,b-a);
-	  nn = nn / std::sqrt(nn*nn); // normalize
-	  Vector p = a - x;
+      nn = nn / std::sqrt(nn*nn); // normalize
+      Vector p = a - x;
       Vector q = b - x;
-	  Vector r = c - x;
-	  FT p_n = std::sqrt(p*p);
-	  FT q_n = std::sqrt(q*q);
-	  FT r_n = std::sqrt(r*r);
-	  FT solid_angle = p*(CGAL::cross_product(q,r));
-	  solid_angle = std::abs(solid_angle * 1.0 / (p_n*q_n*r_n + (p*q)*r_n + (q*r)*p_n + (r*p)*q_n));
-	  Triangle face(a,b,c);
+      Vector r = c - x;
+      FT p_n = std::sqrt(p*p);
+      FT q_n = std::sqrt(q*q);
+      FT r_n = std::sqrt(r*r);
+      FT solid_angle = p*(CGAL::cross_product(q,r));
+      solid_angle = std::abs(solid_angle * 1.0 / (p_n*q_n*r_n + (p*q)*r_n + (q*r)*p_n + (r*p)*q_n));
+      Triangle face(a,b,c);
       FT area = std::sqrt(face.squared_area());
-	  length = std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c));
-	  counter++;
-		div += n * nn * area * 3 / length ;
-     }
+      length = std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c));
+      counter++;
+      div += n * nn * area * 3 / length ;
+    }
     return div;
   }
 

@@ -71,9 +71,6 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_UPDATE_COMMAND_UI(ID_EDIT_DELETE, OnUpdateEditDelete)
     ON_COMMAND(ID_EDIT_RESET_SELECTION, OnEditResetSelection)
     ON_UPDATE_COMMAND_UI(ID_EDIT_RESET_SELECTION, OnUpdateEditResetSelection)
-    ON_COMMAND(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, OnReconstructionDelaunayRefinement)
-	ON_COMMAND(ID_RECONSTRUCTION_POISSON_NORMALIZED, OnReconstructionPoissonNormalized)
-    ON_COMMAND(ID_RECONSTRUCTION_POISSON_SURFACE_MESHING, OnReconstructionPoissonSurfaceMeshing)
     ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALSBYPCA, OnAlgorithmsEstimateNormalsByPCA)
     ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, OnAlgorithmsEstimateNormalsByJetFitting)
     ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSCAMERAS, OnAlgorithmsOrientNormalsWrtCameras)
@@ -83,8 +80,6 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_UPDATE_COMMAND_UI(ID_MODE_POINT_SET, OnUpdateModePointSet)
     ON_COMMAND(ID_MODE_POISSON, OnModePoisson)
     ON_UPDATE_COMMAND_UI(ID_MODE_POISSON, OnUpdateModePoisson)
-    ON_COMMAND(ID_CREATE_POISSON_TRIANGULATION, OnCreatePoissonTriangulation)
-    ON_UPDATE_COMMAND_UI(ID_CREATE_POISSON_TRIANGULATION, OnUpdateCreatePoissonTriangulation)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_SMOOTHUSINGJETFITTING, OnUpdateAlgorithmsSmoothUsingJetFitting)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ESTIMATENORMALSBYPCA, OnUpdateAlgorithmsEstimateNormalsByPCA)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, OnUpdateAlgorithmsEstimateNormalByJetFitting)
@@ -123,18 +118,10 @@ CPoissonDoc::CPoissonDoc()
 {
   m_edit_mode = NO_EDIT_MODE; // No points yet
 
-  m_triangulation_refined = false; // Need to apply Delaunay refinement
-  m_poisson_solved = false; // Need to solve Poisson equation
-
   // Poisson options
   m_sm_angle_poisson = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
   m_sm_radius_poisson = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
   m_sm_distance_poisson = 0.002; // Approximation error w.r.t. p.s.r. For Poisson: 0.01 = fast, 0.002 = smooth.
-  m_dr_shell_size = 0.01; // 3 Delaunay refinement options
-  m_dr_sizing = 0.5 * m_dr_shell_size;
-  m_dr_max_vertices = (unsigned int)5e6;
-  m_contouring_value = 0.0; // Poisson contouring value; should be 0 (TEST)
-  m_lambda = 0.1; // laplacian smoothing
 
   // APSS options
   m_sm_angle_apss = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
@@ -546,11 +533,6 @@ void CPoissonDoc::OnEditOptions()
   dlg.m_sm_angle_apss = m_sm_angle_apss;
   dlg.m_sm_radius_apss = m_sm_radius_apss;
   dlg.m_sm_distance_apss = m_sm_distance_apss;
-  dlg.m_dr_sizing = m_dr_sizing;
-  dlg.m_dr_shell_size = m_dr_shell_size;
-  dlg.m_dr_max_vertices = m_dr_max_vertices;
-  dlg.m_contouring_value = m_contouring_value;
-  dlg.m_lambda = m_lambda;
   dlg.m_nb_neighbors_avg_spacing = m_nb_neighbors_avg_spacing;
   dlg.m_nb_neighbors_remove_outliers = m_nb_neighbors_remove_outliers;
   dlg.m_nb_neighbors_smooth_jet_fitting = m_nb_neighbors_smooth_jet_fitting;
@@ -571,11 +553,6 @@ void CPoissonDoc::OnEditOptions()
     m_sm_angle_apss = dlg.m_sm_angle_apss;
     m_sm_radius_apss = dlg.m_sm_radius_apss;
     m_sm_distance_apss = dlg.m_sm_distance_apss;
-    m_dr_sizing = dlg.m_dr_sizing;
-    m_dr_shell_size = dlg.m_dr_shell_size;
-    m_dr_max_vertices = dlg.m_dr_max_vertices;
-    m_contouring_value = dlg.m_contouring_value;
-    m_lambda = dlg.m_lambda;
     m_nb_neighbors_avg_spacing = dlg.m_nb_neighbors_avg_spacing;
     m_nb_neighbors_remove_outliers = dlg.m_nb_neighbors_remove_outliers;
     m_nb_neighbors_smooth_jet_fitting = dlg.m_nb_neighbors_smooth_jet_fitting;
@@ -864,164 +841,6 @@ void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWrtCameras(CCmdUI *pCmdUI)
   pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals && points_have_cameras);
 }
 
-// Reconstruction >> Poisson >> Create Poisson Triangulation callback:
-// Create m_poisson_dt from m_points[] and enter in Poisson edit mode.
-// m_points is not editable in this mode.
-void CPoissonDoc::OnCreatePoissonTriangulation()
-{
-  BeginWaitCursor();
-  status_message("Create Poisson Triangulation...");
-  CGAL::Timer task_timer; task_timer.start();
-
-  // Clean up previous mode
-  CloseMode();
-
-    // Create implicit function.
-    // Create 3D-Delaunay triangulation for the implicit function and insert vertices.
-  assert(m_poisson_dt == NULL);
-  assert(m_poisson_function == NULL);
-  m_poisson_dt = new Dt3;
-  m_poisson_function = new Poisson_reconstruction_function(*m_poisson_dt, m_points.begin(), m_points.end());
-
-  m_edit_mode = POISSON;
-  m_triangulation_refined = false; // Need to apply Delaunay refinement
-  m_poisson_solved = false; // Need to solve Poisson equation
-
-  status_message("Create Poisson Triangulation...done (%.2lf s)", task_timer.time());
-  update_status();
-  UpdateAllViews(NULL);
-  EndWaitCursor();
-}
-
-// Enable Reconstruction >> Poisson menu items if normals are computed and oriented.
-void CPoissonDoc::OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI)
-{
-  assert(m_points.begin() != m_points.end());
-  bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
-  bool normals_are_oriented = m_points.begin()->normal().is_oriented();
-  pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == POISSON)
-                 && points_have_normals /* && normals_are_oriented */);
-}
-
-// Uniform Delaunay refinement
-void CPoissonDoc::OnReconstructionDelaunayRefinement()
-{
-  assert(m_poisson_dt != NULL);
-  assert(m_poisson_function != NULL);
-
-  BeginWaitCursor();
-  status_message("Delaunay refinement...");
-  CGAL::Timer task_timer; task_timer.start();
-
-  const double radius_edge_ratio_bound = 2.5;
-  const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
-  const double enlarge_ratio = 1.5;
-  const double size = sqrt(m_poisson_function->bounding_sphere().squared_radius()); // get triangulation's radius
-  const double cell_radius_bound = size/5.; // large
-  unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement(radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarge_ratio);
-
-  m_triangulation_refined = true;
-
-  status_message("Delaunay refinement...done (%.2lf s, %d vertices inserted)",
-                 task_timer.time(), nb_vertices_added);
-  update_status();
-  UpdateAllViews(NULL);
-  EndWaitCursor();
-}
-
-void CPoissonDoc::OnReconstructionPoissonNormalized()
-{
-  assert(m_poisson_dt != NULL);
-  assert(m_poisson_function != NULL);
-
-  BeginWaitCursor();
-  status_message("Solve Poisson equation with normalized divergence...");
-  CGAL::Timer task_timer; task_timer.start();
-
-  // Solve Poisson equation such that:
-  // - (*m_poisson_function)() = 0 on the input points,
-  // - (*m_poisson_function)() < 0 inside the surface.
-  double duration_assembly, duration_factorization, duration_solve;
-  m_poisson_solved = m_poisson_function->solve_poisson(m_lambda,
-                                                       &duration_assembly,
-                                                       &duration_factorization,
-                                                       &duration_solve,
-                                                       true /* normalized*/);
-  m_poisson_function->set_contouring_value(m_poisson_function->median_value_at_input_vertices());
-  m_contouring_value = 0.0;
-
-  if (!m_poisson_solved)
-      status_message("Solve Poisson equation with normalized divergence...solver failed");
-  else
-      status_message("Solve Poisson equation with normalized divergence...done (%.2lf s)", task_timer.time());
-  update_status();
-  UpdateAllViews(NULL);
-  EndWaitCursor();
-}
-
-// Reconstruction >> Poisson >> Surface Meshing callback
-void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
-{
-    assert(m_poisson_dt != NULL);
-    assert(m_poisson_function != NULL);
-
-    BeginWaitCursor();
-    status_message("Surface meshing...");
-    CGAL::Timer task_timer; task_timer.start();
-
-    // Clear previous call
-    m_surface_mesher_dt.clear();
-    m_surface_mesher_c2t3.clear();
-    m_surface.clear();
-
-    // Apply contouring value defined in Options dialog
-    m_poisson_function->set_contouring_value(m_contouring_value);
-
-    // Get point inside the implicit surface
-    Point inner_point = m_poisson_function->get_inner_point();
-    FT inner_point_value = (*m_poisson_function)(inner_point);
-    if(inner_point_value >= 0.0)
-    {
-      status_message("Error: unable to seed (%lf at inner_point)",inner_point_value);
-      return;
-    }
-
-    // Get implicit function's radius
-    Sphere bounding_sphere = m_poisson_function->bounding_sphere();
-    FT size = sqrt(bounding_sphere.squared_radius());
-
-    // defining the implicit surface = implicit function + bounding sphere centered at inner_point
-    typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
-    Point sm_sphere_center = inner_point;
-    FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
-    sm_sphere_radius *= 1.01; // <= the Surface Mesher fails if the sphere does not contain the surface
-    Surface_3 surface(*m_poisson_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
-
-    // defining meshing criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_poisson,  // Min triangle angle (degrees)
-                                                        m_sm_radius_poisson*size,  // Max triangle radius
-                                                        m_sm_distance_poisson*size); // Approximation error
-
-    // meshing surface
-    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
-
-    // get output surface
-    std::deque<Triangle> triangles;
-    CGAL::output_surface_facets_to_triangle_soup(m_surface_mesher_c2t3, std::back_inserter(triangles));
-    m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
-
-    // Reset contouring value
-    m_poisson_function->set_contouring_value(0.0);
-
-    // Print status
-    status_message("Surface meshing...done (%d output vertices, %.2lf s)",
-                   m_surface_mesher_dt.number_of_vertices(), task_timer.time());
-    update_status();
-    UpdateAllViews(NULL);
-    EndWaitCursor();
-}
-
 // Smooth point set using jet fitting + projection
 void CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting()
 {
@@ -1091,19 +910,19 @@ void CPoissonDoc::OnUpdateModePointSet(CCmdUI *pCmdUI)
 }
 
 // "Edit >> Mode >> Poisson" is an alias to
-// "Reconstruction >> Poisson >> Create Poisson Triangulation".
+// "Reconstruction >> Poisson Reconstruction w/ Normalized Divergence".
 void CPoissonDoc::OnModePoisson()
 {
-  OnCreatePoissonTriangulation();
+  OnOneStepPoissonReconstructionWithNormalizedDivergence();
 }
 
 void CPoissonDoc::OnUpdateModePoisson(CCmdUI *pCmdUI)
 {
-  OnUpdateCreatePoissonTriangulation(pCmdUI);
+  OnUpdateOneStepPoissonReconstructionWithNormalizedDivergence(pCmdUI);
   pCmdUI->SetCheck(m_edit_mode == POISSON);
 }
 
-// Reconstruction >> Poisson Reconstruction w/ Normalized Divergence callback: 
+// "Reconstruction >> Poisson Reconstruction w/ Normalized Divergence" callback: 
 // - Create Poisson Delaunay Triangulation
 // - Delaunay refinement
 // - Solve Poisson Equation
@@ -1112,16 +931,98 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
 {
   BeginWaitCursor();
   status_message("1-step Poisson reconstruction with normalized divergence...");
+  CGAL::Timer total_timer; total_timer.start();
+
+  // Clean up previous mode
+  CloseMode();
+
   CGAL::Timer task_timer; task_timer.start();
 
-  OnCreatePoissonTriangulation();
-  OnReconstructionDelaunayRefinement();
-  if (m_triangulation_refined)
-    OnReconstructionPoissonNormalized();
-  if (m_poisson_solved)
-    OnReconstructionPoissonSurfaceMeshing();
+  //***************************************
+  // Compute implicit function
+  //***************************************
 
-  status_message("1-step Poisson reconstruction with normalized divergence...done (%.2lf s)", task_timer.time());
+  status_message("Create Poisson triangulation...");
+
+  // Create implicit function.
+  // Create 3D-Delaunay triangulation for the implicit function and insert vertices.
+  assert(m_poisson_dt == NULL);
+  assert(m_poisson_function == NULL);
+  m_poisson_dt = new Dt3;
+  m_poisson_function = new Poisson_reconstruction_function(*m_poisson_dt, m_points.begin(), m_points.end());
+
+  // Print status
+  status_message("Create Poisson triangulation...done (%.2lf s)", task_timer.time());
+  task_timer.reset();
+
+  status_message("Compute implicit function...");
+
+  // Compute the Poisson indicator function f()
+  // at each vertex of the triangulation.
+  if ( ! m_poisson_function->compute_implicit_function() )
+  {
+    status_message("Error: cannot compute implicit function");
+    return;
+  }
+
+  // Print status
+  status_message("Compute implicit function...done (%.2lf s)", task_timer.time());
+  task_timer.reset();
+
+  //***************************************
+  // Surface mesh generation
+  //***************************************
+
+  status_message("Surface meshing...");
+
+  // Clear previous call
+  m_surface_mesher_dt.clear();
+  m_surface_mesher_c2t3.clear();
+  m_surface.clear();
+
+  // Get point inside the implicit surface
+  Point inner_point = m_poisson_function->get_inner_point();
+  FT inner_point_value = (*m_poisson_function)(inner_point);
+  if(inner_point_value >= 0.0)
+  {
+    status_message("Error: unable to seed (%lf at inner_point)",inner_point_value);
+    return;
+  }
+
+  // Get implicit function's radius
+  Sphere bounding_sphere = m_poisson_function->bounding_sphere();
+  FT size = sqrt(bounding_sphere.squared_radius());
+
+  // defining the implicit surface = implicit function + bounding sphere centered at inner_point
+  typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
+  Point sm_sphere_center = inner_point;
+  FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
+  sm_sphere_radius *= 1.01; // <= the Surface Mesher fails if the sphere does not contain the surface
+  Surface_3 surface(*m_poisson_function,
+                    Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
+
+  // defining meshing criteria
+  CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_poisson,  // Min triangle angle (degrees)
+                                                      m_sm_radius_poisson*size,  // Max triangle radius
+                                                      m_sm_distance_poisson*size); // Approximation error
+
+  // meshing surface
+  CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
+
+  // Print status
+  status_message("Surface meshing...done (%d output vertices, %.2lf s)",
+                 m_surface_mesher_dt.number_of_vertices(), task_timer.time());
+  task_timer.reset();
+    
+  // get output surface
+  std::deque<Triangle> triangles;
+  CGAL::output_surface_facets_to_triangle_soup(m_surface_mesher_c2t3, std::back_inserter(triangles));
+  m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
+
+  // Record new mode
+  m_edit_mode = POISSON;
+
+  status_message("1-step Poisson reconstruction with normalized divergence...done (%.2lf s)", total_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1129,7 +1030,11 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
 
 void CPoissonDoc::OnUpdateOneStepPoissonReconstructionWithNormalizedDivergence(CCmdUI *pCmdUI)
 {
-  OnUpdateCreatePoissonTriangulation(pCmdUI);
+  assert(m_points.begin() != m_points.end());
+  bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
+  bool normals_are_oriented = m_points.begin()->normal().is_oriented();
+  pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == POISSON)
+                 && points_have_normals /* && normals_are_oriented */);
 }
 
 // Remove vertices / cameras cone's angle is low

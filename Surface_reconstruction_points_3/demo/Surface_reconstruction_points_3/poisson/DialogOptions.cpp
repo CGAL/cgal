@@ -17,11 +17,6 @@ CDialogOptions::CDialogOptions(CWnd* pParent /*=NULL*/)
     , m_sm_distance_apss(0)
     , m_sm_radius_apss(0)
     , m_sm_angle_apss(0)
-    , m_dr_max_vertices(0)
-    , m_dr_shell_size(0)
-    , m_dr_sizing(0)
-    , m_contouring_value(0)
-    , m_lambda(0)
     , m_nb_neighbors_avg_spacing(0)
     , m_nb_neighbors_remove_outliers(0)
     , m_nb_neighbors_smooth_jet_fitting(0)
@@ -52,11 +47,6 @@ void CDialogOptions::DoDataExchange(CDataExchange* pDX)
     DDX_Text(pDX,IDC_EDIT_SM_ANGLE_APSS,m_sm_angle_apss);
     DDX_Text(pDX,IDC_EDIT_SM_RADIUS_APSS,m_sm_radius_apss);
     DDX_Text(pDX,IDC_EDIT_SM_DISTANCE_APSS,m_sm_distance_apss);
-    DDX_Text(pDX,IDC_EDIT_DR_SHELL_SIZE,m_dr_shell_size);
-    DDX_Text(pDX,IDC_EDIT_DR_SIZING,m_dr_sizing);
-    DDX_Text(pDX,IDC_EDIT_DR_MAXV,m_dr_max_vertices);
-    DDX_Text(pDX,IDC_EDIT_CONTOURING_VALUE,m_contouring_value);
-    DDX_Text(pDX,IDC_EDIT_LAMBDA,m_lambda);
     DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_AVG_SPACING,m_nb_neighbors_avg_spacing);
     DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_OUTLIER_REMOVAL,m_nb_neighbors_remove_outliers);
     DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_SMOOTH_JET_FITTING,m_nb_neighbors_smooth_jet_fitting);
