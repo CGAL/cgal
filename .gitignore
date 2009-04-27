@@ -1,3 +1,11 @@
+AABB_tree/examples/AABB_tree/AABB_examples.sln
+AABB_tree/examples/AABB_tree/AABB_polyhedron_edge_example.vcproj
+AABB_tree/examples/AABB_tree/AABB_polyhedron_facet_example.vcproj
+AABB_tree/examples/AABB_tree/AABB_segment_3_example.vcproj
+AABB_tree/examples/AABB_tree/AABB_triangle_3_example.vcproj
+AABB_tree/test/AABB_tree/AABB_tests.sln
+AABB_tree/test/AABB_tree/aabb_intersection_triangle_test.vcproj
+AABB_tree/test/AABB_tree/aabb_projection_triangle_test.vcproj
 Alpha_shapes_2/demo/Alpha_shapes_2/*.exe
 Alpha_shapes_2/demo/Alpha_shapes_2/*.vcproj
 Alpha_shapes_2/demo/Alpha_shapes_2/Makefile
