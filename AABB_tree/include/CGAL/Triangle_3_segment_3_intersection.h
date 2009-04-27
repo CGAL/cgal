@@ -21,7 +21,7 @@
 #define CGAL_TRIANGLE_3_SEGMENT_3_INTERSECTION_H
 
 #include <CGAL/kernel_basic.h>
-#include <CGAL/intersections.h>
+#include <CGAL/intersection_3.h>
 
 namespace CGAL {
 namespace CGALi {
