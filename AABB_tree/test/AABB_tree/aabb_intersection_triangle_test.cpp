@@ -89,30 +89,96 @@ void test_all_query_types(Tree& tree)
     tree.all_intersections(segment,std::back_inserter(intersections));
 }
 
-template <class Tree, class Polyhedron, class K>
-void test_speed(Tree& tree,
-                Polyhedron& polyhedron)
+double random_in(const double a,
+                 const double b)
 {
-    std::cout << "Test for speed" << std::endl;
+    double r = rand() / (double)RAND_MAX;
+    return a + (b - a) * r;
+}
+
+template <class K>
+typename K::Point_3 random_point_in(CGAL::Bbox_3& bbox)
+{
+    typedef typename K::FT FT;
+    FT x = (FT)random_in(bbox.xmin(),bbox.xmax());
+    FT y = (FT)random_in(bbox.ymin(),bbox.ymax());
+    FT z = (FT)random_in(bbox.zmin(),bbox.zmax());
+    return K::Point_3(x,y,z);
+}
+
+template <class K>
+typename K::Vector_3 random_vector()
+{
+    typedef typename K::FT FT;
+    FT x = (FT)random_in(0.0,1.0);
+    FT y = (FT)random_in(0.0,1.0);
+    FT z = (FT)random_in(0.0,1.0);
+    return K::Vector_3(x,y,z);
+}
+
+enum Query_type {RAY_QUERY,
+                 SEGMENT_QUERY,
+                 LINE_QUERY};
+
+template <class Tree, class K>
+void test_speed_for_query(const Tree& tree,
+                          const Query_type query_type,
+                          const char *query_name)
+{
     typedef typename K::FT FT;
     typedef typename K::Ray_3 Ray;
+    typedef typename K::Line_3 Line;
     typedef typename K::Point_3 Point;
     typedef typename K::Vector_3 Vector;
+    typedef typename K::Segment_3 Segment;
 
     CGAL::Timer timer;
     unsigned int nb = 0;
     timer.start();
-    Point source((FT)0.0, (FT)0.0, (FT)0.0);
-    Vector vec((FT)0.1, (FT)0.2, (FT)0.3);
-    Ray ray(source, vec);
     while(timer.time() < 1.0)
     {
-        tree.do_intersect(ray);
+        switch(query_type)
+        {
+            case RAY_QUERY:
+                {
+                    Point source = random_point_in<K>(tree.root_bbox());
+                    Vector vec = random_vector<K>();
+                    Ray ray(source, vec);
+                    tree.do_intersect(ray);
+                    break;
+                }
+            case SEGMENT_QUERY:
+                {
+                    Point a = random_point_in<K>(tree.root_bbox());
+                    Point b = random_point_in<K>(tree.root_bbox());
+                    tree.do_intersect(Segment(a,b));
+                    break;
+                }
+                break;
+            case LINE_QUERY:
+                {
+                    Point a = random_point_in<K>(tree.root_bbox());
+                    Point b = random_point_in<K>(tree.root_bbox());
+                    tree.do_intersect(Line(a,b));
+                    break;
+                }
+        }
         nb++;
     }
-    double speed = (double)nb / timer.time();
-    std::cout << speed << " intersections/s" << std::endl;
+    unsigned int speed = (unsigned int)(nb / timer.time());
+    std::cout.precision(10);
+    std::cout.width(15);
+    std::cout << speed << " intersections/s with " << query_name << std::endl;
     timer.stop();
+}
+
+template <class Tree, class K>
+void test_speed(Tree& tree)
+{
+    std::cout << "Test for speed" << std::endl;
+    test_speed_for_query<Tree,K>(tree,RAY_QUERY,"ray");
+    test_speed_for_query<Tree,K>(tree,LINE_QUERY,"line");
+    test_speed_for_query<Tree,K>(tree,SEGMENT_QUERY,"segment");
 }
 
 template <class K>
@@ -133,17 +199,23 @@ void test(const char *filename)
     ifs >> polyhedron;
 
     // construct tree (without internal KD-tree as we do not query any projection).
+    std::cout << "construct tree...";
+    CGAL::Timer timer;
+    timer.start();
     Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
+    timer.stop();
+    std::cout << "done (" << timer.time() << " s)" << std::endl;
 
     // call tests
     test_all_query_types<Tree,K>(tree);
-    test_speed<Tree,Polyhedron,K>(tree,polyhedron);
+    test_speed<Tree,K>(tree);
 }
 
 void test_several_kernels(const char *filename)
 {
     std::cout << std::endl;
     std::cout << "Polyhedron " << filename << std::endl;
+    std::cout << "============================" << std::endl;
 
     std::cout << std::endl;
     std::cout << "Simple cartesian float kernel" << std::endl;

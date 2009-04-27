@@ -28,6 +28,8 @@
 
 #include <CGAL/AABB_intersections.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -82,17 +84,28 @@ void test(const char *filename)
 
 void test_kernels(const char *filename)
 {
-        std::cout << std::endl;
-        std::cout << "Polyhedron " << filename << std::endl;
+    std::cout << std::endl;
+    std::cout << "Polyhedron " << filename << std::endl;
 
-        std::cout << "Simple cartesian float kernel" << std::endl;
-        test<CGAL::Simple_cartesian<float> >(filename);
+    std::cout << std::endl;
+    std::cout << "Simple cartesian float kernel" << std::endl;
+    test<CGAL::Simple_cartesian<float> >(filename);
 
-        std::cout << "Simple cartesian double kernel" << std::endl;
-        test<CGAL::Simple_cartesian<double> >(filename);
+    std::cout << std::endl;
+    std::cout << "Cartesian float kernel" << std::endl;
+    test<CGAL::Cartesian<float> >(filename);
 
-        std::cout << "Epic kernel" << std::endl;
-        test<CGAL::Exact_predicates_inexact_constructions_kernel>(filename);
+    std::cout << std::endl;
+    std::cout << "Simple cartesian double kernel" << std::endl;
+    test<CGAL::Simple_cartesian<double> >(filename);
+
+    std::cout << std::endl;
+    std::cout << "Cartesian double kernel" << std::endl;
+    test<CGAL::Cartesian<double> >(filename);
+
+    std::cout << std::endl;
+    std::cout << "Epic kernel" << std::endl;
+    test<CGAL::Exact_predicates_inexact_constructions_kernel>(filename);
 }
 
 int main(void)
@@ -101,5 +114,6 @@ int main(void)
         test_kernels("./data/cube.off");
         test_kernels("./data/coverrear.off");
         test_kernels("./data/nested_spheres.off");
+        test_kernels("./data/lucy.off");
         return 0;
 }
