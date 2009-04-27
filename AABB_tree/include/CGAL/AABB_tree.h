@@ -93,6 +93,8 @@ namespace CGAL {
 
         Projection closest_point(const Projection_query& q,
             const Projection& hint) const;
+
+        // TOFIX: make it const
         Projection closest_point(const Projection_query& q);
 
         //////////////////////////////////////////////
@@ -435,16 +437,22 @@ namespace CGAL {
     // first nearest neighbor point to get a hint
     template<typename Tr>
     typename AABB_tree<Tr>::Projection
-        AABB_tree<Tr>::closest_point(const Projection_query& query)
+        AABB_tree<Tr>::closest_point(const Projection_query& query) 
     {
         // construct search KD-tree if needed
-        if(!m_search_tree_constructed)
-            construct_search_tree();
-
-        Projection hint = m_search_tree.nearest_point(query);
+        Projection hint;
+        if(m_search_tree_constructed)
+        {
+            // pick nearest neighbor point as hint (fast)
+            hint = m_search_tree.nearest_point(query);
+        }
+        else
+        {
+            // pick first primitive reference point as hint (naive)
+            hint = m_data[0].reference_point();
+        }
         return closest_point(query,hint);
     }
-
 
 } // end namespace CGAL
 
