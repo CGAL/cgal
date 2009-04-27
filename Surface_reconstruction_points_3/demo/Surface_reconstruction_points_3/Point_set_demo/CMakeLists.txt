@@ -80,6 +80,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif(TAUCS_FOUND)
 
   if(GLEW_FOUND)
+    include_directories ( ${GLEW_INCLUDE_DIR} )
     add_definitions(-DCGAL_GLEW_ENABLED)
   else(GLEW_FOUND)
     message(STATUS "warning: GLEW is not found. Splatting will not be available.")
@@ -122,15 +123,19 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
   target_link_libraries(scene_polyhedron_item scene_item)
 
-  add_library(point_set SHARED
-    Point_set_scene_item.cpp Point_set_scene_item.moc)
-  target_link_libraries(point_set scene_item)
-
   if(GLEW_FOUND)
     qt4_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
     add_library(gl_splat SHARED
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
     target_link_libraries(gl_splat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
+  endif(GLEW_FOUND)
+
+  add_library(point_set SHARED
+    Point_set_scene_item.cpp Point_set_scene_item.moc)
+  target_link_libraries(point_set scene_item)
+  
+  if(GLEW_FOUND)
+    target_link_libraries( point_set gl_splat ${GLEW_LIBRARIES} )
   endif(GLEW_FOUND)
 
   add_definitions(-DQT_STATICPLUGIN)
@@ -165,12 +170,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Point_set_demo ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
-  if(GLEW_FOUND)
-    target_link_libraries( Point_set_demo gl_splat )
-  endif(GLEW_FOUND)
-
   # Link with the scene_item libraries
   target_link_libraries( Point_set_demo scene_item scene_polyhedron_item point_set )
+
+  if(GLEW_FOUND)
+    target_link_libraries( Point_set_demo gl_splat ${GLEW_LIBRARIES} )
+  endif(GLEW_FOUND)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Point_set_demo )
 
