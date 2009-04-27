@@ -112,7 +112,7 @@ in the directory that contains this INSTALL file. You can add several options
 to this command. The most important ones are
 
   -DCMAKE_INSTALL_PREFIX=<dir>          installation directory [/usr/local]
-  -DCMAKE_BUILD_TYPE=<Debug|Release>    build type [Debug]
+  -DCMAKE_BUILD_TYPE=<Debug|Release>    build type [Release]
   -DBUILD_SHARED_LIBS=<TRUE|FALSE>      shared or static libraries [TRUE]
   -DCMAKE_C_COMPILER=<program>          C compiler [gcc]
   -DCMAKE_CXX_COMPILER=<program>        C++ compiler [g++]
