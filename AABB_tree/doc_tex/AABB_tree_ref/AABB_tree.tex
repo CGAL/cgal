@@ -19,7 +19,7 @@
 
 \ccDefinition
   
-The class \ccRefName\ is a data structure for efficient intersection detection and projection in 3D. It builds a hierarchy of axis-aligned bounding boxes from a set of 3D geometric objects such as triangles, and can received intersection and projection queries, provided that the corresponding predicates are implemented in the traits class. 
+The class \ccRefName\ is a static data structure for efficient intersection detection and projection in 3D. It builds a hierarchy of axis-aligned bounding boxes from a set of 3D geometric objects such as triangles, and can receive intersection and projection queries, provided that the corresponding predicates are implemented in the traits class. 
 
 The template parameter \ccc{Traits} stands for a traits class which must be a model of the concept \ccc{AABBTraits}.
 
@@ -37,7 +37,7 @@ The template parameter \ccc{Traits} stands for a traits class which must be a mo
 %\ccNestedType{AABB}{some nested types}
 
 \ccCreation
-\ccCreationVariable{tree}  %% choose variable name
+\ccCreationVariable{tree}  %% variable name
 
 \ccConstructor{AABB_tree();}{Default constructor.}
 \ccConstructor{template < class ConstPrimitiveIterator>

@@ -49,7 +49,7 @@ The concept \ccRefName\ describes the requirements for the primitives stored in 
 
 \ccExample
 
-The \ccc{Primitive} type can be, e.g., a wrapper around a \ccc{Handle}. Assume for instance that the input objects are the triangle faces of a mesh stored as a \ccc{CGAL::Polyhedron}. The \ccc{Datum} would be a \ccc{Triangle_3} and the \ccc{Id} would be a polyhedron \ccc{Face_handle}. Function \ccc{datum()} can return either a \ccc{Triangle_3} constructed on the fly (memory saving) from the id (face handle) or a \ccc{Triangle_3} stored internally (faster but more memory consuming). 
+The \ccc{Primitive} type can be, e.g., a wrapper around a \ccc{Handle}. Assume for instance that the input objects are the triangle faces of a mesh stored as a \ccc{CGAL::Polyhedron}. The \ccc{Datum} would be a \ccc{Triangle_3} and the \ccc{Id} would be a polyhedron \ccc{Face_handle}. Function \ccc{datum()} can return either a \ccc{Triangle_3} constructed on the fly (memory saving) from the id (face handle) or a \ccc{Triangle_3} stored internally (faster but memory consuming). 
 
 \end{ccRefConcept}
 
