@@ -28,8 +28,7 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 
 \ccTypes
 
-\ccNestedType{Primitive}{This type must be a model of the concept
-\ccc{AABBPrimitive}.}
+\ccNestedType{Primitive}{Type of primitive. Must be a model of the concept \ccc{AABBPrimitive}.}
 \ccGlue
 \ccNestedType{Bounding_box}{Bounding box type.}
 \ccGlue
@@ -41,7 +40,7 @@ The following types are required for projection queries.
 \ccGlue
 \ccNestedType{Projection_query}{Type for which projection queries are issued.}
 \ccGlue
-\ccNestedType{Projection}{Type of projection output.}
+\ccNestedType{Projection}{Type of projection result.}
 	
 
 \ccCreation
@@ -54,14 +53,14 @@ The following types are required for projection queries.
 During the construction of the \ccc{AABB_tree}, the primitives are sorted according to some comparison functions related to the $x$, $y$ or $z$ coordinate axis.
 
 % TODO: replace by sort function (way much faster as we do not have to sort many times)
-\ccMethod{bool x_less_than(const Primitive & pr1, const Primitive & pr2);}{}
+\ccMethod{bool less_x(const Primitive & pr1, const Primitive & pr2);}{}
 \ccGlue
-\ccMethod{bool y_less_than(const Primitive & pr1, const Primitive & pr2);}{}
+\ccMethod{bool less_y(const Primitive & pr1, const Primitive & pr2);}{}
 \ccGlue
-\ccMethod{bool z_less_than(const Primitive & pr1, const Primitive & pr2);}{}
+\ccMethod{bool less_z(const Primitive & pr1, const Primitive & pr2);}{}
 
 \ccMethod{Bounding_box compute_bbox(const_primitive_iterator begin,                                                const_primitive_iterator beyond);}
-{Computes and returns the bounding box of a set of primitives.}
+{Returns the bounding box of a set of primitives.}
 
 The following predicates are required for each type \ccc{Query}
 for which the class \ccc{AABB_tree<Traits>} may receive a query.

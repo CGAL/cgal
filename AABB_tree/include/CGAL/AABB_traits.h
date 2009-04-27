@@ -80,11 +80,11 @@ public:
   ~AABB_traits() { };
 
   /// Comparison functions
-  static bool x_less_than(const Primitive& pr1, const Primitive& pr2)
+  static bool less_x(const Primitive& pr1, const Primitive& pr2)
   { return pr1.reference_point().x() < pr2.reference_point().x(); }
-  static bool y_less_than(const Primitive& pr1, const Primitive& pr2)
+  static bool less_y(const Primitive& pr1, const Primitive& pr2)
   { return pr1.reference_point().y() < pr2.reference_point().y(); }
-  static bool z_less_than(const Primitive& pr1, const Primitive& pr2)
+  static bool less_z(const Primitive& pr1, const Primitive& pr2)
   { return pr1.reference_point().z() < pr2.reference_point().z(); }
 
   /// UNDOCUMENTED FEATURE
@@ -182,13 +182,13 @@ AABB_traits<GT,P>::sort_primitives(PrimitiveIterator first,
   switch(longest_axis(bbox))
   {
   case CGAL_AXIS_X: // sort along x
-    std::nth_element(first, middle, beyond, x_less_than);
+    std::nth_element(first, middle, beyond, less_x);
     break;
   case CGAL_AXIS_Y: // sort along y
-    std::nth_element(first, middle, beyond, y_less_than);
+    std::nth_element(first, middle, beyond, less_y);
     break;
   case CGAL_AXIS_Z: // sort along z
-    std::nth_element(first, middle, beyond, z_less_than);
+    std::nth_element(first, middle, beyond, less_z);
     break;
   default:
     CGAL_error();
