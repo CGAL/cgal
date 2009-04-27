@@ -27,12 +27,6 @@
 #include <CGAL/Bbox_3.h>
 #include <vector>
 
-#include <boost/mpl/vector.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/mpl/contains.hpp>
-
-#include <CGAL/AABB_intersections.h>
-
 namespace CGAL {
 
 /**

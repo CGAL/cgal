@@ -25,9 +25,6 @@
 #include <iterator>
 #include <CGAL/AABB_node.h>
 #include <CGAL/AABB_search_tree.h>
-#include <boost/mpl/vector.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/mpl/contains.hpp>
 
 namespace CGAL {
 
@@ -63,7 +60,7 @@ namespace CGAL {
         AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
         /// Non virtual destructor
-        ~AABB_tree();
+        ~AABB_tree() { delete[] m_p_root; }
 
         /// Construct internal search tree with a given point set
         template<typename ConstPointIterator>
@@ -95,7 +92,7 @@ namespace CGAL {
             Primitive& pr) const;
 
         Projection closest_point(const Projection_query& q,
-            const Projection& hint);
+            const Projection& hint) const;
         Projection closest_point(const Projection_query& q);
 
         //////////////////////////////////////////////
@@ -225,14 +222,13 @@ namespace CGAL {
         {
         public:
             Listing_primitive_traits(Output_iterator out_it)
-                : intersection_()
-                , out_it_(out_it) {}
+                : out_it_(out_it) {}
 
             bool go_further() const { return true; }
 
             void intersection(const Query& q, const Primitive& primitive)
             {
-                if( AABBTraits().intersection(q, primitive, intersection_) )
+                if( AABBTraits().do_intersect(q, primitive) )
                 {
                     *out_it_++ = primitive;
                 }
@@ -244,7 +240,6 @@ namespace CGAL {
             }
 
         private:
-            Intersection intersection_;
             Output_iterator out_it_;
         };
 
@@ -349,19 +344,12 @@ namespace CGAL {
         // iterate over primitives to get points on them
         std::list<Projection_query> points;
         typename std::vector<Primitive>::const_iterator it;
-        for(it = m_data.begin(); it != m_data.end(); it++)
+        for(it = m_data.begin(); it != m_data.end(); ++it)
         {
-            const Primitive& pr = *it;
-            points.push_back(pr.reference_point());
+            points.push_back(it->reference_point());
         }
         m_search_tree.init(points.begin(), points.end());
         m_search_tree_constructed = true;
-    }
-
-    template<typename Tr>
-    AABB_tree<Tr>::~AABB_tree()
-    {
-        delete[] m_p_root;
     }
 
     template<typename Tr>
@@ -435,7 +423,7 @@ namespace CGAL {
     template<typename Tr>
     typename AABB_tree<Tr>::Projection
         AABB_tree<Tr>::closest_point(const Projection_query& query,
-        const Projection& hint)
+        const Projection& hint) const
     {
         Projecting_traits traversal_traits(query,hint);
 
@@ -453,11 +441,8 @@ namespace CGAL {
         if(!m_search_tree_constructed)
             construct_search_tree();
 
-        Projection_query hint = m_search_tree.nearest_point(query);
-        Projecting_traits traversal_traits(query,hint);
-
-        this->traversal(query, traversal_traits);
-        return traversal_traits.projection();
+        Projection hint = m_search_tree.nearest_point(query);
+        return closest_point(query,hint);
     }
 
 

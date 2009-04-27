@@ -25,12 +25,15 @@
 #include <iostream>
 #include <fstream>
 #include <CGAL/Timer.h>
+
+#include <CGAL/AABB_intersections.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 template <class Tree, class Polyhedron, class K>
 void test_speed(Tree& tree,
@@ -95,8 +98,8 @@ void test_kernels(const char *filename)
 int main(void)
 {
         std::cout << "AABB projection tests" << std::endl;
-        test_kernels("../data/cube.off");
-        test_kernels("../data/coverrear.off");
-        test_kernels("../data/nested_spheres.off");
+        test_kernels("./data/cube.off");
+        test_kernels("./data/coverrear.off");
+        test_kernels("./data/nested_spheres.off");
         return 0;
 }

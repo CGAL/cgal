@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL:  $
+// $Id:  $
 //
 //
 // Author(s)     : Pierre Alliez
@@ -23,10 +23,12 @@
 //******************************************************************************
 
 #include <iostream>
+
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_polyhedron_edge_primitive.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -53,7 +55,7 @@ int main(void)
         Point base(0.2, 0.2, 0.2);
         Vector normal(0.1, 0.2, 0.3);
         Plane plane(base,normal);
-        std::cout << tree.number_of_intersections(plane) 
+        std::cout << tree.number_of_intersections(plane)
                 << " intersections(s) with plane" << std::endl;
         return 0;
 }

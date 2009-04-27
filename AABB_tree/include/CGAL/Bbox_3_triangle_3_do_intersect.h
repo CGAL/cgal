@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez
 
@@ -24,7 +24,7 @@
 #include <CGAL/Bbox_3.h>
 
 // Fast Triangle-Cuboid intersection test, following Tomas Akenine-Moeller description.
-// The code looks slightly different from his code because we avoid the translation at 
+// The code looks slightly different from his code because we avoid the translation at
 // a minimal cost (and we use C++ ;).
 
 #include <CGAL/number_utils.h>
@@ -41,10 +41,10 @@ namespace CGALi {
 
   template <class K>
   inline
-    bool do_bbox_intersect(const typename K::Triangle_3& triangle, 
+    bool do_bbox_intersect(const typename K::Triangle_3& triangle,
     const CGAL::Bbox_3& bbox)
   {
-    const typename K::Point_3& p = triangle.vertex(0), 
+    const typename K::Point_3& p = triangle.vertex(0),
       q = triangle.vertex(1),
       r = triangle.vertex(2);
     for(int i = 0; i < 3; ++i) {
@@ -84,21 +84,64 @@ namespace CGALi {
     return true;
   }
 
+  // AXE is the axe such that p is orthogonal to it.
+  // if you do not know it, or if it does not exist,
+  // use get_min_max without the AXE template parameter
+  // available in _plane_is_cuboid_do_intersect.h
+  template <class K, int AXE>
+  inline
+    void get_min_max(const typename K::FT& px,
+    const typename K::FT& py,
+    const typename K::FT& pz,
+    const CGAL::Bbox_3& c,
+    typename K::Point_3& p_min,
+    typename K::Point_3& p_max)
+  {
+    if(AXE == 0 || px > 0) {
+      if(AXE == 1 || py > 0) {
+  if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmin(), c.ymin(),c.zmin());
+  p_max = typename K::Point_3(c.xmax(), c.ymax(),c.zmax());}
+  else {                   p_min = typename K::Point_3(c.xmin(), c.ymin(),c.zmax());
+  p_max = typename K::Point_3(c.xmax(), c.ymax(),c.zmin());}
+      }
+      else {
+  if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmin(), c.ymax(),c.zmin());
+  p_max = typename K::Point_3(c.xmax(), c.ymin(),c.zmax());}
+  else {                   p_min = typename K::Point_3(c.xmin(), c.ymax(),c.zmax());
+  p_max = typename K::Point_3(c.xmax(), c.ymin(),c.zmin());}
+      }
+    }
+    else {
+      if(AXE == 1 || py > 0) {
+  if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmax(), c.ymin(),c.zmin());
+  p_max = typename K::Point_3(c.xmin(), c.ymax(),c.zmax());}
+  else {                   p_min = typename K::Point_3(c.xmax(), c.ymin(),c.zmax());
+  p_max = typename K::Point_3(c.xmin(), c.ymax(),c.zmin());}
+      }
+      else {
+  if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmax(), c.ymax(),c.zmin());
+  p_max = typename K::Point_3(c.xmin(), c.ymin(),c.zmax());}
+  else {                   p_min = typename K::Point_3(c.xmax(), c.ymax(),c.zmax());
+  p_max = typename K::Point_3(c.xmin(), c.ymin(),c.zmin());}
+      }
+    }
+  }
+
   template <class K, int AXE, int SIDE>
   inline
     bool do_axis_intersect(const typename K::Triangle_3& triangle,
-    const typename K::Vector_3* sides, 
+    const typename K::Vector_3* sides,
     const CGAL::Bbox_3& bbox)
   {
     const typename K::Point_3& j = triangle.vertex(SIDE);
     const typename K::Point_3& k = triangle.vertex((SIDE+2)%3);
 
     typename K::FT t_min = AXE==0? -sides[SIDE].z()*j.y() + sides[SIDE].y()*j.z():
-      AXE==1?  sides[SIDE].z()*j.x() - sides[SIDE].x()*j.z(): 
+      AXE==1?  sides[SIDE].z()*j.x() - sides[SIDE].x()*j.z():
       -sides[SIDE].y()*j.x() + sides[SIDE].x()*j.y();
 
     typename K::FT t_max = AXE==0? -sides[SIDE].z()*k.y() + sides[SIDE].y()*k.z():
-      AXE==1?  sides[SIDE].z()*k.x() - sides[SIDE].x()*k.z(): 
+      AXE==1?  sides[SIDE].z()*k.x() - sides[SIDE].x()*k.z():
       -sides[SIDE].y()*k.x() + sides[SIDE].x()*k.y();
 
     typename K::FT tmp;
@@ -124,53 +167,10 @@ namespace CGALi {
     return true;
   }
 
-  // AXE is the axe such that p is orthogonal to it.
-  // if you do not know it, or if it does not exist, 
-  // use get_min_max without the AXE template parameter
-  // available in _plane_is_cuboid_do_intersect.h
-  template <class K, int AXE>
-  inline
-    void get_min_max(const typename K::FT& px,
-    const typename K::FT& py,
-    const typename K::FT& pz,
-    const CGAL::Bbox_3& c,
-    typename K::Point_3& p_min, 
-    typename K::Point_3& p_max)
-  {
-    if(AXE == 0 || px > 0) {
-      if(AXE == 1 || py > 0) {
-	if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmin(), c.ymin(),c.zmin()); 
-	p_max = typename K::Point_3(c.xmax(), c.ymax(),c.zmax());}
-	else {							     p_min = typename K::Point_3(c.xmin(), c.ymin(),c.zmax()); 
-	p_max = typename K::Point_3(c.xmax(), c.ymax(),c.zmin());}
-      }
-      else {
-	if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmin(), c.ymax(),c.zmin()); 
-	p_max = typename K::Point_3(c.xmax(), c.ymin(),c.zmax());}
-	else {					         p_min = typename K::Point_3(c.xmin(), c.ymax(),c.zmax()); 
-	p_max = typename K::Point_3(c.xmax(), c.ymin(),c.zmin());}
-      }
-    }
-    else {
-      if(AXE == 1 || py > 0) {
-	if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmax(), c.ymin(),c.zmin()); 
-	p_max = typename K::Point_3(c.xmin(), c.ymax(),c.zmax());}
-	else {					         p_min = typename K::Point_3(c.xmax(), c.ymin(),c.zmax()); 
-	p_max = typename K::Point_3(c.xmin(), c.ymax(),c.zmin());}
-      }
-      else {
-	if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmax(), c.ymax(),c.zmin()); 
-	p_max = typename K::Point_3(c.xmin(), c.ymin(),c.zmax());}
-	else {					         p_min = typename K::Point_3(c.xmax(), c.ymax(),c.zmax()); 
-	p_max = typename K::Point_3(c.xmin(), c.ymin(),c.zmin());}
-      }
-    }
-  }
-
   // assumes that the intersection with the supporting plane has
   // already been checked.
   template <class K>
-  bool do_intersect(const typename K::Triangle_3& triangle, 
+  bool do_intersect(const typename K::Triangle_3& triangle,
     const CGAL::Bbox_3& bbox,
     const K& kernel)
   {
@@ -200,20 +200,20 @@ namespace CGALi {
       return false;
     if(! do_axis_intersect<K,2,2>(triangle, sides, bbox))
       return false;
-    return true; 
+    return true;
   }
 
 } // namespace CGALi
 
 template <class K>
-bool do_intersect(const CGAL::Triangle_3<K>& triangle, 
+bool do_intersect(const CGAL::Triangle_3<K>& triangle,
 		  const CGAL::Bbox_3& bbox)
 {
   return typename K::Do_intersect_3()(triangle, bbox);
 }
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox, 
+bool do_intersect(const CGAL::Bbox_3& bbox,
 		  const CGAL::Triangle_3<K>& triangle)
 {
   return typename K::Do_intersect_3()(triangle, bbox);

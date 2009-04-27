@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL:  $
+// $Id:  $
 //
 //
 // Author(s)     : Camille Wormser, Pierre Alliez
@@ -23,10 +23,12 @@
 //******************************************************************************
 
 #include <iostream>
+
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -52,7 +54,7 @@ int main(void)
         Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
         Point source(0.2, 0.2, 0.2);
         Ray ray(source, Vector(0.1, 0.2, 0.3));
-        std::cout << tree.number_of_intersections(ray) 
+        std::cout << tree.number_of_intersections(ray)
                 << " intersections(s) with ray" << std::endl;
         return 0;
 }

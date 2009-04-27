@@ -27,6 +27,7 @@
 
 #include <CGAL/Timer.h>
 
+#include <CGAL/AABB_intersections.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -168,8 +169,8 @@ void test_several_kernels(const char *filename)
 int main(void)
 {
     std::cout << "AABB intersection tests" << std::endl;
-    test_several_kernels("../data/cube.off");
-    test_several_kernels("../data/coverrear.off");
-    test_several_kernels("../data/nested_spheres.off");
+    test_several_kernels("./data/cube.off");
+    test_several_kernels("./data/coverrear.off");
+    test_several_kernels("./data/nested_spheres.off");
     return 0;
 }

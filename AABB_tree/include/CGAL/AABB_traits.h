@@ -114,10 +114,17 @@ public:
                             ConstPrimitiveIterator beyond) const;
 
   template<typename Query>
-  bool do_intersect(const Query& q, const Bounding_box& bbox) const;
+  bool do_intersect(const Query& q, const Bounding_box& bbox) const
+  {
+    // AABB tree package call TODO: extend kernel
+    return CGAL::do_intersect(q, bbox);
+  }
 
   template<typename Query>
-  bool do_intersect(const Query& q, const Primitive& pr) const;
+  bool do_intersect(const Query& q, const Primitive& pr) const
+  {
+    return GeomTraits().do_intersect_3_object()(q, pr.datum());
+  }
 
   template<typename Query>
   bool intersection(const Query& q,
@@ -200,28 +207,6 @@ AABB_traits<GT,P>::compute_bbox(ConstPrimitiveIterator first,
     bbox = bbox + compute_bbox(*first);
   }
   return bbox;
-}
-
-
-template<typename GT, typename P>
-template<typename Query>
-bool
-AABB_traits<GT,P>::do_intersect(const Query& q,
-                                 const Bounding_box& bbox) const
-{
-  // AABB tree package call
-  // TODO: extend kernel
-  return CGAL::do_intersect(q, bbox);
-}
-
-
-template<typename GT, typename P>
-template<typename Query>
-bool
-AABB_traits<GT,P>::do_intersect(const Query& q,
-                                 const P& pr) const
-{
-  return GT().do_intersect_3_object()(q, pr.datum());
 }
 
 

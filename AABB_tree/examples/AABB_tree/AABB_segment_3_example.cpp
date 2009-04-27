@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL:  $
+// $Id:  $
 //
 //
 // Author(s)     : Pierre Alliez
@@ -24,10 +24,12 @@
 
 #include <iostream>
 #include <list>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/AABB_traits.h>
+
 #include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_segment_primitive.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
