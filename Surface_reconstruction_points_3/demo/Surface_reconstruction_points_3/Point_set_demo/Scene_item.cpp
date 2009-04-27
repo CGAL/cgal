@@ -4,6 +4,12 @@ const QColor Scene_item::defaultColor = QColor(100, 100, 255);
 
 Scene_item::~Scene_item() {}
 
+// Rendering mode list as a human readable string
+QString Scene_item::renderingModeNameList()
+{
+    return tr("Rendering mode (points/points+normals/splatting/wireframe/flat/flat+edges/Gouraud)");
+}
+
 // Rendering mode as a human readable string
 QString Scene_item::renderingModeName() const
 {

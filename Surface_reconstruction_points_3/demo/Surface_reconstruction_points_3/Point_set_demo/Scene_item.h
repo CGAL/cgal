@@ -24,6 +24,8 @@ public:
 
   static const QColor defaultColor; // defined in Scene_item.cpp
 
+  static QString renderingModeNameList(); // Rendering mode list as a human readable string
+
   Scene_item()
     : name_("unamed"),
       color_(defaultColor),

@@ -1,7 +1,7 @@
 #include <Qt/qglobal.h>
 
-#include <CGAL/AABB_tree/Plane_3_Bbox_3_do_intersect.h>
-#include <CGAL/AABB_tree/Triangle_3_plane_3_intersection.h>
+#include <CGAL/Plane_3_Bbox_3_do_intersect.h>
+#include <CGAL/Triangle_3_plane_3_intersection.h>
 #include "Messages_interface.h"
 #include "Scene_item_with_display_list.h"
 #include "Scene_plane_item.h"
@@ -12,8 +12,8 @@
 #include <CGAL/bounding_box.h>
 
 #include "Polyhedron_type.h"
-#include <CGAL/AABB_tree/AABB_tree.h>
-#include <CGAL/AABB_tree/Drawing_traits.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/Drawing_traits.h>
 
 #include <QTime>
 
@@ -21,9 +21,9 @@
 #include <QMainWindow>
 #include <QApplication>
 
-typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel; 
+typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel;
 
-typedef CGAL::AABB_tree<Simple_cartesian_kernel, 
+typedef CGAL::AABB_tree<Simple_cartesian_kernel,
                         Polyhedron::Facet_const_handle,
                         Polyhedron> AABB_tree;
 
@@ -35,7 +35,7 @@ public:
 
   bool isFinite() const { return true; }
   bool isEmpty() const { return tree.size() == 0; }
-  Bbox bbox() const { 
+  Bbox bbox() const {
     const CGAL::Bbox_3 bbox = tree.bbox();
     return Bbox(bbox.xmin(),
                 bbox.ymin(),
@@ -50,7 +50,7 @@ public:
   }
 
   QString toolTip() const {
-    return 
+    return
       tr("<p><b>%1</b> (mode: %2, color: %3)<br />"
          "<i>AABB_tree</i></p>"
          "<p>Number of nodes: %4</p>")
@@ -62,7 +62,7 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m == Wireframe); 
+    return (m == Wireframe);
   }
 
   // Wireframe OpenGL drawing in a display list
@@ -81,7 +81,7 @@ class Q_DECL_EXPORT Scene_edges_item : public Scene_item
 public:
   bool isFinite() const { return true; }
   bool isEmpty() const { return edges.empty(); }
-  Bbox bbox() const { 
+  Bbox bbox() const {
     if(isEmpty())
       return Bbox();
     CGAL::Bbox_3 bbox = edges.begin()->bbox();
@@ -103,7 +103,7 @@ public:
   }
 
   QString toolTip() const {
-    return 
+    return
       tr("<p><b>%1</b> (mode: %2, color: %3)<br />"
          "<i>Edges</i></p>"
          "<p>Number of edges: %4</p>")
@@ -114,8 +114,8 @@ public:
   }
 
   // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const { 
-    return (m == Wireframe); 
+  bool supportsRenderingMode(RenderingMode m) const {
+    return (m == Wireframe);
   }
 
   // Flat/Gouraud OpenGL drawing
@@ -140,7 +140,7 @@ public:
 }; // end class Scene_edges_item
 
 
-class Polyhedron_demo_cut_plugin : 
+class Polyhedron_demo_cut_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface
 {

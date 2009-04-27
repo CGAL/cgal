@@ -107,9 +107,9 @@ private:
   typedef QList<Scene_item*> Entries;
   Entries entries;
   int selected_item;
-  #ifdef CGAL_GLEW_ENABLED
+#ifdef CGAL_GLEW_ENABLED
   GlSplat::SplatRenderer* mSplatting;
-  #endif
+#endif
 
 }; // end class Scene
 

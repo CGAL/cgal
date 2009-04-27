@@ -148,7 +148,7 @@ void Point_set_scene_item::draw_splats() const
 {
   Q_ASSERT(m_points != NULL);
 
-  // Draw normals
+  // Draw splats
   bool points_have_normals = (m_points->begin() != m_points->end() &&
                               m_points->begin()->normal() != CGAL::NULL_VECTOR);
   bool points_have_radii =   (m_points->begin() != m_points->end() &&

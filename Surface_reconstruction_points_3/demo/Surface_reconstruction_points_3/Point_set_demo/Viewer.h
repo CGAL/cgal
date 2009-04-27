@@ -1,5 +1,6 @@
 #ifndef VIEWER_H
 #define VIEWER_H
+
 #include <QGLViewer/qglviewer.h>
 
 // forward declarations
@@ -36,6 +37,7 @@ private:
   bool antialiasing;
   bool twosides;
   bool m_isInitialized;
+
 }; // end class Viewer
 
 #endif // VIEWER_H

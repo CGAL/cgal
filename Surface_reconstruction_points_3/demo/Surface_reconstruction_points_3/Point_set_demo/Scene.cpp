@@ -29,9 +29,9 @@ Scene::Scene(QObject* parent)
   : QAbstractListModel(parent),
     selected_item(-1)
 {
-  #ifdef CGAL_GLEW_ENABLED
+#ifdef CGAL_GLEW_ENABLED
   mSplatting = new GlSplat::SplatRenderer();
-  #endif
+#endif
 }
 
 Scene::Item_id
@@ -74,9 +74,10 @@ Scene::~Scene()
     delete item_ptr;
   }
   entries.clear();
-  #ifdef CGAL_GLEW_ENABLED
+
+#ifdef CGAL_GLEW_ENABLED
   delete mSplatting;
-  #endif
+#endif
 }
 
 Scene_item*
@@ -148,9 +149,9 @@ Scene::convertToPointSet(Item_id index)
 
 void Scene::initializeGL()
 {
-  #ifdef CGAL_GLEW_ENABLED
+#ifdef CGAL_GLEW_ENABLED
   mSplatting->init();
-  #endif
+#endif
 }
 
 // workaround for Qt-4.2.
@@ -260,7 +261,7 @@ Scene::draw_aux(bool with_names)
     }
   }
 
-  #ifdef CGAL_GLEW_ENABLED
+#ifdef CGAL_GLEW_ENABLED
   // Splatting
   if(mSplatting->isSupported())
   {
@@ -288,7 +289,7 @@ Scene::draw_aux(bool with_names)
     }
     mSplatting->finalize();
   }
-  #endif
+#endif
 
   // Normals OpenGL drawing
   for(int index = 0; index < entries.size(); ++index)
@@ -413,7 +414,7 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
     }
     else if(role == ::Qt::ToolTipRole) {
       if(section == RenderingModeColumn) {
-	return tr("Rendering mode (points/points+normals/wireframe/flat/flat+edges/Gouraud)");
+	return Scene_item::renderingModeNameList();
       }
     }
   }

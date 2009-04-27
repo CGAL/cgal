@@ -329,9 +329,9 @@ public:
       const UI_point& p = *it;
       //::glColor4f(0.5,0.6,0.7,1.);
       ::glNormal3dv(&p.normal().x());
-      #ifdef CGAL_GLEW_ENABLED
+#ifdef CGAL_GLEW_ENABLED
       ::glMultiTexCoord1d(GL_TEXTURE2, p.radius());
-      #endif
+#endif
       ::glVertex3dv(&p.x());
     }
     ::glEnd();

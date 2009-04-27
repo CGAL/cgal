@@ -2,16 +2,26 @@
 
 project( Point_set_demo )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
+cmake_minimum_required(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 #option(POINT_SET_DEMO_ENABLE_FORWARD_DECL "In the Point Set demo, enable " OFF)
 #mark_as_advanced(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
 
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
+
+# Use packages improved since CGAL 3.4, if checked out
+foreach(DEP_PKG STL_Extension GraphicsView Filtered_kernel Profiling_tools Mesh_3)
+  foreach(CGAL_SVN_TRUNK ../../../ ../../trunk ..)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
+      include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
+      break()
+    endif()
+  endforeach()
+endforeach()
 
 # Require packages new or improved since CGAL 3.4
 include_directories (BEFORE ../../../../AABB_tree/include)
@@ -19,7 +29,7 @@ include_directories (BEFORE ../../../../Surface_mesher/include)
 include_directories (BEFORE ../../../../Point_set_processing_3/include)
 
 # Include this package's headers first
-include_directories (BEFORE . include ../../../include)
+include_directories( BEFORE ./ ./include ../../../include )
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)
@@ -214,8 +224,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(local_spacing_plugin Point_set_demo_local_spacing_plugin)
   target_link_libraries(local_spacing_plugin point_set)
 
-  polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
-  target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
+# TEMPORARY: commented out cut_plugin which does not compile
+#   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
+#   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
