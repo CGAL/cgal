@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s) : Pierre Alliez, Laurent Rineau, Stephane Tayeb 
+// Author(s) : Pierre Alliez, Laurent Rineau, Stephane Tayeb
 
 #ifndef CGAL_AABB_POLYHEDRAL_ORACLE_H
 #define CGAL_AABB_POLYHEDRAL_ORACLE_H
@@ -49,9 +49,10 @@ namespace CGAL {
     typedef Self Surface_3;
 
     // AABB tree
-    typedef typename AABB_polyhedron_triangle_primitive<Kernel, Polyhedron> AABB_primitive;
-    typedef typename AABB_traits<Kernel,AABB_primitive> AABB_traits;
-    typedef typename AABB_tree<AABB_traits> Tree;
+    typedef AABB_const_polyhedron_triangle_primitive<Kernel, Polyhedron>
+                                                                AABB_primitive;
+    typedef class AABB_traits<Kernel,AABB_primitive> AABB_traits;
+    typedef AABB_tree<AABB_traits> Tree;
     typedef typename AABB_traits::Bounding_box Bounding_box;
 
     typedef boost::shared_ptr<Tree> Tree_shared_ptr;
