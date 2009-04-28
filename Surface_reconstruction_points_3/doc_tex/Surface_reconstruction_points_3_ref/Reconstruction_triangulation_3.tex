@@ -204,9 +204,9 @@ Get the bounding sphere of all points.
 Get the bounding sphere of input points.
 }
 \ccGlue
-\ccMethod{Vertex_handle insert(const Point& p, Point_type type = INPUT, Cell_handle start = Cell_handle());}
+\ccMethod{Vertex_handle insert(const Point_with_normal& p, Point_type type = INPUT, Cell_handle start = Cell_handle());}
 {
-Insert point (model of \ccc{PointWithNormal_3}) in the triangulation. Default type is INPUT.
+Insert point in the triangulation. Default type is INPUT.
 }
 \ccGlue
 \ccMethod{template<class InputIterator> int insert(InputIterator first, InputIterator beyond, Point_type type = INPUT);}
@@ -219,7 +219,7 @@ Insert points in the triangulation using a spatial sort. Default type is INPUT.
 \ccCommentHeading{Returns} the number of inserted points.
 }
 \ccGlue
-\ccMethod{template<class CellIt> Vertex_handle insert_in_hole(const Point& p, CellIt cell_begin, CellIt cell_end, Cell_handle begin, int i, Point_type type = STEINER);}
+\ccMethod{template<class CellIt> Vertex_handle insert_in_hole(const Point_with_normal& p, CellIt cell_begin, CellIt cell_end, Cell_handle begin, int i, Point_type type = STEINER);}
 {
 Delaunay refinement callback: insert STEINER point in the triangulation.
 }
