@@ -97,13 +97,13 @@ double random_in(const double a,
 }
 
 template <class K>
-typename K::Point_3 random_point_in(CGAL::Bbox_3& bbox)
+typename K::Point_3 random_point_in(const CGAL::Bbox_3& bbox)
 {
     typedef typename K::FT FT;
     FT x = (FT)random_in(bbox.xmin(),bbox.xmax());
     FT y = (FT)random_in(bbox.ymin(),bbox.ymax());
     FT z = (FT)random_in(bbox.zmin(),bbox.zmax());
-    return K::Point_3(x,y,z);
+    return typename K::Point_3(x,y,z);
 }
 
 template <class K>
@@ -113,7 +113,7 @@ typename K::Vector_3 random_vector()
     FT x = (FT)random_in(0.0,1.0);
     FT y = (FT)random_in(0.0,1.0);
     FT z = (FT)random_in(0.0,1.0);
-    return K::Vector_3(x,y,z);
+    return typename K::Vector_3(x,y,z);
 }
 
 enum Query_type {RAY_QUERY,

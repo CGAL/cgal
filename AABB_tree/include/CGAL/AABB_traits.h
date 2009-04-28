@@ -134,15 +134,18 @@ public:
   Sphere sphere(const Projection_query& center,
                 const Projection& hint) const
   {
-    return Sphere(center, GeomTraits().compute_squared_distance_3_object()
-                                                          (center, hint));
+    return GeomTraits().construct_sphere_3_object()
+      (center, GeomTraits().compute_squared_distance_3_object()(center, hint));
   }
 
-  bool intersection(const Sphere& sphere,
-                    const Primitive& pr,
-                    Projection& projection_return) const;
-
-  bool is_contained(const Sphere& a, const Sphere& b) const;
+  template <typename Query>
+  Projection nearest_point(const Query& q,
+                           const Primitive& pr,
+                           const Projection& bound) const
+  {
+    return CGAL::nearest_point_3(q, pr.datum(), bound);
+    //return GeomTraits().nearest_point_3_object()(q, pr.datum(), bound);
+  }
 
 private:
   /**
@@ -170,6 +173,7 @@ private:
   Self& operator=(const Self& src);
 
 };  // end class AABB_traits
+
 
 template<typename GT, typename P>
 template<typename PrimitiveIterator>
@@ -234,50 +238,6 @@ AABB_traits<GT,P>::intersection(const Query& q,
 }
 
 
-// PA: CAREFUL: the ad-hoc code here must be removed.
-
-template<typename GT, typename P>
-bool
-AABB_traits<GT,P>::intersection(const Sphere& sphere,
-                                 const P& pr,
-                                 Projection& projected) const
-{
-  typedef typename P::Datum Triangle_3;
-
-  const Triangle_3 triangle = pr.datum();
-  projected = triangle.supporting_plane().projection(sphere.center());
-
-  // If point is projected outside sphere, return false
-  if ( sphere.bounded_side(projected) == CGAL::ON_UNBOUNDED_SIDE )
-  {
-    return false;
-  }
-
-  if( is_inside_triangle_3(projected, triangle) )  // projected is modified
-  {
-    return true;
-  }
-
-  if(sphere.bounded_side(projected) == CGAL::ON_UNBOUNDED_SIDE)
-  {
-    return false;
-  }
-
-  return true;
-}
-
-
-template<typename GT, typename P>
-bool
-AABB_traits<GT,P>::is_contained(const Sphere& a, const Sphere& b) const
-{
-  CGAL_precondition(a.center() == b.center());
-
-  return ( GT().compute_squared_radius_3_object()(a)
-           < GT().compute_squared_radius_3_object()(b) );
-}
-
-
 
 //-------------------------------------------------------
 // Private methods
@@ -312,56 +272,6 @@ AABB_traits<GT,P>::longest_axis(const Bounding_box& bbox) const
       return CGAL_AXIS_Z;
     }
   }
-}
-
-// PA: ad-hoc code to be removed
-template<typename GT, typename P>
-bool
-AABB_traits<GT,P>::is_inside_triangle_3(Point_3& p,
-                                         const Triangle_3& t) const
-{
-  typedef typename GT::Vector_3 Vector;
-  typedef typename GT::Line_3 Line;
-
-  Vector w = CGAL::cross_product(t.vertex(1) - t.vertex(0),
-                                 t.vertex(2) - t.vertex(0));
-  bool out = false;
-  for(int i = 0; i < 3; ++i)
-  {
-    Vector v = CGAL::cross_product(t.vertex(i+1) - t.vertex(i),
-                                   p - t.vertex(i));
-    if(v*w < 0)
-    { // p is outside, on the side of (i, i+1)
-      out = true;
-      if(   (p - t.vertex(i))*(t.vertex(i+1) - t.vertex(i)) >= 0
-         && (p - t.vertex(i+1))*(t.vertex(i) - t.vertex(i+1)) >= 0 )
-      {
-        p = Line(t.vertex(i), t.vertex(i+1)).projection(p);
-        return false;
-      }
-    }
-  }
-
-  if(out)
-  {
-    typename GT::Compare_distance_3 c = GT().compare_distance_3_object();
-    if(c(p, t.vertex(1), t.vertex(0)) == CGAL::LARGER &&
-       c(p, t.vertex(2), t.vertex(0)) == CGAL::LARGER)
-    {
-       p = t.vertex(0);
-       return false;
-    }
-    if(c(p, t.vertex(0), t.vertex(1)) == CGAL::LARGER &&
-       c(p, t.vertex(2), t.vertex(1)) == CGAL::LARGER)
-    {
-       p = t.vertex(1);
-       return false;
-    }
-    p = t.vertex(2);
-    return false;
-  }
-
-  return true;
 }
 
 

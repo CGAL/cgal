@@ -14,3 +14,5 @@
 #include <CGAL/Triangle_3_line_3_intersection.h>
 #include <CGAL/Triangle_3_plane_3_intersection.h>
 #include <CGAL/Triangle_3_segment_3_intersection.h>
+
+#include <CGAL/Point_3_triangle_3_point_3_nearest_point_3.h>

@@ -254,26 +254,14 @@ namespace CGAL {
             Projecting_traits(const Projection_query& query,
                 const Projection& hint)
                 : projection_(hint)
-                , center_(query)
                 , sphere_(AABBTraits().sphere(query,hint))         { }
 
             bool go_further() const { return true; }
 
             void intersection(const Projection_query& q, const Primitive& primitive)
             {
-                // We don't use q here because it is embedded in sphere_ and we don't
-                // want to compute sphere everytime
-
-                Projection projection;
-                if ( AABBTraits().intersection(sphere_, primitive, projection) )
-                {
-                    const Sphere sphere = AABBTraits().sphere(center_, projection);
-                    if ( AABBTraits().is_contained(sphere, sphere_) )
-                    {
-                        projection_ = projection;
-                        sphere_ = sphere;
-                    }
-                }
+                projection_ = AABBTraits().nearest_point(q, primitive, projection_);
+                sphere_ = AABBTraits().sphere(q, projection_);
             }
 
             bool do_intersect(const Projection_query& q, const Node& node) const
@@ -285,7 +273,6 @@ namespace CGAL {
 
         private:
             Projection projection_;
-            Projection_query center_;
             Sphere sphere_;
         };
 
@@ -437,7 +424,7 @@ namespace CGAL {
     // first nearest neighbor point to get a hint
     template<typename Tr>
     typename AABB_tree<Tr>::Projection
-        AABB_tree<Tr>::closest_point(const Projection_query& query) 
+        AABB_tree<Tr>::closest_point(const Projection_query& query)
     {
         // construct search KD-tree if needed
         Projection hint;
