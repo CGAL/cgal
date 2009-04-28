@@ -86,6 +86,28 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     message(STATUS "warning: GLEW is not found. Splatting will not be available.")
   endif(GLEW_FOUND)
 
+  # VisualC++ optimization for applications dealing with large data
+  if (MSVC)
+    # Use /EHa option to catch stack overflows.
+    # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
+
+    # Allow Windows applications to use up to 3GB of RAM
+    SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
+
+    # Turn off stupid VC++ warnings
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4267 /wd4311 /wd4800 /wd4503 /wd4244 /wd4345 /wd4996 /wd4396 /wd4018")
+
+    # Speed up debugger
+    SET (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_HAS_ITERATOR_DEBUGGING=0")
+
+    # Print new compilation options
+    message( STATUS "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'" )
+    message( STATUS "USING DEBUG EXEFLAGS   = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}'" )
+    message( STATUS "USING RELEASE CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}'" )
+    message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
+  endif()
+
   # Temporary debugging stuff
   #add_definitions(-DDEBUG_TRACE)
 
