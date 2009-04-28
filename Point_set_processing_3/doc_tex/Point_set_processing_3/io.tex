@@ -1,0 +1,21 @@
+\section{Input/Output}
+
+The algorithms of this component takes as input parameters iterator ranges of 3D points, normals (3D vectors), and 3D points with normals. \cgal\ provides the next classes to implement points and normals:
+
+\begin{itemize}
+\item \ccRefIdfierPage{CGAL::Point_3<GeomTraits>} \\
+\cgal\ 3D position.
+\item \ccRefIdfierPage{CGAL::Vector_3<GeomTraits>} \\
+\cgal\ 3D vector.
+\item \ccRefIdfierPage{CGAL::Point_with_normal_3<GeomTraits, Normal_3>} \\
+3D point location plus normal.
+\end{itemize}
+
+We provide functions to read and write sets of points or points with normals from the following ASCII file formats: XYZ (three point coordinates \ccc{x y z} per line or three point coordinates and three normal vector coordinates \ccc{x y z nx ny nz} per line) and OFF (Geomview Object File Format), see \cite{cgal-off-format}. % TOFIX: add ref to http://www.geomview.org/
+\ccRefIdfierPage{CGAL::read_xyz_point_set}  \\
+\ccRefIdfierPage{CGAL::read_off_point_set}  \\
+\ccRefIdfierPage{CGAL::write_off_point_set}  \\
+\ccRefIdfierPage{CGAL::write_xyz_point_set}  \\
+
+The following example reads a point set from an input file stream and writes it to a file stream, both in the xyz format.
+\ccIncludeExampleCode{Point_set_processing_3/read_write_xyz_point_set_example.cpp}

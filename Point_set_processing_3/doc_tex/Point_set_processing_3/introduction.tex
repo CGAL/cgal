@@ -1,11 +1,11 @@
 \section{Introduction}
 
+This \cgal\ component implements methods to analyze and process unorganized 3D point sets. The input is an unorganized 3D point set, possibly with attributes such as unoriented or oriented normals. This point set can be analyzed to measure certain geometric properties such as average spacing between the points and their $K$ nearest neighbors. We can furthermore process the point set with functions devoted to the simplification, outlier removal, smoothing, normal estimation and normal orientation. 
 
-This \cgal\ component implements methods to analyze and process unorganized 3D point sets. The input is an unorganized 3D point set, possibly with attributes such as unoriented or oriented normals. This point set can be analyzed to measure certain geometric properties such as average spacing between the points and their $K$ nearest neighbors. We can furthermore process the point set with functions devoted to the simplification, outlier removal, smoothing, normal estimation and normal orientation. The output is either a point set or a point set with normals.
 
+The processing of point sets is often needed by applications dealing with measurement data, such as surface reconstruction from laser scanned data (see Figure \ref{Point_set_processing_3-fig-introduction}).
 
-A typical usage of this package is to pre-process a point set before calling a reconstruction method.
-
+% TOFIX: left and right with same viewpoint.
 
 % Insert image introduction.jpg/eps
 \begin{center}
@@ -27,28 +27,9 @@ A typical usage of this package is to pre-process a point set before calling a r
     \end{figure}
 \end{center}
 
+In the context of surface reconstruction we can replace the elements of this component along the common surface reconstruction pipeline which involves the following steps: 1) Scanning and scan alignment to produce a set of points or points with normals (alignment is not yet covered in \cgal); 2) Outlier removal; 3) Simplification to reduce the number of input points; 4) Smoothing to reduce noise in the input data; 5) Normal estimation and orientation when the normals are not already provided by the acquisition device; and 6) Surface reconstruction. Chapter \ccc{Surface_reconstruction_points_3} \ref{chap:surface_reconstruction_points_3} deals with surface reconstruction from point sets with normal attributes.
 
-
-Surface Reconstruction from Point Sets is a sequential process:
-
-\begin{itemize}
-\item Scanning and scan alignment produce a set of points
-      or points with normals. Alignment is not yet
-      covered by \cgal.
-\item Outlier removal for reconstruction methods which
-      are not resilient to outliers.
-\item Simplification to reduce the number of input points.
-\item Smoothing to reduce noise in the input data.
-\item Normal estimation and orientation when the normals
-      are not already provided by the acquisition device.
-\item Surface reconstruction.
-\end{itemize}
-
-\cgal\ provides algorithms for all steps listed above except alignment.\\
-This package provides outlier removal, simplification, smoothing,
-normal estimation and orientation.\\
-Chapter \ccc{Surface_reconstruction_points_3} \ref{chap:surface_reconstruction_points_3}
-describes surface reconstruction using \cgal\ Surface Mesh Generator.
+Figure \ref{Point_set_processing_3-fig-pipeline} illustrates this pipeline.
 
 % Insert image pipeline.jpg/eps
 \begin{center}
@@ -62,7 +43,7 @@ describes surface reconstruction using \cgal\ Surface Mesh Generator.
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[h]
-        \caption{Point Set Processing pipeline.}
+        \caption{Point set processing pipeline for surface reconstruction.}
     \end{figure}
 \end{center}
 
