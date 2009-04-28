@@ -79,8 +79,7 @@ public:
 */
 
 
-/// Smooth one point position using jet fitting on the k
-/// nearest neighbors and reprojection onto the jet.
+/// Laplacian smooth of one point w.r.t. the k nearest neighbors.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
@@ -127,8 +126,7 @@ laplacian_smoothing_3(
 }
 
 
-/// Smooth one point position using jet fitting on the k
-/// nearest neighbors and reprojection onto the jet.
+/// Improved Laplacian smooth of one point w.r.t. the k nearest neighbors.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
@@ -183,117 +181,18 @@ improved_laplacian_smooth_point_set(
 
 
 /// Improved Laplacian smoothing (Vollmer et al)
-/// on the k nearest neighbors.
-/// This variant requires the kernel.
+/// w.r.t. the k nearest neighbors.
 ///
-/// @commentheading Precondition: k >= 2.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
-/// @param Kernel Geometric traits class.
-///
-/// @return past-the-end output iterator.
-template <typename InputIterator,
-          typename OutputIterator,
-          typename Kernel
->
-OutputIterator
-improved_laplacian_smooth_point_set(
-                InputIterator first,    ///< iterator over the first input point.
-                InputIterator beyond,   ///< past-the-end iterator over input points.
-                OutputIterator output,  ///< iterator over the first output point.
-                const unsigned int k,   ///< number of neighbors.
-                const unsigned int iter_number, ///< number of iterations.
-                const Kernel& kernel,   ///< geometric traits.
-                typename Kernel::FT alpha,
-                typename Kernel::FT beta)
-{
-  // Point_3 types
-  typedef typename std::iterator_traits<InputIterator>::value_type Input_point_3;
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Vector_3 Vector_3;
-
-  // types for K nearest neighbors search structure
-  //typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef improved_laplacian_smoothing_i::KdTreeElement<Kernel> KdTreeElement;
-  typedef improved_laplacian_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
-  typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
-
-  // precondition: at least one element in the container.
-  // to fix: should have at least three distinct points
-  // but this is costly to check
-  CGAL_precondition(first != beyond);
-
-  // precondition: at least 2 nearest neighbors
-  CGAL_precondition(k >= 2);
-
-  unsigned int i; // point index
-  InputIterator it; // point iterator
-
-  // Number of input points
-  int nb_points = std::distance(first, beyond);
-
-  // Create kd-tree
-  //Tree tree(first,beyond);
-  std::vector<KdTreeElement> treeElements;
-  for (it = first, i=0 ; it != beyond ; ++it,++i)
-  {
-    treeElements.push_back(KdTreeElement(*it,i));
-  }
-  Tree tree(treeElements.begin(), treeElements.end());
-
-  std::vector<Point_3>  p(nb_points); // positions at step iter_n
-  std::vector<Vector_3> b(nb_points); // ...
-
-  for(it = first, i=0; it != beyond; it++, ++i)
-      p[i] = *it;
-
-  for(int iter_n = 0; iter_n < iter_number ; ++iter_n)
-  {
-      // Iterate over input points, compute (original) Laplacian smooth and b[].
-      for(it = first, i=0; it != beyond; it++, ++i)
-      {
-          Point_3 np = improved_laplacian_smoothing_i::laplacian_smoothing_3<Kernel>(*it,tree,k);
-          b[i]       = alpha*(np - *it) + (1-alpha)*(np - p[i]);
-          p[i]       = np;
-      }
-
-      // Iterate over input points, compute and output smooth points.
-      // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
-      for(it = first, i=0; it != beyond; it++, ++i)
-      {
-          p[i] = improved_laplacian_smoothing_i::improved_laplacian_smooth_point_set<Kernel>(p[i],b[i],tree,b,k,beta);
-      }
-  }
-
-  // Iterate over input points and output smooth points.
-  // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
-  for(it = first, i=0; it != beyond; it++, ++i)
-  {
-    Input_point_3 point = *it;
-    (Point_3&)(point) = p[i];
-    *output++ = point;
-  }
-
-  return output;
-}
-
-/// Improved Laplacian smoothing (Vollmer et al)
-/// on the k nearest neighbors.
-/// This variant is mutating the input point set and requires the kernel.
-///
-/// Warning:
-/// This method moves the points, thus
-/// should not be called on containers sorted wrt points position.
+/// Warning: as this method relocates the points, it
+/// should not be called on containers sorted w.r.t. point locations.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
+
+// This variant requires the kernel.
 template <typename ForwardIterator,
           typename Kernel>
 void
@@ -372,48 +271,8 @@ improved_laplacian_smooth_point_set(
     (Point_3&)(*it) = p[i];
 }
 
-
-/// Improved Laplacian smoothing (Vollmer et al)
-/// on the k nearest neighbors.
-/// This variant deduces the kernel from iterator types.
-///
-/// @commentheading Precondition: k >= 2.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
-///
-/// @return past-the-end output iterator.
-template <typename InputIterator,
-          typename OutputIterator
->
-OutputIterator
-improved_laplacian_smooth_point_set(
-                InputIterator first, ///< iterator over the first input point.
-                InputIterator beyond, ///< past-the-end iterator over input points.
-                OutputIterator output, ///< iterator over the first output point.
-                unsigned int k, ///< number of neighbors.
-                const unsigned int iter_number, ///< number of iterations.
-                double alpha,
-                double beta)
-{
-  typedef typename std::iterator_traits<InputIterator>::value_type Input_point_3;
-  typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  return improved_laplacian_smooth_point_set(first,beyond,output,k,iter_number,Kernel(),alpha, beta);
-}
-
-/// Improved Laplacian smoothing (Vollmer et al)
-/// on the k nearest neighbors.
-/// This variant is mutating the input point set and deduces the kernel from iterator types.
-///
-/// Warning:
-/// As this method relocates the points, it
-/// should not be called on containers sorted w.r.t. point locations.
-///
-/// @commentheading Precondition: k >= 2.
-///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
+/// @cond SKIP_IN_MANUAL
+// This variant deduces the kernel from iterator type.
 template <typename ForwardIterator>
 void
 improved_laplacian_smooth_point_set(
@@ -428,6 +287,7 @@ improved_laplacian_smooth_point_set(
   typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
   improved_laplacian_smooth_point_set(first,beyond,k,iter_number,Kernel(),alpha, beta);
 }
+/// @endcond
 
 
 CGAL_END_NAMESPACE

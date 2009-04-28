@@ -79,8 +79,8 @@ private:
     KdTreeElement(const Origin& o = ORIGIN, unsigned int id=0)
       : Point_with_normal(o), index(id)
     {}
-    template <class K, class N>
-    KdTreeElement(const Point_with_normal_3<K,N>& pwn, unsigned int id=0)
+    template <class K>
+    KdTreeElement(const Point_with_normal_3<K>& pwn, unsigned int id=0)
       : Point_with_normal(pwn), index(id)
     {}
     KdTreeElement(const Point& p, unsigned int id=0)

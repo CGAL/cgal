@@ -18,7 +18,7 @@
 
 
 /// The Point_set_3 class is array of points + normals of type
-/// Point_with_normal_3<Gt, Orientable_normal_3<Gt> > (in fact
+/// Point_with_normal_3<Gt> (in fact
 /// UI_point_3 to support algorithms specific to Gyroviz and selection flag).
 /// It provides:
 /// - accessors: points and normals iterators, property maps
@@ -44,10 +44,10 @@ private:
   template <class Node>
   struct Project_normal {
     typedef Node                  argument_type;
-    typedef typename Node::Normal Normal;
-    typedef Normal                result_type;
-    Normal&       operator()(Node& x)       const { return x.normal(); }
-    const Normal& operator()(const Node& x) const { return x.normal(); }
+    typedef typename Node::Vector Vector;
+    typedef Vector                result_type;
+    Vector&       operator()(Node& x)       const { return x.normal(); }
+    const Vector& operator()(const Node& x) const { return x.normal(); }
   };
 
 // Public types
@@ -62,8 +62,8 @@ public:
   // Classic CGAL geometric types
   typedef Gt  Geom_traits; ///<Geometric traits class.
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Point_3 Point;
-  typedef typename Geom_traits::Vector_3 Vector;
+  typedef typename Geom_traits::Point_3 Point;  ///< == Point_3<Geom_traits>
+  typedef typename Geom_traits::Vector_3 Vector; ///< == Vector_3<Geom_traits>
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
@@ -72,9 +72,6 @@ public:
   // Its superclasses:
   typedef Gyroviz_point_3<Gt> Gyroviz_point; ///< Position + normal + cameras
   typedef typename UI_point::Point_with_normal Point_with_normal; ///< Position + normal
-
-  // Type of points normal
-  typedef typename UI_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
 
   // Iterator over Point_3 points
   typedef typename std::deque<UI_point>::iterator        Point_iterator;
@@ -271,7 +268,7 @@ public:
       for (const_iterator it = begin(); it != end(); it++)
       {
         const UI_point& p = *it;
-        const Normal& n = p.normal();
+        const Vector& n = p.normal();
         if (!p.is_selected() && n.is_oriented())
         {
           Point q = p + scale * n;
@@ -283,12 +280,11 @@ public:
 
       // Draw *non-oriented* normals
       ::glColor3ub(245,184,0);       // non oriented => orange
-      //::glLineWidth(line_width*1.5); // orange is light color
       ::glBegin(GL_LINES);
       for (const_iterator it = begin(); it != end(); it++)
       {
         const UI_point& p = *it;
-        const Normal& n = p.normal();
+        const Vector& n = p.normal();
         if (!p.is_selected() && !n.is_oriented())
         {
           Point q = p + scale * n;
@@ -308,7 +304,7 @@ public:
       for (const_iterator it = begin(); it != end(); it++)
       {
         const UI_point& p = *it;
-        const Normal& n = p.normal();
+        const Vector& n = p.normal();
         if (p.is_selected())
         {
           Point q = p + scale * n;
@@ -459,21 +455,30 @@ get(CGAL::vertex_point_t, const Point_set_3<Gt>& points)
 }
 
 
+namespace boost {
+
+/// Helper type and constant to get a "vertex_normal" property map.
+enum vertex_normal_t { vertex_normal } ;
+BOOST_INSTALL_PROPERTY(vertex, normal);
+
+} // namespace boost
+
+
 /// Helper class: type of the "vertex_normal" property map
 /// of an Point_set_3 object.
 template <class Gt>
 class Point_set_vertex_normal_map
-  : public boost::put_get_helper<typename Point_set_3<Gt>::Normal&,
+  : public boost::put_get_helper<typename Gt::Vector_3&,
   Point_set_vertex_normal_map<Gt> >
 {
 public:
   typedef Point_set_3<Gt> Point_set;
-  typedef typename Point_set::Normal Normal;
+  typedef typename Gt::Vector_3 Vector_3;
 
   // Property maps required types
   typedef boost::lvalue_property_map_tag            category;
-  typedef Normal                                    value_type;
-  typedef Normal&                                   reference;
+  typedef Vector_3                                  value_type;
+  typedef Vector_3&                                 reference;
   typedef typename Point_set::iterator              key_type;
 
   Point_set_vertex_normal_map(const Point_set&) {}

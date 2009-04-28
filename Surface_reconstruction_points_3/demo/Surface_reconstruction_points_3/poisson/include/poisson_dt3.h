@@ -14,14 +14,11 @@
 /// - the interface requested by the Poisson_reconstruction_function class
 /// - OpenGL rendering
 ///
-/// @heading Is Model for the Concepts:
-/// Model of the ReconstructionTriangulation_3 concept.
-///
 /// @heading Parameters:
 /// @param BaseGt   Kernel's geometric traits.
-/// @param Gt       Geometric traits class / Point_3 is a model of PointWithNormal_3.
+/// @param Gt       Geometric traits class / Point_3 == Point_with_normal_3<BaseGt>.
 /// @param Tds      Model of TriangulationDataStructure_3. The vertex class
-///                 must be a model of ReconstructionVertexBase_3.
+///                 must derive from Reconstruction_vertex_base_3.
 
 template <class BaseGt,
           class Gt = CGAL::Reconstruction_triangulation_default_geom_traits_3<BaseGt>,
@@ -37,7 +34,7 @@ private:
 // Public types
 public:
 
-  /// Geometric traits class / Point_3 is a model of PointWithNormal_3.
+  /// Geometric traits class / Point_3 == Point_with_normal_3<BaseGt>.
   typedef Gt Geom_traits;
 
   // Repeat Reconstruction_triangulation_3 public types
@@ -69,14 +66,12 @@ public:
   typedef typename Base::All_cells_iterator       All_cells_iterator;
   typedef typename Base::Locate_type Locate_type;
   typedef typename Base::FT FT;
-  typedef typename Base::Vector Vector;
+  typedef typename Base::Vector Vector; ///< == Vector_3<BaseGt>
+  typedef typename Base::Point Point;  ///< == Point_with_normal_3<BaseGt>
+  typedef typename Base::Point_with_normal Point_with_normal; ///< Point_with_normal_3<BaseGt>
   typedef typename Base::Sphere Sphere;
   typedef typename Base::Normal_iterator Normal_iterator;
   /// @endcond
-
-  typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
-  typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
-  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
 
 // Public methods
 public:
@@ -234,8 +229,8 @@ public:
         v != finite_vertices_end();
         v++)
     {
-      Normal n = v->normal();
-	  if ( n != CGAL::NULL_VECTOR && v->type() == 0)
+      Vector n = v->normal();
+      if ( n != CGAL::NULL_VECTOR && v->type() == 0)
       {
         Point a = v->point();
         Point b = a + c * n;

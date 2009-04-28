@@ -127,14 +127,5 @@ private:
 CGAL_END_NAMESPACE
 
 
-namespace boost {
-
-/// Helper type and constant to get a "vertex_normal" property map.
-enum vertex_normal_t { vertex_normal } ;
-BOOST_INSTALL_PROPERTY(vertex, normal);
-
-} // namespace boost
-
-
 #endif //CGAL_ORIENTABLE_NORMAL_3_H
 

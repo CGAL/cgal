@@ -25,10 +25,8 @@ int main(void)
     // Outlier Removal
     const double threshold_percent_avg_knn_sq_dst = 5.0 /* % */; // percentage of outliers to remove
     const int nb_neighbors = 7; // K-nearest neighbors
-    std::deque<Point> output;
     CGAL::remove_outliers(
                     points.begin(), points.end(),
-                    std::back_inserter(output),
                     nb_neighbors,
                     threshold_percent_avg_knn_sq_dst);
 

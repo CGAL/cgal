@@ -35,6 +35,8 @@
 #include <CGAL/Peak_memory_sizer.h>
 #include <CGAL/poisson_refine_triangulation.h>
 
+#include <boost/shared_ptr.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 
@@ -55,10 +57,11 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
-/// @param ReconstructionTriangulation_3 3D Delaunay triangulation,
-///        model of ReconstructionTriangulation_3 concept.
+/// @param ReconstructionTriangulation_3 3D Delaunay triangulation 
+///        class derived from Reconstruction_triangulation_3.
 
-template <class Gt, class ReconstructionTriangulation_3>
+template <class Gt, 
+          class ReconstructionTriangulation_3 = Reconstruction_triangulation_3<Gt> >
 class Poisson_reconstruction_function
 {
 // Public types
@@ -68,14 +71,12 @@ public:
 
   typedef Gt Geom_traits; ///< Kernel's geometric traits
 
+  // Geometric types
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Point_3 Point; ///< == Point_3<Gt>
-  typedef typename Geom_traits::Vector_3 Vector; ///< == Vector_3<Gt>
+  typedef typename Geom_traits::Vector_3 Vector; ///< == Vector_3<Geom_traits>
+  typedef typename Geom_traits::Point_3 Point;  ///< == Point_3<Geom_traits>
+  typedef typename Triangulation::Point_with_normal Point_with_normal; ///< == Point_with_normal_3<Geom_traits>
   typedef typename Geom_traits::Sphere_3 Sphere;
-
-  typedef typename Triangulation::Point_with_normal Point_with_normal;
-                                                     ///< Model of PointWithNormal_3
-  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
 
 // Private types
 private:
@@ -116,8 +117,9 @@ private:
 // thus this class must be lightweight and stateless.
 private:
 
-  Triangulation& m_tr; // f() is pre-computed on vertices of m_tr by solving
-                       // the Poisson equation Laplacian(f) = divergent(normals field).
+  // f() is pre-computed on vertices of *m_tr by solving
+  // the Poisson equation Laplacian(f) = divergent(normals field).
+  boost::shared_ptr<Triangulation> m_tr; 
 
   // contouring and meshing
   Point m_sink; // Point with the minimum value of f()
@@ -127,71 +129,33 @@ private:
 public:
 
   /// Creates a scalar function from a set of oriented points.
-  /// Inserts the iterator range [first, beyond) into the triangulation 'tr',
-  /// refines it and solves for a piecewise linear scalar function
-  /// which gradient best matches the input normals.
-  ///
-  /// If 'tr' is empty, this method creates an empty implicit function.
-  ///
-  /// @param tr ReconstructionTriangulation_3 base of the Poisson indicator function.
-  Poisson_reconstruction_function(ReconstructionTriangulation_3& tr)
-  : m_tr(tr)
-  {
-  }
-
-  /// Creates a scalar function from a set of oriented points.
-  /// Inserts the iterator range [first, beyond) into the triangulation 'tr',
-  /// refines it and solves for a piecewise linear scalar function
-  /// which gradient best matches the input normals.
   ///
   /// @commentheading Precondition:
   /// InputIterator value_type must be convertible to Point_with_normal.
   ///
-  /// @param tr ReconstructionTriangulation_3 base of the Poisson indicator function.
-  /// @param first Iterator over first point to add.
-  /// @param beyond Past-the-end iterator to add.
+  /// @param first Iterator over first point.
+  /// @param beyond Past-the-end iterator.
   template < class InputIterator >
-  Poisson_reconstruction_function(ReconstructionTriangulation_3& tr,
-                                  InputIterator first, InputIterator beyond)
-  : m_tr(tr)
+  Poisson_reconstruction_function(InputIterator first, InputIterator beyond)
+  : m_tr(new Triangulation)
   {
-    insert(first, beyond);
-  }
-
-  /// Insert points.
-  ///
-  /// @commentheading Precondition:
-  /// InputIterator value_type must be convertible to Point_with_normal.
-  ///
-  /// @param first Iterator over first point to add.
-  /// @param beyond Past-the-end iterator to add.
-  /// @return the number of inserted points.
-  template < class InputIterator >
-  int insert(InputIterator first, InputIterator beyond)
-  {
-    return m_tr.insert(first, beyond);
-  }
-
-  /// Remove all points.
-  void clear()
-  {
-    m_tr.clear();
+    m_tr->insert(first, beyond);
   }
 
   /// Get embedded triangulation.
   ReconstructionTriangulation_3& triangulation()
   {
-    return m_tr;
+    return *m_tr;
   }
   const ReconstructionTriangulation_3& triangulation() const
   {
-    return m_tr;
+    return *m_tr;
   }
 
   /// Returns a sphere bounding the inferred surface.
   Sphere bounding_sphere() const
   {
-    return m_tr.input_points_bounding_sphere();
+    return m_tr->input_points_bounding_sphere();
   }
 
   /// The function compute_implicit_function() must be called
@@ -250,12 +214,12 @@ public:
   /// Evaluates the implicit function at a given 3D query point.
   FT f(const Point& p) const
   {
-    m_hint = m_tr.locate(p,m_hint);
+    m_hint = m_tr->locate(p,m_hint);
 
     if(m_hint == NULL)
       return 1e38;
 
-    if(m_tr.is_infinite(m_hint))
+    if(m_tr->is_infinite(m_hint))
       return 1e38;
 
     FT a,b,c,d;
@@ -295,7 +259,7 @@ private:
                radius_edge_ratio_bound, cell_radius_bound, max_vertices, enlarge_ratio);
 
     Sphere enlarged_bbox = enlarged_bounding_sphere(enlarge_ratio);
-    unsigned int nb_vertices_added = poisson_refine_triangulation(m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
+    unsigned int nb_vertices_added = poisson_refine_triangulation(*m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
 
     CGAL_TRACE("End of delaunay_refinement()\n");
 
@@ -323,13 +287,13 @@ private:
     CGAL_TRACE("  Create matrix...\n");
 
     // get #variables
-    unsigned int nb_variables = m_tr.index_unconstrained_vertices();
+    unsigned int nb_variables = m_tr->index_unconstrained_vertices();
 
     // at least one vertex must be constrained
-    if(nb_variables == m_tr.number_of_vertices())
+    if(nb_variables == m_tr->number_of_vertices())
     {
       constrain_one_vertex_on_convex_hull();
-      nb_variables = m_tr.index_unconstrained_vertices();
+      nb_variables = m_tr->index_unconstrained_vertices();
     }
 
     // Assemble linear system A*X=B
@@ -338,8 +302,8 @@ private:
     Sparse_vector B(nb_variables);
 
     Finite_vertices_iterator v;
-    for(v = m_tr.finite_vertices_begin();
-        v != m_tr.finite_vertices_end();
+    for(v = m_tr->finite_vertices_begin();
+        v != m_tr->finite_vertices_end();
         v++)
     {
       if(!v->constrained())
@@ -408,7 +372,7 @@ private:
 
     // copy function's values to vertices
     unsigned int index = 0;
-    for (v = m_tr.finite_vertices_begin(); v != m_tr.finite_vertices_end(); v++)
+    for (v = m_tr->finite_vertices_begin(); v != m_tr->finite_vertices_end(); v++)
       if(!v->constrained())
         v->f() = X[index++];
 
@@ -447,8 +411,8 @@ private:
   {
     std::deque<FT> values;
     Finite_vertices_iterator v;
-    for(v = m_tr.finite_vertices_begin();
-        v != m_tr.finite_vertices_end();
+    for(v = m_tr->finite_vertices_begin();
+        v != m_tr->finite_vertices_end();
         v++)
       if(v->type() == Triangulation::INPUT)
         values.push_back(v->f());
@@ -496,8 +460,8 @@ private:
     m_sink = CGAL::ORIGIN;
     FT min_f = 1e38;
     Finite_vertices_iterator v;
-    for(v = m_tr.finite_vertices_begin();
-        v != m_tr.finite_vertices_end();
+    for(v = m_tr->finite_vertices_begin();
+        v != m_tr->finite_vertices_end();
         v++)
     {
       if(v->f() < min_f)
@@ -512,8 +476,8 @@ private:
   void shift_f(const FT shift)
   {
     Finite_vertices_iterator v;
-    for(v = m_tr.finite_vertices_begin();
-        v != m_tr.finite_vertices_end();
+    for(v = m_tr->finite_vertices_begin();
+        v != m_tr->finite_vertices_end();
         v++)
       v->f() += shift;
   }
@@ -521,8 +485,8 @@ private:
   void flip_f()
   {
     Finite_vertices_iterator v;
-    for(v = m_tr.finite_vertices_begin();
-        v != m_tr.finite_vertices_end();
+    for(v = m_tr->finite_vertices_begin();
+        v != m_tr->finite_vertices_end();
         v++)
       v->f() = -v->f();
   }
@@ -531,7 +495,7 @@ private:
   {
     // TODO: return NULL if none and assert
     std::vector<Vertex_handle> vertices;
-    m_tr.incident_vertices(m_tr.infinite_vertex(),std::back_inserter(vertices));
+    m_tr->incident_vertices(m_tr->infinite_vertex(),std::back_inserter(vertices));
     typename std::vector<Vertex_handle>::iterator it = vertices.begin();
     return *it;
   }
@@ -547,7 +511,7 @@ private:
   FT div_normalized(Vertex_handle v)
   {
     std::vector<Cell_handle> cells;
-    m_tr.incident_cells(v,std::back_inserter(cells));
+    m_tr->incident_cells(v,std::back_inserter(cells));
     if(cells.size() == 0)
       return 0.0;
 
@@ -558,7 +522,7 @@ private:
     for(it = cells.begin(); it != cells.end(); it++)
     {
       Cell_handle cell = *it;
-      if(m_tr.is_infinite(cell))
+      if(m_tr->is_infinite(cell))
         continue;
 
       // compute average normal per cell
@@ -627,14 +591,14 @@ private:
   FT area_voronoi_face(Edge& edge)
   {
     // circulate around edge
-    Cell_circulator circ = m_tr.incident_cells(edge);
+    Cell_circulator circ = m_tr->incident_cells(edge);
     Cell_circulator done = circ;
     std::vector<Point> voronoi_points;
     do
     {
       Cell_handle cell = circ;
-      if(!m_tr.is_infinite(cell))
-        voronoi_points.push_back(m_tr.dual(cell));
+      if(!m_tr->is_infinite(cell))
+        voronoi_points.push_back(m_tr->dual(cell));
       else // one infinite tet, switch to another calculation
         return area_voronoi_face_boundary(edge);
       circ++;
@@ -673,16 +637,16 @@ private:
     Point m = CGAL::midpoint(pi,pj);
 
     // circulate around each incident cell
-    Cell_circulator circ = m_tr.incident_cells(edge);
+    Cell_circulator circ = m_tr->incident_cells(edge);
     Cell_circulator done = circ;
     do
     {
       Cell_handle cell = circ;
-      if(!m_tr.is_infinite(cell))
+      if(!m_tr->is_infinite(cell))
       {
         // circumcenter of cell
-        Point c = m_tr.dual(cell);
-        Tetrahedron tet = m_tr.tetrahedron(cell);
+        Point c = m_tr->dual(cell);
+        Tetrahedron tet = m_tr->tetrahedron(cell);
 
         int i = cell->index(vi);
         int j = cell->index(vj);
@@ -754,14 +718,14 @@ private:
 
     // for each vertex vj neighbor of vi
     std::vector<Vertex_handle> vertices;
-    m_tr.incident_vertices(vi,std::back_inserter(vertices));
+    m_tr->incident_vertices(vi,std::back_inserter(vertices));
     double diagonal = 0.0;
     for(typename std::vector<Vertex_handle>::iterator it = vertices.begin();
         it != vertices.end();
         it++)
     {
       Vertex_handle vj = *it;
-      if(m_tr.is_infinite(vj))
+      if(m_tr->is_infinite(vj))
         continue;
 
       // get corresponding edge
@@ -794,9 +758,9 @@ private:
     Cell_handle cell = NULL;
     bool success;
     if(vi->index() > vj->index())
-      success = m_tr.is_edge(vi,vj,cell,i1,i2);
+      success = m_tr->is_edge(vi,vj,cell,i1,i2);
     else
-      success = m_tr.is_edge(vj,vi,cell,i1,i2);
+      success = m_tr->is_edge(vj,vi,cell,i1,i2);
     CGAL_surface_reconstruction_points_assertion(success);
     return Edge(cell,i1,i2);
   }

@@ -43,11 +43,8 @@ CGAL_BEGIN_NAMESPACE
 ///   or not (i.e. may contribute to the right or left member of the linear system),
 ///   and has a unique index.
 ///
-/// @heading Is Model for the Concepts:
-/// Model of the ReconstructionVertexBase_3 concept.
-///
 /// @heading Parameters:
-/// @param Gt   Geometric traits class / Point_3 is a model of PointWithNormal_3.
+/// @param Gt   Geometric traits class / Point_3 == Point_with_normal_3.
 /// @param Cb   Vertex base class, model of TriangulationVertexBase_3.
 
 template < typename Gt,
@@ -57,7 +54,7 @@ class Reconstruction_vertex_base_3 : public Vb
 // Public types
 public:
 
-  /// Geometric traits class / Point_3 is a model of PointWithNormal_3.
+  /// Geometric traits class / Point_3 == Point_with_normal_3.
   typedef Gt Geom_traits;
 
   // Repeat Triangulation_vertex_base_3 public types
@@ -70,10 +67,11 @@ public:
   };
   /// @endcond
 
+  // Geometric types
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
-  typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
-  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
+  typedef typename Geom_traits::Vector_3 Vector;           ///< == Vector_3
+  typedef typename Geom_traits::Point_3 Point;             ///< == Point_with_normal_3
+  typedef typename Geom_traits::Point_3 Point_with_normal; ///< == Point_with_normal_3
 
 // data members
 private:
@@ -144,10 +142,10 @@ public:
   unsigned int  index() const { return m_index; }
   unsigned int& index()       { return m_index; }
 
-  /// Get/set normal (vector + orientation).
+  /// Get/set normal vector.
   /// Default value is null vector.
-  const Normal& normal() const { return this->point().normal(); }
-  Normal&       normal()       { return this->point().normal(); }
+  const Vector& normal() const { return this->point().normal(); }
+  Vector&       normal()       { return this->point().normal(); }
 
 // Private methods
 private:
@@ -169,29 +167,24 @@ private:
 template <class BaseGt>
 struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 {
-  typedef Point_with_normal_3<BaseGt, Lightweight_vector_3<BaseGt> > Point_3;
+  typedef Point_with_normal_3<BaseGt> Point_3;
 };
 
 
-/// The Reconstruction_triangulation_3 class is the default implementation
-/// of the ReconstructionTriangulation_3 concept.
-/// The vertex class must be a model of ReconstructionVertexBase_3.
-///
-/// It provides the interface requested by the Poisson_reconstruction_function class:
+/// The Reconstruction_triangulation_3 class
+/// provides the interface requested by the Poisson_reconstruction_function class:
 /// - Each vertex stores a normal vector.
 /// - A vertex is either an input point or a Steiner point added by Delaunay refinement.
 /// - In order to solve a linear system over the triangulation, a vertex may be constrained
 ///   or not (i.e. may contribute to the right or left member of the linear system),
 ///   and has a unique index.
-///
-/// @heading Is Model for the Concepts:
-/// Model of the ReconstructionTriangulation_3 concept.
+/// The vertex class must derive from Reconstruction_vertex_base_3.
 ///
 /// @heading Parameters:
 /// @param BaseGt   Kernel's geometric traits.
-/// @param Gt       Geometric traits class / Point_3 is a model of PointWithNormal_3.
+/// @param Gt       Geometric traits class / Point_3 == Point_with_normal_3<BaseGt>.
 /// @param Tds      Model of TriangulationDataStructure_3. The vertex class
-///                 must be a model of ReconstructionVertexBase_3.
+///                 must derive from Reconstruction_vertex_base_3.
 
 template <class BaseGt,
           class Gt = Reconstruction_triangulation_default_geom_traits_3<BaseGt>,
@@ -208,10 +201,10 @@ private:
   template <class Node>
   struct Project_normal {
     typedef Node                  argument_type;
-    typedef typename Node::Normal Normal;
-    typedef Normal                result_type;
-    Normal&       operator()(Node& x)       const { return x.normal(); }
-    const Normal& operator()(const Node& x) const { return x.normal(); }
+    typedef typename Node::Vector Vector;
+    typedef Vector                result_type;
+    Vector&       operator()(Node& x)       const { return x.normal(); }
+    const Vector& operator()(const Node& x) const { return x.normal(); }
   };
 
   // Auxiliary class to build an iterator over input points.
@@ -229,7 +222,7 @@ private:
 // Public types
 public:
 
-  /// Geometric traits class / Point_3 is a model of PointWithNormal_3.
+  /// Geometric traits class / Point_3 == Point_with_normal_3<BaseGt>.
   typedef Gt  Geom_traits;
 
   // Repeat base class' types
@@ -264,12 +257,10 @@ public:
 
   // Geometric types
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Vector_3 Vector;
+  typedef typename Geom_traits::Vector_3 Vector; ///< == Vector_3<BaseGt>
+  typedef typename Geom_traits::Point_3 Point;  ///< == Point_with_normal_3<BaseGt>
+  typedef typename Geom_traits::Point_3 Point_with_normal; ///< Point_with_normal_3<BaseGt>
   typedef typename Geom_traits::Sphere_3 Sphere;
-
-  typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
-  typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
-  typedef typename Point_with_normal::Normal Normal; ///< Model of Kernel::Vector_3 concept.
 
   /// Iterator over all normals.
   typedef Iterator_project<Finite_vertices_iterator,

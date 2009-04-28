@@ -18,8 +18,7 @@ typedef Kernel::Point_3 Point;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
 typedef std::deque<Point_with_normal> PointList;
-typedef CGAL::Reconstruction_triangulation_3<Kernel> Dt3;
-typedef CGAL::Poisson_reconstruction_function<Kernel, Dt3> Poisson_reconstruction_function;
+typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
@@ -41,10 +40,8 @@ int main(void)
       return EXIT_FAILURE;
     }
 
-    // Create implicit function.
-    // Create 3D-Delaunay triangulation for the implicit function and insert vertices.
-    Dt3 dt;
-    Poisson_reconstruction_function implicit_function(dt, points.begin(), points.end());
+    // Create implicit function and insert vertices.
+    Poisson_reconstruction_function implicit_function(points.begin(), points.end());
 
     // Compute the Poisson indicator function f()
     // at each vertex of the triangulation.

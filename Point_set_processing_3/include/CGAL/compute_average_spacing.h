@@ -92,15 +92,16 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 
 
 /// Compute average spacing from k nearest neighbors.
-/// This variant requires the kernel.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
 /// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
 ///
 /// @return average spacing (scalar).
+
+// This variant requires the kernel.
 template <typename InputIterator,
           typename Kernel
 >
@@ -142,20 +143,10 @@ compute_average_spacing(InputIterator first,    ///< iterator over the first inp
   return sum_spacings / (FT)nb_points;
 }
 
-/// Compute average spacing from k nearest neighbors.
-/// This variant deduces the kernel from iterator types.
-///
-/// @commentheading Precondition: k >= 2.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param FT number type.
-///
-/// @return average spacing (scalar).
-template < typename InputIterator,
-           typename FT
->
-FT
+/// @cond SKIP_IN_MANUAL
+// This variant deduces the kernel from iterator type.
+template < typename InputIterator >
+typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel::FT
 compute_average_spacing(InputIterator first,    ///< iterator over the first input point.
                         InputIterator beyond,   ///< past-the-end iterator over input points.
                         unsigned int k)         ///< number of neighbors.
@@ -164,6 +155,7 @@ compute_average_spacing(InputIterator first,    ///< iterator over the first inp
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   return compute_average_spacing(first,beyond,k,Kernel());
 }
+/// @endcond
 
 
 CGAL_END_NAMESPACE

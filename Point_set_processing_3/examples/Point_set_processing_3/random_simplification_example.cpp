@@ -24,10 +24,8 @@ int main(void)
 
     // Random Point Set Simplification options
     const double random_simplification_percentage = 50.0 /* % */; // percentage of outliers to remove
-    std::deque<Point> output;
     CGAL::random_simplify_point_set(
                     points.begin(), points.end(),
-                    std::back_inserter(output),
                     random_simplification_percentage);
 
     return EXIT_SUCCESS;

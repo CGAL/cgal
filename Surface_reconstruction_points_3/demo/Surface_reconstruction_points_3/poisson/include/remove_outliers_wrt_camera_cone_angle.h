@@ -10,6 +10,12 @@
 #include <map>
 
 
+// ----------------------------------------------------------------------------
+// Private section
+// ----------------------------------------------------------------------------
+namespace CGALi {
+
+
 /// Compute cameras' cone angle for a single point.
 ///
 /// @commentheading Template Parameters:
@@ -70,61 +76,30 @@ public:
     }
 };
 
-/// Remove points / cameras cone's angle < min_camera_cone_angle.
-/// This variant requires the kernel.
-///
-/// @commentheading Precondition: min_camera_cone_angle >= 0.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Gyroviz_point_3<Kernel>.
-/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
-/// @param Kernel Geometric traits class.
-///
-/// @return past-the-end output iterator.
-template <typename InputIterator,
-          typename OutputIterator,
-          typename Kernel
->
-OutputIterator
-remove_outliers_wrt_camera_cone_angle(InputIterator first,           ///< iterator over the first input point
-                                      InputIterator beyond,          ///< past-the-end iterator over input points
-                                      OutputIterator output,         ///< iterator over the first output point
-                                      double min_camera_cone_angle,  ///< min angle of camera's cone (radians)
-                                      const Kernel& kernel)          ///< kernel
-{
-    // geometric types
-    typedef typename Kernel::FT                FT;
-    typedef typename Kernel::Point_3           Point;
-    typedef Gyroviz_point_3<Kernel>            Gyroviz_point_3;
 
-    // precondition: at least 0
-    CGAL_precondition(min_camera_cone_angle >= 0);
+} /* namespace CGALi */
 
-    // iterate over input points and output points / camera angle >= min_camera_cone_angle
-    for(InputIterator point_it = first; point_it != beyond; point_it++)
-    {
-        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(*point_it);
-        if (greatest_camera_angle >= min_camera_cone_angle)
-            *output++ = *point_it;
-    }
-    return output;
-}
+
+// ----------------------------------------------------------------------------
+// Public section
+// ----------------------------------------------------------------------------
+
 
 /// Remove points / cameras cone's angle < min_camera_cone_angle.
-/// This function is mutating the input point set.
-/// This variant requires the kernel.
 ///
-/// Warning:
-/// This method modifies the order of points, thus
-/// should not be called on sorted containers.
+/// This method modifies the order of input points, and returns 
+/// an iterator over the first point to remove (see erase-remove idiom).
+/// Warning: this method should not be called on sorted containers.
 ///
 /// @commentheading Precondition: min_camera_cone_angle >= 0.
 ///
 /// @commentheading Template Parameters:
 /// @param ForwardIterator value_type must be convertible to Gyroviz_point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
 ///
-/// @return First iterator to remove (see erase-remove idiom).
+/// @return iterator over the first point to remove.
+
+// This variant requires the kernel.
 template <typename ForwardIterator,
           typename Kernel
 >
@@ -143,49 +118,13 @@ remove_outliers_wrt_camera_cone_angle(ForwardIterator first,         ///< iterat
     CGAL_precondition(min_camera_cone_angle >= 0);
 
     ForwardIterator first_iterator_to_remove =
-      std::partition(first, beyond, Is_cameras_cone_angle_greater_equal<Kernel>(min_camera_cone_angle));
+      std::partition(first, beyond, CGALi::Is_cameras_cone_angle_greater_equal<Kernel>(min_camera_cone_angle));
 
     return first_iterator_to_remove;
 }
 
-/// Remove points / cameras cone's angle < min_camera_cone_angle.
-/// This variant deduces the kernel from iterator types.
-///
-/// @commentheading Precondition: min_camera_cone_angle >= 0.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Gyroviz_point_3<Kernel>.
-/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
-///
-/// @return past-the-end output iterator.
-template <typename InputIterator,
-          typename OutputIterator
->
-OutputIterator
-remove_outliers_wrt_camera_cone_angle(InputIterator first,           ///< iterator over the first input point
-                                      InputIterator beyond,          ///< past-the-end iterator over input points
-                                      OutputIterator output,         ///< iterator over the first output point
-                                      double min_camera_cone_angle)  ///< min angle of camera's cone (radians)
-{
-    typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-    typedef typename CGAL::Kernel_traits<Value_type>::Kernel Kernel;
-    return remove_outliers_wrt_camera_cone_angle(first,beyond,output,min_camera_cone_angle,Kernel());
-}
-
-/// Remove points / cameras cone's angle < min_camera_cone_angle.
-/// This function is mutating the input point set.
-/// This variant deduces the kernel from iterator types.
-///
-/// Warning:
-/// This method modifies the order of points, thus
-/// should not be called on sorted containers.
-///
-/// @commentheading Precondition: min_camera_cone_angle >= 0.
-///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Gyroviz_point_3<Kernel>.
-///
-/// @return First iterator to remove (see erase-remove idiom).
+/// @cond SKIP_IN_MANUAL
+// This variant deduces the kernel from iterator type.
 template <typename ForwardIterator>
 ForwardIterator
 remove_outliers_wrt_camera_cone_angle(ForwardIterator first,         ///< iterator over the first input/output point
@@ -196,6 +135,7 @@ remove_outliers_wrt_camera_cone_angle(ForwardIterator first,         ///< iterat
     typedef typename CGAL::Kernel_traits<Value_type>::Kernel Kernel;
     return remove_outliers_wrt_camera_cone_angle(first,beyond,min_camera_cone_angle,Kernel());
 }
+/// @endcond
 
 
 #endif // REMOVE_OUTLIERS_WRT_CAMERA_CONE_ANGLE_H

@@ -112,7 +112,6 @@ END_MESSAGE_MAP()
 
 CPoissonDoc::CPoissonDoc()
 : m_poisson_function(NULL),
-  m_poisson_dt(NULL),
   m_apss_function(NULL),
   m_surface_mesher_c2t3(m_surface_mesher_dt)
 {
@@ -463,13 +462,12 @@ void CPoissonDoc::update_status()
   }
   else if (m_edit_mode == POISSON)
   {
-    assert(m_poisson_dt != NULL);
     assert(m_poisson_function != NULL);
 
     CString vertices;
-    vertices.Format("%d vertices",m_poisson_dt->number_of_vertices());
+    vertices.Format("%d vertices",m_poisson_function->triangulation().number_of_vertices());
     CString tets;
-    tets.Format("%d tets",m_poisson_dt->number_of_cells());
+    tets.Format("%d tets",m_poisson_function->triangulation().number_of_cells());
 
     // write message to cerr
     std::cerr << "=> " << vertices << ", " << tets << ", "
@@ -880,7 +878,6 @@ void CPoissonDoc::CloseMode()
 
   // If m_edit_mode == POISSON
   delete m_poisson_function; m_poisson_function = NULL;
-  delete m_poisson_dt; m_poisson_dt = NULL;
 
   // If m_edit_mode == APSS
   delete m_apss_function; m_apss_function = NULL;
@@ -944,12 +941,9 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
 
   status_message("Create Poisson triangulation...");
 
-  // Create implicit function.
-  // Create 3D-Delaunay triangulation for the implicit function and insert vertices.
-  assert(m_poisson_dt == NULL);
+  // Create implicit function and insert vertices.
   assert(m_poisson_function == NULL);
-  m_poisson_dt = new Dt3;
-  m_poisson_function = new Poisson_reconstruction_function(*m_poisson_dt, m_points.begin(), m_points.end());
+  m_poisson_function = new Poisson_reconstruction_function(m_points.begin(), m_points.end());
 
   // Print status
   status_message("Create Poisson triangulation...done (%.2lf s)", task_timer.time());
@@ -1111,8 +1105,7 @@ void CPoissonDoc::OnAnalysisAverageSpacing()
 
   double value = CGAL::compute_average_spacing(m_points.begin(),
                                                m_points.end(),
-                                               m_nb_neighbors_avg_spacing,
-                                               Kernel());
+                                               m_nb_neighbors_avg_spacing);
 
   // write message in message box
   prompt_message("Average spacing: %lf", value);
@@ -1341,8 +1334,7 @@ void CPoissonDoc::OnFlipNormals()
 
   // Flip normals
   for (int i=0; i<m_points.size(); i++)
-    m_points[i].normal() = Normal(-m_points[i].normal().get_vector(),
-                                  m_points[i].normal().is_oriented());
+    m_points[i].normal() = -m_points[i].normal();
 
   status_message("Flip Normals...done (%.2lf s)", task_timer.time());
 

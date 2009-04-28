@@ -46,8 +46,8 @@ void test_average_spacing(std::deque<Point>& points, // input point set
   CGAL::Timer task_timer; task_timer.start();
 
   typedef std::deque<Point>::iterator Iterator;
-  std::cerr << CGAL::compute_average_spacing<Iterator,FT>(points.begin(), points.end(),
-                                                          nb_neighbors_avg_spacing) << "\n";
+  std::cerr << CGAL::compute_average_spacing<Iterator>(points.begin(), points.end(),
+                                                       nb_neighbors_avg_spacing) << "\n";
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "

@@ -55,12 +55,6 @@ void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
   std::cerr << "Smooth Point Set (k="
             << nb_neighbors_smooth_jet_fitting << "%=" << nb_neighbors << ")...\n";
 
-  std::deque<Point> output;
-  CGAL::jet_smooth_point_set(points.begin(), points.end(),
-                             std::back_inserter(output),
-                             nb_neighbors);
-
-  // mutating version of the same function
   CGAL::jet_smooth_point_set(points.begin(), points.end(),
                              nb_neighbors);
 

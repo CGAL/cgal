@@ -15,7 +15,7 @@ include_directories (BEFORE ../../../../Surface_mesher/include)
 include_directories (BEFORE ../../../../Point_set_processing_3/include)
 
 # Include this package's headers first
-include_directories (BEFORE . include ../../../include)
+include_directories( BEFORE ./ ./include ../../../include )
 
 # Find CGAL
 find_package(CGAL)

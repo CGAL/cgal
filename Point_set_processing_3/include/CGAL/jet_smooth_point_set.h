@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Point_set_processing_3/include/CGAL/improved_laplacian_smooth_point_set.h $
+// $Id: improved_laplacian_smooth_point_set.h 48866 2009-04-22 15:06:24Z lsaboret $
 //
 // Author(s) : Pierre Alliez and Marc Pouget
 
@@ -103,75 +103,17 @@ jet_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point to pro
 
 /// Smooth a point set using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
-/// This variant requires the kernel.
 ///
-/// @commentheading Precondition: k >= 2.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
-/// @param Kernel Geometric traits class.
-///
-/// @return past-the-end output iterator.
-template <typename InputIterator,
-          typename OutputIterator,
-          typename Kernel
->
-OutputIterator
-jet_smooth_point_set(InputIterator first,    ///< iterator over the first input point.
-                     InputIterator beyond,   ///< past-the-end iterator over input points.
-                     OutputIterator output,  ///< iterator over the first output point.
-                     const unsigned int k,   ///< number of neighbors.
-                     const Kernel& kernel,   ///< geometric traits.
-                     const unsigned int degree_fitting = 2,
-                     const unsigned int degree_monge = 2)
-{
-  // Point_3 types
-  typedef typename std::iterator_traits<InputIterator>::value_type Input_point_3;
-  typedef typename Kernel::Point_3 Point_3;
-
-  // types for K nearest neighbors search structure
-  typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
-
-  // precondition: at least one element in the container.
-  // to fix: should have at least three distinct points
-  // but this is costly to check
-  CGAL_precondition(first != beyond);
-
-  // precondition: at least 2 nearest neighbors
-  CGAL_precondition(k >= 2);
-
-  // instanciate a KD-tree search
-  Tree tree(first,beyond);
-
-  // Iterate over input points, compute and output smooth points.
-  // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
-  for(InputIterator it = first; it != beyond; it++)
-  {
-    Input_point_3 point = *it;
-    (Point_3&)(point) = CGALi::jet_smooth_point_set<Kernel>(*it,tree,k,degree_fitting,degree_monge);
-    *output++ = point;
-  }
-
-  return output;
-}
-
-/// Smooth a point set using jet fitting on the k
-/// nearest neighbors and reprojection onto the jet.
-/// This variant is mutating the input point set and requires the kernel.
-///
-/// Warning:
-/// This method moves the points, thus
-/// should not be called on containers sorted wrt points position.
+/// Warning: as this method relocates the points, it
+/// should not be called on containers sorted w.r.t. point locations.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
+
+// This variant requires the kernel.
 template <typename ForwardIterator,
           typename Kernel>
 void
@@ -210,46 +152,8 @@ jet_smooth_point_set(ForwardIterator first,     ///< iterator over the first inp
     (Point_3&)(*it) = CGALi::jet_smooth_point_set<Kernel>(*it,tree,k,degree_fitting,degree_monge);
 }
 
-
-/// Smooths points by fitting jet surfaces over their k
-/// nearest neighbors and projecting onto the jets.
-/// This variant deduces the kernel from iterator types.
-///
-/// @commentheading Precondition: k >= 2.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
-///
-/// @return past-the-end output iterator.
-template <typename InputIterator,
-          typename OutputIterator
->
-OutputIterator
-jet_smooth_point_set(InputIterator first, ///< iterator over the first input point
-                     InputIterator beyond, ///< past-the-end iterator over input points
-                     OutputIterator output, ///< iterator over the first output point
-                     unsigned int k, ///< number of neighbors
-                     const unsigned int degree_fitting = 2,
-                     const unsigned int degree_monge = 2)
-{
-  typedef typename std::iterator_traits<InputIterator>::value_type Input_point_3;
-  typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  return jet_smooth_point_set(first,beyond,output,k,Kernel(),degree_fitting,degree_monge);
-}
-
-/// Smooths points by fitting jet surfaces over their k
-/// nearest neighbors and projecting onto the jets.
-/// This function is mutating the input point set and deduces the kernel from iterator types.
-///
-/// Warning:
-/// As this method relocates the points, it
-/// should not be called on containers sorted w.r.t. point locations.
-///
-/// @commentheading Precondition: k >= 2.
-///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
+/// @cond SKIP_IN_MANUAL
+// This variant deduces the kernel from iterator type.
 template <typename ForwardIterator>
 void
 jet_smooth_point_set(ForwardIterator first, ///< iterator over the first input/output point
@@ -262,6 +166,7 @@ jet_smooth_point_set(ForwardIterator first, ///< iterator over the first input/o
   typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
   jet_smooth_point_set(first,beyond,k,Kernel(),degree_fitting,degree_monge);
 }
+/// @endcond
 
 
 CGAL_END_NAMESPACE

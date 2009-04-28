@@ -42,9 +42,6 @@ typedef UI_point_3<Kernel> UI_point; ///< Position + normal + cameras + selectio
 typedef Gyroviz_point_3<Kernel> Gyroviz_point; ///< Position + normal + cameras
 typedef UI_point::Point_with_normal Point_with_normal; ///< Position + normal
 
-// Type of points normal
-typedef UI_point::Normal Normal; ///< Model of OrientableNormal_3 concept.
-
 // Poisson's 3D Delaunay triangulation and implicit function
 typedef Poisson_dt3<Kernel> Dt3;
 typedef CGAL::Poisson_reconstruction_function<Kernel, Dt3> Poisson_reconstruction_function;
@@ -67,8 +64,8 @@ typedef Triangular_surface_3<Kernel> Triangular_surface;
 //
 // This class owns the edited points. They exist under 2 forms:
 // - m_points[] array of points + normals.
-// - the m_poisson_dt 3D triangulation used by the m_poisson_function implicit function
-//   (in fact, the points in m_poisson_dt are a non editable copy of m_points[]).
+// - the m_poisson_function implicit function
+// - the m_apss_function implicit function
 //
 // Only 1 form is visible on screen and editable at a given time.
 // This is controlled by m_edit_mode.
@@ -95,10 +92,9 @@ private:
     Point_set m_points;
 
     // Poisson implicit function
-    Poisson_reconstruction_function* m_poisson_function; // Poisson implicit function
-    Dt3* m_poisson_dt; // The Poisson equation is solved on the vertices of m_poisson_dt
+    Poisson_reconstruction_function* m_poisson_function;
 
-    // - APSS implicit function
+    // APSS implicit function
     APSS_reconstruction_function* m_apss_function;
 
     // Surface mesher

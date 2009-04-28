@@ -49,9 +49,8 @@ typedef std::deque<Point_with_normal> PointList;
 // polyhedron
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
-// Poisson's Delaunay triangulation 3 and implicit function
-typedef CGAL::Reconstruction_triangulation_3<Kernel> Dt3;
-typedef CGAL::Poisson_reconstruction_function<Kernel, Dt3> Poisson_reconstruction_function;
+// Poisson implicit function
+typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 
 // Surface mesher
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
@@ -187,10 +186,8 @@ int main(int argc, char * argv[])
 
     std::cerr << "Create Poisson triangulation...\n";
 
-    // Create implicit function.
-    // Create 3D-Delaunay triangulation for the implicit function and insert vertices.
-    Dt3 dt;
-    Poisson_reconstruction_function implicit_function(dt, points.begin(), points.end());
+    // Create implicit function and insert vertices.
+    Poisson_reconstruction_function implicit_function(points.begin(), points.end());
 
     // Recover memory used by points[]
     points.clear();

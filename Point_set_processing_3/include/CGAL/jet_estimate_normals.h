@@ -23,7 +23,6 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Monge_via_jet_fitting.h>
-#include <CGAL/Orientable_normal_3.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -47,14 +46,12 @@ namespace CGALi {
 /// @commentheading Template Parameters:
 /// @param Kernel Geometric traits class.
 /// @param Tree KD-tree.
-/// @param OrientableNormal_3 Type of return value.
 ///
-/// @return Computed normal, model of OrientableNormal_3.
+/// @return Computed normal. Orientation is random.
 template < typename Kernel,
-           typename Tree,
-           typename OrientableNormal_3
+           typename Tree
 >
-OrientableNormal_3
+typename Kernel::Vector_3
 jet_estimate_normals(const typename Kernel::Point_3& query, ///< point to compute the normal at
                      Tree& tree, ///< KD-tree
                      unsigned int k, ///< number of neighbors
@@ -63,7 +60,6 @@ jet_estimate_normals(const typename Kernel::Point_3& query, ///< point to comput
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Vector_3 Vector;
-  typedef OrientableNormal_3 Oriented_normal;
 
   // types for K nearest neighbors search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
@@ -98,8 +94,7 @@ jet_estimate_normals(const typename Kernel::Point_3& query, ///< point to comput
                                     degree_fitting, degree_monge);
 
   // output normal vector (already normalized in monge form)
-  return OrientableNormal_3(monge_form.normal_direction(),
-                            false /* not oriented */);
+  return monge_form.normal_direction();
 }
 
 
@@ -112,18 +107,18 @@ jet_estimate_normals(const typename Kernel::Point_3& query, ///< point to comput
 
 
 /// Estimate normal directions using jet fitting on the k nearest neighbors.
-/// The output normals are marked as unoriented.
-///
-/// This variant requires the kernel.
+/// The output normals are randomly oriented.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
 /// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param OutputIterator value_type must be a model of OrientableNormal_3.
-/// @param Kernel Geometric traits class.
+/// @param OutputIterator value_type must be convertible from Vector_3<Kernel>.
+/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
 ///
 /// @return past-the-end output iterator.
+
+// This variant requires the kernel.
 template <typename InputIterator,
           typename OutputIterator,
           typename Kernel
@@ -137,9 +132,6 @@ jet_estimate_normals(InputIterator first, ///< iterator over the first input poi
                      unsigned int degree_fitting)
 {
   CGAL_TRACE("Call jet_estimate_normals()\n");
-
-  // value_type_traits is a workaround as back_insert_iterator's value_type is void
-  typedef typename value_type_traits<OutputIterator>::type Normal;
 
   // types for K nearest neighbors search structure
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
@@ -168,7 +160,7 @@ jet_estimate_normals(InputIterator first, ///< iterator over the first input poi
   InputIterator it;
   for(it = first; it != beyond; it++)
   {
-    *normals = CGALi::jet_estimate_normals<Kernel,Tree,Normal>(*it,tree,k,degree_fitting);
+    *normals = CGALi::jet_estimate_normals<Kernel,Tree>(*it,tree,k,degree_fitting);
     normals++;
   }
 
@@ -178,17 +170,8 @@ jet_estimate_normals(InputIterator first, ///< iterator over the first input poi
   return normals;
 }
 
-/// Estimate normal directions using jet fitting on the k nearest neighbors.
-/// The output normals are marked as unoriented.
-/// This variant deduces the kernel from iterator types.
-///
-/// @commentheading Precondition: k >= 2.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param OutputIterator value_type must be a model of OrientableNormal_3.
-///
-/// @return past-the-end output iterator.
+/// @cond SKIP_IN_MANUAL
+// This variant deduces the kernel from iterator type.
 template <typename InputIterator,
           typename OutputIterator
 >
@@ -203,6 +186,7 @@ jet_estimate_normals(InputIterator first, ///< iterator over the first input poi
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   return jet_estimate_normals(first,beyond,normals,k,Kernel(),degree_fitting);
 }
+/// @endcond
 
 
 CGAL_END_NAMESPACE

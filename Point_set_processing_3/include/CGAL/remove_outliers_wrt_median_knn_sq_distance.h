@@ -94,58 +94,6 @@ compute_median_knn_sq_distance_3(
 }
 
 
-/// Outliers distribution:
-/// - compute median squared distance to the K nearest neighbors,
-/// - outliers distribution.
-//template <typename InputIterator,
-//          typename OutputIterator,
-//          typename Kernel
-//>
-//OutputIterator
-//outliers_distribution_wrt_median_knn_sq_distance_3(
-//                     InputIterator first,       ///< iterator over the first input point.
-//                     InputIterator beyond,      ///< past-the-end iterator over input points.
-//                     OutputIterator output,     ///< iterator over the first output point.
-//                     unsigned int k,            ///< number of neighbors.
-//                     const Kernel& kernel,      ///< geometric traits.
-//                     double threshold_percent)  ///< percentage of points to remove.
-//{
-//    // geometric types
-//    typedef typename Kernel::FT FT;
-//    typedef typename std::iterator_traits<InputIterator>::value_type Point;
-//
-//    // types for K nearest neighbors search structure
-//    typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-//    typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-//    typedef typename Neighbor_search::Tree Tree;
-//    typedef typename Neighbor_search::iterator Search_iterator;
-//
-//    // precondition: at least one element in the container.
-//    // to fix: should have at least three distinct points
-//    // but this is costly to check
-//    CGAL_precondition(first != beyond);
-//
-//    // precondition: at least 2 nearest neighbors
-//    CGAL_precondition(k >= 2);
-//
-//    CGAL_precondition(threshold_percent >= 0 && threshold_percent <= 100);
-//
-//    // instanciate a KD-tree search
-//    Tree tree(first,beyond);
-//
-//    // iterate over input points and add them to multimap sorted by distance to k
-//    std::multimap<FT,Point> sorted_points;
-//    for(InputIterator point_it = first; point_it != beyond; point_it++)
-//    {
-//      FT sq_distance = compute_median_knn_sq_distance_3<Kernel>(*point_it,tree,k);
-//      sorted_points.insert( std::make_pair(sq_distance,*point_it) );
-//    }
-//
-//    output = std::copy(sorted_points.begin(), sorted_points.end(), output);
-//    return output;
-//}
-
-
 } /* namespace CGALi */
 
 
@@ -156,90 +104,21 @@ compute_median_knn_sq_distance_3(
 
 /// Remove outliers:
 /// - compute median squared distance to the K nearest neighbors,
-/// - output (100-threshold_percent) % best points wrt this distance.
-/// This variant requires the kernel.
-///
-/// @commentheading Precondition: k >= 2.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
-/// @param Kernel Geometric traits class.
-///
-/// @return past-the-end output iterator.
-template <typename InputIterator,
-          typename OutputIterator,
-          typename Kernel
->
-OutputIterator
-remove_outliers_wrt_median_knn_sq_distance(
-                     InputIterator first,       ///< iterator over the first input point.
-                     InputIterator beyond,      ///< past-the-end iterator over input points.
-                     OutputIterator output,     ///< iterator over the first output point.
-                     unsigned int k,            ///< number of neighbors.
-                     const Kernel& kernel,      ///< geometric traits.
-                     double threshold_percent)  ///< percentage of points to remove.
-{
-    // geometric types
-    typedef typename Kernel::FT FT;
-    typedef typename std::iterator_traits<InputIterator>::value_type Point;
-
-    // types for K nearest neighbors search structure
-    typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-    typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-    typedef typename Neighbor_search::Tree Tree;
-    typedef typename Neighbor_search::iterator Search_iterator;
-
-    // precondition: at least one element in the container.
-    // to fix: should have at least three distinct points
-    // but this is costly to check
-    CGAL_precondition(first != beyond);
-
-    // precondition: at least 2 nearest neighbors
-    CGAL_precondition(k >= 2);
-
-    CGAL_precondition(threshold_percent >= 0 && threshold_percent <= 100);
-
-    // instanciate a KD-tree search
-    Tree tree(first,beyond);
-
-    // iterate over input points and add them to multimap sorted by distance to k
-    std::multimap<FT,Point> sorted_points;
-    for(InputIterator point_it = first; point_it != beyond; point_it++)
-    {
-      FT sq_distance = CGALi::compute_median_knn_sq_distance_3<Kernel>(*point_it,tree,k);
-      sorted_points.insert( std::make_pair(sq_distance,*point_it) );
-    }
-
-    // output (100-threshold_percent) % best points
-    int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
-    typename std::multimap<FT,Point>::iterator src;
-    int index;
-    for (src = sorted_points.begin(), index = 0;
-         index < first_index_to_remove;
-         ++src, ++index)
-    {
-      *output++ = src->second;
-    }
-    return output;
-}
-
-/// Remove outliers:
-/// - compute median squared distance to the K nearest neighbors,
 /// - sort the points in increasing order of computed distance.
-/// This variant is mutating the input point set and requires the kernel.
 ///
-/// Warning:
-/// This method modifies the order of points, thus
-/// should not be called on sorted containers.
+/// This method modifies the order of input points, and returns 
+/// an iterator over the first point to remove (see erase-remove idiom).
+/// Warning: this method should not be called on sorted containers.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
 ///
-/// @return First iterator to remove (see erase-remove idiom).
+/// @return iterator over the first point to remove.
+
+// This variant requires the kernel.
 template <typename ForwardIterator,
           typename Kernel
 >
@@ -301,49 +180,8 @@ remove_outliers_wrt_median_knn_sq_distance(
     return first_iterator_to_remove;
 }
 
-/// Remove outliers:
-/// - compute median squared distance to the K nearest neighbors,
-/// - output (100-threshold_percent) % best points wrt this distance.
-/// This variant deduces the kernel from iterator types.
-///
-/// @commentheading Precondition: k >= 2.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
-///
-/// @return past-the-end output iterator.
-template <typename InputIterator,
-          typename OutputIterator
->
-OutputIterator
-remove_outliers_wrt_median_knn_sq_distance(
-                     InputIterator first,       ///< iterator over the first input point.
-                     InputIterator beyond,      ///< past-the-end iterator over input points.
-                     OutputIterator output,     ///< iterator over the first output point.
-                     unsigned int k,            ///< number of neighbors.
-                     double threshold_percent)  ///< percentage of points to remove.
-{
-  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return remove_outliers_wrt_median_knn_sq_distance(first,beyond,output,k,Kernel(),threshold_percent);
-}
-
-/// Remove outliers:
-/// - compute median squared distance to the K nearest neighbors,
-/// - sort the points in increasing order of computed distance.
-/// This variant is mutating the input point set and deduces the kernel from iterator types.
-///
-/// Warning:
-/// This method modifies the order of points, thus
-/// should not be called on sorted containers.
-///
-/// @commentheading Precondition: k >= 2.
-///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
-///
-/// @return First iterator to remove (see erase-remove idiom).
+/// @cond SKIP_IN_MANUAL
+// This variant deduces the kernel from iterator type.
 template <typename ForwardIterator>
 ForwardIterator
 remove_outliers_wrt_median_knn_sq_distance(
@@ -356,6 +194,7 @@ remove_outliers_wrt_median_knn_sq_distance(
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   return remove_outliers_wrt_median_knn_sq_distance(first,beyond,k,Kernel(),threshold_percent);
 }
+/// @endcond
 
 
 CGAL_END_NAMESPACE

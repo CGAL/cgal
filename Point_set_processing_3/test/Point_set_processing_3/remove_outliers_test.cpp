@@ -57,18 +57,9 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
             << threshold_percent_avg_knn_sq_dst << "%, k="
             << nb_neighbors_remove_outliers << "%=" << nb_neighbors << ")...\n";
 
-  std::deque<Point> output;
-  CGAL::remove_outliers(
-                  points.begin(), points.end(),
-                  std::back_inserter(output),
-                  nb_neighbors,
-                  threshold_percent_avg_knn_sq_dst);
-
-  // mutating version of the same function
-  points.erase(CGAL::remove_outliers(
-               points.begin(), points.end(),
-               nb_neighbors,
-               threshold_percent_avg_knn_sq_dst),
+  points.erase(CGAL::remove_outliers(points.begin(), points.end(),
+                                     nb_neighbors,
+                                     threshold_percent_avg_knn_sq_dst),
                points.end());
 
   long memory = CGAL::Memory_sizer().virtual_size();

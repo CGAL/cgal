@@ -21,8 +21,9 @@
 #define GYROVIZ_POINT_3_H
 
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/Orientable_normal_3.h>
 #include <CGAL/Iterator_project.h>
+
+#include <boost/graph/properties.hpp>
 
 #include <set>
 #include <algorithm>
@@ -31,24 +32,24 @@
 
 /// The Gyroviz_point_3 class represents a 3D point with:
 /// - a position,
-/// - a normal (oriented or not),
+/// - a normal (oriented),
 /// - a list of camera/2D point pairs used to reconstruct the point from images,
 ///
 /// @heading Is Model for the Concepts: 
-/// Model of the PointWithOrientableNormal_3 concept.
+/// Model of the PointWithNormal_3 concept.
 ///
 /// @heading Parameters:
 /// @param Gt   Kernel's geometric traits.
 
 template<class Gt>
 class Gyroviz_point_3 
-  : public CGAL::Point_with_normal_3<Gt, CGAL::Orientable_normal_3<Gt> >
+  : public CGAL::Point_with_normal_3<Gt>
 {
 // Private types
 private:
 
     // Base class
-    typedef CGAL::Point_with_normal_3<Gt, CGAL::Orientable_normal_3<Gt> > Base;
+    typedef CGAL::Point_with_normal_3<Gt> Base;
 
     // Auxiliary class to build a camera iterator
     template <class Node> // Node is Camera_point2_pair
@@ -64,15 +65,15 @@ private:
 public:
 
     // Base class
-    typedef Base Point_with_normal; ///< Model of the PointWithOrientableNormal_3 concept.
+    typedef Base Point_with_normal; ///< Model of the PointWithNormal_3 concept.
 
     // Repeat Point_with_normal_3 public types
     typedef Gt Geom_traits; ///< Kernel's geometric traits.
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::RT RT;
-    typedef typename Geom_traits::Point_2 Point_2; ///< Kernel's Point_2 class.
-    typedef typename Geom_traits::Point_3 Point_3; ///< Kernel's Point_3 class.
-    typedef typename Point_with_normal::Normal Normal; ///< Model of OrientableNormal_3 concept.
+    typedef typename Geom_traits::Point_2  Point_2;  ///< == Point_2<Geom_traits>
+    typedef typename Geom_traits::Point_3  Point_3;  ///< == Point_3<Geom_traits>
+    typedef typename Geom_traits::Vector_3 Vector_3; ///< == Vector_3<Geom_traits>
 
     /// Camera/2D point pair. The 2D point is the 3D point (*this) projection's
     /// in the camera's image plane.
@@ -92,29 +93,29 @@ public:
 public:
 
     /// Point is (0,0,0) by default.
-    /// Normal is (0,0,0) and is oriented by default.
+    /// Normal is (0,0,0) by default.
     /// Camera list is empty by default.
     Gyroviz_point_3(const CGAL::Origin& o = CGAL::ORIGIN)
     : Base(o)
     {
     }
     Gyroviz_point_3(FT x, FT y, FT z,
-                    const Normal& normal = CGAL::NULL_VECTOR)
+                    const Vector_3& normal = CGAL::NULL_VECTOR)
     : Base(x,y,z,normal)
     {
     }
     Gyroviz_point_3(RT hx, RT hy, RT hz, RT hw,
-                    const Normal& normal = CGAL::NULL_VECTOR)
+                    const Vector_3& normal = CGAL::NULL_VECTOR)
     : Base(hx,hy,hz,hw,normal)
     {
     }
     Gyroviz_point_3(const Point_3& point,
-                    const Normal& normal = CGAL::NULL_VECTOR)
+                    const Vector_3& normal = CGAL::NULL_VECTOR)
     : Base(point, normal)
     {
     }
-    template <class K, class N>
-    Gyroviz_point_3(const Point_with_normal_3<K,N>& pwn)
+    template <class K>
+    Gyroviz_point_3(const Point_with_normal_3<K>& pwn)
     : Base(pwn)
     {
     }
@@ -128,7 +129,7 @@ public:
     }
     template < class InputIterator >
     Gyroviz_point_3(const Point_3& point,
-                    const Normal& normal,
+                    const Vector_3& normal,
                     InputIterator first_camera_point2_pair, 
                     InputIterator beyond_camera_point2_pair)
     : Base(point, normal)

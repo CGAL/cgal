@@ -4,29 +4,28 @@
 #define UI_POINT_3_H
 
 #include <Gyroviz_point_3.h>
-#include <CGAL/Orientable_normal_3.h>
 #include <CGAL/Iterator_project.h>
 
 #include <set>
 #include <algorithm>
 
 
-/// The UI_point_3 class represents a 3D point in Surface_reconstruction_points_3 demo. 
+/// The UI_point_3 class represents a 3D point in Surface_reconstruction_points_3 demo.
 /// It contains:
 /// - a position,
-/// - a normal (oriented or not),
-/// - an original normal (optional, always oriented),
+/// - a normal (oriented),
+/// - an original normal (optional, oriented),
 /// - a list of camera/2D point pairs used to reconstruct the point from images,
 /// - a selection flag.
 ///
-/// @heading Is Model for the Concepts: 
-/// Model of the PointWithOrientableNormal_3 concept.
+/// @heading Is Model for the Concepts:
+/// Model of the PointWithNormal_3 concept.
 ///
 /// @heading Parameters:
 /// @param Gt   Kernel's geometric traits.
 
 template<class Gt>
-class UI_point_3 
+class UI_point_3
   : public Gyroviz_point_3<Gt>
 {
 // Private types
@@ -39,22 +38,21 @@ private:
 public:
 
     // Base class
-    typedef Base Point_with_normal; ///< Model of the PointWithOrientableNormal_3 concept.
+    typedef Base Point_with_normal; ///< Model of the PointWithNormal_3 concept.
 
     // Repeat base class public types
     typedef Gt Geom_traits; ///< Kernel's geometric traits.
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::RT RT;
-    typedef typename Geom_traits::Point_2 Point_2; ///< Kernel's Point_2 class.
-    typedef typename Geom_traits::Point_3 Point_3; ///< Kernel's Point_3 class.
-    typedef typename Geom_traits::Vector_3 Vector_3; ///< Kernel's Vector_3 class.
-    typedef typename Point_with_normal::Normal Normal; ///< Model of OrientableNormal_3 concept.
+    typedef typename Geom_traits::Point_2  Point_2;  ///< == Point_2<Geom_traits>
+    typedef typename Geom_traits::Point_3  Point_3;  ///< == Point_3<Geom_traits>
+    typedef typename Geom_traits::Vector_3 Vector_3; ///< == Vector_3<Geom_traits>
 
 // Public methods
 public:
 
     /// Point is (0,0,0) by default.
-    /// Normal is (0,0,0) and is oriented by default.
+    /// Normal is (0,0,0) by default.
     /// Camera list is empty by default.
     UI_point_3(const CGAL::Origin& o = CGAL::ORIGIN)
     : Base(o)
@@ -62,25 +60,25 @@ public:
       m_is_selected = false;
     }
     UI_point_3(FT x, FT y, FT z,
-               const Normal& normal = CGAL::NULL_VECTOR)
+               const Vector_3& normal = CGAL::NULL_VECTOR)
     : Base(x,y,z,normal)
     {
       m_is_selected = false;
     }
     UI_point_3(RT hx, RT hy, RT hz, RT hw,
-               const Normal& normal = CGAL::NULL_VECTOR)
+               const Vector_3& normal = CGAL::NULL_VECTOR)
     : Base(hx,hy,hz,hw,normal)
     {
       m_is_selected = false;
     }
     UI_point_3(const Point_3& point,
-               const Normal& normal = CGAL::NULL_VECTOR)
+               const Vector_3& normal = CGAL::NULL_VECTOR)
     : Base(point, normal)
     {
       m_is_selected = false;
     }
-    template <class K, class N>
-    UI_point_3(const CGAL::Point_with_normal_3<K,N>& pwn)
+    template <class K>
+    UI_point_3(const CGAL::Point_with_normal_3<K>& pwn)
     : Base(pwn)
     {
       m_is_selected = false;
@@ -101,7 +99,7 @@ public:
     }
     template < class InputIterator >
     UI_point_3(const Point_3& point,
-               const Normal& normal,
+               const Vector_3& normal,
                InputIterator first_camera_point2_pair, 
                InputIterator beyond_camera_point2_pair)
     : Base(point, normal, first_camera_point2_pair, beyond_camera_point2_pair)

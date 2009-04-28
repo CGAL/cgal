@@ -12,6 +12,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
+// $Id$
 //
 // Author(s) : Laurent Saboret and Nader Salman
 
@@ -111,55 +112,20 @@ public:
 
 
 /// Merge points which belong to the same cell of a grid of cell size = epsilon.
-/// This variant requires the kernel.
 ///
-/// @commentheading Precondition: epsilon > 0.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
-/// @param Kernel Geometric traits class.
-///
-/// @return past-the-end output iterator.
-template <typename InputIterator,
-          typename OutputIterator,
-          typename Kernel
->
-OutputIterator
-merge_simplify_point_set(
-          InputIterator first,      ///< iterator over the first input point.
-          InputIterator beyond,     ///< past-the-end iterator over input points.
-          OutputIterator output,    ///< iterator over the first output point.
-          double epsilon,           ///< tolerance value when comparing 3D points.
-          const Kernel& kernel)     ///< geometric traits.
-{
-    typedef typename std::iterator_traits<InputIterator>::value_type Point;
-
-    CGAL_precondition(epsilon > 0);
-
-    // Merge points which belong to the same cell of a grid of cell size = epsilon.
-    Epsilon_point_set_3<Point> points_to_keep(epsilon);
-    points_to_keep.insert(first, beyond);
-
-    // Copy merged points to output
-    output = std::copy(points_to_keep.begin(), points_to_keep.end(), output);
-    return output;
-}
-
-/// Merge points which belong to the same cell of a grid of cell size = epsilon.
-/// This variant is mutating the input point set and requires the kernel.
-///
-/// Warning:
-/// This method modifies the order of points, thus
-/// should not be called on sorted containers.
+/// This method modifies the order of input points, and returns 
+/// an iterator over the first point to remove (see erase-remove idiom).
+/// Warning: this method should not be called on sorted containers.
 ///
 /// @commentheading Precondition: epsilon > 0.
 ///
 /// @commentheading Template Parameters:
 /// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
 ///
-/// @return First iterator to remove (see erase-remove idiom).
+/// @return iterator over the first point to remove.
+
+// This variant requires the kernel.
 template <typename ForwardIterator,
           typename Kernel
 >
@@ -195,44 +161,8 @@ merge_simplify_point_set(
     return first_iterator_to_remove;
 }
 
-/// Merge points which belong to the same cell of a grid of cell size = epsilon.
-/// This variant deduces the kernel from iterator types.
-///
-/// @commentheading Precondition: epsilon > 0.
-///
-/// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param OutputIterator value_type must be convertible from InputIterator's value_type.
-///
-/// @return past-the-end output iterator.
-template <typename InputIterator,
-          typename OutputIterator
->
-OutputIterator
-merge_simplify_point_set(
-           InputIterator first,   ///< iterator over the first input point.
-           InputIterator beyond,  ///< past-the-end iterator over input points.
-           OutputIterator output, ///< iterator over the first output point.
-           double epsilon)        ///< tolerance value when comparing 3D points.
-{
-  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return merge_simplify_point_set(first,beyond,output,epsilon,Kernel());
-}
-
-/// Merge points which belong to the same cell of a grid of cell size = epsilon.
-/// This variant is mutating the input point set and deduces the kernel from iterator types.
-///
-/// Warning:
-/// This method modifies the order of points, thus
-/// should not be called on sorted containers.
-///
-/// @commentheading Precondition: epsilon > 0.
-///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
-///
-/// @return First iterator to remove (see erase-remove idiom).
+/// @cond SKIP_IN_MANUAL
+// This variant deduces the kernel from iterator type.
 template <typename ForwardIterator>
 ForwardIterator
 merge_simplify_point_set(
@@ -244,6 +174,7 @@ merge_simplify_point_set(
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   return merge_simplify_point_set(first,beyond,epsilon,Kernel());
 }
+/// @endcond
 
 
 CGAL_END_NAMESPACE

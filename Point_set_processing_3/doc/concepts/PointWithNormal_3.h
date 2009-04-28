@@ -18,12 +18,11 @@
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
 
-/// A PointWithNormal_3 concept represents a 3D point with:
+/// The PointWithNormal_3 concept represents a 3D point with:
 /// - a position
 /// - a normal (oriented).
 ///
-/// @heading Has Models:
-/// - Point_with_normal_3<GeomTraits, Normal_3>
+/// @heading Has Models: Point_with_normal_3<GeomTraits>
 
 class PointWithNormal_3 
   : public Kernel::Point_3,
@@ -35,8 +34,8 @@ public:
     typedef xxx Geom_traits; ///< Kernel's geometric traits
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::RT RT;
-    typedef typename Geom_traits::Point_3  Point;  ///< Kernel's Point_3 class.
-    typedef Normal_3 Normal; ///< Model of Kernel::Vector_3 or of OrientableNormal_3.
+    typedef typename Geom_traits::Point_3  Point;  ///< Model of Kernel::Point_3.
+    typedef typename Geom_traits::Vector_3 Vector; ///< Model of Kernel::Vector_3.
 
 // Public methods
 public:
@@ -45,18 +44,18 @@ public:
     /// Normal is (0,0,0) by default.
     PointWithNormal_3(const Origin& o = ORIGIN);
     PointWithNormal_3(FT x, FT y, FT z,
-                      const Normal& normal = NULL_VECTOR);
+                      const Vector& normal = NULL_VECTOR);
     PointWithNormal_3(RT hx, RT hy, RT hz, RT hw,
-                      const Normal& normal = NULL_VECTOR);
+                      const Vector& normal = NULL_VECTOR);
     PointWithNormal_3(const Point& point,
-                      const Normal& normal = NULL_VECTOR);
+                      const Vector& normal = NULL_VECTOR);
 
     /// Get/set position.
     const Point& position() const;
     Point&       position();
 
     /// Get/set normal.
-    const Normal& normal() const;
-    Normal&       normal();
+    const Vector& normal() const;
+    Vector&       normal();
 };
 
