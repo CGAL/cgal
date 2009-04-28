@@ -1,5 +1,12 @@
 \section{Introduction}
 
+
+This \cgal\ component implements methods to analyze and process unorganized 3D point sets. The input is an unorganized 3D point set, possibly with attributes such as unoriented or oriented normals. This point set can be analyzed to measure certain geometric properties such as average spacing between the points and their $K$ nearest neighbors. We can furthermore process the point set with functions devoted to the simplification, outlier removal, smoothing, normal estimation and normal orientation. The output is either a point set or a point set with normals.
+
+
+A typical usage of this package is to pre-process a point set before calling a reconstruction method.
+
+
 % Insert image introduction.jpg/eps
 \begin{center}
     \label{Point_set_processing_3-fig-introduction}
@@ -20,10 +27,8 @@
     \end{figure}
 \end{center}
 
-This \cgal\ component implements methods to analyze and process unorganized 3D point sets. The input is an unorganized 3D point set, possibly with attributes such as unoriented or oriented normals. This point set can be analyzed to measure certain geometric properties such as average spacing between the points and their $K$ nearest neighbors. We can furthermore process the point set with functions devoted to the simplification, outlier removal, smoothing, normal estimation and normal orientation. The output is either a point set or a point set with normals.
 
 
-A typical usage of this package is to pre-process a point set before calling a reconstruction method.
 Surface Reconstruction from Point Sets is a sequential process:
 
 \begin{itemize}
