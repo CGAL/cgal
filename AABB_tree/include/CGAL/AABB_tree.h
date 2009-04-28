@@ -328,8 +328,14 @@ namespace CGAL {
         }
 
         m_p_root = new Node[m_data.size()-1]();
-        CGAL_assertion(m_p_root != NULL);
-        m_p_root->expand(m_data.begin(), m_data.end(), m_data.size());
+        if(m_p_root == NULL)
+        {
+            std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
+            CGAL_assertion(m_p_root != NULL);
+            m_data.clear();
+        }
+        else
+            m_p_root->expand(m_data.begin(), m_data.end(), m_data.size());
     }
 
     // Clears tree and insert a set of primitives
@@ -341,14 +347,6 @@ namespace CGAL {
     {
         clear();
 
-        // allocate memory
-        m_p_root = new Node[m_data.size()-1]();
-        if(m_p_root == NULL)
-        {
-            std::cerr << "Unable to allocate memory for AABB tree" << std::cerr;
-            return false;
-        }
-
         // inserts primitives
         while(first != beyond)
         {
@@ -358,10 +356,15 @@ namespace CGAL {
 
         // allocates tree nodes
         m_p_root = new Node[m_data.size()-1]();
+        if(m_p_root == NULL)
+        {
+            std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
+            m_data.clear();
+            return false;
+        }
 
         // constructs the tree
         m_p_root->expand(m_data.begin(), m_data.end(), m_data.size());
-
         return true;
     }
 

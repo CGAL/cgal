@@ -193,12 +193,12 @@ void test(const char *filename)
     typedef CGAL::AABB_traits<K, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
 
-    // load (triangle) polyhedral surface
+    // loads triangle polyhedral surface
     Polyhedron polyhedron;
     std::ifstream ifs(filename);
     ifs >> polyhedron;
 
-    // construct tree (without internal KD-tree as we do not query any projection).
+    // constructs tree 
     std::cout << "construct tree...";
     CGAL::Timer timer;
     timer.start();
@@ -206,7 +206,10 @@ void test(const char *filename)
     timer.stop();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 
-    // call tests
+    // tests clear and rebuilds
+    tree.clear_and_insert(polyhedron.facets_begin(),polyhedron.facets_end());
+
+    // calls all tests
     test_all_query_types<Tree,K>(tree);
     test_speed<Tree,K>(tree);
 }
@@ -244,6 +247,5 @@ int main(void)
     test_several_kernels("./data/cube.off");
     test_several_kernels("./data/coverrear.off");
     test_several_kernels("./data/nested_spheres.off");
-    test_several_kernels("./data/lucy.off");
     return 0;
 }
