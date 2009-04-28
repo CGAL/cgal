@@ -59,8 +59,25 @@ namespace CGAL {
         template<typename ConstPrimitiveIterator>
         AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
+        /// Clears the current tree and rebuilds the datastructure.
+        /// Type ConstPrimitiveIterator can be any const iterator on
+        /// a container of Primitive::id_type such that Primitive has 
+        /// a constructor taking a ConstPrimitiveIterator as argument.
+        /// Returns true if the memory allocation was successful.
+        template<typename ConstPrimitiveIterator>
+        bool clear_and_insert(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
+
         /// Non virtual destructor
-        ~AABB_tree() { delete[] m_p_root; }
+        ~AABB_tree() { clear(); }
+
+        /// Clears the tree
+        void clear(void)
+        { 
+            m_data.clear();
+            delete[] m_p_root;
+            m_p_root = NULL;
+            m_search_tree_constructed = false;
+        }
 
         /// Construct internal search tree with a given point set
         template<typename ConstPointIterator>
@@ -313,6 +330,39 @@ namespace CGAL {
         m_p_root = new Node[m_data.size()-1]();
         CGAL_assertion(m_p_root != NULL);
         m_p_root->expand(m_data.begin(), m_data.end(), m_data.size());
+    }
+
+    // Clears tree and insert a set of primitives
+    // Returns true upon successful memory allocation
+    template<typename Tr>
+    template<typename ConstPrimitiveIterator>
+    bool AABB_tree<Tr>::clear_and_insert(ConstPrimitiveIterator first, 
+                                         ConstPrimitiveIterator beyond)
+    {
+        clear();
+
+        // allocate memory
+        m_p_root = new Node[m_data.size()-1]();
+        if(m_p_root == NULL)
+        {
+            std::cerr << "Unable to allocate memory for AABB tree" << std::cerr;
+            return false;
+        }
+
+        // inserts primitives
+        while(first != beyond)
+        {
+            m_data.push_back(Primitive(first));
+            first++;
+        }
+
+        // allocates tree nodes
+        m_p_root = new Node[m_data.size()-1]();
+
+        // constructs the tree
+        m_p_root->expand(m_data.begin(), m_data.end(), m_data.size());
+
+        return true;
     }
 
     // constructs the search KD tree from given points
