@@ -2712,8 +2712,10 @@ Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text svneol=unset#application/
 Partition_2/doc_tex/Partition_2/teaser-small.png -text svneol=unset#image/png
 Partition_2/doc_tex/Partition_2/teaser.png -text svneol=unset#image/png
 Point_set_2/doc_tex/Point_set_2/point_set.png -text
+Point_set_processing_3/doc_tex/Point_set_processing_3/analysis.tex -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/fig/point_set_processing.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/fig/point_set_processing_detail.png -text svneol=unset#image/png
+Point_set_processing_3/doc_tex/Point_set_processing_3/input.tex -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/introduction.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/introduction.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/jet_smoothing.eps -text svneol=unset#application/postscript
@@ -2722,6 +2724,8 @@ Point_set_processing_3/doc_tex/Point_set_processing_3/merge_simplification.eps -
 Point_set_processing_3/doc_tex/Point_set_processing_3/merge_simplification.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/mst_orient_normals.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/mst_orient_normals.jpg -text svneol=unset#image/jpeg
+Point_set_processing_3/doc_tex/Point_set_processing_3/outliers.tex -text
+Point_set_processing_3/doc_tex/Point_set_processing_3/output.tex -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/pca_estimate_normals.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/pca_estimate_normals.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/pipeline.eps -text svneol=unset#application/postscript
@@ -2730,6 +2734,8 @@ Point_set_processing_3/doc_tex/Point_set_processing_3/random_simplification.eps 
 Point_set_processing_3/doc_tex/Point_set_processing_3/random_simplification.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/remove_outliers.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/remove_outliers.jpg -text svneol=unset#image/jpeg
+Point_set_processing_3/doc_tex/Point_set_processing_3/simplification.tex -text
+Point_set_processing_3/doc_tex/Point_set_processing_3/smoothing.tex -text
 Point_set_processing_3/examples/Point_set_processing_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Point_set_processing_3/examples/Point_set_processing_3/data/camel.off -text svneol=unset#application/octet-stream
 Point_set_processing_3/examples/Point_set_processing_3/data/oni.xyz -text

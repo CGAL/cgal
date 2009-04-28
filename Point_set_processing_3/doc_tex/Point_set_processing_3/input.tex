@@ -1,0 +1,36 @@
+\section{Input}
+
+The algorithms of this component expect as input parameters range iterators over:
+
+\begin{itemize}
+\item 3D points
+\item Normals (orientable 3D vectors)
+\item 3D points with unoriented normals
+\item 3D points with oriented normals
+\end{itemize}
+
+These types are described as concepts.
+\cgal\ provides the next classes to implement points and normals:
+
+\begin{itemize}
+\item \ccRefIdfierPage{CGAL::Point_3<GeomTraits>} \\
+\cgal\ 3D position.
+\item \ccRefIdfierPage{CGAL::Vector_3<GeomTraits>} \\
+\cgal\ 3D vector.
+\item \ccRefIdfierPage{CGAL::Point_with_normal_3<GeomTraits, Normal_3>} \\
+3D point location plus normal.
+\end{itemize}
+
+We provide convenient functions to read point sets from standard file formats:
+
+\begin{itemize}
+\item XYZ
+\item OFF
+\end{itemize}
+
+\ccRefIdfierPage{CGAL::read_xyz_point_set}  \\
+\ccRefIdfierPage{CGAL::read_off_point_set}  \\
+
+Example:
+
+\ccIncludeExampleCode{Point_set_processing_3/read_write_xyz_point_set_example.cpp}
