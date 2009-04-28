@@ -12,7 +12,7 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-    // Read a .xyz point set file in points[]
+    // Reads a .xyz point set file 
     std::deque<Point> points;
     std::ifstream stream("data/sphere_20k.xyz");
     if (!stream || 
@@ -23,12 +23,12 @@ int main(void)
       return EXIT_FAILURE;
     }
 
-    // Average Spacing
+    // Computes average spacing
     const unsigned int nb_neighbors = 7;
     typedef std::deque<Point>::iterator Iterator;
     FT average_spacing = CGAL::compute_average_spacing<Iterator>(points.begin(), points.end(),
                                                                  nb_neighbors);
-    std::cout << "Average spacing = " << average_spacing << std::endl;
+    std::cout << "Average spacing: " << average_spacing << std::endl;
 
     return EXIT_SUCCESS;
 }

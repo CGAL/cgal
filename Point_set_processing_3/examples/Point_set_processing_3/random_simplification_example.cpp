@@ -11,7 +11,7 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-    // Read a .xyz point set file in points[]
+    // Reads a .xyz point set file
     std::deque<Point> points;
     std::ifstream stream("data/oni.xyz");
     if (!stream || 
@@ -22,11 +22,11 @@ int main(void)
       return EXIT_FAILURE;
     }
 
-    // Random Point Set Simplification options
-    const double random_simplification_percentage = 50.0 /* % */; // percentage of outliers to remove
+    // Randomly simplifies
+    const double removed_percentage = 75.0; // removed percentage
     CGAL::random_simplify_point_set(
                     points.begin(), points.end(),
-                    random_simplification_percentage);
+                    removed_percentage);
 
     return EXIT_SUCCESS;
 }

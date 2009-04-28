@@ -1,19 +1,12 @@
 \section{Analysis}
 
-The purpose of the analysis stage is to measure common statistics and bounding volumes over the input points so as to automatically determine parameters for subsequent stages:
-\begin{itemize}
-  \item Point set barycenter, bounding box,
-        bounding sphere (provided by other \cgal\ components).
-  \item Average spacing to the $k$ nearest neighbors.
-\end{itemize}
+Function \ccc{CGAL::compute_average_spacing()} computes the average spacing of all input points to their $k$ nearest neighbor points, $k$ being specified by the user. As it provides an order of a point set density, this function is used downstream the surface reconstruction pipeline to automatically determine some parameters such as output mesh sizing.
+\ccRefIdfierPage{CGAL::compute_average_spacing}
+The following example reads a point set in the \ccc{xyz} format and computes the average spacing
+\ccIncludeExampleCode{Point_set_processing_3/average_spacing_example.cpp}
 
-\ccc{CGAL::compute_average_spacing()} computes the average spacing of all input points to their $k$ nearest neighbors.
-
+Note that other functions such as centroid or bounding volumes are found in other \cgal \components:
 \ccRefIdfierPage{CGAL::centroid}  \\
 \ccRefIdfierPage{CGAL::bounding_box}  \\
 \ccRefIdfierPage{CGAL::bounding_sphere}  \\
-\ccRefIdfierPage{CGAL::compute_average_spacing}  \\
 
-Example:
-
-\ccIncludeExampleCode{Point_set_processing_3/average_spacing_example.cpp}

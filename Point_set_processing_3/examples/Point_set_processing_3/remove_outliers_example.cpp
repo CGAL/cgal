@@ -11,7 +11,7 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-    // Read a .xyz point set file in points[]
+    // Reads a .xyz point set file
     std::deque<Point> points;
     std::ifstream stream("data/oni.xyz");
     if (!stream || 
@@ -22,13 +22,13 @@ int main(void)
       return EXIT_FAILURE;
     }
 
-    // Outlier Removal
-    const double threshold_percent_avg_knn_sq_dst = 5.0 /* % */; // percentage of outliers to remove
-    const int nb_neighbors = 7; // K-nearest neighbors
+    // Removes outliers
+    const double removed_percentage = 5.0; // removed percentage
+    const int nb_neighbors = 7; // considers 7 nearest neighbor points
     CGAL::remove_outliers(
                     points.begin(), points.end(),
                     nb_neighbors,
-                    threshold_percent_avg_knn_sq_dst);
+                    removed_percentage);
 
     return EXIT_SUCCESS;
 }
