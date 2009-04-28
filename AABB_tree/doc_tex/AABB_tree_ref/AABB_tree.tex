@@ -48,6 +48,16 @@ The template parameter \ccc{Traits} stands for a traits class which must be a mo
 
 \ccOperations
 
+\ccMethod{template < class ConstPrimitiveIterator>
+       bool clear_and_insert(ConstPrimitiveIterator begin, 
+                  ConstPrimitiveIterator beyond,
+                  const bool construct_search_tree = false);}
+{Clears the current tree and rebuilds it from scratch (see constructor \ccc{AABB_tree(begin,beyond)} above for the parameters). Returns \ccc{true} iff the memory allocation was successful. }
+
+\ccMethod{void clear(void);}
+{Clears the current tree. }
+
+
 \ccMethod{void construct_search_tree();}
 { Constructs the internal search KD-tree used to accelerate the projection queries. The points in the search tree are taken from the primitives by calling the function \ccc{point_on} from the primitive.}
 
