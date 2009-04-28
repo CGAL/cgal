@@ -1,11 +1,11 @@
 \section{Introduction}
 \label{AABB_tree_section_intro}
 
-The AABB tree component offers a data structure and algorithms to perform efficient intersection and projection of 3D queries against a large set of 3D geometric objects. Common examples of intersection queries include a ray or line or segment against a set of triangles, and a plane or triangle against a set of segments. A common example of projection query is to find the closest point from a point query to a set of triangles.
+The AABB tree component offers a data structure and algorithms to perform efficient intersection and projection of 3D queries against a large set of 3D geometric objects. Common examples of intersection queries include line objects (rays, lines or segments) against sets of triangles, and plane objects (planes or triangles) against sets of segments. A common example of projection query is to find the closest point from a point query to a set of triangles.
 
 More generally, the set of geometric objects stored in the data structure may be queried for intersection detection, intersection computation and projection with any type of query type, provided that the corresponding intersection predicates and constructors are implemented in the traits class. 
 
-The data structure takes as input an iterator range of geometric primitives, where a primitive wraps both one input geometric object (so-called datum) and one id (e.g., a 3D triangle and a face handle of a polyhedral surface). From these primitives a hierarchy of axis-aligned bounding boxes (AABBs) is constructed, and used to speed up intersection and projection queries (see Figure \ref{fig:AABB-tree-shark}). 
+The data structure takes as input an iterator range of geometric primitives, where each primitive wraps both one input geometric object (so-called datum) and one reference id to this object (e.g., wraps a 3D triangle and a face handle of a polyhedral surface). From these primitives a hierarchy of axis-aligned bounding boxes (AABBs) is constructed and used to speed up intersection and projection queries (see Figure \ref{fig:AABB-tree-shark}). 
 
 \begin{center}
     \label{fig:AABB-tree-shark}
@@ -26,7 +26,7 @@ The data structure takes as input an iterator range of geometric primitives, whe
 \section{Examples}
 \label{AABB_tree_section_examples}
 
-In the following example a set of 3D triangles are stored into a list. The AABB primitive wraps a triangle and an iterator in the list. We computes the number of intersections between a 3D line and the input triangles, and the closest point from a query point to the input triangles.
+In the following example a set of 3D triangles is stored in a list. The AABB primitive wraps a triangle and an iterator in the list. We computes the number of intersections between a 3D line and the input triangles, and the closest point from a query point to the input triangles.
 \ccIncludeExampleCode{AABB_tree/AABB_triangle_3_example.cpp}
 
 The following example computes the number of intersections between a 3D ray and a set of facets of a triangle polyhedral surface. The AABB primitive wraps a facet handle and generates on the fly a 3D triangle each time its object function is called.
@@ -44,4 +44,4 @@ The following example computes the number of intersections between a 3D plane an
 
 The hierarchy construction is initialized by computing the AABB of the whole set of input primitives. All primitives are then stored along the longest axis of this box, and the primitives are separated into two equal sized sets. This procedure is applied recursively until an AABB contains a single primitive. 
 
-In practice the design is slightly different than the one described above as the tree is leafless as presented in OPCODE \cite{opcode}. An intersection query traverses the tree by computing intersection tests only with respect to the AABBs during traversal, and with respect to the input primitives at the end of traversal, i.e., in the leafs of the tree. A projection query between, e.g., a point $q$ and a set of triangle primitives is turned into a \emph{ball} query centered at the query point. The ball traverses the tree while recursively querying intersections with the AABBs, and computes the closest point $p$ from the query point to the input primitives when the traversal ends, i.e., at the leafs of the tree. The ball radius is then shrunk to the distance between $p$ and $q$ for all remaining recursive tree traversals. Efficiency is achieved through setting the initial ball radius to a small value albeit guaranteed to intersect the input primitives.
+In practice the design is slightly different than the one described above as the tree is leafless as presented in OPCODE \cite{cgal:t-ocdl-05}. An intersection query traverses the tree by computing intersection tests only with respect to the AABBs during traversal, and with respect to the input primitives at the end of traversal, i.e., in the leafs of the tree. A projection query between, e.g., a point $q$ and a set of triangle primitives is turned into a \emph{ball} query centered at the query point. The ball traverses the tree while recursively querying intersections with the AABBs, and computes the closest point $p$ from the query point to the input primitives when the traversal ends, i.e., at the leafs of the tree. The ball radius is then shrunk to the distance between $p$ and $q$ for all remaining recursive tree traversals. Efficiency is achieved through setting the initial ball radius to a small value albeit guaranteed to intersect the input primitives.
