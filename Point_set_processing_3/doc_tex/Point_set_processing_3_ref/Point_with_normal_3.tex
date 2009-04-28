@@ -23,7 +23,7 @@
 %START-AUTO(\ccDefinition)
 
 The \ccc{Point_with_normal_3} class represents a 3D point with:\begin{itemize}
-\item a position,\item a normal (orientable or always oriented).\end{itemize}
+\item a position,\item a normal (oriented).\end{itemize}
 
 %END-AUTO(\ccDefinition)
 
@@ -42,13 +42,11 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$  \\
-class Gt,   \\
-class \ccc{Normal_3} = typename \ccc{Gt::Vector_3}$>$   \\
+class Gt$>$   \\
 class \ccc{Point_with_normal_3};
 
 \ccCommentHeading{Parameters}
-\begin{description}
-\item \ccc{Gt}: Kernel's geometric traits. \item \ccc{Normal_3}: Model of \ccc{Kernel::Vector_3} or of \ccc{OrientableNormal_3}. \end{description}
+\ccc{Gt}: Kernel's geometric traits.
 
 %END-AUTO(\ccParameters)
 
@@ -67,7 +65,7 @@ class \ccc{Point_with_normal_3};
 %START-AUTO(\ccIsModel)
 
 \begin{itemize}
-\item Model of the \ccc{PointWithNormal_3} concept.\item Model of the \ccc{PointWithOrientableNormal_3} if \ccc{Normal_3} is a model of \ccc{OrientableNormal_3} concept.\end{itemize}
+\item Model of the \ccc{PointWithNormal_3} concept.\end{itemize}
 
 %END-AUTO(\ccIsModel)
 
@@ -91,12 +89,12 @@ Kernel's geometric traits.
 \ccGlue
 \ccNestedType{Point}
 {
-Kernel's \ccc{Point_3} class.
+== \ccc{Point_3<Geom_traits>}
 }
 \ccGlue
-\ccNestedType{Normal}
+\ccNestedType{Vector}
 {
-Model of \ccc{Kernel::Vector_3} or of \ccc{OrientableNormal_3}.
+== \ccc{Vector_3<Geom_traits>}
 }
 \ccGlue
 
@@ -110,27 +108,27 @@ Model of \ccc{Kernel::Vector_3} or of \ccc{OrientableNormal_3}.
 
 \ccConstructor{Point_with_normal_3(const Origin& o = ORIGIN);}
 {
-Point is (0, 0, 0) by default. Normal is (0, 0, 0) by default. Normal is oriented by default.
+Point is (0, 0, 0) by default. Normal is (0, 0, 0) by default.
 }
 \ccGlue
-\ccConstructor{Point_with_normal_3(FT x, FT y, FT z, const Normal& normal = NULL_VECTOR);}
+\ccConstructor{Point_with_normal_3(FT x, FT y, FT z, const Vector& normal = NULL_VECTOR);}
 {
 }
 \ccGlue
-\ccConstructor{Point_with_normal_3(RT hx, RT hy, RT hz, RT hw, const Normal& normal = NULL_VECTOR);}
+\ccConstructor{Point_with_normal_3(RT hx, RT hy, RT hz, RT hw, const Vector& normal = NULL_VECTOR);}
 {
 }
 \ccGlue
-\ccConstructor{Point_with_normal_3(const Point& point, const Normal& normal = NULL_VECTOR);}
+\ccConstructor{Point_with_normal_3(const Point& point, const Vector& normal = NULL_VECTOR);}
 {
 }
 \ccGlue
-\ccConstructor{Point_with_normal_3(const Point_with_normal_3<Gt, Normal_3>& pwn);}
+\ccConstructor{Point_with_normal_3(const Point_with_normal_3<Gt>& pwn);}
 {
 Copy constructor.
 }
 \ccGlue
-\ccConstructor{template<class K, class N> Point_with_normal_3(const Point_with_normal_3<K, N>& pwn);}
+\ccConstructor{template<class K> Point_with_normal_3(const Point_with_normal_3<K>& pwn);}
 {
 }
 \ccGlue
@@ -142,7 +140,7 @@ Copy constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{Point_with_normal_3& operator =(const Point_with_normal_3<Gt, Normal_3>& pwn);}
+\ccMethod{Point_with_normal_3& operator =(const Point_with_normal_3<Gt>& pwn);}
 {
 Operator =().
 }
@@ -156,12 +154,12 @@ Get/set position.
 {
 }
 \ccGlue
-\ccMethod{const Normal& normal() const;}
+\ccMethod{const Vector& normal() const;}
 {
 Get/set normal.
 }
 \ccGlue
-\ccMethod{Normal& normal();}
+\ccMethod{Vector& normal();}
 {
 }
 \ccGlue

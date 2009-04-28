@@ -22,7 +22,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-A \ccc{PointWithNormal_3} concept represents a 3D point with:\begin{itemize}
+The \ccc{PointWithNormal_3} concept represents a 3D point with:\begin{itemize}
 \item a position\item a normal (oriented).\end{itemize}
 
 %END-AUTO(\ccDefinition)
@@ -56,12 +56,12 @@ Kernel's geometric traits.
 \ccGlue
 \ccNestedType{Point}
 {
-Kernel's \ccc{Point_3} class.
+Model of \ccc{Kernel::Point_3}.
 }
 \ccGlue
-\ccNestedType{Normal}
+\ccNestedType{Vector}
 {
-Model of \ccc{Kernel::Vector_3} or of \ccc{OrientableNormal_3}.
+Model of \ccc{Kernel::Vector_3}.
 }
 \ccGlue
 
@@ -78,15 +78,15 @@ Model of \ccc{Kernel::Vector_3} or of \ccc{OrientableNormal_3}.
 Point is (0, 0, 0) by default. Normal is (0, 0, 0) by default.
 }
 \ccGlue
-\ccConstructor{PointWithNormal_3(FT x, FT y, FT z, const Normal& normal = NULL_VECTOR);}
+\ccConstructor{PointWithNormal_3(FT x, FT y, FT z, const Vector& normal = NULL_VECTOR);}
 {
 }
 \ccGlue
-\ccConstructor{PointWithNormal_3(RT hx, RT hy, RT hz, RT hw, const Normal& normal = NULL_VECTOR);}
+\ccConstructor{PointWithNormal_3(RT hx, RT hy, RT hz, RT hw, const Vector& normal = NULL_VECTOR);}
 {
 }
 \ccGlue
-\ccConstructor{PointWithNormal_3(const Point& point, const Normal& normal = NULL_VECTOR);}
+\ccConstructor{PointWithNormal_3(const Point& point, const Vector& normal = NULL_VECTOR);}
 {
 }
 \ccGlue
@@ -107,12 +107,12 @@ Get/set position.
 {
 }
 \ccGlue
-\ccMethod{const Normal& normal() const;}
+\ccMethod{const Vector& normal() const;}
 {
 Get/set normal.
 }
 \ccGlue
-\ccMethod{Normal& normal();}
+\ccMethod{Vector& normal();}
 {
 }
 \ccGlue
@@ -124,7 +124,7 @@ Get/set normal.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHasModels)
 
-\ccc{Point_with_normal_3<GeomTraits, Normal_3>}
+\ccc{Point_with_normal_3<GeomTraits>}
 
 %END-AUTO(\ccHasModels)
 

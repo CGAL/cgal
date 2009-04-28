@@ -30,8 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 /// The Orientable_normal_3 class represents a normal vector (oriented or not).
 ///
-/// @heading Is Model for the Concepts: Model of the OrientableNormal_3 concept.
-///
 /// @heading Parameters:
 /// @param Gt   Kernel's geometric traits.
 
@@ -93,7 +91,7 @@ public:
     Orientable_normal_3& operator=(const Orientable_normal_3& that)
     {
       Base::operator=(that);
-      m_oriented = that.m_oriented;      
+      m_oriented = that.m_oriented;
       return *this;
     }
 
@@ -113,7 +111,7 @@ public:
         return *this;
     }
 
-    /// Get/set normal orientation. 
+    /// Get/set normal orientation.
     bool is_oriented() const { return m_oriented; }
     void set_orientation(bool oriented) { m_oriented = oriented; }
 
