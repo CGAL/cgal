@@ -88,7 +88,6 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
         }
     };
 };
-
 CGAL_END_NAMESPACE
 
 #endif

@@ -421,6 +421,14 @@ operator>>(std::istream& is, Gmpq &z)
   return is;
 }
 
+inline Gmpq min BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpq& x,const Gmpq& y){
+  return (x<=y)?x:y; 
+}
+inline Gmpq max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpq& x,const Gmpq& y){
+  return (x>=y)?x:y; 
+}
+
+
 CGAL_END_NAMESPACE
 
 

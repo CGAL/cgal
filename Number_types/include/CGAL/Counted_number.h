@@ -768,6 +768,19 @@ public:
     };
 };
 
+template<typename NT> inline 
+Counted_number<NT> min BOOST_PREVENT_MACRO_SUBSTITUTION(
+const Counted_number<NT> & x,
+const Counted_number<NT> & y){
+  return CGAL::Min<Counted_number<NT> > ()(x,y);
+}
+template<typename NT> inline 
+Counted_number<NT> max BOOST_PREVENT_MACRO_SUBSTITUTION(
+const Counted_number<NT> & x,
+const Counted_number<NT> & y){
+  return CGAL::Max<Counted_number<NT> > ()(x,y);
+}
+
 CGAL_END_NAMESPACE
 
 #endif

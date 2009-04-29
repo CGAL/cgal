@@ -1220,6 +1220,18 @@ struct Max <Lazy_exact_nt<ET> >
     }
 };
 
+template<typename ET> inline 
+Lazy_exact_nt<ET> min BOOST_PREVENT_MACRO_SUBSTITUTION(
+const Lazy_exact_nt<ET> & x,
+const Lazy_exact_nt<ET> & y){
+  return CGAL::Min<Lazy_exact_nt<ET> > ()(x,y);
+}
+template<typename ET> inline 
+Lazy_exact_nt<ET> max BOOST_PREVENT_MACRO_SUBSTITUTION(
+const Lazy_exact_nt<ET> & x,
+const Lazy_exact_nt<ET> & y){
+  return CGAL::Max<Lazy_exact_nt<ET> > ()(x,y);
+}
 
 template <typename ET>
 std::ostream &

@@ -573,6 +573,13 @@ bool operator>(const Gmpzf &a, int b)
   return operator>(a, Gmpzf(b));
 }
 
+inline Gmpzf min BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpzf& x,const Gmpzf& y){
+  return (x<=y)?x:y; 
+}
+inline Gmpzf max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpzf& x,const Gmpzf& y){
+  return (x>=y)?x:y; 
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_GMPZF_TYPE_H

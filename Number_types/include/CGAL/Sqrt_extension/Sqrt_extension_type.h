@@ -606,6 +606,20 @@ template <class NT,class ROOT>  bool operator >
 (CGAL_int(NT) num, const Sqrt_extension<NT,ROOT>& p)
 { return ( p.compare(num) == CGAL::SMALLER ); }
 
+template<typename NT, typename ROOT> inline 
+Sqrt_extension<NT,ROOT> min BOOST_PREVENT_MACRO_SUBSTITUTION(
+const Sqrt_extension<NT,ROOT> & x,
+const Sqrt_extension<NT,ROOT> & y){
+  return (std::min)(x,y);
+}
+template<typename NT, typename ROOT> inline 
+Sqrt_extension<NT,ROOT> max BOOST_PREVENT_MACRO_SUBSTITUTION(
+const Sqrt_extension<NT,ROOT> & x,
+const Sqrt_extension<NT,ROOT> & y){
+  return (std::max)(x,y);
+}
+
+
 CGAL_END_NAMESPACE
 
 #undef CGAL_int

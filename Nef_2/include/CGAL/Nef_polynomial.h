@@ -222,6 +222,18 @@ template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> >
 };
 
 template <typename NT>
+inline Nef_polynomial<NT> min BOOST_PREVENT_MACRO_SUBSTITUTION
+(const Nef_polynomial<NT>& x,const Nef_polynomial<NT>& y){
+  return (x<=y)?x:y; 
+}
+
+template <typename NT>
+inline Nef_polynomial<NT> max BOOST_PREVENT_MACRO_SUBSTITUTION
+(const Nef_polynomial<NT>& x,const Nef_polynomial<NT>& y){
+  return (x>=y)?x:y; 
+}
+
+template <typename NT>
 class Fraction_traits<Nef_polynomial<NT> > {
 public:
     typedef Nef_polynomial<NT> Type;

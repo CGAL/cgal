@@ -1362,6 +1362,17 @@ public:
     }
 };
 
+template <class NT>
+inline const Root_of_2<NT>& min BOOST_PREVENT_MACRO_SUBSTITUTION
+(const Root_of_2<NT>& p, const Root_of_2<NT>& q){
+  return (std::min)(p, q);
+}
+template <class NT> 
+inline const Root_of_2<NT>& max BOOST_PREVENT_MACRO_SUBSTITUTION
+(const Root_of_2<NT>& p, const Root_of_2<NT>& q){
+  return (std::max)(p, q);
+}
+
 } // namespace CGAL
 
 #undef CGAL_int

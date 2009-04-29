@@ -123,11 +123,24 @@ CGAL_BEGIN_NAMESPACE
         }
     };
 
+// Several libraries do not want to enforce the use of std::min/max
+// for the case that there is a special function for min/max
+// However, this may be a problem for template CGAL::min/max in case NT is a 
+// CGAL type. These types have to overload CGAL::min/max. 
+template<typename NT>
+void test_min_max(){
+  using std:: min BOOST_PREVENT_MACRO_SUBSTITUTION ;
+  using std:: max BOOST_PREVENT_MACRO_SUBSTITUTION ;  
+  NT x(1),y(2);
+  assert(min BOOST_PREVENT_MACRO_SUBSTITUTION (x,y)==NT(1));
+  assert(max BOOST_PREVENT_MACRO_SUBSTITUTION (x,y)==NT(2));
+}
 
 //! tests if \c Type is a model for the \c RealComparable concept
 //! and terminates the program with an error message if not.
 template <class Type>
 void test_real_embeddable() {    
+  test_min_max<Type>();  
     typedef CGAL::Real_embeddable_traits<Type> RET;
     CGAL_SNAP_RET_FUNCTORS(RET);
     typedef typename RET::Is_real_embeddable Is_real_embeddable;

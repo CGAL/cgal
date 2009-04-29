@@ -822,6 +822,14 @@ public:
     };
 };
 
+inline MP_Float min BOOST_PREVENT_MACRO_SUBSTITUTION(const MP_Float& x,const MP_Float& y){
+  return (x<=y)?x:y; 
+}
+inline MP_Float max BOOST_PREVENT_MACRO_SUBSTITUTION(const MP_Float& x,const MP_Float& y){
+  return (x>=y)?x:y; 
+}
+
+
 // TODO:
 // // specialization of to double functor
 // template<>

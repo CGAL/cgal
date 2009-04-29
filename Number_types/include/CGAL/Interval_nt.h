@@ -788,9 +788,6 @@ operator/ (const Interval_nt<Protected> & a, int b)
 }
 
 // TODO: What about these two guys? Where do they belong to?
-
-
-
 template <bool Protected>
 struct Min <Interval_nt<Protected> >
     : public std::binary_function<Interval_nt<Protected>,
@@ -820,6 +817,20 @@ struct Max <Interval_nt<Protected> >
                 (std::max)(d.sup(), e.sup()));
     }
 };
+
+template<bool Protected> inline 
+Interval_nt<Protected> min BOOST_PREVENT_MACRO_SUBSTITUTION(
+const Interval_nt<Protected> & x,
+const Interval_nt<Protected> & y){
+  return CGAL::Min<Interval_nt<Protected> > ()(x,y);
+}
+template<bool Protected> inline 
+Interval_nt<Protected> max BOOST_PREVENT_MACRO_SUBSTITUTION(
+const Interval_nt<Protected> & x,
+const Interval_nt<Protected> & y){
+  return CGAL::Max<Interval_nt<Protected> > ()(x,y);
+}
+
 
 
 // TODO : document, when we are OK with the interface.

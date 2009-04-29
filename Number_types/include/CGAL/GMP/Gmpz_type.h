@@ -454,8 +454,17 @@ struct Split_double<Gmpz>
   }
 };
 
+inline Gmpz min BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpz& x,const Gmpz& y){
+  return (x<=y)?x:y; 
+}
+inline Gmpz max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpz& x,const Gmpz& y){
+  return (x>=y)?x:y; 
+}
+
+
 #include <CGAL/auto_link/GMP.h>
 #include <CGAL/auto_link/MPFR.h>
+
 
 CGAL_END_NAMESPACE
 
