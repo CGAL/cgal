@@ -25,7 +25,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program("aabb_intersection_triangle_test.cpp")
   create_single_source_cgal_program("aabb_projection_triangle_test.cpp")
-  create_single_source_cgal_program("aabb_projection_segment_test.cpp")
+  create_single_source_cgal_program("aabb_projection_edge_test.cpp")
 
 else()
   
