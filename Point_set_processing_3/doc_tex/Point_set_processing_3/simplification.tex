@@ -1,13 +1,15 @@
 \section{Simplification}
 
-Two simplification functions are devised to reduce an input point set, either randomly or using a grid-based clustering approach. 
+Two simplification functions are devised to reduce an input point set, either randomly or using a grid-based clustering approach.
 
-Function \ccc{CGAL::random_simplify_point_set()} randomly deletes a user-specified fraction of points from the input point set. This algorithm is fast. The following example reads an input point set and randomly deletes 75\% of the points.
-\ccIncludeExampleCode{Point_set_processing_3/random_simplification_example.cpp}
+Function \ccc{CGAL::random_simplify_point_set()} randomly deletes a user-specified fraction of points from the input point set. This algorithm is fast. \\
 \ccRefIdfierPage{CGAL::random_simplify_point_set}  \\
 
+The following example reads an input point set and randomly deletes 75\% of the points.
+\ccIncludeExampleCode{Point_set_processing_3/random_simplification_example.cpp}
+
 % PA: careful, if you first construct a grid and cluster all points lying in the same cell of the grid (by merging or whatever) it should be called grid_simplify
-Function \ccc{CGAL::grid_simplify_point_set()} considers a regular grid covering the bounding box of the input point set, and clusters all points sharing the same cell of the grid by picking as representant one of the point arbitrarily chosen. This algorithm is slower than \ccc{CGAL::random_simplify_point_set()}.
+Function \ccc{CGAL::grid_simplify_point_set()} considers a regular grid covering the bounding box of the input point set, and clusters all points sharing the same cell of the grid by picking as representant one of the point arbitrarily chosen. This algorithm is slower than \ccc{CGAL::random_simplify_point_set()}. \\
 % PA: can't you do better? ie pick the point which minimizes sum of squared distances to others?
 % add example?
 \ccRefIdfierPage{CGAL::merge_simplify_point_set}  \\
