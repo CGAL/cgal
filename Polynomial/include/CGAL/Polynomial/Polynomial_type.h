@@ -92,7 +92,7 @@ template <class NT_> class Polynomial_rep
   {}
 
   void reduce() {
-    while ( coeff.size()>1 && coeff.back()==NT(0) ) coeff.pop_back();
+    while ( coeff.size()>1 && CGAL::is_zero(coeff.back())) coeff.pop_back();
   }
 
   void simplify_coefficients() {
