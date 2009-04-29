@@ -53,8 +53,7 @@ namespace CGAL {
             const K& k)
         {
             typedef typename K::FT FT;
-            typedef typename K::Point_3 Point_3;
-            typedef typename K::Vector_3 Vector_3;
+            typedef typename K::Point_3 Point;
 
             const Point& a = s.source();
             const Point& b = s.target();
