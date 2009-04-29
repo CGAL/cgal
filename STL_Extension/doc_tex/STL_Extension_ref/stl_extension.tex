@@ -251,8 +251,8 @@
   Other types are also accepted, and the object is simply discarded in this case.
 
   \ccParameters
-  \ccc{V} must be a \ccc{CGAL::tuple} of the types of values to be accepted and dispatched.
-  \ccc{O} must be a \ccc{CGAL::tuple} of the types of corresponding output iterators.
+  \ccc{V} must be a \ccc{CGAL::tuple<...>} of the types of values to be accepted and dispatched.
+  \ccc{O} must be a \ccc{CGAL::tuple<...>} of the types of corresponding output iterators.
 
   \ccInclude{CGAL/iterator.h}
 
@@ -1613,7 +1613,7 @@
   accessing the elements of a container.
 
   This class is NOT RECOMMENDED anymore.  We recommend that you use
-  \ccc{boost::tuple} or \ccc{CGAL::array} instead for new uses.
+  \ccc{CGAL::tuple} or \ccc{CGAL::array} instead for new uses.
 
   \ccInclude{CGAL/utility.h}
   
@@ -1707,7 +1707,7 @@
   container.
 
   This class is NOT RECOMMENDED anymore.  We recommend that you use
-  \ccc{boost::tuple} or \ccc{CGAL::array} instead for new uses.
+  \ccc{CGAL::tuple} or \ccc{CGAL::array} instead for new uses.
 
   \ccInclude{CGAL/utility.h}
   
