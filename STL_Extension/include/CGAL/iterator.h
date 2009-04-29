@@ -29,6 +29,8 @@
 #include <CGAL/circulator.h>
 #include <vector>
 #include <map>
+#include <boost/type_traits.hpp>
+#include <CGAL/tuple.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1168,6 +1170,233 @@ template < class I, class P >
 inline Filter_output_iterator< I, P >
 filter_output_iterator(I e, const P& p)
 { return Filter_output_iterator< I, P >(e, p); }
+
+
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+
+namespace CGALi {
+
+template < typename D, typename V = tuple<>, typename O = tuple<> >
+struct Derivator
+{
+  typedef Derivator<D, V, O> Self;
+  Self& operator=(const Self&) = delete;
+};
+
+template < typename D, typename V1, typename O1, typename... V, typename... O>
+struct Derivator<D, tuple<V1, V...>, tuple<O1, O...> >
+  : public Derivator<D, tuple<V...>, tuple<O...> >
+{
+  typedef Derivator<D, tuple<V1, V...>, tuple<O1, O...> > Self;
+  typedef Derivator<D, tuple<V...>, tuple<O...> > Base;
+
+  Self& operator=(const Self&) = delete;
+
+  using Base::operator=;
+  
+  D& operator=(const V1& v)
+  {
+    * std::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterators_tuple&>(static_cast<D&>(*this))) ++ = v;
+    return static_cast<D&>(*this);
+  }
+};
+
+} // CGALi
+
+
+// OutputIterator which accepts several types in *o++= and dispatches,
+// wraps several other outputiterators, and dispatches accordingly.
+template < typename V, typename O >
+class Dispatch_output_iterator;
+
+template < typename... V, typename... O >
+class Dispatch_output_iterator < tuple<V...>, tuple<O...> >
+ : private CGALi::Derivator<Dispatch_output_iterator< tuple<V...>, tuple<O...> >, tuple<V...>, tuple<O...> >
+ , public tuple<O...>
+{
+  static_assert(sizeof...(V) == sizeof...(O),
+                "The number of explicit template parameters has to match the number of arguments");
+
+  static const int size = sizeof...(V);
+
+  template <typename D, typename V_, typename O_>
+  friend class CGALi::Derivator;
+
+public:
+
+  typedef tuple<O...>               Iterators_tuple;
+  typedef tuple<V...>               Value_types_tuple;
+
+  typedef std::output_iterator_tag  iterator_category;
+  typedef void                      value_type;
+  typedef void                      difference_type;
+  typedef void                      pointer;
+  typedef void                      reference;
+
+private:
+
+  typedef Dispatch_output_iterator Self;
+  typedef CGALi::Derivator<Self, Value_types_tuple, Iterators_tuple > Base;
+
+public:
+
+  using Base::operator=;
+
+  Dispatch_output_iterator(O... o) : tuple<O...>(o...) {}
+
+  Self& operator=(const Self& s)
+  {
+    static_cast<Iterators_tuple&>(*this) = static_cast<const Iterators_tuple&>(s);
+    return *this;
+  }
+
+  Self& operator++() { return *this; }
+  Self& operator++(int) { return *this; }
+  Self& operator*() { return *this; }
+
+  const Iterators_tuple& get_iterator_tuple() const { return *this; }
+};
+
+template < typename... V, typename... O>
+Dispatch_output_iterator<tuple<V...>, tuple<O...> >
+dispatch_output(O... o)
+{
+  return Dispatch_output_iterator<tuple<V...>, tuple<O...> > (o...);
+}
+
+
+// Same as Dispatch_output_iterator, but has a dummy *o++= for all other types
+// that drops the data (same as Emptyset_iterator).
+
+template < typename V, typename O >
+class Dispatch_or_drop_output_iterator;
+
+template < typename... V, typename... O >
+class Dispatch_or_drop_output_iterator < tuple<V...>, tuple<O...> >
+ : public Dispatch_output_iterator< tuple<V...>, tuple<O...> >
+{
+  typedef Dispatch_or_drop_output_iterator Self;
+  typedef Dispatch_output_iterator< tuple<V...>, tuple<O...> > Base;
+
+  template <typename D, typename V_, typename O_>
+  friend class Derivator;
+
+public:
+
+  Dispatch_or_drop_output_iterator(O... o) : Base(o...) {}
+
+  using Base::operator=;
+
+  Self& operator*() { return *this; }
+  Self& operator++() { return *this; }
+  Self& operator++(int) { return *this; }
+
+  template <class T>
+  Self& operator=(const T&) { return *this; }
+};
+
+
+template < typename... V, typename... O>
+inline
+Dispatch_or_drop_output_iterator<tuple<V...>, tuple<O...> >
+dispatch_or_drop_output(O... o)
+{
+  return Dispatch_or_drop_output_iterator<tuple<V...>, tuple<O...> >(o...);
+}
+
+#else
+
+// Non-variadic version
+
+template < typename V, typename O >
+class Dispatch_output_iterator;
+
+template<class V1,class O1,class V2,class O2>
+class Dispatch_output_iterator<tuple<V1,V2>,tuple<O1,O2> >:public tuple<O1,O2>{
+  typedef Dispatch_output_iterator Self;
+  
+public:
+  typedef tuple<V1,V2> Value_types_tuple;
+  typedef tuple<O1,O2> Iterators_tuple;
+  typedef std::output_iterator_tag iterator_category;
+  typedef void                     value_type;
+  typedef void                     difference_type;
+  typedef void                     pointer;
+  typedef void                     reference;
+
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_output_iterator(O1 out1,O2 out2):Iterators_tuple(out1,out2){}
+  
+  Self& operator=(const V1& obj){
+    *get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    return *this;
+  }
+  
+  const Iterators_tuple& get_iterator_tuple() const
+  { return *this; }
+  
+};
+
+
+template<class V1,class V2,class O1,class O2>
+inline 
+Dispatch_output_iterator<tuple<V1,V2>,tuple<O1,O2> >
+dispatch_output(O1 out1,O2 out2){
+  return Dispatch_output_iterator<tuple<V1,V2>,tuple<O1,O2> >(out1,out2);
+}
+
+
+//Version with DROP
+template < typename V, typename O >
+class Dispatch_or_drop_output_iterator;
+
+
+template<class V1,class O1,class V2,class O2>
+class Dispatch_or_drop_output_iterator<tuple<V1,V2>,tuple<O1,O2> >:
+        public Dispatch_output_iterator<tuple<V1,V2>,tuple<O1,O2> >
+{
+  typedef Dispatch_or_drop_output_iterator Self;
+  typedef Dispatch_output_iterator<tuple<V1,V2>,tuple<O1,O2> > Base;
+  
+public:
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_or_drop_output_iterator(O1 out1,O2 out2):Base(out1,out2){}
+  
+  using Base::operator=;
+  
+  
+  template <class T>
+  Self& operator=(const T&){
+    return *this;
+  }
+};
+
+template<class V1,class V2,class O1,class O2>
+inline 
+Dispatch_or_drop_output_iterator<tuple<V1,V2>,tuple<O1,O2> >
+dispatch_or_drop_output(O1 out1,O2 out2){
+  return Dispatch_or_drop_output_iterator<tuple<V1,V2>,tuple<O1,O2> >(out1,out2);
+}
+
+#endif
 
 CGAL_END_NAMESPACE
 

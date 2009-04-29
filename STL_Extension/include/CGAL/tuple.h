@@ -21,6 +21,7 @@
 #define CGAL_TUPLE_H
 
 // A wrapper around C++0x, TR1 or Boost tuple<>.
+// Together with the Is_in_tuple<> tool.
 
 #include <CGAL/config.h>
 
@@ -50,6 +51,64 @@ using boost::make_tuple;
 using boost::tie;
 using boost::get;
 #endif
+
+
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+
+// Tool to test whether a type V is among the types of a tuple<...> = T.
+template <typename V, typename T>
+struct Is_in_tuple;
+
+template <typename V, typename T0, typename... T>
+struct Is_in_tuple <V, tuple<T0, T...> >
+{
+  static const bool value = Is_in_tuple<V, tuple<T...> >::value;
+};
+
+template <typename V, typename... T>
+struct Is_in_tuple <V, tuple<V, T...> >
+{
+  static const bool value = true;
+};
+
+template <typename V>
+struct Is_in_tuple <V, tuple<> >
+{
+  static const bool value = false;
+};
+
+#else
+
+// Non-variadic version
+
+template <typename V, typename T>
+struct Is_in_tuple;
+
+template <typename V, typename T0, typename T1>
+struct Is_in_tuple <V, tuple<T0, T1> >
+{
+  static const bool value = Is_in_tuple<V, tuple<T1> >::value;
+};
+
+template <typename V, typename T1>
+struct Is_in_tuple <V, tuple<V,T1> >
+{
+  static const bool value = true;
+};
+
+template <typename V>
+struct Is_in_tuple <V, tuple<V> >
+{
+  static const bool value = true;
+};
+
+template <typename V, typename T1>
+struct Is_in_tuple <V, tuple<T1> >
+{
+  static const bool value = false;
+};
+
+#endif 
 
 CGAL_END_NAMESPACE
 
