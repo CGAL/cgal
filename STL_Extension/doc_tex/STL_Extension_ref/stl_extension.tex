@@ -198,6 +198,93 @@
 
 %% +=========================================================================+
 
+\begin{ccRefClass}{Dispatch_output_iterator<V,O>}
+
+  \ccCreationVariable{i}
+
+  \ccDefinition The class \ccClassTemplateName\ defines an
+  \ccc{OutputIterator} that contains a tuple of output iterators, and dispatches
+  among those based on the type of the value type which is put in it.
+
+  \ccParameters
+  \ccc{V} must be a \ccc{CGAL::tuple} of the types of values to be accepted and dispatched.
+  \ccc{O} must be a \ccc{CGAL::tuple} of the types of corresponding output iterators.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{OutputIterator}
+
+  \ccTypes
+
+  \ccTypedef{typedef V Value_types_tuple;}{}
+  \ccGlue
+  \ccTypedef{typedef O Iterators_tuple;}{}
+
+  \ccCreation
+
+  \ccTwo{Exptyset_iterator()}{}
+
+  \ccConstructor{Dispatch_output_iterator(O...o);}{Constructor taking all the output iterators.}
+
+  \ccMemberFunction{const Iterators_tuple& get_iterator_tuple() const;}
+  {returns a reference to the tuple of output iterators.}
+
+  \ccFunction{template < typename... V, typename... O>
+              Dispatch_output_iterator<tuple<V...>, tuple<O...> >
+              dispatch_output(O... o);}
+  {returns a \ccc{Dispatch_output_iterator} constructed from the arguments.}
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Dispatch_or_drop_output_iterator<V,O>}
+
+\end{ccRefClass}
+
+
+\begin{ccRefClass}{Dispatch_or_drop_output_iterator<V,O>}
+
+  \ccCreationVariable{i}
+
+  \ccDefinition The class \ccClassTemplateName\ defines an
+  \ccc{OutputIterator} that contains a tuple of output iterators, and dispatches
+  among those based on the type of the value type which is put in it.
+  Other types are also accepted, and the object is simply discarded in this case.
+
+  \ccParameters
+  \ccc{V} must be a \ccc{CGAL::tuple} of the types of values to be accepted and dispatched.
+  \ccc{O} must be a \ccc{CGAL::tuple} of the types of corresponding output iterators.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{OutputIterator}
+
+  \ccTypes
+
+  \ccTypedef{typedef V Value_types_tuple;}{}
+  \ccGlue
+  \ccTypedef{typedef O Iterators_tuple;}{}
+
+  \ccCreation
+
+  \ccTwo{Exptyset_iterator()}{}
+
+  \ccConstructor{Dispatch_or_drop_output_iterator(O...o);}{Constructor taking all the output iterators.}
+
+  \ccMemberFunction{const Iterators_tuple& get_iterator_tuple() const;}
+  {returns a reference to the tuple of output iterators.}
+
+  \ccFunction{template < typename... V, typename... O>
+              Dispatch_or_drop_output_iterator<tuple<V...>, tuple<O...> >
+              dispatch_or_drop_output(O... o);}
+  {returns a \ccc{Dispatch_or_drop_output_iterator} constructed from the arguments.}
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Dispatch_output_iterator<V,O>}
+
+\end{ccRefClass}
+
+
 \begin{ccRefClass}{Emptyset_iterator}
   \label{sectionEmptysetIterator}
 
