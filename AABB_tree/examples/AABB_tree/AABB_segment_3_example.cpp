@@ -56,22 +56,24 @@ int main(void)
         segments.push_back(Segment(a,c));
         segments.push_back(Segment(c,d));
 
+        // constructs the AABB tree and the internal search tree for 
+        // efficient projection computations.
         Tree tree(segments.begin(),segments.end());
+        tree.construct_search_tree();
 
+        // counts #intersections with a plane
         Plane plane(a,b,d);
         std::cout << tree.number_of_intersections(plane)
                 << " intersections(s) with plane" << std::endl;
 
+        // counts #intersections with a triangle
         Triangle triangle(a,b,c);
         std::cout << tree.number_of_intersections(triangle)
                 << " intersections(s) with triangle" << std::endl;
 
-        // TOFIX: following does not compile due to intersection(const Sphere& sphere,
-        // const P& pr,Projection&...function in AABB_traits.h
-
-        //Point hint(a);
-        //Point query(2.0, 2.0, 2.0);
-        //Point closest = tree.closest_point(query,hint);
+        // computes the closest point from a query point
+        Point query(2.0, 2.0, 2.0);
+        Point closest = tree.closest_point(query);
 
         return 0;
 }

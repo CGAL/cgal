@@ -30,6 +30,7 @@ AABB_tree/include/CGAL/AABB_triangle_primitive.h -text
 AABB_tree/include/CGAL/Triangle_3_line_3_intersection.h -text
 AABB_tree/test/AABB_tree/CMakeLists.txt -text
 AABB_tree/test/AABB_tree/aabb_intersection_triangle_test.cpp -text
+AABB_tree/test/AABB_tree/aabb_projection_segment_test.cpp -text
 AABB_tree/test/AABB_tree/aabb_projection_triangle_test.cpp -text
 AABB_tree/test/AABB_tree/cleanup.bat -text
 AABB_tree/test/AABB_tree/data/coverrear.off -text

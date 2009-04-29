@@ -35,7 +35,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
+#include <CGAL/AABB_polyhedron_edge_primitive.h>
 
 template <class Tree, class K>
 void test_speed(Tree& tree)
@@ -66,8 +66,9 @@ void test(const char *filename)
         typedef typename K::Ray_3 Ray;
         typedef typename K::Point_3 Point;
         typedef typename K::Vector_3 Vector;
+        typedef typename K::Segment_3 Segment;
         typedef CGAL::Polyhedron_3<K> Polyhedron;
-        typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
+        typedef CGAL::AABB_polyhedron_edge_primitive<K,Polyhedron> Primitive;
         typedef CGAL::AABB_traits<K, Primitive> Traits;
         typedef CGAL::AABB_tree<Traits> Tree;
 
@@ -75,10 +76,9 @@ void test(const char *filename)
         std::ifstream ifs(filename);
         ifs >> polyhedron;
 
-        // constructs AABB tree and internal search KD-tree with 
-        // the points of the polyhedron
-        Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
-        tree.construct_search_tree(polyhedron.points_begin(),polyhedron.points_end());
+        // constructs AABB tree and internal search KD-tree
+        Tree tree(polyhedron.edges_begin(),polyhedron.edges_end());
+        tree.construct_search_tree();
 
         // call all tests
         test_speed<Tree,K>(tree);

@@ -37,6 +37,7 @@ typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef K::Plane_3 Plane;
 typedef K::Vector_3 Vector;
+typedef K::Triangle_3 Triangle;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_polyhedron_edge_primitive<K,Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
@@ -51,11 +52,19 @@ int main(void)
         Polyhedron polyhedron;
         polyhedron.make_tetrahedron( p, q, r, s);
 
+        // constructs the AABB tree and the internal search tree for 
+        // efficient projection computations.
         Tree tree(polyhedron.edges_begin(),polyhedron.edges_end());
-        Point base(0.2, 0.2, 0.2);
-        Vector normal(0.1, 0.2, 0.3);
-        Plane plane(base,normal);
-        std::cout << tree.number_of_intersections(plane)
-                << " intersections(s) with plane" << std::endl;
+        tree.construct_search_tree();
+
+        // counts #intersections with a triangle
+        Triangle triangle(p,q,r);
+        std::cout << tree.number_of_intersections(triangle)
+                << " intersections(s) with triangle" << std::endl;
+
+        // computes the closest point from a query point
+        Point query(2.0, 2.0, 2.0);
+        Point closest = tree.closest_point(query);
+
         return 0;
 }
