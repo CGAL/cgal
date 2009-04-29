@@ -31,11 +31,11 @@ The several callbacks given as member functions in the visitor are called from c
 \ccGlue    
   \ccNestedType{FT}{A field type representing the collapse cost}{}
 \ccGlue    
-  \ccTypedef{typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor;}
-  {A {\sc Bgl} edge descriptor representing an undirected edge of the surface.}
+  \ccNestedType{Profile}
+  {The type of the edge profile cache. Must be a model of the \ccc{EdgeProfile} concept.}{}
 \ccGlue    
   \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}
-  {The point type of the vertex. Must be a model of \ccc{Point_3}.}
+  {The point type for the surface vertex.  Must be a model of \ccc{Point_3}.}
 \ccGlue    
   \ccNestedType{size_type}{An integer type representing the number of edges}{}
 
@@ -58,27 +58,24 @@ The several callbacks given as member functions in the visitor are called from c
   }
   
   \ccMethod
-  {void OnCollected( edge_descriptor const& edge
-                   , ECM&                   surface
-                   );
+  {void OnCollected( Profile const& profile, boost::optional<FT> cost );
   }                  
   {Called during the {\em collecting phase} (when a cost is assigned to the edges),
-  for each \ccc{edge} collected.
+  for each edge collected.
   }
   
   \ccMethod
-  {void OnSelected(edge_descriptor const&  edge
-                  ,ECM&                    surface
-                  ,boost::optional<double> cost
-                  ,size_type               initial_count
-                  ,size_type               current_count
+  {void OnSelected( Profile const&      profile
+                  , boost::optional<FT> cost
+                  , size_type           initial_count
+                  , size_type           current_count
                   );
   }                 
   {Called during the {\em processing phase} (when edges are collapsed),
-  for each \ccc{edge} that is selected.\\
+  for each edge that is selected.\\
   This method is called before the algorithm checks 
   if the edge is collapsable.\\
-  \ccc{cost} indicates the current collapse cost for the \ccc{edge}.
+  \ccc{cost} indicates the current collapse cost for the edge.
   If absent (meaning that it could not be computed)
   the edge will not be collapsed.\\
   \ccc{initial_count} and \ccc{current_count} refer to 
@@ -86,23 +83,20 @@ The several callbacks given as member functions in the visitor are called from c
   }
   
   \ccMethod
-  {void OnCollapsing( edge_descriptor const& edge
-                    , ECM&                   surface
+  {void OnCollapsing( Profile const&         profile
                     , boost::optional<Point> placement
                     );
   }                  
-  {Called when \ccc{edge} is about to be collapsed and replaced by a vertex
+  {Called when an edge is about to be collapsed and replaced by a vertex
   whose position is \ccc{*placement}.\\
   If \ccc{placement} is absent (meaning that it could not be computed)
   the edge will not be collapsed.
   }
   
   \ccMethod
-  {void OnNonCollapsable( edge_descriptor const& edge
-                        , ECM&                   surface
-                        );
+  {void OnNonCollapsable( Profile const& profile );
   }                  
-  {Called for each selected \ccc{edge} which cannot be 
+  {Called for each selected edge which cannot be 
   collapsed because doing so would change the topological
   type of the surface (turn it into a non-manifold
   for instance).

@@ -311,6 +311,13 @@ and how to use a visitor policy to track the simplification process.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
 
+\subsubsection{Example with edges marked as non-removable}
+
+The following example shows how to use the optional named parameter \ccc{edge_is_border_map} to prevent
+edges from being removed even if they are not really borders.
+
+\ccIncludeExampleCode{Surface_mesh_simplification/edge_collapse_constrained_polyhedron.cpp}
+
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of sfsooter
 % EOF
