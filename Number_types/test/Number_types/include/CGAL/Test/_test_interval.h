@@ -12,7 +12,7 @@
 //
 //    \brief provides test functions for the \c Interval concept.
 
-// TODO: Add Is_empty?
+// TODO: rename Empty to Is_empty?
 
 #include <CGAL/basic.h>
 
@@ -62,7 +62,7 @@ void test_with_empty_interval(CGAL::Tag_true) {
     const  Empty empty = Empty();
 
     assert(empty(typename IT::Intersection()(Interval(1),Interval(2))));
-            
+    assert(!empty(Interval(1)));         
 }
 
 
