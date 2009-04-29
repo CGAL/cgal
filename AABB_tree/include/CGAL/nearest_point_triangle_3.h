@@ -22,9 +22,8 @@
 //
 //******************************************************************************
 
-#ifndef POINT_3_TRIANGLE_3_POINT_3_NEAREST_POINT_3_H_
-#define POINT_3_TRIANGLE_3_POINT_3_NEAREST_POINT_3_H_
-
+#ifndef NEAREST_POINT_TRIANGLE_3_H_
+#define NEAREST_POINT_TRIANGLE_3_H_
 
 #include <CGAL/kernel_basic.h>
 #include <CGAL/enum.h>
@@ -195,7 +194,6 @@ nearest_point_3(const typename K::Point_3& origin,
   typename K::Construct_projected_point_3 projection =
     k.construct_projected_point_3_object();
 
-
   // Distance from origin to bound
   const FT bound_sq_dist = sq_distance(origin, bound);
 
@@ -244,4 +242,4 @@ nearest_point_3(const Point_3<K>& origin,
 }  // end namespace CGAL
 
 
-#endif // POINT_3_TRIANGLE_3_POINT_3_NEAREST_POINT_3_H_
+#endif // NEAREST_POINT_TRIANGLE_3_H_

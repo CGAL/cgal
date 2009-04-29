@@ -102,7 +102,7 @@ bool any_intersected_primitive(const Query& query,
 \ccMethod{Projection 
 closest_point(const Projection_query & query, 
               const Projection & hint);} 
-{Returns the point on all input primitives which is closest to the query. Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster the query). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed it is used to efficiently query the nearest hint point from the query. Otherwise a naive hint point is taken as the first primitive reference point. }
+{Returns the point on all input primitives which is closest to the query. In case of several points located at the same (closest) distance one arbitrarily chosen is returned.  Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster the query). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed it is used to efficiently query the nearest hint point from the query. Otherwise a naive hint point is taken as the first primitive reference point. }
 
 \ccMethod{Primitive
 closest_primitive(const Projection_query & query, 
