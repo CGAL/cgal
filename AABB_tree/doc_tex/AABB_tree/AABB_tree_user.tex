@@ -1,11 +1,11 @@
 \section{Introduction}
 \label{AABB_tree_section_intro}
 
-The AABB tree component offers a data structure and algorithms to perform efficient intersection and projection of 3D queries against a large set of 3D geometric objects. Common examples of intersection queries include line objects (rays, lines or segments) against sets of triangles, and plane objects (planes or triangles) against sets of segments. A common example of projection query is to find the closest point from a point query to a set of triangles.
+The AABB tree component offers a static data structure and algorithms to perform efficient intersection and projection of 3D queries against a large set of 3D geometric objects. Examples of intersection queries include line objects (rays, lines or segments) against sets of triangles, and plane objects (planes or triangles) against sets of segments. A common example of projection query is to find the closest point from a point query to a set of triangles.
 
 More generally, the set of geometric objects stored in the data structure may be queried for intersection detection, intersection computation and projection with any type of query type, provided that the corresponding intersection predicates and constructors are implemented in the traits class. 
 
-The data structure takes as input an iterator range of geometric primitives, where each primitive wraps both one input geometric object (so-called datum) and one reference id to this object (e.g., wraps a 3D triangle and a face handle of a polyhedral surface). From these primitives a hierarchy of axis-aligned bounding boxes (AABBs) is constructed and used to speed up intersection and projection queries (see Figure \ref{fig:AABB-tree-shark}). 
+The data structure takes as input an iterator range of geometric primitives, where each primitive wraps both one input geometric object (so-called datum) and one reference id to this object (e.g., wraps a 3D triangle and a face handle of a polyhedral surface). From these primitives a hierarchy of axis-aligned bounding boxes (AABBs) is constructed and used to speed up intersection and projection queries (see Figure~\ref{fig:AABB-tree-shark}). 
 
 \begin{center}
     \label{fig:AABB-tree-shark}
@@ -21,6 +21,30 @@ The data structure takes as input an iterator range of geometric primitives, whe
                  Right: AABB tree constructed.}
     \end{figure}
 \end{center}
+
+% API
+\section{Interface}
+\label{AABB_tree_section_interface}
+
+The main entry point to the component is the class \ccc{AABB_tree} which stores a static AABB tree constructed from an iterator range of primitives. The tree can then be queried for intersection and projection.
+
+
+Considers for the example that the tree contains triangle primitives. The tree can be queried for intersection against lineic objects (rays, segments or line) in various ways. We distinguish intersection \emph{tests} which do not construct any intersection objects, from \emph{intersections} which construct the intersection objects.
+
+Intersections tests:
+\begin{itemize}
+\item Function \ccc{do_intersect} only tests if the input primitives are intersected by the query. This function is fast as it only involves predicates and stops at the first encountered intersection.
+\item Function \ccc{number_of_intersections} counts all  intersections.
+\item Function \ccc{all_intersected_primitives} enumerates all intersected primitives without constructing the corresponding intersection objects.
+\item Function \ccc{any_intersected_primitive} returns the first encoutered intersecting primitive (if any) without constructing the corresponding intersection object, and stops at the first encountered intersection.
+\end{itemize}
+
+Intersections:
+\begin{itemize}
+\item Function \ccc{all_intersections} detects and constructs all intersection objects with the input primitives.
+\item Function \ccc{any_intersection} detects and constructs the first encountered intersecting primitive and constructs the corresponding object. This function is fast as it stops at the first encountered intersection.
+\end{itemize}
+
 
 % Examples
 \section{Examples}
@@ -40,7 +64,7 @@ The following example computes the number of intersections between a 3D plane an
 
 % Implementation Details
 \section{Implementation Details}
-\label{AABB_tree_section_intro}
+\label{AABB_tree_section_details}
 
 The hierarchy construction is initialized by computing the AABB of the whole set of input primitives. All primitives are then stored along the longest axis of this box, and the primitives are separated into two equal sized sets. This procedure is applied recursively until an AABB contains a single primitive. 
 
