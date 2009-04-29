@@ -10,15 +10,15 @@ int main(void)
 {
     // generate point set
     std::deque<Point> points;
-    points.push_back(Point( 0.0, 0.0, 0.01));
-    points.push_back(Point(-0.1,-0.1, 0.02));
-    points.push_back(Point(-0.1,-0.2, 0.01));
-    points.push_back(Point(-0.1, 0.1, 0.02));
-    points.push_back(Point( 0.1,-0.1, 0.00));
-    points.push_back(Point( 0.1, 0.2, 0.01));
-    points.push_back(Point( 0.2, 0.0, 0.02));
-    points.push_back(Point( 0.2, 0.1, 0.00));
-    points.push_back(Point( 0.0,-0.1, 0.01));
+    points.push_back(Point( 0.0, 0.0, 0.001));
+    points.push_back(Point(-0.1,-0.1, 0.002));
+    points.push_back(Point(-0.1,-0.2, 0.001));
+    points.push_back(Point(-0.1, 0.1, 0.002));
+    points.push_back(Point( 0.1,-0.1, 0.000));
+    points.push_back(Point( 0.1, 0.2, 0.001));
+    points.push_back(Point( 0.2, 0.0, 0.002));
+    points.push_back(Point( 0.2, 0.1, 0.000));
+    points.push_back(Point( 0.0,-0.1, 0.001));
 
     // smoothing
     const unsigned int nb_neighbors = 8;
