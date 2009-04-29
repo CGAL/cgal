@@ -1,6 +1,10 @@
 * text=auto !eol
 AABB_tree/doc_tex/AABB_tree/AABB_tree_user.tex -text
 AABB_tree/doc_tex/AABB_tree/PkgDescription.tex -text
+AABB_tree/doc_tex/AABB_tree/api.tex -text
+AABB_tree/doc_tex/AABB_tree/details.tex -text
+AABB_tree/doc_tex/AABB_tree/examples.tex -text
+AABB_tree/doc_tex/AABB_tree/intro.tex -text
 AABB_tree/doc_tex/AABB_tree/main.tex -text
 AABB_tree/doc_tex/AABB_tree/shark.eps -text
 AABB_tree/doc_tex/AABB_tree/shark.jpg -text

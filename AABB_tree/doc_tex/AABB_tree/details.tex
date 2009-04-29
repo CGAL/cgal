@@ -1,0 +1,7 @@
+% Implementation Details
+\section{Implementation Details}
+\label{AABB_tree_section_details}
+
+The hierarchy construction is initialized by computing the AABB of the whole set of input primitives. All primitives are then stored along the longest axis of this box, and the primitives are separated into two equal sized sets. This procedure is applied recursively until an AABB contains a single primitive. 
+
+In practice the design is slightly different than the one described above as the tree is leafless as presented in OPCODE \cite{cgal:t-ocdl-05}. An intersection query traverses the tree by computing intersection tests only with respect to the AABBs during traversal, and with respect to the input primitives at the end of traversal, i.e., in the leafs of the tree. A projection query between, e.g., a point $q$ and a set of triangle primitives is turned into a \emph{ball} query centered at the query point. The ball traverses the tree while recursively querying intersections with the AABBs, and computes the closest point $p$ from the query point to the input primitives when the traversal ends, i.e., at the leafs of the tree. The ball radius is then shrunk to the distance between $p$ and $q$ for all remaining recursive tree traversals. Efficiency is achieved through setting the initial ball radius to a small value albeit guaranteed to intersect the input primitives.

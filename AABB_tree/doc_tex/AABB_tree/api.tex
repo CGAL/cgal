@@ -1,0 +1,25 @@
+% API
+\section{Interface}
+\label{AABB_tree_section_interface}
+
+The main entry point to the component is the class \ccc{AABB_tree} which stores a static AABB tree constructed from an iterator range of primitives. Once instantiated an AABB tree can be queried for intersection and projection.
+
+
+\paragraph{Intersections.} Considers for the example that the tree contains triangle primitives. The tree can be queried for intersection against line objects (rays, segments or line) in various ways. We distinguish intersection \emph{tests} which do not construct any intersection objects, from \emph{intersections} which construct the intersection objects.\\
+
+Intersections tests:
+\begin{itemize}
+\item Function \ccc{do_intersect} only tests if the input primitives are intersected by the query. This function is fast as it only involves predicates and stops at the first encountered intersection.
+\item Function \ccc{number_of_intersections} counts all  intersections.
+\item Function \ccc{all_intersected_primitives} enumerates all intersected primitives without constructing the corresponding intersection objects.
+\item Function \ccc{any_intersected_primitive} returns the first encoutered intersecting primitive (if any) without constructing the corresponding intersection object, and stops at the first encountered intersection.
+\end{itemize}
+
+Intersections:
+\begin{itemize}
+\item Function \ccc{all_intersections} detects and constructs all intersection objects with the input primitives.
+\item Function \ccc{any_intersection} detects and constructs the first encountered intersecting primitive and constructs the corresponding object. This function is fast as it stops at the first encountered intersection.
+\end{itemize}
+
+
+\paragraph{Closest point.} An AABB tree can compute the closest point from a given point query to the input primitives through the function \ccc{closest_point(query,hint)}. In addition, it can compute the closest primitive from a given point query through the function \ccc{closest_primitive(query,hint)}, i.e., the primitive which realizes the minimum distance from the point query. The latter function is a loose version of the primer in the sense that it does not precise which point on this primitive is the closest. This is often sufficient in some applications to know which primitive is closer. The hint parameter, which can be omitted, provides a way to indicate a point already on one of the primitives. Although this hint can be chosen arbitrarily, the closer from the query the faster. 
