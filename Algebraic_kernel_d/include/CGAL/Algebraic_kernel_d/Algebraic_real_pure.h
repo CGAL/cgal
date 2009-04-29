@@ -467,6 +467,21 @@ struct Get_arithmetic_kernel<CGAL::CGALi::Algebraic_real_pure<Coefficient,Ration
 
 };
 
+template <class Coefficient,class Rational,class Handle_policy,class Rep_class>
+inline CGAL::CGALi::Algebraic_real_pure<Coefficient,Rational,Handle_policy,Rep_class> 
+min BOOST_PREVENT_MACRO_SUBSTITUTION(
+const CGAL::CGALi::Algebraic_real_pure<Coefficient,Rational,Handle_policy,Rep_class>& x,
+const CGAL::CGALi::Algebraic_real_pure<Coefficient,Rational,Handle_policy,Rep_class>& y){
+  return (x<=y)?x:y; 
+}
+template <class Coefficient,class Rational,class Handle_policy,class Rep_class>
+inline CGAL::CGALi::Algebraic_real_pure<Coefficient,Rational,Handle_policy,Rep_class> 
+max BOOST_PREVENT_MACRO_SUBSTITUTION(
+const CGAL::CGALi::Algebraic_real_pure<Coefficient,Rational,Handle_policy,Rep_class>& x,
+const CGAL::CGALi::Algebraic_real_pure<Coefficient,Rational,Handle_policy,Rep_class>& y){
+  return (x>=y)?x:y; 
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_REAL_PURE_H
