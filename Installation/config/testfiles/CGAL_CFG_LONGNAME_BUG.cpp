@@ -21,12 +21,6 @@
 //
 // Author(s)     : various
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a C++ compiler.
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| If a compiler (or assembler or linker) has problems with long names
 //| CGAL_CFG_LONGNAME_BUG is set.
 

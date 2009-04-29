@@ -17,12 +17,6 @@
 //
 // Author(s)     : Sylvain Pion
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a C++ compiler.
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| If a compiler does not support std::isfinite() (from C++0x)
 //| CGAL_CFG_NO_CPP0X_ISFINITE is set. 
 

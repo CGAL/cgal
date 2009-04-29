@@ -21,12 +21,6 @@
 //
 // Author(s)     : Sylvain Pion
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a machine architecture.
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| The long long built-in integral type is not part of the ISO C++ 98 standard,
 //| but many compilers support it nevertheless since it's part of the ISO
 //| C standard.  It is part of C++0x.

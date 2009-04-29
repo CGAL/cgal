@@ -21,12 +21,6 @@
 //
 // Author(s)     : Andreas Fabri
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a C++ compiler.
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| If a compiler doesn't know nextafter() (or only knows _nextafter as VC++ 7.1).
 //| nextafter() is part of ISO C99, but not ISO C++98 (hence <math.h> instead of <cmath>).
 //| CGAL_CFG_NO_NEXTAFTER is set. 

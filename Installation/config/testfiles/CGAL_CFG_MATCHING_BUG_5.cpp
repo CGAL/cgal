@@ -21,11 +21,6 @@
 //
 // Author(s)     : Sylvain Pion
 
-// ---------------------------------------------------------------------
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| This flag is set, if a compiler cannot distinguish the signature
 //| of overloaded function templates, which have one template parameter
 //| to be passed explicitely when being called.

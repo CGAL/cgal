@@ -18,11 +18,6 @@
 //
 // Author(s)     : Andreas Fabri
 
-// ---------------------------------------------------------------------
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| This flag is set, if the executable does not properly parse an int followed by a comma
 //| Can you believe it!!!
 

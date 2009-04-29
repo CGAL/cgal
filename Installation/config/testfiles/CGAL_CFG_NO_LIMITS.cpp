@@ -21,12 +21,6 @@
 //
 // Author(s)     : various
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a C++ compiler.
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| If a compiler has a bug in the implementation of
 //| std::numeric_limits<>::denorm_min(), such as PGCC 7.1-2,
 //| CGAL_CFG_NO_LIMITS is set. 

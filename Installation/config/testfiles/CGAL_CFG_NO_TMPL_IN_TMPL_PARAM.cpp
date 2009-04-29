@@ -21,12 +21,6 @@
 //
 // Author(s)     : Lutz Kettner
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a C++ compiler.
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| Nested templates in template parameter, such as 'template <
 //| template <class T> class A>' are not supported by any compiler. 
 //| The following definition is set if they are not supported.

@@ -21,11 +21,6 @@
 //
 // Author(s)     : Andreas Fabri
 
-// ---------------------------------------------------------------------
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| VC 7.3 does not recognize when an operator in a class
 //| redefines the operator with the same signature in a base class
 //| It happens with the regular triangulation.

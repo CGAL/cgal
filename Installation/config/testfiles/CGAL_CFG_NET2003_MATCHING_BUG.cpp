@@ -21,11 +21,6 @@
 //
 // Author(s)     : Radu Ursu
 
-// ---------------------------------------------------------------------
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| This flag is set, if the compiler does not match a member 
 //| definition to an existing declaration (eg., cl1310 Beta).
 

@@ -21,12 +21,6 @@
 //
 // Author(s)     : Marc Glisse
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a C++ compiler.
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| This flag is set if the compiler complains about an ambiguity between
 //| a type and itself when some members are defined out of line. This is
 //| a Sun CC bug.

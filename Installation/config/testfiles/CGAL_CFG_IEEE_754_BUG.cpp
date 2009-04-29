@@ -18,14 +18,7 @@
 // $URL$
 // $Id$
 // 
-//
 // Author(s)     : Sylvain Pion
-
-// ---------------------------------------------------------------------
-// A short test program to evaluate a C++ compiler.
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
 
 //| This flag is set if the compiler bugs with special features with IEEE 754
 //| handling, concerning is_valid() and is_finite() testing of infinity and

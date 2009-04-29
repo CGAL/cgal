@@ -21,11 +21,6 @@
 //
 // Author(s)     : Andreas Fabri
 
-// ---------------------------------------------------------------------
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| If a compiler has problems with restoring the rounding mode in a try/catch
 //| CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
 

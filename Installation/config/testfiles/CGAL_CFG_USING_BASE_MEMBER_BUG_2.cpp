@@ -21,12 +21,6 @@
 //
 // Author(s)     : Sylvain Pion
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a C++ compiler.
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| This flag is set if the compiler bugs with some "using Base::Member;" in
 //| a derived class.  The workaround is to write a forwarder or not use using.
 //| At least SunPro CC 5.3 has this bug where the typical error message is :

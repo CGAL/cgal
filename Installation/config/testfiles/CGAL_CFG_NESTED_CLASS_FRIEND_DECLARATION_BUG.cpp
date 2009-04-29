@@ -18,12 +18,6 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a C++ compiler.
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| The flag CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG is set
 //| if the compiler cannot recognize the declaration of a nested
 //| class as friend.

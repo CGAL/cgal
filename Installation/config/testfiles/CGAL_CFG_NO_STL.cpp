@@ -21,12 +21,6 @@
 //
 // Author(s)     : Lutz Kettner, Sylvain Pion
 
-// ---------------------------------------------------------------------
-// A short test program to evaluate a machine architecture.
-// This program is used by install_cgal.
-// The following documentation will be pasted in the generated configfile.
-// ---------------------------------------------------------------------
-
 //| A basic test for the STL.
 //| If it fails, it probably means a bad CGAL installation.
 
