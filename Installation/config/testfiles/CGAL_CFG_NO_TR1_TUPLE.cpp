@@ -1,4 +1,4 @@
-// Copyright (c) 2008  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -23,16 +23,16 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| If a compiler does not support std::tr1::array<> (from TR1)
-//| CGAL_CFG_NO_TR1_ARRAY is set. 
+//| If a compiler does not support std::tr1::tuple<> (from TR1)
+//| CGAL_CFG_NO_TR1_TUPLE is set. 
 
 #undef NDEBUG
 #include <cassert>
-#include <tr1/array>
+#include <tr1/tuple>
 
 int main()
 {
-  std::tr1::array<int, 3> a = { {0, 2, 4} };
-  assert(a[1] == 2);
+  std::tr1::tuple<int, double> a (2, 1.0);
+  assert(std::tr1::get<0>(a) == 2);
   return 0;
 }
