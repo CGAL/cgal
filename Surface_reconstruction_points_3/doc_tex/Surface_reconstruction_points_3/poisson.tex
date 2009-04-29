@@ -1,7 +1,4 @@
-\section{Basics}
-
-
-\subsection{Poisson Reconstruction Overview}
+\section{Poisson Reconstruction}
 
 Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm \cite{Kazhdan06}.
 Given a set of 3D points with oriented normals (denoted oriented points in the sequel)
@@ -21,7 +18,7 @@ using a sparse linear solver.
 Eventually, the \cgal\ surface mesh generator extracts an isosurface with function value set by default
 to be the median value of $f$ at all input points.
 
-\subsection{Poisson Reconstruction API}
+\subsection{API}
 
 The class template declaration is:
 
@@ -72,7 +69,7 @@ See details in \\
 \ccRefIdfierPage{CGAL::Poisson_reconstruction_function<GeomTraits, ReconstructionTriangulation_3>}
 
 
-\subsection{Poisson Reconstruction Example}
+\subsection{Example}
 
 \ccc{poisson_reconstruction_example.cpp} reads a point set, creates a Poisson implicit function and reconstructs a surface.
 
