@@ -31,6 +31,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace cpp0x {
+
 #ifndef CGAL_CFG_NO_CPP0X_ARRAY
 using std::array;
 #elif !defined CGAL_CFG_NO_TR1_ARRAY
@@ -38,6 +40,14 @@ using std::tr1::array;
 #else
 using boost::array;
 #endif
+
+} // cpp0x
+
+
+// This using is just for short-term backward-compat, people should take the
+// habit to use CGAL::cpp0x::array.
+using cpp0x::array;
+
 
 // The make_array() function simply constructs an std::array.
 // It is needed for cases where a std::array is used as a class data
@@ -57,61 +67,61 @@ using boost::array;
 
 template< typename T, typename... Args >
 inline
-array< T, 1 + sizeof...(Args) >
+cpp0x::array< T, 1 + sizeof...(Args) >
 make_array(const T & t, const Args & ... args)
 {
-  array< T, 1 + sizeof...(Args) > a = { { t, args... } };
+  cpp0x::array< T, 1 + sizeof...(Args) > a = { { t, args... } };
   return a;
 }
 
 #else // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 template < typename T > inline
-array<T, 1>
+cpp0x::array<T, 1>
 make_array(const T& b1)
 {
-  array<T, 1> a = { { b1 } };
+  cpp0x::array<T, 1> a = { { b1 } };
   return a;
 }
 
 template < typename T > inline
-array<T, 2>
+cpp0x::array<T, 2>
 make_array(const T& b1, const T& b2)
 {
-  array<T, 2> a = { { b1, b2 } };
+  cpp0x::array<T, 2> a = { { b1, b2 } };
   return a;
 }
 
 template < typename T > inline
-array<T, 3>
+cpp0x::array<T, 3>
 make_array(const T& b1, const T& b2, const T& b3)
 {
-  array<T, 3> a = { { b1, b2, b3 } };
+  cpp0x::array<T, 3> a = { { b1, b2, b3 } };
   return a;
 }
 
 template < typename T > inline
-array<T, 4>
+cpp0x::array<T, 4>
 make_array(const T& b1, const T& b2, const T& b3, const T& b4)
 {
-  array<T, 4> a = { { b1, b2, b3, b4 } };
+  cpp0x::array<T, 4> a = { { b1, b2, b3, b4 } };
   return a;
 }
 
 template < typename T > inline
-array<T, 5>
+cpp0x::array<T, 5>
 make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5)
 {
-  array<T, 5> a = { { b1, b2, b3, b4, b5 } };
+  cpp0x::array<T, 5> a = { { b1, b2, b3, b4, b5 } };
   return a;
 }
 
 template < typename T > inline
-array<T, 6>
+cpp0x::array<T, 6>
 make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
            const T& b6)
 {
-  array<T, 6> a = { { b1, b2, b3, b4, b5, b6 } };
+  cpp0x::array<T, 6> a = { { b1, b2, b3, b4, b5, b6 } };
   return a;
 }
 

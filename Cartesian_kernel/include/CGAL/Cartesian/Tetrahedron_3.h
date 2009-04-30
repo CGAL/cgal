@@ -39,7 +39,7 @@ class TetrahedronC3
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Tetrahedron_3        Tetrahedron_3;
 
-  typedef CGAL::array<Point_3, 4>          Rep;
+  typedef cpp0x::array<Point_3, 4>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

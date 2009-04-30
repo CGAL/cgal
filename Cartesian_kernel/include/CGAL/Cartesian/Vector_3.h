@@ -41,7 +41,7 @@ class VectorC3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef CGAL::array<FT, 3>               Rep;
+  typedef cpp0x::array<FT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

@@ -70,7 +70,7 @@ private:
   typedef std::pair < Vertex_handle, Vertex_handle > Vpair;
   typedef std::map < Vpair, Facet > MapPair;
   typedef typename MapPair::iterator   MapPairIt;
-  typedef CGAL::array < Vertex_handle, 3 > Vtriple;
+  typedef cpp0x::array < Vertex_handle, 3 > Vtriple;
   typedef std::map < Vtriple, Facet > MapTriple;
   typedef typename MapTriple::iterator   MapTripleIt;
 	

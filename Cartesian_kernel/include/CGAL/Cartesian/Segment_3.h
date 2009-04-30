@@ -38,7 +38,7 @@ class SegmentC3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Segment_3            Segment_3;
 
-  typedef CGAL::array<Point_3, 2>          Rep;
+  typedef cpp0x::array<Point_3, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

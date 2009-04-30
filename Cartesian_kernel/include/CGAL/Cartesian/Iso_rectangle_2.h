@@ -36,7 +36,7 @@ class Iso_rectangleC2
   typedef typename R_::Iso_rectangle_2      Iso_rectangle_2;
   typedef typename R_::Construct_point_2    Construct_point_2;
 
-  typedef CGAL::array<Point_2, 2>          Rep;
+  typedef cpp0x::array<Point_2, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

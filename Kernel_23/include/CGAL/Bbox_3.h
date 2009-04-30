@@ -35,7 +35,7 @@ struct Simple_cartesian;
 
 class Bbox_3
 {
-  CGAL::array<double, 6>   rep;
+  cpp0x::array<double, 6>   rep;
 
 public:
 

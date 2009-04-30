@@ -37,7 +37,7 @@ class TriangleC2
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Triangle_2           Triangle_2;
 
-  typedef CGAL::array<Point_2, 3>          Rep;
+  typedef cpp0x::array<Point_2, 3>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

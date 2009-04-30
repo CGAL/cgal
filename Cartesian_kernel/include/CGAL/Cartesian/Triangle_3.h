@@ -38,7 +38,7 @@ class TriangleC3
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Triangle_3           Triangle_3;
 
-  typedef CGAL::array<Point_3, 3>          Rep;
+  typedef cpp0x::array<Point_3, 3>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

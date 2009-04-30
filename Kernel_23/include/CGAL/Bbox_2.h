@@ -36,7 +36,7 @@ struct Simple_cartesian;
 
 class Bbox_2
 {
-  typedef CGAL::array<double, 4>            BBox_rep_2;
+  typedef cpp0x::array<double, 4>            BBox_rep_2;
 
   BBox_rep_2 rep;
 
