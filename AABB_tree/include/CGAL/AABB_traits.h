@@ -49,7 +49,7 @@ public:
   typedef typename GeomTraits::Point_3 Projection;
   // TOFIX: Workaround for weighted_point
 #ifndef AABB_KERNEL_USE_WEIGHTED_POINT
-  typedef typename GeomTraits::Point Intersection;
+  typedef typename GeomTraits::Point_3 Intersection;
 #else
   typedef typename GeomTraits::Point_3::Point Intersection;
 #endif
