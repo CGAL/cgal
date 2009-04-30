@@ -1180,7 +1180,9 @@ template < typename D, typename V = cpp0x::tuple<>, typename O = cpp0x::tuple<> 
 struct Derivator
 {
   typedef Derivator<D, V, O> Self;
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   Self& operator=(const Self&) = delete;
+#endif
 };
 
 template < typename D, typename V1, typename O1, typename... V, typename... O>
@@ -1190,7 +1192,9 @@ struct Derivator<D, cpp0x::tuple<V1, V...>, cpp0x::tuple<O1, O...> >
   typedef Derivator<D, cpp0x::tuple<V1, V...>, cpp0x::tuple<O1, O...> > Self;
   typedef Derivator<D, cpp0x::tuple<V...>, cpp0x::tuple<O...> > Base;
 
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   Self& operator=(const Self&) = delete;
+#endif
 
   using Base::operator=;
   
