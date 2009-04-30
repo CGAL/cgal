@@ -21,11 +21,6 @@
   
 The concept \ccRefName\ provides the geometric primitive types and methods for the class \ccc{AABB_tree<Traits>}.
 
-% \ccGeneralizes
-
-% ThisConcept \\
-% ThatConcept
-
 \ccTypes
 
 \ccNestedType{Primitive}{Type of primitive. Must be a model of the concept \ccc{AABBPrimitive}.}
@@ -91,12 +86,12 @@ The following members are required only if projection queries are issued.
 \ccMethod{bool is_contained(const Sphere & a, const Sphere & b);}{Returns \ccc{true} iff sphere $a$ is contained in sphere $b$. Both spheres are assumed to share the same center.}
 
 \ccHasModels
-
 \ccc{AABB_traits<GeomTraits,TrianglePrimitive>}.
 
 \ccSeeAlso
 \ccc{AABB_traits<GeomTraits,TrianglePrimitive>}\\
 \ccc{AABB_tree<Traits>}
+\ccc{AABBPrimitive}
 
 \end{ccRefConcept}
 
