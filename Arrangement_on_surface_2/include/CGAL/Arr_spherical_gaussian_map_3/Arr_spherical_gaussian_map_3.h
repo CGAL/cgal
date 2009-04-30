@@ -46,15 +46,7 @@
 #include <iostream>
 
 #include "CGAL/Arr_default_dcel.h"
-#include "CGAL/Arr_geodesic_arc_on_sphere_traits_2.h"
 #include "CGAL/Arr_spherical_topology_traits_2.h"
-
-#ifdef CGAL_ARR_TRACING_TRAITS
-#include "CGAL/Arr_tracing_traits_2.h"
-#endif
-#ifdef CGAL_COUNTING_TRAITS
-#include "CGAL/Arr_counting_traits_2.h"
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -109,12 +101,12 @@ public:
  * Arr_spherical_gaussian_map_3 structure. It is parameterized by the SGM to
  * be initialized and by a visitor class.
  */
-template <typename Sgm, typename T_Kernel = typename Sgm::Kernel>
+template <typename Sgm, typename T_Traits = typename Sgm::Traits>
 class Arr_sgm_initializer {
 public:
-  typedef T_Kernel                                        Kernel;
-  typedef typename Kernel::Vector_3                       Vector_3;
-  typedef typename Kernel::Direction_3                    Direction_3;
+  typedef T_Traits                                        Traits;
+  typedef typename Traits::Vector_3                       Vector_3;
+  typedef typename Traits::Direction_3                    Direction_3;
 
   typedef typename Sgm::Geometry_traits_2                 Geometry_traits_2;
   typedef typename Geometry_traits_2::Point_2             Point_2;
@@ -338,53 +330,28 @@ protected:
 /* Spherical_gaussian_map is a data dtructure that represents a Gaussinal map
  * embedded on the sphere.
  */
-#ifdef CGAL_ARR_TRACING_TRAITS
-template <class T_Kernel,
+template <class T_Traits,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
           template <class T>
 #endif
           class T_Dcel = Arr_default_dcel>
 class Arr_spherical_gaussian_map_3 :
-  public Arrangement_on_surface_2<Arr_tracing_traits_2<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel> >,
-    Arr_spherical_topology_traits_2<Arr_tracing_traits_2<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel> >,
+  public Arrangement_on_surface_2<T_Traits,
+    Arr_spherical_topology_traits_2<T_Traits,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-      T_Dcel<Arr_tracing_traits_2<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel> > >
+      T_Dcel<T_Traits>
 #else
-      typename T_Dcel::template Dcel<Arr_tracing_traits_2<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel> > >
+      typename T_Dcel::template Dcel<T_Traits>
 #endif
     >
   >
-
-#else
-
-template <class T_Kernel,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-          template <class T>
-#endif
-          class T_Dcel = Arr_default_dcel>
-class Arr_spherical_gaussian_map_3 :
-  public Arrangement_on_surface_2<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel>,
-    Arr_spherical_topology_traits_2<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel>,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-      T_Dcel<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel> >
-#else
-      typename T_Dcel::template Dcel<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel> >
-#endif
-    >
-  >
-#endif
 {
 private:
-  typedef Arr_spherical_gaussian_map_3<T_Kernel, T_Dcel>    Self;
+  typedef Arr_spherical_gaussian_map_3<T_Traits, T_Dcel>    Self;
   
 public:
-  typedef T_Kernel                                          Kernel;
-#ifdef CGAL_ARR_TRACING_TRAITS
-  typedef Arr_tracing_traits_2<Arr_geodesic_arc_on_sphere_traits_2<Kernel> >
-                                                          Geometry_traits_2;
-#else
-  typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Geometry_traits_2;
-#endif
+  typedef T_Traits                                          Traits;
+  typedef Traits                                            Geometry_traits_2;
   
   /*! Parameter-less Constructor */
   Arr_spherical_gaussian_map_3() { }

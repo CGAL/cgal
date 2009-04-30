@@ -38,6 +38,7 @@
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_spherical_gaussian_map_3.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_polyhedron_3.h>
+#include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_traits.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_arr_dcel.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_overlay.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_initializer_visitor.h>
@@ -375,7 +376,7 @@ private:
       process_vertex(++src, first_time);
       return;
     }
-    
+
     CGAL_assertion(circulator_size(hec) >= 3);
     Polyhedron_halfedge_around_vertex_circulator begin_hec = hec;
     Polyhedron_halfedge_around_vertex_circulator next_hec = hec;
@@ -396,6 +397,7 @@ private:
     // Traverse the incident halfedges:
     do {
       if (!next_hec->processed()) {
+
         const Vector_3 & normal1 = hec->facet()->plane();
         const Vector_3 & normal2 = next_hec->facet()->plane();
         m_trg_vertex = next_hec->opposite()->vertex();
@@ -514,7 +516,11 @@ public:
   /*! Destructor */
   virtual ~Arr_polyhedral_sgm_initializer() {}
 
-  /*! Initialize the Gaussian map */
+  /*! Initialize the Gaussian map
+   * \param polyhedron
+   * \param visitor
+   * \pre The polyhedron polyhedron does not have coplanar facets.
+   */
   void operator()(Polyhedron & polyhedron, Visitor * visitor = NULL)
   {
 #if 0
@@ -592,17 +598,29 @@ template <class T_Kernel,
 #endif
           class T_Dcel = Arr_polyhedral_sgm_arr_dcel>
 class Arr_polyhedral_sgm :
-  public Arr_spherical_gaussian_map_3<T_Kernel,T_Dcel>
+  public Arr_spherical_gaussian_map_3<Arr_polyhedral_sgm_traits<T_Kernel>, T_Dcel>
 {
 private:
   typedef Arr_polyhedral_sgm<T_Kernel, T_Dcel>              Self;
   
 public:
   typedef T_Kernel                                          Kernel;
+  typedef typename Kernel::Point_3                          Point_3;
+  typedef typename Kernel::Vector_3                         Vector_3;
+
+  typedef Arr_polyhedral_sgm_traits<Kernel>                 Geometry_traits_2;
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+  typedef T_Dcel<Geometry_traits_2>                         Dcel;
+#else
+  typedef typename T_Dcel::template Dcel<Geometry_traits_2> Dcel;
+#endif
   
   // For some reason MSVC barfs on the friend statement below. Therefore,
   // we declare the Base to be public to overcome the problem.
-  typedef Arr_spherical_gaussian_map_3<T_Kernel, T_Dcel>    Base;
+  typedef Arr_spherical_gaussian_map_3<Geometry_traits_2, T_Dcel>   Base;
+
+  typedef Arr_polyhedral_sgm_overlay<Self>
+    Arr_polyhedral_sgm_overlay;
 
 #if 0
   /*! Allow the initializer to update the SGM data members */
@@ -610,22 +628,6 @@ public:
   friend class Arr_polyhedral_sgm_initializer<Self, Polyhedron, Visitor>;
 #endif
   
-public:
-  // Arrangement traits and types:
-  typedef typename Base::Geometry_traits_2                  Geometry_traits_2;
-  
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-  typedef T_Dcel<Geometry_traits_2>                         Dcel;
-#else
-  typedef typename T_Dcel::template Dcel<Geometry_traits_2> Dcel;
-#endif
-
-  typedef Arr_polyhedral_sgm_overlay<Self>
-    Arr_polyhedral_sgm_overlay;
-
-  typedef typename Kernel::Point_3                          Point_3;
-  typedef typename Kernel::Vector_3                         Vector_3;
-
 private:
   /*! The gravity center */
   Point_3 m_center;

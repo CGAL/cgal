@@ -23,6 +23,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 
+#if defined(CGAL_ARR_TRACING_TRAITS)
+#include "CGAL/Arr_tracing_traits_2.h"
+#elif defined(CGAL_COUNTING_TRAITS)
+#include "CGAL/Arr_counting_traits_2.h"
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 /*! \file
@@ -43,7 +49,13 @@ CGAL_BEGIN_NAMESPACE
  */
 template <typename T_Kernel>
 class Arr_polyhedral_sgm_traits :
+#if defined(CGAL_ARR_TRACING_TRAITS)
+  public Arr_tracing_traits_2<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel> >
+#elif defined(CGAL_ARR_COUNTING_TRAITS)
+  public Arr_counting_traits_2<Arr_geodesic_arc_on_sphere_traits_2<T_Kernel> >
+#else
   public Arr_geodesic_arc_on_sphere_traits_2<T_Kernel>
+#endif
 {
 public:
   typedef T_Kernel                                      Kernel;
@@ -52,7 +64,15 @@ public:
   typedef typename Kernel::Direction_3                  Direction_3;
 
 protected:
+#if defined(CGAL_ARR_TRACING_TRAITS)
+  typedef Arr_tracing_traits_2<Arr_geodesic_arc_on_sphere_traits_2<Kernel> >
+                                                        Base;
+#elif defined(CGAL_ARR_COUNTING_TRAITS)
+  typedef Arr_counting_traits_2<Arr_geodesic_arc_on_sphere_traits_2<Kernel> >
+                                                        Base;
+#else
   typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel>   Base;
+#endif
 
 public:
 };
