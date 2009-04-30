@@ -106,7 +106,6 @@ class Arr_sgm_initializer {
 public:
   typedef T_Traits                                        Traits;
   typedef typename Traits::Vector_3                       Vector_3;
-  typedef typename Traits::Direction_3                    Direction_3;
 
   typedef typename Sgm::Geometry_traits_2                 Geometry_traits_2;
   typedef typename Geometry_traits_2::Point_2             Point_2;

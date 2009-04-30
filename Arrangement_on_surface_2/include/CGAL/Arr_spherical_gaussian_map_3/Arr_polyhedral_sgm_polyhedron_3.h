@@ -204,9 +204,9 @@ struct Arr_polyhedral_sgm_polyhedron_items : public Polyhedron_items_3 {
  * type that is based on the extended types, and define a new polyhedron type
  * based on the new items type.
  */
-template <class Sgm>
+template <class Sgm, class Kernel>
 struct Arr_polyhedral_sgm_polyhedron_3 :
-  public Polyhedron_3<Polyhedron_traits_with_normals_3<typename Sgm::Kernel>,
+  public Polyhedron_3<Polyhedron_traits_with_normals_3<Kernel>,
                       Arr_polyhedral_sgm_polyhedron_items<Sgm> >
 {
   /*! Constructor */

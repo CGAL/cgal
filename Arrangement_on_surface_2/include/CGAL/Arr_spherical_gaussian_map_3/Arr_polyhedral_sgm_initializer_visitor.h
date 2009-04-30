@@ -24,8 +24,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class PolyhedralSgm,
-         class Polyhedron = Arr_polyhedral_sgm_polyhedron_3<PolyhedralSgm> >
+template<class PolyhedralSgm, class Polyhedron>
 class Arr_polyhedral_sgm_initializer_visitor {
 public:
   typedef typename Polyhedron::Vertex_const_handle

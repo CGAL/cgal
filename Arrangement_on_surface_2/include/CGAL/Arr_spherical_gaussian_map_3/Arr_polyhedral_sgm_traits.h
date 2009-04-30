@@ -61,7 +61,6 @@ public:
   typedef T_Kernel                                      Kernel;
   typedef typename Kernel::Point_3                      Point_3;
   typedef typename Kernel::Vector_3                     Vector_3;
-  typedef typename Kernel::Direction_3                  Direction_3;
 
 protected:
 #if defined(CGAL_ARR_TRACING_TRAITS)

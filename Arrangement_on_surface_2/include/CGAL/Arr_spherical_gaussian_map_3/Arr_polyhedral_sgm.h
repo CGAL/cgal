@@ -37,7 +37,6 @@
 
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_spherical_gaussian_map_3.h>
-#include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_polyhedron_3.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_traits.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_arr_dcel.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_overlay.h>
@@ -53,28 +52,24 @@ CGAL_BEGIN_NAMESPACE
 /*!
  */
 template <typename PolyhedralSgm,
-          typename Polyhedron = Arr_polyhedral_sgm_polyhedron_3<PolyhedralSgm>,
-          typename Visitor = Arr_polyhedral_sgm_initializer_visitor<PolyhedralSgm> >
+          typename Polyhedron,
+          typename Visitor = Arr_polyhedral_sgm_initializer_visitor<PolyhedralSgm, Polyhedron> >
 class Arr_polyhedral_sgm_initializer :
   public Arr_sgm_initializer<typename PolyhedralSgm::Base>
 {
 private:
   // Base type:
-  typedef Arr_sgm_initializer<typename PolyhedralSgm::Base>
-                                                          Base;
+  typedef Arr_sgm_initializer<typename PolyhedralSgm::Base> Base;
+  typedef typename PolyhedralSgm::Geometry_traits_2         Geometry_traits_2;
+  typedef typename Geometry_traits_2::Point_2               Point_2;
+  typedef typename Geometry_traits_2::X_monotone_curve_2    X_monotone_curve_2;
+  typedef typename Geometry_traits_2::Curve_2               Curve_2;  
 
-  typedef typename PolyhedralSgm::Kernel                  Kernel;
-  typedef typename Kernel::FT                             FT;
-  typedef typename Kernel::Point_3                        Point_3;
-  typedef typename Kernel::Vector_3                       Vector_3;
-
-  typedef typename PolyhedralSgm::Geometry_traits_2       Geometry_traits_2;
-  typedef typename Geometry_traits_2::Point_2             Point_2;
-  typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
-  typedef typename Geometry_traits_2::Curve_2             Curve_2;  
+  typedef typename Geometry_traits_2::Point_3               Point_3;
+  typedef typename Geometry_traits_2::Vector_3              Vector_3;
   
   /*! */
-  typedef unsigned int *                                  Coord_index_iter;
+  typedef unsigned int *                                    Coord_index_iter;
   
   // Polyhedron types:
   typedef typename Polyhedron::Vertex_const_handle
@@ -97,20 +92,13 @@ private:
     template <class Facet>
     typename Facet::Plane_3 operator()(Facet & f) {
       typename Facet::Halfedge_handle h = f.halfedge();
-      // Facet::Plane_3 is the normal vector type. We assume the
-      // CGAL Kernel here and use its global functions.
-#if 0
-      const Point_3 & x = h->vertex()->point();
-      const Point_3 & y = h->next()->vertex()->point();
-      const Point_3 & z = h->next()->next()->vertex()->point();
-#endif 
+      // Facet::Plane_3 is the normal vector type.
       Vector_3 normal =
         CGAL::cross_product(h->next()->vertex()->point() -
                             h->vertex()->point(),
                             h->next()->next()->vertex()->point() -
                             h->next()->vertex()->point());
-      FT sqr_length = normal.squared_length();
-      double tmp = CGAL::to_double(sqr_length);
+      double tmp = CGAL::to_double(normal.squared_length());
       return normal / CGAL::sqrt(tmp);
     }
   };
@@ -351,17 +339,6 @@ private:
   {
     m_src_vertex = src;
 
-#if 0
-    CGAL::To_double<typename Kernel::FT> todouble;
-    std::cout << "process_vertex src: "
-              << static_cast<float>(todouble(m_src_vertex->point().x()))
-              << ","
-              << static_cast<float>(todouble(m_src_vertex->point().y()))
-              << ","
-              << static_cast<float>(todouble(m_src_vertex->point().z()))
-              << std::endl;
-#endif
-    
     typedef typename Base::Vertex_handle                Vertex_handle;
     typedef typename Base::Halfedge_handle              Halfedge_handle;
 
@@ -592,23 +569,21 @@ public:
 
 /*!
  */
-template <class T_Kernel,
+template <class Geometry_traits_2,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
           template <class T>
 #endif
           class T_Dcel = Arr_polyhedral_sgm_arr_dcel>
 class Arr_polyhedral_sgm :
-  public Arr_spherical_gaussian_map_3<Arr_polyhedral_sgm_traits<T_Kernel>, T_Dcel>
+  public Arr_spherical_gaussian_map_3<Geometry_traits_2, T_Dcel>
 {
 private:
-  typedef Arr_polyhedral_sgm<T_Kernel, T_Dcel>              Self;
+  typedef Arr_polyhedral_sgm<Geometry_traits_2, T_Dcel>     Self;
   
 public:
-  typedef T_Kernel                                          Kernel;
-  typedef typename Kernel::Point_3                          Point_3;
-  typedef typename Kernel::Vector_3                         Vector_3;
+  typedef typename Geometry_traits_2::Point_3               Point_3;
+  typedef typename Geometry_traits_2::Vector_3              Vector_3;
 
-  typedef Arr_polyhedral_sgm_traits<Kernel>                 Geometry_traits_2;
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
   typedef T_Dcel<Geometry_traits_2>                         Dcel;
 #else
@@ -639,21 +614,16 @@ private:
   void calculate_center()
   {
     // Count them:
-    unsigned int vertices_num = 0;
     typename Base::Face_handle fi;
     for (fi = this->faces_begin(); fi != this->faces_end(); fi++) {
-      vertices_num++;
       const Point_3 & p = fi->point();
       Vector_3 v = p - CGAL::ORIGIN;
       m_center = m_center + v;
     }
 
-    typedef typename Kernel::FT FT;
-    FT num((int)vertices_num);
-    FT x = m_center.x() / num;
-    FT y = m_center.y() / num;
-    FT z = m_center.z() / num;
-    m_center = Point_3(x, y, z);
+    typename Base::Size num = this->number_of_faces();
+    m_center =
+      Point_3(m_center.x() / num, m_center.y() / num, m_center.z() / num);
 
     m_dirty_center = false;
   }
