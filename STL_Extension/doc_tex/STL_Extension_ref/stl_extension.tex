@@ -205,6 +205,7 @@
   \ccDefinition The class \ccClassTemplateName\ defines an
   \ccc{OutputIterator} that contains a tuple of output iterators, and dispatches
   among those based on the type of the value type which is put in it.
+  It also inherits from \ccc{O}, which makes it easy to treat like a tuple.
 
   \ccParameters
   \ccc{V} must be a \ccc{CGAL::tuple} of the types of values to be accepted and dispatched.
@@ -214,6 +215,8 @@
 
   \ccIsModel
   \ccc{OutputIterator}
+
+  \ccInheritsFrom \ccc{O}
 
   \ccTypes
 
@@ -249,6 +252,7 @@
   \ccc{OutputIterator} that contains a tuple of output iterators, and dispatches
   among those based on the type of the value type which is put in it.
   Other types are also accepted, and the object is simply discarded in this case.
+  It also inherits from \ccc{O}, which makes it easy to treat like a tuple.
 
   \ccParameters
   \ccc{V} must be a \ccc{CGAL::tuple<...>} of the types of values to be accepted and dispatched.
@@ -258,6 +262,8 @@
 
   \ccIsModel
   \ccc{OutputIterator}
+
+  \ccInheritsFrom \ccc{O}
 
   \ccTypes
 
