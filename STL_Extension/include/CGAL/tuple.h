@@ -35,6 +35,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace cpp0x {
+
 #ifndef CGAL_CFG_NO_CPP0X_TUPLE
 using std::tuple;
 using std::make_tuple;
@@ -52,6 +54,7 @@ using boost::tie;
 using boost::get;
 #endif
 
+} // cpp0x
 
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
@@ -60,19 +63,19 @@ template <typename V, typename T>
 struct Is_in_tuple;
 
 template <typename V, typename T0, typename... T>
-struct Is_in_tuple <V, tuple<T0, T...> >
+struct Is_in_tuple <V, cpp0x::tuple<T0, T...> >
 {
-  static const bool value = Is_in_tuple<V, tuple<T...> >::value;
+  static const bool value = Is_in_tuple<V, cpp0x::tuple<T...> >::value;
 };
 
 template <typename V, typename... T>
-struct Is_in_tuple <V, tuple<V, T...> >
+struct Is_in_tuple <V, cpp0x::tuple<V, T...> >
 {
   static const bool value = true;
 };
 
 template <typename V>
-struct Is_in_tuple <V, tuple<> >
+struct Is_in_tuple <V, cpp0x::tuple<> >
 {
   static const bool value = false;
 };
@@ -85,25 +88,25 @@ template <typename V, typename T>
 struct Is_in_tuple;
 
 template <typename V, typename T0, typename T1>
-struct Is_in_tuple <V, tuple<T0, T1> >
+struct Is_in_tuple <V, cpp0x::tuple<T0, T1> >
 {
-  static const bool value = Is_in_tuple<V, tuple<T1> >::value;
+  static const bool value = Is_in_tuple<V, cpp0x::tuple<T1> >::value;
 };
 
 template <typename V, typename T1>
-struct Is_in_tuple <V, tuple<V,T1> >
+struct Is_in_tuple <V, cpp0x::tuple<V,T1> >
 {
   static const bool value = true;
 };
 
 template <typename V>
-struct Is_in_tuple <V, tuple<V> >
+struct Is_in_tuple <V, cpp0x::tuple<V> >
 {
   static const bool value = true;
 };
 
 template <typename V, typename T1>
-struct Is_in_tuple <V, tuple<T1> >
+struct Is_in_tuple <V, cpp0x::tuple<T1> >
 {
   static const bool value = false;
 };
