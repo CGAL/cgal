@@ -78,11 +78,11 @@ typedef CGAL::Segment_Delaunay_graph_vertex_base_2<ST>                Vb;
 typedef CGAL::Segment_Delaunay_graph_vertex_base_with_info_2<Vb,int>  Vbi;
 typedef CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbi>     Vbh;
 typedef CGAL::Triangulation_face_base_2<Gt>                           Fb;
-typedef CGAL::Triangulation_data_structure_2<Vbh,Fb>                  DS;
+typedef CGAL::Triangulation_data_structure_2<Vbh,Fb>                  DS_;
 
 
 
-typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,DS>   SDG_2;
-//typedef CGAL::Segment_Delaunay_graph_2<Gt,ST,DS>          SDG_2;
+typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,DS_>   SDG_2;
+//typedef CGAL::Segment_Delaunay_graph_2<Gt,ST,DS_>          SDG_2;
 
 #endif  // PDG_TYPEDEFS_H

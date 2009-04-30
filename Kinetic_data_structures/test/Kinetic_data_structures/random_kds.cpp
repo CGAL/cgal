@@ -30,11 +30,11 @@ int main(int, char *[]) {
   if (which ==0) {
     std::cout << "Checking Delaunay_2" << std::endl;
     typedef CGAL::Kinetic::Exact_simulation_traits Traits;
-    typedef CGAL::Kinetic::Delaunay_triangulation_2<Traits> DS;
+    typedef CGAL::Kinetic::Delaunay_triangulation_2<Traits> DS_;
     typedef Traits::Kinetic_kernel::Motion_function F;
     typedef Traits::Kinetic_kernel::Point_2 Point;
     Traits tr(0, end_time);
-    DS ds(tr);
+    DS_ ds(tr);
     std::cout << "Points are:\n";
 
     for (int i=0; i< nump/1.5; ++i){
@@ -58,11 +58,11 @@ int main(int, char *[]) {
     std::cout << "Checking Sort" << std::endl;
 
     typedef CGAL::Kinetic::Exact_simulation_traits Traits;
-    typedef CGAL::Kinetic::Sort<Traits> DS;
+    typedef CGAL::Kinetic::Sort<Traits> DS_;
     typedef Traits::Kinetic_kernel::Motion_function F;
     typedef Traits::Kinetic_kernel::Point_1 Point;
     Traits tr(0, end_time);
-    DS ds(tr);
+    DS_ ds(tr);
     std::cout << "Points are:\n";
     for (int i=0; i< nump; ++i){
       Point pt(rp<F>(r, r.get_int(0,5)));
@@ -85,11 +85,11 @@ int main(int, char *[]) {
   } else if (which == 2) {
     std::cout << "Checking Delaunay_3" << std::endl;
     typedef CGAL::Kinetic::Exact_simulation_traits Traits;
-    typedef CGAL::Kinetic::Delaunay_triangulation_3<Traits> DS;
+    typedef CGAL::Kinetic::Delaunay_triangulation_3<Traits> DS_;
     typedef Traits::Kinetic_kernel::Motion_function F;
     typedef Traits::Kinetic_kernel::Point_3 Point;
     Traits tr(0, end_time);
-    DS ds(tr);
+    DS_ ds(tr);
     std::cout << "Points are:\n";
     for (int i=0; i< nump/2; ++i){
       Point pt(rp<F>(r, r.get_int(0,3)),
@@ -114,12 +114,12 @@ int main(int, char *[]) {
   } else {
     std::cout << "Checking regular_3" << std::endl;
     typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits Traits;
-    typedef CGAL::Kinetic::Regular_triangulation_3<Traits> DS;
+    typedef CGAL::Kinetic::Regular_triangulation_3<Traits> DS_;
     typedef Traits::Kinetic_kernel::Motion_function F;
     typedef Traits::Kinetic_kernel::Point_3 Bare_point;
     typedef Traits::Kinetic_kernel::Weighted_point_3 Point;
     Traits tr(0, end_time);
-    DS ds(tr);
+    DS_ ds(tr);
     std::cout << "Points are:\n";
 
     for (int i=0; i< nump/2; ++i){

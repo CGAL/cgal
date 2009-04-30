@@ -6,7 +6,7 @@
 
 #include "SketchSample.h"
 
-SketchSample::SketchSample(Mesh* mesh, DS* ppal_data) {
+SketchSample::SketchSample(Mesh* mesh, DS_* ppal_data) {
   highlight = false;
   p_mesh = mesh;
   p_ppal_data = ppal_data;
@@ -111,7 +111,7 @@ const double* SketchSample::rcoord() {
 // //move to sketch
 // void draw_point(Point& P);
 // void draw_vector(Point& P, Vector& V);
-// void MakeCallList(DS& L);
+// void MakeCallList(DS_& L);
 
 
 void SketchSample::draw_point(Point& P)

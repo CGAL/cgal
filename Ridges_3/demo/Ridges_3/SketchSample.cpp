@@ -10,7 +10,7 @@
 extern double strength_threshold;
 extern double sharpness_threshold;
 
-SketchSample::SketchSample(Mesh* mesh, DS* ridge_data) {
+SketchSample::SketchSample(Mesh* mesh, DS_* ridge_data) {
   highlight = false;
   p_mesh = mesh;
   p_ridge_data = ridge_data;

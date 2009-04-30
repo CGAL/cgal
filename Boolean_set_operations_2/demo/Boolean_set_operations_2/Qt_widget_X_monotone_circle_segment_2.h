@@ -35,13 +35,13 @@ operator<<(CGAL::Qt_widget & widget,
   if(arc.is_linear())
   {
     typedef Simple_cartesian<double> DK;
-    typedef DK::Segment_2            DS;
+    typedef DK::Segment_2            DS_;
     typedef DK::Point_2              DP;
     double sx = CGAL::to_double(arc.source().x());
     double sy = CGAL::to_double(arc.source().y());
     double tx = CGAL::to_double(arc.target().x());
     double ty = CGAL::to_double(arc.target().y());
-    DS seg(DP(sx ,sy), DP(tx, ty));
+    DS_ seg(DP(sx ,sy), DP(tx, ty));
     widget << seg;
     return (widget);
   }

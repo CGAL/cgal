@@ -17,11 +17,11 @@
 #include <string>
 
 Mesh m_mesh;
-DS ridge_data;
+DS_ ridge_data;
 double strength_threshold = 0;
 double sharpness_threshold = 0;
 
-void clean_DS(DS& L)
+void clean_DS(DS_& L)
 {
   DS_iterator current=L.begin();
   for (DS_iterator it=++L.begin();it!=L.end();it++)
@@ -66,7 +66,7 @@ read_line(std::ifstream& stream_res, int& ridge_type,
       }
 }
 
-void load_data_from_file(DS& l, const char* file_res)
+void load_data_from_file(DS_& l, const char* file_res)
 {
   std::ifstream stream_res(file_res, std::ifstream::in);
   if(!stream_res)   {   exit(0);    }

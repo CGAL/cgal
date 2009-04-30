@@ -15,9 +15,9 @@
 #include <cassert>
 
 Mesh m_mesh;
-DS ppal_data;
+DS_ ppal_data;
 
-void clean_DS(DS& L)
+void clean_DS(DS_& L)
 {
   DS_iterator current=L.begin();
   for (DS_iterator it=++L.begin();it!=L.end();it++)
@@ -46,7 +46,7 @@ read_line(FILE* file, Point& P1,Point& P2,
   fscanf(file, "%lf%lf",&k1,&k2);
 }
 
-void load_data_from_file(DS& l, const char* file_res)
+void load_data_from_file(DS_& l, const char* file_res)
 {
   FILE *file;
   if((file = fopen(file_res, "r")) != NULL)

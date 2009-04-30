@@ -30,7 +30,7 @@ struct data_line{
     {};
 };
 
-typedef std::list<data_line* > DS;
+typedef std::list<data_line* > DS_;
 typedef std::list<data_line* >::iterator DS_iterator;
 
 
@@ -38,11 +38,11 @@ class SketchSample : public Sketcher {
  private:
   bool highlight;
   Mesh* p_mesh;
-  DS* p_ridge_data;
+  DS_* p_ridge_data;
   double mesh_center_x, mesh_center_y, mesh_center_z, mesh_radius;
 
  public:
-  SketchSample(Mesh* mesh, DS* ridge_data);
+  SketchSample(Mesh* mesh, DS_* ridge_data);
 
   ~SketchSample();
 

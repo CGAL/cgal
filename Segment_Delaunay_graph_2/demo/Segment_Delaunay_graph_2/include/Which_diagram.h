@@ -28,14 +28,14 @@ CGAL_BEGIN_NAMESPACE
 
 template<class Matching_class> struct Which_diagram;
 
-template<class Gt, class DS, class LTag>
-struct Which_diagram< Segment_Delaunay_graph_2<Gt,DS,LTag> >
+template<class Gt, class DS_, class LTag>
+struct Which_diagram< Segment_Delaunay_graph_2<Gt,DS_,LTag> >
 {
   typedef Tag_false Is_hierarchy;
 };
 
-template<class Gt, class STag, class DS, class LTag>
-struct Which_diagram< Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS,LTag> >
+template<class Gt, class STag, class DS_, class LTag>
+struct Which_diagram< Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS_,LTag> >
 {
   typedef Tag_true  Is_hierarchy;
 };
