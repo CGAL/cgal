@@ -38,12 +38,11 @@ The template parameter \ccc{Traits} stands for a traits class which must be a mo
 \ccGlue
 \ccTypedef{Point_and_primitive}
           {A pair composed of a Point and a Primitive.}
-\ccGlue
 
 %\ccNestedType{AABB}{some nested types}
 
 \ccCreation
-\ccCreationVariable{tree}  %% variable name
+\ccCreationVariable{tree} %% variable name
 
 \ccConstructor{AABB_tree();}{Default constructor.}
 \ccConstructor{template < class ConstPrimitiveIterator>
@@ -63,17 +62,8 @@ The template parameter \ccc{Traits} stands for a traits class which must be a mo
 \ccMethod{void clear(void);}
 {Clears the current tree. }
 
-\ccMethod{void construct_search_tree();}
-{ Constructs the internal search KD-tree used to accelerate the projection queries. The points in the search tree are taken from the primitives by calling the function \ccc{point_on} from the primitive.}
-
-\ccMethod{template <class ConstPointIterator>
-void construct_search_tree(ConstPointIterator begin,
-                           ConstPointIterator beyond);}
-{ Constructs the internal search KD-tree used to accelerate the projection queries from a specified point set. }
-
 % INTERSECTION TESTS
 \ccHeading{Intersection Tests}
-
 
 \ccMethod{ template <class Query>
 	  bool do_intersect(const Query & q);}
@@ -134,6 +124,16 @@ closest_point_and_primitive(const Point& query,
 squared_distance(const Point& query, 
                  const Point & hint);} 
 {Returns the squared distance between the query point and all input primitives. See \ccc{closest_point} function for the \ccc{hint} parameter. }
+
+\ccHeading{Accelerating the projection queries}
+
+\ccMethod{void construct_search_tree();}
+{ Constructs the internal search KD-tree used to accelerate the projection queries. The points in the search tree are taken from the primitives by calling the function \ccc{point_on} from the primitive.}
+
+\ccMethod{template <class ConstPointIterator>
+void construct_search_tree(ConstPointIterator begin,
+                           ConstPointIterator beyond);}
+{ Constructs the internal search KD-tree used to accelerate the projection queries from a specified point set. }
 
 \ccSeeAlso
 
