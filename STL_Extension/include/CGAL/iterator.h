@@ -1311,6 +1311,7 @@ dispatch_or_drop_output(O... o)
 template < typename V, typename O >
 class Dispatch_output_iterator;
 
+// Version with 2 parameters
 template<class V1,class O1,class V2,class O2>
 class Dispatch_output_iterator<cpp0x::tuple<V1,V2>,cpp0x::tuple<O1,O2> >:public cpp0x::tuple<O1,O2>{
   typedef Dispatch_output_iterator Self;
@@ -1359,7 +1360,6 @@ dispatch_output(O1 out1,O2 out2){
   return Dispatch_output_iterator<cpp0x::tuple<V1,V2>,cpp0x::tuple<O1,O2> >(out1,out2);
 }
 
-
 //Version with DROP
 template < typename V, typename O >
 class Dispatch_or_drop_output_iterator;
@@ -1394,6 +1394,506 @@ inline
 Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2>,cpp0x::tuple<O1,O2> >
 dispatch_or_drop_output(O1 out1,O2 out2){
   return Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2>,cpp0x::tuple<O1,O2> >(out1,out2);
+}
+
+//Versio with 3 parameters
+template<class V1,class O1,class V2,class O2,class V3, class O3>
+class Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3>,cpp0x::tuple<O1,O2,O3> >:public cpp0x::tuple<O1,O2,O3>{
+  typedef Dispatch_output_iterator Self;
+  
+public:
+  typedef cpp0x::tuple<V1,V2,V3> Value_types_tuple;
+  typedef cpp0x::tuple<O1,O2,O3> Iterators_tuple;
+  typedef std::output_iterator_tag iterator_category;
+  typedef void                     value_type;
+  typedef void                     difference_type;
+  typedef void                     pointer;
+  typedef void                     reference;
+
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3):Iterators_tuple(out1,out2,out3){}
+  
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *cpp0x::get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+
+  Self& operator=(const V3& obj){
+    *cpp0x::get<2>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    return *this;
+  }
+  
+  const Iterators_tuple& get_iterator_tuple() const
+  { return *this; }
+  
+};
+
+
+template<class V1,class V2,class V3,class O1,class O2,class O3>
+inline 
+Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3>,cpp0x::tuple<O1,O2,O3> >
+dispatch_output(O1 out1,O2 out2,O3 out3){
+  return Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3>,cpp0x::tuple<O1,O2,O3> >(out1,out2,out3);
+}
+
+//Version with DROP
+template < typename V, typename O >
+class Dispatch_or_drop_output_iterator;
+
+
+template<class V1,class O1,class V2,class O2,class V3,class O3>
+class Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3>,cpp0x::tuple<O1,O2,O3> >:
+        public Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3>,cpp0x::tuple<O1,O2,O3> >
+{
+  typedef Dispatch_or_drop_output_iterator Self;
+  typedef Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3>,cpp0x::tuple<O1,O2,O3> > Base;
+  
+public:
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_or_drop_output_iterator(O1 out1,O2 out2,O3 out3):Base(out1,out2,out3){}
+  
+  using Base::operator=;
+  
+  
+  template <class T>
+  Self& operator=(const T&){
+    return *this;
+  }
+};
+
+template<class V1,class V2,class V3,class O1,class O2,class O3>
+inline 
+Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3>,cpp0x::tuple<O1,O2,O3> >
+dispatch_or_drop_output(O1 out1,O2 out2,O3 out3){
+  return Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3>,cpp0x::tuple<O1,O2,O3> >(out1,out2,out3);
+}
+
+//Versio with 4 parameters
+template<class V1,class O1,class V2,class O2,class V3,class O3,class V4,class O4>
+class Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4>,cpp0x::tuple<O1,O2,O3,O4> >:public cpp0x::tuple<O1,O2,O3,O4>{
+  typedef Dispatch_output_iterator Self;
+  
+public:
+  typedef cpp0x::tuple<V1,V2,V3,V4> Value_types_tuple;
+  typedef cpp0x::tuple<O1,O2,O3,O4> Iterators_tuple;
+  typedef std::output_iterator_tag iterator_category;
+  typedef void                     value_type;
+  typedef void                     difference_type;
+  typedef void                     pointer;
+  typedef void                     reference;
+
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4):Iterators_tuple(out1,out2,out3,out4){}
+  
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *cpp0x::get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+
+  Self& operator=(const V3& obj){
+    *cpp0x::get<2>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V4& obj){
+    *cpp0x::get<3>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    return *this;
+  }
+  
+  const Iterators_tuple& get_iterator_tuple() const
+  { return *this; }
+  
+};
+
+
+template<class V1,class V2,class V3,class V4,class O1,class O2,class O3,class O4>
+inline 
+Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4>,cpp0x::tuple<O1,O2,O3,O4> >
+dispatch_output(O1 out1,O2 out2,O3 out3,O4 out4){
+  return Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4>,cpp0x::tuple<O1,O2,O3,O4> >(out1,out2,out3,out4);
+}
+
+//Version with DROP
+template < typename V, typename O >
+class Dispatch_or_drop_output_iterator;
+
+
+template<class V1,class O1,class V2,class O2,class V3,class O3,class V4,class O4>
+class Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4>,cpp0x::tuple<O1,O2,O3,O4> >:
+        public Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4>,cpp0x::tuple<O1,O2,O3,O4> >
+{
+  typedef Dispatch_or_drop_output_iterator Self;
+  typedef Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4>,cpp0x::tuple<O1,O2,O3,O4> > Base;
+  
+public:
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_or_drop_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4):Base(out1,out2,out3,out4){}
+  
+  using Base::operator=;
+  
+  
+  template <class T>
+  Self& operator=(const T&){
+    return *this;
+  }
+};
+
+template<class V1,class V2,class V3,class V4,class O1,class O2,class O3,class O4>
+inline 
+Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4>,cpp0x::tuple<O1,O2,O3,O4> >
+dispatch_or_drop_output(O1 out1,O2 out2,O3 out3,O4 out4){
+  return Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4>,cpp0x::tuple<O1,O2,O3,O4> >(out1,out2,out3,out4);
+}
+
+//Versio with 5 parameters
+template<class V1,class O1,class V2,class O2,class V3,class O3,class V4,class O4,class V5,class O5>
+class Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5>,cpp0x::tuple<O1,O2,O3,O4,O5> >:public cpp0x::tuple<O1,O2,O3,O4,O5>{
+  typedef Dispatch_output_iterator Self;
+  
+public:
+  typedef cpp0x::tuple<V1,V2,V3,V4,V5> Value_types_tuple;
+  typedef cpp0x::tuple<O1,O2,O3,O4,O5> Iterators_tuple;
+  typedef std::output_iterator_tag iterator_category;
+  typedef void                     value_type;
+  typedef void                     difference_type;
+  typedef void                     pointer;
+  typedef void                     reference;
+
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5):Iterators_tuple(out1,out2,out3,out4,out5){}
+  
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *cpp0x::get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+
+  Self& operator=(const V3& obj){
+    *cpp0x::get<2>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V4& obj){
+    *cpp0x::get<3>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V5& obj){
+    *cpp0x::get<4>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    return *this;
+  }
+  
+  const Iterators_tuple& get_iterator_tuple() const
+  { return *this; }
+  
+};
+
+
+template<class V1,class V2,class V3,class V4,class V5,class O1,class O2,class O3,class O4,class O5>
+inline 
+Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5>,cpp0x::tuple<O1,O2,O3,O4,O5> >
+dispatch_output(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5){
+  return Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5>,cpp0x::tuple<O1,O2,O3,O4,O5> >(out1,out2,out3,out4,out5);
+}
+
+//Version with DROP
+template < typename V, typename O >
+class Dispatch_or_drop_output_iterator;
+
+
+template<class V1,class O1,class V2,class O2,class V3,class O3,class V4,class O4,class V5,class O5>
+class Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5>,cpp0x::tuple<O1,O2,O3,O4,O5> >:
+        public Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5>,cpp0x::tuple<O1,O2,O3,O4,O5> >
+{
+  typedef Dispatch_or_drop_output_iterator Self;
+  typedef Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5>,cpp0x::tuple<O1,O2,O3,O4,O5> > Base;
+  
+public:
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_or_drop_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5):Base(out1,out2,out3,out4,out5){}
+  
+  using Base::operator=;
+  
+  
+  template <class T>
+  Self& operator=(const T&){
+    return *this;
+  }
+};
+
+template<class V1,class V2,class V3,class V4,class V5,class O1,class O2,class O3,class O4,class O5>
+inline 
+Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5>,cpp0x::tuple<O1,O2,O3,O4,O5> >
+dispatch_or_drop_output(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5){
+  return Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5>,cpp0x::tuple<O1,O2,O3,O4,O5> >(out1,out2,out3,out4,out5);
+}
+
+//Versio with 6 parameters
+template<class V1,class O1,class V2,class O2,class V3,class O3,class V4,class O4,class V5,class O5,class V6,class O6>
+class Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6>,cpp0x::tuple<O1,O2,O3,O4,O5,O6> >:public cpp0x::tuple<O1,O2,O3,O4,O5,O6>{
+  typedef Dispatch_output_iterator Self;
+  
+public:
+  typedef cpp0x::tuple<V1,V2,V3,V4,V5,V6> Value_types_tuple;
+  typedef cpp0x::tuple<O1,O2,O3,O4,O5,O6> Iterators_tuple;
+  typedef std::output_iterator_tag iterator_category;
+  typedef void                     value_type;
+  typedef void                     difference_type;
+  typedef void                     pointer;
+  typedef void                     reference;
+
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6):Iterators_tuple(out1,out2,out3,out4,out5,out6){}
+  
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *cpp0x::get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+
+  Self& operator=(const V3& obj){
+    *cpp0x::get<2>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V4& obj){
+    *cpp0x::get<3>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V5& obj){
+    *cpp0x::get<4>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V6& obj){
+    *cpp0x::get<5>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    return *this;
+  }
+  
+  const Iterators_tuple& get_iterator_tuple() const
+  { return *this; }
+  
+};
+
+
+template<class V1,class V2,class V3,class V4,class V5,class V6,class O1,class O2,class O3,class O4,class O5,class O6>
+inline 
+Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6>,cpp0x::tuple<O1,O2,O3,O4,O5,O6> >
+dispatch_output(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6){
+  return Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6>,cpp0x::tuple<O1,O2,O3,O4,O5,O6> >(out1,out2,out3,out4,out5,out6);
+}
+
+//Version with DROP
+template < typename V, typename O >
+class Dispatch_or_drop_output_iterator;
+
+
+template<class V1,class O1,class V2,class O2,class V3,class O3,class V4,class O4,class V5,class O5,class V6,class O6>
+class Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6>,cpp0x::tuple<O1,O2,O3,O4,O5,O6> >:
+        public Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6>,cpp0x::tuple<O1,O2,O3,O4,O5,O6> >
+{
+  typedef Dispatch_or_drop_output_iterator Self;
+  typedef Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6>,cpp0x::tuple<O1,O2,O3,O4,O5,O6> > Base;
+  
+public:
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_or_drop_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6):Base(out1,out2,out3,out4,out5,out6){}
+  
+  using Base::operator=;
+  
+  
+  template <class T>
+  Self& operator=(const T&){
+    return *this;
+  }
+};
+
+template<class V1,class V2,class V3,class V4,class V5,class V6,class O1,class O2,class O3,class O4,class O5,class O6>
+inline 
+Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6>,cpp0x::tuple<O1,O2,O3,O4,O5,O6> >
+dispatch_or_drop_output(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6){
+  return Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6>,cpp0x::tuple<O1,O2,O3,O4,O5,O6> >(out1,out2,out3,out4,out5,out6);
+}
+
+//Versio with 7 parameters
+template<class V1,class O1,class V2,class O2,class V3,class O3,class V4,class O4,class V5,class O5,class V6,class O6,class V7,class O7>
+class Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7>,cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> >:public cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7>{
+  typedef Dispatch_output_iterator Self;
+  
+public:
+  typedef cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7> Value_types_tuple;
+  typedef cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> Iterators_tuple;
+  typedef std::output_iterator_tag iterator_category;
+  typedef void                     value_type;
+  typedef void                     difference_type;
+  typedef void                     pointer;
+  typedef void                     reference;
+
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6,O7 out7):Iterators_tuple(out1,out2,out3,out4,out5,out6,out7){}
+  
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *cpp0x::get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }
+
+  Self& operator=(const V3& obj){
+    *cpp0x::get<2>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V4& obj){
+    *cpp0x::get<3>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V5& obj){
+    *cpp0x::get<4>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V6& obj){
+    *cpp0x::get<5>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+   Self& operator=(const V7& obj){
+    *cpp0x::get<6>(static_cast<Iterators_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    return *this;
+  }
+  
+  const Iterators_tuple& get_iterator_tuple() const
+  { return *this; }
+  
+};
+
+
+template<class V1,class V2,class V3,class V4,class V5,class V6,class V7,class O1,class O2,class O3,class O4,class O5,class O6,class O7>
+inline 
+Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7>,cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> >
+dispatch_output(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6,O7 out7){
+  return Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7>,cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> >(out1,out2,out3,out4,out5,out6,out7);
+}
+
+//Version with DROP
+template < typename V, typename O >
+class Dispatch_or_drop_output_iterator;
+
+
+template<class V1,class O1,class V2,class O2,class V3,class O3,class V4,class O4,class V5,class O5,class V6,class O6,class V7,class O7>
+class Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7>,cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> >:
+        public Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7>,cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> >
+{
+  typedef Dispatch_or_drop_output_iterator Self;
+  typedef Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7>,cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> > Base;
+  
+public:
+
+  Self& operator*(){ return *this; }
+  Self& operator++(){ return *this; } 
+  Self& operator++(int){ return *this; }  
+  
+  Dispatch_or_drop_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6,O7 out7):Base(out1,out2,out3,out4,out5,out6,out7){}
+  
+  using Base::operator=;
+  
+  
+  template <class T>
+  Self& operator=(const T&){
+    return *this;
+  }
+};
+
+template<class V1,class V2,class V3,class V4,class V5,class V6,class V7,class O1,class O2,class O3,class O4,class O5,class O6,class O7>
+inline 
+Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7>,cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> >
+dispatch_or_drop_output(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6,O7 out7){
+  return Dispatch_or_drop_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7>,cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> >(out1,out2,out3,out4,out5,out6,out7);
 }
 
 #endif

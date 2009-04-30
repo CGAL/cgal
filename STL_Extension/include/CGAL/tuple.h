@@ -84,32 +84,96 @@ struct Is_in_tuple <V, cpp0x::tuple<> >
 
 // Non-variadic version
 
-template <typename V, typename T>
+template <typename V,typename T>
 struct Is_in_tuple;
 
-template <typename V, typename T0, typename T1>
-struct Is_in_tuple <V, cpp0x::tuple<T0, T1> >
+template <typename V,typename T0,typename T1>
+struct Is_in_tuple <V,cpp0x::tuple<T0,T1> >
 {
-  static const bool value = Is_in_tuple<V, cpp0x::tuple<T1> >::value;
+  static const bool value = Is_in_tuple<V,cpp0x::tuple<T1> >::value;
 };
 
-template <typename V, typename T1>
-struct Is_in_tuple <V, cpp0x::tuple<V,T1> >
+template <typename V, typename T0,typename T1,typename T2>
+struct Is_in_tuple <V, cpp0x::tuple<T0,T1,T2> >
 {
-  static const bool value = true;
+  static const bool value = Is_in_tuple<V,cpp0x::tuple<T1,T2> >::value;
 };
 
-template <typename V>
-struct Is_in_tuple <V, cpp0x::tuple<V> >
+template <typename V, typename T0,typename T1,typename T2,typename T3>
+struct Is_in_tuple <V, cpp0x::tuple<T0,T1,T2,T3> >
 {
-  static const bool value = true;
+  static const bool value = Is_in_tuple<V,cpp0x::tuple<T1,T2,T3> >::value;
 };
 
-template <typename V, typename T1>
-struct Is_in_tuple <V, cpp0x::tuple<T1> >
+template <typename V, typename T0,typename T1,typename T2,typename T3,typename T4>
+struct Is_in_tuple <V, cpp0x::tuple<T0,T1,T2,T3,T4> >
+{
+  static const bool value = Is_in_tuple<V,cpp0x::tuple<T1,T2,T3,T4> >::value;
+};
+
+template <typename V, typename T0,typename T1,typename T2,typename T3,typename T4,typename T5>
+struct Is_in_tuple <V, cpp0x::tuple<T0,T1,T2,T3,T4,T5> >
+{
+  static const bool value = Is_in_tuple<V,cpp0x::tuple<T1,T2,T3,T4,T5> >::value;
+};
+
+template <typename V, typename T0,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6>
+struct Is_in_tuple <V, cpp0x::tuple<T0,T1,T2,T3,T4,T5,T6> >
+{
+  static const bool value = Is_in_tuple<V,cpp0x::tuple<T1,T2,T3,T4,T5,T6> >::value;
+};
+
+
+//Conclusions
+
+template <typename V,typename T1>
+struct Is_in_tuple <V,cpp0x::tuple<T1> >
 {
   static const bool value = false;
 };
+
+template <typename V>
+struct Is_in_tuple <V,cpp0x::tuple<V> >
+{
+  static const bool value = true;
+};
+
+template <typename V,typename T1>
+struct Is_in_tuple <V,cpp0x::tuple<V,T1> >
+{
+  static const bool value = true;
+};
+
+template <typename V,typename T1,typename T2>
+struct Is_in_tuple <V,cpp0x::tuple<V,T1,T2> >
+{
+  static const bool value = true;
+};
+
+template <typename V,typename T1,typename T2,typename T3>
+struct Is_in_tuple <V,cpp0x::tuple<V,T1,T2,T3> >
+{
+  static const bool value = true;
+};
+
+template <typename V,typename T1,typename T2,typename T3,typename T4>
+struct Is_in_tuple <V,cpp0x::tuple<V,T1,T2,T3,T4> >
+{
+  static const bool value = true;
+};
+
+template <typename V,typename T1,typename T2,typename T3,typename T4,typename T5>
+struct Is_in_tuple <V,cpp0x::tuple<V,T1,T2,T3,T4,T5> >
+{
+  static const bool value = true;
+};
+
+template <typename V,typename T1,typename T2,typename T3,typename T4,typename T5,typename T6>
+struct Is_in_tuple <V,cpp0x::tuple<V,T1,T2,T3,T4,T5,T6> >
+{
+  static const bool value = true;
+};
+
 
 #endif 
 
