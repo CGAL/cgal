@@ -37,13 +37,14 @@ namespace CGAL {
     class AABB_tree
     {
     public:
-        /// Traits types
+        /// types
+        typedef typename AABBTraits::FT FT;
+        typedef typename AABBTraits::Point Point;
         typedef typename AABBTraits::Primitive Primitive;
-        typedef typename AABBTraits::Projection Projection;
         typedef typename AABBTraits::Bounding_box Bounding_box;
-        typedef typename AABBTraits::Intersection Intersection;
-        typedef typename AABBTraits::Projection_query Projection_query;
+        typedef typename std::pair<typename Point,typename Primitive> Point_and_primitive;
     private:
+        // internal KD-tree used to accelerate the distance queries
         typedef AABB_search_tree<AABBTraits> Search_tree;
 
     public:
@@ -83,7 +84,8 @@ namespace CGAL {
         template<typename ConstPointIterator>
         void construct_search_tree(ConstPointIterator first, ConstPointIterator beyond);
 
-        /// Construct internal search tree from a point set taken on the internal primitives
+        /// Construct internal search tree from 
+        /// a point set taken on the internal primitives
         void construct_search_tree(void);
 
         template<typename Query>
@@ -94,25 +96,29 @@ namespace CGAL {
 
         template<typename Query, typename OutputIterator>
         OutputIterator all_intersected_primitives(const Query& q,
-            OutputIterator out) const;
+                                                  OutputIterator out) const;
 
         template<typename Query, typename OutputIterator>
         OutputIterator all_intersections(const Query& q,
-            OutputIterator out) const;
+                                         OutputIterator out) const;
 
         template<typename Query>
         bool any_intersection(const Query& q,
-            Intersection& intersection) const;
+                              Intersection& intersection) const;
 
         template<typename Query, typename OutputIterator>
         bool any_intersected_primitive(const Query& q,
             Primitive& pr) const;
 
-        Projection closest_point(const Projection_query& q,
-            const Projection& hint) const;
-
-        // TOFIX: make it const
-        Projection closest_point(const Projection_query& q);
+        // distance queries
+        FT squared_distance(const Point& q, const Point& hint) const;
+        FT squared_distance(const Point& q) const;
+        Point closest_point(const Point& q, const Point& hint) const;
+        Point closest_point(const Point& q) const;
+        Primitive closest_primitive(const Point& q, const Point& hint) const;
+        Primitive closest_primitive(const Point& q) const;
+        Point_and_primitive closest_point_and_primitive(const Point& q, const Point& hint) const;
+        Point_and_primitive closest_point_and_primitive(const Point& q) const;
 
         //////////////////////////////////////////////
         //TODO: document this
@@ -158,12 +164,12 @@ namespace CGAL {
                 return AABBTraits().do_intersect(q, node.bounding_box());
             }
 
-            Intersection result() const { return m_result; }
+            Point_and_primitive result() const { return m_result; }
             bool is_intersection_found() const { return m_is_found; }
 
         private:
             bool m_is_found;
-            Intersection m_result;
+            Point_and_primitive m_result;
         };
 
 
@@ -175,16 +181,16 @@ namespace CGAL {
         {
         public:
             Counting_traits()
-                : intersection_()
-                , intersection_nb_(0) {}
+                : m_intersection()
+                , m_nb_intersections(0) {}
 
             bool go_further() const { return true; }
 
             void intersection(const Query& q, const Primitive& primitive)
             {
-                if( AABBTraits().intersection(q, primitive, intersection_) )
+                if( AABBTraits().intersection(q, primitive, m_intersection) )
                 {
-                    ++intersection_nb_;
+                    ++m_nb_intersections;
                 }
             }
 
@@ -193,11 +199,11 @@ namespace CGAL {
                 return AABBTraits().do_intersect(q, node.bounding_box());
             }
 
-            int intersection_number() const { return intersection_nb_; }
+            int intersection_number() const { return m_nb_intersections; }
 
         private:
-            Intersection intersection_;
-            int intersection_nb_;
+            Point_and_primitive m_intersection;
+            int m_nb_intersections;
         };
 
 
@@ -209,16 +215,16 @@ namespace CGAL {
         {
         public:
             Listing_intersection_traits(Output_iterator out_it)
-                : intersection_()
-                , out_it_(out_it) {}
+                : m_intersection()
+                , m_out_it(out_it) {}
 
             bool go_further() const { return true; }
 
             void intersection(const Query& q, const Primitive& primitive)
             {
-                if( AABBTraits().intersection(q, primitive, intersection_) )
+                if( AABBTraits().intersection(q, primitive, m_intersection) )
                 {
-                    *out_it_++ = intersection_;
+                    *m_out_it++ = m_intersection;
                 }
             }
 
@@ -228,8 +234,8 @@ namespace CGAL {
             }
 
         private:
-            Intersection intersection_;
-            Output_iterator out_it_;
+            Intersection m_intersection;
+            Output_iterator m_out_it;
         };
 
 
@@ -241,7 +247,7 @@ namespace CGAL {
         {
         public:
             Listing_primitive_traits(Output_iterator out_it)
-                : out_it_(out_it) {}
+                : m_out_it(out_it) {}
 
             bool go_further() const { return true; }
 
@@ -249,7 +255,7 @@ namespace CGAL {
             {
                 if( AABBTraits().do_intersect(q, primitive) )
                 {
-                    *out_it_++ = primitive;
+                    *m_out_it++ = primitive;
                 }
             }
 
@@ -259,38 +265,41 @@ namespace CGAL {
             }
 
         private:
-            Output_iterator out_it_;
+            Output_iterator m_out_it;
         };
 
         /**
         * @class Projection_traits
         */
-        class Projecting_traits
+        class Distance_traits
         {
         public:
-            Projecting_traits(const Projection_query& query,
-                const Projection& hint)
-                : projection_(hint)
-                , sphere_(AABBTraits().sphere(query,hint))         { }
+            Distance_traits(const Point& query,
+                            const Point& hint)
+                            : m_closest_point(hint), 
+                              m_sphere(AABBTraits().sphere(query,hint))
+            {}
 
             bool go_further() const { return true; }
 
-            void intersection(const Projection_query& q, const Primitive& primitive)
+            void intersection(const Point& query, const Primitive& primitive)
             {
-                projection_ = AABBTraits().nearest_point(q, primitive, projection_);
-                sphere_ = AABBTraits().sphere(q, projection_);
+                // TOFIX: update m_closest_primitive
+                m_closest_point = AABBTraits().nearest_point(query, primitive, m_closest_point);
+                m_sphere = AABBTraits().sphere(q, m_closest_point);
             }
 
-            bool do_intersect(const Projection_query& q, const Node& node) const
+            bool do_intersect(const Point& q, const Node& node) const
             {
-                return AABBTraits().do_intersect(sphere_, node.bounding_box());
+                return AABBTraits().do_intersect(m_sphere, node.bounding_box());
             }
 
-            Projection projection() const { return projection_; }
+            Point closest_point() const { return m_closest_point; }
 
         private:
-            Projection projection_;
-            Sphere sphere_;
+            // TOFIX: add closest_primitive
+            Sphere m_sphere;
+            Point m_closest_point;
         };
 
 
@@ -373,7 +382,7 @@ namespace CGAL {
     template<typename ConstPointIterator>
     void
         AABB_tree<Tr>::construct_search_tree(ConstPointIterator first,
-        ConstPointIterator beyond)
+                                             ConstPointIterator beyond)
     {
         m_search_tree.init(first, beyond);
         m_search_tree_constructed = true;
@@ -384,7 +393,7 @@ namespace CGAL {
     void AABB_tree<Tr>::construct_search_tree(void)
     {
         // iterate over primitives to get points on them
-        std::list<Projection_query> points;
+        std::list<Point> points;
         typename std::vector<Primitive>::const_iterator it;
         for(it = m_data.begin(); it != m_data.end(); ++it)
         {
@@ -423,7 +432,7 @@ namespace CGAL {
     template<typename Query, typename OutputIterator>
     OutputIterator
         AABB_tree<Tr>::all_intersected_primitives(const Query& query,
-        OutputIterator out) const
+                                                  OutputIterator out) const
     {
         typedef Listing_primitive_traits<Query, OutputIterator> Traversal_traits;
         Traversal_traits traversal_traits(out);
@@ -436,7 +445,7 @@ namespace CGAL {
     template<typename Query, typename OutputIterator>
     OutputIterator
         AABB_tree<Tr>::all_intersections(const Query& query,
-        OutputIterator out) const
+                                         OutputIterator out) const
     {
         typedef Listing_intersection_traits<Query, OutputIterator> Traversal_traits;
         Traversal_traits traversal_traits(out);
@@ -450,25 +459,44 @@ namespace CGAL {
     template<typename Query>
     bool
         AABB_tree<Tr>::any_intersection(const Query& query,
-        Intersection& intersection) const
+        Point_and_primitive& point_and_primitive) const
     {
         typedef First_intersection_traits<Query> Traversal_traits;
         Traversal_traits traversal_traits;
 
         this->traversal(query, traversal_traits);
 
-        intersection = traversal_traits.result();
+        point_and_primitive = traversal_traits.result();
         return traversal_traits.is_intersection_found();
+    }
+
+
+    // squared distance with user-specified hint
+    template<typename Tr>
+    typename AABB_tree<Tr>::FT
+        AABB_tree<Tr>::squared_distance(const Point& query,
+                                        const Point& hint) const
+    {
+        Point closest = closest_point(query, hint);
+        return CGAL::squared_distance(query, closest);
+    }
+
+    // squared distance without user-specified hint
+    template<typename Tr>
+    typename AABB_tree<Tr>::FT
+        AABB_tree<Tr>::squared_distance(const Point& query) const
+    {
+        Point closest = closest_point(query);
+        return CGAL::squared_distance(query, closest);
     }
 
     // closest point with user-specified hint
     template<typename Tr>
-    typename AABB_tree<Tr>::Projection
-        AABB_tree<Tr>::closest_point(const Projection_query& query,
-        const Projection& hint) const
+    typename AABB_tree<Tr>::Point
+        AABB_tree<Tr>::closest_point(const Point& query,
+                                     const Point& hint) const
     {
-        Projecting_traits traversal_traits(query,hint);
-
+        Distance_traits traversal_traits(query,hint);
         this->traversal(query, traversal_traits);
         return traversal_traits.projection();
     }
@@ -476,11 +504,11 @@ namespace CGAL {
     // closest point without hint, the search KD-tree is queried for the
     // first nearest neighbor point to get a hint
     template<typename Tr>
-    typename AABB_tree<Tr>::Projection
-        AABB_tree<Tr>::closest_point(const Projection_query& query)
+    typename AABB_tree<Tr>::Point
+        AABB_tree<Tr>::closest_point(const Point& query) const
     {
         // construct search KD-tree if needed
-        Projection hint;
+        Point hint;
         if(m_search_tree_constructed)
         {
             // pick nearest neighbor point as hint (fast)

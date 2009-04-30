@@ -44,17 +44,16 @@ public:
 
   typedef AABB_primitive Primitive;
   typedef typename AABB_primitive::Datum Datum;
-
   typedef typename GeomTraits::Sphere_3 Sphere;
-  typedef typename GeomTraits::Point_3 Projection;
+
   // TOFIX: Workaround for weighted_point
 #ifndef AABB_KERNEL_USE_WEIGHTED_POINT
-  typedef typename GeomTraits::Point_3 Intersection;
+  typedef typename GeomTraits::Point_3 Point;
 #else
-  typedef typename GeomTraits::Point_3::Point Intersection;
+  typedef typename GeomTraits::Point_3::Point Point;
 #endif
 
-  typedef typename GeomTraits::Point_3 Projection_query;
+  typedef typename std::pair<typename Point, typename primitive> Point_and_primitive;
 
   // types for search tree
   // TOFIX: how can we avoid repeating those?
@@ -68,7 +67,8 @@ public:
   typedef typename GeomTraits::Construct_max_vertex_3 Construct_max_vertex_3;
   typedef typename GeomTraits::Compute_squared_radius_3 Compute_squared_radius_3;
   typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
-  typedef typename GeomTraits::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_3;
+  typedef typename GeomTraits::Construct_cartesian_const_iterator_3
+                     Construct_cartesian_const_iterator_3;
 
   /// Constructor
   AABB_traits() { };
@@ -126,22 +126,21 @@ public:
   template<typename Query>
   bool intersection(const Query& q,
                     const Primitive& pr,
-                    Intersection& intersection) const;
+                    Point_and_primitive& result) const;
 
-  Sphere sphere(const Projection_query& center,
-                const Projection& hint) const
+  Sphere sphere(const Point& center,
+                const Point& hint) const
   {
     return GeomTraits().construct_sphere_3_object()
       (center, GeomTraits().compute_squared_distance_3_object()(center, hint));
   }
 
   template <typename Query>
-  Projection nearest_point(const Query& q,
+  Point nearest_point(const Query& q,
                            const Primitive& pr,
-                           const Projection& bound) const
+                           const Point& bound) const
   {
     return CGAL::nearest_point_3(q, pr.datum(), bound);
-    //return GeomTraits().nearest_point_3_object()(q, pr.datum(), bound);
   }
 
 private:
@@ -174,8 +173,8 @@ template<typename GT, typename P>
 template<typename PrimitiveIterator>
 void
 AABB_traits<GT,P>::sort_primitives(PrimitiveIterator first,
-                                    PrimitiveIterator beyond,
-                                    const Bounding_box& bbox) const
+                                   PrimitiveIterator beyond,
+                                   const Bounding_box& bbox) const
 {
   PrimitiveIterator middle = first + (beyond - first)/2;
   switch(longest_axis(bbox))
@@ -213,8 +212,8 @@ template<typename GT, typename P>
 template<typename Query>
 bool
 AABB_traits<GT,P>::intersection(const Query& q,
-                                 const P& pr,
-                                 Intersection& result) const
+                                const P& pr,
+                                Point_and_primitive& result) const
 {
   // TODO: implement a real intersection construction method
   // do_intersect is needed here because we construct intersection between
@@ -225,14 +224,14 @@ AABB_traits<GT,P>::intersection(const Query& q,
   }
 
   // AABB tree package call
-  // TODO: extend kernel
   Datum datum = pr.datum();
   CGAL::Object intersection_obj = CGAL::intersection(datum, q);
-
-  return CGAL::assign(result, intersection_obj);
+  Point point;
+  if(CGAL::assign(point, intersection_obj))
+     result = std::pair<point,pr>;
+  else
+     return false;
 }
-
-
 
 //-------------------------------------------------------
 // Private methods

@@ -27,15 +27,11 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 \ccGlue
 \ccNestedType{Bounding_box}{Bounding box type.}
 \ccGlue
-\ccNestedType{Intersection}{Type of intersection.}
+\ccNestedType{Point_and_primitive}{Pair composed of a point and a primitive.}
 
-The following types are required for projection queries.
+The following types are required for distance queries.
 
 \ccNestedType{Sphere}{Sphere type.}
-\ccGlue
-\ccNestedType{Projection_query}{Type for which projection queries are issued.}
-\ccGlue
-\ccNestedType{Projection}{Type of projection result.}
 	
 
 \ccCreation
@@ -69,19 +65,11 @@ for which the class \ccc{AABB_tree<Traits>} may receive a query.
 % TODO: replace return by pair<bool,Intersection>
 \ccMethod{bool intersection(const Query & q, 
           const Primitive& primitive, 
-          Intersection & intersection);}
-{Returns \ccc{true} iff the query intersects the primitive. In the positive, stores the intersection in the last parameter. }
+          Point_and_primitive& result);}
+{Returns \ccc{true} iff the query intersects the primitive. In the positive, stores the intersection in the last parameter as a pair composed of a point and a primitive. }
 
-The following members are required only if projection queries are issued.
-\ccMethod{Sphere sphere_from_query_and_hint(const Projection_query & center, 
-                                const Projection & hint);}
-{Returns a sphere centered at \ccc{center} and passing through \ccc{hint}.}
+% TODO: document nearest_point
 
-% TODO: replace return by pair<bool,Intersection>
-\ccMethod{ bool intersection(const Sphere & sphere, 
-                          const Primitive::Object object, 
-                          const Projection & projection);}
-{Returns \ccc{true} iff the primitive object is intersecting the ball defined as the interior of the sphere. In the positive, the point of the primitive closest to the center of the sphere is stored in the last parameter.}
 
 \ccMethod{bool is_contained(const Sphere & a, const Sphere & b);}{Returns \ccc{true} iff sphere $a$ is contained in sphere $b$. Both spheres are assumed to share the same center.}
 
