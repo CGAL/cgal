@@ -74,7 +74,6 @@ protected:
 
   typedef typename Kernel::Direction_3          Direction_3;
   typedef typename Kernel::Vector_3             Vector_3;
-  typedef typename Kernel::Point_3              Point_3;
   typedef typename Kernel::Direction_2          Direction_2;
   typedef typename Kernel::Vector_2             Vector_2;
 
@@ -2209,7 +2208,6 @@ protected:
   typedef T_Kernel                                    Kernel;
   
   typedef typename Kernel::Plane_3                    Plane_3;
-  typedef typename Kernel::Point_3                    Point_3;
   typedef typename Kernel::Vector_3                   Vector_3;
   typedef typename Kernel::Direction_2                Direction_2;
   typedef typename Kernel::Direction_3                Direction_3;
@@ -2248,7 +2246,6 @@ protected:
   inline Sign z_sign(Direction_3 d) const { return CGAL::sign(d.dz()); }
 
   /*! Constructs a plane that contains two directions.
-   * \todo Introduce in Kernel::ConstructPlane_3::operator()(Direction_3, Dir..)
    * \param d1 the first direction.
    * \param d2 the second direction.
    */
@@ -2259,16 +2256,6 @@ protected:
     Vector_3 v = kernel.construct_cross_product_vector_3_object()(d1.vector(),
                                                                   d2.vector());
     return v.direction();
-#if 0
-    Vector_3 v1 = d1.vector();
-    Point_3 p1 = kernel.construct_translated_point_3_object()(ORIGIN, v1);
-
-    Vector_3 v2 = d2.vector();
-    Point_3 p2 = kernel.construct_translated_point_3_object()(ORIGIN, v2);
-
-    Plane_3 plane = kernel.construct_plane_3_object()(ORIGIN, p1, p2);
-    return plane.orthogonal_direction();
-#endif
   }
 
 public:
@@ -2828,7 +2815,7 @@ public:
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel>         Traits;
     typedef typename Kernel::Direction_2                        Direction_2;
     typedef typename Kernel::Direction_3                        Direction_3;
-    
+
     Kernel kernel;
     CGAL_precondition(!kernel.equal_3_object()(source, target));
     CGAL_precondition(!kernel.equal_3_object()
