@@ -27,13 +27,15 @@ The template parameter \ccc{Traits} stands for a traits class which must be a mo
 
 \ccTypes
 
-\ccTypedef{typedef Traits::Primitive Primitive;}{Type of input primitives.}
+\ccTypedef{typedef Traits::FT FT;}{Field number type.}
 \ccGlue
-\ccTypedef{typedef Traits::Intersection Intersection;}{Type of intersection result.}
+\ccTypedef{typedef Traits::Point_3 Point;}{Type of 3D point.}
 \ccGlue
-\ccTypedef{typedef Traits::Projection_query Projection_query;}{Type of projection query.}
+\ccTypedef{Primitive}{Type of input primitives.}
 \ccGlue
-\ccTypedef{typedef Traits::Projection Projection;}{Type of projection point result.}
+\ccTypedef{Point_and_primitive;}{A pair composed of a \ccc{Point} and a \ccc{Primitive}}
+\ccGlue
+
 %\ccNestedType{AABB}{some nested types}
 
 \ccCreation
@@ -57,7 +59,6 @@ The template parameter \ccc{Traits} stands for a traits class which must be a mo
 \ccMethod{void clear(void);}
 {Clears the current tree. }
 
-
 \ccMethod{void construct_search_tree();}
 { Constructs the internal search KD-tree used to accelerate the projection queries. The points in the search tree are taken from the primitives by calling the function \ccc{point_on} from the primitive.}
 
@@ -66,7 +67,9 @@ void construct_search_tree(ConstPointIterator begin,
                            ConstPointIterator beyond);}
 { Constructs the internal search KD-tree used to accelerate the projection queries from a specified point set. }
 
-% intersection tests
+% INTERSECTION TESTS
+\ccHeading{Intersection Tests}
+
 
 \ccMethod{ template <class Query>
 	  bool do_intersect(const Query & q);}
@@ -75,17 +78,6 @@ void construct_search_tree(ConstPointIterator begin,
 \ccMethod{template <class Query>
 	  size_t number_of_intersections(const Query& q );}
 {Returns the number of primitives intersected by the query. Type \ccc{Query} has to be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}.}
-	
-\ccMethod{template <class Query, class OutputIterator>
-	        OutputIterator 
-          all_intersections(const Query& query,
-          OutputIterator out);}
-{Outputs to the iterator the list of all intersections between the query and input data. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}. The value type of OutputIterator is assumed to be \ccc{Intersection}.}
-
-\ccMethod{template <class Query>
-bool any_intersection(const Query& query,
-                      Intersection& intersection);}
-{Returns \ccc{true} iff the query intersects the primitives. In the positive, saves the first encountered intersection to the second parameter. Type \ccc{Query} has to be a type for which \ccc{do_intersect} and intersection predicates have been defined in \ccc{Traits}.}
 
 \ccMethod{template <class Query, class OutputIterator>
 	        OutputIterator 
@@ -98,16 +90,46 @@ bool any_intersected_primitive(const Query& query,
                                Primitive& primitive);}
 {Return \ccc{true} iff the query intersects the primitive. In the positive, saves the first encountered primitive to the second parameter. Type \ccc{Query} has to be a type for which \ccc{do_intersect} and intersection predicates have been defined in \ccc{Traits}.}
 
+% INTERSECTIONS
+\ccHeading{Intersections}
+	
+\ccMethod{template <class Query, class OutputIterator>
+	        OutputIterator 
+          all_intersections(const Query& query,
+          OutputIterator out);}
+{Outputs to the iterator the list of all intersections between the query and input data. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates have been defined in \ccc{Traits}. The value type of OutputIterator is assumed to be \ccc{Point_and_primitive}.}
 
-\ccMethod{Projection 
+%  ( Note : output iterators have "void" as value_type, so you should better write      "and output them to the output iterator pts, as objects of type...".) 
+
+
+\ccMethod{template <class Query>
+bool any_intersection(const Query& query,
+                      Intersection& intersection);}
+{Returns \ccc{true} iff the query intersects the primitives. In the positive, saves the first encountered intersection to the second parameter. Type \ccc{Query} has to be a type for which \ccc{do_intersect} and intersection predicates have been defined in \ccc{Traits}.}
+
+
+% DISTANCE QUERIES
+\ccHeading{Distance Queries}
+
+\ccMethod{Point
 closest_point(const Projection_query & query, 
               const Projection & hint);} 
 {Returns the point on all input primitives which is closest to the query. In case of several points located at the same (closest) distance one arbitrarily chosen is returned.  Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster the query). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed it is used to efficiently query the nearest hint point from the query. Otherwise a naive hint point is taken as the first primitive reference point. }
 
 \ccMethod{Primitive
-closest_primitive(const Projection_query & query, 
-                  const Projection & hint);} 
-{Returns the primitive which realizes the smallest distance between the query point and all input primitives. See above for \ccc{hint} parameter. }
+closest_primitive(const Point& query, 
+                  const Point & hint);} 
+{Returns the primitive which realizes the smallest distance between the query point and all input primitives. See \ccc{closest_point} function for the \ccc{hint} parameter. }
+
+\ccMethod{Point_and_primitive
+closest_point_and_primitive(const Point& query, 
+                            const Point & hint);} 
+{Returns a pair \ccc{<Point,Primitive>} which realizes the smallest distance between the query point and all input primitives. See \ccc{closest_point} function for the \ccc{hint} parameter. }
+
+\ccMethod{FT
+squared_distance(const Point& query, 
+                 const Point & hint);} 
+{Returns the squared distance between the query point and all input primitives. See \ccc{closest_point} function for the \ccc{hint} parameter. }
 
 \ccSeeAlso
 
