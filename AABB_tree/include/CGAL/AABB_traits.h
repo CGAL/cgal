@@ -27,7 +27,6 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/AABB_intersections.h>
-#include <CGAL/Kernel/global_functions.h>
 
 namespace CGAL {
 
@@ -40,14 +39,6 @@ template<typename GeomTraits, typename AABB_primitive>
 class AABB_traits
 {
 public:
-  /// query types
-  typedef typename GeomTraits::Ray_3 Ray_3;
-  typedef typename GeomTraits::Line_3 Line_3;
-  typedef typename GeomTraits::Segment_3 Segment_3;
-
-  // TOFIX: delete once "inside..." disappears
-  typedef typename GeomTraits::Triangle_3 Triangle_3;
-
   /// AABBTraits concept types
   typedef typename CGAL::Bbox_3 Bounding_box;
 
@@ -56,7 +47,13 @@ public:
 
   typedef typename GeomTraits::Sphere_3 Sphere;
   typedef typename GeomTraits::Point_3 Projection;
-  typedef typename GeomTraits::Point_3 Intersection;
+  // TOFIX: Workaround for weighted_point
+#ifndef AABB_KERNEL_USE_WEIGHTED_POINT
+  typedef typename GeomTraits::Point Intersection;
+#else
+  typedef typename GeomTraits::Point_3::Point Intersection;
+#endif
+
   typedef typename GeomTraits::Point_3 Projection_query;
 
   // types for search tree
@@ -163,8 +160,6 @@ private:
                  CGAL_AXIS_Z = 2} Axis;
 
   Axis longest_axis(const Bounding_box& bbox) const;
-
-  bool is_inside_triangle_3(Point_3& p, const Triangle_3& t) const;
 
 private:
   // Disabled copy constructor & assignment operator
