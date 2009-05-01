@@ -61,6 +61,15 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 \ccMethod{void clear(void);}
 {Clears the AABB tree. }
 
+\ccMethod{Bounding_box root_bbox();}
+{Returns the root axis-aligned bounding box of the whole tree. }
+
+\ccMethod{size_t size();}
+{Returns the number of primitives in the tree. }
+
+\ccMethod{bool empty();}
+{Returns \ccc{true} iff tree contains no primitive. }
+
 % INTERSECTION TESTS
 \ccHeading{Intersection Tests}
 

@@ -120,8 +120,6 @@ namespace CGAL {
         Point_and_primitive closest_point_and_primitive(const Point& q, const Point& hint) const;
         Point_and_primitive closest_point_and_primitive(const Point& q) const;
 
-        //////////////////////////////////////////////
-        //TODO: document this
         Bounding_box root_bbox() const { return m_p_root->bounding_box(); }
         bool is_empty() const { return m_data.empty(); }
         size_t size() const { return m_data.size(); }
