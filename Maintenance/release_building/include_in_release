@@ -71,7 +71,6 @@ Optimisation_doc
 PDB
 Partition_2
 Point_set_2
-Point_set_processing_3
 Polygon
 Polyhedron
 Polyhedron_IO
@@ -99,7 +98,7 @@ Subdivision_method_3
 Surface_mesher
 Surface_mesh_parameterization
 Surface_mesh_simplification
-Surface_reconstruction_points_3
+Surface_reconstruction_3
 Testsuite
 Trapezoidal_decomposition
 Triangulation_2
