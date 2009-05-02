@@ -33,8 +33,8 @@ AABB_tree/include/CGAL/AABB_search_tree.h -text
 AABB_tree/include/CGAL/AABB_segment_primitive.h -text
 AABB_tree/include/CGAL/AABB_traits.h -text
 AABB_tree/include/CGAL/AABB_triangle_primitive.h -text
-AABB_tree/include/CGAL/Triangle_3_line_3_intersection.h -text
-AABB_tree/include/CGAL/nearest_point_segment_3.h -text
+AABB_tree/include/CGAL/intersections/Triangle_3_line_3_intersection.h -text
+AABB_tree/include/CGAL/intersections/nearest_point_segment_3.h -text
 AABB_tree/test/AABB_tree/CMakeLists.txt -text
 AABB_tree/test/AABB_tree/aabb_intersection_triangle_test.cpp -text
 AABB_tree/test/AABB_tree/aabb_projection_edge_test.cpp -text
