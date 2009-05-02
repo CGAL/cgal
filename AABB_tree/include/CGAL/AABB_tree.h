@@ -92,7 +92,7 @@ namespace CGAL {
         bool do_intersect(const Query& q) const;
 
         template<typename Query>
-        int number_of_intersections(const Query& q) const;
+        int number_of_intersected_primitives(const Query& q) const;
 
         template<typename Query, typename OutputIterator>
         OutputIterator all_intersected_primitives(const Query& q,
@@ -419,7 +419,7 @@ namespace CGAL {
     template<typename Tr>
     template<typename Query>
     int
-        AABB_tree<Tr>::number_of_intersections(const Query& query) const
+        AABB_tree<Tr>::number_of_intersected_primitives(const Query& query) const
     {
         typedef Counting_traits<Query> Traversal_traits;
         Traversal_traits traversal_traits;

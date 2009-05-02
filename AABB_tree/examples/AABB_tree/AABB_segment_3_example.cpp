@@ -63,12 +63,12 @@ int main(void)
 
         // counts #intersections with a plane
         Plane plane(a,b,d);
-        std::cout << tree.number_of_intersections(plane)
+        std::cout << tree.number_of_intersected_primitives(plane)
                 << " intersections(s) with plane" << std::endl;
 
         // counts #intersections with a triangle
         Triangle triangle(a,b,c);
-        std::cout << tree.number_of_intersections(triangle)
+        std::cout << tree.number_of_intersected_primitives(triangle)
                 << " intersections(s) with triangle" << std::endl;
 
         // computes the closest point from a query point

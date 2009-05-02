@@ -60,6 +60,9 @@ for which the class \ccc{AABB_tree<Traits>} may receive a query.
 \ccMethod{bool do_intersect(const Query & q, const Primitive& primitive);}
 {Returns \ccc{true} iff the query intersects the primitive.}
 \ccGlue	
+\ccMethod{int do_transversally_intersect(const Query & q, const Primitive& primitive);}
+{Returns 1 iff the query intersects the primitive transversally, returns 0 iff the query does not intersect the primitive and returns a negative error code in case of a non-transversal intersection.}
+\ccGlue	
 % TODO: replace return by pair<bool,Intersection>
 \ccMethod{bool intersection(const Query & q, 
           const Primitive& primitive, 

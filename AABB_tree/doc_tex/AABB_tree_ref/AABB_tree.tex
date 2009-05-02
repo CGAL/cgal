@@ -78,8 +78,12 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 { Returns \ccc{true} iff the query intersects the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{Traits}.}
 	
 \ccMethod{template <class Query>
-	        size_t number_of_intersections(const Query& query);}
-{Returns the number of intersections between the query and the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{Traits}.}
+	        size_t number_of_intersected_primitives(const Query& query);}
+{Returns the number of primitives intersected by the query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{Traits}.}
+
+\ccMethod{template <class Query>
+	        int number_of_transversal_intersections(const Query& query);}
+{Returns the number of primitives intersected transversally by the query, if all intersections are transversal. Type \ccc{Query} must be a type for which \ccc{do_transversally_intersect} predicates are defined in the \ccc{Traits}. If any of the intersections is not transversal, the method returns the error code (a negative integer) returned by \ccc{do_transversally_intersect} at the first non-transversal intersection encountered.}
 
 \ccMethod{template <class Query, class OutputIterator>
 	        OutputIterator 

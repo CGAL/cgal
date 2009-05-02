@@ -54,7 +54,7 @@ int main(void)
         Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
         Point source(0.2, 0.2, 0.2);
         Ray ray(source, Vector(0.1, 0.2, 0.3));
-        std::cout << tree.number_of_intersections(ray)
+        std::cout << tree.number_of_intersected_primitives(ray)
                 << " intersections(s) with ray" << std::endl;
         return 0;
 }

@@ -60,7 +60,7 @@ int main(void)
 
         // counts #intersections
         Ray ray(a,b);
-        std::cout << tree.number_of_intersections(ray)
+        std::cout << tree.number_of_intersected_primitives(ray)
                 << " intersections(s) with ray" << std::endl;
 
         // compute closest point

@@ -59,7 +59,7 @@ int main(void)
 
         // counts #intersections with a triangle
         Triangle triangle(p,q,r);
-        std::cout << tree.number_of_intersections(triangle)
+        std::cout << tree.number_of_intersected_primitives(triangle)
                 << " intersections(s) with triangle" << std::endl;
 
         // computes the closest point from a query point

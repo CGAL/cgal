@@ -65,10 +65,10 @@ void test_all_query_types(Tree& tree)
     success = tree.do_intersect(line);
     success = tree.do_intersect(segment);
 
-    // number_of_intersections
-    tree.number_of_intersections(ray);
-    tree.number_of_intersections(line);
-    tree.number_of_intersections(segment);
+    // number_of_intersected_primitives
+    tree.number_of_intersected_primitives(ray);
+    tree.number_of_intersected_primitives(line);
+    tree.number_of_intersected_primitives(segment);
 
     // all_intersected_primitives
     std::list<Primitive> primitives;

@@ -5,12 +5,13 @@
 The main entry point to the component is the class \ccc{AABB_tree} which stores a static AABB tree constructed from an iterator range of primitives. Once instantiated an AABB tree can be queried for intersection and projection.
 
 
-\paragraph{Intersections.} Considers for the example that the tree contains triangle primitives. The tree can be queried for intersection against line objects (rays, segments or line) in various ways. We distinguish intersection \emph{tests} which do not construct any intersection objects, from \emph{intersections} which construct the intersection objects.\\
+\paragraph{Intersections.} Considers for the example that the tree contains triangle primitives. The tree can be queried for intersection against line objects (rays, segments or line) in various ways. We distinguish intersection \emph{tests} which do not construct any intersection objects, from \emph{intersections} which construct the intersection objects. Furthermore, we distinguish the case of transversal intersections: an intersection of a line object with a triangle is said to be transversal if the line object does not intersect the vertices or the edges of the triangle, if the line object is not contained in the plane of the triangle, and if the vertices of the line object (if any) do not belong to the triangle. Assuming that the triangles define a closed surface, the number of transversal intersections is useful for determining if the source of a ray is inside or outside of the domain bounded by the surface.\\
 
 Intersections tests:
 \begin{itemize}
 \item Function \ccc{do_intersect} only tests if the input primitives are intersected by the query. This function is fast as it only involves predicates and stops at the first encountered intersection.
-\item Function \ccc{number_of_intersections} counts all  intersections.
+\item Function \ccc{number_of_intersected_primitives} counts all intersected primitives.
+\item Function \ccc{number_of_transversal_intersections} counts all transversal intersections, and returns an error code if some intersections are not transversal.
 \item Function \ccc{all_intersected_primitives} enumerates all intersected primitives without constructing the corresponding intersection objects.
 \item Function \ccc{any_intersected_primitive} returns the first encoutered intersecting primitive (if any) without constructing the corresponding intersection object, and stops at the first encountered intersection.
 \end{itemize}
