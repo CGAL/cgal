@@ -41,16 +41,14 @@ The following types are required for distance queries.
 
 \ccOperations
 
-During the construction of the \ccc{AABB_tree}, the primitives are sorted according to some comparison functions related to the $x$, $y$ or $z$ coordinate axis.
-
-% TODO: replace by sort function (way much faster as we do not have to sort many times)
+During the construction of the \ccc{AABB_tree}, the primitives are sorted according to some comparison functions related to the $x$, $y$ or $z$ coordinate axis:
 \ccMethod{bool less_x(const Primitive & pr1, const Primitive & pr2);}{}
 \ccGlue
 \ccMethod{bool less_y(const Primitive & pr1, const Primitive & pr2);}{}
 \ccGlue
 \ccMethod{bool less_z(const Primitive & pr1, const Primitive & pr2);}{}
 
-\ccMethod{Bounding_box compute_bbox(const_primitive_iterator begin,                                                const_primitive_iterator beyond);}
+\ccMethod{Bounding_box compute_bbox(const_primitive_iterator begin,                                              const_primitive_iterator beyond);}
 {Returns the bounding box of a set of primitives.}
 
 The following predicates are required for each type \ccc{Query}
