@@ -104,7 +104,7 @@ namespace CGAL {
 
         template<typename Query>
         bool any_intersection(const Query& q,
-                              Intersection& intersection) const;
+                              Point_and_primitive& intersection) const;
 
         template<typename Query, typename OutputIterator>
         bool any_intersected_primitive(const Query& q,
@@ -113,22 +113,25 @@ namespace CGAL {
         // distance queries
         FT squared_distance(const Point& q, const Point& hint) const;
         FT squared_distance(const Point& q) const;
-        Point closest_point(const Point& q, const Point& hint) const;
-        Point closest_point(const Point& q) const;
+        Point closest_point(const Point& q, const Point& hint);
+        Point closest_point(const Point& q);
         Primitive closest_primitive(const Point& q, const Point& hint) const;
         Primitive closest_primitive(const Point& q) const;
         Point_and_primitive closest_point_and_primitive(const Point& q, const Point& hint) const;
         Point_and_primitive closest_point_and_primitive(const Point& q) const;
 
         Bounding_box root_bbox() const { return m_p_root->bounding_box(); }
-        bool is_empty() const { return m_data.empty(); }
+        bool empty() const { return m_data.empty(); }
         size_t size() const { return m_data.size(); }
 
         /// generic traversal of tree
         template <class Query, class Traversal_traits>
         void traversal(const Query& q, Traversal_traits& traits) const
         {
-            m_p_root->template traversal<Traversal_traits,Query>(q, traits, m_data.size());
+            if(!empty())
+                m_p_root->template traversal<Traversal_traits,Query>(q, traits, m_data.size());
+            else
+                std::cerr << "AABB tree traversal with empty tree" << std::endl;
         }
         //////////////////////////////////////////////
 
@@ -197,7 +200,7 @@ namespace CGAL {
                 return AABBTraits().do_intersect(q, node.bounding_box());
             }
 
-            int intersection_number() const { return m_nb_intersections; }
+            int number_of_intersections() const { return m_nb_intersections; }
 
         private:
             Point_and_primitive m_intersection;
@@ -232,8 +235,8 @@ namespace CGAL {
             }
 
         private:
-            Intersection m_intersection;
             Output_iterator m_out_it;
+            Point_and_primitive m_intersection;
         };
 
 
@@ -284,7 +287,7 @@ namespace CGAL {
             {
                 // TOFIX: update m_closest_primitive
                 m_closest_point = AABBTraits().nearest_point(query, primitive, m_closest_point);
-                m_sphere = AABBTraits().sphere(q, m_closest_point);
+                m_sphere = AABBTraits().sphere(query, m_closest_point);
             }
 
             bool do_intersect(const Point& q, const Node& node) const
@@ -422,7 +425,7 @@ namespace CGAL {
         Traversal_traits traversal_traits;
 
         this->traversal(query, traversal_traits);
-        return traversal_traits.intersection_number();
+        return traversal_traits.number_of_intersections();
     }
 
 
@@ -492,18 +495,18 @@ namespace CGAL {
     template<typename Tr>
     typename AABB_tree<Tr>::Point
         AABB_tree<Tr>::closest_point(const Point& query,
-                                     const Point& hint) const
+                                     const Point& hint) 
     {
-        Distance_traits traversal_traits(query,hint);
-        this->traversal(query, traversal_traits);
-        return traversal_traits.projection();
+        Distance_traits distance_traits(query,hint);
+        this->traversal(query, distance_traits);
+        return distance_traits.closest_point();
     }
 
     // closest point without hint, the search KD-tree is queried for the
     // first nearest neighbor point to get a hint
     template<typename Tr>
     typename AABB_tree<Tr>::Point
-        AABB_tree<Tr>::closest_point(const Point& query) const
+        AABB_tree<Tr>::closest_point(const Point& query) 
     {
         // construct search KD-tree if needed
         Point hint;
