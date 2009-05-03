@@ -174,7 +174,9 @@ public:
       Integer lead_coeff = (deg_num < 0) ? Integer(0) : 
         nt_traits.get_coefficient (_numer, deg_num);
 
-      _ps = _pt = Point_2 (Algebraic(), nt_traits.convert (lead_coeff));
+      _ps = _pt = Point_2 (Algebraic(), 
+                           nt_traits.convert (lead_coeff) / 
+                           nt_traits.convert (p_factor));
     }
 
     // Mark that the arc is continuous and valid.
@@ -222,7 +224,8 @@ public:
     _denom = nt_traits.construct_polynomial (denom_coeffs, 0);
 
     // Set the source point.
-    _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s));
+    _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s) / 
+                   nt_traits.convert(p_factor));
     
     // Check whether the target point lies at y = -oo or at y = +oo.
     const int    deg_num = nt_traits.degree (_numer);
@@ -260,7 +263,8 @@ public:
       Integer lead_coeff = (deg_num < 0) ? Integer(0) : 
         nt_traits.get_coefficient (_numer, deg_num);
 
-      _pt = Point_2 (Algebraic(), nt_traits.convert (lead_coeff));
+      _pt = Point_2 (Algebraic(), nt_traits.convert (lead_coeff) / 
+                     nt_traits.convert (p_factor));
     }
 
     // Mark that the arc is continuous and valid.
@@ -305,8 +309,10 @@ public:
     _denom = nt_traits.construct_polynomial (denom_coeffs, 0);
     
     // Set the endpoints.
-    _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s));
-    _pt = Point_2 (x_t, nt_traits.evaluate_at (_numer, x_t));
+    _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s) / 
+                   nt_traits.convert (p_factor));
+    _pt = Point_2 (x_t, nt_traits.evaluate_at (_numer, x_t) / 
+                   nt_traits.convert (p_factor));
 
     // Mark that the arc is continuous and valid.
     _info = (_info | IS_CONTINUOUS);
