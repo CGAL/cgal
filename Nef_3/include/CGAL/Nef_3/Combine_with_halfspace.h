@@ -99,6 +99,8 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
     int index1(Index_generator::get_unique_index());
     Halffacet_handle dummy_facet = 
       this->sncp()->new_halffacet_pair(plane, im != OPEN_HALFSPACE);
+	A.initialize_hash(index0);
+	A.initialize_hash(index1);
 
     Binary_operation bo(*this->sncp());
       Vertex_const_iterator v0;
@@ -144,8 +146,6 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
       vp->shalfloop()->twin()->set_index_facet(dummy_facet->twin());
       vp->shalfloop()->set_index(index0);
       vp->shalfloop()->twin()->set_index(index1);
-      A.initialize_hash(vp->shalfloop());
-      A.initialize_hash(vp->shalfloop()->twin());
 
       Vertex_handle ve = C.create_from_edge(e0, ip);
       

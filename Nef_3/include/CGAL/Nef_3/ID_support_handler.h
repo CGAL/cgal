@@ -45,7 +45,7 @@ class ID_support_handler {
 
   int& get_hash(int) { return 0; }
   template<typename Handle> void initialize_hash(Handle h) {}
-
+  void initialize_hash(int i) {}
   void handle_support(SVertex_handle , 
 		      SHalfedge_const_handle ,
 		      SHalfedge_const_handle ) {} 
@@ -146,6 +146,9 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
   template<typename Handle>
   void initialize_hash(Handle h) {
     hash[h->get_index()] = h->get_index();
+  }
+  void initialize_hash(int i) {
+	hash[i] = i;
   }
 
   void hash_facet_pair(SVertex_handle sv, 
