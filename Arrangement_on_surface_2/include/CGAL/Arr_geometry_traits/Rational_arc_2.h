@@ -68,8 +68,6 @@ public:
 
 protected:
 
-  typedef std::pair<Point_2, unsigned int>        Intersection_point_2;
-
   enum
   {
     SRC_AT_X_MINUS_INFTY = 1,
@@ -1316,392 +1314,6 @@ public:
 
   /// \name Constructions of points and curves.
   //@{
-  
-  /*!
-   * Compute the intersections with the given arc.
-   * \param arc The given intersecting arc.
-   * \param oi The output iterator.
-   * \return The past-the-end iterator.
-   */
-  template<class OutputIterator>
-  OutputIterator intersect (const Self& arc,
-                            OutputIterator oi) const
-  {
-    CGAL_precondition (is_valid() && is_continuous());
-    CGAL_precondition (arc.is_valid() && arc.is_continuous());
-
-    if (_has_same_base (arc))
-    {
-      Alg_kernel       ker;
-
-      // Get the left and right endpoints of (*this) and their information
-      // bits.
-      const Point_2&   left1 = (is_directed_right() ? _ps : _pt);
-      const Point_2&   right1 = (is_directed_right() ? _pt : _ps);
-      int              info_left1, info_right1;
-
-      if (is_directed_right())
-      {
-        info_left1 = (_info & SRC_INFO_BITS);
-        info_right1 = ((_info & TRG_INFO_BITS) >> 4);
-      }
-      else
-      {
-        info_right1 = (_info & SRC_INFO_BITS);
-        info_left1 = ((_info & TRG_INFO_BITS) >> 4);
-      }
-
-      // Get the left and right endpoints of the other arc and their
-      // information bits.
-      const Point_2&   left2 = (arc.is_directed_right() ? arc._ps : arc._pt);
-      const Point_2&   right2 = (arc.is_directed_right() ? arc._pt : arc._ps);
-      int              info_left2, info_right2;
-
-      if (arc.is_directed_right())
-      {
-        info_left2 = (arc._info & SRC_INFO_BITS);
-        info_right2 = ((arc._info & TRG_INFO_BITS) >> 4);
-      }
-      else
-      {
-        info_right2 = (arc._info & SRC_INFO_BITS);
-        info_left2 = ((arc._info & TRG_INFO_BITS) >> 4);
-      }
-
-      // Locate the left curve-end with larger x-coordinate.
-      bool             at_minus_infinity = false;
-      Arr_parameter_space    inf_l1 = left_infinite_in_x();
-      Arr_parameter_space    inf_l2 = arc.left_infinite_in_x();
-      Point_2          p_left;
-      int              info_left;
-
-      if (inf_l1 == ARR_INTERIOR && inf_l2 == ARR_INTERIOR)
-      {
-        // Let p_left be the rightmost of the two left endpoints.
-        if (ker.compare_x_2_object() (left1, left2) == LARGER)
-        {
-          p_left = left1;
-          info_left = info_left1;
-        }
-        else
-        {
-          p_left = left2;
-          info_left = info_left2;
-        }
-      }
-      else if (inf_l1 == ARR_INTERIOR)
-      {
-        // Let p_left be the left endpoint of (*this).
-        p_left = left1;
-        info_left = info_left1;
-      }
-      else if (inf_l2 == ARR_INTERIOR)
-      {
-        // Let p_left be the left endpoint of the other arc.
-        p_left = left2;
-        info_left = info_left2;
-      }
-      else
-      {
-        // Both arcs are defined at x = -oo.
-        at_minus_infinity = true;
-        info_left = info_left1;
-      }
-
-      // Locate the right curve-end with smaller x-coordinate.
-      bool             at_plus_infinity = false;
-      Arr_parameter_space    inf_r1 = right_infinite_in_x();
-      Arr_parameter_space    inf_r2 = arc.right_infinite_in_x();
-      Point_2          p_right;
-      int              info_right;
-
-      if (inf_r1 == ARR_INTERIOR && inf_r2 == ARR_INTERIOR)
-      {
-        // Let p_right be the rightmost of the two right endpoints.
-        if (ker.compare_x_2_object() (right1, right2) == SMALLER)
-        {
-          p_right = right1;
-          info_right = info_right1;
-        }
-        else
-        {
-          p_right = right2;
-          info_right = info_right2;
-        }
-      }
-      else if (inf_r1 == ARR_INTERIOR)
-      {
-        // Let p_right be the right endpoint of (*this).
-        p_right = right1;
-        info_right = info_right1;
-      }
-      else if (inf_r2 == ARR_INTERIOR)
-      {
-        // Let p_right be the right endpoint of the other arc.
-        p_right = right2;
-        info_right = info_right2;
-      }
-      else
-      {
-        // Both arcs are defined at x = +oo.
-        at_plus_infinity = true;
-        info_right = info_right2;
-      }
-
-      // Check the case of two bounded (in x) ends.
-      if (! at_minus_infinity && ! at_plus_infinity)
-      {
-        Comparison_result res = ker.compare_x_2_object() (p_left, p_right);
-
-        if (res == LARGER)
-        {
-          // The x-range of the overlap is empty, so there is no overlap.
-          return (oi);
-        }
-        else if (res == EQUAL)
-        {
-          // We have a single overlapping point. Just make sure this point
-          // is not at y = -/+ oo.
-          if (info_left && (SRC_AT_Y_MINUS_INFTY | SRC_AT_Y_PLUS_INFTY) == 0 &&
-              info_right && (SRC_AT_Y_MINUS_INFTY | SRC_AT_Y_PLUS_INFTY) == 0)
-          {
-            Intersection_point_2  ip (p_left, 0);
-
-            *oi = make_object (ip);
-            ++oi;
-          }
-
-          return (oi);
-        }
-      }
-
-      // Create the overlapping portion of the rational arc by properly setting
-      // the source (left) and target (right) endpoints and their information
-      // bits.
-      Self      overlap_arc (*this);
-
-      overlap_arc._ps = p_left;
-      overlap_arc._pt = p_right;
-
-      overlap_arc._info = ((info_left) | (info_right << 4) |
-                           IS_DIRECTED_RIGHT | IS_CONTINUOUS | IS_VALID);
-
-      *oi = make_object (overlap_arc);
-      ++oi;
-
-      return (oi);
-    }
-    
-    // We wish to find the intersection points between:
-    //
-    //   y = p1(x)/q1(x)    and     y = p2(x)/q2(x)
-    //
-    // It is clear that the x-coordinates of the intersection points are
-    // the roots of the polynomial: ip(x) = p1(x)*q2(x) - p2(x)*q1(x).
-    Nt_traits            nt_traits;
-    Polynomial           ipoly = _numer*arc._denom - arc._numer*_denom;
-    std::list<Algebraic>                           xs;
-    typename std::list<Algebraic>::const_iterator  x_iter;
-
-    nt_traits.compute_polynomial_roots (ipoly,
-                                        std::back_inserter(xs));
-
-    // Go over the x-values we obtained. For each value produce an
-    // intersection point if it is contained in the x-range of both curves.
-    unsigned int                     mult;
-
-    for (x_iter = xs.begin(); x_iter != xs.end(); ++x_iter)
-    {
-      if (_is_in_true_x_range (*x_iter) &&
-          arc._is_in_true_x_range (*x_iter))
-      {
-        // Compute the intersection point and obtain its multiplicity.
-        Point_2    p (*x_iter, nt_traits.evaluate_at (_numer, *x_iter) /
-                               nt_traits.evaluate_at (_denom, *x_iter));
-
-        this->compare_slopes (arc, p, mult);
-    
-        // Output the intersection point:
-        Intersection_point_2  ip (p, mult);
-
-        *oi = make_object (ip);
-        ++oi;
-      }
-    }
-
-    return (oi);
-  }
-
-  /*!
-   * Split the arc into two at a given split point.
-   * \param p The split point.
-   * \param c1 Output: The first resulting arc, lying to the left of p.
-   * \param c2 Output: The first resulting arc, lying to the right of p.
-   * \pre p lies in the interior of the arc (not one of its endpoints).
-   */
-  void split (const Point_2& p,
-              Self& c1, Self& c2) const
-  {
-    CGAL_precondition (is_valid() && is_continuous());
-
-    // Make sure that p lies on the interior of the arc.
-    CGAL_precondition_code (
-      Alg_kernel   ker;
-    );
-    CGAL_precondition (this->point_position(p) == EQUAL &&
-                       (source_infinite_in_x() != ARR_INTERIOR ||
-                        source_infinite_in_y() != ARR_INTERIOR ||
-                        ! ker.equal_2_object() (p, _ps)) &&
-                       (target_infinite_in_x() != ARR_INTERIOR ||
-                        target_infinite_in_y() != ARR_INTERIOR ||
-                        ! ker.equal_2_object() (p, _pt)));
-
-    // Make copies of the current arc.
-    c1 = *this;
-    c2 = *this;
-
-    // Split the arc, such that c1 lies to the left of c2.
-    if ((_info & IS_DIRECTED_RIGHT) != 0)
-    {
-      c1._pt = p;
-      c1._info = (c1._info & ~TRG_INFO_BITS);
-      c2._ps = p;
-      c2._info = (c2._info & ~SRC_INFO_BITS);
-    }
-    else
-    {
-      c1._ps = p;
-      c1._info = (c1._info & ~SRC_INFO_BITS);
-      c2._pt = p;
-      c2._info = (c2._info & ~TRG_INFO_BITS);
-   }
-
-    return;
-  }
-
-  /*!
-   * Merge the current arc with the given arc.
-   * \param arc The arc to merge with.
-   * \pre The two arcs are mergeable.
-   */
-  void merge (const Self& arc)
-  {
-    CGAL_precondition (is_valid() && is_continuous());
-    CGAL_precondition (arc.is_valid() && arc.is_continuous());
-    CGAL_precondition (this->can_merge_with (arc));
-
-    // Check if we should extend the arc to the left or to the right.
-    Alg_kernel   ker;
-
-    if (right_infinite_in_x() == ARR_INTERIOR &&
-        right_infinite_in_y() == ARR_INTERIOR &&
-        arc.left_infinite_in_x() == ARR_INTERIOR &&
-        arc.left_infinite_in_y() == ARR_INTERIOR &&
-        ker.equal_2_object() (right(), arc.left()))
-    {
-      // Extend the arc to the right.
-      if ((_info & IS_DIRECTED_RIGHT) != 0)
-      {
-        if (arc.right_infinite_in_x() == ARR_INTERIOR &&
-            arc.right_infinite_in_y() == ARR_INTERIOR)
-        {
-          _pt = arc.right();
-        }
-        else
-        {
-          if (arc.right_infinite_in_x() == ARR_LEFT_BOUNDARY)
-            _info = (_info | TRG_AT_X_MINUS_INFTY);
-          else if (arc.right_infinite_in_x() == ARR_RIGHT_BOUNDARY)
-            _info = (_info | TRG_AT_X_PLUS_INFTY);
-
-          if (arc.right_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
-            _info = (_info | TRG_AT_Y_MINUS_INFTY);
-          else if (arc.right_infinite_in_y() == ARR_TOP_BOUNDARY)
-            _info = (_info | TRG_AT_Y_PLUS_INFTY);
-
-          _pt = (arc._info & IS_DIRECTED_RIGHT) ? arc._pt : arc._ps;
-        }
-      }
-      else
-      {
-        if (arc.right_infinite_in_x() == ARR_INTERIOR &&
-            arc.right_infinite_in_y() == ARR_INTERIOR)
-        {
-          _ps = arc.right();
-        }
-        else
-        {
-          if (arc.right_infinite_in_x() == ARR_LEFT_BOUNDARY)
-            _info = (_info | SRC_AT_X_MINUS_INFTY);
-          else if (arc.right_infinite_in_x() == ARR_RIGHT_BOUNDARY)
-            _info = (_info | SRC_AT_X_PLUS_INFTY);
-
-          if (arc.right_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
-            _info = (_info | SRC_AT_Y_MINUS_INFTY);
-          else if (arc.right_infinite_in_y() == ARR_TOP_BOUNDARY)
-            _info = (_info | SRC_AT_Y_PLUS_INFTY);
-
-          _ps = (arc._info & IS_DIRECTED_RIGHT) ? arc._pt : arc._ps;
-        }
-      }
-    }
-    else
-    {
-      CGAL_precondition (left_infinite_in_x() == ARR_INTERIOR &&
-                         left_infinite_in_y() == ARR_INTERIOR &&
-                         arc.right_infinite_in_x() == ARR_INTERIOR &&
-                         arc.right_infinite_in_y() == ARR_INTERIOR &&
-                         ker.equal_2_object() (left(), arc.right()));
-
-      // Extend the arc to the left.
-      if ((_info & IS_DIRECTED_RIGHT) != 0)
-      {
-        if (arc.left_infinite_in_x() == ARR_INTERIOR &&
-            arc.left_infinite_in_y() == ARR_INTERIOR)
-        {
-          _ps = arc.left();
-        }
-        else
-        {
-          if (arc.left_infinite_in_x() == ARR_LEFT_BOUNDARY)
-            _info = (_info | SRC_AT_X_MINUS_INFTY);
-          else if (arc.left_infinite_in_x() == ARR_RIGHT_BOUNDARY)
-            _info = (_info | SRC_AT_X_PLUS_INFTY);
-
-          if (arc.left_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
-            _info = (_info | SRC_AT_Y_MINUS_INFTY);
-          else if (arc.left_infinite_in_y() == ARR_TOP_BOUNDARY)
-            _info = (_info | SRC_AT_Y_PLUS_INFTY);
-
-          _ps = (arc._info & IS_DIRECTED_RIGHT) ? arc._ps : arc._pt;
-        }
-      }
-      else
-      {
-        if (arc.left_infinite_in_x() == ARR_INTERIOR &&
-            arc.left_infinite_in_y() == ARR_INTERIOR)
-        {
-          _pt = arc.left();
-        }
-        else
-        {
-          if (arc.left_infinite_in_x() == ARR_LEFT_BOUNDARY)
-            _info = (_info | TRG_AT_X_MINUS_INFTY);
-          else if (arc.left_infinite_in_x() == ARR_RIGHT_BOUNDARY)
-            _info = (_info | TRG_AT_X_PLUS_INFTY);
-
-          if (arc.left_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
-            _info = (_info | TRG_AT_Y_MINUS_INFTY);
-          else if (arc.left_infinite_in_y() == ARR_TOP_BOUNDARY)
-            _info = (_info | TRG_AT_Y_PLUS_INFTY);
-
-          _pt = (arc._info & IS_DIRECTED_RIGHT) ? arc._ps : arc._pt;
-        }
-      }
-    }
-
-    return;
-  }
 
   /*!
    * Flip the arc (swap its source and target).
@@ -2222,6 +1834,9 @@ public:
   typedef typename Base::Rat_vector               Rat_vector;
   typedef typename Base::Polynomial               Polynomial;
 
+  typedef std::pair<Point_2, unsigned int>        Intersection_point_2;
+
+
   /// \name Constrcution methods.
   //@{
 
@@ -2339,6 +1954,403 @@ public:
     }
   }
   //@}
+
+  /// \name Constructions of points and curves.
+  //@{
+      
+  /*!
+   * Compute the intersections with the given arc.
+   * \param arc The given intersecting arc.
+   * \param oi The output iterator.
+   * \return The past-the-end iterator.
+   */
+  template<class OutputIterator>
+  OutputIterator intersect (const Self& arc,
+                            OutputIterator oi) const
+  {
+    CGAL_precondition (this->is_valid() && this->is_continuous());
+    CGAL_precondition (arc.is_valid() && arc.is_continuous());
+
+    if (this->_has_same_base (arc))
+    {
+      Alg_kernel       ker;
+
+      // Get the left and right endpoints of (*this) and their information
+      // bits.
+      const Point_2&   left1 = (this->is_directed_right() ? 
+                                this->_ps : this->_pt);
+      const Point_2&   right1 = (this->is_directed_right() ? 
+                                 this->_pt : this->_ps);
+      int              info_left1, info_right1;
+
+      if (this->is_directed_right())
+      {
+        info_left1 = (this->_info & this->SRC_INFO_BITS);
+        info_right1 = ((this->_info & this->TRG_INFO_BITS) >> 4);
+      }
+      else
+      {
+        info_right1 = (this->_info & this->SRC_INFO_BITS);
+        info_left1 = ((this->_info & this->TRG_INFO_BITS) >> 4);
+      }
+
+      // Get the left and right endpoints of the other arc and their
+      // information bits.
+      const Point_2&   left2 = (arc.is_directed_right() ? arc._ps : arc._pt);
+      const Point_2&   right2 = (arc.is_directed_right() ? arc._pt : arc._ps);
+      int              info_left2, info_right2;
+
+      if (arc.is_directed_right())
+      {
+        info_left2 = (arc._info & this->SRC_INFO_BITS);
+        info_right2 = ((arc._info & this->TRG_INFO_BITS) >> 4);
+      }
+      else
+      {
+        info_right2 = (arc._info & this->SRC_INFO_BITS);
+        info_left2 = ((arc._info & this->TRG_INFO_BITS) >> 4);
+      }
+
+      // Locate the left curve-end with larger x-coordinate.
+      bool             at_minus_infinity = false;
+      Arr_parameter_space    inf_l1 = this->left_infinite_in_x();
+      Arr_parameter_space    inf_l2 = arc.left_infinite_in_x();
+      Point_2          p_left;
+      int              info_left;
+
+      if (inf_l1 == ARR_INTERIOR && inf_l2 == ARR_INTERIOR)
+      {
+        // Let p_left be the rightmost of the two left endpoints.
+        if (ker.compare_x_2_object() (left1, left2) == LARGER)
+        {
+          p_left = left1;
+          info_left = info_left1;
+        }
+        else
+        {
+          p_left = left2;
+          info_left = info_left2;
+        }
+      }
+      else if (inf_l1 == ARR_INTERIOR)
+      {
+        // Let p_left be the left endpoint of (*this).
+        p_left = left1;
+        info_left = info_left1;
+      }
+      else if (inf_l2 == ARR_INTERIOR)
+      {
+        // Let p_left be the left endpoint of the other arc.
+        p_left = left2;
+        info_left = info_left2;
+      }
+      else
+      {
+        // Both arcs are defined at x = -oo.
+        at_minus_infinity = true;
+        info_left = info_left1;
+      }
+
+      // Locate the right curve-end with smaller x-coordinate.
+      bool             at_plus_infinity = false;
+      Arr_parameter_space    inf_r1 = this->right_infinite_in_x();
+      Arr_parameter_space    inf_r2 = arc.right_infinite_in_x();
+      Point_2          p_right;
+      int              info_right;
+
+      if (inf_r1 == ARR_INTERIOR && inf_r2 == ARR_INTERIOR)
+      {
+        // Let p_right be the rightmost of the two right endpoints.
+        if (ker.compare_x_2_object() (right1, right2) == SMALLER)
+        {
+          p_right = right1;
+          info_right = info_right1;
+        }
+        else
+        {
+          p_right = right2;
+          info_right = info_right2;
+        }
+      }
+      else if (inf_r1 == ARR_INTERIOR)
+      {
+        // Let p_right be the right endpoint of (*this).
+        p_right = right1;
+        info_right = info_right1;
+      }
+      else if (inf_r2 == ARR_INTERIOR)
+      {
+        // Let p_right be the right endpoint of the other arc.
+        p_right = right2;
+        info_right = info_right2;
+      }
+      else
+      {
+        // Both arcs are defined at x = +oo.
+        at_plus_infinity = true;
+        info_right = info_right2;
+      }
+
+      // Check the case of two bounded (in x) ends.
+      if (! at_minus_infinity && ! at_plus_infinity)
+      {
+        Comparison_result res = ker.compare_x_2_object() (p_left, p_right);
+
+        if (res == LARGER)
+        {
+          // The x-range of the overlap is empty, so there is no overlap.
+          return (oi);
+        }
+        else if (res == EQUAL)
+        {
+          // We have a single overlapping point. Just make sure this point
+          // is not at y = -/+ oo.
+          if (info_left && 
+              (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0 &&
+              info_right && 
+              (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0)
+          {
+            Intersection_point_2  ip (p_left, 0);
+
+            *oi = make_object (ip);
+            ++oi;
+          }
+
+          return (oi);
+        }
+      }
+
+      // Create the overlapping portion of the rational arc by properly setting
+      // the source (left) and target (right) endpoints and their information
+      // bits.
+      Self      overlap_arc (*this);
+
+      overlap_arc._ps = p_left;
+      overlap_arc._pt = p_right;
+
+      overlap_arc._info = ((info_left) | (info_right << 4) |
+                           this->IS_DIRECTED_RIGHT | this->IS_CONTINUOUS | 
+                           this->IS_VALID);
+
+      *oi = make_object (overlap_arc);
+      ++oi;
+
+      return (oi);
+    }
+    
+    // We wish to find the intersection points between:
+    //
+    //   y = p1(x)/q1(x)    and     y = p2(x)/q2(x)
+    //
+    // It is clear that the x-coordinates of the intersection points are
+    // the roots of the polynomial: ip(x) = p1(x)*q2(x) - p2(x)*q1(x).
+    Nt_traits            nt_traits;
+    Polynomial           ipoly = this->_numer * arc._denom - 
+      arc._numer * this->_denom;
+    std::list<Algebraic>                           xs;
+    typename std::list<Algebraic>::const_iterator  x_iter;
+
+    nt_traits.compute_polynomial_roots (ipoly,
+                                        std::back_inserter(xs));
+
+    // Go over the x-values we obtained. For each value produce an
+    // intersection point if it is contained in the x-range of both curves.
+    unsigned int                     mult;
+
+    for (x_iter = xs.begin(); x_iter != xs.end(); ++x_iter)
+    {
+      if (_is_in_true_x_range (*x_iter) &&
+          arc._is_in_true_x_range (*x_iter))
+      {
+        // Compute the intersection point and obtain its multiplicity.
+        Point_2    p (*x_iter, nt_traits.evaluate_at (this->_numer, *x_iter) /
+                               nt_traits.evaluate_at (this->_denom, *x_iter));
+
+        this->compare_slopes (arc, p, mult);
+    
+        // Output the intersection point:
+        Intersection_point_2  ip (p, mult);
+
+        *oi = make_object (ip);
+        ++oi;
+      }
+    }
+
+    return (oi);
+  }
+
+  /*!
+   * Split the arc into two at a given split point.
+   * \param p The split point.
+   * \param c1 Output: The first resulting arc, lying to the left of p.
+   * \param c2 Output: The first resulting arc, lying to the right of p.
+   * \pre p lies in the interior of the arc (not one of its endpoints).
+   */
+  void split (const Point_2& p,
+              Self& c1, Self& c2) const
+  {
+    CGAL_precondition (this->is_valid() && this->is_continuous());
+
+    // Make sure that p lies on the interior of the arc.
+    CGAL_precondition_code (
+      Alg_kernel   ker;
+    );
+    CGAL_precondition (this->point_position(p) == EQUAL &&
+                       (this->source_infinite_in_x() != ARR_INTERIOR ||
+                        this->source_infinite_in_y() != ARR_INTERIOR ||
+                        ! ker.equal_2_object() (p, this->_ps)) &&
+                       (this->target_infinite_in_x() != ARR_INTERIOR ||
+                        this->target_infinite_in_y() != ARR_INTERIOR ||
+                        ! ker.equal_2_object() (p, this->_pt)));
+
+    // Make copies of the current arc.
+    c1 = *this;
+    c2 = *this;
+
+    // Split the arc, such that c1 lies to the left of c2.
+    if ((this->_info & this->IS_DIRECTED_RIGHT) != 0)
+    {
+      c1._pt = p;
+      c1._info = (c1._info & ~this->TRG_INFO_BITS);
+      c2._ps = p;
+      c2._info = (c2._info & ~this->SRC_INFO_BITS);
+    }
+    else
+    {
+      c1._ps = p;
+      c1._info = (c1._info & ~this->SRC_INFO_BITS);
+      c2._pt = p;
+      c2._info = (c2._info & ~this->TRG_INFO_BITS);
+   }
+
+    return;
+  }
+
+  /*!
+   * Merge the current arc with the given arc.
+   * \param arc The arc to merge with.
+   * \pre The two arcs are mergeable.
+   */
+  void merge (const Self& arc)
+  {
+    CGAL_precondition (this->is_valid() && this->is_continuous());
+    CGAL_precondition (arc.is_valid() && arc.is_continuous());
+    CGAL_precondition (this->can_merge_with (arc));
+
+    // Check if we should extend the arc to the left or to the right.
+    Alg_kernel   ker;
+
+    if (this->right_infinite_in_x() == ARR_INTERIOR &&
+        this->right_infinite_in_y() == ARR_INTERIOR &&
+        arc.left_infinite_in_x() == ARR_INTERIOR &&
+        arc.left_infinite_in_y() == ARR_INTERIOR &&
+        ker.equal_2_object() (this->right(), arc.left()))
+    {
+      // Extend the arc to the right.
+      if ((this->_info & this->IS_DIRECTED_RIGHT) != 0)
+      {
+        if (arc.right_infinite_in_x() == ARR_INTERIOR &&
+            arc.right_infinite_in_y() == ARR_INTERIOR)
+        {
+          this->_pt = arc.right();
+        }
+        else
+        {
+          if (arc.right_infinite_in_x() == ARR_LEFT_BOUNDARY)
+            this->_info = (this->_info | this->TRG_AT_X_MINUS_INFTY);
+          else if (arc.right_infinite_in_x() == ARR_RIGHT_BOUNDARY)
+            this->_info = (this->_info | this->TRG_AT_X_PLUS_INFTY);
+
+          if (arc.right_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+            this->_info = (this->_info | this->TRG_AT_Y_MINUS_INFTY);
+          else if (arc.right_infinite_in_y() == ARR_TOP_BOUNDARY)
+            this->_info = (this->_info | this->TRG_AT_Y_PLUS_INFTY);
+
+          this->_pt = (arc._info & this->IS_DIRECTED_RIGHT) ? arc._pt : arc._ps;
+        }
+      }
+      else
+      {
+        if (arc.right_infinite_in_x() == ARR_INTERIOR &&
+            arc.right_infinite_in_y() == ARR_INTERIOR)
+        {
+          this->_ps = arc.right();
+        }
+        else
+        {
+          if (arc.right_infinite_in_x() == ARR_LEFT_BOUNDARY)
+            this->_info = (this->_info | this->SRC_AT_X_MINUS_INFTY);
+          else if (arc.right_infinite_in_x() == ARR_RIGHT_BOUNDARY)
+            this->_info = (this->_info | this->SRC_AT_X_PLUS_INFTY);
+
+          if (arc.right_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+            this->_info = (this->_info | this->SRC_AT_Y_MINUS_INFTY);
+          else if (arc.right_infinite_in_y() == ARR_TOP_BOUNDARY)
+            this->_info = (this->_info | this->SRC_AT_Y_PLUS_INFTY);
+
+          this->_ps = (arc._info & this->IS_DIRECTED_RIGHT) ? arc._pt : arc._ps;
+        }
+      }
+    }
+    else
+    {
+      CGAL_precondition (this->left_infinite_in_x() == ARR_INTERIOR &&
+                         this->left_infinite_in_y() == ARR_INTERIOR &&
+                         arc.right_infinite_in_x() == ARR_INTERIOR &&
+                         arc.right_infinite_in_y() == ARR_INTERIOR &&
+                         ker.equal_2_object() (this->left(), arc.right()));
+
+      // Extend the arc to the left.
+      if ((this->_info & this->IS_DIRECTED_RIGHT) != 0)
+      {
+        if (arc.left_infinite_in_x() == ARR_INTERIOR &&
+            arc.left_infinite_in_y() == ARR_INTERIOR)
+        {
+          this->_ps = arc.left();
+        }
+        else
+        {
+          if (arc.left_infinite_in_x() == ARR_LEFT_BOUNDARY)
+            this->_info = (this->_info | this->SRC_AT_X_MINUS_INFTY);
+          else if (arc.left_infinite_in_x() == ARR_RIGHT_BOUNDARY)
+            this->_info = (this->_info | this->SRC_AT_X_PLUS_INFTY);
+
+          if (arc.left_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+            this->_info = (this->_info | this->SRC_AT_Y_MINUS_INFTY);
+          else if (arc.left_infinite_in_y() == ARR_TOP_BOUNDARY)
+            this->_info = (this->_info | this->SRC_AT_Y_PLUS_INFTY);
+
+          this->_ps = (arc._info & this->IS_DIRECTED_RIGHT) ? arc._ps : arc._pt;
+        }
+      }
+      else
+      {
+        if (arc.left_infinite_in_x() == ARR_INTERIOR &&
+            arc.left_infinite_in_y() == ARR_INTERIOR)
+        {
+          this->_pt = arc.left();
+        }
+        else
+        {
+          if (arc.left_infinite_in_x() == ARR_LEFT_BOUNDARY)
+            this->_info = (this->_info | this->TRG_AT_X_MINUS_INFTY);
+          else if (arc.left_infinite_in_x() == ARR_RIGHT_BOUNDARY)
+            this->_info = (this->_info | this->TRG_AT_X_PLUS_INFTY);
+
+          if (arc.left_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+            this->_info = (this->_info | this->TRG_AT_Y_MINUS_INFTY);
+          else if (arc.left_infinite_in_y() == ARR_TOP_BOUNDARY)
+            this->_info = (this->_info | this->TRG_AT_Y_PLUS_INFTY);
+
+          this->_pt = (arc._info & this->IS_DIRECTED_RIGHT) ? arc._ps : arc._pt;
+        }
+      }
+    }
+
+    return;
+  }
+  //@}
+
 };
 
 /*! \class Rational_arc_2
