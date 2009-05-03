@@ -1179,8 +1179,8 @@ namespace CGALi {
 template < typename D, typename V = cpp0x::tuple<>, typename O = cpp0x::tuple<> >
 struct Derivator
 {
-  typedef Derivator<D, V, O> Self;
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+  typedef Derivator<D, V, O> Self;
   Self& operator=(const Self&) = delete;
 #endif
 };
@@ -1283,7 +1283,7 @@ class Dispatch_or_drop_output_iterator < cpp0x::tuple<V...>, cpp0x::tuple<O...> 
   typedef Dispatch_output_iterator< cpp0x::tuple<V...>, cpp0x::tuple<O...> > Base;
 
   template <typename D, typename V_, typename O_>
-  friend class Derivator;
+  friend class CGALi::Derivator;
 
 public:
 
