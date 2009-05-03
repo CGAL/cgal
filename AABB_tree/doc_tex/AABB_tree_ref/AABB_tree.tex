@@ -117,16 +117,16 @@ bool any_intersection(const Query& query,
 \ccMethod{Point
 closest_point(const Point& query, 
               const Point& hint);} 
-{Returns the point on all input primitives which is closest to the query. In case of several closest points one arbitrarily chosen point is returned.  Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{construct_search_tree} (see below), it is used to efficiently query the nearest hint point from the query. Otherwise a naive hint point is taken as the first primitive reference point. }
+{Returns the point on all input primitives which is closest to the query. In case of several closest points one arbitrarily chosen point is returned.  Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{construct_search_tree} (see below), it is used to efficiently query the nearest hint point from the query. Otherwise a naive hint point is taken as the first primitive reference point. }
 
 \ccMethod{Primitive
 closest_primitive(const Point& query, 
-                  const Point& hint);} 
+                  const Primitive& hint);} 
 {Returns the primitive which realizes the smallest distance between the query point and all input primitives. See \ccc{closest_point} function for the optional \ccc{hint} parameter. }
 
 \ccMethod{Point_and_primitive
 closest_point_and_primitive(const Point& query, 
-                            const Point& hint);} 
+                            const Point_and_primitive& hint);} 
 {Returns a \ccc{std::pair<Point,Primitive>} which realizes the smallest distance between the query point and all input primitives. See \ccc{closest_point} function for the optional \ccc{hint} parameter. }
 
 \ccMethod{FT
@@ -141,10 +141,10 @@ squared_distance(const Point& query,
 { Constructs the internal search KD-tree used to accelerate the distance queries. The points in the search tree are taken from the primitives by calling the member function \ccc{point_on} from the primitive.}
 
 \begin{ccAdvanced}
-\ccMethod{template <class ConstPointIterator>
-void construct_search_tree(ConstPointIterator begin,
-                           ConstPointIterator beyond);}
-{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Each point from the specified point set must be located on the input primitives. For a triangle surface mesh this point set can be provided as the vertex points or as the triangle centroids.}
+\ccMethod{template <class ConstPointAndPrimitiveIterator>
+void construct_search_tree(ConstPointAndPrimitiveIterator begin,
+                           ConstPointAndPrimitiveIterator beyond);}
+{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Each point from the specified \ccc{Point_and_primitive} set should be located on the corresponding input primitive. For a triangle surface mesh this point set can be provided as the vertex points or as the triangle centroids.}
 \end{ccAdvanced}
 
 \ccSeeAlso
