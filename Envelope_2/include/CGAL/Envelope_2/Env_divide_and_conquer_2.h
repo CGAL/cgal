@@ -254,9 +254,10 @@ protected:
    * \param same_org Whether e and v originate from the same diagram.
    * \param out_d The merged diagram.
    */
-  void _merge_single_interval (Edge_const_handle e,
+  void _merge_single_interval (Edge_const_handle e, 
+                               Edge_const_handle other_edge,
                                Vertex_const_handle v, bool v_exists,
-                               bool same_org,
+                               Comparison_result origin_of_v,
                                Envelope_diagram_1& out_d);
 
   /*!
@@ -267,13 +268,16 @@ protected:
    * \param is_leftmost2 Is it the leftmost edge in its diagram.
    * \param v The next vertex.
    * \param v_exists Whether such a vertex exists.
-   * \param org_v The origin of v: 1 if it is from e1, 2 if it is from e2.
+   * \param origin_of_v The origin of v: SMALLER if it is from e1, 
+   *                    otherwise it is from e2. EQUAL result means that
+   *                    both diagram have vertex at the same place (but v
+   *                    is still taken from e2.
    * \param out_d The merged diagram.
    */
   void _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
                              Edge_const_handle e2, bool is_leftmost2,
                              Vertex_const_handle v, bool v_exists,
-                             int org_v,
+                             Comparison_result origin_of_v,
                              Envelope_diagram_1& out_d);
 
   /*!

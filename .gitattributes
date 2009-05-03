@@ -1370,6 +1370,7 @@ Envelope_2/doc_tex/Envelope_2/fig/min_diag.gif -text svneol=unset#image/gif
 Envelope_2/doc_tex/Envelope_2/fig/min_diag.pdf -text svneol=unset#application/pdf
 Envelope_2/examples/Envelope_2/ch_points.dat -text
 Envelope_2/test/Envelope_2/data/Europe.dat -text
+Envelope_2/test/Envelope_2/data/bug_r49069.dat -text
 Envelope_2/test/Envelope_2/data/onebig_100.dat -text
 Envelope_2/test/Envelope_2/data/random_500.dat -text
 Envelope_2/test/Envelope_2/data/segs_4.dat -text
