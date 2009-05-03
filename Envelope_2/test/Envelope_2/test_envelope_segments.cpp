@@ -136,6 +136,8 @@ bool check_envelope (const Curve_list& segs,
                      const Diagram_1& diag,
                      bool is_lower)
 {
+  typedef Diagram_1::Curve_const_iterator                 Curve_iterator;
+
   // Go over minimization diagram.
   Diagram_1::Edge_const_handle    e = diag.leftmost();
   Diagram_1::Vertex_const_handle  v;
@@ -162,6 +164,37 @@ bool check_envelope (const Curve_list& segs,
   {
     // Get the midpoint of the current edge.
     p_mid = midpoint (e->left()->point(), e->right()->point());
+
+    // Check that all associated curves are equal:
+    for (Curve_iterator it = e->curves_begin();
+         it != e->curves_end(); ++it)
+    {
+      if(comp_y_at_x(p_mid, e->curve(), *it) != CGAL::EQUAL)
+      {
+        std::cerr << "The edge (" << e->left()->point()
+                  << ") -> (" << e->right()->point() << ") is associated with "
+                  << "both of the following curve which are not equal: "
+                  << " [" << e->curve() << "], [" << *it << "]"
+                  << std::endl;
+        return false;
+      }
+    }
+
+    // Check that all associated curves are equal:
+    for (Curve_iterator it = v->curves_begin();
+         it != v->curves_end(); ++it)
+    {
+      if(comp_y_at_x(v->point(), *it) != CGAL::EQUAL)
+      {
+        std::cerr << "The vertex (" << v->point() << ") is associated with "
+                  << "is associated with"
+                  << " [" << *it << "] but they are not equal at the vertex."
+                  << std::endl;
+        return false;
+      }
+    }
+
+    
 
     // Go over all segments.
     for (sit = segs.begin(); sit != segs.end(); ++sit)
