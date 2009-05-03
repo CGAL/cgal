@@ -317,15 +317,6 @@ _merge_envelopes (const Envelope_diagram_1& d1,
                               next_v, next_exists,
                               CGAL::opposite(res_v),
                               out_d);
-      
-/*       // Bug fix: */
-/*       // If (res_v == EQUAL) then the _merge_single_interval will not */
-/*       // add the curves from v1 to the set of curves of the newly created */
-/*       // vertex (rightmost vertex). We handle it here though there maybe  */
-/*       // a better design for this code. */
-/*       if (res_v == EQUAL) */
-/*         out_d.rightmost()->left()->add_curves  */
-/*           (v1->curves_begin(), v1->curves_end()); */
     }
     else
     {

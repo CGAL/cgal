@@ -249,9 +249,13 @@ protected:
    * Deal with an interval which is non-empty in one of the merged diagrams and
    * empty in the other.
    * \param e The non-empty edge.
+   * \param other_edge The empty edge.
    * \param v The next vertex to the right.
    * \param v_exists Whether the next vertex exists.
-   * \param same_org Whether e and v originate from the same diagram.
+   * \param origin_of_v The origin of v: SMALLER if it is from e, 
+   *                    LARGER if it is from other_edge. 
+   *                    EQUAL result means that both edges have vertex at 
+   *                    the same place.
    * \param out_d The merged diagram.
    */
   void _merge_single_interval (Edge_const_handle e, 
