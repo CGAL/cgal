@@ -27,7 +27,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_segment_primitive.h>
+#include <CGAL/primitives/AABB_segment_primitive.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
