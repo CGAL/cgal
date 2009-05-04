@@ -1,22 +1,8 @@
-\section{Poisson Reconstruction}
+\section{Poisson}
 
-Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm \cite{Kazhdan06}.
-Given a set of 3D points with oriented normals (denoted oriented points in the sequel)
-sampled on the boundary of a 3D solid, this method solves for an approximate indicator function of the inferred solid,
-whose gradient best matches the input normals. The output scalar function, represented in an adaptive octree,
-is then iso-contoured using an adaptive marching cubes.\\
+Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm \cite{Kazhdan06}. Given a set of 3D points with oriented normals (denoted oriented points in the sequel) sampled on the boundary of a 3D solid, this method solves for an approximate indicator function of the inferred solid, whose gradient best matches the input normals. The output scalar function, represented in an adaptive octree, is then iso-contoured using an adaptive marching cubes.
 
-\cgal\ implements a variant of this algorithm which solves for a piecewise linear function
-on a 3D Delaunay triangulation instead of an adaptive octree.
-The algorithm takes as input a set of 3D oriented points.
-It builds a 3D Delaunay triangulation from these points and refines it by Delaunay refinement
-so as to remove all badly shaped (non isotropic) tetrahedra and to tessellate a loose bounding box
-of the input oriented points. The normal of each Steiner point added during refinement is set to zero.
-It then solves for a scalar indicator function $f$ represented as a piecewise linear function over the refined triangulation.
-More specifically, it solves for the Poisson equation  $\Delta f = div(\mathbf{n})$ at each vertex of the triangulation
-using a sparse linear solver.
-Eventually, the \cgal\ surface mesh generator extracts an isosurface with function value set by default
-to be the median value of $f$ at all input points.
+\cgal\ implements a variant of this algorithm which solves for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree. The algorithm takes as input a set of 3D oriented points. It builds a 3D Delaunay triangulation from these points and refines it by Delaunay refinement so as to remove all badly shaped (non isotropic) tetrahedra and to tessellate a loose bounding box of the input oriented points. The normal of each Steiner point added during refinement is set to zero. It then solves for a scalar indicator function $f$ represented as a piecewise linear function over the refined triangulation. More specifically, it solves for the Poisson equation  $\Delta f = div(\mathbf{n})$ at each vertex of the triangulation using a sparse linear solver. Eventually, the \cgal\ surface mesh generator extracts an isosurface with function value set by default to be the median value of $f$ at all input points.
 
 \subsection{API}
 
