@@ -1,0 +1,46 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_3_triangulation_traits_3.tex
+% +------------------------------------------------------------------------+
+% | 19.2.2009   Monique Teillaud, Manuel Caroli
+% | Package: Periodic_3_triangulation_3
+% | 
+\RCSdef{\RCSPeriodictriangulationtraitsRev}{$Id$}
+\RCSdefDate{\RCSPeriodictriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Periodic_3_triangulation_traits_3<Traits,Periodic_3Offset_3>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is designed as a default traits class for the
+class \ccc{Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3,TriangulationDataStructure_3>}. 
+
+The argument \ccc{Traits} must be a model of the
+\ccc{DelaunayTriangulationTraits_3} concept. The 
+argument \ccc{Periodic_3Offset_3} must be a model of the concept
+\ccc{Periodic_3Offset_3} and defaults to \ccc{Periodic_3_offset_3}.
+
+Note that this template class is specialized for
+\ccc{CGAL::Filtered_kernel}, so that it automatically provides
+filtered predicates. This holds implicitly for
+\ccc{CGAL::Exact_predicates_inexact_constructions_kernel}, as it is an
+instantiation of \ccc{CGAL::Filtered_kernel}.
+
+\ccInclude{CGAL/Periodic_3_triangulation_traits_3.h}
+
+\ccIsModel
+\ccc{Periodic_3DelaunayTriangulationTraits_3}
+
+\ccInheritsFrom{\ccc{Traits}}
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{Triangulation3/Regular_triangulation_euclidean_traits_3_prog.cpp}
+
+\end{ccRefClass}

@@ -1,0 +1,75 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_3_triangulation_hierarchy_3.tex
+% +------------------------------------------------------------------------+
+% | 4.3.2009   Manuel Caroli
+% | Package: Periodic_3_triangulation_3
+% | 
+\RCSdef{\RCSPeriodictriangulationhierarchyRev}{$Id$}
+\RCSdefDate{\RCSPeriodictriangulationhierarchyDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Periodic_3_triangulation_hierarchy_3<PTr>}
+
+\ccDefinition
+
+The class \ccc{Periodic_3_triangulation_hierarchy_3} implements a
+triangulation augmented with a data structure which allows fast point
+location queries. 
+
+\ccInclude{CGAL/Periodic_3_triangulation_hierarchy_3.h}
+
+\ccParameters
+
+It is templated by a parameter which must be instantiated by one of the \cgal\
+periodic triangulation classes.  \textit{In the current
+  implementation, only \ccc{Periodic_3_Delaunay_triangulation_3} is
+  supported for \ccc{PTr}.} 
+
+\ccc{PTr::Vertex} has to be a model of the concept
+\ccc{Periodic_3TriangulationHierarchyVertexBase_3}.\\
+\ccc{PTr::Geom_traits} has to be a model of the concept
+\ccc{Periodic_3DelaunayTriangulationTraits_3}.
+
+\ccInheritsFrom
+
+\ccc{PTr}
+
+\ccRefName\ offers exactly the same functionalities as \ccc{PTr}.
+Most of them (point location, insertion, removal\ldots) are overloaded to
+improve their efficiency by using the hierarchic structure. 
+
+Note that, since the algorithms that are provided are randomized, the
+running time of constructing a triangulation with a hierarchy may be
+improved when shuffling the data points.
+
+However, the I/O operations are not overloaded. So, writing a
+hierarchy into a file will lose the hierarchic structure and reading
+it from the file will result in an ordinary triangulation whose
+efficiency will be the same as \ccc{PTr}.
+
+\ccImplementation
+The data structure is a hierarchy of triangulations. The triangulation
+at the lowest level is the original triangulation where operations and
+point location are to be performed.
+Then at each succeeding level, the data structure
+stores a triangulation of a small random sample of the vertices
+of the triangulation at the preceding level. Point location
+is done through a top-down nearest neighbor query.
+The nearest neighbor query is first
+performed naively in the top level triangulation.
+Then, at each following level, the nearest neighbor at that level
+is found through a linear walk performed from
+the nearest neighbor found at the preceding level.
+Because the number of vertices in each triangulation is only a small
+fraction of the number of vertices of the preceding triangulation 
+the data structure remains small and achieves fast point location 
+queries on real data.
+
+\ccSeeAlso
+\ccc{CGAL::Periodic_3_triangulation_hierarchy_vertex_base_3}\\
+\ccc{CGAL::Periodic_3_Delaunay_triangulation_3}
+
+\end{ccRefClass}

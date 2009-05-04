@@ -1,0 +1,416 @@
+<ui version="4.0" >
+ <class>periodicClass</class>
+ <widget class="QMainWindow" name="periodicClass" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>415</width>
+    <height>389</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>CGAL Periodic Delaunay Triangulation</string>
+  </property>
+  <widget class="QWidget" name="centralWidget" >
+   <layout class="QHBoxLayout" >
+    <item>
+     <widget class="QGLViewer" name="viewer" />
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>415</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionLoad_Points" />
+    <addaction name="actionExport_pov" />
+    <addaction name="separator" />
+    <addaction name="actionExit" />
+   </widget>
+   <widget class="QMenu" name="menuOptions" >
+    <property name="title" >
+     <string>&amp;Options</string>
+    </property>
+    <addaction name="actionWireframe" />
+    <addaction name="actionPlanar_triangulation" />
+    <addaction name="separator" />
+    <addaction name="actionDraw_1_sheeted_covering" />
+    <addaction name="actionDraw_bordering_cells_multiply" />
+    <addaction name="separator" />
+    <addaction name="actionDraw_segments" />
+    <addaction name="actionDraw_triangles" />
+    <addaction name="actionDraw_tetrahedra" />
+    <addaction name="separator" />
+    <addaction name="actionDraw_cube_square" />
+    <addaction name="separator" />
+    <addaction name="actionClip_along_the_cube_square" />
+    <addaction name="action2_color_clipping" />
+    <addaction name="separator" />
+   </widget>
+   <widget class="QMenu" name="menuInitialization" >
+    <property name="title" >
+     <string>&amp;Initialization</string>
+    </property>
+    <addaction name="actionEmpty_scene" />
+    <addaction name="actionSingle_Point" />
+    <addaction name="actionRandom_Point_Set" />
+    <addaction name="actionRandom_Points_in_Plane" />
+    <addaction name="actionPoint_grid" />
+   </widget>
+   <widget class="QMenu" name="menuFeatures" >
+    <property name="title" >
+     <string>&amp;Features</string>
+    </property>
+    <addaction name="actionPoint_location" />
+    <addaction name="actionConflict_region" />
+    <addaction name="actionHole" />
+    <addaction name="actionStar" />
+   </widget>
+   <widget class="QMenu" name="menuActions" >
+    <property name="title" >
+     <string>&amp;Actions</string>
+    </property>
+    <addaction name="actionFlying_ball" />
+    <addaction name="actionPause" />
+    <addaction name="separator" />
+    <addaction name="actionInsert_point" />
+    <addaction name="actionInsert_random_point" />
+    <addaction name="separator" />
+    <addaction name="actionGrab_image" />
+   </widget>
+   <addaction name="menuFile" />
+   <addaction name="menuInitialization" />
+   <addaction name="menuActions" />
+   <addaction name="menuFeatures" />
+   <addaction name="menuOptions" />
+  </widget>
+  <widget class="QStatusBar" name="statusBar" />
+  <action name="actionLoad_Points" >
+   <property name="text" >
+    <string>Load Points</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionExit" >
+   <property name="text" >
+    <string>Exit</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionWireframe" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Wireframe</string>
+   </property>
+   <property name="shortcut" >
+    <string>X</string>
+   </property>
+  </action>
+  <action name="actionPlanar_triangulation" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Planar triangulation</string>
+   </property>
+   <property name="shortcut" >
+    <string>Z</string>
+   </property>
+  </action>
+  <action name="actionDraw_1_sheeted_covering" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Draw 1-sheeted covering</string>
+   </property>
+   <property name="shortcut" >
+    <string>1</string>
+   </property>
+  </action>
+  <action name="actionDraw_bordering_cells_multiply" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Draw bordering cells multiply</string>
+   </property>
+   <property name="shortcut" >
+    <string>M</string>
+   </property>
+  </action>
+  <action name="actionClip_along_the_cube_square" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Clip along the cube/square</string>
+   </property>
+  </action>
+  <action name="action2_color_clipping" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="text" >
+    <string>2-color clipping</string>
+   </property>
+  </action>
+  <action name="actionPoint_grid" >
+   <property name="text" >
+    <string>Point grid</string>
+   </property>
+   <property name="shortcut" >
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionSingle_Point" >
+   <property name="text" >
+    <string>Single point</string>
+   </property>
+   <property name="shortcut" >
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="actionRandom_Points_in_Plane" >
+   <property name="text" >
+    <string>Random planar point set</string>
+   </property>
+   <property name="shortcut" >
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="actionRandom_Point_Set" >
+   <property name="text" >
+    <string>Random point set</string>
+   </property>
+   <property name="shortcut" >
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="actionEmpty_scene" >
+   <property name="text" >
+    <string>Empty scene</string>
+   </property>
+   <property name="shortcut" >
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionShow_flying_ball" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Show flying ball</string>
+   </property>
+   <property name="shortcut" >
+    <string>B</string>
+   </property>
+  </action>
+  <action name="actionDraw_cube_square" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Draw domain (cube/square)</string>
+   </property>
+   <property name="shortcut" >
+    <string>D</string>
+   </property>
+  </action>
+  <action name="actionPoint_location" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Point location</string>
+   </property>
+   <property name="shortcut" >
+    <string>L</string>
+   </property>
+  </action>
+  <action name="actionConflict_region" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Conflict region</string>
+   </property>
+   <property name="shortcut" >
+    <string>C</string>
+   </property>
+  </action>
+  <action name="actionHole" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Hole*</string>
+   </property>
+   <property name="shortcut" >
+    <string>H</string>
+   </property>
+  </action>
+  <action name="actionStar" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Star*</string>
+   </property>
+   <property name="shortcut" >
+    <string>S</string>
+   </property>
+  </action>
+  <action name="actionFlying_ball" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Flying ball</string>
+   </property>
+   <property name="shortcut" >
+    <string>B</string>
+   </property>
+  </action>
+  <action name="actionPause" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Pause</string>
+   </property>
+   <property name="shortcut" >
+    <string>P</string>
+   </property>
+  </action>
+  <action name="actionInsert_point" >
+   <property name="text" >
+    <string>Insert point</string>
+   </property>
+   <property name="shortcut" >
+    <string>I</string>
+   </property>
+  </action>
+  <action name="actionInsert_random_point" >
+   <property name="text" >
+    <string>Insert random point</string>
+   </property>
+   <property name="shortcut" >
+    <string>R</string>
+   </property>
+  </action>
+  <action name="actionDraw_segments" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+   <property name="text" >
+    <string>Draw segments</string>
+   </property>
+   <property name="shortcut" >
+    <string>2</string>
+   </property>
+  </action>
+  <action name="actionDraw_triangles" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Draw triangles</string>
+   </property>
+   <property name="shortcut" >
+    <string>3</string>
+   </property>
+  </action>
+  <action name="actionDraw_tetrahedra" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Draw tetrahedra</string>
+   </property>
+   <property name="shortcut" >
+    <string>4</string>
+   </property>
+  </action>
+  <action name="actionGrab_image" >
+   <property name="checkable" >
+    <bool>false</bool>
+   </property>
+   <property name="text" >
+    <string>Grab image</string>
+   </property>
+   <property name="shortcut" >
+    <string>G</string>
+   </property>
+  </action>
+  <action name="actionExport_pov" >
+   <property name="text" >
+    <string>Export pov</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <customwidgets>
+  <customwidget>
+   <class>QGLViewer</class>
+   <extends>QWidget</extends>
+   <header>QGLViewer/qglviewer.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>actionClip_along_the_cube_square</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>action2_color_clipping</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

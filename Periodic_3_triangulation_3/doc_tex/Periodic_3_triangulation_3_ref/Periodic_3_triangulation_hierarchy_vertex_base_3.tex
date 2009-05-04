@@ -1,0 +1,46 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_3_triangulation_hierarchy_vertex_base_3.tex
+% +------------------------------------------------------------------------+
+% | 4.3.2009   Manuel Caroli
+% | Package: Periodic_3_triangulation_3
+% | 
+\RCSdef{\RCSperiodictriangulationhierarchyvertexbaseRev}{$Id$}
+\RCSdefDate{\RCSPeriodictriangulationhierarchyvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Periodic_3_triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}
+
+\ccDefinition
+  
+This class is designed to be used as the vertex base class for
+\ccc{Periodic_3_triangulation_hierarchy_3}.
+
+It inherits from its parameter \ccc{TriangulationVertexBase_3}, and adds the
+requirements in order to match the concept
+\ccc{Periodic_3TriangulationHierarchyVertexBase_3}, it does so by
+storing a \ccc{Vertex_handle} and a vector of \ccc{Vertex_handle}s.
+This design allows to use either a vertex base class
+provided by CGAL, or a user customized vertex base with additional
+functionalities.
+
+\ccInclude{CGAL/Periodic_3_triangulation_hierarchy_vertex_base_3.h}
+
+\ccParameters
+
+It is parameterized by a model of the concept \ccc{TriangulationVertexBase_3}.
+
+\ccIsModel \ccc{Periodic_3TriangulationHierarchyVertexBase_3}
+
+\ccInheritsFrom \ccc{TriangulationVertexBase_3}
+
+\ccCreationVariable{v}
+
+\ccSeeAlso
+\ccc{CGAL::Periodic_3_triangulation_hierarchy_3}\\
+\ccc{CGAL::Triangulation_vertex_base_3}\\
+\ccc{CGAL::Triangulation_vertex_base_with_info_3}
+
+\end{ccRefClass}

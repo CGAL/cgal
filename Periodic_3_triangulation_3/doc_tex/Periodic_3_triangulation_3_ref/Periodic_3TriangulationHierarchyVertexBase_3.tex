@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_3TriangulationHierarchyVertexBase_3.tex
+% +------------------------------------------------------------------------+
+% | 4.3.2009   Manuel Caroli
+% | Package: Periodic_3_triangulation_3
+% |
+\RCSdef{\RCSPeriodicTriangulationHierarchyVertexBaseRev}{$Id$}
+\RCSdefDate{\RCSPeriodicTriangulationHierarchyVertexBaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{Periodic_3TriangulationHierarchyVertexBase_3}
+
+\ccDefinition
+
+The vertex base used by \ccc{Periodic_3_triangulation_hierarchy_3}
+must provide access to a vertex handle and a vector of
+\ccc{Vertex_handle}s for linking between the levels of the
+hierarchy. The vector is needed in case there is a change of the
+number of sheets between two levels. The number of sheets in level $l$
+never smaller than the number of sheets in level $l-1$, but it can be
+larger.
+
+\ccRefines{\ccc{TriangulationVertexBase_3}}
+
+\ccCreationVariable{v}
+
+\ccAccessFunctions
+\ccThree{std::vector<Vertex_handle>x}{v.down() constx}{}
+\ccTagFullDeclarations
+
+\ccMethod{std::vector<Vertex_handle> up() const;}
+{Returns the vector of all \ccc{Vertex_handle}s pointing to associated
+  vertices in the level above.}
+\ccGlue
+\ccMethod{Vertex_handle down() const;}
+{Returns the \ccc{Vertex_handle} pointing to the level below.}
+
+\ccHeading{Setting}
+\ccThree{void}{v.set_up(std::vector<Vertex_handle> vvh)}{}
+
+\ccMethod{void set_up(std::vector<Vertex_handle> vv);}
+{Sets the \ccc{Vertex_handle}s pointing to the level above to \ccc{vv}.}
+\ccGlue
+\ccMethod{void set_down(Vertex_handle vh);}
+{Sets the \ccc{Vertex_handle} pointing to the level below to \ccc{vh}.}
+
+\ccHasModels
+
+\ccc{CGAL::Periodic_3_triangulation_hierarchy_vertex_base_3}
+
+%% \ccExample
+%% \ccIncludeExampleCode{Triangulation3/Triangulation_vb_prog.cpp}
+
+\end{ccRefConcept}

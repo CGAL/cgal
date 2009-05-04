@@ -1,0 +1,32 @@
+
+------- example_simple ---------------------------------------
+
+This example shows the incremental construction of a 3D triangulation, 
+the location of a point, and how to manipulate elementary operations
+on indices in a cell. It uses the default parameters proposed by
+CGAL for the Triangulation_3 class.
+
+--------------------------------------------------------------
+
+------- example_color ----------------------------------------
+
+This example shows how the user can plug his own vertex base in a
+triangulation.
+
+--------------------------------------------------------------
+
+------- example_adding_handles -------------------------------
+
+This example shows how the user can plug his own vertex base
+in a triangulation, when he needs to add handles in it.
+
+--------------------------------------------------------------
+
+------- example_find_conflicts -------------------------------
+
+Illustrates how the insertion process of points in a Delaunay
+triangulation can be decomposed in order to give access to the
+cells in conflict (those which would be destroyed by the insertion
+of a point) prior to deciding to do the actual insertion or not.
+TODO: this is not yet implemented like this
+--------------------------------------------------------------

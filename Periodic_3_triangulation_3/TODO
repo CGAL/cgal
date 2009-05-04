@@ -1,0 +1,6 @@
+General
+- Introduce hierarchy
+- Is Locate_type redundant?
+
+TEST-SUITE
+- Use gcov to improve code coverage
