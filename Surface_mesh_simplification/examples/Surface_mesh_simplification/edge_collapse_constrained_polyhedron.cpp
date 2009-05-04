@@ -29,10 +29,10 @@ class Constrains_map : public boost::put_get_helper<bool,Constrains_map>
 {
 public:
 
-  typedef boost::readable_property_map_tag                             category;
-  typedef bool                                                         value_type;
-  typedef bool                                                         reference;
-  typedef typename boost::graph_traits<Surface const>::edge_descriptor key_type;
+  typedef boost::readable_property_map_tag                    category;
+  typedef bool                                                value_type;
+  typedef bool                                                reference;
+  typedef boost::graph_traits<Surface const>::edge_descriptor key_type;
 
   Constrains_map() : mConstrains(false) {}
 
@@ -44,7 +44,7 @@ public:
   
 private:
   
-  typedef CGAL::Unique_hash_map<key_type,bool> mConstrains ;
+  CGAL::Unique_hash_map<key_type,bool> mConstrains ;
   
 };
 
