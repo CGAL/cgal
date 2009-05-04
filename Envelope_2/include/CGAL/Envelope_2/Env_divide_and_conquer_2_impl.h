@@ -771,9 +771,14 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
     }
     else
     {
-      // Note that the new vertex is incident to all curves in e1 and in e2.
-      new_v->add_curves (e1->curves_begin(), e1->curves_end());
-      new_v->add_curves (e2->curves_begin(), e2->curves_end());
+      // We add the curves from the original vertex and from the edge of the
+      // other diagram.
+      Vertex_const_handle v = (origin_of_v == SMALLER) ? e1->right() : 
+                                                         e2->right();
+      Edge_const_handle e = (origin_of_v == SMALLER) ? e2 : e1;
+
+      new_v->add_curves (v->curves_begin(), v->curves_end());
+      new_v->add_curves (e->curves_begin(), e->curves_end());
     }
     
     return;
