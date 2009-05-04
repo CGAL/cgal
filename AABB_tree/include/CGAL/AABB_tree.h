@@ -42,7 +42,7 @@ namespace CGAL {
         typedef typename AABBTraits::Point Point;
         typedef typename AABBTraits::Primitive Primitive;
         typedef typename AABBTraits::Bounding_box Bounding_box;
-        typedef typename std::pair<typename Point,typename Primitive> Point_and_primitive;
+        typedef std::pair<Point,Primitive> Point_and_primitive;
     private:
         // internal KD-tree used to accelerate the distance queries
         typedef AABB_search_tree<AABBTraits> Search_tree;
@@ -62,7 +62,7 @@ namespace CGAL {
 
         /// Clears the current tree and rebuilds the datastructure.
         /// Type ConstPrimitiveIterator can be any const iterator on
-        /// a container of Primitive::id_type such that Primitive has 
+        /// a container of Primitive::id_type such that Primitive has
         /// a constructor taking a ConstPrimitiveIterator as argument.
         /// Returns true if the memory allocation was successful.
         template<typename ConstPrimitiveIterator>
@@ -73,7 +73,7 @@ namespace CGAL {
 
         /// Clears the tree
         void clear(void)
-        { 
+        {
             m_data.clear();
             delete[] m_p_root;
             m_p_root = NULL;
@@ -84,7 +84,7 @@ namespace CGAL {
         template<typename ConstPointIterator>
         void construct_search_tree(ConstPointIterator first, ConstPointIterator beyond);
 
-        /// Construct internal search tree from 
+        /// Construct internal search tree from
         /// a point set taken on the internal primitives
         void construct_search_tree(void);
 
@@ -277,7 +277,7 @@ namespace CGAL {
         public:
             Distance_traits(const Point& query,
                             const Point& hint)
-                            : m_closest_point(hint), 
+                            : m_closest_point(hint),
                               m_sphere(AABBTraits().sphere(query,hint))
             {}
 
@@ -352,7 +352,7 @@ namespace CGAL {
     // Returns true upon successful memory allocation
     template<typename Tr>
     template<typename ConstPrimitiveIterator>
-    bool AABB_tree<Tr>::clear_and_insert(ConstPrimitiveIterator first, 
+    bool AABB_tree<Tr>::clear_and_insert(ConstPrimitiveIterator first,
                                          ConstPrimitiveIterator beyond)
     {
         clear();
@@ -495,7 +495,7 @@ namespace CGAL {
     template<typename Tr>
     typename AABB_tree<Tr>::Point
         AABB_tree<Tr>::closest_point(const Point& query,
-                                     const Point& hint) 
+                                     const Point& hint)
     {
         Distance_traits distance_traits(query,hint);
         this->traversal(query, distance_traits);
@@ -506,7 +506,7 @@ namespace CGAL {
     // first nearest neighbor point to get a hint
     template<typename Tr>
     typename AABB_tree<Tr>::Point
-        AABB_tree<Tr>::closest_point(const Point& query) 
+        AABB_tree<Tr>::closest_point(const Point& query)
     {
         // construct search KD-tree if needed
         Point hint;
