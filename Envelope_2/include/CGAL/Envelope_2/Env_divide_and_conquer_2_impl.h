@@ -70,16 +70,9 @@ _construct_envelope_non_vertical (Curve_pointer_iterator begin,
   else
   {
     // Divide the given range of curves into two.
+    std::size_t size = std::distance(begin, end);
     Curve_pointer_iterator  div_it = begin;
-    unsigned int            count = 0;
-    
-    for (iter = begin; iter != end; ++iter)
-    {
-      if (count % 2 == 0)
-        ++div_it;
-      
-      count++;
-    }
+    std::advance(div_it, size / 2);
     
     // Construct the diagrams (envelopes) for the two sub-ranges recursively 
     // and then merge the two diagrams to obtain the result.
