@@ -1,0 +1,49 @@
+\subsection{Surface Reconstruction}
+
+The two surface reconstruction methods fall into the category of the implicit surface reconstruction approaches in the sense that they both compute a scalar function whose iso-surface approximates the input oriented points.
+\begin{itemize}
+\item Delaunay-based Poisson reconstruction inspired
+      from \cite{Kazhdan06}. This method solves for
+      an approximate indicator function of the inferred
+      solid. The solving stage must be done once for all
+      before iso-contouring. % refer to basics?
+\item Algebraic point set surfaces \cite{Guennebaud07}.
+      This method falls into the category of so-called
+      point set surfaces, where the approximate
+      signed distance function to the inferred surface
+      can be evaluated at any query point, on the fly
+      during iso-contouring.
+\end{itemize}
+
+\ccRefIdfierPage{CGAL::Poisson_reconstruction_function<GeomTraits, ReconstructionTriangulation_3>}  \\
+\ccRefIdfierPage{CGAL::APSS_reconstruction_function<GeomTraits>}  \\
+
+% Insert image APSS.jpg/eps
+\begin{center}
+    \label{Surface_reconstruction_points_3-fig-APSS}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/APSS} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="50%" border=0 src="./APSS.jpg"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
+        \caption{APSS surface reconstruction from 10K
+                 points sampled with a Minolta laser scanner.}
+        % later: add computed function
+    \end{figure}
+\end{center}
+
+The computed implicit functions can be iso-contoured to reconstruct a surface by using the \cgal\ surface mesh generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}.
+
+\ccRefIdfierPage{CGAL::make_surface_mesh}  \\
+
+The parameter \ccc{Tag} affects the behavior of \ccc{make_surface_mesh()}: \\
+- \ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold surface without boundary.\\
+- \ccc{Manifold_with_boundary_tag}: the output mesh is guaranteed to be manifold and may have boundaries.\\
+- \ccc{Non_manifold_tag}: the output mesh has no guarantee and hence is outputted as a polygon soup.
+
+Example:
+See \ccc{poisson_reconstruction_example.cpp} example above.

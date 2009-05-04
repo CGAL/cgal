@@ -1,18 +1,8 @@
 \begin{ccPkgDescription}{Surface Reconstruction from Point Sets\label{Pkg:SurfaceReconstructionFromPointSets}}
 \ccPkgHowToCiteCgal{cgal:sal-pptsm2-08}
 \ccPkgSummary{
-This \cgal\ package implements some of the state-of-the-art surface
-reconstruction methods. Priority is given to methods
-which take as input unorganized point sets and
-which compute an implicit function.
 
-The package proposes an interface to the \cgal\ Surface Mesh Generator.
-
-The input is an unorganized point set with oriented normals.
-
-The output can be either an implicit function (ready for evaluation
-by any contouring algorithm), or a surface mesh.
-}
+This \cgal\ package implements two surface reconstruction methods. Both take as input a set of points with oriented normals and compute an implicit function. The \cgal\ surface mesh generator can then be used to extract an iso-surface from this function. 
 
 \ccPkgDependsOn{\ccThirdPartyTaucs}
 \ccPkgIntroducedInCGAL{3.5}
