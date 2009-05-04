@@ -81,9 +81,7 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 	        size_t number_of_intersected_primitives(const Query& query);}
 {Returns the number of primitives intersected by the query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{Traits}.}
 
-\ccMethod{template <class Query>
-	        int number_of_transversal_intersections(const Query& query);}
-{Returns the number of primitives intersected transversally by the query, if all intersections are transversal. Type \ccc{Query} must be a type for which \ccc{do_transversally_intersect} predicates are defined in the \ccc{Traits}. If any of the intersections is not transversal, the method returns the error code (a negative integer) returned by \ccc{do_transversally_intersect} at the first non-transversal intersection encountered.}
+%\ccMethod{template <class Query> size_t number_of_transversal_intersections(const Query& query);} {Returns the number of primitives intersected transversally by the query, if all intersections are transversal. Type \ccc{Query} must be a type for which \ccc{do_transversally_intersect} predicates are defined in the \ccc{Traits}. If any of the intersections is not transversal, the method returns the error code (a negative integer) returned by \ccc{do_transversally_intersect} at the first non-transversal intersection encountered.}
 
 \ccMethod{template <class Query, class OutputIterator>
 	        OutputIterator 
@@ -122,7 +120,7 @@ closest_point(const Point& query,
 \ccMethod{Primitive
 closest_primitive(const Point& query, 
                   const Primitive& hint);} 
-{Returns the primitive which realizes the smallest distance between the query point and all input primitives. See \ccc{closest_point} function for the optional \ccc{hint} parameter. }
+{Returns the primitive which realizes the smallest distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any input primitive (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{construct_search_tree} (see below), it is used to efficiently query the nearest hint point from the query. Otherwise a naive hint is taken as the first primitive. }
 
 \ccMethod{Point_and_primitive
 closest_point_and_primitive(const Point& query, 
