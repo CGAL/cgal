@@ -42,8 +42,14 @@ namespace CGAL {
         typedef typename Polyhedron::Halfedge_handle Id;
 
         /// Constructor
+        AABB_polyhedron_edge_primitive() {}
         AABB_polyhedron_edge_primitive(const Id& handle)
             : m_halfedge_handle(handle)  { };
+
+        AABB_polyhedron_edge_primitive(const AABB_polyhedron_edge_primitive& primitive)
+        {
+            m_halfedge_handle = primitive.id();
+        }
 
         // Default destructor, copy constructor and assignment operator are ok
 
@@ -56,7 +62,8 @@ namespace CGAL {
         }
 
         /// Returns the identifier
-        const Id id() const { return m_halfedge_handle; }
+        Id& id() { return m_halfedge_handle; }
+        const Id& id() const { return m_halfedge_handle; }
 
         /// Returns a point on the primitive
         Point reference_point() const

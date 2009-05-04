@@ -45,6 +45,11 @@ namespace CGAL {
         typedef AABB_polyhedron_triangle_primitive<GeomTraits, Polyhedron> Self;
 
         /// Constructors
+        AABB_polyhedron_triangle_primitive() {}
+        AABB_polyhedron_triangle_primitive(const AABB_polyhedron_triangle_primitive& primitive)
+        {
+            m_facet_handle = primitive.id();
+        }
         AABB_polyhedron_triangle_primitive(const Id& handle)
             : m_facet_handle(handle)  { };
 
@@ -66,7 +71,8 @@ namespace CGAL {
         }
 
         /// Returns the identifier
-        Id id() const { return m_facet_handle; }
+        const Id& id() const { return m_facet_handle; }
+        Id& id() { return m_facet_handle; }
 
     private:
         /// The id, here a polyhedron facet handle

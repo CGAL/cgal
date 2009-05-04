@@ -43,13 +43,20 @@ namespace CGAL {
 
         // constructor
     public:
+        AABB_triangle_primitive() {}
         AABB_triangle_primitive(Id it)
             : m_it(it)
         {
             m_datum = *it; // copy triangle
         }
+        AABB_triangle_primitive(const AABB_triangle_primitive& primitive)
+        {
+            m_datum = primitive.datum();
+            m_it = primitive.id();
+        }
     public:
-        Id id() { return m_it; }
+        Id& id() { return m_it; }
+        const Id& id() const { return m_it; }
         Datum& datum() { return m_datum; }
         const Datum& datum() const { return m_datum; }
 

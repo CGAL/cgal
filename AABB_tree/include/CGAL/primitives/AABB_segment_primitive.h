@@ -42,14 +42,21 @@ private:
         Datum m_datum; // 3D segment
 
 public:
-        // constructor
+        // constructors
+        AABB_segment_primitive() {}
         AABB_segment_primitive(Id it)
                 : m_it(it)
         {
                 m_datum = *it; // copy segment
         }
+        AABB_segment_primitive(const AABB_segment_primitive& primitive)
+        {
+                m_it = primitive.id();
+                m_datum = primitive.datum();
+        }
 public:
-        Id id() { return m_it; }
+        Id& id() { return m_it; }
+        const Id& id() const { return m_it; }
         Datum& datum() { return m_datum; }
         const Datum& datum() const { return m_datum; }
 
