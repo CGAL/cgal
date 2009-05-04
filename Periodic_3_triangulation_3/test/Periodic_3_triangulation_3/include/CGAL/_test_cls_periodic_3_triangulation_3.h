@@ -475,14 +475,13 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &T,
     assert(PT3.is_facet(facetv[n].first->vertex((facetv[n].second+1)&3),
 	    facetv[n].first->vertex((facetv[n].second+2)&3),
 	    facetv[n].first->vertex((facetv[n].second+3)&3),c,i,j,k));
-    // TODO: find the bug
-//     assert(PT3.is_facet(facetv[n].first->vertex((facetv[n].second+1)&3),
-// 	    PT3.periodic_point(facetv[n].first,(facetv[n].second+1)&3).second,
-// 	    facetv[n].first->vertex((facetv[n].second+2)&3),
-// 	    PT3.periodic_point(facetv[n].first,(facetv[n].second+2)&3).second,
-// 	    facetv[n].first->vertex((facetv[n].second+3)&3),
-// 	    PT3.periodic_point(facetv[n].first,(facetv[n].second+3)&3).second,
-// 	    c,i,j,k));
+    assert(PT3.is_facet(facetv[n].first->vertex((facetv[n].second+1)&3),
+ 	    PT3.periodic_point(facetv[n].first,(facetv[n].second+1)&3).second,
+ 	    facetv[n].first->vertex((facetv[n].second+2)&3),
+ 	    PT3.periodic_point(facetv[n].first,(facetv[n].second+2)&3).second,
+ 	    facetv[n].first->vertex((facetv[n].second+3)&3),
+ 	    PT3.periodic_point(facetv[n].first,(facetv[n].second+3)&3).second,
+ 	    c,i,j,k));
   }
   PT3.incident_edges(PT3.vertices_begin(),std::back_inserter(edgev));
   for (int n=0 ; n<edgev.size() ; n++) {
@@ -492,11 +491,10 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &T,
 	    == edgev[n].first->vertex(edgev[n].third)) );
     assert(PT3.is_edge(edgev[n].first->vertex(edgev[n].second),
 	    edgev[n].first->vertex(edgev[n].third),c,i,j));
-    // TODO: find the bug
-//     assert(PT3.is_edge(edgev[n].first->vertex(edgev[n].second),
-// 	    PT3.periodic_point(edgev[n].first,edgev[n].second).second,
-// 	    edgev[n].first->vertex(edgev[n].third),
-// 	    PT3.periodic_point(edgev[n].first,edgev[n].third).second,c,i,j));
+    assert(PT3.is_edge(edgev[n].first->vertex(edgev[n].second),
+ 	    PT3.periodic_point(edgev[n].first,edgev[n].second).second,
+ 	    edgev[n].first->vertex(edgev[n].third),
+ 	    PT3.periodic_point(edgev[n].first,edgev[n].third).second,c,i,j));
   }
   PT3.adjacent_vertices(PT3.vertices_begin(),std::back_inserter(vertexv));
   for (int n=0 ; n<vertexv.size() ; n++) {

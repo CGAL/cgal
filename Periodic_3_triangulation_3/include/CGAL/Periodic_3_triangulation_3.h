@@ -567,7 +567,22 @@ public:
 	       Vertex_handle v, const Offset & off_v,
       Cell_handle & c, int & i, int & j) const {
     if (!_tds.is_edge(u,v,c,i,j)) return false;
-    return ((get_offset(c,i) == off_u) && (get_offset(c,j) == off_v));
+    if ((get_offset(c,i) == off_u) && (get_offset(c,j) == off_v))
+      return true;
+    // it might be that different cells containing (u,v) yield
+    // different offsets, which forces us to test for all possibilities.
+    else {
+      Cell_circulator ccirc = incident_cells(c,i,j,c);
+      while (++ccirc != c) {
+	i = ccirc->index(u);
+	j = ccirc->index(v);
+	if ((get_offset(ccirc,i) == off_u) && (get_offset(ccirc,j) == off_v)) {
+	  c = ccirc;
+	  return true;
+	}
+      }
+      return false;
+    }
   }
   bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
       Cell_handle & c, int & i, int & j, int & k) const {
@@ -578,9 +593,22 @@ public:
 		Vertex_handle w, const Offset & off_w,
       Cell_handle & c, int & i, int & j, int & k) const {
     if (!_tds.is_facet(u,v,w,c,i,j,k)) return false;
-    return ((get_offset(c,i) == off_u)
-	    && (get_offset(c,j) == off_v)
-	    && (get_offset(c,k) == off_w) );
+    if ((get_offset(c,i) == off_u)
+	&& (get_offset(c,j) == off_v)
+	&& (get_offset(c,k) == off_w) )
+      return true;
+    // it might be that c and c->neighbor(l) yield different offsets
+    // which forces us to test for both possibilities.
+    else {
+      int l = 6-i-j-k;
+      c = c->neighbor(l);
+      i = c->index(u);
+      j = c->index(v);
+      k = c->index(w);      
+      return ((get_offset(c,i) == off_u)
+	  && (get_offset(c,j) == off_v)
+	  && (get_offset(c,k) == off_w) );
+    }
   }
   bool is_cell(Cell_handle c) const {
     return _tds.is_cell(c);
