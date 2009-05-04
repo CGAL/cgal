@@ -12,33 +12,33 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{AABB_tree<AABB_traits>}
+\begin{ccRefClass}{AABB_tree<AT>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The class \ccRefName\ is a static data structure for efficient intersection and distance computations in 3D. It builds a hierarchy of axis-aligned bounding boxes from a set of 3D geometric objects such as triangles, and can receive intersection and distance queries, provided that the corresponding predicates are implemented in the traits class. The template parameter must be a model of the concept \ccc{AABBTraits}.
+The class \ccRefName\ is a static data structure for efficient intersection and distance computations in 3D. It builds a hierarchy of axis-aligned bounding boxes from a set of 3D geometric objects such as triangles, and can receive intersection and distance queries, provided that the corresponding predicates are implemented in the traits class \ccc{AT}. The template parameter \ccc{AT} stands for a traits class which must be a model of the concept \ccc{AABBTraits}.
 
 \ccInclude{AABB_tree.h}
 
 \ccTypes
 
-\ccTypedef{typedef Traits::FT FT;}
+\ccTypedef{typedef AT::FT FT;}
           {Field number type.}
 \ccGlue
-\ccTypedef{typedef Traits::Point_3 Point;}
+\ccTypedef{typedef AT::Point_3 Point;}
           {Type of 3D point.}
 \ccGlue
-\ccTypedef{typedef Traits::Primitive Primitive;}
+\ccTypedef{typedef AT::Primitive Primitive;}
           {Type of input primitive.}
 \ccGlue
-\ccTypedef{typedef Traits::Bounding_box Bounding_box;}
+\ccTypedef{typedef AT::Bounding_box Bounding_box;}
           {Type of bounding box.}
 \ccGlue
-\ccTypedef{typedef std::pair<Point,Primitive> Point_and_primitive;}
-          {A pair composed of a point and a primitive.}
+\ccTypedef{typedef std::pair<Point, Primitive> Point_and_primitive}
+             {A pair composed of a point and a primitive.}
 
 %\ccNestedType{AABB}{some nested types}
 
@@ -46,19 +46,19 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 \ccCreationVariable{tree} %% variable name
 
 \ccConstructor{AABB_tree();}{Default constructor.}
-\ccConstructor{template < class InputIterator>
-       AABB_tree( InputIterator begin, 
-                  InputIterator beyond);}
-{Builds the datastructure. Type \ccc{InputIterator} can be any const iterator on a container of \ccc{Primitive::Datum} such that \ccc{Primitive} has a constructor taking a \ccc{InputIterator} as argument.}
+\ccConstructor{template < class ConstPrimitiveIterator>
+       AABB_tree( ConstPrimitiveIterator begin, 
+                  ConstPrimitiveIterator beyond);}
+{Builds the datastructure. Type \ccc{ConstPrimitiveIterator} can be any const iterator on a container of \ccc{Primitive::Object} such that \ccc{Primitive} has a constructor taking a \ccc{ConstPrimitiveIterator} as argument.}
 
 \ccOperations
 
-\ccMethod{template < class InputIterator>
-       bool clear_and_insert(InputIterator begin, 
-                             InputIterator beyond);}
-{Clears the current tree and rebuilds it from scratch. See constructor above for the parameters. Returns \ccc{true} iff, the memory allocation is successful. }
+\ccMethod{template < class ConstPrimitiveIterator>
+       bool rebuild(ConstPrimitiveIterator begin, 
+                    ConstPrimitiveIterator beyond);}
+{Clears the current tree and rebuilds it from scratch. See constructor above for the parameters. Returns \ccc{true}, iff the memory allocation is successful. }
 
-\ccMethod{void clear();}
+\ccMethod{void clear(void);}
 {Clears the AABB tree. }
 
 \ccMethod{Bounding_box bbox();}
@@ -68,31 +68,31 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 {Returns the number of primitives in the tree. }
 
 \ccMethod{bool empty();}
-{Returns \ccc{true} iff, tree contains no primitive. }
+{Returns \ccc{true}, iff tree contains no primitive. }
 
 % INTERSECTION TESTS
 \ccHeading{Intersection Tests}
 
 \ccMethod{template <class Query>
 	        bool do_intersect(const Query& query);}
-{ Returns \ccc{true} iff, the query intersects the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{Traits}.}
+{ Returns \ccc{true}, iff the query intersects the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 	
 \ccMethod{template <class Query>
 	        size_t number_of_intersected_primitives(const Query& query);}
-{Returns the number of primitives intersected by the query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{Traits}.}
+{Returns the number of primitives intersected by the query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 
-%\ccMethod{template <class Query> size_t number_of_transversal_intersections(const Query& query);} {Returns the number of primitives intersected transversally by the query, if all intersections are transversal. Type \ccc{Query} must be a type for which \ccc{do_transversally_intersect} predicates are defined in the \ccc{Traits}. If any of the intersections is not transversal, the method returns the error code (a negative integer) returned by \ccc{do_transversally_intersect} at the first non-transversal intersection encountered.}
+%\ccMethod{template <class Query> size_t number_of_transversal_intersections(const Query& query);} {Returns the number of primitives intersected transversally by the query, if all intersections are transversal. Type \ccc{Query} must be a type for which \ccc{do_transversally_intersect} predicates are defined in the \ccc{AT} class. If any of the intersections is not transversal, the method returns the error code (a negative integer) returned by \ccc{do_transversally_intersect} at the first non-transversal intersection encountered.}
 
 \ccMethod{template <class Query, class OutputIterator>
 	        OutputIterator 
           all_intersected_primitives(const Query& query,
                                      OutputIterator out);}
-{Outputs to the iterator the list of all intersected primitives. This function does not compute the intersection points and is hence faster than the function \ccc{all_intersections} function below. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{Traits}.}
+{Outputs to the iterator the list of all intersected primitives. This function does not compute the intersection points and is hence faster than the function \ccc{all_intersections} function below. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 
 \ccMethod{template <class Query>
-bool any_intersected_primitive(const Query& query,
-                               Primitive& primitive);}
-{Return \ccc{true} iff, the query intersects at least one of the input primitives. In the positive, saves the first encountered primitive to the second parameter. Type \ccc{Query} must be a type for which \ccc{do_intersect} and intersection predicates are defined in the \ccc{Traits}.}
+	        boost::optional<Primitive> any_intersected_primitive(const Query& query);}
+{Returns the first encountered intersected primitive, iff the query intersects at least one of the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} and intersection predicates are defined in the \ccc{AT} class.}
+
 
 % INTERSECTIONS
 \ccHeading{Intersections}
@@ -101,12 +101,12 @@ bool any_intersected_primitive(const Query& query,
 	        OutputIterator 
           all_intersections(const Query& query,
                             OutputIterator out);}
-{Outputs to the iterator the list of all intersections between the query and input data, as objects of type \ccc{Point_and_primitive}. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates and intersections are defined in the \ccc{Traits}.}
+{Outputs to the iterator the list of all intersections between the query and input data, as objects of type \ccc{Point_and_primitive}. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates and intersections are defined in the \ccc{AT} class.}
 
 \ccMethod{template <class Query>
-bool any_intersection(const Query& query,
-                      Point_and_primitive& point_and_primitive);}
-{Returns \ccc{true} iff, the query intersects at least one of the input primitives. In the positive, saves the first encountered intersection to the second parameter. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates and intersections are defined in the \ccc{Traits}.}
+	        boost::optional<Point_and_primitive> any_intersection(const Query& query);}
+{Returns the first encountered intersection, iff the query intersects at least one of the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates and intersections are defined in the \ccc{AT} class.}
+
 
 
 % DISTANCE QUERIES
@@ -132,6 +132,7 @@ squared_distance(const Point& query,
                  const Point& hint);} 
 {Returns the minimum squared distance between the query point and all input primitives. See \ccc{closest_point} function for the optional \ccc{hint} parameter. }
 
+
 \ccHeading{Accelerating the distance queries}
 
 \ccMethod{void construct_search_tree();}
@@ -141,7 +142,7 @@ squared_distance(const Point& query,
 \ccMethod{template <class InputIterator>
 void construct_search_tree(InputIterator begin,
                            InputIterator beyond);}
-{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Each point from the specified \ccc{Point_and_primitive} set should be located on the corresponding input primitive. For a triangle surface mesh this point set can be provided as the vertex points or as the triangle centroids.}
+{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Iterator \ccc{InputIterator} should have \ccc{Point_and_primitive} as value type. Each point from the specified \ccc{Point_and_primitive} set should be located on the corresponding input primitive. For a triangle surface mesh this point set can be provided as the vertex points or as the triangle centroids.}
 \end{ccAdvanced}
 
 \ccSeeAlso
