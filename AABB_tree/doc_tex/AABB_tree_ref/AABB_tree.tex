@@ -25,6 +25,9 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 
 \ccTypes
 
+\ccNestedType{size_type}
+             {Size type (unsigned integral type).}
+\ccGlue
 \ccTypedef{typedef AT::FT FT;}
           {Number type returned by the distance queries.}
 \ccGlue
@@ -37,7 +40,7 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 \ccTypedef{typedef AT::Bounding_box Bounding_box;}
           {Type of bounding box.}
 \ccGlue
-\ccTypedef{typedef std::pair<Point, Primitive> Point_and_primitive}
+\ccTypedef{typedef std::pair<Point, Primitive> Point_and_primitive;}
              {A pair composed of a point and a primitive.}
 
 %\ccNestedType{AABB}{some nested types}
@@ -64,7 +67,7 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 \ccMethod{Bounding_box bbox();}
 {Returns the axis-aligned bounding box of the whole tree. }
 
-\ccMethod{size_t size();}
+\ccMethod{size_type size();}
 {Returns the number of primitives in the tree. }
 
 \ccMethod{bool empty();}
@@ -78,10 +81,10 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 { Returns \ccc{true}, iff the query intersects the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 	
 \ccMethod{template <class Query>
-	        size_t number_of_intersected_primitives(const Query& query);}
+	        size_type number_of_intersected_primitives(const Query& query);}
 {Returns the number of primitives intersected by the query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 
-%\ccMethod{template <class Query> size_t number_of_transversal_intersections(const Query& query);} {Returns the number of primitives intersected transversally by the query, if all intersections are transversal. Type \ccc{Query} must be a type for which \ccc{do_transversally_intersect} predicates are defined in the \ccc{AT} class. If any of the intersections is not transversal, the method returns the error code (a negative integer) returned by \ccc{do_transversally_intersect} at the first non-transversal intersection encountered.}
+%\ccMethod{template <class Query> size_type number_of_transversal_intersections(const Query& query);} {Returns the number of primitives intersected transversally by the query, if all intersections are transversal. Type \ccc{Query} must be a type for which \ccc{do_transversally_intersect} predicates are defined in the \ccc{AT} class. If any of the intersections is not transversal, the method returns the error code (a negative integer) returned by \ccc{do_transversally_intersect} at the first non-transversal intersection encountered.}
 
 \ccMethod{template <class Query, class OutputIterator>
 	        OutputIterator 
