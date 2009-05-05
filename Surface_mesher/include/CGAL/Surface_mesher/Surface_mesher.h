@@ -1,5 +1,5 @@
 // Copyright (c) 2003-2007  INRIA Sophia-Antipolis (France).
-// Copyright (c) 2008       GeometryFactory, Sophia Antipolis (France)
+// Copyright (c) 2008-2009  GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -243,7 +243,9 @@ namespace CGAL {
     {
       if( zone.locate_type == Tr::VERTEX )
       {
-	std::cerr << boost::format("Error: (%1%) is already inserted on surface.\n") % p;
+        std::stringstream sstr;
+        sstr << "(" << p << ") is already inserted on surface.\n";
+        CGAL_error_msg(sstr.str().c_str());
 	return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
       }
       else
