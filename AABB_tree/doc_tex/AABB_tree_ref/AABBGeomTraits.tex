@@ -28,25 +28,31 @@ The concept \ccRefName\ defines the requirements for the first template paramete
 \ccTypes
 
 \ccNestedType{Bbox_3}{Bounding box type.}
+\ccNestedType{Point_3}{Point type.}
 
 \ccNestedType{Do_intersect_3} 
 {A functor object to detect intersections between two primitives.
 Provides the operators:
 \ccc{bool operator()(Type_1 type_1, Type_2 type_2);}
 where \ccc{Type_1} and \ccc{Type_2} are relevant types
-among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3}, \ccc{Triangle_3}, \ccc{Sphere_3}, \ccc{Plane_3} and \ccc{Bbox_3} \}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box, interior of a sphere), and a solid primitive is tested against another solid primitive (sphere against box, box against box). The operator returns \ccc{true} iff \ccc{type_1} and \ccc{type_2} have a non empty intersection.}
-
-\ccNestedType{Do_transversally_intersect_3} 
-{A functor object to detect transversal intersections between two primitives.
-Provides the operators:
-\ccc{int operator()(Type_1 type_1, Type_2 type_2);}
-where \ccc{Type_1} and \ccc{Type_2} are relevant types
-among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3} and \ccc{Triangle_3} \}. Relevant herein means that a line primitive (ray, segment, line) is tested against a triangle primitive. The operator returns 1 iff \ccc{type_1} and \ccc{type_2} have a transversal intersection. The operator returns 0 if \ccc{type_1} and \ccc{type_2} have no intersection. The operator returns -1 if a vertex of \ccc{type_1} belongs to \ccc{type_2}. The operator returns -2 in the other cases of non-transversal intersection (i.e. when \ccc{type_1} intersects the vertices or edges of \ccc{type_2} or when \ccc{type_1} intersects \ccc{type_2} tangentially).}
+among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3}, \ccc{Triangle_3}, \ccc{Sphere_3}, \ccc{Plane_3} and \ccc{Bbox_3}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box), and a solid primitive is tested against another solid primitive (interior of a sphere against box, interior of a sphere against triangle, box against box). The operator returns \ccc{true} iff \ccc{type_1} and \ccc{type_2} have a non empty intersection.}
 
 \ccNestedType{Intersect_3} 
 {A functor object to construct the intersection between two primitives.
 Provides the operators:
-\ccc{CGAL::Object operator()(Type_1 type_1, Type_2 type_2);} where \ccc{Type_1} and \ccc{Type_2} are any relevant types among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3},  \ccc{Triangle_3}, \ccc{Sphere_3}, \ccc{Plane_3} and \ccc{Bbox_3}. \}. The operator computes a \ccc{CGAL::Object} which is the intersection between the objects \ccc{type_1} and \ccc{type_2}.}
+\ccc{CGAL::Object operator()(Type_1 type_1, Type_2 type_2);} where \ccc{Type_1} and \ccc{Type_2} are any relevant types among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3},  \ccc{Triangle_3}, \ccc{Plane_3} and \ccc{Bbox_3}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box). The operator computes a \ccc{CGAL::Object} which is the intersection between the objects \ccc{type_1} and \ccc{type_2}.}
+
+\ccNestedType{Compare_distance_3} 
+{A functor object to compare distances between points and primitives.
+Provides the operators:
+\ccc{bool operator()(Point_3 p, Type type, Point_3 q);}
+where \ccc{Type} is any of the types among \ccc{Segment_3}, \ccc{Triangle_3} and \ccc{Bbox_3}. The operator returns \ccc{true} iff \ccc{type} is closer to \ccc{p} than \ccc{q} is.}
+
+\ccNestedType{Closest_point_3} 
+{A functor object to compute closest points on primitives.
+Provides the operators:
+\ccc{Point_3 operator()(Point_3 p, Type type, Point_3 q);}
+where \ccc{Type} is any of the types among \ccc{Segment_3} and \ccc{Triangle_3}. If \ccc{type} is closer to \ccc{p} than \ccc{q} is, the operator returns the point on \ccc{type} which is closest to \ccc{p}. Otherwise, the operator returns \ccc{q}.}
 
 \ccCreation
 \ccCreationVariable{geomtraits}  %% choose variable name
@@ -56,11 +62,14 @@ Provides the operators:
 \ccMethod{Do_intersect_3 do_intersect_3_object();}
 {Returns the intersection detection functor.}
 
-\ccMethod{Do_transversally_intersect_3 do_transversally_intersect_3_object();}
-{Returns the transversal intersection detection functor.}
-
 \ccMethod{Intersect_3 intersect_3_object();}
 {Returns the intersection constructor.}
+
+\ccMethod{Compare_distance_3 compare_distance_3_object();}
+{Returns the distance comparison functor.}
+
+\ccMethod{Closest_point_3 closest_point_3_object();}
+{Returns the closest point constructor.}
 
 \ccHasModels
 Any instantiation of \ccc{CGAL::Kernel} is a model of this traits concept.
