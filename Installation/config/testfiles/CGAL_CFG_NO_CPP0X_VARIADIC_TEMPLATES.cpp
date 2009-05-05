@@ -22,19 +22,18 @@
 
 #undef NDEBUG
 #include <cassert>
-//#include <iostream> // commented to speed up compilation.
 
-// This test should be re-evaluated for further GCC releases.
 // It is annoying that the test passes in non-std=c++0x mode, hence
 // triggering warnings all over the place.
-#if defined __GNUC__ && (__GNUC__ == 4) && (__GNUC_MINOR__ == 4) \
+// If GCC's non-c++0x mode finally rejects variadic templates at some point
+// in some future release, we will be able to refine the version check.
+#if defined __GNUC__ && (__GNUC__ == 4) && (__GNUC_MINOR__ >= 4) \
     && !defined __GXX_EXPERIMENTAL_CXX0X__
 #  error GCC needs -std=c++0x to enable variadic templates without warnings
 #endif
 
 double total = 0.0;
 
-// increment
 template < typename T >
 T inc(const T& i)
 {
@@ -42,25 +41,21 @@ T inc(const T& i)
   return i+T(1);
 }
 
-// print all args on std::cout
 void print() {}
 
 template < typename T, typename... Args >
 void print(const T&t, const Args&... args)
 {
-  //std::cout << t << std::endl;
   (void) t;
   print(args...);
 }
 
-// A mixture for testing
 void f() {}
 
 template < typename... Args >
 void f(const Args&... args)
 {
   print(inc(args)...);
-  //std::cout << std::endl;
 }
 
 int main()
