@@ -237,7 +237,7 @@ public:
     return Construct_circumcenter_3(&_domain);
   }
 
-protected:
+public:
   Iso_cuboid_3 _domain;
 };
 

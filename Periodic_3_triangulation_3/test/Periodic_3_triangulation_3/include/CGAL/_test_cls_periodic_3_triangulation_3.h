@@ -449,7 +449,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &T,
   std::vector<Edge> edgev;
   std::vector<Vertex_handle> vertexv;
   PT3.incident_cells(PT3.vertices_begin(),std::back_inserter(cellv));
-  for (int n=0 ; n<cellv.size() ; n++) {
+  for (unsigned int n=0 ; n<cellv.size() ; n++) {
     assert( (PT3.vertices_begin() == cellv[n]->vertex(0))
 	|| (PT3.vertices_begin() == cellv[n]->vertex(1))
 	|| (PT3.vertices_begin() == cellv[n]->vertex(2))
@@ -465,7 +465,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &T,
   }
 
   PT3.incident_facets(PT3.vertices_begin(),std::back_inserter(facetv));
-  for (int n=0 ; n<facetv.size() ; n++) {
+  for (unsigned int n=0 ; n<facetv.size() ; n++) {
     assert( (PT3.vertices_begin()
 	    == facetv[n].first->vertex((facetv[n].second+1)&3))
 	|| (PT3.vertices_begin()
@@ -484,7 +484,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &T,
  	    c,i,j,k));
   }
   PT3.incident_edges(PT3.vertices_begin(),std::back_inserter(edgev));
-  for (int n=0 ; n<edgev.size() ; n++) {
+  for (unsigned int n=0 ; n<edgev.size() ; n++) {
     assert( (PT3.vertices_begin()
 	    == edgev[n].first->vertex(edgev[n].second))
 	|| (PT3.vertices_begin()
@@ -497,7 +497,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &T,
  	    PT3.periodic_point(edgev[n].first,edgev[n].third).second,c,i,j));
   }
   PT3.adjacent_vertices(PT3.vertices_begin(),std::back_inserter(vertexv));
-  for (int n=0 ; n<vertexv.size() ; n++) {
+  for (unsigned int n=0 ; n<vertexv.size() ; n++) {
     assert(PT3.is_vertex(vertexv[n]));
     assert(PT3.is_edge(PT3.vertices_begin(),vertexv[n],c,i,j));
   }
@@ -511,7 +511,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &T,
   edgev.clear();
   vertexv.clear();
   PT1.incident_cells(PT1.vertices_begin(),std::back_inserter(cellv));
-  for (int n=0 ; n<cellv.size() ; n++) {
+  for (unsigned int n=0 ; n<cellv.size() ; n++) {
     assert( (PT1.vertices_begin() == cellv[n]->vertex(0))
 	|| (PT1.vertices_begin() == cellv[n]->vertex(1))
 	|| (PT1.vertices_begin() == cellv[n]->vertex(2))
@@ -527,7 +527,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &T,
   }
 
   PT1.incident_facets(PT1.vertices_begin(),std::back_inserter(facetv));
-  for (int n=0 ; n<facetv.size() ; n++) {
+  for (unsigned int n=0 ; n<facetv.size() ; n++) {
     assert( (PT1.vertices_begin()
 	    == facetv[n].first->vertex((facetv[n].second+1)&3))
 	|| (PT1.vertices_begin()
@@ -546,7 +546,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &T,
  	    c,i,j,k));
   }
   PT1.incident_edges(PT1.vertices_begin(),std::back_inserter(edgev));
-  for (int n=0 ; n<edgev.size() ; n++) {
+  for (unsigned int n=0 ; n<edgev.size() ; n++) {
     assert( (PT1.vertices_begin()
 	    == edgev[n].first->vertex(edgev[n].second))
 	|| (PT1.vertices_begin()
@@ -559,7 +559,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &T,
  	    PT1.periodic_point(edgev[n].first,edgev[n].third).second,c,i,j));
   }
   PT1.adjacent_vertices(PT1.vertices_begin(),std::back_inserter(vertexv));
-  for (int n=0 ; n<vertexv.size() ; n++) {
+  for (unsigned int n=0 ; n<vertexv.size() ; n++) {
     assert(PT1.is_vertex(vertexv[n]));
     assert(PT1.is_edge(PT1.vertices_begin(),vertexv[n],c,i,j));
   }

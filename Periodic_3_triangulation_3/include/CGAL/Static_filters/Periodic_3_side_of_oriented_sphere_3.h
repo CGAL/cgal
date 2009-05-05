@@ -48,7 +48,7 @@ public:
     SF_Periodic_3_side_of_oriented_sphere_3(const Iso_cuboid_3 * dom,
 					    const EX * dom_e,
 					    const AP * dom_f)
-    : _dom(dom), Base(dom_e,dom_f) { }
+      : Base(dom_e,dom_f), _dom(dom) { }
 
   Oriented_side
   operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r,

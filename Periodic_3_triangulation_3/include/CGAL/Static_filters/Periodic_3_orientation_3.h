@@ -50,8 +50,7 @@ public:
 
  template <class EX, class AP>
    SF_Periodic_3_orientation_3(const Iso_cuboid_3 * const dom,
-			       const EX * dom_e,
-			       const AP * dom_f) : _dom(dom), Base(dom_e,dom_f) {
+       const EX * dom_e, const AP * dom_f) : Base(dom_e,dom_f), _dom(dom) {
  }
 
 #ifndef CGAL_CFG_MATCHING_BUG_6

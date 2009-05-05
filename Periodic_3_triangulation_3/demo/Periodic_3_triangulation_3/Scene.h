@@ -231,6 +231,7 @@ public slots:
       rp.render(p3dt, pov_name, ini_name);
       delete [] pov_name;
     }
+    return true;
   }
 
 signals:

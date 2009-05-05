@@ -666,8 +666,6 @@ inline void Scene::remove_hole(Segment_set& sset) {
   p3dt.find_conflicts(moving_point, ch, std::back_inserter(outer_boundary),
 			    std::back_inserter(conflict_cells), std::back_inserter(inner_facets));
 
-  int cover = p3dt.number_of_sheets().at(0);
-
   for (unsigned int i=0 ; i<conflict_cells.size(); i++) {
     hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],0,1)));
     hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],0,2)));

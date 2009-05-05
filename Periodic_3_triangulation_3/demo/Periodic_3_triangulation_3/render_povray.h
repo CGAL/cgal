@@ -220,7 +220,7 @@ public:
     fprintf(pov, "#declare offsetz=0;\n");
 
     // write vertex positions
-    int nbv = pdt.number_of_vertices();
+    //int nbv = pdt.number_of_vertices();
     //fprintf(pov, "  vertex_vectors\n  {\n    %d,\n",nbv);
     for(Point_iterator vit = pdt.periodic_points_begin(PDT::UNIQUE);
 	vit != pdt.periodic_points_end(PDT::UNIQUE); vit++)
@@ -279,7 +279,7 @@ public:
 
     // write cube
     if (ddomain) {
-      std::vector<char *> cube_edges;
+      std::vector<const char *> cube_edges;
       cube_edges.push_back("    < 0., 0., 0. >, < 1., 0., 0. >, 0.01\n");
       cube_edges.push_back("    < 0., 0., 0. >, < 0., 1., 0. >, 0.01\n");
       cube_edges.push_back("    < 1., 0., 0. >, < 1., 1., 0. >, 0.01\n");
@@ -293,7 +293,7 @@ public:
       cube_edges.push_back("    < 1., 0., 1. >, < 1., 1., 1. >, 0.01\n");
       cube_edges.push_back("    < 0., 1., 1. >, < 1., 1., 1. >, 0.01\n");
    
-      for (int i=0 ; i<cube_edges.size() ; i++) {
+      for (unsigned int i=0 ; i<cube_edges.size() ; i++) {
 	fprintf(pov, "cylinder \n");
 	fprintf(pov, "{\n");
 	fprintf(pov, cube_edges[i]);
@@ -302,7 +302,7 @@ public:
 	fprintf(pov, "}\n\n");
       }
 
-      std::vector<char *> cube_vertices;
+      std::vector<const char *> cube_vertices;
       cube_vertices.push_back("    < 0., 0., 0. >, 0.01\n");
       cube_vertices.push_back("    < 0., 0., 1. >, 0.01\n");
       cube_vertices.push_back("    < 0., 1., 0. >, 0.01\n");
@@ -312,7 +312,7 @@ public:
       cube_vertices.push_back("    < 1., 1., 0. >, 0.01\n");
       cube_vertices.push_back("    < 1., 1., 1. >, 0.01\n");
 
-      for (int i=0 ; i<cube_vertices.size() ; i++) {
+      for (unsigned int i=0 ; i<cube_vertices.size() ; i++) {
 	fprintf(pov, "sphere \n");
 	fprintf(pov, "{\n");
 	fprintf(pov, cube_vertices[i]);

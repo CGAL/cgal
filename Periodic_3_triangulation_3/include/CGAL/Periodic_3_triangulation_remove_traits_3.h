@@ -128,12 +128,6 @@ public:
   PT _pt;
 };
 
-template < class BarePoint, class Offset >
-std::ostream&
-operator<<(std::ostream &os, const std::pair<BarePoint, Offset> ppt) {
-  os << ppt.second << '\t' << ppt.first;
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_REMOVE_TRAITS_3_H

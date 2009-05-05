@@ -40,6 +40,8 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   typedef typename P3T3::Geometric_traits              GT;
   typedef typename P3T3::Triangulation_data_structure  TDS;
 
+  typedef typename GT::FT                              FT;
+
   typedef typename P3T3::Offset               Offset;
   typedef typename P3T3::Covering_sheets      Covering_sheets;
   typedef typename P3T3::Iso_cuboid           Iso_cuboid;
@@ -307,14 +309,14 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   std::cout << "  Nearest vertex"<< std::endl;
 
   vh = PT.nearest_vertex(Point(0,0,0));
-  assert(Segment(vh->point(),Point(0,0,0)).squared_length() < 0.25);
+  assert(Segment(vh->point(),Point(0,0,0)).squared_length() < FT(0.25));
   assert(PT.nearest_vertex(Point( 1, 1, 1))
       == PT.nearest_vertex(Point( 1,-1,-1)));
 
   vh = PT.nearest_vertex_in_cell(vh->cell(),Point(0,0,0));
-  assert(Segment(vh->point(),Point(0,0,0)).squared_length() < 0.25);
+  assert(Segment(vh->point(),Point(0,0,0)).squared_length() < FT(0.25));
   vh = PT.nearest_vertex_in_cell(vh->cell(),Point(0,0,0),Offset(1,0,0));
-  assert(Segment(vh->point(),Point(0,0,0)).squared_length() > 0.25);
+  assert(Segment(vh->point(),Point(0,0,0)).squared_length() > FT(0.25));
 
   std::cout << "  Conflict region"<< std::endl;
   std::vector<Facet> bd_facets;
@@ -322,17 +324,17 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   std::vector<Facet> int_facets;
   PT.find_conflicts(Point(-1,-1,1),ch,std::back_inserter(bd_facets),
       std::back_inserter(conflict_cells),std::back_inserter(int_facets));
-  for (int i=0 ; i<bd_facets.size() ; i++) {
+  for (unsigned int i=0 ; i<bd_facets.size() ; i++) {
     assert( (PT.side_of_sphere(bd_facets[i].first,Point(-1,-1,1))
 	    == CGAL::ON_BOUNDED_SIDE)
 	^ (PT.side_of_sphere(bd_facets[i].first->neighbor(bd_facets[i].second),
 		Point(-1,-1,1)) == CGAL::ON_BOUNDED_SIDE) );
   }
-  for (int i=0 ; i<conflict_cells.size() ; i++) {
+  for (unsigned int i=0 ; i<conflict_cells.size() ; i++) {
     assert( PT.side_of_sphere(conflict_cells[i],Point(-1,-1,1))
 	== CGAL::ON_BOUNDED_SIDE);
   }
-  for (int i=0 ; i<int_facets.size() ; i++) {
+  for (unsigned int i=0 ; i<int_facets.size() ; i++) {
     assert((PT.side_of_sphere(int_facets[i].first,Point(-1,-1,1))
 	    == CGAL::ON_BOUNDED_SIDE) );
     assert((PT.side_of_sphere(int_facets[i].first->neighbor(
