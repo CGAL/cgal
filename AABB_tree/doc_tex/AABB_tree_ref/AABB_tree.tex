@@ -136,7 +136,7 @@ squared_distance(const Point& query,
 \ccHeading{Accelerating the distance queries}
 
 \ccMethod{void construct_search_tree();}
-{ Constructs the internal search KD-tree used to accelerate the distance queries. The points in the search tree are taken from the primitives by calling the member function \ccc{point_on} from the primitive.}
+{ Constructs the internal search KD-tree used to accelerate the distance queries. The points in the search tree are taken from the primitives by calling the member function \ccc{reference_point} from the primitive.}
 
 \begin{ccAdvanced}
 \ccMethod{template <class InputIterator>
