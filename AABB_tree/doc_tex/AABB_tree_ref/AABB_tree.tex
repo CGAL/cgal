@@ -49,16 +49,16 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 \ccCreationVariable{tree} %% variable name
 
 \ccConstructor{AABB_tree();}{Constructs an empty tree.}
-\ccConstructor{template < class ConstPrimitiveIterator>
-       AABB_tree( ConstPrimitiveIterator begin, 
-                  ConstPrimitiveIterator beyond);}
-{Builds the datastructure. Type \ccc{ConstPrimitiveIterator} can be any const iterator on a container of \ccc{Primitive::Object} such that \ccc{Primitive} has a constructor taking a \ccc{ConstPrimitiveIterator} as argument.}
+\ccConstructor{template < class InputIterator>
+       AABB_tree( InputIterator begin, 
+                  InputIterator beyond);}
+{Builds the AABB tree data structure. Type \ccc{InputIterator} can be any const iterator on a container of \ccc{Primitive::Object} such that \ccc{Primitive} has a constructor taking a \ccc{InputIterator} as argument.}
 
 \ccOperations
 
-\ccMethod{template < class ConstPrimitiveIterator>
-       bool rebuild(ConstPrimitiveIterator begin, 
-                    ConstPrimitiveIterator beyond);}
+\ccMethod{template < class InputIterator>
+       bool rebuild(InputIterator begin, 
+                    InputIterator beyond);}
 {Clears the current tree and rebuilds it from scratch. See constructor above for the parameters. Returns \ccc{true}, iff the memory allocation is successful. }
 
 \ccMethod{void clear();}
@@ -145,7 +145,7 @@ squared_distance(const Point& query,
 \ccMethod{template <class InputIterator>
 void construct_search_tree(InputIterator begin,
                            InputIterator beyond);}
-{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Iterator \ccc{InputIterator} should have \ccc{Point_and_primitive} as value type. Each point from the specified \ccc{Point_and_primitive} set should be located on the corresponding input primitive. For a triangle surface mesh this point set can be provided as the vertex points or as the triangle centroids.}
+{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Iterator \ccc{InputIterator} should have \ccc{Point_and_primitive} as value type. Each point from the specified \ccc{Point_and_primitive} set should be located on the corresponding input primitive. For a triangle surface mesh this point set can be provided, e.g., as the vertex points or as the triangle centroids.}
 \end{ccAdvanced}
 
 \ccSeeAlso

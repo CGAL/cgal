@@ -1,17 +1,16 @@
 * text=auto !eol
-AABB_tree/doc_tex/AABB_tree/AABB_tree_user.tex -text
 AABB_tree/doc_tex/AABB_tree/PkgDescription.tex -text
-AABB_tree/doc_tex/AABB_tree/api.tex -text
+AABB_tree/doc_tex/AABB_tree/anchor.eps -text
+AABB_tree/doc_tex/AABB_tree/anchor.jpg -text
+AABB_tree/doc_tex/AABB_tree/anchor.png -text
+AABB_tree/doc_tex/AABB_tree/anchor.ppt -text
 AABB_tree/doc_tex/AABB_tree/cut-onion.off -text
 AABB_tree/doc_tex/AABB_tree/details.tex -text
 AABB_tree/doc_tex/AABB_tree/examples.tex -text
+AABB_tree/doc_tex/AABB_tree/interface.tex -text
 AABB_tree/doc_tex/AABB_tree/intersections.ppt -text
-AABB_tree/doc_tex/AABB_tree/intro.tex -text
+AABB_tree/doc_tex/AABB_tree/introduction.tex -text
 AABB_tree/doc_tex/AABB_tree/main.tex -text
-AABB_tree/doc_tex/AABB_tree/shark.eps -text
-AABB_tree/doc_tex/AABB_tree/shark.jpg -text
-AABB_tree/doc_tex/AABB_tree/shark.png -text
-AABB_tree/doc_tex/AABB_tree/shark.ppt -text
 AABB_tree/doc_tex/AABB_tree_ref/AABBGeomTraits.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABBPrimitive.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABBTraits.tex -text
