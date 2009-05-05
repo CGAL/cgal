@@ -291,9 +291,6 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   // Save original normals for visual comparison
   for (int i=0; i<m_points.size(); i++)
     m_points[i].original_normal() = m_points[i].normal();
-    
-  // Mark all normals as oriented
-  m_points.unoriented_points_begin() = m_points.end();
 
   m_points.invalidate_bounds();
   m_edit_mode = POINT_SET;
@@ -604,7 +601,8 @@ bool CPoissonDoc::verify_normal_direction()
       if (cos_normal_deviation < 0)
       {
         cos_normal_deviation = -cos_normal_deviation;
-        p->normal() = -v2;
+        assert( ! p->normal().is_oriented() );
+        p->normal() = Normal(-v2, false /*non oriented*/);
       }
       double normal_deviation = std::acos(cos_normal_deviation);
       assert(normal_deviation >= 0 && normal_deviation <= M_PI/2.);
@@ -657,9 +655,6 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
                              m_points.normals_begin(),
                              nb_neighbors);
 
-  // Mark all normals as unoriented
-  m_points.unoriented_points_begin() = m_points.begin();
-
   status_message("Estimate Normals Direction by PCA...done (%.2lf s)", task_timer.time());
 
   // Check the accuracy of normals direction estimation.
@@ -696,9 +691,6 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
                              m_points.normals_begin(),
                              nb_neighbors);
 
-  // Mark all normals as unoriented
-  m_points.unoriented_points_begin() = m_points.begin();
-
   status_message("Estimate Normals Direction by Jet Fitting...done (%.2lf s)", task_timer.time());
 
   // Check the accuracy of normals direction estimation.
@@ -722,15 +714,23 @@ bool CPoissonDoc::verify_normal_orientation()
 {
   bool success = true;
 
-  // Unselect all points
   m_points.select(m_points.begin(), m_points.end(), false);
 
   // Count and select non-oriented normals
   int unoriented_normals = 0;
-  for (Point_set::iterator p = m_points.unoriented_points_begin(); p != m_points.end(); p++)
+  for (Point_set::iterator p = m_points.begin(); p != m_points.end(); p++)
   {
+    // Check unit vector
+    Vector v = p->normal();
+    double norm = std::sqrt( v*v );
+    assert(norm > 0.99 || norm < 1.01);
+
+    // Check orientation
+    if ( ! p->normal().is_oriented() )
+    {
       m_points.select(&*p);
       unoriented_normals++;
+    }
   }
   if (unoriented_normals > 0)
   {
@@ -738,7 +738,7 @@ bool CPoissonDoc::verify_normal_orientation()
     success = false;
   }
 
-  // Compare oriented normals with original ones and select flipped normals
+  // If original normals are available, compare with them and select flipped normals
   assert(m_points.begin() != m_points.end());
   bool points_have_original_normals = (m_points.begin()->original_normal() != CGAL::NULL_VECTOR);
   if (points_have_original_normals)
@@ -746,7 +746,7 @@ bool CPoissonDoc::verify_normal_orientation()
     std::cerr << "Compare with original normals:" << std::endl;
 
     int flipped_normals = 0; // #normals with wrong orientation
-    for (Point_set::iterator p = m_points.begin(); p != m_points.unoriented_points_begin(); p++)
+    for (Point_set::iterator p = m_points.begin(); p != m_points.end(); p++)
     {
       Vector v1 = p->original_normal(); // input normal
       double norm1 = std::sqrt( v1*v1 );
@@ -755,7 +755,8 @@ bool CPoissonDoc::verify_normal_orientation()
       double norm2 = std::sqrt( v2*v2 );
       assert(norm2 != 0.0);
       double cos_normal_deviation = (v1*v2)/(norm1*norm2);
-      if (cos_normal_deviation < 0) // if flipped
+      if (cos_normal_deviation < 0 // if flipped
+       && p->normal().is_oriented()) // unoriented normals are already reported
       {
         m_points.select(&*p);
         flipped_normals++;
@@ -778,10 +779,15 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
   status_message("Orient Normals with a Minimum Spanning Tree (k=%d)...", m_nb_neighbors_mst);
   CGAL::Timer task_timer; task_timer.start();
 
-  m_points.unoriented_points_begin() = 
-    CGAL::mst_orient_normals(m_points.begin(), m_points.end(),
-                             m_nb_neighbors_mst, 
-                             get(boost::vertex_index, m_points));
+  // Mark all normals as unoriented
+  for (Point_set::iterator p = m_points.begin(); p != m_points.end(); p++)
+    p->normal().set_orientation(false);
+
+  CGAL::mst_orient_normals(m_points.begin(), m_points.end(),
+                           get(boost::vertex_index, m_points),
+                           get(CGAL::vertex_point, m_points),
+                           get(boost::vertex_normal, m_points),
+                           m_nb_neighbors_mst);
 
   status_message("Orient Normals with a Minimum Spanning Tree...done (%.2lf s)", task_timer.time());
 
@@ -809,8 +815,10 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
   status_message("Orient Normals wrt Cameras...");
   CGAL::Timer task_timer; task_timer.start();
 
-  m_points.unoriented_points_begin() = 
-    orient_normals_wrt_cameras(m_points.begin(), m_points.end());
+  normal_orientation_wrt_cameras(m_points.begin(), m_points.end(),
+                                 get(CGAL::vertex_point, m_points),
+                                 get(boost::vertex_normal, m_points),
+                                 get(boost::vertex_cameras, m_points));
 
   status_message("Orient Normals wrt Cameras...done (%.2lf s)", task_timer.time());
 
@@ -1018,7 +1026,7 @@ void CPoissonDoc::OnUpdateOneStepPoissonReconstructionWithNormalizedDivergence(C
 {
   assert(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
-  bool normals_are_oriented = (m_points.begin() != m_points.unoriented_points_begin());
+  bool normals_are_oriented = m_points.begin()->normal().is_oriented();
   pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == POISSON)
                  && points_have_normals /* && normals_are_oriented */);
 }
@@ -1032,11 +1040,11 @@ void CPoissonDoc::OnAlgorithmsOutlierRemovalWrtCamerasConeAngle()
 
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
-  Point_set::iterator first_point_to_remove =
+  Point_set::iterator first_iterator_to_remove =
     remove_outliers_wrt_camera_cone_angle(
             m_points.begin(), m_points.end(),
             m_min_cameras_cone_angle*M_PI/180.0);
-  m_points.select(first_point_to_remove, m_points.end(), true);
+  m_points.select(first_iterator_to_remove, m_points.end(), true);
 
   status_message("Remove outliers / cameras cone's angle...done (%.2lf s)", task_timer.time());
   update_status();
@@ -1071,12 +1079,12 @@ void CPoissonDoc::OnOutlierRemoval()
 
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
-  Point_set::iterator first_point_to_remove =
+  Point_set::iterator first_iterator_to_remove =
     CGAL::remove_outliers(
             m_points.begin(), m_points.end(),
             nb_neighbors,
             m_threshold_percent_avg_knn_sq_dst);
-  m_points.select(first_point_to_remove, m_points.end(), true);
+  m_points.select(first_iterator_to_remove, m_points.end(), true);
 
   status_message("Remove outliers wrt average squared distance to k nearest neighbors...done (%.2lf s)", task_timer.time());
   update_status();
@@ -1182,7 +1190,7 @@ void CPoissonDoc::OnUpdateReconstructionApssReconstruction(CCmdUI *pCmdUI)
 {
   assert(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
-  bool normals_are_oriented = (m_points.begin() != m_points.unoriented_points_begin());
+  bool normals_are_oriented = m_points.begin()->normal().is_oriented();
   pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == APSS)
                  && points_have_normals /* && normals_are_oriented */);
 }
@@ -1247,11 +1255,11 @@ void CPoissonDoc::OnPointCloudSimplificationByClustering()
 
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
-  Point_set::iterator first_point_to_remove =
+  Point_set::iterator first_iterator_to_remove =
     CGAL::merge_simplify_point_set(
             m_points.begin(), m_points.end(),
             m_clustering_step*size);
-  m_points.select(first_point_to_remove, m_points.end(), true);
+  m_points.select(first_iterator_to_remove, m_points.end(), true);
 
   status_message("Point cloud simplification by clustering...done (%.2lf s)", task_timer.time());
   update_status();
@@ -1272,11 +1280,11 @@ void CPoissonDoc::OnPointCloudSimplificationRandom()
 
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
-  Point_set::iterator first_point_to_remove =
+  Point_set::iterator first_iterator_to_remove =
     CGAL::random_simplify_point_set(
             m_points.begin(), m_points.end(),
             m_random_simplification_percentage);
-  m_points.select(first_point_to_remove, m_points.end(), true);
+  m_points.select(first_iterator_to_remove, m_points.end(), true);
 
   status_message("Random point cloud simplification...done (%.2lf s)", task_timer.time());
   update_status();
@@ -1295,8 +1303,10 @@ void CPoissonDoc::OnRadialNormalOrientation()
   status_message("Radial Normal Orientation...");
   CGAL::Timer task_timer; task_timer.start();
 
-  m_points.unoriented_points_begin() = 
-    CGAL::radial_orient_normals(m_points.begin(), m_points.end());
+  CGAL::radial_orient_normals(m_points.begin(), m_points.end(),
+                              get(boost::vertex_index, m_points),
+                              get(CGAL::vertex_point, m_points),
+                              get(boost::vertex_normal, m_points));
 
   status_message("Radial Normal Orientation...done (%.2lf s)", task_timer.time());
 
