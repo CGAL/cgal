@@ -26,7 +26,7 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 \ccTypes
 
 \ccTypedef{typedef AT::FT FT;}
-          {Field number type.}
+          {Number type returned by the distance queries.}
 \ccGlue
 \ccTypedef{typedef AT::Point_3 Point;}
           {Type of 3D point.}
@@ -45,7 +45,7 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 \ccCreation
 \ccCreationVariable{tree} %% variable name
 
-\ccConstructor{AABB_tree();}{Default constructor.}
+\ccConstructor{AABB_tree();}{Constructs an empty tree.}
 \ccConstructor{template < class ConstPrimitiveIterator>
        AABB_tree( ConstPrimitiveIterator begin, 
                   ConstPrimitiveIterator beyond);}
@@ -58,7 +58,7 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
                     ConstPrimitiveIterator beyond);}
 {Clears the current tree and rebuilds it from scratch. See constructor above for the parameters. Returns \ccc{true}, iff the memory allocation is successful. }
 
-\ccMethod{void clear(void);}
+\ccMethod{void clear();}
 {Clears the AABB tree. }
 
 \ccMethod{Bounding_box bbox();}
