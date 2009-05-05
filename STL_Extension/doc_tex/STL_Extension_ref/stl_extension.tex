@@ -220,9 +220,9 @@
 
   \ccTypes
 
-  \ccTypedef{typedef V Value_types_tuple;}{}
+  \ccTypedef{typedef V Value_type_tuple;}{}
   \ccGlue
-  \ccTypedef{typedef O Iterators_tuple;}{}
+  \ccTypedef{typedef O Iterator_tuple;}{}
 
   \ccCreation
 
@@ -230,7 +230,7 @@
 
   \ccConstructor{Dispatch_output_iterator(I...o);}{Constructor taking all the output iterators.}
 
-  \ccMemberFunction{const Iterators_tuple& get_iterator_tuple() const;}
+  \ccMemberFunction{const Iterator_tuple& get_iterator_tuple() const;}
   {returns a reference to the tuple of output iterators.}
 
   \ccFunction{template < typename... V, typename... O>
@@ -267,9 +267,9 @@
 
   \ccTypes
 
-  \ccTypedef{typedef V Value_types_tuple;}{}
+  \ccTypedef{typedef V Value_type_tuple;}{}
   \ccGlue
-  \ccTypedef{typedef O Iterators_tuple;}{}
+  \ccTypedef{typedef O Iterator_tuple;}{}
 
   \ccCreation
 
@@ -277,7 +277,7 @@
 
   \ccConstructor{Dispatch_or_drop_output_iterator(I...o);}{Constructor taking all the output iterators.}
 
-  \ccMemberFunction{const Iterators_tuple& get_iterator_tuple() const;}
+  \ccMemberFunction{const Iterator_tuple& get_iterator_tuple() const;}
   {returns a reference to the tuple of output iterators.}
 
   \ccFunction{template < typename... V, typename... O>

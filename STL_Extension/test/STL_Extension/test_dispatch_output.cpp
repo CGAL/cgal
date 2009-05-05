@@ -11,8 +11,8 @@ struct B{};
 
 template<class output>
 void check_types(output out){
-  typedef typename output::Iterators_tuple T1;
-	typedef typename output::Value_types_tuple T2;
+  typedef typename output::Iterator_tuple T1;
+  typedef typename output::Value_type_tuple T2;
   typedef typename output::iterator_category T3;
   typedef typename output::value_type T4;
   typedef typename output::difference_type T5;
@@ -42,12 +42,12 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
   Dispatcher disp=CGAL::dispatch_output<T1,T2>( cont_1,std::back_inserter(cont_2) );
   Dropper drop=CGAL::dispatch_or_drop_output<T1,T2>( cont_1,std::back_inserter(cont_2) );
   
-  assert( (CGAL::Is_in_tuple<T1,typename Dispatcher::Value_types_tuple >::value) );
-  assert( (CGAL::Is_in_tuple<T2,typename Dispatcher::Value_types_tuple >::value) );
-  assert( (!CGAL::Is_in_tuple<A,typename Dispatcher::Value_types_tuple >::value) );
-  assert( (CGAL::Is_in_tuple<T1,typename Dropper::Value_types_tuple >::value) );
-  assert( (CGAL::Is_in_tuple<T2,typename Dropper::Value_types_tuple >::value) );
-  assert( (!CGAL::Is_in_tuple<A,typename Dropper::Value_types_tuple >::value) );
+  assert( (CGAL::Is_in_tuple<T1,typename Dispatcher::Value_type_tuple >::value) );
+  assert( (CGAL::Is_in_tuple<T2,typename Dispatcher::Value_type_tuple >::value) );
+  assert( (!CGAL::Is_in_tuple<A,typename Dispatcher::Value_type_tuple >::value) );
+  assert( (CGAL::Is_in_tuple<T1,typename Dropper::Value_type_tuple >::value) );
+  assert( (CGAL::Is_in_tuple<T2,typename Dropper::Value_type_tuple >::value) );
+  assert( (!CGAL::Is_in_tuple<A,typename Dropper::Value_type_tuple >::value) );
 
 
   std::copy(data1.begin(),data1.end(),disp);

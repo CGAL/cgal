@@ -1200,7 +1200,7 @@ struct Derivator<D, cpp0x::tuple<V1, V...>, cpp0x::tuple<O1, O...> >
   
   D& operator=(const V1& v)
   {
-    * cpp0x::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterators_tuple&>(static_cast<D&>(*this))) ++ = v;
+    * cpp0x::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = v;
     return static_cast<D&>(*this);
   }
 };
@@ -1228,8 +1228,8 @@ class Dispatch_output_iterator < cpp0x::tuple<V...>, cpp0x::tuple<O...> >
 
 public:
 
-  typedef cpp0x::tuple<O...>               Iterators_tuple;
-  typedef cpp0x::tuple<V...>               Value_types_tuple;
+  typedef cpp0x::tuple<O...>               Iterator_tuple;
+  typedef cpp0x::tuple<V...>               Value_type_tuple;
 
   typedef std::output_iterator_tag  iterator_category;
   typedef void                      value_type;
@@ -1240,7 +1240,7 @@ public:
 private:
 
   typedef Dispatch_output_iterator Self;
-  typedef CGALi::Derivator<Self, Value_types_tuple, Iterators_tuple > Base;
+  typedef CGALi::Derivator<Self, Value_type_tuple, Iterator_tuple > Base;
 
 public:
 
@@ -1250,7 +1250,7 @@ public:
 
   Self& operator=(const Self& s)
   {
-    static_cast<Iterators_tuple&>(*this) = static_cast<const Iterators_tuple&>(s);
+    static_cast<Iterator_tuple&>(*this) = static_cast<const Iterator_tuple&>(s);
     return *this;
   }
 
@@ -1258,7 +1258,7 @@ public:
   Self& operator++(int) { return *this; }
   Self& operator*() { return *this; }
 
-  const Iterators_tuple& get_iterator_tuple() const { return *this; }
+  const Iterator_tuple& get_iterator_tuple() const { return *this; }
 };
 
 template < typename... V, typename... O>
@@ -1321,8 +1321,8 @@ class Dispatch_output_iterator<cpp0x::tuple<V1,V2>,cpp0x::tuple<O1,O2> >:public 
   typedef Dispatch_output_iterator Self;
   
 public:
-  typedef cpp0x::tuple<V1,V2> Value_types_tuple;
-  typedef cpp0x::tuple<O1,O2> Iterators_tuple;
+  typedef cpp0x::tuple<V1,V2> Value_type_tuple;
+  typedef cpp0x::tuple<O1,O2> Iterator_tuple;
   typedef std::output_iterator_tag iterator_category;
   typedef void                     value_type;
   typedef void                     difference_type;
@@ -1334,24 +1334,24 @@ public:
   Self& operator++(){ return *this; } 
   Self& operator++(int){ return *this; }  
   
-  Dispatch_output_iterator(O1 out1,O2 out2):Iterators_tuple(out1,out2){}
+  Dispatch_output_iterator(O1 out1,O2 out2):Iterator_tuple(out1,out2){}
   
   Self& operator=(const V1& obj){
-    *cpp0x::get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
   
   Self& operator=(const V2& obj){
-    *cpp0x::get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
   
   Self& operator=(const Self& s){
-    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
-  const Iterators_tuple& get_iterator_tuple() const
+  const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
 };
@@ -1406,8 +1406,8 @@ class Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3>,cpp0x::tuple<O1,O2,O3> >:p
   typedef Dispatch_output_iterator Self;
   
 public:
-  typedef cpp0x::tuple<V1,V2,V3> Value_types_tuple;
-  typedef cpp0x::tuple<O1,O2,O3> Iterators_tuple;
+  typedef cpp0x::tuple<V1,V2,V3> Value_type_tuple;
+  typedef cpp0x::tuple<O1,O2,O3> Iterator_tuple;
   typedef std::output_iterator_tag iterator_category;
   typedef void                     value_type;
   typedef void                     difference_type;
@@ -1419,29 +1419,29 @@ public:
   Self& operator++(){ return *this; } 
   Self& operator++(int){ return *this; }  
   
-  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3):Iterators_tuple(out1,out2,out3){}
+  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3):Iterator_tuple(out1,out2,out3){}
   
   Self& operator=(const V1& obj){
-    *cpp0x::get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
   
   Self& operator=(const V2& obj){
-    *cpp0x::get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
 
   Self& operator=(const V3& obj){
-    *cpp0x::get<2>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const Self& s){
-    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
-  const Iterators_tuple& get_iterator_tuple() const
+  const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
 };
@@ -1496,8 +1496,8 @@ class Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4>,cpp0x::tuple<O1,O2,O3,O
   typedef Dispatch_output_iterator Self;
   
 public:
-  typedef cpp0x::tuple<V1,V2,V3,V4> Value_types_tuple;
-  typedef cpp0x::tuple<O1,O2,O3,O4> Iterators_tuple;
+  typedef cpp0x::tuple<V1,V2,V3,V4> Value_type_tuple;
+  typedef cpp0x::tuple<O1,O2,O3,O4> Iterator_tuple;
   typedef std::output_iterator_tag iterator_category;
   typedef void                     value_type;
   typedef void                     difference_type;
@@ -1509,34 +1509,34 @@ public:
   Self& operator++(){ return *this; } 
   Self& operator++(int){ return *this; }  
   
-  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4):Iterators_tuple(out1,out2,out3,out4){}
+  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4):Iterator_tuple(out1,out2,out3,out4){}
   
   Self& operator=(const V1& obj){
-    *cpp0x::get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
   
   Self& operator=(const V2& obj){
-    *cpp0x::get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
 
   Self& operator=(const V3& obj){
-    *cpp0x::get<2>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const V4& obj){
-    *cpp0x::get<3>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<3>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const Self& s){
-    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
-  const Iterators_tuple& get_iterator_tuple() const
+  const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
 };
@@ -1591,8 +1591,8 @@ class Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5>,cpp0x::tuple<O1,O2,O
   typedef Dispatch_output_iterator Self;
   
 public:
-  typedef cpp0x::tuple<V1,V2,V3,V4,V5> Value_types_tuple;
-  typedef cpp0x::tuple<O1,O2,O3,O4,O5> Iterators_tuple;
+  typedef cpp0x::tuple<V1,V2,V3,V4,V5> Value_type_tuple;
+  typedef cpp0x::tuple<O1,O2,O3,O4,O5> Iterator_tuple;
   typedef std::output_iterator_tag iterator_category;
   typedef void                     value_type;
   typedef void                     difference_type;
@@ -1604,39 +1604,39 @@ public:
   Self& operator++(){ return *this; } 
   Self& operator++(int){ return *this; }  
   
-  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5):Iterators_tuple(out1,out2,out3,out4,out5){}
+  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5):Iterator_tuple(out1,out2,out3,out4,out5){}
   
   Self& operator=(const V1& obj){
-    *cpp0x::get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
   
   Self& operator=(const V2& obj){
-    *cpp0x::get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
 
   Self& operator=(const V3& obj){
-    *cpp0x::get<2>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const V4& obj){
-    *cpp0x::get<3>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<3>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const V5& obj){
-    *cpp0x::get<4>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<4>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const Self& s){
-    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
-  const Iterators_tuple& get_iterator_tuple() const
+  const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
 };
@@ -1691,8 +1691,8 @@ class Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6>,cpp0x::tuple<O1,O
   typedef Dispatch_output_iterator Self;
   
 public:
-  typedef cpp0x::tuple<V1,V2,V3,V4,V5,V6> Value_types_tuple;
-  typedef cpp0x::tuple<O1,O2,O3,O4,O5,O6> Iterators_tuple;
+  typedef cpp0x::tuple<V1,V2,V3,V4,V5,V6> Value_type_tuple;
+  typedef cpp0x::tuple<O1,O2,O3,O4,O5,O6> Iterator_tuple;
   typedef std::output_iterator_tag iterator_category;
   typedef void                     value_type;
   typedef void                     difference_type;
@@ -1704,44 +1704,44 @@ public:
   Self& operator++(){ return *this; } 
   Self& operator++(int){ return *this; }  
   
-  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6):Iterators_tuple(out1,out2,out3,out4,out5,out6){}
+  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6):Iterator_tuple(out1,out2,out3,out4,out5,out6){}
   
   Self& operator=(const V1& obj){
-    *cpp0x::get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
   
   Self& operator=(const V2& obj){
-    *cpp0x::get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
 
   Self& operator=(const V3& obj){
-    *cpp0x::get<2>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const V4& obj){
-    *cpp0x::get<3>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<3>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const V5& obj){
-    *cpp0x::get<4>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<4>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const V6& obj){
-    *cpp0x::get<5>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<5>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const Self& s){
-    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
-  const Iterators_tuple& get_iterator_tuple() const
+  const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
 };
@@ -1796,8 +1796,8 @@ class Dispatch_output_iterator<cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7>,cpp0x::tuple<O
   typedef Dispatch_output_iterator Self;
   
 public:
-  typedef cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7> Value_types_tuple;
-  typedef cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> Iterators_tuple;
+  typedef cpp0x::tuple<V1,V2,V3,V4,V5,V6,V7> Value_type_tuple;
+  typedef cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> Iterator_tuple;
   typedef std::output_iterator_tag iterator_category;
   typedef void                     value_type;
   typedef void                     difference_type;
@@ -1809,49 +1809,49 @@ public:
   Self& operator++(){ return *this; } 
   Self& operator++(int){ return *this; }  
   
-  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6,O7 out7):Iterators_tuple(out1,out2,out3,out4,out5,out6,out7){}
+  Dispatch_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6,O7 out7):Iterator_tuple(out1,out2,out3,out4,out5,out6,out7){}
   
   Self& operator=(const V1& obj){
-    *cpp0x::get<0>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
   
   Self& operator=(const V2& obj){
-    *cpp0x::get<1>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
 
   Self& operator=(const V3& obj){
-    *cpp0x::get<2>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const V4& obj){
-    *cpp0x::get<3>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<3>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const V5& obj){
-    *cpp0x::get<4>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<4>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const V6& obj){
-    *cpp0x::get<5>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<5>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
    Self& operator=(const V7& obj){
-    *cpp0x::get<6>(static_cast<Iterators_tuple& >(*this))++=obj;
+    *cpp0x::get<6>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
   
   Self& operator=(const Self& s){
-    static_cast< Iterators_tuple& >(*this) = static_cast< const Iterators_tuple& >(s);
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
-  const Iterators_tuple& get_iterator_tuple() const
+  const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
 };
