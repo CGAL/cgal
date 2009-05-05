@@ -3020,57 +3020,10 @@ inline void Periodic_3_triangulation_3<GT,TDS>::convert_to_needed_covering() {
     }
   }
 
-  // Set incident cells of vertex copies
-  typename std::list< Offset >::iterator oit_v = off_v.begin();
-  for (typename std::list<Vertex_handle>::iterator vit
-	 = original_vertices.begin() ; vit != original_vertices.end() ;
-       ++vit, ++oit_v) {
-    CGAL_assertion(oit_v != off_v.end());
-    Virtual_vertex_reverse_map_it v_cp = virtual_vertices_reverse.find(*vit);
-    CGAL_assertion(v_cp != virtual_vertices_reverse.end());
-    Cell_handle cit_c = (*vit)->cell();
-    VCRMIT v_cp_c = virtual_cells_reverse.find(cit_c);
-    CGAL_assertion(v_cp_c != virtual_cells_reverse.end());
-    Offset voff = *oit_v;
-    for (int n=0; n<26; n++) {
-      int n_nb;
-      if (voff.is_empty()) n_nb = n;
-      else {
-	int o_i = ((n+1)/9-voff.x()+3)%3;
-	int o_j = ((n+1)/3-voff.y()+3)%3;
-	int o_k = (n+1-voff.z()+3)%3;
-	n_nb = 9*o_i+3*o_j+o_k-1;
-      }
-      if (n_nb == -1) {
-	CGAL_assertion(cit_c->has_vertex(v_cp->second[n]));
-	v_cp->second[n]->set_cell(cit_c);
-      }
-      else {
-	CGAL_assertion(n_nb >= 0 && n_nb <= v_cp_c->second.size());
-	CGAL_assertion(v_cp_c->second[n_nb]->has_vertex(v_cp->second[n]));
-	v_cp->second[n]->set_cell(v_cp_c->second[n_nb]);
-      }
-    }
-  }  
-
-  // Set incident cells of original vertices
-  oit_v = off_v.begin();
-  for (typename std::list<Vertex_handle>::iterator vit
-	 = original_vertices.begin() ; vit != original_vertices.end() ;
-       ++vit, ++oit_v) {
-    CGAL_assertion(oit_v != off_v.end());
-    Offset voff = *oit_v;
-    if (!voff.is_empty()) {
-      Cell_handle cit_c = (*vit)->cell();
-      VCRMIT v_cp_c = virtual_cells_reverse.find(cit_c);
-      CGAL_assertion(v_cp_c != virtual_cells_reverse.end());
-      int o_i = (3-voff.x())%3;
-      int o_j = (3-voff.y())%3;
-      int o_k = (3-voff.z())%3;
-      int n_nb = 9*o_i+3*o_j+o_k-1;
-      CGAL_assertion(n_nb >= 0 && n_nb <= v_cp_c->second.size());
-      CGAL_assertion(v_cp_c->second[n_nb]->has_vertex(*vit));
-      (*vit)->set_cell(v_cp_c->second[n_nb]);
+  // Set incident cells 
+  for (Cell_iterator cit = cells_begin() ; cit != cells_end() ; ++cit) {
+    for (int i=0 ; i<4 ; i++) {
+      cit->vertex(i)->set_cell(cit);
     }
   }
 
@@ -3099,17 +3052,6 @@ inline void Periodic_3_triangulation_3<GT,TDS>::convert_to_needed_covering() {
 	CGAL_assertion(off_cp[i].z() == 0 || off_cp[i].z() == 1);
       }
       c_cp->second[n]->set_offsets(off_cp[0],off_cp[1],off_cp[2],off_cp[3]);
-    }
-  }
-
-
-  typedef typename std::list<Cell_handle>::iterator LCHIT;
-  std::list<LCHIT> tc;
-  for (typename std::list<Cell_handle>::iterator cit = original_cells.begin() ;
-       cit != original_cells.end() ; ++cit) {
-    if ((*cit)->offset(0)+(*cit)->offset(1)
-  	+(*cit)->offset(2)+(*cit)->offset(3)!=0) {
-      tc.push_back(cit);
     }
   }
 
