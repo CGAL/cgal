@@ -12,12 +12,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 typedef CGAL::Periodic_3_triangulation_traits_3<EPIC> K;
 
-typedef CGAL::Triangulation_data_structure_3<
-  CGAL::Periodic_3_triangulation_vertex_base_3<K>,
-  CGAL::Triangulation_cell_base_3<
-    K, CGAL::Periodic_3_triangulation_ds_cell_base_3<> > > TDS;
-
-typedef CGAL::Periodic_3_Delaunay_triangulation_3<K, TDS> P3DT;
+typedef CGAL::Periodic_3_Delaunay_triangulation_3<K> P3DT;
 
 typedef K::RT NT;
 typedef K::FT FT;
@@ -34,10 +29,10 @@ typedef P3DT::Segment Segment;
 typedef P3DT::Triangle Triangle;
 typedef P3DT::Tetrahedron Tetrahedron;
 
-typedef P3DT::Point_iterator Point_iterator;
-typedef P3DT::Segment_iterator Segment_iterator;
-typedef P3DT::Triangle_iterator Triangle_iterator;
-typedef P3DT::Tetrahedron_iterator Tetrahedron_iterator;
+typedef P3DT::Periodic_point_iterator Point_iterator;
+typedef P3DT::Periodic_segment_iterator Segment_iterator;
+typedef P3DT::Periodic_triangle_iterator Triangle_iterator;
+typedef P3DT::Periodic_tetrahedron_iterator Tetrahedron_iterator;
 
 typedef P3DT::Iterator_type Iterator_type;
 

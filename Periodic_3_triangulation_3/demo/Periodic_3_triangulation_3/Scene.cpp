@@ -125,9 +125,9 @@ void Scene::make_draw_list()
   // Draw vertices
   change_material(materials[VERTEX_COLOR]);
   if (wireframe) glBegin(GL_POINTS);
-  for (Point_iterator pit = p3dt.points_begin(it_type) ;
-       pit != p3dt.points_end(it_type) ; pit++)
-    gl_draw_vertex(*pit, 0.02);
+  for (Point_iterator pit = p3dt.periodic_points_begin(it_type) ;
+       pit != p3dt.periodic_points_end(it_type) ; pit++)
+    gl_draw_vertex(pit->first, 0.02);
   if (wireframe) glEnd();
 
   // Draw segments
@@ -320,10 +320,10 @@ void Scene::gl_draw_cube() {
 // triangulation
 inline void Scene::get_tri_offsets(const Cell_handle ch, int i,
     Offset &off0, Offset &off1, Offset &off2) const {
-  off0 = p3dt.get_vertex_offset(ch,(i+1)&3);
-  off1 = p3dt.get_vertex_offset(ch,(i+2)&3);
-  off2 = p3dt.get_vertex_offset(ch,(i+3)&3);
-  if (it_type == P3DT::UNIQUE || it_type == P3DT::COVER_DOMAIN_UNIQUE) {
+  off0 = p3dt.get_offset(ch,(i+1)&3);
+  off1 = p3dt.get_offset(ch,(i+2)&3);
+  off2 = p3dt.get_offset(ch,(i+3)&3);
+  if (it_type == P3DT::UNIQUE || it_type == P3DT::UNIQUE_COVER_DOMAIN) {
     int diff_offx = std::min(std::min(off0.x(),off1.x()),off2.x());
     int diff_offy = std::min(std::min(off0.y(),off1.y()),off2.y());
     int diff_offz = std::min(std::min(off0.z(),off1.z()),off2.z());
@@ -338,11 +338,11 @@ inline void Scene::get_tri_offsets(const Cell_handle ch, int i,
 // triangulation
 inline void Scene::get_tet_offsets(const Cell_handle ch,
     Offset &off0, Offset &off1, Offset &off2, Offset &off3) const {
-  off0 = p3dt.get_vertex_offset(ch,0);
-  off1 = p3dt.get_vertex_offset(ch,1);
-  off2 = p3dt.get_vertex_offset(ch,2);
-  off3 = p3dt.get_vertex_offset(ch,3);
-  if (it_type == P3DT::UNIQUE || it_type == P3DT::COVER_DOMAIN_UNIQUE) {
+  off0 = p3dt.get_offset(ch,0);
+  off1 = p3dt.get_offset(ch,1);
+  off2 = p3dt.get_offset(ch,2);
+  off3 = p3dt.get_offset(ch,3);
+  if (it_type == P3DT::UNIQUE || it_type == P3DT::UNIQUE_COVER_DOMAIN) {
     int diff_offx = std::min(std::min(off0.x(),off1.x()),
 			     std::min(off2.x(),off3.x()));
     int diff_offy = std::min(std::min(off0.y(),off1.y()),
@@ -364,10 +364,10 @@ inline int Scene::get_tri_drawing_offsets(const Cell_handle ch, int i) const {
   // if drawing boundary cells multiply is not activated then there is
   // nothing to do.
   switch( it_type ) {
-  case P3DT::COVER_DOMAIN_UNIQUE:
+  case P3DT::UNIQUE_COVER_DOMAIN:
     get_tri_offsets(ch,i,off0,off1,off2);
     break;
-  case P3DT::COVER_DOMAIN:
+  case P3DT::STORED_COVER_DOMAIN:
     off0 = Offset(ch->offset((i+1)&3));
     off1 = Offset(ch->offset((i+2)&3));
     off2 = Offset(ch->offset((i+3)&3));
@@ -403,10 +403,10 @@ inline int Scene::get_tet_drawing_offsets(const Cell_handle ch) const {
   // if drawing boundary cells multiply is not activated then there is
   // nothing to do.
   switch( it_type ) {
-  case P3DT::COVER_DOMAIN_UNIQUE:
+  case P3DT::UNIQUE_COVER_DOMAIN:
     get_tet_offsets(ch,off0,off1,off2,off3);
     break;
-  case P3DT::COVER_DOMAIN:
+  case P3DT::STORED_COVER_DOMAIN:
     off0 = Offset(ch->offset(0));
     off1 = Offset(ch->offset(1));
     off2 = Offset(ch->offset(2));
@@ -449,7 +449,7 @@ inline int Scene::get_tet_drawing_offsets(const Cell_handle ch) const {
 // common offset
 inline Triangle Scene::construct_triangle(const Cell_handle ch, int i,
     const Offset& off0, const Offset& off1, const Offset& off2, int off) const {
-  if (it_type == P3DT::AS_STORED || it_type == P3DT::UNIQUE) {
+  if (it_type == P3DT::STORED || it_type == P3DT::UNIQUE) {
     CGAL_assertion( off == 0 );
     return p3dt.construct_triangle(
         ch->vertex((i+1)&3)->point(), ch->vertex((i+2)&3)->point(),
@@ -457,7 +457,7 @@ inline Triangle Scene::construct_triangle(const Cell_handle ch, int i,
   }
   Offset diff_off((off>>2)&1,(off>>1)&1,off&1);
   switch (it_type) {
-  case P3DT::COVER_DOMAIN:
+  case P3DT::STORED_COVER_DOMAIN:
     return p3dt.construct_triangle(
         ch->vertex((i+1)&3)->point(), ch->vertex((i+2)&3)->point(),
 	ch->vertex((i+3)&3)->point(),
@@ -465,7 +465,7 @@ inline Triangle Scene::construct_triangle(const Cell_handle ch, int i,
         p3dt.combine_offsets(off1,-diff_off),
         p3dt.combine_offsets(off2,-diff_off));
     break;
-  case P3DT::COVER_DOMAIN_UNIQUE:
+  case P3DT::UNIQUE_COVER_DOMAIN:
     return p3dt.construct_triangle(
         ch->vertex((i+1)&3)->point(), ch->vertex((i+2)&3)->point(),
 	ch->vertex((i+3)&3)->point(),
@@ -482,7 +482,7 @@ inline Triangle Scene::construct_triangle(const Cell_handle ch, int i,
 inline Tetrahedron Scene::construct_tetrahedron(const Cell_handle ch,
     const Offset& off0, const Offset& off1, const Offset& off2,
     const Offset& off3, int off) const {
-  if (it_type == P3DT::AS_STORED || it_type == P3DT::UNIQUE) {
+  if (it_type == P3DT::STORED || it_type == P3DT::UNIQUE) {
     CGAL_assertion( off == 0 );
     return p3dt.construct_tetrahedron(
         ch->vertex(0)->point(), ch->vertex(1)->point(),
@@ -491,7 +491,7 @@ inline Tetrahedron Scene::construct_tetrahedron(const Cell_handle ch,
   }
   Offset diff_off((off>>2)&1,(off>>1)&1,off&1);
   switch (it_type) {
-  case P3DT::COVER_DOMAIN:
+  case P3DT::STORED_COVER_DOMAIN:
     return p3dt.construct_tetrahedron(
 	ch->vertex(0)->point(), ch->vertex(1)->point(),
 	ch->vertex(2)->point(), ch->vertex(3)->point(), 
@@ -500,7 +500,7 @@ inline Tetrahedron Scene::construct_tetrahedron(const Cell_handle ch,
         p3dt.combine_offsets(off2,-diff_off),
 	p3dt.combine_offsets(off3,-diff_off));
     break;
-  case P3DT::COVER_DOMAIN_UNIQUE:
+  case P3DT::UNIQUE_COVER_DOMAIN:
     return p3dt.construct_tetrahedron(
         ch->vertex(0)->point(), ch->vertex(1)->point(), 
 	ch->vertex(2)->point(), ch->vertex(3)->point(),
@@ -580,29 +580,29 @@ inline void Scene::primitives_from_geom_it(Segment_set& sset) {
   Point p0,p1,p2,p3;
   switch(draw_type) {
   case SEGMENT:
-    for ( Segment_iterator sit = p3dt.segments_begin(it_type) ;
-	  sit != p3dt.segments_end(it_type) ; ++sit ) {
-      sset.insert(*sit);
+    for ( Segment_iterator sit = p3dt.periodic_segments_begin(it_type) ;
+	  sit != p3dt.periodic_segments_end(it_type) ; ++sit ) {
+      sset.insert(p3dt.segment(*sit));
     }
     break;
   case TRIANGLE:
-    for ( Triangle_iterator tit = p3dt.triangles_begin(it_type) ;
-	  tit != p3dt.triangles_end(it_type) ; ++tit ) {
-      p0 = tit->vertex(0);
-      p1 = tit->vertex(1);
-      p2 = tit->vertex(2);
+    for ( Triangle_iterator tit = p3dt.periodic_triangles_begin(it_type) ;
+	  tit != p3dt.periodic_triangles_end(it_type) ; ++tit ) {
+      p0 = tit->at(0).first;
+      p1 = tit->at(1).first;
+      p2 = tit->at(2).first;
       sset.insert(p0 < p1 ? Segment(p0,p1) : Segment(p1,p0));
       sset.insert(p0 < p2 ? Segment(p0,p2) : Segment(p2,p0));
       sset.insert(p1 < p2 ? Segment(p1,p2) : Segment(p2,p1));
     }
     break;
   case TETRAHEDRON:
-    for ( Tetrahedron_iterator tit = p3dt.tetrahedra_begin(it_type) ;
-	  tit != p3dt.tetrahedra_end(it_type) ; ++tit ) {
-      p0 = tit->vertex(0);
-      p1 = tit->vertex(1);
-      p2 = tit->vertex(2);
-      p3 = tit->vertex(3);
+    for ( Tetrahedron_iterator tit = p3dt.periodic_tetrahedra_begin(it_type) ;
+	  tit != p3dt.periodic_tetrahedra_end(it_type) ; ++tit ) {
+      p0 = tit->at(0).first;
+      p1 = tit->at(1).first;
+      p2 = tit->at(2).first;
+      p3 = tit->at(3).first;
       sset.insert((p0 < p1) ? Segment(p0,p1) : Segment(p1,p0));
       sset.insert((p0 < p2) ? Segment(p0,p2) : Segment(p2,p0));
       sset.insert((p0 < p3) ? Segment(p0,p3) : Segment(p3,p0));
@@ -666,19 +666,15 @@ inline void Scene::remove_hole(Segment_set& sset) {
   p3dt.find_conflicts(moving_point, ch, std::back_inserter(outer_boundary),
 			    std::back_inserter(conflict_cells), std::back_inserter(inner_facets));
 
+  int cover = p3dt.number_of_sheets().at(0);
+
   for (unsigned int i=0 ; i<conflict_cells.size(); i++) {
-    hole.push_back(Segment(conflict_cells[i]->vertex(0)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(0)),
-			   conflict_cells[i]->vertex(1)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(1))));
-    hole.push_back(Segment(conflict_cells[i]->vertex(0)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(0)),
-			   conflict_cells[i]->vertex(2)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(2))));
-    hole.push_back(Segment(conflict_cells[i]->vertex(0)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(0)),
-			   conflict_cells[i]->vertex(3)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(3))));
-    hole.push_back(Segment(conflict_cells[i]->vertex(1)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(1)),
-			   conflict_cells[i]->vertex(2)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(2))));
-    hole.push_back(Segment(conflict_cells[i]->vertex(1)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(1)),
-			   conflict_cells[i]->vertex(3)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(3))));
-    hole.push_back(Segment(conflict_cells[i]->vertex(2)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(2)),
-			   conflict_cells[i]->vertex(3)->point()+p3dt.get_cover()*Offset(conflict_cells[i]->offset(3))));
+    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],0,1)));
+    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],0,2)));
+    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],0,3)));
+    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],1,2)));
+    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],1,3)));
+    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],2,3)));
   }
     
   for (unsigned int i=0 ; i<hole.size() ; i++) {
@@ -708,7 +704,7 @@ void Scene::gl_draw_location() {
     // in the z=0 plane
     for (int j=0 ; j<4 ; j++) {
       if (ch->vertex(j)->point().z() != 0.0 ||
-	  p3dt.get_vertex_offset(ch,j).z() != 0) {
+	  p3dt.get_offset(ch,j).z() != 0) {
 	i=j;
 	count++;
       }
@@ -810,7 +806,7 @@ void Scene::gl_draw_conflict() {
       // contained in the z=0 plane
       for (int j=0 ; j<4 ; j++) {
 	if (ch->vertex(j)->point().z() != 0.0 ||
-	    p3dt.get_vertex_offset(ch,j).z() != 0) {
+	    p3dt.get_offset(ch,j).z() != 0) {
 	  i=j;
 	  count++;
 	}
@@ -904,7 +900,6 @@ void Scene::gl_draw_star() {
 // TODO: does not yet work properly
 void Scene::gl_draw_hole() {
   if (p3dt.number_of_vertices()==0) return;
-  int dim = p3dt.dimension(); 
   Cell_handle ch;
   std::vector<Facet> boundary_facets;
   Cell_handle c = p3dt.locate(moving_point);
@@ -917,30 +912,30 @@ void Scene::gl_draw_hole() {
       Offset common_offset = Offset(ch->offset(0)|ch->offset(1)|ch->offset(2)|ch->offset(3));
       int i = boundary_facets[k].second;
       pts.clear();
-      for(int j=0 ; j<dim+1 ; j++) {
+      for(int j=0 ; j<4 ; j++) {
 	if (j==i) continue;
-	pts.push_back(ch->vertex(j)->point() + p3dt.get_cover()*(Offset(ch->offset(j))-common_offset));
+	std::pair<Point,Offset> ppt = p3dt.periodic_point(ch,j);
+	ppt.second -= common_offset;
+	pts.push_back(p3dt.point(ppt));
       }
       gl_draw_edge(pts[0],pts[1],0.005);
-      if (dim==3) {
-	gl_draw_edge(pts[0],pts[2],0.005);
-	gl_draw_edge(pts[1],pts[2],0.005);
-      }
+      gl_draw_edge(pts[0],pts[2],0.005);
+      gl_draw_edge(pts[1],pts[2],0.005);
     }
   } else {
     for (unsigned int i=0 ; i<boundary_facets.size(); i++) {
       ch = boundary_facets[i].first;
       Offset common_offset = Offset(ch->offset(0)|ch->offset(1)|ch->offset(2)|ch->offset(3));
       pts.clear();
-      for (int j=0; j<dim+1 ; j++) {
+      for (int j=0; j<4 ; j++) {
 	if (j==boundary_facets[i].second) continue;
-	pts.push_back(ch->vertex(j)->point()+ p3dt.get_cover()*(Offset(ch->offset(j))-common_offset));
+	std::pair<Point,Offset> ppt = p3dt.periodic_point(ch,j);
+	ppt.second -= common_offset;
+	pts.push_back(p3dt.point(ppt));
       }
       gl_draw_edge(pts[0],pts[1],0.005);
-      if (dim == 3) {
-	gl_draw_edge(pts[0],pts[2],0.005);
-	gl_draw_edge(pts[1],pts[2],0.005);
-      }
+      gl_draw_edge(pts[0],pts[2],0.005);
+      gl_draw_edge(pts[1],pts[2],0.005);
     }
   }
 }

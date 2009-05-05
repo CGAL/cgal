@@ -10,16 +10,6 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 find_package(CGAL REQUIRED)
 include( ${CGAL_USE_FILE} )
 
-include( CreateSingleSourceCGALProgram )
-
-# TODO: this does not work currently. Probably it works once I
-# manage to compile CGAL using cmake
-create_single_source_cgal_program( demo.cpp )
-create_single_source_cgal_program( demo_color.cpp )
-create_single_source_cgal_program( demo_remove.cpp )
-create_single_source_cgal_program( demo_voronoi.cpp )
-
-
 set ( QT_USE_QTXML    TRUE )
 set ( QT_USE_QTMAIN   TRUE )
 set ( QT_USE_QTOPENGL TRUE )

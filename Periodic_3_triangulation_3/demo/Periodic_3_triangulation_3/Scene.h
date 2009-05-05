@@ -45,10 +45,10 @@ public:
     bool c1 = ui->actionDraw_1_sheeted_covering->isChecked();
     bool cd = ui->actionDraw_bordering_cells_multiply->isChecked();
 
-    if ( c1 &&  cd) it_type = P3DT::COVER_DOMAIN_UNIQUE;
+    if ( c1 &&  cd) it_type = P3DT::UNIQUE_COVER_DOMAIN;
     if ( c1 && !cd) it_type = P3DT::UNIQUE;
-    if (!c1 &&  cd) it_type = P3DT::COVER_DOMAIN;
-    if (!c1 && !cd) it_type = P3DT::AS_STORED;
+    if (!c1 &&  cd) it_type = P3DT::STORED_COVER_DOMAIN;
+    if (!c1 && !cd) it_type = P3DT::STORED;
 
     if ( ui->actionDraw_segments->isChecked() )   draw_type = SEGMENT;
     if ( ui->actionDraw_triangles->isChecked() )  draw_type = TRIANGLE;
@@ -157,16 +157,16 @@ public slots:
   // TODO: find radio button functionality within menus in QtDesigner
   void toggle_force_1cover(bool on) {
     if (ui->actionDraw_bordering_cells_multiply->isChecked())
-      it_type = ( on ? P3DT::COVER_DOMAIN_UNIQUE : P3DT::COVER_DOMAIN );
+      it_type = ( on ? P3DT::UNIQUE_COVER_DOMAIN : P3DT::STORED_COVER_DOMAIN );
     else
-      it_type = ( on ? P3DT::UNIQUE : P3DT::AS_STORED);
+      it_type = ( on ? P3DT::UNIQUE : P3DT::STORED);
     make_draw_list();
   }
   void toggle_multiple_cells(bool on) {
     if (ui->actionDraw_1_sheeted_covering->isChecked())
-      it_type = ( on ? P3DT::COVER_DOMAIN_UNIQUE : P3DT::UNIQUE );
+      it_type = ( on ? P3DT::UNIQUE_COVER_DOMAIN : P3DT::UNIQUE );
     else
-      it_type = ( on ? P3DT::COVER_DOMAIN : P3DT::AS_STORED );
+      it_type = ( on ? P3DT::STORED_COVER_DOMAIN : P3DT::STORED );
     make_draw_list();
   }
   void trigger_draw_type_segment() {
