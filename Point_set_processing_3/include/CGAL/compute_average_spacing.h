@@ -144,7 +144,7 @@ compute_average_spacing(InputIterator first,    ///< iterator over the first inp
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from iterator type.
+// This variant deduces the kernel from the iterator type.
 template < typename InputIterator >
 typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel::FT
 compute_average_spacing(InputIterator first,    ///< iterator over the first input point.

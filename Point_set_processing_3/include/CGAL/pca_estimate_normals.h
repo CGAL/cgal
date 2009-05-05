@@ -69,7 +69,7 @@ pca_estimate_normals(const typename Kernel::Point_3& query, ///< 3D point whose 
 
   // Gather set of (k+1) neighboring points.
   // Perform k+1 queries (as in point set, the query point is
-  // output first). Search may be aborted when k is greater
+  // output first). Search may be aborted if k is greater
   // than number of input points.
   std::vector<Point> points; points.reserve(k+1);
   Neighbor_search search(tree,query,k+1);
@@ -166,7 +166,7 @@ pca_estimate_normals(InputIterator first, ///< iterator over the first input poi
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from iterator type.
+// This variant deduces the kernel from the iterator type.
 template <typename InputIterator,
           typename OutputIterator
 >

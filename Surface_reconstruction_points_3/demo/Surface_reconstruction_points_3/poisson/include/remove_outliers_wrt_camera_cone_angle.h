@@ -117,14 +117,14 @@ remove_outliers_wrt_camera_cone_angle(ForwardIterator first,         ///< iterat
     // precondition: at least 0
     CGAL_precondition(min_camera_cone_angle >= 0);
 
-    ForwardIterator first_iterator_to_remove =
+    ForwardIterator first_point_to_remove =
       std::partition(first, beyond, CGALi::Is_cameras_cone_angle_greater_equal<Kernel>(min_camera_cone_angle));
 
-    return first_iterator_to_remove;
+    return first_point_to_remove;
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from iterator type.
+// This variant deduces the kernel from the iterator type.
 template <typename ForwardIterator>
 ForwardIterator
 remove_outliers_wrt_camera_cone_angle(ForwardIterator first,         ///< iterator over the first input/output point

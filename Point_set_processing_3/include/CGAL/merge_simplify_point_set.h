@@ -154,15 +154,15 @@ merge_simplify_point_set(
     }
 
     // Replace [first, beyond) range by the content of points_to_keep, then points_to_remove.
-    ForwardIterator first_iterator_to_remove =
-    std::copy(points_to_keep.begin(), points_to_keep.end(), first);
-    std::copy(points_to_remove.begin(), points_to_remove.end(), first_iterator_to_remove);
+    ForwardIterator first_point_to_remove =
+      std::copy(points_to_keep.begin(), points_to_keep.end(), first);
+    std::copy(points_to_remove.begin(), points_to_remove.end(), first_point_to_remove);
 
-    return first_iterator_to_remove;
+    return first_point_to_remove;
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from iterator type.
+// This variant deduces the kernel from the iterator type.
 template <typename ForwardIterator>
 ForwardIterator
 merge_simplify_point_set(

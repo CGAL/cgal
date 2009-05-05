@@ -251,7 +251,6 @@ void CPoissonView::OnPaint()
 
   // Do points have normals?
   bool points_have_normals = (pDoc->points()->begin()->normal() != CGAL::NULL_VECTOR);
-  bool normals_are_oriented = pDoc->points()->begin()->normal().is_oriented();
   bool points_have_original_normals = (pDoc->points()->begin()->original_normal() != CGAL::NULL_VECTOR);
 
   if(first_paint)

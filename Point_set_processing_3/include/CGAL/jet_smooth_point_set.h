@@ -68,7 +68,7 @@ jet_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point to pro
 
   // Gather set of (k+1) neighboring points.
   // Performs k + 1 queries (if unique the query point is
-  // output first). Search may be aborted when k is greater
+  // output first). Search may be aborted if k is greater
   // than number of input points.
   std::vector<Point_3> points; points.reserve(k+1);
   Neighbor_search search(tree,query,k+1);
@@ -153,7 +153,7 @@ jet_smooth_point_set(ForwardIterator first,     ///< iterator over the first inp
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from iterator type.
+// This variant deduces the kernel from the iterator type.
 template <typename ForwardIterator>
 void
 jet_smooth_point_set(ForwardIterator first, ///< iterator over the first input/output point

@@ -59,14 +59,14 @@ random_simplify_point_set(
     // Compute first iterator to remove
     int nb_points = std::distance(first, beyond);
     int first_index_to_remove = int(double(nb_points) * ((100.0-threshold_percent)/100.0));
-    ForwardIterator first_iterator_to_remove = first;
-    std::advance(first_iterator_to_remove, first_index_to_remove);
+    ForwardIterator first_point_to_remove = first;
+    std::advance(first_point_to_remove, first_index_to_remove);
 
-    return first_iterator_to_remove;
+    return first_point_to_remove;
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from iterator type.
+// This variant deduces the kernel from the iterator type.
 template <typename ForwardIterator>
 ForwardIterator
 random_simplify_point_set(

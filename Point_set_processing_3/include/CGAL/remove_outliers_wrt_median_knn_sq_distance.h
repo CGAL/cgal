@@ -64,7 +64,7 @@ compute_median_knn_sq_distance_3(
 
     // Gather set of (k+1) neighboring points.
     // Perform k+1 queries (if in point set, the query point is
-    // output first). Search may be aborted when k is greater
+    // output first). Search may be aborted if k is greater
     // than number of input points.
     std::vector<Point> points; points.reserve(k+1);
     Neighbor_search search(tree,query,k+1);
@@ -163,7 +163,7 @@ remove_outliers_wrt_median_knn_sq_distance(
 
     // Replace [first, beyond) range by the multimap content.
     // Return the iterator after the (100-threshold_percent) % best points.
-    ForwardIterator first_iterator_to_remove = beyond;
+    ForwardIterator first_point_to_remove = beyond;
     ForwardIterator dst = first;
     int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
     typename std::multimap<FT,Point>::iterator src;
@@ -174,14 +174,14 @@ remove_outliers_wrt_median_knn_sq_distance(
     {
       *dst++ = src->second;
       if (index == first_index_to_remove)
-        first_iterator_to_remove = dst;
+        first_point_to_remove = dst;
     }
 
-    return first_iterator_to_remove;
+    return first_point_to_remove;
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from iterator type.
+// This variant deduces the kernel from the iterator type.
 template <typename ForwardIterator>
 ForwardIterator
 remove_outliers_wrt_median_knn_sq_distance(

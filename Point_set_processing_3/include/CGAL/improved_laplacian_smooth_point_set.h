@@ -272,7 +272,7 @@ improved_laplacian_smooth_point_set(
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from iterator type.
+// This variant deduces the kernel from the iterator type.
 template <typename ForwardIterator>
 void
 improved_laplacian_smooth_point_set(
