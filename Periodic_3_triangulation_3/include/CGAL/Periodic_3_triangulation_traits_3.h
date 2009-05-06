@@ -237,14 +237,12 @@ public:
     return Construct_circumcenter_3(&_domain);
   }
 
-public:
+protected:
   Iso_cuboid_3 _domain;
 };
 
-  template < class K, class Off = CGAL::Periodic_3_offset_3 >
-class Periodic_3_triangulation_traits_3
-  : public Periodic_3_triangulation_traits_base_3<K, Off>
-{};
+template < typename K, typename Off = CGAL::Periodic_3_offset_3 >
+class Periodic_3_triangulation_traits_3;
 
 CGAL_END_NAMESPACE
 
@@ -266,6 +264,11 @@ class Periodic_3_triangulation_traits_3 < Filtered_kernel<CK>, T>
 public:
   typedef Filtered_kernel<CK>  Kernel;
 };
+
+template < class K, class Off >
+class Periodic_3_triangulation_traits_3
+  : public Periodic_3_triangulation_traits_base_3<K, Off>
+{};
 
 CGAL_END_NAMESPACE
 

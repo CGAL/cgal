@@ -466,14 +466,14 @@ class Periodic_3_triangulation_filtered_traits_base_3
   // Filtering traits is based on the filtering kernel.
   typedef Periodic_3_triangulation_traits_3<typename K::Approximate_kernel>
                                                    Filtering_traits;
-
+private:
   typedef typename K::C2E C2E;
   typedef typename K::C2F C2F;
 
   typedef typename C2E::Target_kernel::Iso_cuboid_3 Exact_iso_cuboid_3;
   typedef typename C2F::Target_kernel::Iso_cuboid_3 Approximate_iso_cuboid_3;
  
-
+protected:
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::_domain;
 #endif
@@ -574,7 +574,7 @@ CGAL_BEGIN_NAMESPACE
 template < typename K >
 class Periodic_3_triangulation_filtered_traits_3
   : public Periodic_3_triangulation_statically_filtered_traits_3<
-    Periodic_3_triangulation_filtered_traits_base_3<K> > {
+  Periodic_3_triangulation_filtered_traits_base_3<K> > {
 };
 
 CGAL_END_NAMESPACE
