@@ -118,15 +118,26 @@ inline Point_3<K> operator+(const Point_3<K> &p, const Periodic_3_offset_3 &off)
 
 inline std::ostream 
 &operator<<(std::ostream &os, const Periodic_3_offset_3 &off) {
-  return os << off.x() << " " 
-	    << off.y() << " "
-	    << off.z();
+  if (is_ascii(os))
+    os << off.x() << " " << off.y() << " " << off.z();
+  else {
+    write(os,off.x());
+    write(os,off.y());
+    write(os,off.z());
+  }
+  return os;
 }
 
 inline std::istream
 &operator>>(std::istream &is, Periodic_3_offset_3 &off) {
   int x,y,z;
-  is >> x >> y >> z;
+  if (is_ascii(is))
+    is >> x >> y >> z;
+  else {
+    read(is,x);
+    read(is,y);
+    read(is,z);
+  }
   off = Periodic_3_offset_3(x,y,z);
   return is;
 }

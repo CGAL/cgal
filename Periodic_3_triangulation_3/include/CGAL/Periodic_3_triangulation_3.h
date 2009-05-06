@@ -3308,12 +3308,22 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
 
   tr.clear();
 
-  int n, cx, cy, cz;
+  unsigned int n;
+  int cx, cy, cz;
   Iso_cuboid domain;
 
-  is >> n;
-  is >> domain;
-  is >> cx >> cy >> cz;
+  if (is_ascii(is)) {
+    is >> n;
+    is >> domain;
+    is >> cx >> cy >> cz;
+  }
+  else {
+    read(is,n);
+    is >> domain;
+    read(is,cx);
+    read(is,cy);
+    read(is,cz);
+  }
  
   CGAL_assertion((n/(cx*cy*cz))*cx*cy*cz == n);
 
@@ -3327,7 +3337,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
   std::map< int, Vertex_handle > V;
 
   if (cx==1 && cy==1 && cz==1) {
-    for (int i=0; i < n; i++) {
+    for (unsigned int i=0; i < n; i++) {
       V[i] = tr.tds().create_vertex();
       is >> *V[i];
     }
@@ -3335,7 +3345,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
     Vertex_handle v,w;
     std::vector<Vertex_handle> vv;
     Offset off;
-    for (int i=0; i < n; i++) {
+    for (unsigned int i=0; i < n; i++) {
       v = tr.tds().create_vertex();
       V[i] = v;
       is >> *V[i] >> off;
@@ -3359,7 +3369,14 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
   // read offsets
   int off[4];
   for (int j=0 ; j < m; j++) {
-    is >> off[0] >> off[1] >> off[2] >> off[3];
+    if (is_ascii(is))
+      is >> off[0] >> off[1] >> off[2] >> off[3];
+    else {
+      read(is,off[0]);
+      read(is,off[1]);
+      read(is,off[2]);
+      read(is,off[3]);
+    }
     C[j]->set_offsets(off[0],off[1],off[2],off[3]);
   }
   
@@ -3388,7 +3405,6 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
 template < class GT, class TDS >
 std::ostream & 
 operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
-// TODO: new version into the doc
 // writes :
 // the number of vertices
 // the domain as six coordinates: xmin ymin zmin xmax ymax zmax
@@ -3424,9 +3440,11 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
        << domain << std::endl
        << cover[0] << " " << cover[1] << " " << cover[2] << std::endl;
   else {
-    os << n*cover[0]*cover[1]*cover[2]
-       << domain
-       << cover[0] << cover[1] << cover[2];
+    write(os,n*cover[0]*cover[1]*cover[2]);
+    os << domain;
+    write(os,cover[0]);
+    write(os,cover[1]);
+    write(os,cover[2]);
   }
 
   if (n == 0)
@@ -3479,13 +3497,14 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
     //Cell_handle ch = std::find(tr.cells_begin(), tr.cells_end(), i);
     Cell_handle ch(it);
     for (int j=0; j<4; j++) {
-      os << ch->offset(j);
       if(is_ascii(os)) {
+	os << ch->offset(j);
         if ( j==3 )
           os << std::endl;
         else
           os << ' ';
       }
+      else write(os,ch->offset(j));
     }
   }
   
