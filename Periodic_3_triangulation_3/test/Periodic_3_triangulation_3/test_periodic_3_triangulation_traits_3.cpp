@@ -109,7 +109,6 @@ int main()
 #endif
 
 #ifdef CGAL_USE_LEDA
-  // TODO: This is not tested as I don't have leda on my machine.
   std::cout<<"  LEDA...";std::cout.flush();
 #define RT leda_integer
 #define FT leda_rational

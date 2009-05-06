@@ -124,7 +124,6 @@ std::pair<Point, Offset> pick_coplanar(
 {
   // s = p + (p-q)*my_rand() + (p-r)*my_rand();  (almost)
 
-  // TODO this currently only works for the domain being a unit cube
   double r1 = my_rand_dbl(), r2 = my_rand_dbl();
   double x = p.x()+po.x() + (q.x()+qo.x() - (p.x()+po.x()))*r1
                           + (r.x()+ro.x() - (p.x()+po.x()))*r2;
