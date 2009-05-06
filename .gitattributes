@@ -2782,21 +2782,13 @@ Point_set_processing_3/doc_tex/Point_set_processing_3/fig/point_set_processing_d
 Point_set_processing_3/doc_tex/Point_set_processing_3/introduction.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/introduction.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/io.tex -text
-Point_set_processing_3/doc_tex/Point_set_processing_3/jet_smoothing.eps -text svneol=unset#application/postscript
-Point_set_processing_3/doc_tex/Point_set_processing_3/jet_smoothing.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/merge_simplification.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/merge_simplification.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/mst_orient_normals.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/mst_orient_normals.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/outliers.tex -text
-Point_set_processing_3/doc_tex/Point_set_processing_3/pca_estimate_normals.eps -text svneol=unset#application/postscript
-Point_set_processing_3/doc_tex/Point_set_processing_3/pca_estimate_normals.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/pipeline.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/pipeline.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc_tex/Point_set_processing_3/random_simplification.eps -text svneol=unset#application/postscript
-Point_set_processing_3/doc_tex/Point_set_processing_3/random_simplification.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc_tex/Point_set_processing_3/remove_outliers.eps -text svneol=unset#application/postscript
-Point_set_processing_3/doc_tex/Point_set_processing_3/remove_outliers.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/simplification.tex -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/smoothing.tex -text
 Point_set_processing_3/examples/Point_set_processing_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
@@ -3896,14 +3888,9 @@ Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_d
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/Point_set_demo.qrc -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/Point_set_demo_local_spacing_plugin.cpp -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/ChineseDragon-points.off -text svneol=unset#application/octet-stream
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/camel.pwn -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/fandisk.off -text svneol=unset#application/octet-stream
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/lion-head.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/mushroom.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/rotor.off -text svneol=unset#application/octet-stream
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/sphere926.xyz -text
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/tripod.off -text svneol=unset#application/octet-stream
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/data/turbine.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/resources/about.html svneol=native#text/html
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/resources/check-off.png -text svneol=unset#image/png
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/resources/check-off.svg -text
@@ -3916,10 +3903,8 @@ Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_d
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/resources/simplification.png -text svneol=unset#image/png
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/PoissonDoc.cpp -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/ChineseDragon-points.off -text svneol=unset#application/octet-stream
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/camel.pwn -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/oni.pwn -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/rotor.off -text svneol=unset#application/octet-stream
-Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/sphere926.xyz -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/include/Gyroviz_point_3.h -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/res/Poisson.ico -text svneol=unset#image/x-icon
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/res/PoissonDoc.ico -text svneol=unset#image/x-icon
