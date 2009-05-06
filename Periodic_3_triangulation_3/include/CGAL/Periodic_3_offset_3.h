@@ -130,7 +130,7 @@ inline std::ostream
 
 inline std::istream
 &operator>>(std::istream &is, Periodic_3_offset_3 &off) {
-  int x,y,z;
+  int x=0,y=0,z=0;
   if (is_ascii(is))
     is >> x >> y >> z;
   else {

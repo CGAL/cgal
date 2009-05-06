@@ -68,7 +68,7 @@ Point my_rand_p3()
 }
 
 // Random int in [0;256).
-double my_rand_int(int min, int max)
+int my_rand_int(int min, int max)
 {
   return r->get_int(min, max+1);
 }
@@ -133,9 +133,9 @@ std::pair<Point, Offset> pick_coplanar(
   double z = p.z()+po.z() + (q.z()+qo.z() - (p.z()+po.z()))*r1
                           + (r.z()+ro.z() - (p.z()+po.z()))*r2;
 
-  int ix = floor(x);
-  int iy = floor(y);
-  int iz = floor(z);
+  int ix = static_cast<int>(floor(x));
+  int iy = static_cast<int>(floor(y));
+  int iz = static_cast<int>(floor(z));
 
   return std::make_pair(Point(x-floor(x),y-floor(y),z-floor(z)),
       Offset(ix,iy,iz));

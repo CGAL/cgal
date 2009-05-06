@@ -884,21 +884,21 @@ public:
   }
   inline void hide_point(Cell_handle, const Point &) {}
 
-  inline void hide(Point &p, Cell_handle ch) const {
+  inline void hide(Point &, Cell_handle ) const {
     CGAL_assertion(false);
   }
 
-  inline void do_hide(const Point &p, Cell_handle ch) const {
+  inline void do_hide(const Point &, Cell_handle ) const {
     CGAL_assertion(false);
   }
   template < class Tester > 
-  inline bool replace_vertex(const Point &p, Vertex_handle vh,
-      const Tester &tester) const {
+  inline bool replace_vertex(const Point &, Vertex_handle ,
+      const Tester &) const {
     return true;
   }
   template <class Conflict_tester>
-  inline void hide_points(Vertex_handle vh,
-      const Conflict_tester & tester) {
+  inline void hide_points(Vertex_handle,
+      const Conflict_tester &) {
     // No points to hide in the Delaunay triangulation.
   }
 

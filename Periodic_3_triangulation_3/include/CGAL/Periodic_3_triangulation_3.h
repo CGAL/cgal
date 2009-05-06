@@ -718,7 +718,7 @@ private:
 
   template < class Conflict_tester, class Point_hider >
   Vertex_handle periodic_insert(const Point& p, const Offset& o, Locate_type lt,
-      Cell_handle c, int li, int lj, const Conflict_tester &tester,
+      Cell_handle c, const Conflict_tester &tester,
       Point_hider &hider, Vertex_handle vh = Vertex_handle());
 
   template <class Point_iterator, class Offset_iterator>
@@ -779,19 +779,22 @@ protected:
       Conflict_tester &tester, Point_hider &hider) {
     Vertex_handle new_vertex;
     std::vector<Vertex_handle> double_vertices;
-    Locate_type lt = Locate_type(), lta = Locate_type();
-    int li=0, lj=0, ia=0, ja=0;
+    Locate_type lt = Locate_type();
+    int li=0, lj=0;
+    CGAL_assertion_code( Locate_type lta = Locate_type(); )
+    CGAL_assertion_code( int ia = 0; )
+    CGAL_assertion_code( int ja = 0; )
     Cell_handle hint;
     while (begin!=end) {
       tester.set_point(*begin);
       hint = locate(*begin, Offset(), lt, li, lj, start);
-      if (number_of_vertices() != 0) {
+      CGAL_assertion_code( if (number_of_vertices() != 0) { );
 	CGAL_assertion(side_of_cell(*begin,Offset(), hint, lta, ia, ja)
 	    != ON_UNBOUNDED_SIDE);
 	CGAL_assertion(lta == lt);
 	CGAL_assertion(ia == li);
 	CGAL_assertion(ja == lj);
-      }
+      CGAL_assertion_code( } );
 
       new_vertex = insert_in_conflict(*begin,lt,hint,li,lj,tester,hider);
       if (lt == VERTEX) double_vertices.push_back(new_vertex);
@@ -1362,12 +1365,15 @@ Periodic_3_triangulation_3<GT,TDS>::locate(const Point & p, const Offset &o_p,
     start = cells_begin();
   }
 
-  cumm_off = start->offset(0) | start->offset(1) | start->offset(2) |
-start->offset(3);
+  cumm_off = start->offset(0) | start->offset(1)
+    | start->offset(2) | start->offset(3);
   if (is_1_cover() && cumm_off != 0) {
-    if (((cumm_off & 4) == 4) && (p.x() < 0.5)) off_query += Offset(1,0,0);
-    if (((cumm_off & 2) == 2) && (p.y() < 0.5)) off_query += Offset(0,1,0);
-    if (((cumm_off & 1) == 1) && (p.z() < 0.5)) off_query += Offset(0,0,1);
+    if (((cumm_off & 4) == 4) && (FT(2)*p.x()<(_domain.xmax()-_domain.xmin())))
+      off_query += Offset(1,0,0);
+    if (((cumm_off & 2) == 2) && (FT(2)*p.y()<(_domain.ymax()-_domain.ymin())))
+      off_query += Offset(0,1,0);
+    if (((cumm_off & 1) == 1) && (FT(2)*p.z()<(_domain.zmax()-_domain.zmin())))
+      off_query += Offset(0,0,1);
   }
 
   CGAL_postcondition(start!=Cell_handle());
@@ -1532,6 +1538,7 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
 
   Orientation o0,o1,o2,o3;
+  o0 = o1 = o2 = o3 = ZERO;
 
   int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
   if ((cumm_off == 0) && (is_1_cover())) {
@@ -1736,8 +1743,7 @@ template < class Conflict_tester, class Point_hider >
 inline typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle
 Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
     const Point & p, const Offset& o,
-    Locate_type lt, Cell_handle c, int li, int, 
-    const Conflict_tester &tester,
+    Locate_type lt, Cell_handle c, const Conflict_tester &tester,
     Point_hider &hider, Vertex_handle vh)
 {
   Vertex_handle v;
@@ -2125,7 +2131,7 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point & p,
   }
   CGAL_assertion( number_of_vertices() != 0 );
   CGAL_expensive_assertion(is_valid());
-  Vertex_handle vh = periodic_insert(p, Offset(), lt, c, li, lj, tester, hider);
+  Vertex_handle vh = periodic_insert(p, Offset(), lt, c, tester, hider);
   if (is_1_cover()) {
     return vh;
   }
@@ -2156,7 +2162,7 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point & p,
           // be contained in the triangulation anymore.
           start = start_vertices[i*9+j*3+k-1]->cell();
           c = locate(p, Offset(i,j,k), lt, li, lj, start);
-          Vertex_handle vh2 = periodic_insert(p, Offset(i,j,k), lt, c, li, lj,
+          Vertex_handle vh2 = periodic_insert(p, Offset(i,j,k), lt, c,
               tester, hider,vh);
         }
       }
@@ -3308,8 +3314,8 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
 
   tr.clear();
 
-  unsigned int n;
-  int cx, cy, cz;
+  unsigned int n=0;
+  int cx=0, cy=0, cz=0;
   Iso_cuboid domain;
 
   if (is_ascii(is)) {
@@ -3367,7 +3373,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
   tr._tds.read_cells(is, V, m, C);
 
   // read offsets
-  int off[4];
+  int off[4] = {0,0,0,0};
   for (int j=0 ; j < m; j++) {
     if (is_ascii(is))
       is >> off[0] >> off[1] >> off[2] >> off[3];

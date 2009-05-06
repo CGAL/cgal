@@ -30,7 +30,7 @@
 
 template <class PeriodicTriangulation>
 void
-_test_periodic_3_triangulation_3_constructors(const PeriodicTriangulation &T)
+_test_periodic_3_triangulation_3_constructors(const PeriodicTriangulation &)
 {
   std::cout<<"Creation"<<std::endl;
   PeriodicTriangulation PT_def;
@@ -47,7 +47,7 @@ _test_periodic_3_triangulation_3_constructors(const PeriodicTriangulation &T)
 
 template <class PeriodicTriangulation>
 void
-_test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &T,
+_test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
     bool ex = false, bool hom = false)
 {
   typedef PeriodicTriangulation                  P3T3;
