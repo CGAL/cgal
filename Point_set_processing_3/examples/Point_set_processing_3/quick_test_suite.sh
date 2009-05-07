@@ -93,6 +93,7 @@ else
   run average_spacing_example
   run jet_smoothing_example
   run normal_estimation
+  run property_map
   run remove_outliers_example
   run normals_example
   run random_simplification_example
