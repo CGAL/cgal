@@ -19,7 +19,7 @@
 
 \ccDefinition
   
-The concept \ccRefName\ provides the geometric primitive types and methods for the class \ccc{AABB_tree<Traits>}.
+The concept \ccRefName\ provides the geometric primitive types and methods for the class \ccc{AABB_tree<AT>}.
 
 \ccTypes
 
@@ -51,7 +51,7 @@ During the construction of the \ccc{AABB_tree}, the primitives are sorted accord
 {Returns the bounding box of a set of primitives.}
 
 The following predicates are required for each type \ccc{Query}
-for which the class \ccc{AABB_tree<Traits>} may receive a query.
+for which the class \ccc{AABB_tree<AT>} may receive a query.
 
 \ccMethod{bool do_intersect(const Query & q, const Bounding_box & box);}
 {Returns \ccc{true} iff the query intersects the bounding box.}
@@ -78,7 +78,7 @@ for which the class \ccc{AABB_tree<Traits>} may receive a query.
 
 \ccSeeAlso
 \ccc{AABB_traits<GeomTraits,TrianglePrimitive>}\\
-\ccc{AABB_tree<Traits>}
+\ccc{AABB_tree<AT>}
 \ccc{AABBPrimitive}
 
 \end{ccRefConcept}
