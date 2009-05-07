@@ -2,7 +2,7 @@
 #include <CGAL/random_simplify_point_set.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
-#include <deque>
+#include <vector>
 #include <fstream>
 
 // types
@@ -12,7 +12,7 @@ typedef Kernel::Point_3 Point;
 int main(void)
 {
     // Reads a .xyz point set file
-    std::deque<Point> points;
+    std::vector<Point> points;
     std::ifstream stream("data/oni.xyz");
     if (!stream || 
         !CGAL::read_xyz_point_set(stream,

@@ -8,7 +8,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
-#include <deque>
+#include <vector>
 #include <fstream>
 
 // Types
@@ -17,7 +17,7 @@ typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
-typedef std::deque<Point_with_normal> PointList;
+typedef std::vector<Point_with_normal> PointList;
 typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;

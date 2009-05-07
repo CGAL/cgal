@@ -2,7 +2,7 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
-#include <deque>
+#include <vector>
 #include <fstream>
 
 // types
@@ -13,7 +13,7 @@ typedef Kernel::Point_3 Point;
 int main(void)
 {
     // Reads a .xyz point set file 
-    std::deque<Point> points;
+    std::vector<Point> points;
     std::ifstream stream("data/sphere_20k.xyz");
     if (!stream || 
         !CGAL::read_xyz_point_set(stream,
@@ -25,7 +25,7 @@ int main(void)
 
     // Computes average spacing
     const unsigned int nb_neighbors = 7;
-    typedef std::deque<Point>::iterator Iterator;
+    typedef std::vector<Point>::iterator Iterator;
     FT average_spacing = CGAL::compute_average_spacing<Iterator>(points.begin(), points.end(),
                                                                  nb_neighbors);
     std::cout << "Average spacing: " << average_spacing << std::endl;

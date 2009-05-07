@@ -3,13 +3,13 @@
 #include <CGAL/IO/read_xyz_point_set.h>
 #include <CGAL/IO/write_xyz_point_set.h>
 
-#include <deque>
+#include <vector>
 #include <fstream>
 
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
-typedef std::deque<Point_with_normal> PointList;
+typedef std::vector<Point_with_normal> PointList;
 
 int main(void)
 {
