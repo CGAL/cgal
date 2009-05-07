@@ -1,6 +1,13 @@
+// property_map.cpp
+
+//----------------------------------------------------------
+// Test various types of containers and property maps
+// compatible with Point_set_processing_3 package.
+//----------------------------------------------------------
+// Usage: no parameters
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/property_map.h>
+#include <CGAL/point_set_property_map.h>
 #include <algorithm>
 #include <vector>
 #include <boost/tuple/tuple.hpp>
@@ -10,81 +17,74 @@ typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point_3;
 typedef K::Vector_3 Vector_3;
 
+// Point with normal vector stored in a std::pair.
 typedef std::pair<Point_3, Vector_3> PointVectorPair; 
 
+// Data type = index, followed by the point, followed by a boolean
+// that tells us whether the normal is oriented or not, followed by the normal vector.
 typedef boost::tuple<int, Point_3, bool, Vector_3> IndexedPointWithOrientableNormalTuple;
 
 
 
-// This is an implementation detail of the process_point_set function
-// We need this function because  in process_point_set we use std::sort
-// We sort arbitrary objects of type T, and the property map will allows
-// us to access the Point_3 associated to it
+// This is an implementation detail of the process_point_set function.
+// We need this function because in process_point_set() we use std::sort.
+// We sort arbitrary objects of type T, and the property map will allow
+// us to access the Point_3 associated to it.
 
-template <typename T, typename PointPmap>
+template <typename T, typename PointPMap>
 struct MyLess {
 
-  PointPmap pm;
+  PointPMap pmap;
 
-  MyLess(const PointPmap& p)
-    : pm(p)
+  MyLess(const PointPMap& p)
+    : pmap(p)
   {}
 
   bool operator()(const T& t0, const T& t1) const
   {
-    return boost::get(pm,t0) < boost::get(pm,t1);
+    return get(pmap, &t0) < get(pmap, &t1);
   }
-
 };
 
 
-// In this example we have a function that only operates on the point part
-// It sorts them lexicographically
+// In this example we have a function that only operates on the point part.
+// It sorts them lexicographically.
 
-
-template <typename Iterator, typename PointPmap >
-void process_point_set(Iterator beg, Iterator end, PointPmap pm)
+template <typename Iterator, typename PointPMap >
+void process_point_set(Iterator beg, Iterator end, PointPMap pmap)
 {
-  MyLess<typename std::iterator_traits<Iterator>::value_type,PointPmap> less(pm);
+  MyLess<typename std::iterator_traits<Iterator>::value_type,PointPMap> less(pmap);
   std::sort(beg,end,less);
 }
 
 
 // We can call it just with points. Then interally we use a property map
-// that maps points on points
-// The identity_property_map is buggy so we use the one of CGAL
-
+// that maps point iterators on points.
 
 template <typename Iterator>
 void process_point_set(Iterator beg, Iterator end)
 {
-  typedef CGAL::identity_property_map<typename std::iterator_traits<Iterator>::value_type > Identity;
-  Identity identity;
-  process_point_set(beg,end,identity);
+  process_point_set(beg,end, CGAL::make_dereference_property_map(beg));
 }
 
 
 
 // Here comes a function that changes the orientation and the normal
 
-template <typename Iterator, typename PointPmap, typename OrientationPmap, typename NormalPmap >
-void orient_normals(Iterator beg, Iterator end, PointPmap ppm, OrientationPmap opm, NormalPmap npm)
+template <typename Iterator, typename PointPMap, typename OrientationPMap, typename NormalPMap >
+void orient_normals(Iterator beg, Iterator end, PointPMap point_pmap, OrientationPMap orient_pmap, NormalPMap normal_pmap)
 {
-  //std::cout << "npm = " << typeid(npm).name() << std::endl;
-  //std::cout << typeid(boost::get(npm,*beg)).name() << std::endl;
-  
   for(;beg!= end;++beg){
-    Vector_3& v = boost::get(npm,*beg);
+    Vector_3& v = get(normal_pmap, beg);
     
-    boost::put(opm, *beg, (v == CGAL::NULL_VECTOR));
+    boost::put(orient_pmap, beg, (v == CGAL::NULL_VECTOR));
 
     if(v.x() < 0){
       v = -v;
-      boost::put(npm,*beg, v);
+      boost::put(normal_pmap, beg, v);
     }
   }
 }
-
 
 
 
@@ -92,7 +92,7 @@ int main()
 {
   CGAL::set_pretty_mode(std::cout);
 
-  // Here we run it on plain points. No need for a poperty map
+  // Here we run it on plain points. No need for a property map
   {
     std::vector<Point_3> points;
     
@@ -101,7 +101,7 @@ int main()
 
 
   // Here we run it on points with normal vectors stored in a std::pair.
-  // We use a property map that accesses pair::first
+  // We use a property map that accesses pair::first.
   {
     std::vector<PointVectorPair> points;
 
@@ -111,7 +111,7 @@ int main()
     
     process_point_set(points.begin(),
                       points.end(),
-                      CGAL::first_of_pair_property_map<PointVectorPair>());
+                      CGAL::First_of_pair_property_map<PointVectorPair>());
     
     for(int i = 0; i < 10; i++){
       std::cout << points[i].first << "\t" << points[i].second << std::endl;
@@ -120,10 +120,10 @@ int main()
 
 
   // Here we run it on tuples. To see the interest I made up my own
-  // data type which starts with an index, followed by the point, followed
-  // by the Boolean that tells us whether the normal Vector is oriented or not.
+  // data type = index, followed by the point, followed by a boolean
+  // that tells us whether the normal is oriented or not, followed by the normal vector.
   // As the point is the second element of the tuple (that is with index 1)
-  // we use a property map that accesses the 1st element of the tuple
+  // we use a property map that accesses the 1st element of the tuple.
   {
     std::vector<IndexedPointWithOrientableNormalTuple> points;
 
@@ -134,9 +134,7 @@ int main()
     
     process_point_set(points.begin(),
                       points.end(),
-                      CGAL::nth_of_tuple_property_map<IndexedPointWithOrientableNormalTuple,1>());
-    
-
+                      CGAL::Nth_of_tuple_property_map<1,IndexedPointWithOrientableNormalTuple>());
     
     std::cout << boost::tuples::set_open('[') << boost::tuples::set_close(']') << boost::tuples::set_delimiter(','); 
 
@@ -144,27 +142,18 @@ int main()
       std::cout << points[i]  << std::endl;
     }
 
-
     //We keep the sequence in order, but determine the normal and if it is different from zero set the Boolean to true 
     orient_normals(points.begin(),
                    points.end(),
-                   CGAL::nth_of_tuple_property_map<IndexedPointWithOrientableNormalTuple,1>(),
-                   CGAL::nth_of_tuple_property_map<IndexedPointWithOrientableNormalTuple,2>(),
-                   CGAL::nth_of_tuple_property_map<IndexedPointWithOrientableNormalTuple,3>());
+                   CGAL::make_nth_of_tuple_property_map<1>(points.begin()),
+                   CGAL::make_nth_of_tuple_property_map<2>(points.begin()),
+                   CGAL::make_nth_of_tuple_property_map<3>(points.begin()));
     
     std::cout << "\nAfter orient_normals\n";
     for(int i = 0; i < 10; i++){
       std::cout << points[i]  << std::endl;
     }     
-    
   }
   
-
-
-
   return 0;
 }
-
-
-
-

@@ -13,7 +13,7 @@
 /// The UI_point_3 class represents a 3D point in Surface_reconstruction_points_3 demo.
 /// It contains:
 /// - a position,
-/// - a normal (oriented),
+/// - a normal,
 /// - a radius,
 /// - a selection flag.
 ///
@@ -123,11 +123,11 @@ public:
 // Data
 private:
 
-    /// radius.
-    FT m_radius;
-
     // Selection flag.
     bool m_is_selected;
+
+    /// radius.
+    FT m_radius;
 };
 
 

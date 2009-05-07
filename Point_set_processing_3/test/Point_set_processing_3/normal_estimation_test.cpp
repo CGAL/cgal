@@ -13,18 +13,17 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
-#include <CGAL/boost/graph/properties.h>
 
 // This package
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/Orientable_normal_3.h>
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/IO/read_off_point_set.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
-#include <deque>
+#include <vector>
 #include <cstdlib>
 #include <fstream>
 #include <cassert>
@@ -45,9 +44,8 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-typedef CGAL::Orientable_normal_3<Kernel> Orientable_normal; // normal vector + orientation
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // position + normal vector
-typedef std::deque<Point_with_normal> PointList;
+typedef std::vector<Point_with_normal> PointList;
 
 
 // ----------------------------------------------------------------------------
@@ -57,15 +55,16 @@ typedef std::deque<Point_with_normal> PointList;
 // Check the accuracy of normals direction estimation.
 // If original normals are available, compare with them and count normals with large deviation.
 // @return true on success.
-bool verify_normal_direction(const PointList& points, // input point set
-                             const std::deque<Orientable_normal>& computed_normals) // estimated normals
+bool verify_normal_direction(const PointList& points, // input points + computed normals
+                             const std::vector<Vector>& original_normals) // may be empty
 {
   bool success = true;
 
-  assert(points.begin() != points.end());
-  bool points_have_original_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
+  bool points_have_original_normals = ! original_normals.empty();
   if (points_have_original_normals)
   {
+    assert(points.size() == original_normals.size());
+
     std::cerr << "Compare with original normals:" << std::endl;
 
     double min_normal_deviation = DBL_MAX; // deviation / original normal
@@ -73,14 +72,14 @@ bool verify_normal_direction(const PointList& points, // input point set
     double avg_normal_deviation = 0;
     int invalid_normals = 0; // #normals with large deviation
     PointList::const_iterator p;
-    std::deque<Orientable_normal>::const_iterator n;
-    for (p = points.begin(), n = computed_normals.begin(); p != points.end(); p++, n++)
+    std::vector<Vector>::const_iterator n;
+    for (p = points.begin(), n = original_normals.begin(); p != points.end(); p++, n++)
     {
-      // compute normal deviation
-      Vector v1 = p->normal(); // input normal
+      // Compute normal deviation.
+      Vector v1 = *n; // original normal
       double norm1 = std::sqrt( v1*v1 );
       assert(norm1 != 0.0);
-      Vector v2 = *n; // computed normal
+      Vector v2 = p->normal(); // computed normal
       double norm2 = std::sqrt( v2*v2 );
       assert(norm2 != 0.0);
       double cos_normal_deviation = (v1*v2)/(norm1*norm2);
@@ -119,9 +118,9 @@ bool verify_normal_direction(const PointList& points, // input point set
 
 // Compute normals direction by Principal Component Analysis
 // @return true on success.
-bool test_pca_estimate_normals(const PointList& points, // input point set
-                               std::deque<Orientable_normal>& computed_normals, // normals to estimate
-                               double nb_neighbors_pca_normals /* % */) // number of neighbors
+bool run_pca_estimate_normals(PointList& points, // input points + output normals
+                              double nb_neighbors_pca_normals, // number of neighbors (%)
+                              const std::vector<Vector>& original_normals) // may be empty
 {
   CGAL::Timer task_timer; task_timer.start();
 
@@ -135,9 +134,17 @@ bool test_pca_estimate_normals(const PointList& points, // input point set
   std::cerr << "Estimate Normals Direction by PCA (k="
             << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
 
+  std::vector<Vector> output; 
+
   CGAL::pca_estimate_normals(points.begin(), points.end(),
-                             std::back_inserter(computed_normals),
+                             std::back_inserter(output),
                              nb_neighbors);
+
+  // TEMPORARY: copy normals
+  PointList::iterator p;
+  std::vector<Vector>::iterator n;
+  for (p = points.begin(), n = output.begin(); p != points.end(); p++, n++)
+    p->normal() = *n;
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -146,14 +153,14 @@ bool test_pca_estimate_normals(const PointList& points, // input point set
 
   // Check the accuracy of normals direction estimation.
   // If original normals are available, compare with them.
-  return verify_normal_direction(points, computed_normals);
+  return verify_normal_direction(points, original_normals);
 }
 
 // Compute normals direction by Jet Fitting
 // @return true on success.
-bool test_jet_estimate_normals(const PointList& points, // input point set
-                               std::deque<Orientable_normal>& computed_normals, // normals to estimate
-                               double nb_neighbors_jet_fitting_normals /* % */) // number of neighbors
+bool run_jet_estimate_normals(PointList& points, // input points + output normals
+                              double nb_neighbors_jet_fitting_normals, // number of neighbors (%)
+                              const std::vector<Vector>& original_normals) // may be empty
 {
   CGAL::Timer task_timer; task_timer.start();
 
@@ -167,9 +174,17 @@ bool test_jet_estimate_normals(const PointList& points, // input point set
   std::cerr << "Estimate Normals Direction by Jet Fitting (k="
             << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
 
+  std::vector<Vector> output; // normals to estimate
+
   CGAL::jet_estimate_normals(points.begin(), points.end(),
-                             std::back_inserter(computed_normals),
+                             std::back_inserter(output),
                              nb_neighbors);
+
+  // TEMPORARY: copy normals
+  PointList::iterator p;
+  std::vector<Vector>::iterator n;
+  for (p = points.begin(), n = output.begin(); p != points.end(); p++, n++)
+    p->normal() = *n;
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -178,32 +193,23 @@ bool test_jet_estimate_normals(const PointList& points, // input point set
 
   // Check the accuracy of normals direction estimation.
   // If original normals are available, compare with them.
-  return verify_normal_direction(points, computed_normals);
+  return verify_normal_direction(points, original_normals);
 }
 
 // Check the accuracy of normal orientation.
 // Count non-oriented normals.
 // If original normals are available, compare with them and count flipped normals.
-bool verify_normal_orientation(const PointList& points, // input point set
-                                const std::deque<Orientable_normal>& computed_normals) // oriented normals
+bool verify_normal_orientation(const PointList& points, // input points + computed normals
+                               PointList::const_iterator unoriented_points_begin, // first pt w/ unoriented normal
+                               const std::vector<Vector>& original_normals) // may be empty
 {
   bool success = true;
 
   // Count non-oriented normals
   int unoriented_normals = 0;
-  std::deque<Orientable_normal>::const_iterator n;
-  for (n = computed_normals.begin(); n != computed_normals.end(); n++)
+  for (PointList::const_iterator p = unoriented_points_begin ; p != points.end(); p++)
   {
-    // Check unit vector
-    Vector v = *n;
-    double norm = std::sqrt( v*v );
-    assert(norm > 0.99 || norm < 1.01);
-
-    // Check orientation
-    if ( ! n->is_oriented() )
-    {
       unoriented_normals++;
-    }
   }
   if (unoriented_normals > 0)
   {
@@ -211,27 +217,27 @@ bool verify_normal_orientation(const PointList& points, // input point set
     success = false;
   }
 
-  // If original normals are available, compare with them and count flipped normals
-  assert(points.begin() != points.end());
-  bool points_have_original_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
+  // Compare oriented normals with original ones and count flipped normals
+  bool points_have_original_normals = ! original_normals.empty();
   if (points_have_original_normals)
   {
+    assert(points.size() == original_normals.size());
+
     std::cerr << "Compare with original normals:" << std::endl;
 
     int flipped_normals = 0; // #normals with wrong orientation
     PointList::const_iterator p;
-    std::deque<Orientable_normal>::const_iterator n;
-    for (p = points.begin(), n = computed_normals.begin(); p != points.end(); p++, n++)
+    std::vector<Vector>::const_iterator n;
+    for (p = points.begin(), n = original_normals.begin(); p != unoriented_points_begin; p++, n++)
     {
-      Vector v1 = p->normal(); // input normal
+      Vector v1 = *n; // original normal
       double norm1 = std::sqrt( v1*v1 );
       assert(norm1 != 0.0);
-      Vector v2 = *n; // computed normal
+      Vector v2 = p->normal(); // computed normal
       double norm2 = std::sqrt( v2*v2 );
       assert(norm2 != 0.0);
       double cos_normal_deviation = (v1*v2)/(norm1*norm2);
-      if (cos_normal_deviation < 0 // if flipped
-       && n->is_oriented()) // unoriented normals are already reported
+      if (cos_normal_deviation < 0) // if flipped
       {
         flipped_normals++;
       }
@@ -246,30 +252,23 @@ bool verify_normal_orientation(const PointList& points, // input point set
   return success;
 }
 
-// Test Hoppe92 normal orientation using a Minimum Spanning Tree.
+// Hoppe92 normal orientation using a Minimum Spanning Tree.
 // @return true on success.
-bool test_mst_orient_normals(const PointList& points, // input point set
-                             std::deque<Orientable_normal>& computed_normals, // normals to orient
-                             unsigned int nb_neighbors_mst) // number of neighbors
+bool run_mst_orient_normals(PointList& points, // input points + input/output normals
+                            unsigned int nb_neighbors_mst, // number of neighbors
+                            const std::vector<Vector>& original_normals) // may be empty
 {
   std::cerr << "Orient Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
-  // Mark all normals as unoriented
-  std::deque<Orientable_normal>::iterator n;
-  for (n = computed_normals.begin(); n != computed_normals.end(); n++)
-    n->set_orientation(false);
-
   // mst_orient_normals() requires an iterator over points
   // + property maps to access each point's index, position and normal.
-  // We use the points index as iterator.
-  boost::identity_property_map index_id; // identity
-  CGAL::mst_orient_normals(
-         (std::size_t)0, points.size(), // use the points index as iterator
-         index_id, // index -> index property map = identity
-         boost::make_iterator_property_map(points.begin(), index_id), // index -> position prop. map
-         boost::make_iterator_property_map(computed_normals.begin(), index_id), // index -> normal prop. map
-         nb_neighbors_mst);
+  PointList::iterator unoriented_points_begin = 
+    CGAL::mst_orient_normals(points.begin(), points.end(),
+                             CGAL::make_dereference_property_map(points.begin()),
+                             CGAL::make_normal_vector_property_map(points.begin()),
+                             CGAL::make_index_property_map(points),
+                             nb_neighbors_mst);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -278,7 +277,7 @@ bool test_mst_orient_normals(const PointList& points, // input point set
 
   // Check the accuracy of normal orientation.
   // If original normals are available, compare with them.
-  return verify_normal_orientation(points, computed_normals);
+  return verify_normal_orientation(points, unoriented_points_begin, original_normals);
 }
 
 
@@ -328,7 +327,7 @@ int main(int argc, char * argv[])
 
     // Read the point set file in points[].
     PointList points;
-    std::cerr << "Open " << argv[i] << " for reading..." << std::endl;
+    std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
     // If OFF file format
     bool success = false;
@@ -373,19 +372,28 @@ int main(int argc, char * argv[])
     }
 
     //***************************************
+    // copy original normals
+    //***************************************
+
+    std::vector<Vector> original_normals; 
+    bool points_have_original_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
+    if ( points_have_original_normals )
+    {
+      for (PointList::iterator p = points.begin() ; p != points.end(); p++)
+        original_normals.push_back(p->normal());
+    }
+
+    //***************************************
     // Compute normals (PCA + MST)
     //***************************************
 
-    std::deque<Orientable_normal> computed_normals;
-
     // Estimate normals direction.
-    success = test_pca_estimate_normals(points, computed_normals, nb_neighbors_pca_normals);
+    success = run_pca_estimate_normals(points, nb_neighbors_pca_normals, original_normals);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 
     // Orient normals.
-    // Check normal orientation.
-    success = test_mst_orient_normals(points, computed_normals, nb_neighbors_mst);
+    success = run_mst_orient_normals(points, nb_neighbors_mst, original_normals);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 
@@ -393,16 +401,13 @@ int main(int argc, char * argv[])
     // Compute normals (jet fitting + MST)
     //***************************************
 
-    computed_normals.clear();
-
     // Estimate normals direction
-    success = test_jet_estimate_normals(points, computed_normals, nb_neighbors_jet_fitting_normals);
+    success = run_jet_estimate_normals(points, nb_neighbors_jet_fitting_normals, original_normals);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 
     // Orient normals
-    // Check normal orientation.
-    success = test_mst_orient_normals(points, computed_normals, nb_neighbors_mst);
+    success = run_mst_orient_normals(points, nb_neighbors_mst, original_normals);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 

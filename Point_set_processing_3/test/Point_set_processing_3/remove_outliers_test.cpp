@@ -12,7 +12,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
-#include <CGAL/boost/graph/properties.h>
 
 // This package
 #include <CGAL/remove_outliers.h>

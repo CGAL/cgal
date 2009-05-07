@@ -13,8 +13,8 @@
 /// The UI_point_3 class represents a 3D point in Surface_reconstruction_points_3 demo.
 /// It contains:
 /// - a position,
-/// - a normal (oriented),
-/// - an original normal (optional, oriented),
+/// - a normal,
+/// - an original normal (optional),
 /// - a list of camera/2D point pairs used to reconstruct the point from images,
 /// - a selection flag.
 ///

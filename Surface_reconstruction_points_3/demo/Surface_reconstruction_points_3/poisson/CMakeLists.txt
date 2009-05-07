@@ -75,7 +75,7 @@ if(CGAL_FOUND AND MSVC AND OPENGL_FOUND AND TAUCS_FOUND)
   endif()
 
   # Temporary debugging stuff
-  #ADD_DEFINITIONS( "-DDEBUG_TRACE" )
+  ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 
   # Create Poisson executable
   ADD_EXECUTABLE(Poisson WIN32 ChildFrm.cpp DialogOptions.cpp director.cpp MainFrm.cpp Poisson.cpp PoissonDoc.cpp PoissonView.cpp Poisson.rc)

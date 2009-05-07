@@ -23,8 +23,6 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Iterator_project.h>
 
-#include <boost/graph/properties.hpp>
-
 #include <set>
 #include <algorithm>
 #include <cassert>
@@ -221,13 +219,13 @@ private:
 };
 
 
-namespace boost {
-
-/// Helper type and constant to get a "vertex_cameras" property map.
-enum vertex_cameras_t { vertex_cameras } ;
-BOOST_INSTALL_PROPERTY(vertex, cameras);
-
-} // namespace boost
+//namespace boost {
+//
+///// Helper type and constant to get a "vertex_cameras" property map.
+//enum vertex_cameras_t { vertex_cameras } ;
+//BOOST_INSTALL_PROPERTY(vertex, cameras);
+//
+//} // namespace boost
 
 
 #endif //GYROVIZ_POINT_3_H

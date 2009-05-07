@@ -4,13 +4,11 @@
 #define POINT_SET_3_H
 
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/Random_access_container_index_pmap.h>
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 
 #include <UI_point_3.h>
-
-#include <CGAL/boost/graph/properties.h>
 
 #include <algorithm>
 #include <deque>
@@ -23,7 +21,7 @@
 
 
 /// The Point_set_3 class is array of points + normals of type
-/// Point_with_normal_3 (in fact
+/// Point_with_normal_3<Gt> (in fact
 /// UI_point_3 to support a selection flag and an optional radius).
 /// It provides:
 /// - accessors: points and normals iterators, property maps
@@ -31,7 +29,9 @@
 /// - bounding box
 ///
 /// CAUTION:
-/// User is responsible to call invalidate_bounds() after adding, moving or removing points.
+/// - User is responsible to call invalidate_bounds() after adding, moving or removing points.
+/// - User is responsible to partition the point set as oriented/unoriented normals 
+///   and to set unoriented_points_begin() appropriately.
 ///
 /// @heading Parameters:
 /// @param Gt       Geometric traits class.
@@ -103,6 +103,9 @@ private:
 
   unsigned int m_nb_selected_points; // number of selected points
 
+  // Iterator over the first point with an unoriented normal.
+  Point_iterator m_unoriented_points_begin;
+
 // Public methods
 public:
 
@@ -111,6 +114,7 @@ public:
   {
     m_nb_selected_points = 0;
     m_bounding_box_is_valid = false;
+    m_unoriented_points_begin = end();
   }
 
   // Default copy constructor and operator =() are fine.
@@ -124,9 +128,15 @@ public:
 
   // Get first/last iterators over normals.
   Normal_iterator normals_begin()             { return Normal_iterator(begin()); }
-  Normal_const_iterator normals_begin() const { return Normal_iterator(begin()); }
+  Normal_const_iterator normals_begin() const { return Normal_const_iterator(begin()); }
   Normal_iterator normals_end()               { return Normal_iterator(end()); }
-  Normal_const_iterator normals_end() const   { return Normal_iterator(end()); }
+  Normal_const_iterator normals_end() const   { return Normal_const_iterator(end()); }
+
+  // Get/set the iterator over the first point with an unoriented normal.
+  /// User is responsible to partition the point set as oriented/unoriented normals 
+  /// and to set unoriented_points_begin() appropriately.
+  Point_iterator&      unoriented_points_begin()       { return m_unoriented_points_begin; }
+  Point_const_iterator unoriented_points_begin() const { return m_unoriented_points_begin; }
 
   /// Get the number of selected points.
   unsigned int nb_selected_points() const { return m_nb_selected_points; }
@@ -156,11 +166,16 @@ public:
   }
 
   /// Delete selected points.
+  // Note: this call resets unoriented_points_begin().
   void delete_selection()
   {
     // erase-remove idiom
     erase(std::remove_if(begin(), end(), std::mem_fun_ref(&UI_point::is_selected)),
           end());
+
+    // TODO: Update m_unoriented_points_begin. 
+    //       This is tricky as erase() invalidates iterators.
+    m_unoriented_points_begin = end();
 
     m_nb_selected_points = 0;
     invalidate_bounds();
@@ -265,11 +280,11 @@ public:
     {
       // Draw *oriented* normals
       ::glBegin(GL_LINES);
-      for (const_iterator it = begin(); it != end(); it++)
+      for (const_iterator it = begin(); it != unoriented_points_begin(); it++)
       {
         const UI_point& p = *it;
         const Vector& n = p.normal();
-        if (!p.is_selected() /*&& n.is_oriented()*/)
+        if (!p.is_selected())
         {
           Point q = p + scale * n;
           ::glVertex3d(p.x(),p.y(),p.z());
@@ -278,21 +293,21 @@ public:
       }
       ::glEnd();
 
-      //// Draw *non-oriented* normals
-      //::glColor3ub(245,184,0);       // non oriented => orange
-      //::glBegin(GL_LINES);
-      //for (const_iterator it = begin(); it != end(); it++)
-      //{
-      //  const UI_point& p = *it;
-      //  const Vector& n = p.normal();
-      //  if (!p.is_selected() && !n.is_oriented())
-      //  {
-      //    Point q = p + scale * n;
-      //    ::glVertex3d(p.x(),p.y(),p.z());
-      //    ::glVertex3d(q.x(),q.y(),q.z());
-      //  }
-      //}
-      //::glEnd();
+      // Draw *non-oriented* normals
+      ::glColor3ub(245,184,0);       // non oriented => orange
+      ::glBegin(GL_LINES);
+      for (const_iterator it = unoriented_points_begin(); it != end(); it++)
+      {
+        const UI_point& p = *it;
+        const Vector& n = p.normal();
+        if (!p.is_selected())
+        {
+          Point q = p + scale * n;
+          ::glVertex3d(p.x(),p.y(),p.z());
+          ::glVertex3d(q.x(),q.y(),q.z());
+        }
+      }
+      ::glEnd();
     }
 
     // Draw normals of *selected* points
@@ -391,85 +406,85 @@ private:
 }; // end of class Point_set_3
 
 
-/// Helper class: type of the "vertex_point" property map
-/// of an Point_set_3 object.
-template <class Gt>
-class Point_set_vertex_point_const_map
-{
-public:
-  typedef Point_set_3<Gt> Point_set;
-  typedef typename Gt::Point_3 Point_3;
-
-  // Property maps required types
-  typedef boost::readable_property_map_tag          category;
-  typedef Point_3                                   value_type;
-  typedef value_type                                reference;
-  typedef typename Point_set::Point_const_iterator  key_type;
-
-  Point_set_vertex_point_const_map(const Point_set&) {}
-
-  /// Free function to access the map elements.
-  friend inline
-  reference get(const Point_set_vertex_point_const_map&, key_type p)
-  {
-    return *p;
-  }
-};
-
-/// Free function to get the "vertex_point" property map
-/// of an Point_set_3 object.
-template <class Gt>
-inline
-Point_set_vertex_point_const_map<Gt>
-get(CGAL::vertex_point_t, const Point_set_3<Gt>& points)
-{
-  Point_set_vertex_point_const_map<Gt> aMap(points);
-  return aMap;
-}
-
-
-namespace boost {
-
-/// Helper type and constant to get a "vertex_normal" property map.
-enum vertex_normal_t { vertex_normal } ;
-BOOST_INSTALL_PROPERTY(vertex, normal);
-
-} // namespace boost
-
-
-/// Helper class: type of the "vertex_normal" property map
-/// of an Point_set_3 object.
-template <class Gt>
-class Point_set_vertex_normal_map
-  : public boost::put_get_helper<typename Gt::Vector_3&,
-  Point_set_vertex_normal_map<Gt> >
-{
-public:
-  typedef Point_set_3<Gt> Point_set;
-  typedef typename Gt::Vector_3 Vector_3;
-
-  // Property maps required types
-  typedef boost::lvalue_property_map_tag            category;
-  typedef Vector_3                                  value_type;
-  typedef Vector_3&                                 reference;
-  typedef typename Point_set::iterator              key_type;
-
-  Point_set_vertex_normal_map(const Point_set&) {}
-
-  /// Access the map elements.
-  reference operator[](key_type p) const { return p->normal(); }
-};
-
-/// Free function to get the "vertex_normal" property map
-/// of an Point_set_3 object.
-template <class Gt>
-inline
-Point_set_vertex_normal_map<Gt>
-get(boost::vertex_normal_t, const Point_set_3<Gt>& points)
-{
-  Point_set_vertex_normal_map<Gt> aMap(points);
-  return aMap;
-}
+///// Helper class: type of the "vertex_point" property map
+///// of an Point_set_3 object.
+//template <class Gt>
+//class Point_set_vertex_point_const_map
+//{
+//public:
+//  typedef Point_set_3<Gt> Point_set;
+//  typedef typename Gt::Point_3 Point_3;
+//
+//  // Property maps required types
+//  typedef boost::readable_property_map_tag          category;
+//  typedef Point_3                                   value_type;
+//  typedef value_type                                reference;
+//  typedef typename Point_set::Point_const_iterator  key_type;
+//
+//  Point_set_vertex_point_const_map(const Point_set&) {}
+//
+//  /// Free function to access the map elements.
+//  friend inline
+//  reference get(const Point_set_vertex_point_const_map&, key_type p)
+//  {
+//    return *p;
+//  }
+//};
+//
+///// Free function to get the "vertex_point" property map
+///// of an Point_set_3 object.
+//template <class Gt>
+//inline
+//Point_set_vertex_point_const_map<Gt>
+//get(CGAL::vertex_point_t, const Point_set_3<Gt>& points)
+//{
+//  Point_set_vertex_point_const_map<Gt> aMap(points);
+//  return aMap;
+//}
+//
+//
+//namespace boost {
+//
+///// Helper type and constant to get a "vertex_normal" property map.
+//enum vertex_normal_t { vertex_normal } ;
+//BOOST_INSTALL_PROPERTY(vertex, normal);
+//
+//} // namespace boost
+//
+//
+///// Helper class: type of the "vertex_normal" property map
+///// of an Point_set_3 object.
+//template <class Gt>
+//class Point_set_vertex_normal_map
+//  : public boost::put_get_helper<typename Gt::Vector_3&,
+//                                 Point_set_vertex_normal_map<Gt> >
+//{
+//public:
+//  typedef Point_set_3<Gt> Point_set;
+//  typedef typename Gt::Vector_3 Vector_3;
+//
+//  // Property maps required types
+//  typedef boost::lvalue_property_map_tag            category;
+//  typedef Vector_3                                  value_type;
+//  typedef Vector_3&                                 reference;
+//  typedef typename Point_set::iterator              key_type;
+//
+//  Point_set_vertex_normal_map(const Point_set&) {}
+//
+//  /// Access the map elements.
+//  reference operator[](key_type p) const { return p->normal(); }
+//};
+//
+///// Free function to get the "vertex_normal" property map
+///// of an Point_set_3 object.
+//template <class Gt>
+//inline
+//Point_set_vertex_normal_map<Gt>
+//get(boost::vertex_normal_t, const Point_set_3<Gt>& points)
+//{
+//  Point_set_vertex_normal_map<Gt> aMap(points);
+//  return aMap;
+//}
 
 
 #endif // POINT_SET_3_H

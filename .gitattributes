@@ -2804,7 +2804,6 @@ Point_set_processing_3/examples/Point_set_processing_3/property_map_multiple_str
 Point_set_processing_3/examples/Point_set_processing_3/quick_test_suite.bat eol=crlf
 Point_set_processing_3/examples/Point_set_processing_3/quick_test_suite.sh eol=lf
 Point_set_processing_3/include/CGAL/Fast_orthogonal_k_neighbor_search.h -text
-Point_set_processing_3/include/CGAL/Orientable_normal_3.h -text
 Point_set_processing_3/include/CGAL/compute_average_spacing.h -text
 Point_set_processing_3/include/CGAL/jet_smooth_point_set.h -text
 Point_set_processing_3/test/Point_set_processing_3/analysis_test.cmd eol=lf

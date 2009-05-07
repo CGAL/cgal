@@ -67,9 +67,14 @@ bool Point_set_scene_item::read_off_point_set(std::istream& in)
   Q_ASSERT(m_points != NULL);
 
   m_points->clear();
-  return in &&
-         CGAL::read_off_point_set(in, std::back_inserter(*m_points)) &&
-         !isEmpty();
+  bool success = in &&
+                 CGAL::read_off_point_set(in, std::back_inserter(*m_points)) &&
+                 !isEmpty();
+    
+  // Mark all normals as oriented
+  m_points->unoriented_points_begin() = m_points->end();
+  
+  return success;
 }
 
 // Write point set to .OFF file
@@ -87,9 +92,14 @@ bool Point_set_scene_item::read_xyz_point_set(std::istream& in)
   Q_ASSERT(m_points != NULL);
 
   m_points->clear();
-  return in &&
-         CGAL::read_xyz_point_set(in, std::back_inserter(*m_points)) &&
-         !isEmpty();
+  bool success = in &&
+                 CGAL::read_xyz_point_set(in, std::back_inserter(*m_points)) &&
+                 !isEmpty();
+    
+  // Mark all normals as oriented
+  m_points->unoriented_points_begin() = m_points->end();
+  
+  return success;
 }
 
 // Write point set to .XYZ file

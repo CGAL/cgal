@@ -12,7 +12,6 @@
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
-#include <CGAL/boost/graph/properties.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -21,13 +20,13 @@
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/Orientable_normal_3.h>
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 #include <CGAL/IO/write_xyz_point_set.h>
 
 #include "compute_normal.h"
 
-#include <deque>
+#include <vector>
 #include <cstdlib>
 #include <fstream>
 
@@ -43,9 +42,8 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-typedef CGAL::Orientable_normal_3<Kernel> Orientable_normal; // normal vector + orientation
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // position + normal vector
-typedef std::deque<Point_with_normal> PointList;
+typedef std::vector<Point_with_normal> PointList;
 
 
 // ----------------------------------------------------------------------------
@@ -53,9 +51,8 @@ typedef std::deque<Point_with_normal> PointList;
 // ----------------------------------------------------------------------------
 
 // Compute normals direction by Principal Component Analysis
-void run_pca_estimate_normals(const PointList& points, // input point set
-                              std::deque<Orientable_normal>& computed_normals, // normals to estimate
-                              double nb_neighbors_pca_normals /* % */) // number of neighbors
+void run_pca_estimate_normals(PointList& points, // input points + output normals
+                              double nb_neighbors_pca_normals) // number of neighbors (%)
 {
   CGAL::Timer task_timer; task_timer.start();
 
@@ -69,9 +66,17 @@ void run_pca_estimate_normals(const PointList& points, // input point set
   std::cerr << "Estimate Normals Direction by PCA (k="
             << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
 
+  std::vector<Vector> output; 
+
   CGAL::pca_estimate_normals(points.begin(), points.end(),
-                             std::back_inserter(computed_normals),
+                             std::back_inserter(output),
                              nb_neighbors);
+
+  // TEMPORARY: copy normals
+  PointList::iterator p;
+  std::vector<Vector>::iterator n;
+  for (p = points.begin(), n = output.begin(); p != points.end(); p++, n++)
+    p->normal() = *n;
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -80,9 +85,8 @@ void run_pca_estimate_normals(const PointList& points, // input point set
 }
 
 // Compute normals direction by Jet Fitting
-void run_jet_estimate_normals(const PointList& points, // input point set
-                              std::deque<Orientable_normal>& computed_normals, // normals to estimate
-                              double nb_neighbors_jet_fitting_normals /* % */) // number of neighbors
+void run_jet_estimate_normals(PointList& points, // input points + output normals
+                              double nb_neighbors_jet_fitting_normals) // number of neighbors (%)
 {
   CGAL::Timer task_timer; task_timer.start();
 
@@ -96,9 +100,17 @@ void run_jet_estimate_normals(const PointList& points, // input point set
   std::cerr << "Estimate Normals Direction by Jet Fitting (k="
             << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
 
+  std::vector<Vector> output; // normals to estimate
+
   CGAL::jet_estimate_normals(points.begin(), points.end(),
-                             std::back_inserter(computed_normals),
+                             std::back_inserter(output),
                              nb_neighbors);
+
+  // TEMPORARY: copy normals
+  PointList::iterator p;
+  std::vector<Vector>::iterator n;
+  for (p = points.begin(), n = output.begin(); p != points.end(); p++, n++)
+    p->normal() = *n;
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -107,28 +119,20 @@ void run_jet_estimate_normals(const PointList& points, // input point set
 }
 
 // Test Hoppe92 normal orientation using a Minimum Spanning Tree.
-void run_mst_orient_normals(const PointList& points, // input point set
-                            std::deque<Orientable_normal>& computed_normals, // normals to orient
+void run_mst_orient_normals(PointList& points, // input points + input/output normals
                             unsigned int nb_neighbors_mst) // number of neighbors
 {
   std::cerr << "Orient Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
-  // Mark all normals as unoriented
-  std::deque<Orientable_normal>::iterator n;
-  for (n = computed_normals.begin(); n != computed_normals.end(); n++)
-    n->set_orientation(false);
-
   // mst_orient_normals() requires an iterator over points
   // + property maps to access each point's index, position and normal.
-  // We use the points index as iterator.
-  boost::identity_property_map index_id; // identity
-  CGAL::mst_orient_normals(
-         (std::size_t)0, points.size(), // use the points index as iterator
-         index_id, // index -> index property map = identity
-         boost::make_iterator_property_map(points.begin(), index_id), // index -> position prop. map
-         boost::make_iterator_property_map(computed_normals.begin(), index_id), // index -> normal prop. map
-         nb_neighbors_mst);
+  PointList::iterator first_unoriented_point = 
+    CGAL::mst_orient_normals(points.begin(), points.end(),
+                             CGAL::make_dereference_property_map(points.begin()),
+                             CGAL::make_normal_vector_property_map(points.begin()),
+                             CGAL::make_index_property_map(points),
+                             nb_neighbors_mst);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -219,9 +223,9 @@ int main(int argc, char * argv[])
     //***************************************
 
     PointList points;
+    std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
     // If OFF file format
-    std::cerr << "Open " << input_filename << " for reading..." << std::endl;
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
@@ -287,27 +291,19 @@ int main(int argc, char * argv[])
     // Compute normals
     //***************************************
 
-    std::deque<Orientable_normal> computed_normals;
-
     // Estimate normals direction.
     if (estimate == "plane")
-      run_pca_estimate_normals(points, computed_normals, nb_neighbors_pca_normals);
+      run_pca_estimate_normals(points, nb_neighbors_pca_normals);
     else if (estimate == "quadric")
-      run_jet_estimate_normals(points, computed_normals, nb_neighbors_jet_fitting_normals);
+      run_jet_estimate_normals(points, nb_neighbors_jet_fitting_normals);
 
     // Orient normals.
     if (orient == "MST")
-      run_mst_orient_normals(points, computed_normals, nb_neighbors_mst);
+      run_mst_orient_normals(points, nb_neighbors_mst);
 
     //***************************************
     // Save the point set
     //***************************************
-
-    // Replace old normals by new ones
-    PointList::iterator p;
-    std::deque<Orientable_normal>::iterator n;
-    for (p = points.begin(), n = computed_normals.begin(); p != points.end(); p++, n++)
-      p->normal() = *n;
 
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
 
