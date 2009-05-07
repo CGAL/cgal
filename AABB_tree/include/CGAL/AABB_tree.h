@@ -134,9 +134,9 @@ namespace CGAL {
 
     private:
 
+        // clears internal KD tree
         void clear_search_tree()
         {
-            // clear KD tree
             delete m_p_search_tree;
             m_p_search_tree = NULL;
             m_search_tree_constructed = false;
@@ -347,9 +347,11 @@ namespace CGAL {
 
             void intersection(const Point& query, const Primitive& primitive)
             {
+                // TOFIX
                 // update m_closest_primitive if needed
-                Point new_closest_point = AABBTraits().closest_point(query, primitive, m_closest_point)
-                if(new_closest_point != )
+                Point new_closest_point = 
+                    AABBTraits().closest_point(query, primitive, m_closest_point);
+                if(new_closest_point != m_closest_point)
                 {
                     m_closest_primitive = primitive;
                     m_closest_point = new_closest_point;
@@ -377,11 +379,6 @@ namespace CGAL {
         {
             CGAL_assertion(!empty());
             return m_data[0].reference_point();
-        }
-        Primitive any_primitive()
-        {
-            CGAL_assertion(!empty());
-            return m_data[0];
         }
 
     public:
@@ -496,7 +493,7 @@ namespace CGAL {
     {
         CGAL_assertion(!m_data.empty());
 
-        // iterate over primitives to get points on them
+        // iterate over primitives to get reference points on them
         std::vector<Point> points;
         typename std::vector<Primitive>::const_iterator it;
         for(it = m_data.begin(); it != m_data.end(); ++it)
@@ -573,7 +570,8 @@ namespace CGAL {
         AABB_tree<Tr>::closest_point(const Point& query,
                                      const Point& hint)
     {
-        Distance_traits distance_traits(query,hint);
+        Primitive hint_primitive = m_data[0];
+        Distance_traits distance_traits(query,hint,hint_primitive);
         this->traversal(query, distance_traits);
         return distance_traits.closest_point();
     }
@@ -584,7 +582,7 @@ namespace CGAL {
     typename AABB_tree<Tr>::Point
         AABB_tree<Tr>::closest_point(const Point& query)
     {
-        const Point hint = best_hint();
+        const Point hint = best_hint(query);
         return closest_point(query,hint);
     }
 
@@ -610,19 +608,18 @@ namespace CGAL {
     // closest point with user-specified hint
     template<typename Tr>
     typename AABB_tree<Tr>::Primitive
-        AABB_tree<Tr>::closest_primitive(const Point& query)
+        AABB_tree<Tr>::closest_primitive(const Point& query) const
     {
-        const Point hint = best_hint();
-        return closest_primitive(query,hint);
+        return closest_primitive(query,best_hint(query));
     }
 
     // closest point with user-specified hint
     template<typename Tr>
     typename AABB_tree<Tr>::Primitive
         AABB_tree<Tr>::closest_primitive(const Point& query,
-                                         const Point& hint)
+                                         const Point& hint) const
     {
-        const Point hint = best_hint();
+        const Point hint = best_hint(query);
         Distance_traits distance_traits(query,hint,any_primitive());
         this->traversal(query, distance_traits);
         return distance_traits.closest_primitive();

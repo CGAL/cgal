@@ -59,7 +59,7 @@ int main(void)
         // constructs the AABB tree and the internal search tree for 
         // efficient projection computations.
         Tree tree(segments.begin(),segments.end());
-        tree.construct_search_tree();
+        tree.accelerate_distance_queries();
 
         // counts #intersections with a plane
         Plane plane(a,b,d);

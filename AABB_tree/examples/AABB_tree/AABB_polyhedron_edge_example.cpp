@@ -55,7 +55,7 @@ int main(void)
         // constructs the AABB tree and the internal search tree for 
         // efficient projection computations.
         Tree tree(polyhedron.edges_begin(),polyhedron.edges_end());
-        tree.construct_search_tree();
+        tree.accelerate_distance_queries();
 
         // counts #intersections with a triangle
         Triangle triangle(p,q,r);
