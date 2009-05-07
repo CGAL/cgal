@@ -40,6 +40,33 @@
 #include "AABB_test_util.h"
 
 template <class Tree, class K>
+void test_all_query_types(Tree& tree)
+{
+        typedef typename K::FT FT;
+        typedef typename K::Ray_3 Ray;
+        typedef typename K::Point_3 Point;
+        typedef typename K::Vector_3 Vector;
+        typedef typename Tree::Primitive Primitive;
+        typedef typename Tree::Point_and_primitive Point_and_primitive;
+
+        Point query = random_point_in<K>(tree.bbox());
+        Point hint = tree.any_reference_point();
+
+        //FT sqd1 = tree.squared_distance(query);
+        //FT sqd2 = tree.squared_distance(query,hint);
+
+        //Point closest1 = tree.closest_point(query);
+        //Point closest2 = tree.closest_point(query,hint);
+
+        Primitive primitive1 = tree.closest_primitive(query);
+        Primitive primitive2 = tree.closest_primitive(query,hint);
+
+        Point_and_primitive pp1 = tree.closest_point_and_primitive(query);
+        Point_and_primitive pp2 = tree.closest_point_and_primitive(query,hint);
+}
+
+
+template <class Tree, class K>
 void test_speed(Tree& tree)
 {
         typedef typename K::FT FT;
@@ -84,6 +111,7 @@ void test(const char *filename)
 
         // call all tests
         test_speed<Tree,K>(tree);
+        test_all_query_types<Tree,K>(tree);
 }
 
 void test_kernels(const char *filename)
