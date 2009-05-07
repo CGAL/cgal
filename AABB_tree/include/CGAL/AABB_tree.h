@@ -70,7 +70,11 @@ namespace CGAL {
         bool rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
         /// Non virtual destructor
-        ~AABB_tree() { clear(); }
+        ~AABB_tree() { 
+            clear(); 
+            if(m_search_tree_constructed)
+                delete(m_search_tree);
+         }
 
         /// Clears the tree
         void clear(void)
@@ -349,7 +353,7 @@ namespace CGAL {
         // single root node
         Node* m_p_root;
         // search KD-tree
-        Search_tree m_search_tree;
+        Search_tree* m_search_tree;
         bool m_search_tree_constructed;
 
     private:
@@ -425,7 +429,7 @@ namespace CGAL {
         AABB_tree<Tr>::construct_search_tree(ConstPointIterator first,
                                              ConstPointIterator beyond)
     {
-        m_search_tree.init(first, beyond);
+        m_search_tree = new Search_tree(first, beyond);
         m_search_tree_constructed = true;
     }
 
@@ -436,14 +440,13 @@ namespace CGAL {
         CGAL_assertion(!m_data.empty());
 
         // iterate over primitives to get points on them
-        std::list<Point> points;
+        std::vector<Point> points;
         typename std::vector<Primitive>::const_iterator it;
         for(it = m_data.begin(); it != m_data.end(); ++it)
         {
             points.push_back(it->reference_point());
         }
-        m_search_tree.init(points.begin(), points.end());
-        m_search_tree_constructed = true;
+        construct_search_tree(points.begin(), points.end());
     }
 
     template<typename Tr>
@@ -547,7 +550,7 @@ namespace CGAL {
     {
         Point hint;
         if(m_search_tree_constructed)
-            hint = m_search_tree.closest_point(query); // pick closest neighbor point as hint (fast)
+            hint = m_search_tree->closest_point(query); // pick closest neighbor point as hint (fast)
         else 
             hint = m_data[0].reference_point(); // pick first primitive reference point as hint (slow)
         return closest_point(query,hint);

@@ -37,14 +37,11 @@ namespace CGAL
         private:
                 Tree m_tree;
         public:
-                AABB_search_tree() {}
-                ~AABB_search_tree() {}
-
                 template <class ConstPointIterator>
-                void init(ConstPointIterator begin, ConstPointIterator beyond)
-                {
- //                       m_tree = Tree(begin, beyond);
-                }
+                AABB_search_tree(ConstPointIterator begin, ConstPointIterator beyond):
+                m_tree(begin, beyond){}
+                
+                ~AABB_search_tree() {}
 
                 // TOFIX: make it const
                 Point closest_point(const Point& query) 
