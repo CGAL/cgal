@@ -43,7 +43,7 @@ namespace CGAL
                 template <class ConstPointIterator>
                 void init(ConstPointIterator begin, ConstPointIterator beyond)
                 {
-                        m_tree = Tree(begin, beyond);
+ //                       m_tree = Tree(begin, beyond);
                 }
 
                 // TOFIX: make it const

@@ -43,7 +43,7 @@ namespace CGAL {
         typedef typename AABBTraits::Primitive Primitive;
         typedef typename AABBTraits::Size_type Size_type; 
         typedef typename AABBTraits::Bounding_box Bounding_box;
-        typedef std::pair<Point,Primitive> Point_and_primitive;
+        typedef typename AABBTraits::Point_and_primitive Point_and_primitive;
     private:
         // internal KD-tree used to accelerate the distance queries
         typedef AABB_search_tree<AABBTraits> Search_tree;

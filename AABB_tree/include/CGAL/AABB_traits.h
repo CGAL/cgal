@@ -54,7 +54,7 @@ public:
   typedef typename GeomTraits::Point_3::Point Point;
 #endif
 
-  typedef typename std::pair<typename Point, typename Primitive> Point_and_primitive;
+  typedef typename std::pair<Point, Primitive> Point_and_primitive;
 
   // types for search tree
   // TOFIX: how can we avoid repeating those?
