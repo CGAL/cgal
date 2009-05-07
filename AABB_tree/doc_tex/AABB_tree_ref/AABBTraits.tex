@@ -28,7 +28,7 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 \ccGlue
 \ccNestedType{Bounding_box}{Bounding box type.}
 \ccGlue
-\ccTypedef{typedef std::pair<Point, Primitive> Point_and_primitive;}{}
+\ccTypedef{typedef std::pair<Point, Primitive::Id> Point_and_primitive_id;}{}
 \ccGlue
 \ccNestedType{Sphere}{Sphere type required for distance queries.}
 	
@@ -65,8 +65,8 @@ for which the class \ccc{AABB_tree<AT>} may receive a query.
 % TODO: replace return by pair<bool,Intersection>
 \ccMethod{bool intersection(const Query & q, 
           const Primitive& primitive, 
-          Point_and_primitive& result);}
-{Returns \ccc{true} iff the query intersects the primitive. In the positive, stores the intersection in the last parameter as a pair composed of a point and a primitive. }
+          Point_and_primitive_id& result);}
+{Returns \ccc{true} iff the query intersects the primitive. In the positive, stores the intersection in the last parameter as a pair composed of a point and a primitive id. }
 
 % TODO: document nearest_point
 
