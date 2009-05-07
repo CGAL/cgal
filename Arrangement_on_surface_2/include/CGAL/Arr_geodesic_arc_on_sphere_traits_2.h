@@ -108,14 +108,7 @@ protected:
 #if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
     static const Direction_2 d(-1, 0);
 #elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)    
-    typedef CGAL::Fraction_traits<FT> Fraction_FT;
-    typedef typename Fraction_FT::Denominator_type      Denominator_type;
-    typedef typename Fraction_FT::Numerator_type        Numerator_type;
-    
-    Denominator_type den(10);
-    FT u = typename Fraction_FT::Compose()(Numerator_type(-8), den);
-    FT v = typename Fraction_FT::Compose()(Numerator_type(6), den);
-    static const Direction_2 d(u, v);
+    static const Direction_2 d(-8, 6);
 #else
 #error CGAL_IDENTIFICATION_XY is not defined
 #endif
