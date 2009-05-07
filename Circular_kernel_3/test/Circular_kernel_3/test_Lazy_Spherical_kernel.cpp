@@ -26,7 +26,6 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Gmpq.h>
-typedef CGAL::Gmpq FT_Q;
 #include <CGAL/_test_sphere_predicates.h>
 #include <CGAL/_test_sphere_constructions.h>
 #include <CGAL/_test_sphere_compute.h>

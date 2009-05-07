@@ -21,9 +21,6 @@
 // (ACS -- Algorithms for Complex Shapes)
 
 #include <CGAL/Exact_spherical_kernel_3.h>
-
-typedef CGAL::Exact_spherical_kernel_3::FT FT_Q;
-
 #include <CGAL/_test_sphere_predicates.h>
 #include <CGAL/_test_sphere_constructions.h>
 #include <CGAL/_test_sphere_compute.h>
