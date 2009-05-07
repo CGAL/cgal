@@ -117,25 +117,25 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 % DISTANCE QUERIES
 \ccHeading{Distance queries}
 
-\ccMethod{Point
-closest_point(const Point& query, 
-              const Point& hint);} 
-{Returns the point on all input primitives which is closest to the query. In case of several closest points one arbitrarily chosen point is returned.  Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{construct_search_tree} (see below), it is used to efficiently query the nearest hint point from the query. Otherwise a naive hint point is taken as the first primitive reference point. }
-
-\ccMethod{Primitive
-closest_primitive(const Point& query, 
-                  const Primitive& hint);} 
-{Returns the primitive which realizes the smallest distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any input primitive (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{construct_search_tree} (see below), it is used to efficiently query the nearest hint point from the query. Otherwise a naive hint is taken as the first primitive. }
-
-\ccMethod{Point_and_primitive
-closest_point_and_primitive(const Point& query, 
-                            const Point_and_primitive& hint);} 
-{Returns a \ccc{std::pair<Point,Primitive>} which realizes the smallest distance between the query point and all input primitives. See \ccc{closest_point} function for the optional \ccc{hint} parameter. }
-
 \ccMethod{FT
 squared_distance(const Point& query, 
                  const Point& hint);} 
-{Returns the minimum squared distance between the query point and all input primitives. See \ccc{closest_point} function for the optional \ccc{hint} parameter. }
+{Returns the minimum squared distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted. When omitted, and if the internal KD-tree data structure has been constructed using function \ccc{construct_search_tree} (see below), the latter is used to efficiently query the nearest hint point from the query. Otherwise a naive hint point is taken as the first primitive reference point. }
+
+\ccMethod{Point
+closest_point(const Point& query, 
+              const Point& hint);} 
+{Returns the point on all input primitives which is closest to the query. In case of several closest points one arbitrarily chosen point is returned.  See \ccc{squared_distance} function for the optional \ccc{hint} parameter.}
+
+\ccMethod{Primitive
+closest_primitive(const Point& query, 
+                  const Point& hint);} 
+{Returns the primitive which realizes the smallest distance between the query point and all input primitives. See \ccc{squared_distance} function for the optional \ccc{hint} parameter.}
+
+\ccMethod{Point_and_primitive
+closest_point_and_primitive(const Point& query, 
+                            const Point& hint);} 
+{Returns a \ccc{std::pair<Point,Primitive>} which realizes the smallest distance between the query point and all input primitives. See \ccc{squared_distance} function for the optional \ccc{hint} parameter. }
 
 
 \ccHeading{Accelerating the distance queries}
