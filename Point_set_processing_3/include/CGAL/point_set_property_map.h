@@ -32,7 +32,7 @@ namespace CGAL {
   //=========================================================================
   /// Property map T* -> T.
   /// A common usage is a property map Point_with_normal_3* -> position (Point_3).
-  
+
   template <typename T>
   struct Dereference_property_map
     : public boost::put_get_helper<T&, Dereference_property_map<T> >
@@ -58,15 +58,15 @@ namespace CGAL {
 
   //=========================================================================
   /// Property map Point_with_normal_3* -> normal vector (Vector_3)
-  
+
   template <class Gt>
   struct Normal_vector_property_map
-    : public boost::put_get_helper<typename Gt::Vector_3&, 
+    : public boost::put_get_helper<typename Gt::Vector_3&,
                                    Normal_vector_property_map<Gt> >
   {
     typedef Point_with_normal_3<Gt> Point_with_normal; ///< Position + normal
     typedef typename Gt::Vector_3 Vector; /// normal
-    
+
     typedef Point_with_normal* key_type;
     typedef Vector value_type;
     typedef value_type& reference;
@@ -89,13 +89,13 @@ namespace CGAL {
 
 
   //=========================================================================
-  // Property maps Pair* -> Pair::first_type 
+  // Property maps Pair* -> Pair::first_type
   // and           Pair* -> Pair::second_type.
-  
-  /// Property map Pair* -> Pair::first_type 
+
+  /// Property map Pair* -> Pair::first_type
   template <typename Pair>
   struct First_of_pair_property_map
-    : public boost::put_get_helper<typename Pair::first_type&, 
+    : public boost::put_get_helper<typename Pair::first_type&,
                                    First_of_pair_property_map<Pair> >
   {
     typedef Pair* key_type;
@@ -116,10 +116,10 @@ namespace CGAL {
     return First_of_pair_property_map<typename std::iterator_traits<Iter>::value_type>();
   }
 
-  /// Property map Pair* -> Pair::second_type 
+  /// Property map Pair* -> Pair::second_type
   template <typename Pair>
   struct Second_of_pair_property_map
-    : public boost::put_get_helper<typename Pair::second_type&, 
+    : public boost::put_get_helper<typename Pair::second_type&,
                                    Second_of_pair_property_map<Pair> >
   {
     typedef Pair* key_type;
@@ -146,17 +146,17 @@ namespace CGAL {
 
   template <int N, typename Tuple>
   struct Nth_of_tuple_property_map
-    : public boost::put_get_helper<typename boost::tuples::element<N,Tuple>::type&, 
+    : public boost::put_get_helper<typename boost::tuples::element<N,Tuple>::type&,
                                    Nth_of_tuple_property_map<N,Tuple> >
   {
     typedef Tuple* key_type;
     typedef typename boost::tuples::element<N,Tuple>::type value_type;
     typedef value_type& reference;
     typedef boost::lvalue_property_map_tag category;
-    
+
     /// Access the map elements.
     template <class Iter> // Type convertible to key_type
-    reference operator[](Iter tuple) const { return (reference) get<N>(*tuple); }
+    reference operator[](Iter tuple) const { return (reference) tuple->get<N>(); }
   };
 
   /// Free function to create a Nth_of_tuple_property_map property map
@@ -169,11 +169,11 @@ namespace CGAL {
 
 
   //=========================================================================
-  /// "vertex_index" property map of a random access container 
+  /// "vertex_index" property map of a random access container
   /// (typically vector and deque).
 
   template <class RandomAccessContainer>
-  class Index_property_map 
+  class Index_property_map
   {
   public:
       // Property maps required types
@@ -182,8 +182,8 @@ namespace CGAL {
       typedef value_type                                      reference;
       typedef typename RandomAccessContainer::const_iterator  key_type;
 
-      Index_property_map(const RandomAccessContainer& container) 
-      : m_container(container) 
+      Index_property_map(const RandomAccessContainer& container)
+      : m_container(container)
       {}
 
       /// Free function to access the map elements.
@@ -194,14 +194,14 @@ namespace CGAL {
         // but will fail to compile for non random access containers.
         return p - map.m_container.begin();
       }
-      
+
   private:
     const RandomAccessContainer& m_container;
   };
 
   /// Free function to get the "vertex_index" property map
   /// of a random access container (typically vector and deque).
-  template <class RandomAccessContainer> 
+  template <class RandomAccessContainer>
   Index_property_map<RandomAccessContainer>
   make_index_property_map(const RandomAccessContainer& container)
   {
@@ -212,8 +212,8 @@ namespace CGAL {
   ///// of a std::vector object.
   //template <class T>
   //inline
-  //Index_property_map< std::vector<T> > 
-  //get(boost::vertex_index_t, const std::vector<T>& container) 
+  //Index_property_map< std::vector<T> >
+  //get(boost::vertex_index_t, const std::vector<T>& container)
   //{
   //  Index_property_map< std::vector<T> > aMap(container);
   //  return aMap;
@@ -223,8 +223,8 @@ namespace CGAL {
   ///// of a std::deque object.
   //template <class T>
   //inline
-  //Index_property_map< std::deque<T> > 
-  //get(boost::vertex_index_t, const std::deque<T>& container) 
+  //Index_property_map< std::deque<T> >
+  //get(boost::vertex_index_t, const std::deque<T>& container)
   //{
   //  Index_property_map< std::deque<T> > aMap(container);
   //  return aMap;
