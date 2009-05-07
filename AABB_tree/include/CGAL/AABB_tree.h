@@ -44,6 +44,8 @@ namespace CGAL {
         typedef typename AABBTraits::Size_type Size_type; 
         typedef typename AABBTraits::Bounding_box Bounding_box;
         typedef typename AABBTraits::Point_and_primitive Point_and_primitive;
+        typedef typename AABBTraits::Object_and_primitive Object_and_primitive;
+
     private:
         // internal KD-tree used to accelerate the distance queries
         typedef AABB_search_tree<AABBTraits> Search_tree;
@@ -95,12 +97,12 @@ namespace CGAL {
         /// Construct internal search tree with a given point set
         // returns true iff successful memory allocation
         template<typename ConstPointIterator>
-        bool construct_search_tree(ConstPointIterator first, ConstPointIterator beyond);
+        bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond);
 
         /// Construct internal search tree from
         /// a point set taken on the internal primitives
         // returns true iff successful memory allocation
-        bool construct_search_tree();
+        bool accelerate_distance_queries();
 
         template<typename Query>
         bool do_intersect(const Query& query) const;
@@ -118,7 +120,7 @@ namespace CGAL {
         template <typename Query>
         boost::optional<Primitive> any_intersected_primitive(const Query& query) const;
         template <typename Query>
-        boost::optional<Point_and_primitive> any_intersection(const Query& query) const;
+        boost::optional<Object_and_primitive> any_intersection(const Query& query) const;
 
         // distance queries
         FT squared_distance(const Point& query) const;
@@ -166,7 +168,7 @@ namespace CGAL {
         class First_intersection_traits
         {
         public:
-            typedef typename boost::optional<Point_and_primitive> Result;
+            typedef typename boost::optional<Object_and_primitive> Result;
         public:
             First_intersection_traits()
                 : m_is_found(false)
@@ -176,10 +178,10 @@ namespace CGAL {
 
             void intersection(const Query& query, const Primitive& primitive)
             {
-                Point_and_primitive pp;
-                m_is_found = AABBTraits().intersection(query, primitive, pp);
+                Object_and_primitive op;
+                m_is_found = AABBTraits().intersection(query, primitive, op);
                 if(m_is_found)
-                    m_result = Result(pp);
+                    m_result = Result(op);
             }
 
             bool do_intersect(const Query& query, const Node& node) const
@@ -245,9 +247,10 @@ namespace CGAL {
 
             void intersection(const Query& query, const Primitive& primitive)
             {
-                if( AABBTraits().intersection(query, primitive, m_intersection) )
+                Object_and_primitive intersection;
+                if( AABBTraits().intersection(query, primitive, intersection) )
                 {
-                    *m_out_it++ = m_intersection;
+                    *m_out_it++ = intersection;
                 }
             }
 
@@ -258,7 +261,6 @@ namespace CGAL {
 
         private:
             Output_iterator m_out_it;
-            Point_and_primitive m_intersection;
         };
 
 
@@ -469,10 +471,11 @@ namespace CGAL {
 
 
     // constructs the search KD tree from given points
+    // to accelerate the distance queries
     template<typename Tr>
     template<typename ConstPointIterator>
-    bool AABB_tree<Tr>::construct_search_tree(ConstPointIterator first,
-                                              ConstPointIterator beyond)
+    bool AABB_tree<Tr>::accelerate_distance_queries(ConstPointIterator first,
+                                                    ConstPointIterator beyond)
     {
         // clears current KD tree
         clear_search_tree();
@@ -489,7 +492,7 @@ namespace CGAL {
 
     // constructs the search KD tree from interal primitives
     template<typename Tr>
-    bool AABB_tree<Tr>::construct_search_tree()
+    bool AABB_tree<Tr>::accelerate_distance_queries()
     {
         CGAL_assertion(!m_data.empty());
 
@@ -499,7 +502,7 @@ namespace CGAL {
         for(it = m_data.begin(); it != m_data.end(); ++it)
             points.push_back(it->reference_point());
 
-        return construct_search_tree(points.begin(), points.end());
+        return accelerate_distance_queries(points.begin(), points.end());
     }
 
     template<typename Tr>
@@ -507,9 +510,7 @@ namespace CGAL {
     bool
         AABB_tree<Tr>::do_intersect(const Query& query) const
     {
-        typedef First_intersection_traits<Query> Traversal_traits;
-        Traversal_traits traversal_traits;
-
+        First_intersection_traits<Query> traversal_traits;
         this->traversal(query, traversal_traits);
         return traversal_traits.is_intersection_found();
     }
@@ -548,7 +549,7 @@ namespace CGAL {
 
     template <typename Tr>
     template <typename Query>
-    boost::optional<typename Tr::Point_and_primitive>
+    boost::optional<typename Tr::Object_and_primitive>
         AABB_tree<Tr>::any_intersection(const Query& query) const
     {
         First_intersection_traits<Query> traversal_traits;

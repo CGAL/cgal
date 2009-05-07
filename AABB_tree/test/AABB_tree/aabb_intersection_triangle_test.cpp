@@ -54,6 +54,7 @@ void test_all_query_types(Tree& tree)
     typedef typename K::Segment_3 Segment;
     typedef typename Tree::Primitive Primitive;
     typedef typename Tree::Point_and_primitive Point_and_primitive;
+    typedef typename Tree::Object_and_primitive Object_and_primitive;
 
     Point p((FT)-0.5, (FT)-0.5, (FT)-0.5);
     Point q((FT) 0.5, (FT) 0.5, (FT) 0.5);
@@ -79,10 +80,10 @@ void test_all_query_types(Tree& tree)
     tree.all_intersected_primitives(segment,std::back_inserter(primitives));
 
     // any_intersection
-    boost::optional<Point_and_primitive> optional_point_and_primitive;
-    optional_point_and_primitive = tree.any_intersection(ray);
-    optional_point_and_primitive = tree.any_intersection(line);
-    optional_point_and_primitive = tree.any_intersection(segment);
+    boost::optional<Object_and_primitive> optional_object_and_primitive;
+    optional_object_and_primitive = tree.any_intersection(ray);
+    optional_object_and_primitive = tree.any_intersection(line);
+    optional_object_and_primitive = tree.any_intersection(segment);
 
     // any_intersected_primitive
     boost::optional<Primitive> optional_primitive;
@@ -91,7 +92,7 @@ void test_all_query_types(Tree& tree)
     optional_primitive = tree.any_intersected_primitive(segment);
 
     // all_intersections
-    std::list<Point_and_primitive> intersections;
+    std::list<Object_and_primitive> intersections;
     tree.all_intersections(ray,std::back_inserter(intersections));
     tree.all_intersections(line,std::back_inserter(intersections));
     tree.all_intersections(segment,std::back_inserter(intersections));

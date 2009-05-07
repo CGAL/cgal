@@ -83,7 +83,7 @@ void test(const char *filename)
         Tree tree(polyhedron.edges_begin(),polyhedron.edges_end());
 
         // constructs internal search KD-tree with points from the polyhedron vertex points
-        tree.construct_search_tree(polyhedron.points_begin(),polyhedron.points_end());
+        tree.accelerate_distance_queries(polyhedron.points_begin(),polyhedron.points_end());
 
         // call all tests
         test_speed<Tree,K>(tree);

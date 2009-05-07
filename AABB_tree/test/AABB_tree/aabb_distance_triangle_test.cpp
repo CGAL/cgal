@@ -107,7 +107,7 @@ void test(const char *filename)
         // constructs AABB tree and internal search KD-tree with 
         // the points of the polyhedron
         Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
-        tree.construct_search_tree(polyhedron.points_begin(),polyhedron.points_end());
+        tree.accelerate_distance_queries(polyhedron.points_begin(),polyhedron.points_end());
 
         // call all tests
         test_speed<Tree,K>(tree);

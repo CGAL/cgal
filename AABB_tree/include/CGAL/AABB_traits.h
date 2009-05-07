@@ -41,6 +41,7 @@ class AABB_traits
 public:
   /// AABBTraits concept types
   typedef typename CGAL::Bbox_3 Bounding_box;
+  typedef typename CGAL::Object Object;
 
   typedef AABB_primitive Primitive;
   typedef typename AABB_primitive::Datum Datum;
@@ -54,7 +55,7 @@ public:
   typedef typename GeomTraits::Point_3::Point Point;
 #endif
 
-  typedef typename std::pair<Point, Primitive> Point_and_primitive;
+  typedef typename std::pair<Object,Primitive> Object_and_primitive;
 
   // types for search tree
   // TOFIX: how can we avoid repeating those?
@@ -126,7 +127,7 @@ public:
   template<typename Query>
   bool intersection(const Query& q,
                     const Primitive& pr,
-                    Point_and_primitive& result) const;
+                    Object_and_primitive& result) const;
 
   Sphere sphere(const Point& center,
                 const Point& hint) const
@@ -211,29 +212,22 @@ AABB_traits<GT,P>::compute_bbox(ConstPrimitiveIterator first,
 template<typename GT, typename P>
 template<typename Query>
 bool
-AABB_traits<GT,P>::intersection(const Query& q,
-                                const P& pr,
-                                Point_and_primitive& result) const
+AABB_traits<GT,P>::intersection(const Query& query,
+                                const P& primitive,
+                                Object_and_primitive& result) const
 {
   // TODO: implement a real intersection construction method
   // do_intersect is needed here because we construct intersection between
   // pr.datum().supporting_plane() and q
-  if ( ! do_intersect(q,pr) )
-  {
+  if(!do_intersect(query,primitive))
     return false;
-  }
 
-  // AABB tree package call
-  Datum datum = pr.datum();
-  CGAL::Object intersection_obj = CGAL::intersection(datum, q);
-  Point point;
-  if(CGAL::assign(point, intersection_obj))
-  {
-     result = Point_and_primitive(point,pr);
-     return true;
-  }
+  // compute intersection
+  CGAL::Object object = CGAL::intersection(primitive.datum(),query);
+  if(object.empty())
+      return false;
   else
-     return false;
+      return Object_and_primitive(object,primitive);
 }
 
 //-------------------------------------------------------
