@@ -39,6 +39,8 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
+#include "AABB_test_util.h"
+
 template <class Tree, class K>
 void test_all_query_types(Tree& tree)
 {
@@ -95,32 +97,6 @@ void test_all_query_types(Tree& tree)
     tree.all_intersections(segment,std::back_inserter(intersections));
 }
 
-double random_in(const double a,
-                 const double b)
-{
-    double r = rand() / (double)RAND_MAX;
-    return a + (b - a) * r;
-}
-
-template <class K>
-typename K::Point_3 random_point_in(const CGAL::Bbox_3& bbox)
-{
-    typedef typename K::FT FT;
-    FT x = (FT)random_in(bbox.xmin(),bbox.xmax());
-    FT y = (FT)random_in(bbox.ymin(),bbox.ymax());
-    FT z = (FT)random_in(bbox.zmin(),bbox.zmax());
-    return typename K::Point_3(x,y,z);
-}
-
-template <class K>
-typename K::Vector_3 random_vector()
-{
-    typedef typename K::FT FT;
-    FT x = (FT)random_in(0.0,1.0);
-    FT y = (FT)random_in(0.0,1.0);
-    FT z = (FT)random_in(0.0,1.0);
-    return typename K::Vector_3(x,y,z);
-}
 
 enum Query_type {RAY_QUERY,
                  SEGMENT_QUERY,

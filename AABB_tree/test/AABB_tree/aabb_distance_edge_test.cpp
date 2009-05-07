@@ -37,6 +37,8 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/AABB_polyhedron_edge_primitive.h>
 
+#include "AABB_test_util.h"
+
 template <class Tree, class K>
 void test_speed(Tree& tree)
 {
@@ -46,11 +48,12 @@ void test_speed(Tree& tree)
         typedef typename K::Vector_3 Vector;
 
         CGAL::Timer timer;
-        unsigned int nb = 0;
         timer.start();
-        Point query((FT)0.0, (FT)0.0, (FT)0.0);
+        unsigned int nb = 0;
         while(timer.time() < 1.0)
         {
+                // picks a random point in the tree bbox
+                Point query = random_point_in<K>(tree.bbox());
                 Point closest = tree.closest_point(query);
                 nb++;
         }
@@ -76,9 +79,11 @@ void test(const char *filename)
         std::ifstream ifs(filename);
         ifs >> polyhedron;
 
-        // constructs AABB tree and internal search KD-tree
+        // constructs AABB tree 
         Tree tree(polyhedron.edges_begin(),polyhedron.edges_end());
-        tree.construct_search_tree();
+
+        // constructs internal search KD-tree with points from the polyhedron vertex points
+        tree.construct_search_tree(polyhedron.points_begin(),polyhedron.points_end());
 
         // call all tests
         test_speed<Tree,K>(tree);
