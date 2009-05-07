@@ -3811,7 +3811,7 @@ _is_inside_new_face (const DHalfedge *prev1,
 
   if (is_perimetric)
   {
-      std::cout << "perimetric" << std::endl;
+    // std::cout << "perimetric" << std::endl;
     // In this case the route from prev1's target to prev2's target is
     // perimetric. We use the topology traits to determine which halfedge
     // lies inside the hole (in case a hole is indeed created).
