@@ -45,6 +45,7 @@ public:
   typedef AABB_primitive Primitive;
   typedef typename AABB_primitive::Datum Datum;
   typedef typename GeomTraits::Sphere_3 Sphere;
+  typedef unsigned int Size_type;
 
   // TOFIX: Workaround for weighted_point
 #ifndef AABB_KERNEL_USE_WEIGHTED_POINT
@@ -113,7 +114,6 @@ public:
   template<typename Query>
   bool do_intersect(const Query& q, const Bounding_box& bbox) const
   {
-    // AABB tree package call TODO: extend kernel
     return CGAL::do_intersect(q, bbox);
   }
 
@@ -136,9 +136,9 @@ public:
   }
 
   template <typename Query>
-  Point nearest_point(const Query& q,
-                           const Primitive& pr,
-                           const Point& bound) const
+  Point closest_point(const Query& q,
+                      const Primitive& pr,
+                      const Point& bound) const
   {
     return CGAL::nearest_point_3(q, pr.datum(), bound);
   }
@@ -228,7 +228,10 @@ AABB_traits<GT,P>::intersection(const Query& q,
   CGAL::Object intersection_obj = CGAL::intersection(datum, q);
   Point point;
   if(CGAL::assign(point, intersection_obj))
-     result = std::pair<point,pr>;
+  {
+     result = Point_and_primitive(point,pr);
+     return true;
+  }
   else
      return false;
 }

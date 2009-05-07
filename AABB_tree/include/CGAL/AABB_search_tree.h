@@ -47,7 +47,7 @@ namespace CGAL
                 }
 
                 // TOFIX: make it const
-                Point nearest_point(const Point& query) 
+                Point closest_point(const Point& query) 
                 {
                         Neighbor_search search(m_tree, query, 1);
                         return search.begin()->first;

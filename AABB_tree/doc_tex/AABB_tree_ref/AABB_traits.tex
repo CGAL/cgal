@@ -22,9 +22,7 @@
 The class \ccRefName\ is a model of the concept \ccc{AABBTraits}. This traits class handles any type of 3D geometric primitives provided that the proper intersection tests and constructions are implemented.
 
 \ccParameters
-The template parameter \ccc{GeomTraits} provides the geometric types as well as the intersection tests and computations required. This type must be a model of the concept \ccc{AABBGeomTraits}.
-
-The template parameter \ccc{Primitive} provides the primitives stored in the AABB tree. This parameter must be a model of the concept \ccc{AABBPrimitive}.
+The template parameter \ccc{GeomTraits} provides the geometric types as well as the intersection tests and computations required. This type must be a model of the concept \ccc{AABBGeomTraits}. The template parameter \ccc{Primitive} provides the type of primitives stored in the AABB tree. This parameter must be a model of the concept \ccc{AABBPrimitive}.
 
 \ccInclude{AABB_traits.h}
 
@@ -32,12 +30,17 @@ The template parameter \ccc{Primitive} provides the primitives stored in the AAB
 
 \ccTypedef{GeomTraits::Point_3 Point_3;}
           {Point query type.}
+\ccGlue
 \ccTypedef{GeomTraits::Ray_3  Ray_3;}
           {Ray query type.}
+\ccGlue
 \ccTypedef{GeomTraits::Line_3 Line_3;}
           {Line query type.}
+\ccGlue
 \ccTypedef{GeomTraits::Segment_3 Segment_3;}
           {Segment query type.}
+\ccGlue
+\ccNestedType{Size_type}{Unsigned integral type.}
 
 \ccCreation
 \ccCreationVariable{traits} 

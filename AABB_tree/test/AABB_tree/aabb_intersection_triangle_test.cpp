@@ -77,10 +77,16 @@ void test_all_query_types(Tree& tree)
     tree.all_intersected_primitives(segment,std::back_inserter(primitives));
 
     // any_intersection
-    Point_and_primitive intersection;
-    success = tree.any_intersection(ray,intersection);
-    success = tree.any_intersection(line,intersection);
-    success = tree.any_intersection(segment,intersection);
+    boost::optional<Point_and_primitive> optional_point_and_primitive;
+    optional_point_and_primitive = tree.any_intersection(ray);
+    optional_point_and_primitive = tree.any_intersection(line);
+    optional_point_and_primitive = tree.any_intersection(segment);
+
+    // any_intersected_primitive
+    boost::optional<Primitive> optional_primitive;
+    optional_primitive = tree.any_intersected_primitive(ray);
+    optional_primitive = tree.any_intersected_primitive(line);
+    optional_primitive = tree.any_intersected_primitive(segment);
 
     // all_intersections
     std::list<Point_and_primitive> intersections;
@@ -141,7 +147,7 @@ void test_speed_for_query(const Tree& tree,
         {
             case RAY_QUERY:
                 {
-                    Point source = random_point_in<K>(tree.root_bbox());
+                    Point source = random_point_in<K>(tree.bbox());
                     Vector vec = random_vector<K>();
                     Ray ray(source, vec);
                     tree.do_intersect(ray);
@@ -149,16 +155,16 @@ void test_speed_for_query(const Tree& tree,
                 }
             case SEGMENT_QUERY:
                 {
-                    Point a = random_point_in<K>(tree.root_bbox());
-                    Point b = random_point_in<K>(tree.root_bbox());
+                    Point a = random_point_in<K>(tree.bbox());
+                    Point b = random_point_in<K>(tree.bbox());
                     tree.do_intersect(Segment(a,b));
                     break;
                 }
                 break;
             case LINE_QUERY:
                 {
-                    Point a = random_point_in<K>(tree.root_bbox());
-                    Point b = random_point_in<K>(tree.root_bbox());
+                    Point a = random_point_in<K>(tree.bbox());
+                    Point b = random_point_in<K>(tree.bbox());
                     tree.do_intersect(Line(a,b));
                     break;
                 }
@@ -206,8 +212,8 @@ void test(const char *filename)
     timer.stop();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 
-    // tests clear and rebuilds
-    tree.clear_and_insert(polyhedron.facets_begin(),polyhedron.facets_end());
+    // tests rebuilding
+    tree.rebuild(polyhedron.facets_begin(),polyhedron.facets_end());
 
     // calls all tests
     test_all_query_types<Tree,K>(tree);

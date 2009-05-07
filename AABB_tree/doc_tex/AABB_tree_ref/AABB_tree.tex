@@ -25,8 +25,8 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 
 \ccTypes
 
-\ccNestedType{size_type}
-             {Size type (unsigned integral type).}
+\ccTypedef{typedef AT::Size_type Size_type;}
+          {Unsigned integral size type.}
 \ccGlue
 \ccTypedef{typedef AT::FT FT;}
           {Number type returned by the distance queries.}
@@ -41,9 +41,9 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
           {Type of bounding box.}
 \ccGlue
 \ccTypedef{typedef std::pair<Point, Primitive> Point_and_primitive;}
-             {A pair composed of a point and a primitive.}
+          {}
 
-%\ccNestedType{AABB}{some nested types}
+%\ccNestedType{}{some nested types}
 
 \ccCreation
 \ccCreationVariable{tree} %% variable name
@@ -52,7 +52,7 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 \ccConstructor{template < class InputIterator>
        AABB_tree( InputIterator begin, 
                   InputIterator beyond);}
-{Builds the AABB tree data structure. Type \ccc{InputIterator} can be any const iterator on a container of \ccc{Primitive::Object} such that \ccc{Primitive} has a constructor taking a \ccc{InputIterator} as argument.}
+{Builds the AABB tree data structure. Type \ccc{InputIterator} can be any const iterator on a container of \ccc{Primitive::Datum} such that \ccc{Primitive} has a constructor taking a \ccc{InputIterator} as argument.}
 
 \ccOperations
 
@@ -67,7 +67,7 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 \ccMethod{Bounding_box bbox();}
 {Returns the axis-aligned bounding box of the whole tree. }
 
-\ccMethod{size_type size();}
+\ccMethod{Size_type size();}
 {Returns the number of primitives in the tree. }
 
 \ccMethod{bool empty();}
@@ -78,10 +78,10 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 
 \ccMethod{template <class Query>
 	        bool do_intersect(const Query& query);}
-{ Returns \ccc{true}, iff the query intersects the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
+{Returns \ccc{true}, iff the query intersects at least one of the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 	
 \ccMethod{template <class Query>
-	        size_type number_of_intersected_primitives(const Query& query);}
+	        Size_type number_of_intersected_primitives(const Query& query);}
 {Returns the number of primitives intersected by the query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 
 %\ccMethod{template <class Query> size_type number_of_transversal_intersections(const Query& query);} {Returns the number of primitives intersected transversally by the query, if all intersections are transversal. Type \ccc{Query} must be a type for which \ccc{do_transversally_intersect} predicates are defined in the \ccc{AT} class. If any of the intersections is not transversal, the method returns the error code (a negative integer) returned by \ccc{do_transversally_intersect} at the first non-transversal intersection encountered.}
@@ -93,8 +93,9 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 {Outputs to the iterator the list of all intersected primitives. This function does not compute the intersection points and is hence faster than the function \ccc{all_intersections} function below. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 
 \ccMethod{template <class Query>
-	        boost::optional<Primitive> any_intersected_primitive(const Query& query);}
-{Returns the first encountered intersected primitive, iff the query intersects at least one of the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} and intersection predicates are defined in the \ccc{AT} class.}
+	        boost::optional<Primitive>
+	        any_intersected_primitive(const Query& query);}
+{Returns the first encountered intersected primitive, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccc{do_intersect} and intersection predicates are defined in the \ccc{AT} class.}
 
 
 % INTERSECTIONS
@@ -107,8 +108,9 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 {Outputs to the iterator the list of all intersections between the query and input data, as objects of type \ccc{Point_and_primitive}. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates and intersections are defined in the \ccc{AT} class.}
 
 \ccMethod{template <class Query>
-	        boost::optional<Point_and_primitive> any_intersection(const Query& query);}
-{Returns the first encountered intersection, iff the query intersects at least one of the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates and intersections are defined in the \ccc{AT} class.}
+	        boost::optional<Point_and_primitive>
+	        any_intersection(const Query& query);}
+{Returns the first encountered intersection, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates and intersections are defined in the \ccc{AT} class.}
 
 
 
@@ -145,7 +147,7 @@ squared_distance(const Point& query,
 \ccMethod{template <class InputIterator>
 void construct_search_tree(InputIterator begin,
                            InputIterator beyond);}
-{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Iterator \ccc{InputIterator} should have \ccc{Point_and_primitive} as value type. Each point from the specified \ccc{Point_and_primitive} set should be located on the corresponding input primitive. For a triangle surface mesh this point set can be provided, e.g., as the vertex points or as the triangle centroids.}
+{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Iterator \ccc{InputIterator} must have \ccc{Point_and_primitive} as value type. Each point from the specified \ccc{Point_and_primitive} set must be located on the corresponding input primitive. For a triangle surface mesh this point set can be provided, e.g., as the vertex points or as the triangle centroids. It is not required to provide one point per primitive, such that, e.g., large input primitive can be sampled with several sample points or conversely such that a single point is provided for clusters of small input primitives. }
 \end{ccAdvanced}
 
 \ccSeeAlso

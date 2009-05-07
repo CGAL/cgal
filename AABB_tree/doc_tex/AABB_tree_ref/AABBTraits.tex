@@ -23,15 +23,14 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 
 \ccTypes
 
-\ccNestedType{Primitive}{Type of primitive. Must be a model of the concept \ccc{AABBPrimitive}.}
+\ccNestedType{Primitive}{Type of primitive.
+                         Must be a model of the concept \ccc{AABBPrimitive}.}
 \ccGlue
 \ccNestedType{Bounding_box}{Bounding box type.}
 \ccGlue
-\ccNestedType{Point_and_primitive}{Pair composed of a point and a primitive.}
-
-The following types are required for distance queries.
-
-\ccNestedType{Sphere}{Sphere type.}
+\ccTypedef{typedef std::pair<Point, Primitive> Point_and_primitive;}{}
+\ccGlue
+\ccNestedType{Sphere}{Sphere type required for distance queries.}
 	
 
 \ccCreation

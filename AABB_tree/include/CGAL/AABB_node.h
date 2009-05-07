@@ -51,7 +51,7 @@ public:
   ~AABB_node() { };
 
   /// Returns the bounding box of the node
-  Bounding_box bounding_box() const { return m_bbox; }
+  Bounding_box bbox() const { return m_bbox; }
 
   /**
    * @brief Builds the tree by recursive expansion.

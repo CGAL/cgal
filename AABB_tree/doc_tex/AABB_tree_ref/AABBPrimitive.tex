@@ -42,7 +42,7 @@ The concept \ccRefName\ describes the requirements for the primitives stored in 
 {Returns the corresponding identifier. This identifier is only used as a reference for the objects in the output of the \ccc{AABB_tree} methods.}
 
 \ccMethod{Point reference_point();}
-{Returns a 3D point located on the geometric object wrapped by the primitive. This function is used to sort the primitives during the AABB tree construction and to construct the search KD-tree internal to the AABB tree in order to accelerate projection queries.}
+{Returns a 3D point located on the geometric object wrapped by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree in order to accelerate distance queries.}
 
 \ccSeeAlso
 \ccc{AABB_tree<Traits>}
