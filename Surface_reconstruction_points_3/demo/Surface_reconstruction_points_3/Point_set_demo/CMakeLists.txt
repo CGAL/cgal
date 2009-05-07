@@ -251,9 +251,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(local_spacing_plugin Point_set_demo_local_spacing_plugin)
   target_link_libraries(local_spacing_plugin point_set)
 
-  polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
-  target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
-
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(POINT_SET_DEMO_MISSING_DEPS "")
