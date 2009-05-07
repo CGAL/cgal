@@ -94,7 +94,7 @@ else
   run jet_smoothing_example
   run normal_estimation
   run remove_outliers_example
-  run pca_estimate_normals_example
+  run normals_example
   run random_simplification_example
   run read_write_xyz_point_set_example
 fi
