@@ -121,6 +121,7 @@ public:
   using Base::orientation;
   using Base::insert_dummy_points;
   using Base::swap;
+  using Base::is_virtual;
 #endif
 
 public:

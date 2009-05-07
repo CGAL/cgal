@@ -54,6 +54,7 @@ public:
 
   using PTr_Base::number_of_vertices;
   using PTr_Base::geom_traits;
+  using PTr_Baes::is_virtual;
 
 private:
   // here is the stack of triangulations which form the hierarchy
@@ -208,13 +209,16 @@ Periodic_3_triangulation_hierarchy_3(
   std::map< Vertex_handle, Vertex_handle > V;
 
   for( Vertex_iterator it=hierarchy[0]->vertices_begin(); 
-       it != hierarchy[0]->vertices_end(); ++it)
+       it != hierarchy[0]->vertices_end(); ++it) {
+    if (hierarchy[0]->is_virtual(it)) continue;
     if (it->up() != Vertex_handle())
       V[ it->up()->down() ] = it;
+  }
 
   for(int j=1; j<maxlevel; ++j) {
     for( Vertex_iterator it=hierarchy[j]->vertices_begin();
 	 it != hierarchy[j]->vertices_end(); ++it) {
+      if (hierarchy[j]->is_virtual(it));
 	// down pointer goes in original instead in copied triangulation
 	it->set_down(V[it->down()]);
 	// make reverse link
@@ -268,20 +272,23 @@ is_valid(bool verbose, int level) const
   // verify that lower level has no down pointers
   for( Vertex_iterator it = hierarchy[0]->vertices_begin(); 
        it != hierarchy[0]->vertices_end(); ++it) 
-    result = result && (it->down() == Vertex_handle());
+    if (!hierarchy[0]->is_virtual(it))
+      result = result && (it->down() == Vertex_handle());
 
   // verify that other levels has down pointer and reciprocal link is fine
   for(int j=1; j<maxlevel; ++j)
     for( Vertex_iterator it = hierarchy[j]->vertices_begin(); 
 	 it != hierarchy[j]->vertices_end(); ++it) 
-      result = result && &*(it) == &*(it->down()->up());
+      if (!hierarchy[j]->is_virtual(it))
+	result = result && &*(it) == &*(it->down()->up());
 
   // verify that other levels has down pointer and reciprocal link is fine
   for(int k=0; k<maxlevel-1; ++k)
     for( Vertex_iterator it = hierarchy[k]->vertices_begin(); 
 	 it != hierarchy[k]->vertices_end(); ++it) 
-      result = result && ( it->up() == Vertex_handle() ||
-	        &*it == &*(it->up())->down() );
+      if (!hierarchy[k]->is_virtual(it))
+	result = result && ( it->up() == Vertex_handle() ||
+	    &*it == &*(it->up())->down() );
 
   return result;
 }
