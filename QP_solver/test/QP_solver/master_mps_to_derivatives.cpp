@@ -191,7 +191,6 @@ void create_shifted_instance(const CGAL::Quadratic_program_from_mps <IT>& qp,
   // output:
   using boost::make_transform_iterator;
   using boost::make_zip_iterator;
-  using boost::make_tuple;
   std::auto_ptr<std::ofstream> out = create_output_file(file, dir, "shifted");
 
   write_MPS(*out,
@@ -204,20 +203,20 @@ void create_shifted_instance(const CGAL::Quadratic_program_from_mps <IT>& qp,
      m, 
      qp.get_a(), 
      make_transform_iterator(
-			     make_zip_iterator(make_tuple(qp.get_b(),Av.begin())),
+			     make_zip_iterator(boost::make_tuple(qp.get_b(),Av.begin())),
 			     tuple_add<IT>()),
      qp.get_r(), 
      qp.get_fl(),
      make_transform_iterator(
-			      make_zip_iterator(make_tuple(qp.get_l(),v.begin())),
+			      make_zip_iterator(boost::make_tuple(qp.get_l(),v.begin())),
 			      tuple_add<IT>()),
      qp.get_fu(),
      make_transform_iterator(
-			     make_zip_iterator(make_tuple(qp.get_u(),v.begin())),
+			     make_zip_iterator(boost::make_tuple(qp.get_u(),v.begin())),
 			     tuple_add<IT>()),
      qp.get_d(),
      make_transform_iterator(
-			   make_zip_iterator(make_tuple(qp.get_c(),mvTD.begin())),
+			   make_zip_iterator(boost::make_tuple(qp.get_c(),mvTD.begin())),
 			   tuple_add<IT>()), 
      qp.get_c0()
      )
