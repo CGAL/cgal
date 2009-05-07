@@ -110,12 +110,14 @@ public:
       //std::cout << "Get_mantissa" <<std::endl;
 
       std::pair<Gmpz,long> pair(x.to_integer_exp());
-      Gmpfr tmp (pair.first, x.get_prec());
-      if (pair.second > 0)
-        mpfr_mul_2ui(tmp.fr(),tmp.fr(),pair.second,GMP_RNDN);
-      else 
-        mpfr_div_2ui(tmp.fr(),tmp.fr(),-pair.second,GMP_RNDN);
-      CGAL_postcondition(x == tmp);
+      CGAL_assertion_code(
+          Gmpfr tmp (pair.first, x.get_prec());
+          if (pair.second > 0)
+            mpfr_mul_2ui(tmp.fr(),tmp.fr(),pair.second,GMP_RNDN);
+          else 
+            mpfr_div_2ui(tmp.fr(),tmp.fr(),-pair.second,GMP_RNDN);
+          assert(x == tmp);
+      )
       return pair.first;  
     }
   };
@@ -127,12 +129,14 @@ public:
       //std::cout << "Get_exponent" <<std::endl;
 
       std::pair<Gmpz,long> pair(x.to_integer_exp());
-      Gmpfr tmp (pair.first, x.get_prec());
-      if (pair.second > 0)
-        mpfr_mul_2ui(tmp.fr(),tmp.fr(),pair.second,GMP_RNDN);
-      else 
-        mpfr_div_2ui(tmp.fr(),tmp.fr(),-pair.second,GMP_RNDN);
-      CGAL_postcondition(x == tmp);
+      CGAL_assertion_code(
+          Gmpfr tmp (pair.first, x.get_prec());
+          if (pair.second > 0)
+            mpfr_mul_2ui(tmp.fr(),tmp.fr(),pair.second,GMP_RNDN);
+          else 
+            mpfr_div_2ui(tmp.fr(),tmp.fr(),-pair.second,GMP_RNDN);
+          assert(x == tmp);
+      );
       return pair.second;
     }
   };
