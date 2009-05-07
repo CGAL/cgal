@@ -70,20 +70,22 @@ namespace CGAL {
         bool rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
         /// Non virtual destructor
-        ~AABB_tree() { 
+        ~AABB_tree()
+        { 
             clear(); 
-            if(m_search_tree_constructed)
-                delete(m_search_tree);
          }
 
         /// Clears the tree
-        void clear(void)
+        void clear()
         {
+            // clear AABB tree
             m_data.clear();
-            delete[] m_p_root;
+            delete [] m_p_root;
             m_p_root = NULL;
-            m_search_tree_constructed = false;
+
+            clear_search_tree();
         }
+
 
         // bbox and size
         Bounding_box bbox() const { return m_p_root->bbox(); }
@@ -91,12 +93,14 @@ namespace CGAL {
         bool empty() const { return m_data.empty(); }
 
         /// Construct internal search tree with a given point set
+        // returns true iff successful memory allocation
         template<typename ConstPointIterator>
-        void construct_search_tree(ConstPointIterator first, ConstPointIterator beyond);
+        bool construct_search_tree(ConstPointIterator first, ConstPointIterator beyond);
 
         /// Construct internal search tree from
         /// a point set taken on the internal primitives
-        void construct_search_tree(void);
+        // returns true iff successful memory allocation
+        bool construct_search_tree();
 
         template<typename Query>
         bool do_intersect(const Query& query) const;
@@ -125,6 +129,17 @@ namespace CGAL {
         Primitive closest_primitive(const Point& query) const;
         Point_and_primitive closest_point_and_primitive(const Point& query, const Point& hint) const;
         Point_and_primitive closest_point_and_primitive(const Point& query) const;
+
+    private:
+
+        void clear_search_tree()
+        {
+            // clear KD tree
+            delete m_p_search_tree;
+            m_p_search_tree = NULL;
+            m_search_tree_constructed = false;
+        }
+
 
         /// generic traversal of the tree
         template <class Query, class Traversal_traits>
@@ -353,7 +368,7 @@ namespace CGAL {
         // single root node
         Node* m_p_root;
         // search KD-tree
-        Search_tree* m_search_tree;
+        Search_tree* m_p_search_tree;
         bool m_search_tree_constructed;
 
     private:
@@ -370,6 +385,7 @@ namespace CGAL {
         ConstPrimitiveIterator beyond)
         : m_data()
         , m_p_root(NULL)
+        , m_p_search_tree(NULL)
         , m_search_tree_constructed(false)
     {
         // Insert each primitive into tree
@@ -398,7 +414,7 @@ namespace CGAL {
     bool AABB_tree<Tr>::rebuild(ConstPrimitiveIterator first,
                                 ConstPrimitiveIterator beyond)
     {
-        // cleanup current tree
+        // cleanup current tree and internal KD tree
         clear();
 
         // inserts primitives
@@ -425,17 +441,25 @@ namespace CGAL {
     // constructs the search KD tree from given points
     template<typename Tr>
     template<typename ConstPointIterator>
-    void
-        AABB_tree<Tr>::construct_search_tree(ConstPointIterator first,
-                                             ConstPointIterator beyond)
+    bool AABB_tree<Tr>::construct_search_tree(ConstPointIterator first,
+                                              ConstPointIterator beyond)
     {
-        m_search_tree = new Search_tree(first, beyond);
-        m_search_tree_constructed = true;
+        // clears current KD tree
+        clear_search_tree();
+        
+        m_p_search_tree = new Search_tree(first, beyond);
+        if(m_p_search_tree != NULL)
+        {
+            m_search_tree_constructed = true;
+            return true;
+        }
+        else
+            return false;
     }
 
     // constructs the search KD tree from interal primitives
     template<typename Tr>
-    void AABB_tree<Tr>::construct_search_tree(void)
+    bool AABB_tree<Tr>::construct_search_tree()
     {
         CGAL_assertion(!m_data.empty());
 
@@ -443,10 +467,9 @@ namespace CGAL {
         std::vector<Point> points;
         typename std::vector<Primitive>::const_iterator it;
         for(it = m_data.begin(); it != m_data.end(); ++it)
-        {
             points.push_back(it->reference_point());
-        }
-        construct_search_tree(points.begin(), points.end());
+
+        return construct_search_tree(points.begin(), points.end());
     }
 
     template<typename Tr>
@@ -550,7 +573,7 @@ namespace CGAL {
     {
         Point hint;
         if(m_search_tree_constructed)
-            hint = m_search_tree->closest_point(query); // pick closest neighbor point as hint (fast)
+            hint = m_p_search_tree->closest_point(query); // pick closest neighbor point as hint (fast)
         else 
             hint = m_data[0].reference_point(); // pick first primitive reference point as hint (slow)
         return closest_point(query,hint);

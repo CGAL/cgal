@@ -140,14 +140,14 @@ squared_distance(const Point& query,
 
 \ccHeading{Accelerating the distance queries}
 
-\ccMethod{void construct_search_tree();}
-{ Constructs the internal search KD-tree used to accelerate the distance queries. The points in the search tree are taken from the primitives by calling the member function \ccc{reference_point} from the primitive.}
+\ccMethod{bool construct_search_tree();}
+{ Constructs the internal search KD-tree used to accelerate the distance queries. The points in the search tree are taken from the primitives by calling the member function \ccc{reference_point} from the primitive. Returns \ccc{true}, iff the memory allocation is successful.}
 
 \begin{ccAdvanced}
 \ccMethod{template <class InputIterator>
-void construct_search_tree(InputIterator begin,
+bool construct_search_tree(InputIterator begin,
                            InputIterator beyond);}
-{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Iterator \ccc{InputIterator} must have \ccc{Point_and_primitive} as value type. Each point from the specified \ccc{Point_and_primitive} set must be located on the corresponding input primitive. For a triangle surface mesh this point set can be provided, e.g., as the vertex points or as the triangle centroids. It is not required to provide one point per primitive, such that, e.g., large input primitive can be sampled with several sample points or conversely such that a single point is provided for clusters of small input primitives. }
+{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Iterator \ccc{InputIterator} must have \ccc{Point_and_primitive} as value type. Each point from the specified \ccc{Point_and_primitive} set must be located on the corresponding input primitive. For a triangle surface mesh this point set can be provided, e.g., as the vertex points or as the triangle centroids. It is not required to provide one point per primitive, such that, e.g., large input primitive can be sampled with several sample points or conversely such that a single point is provided for clusters of small input primitives. Returns \ccc{true}, iff the memory allocation is successful.}
 \end{ccAdvanced}
 
 \ccSeeAlso
