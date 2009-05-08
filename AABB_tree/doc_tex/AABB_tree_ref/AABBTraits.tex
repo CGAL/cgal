@@ -23,6 +23,12 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 
 \ccTypes
 
+\ccNestedType{Size_type}{Unsigned integral size type.}
+\ccGlue
+\ccNestedType{FT}{Number type returned by the distance method.}
+\ccGlue
+\ccNestedType{Point_3}{Type of a 3D point.}
+\ccGlue
 \ccNestedType{Primitive}{Type of primitive.
                          Must be a model of the concept \ccc{AABBPrimitive}.}
 \ccGlue
@@ -74,9 +80,12 @@ for which the class \ccc{AABB_tree<AT>} may receive a query.
 \ccGlue	
 \ccMethod{bool is_closer(const Point & p, const Primitive& primitive, const Point & q);}
 {Returns true, iff the primitive is closer to \ccc{p} than \ccc{q} is.}
-\ccGlue	
+\ccGlue
 \ccMethod{Point_3 closest_point(const Point_3 & p, const Primitive& primitive, const Point_3 & q);}
 {Returns the closest point to \ccc{p}, among \ccc{q} and the points of the primitive.}
+\ccGlue
+\ccMethod{FT squared_distance(const Point_3 & p, const Point_3 & q);}
+{Returns the distance between \ccc{p} and \ccc{q}.}
 
 % NOT NEEDED
 %\ccMethod{bool is_contained(const Sphere & a, const Sphere & b);}{Returns \ccc{true} iff sphere $a$ is contained in sphere $b$. Both spheres are assumed to share the same center.}
