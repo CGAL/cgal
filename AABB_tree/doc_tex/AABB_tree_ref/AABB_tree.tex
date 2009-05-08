@@ -93,12 +93,12 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 	        OutputIterator 
           all_intersected_primitives(const Query& query,
                                      OutputIterator out);}
-{Outputs to the iterator the list of all intersected primitives. This function does not compute the intersection points and is hence faster than the function \ccc{all_intersections} function below. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
+{Outputs to the iterator the list of all intersected primitives ids. This function does not compute the intersection points and is hence faster than the function \ccc{all_intersections} function below. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 
 \ccMethod{template <class Query>
-	        boost::optional<Primitive>
+	        boost::optional<Primitive::Id>
 	        any_intersected_primitive(const Query& query);}
-{Returns the first encountered intersected primitive, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
+{Returns the first encountered intersected primitive id, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 
 
 % INTERSECTIONS
@@ -128,29 +128,29 @@ squared_distance(const Point& query,
 \ccMethod{Point
 closest_point(const Point& query, 
               const Point& hint);} 
-{Returns the point in the union of all input primitives which is closest to the query. In case there are several closest points, one arbitrarily chosen closest point is returned. ÊParameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), it is used to efficiently query the nearest hint point from the query, among a set of hint points stored in the internal KD-tree. Otherwise, the first primitive reference point is taken as a naive hint point.}
+{Returns the point in the union of all input primitives which is closest to the query. In case there are several closest points, one arbitrarily chosen closest point is returned. ÊParameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), it is used to efficiently query the nearest hint point from the query, among a set of hint points stored in the internal KD-tree. Otherwise, the first primitive reference point is chosen as a naive hint point.}
 
-\ccMethod{Primitive
+\ccMethod{Primitive::Id
 closest_primitive(const Point& query, 
-                  const Primitive& hint);} 
-{Returns the primitive which realizes the smallest distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any input primitive (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), it is used to efficiently query the nearest hint primitive from the query, among a set of hint primitives stored in the internal KD-tree. Otherwise, the first primitive is taken as a naive hint.}
+                  const Primitive::Id& hint);} 
+{Returns the primitive which realizes the smallest distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any input primitive (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), it is used to efficiently query the nearest hint primitive from the query, among a set of hint primitives stored in the internal KD-tree. Otherwise, the first primitive is chosen as a naive hint.}
 
 \ccMethod{Point_and_primitive_id
 closest_point_and_primitive(const Point& query, 
                             const Point_and_primitive_id& hint);} 
-{Returns a \ccc{std::pair<Point,Primitive>} which realizes the smallest distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any point and the corresponding input primitive it lies on (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), it is used to efficiently query the nearest hint from the query, among a set of hints stored in the internal KD-tree. Otherwise, the first point and primitive pair is taken as a naive hint.}
+{Returns a \ccc{std::pair<Point,Primitive>} which realizes the smallest distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any point and the corresponding input primitive it lies on (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), it is used to efficiently query the nearest hint from the query, among a set of hints stored in the internal KD-tree. Otherwise, the first point and primitive pair is chosen as a naive hint.}
 
 
 \ccHeading{Accelerating the distance queries}
 
 \ccMethod{bool accelerate_distance_queries();}
-{ Constructs the internal search KD-tree used to accelerate the distance queries. The points in the search tree are taken from the primitives by calling the member function \ccc{reference_point} from the primitive. Returns \ccc{true}, iff the memory allocation is successful.}
+{ Constructs the internal search KD-tree used to accelerate the distance queries. The points in the search tree are taken from the primitives by calling the member function \ccc{reference_point} of the primitive. Returns \ccc{true}, iff the memory allocation is successful.}
 
 \begin{ccAdvanced}
 \ccMethod{template <class InputIterator>
 bool accelerate_distance_queries(InputIterator begin,
                                  InputIterator beyond);}
-{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Iterator \ccc{InputIterator} must have \ccc{Point_and_primitive_id} as value type. Each point from the specified \ccc{Point_and_primitive_id} set must be located on the corresponding input primitive. For a triangle surface mesh this point set can be provided, e.g., as the vertex points or as the triangle centroids. It is not required to provide one point per primitive, such that, e.g., large input primitive can be sampled with several sample points or conversely such that a single point is provided for clusters of small input primitives. Returns \ccc{true}, iff the memory allocation is successful.}
+{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Iterator \ccc{InputIterator} must have \ccc{Point_and_primitive_id} as value type. Each point from the specified \ccc{Point_and_primitive_id} set must be located on the corresponding input primitive. For a triangle surface mesh this point set can be provided, e.g., as the vertices of the mesh or as the triangle centroids. It is not required to provide one point per primitive, such that, e.g., large input primitive can be sampled with several sample points or, conversely, such that a single point is provided for clusters of small input primitives. Returns \ccc{true}, iff the memory allocation is successful.}
 \end{ccAdvanced}
 
 \ccSeeAlso
