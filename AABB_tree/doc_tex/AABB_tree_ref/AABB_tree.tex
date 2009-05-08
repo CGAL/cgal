@@ -98,7 +98,7 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 \ccMethod{template <class Query>
 	        boost::optional<Primitive>
 	        any_intersected_primitive(const Query& query);}
-{Returns the first encountered intersected primitive, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccc{do_intersect} and intersection predicates are defined in the \ccc{AT} class.}
+{Returns the first encountered intersected primitive, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 
 
 % INTERSECTIONS
