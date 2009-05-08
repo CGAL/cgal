@@ -44,10 +44,10 @@
 #define NBQ 100000
 
 template<class Value>
-size_t check_outputs(const std::vector<Value>& a, const std::vector<Value>& b) {
+size_t check_outputs(const std::vector<Value>& a, const std::vector<Value>& b, Value deflt) {
         size_t counter = 0;
         for(size_t i = 0; i < a.size(); ++i) {
-                if(a[i] != b[i])
+                if(a[i] != b[i] && b[i] != deflt)
                         ++counter;
         }
         return counter;
@@ -114,15 +114,15 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
         std::cout << "with KD-tree:      " << speed << " queries/s" << std::endl << std::endl;
         timer.stop();               
         std::cout << "Consistency:" << std::endl;
-        if((counter = check_outputs(outputs1, outputs2)) == 0)
+        if((counter = check_outputs(outputs1, outputs2, Id())) == 0)
                 std::cout << "         without hint and spatial sort are consistent" << std::endl;
         else
-                std::cout << "WARNING, without hint and spatial sort have " << counter << " inconsistencies" << std::endl;
+                std::cout << "WARNING, without hint and spatial sort have " << counter << " inconsistencies (closest point on vertex/edge?)" << std::endl;
                 
-        if((counter = check_outputs(outputs1, outputs3)) == 0)
-                std::cout << "         without hint and with KD-tree are consistent" << std::endl;
+        if((counter = check_outputs(outputs1, outputs3, Id())) == 0)
+                std::cout << "         without hint and with KD-tree are consistent (modulo hint case)" << std::endl;
         else
-                std::cout << "WARNING, without hint and with KD-tree have " << counter << " inconsistencies (hopefully just because the hint is returned)" << std::endl;
+                std::cout << "WARNING, without hint and with KD-tree have " << counter << " inconsistencies (closest point on vertex/edge? the hint case has been excluded)" << std::endl;
                 
         std::cout << std::endl;
 }
