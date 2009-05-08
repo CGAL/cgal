@@ -126,9 +126,8 @@ public:
   }
 
   template<typename Query>
-  bool intersection(const Query& q,
-                    const Primitive& pr,
-                    Object_and_primitive_id& result) const;
+  boost::optional<Object_and_primitive_id> intersection(const Query& q,
+                    const Primitive& pr) const;
 
   Sphere sphere(const Point& center,
                 const Point& hint) const
@@ -212,10 +211,9 @@ AABB_traits<GT,P>::compute_bbox(ConstPrimitiveIterator first,
 
 template<typename GT, typename P>
 template<typename Query>
-bool
+boost::optional<typename AABB_traits<GT,P>::Object_and_primitive_id>
 AABB_traits<GT,P>::intersection(const Query& query,
-                                const P& primitive,
-                                Object_and_primitive_id& result) const
+                                const P& primitive) const
 {
   // TODO: implement a real intersection construction method
   // do_intersect is needed here because we construct intersection between
@@ -226,9 +224,9 @@ AABB_traits<GT,P>::intersection(const Query& query,
   // compute intersection
   CGAL::Object object = CGAL::intersection(primitive.datum(),query);
   if(object.empty())
-      return false;
-  else
-      return Object_and_primitive(object,primitive);
+      return boost::optional<Object_and_primitive_id>();
+  else 
+      return boost::optional<Object_and_primitive_id>(Object_and_primitive_id(object,primitive.id()));
 }
 
 //-------------------------------------------------------

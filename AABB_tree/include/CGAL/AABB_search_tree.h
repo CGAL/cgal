@@ -47,12 +47,24 @@ namespace CGAL
         public:
                 typedef typename Traits::FT FT;
                 typedef typename Traits::Point_3 Point;
+                typedef typename Traits::Primitive Primitive;
                 typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
                 typedef typename CGAL::Search_traits_3<Add_decorated_point<Traits, typename Traits::Primitive::Id> > TreeTraits;
                 typedef typename CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
                 typedef typename Neighbor_search::Tree Tree;
         private:
                 Tree* m_tree;
+                
+ 
+                Point_and_primitive_id get_p_and_p(const Point_and_primitive_id& p) 
+                {
+                        return p;
+                }
+                Point_and_primitive_id get_p_and_p(const Point& p) 
+                {
+                        return Point_and_primitive_id(p, typename Primitive::Id());
+                }
+                
         public:
                 template <class ConstPointIterator>
                 AABB_search_tree(ConstPointIterator begin, ConstPointIterator beyond)
@@ -60,8 +72,9 @@ namespace CGAL
                         typedef typename Add_decorated_point<Traits, typename Traits::Primitive::Id>::Point_3 Decorated_point;
                         std::vector<Decorated_point> points;
                         while(begin != beyond) {
-                                points.push_back(Decorated_point(begin->first));
-                                points.back().id = begin->second;
+                                Point_and_primitive_id pp = get_p_and_p(*begin);
+                                points.push_back(Decorated_point(pp.first));
+                                points.back().id = pp.second;
                                 ++begin;
                         }
                         m_tree = new Tree(points.begin(), points.end());

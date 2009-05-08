@@ -53,8 +53,8 @@ void test_all_query_types(Tree& tree)
     typedef typename K::Vector_3 Vector;
     typedef typename K::Segment_3 Segment;
     typedef typename Tree::Primitive Primitive;
-    typedef typename Tree::Point_and_primitive Point_and_primitive;
-    typedef typename Tree::Object_and_primitive Object_and_primitive;
+    typedef typename Tree::Point_and_primitive_id Point_and_primitive_id;
+    typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
 
     Point p((FT)-0.5, (FT)-0.5, (FT)-0.5);
     Point q((FT) 0.5, (FT) 0.5, (FT) 0.5);
@@ -74,25 +74,25 @@ void test_all_query_types(Tree& tree)
     tree.number_of_intersected_primitives(segment);
 
     // all_intersected_primitives
-    std::list<Primitive> primitives;
+    std::list<typename Primitive::Id> primitives;
     tree.all_intersected_primitives(ray,std::back_inserter(primitives));
     tree.all_intersected_primitives(line,std::back_inserter(primitives));
     tree.all_intersected_primitives(segment,std::back_inserter(primitives));
 
     // any_intersection
-    boost::optional<Object_and_primitive> optional_object_and_primitive;
+    boost::optional<Object_and_primitive_id> optional_object_and_primitive;
     optional_object_and_primitive = tree.any_intersection(ray);
     optional_object_and_primitive = tree.any_intersection(line);
     optional_object_and_primitive = tree.any_intersection(segment);
 
     // any_intersected_primitive
-    boost::optional<Primitive> optional_primitive;
+    boost::optional<typename Primitive::Id> optional_primitive;
     optional_primitive = tree.any_intersected_primitive(ray);
     optional_primitive = tree.any_intersected_primitive(line);
     optional_primitive = tree.any_intersected_primitive(segment);
 
     // all_intersections
-    std::list<Object_and_primitive> intersections;
+    std::list<Object_and_primitive_id> intersections;
     tree.all_intersections(ray,std::back_inserter(intersections));
     tree.all_intersections(line,std::back_inserter(intersections));
     tree.all_intersections(segment,std::back_inserter(intersections));

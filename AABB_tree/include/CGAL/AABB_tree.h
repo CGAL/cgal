@@ -125,8 +125,8 @@ namespace CGAL {
         // distance queries
         FT squared_distance(const Point& query) const;
         FT squared_distance(const Point& query, const Point& hint) const;
-        Point closest_point(const Point& query);
-        Point closest_point(const Point& query, const Point& hint);
+        Point closest_point(const Point& query) const;
+        Point closest_point(const Point& query, const Point& hint) const;
         Point_and_primitive_id closest_point_and_primitive(const Point& query) const;
         Point_and_primitive_id closest_point_and_primitive(const Point& query, const Point_and_primitive_id& hint) const;
 
@@ -176,10 +176,11 @@ namespace CGAL {
 
             void intersection(const Query& query, const Primitive& primitive)
             {
-                Object_and_primitive_id op;
-                m_is_found = AABBTraits().intersection(query, primitive, op);
+                boost::optional<Object_and_primitive_id> op;
+                op = AABBTraits().intersection(query, primitive);
+                m_is_found = op;
                 if(m_is_found)
-                    m_result = Result(op);
+                    m_result = Result(*op);
             }
 
             bool do_intersect(const Query& query, const Node& node) const
@@ -244,10 +245,11 @@ namespace CGAL {
 
             void intersection(const Query& query, const Primitive& primitive)
             {
-                Object_and_primitive_id intersection;
-                if( AABBTraits().intersection(query, primitive, intersection) )
+                boost::optional<Object_and_primitive_id> intersection;
+                intersection = AABBTraits().intersection(query, primitive);
+                if(intersection)
                 {
-                    *m_out_it++ = intersection;
+                    *m_out_it++ = *intersection;
                 }
             }
 
@@ -362,7 +364,10 @@ namespace CGAL {
             }
 
             Point closest_point() const { return m_closest_point; }
-            typename Primitive::Id closest_primitive() const { return m_closest_primitive; }
+            Point_and_primitive_id closest_point_and_primitive() const 
+            { 
+                return Point_and_primitive_id(m_closest_point, m_closest_primitive); 
+            }
 
         private:
             Sphere m_sphere;
@@ -370,16 +375,16 @@ namespace CGAL {
             typename Primitive::Id m_closest_primitive;
         };
 
-    private:
+    public:
         // returns a point guaranteed to be on one primitive
-        Point_and_primitive_id any_reference_point_and_id()
+        Point_and_primitive_id any_reference_point_and_id() const
         {
             CGAL_assertion(!empty());
             return Point_and_primitive_id(m_data[0].reference_point(), m_data[0].id());
         }
 
     public:
-        Point_and_primitive_id best_hint(const Point& query)
+        Point_and_primitive_id best_hint(const Point& query) const
         {
             if(m_search_tree_constructed)
                 return m_p_search_tree->closest_point(query); 
@@ -565,7 +570,7 @@ namespace CGAL {
     template<typename Tr>
     typename AABB_tree<Tr>::Point
         AABB_tree<Tr>::closest_point(const Point& query,
-                                     const Point& hint)
+                                     const Point& hint) const
     {
         typename Primitive::Id hint_primitive = m_data[0].id();
         Distance_traits distance_traits(query,hint,hint_primitive);
@@ -577,7 +582,7 @@ namespace CGAL {
     // first closest neighbor point to get a hint
     template<typename Tr>
     typename AABB_tree<Tr>::Point
-        AABB_tree<Tr>::closest_point(const Point& query)
+        AABB_tree<Tr>::closest_point(const Point& query) const 
     {
         const Point_and_primitive_id hint = best_hint(query);
         return closest_point(query,hint.first);
@@ -607,7 +612,7 @@ namespace CGAL {
     typename AABB_tree<Tr>::Point_and_primitive_id
         AABB_tree<Tr>::closest_point_and_primitive(const Point& query) const
     {
-        return closest_primitive(query,best_hint(query));
+        return closest_point_and_primitive(query,best_hint(query));
     }
 
     // closest point with user-specified hint
@@ -619,7 +624,7 @@ namespace CGAL {
 //        const Point hint = best_hint(query);
         Distance_traits distance_traits(query,hint.first,hint.second);
         this->traversal(query, distance_traits);
-        return distance_traits.closest_primitive();
+        return distance_traits.closest_point_and_primitive();
     }
 
 } // end namespace CGAL
