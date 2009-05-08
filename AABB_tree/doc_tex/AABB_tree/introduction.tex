@@ -6,7 +6,7 @@ The set of geometric objects stored in the data structure may be queried for int
 
 Examples of intersection queries include line objects (rays, lines or segments) against sets of triangles, or plane objects (planes or triangles) against sets of segments. An example of distance query consists of finding the closest point from a point query to a set of triangles.\\
 
-The AABB tree data structure takes as input an iterator range of geometric primitives, where each primitive wraps both one input geometric object (so-called datum) and one reference id to this object (e.g., wraps a 3D triangle and a face handle of a polyhedral surface). From these primitives a hierarchy of axis-aligned bounding boxes (AABBs) is constructed and used to speed up intersection and distance queries (see Figure~\ref{fig:AABB-tree-anchor}). 
+The AABB tree data structure takes as input an iterator range of geometric data, which are then converted into primitives, where each primitive gives access to both one input geometric object (so-called datum) and one reference id to this object (e.g., wraps a 3D triangle and a face handle of a polyhedral surface). From these primitives a hierarchy of axis-aligned bounding boxes (AABBs) is constructed and used to speed up intersection and distance queries (see Figure~\ref{fig:AABB-tree-anchor}). 
 
 \begin{center}
     \label{fig:AABB-tree-anchor}
