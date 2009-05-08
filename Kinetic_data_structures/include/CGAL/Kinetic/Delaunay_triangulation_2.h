@@ -387,7 +387,7 @@ public:
     }
     watcher_.pre_remove_vertex(vh);
     if (has_certificates_) {
-      Face_circulator fc= vh->incident_faces(), fe=fc;
+      Face_circulator fc= del_.incident_faces(vh), fe=fc;
       if (fc != NULL) {
 	do {
 	  for (unsigned int j=0; j<3; ++j) {
