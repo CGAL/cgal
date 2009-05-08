@@ -55,7 +55,7 @@ The class \ccRefName\ is a static data structure for efficient intersection and 
 \ccConstructor{template < class InputIterator>
        AABB_tree( InputIterator begin, 
                   InputIterator beyond);}
-{Builds the AABB tree data structure. Type \ccc{InputIterator} can be any const iterator such that \ccc{Primitive} has a constructor taking a \ccc{InputIterator} as argument.}
+{Builds the AABB tree data structure. Type \ccc{InputIterator} can be any const iterator such that \ccc{Primitive} has a constructor taking a \ccc{InputIterator} as argument. The tree stays empty if the memory allocation is not successful.}
 
 \ccOperations
 
