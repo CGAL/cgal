@@ -28,11 +28,13 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 \ccGlue
 \ccNestedType{Bounding_box}{Bounding box type.}
 \ccGlue
-\ccTypedef{typedef std::pair<Point, Primitive::Id> Point_and_primitive_id;}{}
+\ccTypedef{typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id;}{}
 \ccGlue
 \ccTypedef{typedef std::pair<Object, Primitive::Id> Object_and_primitive_id;}{}
-\ccGlue
-\ccNestedType{Sphere}{Sphere type required for distance queries.}
+
+% NOT NEEDED
+%\ccGlue
+%\ccNestedType{Sphere}{Sphere type required for distance queries.}
 	
 
 \ccCreation
@@ -64,16 +66,20 @@ for which the class \ccc{AABB_tree<AT>} may receive a query.
 % \ccMethod{int do_transversally_intersect(const Query & q, const Primitive& primitive);}
 %{Returns 1 iff the query intersects the primitive transversally, returns 0 iff the query does not intersect the primitive and returns a negative error code in case of a non-transversal intersection.}
 %\ccGlue	
-% TODO: replace return by pair<bool,Intersection>
-\ccMethod{bool intersection(const Query & q, 
-          const Primitive& primitive, 
-          Point_and_primitive_id& result);}
-{Returns \ccc{true} iff the query intersects the primitive. In the positive, stores the intersection in the last parameter as a pair composed of a point and a primitive id. }
+\ccMethod{boost::optional<Object_and_primitive_id> intersection(const Query & q, const Primitive& primitive);}
+{Returns the intersection as a pair composed of a point and a primitive id, iff the query intersects the primitive.}
+\ccGlue	
+\ccMethod{bool is_closer(const Point & p, const Bounding_box& box, const Point & q);}
+{Returns true, iff the primitive is closer to \ccc{p} than \ccc{q} is.}
+\ccGlue	
+\ccMethod{bool is_closer(const Point & p, const Primitive& primitive, const Point & q);}
+{Returns true, iff the primitive is closer to \ccc{p} than \ccc{q} is.}
+\ccGlue	
+\ccMethod{Point_3 closest_point(const Point_3 & p, const Primitive& primitive, const Point_3 & q);}
+{Returns the closest point to \ccc{p}, among \ccc{q} and the points of the primitive.}
 
-% TODO: document nearest_point
-
-
-\ccMethod{bool is_contained(const Sphere & a, const Sphere & b);}{Returns \ccc{true} iff sphere $a$ is contained in sphere $b$. Both spheres are assumed to share the same center.}
+% NOT NEEDED
+%\ccMethod{bool is_contained(const Sphere & a, const Sphere & b);}{Returns \ccc{true} iff sphere $a$ is contained in sphere $b$. Both spheres are assumed to share the same center.}
 
 \ccHasModels
 \ccc{AABB_traits<GeomTraits,TrianglePrimitive>}.

@@ -133,12 +133,12 @@ closest_point(const Point& query,
 \ccMethod{Primitive::Id
 closest_primitive(const Point& query, 
                   const Primitive::Id& hint);} 
-{Returns the primitive which realizes the smallest distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any input primitive (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), it is used to efficiently query the nearest hint primitive from the query, among a set of hint primitives stored in the internal KD-tree. Otherwise, the first primitive is chosen as a naive hint.}
+{Returns the id of the primitive which realizes the smallest distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be the id of any input primitive (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), it is used to efficiently query the nearest hint primitive from the query, among a set of hint primitives stored in the internal KD-tree. Otherwise, the first primitive is chosen as a naive hint.}
 
 \ccMethod{Point_and_primitive_id
 closest_point_and_primitive(const Point& query, 
                             const Point_and_primitive_id& hint);} 
-{Returns a \ccc{std::pair<Point,Primitive>} which realizes the smallest distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any point and the corresponding input primitive it lies on (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), it is used to efficiently query the nearest hint from the query, among a set of hints stored in the internal KD-tree. Otherwise, the first point and primitive pair is chosen as a naive hint.}
+{Returns a \ccc{Point_and_primitive_id} which realizes the smallest distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any point and the corresponding input primitive it lies on (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted. If the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), it is used to efficiently query the nearest hint from the query, among a set of hints stored in the internal KD-tree. Otherwise, the first point and primitive pair is chosen as a naive hint.}
 
 
 \ccHeading{Accelerating the distance queries}
