@@ -55,8 +55,8 @@ public:
   typedef typename GeomTraits::Point_3::Point Point;
 #endif
 
-  typedef typename std::pair<Object,Primitive> Object_and_primitive;
-  typedef typename std::pair<Point,Primitive> Point_and_primitive;
+  typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
+  typedef typename std::pair<Point,typename Primitive::Id> Point_and_primitive_id;
 
   // types for search tree
   // TOFIX: how can we avoid repeating those?
@@ -128,7 +128,7 @@ public:
   template<typename Query>
   bool intersection(const Query& q,
                     const Primitive& pr,
-                    Object_and_primitive& result) const;
+                    Object_and_primitive_id& result) const;
 
   Sphere sphere(const Point& center,
                 const Point& hint) const
@@ -215,7 +215,7 @@ template<typename Query>
 bool
 AABB_traits<GT,P>::intersection(const Query& query,
                                 const P& primitive,
-                                Object_and_primitive& result) const
+                                Object_and_primitive_id& result) const
 {
   // TODO: implement a real intersection construction method
   // do_intersect is needed here because we construct intersection between

@@ -43,8 +43,8 @@ namespace CGAL {
         typedef typename AABBTraits::Primitive Primitive;
         typedef typename AABBTraits::Size_type Size_type; 
         typedef typename AABBTraits::Bounding_box Bounding_box;
-        typedef typename AABBTraits::Point_and_primitive Point_and_primitive;
-        typedef typename AABBTraits::Object_and_primitive Object_and_primitive;
+        typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
+        typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
 
     private:
         // internal KD-tree used to accelerate the distance queries
@@ -118,19 +118,17 @@ namespace CGAL {
 
         // any intersection
         template <typename Query>
-        boost::optional<Primitive> any_intersected_primitive(const Query& query) const;
+        boost::optional<typename Primitive::Id> any_intersected_primitive(const Query& query) const;
         template <typename Query>
-        boost::optional<Object_and_primitive> any_intersection(const Query& query) const;
+        boost::optional<Object_and_primitive_id> any_intersection(const Query& query) const;
 
         // distance queries
         FT squared_distance(const Point& query) const;
         FT squared_distance(const Point& query, const Point& hint) const;
         Point closest_point(const Point& query);
         Point closest_point(const Point& query, const Point& hint);
-        Primitive closest_primitive(const Point& query) const;
-        Primitive closest_primitive(const Point& query, const Point& hint) const;
-        Point_and_primitive closest_point_and_primitive(const Point& query) const;
-        Point_and_primitive closest_point_and_primitive(const Point& query, const Point& hint) const;
+        Point_and_primitive_id closest_point_and_primitive(const Point& query) const;
+        Point_and_primitive_id closest_point_and_primitive(const Point& query, const Point_and_primitive_id& hint) const;
 
     private:
 
@@ -168,7 +166,7 @@ namespace CGAL {
         class First_intersection_traits
         {
         public:
-            typedef typename boost::optional<Object_and_primitive> Result;
+            typedef typename boost::optional<Object_and_primitive_id> Result;
         public:
             First_intersection_traits()
                 : m_is_found(false)
@@ -178,7 +176,7 @@ namespace CGAL {
 
             void intersection(const Query& query, const Primitive& primitive)
             {
-                Object_and_primitive op;
+                Object_and_primitive_id op;
                 m_is_found = AABBTraits().intersection(query, primitive, op);
                 if(m_is_found)
                     m_result = Result(op);
@@ -240,14 +238,13 @@ namespace CGAL {
         {
         public:
             Listing_intersection_traits(Output_iterator out_it)
-                : m_intersection()
-                , m_out_it(out_it) {}
+                : m_out_it(out_it) {}
 
             bool go_further() const { return true; }
 
             void intersection(const Query& query, const Primitive& primitive)
             {
-                Object_and_primitive intersection;
+                Object_and_primitive_id intersection;
                 if( AABBTraits().intersection(query, primitive, intersection) )
                 {
                     *m_out_it++ = intersection;
@@ -280,7 +277,7 @@ namespace CGAL {
             {
                 if( AABBTraits().do_intersect(query, primitive) )
                 {
-                    *m_out_it++ = primitive;
+                    *m_out_it++ = primitive.id();
                 }
             }
 
@@ -311,7 +308,7 @@ namespace CGAL {
             {
                 if( AABBTraits().do_intersect(query, primitive) )
                 {
-                    m_result = boost::optional<Primitive>(primitive);
+                    m_result = boost::optional<typename Primitive::Id>(primitive.id());
                     m_is_found = true;
                 }
             }
@@ -321,12 +318,12 @@ namespace CGAL {
                 return AABBTraits().do_intersect(query, node.bbox());
             }
 
-            boost::optional<Primitive> result() const { return m_result; }
+            boost::optional<typename Primitive::Id> result() const { return m_result; }
             bool is_intersection_found() const { return m_is_found; }
 
         private:
             bool m_is_found;
-            boost::optional<Primitive> m_result;
+            boost::optional<typename Primitive::Id> m_result;
         };
 
         /**
@@ -337,7 +334,7 @@ namespace CGAL {
         public:
             Distance_traits(const Point& query,
                             const Point& hint,
-                            const Primitive& hint_primitive)
+                            const typename Primitive::Id& hint_primitive)
                             : m_closest_point(hint),
                               m_closest_primitive(hint_primitive),
                               m_sphere(AABBTraits().sphere(query,hint))
@@ -353,7 +350,7 @@ namespace CGAL {
                     AABBTraits().closest_point(query, primitive, m_closest_point);
                 if(new_closest_point != m_closest_point)
                 {
-                    m_closest_primitive = primitive;
+                    m_closest_primitive = primitive.id();
                     m_closest_point = new_closest_point;
                 }
                 m_sphere = AABBTraits().sphere(query, m_closest_point);
@@ -365,29 +362,29 @@ namespace CGAL {
             }
 
             Point closest_point() const { return m_closest_point; }
-            Primitive closest_primitive() const { return m_closest_primitive; }
+            typename Primitive::Id closest_primitive() const { return m_closest_primitive; }
 
         private:
             Sphere m_sphere;
             Point m_closest_point;
-            Primitive m_closest_primitive;
+            typename Primitive::Id m_closest_primitive;
         };
 
     private:
         // returns a point guaranteed to be on one primitive
-        Point any_reference_point()
+        Point_and_primitive_id any_reference_point_and_id()
         {
             CGAL_assertion(!empty());
-            return m_data[0].reference_point();
+            return Point_and_primitive_id(m_data[0].reference_point(), m_data[0].id());
         }
 
     public:
-        Point best_hint(const Point& query)
+        Point_and_primitive_id best_hint(const Point& query)
         {
             if(m_search_tree_constructed)
                 return m_p_search_tree->closest_point(query); 
             else 
-                return this->any_reference_point();
+                return this->any_reference_point_and_id();
         }
 
     private:
@@ -494,10 +491,10 @@ namespace CGAL {
         CGAL_assertion(!m_data.empty());
 
         // iterate over primitives to get reference points on them
-        std::vector<Point> points;
+        std::vector<Point_and_primitive_id> points;
         typename std::vector<Primitive>::const_iterator it;
         for(it = m_data.begin(); it != m_data.end(); ++it)
-            points.push_back(it->reference_point());
+            points.push_back(Point_and_primitive_id(it->reference_point(), it->id()));
 
         return accelerate_distance_queries(points.begin(), points.end());
     }
@@ -546,7 +543,7 @@ namespace CGAL {
 
     template <typename Tr>
     template <typename Query>
-    boost::optional<typename Tr::Object_and_primitive>
+    boost::optional<typename AABB_tree<Tr>::Object_and_primitive_id>
         AABB_tree<Tr>::any_intersection(const Query& query) const
     {
         First_intersection_traits<Query> traversal_traits;
@@ -556,7 +553,7 @@ namespace CGAL {
 
     template <typename Tr>
     template <typename Query>
-    boost::optional<typename Tr::Primitive>
+    boost::optional<typename AABB_tree<Tr>::Primitive::Id>
         AABB_tree<Tr>::any_intersected_primitive(const Query& query) const
     {
         First_primitive_traits<Query> traversal_traits;
@@ -570,7 +567,7 @@ namespace CGAL {
         AABB_tree<Tr>::closest_point(const Point& query,
                                      const Point& hint)
     {
-        Primitive hint_primitive = m_data[0];
+        typename Primitive::Id hint_primitive = m_data[0].id();
         Distance_traits distance_traits(query,hint,hint_primitive);
         this->traversal(query, distance_traits);
         return distance_traits.closest_point();
@@ -582,8 +579,8 @@ namespace CGAL {
     typename AABB_tree<Tr>::Point
         AABB_tree<Tr>::closest_point(const Point& query)
     {
-        const Point hint = best_hint(query);
-        return closest_point(query,hint);
+        const Point_and_primitive_id hint = best_hint(query);
+        return closest_point(query,hint.first);
     }
 
     // squared distance with user-specified hint
@@ -607,20 +604,20 @@ namespace CGAL {
 
     // closest point with user-specified hint
     template<typename Tr>
-    typename AABB_tree<Tr>::Primitive
-        AABB_tree<Tr>::closest_primitive(const Point& query) const
+    typename AABB_tree<Tr>::Point_and_primitive_id
+        AABB_tree<Tr>::closest_point_and_primitive(const Point& query) const
     {
         return closest_primitive(query,best_hint(query));
     }
 
     // closest point with user-specified hint
     template<typename Tr>
-    typename AABB_tree<Tr>::Primitive
-        AABB_tree<Tr>::closest_primitive(const Point& query,
-                                         const Point& hint) const
+    typename AABB_tree<Tr>::Point_and_primitive_id
+        AABB_tree<Tr>::closest_point_and_primitive(const Point& query,
+                                         const Point_and_primitive_id& hint) const
     {
-        const Point hint = best_hint(query);
-        Distance_traits distance_traits(query,hint,any_primitive());
+//        const Point hint = best_hint(query);
+        Distance_traits distance_traits(query,hint.first,hint.second);
         this->traversal(query, distance_traits);
         return distance_traits.closest_primitive();
     }
