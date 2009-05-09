@@ -39,28 +39,6 @@
 
 #include "AABB_test_util.h"
 
-template <class Tree, class K>
-void test_speed(Tree& tree)
-{
-        typedef typename K::FT FT;
-        typedef typename K::Ray_3 Ray;
-        typedef typename K::Point_3 Point;
-        typedef typename K::Vector_3 Vector;
-
-        CGAL::Timer timer;
-        timer.start();
-        unsigned int nb = 0;
-        while(timer.time() < 1.0)
-        {
-                // picks a random point in the tree bbox
-                Point query = random_point_in<K>(tree.bbox());
-                Point closest = tree.closest_point(query);
-                nb++;
-        }
-        double speed = (double)nb / timer.time();
-        std::cout << speed << " distance queries/s" << std::endl;
-        timer.stop();
-}
 
 template <class K>
 void test(const char *filename)
@@ -86,7 +64,8 @@ void test(const char *filename)
         tree.accelerate_distance_queries(polyhedron.points_begin(),polyhedron.points_end());
 
         // call all tests
-        test_speed<Tree,K>(tree);
+        test_distance_speed<Tree,K>(tree);
+        test_all_distance_query_types<Tree,K>(tree);
 }
 
 void test_kernels(const char *filename)

@@ -41,62 +41,6 @@
 
 #include "AABB_test_util.h"
 
-template <class Tree, class K>
-void test_all_query_types(Tree& tree)
-{
-    std::cout << "Test all query types" << std::endl;
-
-    typedef typename K::FT FT;
-    typedef typename K::Ray_3 Ray;
-    typedef typename K::Line_3 Line;
-    typedef typename K::Point_3 Point;
-    typedef typename K::Vector_3 Vector;
-    typedef typename K::Segment_3 Segment;
-    typedef typename Tree::Primitive Primitive;
-    typedef typename Tree::Point_and_primitive_id Point_and_primitive_id;
-    typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
-
-    Point p((FT)-0.5, (FT)-0.5, (FT)-0.5);
-    Point q((FT) 0.5, (FT) 0.5, (FT) 0.5);
-    Ray ray(p,q);
-    Ray line(p,q);
-    Ray segment(p,q);
-    bool success = false;
-
-    // do_intersect
-    success = tree.do_intersect(ray);
-    success = tree.do_intersect(line);
-    success = tree.do_intersect(segment);
-
-    // number_of_intersected_primitives
-    tree.number_of_intersected_primitives(ray);
-    tree.number_of_intersected_primitives(line);
-    tree.number_of_intersected_primitives(segment);
-
-    // all_intersected_primitives
-    std::list<typename Primitive::Id> primitives;
-    tree.all_intersected_primitives(ray,std::back_inserter(primitives));
-    tree.all_intersected_primitives(line,std::back_inserter(primitives));
-    tree.all_intersected_primitives(segment,std::back_inserter(primitives));
-
-    // any_intersection
-    boost::optional<Object_and_primitive_id> optional_object_and_primitive;
-    optional_object_and_primitive = tree.any_intersection(ray);
-    optional_object_and_primitive = tree.any_intersection(line);
-    optional_object_and_primitive = tree.any_intersection(segment);
-
-    // any_intersected_primitive
-    boost::optional<typename Primitive::Id> optional_primitive;
-    optional_primitive = tree.any_intersected_primitive(ray);
-    optional_primitive = tree.any_intersected_primitive(line);
-    optional_primitive = tree.any_intersected_primitive(segment);
-
-    // all_intersections
-    std::list<Object_and_primitive_id> intersections;
-    tree.all_intersections(ray,std::back_inserter(intersections));
-    tree.all_intersections(line,std::back_inserter(intersections));
-    tree.all_intersections(segment,std::back_inserter(intersections));
-}
 
 
 enum Query_type {RAY_QUERY,
@@ -193,7 +137,7 @@ void test(const char *filename)
     tree.rebuild(polyhedron.facets_begin(),polyhedron.facets_end());
 
     // calls all tests
-    test_all_query_types<Tree,K>(tree);
+    test_all_intersection_query_types<Tree,K>(tree);
     test_speed<Tree,K>(tree);
 }
 

@@ -127,29 +127,6 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
         std::cout << std::endl;
 }
 
-
-template <class Tree, class K>
-void test_speed(Tree& tree)
-{
-        typedef typename K::FT FT;
-        typedef typename K::Ray_3 Ray;
-        typedef typename K::Point_3 Point;
-        typedef typename K::Vector_3 Vector;
-
-        CGAL::Timer timer;
-        timer.start();
-        unsigned int nb = 0;
-        while(timer.time() < 1.0)
-        {
-                Point query = random_point_in<K>(tree.bbox());
-                Point closest = tree.closest_point(query);
-                nb++;
-        }
-        double speed = (double)nb / timer.time();
-        std::cout << speed << " distance queries/s" << std::endl;
-        timer.stop();
-}
-
 template <class K>
 void test(const char *filename)
 {
