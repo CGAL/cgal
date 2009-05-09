@@ -449,91 +449,6 @@ _merge_single_interval (Edge_const_handle e, Edge_const_handle other_edge,
 //! \brief Functions that should be on Arr_traits_adaptor.
 /*@{*/
 
-inline
-Arr_curve_end
-operator-(Arr_curve_end o)
-{ return static_cast<Arr_curve_end>( - static_cast<int>(o)); }
-
-//! Checks whether a curve-end is in the parameter space interior.
-/*! 
-  \param xcv The curve
-  \param curve_end The end of the curve to be checked.
-  \return True, if the curve-end is inside the parameter space, false, 
-  otherwise.
-  \todo Move to Arr_traits_adaptor.
-*/
-template <class Traits, class Diagram>
-bool Envelope_divide_and_conquer_2<Traits,Diagram>::
-is_in_interior_of_parameter_space(const X_monotone_curve_2& xcv,
-                                  Arr_curve_end curve_end) const
-{
-  Arr_parameter_space ps = traits->parameter_space_in_x_2_object ()
-    (xcv, curve_end);
-  if (ps != ARR_INTERIOR)
-    return false;
-  
-  ps = traits->parameter_space_in_y_2_object () (xcv, curve_end);
-  if (ps != ARR_INTERIOR)
-    return false;
-
-  return true;
-}
-
-template <class Traits, class Diagram>
-boost::optional<typename Traits::Point_2> 
-Envelope_divide_and_conquer_2<Traits,Diagram>::
-get_joint_endpoint(const X_monotone_curve_2& xcv1,
-                   const X_monotone_curve_2& xcv2,
-                   Arr_curve_end curve_end,
-                   Comparison_result &out_origin) const
-{
-  bool x1_bounded = is_in_interior_of_parameter_space (xcv1, curve_end);
-  bool x2_bounded = is_in_interior_of_parameter_space (xcv2, curve_end);
-  
-  boost::optional<Point_2> p1, p2;
-  if (curve_end == ARR_MIN_END)
-  {
-    if (x1_bounded)
-      p1 = traits->construct_min_vertex_2_object() (xcv1);
-    if (x2_bounded)
-      p2 = traits->construct_min_vertex_2_object() (xcv2);
-  }
-  else
-  {
-    if (x1_bounded)
-      p1 = traits->construct_max_vertex_2_object() (xcv1);
-    if (x2_bounded)
-      p2 = traits->construct_max_vertex_2_object() (xcv2);
-  }
-
-  Comparison_result wanted_res = (curve_end == ARR_MIN_END) ? SMALLER : LARGER;
-
-  boost::optional<Point_2> p;
-  out_origin = EQUAL;
-  if (p1 && p2)
-  {
-    if (traits->compare_x_2_object() (*p1, *p2) == wanted_res)
-    {
-      p = *p2; out_origin = LARGER;
-    }
-    else
-    {
-      p = *p1; out_origin = SMALLER;
-    }
-  }
-  else if (p1 && !p2)
-  {
-    p = p1; out_origin = SMALLER;
-  }
-  else if (!p1 && p2)
-  {
-    p = p2; out_origin = LARGER;
-  }
-
-  CGAL_postcondition(!p || out_origin != EQUAL);
-  return p;
-}
-
 //! Compare the $y$-coordinates of two curves at their endpoints
 /*! The function compares the $y$ values of two curves with a joint 
   range of $x$ values, at the end of the joint range.
@@ -552,27 +467,174 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
                                    const X_monotone_curve_2& xcv2,
                                    Arr_curve_end curve_end) const
 {
-  // \todo Extend it to ARR_MAX_END
-
   CGAL_precondition (traits->is_in_x_range_2_object() (xcv1, xcv2));
-  
-  boost::optional<Point_2> p;
-  Comparison_result p_origin = SMALLER;
-  p = get_joint_endpoint(xcv1, xcv2, curve_end, p_origin);
-  if (!p)
-    p = get_joint_endpoint(xcv1, xcv2, CGAL::opposite(curve_end), p_origin);
 
-  Comparison_result res = EQUAL;
-  if (p)
+  typedef typename Traits::Compare_xy_2               Compare_xy_2;
+  typedef typename Traits::Compare_y_at_x_2           Compare_y_at_x_2;
+  typedef typename Traits::Construct_min_vertex_2     Construct_min_vertex_2;
+  typedef typename Traits::Construct_max_vertex_2     Construct_max_vertex_2;
+
+  Compare_y_at_x_2       compare_y_at_x = traits->compare_y_at_x_2_object();
+  Construct_min_vertex_2 min_vertex =
+    traits->construct_min_vertex_2_object();
+  Construct_max_vertex_2 max_vertex =
+    traits->construct_max_vertex_2_object();
+  
+  // First check whether any of the curves is defined at x boundary.
+  const Arr_parameter_space ps_x1 = traits->parameter_space_in_x_2_object()
+    (xcv1, curve_end);
+  const Arr_parameter_space ps_x2 = traits->parameter_space_in_x_2_object()
+    (xcv2, curve_end);
+  Comparison_result         res;
+  
+  if (ps_x1 != ARR_INTERIOR)
   {
-    res = traits->compare_y_at_x_2_object()(*p, ((p_origin == SMALLER) 
-                                            ? xcv2 : xcv1));
-    res = (p_origin == SMALLER ? res : CGAL::opposite(res));
+    if (ps_x2 != ARR_INTERIOR)
+    {
+      // Compare the relative position of the curves at x boundary.
+      return (traits->compare_y_near_boundary_2_object()
+	      (xcv1, xcv2, curve_end));
+    }
+    
+    // Check if the left end of xcv2 lies at y boundary.
+    const Arr_parameter_space ps_y2 =  traits->parameter_space_in_y_2_object()
+      (xcv2, curve_end);
+    
+    if (ps_y2 == ARR_BOTTOM_BOUNDARY)
+      return (LARGER);          // xcv2 is obviously below xcv1.
+    else if (ps_y2 == ARR_TOP_BOUNDARY)
+      return (SMALLER);         // xcv2 is obviously above xcv1.
+          
+    // Compare the position of the left end of xcv2 (which is a normal
+    // point) to xcv1.
+    if (curve_end == ARR_MIN_END)
+      res = compare_y_at_x (min_vertex (xcv2), xcv1);
+    else
+      res = compare_y_at_x (max_vertex (xcv2), xcv1);
+
+    // Swap the result.
+    return CGAL::opposite(res);
+  }
+  else if (ps_x2 != ARR_INTERIOR)
+  {
+    // Check if the left end of xcv1 lies at y boundary.
+    const Arr_parameter_space ps_y1 =  traits->parameter_space_in_y_2_object()
+      (xcv1, curve_end);
+    
+    if (ps_y1 == ARR_BOTTOM_BOUNDARY)
+      return (SMALLER);         // xcv1 is obviously below xcv2.
+    else if (ps_y1 == ARR_TOP_BOUNDARY)
+      return (LARGER);          // xcv1 is obviously above xcv2.
+    
+    // Compare the position of the left end of xcv1 (which is a normal
+    // point) to xcv2.
+    if (curve_end == ARR_MIN_END)
+      res = compare_y_at_x (min_vertex (xcv1), xcv2);
+    else
+      res = compare_y_at_x (max_vertex (xcv1), xcv2);
+    
+    return (res);
+  }
+  
+  // Check if the left curve end lies at y = +/- oo.
+  const Arr_parameter_space ps_y1 =  traits->parameter_space_in_y_2_object()
+    (xcv1, curve_end);
+  const Arr_parameter_space ps_y2 =  traits->parameter_space_in_y_2_object()
+    (xcv2, curve_end);
+  Comparison_result         l_res;
+  
+  if (ps_y1 != ARR_INTERIOR)
+  {
+    if (ps_y2 != ARR_INTERIOR)
+    {
+      // The curve ends have boundary conditions with oposite signs in y,
+      // we readily know their relative position (recall that they do not
+      // instersect).
+      if (ps_y1 == ARR_BOTTOM_BOUNDARY && ps_y2 == ARR_TOP_BOUNDARY)
+	return (SMALLER);
+      else if (ps_y1 == ARR_TOP_BOUNDARY && ps_y2 == ARR_BOTTOM_BOUNDARY)
+	return (LARGER);
+
+      // Both curves have vertical asymptotes with the same sign in y.
+      // Check which asymptote is the rightmost. Note that in this case
+      // the vertical asymptotes cannot be equal.
+      l_res = traits->compare_x_near_boundary_2_object()
+	(xcv1, curve_end, xcv2, curve_end);
+      CGAL_assertion (l_res != EQUAL);
+      
+      if (ps_y1 == ARR_TOP_BOUNDARY)
+	return (l_res);
+      else
+	return CGAL::opposite(l_res);
+    }
+
+    // xcv1 has a vertical asymptote and xcv2 has a normal left endpoint.
+    // Compare the x-positions of this endpoint and the asymptote.
+    const Point_2&  left2 = 
+      (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
+        
+    l_res = traits->compare_x_near_boundary_2_object()
+      (left2, xcv1, curve_end);
+    
+    if (l_res == LARGER)
+    {
+      // left2 lies in the x-range of xcv1, so it is safe to compare:
+      res = compare_y_at_x (left2, xcv1);
+      
+      return CGAL::opposite(res);
+    }
+    else
+    {
+      if (ps_y1 == ARR_BOTTOM_BOUNDARY)
+	return (SMALLER);          // xcv1 is obviously below xcv2.
+      else
+	return (LARGER);           // xcv2 is obviously above xcv1.
+    }
+  }
+  else if (ps_y2 != ARR_INTERIOR)
+  {
+    // xcv2 has a vertical asymptote and xcv1 has a normal left endpoint.
+    // Compare the x-positions of this endpoint and the asymptote.
+    const Point_2&  left1 = 
+      (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
+        
+    l_res = traits->compare_x_near_boundary_2_object()
+      (left1, xcv2, curve_end);
+    
+    if (l_res == LARGER)
+    {
+      // left1 lies in the x-range of xcv2, so it is safe to compare:
+      return (compare_y_at_x (left1, xcv2));
+    }
+    else
+    {
+      return (ps_y2 == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER;
+    }
+  }
+
+  // In this case we compare two normal points.
+  Compare_xy_2            compare_xy = traits->compare_xy_2_object();
+
+  // Get the left endpoints of xcv1 and xcv2.
+  const Point_2&  left1 = 
+    (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
+  const Point_2&  left2 = 
+    (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
+
+  // Locate the rightmost point of left1 and left2 and compare its position
+  // to the other curve.
+  l_res = compare_xy (left1, left2);
+  
+  if (l_res != SMALLER)
+  {
+    // left1 is in the x-range of xcv2:
+    return compare_y_at_x (left1, xcv2);
   }
   else
-    res = traits->compare_y_position_2_object() (xcv1, xcv2);
-
-  return res;
+  {
+    // left2 is in the x-range of xcv1:
+    return CGAL::opposite(compare_y_at_x (left2, xcv1));
+  }
 }
 /*@}*/
 
@@ -594,8 +656,7 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   boost::optional<Point_2>         last_ip; // last observed intersetion point.
  
 
-  // We actually cannot use this function because the curves do not have
-  // to be interior disjoint. This function needs a review.
+  // This function needs a review.
   current_res = compare_y_at_end(e1->curve(), e2->curve(), ARR_MIN_END);
   // Flip the result in case of an upper envelope.
   if (env_type == UPPER)
@@ -714,7 +775,8 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
         // Odd multiplicity: flip the current comparison result.
         current_res = CGAL::opposite (current_res);
       }
-      else if (intersection_point.second == 0 && equal_at_v == false)
+      else if ((intersection_point.second == 0 || current_res == EQUAL) 
+	       && equal_at_v == false)
       {
         // The multiplicity is unknown, so we have to compare the curves to
         // the right of their intersection point.

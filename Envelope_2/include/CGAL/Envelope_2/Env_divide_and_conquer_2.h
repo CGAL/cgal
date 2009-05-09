@@ -268,23 +268,6 @@ protected:
                                Comparison_result origin_of_v,
                                Envelope_diagram_1& out_d);
   
-  //! Checks whether a curve-end is in the parameter space interior.
-  /*! 
-    \param xcv The curve
-    \param curve_end The end of the curve to be checked.
-    \return True, if the curve-end is inside the parameter space, false, 
-    otherwise.
-    \todo Move to Arr_traits_adaptor.
-  */
-  bool is_in_interior_of_parameter_space(const X_monotone_curve_2& xcv,
-                                         Arr_curve_end curve_end) const;
-
-  
-  boost::optional<Point_2> get_joint_endpoint(const X_monotone_curve_2& xcv1,
-                                              const X_monotone_curve_2& xcv2,
-                                              Arr_curve_end curve_end,
-                                              Comparison_result &out_origin) 
-    const;
   
   //! Compare the $y$-coordinates of two curves at their endpoints
   /*! The function compares the $y$ values of two curves with a joint 
