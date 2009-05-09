@@ -77,13 +77,13 @@ public:
   Vector_3(const Point_3& a, const Point_3& b)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), a, b)) {}
 
-  Vector_3(const Segment_3& s)
+  explicit Vector_3(const Segment_3& s)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), s)) {}
 
-  Vector_3(const Ray_3& r)
+  explicit Vector_3(const Ray_3& r)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), r)) {}
 
-  Vector_3(const Line_3& l)
+  explicit Vector_3(const Line_3& l)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), l)) {}
 
   Vector_3(const Null_vector& v)

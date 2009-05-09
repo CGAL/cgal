@@ -70,16 +70,16 @@ public:
   Direction_2(const RDirection_2& d)
     : RDirection_2(d) {}
 
-  Direction_2(const Vector_2& v)
+  explicit Direction_2(const Vector_2& v)
     : RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), v)) {}
 
-  Direction_2(const Line_2& l)
+  explicit Direction_2(const Line_2& l)
     : RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), l)) {}
 
-  Direction_2(const Ray_2& r)
+  explicit Direction_2(const Ray_2& r)
     : RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), r)) {}
 
-  Direction_2(const Segment_2& s)
+  explicit Direction_2(const Segment_2& s)
     : RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), s)) {}
 
   Direction_2(const RT &x, const RT &y)

@@ -78,13 +78,13 @@ public:
   Vector_2(const Point_2& a, const Point_2& b)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), a, b)) {}
 
-  Vector_2(const Segment_2 &s)
+  explicit Vector_2(const Segment_2 &s)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), s)) {}
 
-  Vector_2(const Ray_2 &r)
+  explicit Vector_2(const Ray_2 &r)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), r)) {}
 
-  Vector_2(const Line_2 &l)
+  explicit Vector_2(const Line_2 &l)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), l)) {}
 
   Vector_2(const Null_vector &v)

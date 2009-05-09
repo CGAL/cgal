@@ -77,10 +77,10 @@ public:
   Line_2(const RT &a, const RT &b, const RT &c)
     : RLine_2(typename R::Construct_line_2()(Return_base_tag(), a,b,c)) {}
 
-  Line_2(const Segment_2& s)
+  explicit Line_2(const Segment_2& s)
     : RLine_2(typename R::Construct_line_2()(Return_base_tag(), s)) {}
 
-  Line_2(const Ray_2& r)
+  explicit Line_2(const Ray_2& r)
     : RLine_2(typename R::Construct_line_2()(Return_base_tag(), r)) {}
 
   Line_2(const Point_2 &p, const Direction_2 &d)

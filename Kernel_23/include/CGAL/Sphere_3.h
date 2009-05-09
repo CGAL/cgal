@@ -84,10 +84,10 @@ public:
            const Orientation& o = COUNTERCLOCKWISE)
    : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, q, o)) {}
 
-  Sphere_3(const Point_3& p, const Orientation& o = COUNTERCLOCKWISE)
+  explicit Sphere_3(const Point_3& p, const Orientation& o = COUNTERCLOCKWISE)
    : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, o)) {}
 
-  Sphere_3(const Circle_3& c)
+  explicit Sphere_3(const Circle_3& c)
    : Rep(typename R::Construct_sphere_3()(c)) {}
 
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const;

@@ -69,16 +69,16 @@ public:
   Direction_3(const Rep& d)
     : Rep(d) {}
 
-  Direction_3(const Vector_3& v)
+  explicit Direction_3(const Vector_3& v)
     : Rep(typename R::Construct_direction_3()(Return_base_tag(), v)) {}
 
-  Direction_3(const Line_3& l)
+  explicit Direction_3(const Line_3& l)
     : Rep(typename R::Construct_direction_3()(Return_base_tag(), l)) {}
 
-  Direction_3(const Ray_3& r)
+  explicit Direction_3(const Ray_3& r)
     : Rep(typename R::Construct_direction_3()(Return_base_tag(), r)) {}
 
-  Direction_3(const Segment_3& s)
+  explicit Direction_3(const Segment_3& s)
     : Rep(typename R::Construct_direction_3()(Return_base_tag(), s)) {}
 
   Direction_3(const RT& hx, const RT& hy, const RT& hz)

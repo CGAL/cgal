@@ -144,8 +144,8 @@ void _test_circle_construct(const K &k) {
     assert(theEqual_3(circle,circle2));
     assert(theEqual_3(circle,circle3));
 
-		Plane_3 pus = circle2;
-		Sphere_3 sus = circle3;
+		Plane_3 pus(circle2);
+		Sphere_3 sus(circle3);
 		assert(pus == circle2.supporting_plane());
 		assert(sus == circle3.diametral_sphere());
   }

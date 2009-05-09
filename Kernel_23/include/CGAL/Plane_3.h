@@ -93,7 +93,7 @@ public:
   Plane_3(const Ray_3& r, const Point_3& p)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), r, p)) {}
 
-  Plane_3(const Circle_3& c)
+  explicit Plane_3(const Circle_3& c)
     : Rep(typename R::Construct_plane_3()(c)) {}
 
   Plane_3 transform(const Aff_transformation_3 &t) const
