@@ -155,6 +155,7 @@ void test_kernels(const char *filename)
 {
     std::cout << std::endl;
     std::cout << "Polyhedron " << filename << std::endl;
+    std::cout << "============================" << std::endl;
 
     std::cout << std::endl;
     std::cout << "Simple cartesian float kernel" << std::endl;
@@ -177,11 +178,13 @@ void test_kernels(const char *filename)
     test<CGAL::Exact_predicates_inexact_constructions_kernel>(filename);
 }
 
+
 int main(void)
 {
         std::cout << "AABB hint strategies tests" << std::endl;
         test_kernels("./data/cube.off");
         test_kernels("./data/coverrear.off");
         test_kernels("./data/nested_spheres.off");
+        test_kernels("./data/finger.off");
         return 0;
 }

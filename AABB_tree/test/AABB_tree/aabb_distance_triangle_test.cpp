@@ -27,9 +27,6 @@
 #include <CGAL/Timer.h>
 
 #include <CGAL/AABB_intersections.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -70,6 +67,7 @@ void test_kernels(const char *filename)
 {
     std::cout << std::endl;
     std::cout << "Polyhedron " << filename << std::endl;
+    std::cout << "============================" << std::endl;
 
     std::cout << std::endl;
     std::cout << "Simple cartesian float kernel" << std::endl;
@@ -98,5 +96,6 @@ int main(void)
         test_kernels("./data/cube.off");
         test_kernels("./data/coverrear.off");
         test_kernels("./data/nested_spheres.off");
+        test_kernels("./data/finger.off");
         return 0;
 }

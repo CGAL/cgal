@@ -22,6 +22,11 @@
 //
 //******************************************************************************
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
+
+
 double random_in(const double a,
                  const double b)
 {
@@ -152,4 +157,6 @@ void test_distance_speed(Tree& tree)
         std::cout << speed << " distance queries/s" << std::endl;
         timer.stop();
 }
+
+
 

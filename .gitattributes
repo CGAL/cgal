@@ -43,6 +43,7 @@ AABB_tree/test/AABB_tree/aabb_intersection_triangle_test.cpp -text
 AABB_tree/test/AABB_tree/cleanup.bat -text
 AABB_tree/test/AABB_tree/data/coverrear.off -text
 AABB_tree/test/AABB_tree/data/cube.off -text
+AABB_tree/test/AABB_tree/data/finger.off -text
 AABB_tree/test/AABB_tree/data/nested_spheres.off -text
 AABB_tree/test/AABB_tree/todo.txt -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations.png -text

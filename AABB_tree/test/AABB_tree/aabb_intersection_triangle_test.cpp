@@ -141,7 +141,7 @@ void test(const char *filename)
     test_speed<Tree,K>(tree);
 }
 
-void test_several_kernels(const char *filename)
+void test_kernels(const char *filename)
 {
     std::cout << std::endl;
     std::cout << "Polyhedron " << filename << std::endl;
@@ -171,8 +171,9 @@ void test_several_kernels(const char *filename)
 int main(void)
 {
     std::cout << "AABB intersection tests" << std::endl;
-    test_several_kernels("./data/cube.off");
-    test_several_kernels("./data/coverrear.off");
-    test_several_kernels("./data/nested_spheres.off");
+    test_kernels("./data/cube.off");
+    test_kernels("./data/coverrear.off");
+    test_kernels("./data/nested_spheres.off");
+    test_kernels("./data/finger.off");
     return 0;
 }
