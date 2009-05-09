@@ -44,6 +44,7 @@ bool operator==(const Gmpzf &a, const Gmpzf &b);
 bool operator<(const Gmpzf &a, int b);
 bool operator==(const Gmpzf &a, int b);
 bool operator>(const Gmpzf &a, int b);
+Gmpzf approximate_sqrt(const Gmpzf &f);
 
 struct Gmpzf_rep // as in Gmpz.h
 {
@@ -85,6 +86,8 @@ public:
                          // potentially too large to be useful, anyway;
                          // still, repeated squaring of a power of two
                          // quickly brings this type to its limits...
+
+  friend Gmpzf approximate_sqrt(const Gmpzf &f);
 
 private:
   // data members (mantissa is from Gmpzf_rep)
@@ -188,7 +191,6 @@ public:
   Sign sign() const;
   Gmpzf integral_division(const Gmpzf& b) const;
   Gmpzf gcd (const Gmpzf& b) const;
-  Gmpzf sqrt() const;
   Comparison_result compare (const Gmpzf &b) const;
   double to_double() const ;
   std::pair<double, double> to_interval() const ;
@@ -363,20 +365,20 @@ Gmpzf Gmpzf::gcd (const Gmpzf& b) const
 }
 
 inline
-Gmpzf Gmpzf::sqrt() const
+Gmpzf approximate_sqrt(const Gmpzf &f)
 {
   // is there a well-defined sqrt at all?? Here we do the
   // following: write *this as m * 2 ^ e with e even, and
   // then return sqrt(m) * 2 ^ (e/2)
   Gmpzf result;
   // make exponent even
-  if (exp() % 2 == 0) {
-    mpz_set (result.man(), man());
+  if (f.exp() % 2 == 0) {
+    mpz_set (result.man(), f.man());
   } else {
-    mpz_mul_2exp (result.man(), man(), 1);
+    mpz_mul_2exp (result.man(), f.man(), 1);
   }
   mpz_sqrt(result.man(), result.man());
-  result.e = exp() / 2;
+  result.e = f.exp() / 2;
   result.canonicalize();
   return result;
 }

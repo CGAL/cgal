@@ -70,13 +70,6 @@ public:
 
     typedef INTERN_AST::Div_per_operator< Type > Div;
     typedef INTERN_AST::Mod_per_operator< Type > Mod;
-
-    struct Sqrt
-        : public std::unary_function< Type, Type > {
-        Type operator()( const Type& x ) const {
-            return x.sqrt();
-        }
-    };
     typedef INTERN_AST::Is_square_per_sqrt<Type> Is_square;
 
 };
