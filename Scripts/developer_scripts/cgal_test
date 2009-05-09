@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# If there is already a cgal_test script in the current directory, execute it.
-[ ! -x cgal_test ] && echo "No cgal_test in current directory, creating it" && create_cgal_test
-
-./cgal_test $@
