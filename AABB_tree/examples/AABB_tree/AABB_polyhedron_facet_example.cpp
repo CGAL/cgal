@@ -29,10 +29,9 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-
+typedef CGAL::Simple_cartesian<double> K;
 typedef K::FT FT;
 typedef K::Ray_3 Ray;
 typedef K::Point_3 Point;
@@ -42,14 +41,14 @@ typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
-int main(void)
+int main()
 {
         Point p(1.0, 0.0, 0.0);
         Point q(0.0, 1.0, 0.0);
         Point r(0.0, 0.0, 1.0);
         Point s(0.0, 0.0, 0.0);
         Polyhedron polyhedron;
-        polyhedron.make_tetrahedron( p, q, r, s);
+        polyhedron.make_tetrahedron(p, q, r, s);
 
         Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
         Point source(0.2, 0.2, 0.2);

@@ -31,9 +31,9 @@
 #include "Bbox_3_plane_3_do_intersect.h"
 
 // Turn off Visual C++ warning
-#ifdef _MSC_VER
-#pragma warning ( disable : 4003 )
-#endif
+//#ifdef _MSC_VER
+//#pragma warning ( disable : 4003 )
+//#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -50,32 +50,32 @@ namespace CGALi {
     for(int i = 0; i < 3; ++i) {
       if(p[i] <= q[i]) {
 	if(q[i] <= r[i]) { // pqr
-	  if(bbox.max(i) < p[i] || bbox.min(i) > r[i])
+	  if((FT)bbox.max(i) < p[i] || (FT)bbox.min(i) > r[i])
 	    return false;
 	}
 	else {
 	  if(p[i] <= r[i]) { // prq
-	    if(bbox.max(i) < p[i] || bbox.min(i) > q[i])
+	    if((FT)bbox.max(i) < p[i] || (FT)bbox.min(i) > q[i])
 	      return false;
 	  }
 	  else { // rpq
-	    if(bbox.max(i) < r[i] || bbox.min(i) > q[i])
+	    if((FT)bbox.max(i) < r[i] || (FT)bbox.min(i) > q[i])
 	      return false;
 	  }
 	}
       }
       else {
 	if(p[i] <= r[i]) { // qpr
-	  if(bbox.max(i) < q[i] || bbox.min(i) > r[i])
+	  if((FT)bbox.max(i) < q[i] || (FT)bbox.min(i) > r[i])
 	    return false;
 	}
 	else {
 	  if(q[i] <= r[i]) { // qrp
-	    if(bbox.max(i) < q[i] || bbox.min(i) > p[i])
+	    if((FT)bbox.max(i) < q[i] || (FT)bbox.min(i) > p[i])
 	      return false;
 	  }
 	  else { // rqp
-	    if(bbox.max(i) < r[i] || bbox.min(i) > p[i])
+	    if((FT)bbox.max(i) < r[i] || (FT)bbox.min(i) > p[i])
 	      return false;
 	  }
 	}

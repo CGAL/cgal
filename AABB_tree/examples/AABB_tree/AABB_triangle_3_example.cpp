@@ -29,9 +29,9 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Simple_cartesian<double> K;
 
 typedef K::FT FT;
 typedef K::Ray_3 Ray;
@@ -44,7 +44,7 @@ typedef CGAL::AABB_triangle_primitive<K,Iterator> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> AABB_triangle_traits;
 typedef CGAL::AABB_tree<AABB_triangle_traits> Tree;
 
-int main(void)
+int main()
 {
         Point a(1.0, 0.0, 0.0);
         Point b(0.0, 1.0, 0.0);
@@ -56,17 +56,17 @@ int main(void)
         triangles.push_back(Triangle(a,b,d));
         triangles.push_back(Triangle(a,d,c));
 
+        // constructs AABB tree
         Tree tree(triangles.begin(),triangles.end());
 
         // counts #intersections
         Ray ray(a,b);
         std::cout << tree.number_of_intersected_primitives(ray)
-                << " intersections(s) with ray" << std::endl;
+                  << " intersections(s) with ray" << std::endl;
 
         // compute closest point
-        Point hint(a);
-        Point query(2.0, 2.0, 2.0);
-        Point closest = tree.closest_point(query,hint);
+        Point point_query(2.0, 2.0, 2.0);
+        Point closest_point = tree.closest_point(point_query);
 
         return 0;
 }

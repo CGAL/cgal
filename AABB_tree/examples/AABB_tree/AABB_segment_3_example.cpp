@@ -29,9 +29,9 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_segment_primitive.h>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Simple_cartesian<double> K;
 
 typedef K::FT FT;
 typedef K::Point_3 Point;
@@ -62,18 +62,18 @@ int main(void)
         tree.accelerate_distance_queries();
 
         // counts #intersections with a plane
-        Plane plane(a,b,d);
-        std::cout << tree.number_of_intersected_primitives(plane)
+        Plane plane_query(a,b,d);
+        std::cout << tree.number_of_intersected_primitives(plane_query)
                 << " intersections(s) with plane" << std::endl;
 
         // counts #intersections with a triangle
-        Triangle triangle(a,b,c);
-        std::cout << tree.number_of_intersected_primitives(triangle)
+        Triangle triangle_query(a,b,c);
+        std::cout << tree.number_of_intersected_primitives(triangle_query)
                 << " intersections(s) with triangle" << std::endl;
 
-        // computes the closest point from a query point
-        Point query(2.0, 2.0, 2.0);
-        Point closest = tree.closest_point(query);
+        // computes the closest point from a point query 
+        Point point_query(2.0, 2.0, 2.0);
+        Point closest = tree.closest_point(point_query);
 
         return 0;
 }
