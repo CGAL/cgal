@@ -64,9 +64,11 @@ int main()
         std::cout << tree.number_of_intersected_primitives(ray)
                   << " intersections(s) with ray" << std::endl;
 
-        // compute closest point
+        // compute closest point and squared distance
         Point point_query(2.0, 2.0, 2.0);
         Point closest_point = tree.closest_point(point_query);
+        FT sqd = tree.squared_distance(point_query);
+        std::cout << "squared distance: " << sqd << std::endl;
 
         return 0;
 }

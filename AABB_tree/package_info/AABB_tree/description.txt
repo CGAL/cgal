@@ -1,1 +1,1 @@
-Data structure for efficient intersection and projection.
+Data structure for efficient intersection and distance computations.

@@ -329,7 +329,7 @@ namespace CGAL {
         };
 
         /**
-        * @class Projection_traits
+        * @class Distance_traits
         */
         class Distance_traits
         {

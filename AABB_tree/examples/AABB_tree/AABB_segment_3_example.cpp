@@ -10,7 +10,7 @@
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
+/
 // $URL:  $
 // $Id:  $
 //
@@ -44,7 +44,7 @@ typedef CGAL::AABB_segment_primitive<K,Iterator> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
-int main(void)
+int main()
 {
         Point a(1.0, 0.0, 0.0);
         Point b(0.0, 1.0, 0.0);
@@ -57,16 +57,16 @@ int main(void)
         segments.push_back(Segment(c,d));
 
         // constructs the AABB tree and the internal search tree for 
-        // efficient projection computations.
+        // efficient distance computations.
         Tree tree(segments.begin(),segments.end());
         tree.accelerate_distance_queries();
 
-        // counts #intersections with a plane
+        // counts #intersections with a plane query
         Plane plane_query(a,b,d);
         std::cout << tree.number_of_intersected_primitives(plane_query)
                 << " intersections(s) with plane" << std::endl;
 
-        // counts #intersections with a triangle
+        // counts #intersections with a triangle query
         Triangle triangle_query(a,b,c);
         std::cout << tree.number_of_intersected_primitives(triangle_query)
                 << " intersections(s) with triangle" << std::endl;

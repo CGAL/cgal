@@ -1,1 +1,1 @@
-This package implements a hierarchy of axi-aligned bounding boxes (AABBs) for efficient intersection and projection of 3D queries against a set of geometric objects. 
+This component implements a hierarchy of axis-aligned bounding boxes (AABBs) for efficient intersection and distance computations between 3D queries and sets of bounded 3D input geometric objects. 
