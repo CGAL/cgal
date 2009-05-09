@@ -52,11 +52,8 @@ void test_all_query_types(Tree& tree)
         Point query = random_point_in<K>(tree.bbox());
         Point_and_primitive_id hint = tree.any_reference_point_and_id();
 
-        //FT sqd1 = tree.squared_distance(query);
-        //FT sqd2 = tree.squared_distance(query,hint);
-
-        //Point closest1 = tree.closest_point(query);
-        //Point closest2 = tree.closest_point(query,hint);
+        FT sqd1 = tree.squared_distance(query);
+        FT sqd2 = tree.squared_distance(query,hint.first);
 
         Point p1 = tree.closest_point(query);
         Point p2 = tree.closest_point(query,hint.first);

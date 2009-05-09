@@ -81,18 +81,18 @@ namespace CGAL {
         void clear()
         {
             // clear AABB tree
-            m_data.clear();
-            delete [] m_p_root;
-            m_p_root = NULL;
+            m_primitives.clear();
+            delete [] m_p_root_node;
+            m_p_root_node = NULL;
 
             clear_search_tree();
         }
 
 
         // bbox and size
-        Bounding_box bbox() const { return m_p_root->bbox(); }
-        Size_type size() const { return m_data.size(); }
-        bool empty() const { return m_data.empty(); }
+        Bounding_box bbox() const { return m_p_root_node->bbox(); }
+        Size_type size() const { return m_primitives.size(); }
+        bool empty() const { return m_primitives.empty(); }
 
         /// Construct internal search tree with a given point set
         // returns true iff successful memory allocation
@@ -146,7 +146,7 @@ namespace CGAL {
         void traversal(const Query& query, Traversal_traits& traits) const
         {
             if(!empty())
-                m_p_root->template traversal<Traversal_traits,Query>(query, traits, m_data.size());
+                m_p_root_node->template traversal<Traversal_traits,Query>(query, traits, m_primitives.size());
             else
                 std::cerr << "AABB tree traversal with empty tree" << std::endl;
         }
@@ -380,7 +380,7 @@ namespace CGAL {
         Point_and_primitive_id any_reference_point_and_id() const
         {
             CGAL_assertion(!empty());
-            return Point_and_primitive_id(m_data[0].reference_point(), m_data[0].id());
+            return Point_and_primitive_id(m_primitives[0].reference_point(), m_primitives[0].id());
         }
 
     public:
@@ -394,9 +394,9 @@ namespace CGAL {
 
     private:
         // set of input primitives
-        std::vector<Primitive> m_data;
+        std::vector<Primitive> m_primitives;
         // single root node
-        Node* m_p_root;
+        Node* m_p_root_node;
         // search KD-tree
         Search_tree* m_p_search_tree;
         bool m_search_tree_constructed;
@@ -413,8 +413,8 @@ namespace CGAL {
     template<typename ConstPrimitiveIterator>
     AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
         ConstPrimitiveIterator beyond)
-        : m_data()
-        , m_p_root(NULL)
+        : m_primitives()
+        , m_p_root_node(NULL)
         , m_p_search_tree(NULL)
         , m_search_tree_constructed(false)
     {
@@ -422,19 +422,19 @@ namespace CGAL {
         // TODO: get number of elements to reserve space ?
         while ( first != beyond )
         {
-            m_data.push_back(Primitive(first));
+            m_primitives.push_back(Primitive(first));
             ++first;
         }
 
-        m_p_root = new Node[m_data.size()-1]();
-        if(m_p_root == NULL)
+        m_p_root_node = new Node[m_primitives.size()-1]();
+        if(m_p_root_node == NULL)
         {
             std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
-            CGAL_assertion(m_p_root != NULL);
-            m_data.clear();
+            CGAL_assertion(m_p_root_node != NULL);
+            m_primitives.clear();
         }
         else
-            m_p_root->expand(m_data.begin(), m_data.end(), m_data.size());
+            m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size());
     }
 
     // Clears tree and insert a set of primitives
@@ -450,21 +450,21 @@ namespace CGAL {
         // inserts primitives
         while(first != beyond)
         {
-            m_data.push_back(Primitive(first));
+            m_primitives.push_back(Primitive(first));
             first++;
         }
 
         // allocates tree nodes
-        m_p_root = new Node[m_data.size()-1]();
-        if(m_p_root == NULL)
+        m_p_root_node = new Node[m_primitives.size()-1]();
+        if(m_p_root_node == NULL)
         {
             std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
-            m_data.clear();
+            m_primitives.clear();
             return false;
         }
 
         // constructs the tree
-        m_p_root->expand(m_data.begin(), m_data.end(), m_data.size());
+        m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size());
         return true;
     }
 
@@ -493,12 +493,12 @@ namespace CGAL {
     template<typename Tr>
     bool AABB_tree<Tr>::accelerate_distance_queries()
     {
-        CGAL_assertion(!m_data.empty());
+        CGAL_assertion(!m_primitives.empty());
 
         // iterate over primitives to get reference points on them
         std::vector<Point_and_primitive_id> points;
         typename std::vector<Primitive>::const_iterator it;
-        for(it = m_data.begin(); it != m_data.end(); ++it)
+        for(it = m_primitives.begin(); it != m_primitives.end(); ++it)
             points.push_back(Point_and_primitive_id(it->reference_point(), it->id()));
 
         return accelerate_distance_queries(points.begin(), points.end());
@@ -572,7 +572,7 @@ namespace CGAL {
         AABB_tree<Tr>::closest_point(const Point& query,
                                      const Point& hint) const
     {
-        typename Primitive::Id hint_primitive = m_data[0].id();
+        typename Primitive::Id hint_primitive = m_primitives[0].id();
         Distance_traits distance_traits(query,hint,hint_primitive);
         this->traversal(query, distance_traits);
         return distance_traits.closest_point();
