@@ -215,8 +215,8 @@ Quotient<NT>::normalize()
   NT ggt = CGAL_NTS gcd(num, den);
   if (ggt != 1 )
   {
-      num /= ggt;
-      den /= ggt;
+      num = CGAL::integral_division(num, ggt);
+      den = CGAL::integral_division(den, ggt);
   }
   return *this;
 }
