@@ -19,7 +19,7 @@
 
 \ccDefinition
   
-The concept \ccRefName\ describes the requirements for the primitives stored in the AABB data structure. The concept encapsulates a type for the input datum (a geometric object) and an identifier type by which those primitives are referred to. The concept \ccRefName\ also refines the concepts DefaultConstructible and Assignable.
+The concept \ccRefName\ describes the requirements for the primitives stored in the AABB data structure. The concept encapsulates a type for the input datum (a geometric object) and an identifier (id) type by which those primitives are referred to. The concept \ccRefName\ also refines the concepts DefaultConstructible and Assignable.
 
 \ccTypes
 
@@ -27,7 +27,7 @@ The concept \ccRefName\ describes the requirements for the primitives stored in 
 
 \ccNestedType{Datum}{Type of input datum.}
 
-\ccNestedType{Id}{Type of identifiers by which the input objects are referred to. It should be a model of the concepts DefaultConstructible and Assignable.}
+\ccNestedType{Id}{Type of identifiers by which the input objects are referred to. It must be a model of the concepts DefaultConstructible and Assignable.}
 
 
 % variable name
@@ -49,7 +49,7 @@ The concept \ccRefName\ describes the requirements for the primitives stored in 
 
 \ccExample
 
-The \ccc{Primitive} type can be, e.g., a wrapper around a \ccc{Handle}. Assume for instance that the input objects are the triangle faces of a mesh stored as a \ccc{CGAL::Polyhedron}. The \ccc{Datum} would be a \ccc{Triangle_3} and the \ccc{Id} would be a polyhedron \ccc{Face_handle}. Function \ccc{datum()} can return either a \ccc{Triangle_3} constructed on the fly (memory saving) from the id (face handle) or a \ccc{Triangle_3} stored internally (faster but memory consuming). 
+The \ccc{Primitive} type can be, e.g., a wrapper around a \ccc{Handle}. Assume for instance that the input objects are the triangle faces of a mesh stored as a \ccc{CGAL::Polyhedron}. The \ccc{Datum} would be a \ccc{Triangle_3} and the \ccc{Id} would be a polyhedron \ccc{Face_handle}. Method \ccc{datum()} can return either a \ccc{Triangle_3} constructed on the fly from the face handle or a \ccc{Triangle_3} stored internally. This provides a way for the user to trade memory for efficiency.
 
 \end{ccRefConcept}
 
