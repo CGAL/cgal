@@ -183,9 +183,9 @@ public:
   Gmpzf& operator-=( int i);
   Gmpzf& operator*=( const Gmpzf& b);
   Gmpzf& operator*=( int i);
-  Gmpzf& operator/= (const Gmpzf& b);
+  Gmpzf& div(const Gmpzf& b);
   Gmpzf& operator%= (const Gmpzf& b);
-  Gmpzf& operator/= (int i);
+  Gmpzf& div(int i);
   Gmpzf& operator%= (int i);
   bool is_zero() const;
   Sign sign() const;
@@ -294,7 +294,7 @@ Gmpzf& Gmpzf::operator*=( int i)
 // => a / b = a div b = (a_aligned div b_aligned)
 //            a mod b = (a_aligned mod b_aligned) * 2 ^ rexp
 inline
-Gmpzf& Gmpzf::operator/= (const Gmpzf& b)
+Gmpzf& Gmpzf::div(const Gmpzf& b)
 {
   CGAL_precondition(!b.is_zero());
   Gmpzf result;
@@ -321,9 +321,9 @@ Gmpzf& Gmpzf::operator%= (const Gmpzf& b)
 }
 
 inline
-Gmpzf& Gmpzf::operator/= (int i)
+Gmpzf& Gmpzf::div(int i)
 {
-  return operator/= (Gmpzf(i));
+  return div(Gmpzf(i));
 }
 
 inline

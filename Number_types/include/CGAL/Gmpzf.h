@@ -68,7 +68,14 @@ public:
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR(int)
     };
 
-    typedef INTERN_AST::Div_per_operator< Type > Div;
+    class Div
+        : public std::binary_function< Type, Type, Type > {
+    public:
+        Type operator()( const Type& x, const Type& y ) const {
+            return Type(x).div( y );
+	}
+    };
+
     typedef INTERN_AST::Mod_per_operator< Type > Mod;
     typedef INTERN_AST::Is_square_per_sqrt<Type> Is_square;
 
