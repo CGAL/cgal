@@ -39,13 +39,14 @@ template<typename GeomTraits, typename AABB_primitive>
 class AABB_traits
 {
 public:
+  typedef AABB_traits<GeomTraits, AABB_primitive> AT;
   /// AABBTraits concept types
   typedef typename CGAL::Bbox_3 Bounding_box;
   typedef typename CGAL::Object Object;
 
   typedef AABB_primitive Primitive;
   typedef typename AABB_primitive::Datum Datum;
-  typedef typename GeomTraits::Sphere_3 Sphere;
+//  typedef typename GeomTraits::Sphere_3 Sphere;
   typedef unsigned int Size_type;
 
   // TOFIX: Workaround for weighted_point
@@ -129,21 +130,53 @@ public:
   boost::optional<Object_and_primitive_id> intersection(const Query& q,
                     const Primitive& pr) const;
 
-  Sphere sphere(const Point& center,
+/*  Sphere sphere(const Point& center,
                 const Point& hint) const
   {
     return GeomTraits().construct_sphere_3_object()
       (center, GeomTraits().compute_squared_distance_3_object()(center, hint));
-  }
+  }*/
 
+/*
   template <typename Query>
   Point closest_point(const Query& q,
                       const Primitive& pr,
                       const Point& bound) const
   {
     return CGAL::nearest_point_3(q, pr.datum(), bound);
-  }
+  } */
 
+  // This should go down to the GeomTraits, i.e. the kernel  
+  class Closest_point_3 {
+      typedef typename AT::Point Point;
+      typedef typename AT::Primitive Primitive;
+  public:    
+      Point operator()(const Point& p, const Primitive& pr, const Point& bound) const
+      {
+          return CGAL::nearest_point_3(p, pr.datum(), bound);
+      }
+  };
+  
+  // This should go down to the GeomTraits, i.e. the kernel
+  // and the internal implementation should change its name from 
+  // do_intersect to something like does_contain (this is what we compute, 
+  // this is not the same do_intersect as the spherical kernel)
+  class Compare_distance_3 {
+      typedef typename AT::Point Point;
+      typedef typename AT::Primitive Primitive;
+  public:    
+      template <class Solid>
+      bool operator()(const Point& p, const Solid& pr, const Point& bound) const
+      {
+          return GeomTraits().do_intersect_3_object()
+          (GeomTraits().construct_sphere_3_object()
+          (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), pr);
+      }
+  };
+  
+  Closest_point_3 closest_point_3_object() {return Closest_point_3();}
+  Compare_distance_3 compare_distance_3_object() {return Compare_distance_3();}
+  
 private:
   /**
    * @brief Computes bounding box of one primitive

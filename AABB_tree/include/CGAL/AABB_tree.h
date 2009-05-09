@@ -154,7 +154,7 @@ namespace CGAL {
 
     private:
         typedef AABB_node<AABBTraits> Node;
-        typedef typename AABBTraits::Sphere Sphere;
+//        typedef typename AABBTraits::Sphere Sphere;
 
         //-------------------------------------------------------
         // Traits classes for traversal computation
@@ -338,29 +338,27 @@ namespace CGAL {
                             const Point& hint,
                             const typename Primitive::Id& hint_primitive)
                             : m_closest_point(hint),
-                              m_closest_primitive(hint_primitive),
-                              m_sphere(AABBTraits().sphere(query,hint))
+                              m_closest_primitive(hint_primitive)
             {}
 
             bool go_further() const { return true; }
 
             void intersection(const Point& query, const Primitive& primitive)
             {
-                // TOFIX
-                // update m_closest_primitive if needed
-                Point new_closest_point = 
-                    AABBTraits().closest_point(query, primitive, m_closest_point);
+                Point new_closest_point = AABBTraits().closest_point_3_object()
+                                          (query, primitive, m_closest_point);
                 if(new_closest_point != m_closest_point)
                 {
                     m_closest_primitive = primitive.id();
                     m_closest_point = new_closest_point;
                 }
-                m_sphere = AABBTraits().sphere(query, m_closest_point);
+//                m_sphere = AABBTraits().sphere(query, m_closest_point);
             }
 
             bool do_intersect(const Point& query, const Node& node) const
             {
-                return AABBTraits().do_intersect(m_sphere, node.bbox());
+                return AABBTraits().compare_distance_3_object()
+                       (query, node.bbox(), m_closest_point);
             }
 
             Point closest_point() const { return m_closest_point; }
@@ -370,7 +368,7 @@ namespace CGAL {
             }
 
         private:
-            Sphere m_sphere;
+//            Sphere m_sphere;
             Point m_closest_point;
             typename Primitive::Id m_closest_primitive;
         };
