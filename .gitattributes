@@ -3940,7 +3940,6 @@ Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/quick_test_
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/quick_test_suite.sh eol=lf
 Testsuite/test/collect_cgal_testresults_from_cmake -text
 Testsuite/test/makefile2 -text
-Testsuite/test/run_testsuite eol=lf
 Testsuite/test/run_testsuite_with_cmake -text
 Triangulation_2/demo/Triangulation_2/qt3/help/cindex.html svneol=native#text/html
 Triangulation_2/demo/Triangulation_2/qt3/help/cinput_point_layer.gif -text svneol=unset#image/gif
