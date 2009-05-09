@@ -21,7 +21,11 @@
 
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+
+#include <boost/optional.hpp>
+
 #include <vector>
+
 
 CGAL_BEGIN_NAMESPACE
 
@@ -263,6 +267,42 @@ protected:
                                Vertex_const_handle v, bool v_exists,
                                Comparison_result origin_of_v,
                                Envelope_diagram_1& out_d);
+  
+  //! Checks whether a curve-end is in the parameter space interior.
+  /*! 
+    \param xcv The curve
+    \param curve_end The end of the curve to be checked.
+    \return True, if the curve-end is inside the parameter space, false, 
+    otherwise.
+    \todo Move to Arr_traits_adaptor.
+  */
+  bool is_in_interior_of_parameter_space(const X_monotone_curve_2& xcv,
+                                         Arr_curve_end curve_end) const;
+
+  
+  boost::optional<Point_2> get_joint_endpoint(const X_monotone_curve_2& xcv1,
+                                              const X_monotone_curve_2& xcv2,
+                                              Arr_curve_end curve_end,
+                                              Comparison_result &out_origin) 
+    const;
+  
+  //! Compare the $y$-coordinates of two curves at their endpoints
+  /*! The function compares the $y$ values of two curves with a joint 
+    range of $x$ values, at the end of the joint range.
+    \param xcv1 The first curve
+    \param xcv2 The second curve
+    \param curve_end ARR_MIN_END - compare the $y$ value of the smaller 
+    endpoint, ARR_MAX_END - compare the $y$ value of the larger endpoint.
+    \pre The two $x$-monotone curves need to have a partially overlapping 
+    $x$-ranges.
+    \return 
+    \todo Move it to Arr_traits_adaptor ?
+  */
+  Comparison_result compare_y_at_end(const X_monotone_curve_2& xcv1,
+                                     const X_monotone_curve_2& xcv2,
+                                     Arr_curve_end curve_end) const;
+
+
 
   /*!
    * Merge two non-empty intervals into the merged diagram.

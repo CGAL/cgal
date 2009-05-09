@@ -23,24 +23,9 @@
  * Definitions of the functions of the Envelope_divide_and_conquer_2 class.
  */
 
+#include <boost/optional.hpp>
+
 CGAL_BEGIN_NAMESPACE
-
-/*! \todo Make the handlers default constructibe
- * Some compilers complain that the handlers are not initialized. Currently,
- * there is no requirement from the concepts they model respectively to
- * have default constructors. The following is a work around.
- */
-template <typename Handle>
-class Vertex_initializer {
-public:
-  void operator()(Handle & handle) {}
-};
-
-template <typename Vertex>
-class Vertex_initializer<Vertex *> {
-public:
-  void operator()(Vertex * & handle) {handle = NULL; }
-};
 
 // ---------------------------------------------------------------------------
 // Construct the lower/upper envelope of the given list of non-vertical curves.
@@ -243,11 +228,6 @@ _merge_envelopes (const Envelope_diagram_1& d1,
   Comparison_result    res_v = EQUAL;
   bool                 same_x = false;
 
-  Vertex_initializer<Vertex_const_handle> v_init;
-  v_init(v1);
-  v_init(v2);
-  v_init(next_v);
-    
   do
   {
     // Locate the vertex that has smaller x-coordinate between v1 and v2.
@@ -466,6 +446,136 @@ _merge_single_interval (Edge_const_handle e, Edge_const_handle other_edge,
   return;
 }
 
+//! \brief Functions that should be on Arr_traits_adaptor.
+/*@{*/
+
+inline
+Arr_curve_end
+operator-(Arr_curve_end o)
+{ return static_cast<Arr_curve_end>( - static_cast<int>(o)); }
+
+//! Checks whether a curve-end is in the parameter space interior.
+/*! 
+  \param xcv The curve
+  \param curve_end The end of the curve to be checked.
+  \return True, if the curve-end is inside the parameter space, false, 
+  otherwise.
+  \todo Move to Arr_traits_adaptor.
+*/
+template <class Traits, class Diagram>
+bool Envelope_divide_and_conquer_2<Traits,Diagram>::
+is_in_interior_of_parameter_space(const X_monotone_curve_2& xcv,
+                                  Arr_curve_end curve_end) const
+{
+  Arr_parameter_space ps = traits->parameter_space_in_x_2_object ()
+    (xcv, curve_end);
+  if (ps != ARR_INTERIOR)
+    return false;
+  
+  ps = traits->parameter_space_in_y_2_object () (xcv, curve_end);
+  if (ps != ARR_INTERIOR)
+    return false;
+
+  return true;
+}
+
+template <class Traits, class Diagram>
+boost::optional<typename Traits::Point_2> 
+Envelope_divide_and_conquer_2<Traits,Diagram>::
+get_joint_endpoint(const X_monotone_curve_2& xcv1,
+                   const X_monotone_curve_2& xcv2,
+                   Arr_curve_end curve_end,
+                   Comparison_result &out_origin) const
+{
+  bool x1_bounded = is_in_interior_of_parameter_space (xcv1, curve_end);
+  bool x2_bounded = is_in_interior_of_parameter_space (xcv2, curve_end);
+  
+  boost::optional<Point_2> p1, p2;
+  if (curve_end == ARR_MIN_END)
+  {
+    if (x1_bounded)
+      p1 = traits->construct_min_vertex_2_object() (xcv1);
+    if (x2_bounded)
+      p2 = traits->construct_min_vertex_2_object() (xcv2);
+  }
+  else
+  {
+    if (x1_bounded)
+      p1 = traits->construct_max_vertex_2_object() (xcv1);
+    if (x2_bounded)
+      p2 = traits->construct_max_vertex_2_object() (xcv2);
+  }
+
+  Comparison_result wanted_res = (curve_end == ARR_MIN_END) ? SMALLER : LARGER;
+
+  boost::optional<Point_2> p;
+  out_origin = EQUAL;
+  if (p1 && p2)
+  {
+    if (traits->compare_x_2_object() (*p1, *p2) == wanted_res)
+    {
+      p = *p2; out_origin = LARGER;
+    }
+    else
+    {
+      p = *p1; out_origin = SMALLER;
+    }
+  }
+  else if (p1 && !p2)
+  {
+    p = p1; out_origin = SMALLER;
+  }
+  else if (!p1 && p2)
+  {
+    p = p2; out_origin = LARGER;
+  }
+
+  CGAL_postcondition(!p || out_origin != EQUAL);
+  return p;
+}
+
+//! Compare the $y$-coordinates of two curves at their endpoints
+/*! The function compares the $y$ values of two curves with a joint 
+  range of $x$ values, at the end of the joint range.
+  \param xcv1 The first curve
+  \param xcv2 The second curve
+  \param curve_end ARR_MIN_END - compare the $y$ value of the smaller 
+  endpoint, ARR_MAX_END - compare the $y$ value of the larger endpoint.
+  \pre The two $x$-monotone curves need to have a partially overlapping 
+  $x$-ranges.
+  \return 
+  \todo Move it to Arr_traits_adaptor ?
+*/
+template <class Traits, class Diagram>
+Comparison_result Envelope_divide_and_conquer_2<Traits,Diagram>::
+compare_y_at_end(const X_monotone_curve_2& xcv1,
+                                   const X_monotone_curve_2& xcv2,
+                                   Arr_curve_end curve_end) const
+{
+  // \todo Extend it to ARR_MAX_END
+
+  CGAL_precondition (traits->is_in_x_range_2_object() (xcv1, xcv2));
+  
+  boost::optional<Point_2> p;
+  Comparison_result p_origin = SMALLER;
+  p = get_joint_endpoint(xcv1, xcv2, curve_end, p_origin);
+  if (!p)
+    p = get_joint_endpoint(xcv1, xcv2, CGAL::opposite(curve_end), p_origin);
+
+  Comparison_result res = EQUAL;
+  if (p)
+  {
+    res = traits->compare_y_at_x_2_object()(*p, ((p_origin == SMALLER) 
+                                            ? xcv2 : xcv1));
+    res = (p_origin == SMALLER ? res : CGAL::opposite(res));
+  }
+  else
+    res = traits->compare_y_position_2_object() (xcv1, xcv2);
+
+  return res;
+}
+/*@}*/
+
 // ---------------------------------------------------------------------------
 // Merge two non-empty intervals into the merged diagram.
 //
@@ -479,47 +589,47 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
 {
   // Get the relative position of two curves associated with e1 and e2
   // at the rightmost of the left endpoints of e1 and e2.
-  Comparison_result      u_res;
-  bool                   equal_at_v = false;
-  Point_2                pu;
-  bool                   pu_exists = false;
+  Comparison_result                current_res;
+  bool                             equal_at_v = false;
+  boost::optional<Point_2>         last_ip; // last observed intersetion point.
  
-  u_res = traits->compare_y_position_2_object() (e1->curve(),
-                                                 e2->curve());
-  
+
+  // We actually cannot use this function because the curves do not have
+  // to be interior disjoint. This function needs a review.
+  current_res = compare_y_at_end(e1->curve(), e2->curve(), ARR_MIN_END);
   // Flip the result in case of an upper envelope.
   if (env_type == UPPER)
-    u_res = CGAL::opposite (u_res);
+    current_res = CGAL::opposite (current_res);
+
   
   // Use the current rightmost of the two left vertices as a reference point.
-  bool                 v_rm_exists = true;
-  Vertex_const_handle  v_rm;
-  Vertex_initializer<Vertex_const_handle> v_init;
-  v_init(v_rm);
+  // This is the rightmost vertex in the current minimization diagram (out_d).
+  // The intersection points/curves that interest us are the ones in
+  // [v_leftmost, v].
+  boost::optional<Vertex_const_handle>  v_leftmost;
 
-  if (is_leftmost1)
+  if (is_leftmost1 == true)
   {
-    if (is_leftmost2)
-      v_rm_exists = false;
-    else
-      v_rm = e2->left();
+    if (is_leftmost2 == false)
+      v_leftmost = e2->left();
   }
   else
   {
-    if (is_leftmost2)
-      v_rm = e1->left();
+    if (is_leftmost2 == true)
+      v_leftmost = e1->left();
     else
     {
       if ((traits->compare_xy_2_object() (e1->left()->point(),
                                           e2->left()->point()) == LARGER))
-        v_rm = e1->left();
+        v_leftmost = e1->left();
       else
-        v_rm = e2->left();
+        v_leftmost = e2->left();
     }
   }
 
   // Find the next intersection of the envelopes to the right of the current
   // rightmost point in the merged diagram.
+  // \todo Use the faster object_cast.
   std::list<CGAL::Object>           objects;
   CGAL::Object                      obj;
   X_monotone_curve_2                intersection_curve;
@@ -537,83 +647,87 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
     if (CGAL::assign(intersection_point, obj))
     {
       // We have a simple intersection point.
-      if (v_rm_exists &&
+      bool is_in_x_range = true; // true if the intersection point is to the 
+                                 // right of v_leftmost.
+      // check if we are before the leftmost point.
+      if (v_leftmost &&
           traits->compare_xy_2_object() (intersection_point.first, 
-                                         v_rm->point()) != LARGER)
+                                         (*v_leftmost)->point()) != LARGER)
       {
         // The point is to the left of the current rightmost vertex in out_d,
         // so we skip it and continue examining the next intersections.
         // However, we update the last intersection point observed.
-        pu = intersection_point.first;
-        pu_exists = true;
-        continue;
+        is_in_x_range = false;
       }
       
-      if (v_exists)
+      // check if we arrived at the rightmost point (stop if indeed we are
+      // there).
+      if (is_in_x_range && v_exists)
       {
         Comparison_result res = traits->compare_xy_2_object() 
           (intersection_point.first, v->point());
         
+        // v is an intersection points, so both curves are equal there:
         if (res == EQUAL)
-          // v is an intersection points, so both curves are equal there:
           equal_at_v = true;
         
-        if (res != SMALLER)
+        // We passed the next vertex, so we can stop here.
+        if (res == LARGER)
         {
-          // We passed the next vertex, so we can stop here.
           break;
         }
       }
       
       // Create a new vertex in the output diagram that corrsponds to the
       // current intersection point.
-      Vertex_handle        new_v;
-      
-      if (pu_exists)
+      if (is_in_x_range)
       {
-        // Update the relative position of the two curves, which is their
-        // order immediately to the right of their last observed intersection
-        // point pu.
-        u_res = traits->compare_y_at_x_right_2_object() (e1->curve(),
-                                                         e2->curve(),
-                                                         pu);
- 
-        if (env_type == UPPER)
-          u_res = CGAL::opposite (u_res);
+        Vertex_handle        new_v;
+        
+        if (current_res == SMALLER)
+          new_v = _append_vertex (out_d, intersection_point.first, e1);
+        else
+          new_v = _append_vertex (out_d, intersection_point.first, e2);
+        
+        // if we are at v, then this is a special case that is handled after
+        // the loop. We need to add the curves from the original vertices.
+        if (equal_at_v == false)
+        {
+          // Note that the new vertex is incident to all curves in e1 and in e2.
+          new_v->add_curves (e1->curves_begin(), e1->curves_end());
+          new_v->add_curves (e2->curves_begin(), e2->curves_end());
+        }
+        
+        // Update the handle to the rightmost vertex in the output diagram.
+        v_leftmost = new_v;
       }
-      CGAL_assertion (u_res != EQUAL);
-      
-      if (u_res == SMALLER)
-        new_v = _append_vertex (out_d, intersection_point.first, e1);
-      else
-        new_v = _append_vertex (out_d, intersection_point.first, e2);
-      
-      // Note that the new vertex is incident to all curves in e1 and in e2.
-      new_v->add_curves (e1->curves_begin(), e1->curves_end());
-      new_v->add_curves (e2->curves_begin(), e2->curves_end());
-      
-      // Update the handle to the rightmost vertex in the output diagram.
-      v_rm = new_v;
-      v_rm_exists = true;
 
+      // Update the relative position of the two curves, which is their
+      // order immediately to the right of their last observed intersection
+      // point last_ip.
+      
       // Get the curve order immediately to the right of the intersection
       // point. Note that in case of even (non-zero) multiplicity the order
       // remains the same.
-      if (intersection_point.second % 2 == 1)
+      if (current_res != EQUAL && intersection_point.second % 2 == 1)
       {
         // Odd multiplicity: flip the current comparison result.
-        u_res = CGAL::opposite (u_res);
+        current_res = CGAL::opposite (current_res);
       }
-      else if (intersection_point.second == 0)
+      else if (intersection_point.second == 0 && equal_at_v == false)
       {
         // The multiplicity is unknown, so we have to compare the curves to
         // the right of their intersection point.
-        u_res = traits->compare_y_at_x_right_2_object() 
+        current_res = traits->compare_y_at_x_right_2_object() 
           (e1->curve(),
            e2->curve(),
            intersection_point.first);
-        CGAL_assertion (u_res != EQUAL);
+        // Flip the result in case of an upper envelope.
+        if (env_type == UPPER)
+          current_res = CGAL::opposite (current_res);
       }
+
+      last_ip = intersection_point.first;
     }
     else
     {
@@ -621,123 +735,140 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
       // curves.
       bool     assign_success = CGAL::assign (intersection_curve, obj);
       
-      CGAL_assertion (assign_success);
       if (! assign_success)
-        continue;
+        CGAL_error_msg ("unrecognized intersection object.");
 
       // Get the endpoints of the overlapping curves.
       const bool  has_left = 
-        (traits->parameter_space_in_x_2_object() (intersection_curve, ARR_MIN_END) == ARR_INTERIOR);
+        (traits->parameter_space_in_x_2_object() 
+         (intersection_curve, ARR_MIN_END) == ARR_INTERIOR);
       const bool  has_right = 
-        (traits->parameter_space_in_x_2_object() (intersection_curve, ARR_MAX_END) == ARR_INTERIOR);
-      Point_2     p1, p2;
+        (traits->parameter_space_in_x_2_object() 
+         (intersection_curve, ARR_MAX_END) == ARR_INTERIOR);
+      Point_2     p_left, p_right;
       
       if (has_left)
-        p1 = traits->construct_min_vertex_2_object() (intersection_curve);
+        p_left = traits->construct_min_vertex_2_object() (intersection_curve);
       
       if (has_right)
-        p2 = traits->construct_max_vertex_2_object() (intersection_curve);
+        p_right = traits->construct_max_vertex_2_object() (intersection_curve);
+
+      if (has_right)
+      {
+        last_ip = p_right;
+      }
+      else if (has_left)
+        last_ip = p_left;
       
+      bool is_in_x_range = true;
       // Check if the overlapping curve is not relevant to our range.
-      if (v_rm_exists && has_right &&
-          traits->compare_xy_2_object() (p2, 
-                                         v_rm->point()) != LARGER)
+      if (v_leftmost && has_right &&
+          traits->compare_xy_2_object() (p_right, 
+                                         (*v_leftmost)->point()) != LARGER)
       {
         // The right point of the overlappinf curve is to the left of the
         // current rightmost vertex in out_d, so we skip it and continue
         // examining the next intersections.
         // However, we update the last intersection point observed.
-        pu = p2;
-        pu_exists = true;
-        continue;
+        is_in_x_range = false;
       }
       
-      if (v_exists && has_right)
+      if (is_in_x_range && v_exists && has_left)
       {
-        Comparison_result res = traits->compare_xy_2_object() (p1, 
+        Comparison_result res = traits->compare_xy_2_object() (p_left, 
                                                                v->point());
         
+        // v is an intersection points, so both curves are equal there:
         if (res == EQUAL)
-          // v is an intersection points, so both curves are equal there:
-          equal_at_v = true;
-        
-        if (res != SMALLER)
         {
-          // We passed the next vertex, so we can stop here.
+          equal_at_v = true;
+          last_ip = p_left;
+        }
+        
+        // We passed the next vertex, so we can stop here.
+        if (res == LARGER)
+        {
           break;
         }
       }
       
       // There is an overlap between the range [u, v] and intersection_curve.
-      if (has_left && 
-          (! v_rm_exists ||
-           traits->compare_xy_2_object() (p1, 
-                                          v_rm->point()) == LARGER))
+      if (is_in_x_range && has_left && 
+          (! v_leftmost ||
+           traits->compare_xy_2_object() (p_left, 
+                                          (*v_leftmost)->point()) == LARGER))
       {
         // Create an output edge that represent the portion of [u, v] to the
         // left of the overlapping curve.
         Vertex_handle        new_v;
 
-        if (pu_exists)
-        {
-          // Update the relative position of the two curves, which is their
-          // order immediately to the right of their last observed intersection
-          // point pu.
-          u_res = traits->compare_y_at_x_right_2_object() (e1->curve(),
-                                                           e2->curve(),
-                                                           pu);
- 
-          if (env_type == UPPER)
-            u_res = CGAL::opposite (u_res);
-        }        
-        CGAL_assertion (u_res != EQUAL);
-
-        if (u_res == SMALLER)
-          new_v = _append_vertex (out_d, intersection_point.first, e1);
+        if (current_res == SMALLER)
+          new_v = _append_vertex (out_d, p_left, e1);
         else
-          new_v = _append_vertex (out_d, intersection_point.first, e2);
+          new_v = _append_vertex (out_d, p_left, e2);
         
-        // Note that the new vertex is incident to all curves in e1 and
-        // in e2.
-        new_v->add_curves (e1->curves_begin(), e1->curves_end());
-        new_v->add_curves (e2->curves_begin(), e2->curves_end());
-
+        // if we are at v, then this is a special case that is handled after
+        // the loop. We need to add the curves from the original vertices.
+        if (equal_at_v == false)
+        {
+          // Note that the new vertex is incident to all curves in e1 and
+          // in e2.
+          new_v->add_curves (e1->curves_begin(), e1->curves_end());
+          new_v->add_curves (e2->curves_begin(), e2->curves_end());
+        }
+        
         // Update the handle to the rightmost vertex in the output diagram.
-        v_rm = new_v;
-        v_rm_exists = true;
+        v_leftmost = new_v;
       }
       
-      if (has_right &&
+      if (is_in_x_range && has_right &&
           (! v_exists ||
-           traits->compare_xy_2_object() (p2, 
+           traits->compare_xy_2_object() (p_right, 
                                           v->point()) == SMALLER))
       {
         // Create an edge that represents the overlapping curve.
         Vertex_handle        new_v;
         
-        new_v = _append_vertex (out_d, intersection_point.first, e1);
+        new_v = _append_vertex (out_d, p_right, e1);
         new_v->left()->add_curves (e2->curves_begin(), e2->curves_end());
         
-        new_v->add_curves (e1->curves_begin(), e1->curves_end());
-        new_v->add_curves (e2->curves_begin(), e2->curves_end());
+        // if we are at v, then this is a special case that is handled after
+        // the loop. We need to add the curves from the original vertices.
+        if (equal_at_v == false)
+        {
+          new_v->add_curves (e1->curves_begin(), e1->curves_end());
+          new_v->add_curves (e2->curves_begin(), e2->curves_end());
+        }
         
         // Update the handle to the rightmost vertex in the output diagram.
-        v_rm = new_v;
-        v_rm_exists = true;
-
-        // Compare the curves to the right of p2.
-        u_res = traits->compare_y_at_x_right_2_object() (e1->curve(),
-                                                         e2->curve(),
-                                                         p2);
-        CGAL_assertion (u_res != EQUAL);
+        v_leftmost = new_v;
       }
-      else
+      
+      if (has_right == false || 
+          (v_exists && traits->compare_xy_2_object() (p_right, 
+                                                      v->point()) != SMALLER))
       {
         // The overlapping curves reaches v.
+        if (v_exists)
+        {
+          Vertex_handle        new_v;
+          new_v = _append_vertex (out_d, v->point(), e1);
+          new_v->left()->add_curves (e2->curves_begin(), e2->curves_end());
+          last_ip = v->point();
+        }
+        
         equal_at_v = true;
-        u_res = EQUAL;
+        current_res = EQUAL;
         break;
       }
+
+      // Compare the curves to the right of p_right.
+      current_res = traits->compare_y_at_x_right_2_object() (e1->curve(),
+                                                             e2->curve(),
+                                                             *last_ip);
+      // Flip the result in case of an upper envelope.
+      if (env_type == UPPER)
+        current_res = CGAL::opposite (current_res);
       
     }
     
@@ -748,26 +879,21 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   if (equal_at_v)
   {
     CGAL_assertion (v_exists);
-    
-    // In this case the two urves intersect (or overlap) at v.
-    Vertex_handle        new_v;
-    
-    if (u_res == SMALLER)
-      new_v = _append_vertex (out_d, v->point(), e1);
-    else
-      new_v = _append_vertex (out_d, v->point(), e2);
-    
-    if (u_res == EQUAL)
-      new_v->left()->add_curves (e1->curves_begin(), e1->curves_end());
-    
+
+    // v_leftmost should be our vertex at v.
+    // In this case the two curves intersect (or overlap) at v.
+    // We need to add the correct curves to v_leftmost.
+
+    Vertex_handle v_to_be_updated = out_d.rightmost()->left();
+
     if (origin_of_v == EQUAL)
     {
       // If the vertices of the edge are the same, we have to get the 
       // curves from there:
-      new_v->add_curves (e1->right()->curves_begin(), 
-                         e1->right()->curves_end());
-      new_v->add_curves (e2->right()->curves_begin(), 
-                         e2->right()->curves_end());
+      v_to_be_updated->add_curves (e1->right()->curves_begin(), 
+                                   e1->right()->curves_end());
+      v_to_be_updated->add_curves (e2->right()->curves_begin(), 
+                                   e2->right()->curves_end());
     }
     else
     {
@@ -777,8 +903,8 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
                                                          e2->right();
       Edge_const_handle e = (origin_of_v == SMALLER) ? e2 : e1;
 
-      new_v->add_curves (v->curves_begin(), v->curves_end());
-      new_v->add_curves (e->curves_begin(), e->curves_end());
+      v_to_be_updated->add_curves (v->curves_begin(), v->curves_end());
+      v_to_be_updated->add_curves (e->curves_begin(), e->curves_end());
     }
     
     return;
@@ -788,32 +914,27 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   {
     // Both edges are unbounded from the right, so we simply have
     // to update the rightmost edge in out_d.
-    CGAL_assertion (u_res != EQUAL);
-    
-    if (u_res == SMALLER)
+    switch (current_res)
+    {
+    case SMALLER:
       out_d.rightmost()->add_curves (e1->curves_begin(), e1->curves_end());
-    else
+      return;
+    case LARGER:
       out_d.rightmost()->add_curves (e2->curves_begin(), e2->curves_end());
-    
-    return;
+      return;
+    case EQUAL:
+      out_d.rightmost()->add_curves (e1->curves_begin(), e1->curves_end());
+      out_d.rightmost()->add_curves (e2->curves_begin(), e2->curves_end());
+      return;
+    default:
+      CGAL_error_msg("should not reach here.");
+      return;
+    }
   }
   
   // Check if we need to insert v into the diagram.
-  if (pu_exists)
-  {
-    // Update the relative position of the two curves, which is their
-    // order immediately to the right of their last observed intersection
-    // point pu.
-    u_res = traits->compare_y_at_x_right_2_object() (e1->curve(),
-                                                     e2->curve(),
-                                                     pu);
-    
-    if (env_type == UPPER)
-      u_res = CGAL::opposite (u_res);
-  }
-  CGAL_assertion (u_res != EQUAL);
 
-  if (u_res == SMALLER)
+  if (current_res == SMALLER)
   {    
     // The final part of the interval is taken from e1.
     Vertex_handle        new_v;
@@ -980,9 +1101,6 @@ _merge_vertical_segments (Curve_pointer_vector& vert_vec,
   bool                    on_v;
   Point_2                 p;
 
-  Vertex_initializer<Vertex_handle> v_init;
-  v_init(v);
-  
   while (iter != vert_vec.end())
   {
     // Check if the current vertical segment is on the x-range of the current
