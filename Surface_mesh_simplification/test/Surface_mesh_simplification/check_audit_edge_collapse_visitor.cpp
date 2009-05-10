@@ -19,7 +19,7 @@ private :
     optional<NT>     cost ;
     optional<Point>  placement ;
   } ;
-  typedef shared_ptr<Data> Data_ptr ;
+  typedef boost::shared_ptr<Data> Data_ptr ;
   
   typedef map<int,Data_ptr> Table ;
  

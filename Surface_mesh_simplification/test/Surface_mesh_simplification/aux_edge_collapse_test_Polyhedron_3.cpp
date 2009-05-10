@@ -128,7 +128,7 @@ string edge2str ( E const& e )
 }
 
 template<class D>
-string audit2str ( shared_ptr<D> const& d )
+string audit2str ( boost::shared_ptr<D> const& d )
 {
   ostringstream ss ;
   ss << "[id:" << d->id  ;
