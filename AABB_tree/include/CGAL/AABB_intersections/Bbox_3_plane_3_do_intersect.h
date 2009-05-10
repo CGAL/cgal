@@ -69,7 +69,7 @@ namespace CGALi {
   template <class K>
   bool do_intersect(const typename K::Plane_3& plane, 
     const CGAL::Bbox_3& bbox,
-    const K& kernel)
+    const K&)
   {	
     typename K::Point_3 p_max, p_min;
     get_min_max<K>(plane.orthogonal_vector(), bbox, p_min, p_max);
