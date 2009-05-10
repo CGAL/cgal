@@ -40,21 +40,21 @@ namespace CGALi {
     template <class K>
     bool do_intersect(const typename K::Sphere_3& sphere, 
         const CGAL::Bbox_3& bbox,
-        const K& kernel)
+        const K&)
     {
         typedef typename K::FT FT;
-        FT d = (FT)0.0;
-        FT distance = (FT)0.0;
+        FT d = 0.0;
+        FT distance = 0.0;
         for(int i = 0; i < 3; ++i)
         {
-            if(sphere.center()[i] < (FT)bbox.min(i))
+            if(sphere.center()[i] < bbox.min(i))
             {
-                d = (FT)bbox.min(i) - sphere.center()[i];
+                d = bbox.min(i) - sphere.center()[i];
                 distance += d*d;
             }
-            else if(sphere.center()[i] > (FT)bbox.max(i))
+            else if(sphere.center()[i] > bbox.max(i))
             {
-                d = sphere.center()[i] - (FT)bbox.max(i);
+                d = sphere.center()[i] - bbox.max(i);
                 distance += d*d;
             }
         }

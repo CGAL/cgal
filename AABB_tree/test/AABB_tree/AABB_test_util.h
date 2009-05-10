@@ -127,12 +127,18 @@ void test_all_distance_query_types(Tree& tree)
 
         FT sqd1 = tree.squared_distance(query);
         FT sqd2 = tree.squared_distance(query,hint.first);
+        if(sqd1 != sqd2)
+            std::cout << "warning: different distances with and without hint";
 
         Point p1 = tree.closest_point(query);
         Point p2 = tree.closest_point(query,hint.first);
+        if(sqd1 != sqd2)
+            std::cout << "warning: different closest points with and without hint (possible, in case there are more than one)";
 
         Point_and_primitive_id pp1 = tree.closest_point_and_primitive(query);
         Point_and_primitive_id pp2 = tree.closest_point_and_primitive(query,hint);
+        if(pp1.second != pp2.second)
+            std::cout << "warning: different closest primitives with and without hint (possible, in case there are more than one)";        
 }
 
 template <class Tree, class K>

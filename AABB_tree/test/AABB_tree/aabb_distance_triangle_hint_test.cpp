@@ -68,7 +68,7 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
         outputs2.reserve(NBQ);
         outputs3.reserve(NBQ);
         
-        size_t common_min = NBQ;
+//        size_t common_min = NBQ;
         size_t counter;
         
         for(size_t i = 0; i < NBQ; ++i)

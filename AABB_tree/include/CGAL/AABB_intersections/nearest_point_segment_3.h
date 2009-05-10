@@ -50,7 +50,7 @@ namespace CGAL {
             is_inside_segment_3(const typename K::Point_3& query,
             const typename K::Segment_3 & s,
             typename K::Point_3& closest_point_on_segment,
-            const K& k)
+            const K&)
         {
             typedef typename K::FT FT;
             typedef typename K::Point_3 Point;

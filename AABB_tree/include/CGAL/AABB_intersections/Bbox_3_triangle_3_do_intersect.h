@@ -50,32 +50,32 @@ namespace CGALi {
     for(int i = 0; i < 3; ++i) {
       if(p[i] <= q[i]) {
 	if(q[i] <= r[i]) { // pqr
-	  if((FT)bbox.max(i) < p[i] || (FT)bbox.min(i) > r[i])
+	  if(bbox.max(i) < p[i] || bbox.min(i) > r[i])
 	    return false;
 	}
 	else {
 	  if(p[i] <= r[i]) { // prq
-	    if((FT)bbox.max(i) < p[i] || (FT)bbox.min(i) > q[i])
+	    if(bbox.max(i) < p[i] || bbox.min(i) > q[i])
 	      return false;
 	  }
 	  else { // rpq
-	    if((FT)bbox.max(i) < r[i] || (FT)bbox.min(i) > q[i])
+	    if(bbox.max(i) < r[i] || bbox.min(i) > q[i])
 	      return false;
 	  }
 	}
       }
       else {
 	if(p[i] <= r[i]) { // qpr
-	  if((FT)bbox.max(i) < q[i] || (FT)bbox.min(i) > r[i])
+	  if(bbox.max(i) < q[i] || bbox.min(i) > r[i])
 	    return false;
 	}
 	else {
 	  if(q[i] <= r[i]) { // qrp
-	    if((FT)bbox.max(i) < q[i] || (FT)bbox.min(i) > p[i])
+	    if(bbox.max(i) < q[i] || bbox.min(i) > p[i])
 	      return false;
 	  }
 	  else { // rqp
-	    if((FT)bbox.max(i) < r[i] || (FT)bbox.min(i) > p[i])
+	    if(bbox.max(i) < r[i] || bbox.min(i) > p[i])
 	      return false;
 	  }
 	}

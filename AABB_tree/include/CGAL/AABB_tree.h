@@ -334,8 +334,7 @@ namespace CGAL {
         class Distance_traits
         {
         public:
-            Distance_traits(const Point& query,
-                            const Point& hint,
+            Distance_traits(const Point& hint,
                             const typename Primitive::Id& hint_primitive)
                             : m_closest_point(hint),
                               m_closest_primitive(hint_primitive)
@@ -571,7 +570,7 @@ namespace CGAL {
                                      const Point& hint) const
     {
         typename Primitive::Id hint_primitive = m_primitives[0].id();
-        Distance_traits distance_traits(query,hint,hint_primitive);
+        Distance_traits distance_traits(hint,hint_primitive);
         this->traversal(query, distance_traits);
         return distance_traits.closest_point();
     }
@@ -620,7 +619,7 @@ namespace CGAL {
                                          const Point_and_primitive_id& hint) const
     {
 //        const Point hint = best_hint(query);
-        Distance_traits distance_traits(query,hint.first,hint.second);
+        Distance_traits distance_traits(hint.first,hint.second);
         this->traversal(query, distance_traits);
         return distance_traits.closest_point_and_primitive();
     }
