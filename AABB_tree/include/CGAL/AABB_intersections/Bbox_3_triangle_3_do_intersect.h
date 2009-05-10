@@ -172,7 +172,7 @@ namespace CGALi {
   template <class K>
   bool do_intersect(const typename K::Triangle_3& triangle,
     const CGAL::Bbox_3& bbox,
-    const K& kernel)
+    const K&)
   {
     if(! do_bbox_intersect<K>(triangle, bbox))
       return false;

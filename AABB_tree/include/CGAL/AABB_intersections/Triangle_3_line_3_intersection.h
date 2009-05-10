@@ -35,7 +35,7 @@ template <class K>
 Object
 intersection(const typename K::Triangle_3 &t,
              const typename K::Line_3 &l,
-             const K& k)
+             const K&)
 {
   return CGAL::intersection(t.supporting_plane(),
                             l);

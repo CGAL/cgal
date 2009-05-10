@@ -70,6 +70,7 @@ public:
   typedef typename GeomTraits::Construct_min_vertex_3 Construct_min_vertex_3;
   typedef typename GeomTraits::Construct_max_vertex_3 Construct_max_vertex_3;
   typedef typename GeomTraits::Compute_squared_radius_3 Compute_squared_radius_3;
+  typedef typename GeomTraits::Compute_squared_distance_3 Compute_squared_distance_3;
   typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
   typedef typename GeomTraits::Construct_cartesian_const_iterator_3
                      Construct_cartesian_const_iterator_3;

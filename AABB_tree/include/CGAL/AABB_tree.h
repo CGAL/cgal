@@ -592,7 +592,7 @@ namespace CGAL {
                                         const Point& hint) const
     {
         const Point closest = this->closest_point(query, hint);
-        return CGAL::squared_distance(query, closest);
+        return typename Tr::Compute_squared_distance_3()(query, closest);
     }
 
     // squared distance without user-specified hint
@@ -601,7 +601,7 @@ namespace CGAL {
         AABB_tree<Tr>::squared_distance(const Point& query) const
     {
         const Point closest = this->closest_point(query);
-        return CGAL::squared_distance(query, closest);
+        return typename Tr::Compute_squared_distance_3()(query, closest);
     }
 
     // closest point with user-specified hint

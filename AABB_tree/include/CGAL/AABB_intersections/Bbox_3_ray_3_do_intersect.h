@@ -31,7 +31,7 @@ namespace CGALi {
   template <class K>
   bool do_intersect(const typename K::Ray_3& ray, 
     const CGAL::Bbox_3& bbox,
-    const K& kernel)
+    const K&)
   {
     typedef typename K::FT FT;
     typedef typename K::Point_3 Point;

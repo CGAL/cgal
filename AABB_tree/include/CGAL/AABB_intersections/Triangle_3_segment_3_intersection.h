@@ -29,7 +29,7 @@ template <class K>
 Object
 intersection(const typename K::Triangle_3  &t,
 	     const typename K::Segment_3 &s,
-	     const K& k)
+	     const K&)
 {
 	// TOFIX: here we assume that we have already tested
 	// do_intersection between the triangle and the segment

@@ -34,7 +34,7 @@ namespace CGALi {
   template <class K>
   bool do_intersect(const CGAL::Bbox_3& c1, 
     const CGAL::Bbox_3& c2,
-    const K& kernel)
+    const K&)
   {
     for(int i = 0; i < 3; ++i)
       if(c1.max(i) < c2.min(i) || c1.min(i) > c2.max(i))
