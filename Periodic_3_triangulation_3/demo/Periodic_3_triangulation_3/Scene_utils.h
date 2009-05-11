@@ -87,7 +87,7 @@ struct Segment_clipper {
   bool operator()(Point& p1, Point& p2) {
       int p1_outcode = cs_outcode(p1);
       int p2_outcode = cs_outcode(p2);
-      FT x,y,z, t;
+      FT x(0),y(0),z(0), t(0);
       bool accept = false;
       bool done = false;
       do {

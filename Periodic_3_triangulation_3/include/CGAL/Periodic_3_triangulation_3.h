@@ -3322,7 +3322,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
 
   unsigned int n=0;
   int cx=0, cy=0, cz=0;
-  Iso_cuboid domain;
+  Iso_cuboid domain(0,0,0,1,1,1);
 
   if (is_ascii(is)) {
     is >> n;

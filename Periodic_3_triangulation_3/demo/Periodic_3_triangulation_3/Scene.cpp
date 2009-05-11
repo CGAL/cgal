@@ -696,7 +696,7 @@ void Scene::gl_draw_location() {
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
   if (in_plane) {
-    int i;
+    int i=0;
     int count = 0;
     // Figure out whether there is a facet that is completly contained
     // in the z=0 plane
@@ -798,7 +798,7 @@ void Scene::gl_draw_conflict() {
     for (unsigned int k=0 ; k<cic.size(); k++) {
       ch = cic[k];
 
-      int i;
+      int i = 0;
       int count = 0;
       // Figure out whether there is a facet that is completely
       // contained in the z=0 plane
