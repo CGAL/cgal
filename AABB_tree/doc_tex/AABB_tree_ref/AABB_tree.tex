@@ -128,7 +128,7 @@ squared_distance(const Point& query,
 \ccMethod{Point
 closest_point(const Point& query, 
               const Point& hint);} 
-{Returns the point in the union of all input primitives which is closest to the query. In case there are several closest points, one arbitrarily chosen closest point is returned. ÊParameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted (see \ccc{squared_distance}). }
+{Returns the point in the union of all input primitives which is closest to the query. In case there are several closest points, one arbitrarily chosen closest point is returned. Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted (see \ccc{squared_distance}). }
 
 \ccMethod{Point_and_primitive_id
 closest_point_and_primitive(const Point& query, 
