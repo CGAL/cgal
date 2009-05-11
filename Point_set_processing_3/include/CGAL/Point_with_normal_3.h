@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2008  INRIA (France).
+// Copyright (c) 2007-2009  INRIA (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -30,9 +30,6 @@ CGAL_BEGIN_NAMESPACE
 /// The Point_with_normal_3 class represents a 3D point with:
 /// - a position,
 /// - a normal (oriented).
-///
-/// @heading Is Model for the Concepts:
-/// - Model of the PointWithNormal_3 concept.
 ///
 /// @heading Parameters:
 /// @param Gt       Kernel's geometric traits.
