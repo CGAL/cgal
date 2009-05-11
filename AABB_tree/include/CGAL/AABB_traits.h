@@ -15,7 +15,7 @@
 // $Id: $
 //
 //
-// Author(s) : Stéphane Tayeb, Pierre Alliez
+// Author(s) : Stéphane Tayeb, Pierre Alliez, Camille Wormser
 //
 //******************************************************************************
 // File Description :
@@ -81,15 +81,7 @@ public:
   /// Non-virtual Destructor
   ~AABB_traits() { };
 
-  /// Comparison functions
-  static bool less_x(const Primitive& pr1, const Primitive& pr2)
-  { return pr1.reference_point().x() < pr2.reference_point().x(); }
-  static bool less_y(const Primitive& pr1, const Primitive& pr2)
-  { return pr1.reference_point().y() < pr2.reference_point().y(); }
-  static bool less_z(const Primitive& pr1, const Primitive& pr2)
-  { return pr1.reference_point().z() < pr2.reference_point().z(); }
 
-  /// UNDOCUMENTED FEATURE
   /// TODO: see what to do
   /**
    * @brief Sorts [first,beyond[
@@ -100,10 +92,35 @@ public:
    * Sorts the range defined by [first,beyond[. Sort is achieved on bbox longuest
    * axis, using the comparison function <dim>_less_than (dim in {x,y,z})
    */
-  template<typename PrimitiveIterator>
-  void sort_primitives(PrimitiveIterator first,
-                       PrimitiveIterator beyond,
-                       const Bounding_box& bbox) const;
+
+class Sort_primitives 
+{
+public:
+template<typename PrimitiveIterator>
+void operator()(PrimitiveIterator first,
+                PrimitiveIterator beyond,
+                const typename AT::Bounding_box& bbox) const
+  {
+    PrimitiveIterator middle = first + (beyond - first)/2;
+    switch(longest_axis(bbox))
+    {
+    case AT::CGAL_AXIS_X: // sort along x
+      std::nth_element(first, middle, beyond, less_x);
+      break;
+    case AT::CGAL_AXIS_Y: // sort along y
+      std::nth_element(first, middle, beyond, less_y);
+      break;
+    case AT::CGAL_AXIS_Z: // sort along z
+      std::nth_element(first, middle, beyond, less_z);
+      break;
+    default:
+      CGAL_error();
+    }
+  }
+};
+
+Sort_primitives sort_primitives_object() {return Sort_primitives();}
+
 
   /**
    * Computes the bounding box of a set of primitives
@@ -111,44 +128,68 @@ public:
    * @param beyond an iterator on the past-the-end primitive
    * @return the bounding box of the primitives of the iterator range
    */
-  template<typename ConstPrimitiveIterator>
-  Bounding_box compute_bbox(ConstPrimitiveIterator first,
-                            ConstPrimitiveIterator beyond) const;
+   
+   class Compute_bbox {
+public:
+template<typename ConstPrimitiveIterator>
+typename AT::Bounding_box operator()(ConstPrimitiveIterator first,
+                                     ConstPrimitiveIterator beyond) const
+  {
+    typename AT::Bounding_box bbox = compute_bbox(*first);
+    for(++first; first != beyond; ++first)
+    {
+      bbox = bbox + compute_bbox(*first);
+    }
+    return bbox;
+  }
+};
 
+Compute_bbox compute_bbox_object() {return Compute_bbox();}
+  
+
+class Do_intersect {
+public:
   template<typename Query>
-  bool do_intersect(const Query& q, const Bounding_box& bbox) const
+  bool operator()(const Query& q, const Bounding_box& bbox) const
   {
     return CGAL::do_intersect(q, bbox);
   }
 
   template<typename Query>
-  bool do_intersect(const Query& q, const Primitive& pr) const
+  bool operator()(const Query& q, const Primitive& pr) const
   {
     return GeomTraits().do_intersect_3_object()(q, pr.datum());
   }
+};
 
-  template<typename Query>
-  boost::optional<Object_and_primitive_id> intersection(const Query& q,
-                    const Primitive& pr) const;
+Do_intersect do_intersect_object() {return Do_intersect();}
 
-/*  Sphere sphere(const Point& center,
-                const Point& hint) const
-  {
-    return GeomTraits().construct_sphere_3_object()
-      (center, GeomTraits().compute_squared_distance_3_object()(center, hint));
-  }*/
+class Intersection {
+public:
+template<typename Query>
+boost::optional<typename AT::Object_and_primitive_id>
+operator()(const Query& query, const typename AT::Primitive& primitive) const
+{
+  // TODO: implement a real intersection construction method
+  // do_intersect is needed here because we construct intersection between
+  // pr.datum().supporting_plane() and q
+  if(! AT().do_intersect_object()(query,primitive))
+    return false;
 
-/*
-  template <typename Query>
-  Point closest_point(const Query& q,
-                      const Primitive& pr,
-                      const Point& bound) const
-  {
-    return CGAL::nearest_point_3(q, pr.datum(), bound);
-  } */
+  // compute intersection
+  CGAL::Object object = CGAL::intersection(primitive.datum(),query);
+  if(object.empty())
+      return boost::optional<Object_and_primitive_id>();
+  else 
+      return boost::optional<Object_and_primitive_id>(Object_and_primitive_id(object,primitive.id()));
+}
+};
+
+Intersection intersection_object() {return Intersection();}
+
 
   // This should go down to the GeomTraits, i.e. the kernel  
-  class Closest_point_3 {
+  class Closest_point {
       typedef typename AT::Point Point;
       typedef typename AT::Primitive Primitive;
   public:    
@@ -162,7 +203,7 @@ public:
   // and the internal implementation should change its name from 
   // do_intersect to something like does_contain (this is what we compute, 
   // this is not the same do_intersect as the spherical kernel)
-  class Compare_distance_3 {
+  class Compare_distance {
       typedef typename AT::Point Point;
       typedef typename AT::Primitive Primitive;
   public:    
@@ -175,8 +216,9 @@ public:
       }
   };
   
-  Closest_point_3 closest_point_3_object() {return Closest_point_3();}
-  Compare_distance_3 compare_distance_3_object() {return Compare_distance_3();}
+  Closest_point closest_point_object() {return Closest_point();}
+  Compare_distance compare_distance_object() {return Compare_distance();}
+
   
 private:
   /**
@@ -184,7 +226,7 @@ private:
    * @param pr the primitive
    * @return the bounding box of the primitive \c pr
    */
-  Bounding_box compute_bbox(const Primitive& pr) const
+  static Bounding_box compute_bbox(const Primitive& pr) 
   {
     return pr.datum().bbox();
   }
@@ -193,7 +235,15 @@ private:
                  CGAL_AXIS_Y = 1,
                  CGAL_AXIS_Z = 2} Axis;
 
-  Axis longest_axis(const Bounding_box& bbox) const;
+  static Axis longest_axis(const Bounding_box& bbox);
+  /// Comparison functions
+  static bool less_x(const Primitive& pr1, const Primitive& pr2)
+  { return pr1.reference_point().x() < pr2.reference_point().x(); }
+  static bool less_y(const Primitive& pr1, const Primitive& pr2)
+  { return pr1.reference_point().y() < pr2.reference_point().y(); }
+  static bool less_z(const Primitive& pr1, const Primitive& pr2)
+  { return pr1.reference_point().z() < pr2.reference_point().z(); }
+  
 
 private:
   // Disabled copy constructor & assignment operator
@@ -204,71 +254,12 @@ private:
 };  // end class AABB_traits
 
 
-template<typename GT, typename P>
-template<typename PrimitiveIterator>
-void
-AABB_traits<GT,P>::sort_primitives(PrimitiveIterator first,
-                                   PrimitiveIterator beyond,
-                                   const Bounding_box& bbox) const
-{
-  PrimitiveIterator middle = first + (beyond - first)/2;
-  switch(longest_axis(bbox))
-  {
-  case CGAL_AXIS_X: // sort along x
-    std::nth_element(first, middle, beyond, less_x);
-    break;
-  case CGAL_AXIS_Y: // sort along y
-    std::nth_element(first, middle, beyond, less_y);
-    break;
-  case CGAL_AXIS_Z: // sort along z
-    std::nth_element(first, middle, beyond, less_z);
-    break;
-  default:
-    CGAL_error();
-  }
-}
-
-template<typename GT, typename P>
-template<typename ConstPrimitiveIterator>
-typename AABB_traits<GT,P>::Bounding_box
-AABB_traits<GT,P>::compute_bbox(ConstPrimitiveIterator first,
-                                 ConstPrimitiveIterator beyond) const
-{
-  Bounding_box bbox = compute_bbox(*first);
-  for(++first; first != beyond; ++first)
-  {
-    bbox = bbox + compute_bbox(*first);
-  }
-  return bbox;
-}
-
-
-template<typename GT, typename P>
-template<typename Query>
-boost::optional<typename AABB_traits<GT,P>::Object_and_primitive_id>
-AABB_traits<GT,P>::intersection(const Query& query,
-                                const P& primitive) const
-{
-  // TODO: implement a real intersection construction method
-  // do_intersect is needed here because we construct intersection between
-  // pr.datum().supporting_plane() and q
-  if(!do_intersect(query,primitive))
-    return false;
-
-  // compute intersection
-  CGAL::Object object = CGAL::intersection(primitive.datum(),query);
-  if(object.empty())
-      return boost::optional<Object_and_primitive_id>();
-  else 
-      return boost::optional<Object_and_primitive_id>(Object_and_primitive_id(object,primitive.id()));
-}
-
 //-------------------------------------------------------
 // Private methods
 //-------------------------------------------------------
 template<typename GT, typename P>
 typename AABB_traits<GT,P>::Axis
-AABB_traits<GT,P>::longest_axis(const Bounding_box& bbox) const
+AABB_traits<GT,P>::longest_axis(const Bounding_box& bbox) 
 {
   const double dx = bbox.xmax() - bbox.xmin();
   const double dy = bbox.ymax() - bbox.ymin();

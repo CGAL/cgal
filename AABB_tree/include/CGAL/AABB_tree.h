@@ -177,7 +177,7 @@ namespace CGAL {
             void intersection(const Query& query, const Primitive& primitive)
             {
                 boost::optional<Object_and_primitive_id> op;
-                op = AABBTraits().intersection(query, primitive);
+                op = AABBTraits().intersection_object()(query, primitive);
                 m_is_found = op;
                 if(m_is_found)
                     m_result = Result(*op);
@@ -185,7 +185,7 @@ namespace CGAL {
 
             bool do_intersect(const Query& query, const Node& node) const
             {
-                return AABBTraits().do_intersect(query, node.bbox());
+                return AABBTraits().do_intersect_object()(query, node.bbox());
             }
 
             Result result() const { return m_result; }
@@ -213,7 +213,7 @@ namespace CGAL {
             // TOCHECK
             void intersection(const Query& query, const Primitive& primitive)
             {
-                if( AABBTraits().do_intersect(query, primitive) )
+                if( AABBTraits().do_intersect_object()(query, primitive) )
                 {
                     ++m_nb_intersections;
                 }
@@ -221,7 +221,7 @@ namespace CGAL {
 
             bool do_intersect(const Query& query, const Node& node) const
             {
-                return AABBTraits().do_intersect(query, node.bbox());
+                return AABBTraits().do_intersect_object()(query, node.bbox());
             }
 
             Size_type number_of_intersections() const { return m_nb_intersections; }
@@ -246,7 +246,7 @@ namespace CGAL {
             void intersection(const Query& query, const Primitive& primitive)
             {
                 boost::optional<Object_and_primitive_id> intersection;
-                intersection = AABBTraits().intersection(query, primitive);
+                intersection = AABBTraits().intersection_object()(query, primitive);
                 if(intersection)
                 {
                     *m_out_it++ = *intersection;
@@ -255,7 +255,7 @@ namespace CGAL {
 
             bool do_intersect(const Query& query, const Node& node) const
             {
-                return AABBTraits().do_intersect(query, node.bbox());
+                return AABBTraits().do_intersect_object()(query, node.bbox());
             }
 
         private:
@@ -277,7 +277,7 @@ namespace CGAL {
 
             void intersection(const Query& query, const Primitive& primitive)
             {
-                if( AABBTraits().do_intersect(query, primitive) )
+                if( AABBTraits().do_intersect_object()(query, primitive) )
                 {
                     *m_out_it++ = primitive.id();
                 }
@@ -285,7 +285,7 @@ namespace CGAL {
 
             bool do_intersect(const Query& query, const Node& node) const
             {
-                return AABBTraits().do_intersect(query, node.bbox());
+                return AABBTraits().do_intersect_object()(query, node.bbox());
             }
 
         private:
@@ -308,7 +308,7 @@ namespace CGAL {
 
             void intersection(const Query& query, const Primitive& primitive)
             {
-                if( AABBTraits().do_intersect(query, primitive) )
+                if( AABBTraits().do_intersect_object()(query, primitive) )
                 {
                     m_result = boost::optional<typename Primitive::Id>(primitive.id());
                     m_is_found = true;
@@ -317,7 +317,7 @@ namespace CGAL {
 
             bool do_intersect(const Query& query, const Node& node) const
             {
-                return AABBTraits().do_intersect(query, node.bbox());
+                return AABBTraits().do_intersect_object()(query, node.bbox());
             }
 
             boost::optional<typename Primitive::Id> result() const { return m_result; }
@@ -344,7 +344,7 @@ namespace CGAL {
 
             void intersection(const Point& query, const Primitive& primitive)
             {
-                Point new_closest_point = AABBTraits().closest_point_3_object()
+                Point new_closest_point = AABBTraits().closest_point_object()
                                           (query, primitive, m_closest_point);
                 if(new_closest_point != m_closest_point)
                 {
@@ -356,7 +356,7 @@ namespace CGAL {
 
             bool do_intersect(const Point& query, const Node& node) const
             {
-                return AABBTraits().compare_distance_3_object()
+                return AABBTraits().compare_distance_object()
                        (query, node.bbox(), m_closest_point);
             }
 

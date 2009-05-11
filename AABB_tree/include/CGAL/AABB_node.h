@@ -118,7 +118,6 @@ private:
 };  // end class AABB_node
 
 
-
 template<typename Tr>
 template<typename ConstPrimitiveIterator>
 void
@@ -126,10 +125,10 @@ AABB_node<Tr>::expand(ConstPrimitiveIterator first,
                       ConstPrimitiveIterator beyond,
                       const int range)
 {
-  m_bbox = Tr().compute_bbox(first, beyond);
+  m_bbox = Tr().compute_bbox_object()(first, beyond);
 
   // sort primitives along longest axis aabb
-  Tr().sort_primitives(first, beyond, m_bbox);
+  Tr().sort_primitives_object()(first, beyond, m_bbox);
 
   switch(range)
   {
