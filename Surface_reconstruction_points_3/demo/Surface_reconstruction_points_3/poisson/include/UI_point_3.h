@@ -18,9 +18,6 @@
 /// - a list of camera/2D point pairs used to reconstruct the point from images,
 /// - a selection flag.
 ///
-/// @heading Is Model for the Concepts:
-/// Model of the PointWithNormal_3 concept.
-///
 /// @heading Parameters:
 /// @param Gt   Kernel's geometric traits.
 
@@ -37,8 +34,8 @@ private:
 // Public types
 public:
 
-    // Base class
-    typedef Base Point_with_normal; ///< Model of the PointWithNormal_3 concept.
+    /// Base class
+    typedef Base Point_with_normal; 
 
     // Repeat base class public types
     typedef Gt Geom_traits; ///< Kernel's geometric traits.
