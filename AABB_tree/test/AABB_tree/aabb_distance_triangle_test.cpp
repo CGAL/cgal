@@ -71,7 +71,7 @@ void test_kernels(const char *filename)
 
     std::cout << std::endl;
     std::cout << "Simple cartesian float kernel" << std::endl;
-//    test<CGAL::Simple_cartesian<float> >(filename);
+    test<CGAL::Simple_cartesian<float> >(filename);
 
     std::cout << std::endl;
     std::cout << "Cartesian float kernel" << std::endl;

@@ -50,6 +50,10 @@ Provides the operators:
 \ccc{Point_3 operator()(Point_3 p, Type type, Point_3 q);}
 where \ccc{Type} is any of the types among \ccc{Segment_3} and \ccc{Triangle_3}. If \ccc{type} is closer to \ccc{p} than \ccc{q} is, the operator returns the point on \ccc{type} which is closest to \ccc{p}. Otherwise, the operator returns \ccc{q}.}
 
+\ccNestedType{Squared_distance_3}
+{A functor object to compute the squared distance between points. Provides the operator:
+\ccc{FT operator()(const Point_3& p, const Point_3 & q);} which returns the squared distance between \ccc{p} and \ccc{q}.}
+
 \ccCreation
 \ccCreationVariable{geomtraits}  %% choose variable name
 

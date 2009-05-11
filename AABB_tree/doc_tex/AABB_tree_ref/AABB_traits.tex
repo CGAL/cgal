@@ -19,7 +19,7 @@
 
 \ccDefinition
   
-The class \ccRefName\ is a model of the concept \ccc{AABBTraits}. This traits class handles any type of 3D geometric primitives provided that the proper intersection tests and constructions are implemented.
+The class \ccRefName\ is a model of the concept \ccc{AABBTraits}. This traits class handles any type of 3D geometric primitives provided that the proper intersection tests and constructions are implemented. It handles points, rays, lines and segments as query types for intersection detection and computations, and it handles points as query type for distance queries.
 
 \ccParameters
 The template parameter \ccc{GeomTraits} provides the geometric types as well as the intersection tests and computations required. This type must be a model of the concept \ccc{AABBGeomTraits}. The template parameter \ccc{Primitive} provides the type of primitives stored in the AABB tree. This parameter must be a model of the concept \ccc{AABBPrimitive}.
