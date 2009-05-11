@@ -60,9 +60,9 @@ int main()
         Tree tree(triangles.begin(),triangles.end());
 
         // counts #intersections
-        Ray ray(a,b);
-        std::cout << tree.number_of_intersected_primitives(ray)
-                  << " intersections(s) with ray" << std::endl;
+        Ray ray_query(a,b);
+        std::cout << tree.number_of_intersected_primitives(ray_query)
+                  << " intersections(s) with ray query" << std::endl;
 
         // compute closest point and squared distance
         Point point_query(2.0, 2.0, 2.0);
