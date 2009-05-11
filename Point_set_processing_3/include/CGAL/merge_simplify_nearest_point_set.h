@@ -21,6 +21,7 @@
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/point_set_processing_assertions.h>
 
 #include <iterator>
 #include <algorithm>
@@ -38,7 +39,7 @@ template <typename InputIterator,
 OutputIterator
 merge_simplify_nearest_point_set(
           InputIterator first,      ///< iterator over the first input point.
-          InputIterator beyond,     ///< past-the-end iterator over input points.
+          InputIterator beyond,     ///< past-the-end iterator.
           OutputIterator output,    ///< iterator over the first output point.
           unsigned int k,           ///< number of neighbors.
           double epsilon,           ///< tolerance value when comparing 3D points.
@@ -56,9 +57,9 @@ merge_simplify_nearest_point_set(
     typedef typename Neighbor_search::iterator Search_iterator;
 
     // preconditions
-    CGAL_precondition(first != beyond);
-    CGAL_precondition(k >= 1);
-    CGAL_precondition(epsilon > 0);
+    CGAL_point_set_processing_precondition(first != beyond);
+    CGAL_point_set_processing_precondition(k >= 1);
+    CGAL_point_set_processing_precondition(epsilon > 0);
 
     // instanciate a KD-tree search
     Tree tree(first,beyond);
@@ -108,7 +109,7 @@ template <typename InputIterator,
 OutputIterator
 merge_simplify_nearest_point_set(
           InputIterator first,      ///< iterator over the first input point
-          InputIterator beyond,     ///< past-the-end iterator over input points
+          InputIterator beyond,     ///< past-the-end iterator
           OutputIterator output,    ///< iterator over the first output point
           unsigned int k,           ///< number of neighbors
           double epsilon)           ///< tolerance value when comparing 3D points

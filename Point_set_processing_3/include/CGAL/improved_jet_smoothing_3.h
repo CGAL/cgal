@@ -22,6 +22,8 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Monge_via_jet_fitting.h>
+#include <CGAL/point_set_processing_assertions.h>
+
 #include <iterator>
 #include <list>
 
@@ -127,7 +129,7 @@ jet_smoothing_3(const typename Kernel::Point_3& query, ///< 3D point to project
     points.push_back(search_iterator->first);
     search_iterator++;
   }
-  CGAL_precondition(points.size() >= 1);
+  CGAL_point_set_processing_precondition(points.size() >= 1);
 
   // performs jet fitting
   Monge_jet_fitting monge_fit;
@@ -213,7 +215,7 @@ template <typename InputIterator,
 OutputIterator
 improved_jet_smoothing_3(
                 InputIterator first,    ///< iterator over the first input point
-                InputIterator beyond,   ///< past-the-end iterator over input points
+                InputIterator beyond,   ///< past-the-end iterator
                 OutputIterator output,  ///< iterator over the first output point
                 const unsigned int k,   ///< number of neighbors
                 const unsigned int iter_number,
@@ -222,7 +224,7 @@ improved_jet_smoothing_3(
                 typename Kernel::FT beta)
 {
   // Point_3 types
-  typedef typename std::iterator_traits<InputIterator>::value_type Input_point_3;
+  typedef typename std::iterator_traits<InputIterator>::value_type Enriched_point;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
 
@@ -237,10 +239,10 @@ improved_jet_smoothing_3(
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_precondition(first != beyond);
+  CGAL_point_set_processing_precondition(first != beyond);
 
   // precondition: at least 2 nearest neighbors
-  CGAL_precondition(k >= 2);
+  CGAL_point_set_processing_precondition(k >= 2);
 
   unsigned int i; // point index
 
@@ -281,7 +283,7 @@ improved_jet_smoothing_3(
   // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
   for(InputIterator it = first, i=0; it != beyond; it++, ++i)
   {  
-    Input_point_3 point = *it;
+    Enriched_point point = *it;
     (Point_3&)(point) = p[i];
     *output++ = point;
   }
@@ -316,7 +318,7 @@ improved_jet_smoothing_3(
                 typename Kernel::FT beta)
 {
   // Point_3 types
-  typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
+  typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
 
@@ -331,10 +333,10 @@ improved_jet_smoothing_3(
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_precondition(first != beyond);
+  CGAL_point_set_processing_precondition(first != beyond);
 
   // precondition: at least 2 nearest neighbors
-  CGAL_precondition(k >= 2);
+  CGAL_point_set_processing_precondition(k >= 2);
 
   unsigned int i; // point index
   ForwardIterator it; // point iterator
@@ -398,15 +400,15 @@ template <typename InputIterator,
 OutputIterator
 improved_jet_smoothing_3(
                 InputIterator first, ///< iterator over the first input point
-                InputIterator beyond, ///< past-the-end iterator over input points
+                InputIterator beyond, ///< past-the-end iterator
                 OutputIterator output, ///< iterator over the first output point
                 unsigned int k, ///< number of neighbors
                 const unsigned int iter_number,
                 double alpha,
                 double beta)
 {
-  typedef typename std::iterator_traits<InputIterator>::value_type Input_point_3;
-  typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
+  typedef typename std::iterator_traits<InputIterator>::value_type Enriched_point;
+  typedef typename Kernel_traits<Enriched_point>::Kernel Kernel;
   return improved_jet_smoothing_3(first,beyond,output,k,iter_number,Kernel(),alpha, beta);
 }
 
@@ -433,8 +435,8 @@ improved_jet_smoothing_3(
                 double alpha,
                 double beta)
 {
-  typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
-  typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
+  typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
+  typedef typename Kernel_traits<Enriched_point>::Kernel Kernel;
   improved_jet_smoothing_3(first,beyond,k,iter_number,Kernel(),alpha, beta);
 }
 

@@ -21,6 +21,8 @@
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/point_set_processing_assertions.h>
+
 #include <iterator>
 #include <list>
 
@@ -206,7 +208,7 @@ improved_laplacian_smooth_point_set(
                 typename Kernel::FT beta)
 {
   // Point_3 types
-  typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
+  typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
 
@@ -221,10 +223,10 @@ improved_laplacian_smooth_point_set(
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_precondition(first != beyond);
+  CGAL_point_set_processing_precondition(first != beyond);
 
   // precondition: at least 2 nearest neighbors
-  CGAL_precondition(k >= 2);
+  CGAL_point_set_processing_precondition(k >= 2);
 
   unsigned int i; // point index
   ForwardIterator it; // point iterator
@@ -283,8 +285,8 @@ improved_laplacian_smooth_point_set(
                 double alpha,
                 double beta)
 {
-  typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
-  typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
+  typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
+  typedef typename Kernel_traits<Enriched_point>::Kernel Kernel;
   improved_laplacian_smooth_point_set(first,beyond,k,iter_number,Kernel(),alpha, beta);
 }
 /// @endcond

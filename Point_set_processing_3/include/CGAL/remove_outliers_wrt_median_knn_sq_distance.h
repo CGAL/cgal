@@ -21,6 +21,7 @@
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/point_set_processing_assertions.h>
 
 #include <iterator>
 #include <algorithm>
@@ -78,7 +79,7 @@ compute_median_knn_sq_distance_3(
         points.push_back(search_iterator->first);
         search_iterator++;
     }
-    CGAL_precondition(points.size() >= 1);
+    CGAL_point_set_processing_precondition(points.size() >= 1);
 
     // compute median squared distance
     typename Kernel::Compute_squared_distance_3 sqd;
@@ -143,12 +144,12 @@ remove_outliers_wrt_median_knn_sq_distance(
     // precondition: at least one element in the container.
     // to fix: should have at least three distinct points
     // but this is costly to check
-    CGAL_precondition(first != beyond);
+    CGAL_point_set_processing_precondition(first != beyond);
 
     // precondition: at least 2 nearest neighbors
-    CGAL_precondition(k >= 2);
+    CGAL_point_set_processing_precondition(k >= 2);
 
-    CGAL_precondition(threshold_percent >= 0 && threshold_percent <= 100);
+    CGAL_point_set_processing_precondition(threshold_percent >= 0 && threshold_percent <= 100);
 
     // instanciate a KD-tree search
     Tree tree(first,beyond);
