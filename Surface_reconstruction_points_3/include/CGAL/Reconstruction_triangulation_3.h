@@ -160,7 +160,7 @@ private:
 /// Helper class:
 /// Reconstruction_triangulation_default_geom_traits_3
 /// changes in a geometric traits class the Point_3 type to
-/// a lightweight model of PointWithNormal_3.
+/// Point_with_normal_3<BaseGt>.
 ///
 /// @heading Parameters:
 /// @param BaseGt   Kernel's geometric traits.
@@ -328,7 +328,7 @@ public:
   {
       return Input_point_iterator(input_vertices_begin());
   }
-  /// Get past-the-end iterator over input points.
+  /// Get past-the-end iterator.
   Input_point_iterator input_points_end() const
   {
       return Input_point_iterator(input_vertices_end());
