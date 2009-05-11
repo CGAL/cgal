@@ -49,17 +49,9 @@ During the construction of the \ccc{AABB_tree}, the primitives are sorted accord
 %\ccGlue
 %\ccMethod{bool less_z(const Primitive & pr1, const Primitive & pr2);}{}
 
-\ccNestedType{Less_x} 
-{A functor object to compare primitives along the x axis. Provides the operator:
-\ccc{bool operator()(const Primitive & pr1, const Primitive & pr2);}}
-
-\ccNestedType{Less_y} 
-{A functor object to compare primitives along the y axis. Provides the operator:
-\ccc{bool operator()(const Primitive & pr1, const Primitive & pr2);}}
-
-\ccNestedType{Less_z} 
-{A functor object to compare primitives along the z axis. Provides the operator:
-\ccc{bool operator()(const Primitive & pr1, const Primitive & pr2);}}
+\ccNestedType{Sort_primitives} 
+{A functor object to sort primitives along the longest axis of their bounding box. Provides the operator:
+\ccc{bool operator()(InputIterator first, InputIterator beyond,const Bounding_box& bbox);} Iterator \ccc{InputIterator} must have \ccc{Primitive} as value type. The operator is used when computing the two children nodes of a node whose bounding box is \ccc{bbox}. It should modify the iterator range in such a way that its first half and its second half correspond to the two children nodes.}
 
 %\ccMethod{Bounding_box compute_bbox();}
 %{Returns the bounding box of a set of primitives.}
@@ -123,14 +115,8 @@ for which the class \ccc{AABB_tree<AT>} may receive a distance query.
 
 \ccOperations
 
-\ccMethod{Less_x less_x_object();}
-{Returns x-axis comparison functor.}
-
-\ccMethod{Less_y less_y_object();}
-{Returns y-axis comparison functor.}
-
-\ccMethod{Less_z less_z_object();}
-{Returns z-axis comparison functor.}
+\ccMethod{Sort_primitives sort_primitives_object();}
+{Returns the primitive sorting functor.}
 
 \ccMethod{Compute_bbox compute_bbox_object();}
 {Returns the bounding box constructor.}
