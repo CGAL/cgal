@@ -210,7 +210,7 @@ unsigned int poisson_refine_triangulation(
   CGAL_TRACE("Call poisson_refine_triangulation()\n");
 
   // Convergence is guaranteed if radius_edge_ratio_bound >= 1.0
-  CGAL_precondition(radius_edge_ratio_bound >= 1.0);
+  CGAL_surface_reconstruction_points_precondition(radius_edge_ratio_bound >= 1.0);
 
   // Basic geometric types
   typedef typename Tr::Geom_traits Gt;
