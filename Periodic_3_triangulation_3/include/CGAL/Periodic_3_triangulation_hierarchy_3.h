@@ -54,12 +54,13 @@ public:
 
   using PTr_Base::number_of_vertices;
   using PTr_Base::geom_traits;
-  using PTr_Baes::is_virtual;
+  using PTr_Base::is_virtual;
 
 private:
   // here is the stack of triangulations which form the hierarchy
   PTr_Base*  hierarchy[maxlevel];
   Random     random; // random generator
+  int level_mult_cover;
 
 public:
   Periodic_3_triangulation_hierarchy_3(
@@ -73,7 +74,7 @@ public:
   Periodic_3_triangulation_hierarchy_3(InputIterator first, InputIterator last,
       const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
       const Geom_traits& traits = Geom_traits())
-    : PTr_Base(domain,traits), random((long)0)
+    : PTr_Base(domain,traits), random((long)0), level_mult_cover(0)
   {
       hierarchy[0] = this; 
       for(int i=1; i<maxlevel; ++i)
@@ -105,37 +106,36 @@ public:
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last, bool = false)
   {
-      int n = number_of_vertices();
+    int n = number_of_vertices();
 
-      std::vector<Point> points (first, last);
-      std::random_shuffle (points.begin(), points.end());
-      spatial_sort (points.begin(), points.end(), geom_traits());
+    std::vector<Point> points (first, last);
+    std::random_shuffle (points.begin(), points.end());
+    spatial_sort (points.begin(), points.end(), geom_traits());
 
-      // hints[i] is the cell of the previously inserted point in level i.
-      // Thanks to spatial sort, they are better hints than what the hierarchy
-      // would give us.
-      Cell_handle hints[maxlevel];
-      for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
-              p != end; ++p)
-      {
-          int vertex_level = random_level();
-
-          Vertex_handle v = hierarchy[0]->insert (*p, hints[0]);
-          hints[0] = v->cell();
-
-          Vertex_handle prev = v;
-
-          for (int level = 1; level <= vertex_level; ++level) {
-              v = hierarchy[level]->insert (*p, hints[level]);
-              hints[level] = v->cell();
-
-              v->set_down (prev);
-              prev->set_up (v);
-              prev = v;
-          }
+    // hints[i] is the cell of the previously inserted point in level i.
+    // Thanks to spatial sort, they are better hints than what the hierarchy
+    // would give us.
+    Cell_handle hints[maxlevel];
+    for (typename std::vector<Point>::const_iterator p = points.begin(),
+	   end = points.end(); p != end; ++p) {
+      int vertex_level = random_level();
+	
+      Vertex_handle v = hierarchy[0]->insert (*p, hints[0]);
+      hints[0] = v->cell();
+	
+      Vertex_handle prev = v;
+	
+      for (int level = 1; level <= vertex_level; ++level) {
+	v = hierarchy[level]->insert (*p, hints[level]);
+	hints[level] = v->cell();
+	  
+	v->set_down (prev);
+	prev->set_up (v);
+	prev = v;
       }
-
-      return number_of_vertices() - n;
+    }
+    
+    return number_of_vertices() - n;
   }
 
   // bool only for backward compatibility, we document void.
@@ -185,7 +185,7 @@ template <class PTr >
 Periodic_3_triangulation_hierarchy_3<PTr>::
 Periodic_3_triangulation_hierarchy_3(
     const Iso_cuboid& domain, const Geom_traits& traits)
-  : PTr_Base(domain, traits), random((long)0)
+  : PTr_Base(domain, traits), random((long)0), level_mult_cover(0)
 { 
   hierarchy[0] = this; 
   for(int i=1;i<maxlevel;++i)
@@ -197,7 +197,7 @@ template <class PTr>
 Periodic_3_triangulation_hierarchy_3<PTr>::
 Periodic_3_triangulation_hierarchy_3(
     const Periodic_3_triangulation_hierarchy_3<PTr> &tr)
-    : PTr_Base(tr), random((long)0)
+  : PTr_Base(tr), random((long)0), level_mult_cover(tr.level_mult_cover)
 { 
   hierarchy[0] = this;
   for(int i=1; i<maxlevel; ++i)
@@ -491,8 +491,12 @@ int
 Periodic_3_triangulation_hierarchy_3<PTr>::
 random_level()
 {
+  if ( level_mult_cover < maxlevel
+      && hierarchy[level_mult_cover]->number_of_sheets() == make_array(1,1,1) )
+    ++level_mult_cover;
+
   int l = 0;
-  while ( ! random(ratio) && l < maxlevel-1 )
+  while ( ! random(ratio) && l < level_mult_cover-1)
     ++l;
 
   return l;
