@@ -12,38 +12,33 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // position + normal vector
-typedef std::list<Point_with_normal> PointList;
 
 int main(void)
 {
-    // Read a .xyz point set file in points[]
-    PointList points;
+    // Read a .xyz point set file in points[].
+    // Skip normal vectors as we do not specify a normal property map.
+    std::list<Point_with_normal> points;
     std::ifstream stream("data/sphere_20k.xyz");
-    if (!stream || 
+    if (!stream ||
         !CGAL::read_xyz_point_set(stream,
-                                  std::back_inserter(points),
-                                  false /*skip normals*/))
+                                  std::back_inserter(points)))
     {
       return EXIT_FAILURE;
     }
 
-    // Estimate normals direction.
-    std::list<Vector> output; 
+    // Estimates normals direction.
+    // Note: pca_estimate_normals() requires an iterator over points
+    //       + property maps to access each point's position and normal.
+    //       The position property map has a default value and is omitted here.
     const int nb_neighbors = 7; // K-nearest neighbors
     CGAL::pca_estimate_normals(points.begin(), points.end(),
-                               std::back_inserter(output),
+                               CGAL::make_normal_vector_property_map(points.begin()),
                                nb_neighbors);
 
-    // TEMPORARY: copy normals
-    PointList::iterator p;
-    std::list<Vector>::iterator n;
-    for (p = points.begin(), n = output.begin(); p != points.end(); p++, n++)
-      p->normal() = *n;
-
     // Orient normals.
-    // mst_orient_normals() requires an iterator over points
-    // + property maps to access each point's index, position and normal.
-    // The index and position property maps have default values and are omitted here. 
+    // Note: mst_orient_normals() requires an iterator over points
+    //       + property maps to access each point's index, position and normal.
+    //       The index and point property maps have default values and are omitted here.
     CGAL::mst_orient_normals(points.begin(), points.end(),
                              CGAL::make_normal_vector_property_map(points.begin()),
                              nb_neighbors);

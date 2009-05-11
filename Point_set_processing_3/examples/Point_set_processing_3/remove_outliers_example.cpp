@@ -11,13 +11,12 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-    // Reads a .xyz point set file
+    // Reads a .xyz point set file in points[].
     std::vector<Point> points;
     std::ifstream stream("data/oni.xyz");
-    if (!stream || 
+    if (!stream ||
         !CGAL::read_xyz_point_set(stream,
-                                  std::back_inserter(points),
-                                  false /*skip normals*/))
+                                  std::back_inserter(points)))
     {
       return EXIT_FAILURE;
     }
@@ -25,10 +24,9 @@ int main(void)
     // Removes outliers
     const double removed_percentage = 5.0; // removed percentage
     const int nb_neighbors = 7; // considers 7 nearest neighbor points
-    CGAL::remove_outliers(
-                    points.begin(), points.end(),
-                    nb_neighbors,
-                    removed_percentage);
+    CGAL::remove_outliers(points.begin(), points.end(),
+                          nb_neighbors,
+                          removed_percentage);
 
     return EXIT_SUCCESS;
 }

@@ -6,6 +6,7 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 
 #include <vector>
@@ -30,18 +31,26 @@ int main(void)
     FT sm_radius = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
     FT sm_distance = 0.01; // Approximation error w.r.t. p.s.r. For Poisson: 0.01 = fast, 0.002 = smooth.
 
-    // Read a .xyz point set file in points[]
+    // Reads the point set file in points[].
+    // Note: read_xyz_point_set() requires an iterator over points
+    //       + property maps to access each point's position and normal.
     PointList points;
     std::ifstream stream("data/oni.xyz");
     if (!stream || 
         !CGAL::read_xyz_point_set(stream,
-                                  std::back_inserter(points)))
+                                 std::back_inserter(points),
+                                 CGAL::make_dereference_property_map(std::back_inserter(points)),
+                                 CGAL::make_normal_vector_property_map(points.begin())))
     {
       return EXIT_FAILURE;
     }
 
     // Create implicit function and insert vertices.
-    Poisson_reconstruction_function implicit_function(points.begin(), points.end());
+    // Note: Poisson_implicit_function() requires an iterator over points
+    //       + property maps to access each point's position and normal.
+    //       The position property map has a default value and is omitted here.
+    Poisson_reconstruction_function implicit_function(points.begin(), points.end(),
+                                                      CGAL::make_normal_vector_property_map(points.begin()));
 
     // Compute the Poisson indicator function f()
     // at each vertex of the triangulation.

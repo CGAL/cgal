@@ -20,7 +20,7 @@ int main(void)
     points.push_back(Point( 0.2, 0.1, 0.000));
     points.push_back(Point( 0.0,-0.1, 0.001));
 
-    // smoothing
+    // Smoothing.
     const unsigned int nb_neighbors = 8;
     CGAL::jet_smooth_point_set(points.begin(),points.end(),nb_neighbors);
 

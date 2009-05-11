@@ -37,11 +37,11 @@ This method modifies the order of input points, and returns an iterator over the
 \item Normals must be unit vectors.\item k $>$= 2.\end{itemize}
 \ccCommentHeading{Template Parameters}
 \begin{description}
-\item \ccc{ForwardIterator}: iterator over input points. \item \ccc{PointPMap}: is a model of \ccc{boost::readable_property_map} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if ForwardIterator's \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \item \ccc{NormalPMap}: is a model of \ccc{boost::lvalue_property_map} with a \ccc{value_type} = \ccc{Vector_3<Kernel>}. \item \ccc{IndexPMap}: must be a model of \ccc{boost::readable_property_map} with an integral \ccc{value_type}. It can be omitted and will default to a \ccc{std::map<ForwardIterator, int>}. \item \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from the iterator type.\end{description}
+\item \ccc{ForwardIterator}: iterator over input points. \item \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if ForwardIterator \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \item \ccc{NormalPMap}: is a model of \ccc{boost::ReadWritePropertyMap} with a \ccc{value_type} = \ccc{Vector_3<Kernel>}. \item \ccc{IndexPMap}: must be a model of \ccc{boost::ReadablePropertyMap} with an integral \ccc{value_type}. It can be omitted and will default to a \ccc{std::map<ForwardIterator, int>}. \item \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from PointPMap \ccc{value_type}.\end{description}
 \ccCommentHeading{Returns} iterator over the first point with an unoriented normal.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator. \item \ccc{point_pmap}: property map ForwardIterator -$>$ \ccc{Point_3} \item \ccc{normal_pmap}: property map ForwardIterator -$>$ \ccc{Vector_3} \item \ccc{index_pmap}: property map ForwardIterator -$>$ index \item \ccc{k}: number of neighbors \item \ccc{kernel}: geometric traits. \end{description}
+\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator. \item \ccc{point_pmap}: property map ForwardIterator -$>$ \ccc{Point_3}. \item \ccc{normal_pmap}: property map ForwardIterator -$>$ \ccc{Vector_3}. \item \ccc{index_pmap}: property map ForwardIterator -$>$ index \item \ccc{k}: number of neighbors \item \ccc{kernel}: geometric traits. \end{description}
 }
 \ccGlue
 

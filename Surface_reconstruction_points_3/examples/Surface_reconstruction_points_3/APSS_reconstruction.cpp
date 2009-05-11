@@ -20,6 +20,7 @@
 // This package
 #include <CGAL/APSS_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/IO/read_xyz_point_set.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/polyhedron_connected_components.h>
@@ -146,11 +147,15 @@ int main(int argc, char * argv[])
     else if (extension == ".xyz" || extension == ".XYZ" ||
              extension == ".pwn" || extension == ".PWN")
     {
-      // Read the point set file in points[]
+      // Reads the point set file in points[].
+      // Note: read_xyz_point_set() requires an iterator over points
+      //       + property maps to access each point's position and normal.
       std::ifstream stream(input_filename.c_str());
-      if(!stream || 
+      if(!stream ||
          !CGAL::read_xyz_point_set(stream,
-                                   std::back_inserter(points)))
+                                   std::back_inserter(points),
+                                   CGAL::make_dereference_property_map(std::back_inserter(points)),
+                                   CGAL::make_normal_vector_property_map(points.begin())))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -192,8 +197,12 @@ int main(int argc, char * argv[])
 
     std::cerr << "Compute APSS implicit function (k=" << k << ")...\n";
 
-    // Create implicit function
+    // Create implicit function and insert vertices.
+    // Note: APSS_implicit_function() requires an iterator over points
+    //       + property maps to access each point's position and normal.
+    //       The position property map has a default value and is omitted here.
     APSS_reconstruction_function implicit_function(points.begin(), points.end(),
+                                                   CGAL::make_normal_vector_property_map(points.begin()),
                                                    k);
 
     // Recover memory used by points[]
@@ -257,8 +266,8 @@ int main(int argc, char * argv[])
     //***************************************
 
     std::cerr << "Erase small connected components...\n";
-    
-    unsigned int nb_erased_components = 
+
+    unsigned int nb_erased_components =
       CGAL::erase_small_polyhedron_connected_components(output_mesh);
 
     // Print status

@@ -19,13 +19,15 @@ class \ccc{Poisson_reconstruction_function};
 
 The main constructor is:
 
-\ccFunction{template<class InputIterator> Poisson_reconstruction_function(InputIterator first, InputIterator beyond);}
+\ccFunction{template<typename InputIterator, typename PointPMap, typename NormalPMap> Poisson_reconstruction_function(InputIterator first, InputIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap);}
 {
-Creates a scalar function from a set of oriented points.
-\ccPrecond InputIterator \ccc{value_type} must be convertible to \ccc{Point_with_normal}.
+Creates a Poisson implicit function from the [first, beyond) range of vertices.
+\ccCommentHeading{Template Parameters}
+\begin{description}
+\item \ccc{InputIterator}: iterator over input points. \item \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Gt>}. It can be omitted if InputIterator \ccc{value_type} is convertible to \ccc{Point_3<Gt>}. \item \ccc{NormalPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Vector_3<Gt>}. \end{description}
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: Iterator over first point. \item \ccc{beyond}: Past-the-end iterator. \end{description}
+\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator. \item \ccc{point_pmap}: property map InputIterator -$>$ \ccc{Point_3}. \item \ccc{normal_pmap}: property map InputIterator -$>$ \ccc{Vector_3}. \end{description}
 }
 
 The main methods are:

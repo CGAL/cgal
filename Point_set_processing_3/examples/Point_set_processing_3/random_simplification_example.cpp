@@ -11,22 +11,20 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-    // Reads a .xyz point set file
+    // Reads a .xyz point set file in points[].
     std::vector<Point> points;
     std::ifstream stream("data/oni.xyz");
-    if (!stream || 
+    if (!stream ||
         !CGAL::read_xyz_point_set(stream,
-                                  std::back_inserter(points),
-                                  false /*skip normals*/))
+                                  std::back_inserter(points)))
     {
       return EXIT_FAILURE;
     }
 
-    // Randomly simplifies
+    // Randomly simplifies.
     const double removed_percentage = 75.0; // removed percentage
-    CGAL::random_simplify_point_set(
-                    points.begin(), points.end(),
-                    removed_percentage);
+    CGAL::random_simplify_point_set(points.begin(), points.end(),
+                                    removed_percentage);
 
     return EXIT_SUCCESS;
 }
