@@ -208,11 +208,12 @@ Intersection intersection_object() {return Intersection();}
       typedef typename AT::Primitive Primitive;
   public:    
       template <class Solid>
-      bool operator()(const Point& p, const Solid& pr, const Point& bound) const
+      CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const
       {
           return GeomTraits().do_intersect_3_object()
           (GeomTraits().construct_sphere_3_object()
-          (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), pr);
+          (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), pr)?
+          CGAL::SMALLER : CGAL::LARGER;
       }
   };
   

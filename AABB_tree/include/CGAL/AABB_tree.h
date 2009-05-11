@@ -357,7 +357,7 @@ namespace CGAL {
             bool do_intersect(const Point& query, const Node& node) const
             {
                 return AABBTraits().compare_distance_object()
-                       (query, node.bbox(), m_closest_point);
+                       (query, node.bbox(), m_closest_point) == CGAL::SMALLER;
             }
 
             Point closest_point() const { return m_closest_point; }
