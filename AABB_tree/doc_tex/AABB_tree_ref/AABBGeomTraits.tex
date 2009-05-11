@@ -41,8 +41,8 @@ Provides the operators:
 \ccNestedType{Compare_distance_3} 
 {A functor object to compare distances between points and primitives.
 Provides the operators:
-\ccc{bool operator()(Point_3 p, Type type, Point_3 q);}
-where \ccc{Type} is any of the types among \ccc{Segment_3}, \ccc{Triangle_3} and \ccc{Bbox_3}. The operator returns \ccc{true} iff \ccc{type} is closer to \ccc{p} than \ccc{q} is.}
+\ccc{CGAL::Comparison_result operator()(Point_3 p, Type type, Point_3 q);}
+where \ccc{Type} is any of the types among \ccc{Segment_3}, \ccc{Triangle_3} and \ccc{Bbox_3}. The operator returns whether \ccc{type} is closer to \ccc{p} than \ccc{q} is, or not.}
 
 \ccNestedType{Closest_point_3} 
 {A functor object to compute closest points on primitives.

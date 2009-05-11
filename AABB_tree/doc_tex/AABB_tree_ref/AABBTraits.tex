@@ -65,7 +65,7 @@ During the construction of the \ccc{AABB_tree}, the primitives are sorted accord
 %{Returns the bounding box of a set of primitives.}
 \ccNestedType{Compute_bbox} 
 {A functor object to compute the bounding box of a set of primitives. Provides the operator:
-\ccc{Bounding_box operator()(Const_primitive_iterator begin,                                              Const_primitive_iterator beyond);}}
+\ccc{Bounding_box operator()(Input_iterator begin,                                              Input_iterator beyond);} Iterator \ccc{InputIterator} must have \ccc{Primitive} as value type. }
 
 The following predicates are required for each type \ccc{Query}
 for which the class \ccc{AABB_tree<AT>} may receive an intersection detection or computation query.
