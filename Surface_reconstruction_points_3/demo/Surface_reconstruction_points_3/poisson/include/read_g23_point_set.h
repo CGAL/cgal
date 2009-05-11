@@ -70,8 +70,8 @@ bool read_g23_point_set(
   typedef typename Geom_traits::Point_2               Point_2;
   typedef typename Geom_traits::Aff_transformation_3  Aff_transformation_3;
 
-  CGAL_precondition(pFilename != NULL);
-  CGAL_precondition(movie_file_name != NULL);
+  assert(pFilename != NULL);
+  assert(movie_file_name != NULL);
 
   FILE *pFile = fopen(pFilename,"rt");
   if(pFile == NULL)

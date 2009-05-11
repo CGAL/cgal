@@ -115,7 +115,7 @@ remove_outliers_wrt_camera_cone_angle(ForwardIterator first,         ///< iterat
     typedef Gyroviz_point_3<Kernel>            Gyroviz_point_3;
 
     // precondition: at least 0
-    CGAL_precondition(min_camera_cone_angle >= 0);
+    assert(min_camera_cone_angle >= 0);
 
     ForwardIterator first_point_to_remove =
       std::partition(first, beyond, CGALi::Is_cameras_cone_angle_greater_equal<Kernel>(min_camera_cone_angle));

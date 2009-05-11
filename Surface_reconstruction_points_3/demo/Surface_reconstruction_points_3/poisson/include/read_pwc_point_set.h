@@ -28,7 +28,7 @@ bool read_pwc_point_set(const char* pFilename,
   typedef typename Geom_traits::Point_3       Point_3;
   typedef typename Geom_traits::Point_2       Point_2;
 
-  CGAL_precondition(pFilename != NULL);
+  assert(pFilename != NULL);
 
   FILE *pFile = fopen(pFilename,"rt");
   if(pFile == NULL)
