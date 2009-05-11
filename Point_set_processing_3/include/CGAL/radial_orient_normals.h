@@ -19,6 +19,7 @@
 #ifndef CGAL_RADIAL_ORIENT_NORMALS_H
 #define CGAL_RADIAL_ORIENT_NORMALS_H
 
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 
 #include <math.h>
@@ -33,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 /// Normals are oriented towards exterior of the point set.
 /// This very fast method is intended to convex objects.
 ///
-/// This method modifies the order of input points, and returns 
+/// This method modifies the order of input points, and returns
 /// an iterator over the first point with an unoriented normal (see erase-remove idiom).
 /// Warning: this method should not be called on sorted containers.
 ///
@@ -41,11 +42,11 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// @commentheading Template Parameters:
 /// @param ForwardIterator iterator over input points.
-/// @param PointPMap is a model of boost::readable_property_map with a value_type = Point_3<Kernel>.
-///        It can be omitted if ForwardIterator's value_type is convertible to Point_3<Kernel>.
-/// @param NormalPMap is a model of boost::lvalue_property_map with a value_type = Vector_3<Kernel>.
-/// @param Kernel Geometric traits class. 
-///        It can be omitted and deduced automatically from the iterator type.
+/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
+/// @param NormalPMap is a model of boost::ReadWritePropertyMap with a value_type = Vector_3<Kernel>.
+/// @param Kernel Geometric traits class.
+///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return iterator over the first point with an unoriented normal.
 
@@ -140,16 +141,17 @@ radial_orient_normals(
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
     NormalPMap normal_pmap) ///< property map ForwardIterator -> Vector_3.
 {
-    typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;
-    typedef typename CGAL::Kernel_traits<Value_type>::Kernel Kernel;
-    return radial_orient_normals(first,beyond,
-                                 point_pmap, normal_pmap, 
-                                 Kernel());
+    typedef typename boost::property_traits<PointPMap>::value_type Point;
+    typedef typename Kernel_traits<Point>::Kernel Kernel;
+    return radial_orient_normals(
+      first,beyond,
+      point_pmap, normal_pmap, 
+      Kernel());
 }
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map
+// This variant creates a default point property map = Dereference_property_map.
 template <typename ForwardIterator,
           typename NormalPMap
 >
@@ -159,8 +161,10 @@ radial_orient_normals(
     ForwardIterator beyond, ///< past-the-end iterator.
     NormalPMap normal_pmap) ///< property map ForwardIterator -> Vector_3.
 {
-    return radial_orient_normals(first,beyond,
-                                 make_dereference_property_map(first), normal_pmap);
+    return radial_orient_normals(
+      first,beyond,
+      make_dereference_property_map(first), 
+      normal_pmap);
 }
 /// @endcond
 
