@@ -217,7 +217,7 @@ Periodic_3_triangulation_hierarchy_3(
   for(int j=1; j<maxlevel; ++j) {
     for( Vertex_iterator it=hierarchy[j]->vertices_begin();
 	 it != hierarchy[j]->vertices_end(); ++it) {
-      if (hierarchy[j]->is_virtual(it));
+      if (hierarchy[j]->is_virtual(it)) {
 	// down pointer goes in original instead in copied triangulation
 	it->set_down(V[it->down()]);
 	// make reverse link
@@ -225,6 +225,7 @@ Periodic_3_triangulation_hierarchy_3(
 	// make map for next level
 	if (it->up() != Vertex_handle())
 	    V[ it->up()->down() ] = it;
+      }
     }
   }
 }
