@@ -24,9 +24,10 @@ find_package(Qt4)
 include( ${QT_USE_FILE} )
 
 find_package(QGLViewer)
-include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
 if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND) 
+
+   include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
   qt4_wrap_ui ( UI_FILES periodic.ui )
 
