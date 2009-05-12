@@ -65,8 +65,6 @@
   \lciIfDefined{\cgalversiondate}{}{\gdef\cgalversiondate{\today}}}
 
 
-% minitoc and hyperref do not seem to work together so they should not both
-% be true
 \newboolean{useminitoc}
 \setboolean{useminitoc}{true}
 
@@ -81,7 +79,7 @@
 % ... end configuration section.
 % +------------------------------------------------------------------------+
 
-% include hypperref for PDF documents
+% include hyperref for PDF documents
 \lcTex{\ifpdf
   \pdfinfo{
     /Author   (CGAL Open Source Project)
@@ -104,6 +102,9 @@
 
 
 % include minitoc if selected above
+% The option 'nohints' is passed to minitoc, so that it does not complain
+% about hyperref. minitoc is compatible with minitoc, as soon as minitoc is
+% included *after* hyperref.
 \ifthenelse{\boolean{useminitoc}}{\lcTex{\usepackage[nohints]{minitoc}}}
 {\newcommand{\minitoc}{}}
 
