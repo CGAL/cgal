@@ -186,7 +186,10 @@ first, and after the last event).
 
 \ccMethod{Status_line_1 status_line_of_interval(size_type i);}{
   returns an instance of \ccc{StatusLine_1} of the $i$-th interval
-  between $x$-events.
+  between $x$-events. The $x$-coordinate at which the status line is
+  an arbitrary and uncontrollable representative chosen within the indicated
+  interval. If a specific one is desired, the next two operator provide proper
+  access.
  \ccPrecond{$0 \leq i \leq $ \ccc{number_of_status_lines_with_event()}}
 }
 
