@@ -17,9 +17,13 @@
 \ccDefinition
 
 The function \ccc{minkowski_sum_3} computes the Minkowski sum of two
-given 3D Nef polyhedra $N0$ and $N1$.
+given 3D Nef polyhedra $N0$ and $N1$. Note that the function runs in
+$O(n^3m^3)$ time in the worst case, where $n$ and
+$m$ are the complexities of the two input polyhedra (the complexity of
+a \ccc{Nef_polyhedron_3} is the sum of its \ccc{Vertices},
+\ccc{Halfedges} and \ccc{SHalfedges}).
 
-\ccGlobalFunction{Nef_polyhedron_3 convex_decomposition_3(Nef_polyhedron_3 N0, Nef_polyhedron_3 N1);}
+\ccGlobalFunction{Nef_polyhedron_3 minowski_sum_3(Nef_polyhedron_3 N0, Nef_polyhedron_3 N1);}
 
 \ccPrecond
 
