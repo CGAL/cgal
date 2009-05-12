@@ -19,9 +19,7 @@
 
 \ccDefinition
 
-\ccc{CGAL::write_xyz_point_set()} saves points (positions + optionally normals) to a .xyz ASCII stream.
-
-The \ccc{NormalPMap} parameter can be omitted to write 3D points without normal vector.
+\ccc{CGAL::write_xyz_point_set()} saves points (positions + optionally normals) to a .xyz ASCII stream. The \ccc{NormalPMap} parameter can be omitted to write 3D points without normal vector.
 
 \ccInclude{CGAL/write_xyz_point_set.h}
 
@@ -38,7 +36,7 @@ Save the [first, beyond) range of vertices (positions + normals) to a .xyz ASCII
 \ccCommentHeading{Returns} true on success.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{stream}: output stream. \item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator. \item \ccc{point_pmap}: property map ForwardIterator -$>$ \ccc{Point_3}. \item \ccc{normal_pmap}: property map ForwardIterator -$>$ \ccc{Vector_3}. \item \ccc{kernel}: geometric traits. \end{description}
+\item \ccc{stream}: output stream. \item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator over the input points. \item \ccc{point_pmap}: property map ForwardIterator -$>$ \ccc{Point_3}. \item \ccc{normal_pmap}: property map ForwardIterator -$>$ \ccc{Vector_3}. \item \ccc{kernel}: geometric traits. \end{description}
 }
 \ccGlue
 

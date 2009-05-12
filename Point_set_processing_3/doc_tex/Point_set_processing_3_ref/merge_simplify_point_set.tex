@@ -19,11 +19,8 @@
 
 \ccDefinition
 
-\ccc{CGAL::merge_simplify_point_set()} iteratively merges pairs of closest points which are epsilon-closed.
-To be precise, it merges points which belong to the same cell of a grid of cell size = the \ccc{epsilon} parameter.
-
-This method modifies the order of input points, and returns an iterator over the first point to remove (see erase-remove idiom). \\
-Warning: this method should not be called on sorted containers.
+\ccc{CGAL::merge_simplify_point_set()} iteratively iteratively merges pairs of points which are epsilon-closed. More specifically, 
+it merges points which belong to the same cell of an axis-aligned grid of cell size the \ccc{epsilon} parameter. This method modifies the order of input points so as to pack all remaining points first, and returns an iterator over the first point to remove (see erase-remove idiom). For this reason it should not be called on sorted containers.
 
 \ccInclude{CGAL/merge_simplify_point_set.h}
 
@@ -41,7 +38,7 @@ This method modifies the order of input points, and returns an iterator over the
 \ccCommentHeading{Returns} iterator over the first point to remove.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator. \item \ccc{point_pmap}: property map ForwardIterator -$>$ \ccc{Point_3} \item \ccc{epsilon}: tolerance value when comparing 3D points. \item \ccc{kernel}: geometric traits. \end{description}
+\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator. \item \ccc{point_pmap}: property map ForwardIterator -$>$ \ccc{Point_3} \item \ccc{epsilon}: tolerance value when merging 3D points. \item \ccc{kernel}: geometric traits. \end{description}
 }
 \ccGlue
 

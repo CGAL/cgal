@@ -19,17 +19,14 @@
 
 \ccDefinition
 
-\ccc{CGAL::random_simplify_point_set()} randomly deletes a user-specified fraction of the input points.
-
-This method modifies the order of input points, and returns an iterator over the first point to remove (see erase-remove idiom). \\
-Warning: this method should not be called on sorted containers.
+\ccc{CGAL::random_simplify_point_set()} randomly deletes a user-specified fraction of the input points. This method modifies the order of input points so as to pack all remaining points first, and returns an iterator over the first point to remove (see erase-remove idiom). For this reason it should not be called on sorted containers.
 
 \ccInclude{CGAL/random_simplify_point_set.h}
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{template<typename ForwardIterator, typename PointPMap, typename Kernel> ForwardIterator random_simplify_point_set(ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, double threshold_percent, const Kernel& kernel);}
+\ccFunction{template<typename ForwardIterator, typename PointPMap, typename Kernel> ForwardIterator random_simplify_point_set(ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, double removed_percentage, const Kernel& kernel);}
 {
 Randomly deletes a user-specified fraction of the input points.
 This method modifies the order of input points, and returns an iterator over the first point to remove (see erase-remove idiom). Warning: this method should not be called on sorted containers.
@@ -39,7 +36,7 @@ This method modifies the order of input points, and returns an iterator over the
 \ccCommentHeading{Returns} iterator over the first point to remove.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator. \item \ccc{point_pmap}: property map ForwardIterator -$>$ \ccc{Point_3} \item \ccc{threshold_percent}: percentage of points to remove. \item \ccc{kernel}: geometric traits. \end{description}
+\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator. \item \ccc{point_pmap}: property map ForwardIterator -$>$ \ccc{Point_3} \item \ccc{removed_percentage}: percentage of points to remove. \item \ccc{kernel}: geometric traits. \end{description}
 }
 \ccGlue
 
