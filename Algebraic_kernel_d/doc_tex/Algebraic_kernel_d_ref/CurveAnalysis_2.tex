@@ -85,7 +85,9 @@ of a curve's status lines and $x = +\infty$.
 }
 
 \ccMethod{bool has_x_critical_point();}{
-  returns \ccc{true} if the curve $f$ has an intersection with $f_y$ at $x$
+  returns \ccc{true} if the curve $f$ has an intersection with the
+  algebraic curve defined by its partial derivative with respect to $y$,
+  namely $f_y$, at $x$.
 }
 
 \ccMethod{bool is_event();}{
