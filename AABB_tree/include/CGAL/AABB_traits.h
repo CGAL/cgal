@@ -47,7 +47,7 @@ public:
   typedef AABB_primitive Primitive;
   typedef typename AABB_primitive::Datum Datum;
 //  typedef typename GeomTraits::Sphere_3 Sphere;
-  typedef unsigned int Size_type;
+  typedef unsigned int size_type;
 
   // TOFIX: Workaround for weighted_point
 #ifndef AABB_KERNEL_USE_WEIGHTED_POINT

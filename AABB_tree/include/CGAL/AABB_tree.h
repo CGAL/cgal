@@ -41,7 +41,7 @@ namespace CGAL {
         typedef typename AABBTraits::FT FT;
         typedef typename AABBTraits::Point Point;
         typedef typename AABBTraits::Primitive Primitive;
-        typedef typename AABBTraits::Size_type Size_type; 
+        typedef typename AABBTraits::size_type size_type; 
         typedef typename AABBTraits::Bounding_box Bounding_box;
         typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
         typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
@@ -91,7 +91,7 @@ namespace CGAL {
 
         // bbox and size
         Bounding_box bbox() const { return m_p_root_node->bbox(); }
-        Size_type size() const { return m_primitives.size(); }
+        size_type size() const { return m_primitives.size(); }
         bool empty() const { return m_primitives.empty(); }
 
         /// Construct internal search tree with a given point set
@@ -108,7 +108,7 @@ namespace CGAL {
         bool do_intersect(const Query& query) const;
 
         template<typename Query>
-        Size_type number_of_intersected_primitives(const Query& query) const;
+        size_type number_of_intersected_primitives(const Query& query) const;
 
         // all intersections
         template<typename Query, typename OutputIterator>
@@ -224,10 +224,10 @@ namespace CGAL {
                 return AABBTraits().do_intersect_object()(query, node.bbox());
             }
 
-            Size_type number_of_intersections() const { return m_nb_intersections; }
+            size_type number_of_intersections() const { return m_nb_intersections; }
 
         private:
-            Size_type m_nb_intersections;
+            size_type m_nb_intersections;
         };
 
 
@@ -513,7 +513,7 @@ namespace CGAL {
 
     template<typename Tr>
     template<typename Query>
-    typename Tr::Size_type
+    typename Tr::size_type
         AABB_tree<Tr>::number_of_intersected_primitives(const Query& query) const
     {
         Counting_traits<Query> traversal_traits;

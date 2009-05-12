@@ -25,7 +25,7 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 
 \ccTypes
 
-\ccTypedef{typedef AT::Size_type Size_type;}
+\ccTypedef{typedef AT::size_type size_type;}
           {Unsigned integral size type.}
 \ccGlue
 \ccTypedef{typedef AT::FT FT;}
@@ -70,7 +70,7 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 \ccMethod{Bounding_box bbox();}
 {Returns the axis-aligned bounding box of the whole tree. }
 
-\ccMethod{Size_type size();}
+\ccMethod{size_type size();}
 {Returns the number of primitives in the tree. }
 
 \ccMethod{bool empty();}
@@ -84,7 +84,7 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 {Returns \ccc{true}, iff the query intersects at least one of the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 	
 \ccMethod{template <class Query>
-	        Size_type number_of_intersected_primitives(const Query& query);}
+	        size_type number_of_intersected_primitives(const Query& query);}
 {Returns the number of primitives intersected by the query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
 
 %\ccMethod{template <class Query> size_type number_of_transversal_intersections(const Query& query);} {Returns the number of primitives intersected transversally by the query, if all intersections are transversal. Type \ccc{Query} must be a type for which \ccc{do_transversally_intersect} predicates are defined in the \ccc{AT} class. If any of the intersections is not transversal, the method returns the error code (a negative integer) returned by \ccc{do_transversally_intersect} at the first non-transversal intersection encountered.}
