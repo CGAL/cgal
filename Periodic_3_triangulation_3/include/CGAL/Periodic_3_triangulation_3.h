@@ -326,7 +326,7 @@ public:
     return _tds.number_of_vertices();
   }
 
-private:
+protected:
   bool is_1_cover() const {
     bool flag;
     flag = ((_cover[0] == 1) && (_cover[1] == 1) && (_cover[2] == 1));

@@ -121,6 +121,7 @@ public:
   using Base::orientation;
   using Base::insert_dummy_points;
   using Base::swap;
+  using Base::is_1_cover;
   using Base::is_virtual;
 #endif
 
@@ -170,18 +171,25 @@ public:
 
     std::vector<Point> points(first, last);
     std::random_shuffle (points.begin(), points.end());
-    spatial_sort (points.begin(), points.end(), geom_traits());
 
     Cell_handle hint;
     std::vector<Vertex_handle> dummy_points, double_vertices;
+    typename std::vector<Point>::iterator pbegin = points.begin();
     if (is_large_point_set)
       dummy_points = insert_dummy_points();
+    else while (!is_1_cover()) {
+	insert(*pbegin);
+	++pbegin;
+	if (pbegin == points.end()) return number_of_vertices() - n;
+      }
 
-    Conflict_tester tester(*points.begin(),this);
+    spatial_sort (pbegin, points.end(), geom_traits());
+
+    Conflict_tester tester(*pbegin,this);
     Point_hider hider;
     double_vertices = Base::insert_in_conflict(
-	points.begin(),points.end(),hint,tester,hider);
-    
+	points.begin(),points.end(),hint,tester,hider); 
+   
     if (is_large_point_set) {
       typedef CGAL::Periodic_3_triangulation_remove_traits_3< Gt > P3removeT;
       typedef CGAL::Delaunay_triangulation_3< P3removeT > DT;

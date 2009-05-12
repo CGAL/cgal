@@ -110,7 +110,7 @@ public:
 
     std::vector<Point> points (first, last);
     std::random_shuffle (points.begin(), points.end());
-    //spatial_sort (points.begin(), points.end(), geom_traits());
+    spatial_sort (points.begin(), points.end(), geom_traits());
 
     // hints[i] is the cell of the previously inserted point in level i.
     // Thanks to spatial sort, they are better hints than what the hierarchy

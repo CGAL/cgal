@@ -195,7 +195,7 @@ int bench_triang(int argc, char* argv[], Triang T, bool periodic) {
     std::cout<<"benchmarking insert: " ;
     if (do_spatial_sort) {
       t_insert.start();
-      T.insert( pts.begin(), pts.end(), true );
+      T.insert( pts.begin(), pts.end(), false );
       t_insert.stop();
     } else {
       t_insert.start();
