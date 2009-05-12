@@ -62,7 +62,8 @@ of a curve's status lines and $x = +\infty$.
 
 \ccMethod{std::pair< size_type, size_type > 
   number_of_incident_branches(size_type j);}{
-  returns the number of branches of the curve connected to $j$-th event
+  returns the number of branches (a branch is an arc of a curve containing a
+  non-compact sequence) of the curve connected to $j$-th event
   immediately to the left,
   to the right, respectively, as a pair of \ccc{size_type} ignoring 
   vertical curve components at the given $x$-coordinate.
