@@ -23,7 +23,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Random.h>
-#include <CGAL/Periodic_3_triangulation_hierarchy_vertex_base_3.h>
+#include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -110,7 +110,7 @@ public:
 
     std::vector<Point> points (first, last);
     std::random_shuffle (points.begin(), points.end());
-    spatial_sort (points.begin(), points.end(), geom_traits());
+    //spatial_sort (points.begin(), points.end(), geom_traits());
 
     // hints[i] is the cell of the previously inserted point in level i.
     // Thanks to spatial sort, they are better hints than what the hierarchy
@@ -134,7 +134,6 @@ public:
 	prev = v;
       }
     }
-    
     return number_of_vertices() - n;
   }
 
@@ -394,6 +393,7 @@ move_point(Vertex_handle v, const Point & p)
 
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
+    CGAL_assertion(hierarchy[l]->is_valid());
     Vertex_handle w = hierarchy[l]->move_point(v, p);
     if (l == 0) {
 	ret = w;
@@ -496,7 +496,7 @@ random_level()
     ++level_mult_cover;
 
   int l = 0;
-  while ( ! random(ratio) && l < level_mult_cover-1)
+  while ( ! random(ratio) && l < level_mult_cover )
     ++l;
 
   return l;

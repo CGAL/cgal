@@ -66,12 +66,6 @@ public:
 
   bool get_offset_flag() const { return offset_flag; }
 
-  const int& index() const
-  { return _index; }
-  
-  void set_index(const int& index)
-  { _index = index; }
-
   // the following trivial is_valid allows
   // the user of derived cell base classes 
   // to add their own purpose checking

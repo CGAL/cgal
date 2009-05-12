@@ -88,14 +88,6 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   std::vector<Point> pts_rnd1000;
   for (int i=0 ; i<1000 ; i++)
     pts_rnd1000.push_back(*in_cube++);
-  std::vector<Point> pts_rnd1000_tmp1, pts_rnd1000_tmp;
-  for (int i=0 ; i<1000 ; i++)
-    pts_rnd1000_tmp1.push_back(*in_cube_tmp++);
-  for (int i=0 ; i<1000 ; i++)
-    pts_rnd1000_tmp.push_back(Point(
-	    pts_rnd1000_tmp1[i].x()+0.5,
-	    pts_rnd1000_tmp1[i].y()+0.5,
-	    pts_rnd1000_tmp1[i].z()+0.5));
 
   std::vector<Point> pts_rnd10;
   pts_rnd10.push_back(Point(-0.578898, -0.421525,   0.841529 ));
@@ -312,10 +304,10 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   assert(Segment(vh->point(),Point(0,0,0)).squared_length() < FT(0.25));
   assert(PT.nearest_vertex(Point( 1, 1, 1))
       == PT.nearest_vertex(Point( 1,-1,-1)));
-
-  vh = PT.nearest_vertex_in_cell(vh->cell(),Point(0,0,0));
+  vh = PT.nearest_vertex_in_cell(vh->cell(),Point(0,0,0),
+      PT.get_offset(vh->cell(),vh->cell()->index(vh)));
   assert(Segment(vh->point(),Point(0,0,0)).squared_length() < FT(0.25));
-  vh = PT.nearest_vertex_in_cell(vh->cell(),Point(0,0,0),Offset(1,0,0));
+  vh = PT.nearest_vertex_in_cell(vh->cell(),Point(0,0,0),Offset(2,0,0));
   assert(Segment(vh->point(),Point(0,0,0)).squared_length() > FT(0.25));
 
   std::cout << "  Conflict region"<< std::endl;
