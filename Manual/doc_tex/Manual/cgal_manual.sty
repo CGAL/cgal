@@ -103,8 +103,8 @@
 
 % include minitoc if selected above
 % The option 'nohints' is passed to minitoc, so that it does not complain
-% about hyperref. minitoc is compatible with minitoc, as soon as minitoc is
-% included *after* hyperref.
+% about hyperref. minitoc is compatible with hyperref, as soon as minitoc
+% is included *after* hyperref.
 \ifthenelse{\boolean{useminitoc}}{\lcTex{\usepackage[nohints]{minitoc}}}
 {\newcommand{\minitoc}{}}
 
