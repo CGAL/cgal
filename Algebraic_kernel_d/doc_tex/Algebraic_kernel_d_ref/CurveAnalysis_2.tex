@@ -180,12 +180,14 @@ first, and after the last event).
 }
 
 \ccMethod{Status_line_1 status_line_at_event(size_type i);}{
-  returns an instance of \ccc{StatusLine_1} at the $i$-th event
+  returns an instance of \ccc{StatusLine_1} at the $i$-th event (in increasing
+ order of $x$-coordinates)
  \ccPrecond{$0 \leq i < $ \ccc{number_of_status_lines_with_event()}}
 }
 
 \ccMethod{Status_line_1 status_line_of_interval(size_type i);}{
-  returns an instance of \ccc{StatusLine_1} of the $i$-th interval
+  returns an instance of \ccc{StatusLine_1} of the $i$-th interval (in
+  increasing order of $x$-coordinates)
   between $x$-events. The $x$-coordinate at which the status line is
   an arbitrary and uncontrollable representative chosen within the indicated
   interval. If a specific one is desired, the next two operator provide proper
@@ -195,16 +197,19 @@ first, and after the last event).
 
 \ccMethod{Status_line_1 status_line_for_x(Algebraic_real_1 x, 
   CGAL::Sign perturb = CGAL::ZERO);}{
- returns status\_line\_at\_event(i), if $x$ hits $i$-th event, otherwise
- returns status\_line\_of\_interval(i), where $i$ is the id of the interval
-  $x$ lies in. If $pertub$ is CGAL::NEGATIVE (CGAL::POSITIVE) and $x$ states
+ returns status\_line\_at\_event(i), if $x$ hits $i$-th event (in increasing
+ order of $x$-coordinates), otherwise
+ returns status\_line\_of\_interval(i). If $pertub$ is CGAL::NEGATIVE
+(CGAL::POSITIVE) and $x$ states
   an event, then status\_line\_of\_interval(i) 
   (status\_line\_of\_interval(i+1)) is returned.
+  The purpose of the operation is to slightly perturb an $x$-coordinate in
+  order to return some status line in an incident interval.
   \ccPrecond{$x$ is finite}
 }
 
 \ccMethod{Status_line_1 status_line_at_exact_x(Algebraic_real_1 x);}{
-  returns an instance of \ccc{StatusLine_1} at the given $x$.
+  returns an instance of \ccc{StatusLine_1} at the given~$x$.
   \ccPrecond{$x$ is finite}
 }
 
