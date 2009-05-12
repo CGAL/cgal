@@ -653,6 +653,15 @@ _test_cls_delaunay_3(const Triangulation &)
   //  assert(T3_2.number_of_vertices()==1000);
   std::cout << "   end of insertion " << std::endl;
 
+  std::cout << "  insertion of located point"<< std::endl;
+  Locate_type lt;
+  int li, lj;
+  Cell_handle ch = T3_2_1.locate(p7,lt,li,lj);
+  T3_2_1.insert(p7,lt,ch,li,lj);
+
+  assert(T3_2_1.is_valid());
+  assert(T3_2_1.dimension()==3);
+
   // Same as above but using the template ctor.
   std::cout << "  template constructor"<< std::endl;
   Cls T3_2_2(lp2.begin(), lp2.end());

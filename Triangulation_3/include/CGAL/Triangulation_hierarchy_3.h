@@ -91,6 +91,8 @@ public:
 
   // INSERT REMOVE
   Vertex_handle insert(const Point &p, Cell_handle start = Cell_handle ());
+  Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle loc,
+      int li, int lj);
 
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)
@@ -309,6 +311,43 @@ insert(const Point &p, Cell_handle start)
     previous->set_up(vertex);
     previous=vertex;
     level++;
+  }
+  return first;
+}
+
+template <class Tr>
+typename Triangulation_hierarchy_3<Tr>::Vertex_handle
+Triangulation_hierarchy_3<Tr>::
+insert(const Point &p, Locate_type lt, Cell_handle loc, int li, int lj)
+{
+  int vertex_level = random_level();
+  // insert at level 0
+  Vertex_handle vertex = hierarchy[0]->insert(p,lt,loc,li,lj);
+  Vertex_handle previous = vertex;
+  Vertex_handle first = vertex;
+
+  if (vertex_level > 0) {
+    Locate_type lt;
+    int i, j;
+    // locate using hierarchy
+    locs positions[maxlevel];
+    locate(p, lt, i, j, positions, loc);
+    
+    int level = 1;
+    while (level <= vertex_level ){
+      if (positions[level].pos == Cell_handle())
+	vertex = hierarchy[level]->insert(p);
+      else
+	vertex = hierarchy[level]->insert(p,
+	    positions[level].lt,
+	    positions[level].pos,
+	    positions[level].li,
+	    positions[level].lj);
+      vertex->set_down(previous);// link with level above
+      previous->set_up(vertex);
+      previous=vertex;
+      level++;
+    }
   }
   return first;
 }
