@@ -71,8 +71,8 @@ not allowed.
 }
 
 \ccMethod{std::pair< size_type, size_type > curves_at_event(size_type j);}{
-  returns a pair of \ccc{size_type} indicating whether event $j$ is formed by 
-  which arc numbers of the first and the second curve, or $-1$, if the 
+  returns a pair indicating which events of the two curves contribute to
+  event~$j$ in the pair of curves. An entry can be $-1$, if the 
   corresponding curve is not involved. 
   \ccPrecond{$0 \leq j < $\ccc{number\_of_events()}}
 }
@@ -80,15 +80,13 @@ not allowed.
 \ccMethod{std::pair< size_type>  curves_at_event(size_type j, 
                                                  Curve_analysis_2 ca1,
                                                  Curve_analysis_2 ca2);}{
-  returns a pair of \ccc{size_type} indicating whether event $j$ is formed by 
-  which arc numbers of {\tt ca1} and {\tt ca2}, or $-1$, if the 
-  corresponding curve is not involved in the $j$-th curve pair event. 
+  returns a pair indicating which events of the two curves {\tt ca1} and {\tt
+  ca2} contribute to event~$j$ in the pair of curves. An entry can be $-1$,
+  if the corresponding curve is not involved.
   \ccPrecond{$0 \leq j < $\ccc{number\_of_events()}}
   \ccPrecond{$ca1$ and $ca2$ are the two curves involved in the curve pair}
   \ccPrecond{$ca1 != ca2$}
 }
-
-
 
 %Note that this interface mainly rewrites $\{f,g,x\}^n$ in a different way - 
 %using \ccc{size_type}. Actually the CPVL has to compute this sequence, but for
