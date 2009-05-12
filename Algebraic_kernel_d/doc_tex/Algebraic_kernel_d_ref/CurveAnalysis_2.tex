@@ -95,21 +95,24 @@ of a curve's status lines and $x = +\infty$.
 \end{ccRefConcept}
 
 \begin{ccRefConcept}{AlgebraicKernelWithAnalysis_d_2::CurveAnalysis_2}
-\footnote{There is no need
-for curves to be algebraic, hence the generic name. Only the number
-of events must be finite.}
 
 \ccDefinition
 
-The \ccc{AlgebraicKernel_d_2::CurveAnalysis_2} 
-concept is meant to provide tools to analyze a single
+The \ccc{AlgebraicKernel_d_2::CurveAnalysis_2}
+concept\footnote{There is no need
+for curves to be algebraic, hence the generic name. Only the number
+of events must be finite.}
+ is meant to provide tools to analyze a single
 curve. An analysis is meant to describe the curve's interesting points and how 
 they are connected. The analysis searches for {\it events}. Events only
 occur at a finite number of $x$-coordinates. Each such coordinate defines
 a \ccc{StatusLine_1} of an event. These coordinates also define open 
 {\it intervals} on the $x$-axis. Different 
-\ccc{StatusLine_1} at values within one 
-such interval only differ in the values of the \ccc{Algebraic_real_2} entries. 
+\ccc{StatusLine_1} at different $x$-coordinates within one 
+such interval provide the same combinatorial representation, but differ
+in the accessible \ccc{Algebraic_real_2} instances (those differ in 
+$x$- and probably also in their $y$-coordinates. Namely, if the curve is not
+horizontal along the corresponding arc over the interval). 
 Topological information is equal for all $x$-coordinate inside such an
 open interval. If there a $n$ $x$-coordinate that have an event point, we 
 see at most $2n+1$ topologically different status lines, that is, $n$ for 
