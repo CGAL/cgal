@@ -128,7 +128,7 @@ Copy constructor
 operator =()
 }
 \ccGlue
-\ccMethod{void set_numbers_of_neighbors(unsigned int k);}
+\ccMethod{void set_number_of_neighbors(unsigned int k);}
 {
 Set number of neighbors for APSS sphere fitting.
 }
@@ -140,7 +140,7 @@ Returns a sphere bounding the inferred surface.
 \ccGlue
 \ccMethod{FT operator()(const Point& p) const;}
 {
-\ccc{ImplicitFunction} interface: evaluate implicit function for any 3D point.
+\ccc{ImplicitFunction} interface: evaluates implicit function at 3D query point.
 }
 \ccGlue
 \ccMethod{Point get_inner_point() const;}
