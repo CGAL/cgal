@@ -10,13 +10,15 @@ Each intersection of a
 curve with the status line defined by some given $x$ induces an event. 
 An event can be queried for its coordinates (\ccc{Algebraic_real_2})
 and the involved curve(s). 
-Note that the involvement also holds for curve ends approaching the 
-vertical asymptote. Again \ccc{StatusLine_1} at $x = \pm\infty$ are 
+Again \ccc{StatusLine_1} at $x = \pm\infty$ are 
 not allowed. 
 
 \ccTypes
 
 \ccNestedType{size_type}{A instance of a size type, e.g., \ccc{int}}
+
+\ccNestedType{Multiplicity}{A instance of a multiplicity type, for instance,
+\ccc{int}, that enables to encode the multiplicy of two intersecting curves.}
 
 \ccNestedType{Algebraic_real_1}{Model of the concept
 \ccc{AlgebraicKernel_d_1::AlgebraicReal_1}.}
@@ -61,8 +63,9 @@ not allowed.
 }
 
 \ccMethod{Multiplicity multiplicity_of_intersection(size_type j);}{
-  returns the multiplicity of intersection defined at event with position $j$.
-  May return $0$ in case multiplicity is unknown.
+  returns either~$0$, or, if known, the multiplicity of intersection defined at
+  event with position~$j$. After all, always returning~$0$ is a correct
+  behavior, but reporting the correct value may help for speed-up computations.
   \ccPrecond{There is an intersection of both curves at $j$-th event.}
   \ccPrecond{$0 \leq j < $\ccc{number_of_events()}}
 }
