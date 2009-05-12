@@ -29,7 +29,7 @@ of a curve's status lines and $x = +\infty$.
 
 \ccTypes
 
-\ccNestedType{size_type}{A instance of a size type, e.g., \ccc{int}}
+\ccNestedType{size_type}{A instance of a size type, for instance, \ccc{int}}
 
 \ccNestedType{Algebraic_real_1}{A model of the concept
   \ccc{AlgebraicKernel_d_1::AlgebraicReal_1}.}
@@ -125,7 +125,7 @@ first, and after the last event).
 
 \ccTypes
 
-\ccNestedType{size_type}{A instance of a size type, e.g., \ccc{int}}
+\ccNestedType{size_type}{A instance of a size type, for instance, \ccc{int}}
 
 \ccNestedType{Algebraic_real_1}{A model of the concept
   \ccc{AlgebraicKernel_d_1::AlgebraicReal_1}.}
@@ -153,14 +153,20 @@ first, and after the last event).
   CurveAnalysis_2(Polynomial_2 p, InputIterator begin, InputIterator end);}{
   constructs an analysis for the curve defined by p. The iterator range 
   [begin,end) contains factors of $\mbox{resultant}(p,p_y,y)$ 
-  i.e., their roots define $x$-coordinates of events, 
-  which allows to simplify the real root isolation within this layer.
+  that is, their roots define $x$-coordinates of events.
   The \ccc{value_type} of InputIterator is \ccc{Polynomial_1}. 
-\ccPrecond{The polynomial must be square free.}
+\ccPrecond{Each given polynomial must be square free.}
 }
-  This constructor has been introduced to enable an upper layer 
-(geometric curved kernel) to propagate additional knowledge on the problem.
-If the signature is not provided by a model, a compile error occurs.
+  This constructor has been introduced to enable an outside instance 
+  (e.g., a geometric curved kernel relying on this algebraic kernel) to
+  propagate additional knowledge useful for the analysis. The factors are a way
+  to enable a simplified computation of the curve's critical $x$-coordinates.
+  (e.g., no square-free decomposition needed). In the best case, the given
+  polynomials are minimal for the roots they define.
+
+  The constructor is optional in the sense, that if the signature is not
+  provided by a model, but demanded by external soure code, a compile error is
+  reported.
 \end{ccAdvanced}
 
 \ccAccessFunctions
