@@ -69,7 +69,7 @@ namespace CGAL {
         /// a constructor taking a ConstPrimitiveIterator as argument.
         /// Returns true if the memory allocation was successful.
         template<typename ConstPrimitiveIterator>
-        bool rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
+        void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
         /// Non virtual destructor
         ~AABB_tree()
@@ -87,7 +87,6 @@ namespace CGAL {
 
             clear_search_tree();
         }
-
 
         // bbox and size
         Bounding_box bbox() const { return m_p_root_node->bbox(); }
@@ -435,10 +434,9 @@ namespace CGAL {
     }
 
     // Clears tree and insert a set of primitives
-    // Returns true upon successful memory allocation
     template<typename Tr>
     template<typename ConstPrimitiveIterator>
-    bool AABB_tree<Tr>::rebuild(ConstPrimitiveIterator first,
+    void AABB_tree<Tr>::rebuild(ConstPrimitiveIterator first,
                                 ConstPrimitiveIterator beyond)
     {
         // cleanup current tree and internal KD tree
@@ -457,12 +455,11 @@ namespace CGAL {
         {
             std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
             m_primitives.clear();
-            return false;
+            clear();
         }
 
         // constructs the tree
         m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size());
-        return true;
     }
 
 

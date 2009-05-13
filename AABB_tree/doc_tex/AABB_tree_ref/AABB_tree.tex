@@ -60,9 +60,9 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 \ccOperations
 
 \ccMethod{template < class InputIterator>
-       bool rebuild(InputIterator begin, 
+       void rebuild(InputIterator begin, 
                     InputIterator beyond);}
-{Clears the current tree and rebuilds it from scratch. See constructor above for the parameters. Returns \ccc{true}, iff the memory allocation is successful. }
+{Clears the current tree and rebuilds it from scratch. See constructor above for the parameters. }
 
 \ccMethod{void clear();}
 {Clears the AABB tree. }
