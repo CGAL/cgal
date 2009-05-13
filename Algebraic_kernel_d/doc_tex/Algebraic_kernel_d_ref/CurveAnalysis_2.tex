@@ -9,8 +9,9 @@ in finitely many points $(x_0,y_j)$ where non-vertical arcs of the curve
 intersect~$\ell$. 
 
 The \ccc{StatusLine_1} concept is meant to provide information
-about those points of interest of a curve with a vertical line
-at a given finite $x$-coordinate and whether~$\ell$ is contained in the curve.
+about those points of interest, called ``$y$-events'', of a curve with a
+vertical line at a given finite $x$-coordinate and whether~$\ell$ is contained
+in the curve.
 That is, the concept's methods interface the local topology of the curve. A
 status line at any $x_0$ smaller than any $x$-coordinate of a curve's
 $x$-critical points captures the topology of the curve when 
@@ -40,14 +41,14 @@ $x$-coordinate of a curve's status lines and $x = +\infty$.
 }
 
 \ccMethod{size_type number_of_events();}{
-  returns number of distinct and finite intersections of a curve with a 
-  the vertical line $x = x_0$ ignoring a real vertical line component 
-  of the curve at $x_0$.
+  returns number of distinct and finite $y$-events of a curve
+  with the vertical line~$\ell$.
 }
 
 \ccMethod{Algebraic_real_2 algebraic_real_2(size_type j);}{
-  returns an object of type \ccc{Algebraic_real_2} for the $j$-th event
-  \ccPrecond{$0 \leq j < \mbox{num\_events()}$}.
+  returns an object of type \ccc{Algebraic_real_2} for the $j$-th event, in
+  increasing $y$-order.
+  \ccPrecond{$0 \leq j < \mbox{number\_of\_events()}$}.
 }
 
 \ccMethod{std::pair< size_type, size_type > 
@@ -57,21 +58,23 @@ $x$-coordinate of a curve's status lines and $x = +\infty$.
   immediately to the left,
   to the right, respectively, as a pair of \ccc{size_type} ignoring 
   vertical curve components at the given $x$-coordinate.
-  \ccPrecond{$0 \leq j < \mbox{num\_events()}$}
+  \ccPrecond{$0 \leq j < \mbox{number\_of\_events()}$}
 }
 
 \ccMethod{std::pair< size_type, size_type > 
   number_of_branches_approaching_minus_infinity();}{
-  returns the number of vertical asymptotes at $x$ 
-  of the curve approaching $y=-\infty$
-  from left and right. A vertical line being component of the curve is ignored.
+  returns the number of the curve's non-vertical branches that have the status
+  line as vertical asympote and that approach $y=-\infty$. We distinguish
+  between approachings from left (\ccc{pair.first}) and approaches from right
+  (\ccc{pair.second}).
 }
 
 \ccMethod{std::pair< size_type, size_type > 
   number_of_branches_approaching_plus_infinity();}{
-  returns the number of vertical asymptotes at $x$ 
-  of the curve approaching $y=+\infty$
-  from left and right. A vertical line being component of the curve is ignored.
+  returns the number of the curve's non-vertical branches that have the status
+  line as vertical asympote and that approach $y=+\infty$. We distinguish
+  between approachings from left (\ccc{pair.first}) and approaches from right
+  (\ccc{pair.second}).
 }
 
 \ccMethod{bool has_x_critical_point();}{
@@ -240,10 +243,10 @@ $x$-coordinate only.
     \ccc{CGAL::ARR_RIGHT_BOUNDARY}}
 }
 
-In our $y$-per-$x$-view we imagine the parameter space to be slightly 
-``heigher'' than ``width'' and so we distinguish three aymptotic behaviors
+In our $y$-per-$x$-view we imagine the space to be slightly 
+heigher than it is wide and so we distinguish three aymptotic behaviors
 of arcs. Horizontal, vertical, and none of them. This member covers 
-all non-vertical asymptotic values. We do not introduce a special one
+all non-vertical asymptotes. We do not introduce a special one
 for vertical asympototes as the respective $x$-coordinates are already defined
 by proper status lines.
 
