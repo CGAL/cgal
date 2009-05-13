@@ -24,6 +24,7 @@ The concept \ccRefName\ defines the requirements for the first template paramete
 \ccTypes
 
 \ccNestedType{Bbox_3}{Bounding box type.}
+\ccNestedType{Sphere_3}{Sphere type, that should be consistent with the distance function chosen for the distance queries, namely the \ccc{Squared_distance_3} functor.}
 \ccNestedType{Point_3}{Point type.}
 
 \ccNestedType{Do_intersect_3} 
@@ -38,21 +39,34 @@ among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3}, \ccc{Triangle_3}, \ccc{Plane_3
 Provides the operators:
 \ccc{CGAL::Object operator()(Type_1 type_1, Type_2 type_2);} where \ccc{Type_1} and \ccc{Type_2} are any relevant types among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3},  \ccc{Triangle_3}, \ccc{Plane_3} and \ccc{Bbox_3}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box). The operator computes a \ccc{CGAL::Object} which is the intersection between the objects \ccc{type_1} and \ccc{type_2}.}
 
-\ccNestedType{Compare_distance_3} 
-{A functor object to compare distances between points and primitives.
-Provides the operators:
-\ccc{CGAL::Comparison_result operator()(Point_3 p, Type type, Point_3 q);}
-where \ccc{Type} is any of the types among \ccc{Segment_3}, \ccc{Triangle_3} and \ccc{Bbox_3}. The operator returns whether \ccc{type} is closer to \ccc{p} than \ccc{q} is, or not.}
+%\ccNestedType{Compare_distance_3} 
+%{A functor object to compare distances between points and primitives.
+%Provides the operators:
+%\ccc{CGAL::Comparison_result operator()(Point_3 p, Type type, Point_3 q);}
+%where \ccc{Type} is any of the types among \ccc{Segment_3}, \ccc{Triangle_3} and \ccc{Bbox_3}. The operator returns whether \ccc{type} is closer to \ccc{p} than \ccc{q} is, or not.}
 
-\ccNestedType{Closest_point_3} 
-{A functor object to compute closest points on primitives.
-Provides the operators:
-\ccc{Point_3 operator()(Point_3 p, Type type, Point_3 q);}
-where \ccc{Type} is any of the types among \ccc{Segment_3} and \ccc{Triangle_3}. If \ccc{type} is closer to \ccc{p} than \ccc{q} is, the operator returns the point on \ccc{type} which is closest to \ccc{p}. Otherwise, the operator returns \ccc{q}.}
+%\ccNestedType{Closest_point_3} 
+%{A functor object to compute closest points on primitives.
+%Provides the operators:
+%\ccc{Point_3 operator()(Point_3 p, Type type, Point_3 q);}
+%where \ccc{Type} is any of the types among \ccc{Segment_3} and \ccc{Triangle_3}. If \ccc{type} is closer to \ccc{p} than \ccc{q} is, the operator returns the point on \ccc{type} which is closest to \ccc{p}. Otherwise, the operator returns \ccc{q}.}
 
-\ccNestedType{Squared_distance_3}
-{A functor object to compute the squared distance between points. Provides the operator:
-\ccc{FT operator()(const Point_3& p, const Point_3 & q);} which returns the squared distance between \ccc{p} and \ccc{q}.}
+\ccNestedType{Construct_sphere_3}
+{A functor object to construct the sphere centered at one point and passing through another one. Provides the operator:
+\ccc{Sphere_3 operator()(const Point_3& p, const Point_3 & q);} which returns the sphere centered at \ccc{p} and passing through \ccc{q}.}
+
+\ccNestedType{Compute_closest_point_3}
+{A functor object to compute the point on a geometric primitive which is closest from a query. Provides the operator:
+\ccc{Point_3 operator()(const Point_3& p, const Type_2& type_2);} where \ccc{Type_2} is any type among \ccc{Segment_3} and \ccc{Triangle_3}. The operator returns the point on \ccc{type_2} which is closest to \ccc{p}.}
+
+\ccNestedType{Has_on_bounded_side_3} 
+{A functor object to detect if a point lies inside a sphere or not.
+Provides the operator:
+\ccc{bool operator()(Sphere_3 s, Point_3 p);} which returns \ccc{true} iff the closed volume bounded by \ccc{s} contains \ccc{p}.}
+
+\ccNestedType{Compute_squared_radius_3}
+{A functor object to compute the squared radius of a sphere. Provides the operator:
+\ccc{FT operator()(const Sphere_3& s);} which returns the squared radius of  \ccc{s}.}
 
 \ccCreation
 \ccCreationVariable{geomtraits}  %% choose variable name
@@ -65,11 +79,17 @@ where \ccc{Type} is any of the types among \ccc{Segment_3} and \ccc{Triangle_3}.
 \ccMethod{Intersect_3 intersect_3_object();}
 {Returns the intersection constructor.}
 
-\ccMethod{Compare_distance_3 compare_distance_3_object();}
+\ccMethod{Construct_sphere_3 construct_sphere_3_object();}
 {Returns the distance comparison functor.}
 
-\ccMethod{Closest_point_3 closest_point_3_object();}
+\ccMethod{Compute_closest_point_3 compute_closest_point_3_object();}
 {Returns the closest point constructor.}
+
+\ccMethod{Has_on_bounded_side_3 has_on_bounded_side_3_object();}
+{Returns the closest point constructor.}
+
+\ccMethod{Compute_squared_radius_3 compute_squared_radius_3_object();}
+{Returns the squared radius functor.}
 
 \ccHasModels
 Any instantiation of \ccc{CGAL::Kernel} is a model of this traits concept.
