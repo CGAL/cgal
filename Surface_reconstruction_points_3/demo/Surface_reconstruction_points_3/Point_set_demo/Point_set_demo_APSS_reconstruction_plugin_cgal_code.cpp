@@ -34,7 +34,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
                              FT sm_angle, // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
                              FT sm_radius, // Max triangle radius w.r.t. point set radius. 0.1 is fine.
                              FT sm_distance, // Approximation error w.r.t. p.s.r.. For APSS: 0.015 = fast, 0.003 = smooth.
-                             unsigned int k = 24) // #neighbors to compute APPS sphere fitting. 12 = fast, 24 = robust.
+                             FT smoothness = 2) // smoothness factor
 {
     CGAL::Timer task_timer; task_timer.start();
 
@@ -60,11 +60,12 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
     // Compute implicit function
     //***************************************
 
-    std::cerr << "Compute APSS implicit function (k=" << k << ")...\n";
+    std::cerr << "Compute APSS implicit function (smoothness=" << smoothness << ")...\n";
 
     // Create implicit function
     APSS_reconstruction_function implicit_function(points.begin(), points.end(),
-                                                   k);
+                                                   CGAL::make_normal_vector_property_map(points.begin()),
+                                                   smoothness);
 
     // Print status
     std::cerr << "Compute implicit function: " << task_timer.time() << " seconds\n";

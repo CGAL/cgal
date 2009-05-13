@@ -83,8 +83,8 @@ int main(int argc, char * argv[])
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=0.1 * point set radius)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.003 * point set radius)\n";
-      std::cerr << "  -k <int>               Number of neighbors to compute APPS sphere fitting (default=24)\n";
-      std::cerr << "                           - should be greater than 7,\n";
+      std::cerr << "  -smooth <float>        Smoothness factor (default = 2)\n";
+      std::cerr << "                           - should be greater than 1,\n";
       std::cerr << "                           - high numbers lead to smoother surfaces.\n";
       return EXIT_FAILURE;
     }
@@ -93,7 +93,7 @@ int main(int argc, char * argv[])
     FT sm_angle = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
     FT sm_radius = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
     FT sm_distance = 0.003; // Approximation error w.r.t. p.s.r.. For APSS: 0.015 = fast, 0.003 = smooth.
-    unsigned int k = 24; // #neighbors to compute APPS sphere fitting. 12 = fast, 24 = robust.
+    FT smoothness = 2; // smoothness factor (the large the smoother and slower)
 
     // decode parameters
     std::string input_filename  = argv[1];
@@ -104,8 +104,8 @@ int main(int argc, char * argv[])
         sm_radius = atof(argv[++i]);
       else if (std::string(argv[i])=="-sm_distance")
         sm_distance = atof(argv[++i]);
-      else if (std::string(argv[i])=="-k")
-        k = atoi(argv[++i]);
+      else if (std::string(argv[i])=="-smooth")
+        smoothness = atof(argv[++i]);
       else
         std::cerr << "invalid option " << argv[i] << "\n";
     }
@@ -144,23 +144,28 @@ int main(int argc, char * argv[])
       }
     }
     // If XYZ file format
-    else if (extension == ".xyz" || extension == ".XYZ" ||
-             extension == ".pwn" || extension == ".PWN")
-    {
-      // Reads the point set file in points[].
-      // Note: read_xyz_point_set() requires an iterator over points
-      //       + property maps to access each point's position and normal.
-      std::ifstream stream(input_filename.c_str());
-      if(!stream ||
-         !CGAL::read_xyz_point_set(stream,
-                                   std::back_inserter(points),
-                                   CGAL::make_dereference_property_map(std::back_inserter(points)),
-                                   CGAL::make_normal_vector_property_map(points.begin())))
-      {
-        std::cerr << "Error: cannot read file " << input_filename << std::endl;
-        return EXIT_FAILURE;
-      }
-    }
+    // FIXME fails to compile:
+    //  CGAL/point_set_property_map.h:39: error: forming reference to void                                                                                                                                                                                 
+    //  CGAL/point_set_property_map.h:42: error: forming reference to void                                                                                                                                                                                 
+    //  CGAL/point_set_property_map.h:47: error: forming reference to void
+    // 
+//     else if (extension == ".xyz" || extension == ".XYZ" ||
+//              extension == ".pwn" || extension == ".PWN")
+//     {
+//       // Reads the point set file in points[].
+//       // Note: read_xyz_point_set() requires an iterator over points
+//       //       + property maps to access each point's position and normal.
+//       std::ifstream stream(input_filename.c_str());
+//       if(!stream ||
+//          !CGAL::read_xyz_point_set(stream,
+//                                    std::back_inserter(points),
+//                                    CGAL::make_dereference_property_map(std::back_inserter(points)),
+//                                    CGAL::make_normal_vector_property_map(points.begin())))
+//       {
+//         std::cerr << "Error: cannot read file " << input_filename << std::endl;
+//         return EXIT_FAILURE;
+//       }
+//     }
     else
     {
       std::cerr << "Error: cannot read file " << input_filename << std::endl;
@@ -195,7 +200,7 @@ int main(int argc, char * argv[])
     // Compute implicit function
     //***************************************
 
-    std::cerr << "Compute APSS implicit function (k=" << k << ")...\n";
+    std::cerr << "Compute APSS implicit function (smoothness=" << smoothness << ")...\n";
 
     // Create implicit function and insert vertices.
     // Note: APSS_implicit_function() requires an iterator over points
@@ -203,7 +208,7 @@ int main(int argc, char * argv[])
     //       The position property map has a default value and is omitted here.
     APSS_reconstruction_function implicit_function(points.begin(), points.end(),
                                                    CGAL::make_normal_vector_property_map(points.begin()),
-                                                   k);
+                                                   smoothness);
 
     // Recover memory used by points[]
     points.clear();

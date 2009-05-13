@@ -155,7 +155,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(point_set SHARED
     Point_set_scene_item.cpp Point_set_scene_item.moc)
   target_link_libraries(point_set scene_item)
-  
+
   if(GLEW_FOUND)
     target_link_libraries( point_set gl_splat ${GLEW_LIBRARIES} )
   endif(GLEW_FOUND)

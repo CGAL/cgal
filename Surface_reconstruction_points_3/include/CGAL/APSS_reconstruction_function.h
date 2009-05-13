@@ -14,7 +14,6 @@
 // $URL$
 // $Id$
 //
-//
 // Author(s)     : Gael Guennebaud, Laurent Saboret
 
 #ifndef CGAL_APSS_RECONSTRUCTION_FUNCTION_H
@@ -23,6 +22,7 @@
 #include <vector>
 #include <algorithm>
 
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Fast_orthogonal_k_neighbor_search.h>
@@ -39,12 +39,31 @@ CGAL_BEGIN_NAMESPACE
 /// that defines a Point Set Surface (PSS) based on
 /// moving least squares (MLS) fitting of algebraic spheres.
 ///
-/// See "Algebraic Point Set Surfaces" by Guennebaud and Gross [Guennebaud07].
+/// This class implements a variant the "Algebraic Point Set Surfaces" method
+/// by Guennebaud and Gross [Guennebaud07].
 ///
 /// Note that APSS reconstruction may create small "ghost" connected components
 /// close to the reconstructed surface that you should delete.
 /// For this purpose, you may call erase_small_polyhedron_connected_components()
 /// after make_surface_mesh().
+/// 
+/// @note Currently, the quality of the reconstruction highly depends on both the quality of input
+///       normals and the smoothness parameter. Whereas the algorithm can tolerate
+///       a little noise in the normal direction, the normals must be consistently oriented.
+///       The smoothness parameter controls the width of the underlying low-pass filter as a factor
+///       of the local point spacing. Larger value leads to smoother surfaces and longer computation
+///       times. For clean datasets, this value should be set between 1.5 and 2.5. On the other hand,
+///       as the amount of noise increase, this value should be increased as well. For these reasons,
+///       we do not provide any default value for this parameter.
+///       
+///       The radius property should correspond to the local point spacing which can be intuitively
+///       defined as the average distance to its \em natural one ring neighbors. Currently, this
+///       information is only used to define the \em surface \em definition \em domain as the union of
+///       these balls. Outside this union of balls, the surface is not defined. Therefore, if the balls
+///       do not overlap enough, then some holes might appear. If no radius is provided, then they are
+///       automatically computed from a basic estimate of the local density based on the 16 nearest
+///       neighbors. In the future, this information might be used as well to adjust the width 
+///       of the low pass filter.
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the 'ImplicitFunction' concept.
@@ -58,36 +77,30 @@ class APSS_reconstruction_function
 // Public types
 public:
 
-  typedef Gt Geom_traits; ///< Kernel's geometric traits
+  typedef Gt Geom_traits; ///< Kernel (Geometric traits)
 
+  // Geometric types
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Point_3 Point; ///< == Point_3<Gt>
-  typedef typename Geom_traits::Vector_3 Vector; ///< == Vector_3<Gt>
-  typedef typename Geom_traits::Sphere_3 Sphere;
-
-  typedef Point_with_normal_3<Gt> Point_with_normal; ///< == Point_with_normal_3<Gt>
+  typedef typename Geom_traits::Point_3 Point; ///< == typedef Geom_traits::Point_3
+  typedef typename Geom_traits::Vector_3 Vector; ///< == typedef Geom_traits::Vector_3
+  typedef typename Geom_traits::Sphere_3 Sphere; ///< == typedef Geom_traits::Sphere_3
 
 // Private types
 private:
 
   // Item in the Kd-tree: position (Point_3) + normal + index
-  class KdTreeElement : public Point_with_normal
+  class KdTreeElement : public Point_with_normal_3<Gt>
   {
+    typedef Point_with_normal_3<Gt> Base; ///< base class
+
   public:
     unsigned int index;
 
     KdTreeElement(const Origin& o = ORIGIN, unsigned int id=0)
-      : Point_with_normal(o), index(id)
+      : Base(o), index(id)
     {}
-    template <class K>
-    KdTreeElement(const Point_with_normal_3<K>& pwn, unsigned int id=0)
-      : Point_with_normal(pwn), index(id)
-    {}
-    KdTreeElement(const Point& p, unsigned int id=0)
-      : Point_with_normal(p), index(id)
-    {}
-    KdTreeElement(const KdTreeElement& other)
-      : Point_with_normal(other), index(other.index)
+    KdTreeElement(const Point& p, const Vector& n = NULL_VECTOR, unsigned int id=0)
+      : Base(p, n), index(id)
     {}
   };
 
@@ -109,20 +122,29 @@ private:
   typedef typename Neighbor_search::Point_ptr_with_transformed_distance
                                     Point_ptr_with_transformed_distance;
 
-// Public methods
-public:
+// Private initialization method
+private:
 
-  /// Creates an APSS implicit function from a set of oriented points.
+  /// Creates an APSS implicit function from the [first, beyond) range of vertices.
   ///
-  /// @commentheading Precondition:
-  /// InputIterator value_type must be convertible to Point_with_normal.
-  ///
-  /// @param first Iterator over first point.
-  /// @param beyond Past-the-end iterator.
-  /// @param k number of neighbors for APSS sphere fitting.
-  template < class InputIterator >
-  APSS_reconstruction_function(InputIterator first, InputIterator beyond,
-                               unsigned int k)
+  /// @commentheading Template Parameters:
+  /// @param InputIterator iterator over input points.
+  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Gt>.
+  ///        It can be omitted if InputIterator value_type is convertible to Point_3<Gt>.
+  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Vector_3<Gt>.
+  /// @param RadiusPMap is a model of boost::ReadablePropertyMap with a value_type = Gt::FT.
+  template <typename InputIterator,
+            typename PointPMap,
+            typename NormalPMap,
+            typename RadiusPMap
+  >
+  void init(
+    InputIterator first,  ///< iterator over the first input point.
+    InputIterator beyond, ///< past-the-end iterator.
+    PointPMap point_pmap, ///< property map InputIterator -> Point_3.
+    NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+    RadiusPMap radius_pmap, ///< property map InputIterator -> FT.
+    FT smoothness) ///< smoothness factor.
   {
     // Allocate smart pointer to data
     m = new Private;
@@ -130,29 +152,37 @@ public:
 
     int nb_points = std::distance(first, beyond);
 
-    // Number of nearest neighbors
-    m->nofNeighbors = k;
+    set_smoothness_factor(smoothness);
 
     // Create kd-tree
     m->treeElements.reserve(nb_points);
     unsigned int i=0;
     for (InputIterator it=first ; it != beyond ; ++it,++i)
     {
-      m->treeElements.push_back(KdTreeElement(*it,i));
+      m->treeElements.push_back(KdTreeElement(get(point_pmap,it), get(normal_pmap,it), i));
     }
     m->tree = new Tree(m->treeElements.begin(), m->treeElements.end());
 
-    // Compute the radius of each point = (distance max to k nearest neighbors)/2.
-    // The union of these balls defines the surface definition domain.
     m->radii.resize(nb_points);
-    // FIXME the radii should be computed by another component
+    if (boost::is_same<RadiusPMap,boost::dummy_property_map>::value)
     {
+      // Compute the radius of each point = (distance max to k nearest neighbors)/2.
+      // The union of these balls defines the surface definition domain.
       int i=0;
       for (InputIterator it=first ; it != beyond ; ++it, ++i)
       {
         Neighbor_search search(*(m->tree), *it, 16);
         FT maxdist2 = search.begin()->second; // squared distance to furthest neighbor
         m->radii[i] = sqrt(maxdist2)/2.;
+      }
+    }
+    else
+    {
+      // Copy the radii from given input data
+      int i=0;
+      for (InputIterator it=first ; it != beyond ; ++it, ++i)
+      {
+        m->radii[i] = boost::get(radius_pmap,*it);
       }
     }
 
@@ -166,6 +196,82 @@ public:
     // Dichotomy error when projecting point (squared)
     m->sqError = 1e-7 * Gt().compute_squared_radius_3_object()(m->bounding_sphere);
   }
+
+// Public methods
+public:
+
+  /// Creates an APSS implicit function from the [first, beyond) range of vertices.
+  ///
+  /// @commentheading Template Parameters:
+  /// @param InputIterator iterator over input points.
+  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Gt>.
+  ///        It can be omitted if InputIterator value_type is convertible to Point_3<Gt>.
+  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Vector_3<Gt>.
+  /// @param RadiusPMap is a model of boost::ReadablePropertyMap with a value_type = Gt::FT.
+  // This variant requires all parameters.
+  template <typename InputIterator,
+            typename PointPMap,
+            typename NormalPMap,
+            typename RadiusPMap
+  >
+  APSS_reconstruction_function(
+    InputIterator first,  ///< iterator over the first input point.
+    InputIterator beyond, ///< past-the-end iterator.
+    PointPMap point_pmap, ///< property map InputIterator -> Point_3 (access to the position of an input point).
+    NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3 (access to the \b oriented normal of an input point).
+    RadiusPMap radius_pmap, ///< property map InputIterator -> FT (access to the local point spacing of an input point). This parameter is optional.
+    FT smoothness) ///< smoothness factor. Typical choices are in the range 2 (clean datasets) and 8 (noisy datasets).
+  {
+    init(
+      first, beyond,
+      point_pmap,
+      normal_pmap,
+      radius_pmap,
+      smoothness);
+  }
+
+  /// @cond SKIP_IN_MANUAL
+  // This variant creates a default radius property map = boost::dummy_property_map.
+  template <typename InputIterator,
+            typename PointPMap,
+            typename NormalPMap
+  >
+  APSS_reconstruction_function(
+    InputIterator first,  ///< iterator over the first input point.
+    InputIterator beyond, ///< past-the-end iterator.
+    PointPMap point_pmap, ///< property map InputIterator -> Point_3.
+    NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+    FT smoothness) ///< smoothness factor.
+  {
+    init(
+      first, beyond,
+      point_pmap,
+      normal_pmap,
+      boost::dummy_property_map(),
+      smoothness);
+  }
+  /// @endcond
+
+  /// @cond SKIP_IN_MANUAL
+  // This variant creates a default point property map = Dereference_property_map,
+  // and a dummy radius property map
+  template <typename InputIterator,
+            typename NormalPMap
+  >
+  APSS_reconstruction_function(
+    InputIterator first,  ///< iterator over the first input point.
+    InputIterator beyond, ///< past-the-end iterator.
+    NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+    FT smoothness) ///< smoothness factor.
+  {
+    init(
+      first, beyond,
+      make_dereference_property_map(first),
+      normal_pmap,
+      boost::dummy_property_map(),
+      smoothness);
+  }
+  /// @endcond
 
   /// Copy constructor
   APSS_reconstruction_function(const APSS_reconstruction_function& other) {
@@ -186,7 +292,7 @@ public:
   }
 
   /// Set number of neighbors for APSS sphere fitting.
-  void set_numbers_of_neighbors(unsigned int k) {m->nofNeighbors = k;}
+  void set_smoothness_factor(FT smoothness) { m->nofNeighbors = 6*smoothness*smoothness; }
 
   /// Returns a sphere bounding the inferred surface.
   const Sphere& bounding_sphere() const
@@ -237,7 +343,7 @@ private:
   */
   inline bool isValid(const Point_ptr_with_transformed_distance& nearest_neighbor, const Point& /* p */) const
   {
-      FT r = 2. * m->radii[nearest_neighbor.first->index];
+      FT r = FT(2) * m->radii[nearest_neighbor.first->index];
       return (r*r > nearest_neighbor.second);
   }
 
@@ -286,7 +392,7 @@ public:
     fit(search_knn);
 
     // return the distance to the sphere
-    return m->as.euclideanDistance(p);
+    return m->as.euclideanDistance(p, *(m->cached_nearest_neighbor.first));
   }
 
   /// Returns a point located inside the inferred surface.
@@ -343,35 +449,11 @@ private:
         fit(search);
 
         Point oldP = p;
-        if (m->as.state==AlgebraicSphere::SPHERE)
-        {
-          // projection onto a sphere.
-          Vector dir = normalize(sub(source,m->as.center));
-          p = add(m->as.center,mul(m->as.radius,dir));
-          FT flipN = m->as.u4<0. ? -1. : 1.;
-          if (!isValid(nearest,p))
-          {
-            // if the closest intersection is far away the input points,
-            // then we take the other one.
-            p = add(m->as.center,mul(-m->as.radius,dir));
-            flipN = -flipN;
-          }
-          n = mul(flipN,dir);
+        m->as.project(p,n,*(nearest.first));
 
-          if (!isValid(nearest,p))
-          {
-            std::cout << "Invalid projection\n";
-          }
-        }
-        else if (m->as.state==AlgebraicSphere::PLANE)
+        if (!isValid(nearest,p))
         {
-          // projection onto a plane.
-          p = sub(source, mul(dot(m->as.normal,source-CGAL::ORIGIN)+m->as.d,m->as.normal));
-        }
-        else
-        {
-          // iterative projection onto the algebraic sphere.
-          p = m->as.iProject(source);
+          std::cout << "Invalid projection\n";
         }
 
         Vector diff = sub(oldP,p);
@@ -452,15 +534,65 @@ private:
       }
     }
 
-    /** Compute the Euclidean distance between the algebraic surface and a point.
-    */
-    FT euclideanDistance(const Point& p) {
+    /** Projects a point onto the surface of the sphere.
+      * This function considers the projection which is the closest
+      * to a given reference point.
+      */
+    void project(Point& p, Vector& n, const Point& reference_point) {
+      if (state==AlgebraicSphere::SPHERE)
+      {
+        Vector dir = sub(p,center);
+        FT l = length(dir);
+        dir = dir * (1./l);
+        p = add(center,mul( radius,dir));
+        FT flip = u4<0. ? -1. : 1.;
+        n = mul(flip,dir);
+
+        Point other = add(center,mul(-radius,dir));
+        typename Geom_traits::Compute_squared_distance_3 sqd;
+        if (sqd(reference_point,other) < 0.9*sqd(reference_point,p))
+        {
+          p = other;
+          n = -n;
+        }
+      }
+      else if (state==AlgebraicSphere::PLANE)
+      {
+        // projection onto a plane.
+        p = sub(p, mul(dot(normal,p-CGAL::ORIGIN) + d, normal));
+        n = normal;
+      }
+      else
+      {
+        // iterative projection onto the algebraic sphere.
+        p = iProject(p);
+      }
+    }
+
+    /** Compute the Euclidean distance between the algebraic surface and a point \a p.
+      * This function uses the closest intersection to a given reference point.
+      */
+    FT euclideanDistance(const Point& p, const Point& reference_point) {
       if (state==SPHERE)
       {
-        FT aux = length(sub(center,p)) - radius;
-        if (u4<0.)
-          aux = -aux;
-        return aux;
+        // tricky case because we have to pick to best intersection
+        // that is the closest to the reference point
+        Vector dir = sub(p,center);
+        FT l = length(dir);
+        FT inside = l < radius ? -1. : 1;
+        dir = dir * (1./l);
+        Point proj0 = add(center,mul( radius,dir));
+        Point proj1 = add(center,mul(-radius,dir));
+        FT flip = u4<0. ? -1. : 1.;
+        
+        typename Geom_traits::Compute_squared_distance_3 sqd;
+        if (sqd(reference_point,proj1) < 0.9*sqd(reference_point,proj0))
+        {
+          proj0 = proj1;
+          inside = -1;
+        }
+
+        return length(sub(p,proj0)) * flip * inside;        
       }
 
       if (state==PLANE)

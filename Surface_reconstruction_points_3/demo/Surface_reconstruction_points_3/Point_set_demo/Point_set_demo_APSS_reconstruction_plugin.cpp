@@ -17,7 +17,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
                              FT sm_angle, // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
                              FT sm_radius, // Max triangle radius w.r.t. point set radius. 0.1 is fine.
                              FT sm_distance, // Approximation error w.r.t. p.s.r.. For APSS: 0.015 = fast, 0.003 = smooth.
-                             unsigned int k = 24); // #neighbors to compute APPS sphere fitting. 12 = fast, 24 = robust.
+                             FT smoothness = 2); // #neighbors to compute APPS sphere fitting. 12 = fast, 24 = robust.
 
 class Point_set_demo_APSS_reconstruction_plugin :
   public QObject,
@@ -98,20 +98,32 @@ void Point_set_demo_APSS_reconstruction_plugin::reconstruct()
                               &ok);
     if(!ok) return;
 
+    const double smoothness =
+      QInputDialog::getDouble(mw,
+                              tr("APSS Reconstruction"), // dialog title
+                              tr("Smoothness factor:"), // field label
+                              2, // default value
+                              1,  // min
+                              20, // max
+                              0.1, // step
+                              &ok);
+    if(!ok) return;
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // Reconstruct point set as a polyhedron
-    Polyhedron* pRemesh = APSS_reconstruct(*points, sm_angle, sm_radius, sm_distance);
+    Polyhedron* pRemesh = APSS_reconstruct(*points, sm_angle, sm_radius, sm_distance, smoothness);
 
     if(pRemesh)
     {
       // Add polyhedron to scene
       Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pRemesh);
-      new_item->setName(tr("%1 APSS (%2 %3 %4)")
+      new_item->setName(tr("%1 APSS (%2 %3 %4 %5)")
                          .arg(point_set_item->name())
                          .arg(sm_angle)
                          .arg(sm_radius)
-                         .arg(sm_distance));
+                         .arg(sm_distance)
+                         .arg(smoothness));
       new_item->setColor(Qt::magenta);
       scene->addItem(new_item);
 
