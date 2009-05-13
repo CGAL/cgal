@@ -363,7 +363,7 @@ discussed above:
 
 \section{Resultants, Subresultants and Sturm-Habicht sequences}
 
-The \ccc{PolynomialTraits_d} concept also provides more sophisitcated functors
+The \ccc{PolynomialTraits_d} concept also provides more sophisticated functors
 for computations with polynomials --
 computing the resultant of two polynomials, 
 their polynomial subresultant sequence, with or without cofactors,
@@ -392,7 +392,7 @@ real roots of a polynomial using the function
 \end{itemize}
 As input, this function requires an iterator range that represents
 the principal Sturm-Habicht coefficients. 
-This might look circumstantially at a first sight,
+This might look complicated at a first sight,
 as one has to store the principal Sturm-Habicht sequence temporarily.
 However, we remark an important property of the (principal) Sturm-Habicht
 sequence. Having a polynomial $f_t(x)$ that depends on a parameter $t$,
@@ -406,8 +406,8 @@ the sequence once for the parameter $t$, and call
 value.
 
 We finally remark that computing subresultants and Sturm-Habicht sequences
-introduces an enormous coefficient swell-up.
-An applications of the functors therefore does not make sense
+introduces an enormous coefficient blow-up.
+An application of the functors therefore does not make sense
 for built-in integers except for toy examples as below.
 To avoid overflows, one should pass to arbitrary size integer types
 in real applications.

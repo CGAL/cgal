@@ -7,20 +7,20 @@
 Computes the polynomial subresultant of two polynomials $p$ and $q$ of 
 type \ccc{PolynomialTraits_d::Polynomial_d} with respect to outermost variable.
 Let 
-$p=\ccSum{i=0,\ldots,n}{} p_i t^i$ and 
-$q=\ccSum{i=0,\ldots,m}{} q_i t^i$, where $t$
+$p=\ccSum{i=0,\ldots,n}{} p_i x^i$ and 
+$q=\ccSum{i=0,\ldots,m}{} q_i x^i$, where $x$
 is the outermost variable.
 The $i$-th subresultant (with $i=0,\ldots,\min\{n,m\}$) is defined by
 
 \begin{ccTexOnly}
 \begin{eqnarray*}
-\mathrm{Sres}_i(p,q)&=&\det \left(\begin{array}{cccccc}
-p_n & \ldots &\ldots& p_{2i-m+2}&t^{m-i-1}p \\
-&\ddots&&\vdots&\vdots\\
-&p_n&\ldots&p_{i+1}&p\\
-q_m & \ldots &\ldots & q_{2i-n+2}&t^{n-i-1}q \\
-&\ddots&&\vdots&\vdots\\
-&q_m&\ldots&q_{i+1}&q
+\mathrm{Sres}_i(p,q)&=&\det \left(\begin{array}{ccccccc}
+p_n & \ldots &&\ldots& p_{2i-m+2}&x^{m-i-1}p \\
+&\ddots&&&\vdots&\vdots\\
+&&p_n&\ldots&p_{i+1}&p\\
+q_m & \ldots &&\ldots & q_{2i-n+2}&x^{n-i-1}q \\
+&\ddots&&&\vdots&\vdots\\
+&&q_m&\ldots&q_{i+1}&q
 \end{array}\right)
 \end{eqnarray*}
 \end{ccTexOnly}
@@ -31,7 +31,8 @@ q_m & \ldots &\ldots & q_{2i-n+2}&t^{n-i-1}q \\
 </CENTER>
 \end{ccHtmlOnly}
 
-In the exceptional case that $n=m$, $\mathrm{Sres_n}$ is set to $q$.
+where $p_i$ and $q_i$ are set to zero if $i<0$.
+In the case that $n=m$, $\mathrm{Sres_n}$ is set to $q$.
 
 The result is written in an output range, starting with the $0$-th subresultant
 $\mathrm{Sres}_0(p,q)$

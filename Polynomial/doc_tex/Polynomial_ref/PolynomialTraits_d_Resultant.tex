@@ -11,8 +11,8 @@ specific variable.
 
 Let $f$ and $g$ be two univariate polynomials over some commutative ring $A$, 
 where 
-\[f = f_mX^m + \dots + f_0\] and 
-\[g = g_nX^n + \dots + g_0.\] 
+\[f = f_mx^m + \dots + f_0\] and 
+\[g = g_nx^n + \dots + g_0.\] 
 The resultant of $f$ and $g$ is defined as the determinant of the {\em Sylvester matrix}: 
 
 \begin{ccTexOnly}
@@ -35,7 +35,7 @@ g_n & \dots & g_0&&& \\
 \end{ccHtmlOnly}
 
 Note that this is a $(n+m)\times(n+m)$ matrix as there are $n$ rows for $f$ 
-and $m$ rows that are used for $g$. The blanc spaces are supposed to be 
+and $m$ rows that are used for $g$. The blank spaces are supposed to be 
 filled with zeros. 
 
 
@@ -48,12 +48,14 @@ and
 the resultant of $f$ and $g$ is (up to leading coefficients) 
 the product of all pairwise differences of the roots of $f$ and $g$, namely 
 \[res(f,g) = f_m^n g_n^m \ccProd{i=1}{m}{\ccProd{j=1}{n}{(\alpha_i-\beta_j)}}.\] 
-\end{ccAdvanced}
-
 In particular, $res(f,g) \neq 0$ iff $f$ and $g$ have a common factor with a 
 positive degree in $X$. %, that is, they may still have a common factor in $A$. 
 %As a consequence $res(f,f') \neq 0$ iff $f$ is square free with respect to 
 %$X$, that is, the content of $f$ may still contain a square.  
+
+
+\end{ccAdvanced}
+
 
 There are various ways to compute the resultant. 
 Naive options are the computation of the resultant as the determinant of 
