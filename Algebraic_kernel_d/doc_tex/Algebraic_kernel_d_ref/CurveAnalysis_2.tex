@@ -2,30 +2,20 @@
 
 \ccDefinition
 
-The \ccc{StatusLine_1} concept is meant to provide information
-about the intersections of a curve with a vertical line at a given 
-finite $x$-coordinate. Note that a curve can have a vertical line component 
-at this coordinate and non-vertical components may intersect 
-the status line respectively. 
-With the help of the concept's methods one is able
-to compute the local topology of the curve 
-at the given vertical line $x = x_0$ for some finite $x_0$.
-A status line at any $x_0$ smaller than any $x$-coordinate of a curve's 
-$x$-critical points captures the topology of the curve when 
-approaching $x = -\infty$.
-An analogue argument holds for $x_0$ larger than any $x$-coordinate
-of a curve's status lines and $x = +\infty$.
-%at the given vertical line.
-%Note that vertical lines at $x = \pm\infty$ are not allowed, since different 
-%events (curve ends going to infinity with different non-horizontal asymptotes)
-%would have equal $y$-coordinate ($\pm\infty$), which confuses more than it
-%helps. 
+Given a vertical line~$\ell$ at $x = x_0$. A curve can either have finitely
+many intersection $(x_0,y_j)$ with~$\ell$, or $\ell$ is
+completely contained in the curve. In the latter case, we are still interested
+in finitely many points $(x_0,y_j)$ where non-vertical arcs of the curve
+intersect~$\ell$. 
 
-%Note in addition that curve ends approaching the vertical asymptote 
-%introduce an event (depending on whether approaching $+\infty$ or $-\infty$ -
-%but the event with coordinates $(x,-\infty)$, resp. $(x,+\infty)$, occur
-%only once, if they occur, and they imply not to be associated with
-%an instance of \ccc{Algebraic_real_2}.
+The \ccc{StatusLine_1} concept is meant to provide information
+about those points of interest of a curve with a vertical line
+at a given finite $x$-coordinate and whether~$\ell$ is contained in the curve.
+That is, the concept's methods interface the local topology of the curve. A
+status line at any $x_0$ smaller than any $x$-coordinate of a curve's
+$x$-critical points captures the topology of the curve when 
+approaching $x = -\infty$. An analogue argument holds for $x_0$ larger than any
+$x$-coordinate of a curve's status lines and $x = +\infty$.
 
 \ccTypes
 
