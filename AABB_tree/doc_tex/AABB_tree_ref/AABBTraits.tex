@@ -34,7 +34,7 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 
 \ccNestedType{Bounding_box}{Bounding box type.}
 
-\ccNestedType{enum Axis \{ AXIS_X, AXIS_Y, AXIS_Z \}}{}
+\ccNestedType{enum Axis \{ X_AXIS, Y_AXIS, Z_AXIS \}}{}
 
 \ccTypedef{typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id;}{}
 
@@ -53,7 +53,7 @@ During the construction of the \ccc{AABB_tree}, the primitives are sorted accord
 
 \ccNestedType{Split_primitives_along_x_axis} 
 {A functor object to split a range of primitives into two sub-ranges, along the X-axis. Provides the operator:
-\ccc{bool operator()(InputIterator first, InputIterator beyond);} Iterator \ccc{InputIterator} must be a model of RandomAccessIterator and have \ccc{Primitive} as value type. The operator is used for determining the primitives assigned to the two children nodes of a given node, assuming that the goal is to split the X-dimension of the bounding box of the node. The primitives assigned to this node are passed as argument to the operator. It should modify the iterator range in such a way that its first half and its second half correspond to the two children nodes.}
+\ccc{void operator()(InputIterator first, InputIterator beyond);} Iterator \ccc{InputIterator} must be a model of RandomAccessIterator and have \ccc{Primitive} as value type. The operator is used for determining the primitives assigned to the two children nodes of a given node, assuming that the goal is to split the X-dimension of the bounding box of the node. The primitives assigned to this node are passed as argument to the operator. It should modify the iterator range in such a way that its first half and its second half correspond to the two children nodes.}
 
 \ccNestedType{Split_primitives_along_y_axis} 
 {A functor object to split a range of primitives into two sub-ranges, along the Y-axis. See \ccc{Split_primitives_along_x_axis} for the detailed description.}
