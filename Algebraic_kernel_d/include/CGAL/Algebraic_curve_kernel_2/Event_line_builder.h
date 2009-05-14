@@ -444,7 +444,7 @@ protected:
         CGAL_ACK_DEBUG_PRINT << "k=" << k << ", Compute m..." << std::flush;
 #endif
 */
-        m = CGAL::stha_count_number_of_real_roots(it,spec_stha.end());
+        m = CGAL::number_of_real_roots(it,spec_stha.end());
 /*
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
