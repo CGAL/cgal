@@ -1,15 +1,9 @@
 \section{Input/Output}
 
-The algorithms of this component takes as input parameters iterator ranges of 3D points plus property maps to access each point's position and normal (3D vector). \cgal\ provides the next classes to implement points and normals, which come with the appropriate property maps:
-
-\begin{itemize}
-\item \ccRefIdfierPage{CGAL::Point_3<GeomTraits>} \\
-\cgal\ 3D position.
-\item \ccRefIdfierPage{CGAL::Vector_3<GeomTraits>} \\
-\cgal\ 3D vector.
-\item \ccRefIdfierPage{CGAL::Point_with_normal_3<GeomTraits, Normal_3>} \\
-3D point location plus normal.
-\end{itemize}
+The algorithms of this component take as input parameters iterator ranges of 3D points, or points with normals.
+As the latter might be represented in various ways, e.g., as a class derived from the \cgal\ point class, or as a 
+\ccc{std::pair<Point_3<K>, Vector_3<K> >}, or as a \ccc{boost::tuple<..,Point_3<K>, ..., Vector_3<K> >}, the
+algorithms use property maps to access the point or vector information in the input data.
 
 Users of this package may use other types to represent positions and normals if they implement the corresponding property maps. \\
 
