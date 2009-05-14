@@ -121,19 +121,19 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 \ccHeading{Distance queries}
 
 \ccMethod{FT
-squared_distance(const Point& query, 
-                 const Point& hint);} 
-{Returns the minimum squared distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted. When omitted, and if the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), the latter is used to efficiently query the nearest hint point from the query, among a set of hint points stored in the internal KD-tree. Otherwise, the first primitive reference point is taken as a naive hint point. }
+squared_distance(const Point& query);} 
+{Returns the minimum squared distance between the query point and all input primitives. Method \ccc{accelerate_distance_queries} should be called before the first distance query, so that an internal secondary search structure is build, for improving performance.}
+%Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted. When omitted, and if the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), the latter is used to efficiently query the nearest hint point from the query, among a set of hint points stored in the internal KD-tree. Otherwise, the first primitive reference point is taken as a naive hint point. }
 
 \ccMethod{Point
-closest_point(const Point& query, 
-              const Point& hint);} 
-{Returns the point in the union of all input primitives which is closest to the query. In case there are several closest points, one arbitrarily chosen closest point is returned. Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted (see \ccc{squared_distance}). }
+closest_point(const Point& query);} 
+{Returns the point in the union of all input primitives which is closest to the query. In case there are several closest points, one arbitrarily chosen closest point is returned. Method \ccc{accelerate_distance_queries} should be called before the first distance query, so that an internal secondary search structure is build, for improving performance.}
+%Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted (see \ccc{squared_distance}). }
 
 \ccMethod{Point_and_primitive_id
-closest_point_and_primitive(const Point& query, 
-                            const Point_and_primitive_id& hint);} 
-{Returns a \ccc{Point_and_primitive_id} which realizes the smallest distance between the query point and all input primitives. Parameter \ccc{hint} is assumed to be any point and the corresponding input primitive it lies on (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted (see \ccc{squared_distance}).}
+closest_point_and_primitive(const Point& query);} 
+{Returns a \ccc{Point_and_primitive_id} which realizes the smallest distance between the query point and all input primitives. Method \ccc{accelerate_distance_queries} should be called before the first distance query, so that an internal secondary search structure is build, for improving performance.}
+%Parameter \ccc{hint} is assumed to be any point and the corresponding input primitive it lies on (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted (see \ccc{squared_distance}).}
 
 
 % ACCELERATING THE DISTANCE QUERIES
@@ -141,13 +141,51 @@ closest_point_and_primitive(const Point& query,
 \ccHeading{Accelerating the distance queries}
 
 \ccMethod{bool accelerate_distance_queries();}
-{ Constructs the internal search KD-tree used to accelerate the distance queries. The points in the search tree are taken from the primitives by calling the member function \ccc{reference_point} of the primitive. Returns \ccc{true}, iff the memory allocation is successful.}
+{ Constructs an internal data structure for accelerating distance queries. This method should be called once, before the first distance query. 
+%search KD-tree used to accelerate the distance queries. The points in the search tree are taken from the primitives by calling the member function \ccc{reference_point} of the primitive.
+Returns \ccc{true}, iff the memory allocation is successful.}
 
 \begin{ccAdvanced}
-\ccMethod{template <class InputIterator>
+In the following paragraphs, we discuss details of the implementation of the distance queries. We explain the internal use of hints, how the user can pass his own hints to the tree, and how the user can influence the construction of the secondary data structure used for accelerating distance queries.
+
+Internally, the distance queries algorithms are initialized with some hint, which has the same type as the return type of the query, and this value is refined along a traversal of the tree, until it is optimal, that is to say until it realizes the shortest distance to the primitives. In particular, the exact specification of these internal algorithms is that they minimize the distance  to the object composed of the union of the primitives and the hint. 
+
+It follows that 
+\begin{itemize}
+\item in order to return the exact distance to the set of primitives, the algorithms need the hint to be exactly on the primitives;
+\item if this is not the case, and if the hint happens to be closer to the query point than any of the primitives, then the hint is returned.
+\end{itemize}
+This second observation is reasonnable, in the sense that providing a hint to the algorithm means claiming that this hint belongs to the union of the primitives. These considerations about the hints being exactly on the primitives or not are important: in the case where the set of primitives is a triangle soup, and if some of the primitives are large, one may want to provide a much better hint than a vertex of the triangle soup could be. It could be, for example, the barycenter of one of the triangles. But, except with the use of an exact constructions kernel, one cannot easily construct points other than the vertices, that lie exactly on a triangle soup. Hence, providing a good hint sometimes means not being able to provide it exactly on the primitives. In rare occasions, this hint can be returned as the closest point.
+
+In order to accelerate distance queries significantly, the AABB tree builds an internal KD-tree containing a set of potential hints, when the method \ccc{accelerate_distance_queries} is called. This KD-tree provides very good hints that allow the algorithms to run much faster than with a default hint (such as the \ccc{reference_point} of the first primitive). The set of potential hints is a sampling of the union of the primitives, which is obtained, by default, by calling the method \ccc{reference_point} of each of the primitives. However, such a sampling with one point per primitive may not be the most relevant one: if some primitives are very large, it helps inserting more than one sample on them. Conversely, a sparser sampling with less than one point per input primitive is relevant in some cases.
+
+For this reason, the user can provide his own set of sample points:
+
+\ccMethod{template <class InputIterator, class PointAndIdBuilder>
 bool accelerate_distance_queries(InputIterator begin,
-                                 InputIterator beyond);}
-{ Constructs the internal search KD-tree used to accelerate the distance queries from a specified point set. Iterator \ccc{InputIterator} must have \ccc{Point} or \ccc{Point_and_primitive_id} as value type. Each point from the specified \ccc{Point_and_primitive_id} set must be located on the corresponding input primitive. If the value type of the iterator is \ccc{Point}, in the rare cases where the hint from the KD-tree would be returned by the \ccc{closest_point_and_primitive method}, the default primitive id would be returned as primitive id. For a triangle surface mesh this point set can be provided, e.g., as the vertices of the mesh or as the triangle centroids. It is not required to provide one point per primitive, such that, e.g., large input primitive can be sampled with several sample points or, conversely, such that a single point is provided for clusters of small input primitives. Returns \ccc{true}, iff the memory allocation is successful.}
+                                 InputIterator beyond, 
+                                 PointAndIdBuilder idb =
+                                 PointAndIdBuilder());}
+{ Constructs an internal KD-tree containing the specified point set, to be used as the set of potential hints for accelerating the distance queries. Iterator \ccc{InputIterator} must be accepted as argument by the operator provided by the \ccc{idb} object: this operator returns a \ccc{Point_and_primitive_id} corresponding to the object the iterator points to.}
+
+Note that, in some cases, the user is not able to provide ids of the primitives on which the points lie. In these cases, providing a default value for the ids of the hints is possible. Still, the user should be aware that if he uses the \ccc{closest_point_and_primitive} method, there is a (tiny) chance that a hint is returned, along with this default value as corresponding primitive id. Hence, the validity of the returned primitive id should be checked in these cases.
+
+As an alternative to using the KD-tree, the user can also provide the hints directly, by using the following methods:
+
+\ccMethod{FT
+squared_distance(const Point& query, const Point& hint);} 
+{Returns the minimum squared distance between the query point and all input primitives. The internal KD-tree is not used.}
+%Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted. When omitted, and if the internal KD-tree data structure has been constructed using function \ccc{accelerate_distance_queries} (see below), the latter is used to efficiently query the nearest hint point from the query, among a set of hint points stored in the internal KD-tree. Otherwise, the first primitive reference point is taken as a naive hint point. }
+
+\ccMethod{Point
+closest_point(const Point& query, const Point& hint);} 
+{Returns the point in the union of all input primitives which is closest to the query. In case there are several closest points, one arbitrarily chosen closest point is returned. The internal KD-tree is not used.}
+%Parameter \ccc{hint} is assumed to be any point located on the input primitives (the closer \ccc{hint} to \ccc{query}, the faster). If \ccc{hint} is closer to \ccc{query} than any of the primitives, \ccc{hint} is returned. Parameter \ccc{hint} can be omitted (see \ccc{squared_distance}). }
+
+\ccMethod{Point_and_primitive_id
+closest_point_and_primitive(const Point& query, const Point_and_primitive_id& hint);} 
+{Returns a \ccc{Point_and_primitive_id} which realizes the smallest distance between the query point and all input primitives. The internal KD-tree is not used.}
+%Parameter \ccc{hint} is assumed to be any point and the corresponding input primitive it lies on (the closer \ccc{hint} to \ccc{query}, the faster). Parameter \ccc{hint} can be omitted (see \ccc{squared_distance}).}
 \end{ccAdvanced}
 
 \ccSeeAlso
