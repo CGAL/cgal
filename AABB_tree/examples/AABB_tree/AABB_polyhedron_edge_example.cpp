@@ -27,7 +27,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/AABB_polyhedron_edge_primitive.h>
+#include <CGAL/AABB_polyhedron_segment_primitive.h>
 #include <CGAL/Simple_cartesian.h>
 
 typedef CGAL::Simple_cartesian<double> K;
@@ -35,7 +35,7 @@ typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
-typedef CGAL::AABB_polyhedron_edge_primitive<K,Polyhedron> Primitive;
+typedef CGAL::AABB_polyhedron_segment_primitive<K,Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
