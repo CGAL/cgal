@@ -33,7 +33,7 @@
 
 namespace CGAL {
 
-  template <class Polyhedron, class Kernel, class AABBTree_kernel>
+  template <class Polyhedron, class Kernel, class Dummy_kernel>
   class AABB_polyhedral_oracle : public Polyhedron
   {
   public:
@@ -43,7 +43,7 @@ namespace CGAL {
     typedef typename Kernel::Point_3 Point_3;
     typedef typename Kernel::Segment_3 Segment_3;
 
-    typedef AABB_polyhedral_oracle<Polyhedron,Kernel,AABBTree_kernel> Self;
+    typedef AABB_polyhedral_oracle<Polyhedron,Kernel,Dummy_kernel> Self;
     typedef Self Surface_mesher_traits_3;
     typedef Point_3 Intersection_point;
     typedef Self Surface_3;

@@ -49,12 +49,7 @@ public:
 //  typedef typename GeomTraits::Sphere_3 Sphere;
   typedef unsigned int size_type;
 
-  // TOFIX: Workaround for weighted_point
-#ifndef AABB_KERNEL_USE_WEIGHTED_POINT
   typedef typename GeomTraits::Point_3 Point;
-#else
-  typedef typename GeomTraits::Point_3::Point Point;
-#endif
 
   typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
   typedef typename std::pair<Point,typename Primitive::Id> Point_and_primitive_id;
@@ -93,7 +88,7 @@ public:
    * axis, using the comparison function <dim>_less_than (dim in {x,y,z})
    */
 
-class Sort_primitives 
+class Sort_primitives
 {
 public:
 template<typename PrimitiveIterator>
@@ -128,7 +123,7 @@ Sort_primitives sort_primitives_object() {return Sort_primitives();}
    * @param beyond an iterator on the past-the-end primitive
    * @return the bounding box of the primitives of the iterator range
    */
-   
+
    class Compute_bbox {
 public:
 template<typename ConstPrimitiveIterator>
@@ -145,7 +140,7 @@ typename AT::Bounding_box operator()(ConstPrimitiveIterator first,
 };
 
 Compute_bbox compute_bbox_object() {return Compute_bbox();}
-  
+
 
 class Do_intersect {
 public:
@@ -170,43 +165,38 @@ template<typename Query>
 boost::optional<typename AT::Object_and_primitive_id>
 operator()(const Query& query, const typename AT::Primitive& primitive) const
 {
-  // TODO: implement a real intersection construction method
-  // do_intersect is needed here because we construct intersection between
-  // pr.datum().supporting_plane() and q
-  if(! AT().do_intersect_object()(query,primitive))
-    return false;
+  typedef boost::optional<Object_and_primitive_id> Intersection;
 
-  // compute intersection
   CGAL::Object object = CGAL::intersection(primitive.datum(),query);
-  if(object.empty())
-      return boost::optional<Object_and_primitive_id>();
-  else 
-      return boost::optional<Object_and_primitive_id>(Object_and_primitive_id(object,primitive.id()));
+  if ( object.empty() )
+    return Intersection();
+  else
+    return Intersection(Object_and_primitive_id(object,primitive.id()));
 }
 };
 
 Intersection intersection_object() {return Intersection();}
 
 
-  // This should go down to the GeomTraits, i.e. the kernel  
+  // This should go down to the GeomTraits, i.e. the kernel
   class Closest_point {
       typedef typename AT::Point Point;
       typedef typename AT::Primitive Primitive;
-  public:    
+  public:
       Point operator()(const Point& p, const Primitive& pr, const Point& bound) const
       {
           return CGAL::nearest_point_3(p, pr.datum(), bound);
       }
   };
-  
+
   // This should go down to the GeomTraits, i.e. the kernel
-  // and the internal implementation should change its name from 
-  // do_intersect to something like does_contain (this is what we compute, 
+  // and the internal implementation should change its name from
+  // do_intersect to something like does_contain (this is what we compute,
   // this is not the same do_intersect as the spherical kernel)
   class Compare_distance {
       typedef typename AT::Point Point;
       typedef typename AT::Primitive Primitive;
-  public:    
+  public:
       template <class Solid>
       CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const
       {
@@ -216,18 +206,18 @@ Intersection intersection_object() {return Intersection();}
           CGAL::SMALLER : CGAL::LARGER;
       }
   };
-  
+
   Closest_point closest_point_object() {return Closest_point();}
   Compare_distance compare_distance_object() {return Compare_distance();}
 
-  
+
 private:
   /**
    * @brief Computes bounding box of one primitive
    * @param pr the primitive
    * @return the bounding box of the primitive \c pr
    */
-  static Bounding_box compute_bbox(const Primitive& pr) 
+  static Bounding_box compute_bbox(const Primitive& pr)
   {
     return pr.datum().bbox();
   }
@@ -244,7 +234,7 @@ private:
   { return pr1.reference_point().y() < pr2.reference_point().y(); }
   static bool less_z(const Primitive& pr1, const Primitive& pr2)
   { return pr1.reference_point().z() < pr2.reference_point().z(); }
-  
+
 
 private:
   // Disabled copy constructor & assignment operator
@@ -260,7 +250,7 @@ private:
 //-------------------------------------------------------
 template<typename GT, typename P>
 typename AABB_traits<GT,P>::Axis
-AABB_traits<GT,P>::longest_axis(const Bounding_box& bbox) 
+AABB_traits<GT,P>::longest_axis(const Bounding_box& bbox)
 {
   const double dx = bbox.xmax() - bbox.xmin();
   const double dy = bbox.ymax() - bbox.ymin();
