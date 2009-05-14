@@ -46,8 +46,9 @@ template<typename ArithmeticKernel> void test_routine() {
     assert(stha[5] == NT(54));
     assert(stha[6] == NT(7));
     assert(stha[7] == NT(1));
-    assert(CGAL::stha_count_number_of_real_roots
+    assert(CGAL::number_of_real_roots
              (stha.begin(),stha.end()) == 4);
+    assert(CGAL::number_of_real_roots(f)==4);
     
     stha.clear();
     
@@ -63,9 +64,9 @@ template<typename ArithmeticKernel> void test_routine() {
     assert(stha[5] == NT(54));
     assert(stha[6] == NT(7));
     assert(stha[7] == NT(1));
-    assert(CGAL::stha_count_number_of_real_roots
+    assert(CGAL::number_of_real_roots
              (stha.begin(),stha.end()) == 4);
-
+    
     stha.clear();
     
     CGAL::CGALi::bezout_principal_sturm_habicht_sequence<PNT_1_traits>
@@ -80,7 +81,7 @@ template<typename ArithmeticKernel> void test_routine() {
     assert(stha[5] == NT(54));
     assert(stha[6] == NT(7));
     assert(stha[7] == NT(1));
-    assert(CGAL::stha_count_number_of_real_roots
+    assert(CGAL::number_of_real_roots
              (stha.begin(),stha.end()) == 4);
 
     stha.clear();
@@ -98,7 +99,7 @@ template<typename ArithmeticKernel> void test_routine() {
     assert(stha[5] == NT(54));
     assert(stha[6] == NT(7));
     assert(stha[7] == NT(1));
-    assert(CGAL::stha_count_number_of_real_roots
+    assert(CGAL::number_of_real_roots
              (stha.begin(),stha.end()) == 4);
   }
   
@@ -120,7 +121,7 @@ template<typename ArithmeticKernel> void test_routine() {
     assert(stha[6] == NT(0));
     assert(stha[7] == NT(8));
     assert(stha[8] == NT(1));
-    assert(CGAL::stha_count_number_of_real_roots
+    assert(CGAL::number_of_real_roots
                (stha.begin(),stha.end()) == 1);
 
     stha.clear();
@@ -138,7 +139,7 @@ template<typename ArithmeticKernel> void test_routine() {
     assert(stha[6] == NT(0));
     assert(stha[7] == NT(8));
     assert(stha[8] == NT(1));
-    assert(CGAL::stha_count_number_of_real_roots
+    assert(CGAL::number_of_real_roots
                (stha.begin(),stha.end()) == 1);
 
     stha.clear();
@@ -156,7 +157,7 @@ template<typename ArithmeticKernel> void test_routine() {
     assert(stha[6] == NT(0));
     assert(stha[7] == NT(8));
     assert(stha[8] == NT(1));
-    assert(CGAL::stha_count_number_of_real_roots
+    assert(CGAL::number_of_real_roots
                (stha.begin(),stha.end()) == 1);
     
   }

@@ -3,10 +3,14 @@
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial_type_generator.h>
 
+#include <CGAL/Arithmetic_kernel.h>
+
 int main(){
   CGAL::set_pretty_mode(std::cout);
 
-  typedef CGAL::Polynomial_type_generator<int,1>::Type Poly_1;
+  typedef CGAL::Arithmetic_kernel::Integer Int;
+
+  typedef CGAL::Polynomial_type_generator<Int,1>::Type Poly_1;
   typedef CGAL::Polynomial_traits_d<Poly_1>            PT_1;
   
   //construction using shift 
@@ -30,13 +34,17 @@ int main(){
 
   // Real root counting:
   PT_1::Principal_sturm_habicht_sequence stha;
-  std::vector<int> psc;
+  std::vector<Int> psc;
   
   stha(F,std::back_inserter(psc));
   
-  int roots = CGAL::stha_count_number_of_real_roots(psc.begin(),psc.end());
+  int roots = CGAL::number_of_real_roots(psc.begin(),psc.end());
 
   std::cout << "The number of real roots of F is: " << roots << std::endl; // 3
+
+  roots =  CGAL::number_of_real_roots(G);
+
+  std::cout << "The number of real roots of G is: " << roots << std::endl; // 2
 
   return 0;
   

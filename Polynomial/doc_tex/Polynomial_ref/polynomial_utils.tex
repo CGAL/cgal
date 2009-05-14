@@ -949,20 +949,58 @@ For more details see the concept
 \ccRefConceptPage{PolynomialTraits_d::PrincipalSturmHabichtSequence}\\
 \end{ccRefFunction}
 
-% stha_count_number_of_real_roots
-\begin{ccRefFunction}{stha_count_number_of_real_roots}
+% number_of_real_roots
+\begin{ccRefFunction}{number_of_real_roots}
 \ccDefinition
 
-Given a range that is interpreted as the principal Sturm-Habicht coefficients
-of a polynomial $f$, the function computes
+Given a polynomial $f$, or a range of values that is interpreted 
+as the principal Sturm-Habicht coefficients of $f$, the function computes
 $$m:=\# \{\alpha\in\mathbb{R}\mid f(\alpha)=0\}$$
 that is, the number of distinct real roots of $f$.
 
-The value type of the iterator range must be a model of \ccc{RealEmbeddable}.
+The coefficient type of the polynomial, 
+or the value type of the iterator range, respectively 
+must be a model of \ccc{RealEmbeddable}.
+In the second version, 
+it is not required to pass the exact princiapl Sturm-Habicht coefficients
+to the functions; it is only required that the sign of each element
+corresponds to the sign of the actual principal Sturm-Habicht coefficient.
+
+\begin{ccAdvanced}
+
+We explain the internals of this function.
+For a sequence $I:=(a_0,\ldots,a_n)$ of real numbers with $a_0\neq 0$, define 
+$$C(I)=\ccSum{i=1}{s}\epsilon_i$$
+where $s$ is the number of subsequences of $I$ of the form
+\begin{ccTexOnly}
+$$(a,\underbrace{0,\ldots,0}_k,b)$$
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<CENTER>
+<IMG BORDER=0 SRC="./underbrace.gif" ALIGN=middle ALT="">
+</CENTER>
+\end{ccHtmlOnly}
+with $a\neq 0,b\neq 0, k\geq 0$.\\
+For the $i$-th subsequence of $I$, define
+$$\epsilon_i:=\begin{array}{cc}
+0 & \mbox{if $k$ is odd},\\
+(-1)^{k/2}\mathrm{sign}(ab) & \mbox{if $k$ is even}.
+\end{array}$$ 
+
+For $f\in\mathbb{R}[x]$ with $\deg f=n$, we have:
+$$C(\mathrm{stha}_n(f),\ldots,\mathrm{stha}_0(f)) = \#\{\alpha\in\R\mid f(\alpha)=0\}$$
+In other words, the signs of the principal Sturm-Habicht coefficients
+determine the number of distinct real roots of $f$.
+
+\end{ccAdvanced}
+
 
 \ccOperations
+\ccFunction{  template<typename Polynomial_d>
+    int number_of_real_roots(Polynomial_d f);}
+         { computes the number of distinct real roots of $f$}
 \ccFunction{  template<typename InputIterator>
-    int stha_count_number_of_real_roots(InputIterator start,InputIterator end);}
+    int number_of_real_roots(InputIterator start,InputIterator end);}
          { computes the number of distinct real roots of $f$ whose principal Sturm-Habicht coefficients are passed by the iterator range.}
 \ccSeeAlso
 \ccRefConceptPage{Polynomial_d}\\

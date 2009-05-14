@@ -3010,6 +3010,7 @@ Polynomial/doc_tex/Polynomial_ref/polynomial_utils.tex -text
 Polynomial/doc_tex/Polynomial_ref/sturm_habicht_def.gif -text
 Polynomial/doc_tex/Polynomial_ref/subresultant_def.gif -text
 Polynomial/doc_tex/Polynomial_ref/sylvester_matrix.gif -text
+Polynomial/doc_tex/Polynomial_ref/underbrace.gif -text
 Polynomial/examples/Polynomial/coefficient_access.cpp -text
 Polynomial/examples/Polynomial/construction.cpp -text
 Polynomial/examples/Polynomial/degree.cpp -text

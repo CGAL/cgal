@@ -370,25 +370,28 @@ their polynomial subresultant sequence, with or without cofactors,
 and their principal subresultant coefficients.
 %
 \begin{itemize}
-\item \ccc{PolynomialTraits_d::Resultant}\ccGlue
-\item \ccc{PolynomialTraits_d::PolynomialSubresultants}\ccGlue
-\item \ccc{PolynomialTraits_d::PolynomialSubresultantsWithCofactors}\ccGlue
-\item \ccc{PolynomialTraits_d::PrincipalSubresultants}
+\item \ccRefConceptPage{PolynomialTraits_d::Resultant}\ccGlue
+\item \ccRefConceptPage{PolynomialTraits_d::PolynomialSubresultants}\ccGlue
+\item \ccRefConceptPage{PolynomialTraits_d::PolynomialSubresultantsWithCofactors}\ccGlue
+\item \ccRefConceptPage{PolynomialTraits_d::PrincipalSubresultants}
 \end{itemize}
 %
 Moreover, functors to compute the Sturm-Habicht sequence, with or without
 cofactors, and for the principal Sturm-Habicht coefficients exist.
 %
 \begin{itemize}
-\item \ccc{PolynomialTraits_d::SturmHabichtSequence}\ccGlue
-\item \ccc{PolynomialTraits_d::SturmHabichtSequenceWithCofactors}\ccGlue
-\item \ccc{PolynomialTraits_d::PrincipalSturmHabichtSequence}
+\item \ccRefConceptPage{PolynomialTraits_d::SturmHabichtSequence}\ccGlue
+\item \ccRefConceptPage{PolynomialTraits_d::SturmHabichtSequenceWithCofactors}\ccGlue
+\item \ccRefConceptPage{PolynomialTraits_d::PrincipalSturmHabichtSequence}
 \end{itemize}
 %
+For a formal definition of all used terms, we refer to the corresponding
+reference pages.
+
 The principal Sturm-Habicht sequence allows to count the number of
 real roots of a polynomial using the function
 \begin{itemize}
-\item \ccc{CGAL::stha_count_number_of_real_roots}.
+\item \ccRefIdfierPage{CGAL::number_of_real_roots}.
 \end{itemize}
 As input, this function requires an iterator range that represents
 the principal Sturm-Habicht coefficients. 
@@ -402,14 +405,14 @@ $\mathrm{stha}_0(f_t)$ for $t=t_0$ yields a valid (principal)
 Sturm-Habicht sequence for $f_{t_0}$. The same holds for (principal)
 subresultants. Thus, it is enough in such situations to compute
 the sequence once for the parameter $t$, and call 
-\ccc{CGAL::stha_count_number_of_real_roots} for each specialized parameter
+\ccc{CGAL::number_of_real_roots} for each specialized parameter
 value.
 
 We finally remark that computing subresultants and Sturm-Habicht sequences
 introduces an enormous coefficient blow-up.
 An application of the functors therefore does not make sense
-for built-in integers except for toy examples as below.
-To avoid overflows, one should pass to arbitrary size integer types
+for built-in integers except for toy examples.
+To avoid overflows, one should use arbitrary size integer types
 in real applications.
 
 \subsection{Examples}

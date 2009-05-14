@@ -412,12 +412,15 @@ template<typename Polynomial_traits_d,
 } // namespace CGALi
 
 
+
+      
+
   /*! 
    *  \brief returns the number of roots of a polynomial with given 
    *  principal Sturm-Habicht sequence (counted without multiplicity)
    */
   template<typename InputIterator>
-    int stha_count_number_of_real_roots(InputIterator start,InputIterator end) {
+    int number_of_real_roots(InputIterator start,InputIterator end) {
     if(start==end) {
       return 0;
     }
@@ -463,6 +466,20 @@ template<typename Polynomial_traits_d,
 	  
     }
     return m;
+  }
+
+  /*! 
+   *  \brief returns the number of roots of a polynomial 
+   */
+  template<typename Polynomial_d>
+    int number_of_real_roots(Polynomial_d f) {
+      
+      typedef CGAL::Polynomial_traits_d<Polynomial_d> Poly_traits_d;
+      typedef typename Poly_traits_d::Coefficient_type Coeff;
+      std::vector<Coeff> stha;
+      typename Poly_traits_d::Principal_sturm_habicht_sequence()
+          (f,std::back_inserter(stha));
+      return CGAL::number_of_real_roots(stha.begin(),stha.end());
   }
 
 CGAL_END_NAMESPACE
