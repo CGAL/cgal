@@ -35,7 +35,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/AABB_polyhedron_edge_primitive.h>
+#include <CGAL/AABB_polyhedron_segment_primitive.h>
 
 #include "AABB_test_util.h"
 
@@ -49,7 +49,7 @@ void test(const char *filename)
         typedef typename K::Vector_3 Vector;
         typedef typename K::Segment_3 Segment;
         typedef CGAL::Polyhedron_3<K> Polyhedron;
-        typedef CGAL::AABB_polyhedron_edge_primitive<K,Polyhedron> Primitive;
+        typedef CGAL::AABB_polyhedron_segment_primitive<K,Polyhedron> Primitive;
         typedef CGAL::AABB_traits<K, Primitive> Traits;
         typedef CGAL::AABB_tree<Traits> Tree;
 

@@ -22,18 +22,18 @@
 //
 //******************************************************************************
 
-#ifndef AABB_POLYHEDRON_EDGE_PRIMITIVE_H_
-#define AABB_POLYHEDRON_EDGE_PRIMITIVE_H_
+#ifndef AABB_POLYHEDRON_SEGMENT_PRIMITIVE_H_
+#define AABB_POLYHEDRON_SEGMENT_PRIMITIVE_H_
 
 namespace CGAL {
 
     /**
-    * @class AABB_polyhedron_edge_primitive
+    * @class AABB_polyhedron_segment_primitive
     *
     *
     */
     template<typename GeomTraits, typename Polyhedron>
-    class AABB_polyhedron_edge_primitive
+    class AABB_polyhedron_segment_primitive
     {
     public:
         /// AABBTrianglePrimitive types
@@ -42,11 +42,11 @@ namespace CGAL {
         typedef typename Polyhedron::Halfedge_handle Id;
 
         /// Constructor
-        AABB_polyhedron_edge_primitive() {}
-        AABB_polyhedron_edge_primitive(const Id& handle)
+        AABB_polyhedron_segment_primitive() {}
+        AABB_polyhedron_segment_primitive(const Id& handle)
             : m_halfedge_handle(handle)  { };
 
-        AABB_polyhedron_edge_primitive(const AABB_polyhedron_edge_primitive& primitive)
+        AABB_polyhedron_segment_primitive(const AABB_polyhedron_segment_primitive& primitive)
         {
             m_halfedge_handle = primitive.id();
         }
@@ -74,7 +74,7 @@ namespace CGAL {
     private:
         /// Id, here a polyhedron halfedge handle
         Id m_halfedge_handle;
-    };  // end class AABB_polyhedron_edge_primitive
+    };  // end class AABB_polyhedron_segment_primitive
 
 
 
@@ -123,4 +123,4 @@ namespace CGAL {
 }  // end namespace CGAL
 
 
-#endif // AABB_POLYHEDRON_EDGE_PRIMITIVE_H_
+#endif // AABB_POLYHEDRON_SEGMENT_PRIMITIVE_H_

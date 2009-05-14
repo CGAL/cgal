@@ -24,9 +24,10 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
   create_single_source_cgal_program("aabb_intersection_triangle_test.cpp")
-  create_single_source_cgal_program("aabb_distance_triangle_test.cpp")
-  create_single_source_cgal_program("aabb_distance_edge_test.cpp")
-  create_single_source_cgal_program("aabb_distance_triangle_hint_test.cpp")
+#  create_single_source_cgal_program("aabb_distance_triangle_test.cpp")
+#  create_single_source_cgal_program("aabb_distance_edge_test.cpp")
+#  create_single_source_cgal_program("aabb_distance_triangle_hint_test.cpp")
+  create_single_source_cgal_program("aabb_intersection_triangle_compact_test.cpp")
 
 else()
   
