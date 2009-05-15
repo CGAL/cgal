@@ -52,50 +52,55 @@ intersection(const typename K::Triangle_3 &t,
 
   // intersection is either a point, either a line
   // if it is a line, then we need to clip it to a segment
-  if ( const Line_3* l = object_cast<Line_3>(&intersection))
+  if ( const Line_3* line = object_cast<Line_3>(&intersection))
   {
     typename K::Intersect_3 intersect = k.intersect_3_object();
-    typename K::Construct_line_3 line = k.construct_line_3_object();
+    typename K::Construct_line_3 f_line = k.construct_line_3_object();
     typename K::Construct_vertex_3 vertex_on = k.construct_vertex_3_object();
     typename K::Construct_object_3 make_object = k.construct_object_3_object();
-    typename K::Construct_segment_3 segment = k.construct_segment_3_object();
+    typename K::Construct_segment_3 f_segment = k.construct_segment_3_object();
+    typename K::Has_on_3 has_on = k.has_on_3_object();
 
     const Point_3& t0 = vertex_on(t,0);
     const Point_3& t1 = vertex_on(t,1);
     const Point_3& t2 = vertex_on(t,2);
 
-    const Line_3 l01 = line(t0,t1);
-    const Line_3 l02 = line(t0,t2);
-    const Line_3 l12 = line(t1,t2);
+    const Line_3 l01 = f_line(t0,t1);
+    const Line_3 l02 = f_line(t0,t2);
+    const Line_3 l12 = f_line(t1,t2);
 
-    const Object_3 inter_01 = intersect(l01,*l);
-    const Object_3 inter_02 = intersect(l02,*l);
-    const Object_3 inter_12 = intersect(l12,*l);
+    const Segment_3 s01 = f_segment(t0,t1);
+    const Segment_3 s02 = f_segment(t0,t2);
+    const Segment_3 s12 = f_segment(t1,t2);
+
+    const Object_3 inter_01 = intersect(l01,*line);
+    const Object_3 inter_02 = intersect(l02,*line);
+    const Object_3 inter_12 = intersect(l12,*line);
 
     const Point_3* p01 = object_cast<Point_3>(&inter_01);
     const Point_3* p02 = object_cast<Point_3>(&inter_02);
     const Point_3* p12 = object_cast<Point_3>(&inter_12);
 
-    if ( p01 )
+    if ( p01 && has_on(s01, *p01) )
     {
-      if ( p02 )
-        return make_object(segment(*p01,*p02));
-      if ( p12 )
-        return make_object(segment(*p01,*p12));
+      if ( p02 && has_on(s02, *p02) )
+        return make_object(f_segment(*p01,*p02));
+      else if ( p12 && has_on(s12, *p12) )
+        return make_object(f_segment(*p01,*p12));
+      else
+        return make_object(*p01);
     }
-    else
+    else if ( p02 && has_on(s02, *p02) )
     {
-      if ( p02 && p12)
-        return make_object(segment(*p02,*p12));
+      if  ( p12 && has_on(s12, *p12) )
+        return make_object(f_segment(*p02,*p12));
+      else
+        return make_object(*p02);
     }
-
-    // here line intersects the boundary of the triangle
-    if ( const Segment_3* s01 = object_cast<Segment_3>(&inter_01) )
-      return make_object(*s01);
-    if ( const Segment_3* s02 = object_cast<Segment_3>(&inter_02) )
-      return make_object(*s02);
-    if ( const Segment_3* s12 = object_cast<Segment_3>(&inter_12) )
-      return make_object(*s12);
+    else if ( p12 && has_on(s12, *p12) )
+    {
+      return make_object(*p12);
+    }
 
     // should not happen
     CGAL_kernel_assertion(false);
