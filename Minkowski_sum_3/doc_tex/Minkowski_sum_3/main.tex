@@ -79,18 +79,12 @@ $-P$ on $Q$, such that $-r$ is on the boundary of $Q$. Finally, move
 $-P$ along the complete boundary of $Q$. The union of $Q$ and the
 points swept by $-P$ is the Minkowski sum of $P$ and $Q$.
 
-Implementing the Minkowski sum, the reference point needs not be
-chosen. It is implicitly given as the origin of the coordinate
+Implementing the Minkowski sum, the reference point does not need to
+be chosen. It is implicitly given as the origin of the coordinate
 system. Choosing a different reference point is equivalent to
 translating the coordinate system. Such a translation does not change
-the shape of the Minkowski sum; it only translates Minkowski sum by
-the same vector. 
-
-Note, that the described method is helpful for illustrating the
-operation and for constructing a drawing of a Minkowski sum, but its
-not always accurate. It only works if the reference point is part of
-$P$, while the origin of the coordinate system needs not to be within
-$P$.
+the shape of the Minkowski sum; it only translates the Minkowski sum
+by the same vector.
 
 This package provides a function \ccc{minkowski_sum_3} that computes
 the Minkowski sum of two Nef polyhedra. We do not support arbitrary
@@ -193,8 +187,7 @@ polyhedron and therefore selected, but in case of the open unit cube
 $[0,1)^3$ they are unselected. Each item has its own selection mark,
 which allows the correct representation of Nef polyhedra, which are
 closed under Boolean and topological operations. Details can be found
-in the chapter on 3D Boolean operations on Nef polyhedra for more
-details~\ref{chapterNef3}.
+in the chapter on 3D Boolean operations on Nef polyhedra~\ref{chapterNef3}.
 
 The use of \ccc{Nef_polyhedron_3} allows many scenarios beyond the
 Minkowski sum of two solids. First, they can model the input and the
@@ -242,7 +235,7 @@ selection mark without spoiling the correctness of the Minkowski sum.
 
 The function \ccc{minkowski_sum_3} should be used with the
 \ccc{Extact_predicates_exact_constructions_kernel}, which often is
-the most efficient choice and allows the floating-point input. Consult
+the most efficient choice and allows floating-point input. Consult
 Section~\label{sectionNef_3IO} for more details.
 
 The following example code illustrates the usage of the function
