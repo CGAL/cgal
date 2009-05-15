@@ -62,7 +62,7 @@ public:
   const Triangle t() const { return m_t; }
 
   double& z() { return m_z; }
-  const double z() const { return m_z; }
+  double z() const { return m_z; }
 
   static bool closer(const Projected_triangle& t1, const Projected_triangle& t2) {
     return t1.z() < t2.z();

@@ -649,7 +649,7 @@ inline void Scene::segment_2color_clipping (Segment_set& sset) {
     }
   }
 
-  for (std::set<Segment>::iterator sit = sset_out.begin() ;
+  for (Segment_set::iterator sit = sset_out.begin() ;
        sit != sset_out.end() ; ++sit)
     gl_draw_edge(sit->source(), sit->target(), 0.005);
 
