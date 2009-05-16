@@ -47,7 +47,6 @@
 #include <CGAL/HalfedgeDS_vertex_base.h>
 #include <CGAL/HalfedgeDS_halfedge_base.h>
 #include <CGAL/HalfedgeDS_face_base.h>
-#include <CGAL/Polyhedron_traits_with_normals_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -204,9 +203,9 @@ struct Arr_polyhedral_sgm_polyhedron_items : public Polyhedron_items_3 {
  * type that is based on the extended types, and define a new polyhedron type
  * based on the new items type.
  */
-template <class Sgm, class Kernel>
+template <class Sgm, class Traits>
 struct Arr_polyhedral_sgm_polyhedron_3 :
-  public Polyhedron_3<Polyhedron_traits_with_normals_3<Kernel>,
+  public Polyhedron_3<Traits,
                       Arr_polyhedral_sgm_polyhedron_items<Sgm> >
 {
   /*! Constructor */

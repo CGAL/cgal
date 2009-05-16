@@ -24,6 +24,13 @@
  * This representation represents the 2D surface boundary of the shape.
  */
 
+#include <string>
+#include <vector>
+#include <list>
+#include <iostream>
+
+#include <boost/type_traits.hpp>
+
 #include <CGAL/basic.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_traits_with_normals_3.h>
@@ -41,11 +48,6 @@
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_arr_dcel.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_overlay.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_initializer_visitor.h>
-
-#include <string>
-#include <vector>
-#include <list>
-#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -73,36 +75,57 @@ private:
   
   // Polyhedron types:
   typedef typename Polyhedron::Vertex_const_handle
-                                Polyhedron_vertex_const_handle;
+    Polyhedron_vertex_const_handle;
   typedef typename Polyhedron::Halfedge_const_handle
-                                Polyhedron_halfedge_const_handle;
+    Polyhedron_halfedge_const_handle;
 
   typedef typename Polyhedron::Vertex_iterator
-                                Polyhedron_vertex_iterator;
+    Polyhedron_vertex_iterator;
   typedef typename Polyhedron::Halfedge_iterator
-                                Polyhedron_halfedge_iterator;
+    Polyhedron_halfedge_iterator;
   typedef typename Polyhedron::Facet_iterator
-                                Polyhedron_facet_iterator;
+    Polyhedron_facet_iterator;
 
   typedef typename Polyhedron::Halfedge_around_vertex_circulator
-                                Polyhedron_halfedge_around_vertex_circulator;
+    Polyhedron_halfedge_around_vertex_circulator;
+  typedef boost::is_same<typename Polyhedron::Plane_3, Vector_3>
+    Polyhedron_has_normal;
 
   /*! Transforms a (planar) facet into a normal */
-  struct Normal_vector {
+  struct Normal_equation {
     template <class Facet>
     typename Facet::Plane_3 operator()(Facet & f) {
       typename Facet::Halfedge_handle h = f.halfedge();
-      // Facet::Plane_3 is the normal vector type.
-      Vector_3 normal =
-        CGAL::cross_product(h->next()->vertex()->point() -
-                            h->vertex()->point(),
-                            h->next()->next()->vertex()->point() -
-                            h->next()->vertex()->point());
-      double tmp = CGAL::to_double(normal.squared_length());
-      return normal / CGAL::sqrt(tmp);
+      return CGAL::cross_product(h->next()->vertex()->point() -
+                                 h->vertex()->point(),
+                                 h->next()->next()->vertex()->point() -
+                                 h->next()->vertex()->point());
     }
   };
 
+  void compute_planes(Polyhedron & polyhedron, boost::true_type)
+  {
+    std::transform(polyhedron.facets_begin(), polyhedron.facets_end(),
+                   polyhedron.planes_begin(), Normal_equation());
+  }
+  
+  /*! Compute the equation of the undelying plane of a facet */
+  struct Plane_equation {
+    template <typename Facet>
+    typename Facet::Plane_3 operator()(Facet & f) {
+      typename Facet::Halfedge_handle h = f.halfedge();
+      return typename Facet::Plane_3(h->vertex()->point(),
+                                     h->next()->vertex()->point(),
+                                     h->next()->next()->vertex()->point());
+    }
+  };
+
+  void compute_planes(Polyhedron & polyhedron, boost::false_type)
+  {
+    std::transform(polyhedron.facets_begin(), polyhedron.facets_end(),
+                   polyhedron.planes_begin(), Plane_equation());
+  }
+  
   /*! A point adder */
   template <class HDS, class PointIterator_3>
   class Point_adder {
@@ -329,6 +352,16 @@ private:
     }
   }
 
+  /*! Obtain the normal of a facet of a polyhedron that supports normals */
+  template <typename Facet>
+  const Vector_3 & get_normal(const Facet & facet, boost::true_type) const
+  { return facet->plane(); }
+  
+  /*! Obtain the normal of a facet of a polyhedron that supports planes */
+  template <typename Facet>
+  Vector_3 get_normal(const Facet & facet, boost::false_type) const
+  { return facet->plane().orthogonal_vector(); }
+
   /*! Process a polyhedron vertex recursively constructing the Gaussian map
    * of the polyhedron
    * \param src the polyhedron vertex currently processed
@@ -375,8 +408,11 @@ private:
     do {
       if (!next_hec->processed()) {
 
-        const Vector_3 & normal1 = hec->facet()->plane();
-        const Vector_3 & normal2 = next_hec->facet()->plane();
+        Vector_3 normal1 =
+          get_normal(hec->facet(), Polyhedron_has_normal());
+        Vector_3 normal2 =
+          get_normal(next_hec->facet(), Polyhedron_has_normal());
+
         m_trg_vertex = next_hec->opposite()->vertex();
 
 #if 0
@@ -514,8 +550,7 @@ public:
     polyhedron.normalize_border();
 #endif
 #if 1
-    std::transform(polyhedron.facets_begin(), polyhedron.facets_end(),
-                   polyhedron.planes_begin(), Normal_vector());
+    compute_planes(polyhedron, Polyhedron_has_normal());
 #endif
 
     compute_sgm(polyhedron);
@@ -549,8 +584,7 @@ public:
     polyhedron.normalize_border();
 #endif
 #if 1
-    std::transform(polyhedron.facets_begin(), polyhedron.facets_end(),
-                   polyhedron.planes_begin(), Normal_vector());
+    compute_planes(polyhedron, Polyhedron_has_normal());
 #endif
 
     compute_sgm(polyhedron);
