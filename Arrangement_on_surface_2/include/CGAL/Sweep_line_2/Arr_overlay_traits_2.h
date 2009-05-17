@@ -602,14 +602,14 @@ public:
       {
         CGAL_assertion (xcv.color() == RB_OVERLAP);
 
-        if (! xcv.red_halfedge_handle()->target()->is_at_infinity() &&
+        if (! xcv.red_halfedge_handle()->target()->is_at_open_boundary() &&
             m_base_equal (base_p,
                           xcv.red_halfedge_handle()->target()->point()))
         {
           obj_red = CGAL::make_object (xcv.red_halfedge_handle()->target());
         }
 
-        if (! xcv.blue_halfedge_handle()->target()->is_at_infinity() &&
+        if (! xcv.blue_halfedge_handle()->target()->is_at_open_boundary() &&
             m_base_equal (base_p,
                           xcv.blue_halfedge_handle()->target()->point()))
         {
@@ -673,14 +673,14 @@ public:
       {
         CGAL_assertion(xcv.color() == RB_OVERLAP);
 
-        if (! xcv.red_halfedge_handle()->source()->is_at_infinity() &&
+        if (! xcv.red_halfedge_handle()->source()->is_at_open_boundary() &&
             m_base_equal (base_p,
                           xcv.red_halfedge_handle()->source()->point()))
         {
           obj_red = CGAL::make_object (xcv.red_halfedge_handle()->source());
         }
 
-        if (! xcv.blue_halfedge_handle()->source()->is_at_infinity() &&
+        if (! xcv.blue_halfedge_handle()->source()->is_at_open_boundary() &&
             m_base_equal (base_p,
                           xcv.blue_halfedge_handle()->source()->point()))
         {

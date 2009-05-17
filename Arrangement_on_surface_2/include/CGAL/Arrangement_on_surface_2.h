@@ -524,8 +524,8 @@ public:
     Vertex()
     {}
 
-    /*! Check whether the vertex lies at infinity. */
-    bool is_at_infinity () const
+    /*! Check whether the vertex lies on an open boundary. */
+    bool is_at_open_boundary () const
     {
       return (Base::has_null_point());
     }

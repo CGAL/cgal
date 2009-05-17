@@ -1,3 +1,4 @@
+
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
@@ -971,9 +972,11 @@ remove_edge
   bool                         is_removed[2];
 
   v_ends[0] = e->source();
-  is_removed[0] = (v_ends[0]->is_at_infinity() || v_ends[0]->degree() == 1);
+  is_removed[0] = 
+      (v_ends[0]->is_at_open_boundary() || v_ends[0]->degree() == 1);
   v_ends[1] = e->target();
-  is_removed[1] = (v_ends[1]->is_at_infinity() || v_ends[1]->degree() == 1);
+  is_removed[1] = 
+      (v_ends[1]->is_at_open_boundary() || v_ends[1]->degree() == 1);
 
   // Remove the edge from the arrangement.
   typename Arr::Face_handle    face = arr.remove_edge (e);

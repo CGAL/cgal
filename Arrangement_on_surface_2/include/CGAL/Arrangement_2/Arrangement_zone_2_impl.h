@@ -1200,7 +1200,7 @@ _zone_in_face (Face_handle face, bool on_boundary)
   {
     // Check whether intersect_p coincides with one of the end-vertices of the
     // halfedge that cv intersects.
-    if (! intersect_he->source()->is_at_infinity() &&
+    if (! intersect_he->source()->is_at_open_boundary() &&
         geom_traits->equal_2_object() (intersect_p,
                                        intersect_he->source()->point()))
     {
@@ -1208,7 +1208,7 @@ _zone_in_face (Face_handle face, bool on_boundary)
       right_v = intersect_he->source();
       right_he = invalid_he;
     }
-    else if (! intersect_he->target()->is_at_infinity() &&
+    else if (! intersect_he->target()->is_at_open_boundary() &&
              geom_traits->equal_2_object() (intersect_p,
                                        intersect_he->target()->point()))
     {
@@ -1456,7 +1456,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
     // we check whether it is equal to cv_right_pt. Otherwise, we know that
     // intersect_he extends to the the right of overlap_cv, and there is no
     // vertex currently associated with overlap_cv's right endpoint.
-    if (! he_right_v->is_at_infinity() &&
+    if (! he_right_v->is_at_open_boundary() &&
         geom_traits->equal_2_object() (cv_right_pt, he_right_v->point()))
     {
       // The overlap is with the entire halfedge. In this case we set the
