@@ -1,9 +1,6 @@
 Rename:
 =======
 
-Arrangement_on_surface_2.h + Arrangement_2/Arrangement_on_surface_2_impl.h + others: is_at_infinity() -> is_at_open_boundary()
-
-
 Probably best idea: Use TopologyTraits (ARR_OPEN_BOUNDARY) + Parameter_space_in_x/y_2(cv, ind) to replace Is_closed_2
 
 Tags:
@@ -18,8 +15,6 @@ Tags to ensure selection of "dummy" functors
 - Arr_contracted_side_tag
 - Arr_identified_side_tag
 - Arr_oblivious_side_tag or better: Arr_imperceptive_side_tag
-
-
 
 Files:
 ======
