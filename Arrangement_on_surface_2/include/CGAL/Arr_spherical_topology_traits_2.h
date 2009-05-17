@@ -109,7 +109,7 @@ private:
     Traits_adaptor_2 * m_traits;
     bool operator()(const Point_2 & p1, const Point_2 & p2) const
     {
-      return (m_traits->compare_y_on_identification_2_object()(p1, p2) ==
+      return (m_traits->compare_y_on_boundary_2_object()(p1, p2) ==
               SMALLER);
     }
   };

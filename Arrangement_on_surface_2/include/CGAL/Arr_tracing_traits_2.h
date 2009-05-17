@@ -62,8 +62,8 @@ public:
     BOUNDARY_IN_Y_OP,
     COMPARE_X_NEAR_BOUNDARY_OP,
     COMPARE_Y_NEAR_BOUNDARY_OP,
-    COMPARE_X_ON_IDENTIFICATION_OP,
-    COMPARE_Y_ON_IDENTIFICATION_OP,
+    COMPARE_X_ON_BOUNDARY_OP,
+    COMPARE_Y_ON_BOUNDARY_OP,
     NUMBER_OF_OPERATIONS
   };
 
@@ -137,11 +137,11 @@ private:
   bool compare_y_near_boundary_op() const
   { return m_flags & (0x1 << COMPARE_Y_NEAR_BOUNDARY_OP); }
 
-  bool compare_x_on_identification_op() const
-  { return m_flags & (0x1 << COMPARE_X_ON_IDENTIFICATION_OP); }  
+  bool compare_x_on_boundary_op() const
+  { return m_flags & (0x1 << COMPARE_X_ON_BOUNDARY_OP); }  
 
-  bool compare_y_on_identification_op() const
-  { return m_flags & (0x1 << COMPARE_Y_ON_IDENTIFICATION_OP); }  
+  bool compare_y_on_boundary_op() const
+  { return m_flags & (0x1 << COMPARE_Y_ON_BOUNDARY_OP); }  
   
 public:
   /*! Default constructor */
@@ -883,17 +883,17 @@ public:
   };
 
   /*! A functor that compares the x-coordinate of two given points
-   * that lie on the horizontal identification curve.
+   * that lie on horizontal boundaries.
    */
-  class Compare_x_on_identification_2 {
+  class Compare_x_on_boundary_2 {
   private:
-    typename Base::Compare_x_on_identification_2 m_object;
+    typename Base::Compare_x_on_boundary_2 m_object;
     bool m_enabled;
     
   public:
     /*! Construct */
-    Compare_x_on_identification_2(const Base * base, bool enabled = true) :
-      m_object(base->compare_x_on_identification_object()), m_enabled(enabled) {}
+    Compare_x_on_boundary_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_x_on_boundary_object()), m_enabled(enabled) {}
     /*! Operate
      * \param p1 the first point.
      * \param p2 the second point.
@@ -901,7 +901,7 @@ public:
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
       if (!m_enabled) return m_object(p1, p2);
-      std::cout << "compare_x_on_identification" << std::endl
+      std::cout << "compare_x_on_boundary" << std::endl
                 << "  p1: " << p1 << std::endl
                 << "  p2: " << p2 << std::endl;
       Comparison_result cr = m_object(p1, p2);
@@ -911,17 +911,17 @@ public:
   };
   
   /*! A functor that compares the y-coordinate of two given points
-   * that lie on the vertical identification curve.
+   * that lie on vertical boundaries.
    */
-  class Compare_y_on_identification_2 {
+  class Compare_y_on_boundary_2 {
   private:
-    typename Base::Compare_y_on_identification_2 m_object;
+    typename Base::Compare_y_on_boundary_2 m_object;
     bool m_enabled;
     
   public:
     /*! Construct */
-    Compare_y_on_identification_2(const Base * base, bool enabled = true) :
-      m_object(base->compare_y_on_identification_2_object()),
+    Compare_y_on_boundary_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_y_on_boundary_2_object()),
       m_enabled(enabled)
     {}
 
@@ -932,7 +932,7 @@ public:
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
       if (!m_enabled) return m_object(p1, p2);
-      std::cout << "compare_y_on_identification" << std::endl
+      std::cout << "compare_y_on_boundary" << std::endl
                 << "  p1: " << p1 << std::endl
                 << "  p2: " << p2 << std::endl;
       Comparison_result cr = m_object(p1, p2);
@@ -1004,16 +1004,14 @@ public:
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(this, compare_y_near_boundary_op()); }
 
-  Compare_x_on_identification_2 compare_x_on_identification_2_object() const
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
   {
-    return Compare_x_on_identification_2(this,
-                                         compare_x_on_identification_op());
+    return Compare_x_on_boundary_2(this, compare_x_on_boundary_op());
   }
 
-  Compare_y_on_identification_2 compare_y_on_identification_2_object() const
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
   {
-    return Compare_y_on_identification_2(this,
-                                         compare_y_on_identification_op());
+    return Compare_y_on_boundary_2(this, compare_y_on_boundary_op());
   }
   //@}
 };

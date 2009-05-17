@@ -786,7 +786,7 @@ public:
    * that lie on the horizontal identification arc.
    * The parameter space does not contain a horizontal identification arc.
    */
-  class Compare_x_on_identification_2 {
+  class Compare_x_on_boundary_2 {
   public:
     /*! Compare the x-coordinate of two given points that lie on the
      * horizontal identification arc.
@@ -801,14 +801,14 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_on_identification_2 function object */
-  Compare_x_on_identification_2 compare_x_on_identification_2_object() const
-  { return Compare_x_on_identification_2(); }
+  /*! Obtain a Compare_x_on_boundary_2 function object */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(); }
 
   /*! A functor that compares the y-coordinate of two given points
    * that lie on the vertical identification arc.
    */
-  class Compare_y_on_identification_2 {
+  class Compare_y_on_boundary_2 {
   protected:
     typedef Arr_arc_on_sphere_traits_2<Kernel> Traits;
 
@@ -818,7 +818,7 @@ public:
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
-    Compare_y_on_identification_2(const Traits * traits) : m_traits(traits) {}
+    Compare_y_on_boundary_2(const Traits * traits) : m_traits(traits) {}
 
     friend class Arr_arc_on_sphere_traits_2<Kernel>;
     
@@ -839,9 +839,9 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_on_identification_2 function object */
-  Compare_y_on_identification_2 compare_y_on_identification_2_object() const
-  { return Compare_y_on_identification_2(this); }
+  /*! Obtain a Compare_y_on_boundary_2 function object */
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
+  { return Compare_y_on_boundary_2(this); }
   //@}
 
   /// \name Functor definitions for supporting intersections.

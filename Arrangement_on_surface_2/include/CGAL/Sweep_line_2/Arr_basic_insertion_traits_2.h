@@ -839,10 +839,10 @@ public:
   }
 
 
-  /*! A functor that compares the y-coordinates of two points on the 
-   * identification curve.
+  /*! A functor that compares the y-coordinates of two points on vertical
+   * boundaries.
    */
-  class Compare_y_on_identification_2 
+  class Compare_y_on_boundary_2 
   {
   protected:
     //! The base traits.
@@ -852,7 +852,7 @@ public:
                                      const Point_2 & p2,
                                      Arr_bounded_boundary_tag) const
     {
-      return m_base->compare_y_on_identification_2_object()(p1.base(),
+      return m_base->compare_y_on_boundary_2_object()(p1.base(),
                                                             p2.base());
     }
 
@@ -883,7 +883,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_y_on_identification_2 (const Traits_2 * base) : m_base(base) {}
+    Compare_y_on_boundary_2 (const Traits_2 * base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
@@ -899,15 +899,15 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_on_identification_2 object
+  /*! Obtain a Compare_y_on_boundary_2 object
    */ 
-  Compare_y_on_identification_2 compare_y_on_identification_2_object() const
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
   {
-    return Compare_y_on_identification_2(m_base_traits);
+    return Compare_y_on_boundary_2(m_base_traits);
   }
 
-  /*! A function object that determines whether a curve end is bounded. */
-  class Is_bounded_2 {
+  /*! A function object that determines whether a curve end is closed. */
+  class Is_closed_2 {
   protected:
     //! The base traits.
     const Traits_2 * m_base;
@@ -919,41 +919,41 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Is_bounded_2(const Traits_2 * base) : m_base(base) {}
+    Is_closed_2(const Traits_2 * base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
     
-    bool is_bounded (const X_monotone_curve_2 &, Arr_curve_end,
+    bool is_closed (const X_monotone_curve_2 &, Arr_curve_end,
                      Arr_no_boundary_tag) const
     { return true; }
 
-    bool is_bounded (const X_monotone_curve_2 &, Arr_curve_end,
+    bool is_closed (const X_monotone_curve_2 &, Arr_curve_end,
                      Arr_has_boundary_tag) const
     { return true; }
 
-    bool is_bounded (const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+    bool is_closed (const X_monotone_curve_2 & xcv, Arr_curve_end ce,
                      Arr_unbounded_boundary_tag) const
     {
-      return m_base->is_bounded_2_object()(xcv, ce);
+      return m_base->is_closed_2_object()(xcv, ce);
     }
     
   public:
-    /*! Is the end of an x-monotone curve bounded?
+    /*! Is the end of an x-monotone curve closed?
      * \param xcv The x-monotone curve.
      * \param ce The end of xcv identifier.
-     * \return true is the curve end is bounded, and false otherwise
+     * \return true is the curve end is closed, and false otherwise
      */
     bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
     {
-      return is_bounded(xcv, ce, Boundary_category());
+      return is_closed(xcv, ce, Boundary_category());
     }
   };
 
-  /*! Obtain a Is_bounded_2 function object. */
-  Is_bounded_2 is_bounded_2_object() const
+  /*! Obtain a Is_closed_2 function object. */
+  Is_closed_2 is_closed_2_object() const
   {
-    return Is_bounded_2(m_base_traits);
+    return Is_closed_2(m_base_traits);
   }
 };
 

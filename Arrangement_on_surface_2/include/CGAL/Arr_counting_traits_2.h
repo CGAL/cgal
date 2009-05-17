@@ -62,8 +62,8 @@ public:
     BOUNDARY_IN_Y_OP,
     COMPARE_X_NEAR_BOUNDARY_OP,
     COMPARE_Y_NEAR_BOUNDARY_OP,
-    COMPARE_X_ON_IDENTIFICATION_OP,
-    COMPARE_Y_ON_IDENTIFICATION_OP,
+    COMPARE_X_ON_BOUNDARY_OP,
+    COMPARE_Y_ON_BOUNDARY_OP,
     NUMBER_OF_OPERATIONS
   };
 
@@ -151,11 +151,11 @@ public:
   unsigned int count_compare_y_near_boundary() const
   { return m_counters[COMPARE_Y_NEAR_BOUNDARY_OP]; }
 
-  unsigned int count_compare_x_on_identification() const
-  { return m_counters[COMPARE_X_ON_IDENTIFICATION_OP]; }
+  unsigned int count_compare_x_on_boundary() const
+  { return m_counters[COMPARE_X_ON_BOUNDARY_OP]; }
 
-  unsigned int count_compare_y_on_identification() const
-  { return m_counters[COMPARE_Y_ON_IDENTIFICATION_OP]; }
+  unsigned int count_compare_y_on_boundary() const
+  { return m_counters[COMPARE_Y_ON_BOUNDARY_OP]; }
   
   /// \name Types and functors inherited from the base
   //@{
@@ -547,17 +547,17 @@ public:
   };
 
   /*! A functor that compares the x-coordinate of two given points
-   * that lie on the horizontal identification curve.
+   * that lie on horizontal boundaries.
    */
-  class Compare_x_on_identification_2 {
+  class Compare_x_on_boundary_2 {
   private:
-    typename Base::Compare_x_on_identification_2 m_object;
+    typename Base::Compare_x_on_boundary_2 m_object;
     unsigned int & m_counter;
 
   public:
     /*! Construct */
-    Compare_x_on_identification_2(const Base * base, unsigned int & counter) :
-      m_object(base->compare_x_on_identification_2_object()),
+    Compare_x_on_boundary_2(const Base * base, unsigned int & counter) :
+      m_object(base->compare_x_on_boundary_2_object()),
       m_counter(counter)
     {}
 
@@ -568,17 +568,17 @@ public:
   };
 
   /*! A functor that compares the y-coordinate of two given points
-   * that lie on the vertical identification curve.
+   * that lie on vertical boundaries.
    */
-  class Compare_y_on_identification_2 {
+  class Compare_y_on_boundary_2 {
   private:
-    typename Base::Compare_y_on_identification_2 m_object;
+    typename Base::Compare_y_on_boundary_2 m_object;
     unsigned int & m_counter;
 
   public:
     /*! Construct */
-    Compare_y_on_identification_2(const Base * base, unsigned int & counter) :
-      m_object(base->compare_y_on_identification_2_object()),
+    Compare_y_on_boundary_2(const Base * base, unsigned int & counter) :
+      m_object(base->compare_y_on_boundary_2_object()),
       m_counter(counter)
     {}
 
@@ -722,10 +722,10 @@ Out_stream & operator<<(Out_stream & os,
      << traits.count_compare_x_near_boundary() << std::endl
      << "# of COMPARE_Y_NEAR_BOUNDARY operation = "
      << traits.count_compare_y_near_boundary() << std::endl
-     << "# of COMPARE_X_ON_IDENTIFICATION operation = "
-     << traits.count_compare_x_on_identification() << std::endl
-     << "# of COMPARE_Y_ON_IDENTIFICATION operation = "
-     << traits.count_compare_y_on_identification() << std::endl
+     << "# of COMPARE_X_ON_BOUNDARY operation = "
+     << traits.count_compare_x_on_boundary() << std::endl
+     << "# of COMPARE_Y_ON_BOUNDARY operation = "
+     << traits.count_compare_y_on_boundary() << std::endl
      << "total # = " << sum << std::endl
      << "# of traits constructed = " << Traits::increment(false)
      << std::endl;

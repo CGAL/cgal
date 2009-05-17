@@ -836,7 +836,7 @@ public:
   /*! A functor that compares the x-coordinate of two given points
    * that lie on the horizontal identification curve.
    */
-  class Compare_x_on_identification_2 {
+  class Compare_x_on_boundary_2 {
   protected:
     //! The base traits.
     const Base_traits_2 * m_base;
@@ -848,7 +848,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_on_identification_2(const Base_traits_2 * tr) : m_base(tr) {}
+    Compare_x_on_boundary_2(const Base_traits_2 * tr) : m_base(tr) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_batched_point_location_traits_2<Arrangement_2>;
@@ -861,16 +861,16 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_on_identification_2 functor object. */
-  Compare_x_on_identification_2 compare_x_on_identification_2_object () const
+  /*! Obtain a Compare_x_on_boundary_2 functor object. */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object () const
   {
-    return Compare_x_on_identification_2(m_base_traits);
+    return Compare_x_on_boundary_2(m_base_traits);
   }
 
   /*! A functor that compares the y-coordinate of two given points
    * that lie on the vertical identification curve.
    */
-  class Compare_y_on_identification_2 {
+  class Compare_y_on_boundary_2 {
   protected:
     //! The base traits.
     const Base_traits_2 * m_base;
@@ -882,7 +882,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_y_on_identification_2(const Base_traits_2 * tr) : m_base(tr) {}
+    Compare_y_on_boundary_2(const Base_traits_2 * tr) : m_base(tr) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_batched_point_location_traits_2<Arrangement_2>;
@@ -895,10 +895,10 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_on_identification_2 functor object. */
-  Compare_y_on_identification_2 compare_y_on_identification_2_object () const
+  /*! Obtain a Compare_y_on_boundary_2 functor object. */
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object () const
   {
-    return Compare_y_on_identification_2(m_base_traits);
+    return Compare_y_on_boundary_2(m_base_traits);
   }
 };
 
