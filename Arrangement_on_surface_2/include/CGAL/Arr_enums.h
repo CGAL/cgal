@@ -96,11 +96,11 @@ OutputStream& operator<<(
  * - The sphere has 2 contraction points and one identification curve.
  */
 enum Arr_boundary_type {
-  ARR_UNBOUNDED = 0,
-  ARR_BOUNDED,
+  ARR_OBLIVIOUS = 0,
+  ARR_OPEN,
+  ARR_CLOSED,
   ARR_CONTRACTION,
   ARR_IDENTIFICATION,
-  ARR_NUMBER_OF_BOUNDARY_TYPES
 };
 
 //! \brief prints boundary type (for debugging)
@@ -111,11 +111,11 @@ OutputStream& operator<<(
         const Arr_boundary_type& bt) {
     
     switch(bt) {
-    case CGAL::ARR_UNBOUNDED:
-        os << "ARR_UNBOUNDED";
+    case CGAL::ARR_OPEN:
+        os << "ARR_OPEN";
         break;
-    case CGAL::ARR_BOUNDED:
-        os << "ARR_BOUNDED";
+    case CGAL::ARR_CLOSED:
+        os << "ARR_CLOSED";
         break;
     case CGAL::ARR_CONTRACTION:
         os << "ARR_CONTRACTION";
@@ -123,8 +123,8 @@ OutputStream& operator<<(
     case CGAL::ARR_IDENTIFICATION:
         os << "ARR_IDENTIFICATION";
         break;
-    case CGAL::ARR_NUMBER_OF_BOUNDARY_TYPES:
-        os << static_cast<int>(ARR_NUMBER_OF_BOUNDARY_TYPES);
+    case CGAL::ARR_OBLIVIOUS:
+        os << "ARR_OBLIVIOUS";
         break;
     default:
         CGAL_error_msg("bogus boundary type");
