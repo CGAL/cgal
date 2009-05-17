@@ -411,7 +411,7 @@ public:
       //              |
       //              status line
       //
-      // Note that we do not bother with curves whose left ends are unbounded,
+      // Note that we do not bother with curves whose left ends are open,
       // since such curved did not intersect before.
 
       const std::pair<Base_point_2, unsigned int>   *base_ipt;
@@ -937,9 +937,9 @@ public:
       (Compare_y_at_x_right_2(m_base_traits->compare_y_at_x_right_2_object()));
   }
 
-  /*! A function object that determines whether a curve end is bounded.
+  /*! A function object that determines whether a curve end is closed.
    */
-  class Is_bounded_2 {
+  class Is_closed_2 {
   protected:
     //! The base traits.
     const Traits_2 * m_base;
@@ -951,43 +951,43 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Is_bounded_2(const Traits_2 * base) : m_base(base) {}
+    Is_closed_2(const Traits_2 * base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
     
-    bool is_bounded(const X_monotone_curve_2 &, Arr_curve_end,
+    bool is_closed(const X_monotone_curve_2 &, Arr_curve_end,
                     Arr_no_boundary_tag) const
     { return true; }
 
-    bool is_bounded(const X_monotone_curve_2 &, Arr_curve_end,
+    bool is_closed(const X_monotone_curve_2 &, Arr_curve_end,
                     Arr_has_boundary_tag) const
     { return true; }
 
-    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+    bool is_closed(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
                     Arr_unbounded_boundary_tag) const
     {
-      return m_base->is_bounded_2_object()(xcv.base(), ce);
+      return m_base->is_closed_2_object()(xcv.base(), ce);
     }
     
   public:
-    /*! Is the end of an x-monotone curve bounded?
+    /*! Is the end of an x-monotone curve closed?
      * \param xcv The x-monotone curve.
      * \param ce The end of xcv identifier.
-     * \return true is the curve end is bounded, and false otherwise
+     * \return true is the curve end is closed, and false otherwise
      */
     bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
     {
-      return is_bounded(xcv, ce, Boundary_category());
+      return is_closed(xcv, ce, Boundary_category());
     }
   };
 
-  /*! Obtain a Is_bounded_2 function object. */
-  Is_bounded_2 is_bounded_2_object() const
+  /*! Obtain a Is_closed_2 function object. */
+  Is_closed_2 is_closed_2_object() const
   {
-    return Is_bounded_2(m_base_traits);
+    return Is_closed_2(m_base_traits);
   }
   
   /*! A functor that determines whether an endpoint of an x-monotone curve lies
@@ -1251,7 +1251,7 @@ public:
                                   Arr_curve_end ce) const
     {
       // The function is implemented based on the Boundary category.
-      // If the traits class does not support unbounded curves, we just
+      // If the traits class does not support open curves, we just
       // return EQUAL, as this comparison will not be invoked anyway.
       return comp_y_near_bnd(xcv1, xcv2, ce, Boundary_category());
     }

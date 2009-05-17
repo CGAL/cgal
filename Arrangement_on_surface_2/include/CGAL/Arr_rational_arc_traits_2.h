@@ -530,13 +530,13 @@ public:
   /// \name Functor definitions to handle boundaries
   //@{
 
-  /*! A function object that determines whether a curve end is bounded. */
-  class Is_bounded_2 {
+  /*! A function object that determines whether a curve end is closed. */
+  class Is_closed_2 {
   public:
-    /*! Is the end of an x-monotone curve bounded?
+    /*! Is the end of an x-monotone curve closed?
      * \param xcv The x-monotone curve.
      * \param ce The end of xcv identifier.
-     * \return true is the curve end is bounded, and false otherwise
+     * \return true is the curve end is closed, and false otherwise
      */
     bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
     {
@@ -548,10 +548,10 @@ public:
     }
   };
 
-  /*! Obtain a Is_bounded_2 function object. */
-  Is_bounded_2 is_bounded_2_object() const
+  /*! Obtain a Is_closed_2 function object. */
+  Is_closed_2 is_closed_2_object() const
   {
-    return Is_bounded_2();
+    return Is_closed_2();
   }
   
   

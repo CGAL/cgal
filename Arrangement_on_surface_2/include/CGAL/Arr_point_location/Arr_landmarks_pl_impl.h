@@ -849,13 +849,13 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
   // Use the left and right endpoints of the segment.
   Point_2 cv_left;
   Point_2 cv_right;
-  bool cv_left_is_bounded = m_traits->is_bounded_2_object() (cv, ARR_MIN_END);
-  bool cv_right_is_bounded = m_traits->is_bounded_2_object() (cv, ARR_MAX_END);
-  if (cv_left_is_bounded)
+  bool cv_left_is_closed = m_traits->is_closed_2_object() (cv, ARR_MIN_END);
+  bool cv_right_is_closed = m_traits->is_closed_2_object() (cv, ARR_MAX_END);
+  if (cv_left_is_closed)
     cv_left = m_traits->construct_min_vertex_2_object()(cv);
-  if (cv_right_is_bounded)
+  if (cv_right_is_closed)
     cv_right = m_traits->construct_max_vertex_2_object()(cv);
-  if (cv_left_is_bounded && cv_right_is_bounded)
+  if (cv_left_is_closed && cv_right_is_closed)
   {
     if (is_in_x_range(seg,cv_left) && is_in_x_range(seg,cv_right))
     {
@@ -871,7 +871,7 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
   }
   // Check if the overlapping x-range of the two curves is trivial.
   // In this case, they cannot cross.
-  if (cv_left_is_bounded) {
+  if (cv_left_is_closed) {
     // Check if the left endpoint of cv has the same x-coordinate as the
     // right endpoint of seg.
     if (m_traits->compare_x_2_object()
@@ -902,7 +902,7 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
       return (false);
     }
   }
-  if (cv_right_is_bounded) {
+  if (cv_right_is_closed) {
     // Check if the right endpoint of cv has the same x-coordinate as the
     // left endpoint of seg.
     if (m_traits->compare_x_2_object()
