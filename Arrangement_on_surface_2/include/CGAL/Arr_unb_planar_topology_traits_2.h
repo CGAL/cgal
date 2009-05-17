@@ -373,11 +373,11 @@ public:
      case ARR_LEFT_BOUNDARY:
      case ARR_RIGHT_BOUNDARY: 
      case ARR_BOTTOM_BOUNDARY:
-     case ARR_TOP_BOUNDARY: return ARR_UNBOUNDED;
+     case ARR_TOP_BOUNDARY: return ARR_OPEN;
      default: CGAL_error();
     }
     // Cannot reach here!
-    return ARR_NUMBER_OF_BOUNDARY_TYPES;
+    return ARR_OBLIVIOUS;
   }
   
   
