@@ -174,7 +174,7 @@ template <class Tr, class Arr, class Evnt, class Sbcv>
 void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::
 before_handle_event (Event* event)
 {
-  if (event->is_finite())
+  if (event->is_closed())
     return;
 
   // In case the event lies at inifinity, check whether its incident curve

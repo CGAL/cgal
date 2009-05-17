@@ -313,19 +313,19 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
     // Inform the visitor in case we updated an existing event.
     Event   *e = pair_res.first;
     
-    CGAL_assertion (e->is_finite());
+    CGAL_assertion (e->is_closed());
     m_visitor->update_event (e, pt, cv, ind, pair_res.second);
   }
   else
   {
-    // The curve end is unbounded, insert it into the event queue.
+    // The curve end is open, insert it into the event queue.
     pair_res = _push_event (cv, ind, end_attr, ps_x, ps_y, sc);
 
     // Inform the visitor in case we updated an existing event.
     Event   *e = pair_res.first;
     
-    CGAL_assertion (! e->is_finite());
-    _update_event_at_infinity(e, cv, ind, pair_res.second);
+    CGAL_assertion (! e->is_closed());
+    _update_event_at_open_boundary(e, cv, ind, pair_res.second);
   }
 
   return;
@@ -349,7 +349,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
     // We also notify the visitor on the new event we are about to handle.
     _handle_event_without_left_curves();
 
-    if (m_currentEvent->is_finite())
+    if (m_currentEvent->is_closed())
     {
       if (m_is_event_on_above)
       {
@@ -640,24 +640,26 @@ _allocate_event (const Point_2& pt, Attribute type,
 }
 
 //-----------------------------------------------------------------------------
-// Allocate an event at infinity, which is not associated with a valid point.
+// Allocate an event at open boundary, 
+// which is not associated with a valid point.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
-_allocate_event_at_infinity(Attribute type,
-                            Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+_allocate_event_at_open_boundary(Attribute type,
+                                 Arr_parameter_space ps_x, 
+                                 Arr_parameter_space ps_y)
 {
   Event *e =  m_eventAlloc.allocate(1); 
   m_eventAlloc.construct(e, m_masterEvent);
-  e->init_at_infinity (type, ps_x, ps_y);
+  e->init_at_open_boundary (type, ps_x, ps_y);
 
   m_allocated_events.insert(e);
   return (e);
 }
 
 //-----------------------------------------------------------------------------
-// Push a finite event point into the event queue.
+// Push a closed event point into the event queue.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 std::pair<typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*,
@@ -686,7 +688,7 @@ _push_event (const Point_2& pt, Attribute type,
     // The event associated with the given point already exists in the queue,
     // so we just have to update it.
     e = *(pair_res.first);
-    CGAL_assertion (e->is_finite());
+    CGAL_assertion (e->is_closed());
     
     e->set_attribute(type);
   }
@@ -765,8 +767,8 @@ _push_event (const X_monotone_curve_2& cv, Arr_curve_end ind,
     }
     else
     {
-      // The curve end is unbounded, so we create an event at infinity.
-      e = _allocate_event_at_infinity (type, ps_x, ps_y);
+      // The curve end is open, so we create an event at open boundary.
+      e = _allocate_event_at_open_boundary (type, ps_x, ps_y);
     }
   }
   else

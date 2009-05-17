@@ -236,7 +236,7 @@ template <class Tr, class Arr, class Evnt, class Sbcv>
 void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::
 before_handle_event (Event* event)
 {
-  if (event->is_finite())
+  if (event->is_closed())
     return;
 
   // As the event lieas at infinity, it must have only one (right or left)

@@ -384,7 +384,7 @@ update_event (Event *e,
               bool /* is_new */)
 {
   // Nothing to do in case of an event at infinity.
-  CGAL_assertion(e->is_finite());
+  CGAL_assertion(e->is_closed());
 
   // Update the red and blue objects associated with the point as necessary. 
   Point_2& pt = e->point();

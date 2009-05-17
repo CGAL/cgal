@@ -469,8 +469,8 @@ protected:
    * Allocate an event object associated with a given point.
    * \param pt The point.
    * \param type The event type.
-   * \param ps_x The boundary condition of the point in x.
-   * \param ps_y The boundary condition of the point in y.
+   * \param ps_x The location of the point in x.
+   * \param ps_y The location of the point in y.
    * \pre Neither one of the boundary conditions is +/-oo. 
    * \return The created event.
    */
@@ -478,23 +478,24 @@ protected:
                           Arr_parameter_space ps_x, Arr_parameter_space ps_y);
 
   /*!
-   * Allocate an event at infinity, which is not associated with a valid point.
+   * Allocate an event at open boundary, 
+   * which is not associated with a valid point.
    * \param type The event type.
-   * \param ps_x The boundary condition of the point in x.
-   * \param ps_y The boundary condition of the point in y.
+   * \param ps_x The location of the point in x.
+   * \param ps_y The location of the point in y.
    * \param At least one of the boundary conditions is +/-oo.
    * \return The created event.
    */
-  Event* _allocate_event_at_infinity (Attribute type,
-                                      Arr_parameter_space ps_x,
-                                      Arr_parameter_space ps_y);
+  Event* _allocate_event_at_open_boundary (Attribute type,
+                                           Arr_parameter_space ps_x,
+                                           Arr_parameter_space ps_y);
 
   /*! 
    * Push a finite event point into the event queue.
    * \param pt The point associated with the event.
    * \param type The event type.
-   * \param ps_x The boundary condition of the point in x.
-   * \param ps_y The boundary condition of the point in y.
+   * \param ps_x The location of the point in x.
+   * \param ps_y The location of the point in y.
    * \param sc A subcurve that the new event represents on of its endpoints.
    * \return A pair that comprises a pointer to the event, and a flag
    *         indicating whether this is a new event (if false, the event
@@ -511,8 +512,8 @@ protected:
    * \param cv The x-monotone curve.
    * \param ind The relevant curve end.
    * \param type The event type.
-   * \param ps_x The boundary condition of the point in x.
-   * \param ps_y The boundary condition of the point in y.
+   * \param ps_x The location of the point in x.
+   * \param ps_y The location of the point in y.
    * \param sc A subcurve that the new event represents on of its endpoints.
    * \return A pair that comprises a pointer to the event, and a flag
    *         indicating whether this is a new event (if false, the event
@@ -525,28 +526,28 @@ protected:
                                        Arr_parameter_space ps_y,
                                        Subcurve* sc = NULL);
 
-  void _update_event_at_infinity(Event* e,
-                                 const X_monotone_curve_2& cv,
-                                 Arr_curve_end ind,
-                                 bool is_new)
+    void _update_event_at_open_boundary(Event* e,
+                                        const X_monotone_curve_2& cv,
+                                        Arr_curve_end ind,
+                                        bool is_new)
   {
-    _update_event_at_infinity(e, cv, ind, is_new, Boundary_category());
+    _update_event_at_open_boundary(e, cv, ind, is_new, Boundary_category());
   }
 
-  void _update_event_at_infinity(Event* e,
-                                 const X_monotone_curve_2& cv,
-                                 Arr_curve_end ind,
-                                 bool is_new,
-                                 Arr_has_boundary_tag)
+  void _update_event_at_open_boundary(Event* e,
+                                      const X_monotone_curve_2& cv,
+                                      Arr_curve_end ind,
+                                      bool is_new,
+                                      Arr_has_boundary_tag)
   {
     m_visitor->update_event (e, cv, ind, is_new);
   }
 
-  void _update_event_at_infinity(Event* /* e */,
-                                 const X_monotone_curve_2& /* cv */,
-                                 Arr_curve_end /* ind */,
-                                 bool /* is_new */,
-                                 Arr_no_boundary_tag)
+  void _update_event_at_open_boundary(Event* /* e */,
+                                      const X_monotone_curve_2& /* cv */,
+                                      Arr_curve_end /* ind */,
+                                      bool /* is_new */,
+                                      Arr_no_boundary_tag)
   {
     CGAL_error();
   }
@@ -555,7 +556,7 @@ protected:
   void PrintEventQueue();
   void PrintSubCurves();
   void PrintStatusLine();
-  void PrintInfinityType(Arr_parameter_space x, Arr_parameter_space y);
+  void PrintOpenBoundaryType(Arr_parameter_space x, Arr_parameter_space y);
   void PrintEvent(const Event* e);
 #endif
 
