@@ -33,6 +33,14 @@ struct Arr_unbounded_boundary_tag : public virtual Arr_has_boundary_tag {};
 struct Arr_all_boundary_tag : public virtual Arr_bounded_boundary_tag,
                               public virtual Arr_unbounded_boundary_tag {};
 
+
+struct Arr_boundary_side_tag {};
+struct Arr_oblivious_side_tag : public virtual Arr_boundary_side_tag {};
+struct Arr_open_side_tag : public virtual Arr_boundary_side_tag {};
+struct Arr_closed_side_tag : public virtual Arr_boundary_side_tag {};
+struct Arr_contracted_side_tag : public virtual Arr_boundary_side_tag {};
+struct Arr_identified_side_tag : public virtual Arr_boundary_side_tag {};
+
 CGAL_END_NAMESPACE
 
 #endif
