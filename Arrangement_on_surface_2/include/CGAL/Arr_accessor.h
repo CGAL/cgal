@@ -175,7 +175,7 @@ public:
 
     Arr_curve_end                ind = ARR_MIN_END;
 
-    if (m_traits->is_bounded_2_object() (cv, ARR_MAX_END) &&
+    if (m_traits->is_closed_2_object() (cv, ARR_MAX_END) &&
         m_traits->equal_2_object() (vh->point(),
                                     m_traits->construct_max_vertex_2_object()(cv)))
     {

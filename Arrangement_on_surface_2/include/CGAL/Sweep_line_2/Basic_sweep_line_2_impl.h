@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005, 2009  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -17,6 +17,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
+//                 Eric Berberich <ericb@post.tau.ac.il>
 //                 (based on old version by Tali Zvi)
 
 #ifndef CGAL_BASIC_SWEEP_LINE_2_IMPL_H
@@ -297,8 +298,8 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
   // Create the corresponding event an push it into the event queue.
   std::pair<Event*, bool> pair_res;
 
-  if (m_traits->is_bounded_2_object()(cv, ind)) {
-    // The curve end is bounded and associated with a valid endpoint.
+  if (m_traits->is_closed_2_object()(cv, ind)) {
+    // The curve end is closed and thus associated with a valid endpoint.
     const Point_2&  pt = (ind == ARR_MIN_END) ?
       m_traits->construct_min_vertex_2_object()(cv) :
       m_traits->construct_max_vertex_2_object()(cv);
@@ -752,9 +753,9 @@ _push_event (const X_monotone_curve_2& cv, Arr_curve_end ind,
   {
     // The curve end is not found in the event queue - create a new event and
     // insert it into the queue.
-    if (m_traits->is_bounded_2_object()(cv, ind))
+    if (m_traits->is_closed_2_object()(cv, ind))
     {
-      // The curve end is not unbounded, so it is associated with a valid
+      // The curve end is closed and so it is associated with a valid
       // point.
       const Point_2&  pt = (ind == ARR_MIN_END) ? 
         m_traits->construct_min_vertex_2_object()(cv) :

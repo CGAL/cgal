@@ -1448,18 +1448,18 @@ protected:
   /// \name Allocating and de-allocating points and curves.
   //@{
 
-  /*! Is one of the given x and y parameter spaces unbounded?
+  /*! Is one of the given x and y parameter spaces open?
    * These parameter spaces are typically associated with a particular curve
    * end.
    * \param ps_x The parameter space in x.
    * \param ps_y The parameter space in y.
    */
-  inline bool is_unbounded(Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+  inline bool is_open(Arr_parameter_space ps_x, Arr_parameter_space ps_y)
     const
   {
     return
-      (((ps_x != ARR_INTERIOR) && (_boundary_types[ps_x] == ARR_UNBOUNDED)) ||
-       ((ps_y != ARR_INTERIOR) && (_boundary_types[ps_y] == ARR_UNBOUNDED)));
+      (((ps_x != ARR_INTERIOR) && (_boundary_types[ps_x] == ARR_OPEN)) ||
+       ((ps_y != ARR_INTERIOR) && (_boundary_types[ps_y] == ARR_OPEN)));
   }
   
   /*! Initialize the boundary_types array */

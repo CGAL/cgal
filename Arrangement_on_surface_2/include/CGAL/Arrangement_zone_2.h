@@ -200,7 +200,7 @@ public:
       // traits use the arrangement accessor to locate it.
       // Note that if the curve-end is unbounded, left_pt does not exist.
       // Note that if the curve-end is unbounded, left_pt does not exist.
-      has_left_pt = geom_traits->is_bounded_2_object()(cv, ARR_MIN_END);
+      has_left_pt = geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
       left_on_boundary = true;
       if (has_left_pt)
         left_pt = geom_traits->construct_min_vertex_2_object() (cv);
@@ -208,7 +208,7 @@ public:
     }
 
     // Check the boundary conditions of th right curve end.
-    if (geom_traits->is_bounded_2_object()(cv, ARR_MAX_END)) {
+    if (geom_traits->is_closed_2_object()(cv, ARR_MAX_END)) {
       const Arr_parameter_space  bx2 =
         geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
       const Arr_parameter_space  by2 =

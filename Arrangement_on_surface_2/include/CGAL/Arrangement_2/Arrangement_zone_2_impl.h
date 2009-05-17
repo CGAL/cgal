@@ -40,7 +40,7 @@ init_with_hint(const X_monotone_curve_2& _cv, const Object& _obj)
   // associated with valid endpoints.
   cv = _cv;
   
-  if (geom_traits->is_bounded_2_object()(cv, ARR_MIN_END))
+  if (geom_traits->is_closed_2_object()(cv, ARR_MIN_END))
   {
     // The left endpoint is valid.
     const Arr_parameter_space  ps_x1 =
@@ -58,7 +58,7 @@ init_with_hint(const X_monotone_curve_2& _cv, const Object& _obj)
     left_on_boundary = true;
   }
   
-  if (geom_traits->is_bounded_2_object()(cv, ARR_MAX_END))
+  if (geom_traits->is_closed_2_object()(cv, ARR_MAX_END))
   {
     // The right endpoint is valid.
     const Arr_parameter_space  ps_x2 =
@@ -555,7 +555,7 @@ _compute_next_intersection (Halfedge_handle he,
         icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
         CGAL_assertion (icv != NULL);
 
-        if (geom_traits->is_bounded_2_object()(*icv, ARR_MIN_END))
+        if (geom_traits->is_closed_2_object()(*icv, ARR_MIN_END))
         {
           // The curve has a valid left point - make sure it lies to the
           // right of left_pt.
@@ -638,7 +638,7 @@ _compute_next_intersection (Halfedge_handle he,
       icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
       CGAL_assertion (icv != NULL);
 
-      if (geom_traits->is_bounded_2_object() (*icv, ARR_MIN_END))
+      if (geom_traits->is_closed_2_object() (*icv, ARR_MIN_END))
       {
         // The curve has a valid left point - make sure it lies to the
         // right of left_pt.
@@ -1411,7 +1411,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
   // Check if the right end of overlap_cv is bounded. If so, compute its
   // right endpoint.
   const bool           cv_has_right_pt =
-    geom_traits->is_bounded_2_object() (overlap_cv, ARR_MAX_END);
+    geom_traits->is_closed_2_object() (overlap_cv, ARR_MAX_END);
 
   Point_2              cv_right_pt;
 
