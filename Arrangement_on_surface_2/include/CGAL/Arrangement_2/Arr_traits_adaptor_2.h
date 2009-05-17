@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005, 2009  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -16,8 +16,9 @@
 // $Date$
 // 
 //
-// Author(s)     : Ron Wein             <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein             <wein@post.tau.ac.il>s
 //                 Efi Fogel            <efif@post.tau.ac.il>
+//                 Eric Berberich       <ericb@post.tau.ac.il>
 //                 (based on old version by Iddo Hanniel
 //                                          Eyal Flato
 //                                          Oren Nechushtan
@@ -222,20 +223,21 @@ public:
 
   //@}
 
-  /// \name Overriden functors for unbounded boundaries.
+  /// \name Overriden functors for boundaries.
   //@{
 
-  /*! A functor that determines whether an endpoint of an x-monotone curve lies
-   * on a boundary of the parameter space along the x axis.
+  /*! A functor that determines the location of a geometric object 
+   * with respect to the parameter space along the x axis.
    */
   class Parameter_space_in_x_2 {
   public:
+
     /*!
-     * Get the boundary condition of the given curve end in x.
+     * Get the location of the given curve end in x.
      * \param xcv The curve.
      * \param ind ARR_MIN_END if we refer to xcv's minimal end,
      *            ARR_MAX_END if we refer to its maximal end.
-     * \return The boundary condition of the curve end.
+     * \return The location of the curve end.
      */
     Arr_parameter_space operator() (const X_monotone_curve_2& xcv,
                                     Arr_curve_end ind) const
@@ -246,6 +248,24 @@ public:
       return parameter_space_in_x (xcv, ind, Boundary_category());
     }
 
+    /*!
+     * Get the location of the given curve end in x.
+     * \param xcv The curve.
+     * \return The location of the curve end in x direction.
+     */
+    Arr_parameter_space operator() (const X_monotone_curve_2& xcv) const
+    {
+      // The function is implemented based on the Boundary category.
+      // If the traits class does not support boundary conditions, we just
+      // return ARR_INTERIOR.
+      return parameter_space_in_x (xcv, Boundary_category());
+    }
+
+    /*!
+     * Get the location of the given point end in x.
+     * \param p The point.
+     * \return The location of the point end in x direction.
+     */
     Arr_parameter_space operator() (const Point_2 & p) const
     {
       // The function is implemented based on the Boundary category.
@@ -290,20 +310,46 @@ public:
     {
       return ARR_INTERIOR;
     }
-    
+
+    /*!
+     * Implementation of the operator() in case the Boundary tag is true.
+     */
+    Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2& xcv,
+                                              Arr_has_boundary_tag) const
+    {
+      return (m_base->parameter_space_in_x_2_object() (xcv));
+    }
+
+    /*!
+     * Implementation of the operator() in case the Boundary tag is false.
+     */
+    Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2&,
+                                              Arr_no_boundary_tag) const
+    {
+      return ARR_INTERIOR;
+    }
+
+    /*!
+     * Implementation of the operator() in case the Boundary tag is false.
+     */
     Arr_parameter_space parameter_space_in_x (const Point_2 & p,
                                               Arr_bounded_boundary_tag) const
     {
       return m_base->parameter_space_in_x_2_object() (p);
     }
 
+    /*!
+     * Implementation of the operator() in case the Boundary tag is false.
+     */
     Arr_parameter_space parameter_space_in_x (const Point_2 &,
                                               Arr_has_boundary_tag) const
     {
       return ARR_INTERIOR;
     }
 
-
+    /*!
+     * Implementation of the operator() in case the Boundary tag is false.
+     */
     Arr_parameter_space parameter_space_in_x (const Point_2 &,
                                               Arr_no_boundary_tag) const
     {
@@ -317,20 +363,22 @@ public:
     return Parameter_space_in_x_2(this);
   }
 
-  /*! A functor that determines whether an endpoint of an x-monotone curve lies
-   * on a boundary of the parameter space along the y axis.
+
+
+  /*! A functor that determines the location of a geometric object 
+   * with respect to the parameter space along the y axis.
    */
   class Parameter_space_in_y_2 {
   public:
     /*!
-     * Get the boundary condition of the given curve end in y.
+     * Get the location of the given curve end in y.
      * \param xcv The curve.
      * \param ind ARR_MIN_END if we refer to xcv's minimal end,
      *            ARR_MAX_END if we refer to its maximal end.
-     * \return The boundary condition of the curve end.
+     * \return The location of the curve end.
      */
     Arr_parameter_space operator() (const X_monotone_curve_2& xcv,
-                              Arr_curve_end ind) const
+                                    Arr_curve_end ind) const
     {
       // The function is implemented based on the Boundary category.
       // If the traits class does not support boundary conditions, we just
@@ -338,12 +386,23 @@ public:
       return parameter_space_in_y(xcv, ind, Boundary_category());
     }
 
-    /*! Determine whether a point lies on a y-boundary.
-     * \param p the point.
-     * \return
-     *   the point is on the bottom boundary and => AFTER_SINGULARITY, else
-     *   the point is on the top boundary        => BEFORE_SINGULARITY.
-     *   otherwise                               => ARR_INTERIOR, 
+      /*!
+     * Get the location of the given curve end in y.
+     * \param xcv The curve.
+     * \return The location of the curve end in y direction.
+     */
+    Arr_parameter_space operator() (const X_monotone_curve_2& xcv) const
+    {
+      // The function is implemented based on the Boundary category.
+      // If the traits class does not support boundary conditions, we just
+      // return ARR_INTERIOR.
+      return parameter_space_in_y (xcv, Boundary_category());
+    }
+
+    /*!
+     * Get the location of the given point end in y.
+     * \param p The point.
+     * \return The location of the point end in y direction.
      */
     Arr_parameter_space operator()(const Point_2 & p) const
     {
@@ -366,6 +425,9 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
     
+    /*!
+     * Implementation of the operator() in case the Boundary tag is true.
+     */
     Arr_parameter_space parameter_space_in_y (const X_monotone_curve_2& xcv,
                                               Arr_curve_end ind,
                                               Arr_has_boundary_tag) const
@@ -373,6 +435,9 @@ public:
       return m_base->parameter_space_in_y_2_object() (xcv, ind);
     }
 
+    /*!
+     * Implementation of the operator() in case the Boundary tag is true.
+     */
     Arr_parameter_space parameter_space_in_y (const X_monotone_curve_2 &,
                                               Arr_curve_end,
                                               Arr_no_boundary_tag) const
@@ -380,18 +445,45 @@ public:
       return ARR_INTERIOR;
     }
 
+    /*!
+     * Implementation of the operator() in case the Boundary tag is true.
+     */
+    Arr_parameter_space parameter_space_in_y (const X_monotone_curve_2& xcv,
+                                              Arr_has_boundary_tag) const
+    {
+      return (m_base->parameter_space_in_x_2_object() (xcv));
+    }
+
+    /*!
+     * Implementation of the operator() in case the Boundary tag is false.
+     */
+    Arr_parameter_space parameter_space_in_y (const X_monotone_curve_2&,
+                                              Arr_no_boundary_tag) const
+    {
+      return ARR_INTERIOR;
+    }
+
+    /*!
+     * Implementation of the operator() in case the Boundary tag is true.
+     */
     Arr_parameter_space parameter_space_in_y (const Point_2 & p,
                                               Arr_bounded_boundary_tag) const
     {
       return m_base->parameter_space_in_y_2_object()(p);
     }
 
+    /*!
+     * Implementation of the operator() in case the Boundary tag is true.
+     */
     Arr_parameter_space parameter_space_in_y (const Point_2 &,
                                               Arr_has_boundary_tag) const
     {
       return ARR_INTERIOR;
     }
 
+    /*!
+     * Implementation of the operator() in case the Boundary tag is true.
+     */
     Arr_parameter_space parameter_space_in_y (const Point_2 &,
                                               Arr_no_boundary_tag) const
     {
@@ -430,7 +522,7 @@ public:
      */
     Comparison_result _compare_point_curve (const Point_2 & p,
                                             const X_monotone_curve_2 & xcv,
-                                            Arr_curve_end ce,
+                                           Arr_curve_end ce,
                                             Arr_has_boundary_tag) const
     {
       return (m_base->compare_x_near_boundary_2_object()(p, xcv, ce));
@@ -578,7 +670,7 @@ public:
                                   Arr_curve_end ce) const
     {
       // The function is implemented based on the Boundary category.
-      // If the traits class does not support unbounded curves, we just
+      // If the traits class does not support open curves, we just
       // return EQUAL, as this comparison will not be invoked anyway.
       return comp_y_near_bnd (xcv1, xcv2, ce, Boundary_category());
     }
@@ -591,9 +683,9 @@ public:
   }
 
   /*! A function object that compares the x-coordinate of two given points
-   * that lie on the horizontal identification curve.
+   * that lie on horizontal boundaries.
    */
-  class Compare_x_on_identification_2 {
+  class Compare_x_on_boundary_2 {
   protected:
     //! The base traits.
     const Base * m_base;
@@ -605,14 +697,14 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_on_identification_2(const Base * base) : m_base(base) {}
+    Compare_x_on_boundary_2(const Base * base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
         
   public:
-    /*! Compare the x-coordinate of two given points that lie on the horizontal
-     * identification curve.
+    /*! Compare the x-coordinate of two given points that lie on horizontal
+     * boundaries
      * \param p1 the first point.
      * \param p2 the second point.
      */
@@ -622,20 +714,20 @@ public:
     }
 
   private:
-    Comparison_result comp_x_on_idn (const Point_2 & p1, const Point_2 & p2,
+    Comparison_result comp_x_on_bnd (const Point_2 & p1, const Point_2 & p2,
                                      Arr_bounded_boundary_tag) const
     {
-      return m_base->compare_x_on_identification_2_object ()(p1, p2);
+      return m_base->compare_x_on_boundary_2_object ()(p1, p2);
     }
 
-    Comparison_result comp_x_on_idn (const Point_2 &, const Point_2 &,
+    Comparison_result comp_x_on_bnd (const Point_2 &, const Point_2 &,
                                      Arr_has_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
 
-    Comparison_result comp_x_on_idn (const Point_2 &, const Point_2 &,
+    Comparison_result comp_x_on_bnd (const Point_2 &, const Point_2 &,
                                      Arr_no_boundary_tag) const
     {
       CGAL_error();
@@ -643,16 +735,16 @@ public:
     }
   };
   
-  /*! Obtain a Compare_x_on_identification_2 function object. */
-  Compare_x_on_identification_2 compare_x_on_identification_2_object () const
+  /*! Obtain a Compare_x_on_boundary_2 function object. */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object () const
   {
-    return Compare_x_on_identification_2(this);
+    return Compare_x_on_boundary_2(this);
   }
 
   /*! A function object that compares the y-coordinate of two given points
-   * that lie on the vertical identification curve.
+   * that lie on vertical boundaries.
    */
-  class Compare_y_on_identification_2 {
+  class Compare_y_on_boundary_2 {
   protected:
     //! The base traits.
     const Base * m_base;
@@ -664,7 +756,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_y_on_identification_2(const Base * base) : m_base(base) {}
+    Compare_y_on_boundary_2(const Base * base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
@@ -672,23 +764,23 @@ public:
     /*!
      * Implementation of the operator() in case the boundary tag is true.
      */
-    Comparison_result comp_y_on_idn (const Point_2 & p1, const Point_2 & p2,
+    Comparison_result comp_y_on_bnd (const Point_2 & p1, const Point_2 & p2,
                                      Arr_bounded_boundary_tag) const
     {
-      return m_base->compare_y_on_identification_2_object()(p1, p2);
+      return m_base->compare_y_on_boundary_2_object()(p1, p2);
     }
     
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Comparison_result comp_y_on_idn (const Point_2 &, const Point_2 &,
+    Comparison_result comp_y_on_bnd (const Point_2 &, const Point_2 &,
                                      Arr_no_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
 
-    Comparison_result comp_y_on_idn (const Point_2 &, const Point_2 &,
+    Comparison_result comp_y_on_bnd (const Point_2 &, const Point_2 &,
                                      Arr_has_boundary_tag) const
     {
       CGAL_error();
@@ -699,7 +791,7 @@ public:
     /*! Compare the relative y-positions of two points.
      * \param p1 The first point.
      * \param p2 The second point.
-     * \pre Both points lie on the vertical identification curve.
+     * \pre Both points lie on vertical boundaries.
      * \return SMALLER if xcv1 lies below xcv2;
      *         LARGER if xcv1 lies above xcv2;
      *         EQUAL in case of an overlap.
@@ -707,16 +799,16 @@ public:
     Comparison_result operator() (const Point_2 & p1, const Point_2 & p2) const
     {
       // The function is implemented based on the Boundary category.
-      // If the traits class does not support unbounded curves, we just
+      // If the traits class does not support open curves, we just
       // return EQUAL, as this comparison will not be invoked anyway.
       return comp_y_on_idn (p1, p2, Boundary_category());
     }
   };
 
-  /*! Obtain a Compare_y_on_identification_2 function object. */
-  Compare_y_on_identification_2 compare_y_on_identification_2_object() const
+  /*! Obtain a Compare_y_on_boundary_2 function object. */
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
   {
-    return Compare_y_on_identification_2(this);
+    return Compare_y_on_boundary_2(this);
   }
 
   /*! A function object that determines whether an x-monotone curve or a
@@ -889,8 +981,8 @@ public:
     return Is_on_y_identification_2(this);
   }
   
-  /*! A function object that determines whether a curve end is bounded. */
-  class Is_bounded_2 {
+  /*! A function object that determines whether a curve end is closed. */
+  class Is_closed_2 {
   protected:
     //! The base traits.
     const Base * m_base;
@@ -902,23 +994,23 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Is_bounded_2(const Base * base) : m_base(base) {}
+    Is_closed_2(const Base * base) : m_base(base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
     
-    bool is_bounded(const X_monotone_curve_2 &, Arr_curve_end,
+    bool is_closed(const X_monotone_curve_2 &, Arr_curve_end,
                     Arr_no_boundary_tag) const
     { return true; }
 
-    bool is_bounded(const X_monotone_curve_2 &, Arr_curve_end,
+    bool is_closed(const X_monotone_curve_2 &, Arr_curve_end,
                     Arr_has_boundary_tag) const
     { return true; }
 
-    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+    bool is_closed(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
                     Arr_unbounded_boundary_tag) const
     {
-      return m_base->is_bounded_2_object()(xcv, ce);
+      return m_base->is_closed_2_object()(xcv, ce);
     }
     
   public:
@@ -929,14 +1021,14 @@ public:
      */
     bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
     {
-      return is_bounded(xcv, ce, Boundary_category());
+      return is_closed(xcv, ce, Boundary_category());
     }
   };
 
-  /*! Obtain a Is_bounded_2 function object. */
-  Is_bounded_2 is_bounded_2_object() const
+  /*! Obtain a Is_closed_2 function object. */
+  Is_closed_2 is_closed_2_object() const
   {
-    return Is_bounded_2(this);
+    return Is_closed_2(this);
   }
   
   //@}
