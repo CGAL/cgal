@@ -53,7 +53,7 @@ init_with_hint(const X_monotone_curve_2& _cv, const Object& _obj)
   }
   else
   {
-    // The left end of the curve lies at infinity.
+    // The left end of the curve lies on open boundary.
     has_left_pt = false;
     left_on_boundary = true;
   }
@@ -71,7 +71,7 @@ init_with_hint(const X_monotone_curve_2& _cv, const Object& _obj)
   }
   else
   {
-    // The right end of the curve lies at infinity.
+    // The right end of the curve lies on open boundary.
     has_right_pt = false;
     right_on_boundary = true;
   }
@@ -1434,7 +1434,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
 
   // Compare the two right endpoints. Note that overlap_cv cannot extend to
   // the right longer than the halfedge it overlaps. Thus, if the curve is
-  // not bounded, the right vertex of intersect_he must lie at infinity as
+  // not bounded, the right vertex of intersect_he must lie on open boundary as
   // well.
   if (! cv_has_right_pt)
   {
@@ -1481,7 +1481,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
 
   // If the visitor has indicated we should halt the process, or it the right
   // endpoint of the overlapping curve is the right endpoint of cv then we are
-  // done (or both extend to infinity).
+  // done (or both extend to an open boundary).
   if (visitor_res.second ||
       (cv_has_right_pt && has_right_pt &&
        geom_traits->equal_2_object() (cv_right_pt, right_pt)) ||

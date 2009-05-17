@@ -1,22 +1,11 @@
 Rename:
 =======
 
-Is_closed_2
------------
+Sweep_line + Event: Rename "initialize_at_inf" + CHECK is_finite???
 
-* Sweep_line_2/Basic_sweep_line_2_impl.h (for init events "at infinity") - simple to replace
-* Arrangement_2/Arrangement_on_surface_2_impl.h (for insert from vertices) - simple to replace
-* CHECK Arrangement_2/Arrangement_zone_2_impl.h (for init) - but probably easy to replace
-* CHECK Sweep_line_2/Sweep_line_2_impl.h (skipping common left/right end point on boundary)
-* Backup functors (easy to replace)
-** Arr_point_location/Arr_batched_point_location_traits_2.h
-** Sweep_line_2/Arr_basic_insertion_traits_2.h
-** Sweep_line_2/Arr_overlay_traits_2.h
-* CHECK Arr_point_location/Arr_landmarks_pl_impl.h
+Arrangement_on_surface_2.h + Arrangement_2/Arrangement_on_surface_2_impl.h + others: is_at_infinity() -> is_at_open_boundary()
 
--> Sweep_line + Event: Rename "initialize_at_inf" + CHECK is_finite???
 
--> Arrangement_on_surface_2.h + Arrangement_2/Arrangement_on_surface_2_impl.h + others: is_at_infinity() -> is_at_open_boundary()
 
 Probably best idea: Use TopologyTraits (ARR_OPEN_BOUNDARY) + Parameter_space_in_x/y_2(cv, ind) to replace Is_closed_2
 
@@ -24,7 +13,7 @@ Tags:
 =====
 
 Tags to ensure selection of "dummy" functors
-
+-> Replace old tags and dispatching mechanism
 
 4 Tags - one for each side - each allow 5 options: 
 - Arr_open_side_tag
