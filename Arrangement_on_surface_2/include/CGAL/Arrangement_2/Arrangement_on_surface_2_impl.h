@@ -45,21 +45,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/*! \brief initializes the boundary_types array */
-template<class GeomTraits, class TopTraits>
-void Arrangement_on_surface_2<GeomTraits, TopTraits>::
-init_boundary_types_imp(Arr_has_boundary_tag)
-{
-  _boundary_types[ARR_LEFT_BOUNDARY] =
-    top_traits.boundary_type(ARR_LEFT_BOUNDARY);
-  _boundary_types[ARR_BOTTOM_BOUNDARY] =
-    top_traits.boundary_type(ARR_BOTTOM_BOUNDARY);
-  _boundary_types[ARR_TOP_BOUNDARY] =
-    top_traits.boundary_type(ARR_TOP_BOUNDARY);
-  _boundary_types[ARR_RIGHT_BOUNDARY] =
-    top_traits.boundary_type(ARR_RIGHT_BOUNDARY);
-}
-
 //-----------------------------------------------------------------------------
 // Default constructor.
 //

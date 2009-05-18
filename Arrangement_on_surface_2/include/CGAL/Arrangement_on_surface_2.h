@@ -1465,15 +1465,46 @@ protected:
   /*! Initialize the boundary_types array */
   inline void init_boundary_types()
   {
-    init_boundary_types_imp(Boundary_category());
+      init_boundary_side(ARR_LEFT_BOUNDARY, 
+                         typename Geometry_traits_2::Arr_left_side_tag());
+      init_boundary_side(ARR_BOTTOM_BOUNDARY, 
+                         typename Geometry_traits_2::Arr_bottom_side_tag());
+      init_boundary_side(ARR_TOP_BOUNDARY, 
+                         typename Geometry_traits_2::Arr_top_side_tag());
+      init_boundary_side(ARR_RIGHT_BOUNDARY, 
+                         typename Geometry_traits_2::Arr_right_side_tag());
   }
 
   /*! Initialize the boundary_types array */
-  void init_boundary_types_imp(Arr_no_boundary_tag) {}
-  
+  void init_boundary_side(Arr_parameter_space ps, 
+                          Arr_oblivious_side_tag) {
+      _boundary_types[ps] = ARR_OBLIVIOUS;
+  }
+    
   /*! Initialize the boundary_types array */
-  void init_boundary_types_imp(Arr_has_boundary_tag);
-  
+  void init_boundary_side(Arr_parameter_space ps, 
+                          Arr_open_side_tag) {
+      _boundary_types[ps] = ARR_OPEN;
+  }
+
+  /*! Initialize the boundary_types array */
+  void init_boundary_side(Arr_parameter_space ps, 
+                          Arr_closed_side_tag) {
+      _boundary_types[ps] = ARR_CLOSED;
+  }
+
+  /*! Initialize the boundary_types array */
+  void init_boundary_side(Arr_parameter_space ps, 
+                          Arr_contracted_side_tag) {
+      _boundary_types[ps] = ARR_CONTRACTION;
+  }
+
+  /*! Initialize the boundary_types array */
+  void init_boundary_side(Arr_parameter_space ps, 
+                          Arr_identified_side_tag) {
+      _boundary_types[ps] = ARR_IDENTIFICATION;
+  }
+
   /*! Allocate a new point. */
   Point_2 *_new_point (const Point_2& pt)
   {
