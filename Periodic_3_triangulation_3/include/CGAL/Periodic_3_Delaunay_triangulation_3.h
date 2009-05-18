@@ -171,10 +171,11 @@ public:
 
     std::vector<Point> points(first, last);
     std::random_shuffle (points.begin(), points.end());
-
+    std::cout<<'a';std::cout.flush();
     Cell_handle hint;
     std::vector<Vertex_handle> dummy_points, double_vertices;
     typename std::vector<Point>::iterator pbegin = points.begin();
+    std::cout<<'b';std::cout.flush();
     if (is_large_point_set)
       dummy_points = insert_dummy_points();
     else while (!is_1_cover()) {
@@ -182,13 +183,16 @@ public:
 	++pbegin;
 	if (pbegin == points.end()) return number_of_vertices() - n;
       }
+    std::cout<<'c';std::cout.flush();
 
     spatial_sort (pbegin, points.end(), geom_traits());
+    std::cout<<'d';std::cout.flush();
 
     Conflict_tester tester(*pbegin,this);
     Point_hider hider;
     double_vertices = Base::insert_in_conflict(
 	points.begin(),points.end(),hint,tester,hider); 
+    std::cout<<'e';std::cout.flush();
    
     if (is_large_point_set) {
       typedef CGAL::Periodic_3_triangulation_remove_traits_3< Gt > P3removeT;
@@ -198,10 +202,12 @@ public:
       DT dt(remove_traits);
       Remover remover(this,dt);
       Conflict_tester t(this);
+    std::cout<<'f';std::cout.flush();
       for (unsigned int i=0; i<dummy_points.size(); i++) {
 	if (std::find(double_vertices.begin(), double_vertices.end(),
 		dummy_points[i]) == double_vertices.end())
 	  Base::remove(dummy_points[i],remover,t);
+    std::cout<<'g';std::cout.flush();
       }
     }
 
@@ -402,8 +408,62 @@ public:
 
 private:
   class Conflict_tester;
-  template <class DT> struct Vertex_remover;
   class Point_hider;
+
+  //#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  //template <class Triangulation_R3> struct Vertex_remover;
+  //#else
+  template <class TriangulationR3>
+  struct Vertex_remover
+  {
+    typedef TriangulationR3      Triangulation_R3;
+    typedef Conflict_tester      Conflict_tester;
+    typedef Point_hider          Point_hider;
+    
+    typedef typename std::vector<Point>::iterator Hidden_points_iterator;
+    
+    // TODO: All these typedefs are only needed in the remove.
+    // If they are not different for the Regular_conflict_tester, then
+    // they should be moved to the remove.
+    
+    typedef Triple < Vertex_handle, Vertex_handle, Vertex_handle > Vertex_triple;
+    
+    typedef typename Triangulation_R3::Triangulation_data_structure TDSE;
+    typedef typename Triangulation_R3::Cell_handle        CellE_handle;
+    typedef typename Triangulation_R3::Vertex_handle      VertexE_handle;
+    typedef typename Triangulation_R3::Facet              FacetE;
+    typedef typename Triangulation_R3::Finite_cells_iterator Finite_cellsE_iterator;
+    
+    typedef Triple< VertexE_handle, VertexE_handle, VertexE_handle >
+      VertexE_triple;
+    
+    typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
+    typedef std::map<Vertex_triple, FacetE> Vertex_triple_FacetE_map;
+    typedef typename Vertex_triple_FacetE_map::iterator
+    Vertex_triple_FacetE_map_it;
+    
+  Vertex_remover(const Self *t, Triangulation_R3 &tmp_) : _t(t),tmp(tmp_) {}
+    
+    const Self *_t;
+    Triangulation_R3 &tmp;
+    
+    void add_hidden_points(Cell_handle) {
+      std::copy (hidden_points_begin(), hidden_points_end(), 
+		 std::back_inserter(hidden));
+    }
+    
+    Hidden_points_iterator hidden_points_begin() {
+      return hidden.begin();
+    }
+    Hidden_points_iterator hidden_points_end() {
+      return hidden.end();
+    }
+    //private:
+    // The removal of v may un-hide some points,
+    // Space functions output them.
+    std::vector<Point> hidden;
+  };
+  //#endif CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 };
 
 template < class GT, class Tds >
@@ -859,61 +919,6 @@ public:
     return p;
   }
   
-};
-
-template <class GT, class Tds>
-template <class EuclideanTriangulation>
-struct Periodic_3_Delaunay_triangulation_3<GT,Tds>::Vertex_remover
-{
-  typedef typename Periodic_3_Delaunay_triangulation_3<GT,Tds>::Conflict_tester
-      Conflict_tester;
-  typedef typename Periodic_3_Delaunay_triangulation_3<GT,Tds>::Point_hider
-      Point_hider;
-
-  typedef typename std::vector<Point>::iterator Hidden_points_iterator;
-
-  // TODO: All these typedefs are only needed in the remove.
-  // If they are not different for the Regular_conflict_tester, then
-  // they should be moved to the remove.
-  
-  typedef EuclideanTriangulation Triangulation;
-
-  typedef Triple < Vertex_handle, Vertex_handle, Vertex_handle > Vertex_triple;
-  
-  typedef typename Triangulation::Triangulation_data_structure TDSE;
-  typedef typename Triangulation::Cell_handle        CellE_handle;
-  typedef typename Triangulation::Vertex_handle      VertexE_handle;
-  typedef typename Triangulation::Facet              FacetE;
-  typedef typename Triangulation::Finite_cells_iterator Finite_cellsE_iterator;
-  
-  typedef Triple< VertexE_handle, VertexE_handle, VertexE_handle >
-      VertexE_triple;
-  
-  typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
-  typedef std::map<Vertex_triple, FacetE> Vertex_triple_FacetE_map;
-  typedef typename Vertex_triple_FacetE_map::iterator
-      Vertex_triple_FacetE_map_it;
-  
-  Vertex_remover(const Self *t, Triangulation &tmp_) : _t(t),tmp(tmp_) {}
-  
-  const Self *_t;
-  Triangulation &tmp;
-  
-  void add_hidden_points(Cell_handle) {
-    std::copy (hidden_points_begin(), hidden_points_end(), 
-        std::back_inserter(hidden));
-  }
-
-  Hidden_points_iterator hidden_points_begin() {
-    return hidden.begin();
-  }
-  Hidden_points_iterator hidden_points_end() {
-    return hidden.end();
-  }
-  //private:
-  // The removal of v may un-hide some points,
-  // Space functions output them.
-  std::vector<Point> hidden;
 };
 
 template < class GT, class Tds>

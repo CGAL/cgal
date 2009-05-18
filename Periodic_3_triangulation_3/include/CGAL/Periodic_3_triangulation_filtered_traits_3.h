@@ -437,14 +437,16 @@ struct Offset_converter_3
 
   typedef typename Periodic_3_triangulation_traits_base_3<Source_kernel>
                    ::Offset  Source_off;
+  typedef typename Periodic_3_triangulation_traits_base_3<Source_kernel>
+                   ::Point_3  Source_pt;
 
   typedef typename Periodic_3_triangulation_traits_base_3<Target_kernel>
                    ::Offset  Target_off;
+  typedef typename Periodic_3_triangulation_traits_base_3<Target_kernel>
+                   ::Point_3  Target_pt;
 
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Converter::operator();
-#endif
 
   Target_off
   operator()(const Source_off &off) const

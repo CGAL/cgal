@@ -137,13 +137,13 @@ public:
 
   reference operator*() const
     {
-      periodic_tetrahedron = construct_periodic_tetrahedron(_t);
+      periodic_tetrahedron = construct_periodic_tetrahedron();
       return periodic_tetrahedron;
     }
 
   pointer operator->() const
     {
-      periodic_tetrahedron = construct_periodic_tetrahedron(_t);
+      periodic_tetrahedron = construct_periodic_tetrahedron();
       return &periodic_tetrahedron;
     }
 
@@ -299,7 +299,7 @@ private:
     return( 4*offx + 2*offy + offz );
   }
 
-  Periodic_tetrahedron construct_periodic_tetrahedron(const T* _t) const {
+  Periodic_tetrahedron construct_periodic_tetrahedron() const {
     CGAL_assertion(pos != typename T::Cell_handle());
     Offset off0, off1, off2, off3;
     get_edge_offsets(off0, off1, off2, off3);
@@ -438,13 +438,13 @@ public:
 
   reference operator*() const
     {
-      periodic_triangle = construct_periodic_triangle(_t);
+      periodic_triangle = construct_periodic_triangle();
       return periodic_triangle;
     }
 
   pointer operator->() const
     {
-      periodic_triangle = construct_periodic_triangle(_t);
+      periodic_triangle = construct_periodic_triangle();
       return &periodic_triangle;
     }
 
@@ -587,7 +587,7 @@ private:
     return( 4*offx + 2*offy + offz );
   }
 
-  Periodic_triangle construct_periodic_triangle(const T* _t) const {
+  Periodic_triangle construct_periodic_triangle() const {
     CGAL_assertion(pos->first != typename T::Cell_handle());
     Offset off0, off1, off2;
     get_edge_offsets(off0, off1, off2);
@@ -723,13 +723,13 @@ public:
 
   reference operator*() const
     {
-      periodic_segment = construct_periodic_segment(_t);
+      periodic_segment = construct_periodic_segment();
       return periodic_segment;
     }
 
   pointer operator->() const
     {
-      periodic_segment = construct_periodic_segment(_t);
+      periodic_segment = construct_periodic_segment();
       return &periodic_segment;
     }
 
@@ -846,7 +846,7 @@ private:
 	    + (diff_off.z() == 0 ? 0:1) );
   }
 
-  Periodic_segment construct_periodic_segment(const T* _t) const {
+  Periodic_segment construct_periodic_segment() const {
     CGAL_assertion(pos->first != typename T::Cell_handle());
     Offset off0, off1;
     get_edge_offsets(off0, off1);
@@ -977,13 +977,13 @@ public:
   
   reference operator*() const
   {
-    periodic_point = construct_periodic_point(_t);
+    periodic_point = construct_periodic_point();
     return periodic_point;
   }
   
   pointer operator->() const
   {
-    periodic_point = construct_periodic_point(_t);
+    periodic_point = construct_periodic_point();
     return &periodic_point;
   }
   
@@ -1002,7 +1002,7 @@ private:
     return (_t->get_offset(pos) == Offset(0,0,0));
   }
 
-  Periodic_point construct_periodic_point(const T* _t) const {
+  Periodic_point construct_periodic_point() const {
     CGAL_assertion(pos != typename T::Vertex_handle());
     Offset off = _t->get_offset(pos);
     return std::make_pair(pos->point(),off);

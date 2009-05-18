@@ -1846,11 +1846,10 @@ template < class GT, class TDS >
 inline typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle
 Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(
     const Point &p) {
-  /** NGHK: Assume diagonal is Vector(1,1,1) for now **/
   /// Virtual vertices, one per periodic domain
-  Vertex_handle vir_vertices[_cover[0]][_cover[1]][_cover[2]];
+  Vertex_handle vir_vertices[3][3][3];
   /// Virtual cells, 6 per periodic domain
-  Cell_handle cells[_cover[0]][_cover[1]][_cover[2]][6];
+  Cell_handle cells[3][3][3][6];
 
   // Initialise vertices:
   vir_vertices[0][0][0] = _tds.create_vertex();
@@ -2471,7 +2470,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
   remover.tmp.clear();
   
   for(unsigned int i=0; i < vertices.size(); i++){
-    typedef typename Point_remover::Triangulation::Point TRPoint;
+    typedef typename Point_remover::Triangulation_R3::Point TRPoint;
     CGAL_assertion(get_offset(vertices[i])
 	+ combine_offsets(Offset(), vh_off_map[vertices[i]])
 	== combine_offsets(get_offset(vertices[i]),vh_off_map[vertices[i]]));
