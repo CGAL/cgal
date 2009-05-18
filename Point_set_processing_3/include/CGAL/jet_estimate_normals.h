@@ -19,10 +19,10 @@
 #ifndef CGAL_JET_ESTIMATE_NORMALS_H
 #define CGAL_JET_ESTIMATE_NORMALS_H
 
-#include <CGAL/value_type_traits.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Monge_via_jet_fitting.h>
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -38,7 +38,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 
-/// Estimate normal direction using jet fitting
+/// Estimates normal direction using jet fitting
 /// on the k nearest neighbors.
 ///
 /// @commentheading Precondition: k >= 2.
@@ -52,10 +52,10 @@ template < typename Kernel,
            typename Tree
 >
 typename Kernel::Vector_3
-jet_estimate_normals(const typename Kernel::Point_3& query, ///< point to compute the normal at
-                     Tree& tree, ///< KD-tree
-                     unsigned int k, ///< number of neighbors
-                     unsigned int degree_fitting)
+jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute the normal at
+                    Tree& tree, ///< KD-tree
+                    unsigned int k, ///< number of neighbors
+                    unsigned int degree_fitting)
 {
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
@@ -106,32 +106,41 @@ jet_estimate_normals(const typename Kernel::Point_3& query, ///< point to comput
 // ----------------------------------------------------------------------------
 
 
-/// Estimate normal directions using jet fitting on the k nearest neighbors.
+/// Estimates normal directions of the [first, beyond) range of points
+/// using jet fitting on the k nearest neighbors.
 /// The output normals are randomly oriented.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param OutputIterator value_type must be convertible from Vector_3<Kernel>.
-/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
-///
-/// @return past-the-end output iterator.
+/// @param InputIterator iterator over input points.
+/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
+/// @param NormalPMap is a model of boost::WritablePropertyMap with a value_type = Vector_3<Kernel>.
+/// @param Kernel Geometric traits class.
+///        It can be omitted and deduced automatically from PointPMap value_type.
 
-// This variant requires the kernel.
+// This variant requires all parameters.
 template <typename InputIterator,
-          typename OutputIterator,
+          typename PointPMap,
+          typename NormalPMap,
           typename Kernel
 >
-OutputIterator
-jet_estimate_normals(InputIterator first, ///< iterator over the first input point.
-                     InputIterator beyond, ///< past-the-end iterator over input points.
-                     OutputIterator normals, ///< output normals.
-                     unsigned int k, ///< number of neighbors.
-                     const Kernel& kernel, ///< geometric traits.
-                     unsigned int degree_fitting)
+void
+jet_estimate_normals(
+  InputIterator first,  ///< iterator over the first input point.
+  InputIterator beyond, ///< past-the-end iterator over input points.
+  PointPMap point_pmap, ///< property map InputIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+  unsigned int k, ///< number of neighbors.
+  const Kernel& kernel, ///< geometric traits.
+  unsigned int degree_fitting = 2)
 {
-  CGAL_TRACE("Call jet_estimate_normals()\n");
+  CGAL_TRACE("Calls jet_estimate_normals()\n");
+
+  // Input points types
+  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  typedef typename boost::property_traits<NormalPMap>::value_type Vector;
 
   // types for K nearest neighbors search structure
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
@@ -147,44 +156,73 @@ jet_estimate_normals(InputIterator first, ///< iterator over the first input poi
   CGAL_point_set_processing_precondition(k >= 2);
 
   long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-  CGAL_TRACE("  Create KD-tree\n");
+  CGAL_TRACE("  Creates KD-tree\n");
 
   // instanciate a KD-tree search
   Tree tree(first,beyond);
 
   /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-  CGAL_TRACE("  Compute normals\n");
+  CGAL_TRACE("  Computes normals\n");
 
   // iterate over input points, compute and output normal
   // vectors (already normalized)
   InputIterator it;
   for(it = first; it != beyond; it++)
   {
-    *normals = CGALi::jet_estimate_normals<Kernel,Tree>(*it,tree,k,degree_fitting);
-    normals++;
+    Vector normal = CGALi::jet_estimate_normal<Kernel,Tree>(get(point_pmap,it), tree, k, degree_fitting);
+    put(normal_pmap, it, normal); // normal_pmap[it] = normal
   }
 
   /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of jet_estimate_normals()\n");
-
-  return normals;
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the iterator type.
+// This variant deduces the kernel from the point property map.
 template <typename InputIterator,
-          typename OutputIterator
+          typename PointPMap,
+          typename NormalPMap
 >
-OutputIterator
-jet_estimate_normals(InputIterator first, ///< iterator over the first input point
-                     InputIterator beyond, ///< past-the-end iterator over input points
-                     OutputIterator normals, ///< output normals
-                     unsigned int k, ///< number of neighbors
-                     unsigned int degree_fitting = 2)
+void
+jet_estimate_normals(
+  InputIterator first,  ///< iterator over the first input point.
+  InputIterator beyond, ///< past-the-end iterator over input points.
+  PointPMap point_pmap, ///< property map InputIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+  unsigned int k, ///< number of neighbors.
+  unsigned int degree_fitting = 2)
 {
-  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return jet_estimate_normals(first,beyond,normals,k,Kernel(),degree_fitting);
+  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+  jet_estimate_normals(
+    first,beyond,
+    point_pmap, 
+    normal_pmap,
+    k,
+    Kernel(),
+    degree_fitting);
+}
+/// @endcond
+
+/// @cond SKIP_IN_MANUAL
+// This variant creates a default point property map = Dereference_property_map.
+template <typename InputIterator,
+          typename NormalPMap
+>
+void
+jet_estimate_normals(
+  InputIterator first,  ///< iterator over the first input point.
+  InputIterator beyond, ///< past-the-end iterator over input points.
+  NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+  unsigned int k, ///< number of neighbors.
+  unsigned int degree_fitting = 2)
+{
+  jet_estimate_normals(
+    first,beyond,
+    make_dereference_property_map(first), 
+    normal_pmap,
+    k,
+    degree_fitting);
 }
 /// @endcond
 

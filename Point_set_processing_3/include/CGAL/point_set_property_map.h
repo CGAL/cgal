@@ -20,6 +20,7 @@
 #define CGAL_PROPERTY_MAP_H
 
 #include <CGAL/Point_with_normal_3.h>
+#include <CGAL/value_type_traits.h>
 
 #include <boost/property_map.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -49,10 +50,11 @@ namespace CGAL {
 
   /// Free function to create a Dereference_property_map property map
   template <class Iter> // Type convertible to key_type
-  Dereference_property_map<typename std::iterator_traits<Iter>::value_type>
+  Dereference_property_map<typename CGAL::value_type_traits<Iter>::type>
   make_dereference_property_map(Iter)
   {
-    return Dereference_property_map<typename std::iterator_traits<Iter>::value_type>();
+    // value_type_traits is a workaround as back_insert_iterator's value_type is void
+    return Dereference_property_map<typename CGAL::value_type_traits<Iter>::type>();
   }
 
 
@@ -79,10 +81,11 @@ namespace CGAL {
 
   /// Free function to create a Normal_vector_property_map property map
   template <class Iter> // Type convertible to key_type
-  Normal_vector_property_map<typename CGAL::Kernel_traits<typename std::iterator_traits<Iter>::value_type>::Kernel>
+  Normal_vector_property_map<typename CGAL::Kernel_traits<typename CGAL::value_type_traits<Iter>::type>::Kernel>
   make_normal_vector_property_map(Iter)
   {
-    typedef typename std::iterator_traits<Iter>::value_type Value_type;
+    // value_type_traits is a workaround as back_insert_iterator's value_type is void
+    typedef typename CGAL::value_type_traits<Iter>::type Value_type;
     typedef typename CGAL::Kernel_traits<Value_type>::Kernel Kernel;
     return Normal_vector_property_map<Kernel>();
   }
@@ -110,10 +113,11 @@ namespace CGAL {
 
   /// Free function to create a First_of_pair_property_map property map
   template <class Iter> // Type convertible to key_type
-  First_of_pair_property_map<typename std::iterator_traits<Iter>::value_type>
+  First_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>
   make_first_of_pair_property_map(Iter)
   {
-    return First_of_pair_property_map<typename std::iterator_traits<Iter>::value_type>();
+    // value_type_traits is a workaround as back_insert_iterator's value_type is void
+    return First_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>();
   }
 
   /// Property map Pair* -> Pair::second_type
@@ -134,10 +138,11 @@ namespace CGAL {
 
   /// Free function to create a Second_of_pair_property_map property map
   template <class Iter> // Type convertible to key_type
-  Second_of_pair_property_map<typename std::iterator_traits<Iter>::value_type>
+  Second_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>
   make_second_of_pair_property_map(Iter)
   {
-    return Second_of_pair_property_map<typename std::iterator_traits<Iter>::value_type>();
+    // value_type_traits is a workaround as back_insert_iterator's value_type is void
+    return Second_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>();
   }
 
 
@@ -161,10 +166,11 @@ namespace CGAL {
 
   /// Free function to create a Nth_of_tuple_property_map property map
   template <int N, class Iter> // Type convertible to key_type
-  Nth_of_tuple_property_map<N, typename std::iterator_traits<Iter>::value_type>
+  Nth_of_tuple_property_map<N, typename CGAL::value_type_traits<Iter>::type>
   make_nth_of_tuple_property_map(Iter)
   {
-    return Nth_of_tuple_property_map<N, typename std::iterator_traits<Iter>::value_type>();
+    // value_type_traits is a workaround as back_insert_iterator's value_type is void
+    return Nth_of_tuple_property_map<N, typename CGAL::value_type_traits<Iter>::type>();
   }
 
 

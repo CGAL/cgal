@@ -15,7 +15,7 @@
 
 // This package
 #include <CGAL/compute_average_spacing.h>
-#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/read_xyz_points.h>
 
 #include <deque>
 #include <cstdlib>
@@ -39,15 +39,16 @@ typedef Kernel::Point_3 Point;
 // Tests
 // ----------------------------------------------------------------------------
 
+// Computes average spacing.
 void test_average_spacing(std::deque<Point>& points, // input point set
-                          unsigned int nb_neighbors_avg_spacing) // number of neighbors
+                          unsigned int nb_neighbors) // number of neighbors
 {
-  std::cerr << "Compute average spacing to k nearest neighbors (k="<< nb_neighbors_avg_spacing << ")... ";
+  std::cerr << "Computes average spacing to k nearest neighbors (k="<< nb_neighbors << ")... ";
   CGAL::Timer task_timer; task_timer.start();
 
-  typedef std::deque<Point>::iterator Iterator;
-  std::cerr << CGAL::compute_average_spacing<Iterator>(points.begin(), points.end(),
-                                                       nb_neighbors_avg_spacing) << "\n";
+  FT average_spacing = CGAL::compute_average_spacing(points.begin(), points.end(),
+                                           nb_neighbors);
+  std::cout << average_spacing << std::endl;
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
@@ -80,7 +81,7 @@ int main(int argc, char * argv[])
   }
 
   // Average Spacing options
-  const unsigned int nb_neighbors_avg_spacing = 7; // K-nearest neighbors = 1 ring (average spacing)
+  const unsigned int nb_neighbors = 7; // K-nearest neighbors = 1 ring (average spacing)
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -91,22 +92,21 @@ int main(int argc, char * argv[])
     std::cerr << std::endl;
 
     //***************************************
-    // Load point set
+    // Loads point set
     //***************************************
 
     // File name is:
     std::string input_filename  = argv[i];
 
-    // Read the point set file in points[].
+    // Reads the point set file in points[].
     std::deque<Point> points;
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
     // If XYZ file format:
     std::ifstream stream(input_filename.c_str());
     if(stream &&
-       CGAL::read_xyz_point_set(stream,
-                                std::back_inserter(points),
-                                false /*skip normals*/))
+       CGAL::read_xyz_points(stream,
+                             std::back_inserter(points)))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }
@@ -121,13 +121,13 @@ int main(int argc, char * argv[])
     // Test
     //***************************************
 
-    test_average_spacing(points,nb_neighbors_avg_spacing);
+    test_average_spacing(points,nb_neighbors);
 
   } // for each input file
 
   std::cerr << std::endl;
 
-  // Return accumulated fatal error
+  // Returns accumulated fatal error
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }

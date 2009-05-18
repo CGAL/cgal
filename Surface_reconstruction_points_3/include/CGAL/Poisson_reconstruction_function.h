@@ -14,9 +14,7 @@
 // $URL$
 // $Id$
 //
-//
 // Author(s)     : Laurent Saboret, Pierre Alliez
-
 
 #ifndef CGAL_POISSON_RECONSTRUCTION_FUNCTION_H
 #define CGAL_POISSON_RECONSTRUCTION_FUNCTION_H
@@ -30,6 +28,7 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/taucs_solver.h>
 #include <CGAL/centroid.h>
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Peak_memory_sizer.h>
@@ -49,7 +48,7 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// Poisson_reconstruction_function implements a variant of this algorithm which solves
 /// for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree
-/// the TAUCS sparse linear solver.
+/// using the TAUCS sparse linear solver.
 /// In order to get a unique solution, one vertex outside of the surface is constrained to a value of 0.0.
 ///
 /// @heading Is Model for the Concepts:
@@ -69,14 +68,14 @@ public:
 
   typedef ReconstructionTriangulation_3 Triangulation;
 
-  typedef Gt Geom_traits; ///< Kernel's geometric traits
+  typedef Gt Geom_traits; ///< Geometric traits class
 
   // Geometric types
-  typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Vector_3 Vector; ///< == Vector_3<Geom_traits>
-  typedef typename Geom_traits::Point_3 Point;  ///< == Point_3<Geom_traits>
+  typedef typename Geom_traits::FT FT; ///< == Geom_traits::FT
+  typedef typename Geom_traits::Point_3 Point; ///< == Geom_traits::Point_3
+  typedef typename Geom_traits::Vector_3 Vector; ///< == Geom_traits::Vector_3
   typedef typename Triangulation::Point_with_normal Point_with_normal; ///< == Point_with_normal_3<Geom_traits>
-  typedef typename Geom_traits::Sphere_3 Sphere;
+  typedef typename Geom_traits::Sphere_3 Sphere; ///< == Geom_traits::Sphere_3
 
 // Private types
 private:
@@ -128,21 +127,69 @@ private:
 // Public methods
 public:
 
-  /// Creates a scalar function from a set of oriented points.
+  /// Creates a Poisson implicit function from the [first, beyond) range of points.
   ///
-  /// @commentheading Precondition:
-  /// InputIterator value_type must be convertible to Point_with_normal.
-  ///
-  /// @param first Iterator over first point.
-  /// @param beyond Past-the-end iterator.
-  template < class InputIterator >
-  Poisson_reconstruction_function(InputIterator first, InputIterator beyond)
+  /// @commentheading Template Parameters:
+  /// @param InputIterator iterator over input points.
+  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Point_3.
+  ///        It can be omitted if InputIterator value_type is convertible to Geom_traits::Point_3.
+  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Vector_3.
+
+  // This variant requires all parameters.
+  template <typename InputIterator,
+            typename PointPMap,
+            typename NormalPMap
+  >
+  Poisson_reconstruction_function(
+    InputIterator first,  ///< iterator over the first input point.
+    InputIterator beyond, ///< past-the-end iterator over input points.
+    PointPMap point_pmap, ///< property map InputIterator -> Point_3.
+    NormalPMap normal_pmap) ///< property map InputIterator -> Vector_3.
   : m_tr(new Triangulation)
   {
-    m_tr->insert(first, beyond);
+    //m_tr->insert(
+    //  first, beyond,
+    //  point_pmap,
+    //  normal_pmap);
+
+    // TEMPORARY: convert points to Point_with_normal_3.
+    std::vector<Point_with_normal> pwns; 
+    for (InputIterator it = first; it != beyond; it++)
+    {
+        Point_with_normal point_wrapper(get(point_pmap,it), get(normal_pmap,it));
+        pwns.push_back(point_wrapper);
+    }
+    m_tr->insert(pwns.begin(), pwns.end());
   }
 
-  /// Get embedded triangulation.
+  /// @cond SKIP_IN_MANUAL
+  // This variant creates a default point property map = Dereference_property_map.
+  template <typename InputIterator,
+            typename NormalPMap
+  >
+  Poisson_reconstruction_function(
+    InputIterator first,  ///< iterator over the first input point.
+    InputIterator beyond, ///< past-the-end iterator over input points.
+    NormalPMap normal_pmap) ///< property map InputIterator -> Vector_3.
+  : m_tr(new Triangulation)
+  {
+    //m_tr->insert(
+    //  first, beyond,
+    //  make_dereference_property_map(first),
+    //  normal_pmap);
+
+    // TEMPORARY: convert points to Point_with_normal_3.
+    std::vector<Point_with_normal> pwns; 
+    for (InputIterator it = first; it != beyond; it++)
+    {
+        Point_with_normal point_wrapper(*it, get(normal_pmap,it));
+        pwns.push_back(point_wrapper);
+    }
+    m_tr->insert(pwns.begin(), pwns.end());
+  }
+  /// @endcond
+
+  /// Gets embedded triangulation.
   ReconstructionTriangulation_3& triangulation()
   {
     return *m_tr;
@@ -179,7 +226,7 @@ public:
     const FT cell_radius_bound = size/5.; // large
     unsigned int nb_vertices_added = delaunay_refinement(radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarge_ratio);
 
-    // Print status
+    // Prints status
     CGAL_TRACE_STREAM << "Delaunay refinement: " << "added " << nb_vertices_added << " Steiner points, "
                                                  << task_timer.time() << " seconds, "
                                                  << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
@@ -188,7 +235,7 @@ public:
 
     CGAL_TRACE_STREAM << "Solve Poisson equation with normalized divergence...\n";
 
-    // Compute the Poisson indicator function f()
+    // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
     double lambda = 0.1;
     if ( ! solve_poisson(lambda) )
@@ -202,7 +249,7 @@ public:
     // - f() < 0 inside the surface.
     set_contouring_value(median_value_at_input_vertices());
 
-    // Print status
+    // Prints status
     CGAL_TRACE_STREAM << "Solve Poisson equation: " << task_timer.time() << " seconds, "
                                                     << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
                                                     << std::endl;
@@ -230,7 +277,7 @@ public:
            d * m_hint->vertex(3)->f();
   }
 
-  /// 'ImplicitFunction' interface: evaluate implicit function for any 3D point.
+  /// 'ImplicitFunction' interface: evaluates implicit function at 3D query point.
   FT operator()(const Point& p) const
   {
     return f(p);
@@ -239,7 +286,7 @@ public:
   /// Returns a point located inside the inferred surface.
   Point get_inner_point() const
   {
-    // Get point / the implicit function is minimum
+    // Gets point / the implicit function is minimum
     return m_sink;
   }
 
@@ -249,13 +296,13 @@ private:
   /// Delaunay refinement (break bad tetrahedra, where
   /// bad means badly shaped or too big). The normal of
   /// Steiner points is set to zero.
-  /// Return the number of vertices inserted.
+  /// Returns the number of vertices inserted.
   unsigned int delaunay_refinement(FT radius_edge_ratio_bound, ///< radius edge ratio bound (ignored if zero)
                                    FT cell_radius_bound, ///< cell radius bound (ignored if zero)
                                    unsigned int max_vertices, ///< number of vertices bound
                                    FT enlarge_ratio) ///< bounding box enlarge ratio
   {
-    CGAL_TRACE("Call delaunay_refinement(radius_edge_ratio_bound=%lf, cell_radius_bound=%lf, max_vertices=%u, enlarge_ratio=%lf)\n",
+    CGAL_TRACE("Calls delaunay_refinement(radius_edge_ratio_bound=%lf, cell_radius_bound=%lf, max_vertices=%u, enlarge_ratio=%lf)\n",
                radius_edge_ratio_bound, cell_radius_bound, max_vertices, enlarge_ratio);
 
     Sphere enlarged_bbox = enlarged_bounding_sphere(enlarge_ratio);
@@ -267,10 +314,10 @@ private:
   }
 
   /// Poisson reconstruction.
-  /// Return false on error.
+  /// Returns false on error.
   bool solve_poisson(double lambda)
   {
-    CGAL_TRACE("Call solve_poisson()\n");
+    CGAL_TRACE("Calls solve_poisson()\n");
 
     double time_init = clock();
 
@@ -284,7 +331,7 @@ private:
                long(CGAL::Memory_sizer().virtual_size())>>20,
                long(CGAL::Peak_memory_sizer().largest_free_block()>>20),
                long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
-    CGAL_TRACE("  Create matrix...\n");
+    CGAL_TRACE("  Creates matrix...\n");
 
     // get #variables
     unsigned int nb_variables = m_tr->index_unconstrained_vertices();
@@ -314,7 +361,7 @@ private:
     }
 
     duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
-    CGAL_TRACE("  Create matrix: done (%.2lf s)\n", duration_assembly);
+    CGAL_TRACE("  Creates matrix: done (%.2lf s)\n", duration_assembly);
 
     /*
     time_init = clock();
@@ -336,7 +383,7 @@ private:
     duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
     CGAL_TRACE("  Choleschy factorization: done (%.2lf s)\n", duration_factorization);
 
-    // Print peak memory (Windows only)
+    // Prints peak memory (Windows only)
     long max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
     if (max_memory > old_max_memory)
       CGAL_TRACE("  Max allocation = %ld Mb\n", max_memory>>20);
@@ -389,7 +436,7 @@ private:
   /// - the implicit function = 0 for points / f() = contouring_value,
   /// - the implicit function < 0 inside the surface.
   ///
-  /// Return the minimum value of the implicit function.
+  /// Returns the minimum value of the implicit function.
   FT set_contouring_value(FT contouring_value)
   {
     // median value set to 0.0
@@ -406,7 +453,7 @@ private:
   }
 
 
-/// Get median value of the implicit function over input vertices.
+/// Gets median value of the implicit function over input vertices.
   FT median_value_at_input_vertices() const
   {
     std::deque<FT> values;
@@ -681,7 +728,7 @@ private:
     return area;
   }
 
-  // Get indices different from i and j
+  // Gets indices different from i and j
   void other_two_indices(int i, int j, int* k, int* l)
   {
     CGAL_surface_reconstruction_points_assertion(i != j);
@@ -765,7 +812,7 @@ private:
     return Edge(cell,i1,i2);
   }
 
-  /// Compute enlarged geometric bounding sphere of the embedded triangulation.
+  /// Computes enlarged geometric bounding sphere of the embedded triangulation.
   Sphere enlarged_bounding_sphere(FT ratio) const
   {
     Sphere bbox = bounding_sphere(); // triangulation's bounding sphere

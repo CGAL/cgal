@@ -1,34 +1,37 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: read_xyz_point_set.tex
+% | Reference manual page: read_off_points.tex
 % +------------------------------------------------------------------------+
 % | 07.01.2009   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Point_set_processing_3
 % |
-\RCSdef{\RCSreadxyzpointsetRev}{$Id$}
-\RCSdefDate{\RCSreadxyzpointsetDate}{$Date$}
+\RCSdef{\RCSreadoffpointsetRev}{$Id$}
+\RCSdefDate{\RCSreadoffpointsetDate}{$Date$}
 % |
 \ccRefPageBegin
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{read_xyz_point_set}  %% add template arg's if necessary
+\begin{ccRefFunction}{read_off_points}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[function]{} %% add further index entries
 
 \ccDefinition
 
-\ccc{CGAL::read_xyz_point_set()} reads points (positions + normals if available) from a .xyz ASCII stream. The \ccc{NormalPMap} parameter can be omitted if the caller knows that the stream does not describe normal vectors.
+\ccc{CGAL::read_off_points()} reads points (positions + normals, if available) from a .off ASCII stream.
+Faces are ignored.
 
-\ccInclude{CGAL/read_xyz_point_set.h}
+The \ccc{NormalPMap} parameter can be omitted if the caller knows that the stream does not describe normal vectors.
+
+\ccInclude{CGAL/read_off_points.h}
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{template<typename OutputIterator, typename PointPMap, typename NormalPMap, typename Kernel> bool read_xyz_point_set(std::istream& stream, OutputIterator output, PointPMap point_pmap, NormalPMap normal_pmap, const Kernel& kernel);}
+\ccFunction{template<typename OutputIterator, typename PointPMap, typename NormalPMap, typename Kernel> bool read_off_points(std::istream& stream, OutputIterator output, PointPMap point_pmap, NormalPMap normal_pmap, const Kernel& kernel);}
 {
-Reads points (positions + normals if available) from a .xyz ASCII stream.
+Reads points (positions + normals, if available) from a .off ASCII stream. Faces are ignored.
 \ccCommentHeading{Template Parameters}
 \begin{description}
 \item \ccc{OutputIterator}: iterator over output points. \item \ccc{PointPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if OutputIterator \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \item \ccc{NormalPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Vector_3<Kernel>}. It can be omitted if the caller knows that the stream does not describe normal vectors. \item \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from PointPMap \ccc{value_type}.\end{description}
@@ -43,9 +46,9 @@ Reads points (positions + normals if available) from a .xyz ASCII stream.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::write_xyz_point_set}  \\
-\ccRefIdfierPage{CGAL::read_off_point_set}  \\
-\ccRefIdfierPage{CGAL::write_off_point_set}  \\
+\ccRefIdfierPage{CGAL::read_xyz_points}  \\
+\ccRefIdfierPage{CGAL::write_xyz_points}  \\
+\ccRefIdfierPage{CGAL::write_off_points}  \\
 
 \ccExample
 

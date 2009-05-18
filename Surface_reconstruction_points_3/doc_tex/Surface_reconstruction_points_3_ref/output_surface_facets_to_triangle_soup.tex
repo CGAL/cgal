@@ -28,7 +28,7 @@
 
 \ccFunction{template<class SurfaceMeshComplex_2InTriangulation_3, typename OutputIterator> void output_surface_facets_to_triangle_soup(const SurfaceMeshComplex_2InTriangulation_3& c2t3, OutputIterator output_iterator);}
 {
-Get reconstructed surface out of a \ccc{SurfaceMeshComplex_2InTriangulation_3} object.
+Gets reconstructed surface out of a \ccc{SurfaceMeshComplex_2InTriangulation_3} object.
 This variant exports the surface as a triangle soup.
 \ccCommentHeading{Template Parameters}
 \begin{description}
@@ -62,7 +62,7 @@ STr tr; // 3D-Delaunay triangulation
 C2t3 c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
 CGAL::make_surface_mesh(c2t3, surface, ...);
 
-// Convert reconstructed surface to a triangles soup
+// Converts reconstructed surface to a triangles soup
 std::deque<Triangle> triangles;
 CGAL::output_surface_facets_to_triangle_soup(c2t3, std::back_inserter(triangles));
 \end{ccExampleCode}

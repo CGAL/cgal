@@ -67,7 +67,7 @@ public:
   virtual Scene_item* item(Item_id) const = 0;
   virtual Item_id mainSelectionIndex() const = 0;
 
-  // Get scene bounding box
+  // Gets scene bounding box
   virtual Bbox bbox() const = 0;
   virtual double len_diagonal() const = 0;
 

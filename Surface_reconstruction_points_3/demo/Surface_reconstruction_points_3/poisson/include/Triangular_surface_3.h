@@ -59,16 +59,16 @@ public:
   Base::push_back;
   /// @endcond
   
-  /// Compute triangle normal and append it.
+  /// Computes triangle normal and append it.
   void push_back(const Triangle& t)
   {
       insert(end(), t);
   }
 
-  /// Compute triangle normal and insert it.
+  /// Computes triangle normal and insert it.
   iterator insert(iterator loc, const Triangle& t)
   {
-      // Compute normal
+      // Computes normal
       Vector u = t[1] - t[0];
       Vector v = t[2] - t[0];
       Vector n = CGAL::cross_product(u,v);
@@ -87,7 +87,7 @@ public:
   void insert(iterator loc, 
               InputIterator first, InputIterator beyond)
   {
-    // Compute normals in temporary container
+    // Computes normals in temporary container
     std::deque<Facet_with_normal> tmp;
     for (InputIterator it = first; it != beyond; ++it)
     {

@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/remove_outliers.h>
-#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/read_xyz_points.h>
 
 #include <vector>
 #include <fstream>
@@ -11,23 +11,24 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-    // Reads a .xyz point set file in points[].
-    std::vector<Point> points;
-    std::ifstream stream("data/oni.xyz");
-    if (!stream ||
-        !CGAL::read_xyz_point_set(stream,
-                                  std::back_inserter(points)))
-    {
-      return EXIT_FAILURE;
-    }
+  // Reads a .xyz point set file in points[].
+  std::vector<Point> points;
+  std::ifstream stream("data/oni.xyz");
+  if (!stream ||
+      !CGAL::read_xyz_points(stream,
+                             std::back_inserter(points)))
+  {
+    return EXIT_FAILURE;
+  }
 
-    // Removes outliers
-    const double removed_percentage = 5.0; // removed percentage
-    const int nb_neighbors = 7; // considers 7 nearest neighbor points
-    CGAL::remove_outliers(points.begin(), points.end(),
-                          nb_neighbors,
-                          removed_percentage);
+  // Removes outliers using erase-remove idiom
+  const double percentage_to_remove = 5.0; // percentage of points to remove
+  const int nb_neighbors = 7; // considers 7 nearest neighbor points
+  points.erase(CGAL::remove_outliers(points.begin(), points.end(),
+                                     nb_neighbors,
+                                     percentage_to_remove),
+               points.end());
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 

@@ -2,10 +2,10 @@
 #include "Polyhedron_type.h"
 #include <CGAL/compute_normal.h>
 
-#include <CGAL/IO/read_off_point_set.h>
-#include <CGAL/IO/write_off_point_set.h>
-#include <CGAL/IO/read_xyz_point_set.h>
-#include <CGAL/IO/write_xyz_point_set.h>
+#include <CGAL/IO/read_off_points.h>
+#include <CGAL/IO/write_off_points.h>
+#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/write_xyz_points.h>
 
 #include <QObject>
 
@@ -30,13 +30,13 @@ Point_set_scene_item::Point_set_scene_item(const Point_set_scene_item& toCopy)
   setRenderingMode(PointsPlusNormals);
 }
 
-// Convert polyhedron to point set
+// Converts polyhedron to point set
 Point_set_scene_item::Point_set_scene_item(const Polyhedron& input_mesh)
   : Scene_item_with_display_list(),
     m_points(new Point_set)
 {
-  // Convert Polyhedron vertices to point set.
-  // Compute vertices' normals from connectivity.
+  // Converts Polyhedron vertices to point set.
+  // Computes vertices normal from connectivity.
   Polyhedron::Vertex_const_iterator v;
   for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
   {
@@ -54,61 +54,69 @@ Point_set_scene_item::~Point_set_scene_item()
   delete m_points; m_points = NULL;
 }
 
-// Duplicate scene item
+// Duplicates scene item
 Point_set_scene_item*
 Point_set_scene_item::clone() const
 {
   return new Point_set_scene_item(*this);
 }
 
-// Load point set from .OFF file
-bool Point_set_scene_item::read_off_point_set(std::istream& in)
+// Loads point set from .OFF file
+bool Point_set_scene_item::read_off_point_set(std::istream& stream)
 {
   Q_ASSERT(m_points != NULL);
 
   m_points->clear();
-  bool success = in &&
-                 CGAL::read_off_point_set(in, std::back_inserter(*m_points)) &&
-                 !isEmpty();
+  bool ok = stream &&
+            CGAL::read_off_points_and_normals(stream, 
+                                              std::back_inserter(*m_points),
+                                              CGAL::make_normal_vector_property_map(std::back_inserter(*m_points))) &&
+            !isEmpty();
     
   // Mark all normals as oriented
   m_points->unoriented_points_begin() = m_points->end();
   
-  return success;
+  return ok;
 }
 
 // Write point set to .OFF file
-bool Point_set_scene_item::write_off_point_set(std::ostream& out) const
+bool Point_set_scene_item::write_off_point_set(std::ostream& stream) const
 {
   Q_ASSERT(m_points != NULL);
 
-  return out &&
-         CGAL::write_off_point_set(out, m_points->begin(), m_points->end());
+  return stream &&
+         CGAL::write_off_points_and_normals(stream,
+                                            m_points->begin(), m_points->end(),
+                                            CGAL::make_normal_vector_property_map(m_points->begin()));
 }
 
-// Load point set from .XYZ file
-bool Point_set_scene_item::read_xyz_point_set(std::istream& in)
+// Loads point set from .XYZ file
+bool Point_set_scene_item::read_xyz_point_set(std::istream& stream)
 {
   Q_ASSERT(m_points != NULL);
 
   m_points->clear();
-  bool success = in &&
-                 CGAL::read_xyz_point_set(in, std::back_inserter(*m_points)) &&
-                 !isEmpty();
+  bool ok = stream &&
+            CGAL::read_xyz_points_and_normals(stream, 
+                                              std::back_inserter(*m_points),
+                                              CGAL::make_normal_vector_property_map(std::back_inserter(*m_points))) &&
+            !isEmpty();
     
   // Mark all normals as oriented
   m_points->unoriented_points_begin() = m_points->end();
   
-  return success;
+  return ok;
 }
 
 // Write point set to .XYZ file
-bool Point_set_scene_item::write_xyz_point_set(std::ostream& out) const
+bool Point_set_scene_item::write_xyz_point_set(std::ostream& stream) const
 {
   Q_ASSERT(m_points != NULL);
 
-  return out &&
-         CGAL::write_xyz_point_set(out, m_points->begin(), m_points->end());
+  return stream &&
+         CGAL::write_xyz_points_and_normals(stream,
+                                            m_points->begin(), m_points->end(),
+                                            CGAL::make_normal_vector_property_map(m_points->begin()));
 }
 
 QString
@@ -118,7 +126,7 @@ Point_set_scene_item::toolTip() const
 
   return QObject::tr("<p><b>%1</b> (color: %4)<br />"
                      "<i>Point set</i></p>"
-                     "<p>Number of vertices: %2</p>")
+                     "<p>Number of points: %2</p>")
     .arg(name())
     .arg(m_points->size())
     .arg(color().name());
@@ -169,7 +177,7 @@ void Point_set_scene_item::draw_splats() const
   }
 }
 
-// Get wrapped point set
+// Gets wrapped point set
 Point_set* Point_set_scene_item::point_set()
 {
   Q_ASSERT(m_points != NULL);

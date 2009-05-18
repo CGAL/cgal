@@ -15,7 +15,7 @@
 
 // This package
 #include <CGAL/jet_smooth_point_set.h>
-#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/read_xyz_points.h>
 
 #include <deque>
 #include <cstdlib>
@@ -52,7 +52,7 @@ void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
   if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
-  std::cerr << "Smooth Point Set (k="
+  std::cerr << "Smoothes Point Set (k="
             << nb_neighbors_smooth_jet_fitting << "%=" << nb_neighbors << ")...\n";
 
   CGAL::jet_smooth_point_set(points.begin(), points.end(),
@@ -100,22 +100,21 @@ int main(int argc, char * argv[])
     std::cerr << std::endl;
 
     //***************************************
-    // Load point set
+    // Loads point set
     //***************************************
 
     // File name is:
     std::string input_filename  = argv[i];
 
-    // Read the point set file in points[].
+    // Reads the point set file in points[].
     std::deque<Point> points;
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
     // If XYZ file format:
     std::ifstream stream(input_filename.c_str());
     if(stream &&
-       CGAL::read_xyz_point_set(stream,
-                                std::back_inserter(points),
-                                false /*skip normals*/))
+       CGAL::read_xyz_points(stream,
+                             std::back_inserter(points)))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }
@@ -136,7 +135,7 @@ int main(int argc, char * argv[])
 
   std::cerr << std::endl;
 
-  // Return accumulated fatal error
+  // Returns accumulated fatal error
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }

@@ -30,13 +30,13 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Radial orientation of the [first, beyond) range of vertices.
+/// Radial orientation of the [first, beyond) range of points.
 /// Normals are oriented towards exterior of the point set.
 /// This very fast method is intended to convex objects.
 ///
-/// This method modifies the order of input points, and returns
-/// an iterator over the first point with an unoriented normal (see erase-remove idiom).
-/// Warning: this method should not be called on sorted containers.
+/// This method modifies the order of input points so as to pack all oriented points first,
+/// and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
+/// For this reason it should not be called on sorted containers.
 ///
 /// @commentheading Precondition: normals must be unit vectors.
 ///
@@ -59,14 +59,14 @@ template <typename ForwardIterator,
 ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator.
+    ForwardIterator beyond, ///< past-the-end iterator over input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
     const Kernel& kernel) ///< geometric traits.
 {
-    CGAL_TRACE("Call radial_orient_normals()\n");
+    CGAL_TRACE("Calls radial_orient_normals()\n");
 
-    // Input vertices' types
+    // Input points types
     typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
@@ -88,7 +88,7 @@ radial_orient_normals(
     }
     Point barycenter = CGAL::ORIGIN + sum / (FT)nb_points;
 
-    // Iterate over input points and orient normals towards exterior of the point set.
+    // Iterates over input points and orients normals towards exterior of the point set.
     // Copy points with robust normal orientation to oriented_points[], the others to unoriented_points[].
     std::deque<Enriched_point> oriented_points, unoriented_points;
     for (ForwardIterator it = first; it != beyond; it++)
@@ -102,7 +102,7 @@ radial_orient_normals(
       Vector vec2 = normal_pmap[it];
 
       //         ->               ->
-      // Orient vec2 parallel to vec1
+      // Orients vec2 parallel to vec1
       double dot = vec1 * vec2;
       if (dot < 0)
         vec2 = -vec2;
@@ -117,7 +117,7 @@ radial_orient_normals(
         unoriented_points.push_back(*it);
     }
 
-    // Replace [first, beyond) range by the content of oriented_points[], then unoriented_points[].
+    // Replaces [first, beyond) range by the content of oriented_points[], then unoriented_points[].
     ForwardIterator first_unoriented_point =
       std::copy(oriented_points.begin(), oriented_points.end(), first);
     std::copy(unoriented_points.begin(), unoriented_points.end(), first_unoriented_point);
@@ -137,7 +137,7 @@ template <typename ForwardIterator,
 ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator.
+    ForwardIterator beyond, ///< past-the-end iterator over input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
     NormalPMap normal_pmap) ///< property map ForwardIterator -> Vector_3.
 {
@@ -158,7 +158,7 @@ template <typename ForwardIterator,
 ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator.
+    ForwardIterator beyond, ///< past-the-end iterator over input points.
     NormalPMap normal_pmap) ///< property map ForwardIterator -> Vector_3.
 {
     return radial_orient_normals(

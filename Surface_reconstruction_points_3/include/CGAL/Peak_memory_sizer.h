@@ -38,12 +38,12 @@ struct Peak_memory_sizer : public Memory_sizer
 {
     typedef std::size_t   size_type;
 
-    /// Get the peak memory used by the process.
+    /// Gets the peak memory used by the process.
     /// Both the virtual memory size and the resident size.
     size_type peak_virtual_size()  const { return get_peak_memory(true); }
     size_type peak_resident_size() const { return get_peak_memory(false); }
 
-    /// Get the number of large free memory blocks.
+    /// Gets the number of large free memory blocks.
     size_type count_free_memory_blocks(size_type block_size) const
     {
       double m_sys; /* physical system memory size */

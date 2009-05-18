@@ -12,7 +12,7 @@
 ///
 
 
-/// Read 3D points + cameras from a Gyroviz .pwc file.
+/// Reads 3D points + cameras from a Gyroviz .pwc file.
 /// @return true on success.
 template <typename GyrovizPointOutputIterator, ///< GyrovizPointOutputIterator value_type must be convertible from Gyroviz_point_3<Kernel>.
           typename PointOutputIterator> ///< PointOutputIterator value_type must be convertible from Point_3<Kernel>.
@@ -50,7 +50,7 @@ bool read_pwc_point_set(const char* pFilename,
   {
     lineNumber++;
 
-    // Read file signature on first line
+    // Reads file signature on first line
     if (lineNumber == 1)
     {
       char signature[512];
@@ -62,7 +62,7 @@ bool read_pwc_point_set(const char* pFilename,
       }
     }
 
-    // Read number of cameras and points on 2nd line
+    // Reads number of cameras and points on 2nd line
     else if (lineNumber == 2)
     {
       if (sscanf(pLine,"%ld %ld",&cameras_count,&positions_3D_count) != 2)
@@ -73,10 +73,10 @@ bool read_pwc_point_set(const char* pFilename,
       cameras.reserve(cameras_count);
     }
 
-    // Read cameras on next lines
+    // Reads cameras on next lines
     else if (cameras.size() < cameras_count)
     {
-      // Read position...
+      // Reads position...
       double Cx,Cy,Cz;
       if(sscanf(pLine,"%lg\t%lg\t%lg",&Cx,&Cy,&Cz) == 3)
       {
@@ -86,10 +86,10 @@ bool read_pwc_point_set(const char* pFilename,
       // ...or skip comment line
     }
 
-    // Read 3D points + camera indices on next lines
+    // Reads 3D points + camera indices on next lines
     else
     {
-      // Read position + camera indices...
+      // Reads position + camera indices...
       std::istringstream iss(pLine);
       Point_3 position_3D;
       if (iss >> position_3D)

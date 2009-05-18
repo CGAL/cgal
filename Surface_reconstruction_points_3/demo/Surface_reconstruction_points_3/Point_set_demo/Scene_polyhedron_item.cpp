@@ -39,7 +39,7 @@ Scene_polyhedron_item::clone() const {
   return new Scene_polyhedron_item(*poly);
 }
 
-// Load polyhedron from .OFF file
+// Loads polyhedron from .OFF file
 bool
 Scene_polyhedron_item::load(std::istream& in)
 {

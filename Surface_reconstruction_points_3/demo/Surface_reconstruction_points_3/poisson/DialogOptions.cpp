@@ -23,7 +23,7 @@ CDialogOptions::CDialogOptions(CWnd* pParent /*=NULL*/)
     , m_nb_neighbors_pca_normals(0)
     , m_nb_neighbors_jet_fitting_normals(0)
     , m_nb_neighbors_mst(0)
-    , m_nb_neighbors_apss(0)
+    , m_smoothness_apss(0)
     , m_threshold_percent_avg_knn_sq_dst(0)
     , m_clustering_step(0)
     , m_random_simplification_percentage(0)
@@ -53,7 +53,7 @@ void CDialogOptions::DoDataExchange(CDataExchange* pDX)
     DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_PCA_NORMALS,m_nb_neighbors_pca_normals);
     DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_JET_FITTING_NORMALS,m_nb_neighbors_jet_fitting_normals);
     DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_MST,m_nb_neighbors_mst);
-    DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_APSS,m_nb_neighbors_apss);
+    DDX_Text(pDX,IDC_EDIT_NB_NEIGHBORS_APSS,m_smoothness_apss);
     DDX_Text(pDX,IDC_EDIT_CLUSTERING_STEP, m_clustering_step);
     DDX_Text(pDX,IDC_EDIT_RANDOM_SIMPLIFICATION_PERCENTAGE, m_random_simplification_percentage);
 }

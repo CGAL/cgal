@@ -64,7 +64,7 @@ CPoissonView::CPoissonView()
   first_paint = true;
 
   // options
-  m_view_vertices = true;
+  m_view_points = true;
   m_view_delaunay_edges = false;
   m_view_contour = true;
   m_view_normals = true; 
@@ -174,7 +174,7 @@ BOOL CPoissonView::SetWindowPixelFormat(HDC hDC)
 
 //********************************************
 // CreateViewGLContext
-// Create an OpenGL rendering context
+// Creates an OpenGL rendering context
 //********************************************
 BOOL CPoissonView::CreateViewGLContext(HDC hDC)
 {
@@ -294,8 +294,8 @@ void CPoissonView::OnPaint()
     if ( m_view_arcball && !(m_KeyboardFlags & MK_SHIFT) )
         m_pArcball->draw_sphere();
 
-    // draw vertices
-    if(m_view_vertices)
+    // draw points
+    if(m_view_points)
     {
       if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
         pDoc->points()->gl_draw_vertices(0,0,0 /*black*/, 2.0f /*size*/);
@@ -517,12 +517,12 @@ void CPoissonView::OnUpdateRenderContour(CCmdUI *pCmdUI)
 
 void CPoissonView::OnRenderPoints()
 {
-  m_view_vertices = !m_view_vertices;
+  m_view_points = !m_view_points;
   InvalidateRect(NULL,FALSE);
 }
 void CPoissonView::OnUpdateRenderPoints(CCmdUI *pCmdUI)
 {
-  pCmdUI->SetCheck(m_view_vertices);
+  pCmdUI->SetCheck(m_view_points);
 }
 
 void CPoissonView::OnRenderNormals()

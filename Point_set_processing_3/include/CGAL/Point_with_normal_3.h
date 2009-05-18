@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 /// - a normal (oriented).
 ///
 /// @heading Parameters:
-/// @param Gt       Kernel's geometric traits.
+/// @param Gt       Geometric traits class.
 
 template<class Gt>
 class Point_with_normal_3 : public Gt::Point_3
@@ -45,11 +45,11 @@ private:
 // Public types
 public:
 
-    typedef Gt Geom_traits; ///< Kernel's geometric traits
+    typedef Gt Geom_traits; ///< Geometric traits class
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::RT RT;
-    typedef typename Geom_traits::Point_3  Point;  ///< == Point_3<Geom_traits>
-    typedef typename Geom_traits::Vector_3 Vector; ///< == Vector_3<Geom_traits>
+    typedef typename Geom_traits::Point_3  Point;  ///< == Geom_traits::Point_3
+    typedef typename Geom_traits::Vector_3 Vector; ///< == Geom_traits::Vector_3
 
 // Public methods
 public:
@@ -99,11 +99,11 @@ public:
       return *this;
     }
 
-    /// Get/set position.
+    /// Gets/sets position.
     const Point& position() const { return *this; }
     Point&       position()       { return *this; }
 
-    /// Get/set normal.
+    /// Gets/sets normal.
     const Vector& normal() const { return m_normal; }
     Vector&       normal()       { return m_normal; }
 

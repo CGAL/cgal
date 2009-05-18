@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 /// @heading Is Model for the Concepts: Model of the Kernel::Vector_3 concept.
 ///
 /// @heading Parameters:
-/// @param Gt   Kernel's geometric traits.
+/// @param Gt   Geometric traits class.
 
 template<class Gt>
 class Lightweight_vector_3
@@ -41,7 +41,7 @@ class Lightweight_vector_3
 // Public types
 public:
 
-    typedef Gt Geom_traits; ///< Kernel's geometric traits
+    typedef Gt Geom_traits; ///< Geometric traits class
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::RT RT;
     typedef typename Geom_traits::Vector_3 Vector; ///< Kernel's Vector_3 class.
@@ -109,7 +109,7 @@ public:
       return ! (*this == that);
     }
 
-    /// Get (a copy of) the actual vector. 
+    /// Gets (a copy of) the actual vector. 
     operator Vector() const
     {
       if (m_pVector != NULL)

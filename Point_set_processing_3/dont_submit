@@ -1,6 +1,6 @@
 doc
 remove_outliers_wrt_median_knn_sq_distance.h
-merge_simplify_nearest_point_set.h
 improved_laplacian_smooth_point_set.h
-improved_jet_smoothing_3.h
+improved_jet_smooth_point_set.h
+pca_smooth_point_set.h
 property_map_multiple_streams.cpp

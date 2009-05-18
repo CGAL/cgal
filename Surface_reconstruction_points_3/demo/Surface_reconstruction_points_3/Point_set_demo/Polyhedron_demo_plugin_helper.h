@@ -18,13 +18,13 @@ class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
   : public Polyhedron_demo_plugin_interface
 {
 public:
-  // get action object from its name
+  // Gets action object from its name
   static QAction* getActionFromMainWindow(QMainWindow*, QString action_name);
   
   // Init plugin
   virtual void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
   
-  // Get list of actions supported by this plugin
+  // Gets list of actions supported by this plugin
   virtual QStringList actionsNames() const;
   virtual QList<QAction*> actions() const;
 

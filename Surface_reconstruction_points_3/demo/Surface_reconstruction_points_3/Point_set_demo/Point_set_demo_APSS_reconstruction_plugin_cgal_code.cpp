@@ -42,8 +42,8 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
     // Check requirements
     //***************************************
 
-    int nb_vertices = points.size();
-    if (nb_vertices == 0)
+    int nb_points = points.size();
+    if (nb_points == 0)
     {
       std::cerr << "Error: empty file" << std::endl;
       return NULL;
@@ -57,18 +57,18 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
     }
 
     //***************************************
-    // Compute implicit function
+    // Computes implicit function
     //***************************************
 
-    std::cerr << "Compute APSS implicit function (smoothness=" << smoothness << ")...\n";
+    std::cerr << "Computes APSS implicit function (smoothness=" << smoothness << ")...\n";
 
-    // Create implicit function
+    // Creates implicit function
     APSS_reconstruction_function implicit_function(points.begin(), points.end(),
                                                    CGAL::make_normal_vector_property_map(points.begin()),
                                                    smoothness);
 
-    // Print status
-    std::cerr << "Compute implicit function: " << task_timer.time() << " seconds\n";
+    // Prints status
+    std::cerr << "Computes implicit function: " << task_timer.time() << " seconds\n";
     task_timer.reset();
 
     //***************************************
@@ -77,7 +77,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
 
     std::cerr << "Surface meshing...\n";
 
-    // Get point inside the implicit surface
+    // Gets point inside the implicit surface
     Point inner_point = implicit_function.get_inner_point();
     FT inner_point_value = implicit_function(inner_point);
     if(inner_point_value >= 0.0)
@@ -86,7 +86,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
       return NULL;
     }
 
-    // Get implicit function's radius
+    // Gets implicit function's radius
     Sphere bounding_sphere = implicit_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
@@ -107,7 +107,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
     C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
     CGAL::make_surface_mesh(surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
 
-    // Print status
+    // Prints status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
                                      << tr.number_of_vertices() << " output vertices"
                                      << std::endl;
@@ -116,21 +116,21 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
     if(tr.number_of_vertices() == 0)
       return NULL;
 
-    // Convert to polyhedron
+    // Converts to polyhedron
     Polyhedron* output_mesh = new Polyhedron;
     CGAL::output_surface_facets_to_polyhedron(surface_mesher_c2t3, *output_mesh);
 
     //***************************************
-    // Erase small connected components
+    // Erases small connected components
     //***************************************
 
-    std::cerr << "Erase small connected components...\n";
+    std::cerr << "Erases small connected components...\n";
     
     unsigned int nb_erased_components = 
       CGAL::erase_small_polyhedron_connected_components(*output_mesh);
 
-    // Print status
-    std::cerr << "Erase small connected components: " << task_timer.time() << " seconds, "
+    // Prints status
+    std::cerr << "Erases small connected components: " << task_timer.time() << " seconds, "
                                                       << nb_erased_components << " components erased"
                                                       << std::endl;
     task_timer.reset();

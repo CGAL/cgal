@@ -15,7 +15,7 @@
 /// - OpenGL rendering
 ///
 /// @heading Parameters:
-/// @param BaseGt   Kernel's geometric traits.
+/// @param BaseGt   Geometric traits class.
 /// @param Gt       Geometric traits class / Point_3 == Point_with_normal_3<BaseGt>.
 /// @param Tds      Model of TriangulationDataStructure_3. The vertex class
 ///                 must derive from Reconstruction_vertex_base_3.
@@ -129,95 +129,6 @@ public:
     }
     ::glEnd();
   }
-
-  // Contour a triangular surface via a Marching Cubes style algorithm.
-  // OutputIterator value_type must be convertible from Triangle_3<Kernel>.
-  template <typename OutputIterator>
-  unsigned int marching_tet(OutputIterator output, ///< output triangles
-                            const FT value)
-  {
-    unsigned int nb_tri = 0;
-    for(Finite_cells_iterator c = finite_cells_begin();
-        c != finite_cells_end();
-        c++)
-      nb_tri += contour(c,output,value);
-    return nb_tri;
-  }
-
-private:
-
-  // Contour a triangular surface in 'cell' via a Marching Cubes style algorithm.
-  // OutputIterator value_type must be convertible from Triangle_3<Kernel>.
-  template <typename OutputIterator>
-  unsigned int contour(Cell_handle cell,
-                       OutputIterator& output, // notice the '&'
-                       const FT value)
-  {
-    std::vector<Point> points;
-    Point point;
-    if(level_set(cell,value,0,1,point)) points.push_back(point);
-    if(level_set(cell,value,0,2,point)) points.push_back(point);
-    if(level_set(cell,value,0,3,point)) points.push_back(point);
-    if(level_set(cell,value,1,2,point)) points.push_back(point);
-    if(level_set(cell,value,1,3,point)) points.push_back(point);
-    if(level_set(cell,value,2,3,point)) points.push_back(point);
-
-    // only 3 or 4
-    if(points.size() == 3)
-    {
-      std::vector<Point>::iterator it = points.begin();
-      const Point& a = (*it); it++;
-      const Point& b = (*it); it++;
-      const Point& c = (*it);
-
-      Triangle triangle = Triangle(a,b,c);
-      *output++ = triangle;
-      return 1;
-    }
-    else if(points.size() == 4)
-    {
-      std::vector<Point>::iterator it = points.begin();
-      std::vector<Point> p(4);
-      for(int i=0;i<4;i++)
-      {
-        p[i] = (*it);
-        it++;
-      }
-      *output++ = Triangle(p[0],p[1],p[3]);
-      *output++ = Triangle(p[0],p[3],p[2]);
-
-      return 2;
-    }
-    return 0;
-  }
-
-  bool level_set(Cell_handle c,
-                 const FT value,
-                 const int i1,
-                 const int i2,
-                 Point& p)
-  {
-    const Point& p1 = c->vertex(i1)->point();
-    const Point& p2 = c->vertex(i2)->point();
-    double v1 = c->vertex(i1)->f();
-    double v2 = c->vertex(i2)->f();
-
-    if(v1 <= value && v2 >= value)
-    {
-      double ratio = (value - v1) / (v2 - v1);
-      p = p1 + ratio * (p2-p1);
-      return true;
-    }
-    else if(v2 <= value && v1 >= value)
-    {
-      double ratio = (value - v2) / (v1 - v2);
-      p = p2 + ratio * (p1-p2);
-      return true;
-    }
-    return false;
-  }
-
-public:
 
   // Draw normals
   void gl_draw_normals(unsigned char r, unsigned char g, unsigned char b,

@@ -23,6 +23,8 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/point_set_property_map.h>
+#include <CGAL/point_set_processing_assertions.h>
 
 #include <iterator>
 #include <list>
@@ -36,7 +38,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 
-/// Smooth one point position using linear least
+/// Smoothes one point position using linear least
 /// squares fitting of a plane (PCA) on the K
 /// nearest neighbors.
 ///
@@ -50,13 +52,14 @@ namespace CGALi {
 template <typename Kernel,
           typename Tree>
 typename Kernel::Point_3
-pca_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute.
-                     Tree& tree,                            ///< KD-tree.
-                     unsigned int k)                        ///< number of neighbors.
+pca_smooth_point(
+  const typename Kernel::Point_3& query, ///< 3D point to project
+  Tree& tree, ///< KD-tree
+  unsigned int k) ///< number of neighbors.
 {
   // basic geometric types
-  typedef typename Kernel::Point_3  Point;
-  typedef typename Kernel::Plane_3  Plane;
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Plane_3 Plane;
 
   // types for K nearest neighbors search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
@@ -78,7 +81,7 @@ pca_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point whose 
     points.push_back(search_iterator->first);
     search_iterator++;
   }
-  CGAL_precondition(points.size() >= 1);
+  CGAL_point_set_processing_precondition(points.size() >= 1);
 
   // performs plane fitting by point-based PCA
   Plane plane;
@@ -98,7 +101,7 @@ pca_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point whose 
 // ----------------------------------------------------------------------------
 
 
-/// Smooth a point set using pca on the k
+/// Smoothes the [first, beyond) range of points using pca on the k
 /// nearest neighbors and reprojection onto the plane.
 ///
 /// Warning: as this method relocates the points, it
@@ -107,58 +110,90 @@ pca_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point whose 
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
+/// @param ForwardIterator iterator over input points.
+/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
+/// @param Kernel Geometric traits class.
+///        It can be omitted and deduced automatically from PointPMap value_type.
 
-// This variant requires the kernel.
+// This variant requires all parameters.
 template <typename ForwardIterator,
-          typename Kernel>
+          typename PointPMap,
+          typename Kernel
+>
 void
-pca_smooth_point_set(ForwardIterator first,     ///< iterator over the first input/output point.
-                     ForwardIterator beyond,    ///< past-the-end iterator.
-                     unsigned int k,            ///< number of neighbors.
-                     const Kernel& kernel)      ///< geometric traits.
+pca_smooth_point_set(
+  ForwardIterator first,  ///< iterator over the first input point.
+  ForwardIterator beyond, ///< past-the-end iterator over input points.
+  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
+  unsigned int k, ///< number of neighbors.
+  const Kernel& kernel) ///< geometric traits.
 {
+  // Input points types
+  typedef typename boost::property_traits<PointPMap>::value_type Point;
 
   // types for K nearest neighbors search structure
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
   
-  // Point_3 types
-  typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
-  typedef typename Kernel::Point_3 Point_3;
-
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_precondition(first != beyond);
+  CGAL_point_set_processing_precondition(first != beyond);
 
   // precondition: at least 2 nearest neighbors
-  CGAL_precondition(k >= 2);
+  CGAL_point_set_processing_precondition(k >= 2);
 
-  // instanciate a KD-tree search
+  // Instanciate a KD-tree search
   Tree tree(first,beyond);
 
-  // Iterate over input points and mutate them.
-  // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
+  // Iterates over input points and mutates them.
   ForwardIterator it;
   for(it = first; it != beyond; it++)
-    (Point_3&)(*it) = CGALi::pca_smooth_point_set<Kernel>(*it,tree,k);
+  {
+    //(Point_3&)(*it) = CGALi::pca_smooth_point<Kernel>(*it,tree,k);
+    Point& p = get(point_pmap, it);
+    p = CGALi::pca_smooth_point<Kernel>(p,tree,k);
+  }
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the iterator type.
-template <typename ForwardIterator>
+// This variant deduces the kernel from the point property map.
+template <typename ForwardIterator,
+          typename PointPMap
+>
 void
-pca_smooth_point_set(ForwardIterator first,  ///< iterator over the first input/output point.
-                     ForwardIterator beyond, ///< past-the-end iterator.
-                     unsigned int k)         ///< number of neighbors.
+pca_smooth_point_set(
+  ForwardIterator first, ///< iterator over the first input point
+  ForwardIterator beyond, ///< past-the-end iterator
+  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  unsigned int k) ///< number of neighbors.
 {
-  typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
-  typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  pca_smooth_point_set(first,beyond,k,Kernel());
+  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+  pca_smooth_point_set(
+    first,beyond,
+    point_pmap, 
+    k,
+    Kernel());
+}
+/// @endcond
+
+/// @cond SKIP_IN_MANUAL
+// This variant creates a default point property map = Dereference_property_map.
+template <typename ForwardIterator
+>
+void
+pca_smooth_point_set(
+  ForwardIterator first, ///< iterator over the first input point
+  ForwardIterator beyond, ///< past-the-end iterator
+  unsigned int k) ///< number of neighbors.
+{
+  pca_smooth_point_set(
+    first,beyond,
+    make_dereference_property_map(first), 
+    k);
 }
 /// @endcond
 

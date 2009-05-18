@@ -24,10 +24,10 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 // This package
-#include <CGAL/IO/read_off_point_set.h>
-#include <CGAL/IO/write_off_point_set.h>
-#include <CGAL/IO/read_xyz_point_set.h>
-#include <CGAL/IO/write_xyz_point_set.h>
+#include <CGAL/IO/read_off_points.h>
+#include <CGAL/IO/write_off_points.h>
+#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/IO/output_surface_facets_to_triangle_soup.h>
 #include <CGAL/remove_outliers.h>
 #include <CGAL/jet_estimate_normals.h>
@@ -35,7 +35,7 @@
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/compute_average_spacing.h>
-#include <CGAL/merge_simplify_point_set.h>
+#include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/random_simplify_point_set.h>
 #include <CGAL/radial_orient_normals.h>
 #include <CGAL/Peak_memory_sizer.h>
@@ -75,7 +75,7 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, OnAlgorithmsEstimateNormalsByJetFitting)
     ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSCAMERAS, OnAlgorithmsOrientNormalsWrtCameras)
     ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSMST, OnAlgorithmsOrientNormalsWithMST)
-	ON_COMMAND(ID_ALGORITHMS_SMOOTHUSINGJETFITTING, OnAlgorithmsSmoothUsingJetFitting)
+    ON_COMMAND(ID_ALGORITHMS_SMOOTHUSINGJETFITTING, OnAlgorithmsSmoothUsingJetFitting)
     ON_COMMAND(ID_MODE_POINT_SET, OnModePointSet)
     ON_UPDATE_COMMAND_UI(ID_MODE_POINT_SET, OnUpdateModePointSet)
     ON_COMMAND(ID_MODE_POISSON, OnModePoisson)
@@ -91,7 +91,7 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_OUTLIER_REMOVAL, OnUpdateOutlierRemoval)
     ON_COMMAND(ID_ANALYSIS_AVERAGE_SPACING, OnAnalysisAverageSpacing)
     ON_UPDATE_COMMAND_UI(ID_ANALYSIS_AVERAGE_SPACING, OnUpdateAnalysisAverageSpacing)
-	ON_COMMAND(ID_RECONSTRUCTION_ONE_STEP_NORMALIZED, OnOneStepPoissonReconstructionWithNormalizedDivergence)
+    ON_COMMAND(ID_RECONSTRUCTION_ONE_STEP_NORMALIZED, OnOneStepPoissonReconstructionWithNormalizedDivergence)
     ON_COMMAND(ID_RECONSTRUCTION_APSS_RECONSTRUCTION, OnReconstructionApssReconstruction)
     ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_APSS_RECONSTRUCTION, OnUpdateReconstructionApssReconstruction)
     ON_COMMAND(ID_MODE_APSS, OnModeAPSS)
@@ -127,7 +127,7 @@ CPoissonDoc::CPoissonDoc()
   m_sm_radius_apss = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
   m_sm_distance_apss = 0.003; // Approximation error w.r.t. p.s.r. (APSS). 0.015 = fast, 0.003 = smooth.
                               // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
-  m_nb_neighbors_apss = 24; // #neighbors to compute APPS sphere fitting. 12 = fast, 24 = robust (GG).
+  m_smoothness_apss = 2; // Smoothness factor. In the range 2 (clean datasets) and 8 (noisy datasets).
 
   // Average Spacing options
   m_nb_neighbors_avg_spacing = 7; // K-nearest neighbors = 1 ring (average spacing)
@@ -179,15 +179,15 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   if (!CDocument::OnOpenDocument(lpszPathName))
     return FALSE;
 
-  status_message("Load point set %s...",lpszPathName);
+  status_message("Loads point set %s...",lpszPathName);
 
-  // get extension
+  // Gets extension
   CString file = lpszPathName;
   CString extension = lpszPathName;
   extension = extension.Right(4);
   extension.MakeLower();
 
-  // set current path
+  // Sets current path
   CString path = lpszPathName;
   path = path.Left(path.ReverseFind('\\'));
   SetCurrentDirectory(path);
@@ -206,10 +206,10 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     bool is_mesh = (header.size_of_facets() > 0);
     header_stream.close();
 
-    // Read OFF file as a mesh and compute normals from connectivity
+    // Reads OFF file as a mesh and compute normals from connectivity
     if (is_mesh)
     {
-      // Read the mesh file in a polyhedron
+      // Reads the mesh file in a polyhedron
       std::ifstream stream(lpszPathName);
       typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
       Polyhedron input_mesh;
@@ -220,8 +220,8 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
         return FALSE;
       }
 
-      // Convert Polyhedron vertices to point set.
-      // Compute vertices' normals from connectivity.
+      // Converts Polyhedron vertices to point set.
+      // Computes vertices normal from connectivity.
       Polyhedron::Vertex_const_iterator v;
       for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
       {
@@ -230,16 +230,17 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
         m_points.push_back(Point_with_normal(p,n));
       }
     }
-    else // Read OFF file as a point cloud
+    else // Reads OFF file as a point cloud
     {
-      std::ifstream stream(lpszPathName);
-      if( ! stream || 
-          ! CGAL::read_off_point_set(stream,
-                                     std::back_inserter(m_points)) )
-      {
-        prompt_message("Unable to read file");
-        return FALSE;
-      }
+    std::ifstream stream(lpszPathName);
+    if( ! stream || 
+        ! CGAL::read_off_points_and_normals(stream,
+                                            std::back_inserter(m_points),
+                                            CGAL::make_normal_vector_property_map(std::back_inserter(m_points))) )
+    {
+      prompt_message("Unable to read file");
+      return FALSE;
+    }
     }
   }
   // if .pwn or .xyz extension
@@ -248,8 +249,9 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   {
     std::ifstream stream(lpszPathName);
     if( ! stream || 
-        ! CGAL::read_xyz_point_set(stream,
-                                   std::back_inserter(m_points)) )
+        ! CGAL::read_xyz_points_and_normals(stream,
+                                            std::back_inserter(m_points),
+                                            CGAL::make_normal_vector_property_map(std::back_inserter(m_points))) )
     {
       prompt_message("Unable to read file");
       return FALSE;
@@ -288,7 +290,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     return FALSE;
   }
 
-  // Save original normals for visual comparison
+  // Saves original normals for visual comparison
   for (int i=0; i<m_points.size(); i++)
     m_points[i].original_normal() = m_points[i].normal();
     
@@ -298,7 +300,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   m_points.invalidate_bounds();
   m_edit_mode = POINT_SET;
 
-  status_message("Load point set...done (%.2lf s)", task_timer.time());
+  status_message("Loads point set...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   return TRUE;
@@ -319,7 +321,7 @@ void CPoissonDoc::OnFileSaveAs()
                         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, AfxGetMainWnd());
 
   // dialog title
-  dlgExport.m_ofn.lpstrTitle = "Save reconstructed surface to file";
+  dlgExport.m_ofn.lpstrTitle = "Saves reconstructed surface to file";
 
   // show the dialog
   if (dlgExport.DoModal() == IDOK)
@@ -335,7 +337,7 @@ void CPoissonDoc::OnFileSaveAs()
     path = path.Left(path.ReverseFind('\\'));
     SetCurrentDirectory(path);
 
-    // Save normals?
+    // Saves normals?
     assert(m_points.begin() != m_points.end());
     bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
     bool save_normals = points_have_normals || 
@@ -345,11 +347,22 @@ void CPoissonDoc::OnFileSaveAs()
     if(extension.CompareNoCase(".pwn") == 0 ||
        extension.CompareNoCase(".xyz") == 0)
     {
+      bool ok;
       std::ofstream stream(dlgExport.m_ofn.lpstrFile);
-      if( ! stream || 
-          ! CGAL::write_xyz_point_set(stream,
-                                      m_points.begin(), m_points.end(),
-                                      save_normals) )
+      if (save_normals)
+      {
+        ok = stream && 
+             CGAL::write_xyz_points_and_normals(stream,
+                                                m_points.begin(), m_points.end(),
+                                                CGAL::make_normal_vector_property_map(m_points.begin()));
+      }
+      else
+      {
+        ok = stream && 
+             CGAL::write_xyz_points(stream,
+                                    m_points.begin(), m_points.end());
+      }
+      if( ! ok )
       {
         prompt_message("Unable to save file");
         return;
@@ -358,10 +371,22 @@ void CPoissonDoc::OnFileSaveAs()
     // if .off extension
     else if(extension.CompareNoCase(".off") == 0)
     {
+      bool ok;
       std::ofstream stream(dlgExport.m_ofn.lpstrFile);
-      if( ! stream || 
-          ! CGAL::write_off_point_set(stream,
-                                      m_points.begin(), m_points.end()) )
+      if (save_normals)
+      {
+        ok = stream && 
+             CGAL::write_off_points_and_normals(stream,
+                                                m_points.begin(), m_points.end(),
+                                                CGAL::make_normal_vector_property_map(m_points.begin()));
+      }
+      else
+      {
+        ok = stream && 
+             CGAL::write_off_points(stream,
+                                    m_points.begin(), m_points.end());
+      }
+      if( ! ok )
       {
         prompt_message("Unable to save file");
         return;
@@ -375,7 +400,7 @@ void CPoissonDoc::OnFileSaveAs()
   }
 }
 
-// Save m_points[] only if it is the form visible on screen
+// Saves m_points[] only if it is the form visible on screen
 void CPoissonDoc::OnUpdateFileSaveAs(CCmdUI *pCmdUI)
 {
   assert(m_points.begin() != m_points.end());
@@ -393,7 +418,7 @@ void CPoissonDoc::OnFileSaveSurface()
                         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, AfxGetMainWnd());
 
   // dialog title
-  dlgExport.m_ofn.lpstrTitle = "Save reconstructed surface to file";
+  dlgExport.m_ofn.lpstrTitle = "Saves reconstructed surface to file";
 
   // show the dialog
   if (dlgExport.DoModal() == IDOK)
@@ -436,7 +461,7 @@ void CPoissonDoc::OnUpdateFileSaveSurface(CCmdUI *pCmdUI)
                  && m_surface_mesher_dt.number_of_vertices() > 0);
 }
 
-// Update the number of vertices and tetrahedra in the status bar
+// Update the number of points and tetrahedra in the status bar
 // and write them to cerr.
 void CPoissonDoc::update_status()
 {
@@ -540,7 +565,7 @@ void CPoissonDoc::OnEditOptions()
   dlg.m_nb_neighbors_pca_normals = m_nb_neighbors_pca_normals;
   dlg.m_nb_neighbors_jet_fitting_normals = m_nb_neighbors_jet_fitting_normals;
   dlg.m_nb_neighbors_mst = m_nb_neighbors_mst;
-  dlg.m_nb_neighbors_apss = m_nb_neighbors_apss;
+  dlg.m_smoothness_apss = m_smoothness_apss;
   dlg.m_min_cameras_cone_angle = m_min_cameras_cone_angle;
   dlg.m_threshold_percent_avg_knn_sq_dst = m_threshold_percent_avg_knn_sq_dst;
   dlg.m_clustering_step = m_clustering_step;
@@ -560,7 +585,7 @@ void CPoissonDoc::OnEditOptions()
     m_nb_neighbors_pca_normals = dlg.m_nb_neighbors_pca_normals;
     m_nb_neighbors_jet_fitting_normals = dlg.m_nb_neighbors_jet_fitting_normals;
     m_nb_neighbors_mst = dlg.m_nb_neighbors_mst;
-    m_nb_neighbors_apss = dlg.m_nb_neighbors_apss;
+    m_smoothness_apss = dlg.m_smoothness_apss;
     m_min_cameras_cone_angle = dlg.m_min_cameras_cone_angle;
     m_threshold_percent_avg_knn_sq_dst = dlg.m_threshold_percent_avg_knn_sq_dst;
     m_clustering_step = dlg.m_clustering_step;
@@ -593,8 +618,8 @@ bool CPoissonDoc::verify_normal_direction()
     Point_set::iterator p;
     for (p = m_points.begin(); p != m_points.end(); p++)
     {
-      // Compute normal deviation.
-      // Orient each normal like the original one.
+      // Computes normal deviation.
+      // Orients each normal like the original one.
       Vector v1 = p->original_normal(); // original normal
       double norm1 = std::sqrt( v1*v1 );
       assert(norm1 != 0.0);
@@ -637,7 +662,7 @@ bool CPoissonDoc::verify_normal_direction()
   return success;
 }
 
-// Compute normals direction by Principal Component Analysis
+// Computes normals direction by Principal Component Analysis
 void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
 {
   BeginWaitCursor();
@@ -650,17 +675,17 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
   if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Estimate Normals Direction by PCA (k=%.2lf%%=%d)...",
+  status_message("Estimates Normals Direction by PCA (k=%.2lf%%=%d)...",
                  m_nb_neighbors_pca_normals, nb_neighbors);
 
   CGAL::pca_estimate_normals(m_points.begin(), m_points.end(),
-                             m_points.normals_begin(),
+                             CGAL::make_normal_vector_property_map(m_points.begin()),
                              nb_neighbors);
 
   // Mark all normals as unoriented
   m_points.unoriented_points_begin() = m_points.begin();
 
-  status_message("Estimate Normals Direction by PCA...done (%.2lf s)", task_timer.time());
+  status_message("Estimates Normals Direction by PCA...done (%.2lf s)", task_timer.time());
 
   // Check the accuracy of normals direction estimation.
   // If original normals are available, compare with them.
@@ -676,7 +701,7 @@ void CPoissonDoc::OnUpdateAlgorithmsEstimateNormalsByPCA(CCmdUI *pCmdUI)
   pCmdUI->Enable(m_edit_mode == POINT_SET);
 }
 
-// Compute normals direction by Jet Fitting
+// Computes normals direction by Jet Fitting
 void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
 {
   BeginWaitCursor();
@@ -689,17 +714,17 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
   if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Estimate Normals Direction by Jet Fitting (k=%.2lf%%=%d)...",
+  status_message("Estimates Normals Direction by Jet Fitting (k=%.2lf%%=%d)...",
                  m_nb_neighbors_jet_fitting_normals, nb_neighbors);
 
   CGAL::jet_estimate_normals(m_points.begin(), m_points.end(),
-                             m_points.normals_begin(),
+                             CGAL::make_normal_vector_property_map(m_points.begin()),
                              nb_neighbors);
 
   // Mark all normals as unoriented
   m_points.unoriented_points_begin() = m_points.begin();
 
-  status_message("Estimate Normals Direction by Jet Fitting...done (%.2lf s)", task_timer.time());
+  status_message("Estimates Normals Direction by Jet Fitting...done (%.2lf s)", task_timer.time());
 
   // Check the accuracy of normals direction estimation.
   // If original normals are available, compare with them.
@@ -776,7 +801,7 @@ bool CPoissonDoc::verify_normal_orientation()
 void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
 {
   BeginWaitCursor();
-  status_message("Orient Normals with a Minimum Spanning Tree (k=%d)...", m_nb_neighbors_mst);
+  status_message("Orients Normals with a Minimum Spanning Tree (k=%d)...", m_nb_neighbors_mst);
   CGAL::Timer task_timer; task_timer.start();
 
   // mst_orient_normals() requires an iterator over points
@@ -788,7 +813,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
                              CGAL::make_index_property_map(m_points),
                              m_nb_neighbors_mst);
 
-  status_message("Orient Normals with a Minimum Spanning Tree...done (%.2lf s)", task_timer.time());
+  status_message("Orients Normals with a Minimum Spanning Tree...done (%.2lf s)", task_timer.time());
 
   // Check the accuracy of normal orientation.
   // If original normals are available, compare with them.
@@ -811,13 +836,13 @@ void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWithMST(CCmdUI *pCmdUI)
 void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
 {
   BeginWaitCursor();
-  status_message("Orient Normals wrt Cameras...");
+  status_message("Orients Normals wrt Cameras...");
   CGAL::Timer task_timer; task_timer.start();
 
   m_points.unoriented_points_begin() = 
     orient_normals_wrt_cameras(m_points.begin(), m_points.end());
 
-  status_message("Orient Normals wrt Cameras...done (%.2lf s)", task_timer.time());
+  status_message("Orients Normals wrt Cameras...done (%.2lf s)", task_timer.time());
 
   // Check the accuracy of normal orientation.
   // If original normals are available, compare with them.
@@ -836,7 +861,7 @@ void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWrtCameras(CCmdUI *pCmdUI)
   pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals && points_have_cameras);
 }
 
-// Smooth point set using jet fitting + projection
+// Smoothes point set using jet fitting + projection
 void CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting()
 {
   BeginWaitCursor();
@@ -849,15 +874,15 @@ void CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting()
   if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Smooth Point Set (k=%.2lf%%=%d)...",
+  status_message("Smoothes Point Set (k=%.2lf%%=%d)...",
                  m_nb_neighbors_smooth_jet_fitting, nb_neighbors);
 
-  // Smooth points in m_points[]
+  // Smoothes points in m_points[]
   CGAL::jet_smooth_point_set(m_points.begin(), m_points.end(),
                              nb_neighbors);
   m_points.invalidate_bounds();
 
-  status_message("Smooth Point Set...done (%.2lf s)", task_timer.time());
+  status_message("Smoothes Point Set...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -917,14 +942,14 @@ void CPoissonDoc::OnUpdateModePoisson(CCmdUI *pCmdUI)
 }
 
 // "Reconstruction >> Poisson Reconstruction w/ Normalized Divergence" callback: 
-// - Create Poisson Delaunay Triangulation
+// - Creates Poisson Delaunay Triangulation
 // - Delaunay refinement
 // - Solve Poisson Equation
 // - Surface Meshing
 void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
 {
   BeginWaitCursor();
-  status_message("1-step Poisson reconstruction with normalized divergence...");
+  status_message("Poisson reconstruction (with normalized divergence)...");
   CGAL::Timer total_timer; total_timer.start();
 
   // Clean up previous mode
@@ -933,22 +958,23 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   CGAL::Timer task_timer; task_timer.start();
 
   //***************************************
-  // Compute implicit function
+  // Computes implicit function
   //***************************************
 
-  status_message("Create Poisson triangulation...");
+  status_message("Creates Poisson triangulation...");
 
-  // Create implicit function and insert vertices.
+  // Creates implicit function and insert points.
   assert(m_poisson_function == NULL);
-  m_poisson_function = new Poisson_reconstruction_function(m_points.begin(), m_points.end());
+  m_poisson_function = new Poisson_reconstruction_function(m_points.begin(), m_points.end(),
+                                                           CGAL::make_normal_vector_property_map(m_points.begin()));
 
-  // Print status
-  status_message("Create Poisson triangulation...done (%.2lf s)", task_timer.time());
+  // Prints status
+  status_message("Creates Poisson triangulation...done (%.2lf s)", task_timer.time());
   task_timer.reset();
 
-  status_message("Compute implicit function...");
+  status_message("Computes implicit function...");
 
-  // Compute the Poisson indicator function f()
+  // Computes the Poisson indicator function f()
   // at each vertex of the triangulation.
   if ( ! m_poisson_function->compute_implicit_function() )
   {
@@ -956,8 +982,8 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
     return;
   }
 
-  // Print status
-  status_message("Compute implicit function...done (%.2lf s)", task_timer.time());
+  // Prints status
+  status_message("Computes implicit function...done (%.2lf s)", task_timer.time());
   task_timer.reset();
 
   //***************************************
@@ -971,7 +997,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   m_surface_mesher_c2t3.clear();
   m_surface.clear();
 
-  // Get point inside the implicit surface
+  // Gets point inside the implicit surface
   Point inner_point = m_poisson_function->get_inner_point();
   FT inner_point_value = (*m_poisson_function)(inner_point);
   if(inner_point_value >= 0.0)
@@ -980,7 +1006,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
     return;
   }
 
-  // Get implicit function's radius
+  // Gets implicit function's radius
   Sphere bounding_sphere = m_poisson_function->bounding_sphere();
   FT size = sqrt(bounding_sphere.squared_radius());
 
@@ -1000,7 +1026,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   // meshing surface
   CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
 
-  // Print status
+  // Prints status
   status_message("Surface meshing...done (%d output vertices, %.2lf s)",
                  m_surface_mesher_dt.number_of_vertices(), task_timer.time());
   task_timer.reset();
@@ -1013,7 +1039,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   // Record new mode
   m_edit_mode = POISSON;
 
-  status_message("1-step Poisson reconstruction with normalized divergence...done (%.2lf s)", total_timer.time());
+  status_message("Poisson reconstruction (with normalized divergence)...done (%.2lf s)", total_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1028,11 +1054,11 @@ void CPoissonDoc::OnUpdateOneStepPoissonReconstructionWithNormalizedDivergence(C
                  && points_have_normals /* && normals_are_oriented */);
 }
 
-// Remove vertices / cameras cone's angle is low
+// Removes points / cameras cone's angle is low
 void CPoissonDoc::OnAlgorithmsOutlierRemovalWrtCamerasConeAngle()
 {
   BeginWaitCursor();
-  status_message("Remove outliers / cameras cone's angle...");
+  status_message("Removes outliers / cameras cone's angle...");
   CGAL::Timer task_timer; task_timer.start();
 
   // Select points to delete
@@ -1043,7 +1069,7 @@ void CPoissonDoc::OnAlgorithmsOutlierRemovalWrtCamerasConeAngle()
             m_min_cameras_cone_angle*M_PI/180.0);
   m_points.select(first_point_to_remove, m_points.end(), true);
 
-  status_message("Remove outliers / cameras cone's angle...done (%.2lf s)", task_timer.time());
+  status_message("Removes outliers / cameras cone's angle...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1056,7 +1082,7 @@ void CPoissonDoc::OnUpdateAlgorithmsOutlierRemovalWrtCamerasConeAngle(CCmdUI *pC
   pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_cameras);
 }
 
-// Remove outliers:
+// Removes outliers:
 // - compute average squared distance to the K nearest neighbors,
 // - remove threshold_percent worst points.
 void CPoissonDoc::OnOutlierRemoval()
@@ -1071,19 +1097,18 @@ void CPoissonDoc::OnOutlierRemoval()
   if ((unsigned int)nb_neighbors > m_points.size()-1)
     nb_neighbors = m_points.size()-1;
 
-  status_message("Remove outliers wrt average squared distance to k nearest neighbors (remove %.2lf%%, k=%.2lf%%=%d)...",
+  status_message("Removes outliers wrt average squared distance to k nearest neighbors (remove %.2lf%%, k=%.2lf%%=%d)...",
                  m_threshold_percent_avg_knn_sq_dst, m_nb_neighbors_remove_outliers, nb_neighbors);
 
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_point_to_remove =
-    CGAL::remove_outliers(
-            m_points.begin(), m_points.end(),
-            nb_neighbors,
-            m_threshold_percent_avg_knn_sq_dst);
+    CGAL::remove_outliers(m_points.begin(), m_points.end(),
+                          nb_neighbors,
+                          m_threshold_percent_avg_knn_sq_dst);
   m_points.select(first_point_to_remove, m_points.end(), true);
 
-  status_message("Remove outliers wrt average squared distance to k nearest neighbors...done (%.2lf s)", task_timer.time());
+  status_message("Removes outliers wrt average squared distance to k nearest neighbors...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1097,17 +1122,16 @@ void CPoissonDoc::OnUpdateOutlierRemoval(CCmdUI *pCmdUI)
 void CPoissonDoc::OnAnalysisAverageSpacing()
 {
   BeginWaitCursor();
-  status_message("Compute average spacing to k nearest neighbors (k=%d)...", m_nb_neighbors_avg_spacing);
+  status_message("Computes average spacing to k nearest neighbors (k=%d)...", m_nb_neighbors_avg_spacing);
   CGAL::Timer task_timer; task_timer.start();
 
-  double value = CGAL::compute_average_spacing(m_points.begin(),
-                                               m_points.end(),
+  double value = CGAL::compute_average_spacing(m_points.begin(), m_points.end(),
                                                m_nb_neighbors_avg_spacing);
 
   // write message in message box
   prompt_message("Average spacing: %lf", value);
 
-  status_message("Compute average spacing to k nearest neighbors...done: %lf (%.2lf s)", value, task_timer.time());
+  status_message("Computes average spacing to k nearest neighbors...done: %lf (%.2lf s)", value, task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1133,11 +1157,12 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     m_surface_mesher_c2t3.clear();
     m_surface.clear();
 
-    // Create implicit function
+    // Creates implicit function
     m_apss_function = new APSS_reconstruction_function(m_points.begin(), m_points.end(),
-                                                       m_nb_neighbors_apss);
+                                                       CGAL::make_normal_vector_property_map(m_points.begin()),
+                                                       m_smoothness_apss);
 
-    // Get point inside the implicit surface
+    // Gets point inside the implicit surface
     Point inner_point = m_apss_function->get_inner_point();
     FT inner_point_value = (*m_apss_function)(inner_point);
     if(inner_point_value >= 0.0)
@@ -1146,7 +1171,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
       return;
     }
 
-    // Get implicit function's radius
+    // Gets implicit function's radius
     Sphere bounding_sphere = m_apss_function->bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
@@ -1174,7 +1199,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     // Record new mode
     m_edit_mode = APSS;
 
-    // Print status
+    // Prints status
     status_message("APSS reconstruction...done (%d vertices, %.2lf s)",
                    m_surface_mesher_dt.number_of_vertices(), task_timer.time());
     update_status();
@@ -1209,7 +1234,7 @@ void CPoissonDoc::OnUpdateModeAPSS(CCmdUI *pCmdUI)
 void CPoissonDoc::OnEditDelete()
 {
     BeginWaitCursor();
-    status_message("Delete selected points");
+    status_message("Deletes selected points");
 
     m_points.delete_selection();
 
@@ -1226,7 +1251,7 @@ void CPoissonDoc::OnUpdateEditDelete(CCmdUI *pCmdUI)
 void CPoissonDoc::OnEditResetSelection()
 {
     BeginWaitCursor();
-    status_message("Reset selection");
+    status_message("Resets selection");
 
     m_points.select(m_points.begin(), m_points.end(), false);
 
@@ -1246,19 +1271,18 @@ void CPoissonDoc::OnPointCloudSimplificationByClustering()
   status_message("Point cloud simplification by clustering...");
   CGAL::Timer task_timer; task_timer.start();
 
-  // Get point set's radius
+  // Gets point set's radius
   Sphere bounding_sphere = m_points.bounding_sphere();
   FT size = sqrt(bounding_sphere.squared_radius());
 
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_point_to_remove =
-    CGAL::merge_simplify_point_set(
-            m_points.begin(), m_points.end(),
-            m_clustering_step*size);
+    CGAL::grid_simplify_point_set(m_points.begin(), m_points.end(),
+                                  m_clustering_step*size);
   m_points.select(first_point_to_remove, m_points.end(), true);
 
-  status_message("Point cloud simplification by clustering...done (%.2lf s)", task_timer.time());
+  status_message("Point cloud  simplification by clustering...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -1278,9 +1302,8 @@ void CPoissonDoc::OnPointCloudSimplificationRandom()
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_point_to_remove =
-    CGAL::random_simplify_point_set(
-            m_points.begin(), m_points.end(),
-            m_random_simplification_percentage);
+    CGAL::random_simplify_point_set(m_points.begin(), m_points.end(),
+                                    m_random_simplification_percentage);
   m_points.select(first_point_to_remove, m_points.end(), true);
 
   status_message("Random point cloud simplification...done (%.2lf s)", task_timer.time());

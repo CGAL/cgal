@@ -2786,11 +2786,11 @@ Point_set_2/doc_tex/Point_set_2/point_set.png -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/analysis.tex -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/fig/point_set_processing.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/fig/point_set_processing_detail.png -text svneol=unset#image/png
+Point_set_processing_3/doc_tex/Point_set_processing_3/grid_simplification.eps -text svneol=unset#application/postscript
+Point_set_processing_3/doc_tex/Point_set_processing_3/grid_simplification.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/introduction.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/introduction.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/io.tex -text
-Point_set_processing_3/doc_tex/Point_set_processing_3/merge_simplification.eps -text svneol=unset#application/postscript
-Point_set_processing_3/doc_tex/Point_set_processing_3/merge_simplification.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/mst_orient_normals.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/mst_orient_normals.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/outliers.tex -text

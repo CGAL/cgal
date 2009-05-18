@@ -23,6 +23,7 @@
 
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Lightweight_vector_3.h>
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -129,20 +130,20 @@ public:
   bool  constrained() const { return m_constrained; }
   bool& constrained()       { return m_constrained; }
 
-  /// Get/set the value of the implicit function.
+  /// Gets/sets the value of the implicit function.
   /// Default value is 0.0.
   FT  f() const { return m_f; }
   FT& f()       { return m_f; }
 
-  /// Get/set the type = INPUT or STEINER.
+  /// Gets/sets the type = INPUT or STEINER.
   unsigned char  type() const { return m_type; }
   unsigned char& type()       { return m_type; }
 
-  /// Get/set the index in matrix.
+  /// Gets/sets the index in matrix.
   unsigned int  index() const { return m_index; }
   unsigned int& index()       { return m_index; }
 
-  /// Get/set normal vector.
+  /// Gets/sets normal vector.
   /// Default value is null vector.
   const Vector& normal() const { return this->point().normal(); }
   Vector&       normal()       { return this->point().normal(); }
@@ -163,7 +164,7 @@ private:
 /// Point_with_normal_3<BaseGt>.
 ///
 /// @heading Parameters:
-/// @param BaseGt   Kernel's geometric traits.
+/// @param BaseGt   Geometric traits class.
 template <class BaseGt>
 struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 {
@@ -181,7 +182,7 @@ struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 /// The vertex class must derive from Reconstruction_vertex_base_3.
 ///
 /// @heading Parameters:
-/// @param BaseGt   Kernel's geometric traits.
+/// @param BaseGt   Geometric traits class.
 /// @param Gt       Geometric traits class / Point_3 == Point_with_normal_3<BaseGt>.
 /// @param Tds      Model of TriangulationDataStructure_3. The vertex class
 ///                 must derive from Reconstruction_vertex_base_3.
@@ -300,41 +301,41 @@ public:
   Base::geom_traits;
   /// @endcond
 
-  /// Get first iterator over finite vertices normals.
+  /// Gets first iterator over finite vertices normals.
   Normal_iterator normals_begin()
   {
       return Normal_iterator(finite_vertices_begin());
   }
-  /// Get past-the-end iterator over finite vertices normals.
+  /// Gets past-the-end iterator over finite vertices normals.
   Normal_iterator normals_end()
   {
       return Normal_iterator(finite_vertices_end());
   }
 
-  /// Get first iterator over input vertices.
+  /// Gets first iterator over input vertices.
   Input_vertices_iterator input_vertices_begin() const
   {
       return Input_vertices_iterator(finite_vertices_end(), Is_steiner_point(),
                                      finite_vertices_begin());
   }
-  /// Get past-the-end iterator over input vertices.
+  /// Gets past-the-end iterator over input vertices.
   Input_vertices_iterator input_vertices_end() const
   {
       return Input_vertices_iterator(finite_vertices_end(), Is_steiner_point());
   }
 
-  /// Get iterator over the first input point.
+  /// Gets iterator over the first input point.
   Input_point_iterator input_points_begin() const
   {
       return Input_point_iterator(input_vertices_begin());
   }
-  /// Get past-the-end iterator.
+  /// Gets past-the-end iterator over input points.
   Input_point_iterator input_points_end() const
   {
       return Input_point_iterator(input_vertices_end());
   }
 
-  /// Get the bounding sphere of all points.
+  /// Gets the bounding sphere of all points.
   Sphere bounding_sphere() const
   {
     Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> >
@@ -342,7 +343,7 @@ public:
     return Sphere(ms3.center(), ms3.squared_radius());
   }
 
-  /// Get the bounding sphere of input points.
+  /// Gets the bounding sphere of input points.
   Sphere input_points_bounding_sphere() const
   {
     Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> >

@@ -7,7 +7,7 @@
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/point_set_property_map.h>
-#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/read_xyz_points.h>
 
 #include <vector>
 #include <fstream>
@@ -32,35 +32,35 @@ int main(void)
     FT sm_distance = 0.01; // Approximation error w.r.t. p.s.r. For Poisson: 0.01 = fast, 0.002 = smooth.
 
     // Reads the point set file in points[].
-    // Note: read_xyz_point_set() requires an iterator over points
+    // Note: read_xyz_points_and_normals() requires an iterator over points
     //       + property maps to access each point's position and normal.
+    //       The position property map can be omitted here as we use an iterator over Point_3 elements.
     PointList points;
     std::ifstream stream("data/oni.xyz");
     if (!stream || 
-        !CGAL::read_xyz_point_set(stream,
-                                 std::back_inserter(points),
-                                 CGAL::make_dereference_property_map(std::back_inserter(points)),
-                                 CGAL::make_normal_vector_property_map(points.begin())))
+        !CGAL::read_xyz_points_and_normals(stream,
+                                           std::back_inserter(points),
+                                           CGAL::make_normal_vector_property_map(std::back_inserter(points))))
     {
       return EXIT_FAILURE;
     }
 
-    // Create implicit function and insert vertices.
+    // Creates implicit function and insert points.
     // Note: Poisson_implicit_function() requires an iterator over points
     //       + property maps to access each point's position and normal.
-    //       The position property map has a default value and is omitted here.
+    //       The position property map can be omitted here as we use an iterator over Point_3 elements.
     Poisson_reconstruction_function implicit_function(points.begin(), points.end(),
                                                       CGAL::make_normal_vector_property_map(points.begin()));
 
-    // Compute the Poisson indicator function f()
+    // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
     if ( ! implicit_function.compute_implicit_function() )
       return EXIT_FAILURE;
 
-    // Get point inside the implicit surface
+    // Gets point inside the implicit surface
     Point inner_point = implicit_function.get_inner_point();
 
-    // Get implicit function's radius
+    // Gets implicit function's radius
     Sphere bounding_sphere = implicit_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 

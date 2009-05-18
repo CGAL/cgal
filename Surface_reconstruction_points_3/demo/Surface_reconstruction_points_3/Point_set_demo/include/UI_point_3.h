@@ -18,7 +18,7 @@
 /// - a selection flag.
 ///
 /// @heading Parameters:
-/// @param Gt   Kernel's geometric traits.
+/// @param Gt   Geometric traits class.
 
 template<class Gt>
 class UI_point_3
@@ -37,12 +37,12 @@ public:
     typedef Base Point_with_normal; 
 
     // Repeat base class public types
-    typedef Gt Geom_traits; ///< Kernel's geometric traits.
+    typedef Gt Geom_traits; ///< Geometric traits class.
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::RT RT;
-    typedef typename Geom_traits::Point_2  Point_2;  ///< == Point_2<Geom_traits>
-    typedef typename Geom_traits::Point_3  Point_3;  ///< == Point_3<Geom_traits>
-    typedef typename Geom_traits::Vector_3 Vector_3; ///< == Vector_3<Geom_traits>
+    typedef typename Geom_traits::Point_2  Point_2;  ///< == Geom_traits::Point_2
+    typedef typename Geom_traits::Point_3  Point_3;  ///< == Geom_traits::Point_3
+    typedef typename Geom_traits::Vector_3 Vector_3; ///< == Geom_traits::Vector_3
 
 // Public methods
 public:
@@ -113,7 +113,7 @@ public:
     bool is_selected() const { return m_is_selected; }
     void select(bool is_selected=true) { m_is_selected = is_selected; }
 
-    /// Get/set radius.
+    /// Gets/sets radius.
     FT radius() const { return m_radius; }
     FT& radius() { return m_radius; }
 

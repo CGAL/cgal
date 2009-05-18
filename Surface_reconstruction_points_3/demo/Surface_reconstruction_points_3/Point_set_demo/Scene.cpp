@@ -92,8 +92,8 @@ Scene::numberOfEntries() const
   return entries.size();
 }
 
-// Duplicate a scene item.
-// Return the ID of the new item (-1 on error).
+// Duplicates a scene item.
+// Returns the ID of the new item (-1 on error).
 Scene::Item_id
 Scene::duplicate(Item_id index)
 {
@@ -113,8 +113,8 @@ Scene::duplicate(Item_id index)
     return -1;
 }
 
-// Convert a polyhedron to a point set.
-// Return the ID of the new item (-1 on error).
+// Converts a polyhedron to a point set.
+// Returns the ID of the new item (-1 on error).
 Scene::Item_id
 Scene::convertToPointSet(Item_id index)
 {
@@ -129,7 +129,7 @@ Scene::convertToPointSet(Item_id index)
   if(poly_item == NULL || poly_item->polyhedron() == NULL)
     return -1;
 
-  // Convert polyhedron to a point set
+  // Converts polyhedron to a point set
   Point_set_scene_item* new_item = new Point_set_scene_item(*poly_item->polyhedron());
   if(new_item) {
     new_item->setName(tr("%1 (point set)").arg(item->name()));

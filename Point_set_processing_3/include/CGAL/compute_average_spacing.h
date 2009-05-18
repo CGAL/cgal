@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Point_set_processing_3/include/CGAL/improved_laplacian_smooth_point_set.h $
+// $Id: improved_laplacian_smooth_point_set.h 48866 2009-04-22 15:06:24Z lsaboret $
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
@@ -21,6 +21,8 @@
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/point_set_property_map.h>
+#include <CGAL/point_set_processing_assertions.h>
 
 #include <iterator>
 #include <list>
@@ -34,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 
-/// Compute average spacing of one query point from K nearest neighbors.
+/// Computes average spacing of one query point from K nearest neighbors.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
@@ -57,8 +59,8 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
   typedef typename Kernel::Vector_3 Vector;
 
   // types for K nearest neighbors search
-  typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+  typedef typename Search_traits_3<Kernel> Tree_traits;
+  typedef typename Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
   // performs k + 1 queries (if unique the query point is
@@ -91,39 +93,45 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 // ----------------------------------------------------------------------------
 
 
-/// Compute average spacing from k nearest neighbors.
+/// Computes average spacing from k nearest neighbors.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param InputIterator value_type must be convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
+/// @param InputIterator iterator over input points.
+/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
+/// @param Kernel Geometric traits class. 
+///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return average spacing (scalar).
 
 // This variant requires the kernel.
 template <typename InputIterator,
+          typename PointPMap,
           typename Kernel
 >
 typename Kernel::FT
-compute_average_spacing(InputIterator first,    ///< iterator over the first input point.
-                        InputIterator beyond,   ///< past-the-end iterator over input points.
-                        unsigned int k,         ///< number of neighbors.
-                        const Kernel& kernel)   ///< geometric traits.
+compute_average_spacing(
+  InputIterator first,  ///< iterator over the first input point.
+  InputIterator beyond, ///< past-the-end iterator over input points.
+  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  unsigned int k, ///< number of neighbors.
+  const Kernel& kernel) ///< geometric traits.
 {
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
-  typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+  typedef typename Search_traits_3<Kernel> Tree_traits;
+  typedef typename Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_precondition(first != beyond);
+  CGAL_point_set_processing_precondition(first != beyond);
 
   // precondition: at least 2 nearest neighbors
-  CGAL_precondition(k >= 2);
+  CGAL_point_set_processing_precondition(k >= 2);
 
   // instanciate a KD-tree search
   Tree tree(first,beyond);
@@ -135,7 +143,7 @@ compute_average_spacing(InputIterator first,    ///< iterator over the first inp
   InputIterator it;
   for(it = first; it != beyond; it++)
   {
-    sum_spacings += CGALi::compute_average_spacing<Kernel,Tree>(*it,tree,k);
+    sum_spacings += CGALi::compute_average_spacing<Kernel,Tree>(get(point_pmap,it),tree,k);
     nb_points++;
   }
 
@@ -145,15 +153,39 @@ compute_average_spacing(InputIterator first,    ///< iterator over the first inp
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
+template <typename InputIterator,
+          typename PointPMap
+>
+typename Kernel_traits<typename boost::property_traits<PointPMap>::value_type>::Kernel::FT
+compute_average_spacing(
+  InputIterator first,    ///< iterator over the first input point.
+  InputIterator beyond,   ///< past-the-end iterator over input points.
+  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  unsigned int k) ///< number of neighbors
+{
+  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+  return compute_average_spacing(
+    first,beyond,
+    point_pmap, 
+    k,
+    Kernel());
+}
+/// @endcond
+
+/// @cond SKIP_IN_MANUAL
+// This variant creates a default point property map = Dereference_property_map.
 template < typename InputIterator >
 typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel::FT
-compute_average_spacing(InputIterator first,    ///< iterator over the first input point.
-                        InputIterator beyond,   ///< past-the-end iterator over input points.
-                        unsigned int k)         ///< number of neighbors.
+compute_average_spacing(
+  InputIterator first,    ///< iterator over the first input point.
+  InputIterator beyond,   ///< past-the-end iterator over input points.
+  unsigned int k) ///< number of neighbors.
 {
-  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return compute_average_spacing(first,beyond,k,Kernel());
+  return compute_average_spacing(
+    first,beyond,
+    make_dereference_property_map(first), 
+    k);
 }
 /// @endcond
 

@@ -24,10 +24,8 @@
 
 #include <CGAL/point_set_property_map.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/make_surface_mesh.h>
 #include <CGAL/Fast_orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
-#include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
@@ -39,31 +37,30 @@ CGAL_BEGIN_NAMESPACE
 /// that defines a Point Set Surface (PSS) based on
 /// moving least squares (MLS) fitting of algebraic spheres.
 ///
-/// This class implements a variant the "Algebraic Point Set Surfaces" method
+/// This class implements a variant of the "Algebraic Point Set Surfaces" method
 /// by Guennebaud and Gross [Guennebaud07].
+///
+/// Currently, the quality of the reconstruction highly depends on both the quality of input
+/// normals and the smoothness parameter. Whereas the algorithm can tolerate
+/// a little noise in the normal direction, the normals must be consistently oriented.
+/// The smoothness parameter controls the width of the underlying low-pass filter as a factor
+/// of the local point spacing. Larger value leads to smoother surfaces and longer computation
+/// times. For clean datasets, this value should be set between 1.5 and 2.5. On the other hand,
+/// as the amount of noise increases, this value should be increased as well. For these reasons,
+/// we do not provide any default value for this parameter.
+/// The radius property should correspond to the local point spacing which can be intuitively
+/// defined as the average distance to its "natural" one ring neighbors. Currently, this
+/// information is only used to define the "surface definition domain" as the union of
+/// these balls. Outside this union of balls, the surface is not defined. Therefore, if the balls
+/// do not overlap enough, then some holes might appear. If no radius is provided, then they are
+/// automatically computed from a basic estimate of the local density based on the 16 nearest
+/// neighbors. In the future, this information might be used as well to adjust the width 
+/// of the low pass filter.
 ///
 /// Note that APSS reconstruction may create small "ghost" connected components
 /// close to the reconstructed surface that you should delete.
 /// For this purpose, you may call erase_small_polyhedron_connected_components()
 /// after make_surface_mesh().
-/// 
-/// @note Currently, the quality of the reconstruction highly depends on both the quality of input
-///       normals and the smoothness parameter. Whereas the algorithm can tolerate
-///       a little noise in the normal direction, the normals must be consistently oriented.
-///       The smoothness parameter controls the width of the underlying low-pass filter as a factor
-///       of the local point spacing. Larger value leads to smoother surfaces and longer computation
-///       times. For clean datasets, this value should be set between 1.5 and 2.5. On the other hand,
-///       as the amount of noise increase, this value should be increased as well. For these reasons,
-///       we do not provide any default value for this parameter.
-///       
-///       The radius property should correspond to the local point spacing which can be intuitively
-///       defined as the average distance to its \em natural one ring neighbors. Currently, this
-///       information is only used to define the \em surface \em definition \em domain as the union of
-///       these balls. Outside this union of balls, the surface is not defined. Therefore, if the balls
-///       do not overlap enough, then some holes might appear. If no radius is provided, then they are
-///       automatically computed from a basic estimate of the local density based on the 16 nearest
-///       neighbors. In the future, this information might be used as well to adjust the width 
-///       of the low pass filter.
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the 'ImplicitFunction' concept.
@@ -77,13 +74,13 @@ class APSS_reconstruction_function
 // Public types
 public:
 
-  typedef Gt Geom_traits; ///< Kernel (Geometric traits)
+  typedef Gt Geom_traits; ///< Geometric traits class
 
   // Geometric types
-  typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Point_3 Point; ///< == typedef Geom_traits::Point_3
-  typedef typename Geom_traits::Vector_3 Vector; ///< == typedef Geom_traits::Vector_3
-  typedef typename Geom_traits::Sphere_3 Sphere; ///< == typedef Geom_traits::Sphere_3
+  typedef typename Geom_traits::FT FT; ///< == Geom_traits::FT
+  typedef typename Geom_traits::Point_3 Point; ///< == Geom_traits::Point_3
+  typedef typename Geom_traits::Vector_3 Vector; ///< == Geom_traits::Vector_3
+  typedef typename Geom_traits::Sphere_3 Sphere; ///< == Geom_traits::Sphere_3
 
 // Private types
 private:
@@ -125,14 +122,15 @@ private:
 // Private initialization method
 private:
 
-  /// Creates an APSS implicit function from the [first, beyond) range of vertices.
+  /// Creates an APSS implicit function from the [first, beyond) range of points.
   ///
   /// @commentheading Template Parameters:
   /// @param InputIterator iterator over input points.
-  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Gt>.
-  ///        It can be omitted if InputIterator value_type is convertible to Point_3<Gt>.
-  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Vector_3<Gt>.
-  /// @param RadiusPMap is a model of boost::ReadablePropertyMap with a value_type = Gt::FT.
+  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Point_3.
+  ///        It can be omitted if InputIterator value_type is convertible to Geom_traits::Point_3.
+  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Vector_3.
+  /// @param RadiusPMap is a model of boost::ReadablePropertyMap with a value_type = FT.
+  ///        If it is omitted, a default radius is computed = (distance max to 16 nearest neighbors)/2.
   template <typename InputIterator,
             typename PointPMap,
             typename NormalPMap,
@@ -154,7 +152,7 @@ private:
 
     set_smoothness_factor(smoothness);
 
-    // Create kd-tree
+    // Creates kd-tree
     m->treeElements.reserve(nb_points);
     unsigned int i=0;
     for (InputIterator it=first ; it != beyond ; ++it,++i)
@@ -166,12 +164,12 @@ private:
     m->radii.resize(nb_points);
     if (boost::is_same<RadiusPMap,boost::dummy_property_map>::value)
     {
-      // Compute the radius of each point = (distance max to k nearest neighbors)/2.
+      // Compute the radius of each point = (distance max to 16 nearest neighbors)/2.
       // The union of these balls defines the surface definition domain.
       int i=0;
       for (InputIterator it=first ; it != beyond ; ++it, ++i)
       {
-        Neighbor_search search(*(m->tree), *it, 16);
+        Neighbor_search search(*(m->tree), get(point_pmap,it), 16);
         FT maxdist2 = search.begin()->second; // squared distance to furthest neighbor
         m->radii[i] = sqrt(maxdist2)/2.;
       }
@@ -200,14 +198,16 @@ private:
 // Public methods
 public:
 
-  /// Creates an APSS implicit function from the [first, beyond) range of vertices.
+  /// Creates an APSS implicit function from the [first, beyond) range of points.
   ///
   /// @commentheading Template Parameters:
   /// @param InputIterator iterator over input points.
-  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Gt>.
-  ///        It can be omitted if InputIterator value_type is convertible to Point_3<Gt>.
-  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Vector_3<Gt>.
-  /// @param RadiusPMap is a model of boost::ReadablePropertyMap with a value_type = Gt::FT.
+  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Point_3.
+  ///        It can be omitted if InputIterator value_type is convertible to Geom_traits::Point_3.
+  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Vector_3.
+  /// @param RadiusPMap is a model of boost::ReadablePropertyMap with a value_type = FT.
+  ///        If it is omitted, a default radius is computed = (distance max to 16 nearest neighbors)/2.
+
   // This variant requires all parameters.
   template <typename InputIterator,
             typename PointPMap,
@@ -218,8 +218,8 @@ public:
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator.
     PointPMap point_pmap, ///< property map InputIterator -> Point_3 (access to the position of an input point).
-    NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3 (access to the \b oriented normal of an input point).
-    RadiusPMap radius_pmap, ///< property map InputIterator -> FT (access to the local point spacing of an input point). This parameter is optional.
+    NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3 (access to the *oriented* normal of an input point).
+    RadiusPMap radius_pmap, ///< property map InputIterator -> FT (access to the local point spacing of an input point).
     FT smoothness) ///< smoothness factor. Typical choices are in the range 2 (clean datasets) and 8 (noisy datasets).
   {
     init(
@@ -238,7 +238,7 @@ public:
   >
   APSS_reconstruction_function(
     InputIterator first,  ///< iterator over the first input point.
-    InputIterator beyond, ///< past-the-end iterator.
+    InputIterator beyond, ///< past-the-end iterator over input points.
     PointPMap point_pmap, ///< property map InputIterator -> Point_3.
     NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
     FT smoothness) ///< smoothness factor.
@@ -260,7 +260,7 @@ public:
   >
   APSS_reconstruction_function(
     InputIterator first,  ///< iterator over the first input point.
-    InputIterator beyond, ///< past-the-end iterator.
+    InputIterator beyond, ///< past-the-end iterator over input points.
     NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
     FT smoothness) ///< smoothness factor.
   {
@@ -291,7 +291,7 @@ public:
       delete m;
   }
 
-  /// Set number of neighbors for APSS sphere fitting.
+  /// Sets smoothness factor. Typical choices are in the range 2 (clean datasets) and 8 (noisy datasets).
   void set_smoothness_factor(FT smoothness) { m->nofNeighbors = 6*smoothness*smoothness; }
 
   /// Returns a sphere bounding the inferred surface.
@@ -349,7 +349,7 @@ private:
 
 public:
 
-  /// 'ImplicitFunction' interface: evaluate implicit function for any 3D point.
+  /// 'ImplicitFunction' interface: evaluates implicit function at 3D query point.
   //
   // Implementation note: this function is called a large number of times,
   // thus us heavily optimized. The bottleneck is Neighbor_search's constructor,
@@ -569,7 +569,7 @@ private:
       }
     }
 
-    /** Compute the Euclidean distance between the algebraic surface and a point \a p.
+    /** Compute the Euclidean distance between the algebraic surface and a point 'p'.
       * This function uses the closest intersection to a given reference point.
       */
     FT euclideanDistance(const Point& p, const Point& reference_point) {
@@ -661,7 +661,7 @@ private:
     CGAL::Random_points_in_sphere_3<Point> rnd(radius);
     while (min_f > 0)
     {
-      // Create random point in bounding sphere
+      // Creates random point in bounding sphere
       Point p = center + (*rnd++ - CGAL::ORIGIN);
       FT value = (*this)(p);
       if(value < min_f)

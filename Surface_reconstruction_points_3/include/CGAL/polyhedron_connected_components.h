@@ -39,7 +39,7 @@ namespace CGALi {
 enum { tag_free, tag_done };
 
 
-/// Get any vertex with tag == tag_free.
+/// Gets any vertex with tag == tag_free.
 ///
 /// @commentheading Template Parameters:
 /// @param Polyhedron an instance of CGAL::Polyhedron_3<Traits>.
@@ -123,7 +123,7 @@ unsigned int tag_component(Polyhedron& polyhedron,
 // ----------------------------------------------------------------------------
 
 
-/// Compute the list of all connected components of a polyhedron.
+/// Computes the list of all connected components of a polyhedron.
 ///
 /// @commentheading Template Parameters:
 /// @param Polyhedron an instance of CGAL::Polyhedron_3<Traits> that supports vertices.
@@ -190,22 +190,22 @@ erase_small_polyhedron_connected_components(Polyhedron& polyhedron)
     unsigned int nb_erased_components = 0,
                  nb_isolated_vertices = 0;
 
-    // Get list of connected components, ordered by size (number of vertices)
+    // Gets list of connected components, ordered by size (number of vertices)
     std::multimap<unsigned int, Vertex_handle>
       components = CGAL::get_polyhedron_connected_components(polyhedron);
 
-    // Erase all connected components but the largest
+    // Erases all connected components but the largest
     while (components.size() > 1)
     {
       unsigned int number_of_vertices = components.begin()->first;
       Vertex_handle vertex = components.begin()->second;
 
-      // Remove component from list
+      // Removes component from list
       components.erase(components.begin());
 
       if (vertex->halfedge() != NULL) // if not isolated vertex
       {
-        CGAL_TRACE_STREAM << "  Erase connected component (" << number_of_vertices << " vertices)\n";
+        CGAL_TRACE_STREAM << "  Erases connected component (" << number_of_vertices << " vertices)\n";
         polyhedron.erase_connected_component(vertex->halfedge());
         nb_erased_components++;
       }

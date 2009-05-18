@@ -28,7 +28,7 @@
 
 \ccFunction{template<typename InputIterator, typename PointPMap, typename NormalPMap, typename Kernel> void pca_estimate_normals(InputIterator first, InputIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap, unsigned int k, const Kernel& kernel);}
 {
-Estimate normal directions of the [first, beyond) range of vertices by linear least squares fitting of a plane over the k nearest neighbors. The output normals are randomly oriented.
+Estimates normal directions of the [first, beyond) range of points by linear least squares fitting of a plane over the k nearest neighbors. The output normals are randomly oriented.
 \ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}
 \begin{description}

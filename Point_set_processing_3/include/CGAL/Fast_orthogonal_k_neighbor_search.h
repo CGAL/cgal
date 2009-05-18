@@ -219,7 +219,7 @@ public:
       pqueue.sort();
   }
 
-  // Print statistics of the k_neighbor search process.
+  // Prints statistics of the k_neighbor search process.
   std::ostream& statistics (std::ostream& s)
   {
     s << "K_Neighbor search statistics:" << std::endl;

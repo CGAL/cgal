@@ -46,7 +46,7 @@
 
 
 
-/// Read 3D points + cameras from a Gyroviz .g23 file.
+/// Reads 3D points + cameras from a Gyroviz .g23 file.
 ///
 /// @commentheading Template Parameters:
 /// @param GyrovizPointOutputIterator value_type must be convertible from Gyroviz_point_3<Kernel>.
@@ -103,7 +103,7 @@ bool read_g23_point_set(
     if (pLine[0] == '#')
       continue;
 
-    // Read file signature on first line
+    // Reads file signature on first line
     if (lineNumber == 1)
     {
       char signature[512];
@@ -118,7 +118,7 @@ bool read_g23_point_set(
       }
     }
 
-    // Read movie file name on 2nd (significant) line
+    // Reads movie file name on 2nd (significant) line
     else if (movie_file_name->size() == 0)
     {
       char file_name[512];
@@ -130,7 +130,7 @@ bool read_g23_point_set(
       *movie_file_name = file_name;
     }
 
-    // Read number of cameras and points on 3rd (significant) line
+    // Reads number of cameras and points on 3rd (significant) line
     else if (cameras_count == -1)
     {
       if (sscanf(pLine,"%ld %ld %ld",&cameras_count,&positions_3D_count,&positions_2D_count) != 3)
@@ -140,7 +140,7 @@ bool read_g23_point_set(
       }
     }
 
-    // Read cameras on next lines
+    // Reads cameras on next lines
     else if (cameras->size() < cameras_count)
     {
       // If version 1, read frame index + camera's 3D position
@@ -177,10 +177,10 @@ bool read_g23_point_set(
       }
     }
 
-    // Read 3D points on next lines
+    // Reads 3D points on next lines
     else if (gyroviz_points.size() < positions_3D_count)
     {
-      // Read label (with double quotes) + position...
+      // Reads label (with double quotes) + position...
       // WARNING: this code does not support spaces in labels.
       char point_3D_label[512];
       double X,Y,Z;
@@ -193,10 +193,10 @@ bool read_g23_point_set(
       gyroviz_points[point_3D_label] = position_3D;
     }
 
-	// Read 2D points + camera indices + 3D points indices on remaining lines
+	// Reads 2D points + camera indices + 3D points indices on remaining lines
     else
     {
-      // Read camera index, 3D point label (with double quotes) and 2D position...
+      // Reads camera index, 3D point label (with double quotes) and 2D position...
       // WARNING: this code does not support spaces in labels.
       int camera_index;
       char point_3D_label[512];

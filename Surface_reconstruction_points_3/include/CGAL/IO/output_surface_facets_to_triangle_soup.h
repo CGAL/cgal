@@ -26,7 +26,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Get reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
+/// Gets reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
 ///
 /// This variant exports the surface as a triangle soup.
 ///

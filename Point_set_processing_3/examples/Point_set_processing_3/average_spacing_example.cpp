@@ -1,11 +1,11 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/compute_average_spacing.h>
-#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/read_xyz_points.h>
 
 #include <vector>
 #include <fstream>
 
-// types
+// Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
@@ -16,8 +16,8 @@ int main(void)
     std::vector<Point> points;
     std::ifstream stream("data/sphere_20k.xyz");
     if (!stream ||
-        !CGAL::read_xyz_point_set(stream,
-                                  std::back_inserter(points)))
+        !CGAL::read_xyz_points(stream,
+                               std::back_inserter(points)))
     {
       return EXIT_FAILURE;
     }

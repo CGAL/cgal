@@ -63,8 +63,8 @@ public:
   // Classic CGAL geometric types
   typedef Gt  Geom_traits; ///<Geometric traits class.
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Point_3 Point;  ///< == Point_3<Geom_traits>
-  typedef typename Geom_traits::Vector_3 Vector; ///< == Vector_3<Geom_traits>
+  typedef typename Geom_traits::Point_3 Point;  ///< == Geom_traits::Point_3
+  typedef typename Geom_traits::Vector_3 Vector; ///< == Geom_traits::Vector_3
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
@@ -123,19 +123,19 @@ public:
   Base::size;
   /// @endcond
 
-  // Get first/last iterators over normals.
+  // Gets first/last iterators over normals.
   Normal_iterator normals_begin()             { return Normal_iterator(begin()); }
   Normal_const_iterator normals_begin() const { return Normal_const_iterator(begin()); }
   Normal_iterator normals_end()               { return Normal_iterator(end()); }
   Normal_const_iterator normals_end() const   { return Normal_const_iterator(end()); }
 
-  // Get/set the iterator over the first point with an unoriented normal.
+  // Gets/sets the iterator over the first point with an unoriented normal.
   /// User is responsible to partition the point set as oriented/unoriented normals 
   /// and to set unoriented_points_begin() appropriately.
   Point_iterator&      unoriented_points_begin()       { return m_unoriented_points_begin; }
   Point_const_iterator unoriented_points_begin() const { return m_unoriented_points_begin; }
 
-  /// Get the number of selected points.
+  /// Gets the number of selected points.
   unsigned int nb_selected_points() const { return m_nb_selected_points; }
 
   /// Mark a point as selected/not selected.
@@ -162,7 +162,7 @@ public:
                                          std::mem_fun_ref(&UI_point::is_selected));
   }
 
-  /// Delete selected points.
+  /// Deletes selected points.
   // Note: this call resets unoriented_points_begin().
   void delete_selection()
   {
@@ -178,7 +178,7 @@ public:
     invalidate_bounds();
   }
 
-  /// Get the bounding box.
+  /// Gets the bounding box.
   Iso_cuboid bounding_box() const
   {
     if (!m_bounding_box_is_valid)
@@ -187,7 +187,7 @@ public:
     return m_bounding_box;
   }
 
-  /// Get bounding sphere.
+  /// Gets bounding sphere.
   Sphere bounding_sphere() const
   {
     if (!m_bounding_box_is_valid)
@@ -196,7 +196,7 @@ public:
     return m_bounding_sphere;
   }
 
-  /// Get points barycenter.
+  /// Gets points barycenter.
   Point barycenter() const
   {
     if (!m_bounding_box_is_valid)
@@ -205,7 +205,7 @@ public:
     return m_barycenter;
   }
 
-  /// Get the standard deviation of the distance to barycenter.
+  /// Gets the standard deviation of the distance to barycenter.
   FT diameter_standard_deviation() const
   {
     if (!m_bounding_box_is_valid)
@@ -214,7 +214,7 @@ public:
     return m_diameter_standard_deviation;
   }
 
-  // Get the region of interest, ignoring the outliers.
+  // Gets the region of interest, ignoring the outliers.
   // This method is used to define the OpenGL arcball sphere.
   Sphere region_of_interest() const
   {
@@ -419,7 +419,7 @@ private:
     CGAL::Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > ms3(begin(), end());
     m_bounding_sphere = Sphere(ms3.center(), ms3.squared_radius());
 
-    // Compute standard deviation of the distance to barycenter
+    // Computes standard deviation of the distance to barycenter
     typename Geom_traits::Compute_squared_distance_3 sqd;
     FT sq_radius = 0;
     for (Point_const_iterator it = begin(); it != end(); it++)

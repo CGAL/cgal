@@ -2,18 +2,16 @@
 
 //----------------------------------------------------------
 // Normal estimation:
-// Read a point set or a mesh's set of vertices, compute and orient its normals,
+// Reads a point set, compute and orient its normals,
 // and save the point set.
-// Input file formats are .off (mesh) and .xyz or .pwn (point set).
-// Output file format is .xyz or .pwn (point set).
+// Input file formats are .off, .xyz and .pwn.
+// Output file formats are .xyz and .pwn.
 //----------------------------------------------------------
 // normal_estimation file_in file_out [options]
 
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 // This package
 #include <CGAL/pca_estimate_normals.h>
@@ -21,10 +19,9 @@
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/point_set_property_map.h>
-#include <CGAL/IO/read_xyz_point_set.h>
-#include <CGAL/IO/write_xyz_point_set.h>
-
-#include "compute_normal.h"
+#include <CGAL/IO/read_off_points.h>
+#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/write_xyz_points.h>
 
 #include <vector>
 #include <cstdlib>
@@ -50,7 +47,7 @@ typedef std::vector<Point_with_normal> PointList;
 // Private functions
 // ----------------------------------------------------------------------------
 
-// Compute normals direction by Principal Component Analysis
+// Computes normals direction by Principal Component Analysis
 void run_pca_estimate_normals(PointList& points, // input points + output normals
                               double nb_neighbors_pca_normals) // number of neighbors (%)
 {
@@ -63,20 +60,16 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
   if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
-  std::cerr << "Estimate Normals Direction by PCA (k="
+  std::cerr << "Estimates Normals Direction by PCA (k="
             << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
 
-  std::vector<Vector> output; 
-
+  // Estimates normals direction.
+  // Note: pca_estimate_normals() requires an iterator over points
+  //       + property maps to access each point's position and normal.
+  //       The position property map can be omitted here as we use an iterator over Point_3 elements.
   CGAL::pca_estimate_normals(points.begin(), points.end(),
-                             std::back_inserter(output),
+                             CGAL::make_normal_vector_property_map(points.begin()),
                              nb_neighbors);
-
-  // TEMPORARY: copy normals
-  PointList::iterator p;
-  std::vector<Vector>::iterator n;
-  for (p = points.begin(), n = output.begin(); p != points.end(); p++, n++)
-    p->normal() = *n;
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -84,7 +77,7 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
                         << std::endl;
 }
 
-// Compute normals direction by Jet Fitting
+// Computes normals direction by Jet Fitting
 void run_jet_estimate_normals(PointList& points, // input points + output normals
                               double nb_neighbors_jet_fitting_normals) // number of neighbors (%)
 {
@@ -97,20 +90,16 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
   if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
-  std::cerr << "Estimate Normals Direction by Jet Fitting (k="
+  std::cerr << "Estimates Normals Direction by Jet Fitting (k="
             << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
 
-  std::vector<Vector> output; // normals to estimate
-
+  // Estimates normals direction.
+  // Note: jet_estimate_normals() requires an iterator over points
+  //       + property maps to access each point's position and normal.
+  //       The position property map can be omitted here as we use an iterator over Point_3 elements.
   CGAL::jet_estimate_normals(points.begin(), points.end(),
-                             std::back_inserter(output),
+                             CGAL::make_normal_vector_property_map(points.begin()),
                              nb_neighbors);
-
-  // TEMPORARY: copy normals
-  PointList::iterator p;
-  std::vector<Vector>::iterator n;
-  for (p = points.begin(), n = output.begin(); p != points.end(); p++, n++)
-    p->normal() = *n;
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -118,7 +107,7 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
                         << std::endl;
 }
 
-// Test Hoppe92 normal orientation using a Minimum Spanning Tree.
+// Hoppe92 normal orientation using a Minimum Spanning Tree.
 void run_mst_orient_normals(PointList& points, // input points + input/output normals
                             unsigned int nb_neighbors_mst) // number of neighbors
 {
@@ -127,12 +116,11 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
 
   // mst_orient_normals() requires an iterator over points
   // + property maps to access each point's index, position and normal.
-  PointList::iterator first_unoriented_point = 
-    CGAL::mst_orient_normals(points.begin(), points.end(),
-                             CGAL::make_dereference_property_map(points.begin()),
-                             CGAL::make_normal_vector_property_map(points.begin()),
-                             CGAL::make_index_property_map(points),
-                             nb_neighbors_mst);
+  CGAL::mst_orient_normals(points.begin(), points.end(),
+                           CGAL::make_dereference_property_map(points.begin()),
+                           CGAL::make_normal_vector_property_map(points.begin()),
+                           CGAL::make_index_property_map(points),
+                           nb_neighbors_mst);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -156,15 +144,15 @@ int main(int argc, char * argv[])
     // usage
     if (argc-1 < 2)
     {
-      std::cerr << "Read a point set or a mesh's set of vertices, compute and orient its normals,\n";
+      std::cerr << "Reads a point set, compute and orient its normals,\n";
       std::cerr << "and save the point set.\n";
       std::cerr << "If the input mesh has normals, print the normals deviation.\n";
       std::cerr << "\n";
       std::cerr << "Usage: " << argv[0] << " file_in file_out [options]\n";
-      std::cerr << "Input file formats are .off (mesh) and .xyz or .pwn (point set).\n";
-      std::cerr << "Output file format is .xyz or .pwn (point set).\n";
+      std::cerr << "Input file formats are .off, .xyz and .pwn.\n";
+      std::cerr << "Output file formats are .xyz and .pwn.\n";
       std::cerr << "Options:\n";
-      std::cerr << "  -estimate plane|quadric          Estimate normals direction\n";
+      std::cerr << "  -estimate plane|quadric          Estimates normals direction\n";
       std::cerr << "  using a tangent plane or quadric (default=quadric)\n";
       std::cerr << "  -nb_neighbors_pca <int>          Number of neighbors\n";
       std::cerr << "  to compute tangent plane (default=0.15% of points)\n";
@@ -219,60 +207,41 @@ int main(int argc, char * argv[])
     CGAL::Timer task_timer; task_timer.start();
 
     //***************************************
-    // Load mesh/point set
+    // Loads point set
     //***************************************
 
+    // Reads the point set file in points[].
     PointList points;
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
     // If OFF file format
+    bool success = false;
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
-      // Read the mesh file in a polyhedron
       std::ifstream stream(input_filename.c_str());
-      typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-      Polyhedron input_mesh;
-      CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
-      if(!stream || !input_mesh.is_valid() || input_mesh.empty())
-      {
-        std::cerr << "Error: cannot read file " << input_filename << std::endl;
-        return EXIT_FAILURE;
-      }
-
-      // Convert Polyhedron vertices to point set.
-      // Compute vertices' normals from connectivity.
-      Polyhedron::Vertex_const_iterator v;
-      for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
-      {
-        const Point& p = v->point();
-        Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
-        points.push_back(Point_with_normal(p,n));
-      }
+      success = stream && 
+                CGAL::read_off_points(stream,
+                                         std::back_inserter(points));
     }
     // If XYZ file format
     else if (extension == ".xyz" || extension == ".XYZ" ||
              extension == ".pwn" || extension == ".PWN")
     {
-      // Read the point set file in points[]
       std::ifstream stream(input_filename.c_str());
-      if(!stream || 
-         !CGAL::read_xyz_point_set(stream,
-                                   std::back_inserter(points)))
-      {
-        std::cerr << "Error: cannot read file " << input_filename << std::endl;
-        return EXIT_FAILURE;
-      }
+      success = stream && 
+                CGAL::read_xyz_points(stream,
+                                         std::back_inserter(points));
     }
-    else
+    if (!success)
     {
       std::cerr << "Error: cannot read file " << input_filename << std::endl;
       return EXIT_FAILURE;
     }
 
-    // Print status
-    int nb_vertices = points.size();
-    std::cerr << "Read file " << input_filename << ": " << nb_vertices << " vertices, "
+    // Prints status
+    int nb_points = points.size();
+    std::cerr << "Reads file " << input_filename << ": " << nb_points << " points, "
                                                         << task_timer.time() << " seconds"
                                                         << std::endl;
     task_timer.reset();
@@ -281,17 +250,17 @@ int main(int argc, char * argv[])
     // Check requirements
     //***************************************
 
-    if (nb_vertices == 0)
+    if (nb_points == 0)
     {
       std::cerr << "Error: empty file" << std::endl;
       return EXIT_FAILURE;
     }
 
     //***************************************
-    // Compute normals
+    // Computes normals
     //***************************************
 
-    // Estimate normals direction.
+    // Estimates normals direction.
     if (estimate == "plane")
       run_pca_estimate_normals(points, nb_neighbors_pca_normals);
     else if (estimate == "quadric")
@@ -302,7 +271,7 @@ int main(int argc, char * argv[])
       run_mst_orient_normals(points, nb_neighbors_mst);
 
     //***************************************
-    // Save the point set
+    // Saves the point set
     //***************************************
 
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
@@ -314,8 +283,9 @@ int main(int argc, char * argv[])
     {
       std::ofstream stream(output_filename.c_str());
       if (!stream || 
-          !CGAL::write_xyz_point_set(stream,
-                                     points.begin(), points.end()) )
+          !CGAL::write_xyz_points_and_normals(stream,
+                                              points.begin(), points.end(),
+                                              CGAL::make_normal_vector_property_map(points.begin())))
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;
@@ -327,7 +297,7 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
-    // Return accumulated fatal error
+    // Returns accumulated fatal error
     std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
     return accumulated_fatal_err;
 }

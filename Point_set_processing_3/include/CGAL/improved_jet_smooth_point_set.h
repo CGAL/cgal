@@ -16,11 +16,13 @@
 //
 // Author(s) : Nader Salman and Laurent Saboret
 
-#ifndef CGAL_IMPROVED_LAPLACIAN_SMOOTH_POINT_SET_H
-#define CGAL_IMPROVED_LAPLACIAN_SMOOTH_POINT_SET_H
+#ifndef CGAL_IMPROVED_JET_SMOOTH_POINT_SET_H
+#define CGAL_IMPROVED_JET_SMOOTH_POINT_SET_H
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Monge_via_jet_fitting.h>
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 
 #include <iterator>
@@ -32,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace improved_laplacian_smoothing_i {
+namespace improved_jet_smoothing_i {
 
 
 // Item in the Kd-tree: position (Point_3) + index
@@ -73,15 +75,16 @@ public:
 };
 
 /* Usage:
-  typedef improved_laplacian_smoothing_i::KdTreeElement<Kernel> KdTreeElement;
-  typedef improved_laplacian_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
+  typedef improved_jet_smoothing_i::KdTreeElement<Kernel> KdTreeElement;
+  typedef improved_jet_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Search_iterator;
 */
 
 
-/// Laplacian smooth of one point w.r.t. the k nearest neighbors.
+/// Smoothes one point position using jet fitting on the k
+/// nearest neighbors and reprojection onto the jet.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
@@ -93,41 +96,54 @@ public:
 template <typename Kernel,
           typename Tree>
 typename Kernel::Point_3
-laplacian_smooth_point(
-  const typename Kernel::Point_3& pi, ///< 3D point to smooth
+jet_smooth_point(
+  const typename Kernel::Point_3& query, ///< 3D point to project
   Tree& tree, ///< KD-tree
-  const unsigned int k) // nb neighbors
+  const unsigned int k, // nb neighbors
+  const unsigned int degree_fitting = 2,
+  const unsigned int degree_monge = 2)
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
 
   // types for K nearest neighbors search
-  typedef improved_laplacian_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
+  typedef improved_jet_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
-  // Computes Laplacian (centroid) of k neighboring points.
-  // Note: we perform k+1 queries and skip the query point which is output first.
-  // TODO: we should use the functions in PCA component instead.
-  Vector v = CGAL::NULL_VECTOR;
-  Neighbor_search search(tree,pi,k+1);
-  Search_iterator search_iterator;
-  for(search_iterator = search.begin(), search_iterator++; // skip pi point
-      search_iterator != search.end();
-      search_iterator++ )
+  // types for jet fitting
+  typedef typename CGAL::Monge_via_jet_fitting<Kernel> Monge_jet_fitting;
+  typedef typename Monge_jet_fitting::Monge_form Monge_form;
+
+  // Gather set of (k+1) neighboring points.
+  // Performs k + 1 queries (if unique the query point is
+  // output first). Search may be aborted if k is greater
+  // than number of input points.
+  std::vector<Point> points; points.reserve(k+1);
+  Neighbor_search search(tree,query,k+1);
+  Search_iterator search_iterator = search.begin();
+  unsigned int i;
+  for(i=0;i<(k+1);i++)
   {
-      const Point& p = search_iterator->first;
-      v = v + (p - CGAL::ORIGIN);
+    if(search_iterator == search.end())
+      break; // premature ending
+    points.push_back(search_iterator->first);
+    search_iterator++;
   }
+  CGAL_point_set_processing_precondition(points.size() >= 1);
 
-  Point centroid = CGAL::ORIGIN + v / k;
+  // performs jet fitting
+  Monge_jet_fitting monge_fit;
+  Monge_form monge_form = monge_fit(points.begin(), points.end(),
+                                    degree_fitting, degree_monge);
 
-  return centroid;
+  // output projection of query point onto the jet
+  return monge_form.origin();
 }
 
 
-/// Improved Laplacian smooth of one point w.r.t. the k nearest neighbors.
+/// Smoothes one point position using jet fitting on the k
+/// nearest neighbors and reprojection onto the jet.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
@@ -139,7 +155,7 @@ laplacian_smooth_point(
 template <typename Kernel,
           typename Tree>
 typename Kernel::Point_3
-improved_laplacian_smooth_point(
+improved_jet_smooth_point(
   const typename Kernel::Point_3& pi, ///< 3D point to smooth
   const typename Kernel::Vector_3& bi, ///< bi movement
   Tree& tree, ///< KD-tree
@@ -153,7 +169,7 @@ improved_laplacian_smooth_point(
 
   // types for K nearest neighbors search
   //typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef improved_laplacian_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
+  typedef improved_jet_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -173,7 +189,7 @@ improved_laplacian_smooth_point(
 }
 
 
-} /* namespace improved_laplacian_smoothing_i */
+} /* namespace improved_jet_smoothing_i */
 
 
 // ----------------------------------------------------------------------------
@@ -181,8 +197,8 @@ improved_laplacian_smooth_point(
 // ----------------------------------------------------------------------------
 
 
-/// Improved Laplacian smoothing (Vollmer et al)
-/// w.r.t. the k nearest neighbors.
+/// Improved Laplacian smoothing (Vollmer et al) 
+/// on the k nearest neighbors.
 ///
 /// Warning: as this method relocates the points, it
 /// should not be called on containers sorted w.r.t. point locations.
@@ -202,7 +218,7 @@ template <typename ForwardIterator,
           typename Kernel
 >
 void
-improved_laplacian_smooth_point_set(
+improved_jet_smooth_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
@@ -217,8 +233,8 @@ improved_laplacian_smooth_point_set(
   typedef typename Kernel::Vector_3 Vector;
 
   // types for K nearest neighbors search structure
-  typedef improved_laplacian_smoothing_i::KdTreeElement<Kernel> KdTreeElement;
-  typedef improved_laplacian_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
+  typedef improved_jet_smoothing_i::KdTreeElement<Kernel> KdTreeElement;
+  typedef improved_jet_smoothing_i::KdTreeTraits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Search_iterator;
@@ -254,11 +270,13 @@ improved_laplacian_smooth_point_set(
   // loop until convergence
   for(int iter_n = 0; iter_n < iter_number ; ++iter_n)
   {
+      int kk = k/iter_number+1; // adaptative k
+    
       // Iterates over input points, computes (original) Laplacian smoothing and b[].
       for(it = first, i=0; it != beyond; it++, ++i)
       {
           Point& p0  = get(point_pmap,it);
-          Point np   = improved_laplacian_smoothing_i::laplacian_smooth_point<Kernel>(p0,tree,k);
+          Point np   = improved_jet_smoothing_i::jet_smooth_point<Kernel>(p0,tree,kk);
           b[i]       = alpha*(np - p0) + (1-alpha)*(np - p[i]);
           p[i]       = np;
       }
@@ -266,7 +284,7 @@ improved_laplacian_smooth_point_set(
       // Iterates over input points, compute and store smoothed points.
       for(it = first, i=0; it != beyond; it++, ++i)
       {
-          p[i] = improved_laplacian_smoothing_i::improved_laplacian_smooth_point<Kernel>(p[i],b[i],tree,b,k,beta);
+          p[i] = improved_jet_smoothing_i::improved_jet_smooth_point<Kernel>(p[i],b[i],tree,b,kk,beta);
       }
   }
 
@@ -286,7 +304,7 @@ template <typename ForwardIterator,
           typename FT
 >
 void
-improved_laplacian_smooth_point_set(
+improved_jet_smooth_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
@@ -297,7 +315,7 @@ improved_laplacian_smooth_point_set(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return improved_laplacian_smooth_point_set(
+  return improved_jet_smooth_point_set(
     first,beyond,
     point_pmap, 
     k,
@@ -313,7 +331,7 @@ template <typename ForwardIterator,
           typename FT
 >
 void
-improved_laplacian_smooth_point_set(
+improved_jet_smooth_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   unsigned int k, ///< number of neighbors.
@@ -321,7 +339,7 @@ improved_laplacian_smooth_point_set(
   FT alpha,
   FT beta)
 {
-  return improved_laplacian_smooth_point_set(
+  return improved_jet_smooth_point_set(
     first,beyond,
     make_dereference_property_map(first), 
     k,
@@ -333,5 +351,5 @@ improved_laplacian_smooth_point_set(
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_IMPROVED_LAPLACIAN_SMOOTH_POINT_SET_H
+#endif // CGAL_IMPROVED_JET_SMOOTH_POINT_SET_H
 

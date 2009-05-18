@@ -20,7 +20,8 @@
 // This package
 #include <CGAL/APSS_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/point_set_property_map.h>
+#include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/polyhedron_connected_components.h>
 
@@ -82,11 +83,11 @@ int main(int argc, char * argv[])
   }
 
   // APSS options
-  FT sm_angle = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence (PA).
-  FT sm_radius = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine (LR).
+  FT sm_angle = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
+  FT sm_radius = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
   FT sm_distance = 0.015; // Approximation error w.r.t. p.s.r. For APSS: 0.015 = fast, 0.003 = smooth (LS).
                           // Note: 1.5 * Poisson's  approximation error gives roughly the same number of triangles.
-  unsigned int k = 12; // #neighbors to compute APPS sphere fitting. 12 = fast, 24 = robust (GG).
+  FT smoothness = 2; // Smoothness factor. In the range 2 (clean datasets) and 8 (noisy datasets).
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -99,7 +100,7 @@ int main(int argc, char * argv[])
     std::cerr << std::endl;
 
     //***************************************
-    // Load mesh/point set
+    // Loads mesh/point set
     //***************************************
 
     // File name is:
@@ -112,7 +113,7 @@ int main(int argc, char * argv[])
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
-      // Read the mesh file in a polyhedron
+      // Reads the mesh file in a polyhedron
       std::ifstream stream(input_filename.c_str());
       Polyhedron input_mesh;
       CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
@@ -123,8 +124,8 @@ int main(int argc, char * argv[])
         continue;
       }
 
-      // Convert Polyhedron vertices to point set.
-      // Compute vertices' normals from connectivity.
+      // Converts Polyhedron vertices to point set.
+      // Computes vertices normal from connectivity.
       Polyhedron::Vertex_const_iterator v;
       for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
       {
@@ -137,11 +138,15 @@ int main(int argc, char * argv[])
     else if (extension == ".xyz" || extension == ".XYZ" ||
              extension == ".pwn" || extension == ".PWN")
     {
-      // Read the point set file in points[]
+      // Reads the point set file in points[].
+      // Note: read_xyz_points_and_normals() requires an iterator over points
+      //       + property maps to access each point's position and normal.
+      //       The position property map can be omitted here as we use an iterator over Point_3 elements.
       std::ifstream stream(input_filename.c_str());
-      if(!stream || 
-         !CGAL::read_xyz_point_set(stream,
-                                   std::back_inserter(points)))
+      if(!stream ||
+         !CGAL::read_xyz_points_and_normals(stream,
+                                            std::back_inserter(points),
+                                            CGAL::make_normal_vector_property_map(std::back_inserter(points))))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         accumulated_fatal_err = EXIT_FAILURE;
@@ -155,10 +160,10 @@ int main(int argc, char * argv[])
       continue;
     }
 
-    // Print status
+    // Prints status
     long memory = CGAL::Memory_sizer().virtual_size();
-    int nb_vertices = points.size();
-    std::cerr << "Read file " << input_filename << ": " << nb_vertices << " vertices, "
+    int nb_points = points.size();
+    std::cerr << "Reads file " << input_filename << ": " << nb_points << " points, "
                                                         << task_timer.time() << " seconds, "
                                                         << (memory>>20) << " Mb allocated"
                                                         << std::endl;
@@ -168,7 +173,7 @@ int main(int argc, char * argv[])
     // Check requirements
     //***************************************
 
-    if (nb_vertices == 0)
+    if (nb_points == 0)
     {
       std::cerr << "Error: empty file" << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
@@ -184,21 +189,25 @@ int main(int argc, char * argv[])
     }
 
     //***************************************
-    // Compute implicit function
+    // Computes implicit function
     //***************************************
 
-    std::cerr << "Compute APSS implicit function (k=" << k << ")...\n";
+    std::cerr << "Computes APSS implicit function (smoothness=" << smoothness << ")...\n";
 
-    // Create implicit function
+    // Creates implicit function and insert points.
+    // Note: APSS_implicit_function() requires an iterator over points
+    //       + property maps to access each point's position and normal.
+    //       The position property map can be omitted here as we use an iterator over Point_3 elements.
     APSS_reconstruction_function implicit_function(points.begin(), points.end(),
-                                                   k);
+                                                   CGAL::make_normal_vector_property_map(points.begin()),
+                                                   smoothness);
 
     // Recover memory used by points[]
     points.clear();
 
-    // Print status
+    // Prints status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Compute implicit function: " << task_timer.time() << " seconds, "
+    std::cerr << "Computes implicit function: " << task_timer.time() << " seconds, "
                                                << (memory>>20) << " Mb allocated"
                                                << std::endl;
     task_timer.reset();
@@ -209,7 +218,7 @@ int main(int argc, char * argv[])
 
     std::cerr << "Surface meshing...\n";
 
-    // Get point inside the implicit surface
+    // Gets point inside the implicit surface
     Point inner_point = implicit_function.get_inner_point();
     FT inner_point_value = implicit_function(inner_point);
     if(inner_point_value >= 0.0)
@@ -219,7 +228,7 @@ int main(int argc, char * argv[])
       continue;
     }
 
-    // Get implicit function's radius
+    // Gets implicit function's radius
     Sphere bounding_sphere = implicit_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
@@ -247,7 +256,7 @@ int main(int argc, char * argv[])
     C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
     CGAL::make_surface_mesh(surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
 
-    // Print status
+    // Prints status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
                                      << tr.number_of_vertices() << " output vertices, "
@@ -260,22 +269,22 @@ int main(int argc, char * argv[])
       continue;
     }
 
-    // Convert to polyhedron
+    // Converts to polyhedron
     Polyhedron output_mesh;
     CGAL::output_surface_facets_to_polyhedron(surface_mesher_c2t3, output_mesh);
 
     //***************************************
-    // Erase small connected components
+    // Erases small connected components
     //***************************************
 
-    std::cerr << "Erase small connected components...\n";
-    
-    unsigned int nb_erased_components = 
+    std::cerr << "Erases small connected components...\n";
+
+    unsigned int nb_erased_components =
       CGAL::erase_small_polyhedron_connected_components(output_mesh);
 
-    // Print status
+    // Prints status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Erase small connected components: " << task_timer.time() << " seconds, "
+    std::cerr << "Erases small connected components: " << task_timer.time() << " seconds, "
                                                       << nb_erased_components << " components erased, "
                                                       << (memory>>20) << " Mb allocated"
                                                       << std::endl;
@@ -285,7 +294,7 @@ int main(int argc, char * argv[])
 
   std::cerr << std::endl;
 
-  // Return accumulated fatal error
+  // Returns accumulated fatal error
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }

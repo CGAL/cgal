@@ -34,7 +34,7 @@
 /// - a list of camera/2D point pairs used to reconstruct the point from images,
 ///
 /// @heading Parameters:
-/// @param Gt   Kernel's geometric traits.
+/// @param Gt   Geometric traits class.
 
 template<class Gt>
 class Gyroviz_point_3 
@@ -63,12 +63,12 @@ public:
     typedef Base Point_with_normal;
 
     // Repeat Point_with_normal_3 public types
-    typedef Gt Geom_traits; ///< Kernel's geometric traits.
+    typedef Gt Geom_traits; ///< Geometric traits class.
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::RT RT;
-    typedef typename Geom_traits::Point_2  Point_2;  ///< == Point_2<Geom_traits>
-    typedef typename Geom_traits::Point_3  Point_3;  ///< == Point_3<Geom_traits>
-    typedef typename Geom_traits::Vector_3 Vector_3; ///< == Vector_3<Geom_traits>
+    typedef typename Geom_traits::Point_2  Point_2;  ///< == Geom_traits::Point_2
+    typedef typename Geom_traits::Point_3  Point_3;  ///< == Geom_traits::Point_3
+    typedef typename Geom_traits::Vector_3 Vector_3; ///< == Geom_traits::Vector_3
 
     /// Camera/2D point pair. The 2D point is the 3D point (*this) projection's
     /// in the camera's image plane.
@@ -152,7 +152,7 @@ public:
       return *this;
     }
 
-    /// Merge points, including lists of camera/2D point pairs.
+    /// Merges points, including lists of camera/2D point pairs.
     void merge(const Gyroviz_point_3& gpt)
     { 
       // we assume that both points 3D position is the same
@@ -163,7 +163,7 @@ public:
 
     // Inherited operators ==() and !=() are fine.
 
-    /// Get camera/2D point pairs.
+    /// Gets camera/2D point pairs.
     const Camera_point2_map& camera_point2_pairs() const 
     { 
       return camera_point2_map; 
@@ -198,7 +198,7 @@ public:
       camera_point2_map.insert(first_camera_point2_pair, beyond_camera_point2_pair); 
     }
 
-    /// Get cameras.
+    /// Gets cameras.
     Camera_const_iterator cameras_begin() const 
     { 
       return Camera_const_iterator(camera_point2_pairs_begin()); 

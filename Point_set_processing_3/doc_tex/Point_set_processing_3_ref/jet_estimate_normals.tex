@@ -28,7 +28,7 @@
 
 \ccFunction{template<typename InputIterator, typename PointPMap, typename NormalPMap, typename Kernel> void jet_estimate_normals(InputIterator first, InputIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap, unsigned int k, const Kernel& kernel, unsigned int degree_fitting = 2);}
 {
-Estimate normal directions of the [first, beyond) range of vertices using jet fitting on the k nearest neighbors. The output normals are randomly oriented.
+Estimates normal directions of the [first, beyond) range of points using jet fitting on the k nearest neighbors. The output normals are randomly oriented.
 \ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}
 \begin{description}

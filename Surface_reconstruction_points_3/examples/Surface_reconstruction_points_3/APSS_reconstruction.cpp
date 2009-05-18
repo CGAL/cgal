@@ -2,7 +2,7 @@
 
 //----------------------------------------------------------
 // APSS reconstruction method:
-// Read a point set or a mesh's set of vertices, reconstruct a surface,
+// Reads a point set or a mesh's set of vertices, reconstruct a surface,
 // and save the surface.
 // Output format is .off.
 //----------------------------------------------------------
@@ -21,7 +21,7 @@
 #include <CGAL/APSS_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/point_set_property_map.h>
-#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/polyhedron_connected_components.h>
 
@@ -74,7 +74,7 @@ int main(int argc, char * argv[])
     // usage
     if (argc-1 < 2)
     {
-      std::cerr << "Read a point set or a mesh's set of vertices, reconstruct a surface,\n";
+      std::cerr << "Reads a point set or a mesh's set of vertices, reconstruct a surface,\n";
       std::cerr << "and save the surface.\n";
       std::cerr << "\n";
       std::cerr << "Usage: " << argv[0] << " file_in file_out [options]\n";
@@ -93,7 +93,7 @@ int main(int argc, char * argv[])
     FT sm_angle = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
     FT sm_radius = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
     FT sm_distance = 0.003; // Approximation error w.r.t. p.s.r.. For APSS: 0.015 = fast, 0.003 = smooth.
-    FT smoothness = 2; // smoothness factor (the large the smoother and slower)
+    FT smoothness = 2; // Smoothness factor. In the range 2 (clean datasets) and 8 (noisy datasets).
 
     // decode parameters
     std::string input_filename  = argv[1];
@@ -113,7 +113,7 @@ int main(int argc, char * argv[])
     CGAL::Timer task_timer; task_timer.start();
 
     //***************************************
-    // Load mesh/point set
+    // Loads mesh/point set
     //***************************************
 
     PointList points;
@@ -123,7 +123,7 @@ int main(int argc, char * argv[])
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
-      // Read the mesh file in a polyhedron
+      // Reads the mesh file in a polyhedron
       std::ifstream stream(input_filename.c_str());
       Polyhedron input_mesh;
       CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
@@ -133,8 +133,8 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
       }
 
-      // Convert Polyhedron vertices to point set.
-      // Compute vertices' normals from connectivity.
+      // Converts Polyhedron vertices to point set.
+      // Computes vertices normal from connectivity.
       Polyhedron::Vertex_const_iterator v;
       for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
       {
@@ -144,37 +144,32 @@ int main(int argc, char * argv[])
       }
     }
     // If XYZ file format
-    // FIXME fails to compile:
-    //  CGAL/point_set_property_map.h:39: error: forming reference to void                                                                                                                                                                                 
-    //  CGAL/point_set_property_map.h:42: error: forming reference to void                                                                                                                                                                                 
-    //  CGAL/point_set_property_map.h:47: error: forming reference to void
-    // 
-//     else if (extension == ".xyz" || extension == ".XYZ" ||
-//              extension == ".pwn" || extension == ".PWN")
-//     {
-//       // Reads the point set file in points[].
-//       // Note: read_xyz_point_set() requires an iterator over points
-//       //       + property maps to access each point's position and normal.
-//       std::ifstream stream(input_filename.c_str());
-//       if(!stream ||
-//          !CGAL::read_xyz_point_set(stream,
-//                                    std::back_inserter(points),
-//                                    CGAL::make_dereference_property_map(std::back_inserter(points)),
-//                                    CGAL::make_normal_vector_property_map(points.begin())))
-//       {
-//         std::cerr << "Error: cannot read file " << input_filename << std::endl;
-//         return EXIT_FAILURE;
-//       }
-//     }
+    else if (extension == ".xyz" || extension == ".XYZ" ||
+             extension == ".pwn" || extension == ".PWN")
+    {
+      // Reads the point set file in points[].
+      // Note: read_xyz_points_and_normals() requires an iterator over points
+      //       + property maps to access each point's position and normal.
+      //       The position property map can be omitted here as we use an iterator over Point_3 elements.
+      std::ifstream stream(input_filename.c_str());
+      if(!stream ||
+         !CGAL::read_xyz_points_and_normals(stream,
+                                            std::back_inserter(points),
+                                            CGAL::make_normal_vector_property_map(std::back_inserter(points))))
+      {
+        std::cerr << "Error: cannot read file " << input_filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
     else
     {
       std::cerr << "Error: cannot read file " << input_filename << std::endl;
       return EXIT_FAILURE;
     }
 
-    // Print status
-    int nb_vertices = points.size();
-    std::cerr << "Read file " << input_filename << ": " << nb_vertices << " vertices, "
+    // Prints status
+    int nb_points = points.size();
+    std::cerr << "Reads file " << input_filename << ": " << nb_points << " points, "
                                                         << task_timer.time() << " seconds"
                                                         << std::endl;
     task_timer.reset();
@@ -183,7 +178,7 @@ int main(int argc, char * argv[])
     // Check requirements
     //***************************************
 
-    if (nb_vertices == 0)
+    if (nb_points == 0)
     {
       std::cerr << "Error: empty file" << std::endl;
       return EXIT_FAILURE;
@@ -197,15 +192,15 @@ int main(int argc, char * argv[])
     }
 
     //***************************************
-    // Compute implicit function
+    // Computes implicit function
     //***************************************
 
-    std::cerr << "Compute APSS implicit function (smoothness=" << smoothness << ")...\n";
+    std::cerr << "Computes APSS implicit function (smoothness=" << smoothness << ")...\n";
 
-    // Create implicit function and insert vertices.
+    // Creates implicit function and insert points.
     // Note: APSS_implicit_function() requires an iterator over points
     //       + property maps to access each point's position and normal.
-    //       The position property map has a default value and is omitted here.
+    //       The position property map can be omitted here as we use an iterator over Point_3 elements.
     APSS_reconstruction_function implicit_function(points.begin(), points.end(),
                                                    CGAL::make_normal_vector_property_map(points.begin()),
                                                    smoothness);
@@ -213,7 +208,7 @@ int main(int argc, char * argv[])
     // Recover memory used by points[]
     points.clear();
 
-    // Print status
+    // Prints status
     std::cerr << "Compute implicit function: " << task_timer.time() << " seconds\n";
     task_timer.reset();
 
@@ -223,7 +218,7 @@ int main(int argc, char * argv[])
 
     std::cerr << "Surface meshing...\n";
 
-    // Get point inside the implicit surface
+    // Gets point inside the implicit surface
     Point inner_point = implicit_function.get_inner_point();
     FT inner_point_value = implicit_function(inner_point);
     if(inner_point_value >= 0.0)
@@ -232,7 +227,7 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    // Get implicit function's radius
+    // Gets implicit function's radius
     Sphere bounding_sphere = implicit_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
@@ -253,7 +248,7 @@ int main(int argc, char * argv[])
     C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
     CGAL::make_surface_mesh(surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
 
-    // Print status
+    // Prints status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
                                      << tr.number_of_vertices() << " output vertices"
                                      << std::endl;
@@ -262,21 +257,21 @@ int main(int argc, char * argv[])
     if(tr.number_of_vertices() == 0)
       return EXIT_FAILURE;
 
-    // Convert to polyhedron
+    // Converts to polyhedron
     Polyhedron output_mesh;
     CGAL::output_surface_facets_to_polyhedron(surface_mesher_c2t3, output_mesh);
 
     //***************************************
-    // Erase small connected components
+    // Erases small connected components
     //***************************************
 
-    std::cerr << "Erase small connected components...\n";
+    std::cerr << "Erases small connected components...\n";
 
     unsigned int nb_erased_components =
       CGAL::erase_small_polyhedron_connected_components(output_mesh);
 
-    // Print status
-    std::cerr << "Erase small connected components: " << task_timer.time() << " seconds, "
+    // Prints status
+    std::cerr << "Erases small connected components: " << task_timer.time() << " seconds, "
                                                       << nb_erased_components << " components erased"
                                                       << std::endl;
     task_timer.reset();

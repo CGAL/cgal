@@ -14,7 +14,7 @@ void gl_render_facets(Polyhedron& polyhedron)
   typedef typename Polyhedron::Facet_iterator Facet_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator HF_circulator;
 
-  // Get current shading model
+  // Gets current shading model
   GLint shading;
   ::glGetIntegerv(GL_SHADE_MODEL, &shading);
 

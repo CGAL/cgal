@@ -67,7 +67,7 @@ if(CGAL_FOUND AND MSVC AND OPENGL_FOUND AND TAUCS_FOUND)
     # Speed up debugger
     SET (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_HAS_ITERATOR_DEBUGGING=0")
 
-    # Print new compilation options
+    # Prints new compilation options
     message( STATUS "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'" )
     message( STATUS "USING DEBUG EXEFLAGS   = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}'" )
     message( STATUS "USING RELEASE CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}'" )
@@ -77,7 +77,7 @@ if(CGAL_FOUND AND MSVC AND OPENGL_FOUND AND TAUCS_FOUND)
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 
-  # Create Poisson executable
+  # Creates Poisson executable
   ADD_EXECUTABLE(Poisson WIN32 ChildFrm.cpp DialogOptions.cpp director.cpp MainFrm.cpp Poisson.cpp PoissonDoc.cpp PoissonView.cpp Poisson.rc)
   
   # Link the executable to CGAL and third-party libraries

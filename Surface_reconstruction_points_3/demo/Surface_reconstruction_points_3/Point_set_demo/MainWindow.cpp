@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget* parent)
   ui = new Ui::MainWindow;
   ui->setupUi(this);
 
-  // Save some pointers from ui, for latter use.
+  // Saves some pointers from ui, for latter use.
   treeView = ui->treeView;
   viewer = ui->viewer;
 
@@ -131,7 +131,7 @@ MainWindow::MainWindow(QWidget* parent)
   clearMenu(ui->menuProcessing);
   clearMenu(ui->menuReconstruction);
 
-  // Load plugins, and re-enable actions that need it.
+  // Loads plugins, and re-enable actions that need it.
   loadPlugins();
 
   readSettings(); // Among other things, the column widths are stored.
@@ -171,7 +171,7 @@ bool MainWindow::initPlugin(QObject* obj)
   Polyhedron_demo_plugin_interface* plugin =
     qobject_cast<Polyhedron_demo_plugin_interface*>(obj);
   if(plugin) {
-    // Call plugin's init() method
+    // Calls plugin's init() method
     plugin->init(this, this->scene, this);
 
     Q_FOREACH(QAction* action, plugin->actions()) {
@@ -455,7 +455,7 @@ void MainWindow::on_actionSaveAs_triggered()
 
   QString filename =
     QFileDialog::getSaveFileName(this,
-                                 tr("Save to File..."),
+                                 tr("Saves to File..."),
                                  QString(),
                                  tr("OFF files (*.off)\n"
                                     "All files (*)"));

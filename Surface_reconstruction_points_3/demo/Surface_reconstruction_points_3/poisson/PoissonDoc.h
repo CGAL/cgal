@@ -73,8 +73,8 @@ typedef Triangular_surface_3<Kernel> Triangular_surface;
 class CPoissonDoc : public CDocument
 {
 protected: // create from serialization only
-	CPoissonDoc();
-	DECLARE_DYNCREATE(CPoissonDoc)
+    CPoissonDoc();
+    DECLARE_DYNCREATE(CPoissonDoc)
 
 // Public types
 public:
@@ -111,7 +111,7 @@ private:
     double m_sm_distance_apss; // Approximation error w.r.t. point set radius (APSS)
     double m_sm_radius_apss; // Max triangle radius w.r.t. point set radius (APSS)
     double m_sm_angle_apss; // Min triangle angle (degrees) (APSS)
-    unsigned int m_nb_neighbors_apss; // #neighbors to compute APPS sphere fitting
+    unsigned int m_smoothness_apss; // Smoothness factor (APSS)
 
     // Average Spacing options
     unsigned int m_nb_neighbors_avg_spacing; // K-nearest neighbors (average spacing)
@@ -136,7 +136,7 @@ private:
 // Public methods
 public:
 
-    // Get input point set. It is exported as const objects as
+    // Gets input point set. It is exported as const objects as
     // the rules to modify it are complex. See comment above.
     //
     // - as array of points + normals
@@ -159,7 +159,7 @@ public:
 // Private methods
 private:
 
-    // Update the number of vertices and tetrahedra in the status bar
+    // Update the number of points and tetrahedra in the status bar
     // and write them to cerr.
     void update_status();
     // Write user message in status bar and cerr
@@ -182,17 +182,17 @@ private:
 
 // MFC generated
 public:
-	virtual ~CPoissonDoc();
+    virtual ~CPoissonDoc();
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+    virtual void AssertValid() const;
+    virtual void Dump(CDumpContext& dc) const;
 #endif
 
 protected:
 
 // Generated message map functions
 protected:
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 public:
     virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
     afx_msg void OnFileSaveSurface();
@@ -234,8 +234,8 @@ public:
     afx_msg void OnUpdateReconstructionApssReconstruction(CCmdUI *pCmdUI);
     afx_msg void OnModeAPSS();
     afx_msg void OnUpdateModeAPSS(CCmdUI *pCmdUI);
-	afx_msg void OnCalculateAverageSpacing();
-	afx_msg void OnExtrapolateNormalsUsingGaussianKernel();
+    afx_msg void OnCalculateAverageSpacing();
+    afx_msg void OnExtrapolateNormalsUsingGaussianKernel();
     afx_msg void OnPointCloudSimplificationByClustering();
     afx_msg void OnPointCloudSimplificationRandom();
     afx_msg void OnUpdatePointCloudSimplificationByClustering(CCmdUI *pCmdUI);

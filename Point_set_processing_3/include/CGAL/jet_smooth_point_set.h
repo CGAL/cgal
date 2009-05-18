@@ -14,7 +14,7 @@
 // $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Point_set_processing_3/include/CGAL/improved_laplacian_smooth_point_set.h $
 // $Id: improved_laplacian_smooth_point_set.h 48866 2009-04-22 15:06:24Z lsaboret $
 //
-// Author(s) : Pierre Alliez and Marc Pouget
+// Author(s) : Pierre Alliez, Marc Pouget and Laurent Saboret
 
 #ifndef CGAL_JET_SMOOTH_POINT_SET_H
 #define CGAL_JET_SMOOTH_POINT_SET_H
@@ -22,6 +22,8 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Monge_via_jet_fitting.h>
+#include <CGAL/point_set_property_map.h>
+#include <CGAL/point_set_processing_assertions.h>
 
 #include <iterator>
 #include <list>
@@ -35,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 
-/// Smooth one point position using jet fitting on the k
+/// Smoothes one point position using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
 ///
 /// @commentheading Precondition: k >= 2.
@@ -48,14 +50,15 @@ namespace CGALi {
 template <typename Kernel,
           typename Tree>
 typename Kernel::Point_3
-jet_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point to project
-                     Tree& tree, ///< KD-tree
-                     const unsigned int k,
-                     const unsigned int degree_fitting,
-                     const unsigned int degree_monge)
+jet_smooth_point(
+  const typename Kernel::Point_3& query, ///< 3D point to project
+  Tree& tree, ///< KD-tree
+  const unsigned int k, ///< number of neighbors.
+  const unsigned int degree_fitting,
+  const unsigned int degree_monge)
 {
   // basic geometric types
-  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Point_3 Point;
 
   // types for K nearest neighbors search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
@@ -70,7 +73,7 @@ jet_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point to pro
   // Performs k + 1 queries (if unique the query point is
   // output first). Search may be aborted if k is greater
   // than number of input points.
-  std::vector<Point_3> points; points.reserve(k+1);
+  std::vector<Point> points; points.reserve(k+1);
   Neighbor_search search(tree,query,k+1);
   Search_iterator search_iterator = search.begin();
   unsigned int i;
@@ -81,7 +84,7 @@ jet_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point to pro
     points.push_back(search_iterator->first);
     search_iterator++;
   }
-  CGAL_precondition(points.size() >= 1);
+  CGAL_point_set_processing_precondition(points.size() >= 1);
 
   // performs jet fitting
   Monge_jet_fitting monge_fit;
@@ -101,7 +104,7 @@ jet_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point to pro
 // ----------------------------------------------------------------------------
 
 
-/// Smooth a point set using jet fitting on the k
+/// Smoothes the [first, beyond) range of points using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
 ///
 /// Warning: as this method relocates the points, it
@@ -110,61 +113,97 @@ jet_smooth_point_set(const typename Kernel::Point_3& query, ///< 3D point to pro
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
+/// @param ForwardIterator iterator over input points.
+/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
+/// @param Kernel Geometric traits class.
+///        It can be omitted and deduced automatically from PointPMap value_type.
 
-// This variant requires the kernel.
+// This variant requires all parameters.
 template <typename ForwardIterator,
-          typename Kernel>
+          typename PointPMap,
+          typename Kernel
+>
 void
-jet_smooth_point_set(ForwardIterator first,     ///< iterator over the first input/output point.
-                     ForwardIterator beyond,    ///< past-the-end iterator.
-                     unsigned int k,            ///< number of neighbors.
-                     const Kernel& kernel,      ///< geometric traits.
-                     const unsigned int degree_fitting = 2,
-                     const unsigned int degree_monge = 2)
+jet_smooth_point_set(
+  ForwardIterator first,  ///< iterator over the first input point.
+  ForwardIterator beyond, ///< past-the-end iterator over input points.
+  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
+  unsigned int k, ///< number of neighbors.
+  const Kernel& kernel, ///< geometric traits.
+  unsigned int degree_fitting = 2,
+  unsigned int degree_monge = 2)
 {
-  // Point_3 types
-  typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
-  typedef typename Kernel::Point_3 Point_3;
+  // Input points types
+  typedef typename boost::property_traits<PointPMap>::value_type Point;
 
   // types for K nearest neighbors search structure
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
-
+  
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_precondition(first != beyond);
+  CGAL_point_set_processing_precondition(first != beyond);
 
   // precondition: at least 2 nearest neighbors
-  CGAL_precondition(k >= 2);
+  CGAL_point_set_processing_precondition(k >= 2);
 
-  // instanciate a KD-tree search
+  // Instanciate a KD-tree search
   Tree tree(first,beyond);
 
-  // Iterate over input points and mutate them.
-  // Note: the cast to (Point_3&) ensures compatibility with classes derived from Point_3.
+  // Iterates over input points and mutates them.
   ForwardIterator it;
   for(it = first; it != beyond; it++)
-    (Point_3&)(*it) = CGALi::jet_smooth_point_set<Kernel>(*it,tree,k,degree_fitting,degree_monge);
+  {
+    Point& p = get(point_pmap, it);
+    p = CGALi::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge);
+  }
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the iterator type.
-template <typename ForwardIterator>
+// This variant deduces the kernel from the point property map.
+template <typename ForwardIterator,
+          typename PointPMap
+>
 void
-jet_smooth_point_set(ForwardIterator first, ///< iterator over the first input/output point
-                     ForwardIterator beyond, ///< past-the-end iterator
-                     unsigned int k, ///< number of neighbors
-                     const unsigned int degree_fitting = 2,
-                     const unsigned int degree_monge = 2)
+jet_smooth_point_set(
+  ForwardIterator first, ///< iterator over the first input point
+  ForwardIterator beyond, ///< past-the-end iterator
+  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  unsigned int k, ///< number of neighbors.
+  const unsigned int degree_fitting = 2,
+  const unsigned int degree_monge = 2)
 {
-  typedef typename std::iterator_traits<ForwardIterator>::value_type Input_point_3;
-  typedef typename Kernel_traits<Input_point_3>::Kernel Kernel;
-  jet_smooth_point_set(first,beyond,k,Kernel(),degree_fitting,degree_monge);
+  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+  jet_smooth_point_set(
+    first,beyond,
+    point_pmap, 
+    k,
+    Kernel(),
+    degree_fitting,degree_monge);
+}
+/// @endcond
+
+/// @cond SKIP_IN_MANUAL
+// This variant creates a default point property map = Dereference_property_map.
+template <typename ForwardIterator
+>
+void
+jet_smooth_point_set(
+  ForwardIterator first, ///< iterator over the first input point
+  ForwardIterator beyond, ///< past-the-end iterator
+  unsigned int k, ///< number of neighbors.
+  const unsigned int degree_fitting = 2,
+  const unsigned int degree_monge = 2)
+{
+  jet_smooth_point_set(
+    first,beyond,
+    make_dereference_property_map(first), 
+    k,
+    degree_fitting,degree_monge);
 }
 /// @endcond
 

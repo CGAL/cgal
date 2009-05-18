@@ -3,7 +3,7 @@
 //----------------------------------------------------------
 // Test the normal estimation methods:
 // For each input point set, compute and orient its normals.
-// If an input mesh has normals, print the normals deviation.
+// If an input mesh has normals, print the normal deviation.
 // Input file formats are .off, .xyz and .pwn.
 // No output.
 //----------------------------------------------------------
@@ -20,8 +20,8 @@
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/point_set_property_map.h>
-#include <CGAL/IO/read_off_point_set.h>
-#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/read_off_points.h>
+#include <CGAL/IO/read_xyz_points.h>
 
 #include <vector>
 #include <cstdlib>
@@ -75,7 +75,7 @@ bool verify_normal_direction(const PointList& points, // input points + computed
     std::vector<Vector>::const_iterator n;
     for (p = points.begin(), n = original_normals.begin(); p != points.end(); p++, n++)
     {
-      // Compute normal deviation.
+      // Computes normal deviation.
       Vector v1 = *n; // original normal
       double norm1 = std::sqrt( v1*v1 );
       assert(norm1 != 0.0);
@@ -116,7 +116,7 @@ bool verify_normal_direction(const PointList& points, // input points + computed
   return success;
 }
 
-// Compute normals direction by Principal Component Analysis
+// Computes normals direction by Principal Component Analysis
 // @return true on success.
 bool run_pca_estimate_normals(PointList& points, // input points + output normals
                               double nb_neighbors_pca_normals, // number of neighbors (%)
@@ -131,20 +131,12 @@ bool run_pca_estimate_normals(PointList& points, // input points + output normal
   if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
-  std::cerr << "Estimate Normals Direction by PCA (k="
+  std::cerr << "Estimates Normals Direction by PCA (k="
             << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
 
-  std::vector<Vector> output; 
-
   CGAL::pca_estimate_normals(points.begin(), points.end(),
-                             std::back_inserter(output),
+                             CGAL::make_normal_vector_property_map(points.begin()),
                              nb_neighbors);
-
-  // TEMPORARY: copy normals
-  PointList::iterator p;
-  std::vector<Vector>::iterator n;
-  for (p = points.begin(), n = output.begin(); p != points.end(); p++, n++)
-    p->normal() = *n;
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -156,7 +148,7 @@ bool run_pca_estimate_normals(PointList& points, // input points + output normal
   return verify_normal_direction(points, original_normals);
 }
 
-// Compute normals direction by Jet Fitting
+// Computes normals direction by Jet Fitting
 // @return true on success.
 bool run_jet_estimate_normals(PointList& points, // input points + output normals
                               double nb_neighbors_jet_fitting_normals, // number of neighbors (%)
@@ -171,20 +163,12 @@ bool run_jet_estimate_normals(PointList& points, // input points + output normal
   if ((unsigned int)nb_neighbors > points.size()-1)
     nb_neighbors = points.size()-1;
 
-  std::cerr << "Estimate Normals Direction by Jet Fitting (k="
+  std::cerr << "Estimates Normals Direction by Jet Fitting (k="
             << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
 
-  std::vector<Vector> output; // normals to estimate
-
   CGAL::jet_estimate_normals(points.begin(), points.end(),
-                             std::back_inserter(output),
+                             CGAL::make_normal_vector_property_map(points.begin()),
                              nb_neighbors);
-
-  // TEMPORARY: copy normals
-  PointList::iterator p;
-  std::vector<Vector>::iterator n;
-  for (p = points.begin(), n = output.begin(); p != points.end(); p++, n++)
-    p->normal() = *n;
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -258,7 +242,7 @@ bool run_mst_orient_normals(PointList& points, // input points + input/output no
                             unsigned int nb_neighbors_mst, // number of neighbors
                             const std::vector<Vector>& original_normals) // may be empty
 {
-  std::cerr << "Orient Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
+  std::cerr << "Orients Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
   // mst_orient_normals() requires an iterator over points
@@ -319,13 +303,13 @@ int main(int argc, char * argv[])
     std::cerr << std::endl;
 
     //***************************************
-    // Load point set
+    // Loads point set
     //***************************************
 
     // File name is:
     std::string input_filename  = argv[i];
 
-    // Read the point set file in points[].
+    // Reads the point set file in points[].
     PointList points;
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
@@ -336,8 +320,9 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream && 
-                CGAL::read_off_point_set(stream,
-                                         std::back_inserter(points));
+                CGAL::read_off_points_and_normals(stream,
+                                                  std::back_inserter(points),
+                                                  CGAL::make_normal_vector_property_map(std::back_inserter(points)));
     }
     // If XYZ file format
     else if (extension == ".xyz" || extension == ".XYZ" ||
@@ -345,8 +330,9 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream && 
-                CGAL::read_xyz_point_set(stream,
-                                         std::back_inserter(points));
+                CGAL::read_xyz_points_and_normals(stream,
+                                                  std::back_inserter(points),
+                                                  CGAL::make_normal_vector_property_map(std::back_inserter(points)));
     }
     if (success)
     {
@@ -363,8 +349,8 @@ int main(int argc, char * argv[])
     // Check requirements
     //***************************************
 
-    int nb_vertices = points.size();
-    if (nb_vertices == 0)
+    int nb_points = points.size();
+    if (nb_points == 0)
     {
       std::cerr << "Error: empty file" << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
@@ -372,7 +358,7 @@ int main(int argc, char * argv[])
     }
 
     //***************************************
-    // copy original normals
+    // Copy original normals
     //***************************************
 
     std::vector<Vector> original_normals; 
@@ -384,29 +370,29 @@ int main(int argc, char * argv[])
     }
 
     //***************************************
-    // Compute normals (PCA + MST)
+    // Computes normals (PCA + MST)
     //***************************************
 
-    // Estimate normals direction.
+    // Estimates normals direction.
     success = run_pca_estimate_normals(points, nb_neighbors_pca_normals, original_normals);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 
-    // Orient normals.
+    // Orients normals.
     success = run_mst_orient_normals(points, nb_neighbors_mst, original_normals);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 
     //***************************************
-    // Compute normals (jet fitting + MST)
+    // Computes normals (jet fitting + MST)
     //***************************************
 
-    // Estimate normals direction
+    // Estimates normals direction
     success = run_jet_estimate_normals(points, nb_neighbors_jet_fitting_normals, original_normals);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
 
-    // Orient normals
+    // Orients normals
     success = run_mst_orient_normals(points, nb_neighbors_mst, original_normals);
     if ( ! success )
       accumulated_fatal_err = EXIT_FAILURE; // set error and continue
@@ -415,7 +401,7 @@ int main(int argc, char * argv[])
 
   std::cerr << std::endl;
 
-  // Return accumulated fatal error
+  // Returns accumulated fatal error
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }

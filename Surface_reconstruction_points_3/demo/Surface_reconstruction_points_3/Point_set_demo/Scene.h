@@ -46,9 +46,9 @@ public:
                       // one that is erased, or just after. Returns -1 if
                       // the list is empty.
 
-  // Duplicate a scene item. Return the ID of the new item (-1 on error).
+  // Duplicates a scene item. Returns the ID of the new item (-1 on error).
   Item_id duplicate(Item_id index);
-  // Convert a polyhedron to a point set. Return the ID of the new item (-1 on error).
+  // Converts a polyhedron to a point set. Returns the ID of the new item (-1 on error).
   Item_id convertToPointSet(Item_id index);
 
   // Accessors (getters)
@@ -62,7 +62,7 @@ public:
   void draw();
   void drawWithNames();
 
-  // Get scene bounding box
+  // Gets scene bounding box
   Bbox bbox() const;
   double len_diagonal() const
   {

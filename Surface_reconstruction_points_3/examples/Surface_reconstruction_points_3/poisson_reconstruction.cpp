@@ -2,7 +2,7 @@
 
 //----------------------------------------------------------
 // Poisson Delaunay Reconstruction method.
-// Read a point set or a mesh's set of vertices, reconstruct a surface using Poisson,
+// Reads a point set or a mesh's set of vertices, reconstruct a surface using Poisson,
 // and save the surface.
 // Output format is .off.
 //----------------------------------------------------------
@@ -22,7 +22,8 @@
 // This package
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/point_set_property_map.h>
+#include <CGAL/IO/read_xyz_points.h>
 
 #include "compute_normal.h"
 
@@ -73,7 +74,7 @@ int main(int argc, char * argv[])
     // usage
     if (argc-1 < 2)
     {
-      std::cerr << "Read a point set or a mesh's set of vertices, reconstruct a surface,\n";
+      std::cerr << "Reads a point set or a mesh's set of vertices, reconstruct a surface,\n";
       std::cerr << "and save the surface.\n";
       std::cerr << "\n";
       std::cerr << "Usage: " << argv[0] << " file_in file_out [options]\n";
@@ -106,7 +107,7 @@ int main(int argc, char * argv[])
     CGAL::Timer task_timer; task_timer.start();
 
     //***************************************
-    // Load mesh/point set
+    // Loads mesh/point set
     //***************************************
 
     PointList points;
@@ -116,7 +117,7 @@ int main(int argc, char * argv[])
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
-      // Read the mesh file in a polyhedron
+      // Reads the mesh file in a polyhedron
       std::ifstream stream(input_filename.c_str());
       Polyhedron input_mesh;
       CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
@@ -126,8 +127,8 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
       }
 
-      // Convert Polyhedron vertices to point set.
-      // Compute vertices' normals from connectivity.
+      // Converts Polyhedron vertices to point set.
+      // Computes vertices normal from connectivity.
       Polyhedron::Vertex_const_iterator v;
       for (v = input_mesh.vertices_begin(); v != input_mesh.vertices_end(); v++)
       {
@@ -140,11 +141,15 @@ int main(int argc, char * argv[])
     else if (extension == ".xyz" || extension == ".XYZ" ||
              extension == ".pwn" || extension == ".PWN")
     {
-      // Read the point set file in points[]
+      // Reads the point set file in points[].
+      // Note: read_xyz_points_and_normals() requires an iterator over points
+      //       + property maps to access each point's position and normal.
+      //       The position property map can be omitted here as we use an iterator over Point_3 elements.
       std::ifstream stream(input_filename.c_str());
-      if(!stream || 
-         !CGAL::read_xyz_point_set(stream,
-                                   std::back_inserter(points)))
+      if(!stream ||
+         !CGAL::read_xyz_points_and_normals(stream,
+                                            std::back_inserter(points),
+                                            CGAL::make_normal_vector_property_map(std::back_inserter(points))))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -156,9 +161,9 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    // Print status
-    int nb_vertices = points.size();
-    std::cerr << "Read file " << input_filename << ": " << nb_vertices << " vertices, "
+    // Prints status
+    int nb_points = points.size();
+    std::cerr << "Reads file " << input_filename << ": " << nb_points << " points, "
                                                         << task_timer.time() << " seconds"
                                                         << std::endl;
     task_timer.reset();
@@ -167,7 +172,7 @@ int main(int argc, char * argv[])
     // Check requirements
     //***************************************
 
-    if (nb_vertices == 0)
+    if (nb_points == 0)
     {
       std::cerr << "Error: empty file" << std::endl;
       return EXIT_FAILURE;
@@ -181,24 +186,28 @@ int main(int argc, char * argv[])
     }
 
     //***************************************
-    // Compute implicit function
+    // Computes implicit function
     //***************************************
 
-    std::cerr << "Create Poisson triangulation...\n";
+    std::cerr << "Creates Poisson triangulation...\n";
 
-    // Create implicit function and insert vertices.
-    Poisson_reconstruction_function implicit_function(points.begin(), points.end());
+    // Creates implicit function and insert points.
+    // Note: Poisson_implicit_function() requires an iterator over points
+    //       + property maps to access each point's position and normal.
+    //       The position property map can be omitted here as we use an iterator over Point_3 elements.
+    Poisson_reconstruction_function implicit_function(points.begin(), points.end(),
+                                                      CGAL::make_normal_vector_property_map(points.begin()));
 
     // Recover memory used by points[]
     points.clear();
 
-    // Print status
-    std::cerr << "Create Poisson triangulation: " << task_timer.time() << " seconds\n";
+    // Prints status
+    std::cerr << "Creates Poisson triangulation: " << task_timer.time() << " seconds\n";
     task_timer.reset();
 
-    std::cerr << "Compute implicit function...\n";
+    std::cerr << "Computes implicit function...\n";
 
-    // Compute the Poisson indicator function f()
+    // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
     if ( ! implicit_function.compute_implicit_function() )
     {
@@ -206,9 +215,8 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    // Print status
-    std::cerr << "Compute implicit function: " << task_timer.time() << " seconds"
-                                               << std::endl;
+    // Prints status
+    std::cerr << "Computes implicit function: " << task_timer.time() << " seconds\n";
     task_timer.reset();
 
     //***************************************
@@ -217,7 +225,7 @@ int main(int argc, char * argv[])
 
     std::cerr << "Surface meshing...\n";
 
-    // Get point inside the implicit surface
+    // Gets point inside the implicit surface
     Point inner_point = implicit_function.get_inner_point();
     FT inner_point_value = implicit_function(inner_point);
     if(inner_point_value >= 0.0)
@@ -226,7 +234,7 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    // Get implicit function's radius
+    // Gets implicit function's radius
     Sphere bounding_sphere = implicit_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
@@ -247,7 +255,7 @@ int main(int argc, char * argv[])
     C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
     CGAL::make_surface_mesh(surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
 
-    // Print status
+    // Prints status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
                                      << tr.number_of_vertices() << " output vertices"
                                      << std::endl;

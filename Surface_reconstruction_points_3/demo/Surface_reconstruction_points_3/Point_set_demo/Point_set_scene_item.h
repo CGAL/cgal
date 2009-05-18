@@ -46,11 +46,11 @@ public:
   // Draws oriented points with radius
   virtual void draw_splats() const;
 
-  // Get wrapped point set
+  // Gets wrapped point set
   Point_set*       point_set();
   const Point_set* point_set() const;
 
-  // Get dimensions
+  // Gets dimensions
   bool isFinite() const { return true; }
   bool isEmpty() const;
   Bbox bbox() const;

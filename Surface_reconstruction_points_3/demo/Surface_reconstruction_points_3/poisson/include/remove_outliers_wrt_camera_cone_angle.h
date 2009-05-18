@@ -16,7 +16,7 @@
 namespace CGALi {
 
 
-/// Compute cameras' cone angle for a single point.
+/// Computes cameras' cone angle for a single point.
 ///
 /// @commentheading Template Parameters:
 /// @param Kernel Geometric traits class.
@@ -34,7 +34,7 @@ double compute_greatest_camera_angle_3(const Gyroviz_point_3<Kernel>& gpt)
 
     std::vector<Point> cameras(gpt.cameras_begin(), gpt.cameras_end());
 
-    // give a score to each vertex: the score will help detecting outliers
+    // give a score to each point: the score will help detecting outliers
     FT greatest_camera_angle=0, v1_v2, n_v1, n_v2, intermediate_score;
     Vector v1, v2;
     for(int i=0; i<cameras.size()-1; ++i)
@@ -85,11 +85,11 @@ public:
 // ----------------------------------------------------------------------------
 
 
-/// Remove points / cameras cone's angle < min_camera_cone_angle.
+/// Removes points / cameras cone's angle < min_camera_cone_angle.
 ///
-/// This method modifies the order of input points, and returns 
-/// an iterator over the first point to remove (see erase-remove idiom).
-/// Warning: this method should not be called on sorted containers.
+/// This method modifies the order of input points so as to pack all remaining points first, 
+/// and returns an iterator over the first point to remove (see erase-remove idiom).
+/// For this reason it should not be called on sorted containers.
 ///
 /// @commentheading Precondition: min_camera_cone_angle >= 0.
 ///

@@ -1,7 +1,7 @@
 // Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute point_it under
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
 // See the file LICENSE.QPL distributed with CGAL.
 //
@@ -21,6 +21,7 @@
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/point_set_property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 
 #include <iterator>
@@ -37,7 +38,7 @@ namespace CGALi {
 
 
 /// Utility function for remove_outliers_wrt_median_knn_sq_distance():
-/// Compute median squared distance to the K nearest neighbors.
+/// Computes median squared distance to the K nearest neighbors.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
@@ -50,9 +51,9 @@ template < typename Kernel,
            typename Tree >
 typename Kernel::FT
 compute_median_knn_sq_distance_3(
-                     const typename Kernel::Point_3& query, ///< 3D point to project
-                     Tree& tree,                            ///< KD-tree
-                     unsigned int k)                        ///< number of neighbors
+    const typename Kernel::Point_3& query, ///< 3D point to project
+    Tree& tree,                            ///< KD-tree
+    unsigned int k)                        ///< number of neighbors
 {
     // geometric types
     typedef typename Kernel::FT FT;
@@ -83,15 +84,7 @@ compute_median_knn_sq_distance_3(
 
     // compute median squared distance
     typename Kernel::Compute_squared_distance_3 sqd;
-    FT sq_distance = 0;
-    //for(typename std::vector<Point>::iterator neighbor = points.begin(); neighbor != points.end(); neighbor++)
-       // sq_distance += sqd(*neighbor, query);
-    //sq_distance /= FT(points.size());
-
-    //if((points.size() & 1) == 1)
-        return sqd(points[k_median]/*[points.size()/2]*/, query);
-    //else
-    //    return (sqd(points[points.size()/2],query)+ sqd(points[(points.size()/2)+1], query))/2;
+    return sqd(points[k_median]/*[points.size()/2]*/, query);
 }
 
 
@@ -103,97 +96,129 @@ compute_median_knn_sq_distance_3(
 // ----------------------------------------------------------------------------
 
 
-/// Remove outliers:
-/// - compute median squared distance to the K nearest neighbors,
-/// - sort the points in increasing order of computed distance.
+/// Removes outliers:
+/// - computes median squared distance to the K nearest neighbors,
+/// - sorts the points in increasing order of computed distance.
 ///
-/// This method modifies the order of input points, and returns 
-/// an iterator over the first point to remove (see erase-remove idiom).
-/// Warning: this method should not be called on sorted containers.
+/// This method modifies the order of input points so as to pack all remaining points first,
+/// and returns an iterator over the first point to remove (see erase-remove idiom).
+/// For this reason it should not be called on sorted containers.
 ///
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator value_type must be convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class. It can be omitted and deduced automatically from the iterator type.
+/// @param ForwardIterator iterator over input points.
+/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
+/// @param Kernel Geometric traits class. 
+///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return iterator over the first point to remove.
 
-// This variant requires the kernel.
+// This variant requires all parameters.
 template <typename ForwardIterator,
+          typename PointPMap,
           typename Kernel
 >
 ForwardIterator
 remove_outliers_wrt_median_knn_sq_distance(
-                     ForwardIterator first,     ///< iterator over the first input/output point.
-                     ForwardIterator beyond,    ///< past-the-end iterator.
-                     unsigned int k,            ///< number of neighbors.
-                     const Kernel& kernel,      ///< geometric traits.
-                     double threshold_percent)  ///< percentage of points to remove.
+  ForwardIterator first,  ///< iterator over the first input point.
+  ForwardIterator beyond, ///< past-the-end iterator over input points.
+  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  unsigned int k, ///< number of neighbors.
+  double threshold_percent, ///< percentage of points to remove.
+  const Kernel& kernel) ///< geometric traits.
 {
-    // geometric types
-    typedef typename Kernel::FT FT;
-    typedef typename std::iterator_traits<ForwardIterator>::value_type Point;
+  // geometric types
+  typedef typename Kernel::FT FT;
+  
+  // actual type of input points
+  typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
 
-    // types for K nearest neighbors search structure
-    typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-    typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-    typedef typename Neighbor_search::Tree Tree;
-    typedef typename Neighbor_search::iterator Search_iterator;
+  // types for K nearest neighbors search structure
+  typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
+  typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+  typedef typename Neighbor_search::Tree Tree;
+  typedef typename Neighbor_search::iterator Search_iterator;
 
-    // precondition: at least one element in the container.
-    // to fix: should have at least three distinct points
-    // but this is costly to check
-    CGAL_point_set_processing_precondition(first != beyond);
+  // precondition: at least one element in the container.
+  // to fix: should have at least three distinct points
+  // but this is costly to check
+  CGAL_point_set_processing_precondition(first != beyond);
 
-    // precondition: at least 2 nearest neighbors
-    CGAL_point_set_processing_precondition(k >= 2);
+  // precondition: at least 2 nearest neighbors
+  CGAL_point_set_processing_precondition(k >= 2);
 
-    CGAL_point_set_processing_precondition(threshold_percent >= 0 && threshold_percent <= 100);
+  CGAL_point_set_processing_precondition(threshold_percent >= 0 && threshold_percent <= 100);
 
-    // instanciate a KD-tree search
-    Tree tree(first,beyond);
+  // instanciate a KD-tree search
+  Tree tree(first,beyond);
 
-    // iterate over input points and add them to multimap sorted by distance to k
-    std::multimap<FT,Point> sorted_points;
-    for(ForwardIterator point_it = first; point_it != beyond; point_it++)
-    {
-      FT sq_distance = CGALi::compute_median_knn_sq_distance_3<Kernel>(*point_it,tree,k);
-      sorted_points.insert( std::make_pair(sq_distance,*point_it) );
-    }
+  // iterate over input points and add them to multimap sorted by distance to k
+  std::multimap<FT,Enriched_point> sorted_points;
+  for(ForwardIterator it = first; it != beyond; it++)
+  {
+    FT sq_distance = CGALi::compute_median_knn_sq_distance_3<Kernel>(get(point_pmap,it), tree, k);
+    sorted_points.insert( std::make_pair(sq_distance, *it) );
+  }
 
-    // Replace [first, beyond) range by the multimap content.
-    // Return the iterator after the (100-threshold_percent) % best points.
-    ForwardIterator first_point_to_remove = beyond;
-    ForwardIterator dst = first;
-    int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
-    typename std::multimap<FT,Point>::iterator src;
-    int index;
-    for (src = sorted_points.begin(), index = 0;
-         src != sorted_points.end();
-         ++src, ++index)
-    {
-      *dst++ = src->second;
-      if (index == first_index_to_remove)
-        first_point_to_remove = dst;
-    }
+  // Replaces [first, beyond) range by the multimap content.
+  // Returns the iterator after the (100-threshold_percent) % best points.
+  ForwardIterator first_point_to_remove = beyond;
+  ForwardIterator dst = first;
+  int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
+  typename std::multimap<FT,Enriched_point>::iterator src;
+  int index;
+  for (src = sorted_points.begin(), index = 0;
+       src != sorted_points.end();
+       ++src, ++index)
+  {
+    *dst++ = src->second;
+    if (index == first_index_to_remove)
+      first_point_to_remove = dst;
+  }
 
-    return first_point_to_remove;
+  return first_point_to_remove;
 }
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
-template <typename ForwardIterator>
+template <typename ForwardIterator,
+          typename PointPMap
+>
 ForwardIterator
 remove_outliers_wrt_median_knn_sq_distance(
-                     ForwardIterator first,     ///< iterator over the first input/output point.
-                     ForwardIterator beyond,    ///< past-the-end iterator.
-                     unsigned int k,            ///< number of neighbors.
-                     double threshold_percent)  ///< percentage of points to remove.
+  ForwardIterator first, ///< iterator over the first input point
+  ForwardIterator beyond, ///< past-the-end iterator
+  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  unsigned int k, ///< number of neighbors.
+  double threshold_percent) ///< percentage of points to remove
 {
-  typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;
-  typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return remove_outliers_wrt_median_knn_sq_distance(first,beyond,k,Kernel(),threshold_percent);
+  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+  return remove_outliers_wrt_median_knn_sq_distance(
+    first,beyond,
+    point_pmap, 
+    k,threshold_percent,
+    Kernel());
+}
+/// @endcond
+
+/// @cond SKIP_IN_MANUAL
+// This variant creates a default point property map = Dereference_property_map.
+template <typename ForwardIterator
+>
+ForwardIterator
+remove_outliers_wrt_median_knn_sq_distance(
+  ForwardIterator first, ///< iterator over the first input point
+  ForwardIterator beyond, ///< past-the-end iterator
+  unsigned int k, ///< number of neighbors.
+  double threshold_percent) ///< percentage of points to remove
+{
+  return remove_outliers_wrt_median_knn_sq_distance(
+    first,beyond,
+    make_dereference_property_map(first), 
+    k,threshold_percent);
 }
 /// @endcond
 

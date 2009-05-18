@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/random_simplify_point_set.h>
-#include <CGAL/IO/read_xyz_point_set.h>
+#include <CGAL/IO/read_xyz_points.h>
 
 #include <vector>
 #include <fstream>
@@ -11,21 +11,22 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-    // Reads a .xyz point set file in points[].
-    std::vector<Point> points;
-    std::ifstream stream("data/oni.xyz");
-    if (!stream ||
-        !CGAL::read_xyz_point_set(stream,
-                                  std::back_inserter(points)))
-    {
-      return EXIT_FAILURE;
-    }
+  // Reads a .xyz point set file in points[].
+  std::vector<Point> points;
+  std::ifstream stream("data/oni.xyz");
+  if (!stream ||
+      !CGAL::read_xyz_points(stream,
+                             std::back_inserter(points)))
+  {
+    return EXIT_FAILURE;
+  }
 
-    // Randomly simplifies.
-    const double removed_percentage = 75.0; // removed percentage
-    CGAL::random_simplify_point_set(points.begin(), points.end(),
-                                    removed_percentage);
+  // Randomly simplifies using erase-remove idiom
+  const double percentage_to_remove = 75.0; // percentage of points to remove
+  points.erase(CGAL::random_simplify_point_set(points.begin(), points.end(),
+                                               percentage_to_remove),
+               points.end());
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 

@@ -207,7 +207,7 @@ unsigned int poisson_refine_triangulation(
   unsigned int max_vertices, ///< number of vertices bound (ignored if zero)
   Surface& enlarged_bbox) ///< new bounding sphere or box
 {
-  CGAL_TRACE("Call poisson_refine_triangulation()\n");
+  CGAL_TRACE("Calls poisson_refine_triangulation()\n");
 
   // Convergence is guaranteed if radius_edge_ratio_bound >= 1.0
   CGAL_surface_reconstruction_points_precondition(radius_edge_ratio_bound >= 1.0);
@@ -223,7 +223,7 @@ unsigned int poisson_refine_triangulation(
   typedef Poisson_mesher_level<Tr, Tets_criteria, Surface, Oracle, Null_mesher_level> Refiner;
 
   long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-  CGAL_TRACE("  Create queue\n");
+  CGAL_TRACE("  Creates queue\n");
 
   int nb_vertices = tr.number_of_vertices(); // get former #vertices
 

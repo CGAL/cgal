@@ -31,11 +31,11 @@ public:
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   virtual void direct_draw() const;
 
-  // Get wrapped polyhedron
+  // Gets wrapped polyhedron
   Polyhedron*       polyhedron();
   const Polyhedron* polyhedron() const;
 
-  // Get dimensions
+  // Gets dimensions
   bool isFinite() const { return true; }
   bool isEmpty() const;
   Bbox bbox() const;

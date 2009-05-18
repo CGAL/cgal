@@ -415,7 +415,7 @@ private:
     A.n        = (int)(colptr.size()-1);
     A.m        = (int)(colptr.size()-1);
 
-    // Convert matrix's T type to the corresponding TAUCS constant
+    // Converts matrix's T type to the corresponding TAUCS constant
     A.flags    = (Taucs_traits<T>::TAUCS_FLAG | TAUCS_SYMMETRIC | TAUCS_LOWER);
 
     A.colptr   = &colptr[0];

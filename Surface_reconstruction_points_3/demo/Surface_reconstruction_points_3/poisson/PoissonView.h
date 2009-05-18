@@ -42,7 +42,7 @@ public:
 	bool m_view_contour;
 	bool m_view_surface;
 	bool m_view_delaunay_edges;
-	bool m_view_vertices;
+	bool m_view_points;
 	bool m_view_arcball;
 
 	// OpenGL specific

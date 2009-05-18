@@ -16,7 +16,7 @@
 namespace CGALi {
 
 
-/// Orient a 3D point's normal w.r.t. the position of cameras
+/// Orients a 3D point's normal w.r.t. the position of cameras
 /// that reconstructed the point by photogrammetry.
 //
 // @return true if the orientation is robust.
@@ -60,7 +60,7 @@ orient_normal_wrt_cameras(const typename Gt::Point_3& p, ///< 3D point position
     }
 
     //        ->             ->
-    // Orient n backwards to cp
+    // Orients n backwards to cp
     if (max_dot_product > 0 &&
         std::abs(max_dot_product) > 0.2588) // oriented iff angle < ~75 degrees
     {
@@ -87,13 +87,13 @@ orient_normal_wrt_cameras(const typename Gt::Point_3& p, ///< 3D point position
 // ----------------------------------------------------------------------------
 
 
-/// Orient the normals of the [first, beyond) range of vertices
+/// Orients the normals of the [first, beyond) range of points
 /// w.r.t. the position of cameras
 /// that reconstructed the points by photogrammetry.
 ///
-/// This method modifies the order of input points, and returns 
-/// an iterator over the first point with an unoriented normal (see erase-remove idiom).
-/// Warning: this method should not be called on sorted containers.
+/// This method modifies the order of input points so as to pack all oriented points first,
+/// and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
+/// For this reason it should not be called on sorted containers.
 ///
 /// @commentheading Precondition: normals must be unit vectors.
 ///
@@ -109,15 +109,15 @@ template <typename ForwardIterator,
 >
 ForwardIterator
 orient_normals_wrt_cameras(
-           ForwardIterator first,   ///< iterator over the first input/output point.
-           ForwardIterator beyond,  ///< past-the-end iterator.
+           ForwardIterator first,   ///< iterator over the first input point.
+           ForwardIterator beyond,  ///< past-the-end iterator over input points.
            const Kernel& kernel)    ///< geometric traits.
 {
-    CGAL_TRACE("Call orient_normals_wrt_cameras()\n");
+    CGAL_TRACE("Calls orient_normals_wrt_cameras()\n");
 
     typedef typename std::iterator_traits<ForwardIterator>::value_type Gyroviz_point;
 
-    // Iterate over input points and orient normals.
+    // Iterates over input points and orients normals.
     // Copy points with robust normal orientation to oriented_points[], the others to unoriented_points[].
     std::deque<Gyroviz_point> oriented_points, unoriented_points;
     for (ForwardIterator it = first; it != beyond; it++)
@@ -132,7 +132,7 @@ orient_normals_wrt_cameras(
           unoriented_points.push_back(*it);
     }
 
-    // Replace [first, beyond) range by the content of oriented_points[], then unoriented_points[].
+    // Replaces [first, beyond) range by the content of oriented_points[], then unoriented_points[].
     ForwardIterator first_unoriented_point =
       std::copy(oriented_points.begin(), oriented_points.end(), first);
     std::copy(unoriented_points.begin(), unoriented_points.end(), first_unoriented_point);
