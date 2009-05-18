@@ -524,8 +524,12 @@ namespace CGAL {
   
     typedef CGAL::Tag_false                        Has_left_category;
     typedef CGAL::Tag_false 			   Has_merge_category;
-    typedef Arr_no_boundary_tag                    Boundary_category;
-  
+
+    typedef Arr_oblivious_side_tag                 Arr_left_side_tag;
+    typedef Arr_oblivious_side_tag                 Arr_bottom_side_tag;
+    typedef Arr_oblivious_side_tag                 Arr_top_side_tag;
+    typedef Arr_oblivious_side_tag                 Arr_right_side_tag;
+    
     typedef boost::variant< Arc1, Arc2 > Curve_2;
     typedef boost::variant< Arc1, Arc2 > X_monotone_curve_2;
 

@@ -60,8 +60,12 @@ public:
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
-  typedef Arr_no_boundary_tag             Boundary_category;
-
+ 
+  typedef Arr_oblivious_side_tag          Arr_left_side_tag;
+  typedef Arr_oblivious_side_tag          Arr_bottom_side_tag;
+  typedef Arr_oblivious_side_tag          Arr_top_side_tag;
+  typedef Arr_oblivious_side_tag          Arr_right_side_tag;
+ 
   typedef typename Kernel::Line_2         Line_2;
   typedef CGAL::Segment_assertions<Arr_segment_traits_2<Kernel> >
                                           Segment_assertions;
