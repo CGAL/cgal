@@ -39,27 +39,25 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Kazhdan, Bolitho and Hoppe introduced the Poisson Surface Reconstruction algorithm [Kazhdan06].
 /// Given a set of 3D points with oriented normals sampled on the boundary of a 3D solid,
-/// this method solves for an approximate indicator function
+/// the Poisson Surface Reconstruction method [Kazhdan06] solves for an approximate indicator function
 /// of the inferred solid, whose gradient best matches the input normals.
 /// The output scalar function, represented in an adaptive octree, is then iso-contoured
 /// using an adaptive marching cubes.
 ///
 /// Poisson_reconstruction_function implements a variant of this algorithm which solves
 /// for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree
-/// using the TAUCS sparse linear solver.
-/// In order to get a unique solution, one vertex outside of the surface is constrained to a value of 0.0.
+/// and uses the TAUCS sparse linear solver.
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the 'ImplicitFunction' concept.
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
-/// @param ReconstructionTriangulation_3 3D Delaunay triangulation 
+/// @param ReconstructionTriangulation_3 3D Delaunay triangulation
 ///        class derived from Reconstruction_triangulation_3.
 
-template <class Gt, 
+template <class Gt,
           class ReconstructionTriangulation_3 = Reconstruction_triangulation_3<Gt> >
 class Poisson_reconstruction_function
 {
@@ -74,7 +72,6 @@ public:
   typedef typename Geom_traits::FT FT; ///< == Geom_traits::FT
   typedef typename Geom_traits::Point_3 Point; ///< == Geom_traits::Point_3
   typedef typename Geom_traits::Vector_3 Vector; ///< == Geom_traits::Vector_3
-  typedef typename Triangulation::Point_with_normal Point_with_normal; ///< == Point_with_normal_3<Geom_traits>
   typedef typename Geom_traits::Sphere_3 Sphere; ///< == Geom_traits::Sphere_3
 
 // Private types
@@ -107,6 +104,8 @@ private:
   typedef typename Triangulation::All_cells_iterator       All_cells_iterator;
   typedef typename Triangulation::Locate_type Locate_type;
 
+  typedef typename Triangulation::Point_with_normal Point_with_normal; ///< == Point_with_normal_3<Geom_traits>
+
   // TAUCS solver
   typedef Taucs_solver<double>  Solver;
   typedef std::vector<double>   Sparse_vector;
@@ -116,12 +115,12 @@ private:
 // thus this class must be lightweight and stateless.
 private:
 
-  // f() is pre-computed on vertices of *m_tr by solving
+  // operator() is pre-computed on vertices of *m_tr by solving
   // the Poisson equation Laplacian(f) = divergent(normals field).
-  boost::shared_ptr<Triangulation> m_tr; 
+  boost::shared_ptr<Triangulation> m_tr;
 
   // contouring and meshing
-  Point m_sink; // Point with the minimum value of f()
+  Point m_sink; // Point with the minimum value of operator()
   mutable Cell_handle m_hint; // last cell found = hint for next search
 
 // Public methods
@@ -142,7 +141,7 @@ public:
   >
   Poisson_reconstruction_function(
     InputIterator first,  ///< iterator over the first input point.
-    InputIterator beyond, ///< past-the-end iterator over input points.
+    InputIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map InputIterator -> Point_3.
     NormalPMap normal_pmap) ///< property map InputIterator -> Vector_3.
   : m_tr(new Triangulation)
@@ -153,7 +152,7 @@ public:
     //  normal_pmap);
 
     // TEMPORARY: convert points to Point_with_normal_3.
-    std::vector<Point_with_normal> pwns; 
+    std::vector<Point_with_normal> pwns;
     for (InputIterator it = first; it != beyond; it++)
     {
         Point_with_normal point_wrapper(get(point_pmap,it), get(normal_pmap,it));
@@ -169,7 +168,7 @@ public:
   >
   Poisson_reconstruction_function(
     InputIterator first,  ///< iterator over the first input point.
-    InputIterator beyond, ///< past-the-end iterator over input points.
+    InputIterator beyond, ///< past-the-end iterator over the input points.
     NormalPMap normal_pmap) ///< property map InputIterator -> Vector_3.
   : m_tr(new Triangulation)
   {
@@ -179,7 +178,7 @@ public:
     //  normal_pmap);
 
     // TEMPORARY: convert points to Point_with_normal_3.
-    std::vector<Point_with_normal> pwns; 
+    std::vector<Point_with_normal> pwns;
     for (InputIterator it = first; it != beyond; it++)
     {
         Point_with_normal point_wrapper(*it, get(normal_pmap,it));
@@ -207,10 +206,10 @@ public:
 
   /// The function compute_implicit_function() must be called
   /// after each insertion of oriented points.
-  /// It computes the piecewise linear scalar function 'f' by:
+  /// It computes the piecewise linear scalar function operator() by:
   /// - applying Delaunay refinement.
-  /// - solving for 'f' at each vertex of the triangulation with a sparse linear solver.
-  /// - shifting and orienting 'f' such that 'f=0' at all input points and 'f<0' inside the inferred surface.
+  /// - solving for operator() at each vertex of the triangulation with a sparse linear solver.
+  /// - shifting and orienting operator() such that 'operator()=0' at all input points and 'operator()<0' inside the inferred surface.
   ///
   /// Returns false if the linear solver fails.
   bool compute_implicit_function()
@@ -235,7 +234,7 @@ public:
 
     CGAL_TRACE_STREAM << "Solve Poisson equation with normalized divergence...\n";
 
-    // Computes the Poisson indicator function f()
+    // Computes the Poisson indicator function operator()
     // at each vertex of the triangulation.
     double lambda = 0.1;
     if ( ! solve_poisson(lambda) )
@@ -244,9 +243,9 @@ public:
       return false;
     }
 
-    // Shift and orient f() such that:
-    // - f() = 0 on the input points,
-    // - f() < 0 inside the surface.
+    // Shift and orient operator() such that:
+    // - operator() = 0 on the input points,
+    // - operator() < 0 inside the surface.
     set_contouring_value(median_value_at_input_vertices());
 
     // Prints status
@@ -258,8 +257,8 @@ public:
     return true;
   }
 
-  /// Evaluates the implicit function at a given 3D query point.
-  FT f(const Point& p) const
+  /// 'ImplicitFunction' interface: evaluates implicit function at 3D query point.
+  FT operator()(const Point& p) const
   {
     m_hint = m_tr->locate(p,m_hint);
 
@@ -275,12 +274,6 @@ public:
            b * m_hint->vertex(1)->f() +
            c * m_hint->vertex(2)->f() +
            d * m_hint->vertex(3)->f();
-  }
-
-  /// 'ImplicitFunction' interface: evaluates implicit function at 3D query point.
-  FT operator()(const Point& p) const
-  {
-    return f(p);
   }
 
   /// Returns a point located inside the inferred surface.

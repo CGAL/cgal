@@ -59,8 +59,8 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
   typedef typename Kernel::Vector_3 Vector;
 
   // types for K nearest neighbors search
-  typedef typename Search_traits_3<Kernel> Tree_traits;
-  typedef typename Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+  typedef Search_traits_3<Kernel> Tree_traits;
+  typedef Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
   // performs k + 1 queries (if unique the query point is
@@ -101,7 +101,7 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 /// @param InputIterator iterator over input points.
 /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
 ///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class. 
+/// @param Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return average spacing (scalar).
@@ -114,15 +114,15 @@ template <typename InputIterator,
 typename Kernel::FT
 compute_average_spacing(
   InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over input points.
+  InputIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   const Kernel& kernel) ///< geometric traits.
 {
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
-  typedef typename Search_traits_3<Kernel> Tree_traits;
-  typedef typename Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+  typedef Search_traits_3<Kernel> Tree_traits;
+  typedef Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
 
   // precondition: at least one element in the container.
@@ -159,7 +159,7 @@ template <typename InputIterator,
 typename Kernel_traits<typename boost::property_traits<PointPMap>::value_type>::Kernel::FT
 compute_average_spacing(
   InputIterator first,    ///< iterator over the first input point.
-  InputIterator beyond,   ///< past-the-end iterator over input points.
+  InputIterator beyond,   ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map InputIterator -> Point_3
   unsigned int k) ///< number of neighbors
 {
@@ -167,7 +167,7 @@ compute_average_spacing(
   typedef typename Kernel_traits<Point>::Kernel Kernel;
   return compute_average_spacing(
     first,beyond,
-    point_pmap, 
+    point_pmap,
     k,
     Kernel());
 }
@@ -179,12 +179,12 @@ template < typename InputIterator >
 typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel::FT
 compute_average_spacing(
   InputIterator first,    ///< iterator over the first input point.
-  InputIterator beyond,   ///< past-the-end iterator over input points.
+  InputIterator beyond,   ///< past-the-end iterator over the input points.
   unsigned int k) ///< number of neighbors.
 {
   return compute_average_spacing(
     first,beyond,
-    make_dereference_property_map(first), 
+    make_dereference_property_map(first),
     k);
 }
 /// @endcond

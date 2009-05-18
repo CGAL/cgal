@@ -126,7 +126,7 @@ public:
 /// @param ForwardIterator iterator over input points.
 /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class. 
+/// @param Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return iterator over the first point to remove.
@@ -139,9 +139,9 @@ template <typename ForwardIterator,
 ForwardIterator
 grid_simplify_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over input points.
+  ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
-  double epsilon, ///< tolerance value when comparing 3D points.
+  double epsilon, ///< tolerance value when merging 3D points.
   const Kernel& kernel) ///< geometric traits.
 {
   // actual type of input points
@@ -179,13 +179,13 @@ grid_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
-  double epsilon) ///< tolerance value when comparing 3D points
+  double epsilon) ///< tolerance value when merging 3D points
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
   return grid_simplify_point_set(
     first,beyond,
-    point_pmap, 
+    point_pmap,
     epsilon,
     Kernel());
 }
@@ -199,11 +199,11 @@ ForwardIterator
 grid_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
-  double epsilon) ///< tolerance value when comparing 3D points
+  double epsilon) ///< tolerance value when merging 3D points
 {
   return grid_simplify_point_set(
     first,beyond,
-    make_dereference_property_map(first), 
+    make_dereference_property_map(first),
     epsilon);
 }
 /// @endcond

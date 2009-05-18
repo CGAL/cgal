@@ -59,7 +59,7 @@ template <typename ForwardIterator,
 ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over input points.
+    ForwardIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
     const Kernel& kernel) ///< geometric traits.
@@ -137,7 +137,7 @@ template <typename ForwardIterator,
 ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over input points.
+    ForwardIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
     NormalPMap normal_pmap) ///< property map ForwardIterator -> Vector_3.
 {
@@ -158,7 +158,7 @@ template <typename ForwardIterator,
 ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over input points.
+    ForwardIterator beyond, ///< past-the-end iterator over the input points.
     NormalPMap normal_pmap) ///< property map ForwardIterator -> Vector_3.
 {
     return radial_orient_normals(

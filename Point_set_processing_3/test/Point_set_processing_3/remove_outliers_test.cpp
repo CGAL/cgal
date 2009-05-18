@@ -42,7 +42,7 @@ typedef Kernel::Point_3 Point;
 // Removes outliers
 void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
                               double nb_neighbors_remove_outliers, // K-nearest neighbors (%)
-                              double percentage_to_remove) // percentage of points to remove
+                              double removed_percentage) // percentage of points to remove
 {
   CGAL::Timer task_timer; task_timer.start();
 
@@ -54,13 +54,13 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
     nb_neighbors = points.size()-1;
 
   std::cerr << "Removes outliers wrt average squared distance to k nearest neighbors (remove "
-            << percentage_to_remove << "%, k="
+            << removed_percentage << "%, k="
             << nb_neighbors_remove_outliers << "%=" << nb_neighbors << ")...\n";
 
   // Removes outliers using erase-remove idiom
   points.erase(CGAL::remove_outliers(points.begin(), points.end(),
                                      nb_neighbors,
-                                     percentage_to_remove),
+                                     removed_percentage),
                points.end());
 
   long memory = CGAL::Memory_sizer().virtual_size();
@@ -94,7 +94,7 @@ int main(int argc, char * argv[])
   }
 
   // Outlier Removal options
-  const double percentage_to_remove = 5.0 /* % */; // percentage of outliers to remove
+  const double removed_percentage = 5.0 /* % */; // percentage of outliers to remove
   const double nb_neighbors_remove_outliers = 0.05; // K-nearest neighbors (%)
 
   // Accumulated errors
@@ -135,7 +135,7 @@ int main(int argc, char * argv[])
     // Test
     //***************************************
 
-    test_avg_knn_sq_distance(points, nb_neighbors_remove_outliers, percentage_to_remove);
+    test_avg_knn_sq_distance(points, nb_neighbors_remove_outliers, removed_percentage);
 
   } // for each input file
 

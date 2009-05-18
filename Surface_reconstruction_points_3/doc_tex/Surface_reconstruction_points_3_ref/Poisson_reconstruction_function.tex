@@ -24,9 +24,7 @@
 
 Given a set of 3D points with oriented normals sampled on the boundary of a 3D solid, the Poisson Surface Reconstruction method \cite{Kazhdan06} solves for an approximate indicator function of the inferred solid, whose gradient best matches the input normals. The output scalar function, represented in an adaptive octree, is then iso-contoured using an adaptive marching cubes.
 
-\ccc{Poisson_reconstruction_function} implements a variant of this algorithm which solves for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree and uses the TAUCS sparse linear solver. 
-
-% In order to get a unique solution, one vertex outside of the surface is constrained to a value of 0.0.
+\ccc{Poisson_reconstruction_function} implements a variant of this algorithm which solves for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree and uses the TAUCS sparse linear solver.
 
 %END-AUTO(\ccDefinition)
 
@@ -80,6 +78,7 @@ Geometric traits class.
 \ccGlue
 \ccNestedType{FT}
 {
+== \ccc{Geom_traits::FT}
 }
 \ccGlue
 \ccNestedType{Point}
@@ -94,6 +93,7 @@ Geometric traits class.
 \ccGlue
 \ccNestedType{Sphere}
 {
+== \ccc{Geom_traits::Sphere_3}
 }
 \ccGlue
 
@@ -113,7 +113,7 @@ Creates a Poisson implicit function from the [first, beyond) range of points.
 \item \ccc{InputIterator}: iterator over input points. \item \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Geom_traits::Point_3}. It can be omitted if InputIterator \ccc{value_type} is convertible to \ccc{Geom_traits::Point_3}. \item \ccc{NormalPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Geom_traits::Vector_3}. \end{description}
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator over input points. \item \ccc{point_pmap}: property map InputIterator -$>$ \ccc{Point_3}. \item \ccc{normal_pmap}: property map InputIterator -$>$ \ccc{Vector_3}. \end{description}
+\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator over the input points. \item \ccc{point_pmap}: property map InputIterator -$>$ \ccc{Point_3}. \item \ccc{normal_pmap}: property map InputIterator -$>$ \ccc{Vector_3}. \end{description}
 }
 \ccGlue
 
@@ -140,14 +140,9 @@ Returns a sphere bounding the inferred surface.
 \ccGlue
 \ccMethod{bool compute_implicit_function();}
 {
-The function \ccc{compute_implicit_function}() must be called after each insertion of oriented points. It computes the piecewise linear scalar function \ccc{f} by:\begin{itemize}
-\item applying Delaunay refinement.\item solving for \ccc{f} at each vertex of the triangulation with a sparse linear solver.\item shifting and orienting \ccc{f} such that 'f = 0' at all input points and 'f$<$0' inside the inferred surface.\end{itemize}
+The function \ccc{compute_implicit_function}() must be called after each insertion of oriented points. It computes the piecewise linear scalar function operator() by:\begin{itemize}
+\item applying Delaunay refinement.\item solving for operator() at each vertex of the triangulation with a sparse linear solver.\item shifting and orienting operator() such that 'operator()= 0' at all input points and 'operator()$<$0' inside the inferred surface.\end{itemize}
 Returns false if the linear solver fails.
-}
-\ccGlue
-\ccMethod{FT operator()(const Point& p) const;}
-{
-Evaluates the implicit function at a given 3D query point.
 }
 \ccGlue
 \ccMethod{FT operator()(const Point& p) const;}

@@ -129,7 +129,7 @@ template <typename InputIterator,
 void
 jet_estimate_normals(
   InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over input points.
+  InputIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map InputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
   unsigned int k, ///< number of neighbors.
@@ -186,7 +186,7 @@ template <typename InputIterator,
 void
 jet_estimate_normals(
   InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over input points.
+  InputIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map InputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
   unsigned int k, ///< number of neighbors.
@@ -212,7 +212,7 @@ template <typename InputIterator,
 void
 jet_estimate_normals(
   InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over input points.
+  InputIterator beyond, ///< past-the-end iterator over the input points.
   NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
   unsigned int k, ///< number of neighbors.
   unsigned int degree_fitting = 2)

@@ -22,9 +22,9 @@ int main(void)
   }
 
   // Randomly simplifies using erase-remove idiom
-  const double percentage_to_remove = 75.0; // percentage of points to remove
+  const double removed_percentage = 75.0; // percentage of points to remove
   points.erase(CGAL::random_simplify_point_set(points.begin(), points.end(),
-                                               percentage_to_remove),
+                                               removed_percentage),
                points.end());
 
   return EXIT_SUCCESS;

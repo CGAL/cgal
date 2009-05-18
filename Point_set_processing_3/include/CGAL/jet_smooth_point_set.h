@@ -106,8 +106,7 @@ jet_smooth_point(
 
 /// Smoothes the [first, beyond) range of points using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
-///
-/// Warning: as this method relocates the points, it
+/// As this method relocates the points, it
 /// should not be called on containers sorted w.r.t. point locations.
 ///
 /// @commentheading Precondition: k >= 2.
@@ -127,7 +126,7 @@ template <typename ForwardIterator,
 void
 jet_smooth_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over input points.
+  ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
   unsigned int k, ///< number of neighbors.
   const Kernel& kernel, ///< geometric traits.
@@ -141,7 +140,7 @@ jet_smooth_point_set(
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
-  
+
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
@@ -180,7 +179,7 @@ jet_smooth_point_set(
   typedef typename Kernel_traits<Point>::Kernel Kernel;
   jet_smooth_point_set(
     first,beyond,
-    point_pmap, 
+    point_pmap,
     k,
     Kernel(),
     degree_fitting,degree_monge);
@@ -201,7 +200,7 @@ jet_smooth_point_set(
 {
   jet_smooth_point_set(
     first,beyond,
-    make_dereference_property_map(first), 
+    make_dereference_property_map(first),
     k,
     degree_fitting,degree_monge);
 }

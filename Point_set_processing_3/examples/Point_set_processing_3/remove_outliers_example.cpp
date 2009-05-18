@@ -22,11 +22,11 @@ int main(void)
   }
 
   // Removes outliers using erase-remove idiom
-  const double percentage_to_remove = 5.0; // percentage of points to remove
+  const double removed_percentage = 5.0; // percentage of points to remove
   const int nb_neighbors = 7; // considers 7 nearest neighbor points
   points.erase(CGAL::remove_outliers(points.begin(), points.end(),
                                      nb_neighbors,
-                                     percentage_to_remove),
+                                     removed_percentage),
                points.end());
 
   return EXIT_SUCCESS;

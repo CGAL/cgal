@@ -208,7 +208,7 @@ template <typename ForwardIterator,
 ForwardIterator
 mst_find_source(
     ForwardIterator first,   ///< iterator over the first input point.
-    ForwardIterator beyond,  ///< past-the-end iterator over input points.
+    ForwardIterator beyond,  ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3
     const Kernel& kernel)    ///< geometric traits.
@@ -234,7 +234,7 @@ mst_find_source(
     }
 
     // Orients its normal towards +Z axis
-    Vector& normal = get(normal_pmap,top_point); 
+    Vector& normal = get(normal_pmap,top_point);
     const Vector Z(0, 0, 1);
     if (Z * normal < 0) {
       CGAL_TRACE("  Flip top point normal\n");
@@ -271,7 +271,7 @@ template <typename ForwardIterator,
 Riemannian_graph<ForwardIterator>
 create_riemannian_graph(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over input points.
+    ForwardIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3
     IndexPMap index_pmap, ///< property map ForwardIterator -> index
@@ -414,7 +414,7 @@ template <typename ForwardIterator,
 MST_graph<ForwardIterator, NormalPMap, Kernel>
 create_mst_graph(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over input points.
+    ForwardIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3
     IndexPMap index_pmap, ///< property map ForwardIterator -> index
@@ -499,11 +499,9 @@ create_mst_graph(
 // ----------------------------------------------------------------------------
 
 
-/// Orients the normals of the [first, beyond) range of points using the method described by
-/// Hoppe, DeRose, Duchamp, McDonald and Stuetzle in
-/// "Surface reconstruction from unorganized points" [Hoppe92].
-///
-/// This method modifies the order of input points so as to pack all oriented points first,
+/// Orients the normals of the [first, beyond) range of points using the propagation
+/// of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
+/// This method modifies the order of input points so as to pack all sucessfully oriented points first,
 /// and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
 /// For this reason it should not be called on sorted containers.
 ///
@@ -533,7 +531,7 @@ template <typename ForwardIterator,
 ForwardIterator
 mst_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over input points.
+    ForwardIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
     IndexPMap index_pmap, ///< property map ForwardIterator -> index
@@ -633,7 +631,7 @@ template <typename ForwardIterator,
 ForwardIterator
 mst_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over input points.
+    ForwardIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
     IndexPMap index_pmap, ///< property map ForwardIterator -> index
@@ -643,8 +641,8 @@ mst_orient_normals(
     typedef typename Kernel_traits<Point>::Kernel Kernel;
     return mst_orient_normals(
       first,beyond,
-      point_pmap, 
-      normal_pmap, 
+      point_pmap,
+      normal_pmap,
       index_pmap,
       k,
       Kernel());
@@ -660,7 +658,7 @@ template <typename ForwardIterator,
 ForwardIterator
 mst_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over input points.
+    ForwardIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3
     unsigned int k) ///< number of neighbors
@@ -681,8 +679,8 @@ mst_orient_normals(
 
     return mst_orient_normals(
       first,beyond,
-      point_pmap, 
-      normal_pmap, 
+      point_pmap,
+      normal_pmap,
       index_pmap,
       k);
 }
@@ -696,13 +694,13 @@ template <typename ForwardIterator,
 ForwardIterator
 mst_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over input points.
+    ForwardIterator beyond, ///< past-the-end iterator over the input points.
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
     unsigned int k) ///< number of neighbors
 {
     return mst_orient_normals(
       first,beyond,
-      make_dereference_property_map(first), 
+      make_dereference_property_map(first),
       normal_pmap,
       k);
 }

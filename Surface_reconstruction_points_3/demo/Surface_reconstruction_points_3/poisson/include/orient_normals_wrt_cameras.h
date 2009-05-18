@@ -110,7 +110,7 @@ template <typename ForwardIterator,
 ForwardIterator
 orient_normals_wrt_cameras(
            ForwardIterator first,   ///< iterator over the first input point.
-           ForwardIterator beyond,  ///< past-the-end iterator over input points.
+           ForwardIterator beyond,  ///< past-the-end iterator over the input points.
            const Kernel& kernel)    ///< geometric traits.
 {
     CGAL_TRACE("Calls orient_normals_wrt_cameras()\n");

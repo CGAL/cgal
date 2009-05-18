@@ -329,7 +329,7 @@ public:
   {
       return Input_point_iterator(input_vertices_begin());
   }
-  /// Gets past-the-end iterator over input points.
+  /// Gets past-the-end iterator over the input points.
   Input_point_iterator input_points_end() const
   {
       return Input_point_iterator(input_vertices_end());

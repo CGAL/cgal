@@ -55,11 +55,15 @@ bool
 write_off_points_and_normals(
   std::ostream& stream, ///< output stream.
   ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over input points.
+  ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
   const Kernel& kernel) ///< geometric traits.
 {
+  // basic geometric types
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
+
   CGAL_point_set_processing_precondition(first != beyond);
 
   if(!stream)
@@ -76,8 +80,6 @@ write_off_points_and_normals(
   // Write positions + normals
   for(ForwardIterator it = first; it != beyond; it++)
   {
-//    const Point& p = *it;
-//    const Vector& n = it->normal();
     Point p = get(point_pmap, it);
     Vector n = get(normal_pmap, it);
     stream << p << " " << n << std::endl;
@@ -153,7 +155,7 @@ bool
 write_off_points(
   std::ostream& stream, ///< output stream.
   ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over input points.
+  ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
   const Kernel& kernel) ///< geometric traits.
 {
@@ -176,7 +178,6 @@ write_off_points(
   // Write positions
   for(ForwardIterator it = first; it != beyond; it++)
   {
-//    const Point& p = *it;
     Point p = get(point_pmap, it);
     stream << p << std::endl;
   }

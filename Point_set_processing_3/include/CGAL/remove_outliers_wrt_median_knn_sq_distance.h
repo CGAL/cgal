@@ -123,7 +123,7 @@ template <typename ForwardIterator,
 ForwardIterator
 remove_outliers_wrt_median_knn_sq_distance(
   ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over input points.
+  ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   double threshold_percent, ///< percentage of points to remove.

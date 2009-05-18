@@ -174,7 +174,7 @@ improved_jet_smooth_point(
   typedef typename Neighbor_search::iterator Search_iterator;
 
   // Gather set of k neighboring points and compute the sum of their b[] values.
-  // Note: we perform k+1 queries and skip the query point which is output first. 
+  // Note: we perform k+1 queries and skip the query point which is output first.
   Vector bj_sum;
   Neighbor_search search(tree,pi,k+1);
   Search_iterator search_iterator;
@@ -197,10 +197,9 @@ improved_jet_smooth_point(
 // ----------------------------------------------------------------------------
 
 
-/// Improved Laplacian smoothing (Vollmer et al) 
+/// Improved Laplacian smoothing (Vollmer et al)
 /// on the k nearest neighbors.
-///
-/// Warning: as this method relocates the points, it
+/// As this method relocates the points, it
 /// should not be called on containers sorted w.r.t. point locations.
 ///
 /// @commentheading Precondition: k >= 2.
@@ -220,7 +219,7 @@ template <typename ForwardIterator,
 void
 improved_jet_smooth_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over input points.
+  ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
   unsigned int k, ///< number of neighbors.
   const unsigned int iter_number, ///< number of iterations.
@@ -265,13 +264,13 @@ improved_jet_smooth_point_set(
   std::vector<Point>  p(nb_points); // positions at step iter_n
   std::vector<Vector> b(nb_points); // ...
   for(it = first, i=0; it != beyond; it++, ++i)
-      p[i] = get(point_pmap,it); 
+      p[i] = get(point_pmap,it);
 
   // loop until convergence
   for(int iter_n = 0; iter_n < iter_number ; ++iter_n)
   {
       int kk = k/iter_number+1; // adaptative k
-    
+
       // Iterates over input points, computes (original) Laplacian smoothing and b[].
       for(it = first, i=0; it != beyond; it++, ++i)
       {
@@ -280,7 +279,7 @@ improved_jet_smooth_point_set(
           b[i]       = alpha*(np - p0) + (1-alpha)*(np - p[i]);
           p[i]       = np;
       }
- 
+
       // Iterates over input points, compute and store smoothed points.
       for(it = first, i=0; it != beyond; it++, ++i)
       {
@@ -317,7 +316,7 @@ improved_jet_smooth_point_set(
   typedef typename Kernel_traits<Point>::Kernel Kernel;
   return improved_jet_smooth_point_set(
     first,beyond,
-    point_pmap, 
+    point_pmap,
     k,
     iter_number,
     Kernel(),
@@ -341,7 +340,7 @@ improved_jet_smooth_point_set(
 {
   return improved_jet_smooth_point_set(
     first,beyond,
-    make_dereference_property_map(first), 
+    make_dereference_property_map(first),
     k,
     iter_number,
     alpha, beta);

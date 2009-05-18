@@ -24,7 +24,9 @@
 
 \ccc{APSS_reconstruction_function} computes an implicit function that defines a Point Set Surface (PSS) based on moving least squares (MLS) fitting of algebraic spheres.
 
-See {\em Algebraic Point Set Surfaces} by Guennebaud and Gross \cite{Guennebaud07}.
+This class implements a variant of the {\em Algebraic Point Set Surfaces} method by Guennebaud and Gross \cite{Guennebaud07}.
+
+Currently, the quality of the reconstruction highly depends on both the quality of input normals and the smoothness parameter. Whereas the algorithm can tolerate a little noise in the normal direction, the normals must be consistently oriented. The smoothness parameter controls the width of the underlying low-pass filter as a factor of the local point spacing. Larger value leads to smoother surfaces and longer computation times. For clean datasets, this value should be set between 1.5 and 2.5. On the other hand, as the amount of noise increases, this value should be increased as well. For these reasons, we do not provide any default value for this parameter. The radius property should correspond to the local point spacing which can be intuitively defined as the average distance to its {\em natural} one ring neighbors. Currently, this information is only used to define the {\em surface definition domain} as the union of these balls. Outside this union of balls, the surface is not defined. Therefore, if the balls do not overlap enough, then some holes might appear. If no radius is provided, then they are automatically computed from a basic estimate of the local density based on the 16 nearest neighbors. In the future, this information might be used as well to adjust the width of the low pass filter.
 
 Note that APSS reconstruction may create small {\em ghost} connected components close to the reconstructed surface that you should delete. For this purpose, you may call \ccc{erase_small_polyhedron_connected_components}() after \ccc{make_surface_mesh}().
 
@@ -74,6 +76,7 @@ Geometric traits class.
 \ccGlue
 \ccNestedType{FT}
 {
+== \ccc{Geom_traits::FT}
 }
 \ccGlue
 \ccNestedType{Point}
@@ -88,6 +91,7 @@ Geometric traits class.
 \ccGlue
 \ccNestedType{Sphere}
 {
+== \ccc{Geom_traits::Sphere_3}
 }
 \ccGlue
 
@@ -99,15 +103,15 @@ Geometric traits class.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
-\ccConstructor{template<typename InputIterator, typename PointPMap, typename NormalPMap> APSS_reconstruction_function(InputIterator first, InputIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap, unsigned int k);}
+\ccConstructor{template<typename InputIterator, typename PointPMap, typename NormalPMap, typename RadiusPMap> APSS_reconstruction_function(InputIterator first, InputIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap, RadiusPMap radius_pmap, FT smoothness);}
 {
 Creates an APSS implicit function from the [first, beyond) range of points.
 \ccCommentHeading{Template Parameters}
 \begin{description}
-\item \ccc{InputIterator}: iterator over input points. \item \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Geom_traits::Point_3}. It can be omitted if InputIterator \ccc{value_type} is convertible to \ccc{Geom_traits::Point_3}. \item \ccc{NormalPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Geom_traits::Vector_3}. \end{description}
+\item \ccc{InputIterator}: iterator over input points. \item \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Geom_traits::Point_3}. It can be omitted if InputIterator \ccc{value_type} is convertible to \ccc{Geom_traits::Point_3}. \item \ccc{NormalPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Geom_traits::Vector_3}. \item \ccc{RadiusPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = FT. If it is omitted, a default radius is computed = (distance max to 16 nearest neighbors)/2. \end{description}
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator over input points. \item \ccc{point_pmap}: property map InputIterator -$>$ \ccc{Point_3}. \item \ccc{normal_pmap}: property map InputIterator -$>$ \ccc{Vector_3}. \item \ccc{k}: number of neighbors. \end{description}
+\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator. \item \ccc{point_pmap}: property map InputIterator -$>$ \ccc{Point_3} (access to the position of an input point). \item \ccc{normal_pmap}: property map InputIterator -$>$ \ccc{Vector_3} (access to the {\bf oriented} normal of an input point). \item \ccc{radius_pmap}: property map InputIterator -$>$ FT (access to the local point spacing of an input point). \item \ccc{smoothness}: smoothness factor. Typical choices are in the range 2 (clean datasets) and 8 (noisy datasets). \end{description}
 }
 \ccGlue
 \ccConstructor{APSS_reconstruction_function(const APSS_reconstruction_function<Gt>& other);}
@@ -128,9 +132,9 @@ Copy constructor
 operator =()
 }
 \ccGlue
-\ccMethod{void set_number_of_neighbors(unsigned int k);}
+\ccMethod{void set_smoothness_factor(FT smoothness);}
 {
-Set number of neighbors for APSS sphere fitting.
+Sets smoothness factor. Typical choices are in the range 2 (clean datasets) and 8 (noisy datasets).
 }
 \ccGlue
 \ccMethod{const Sphere& bounding_sphere() const;}

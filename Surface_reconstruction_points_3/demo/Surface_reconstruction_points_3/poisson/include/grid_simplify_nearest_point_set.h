@@ -39,7 +39,7 @@ template <typename InputIterator,
 OutputIterator
 grid_simplify_nearest_point_set(
           InputIterator first,      ///< iterator over the first input point.
-          InputIterator beyond,     ///< past-the-end iterator over input points.
+          InputIterator beyond,     ///< past-the-end iterator over the input points.
           OutputIterator output,    ///< iterator over the first output point.
           unsigned int k,           ///< number of neighbors.
           double epsilon,           ///< tolerance value when comparing 3D points.

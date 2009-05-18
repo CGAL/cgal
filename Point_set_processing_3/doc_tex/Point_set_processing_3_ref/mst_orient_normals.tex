@@ -28,7 +28,7 @@
 
 \ccFunction{template<typename ForwardIterator, typename PointPMap, typename NormalPMap, typename IndexPMap, typename Kernel> ForwardIterator mst_orient_normals(ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap, IndexPMap index_pmap, unsigned int k, const Kernel& kernel);}
 {
-Orients the normals of the [first, beyond) range of points. This method modifies the order of input points so as to pack all successfully oriented points first, and returns an iterator over the first point with an unoriented normal (see erase-remove idiom). This method should not be called on sorted containers.
+Orients the normals of the [first, beyond) range of points using the propagation of a seed orientation through a minimum spanning tree of the Riemannian graph \cite{cgal:hddms-srup-92}. This method modifies the order of input points so as to pack all sucessfully oriented points first, and returns an iterator over the first point with an unoriented normal (see erase-remove idiom). For this reason it should not be called on sorted containers.
 \ccCommentHeading{Preconditions}\begin{itemize}
 \item Normals must be unit vectors.\item k $>$= 2.\end{itemize}
 \ccCommentHeading{Template Parameters}
@@ -37,7 +37,7 @@ Orients the normals of the [first, beyond) range of points. This method modifies
 \ccCommentHeading{Returns} iterator over the first point with an unoriented normal.
 \ccCommentHeading{Parameters}
 \begin{description}
-\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator over the input points. \item \ccc{point_pmap}: property map ForwardIterator -$>$ \ccc{Point_3}. \item \ccc{normal_pmap}: property map ForwardIterator -$>$ \ccc{Vector_3}. \item \ccc{index_pmap}: property map ForwardIterator -$>$ index \item \ccc{k}: number of neighbors. \item \ccc{kernel}: geometric traits. \end{description}
+\item \ccc{first}: iterator over the first input point. \item \ccc{beyond}: past-the-end iterator over the input points. \item \ccc{point_pmap}: property map ForwardIterator -$>$ \ccc{Point_3}. \item \ccc{normal_pmap}: property map ForwardIterator -$>$ \ccc{Vector_3}. \item \ccc{index_pmap}: property map ForwardIterator -$>$ index \item \ccc{k}: number of neighbors \item \ccc{kernel}: geometric traits. \end{description}
 }
 \ccGlue
 
