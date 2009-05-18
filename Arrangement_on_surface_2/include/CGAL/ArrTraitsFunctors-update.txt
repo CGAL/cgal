@@ -9,14 +9,14 @@ Probably best idea: Use TopologyTraits (ARR_OPEN_BOUNDARY) + Parameter_space_in_
 
 Files: (AA - adapter available) 
 
-* Arr_accessor.h: AA + p_arr
+* Arrangement_2/Arrangement_on_surface_2_impl.h: AA
 * Arrangement_zone_2: AA
+* Arrangement_2/Arrangement_zone_2_impl.h: AA probable (see basic file)
+* Arr_accessor.h: AA + p_arr
 
 * Arr_point_location/Arr_batched_point_location_traits_2.h: provides own Is_closed_2 based on Arr_2::Geometry_traits::Is_closed_2
 * Arr_point_location/Arr_landmarks_pl_impl.h: AA
 
-* Arrangement_2/Arrangement_on_surface_2_impl.h: AA
-* Arrangement_2/Arrangement_zone_2_impl.h: AA probable (see basic file)
 
 * Sweep_line_2/Arr_basic_insertion_traits_2.h: provides own Is_closed_2 based on Traits_::Is_closed_2 which is Geometry_traits_2
 * Sweep_line_2/Arr_overlay_traits_2.h: provides own Is_closed_2 based on Traits_::Is_closed_2 which is Geometry_traits_2
