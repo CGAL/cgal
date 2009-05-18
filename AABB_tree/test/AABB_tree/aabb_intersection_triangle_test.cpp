@@ -171,7 +171,6 @@ void test_kernels(const char *filename)
 int main(void)
 {
     std::cout << "AABB intersection tests" << std::endl;
-    test_kernels("./data/bimba_400kf.off");
     test_kernels("./data/cube.off");
     test_kernels("./data/coverrear.off");
     test_kernels("./data/nested_spheres.off");
