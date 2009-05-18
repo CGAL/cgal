@@ -505,7 +505,7 @@ namespace CGAL {
 
     template<typename Tr>
     template<typename Query>
-    typename Tr::size_type
+    typename AABB_tree<Tr>::size_type
         AABB_tree<Tr>::number_of_intersected_primitives(const Query& query) const
     {
         Counting_traits<Query> traversal_traits;

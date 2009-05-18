@@ -40,16 +40,16 @@ namespace CGAL {
         typedef typename GeomTraits::Point_3 Point;
         typedef typename GeomTraits::Segment_3 Datum;
         typedef typename Polyhedron::Halfedge_handle Id;
+        /// Self
+        typedef AABB_polyhedron_segment_primitive<GeomTraits,Polyhedron> Self;
 
         /// Constructor
         AABB_polyhedron_segment_primitive() {}
         AABB_polyhedron_segment_primitive(const Id& handle)
             : m_halfedge_handle(handle)  { };
 
-        AABB_polyhedron_segment_primitive(const AABB_polyhedron_segment_primitive& primitive)
-        {
-            m_halfedge_handle = primitive.id();
-        }
+        AABB_polyhedron_segment_primitive(const Self& primitive)
+            : m_halfedge_handle(primitive.m_halfedge_handle) {}
 
         // Default destructor, copy constructor and assignment operator are ok
 

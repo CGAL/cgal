@@ -62,20 +62,20 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
 
         std::vector<Point> queries;
         std::vector<Id> outputs1, outputs2, outputs3;
-        
+
         queries.reserve(NBQ);
         outputs1.reserve(NBQ);
         outputs2.reserve(NBQ);
         outputs3.reserve(NBQ);
-        
+
 //        size_t common_min = NBQ;
         size_t counter;
-        
+
         for(size_t i = 0; i < NBQ; ++i)
                 queries.push_back(random_point_in<K>(tree.bbox()));
-        
+
         CGAL::spatial_sort(queries.begin(), queries.end());
-        
+
         CGAL::Timer timer;
         timer.start();
         counter = 0;
@@ -84,12 +84,12 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
                 ++counter;
         }
         timer.stop();
-        double speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): 1.); 
+        double speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): 1.);
         std::cout << "without hint:      " << speed << " queries/s" << std::endl;
         timer.reset();
-        
+
         Point_and_primitive_id hint = tree.any_reference_point_and_id();
-        
+
         timer.start();
         counter = 0;
         while(timer.time() < 1. && counter < NBQ) {
@@ -97,94 +97,48 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
                 ++counter;
         }
         timer.stop();
-        speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): 1.); 
+        speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): 1.);
         std::cout << "with spatial sort: " << speed << " queries/s" << std::endl;
-        timer.reset();        
-      
+        timer.reset();
+
         tree.accelerate_distance_queries(polyhedron.points_begin(),polyhedron.points_end());
-        
-        timer.start();   
+
+        timer.start();
         counter = 0;
         while(timer.time() < 1. && counter < NBQ) {
                 outputs3.push_back(tree.closest_point_and_primitive(queries[counter]).second);
                 ++counter;
         }
         timer.stop();
-        speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): 1.); 
+        speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): 1.);
         std::cout << "with KD-tree:      " << speed << " queries/s" << std::endl << std::endl;
-        timer.stop();               
+        timer.stop();
         std::cout << "Consistency:" << std::endl;
         if((counter = check_outputs(outputs1, outputs2, Id())) == 0)
                 std::cout << "         without hint and spatial sort are consistent" << std::endl;
         else
                 std::cout << "WARNING, without hint and spatial sort have " << counter << " inconsistencies (closest point on vertex/edge?)" << std::endl;
-                
+
         if((counter = check_outputs(outputs1, outputs3, Id())) == 0)
                 std::cout << "         without hint and with KD-tree are consistent (modulo hint case)" << std::endl;
         else
                 std::cout << "WARNING, without hint and with KD-tree have " << counter << " inconsistencies (closest point on vertex/edge? the hint case has been excluded)" << std::endl;
-                
+
         std::cout << std::endl;
 }
 
-template <class K>
-void test(const char *filename)
+template<class K, class Tree, class Polyhedron>
+void test_impl(Tree& tree, Polyhedron& p)
 {
-        typedef typename K::FT FT;
-        typedef typename K::Ray_3 Ray;
-        typedef typename K::Point_3 Point;
-        typedef typename K::Vector_3 Vector;
-        typedef CGAL::Polyhedron_3<K> Polyhedron;
-        typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
-        typedef CGAL::AABB_traits<K, Primitive> Traits;
-        typedef CGAL::AABB_tree<Traits> Tree;
-
-        Polyhedron polyhedron;
-        std::ifstream ifs(filename);
-        ifs >> polyhedron;
-
-        // constructs AABB tree and internal search KD-tree with 
-        // the points of the polyhedron
-        Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
-
-        // tests hint strategies
-        test_hint_strategies<Tree,K>(tree, polyhedron);
+  test_hint_strategies<Tree,K>(tree, p);
 }
-
-void test_kernels(const char *filename)
-{
-    std::cout << std::endl;
-    std::cout << "Polyhedron " << filename << std::endl;
-    std::cout << "============================" << std::endl;
-
-    std::cout << std::endl;
-    std::cout << "Simple cartesian float kernel" << std::endl;
-    test<CGAL::Simple_cartesian<float> >(filename);
-
-    std::cout << std::endl;
-    std::cout << "Cartesian float kernel" << std::endl;
-    test<CGAL::Cartesian<float> >(filename);
-
-    std::cout << std::endl;
-    std::cout << "Simple cartesian double kernel" << std::endl;
-    test<CGAL::Simple_cartesian<double> >(filename);
-
-    std::cout << std::endl;
-    std::cout << "Cartesian double kernel" << std::endl;
-    test<CGAL::Cartesian<double> >(filename);
-
-    std::cout << std::endl;
-    std::cout << "Epic kernel" << std::endl;
-    test<CGAL::Exact_predicates_inexact_constructions_kernel>(filename);
-}
-
 
 int main(void)
 {
         std::cout << "AABB hint strategies tests" << std::endl;
-        test_kernels("./data/cube.off");
-        test_kernels("./data/coverrear.off");
-        test_kernels("./data/nested_spheres.off");
-        test_kernels("./data/finger.off");
+        test_kernels<TRIANGLE>("./data/cube.off");
+        test_kernels<TRIANGLE>("./data/coverrear.off");
+        test_kernels<TRIANGLE>("./data/nested_spheres.off");
+        test_kernels<TRIANGLE>("./data/finger.off");
         return 0;
 }
