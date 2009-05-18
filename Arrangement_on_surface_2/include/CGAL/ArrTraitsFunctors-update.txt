@@ -13,15 +13,13 @@ Files: (AA - adapter available)
 * Arrangement_zone_2: AA
 * Arrangement_2/Arrangement_zone_2_impl.h: AA probable (see basic file)
 * Arr_accessor.h: AA + p_arr
-
-* Arr_point_location/Arr_batched_point_location_traits_2.h: provides own Is_closed_2 based on Arr_2::Geometry_traits::Is_closed_2
 * Arr_point_location/Arr_landmarks_pl_impl.h: AA
-
-
-* Sweep_line_2/Arr_basic_insertion_traits_2.h: provides own Is_closed_2 based on Traits_::Is_closed_2 which is Geometry_traits_2
-* Sweep_line_2/Arr_overlay_traits_2.h: provides own Is_closed_2 based on Traits_::Is_closed_2 which is Geometry_traits_2
 * Sweep_line_2/Basic_sweep_line_2_impl.h: AA
 * Sweep_line_2/Sweep_line_2_impl.h: AA
+
+* Arr_point_location/Arr_batched_point_location_traits_2.h: provides own Is_closed_2 based on Arr_2::Geometry_traits::Is_closed_2
+* Sweep_line_2/Arr_basic_insertion_traits_2.h: provides own Is_closed_2 based on Traits_::Is_closed_2 which is Geometry_traits_2
+* Sweep_line_2/Arr_overlay_traits_2.h: provides own Is_closed_2 based on Traits_::Is_closed_2 which is Geometry_traits_2
 
 Tags:
 =====
