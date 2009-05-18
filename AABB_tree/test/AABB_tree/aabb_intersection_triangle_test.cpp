@@ -115,12 +115,20 @@ void test_impl(Tree& tree, Polyhedron&)
   test_speed<Tree,K>(tree);
 }
 
-int main(void)
+int main(int argc,
+         char * argv[])
 {
     std::cout << "AABB intersection tests" << std::endl;
-    test_kernels<TRIANGLE>("./data/cube.off");
-    test_kernels<TRIANGLE>("./data/coverrear.off");
-    test_kernels<TRIANGLE>("./data/nested_spheres.off");
-    test_kernels<TRIANGLE>("./data/finger.off");
-    return 0;
+    if(argc < 2)
+    {
+        std::cerr << "Usage: " << argv[0] << " file1.off file2.off ..." << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    // loop over input files
+    int index = 1;
+    for(;index <= argc-1;index++)
+        test_kernels<TRIANGLE>(argv[index]);
+
+    return EXIT_SUCCESS;
 }

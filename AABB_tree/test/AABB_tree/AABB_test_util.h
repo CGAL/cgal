@@ -15,7 +15,7 @@
 // $Id: $
 //
 //
-// Author(s)     : Pierre Alliez
+// Author(s)     : Pierre Alliez, Stephane Tayeb, Camille Wormser
 //
 //******************************************************************************
 // File Description :
