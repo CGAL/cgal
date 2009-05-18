@@ -47,7 +47,7 @@ namespace CGALi {
         FT distance = (FT)0.0;
         for(int i = 0; i < 3; ++i)
         {
-            if(sphere.center()[i] < bbox.min(i))
+            if(sphere.center()[i] < (FT)bbox.min(i))
             {
                 d = (FT)bbox.min(i) - sphere.center()[i];
                 distance += d*d;
