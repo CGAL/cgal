@@ -47,6 +47,11 @@ Arr_tracing_traits_2.h: Some functors are missing!
 Rename:
 =======
 
+enum-values
+-----------
+
+the obvious ones
+
 Is_bounded_2 
 ------------
 
