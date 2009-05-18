@@ -25,6 +25,7 @@
  * Definition of the Arr_bounded_planar_topology_traits_2<GeomTraits> class.
  */
 
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_topology_traits/Arr_planar_topology_traits_base_2.h>
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_insertion_helper.h>
@@ -53,6 +54,14 @@ private:
   typedef Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_> Base;
 
 public:
+
+  ///! \name The side tags
+  //@{
+  typedef Arr_oblivious_side_tag                          Arr_left_side_tag;
+  typedef Arr_oblivious_side_tag                          Arr_bottom_side_tag;
+  typedef Arr_oblivious_side_tag                          Arr_top_side_tag;
+  typedef Arr_oblivious_side_tag                          Arr_right_side_tag;
+  //@}
 
   ///! \name The geometry-traits types.
   //@{

@@ -25,6 +25,7 @@
  */
 
 #include <CGAL/Arr_enums.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
@@ -63,6 +64,15 @@ class Arrangement_on_surface_2;
 template <class GeomTraits, class T_Dcel = Arr_default_dcel<GeomTraits> >
 class Arr_spherical_topology_traits_2 {
 public:
+
+  ///! \name The side tags
+  //@{
+  typedef Arr_identified_side_tag                         Arr_left_side_tag;
+  typedef Arr_contracted_side_tag                         Arr_bottom_side_tag;
+  typedef Arr_contracted_side_tag                         Arr_top_side_tag;
+  typedef Arr_identified_side_tag                         Arr_right_side_tag;
+  //@}
+
   ///! \name The geometry-traits types.
   //@{
   typedef GeomTraits                                      Geometry_traits_2;
@@ -86,7 +96,7 @@ public:
 
   typedef Arr_spherical_topology_traits_2<Geometry_traits_2, Dcel>
                                                           Self;
-
+  
   /*! \struct
    * An auxiliary structure for rebinding the topology traits with a new 
    * geometry-traits class and a new DCEL class.
