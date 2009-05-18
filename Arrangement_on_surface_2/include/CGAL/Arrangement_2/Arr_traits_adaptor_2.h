@@ -55,7 +55,11 @@ public:
 
   // Tags.
   typedef typename Base::Has_left_category      Has_left_category;
-  typedef typename Base::Boundary_category      Boundary_category;
+
+  typedef typename Base::Arr_left_side_tag      Arr_left_side_tag;
+  typedef typename Base::Arr_bottom_side_tag    Arr_bottom_side_tag;
+  typedef typename Base::Arr_top_side_tag       Arr_top_side_tag;
+  typedef typename Base::Arr_right_side_tag     Arr_right_side_tag;
 
   /// \name Construction.
   //@{
@@ -999,20 +1003,45 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
     
-    bool is_closed(const X_monotone_curve_2 &, Arr_curve_end,
-                    Arr_no_boundary_tag) const
-    { return true; }
-
-    bool is_closed(const X_monotone_curve_2 &, Arr_curve_end,
-                    Arr_has_boundary_tag) const
-    { return true; }
-
-    bool is_closed(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
-                    Arr_unbounded_boundary_tag) const
+    bool is_closed(Arr_boundary_side_tag) const
     {
-      return m_base->is_closed_2_object()(xcv, ce);
+        return true;
     }
-    
+
+    bool is_closed(Arr_open_side_tag) const
+    {
+        return false;
+    }
+
+    bool is_closed(const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
+    {
+        Arr_parameter_space ps = 
+            m_base->parameter_space_in_x_2_object()(xcv, ce);
+        if (ARR_INTERIOR == ps) {
+            ps = m_base->parameter_space_in_y_2_object()(xcv, ce);
+        }
+        
+        switch (ps) {
+
+        case ARR_LEFT_BOUNDARY:
+            return is_closed(Arr_left_side_tag());
+
+        case ARR_BOTTOM_BOUNDARY:
+            return is_closed(Arr_bottom_side_tag());
+
+        case ARR_TOP_BOUNDARY:
+            return is_closed(Arr_top_side_tag());
+
+        case ARR_RIGHT_BOUNDARY:
+            return is_closed(Arr_right_side_tag());
+
+        case ARR_INTERIOR:
+            // fall-through
+        default:
+            return true;
+        }
+    }
+
   public:
     /*! Is the end of an x-monotone curve bounded?
      * \param xcv The x-monotone curve.
@@ -1021,7 +1050,7 @@ public:
      */
     bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
     {
-      return is_closed(xcv, ce, Boundary_category());
+        return is_closed(xcv, ce /*, Boundary_category() */);
     }
   };
 
