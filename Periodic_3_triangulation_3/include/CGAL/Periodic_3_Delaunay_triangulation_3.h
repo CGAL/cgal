@@ -172,11 +172,9 @@ public:
 
     std::vector<Point> points(first, last);
     std::random_shuffle (points.begin(), points.end());
-    std::cout<<'a';std::cout.flush();
     Cell_handle hint;
     std::vector<Vertex_handle> dummy_points, double_vertices;
     typename std::vector<Point>::iterator pbegin = points.begin();
-    std::cout<<'b';std::cout.flush();
     if (is_large_point_set)
       dummy_points = insert_dummy_points();
     else while (!is_1_cover()) {
@@ -184,16 +182,13 @@ public:
 	++pbegin;
 	if (pbegin == points.end()) return number_of_vertices() - n;
       }
-    std::cout<<'c';std::cout.flush();
 
     spatial_sort (pbegin, points.end(), geom_traits());
-    std::cout<<'d';std::cout.flush();
 
     Conflict_tester tester(*pbegin,this);
     Point_hider hider;
     double_vertices = Base::insert_in_conflict(
 	points.begin(),points.end(),hint,tester,hider); 
-    std::cout<<'e';std::cout.flush();
    
     if (is_large_point_set) {
       typedef CGAL::Periodic_3_triangulation_remove_traits_3< Gt > P3removeT;
@@ -203,12 +198,10 @@ public:
       DT dt(remove_traits);
       Remover remover(this,dt);
       Conflict_tester t(this);
-    std::cout<<'f';std::cout.flush();
       for (unsigned int i=0; i<dummy_points.size(); i++) {
 	if (std::find(double_vertices.begin(), double_vertices.end(),
 		dummy_points[i]) == double_vertices.end())
 	  Base::remove(dummy_points[i],remover,t);
-    std::cout<<'g';std::cout.flush();
       }
     }
 
