@@ -128,8 +128,8 @@ pca_smooth_point_set(
   unsigned int k, ///< number of neighbors.
   const Kernel& kernel) ///< geometric traits.
 {
-  // Input points types
-  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  // basic geometric types
+  typedef typename Kernel::Point_3 Point;
 
   // types for K nearest neighbors search structure
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
@@ -148,10 +148,10 @@ pca_smooth_point_set(
   Tree tree(first,beyond);
 
   // Iterates over input points and mutates them.
+  // Implementation note: the cast to Point& allows to modify only the point's position.
   ForwardIterator it;
   for(it = first; it != beyond; it++)
   {
-    //(Point_3&)(*it) = CGALi::pca_smooth_point<Kernel>(*it,tree,k);
     Point& p = get(point_pmap, it);
     p = CGALi::pca_smooth_point<Kernel>(p,tree,k);
   }

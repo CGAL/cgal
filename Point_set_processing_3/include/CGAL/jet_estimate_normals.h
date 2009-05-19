@@ -139,7 +139,6 @@ jet_estimate_normals(
   CGAL_TRACE("Calls jet_estimate_normals()\n");
 
   // Input points types
-  typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename boost::property_traits<NormalPMap>::value_type Vector;
 
   // types for K nearest neighbors search structure

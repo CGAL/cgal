@@ -216,8 +216,6 @@ mst_find_source(
     CGAL_TRACE("  mst_find_source()\n");
 
     // Input points types
-    typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
-    typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
 
     // Precondition: at least one element in the container
@@ -279,7 +277,6 @@ create_riemannian_graph(
     const Kernel& kernel) ///< geometric traits.
 {
     // Input points types
-    typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
 
@@ -427,7 +424,6 @@ create_mst_graph(
     using namespace CGALi;
 
     // Input points types
-    typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
 
@@ -544,8 +540,6 @@ mst_orient_normals(
     using namespace CGALi;
 
     // Input points types
-    typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
-    typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
 
     // Riemannian_graph types

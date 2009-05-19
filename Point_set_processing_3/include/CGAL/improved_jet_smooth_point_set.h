@@ -288,9 +288,9 @@ improved_jet_smooth_point_set(
   }
 
   // Iterates over input points and mutates them.
+  // Implementation note: the cast to Point& allows to modify only the point's position.
   for(it = first, i=0; it != beyond; it++, ++i)
   {
-    //(Point&)(*it) = p[i];
     Point& p0 = get(point_pmap,it);
     p0 = p[i];
   }

@@ -133,8 +133,8 @@ jet_smooth_point_set(
   unsigned int degree_fitting = 2,
   unsigned int degree_monge = 2)
 {
-  // Input points types
-  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  // basic geometric types
+  typedef typename Kernel::Point_3 Point;
 
   // types for K nearest neighbors search structure
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
@@ -153,6 +153,7 @@ jet_smooth_point_set(
   Tree tree(first,beyond);
 
   // Iterates over input points and mutates them.
+  // Implementation note: the cast to Point& allows to modify only the point's position.
   ForwardIterator it;
   for(it = first; it != beyond; it++)
   {
