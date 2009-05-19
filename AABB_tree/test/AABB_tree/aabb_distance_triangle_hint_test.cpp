@@ -112,7 +112,6 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
         timer.stop();
         speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): 1.);
         std::cout << "with KD-tree:      " << speed << " queries/s" << std::endl << std::endl;
-        timer.stop();
         std::cout << "Consistency:" << std::endl;
         if((counter = check_outputs(outputs1, outputs2, Id())) == 0)
                 std::cout << "         without hint and spatial sort are consistent" << std::endl;
