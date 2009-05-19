@@ -94,7 +94,23 @@ public:
   typedef Arr_traits_basic_adaptor_2<Traits_2>          Traits_adaptor_2;
   typedef typename Traits_adaptor_2::Point_2            Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Traits_adaptor_2::Boundary_category  Boundary_category;
+
+  typedef typename Geometry_traits_2::Arr_left_side_tag   Arr_left_side_tag;
+  typedef typename Geometry_traits_2::Arr_bottom_side_tag Arr_bottom_side_tag;
+  typedef typename Geometry_traits_2::Arr_top_side_tag    Arr_top_side_tag;
+  typedef typename Geometry_traits_2::Arr_right_side_tag  Arr_right_side_tag;
+
+protected:
+
+  typedef typename Arr_are_all_sides_oblivious_tag< 
+                     Arr_left_side_tag, Arr_bottom_side_tag, 
+                     Arr_top_side_tag, Arr_right_side_tag >::result
+  Are_all_sides_oblivious_tag;
+  
+  typedef boost::mpl::bool_< true > All_sides_oblivious_tag;
+  typedef boost::mpl::bool_< false > Not_all_sides_oblivious_tag;
+
+public:
 
   typedef CGAL::Compare_events<Traits_adaptor_2, Event> Compare_events;
   typedef Multiset<Event*, Compare_events, Allocator>   Event_queue; 
@@ -531,14 +547,15 @@ protected:
                                         Arr_curve_end ind,
                                         bool is_new)
   {
-    _update_event_at_open_boundary(e, cv, ind, is_new, Boundary_category());
+    _update_event_at_open_boundary(e, cv, ind, is_new, 
+                                   Are_all_sides_oblivious());
   }
 
   void _update_event_at_open_boundary(Event* e,
                                       const X_monotone_curve_2& cv,
                                       Arr_curve_end ind,
                                       bool is_new,
-                                      Arr_has_boundary_tag)
+                                      All_sides_oblivious_tag)
   {
     m_visitor->update_event (e, cv, ind, is_new);
   }
@@ -547,7 +564,7 @@ protected:
                                       const X_monotone_curve_2& /* cv */,
                                       Arr_curve_end /* ind */,
                                       bool /* is_new */,
-                                      Arr_no_boundary_tag)
+                                      Not_all_sides_oblivious_tag)
   {
     CGAL_error();
   }
