@@ -56,7 +56,11 @@ public:
   typedef Traits_                                       Traits_2;
   typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
   typedef typename Traits_2::Point_2                    Point_2;
-  typedef typename Traits_2::Boundary_category          Boundary_category;
+
+  typedef typename Traits_2::Arr_left_side_tag          Arr_left_side_tag;
+  typedef typename Traits_2::Arr_bottom_side_tag        Arr_bottom_side_tag;
+  typedef typename Traits_2::Arr_top_side_tag           Arr_top_side_tag;
+  typedef typename Traits_2::Arr_right_side_tag         Arr_right_side_tag;
 
   typedef Subcurve_                                     Subcurve;
   //template<typename SC>
