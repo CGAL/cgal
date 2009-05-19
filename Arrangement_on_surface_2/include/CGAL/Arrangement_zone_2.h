@@ -363,7 +363,7 @@ private:
    */
   bool _is_to_right(const Point_2& p, Halfedge_handle he) const
   {
-    return (_is_to_right_impl(p, he, Boundary_category()));
+    return (_is_to_right_impl(p, he, Are_all_sides_oblivious_tag()));
   }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
