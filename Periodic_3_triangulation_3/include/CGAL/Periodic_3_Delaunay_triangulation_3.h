@@ -1,3 +1,4 @@
+
 // Copyright (c) 1999-2004,2006-2009   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
@@ -417,8 +418,6 @@ private:
   struct Vertex_remover
   {
     typedef TriangulationR3      Triangulation_R3;
-    typedef Conflict_tester      Conflict_tester;
-    typedef Point_hider          Point_hider;
     
     typedef typename std::vector<Point>::iterator Hidden_points_iterator;
     
