@@ -31,7 +31,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
-
 CGAL_BEGIN_NAMESPACE
 
 /*! \class 
@@ -177,7 +176,11 @@ public:
   // Traits types:
   typedef typename Base::Has_left_category      Has_left_category;
   typedef typename Base::Has_merge_category     Has_merge_category;
-  typedef typename Base::Boundary_category      Boundary_category;
+
+  typedef typename Base::Arr_left_side_tag      Arr_left_side_tag;
+  typedef typename Base::Arr_bottom_side_tag    Arr_bottom_side_tag;
+  typedef typename Base::Arr_top_side_tag       Arr_top_side_tag;
+  typedef typename Base::Arr_right_side_tag     Arr_right_side_tag;
   
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
