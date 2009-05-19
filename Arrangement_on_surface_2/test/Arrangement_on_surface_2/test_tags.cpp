@@ -34,21 +34,34 @@ struct Traits4 {
   typedef CGAL::Arr_closed_side_tag Arr_right_side_tag;
 };
 
+
+
+typedef boost::mpl::bool_< true > true_;
+typedef boost::mpl::bool_< false > false_;
+
+bool dispatch(true_) {
+  return true;
+}
+
+bool dispatch(false_) {
+  return false;
+}
+
+
 int main ()
 {
 
-  typedef boost::mpl::bool_< true > true_;
-  typedef boost::mpl::bool_< false > false_;
-
-  typedef CGAL::Arr_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag >::result result1;
 
+  assert(dispatch(result1()));
+
   assert(result1() == true);
   
-  typedef CGAL::Arr_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_open_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
@@ -56,7 +69,7 @@ int main ()
 
   assert(result2() == false);
 
-  typedef CGAL::Arr_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag,
     CGAL::Arr_oblivious_side_tag,
@@ -64,7 +77,7 @@ int main ()
 
   assert(result3() == false);
 
-  typedef CGAL::Arr_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag,
@@ -72,7 +85,7 @@ int main ()
 
   assert(result4() == false);
 
-  typedef CGAL::Arr_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
@@ -80,7 +93,7 @@ int main ()
 
   assert(result5() == false);
 
-  typedef CGAL::Arr_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_closed_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
@@ -88,7 +101,7 @@ int main ()
 
   assert(result6() == false);
 
-  typedef CGAL::Arr_all_sides_oblivious_tag< 
+  typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_contracted_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_identified_side_tag,
