@@ -6,6 +6,34 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/if.hpp>
 
+struct Traits1 {
+  typedef CGAL::Arr_open_side_tag Arr_left_side_tag;
+  typedef CGAL::Arr_open_side_tag Arr_bottom_side_tag;
+  typedef CGAL::Arr_open_side_tag Arr_top_side_tag;
+  typedef CGAL::Arr_open_side_tag Arr_right_side_tag;
+};
+
+struct Traits2 {
+  typedef CGAL::Arr_open_side_tag Arr_left_side_tag;
+  typedef CGAL::Arr_closed_side_tag Arr_bottom_side_tag;
+  typedef CGAL::Arr_open_side_tag Arr_top_side_tag;
+  typedef CGAL::Arr_open_side_tag Arr_right_side_tag;
+};
+
+struct Traits3 {
+  typedef CGAL::Arr_open_side_tag Arr_left_side_tag;
+  typedef CGAL::Arr_open_side_tag Arr_bottom_side_tag;
+  typedef CGAL::Arr_closed_side_tag Arr_top_side_tag;
+  typedef CGAL::Arr_open_side_tag Arr_right_side_tag;
+};
+
+struct Traits4 {
+  typedef CGAL::Arr_open_side_tag Arr_left_side_tag;
+  typedef CGAL::Arr_open_side_tag Arr_bottom_side_tag;
+  typedef CGAL::Arr_open_side_tag Arr_top_side_tag;
+  typedef CGAL::Arr_closed_side_tag Arr_right_side_tag;
+};
+
 int main ()
 {
 
@@ -167,6 +195,27 @@ int main ()
     CGAL::Arr_oblivious_side_tag >::result ident12;
 
   assert(ident12() == false);
+
+
+  typedef CGAL::Arr_same_tags_in_traits_classes< Traits1, Traits1 >::result
+    equal1;
+
+  assert(equal1() == true);
+
+  typedef CGAL::Arr_same_tags_in_traits_classes< Traits1, Traits2 >::result
+    equal2;
+
+  assert(equal2() == false);
+
+  typedef CGAL::Arr_same_tags_in_traits_classes< Traits1, Traits3 >::result
+    equal3;
+
+  assert(equal3() == false);
+
+  typedef CGAL::Arr_same_tags_in_traits_classes< Traits1, Traits4 >::result
+    equal4;
+
+  assert(equal4() == false);
 
   return EXIT_SUCCESS;
 
