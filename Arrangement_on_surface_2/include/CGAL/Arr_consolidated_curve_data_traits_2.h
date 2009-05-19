@@ -73,10 +73,14 @@ public:
   typedef typename Base_traits_2::Multiplicity        Multiplicity;
 
   typedef typename Base_traits_2::Has_left_category   Has_left_category;
-  typedef typename Base_traits_2::Boundary_category   Boundary_category;
   
   typedef typename Base_traits_2::Has_merge_category  Base_has_merge_category;
   typedef Tag_true                                    Has_merge_category;
+
+  typedef typename Base_traits_2::Arr_left_side_tag   Arr_left_side_tag;
+  typedef typename Base_traits_2::Arr_bottom_side_tag Arr_bottom_side_tag;
+  typedef typename Base_traits_2::Arr_top_side_tag    Arr_top_side_tag;
+  typedef typename Base_traits_2::Arr_right_side_tag  Arr_right_side_tag;
 
 };
 
