@@ -41,7 +41,8 @@
 
 #include "AABB_test_util.h"
 
-
+#include<boost/filesystem/operations.hpp>
+namespace bfs = boost::filesystem;
 
 enum Query_type {RAY_QUERY,
                  SEGMENT_QUERY,
@@ -115,20 +116,23 @@ void test_impl(Tree& tree, Polyhedron&)
   test_speed<Tree,K>(tree);
 }
 
-int main(int argc,
-         char * argv[])
+int main()
 {
-    std::cout << "AABB intersection tests" << std::endl;
-    if(argc < 2)
-    {
-        std::cerr << "Usage: " << argv[0] << " file1.off file2.off ..." << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    // loop over input files
-    int index = 1;
-    for(;index <= argc-1;index++)
-        test_kernels<TRIANGLE>(argv[index]);
+    // loop over all data/*.off files
+    bfs::path path("data");
+    bfs::directory_iterator dir_iter(path), dir_end;
+    for(;
+        dir_iter != dir_end;
+        dir_iter++)
+      {
+          bfs::path dir = *dir_iter;
+          std::string filename = "data/" + dir.filename();
+          if(filename.find(".off") != std::string::npos)
+          {
+            test_kernels<TRIANGLE>(filename.data());
+            std::cout << filename; // dir.leaf()
+          }
+      }
 
     return EXIT_SUCCESS;
 }
