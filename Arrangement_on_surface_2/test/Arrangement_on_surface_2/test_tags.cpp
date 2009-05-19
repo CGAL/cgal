@@ -35,18 +35,21 @@ struct Traits4 {
 };
 
 
-
-typedef boost::mpl::bool_< true > true_;
-typedef boost::mpl::bool_< false > false_;
-
-bool dispatch(true_) {
+bool dispatch(CGAL::Arr_all_sides_oblivious_tag) {
   return true;
 }
 
-bool dispatch(false_) {
+bool dispatch(CGAL::Arr_not_all_sides_oblivious_tag) {
   return false;
 }
 
+bool dispatch(CGAL::Arr_all_sides_non_open_tag) {
+  return true;
+}
+
+bool dispatch(CGAL::Arr_not_all_sides_non_open_tag) {
+  return false;
+}
 
 int main ()
 {
@@ -59,15 +62,13 @@ int main ()
 
   assert(dispatch(result1()));
 
-  assert(result1() == true);
-  
   typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_open_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag >::result result2;
 
-  assert(result2() == false);
+  assert(!dispatch(result2()));
 
   typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_oblivious_side_tag,
@@ -75,7 +76,7 @@ int main ()
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag >::result result3;
 
-  assert(result3() == false);
+  assert(!dispatch(result3()));
 
   typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_oblivious_side_tag,
@@ -83,15 +84,15 @@ int main ()
     CGAL::Arr_open_side_tag,
     CGAL::Arr_oblivious_side_tag >::result result4;
 
-  assert(result4() == false);
+  assert(!dispatch(result4()));
 
   typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag >::result result5;
-
-  assert(result5() == false);
+  
+  assert(!dispatch(result5()));
 
   typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_closed_side_tag,
@@ -99,7 +100,7 @@ int main ()
     CGAL::Arr_oblivious_side_tag,
     CGAL::Arr_open_side_tag >::result result6;
 
-  assert(result6() == false);
+  assert(!dispatch(result6()));
 
   typedef CGAL::Arr_are_all_sides_oblivious_tag< 
     CGAL::Arr_contracted_side_tag,
@@ -107,9 +108,66 @@ int main ()
     CGAL::Arr_identified_side_tag,
     CGAL::Arr_closed_side_tag >::result result7;
 
-  assert(result7() == false);
+  assert(!dispatch(result7()));
 
+  // all non-open
 
+  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_oblivious_side_tag >::result open1;
+
+  assert(dispatch(open1()));
+
+  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+    CGAL::Arr_open_side_tag,
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_oblivious_side_tag >::result open2;
+
+  assert(!dispatch(open2()));
+
+  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_open_side_tag,
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_oblivious_side_tag >::result open3;
+
+  assert(!dispatch(open3()));
+  
+  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_open_side_tag,
+    CGAL::Arr_oblivious_side_tag >::result open4;
+
+  assert(!dispatch(open4()));
+
+  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_open_side_tag >::result open5;
+
+  assert(!dispatch(open5()));
+
+  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+    CGAL::Arr_closed_side_tag,
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_oblivious_side_tag,
+    CGAL::Arr_open_side_tag >::result open6;
+
+  assert(!dispatch(open6()));
+  
+  typedef CGAL::Arr_are_all_sides_non_open_tag< 
+    CGAL::Arr_open_side_tag,
+    CGAL::Arr_open_side_tag,
+    CGAL::Arr_open_side_tag,
+    CGAL::Arr_open_side_tag >::result open7;
+
+  assert(!dispatch(open7()));
+  
   // opposite identified tagging
 
   typedef CGAL::Arr_sane_identified_tagging< 
