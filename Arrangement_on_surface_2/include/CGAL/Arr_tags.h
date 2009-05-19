@@ -1,4 +1,4 @@
-// Copyright (c) 2007 Tel-Aviv University (Israel).
+// Copyright (c) 2007, 2009 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -41,13 +41,22 @@ struct Arr_unbounded_boundary_tag : public virtual Arr_has_boundary_tag {};
 struct Arr_all_boundary_tag : public virtual Arr_bounded_boundary_tag,
                               public virtual Arr_unbounded_boundary_tag {};
 
-
 struct Arr_boundary_side_tag {};
 struct Arr_oblivious_side_tag : public virtual Arr_boundary_side_tag {};
 struct Arr_open_side_tag : public virtual Arr_boundary_side_tag {};
 struct Arr_closed_side_tag : public virtual Arr_boundary_side_tag {};
 struct Arr_contracted_side_tag : public virtual Arr_boundary_side_tag {};
 struct Arr_identified_side_tag : public virtual Arr_boundary_side_tag {};
+
+struct Arr_all_sides_oblivious_tag :
+  public boost::mpl::bool_< true > {};
+struct Arr_not_all_sides_oblivious_tag :
+  public boost::mpl::bool_< false > {};
+
+struct Arr_all_sides_non_open_tag : 
+  public virtual boost::mpl::bool_< true > {};
+struct Arr_not_all_sides_non_open_tag : 
+  public virtual boost::mpl::bool_< false > {};
 
 
 /*!\brief Struct to determine whether all side tags are "oblivious"
@@ -98,11 +107,75 @@ private:
 public:
   
   /*!\brief
-   * boolean tag that is bool<true> if all sides are oblivious, 
-   * otherwise bool<false>
+   * boolean tag that is Arr_all_sides_oblivious_tag if all sides are 
+   * oblivious, otherwise Arr_not_all_sides_oblivious_tag
    */
-  typedef boost::mpl::and_< Left_oblivious, Bottom_oblivious, 
-                            Top_oblivious, Right_oblivious > result;
+  typedef typename boost::mpl::if_< 
+                           boost::mpl::and_< Left_oblivious, Bottom_oblivious, 
+                                             Top_oblivious, Right_oblivious >,
+                           Arr_all_sides_oblivious_tag,
+                           Arr_not_all_sides_oblivious_tag >::type result;
+
+};
+
+/*!\brief Struct to determine whether all side tags are "non-open"
+ */
+template < class ArrLeftSideTag, class ArrBottomSideTag, 
+           class ArrTopSideTag, class ArrRightSideTag >
+struct Arr_are_all_sides_non_open_tag {
+
+public:
+
+  //! This instance's first template parameter
+  typedef ArrLeftSideTag   Arr_left_side_tag;
+  
+  //! This instance's second template parameter
+  typedef ArrBottomSideTag Arr_bottom_side_tag;
+  
+  //! This instance's third template parameter
+  typedef ArrTopSideTag    Arr_top_side_tag;
+  
+  //! This instance's fourth template parameter
+  typedef ArrRightSideTag  Arr_right_side_tag;
+  
+private:
+  
+  typedef boost::mpl::bool_< true > true_;
+  typedef boost::mpl::bool_< false > false_;
+  
+  typedef boost::mpl::if_< 
+       boost::is_same< Arr_left_side_tag, Arr_open_side_tag >,
+       true_, false_ > 
+  Left_open;
+
+  typedef boost::mpl::if_< 
+       boost::is_same< Arr_bottom_side_tag, Arr_open_side_tag >,
+       true_, false_ > 
+  Bottom_open;
+
+  typedef boost::mpl::if_< 
+       boost::is_same< Arr_top_side_tag, Arr_open_side_tag >,
+       true_, false_ > 
+  Top_open;
+
+  typedef boost::mpl::if_< 
+       boost::is_same< Arr_right_side_tag, Arr_open_side_tag >,
+       true_, false_ > 
+  Right_open;
+  
+public:
+  
+  /*!\brief
+   * boolean tag that is Arr_all_sides_non_open_tag if all sides are non-open, 
+   * otherwise Arr_not_all_sides_non_open_tag
+   */
+  typedef typename boost::mpl::if_<
+      boost::mpl::and_< boost::mpl::not_< Left_open >, 
+                        boost::mpl::not_< Bottom_open >, 
+                        boost::mpl::not_< Top_open >, 
+                        boost::mpl::not_< Right_open > >,
+      Arr_all_sides_non_open_tag,
+      Arr_not_all_sides_non_open_tag >::type result;
 };
 
 
@@ -169,9 +242,9 @@ private:
 public:
   
   /*!\brief
-   * boolean tag that is bool<true> if opposite sides are either 
+   * boolean tag that is bool_<true> if opposite sides are either 
    * both identified or both non-identified,
-   * otherwise bool<false>
+   * otherwise bool_<false>
    */
   typedef boost::mpl::and_< LR_ok, BT_ok > result;
 
@@ -230,8 +303,8 @@ private:
 public:
   
   /*!\brief
-   * boolean tag that is bool<true> if side tags in given traits classes 
-   * match, otherwise bool<false>
+   * boolean tag that is bool_<true> if side tags in given traits classes 
+   * match, otherwise bool_<false>
    */
   typedef boost::mpl::and_< Left_equal, Bottom_equal, 
                             Top_equal, Right_equal > result;
