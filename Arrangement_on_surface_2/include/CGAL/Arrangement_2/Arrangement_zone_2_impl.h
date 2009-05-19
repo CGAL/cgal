@@ -700,7 +700,7 @@ _remove_next_intersection (Halfedge_handle he)
 template<class Arrangement, class ZoneVisitor>
 bool Arrangement_zone_2<Arrangement,ZoneVisitor>::
 _is_to_left_impl(const Point_2& p, Halfedge_handle he,
-                 Arr_has_boundary_tag) const
+                 Not_all_sides_oblivious_tag) const
 {
   // Check the boundary conditions of the minimal end of the curve associated
   // with the given halfedge.
@@ -737,7 +737,7 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he,
 template<class Arrangement, class ZoneVisitor>
 bool Arrangement_zone_2<Arrangement,ZoneVisitor>::
 _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                  Arr_has_boundary_tag) const
+                  Not_all_sides_oblivious_tag) const
 {
   // Check the boundary conditions of the maximal end of the curve associated
   // with the given halfedge.

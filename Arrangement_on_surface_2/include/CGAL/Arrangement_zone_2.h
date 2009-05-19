@@ -71,9 +71,21 @@ public:
 
   typedef typename Geometry_traits_2::Point_2            Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename  Geometry_traits_2::Boundary_category Boundary_category;
-  
+
+  typedef typename Geometry_traits_2::Arr_left_side_tag   Arr_left_side_tag;
+  typedef typename Geometry_traits_2::Arr_bottom_side_tag Arr_bottom_side_tag;
+  typedef typename Geometry_traits_2::Arr_top_side_tag    Arr_top_side_tag;
+  typedef typename Geometry_traits_2::Arr_right_side_tag  Arr_right_side_tag;
+
 protected:
+
+  typedef typename Arr_are_all_sides_oblivious_tag< 
+                     Arr_left_side_tag, Arr_bottom_side_tag, 
+                     Arr_top_side_tag, Arr_right_side_tag >::result
+  Are_all_sides_oblivious_tag;
+  
+  typedef boost::mpl::bool_< true > All_sides_oblivious_tag;
+  typedef boost::mpl::bool_< false > Not_all_sides_oblivious_tag;
 
   typedef Arr_traits_adaptor_2<Geometry_traits_2>        Traits_adaptor_2;
 
@@ -325,11 +337,11 @@ private:
    */
   bool _is_to_left(const Point_2& p, Halfedge_handle he) const
   {
-    return (_is_to_left_impl(p, he, Boundary_category()));
+    return (_is_to_left_impl(p, he, Are_all_sides_oblivious_tag()));
   }
 
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
-                        Arr_no_boundary_tag) const
+                        All_sides_oblivious_tag) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
@@ -340,8 +352,8 @@ private:
   }
 
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
-                        Arr_has_boundary_tag) const;
-
+                        Not_all_sides_oblivious_tag) const;
+  
   /*!
    * Check if the given point lies completely to the right of the given egde.
    * \param p The point.
@@ -355,7 +367,7 @@ private:
   }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                         Arr_no_boundary_tag) const
+                         All_sides_oblivious_tag) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
@@ -366,7 +378,7 @@ private:
   }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                         Arr_has_boundary_tag) const;
+                         Not_all_sides_oblivious_tag) const;
 
   /*!
    * Compute the (lexicographically) leftmost intersection of the query

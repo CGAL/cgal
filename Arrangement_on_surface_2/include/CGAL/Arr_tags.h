@@ -54,7 +54,7 @@ struct Arr_identified_side_tag : public virtual Arr_boundary_side_tag {};
  */
 template < class ArrLeftSideTag, class ArrBottomSideTag, 
            class ArrTopSideTag, class ArrRightSideTag >
-struct Arr_all_sides_oblivious_tag {
+struct Arr_are_all_sides_oblivious_tag {
 
 public:
 

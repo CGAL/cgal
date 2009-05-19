@@ -77,14 +77,15 @@ public:
   typedef typename Geometry_traits_2::Arr_top_side_tag    Arr_top_side_tag;
   typedef typename Geometry_traits_2::Arr_right_side_tag  Arr_right_side_tag;
 
-  typedef typename Arr_all_sides_oblivious_tag< 
-                     Arr_left_side_tag, Arr_bottom_side_tag, 
-                     Arr_top_side_tag, Arr_right_side_tag >::Boolean_tag
-  All_sides_oblivious_tag;
-  
 protected:
-  typedef boost::mpl::bool_< true > All_sides_oblivous;
-  typedef boost::mpl::bool_< false > Not_all_sides_oblivous;
+
+  typedef typename Arr_are_all_sides_oblivious_tag< 
+                     Arr_left_side_tag, Arr_bottom_side_tag, 
+                     Arr_top_side_tag, Arr_right_side_tag >::result
+  Are_all_sides_oblivious_tag;
+  
+  typedef boost::mpl::bool_< true > All_sides_oblivious_tag;
+  typedef boost::mpl::bool_< false > Not_all_sides_oblivious_tag;
 
 public:
 
@@ -1690,20 +1691,22 @@ protected:
   Comparison_result _compare_vertices_xy (const DVertex *v1,
                                           const DVertex *v2) const
   {
-    return (_compare_vertices_xy_impl(v1, v2, All_sides_oblivious_tag()));
+    return (_compare_vertices_xy_impl(v1, v2, Are_all_sides_oblivious_tag()));
 
   }
 
-  Comparison_result _compare_vertices_xy_impl (const DVertex *v1,
-                                               const DVertex *v2,
-                                               All_sides_oblivious()) const
+  Comparison_result _compare_vertices_xy_impl (
+      const DVertex *v1,
+      const DVertex *v2,
+      All_sides_oblivious_tag()) const
   {
     return (geom_traits->compare_xy_2_object() (v1->point(), v2->point()));
   }
 
-  Comparison_result _compare_vertices_xy_impl (const DVertex *v1,
-                                               const DVertex *v2,
-                                               Not_all_sides_oblivious()) const;
+  Comparison_result _compare_vertices_xy_impl (
+      const DVertex *v1,
+      const DVertex *v2,
+      Not_all_sides_oblivious_tag()) const;
   
   /*!
    * Locate the leftmost vertex on the a given sequence defined by two
