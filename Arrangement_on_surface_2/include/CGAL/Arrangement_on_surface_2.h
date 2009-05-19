@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2007 Tel-Aviv University (Israel).
+// Copyright (c) 2005-2009 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -17,6 +17,7 @@
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
 //            Efi Fogel         <efif@post.tau.ac.il>
+//            Eric Berberich    <ericb@post.tau.ac.il>
 //            (based on old version by: Iddo Hanniel,
 //                                      Eyal Flato,
 //                                      Oren Nechushtan,
@@ -70,8 +71,23 @@ public:
 
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
-  typedef typename Geometry_traits_2::Boundary_category   Boundary_category;
+
+  typedef typename Geometry_traits_2::Arr_left_side_tag   Arr_left_side_tag;
+  typedef typename Geometry_traits_2::Arr_bottom_side_tag Arr_bottom_side_tag;
+  typedef typename Geometry_traits_2::Arr_top_side_tag    Arr_top_side_tag;
+  typedef typename Geometry_traits_2::Arr_right_side_tag  Arr_right_side_tag;
+
+  typedef typename Arr_all_sides_oblivious_tag< 
+                     Arr_left_side_tag, Arr_bottom_side_tag, 
+                     Arr_top_side_tag, Arr_right_side_tag >::Boolean_tag
+  All_sides_oblivious_tag;
   
+protected:
+  typedef boost::mpl::bool_< true > All_sides_oblivous;
+  typedef boost::mpl::bool_< false > Not_all_sides_oblivous;
+
+public:
+
   typedef typename Topology_traits::Dcel                  Dcel;
   typedef typename Dcel::Size                             Size;
 
@@ -1674,22 +1690,21 @@ protected:
   Comparison_result _compare_vertices_xy (const DVertex *v1,
                                           const DVertex *v2) const
   {
-    return (_compare_vertices_xy_impl
-            (v1, v2,
-             typename Geometry_traits_2::Boundary_category()));
+    return (_compare_vertices_xy_impl(v1, v2, All_sides_oblivious_tag()));
+
   }
 
   Comparison_result _compare_vertices_xy_impl (const DVertex *v1,
                                                const DVertex *v2,
-                                               Arr_no_boundary_tag) const
+                                               All_sides_oblivious()) const
   {
     return (geom_traits->compare_xy_2_object() (v1->point(), v2->point()));
   }
 
   Comparison_result _compare_vertices_xy_impl (const DVertex *v1,
                                                const DVertex *v2,
-                                               Arr_has_boundary_tag) const;
-
+                                               Not_all_sides_oblivious()) const;
+  
   /*!
    * Locate the leftmost vertex on the a given sequence defined by two
    * halfedges. This sequence is still an open loop, but it will soon be closed
