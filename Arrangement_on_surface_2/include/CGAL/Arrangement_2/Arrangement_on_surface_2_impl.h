@@ -3352,7 +3352,7 @@ template<class GeomTraits, class TopTraits>
 Comparison_result
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _compare_vertices_xy_impl (const DVertex * v1, const DVertex * v2,
-                           Not_all_sides_oblivious_tag) const
+                           Arr_not_all_sides_oblivious_tag) const
 {
   if (v1 == v2)
     return (EQUAL);

@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005, 2009  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -700,7 +700,7 @@ _remove_next_intersection (Halfedge_handle he)
 template<class Arrangement, class ZoneVisitor>
 bool Arrangement_zone_2<Arrangement,ZoneVisitor>::
 _is_to_left_impl(const Point_2& p, Halfedge_handle he,
-                 Not_all_sides_oblivious_tag) const
+                 Arr_not_all_sides_oblivious_tag) const
 {
   // Check the boundary conditions of the minimal end of the curve associated
   // with the given halfedge.
@@ -737,7 +737,7 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he,
 template<class Arrangement, class ZoneVisitor>
 bool Arrangement_zone_2<Arrangement,ZoneVisitor>::
 _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                  Not_all_sides_oblivious_tag) const
+                  Arr_not_all_sides_oblivious_tag) const
 {
   // Check the boundary conditions of the maximal end of the curve associated
   // with the given halfedge.
