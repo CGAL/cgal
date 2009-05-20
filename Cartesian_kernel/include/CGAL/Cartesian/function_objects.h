@@ -223,10 +223,10 @@ namespace CartesianKernelFunctors {
     {
       FT alpha, beta, gamma;
 
-      solve(t.vertex(1)-t.vertex(0),
-            t.vertex(2)-t.vertex(0),
-            t.vertex(3)-t.vertex(0),
-            p - t.vertex(0), alpha, beta, gamma);
+      Cartesian_internal::solve(t.vertex(1)-t.vertex(0),
+                                t.vertex(2)-t.vertex(0),
+                                t.vertex(3)-t.vertex(0),
+                                p - t.vertex(0), alpha, beta, gamma);
       if (   (alpha < 0) || (beta < 0) || (gamma < 0)
           || (alpha + beta + gamma > 1) )
           return ON_UNBOUNDED_SIDE;
@@ -3566,7 +3566,7 @@ namespace CartesianKernelFunctors {
                v2 = t.vertex(2)-o;
 
       FT alpha, beta, gamma;
-      solve(v0, v1, v2, p-o, alpha, beta, gamma);
+      Cartesian_internal::solve(v0, v1, v2, p-o, alpha, beta, gamma);
       return (alpha >= FT(0)) && (beta >= FT(0)) && (gamma >= FT(0))
           && ((alpha+beta+gamma == FT(1)));
     }

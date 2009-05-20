@@ -29,6 +29,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace Cartesian_internal {
+
 template <class R>
 void solve (const VectorC3<R> &v0,
             const VectorC3<R> &v1,
@@ -42,6 +44,8 @@ void solve (const VectorC3<R> &v0,
         d.x(),  d.y(),  d.z(),
         alpha, beta, gamma);
 }
+
+} // namespace Cartesian_internal
 
 CGAL_END_NAMESPACE
 

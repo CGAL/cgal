@@ -220,7 +220,7 @@ to_plane_basis(const typename PlaneC3<R>::Point_3 &p) const
 {
   FT alpha, beta, gamma;
   Construct_point_3 construct_point_3;
-  solve(base1(), base2(), orthogonal_vector(), p - point(),
+  Cartesian_internal::solve(base1(), base2(), orthogonal_vector(), p - point(),
 	alpha, beta, gamma);
 
   return construct_point_3(alpha, beta, gamma);
@@ -234,7 +234,7 @@ to_2d(const typename PlaneC3<R>::Point_3 &p) const
   FT alpha, beta, gamma;
   Construct_point_2 construct_point_2;
 
-  solve(base1(), base2(), orthogonal_vector(), p - point(),
+  Cartesian_internal::solve(base1(), base2(), orthogonal_vector(), p - point(),
 	alpha, beta, gamma);
 
   return construct_point_2(alpha, beta);
