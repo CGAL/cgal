@@ -99,8 +99,13 @@ EXCLUDE                = ./test \
                          ./demo \
                          ./examples
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       =
-EXCLUDE_SYMBOLS        = __pad*__
+EXCLUDE_PATTERNS       = */internal/* \
+                         */CGALi/*
+EXCLUDE_SYMBOLS        = CGAL::CGALi \
+                         CGAL::internal \
+                         CGAL::*::internal \
+                         CGAL::*::CGALi \
+                         __pad*__
 EXAMPLE_PATH           =
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
@@ -203,7 +208,8 @@ EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = CGAL_INCLUDE_PATH
 INCLUDE_FILE_PATTERNS  =
-PREDEFINED             = "CGAL_BEGIN_NAMESPACE=namespace CGAL {" \
+PREDEFINED             = "CGAL_DOCUMENTATION" \
+                         "CGAL_BEGIN_NAMESPACE=namespace CGAL {" \
                          "CGAL_END_NAMESPACE=}"
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES

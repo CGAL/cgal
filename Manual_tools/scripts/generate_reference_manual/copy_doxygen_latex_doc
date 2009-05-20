@@ -960,6 +960,7 @@ sub insert_manual_section
     }
     $section =~ s/^\s+//s;                  # Remove heading & trailing spaces
     $section =~ s/\s+$//s;                  # and extra carriage returns.
+trace "\$section=$section\n";
 
     # If $section is not empty, copy it to $cgal_buf.
     # If $cgal_buf doesn't already contain $title, add it.
@@ -973,7 +974,7 @@ sub insert_manual_section
         my $title_extra = ($title eq '\ccCreation') ? "\n$creation_variable" : "";
 
         # If %START-AUTO..%END-AUTO section exists, replace it
-        if ($cgal_buf =~ s/$warning*\s*%START-AUTO\(\Q$title\E\).*?%END-AUTO\(\Q$title\E\)/$section/sm)
+        if ($cgal_buf =~ s/($warning\n)?%START-AUTO\(\Q$title\E\).*?%END-AUTO\(\Q$title\E\)/$section/sm)
         {
             print_verbose "  Update section $title\n";
         }
@@ -981,38 +982,50 @@ sub insert_manual_section
         {
             my $success = 0;                # Successful insertion?
 
+            # If section's title exists, insert $section there.
+            #
             # Special case: \ccInclude section is a one-line macro
-            if ($title eq '\ccInclude')
-            {
-              # If \ccInclude{.*?} macro exists, *replace* it by %START-AUTO..%END-AUTO section
-              if ($cgal_buf =~ s/^(\s*)\Q$title\E\{.*?\}/$1$section/sm) {
-                  $success = 1;
-              }
+            if ($title eq '\ccInclude') {
+                # If \ccInclude{.*?} macro exists, *replace* it by %START-AUTO..%END-AUTO section
+                if ($cgal_buf =~ s/^(\s*)\Q$title\E\{.*?\}/$1$section/sm) {
+                    $success = 1;
+                }
+            } else { # if not \ccInclude
+                # If section's title exists, *append* %START-AUTO..%END-AUTO section after it.
+                if ($cgal_buf =~ s/^(\s*\Q$title\E.*?)(\s*$all_titles_pattern(\s|\b))/$1\n\n$section$2/sm) {
+                    $success = 1;
+                }
             }
-            else # if not \ccInclude
-            {
-              # If section's title exists, *append* %START-AUTO..%END-AUTO section after it.
-              if ($cgal_buf =~ s/^(\s*\Q$title\E.*?)(\s*$all_titles_pattern(\s|\b))/$1\n\n$section$2/sm) {
-                  $success = 1;
-              } else {
-                  # Else, insert title + %START-AUTO..%END-AUTO section before
-                  # the first section that appears after $title in @known_section_titles.
-                  my $after_title = 0;        # indicate if we passed $title in @known_section_titles
-                  foreach my $t (@known_section_titles) {
-                      if ($after_title) {
-                        if ($cgal_buf =~ s/(\s+)(\Q$t\E\b)/$1$title$title_extra\n\n$section$1$2/sm) {
-                              $success = 1;
-                              last;
-                          }
-                      }
-                      if ($t eq $title) { $after_title = 1; }
-                  }
 
-                  # Else, insert title + %START-AUTO..%END-AUTO section at the end of the buffer
-                  unless ($success) {
-                      $success = ($cgal_buf =~ s/(\s+)(\\end\{ccRef)/$1$title$title_extra\n\n$section$1$2/sm);
-                  }
-              }
+            # Else, insert title + %START-AUTO..%END-AUTO section before
+            # the first section that appears after $title in @known_section_titles.
+            if (not $success)
+            {
+                my $after_title = 0;        # indicate if we passed $title in @known_section_titles
+                foreach my $t (@known_section_titles)
+                {
+                    if ($after_title)
+                    {
+                        # Special case: \ccInclude section is a one-line macro
+                        if ($title eq '\ccInclude') {
+                            if ($cgal_buf =~ s/(\s+)(\Q$t\E\b)/$1$section$1$2/sm) {
+                                  $success = 1;
+                                  last;
+                              }
+                        } else { # if not \ccInclude
+                            if ($cgal_buf =~ s/(\s+)(\Q$t\E\b)/$1$title$title_extra\n\n$section$1$2/sm) {
+                                  $success = 1;
+                                  last;
+                            }
+                        }
+                    }
+                    if ($t eq $title) { $after_title = 1; }
+                }
+            }
+
+            # Else, insert title + %START-AUTO..%END-AUTO section at the end of the buffer
+            if (not $success) {
+                $success = ($cgal_buf =~ s/(\s+)(\\end\{ccRef)/$1$title$title_extra\n\n$section$1$2/sm);
             }
 
             # Notify user
@@ -1026,7 +1039,7 @@ sub insert_manual_section
         $section = "$warning\n%START-AUTO($title)\n%END-AUTO($title)";
 
         # If %START-AUTO..%END-AUTO section exists, empty it
-        if ($cgal_buf =~ s/$warning*\s*%START-AUTO\(\Q$title\E\).*?%END-AUTO\(\Q$title\E\)/$section/sm)
+        if ($cgal_buf =~ s/($warning\n)?%START-AUTO\(\Q$title\E\).*?%END-AUTO\(\Q$title\E\)/$section/sm)
         {
             # Notify user
             print "  WARNING: section $title is empty!\n" unless ($title eq '\ccCreation');
@@ -1071,7 +1084,7 @@ sub merge_manuals
         $part_to_document = remove_cc_ref_wizard_placeholders($part_to_document);
 
         # Security: empty all %START-AUTO..%END-AUTO sections
-        $part_to_document =~ s/($warning*\s*%START-AUTO\(.*?\)).*?(%END-AUTO\(.*?\))/$1\n$2/smg;
+        $part_to_document =~ s/($warning\n)?(%START-AUTO\(.*?\)).*?(%END-AUTO\(.*?\))/$1$2\n$3/smg;
 
         # Get list of sections present in either file
         my %actual_section_titles;
