@@ -370,26 +370,6 @@ public:
   ///! \name Topology-traits methods.
   //@{
 
-  /*! Obtain the boundary type for a given parameter space.
-   * \param ps the parameter space.
-   * \return the boundary type along ps.
-   * \pre ps must not be ARR_INTERIOR.
-   */
-  Arr_boundary_type boundary_type(const Arr_parameter_space ps) const
-  {
-    CGAL_precondition(ps != ARR_INTERIOR);
-    switch (ps) {
-     case ARR_LEFT_BOUNDARY:
-     case ARR_RIGHT_BOUNDARY: 
-     case ARR_BOTTOM_BOUNDARY:
-     case ARR_TOP_BOUNDARY: return ARR_OPEN;
-     default: CGAL_error();
-    }
-    // Cannot reach here!
-    return ARR_OBLIVIOUS;
-  }
-  
-  
   /*!
    * Initialize an empty DCEL structure.
    */
