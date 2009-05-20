@@ -288,6 +288,18 @@ int main ()
 
   assert(equal4() == false);
 
+
+
+
+
+  // Arr_left_right_implementation_dispatch
+
+  typedef CGAL::Arr_left_right_implementation_dispatch< 
+    CGAL::Arr_oblivious_side_tag, CGAL::Arr_oblivious_side_tag 
+  >::Parameter_space_in_x_2_curve_end_tag PSX_2_curve_end;
+
+  
+
   return EXIT_SUCCESS;
 
 }
