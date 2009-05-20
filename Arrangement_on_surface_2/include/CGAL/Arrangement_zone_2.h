@@ -84,9 +84,6 @@ protected:
                      Arr_top_side_tag, Arr_right_side_tag >::result
   Are_all_sides_oblivious_tag;
   
-  typedef boost::mpl::bool_< true > All_sides_oblivious_tag;
-  typedef boost::mpl::bool_< false > Not_all_sides_oblivious_tag;
-
   typedef Arr_traits_adaptor_2<Geometry_traits_2>        Traits_adaptor_2;
 
   typedef typename Arrangement_2::Vertex_const_handle    Vertex_const_handle;
@@ -341,7 +338,7 @@ private:
   }
 
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
-                        All_sides_oblivious_tag) const
+                        Arr_all_sides_oblivious_tag) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
@@ -352,7 +349,7 @@ private:
   }
 
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
-                        Not_all_sides_oblivious_tag) const;
+                        Arr_not_all_sides_oblivious_tag) const;
   
   /*!
    * Check if the given point lies completely to the right of the given egde.
@@ -367,7 +364,7 @@ private:
   }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                         All_sides_oblivious_tag) const
+                         Arr_all_sides_oblivious_tag) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
@@ -378,7 +375,7 @@ private:
   }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                         Not_all_sides_oblivious_tag) const;
+                         Arr_not_all_sides_oblivious_tag) const;
 
   /*!
    * Compute the (lexicographically) leftmost intersection of the query

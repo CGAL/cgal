@@ -84,9 +84,6 @@ protected:
                      Arr_top_side_tag, Arr_right_side_tag >::result
   Are_all_sides_oblivious_tag;
   
-  typedef boost::mpl::bool_< true > All_sides_oblivious_tag;
-  typedef boost::mpl::bool_< false > Not_all_sides_oblivious_tag;
-
 public:
 
   typedef typename Topology_traits::Dcel                  Dcel;
@@ -1698,7 +1695,7 @@ protected:
   Comparison_result _compare_vertices_xy_impl (
       const DVertex *v1,
       const DVertex *v2,
-      All_sides_oblivious_tag()) const
+      Arr_all_sides_oblivious_tag()) const
   {
     return (geom_traits->compare_xy_2_object() (v1->point(), v2->point()));
   }
@@ -1706,7 +1703,7 @@ protected:
   Comparison_result _compare_vertices_xy_impl (
       const DVertex *v1,
       const DVertex *v2,
-      Not_all_sides_oblivious_tag()) const;
+      Arr_not_all_sides_oblivious_tag()) const;
   
   /*!
    * Locate the leftmost vertex on the a given sequence defined by two

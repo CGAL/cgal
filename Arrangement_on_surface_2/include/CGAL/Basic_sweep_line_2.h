@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005, 2009  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -107,9 +107,6 @@ protected:
                      Arr_top_side_tag, Arr_right_side_tag >::result
   Are_all_sides_oblivious_tag;
   
-  typedef boost::mpl::bool_< true > All_sides_oblivious_tag;
-  typedef boost::mpl::bool_< false > Not_all_sides_oblivious_tag;
-
 public:
 
   typedef CGAL::Compare_events<Traits_adaptor_2, Event> Compare_events;
@@ -555,7 +552,7 @@ protected:
                                       const X_monotone_curve_2& cv,
                                       Arr_curve_end ind,
                                       bool is_new,
-                                      All_sides_oblivious_tag)
+                                      Arr_all_sides_oblivious_tag)
   {
     m_visitor->update_event (e, cv, ind, is_new);
   }
@@ -564,7 +561,7 @@ protected:
                                       const X_monotone_curve_2& /* cv */,
                                       Arr_curve_end /* ind */,
                                       bool /* is_new */,
-                                      Not_all_sides_oblivious_tag)
+                                      Arr_not_all_sides_oblivious_tag)
   {
     CGAL_error();
   }
