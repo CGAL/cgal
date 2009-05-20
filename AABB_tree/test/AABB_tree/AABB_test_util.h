@@ -227,7 +227,8 @@ void test_impl(Tree& tree, Polyhedron& p);
  * Generic test method. Build AABB_tree and call test_impl()
  */
 template <class K, Primitive_type Primitive>
-void test(const char *filename)
+void test(const char *filename,
+          const double duration)
 {
     typedef CGAL::Polyhedron_3<K> Polyhedron;
     typedef Primitive_generator<Primitive,K,Polyhedron> Pr_generator;
@@ -245,7 +246,7 @@ void test(const char *filename)
     tree.accelerate_distance_queries(polyhedron.points_begin(),polyhedron.points_end());
 
     // call all tests
-    test_impl<K,Tree,Polyhedron>(tree,polyhedron);
+    test_impl<K,Tree,Polyhedron>(tree,polyhedron,duration);
 }
 
 
@@ -253,7 +254,8 @@ void test(const char *filename)
  * Generic test_kernel method. call test<K> for various kernel K.
  */
 template<Primitive_type Primitive>
-void test_kernels(const char *filename)
+void test_kernels(const char *filename,
+                  const double duration)
 {
     std::cout << std::endl;
     std::cout << "Polyhedron " << filename << std::endl;
@@ -261,21 +263,21 @@ void test_kernels(const char *filename)
 
     std::cout << std::endl;
     std::cout << "Simple cartesian float kernel" << std::endl;
-    test<CGAL::Simple_cartesian<float>,Primitive>(filename);
+    test<CGAL::Simple_cartesian<float>,Primitive>(filename,duration);
 
     std::cout << std::endl;
     std::cout << "Cartesian float kernel" << std::endl;
-    test<CGAL::Cartesian<float>,Primitive>(filename);
+    test<CGAL::Cartesian<float>,Primitive>(filename,duration);
 
     std::cout << std::endl;
     std::cout << "Simple cartesian double kernel" << std::endl;
-    test<CGAL::Simple_cartesian<double>,Primitive>(filename);
+    test<CGAL::Simple_cartesian<double>,Primitive>(filename,duration);
 
     std::cout << std::endl;
     std::cout << "Cartesian double kernel" << std::endl;
-    test<CGAL::Cartesian<double>,Primitive>(filename);
+    test<CGAL::Cartesian<double>,Primitive>(filename,duration);
 
     std::cout << std::endl;
     std::cout << "Epic kernel" << std::endl;
-    test<CGAL::Exact_predicates_inexact_constructions_kernel,Primitive>(filename);
+    test<CGAL::Exact_predicates_inexact_constructions_kernel,Primitive>(filename,duration);
 }

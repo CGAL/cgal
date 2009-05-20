@@ -54,7 +54,9 @@ size_t check_outputs(const std::vector<Value>& a, const std::vector<Value>& b, V
 }
 
 template <class Tree, class K>
-void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
+void test_hint_strategies(Tree& tree,
+                          CGAL::Polyhedron_3<K>& polyhedron,
+                          const double duration)
 {
         typedef typename K::Point_3 Point;
         typedef typename Tree::Primitive::Id Id;
@@ -68,7 +70,6 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
         outputs2.reserve(NBQ);
         outputs3.reserve(NBQ);
 
-//        size_t common_min = NBQ;
         size_t counter;
 
         for(size_t i = 0; i < NBQ; ++i)
@@ -79,12 +80,12 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
         CGAL::Timer timer;
         timer.start();
         counter = 0;
-        while(timer.time() < 1. && counter < NBQ) {
+        while(timer.time() < duration && counter < NBQ) {
                 outputs1.push_back(tree.closest_point_and_primitive(queries[counter]).second);
                 ++counter;
         }
         timer.stop();
-        double speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): 1.);
+        double speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): duration);
         std::cout << "without hint:      " << speed << " queries/s" << std::endl;
         timer.reset();
 
@@ -92,12 +93,12 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
 
         timer.start();
         counter = 0;
-        while(timer.time() < 1. && counter < NBQ) {
+        while(timer.time() < duration && counter < NBQ) {
                 outputs2.push_back((hint = tree.closest_point_and_primitive(queries[counter], hint)).second);
                 ++counter;
         }
         timer.stop();
-        speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): 1.);
+        speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): duration);
         std::cout << "with spatial sort: " << speed << " queries/s" << std::endl;
         timer.reset();
 
@@ -105,12 +106,12 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
 
         timer.start();
         counter = 0;
-        while(timer.time() < 1. && counter < NBQ) {
+        while(timer.time() < duration && counter < NBQ) {
                 outputs3.push_back(tree.closest_point_and_primitive(queries[counter]).second);
                 ++counter;
         }
         timer.stop();
-        speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): 1.);
+        speed = static_cast<double>(counter)/(counter == NBQ? timer.time(): duration);
         std::cout << "with KD-tree:      " << speed << " queries/s" << std::endl << std::endl;
         std::cout << "Consistency:" << std::endl;
         if((counter = check_outputs(outputs1, outputs2, Id())) == 0)
@@ -127,17 +128,20 @@ void test_hint_strategies(Tree& tree, CGAL::Polyhedron_3<K>& polyhedron)
 }
 
 template<class K, class Tree, class Polyhedron>
-void test_impl(Tree& tree, Polyhedron& p)
+void test_impl(Tree& tree,
+               Polyhedron& p,
+               const double duration)
 {
-  test_hint_strategies<Tree,K>(tree, p);
+  test_hint_strategies<Tree,K>(tree, p, duration);
 }
 
 int main(void)
 {
-        std::cout << "AABB hint strategies tests" << std::endl;
-        test_kernels<TRIANGLE>("./data/cube.off");
-        test_kernels<TRIANGLE>("./data/coverrear.off");
-        test_kernels<TRIANGLE>("./data/nested_spheres.off");
-        test_kernels<TRIANGLE>("./data/finger.off");
-        return 0;
+    const double duration = 0.2;
+    std::cout << "AABB hint strategy tests" << std::endl;
+    test_kernels<TRIANGLE>("./data/cube.off",duration);
+    test_kernels<TRIANGLE>("./data/coverrear.off",duration);
+    test_kernels<TRIANGLE>("./data/nested_spheres.off",duration);
+    test_kernels<TRIANGLE>("./data/finger.off",duration);
+    return 0;
 }

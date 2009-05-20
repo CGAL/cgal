@@ -51,7 +51,8 @@ enum Query_type {RAY_QUERY,
 template <class Tree, class K>
 void test_speed_for_query(const Tree& tree,
                           const Query_type query_type,
-                          const char *query_name)
+                          const char *query_name,
+                          const double duration)
 {
     typedef typename K::FT FT;
     typedef typename K::Ray_3 Ray;
@@ -63,7 +64,7 @@ void test_speed_for_query(const Tree& tree,
     CGAL::Timer timer;
     unsigned int nb = 0;
     timer.start();
-    while(timer.time() < 1.0)
+    while(timer.time() < duration)
     {
         switch(query_type)
         {
@@ -101,23 +102,27 @@ void test_speed_for_query(const Tree& tree,
 }
 
 template <class Tree, class K>
-void test_speed(Tree& tree)
+void test_speed(Tree& tree,
+                const double duration)
 {
     std::cout << "Test for speed" << std::endl;
-    test_speed_for_query<Tree,K>(tree,RAY_QUERY,"ray");
-    test_speed_for_query<Tree,K>(tree,LINE_QUERY,"line");
-    test_speed_for_query<Tree,K>(tree,SEGMENT_QUERY,"segment");
+    test_speed_for_query<Tree,K>(tree,RAY_QUERY,"ray",duration);
+    test_speed_for_query<Tree,K>(tree,LINE_QUERY,"line",duration);
+    test_speed_for_query<Tree,K>(tree,SEGMENT_QUERY,"segment",duration);
 }
 
 template<class K, class Tree, class Polyhedron>
-void test_impl(Tree& tree, Polyhedron&)
+void test_impl(Tree& tree, Polyhedron&, const double duration)
 {
   test_all_intersection_query_types<Tree,K>(tree);
-  test_speed<Tree,K>(tree);
+  test_speed<Tree,K>(tree,duration);
 }
 
 int main()
 {
+    // duration of each test
+    const double duration = 0.2;
+
     // loop over all data/*.off files
     bfs::path path("data");
     bfs::directory_iterator dir_iter(path), dir_end;
@@ -129,7 +134,7 @@ int main()
           std::string filename = "data/" + dir.filename();
           if(filename.find(".off") != std::string::npos)
           {
-            test_kernels<TRIANGLE>(filename.data());
+            test_kernels<TRIANGLE>(filename.data(),duration);
             std::cout << filename; // dir.leaf()
           }
       }
