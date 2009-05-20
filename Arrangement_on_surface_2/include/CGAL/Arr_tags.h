@@ -310,6 +310,193 @@ public:
                             Top_equal, Right_equal > result;
 };
 
+
+struct Arr_use_implementation_tag {};
+struct Arr_use_default_tag : public virtual Arr_use_implementation_tag {};
+struct Arr_use_traits_tag  : public virtual Arr_use_implementation_tag {};
+
+
+namespace CGALi {
+
+namespace Parameter_space_in_x_2 {
+
+  // Curve-end
+
+  template < class ArrSideTag >
+  struct Curve_end {
+    typedef Arr_use_default_tag type;
+  };
+  
+  template <>
+  struct Curve_end< Arr_oblivious_side_tag > {
+    typedef Arr_use_default_tag type;
+  };
+  
+  template <>
+  struct Curve_end< Arr_open_side_tag > {
+    typedef Arr_use_traits_tag type;
+  };
+  
+  template <>
+  struct Curve_end< Arr_contracted_side_tag > {
+    typedef Arr_use_traits_tag type;
+  };
+  
+  template <>
+  struct Curve_end< Arr_closed_side_tag > {
+    typedef Arr_use_traits_tag type;
+  };
+  
+  template <>
+  struct Curve_end< Arr_identified_side_tag > {
+    typedef Arr_use_traits_tag type;
+  };
+
+  // Curve
+
+  template < class ArrSideTag >
+  struct Curve {
+    typedef Arr_use_default_tag type;
+  };
+  
+  template <>
+  struct Curve< Arr_oblivious_side_tag > {
+    typedef Arr_use_default_tag type;
+  };
+  
+  template <>
+  struct Curve< Arr_open_side_tag > {
+    typedef Arr_use_default_tag type;
+  };
+  
+  template <>
+  struct Curve< Arr_contracted_side_tag > {
+    typedef Arr_use_default_tag type;
+  };
+  
+  template <>
+  struct Curve< Arr_closed_side_tag > {
+    typedef Arr_use_traits_tag type;
+  };
+  
+  template <>
+  struct Curve< Arr_identified_side_tag > {
+    typedef Arr_use_traits_tag type;
+  };
+
+  // Point
+
+  template < class ArrSideTag >
+  struct Point {
+    typedef Arr_use_default_tag type;
+  };
+
+  template <>
+  struct Point< Arr_oblivious_side_tag > {
+    typedef Arr_use_default_tag type;
+  };
+  
+  template <>
+  struct Point< Arr_open_side_tag > {
+    typedef Arr_use_default_tag type;
+  };
+  
+  template <>
+  struct Point< Arr_contracted_side_tag > {
+    typedef Arr_use_traits_tag type;
+  };
+  
+  template <>
+  struct Point< Arr_closed_side_tag > {
+    typedef Arr_use_traits_tag type;
+  };
+  
+  template <>
+  struct Point< Arr_identified_side_tag > {
+    typedef Arr_use_traits_tag type;
+  };
+  
+
+} // namespace Parameter_space_in_x_2
+
+// TODO missing functors + signature 
+// TODO move to another file
+
+} // namespace CGALi
+
+template < class ArrLeftSideTag, class ArrRightSideTag >
+struct Arr_left_right_implementation_dispatch {
+
+public:
+  
+  //! This instance's first template parameter
+  typedef ArrLeftSideTag   Arr_left_side_tag;
+  
+  //! This instance's second template parameter
+  typedef ArrRightSideTag  Arr_right_side_tag;
+  
+private:
+
+  //! struct to combine results in "or"-fashion
+  template < class ArrLeftImplementationTag, class ArrRightImplementationTag >
+  struct Or_traits {
+    
+  public:
+    
+    //! This instance's first template parameter
+    typedef ArrLeftImplementationTag   Arr_left_implementation_tag;
+    
+    //! This instance's second template parameter
+    typedef ArrRightImplementationTag  Arr_right_implementation_tag;
+    
+  public:
+    
+    //! the result type (if one side asks for traits, then ask traits!
+    //! Or vice versa: If both ask for default, then default!)
+    typedef boost::mpl::if_<
+//              boost::mpl::or_< 
+//                boost::is_same< Arr_left_implementation_tag, 
+//                                Arr_use_traits_tag >,
+//                boost::is_same< Arr_right_implementation_tag, 
+//                                Arr_use_traits_tag >
+//              >,
+              boost::mpl::bool_<true>,
+              Arr_use_traits_tag,
+              Arr_use_default_tag >::type type;
+  };
+  
+public:
+  
+  //! tag type for Parameter_space_in_x_2 (curve-end signature)
+  typedef typename Or_traits<
+    typename 
+    CGALi::Parameter_space_in_x_2::Curve_end< Arr_left_side_tag >::type,
+    typename 
+    CGALi::Parameter_space_in_x_2::Curve_end< Arr_right_side_tag >::type 
+  >::type
+  Parameter_space_in_x_2_curve_end_tag;
+
+  //! tag type for Parameter_space_in_x_2 (curve signature)
+  typedef typename Or_traits<
+    typename 
+    CGALi::Parameter_space_in_x_2::Curve< Arr_left_side_tag >::type,
+    typename 
+    CGALi::Parameter_space_in_x_2::Curve< Arr_right_side_tag >::type 
+  >::type
+  Parameter_space_in_x_2_curve_tag;
+  
+  //! tag type for Parameter_space_in_x_2 (point signature)
+  typedef typename Or_traits<
+    typename
+    CGALi::Parameter_space_in_x_2::Point< Arr_left_side_tag >::type,
+    typename
+    CGALi::Parameter_space_in_x_2::Point< Arr_right_side_tag >::type >::type
+  Parameter_space_in_x_2_point_tag;
+  
+  // TODO missing functors + signatures
+
+};
+
 CGAL_END_NAMESPACE
 
 #endif
