@@ -35,6 +35,10 @@
 // towards -infinity, it's enough to take the opposite of some of the operand,
 // and the opposite of the result (see operator+, operator*,...).
 
+// TODO : 
+// - test whether stopping constant propagation only in functions taking
+//   double as arguments, improves performance.
+
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Uncertain.h>
 #include <iostream>
