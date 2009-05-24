@@ -1,1 +1,0 @@
-Representation, construction, and maintenance of planar arrangements
