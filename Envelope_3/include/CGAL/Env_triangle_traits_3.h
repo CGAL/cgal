@@ -639,7 +639,7 @@ public:
         }
         else
         {
-          const Point_2&  p = k.construct_point_2_object() (proj_seg, 0);
+          const Point_2&  p = k.construct_point_on_2_object() (proj_seg, 0);
           *o++ = make_object(p);
         }
       }
