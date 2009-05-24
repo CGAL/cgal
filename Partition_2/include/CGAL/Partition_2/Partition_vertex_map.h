@@ -38,16 +38,16 @@ public:
 
   typedef Traits_                                       Traits;
   typedef typename Traits::Polygon_2                    Polygon_2 ; 
-  typedef typename Traits::Polygon_2::Vertex_iterator   Vertex_iterator;
+  typedef typename Traits::Polygon_2::Vertex_const_iterator   Vertex_const_iterator;
   typedef typename Traits::Less_xy_2                    Less_xy_2;
 
-  Vertex_info ( Vertex_iterator const& vx_it, Polygon_2 const* poly_ptr )
+  Vertex_info ( Vertex_const_iterator const& vx_it, Polygon_2 const* poly_ptr )
    :
     m_vx_it(vx_it)
    ,m_poly_ptr(poly_ptr)
   {}
 
-  Vertex_iterator  vertex_it() const { return m_vx_it ; }
+  Vertex_const_iterator  vertex_it() const { return m_vx_it ; }
   Polygon_2 const* poly_ptr () const { return m_poly_ptr ; }
 
   friend bool operator == ( Vertex_info const& a, Vertex_info const& b )
@@ -64,7 +64,7 @@ public:
 
 private:
 
-  Vertex_iterator  m_vx_it   ;
+  Vertex_const_iterator  m_vx_it   ;
   Polygon_2 const* m_poly_ptr ;
 } ;
 
@@ -106,13 +106,13 @@ public:
    typedef CGAL::Vertex_info<Traits> Vertex_info ;
    typedef CGAL::Edge_info<Traits>   Edge_info;
 
-   typedef typename Vertex_info::Vertex_iterator Vertex_iterator ;
+   typedef typename Vertex_info::Vertex_const_iterator Vertex_const_iterator ;
 
    typedef typename Traits::Left_turn_2 Left_turn_2;
    typedef typename Traits::Less_xy_2   Less_xy_2;
    typedef typename Traits::Point_2     Point_2;
 
-   CW_indirect_edge_info_compare (Vertex_iterator v_info) : vertex_it(v_info),
+   CW_indirect_edge_info_compare (Vertex_const_iterator v_info) : vertex_it(v_info),
       left_turn(Traits().left_turn_2_object()),
       less_xy(Traits().less_xy_2_object())
    {}
@@ -134,7 +134,7 @@ public:
    }
 
 private:
-   Vertex_iterator vertex_it;  
+   Vertex_const_iterator vertex_it;  
    Left_turn_2     left_turn;
    Less_xy_2       less_xy;
 };
@@ -154,7 +154,7 @@ public:
   typedef typename Traits::Point_2                      Point_2;
   typedef typename Traits::Orientation_2                Orientation_pred;
   typedef typename Traits::Polygon_2                    Polygon_2 ; 
-  typedef typename Traits::Polygon_2::Vertex_iterator   Vertex_iterator;
+  typedef typename Traits::Polygon_2::Vertex_const_iterator   Vertex_const_iterator;
 
   typedef CGAL::Vertex_info<Traits> Vertex_info;
   typedef CGAL::Edge_info<Traits>   Edge_info;
@@ -221,7 +221,7 @@ public:
   }
 
   // PRE: polygons must be simple
-  bool edges_overlap(Vertex_iterator vertex_it) 
+  bool edges_overlap(Vertex_const_iterator vertex_it) 
   {
 
 #ifdef CGAL_PARTITION_CHECK_DEBUG
@@ -338,7 +338,7 @@ public:
    typedef typename Traits::Point_2   Point_2;
    typedef typename Traits::Polygon_2 Polygon_2 ;
 
-   typedef typename Polygon_2::Vertex_iterator Vertex_iterator;
+   typedef typename Polygon_2::Vertex_const_iterator Vertex_const_iterator;
 
    Partition_vertex_map() {}
 
@@ -457,9 +457,9 @@ private :
       Location_pair begin_v_loc_pair;
       Location_pair prev_v_loc_pair;
    
-      Vertex_iterator vtx_begin;
-      Vertex_iterator vtx_end;
-      Vertex_iterator v_it;
+      Vertex_const_iterator vtx_begin;
+      Vertex_const_iterator vtx_end;
+      Vertex_const_iterator v_it;
    
       int poly_num = 0;
       for (; poly_first != poly_last; poly_first++, poly_num++)
