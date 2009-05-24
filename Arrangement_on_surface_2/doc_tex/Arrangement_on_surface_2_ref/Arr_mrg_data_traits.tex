@@ -1,0 +1,162 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_mrg_data_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+\begin{ccRefClass}{Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}
+
+\ccDefinition
+%============
+
+The class \ccRefName\ is a model of the \ccc{ArrangementTraits_2} concept
+and serves as a decorator class that allows the extension of the curves
+defined by the base traits-class (the \ccc{Tr} parameter), which serves as a
+geometric traits-class (a model of the \ccc{ArrangementTraits_2} concept), with
+extraneous (non-geometric) data fields.
+
+The traits class inherits its point type from \ccc{Traits::Point_2},
+and defines an extended \ccc{Curve_2} and \ccc{X_monotone_curve_2} types,
+as detailed below.
+
+Each \ccc{Curve_2} object is associated with a single data field of type
+\ccc{CData}, and each \ccc{X_monotone_curve_2} object is associated with
+a single data field of type \ccc{XData}. When a curve is
+subdivided into $x$-monotone subcurves, its data field is converted using
+the conversion functor, which is specified by the \ccc{Cnv} template-parameter,
+and the resulting objects is copied to all \ccc{X_monotone_curve_2} objects
+induced by this curve. The conversion functor should provide an operator with
+the following prototype: \\
+\indent \ccc{XData operator() (const CData& d) const;} \\
+
+By default, the two data types are the same, so the conversion operator
+is trivial:
+\begin{tabbing}
+\ccc{CData} = \=\ccc{XData}\\
+\ccc{Cnv} = \>\ccc{_Default_convert_functor<CData,XData>}
+\end{tabbing}
+
+In case two (or more) $x$-monotone curves overlap, their data fields are
+merged to a single field, using the merge functor functor, which is
+specified by the \ccc{Mrg} template-parameter. This functor should provide
+an operator with the following prototype: \\
+\indent \ccc{XData operator() (const XData& d1, const XData& d2) const;} \\
+which returns a single data object that represents the merged data field
+of \ccc{d1} and \ccc{d2}. The $x$-monotone curve that represents the overlap
+is associated with the output of this functor.
+
+\ccInclude{CGAL/Arr_curve_data_traits_2.h}
+ 
+\ccIsModel
+    \ccc{ArrangementTraits_2}
+
+\ccTypes
+%-------
+
+\ccTypedef{typedef Tr Base_traits_2;}
+    {the base traits-class.}
+\ccGlue
+\ccTypedef{typedef typename Base_traits_2::Curve_2 Base_curve_2;}
+    {the base curve.}
+\ccGlue
+\ccTypedef{typedef typename Base_traits_2::X_monotone_curve_2 Base_x_monotone_curve_2;}
+    {the base $x$-monotone curve curve.}
+
+\ccTypedef{typedef Mrg Merge;}{the merge functor.}
+\ccGlue
+\ccTypedef{typedef Cnv Convert;}{the conversion functor.}
+
+\ccTypedef{typedef CData Curve_data;}
+    {the type of data associated with curves.}
+\ccGlue
+\ccTypedef{typedef XData X_monotone_curve_data;}
+    {the type of data associated with $x$-monotone curves.}
+
+\ccInheritsFrom
+  \ccc{Base_traits_2}
+
+\subsection*{Class Arr\_curve\_data\_traits\_2$<$Tr,XData,Mrg,CData,Cnv$>$::Curve\_2}
+%==================================================================
+
+The \ccc{Curve_2} class nested within the curve-data traits
+extends the \ccc{Base_traits_2::Curve_2} type with an extra data field of type
+\ccc{Data}.
+
+\begin{ccClass}{Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>::Curve_2}
+
+\ccInheritsFrom
+  \ccc{Base_curve_2}
+
+\ccCreation
+\ccCreationVariable{cv}
+%---------------------
+
+\ccConstructor{Curve_2 ();}
+    {default constructor.}
+
+\ccConstructor{Curve_2 (const Base_curve_2& base);}
+    {constructs curve from the given \ccc{base} curve with uninitialized
+     data field.}
+
+\ccConstructor{Curve_2 (const Base_curve_2& base, const Data& data);}
+    {constructs curve from the given \ccc{base} curve with an attached
+     \ccc{data} field.}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{const Curve_data& data () const;}
+  {returns the data field (a non-const version, which returns a reference
+   to the data object, is also available).}
+
+\ccMethod{void set_data (const Curve_data& data);}
+  {sets the data field.}
+
+\end{ccClass}
+
+\subsection*{Class Arr\_curve\_data\_traits\_2$<$Tr,XData,Mrg,CData,Cnv$>$::X\_monotone\_curve\_2}
+%=============================================================================
+
+The \ccc{X_monotone_curve_2} class nested within the
+curve-data traits extends the \ccc{Base_traits_2::X_monotone_curve_2} type
+with an extra data field.
+
+\begin{ccClass}{Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>::X_monotone_curve_2}
+
+\ccInheritsFrom
+  \ccc{Base_x_monotone_curve_2}
+
+\ccCreation
+\ccCreationVariable{xcv}
+%-----------------------
+
+\ccConstructor{X_monotone_curve_2 ();}
+    {default constructor.}
+
+\ccConstructor{X_monotone_curve_2 (const Base_x_monotone_curve_2& base);}
+    {constructs an $x$-monotone curve from the given \ccc{base} curve with
+     uninitialized data field.}
+
+\ccConstructor{X_monotone_curve_2 (const Base_x_monotone_curve_2& base, 
+                                   const X_monotone_curve_data& data);}
+    {constructs an $x$-monotone curve from the given \ccc{base} $x$-monotone
+     curve with an attached \ccc{data} field.}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{const X_monotone_curve_data& data () const;}
+  {returns the field (a non-const version, which returns a reference
+   to the data object, is also available).}
+
+\ccMethod{void set_data (const X_monotone_curve_data& data);}
+  {sets the data field.}
+
+\end{ccClass}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

@@ -1,0 +1,189 @@
+\section{Input/Output Streams\label{arr_sec:io}}
+%===============================
+
+In some cases, one would like to save an arrangement object
+constructed by some application, so that later on it can be
+restored. In other cases one would like to create nice drawings that
+represent arrangements constructed by some application. These
+drawings can be hard printed or displayed on a computer screen.
+
+\subsection{Input/Output Stream\label{arr_ssec:io_stream}}
+%--------------------------------------------
+Consider an arrangement that represents a very complicated geographical 
+map, and assume that there are various applications that need to answer 
+point-location queries on this map. Naturally, you can store the set of 
+curves that induces the arrangement, but this implies that you would need 
+to construct the arrangement from scratch each time you need to reuse it.
+A more efficient solution is to write the arrangement to a file in a format 
+that other applications can read.
+
+This package provides an {\em inserter} (the \ccc{<<} operator) and an 
+{\em extractor} (the \ccc{>>} operator) for the 
+\ccc{Arrangement_2<Traits,Dcel>} class that inserts and an arrangement
+object into an output stream and extracts an arrangement object from an
+input stream respectively. The arrangement is written using a simple
+predefined ASCII format that encodes the arrangement topology, as well
+as all geometric entities associated with vertices and edges.
+
+The ability to use the input/output operators, requires that the 
+\ccc{Point_2} type and the \ccc{X_monotone_curve_2} type defined by the 
+traits class both support the \ccc{<<} and \ccc{>>} operators. The 
+\ccc{Arr_conic_traits_2} class (see Section~\ref{arr_ssec:tr_conic}), the 
+\ccc{Arr_rational_arc_traits_2} class (see Section~\ref{arr_ssec:tr_ratfunc}),
+and the \ccc{Arr_linear_traits_2} class (see Section~\ref{arr_ssec:tr_segs})
+currently do not provide these operators for the geometric types they define. 
+Thus, only arrangements of line segments or of polylines can be written or 
+read.
+
+The following example constructs the arrangement depicted in 
+Figure~\ref{arr_fig:ex_5} and writes it to an output file. It also
+demonstrates how to re-read the arrangement from a file:
+
+\ccIncludeExampleCode{Arrangement_on_surface_2/io.cpp}
+
+\begin{ccAdvanced}
+\subsection{Arrangements with Auxiliary Data\label{arr_ssec:arr_io_aux_data}}
+%--------------------------------------------
+
+The inserter and extractor both ignore any auxiliary data stored with
+the arrangement features. Thus, they are ideal for arrangements
+instantiated using the \ccc{Arr_default_dcel} class.
+However, as explained in Section~\ref{arr_sec:ex_dcel}, one can easily
+extend the arrangement faces by using the \ccc{Arr_face_extended_dcel}
+template, or extend all \dcel\ records by using the \ccc{Arr_extended_dcel}
+template. In such cases, it might be crucial that the auxiliary data fields
+are written to the file and read from there.
+
+The arrangement package includes the free functions
+\ccc{write(arr, os, formatter)}, which writes the arrangement \ccc{arr}
+to an output stream \ccc{os}, and \ccc{read(arr, os, formatter)}, which
+reads the arrangement \ccc{arr} from an input stream \ccc{is}. Both
+operations are performed using a \ccc{formatter} object, which defines
+the I/O format. The package contains three formatter classes:
+\begin{itemize}
+\item \ccc{Arr_text_formatter<Arrangement>} defines a simple textual
+I/O format for the arrangement topology and geometry, disregarding any
+auxiliary data that may be associated with the arrangement features.
+This is the default formatter used by the arrangement inserter and the
+arrangement extractor, as defined above.
+%
+\item \ccc{Arr_face_extended_text_formatter<Arrangement>} operates on
+arrangements whose \dcel\ representation is based on the
+\ccc{Arr_face_extended_dcel<Traits,FaceData>} class (see
+Section~\ref{arr_ssec:ex_dcel_face}). It supports reading and writing
+the auxiliary data objects stored with the arrangement faces provided
+that the \ccc{FaceData} class supports an inserter and an extractor.
+%
+\item \ccc{Arr_extended_dcel_text_formatter<Arrangement>} operates on
+arrangements whose \dcel\ representation is based on the
+\ccc{Arr_extended_dcel<Traits,VertexData,HalfedgeData,FaceData>} class
+(see Section~\ref{arr_ssec:ex_dcel_all}). It supports reading and writing
+the auxiliary data objects stored with the arrangement vertices, edges
+and faces, provided that the \ccc{VertexData}, \ccc{HalfedgeData} and
+\ccc{FaceData} classed all have inserters and extractors.
+\end{itemize}
+
+The following example constructs the same arrangement as the
+example \ccc{dcel_extension} does
+(see Section~\ref{arr_ssec:ex_dcel_all}), depicted in
+Figure~\ref{arr_fig:ex_20}, and writes it to an output file. It also
+demonstrates how to re-read the arrangement from a file:
+
+\ccIncludeExampleCode{Arrangement_on_surface_2/dcel_extension_io.cpp}
+
+You may develop your own own formatter classes --- models of the
+\ccc{ArrangementInputFormatter} and \ccc{ArrangementOutputFormatter}
+concepts, as defined in the Reference Manual.
+Doing so, you can define other I/O formats, such as an XML-based
+format or a binary format.
+\end{ccAdvanced}
+
+\subsection{Arrangements with Curve History\label{arr_ssec:arr_io_hist}}
+%-------------------------------------------
+
+Section~\ref{arr_sec:arr_with_hist} introduces the
+\ccc{Arrangement_with_history_2<Traits,Dcel>} class, which saves the
+set of curves inducing an arrangement and maintains the relations between
+these curves and the edges they induce. Naturally, when reading or writing 
+an arrangement-with-history instance we would like this information to be
+saved to the output stream or restored from the input stream alongside
+with the basic arrangement structure.
+
+The arrangement package supplies an inserter and an extractor for the
+\ccc{Arrangement_with_history_2<Traits,Dcel>} class. The arrangement is
+represented using a simple predefined ASCII format. An object of the
+\ccc{Arrangement_with_history_2<Traits,Dcel>} type can be saved and 
+restored, as long as the \ccc{Curve_2} type defined by the traits 
+class --- as well as the \ccc{Point_2} type and the \ccc{X_monotone_curve_2} 
+types --- support the \ccc{<<} and\ccc{>>} operators.
+
+The following example constructs the same arrangement as example
+\ccc{curve_history} does
+(see Section~\ref{arr_ssec:arr_hist_ex}), depicted in 
+Figure~\ref{arr_fig:ex_24}, and writes it to an output file. It also
+demonstrates how to re-read the arrangement-with-history from a file:
+
+\ccIncludeExampleCode{Arrangement_on_surface_2/io_curve_history.cpp}
+
+\begin{ccAdvanced}
+The arrangement package also includes the free functions
+\ccc{write(arr, os, formatter)} and \ccc{read(arr, os, formatter)} that
+operate on a given arrangement-with-history instance \ccc{arr}.
+Both functions are parameterized by a \ccc{formatter} object, which define
+the I/O format. The package contains a template called,
+\ccc{Arr_with_hist_text_formatter<ArranagmentFormatter>}, which extends
+an arrangement formatter class (see Section~\ref{arr_ssec:arr_io_aux_data})
+and defines a simple textual input/output format.
+\end{ccAdvanced}
+
+\subsection{Output \qt{}-widget Stream}\label{arr_ssec:qt_stream}
+%--------------------------------------------
+You can display the drawings of arrangements in a graphical window
+powered by \qt\ interactively. All you need to do is follow the
+guidelines for handling \ccc{Qt_widget} objects, and apply the
+{\em inserter}, which inserts an arrangement into a \ccc{Qt_widget}
+stream to complete the drawing.
+
+The ability to use this output operator, requires that the
+\ccc{Point_2} and \ccc{X_monotone_curve_2} types defined by the
+traits class both support the \ccc{<<} operator that inserts the
+respective geometric object into a \ccc{Qt_widget} stream. The
+\ccc{Arr_rational_arc_traits_2} class (see
+Section~\ref{arr_ssec:tr_ratfunc}) and the \ccc{Arr_linear_traits_2}
+class (see Section~\ref{arr_ssec:tr_segs}) currently do not provide
+this operator for the geometric types they define. Thus, only
+arrangements of line segments, polylines, or conic ards can be written.
+The \ccc{<<} operator for polylines and conic arcs defined in
+\ccc{CGAL/IO/Qt_widget_Polyline_2.h} and
+\ccc{CGAL/IO/Qt_widget_Conic_arc_2.h}
+must be explicitly included, to insert polylines and conic arcs
+respectively into \ccc{Qt_widget} streams.
+
+%% \subsection{Output Postscript Stream\label{arr_ssec:ps_stream}}
+%% %--------------------------------------------
+%% You can create nice drawings of arrangements in Postscript format, which
+%% you can insert into your publications, using the utility class 
+%% \ccc{Arr_postscript_file_stream}. This class is derived from the 
+%% \ccc{Postscript_file_stream} utility class, which in turn is derived from
+%% the \leda\ class \ccc{ps_file}. Note that you must have \leda\ installed
+%% in order to use this feature. 
+%% This package provides an {\em inserter} (the \ccc{<<} operator) for
+%% the \ccc{Arrangement_2<Traits,Dcel>} class that inserts an arrangement
+%% object into a Postscript output stream.
+
+%% The \ccc{Arr_postscript_file_stream}
+%% class allows you to specify the color of points and curves separately
+%% in addition to the functionality of the based class. 
+
+%% The ability to use this output operator, requires that the
+%% \ccc{Point_2} and \ccc{X_monotone_curve_2} types defined by the
+%% traits class both support the \ccc{<<} operator that inserts the
+%% respective geometric object into a Postscript stream. The
+%% \ccc{Arr_conic_traits_2} class (see Section~\ref{arr_ssec:tr_conic}), the
+%% \ccc{Arr_rational_arc_traits_2} class (see Section~\ref{arr_ssec:tr_ratfunc}),
+%% and the \ccc{Arr_linear_traits_2} class (see Section~\ref{arr_ssec:tr_segs})
+%% currently do not provide this operator for the geometric types they define.
+%% Thus, only arrangements of line segments or of polylines can be written.
+%% The \ccc{<<} operator for polylines defined in
+%% \ccc{CGAL/IO/Polyline_postscript_file_sctream.h} must be explicitly
+%% included, to insert polylines into Postscript streams.

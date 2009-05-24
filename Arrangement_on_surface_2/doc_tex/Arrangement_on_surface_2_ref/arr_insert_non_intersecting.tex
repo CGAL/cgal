@@ -1,0 +1,43 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{insert_non_intersecting_curve}
+
+\ccDefinition
+
+The function \ccRefName{} inserts a given $x$-monotone curve into a given
+arrangement, where the interior of the given curve is disjoint from all
+existing arrangement vertices and edges. Under this assumption, it is
+possible to locate the endpoints of the given curve in the arrangement,
+and use one of the specialized insertion member-functions of the
+arrangement according to the results. The insertion operations creates a
+single new edge, that is, two twin halfedges, and the function returns a
+handle for the one directed lexicographically in increasing order (from
+left to right).
+
+A given point-location object is used for answering the two point-location
+queries on the given curve endpoints. By default, the function uses the
+``walk along line'' point-location strategy --- namely, an instance of the
+class \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel,
+                           typename PointLocation>
+            typename Arrangement_2<Traits,Dcel>::Halfedge_handle 
+            insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
+                         const typename Traits::X_monotone_curve_2& xc,
+                         const PointLocation& pl = walk_pl);}
+\ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
+\ccc{arr}.}
+
+\ccRequirements
+\begin{itemize}
+\item The instantiated \ccc{Traits} class must model the restricted
+  \ccc{ArrangementBasicTraits_2} concept, as no intersections are computed.
+\item The point-location object \ccc{pl} must model the
+  \ccc{ArrangementPointLocation_2} concept. 
+\end{itemize}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

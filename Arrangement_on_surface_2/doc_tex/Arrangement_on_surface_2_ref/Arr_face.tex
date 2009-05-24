@@ -1,0 +1,69 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_face.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}[Arrangement_2<Traits,Dcel>::]{Face}
+\ccRefLabel{arr_ref:face}
+
+\ccDefinition
+An object $e$ of the class \ccRefName\ represents an arrangement edge,
+namely a $2$-dimensional arrangement cell. Every arrangement contains
+exactly one \emph{unbounded} face, an a number of bounded face. Each
+bounded face has a boundary comprised of a halfedge chain winding in
+a counterclockwise orientation around it. A face may also contain holes,
+which are defined by clockwise-oriented halfedge chains, and isolated
+vertices.
+
+\ccInheritsFrom
+    \ccHtmlNoLinksFrom{\ccc{typename Dcel::Face}}
+
+\ccCreation
+\ccCreationVariable{f}
+%=====================
+
+\ccConstructor{Face();}
+   {default constructor.}    	    
+    
+\ccAccessFunctions
+%=================
+
+All non-const methods listed below also have \ccc{const} counterparts
+that return constant handles, iterators or circulators:
+
+\ccMethod{bool is_fictitious () const;}
+    {returns whether this is the fictitious face, which contain the entire
+     arrangement (and has not outer CCB).}
+
+\ccMethod{bool is_unbounded() const;} 
+    {returns whether the face is unbounded.}    
+
+\ccMethod{Ccb_halfedge_circulator outer_ccb();}
+    {returns a circulator that allows going over the outer boundary of
+     \ccVar{}. The edges along the CCB are traversed in a counterclockwise
+     direction.
+     \ccPrecond{\ccVar{} is not a fictitious face.}}
+    
+\ccMethod{Hole_iterator holes_begin();}
+    {returns an iterator for traversing all the holes (inner CCBs) of
+     \ccVar{}.}
+\ccGlue
+\ccMethod{Hole_iterator holes_end();}
+    {returns a past-the-end iterator for the holes of \ccVar{}.}
+
+\ccMethod{Isolated_vertex_iterator isolated_vertices_begin();}
+    {returns an iterator for traversing all the isolated vertices
+     contained in the interior of \ccVar{}.}
+\ccGlue
+\ccMethod{Isolated_vertex_iterator isolated_vertices_end();}
+    {returns a past-the-end iterator for the isolated vertices 
+     contained inside \ccVar{}.}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

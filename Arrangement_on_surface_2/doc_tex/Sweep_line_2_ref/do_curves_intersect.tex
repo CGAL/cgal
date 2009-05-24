@@ -1,0 +1,22 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{do_curves_intersect}
+
+\ccInclude{CGAL/Sweep_line_2_algorithms.h}
+
+\ccFunction{template <class InputIterator, class Traits>
+bool do_curves_intersect (InputIterator curves_begin,
+                          InputIterator curves_end,
+                          Traits traits = Default_traits());}
+{given a range of curves, check whether there is at least one pair of curves
+ that intersect in their interior. The function returns \ccc{true} if such
+ a pair is found, and \ccc{false} if all curves are pairwise disjoint in
+ their interior.The \ccc{Traits} type must be a model
+ of the \ccc{ArrangementTraits_2} concept, such that the value-type of
+ \ccc{InputIterator} is \ccc{Traits::Curve_2}.}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd
+
+

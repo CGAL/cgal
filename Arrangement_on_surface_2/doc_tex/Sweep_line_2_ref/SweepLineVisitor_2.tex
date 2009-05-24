@@ -1,0 +1,59 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{SweepLineVisitor_2}
+
+\ccDefinition
+% ===========
+
+This concept defines the set of methods that are needed to be implemented.
+
+
+
+\ccTypes
+% ======
+
+\ccNestedType{Traits_2}{the type of the associated traits class.}
+\ccNestedType{Sweep_line_2}{the type of the associated sweep-line class.}
+
+\ccTypedef{typedef typename Traits_2::Point_2 Point_2;}
+    {the point type.}
+\ccGlue
+\ccTypedef{typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2;}
+    {the $x$-monotone curve type.}
+
+\ccTypedef{typedef typename Sweep_line_2::Event Event;}{the event type.}
+\ccGlue
+\ccTypedef{typedef typename Sweep_line_2::Subcurve Subcurve;}{the subcurve type.}
+\ccGlue
+\ccTypedef{typedef typename Sweep_line_2::Status_line_iterator Status_line_iterator;}{the iterator type of the status line,
+whose value type is \ccc{Subcurve*}. }
+\ccGlue
+
+
+\ccHeading{Notifications from the sweep line}
+%=========================================================
+
+
+\ccMethod{void update_event (Event* e,
+                     Subcurve* sc1,
+                     Subcurve* sc2,
+                     bool is_new);}
+    { Update the event to be the intersection point of two subcurves \ccc{sc1} and \ccc{sc2}.\ccc{is_new} is \ccc{true} iff a new
+      event is created.}
+\ccGlue
+
+\ccMethod{void update_event (Event* e, Subcurve* sc);}
+    {Update the event to be on the interior of \ccc{sc}.}
+   
+   
+\ccMethodvoid found_overlap(Subcurve* sc1, Subcurve* sc2, Subcurve* sc);}
+    {Notify about an overlap subcurve that was found, where \ccc{sc1} and \ccc{sc2} are the originating subcurves
+     and \ccc{sc} is the new subcurve that stores the overlap.}
+  
+\ccHasModels
+%===========
+\ccc{CGAL::Sweep_line_empty_visitor<Traits>}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

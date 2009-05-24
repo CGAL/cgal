@@ -1,0 +1,19 @@
+\begin{picture}(0,0)%
+\includegraphics{Arrangement_on_surface_2/fig/ex_10.pstex}%
+\end{picture}%
+\setlength{\unitlength}{2072sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(6518,5618)(1917,-6920)
+\put(7263,-3723){\makebox(0,0)[lb]{\smash{{\SetFigFont{9}{10.8}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}${\mathcal S}_2$}%
+}}}}
+\put(3363,-4433){\makebox(0,0)[lb]{\smash{{\SetFigFont{8}{9.6}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,.56,.56}$s$}%
+}}}}
+\put(6283,-4043){\makebox(0,0)[lb]{\smash{{\SetFigFont{9}{10.8}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,1}${\mathcal S}_1$}%
+}}}}
+\end{picture}%

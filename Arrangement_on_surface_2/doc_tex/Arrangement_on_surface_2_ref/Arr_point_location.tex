@@ -1,0 +1,78 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ArrangementPointLocation_2.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementPointLocation_2}
+
+\ccDefinition
+%============
+
+A model of the \ccRefName\ concept can be attached to an \ccc{Arrangement_2}
+instance and answer point-location queries on this arrangement. Namely, given
+a \ccc{Arrangement_2::Point_2} object, representing a point in the plane,
+it returns the arrangement cell containing it. In the general case, the
+query point is contained inside an arrangement face, but in degenerate
+situations it may lie on an edge or coincide with an arrangement vertex.
+
+\ccTypes
+%=======
+
+\ccNestedType{Arrangement_2}{the associated arrangement type.}
+
+\ccNestedType{Point_2}{equivalent to \ccc{Arrangement_2::Point_2}.}
+
+\ccCreation
+\ccCreationVariable{pl}
+%======================
+
+\ccConstructor{ArrangementPointLocation_2();}{default constructor.}
+
+\ccConstructor{ArrangementPointLocation_2 (const Arrangement_2& arr);}
+  {constructs a point-location object \ccVar{} attached to the given
+   arrangement \ccc{arr}.}
+
+\ccQueryFunctions
+%================
+
+\ccMethod{Object locate (const Point_2& q) const;}
+  {locates the arrangement cell that contains the query point \ccc{q}
+   and returns a handle for this cell.
+   The function returns an \ccc{Object} instance that wraps either of the
+   following types:
+   \parbox[t]{\ccwComment}{
+   \begin{itemize}
+   \item \ccc{Arrangement_2::Face_const_handle}, in case \ccc{q} is
+         contained inside an arrangement face;
+   \item \ccc{Arrangement_2::Halfedge_const_handle}, in case \ccc{q} lies
+         on an arrangement edge;
+   \item \ccc{Arrangement_2::Vertex_const_handle}, in case \ccc{q} coincides
+         with an arrangement vertex.
+   \end{itemize}}
+   \ccPrecond{\ccVar{} is attached to a valid arrangement instance.}}
+
+\ccOperations
+%============
+
+\ccMethod{void attach (const Arrangement_2& arr);}
+  {attaches \ccVar{} to the given arrangement \ccc{arr}.}
+
+\ccMethod{void detach ();}
+  {detaches \ccVar{} from the arrangement it is currently attached to.}
+
+\ccHasModels
+%===========
+
+\ccc{Arr_naive_point_location<Arrangement>}\\
+\ccc{Arr_walk_along_a_line_point_location<Arrangement>} \\
+\ccc{Arr_trapezoid_ric_point_location<Arrangement>}\\
+\ccc{Arr_landmarks_point_location<Arrangement,Generator>}\\
+
+\end{ccRefConcept}
+
+\ccRefPageEnd
