@@ -38,9 +38,10 @@
 
 namespace CGAL {
 
-template <class Circulator1, class Circulator2>
+template <class Circulator1, class Circulator2, class Traits>
 bool 
-polygons_w_steiner_are_equal(Circulator1 orig_first, Circulator2 new_first)
+polygons_w_steiner_are_equal(Circulator1 orig_first, Circulator2 new_first,
+                             const Traits& traits)
 {
    typedef typename Circulator1::value_type                Point_2;
 
@@ -78,24 +79,14 @@ polygons_w_steiner_are_equal(Circulator1 orig_first, Circulator2 new_first)
       }
       else // points don't correspond
       {
-          typedef typename Kernel_traits<Point_2>::Kernel K;
-	  typename K::Collinear_2 collinear;
-	  typename K::Collinear_are_ordered_along_line_2  collinear_are_ordered_along_line;
-         if (!collinear(prev_pt, *new_circ, *orig_circ))
+         if (traits.orientation_2_object()(prev_pt, *new_circ, *orig_circ) !=
+             COLLINEAR)
          {
 #ifdef CGAL_PARTITION_CHECK_DEBUG
            std::cout << *new_circ << " is not collinear with " << prev_pt 
                      << " and " << *orig_circ << std::endl;
 #endif
-           return false;
-         }
-         if (!collinear_are_ordered_along_line(prev_pt, *new_circ, *orig_circ))
-         {
-#ifdef CGAL_PARTITION_CHECK_DEBUG
-           std::cout << *new_circ << " doesn't belong betweene " << prev_pt 
-                     << " and " << *orig_circ << std::endl;
-#endif
-           return false;
+            return false;
          }
          prev_pt = *new_circ;
          new_circ++;
@@ -144,7 +135,7 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
 {
    if (poly_first == poly_last)  return (point_first == point_last);
 
-   typedef typename Traits::Polygon_2::Vertex_iterator   
+   typedef typename Traits::Polygon_2::Vertex_const_iterator   
                                                        Poly_vtx_iterator;
    typedef typename Traits::Point_2                    Point_2;
    typedef Partition_vertex_map<Traits>                P_Vertex_map;
@@ -207,7 +198,8 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
    if (orig_poly.size() == union_polygon.size())
      return polygons_are_equal(orig_poly_circ, union_poly_circ);
    else
-     return polygons_w_steiner_are_equal(orig_poly_circ, union_poly_circ);
+     return polygons_w_steiner_are_equal(orig_poly_circ, union_poly_circ,
+                                         traits);
 }
 
 template<class InputIterator, class FowardIterator>
