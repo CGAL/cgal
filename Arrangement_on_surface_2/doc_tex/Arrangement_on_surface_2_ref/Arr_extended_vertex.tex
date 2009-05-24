@@ -1,0 +1,60 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_extended_vertex.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_extended_vertex<VertexBase,VData>}
+
+\ccThree{VData &}{v.set_data(const VData & data)~}{}
+\ccThreeToTwo
+
+\ccDefinition
+%============
+  The \ccRefName\ class-template extends the vertex
+  topological-features of the \dcel. It is parameterized by a
+  vertex base-type \ccc{VertexBase} and a data type \ccc{VData} used to extend
+  the vertex base-type.
+
+\ccInclude{CGAL/Arr_extended_dcel.h}
+
+\ccIsModel
+%============
+  \ccc{ArrangementDcelVertex}
+
+\ccInheritsFrom
+%============
+  \ccc{VertexBase}
+
+\ccCreation
+\ccCreationVariable{v}
+%==========
+  \ccMethod{void assign (const Self & other);}
+  {assigns \ccVar{} with the contents of the \ccc{other} vertex.}
+
+\ccAccessFunctions
+%=================
+
+\def\ccLongParamLayout{\ccTrue}
+  \ccMethod{const VData & data () const;}
+  {obtains the auxiliary data (a non-const version, returning a reference
+   to a mutable data object is also available).}
+\def\ccLongParamLayout{\ccFalse}
+
+\ccModifiers
+%============
+  \ccMethod{void set_data (const VData & data);}
+  {sets the auxiliary data.}
+
+\ccSeeAlso
+%============
+  \ccc{Arr_dcel_base<V,H,F>}\lcTex{
+  (\ccRefPage{CGAL::Arr_dcel_base<V,H,F>})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

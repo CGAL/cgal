@@ -1,0 +1,58 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_postscript_file_stream}
+
+\ccDefinition
+%============
+
+\ccRefName\ enables exporting \ccc{Arrangement_2} objects to a stream in
+Postscript format. An object of type \ccRefName\ enables you to create nice
+drawings of arrangements in Postscript format, which you can insert into 
+your publications. \ccRefName\ is derived from \ccc{Postscript_file_stream},
+which in turn is derived from the \leda\ class \ccc{ps_file}. 
+\ccRefName\ allows you to specify the color of points and curves separately
+in addition to the functionality of the based class.
+
+\ccInclude{CGAL/IO/Arr_postscript_file_stream.h}
+
+\ccInheritsFrom\ccc{postscript_file_stream}
+
+\ccCreation
+\ccCreationVariable{psstream}
+%=====================
+
+\ccConstructor{Arr_postscript_file_stream(const char* filename = "CGAL_arr.ps");}
+  {creates a postscript file stream. The name of the output file is 
+   \ccHtmlNoLinksFrom{\ccc{filename}}, which is
+   \ccHtmlNoLinksFrom{\ccc{CGAL_arr.ps}} by default.}
+
+\ccConstructor{Arr_postscript_file_stream(float w, float h, const char* filename  = "CGAL_arr.ps");}
+  {creates a postscript file stream that draws the output to a box of physical 
+   size 
+   \ccHtmlNoLinksFrom{\ccc{width}} $\times$ \ccHtmlNoLinksFrom{\ccc{height}}
+   cm. The name of the output file is filename, which is
+   \ccHtmlNoLinksFrom{\ccc{CGAL_arr.ps}} by default.}
+
+\ccAccessFunctions
+%=================
+\ccMethod{Color point_color () const;}
+    {obtains the color of points.}
+
+\ccMethod{Color curve_color () const;}
+    {obtains the color of curves.}
+
+\ccModifiers
+%===========
+
+\ccMethod{void set_point_color (Color color);}
+    {sets the color of points.}
+
+\ccMethod{void set_curve_color (Color color);}
+    {sets the color of curves.}
+
+\ccSeeAlso
+  \ccc{write}\lcTex{(\ccRefPage{CGAL::write})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

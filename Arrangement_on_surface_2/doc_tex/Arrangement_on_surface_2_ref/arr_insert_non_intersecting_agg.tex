@@ -1,0 +1,28 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{insert_non_intersecting_curves}
+
+\ccDefinition
+
+The function \ccRefName{} inserts a set of $x$-monotone curves in a given
+range into a given arrangement. The insertion is performed in an aggregated
+manner, using the sweep-line algorithm. The input curves should be pairwise
+disjoint in their interior and pairwise interrior-disjoint from all existing
+arrangement vertices and edges. 
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel, InputIterator>
+void insert_non_intersecting_curves(Arrangement_2<Traits,Dcel>& arr,
+                                    InputIterator first, InputIterator last);}
+
+\ccRequirements
+\begin{itemize}
+\item The instantiated \ccc{Traits} class must model the
+  \ccc{ArrangementBasicTraits_2} concept, as no intersections are computed.
+\item \ccc{InputIterator::value_type} must be \ccc{Traits::X_monotone_curve_2}
+\end{itemize}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

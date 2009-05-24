@@ -1,0 +1,38 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_non_caching_segment_basic_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_non_caching_segment_basic_traits_2<Kernel>}
+    
+\ccDefinition 
+
+The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
+concept that allow the construction and maintenance of arrangements of
+sets of pairwise interior-disjoint line segments. It is templated with a
+\cgal-Kernel model, and it is derived from it. This traits class is a
+thin layer above the parameterized kernel. It inherits the \ccc{Point_2}
+from the kernel and its \ccc{X_monotone_curve_2} type is defined as
+\ccc{Kernel::Segment_2}. Most traits-class functor are inherited from the
+kernel functor, and the traits class only supplies the necessary functors
+that are not provided by the kernel. The kernel is parameterized with a
+number type, which should support the arithmetic operations $+$, $-$ and
+$\times$ in an exact manner in order to avoid robustness problems.
+Using \ccc{Cartesian<MP_Float>} or \ccc{Cartesian<Gmpz>} are possible
+instantiations for the kernel. Using other (inexact) number types
+(for example, instatiating the template with
+\ccStyle{Simple_cartesian<double>}) is also possible, at the user's own
+risk.
+    
+\ccInclude{CGAL/Arr_non_caching_segment_basic_traits_2.h}
+ 
+\ccIsModel
+    \ccc{ArrangementLandmarkTraits_2}
+
+\end{ccRefClass}
+\ccRefPageEnd

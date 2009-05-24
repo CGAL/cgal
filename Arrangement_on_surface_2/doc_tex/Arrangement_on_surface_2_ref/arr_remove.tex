@@ -1,0 +1,37 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{remove_edge}
+
+\ccDefinition
+
+The function \ccRefName{} removes an edge given by one of the twin halfedges
+that forms it, from a given arrangement. Once the edge is removed, if the
+vertices associated with its endpoints become isolated, they are removed as
+well. The call \ccc{remove_edge(arr, e)} is equivalent to the call
+\ccc{arr.remove_edge (e, true, true)}. However, this free function requires
+that \ccc{Traits} be a model of the refined concept
+\ccc{ArrangementXMonotoneTraits_2}, which requires merge operations
+on $x$-monotone curves. If one of the end-vertices of the given edge
+becomes redundant after the edge is removed (see \ccc{remove_vertex()}
+for the definition of a redundant vertex), it is removed, and its
+incident edges are merged.
+If the edge-removal operation causes two faces to merge, the merged face
+is returned. Otherwise, the face to which the edge was incident before the
+removal is returned.
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel>
+        typename Arrangement_2<Traits,Dcel>::Face_handle
+        remove_edge (Arrangement_2<Traits,Dcel>& arr,
+                     typename Arrangement_2<Traits,Dcel>::Halfedge_handle e);}
+
+\ccRequirements
+\begin{itemize}
+\item The instantiated traits class must model the concept
+  \ccc{ArrangementXMonotoneTraits_2}. 
+\end{itemize}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

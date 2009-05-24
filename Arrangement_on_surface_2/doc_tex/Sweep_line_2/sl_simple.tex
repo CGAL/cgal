@@ -1,0 +1,38 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{epsfig}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{pst-all}
+
+\begin{document}
+  \begin{center}
+    \pspicture[](0.0,0.0)(10.0,10.0)
+    \psset{unit=1cm}
+    \rput{0}(.0,.0){
+      \psaxes[linewidth=0.5pt]{->}(1,1)(0,0)(10,10)
+      \rput{0}(1.0,1.0){
+	\psline[linewidth=1pt](1,5)(8,5)
+	\uput[90]{0}(2,5){\Large $c_1$}
+	\psline[linewidth=1pt](1,1)(8,8)
+	\uput[135]{0}(2,2){\Large $c_2$}
+	\psline[linewidth=1pt](3,1)(3,8)
+	\uput[0]{0}(3,2){\Large $c_3$}
+	\psline[linewidth=1pt](8,8)(8,5)
+	\uput[0]{0}(8,7){\Large $c_4$}
+	\pscircle*[linecolor=blue](1,1){3pt}
+	\pscircle*[linecolor=blue](8,8){3pt}
+	\pscircle*[linecolor=blue](3,1){3pt}
+	\pscircle*[linecolor=blue](3,8){3pt}
+	\pscircle*[linecolor=blue](1,5){3pt}
+	\pscircle*[linecolor=blue](8,5){3pt}
+	\pscircle*[linecolor=red](3,3){3pt}
+	\pscircle*[linecolor=red](3,5){3pt}
+	\pscircle*[linecolor=red](5,5){3pt}
+      }
+      \psframe[linewidth=0.5pt,framearc=.1](-1,-1)(11,11)
+    }
+    \endpspicture
+  \end{center}
+\end{document}

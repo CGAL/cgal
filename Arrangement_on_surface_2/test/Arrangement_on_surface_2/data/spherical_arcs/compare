@@ -1,0 +1,43 @@
+compare_x   0 0 EQUAL
+compare_x   0 1 EQUAL
+compare_x   0 2 EQUAL
+compare_x   0 3 EQUAL
+compare_x   4 5 SMALLER
+compare_x   5 4 LARGER
+compare_x   4 6 LARGER
+compare_x   6 4 SMALLER
+compare_x   4 0 MIN_END LARGER
+compare_x   4 0 MAX_END LARGER
+compare_x   4 1 MAX_END LARGER
+compare_x   5 1 MAX_END LARGER
+compare_x   7 1 MAX_END EQUAL
+compare_x   6 2 MAX_END SMALLER
+compare_x   8 2 MAX_END EQUAL
+compare_x   0 MIN_END 0 MAX_END EQUAL
+compare_x   1 MAX_END 2 MAX_END SMALLER
+compare_x   3 MIN_END 4 MAX_END SMALLER
+compare_x   4 MAX_END 3 MIN_END LARGER
+compare_x   3 MIN_END 0 MIN_END LARGER
+compare_x   3 MIN_END 0 MAX_END LARGER
+compare_x   3 MIN_END 1 MAX_END SMALLER
+compare_x   3 MIN_END 2 MAX_END SMALLER
+compare_x   4 MAX_END 0 MIN_END LARGER
+compare_x   4 MAX_END 0 MAX_END LARGER
+compare_x   4 MAX_END 1 MAX_END LARGER
+compare_x   4 MAX_END 2 MAX_END LARGER
+
+compare_xy  5 6 LARGER
+compare_xy  7 8 SMALLER
+compare_xy  6 7 LARGER
+compare_xy  5 8 LARGER
+compare_xy  6 8 SMALLER
+compare_xy  5 7 LARGER
+compare_xy  6 5 SMALLER
+compare_xy  8 7 LARGER
+compare_xy  7 6 SMALLER
+compare_xy  8 5 SMALLER
+compare_xy  8 6 LARGER
+compare_xy  7 5 SMALLER
+compare_xy  0 1 EQUAL
+compare_xy  4 9 SMALLER
+compare_xy  9 4 LARGER

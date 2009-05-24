@@ -1,0 +1,52 @@
+compare_y_at_x 0 0 EQUAL
+compare_y_at_x 1 0 LARGER
+compare_y_at_x 2 0 LARGER
+compare_y_at_x 3 0 LARGER
+compare_y_at_x 4 0 LARGER
+compare_y_at_x 5 0 LARGER
+compare_y_at_x 6 0 LARGER
+#
+compare_y_at_x 7  1 SMALLER
+compare_y_at_x 8  1 EQUAL
+compare_y_at_x 9  1 LARGER
+compare_y_at_x 10 1 SMALLER
+compare_y_at_x 12 1 LARGER
+compare_y_at_x 13 1 SMALLER
+compare_y_at_x 15 1 LARGER
+compare_y_at_x 16 1 SMALLER
+compare_y_at_x 18 1 LARGER
+compare_y_at_x 19 1 SMALLER
+compare_y_at_x 20 1 EQUAL
+compare_y_at_x 21 1 LARGER
+#
+compare_y_at_x_right 0 2 0  LARGER
+compare_y_at_x_right 2 0 0  SMALLER
+compare_y_at_x_left  0 8 6  SMALLER
+compare_y_at_x_left  8 0 6  LARGER
+#
+compare_y_at_x_right 0 0 0  EQUAL
+compare_y_at_x_right 0 0 3  EQUAL
+compare_y_at_x_left  0 0 3  EQUAL
+compare_y_at_x_left  0 0 6  EQUAL
+##################################
+#compare_y_at_x 17 1 EQUAL
+#compare_y_at_x 14 1 EQUAL
+#compare_y_at_x 11 1 EQUAL
+###################################
+##compare_y_at_x_right 0 3 1  LARGER
+##compare_y_at_x_right 3 0 1  SMALLER
+##compare_y_at_x_left  0 3 1  SMALLER
+##compare_y_at_x_left  3 0 1  LARGER
+##compare_y_at_x_left  0 4 2  SMALLER
+##compare_y_at_x_left  4 0 2  LARGER
+##compare_y_at_x_right 0 5 3  LARGER
+##compare_y_at_x_right 5 0 3  SMALLER
+##compare_y_at_x_left  0 5 3  SMALLER
+##compare_y_at_x_left  5 0 3  LARGER
+##compare_y_at_x_right 0 6 4  LARGER
+##compare_y_at_x_right 6 0 4  SMALLER
+##compare_y_at_x_right 0 7 5  LARGER
+##compare_y_at_x_right 7 0 5  SMALLER
+##compare_y_at_x_left  0 7 5  SMALLER
+##compare_y_at_x_left  7 0 5  LARGER
+####################################

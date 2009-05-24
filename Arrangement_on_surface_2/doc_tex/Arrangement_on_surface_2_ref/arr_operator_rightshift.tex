@@ -1,0 +1,37 @@
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator>>}
+\label{ref_arr_operator_rightshift}
+
+\ccDefinition
+
+%%%%
+
+Extracts an arrangement from a given input stream using the
+input format defined by the \ccc{Arr_text_formatter} class --- that is,
+only the basic geometric and topological features of the arrangement are
+read and no auxiliary data is attached to the \dcel\ features.
+
+\ccInclude{CGAL/IO/Arr_iostream.h}
+
+\ccGlobalFunction{template<class Traits, class Dcel>
+            std::istream& operator>> (std::istream& is,
+                                      Arrangement_2<Traits,Dcel>& arr);}
+%%%%
+
+Extracts an arrangement-with-history from a given
+input stream using the default input format.
+
+\ccInclude{CGAL/IO/Arr_with_history_iostream.h}
+
+\ccGlobalFunction{template<class Traits, class Dcel>
+            std::istream& operator>> (std::istream& is,
+                                Arrangement_with_history_2<Traits,Dcel>& arr);}
+
+\ccSeeAlso
+  \ccc{read}\lcTex{(\ccRefPage{CGAL::read})}\\
+  \ccc{write}\lcTex{(\ccRefPage{CGAL::write})}\\
+  \lcTex{\ccc{operator>>} page~\pageref{ref_arr_operator_leftshift}}
+  \lcRawHtml{<I><A HREF="Function_operator.html">operator&lt;&lt;</A></I>}
+
+\end{ccRefFunction}
+\ccRefPageEnd

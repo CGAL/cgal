@@ -1,0 +1,41 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_with_hist_text_formatter.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_with_history_text_formatter<ArrFormatter>}
+
+\ccDefinition
+%============
+
+\ccRefName\ defines the format of an arrangement in an input or output stream
+(typically a file stream), thus enabling reading and writing an
+arrangement-with-history instance using a simple text format.
+
+The \ccc{ArrFormatter} parameter servers as a base class for
+\ccRefName\ and must be a model of the \ccc{ArrangementInputFormatter}
+and the \ccc{ArrangementOutputFormatter} concepts. It is used to read or write
+the base arrangement, while the derived class is reponsible for reading and
+writing the set of curves inducing the arrangement and maintaining the
+relations between these curves and the edges they induce.
+
+\ccInclude{CGAL/IO/Arr_with_history_text_formatter.h}
+
+\ccIsModel
+    \ccc{ArrangementWithHistoryInputFormatter} \\
+    \ccc{ArrangementWithHistoryOutputFormatter}
+
+\ccSeeAlso
+    \ccc{read}\lcTex{
+     (\ccRefPage{CGAL::read})} \\
+    \ccc{write}\lcTex{
+     (\ccRefPage{CGAL::write})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd
