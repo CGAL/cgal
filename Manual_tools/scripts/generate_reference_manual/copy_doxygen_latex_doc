@@ -301,7 +301,31 @@ sub latex_mangle
             #
 
             # Wrap C++ types, including template params, by \ccc{}.
-            $line =~ s/((\w*(_|::)\w*(<.*?>)?)+)/\\ccc{$1\}/g;
+            $line =~ s/((\w*(_|::)\w*(<.*?>)?)+)/\\ccc\{$1\}/g;
+
+            # Add carriage returns around \ccc{} for the line by line substitution below.
+            $line =~ s/(\\ccc\{.*?\})/\n$1\n/g;
+        }
+        $buf = $buf . $line . "\n";             # concat lines back to $buf
+    }
+
+    # \ccInclude, \ccHeading, \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
+    # first curly braces pair and \ccc expressions must contain plain C++ code.
+    # For the other lines, we wrap concepts name by \ccc{}.
+    @lines = split(/\n/, $buf);
+    $buf = "";
+    foreach $line (@lines) {
+        # if first curly braces pair of a cgal_manual macro
+        if ($line =~ /\\(ccInclude|ccHeading|ccSubHeading|ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/
+         || $line =~ /\\ccc/)
+        {
+            # nothing to do
+        }
+        else
+        {
+            #
+            # Try to be smart
+            #
 
             # Wrap concepts name by \ccc{}.
             # TODO: replace hard coded list of concepts by regex like [A-Z][a-z]+[A-Z]\w*
@@ -986,6 +1010,13 @@ sub insert_manual_section
     # If $cgal_buf doesn't already contain the %START-AUTO($title)..%END-AUTO($title) section, add it.
     if ($section ne "")
     {
+        # cgal_manual requires \ccTagFullDeclarations to document properly
+        # getters with 2 const/non const variants
+        # => add \ccTagFullDeclarations at the beginning of \ccOperations section
+        if ($title eq '\ccOperations') {
+          $section = "\\ccTagFullDeclarations\n\n" . $section;
+        }
+
         # Add $warning\n%START-AUTO($title)..%END-AUTO($title) around $section
         $section = "$warning\n%START-AUTO($title)\n\n" . $section . "\n\n%END-AUTO($title)";
 
