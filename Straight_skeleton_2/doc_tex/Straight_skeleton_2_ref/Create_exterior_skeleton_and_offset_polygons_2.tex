@@ -38,7 +38,7 @@ create_exterior_skeleton_and_offset_polygons_2
   ) ;
 }
 {returns a container with all the outer offset polygons at distance $offset$ of the 2D polygon $poly$.
-A temporary straight skeleton is constructed in the \ccc{limited exterior} of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions \ccc{create_exterior_straight_skeleton_2} and \ccc{create_polygon_offsets_2} instead. The exterior skeleton is limited by an outer rectangular frame placed at a margin sufficiently large to allow the offset polygons to be constructed.}
+A temporary straight skeleton is constructed in the \ccc{limited exterior} of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions \ccc{create_exterior_straight_skeleton_2} and \ccc{create_offset_polygons_2} instead. The exterior skeleton is limited by an outer rectangular frame placed at a margin sufficiently large to allow the offset polygons to be constructed.}
 
 \ccInclude{CGAL/create_offset_polygons_from_polygon_with_holes_2.h}
 

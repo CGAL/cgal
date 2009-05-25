@@ -41,7 +41,7 @@ create_interior_skeleton_and_offset_polygons_2 ( FT             offset
                                                ) ;
 }
 {returns a container with all the inner offset polygons at distance $offset$ of the 2D polygon with holes whose outer boundary is \ccc{outer_boundary} and its holes are given by \ccc{[holes_begin,holes_end]}.
-A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions \ccc{create_interior_straight_skeleton_2} and \ccc{create_polygon_offsets_2} instead.}
+A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions \ccc{create_interior_straight_skeleton_2} and \ccc{create_offset_polygons_2} instead.}
 
 \ccFunction
 {template<class FT, class Polygon, class OffsettingK, class SkeletonK>
@@ -55,7 +55,7 @@ create_interior_skeleton_and_offset_polygons_2 ( FT             offset
                                                ) ;
 }
 {returns a container with all the inner offset polygons at distance $offset$ of the 2D polygon \ccc{poly}.
-A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions \ccc{create_interior_straight_skeleton_2} and \ccc{create_polygon_offsets_2} instead.}
+A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions \ccc{create_interior_straight_skeleton_2} and \ccc{create_offset_polygons_2} instead.}
 
 
 
@@ -74,7 +74,7 @@ create_interior_skeleton_and_offset_polygons_2 ( FT offset
                                     ) ;
 }
 {returns a container with all the inner offset polygons at distance $offset$ of the 2D polygon with holes $poly_with_holes$.
-A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions \ccc{create_interior_straight_skeleton_2} and \ccc{create_polygon_offsets_2} instead.}
+A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions \ccc{create_interior_straight_skeleton_2} and \ccc{create_offset_polygons_2} instead.}
 
 \ccFunction
 {template<class FT, class OffsettingK, class SkeletonK>
