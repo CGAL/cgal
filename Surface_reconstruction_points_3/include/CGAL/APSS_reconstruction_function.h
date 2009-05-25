@@ -54,7 +54,7 @@ CGAL_BEGIN_NAMESPACE
 /// these balls. Outside this union of balls, the surface is not defined. Therefore, if the balls
 /// do not overlap enough, then some holes might appear. If no radius is provided, then they are
 /// automatically computed from a basic estimate of the local density based on the 16 nearest
-/// neighbors. In the future, this information might be used as well to adjust the width 
+/// neighbors. In the future, this information might be used as well to adjust the width
 /// of the low pass filter.
 ///
 /// Note that APSS reconstruction may create small "ghost" connected components
@@ -63,7 +63,7 @@ CGAL_BEGIN_NAMESPACE
 /// after make_surface_mesh().
 ///
 /// @heading Is Model for the Concepts:
-/// Model of the 'ImplicitFunction' concept.
+/// Model of the ImplicitFunction concept.
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
@@ -584,7 +584,7 @@ private:
         Point proj0 = add(center,mul( radius,dir));
         Point proj1 = add(center,mul(-radius,dir));
         FT flip = u4<0. ? -1. : 1.;
-        
+
         typename Geom_traits::Compute_squared_distance_3 sqd;
         if (sqd(reference_point,proj1) < 0.9*sqd(reference_point,proj0))
         {
@@ -592,7 +592,7 @@ private:
           inside = -1;
         }
 
-        return length(sub(p,proj0)) * flip * inside;        
+        return length(sub(p,proj0)) * flip * inside;
       }
 
       if (state==PLANE)
