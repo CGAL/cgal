@@ -333,7 +333,7 @@ protected:
     return flag;
   }
 
-protected:
+public:
   bool is_virtual(Vertex_handle v) {
     if (is_1_cover()) return false;
     return (virtual_vertices.find(v) != virtual_vertices.end());

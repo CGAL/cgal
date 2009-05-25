@@ -78,7 +78,7 @@ void Scene::draw() {
 void Scene::load_points(const QString& fileName) {
   p3dt.clear();
   std::vector<Point> points;
-  std::ifstream ifs(fileName.toAscii() );
+  std::ifstream ifs(fileName.toAscii().data() );
   std::copy(std::istream_iterator<Point>(ifs), 
   std::istream_iterator<Point>(),
   std::back_inserter(points));
