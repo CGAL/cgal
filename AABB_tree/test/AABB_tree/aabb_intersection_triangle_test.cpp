@@ -135,7 +135,7 @@ int main()
           if(filename.find(".off") != std::string::npos)
           {
             test_kernels<TRIANGLE>(filename.data(),duration);
-            std::cout << filename; // dir.leaf()
+            std::cout << filename; 
           }
       }
 

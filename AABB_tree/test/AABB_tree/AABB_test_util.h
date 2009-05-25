@@ -147,7 +147,8 @@ void test_all_distance_query_types(Tree& tree)
 
 
 template <class Tree, class K>
-void test_distance_speed(Tree& tree)
+void test_distance_speed(Tree& tree,
+                         const double duration)
 {
     typedef typename K::FT FT;
     typedef typename K::Ray_3 Ray;
@@ -157,7 +158,7 @@ void test_distance_speed(Tree& tree)
     CGAL::Timer timer;
     timer.start();
     unsigned int nb = 0;
-    while(timer.time() < 1.0)
+    while(timer.time() < duration)
     {
             // picks a random point in the tree bbox
             Point query = random_point_in<K>(tree.bbox());
@@ -220,7 +221,7 @@ struct Primitive_generator<TRIANGLE, K, Polyhedron>
  * Declaration only, implementation should be given in .cpp file
  */
 template<class K, class Tree, class Polyhedron>
-void test_impl(Tree& tree, Polyhedron& p);
+void test_impl(Tree& tree, Polyhedron& p, const double duration);
 
 
 /**

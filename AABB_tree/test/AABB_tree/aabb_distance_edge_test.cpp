@@ -41,18 +41,19 @@
 
 
 template<class K, class Tree, class Polyhedron>
-void test_impl(Tree& tree, Polyhedron&)
+void test_impl(Tree& tree, Polyhedron&, const double duration)
 {
-  test_distance_speed<Tree,K>(tree);
+  test_distance_speed<Tree,K>(tree,duration);
   test_all_distance_query_types<Tree,K>(tree);
 }
 
 int main(void)
 {
   std::cout << "AABB distance tests" << std::endl;
-  test_kernels<SEGMENT>("./data/cube.off");
-  test_kernels<SEGMENT>("./data/coverrear.off");
-  test_kernels<SEGMENT>("./data/nested_spheres.off");
-  test_kernels<SEGMENT>("./data/finger.off");
+  const double duration = 0.2;
+  test_kernels<SEGMENT>("./data/cube.off",duration);
+  test_kernels<SEGMENT>("./data/coverrear.off",duration);
+  test_kernels<SEGMENT>("./data/nested_spheres.off",duration);
+  test_kernels<SEGMENT>("./data/finger.off",duration);
   return 0;
 }
