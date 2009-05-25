@@ -209,7 +209,7 @@ public:
   /// It computes the piecewise linear scalar function operator() by:
   /// - applying Delaunay refinement.
   /// - solving for operator() at each vertex of the triangulation with a sparse linear solver.
-  /// - shifting and orienting operator() such that 'operator()=0' at all input points and 'operator()<0' inside the inferred surface.
+  /// - shifting and orienting operator() such that operator()=0 at all input points and operator()<0 inside the inferred surface.
   ///
   /// Returns false if the linear solver fails.
   bool compute_implicit_function()
