@@ -359,6 +359,8 @@ Contour vertices have time zero.
 
 \section{API}
 
+\subsection{Create a Straight Skeleton}
+
 The straight skeleton data structure is defined by the \ccc{StraightSkeleton_2} concept and modeled in the \ccc{Straight_skeleton_2<Traits,Items,Alloc>} class.
 
 The simplest way to construct a straight skeleton is via the free functions \ccc{create_interior_straight_skeleton_2} and \ccc{create_exterior_straight_skeleton_2}, as shown in the following example:
@@ -367,13 +369,19 @@ The simplest way to construct a straight skeleton is via the free functions \ccc
 
 The input to these functions is the polygon, which can be given as an iterator pair or directly as a \ccc{Polygon_2} object. In the case of the exterior skeleton, a maximum offset must be specified as well (see the ref manual for details on this max offset parameter).
 
+\subsection{Create a Straight Skeleton from a Polygon With Holes}
+
 If \ccc{Polygon_with_holes_2} is used, you can pass an instance of it directly to the function creating the interior skeleton, as shown below. Notice that a different header must be included in this case. 
 
 \ccIncludeExampleCode{Straight_skeleton_2/Create_straight_skeleton_from_polygon_with_holes_2.cpp}
 
+\subsection{Create Offset Polygons from a Straight Skeleton}
+
 If you already have a straight skeleton instance, the simpler way to generate offset polygons is to call \ccc{create_offset_polygons_2} as shown in the next example, passing the desired offset and the straight skeleton. You can reuse the same skeleton to generate offsets at a different distance, which is recommended because producing the straight skeleton is much slower then generating offset polygons.
 
 \ccIncludeExampleCode{Straight_skeleton_2/Create_offset_polygons_2.cpp}
+
+\subsection{Create Offset Polygons from a Polygon (With or Without Holes)}
 
 If you need offset polygons at just one single distance, you can hide away the construction of the straight skeleton by calling directly the functions \ccc{create_interior_skeleton_and_offset_polygons_2} and \ccc{create_exterior_skeleton_and_offset_polygons_2} as shown in the following examples:
 
