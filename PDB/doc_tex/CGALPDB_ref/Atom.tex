@@ -54,20 +54,12 @@ A class repesenting an atom.
 
 \ccEnum{enum Type { INVALID = 0, C, N, H, O, S, P, FE, PT };}
 {
-The type (element) of an atom. The currently supported types are C,N,H,O,S, INVALID.
+The type (element) of an atom. The currently supported types are C, N, H, O, S, INVALID.
+}
+\ccGlue
 \ccCommentHeading{Values}
 \begin{description}
-\item[INVALID
-]\item[C
-]\item[N
-]\item[H
-]\item[O
-]\item[S
-]\item[P
-]\item[FE
-]\item[PT
-]\end{description}
-}
+\item \ccc{INVALID}: \item \ccc{C}: \item \ccc{N}: \item \ccc{H}: \item \ccc{O}: \item \ccc{S}: \item \ccc{P}: \item \ccc{FE}: \item \ccc{PT}: \end{description}
 \ccGlue
 
 %END-AUTO(\ccConstants)
@@ -93,7 +85,7 @@ Construct and invalid atom.
 
 \ccMethod{const Point& point() const;}
 {
-Cartesian coordinates (x,y,z) for the atom.
+Cartesian coordinates (x, y, z) for the atom.
 }
 \ccGlue
 \ccMethod{void set_point(const Point& pt);}
