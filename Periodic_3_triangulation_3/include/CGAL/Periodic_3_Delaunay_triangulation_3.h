@@ -252,11 +252,17 @@ public:
   }
   //@}
 
-public:
-  /** @name Queries */ //@{
-  Bounded_side side_of_sphere1(const Cell_handle& c, const Point& p,
+private:
+  /** @name Query helpers */ //@{
+  Bounded_side _side_of_sphere(const Cell_handle& c, const Point& p,
       const Offset & offset = Offset(), bool perturb = false) const;
 
+  Offset get_min_dist_offset(const Point & p, const Offset & o,
+      const Vertex_handle vh) const;
+  //@}
+
+public:
+  /** @name Queries */ //@{
   Bounded_side side_of_sphere(const Cell_handle& c, const Point& p,
       const Offset & offset = Offset(), bool perturb = false) const{
     Bounded_side bs = ON_UNBOUNDED_SIDE;
@@ -264,16 +270,12 @@ public:
     // TODO: optimize which copies to check depending on the offsets in
     // the cell.
     while (bs == ON_UNBOUNDED_SIDE && i<8) {
-      bs= side_of_sphere1(c,p,combine_offsets(offset,int_to_off(i)),perturb);
+      bs= _side_of_sphere(c,p,combine_offsets(offset,int_to_off(i)),perturb);
       i++;
     }
     return bs;
   }
 
-private:
-  Offset get_min_dist_offset(const Point & p, const Offset & o,
-      const Vertex_handle vh) const;
-public:
   Vertex_handle nearest_vertex(const Point& p,
       Cell_handle c = Cell_handle()) const;
   Vertex_handle nearest_vertex_in_cell(const Cell_handle& c,
@@ -656,28 +658,8 @@ Periodic_3_Delaunay_triangulation_3<Gt,Tds>::vertices_in_conflict(
 
 template < class Gt, class Tds >
 Bounded_side Periodic_3_Delaunay_triangulation_3<Gt,Tds>::
-side_of_sphere1(const Cell_handle &c, const Point &q,
+_side_of_sphere(const Cell_handle &c, const Point &q,
     const Offset &offset, bool perturb ) const {
-//TODO: check what this code was supposed to do.
-#if 0
-  Point *pts[4]; 
-  if (t->number_of_sheets() == make_array(1,1,1)) {
-    int off;
-    for (int i=0; i<4; i++) {
-      off = c->offset(i);
-      pts[i] = &(c->vertex(i)->point(off));
-      if (!(c->vertex(i)->get_flag(off))) {
-        //TODO: this addition is not exact!
-        c->vertex(i)->set_point(c->vertex(i)->point()+off, off);
-        pts[i] = &(c->vertex(i)->point(off));
-      }
-    }
-
-    return (Bounded_side) Side_of_oriented_sphere_with_perturbation_3()(
-          *pts[0], *pts[1], *pts[2], *pts[3], pt,
-          Offset(), Offset(), Offset(), Offset(), offset, perturb);
-  }
-#endif
 
   Point p0 = c->vertex(0)->point(),
         p1 = c->vertex(1)->point(),
@@ -840,7 +822,7 @@ is_valid(Cell_handle ch, bool verbose, int level) const {
     for (int i=-1; i<=1; i++)
       for (int j=-1; j<=1; j++)
 	for (int k=-1; k<=1; k++) {
-	  if (side_of_sphere1(ch, vit->point(), Offset(i,j,k))
+	  if (_side_of_sphere(ch, vit->point(), Offset(i,j,k))
 	      != ON_UNBOUNDED_SIDE) {
 	    error = true;
 	    if (verbose) {
@@ -874,13 +856,13 @@ public:
     * gives true if the circumcircle of c contains p
     */
   bool operator()(const Cell_handle c, const Offset &off) const {
-    return (t->side_of_sphere1(c, p, t->combine_offsets(o, off), true)
+    return (t->_side_of_sphere(c, p, t->combine_offsets(o, off), true)
         == ON_BOUNDED_SIDE);
   }
 
   bool operator()(const Cell_handle c, const Point& pt,
       const Offset &off) const {
-    return (t->side_of_sphere1(c, pt, o + off, true) == ON_BOUNDED_SIDE);
+    return (t->_side_of_sphere(c, pt, o + off, true) == ON_BOUNDED_SIDE);
   }
   
   int compare_weight(Point, Point) const
