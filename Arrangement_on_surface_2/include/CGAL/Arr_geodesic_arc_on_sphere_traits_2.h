@@ -242,14 +242,26 @@ public:
     Vector_3 v1 = d1.vector();
     Vector_3 v2 = d2.vector();
 
+    FT dot_p1 = v1.z();
+    FT dot_p2 = v2.z();
+
+    Sign s1 = CGAL::sign(dot_p1);
+    Sign s2 = CGAL::sign(dot_p2);
+    
+    if (s1 != s2) {
+      if (s1 == NEGATIVE) return SMALLER;
+      if (s1 == POSITIVE) return LARGER;
+      if (s2 == NEGATIVE) return LARGER;
+      if (s2 == POSITIVE) return SMALLER;      
+    }
+    if (s1 == ZERO) return EQUAL;
+    
     FT norm1 = v1 * v1;
     FT norm2 = v2 * v2;
 
-    FT dot_p1 = v1.z();
-    FT dot_p2 = v2.z();
-    
-    return CGAL::compare(CGAL::sign(dot_p1) * dot_p1 * dot_p1 * norm2,
-                         CGAL::sign(dot_p2) * dot_p2 * dot_p2 * norm1);
+    return (s1 == POSITIVE) ?
+      compare(dot_p1 * dot_p1 * norm2, dot_p2 * dot_p2 * norm1) :
+      compare(dot_p2 * dot_p2 * norm1, dot_p1 * dot_p1 * norm2);
   }
 
   /*! Compare two directions contained in the xy plane by u.
