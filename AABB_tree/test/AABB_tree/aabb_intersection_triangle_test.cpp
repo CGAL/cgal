@@ -125,17 +125,17 @@ int main()
 
     // loop over all data/*.off files
     bfs::path path("data");
-    bfs::directory_iterator dir_iter(path), dir_end;
-    for(;
-        dir_iter != dir_end;
-        dir_iter++)
+    bfs::directory_iterator dir_end; // default construction yields past-the-end
+    for( bfs::directory_iterator dir_iter(path) ;
+         dir_iter != dir_end;
+         ++dir_iter)
       {
-          bfs::path dir = *dir_iter;
-          std::string filename = "data/" + dir.filename();
+          // NB: leaf() is replaced by filename() since boost 1.35
+          std::string filename = "data/" + dir_iter->leaf();
           if(filename.find(".off") != std::string::npos)
           {
             test_kernels<TRIANGLE>(filename.data(),duration);
-            std::cout << filename; 
+            std::cout << filename;
           }
       }
 

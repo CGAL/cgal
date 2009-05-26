@@ -14,6 +14,16 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
  
+find_library(boost_filesystem_LIBRARY
+	     NAMES boost_filesystem)
+
+if ( boost_filesystem_LIBRARY )
+   message(STATUS "Library boost_filesystem found:${boost_filesystem_LIBRARY}")
+   link_libraries( ${boost_filesystem_LIBRARY} ) 
+else()
+   message(FATAL_ERROR "Library boost_filesystem not found !")
+endif()
+
 # Find CGAL 
 find_package(CGAL COMPONENTS)
 
@@ -33,4 +43,5 @@ else()
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
   
 endif()
+
 
