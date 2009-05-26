@@ -92,6 +92,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
 
+    # Use /FR to turn on IntelliSense
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
+
     # Allow Windows applications to use up to 3GB of RAM
     SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
 
@@ -109,7 +112,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif()
 
   # Temporary debugging stuff
-  #add_definitions(-DDEBUG_TRACE)
+  ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 
   qt4_wrap_ui( UI_FILES MainWindow.ui )
 

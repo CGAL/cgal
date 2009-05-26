@@ -24,7 +24,11 @@ if ( CGAL_FOUND )
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
     # Use /EHa option to catch stack overflows.
+    # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
+
+    # Use /FR to turn on IntelliSense
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
 
     # Allow Windows applications to use up to 3GB of RAM
     SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
@@ -43,7 +47,7 @@ if ( CGAL_FOUND )
   endif()
 
   # Temporary debugging stuff
-  #ADD_DEFINITIONS( "-DDEBUG_TRACE" )
+  ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 
   # Executables that do *not* require LAPACK
   create_single_source_cgal_program( "average_spacing_example.cpp" )
