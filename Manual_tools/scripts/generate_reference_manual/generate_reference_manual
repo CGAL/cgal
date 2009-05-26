@@ -12,17 +12,18 @@
 usage ()
 {
 echo "\
+See documentation at https://cgal.geometryfactory.com/CGAL/Members/wiki/Tools/generate_reference_manual
 
 Usage:
-
-cd /path/to/package/doc_tex [NEW]
-
-generate_reference_manual [options] -I /path/to/CGAL/include
-    -h, --help      Print detailed help
-    -v, --verbose   Verbose mode
-    -d, --debug     Debug mode
-
-See documentation at https://cgal.geometryfactory.com/CGAL/Members/wiki/Tools/generate_reference_manual
+cd /path/to/package/doc_tex
+generate_reference_manual [options] [module-files...] [package-dir]
+    package-dir is a subdirectory of doc_tex/ that contains .tex files.
+    module-files... is a list of .tex files.
+Options:
+    -I /path/to/CGAL/include  Include path
+    -h, --help                Print detailed help
+    -v, --verbose             Verbose mode
+    -d, --debug               Debug mode
 "
 
 exit 1
@@ -40,21 +41,29 @@ exit 1
 echo "generate_reference_manual version 1.2"
 
 # Global variables
-REF_MANUAL_TEX_FILES="" # List of .tex files to parse
-COPY_DOXYGEN_LATEX_DOC_ARGS="" # Parameters for copy_doxygen_latex_doc
-INCLUDE_PATH="" # Path to CGAL include folder
-PACKAGE=""  # Package name (without path)
 DOC_TEX_FOLDER="" # Package's doc_tex/ folder
+FOLDER_TO_PARSE="`ls -d *_ref`" # Subfolder of doc_tex/ to parse
+REF_MANUAL_TEX_FILES="" # List of .tex files to parse in $FOLDER_TO_PARSE
+ARGS="" # options for copy_doxygen_latex_doc
+INCLUDE_PATH="" # Path to CGAL include folder
+PACKAGE="" # package name (without path)
 DOXYFILE="" # doxygen configuration file
 DEBUG=0 # Debug mode?
 VERBOSE=0 # Verbose mode?
 
+# Avoid bad surprises
+unalias which 2>/dev/null
+unalias sed 2>/dev/null
+unalias rm 2>/dev/null
+unalias cat 2>/dev/null
+unalias grep 2>/dev/null
+unalias find 2>/dev/null
 
 #
 # Decode parameters
 #
 
-while [ "${1}" ]
+while [ "${1}" ] # for each argument
 do
     case "${1}" in
     -h|--help) # If request for help
@@ -64,24 +73,28 @@ do
         ;;
     -d|--debug) # If --debug
         DEBUG=1
-        COPY_DOXYGEN_LATEX_DOC_ARGS="${COPY_DOXYGEN_LATEX_DOC_ARGS} ${1}"
+        ARGS="${ARGS} ${1}"
         ;;
     -v|--verbose) # If --verbose
         VERBOSE=1
-        COPY_DOXYGEN_LATEX_DOC_ARGS="${COPY_DOXYGEN_LATEX_DOC_ARGS} ${1}"
+        ARGS="${ARGS} ${1}"
         ;;
-    -I|--include) # If -I
-        shift
+    -I|--include) # If -I xxx or --include xxx
+        shift # get argument after -I
         if [ ! "${1}" ]; then # If no argument after -I
             usage
         fi
         INCLUDE_PATH="${INCLUDE_PATH} ${1}"
         ;;
+    -I*) # If -Ixxx (no space)
+        path=`echo "${1}" | sed 's/-I//'`
+        INCLUDE_PATH="${INCLUDE_PATH} ${path}"
+        ;;
     *.tex) # .tex file to parse
         REF_MANUAL_TEX_FILES="${REF_MANUAL_TEX_FILES} ${1}"
         ;;
-    *) # If unknown parameter
-        usage
+    * ) # last param is folder to parse
+        FOLDER_TO_PARSE="${1}"
         ;;
     esac
     shift
@@ -95,6 +108,15 @@ if [[ `basename $DOC_TEX_FOLDER` != "doc_tex" ]]; then
 fi
 if [[ ! "${INCLUDE_PATH}" ]]; then
     usage
+fi
+
+# Fetch list of files to parse
+if [[ ! "${REF_MANUAL_TEX_FILES}" ]]; then
+    REF_MANUAL_TEX_FILES=`find "${FOLDER_TO_PARSE}" -name '*.tex'`
+    if [[ $? != 0 ]]; then
+        echo "ERROR: folder ${DOC_TEX_FOLDER}/${FOLDER_TO_PARSE} contains no .tex files"
+        exit 1
+    fi
 fi
 
 # Test if doxygen is installed
@@ -118,18 +140,8 @@ if [[ $? != 0 ]]; then
     exit 1
 fi
 
-# Fetch list of files to parse
-if [[ ! "${REF_MANUAL_TEX_FILES}" ]]; then
-    REF_MANUAL_TEX_FILES=`find . -name '*.tex'`
-    if [[ $? != 0 ]]; then
-        echo "ERROR: folder ${DOC_TEX_FOLDER} contains no .tex files"
-        exit 1
-    fi
-fi
-
-
 #
-# Run doxygen
+# Run doxygen in package's root folder
 #
 
 # Goto package's root folder
@@ -223,9 +235,9 @@ do
                 echo "Extract ${scope}${item} documentation (from ${doc_html})"
               fi
             else
-              echo copy_doxygen_latex_doc ${COPY_DOXYGEN_LATEX_DOC_ARGS} "${item}" "`pwd`/${doxygen_doc}" "`pwd`/${cgal_doc}"
+              echo copy_doxygen_latex_doc ${ARGS} "${item}" "`pwd`/${doxygen_doc}" "`pwd`/${cgal_doc}"
             fi
-            copy_doxygen_latex_doc ${COPY_DOXYGEN_LATEX_DOC_ARGS} "${item}" "${doxygen_doc}" "${cgal_doc}"
+            copy_doxygen_latex_doc ${ARGS} "${item}" "${doxygen_doc}" "${cgal_doc}"
         else
             echo "ERROR: cannot find doxygen documentation for ${scope}${item} (see `basename ${cgal_doc}`)"
         fi
