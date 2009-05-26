@@ -36,7 +36,7 @@ template <typename T_Traits,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
           template <class T1, class T2>
 #endif
-          class T_Dcel = Envelope_pm_dcel>
+          class T_Dcel = Envelope_3::Envelope_pm_dcel>
 class Envelope_diagram_2 :
   public Arrangement_2<T_Traits,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM

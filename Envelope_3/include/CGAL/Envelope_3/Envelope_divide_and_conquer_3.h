@@ -191,7 +191,7 @@ public:
   void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end,
                              Minimization_diagram_2 &result)
   {
-    Arbitrary_dividor dividor;
+    Envelope_3::Arbitrary_dividor dividor;
     construct_lu_envelope(begin, end, result, dividor);
   }
     
@@ -227,7 +227,7 @@ public:
                                       SurfaceIterator end,
                                       Minimization_diagram_2 &result)
   {
-    Arbitrary_dividor dividor;
+    Envelope_3::Arbitrary_dividor dividor;
     construct_envelope_xy_monotone(begin, end, result, dividor);
   }
 
