@@ -456,7 +456,7 @@ private:
     // Space functions output them.
     std::vector<Point> hidden;
   };
-#endif CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+#endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 };
 
 template < class GT, class Tds >
@@ -979,7 +979,7 @@ struct Periodic_3_Delaunay_triangulation_3<GT,Tds>::Vertex_remover
   // Space functions output them.
   std::vector<Point> hidden;
 };
-#endif CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+#endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 
 CGAL_END_NAMESPACE
 
