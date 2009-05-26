@@ -36,6 +36,7 @@ CGAL_BEGIN_NAMESPACE
 template<> 
 class Interval_traits<CORE::BigFloat> 
     : public CGALi::Interval_traits_base<CORE::BigFloat>{
+
 public: 
     
     typedef Interval_traits<CORE::BigFloat> Self; 
@@ -75,8 +76,9 @@ public:
     };
 
     struct Norm :public std::unary_function<Interval,Boundary>{
-        Boundary operator() ( Interval x ) const {      
-            return std::max(Upper()(x).abs(),Lower()(x).abs());
+        Boundary operator() ( Interval x ) const {
+          BOOST_USING_STD_MAX();
+          return max BOOST_PREVENT_MACRO_SUBSTITUTION (Upper()(x).abs(),Lower()(x).abs());
         }
     };
     
@@ -112,10 +114,12 @@ public:
     };
     
     struct Intersection :public std::binary_function<Interval,Interval,Interval>{ 
-        Interval operator()( const Interval& a, const Interval& b ) const {
+      Interval operator()( const Interval& a, const Interval& b ) const {
+            BOOST_USING_STD_MAX();
+            BOOST_USING_STD_MIN();
             // std::cout <<"a= (" << a.m() << "+-" << a.err() << ")*2^" << a.exp() << std::endl;
-            Boundary l(CGAL::max(Lower()(a),Lower()(b)));
-            Boundary u(CGAL::min(Upper()(a),Upper()(b)));
+            Boundary l(max BOOST_PREVENT_MACRO_SUBSTITUTION (Lower()(a),Lower()(b)));
+            Boundary u(min BOOST_PREVENT_MACRO_SUBSTITUTION (Upper()(a),Upper()(b)));
 
             if(u < l ) throw Exception_intersection_is_empty();
             return Construct()(l,u);
@@ -144,6 +148,8 @@ public:
 */
 
         Interval operator() ( Interval x, Interval y ) const {
+            BOOST_USING_STD_MAX();
+            BOOST_USING_STD_MIN();
 #if 0
             // this is not possible since CORE::centerize has a bug.
             Interval result = CORE::centerize(x,y);
@@ -159,8 +165,8 @@ public:
                 return x;
             }
                          
-            CORE::BigFloat lower = std::min(CGAL::lower(x), CGAL::lower(y));
-            CORE::BigFloat upper = std::max(CGAL::upper(x), CGAL::upper(y));
+            CORE::BigFloat lower = min BOOST_PREVENT_MACRO_SUBSTITUTION (CGAL::lower(x), CGAL::lower(y));
+            CORE::BigFloat upper = max BOOST_PREVENT_MACRO_SUBSTITUTION (CGAL::upper(x), CGAL::upper(y));
 
             CORE::BigFloat mid = (lower + upper)/2;
              
@@ -210,10 +216,10 @@ public:
 
             CGAL_postcondition( 
                     CGAL::lower(result) 
-                    <=  std::min(CGAL::lower(x), CGAL::lower(y)));
+                    <=  min BOOST_PREVENT_MACRO_SUBSTITUTION (CGAL::lower(x), CGAL::lower(y)));
             CGAL_postcondition( 
                     CGAL::upper(result) 
-                    >= std::max(CGAL::upper(x), CGAL::upper(y)));
+                    >= max BOOST_PREVENT_MACRO_SUBSTITUTION (CGAL::upper(x), CGAL::upper(y)));
 
             
 
