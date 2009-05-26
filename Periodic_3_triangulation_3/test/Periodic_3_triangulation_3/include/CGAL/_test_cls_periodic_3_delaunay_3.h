@@ -299,16 +299,17 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   assert(PT.side_of_sphere(ch,pp.first,pp.second) == CGAL::ON_BOUNDARY);
 
   std::cout << "  Nearest vertex"<< std::endl;
-
   vh = PT.nearest_vertex(Point(0,0,0));
   assert(Segment(vh->point(),Point(0,0,0)).squared_length() < FT(0.25));
   assert(PT.nearest_vertex(Point( 1, 1, 1))
       == PT.nearest_vertex(Point( 1,-1,-1)));
   vh = PT.nearest_vertex_in_cell(vh->cell(),Point(0,0,0),
       PT.get_offset(vh->cell(),vh->cell()->index(vh)));
-  assert(Segment(vh->point(),Point(0,0,0)).squared_length() < FT(0.25));
+  assert(PT.construct_segment(vh->point(),Point(0,0,0),PT.get_offset(vh),Offset(0,0,0))
+	 .squared_length() < FT(0.25));
   vh = PT.nearest_vertex_in_cell(vh->cell(),Point(0,0,0),Offset(2,0,0));
-  assert(Segment(vh->point(),Point(0,0,0)).squared_length() > FT(0.25));
+  assert(PT.construct_segment(vh->point(),Point(0,0,0),PT.get_offset(vh),Offset(2,0,0))
+	 .squared_length() > FT(0.25))
 
   std::cout << "  Conflict region"<< std::endl;
   std::vector<Facet> bd_facets;
