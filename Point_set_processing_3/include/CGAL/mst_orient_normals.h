@@ -540,6 +540,7 @@ mst_orient_normals(
     using namespace CGALi;
 
     // Input points types
+    typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point; // actual type of input points
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
 
     // Riemannian_graph types
