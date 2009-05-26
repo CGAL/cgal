@@ -54,10 +54,10 @@ public:
   LineC3(const Point_3 &p, const Point_3 &q)
   { *this = R().construct_line_3_object()(p, q); }
 
-  LineC3(const Segment_3 &s)
+  explicit LineC3(const Segment_3 &s)
   { *this = R().construct_line_3_object()(s); }
 
-  LineC3(const Ray_3 &r)
+  explicit LineC3(const Ray_3 &r)
   { *this = R().construct_line_3_object()(r); }
 
   LineC3(const Point_3 &p, const Vector_3 &v)

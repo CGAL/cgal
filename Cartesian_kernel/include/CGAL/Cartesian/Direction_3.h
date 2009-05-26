@@ -50,17 +50,17 @@ public:
 
   DirectionC3() {}
 
-  DirectionC3(const Vector_3 &v)
+  explicit DirectionC3(const Vector_3 &v)
     : base(CGAL::make_array(v.x(), v.y(), v.z())) {}
   // { *this = v.direction(); }
 
-  DirectionC3(const Line_3 &l)
+  explicit DirectionC3(const Line_3 &l)
   { *this = l.rep().direction(); }
 
-  DirectionC3(const Ray_3 &r)
+  explicit DirectionC3(const Ray_3 &r)
   { *this = r.direction(); }
 
-  DirectionC3(const Segment_3 &s)
+  explicit DirectionC3(const Segment_3 &s)
   { *this = s.direction(); }
 
   DirectionC3(const FT &x, const FT &y, const FT &z)

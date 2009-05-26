@@ -60,13 +60,13 @@ public:
   VectorC3(const Point_3 &a, const Point_3 &b)
   { *this = R().construct_vector_3_object()(a, b); }
 
-  VectorC3(const Segment_3 &s)
+  explicit VectorC3(const Segment_3 &s)
   { *this = R().construct_vector_3_object()(s); }
 
-  VectorC3(const Ray_3 &r)
+  explicit VectorC3(const Ray_3 &r)
   { *this = R().construct_vector_3_object()(r); }
 
-  VectorC3(const Line_3 &l)
+  explicit VectorC3(const Line_3 &l)
   { *this = R().construct_vector_3_object()(l); }
 
   VectorC3(const FT &x, const FT &y, const FT &z)

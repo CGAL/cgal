@@ -93,7 +93,7 @@ public:
     base = Rep(center, squared_radius, o);
   }
 
-  SphereC3(const Point_3 &center,
+  explicit SphereC3(const Point_3 &center,
            const Orientation& o = COUNTERCLOCKWISE)
   {
     CGAL_kernel_precondition(o != COLLINEAR);

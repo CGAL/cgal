@@ -47,7 +47,7 @@ public:
 
   CircleC2() {}
 
-  CircleC2(const Point_2 &center, const FT &squared_radius = FT(0),
+  explicit CircleC2(const Point_2 &center, const FT &squared_radius = FT(0),
            const Orientation &orient = COUNTERCLOCKWISE) // Is this new?
   {
     CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &
