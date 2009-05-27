@@ -125,7 +125,7 @@ protected:
 #if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
     static const Direction_3 d(0, 1, 0);
 #elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)
-    static const Direction_3 d(FT(6,10), FT(8, 10), 0);
+    static const Direction_3 d(6, 8, 0);
 #else
 #error CGAL_IDENTIFICATION_XY is not defined
 #endif
