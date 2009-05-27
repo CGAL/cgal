@@ -32,7 +32,7 @@
 Saves the [first, beyond) range of points (positions only) to a .xyz ASCII stream.
 \ccCommentHeading{Template Parameters}
 \begin{description}
-\item \ccc{ForwardIterator}: iterator over input points. \item \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \item \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from PointPMap \ccc{value_type}.\end{description}
+\item \ccc{ForwardIterator}: iterator over input points. \item \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \item \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.\end{description}
 \ccCommentHeading{Returns} true on success.
 \ccCommentHeading{Parameters}
 \begin{description}

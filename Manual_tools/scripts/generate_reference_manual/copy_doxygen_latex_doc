@@ -263,24 +263,26 @@ sub latex_mangle
     # There is no \ccSubHeading macro yet
     $buf =~ s/\\ccSubHeading\{/\\subsubsection\{/g;
 
-    #
-    # Trust user
-    #
-
     # Emphasize words surrounded by double quotes using \em, by stars using \bf [L. Saboret's extension].
     $buf =~ s/"(.*?)"/\{\\em $1\}/g;
     $buf =~ s/\*(\w*?)\*/\{\\bf $1\}/g;
 
-    # Wrap words surrounded by simple quotes by \ccc{} [L. Saboret's extension].
+    #
+    # \ccInclude, \ccHeading, \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
+    # first curly braces pair must contain plain C++ code.
+    # For the other lines, we wrap API items (concepts, classes, ...) by \ccc{} and we protect
+    # other occurences of _ as \_ (including \subsubsection).
+    #
+
+    # 1) Trust user: wrap words surrounded by simple quotes by \ccc{} [L. Saboret's extension].
+    # Note: we use a one-liner to not insert a \ccc{} call inside an another one.
     $buf =~ s/\'(((::|\w)+(<.*?>)?)+)\'/\\ccc\{$1\}/g;
 
     # Add carriage returns around \ccc{} for the line by line substitution below.
+    # Note: make sure to insert only one \n before and after each \ccc{} call.
     $buf =~ s/(\\ccc\{.*?\})/\n$1\n/g;
 
-    # \ccInclude, \ccHeading, \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
-    # first curly braces pair must contain plain C++ code.
-    # \subsubsection must protect _ as \_.
-    # For the other lines, we wrap C++ types by \ccc{}.
+    # 2) Try to be smart: wrap C++ types, including template params, by \ccc{}.
     @lines = split(/\n/, $buf);
     $buf = "";
     foreach $line (@lines) {
@@ -296,22 +298,18 @@ sub latex_mangle
         }
         else
         {
-            #
-            # Try to be smart
-            #
-
             # Wrap C++ types, including template params, by \ccc{}.
+            # Note: we use a one-liner to not insert a \ccc{} call inside an another one.
             $line =~ s/((\w*(_|::)\w*(<.*?>)?)+)/\\ccc\{$1\}/g;
 
             # Add carriage returns around \ccc{} for the line by line substitution below.
+            # Note: make sure to insert only one \n before and after each \ccc{} call.
             $line =~ s/(\\ccc\{.*?\})/\n$1\n/g;
         }
         $buf = $buf . $line . "\n";             # concat lines back to $buf
     }
 
-    # \ccInclude, \ccHeading, \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
-    # first curly braces pair and \ccc expressions must contain plain C++ code.
-    # For the other lines, we wrap concepts name by \ccc{}.
+    # 3) Try to be smart: concepts name by \ccc{}.
     @lines = split(/\n/, $buf);
     $buf = "";
     foreach $line (@lines) {
@@ -321,29 +319,24 @@ sub latex_mangle
         {
             # nothing to do
         }
+        elsif ($line =~ /\\subsubsection/)
+        {
+            # nothing to do
+        }
         else
         {
-            #
-            # Try to be smart
-            #
-
             # Wrap concepts name by \ccc{}.
-            # TODO: replace hard coded list of concepts by regex like [A-Z][a-z]+[A-Z]\w*
-            $line =~ s/\b(PolylineSimplificationCostFunction)\b/\\ccc{$1\}/g;
-            $line =~ s/\b(PolylineSimplificationStopPredicate)\b/\\ccc{$1\}/g;
-            $line =~ s/\b(PolylineSimplificationVertex)\b/\\ccc{$1\}/g;
-            $line =~ s/\b(ImplicitFunction)\b/\\ccc{$1\}/g;
-            $line =~ s/\b(InputIterator)\b/\\ccc{$1\}/g;
-            $line =~ s/\b(OutputIterator)\b/\\ccc{$1\}/g;
-            $line =~ s/\b(ForwardIterator)\b/\\ccc{$1\}/g;
+            # Note: we use a one-liner to not insert a \ccc{} call inside an another one.
+            $line =~ s/\b([A-Z][a-z]+[A-Z]\w*)\b/\\ccc{$1\}/g;
 
             # Add carriage returns around \ccc{} for the line by line substitution below.
+            # Note: make sure to insert only one \n before and after each \ccc{} call.
             $line =~ s/(\\ccc\{.*?\})/\n$1\n/g;
         }
         $buf = $buf . $line . "\n";             # concat lines back to $buf
     }
 
-    # \ccInclude, \ccHeading, \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
+    # 4) \ccInclude, \ccHeading, \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
     # first curly braces pair and \ccc expressions must contain plain C++ code.
     # The other lines must contain regular latex text => we mangle back
     # ~, <, >, *, &, [] characters (see latex_unmangle() above).
@@ -375,7 +368,7 @@ sub latex_mangle
         $buf = $buf . $line . "\n";             # concat lines back to $buf
     }
 
-    # Remove extra carriage returns around \ccc{} expressions
+    # 5) Remove extra carriage returns around \ccc{} expressions
     $buf =~ s/\n(\\ccc{.*?\})\n/$1/smg;
 
     # Return the formatted string

@@ -33,7 +33,7 @@ Faces are ignored.
 Reads points (positions only) from a .off ASCII stream. Faces are ignored.
 \ccCommentHeading{Template Parameters}
 \begin{description}
-\item \ccc{OutputIterator}: iterator over output points. \item \ccc{PointPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{OutputIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \item \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from PointPMap \ccc{value_type}.\end{description}
+\item \ccc{OutputIterator}: iterator over output points. \item \ccc{PointPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{OutputIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \item \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.\end{description}
 \ccCommentHeading{Returns} true on success.
 \ccCommentHeading{Parameters}
 \begin{description}
