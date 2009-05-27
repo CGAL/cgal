@@ -237,24 +237,24 @@ public:
       }
     }
 
-    CGAL_assertion((std::min)((std::min)(off0[0],off1[0]),
+    CGAL_triangulation_assertion((std::min)((std::min)(off0[0],off1[0]),
 			      (std::min)(off2[0],off3[0])) == 0);
-    CGAL_assertion((std::min)((std::min)(off0[1],off1[1]),
+    CGAL_triangulation_assertion((std::min)((std::min)(off0[1],off1[1]),
 			      (std::min)(off2[1],off3[1])) == 0);
-    CGAL_assertion((std::min)((std::min)(off0[2],off1[2]),
+    CGAL_triangulation_assertion((std::min)((std::min)(off0[2],off1[2]),
 			      (std::min)(off2[2],off3[2])) == 0);
-    CGAL_assertion((0 <= off0[0]) && (off0[0] < 2));
-    CGAL_assertion((0 <= off1[0]) && (off1[0] < 2));
-    CGAL_assertion((0 <= off2[0]) && (off2[0] < 2));
-    CGAL_assertion((0 <= off3[0]) && (off3[0] < 2));
-    CGAL_assertion((0 <= off0[1]) && (off0[1] < 2));
-    CGAL_assertion((0 <= off1[1]) && (off1[1] < 2));
-    CGAL_assertion((0 <= off2[1]) && (off2[1] < 2));
-    CGAL_assertion((0 <= off3[1]) && (off3[1] < 2));
-    CGAL_assertion((0 <= off0[2]) && (off0[2] < 2));
-    CGAL_assertion((0 <= off1[2]) && (off1[2] < 2));
-    CGAL_assertion((0 <= off2[2]) && (off2[2] < 2));
-    CGAL_assertion((0 <= off3[2]) && (off3[2] < 2));
+    CGAL_triangulation_assertion((0 <= off0[0]) && (off0[0] < 2));
+    CGAL_triangulation_assertion((0 <= off1[0]) && (off1[0] < 2));
+    CGAL_triangulation_assertion((0 <= off2[0]) && (off2[0] < 2));
+    CGAL_triangulation_assertion((0 <= off3[0]) && (off3[0] < 2));
+    CGAL_triangulation_assertion((0 <= off0[1]) && (off0[1] < 2));
+    CGAL_triangulation_assertion((0 <= off1[1]) && (off1[1] < 2));
+    CGAL_triangulation_assertion((0 <= off2[1]) && (off2[1] < 2));
+    CGAL_triangulation_assertion((0 <= off3[1]) && (off3[1] < 2));
+    CGAL_triangulation_assertion((0 <= off0[2]) && (off0[2] < 2));
+    CGAL_triangulation_assertion((0 <= off1[2]) && (off1[2] < 2));
+    CGAL_triangulation_assertion((0 <= off2[2]) && (off2[2] < 2));
+    CGAL_triangulation_assertion((0 <= off3[2]) && (off3[2] < 2));
 
     for (int i=0; i<3; i++) {
       set_off0( (_off0()<<1) + off0[i]);
@@ -303,7 +303,7 @@ public:
   // Conflict flag access functions.
   // This should become a property map or something at some point.
   void set_in_conflict_flag(unsigned char f) {
-    CGAL_assertion(f < 4);
+    CGAL_triangulation_assertion(f < 4);
     _in_conflict_flag = f;
   }
   unsigned char get_in_conflict_flag() const {
@@ -313,7 +313,7 @@ public:
   // TODO: Get rid of this flag! Used in convert_to_1_cover.
   // Either use the conflict flag or a std::map.
   void set_additional_flag(unsigned char f) {
-    CGAL_assertion(f < 4);
+    CGAL_triangulation_assertion(f < 4);
     _additional_flag = f;
   }
   unsigned char get_additional_flag() const {

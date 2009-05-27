@@ -396,7 +396,7 @@ move_point(Vertex_handle v, const Point & p)
 
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
-    CGAL_assertion(hierarchy[l]->is_valid());
+    CGAL_triangulation_assertion(hierarchy[l]->is_valid());
     Vertex_handle w = hierarchy[l]->move_point(v, p);
     if (l == 0) {
 	ret = w;

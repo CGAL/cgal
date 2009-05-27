@@ -392,9 +392,9 @@ public:
     Offset transl_off(nos.at(0)*ox,nos.at(1)*oy,nos.at(2)*oz);
     Periodic_point pv(std::make_pair(v,transl_off));
     Point dv(point(pv));
-    CGAL_assertion( !(dv.x() < dom.at(0)) && dv.x() < dom.at(3) );
-    CGAL_assertion( !(dv.y() < dom.at(1)) && dv.y() < dom.at(4) );
-    CGAL_assertion( !(dv.z() < dom.at(2)) && dv.z() < dom.at(5) );
+    CGAL_triangulation_assertion( !(dv.x() < dom.at(0)) && dv.x() < dom.at(3) );
+    CGAL_triangulation_assertion( !(dv.y() < dom.at(1)) && dv.y() < dom.at(4) );
+    CGAL_triangulation_assertion( !(dv.z() < dom.at(2)) && dv.z() < dom.at(5) );
     return point(pv);
   }
   Periodic_segment dual(const Facet & f) const {
@@ -408,15 +408,15 @@ public:
   }
   template <class Stream>
   Stream& draw_dual(Stream& os) {
-    CGAL_assertion_code( unsigned int i = 0; )
+    CGAL_triangulation_assertion_code( unsigned int i = 0; )
     for (Facet_iterator fit = facets_begin(), end = facets_end();
 	 fit != end; ++fit) {
       if (!is_canonical(*fit)) continue;
-      CGAL_assertion_code ( ++i; )
+      CGAL_triangulation_assertion_code ( ++i; )
       Segment pso = segment(dual(*fit));
       os << pso;
     }
-    CGAL_assertion( i == number_of_facets() );
+    CGAL_triangulation_assertion( i == number_of_facets() );
     return os;
   }
   //@}
@@ -599,7 +599,7 @@ void Periodic_3_Delaunay_triangulation_3<Gt,Tds>::remove(Vertex_handle v)
   Conflict_tester ct(this);
 
   Base::remove(v, remover, ct);
-  CGAL_expensive_assertion(is_valid());
+  CGAL_triangulation_expensive_assertion(is_valid());
 }
 
 template < class Gt, class Tds >
@@ -710,7 +710,7 @@ _side_of_sphere(const Cell_handle &c, const Point &q,
   // 2 iterations are enough (cf paper)
   for (int i=4; i>2; --i) {
     if (points[i] == &pts[4]) {
-      CGAL_assertion(orientation(p0, p1, p2, p3, o0, o1, o2, o3)
+      CGAL_triangulation_assertion(orientation(p0, p1, p2, p3, o0, o1, o2, o3)
           == POSITIVE);
       // since p0 p1 p2 p3 are non coplanar and positively oriented
       return ON_UNBOUNDED_SIDE;
@@ -890,7 +890,7 @@ public:
   bool test_initial_cell(Cell_handle c, const Offset &off) const
   {
     if (!(operator()(c, off)))
-      CGAL_assertion(false);
+      CGAL_triangulation_assertion(false);
     return true;
   }
   
@@ -928,11 +928,11 @@ public:
   inline void hide_point(Cell_handle, const Point &) {}
 
   inline void hide(Point &, Cell_handle ) const {
-    CGAL_assertion(false);
+    CGAL_triangulation_assertion(false);
   }
 
   inline void do_hide(const Point &, Cell_handle ) const {
-    CGAL_assertion(false);
+    CGAL_triangulation_assertion(false);
   }
   template < class Tester > 
   inline bool replace_vertex(const Point &, Vertex_handle ,

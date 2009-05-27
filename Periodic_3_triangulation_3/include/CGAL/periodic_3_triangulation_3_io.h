@@ -104,7 +104,7 @@ Stream& draw_dual_to_off(Stream &os) {
       os << pso.first.source() << std::endl
 	 << pso.first.target() - pso.second<< std::endl;
     }
-  CGAL_assertion( i==number_of_facets());
+  CGAL_triangulation_assertion( i==number_of_facets());
   for(unsigned int i=0 ; i < number_of_facets() ; i++) {
     os << "2 " << i*2 << " " << i*2+1 << std::endl;
   }
