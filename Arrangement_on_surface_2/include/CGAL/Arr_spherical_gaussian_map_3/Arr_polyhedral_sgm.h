@@ -712,7 +712,8 @@ public:
    * \param sgm2 the second Arr_polyhedral_sgm object
    */
   template <class Arr_polyhedral_sgm>
-  void minkowski_sum(const Arr_polyhedral_sgm & sgm1, const Arr_polyhedral_sgm & sgm2)
+  void minkowski_sum(const Arr_polyhedral_sgm & sgm1,
+                     const Arr_polyhedral_sgm & sgm2)
   {
     // Compute the overlays:
     Arr_polyhedral_sgm_overlay sgm_overlay;
@@ -725,7 +726,8 @@ public:
    * \param sgm2 the second Arr_polyhedral_sgm object
    */
   template <class Arr_polyhedral_sgm, typename OverlayTraits>
-  void minkowski_sum(const Arr_polyhedral_sgm & sgm1, const Arr_polyhedral_sgm & sgm2,
+  void minkowski_sum(const Arr_polyhedral_sgm & sgm1,
+                     const Arr_polyhedral_sgm & sgm2,
                      OverlayTraits & overlay_traits)
   { CGAL::overlay(sgm1, sgm2, *this, overlay_traits); }
   
