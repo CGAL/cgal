@@ -95,8 +95,8 @@ public:
   typedef typename Base::Iterator_type          Iterator_type;
 
   typedef typename Base::Offset                 Offset;
-
   typedef typename Base::Iso_cuboid             Iso_cuboid;
+  typedef typename Base::Covering_sheets        Covering_sheets;
   //@}
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
@@ -369,8 +369,33 @@ public:
 	c->vertex(2)->point(), c->vertex(3)->point(),
         get_offset(c,0), get_offset(c,1),
 	get_offset(c,2), get_offset(c,3));
-    // TODO: check that v lies within the domain. If not: translate
-    return v;
+    
+    // check that v lies within the domain. If not: translate
+    Covering_sheets nos = number_of_sheets();
+    array<typename Geom_traits::FT,6> dom = make_array(
+	domain().xmin(), domain().ymin(), domain().zmin(),
+	domain().xmin()+nos.at(0)*(domain().xmax()-domain().xmin()),
+	domain().ymin()+nos.at(1)*(domain().ymax()-domain().ymin()),
+	domain().zmin()+nos.at(2)*(domain().zmax()-domain().zmin()) );
+    if (   !(v.x() < dom.at(0)) && v.x()<dom.at(3)
+	&& !(v.y() < dom.at(1)) && v.y()<dom.at(4)
+	&& !(v.z() < dom.at(2)) && v.z()<dom.at(5) )
+      return v;
+
+    int ox=-1, oy=-1, oz=-1;
+    if (v.x() < dom.at(0)) ox = 1;
+    else if (v.x() < dom.at(3)) ox = 0;
+    if (v.y() < dom.at(1)) oy = 1;
+    else if (v.y() < dom.at(4)) oy = 0;
+    if (v.z() < dom.at(2)) oz = 1;
+    else if (v.z() < dom.at(5)) oz = 0;
+    Offset transl_off(nos.at(0)*ox,nos.at(1)*oy,nos.at(2)*oz);
+    Periodic_point pv(std::make_pair(v,transl_off));
+    Point dv(point(pv));
+    CGAL_assertion( !(dv.x() < dom.at(0)) && dv.x() < dom.at(3) );
+    CGAL_assertion( !(dv.y() < dom.at(1)) && dv.y() < dom.at(4) );
+    CGAL_assertion( !(dv.z() < dom.at(2)) && dv.z() < dom.at(5) );
+    return point(pv);
   }
   Periodic_segment dual(const Facet & f) const {
     return dual( f.first, f.second );
@@ -414,10 +439,6 @@ private:
     typedef TriangulationR3      Triangulation_R3;
     
     typedef typename std::vector<Point>::iterator Hidden_points_iterator;
-    
-    // TODO: All these typedefs are only needed in the remove.
-    // If they are not different for the Regular_conflict_tester, then
-    // they should be moved to the remove.
     
     typedef Triple < Vertex_handle, Vertex_handle, Vertex_handle > Vertex_triple;
     
@@ -484,7 +505,6 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex(const Point& p,
     incident_vertices(nearest, std::back_inserter(vs));
     for (typename std::vector<Vertex_handle>::const_iterator
 	   vsit = vs.begin(); vsit != vs.end(); ++vsit)
-      // TODO: double check whether the offsets are set correctly.
       tmp = (compare_distance(p,tmp->point(),(*vsit)->point(),
 	      o,tmp_off,get_min_dist_offset(p,o,*vsit))
 	  == SMALLER) ? tmp : *vsit;
@@ -650,8 +670,6 @@ Periodic_3_Delaunay_triangulation_3<Gt,Tds>::vertices_in_conflict(
     vertices.insert(i->first->vertex((i->second+3)&3));
   }
   
-  // TODO: check whether the flags in the offsets need to be reset
-  // using v_offsets
   return std::copy(vertices.begin(), vertices.end(), res);
 }
 
@@ -937,10 +955,6 @@ struct Periodic_3_Delaunay_triangulation_3<GT,Tds>::Vertex_remover
   typedef TriangulationR3      Triangulation_R3;
   
   typedef typename std::vector<Point>::iterator Hidden_points_iterator;
-  
-  // TODO: All these typedefs are only needed in the remove.
-  // If they are not different for the Regular_conflict_tester, then
-  // they should be moved to the remove.
   
   typedef Triple < Vertex_handle, Vertex_handle, Vertex_handle > Vertex_triple;
   
