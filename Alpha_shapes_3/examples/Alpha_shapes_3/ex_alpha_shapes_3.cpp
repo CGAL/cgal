@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Alpha_shape_euclidean_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
 
@@ -8,11 +9,12 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Alpha_shape_vertex_base_3<K>          Vb;
-typedef CGAL::Alpha_shape_cell_base_3<K>            Fb;
-typedef CGAL::Triangulation_data_structure_3<Vb,Fb> Tds;
-typedef CGAL::Delaunay_triangulation_3<K,Tds>       Triangulation_3;
-typedef CGAL::Alpha_shape_3<Triangulation_3>        Alpha_shape_3;
+typedef CGAL::Alpha_shape_euclidean_traits_3<K>      Gt;
+typedef CGAL::Alpha_shape_vertex_base_3<Gt>          Vb;
+typedef CGAL::Alpha_shape_cell_base_3<Gt>            Fb;
+typedef CGAL::Triangulation_data_structure_3<Vb,Fb>  Tds;
+typedef CGAL::Delaunay_triangulation_3<Gt,Tds>       Triangulation_3;
+typedef CGAL::Alpha_shape_3<Triangulation_3>         Alpha_shape_3;
 
 typedef K::Point_3                                  Point;
 typedef Alpha_shape_3::Alpha_iterator               Alpha_iterator;

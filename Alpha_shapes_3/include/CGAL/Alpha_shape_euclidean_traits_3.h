@@ -23,7 +23,43 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class K>
-class Alpha_shape_euclidean_traits_3 : public K {};
+class Alpha_shape_euclidean_traits_3 : public K
+{
+public:
+
+ class  Compute_squared_radius_3 {
+    typedef typename K::Point_3                  Point_3;
+    typedef typename K::FT                       FT;
+    typedef typename K::Compute_squared_radius_3   Compute_squared_radius_base;
+ 
+  public:
+    FT operator() (Point_3 p, 
+		   Point_3 q , 
+		   Point_3 r, 
+		   Point_3 s) {
+      return Compute_squared_radius_base()(p,q,r,s); }
+
+    FT operator() (Point_3 p, 
+		   Point_3 q , 
+		   Point_3 r) {
+      return Compute_squared_radius_base()(p,q,r); }
+
+    FT operator() (Point_3 p, 
+		   Point_3 q ) {
+      return Compute_squared_radius_base()(p,q); }
+
+    FT operator() (Point_3 p) {
+      return FT(0);}
+ };
+
+//---------------------------------------------------------------------
+
+  Compute_squared_radius_3 
+  compute_squared_radius_3_object() const
+    {
+      return Compute_squared_radius_3();
+    }
+};
 
 CGAL_END_NAMESPACE
 
