@@ -55,6 +55,9 @@ public:
                   Minimization_diagram_2& md2,
                   Minimization_diagram_2& result)
   {
+    CGAL_assertion(md1.is_valid());
+    CGAL_assertion(md2.is_valid());
+
     Overlay_functor overlay_func(md1, md2, result);
     overlay(md1, md2, result, overlay_func);
         
