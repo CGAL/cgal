@@ -114,7 +114,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 
-  qt4_wrap_ui( UI_FILES MainWindow.ui Point_set_demo_APSS_reconstruction_plugin.ui)
+  qt4_wrap_ui( UI_FILES MainWindow.ui)
 
   include(AddFileDependencies)
 
@@ -167,14 +167,16 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
 #  if(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
     add_definitions(-DUSE_FORWARD_DECL)
-    add_executable  ( Point_set_demo MainWindow.cpp
+    add_executable  ( Point_set_demo
+      ${UI_FILES}
+      MainWindow.cpp
       Point_set_demo.cpp
       Viewer.cpp
       Scene.cpp
       MainWindow_moc.cpp
       Scene_moc.cpp
       Viewer_moc.cpp
-      ${UI_FILES} ${RESOURCE_FILES} )
+      ${RESOURCE_FILES} )
     if(TAUCS_FOUND)
 #      add_executable( Point_set_demo Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
     endif()
@@ -230,7 +232,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   endmacro(polyhedron_demo_plugin)
 
-  polyhedron_demo_plugin(APSS_reconstruction_plugin Point_set_demo_APSS_reconstruction_plugin Point_set_demo_APSS_reconstruction_plugin_cgal_code.cpp)
+  qt4_wrap_ui( APSS_UI_FILES Point_set_demo_APSS_reconstruction_plugin.ui)
+  polyhedron_demo_plugin(APSS_reconstruction_plugin Point_set_demo_APSS_reconstruction_plugin Point_set_demo_APSS_reconstruction_plugin_cgal_code.cpp ${APSS_UI_FILES})
   target_link_libraries(APSS_reconstruction_plugin scene_polyhedron_item point_set)
 
   polyhedron_demo_plugin(inside_out_plugin Polyhedron_demo_inside_out_plugin)
@@ -253,6 +256,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(local_spacing_plugin Point_set_demo_local_spacing_plugin)
   target_link_libraries(local_spacing_plugin point_set)
+
+  qt4_wrap_ui( CLEANING_UI_FILES Point_set_demo_outlier_removal_plugin.ui)
+  polyhedron_demo_plugin(cleaning_plugin Point_set_demo_cleaning_plugin ${CLEANING_UI_FILES})
+  target_link_libraries(cleaning_plugin point_set)
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 

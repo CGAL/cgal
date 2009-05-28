@@ -97,6 +97,7 @@
      <string>Processing</string>
     </property>
     <addaction name="actionSimplify" />
+    <addaction name="actionOutlierRemoval" />
    </widget>
    <widget class="QMenu" name="menuReconstruction" >
     <property name="title" >
@@ -406,6 +407,11 @@
   <action name="actionRadiusFromDensity" >
    <property name="text" >
     <string>Point radius from density</string>
+   </property>
+  </action>
+  <action name="actionOutlierRemoval" >
+   <property name="text" >
+    <string>Outlier removal</string>
    </property>
   </action>
   <action name="actionDraw_two_sides" >
