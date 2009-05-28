@@ -701,7 +701,6 @@ public:
       lt = EMPTY;
       return ON_UNBOUNDED_SIDE;
     }
-  //TODO: make it work in case of offset != Off(0,0,0) !
     return side_of_cell(p,Offset(),c,lt,i,j);
   }
   //@}
@@ -1524,6 +1523,8 @@ try_next_cell:
  * 
  * lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
  */
+// TODO: currently off is not used. It could probably be optimized
+// using off.
 template < class GT, class TDS >
 inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
     const Point & q, const Offset &off, Cell_handle c,
@@ -2209,7 +2210,6 @@ template < class GT, class TDS >
 bool
 Periodic_3_triangulation_3<GT,TDS>::
 is_valid(bool verbose, int level) const {
-  //todo: don't use assertions, add verbose output
   bool error = false;
   for (Cell_iterator cit = cells_begin();
        cit != cells_end(); ++cit) {

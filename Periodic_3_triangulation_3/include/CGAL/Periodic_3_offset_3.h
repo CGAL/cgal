@@ -27,7 +27,6 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-// NGHK: make memory efficient later:
 class Periodic_3_offset_3 {
   template <class K2>
   friend std::ostream & operator<<(std::ostream &os, 
