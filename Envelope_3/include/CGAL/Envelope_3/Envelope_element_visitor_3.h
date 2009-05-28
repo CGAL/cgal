@@ -1632,7 +1632,8 @@ protected:
       // over the outer CCB of the single unbounded face in the target
       // arrangement (which is currently empty, thus contain a single
       // unbounded face), and find a halfedge that matches hec.
-      Face_handle              to_uf = to.unbounded_face();
+      CGAL_assertion_msg (to.number_of_faces(), "if all halfedges are fictitious then there should be only one face");
+      Face_handle              to_uf = to.faces_begin();
       Ccb_halfedge_circulator  to_uf_hec = to_uf->outer_ccb();
 
       he_from = hec;
@@ -1704,7 +1705,9 @@ protected:
                          Halfedges_map& map_copied_to_orig_halfedges,
                          Vertices_map&  map_copied_to_orig_vertices)
   {
+    CGAL_precondition (from.is_valid());
     CGAL_precondition (to.is_empty());
+    CGAL_assertion_msg (to.number_of_faces() == 1, "There should be one face in an empty arrangement");
 
     // Initialize a mapping from the original vertices and halfedges to the
     // ones in the copied arrangement. Also keep track of the unbounded face
@@ -1712,7 +1715,7 @@ protected:
     // then it forms a hole in the unbounded face.
     Vertices_map  map_orig_to_copied_vertices;
     Halfedges_map map_orig_to_copied_halfedges;
-    Face_handle   to_uf = to.unbounded_face();
+    Face_handle   to_uf = to.faces_begin();
 
     // Copy outer CCB of the face, if it has one.
     Face_handle     copied_face;
@@ -2497,7 +2500,7 @@ protected:
     // the zone visitor functions
 
     /*! Initialize the visitor with an arrangement object. */
-    void init (typename Minimization_diagram_2::Base *base_arr)
+    void init (Minimization_diagram_2 *base_arr)
     {
       Minimization_diagram_2 *arr = 
         dynamic_cast<Minimization_diagram_2*>(base_arr);
@@ -2807,7 +2810,8 @@ protected:
       // vertex associated with p.
       X_monotone_curve_2  sub_cv1, sub_cv2;
       Halfedge_handle     split_he;
-      copied_arr.traits()->split_2_object() (he->curve(), p, sub_cv1, sub_cv2);
+      copied_arr.geometry_traits()->
+        split_2_object() (he->curve(), p, sub_cv1, sub_cv2);
 
       Arr_accessor<Minimization_diagram_2> arr_access (copied_arr);
       arr_access.notify_before_global_change();

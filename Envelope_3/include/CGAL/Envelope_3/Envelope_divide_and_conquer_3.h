@@ -131,7 +131,7 @@ protected:
   typedef typename Minimization_diagram_2::Vertex_iterator
     Vertex_iterator;
   typedef typename Minimization_diagram_2::Inner_ccb_iterator
-    Hole_iterator;
+    Inner_ccb_iterator;
   typedef typename Minimization_diagram_2::Ccb_halfedge_circulator
     Ccb_halfedge_circulator;
   typedef typename Minimization_diagram_2::Halfedge_around_vertex_circulator
@@ -326,7 +326,8 @@ protected:
     if(boundary.empty())
     {
       //one infinite surface
-      result.unbounded_face()->set_data(surf);
+      CGAL_assertion_msg (result.number_of_faces() == 1, "In the beginning there should be only one face");
+      result.faces_begin()->set_data(surf);
       return;
     }
 
@@ -868,6 +869,9 @@ protected:
        (h->target()->parameter_space_in_y() != ARR_INTERIOR))
       return true;
 
+    // Eos code:
+    // if(h->target()->is_at_infinity())
+    // return false;
     Vertex_handle v = h->target();
     /*if (v->get_is_fake() && !v->is_decision_set())
       return true;
@@ -1143,7 +1147,7 @@ protected:
     bool is_equal, has_equal;
     is_equal = (h->get_decision() == h->face()->get_decision());
     // has equal can be true even if the decision is not the same,
-    // but has same surfaces, i.e. one of the features got BOTH
+    // but has same surfaces, i.e. one of the features got DAC_DECISION_BOTH
     // decision, and the other didn't
     has_equal = (h->get_decision() == h->face()->get_decision() ||
                  h->get_decision() == DAC_DECISION_BOTH ||
@@ -1188,7 +1192,7 @@ protected:
 
     is_equal = (h->get_decision() == h->target()->get_decision());
     // has equal can be true even if the decision is not the same,
-    // but has same surfaces, i.e. one of the features got BOTH
+    // but has same surfaces, i.e. one of the features got DAC_DECISION_BOTH
     // decision, and the other didn't
     has_equal = (h->get_decision() == h->target()->get_decision() ||
                  h->get_decision() == DAC_DECISION_BOTH ||
@@ -1231,7 +1235,7 @@ protected:
   {
     bool has_equal;
     // has equal can be true even if the decision is not the same,
-    // but has same surfaces, i.e. one of the features got BOTH
+    // but has same surfaces, i.e. one of the features got DAC_DECISION_BOTH
     // decision, and the other didn't
     has_equal = (h->face()->get_decision() == h->target()->get_decision() ||
                  h->face()->get_decision() == DAC_DECISION_BOTH ||
@@ -1265,7 +1269,7 @@ protected:
     bool is_equal, has_equal;
     is_equal = (v->get_decision() == f->get_decision());
     // has equal can be true even if the decision is not the same,
-    // but has same surfaces, i.e. one of the features got BOTH
+    // but has same surfaces, i.e. one of the features got DAC_DECISION_BOTH
     // decision, and the other didn't
 
     has_equal = (v->get_decision() == f->get_decision() ||
@@ -1443,7 +1447,7 @@ protected:
         ++face_hec;
       } while(face_hec != face_hec_begin);
 
-      Hole_iterator inner_iter = fh->holes_begin();
+      Inner_ccb_iterator inner_iter = fh->holes_begin();
       for (; inner_iter != fh->holes_end(); ++inner_iter)
 
       {
@@ -1532,12 +1536,11 @@ protected:
       
       all_ok &= (hh->get_is_set());
       if (!all_ok)
-        std::cout << "edge: " << hh->curve() << std::endl;
+        std::cerr << "edge: " << hh->curve() << std::endl;
       CGAL_assertion_msg(all_ok, "data not set over edge");
       all_ok &= (!hh->has_no_data());
       if (!all_ok)
-
-        std::cout << "edge: " << hh->curve() << std::endl;
+        std::cerr << "edge: " << hh->curve() << std::endl;
       CGAL_assertion_msg(all_ok, "data empty over edge");
 
       /*all_ok &= (!hh->get_is_fake());*/
@@ -1595,6 +1598,8 @@ protected:
                                                    Overlay_2>::Self Self;
     Keep_edge_data_observer(Minimization_diagram_2& arr,
                             Self* b) :
+      // Eos
+      // Self* b = NULL) :
       Md_observer(arr), base(b)
     {
       CGAL_assertion(base != NULL);
@@ -1720,6 +1725,8 @@ protected:
     // Constructor.
     Faces_order_bfs_visitor(const IndexMap& imap, std::list<Face_handle>& f,
                             Self* b) :
+// Eos
+//Self* b = NULL) :
       index_map (&imap),
       faces(f),
       base(b)

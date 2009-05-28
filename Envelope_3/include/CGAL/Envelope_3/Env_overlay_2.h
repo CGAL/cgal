@@ -46,7 +46,7 @@ public:
 
   typedef OverlayFunctor                                         Overlay_functor;
 protected:
-  typedef typename Minimization_diagram_2::Traits_2              Traits;
+  typedef typename Minimization_diagram_2::Geometry_traits_2     Traits;
   typedef typename Traits::Xy_monotone_surface_3                 Xy_monotone_surface_3;
 
 public:
