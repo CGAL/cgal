@@ -219,7 +219,7 @@ public:
     Face_handle copied_face = copy_face(face, result, copied_face_arr,
                                         map_copied_to_orig_halfedges,
                                         map_copied_to_orig_vertices);
-    CGAL_assertion(is_valid(copied_face_arr));
+//    CGAL_assertion(is_valid(copied_face_arr));
     map_copied_to_orig_faces[copied_face] = face;
     
     
@@ -1705,7 +1705,7 @@ protected:
                          Halfedges_map& map_copied_to_orig_halfedges,
                          Vertices_map&  map_copied_to_orig_vertices)
   {
-    CGAL_precondition (from.is_valid());
+//    CGAL_precondition (from.is_valid());
     CGAL_precondition (to.is_empty());
     CGAL_assertion_msg (to.number_of_faces() == 1, "There should be one face in an empty arrangement");
 
@@ -1741,7 +1741,7 @@ protected:
                   map_orig_to_copied_vertices,
                   true);
       }
-      CGAL_assertion(is_valid(to));
+//      CGAL_assertion(is_valid(to));
 
       // Get a handle to the copied face, which is the incident face
       // of the copy we created for hec.
@@ -1769,7 +1769,7 @@ protected:
                 map_orig_to_copied_halfedges,
                 map_orig_to_copied_vertices,
                 false);
-      CGAL_assertion(is_valid(to));
+//      CGAL_assertion(is_valid(to));
     }
 
     // Copy the isolated vertices inside the given face.

@@ -21,7 +21,7 @@
 #ifndef CGAL_ENVELOPE_3_H
 #define CGAL_ENVELOPE_3_H
 
-#include <CGAL/Envelope_3/Envelope_on_surface_diagram_2.h>
+#include <CGAL/Envelope_3/Envelope_diagram_on_surface_2.h>
 #include <CGAL/Envelope_3/Envelope_divide_and_conquer_3.h>
 #include <CGAL/Arr_accessor.h>
 
@@ -57,7 +57,7 @@ void lower_envelope_3 (InputIterator begin, InputIterator end,
 template <class InputIterator, class Traits,
           class T_Dcel>
 void upper_envelope_3 (InputIterator begin, InputIterator end,
-                       Envelope_diagram_2<Traits>& max_diagram)
+                       Envelope_diagram_2<Traits, T_Dcel>& max_diagram)
 {
   typedef Traits                                            Traits_3;
   typedef typename Envelope_diagram_2<Traits_3, T_Dcel>::Arrangement              Envelope_diagram_2;

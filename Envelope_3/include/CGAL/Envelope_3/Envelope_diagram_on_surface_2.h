@@ -19,8 +19,8 @@
 //                 Ophir Setter           <ophirset@post.tau.ac.il>
 //                 Efi Fogel              <efif@post.tau.ac.il>
 
-#ifndef CGAL_ENVELOPE_ON_SURFACE_DIAGRAM_2_H
-#define CGAL_ENVELOPE_ON_SURFACE_DIAGRAM_2_H
+#ifndef CGAL_ENVELOPE_DIAGRAM_ON_SURFACE_2_H
+#define CGAL_ENVELOPE_DIAGRAM_ON_SURFACE_2_H
 
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
