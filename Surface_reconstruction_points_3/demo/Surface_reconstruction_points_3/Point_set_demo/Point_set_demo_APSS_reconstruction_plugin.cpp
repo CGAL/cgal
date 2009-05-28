@@ -11,6 +11,8 @@
 #include <QtPlugin>
 #include <QInputDialog>
 
+#include "ui_Point_set_demo_APSS_reconstruction_plugin.h"
+
 // APSS reconstruction method:
 // Reconstruct a surface mesh from a point set and return it as a polyhedron.
 Polyhedron* APSS_reconstruct(const Point_set& points,
@@ -49,6 +51,28 @@ private:
 
 }; // end class Point_set_demo_APSS_reconstruction_plugin
 
+
+class Point_set_demo_APSS_reconstruction_plugin_dialog : public QDialog, private Ui::ApssDialog
+{
+  Q_OBJECT
+  public:
+    Point_set_demo_APSS_reconstruction_plugin_dialog(QWidget *parent = 0)
+    {
+      setupUi(this);
+    }
+
+    double triangleAngle() const { return m_inputAngle->value(); }
+    double triangleRadius() const { return m_inputRadius->value() * 0.01; }
+    double triangleError() const { return m_inputDistance->value(); }
+    double mlsSmoothness() const { return m_inputSmoothness->value(); }
+
+  private slots:
+    void on_buttonBox_accepted()
+    {
+//       std::cerr << "m_inputAngle.value() = " << m_inputAngle->value() << "\n";
+    }
+};
+
 void Point_set_demo_APSS_reconstruction_plugin::reconstruct()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -64,50 +88,14 @@ void Point_set_demo_APSS_reconstruction_plugin::reconstruct()
 
     // TODO: get parameters using ONE dialog box
 
-    bool ok;
-    const double sm_angle =
-      QInputDialog::getDouble(mw,
-                              tr("APSS Reconstruction"), // dialog title
-                              tr("Min triangle angle (degrees):"), // field label
-                              20., // default value = fast
-                              1., // min
-                              30., // max
-                              2, // #decimals
-                              &ok);
-    if(!ok) return;
+    Point_set_demo_APSS_reconstruction_plugin_dialog dialog;
+    if(!dialog.exec())
+      return;
 
-    const double sm_radius =
-      QInputDialog::getDouble(mw,
-                              tr("APSS Reconstruction"), // dialog title
-                              tr("Max triangle radius w.r.t. point set radius:"), // field label
-                              0.1, // default value = fine
-                              0.01, // min
-                              1.0, // max
-                              4, // #decimals
-                              &ok);
-    if(!ok) return;
-
-    const double sm_distance =
-      QInputDialog::getDouble(mw,
-                              tr("APSS Reconstruction"), // dialog title
-                              tr("Approximation error:"), // field label
-                              0.003, // default value = smooth
-                              0.001, // min
-                              0.015, // max
-                              6, // #decimals
-                              &ok);
-    if(!ok) return;
-
-    const double smoothness =
-      QInputDialog::getDouble(mw,
-                              tr("APSS Reconstruction"), // dialog title
-                              tr("Smoothness factor:"), // field label
-                              2, // default value
-                              1,  // min
-                              20, // max
-                              0.1, // step
-                              &ok);
-    if(!ok) return;
+    const double sm_angle     = dialog.triangleAngle();
+    const double sm_radius    = dialog.triangleRadius();
+    const double sm_distance  = dialog.triangleError();
+    const double smoothness   = dialog.mlsSmoothness();
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 

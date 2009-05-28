@@ -114,7 +114,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 
-  qt4_wrap_ui( UI_FILES MainWindow.ui )
+  qt4_wrap_ui( UI_FILES MainWindow.ui Point_set_demo_APSS_reconstruction_plugin.ui)
 
   include(AddFileDependencies)
 
