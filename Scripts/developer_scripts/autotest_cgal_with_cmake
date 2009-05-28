@@ -683,8 +683,8 @@ publish_results()
   # collect results and put them on the web
   #
   cd "${CGAL_TEST_DIR}"
-  log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "PUTTING RESULTS ON THE WEB"
-  log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "RESULTS COLLECTED ${PLATFORM}-${HOST}"
+
+  log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "COLLECTING RESULTS ${PLATFORM}-${HOST}"
 
   # If this file does not exist results collection failed. Fake a results so this fact is itself reported
   if [ ! -f "results_${CGAL_TESTER}_${PLATFORM}.txt" ]; then
@@ -702,10 +702,14 @@ publish_results()
   ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.test.${PLATFORM}"
   mv "${ACTUAL_LOGFILE}.test.${PLATFORM}.gz" "${LOGS_DIR}/${LOGFILENAME}"
 
+  log_done "${ACTUAL_LOGFILE}.test.${PLATFORM}"
+
   log "${ACTUAL_LOGFILE}" "Test results: ${CGAL_TEST_DIR}/test_results-${HOST}_${PLATFORM}.tar.gz"
 
   if [ -z "${DO_NOT_UPLOAD}" ]; then
+    log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "PUTTING RESULTS ON THE WEB"
     put_on_web "test_results-${HOST}_${PLATFORM}.tar.gz" "${FILENAME}"
+    log_done "${ACTUAL_LOGFILE}"
   fi
 
   #
