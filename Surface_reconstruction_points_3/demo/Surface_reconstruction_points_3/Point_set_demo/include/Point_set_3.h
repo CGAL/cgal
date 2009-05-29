@@ -1,4 +1,4 @@
-// Author: Laurent Saboret
+// Author: Laurent Saboret, Nader Salman, Gael Guennebaud
 
 #ifndef POINT_SET_3_H
 #define POINT_SET_3_H
@@ -172,6 +172,9 @@ public:
     // erase-remove idiom
     erase(std::remove_if(begin(), end(), std::mem_fun_ref(&UI_point::is_selected)),
           end());
+          
+    // Scott Meyer's "swap trick" to trim excess capacity
+    Point_set_3(*this).swap(*this);
 
     // TODO: Update m_unoriented_points_begin.
     //       This is tricky as erase() invalidates iterators.
