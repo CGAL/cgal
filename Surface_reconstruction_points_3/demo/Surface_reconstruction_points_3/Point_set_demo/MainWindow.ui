@@ -91,6 +91,7 @@
     <addaction name="actionBoundingSphere" />
     <addaction name="actionConvexHull" />
     <addaction name="actionRadiusFromDensity" />
+    <addaction name="actionNormalEstimation" />
    </widget>
    <widget class="QMenu" name="menuProcessing" >
     <property name="title" >
@@ -418,6 +419,11 @@
   <action name="actionJetSmoothing" >
    <property name="text" >
     <string>Jet smoothing</string>
+   </property>
+  </action>
+  <action name="actionNormalEstimation" >
+   <property name="text" >
+    <string>Normal estimation</string>
    </property>
   </action>
   <action name="actionDraw_two_sides" >
