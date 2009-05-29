@@ -26,6 +26,9 @@ int main(void)
   points.erase(CGAL::random_simplify_point_set(points.begin(), points.end(),
                                                removed_percentage),
                points.end());
+          
+  // Optional: Scott Meyer's "swap trick" to trim excess capacity
+  std::vector<Point>(points).swap(points);
 
   return EXIT_SUCCESS;
 }
