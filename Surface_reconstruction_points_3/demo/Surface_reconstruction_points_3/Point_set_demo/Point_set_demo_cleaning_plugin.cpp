@@ -85,6 +85,7 @@ void Point_set_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
       points->unoriented_points_begin() = points->end();
     else
       points->unoriented_points_begin() = points->begin();
+    item->changed();
 
     QApplication::restoreOverrideCursor();
   }

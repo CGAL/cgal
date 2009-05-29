@@ -257,6 +257,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(local_spacing_plugin Point_set_demo_local_spacing_plugin)
   target_link_libraries(local_spacing_plugin point_set)
 
+  polyhedron_demo_plugin(smoothing_plugin Point_set_demo_smoothing_plugin)
+  target_link_libraries(smoothing_plugin point_set)
+
   qt4_wrap_ui( CLEANING_UI_FILES Point_set_demo_outlier_removal_plugin.ui)
   polyhedron_demo_plugin(cleaning_plugin Point_set_demo_cleaning_plugin ${CLEANING_UI_FILES})
   target_link_libraries(cleaning_plugin point_set)

@@ -96,8 +96,9 @@
     <property name="title" >
      <string>Processing</string>
     </property>
-    <addaction name="actionSimplify" />
     <addaction name="actionOutlierRemoval" />
+    <addaction name="actionJetSmoothing" />
+    <addaction name="actionSimplify" />
    </widget>
    <widget class="QMenu" name="menuReconstruction" >
     <property name="title" >
@@ -412,6 +413,11 @@
   <action name="actionOutlierRemoval" >
    <property name="text" >
     <string>Outlier removal</string>
+   </property>
+  </action>
+  <action name="actionJetSmoothing" >
+   <property name="text" >
+    <string>Jet smoothing</string>
    </property>
   </action>
   <action name="actionDraw_two_sides" >
