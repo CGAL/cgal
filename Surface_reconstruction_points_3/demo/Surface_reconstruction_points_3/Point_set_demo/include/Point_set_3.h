@@ -30,7 +30,7 @@
 ///
 /// CAUTION:
 /// - User is responsible to call invalidate_bounds() after adding, moving or removing points.
-/// - User is responsible to partition the point set as oriented/unoriented normals 
+/// - User is responsible to partition the point set as oriented/unoriented normals
 ///   and to set unoriented_points_begin() appropriately.
 ///
 /// @heading Parameters:
@@ -133,7 +133,7 @@ public:
   Normal_const_iterator normals_end() const   { return Normal_const_iterator(end()); }
 
   // Gets/sets the iterator over the first point with an unoriented normal.
-  /// User is responsible to partition the point set as oriented/unoriented normals 
+  /// User is responsible to partition the point set as oriented/unoriented normals
   /// and to set unoriented_points_begin() appropriately.
   Point_iterator&      unoriented_points_begin()       { return m_unoriented_points_begin; }
   Point_const_iterator unoriented_points_begin() const { return m_unoriented_points_begin; }
@@ -173,7 +173,7 @@ public:
     erase(std::remove_if(begin(), end(), std::mem_fun_ref(&UI_point::is_selected)),
           end());
 
-    // TODO: Update m_unoriented_points_begin. 
+    // TODO: Update m_unoriented_points_begin.
     //       This is tricky as erase() invalidates iterators.
     m_unoriented_points_begin = end();
 

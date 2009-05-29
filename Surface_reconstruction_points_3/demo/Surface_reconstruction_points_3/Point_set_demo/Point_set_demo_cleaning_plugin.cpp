@@ -72,16 +72,21 @@ void Point_set_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
     if(!dialog.exec())
       return;
 
+    bool areOriented = points->unoriented_points_begin() == points->end();
     const double removed_percentage = dialog.percentage(); // percentage of points to remove
     const int nb_neighbors = dialog.nbNeighbors(); // considers 7 nearest neighbor points
-    std::cerr << "remove_outliers" << " : " << removed_percentage << " " << nb_neighbors << "\n";
     points->erase(CGAL::remove_outliers(points->begin(), points->end(),
                                         nb_neighbors,
                                         removed_percentage),
                   points->end());
-    std::cerr << "ok1\n";
+
+    points->invalidate_bounds();
+    if (areOriented)
+      points->unoriented_points_begin() = points->end();
+    else
+      points->unoriented_points_begin() = points->begin();
+
     QApplication::restoreOverrideCursor();
-    std::cerr << "ok2\n";
   }
 }
 
