@@ -691,7 +691,6 @@ Arrangement_on_surface_2/examples/Arrangement_on_surface_2/fan_grids.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/io_unbounded.cpp -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/points.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/unb_planar_vertical_decomposition.cpp -text
-Arrangement_on_surface_2/include/CGAL/Arr_arc_on_sphere_trait_2.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_geodesic_arc_on_sphere_partition_traits_2.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Arr_lm_specified_points_generator.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_on_sphere_transformation.h -text
