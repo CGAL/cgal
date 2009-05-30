@@ -77,12 +77,11 @@ public:
 // data members
 private:
 
-  FT m_f; // value of the implicit function
-          // PA: should we make a separate type instead?
-          //     (so that the user can decide to run in float or double mode)
-  bool m_constrained; // is vertex constrained?
+  // TODO: reduce memory footprint
+  FT m_f; // value of the implicit function // float precise enough?
+  bool m_constrained; // is vertex constrained? // combine constrained and type
   unsigned char m_type; // INPUT or STEINER
-  unsigned int m_index; // index in matrix
+  unsigned int m_index; // index in matrix (to be stored outside)
 
 // Public methods
 public:
