@@ -867,7 +867,7 @@ protected:
   {
     if((h->target()->parameter_space_in_x() != ARR_INTERIOR) ||
        (h->target()->parameter_space_in_y() != ARR_INTERIOR))
-      return true;
+      return false;
 
     // Eos code:
     // if(h->target()->is_at_infinity())
@@ -1598,8 +1598,6 @@ protected:
                                                    Overlay_2>::Self Self;
     Keep_edge_data_observer(Minimization_diagram_2& arr,
                             Self* b) :
-      // Eos
-      // Self* b = NULL) :
       Md_observer(arr), base(b)
     {
       CGAL_assertion(base != NULL);
@@ -1725,8 +1723,6 @@ protected:
     // Constructor.
     Faces_order_bfs_visitor(const IndexMap& imap, std::list<Face_handle>& f,
                             Self* b) :
-// Eos
-//Self* b = NULL) :
       index_map (&imap),
       faces(f),
       base(b)
