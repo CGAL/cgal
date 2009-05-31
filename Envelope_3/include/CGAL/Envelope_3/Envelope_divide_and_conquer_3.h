@@ -865,14 +865,25 @@ protected:
   // this means that the target has the same envelope information as the edge
   bool can_remove_edge_target(Halfedge_handle h)
   {
-    if((h->target()->parameter_space_in_x() != ARR_INTERIOR) ||
-       (h->target()->parameter_space_in_y() != ARR_INTERIOR))
+    // \todo Use new design
+    /* The code below uses the is_at_infinity.
+       The comment from the calling function says:
+       "if the endpoints become isolated after the removal we need to remove
+        them if they have the same data as the edge."
+
+       When I tried to use the following code I got a Segmentation Fault when
+       trying to compute power diagram:
+       
+       if((v->parameter_space_in_x() != ARR_INTERIOR) ||
+          (v->parameter_space_in_y() != ARR_INTERIOR))
+          return false;
+
+     */
+    Vertex_handle v = h->target();
+    if(v->is_at_infinity())
       return false;
 
-    // Eos code:
-    // if(h->target()->is_at_infinity())
-    // return false;
-    Vertex_handle v = h->target();
+
     /*if (v->get_is_fake() && !v->is_decision_set())
       return true;
    

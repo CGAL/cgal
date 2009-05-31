@@ -1940,19 +1940,20 @@ protected:
     to->set_decision(EQUAL);
   }
 
-  void deal_with_new_vertex(Halfedge_handle orig_he, Vertex_handle new_v)
-  {
-    const Xy_monotone_surface_3& surf1 = get_aux_surface(orig_he, 0);
-    const Xy_monotone_surface_3& surf2 = get_aux_surface(orig_he, 1);
+//   void deal_with_new_vertex(Halfedge_handle orig_he, Vertex_handle new_v)
+//   {
+//     const Xy_monotone_surface_3& surf1 = get_aux_surface(orig_he, 0);
+//     const Xy_monotone_surface_3& surf2 = get_aux_surface(orig_he, 1);
 
-    const Point_2& p = new_v->point();
-    Comparison_result res = compare_distance_to_envelope(p, surf1, surf2);
-    new_v->set_aux_source(0, orig_he->get_aux_source(0));
-    new_v->set_aux_source(1, orig_he->get_aux_source(1));
-    new_v->set_decision(res);
-  }
+//     const Point_2& p = new_v->point();
+//     Comparison_result res = compare_distance_to_envelope(p, surf1, surf2);
+//     new_v->set_aux_source(0, orig_he->get_aux_source(0));
+//     new_v->set_aux_source(1, orig_he->get_aux_source(1));
+//     new_v->set_decision(res);
+//   }
     
-  Comparison_result resolve_minimal_edge(Halfedge_handle orig_he, Halfedge_handle new_he)
+  Comparison_result resolve_minimal_edge(Halfedge_handle orig_he, 
+                                         Halfedge_handle new_he)
   {
     // find and set the envelope data on the new edge
     const Xy_monotone_surface_3& surf1 = get_aux_surface(orig_he, 0);
@@ -2006,7 +2007,7 @@ protected:
                                   Faces_hash& parts,
                                   Vertices_hash& boundaryv,
                                   Vertices_hash& specialv,
-								  Vertices_to_edges_map& v_to_h)
+                                  Vertices_to_edges_map& v_to_h)
     {
       boundary_halfedges = &boundary;
       special_edges = &specialh;
@@ -2190,10 +2191,16 @@ protected:
 
     void after_create_boundary_vertex (Vertex_handle v)
     {
+      CGAL_assertion(big_arr.is_valid());
       Vertex_handle new_v = 
         big_arr_accessor.create_boundary_vertex (boundary_vertex_cv,
                                                  boundary_vertex_ind,
                                                  ps_x, ps_y, true);
+      // add indication of a new vertex (that is not connected to anything,
+      // and is also not isolated)
+      if (is_bounded())
+        new_vertices.push_back(v);
+
       map_vertices[v] = new_v;
     }
 
@@ -2639,10 +2646,8 @@ protected:
     // the zone visitor functions
 
     /*! Initialize the visitor with an arrangement object. */
-    void init (Minimization_diagram_2 *base_arr)
+    void init (Minimization_diagram_2 *arr)
     {
-      Minimization_diagram_2 *arr = 
-        dynamic_cast<Minimization_diagram_2*>(base_arr);
       CGAL_assertion(&copied_arr == arr);
       insert_visitor.init(arr);
     }
