@@ -430,7 +430,8 @@ private:
   class Conflict_tester;
   class Point_hider;
 
-#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+#if 0
+  //ndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   template <class Triangulation_R3> struct Vertex_remover;
 #else
   template <class TriangulationR3>
@@ -947,7 +948,8 @@ public:
 
 };
 
-#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG 
+#if 0
+//ndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG 
 template <class GT, class Tds>
 template <class TriangulationR3>
 struct Periodic_3_Delaunay_triangulation_3<GT,Tds>::Vertex_remover

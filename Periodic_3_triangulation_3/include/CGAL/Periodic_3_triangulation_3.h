@@ -202,7 +202,7 @@ private:
 public:
   /** @name Creation */ //@{
   Periodic_3_triangulation_3(
-      const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1), 			  
+      const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1),
       const Geometric_traits & gt = Geometric_traits())
     : _gt(gt), _tds(), _domain(domain), too_long_edge_counter(0) {
     _gt.set_domain(_domain);
@@ -1170,7 +1170,7 @@ copy_multiple_covering(const Periodic_3_triangulation_3<GT,TDS> & tr) {
        vit != vertices_end() ; ++vit) 
     too_long_edges[vit] = std::list<Vertex_handle>();
   std::pair<Vertex_handle, Vertex_handle> edge_to_add;
-  Segment s;
+  Point p1,p2;
   int i,j;
   for (Edge_iterator eit = edges_begin() ;
        eit != edges_end() ; ++eit) {
@@ -1182,12 +1182,12 @@ copy_multiple_covering(const Periodic_3_triangulation_3<GT,TDS> & tr) {
     }
     edge_to_add = std::make_pair(eit->first->vertex(i),
 				 eit->first->vertex(j));
-    s = construct_segment(eit->first->vertex(i)->point(),
-			  eit->first->vertex(j)->point(),
-			  get_offset(eit->first, i),
-			  get_offset(eit->first, j));
+    p1 = construct_point(eit->first->vertex(i)->point(),
+	get_offset(eit->first, i));
+    p2 = construct_point(eit->first->vertex(j)->point(),
+	get_offset(eit->first, j));
     Vertex_handle v_no = eit->first->vertex(i);
-    if (s.squared_length() > edge_length_threshold) {
+    if (squared_distance(p1,p2) > edge_length_threshold) {
       CGAL_triangulation_assertion(
 	  find(too_long_edges[v_no].begin(),
 	       too_long_edges[v_no].end(),
@@ -1234,9 +1234,8 @@ is_extensible_triangulation_in_1_sheet_h2() const {
 	tit->at(2).first, tit->at(3).first,
 	tit->at(0).second, tit->at(1).second,
 	tit->at(2).second, tit->at(3).second);
-    Segment s = construct_segment(cc,tit->at(0).first,
-	Offset(),tit->at(0).second);
-    if ( !(FT(16)*s.squared_length()
+
+    if ( !(FT(16)*squared_distance(cc,point(tit->at(0)))
 	    < (_domain.xmax()-_domain.xmin())*(_domain.xmax()-_domain.xmin())) )
       return false;
   }
@@ -1644,13 +1643,11 @@ inline void Periodic_3_triangulation_3<GT,TDS>::
         const CellIt begin, const CellIt end) {
   CGAL_triangulation_precondition(number_of_vertices() != 0);
   // add newly added edges to too_long_edges, if necessary.
-  Vertex_handle v1,v2;
-  Point p1, p2;
+  Point p1,p2;
   Offset omin;
   std::pair< Vertex_handle, Vertex_handle > edge_to_add;
   std::pair< Offset, Offset > edge_to_add_off;
   std::list<Vertex_handle> empty_list;
-  Segment s;
   too_long_edges[v] = empty_list;
   // Iterate over all cells of the new star.
   for (CellIt it = begin ; it != end ; ++it) {
@@ -1664,14 +1661,13 @@ inline void Periodic_3_triangulation_3<GT,TDS>::
       CGAL_triangulation_precondition(&((*it)->vertex(j))< &((*it)->vertex(k)));
 
       edge_to_add = std::make_pair((*it)->vertex(j), (*it)->vertex(k));
-      // TODO: use squared_distance rather than segment construction
-      s = construct_segment(
-	  (*it)->vertex(j)->point(), (*it)->vertex(k)->point(),
-	  get_offset(*it, j), get_offset(*it, k));
+      
+      p1 = construct_point((*it)->vertex(j)->point(), get_offset(*it, j));
+      p2 = construct_point((*it)->vertex(k)->point(), get_offset(*it, k));
 
       Vertex_handle v_no = (*it)->vertex(j);
 
-      if ((s.squared_length() > edge_length_threshold)
+      if ((squared_distance(p1,p2) > edge_length_threshold)
           && (find(too_long_edges[(*it)->vertex(j)].begin(),
 		  too_long_edges[(*it)->vertex(j)].end(),
 		  edge_to_add.second)
@@ -2417,25 +2413,27 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
   // collect all vertices on the boundary
   std::vector<Vertex_handle> vertices;
   vertices.reserve(64);
-  std::vector<Cell_handle> tmp_cells;
-  tmp_cells.reserve(64);
-  incident_cells(v, std::back_inserter(tmp_cells));
+  //TODO: remove the following commented lines if the test suite runs
+  //successfully 
+//   std::vector<Cell_handle> tmp_cells;
+//   tmp_cells.reserve(64);
+//   incident_cells(v, std::back_inserter(tmp_cells));
 
-  // TODO: figure out why tmp_cells is used. It should contain exactly
-  // the same as hole. If it's still needed it should be copied
-  // instead of computed from scratch.
-  CGAL_triangulation_assertion(hole.size() == tmp_cells.size());
-  for (unsigned int i=0 ; i<tmp_cells.size() ; i++) {
-    CGAL_triangulation_assertion(hole[i] == tmp_cells[i]);
-  }
+//   // TODO: figure out why tmp_cells is used. It should contain exactly
+//   // the same as hole. If it's still needed it should be copied
+//   // instead of computed from scratch.
+//   CGAL_triangulation_assertion(hole.size() == tmp_cells.size());
+//   for (unsigned int i=0 ; i<tmp_cells.size() ; i++) {
+//     CGAL_triangulation_assertion(hole[i] == tmp_cells[i]);
+//   }
 
   // The set is needed to ensure that each vertex is inserted only once.
   std::set<Vertex_handle> tmp_vertices;
   // The map connects vertices to offsets in the hole
   std::map<Vertex_handle, Offset> vh_off_map;
 
-  for(typename std::vector<Cell_handle>::iterator cit = tmp_cells.begin();
-      cit != tmp_cells.end(); ++cit)
+  for(typename std::vector<Cell_handle>::iterator cit = hole.begin();
+      cit != hole.end(); ++cit)
   {
     // Put all incident vertices in tmp_vertices.
     for (int j=0; j<4; ++j){
@@ -2533,12 +2531,13 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
         if (j==i) continue;
         if (&(new_ch->vertex(i)) > &(new_ch->vertex(j))) continue;
 
-	Segment s = construct_segment(
-            new_ch->vertex(i)->point(), new_ch->vertex(j)->point(),
-	    get_offset(new_ch, i), get_offset(new_ch, j));
+	Point p1 = construct_point(new_ch->vertex(i)->point(),
+	    get_offset(new_ch, i));
+	Point p2 = construct_point(new_ch->vertex(j)->point(),
+	    get_offset(new_ch, j));
         Vertex_handle v_no = new_ch->vertex(i);
 
-        if (s.squared_length() > edge_length_threshold) {
+        if (squared_distance(p1,p2) > edge_length_threshold) {
 	  // If the cell does not fulfill the edge-length criterion
 	  // revert all changes to the triangulation and transform it
 	  // to a triangulation in the needed covering space.
@@ -3093,17 +3092,16 @@ inline int
 Periodic_3_triangulation_3<GT,TDS>::find_too_long_edges(
     std::map<Vertex_handle, std::list<Vertex_handle> >& edges)
 const {
-  Segment s;
+  Point p1, p2;
   int counter = 0;
   Vertex_handle v_no,vh;
   for (Edge_iterator eit = edges_begin();
        eit != edges_end() ; eit++) {
-    s = construct_segment(
-			  eit->first->vertex(eit->second)->point(),
-			  eit->first->vertex(eit->third)->point(),
-			  get_offset(eit->first, eit->second),
-			  get_offset(eit->first, eit->third));
-    if (s.squared_length() > edge_length_threshold) {
+    p1 = construct_point(eit->first->vertex(eit->second)->point(),
+	get_offset(eit->first, eit->second));
+    p2 = construct_point(eit->first->vertex(eit->third)->point(),
+	get_offset(eit->first, eit->third));
+    if (squared_distance(p1,p2) > edge_length_threshold) {
       if (&(eit->first->vertex(eit->second)) <
 	  &(eit->first->vertex(eit->third))) {
 	v_no = eit->first->vertex(eit->second);
