@@ -38,9 +38,16 @@ int main(void)
     // Note: mst_orient_normals() requires an iterator over points
     //       + property maps to access each point's index, position and normal.
     //       The index and point property maps have default values and are omitted here.
-    CGAL::mst_orient_normals(points.begin(), points.end(),
-                             CGAL::make_normal_vector_property_map(points.begin()),
-                             nb_neighbors);
+    PointList::iterator unoriented_points_begin = 
+      CGAL::mst_orient_normals(points.begin(), points.end(),
+                               CGAL::make_normal_vector_property_map(points.begin()),
+                               nb_neighbors);
+
+    // Delete points with unoriented normals
+    points.erase(unoriented_points_begin, points.end());
+            
+    // Optional: Scott Meyer's "swap trick" to trim excess capacity
+    std::list<Point_with_normal>(points).swap(points);
 
     return EXIT_SUCCESS;
 }
