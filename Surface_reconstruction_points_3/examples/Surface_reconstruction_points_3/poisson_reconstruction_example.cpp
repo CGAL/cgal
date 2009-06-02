@@ -46,7 +46,7 @@ int main(void)
     }
 
     // Creates implicit function and insert points.
-    // Note: Poisson_implicit_function() requires an iterator over points
+    // Note: Poisson_reconstruction_function() requires an iterator over points
     //       + property maps to access each point's position and normal.
     //       The position property map can be omitted here as we use an iterator over Point_3 elements.
     Poisson_reconstruction_function implicit_function(points.begin(), points.end(),
