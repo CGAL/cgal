@@ -61,7 +61,11 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
   points.erase(CGAL::remove_outliers(points.begin(), points.end(),
                                      nb_neighbors,
                                      removed_percentage),
-               points.end());
+                                     points.end());
+  
+  // Optional: Scott Meyer's "swap trick" to trim excess capacity
+  std::deque<Point>(points).swap(points);
+
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "

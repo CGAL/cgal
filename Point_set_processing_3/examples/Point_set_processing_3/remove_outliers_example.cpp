@@ -28,6 +28,9 @@ int main(void)
                                      nb_neighbors,
                                      removed_percentage),
                points.end());
+               
+  // Optional: Scott Meyer's "swap trick" to trim excess capacity
+  std::vector<Point>(points).swap(points);
 
   return EXIT_SUCCESS;
 }
