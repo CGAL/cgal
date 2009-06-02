@@ -29,7 +29,7 @@ int main(void)
                                      removed_percentage),
                points.end());
                
-  // Optional: Scott Meyer's "swap trick" to trim excess capacity
+  // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
   std::vector<Point>(points).swap(points);
 
   return EXIT_SUCCESS;

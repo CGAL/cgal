@@ -80,8 +80,8 @@ void Point_set_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
                                         removed_percentage),
                   points->end());
 
-    // Scott Meyer's "swap trick" to trim excess capacity
-    Point_set(points).swap(points);
+    // after erase(), use Scott Meyer's "swap trick" to trim excess capacity
+    Point_set(*points).swap(*points);
 
     points->invalidate_bounds();
     if (areOriented)

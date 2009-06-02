@@ -91,6 +91,9 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
                                 CGAL::make_normal_vector_property_map(points->begin()),
                                 dialog.directionNbNeighbors());
 
+      // Mark all normals as unoriented
+      m_points->unoriented_points_begin() = m_points->begin();
+
       long memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "done: " << task_timer.time() << " seconds, "
                             << (memory>>20) << " Mb allocated"
@@ -109,6 +112,9 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
                                 CGAL::make_normal_vector_property_map(points->begin()),
                                 dialog.directionNbNeighbors());
 
+      // Mark all normals as unoriented
+      m_points->unoriented_points_begin() = m_points->begin();
+
       long memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "done: " << task_timer.time() << " seconds, "
                             << (memory>>20) << " Mb allocated"
@@ -122,18 +128,19 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
 
       // mst_orient_normals() requires an iterator over points
       // + property maps to access each point's index, position and normal.
-      Point_set::iterator unoriented_points_begin = 
+      m_points->unoriented_points_begin() = 
         CGAL::mst_orient_normals(points->begin(), points->end(),
                                 CGAL::make_dereference_property_map(points->begin()),
                                 CGAL::make_normal_vector_property_map(points->begin()),
                                 CGAL::make_index_property_map(*points),
                                 dialog.orientationNbNeighbors());
 
-      // Delete points with unoriented normals
-      points.erase(unoriented_points_begin, points.end());
-              
-      // Optional: Scott Meyer's "swap trick" to trim excess capacity
-      Point_set(points).swap(points);
+      // Delete points with an unoriented normal (required by APSS and Poisson)
+      points->erase(m_points->unoriented_points_begin(), points->end());
+      m_points->unoriented_points_begin() = points->end();
+
+      // After erase(), use Scott Meyer's "swap trick" to trim excess capacity
+      Point_set(*points).swap(*points);
 
       long memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "done: " << task_timer.time() << " seconds, "

@@ -166,11 +166,11 @@ public:
   // Note: this call resets unoriented_points_begin().
   void delete_selection()
   {
-    // erase-remove idiom
+    // Deletes selected points using erase-remove idiom
     erase(std::remove_if(begin(), end(), std::mem_fun_ref(&UI_point::is_selected)),
           end());
           
-    // Scott Meyer's "swap trick" to trim excess capacity
+    // after erase(), use Scott Meyer's "swap trick" to trim excess capacity
     Point_set_3(*this).swap(*this);
 
     // TODO: Update m_unoriented_points_begin. 

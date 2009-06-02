@@ -111,7 +111,7 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
 void run_mst_orient_normals(PointList& points, // input points + input/output normals
                             unsigned int nb_neighbors_mst) // number of neighbors
 {
-  std::cerr << "Orient Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
+  std::cerr << "Orients Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
   // mst_orient_normals() requires an iterator over points
@@ -123,10 +123,11 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
                              CGAL::make_index_property_map(points),
                              nb_neighbors_mst);
 
-  // Delete points with unoriented normals
+  // Optional: delete points with an unoriented normal
+  // if you plan to call a reconstruction algorithm that expects oriented normals.
   points.erase(unoriented_points_begin, points.end());
           
-  // Optional: Scott Meyer's "swap trick" to trim excess capacity
+  // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
   PointList(points).swap(points);
 
   long memory = CGAL::Memory_sizer().virtual_size();

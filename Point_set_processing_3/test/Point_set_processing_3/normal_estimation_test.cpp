@@ -254,19 +254,14 @@ bool run_mst_orient_normals(PointList& points, // input points + input/output no
                              CGAL::make_index_property_map(points),
                              nb_neighbors_mst);
 
-  // Delete points with unoriented normals
-  points.erase(unoriented_points_begin, points.end());
-          
-  // Optional: Scott Meyer's "swap trick" to trim excess capacity
-  PointList(points).swap(points);
-          
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
 
-  // Check the accuracy of normal orientation.
-  // If original normals are available, compare with them.
+  // Note: we do *not* delete points with unoriented normals in this test.
+  // Instead, we check the accuracy of normal orientation and,
+  // if original normals are available, compare with them.
   return verify_normal_orientation(points, unoriented_points_begin, original_normals);
 }
 
