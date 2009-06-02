@@ -174,11 +174,11 @@ void CPoissonDoc::Dump(CDumpContext& dc) const
 // File >> Open implementation
 BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
-  CGAL::Timer task_timer; task_timer.start();
-
   if (!CDocument::OnOpenDocument(lpszPathName))
     return FALSE;
 
+  CWaitCursor wait;
+  CGAL::Timer task_timer; task_timer.start();
   status_message("Loads point set %s...",lpszPathName);
 
   // Gets extension
@@ -201,6 +201,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     if(!header_stream || header.size_of_vertices() == 0)
     {
       prompt_message("Unable to read file");
+      update_status();
       return FALSE;
     }
     bool is_mesh = (header.size_of_facets() > 0);
@@ -217,6 +218,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
       if(!stream || !input_mesh.is_valid() || input_mesh.empty())
       {
         prompt_message("Unable to read file");
+        update_status();
         return FALSE;
       }
 
@@ -239,6 +241,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
                                             CGAL::make_normal_vector_property_map(std::back_inserter(m_points))) )
     {
       prompt_message("Unable to read file");
+      update_status();
       return FALSE;
     }
     }
@@ -254,6 +257,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
                                             CGAL::make_normal_vector_property_map(std::back_inserter(m_points))) )
     {
       prompt_message("Unable to read file");
+      update_status();
       return FALSE;
     }
   }
@@ -266,6 +270,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
                              std::back_inserter(cameras)) )
     {
       prompt_message("Unable to read file");
+      update_status();
       return FALSE;
     }
   }
@@ -280,6 +285,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
                                     &movie_file_name) )
     {
       prompt_message("Unable to read file");
+      update_status();
       return FALSE;
     }
   }
@@ -287,6 +293,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   else
   {
     prompt_message("File format not supported");
+    update_status();
     return FALSE;
   }
 
@@ -326,6 +333,10 @@ void CPoissonDoc::OnFileSaveAs()
   // show the dialog
   if (dlgExport.DoModal() == IDOK)
   {
+    CWaitCursor wait;
+    CGAL::Timer task_timer; task_timer.start();
+    status_message("Save input point set as %s...",dlgExport.m_ofn.lpstrFile);
+
     // get extension
     CString file = dlgExport.m_ofn.lpstrFile;
     CString extension = dlgExport.m_ofn.lpstrFile;
@@ -365,6 +376,7 @@ void CPoissonDoc::OnFileSaveAs()
       if( ! ok )
       {
         prompt_message("Unable to save file");
+        update_status();
         return;
       }
     }
@@ -389,14 +401,20 @@ void CPoissonDoc::OnFileSaveAs()
       if( ! ok )
       {
         prompt_message("Unable to save file");
+        update_status();
         return;
       }
     }
     else
     {
       prompt_message("File format not supported");
+      update_status();
       return;
     }
+
+    status_message("Save input point set as...done (%.2lf s)", task_timer.time());
+    update_status();
+    UpdateAllViews(NULL);
   }
 }
 
@@ -423,6 +441,10 @@ void CPoissonDoc::OnFileSaveSurface()
   // show the dialog
   if (dlgExport.DoModal() == IDOK)
   {
+    CWaitCursor wait;
+    CGAL::Timer task_timer; task_timer.start();
+    status_message("Save reconstructed surface as %s...",dlgExport.m_ofn.lpstrFile);
+
     // get extension
     CString file = dlgExport.m_ofn.lpstrFile;
     CString extension = dlgExport.m_ofn.lpstrFile;
@@ -441,6 +463,7 @@ void CPoissonDoc::OnFileSaveSurface()
       if( !out )
       {
         prompt_message("Unable to save file");
+        update_status();
         return;
       }
 
@@ -449,8 +472,13 @@ void CPoissonDoc::OnFileSaveSurface()
     else
     {
       prompt_message("File format not supported");
+      update_status();
       return;
     }
+
+    status_message("Save reconstructed surface as...done (%.2lf s)", task_timer.time());
+    update_status();
+    UpdateAllViews(NULL);
   }
 }
 
@@ -461,7 +489,7 @@ void CPoissonDoc::OnUpdateFileSaveSurface(CCmdUI *pCmdUI)
                  && m_surface_mesher_dt.number_of_vertices() > 0);
 }
 
-// Update the number of points and tetrahedra in the status bar
+// Update the number of points and tetrahedra and the memory footprint in the status bar
 // and write them to cerr.
 void CPoissonDoc::update_status()
 {
@@ -478,9 +506,9 @@ void CPoissonDoc::update_status()
 
     // write message to cerr
     std::cerr << "=> " << points << " (" << selected_points << "), "
-                       << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated, "
-                       << "largest free block=" << (CGAL::Peak_memory_sizer().largest_free_block()>>20) << " Mb, "
-                       << "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
+                       << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
+                       //<< "largest free block=" << (CGAL::Peak_memory_sizer().largest_free_block()>>20) << " Mb, "
+                       //<< "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
                        << std::endl;
 
     // Update status bar
@@ -499,9 +527,9 @@ void CPoissonDoc::update_status()
 
     // write message to cerr
     std::cerr << "=> " << vertices << ", " << tets << ", "
-                       << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated, "
-                       << "largest free block=" << (CGAL::Peak_memory_sizer().largest_free_block()>>20) << " Mb, "
-                       << "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
+                       << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
+                       //<< "largest free block=" << (CGAL::Peak_memory_sizer().largest_free_block()>>20) << " Mb, "
+                       //<< "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
                        << std::endl;
 
     // Update status bar
@@ -592,7 +620,6 @@ void CPoissonDoc::OnEditOptions()
     m_random_simplification_percentage = dlg.m_random_simplification_percentage;
 
     UpdateAllViews(NULL);
-    EndWaitCursor();
   }
 }
 
@@ -665,7 +692,7 @@ bool CPoissonDoc::verify_normal_direction()
 // Computes normals direction by Principal Component Analysis
 void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   CGAL::Timer task_timer; task_timer.start();
 
   // percentage -> number of neighbors
@@ -685,15 +712,13 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
   // Mark all normals as unoriented
   m_points.unoriented_points_begin() = m_points.begin();
 
-  status_message("Estimates Normals Direction by PCA...done (%.2lf s)", task_timer.time());
-
   // Check the accuracy of normals direction estimation.
   // If original normals are available, compare with them.
   verify_normal_direction();
 
+  status_message("Estimates Normals Direction by PCA...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateAlgorithmsEstimateNormalsByPCA(CCmdUI *pCmdUI)
@@ -704,7 +729,7 @@ void CPoissonDoc::OnUpdateAlgorithmsEstimateNormalsByPCA(CCmdUI *pCmdUI)
 // Computes normals direction by Jet Fitting
 void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   CGAL::Timer task_timer; task_timer.start();
 
   // percentage -> number of neighbors
@@ -724,15 +749,13 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
   // Mark all normals as unoriented
   m_points.unoriented_points_begin() = m_points.begin();
 
-  status_message("Estimates Normals Direction by Jet Fitting...done (%.2lf s)", task_timer.time());
-
   // Check the accuracy of normals direction estimation.
   // If original normals are available, compare with them.
   verify_normal_direction();
 
+  status_message("Estimates Normals Direction by Jet Fitting...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateAlgorithmsEstimateNormalByJetFitting(CCmdUI *pCmdUI)
@@ -800,7 +823,7 @@ bool CPoissonDoc::verify_normal_orientation()
 // Hoppe92 normal orientation using a Minimum Spanning Tree.
 void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   status_message("Orients Normals with a Minimum Spanning Tree (k=%d)...", m_nb_neighbors_mst);
   CGAL::Timer task_timer; task_timer.start();
 
@@ -813,15 +836,13 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
                              CGAL::make_index_property_map(m_points),
                              m_nb_neighbors_mst);
 
-  status_message("Orients Normals with a Minimum Spanning Tree...done (%.2lf s)", task_timer.time());
-
   // Check the accuracy of normal orientation.
   // If original normals are available, compare with them.
   verify_normal_orientation();
 
+  status_message("Orients Normals with a Minimum Spanning Tree...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWithMST(CCmdUI *pCmdUI)
@@ -835,22 +856,20 @@ void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWithMST(CCmdUI *pCmdUI)
 // that reconstructed the points by photogrammetry.
 void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   status_message("Orients Normals wrt Cameras...");
   CGAL::Timer task_timer; task_timer.start();
 
   m_points.unoriented_points_begin() = 
     orient_normals_wrt_cameras(m_points.begin(), m_points.end());
 
-  status_message("Orients Normals wrt Cameras...done (%.2lf s)", task_timer.time());
-
   // Check the accuracy of normal orientation.
   // If original normals are available, compare with them.
   verify_normal_orientation();
 
+  status_message("Orients Normals wrt Cameras...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWrtCameras(CCmdUI *pCmdUI)
@@ -864,7 +883,7 @@ void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWrtCameras(CCmdUI *pCmdUI)
 // Smoothes point set using jet fitting + projection
 void CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   CGAL::Timer task_timer; task_timer.start();
 
   // percentage -> number of neighbors
@@ -885,7 +904,6 @@ void CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting()
   status_message("Smoothes Point Set...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateAlgorithmsSmoothUsingJetFitting(CCmdUI *pCmdUI)
@@ -917,9 +935,7 @@ void CPoissonDoc::OnModePointSet()
 
   m_edit_mode = POINT_SET;
 
-  update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateModePointSet(CCmdUI *pCmdUI)
@@ -948,7 +964,7 @@ void CPoissonDoc::OnUpdateModePoisson(CCmdUI *pCmdUI)
 // - Surface Meshing
 void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   status_message("Poisson reconstruction (with normalized divergence)...");
   CGAL::Timer total_timer; total_timer.start();
 
@@ -964,12 +980,16 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   status_message("Creates Poisson triangulation...");
 
   // Creates implicit function and insert points.
+  // Note: Poisson_reconstruction_function() requires an iterator over points
+  //       + property maps to access each point's position and normal.
+  //       The position property map can be omitted here as we use an iterator over Point_3 elements.
   assert(m_poisson_function == NULL);
   m_poisson_function = new Poisson_reconstruction_function(m_points.begin(), m_points.end(),
                                                            CGAL::make_normal_vector_property_map(m_points.begin()));
 
   // Prints status
   status_message("Creates Poisson triangulation...done (%.2lf s)", task_timer.time());
+  update_status();
   task_timer.reset();
 
   status_message("Computes implicit function...");
@@ -979,11 +999,13 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   if ( ! m_poisson_function->compute_implicit_function() )
   {
     status_message("Error: cannot compute implicit function");
+    update_status();
     return;
   }
 
   // Prints status
   status_message("Computes implicit function...done (%.2lf s)", task_timer.time());
+  update_status();
   task_timer.reset();
 
   //***************************************
@@ -1003,6 +1025,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   if(inner_point_value >= 0.0)
   {
     status_message("Error: unable to seed (%lf at inner_point)",inner_point_value);
+    update_status();
     return;
   }
 
@@ -1029,6 +1052,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   // Prints status
   status_message("Surface meshing...done (%d output vertices, %.2lf s)",
                  m_surface_mesher_dt.number_of_vertices(), task_timer.time());
+  update_status();
   task_timer.reset();
     
   // get output surface
@@ -1042,7 +1066,6 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   status_message("Poisson reconstruction (with normalized divergence)...done (%.2lf s)", total_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateOneStepPoissonReconstructionWithNormalizedDivergence(CCmdUI *pCmdUI)
@@ -1057,7 +1080,7 @@ void CPoissonDoc::OnUpdateOneStepPoissonReconstructionWithNormalizedDivergence(C
 // Removes points / cameras cone's angle is low
 void CPoissonDoc::OnAlgorithmsOutlierRemovalWrtCamerasConeAngle()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   status_message("Removes outliers / cameras cone's angle...");
   CGAL::Timer task_timer; task_timer.start();
 
@@ -1072,7 +1095,6 @@ void CPoissonDoc::OnAlgorithmsOutlierRemovalWrtCamerasConeAngle()
   status_message("Removes outliers / cameras cone's angle...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateAlgorithmsOutlierRemovalWrtCamerasConeAngle(CCmdUI *pCmdUI)
@@ -1087,7 +1109,7 @@ void CPoissonDoc::OnUpdateAlgorithmsOutlierRemovalWrtCamerasConeAngle(CCmdUI *pC
 // - remove threshold_percent worst points.
 void CPoissonDoc::OnOutlierRemoval()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   CGAL::Timer task_timer; task_timer.start();
 
   // percentage -> number of neighbors
@@ -1111,7 +1133,6 @@ void CPoissonDoc::OnOutlierRemoval()
   status_message("Removes outliers wrt average squared distance to k nearest neighbors...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateOutlierRemoval(CCmdUI *pCmdUI)
@@ -1121,20 +1142,19 @@ void CPoissonDoc::OnUpdateOutlierRemoval(CCmdUI *pCmdUI)
 
 void CPoissonDoc::OnAnalysisAverageSpacing()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   status_message("Computes average spacing to k nearest neighbors (k=%d)...", m_nb_neighbors_avg_spacing);
   CGAL::Timer task_timer; task_timer.start();
 
   double value = CGAL::compute_average_spacing(m_points.begin(), m_points.end(),
                                                m_nb_neighbors_avg_spacing);
 
-  // write message in message box
+  // write message in message box and cerr
   prompt_message("Average spacing: %lf", value);
 
   status_message("Computes average spacing to k nearest neighbors...done: %lf (%.2lf s)", value, task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateAnalysisAverageSpacing(CCmdUI *pCmdUI)
@@ -1145,7 +1165,7 @@ void CPoissonDoc::OnUpdateAnalysisAverageSpacing(CCmdUI *pCmdUI)
 // "Reconstruction >> APSS reconstruction" callback
 void CPoissonDoc::OnReconstructionApssReconstruction()
 {
-    BeginWaitCursor();
+    CWaitCursor wait;
     status_message("APSS reconstruction...");
     CGAL::Timer task_timer; task_timer.start();
 
@@ -1168,6 +1188,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     if(inner_point_value >= 0.0)
     {
       status_message("Error: unable to seed (%lf at inner_point)",inner_point_value);
+      update_status();
       return;
     }
 
@@ -1204,7 +1225,6 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
                    m_surface_mesher_dt.number_of_vertices(), task_timer.time());
     update_status();
     UpdateAllViews(NULL);
-    EndWaitCursor();
 }
 
 // Enable "Reconstruction >> APSS reconstruction" if normals are computed and oriented.
@@ -1233,14 +1253,15 @@ void CPoissonDoc::OnUpdateModeAPSS(CCmdUI *pCmdUI)
 
 void CPoissonDoc::OnEditDelete()
 {
-    BeginWaitCursor();
-    status_message("Deletes selected points");
+  CWaitCursor wait;
+  status_message("Deletes selected points");
+  CGAL::Timer task_timer; task_timer.start();
 
-    m_points.delete_selection();
+  m_points.delete_selection();
 
-    update_status();
-    UpdateAllViews(NULL);
-    EndWaitCursor();
+  status_message("Deletes selected points...done (%.2lf s)", task_timer.time());
+  update_status();
+  UpdateAllViews(NULL);
 }
 
 void CPoissonDoc::OnUpdateEditDelete(CCmdUI *pCmdUI)
@@ -1250,14 +1271,15 @@ void CPoissonDoc::OnUpdateEditDelete(CCmdUI *pCmdUI)
 
 void CPoissonDoc::OnEditResetSelection()
 {
-    BeginWaitCursor();
-    status_message("Resets selection");
+  CWaitCursor wait;
+  status_message("Resets selection");
+  CGAL::Timer task_timer; task_timer.start();
 
-    m_points.select(m_points.begin(), m_points.end(), false);
+  m_points.select(m_points.begin(), m_points.end(), false);
 
-    update_status();
-    UpdateAllViews(NULL);
-    EndWaitCursor();
+  status_message("Resets selection...done (%.2lf s)", task_timer.time());
+  update_status();
+  UpdateAllViews(NULL);
 }
 
 void CPoissonDoc::OnUpdateEditResetSelection(CCmdUI *pCmdUI)
@@ -1267,7 +1289,7 @@ void CPoissonDoc::OnUpdateEditResetSelection(CCmdUI *pCmdUI)
 
 void CPoissonDoc::OnPointCloudSimplificationByClustering()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   status_message("Point cloud simplification by clustering...");
   CGAL::Timer task_timer; task_timer.start();
 
@@ -1285,7 +1307,6 @@ void CPoissonDoc::OnPointCloudSimplificationByClustering()
   status_message("Point cloud  simplification by clustering...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdatePointCloudSimplificationByClustering(CCmdUI *pCmdUI)
@@ -1295,7 +1316,7 @@ void CPoissonDoc::OnUpdatePointCloudSimplificationByClustering(CCmdUI *pCmdUI)
 
 void CPoissonDoc::OnPointCloudSimplificationRandom()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   status_message("Random point cloud simplification...");
   CGAL::Timer task_timer; task_timer.start();
 
@@ -1309,7 +1330,6 @@ void CPoissonDoc::OnPointCloudSimplificationRandom()
   status_message("Random point cloud simplification...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdatePointCloudSimplificationRandom(CCmdUI *pCmdUI)
@@ -1319,7 +1339,7 @@ void CPoissonDoc::OnUpdatePointCloudSimplificationRandom(CCmdUI *pCmdUI)
 
 void CPoissonDoc::OnRadialNormalOrientation()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   status_message("Radial Normal Orientation...");
   CGAL::Timer task_timer; task_timer.start();
 
@@ -1327,15 +1347,13 @@ void CPoissonDoc::OnRadialNormalOrientation()
     CGAL::radial_orient_normals(m_points.begin(), m_points.end(),
                                 CGAL::make_normal_vector_property_map(m_points.begin()));
 
-  status_message("Radial Normal Orientation...done (%.2lf s)", task_timer.time());
-
   // Check the accuracy of normal orientation.
   // If original normals are available, compare with them.
   verify_normal_orientation();
 
+  status_message("Radial Normal Orientation...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateRadialNormalOrientation(CCmdUI *pCmdUI)
@@ -1347,7 +1365,7 @@ void CPoissonDoc::OnUpdateRadialNormalOrientation(CCmdUI *pCmdUI)
 
 void CPoissonDoc::OnFlipNormals()
 {
-  BeginWaitCursor();
+  CWaitCursor wait;
   status_message("Flip Normals...");
   CGAL::Timer task_timer; task_timer.start();
 
@@ -1355,15 +1373,13 @@ void CPoissonDoc::OnFlipNormals()
   for (int i=0; i<m_points.size(); i++)
     m_points[i].normal() = -m_points[i].normal();
 
-  status_message("Flip Normals...done (%.2lf s)", task_timer.time());
-
   // Check the accuracy of normal orientation.
   // If original normals are available, compare with them.
   verify_normal_orientation();
 
+  status_message("Flip Normals...done (%.2lf s)", task_timer.time());
   update_status();
   UpdateAllViews(NULL);
-  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateFlipNormals(CCmdUI *pCmdUI)

@@ -320,10 +320,7 @@ private:
 
     long old_max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
 
-    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
-               long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(CGAL::Peak_memory_sizer().largest_free_block()>>20),
-               long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
+    CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
     CGAL_TRACE("  Creates matrix...\n");
 
     // get #variables
@@ -363,10 +360,7 @@ private:
     duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
     */
 
-    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
-               long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(CGAL::Peak_memory_sizer().largest_free_block()>>20),
-               long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
+    CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
     CGAL_TRACE("  Choleschy factorization...\n");
 
     // Choleschy factorization M = L L^T
@@ -381,10 +375,7 @@ private:
     if (max_memory > old_max_memory)
       CGAL_TRACE("  Max allocation = %ld Mb\n", max_memory>>20);
 
-    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
-               long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(CGAL::Peak_memory_sizer().largest_free_block()>>20),
-               long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
+    CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
     CGAL_TRACE("  Direct solve...\n");
 
     // Direct solve by forward and backward substitution
@@ -416,10 +407,7 @@ private:
       if(!v->constrained())
         v->f() = X[index++];
 
-    CGAL_TRACE("  %ld Mb allocated, largest free memory block=%ld Mb, #blocks over 100 Mb=%ld\n",
-               long(CGAL::Memory_sizer().virtual_size())>>20,
-               long(CGAL::Peak_memory_sizer().largest_free_block()>>20),
-               long(CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)));
+    CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
     CGAL_TRACE("End of solve_poisson()\n");
 
     return true;

@@ -24,7 +24,7 @@
 
 #include <CGAL/assertions.h>
 
-#include <stdio.h>
+#include <CGAL/trace.h>
 
 
 // macro definitions
@@ -285,21 +285,5 @@
 #  define CGAL_point_set_processing_expensive_exactness_warning_code(CODE) CODE
 #  define CGAL_point_set_processing_expensive_exactness_warnings 1
 #endif // CGAL_POINT_SET_PROCESSING_NO_WARNINGS
-
-
-// Traces
-// ------
-
-#ifdef DEBUG_TRACE
-  #define CGAL_TRACE  printf
-#else
-  #define CGAL_TRACE  if (false) printf
-#endif
-
-#ifdef DEBUG_TRACE
-  #define CGAL_TRACE_STREAM  std::cerr
-#else
-  #define CGAL_TRACE_STREAM  if (false) std::cerr
-#endif
 
 
