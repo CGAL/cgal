@@ -142,8 +142,8 @@ bool Arr_vert_decomp_sl_visitor<Hlpr, OutIt>::after_handle_event
   // Notify the helper on the event.
   m_helper.after_handle_event (event);
 
-  // We are only interested in events associated with finite points:
-  if (! event->is_finite())
+  // We are only interested in events associated with valid points:
+  if (! event->is_closed())
     return (true);
 
   // Get the vertex handle associated with the current event (stored with

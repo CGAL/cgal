@@ -695,6 +695,7 @@ Arrangement_on_surface_2/include/CGAL/Arr_geodesic_arc_on_sphere_partition_trait
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Arr_lm_specified_points_generator.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_on_sphere_transformation.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_transformation.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_transform_on_sphere.h -text
 Arrangement_on_surface_2/include/CGAL/Arrangement_2/Arr_compute_zone_visitor.h -text
 Arrangement_on_surface_2/include/CGAL/Arrangement_2/Arr_do_intersect_zone_visitor.h -text
 Arrangement_on_surface_2/include/CGAL/Arrangement_2/arrangement_type_traits.h -text

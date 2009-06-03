@@ -26,8 +26,9 @@
  * Defintion of the Arrangement_zone_2 class.
  */
 
-#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <boost/mpl/assert.hpp>
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 #include <list>
 #include <map>
@@ -61,6 +62,23 @@ public:
   typedef typename Arrangement_2::Geometry_traits_2      Geometry_traits_2;
   typedef typename Arrangement_2::Topology_traits        Topology_traits;
 
+protected:
+  
+  typedef Arr_traits_adaptor_2<Geometry_traits_2>        Traits_adaptor_2;
+
+  typedef typename Traits_adaptor_2::Arr_left_side_tag   Arr_left_side_tag;
+  typedef typename Traits_adaptor_2::Arr_bottom_side_tag Arr_bottom_side_tag;
+  typedef typename Traits_adaptor_2::Arr_top_side_tag    Arr_top_side_tag;
+  typedef typename Traits_adaptor_2::Arr_right_side_tag  Arr_right_side_tag;
+
+  BOOST_MPL_ASSERT(
+      (typename 
+       Arr_sane_identified_tagging< Arr_left_side_tag, Arr_bottom_side_tag, 
+       Arr_top_side_tag, Arr_right_side_tag >::result)
+  );
+
+public:
+  
   typedef ZoneVisitor_                                   Visitor;
 
   typedef typename Arrangement_2::Vertex_handle          Vertex_handle;
@@ -71,12 +89,14 @@ public:
 
   typedef typename Geometry_traits_2::Point_2            Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename  Geometry_traits_2::Boundary_category Boundary_category;
-  
+
 protected:
 
-  typedef Arr_traits_adaptor_2<Geometry_traits_2>        Traits_adaptor_2;
-
+  typedef typename Arr_are_all_sides_oblivious_tag< 
+                     Arr_left_side_tag, Arr_bottom_side_tag, 
+                     Arr_top_side_tag, Arr_right_side_tag >::result
+  Are_all_sides_oblivious_tag;
+  
   typedef typename Arrangement_2::Vertex_const_handle    Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle  Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle      Face_const_handle;
@@ -200,7 +220,7 @@ public:
       // traits use the arrangement accessor to locate it.
       // Note that if the curve-end is unbounded, left_pt does not exist.
       // Note that if the curve-end is unbounded, left_pt does not exist.
-      has_left_pt = geom_traits->is_bounded_2_object()(cv, ARR_MIN_END);
+      has_left_pt = geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
       left_on_boundary = true;
       if (has_left_pt)
         left_pt = geom_traits->construct_min_vertex_2_object() (cv);
@@ -208,7 +228,7 @@ public:
     }
 
     // Check the boundary conditions of th right curve end.
-    if (geom_traits->is_bounded_2_object()(cv, ARR_MAX_END)) {
+    if (geom_traits->is_closed_2_object()(cv, ARR_MAX_END)) {
       const Arr_parameter_space  bx2 =
         geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
       const Arr_parameter_space  by2 =
@@ -325,11 +345,11 @@ private:
    */
   bool _is_to_left(const Point_2& p, Halfedge_handle he) const
   {
-    return (_is_to_left_impl(p, he, Boundary_category()));
+    return (_is_to_left_impl(p, he, Are_all_sides_oblivious_tag()));
   }
 
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
-                        Arr_no_boundary_tag) const
+                        Arr_all_sides_oblivious_tag) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
@@ -340,8 +360,8 @@ private:
   }
 
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
-                        Arr_has_boundary_tag) const;
-
+                        Arr_not_all_sides_oblivious_tag) const;
+  
   /*!
    * Check if the given point lies completely to the right of the given egde.
    * \param p The point.
@@ -351,11 +371,11 @@ private:
    */
   bool _is_to_right(const Point_2& p, Halfedge_handle he) const
   {
-    return (_is_to_right_impl(p, he, Boundary_category()));
+    return (_is_to_right_impl(p, he, Are_all_sides_oblivious_tag()));
   }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                         Arr_no_boundary_tag) const
+                         Arr_all_sides_oblivious_tag) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
@@ -366,7 +386,7 @@ private:
   }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                         Arr_has_boundary_tag) const;
+                         Arr_not_all_sides_oblivious_tag) const;
 
   /*!
    * Compute the (lexicographically) leftmost intersection of the query

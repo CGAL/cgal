@@ -170,8 +170,8 @@ template <class Tr, class ArrR, class ArrB, class Arr, class Evnt, class Sbcv>
 void Arr_unb_planar_overlay_helper<Tr,ArrR,ArrB,Arr,Evnt,Sbcv>::
 before_handle_event (Event* e)
 {
-  // Nothing to do in case the event represents a finite point.
-  if (e->is_finite())
+  // Nothing to do in case the event represents a valid point.
+  if (e->is_closed())
     return;
   
   // In case the event occurs on the left edge of the fictitious face (x = -oo)

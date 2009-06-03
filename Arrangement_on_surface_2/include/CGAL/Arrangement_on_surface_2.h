@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2007 Tel-Aviv University (Israel).
+// Copyright (c) 2005-2009 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -17,6 +17,7 @@
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
 //            Efi Fogel         <efif@post.tau.ac.il>
+//            Eric Berberich    <ericb@post.tau.ac.il>
 //            (based on old version by: Iddo Hanniel,
 //                                      Eyal Flato,
 //                                      Oren Nechushtan,
@@ -30,6 +31,8 @@
  * The header file for the Arrangement_on_surface_2<Traits,Dcel> class.
  */
 
+#include <boost/mpl/assert.hpp>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
@@ -65,13 +68,43 @@ public:
 
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef TopTraits_                                      Topology_traits;
+
+protected:
+  
+  // first define adaptor ...
+  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
+  
+  // .. as it completes (potentially) missing side tags
+  typedef typename Traits_adaptor_2::Arr_left_side_tag    Arr_left_side_tag;
+  typedef typename Traits_adaptor_2::Arr_bottom_side_tag  Arr_bottom_side_tag;
+  typedef typename Traits_adaptor_2::Arr_top_side_tag     Arr_top_side_tag;
+  typedef typename Traits_adaptor_2::Arr_right_side_tag   Arr_right_side_tag;
+  
+  BOOST_MPL_ASSERT(
+      (typename 
+       Arr_sane_identified_tagging< Arr_left_side_tag, Arr_bottom_side_tag, 
+       Arr_top_side_tag, Arr_right_side_tag >::result)
+  );
+
+public:
+  
   typedef Arrangement_on_surface_2<Geometry_traits_2,
                                    Topology_traits>       Self;
 
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
-  typedef typename Geometry_traits_2::Boundary_category   Boundary_category;
+
+protected:
+
+  // maybe remove this in a future version (that supports complete handling
+  // of all sides)
+  typedef typename Arr_are_all_sides_oblivious_tag< 
+                     Arr_left_side_tag, Arr_bottom_side_tag, 
+                     Arr_top_side_tag, Arr_right_side_tag >::result
+  Are_all_sides_oblivious_tag;
   
+public:
+
   typedef typename Topology_traits::Dcel                  Dcel;
   typedef typename Dcel::Size                             Size;
 
@@ -80,8 +113,6 @@ protected:
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
   
-  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
-
   // Internal DCEL types:
   typedef typename Dcel::Vertex                     DVertex;
   typedef typename Dcel::Halfedge                   DHalfedge;
@@ -524,8 +555,8 @@ public:
     Vertex()
     {}
 
-    /*! Check whether the vertex lies at infinity. */
-    bool is_at_infinity () const
+    /*! Check whether the vertex lies on an open boundary. */
+    bool is_at_open_boundary () const
     {
       return (Base::has_null_point());
     }
@@ -1448,32 +1479,59 @@ protected:
   /// \name Allocating and de-allocating points and curves.
   //@{
 
-  /*! Is one of the given x and y parameter spaces unbounded?
+  /*! Is one of the given x and y parameter spaces open?
    * These parameter spaces are typically associated with a particular curve
    * end.
    * \param ps_x The parameter space in x.
    * \param ps_y The parameter space in y.
    */
-  inline bool is_unbounded(Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+  inline bool is_open(Arr_parameter_space ps_x, Arr_parameter_space ps_y)
     const
   {
     return
-      (((ps_x != ARR_INTERIOR) && (_boundary_types[ps_x] == ARR_UNBOUNDED)) ||
-       ((ps_y != ARR_INTERIOR) && (_boundary_types[ps_y] == ARR_UNBOUNDED)));
+      (((ps_x != ARR_INTERIOR) && (_boundary_types[ps_x] == ARR_OPEN)) ||
+       ((ps_y != ARR_INTERIOR) && (_boundary_types[ps_y] == ARR_OPEN)));
   }
   
   /*! Initialize the boundary_types array */
   inline void init_boundary_types()
   {
-    init_boundary_types_imp(Boundary_category());
+      init_boundary_side(ARR_LEFT_BOUNDARY, Arr_left_side_tag());
+      init_boundary_side(ARR_BOTTOM_BOUNDARY, Arr_bottom_side_tag());
+      init_boundary_side(ARR_TOP_BOUNDARY, Arr_top_side_tag());
+      init_boundary_side(ARR_RIGHT_BOUNDARY, Arr_right_side_tag());
   }
 
   /*! Initialize the boundary_types array */
-  void init_boundary_types_imp(Arr_no_boundary_tag) {}
-  
+  void init_boundary_side(Arr_parameter_space ps, 
+                          Arr_oblivious_side_tag) {
+      _boundary_types[ps] = ARR_OBLIVIOUS;
+  }
+    
   /*! Initialize the boundary_types array */
-  void init_boundary_types_imp(Arr_has_boundary_tag);
-  
+  void init_boundary_side(Arr_parameter_space ps, 
+                          Arr_open_side_tag) {
+      _boundary_types[ps] = ARR_OPEN;
+  }
+
+  /*! Initialize the boundary_types array */
+  void init_boundary_side(Arr_parameter_space ps, 
+                          Arr_closed_side_tag) {
+      _boundary_types[ps] = ARR_CLOSED;
+  }
+
+  /*! Initialize the boundary_types array */
+  void init_boundary_side(Arr_parameter_space ps, 
+                          Arr_contracted_side_tag) {
+      _boundary_types[ps] = ARR_CONTRACTION;
+  }
+
+  /*! Initialize the boundary_types array */
+  void init_boundary_side(Arr_parameter_space ps, 
+                          Arr_identified_side_tag) {
+      _boundary_types[ps] = ARR_IDENTIFICATION;
+  }
+
   /*! Allocate a new point. */
   Point_2 *_new_point (const Point_2& pt)
   {
@@ -1643,22 +1701,23 @@ protected:
   Comparison_result _compare_vertices_xy (const DVertex *v1,
                                           const DVertex *v2) const
   {
-    return (_compare_vertices_xy_impl
-            (v1, v2,
-             typename Geometry_traits_2::Boundary_category()));
+    return (_compare_vertices_xy_impl(v1, v2, Are_all_sides_oblivious_tag()));
+
   }
 
-  Comparison_result _compare_vertices_xy_impl (const DVertex *v1,
-                                               const DVertex *v2,
-                                               Arr_no_boundary_tag) const
+  Comparison_result _compare_vertices_xy_impl (
+      const DVertex *v1,
+      const DVertex *v2,
+      Arr_all_sides_oblivious_tag) const
   {
     return (geom_traits->compare_xy_2_object() (v1->point(), v2->point()));
   }
 
-  Comparison_result _compare_vertices_xy_impl (const DVertex *v1,
-                                               const DVertex *v2,
-                                               Arr_has_boundary_tag) const;
-
+  Comparison_result _compare_vertices_xy_impl (
+      const DVertex *v1,
+      const DVertex *v2,
+      Arr_not_all_sides_oblivious_tag) const;
+  
   /*!
    * Locate the leftmost vertex on the a given sequence defined by two
    * halfedges. This sequence is still an open loop, but it will soon be closed

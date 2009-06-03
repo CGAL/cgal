@@ -396,7 +396,7 @@ Object Arr_simple_point_location<Arrangement>::_vertical_ray_shoot
     // Check if the isolated vertex is closer to p than the current closest
     // object.
     if ((found_vertex &&
-         (closest_v->is_at_infinity() ||
+         (closest_v->is_at_open_boundary() ||
           compare_xy (vh->point(), closest_v->point()) ==
                                                          point_above_under)) ||
         (! found_vertex &&

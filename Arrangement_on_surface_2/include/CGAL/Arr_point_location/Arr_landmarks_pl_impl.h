@@ -124,7 +124,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex
 { 
   Vertex_const_handle       vh = nearest_vertex;
 
-  CGAL_assertion_msg (! vh->is_at_infinity(),
+  CGAL_assertion_msg (! vh->is_at_open_boundary(),
                       "_walk_from_vertex() from a vertex at infinity.");
 
   // Check if the qurey point p conincides with the vertex.
@@ -378,7 +378,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
 
   // If p equals one of the edge's endpoints, return the vertex
   // that represents this endpoint.
-  if (! eh->source()->is_at_infinity())
+  if (! eh->source()->is_at_open_boundary())
   {
     if (m_traits->equal_2_object() (p, eh->source()->point()))
     {
@@ -403,7 +403,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
       }
     }
   }
-  if (! eh->target()->is_at_infinity())
+  if (! eh->target()->is_at_open_boundary())
   {
     if (m_traits->equal_2_object() (p, eh->target()->point()))
     {
@@ -461,12 +461,12 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
   // vertex of eh that lies closer to p, and walk from this vertex.
   Vertex_const_handle  vh = eh->source();
 
-  if (vh->is_at_infinity())
+  if (vh->is_at_open_boundary())
   {
     vh = eh->target();
-    CGAL_assertion (! vh->is_at_infinity());
+    CGAL_assertion (! vh->is_at_open_boundary());
   }
-  else if (! eh->target()->is_at_infinity())
+  else if (! eh->target()->is_at_open_boundary())
   {
     res = m_traits->compare_xy_2_object() (p, eh->source()->point());
 
@@ -733,7 +733,7 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
         return _in_case_p_is_on_edge(he,crossed_edges,p,is_target);
       }
 
-      if ((!curr->target()->is_at_infinity()) && 
+      if ((!curr->target()->is_at_open_boundary()) && 
             is_in_x_range(seg , curr->target()->point() ))
       {
         // if the target point of curr is located on seg
@@ -744,7 +744,7 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
           new_vertex = curr->target();
         }
       }
-      else if ((!curr->source()->is_at_infinity()) &&
+      else if ((!curr->source()->is_at_open_boundary()) &&
                  is_in_x_range(seg , curr->source()->point() ))
       {
         // if the source point of curr is located on seg
@@ -808,13 +808,13 @@ Arr_landmarks_point_location<Arr, Gen>::_in_case_p_is_on_edge
   crossed_edges.insert (he);
   crossed_edges.insert (he->twin());
   // Check if p equals one of the edge end-vertices.
-  if (! he->target()->is_at_infinity() &&
+  if (! he->target()->is_at_open_boundary() &&
       m_traits->compare_xy_2_object() (he->target()->point(), p) == EQUAL)
   {
     // p is the target of the current halfedge.
     is_target = true;
   }
-  else if (! he->source()->is_at_infinity() &&
+  else if (! he->source()->is_at_open_boundary() &&
     m_traits->compare_xy_2_object() (he->source()->point(), p) == EQUAL)
   {
     // Take the twin halfedge, so p equals its target.
@@ -849,13 +849,13 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
   // Use the left and right endpoints of the segment.
   Point_2 cv_left;
   Point_2 cv_right;
-  bool cv_left_is_bounded = m_traits->is_bounded_2_object() (cv, ARR_MIN_END);
-  bool cv_right_is_bounded = m_traits->is_bounded_2_object() (cv, ARR_MAX_END);
-  if (cv_left_is_bounded)
+  bool cv_left_is_closed = m_traits->is_closed_2_object() (cv, ARR_MIN_END);
+  bool cv_right_is_closed = m_traits->is_closed_2_object() (cv, ARR_MAX_END);
+  if (cv_left_is_closed)
     cv_left = m_traits->construct_min_vertex_2_object()(cv);
-  if (cv_right_is_bounded)
+  if (cv_right_is_closed)
     cv_right = m_traits->construct_max_vertex_2_object()(cv);
-  if (cv_left_is_bounded && cv_right_is_bounded)
+  if (cv_left_is_closed && cv_right_is_closed)
   {
     if (is_in_x_range(seg,cv_left) && is_in_x_range(seg,cv_right))
     {
@@ -871,7 +871,7 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
   }
   // Check if the overlapping x-range of the two curves is trivial.
   // In this case, they cannot cross.
-  if (cv_left_is_bounded) {
+  if (cv_left_is_closed) {
     // Check if the left endpoint of cv has the same x-coordinate as the
     // right endpoint of seg.
     if (m_traits->compare_x_2_object()
@@ -902,7 +902,7 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
       return (false);
     }
   }
-  if (cv_right_is_bounded) {
+  if (cv_right_is_closed) {
     // Check if the right endpoint of cv has the same x-coordinate as the
     // left endpoint of seg.
     if (m_traits->compare_x_2_object()

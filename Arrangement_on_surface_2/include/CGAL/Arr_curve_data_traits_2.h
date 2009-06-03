@@ -61,10 +61,18 @@ public:
   typedef typename Base_traits_2::Point_2             Point_2;
 
   typedef typename Base_traits_2::Has_left_category   Has_left_category;
-  typedef typename Base_traits_2::Boundary_category   Boundary_category;
 
   typedef typename Base_traits_2::Has_merge_category  Base_has_merge_category;
   typedef Tag_true                                    Has_merge_category;
+
+  typedef typename CGALi::Arr_complete_left_side_tag< Base_traits_2 >::Tag
+                                                      Arr_left_side_tag;
+  typedef typename CGALi::Arr_complete_bottom_side_tag< Base_traits_2 >::Tag
+                                                      Arr_bottom_side_tag;
+  typedef typename CGALi::Arr_complete_top_side_tag< Base_traits_2 >::Tag
+                                                      Arr_top_side_tag;
+  typedef typename CGALi::Arr_complete_right_side_tag< Base_traits_2 >::Tag
+                                                      Arr_right_side_tag;
 
   // Representation of a curve with an addtional data field:
   typedef _Curve_data_ex<Base_curve_2, Curve_data>    Curve_2;

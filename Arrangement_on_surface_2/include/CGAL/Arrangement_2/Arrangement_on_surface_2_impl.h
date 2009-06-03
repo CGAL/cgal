@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005, 2009  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -17,6 +17,7 @@
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
+//                 Eric Berberich    <ericb@post.tau.ac.il>
 //                 (based on old version by: Iddo Hanniel,
 //                                           Eyal Flato,
 //                                           Oren Nechushtan,
@@ -43,21 +44,6 @@
 #endif
 
 CGAL_BEGIN_NAMESPACE
-
-/*! \brief initializes the boundary_types array */
-template<class GeomTraits, class TopTraits>
-void Arrangement_on_surface_2<GeomTraits, TopTraits>::
-init_boundary_types_imp(Arr_has_boundary_tag)
-{
-  _boundary_types[ARR_LEFT_BOUNDARY] =
-    top_traits.boundary_type(ARR_LEFT_BOUNDARY);
-  _boundary_types[ARR_BOTTOM_BOUNDARY] =
-    top_traits.boundary_type(ARR_BOTTOM_BOUNDARY);
-  _boundary_types[ARR_TOP_BOUNDARY] =
-    top_traits.boundary_type(ARR_TOP_BOUNDARY);
-  _boundary_types[ARR_RIGHT_BOUNDARY] =
-    top_traits.boundary_type(ARR_RIGHT_BOUNDARY);
-}
 
 //-----------------------------------------------------------------------------
 // Default constructor.
@@ -407,13 +393,13 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
                         Face_handle f)
 {
   CGAL_precondition_code (
-    const bool at_inf1 = !geom_traits->is_bounded_2_object()(cv, ARR_MIN_END));
+    const bool at_obnd1 = !geom_traits->is_closed_2_object()(cv, ARR_MIN_END));
   CGAL_precondition_msg 
-    ((! at_inf1 &&
+    ((! at_obnd1 &&
       geom_traits->equal_2_object()
       (v->point(), 
        geom_traits->construct_min_vertex_2_object()(cv))) ||
-     (at_inf1 && v->is_at_infinity()),
+     (at_obnd1 && v->is_at_open_boundary()),
      "The input vertex should be the left curve end.");
 
   // Check if cv's right end has boundary conditions. If not, create a vertex
@@ -569,17 +555,17 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::insert_from_left_vertex
 #endif
 
   CGAL_precondition_code (
-    const bool at_inf1 = !geom_traits->is_bounded_2_object()(cv, ARR_MIN_END));
+    const bool at_obnd1 = !geom_traits->is_closed_2_object()(cv, ARR_MIN_END));
   CGAL_precondition_msg
-    ((! at_inf1 &&
+    ((! at_obnd1 &&
       geom_traits->equal_2_object()
       (prev->target()->point(), 
        geom_traits->construct_min_vertex_2_object()(cv))) ||
-     (at_inf1 && prev->target()->is_at_infinity()),
+     (at_obnd1 && prev->target()->is_at_open_boundary()),
      "The target of the input halfedge should be the left curve end.");
 
   CGAL_precondition_msg
-    (at_inf1 || _locate_around_vertex (_vertex(prev->target()),
+    (at_obnd1 || _locate_around_vertex (_vertex(prev->target()),
                                        cv, ARR_MIN_END) == _halfedge(prev),
      "In the clockwise order of curves around the vertex, "
      " cv must succeed the curve of prev.");
@@ -644,13 +630,14 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
                          Vertex_handle v, Face_handle f)
 {
   CGAL_precondition_code
-    (const bool at_inf2 = !geom_traits->is_bounded_2_object()(cv, ARR_MAX_END));
+    (const bool at_obnd2 = 
+     !geom_traits->is_closed_2_object()(cv, ARR_MAX_END));
   CGAL_precondition_msg 
-    ((! at_inf2 &&
+    ((! at_obnd2 &&
       geom_traits->equal_2_object()
       (v->point(), 
        geom_traits->construct_max_vertex_2_object()(cv))) ||
-     (at_inf2 && v->is_at_infinity()),
+     (at_obnd2 && v->is_at_open_boundary()),
      "The input vertex should be the right curve end.");
 
   // Check if cv's left end has boundary conditions. If not, create a vertex
@@ -799,17 +786,18 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 #endif
 
   CGAL_precondition_code
-    (const bool at_inf2 = !geom_traits->is_bounded_2_object()(cv, ARR_MAX_END));
+    (const bool at_obnd2 = 
+     !geom_traits->is_closed_2_object()(cv, ARR_MAX_END));
   CGAL_precondition_msg 
-    ((! at_inf2 &&
+    ((! at_obnd2 &&
       geom_traits->equal_2_object()
       (prev->target()->point(), 
        geom_traits->construct_max_vertex_2_object()(cv))) ||
-     (at_inf2 && prev->target()->is_at_infinity()),
+     (at_obnd2 && prev->target()->is_at_open_boundary()),
      "The input vertex should be the right curve end.");
 
   CGAL_precondition_msg
-    (at_inf2 ||
+    (at_obnd2 ||
      _locate_around_vertex (_vertex(prev->target()), cv, ARR_MAX_END) ==
      _halfedge(prev),
      "In the clockwise order of curves around the vertex, "
@@ -877,17 +865,17 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 {
   // Determine which one of the given vertices mathces the left end of the
   // given curve.
-  const bool at_inf1 = !geom_traits->is_bounded_2_object()(cv, ARR_MIN_END);
-  const bool at_inf2 = !geom_traits->is_bounded_2_object()(cv, ARR_MAX_END);
+  const bool at_obnd1 = !geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
+  const bool at_obnd2 = !geom_traits->is_closed_2_object()(cv, ARR_MAX_END);
 
   Arr_curve_end      ind1;
   Arr_curve_end      ind2;
 
-  if (! at_inf1)
+  if (! at_obnd1)
   {
     CGAL_precondition_code (Vertex_handle v_right);
 
-    if (! v1->is_at_infinity() &&
+    if (! v1->is_at_open_boundary() &&
         geom_traits->equal_2_object()
         (v1->point(), 
          geom_traits->construct_min_vertex_2_object()(cv)))
@@ -899,7 +887,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     else
     {
       CGAL_precondition_msg
-        (! v2->is_at_infinity() &&
+        (! v2->is_at_open_boundary() &&
          geom_traits->equal_2_object()
          (v2->point(), 
           geom_traits->construct_min_vertex_2_object()(cv)),
@@ -911,20 +899,20 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     }
 
     CGAL_precondition_msg 
-      ((! at_inf2 &&
+      ((! at_obnd2 &&
         geom_traits->equal_2_object()
         (v_right->point(), 
          geom_traits->construct_max_vertex_2_object()(cv))) ||
-       (at_inf2 && v_right->is_at_infinity()),
+       (at_obnd2 && v_right->is_at_open_boundary()),
        "One of the input vertices should be the right curve end.");
   }
   else
   {
-    if (! at_inf2)
+    if (! at_obnd2)
     {
       CGAL_precondition_code (Vertex_handle v_left);
 
-      if (! v1->is_at_infinity() &&
+      if (! v1->is_at_open_boundary() &&
           geom_traits->equal_2_object()
           (v1->point(), 
            geom_traits->construct_max_vertex_2_object()(cv)))
@@ -936,7 +924,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       else
       {
         CGAL_precondition_msg
-          (! v2->is_at_infinity() &&
+          (! v2->is_at_open_boundary() &&
            geom_traits->equal_2_object()
            (v2->point(), 
             geom_traits->construct_max_vertex_2_object()(cv)),
@@ -948,7 +936,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       }
 
       CGAL_precondition_msg
-        (at_inf1 && v_left->is_at_infinity(),
+        (at_obnd1 && v_left->is_at_open_boundary(),
          "One of the input vertices should be the left curve end.");
     }
     else
@@ -1133,16 +1121,16 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 {
   // Determine which one of the given vertices mathces the left end of the
   // given curve.
-  const bool at_inf1 = !geom_traits->is_bounded_2_object()(cv, ARR_MIN_END);
-  const bool at_inf2 = !geom_traits->is_bounded_2_object()(cv, ARR_MAX_END);
+  const bool at_obnd1 = !geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
+  const bool at_obnd2 = !geom_traits->is_closed_2_object()(cv, ARR_MAX_END);
 
   Arr_curve_end      ind2;
 
-  if (! at_inf1)
+  if (! at_obnd1)
   {
     CGAL_precondition_code ( Vertex_handle  v_right; );
 
-    if (! prev1->target()->is_at_infinity() &&
+    if (! prev1->target()->is_at_open_boundary() &&
         geom_traits->equal_2_object()
         (prev1->target()->point(), 
          geom_traits->construct_min_vertex_2_object()(cv)))
@@ -1153,7 +1141,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     else
     {
       CGAL_precondition_msg
-        (! v2->is_at_infinity() &&
+        (! v2->is_at_open_boundary() &&
          geom_traits->equal_2_object()
          (v2->point(), 
           geom_traits->construct_min_vertex_2_object()(cv)),
@@ -1164,20 +1152,20 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     }
 
     CGAL_precondition_msg 
-      ((! at_inf2 &&
+      ((! at_obnd2 &&
         geom_traits->equal_2_object()
         (v_right->point(), 
          geom_traits->construct_max_vertex_2_object()(cv))) ||
-       (at_inf2 && v_right->is_at_infinity()),
+       (at_obnd2 && v_right->is_at_open_boundary()),
        "One of the input vertices should be the right curve end.");
   }
   else
   {
-    if (! at_inf2)
+    if (! at_obnd2)
     {
       CGAL_precondition_code ( Vertex_handle  v_left; );
 
-      if (! prev1->target()->is_at_infinity() &&
+      if (! prev1->target()->is_at_open_boundary() &&
           geom_traits->equal_2_object()
           (prev1->target()->point(), 
            geom_traits->construct_max_vertex_2_object()(cv)))
@@ -1188,7 +1176,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       else
       {
         CGAL_precondition_msg
-          (! v2->is_at_infinity() &&
+          (! v2->is_at_open_boundary() &&
            geom_traits->equal_2_object()
            (v2->point(), 
             geom_traits->construct_max_vertex_2_object()(cv)),
@@ -1199,7 +1187,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       }
 
       CGAL_precondition_msg
-        (at_inf1 && v_left->is_at_infinity(),
+        (at_obnd1 && v_left->is_at_open_boundary(),
          "One of the input vertices should be the left curve end.");
     }
     else
@@ -1315,15 +1303,15 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   // given halfedges) mathces the left end of the given curve.
   // Thus, we can determine the comparison result between prev1->target()
   // and prev2->target().
-  const bool at_inf1 = !geom_traits->is_bounded_2_object()(cv, ARR_MIN_END);
-  const bool at_inf2 = !geom_traits->is_bounded_2_object()(cv, ARR_MAX_END);
+  const bool at_obnd1 = !geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
+  const bool at_obnd2 = !geom_traits->is_closed_2_object()(cv, ARR_MAX_END);
   Comparison_result  res;
 
-  if (! at_inf1)
+  if (! at_obnd1)
   {
     CGAL_precondition_code ( Vertex_handle  v_right; );
 
-    if (! prev1->target()->is_at_infinity() &&
+    if (! prev1->target()->is_at_open_boundary() &&
         geom_traits->equal_2_object()
         (prev1->target()->point(), 
          geom_traits->construct_min_vertex_2_object()(cv)))
@@ -1334,7 +1322,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     else
     {
       CGAL_precondition_msg
-        (! prev2->target()->is_at_infinity() &&
+        (! prev2->target()->is_at_open_boundary() &&
          geom_traits->equal_2_object()
          (prev2->target()->point(), 
           geom_traits->construct_min_vertex_2_object()(cv)),
@@ -1345,20 +1333,20 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     }
 
     CGAL_precondition_msg 
-      ((! at_inf2 &&
+      ((! at_obnd2 &&
         geom_traits->equal_2_object()
         (v_right->point(), 
          geom_traits->construct_max_vertex_2_object()(cv))) ||
-       (at_inf2 && v_right->is_at_infinity()),
+       (at_obnd2 && v_right->is_at_open_boundary()),
        "One of the input vertices should be the right curve end.");
   }
   else
   {
-    if (! at_inf2)
+    if (! at_obnd2)
     {
       CGAL_precondition_code ( Vertex_handle  v_left; );
 
-      if (! prev1->target()->is_at_infinity() &&
+      if (! prev1->target()->is_at_open_boundary() &&
           geom_traits->equal_2_object()
           (prev1->target()->point(), 
            geom_traits->construct_max_vertex_2_object()(cv)))
@@ -1369,7 +1357,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       else
       {
         CGAL_precondition_msg
-          (! prev2->target()->is_at_infinity() &&
+          (! prev2->target()->is_at_open_boundary() &&
            geom_traits->equal_2_object()
            (prev2->target()->point(), 
             geom_traits->construct_max_vertex_2_object()(cv)),
@@ -1380,7 +1368,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       }
 
       CGAL_precondition_msg
-        (at_inf1 && v_left->is_at_infinity(),
+        (at_obnd1 && v_left->is_at_open_boundary(),
          "One of the input vertices should be the left curve end.");
     }
     else
@@ -1492,8 +1480,8 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::
 modify_vertex(Vertex_handle vh, const Point_2& p)
 {
   CGAL_precondition_msg
-    (! vh->is_at_infinity(),
-     "The modified vertex must not lie at infinity.");
+    (! vh->is_at_open_boundary(),
+     "The modified vertex must not lie on open boundary.");
   CGAL_precondition_msg (geom_traits->equal_2_object() (vh->point(), p),
                          "The new point is different from the current one.");
 
@@ -1743,7 +1731,7 @@ merge_edge(Halfedge_handle e1, Halfedge_handle e2,
 
   CGAL_precondition_msg
     (! v->has_null_point(),
-     "The vertex removed by the merge must not lie at infinity.");
+     "The vertex removed by the merge must not lie on open boundary.");
   CGAL_precondition_msg
     (he1->next()->opposite() == he4 &&
      he4->next()->opposite() == he1,
@@ -1873,19 +1861,19 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
     // twin he2 and the leftmost vertex point along the path from the twin to
     // he1 (both paths do not include he1 and he2 themselves).
     bool                            is_perimetric1;
-    bool                            at_infinity1;
+    bool                            at_open_bnd1;
     bool                            is_perimetric2;
-    bool                            at_infinity2;
+    bool                            at_open_bnd2;
 
     std::pair<int, const DVertex*>  v_min1 =
-      _find_leftmost_vertex_on_closed_loop (he1, is_perimetric1, at_infinity1);
+      _find_leftmost_vertex_on_closed_loop (he1, is_perimetric1, at_open_bnd1);
 
     std::pair<int, const DVertex*>  v_min2 =
-      _find_leftmost_vertex_on_closed_loop (he2, is_perimetric2, at_infinity2);
+      _find_leftmost_vertex_on_closed_loop (he2, is_perimetric2, at_open_bnd2);
 
     if (! is_perimetric1 && ! is_perimetric2)
     {
-      CGAL_assertion (! at_infinity1 || ! at_infinity2);
+      CGAL_assertion (! at_open_bnd1 || ! at_open_bnd2);
 
       // Both paths from he1 to he2 and back from he2 to he1 are not
       // perimetric, so case (a) occurs. As we want to determine which
@@ -1903,11 +1891,12 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
       //         |                     |
       //  v_min2 +---------------------+
       //
-      // Note that if one of the paths we have examined goes to infinity
-      // (and only of the paths may go to infinity), then it is obvious that
-      // the other path becomes a hole in an unbounded face.
-      if (at_infinity2 ||
-          (!at_infinity1 && (v_min1.first > v_min2.first ||
+      // Note that if one of the paths we have examined goes to open boundary
+      // (and only of the paths may go to open boundary), 
+      // then it is obvious that the other path becomes a hole in an 
+      // open face.
+      if (at_open_bnd2 ||
+          (!at_open_bnd1 && (v_min1.first > v_min2.first ||
                              (v_min1.first == v_min2.first &&
                               geom_traits->compare_xy_2_object()
                               (v_min1.second->point(),
@@ -1918,7 +1907,7 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
       }
       else
       {
-        CGAL_assertion (at_infinity1 ||
+        CGAL_assertion (at_open_bnd1 ||
                         (v_min1.first < v_min2.first) ||
                         (v_min1.first == v_min2.first &&
                          geom_traits->compare_xy_2_object()
@@ -2223,7 +2212,7 @@ _create_vertex (const Point_2& p)
 }
 
 //-----------------------------------------------------------------------------
-// Create a new vertex at infinity.
+// Create a new vertex on boundary
 //
 template<class GeomTraits, class TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DVertex*
@@ -2242,9 +2231,9 @@ _create_boundary_vertex(const X_monotone_curve_2& cv, Arr_curve_end ind,
   v->set_boundary (ps_x, ps_y);
 
   // Act according to the boundary type if there is one:
-  if (is_unbounded (ps_x, ps_y))
+  if (is_open (ps_x, ps_y))
   {
-    // The curve-end lies at infinity, so the vertex is not associated with
+    // The curve-end lies on open boundary so the vertex is not associated with
     // a valid point.
     v->set_point (NULL);
   }
@@ -3363,7 +3352,7 @@ template<class GeomTraits, class TopTraits>
 Comparison_result
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _compare_vertices_xy_impl (const DVertex * v1, const DVertex * v2,
-                           Arr_has_boundary_tag) const
+                           Arr_not_all_sides_oblivious_tag) const
 {
   if (v1 == v2)
     return (EQUAL);
@@ -3444,7 +3433,7 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
   // vertex, until reaching he_after's source vertex, and find the leftmost
   // one. Note that we do this carefully, keeping track of the number of
   // times we crossed the line of discontinuity in x or in y (if they exist).
-  // Note that the path must not be incident to any vertex at infinity.
+  // Note that the path must not be incident to any vertex on open boundary.
   typename Traits_adaptor_2::Parameter_space_in_x_2    parameter_space_in_x =
     geom_traits->parameter_space_in_x_2_object(); 
   typename Traits_adaptor_2::Parameter_space_in_y_2    parameter_space_in_y =
@@ -3465,7 +3454,7 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
     ps_x = he->vertex()->parameter_space_in_x();
     ps_y = he->vertex()->parameter_space_in_y();
 
-    CGAL_assertion(!is_unbounded(ps_x, ps_y));
+    CGAL_assertion(!is_open(ps_x, ps_y));
 
     // Get the boundary conditions of the curve ends associated with the
     // current halfedge and its next halfedge.
@@ -3640,7 +3629,7 @@ std::pair<int,
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
                                       bool& is_perimetric,
-                                      bool& at_infinity) const
+                                      bool& at_open_bnd) const
 {
   // We go over the sequence of vertices, starting from he_anchor's target
   // vertex and stopping at the source vertex of its twin. As this path is a
@@ -3664,7 +3653,7 @@ _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
   Arr_parameter_space     ps_x, ps_y;
 
   is_perimetric = false;
-  at_infinity = false;
+  at_open_bnd = false;
   do
   {
     // Get the boundary conditions of the current vertex.
@@ -3674,9 +3663,9 @@ _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
     // Get the boundary conditions of the curve ends associated with the
     // current halfedge and its next halfedge.
     if (ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR) {
-      // Stop here if the current vertex lies at infinity.
-      if (is_unbounded (ps_x, ps_y)) {
-        at_infinity = true;
+      // Stop here if the current vertex lies on open boundary
+      if (is_open (ps_x, ps_y)) {
+        at_open_bnd = true;
         index = 0;
         v_min = NULL;
         return (std::make_pair (index, v_min));
@@ -3772,7 +3761,7 @@ _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
           
     // Move to the next halfedge.
     he = he->next();
-    CGAL_assertion (he != he_anchor);      // Guard for infinitive loops.
+    CGAL_assertion (he != he_anchor);      // Guard for infinite loops.
 
   } while (he->next() != he_anchor->opposite());
 

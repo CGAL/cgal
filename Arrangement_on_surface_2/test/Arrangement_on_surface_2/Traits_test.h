@@ -16,6 +16,7 @@
 #include <CGAL/exceptions.h>
 #include <CGAL/Object.h>
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2_dispatching.h>
 
 #include "Traits_base_test.h"
 
@@ -51,43 +52,11 @@ private:
 
   //@{
 
+  // traits
+
   /*! Test Compare_x_2
    */
   bool compare_x_wrapper(std::istringstream &);
-  bool compare_x_wrapper_imp(std::istringstream &, CGAL::Arr_no_boundary_tag);
-  bool compare_x_wrapper_imp(std::istringstream &, CGAL::Arr_has_boundary_tag);
-
-  /*! Test Compare_x_near_boundary_2
-   */
-  bool boundary_near_x_wrapper(std::istringstream &);
-  bool boundary_near_x_wrapper_imp(std::istringstream &,
-                                   CGAL::Arr_no_boundary_tag);
-  bool boundary_near_x_wrapper_imp(std::istringstream &,
-                                   CGAL::Arr_has_boundary_tag);
-
-  /*! Test Compare_y_near_boundary_2
-   */
-  bool boundary_near_y_wrapper(std::istringstream &);
-  bool boundary_near_y_wrapper_imp(std::istringstream &,
-                                   CGAL::Arr_no_boundary_tag);
-  bool boundary_near_y_wrapper_imp(std::istringstream &,
-                                   CGAL::Arr_has_boundary_tag);
-
-  /*! Test Parameter_space_in_x_2
-   */
-  bool parameter_space_x_wrapper(std::istringstream &);
-  bool parameter_space_x_wrapper_imp(std::istringstream &,
-                                     CGAL::Arr_no_boundary_tag);
-  bool parameter_space_x_wrapper_imp(std::istringstream &,
-                                     CGAL::Arr_has_boundary_tag);
-
-  /*! Test Parameter_space_in_y_2
-   */
-  bool parameter_space_y_wrapper(std::istringstream &);
-  bool parameter_space_y_wrapper_imp(std::istringstream &,
-                                     CGAL::Arr_no_boundary_tag);
-  bool parameter_space_y_wrapper_imp(std::istringstream &,
-                                     CGAL::Arr_has_boundary_tag);
 
   /*! Compare_xy_2
    */
@@ -194,6 +163,76 @@ private:
    */
   bool construct_x_monotone_curve_wrapper(std::istringstream & line);
 
+  // /////////////////////////////////////////////////////////////////////////
+  // boundary-specific functors:
+  
+  // -------------------------------------------------------------------------
+  // left-right
+  
+  /*! Test Parameter_space_in_x_2
+   */
+  bool parameter_space_in_x_curve_end_wrapper(std::istringstream &);
+  bool parameter_space_in_x_curve_end_wrapper_imp(std::istringstream &,
+                                                  CGAL::Arr_use_dummy_tag);
+  bool parameter_space_in_x_curve_end_wrapper_imp(std::istringstream &,
+                                                  CGAL::Arr_use_traits_tag);
+
+  // TODO Parameter_space_in_x_2(pt)
+  // TODO Parameter_space_in_x_2(xcv)
+
+  /*! Test Compare_y_near_boundary_2
+   */
+  bool compare_y_near_boundary_curve_ends_wrapper(std::istringstream &);
+  bool compare_y_near_boundary_curve_ends_wrapper_imp(std::istringstream &,
+                                                      CGAL::Arr_use_dummy_tag);
+  bool compare_y_near_boundary_curve_ends_wrapper_imp(std::istringstream &,
+                                                      CGAL::Arr_use_traits_tag);
+
+  // TODO Compare_y_on_boundary_2(pt1, pt2)
+  // TODO Is_on_y_identification_2(pt)  
+  // TODO Is_on_y_identification_2(xcv)
+  
+  
+  // -------------------------------------------------------------------------
+  // bottom-right
+  
+  /*! Test Parameter_space_in_y_2
+   */
+  bool parameter_space_in_y_curve_end_wrapper(std::istringstream &);
+  bool parameter_space_in_y_curve_end_wrapper_imp(std::istringstream &,
+                                                  CGAL::Arr_use_dummy_tag);
+  bool parameter_space_in_y_curve_end_wrapper_imp(std::istringstream &,
+                                                  CGAL::Arr_use_traits_tag);
+
+  // TODO Parameter_space_in_y_2(pt)
+  // TODO Parameter_space_in_y_2(xcv)
+  
+  /*! Test Compare_x_near_boundary_2
+   */
+  bool compare_x_near_boundary_point_curve_end_wrapper(std::istringstream &);
+  bool compare_x_near_boundary_point_curve_end_wrapper_imp(
+      std::istringstream &,
+      CGAL::Arr_use_dummy_tag
+  );
+  bool compare_x_near_boundary_point_curve_end_wrapper_imp(
+      std::istringstream &,
+      CGAL::Arr_use_traits_tag
+  );
+  
+  bool compare_x_near_boundary_curve_ends_wrapper(std::istringstream &);
+  bool compare_x_near_boundary_curve_ends_wrapper_imp(
+      std::istringstream &,
+      CGAL::Arr_use_dummy_tag
+  );
+  bool compare_x_near_boundary_curve_ends_wrapper_imp(
+      std::istringstream &,
+      CGAL::Arr_use_traits_tag
+  );
+
+  // TODO Compare_x_on_boundary_2(pt1, pt2)
+  // TODO Is_on_x_identification_2(pt)
+  // TODO Is_on_x_identification_2(xcv)
+  
   //@}
 
 public:
@@ -218,14 +257,6 @@ Traits_test<T_Traits>::Traits_test(int argc, char * argv[]) :
     &Traits_test<Traits>::compare_x_wrapper;
   m_wrappers[std::string("compare_xy")] =
     &Traits_test<Traits>::compare_xy_wrapper;
-  m_wrappers[std::string("boundary_near_x")] =
-    &Traits_test<Traits>::boundary_near_x_wrapper;
-  m_wrappers[std::string("boundary_near_y")] =
-    &Traits_test<Traits>::boundary_near_y_wrapper;
-  m_wrappers[std::string("parameter_space_x")] =
-    &Traits_test<Traits>::parameter_space_x_wrapper;
-  m_wrappers[std::string("parameter_space_y")] =
-    &Traits_test<Traits>::parameter_space_y_wrapper;
   m_wrappers[std::string("min_vertex")] =
     &Traits_test<Traits>::min_vertex_wrapper;
   m_wrappers[std::string("max_vertex")] =
@@ -256,6 +287,31 @@ Traits_test<T_Traits>::Traits_test(int argc, char * argv[]) :
     &Traits_test<Traits>::approximate_wrapper;
   m_wrappers[std::string("construct_x_monotone_curve")] =
     &Traits_test<Traits>::construct_x_monotone_curve_wrapper;
+
+  // left-right
+  
+  m_wrappers[std::string("parameter_space_x")] =
+    &Traits_test<Traits>::parameter_space_in_x_curve_end_wrapper;
+  // TODO Parameter_space_in_x_2(pt)
+  // TODO Parameter_space_in_x_2(xcv)
+  m_wrappers[std::string("boundary_near_y")] =
+    &Traits_test<Traits>::compare_y_near_boundary_curve_ends_wrapper;
+  // TODO Compare_y_on_boundary_2(pt1, pt2)
+  // TODO Is_on_y_identification_2(pt)  
+  // TODO Is_on_y_identification_2(xcv)
+  
+  // bottom-top
+  
+  m_wrappers[std::string("parameter_space_y")] =
+    &Traits_test<Traits>::parameter_space_in_y_curve_end_wrapper;
+  // TODO Parameter_space_in_y_2(pt)
+  // TODO Parameter_space_in_y_2(xcv)
+  m_wrappers[std::string("boundary_near_x")] =
+    &Traits_test<Traits>::compare_x_near_boundary_curve_ends_wrapper;
+  // TODO split boundary_near_x in point+curve-end + curve-ends
+  // TODO Compare_x_on_boundary_2(pt1, pt2)
+  // TODO Is_on_x_identification_2(pt)
+  // TODO Is_on_x_identification_2(xcv)
 }
 
 /*!
@@ -264,271 +320,11 @@ Traits_test<T_Traits>::Traits_test(int argc, char * argv[]) :
 template <class T_Traits>
 Traits_test<T_Traits>::~Traits_test() {}
 
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-boundary_near_x_wrapper (std::istringstream & str_stream)
-{
-  typedef typename T_Traits::Boundary_category          Boundary_category;
-  return boundary_near_x_wrapper_imp(str_stream, Boundary_category());
-}
-
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-boundary_near_x_wrapper_imp (std::istringstream &, CGAL::Arr_no_boundary_tag)
-{
-  CGAL_error();
-  return false;
-}
-
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-boundary_near_x_wrapper_imp (std::istringstream & str_stream,
-                             CGAL::Arr_has_boundary_tag)
-{
-  CGAL::Comparison_result real_answer;
-  unsigned int id1, id2;
-  // first argument must be a number (either a point or a xcurve)
-  str_stream >> id1;
-  std::pair<Enum_type, unsigned int> next_input = this->get_next_input(str_stream);
-  // second argument can be number or text (either xcurve or curve_end)
-  bool curves_op = next_input.first == Base::NUMBER;
-  CGAL::Arr_curve_end cv_end1 = CGAL::ARR_MIN_END, cv_end2 = CGAL::ARR_MIN_END;
-
-  if (curves_op) {
-    id2 = static_cast<unsigned int>(next_input.second);
-    next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::CURVE_END);
-    cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
-    std::cout << "Test: boundary_near_x( " << this->m_points[id1] << " , "
-              << this->m_xcurves[id2]<< " , "
-              << this->curve_end_str(cv_end1) << " ) ? ";
-  }
-  else if (next_input.first == Base::CURVE_END) {
-    cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
-    next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::NUMBER);
-    id2 = static_cast<unsigned int>(next_input.second);
-    next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::CURVE_END);
-    cv_end2 = static_cast<CGAL::Arr_curve_end>(next_input.second);
-    std::cout << "Test: boundary_near_x( " << this->m_xcurves[id1] << ", "
-              << this->curve_end_str(cv_end1) << ", "
-              << this->m_xcurves[id2] << " , "
-              << this->curve_end_str(cv_end2) << " ) ? ";
-  }
-  else CGAL_error();
-
-  next_input = this->get_next_input(str_stream);
-  CGAL_assertion(next_input.first == Base::SIGN);
-  CGAL::Comparison_result exp_answer = 
-    static_cast<CGAL::Comparison_result>(next_input.second);
-  std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
-               (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
-
-  real_answer = (curves_op) ?
-    this->m_traits.compare_x_near_boundary_2_object()
-    (this->m_points[id1], this->m_xcurves[id2], cv_end1) :
-    this->m_traits.compare_x_near_boundary_2_object()
-    (this->m_xcurves[id1],cv_end1,this->m_xcurves[id2], cv_end2);
-  return this->compare(exp_answer, real_answer);
-}
-
-/*! Test Compare_y_near_boundary_2
- */
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-boundary_near_y_wrapper(std::istringstream & str_stream)
-{
-  typedef typename T_Traits::Boundary_category          Boundary_category;
-  return boundary_near_y_wrapper_imp(str_stream, Boundary_category());
-}
-
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-boundary_near_y_wrapper_imp(std::istringstream &, CGAL::Arr_no_boundary_tag)
-{
-  CGAL_error();
-  return false;
-}
-
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-boundary_near_y_wrapper_imp (std::istringstream & str_stream,
-                             CGAL::Arr_has_boundary_tag)
-{
-  unsigned int id1, id2;
-  str_stream >> id1 >> id2;
-  std::pair<Enum_type, unsigned int> next_input =
-    this->get_next_input(str_stream);
-  CGAL_assertion(next_input.first == Base::CURVE_END);
-  CGAL::Arr_curve_end cv_end =
-    static_cast<CGAL::Arr_curve_end>(next_input.second);
-  std::cout << "Test: boundary_near_y( " << this->m_xcurves[id1] << " , "
-            << this->m_xcurves[id2]<< " , "
-            << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END") << " ) ? ";
-  next_input = this->get_next_input(str_stream);
-  CGAL_assertion(next_input.first == Base::SIGN);
-  CGAL::Comparison_result exp_answer = 
-    static_cast<CGAL::Comparison_result>(next_input.second);
-  std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
-               (exp_answer == CGAL::LARGER ? "LARGER" : "EQUAL")) << " ";
-
-  CGAL::Comparison_result real_answer = 
-    this->m_traits.compare_y_near_boundary_2_object()
-    (this->m_xcurves[id1], this->m_xcurves[id2], cv_end);
-  return this->compare(exp_answer, real_answer);
-}
-
-/*! Test Parameter_space_in_x_2
-*/
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-parameter_space_x_wrapper(std::istringstream & str_stream)
-{
-  typedef typename T_Traits::Boundary_category          Boundary_category;
-  return parameter_space_x_wrapper_imp(str_stream, Boundary_category());
-}
-
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-parameter_space_x_wrapper_imp(std::istringstream &, CGAL::Arr_no_boundary_tag)
-{
-  CGAL_error();
-  return false;
-}
-
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-parameter_space_x_wrapper_imp (std::istringstream & str_stream,
-                               CGAL::Arr_has_boundary_tag)
-{
-  CGAL::Arr_parameter_space exp_answer, real_answer;
-  unsigned int id;
-  str_stream >> id;
-  std::pair<Enum_type, unsigned int> next_input =
-    this->get_next_input(str_stream);
-  bool curves_op = (next_input.first == Base::CURVE_END);
-  CGAL::Arr_curve_end cv_end = CGAL::ARR_MIN_END;
-  if (curves_op) {
-    cv_end = static_cast<CGAL::Arr_curve_end>(next_input.second);
-    std::cout << "Test: parameter_space_x( " << this->m_xcurves[id] << " , "
-              << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END")
-              << " ) ? ";
-    next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::PARAMETER_SPACE);
-  } else if (next_input.first == Base::PARAMETER_SPACE) {
-    std::cout << "Test: parameter_space_x( " << this->m_points[id] << " ) ? ";
-  } else {
-    CGAL_error();
-    return false;
-  }
-  exp_answer = static_cast<CGAL::Arr_parameter_space>(next_input.second);
-  std::cout << (exp_answer == CGAL::ARR_LEFT_BOUNDARY ? "LEFT_BOUNDARY" :
-               (exp_answer == CGAL::ARR_RIGHT_BOUNDARY ? "RIGHT_BOUNDARY" :
-               (exp_answer == CGAL::ARR_BOTTOM_BOUNDARY ? "BOTTOM_BOUNDARY" :
-               (exp_answer == CGAL::ARR_TOP_BOUNDARY ?
-                "TOP_BOUNDARY":"INTERIOR")))) << " ";
-
-  real_answer = (curves_op) ?
-    this->m_traits.parameter_space_in_x_2_object()(this->m_xcurves[id],
-                                                   cv_end) :
-    this->m_traits.parameter_space_in_x_2_object()(this->m_points[id]);
-  return this->compare(exp_answer, real_answer);
-}
-
-/*! Test Parameter_space_in_y_2
- */
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-parameter_space_y_wrapper(std::istringstream & str_stream)
-{
-  typedef typename T_Traits::Boundary_category          Boundary_category;
-  return parameter_space_y_wrapper_imp(str_stream, Boundary_category());
-}
-
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-parameter_space_y_wrapper_imp(std::istringstream &, CGAL::Arr_no_boundary_tag)
-{
-  CGAL_error();
-  return false;
-}
-
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-parameter_space_y_wrapper_imp (std::istringstream & str_stream,
-                               CGAL::Arr_has_boundary_tag)
-{
-  unsigned int id;
-  str_stream >> id;
-  std::pair<Enum_type, unsigned int> next_input =
-    this->get_next_input(str_stream);
-  bool curves_op = (next_input.first == Base::CURVE_END);
-  CGAL::Arr_curve_end cv_end = CGAL::ARR_MIN_END;
-  if (curves_op) {
-    cv_end = static_cast<CGAL::Arr_curve_end>(next_input.second);
-    std::cout << "Test: parameter_space_y( " << this->m_xcurves[id] << " , "
-              << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END")
-              << " ) ? ";
-    next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::PARAMETER_SPACE);
-  } else if (next_input.first == Base::PARAMETER_SPACE) {
-    std::cout << "Test: parameter_space_y( " << this->m_points[id] << " ) ? ";
-  } else {
-    CGAL_error();
-    return false;
-  }
-  CGAL::Arr_parameter_space exp_answer =
-    static_cast<CGAL::Arr_parameter_space>(next_input.second);
-  std::cout << (exp_answer == CGAL::ARR_LEFT_BOUNDARY ? "LEFT_BOUNDARY":
-               (exp_answer == CGAL::ARR_RIGHT_BOUNDARY ? "RIGHT_BOUNDARY":
-               (exp_answer == CGAL::ARR_BOTTOM_BOUNDARY ? "BOTTOM_BOUNDARY":
-               (exp_answer == CGAL::ARR_TOP_BOUNDARY ?
-                "TOP_BOUNDARY" : "INTERIOR")))) << " ";
-
-  CGAL::Arr_parameter_space real_answer = (curves_op) ?
-    this->m_traits.parameter_space_in_y_2_object()(this->m_xcurves[id],
-                                                   cv_end) :
-    this->m_traits.parameter_space_in_y_2_object()(this->m_points[id]);
-  return this->compare(exp_answer, real_answer);
-}
 
 /*! Test Compare_x_2
  */
 template <class T_Traits>
 bool Traits_test<T_Traits>::compare_x_wrapper(std::istringstream & str_stream)
-{
-  typedef typename T_Traits::Boundary_category          Boundary_category;
-  return compare_x_wrapper_imp(str_stream, Boundary_category());
-}
-
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-compare_x_wrapper_imp (std::istringstream & str_stream,
-                       CGAL::Arr_has_boundary_tag)
-{
-  unsigned int id1, id2;
-  unsigned int real_answer = 0, exp_answer = 0;
-  str_stream >> id1;
-  std::pair<Enum_type, unsigned int> exp_answer_1 = this->get_next_input(str_stream);
-  if (exp_answer_1.first == Base::NUMBER) {
-    id2 = exp_answer_1.second;
-    std::pair<Enum_type, unsigned int> exp_answer_2 = this->get_next_input(str_stream);
-    if (exp_answer_2.first == Base::SIGN) {
-      exp_answer = exp_answer_2.second;
-      std::cout << "Test: compare_x( " << this->m_points[id1]
-                << ", " << this->m_points[id2] << " ) ? " << exp_answer << " ";
-      real_answer = this->m_traits.compare_x_2_object()(this->m_points[id1],
-                                                        this->m_points[id2]);
-    }
-  }
-  return this->compare(exp_answer, real_answer);
-}
-
-template <class T_Traits>
-bool Traits_test<T_Traits>::
-compare_x_wrapper_imp (std::istringstream & str_stream,
-                       CGAL::Arr_no_boundary_tag)
 {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
@@ -962,5 +758,402 @@ construct_x_monotone_curve_wrapper(std::istringstream & )
 {
   return false;
 }
+
+// ///////////////////////////////////////////////////////////////////////////
+// boundary-specific functors
+
+
+// ---------------------------------------------------------------------------
+// left-right
+
+
+/*! Test Parameter_space_in_x_2
+*/
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+parameter_space_in_x_curve_end_wrapper(std::istringstream & str_stream)
+{
+  typedef typename CGAL::CGALi::Arr_complete_left_side_tag< T_Traits >::Tag
+    Arr_left_side_tag;
+  typedef typename CGAL::CGALi::Arr_complete_right_side_tag< T_Traits >::Tag
+    Arr_right_side_tag;
+
+  typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+  Arr_left_side_tag, Arr_right_side_tag > LR;
+  
+  typedef typename LR::Parameter_space_in_x_2_curve_end_tag 
+    Psx_2_curve_end_tag;
+  
+  return parameter_space_in_x_curve_end_wrapper_imp(
+      str_stream, Psx_2_curve_end_tag()
+  );
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+parameter_space_in_x_curve_end_wrapper_imp(
+    std::istringstream &, CGAL::Arr_use_dummy_tag
+)
+{
+  CGAL_error();
+  return false;
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+parameter_space_in_x_curve_end_wrapper_imp (std::istringstream & str_stream,
+                                            CGAL::Arr_use_traits_tag)
+{
+  CGAL::Arr_parameter_space exp_answer, real_answer;
+  unsigned int id;
+  str_stream >> id;
+  std::pair<Enum_type, unsigned int> next_input =
+    this->get_next_input(str_stream);
+  bool curves_op = (next_input.first == Base::CURVE_END);
+  CGAL::Arr_curve_end cv_end = CGAL::ARR_MIN_END;
+  if (curves_op) {
+    cv_end = static_cast<CGAL::Arr_curve_end>(next_input.second);
+    std::cout << "Test: parameter_space_x( " << this->m_xcurves[id] << " , "
+              << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END")
+              << " ) ? ";
+    next_input = this->get_next_input(str_stream);
+    CGAL_assertion(next_input.first == Base::PARAMETER_SPACE);
+  } else if (next_input.first == Base::PARAMETER_SPACE) {
+    std::cout << "Test: parameter_space_x( " << this->m_points[id] << " ) ? ";
+  } else {
+    CGAL_error();
+    return false;
+  }
+  exp_answer = static_cast<CGAL::Arr_parameter_space>(next_input.second);
+  std::cout << (exp_answer == CGAL::ARR_LEFT_BOUNDARY ? "LEFT_BOUNDARY" :
+               (exp_answer == CGAL::ARR_RIGHT_BOUNDARY ? "RIGHT_BOUNDARY" :
+               (exp_answer == CGAL::ARR_BOTTOM_BOUNDARY ? "BOTTOM_BOUNDARY" :
+               (exp_answer == CGAL::ARR_TOP_BOUNDARY ?
+                "TOP_BOUNDARY":"INTERIOR")))) << " ";
+
+  real_answer = (curves_op) ?
+    this->m_traits.parameter_space_in_x_2_object()(this->m_xcurves[id],
+                                                   cv_end) :
+    this->m_traits.parameter_space_in_x_2_object()(this->m_points[id]);
+  return this->compare(exp_answer, real_answer);
+}
+
+// TODO Parameter_space_in_x_2(pt)
+// TODO Parameter_space_in_x_2(xcv)
+
+/*! Test Compare_y_near_boundary_2
+ */
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+compare_y_near_boundary_curve_ends_wrapper(std::istringstream & str_stream)
+{
+  typedef typename CGAL::CGALi::Arr_complete_left_side_tag< T_Traits >::Tag
+    Arr_left_side_tag;
+  typedef typename CGAL::CGALi::Arr_complete_right_side_tag< T_Traits >::Tag
+    Arr_right_side_tag;
+
+  typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+  Arr_left_side_tag, Arr_right_side_tag > LR;
+  
+  typedef typename LR::Compare_y_near_boundary_2_curve_ends_tag 
+    Cmp_y_nb_2_curve_ends_tag;
+  
+  return compare_y_near_boundary_curve_ends_wrapper_imp(
+      str_stream, 
+      Cmp_y_nb_2_curve_ends_tag()
+  );
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+compare_y_near_boundary_curve_ends_wrapper_imp(std::istringstream &, 
+                                               CGAL::Arr_use_dummy_tag)
+{
+  CGAL_error();
+  return false;
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+compare_y_near_boundary_curve_ends_wrapper_imp (std::istringstream & str_stream,
+                                                CGAL::Arr_use_traits_tag)
+{
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+  std::pair<Enum_type, unsigned int> next_input =
+    this->get_next_input(str_stream);
+  CGAL_assertion(next_input.first == Base::CURVE_END);
+  CGAL::Arr_curve_end cv_end =
+    static_cast<CGAL::Arr_curve_end>(next_input.second);
+  std::cout << "Test: boundary_near_y( " << this->m_xcurves[id1] << " , "
+            << this->m_xcurves[id2]<< " , "
+            << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END") << " ) ? ";
+  next_input = this->get_next_input(str_stream);
+  CGAL_assertion(next_input.first == Base::SIGN);
+  CGAL::Comparison_result exp_answer = 
+    static_cast<CGAL::Comparison_result>(next_input.second);
+  std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
+               (exp_answer == CGAL::LARGER ? "LARGER" : "EQUAL")) << " ";
+
+  CGAL::Comparison_result real_answer = 
+    this->m_traits.compare_y_near_boundary_2_object()
+    (this->m_xcurves[id1], this->m_xcurves[id2], cv_end);
+  return this->compare(exp_answer, real_answer);
+}
+
+// TODO Compare_y_on_boundary_2(pt1, pt2)
+// TODO Is_on_y_identification_2(pt)  
+// TODO Is_on_y_identification_2(xcv)
+
+// ---------------------------------------------------------------------------
+// bottom-top
+
+/*! Test Parameter_space_in_y_2
+ */
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+parameter_space_in_y_curve_end_wrapper(std::istringstream & str_stream)
+{
+  typedef typename CGAL::CGALi::Arr_complete_bottom_side_tag< T_Traits >::Tag
+    Arr_bottom_side_tag;
+  typedef typename CGAL::CGALi::Arr_complete_top_side_tag< T_Traits >::Tag
+    Arr_top_side_tag;
+
+  typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+  Arr_bottom_side_tag, Arr_top_side_tag > BT;
+  
+  typedef typename BT::Parameter_space_in_y_2_curve_end_tag
+    Psy_2_curve_end_tag;
+
+  return parameter_space_in_y_curve_end_wrapper_imp(
+      str_stream, Psy_2_curve_end_tag()
+  );
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+parameter_space_in_y_curve_end_wrapper_imp(
+    std::istringstream &, CGAL::Arr_use_dummy_tag
+)
+{
+  CGAL_error();
+  return false;
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+parameter_space_in_y_curve_end_wrapper_imp (std::istringstream & str_stream,
+                                            CGAL::Arr_use_traits_tag)
+{
+  unsigned int id;
+  str_stream >> id;
+  std::pair<Enum_type, unsigned int> next_input =
+    this->get_next_input(str_stream);
+  bool curves_op = (next_input.first == Base::CURVE_END);
+  CGAL::Arr_curve_end cv_end = CGAL::ARR_MIN_END;
+  if (curves_op) {
+    cv_end = static_cast<CGAL::Arr_curve_end>(next_input.second);
+    std::cout << "Test: parameter_space_y( " << this->m_xcurves[id] << " , "
+              << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END")
+              << " ) ? ";
+    next_input = this->get_next_input(str_stream);
+    CGAL_assertion(next_input.first == Base::PARAMETER_SPACE);
+  } else if (next_input.first == Base::PARAMETER_SPACE) {
+    std::cout << "Test: parameter_space_y( " << this->m_points[id] << " ) ? ";
+  } else {
+    CGAL_error();
+    return false;
+  }
+  CGAL::Arr_parameter_space exp_answer =
+    static_cast<CGAL::Arr_parameter_space>(next_input.second);
+  std::cout << (exp_answer == CGAL::ARR_LEFT_BOUNDARY ? "LEFT_BOUNDARY":
+               (exp_answer == CGAL::ARR_RIGHT_BOUNDARY ? "RIGHT_BOUNDARY":
+               (exp_answer == CGAL::ARR_BOTTOM_BOUNDARY ? "BOTTOM_BOUNDARY":
+               (exp_answer == CGAL::ARR_TOP_BOUNDARY ?
+                "TOP_BOUNDARY" : "INTERIOR")))) << " ";
+
+  CGAL::Arr_parameter_space real_answer = (curves_op) ?
+    this->m_traits.parameter_space_in_y_2_object()(this->m_xcurves[id],
+                                                   cv_end) :
+    this->m_traits.parameter_space_in_y_2_object()(this->m_points[id]);
+  return this->compare(exp_answer, real_answer);
+}
+
+// TODO Parameter_space_in_y_2(pt)
+// TODO Parameter_space_in_y_2(xcv)
+
+// TODO split boundary_near_x in point+curve-end + curve-ends
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+compare_x_near_boundary_point_curve_end_wrapper (
+    std::istringstream & str_stream)
+{
+  typedef typename CGAL::CGALi::Arr_complete_bottom_side_tag< T_Traits >::Tag
+    Arr_bottom_side_tag;
+  typedef typename CGAL::CGALi::Arr_complete_top_side_tag< T_Traits >::Tag
+    Arr_top_side_tag;
+
+  typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+  Arr_bottom_side_tag, Arr_top_side_tag > BT;
+  
+  typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag
+    Cmp_x_nb_2_point_curve_end_tag;
+  
+  return compare_x_near_boundary_point_curve_end_wrapper_imp(
+      str_stream, 
+      Cmp_x_nb_2_point_curve_end_tag()
+  );
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+compare_x_near_boundary_point_curve_end_wrapper_imp (std::istringstream &, 
+                                                     CGAL::Arr_use_dummy_tag)
+{
+  CGAL_error();
+  return false;
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+compare_x_near_boundary_point_curve_end_wrapper_imp (
+    std::istringstream & str_stream,
+    CGAL::Arr_use_traits_tag)
+{
+  CGAL::Comparison_result real_answer;
+  unsigned int id1, id2;
+  // first argument must be a number (either a point or a xcurve)
+  str_stream >> id1;
+  std::pair<Enum_type, unsigned int> next_input = this->get_next_input(str_stream);
+  // second argument can be number or text (either xcurve or curve_end)
+  bool curves_op = next_input.first == Base::NUMBER;
+  CGAL::Arr_curve_end cv_end1 = CGAL::ARR_MIN_END, cv_end2 = CGAL::ARR_MIN_END;
+
+  if (curves_op) {
+    id2 = static_cast<unsigned int>(next_input.second);
+    next_input = this->get_next_input(str_stream);
+    CGAL_assertion(next_input.first == Base::CURVE_END);
+    cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
+    std::cout << "Test: boundary_near_x( " << this->m_points[id1] << " , "
+              << this->m_xcurves[id2]<< " , "
+              << this->curve_end_str(cv_end1) << " ) ? ";
+  }
+  else if (next_input.first == Base::CURVE_END) {
+    cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
+    next_input = this->get_next_input(str_stream);
+    CGAL_assertion(next_input.first == Base::NUMBER);
+    id2 = static_cast<unsigned int>(next_input.second);
+    next_input = this->get_next_input(str_stream);
+    CGAL_assertion(next_input.first == Base::CURVE_END);
+    cv_end2 = static_cast<CGAL::Arr_curve_end>(next_input.second);
+    std::cout << "Test: boundary_near_x( " << this->m_xcurves[id1] << ", "
+              << this->curve_end_str(cv_end1) << ", "
+              << this->m_xcurves[id2] << " , "
+              << this->curve_end_str(cv_end2) << " ) ? ";
+  }
+  else CGAL_error();
+
+  next_input = this->get_next_input(str_stream);
+  CGAL_assertion(next_input.first == Base::SIGN);
+  CGAL::Comparison_result exp_answer = 
+    static_cast<CGAL::Comparison_result>(next_input.second);
+  std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
+               (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
+
+  real_answer = (curves_op) ?
+    this->m_traits.compare_x_near_boundary_2_object()
+    (this->m_points[id1], this->m_xcurves[id2], cv_end1) :
+    this->m_traits.compare_x_near_boundary_2_object()
+    (this->m_xcurves[id1],cv_end1,this->m_xcurves[id2], cv_end2);
+  return this->compare(exp_answer, real_answer);
+}
+
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+compare_x_near_boundary_curve_ends_wrapper (std::istringstream & str_stream)
+{
+  typedef typename CGAL::CGALi::Arr_complete_bottom_side_tag< T_Traits >::Tag
+    Arr_bottom_side_tag;
+  typedef typename CGAL::CGALi::Arr_complete_top_side_tag< T_Traits >::Tag
+    Arr_top_side_tag;
+
+  typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+  Arr_bottom_side_tag, Arr_top_side_tag > BT;
+  
+  typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag
+    Cmp_x_nb_2_curve_ends_tag;
+  
+  return compare_x_near_boundary_curve_ends_wrapper_imp(
+      str_stream, Cmp_x_nb_2_curve_ends_tag()
+  );
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+compare_x_near_boundary_curve_ends_wrapper_imp (std::istringstream &, 
+                                                CGAL::Arr_use_dummy_tag)
+{
+  CGAL_error();
+  return false;
+}
+
+template <class T_Traits>
+bool Traits_test<T_Traits>::
+compare_x_near_boundary_curve_ends_wrapper_imp (std::istringstream & str_stream,
+                                                CGAL::Arr_use_traits_tag)
+{
+  CGAL::Comparison_result real_answer;
+  unsigned int id1, id2;
+  // first argument must be a number (either a point or a xcurve)
+  str_stream >> id1;
+  std::pair<Enum_type, unsigned int> next_input = this->get_next_input(str_stream);
+  // second argument can be number or text (either xcurve or curve_end)
+  bool curves_op = next_input.first == Base::NUMBER;
+  CGAL::Arr_curve_end cv_end1 = CGAL::ARR_MIN_END, cv_end2 = CGAL::ARR_MIN_END;
+
+  if (curves_op) {
+    id2 = static_cast<unsigned int>(next_input.second);
+    next_input = this->get_next_input(str_stream);
+    CGAL_assertion(next_input.first == Base::CURVE_END);
+    cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
+    std::cout << "Test: boundary_near_x( " << this->m_points[id1] << " , "
+              << this->m_xcurves[id2]<< " , "
+              << this->curve_end_str(cv_end1) << " ) ? ";
+  }
+  else if (next_input.first == Base::CURVE_END) {
+    cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
+    next_input = this->get_next_input(str_stream);
+    CGAL_assertion(next_input.first == Base::NUMBER);
+    id2 = static_cast<unsigned int>(next_input.second);
+    next_input = this->get_next_input(str_stream);
+    CGAL_assertion(next_input.first == Base::CURVE_END);
+    cv_end2 = static_cast<CGAL::Arr_curve_end>(next_input.second);
+    std::cout << "Test: boundary_near_x( " << this->m_xcurves[id1] << ", "
+              << this->curve_end_str(cv_end1) << ", "
+              << this->m_xcurves[id2] << " , "
+              << this->curve_end_str(cv_end2) << " ) ? ";
+  }
+  else CGAL_error();
+
+  next_input = this->get_next_input(str_stream);
+  CGAL_assertion(next_input.first == Base::SIGN);
+  CGAL::Comparison_result exp_answer = 
+    static_cast<CGAL::Comparison_result>(next_input.second);
+  std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
+               (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
+
+  real_answer = (curves_op) ?
+    this->m_traits.compare_x_near_boundary_2_object()
+    (this->m_points[id1], this->m_xcurves[id2], cv_end1) :
+    this->m_traits.compare_x_near_boundary_2_object()
+    (this->m_xcurves[id1],cv_end1,this->m_xcurves[id2], cv_end2);
+  return this->compare(exp_answer, real_answer);
+}
+
+// TODO Compare_x_on_boundary_2(pt1, pt2)
+// TODO Is_on_x_identification_2(pt)
+// TODO Is_on_x_identification_2(xcv)
 
 #endif

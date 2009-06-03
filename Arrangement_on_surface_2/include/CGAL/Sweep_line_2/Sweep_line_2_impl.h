@@ -424,7 +424,7 @@ _intersect (Subcurve *c1, Subcurve *c2)
   else
   {
     // In case both left curve-ends have boundary conditions and are not
-    // unbounded, check whether the left endpoints are the same. If they are,
+    // open, check whether the left endpoints are the same. If they are,
     // skip the first intersection point.
     const Arr_parameter_space   ps_x1 =
       this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
@@ -441,8 +441,8 @@ _intersect (Subcurve *c1, Subcurve *c2)
 
     if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
         ((ps_x1 != ARR_INTERIOR) || (ps_y2 != ARR_INTERIOR)) &&
-        this->m_traits->is_bounded_2_object()(c1->last_curve(), ARR_MIN_END) &&
-        this->m_traits->is_bounded_2_object()(c2->last_curve(), ARR_MIN_END))
+        this->m_traits->is_closed_2_object()(c1->last_curve(), ARR_MIN_END) &&
+        this->m_traits->is_closed_2_object()(c2->last_curve(), ARR_MIN_END))
     {
       if (this->m_traits->equal_2_object()
           (this->m_traits->construct_min_vertex_2_object() (c1->last_curve()),
@@ -473,7 +473,7 @@ _intersect (Subcurve *c1, Subcurve *c2)
   else
   {
     // In case both right curve-ends have boundary conditions and are not
-    // unbounded, check whether the right endpoints are the same. If they are,
+    // open, check whether the right endpoints are the same. If they are,
     // skip the last intersection point.
     const Arr_parameter_space   ps_x1 =
         this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
@@ -490,8 +490,8 @@ _intersect (Subcurve *c1, Subcurve *c2)
 
     if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
         ((ps_x1 != ARR_INTERIOR) || (ps_y2 != ARR_INTERIOR)) &&
-        this->m_traits->is_bounded_2_object()(c1->last_curve(), ARR_MAX_END) &&
-        this->m_traits->is_bounded_2_object()(c2->last_curve(), ARR_MAX_END))
+        this->m_traits->is_closed_2_object()(c1->last_curve(), ARR_MAX_END) &&
+        this->m_traits->is_closed_2_object()(c2->last_curve(), ARR_MAX_END))
     {
       if (this->m_traits->equal_2_object()
           (this->m_traits->construct_max_vertex_2_object() (c1->last_curve()),
@@ -731,7 +731,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_overlap
   }
 
    
-  // Get the right end of overlap_cv (if it is bounded from the right).
+  // Get the right end of overlap_cv (if it is closed from the right).
   Event         *right_end;
   Arr_parameter_space  ps_x_r =
     this->m_traits->parameter_space_in_x_2_object()(overlap_cv, ARR_MAX_END);
@@ -741,9 +741,9 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_overlap
   CGAL_assertion (ps_x_r != ARR_LEFT_BOUNDARY);
   if (ps_x_r != ARR_INTERIOR || ps_y_r != ARR_INTERIOR)
   {
-    // The overlapping subcurve is either unbounded from the right, or
+    // The overlapping subcurve is either open from the right, or
     // touches the boundary of the surface. In either case, the curves that
-    // are involved in the overlap must also be unbounded or defined at the
+    // are involved in the overlap must also be open or defined at the
     // boundary, so the event associated with their right ends already exists,
     // and we set it as the overlapping subcurve's right event.
     CGAL_assertion((*iter)->right_event() == curve->right_event());
@@ -762,7 +762,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_overlap
     right_end = pair_res.first;
   }
 
-  // Get the left end of overlap_cv (if it is bounded from the left).
+  // Get the left end of overlap_cv (if it is closed from the left).
   Arr_parameter_space  ps_x_l =
     this->m_traits->parameter_space_in_x_2_object()(overlap_cv, ARR_MIN_END);
   Arr_parameter_space  ps_y_l =
@@ -796,7 +796,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_overlap
   }
   else
   {
-    // The left end of the overlapping subcurve is either unbounded, or
+    // The left end of the overlapping subcurve is either open, or
     // incident to the surface boundaries. In case the current event is
     // associated with a regular point, it must lie to the right of this
     // curve-end, so we clip the overlapping subcurve accordingly.

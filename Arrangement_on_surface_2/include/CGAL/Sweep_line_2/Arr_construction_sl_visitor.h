@@ -428,7 +428,7 @@ add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
   const Halfedge_handle  invalid_he;
 
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
-  if (last_event->is_finite()) {
+  if (last_event->is_closed()) {
       std::cout << "CGAL_CSLG lastevent: " << last_event->point() << std::endl;
   }
   if (he_left != invalid_he) {

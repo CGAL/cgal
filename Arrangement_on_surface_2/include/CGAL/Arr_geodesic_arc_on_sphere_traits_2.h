@@ -67,7 +67,11 @@ public:
   // Category tags:
   typedef Tag_true                              Has_left_category;
   typedef Tag_true                              Has_merge_category;
-  typedef Arr_bounded_boundary_tag              Boundary_category;
+
+  typedef Arr_identified_side_tag               Arr_left_side_tag;
+  typedef Arr_contracted_side_tag               Arr_bottom_side_tag;
+  typedef Arr_contracted_side_tag               Arr_top_side_tag;
+  typedef Arr_identified_side_tag               Arr_right_side_tag;
 
   /*! Default constructor */
   Arr_geodesic_arc_on_sphere_traits_2(){}
@@ -1212,7 +1216,7 @@ public:
    * that lie on the horizontal identification arc.
    * The parameter space does not contain a horizontal identification arc.
    */
-  class Compare_x_on_identification_2 {
+  class Compare_x_on_boundary_2 {
   public:
     /*! Compare the x-coordinate of two given points that lie on the
      * horizontal identification arc.
@@ -1227,14 +1231,14 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_on_identification_2 function object */
-  Compare_x_on_identification_2 compare_x_on_identification_2_object() const
-  { return Compare_x_on_identification_2(); }
+  /*! Obtain a Compare_x_on_boundary_2 function object */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(); }
 
   /*! A functor that compares the y-coordinate of two given points
    * that lie on the vertical identification arc.
    */
-  class Compare_y_on_identification_2 {
+  class Compare_y_on_boundary_2 {
   protected:
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
@@ -1244,7 +1248,7 @@ public:
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
-    Compare_y_on_identification_2(const Traits * traits) : m_traits(traits) {}
+    Compare_y_on_boundary_2(const Traits * traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
@@ -1267,9 +1271,9 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_on_identification_2 function object */
-  Compare_y_on_identification_2 compare_y_on_identification_2_object() const
-  { return Compare_y_on_identification_2(this); }
+  /*! Obtain a Compare_y_on_boundary_2 function object */
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
+  { return Compare_y_on_boundary_2(this); }
   //@}
 
   /// \name Functor definitions for supporting intersections.

@@ -25,6 +25,7 @@
  * Definition of the Arr_unb_planar_topology_traits_2<GeomTraits> class.
  */
 
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_topology_traits/Arr_planar_topology_traits_base_2.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_construction_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_insertion_helper.h>
@@ -73,9 +74,46 @@ public:
   typedef typename Base::Inner_ccb                        Inner_ccb;
   typedef typename Base::Isolated_vertex                  Isolated_vertex;
   //@}
-
+  
+  // TODO remove adaptor as top-traits might be instantiated by Aos_2 itself
+  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
+  
   typedef Arr_unb_planar_topology_traits_2<Geometry_traits_2,
                                            Dcel>          Self;
+
+  ///! \name The side tags
+  //@{
+  // are inherited from the geometry traits
+  typedef typename Traits_adaptor_2::Arr_left_side_tag   Arr_left_side_tag;
+  typedef typename Traits_adaptor_2::Arr_bottom_side_tag Arr_bottom_side_tag;
+  typedef typename Traits_adaptor_2::Arr_top_side_tag    Arr_top_side_tag;
+  typedef typename Traits_adaptor_2::Arr_right_side_tag  Arr_right_side_tag;
+
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_left_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_left_side_tag, Arr_open_side_tag > >
+      )
+  );
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_bottom_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_bottom_side_tag, Arr_open_side_tag > >
+      )
+  );
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_top_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_top_side_tag, Arr_open_side_tag > >
+      )
+  );
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_right_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_right_side_tag, Arr_open_side_tag > >
+      )
+  );
+  //@}
 
   /*! \struct
    * An auxiliary structure for rebinding the topology traits with a new 
@@ -361,26 +399,6 @@ public:
   ///! \name Topology-traits methods.
   //@{
 
-  /*! Obtain the boundary type for a given parameter space.
-   * \param ps the parameter space.
-   * \return the boundary type along ps.
-   * \pre ps must not be ARR_INTERIOR.
-   */
-  Arr_boundary_type boundary_type(const Arr_parameter_space ps) const
-  {
-    CGAL_precondition(ps != ARR_INTERIOR);
-    switch (ps) {
-     case ARR_LEFT_BOUNDARY:
-     case ARR_RIGHT_BOUNDARY: 
-     case ARR_BOTTOM_BOUNDARY:
-     case ARR_TOP_BOUNDARY: return ARR_UNBOUNDED;
-     default: CGAL_error();
-    }
-    // Cannot reach here!
-    return ARR_NUMBER_OF_BOUNDARY_TYPES;
-  }
-  
-  
   /*!
    * Initialize an empty DCEL structure.
    */

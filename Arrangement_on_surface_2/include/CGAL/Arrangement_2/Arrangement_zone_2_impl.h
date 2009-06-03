@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005, 2009  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -40,7 +40,7 @@ init_with_hint(const X_monotone_curve_2& _cv, const Object& _obj)
   // associated with valid endpoints.
   cv = _cv;
   
-  if (geom_traits->is_bounded_2_object()(cv, ARR_MIN_END))
+  if (geom_traits->is_closed_2_object()(cv, ARR_MIN_END))
   {
     // The left endpoint is valid.
     const Arr_parameter_space  ps_x1 =
@@ -53,12 +53,12 @@ init_with_hint(const X_monotone_curve_2& _cv, const Object& _obj)
   }
   else
   {
-    // The left end of the curve lies at infinity.
+    // The left end of the curve lies on open boundary.
     has_left_pt = false;
     left_on_boundary = true;
   }
   
-  if (geom_traits->is_bounded_2_object()(cv, ARR_MAX_END))
+  if (geom_traits->is_closed_2_object()(cv, ARR_MAX_END))
   {
     // The right endpoint is valid.
     const Arr_parameter_space  ps_x2 =
@@ -71,7 +71,7 @@ init_with_hint(const X_monotone_curve_2& _cv, const Object& _obj)
   }
   else
   {
-    // The right end of the curve lies at infinity.
+    // The right end of the curve lies on open boundary.
     has_right_pt = false;
     right_on_boundary = true;
   }
@@ -555,7 +555,7 @@ _compute_next_intersection (Halfedge_handle he,
         icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
         CGAL_assertion (icv != NULL);
 
-        if (geom_traits->is_bounded_2_object()(*icv, ARR_MIN_END))
+        if (geom_traits->is_closed_2_object()(*icv, ARR_MIN_END))
         {
           // The curve has a valid left point - make sure it lies to the
           // right of left_pt.
@@ -638,7 +638,7 @@ _compute_next_intersection (Halfedge_handle he,
       icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
       CGAL_assertion (icv != NULL);
 
-      if (geom_traits->is_bounded_2_object() (*icv, ARR_MIN_END))
+      if (geom_traits->is_closed_2_object() (*icv, ARR_MIN_END))
       {
         // The curve has a valid left point - make sure it lies to the
         // right of left_pt.
@@ -700,7 +700,7 @@ _remove_next_intersection (Halfedge_handle he)
 template<class Arrangement, class ZoneVisitor>
 bool Arrangement_zone_2<Arrangement,ZoneVisitor>::
 _is_to_left_impl(const Point_2& p, Halfedge_handle he,
-                 Arr_has_boundary_tag) const
+                 Arr_not_all_sides_oblivious_tag) const
 {
   // Check the boundary conditions of the minimal end of the curve associated
   // with the given halfedge.
@@ -737,7 +737,7 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he,
 template<class Arrangement, class ZoneVisitor>
 bool Arrangement_zone_2<Arrangement,ZoneVisitor>::
 _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                  Arr_has_boundary_tag) const
+                  Arr_not_all_sides_oblivious_tag) const
 {
   // Check the boundary conditions of the maximal end of the curve associated
   // with the given halfedge.
@@ -1200,7 +1200,7 @@ _zone_in_face (Face_handle face, bool on_boundary)
   {
     // Check whether intersect_p coincides with one of the end-vertices of the
     // halfedge that cv intersects.
-    if (! intersect_he->source()->is_at_infinity() &&
+    if (! intersect_he->source()->is_at_open_boundary() &&
         geom_traits->equal_2_object() (intersect_p,
                                        intersect_he->source()->point()))
     {
@@ -1208,7 +1208,7 @@ _zone_in_face (Face_handle face, bool on_boundary)
       right_v = intersect_he->source();
       right_he = invalid_he;
     }
-    else if (! intersect_he->target()->is_at_infinity() &&
+    else if (! intersect_he->target()->is_at_open_boundary() &&
              geom_traits->equal_2_object() (intersect_p,
                                        intersect_he->target()->point()))
     {
@@ -1411,7 +1411,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
   // Check if the right end of overlap_cv is bounded. If so, compute its
   // right endpoint.
   const bool           cv_has_right_pt =
-    geom_traits->is_bounded_2_object() (overlap_cv, ARR_MAX_END);
+    geom_traits->is_closed_2_object() (overlap_cv, ARR_MAX_END);
 
   Point_2              cv_right_pt;
 
@@ -1434,7 +1434,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
 
   // Compare the two right endpoints. Note that overlap_cv cannot extend to
   // the right longer than the halfedge it overlaps. Thus, if the curve is
-  // not bounded, the right vertex of intersect_he must lie at infinity as
+  // not bounded, the right vertex of intersect_he must lie on open boundary as
   // well.
   if (! cv_has_right_pt)
   {
@@ -1456,7 +1456,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
     // we check whether it is equal to cv_right_pt. Otherwise, we know that
     // intersect_he extends to the the right of overlap_cv, and there is no
     // vertex currently associated with overlap_cv's right endpoint.
-    if (! he_right_v->is_at_infinity() &&
+    if (! he_right_v->is_at_open_boundary() &&
         geom_traits->equal_2_object() (cv_right_pt, he_right_v->point()))
     {
       // The overlap is with the entire halfedge. In this case we set the
@@ -1481,7 +1481,7 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
 
   // If the visitor has indicated we should halt the process, or it the right
   // endpoint of the overlapping curve is the right endpoint of cv then we are
-  // done (or both extend to infinity).
+  // done (or both extend to an open boundary).
   if (visitor_res.second ||
       (cv_has_right_pt && has_right_pt &&
        geom_traits->equal_2_object() (cv_right_pt, right_pt)) ||

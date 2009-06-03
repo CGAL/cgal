@@ -6,25 +6,6 @@ compare_x   4 5 SMALLER
 compare_x   5 4 LARGER
 compare_x   4 6 LARGER
 compare_x   6 4 SMALLER
-compare_x   4 0 MIN_END LARGER
-compare_x   4 0 MAX_END LARGER
-compare_x   4 1 MAX_END LARGER
-compare_x   5 1 MAX_END LARGER
-compare_x   7 1 MAX_END EQUAL
-compare_x   6 2 MAX_END SMALLER
-compare_x   8 2 MAX_END EQUAL
-compare_x   0 MIN_END 0 MAX_END EQUAL
-compare_x   1 MAX_END 2 MAX_END SMALLER
-compare_x   3 MIN_END 4 MAX_END SMALLER
-compare_x   4 MAX_END 3 MIN_END LARGER
-compare_x   3 MIN_END 0 MIN_END LARGER
-compare_x   3 MIN_END 0 MAX_END LARGER
-compare_x   3 MIN_END 1 MAX_END SMALLER
-compare_x   3 MIN_END 2 MAX_END SMALLER
-compare_x   4 MAX_END 0 MIN_END LARGER
-compare_x   4 MAX_END 0 MAX_END LARGER
-compare_x   4 MAX_END 1 MAX_END LARGER
-compare_x   4 MAX_END 2 MAX_END LARGER
 
 compare_xy  5 6 LARGER
 compare_xy  7 8 SMALLER

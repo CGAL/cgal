@@ -132,7 +132,7 @@ after_handle_event (Event* event)
   // If the event is at infinity and occurs on the top edge of the fictitious
   // face (namely x is finite and y = +oo), we have to update the fictitious
   // edge we keep.
-  if (event->is_finite())
+  if (event->is_closed())
     return;
 
   if (event->parameter_space_in_x() != ARR_INTERIOR)

@@ -443,7 +443,7 @@ are_equal(const Vertex * v,
   const Point_2 & p2 = (ind == ARR_MIN_END) ?
     m_traits->construct_min_vertex_2_object()(xc) :
     m_traits->construct_max_vertex_2_object()(xc);
-  return (m_traits->compare_y_on_identification_2_object()(p1, p2) == EQUAL);
+  return (m_traits->compare_y_on_boundary_2_object()(p1, p2) == EQUAL);
 }
 
 /*! \brief receives a notification on the creation of a new boundary vertex */

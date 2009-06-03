@@ -235,40 +235,38 @@ protected:
   /*! Test Compare_x_2
    */
   bool compare_x_wrapper(std::istringstream & );
-  bool compare_x_wrapper_imp(std::istringstream &, CGAL::Arr_no_boundary_tag);
-  bool compare_x_wrapper_imp(std::istringstream &, CGAL::Arr_has_boundary_tag);
 
   /*! Test Compare_x_near_boundary_2
    */
-  bool boundary_near_x_wrapper(std::istringstream & );
-  bool boundary_near_x_wrapper_imp(std::istringstream &,
-                                   CGAL::Arr_no_boundary_tag);
-  bool boundary_near_x_wrapper_imp(std::istringstream &,
-                                   CGAL::Arr_has_boundary_tag);
-
+  bool compare_x_near_boundary_wrapper(std::istringstream & );
+  bool compare_x_near_boundary_wrapper_imp(std::istringstream &,
+                                           CGAL::Arr_use_dummy_tag);
+  bool compare_x_near_boundary_wrapper_imp(std::istringstream &,
+                                           CGAL::Arr_use_traits_tag);
+  
   /*! Test Compare_y_near_boundary_2
    */
-  bool boundary_near_y_wrapper(std::istringstream & );
-  bool boundary_near_y_wrapper_imp(std::istringstream &,
-                                   CGAL::Arr_no_boundary_tag);
-  bool boundary_near_y_wrapper_imp(std::istringstream &,
-                                   CGAL::Arr_has_boundary_tag);
+  bool compare_y_near_boundary_wrapper(std::istringstream & );
+  bool compare_y_near_boundary_wrapper_imp(std::istringstream &,
+                                           CGAL::Arr_use_dummy_tag);
+  bool compare_y_near_boundary_wrapper_imp(std::istringstream &,
+                                           CGAL::Arr_use_traits_tag);
 
   /*! Test Parameter_space_in_x_2
    */
-  bool parameter_space_x_wrapper(std::istringstream & );
-  bool parameter_space_x_wrapper_imp(std::istringstream &,
-                                     CGAL::Arr_no_boundary_tag);
-  bool parameter_space_x_wrapper_imp(std::istringstream &,
-                                     CGAL::Arr_has_boundary_tag);
-
+  bool parameter_space_in_x_wrapper(std::istringstream & );
+  bool parameter_space_in_x_wrapper_imp(std::istringstream &,
+                                        CGAL::Arr_use_dummy_tag);
+  bool parameter_space_in_x_wrapper_imp(std::istringstream &,
+                                        CGAL::Arr_use_traits_tag);
+  
   /*! Test Parameter_space_in_y_2
    */
-  bool parameter_space_y_wrapper(std::istringstream & );
-  bool parameter_space_y_wrapper_imp(std::istringstream &,
-                                     CGAL::Arr_no_boundary_tag);
-  bool parameter_space_y_wrapper_imp(std::istringstream &,
-                                     CGAL::Arr_has_boundary_tag);
+  bool parameter_space_in_y_wrapper(std::istringstream & );
+  bool parameter_space_in_y_wrapper_imp(std::istringstream &,
+                                        CGAL::Arr_use_dummy_tag);
+  bool parameter_space_in_y_wrapper_imp(std::istringstream &,
+                                        CGAL::Arr_use_traits_tag);
 
   /*! Compare_xy_2
    */

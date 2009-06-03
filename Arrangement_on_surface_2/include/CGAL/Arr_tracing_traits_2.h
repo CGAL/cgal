@@ -51,19 +51,27 @@ public:
     EQUAL_CURVES_OP,
     COMPARE_Y_AT_X_LEFT_OP,
     COMPARE_Y_AT_X_RIGHT_OP,
+
     MAKE_X_MONOTONE_OP,
     SPLIT_OP,
     INTERSECT_OP,
+
     ARE_MERGEABLE_OP,
     MERGE_OP,
+
     CONSTRUCT_OPPOSITE_OP,
     COMPARE_ENDPOINTS_XY_OP,
-    BOUNDARY_IN_X_OP,
-    BOUNDARY_IN_Y_OP,
-    COMPARE_X_NEAR_BOUNDARY_OP,
+
+    PARAMETER_SPACE_IN_X_OP,
     COMPARE_Y_NEAR_BOUNDARY_OP,
-    COMPARE_X_ON_IDENTIFICATION_OP,
-    COMPARE_Y_ON_IDENTIFICATION_OP,
+    COMPARE_Y_ON_BOUNDARY_OP,
+    IS_ON_X_IDENTIFICATION_OP,    
+    
+    PARAMETER_SPACE_IN_Y_OP,
+    COMPARE_X_NEAR_BOUNDARY_OP,
+    COMPARE_X_ON_BOUNDARY_OP,
+    IS_ON_Y_IDENTIFICATION_OP,
+    
     NUMBER_OF_OPERATIONS
   };
 
@@ -126,22 +134,28 @@ private:
   { return m_flags & (0x1 << COMPARE_ENDPOINTS_XY_OP); }
 
   bool parameter_space_in_x_op() const
-  { return m_flags & (0x1 << BOUNDARY_IN_X_OP); }
+  { return m_flags & (0x1 << PARAMETER_SPACE_IN_X_OP); }
   
-  bool parameter_space_in_y_op() const
-  { return m_flags & (0x1 << BOUNDARY_IN_Y_OP); }
-  
-  bool compare_x_near_boundary_op() const
-  { return m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_OP); }
-
   bool compare_y_near_boundary_op() const
   { return m_flags & (0x1 << COMPARE_Y_NEAR_BOUNDARY_OP); }
 
-  bool compare_x_on_identification_op() const
-  { return m_flags & (0x1 << COMPARE_X_ON_IDENTIFICATION_OP); }  
+  bool compare_y_on_boundary_op() const
+  { return m_flags & (0x1 << COMPARE_Y_ON_BOUNDARY_OP); }  
 
-  bool compare_y_on_identification_op() const
-  { return m_flags & (0x1 << COMPARE_Y_ON_IDENTIFICATION_OP); }  
+  bool is_on_x_identification_op() const 
+  { return m_flags & (0x1 << IS_ON_X_IDENTIFICATION_OP); }  
+  
+  bool parameter_space_in_y_op() const
+  { return m_flags & (0x1 << PARAMETER_SPACE_IN_Y_OP); }
+
+  bool compare_x_near_boundary_op() const
+  { return m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_OP); }
+
+  bool compare_x_on_boundary_op() const
+  { return m_flags & (0x1 << COMPARE_X_ON_BOUNDARY_OP); }  
+
+  bool is_on_y_identification_op() const 
+  { return m_flags & (0x1 << IS_ON_Y_IDENTIFICATION_OP); }  
   
 public:
   /*! Default constructor */
@@ -177,7 +191,15 @@ public:
   // Traits types:
   typedef typename Base::Has_left_category      Has_left_category;
   typedef typename Base::Has_merge_category     Has_merge_category;
-  typedef typename Base::Boundary_category      Boundary_category;
+
+  typedef typename CGALi::Arr_complete_left_side_tag< Base >::Tag
+                                                Arr_left_side_tag;
+  typedef typename CGALi::Arr_complete_bottom_side_tag< Base >::Tag
+                                                Arr_bottom_side_tag;
+  typedef typename CGALi::Arr_complete_top_side_tag< Base >::Tag
+                                                Arr_top_side_tag;
+  typedef typename CGALi::Arr_complete_right_side_tag< Base >::Tag
+                                                Arr_right_side_tag;
   
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
@@ -883,17 +905,17 @@ public:
   };
 
   /*! A functor that compares the x-coordinate of two given points
-   * that lie on the horizontal identification curve.
+   * that lie on horizontal boundaries.
    */
-  class Compare_x_on_identification_2 {
+  class Compare_x_on_boundary_2 {
   private:
-    typename Base::Compare_x_on_identification_2 m_object;
+    typename Base::Compare_x_on_boundary_2 m_object;
     bool m_enabled;
     
   public:
     /*! Construct */
-    Compare_x_on_identification_2(const Base * base, bool enabled = true) :
-      m_object(base->compare_x_on_identification_object()), m_enabled(enabled) {}
+    Compare_x_on_boundary_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_x_on_boundary_2_object()), m_enabled(enabled) {}
     /*! Operate
      * \param p1 the first point.
      * \param p2 the second point.
@@ -901,7 +923,7 @@ public:
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
       if (!m_enabled) return m_object(p1, p2);
-      std::cout << "compare_x_on_identification" << std::endl
+      std::cout << "compare_x_on_boundary" << std::endl
                 << "  p1: " << p1 << std::endl
                 << "  p2: " << p2 << std::endl;
       Comparison_result cr = m_object(p1, p2);
@@ -911,17 +933,17 @@ public:
   };
   
   /*! A functor that compares the y-coordinate of two given points
-   * that lie on the vertical identification curve.
+   * that lie on vertical boundaries.
    */
-  class Compare_y_on_identification_2 {
+  class Compare_y_on_boundary_2 {
   private:
-    typename Base::Compare_y_on_identification_2 m_object;
+    typename Base::Compare_y_on_boundary_2 m_object;
     bool m_enabled;
     
   public:
     /*! Construct */
-    Compare_y_on_identification_2(const Base * base, bool enabled = true) :
-      m_object(base->compare_y_on_identification_2_object()),
+    Compare_y_on_boundary_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_y_on_boundary_2_object()),
       m_enabled(enabled)
     {}
 
@@ -932,7 +954,7 @@ public:
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
       if (!m_enabled) return m_object(p1, p2);
-      std::cout << "compare_y_on_identification" << std::endl
+      std::cout << "compare_y_on_boundary" << std::endl
                 << "  p1: " << p1 << std::endl
                 << "  p2: " << p2 << std::endl;
       Comparison_result cr = m_object(p1, p2);
@@ -940,6 +962,85 @@ public:
       return cr;
     }
   };
+
+  /*! A functor that determines whether a point or curve is on 
+   * x-identification.
+   */
+  class Is_on_x_identification_2 {
+  private:
+    typename Base::Is_on_x_identification_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Is_on_x_identification_2(const Base * base, bool enabled = true) :
+      m_object(base->is_on_x_identification_2_object()), m_enabled(enabled) {}
+    /*! Operate
+     * \param p1 the point.
+     */
+    Comparison_result operator()(const Point_2 & p) const
+    {
+      if (!m_enabled) return m_object(p);
+      std::cout << "is_on_x_identification" << std::endl
+                << "  p: " << p << std::endl;
+      Comparison_result cr = m_object(p);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
+    /*! Operate
+     * \param xcv1 the curve
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv) const
+    {
+      if (!m_enabled) return m_object(xcv);
+      std::cout << "is_on_x_identification" << std::endl
+                << "  xcv: " << xcv << std::endl;
+      Comparison_result cr = m_object(xcv);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  /*! A functor that determines whether a point or curve is on 
+   * y-identification.
+   */
+  class Is_on_y_identification_2 {
+  private:
+    typename Base::Is_on_y_identification_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Is_on_y_identification_2(const Base * base, bool enabled = true) :
+      m_object(base->is_on_y_identification_2_object()), m_enabled(enabled) {}
+    /*! Operate
+     * \param p1 the point.
+     */
+    Comparison_result operator()(const Point_2 & p) const
+    {
+      if (!m_enabled) return m_object(p);
+      std::cout << "is_on_y_identification" << std::endl
+                << "  p: " << p << std::endl;
+      Comparison_result cr = m_object(p);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
+    /*! Operate
+     * \param xcv1 the curve
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv) const
+    {
+      if (!m_enabled) return m_object(xcv);
+      std::cout << "is_on_y_identification" << std::endl
+                << "  xcv: " << xcv << std::endl;
+      Comparison_result cr = m_object(xcv);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+  
   //@}
 
   /// \name Obtain the appropriate functor
@@ -995,26 +1096,31 @@ public:
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(this, parameter_space_in_x_op()); }
 
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
+  { return Compare_y_near_boundary_2(this, compare_y_near_boundary_op()); }
+
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
+  {
+    return Compare_y_on_boundary_2(this, compare_y_on_boundary_op());
+  }
+  
+  Is_on_x_identification_2 is_on_x_identification_2_object() const 
+  { return Is_on_x_identification_2(this, is_on_x_identification_op()); }
+  
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(this, parameter_space_in_y_op()); }
   
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   { return Compare_x_near_boundary_2(this, compare_x_near_boundary_op()); }
 
-  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
-  { return Compare_y_near_boundary_2(this, compare_y_near_boundary_op()); }
-
-  Compare_x_on_identification_2 compare_x_on_identification_2_object() const
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
   {
-    return Compare_x_on_identification_2(this,
-                                         compare_x_on_identification_op());
+    return Compare_x_on_boundary_2(this, compare_x_on_boundary_op());
   }
+  
+  Is_on_y_identification_2 is_on_y_identification_2_object() const 
+  { return Is_on_y_identification_2(this, is_on_y_identification_op()); }
 
-  Compare_y_on_identification_2 compare_y_on_identification_2_object() const
-  {
-    return Compare_y_on_identification_2(this,
-                                         compare_y_on_identification_op());
-  }
   //@}
 };
 

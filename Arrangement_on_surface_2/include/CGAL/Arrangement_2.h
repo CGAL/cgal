@@ -24,6 +24,7 @@
  * The header file for the Arrangement_2<Traits,Dcel> class.
  */
 
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
 
@@ -43,16 +44,13 @@ template <class GeomTraits_,
 class Arrangement_2 :
   public Arrangement_on_surface_2
     <GeomTraits_,
-     typename Default_planar_topology<GeomTraits_,
-                                      Dcel_,
-                                      typename GeomTraits_::
-                                      Boundary_category>::Traits>
+     typename Default_planar_topology<GeomTraits_, Dcel_>::Traits>
 {
-private:
 
-  typedef typename GeomTraits_::Boundary_category         Boundary_category;
-  typedef Default_planar_topology<GeomTraits_, Dcel_, Boundary_category>
-                                                          Default_topology;
+protected:
+
+  typedef Default_planar_topology<GeomTraits_, Dcel_ >    Default_topology;
+
 public:
   typedef Arrangement_on_surface_2<GeomTraits_,
                                    typename Default_topology::Traits>
