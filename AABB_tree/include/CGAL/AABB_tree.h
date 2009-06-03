@@ -41,6 +41,7 @@ namespace CGAL {
         typedef typename AABBTraits::FT FT;
         typedef typename AABBTraits::Point Point;
         typedef typename AABBTraits::Primitive Primitive;
+        typedef typename AABBTraits::Primitive::Id Primitive_id;
         typedef typename AABBTraits::size_type size_type;
         typedef typename AABBTraits::Bounding_box Bounding_box;
         typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
@@ -117,7 +118,7 @@ namespace CGAL {
 
         // any intersection
         template <typename Query>
-        boost::optional<typename Primitive::Id> any_intersected_primitive(const Query& query) const;
+        boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
         template <typename Query>
         boost::optional<Object_and_primitive_id> any_intersection(const Query& query) const;
 
@@ -547,7 +548,7 @@ namespace CGAL {
 
     template <typename Tr>
     template <typename Query>
-    boost::optional<typename AABB_tree<Tr>::Primitive::Id>
+    boost::optional<typename AABB_tree<Tr>::Primitive_id>
         AABB_tree<Tr>::any_intersected_primitive(const Query& query) const
     {
         First_primitive_traits<Query> traversal_traits;
