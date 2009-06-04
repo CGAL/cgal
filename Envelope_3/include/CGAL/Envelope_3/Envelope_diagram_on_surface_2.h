@@ -42,8 +42,7 @@ template <class GeomTraits_, class TopTraits_ =
                                Envelope_3::Envelope_pm_dcel<
                                  GeomTraits_, 
                                  typename GeomTraits_::Xy_monotone_surface_3
-                               >,
-                               typename GeomTraits_::Boundary_category>::Traits
+                               > >::Traits
           > 
 class Envelope_diagram_on_surface_2 :
 public Arrangement_on_surface_2<GeomTraits_, TopTraits_>
@@ -93,10 +92,7 @@ template <class GeomTraits_,
 class Envelope_diagram_2 :
   public Envelope_diagram_on_surface_2< GeomTraits_,
      typename Default_planar_topology<GeomTraits_,
-                                      Dcel_,
-                                      typename GeomTraits_::
-                                      Boundary_category
-                                     >::Traits
+                                      Dcel_>::Traits
     >
 {
 public:
@@ -110,9 +106,7 @@ protected:
 
 public:
   typedef typename Default_planar_topology< Traits_3,
-                                   Env_dcel,
-                                   typename Traits_3::Boundary_category
-                                 >::Traits              Topology_traits;
+                                   Env_dcel >::Traits   Topology_traits;
   typedef Envelope_diagram_on_surface_2<Traits_3, Topology_traits>
                                                         Base;
   typedef typename Env_dcel::Dcel_data_const_iterator   Surface_const_iterator;
