@@ -998,11 +998,23 @@ public:
   //@{
 
   /*! Access the geometry-traits object (non-const version). */
+  inline Traits_adaptor_2* traits_adaptor ()
+  {
+    return (geom_traits);
+  }
+
+  /*! Access the geometry-traits object (const version). */
+  inline const Traits_adaptor_2* traits_adaptor () const
+  {
+    return (geom_traits);
+  }
+
+  /*! Access the geometry-traits object (non-const version). */
   inline Geometry_traits_2* geometry_traits ()
   {
     return (geom_traits);
   }
-  
+
   /*! Access the geometry-traits object (const version). */
   inline const Geometry_traits_2* geometry_traits () const
   {
