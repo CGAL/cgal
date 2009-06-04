@@ -53,9 +53,12 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   typedef typename Kernel::Line_3              Line_3;
   typedef typename Kernel::Object_3            Object_3;
   typedef std::pair<Curve_2, Multiplicity>     Intersection_curve;
-  typedef Arr_unbounded_boundary_tag           Boundary_category;
-  
 
+  typedef Arr_open_side_tag                    Arr_left_side_tag;
+  typedef Arr_open_side_tag                    Arr_bottom_side_tag;
+  typedef Arr_open_side_tag                    Arr_top_side_tag;
+  typedef Arr_open_side_tag                    Arr_righ_side_tag;
+  
   class Is_vertical_3
   {
   public:
