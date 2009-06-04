@@ -374,7 +374,7 @@ protected:
     }
     else
       // this cannot happen, since we need to touch an edge
-      CGAL_error();
+      CGAL_assertion(false);
   }
 
   // update halfedge-target flags of new_h that is created inside face in_face
