@@ -61,6 +61,8 @@ struct Get_left_side_tag< Traits_, true > {
 
 template < class Traits_ >
 struct Get_left_side_tag< Traits_, false > {
+#warning "Geometric_traits does not provide 'Arr_left_side_tag', thus assuming \
+'Arr_oblivious_side_tag'. Please add tag."
   typedef Arr_oblivious_side_tag Tag;
 };
 
@@ -87,6 +89,8 @@ struct Get_bottom_side_tag< Traits_, true > {
 
 template < class Traits_ >
 struct Get_bottom_side_tag< Traits_, false > {
+#warning "Geometric_traits does not provide 'Arr_bottom_side_tag', thus \
+assuming 'Arr_oblivious_side_tag'. Please add tag."
   typedef Arr_oblivious_side_tag Tag;
 };
 
@@ -114,6 +118,8 @@ struct Get_top_side_tag< Traits_, true > {
 
 template < class Traits_ >
 struct Get_top_side_tag< Traits_, false > {
+#warning "Geometric_traits does not provide 'Arr_top_side_tag', thus assuming \
+'Arr_oblivious_side_tag'. Please add tag."
   typedef Arr_oblivious_side_tag Tag;
 };
 
@@ -140,6 +146,8 @@ struct Get_right_side_tag< Traits_, true > {
 
 template < class Traits_ >
 struct Get_right_side_tag< Traits_, false > {
+#warning "Geometric_traits does not provide 'Arr_right_side_tag', thus assuming \
+'Arr_oblivious_side_tag'. Please add tag."
   typedef Arr_oblivious_side_tag Tag;
 };
 
