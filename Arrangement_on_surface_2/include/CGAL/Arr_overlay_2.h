@@ -150,7 +150,7 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
     ex_traits(*geom_traits);
 
   Ovl_visitor               visitor (&arr1, &arr2, &arr_res, &ovl_tr);
-  Sweep_line_2<typename Ovl_visitor::Traits_2,
+  Sweep_line_2<Ovl_traits_2,
                Ovl_visitor,
                typename Ovl_visitor::Subcurve,
                typename Ovl_visitor::Event>
