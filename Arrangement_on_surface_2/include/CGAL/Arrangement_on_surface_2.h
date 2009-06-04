@@ -92,8 +92,6 @@ public:
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
 
-protected:
-
   // maybe remove this in a future version (that supports complete handling
   // of all sides)
   typedef typename Arr_are_all_sides_oblivious_tag< 
