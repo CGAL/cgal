@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005  Tel-viv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -59,7 +59,9 @@ public:
   typedef MinimizationDiagram_2                        Minimization_diagram_2;
   typedef typename Traits::Point_2                     Point_2;
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
-  typedef typename Traits::Boundary_category           Boundary_category;
+  typedef typename Minimization_diagram_2::Are_all_sides_oblivious_tag
+                                                   Are_all_sides_oblivious_tag;
+  
 
 protected:
   class Copied_face_zone_visitor;
@@ -881,7 +883,8 @@ protected:
         {
           //two infinite surfaces, no outer boundary or holes. 
           res =
-            compare_distance_to_envelope(surf1, surf2, Boundary_category());
+            compare_distance_to_envelope(surf1, surf2, 
+                                         Are_all_side_oblivious_tag());
         }
       }
       
@@ -979,22 +982,23 @@ protected:
     Comparison_result res = m_traits->compare_z_at_xy_3_object()(g, s1, s2);
     return ((type == ENVELOPE_LOWER) ? res : CGAL::opposite(res));
   }
-
+  
 
   // compare two infinite surfaces with no boundary or holes
   Comparison_result
   compare_distance_to_envelope(const Xy_monotone_surface_3& s1,
                                const Xy_monotone_surface_3& s2,
-                               Arr_has_boundary_tag)
+                               Arr_not_all_sides_oblivious_tag)
   {
     Comparison_result res = m_traits->compare_z_at_xy_3_object()(s1, s2);
     return ((type == ENVELOPE_LOWER) ? res : CGAL::opposite(res));
   }
 
    // compare two infinite surfaces with no boundary or holes
-  Comparison_result compare_distance_to_envelope(const Xy_monotone_surface_3&,
-                                                 const Xy_monotone_surface_3&,
-                                                 Arr_no_boundary_tag)
+  Comparison_result compare_distance_to_envelope(
+      const Xy_monotone_surface_3&,
+      const Xy_monotone_surface_3&,
+      Arr_all_sides_oblivious_tag)
   {
     CGAL_error(); // doesnt' suppose to reach here at all!!!
     return SMALLER;
@@ -1454,7 +1458,7 @@ protected:
   Vertex_handle create_copied_vertex(Halfedge_handle hh, 
                                      Md_accessor &to_accessor, 
                                      bool source,
-                                     Arr_no_boundary_tag)
+                                     Arr_all_sides_oblivious_tag)
   {
     // create the 2 vertices and connect them with the edge
     // copied_prev_he should be directed from copied_source to copied_target
@@ -1474,7 +1478,7 @@ protected:
   Vertex_handle create_copied_vertex(Halfedge_handle hh, 
                                      Md_accessor &to_accessor, 
                                      bool source,
-                                     Arr_has_boundary_tag)
+                                     Arr_not_all_sides_oblivious_tag)
   {
     typename Traits::Parameter_space_in_x_2 ps_x_op = 
       this->m_traits->parameter_space_in_x_2_object ();
@@ -1559,11 +1563,11 @@ protected:
           // copied_prev_he should be directed from copied_source to copied_target
           Vertex_handle copied_source = 
             create_copied_vertex(hh, to_accessor, true, 
-                                 typename Traits::Boundary_category());
+                                 Are_all_sides_oblivious_tag());
           //to_accessor.create_vertex(hh->source()->point());
           Vertex_handle copied_target = 
             create_copied_vertex(hh, to_accessor, false, 
-                                 typename Traits::Boundary_category());
+                                 Are_all_sides_oblivious_tag());
           //to_accessor.create_vertex(hh->target()->point());
           copied_prev_he = to_accessor.insert_in_face_interior_ex(current_cv,
                                                                   inside_face,
@@ -1602,7 +1606,7 @@ protected:
             // create vertex for the new target, and insert the new edge
             Vertex_handle copied_target = 
               create_copied_vertex(hh, to_accessor, false, 
-                                   typename Traits::Boundary_category());
+                                   Are_all_sides_oblivious_tag());
             //to_accessor.create_vertex(hh->target()->point());
             copied_new_he = to_accessor.insert_from_vertex_ex(current_cv,
                                                               copied_prev_he,
@@ -2168,25 +2172,25 @@ protected:
       ps_y = in_ps_y;
     }
 
-    bool is_bounded_impl(Arr_no_boundary_tag)
+    bool is_bounded_impl(Arr_all_sides_oblivious_tag)
     {
       CGAL_error_msg("Cannot reach this!");
       return true;
     }
 
-    bool is_bounded_impl(Arr_has_boundary_tag)
+    bool is_bounded_impl(Arr_not_all_sides_oblivious_tag)
     {
       Topology_traits *tr = small_arr.topology_traits();
       
       return (((ps_x == ARR_INTERIOR) ||
-               (tr->boundary_type(ps_x) != ARR_UNBOUNDED)) &&
+               (tr->boundary_type(ps_x) != ARR_OPEN)) &&
               ((ps_y == ARR_INTERIOR) ||
-               (tr->boundary_type(ps_y) != ARR_UNBOUNDED)));
+               (tr->boundary_type(ps_y) != ARR_OPEN)));
     }
     
     bool is_bounded()
     {
-      return is_bounded_impl(typename Traits::Boundary_category());
+      return is_bounded_impl(Are_all_sides_oblivious_tag());
     }
 
     void after_create_boundary_vertex (Vertex_handle v)
