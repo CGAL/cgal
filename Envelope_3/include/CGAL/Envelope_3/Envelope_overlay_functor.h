@@ -350,7 +350,7 @@ protected:
   // (i.e. the id of the aux information to update)
   void update_halfedge_flags_on_edge(Halfedge_handle new_h, Halfedge_handle on_edge, unsigned int id)
   {
-    if(new_h->target()->is_at_infinity())
+    if(new_h->target()->is_at_open_boundary())
       return;
     Vertex_handle vh;
     Halfedge_handle hh;
@@ -383,7 +383,7 @@ protected:
   // (i.e. the id of the aux information to update)
   void update_halfedge_flags_in_face(Halfedge_handle new_h, Face_handle in_face, unsigned int id)
   {
-    if(new_h->target()->is_at_infinity())
+    if(new_h->target()->is_at_open_boundary())
       return;
     Vertex_handle vh;
     Halfedge_handle hh;

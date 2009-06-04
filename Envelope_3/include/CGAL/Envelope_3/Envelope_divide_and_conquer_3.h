@@ -866,7 +866,7 @@ protected:
   bool can_remove_edge_target(Halfedge_handle h)
   {
     // \todo Use new design
-    /* The code below uses the is_at_infinity.
+    /* The code below uses the is_at_open_boundary.
        The comment from the calling function says:
        "if the endpoints become isolated after the removal we need to remove
         them if they have the same data as the edge."
@@ -880,7 +880,7 @@ protected:
 
      */
     Vertex_handle v = h->target();
-    if(v->is_at_infinity())
+    if(v->is_at_open_boundary())
       return false;
 
 

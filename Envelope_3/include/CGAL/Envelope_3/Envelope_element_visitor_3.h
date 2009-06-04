@@ -604,10 +604,10 @@ public:
     // by checking the first point in the list
     bool source_is_special = false;
     CGAL_assertion(split_points.size() >= 1);
-    if ((!original_src->is_at_infinity() && 
+    if ((!original_src->is_at_open_boundary() && 
          m_traits->equal_2_object()(split_points[0].first,
                                     original_src->point())) ||
-        (original_src->is_at_infinity() && is_min_end_at_inf))
+        (original_src->is_at_open_boundary() && is_min_end_at_inf))
     {
       overlaps++;
       source_is_special = true;
@@ -615,10 +615,10 @@ public:
     
     // check if target is a special vertex, by checking the last point in the list
     bool target_is_special = false;
-    if ((!original_trg->is_at_infinity() && 
+    if ((!original_trg->is_at_open_boundary() && 
          m_traits->equal_2_object()(split_points[split_points.size()-1].first, 
                                     original_trg->point())) ||
-        (original_trg->is_at_infinity() && is_max_end_at_inf))
+        (original_trg->is_at_open_boundary() && is_max_end_at_inf))
       target_is_special = true;
 
     
@@ -639,17 +639,17 @@ public:
       // if we get to the target vertex, we end the loop, since no more splits
 
       // are needed
-      if (!original_trg->is_at_infinity() && 
+      if (!original_trg->is_at_open_boundary() && 
           m_traits->equal_2_object() (cur_p.first, original_trg->point()))
         break;
         
       Vertex_handle cur_src_vertex = cur_part->source();
 
       // check that the current split point is not already a vertex
-      if ((!cur_src_vertex->is_at_infinity() && 
+      if ((!cur_src_vertex->is_at_open_boundary() && 
            !m_traits->equal_2_object() (cur_p.first, 
                                         cur_src_vertex->point())) ||
-           cur_src_vertex->is_at_infinity())
+           cur_src_vertex->is_at_open_boundary())
 
       {
         // split the edge in this point
@@ -884,7 +884,7 @@ protected:
           //two infinite surfaces, no outer boundary or holes. 
           res =
             compare_distance_to_envelope(surf1, surf2, 
-                                         Are_all_side_oblivious_tag());
+                                         Are_all_sides_oblivious_tag());
         }
       }
       
@@ -2180,12 +2180,7 @@ protected:
 
     bool is_bounded_impl(Arr_not_all_sides_oblivious_tag)
     {
-      Topology_traits *tr = small_arr.topology_traits();
-      
-      return (((ps_x == ARR_INTERIOR) ||
-               (tr->boundary_type(ps_x) != ARR_OPEN)) &&
-              ((ps_y == ARR_INTERIOR) ||
-               (tr->boundary_type(ps_y) != ARR_OPEN)));
+      return ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR));
     }
     
     bool is_bounded()
@@ -2613,7 +2608,8 @@ protected:
       {
         copied_arr_boundary_halfedges[hi] =
                    copied_arr_boundary_halfedges.default_value();
-        if (hi->face() == copied_face && !hi->target()->is_at_infinity()) //BZBZ
+        if (hi->face() == copied_face && 
+            !hi->target()->is_at_open_boundary()) //BZBZ
           copied_vertices_to_halfedges[hi->target()] = hi;
       }
                    
