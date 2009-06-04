@@ -32,10 +32,7 @@ CGAL_BEGIN_NAMESPACE
 // General_polygon_set_2
 template <class Traits_, class Dcel_ = Gps_default_dcel<Traits_> >
 class General_polygon_set_2 : public General_polygon_set_on_surface_2
-  <Traits_,
-  typename Default_planar_topology<Traits_,
-  Dcel_,
-  typename Traits_::Boundary_category>::Traits>
+  <Traits_, typename Default_planar_topology<Traits_, Dcel_ >::Traits>
 {
 public:
   typedef Traits_                                         Traits_2;
@@ -43,9 +40,8 @@ public:
 
   typedef General_polygon_set_2< Traits_, Dcel_ >         Self;
   typedef General_polygon_set_on_surface_2 <Traits_2,
-    typename Default_planar_topology<Traits_2,
-    Dcel,
-    typename Traits_2::Boundary_category>::Traits>        Base;
+    typename Default_planar_topology<Traits_2, Dcel >::Traits>
+                                                          Base;
 
   typedef typename Base::Arrangement_on_surface_2         Arrangement_2;
 

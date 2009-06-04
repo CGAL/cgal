@@ -308,8 +308,8 @@ bool is_crossover_outer_boundary(const typename Traits_2::Polygon_with_holes_2& 
   // IMPORTATNT! TODO!
   // Currently the topology traits is the bounded planar traits. This
   // should be replaced with a templated topology traits!
-  typedef typename Default_planar_topology<Traits_2, Dcel, 
-    typename Traits_2::Boundary_category>::Traits     Topology_traits;
+  typedef typename Default_planar_topology<Traits_2, Dcel>::Traits
+                                                     Topology_traits;
   typedef CGAL::Gps_on_surface_base_2<Traits_2, Topology_traits> 
     Polygon_set_2;
   typedef typename Traits_2::Polygon_with_holes_2							Polygon_with_holes_2;
@@ -415,8 +415,8 @@ bool is_crossover_outer_boundary(
   // IMPORTATNT! TODO!
   // Currently the topology traits is the bounded planar traits. This
   // should be replaced with a templated topology traits!
-  typedef typename Default_planar_topology<Traits_2, Dcel, 
-    typename Traits_2::Boundary_category>::Traits     Topology_traits;
+  typedef typename Default_planar_topology<Traits_2, Dcel>::Traits
+                                                              Topology_traits;
 
   typedef CGAL::Gps_on_surface_base_2<Traits_2, Topology_traits> 
     Polygon_set_2;
@@ -534,8 +534,8 @@ bool are_holes_and_boundary_pairwise_disjoint(const typename Traits_2::Polygon_w
   // IMPORTATNT! TODO!
   // Currently the topology traits is the bounded planar traits. This
   // should be replaced with a templated topology traits!
-  typedef typename Default_planar_topology<Traits_2, Dcel, 
-    typename Traits_2::Boundary_category>::Traits     Topology_traits;
+  typedef typename Default_planar_topology<Traits_2, Dcel>::Traits
+                                                     Topology_traits;
 
   typedef CGAL::Gps_on_surface_base_2<Traits_2, Topology_traits> 
     Polygon_set_2;
