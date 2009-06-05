@@ -186,7 +186,7 @@ int main(int argc, char** argv) {
             Polynomial_2 f;
             if(input.peek()=='P') {
                 input >> f; 
-                curves.push_back(CGAL::CGALi::canonicalize_polynomial(f));
+                curves.push_back(CGAL::canonicalize(f));
             } else {
                 std::string str;
                 std::getline(input,str);
@@ -197,7 +197,7 @@ int main(int argc, char** argv) {
                         print_parse_error(str);
                         std::exit(-1);
                     }
-                    curves.push_back(CGAL::CGALi::canonicalize_polynomial(f));
+                    curves.push_back(CGAL::canonicalize(f));
                 }
             }
         }
