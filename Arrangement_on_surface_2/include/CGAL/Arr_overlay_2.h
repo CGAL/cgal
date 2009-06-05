@@ -131,9 +131,10 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   }
 
   // Obtain a extended traits-class object and define the sweep-line visitor.
-  GeomTraitsRes               *geom_traits = arr_res.geometry_traits();
-
-    /* We would like to avoid copy construction of the geometry traits class.
+  typename ArrRes::Traits_adaptor_2   *traits_adaptor = 
+    arr_res.traits_adaptor();
+  
+  /* We would like to avoid copy construction of the geometry traits class.
    * Copy construction is undesired, because it may results with data
    * duplication or even data loss.
    *
@@ -145,14 +146,16 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<boost::is_same<GeomTraitsRes, Ovl_traits_2>,
-                           Ovl_traits_2&, Ovl_traits_2>::type
-    ex_traits(*geom_traits);
+  typedef Arr_traits_basic_adaptor_2< GeomTraitsRes > Geom_traits_adaptor_2;
+  typename boost::mpl::if_< 
+     boost::is_same< Geom_traits_adaptor_2, Ovl_traits_2>,
+       Ovl_traits_2&, Ovl_traits_2 >:: type
+       ex_traits(*traits_adaptor);
 
   Ovl_visitor               visitor (&arr1, &arr2, &arr_res, &ovl_tr);
   Sweep_line_2<Ovl_traits_2,
                Ovl_visitor,
-               typename Ovl_visitor::Subcurve,
+    typename Ovl_visitor::Subcurve,
                typename Ovl_visitor::Event>
     sweep_line (&ex_traits, &visitor);
 

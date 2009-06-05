@@ -338,22 +338,24 @@ public:
 
   template <class ArrangementA_, class ArrangementB_, class OverlayTraits_>
   struct Sweep_line_overlay_visitor :
-    public Arr_overlay_sl_visitor
-        <_Overlay_helper<Arr_overlay_traits_2<Geometry_traits_2,
-                                              ArrangementA_,
-                                              ArrangementB_>,
-                         ArrangementA_, 
-                         ArrangementB_>,
-         OverlayTraits_>
+    public Arr_overlay_sl_visitor <
+      _Overlay_helper<
+        Arr_overlay_traits_2< Arr_traits_basic_adaptor_2<Geometry_traits_2>,
+                              ArrangementA_,
+                              ArrangementB_>,
+        ArrangementA_, 
+        ArrangementB_>,
+      OverlayTraits_>
   {
     typedef ArrangementA_                            ArrangementA_2;
     typedef ArrangementB_                            ArrangementB_2;
     typedef Arr                                      Arrangement_result_2;
     typedef OverlayTraits_                           Overlay_traits;
 
-    typedef Arr_overlay_traits_2<Geometry_traits_2,
-                                 ArrangementA_2,
-                                 ArrangementB_2>     Geom_ovl_traits_2;
+    typedef Arr_overlay_traits_2< 
+              Arr_traits_basic_adaptor_2<Geometry_traits_2>,
+              ArrangementA_2,
+              ArrangementB_2>                        Geom_ovl_traits_2;
 
     typedef _Overlay_helper<Geom_ovl_traits_2, ArrangementA_2, ArrangementB_2>
                                                      Ovl_helper;
