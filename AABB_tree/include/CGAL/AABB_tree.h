@@ -140,7 +140,9 @@ namespace CGAL {
             m_search_tree_constructed = false;
         }
 
-
+    public: 
+    // made public for advanced use by the polyhedron demo
+    
         /// generic traversal of the tree
         template <class Query, class Traversal_traits>
         void traversal(const Query& query, Traversal_traits& traits) const

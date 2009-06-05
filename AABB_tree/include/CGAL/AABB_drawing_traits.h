@@ -39,7 +39,7 @@ struct AABB_drawing_traits
   bool do_intersect(const int&, // unused
                     const Node& node)
   {
-    gl_draw(node.bounding_box());
+    gl_draw(node.bbox());
     return true;
   }
 
