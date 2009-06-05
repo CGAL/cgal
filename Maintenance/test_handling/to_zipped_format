@@ -9,6 +9,17 @@ my $final_version;
 
 my $original_arguments=join(" ", @ARGV);
 
+sub print_log
+{
+    print TESTRESULTSLOG (@_);
+}
+
+sub print_log_err
+{
+    print TESTRESULTSLOG (@_);
+    print STDERR (@_);
+}
+
 sub usage {
     print STDERR "$0: usage\n";
     print STDERR "$0 [-v version] result1.tar[.gz] ...\n";
@@ -180,17 +191,17 @@ sub one_archive($)
 	return 0;
     }
     make_tempdir();
-    rename("$archive","$TMPDIR/$archive") or die "cannot rename";
+    rename("$archive","$TMPDIR/$archive") or die "cannot rename(\"$archive\",\"$TMPDIR/$archive\")";
     chdir("$TMPDIR") or die "cannot chdir";
-    system("gtar", "xf", "$archive") == 0 or die "cannot gtar";
+    system("gtar", "xf", "$archive") == 0 or die "cannot untar $archive";
     unlink($archive);
 
     reformat_results($archive);
-    system('gzip',glob("*/*")) == 0 or die "cannot gzip";
+    system('gzip',glob("*/*")) == 0 or die "cannot gzip (while processing $archive)";
     system('chmod','-R','a+r,og+w','.') == 0 or die "cannot chmod";
-    system('tar', 'cf', "../$archive", glob("*")) == 0 or die;
+    system('tar', 'cf', "../$archive", glob("*")) == 0 or die "cannot tar";
     chdir('..') or die;
-    system('rm', '-rf', "$TMPDIR")== 0 or die;
+    system('rm', '-rf', "$TMPDIR")== 0 or die "cannot rm -rf";
     return 1;
 }
 
@@ -198,18 +209,14 @@ sub all_archives() {
     my $archive;
     foreach $archive (@ARGV) {
 	if (one_archive($archive)) {
-            open (TESTRESULTSLOG, ">>../test_results.log")
-                  or die "Could not open test_results.log\n";
             my $date=`date`;
             chop $date;
-	    print TESTRESULTSLOG "$final_version : $archive succesfully reformatted. [ $date ]\n";
-            close (TESTRESULTSLOG);
+	    print_log("$final_version : $archive succesfully reformatted. [ $date ]\n");
 	} else {
-	    print STDERR "$final_version : Could not reformat $archive\n";
+	    print_log_err("$final_version : Could not reformat $archive\n");
 	}
     }
 }
-
 
 if ($#ARGV < 0) {
     usage;
@@ -226,5 +233,8 @@ if ($#ARGV < 0) {
     exit 1;
 }
 
+open (TESTRESULTSLOG, ">>../test_results.log")
+    or die "Could not open test_results.log\n";
 all_archives();
+close (TESTRESULTSLOG);
 exit 0;
