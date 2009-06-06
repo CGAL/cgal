@@ -70,18 +70,20 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
 
   if(item)
   {
+    // get point set
     Point_set* points = item->point_set();
-
-    if(!points) return;
+    if(points == NULL)
+        return;
 
     Point_set_demo_normal_estimation_dialog dialog;
     if(!dialog.exec())
       return;
 
+    // normal estimation
     if (dialog.directionMethod() == "plane")
     {
       CGAL::Timer task_timer; task_timer.start();
-      std::cerr << "Estimates Normals Direction by PCA (k=" << dialog.directionNbNeighbors() <<")...\n";
+      std::cerr << "Estimates normals directions by PCA (k=" << dialog.directionNbNeighbors() <<")...\n";
 
       // Estimates normals direction.
       // Note: pca_estimate_normals() requires an iterator over points
@@ -92,7 +94,7 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
                                 dialog.directionNbNeighbors());
 
       // Mark all normals as unoriented
-      m_points->unoriented_points_begin() = m_points->begin();
+      points->unoriented_points_begin() = points->begin();
 
       long memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -102,7 +104,7 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
     else if (dialog.directionMethod() == "quadric")
     {
       CGAL::Timer task_timer; task_timer.start();
-      std::cerr << "Estimates Normals Direction by Jet Fitting (k=" << dialog.directionNbNeighbors() <<")...\n";
+      std::cerr << "Estimates normal directions by Jet Fitting (k=" << dialog.directionNbNeighbors() <<")...\n";
 
       // Estimates normals direction.
       // Note: jet_estimate_normals() requires an iterator over points
@@ -113,7 +115,7 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
                                 dialog.directionNbNeighbors());
 
       // Mark all normals as unoriented
-      m_points->unoriented_points_begin() = m_points->begin();
+      points->unoriented_points_begin() = points->begin();
 
       long memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -121,14 +123,15 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
                             << std::endl;
     }
 
+    // normal orientation
     if (dialog.orientationMethod() == "MST")
     {
       CGAL::Timer task_timer; task_timer.start();
-      std::cerr << "Orient Normals with a Minimum Spanning Tree (k=" << dialog.orientationNbNeighbors() << ")...\n";
+      std::cerr << "Orient normals with a Minimum Spanning Tree (k=" << dialog.orientationNbNeighbors() << ")...\n";
 
       // mst_orient_normals() requires an iterator over points
       // + property maps to access each point's index, position and normal.
-      m_points->unoriented_points_begin() = 
+      points->unoriented_points_begin() = 
         CGAL::mst_orient_normals(points->begin(), points->end(),
                                 CGAL::make_dereference_property_map(points->begin()),
                                 CGAL::make_normal_vector_property_map(points->begin()),
@@ -136,8 +139,8 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
                                 dialog.orientationNbNeighbors());
 
       // Delete points with an unoriented normal (required by APSS and Poisson)
-      points->erase(m_points->unoriented_points_begin(), points->end());
-      m_points->unoriented_points_begin() = points->end();
+      points->erase(points->unoriented_points_begin(), points->end());
+      points->unoriented_points_begin() = points->end();
 
       // After erase(), use Scott Meyer's "swap trick" to trim excess capacity
       Point_set(*points).swap(*points);

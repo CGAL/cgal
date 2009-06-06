@@ -74,7 +74,7 @@ void Point_set_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
 
     bool areOriented = points->unoriented_points_begin() == points->end();
     const double removed_percentage = dialog.percentage(); // percentage of points to remove
-    const int nb_neighbors = dialog.nbNeighbors(); // considers 7 nearest neighbor points
+    const int nb_neighbors = dialog.nbNeighbors(); 
     points->erase(CGAL::remove_outliers(points->begin(), points->end(),
                                         nb_neighbors,
                                         removed_percentage),
