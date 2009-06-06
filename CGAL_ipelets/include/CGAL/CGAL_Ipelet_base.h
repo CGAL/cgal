@@ -797,6 +797,14 @@ public:
     }
 
   public:
+    //
+    // .-----7---------2-------.
+    // |                       |
+    // 3                       6
+    // |     indices           |
+    // 4                       1
+    // |                       |
+    // .-----0---------5-------.
     template <class Output_iterator>
     void 
     restrict_circle_to_bbox(const Circle_2& approx_circle,
@@ -894,14 +902,16 @@ public:
                                                   multi_output_iterator it_out) const 
   {
     if (object->AsGroup()){
+      bool deselect_grp=false;
       for (IpeGroup::const_iterator it=object->AsGroup()->begin();
-                                    it!=object->AsGroup()->end();++it){
-        
+                                    it!=object->AsGroup()->end();++it)
+      {
         IpeObject *obj = (*it)->Clone();
         obj->SetMatrix(obj->Matrix()*object->Matrix());
-        read_one_active_object(obj,it_out);  
+        bool cur=read_one_active_object(obj,it_out);
+        deselect_grp=deselect_grp || cur;
       }
-      return true;
+      return deselect_grp;
     }
     
     //detect Points
@@ -917,7 +927,7 @@ public:
       //iterate on each subpath
       to_deselect=false;
       for (int i=0;i<object->AsPath()->NumSubPaths();++i){
-        if(object->AsPath()-> SubPath(i)->AsSegs()){//do not take elliptic segments
+        if(object->AsPath()-> SubPath(i)->AsSegs()){
           std::list<Segment_2> seg_list;
           bool is_polygon=object-> AsPath() -> SubPath(i)->Closed();
           
@@ -952,6 +962,8 @@ public:
                           );
                 it_out++=arc;
               }
+              else
+                to_deselect=true;
             }
           }
           if (object->AsPath() -> SubPath(i)->Closed() && 

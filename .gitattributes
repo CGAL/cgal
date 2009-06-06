@@ -1285,6 +1285,8 @@ CGAL_ipelets/doc_tex/CGAL_ipelets/PkgDescription.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/cgal_ipelets.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/cgal_ipelets_def.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/fig/example.png -text
+CGAL_ipelets/doc_tex/CGAL_ipelets/fig/ipeico.jpg -text
+CGAL_ipelets/doc_tex/CGAL_ipelets/fig/ipelarge.jpg -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/main.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets_ref/cgal_ipelets.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets_ref/intro.tex -text

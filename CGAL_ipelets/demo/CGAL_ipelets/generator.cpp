@@ -33,7 +33,6 @@
 #include <CGAL/copy_n.h>
 
 
-
 namespace CGAL_generator{
   
   
@@ -67,7 +66,7 @@ void generator::protected_run(int fn)
   }
 
   int nbelements=30;
-  int size=200;
+  double size=200;
   int ret_val;
   
   boost::tie(ret_val,nbelements)=request_value_from_user<int>((boost::format("Number of elements (default : %1%)") % nbelements).str() );
@@ -142,7 +141,8 @@ void generator::protected_run(int fn)
   if (fn==6){
     CGAL::Random random;
     for (std::vector<Point_2>::iterator it_pt=points.begin();it_pt!=points.end();++it_pt)
-      draw_in_ipe(Circle_2(*it_pt,random.get_double(size/20.,size/2.)));
+      draw_in_ipe(Circle_2(*it_pt,pow(random.get_double(size/20.,size/2.),2) ));
+    get_IpePage()->Group(get_IpeletHelper()->CurrentLayer());
   }
   else
     if (!points.empty())// Draw points
