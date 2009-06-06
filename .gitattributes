@@ -1262,6 +1262,37 @@ Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.eps -text svneol=un
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.gif -text svneol=unset#image/gif
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=unset#application/pdf
 Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#application/postscript
+CGAL_ipelets/TODO -text
+CGAL_ipelets/demo/CGAL_ipelets/CMakeLists.txt -text
+CGAL_ipelets/demo/CGAL_ipelets/alpha_shapes.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/arrangement.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/bbox_restriction.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/cmake/modules/FindIPE.cmake -text
+CGAL_ipelets/demo/CGAL_ipelets/diagrams.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/generator.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/hilbert_sort.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/hull.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/include/CGAL_ipelets/k_delaunay.h -text
+CGAL_ipelets/demo/CGAL_ipelets/mesh_2.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/minkowski.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/multi_delaunay.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/multi_regular.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/partition.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/pca.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/simple_triangulation.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/triangulation.cpp -text
+CGAL_ipelets/doc_tex/CGAL_ipelets/PkgDescription.tex -text
+CGAL_ipelets/doc_tex/CGAL_ipelets/cgal_ipelets.tex -text
+CGAL_ipelets/doc_tex/CGAL_ipelets/cgal_ipelets_def.tex -text
+CGAL_ipelets/doc_tex/CGAL_ipelets/fig/example.png -text
+CGAL_ipelets/doc_tex/CGAL_ipelets/main.tex -text
+CGAL_ipelets/doc_tex/CGAL_ipelets_ref/cgal_ipelets.tex -text
+CGAL_ipelets/doc_tex/CGAL_ipelets_ref/intro.tex -text
+CGAL_ipelets/doc_tex/CGAL_ipelets_ref/main.tex -text
+CGAL_ipelets/examples/CGAL_ipelets/test_grabbers.cpp -text
+CGAL_ipelets/include/CGAL/CGAL_Ipelet_base.h -text
+CGAL_ipelets/include/CGAL/grabbers.h -text
+CGAL_ipelets/package_info/CGAL_ipelets/maintainer -text
 CGALimageIO/src/CGALimageIO/CMakeLists.txt -text
 CGALimageIO/src/CGALimageIO/local_makefile -text
 Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf

@@ -1,0 +1,10 @@
+CODE
+---------
+enable_if for draw_in_ipe triangulation and draw_dual_in_ipe
+restrict draw_skeleton_in_ipe 
+
+in diagram svg does not work with epic
+CMAKE
+-------------
+check on a mac usual include and lib dir of ipe
+test if ipe present else do not try to compile this module (install procedure?)

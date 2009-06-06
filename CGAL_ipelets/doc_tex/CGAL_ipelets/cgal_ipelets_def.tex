@@ -1,0 +1,24 @@
+\section{Introduction}
+
+The Ipe extensible drawing editor (\ccAnchor{http://tclab.kaist.ac.kr/ipe/}{http://tclab.kaist.ac.kr/ipe/}) \cite{schwarzkopf1995ede,ipe:man-09}
+is a tool used by computational geometry researchers to produce 2D figures for inclusion in articles or presentations.
+The extensible adjective sheds a light on an important feature:
+the possibility for users to write small extensions (called \textit{ipelets})
+to interface any algorithm with Ipe. This feature is especially interesting 
+to produce illustrations in a paper describing a new algorithm.
+This package provides one class
+that eases the writing of ipelets based on \cgal{}, reducing the needed knowledge of the API of Ipe.
+This class is designed to fulfill most of the needs to implement an ipelet for a 2D \cgal{} algorithm.
+In addition, this package comes with more than ten complete examples
+of ipelets: alpha-shape, arrangements, Voronoi diagrams, convex hulls, Hilbert curve, k-order Delaunay,
+2D mesh, Minkowski sum, polygon partition, random generators, triangulations \dots
+
+
+
+% @MANUAL{ipe:man-09,
+%    TITLE        = {{IPE} manual and library documentation},
+%    AUTHOR       = {Otfried Cheong},
+%    EDITION      = {6.0pre32},
+%    YEAR         = {2009},
+%    URL          = {http://tclab.kaist.ac.kr/ipe/}
+% }
