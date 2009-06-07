@@ -20,6 +20,8 @@
 #ifndef CGAL_GPS_TRAITS_DECORATOR_H
 #define CGAL_GPS_TRAITS_DECORATOR_H
 
+#include <boost/mpl/assert.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Traits_, class Curve_data_, class Point_data_>
@@ -50,18 +52,37 @@ public:
   typedef typename Base::Has_left_category         Has_left_category;
   typedef typename Base::Has_merge_category        Has_merge_category;
 
-  // TODO: Gps_agg_meta_traits is only able to deal with
-  //       bounded curves in the plane (must be fixed in future)
   typedef typename Base::Arr_left_side_tag         Arr_left_side_tag;
   typedef typename Base::Arr_bottom_side_tag       Arr_bottom_side_tag;
   typedef typename Base::Arr_top_side_tag          Arr_top_side_tag;
   typedef typename Base::Arr_right_side_tag        Arr_right_side_tag;
 
-//  typedef Arr_oblivious_side_tag Arr_left_side_tag;
-//  typedef Arr_oblivious_side_tag Arr_bottom_side_tag;
-//  typedef Arr_oblivious_side_tag Arr_top_side_tag;
-//  typedef Arr_oblivious_side_tag Arr_right_side_tag;
-  
+  // a side is either oblivious or open (unbounded)
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_left_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_left_side_tag, Arr_open_side_tag > >
+      )
+  );
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_bottom_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_bottom_side_tag, Arr_open_side_tag > >
+      )
+  );
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_top_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_top_side_tag, Arr_open_side_tag > >
+      )
+  );
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_right_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_right_side_tag, Arr_open_side_tag > >
+      )
+  );
+
   class Ex_point_2 
   {
   protected:
