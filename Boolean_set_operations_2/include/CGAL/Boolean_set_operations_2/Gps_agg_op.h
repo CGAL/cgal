@@ -50,7 +50,7 @@ template <class Arrangement_, class Bfs_visitor_>
 class Gps_agg_op
 {
   typedef Arrangement_                                Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2   Traits_2;
+  typedef typename Arrangement_2::Traits_adaptor_2    Traits_2;
   typedef typename Traits_2::Curve_const_iterator     Curve_const_iterator;
   typedef Gps_agg_meta_traits<Arrangement_2>          Meta_traits;
   typedef typename Meta_traits::Curve_data            Curve_data;

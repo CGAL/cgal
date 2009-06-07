@@ -66,7 +66,10 @@ public:
     Arrangement_2              *res = new Arrangement_2(tr);
     std::vector<Vertex_handle> *verts = new std::vector<Vertex_handle>;
 
-    Gps_agg_op<Arrangement_2, Visitor> agg_op(*res, *verts, *tr);
+    Gps_agg_op<Arrangement_2, Visitor> 
+      agg_op(*res, *verts, 
+             *(res->traits_adaptor())
+      );
     agg_op.sweep_arrangements(i, j, jump, arr_vec);
 
     for(unsigned int count=i; count<=j; count+=jump)
