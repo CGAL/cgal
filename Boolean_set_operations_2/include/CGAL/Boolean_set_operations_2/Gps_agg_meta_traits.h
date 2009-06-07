@@ -21,6 +21,7 @@
 #define CGAL_GPS_AGG_META_TRAITS_H
 
 #include <vector>
+#include <boost/mpl/assert.hpp>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_decorator.h>
 #include <CGAL/Boolean_set_operations_2/Curve_with_halfedge.h>
 #include <CGAL/Boolean_set_operations_2/Point_with_vertex.h>
@@ -100,12 +101,12 @@ public:
 
 template <class Arrangement_>
 class Gps_agg_meta_traits :
-  public Gps_traits_decorator<typename Arrangement_::Geometry_traits_2,
+  public Gps_traits_decorator<typename Arrangement_::Traits_adaptor_2,
                               Gps_agg_curve_data<Arrangement_>,
                               Point_with_vertex<Arrangement_> >
 {
   typedef Arrangement_                            Arrangement;
-  typedef typename Arrangement::Geometry_traits_2 Traits;
+  typedef typename Arrangement::Traits_adaptor_2  Traits;
 
   typedef typename Traits::X_monotone_curve_2     Base_X_monotone_curve_2;
   typedef typename Traits::Point_2                Base_Point_2;
@@ -117,6 +118,14 @@ class Gps_agg_meta_traits :
   typedef typename Traits::Compare_y_at_x_2       Base_Compare_y_at_x_2;
   typedef typename Traits::Intersect_2            Base_Intersect_2;
   typedef typename Traits::Split_2                Base_Split_2;
+
+  typedef typename Traits::Parameter_space_in_x_2 Base_Parameter_space_in_x_2;
+  typedef typename Traits::Compare_y_near_boundary_2 
+                                                 Base_Compare_y_near_boundary_2;
+
+  typedef typename Traits::Parameter_space_in_y_2 Base_Parameter_space_in_y_2;
+  typedef typename Traits::Compare_x_near_boundary_2 
+                                                 Base_Compare_x_near_boundary_2;
 
 
   typedef Gps_agg_meta_traits<Traits>             Self;
@@ -130,18 +139,37 @@ class Gps_agg_meta_traits :
   typedef typename Base::Point_2                  Point_2;
   typedef typename Traits::Has_left_category      Has_left_category;
   typedef typename Traits::Has_merge_category     Has_merge_category;
-  
-  // TODO: Gps_agg_meta_traits is only able to deal with
-  //       bounded curves in the plane (must be fixed in future)
-//  typedef typename Arrangement::Arr_left_side_tag   Arr_left_side_tag;
-//  typedef typename Arrangement::Arr_bottom_side_tag Arr_bottom_side_tag;
-//  typedef typename Arrangement::Arr_top_side_tag    Arr_top_side_tag;
-//  typedef typename Arrangement::Arr_right_side_tag  Arr_right_side_tag;
 
-  typedef Arr_oblivious_side_tag Arr_left_side_tag;
-  typedef Arr_oblivious_side_tag Arr_bottom_side_tag;
-  typedef Arr_oblivious_side_tag Arr_top_side_tag;
-  typedef Arr_oblivious_side_tag Arr_right_side_tag;
+  typedef typename Arrangement::Arr_left_side_tag   Arr_left_side_tag;
+  typedef typename Arrangement::Arr_bottom_side_tag Arr_bottom_side_tag;
+  typedef typename Arrangement::Arr_top_side_tag    Arr_top_side_tag;
+  typedef typename Arrangement::Arr_right_side_tag  Arr_right_side_tag;
+
+  // a side is either oblivious or open (unbounded)
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_left_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_left_side_tag, Arr_open_side_tag > >
+      )
+  );
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_bottom_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_bottom_side_tag, Arr_open_side_tag > >
+      )
+  );
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_top_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_top_side_tag, Arr_open_side_tag > >
+      )
+  );
+  BOOST_MPL_ASSERT(
+      (boost::mpl::or_< 
+       boost::is_same< Arr_right_side_tag, Arr_oblivious_side_tag >,
+       boost::is_same< Arr_right_side_tag, Arr_open_side_tag > >
+      )
+  );
 
   typedef typename Base::Curve_data               Curve_data;
   typedef typename Base::Point_data               Point_data;
@@ -404,6 +432,142 @@ class Gps_agg_meta_traits :
   {
     return Compare_xy_2(this->m_base_tr->compare_xy_2_object());
   }
+
+
+
+  // left-right
+
+  
+  class Parameter_space_in_x_2
+  {
+  private:
+    Base_Parameter_space_in_x_2 m_base;
+    
+  public:
+    
+    Parameter_space_in_x_2(const Base_Parameter_space_in_x_2& base):
+      m_base(base)
+    {}
+    
+    /*! Obtains the parameter space at the end of a curve-end along the x-axis.
+     */
+    Arr_parameter_space operator() (const X_monotone_curve_2 & cv, 
+                                    const Arr_curve_end& end) 
+    {
+      return m_base(cv.base(), end);
+    }
+  };
+  
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Parameter_space_in_x_2 parameter_space_in_x_2_object () const
+  {
+    return Parameter_space_in_x_2(
+        this->m_base_tr->parameter_space_in_x_2_object()
+    );
+  }
+
+  class Compare_y_near_boundary_2
+  {
+  private:
+    Base_Compare_y_near_boundary_2 m_base;
+    
+  public:
+    
+    Compare_y_near_boundary_2(const Base_Compare_y_near_boundary_2& base):
+      m_base(base)
+    {}
+    
+    /*!
+     * Compare the relative y-positions of two curve ends.
+     */
+    Comparison_result operator() (const X_monotone_curve_2 & xcv1,
+                                  const X_monotone_curve_2 & xcv2, 
+                                  Arr_curve_end ce) const
+    {
+      return m_base(xcv1, xcv2, ce);
+    }
+  };
+  
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object () const
+  {
+    return Compare_y_near_boundary_2(
+        this->m_base_tr->compare_y_near_boundary_2_object()
+    );
+  }
+
+
+  // bottom-top
+
+
+  class Parameter_space_in_y_2
+  {
+  private:
+    Base_Parameter_space_in_y_2 m_base;
+    
+  public:
+    
+    Parameter_space_in_y_2(const Base_Parameter_space_in_y_2& base):
+      m_base(base)
+    {}
+    
+    /*! Obtains the parameter space at the end of a curve-end along the y-axis.
+     */
+    Arr_parameter_space operator() (const X_monotone_curve_2 & cv, 
+                                    const Arr_curve_end& end) 
+    {
+      return m_base(cv.base(), end);
+    }
+  };
+  
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Parameter_space_in_y_2 parameter_space_in_y_2_object () const
+  {
+    return Parameter_space_in_y_2(
+        this->m_base_tr->parameter_space_in_y_2_object()
+    );
+  }
+
+  class Compare_x_near_boundary_2
+  {
+  private:
+    Base_Compare_x_near_boundary_2 m_base;
+    
+  public:
+    
+    Compare_x_near_boundary_2(const Base_Compare_x_near_boundary_2& base):
+      m_base(base)
+    {}
+    
+    /*! Compare the relative x-positions of a vertical curve and another given
+     * curve end.
+     */
+    Comparison_result operator() (const Point_2 & p,
+                                  const X_monotone_curve_2 & xcv,
+                                  Arr_curve_end ce) const
+    {
+      return m_base(p, xcv, ce);
+    }
+
+    /*! Compare the relative x-positions of two curve ends.
+     */
+    Comparison_result operator() (const X_monotone_curve_2 & xcv1,
+                                  Arr_curve_end ce1,
+                                  const X_monotone_curve_2 & xcv2,
+                                  Arr_curve_end ce2) const
+    {
+      return m_base(xcv1, ce1, xcv2, ce2); 
+    }
+  };
+  
+  /*! Get a Construct_min_vertex_2 functor object. */
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object () const
+  {
+    return Compare_x_near_boundary_2(
+        this->m_base_tr->compare_x_near_boundary_2_object()
+    );
+  }
+
 
 };
 
