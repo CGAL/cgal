@@ -35,6 +35,7 @@ template<class Traits, class Arrangement_, class Event,class Subcurve>
 class Gps_agg_op_base_visitor :
   public
   Arr_construction_sl_visitor<
+    // TODO derive (helper) from topology traits class
     typename boost::mpl::if_< 
     boost::is_same< typename Arr_are_all_sides_oblivious_tag< 
                                      typename Traits::Arr_left_side_tag, 
