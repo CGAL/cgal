@@ -130,11 +130,18 @@ class Gps_agg_meta_traits :
   typedef typename Base::Point_2                  Point_2;
   typedef typename Traits::Has_left_category      Has_left_category;
   typedef typename Traits::Has_merge_category     Has_merge_category;
+  
+  // TODO: Gps_agg_meta_traits is only able to deal with
+  //       bounded curves in the plane (must be fixed in future)
+//  typedef typename Arrangement::Arr_left_side_tag   Arr_left_side_tag;
+//  typedef typename Arrangement::Arr_bottom_side_tag Arr_bottom_side_tag;
+//  typedef typename Arrangement::Arr_top_side_tag    Arr_top_side_tag;
+//  typedef typename Arrangement::Arr_right_side_tag  Arr_right_side_tag;
 
-  typedef typename Arrangement::Arr_left_side_tag   Arr_left_side_tag;
-  typedef typename Arrangement::Arr_bottom_side_tag Arr_bottom_side_tag;
-  typedef typename Arrangement::Arr_top_side_tag    Arr_top_side_tag;
-  typedef typename Arrangement::Arr_right_side_tag  Arr_right_side_tag;
+  typedef Arr_oblivious_side_tag Arr_left_side_tag;
+  typedef Arr_oblivious_side_tag Arr_bottom_side_tag;
+  typedef Arr_oblivious_side_tag Arr_top_side_tag;
+  typedef Arr_oblivious_side_tag Arr_right_side_tag;
 
   typedef typename Base::Curve_data               Curve_data;
   typedef typename Base::Point_data               Point_data;
@@ -157,7 +164,7 @@ class Gps_agg_meta_traits :
     Base_Intersect_2             m_base;
     Base_Compare_endpoints_xy_2  m_base_cmp_endpoints;
     Base_Compare_xy_2            m_base_cmp_xy;
-    Base_Construct_min_vertex_2  m_ctr_min_v;
+    Base_Construct_min_vertex_2  m_base_ctr_min_v;
 
   public:
    
@@ -165,10 +172,11 @@ class Gps_agg_meta_traits :
     Intersect_2 (const Base_Intersect_2& base,
                  const Base_Compare_endpoints_xy_2& base_cmp_endpoints,
                  const Base_Compare_xy_2& base_cmp_xy,
-                 const Base_Construct_min_vertex_2&) : 
+                 const Base_Construct_min_vertex_2& base_ctr_min_v) : 
       m_base(base),
       m_base_cmp_endpoints(base_cmp_endpoints),
-      m_base_cmp_xy(base_cmp_xy)
+      m_base_cmp_xy(base_cmp_xy),
+      m_base_ctr_min_v(base_ctr_min_v)
     {}
 
     template<class OutputIterator>
@@ -185,8 +193,8 @@ class Gps_agg_meta_traits :
       const std::pair<Base_Point_2, unsigned int>   *base_pt;
       const Base_X_monotone_curve_2                 *overlap_cv;
       OutputIterator oi_end;
-      if(m_base_cmp_xy(m_ctr_min_v(cv1.base()),
-                       m_ctr_min_v(cv2.base())) == LARGER)
+      if(m_base_cmp_xy(m_base_ctr_min_v(cv1.base()),
+                       m_base_ctr_min_v(cv2.base())) == LARGER)
         oi_end = m_base(cv1.base(), cv2.base(), oi);
       else
         oi_end = m_base(cv2.base(), cv1.base(), oi);
