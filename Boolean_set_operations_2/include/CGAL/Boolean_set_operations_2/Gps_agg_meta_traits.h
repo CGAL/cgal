@@ -456,6 +456,20 @@ class Gps_agg_meta_traits :
     {
       return m_base(cv.base(), end);
     }
+    
+    /*! Obtains the parameter space for a curve along the x-axis.
+     */
+    Arr_parameter_space operator() (const X_monotone_curve_2 & cv)
+    {
+      return m_base(cv.base());
+    }
+
+    /*! Obtains the parameter space for a point along the x-axis.
+     */
+    Arr_parameter_space operator() (const Point_2 & pt)
+    {
+      return m_base(pt.base());
+    }
   };
   
   /*! Get a Construct_min_vertex_2 functor object. */
@@ -496,6 +510,8 @@ class Gps_agg_meta_traits :
     );
   }
 
+  // TODO Compare_y_on_boundary_2
+  // TODO Is_on_x_identification_2
 
   // bottom-top
 
@@ -518,6 +534,21 @@ class Gps_agg_meta_traits :
     {
       return m_base(cv.base(), end);
     }
+    
+    /*! Obtains the parameter space for a curve along the x-axis.
+     */
+    Arr_parameter_space operator() (const X_monotone_curve_2 & cv)
+    {
+      return m_base(cv.base());
+    }
+
+    /*! Obtains the parameter space for a point along the x-axis.
+     */
+    Arr_parameter_space operator() (const Point_2 & pt)
+    {
+      return m_base(pt.base());
+    }
+    
   };
   
   /*! Get a Construct_min_vertex_2 functor object. */
@@ -568,6 +599,8 @@ class Gps_agg_meta_traits :
     );
   }
 
+  // TODO Compare_x_on_boundary_2
+  // TODO Is_on_y_identification_2
 
 };
 
