@@ -23,25 +23,57 @@
 
 #include <CGAL/Unique_hash_map.h> 
 #include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits.hpp>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_unb_planar_construction_helper.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template<class Traits, class Arrangement_, class Event,class Subcurve>
 class Gps_agg_op_base_visitor :
   public
-  Arr_construction_sl_visitor<Arr_bounded_planar_construction_helper<Traits,
-                                                                     Arrangement_,
-                                                                     Event,
-                                                                     Subcurve> >
+  Arr_construction_sl_visitor<
+    typename boost::mpl::if_< 
+    boost::is_same< typename Arr_are_all_sides_oblivious_tag< 
+                                     typename Traits::Arr_left_side_tag, 
+                                     typename Traits::Arr_bottom_side_tag, 
+                                     typename Traits::Arr_top_side_tag, 
+                                     typename Traits::Arr_right_side_tag 
+    >::result, Arr_all_sides_oblivious_tag >,
+    Arr_bounded_planar_construction_helper<Traits, 
+                                       Arrangement_,
+                                       Event,
+                                       Subcurve>,
+    Arr_unb_planar_construction_helper<Traits,
+                                       Arrangement_,
+                                       Event,
+                                       Subcurve> 
+    >::type
+  >
 {
   protected:
   typedef Arrangement_                                     Arrangement;
 
-  typedef Arr_bounded_planar_construction_helper<Traits,
-                                                 Arrangement,
-                                                 Event,
-                                                 Subcurve> Construction_helper;
+
+  
+  typedef typename boost::mpl::if_< 
+    boost::is_same< typename Arr_are_all_sides_oblivious_tag< 
+                                     typename Traits::Arr_left_side_tag, 
+                                     typename Traits::Arr_bottom_side_tag, 
+                                     typename Traits::Arr_top_side_tag, 
+                                     typename Traits::Arr_right_side_tag 
+    >::result, Arr_all_sides_oblivious_tag >,
+    Arr_bounded_planar_construction_helper<Traits, 
+                                       Arrangement,
+                                       Event,
+                                       Subcurve>,
+    Arr_unb_planar_construction_helper<Traits,
+                                       Arrangement,
+                                       Event,
+                                       Subcurve> 
+    >::type Construction_helper;
   typedef Arr_construction_sl_visitor<Construction_helper> Base;
 
   typedef typename Base::Status_line_iterator              SL_iterator;
@@ -65,6 +97,9 @@ public:
                           Edges_hash* hash): Base(arr),
                                              m_edges_hash(hash)
   {}
+
+  // TODO (IMPORTANT): unbounded helper might be not fully supported
+  // TODO add mpl-warning
 
   virtual Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
                                           Subcurve* sc)
