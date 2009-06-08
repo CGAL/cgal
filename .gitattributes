@@ -2835,26 +2835,27 @@ Point_set_processing_3/doc_tex/Point_set_processing_3/pipeline.eps -text svneol=
 Point_set_processing_3/doc_tex/Point_set_processing_3/pipeline.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/simplification.tex -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/smoothing.tex -text
+Point_set_processing_3/examples/Point_set_processing_3/cgal_test_with_cmake -text
+Point_set_processing_3/examples/Point_set_processing_3/cgal_test_with_cmake.bat eol=crlf
 Point_set_processing_3/examples/Point_set_processing_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Point_set_processing_3/examples/Point_set_processing_3/data/camel.off -text svneol=unset#application/octet-stream
 Point_set_processing_3/examples/Point_set_processing_3/data/oni.xyz -text
 Point_set_processing_3/examples/Point_set_processing_3/data/sphere_20k.xyz -text
 Point_set_processing_3/examples/Point_set_processing_3/normal_estimation.cmd eol=lf
 Point_set_processing_3/examples/Point_set_processing_3/property_map_multiple_streams.cpp -text
-Point_set_processing_3/examples/Point_set_processing_3/quick_test_suite.bat eol=crlf
-Point_set_processing_3/examples/Point_set_processing_3/quick_test_suite.sh eol=lf
 Point_set_processing_3/include/CGAL/Fast_orthogonal_k_neighbor_search.h -text
 Point_set_processing_3/include/CGAL/compute_average_spacing.h -text
 Point_set_processing_3/include/CGAL/jet_smooth_point_set.h -text
+Point_set_processing_3/run_testsuite_with_cmake.bat eol=crlf
 Point_set_processing_3/test/Point_set_processing_3/analysis_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/analysis_test.cpp -text
+Point_set_processing_3/test/Point_set_processing_3/cgal_test_with_cmake -text
+Point_set_processing_3/test/Point_set_processing_3/cgal_test_with_cmake.bat eol=crlf
 Point_set_processing_3/test/Point_set_processing_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Point_set_processing_3/test/Point_set_processing_3/data/oni.pwn -text
 Point_set_processing_3/test/Point_set_processing_3/data/sphere926.pwn -text
 Point_set_processing_3/test/Point_set_processing_3/data/sphere_20k.xyz -text
 Point_set_processing_3/test/Point_set_processing_3/normal_estimation_test.cmd eol=lf
-Point_set_processing_3/test/Point_set_processing_3/quick_test_suite.bat eol=crlf
-Point_set_processing_3/test/Point_set_processing_3/quick_test_suite.sh eol=lf
 Point_set_processing_3/test/Point_set_processing_3/remove_outliers_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/smoothing_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/smoothing_test.cpp -text
@@ -3969,19 +3970,20 @@ Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/output.t
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/pipeline.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/pipeline.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/APSS_reconstruction.cmd eol=lf
+Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/cgal_test_with_cmake -text
+Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/cgal_test_with_cmake.bat eol=crlf
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/data/camel-5kv.xyz -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/data/oni.xyz -text
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/poisson_reconstruction.cmd eol=lf
-Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/quick_test_suite.bat eol=crlf
-Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/quick_test_suite.sh eol=lf
+Surface_reconstruction_points_3/run_testsuite_with_cmake.bat eol=crlf
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/APSS_reconstruction_test.cmd eol=lf
+Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/cgal_test_with_cmake -text
+Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/cgal_test_with_cmake.bat eol=crlf
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/data/oni.pwn -text
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/data/robocat_deci.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/data/sphere_20k.xyz -text
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/poisson_reconstruction_test.cmd eol=lf
-Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/quick_test_suite.bat eol=crlf
-Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/quick_test_suite.sh eol=lf
 Testsuite/test/collect_cgal_testresults_from_cmake -text
 Testsuite/test/makefile2 -text
 Testsuite/test/run_testsuite_with_cmake -text
