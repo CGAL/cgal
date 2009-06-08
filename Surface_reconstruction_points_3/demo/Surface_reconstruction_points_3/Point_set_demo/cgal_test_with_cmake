@@ -18,7 +18,7 @@
 # - running the script should not require any user interaction
 
   ERRORFILE=error.txt
-  DO_RUN=y
+  DO_RUN=
   case "$CMAKE_GENERATOR" in
     Visual* ) # if VisualC++
         solution=`ls *.sln`
@@ -133,14 +133,7 @@ if [ $# -ne 0 ] ; then
   done
 else
   echo "Run all tests."
-  compile_and_run average_spacing_example
-  compile_and_run jet_smoothing_example
-  compile_and_run normal_estimation
-  compile_and_run normals_example
-  compile_and_run property_map
-  compile_and_run random_simplification_example
-  compile_and_run read_write_xyz_point_set_example
-  compile_and_run remove_outliers_example
+  compile_and_run Point_set_demo
 
   # Do *not* call make clean (too slow when called by developer)
   NEED_CLEAN=

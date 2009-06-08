@@ -20,13 +20,13 @@
   ERRORFILE=error.txt
   DO_RUN=y
   case "$CMAKE_GENERATOR" in
-  Visual* ) # if VisualC++
-      solution=`ls *.sln`
-      MAKE_CMD="devenv ${solution} /Build Release /Project"
-      ;;
-  * ) # if make
-      MAKE_CMD="make -fMakefile"
-      ;;
+    Visual* ) # if VisualC++
+        solution=`ls *.sln`
+        MAKE_CMD="devenv ${solution} /Build Release /Project"
+        ;;
+    * ) # if make
+        MAKE_CMD="make -fMakefile"
+        ;;
   esac
   NEED_CLEAN=
 
@@ -152,17 +152,20 @@ if [ -n "${NEED_CLEAN}" ]; then
 fi
 
 ) 2>&1 | tee -a cgal_test_with_cmake.log
+echo                                                                      >> cgal_test_with_cmake.log
 
 #---------------------------------------------------------------------#
 #                   Catenate other log files to cgal_test_with_cmake.log
 #---------------------------------------------------------------------#
 
-echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
-echo "- Tests output for platform $PLATFORM"                              >> cgal_test_with_cmake.log
-echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
-echo                                                                      >> cgal_test_with_cmake.log
-cat ProgramOutput.*.$PLATFORM                                             >> cgal_test_with_cmake.log
-echo                                                                      >> cgal_test_with_cmake.log
+if [ -n "$DO_RUN" ] ; then
+  echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
+  echo "- Tests output for platform $PLATFORM"                              >> cgal_test_with_cmake.log
+  echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
+  echo                                                                      >> cgal_test_with_cmake.log
+  cat ProgramOutput.*.$PLATFORM                                             >> cgal_test_with_cmake.log
+  echo                                                                      >> cgal_test_with_cmake.log
+fi
 
 echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
 echo "- Error output from platform $PLATFORM"                             >> cgal_test_with_cmake.log
