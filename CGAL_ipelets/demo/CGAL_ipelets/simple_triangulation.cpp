@@ -40,7 +40,7 @@ void Triangulation_ipelet::protected_run(int fn)
     );
     
     if (pt_lst.empty()) {
-      print_error_message("No marks selected");
+      print_error_message("No mark selected");
       return;
     }
     

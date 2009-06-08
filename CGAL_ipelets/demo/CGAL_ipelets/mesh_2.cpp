@@ -78,7 +78,7 @@ void IpeletMesh2::protected_run(int fn)
     );
 
   if (pt_list.empty() and sg_list.empty() and pol_list.empty()) {
-    print_error_message("No marks selected");
+    print_error_message("No mark selected");
     return;
   }
 

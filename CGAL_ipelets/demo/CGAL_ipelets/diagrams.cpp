@@ -53,10 +53,10 @@ const std::string sublabel[] = {
 };
 
 const std::string helpmsg[] = {
-  "Draw Voronoi diagram of a set of points and segments, circles and circle arcs",
-  "Draw the segment Voronoi diagram except the edges of the diagram corresponding to a segment and its endpoints",
-  "Draw a Power diagram of a set of weighted points (circles, points)",
-  "Draw Apollonius diagram of a set of circles"
+  "Draw the Voronoi diagram of a set of points and segments, circles and circle arcs",
+  "Draw the segment Voronoi diagram except the bisectors between a segment and its own endpoints",
+  "Draw the Power diagram of a set of weighted points (circles, points)",
+  "Draw the Apollonius diagram of a set of circles"
 };
 
 class diagrammeIpelet 

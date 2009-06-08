@@ -105,7 +105,7 @@ void enveloppeIpelet::protected_run(int fn)
      );
       
       if (pt_list.empty() && cir_list.empty()) {
-        print_error_message("No marks nor circles nor segments selected");
+        print_error_message("No mark nor circle nor segment selected");
         return;
       }
 

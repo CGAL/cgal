@@ -93,7 +93,7 @@ void triangulationIpelet::protected_run(int fn)
   switch(fn){
     case 0://Delaunay
       if (pt_list.empty()) {
-        print_error_message("No marks selected");
+        print_error_message("No mark selected");
         return;
       }
       dt.insert(pt_list.begin(),pt_list.end());
@@ -103,7 +103,7 @@ void triangulationIpelet::protected_run(int fn)
     case 3:
     case 1://Constraint delaunay
       if (pt_list.empty() && sg_list.empty()){
-        print_error_message("No marks or polygons selected");
+        print_error_message("No mark nor polygon selected");
       }
       //insert points
       Cdt.insert(pt_list.begin(),pt_list.end());
@@ -120,7 +120,7 @@ void triangulationIpelet::protected_run(int fn)
       }
       
       if (!Cdt.number_of_vertices()) {
-        print_error_message("No marks or polygons selected");
+        print_error_message("No mark nor polygon selected");
         return;
       }
       
@@ -130,7 +130,7 @@ void triangulationIpelet::protected_run(int fn)
     break;
     case 4:      //regular
       if (pt_list.empty() && cir_list.empty()){
-        print_error_message("No circles or marks selected");
+        print_error_message("No circle nor mark selected");
       }
       //insert points
       for (std::list<Point_2>::iterator it_pt=pt_list.begin();it_pt!=pt_list.end();++it_pt)

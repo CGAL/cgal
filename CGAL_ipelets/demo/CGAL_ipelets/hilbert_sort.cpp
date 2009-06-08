@@ -34,7 +34,7 @@ const std::string sublabel[] ={
 };
 
 const std::string helpmsg[] = {
-  "Sorts the points along a Hilbert curve"
+  "Sort the points along a Hilbert curve"
 };
 
 struct hilbertsortIpelet
@@ -61,7 +61,7 @@ void hilbertsortIpelet::protected_run(int fn)
   read_active_objects( CGAL::dispatch_or_drop_output<Point_2>( std::back_inserter(pt_list) ) );
 
   if (pt_list.empty()) {
-    print_error_message("No marks selected");
+    print_error_message("No mark selected");
     return;
   }
   

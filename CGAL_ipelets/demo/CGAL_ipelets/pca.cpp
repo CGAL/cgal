@@ -116,7 +116,7 @@ void pcaIpelet::protected_run(int fn)
       linear_least_squares_fitting_2(sg_list.begin(),sg_list.end(),line,centroid,CGAL::Dimension_tag<1>());
       break;  
     default:
-      print_error_message("Please selected a set of points or segments or triangles or circles");
+      print_error_message("Please select a set of points or segments or triangles or circles");
       return;    
   }
   

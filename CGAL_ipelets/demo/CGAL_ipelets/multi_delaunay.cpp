@@ -87,7 +87,7 @@ void MdelaunayIpelet::protected_run(int fn)
   Iso_rectangle_2 bbox=read_active_objects( CGAL::dispatch_or_drop_output<Point_2>( std::back_inserter(pt_list) ) );  
   
   if (pt_list.empty()){
-    print_error_message("No marks selected");
+    print_error_message("No mark selected");
     return;
   }
   

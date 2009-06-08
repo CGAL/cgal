@@ -33,8 +33,8 @@ const std::string Slab[] = {
 
 const std::string Hmsg[] = {
   "Y monotonic decomposition of a polygon",
-  "Approximation of convex decomposition of a polygon using Greene algorithm",
-  "Approximation of convex decomposition of a polygon using Hertel and Mehlhorn algorithm",
+  "Approximation of convex decomposition of a polygon using Greene's algorithm",
+  "Approximation of convex decomposition of a polygon using Hertel and Mehlhorn's algorithm",
   "Optimal convex decomposition of a polygon"
 };
 

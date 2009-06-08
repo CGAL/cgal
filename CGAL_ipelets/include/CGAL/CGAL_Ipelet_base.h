@@ -82,7 +82,7 @@ namespace CGAL{
         protected_run(i);
       }
       catch(...){
-        helper->MessageBox("Error : Save your page in a file and submit it to \n https://gforge.inria.fr/tracker/?atid=3253&group_id=801&func=browse","OK",NULL,NULL);
+        helper->MessageBox("Error : Save your page in a file and submit it to \n http://www.cgal.org/bug_report.html","OK",NULL,NULL);
       }
     };
 

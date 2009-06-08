@@ -81,7 +81,7 @@ void ASphapeIpelet::protected_run(int fn)
 
 
   if (pt_list.empty() and cir_list.empty()) {
-    print_error_message("No circle or point selected");
+    print_error_message("No circle nor point selected");
     return;
   }
 

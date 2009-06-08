@@ -32,7 +32,7 @@ namespace CGAL_bbox_restriction{
 typedef CGAL::Exact_predicates_inexact_constructions_kernel               Kernel;  
   
 const std::string sublabel[] ={
-  "Bbox restriction", "Help"
+  "Bounding box restriction", "Help"
 };
 
 const std::string helpmsg[] = {
@@ -43,7 +43,7 @@ struct hilbertsortIpelet
   : CGAL::Ipelet_base<Kernel,2>
 {
   hilbertsortIpelet()
-    : CGAL::Ipelet_base<Kernel,2>("Bbox restriction",sublabel, helpmsg) {}
+    : CGAL::Ipelet_base<Kernel,2>("Bounding box restriction",sublabel, helpmsg) {}
 
   void protected_run(int);
 };
@@ -74,7 +74,7 @@ void hilbertsortIpelet::protected_run(int fn)
 
   
   if (pt_list.size()<2) {
-    print_error_message("No points to define a bounding box");
+    print_error_message("No point selected to define a bounding box");
     return;
   }
   

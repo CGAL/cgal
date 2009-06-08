@@ -42,7 +42,7 @@ const std::string sublabel[] = {
 };
 
 const std::string hlpmsg[] = {
-  "Generate k-th regular triangulation and k-th dual Voronoi diagram. Note : k must be smaller than the number of input circles."
+  "Generate k-th regular triangulation and k-th dual Power diagram. Note : k must be smaller than the number of input circles."
 };
 
 class MregularIpelet 
@@ -78,7 +78,7 @@ void MregularIpelet::protected_run(int fn)
     );  
   
   if (!input_wpt.size()) {
-    print_error_message("No circles selected");
+    print_error_message("No circle selected");
     return;
   }
   
