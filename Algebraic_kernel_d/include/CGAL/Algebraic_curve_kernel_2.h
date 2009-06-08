@@ -866,7 +866,7 @@ public:
                 ::Univariate_content_up_to_constant_factor()( gcd ).degree();
             if( n!=0 || nc!=0 ) {
                 Curve_analysis_2 common_curve = cc_2(gcd);
-                oib++ = common_curve;
+                *oib++ = common_curve;
                 Polynomial_2 divided_curve 
                     = CGAL::integral_division(f,gcd);
                 if( divided_curve.degree()>=1 || 
@@ -874,7 +874,7 @@ public:
                         ::Univariate_content_up_to_constant_factor()
                             ( divided_curve ).degree() >=1 ) {
                     Curve_analysis_2 divided_c = cc_2(divided_curve);
-                    oi1++ = divided_c;
+                    *oi1++ = divided_c;
                 }
                 divided_curve = CGAL::integral_division(g,gcd);
                 if(divided_curve.degree() >= 1 ||
@@ -882,7 +882,7 @@ public:
                        ::Univariate_content_up_to_constant_factor()
                            ( divided_curve ).degree() >=1) {
                     Curve_analysis_2 divided_c = cc_2(divided_curve);
-                    oi2++ = divided_c;
+                    *oi2++ = divided_c;
                 }
                 return true;
             }
