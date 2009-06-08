@@ -44,13 +44,27 @@
 #define NBQ 100000
 
 template<class Value>
-size_t check_outputs(const std::vector<Value>& a, const std::vector<Value>& b, Value deflt) {
-        size_t counter = 0;
-        for(size_t i = 0; i < a.size(); ++i) {
-                if(a[i] != b[i] && b[i] != deflt)
-                        ++counter;
-        }
-        return counter;
+size_t check_outputs(const std::vector<Value>& a,
+                     const std::vector<Value>& b,
+                     Value deflt)
+{
+    typedef typename std::vector<Value>::const_iterator Iterator;
+
+    size_t counter = 0;
+
+    Iterator it_a = a.begin();
+    Iterator it_b = b.begin();
+
+    while ( it_a != a.end() && it_b != b.end() )
+    {
+      if ( *it_a != *it_b && *it_b != deflt )
+        ++counter;
+
+      ++it_a;
+      ++it_b;
+    }
+
+    return counter;
 }
 
 template <class Tree, class K>
