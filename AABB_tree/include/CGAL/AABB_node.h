@@ -82,8 +82,9 @@ public:
                  const int nb_primitives) const;
 
 private:
-  typedef AABB_node<AABBTraits> Node;
-  typedef typename AABBTraits::Primitive Primitive;
+  typedef AABBTraits AABB_traits;
+  typedef AABB_node<AABB_traits> Node;
+  typedef typename AABB_traits::Primitive Primitive;
 
   /// Helper functions
   const Node& left_child() const
@@ -125,10 +126,10 @@ AABB_node<Tr>::expand(ConstPrimitiveIterator first,
                       ConstPrimitiveIterator beyond,
                       const int range)
 {
-  m_bbox = Tr().compute_bbox_object()(first, beyond);
+  m_bbox = AABB_traits().compute_bbox_object()(first, beyond);
 
   // sort primitives along longest axis aabb
-  Tr().sort_primitives_object()(first, beyond, m_bbox);
+  AABB_traits().sort_primitives_object()(first, beyond, m_bbox);
 
   switch(range)
   {
