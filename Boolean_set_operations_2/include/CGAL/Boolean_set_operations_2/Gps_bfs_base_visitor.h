@@ -79,7 +79,7 @@ public:
   // mark the unbounded_face (true iff contained)
   void visit_ubf(Face_iterator ubf, unsigned int ubf_ic)
   {
-    CGAL_assertion(ubf->number_of_outer_ccbs() == 0);
+    CGAL_assertion(ubf->is_unbounded());
     if(static_cast<DerivedVisitor*>(this)->contained_criteria(ubf_ic))
       ubf->set_contained(true);
   }
