@@ -554,8 +554,8 @@ public:
   */
   const Face* reference_face() const
   {
-    CGAL_error_msg("not implemented.");
-    return NULL;
+    assert(v_tr->halfedge()->direction() == ARR_LEFT_TO_RIGHT);
+    return v_tr->halfedge()->outer_ccb()->face();
   }
  
   //! reference_face (non-const version).
@@ -566,8 +566,8 @@ public:
   */
   Face* reference_face()
   {
-    CGAL_error_msg("not implemented.");
-    return NULL;
+    assert(v_tr->halfedge()->direction() == ARR_LEFT_TO_RIGHT);
+    return v_tr->halfedge()->outer_ccb()->face();
   }
 
   //@}
