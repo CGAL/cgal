@@ -23,19 +23,52 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 
-namespace CGAL 
+namespace CGAL
 {
         template <class Underlying, class Id>
-        class Add_decorated_point: public Underlying 
+        class Add_decorated_point: public Underlying
         {
-                class Decorated_point: public Underlying::Point_3 
+                class Decorated_point: public Underlying::Point_3
                 {
                 public:
-                    Id id;
-                    Decorated_point(): Underlying::Point_3(), id(){}
+                    const Id& id() const { return m_id; }
+
+                    Decorated_point()
+                        : Underlying::Point_3()
+                        , m_id()
+                        , m_is_id_initialized(false) {}
+
                     // Allows the user not to provide the id
                     // so that we don't break existing code
-                    Decorated_point(const typename Underlying::Point_3& p): Underlying::Point_3(p), id(){}
+                    Decorated_point(const typename Underlying::Point_3& p)
+                        : Underlying::Point_3(p)
+                        , m_id()
+                        , m_is_id_initialized(false) {}
+
+                    Decorated_point(const typename Underlying::Point_3& p,
+                                    const Id& id)
+                        : Underlying::Point_3(p)
+                        , m_id(id)
+                        , m_is_id_initialized(true) {}
+
+                    Decorated_point(const Decorated_point& rhs)
+                      : Underlying::Point_3(rhs)
+                      , m_id()
+                      , m_is_id_initialized(rhs.m_is_id_initialized)
+                    {
+                      if ( m_is_id_initialized )
+                          m_id = rhs.m_id;
+                    }
+
+                private:
+                    Id m_id;
+
+                    // Needed to avoid exception (depending on Id type)
+                    // "error: attempt to copy-construct an iterator from a singular iterator."
+                    // This exception may appear if we copy-construct an Id
+                    // which has Id() as value (It is done when constructing
+                    // Neighbor_search since we pass the Point only as query)
+                    bool m_is_id_initialized;
                 };
         public:
                 typedef Decorated_point Point_3;
@@ -54,17 +87,17 @@ namespace CGAL
                 typedef typename Neighbor_search::Tree Tree;
         private:
                 Tree* m_tree;
-                
- 
-                Point_and_primitive_id get_p_and_p(const Point_and_primitive_id& p) 
+
+
+                Point_and_primitive_id get_p_and_p(const Point_and_primitive_id& p)
                 {
                         return p;
                 }
-                Point_and_primitive_id get_p_and_p(const Point& p) 
+                Point_and_primitive_id get_p_and_p(const Point& p)
                 {
                         return Point_and_primitive_id(p, typename Primitive::Id());
                 }
-                
+
         public:
                 template <class ConstPointIterator>
                 AABB_search_tree(ConstPointIterator begin, ConstPointIterator beyond)
@@ -73,23 +106,22 @@ namespace CGAL
                         std::vector<Decorated_point> points;
                         while(begin != beyond) {
                                 Point_and_primitive_id pp = get_p_and_p(*begin);
-                                points.push_back(Decorated_point(pp.first));
-                                points.back().id = pp.second;
+                                points.push_back(Decorated_point(pp.first,pp.second));
                                 ++begin;
                         }
                         m_tree = new Tree(points.begin(), points.end());
                 }
-                
+
                 ~AABB_search_tree() {
                         delete m_tree;
                 }
 
                 // TOFIX: make it const
-                Point_and_primitive_id closest_point(const Point& query) 
+                Point_and_primitive_id closest_point(const Point& query)
                 {
                         typedef typename Add_decorated_point<Traits, typename Traits::Primitive::Id>::Point_3 Decorated_point;
                         Neighbor_search search(*m_tree, query, 1);
-                        return Point_and_primitive_id(static_cast<Point>(search.begin()->first), search.begin()->first.id);
+                        return Point_and_primitive_id(static_cast<Point>(search.begin()->first), search.begin()->first.id());
                 }
         };
 

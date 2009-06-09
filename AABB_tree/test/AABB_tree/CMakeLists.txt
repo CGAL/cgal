@@ -17,18 +17,25 @@ endif()
 find_library(boost_filesystem_LIBRARY
 	     NAMES boost_filesystem)
 
-find_library(boost_system_LIBRARY
-	     NAMES boost_system)
-
-
-if ( boost_filesystem_LIBRARY AND boost_system_LIBRARY )
+if ( boost_filesystem_LIBRARY )
    message(STATUS "Library boost_filesystem found: ${boost_filesystem_LIBRARY}")
    link_libraries( ${boost_filesystem_LIBRARY} ) 
-   message(STATUS "Library boost_system found: ${boost_system_LIBRARY}")
-   link_libraries( ${boost_system_LIBRARY} ) 
 else()
    message(FATAL_ERROR "Library boost_filesystem not found !")
 endif()
+
+
+# boost_system is needed on MacOSX in addition to boost_filesystem
+find_library(boost_system_LIBRARY
+	     NAMES boost_system)
+
+if ( boost_system_LIBRARY )
+   message(STATUS "Library boost_system found: ${boost_system_LIBRARY}")
+   link_libraries( ${boost_system_LIBRARY} )
+else()
+   message(STATUS "Library boost_system not found.")
+endif()
+
 
 # Find CGAL 
 find_package(CGAL COMPONENTS)
