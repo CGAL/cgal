@@ -31,18 +31,29 @@ CGAL_BEGIN_NAMESPACE
 namespace Surface_mesh_simplification
 {
 
-template<class ECM>
-LindstromTurkCore<ECM>::LindstromTurkCore( Params const& aParams, Profile const& aProfile )
+template<class ECM, class K>
+LindstromTurkCore<ECM,K>::LindstromTurkCore( Params const& aParams, Profile const& aProfile )
   :
    mParams(aParams)
   ,mProfile(aProfile)
+  ,mConstraints_n(0)
+  ,mConstraints_A(NULL_MATRIX)
+  ,mConstraints_b(NULL_VECTOR) 
 {
+  double alpha = 1.0 * CGAL_PI / 180.0;
+ 
+  FT cos_alpha = std::cos(alpha);
+  FT sin_alpha = std::sin(alpha);
+
+  mSquared_cos_alpha = cos_alpha * cos_alpha ;
+  mSquared_sin_alpha = sin_alpha * sin_alpha ;
+
   Extract_triangle_data();
   Extract_boundary_data();
 }
 
-template<class ECM>
-void LindstromTurkCore<ECM>::Extract_boundary_data()
+template<class ECM, class K>
+void LindstromTurkCore<ECM,K>::Extract_boundary_data()
 {
   for ( const_border_edge_iterator it = mProfile.border_edges().begin(), eit = mProfile.border_edges().end() ; it != eit ; ++ it )
   {
@@ -59,7 +70,7 @@ void LindstromTurkCore<ECM>::Extract_boundary_data()
     Vector v = tp - sp ;
     Vector n = Point_cross_product(tp,sp) ;
     
-    CGAL_ECMS_LT_TRACE(1,"Boundary edge. S:" << xyz_to_string(sp) << " T:" << xyz_to_string(tp)
+    CGAL_ECMS_LT_TRACE(1,"  Boundary edge. S:" << xyz_to_string(sp) << " T:" << xyz_to_string(tp)
                       << " V:" << xyz_to_string(v) << " N:" << xyz_to_string(n) 
                       ) ;
     
@@ -67,8 +78,8 @@ void LindstromTurkCore<ECM>::Extract_boundary_data()
   }  
 }
 
-template<class ECM>
-void LindstromTurkCore<ECM>::Extract_triangle_data()
+template<class ECM, class K>
+void LindstromTurkCore<ECM,K>::Extract_triangle_data()
 {
   for ( const_triangle_iterator it = mProfile.triangles().begin(), eit = mProfile.triangles().end() ; it != eit ; ++ it )
   {
@@ -85,7 +96,7 @@ void LindstromTurkCore<ECM>::Extract_triangle_data()
     
     FT lNormalL = Point_cross_product(p0,p1) * (p2-ORIGIN);
     
-    CGAL_ECMS_LT_TRACE(1,"Extracting triangle v" << tri.v0->id() << "->v" << tri.v1->id() << "->v" << tri.v2->id()
+    CGAL_ECMS_LT_TRACE(1,"  Extracting triangle v" << tri.v0->id() << "->v" << tri.v1->id() << "->v" << tri.v2->id()
                       << " N:" << xyz_to_string(lNormalV) << " L:" << lNormalL
                       );
     
@@ -93,13 +104,13 @@ void LindstromTurkCore<ECM>::Extract_triangle_data()
   }
 }
 
-template<class ECM>
-typename LindstromTurkCore<ECM>::Optional_point LindstromTurkCore<ECM>::compute_placement()
+template<class ECM, class K>
+typename LindstromTurkCore<ECM,K>::Optional_point LindstromTurkCore<ECM,K>::compute_placement()
 {
   Optional_point  rPlacementP ;
   Optional_vector lPlacementV ;
   
-  CGAL_ECMS_LT_TRACE(0,"Computing LT data for E" << mProfile.v0v1()->id() << " (V" << mProfile.v0()->id() << "->V" << mProfile.v1()->id() << ")" );
+  CGAL_ECMS_LT_TRACE(0,"Computing LT placement for E" << mProfile.v0_v1()->id() << " (V" << mProfile.v0()->id() << "->V" << mProfile.v1()->id() << ")" );
   
   //
   // Each vertex constrian is an equation of the form: Ai * v = bi
@@ -127,51 +138,52 @@ typename LindstromTurkCore<ECM>::Optional_point LindstromTurkCore<ECM>::compute_
   if ( mBdry_data.size() > 0 )
     Add_boundary_preservation_constrians(mBdry_data);
   
-  if ( mConstrians.n < 3 )
+  if ( mConstraints_n < 3 )
     Add_volume_preservation_constrians(mTriangle_data);
     
-  if ( mConstrians.n < 3 )
+  if ( mConstraints_n < 3 )
     Add_boundary_and_volume_optimization_constrians(mBdry_data,mTriangle_data); 
     
-  if ( mConstrians.n < 3 )
+  if ( mConstraints_n < 3 )
     Add_shape_optimization_constrians(mProfile.link());
   
   // It might happen that there were not enough alpha-compatible constrians.
   // In that case there is simply no good vertex placement
-  if ( mConstrians.n == 3 ) 
+  if ( mConstraints_n == 3 ) 
   {
     // If the matrix is singular it's inverse cannot be computed so an 'absent' value is returned.
-    optional<Matrix> lOptional_Ai = inverse_matrix(mConstrians.A);
+    optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
     if ( lOptional_Ai )
     {
       Matrix const& lAi = *lOptional_Ai ;
       
-      CGAL_ECMS_LT_TRACE(2,"     b: " << xyz_to_string(mConstrians.b) );
-      CGAL_ECMS_LT_TRACE(2,"inv(A): " << matrix_to_string(lAi) );
+      CGAL_ECMS_LT_TRACE(2,"       b: " << xyz_to_string(mConstraints_b) );
+      CGAL_ECMS_LT_TRACE(2,"  inv(A): " << matrix_to_string(lAi) );
       
-      lPlacementV = mConstrians.b * lAi ;
+      lPlacementV = filter_infinity(mConstraints_b * lAi) ;
       
-      CGAL_ECMS_LT_TRACE(0,"New vertex point: " << xyz_to_string(*lPlacementV) );
+      CGAL_ECMS_LT_TRACE(0,"  New vertex point: " << xyz_to_string(*lPlacementV) );
     }
     else
-      CGAL_ECMS_LT_TRACE(1,"Can't solve optimization, singular system.");
+      CGAL_ECMS_LT_TRACE(1,"  Can't solve optimization, singular system.");
   }
   else
-    CGAL_ECMS_LT_TRACE(1,"Can't solve optimization, not enough alpha-compatible constrians.");
+    CGAL_ECMS_LT_TRACE(1,"  Can't solve optimization, not enough alpha-compatible constrians.");
   
   if ( lPlacementV )
-    rPlacementP = filter_infinity( ORIGIN + (*lPlacementV) );
+    rPlacementP = ORIGIN + (*lPlacementV) ;
     
   return rPlacementP;
 }
 
-template<class ECM>
-typename LindstromTurkCore<ECM>::Optional_FT LindstromTurkCore<ECM>::compute_cost( Optional_point const& aP )
+template<class ECM, class K>
+typename LindstromTurkCore<ECM,K>::Optional_FT LindstromTurkCore<ECM,K>::compute_cost( Optional_point const& aP )
 {
   Optional_FT rCost ;
 
   if ( aP )
   {
+    CGAL_ECMS_LT_TRACE(0,"Computing LT cost for E" << mProfile.v0_v1()->id() );
     Vector lV = (*aP) - ORIGIN ;
 
     FT lSquaredLength = squared_distance(mProfile.p0(),mProfile.p1());
@@ -186,11 +198,11 @@ typename LindstromTurkCore<ECM>::Optional_FT LindstromTurkCore<ECM>::compute_cos
     
     rCost = filter_infinity(lTotalCost);
     
-    CGAL_ECMS_LT_TRACE(0,"\nSquared edge length: " << lSquaredLength 
-                      << "\nBoundary cost: " << lBdryCost << " weight: " << mParams.BoundaryWeight
-                      << "\nVolume cost: " << lVolumeCost << " weight: " << mParams.VolumeWeight
-                      << "\nShape cost: " << lShapeCost  << " weight: " << mParams.ShapeWeight
-                      << "\nTOTAL COST: " << lTotalCost 
+    CGAL_ECMS_LT_TRACE(0,  "    Squared edge length: " << lSquaredLength 
+                      << "\n    Boundary cost: " << lBdryCost << " weight: " << mParams.BoundaryWeight
+                      << "\n    Volume cost: " << lVolumeCost << " weight: " << mParams.VolumeWeight
+                      << "\n    Shape cost: " << lShapeCost  << " weight: " << mParams.ShapeWeight
+                      << "\n  TOTAL COST: " << lTotalCost 
                       );
                       
   }
@@ -199,8 +211,8 @@ typename LindstromTurkCore<ECM>::Optional_FT LindstromTurkCore<ECM>::compute_cos
 }
 
 
-template<class ECM>
-void LindstromTurkCore<ECM>::Add_boundary_preservation_constrians( Boundary_data_vector const& aBdry )
+template<class ECM, class K>
+void LindstromTurkCore<ECM,K>::Add_boundary_preservation_constrians( Boundary_data_vector const& aBdry )
 {
  
   if ( aBdry.size() > 0 )
@@ -223,7 +235,7 @@ void LindstromTurkCore<ECM>::Add_boundary_preservation_constrians( Boundary_data
       e1y = e1y + vy;
       e1z = e1z + vz;
       
-      CGAL_ECMS_LT_TRACE(1,"vx:" << vx << " vy:" << vy << " vz:" << vz << " e1x:" << e1x << " e1y:" << e1y << " e1z:" << e1z );
+      CGAL_ECMS_LT_TRACE(1,"    vx:" << vx << " vy:" << vy << " vz:" << vz << " e1x:" << e1x << " e1y:" << e1y << " e1z:" << e1z );
     }     
     
     Matrix H = LT_product(e1);
@@ -231,20 +243,21 @@ void LindstromTurkCore<ECM>::Add_boundary_preservation_constrians( Boundary_data
     Vector c = cross_product(e1,e2);
     
     CGAL_ECMS_LT_TRACE(1
-                      ,"Adding boundary preservation constrians. SumV:" << xyz_to_string(e1) 
-                       << " SumN:" << xyz_to_string(e2) 
-                       << "\nH:" << matrix_to_string(H)
-                       << "\nc:" << xyz_to_string(c)                       
+                      ,"  Adding boundary preservation constrians."
+                       << "\n      SumV:" << xyz_to_string(e1) 
+                       << "\n      SumN:" << xyz_to_string(e2) 
+                       << "\n      H:" << matrix_to_string(H)
+                       << "\n      c:" << xyz_to_string(c)                       
                       );
     
-    mConstrians.Add_from_gradient(H,c);
+    Add_constraint_from_gradient(H,c);
   }
 }
 
-template<class ECM>
-void LindstromTurkCore<ECM>::Add_volume_preservation_constrians( Triangle_data_vector const& aTriangles )
+template<class ECM, class K>
+void LindstromTurkCore<ECM,K>::Add_volume_preservation_constrians( Triangle_data_vector const& aTriangles )
 {
-  CGAL_ECMS_LT_TRACE(1,"Adding volume preservation constrians. " << aTriangles.size() << " triangles.");
+  CGAL_ECMS_LT_TRACE(1,"  Adding volume preservation constrians. " << aTriangles.size() << " triangles.");
   
   Vector lSumV = NULL_VECTOR ;
   FT     lSumL(0) ;
@@ -255,18 +268,18 @@ void LindstromTurkCore<ECM>::Add_volume_preservation_constrians( Triangle_data_v
     lSumL = lSumL + it->NormalL ;  
   }   
   
-  CGAL_ECMS_LT_TRACE(1, " SumV:" << xyz_to_string(lSumV) << " SumL:" << lSumL );
+  CGAL_ECMS_LT_TRACE(1, "      SumV:" << xyz_to_string(lSumV) << " SumL:" << lSumL );
   
-  mConstrians.Add_if_alpha_compatible(lSumV,lSumL);   
+  Add_constraint_if_alpha_compatible(lSumV,lSumL);   
 
 }
 
-template<class ECM>
-void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( Boundary_data_vector const& aBdry
+template<class ECM, class K>
+void LindstromTurkCore<ECM,K>::Add_boundary_and_volume_optimization_constrians( Boundary_data_vector const& aBdry
                                                                             , Triangle_data_vector const& aTriangles
                                                                             )
 {
-  CGAL_ECMS_LT_TRACE(1,"Adding boundary and volume optimization constrians. ");
+  CGAL_ECMS_LT_TRACE(1,"  Adding boundary and volume optimization constrians. ");
   
   Matrix H = NULL_MATRIX ;
   Vector c = NULL_VECTOR ;
@@ -283,7 +296,7 @@ void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( Bo
     c = c - ( lTri.NormalL * lTri.NormalV ) ;
   }   
   
-  CGAL_ECMS_LT_TRACE(2,"Hv:" << matrix_to_string(H) << "\ncv:" << xyz_to_string(c) ) ;
+  CGAL_ECMS_LT_TRACE(2,"      Hv:" << matrix_to_string(H) << "\n      cv:" << xyz_to_string(c) ) ;
   
   
   if ( aBdry.size() > 0 )
@@ -303,7 +316,7 @@ void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( Bo
       cb = cb + c ;
     }     
     
-    CGAL_ECMS_LT_TRACE(2,"Hb:" << matrix_to_string(Hb) << "\ncb:" << xyz_to_string(cb) ) ;
+    CGAL_ECMS_LT_TRACE(2,"      Hb:" << matrix_to_string(Hb) << "\n      cb:" << xyz_to_string(cb) ) ;
     
     //
     // Weighted average
@@ -316,16 +329,16 @@ void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( Bo
     H += lScaledBoundaryWeight * Hb ;
     c = c + ( lScaledBoundaryWeight * cb ) ;
     
-    CGAL_ECMS_LT_TRACE(2,"H:" << matrix_to_string(H) << "\nc:" << xyz_to_string(c) ) ;
-    CGAL_ECMS_LT_TRACE(2,"VolW:" << mParams.VolumeWeight << " BdryW:" << mParams.BoundaryWeight << " ScaledBdryW:" << lScaledBoundaryWeight ) ;
+    CGAL_ECMS_LT_TRACE(2,"      H:" << matrix_to_string(H) << "\n      c:" << xyz_to_string(c) ) ;
+    CGAL_ECMS_LT_TRACE(2,"      VolW:" << mParams.VolumeWeight << " BdryW:" << mParams.BoundaryWeight << " ScaledBdryW:" << lScaledBoundaryWeight ) ;
     
   }
   
-  mConstrians.Add_from_gradient(H,c);
+  Add_constraint_from_gradient(H,c);
 }
 
-template<class ECM>
-void LindstromTurkCore<ECM>::Add_shape_optimization_constrians( vertex_descriptor_vector const& aLink )
+template<class ECM, class K>
+void LindstromTurkCore<ECM,K>::Add_shape_optimization_constrians( vertex_descriptor_vector const& aLink )
 {
   FT s((double)aLink.size());
   
@@ -339,14 +352,14 @@ void LindstromTurkCore<ECM>::Add_shape_optimization_constrians( vertex_descripto
   for( typename vertex_descriptor_vector::const_iterator it = aLink.begin(), eit = aLink.end() ; it != eit ; ++it )
     c = c + (ORIGIN - get_point(*it)) ;  
            
-  CGAL_ECMS_LT_TRACE(1,"Adding shape optimization constrians. Shape vector: " << xyz_to_string(c) );
+  CGAL_ECMS_LT_TRACE(1,"  Adding shape optimization constrians. Shape vector: " << xyz_to_string(c) );
   
-  mConstrians.Add_from_gradient(H,c);
+  Add_constraint_from_gradient(H,c);
 }
 
-template<class ECM>
-typename LindstromTurkCore<ECM>::FT
-LindstromTurkCore<ECM>::Compute_boundary_cost( Vector const& v, Boundary_data_vector const& aBdry )
+template<class ECM, class K>
+typename LindstromTurkCore<ECM,K>::FT
+LindstromTurkCore<ECM,K>::Compute_boundary_cost( Vector const& v, Boundary_data_vector const& aBdry )
 {
   FT rCost(0);
   for ( typename Boundary_data_vector::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
@@ -358,9 +371,9 @@ LindstromTurkCore<ECM>::Compute_boundary_cost( Vector const& v, Boundary_data_ve
   return rCost / FT(4) ;
 }
 
-template<class ECM>
-typename LindstromTurkCore<ECM>::FT
-LindstromTurkCore<ECM>::Compute_volume_cost( Vector const& v, Triangle_data_vector const& aTriangles )
+template<class ECM, class K>
+typename LindstromTurkCore<ECM,K>::FT
+LindstromTurkCore<ECM,K>::Compute_volume_cost( Vector const& v, Triangle_data_vector const& aTriangles )
 {
   FT rCost(0);
   
@@ -377,9 +390,9 @@ LindstromTurkCore<ECM>::Compute_volume_cost( Vector const& v, Triangle_data_vect
   return rCost / FT(36) ;
 }
 
-template<class ECM>
-typename LindstromTurkCore<ECM>::FT
-LindstromTurkCore<ECM>::Compute_shape_cost( Point const& p, vertex_descriptor_vector const& aLink )
+template<class ECM, class K>
+typename LindstromTurkCore<ECM,K>::FT
+LindstromTurkCore<ECM,K>::Compute_shape_cost( Point const& p, vertex_descriptor_vector const& aLink )
 {
   FT rCost(0);
   
@@ -389,95 +402,104 @@ LindstromTurkCore<ECM>::Compute_shape_cost( Point const& p, vertex_descriptor_ve
   return rCost ;
 }
 
-template<class ECM>
-void LindstromTurkCore<ECM>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
+template<class ECM, class K>
+void LindstromTurkCore<ECM,K>::Add_constraint_if_alpha_compatible( Vector const& Ai, FT const& bi )
 {
+  CGAL_ECMS_LT_TRACE(3,"    Adding new constrains if alpha-compatible.\n      Ai: " << xyz_to_string(Ai) << "\n      bi:" << bi << ")" );
+
   FT slai = Ai*Ai ;
   
-  CGAL_ECMS_LT_TRACE(3,"[constrians] Adding new if alpha-compatble.\nslai: " << slai );
+  CGAL_ECMS_LT_TRACE(3,"\n      slai: " << slai << ")" );
   
-  FT l = CGAL_NTS sqrt(slai) ;
-  
-  CGAL_ECMS_LT_TRACE(3,"[constrians] Adding new if alpha-compatble.\nslai: " << slai );
-  
-  Vector Ain ;
-  FT     bin ;
-  
-  if ( !CGAL_NTS is_zero(l) )
+  if ( is_finite(slai) )
   {
-    Ain = Ai / l ;
-    bin = bi / l ;
-  }
-  else
-  {
-    CGAL_ECMS_LT_TRACE(3,"[constrians] l is ZERO." );
-    
-    Ain = Vector( big_value(), big_value(), big_value() ) ;
-    bin = big_value() ;
-  }
+    FT l = CGAL_NTS sqrt( slai ) ;
   
-  CGAL_ECMS_LT_TRACE(3,"[constrians] Ain: " << xyz_to_string(Ain) << " bin:" << bin );
-  
-  bool lAddIt = true ;
-  
-  if ( n == 1 )
-  {
-    FT d01 = A.r0() * Ai  ;
+    CGAL_ECMS_LT_TRACE(3,"      l: " << l );
     
-    FT sla0 = A.r0() * A.r0() ;
-    FT sd01 = d01 * d01 ;
-
-    FT max = sla0 * slai * squared_cos_alpha() ;     
+    Vector Ain ;
+    FT     bin ;
     
-    CGAL_ECMS_LT_TRACE(3,"[constrians] Second constrain. d01: " << d01 << " sla0:" << sla0 << " sd01:" << sd01 << " max:" << max );
-    
-    if ( sd01 > max )
-      lAddIt = false ;
-  }
-  else if ( n == 2 )
-  {
-    Vector N = cross_product(A.r0(),A.r1());
-    
-    FT dc012 = N * Ai ;
-    
-    FT slc01  = N * N ;
-    FT sdc012 = dc012 * dc012;       
-
-    FT min = slc01 * slai * squared_sin_alpha() ;
-    
-    CGAL_ECMS_LT_TRACE(3,"[constrians] Thirds constrain. N: " << xyz_to_string(N) << " dc012:" << dc012 << " slc01:" << slc01 
-                       << " sdc012:" << sdc012 << " min:" << min );
-    
-    if ( sdc012 <= min )
-      lAddIt = false ;
-  }
-  
-  if ( lAddIt )
-  {
-    switch ( n )
+    if ( !CGAL_NTS is_zero(l) )
     {
-      case 0 :
-        A.r0() = Ain ;
-        b = Vector(bin,b.y(),b.z());
-        break ;
-      case 1 :
-        A.r1() = Ain ;
-        b = Vector(b.x(),bin,b.z());
-        break ;
-      case 2 :
-        A.r2() = Ain ;
-        b = Vector(b.x(),b.y(),bin);
-        break ;
+      Ain = Ai / l ;
+      bin = bi / l ;
+    }
+    else
+    {
+      CGAL_ECMS_LT_TRACE(3,"        l is ZERO." );
+      
+      Ain = Vector( big_value(), big_value(), big_value() ) ;
+      bin = big_value() ;
     }
     
-    CGAL_ECMS_LT_TRACE(3,"[constrains] Accepting # " << n << " A:" << matrix_to_string(A) << " b:" << xyz_to_string(b) ) ;
+    CGAL_ECMS_LT_TRACE(3,"      Ain: " << xyz_to_string(Ain) << " bin:" << bin );
     
-    ++ n ;
+    bool lAddIt = true ;
     
+    if ( mConstraints_n == 1 )
+    {
+      FT d01 = mConstraints_A.r0() * Ai  ;
+      
+      FT sla0 = mConstraints_A.r0() * mConstraints_A.r0() ;
+      FT sd01 = d01 * d01 ;
+  
+      FT max = sla0 * slai * mSquared_cos_alpha ;     
+      
+      CGAL_ECMS_LT_TRACE(3,"      Second constrain. d01: " << d01 << " sla0:" << sla0 << " sd01:" << sd01 << " max:" << max );
+      
+      if ( sd01 > max )
+        lAddIt = false ;
+    }
+    else if ( mConstraints_n == 2 )
+    {
+      Vector N = cross_product(mConstraints_A.r0(),mConstraints_A.r1());
+      
+      FT dc012 = N * Ai ;
+      
+      FT slc01  = N * N ;
+      FT sdc012 = dc012 * dc012;       
+  
+      FT min = slc01 * slai * mSquared_sin_alpha ;
+      
+      CGAL_ECMS_LT_TRACE(3,"      Third constrain. N: " << xyz_to_string(N) << " dc012:" << dc012 << " slc01:" << slc01 
+                        << " sdc012:" << sdc012 << " min:" << min );
+      
+      if ( sdc012 <= min )
+        lAddIt = false ;
+    }
+    
+    if ( lAddIt )
+    {
+      switch ( mConstraints_n )
+      {
+        case 0 :
+          mConstraints_A.r0() = Ain ;
+          mConstraints_b = Vector(bin,mConstraints_b.y(),mConstraints_b.z());
+          break ;
+        case 1 :
+          mConstraints_A.r1() = Ain ;
+          mConstraints_b = Vector(mConstraints_b.x(),bin,mConstraints_b.z());
+          break ;
+        case 2 :
+          mConstraints_A.r2() = Ain ;
+          mConstraints_b = Vector(mConstraints_b.x(),mConstraints_b.y(),bin);
+          break ;
+      }
+      
+      CGAL_ECMS_LT_TRACE(3,"      Accepting # " << mConstraints_n << " A:" << matrix_to_string(mConstraints_A) << " b:" << xyz_to_string(mConstraints_b) ) ;
+      
+      ++ mConstraints_n ;
+      
+    }
+    else
+    {
+      CGAL_ECMS_LT_TRACE(3,"      INCOMPATIBLE. Discarded" ) ;
+    }
   }
   else
   {
-    CGAL_ECMS_LT_TRACE(3,"[constrains] INCOMPATIBLE. Discarded" ) ;
+    CGAL_ECMS_LT_TRACE(3,"      OVERFLOW. Discarded" ) ;
   }
 }
 
@@ -503,26 +525,26 @@ int index_of_max_component ( V const& v )
   return i ;
 }
 
-template<class ECM>
-void LindstromTurkCore<ECM>::Constrians::Add_from_gradient ( Matrix const& H, Vector const& c )
+template<class ECM, class K>
+void LindstromTurkCore<ECM,K>::Add_constraint_from_gradient ( Matrix const& H, Vector const& c )
 {
-  CGAL_ECMS_LT_TRACE(3,"[constrains] Adding from gradient. Current n=" << n ) ;
+  CGAL_ECMS_LT_TRACE(3,"    Adding constrains from gradient. Current n=" << mConstraints_n ) ;
   
-  CGAL_precondition(n >= 0 && n<=2 );
+  CGAL_precondition(mConstraints_n >= 0 && mConstraints_n<=2 );
   
-  switch(n)
+  switch(mConstraints_n)
   {
     case 0 :
     
-      Add_if_alpha_compatible(H.r0(),-c.x());
-      Add_if_alpha_compatible(H.r1(),-c.y());
-      Add_if_alpha_compatible(H.r2(),-c.z());
+      Add_constraint_if_alpha_compatible(H.r0(),-c.x());
+      Add_constraint_if_alpha_compatible(H.r1(),-c.y());
+      Add_constraint_if_alpha_compatible(H.r2(),-c.z());
       
       break;  
       
     case 1 :
       {
-        Vector const& A0 = A.r0();
+        Vector const& A0 = mConstraints_A.r0();
         
         CGAL_assertion( A0 != NULL_VECTOR ) ;
         
@@ -543,7 +565,7 @@ void LindstromTurkCore<ECM>::Constrians::Add_from_gradient ( Matrix const& H, Ve
            default : Q0 = NULL_VECTOR ; // This should never happen!
         }
         
-        CGAL_ECMS_LT_TRACE(3,"[constrains] Q0:" << xyz_to_string(Q0) ) ;
+        CGAL_ECMS_LT_TRACE(3,"      Q0:" << xyz_to_string(Q0) ) ;
         
         CGAL_assertion( Q0 != NULL_VECTOR ) ;
         
@@ -554,10 +576,10 @@ void LindstromTurkCore<ECM>::Constrians::Add_from_gradient ( Matrix const& H, Ve
         FT b1 = - ( Q0 * c ) ;
         FT b2 = - ( Q1 * c ) ;
         
-        CGAL_ECMS_LT_TRACE(3,"[constrains] Q1:" << xyz_to_string(Q1) << " A1: " << xyz_to_string(A1) << " A2:" << xyz_to_string(A2) << "\nb1:" << b1 << " b2:" << b2 ) ;
+        CGAL_ECMS_LT_TRACE(3,"      Q1:" << xyz_to_string(Q1) << " A1: " << xyz_to_string(A1) << " A2:" << xyz_to_string(A2) << "\n      b1:" << b1 << " b2:" << b2 ) ;
         
-        Add_if_alpha_compatible(A1,b1);
-        Add_if_alpha_compatible(A2,b2);
+        Add_constraint_if_alpha_compatible(A1,b1);
+        Add_constraint_if_alpha_compatible(A2,b2);
         
       }
       break ;
@@ -565,14 +587,15 @@ void LindstromTurkCore<ECM>::Constrians::Add_from_gradient ( Matrix const& H, Ve
     case 2:
       {
     
-        Vector Q = cross_product(A.r0(),A.r1());
+        Vector Q = cross_product(mConstraints_A.r0(),mConstraints_A.r1());
         
         Vector A2 = H * Q ;
         
         FT b2 = - ( Q * c ) ;
         
-        CGAL_ECMS_LT_TRACE(3,"[constrains] Q:" << xyz_to_string(Q) << " A2: " << xyz_to_string(A2) << " b2:" << b2 ) ;
-        Add_if_alpha_compatible(A2,b2);
+        CGAL_ECMS_LT_TRACE(3,"      Q:" << xyz_to_string(Q) << " A2: " << xyz_to_string(A2) << " b2:" << b2 ) ;
+
+        Add_constraint_if_alpha_compatible(A2,b2);
         
       }
       break ;

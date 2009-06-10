@@ -58,7 +58,7 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
   vertex_descriptor q = pq->vertex();
   vertex_descriptor p = pq->opposite()->vertex();
   
-  CGAL_ECMS_TRACE(3, "Collapsing p-q E" << pq->ID << " (V" << p->ID << "->V" << q->ID << ")" ) ;
+  CGAL_ECMS_TRACE(3, "Collapsing p-q E" << pq->id() << " (V" << p->id() << "->V" << q->id() << ")" ) ;
   
   bool lP_Erased = false, lQ_Erased = false ;
   
@@ -67,13 +67,13 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
     CGAL_precondition( !pt->opposite()->is_border() ) ; // p-q-t is a face of the mesh
     if ( lTopLeftFaceExists )
     {
-      CGAL_ECMS_TRACE(3, "Removing p-t E" << pt->ID << " (V" << p->ID << "->V" << pt->vertex()->ID << ") by joining top-left face" ) ;
+      CGAL_ECMS_TRACE(3, "Removing p-t E" << pt->id() << " (V" << p->id() << "->V" << pt->vertex()->id() << ") by joining top-left face" ) ;
       
       aSurface.join_facet (pt);
     }
     else
     {
-      CGAL_ECMS_TRACE(3, "Removing p-t E" << pt->ID << " (V" << p->ID << "->V" << pt->vertex()->ID << ") by erasing top face" ) ;
+      CGAL_ECMS_TRACE(3, "Removing p-t E" << pt->id() << " (V" << p->id() << "->V" << pt->vertex()->id() << ") by erasing top face" ) ;
       
       aSurface.erase_facet(pt->opposite());
       
@@ -90,12 +90,12 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
     CGAL_precondition( !qb->opposite()->is_border() ) ; // p-q-b is a face of the mesh
     if ( lBottomRightFaceExists )
     {
-      CGAL_ECMS_TRACE(3, "Removing q-b E" << qb->ID << " (V" << q->ID << "->V" << qb->vertex()->ID << ") by joining bottom-right face" ) ;
+      CGAL_ECMS_TRACE(3, "Removing q-b E" << qb->id() << " (V" << q->id() << "->V" << qb->vertex()->id() << ") by joining bottom-right face" ) ;
       aSurface.join_facet (qb);
     }
     else
     {
-      CGAL_ECMS_TRACE(3, "Removing q-b E" << qb->ID << " (V" << q->ID << "->V" << qb->vertex()->ID << ") by erasing bottom face" ) ;
+      CGAL_ECMS_TRACE(3, "Removing q-b E" << qb->id() << " (V" << q->id() << "->V" << qb->vertex()->id() << ") by erasing bottom face" ) ;
       
       aSurface.erase_facet(qb->opposite());
       

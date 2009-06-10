@@ -99,6 +99,9 @@ struct Dummy_visitor
   template<class Profile, class OPoint>
   void OnCollapsing(Profile const&, OPoint const& ) {}                
   
+  template<class Profile, class VH>
+  void OnCollapsed( Profile const&, VH ) {}
+
   template<class Profile>
   void OnNonCollapsable(Profile const& ) {}                
 } ;

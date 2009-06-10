@@ -20,6 +20,8 @@
 
 #include <vector>
 
+#include <CGAL/Cartesian_converter.h>
+
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
@@ -38,12 +40,13 @@ CGAL_BEGIN_NAMESPACE
 namespace Surface_mesh_simplification
 {
 
-template<class ECM_>
+template<class ECM_, class Kernel_ = typename Kernel_traits< typename halfedge_graph_traits<ECM_>::Point>::Kernel >
 class LindstromTurkCore
 {
 public:
     
-  typedef ECM_ ECM ;
+  typedef ECM_    ECM ;
+  typedef Kernel_ Kernel ;
   
   typedef Edge_profile<ECM> Profile ;
   
@@ -55,9 +58,11 @@ public:
   
   typedef LindstromTurk_params Params ;
   
-  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename Kernel::Point_3 Point ;
+
+  typedef typename halfedge_graph_traits<ECM>::Point ECM_Point ;
   
-  typedef typename Kernel_traits<Point>::Kernel Kernel ;
+  typedef typename Kernel_traits<ECM_Point>::Kernel ECM_Kernel ;
   
   typedef typename Kernel::Vector_3 Vector ;
   typedef typename Kernel::FT       FT ;
@@ -100,27 +105,6 @@ private :
   typedef std::vector<Triangle_data> Triangle_data_vector ;
   typedef std::vector<Boundary_data> Boundary_data_vector ;
   
-  class Constrians
-  {
-  public:
-  
-    Constrians() : n(0), A(NULL_MATRIX), b(NULL_VECTOR) {}
-
-    void Add_if_alpha_compatible( Vector const& Ai, FT const& bi ) ;
-  
-    void Add_from_gradient ( Matrix const& H, Vector const& c ) ;
-    
-    int    n ;
-    Matrix A ;
-    Vector b ;
-    
-  private:
-  
-    // alpha = 1 degree  
-    static FT squared_cos_alpha() { return FT(0.999695413509)  ; }
-    static FT squared_sin_alpha() { return FT(3.04586490453e-4); }
-  } ;
-  
 private :
     
   void Extract_triangle_data();
@@ -135,9 +119,9 @@ private :
   FT Compute_volume_cost  ( Vector const& v, Triangle_data_vector const& aTriangles ) ;
   FT Compute_shape_cost   ( Point  const& p, vertex_descriptor_vector const& aLink ) ;
 
-  Point const& get_point ( vertex_descriptor const& v ) const 
+  Point get_point ( vertex_descriptor const& v ) const 
   {
-    return get(vertex_point,surface(),v);
+    return convert(get(vertex_point,surface(),v));
   }
 
   static Vector Point_cross_product ( Point const& a, Point const& b ) 
@@ -168,19 +152,14 @@ private :
   
   static FT big_value() { return static_cast<FT>((std::numeric_limits<double>::max)()) ; }
 
-  // Returns optional(n) if 'n' is finite, or optional() otherwise.
-  static optional<FT> filter_infinity ( FT n ) { return ( CGAL_NTS is_finite(n) ) ? optional<FT>(n) : optional<FT>() ; }
-  
-  // Returns optional(p) if all coordinates of 'p' are finite, or optional() otherwise.
-  static optional<Point> filter_infinity ( Point const& p )
-  { 
-    bool lIsFinite =   CGAL_NTS is_finite(p.x())
-                    && CGAL_NTS is_finite(p.y()) 
-                    && CGAL_NTS is_finite(p.z()) ;
-    
-    return lIsFinite ? optional<Point>(p) : optional<Point>();
-  }
-  
+  static bool is_finite ( FT     const& n ) { return CGAL_NTS is_finite(n) ; }
+  static bool is_finite ( Point  const& p ) { return is_finite(p.x())  && is_finite(p.y())  && is_finite(p.z()) ;  }
+  static bool is_finite ( Vector const& v ) { return is_finite(v.x())  && is_finite(v.y())  && is_finite(v.z()) ;  }
+  static bool is_finite ( Matrix const& m ) { return is_finite(m.r0()) && is_finite(m.r1()) && is_finite(m.r2()) ; }
+
+  template<class T>
+  static optional<T> filter_infinity ( T const& n ) { return is_finite(n) ? optional<T>(n) : optional<T>() ; }
+
   ECM& surface() const { return mProfile.surface() ; }
   
 private:    
@@ -188,12 +167,23 @@ private:
   Params const&  mParams ; 
   Profile const& mProfile ;
 
+    void Add_constraint_if_alpha_compatible( Vector const& Ai, FT const& bi ) ;
+  
+    void Add_constraint_from_gradient ( Matrix const& H, Vector const& c ) ;
+
 private:    
 
   Triangle_data_vector mTriangle_data ;
   Boundary_data_vector mBdry_data ;
   
-  Constrians mConstrians ;
+  int    mConstraints_n ;
+  Matrix mConstraints_A ;
+  Vector mConstraints_b ;
+
+  Cartesian_converter<ECM_Kernel,Kernel> convert ;
+
+  FT mSquared_cos_alpha;
+  FT mSquared_sin_alpha;
 };
 
 } // namespace Surface_mesh_simplification

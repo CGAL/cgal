@@ -3819,19 +3819,33 @@ Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_e
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_polyhedron.cmd eol=lf
 Surface_mesh_simplification/off2gts/CMakeLists.txt -text
 Surface_mesh_simplification/off2gts/off2gts.cpp -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/basics.h -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/FPT.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/MODELS -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/anchor.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/bones.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/bull.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/couplingdown.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/cow.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/cross.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open_MP.audit -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/dragknob.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight_MP.audit -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/elephant.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/ellipsoid.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/fandisk.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/femur.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1_MP.audit -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/handle.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes_MP.audit -text
@@ -3847,12 +3861,27 @@ Surface_mesh_simplification/test/Surface_mesh_simplification/data/helmet_MP.audi
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/hexagon_open.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/hexagon_open_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/hexagon_open_MP.audit -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/joint.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/knot1.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/knot2.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/lion-head.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/man.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/mushroom.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/oblong.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/oct.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/oct_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/oct_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/oni.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/oni_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/oni_MP.audit -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/pinion.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/pipe.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/pyramid.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/remeshed_cube_1.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/retinal.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/rotor.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/sphere.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/spool.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/square_open.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/square_open_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/square_open_MP.audit -text
@@ -3868,12 +3897,14 @@ Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_6f_LT.au
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_6f_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_MP.audit -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/translated-cube.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_with_hole.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_with_hole_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_with_hole_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/test_LT_strategy.cmd eol=lf
-Surface_mesh_simplification/test/Surface_mesh_simplification/test_MP_strategy.cmd eol=lf
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/tripod.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/turbine.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3.cmd eol=lf
+Surface_mesh_simplification/test/Surface_mesh_simplification/test_self_intersection.h -text
 Surface_mesher/demo/Surface_mesher/icons/bbox-red.png -text svneol=unset#image/png
 Surface_mesher/demo/Surface_mesher/icons/bbox-red.svg -text svneol=unset#image/svg%2Bxml
 Surface_mesher/demo/Surface_mesher/icons/bbox.png -text svneol=unset#image/png

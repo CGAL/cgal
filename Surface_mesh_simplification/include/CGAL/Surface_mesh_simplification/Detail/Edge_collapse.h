@@ -230,32 +230,32 @@ private:
     return get(vertex_point,mSurface,aV);
   }
   
-  tuple<const_vertex_descriptor,const_vertex_descriptor> get_vertices( const_edge_descriptor const& aEdge ) const
+  boost::tuple<const_vertex_descriptor,const_vertex_descriptor> get_vertices( const_edge_descriptor const& aEdge ) const
   {
     const_vertex_descriptor p,q ;
-    p = source(aEdge,mSurface);
-    q = target(aEdge,mSurface);
-    return make_tuple(p,q);
+    p = boost::source(aEdge,mSurface);
+    q = boost::target(aEdge,mSurface);
+    return boost::make_tuple(p,q);
   }
   
-  tuple<vertex_descriptor,vertex_descriptor> get_vertices( edge_descriptor const& aEdge ) 
+  boost::tuple<vertex_descriptor,vertex_descriptor> get_vertices( edge_descriptor const& aEdge ) 
   {
     vertex_descriptor p,q ;
-    p = source(aEdge,mSurface);
-    q = target(aEdge,mSurface);
-    return make_tuple(p,q);
+    p = boost::source(aEdge,mSurface);
+    q = boost::target(aEdge,mSurface);
+    return boost::make_tuple(p,q);
   }
   
   std::string vertex_to_string( const_vertex_descriptor const& v ) const
   {
     Point const& p = get_point(v);
-    return boost::str( boost::format("[V%1%:%2%]") % v->ID % xyz_to_string(p) ) ;
+    return boost::str( boost::format("[V%1%:%2%]") % v->id() % xyz_to_string(p) ) ;
   }
     
   std::string edge_to_string ( const_edge_descriptor const& aEdge ) const
   {
-    const_vertex_descriptor p,q ; tie(p,q) = get_vertices(aEdge);
-    return boost::str( boost::format("{E%1% %2%->%3%}") % aEdge->ID % vertex_to_string(p) % vertex_to_string(q) ) ;
+    const_vertex_descriptor p,q ; boost::tie(p,q) = get_vertices(aEdge);
+    return boost::str( boost::format("{E%1% %2%->%3%}") % aEdge->id() % vertex_to_string(p) % vertex_to_string(q) ) ;
   }
   
   Cost_type get_cost ( Profile const& aProfile ) const
