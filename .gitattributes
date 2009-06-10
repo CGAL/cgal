@@ -3817,6 +3817,8 @@ Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_c
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_constrained_polyhedron.cpp -text
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cmd eol=lf
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_polyhedron.cmd eol=lf
+Surface_mesh_simplification/off2gts/CMakeLists.txt -text
+Surface_mesh_simplification/off2gts/off2gts.cpp -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/MODELS -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_LT.audit -text
