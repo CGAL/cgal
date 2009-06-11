@@ -89,6 +89,17 @@ struct NT_converter < NT1, Interval_nt<b> >
     }
 };
 
+template < bool b >
+struct NT_converter < Interval_nt<b>, Interval_nt<b> >
+  : public std::unary_function< Interval_nt<b>, Interval_nt<b> >
+{
+    const Interval_nt<b> &
+    operator()(const NT1 &a) const
+    {
+        return a;
+    }
+};
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_NT_CONVERTER_H
