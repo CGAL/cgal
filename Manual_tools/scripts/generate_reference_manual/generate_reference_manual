@@ -38,11 +38,11 @@ exit 1
 # set -x
 
 # Version
-echo "generate_reference_manual version 1.2"
+echo "generate_reference_manual version 1.3"
 
 # Global variables
 DOC_TEX_FOLDER="" # Package's doc_tex/ folder
-FOLDER_TO_PARSE="`ls -d *_ref`" # Subfolder of doc_tex/ to parse
+FOLDER_TO_PARSE='*_ref' # Subfolders of doc_tex/ to parse. Default = Reference Manual.
 REF_MANUAL_TEX_FILES="" # List of .tex files to parse in $FOLDER_TO_PARSE
 ARGS="" # options for copy_doxygen_latex_doc
 INCLUDE_PATH="" # Path to CGAL include folder
@@ -112,7 +112,8 @@ fi
 
 # Fetch list of files to parse
 if [[ ! "${REF_MANUAL_TEX_FILES}" ]]; then
-    REF_MANUAL_TEX_FILES=`find "${FOLDER_TO_PARSE}" -name '*.tex'`
+    FOLDER_TO_PARSE=`ls -d ${FOLDER_TO_PARSE}`
+    REF_MANUAL_TEX_FILES=`find ${FOLDER_TO_PARSE} -name '*.tex' | sort`
     if [[ $? != 0 ]]; then
         echo "ERROR: folder ${DOC_TEX_FOLDER}/${FOLDER_TO_PARSE} contains no .tex files"
         exit 1

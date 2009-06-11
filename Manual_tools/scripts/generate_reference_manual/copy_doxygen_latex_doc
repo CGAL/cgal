@@ -25,7 +25,6 @@ my @known_section_titles = (
     '\ccGeneralizes', '\ccIsModel', '\ccHeading{Design Pattern}', '\ccTypes',
     '\ccConstants', '\ccHeading{Variables}', '\ccCreation', '\ccOperations',
     '\ccHeading{Related Functions}', '\ccHasModels', '\ccImplementation',
-#     '\ccHeading{Misc}',
     '\ccSeeAlso', '\ccExample'
 );
 
@@ -64,6 +63,12 @@ my %comment_heading_names = (
     '\ccCommentHeading{Precondition}' => '\ccPrecond',
 #     '\ccCommentHeading{Preconditions}' => '\ccPrecond',
 );
+
+# # \ccTagFullDeclarations command to print properly const keyword
+# my $full_declarations = "% To print properly const keyword\n\\ccTagFullDeclarations";
+
+# \ccThree command to reduce the left margin of functions declaration
+my $reduced_left_margin = "% Reduce left margin\n\\ccThree{123456789012345}{6789012}{}";
 
 # Warning sentence before automatically generated sections
 my $warning = "% The section below is automatically generated. Do not edit!";
@@ -223,6 +228,10 @@ sub doxygen_latex_to_latex
     $buf =~ s/\[package\]//g;
     $buf =~ s/\[related\]//g;
     $buf =~ s/\[friend\]//g;
+    $buf =~ s/\[static\]//g;
+    $buf =~ s/\[virtual\]//g;
+    $buf =~ s/\[pure virtual\]//g;
+    $buf =~ s/\[protected\]//g;
 
     # Add a \n before (parameters) descriptions to ease parsing
     $buf =~ s/\n?\\begin\{Desc\}/\n\\begin\{Desc\}/smg;
@@ -235,6 +244,9 @@ sub doxygen_latex_to_latex
     $buf =~ s/<\s*(.*?)\s*>/<$1>/g;             # Use a canonic style "type<parameters>" for template parameters
     $buf =~ s/Constructor& Destructor/Constructor & Destructor/g;
     $buf =~ s/\\item\[(.*?): +\]/\\item\[$1:\]/g;
+
+    # Remove trailing spaces to ease parsing
+    $buf =~ s/ +\n/\n/g;
 
     # "Desc" is a doxygen style based on "description".
     # "CompactItemize" is a doxygen style based on "itemize".
@@ -376,11 +388,12 @@ sub latex_mangle
 }
 
 
-# Remove blank lines in the second curly braces pair of macros,
-# that cgal_manual does not understand
-# Param: the buffer to format
-# Return value: the formatted buffer
-sub remove_blank_lines_in_macros
+# Format blank lines in the second curly braces pair of an
+# \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable or \ccFunction expression
+# to improve vertical alignment.
+# Param: the buffer to format "{...}".
+# Return value: the formatted buffer.
+sub format_blank_lines_in_macro
 {
     # Get parameter: buffer containing a doxygen-generated latex file
     my $buf = shift;
@@ -388,14 +401,10 @@ sub remove_blank_lines_in_macros
     # Remove trailing spaces to improve pattern matching
     $buf =~ s/ +\n/\n/g;
 
-    # Remove blank lines in the second curly braces pair of macros,
-    # that cgal_manual does not understand
-    if ($buf =~ m/(.*?)\\paragraph(.*)/sm) {    # split $buf in $definition and $macros
-        my $definition = $1;
-        my $macros = $2;
-        $macros =~ s/\n+/\n/g;                  # remove blank lines from $macros
-        $buf = $definition . '\paragraph' . $macros;
-    }                                           # put back in $buf
+    # Replace blank lines by "\\" at the end of the previous line,
+    # except \ccXXX macros which already include an EOL.
+    $buf =~ s/\n\n+\\cc/\n\\cc/g;
+    $buf =~ s/\n\n+/  \\\\\n/g;
 
     # Return the formatted string
     return $buf;
@@ -455,22 +464,42 @@ sub convert_comment_heading_name
 }
 
 
-# Flatten a list if it contains only 1 item.
-# Param: list in doxygen latex doc, of the form "\begin{description}...\end{description}".
-# Return value: the list flattened or not.
-sub flatten_one_item_list
+# Flatten a list as a long line.
+# Param: list in doxygen latex doc, of the form "\begin{xxx} \item a \item b \end{xxx}".
+# Return value: the flattened list, of the form "a b".
+sub flatten_list_as_line
 {
     my $buf = shift;
 
-    # Count the occurences of \item in the list
-    my $count = 0;
-    while ($buf =~ /\\item/g) { $count = $count + 1; }
+    # Remove \begin and \end tags
+    $buf =~ s/\\begin\{.*?\}\s*//sm;
+    $buf =~ s/\\end\{.*?\}//sm;
 
-    # Flatten the list if 1 item
-    if ($count == 1)
-    {
-        $buf =~ s/\\begin\{description\}\s*\\item\s*(.*)\\end\{description\}/$1/sm;
-    }
+    # Remove \item list separators.
+    # Add dot if item does not end by '.', ',' or ';'.
+    $buf =~ s/^\s*\\item\s*//sm;
+    $buf =~ s/([\.,;])\s*\\item\s*/$1 /smg;
+    $buf =~ s/\s*\\item\s*/\. /smg;
+    $buf =~ s/([^\.,;\s])\s*$/$1\./sm;
+
+    return $buf;
+}
+
+# Flatten a list as a column.
+# Param: list in doxygen latex doc, of the form "\begin{xxx} \item a \item b \end{xxx}".
+# Return value: the flattened list, of the form "a  \\\nb  \\\n".
+sub flatten_list_as_column
+{
+    my $buf = shift;
+
+    # Remove \begin and \end tags
+    $buf =~ s/\\begin\{.*?\}\s*//sm;
+    $buf =~ s/\\end\{.*?\}//sm;
+
+    # Remove \item list separators and
+    # add \\ at the end of each line to force EOL.
+    $buf =~ s/\\item\s/  \\\\\n/smg;
+    $buf =~ s/^ *\\\\\n//smg;
 
     return $buf;
 }
@@ -496,19 +525,19 @@ sub format_comment_headings
 
     # Convert function parameters, enum values and return value descriptions to \ccCommentHeading to minimize length and indentation
     $buf =~ s/\\begin\{description\}\s*\\item\[(Returns):\]\s*(.*?)\s*\\end\{description\}/\\ccCommentHeading\{$1\} $2/smg;
-    $buf =~ s/\\begin\{description\}\s*\\item\[(Parameters|Template Parameters|Values):\]\s*(\\begin\{description\}.*?\\end\{description\})\s*\\end\{description\}/\\ccCommentHeading\{$1\}\n$2/smg;
+    $buf =~ s/\\begin\{description\}\s*\\item\[(Parameters|Template Parameters|Values)\n*:\]\s*(\\begin\{description\}.*?\\end\{description\})\s*\\end\{description\}/\\ccCommentHeading\{$1\}\n$2/smg;
 
-    # Replace list items in bold (ie with square brackets around item) by italics (\ccc macro).
+    # Replace list items in bold (ie with square brackets around item) by italics (using \ccc macro).
     $buf =~ s/\\item\[(.*?):\s*\]/\\item $1: /smg;         # regular list items (end by ':') => no italics
     $buf =~ s/\\item\[(.*?)\s*\]/\\item \\ccc\{$1\}: /smg; # parameters => italics
 
-    # Flatten lists with only 1 item (to save space and avoid a cgal_manual bug
-    # with 1-item lists inside the second curly braces pair of \ccXXX expressions).
-    $buf =~ s/(\\begin\{description\}.*?\\end\{description\})/flatten_one_item_list($1)/smge;
-
-    # TODO: Uncomment the next line to set vertical spacing = 0 in parameters descriptions
-    # (=> prettier PDF but ugly Latex).
-#     $buf =~ s/\\begin\{description\}(.*?)\\end\{description\}/\\ccGlue\n\\begin\{description\}\\itemsep=0pt\\parskip=0pt$1\\end\{description\}/smg;
+    # Flatten lists to save space and workaround a cgal_manual bug which does not
+    # print properly lists inside the second curly braces pair of \ccXXX expressions.
+    # Force EOL after \ccCommentHeading calls (prettier).
+    $buf =~ s/(\\ccCommentHeading\{[^\}]*\})\s*(\\begin\{description\}.*?\\end\{description\})/$1."  \\\\\n".flatten_list_as_line($2)/smge;
+    $buf =~ s/(\\ccCommentHeading\{[^\}]*\})\s*(\\begin\{itemize\}.*?\\end\{itemize\})/$1."  \\\\\n".flatten_list_as_line($2)/smge;
+    $buf =~ s/\s*(\\begin\{description\}.*?\\end\{description\})/" ".flatten_list_as_line($1)/smge;
+    $buf =~ s/\s*(\\begin\{itemize\}.*?\\end\{itemize\})/" ".flatten_list_as_line($1)/smge;
 
     # Return the formatted string
     return $buf;
@@ -557,23 +586,10 @@ sub format_headings
         $buf =~ s/\n\n\\ccSeeAlso/$macro_content\n\n\\ccSeeAlso/sm;
     }
 
-    # If the \ccHasModels section is a list, flatten it
+    # If the \ccHasModels section is a list, flatten it as a column
     # (for compatibility with the rest of CGAL manual).
-    if ($buf =~ s/(.*?\\ccHasModels\n+[^\n]*?)\\begin\{itemize\}\n(.*?)\\end\{itemize\}(.*)//sm)
-    {
-        # Extract models from \ccHasModels section
-        my $start  = $1;
-        my $models = $2;
-        my $end    = $3;
-
-        # Remove \item list separators and
-        # add \\ at the end of each line to force EOL
-        $models =~ s/\\item\s/  \\\\\n/smg;
-        $models =~ s/^ *\\\\\n//smg;
-
-        # Insert back $models in the buffer
-        $buf = $start . "\n\n" . $models . $end;
-    }
+    $buf =~ s/(.*?\\ccHasModels\n+[^\n]+?)(\\begin\{itemize\}\n.*?\\end\{itemize\})/$1."\n\n".flatten_list_as_column($2)/smge;
+    $buf =~ s/(.*?\\ccHasModels\n+)(\\begin\{itemize\}\n.*?\\end\{itemize\})/$1.flatten_list_as_column($2)/smge;
 
     # Return the formatted string
     return $buf;
@@ -601,57 +617,52 @@ sub format_curly_brace_pairs_expressions
     # - if class/struct/concept...
     if ($item_type eq "class/struct" || $item_type eq "concept")
     {
-        $buf =~ s/\\paragraph\{typedef.* (\w+)((\[.*\])?)\}/\\ccNestedType\{$1$2\}\n\{/g;
-        $buf =~ s/\\paragraph\{enum\s(.*)\}/\\ccEnum\{enum $1\}\n\{/g;
-        $buf =~ s/\\item\[Enumerator/\\item\[Values/g;
-        $buf =~ s/\\paragraph\{\Q$item_to_document\E\s+\((.*)\}/\\ccConstructor\{$item_to_document \($1;\}\n\{/g;
-        $buf =~ s/\\paragraph\{(template\s*<.*?>\s*)\Q$item_to_document\E\s+\((.*)\}/\\ccConstructor\{$1$item_to_document \($2;\}\n\{/g;
-        $buf =~ s/\\paragraph\{([^\(\)]*?)\}/\\ccVariable\{$1;\}\n\{/g;
-        $buf =~ s/\\paragraph\{(.*\(.*\).*)\}/\\ccMethod\{$1;\}\n\{/g;
+        $buf =~ s/\\paragraph\{typedef.* (\w+)((\[.*\])?)\}\n*/\\ccNestedType\{$1$2\}\n\{\n/g;
+        $buf =~ s/\\paragraph\{enum\s(.*)\}\n*/\\ccEnum\{enum $1\}\n\{\n/g;
+        $buf =~ s/\\item\[Enumerator\n*/\\item\[Values\n/g;
+        $buf =~ s/\\paragraph\{\Q$item_to_document\E\s+\((.*)\}\n*/\\ccConstructor\{$item_to_document \($1;\}\n\{\n/g;
+        $buf =~ s/\\paragraph\{(template\s*<.*?>\s*)\Q$item_to_document\E\s+\((.*)\}\n*/\\ccConstructor\{$1$item_to_document \($2;\}\n\{\n/g;
+        $buf =~ s/\\paragraph\{([^\(\)]*?)\}\n*/\\ccVariable\{$1;\}\n\{\n/g;
+        $buf =~ s/\\paragraph\{(.*\(.*\).*)\}\n*/\\ccMethod\{$1;\}\n\{\n/g;
     }
     # - ...or if function
     else
     {
-        $buf =~ s/\\paragraph\{(.*)\}/\\ccFunction\{$1;\}\n\{/g;
+        $buf =~ s/\\paragraph\{(.*)\}\n*/\\ccFunction\{$1;\}\n\{\n/g;
     }
 
-    # Move [static], [virtual], [protected] comments at the beginning of the expression's comment.
-    $buf =~ s/(\[.*?\])(;?)\}\n\{/$2\}\n\{\n$1 \\\\/g;
+#     # Move [static], [virtual], [protected] comments at the beginning of the expression's comment.
+#     $buf =~ s/(\[.*?\])(;?)\}\n\{/$2\}\n\{\n$1 \\\\/g;
 
     # Remove brackets in curly braces pairs (restored below):
     # - replace \begin{xxx}...\end{xxx} by \begin((xxx))...\end((xxx))
+    # - replace \{ and \} by &#123; and &#125;
+    # Note: cgal_manual does not print properly lists inside the second curly braces pair
+    # of \ccXXX expressions => they are removed later by flatten_list_as_line().
     $buf =~ s/\\begin\{(.*?)\}/\\begin\(\($1\)\)/smg;
     $buf =~ s/\\end\{(.*?)\}/\\end\(\($1\)\)/smg;
-    # - replace \{ and \} by &#123; and &#125;
     $buf =~ s/\\\{/&\#123\;/g;
     $buf =~ s/\\\}/&\#125\;/g;
 
     # Close curly braces pairs.
-    # Note: Sometimes, cgal_manual does not understand 2 or 3-items lists inside the second curly braces pair
-    # of \ccXXX expressions => we put them after (flatten_one_item_list() takes care of 1-item lists).
-#     $buf =~ s/(\{[^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
-    # TEMPORARY HACK: do it for enums to compile Surface_reconstruction_points_3 manual!!!
-    $buf =~ s/(\\ccEnum\{.*?;}\s*\{[^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
-    $buf =~ s/(\{[^\}]*?)(\n+)\\cc/$1\n\}\n\\ccGlue$2\\cc/smg;
+    $buf =~ s/(\{[^\}]*?)\n+\\ccSubHeading/$1\n\}\n\\ccGlue\n\n\\ccSubHeading/smg;
+    $buf =~ s/(\{[^\}]*?)\n+\\cc/$1\n\}\n\\ccGlue\n\\cc/smg;
 
     # Restore brackets:
     # - replace \begin((xxx))...\end((xxx)) by \begin{xxx}...\end{xxx}
+    # - replace back \{ and \}
     $buf =~ s/\\begin\(\((.*?)\)\)/\\begin\{$1\}/smg;
     $buf =~ s/\\end\(\((.*?)\)\)/\\end\{$1\}/smg;
-    # - replace back \{ and \}
     $buf =~ s/&\#123\;/\\\{/g;
     $buf =~ s/&\#125\;/\\\}/g;
 
-    # \ccMethod does not support destructors and there is no \ccDestructor
-    # macro => remove destructors.
-    if ($item_type eq "class/struct" || $item_type eq "concept")
-    {
-        $buf =~ s/\\ccMethod\{.*?~\Q$item_to_document\E\s.*?\}\n\{.*?\}\n\\ccGlue\n//smg;
-    }
+    # cgal_manual does not print properly destructor and operator =() => remove them
+    $buf =~ s/\\ccMethod\{.*?~\Q$item_to_document\E\s.*?\}\n\{.*?\}\n\\ccGlue\n//smg;
+    $buf =~ s/\\ccMethod\{.*?operator\s*=\s*\(.*?\}\n\{.*?\}\n\\ccGlue\n//smg;
 
-    # Security: remove blank lines in curly braces pairs
-    $buf =~ s/\{(\n)+/\{\n/g;
-    $buf =~ s/(\n)+\}/\n\}/g;
+    # Security: remove blank lines before/after curly braces pairs
+    $buf =~ s/\{\n+/\{\n/g;
+    $buf =~ s/\n+\}/\n\}/g;
 
     # Return the formatted string
     return $buf;
@@ -709,10 +720,6 @@ sub format_doxygen_class_doc
     # Remove CGAL:: and $className:: prefixes (implicit)
     $buf =~ s/CGAL::(\w+)/$1/g;
     $buf =~ s/$className(<.*?>)?::(\w+)/$2/g;
-
-    # Remove blank lines in the second curly braces pair of macros,
-    # that cgal_manual does not understand.
-    $buf = remove_blank_lines_in_macros($buf);
 
     # Rename (for a class/struct) or delete (for a concept) the include file
     # and insert \ccSeeAlso title at the end of the document.
@@ -830,14 +837,14 @@ sub format_doxygen_class_doc
     }
     $buf =~ s/\\subsubsection\{Constructor & Destructor Documentation\}/\n\n\\ccCreation\n/;
 
-    # Rename \ccOperations title
-    $buf =~ s/\\subsubsection\{Member Function Documentation\}/\n\n\\ccOperations\n/;
+    # Rename \ccOperations title.
+#     # Note: cgal_manual requires \ccTagFullDeclarations to print properly const keyword.
+#     # Note: reduce left margin of functions/methods declaration.
+#     $buf =~ s/\\subsubsection\{Member Function Documentation\}\n*/\\ccOperations\n\n$full_declarations\n\n$reduced_left_margin\n\n/;
+    $buf =~ s/\\subsubsection\{Member Function Documentation\}\n*/\\ccOperations\n\n/;
 
     # Rename \ccHeading{Related Functions} title
     $buf =~ s/\\subsubsection\{Friends And Related Function Documentation\}/\n\n\\ccHeading\{Related Functions\}\n/;
-
-#     # Fallback is \ccHeading{Misc} title
-#     $buf =~ s/\\subsubsection\{.*?\}/\n\n\\ccHeading\{Misc\}\n/;
 
     # Rename \ccFunction expressions of related functions
     $buf =~ s/(\\ccHeading\{Related Functions\}.*?$all_titles_pattern)/
@@ -849,6 +856,10 @@ sub format_doxygen_class_doc
     # Convert @commentheading sections to \ccCommentHeading calls [L. Saboret + S. Hornus extension].
     # Format (parameters) descriptions.
     $buf = format_comment_headings($buf);
+
+    # Format blank lines in the second curly braces pair of macros
+    # to improve vertical alignment.
+    $buf =~ s/(\{\n.*?\n\})/format_blank_lines_in_macro($1)/smge;
 
     # Remove brief documentation
     $buf =~ s/\\subsection.*?($all_titles_pattern)/\n\n$1/sm;
@@ -892,10 +903,6 @@ sub format_doxygen_function_doc
     # Remove CGAL:: prefix (implicit)
     $buf =~ s/CGAL::(\w+)/$1/g;
 
-    # Remove blank lines in the second curly braces pair of macros,
-    # that cgal_manual does not understand
-    $buf = remove_blank_lines_in_macros($buf);
-
     # Insert \ccSeeAlso title at the end of the document
     $buf = $buf . "\n\n\\ccSeeAlso\n\n\n";
 
@@ -934,11 +941,9 @@ sub format_doxygen_function_doc
     # Extract @headings sections from \Definition section.
     $buf = format_headings($buf);
 
-    # Rename \ccDefinition title
-    $buf =~ s/\\subsubsection\{Function Documentation\}/\\ccDefinition\n/;
-
-#     # Fallback is \ccHeading{Misc} title
-#     $buf =~ s/\\subsubsection\{.*?\}/\n\n\\ccHeading\{Misc\}\n/;
+    # Rename \ccDefinition title.
+    # Note: reduce left margin of functions declaration.
+    $buf =~ s/\\subsubsection\{Function Documentation\}\n*/\\ccDefinition\n\n$reduced_left_margin\n\n/;
 
     # Rename \ccFunction expressions
     $buf = format_curly_brace_pairs_expressions($functionName, "function", $buf);
@@ -946,6 +951,10 @@ sub format_doxygen_function_doc
     # Convert @commentheading sections to \ccCommentHeading calls [L. Saboret + S. Hornus extension].
     # Format (parameters) descriptions.
     $buf = format_comment_headings($buf);
+
+    # Format blank lines in the second curly braces pair of macros
+    # to improve vertical alignment.
+    $buf =~ s/(\{\n.*?\n\})/format_blank_lines_in_macro($1)/smge;
 
     # Remove brief documentation
     $buf =~ s/\\subsection.*?($all_titles_pattern)/\n\n$1/sm;
@@ -1003,13 +1012,6 @@ sub insert_manual_section
     # If $cgal_buf doesn't already contain the %START-AUTO($title)..%END-AUTO($title) section, add it.
     if ($section ne "")
     {
-        # cgal_manual requires \ccTagFullDeclarations to document properly
-        # getters with 2 const/non const variants
-        # => add \ccTagFullDeclarations at the beginning of \ccOperations section
-        if ($title eq '\ccOperations') {
-          $section = "\\ccTagFullDeclarations\n\n" . $section;
-        }
-
         # Add $warning\n%START-AUTO($title)..%END-AUTO($title) around $section
         $section = "$warning\n%START-AUTO($title)\n\n" . $section . "\n\n%END-AUTO($title)";
 
