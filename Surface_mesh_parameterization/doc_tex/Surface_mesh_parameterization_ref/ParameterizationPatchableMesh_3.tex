@@ -27,8 +27,7 @@
 
 \ccc{ParameterizationPatchableMesh_3} adds the ability to support patches and virtual seams. {\em Patches} are a subset of a 3D mesh. {\em Virtual seams} are the ability to behave exactly as if the surface was cut following a certain path.
 
-This mainly means that:\begin{itemize}
-\item vertices can be tagged as inside or outside the patch to parameterize.\item the fields specific to parameterizations (index, u, v, \ccc{is_parameterized}) can be set per {\em corner} (aka half-edge).\end{itemize}
+This mainly means that: vertices can be tagged as inside or outside the patch to parameterize. the fields specific to parameterizations (index, u, v, \ccc{is_parameterized}) can be set per {\em corner} (aka half-edge).
 
 
 The main purpose of this feature is to allow the \ccc{Surface_mesh_parameterization} package to parameterize any 3D surface by decomposing it as a list of topological disks.
@@ -73,8 +72,6 @@ Construction and destruction are undefined.
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
-
-\ccTagFullDeclarations
 
 \ccMethod{int get_vertex_seaming(Vertex_const_handle vertex) const;}
 {

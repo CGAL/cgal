@@ -116,7 +116,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
         // Pick the longest border
         seam = feature_extractor.get_longest_border();
     }
-    else // if mesh is NOT a topological disk, create a virtual cut
+    else // if mesh is *not* a topological disk, create a virtual cut
     {
         Backbone seamingBackbone;           // result of cutting
         Backbone::iterator he;
@@ -452,15 +452,15 @@ int main()
         std::cerr << "Error: invalid solver parameter " << solver << std::endl;
         err = Parameterizer::ERROR_WRONG_PARAMETER;
     }
-    
+
     // Report errors
     switch(err) {
     case Parameterizer::OK: // Success
         break;
     case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-    case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
-    case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
-    case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+    case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
+    case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
+    case Parameterizer::ERROR_BORDER_TOO_SHORT:
         std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
         return EXIT_FAILURE;
         break;

@@ -56,7 +56,7 @@ parameterize(ParameterizationMesh_3& mesh)  ///< 3D mesh, model of Parameterizat
 /// @commentheading Preconditions:
 /// - 'mesh' must be a surface with one connected component.
 /// - 'mesh' must be a triangular mesh.
-/// - the mesh border must be mapped onto a convex polygon
+/// - The mesh border must be mapped onto a convex polygon
 /// (for fixed border parameterizations).
 ///
 template <class ParameterizationMesh_3, class ParameterizerTraits_3>

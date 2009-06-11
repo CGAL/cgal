@@ -27,8 +27,7 @@ The class \ccc{Barycentric_mapping_parameterizer_3} implements Tutte Barycentric
 
 One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 
-This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameterization algorithm \ccc{Fixed_border_parameterizer_3::parameterize}(). \ccc{Barycentric_mapping_parameterizer_3}:\begin{itemize}
-\item provides default \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense.\item implements \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i based on Tutte Barycentric Mapping method.\item implements an optimized version of \ccc{is_one_to_one_mapping}().\end{itemize}
+This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameterization algorithm \ccc{Fixed_border_parameterizer_3::parameterize}(). It provides default \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense. It implements \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i based on Tutte Barycentric Mapping method. It implements an optimized version of \ccc{is_one_to_one_mapping}().
 
 %END-AUTO(\ccDefinition)
 
@@ -83,9 +82,8 @@ class \ccc{BorderParameterizer_3} = \ccc{Circular_border_arc_length_parameterize
 class \ccc{SparseLinearAlgebraTraits_d} = \ccc{OpenNL::DefaultLinearSolverTraits<typename ParameterizationMesh_3::NT>}$>$   \\
 class \ccc{Barycentric_mapping_parameterizer_3};
 
-\ccCommentHeading{Parameters}
-\begin{description}
-\item \ccc{ParameterizationMesh_3}: 3D surface mesh. \item \ccc{BorderParameterizer_3}: Strategy to parameterize the surface border. \item \ccc{SparseLinearAlgebraTraits_d}: Traits class to solve a sparse linear system. Note: the system is NOT symmetric because \ccc{Fixed_border_parameterizer_3} does not remove (yet) border vertices from the system. \end{description}
+\ccCommentHeading{Parameters}  \\
+\ccc{ParameterizationMesh_3}: 3D surface mesh. \ccc{BorderParameterizer_3}: Strategy to parameterize the surface border. \ccc{SparseLinearAlgebraTraits_d}: Traits class to solve a sparse linear system. Note: the system is {\bf not} symmetric because \ccc{Fixed_border_parameterizer_3} does not remove (yet) border vertices from the system.
 
 %END-AUTO(\ccParameters)
 
@@ -99,9 +97,8 @@ class \ccc{Barycentric_mapping_parameterizer_3};
 \ccConstructor{Barycentric_mapping_parameterizer_3(Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
 {
 Constructor.
-\ccCommentHeading{Parameters}
-\begin{description}
-\item \ccc{border_param}: Object that maps the surface's border to 2D space. \item \ccc{sparse_la}: Traits object to access a sparse linear system. \end{description}
+\ccCommentHeading{Parameters}  \\
+\ccc{border_param}: Object that maps the surface's border to 2D space. \ccc{sparse_la}: Traits object to access a sparse linear system.
 }
 \ccGlue
 
@@ -113,19 +110,15 @@ Constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccTagFullDeclarations
-
-\ccMethod{virtual NT compute_w_ij(const Adaptor& , Vertex_const_handle, Vertex_around_vertex_const_circulator);}
+\ccMethod{virtual NT compute_w_ij(const Adaptor& , Vertex_const_handle, Vertex_around_vertex_const_circulator)[protected, virtual];}
 {
-[protected, virtual] \\
-Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i.
+Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i.  \\
 Tutte Barycentric Mapping algorithm is the most simple one: \ccc{w_ij} = 1 for j neighbor vertex of i.
 }
 \ccGlue
-\ccMethod{virtual bool is_one_to_one_mapping(const Adaptor& , const Matrix& , const Vector& , const Vector& );}
+\ccMethod{virtual bool is_one_to_one_mapping(const Adaptor& , const Matrix& , const Vector& , const Vector& )[protected, virtual];}
 {
-[protected, virtual] \\
-Check if 3D -$>$ 2D mapping is one-to-one.
+Check if 3D -$>$ 2D mapping is one-to-one.  \\
 Theorem: one-to-one mapping is guaranteed if all \ccc{w_ij} coefficients are $>$ 0 (for j vertex neighbor of i) and if the surface border is mapped onto a 2D convex polygon. All \ccc{w_ij} coefficients = 1 (for j vertex neighbor of i), thus mapping is guaranteed if the surface border is mapped onto a 2D convex polygon.
 }
 \ccGlue

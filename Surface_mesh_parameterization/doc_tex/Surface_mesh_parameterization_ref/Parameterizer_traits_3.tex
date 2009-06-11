@@ -25,8 +25,7 @@
 
 The class \ccc{Parameterizer_traits_3} is the base class of all parameterization methods. This class is a pure virtual class, thus cannot be instantiated.
 
-This class doesn't do much. Its main goal is to ensure that subclasses will be proper models of the \ccc{ParameterizerTraits_3} concept:\begin{itemize}
-\item \ccc{Parameterizer_traits_3} defines the \ccc{Error_code} list of errors detected by this package\item \ccc{Parameterizer_traits_3} declares a pure virtual method parameterize()\end{itemize}
+This class doesn't do much. Its main goal is to ensure that subclasses will be proper models of the \ccc{ParameterizerTraits_3} concept: \ccc{Parameterizer_traits_3} defines the \ccc{Error_code} list of errors detected by this package. \ccc{Parameterizer_traits_3} declares a pure virtual method parameterize().
 
 %END-AUTO(\ccDefinition)
 
@@ -84,107 +83,86 @@ Export \ccc{ParameterizationMesh_3} template parameter.
 \ccGlue
 \ccNestedType{NT}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Point_2}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Point_3}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Vector_2}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Vector_3}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Facet}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Facet_handle}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Facet_const_handle}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Facet_iterator}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Facet_const_iterator}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Vertex}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Vertex_handle}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Vertex_const_handle}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Vertex_iterator}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Vertex_const_iterator}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Border_vertex_iterator}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Border_vertex_const_iterator}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Vertex_around_facet_circulator}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Vertex_around_facet_const_circulator}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Vertex_around_vertex_circulator}
 {
-[protected] \\
 }
 \ccGlue
 \ccNestedType{Vertex_around_vertex_const_circulator}
 {
-[protected] \\
 }
 \ccGlue
 
@@ -199,11 +177,9 @@ Export \ccc{ParameterizationMesh_3} template parameter.
 \ccEnum{enum Error_code { OK, ERROR_EMPTY_MESH, ERROR_NON_TRIANGULAR_MESH, ERROR_NO_TOPOLOGICAL_DISC, ERROR_BORDER_TOO_SHORT, ERROR_NON_CONVEX_BORDER, ERROR_CANNOT_SOLVE_LINEAR_SYSTEM, ERROR_NO_1_TO_1_MAPPING, ERROR_OUT_OF_MEMORY, ERROR_WRONG_PARAMETER };}
 {
 List of errors detected by this package.
+\ccCommentHeading{Values}  \\
+\ccc{OK}: Success. \ccc{ERROR_EMPTY_MESH}: Input mesh is empty. \ccc{ERROR_NON_TRIANGULAR_MESH}: Input mesh is not triangular. \ccc{ERROR_NO_TOPOLOGICAL_DISC}: Input mesh is not a topological disc. \ccc{ERROR_BORDER_TOO_SHORT}: This border parameterization requires a longer border. \ccc{ERROR_NON_CONVEX_BORDER}: This parameterization method requires a convex border. \ccc{ERROR_CANNOT_SOLVE_LINEAR_SYSTEM}: Cannot solve linear system. \ccc{ERROR_NO_1_TO_1_MAPPING}: Parameterization failed: no one-to-one mapping. \ccc{ERROR_OUT_OF_MEMORY}: Not enough memory. \ccc{ERROR_WRONG_PARAMETER}: A method received an unexpected parameter.
 }
-\ccGlue
-\ccCommentHeading{Values}
-\begin{description}
-\item \ccc{OK}: Success. \item \ccc{ERROR_EMPTY_MESH}: Input mesh is empty. \item \ccc{ERROR_NON_TRIANGULAR_MESH}: Input mesh is not triangular. \item \ccc{ERROR_NO_TOPOLOGICAL_DISC}: Input mesh is not a topological disc. \item \ccc{ERROR_BORDER_TOO_SHORT}: This border parameterization requires a longer border. \item \ccc{ERROR_NON_CONVEX_BORDER}: This parameterization method requires a convex border. \item \ccc{ERROR_CANNOT_SOLVE_LINEAR_SYSTEM}: Cannot solve linear system. \item \ccc{ERROR_NO_1_TO_1_MAPPING}: Parameterization failed: no one-to-one mapping. \item \ccc{ERROR_OUT_OF_MEMORY}: Not enough memory. \item \ccc{ERROR_WRONG_PARAMETER}: A method received an unexpected parameter. \end{description}
 \ccGlue
 
 %END-AUTO(\ccConstants)
@@ -222,22 +198,18 @@ List of errors detected by this package.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccTagFullDeclarations
-
 \ccMethod{virtual Error_code parameterize(Adaptor& mesh);}
 {
-[pure virtual] \\
 Compute a one-to-one mapping from a 3D surface \ccc{mesh} to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface.
-\ccCommentHeading{Preconditions}\begin{itemize}
-\item \ccc{mesh} must be a surface with one connected component.\item \ccc{mesh} must be a triangular mesh. \end{itemize}
+\ccCommentHeading{Preconditions}  \\
+\ccc{mesh} must be a surface with one connected component. \ccc{mesh} must be a triangular mesh.
 }
 \ccGlue
 \ccMethod{static const char* get_error_message(int error_code);}
 {
-[static] \\
 Get message (in English) corresponding to an error code
-\ccCommentHeading{Parameters}
-\ccc{error_code}: The code returned by parameterize() 
+\ccCommentHeading{Parameters}  \\
+\ccc{error_code}: The code returned by parameterize().
 \ccCommentHeading{Returns} The string describing the error code
 }
 \ccGlue

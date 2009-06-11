@@ -27,8 +27,7 @@ The class \ccc{Fixed_border_parameterizer_3} is the base class of fixed border p
 
 One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 
-This class is a pure virtual class, thus cannot be instantiated. Anyway, it implements most of the parameterization algorithm parameterize(). Subclasses are Strategies \cite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm:\begin{itemize}
-\item They provide \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense.\item They implement \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i.\item They may implement an optimized version of \ccc{is_one_to_one_mapping}().\end{itemize}
+This class is a pure virtual class, thus cannot be instantiated. Anyway, it implements most of the parameterization algorithm parameterize(). Subclasses are Strategies \cite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm: They provide \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense. They implement \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i. They may implement an optimized version of \ccc{is_one_to_one_mapping}().
 
 %END-AUTO(\ccDefinition)
 
@@ -114,9 +113,8 @@ Export \ccc{SparseLinearAlgebraTraits_d} template parameter.
 \ccConstructor{Fixed_border_parameterizer_3(Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
 {
 Constructor.
-\ccCommentHeading{Parameters}
-\begin{description}
-\item \ccc{border_param}: Object that maps the surface's border to 2D space \item \ccc{sparse_la}: Traits object to access a sparse linear system \end{description}
+\ccCommentHeading{Parameters}  \\
+\ccc{border_param}: Object that maps the surface's border to 2D space. \ccc{sparse_la}: Traits object to access a sparse linear system.
 }
 \ccGlue
 
@@ -128,74 +126,59 @@ Constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccTagFullDeclarations
-
 \ccMethod{Error_code parameterize(Adaptor& mesh);}
 {
-[virtual] \\
 Compute a one-to-one mapping from a triangular 3D surface \ccc{mesh} to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface.
-\ccCommentHeading{Preconditions}\begin{itemize}
-\item \ccc{mesh} must be a surface with one connected component.\item \ccc{mesh} must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
+\ccCommentHeading{Preconditions}  \\
+\ccc{mesh} must be a surface with one connected component. \ccc{mesh} must be a triangular mesh. The mesh border must be mapped onto a convex polygon.
 }
 \ccGlue
-\ccMethod{Error_code check_parameterize_preconditions(Adaptor& mesh);}
+\ccMethod{Error_code check_parameterize_preconditions(Adaptor& mesh)[protected, virtual];}
 {
-[protected, virtual] \\
-Check parameterize() preconditions:\begin{itemize}
-\item \ccc{mesh} must be a surface with one connected component.\item \ccc{mesh} must be a triangular mesh.\item the mesh border must be mapped onto a convex polygon. \end{itemize}
+Check parameterize() preconditions: \ccc{mesh} must be a surface with one connected component. \ccc{mesh} must be a triangular mesh. The mesh border must be mapped onto a convex polygon.
 }
 \ccGlue
 \ccMethod{void initialize_system_from_mesh_border(Matrix& A, Vector& Bu, Vector& Bv, const Adaptor& mesh);}
 {
-[protected] \\
 Initialize A, Bu and Bv after border parameterization. Fill the border vertices' lines in both linear systems: {\em u = constant} and {\em v = constant}.
-\ccCommentHeading{Preconditions}\begin{itemize}
-\item vertices must be indexed.\item A, Bu and Bv must be allocated.\item border vertices must be parameterized. \end{itemize}
+\ccCommentHeading{Preconditions}  \\
+Vertices must be indexed. A, Bu and Bv must be allocated. Border vertices must be parameterized.
 }
 \ccGlue
-\ccMethod{virtual NT compute_w_ij(const Adaptor& mesh, Vertex_const_handle main_vertex_v_i, Vertex_around_vertex_const_circulator neighbor_vertex_v_j);}
+\ccMethod{virtual NT compute_w_ij(const Adaptor& mesh, Vertex_const_handle main_vertex_v_i, Vertex_around_vertex_const_circulator neighbor_vertex_v_j)[protected, pure virtual];}
 {
-[protected, pure virtual] \\
 Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i. Implementation note: Subclasses must at least implement \ccc{compute_w_ij}().
 }
 \ccGlue
-\ccMethod{Error_code setup_inner_vertex_relations(Matrix& A, Vector& Bu, Vector& Bv, const Adaptor& mesh, Vertex_const_handle vertex);}
+\ccMethod{Error_code setup_inner_vertex_relations(Matrix& A, Vector& Bu, Vector& Bv, const Adaptor& mesh, Vertex_const_handle vertex)[protected, virtual];}
 {
-[protected, virtual] \\
-Compute the line i of matrix A for i inner vertex:\begin{itemize}
-\item call \ccc{compute_w_ij}() to compute the A coefficient \ccc{w_ij} for each neighbor \ccc{v_j}.\item compute \ccc{w_ii} = - sum of \ccc{w_ijs}.\end{itemize}
-\ccCommentHeading{Preconditions}\begin{itemize}
-\item vertices must be indexed.\item vertex i musn't be already parameterized.\item line i of A must contain only zeros. \end{itemize}
+Compute the line i of matrix A for i inner vertex: call \ccc{compute_w_ij}() to compute the A coefficient \ccc{w_ij} for each neighbor \ccc{v_j}. compute \ccc{w_ii} = - sum of \ccc{w_ijs}.
+\ccCommentHeading{Preconditions}  \\
+Vertices must be indexed. Vertex i musn't be already parameterized. Line i of A must contain only zeros.
 }
 \ccGlue
 \ccMethod{void set_mesh_uv_from_system(Adaptor& mesh, const Vector& Xu, const Vector& Xv);}
 {
-[protected] \\
 Copy Xu and Xv coordinates into the (u, v) pair of each surface vertex.
 }
 \ccGlue
-\ccMethod{Error_code check_parameterize_postconditions(const Adaptor& mesh, const Matrix& A, const Vector& Bu, const Vector& Bv);}
+\ccMethod{Error_code check_parameterize_postconditions(const Adaptor& mesh, const Matrix& A, const Vector& Bu, const Vector& Bv)[protected, virtual];}
 {
-[protected, virtual] \\
-Check parameterize() postconditions:\begin{itemize}
-\item 3D -$>$ 2D mapping is one-to-one. \end{itemize}
+Check parameterize() postconditions: 3D -$>$ 2D mapping is one-to-one.
 }
 \ccGlue
-\ccMethod{bool is_one_to_one_mapping(const Adaptor& mesh, const Matrix& A, const Vector& Bu, const Vector& Bv);}
+\ccMethod{bool is_one_to_one_mapping(const Adaptor& mesh, const Matrix& A, const Vector& Bu, const Vector& Bv)[protected, virtual];}
 {
-[protected, virtual] \\
 Check if 3D -$>$ 2D mapping is one-to-one. The default implementation checks each normal.
 }
 \ccGlue
 \ccMethod{Border_param& get_border_parameterizer();}
 {
-[protected] \\
 Get the object that maps the surface's border onto a 2D space.
 }
 \ccGlue
 \ccMethod{Sparse_LA& get_linear_algebra_traits();}
 {
-[protected] \\
 Get the sparse linear algebra (traits object to access the linear system).
 }
 \ccGlue

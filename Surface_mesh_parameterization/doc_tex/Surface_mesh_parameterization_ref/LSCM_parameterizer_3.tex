@@ -27,7 +27,7 @@ The class \ccc{LSCM_parameterizer_3} implements the Least Squares Conformal Maps
 
 This is a conformal parameterization, i.e. it attempts to preserve angles.
 
-This is a free border parameterization. No need to map the surface's border onto a convex polygon (only two pinned vertices are needed to ensure a unique solution), but one-to-one mapping is NOT guaranteed.
+This is a free border parameterization. No need to map the surface's border onto a convex polygon (only two pinned vertices are needed to ensure a unique solution), but one-to-one mapping is {\bf not} guaranteed.
 
 %END-AUTO(\ccDefinition)
 
@@ -113,9 +113,8 @@ Export \ccc{SparseLinearAlgebraTraits_d} template parameter.
 \ccConstructor{LSCM_parameterizer_3(Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
 {
 Constructor.
-\ccCommentHeading{Parameters}
-\begin{description}
-\item \ccc{border_param}: Object that maps the surface's border to 2D space \item \ccc{sparse_la}: Traits object to access a sparse linear system \end{description}
+\ccCommentHeading{Parameters}  \\
+\ccc{border_param}: Object that maps the surface's border to 2D space. \ccc{sparse_la}: Traits object to access a sparse linear system.
 }
 \ccGlue
 
@@ -127,14 +126,11 @@ Constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccTagFullDeclarations
-
 \ccMethod{Error_code parameterize(Adaptor& mesh);}
 {
-[virtual] \\
 Compute a one-to-one mapping from a triangular 3D surface \ccc{mesh} to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface.
-\ccCommentHeading{Preconditions}\begin{itemize}
-\item \ccc{mesh} must be a surface with one connected component.\item \ccc{mesh} must be a triangular mesh. \end{itemize}
+\ccCommentHeading{Preconditions}  \\
+\ccc{mesh} must be a surface with one connected component. \ccc{mesh} must be a triangular mesh.
 }
 \ccGlue
 

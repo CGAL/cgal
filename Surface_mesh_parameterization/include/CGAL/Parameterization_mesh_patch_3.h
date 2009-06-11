@@ -183,7 +183,7 @@ public:
         set_mesh_seaming(first_seam_vertex, end_seam_vertex);
 
         // Check that the cut mesh is 2-manifold
-        m_is_valid = mesh.is_valid() && check_seam(first_seam_vertex, end_seam_vertex); 
+        m_is_valid = mesh.is_valid() && check_seam(first_seam_vertex, end_seam_vertex);
 
         // Construct the list of all exported vertices, i.e. INNER and BORDER vertices
         //
@@ -843,7 +843,7 @@ private:
     ///
     /// @commentheading Preconditions:
     /// - adaptor_neighbor is a neighbor of adaptor_vertex.
-    /// - (adaptor_vertex, adaptor_neighbor) must NOT be a seam (non-oriented) edge.
+    /// - (adaptor_vertex, adaptor_neighbor) must *not* be a seam (non-oriented) edge.
     Vertex_const_handle get_decorated_vertex_from_inner_edge(
                 typename Adaptor::Vertex_const_handle adaptor_vertex,
                 typename Adaptor::Vertex_const_handle adaptor_neighbor) const
@@ -907,7 +907,7 @@ private:
     /// - adaptor_vertex is a border/seam vertex.
     /// - [first_cw_neighbor, last_cw_neighbor] defines the range
     ///   of the valid neighbors of adaptor_vertex (included) or are NULL.
-    /// - either first_cw_neighbor or last_cw_neighbor are not NULL.
+    /// - Either first_cw_neighbor or last_cw_neighbor are not NULL.
     Vertex_const_handle get_decorated_vertex_from_border_edge(
                 typename Adaptor::Vertex_const_handle adaptor_vertex,
                 typename Adaptor::Vertex_const_handle last_cw_neighbor,
@@ -1041,7 +1041,7 @@ private:
     {
         Inner_facets_filter(const Parameterization_mesh_patch_3& mesh) : m_mesh_patch(mesh) {}
 
-        /// Return true <=> the facet is NOT EXPORTED by Parameterization_mesh_patch_3,
+        /// Return true <=> the facet is *not* exported by Parameterization_mesh_patch_3,
         /// i.e. is out of the topological disc.
         bool operator()(const typename Adaptor::Facet_iterator& f) const       {
             return m_mesh_patch.get_facet_seaming(f) == OUTER;

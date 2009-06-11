@@ -29,8 +29,7 @@ DAP is a weak area-preserving parameterization. It is a compromise between area-
 
 One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 
-This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameterization algorithm \ccc{Fixed_border_parameterizer_3::parameterize}(). \ccc{Discrete_authalic_parameterizer_3}:\begin{itemize}
-\item provides default \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense.\item implements \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.\end{itemize}
+This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameterization algorithm \ccc{Fixed_border_parameterizer_3::parameterize}(). \ccc{Discrete_authalic_parameterizer_3}: It provides default \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense. It implements \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.
 
 %END-AUTO(\ccDefinition)
 
@@ -97,9 +96,8 @@ class \ccc{Discrete_authalic_parameterizer_3};
 \ccConstructor{Discrete_authalic_parameterizer_3(Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
 {
 Constructor.
-\ccCommentHeading{Parameters}
-\begin{description}
-\item \ccc{border_param}: Object that maps the surface's border to 2D space. \item \ccc{sparse_la}: Traits object to access a sparse linear system. \end{description}
+\ccCommentHeading{Parameters}  \\
+\ccc{border_param}: Object that maps the surface's border to 2D space. \ccc{sparse_la}: Traits object to access a sparse linear system.
 }
 \ccGlue
 
@@ -111,11 +109,8 @@ Constructor.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccTagFullDeclarations
-
-\ccMethod{virtual NT compute_w_ij(const Adaptor& mesh, Vertex_const_handle main_vertex_v_i, Vertex_around_vertex_const_circulator neighbor_vertex_v_j);}
+\ccMethod{virtual NT compute_w_ij(const Adaptor& mesh, Vertex_const_handle main_vertex_v_i, Vertex_around_vertex_const_circulator neighbor_vertex_v_j)[protected, virtual];}
 {
-[protected, virtual] \\
 Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i.
 }
 \ccGlue

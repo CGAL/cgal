@@ -38,10 +38,9 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// This class is a Strategy [GHJV95] called by the main
 /// parameterization algorithm Fixed_border_parameterizer_3::parameterize().
-/// Discrete_conformal_map_parameterizer_3:
-/// - provides default BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
+/// - It provides default BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
 ///   parameters that make sense.
-/// - implements compute_w_ij() to compute w_ij = (i, j) coefficient of matrix A
+/// - It implements compute_w_ij() to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Discrete Conformal Map method.
 ///
 /// @heading Is Model for the Concepts: Model of the ParameterizerTraits_3 concept.
@@ -55,7 +54,7 @@ CGAL_BEGIN_NAMESPACE
 /// @param ParameterizationMesh_3       3D surface mesh.
 /// @param BorderParameterizer_3        Strategy to parameterize the surface border.
 /// @param SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.
-///        Note: the system is NOT symmetric because Fixed_border_parameterizer_3
+///        Note: the system is *not* symmetric because Fixed_border_parameterizer_3
 ///        does not remove (yet) border vertices from the system.
 
 template

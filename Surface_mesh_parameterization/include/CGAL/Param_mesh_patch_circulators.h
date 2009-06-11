@@ -213,7 +213,7 @@ public:
             return *this;
         }
 
-        // If the previous position is NOT the last "virtual" clockwise neighbor,
+        // If the previous position is *not* the last "virtual" clockwise neighbor,
         // simply rotate the adaptor circulator
         m_adaptor_circulator++;
 
@@ -329,7 +329,7 @@ public:
             return *this;
         }
 
-        // If the previous position is NOT the last "virtual" counter-clockwise
+        // If the previous position is *not* the last "virtual" counter-clockwise
         //  neighbor, simply rotate the adaptor circulator
         m_adaptor_circulator--;
 

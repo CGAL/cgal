@@ -81,8 +81,8 @@ Type representing the list of all borders of the mesh = STL container of Border 
 
 \ccConstructor{Parameterization_mesh_feature_extractor(Adaptor& mesh);}
 {
-Constructor.
-CAUTION: This class caches the result of feature extractions =$>$ The caller must NOT modify \ccc{mesh} during the \ccc{Parameterization_mesh_feature_extractor} life cycle.
+Constructor.  \\
+CAUTION: This class caches the result of feature extractions =$>$ The caller must {\bf not} modify \ccc{mesh} during the \ccc{Parameterization_mesh_feature_extractor} life cycle.
 }
 \ccGlue
 
@@ -93,8 +93,6 @@ CAUTION: This class caches the result of feature extractions =$>$ The caller mus
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
-
-\ccTagFullDeclarations
 
 \ccMethod{int get_nb_borders();}
 {

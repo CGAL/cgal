@@ -76,8 +76,6 @@ Create a rectangular matrix initialized with zeros.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccTagFullDeclarations
-
 \ccMethod{int row_dimension() const;}
 {
 Return the matrix number of rows.
@@ -91,24 +89,23 @@ Return the matrix number of columns.
 \ccMethod{NT get_coef(int row, int column) const;}
 {
 Read access to a matrix coefficient.
-\ccCommentHeading{Preconditions}\begin{itemize}
-\item 0 $<$= row $<$ \ccc{row_dimension}().\item 0 $<$= column $<$ \ccc{column_dimension}(). \end{itemize}
+\ccCommentHeading{Preconditions}  \\
+0 $<$= row $<$ \ccc{row_dimension}(). 0 $<$= column $<$ \ccc{column_dimension}().
 }
 \ccGlue
 \ccMethod{void add_coef(int row, int column, NT value);}
 {
 Write access to a matrix coefficient: \ccc{a_ij} $<$- \ccc{a_ij} + val.
-\ccCommentHeading{Preconditions}\begin{itemize}
-\item 0 $<$= row $<$ \ccc{row_dimension}().\item 0 $<$= column $<$ \ccc{column_dimension}(). \end{itemize}
+\ccCommentHeading{Preconditions}  \\
+0 $<$= row $<$ \ccc{row_dimension}(). 0 $<$= column $<$ \ccc{column_dimension}().
 }
 \ccGlue
 \ccMethod{void set_coef(int row, int column, NT value, bool new_coef = false);}
 {
-Write access to a matrix coefficient: \ccc{a_ij} $<$- val.
-Optimization:\begin{itemize}
-\item Caller can optimize this call by setting \ccc{new_coef} to true if the coefficient does not already exist in the matrix.\end{itemize}
-\ccCommentHeading{Preconditions}\begin{itemize}
-\item 0 $<$= i $<$ \ccc{row_dimension}().\item 0 $<$= j $<$ \ccc{column_dimension}(). \end{itemize}
+Write access to a matrix coefficient: \ccc{a_ij} $<$- val.  \\
+Optimization: Caller can optimize this call by setting \ccc{new_coef} to true if the coefficient does not already exist in the matrix.
+\ccCommentHeading{Preconditions}  \\
+0 $<$= i $<$ \ccc{row_dimension}(). 0 $<$= j $<$ \ccc{column_dimension}().
 }
 \ccGlue
 

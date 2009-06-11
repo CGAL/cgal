@@ -45,7 +45,7 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// This is a free border parameterization. No need to map the surface's border
 /// onto a convex polygon (only two pinned vertices are needed to ensure a
-/// unique solution), but one-to-one mapping is NOT guaranteed.
+/// unique solution), but one-to-one mapping is *not* guaranteed.
 ///
 /// @heading Is Model for the Concepts: Model of the ParameterizerTraits_3 concept.
 ///
@@ -164,9 +164,9 @@ private:
     /// (at least two) border vertices are parameterized.
     ///
     /// @commentheading Preconditions:
-    /// - vertices must be indexed.
+    /// - Vertices must be indexed.
     /// - X and B must be allocated and empty.
-    /// - (at least two) border vertices must be parameterized.
+    /// - At least 2 border vertices must be parameterized.
     void initialize_system_from_mesh_border(LeastSquaresSolver& solver,
                                             const Adaptor& mesh) ;
 
@@ -178,8 +178,7 @@ private:
 
     /// Create two lines in the linear system per triangle (one for u, one for v).
     ///
-    /// @commentheading Preconditions:
-    /// - vertices must be indexed.
+    /// @commentheading Precondition: vertices must be indexed.
     Error_code setup_triangle_relations(LeastSquaresSolver& solver,
                                         const Adaptor& mesh,
                                         Facet_const_handle facet) ;
@@ -262,7 +261,7 @@ parameterize(Adaptor& mesh)
     // Index vertices from 0 to nbVertices-1
     mesh.index_mesh_vertices();
 
-    // Mark all vertices as NOT "parameterized"
+    // Mark all vertices as *not* "parameterized"
     Vertex_iterator vertexIt;
     for (vertexIt = mesh.mesh_vertices_begin();
         vertexIt != mesh.mesh_vertices_end();
@@ -362,19 +361,19 @@ check_parameterize_preconditions(Adaptor& mesh)
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
-    status = mesh.is_mesh_triangular() ? Base::OK                         
-                                       : Base::ERROR_NON_TRIANGULAR_MESH; 
+    status = mesh.is_mesh_triangular() ? Base::OK
+                                       : Base::ERROR_NON_TRIANGULAR_MESH;
     if (status != Base::OK)
         return status;
 
     // The whole package is restricted to surfaces: genus = 0,
     // one connected component and at least one border
-    int genus = feature_extractor.get_genus();                          
-    int nb_borders = feature_extractor.get_nb_borders();                
-    int nb_components = feature_extractor.get_nb_connex_components();   
-    status = (genus == 0 && nb_borders >= 1 && nb_components == 1)      
-           ? Base::OK                                                   
-           : Base::ERROR_NO_TOPOLOGICAL_DISC;                               
+    int genus = feature_extractor.get_genus();
+    int nb_borders = feature_extractor.get_nb_borders();
+    int nb_components = feature_extractor.get_nb_connex_components();
+    status = (genus == 0 && nb_borders >= 1 && nb_components == 1)
+           ? Base::OK
+           : Base::ERROR_NO_TOPOLOGICAL_DISC;
     if (status != Base::OK)
         return status;
 
@@ -385,9 +384,9 @@ check_parameterize_preconditions(Adaptor& mesh)
 // (at least two) border vertices are parameterized
 //
 // Preconditions:
-// - vertices must be indexed
+// - Vertices must be indexed
 // - X and B must be allocated and empty
-// - (at least two) border vertices must be parameterized
+// - At least 2 border vertices must be parameterized
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -457,8 +456,7 @@ project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,   // i
 
 // Create two lines in the linear system per triangle (one for u, one for v)
 //
-// Preconditions:
-// - vertices must be indexed
+// Precondition: vertices must be indexed
 //
 // Implementation note: LSCM equation is:
 //       (Z1 - Z0)(U2 - U0) = (Z2 - Z0)(U1 - U0)
@@ -591,9 +589,9 @@ check_parameterize_postconditions(const Adaptor& mesh,
     Error_code status = Base::OK;
 
     // Check if 3D -> 2D mapping is one-to-one
-    status = is_one_to_one_mapping(mesh, solver) 	    
-           ? Base::OK                                   
-           : Base::ERROR_NO_1_TO_1_MAPPING;             
+    status = is_one_to_one_mapping(mesh, solver)
+           ? Base::OK
+           : Base::ERROR_NO_1_TO_1_MAPPING;
     if (status != Base::OK)
         return status;
 

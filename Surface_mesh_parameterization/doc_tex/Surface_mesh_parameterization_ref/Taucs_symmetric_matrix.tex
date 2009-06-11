@@ -68,7 +68,7 @@ template$<$  \\
 class T$>$   \\
 struct \ccc{Taucs_symmetric_matrix};
 
-\ccCommentHeading{Parameters}
+\ccCommentHeading{Parameters}  \\
 \ccc{T}: Number type. Tested with T = \ccc{taucs_single} or \ccc{taucs_double}. May also work with T = \ccc{taucs_dcomplex} and \ccc{taucs_scomplex}.
 
 %END-AUTO(\ccParameters)
@@ -96,17 +96,16 @@ struct \ccc{Taucs_symmetric_matrix};
 \ccConstructor{Taucs_symmetric_matrix(int dim);}
 {
 Create a square {\bf symmetric} matrix initialized with zeros.
-\ccCommentHeading{Parameters}
-\ccc{dim}: Matrix dimension. 
+\ccCommentHeading{Parameters}  \\
+\ccc{dim}: Matrix dimension.
 }
 \ccGlue
 \ccConstructor{Taucs_symmetric_matrix(int rows, int columns);}
 {
 Create a square {\bf symmetric} matrix initialized with zeros.
 \ccPrecond rows == columns.
-\ccCommentHeading{Parameters}
-\begin{description}
-\item \ccc{rows}: Number of rows. \item \ccc{columns}: Number of columns. \end{description}
+\ccCommentHeading{Parameters}  \\
+\ccc{rows}: Number of rows. \ccc{columns}: Number of columns.
 }
 \ccGlue
 

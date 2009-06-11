@@ -86,7 +86,7 @@ public:
     /// Constructor.
     ///
     /// CAUTION: This class caches the result of feature extractions
-    /// => The caller must NOT modify 'mesh' during the
+    /// => The caller must *not* modify 'mesh' during the
     /// Parameterization_mesh_feature_extractor life cycle.
     Parameterization_mesh_feature_extractor(Adaptor& mesh)
         // Store reference to adapted mesh

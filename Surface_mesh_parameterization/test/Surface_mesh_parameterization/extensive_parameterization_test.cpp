@@ -100,7 +100,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
         // Pick the longest border
         seam = feature_extractor.get_longest_border();
     }
-    else // if mesh is NOT a topological disk, create a virtual cut
+    else // if mesh is *not* a topological disk, create a virtual cut
     {
         Backbone seamingBackbone;           // result of cutting
         Backbone::iterator he;
@@ -272,9 +272,9 @@ int main(int argc, char * argv[])
         case Parameterizer::OK: // Success
             break;
         case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:
             std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
             // this is not a bug => do not set accumulated_fatal_err
             break;
@@ -308,9 +308,9 @@ int main(int argc, char * argv[])
         case Parameterizer::OK: // Success
             break;
         case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:
             std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
             // this is not a bug => do not set accumulated_fatal_err
             break;
@@ -342,9 +342,9 @@ int main(int argc, char * argv[])
         case Parameterizer::OK: // Success
             break;
         case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:
             std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
             // this is not a bug => do not set accumulated_fatal_err
             break;
@@ -380,9 +380,9 @@ int main(int argc, char * argv[])
         case Parameterizer::OK: // Success
             break;
         case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:
             std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
             // this is not a bug => do not set accumulated_fatal_err
             break;
@@ -416,9 +416,9 @@ int main(int argc, char * argv[])
         case Parameterizer::OK: // Success
             break;
         case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:
             std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
             // this is not a bug => do not set accumulated_fatal_err
             break;
@@ -450,9 +450,9 @@ int main(int argc, char * argv[])
         case Parameterizer::OK: // Success
             break;
         case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:   
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:     
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:    
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:
             std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
             // this is not a bug => do not set accumulated_fatal_err
             break;
@@ -464,12 +464,12 @@ int main(int argc, char * argv[])
 
         std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
         task_timer.reset();
-        
+
 #else
 
         std::cerr << "Skip TAUCS tests as TAUCS is not installed" << std::endl << std::endl;
         // this is not a bug => do not set accumulated_fatal_err
-        
+
 #endif // CGAL_USE_TAUCS
 
     } // for each input file

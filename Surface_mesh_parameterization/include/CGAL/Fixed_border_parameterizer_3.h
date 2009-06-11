@@ -154,7 +154,7 @@ public:
     /// @commentheading Preconditions:
     /// - 'mesh' must be a surface with one connected component.
     /// - 'mesh' must be a triangular mesh.
-    /// - the mesh border must be mapped onto a convex polygon.
+    /// - The mesh border must be mapped onto a convex polygon.
     virtual Error_code  parameterize(Adaptor& mesh);
 
 // Protected operations
@@ -162,7 +162,7 @@ protected:
     /// Check parameterize() preconditions:
     /// - 'mesh' must be a surface with one connected component.
     /// - 'mesh' must be a triangular mesh.
-    /// - the mesh border must be mapped onto a convex polygon.
+    /// - The mesh border must be mapped onto a convex polygon.
     virtual Error_code  check_parameterize_preconditions(Adaptor& mesh);
 
     /// Initialize A, Bu and Bv after border parameterization.
@@ -170,9 +170,9 @@ protected:
     /// "u = constant" and "v = constant".
     ///
     /// @commentheading Preconditions:
-    /// - vertices must be indexed.
+    /// - Vertices must be indexed.
     /// - A, Bu and Bv must be allocated.
-    /// - border vertices must be parameterized.
+    /// - Border vertices must be parameterized.
     void  initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
                                               const Adaptor& mesh);
 
@@ -188,9 +188,9 @@ protected:
     /// - compute w_ii = - sum of w_ijs.
     ///
     /// @commentheading Preconditions:
-    /// - vertices must be indexed.
-    /// - vertex i musn't be already parameterized.
-    /// - line i of A must contain only zeros.
+    /// - Vertices must be indexed.
+    /// - Vertex i musn't be already parameterized.
+    /// - Line i of A must contain only zeros.
     virtual Error_code setup_inner_vertex_relations(Matrix& A,
                                                     Vector& Bu,
                                                     Vector& Bv,
@@ -245,7 +245,7 @@ private:
 // Preconditions:
 // - 'mesh' must be a surface with one connected component.
 // - 'mesh' must be a triangular mesh.
-// - the mesh border must be mapped onto a convex polygon.
+// - The mesh border must be mapped onto a convex polygon.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
@@ -273,7 +273,7 @@ parameterize(Adaptor& mesh)
     // Index vertices from 0 to nbVertices-1
     mesh.index_mesh_vertices();
 
-    // Mark all vertices as NOT "parameterized"
+    // Mark all vertices as *not* "parameterized"
     Vertex_iterator vertexIt;
     for (vertexIt = mesh.mesh_vertices_begin();
         vertexIt != mesh.mesh_vertices_end();
@@ -374,7 +374,7 @@ parameterize(Adaptor& mesh)
 // Check parameterize() preconditions:
 // - 'mesh' must be a surface with one connected component.
 // - 'mesh' must be a triangular mesh.
-// - the mesh border must be mapped onto a convex polygon.
+// - The mesh border must be mapped onto a convex polygon.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
@@ -395,27 +395,27 @@ check_parameterize_preconditions(Adaptor& mesh)
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
-    status = mesh.is_mesh_triangular() ? Base::OK                         
-                                       : Base::ERROR_NON_TRIANGULAR_MESH; 
+    status = mesh.is_mesh_triangular() ? Base::OK
+                                       : Base::ERROR_NON_TRIANGULAR_MESH;
     if (status != Base::OK)
         return status;
 
     // The whole package is restricted to surfaces: genus = 0,
     // one connected component and at least one border
-    int genus = feature_extractor.get_genus();                          
-    int nb_borders = feature_extractor.get_nb_borders();                
-    int nb_components = feature_extractor.get_nb_connex_components();   
-    status = (genus == 0 && nb_borders >= 1 && nb_components == 1)      
-           ? Base::OK                                                   
-           : Base::ERROR_NO_TOPOLOGICAL_DISC;                               
+    int genus = feature_extractor.get_genus();
+    int nb_borders = feature_extractor.get_nb_borders();
+    int nb_components = feature_extractor.get_nb_connex_components();
+    status = (genus == 0 && nb_borders >= 1 && nb_components == 1)
+           ? Base::OK
+           : Base::ERROR_NO_TOPOLOGICAL_DISC;
     if (status != Base::OK)
         return status;
 
     // One-to-one mapping is guaranteed if all w_ij coefficients are > 0 (for j vertex neighbor of i)
     // and if the surface border is mapped onto a 2D convex polygon
-    status = get_border_parameterizer().is_border_convex()  
-           ? Base::OK                                       
-           : Base::ERROR_NON_CONVEX_BORDER;                    
+    status = get_border_parameterizer().is_border_convex()
+           ? Base::OK
+           : Base::ERROR_NON_CONVEX_BORDER;
     if (status != Base::OK)
         return status;
 
@@ -426,9 +426,9 @@ check_parameterize_preconditions(Adaptor& mesh)
 // Fill the border vertices' lines in both linear systems: "u = constant" and "v = constant".
 //
 // Preconditions:
-// - vertices must be indexed.
+// - Vertices must be indexed.
 // - A, Bu and Bv must be allocated.
-// - border vertices must be parameterized.
+// - Border vertices must be parameterized.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -459,9 +459,9 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
 // - compute w_ii = - sum of w_ijs.
 //
 // Preconditions:
-// - vertices must be indexed.
-// - vertex i musn't be already parameterized.
-// - line i of A must contain only zeros.
+// - Vertices must be indexed.
+// - Vertex i musn't be already parameterized.
+// - Line i of A must contain only zeros.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
@@ -544,9 +544,9 @@ check_parameterize_postconditions(const Adaptor& mesh,
     Error_code status = Base::OK;
 
     // Check if 3D -> 2D mapping is one-to-one
-    status = is_one_to_one_mapping(mesh, A, Bu, Bv)     
-           ? Base::OK                                   
-           : Base::ERROR_NO_1_TO_1_MAPPING;             
+    status = is_one_to_one_mapping(mesh, A, Bu, Bv)
+           ? Base::OK
+           : Base::ERROR_NO_1_TO_1_MAPPING;
     if (status != Base::OK)
         return status;
 
