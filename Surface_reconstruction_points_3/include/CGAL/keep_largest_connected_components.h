@@ -124,20 +124,22 @@ unsigned int tag_component(Polyhedron& polyhedron,
 
 
 /// Computes the list of all connected components of a polyhedron.
+/// Returns it as a list of components ordered by size.
 ///
 /// @commentheading Template Parameters:
 /// @param Polyhedron an instance of CGAL::Polyhedron_3<Traits> that supports vertices.
-///
-/// @return a list of components expressed as pairs (number of vertices, vertex),
-/// ordered by size.
-template<class Polyhedron>
-std::multimap<unsigned int, typename Polyhedron::Vertex_handle>
-get_polyhedron_connected_components(Polyhedron& polyhedron)
+/// @param OutputIterator value_type must be Polyhedron::Vertex_handle.
+template<class Polyhedron,
+         typename OutputIterator>
+void
+get_polyhedron_connected_components(
+  Polyhedron& polyhedron, ///< input polyhedron
+  OutputIterator output) ///< output iterator over vertex handles
 {
     // Implementation note:
     // We tag vertices instead of halfedges to save a factor 6.
     // The drawback is that we require the Polyhedron_3<Traits> to support vertices.
-    // TODO: replace std::map to tag vertices by a property map.
+    // TODO: replace std::map by a property map to tag vertices.
     Assert_compile_time_tag(typename Polyhedron::Supports_halfedge_vertex(), Tag_true());
     std::map<typename Polyhedron::Vertex*, int> tags;
 
@@ -155,33 +157,35 @@ get_polyhedron_connected_components(Polyhedron& polyhedron)
          tags[&*it] = CGALi::tag_free;
     }
 
-    // For each component
+    // Record each component
     Vertex_handle seed_vertex = NULL;
     while((seed_vertex = CGALi::get_any_free_vertex(polyhedron, tags)) != NULL)
     {
         // Tag it as "done" and compute its size (number of vertices)
         unsigned int number_of_vertices = CGALi::tag_component(polyhedron, seed_vertex, tags);
 
-        // Add component to (ordered) list
-          components.insert(std::make_pair(number_of_vertices, seed_vertex));
+        // Add component to ordered list
+        components.insert(std::make_pair(number_of_vertices, seed_vertex));
     }
 
-    return components;
+    // Copy ordered list to output iterator
+    typename std::multimap<unsigned int, Vertex_handle>::iterator src;
+    for (src = components.begin(); src != components.end(); ++src)
+      *output++ = src->second;
 }
 
 
-/// Erases small connected components of a polyhedron:
-/// It calls get_polyhedron_connected_components(), then erase_connected_component()
-/// on all connected components but the largest.
+/// Erases small connected components of a polyhedron.
 ///
 /// @commentheading Template Parameters:
 /// @param Polyhedron an instance of CGAL::Polyhedron_3<Traits> that supports
 /// vertices and removal operation.
+/// @param nb_components_to_keep the number of large connected components to keep.
 ///
 /// @return the number of connected components erased.
 template<class Polyhedron>
 unsigned int
-erase_small_polyhedron_connected_components(Polyhedron& polyhedron)
+keep_largest_connected_components(Polyhedron& polyhedron, unsigned int nb_components_to_keep)
 {
     Assert_compile_time_tag(typename Polyhedron::Supports_removal(), Tag_true());
 
@@ -191,21 +195,20 @@ erase_small_polyhedron_connected_components(Polyhedron& polyhedron)
                  nb_isolated_vertices = 0;
 
     // Gets list of connected components, ordered by size (number of vertices)
-    std::multimap<unsigned int, Vertex_handle>
-      components = CGAL::get_polyhedron_connected_components(polyhedron);
+    std::vector<Vertex_handle> components;
+    CGAL::get_polyhedron_connected_components(polyhedron, std::back_inserter(components));
 
     // Erases all connected components but the largest
-    while (components.size() > 1)
+    while (components.size() > nb_components_to_keep)
     {
-      unsigned int number_of_vertices = components.begin()->first;
-      Vertex_handle vertex = components.begin()->second;
+      Vertex_handle vertex = *(components.begin());
 
       // Removes component from list
       components.erase(components.begin());
 
       if (vertex->halfedge() != NULL) // if not isolated vertex
       {
-        CGAL_TRACE_STREAM << "  Erases connected component (" << number_of_vertices << " vertices)\n";
+        CGAL_TRACE_STREAM << "  Erases connected component\n";
         polyhedron.erase_connected_component(vertex->halfedge());
         nb_erased_components++;
       }

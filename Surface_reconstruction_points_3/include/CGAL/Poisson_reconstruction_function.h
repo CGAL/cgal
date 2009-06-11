@@ -130,9 +130,9 @@ public:
   ///
   /// @commentheading Template Parameters:
   /// @param InputIterator iterator over input points.
-  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Point_3.
-  ///        It can be omitted if InputIterator value_type is convertible to Geom_traits::Point_3.
-  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Vector_3.
+  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3.
+  ///        It can be omitted if InputIterator value_type is convertible to Point_3.
+  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Vector_3.
 
   // This variant requires all parameters.
   template <typename InputIterator,
@@ -142,8 +142,8 @@ public:
   Poisson_reconstruction_function(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map InputIterator -> Point_3.
-    NormalPMap normal_pmap) ///< property map InputIterator -> Vector_3.
+    PointPMap point_pmap, ///< property map to access the position of an input point.
+    NormalPMap normal_pmap) ///< property map to access the *oriented* normal of an input point.
   : m_tr(new Triangulation)
   {
     //m_tr->insert(
@@ -169,7 +169,7 @@ public:
   Poisson_reconstruction_function(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
-    NormalPMap normal_pmap) ///< property map InputIterator -> Vector_3.
+    NormalPMap normal_pmap) ///< property map to access the *oriented* normal of an input point.
   : m_tr(new Triangulation)
   {
     //m_tr->insert(
@@ -207,9 +207,9 @@ public:
   /// The function compute_implicit_function() must be called
   /// after each insertion of oriented points.
   /// It computes the piecewise linear scalar function operator() by:
-  /// - applying Delaunay refinement.
-  /// - solving for operator() at each vertex of the triangulation with a sparse linear solver.
-  /// - shifting and orienting operator() such that operator()=0 at all input points and operator()<0 inside the inferred surface.
+  /// - applying Delaunay refinement,
+  /// - solving for operator() at each vertex of the triangulation with a sparse linear solver,
+  /// - and shifting and orienting operator() such that it is 0 at all input points and negative inside the inferred surface.
   ///
   /// Returns false if the linear solver fails.
   bool compute_implicit_function()
@@ -257,7 +257,7 @@ public:
     return true;
   }
 
-  /// 'ImplicitFunction' interface: evaluates implicit function at 3D query point.
+  /// 'ImplicitFunction' interface: evaluates the implicit function at a given 3D query point.
   FT operator()(const Point& p) const
   {
     m_hint = m_tr->locate(p,m_hint);

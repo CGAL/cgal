@@ -6,9 +6,6 @@ Function \ccc{CGAL::jet_estimate_normals()} estimates the normal direction at ea
 
 Function \ccc{CGAL::pca_estimate_normals()} estimates the normal direction at each point from the set by linear least squares fitting of a plane over its $k$ nearest neighbors. This algorithm is simpler and faster than \ccc{CGAL::jet_estimate_normals()}.
 
-\ccRefIdfierPage{CGAL::jet_estimate_normals}  \\
-\ccRefIdfierPage{CGAL::pca_estimate_normals}  \\
-
 % % Insert image pca_estimate_normals.jpg/eps
 % \begin{center}
 %     \label{Point_set_processing_3-fig-pca_estimate_normals}
@@ -27,9 +24,7 @@ Function \ccc{CGAL::pca_estimate_normals()} estimates the normal direction at ea
 
 \section{Normal Orientation}
 
-Function \ccc{CGAL::mst_orient_normals()} orients the normals of a set of points with unoriented normals using the method described by Hoppe et al. in \emph{Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}. More specifically, this method constructs a Riemannian graph over the input points (the graph of the $K$ nearest neighbor points) and propagates a seed normal orientation within a minimum spanning tree computed over the graph with the Boost graph library. The result is an oriented normal vector for each input point with normal.
-
-\ccRefIdfierPage{CGAL::mst_orient_normals}  \\
+Function \ccc{CGAL::mst_orient_normals()} orients the normals of a set of points with unoriented normals using the method described by Hoppe et al. in \emph{Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}. More specifically, this method constructs a Riemannian graph over the input points (the graph of the $K$ nearest neighbor points) and propagates a seed normal orientation within a minimum spanning tree computed over the graph. The result is an oriented normal vector for each input point with normal.
 
 % Insert image mst_orient_normals.jpg/eps
 \begin{center}
@@ -45,9 +40,11 @@ Function \ccc{CGAL::mst_orient_normals()} orients the normals of a set of points
     \begin{figure}[h]
         \caption{Normal orientation of a sampled cube surface.
                  Left: unoriented normals.
-                 Right: oriented normals.}
+                 Right: orientation of right face normals is propagated to bottom face.}
     \end{figure}
 \end{center}
+
+\ccExample
 
 The following example reads a point set from a file, estimates the normals through PCA over the 7 nearest neighbors and orient the normals:
 \ccIncludeExampleCode{Point_set_processing_3/normals_example.cpp}

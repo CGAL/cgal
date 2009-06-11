@@ -1,8 +1,6 @@
 \section{Outlier Removal}
 
 Function \ccc{CGAL::remove_outliers()} deletes a user-specified fraction of outliers from an input point set. More specifically, it sorts the input points in increasing order of average squared distances to their $k$ nearest neighbors and deletes the points with largest value. % PA: add ref
-\\
-\ccRefIdfierPage{CGAL::remove_outliers}  \\
 
 % Note to the reviewers: we will add a function in the analysis section which displays in the console the distribution of such average squared distance so as to help the user picking an appropriate fraction value.}
 
@@ -22,6 +20,8 @@ Function \ccc{CGAL::remove_outliers()} deletes a user-specified fraction of outl
 %         \caption{Outlier removal}
 %     \end{figure}
 % \end{center}
+
+\ccExample
 
 The following example reads a point set and removes 5\% of the points.
 \ccIncludeExampleCode{Point_set_processing_3/remove_outliers_example.cpp}

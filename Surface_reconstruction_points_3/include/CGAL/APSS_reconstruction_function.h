@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
 /// This class implements a variant of the "Algebraic Point Set Surfaces" method
 /// by Guennebaud and Gross [Guennebaud07].
 ///
-/// Currently, the quality of the reconstruction highly depends on both the quality of input
+/// The quality of the reconstruction highly depends on both the quality of input
 /// normals and the smoothness parameter. Whereas the algorithm can tolerate
 /// a little noise in the normal direction, the normals must be consistently oriented.
 /// The smoothness parameter controls the width of the underlying low-pass filter as a factor
@@ -48,19 +48,18 @@ CGAL_BEGIN_NAMESPACE
 /// times. For clean datasets, this value should be set between 1.5 and 2.5. On the other hand,
 /// as the amount of noise increases, this value should be increased as well. For these reasons,
 /// we do not provide any default value for this parameter.
+///
 /// The radius property should correspond to the local point spacing which can be intuitively
-/// defined as the average distance to its "natural" one ring neighbors. Currently, this
-/// information is only used to define the "surface definition domain" as the union of
+/// defined as the average distance to its "natural" one ring neighbors. It
+/// defines the "surface definition domain" as the union of
 /// these balls. Outside this union of balls, the surface is not defined. Therefore, if the balls
 /// do not overlap enough, then some holes might appear. If no radius is provided, then they are
 /// automatically computed from a basic estimate of the local density based on the 16 nearest
-/// neighbors. In the future, this information might be used as well to adjust the width
-/// of the low pass filter.
+/// neighbors.
 ///
-/// Note that APSS reconstruction may create small "ghost" connected components
-/// close to the reconstructed surface that you should delete.
-/// For this purpose, you may call erase_small_polyhedron_connected_components()
-/// after make_surface_mesh().
+/// APSS reconstruction may create small "ghost" connected components
+/// close to the reconstructed surface that you should delete with e.g.
+/// keep_largest_connected_components().
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the ImplicitFunction concept.
@@ -126,11 +125,10 @@ private:
   ///
   /// @commentheading Template Parameters:
   /// @param InputIterator iterator over input points.
-  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Point_3.
-  ///        It can be omitted if InputIterator value_type is convertible to Geom_traits::Point_3.
-  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Vector_3.
+  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3.
+  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Vector_3.
   /// @param RadiusPMap is a model of boost::ReadablePropertyMap with a value_type = FT.
-  ///        If it is omitted, a default radius is computed = (distance max to 16 nearest neighbors)/2.
+  ///        If it is boost::dummy_property_map, a default radius is computed.
   template <typename InputIterator,
             typename PointPMap,
             typename NormalPMap,
@@ -139,9 +137,9 @@ private:
   void init(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator.
-    PointPMap point_pmap, ///< property map InputIterator -> Point_3.
-    NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
-    RadiusPMap radius_pmap, ///< property map InputIterator -> FT.
+    PointPMap point_pmap, ///< property map to access the position of an input point.
+    NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
+    RadiusPMap radius_pmap, ///< property map to access the local point spacing of an input point.
     FT smoothness) ///< smoothness factor.
   {
     // Allocate smart pointer to data
@@ -164,7 +162,7 @@ private:
     m->radii.resize(nb_points);
     if (boost::is_same<RadiusPMap,boost::dummy_property_map>::value)
     {
-      // Compute the radius of each point = (distance max to 16 nearest neighbors)/2.
+      // Compute the radius of each point = (distance to 16th nearest neighbor)/2.
       // The union of these balls defines the surface definition domain.
       int i=0;
       for (InputIterator it=first ; it != beyond ; ++it, ++i)
@@ -202,11 +200,11 @@ public:
   ///
   /// @commentheading Template Parameters:
   /// @param InputIterator iterator over input points.
-  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Point_3.
-  ///        It can be omitted if InputIterator value_type is convertible to Geom_traits::Point_3.
-  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Geom_traits::Vector_3.
+  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3.
+  ///        It can be omitted if InputIterator value_type is convertible to Point_3.
+  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Vector_3.
   /// @param RadiusPMap is a model of boost::ReadablePropertyMap with a value_type = FT.
-  ///        If it is omitted, a default radius is computed = (distance max to 16 nearest neighbors)/2.
+  ///        If it is omitted, a default radius is computed.
 
   // This variant requires all parameters.
   template <typename InputIterator,
@@ -217,9 +215,9 @@ public:
   APSS_reconstruction_function(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator.
-    PointPMap point_pmap, ///< property map InputIterator -> Point_3 (access to the position of an input point).
-    NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3 (access to the *oriented* normal of an input point).
-    RadiusPMap radius_pmap, ///< property map InputIterator -> FT (access to the local point spacing of an input point).
+    PointPMap point_pmap, ///< property map to access the position of an input point.
+    NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
+    RadiusPMap radius_pmap, ///< property map to access the local point spacing of an input point.
     FT smoothness) ///< smoothness factor. Typical choices are in the range 2 (clean datasets) and 8 (noisy datasets).
   {
     init(
@@ -239,8 +237,8 @@ public:
   APSS_reconstruction_function(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map InputIterator -> Point_3.
-    NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+    PointPMap point_pmap, ///< property map to access the position of an input point.
+    NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
     FT smoothness) ///< smoothness factor.
   {
     init(
@@ -261,7 +259,7 @@ public:
   APSS_reconstruction_function(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
-    NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+    NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
     FT smoothness) ///< smoothness factor.
   {
     init(
@@ -295,7 +293,7 @@ public:
   void set_smoothness_factor(FT smoothness) { m->nofNeighbors = 6*smoothness*smoothness; }
 
   /// Returns a sphere bounding the inferred surface.
-  const Sphere& bounding_sphere() const
+  Sphere bounding_sphere() const
   {
     return m->bounding_sphere;
   }
@@ -349,7 +347,7 @@ private:
 
 public:
 
-  /// 'ImplicitFunction' interface: evaluates implicit function at 3D query point.
+  /// 'ImplicitFunction' interface: evaluates the implicit function at a given 3D query point.
   //
   // Implementation note: this function is called a large number of times,
   // thus us heavily optimized. The bottleneck is Neighbor_search's constructor,

@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: erase_small_polyhedron_connected_components.tex
+% | Reference manual page: keep_largest_connected_components.tex
 % +------------------------------------------------------------------------+
 % | 16.04.2009   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_points_3
@@ -12,35 +12,37 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunction}{erase_small_polyhedron_connected_components<Polyhedron>}
+\begin{ccRefFunction}{keep_largest_connected_components<Polyhedron>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[function]{} %% add further index entries
 
 \ccDefinition
 
-\ccc{erase_small_polyhedron_connected_components<Polyhedron>} erases all connected components of a polyhedron but the largest.
+\ccc{keep_largest_connected_components<Polyhedron>} erases the small connected components of a polyhedron.
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{template<class Polyhedron> unsigned int erase_small_polyhedron_connected_components(Polyhedron& polyhedron);}
+% Reduce left margin
+\ccThree{123456789012345}{6789012}{}
+
+\ccFunction{template<class Polyhedron> unsigned int keep_largest_connected_components(Polyhedron& polyhedron, unsigned int nb_components_to_keep);}
 {
-Erases small connected components of a polyhedron: It calls \ccc{get_polyhedron_connected_components}(), then \ccc{erase_connected_component}() on all connected components but the largest.
-\ccCommentHeading{Template Parameters}
-\ccc{Polyhedron}: an instance of \ccc{Polyhedron_3<Traits>} that supports vertices and removal operation.
+Erases small connected components of a polyhedron.
+\ccCommentHeading{Template Parameters}  \\
+\ccc{Polyhedron}: an instance of \ccc{Polyhedron_3<Traits>} that supports vertices and removal operation. \ccc{nb_components_to_keep}: the number of large connected components to keep.
 \ccCommentHeading{Returns} the number of connected components erased.
 }
 \ccGlue
 
 %END-AUTO(\ccDefinition)
 
-\ccInclude{erase_small_polyhedron_connected_components.h}
+\ccInclude{CGAL/keep_largest_connected_components.h}
 
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}  \\
-\ccRefIdfierPage{CGAL::get_polyhedron_connected_components<Polyhedron>}  \\
 
 \ccExample
 

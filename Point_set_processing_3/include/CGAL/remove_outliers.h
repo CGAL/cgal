@@ -101,7 +101,7 @@ compute_avg_knn_sq_distance_3(
 
 /// Removes outliers:
 /// - computes average squared distance to the K nearest neighbors,
-/// - sorts the points in increasing order of average distance.
+/// - and sorts the points in increasing order of average distance.
 ///
 /// This method modifies the order of input points so as to pack all remaining points first,
 /// and returns an iterator over the first point to remove (see erase-remove idiom).
@@ -113,7 +113,7 @@ compute_avg_knn_sq_distance_3(
 /// @param ForwardIterator iterator over input points.
 /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class. 
+/// @param Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return iterator over the first point to remove.
@@ -134,7 +134,7 @@ remove_outliers(
 {
   // geometric types
   typedef typename Kernel::FT FT;
-  
+
   // actual type of input points
   typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
 
@@ -201,7 +201,7 @@ remove_outliers(
   typedef typename Kernel_traits<Point>::Kernel Kernel;
   return remove_outliers(
     first,beyond,
-    point_pmap, 
+    point_pmap,
     k,threshold_percent,
     Kernel());
 }
@@ -220,7 +220,7 @@ remove_outliers(
 {
   return remove_outliers(
     first,beyond,
-    make_dereference_property_map(first), 
+    make_dereference_property_map(first),
     k,threshold_percent);
 }
 /// @endcond
