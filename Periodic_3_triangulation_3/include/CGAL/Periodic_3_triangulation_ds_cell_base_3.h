@@ -321,17 +321,6 @@ public:
   }
   
 private:
-  //unsigned int _off0() const { return (off&7);}
-  //unsigned int _off1() const { return ((off>>3)&7);}
-  //unsigned int _off2() const { return ((off>>6)&7);}
-  //unsigned int _off3() const { return ((off>>9)&7);}
-
-  //TODO: assertions!
-  //void set_off0(unsigned int i) {off = ((off&4088)|(i));}
-  //void set_off1(unsigned int i) {off = ((off&4039)|(i<<3));}
-  //void set_off2(unsigned int i) {off = ((off&3647)|(i<<6));}
-  //void set_off3(unsigned int i) {off = ((off&511 )|(i<<9));}
-
   Cell_handle   N[4];
   Vertex_handle V[4];
   unsigned char _in_conflict_flag:2;

@@ -315,54 +315,17 @@ public:
   
 private:
   /** @name Voronoi diagram helpers */ //@{
-  bool is_canonical(const Facet &f) const {
+  bool is_canonical(const Periodic_segment &ps) const {
     if (number_of_sheets() == make_array(1,1,1)) return true;
-    Offset cell_off0 = Offset(f.first->offset((f.second+1)&3));
-    Offset cell_off1 = Offset(f.first->offset((f.second+2)&3));
-    Offset cell_off2 = Offset(f.first->offset((f.second+3)&3));
-    Offset diff_off((cell_off0.x() == 1 
-		     && cell_off1.x() == 1 
-		     && cell_off2.x() == 1)?-1:0,
-		    (cell_off0.y() == 1 
-		     && cell_off1.y() == 1
-		     && cell_off2.y() == 1)?-1:0,
-		    (cell_off0.z() == 1 
-		     && cell_off1.z() == 1
-		     && cell_off2.z() == 1)?-1:0);
-    Offset off0 = combine_offsets(get_offset(f.first, (f.second+1)&3),
-			   diff_off);
-    Offset off1 = combine_offsets(get_offset(f.first, (f.second+2)&3),
-			   diff_off);
-    Offset off2 = combine_offsets(get_offset(f.first, (f.second+3)&3),
-			   diff_off);
-    
-    // If there is one offset with entries larger than 1 then we are
-    // talking about a vertex that is too far away from the original
-    // domain to belong to a canonical triangle.
-    if (off0.x() > 1) return false;
-    if (off0.y() > 1) return false;
-    if (off0.z() > 1) return false;
-    if (off1.x() > 1) return false;
-    if (off1.y() > 1) return false;
-    if (off1.z() > 1) return false;
-    if (off2.x() > 1) return false;
-    if (off2.y() > 1) return false;
-    if (off2.z() > 1) return false;
-
-    // If there is one direction of space for which all offsets are
-    // non-zero then the edge is not canonical because we can
-    // take the copy closer towards the origin in that direction.
-    int offx = off0.x() & off1.x() & off2.x();
-    int offy = off0.y() & off1.y() & off2.y();
-    int offz = off0.z() & off1.z() & off2.z();
-
-    return (offx == 0 && offy == 0 && offz == 0);
+    Offset o0 = ps.at(0).second;
+    Offset o1 = ps.at(1).second;
+    Offset cumm_off(std::min(o0.x(),o1.x()),std::min(o0.y(),o1.y()),
+	std::min(o0.z(),o1.z()));
+    return (cumm_off == Offset(0,0,0));
   }
   //@}
 
-public:
-  /** @name Voronoi diagram */ //@{
-  Point dual(Cell_handle c) const {
+  Periodic_point periodic_circumcenter(Cell_handle c) const {
     CGAL_triangulation_precondition(c != Cell_handle());
     Point v = geom_traits().construct_circumcenter_3_object()(
         c->vertex(0)->point(), c->vertex(1)->point(),
@@ -372,49 +335,132 @@ public:
     
     // check that v lies within the domain. If not: translate
     Covering_sheets nos = number_of_sheets();
-    array<typename Geom_traits::FT,6> dom = make_array(
-	domain().xmin(), domain().ymin(), domain().zmin(),
-	domain().xmin()+nos.at(0)*(domain().xmax()-domain().xmin()),
-	domain().ymin()+nos.at(1)*(domain().ymax()-domain().ymin()),
-	domain().zmin()+nos.at(2)*(domain().zmax()-domain().zmin()) );
-    if (   !(v.x() < dom.at(0)) && v.x()<dom.at(3)
-	&& !(v.y() < dom.at(1)) && v.y()<dom.at(4)
-	&& !(v.z() < dom.at(2)) && v.z()<dom.at(5) )
-      return v;
+    Iso_cuboid dom = domain();
+    if (   !(v.x() < dom.xmin()) && v.x()<dom.xmax()
+	&& !(v.y() < dom.ymin()) && v.y()<dom.ymax()
+	&& !(v.z() < dom.zmin()) && v.z()<dom.zmax() )
+      return std::make_pair(v,Offset());
 
     int ox=-1, oy=-1, oz=-1;
-    if (v.x() < dom.at(0)) ox = 1;
-    else if (v.x() < dom.at(3)) ox = 0;
-    if (v.y() < dom.at(1)) oy = 1;
-    else if (v.y() < dom.at(4)) oy = 0;
-    if (v.z() < dom.at(2)) oz = 1;
-    else if (v.z() < dom.at(5)) oz = 0;
-    Offset transl_off(nos.at(0)*ox,nos.at(1)*oy,nos.at(2)*oz);
-    Periodic_point pv(std::make_pair(v,transl_off));
-    Point dv(point(pv));
-    CGAL_triangulation_assertion( !(dv.x() < dom.at(0)) && dv.x() < dom.at(3) );
-    CGAL_triangulation_assertion( !(dv.y() < dom.at(1)) && dv.y() < dom.at(4) );
-    CGAL_triangulation_assertion( !(dv.z() < dom.at(2)) && dv.z() < dom.at(5) );
-    return point(pv);
+    if (v.x() < dom.xmin()) ox = 1;
+    else if (v.x() < dom.xmax()) ox = 0;
+    if (v.y() < dom.ymin()) oy = 1;
+    else if (v.y() < dom.ymax()) oy = 0;
+    if (v.z() < dom.zmin()) oz = 1;
+    else if (v.z() < dom.zmax()) oz = 0;
+    Offset transl_offx(0,0,0);
+    Offset transl_offy(0,0,0);
+    Offset transl_offz(0,0,0);
+    Point dv(v);
+
+    // Find the right offset such that the translation will yield a
+    // point inside the original domain.
+    while ( dv.x() < dom.xmin() || !(dv.x() < dom.xmax()) ) {
+      transl_offx.x() = transl_offx.x() + ox;
+      dv = point(std::make_pair(v,transl_offx));
+    }
+    while ( dv.y() < dom.ymin() || !(dv.y() < dom.ymax()) ) {
+      transl_offy.y() = transl_offy.y() + oy;
+      dv = point(std::make_pair(v,transl_offy));
+    }
+    while ( dv.z() < dom.zmin() || !(dv.z() < dom.zmax()) ) {
+      transl_offz.z() = transl_offz.z() + oz;
+      dv = point(std::make_pair(v,transl_offz));
+    }
+
+    Offset transl_off(transl_offx.x(),transl_offy.y(),transl_offz.z());
+    Periodic_point ppv(std::make_pair(v,transl_off));
+
+    CGAL_triangulation_assertion_code(Point rv(point(ppv));)
+    CGAL_triangulation_assertion( !(rv.x() < dom.xmin()) && rv.x() < dom.xmax() );
+    CGAL_triangulation_assertion( !(rv.y() < dom.ymin()) && rv.y() < dom.ymax() );
+    CGAL_triangulation_assertion( !(rv.z() < dom.zmin()) && rv.z() < dom.zmax() );
+    return ppv;
+  }
+
+bool is_canonical(const Facet &f) const {
+  if (number_of_sheets() == make_array(1,1,1)) return true;
+  Offset cell_off0 = Offset(f.first->offset((f.second+1)&3));
+  Offset cell_off1 = Offset(f.first->offset((f.second+2)&3));
+  Offset cell_off2 = Offset(f.first->offset((f.second+3)&3));
+  Offset diff_off((cell_off0.x() == 1 
+	  && cell_off1.x() == 1 
+	  && cell_off2.x() == 1)?-1:0,
+      (cell_off0.y() == 1 
+	  && cell_off1.y() == 1
+	  && cell_off2.y() == 1)?-1:0,
+      (cell_off0.z() == 1 
+	  && cell_off1.z() == 1
+	  && cell_off2.z() == 1)?-1:0);
+  Offset off0 = combine_offsets(get_offset(f.first, (f.second+1)&3),
+      diff_off);
+  Offset off1 = combine_offsets(get_offset(f.first, (f.second+2)&3),
+      diff_off);
+  Offset off2 = combine_offsets(get_offset(f.first, (f.second+3)&3),
+      diff_off);
+  
+  // If there is one offset with entries larger than 1 then we are
+  // talking about a vertex that is too far away from the original
+  // domain to belong to a canonical triangle.
+  if (off0.x() > 1) return false;
+  if (off0.y() > 1) return false;
+  if (off0.z() > 1) return false;
+  if (off1.x() > 1) return false;
+  if (off1.y() > 1) return false;
+  if (off1.z() > 1) return false;
+  if (off2.x() > 1) return false;
+  if (off2.y() > 1) return false;
+  if (off2.z() > 1) return false;
+  
+  // If there is one direction of space for which all offsets are
+  // non-zero then the edge is not canonical because we can
+  // take the copy closer towards the origin in that direction.
+  int offx = off0.x() & off1.x() & off2.x();
+  int offy = off0.y() & off1.y() & off2.y();
+  int offz = off0.z() & off1.z() & off2.z();
+  
+  return (offx == 0 && offy == 0 && offz == 0);
+}
+  
+  bool canonical_dual_segment(Cell_handle c, int i, Periodic_segment& ps) const {
+    CGAL_triangulation_precondition(c != Cell_handle());
+    Offset off = get_neighbor_offset(c,i,c->neighbor(i));
+    Periodic_point p1 = periodic_circumcenter(c);
+    Periodic_point p2 = periodic_circumcenter(c->neighbor(i));
+    Offset o1 = -p1.second;
+    Offset o2 = combine_offsets(-p2.second,-off);
+    Offset cumm_off(std::min(o1.x(),o2.x()),
+	std::min(o1.y(),o2.y()),std::min(o1.z(),o2.z()));
+    ps = make_array(
+	std::make_pair(point(p1), o1 - cumm_off),
+	std::make_pair(point(p2), o2 - cumm_off));
+    return (cumm_off == Offset(0,0,0));
+  }
+
+public:
+  /** @name Voronoi diagram */ //@{
+  Point dual(Cell_handle c) const {
+    return point(periodic_circumcenter(c));
   }
   Periodic_segment dual(const Facet & f) const {
     return dual( f.first, f.second );
   }
   Periodic_segment dual(Cell_handle c, int i) const{
-    CGAL_triangulation_precondition(c != Cell_handle());
-    Offset o = get_neighbor_offset(c,i,c->neighbor(i));
-    return make_array(std::make_pair(dual(c),Offset()),
-		      std::make_pair(dual(c->neighbor(i)),o));
+    Periodic_segment ps;
+    canonical_dual_segment(c,i,ps);
+    return ps;
   }
+
   template <class Stream>
   Stream& draw_dual(Stream& os) {
     CGAL_triangulation_assertion_code( unsigned int i = 0; )
     for (Facet_iterator fit = facets_begin(), end = facets_end();
 	 fit != end; ++fit) {
       if (!is_canonical(*fit)) continue;
+      Periodic_segment pso = dual(*fit);
+      Segment so = segment(pso);
       CGAL_triangulation_assertion_code ( ++i; )
-      Segment pso = segment(dual(*fit));
-      os << pso;
+	os << so.source()<<' '<<so.target()<<' ';
     }
     CGAL_triangulation_assertion( i == number_of_facets() );
     return os;
@@ -430,8 +476,7 @@ private:
   class Conflict_tester;
   class Point_hider;
 
-#if 0
-  //ndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   template <class Triangulation_R3> struct Vertex_remover;
 #else
   template <class TriangulationR3>
@@ -948,8 +993,7 @@ public:
 
 };
 
-#if 0
-//ndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG 
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG 
 template <class GT, class Tds>
 template <class TriangulationR3>
 struct Periodic_3_Delaunay_triangulation_3<GT,Tds>::Vertex_remover

@@ -20,7 +20,7 @@
 
 #include <cassert>
 #include <iostream>
-#include <fstream>
+#include <sstream>
 #include <list>
 #include <vector>
 
@@ -155,21 +155,21 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   assert(PT3_deg.number_of_vertices() == 27);
   assert(PT3_deg.is_valid());
 
-  std::cout << "    Covering 3 -> 1" << std::endl;
+   std::cout << "    Covering 3 -> 1" << std::endl;
 
-  // non-degenerate
-  std::ifstream fin;
-  if (hom) fin.open("data/P3DT3_covering_test_HOM.tri");
-  else     fin.open("data/P3DT3_covering_test.tri");
-  P3T3 PT1(PT);
-  fin >> PT1;
-  assert(PT1.number_of_sheets() == CGAL::make_array(3,3,3));
-  assert(PT1.number_of_vertices() == 70);
-  assert(PT1.is_valid());
-  Vertex_handle vh_rem13 = PT1.insert(Point(0.711476,-0.0713565,-0.52312));
-  assert(PT1.number_of_sheets() == CGAL::make_array(1,1,1));
-  assert(PT1.number_of_vertices() == 71);
-  assert(PT1.is_valid());
+   // non-degenerate
+   std::ifstream fin;
+   if (hom) fin.open("data/P3DT3_covering_test_HOM.tri");
+   else     fin.open("data/P3DT3_covering_test.tri");
+   P3T3 PT1(PT);
+   fin >> PT1;
+   assert(PT1.number_of_sheets() == CGAL::make_array(3,3,3));
+   assert(PT1.number_of_vertices() == 70);
+   assert(PT1.is_valid());
+   Vertex_handle vh_rem13 = PT1.insert(Point(0.711476,-0.0713565,-0.52312));
+   assert(PT1.number_of_sheets() == CGAL::make_array(1,1,1));
+   assert(PT1.number_of_vertices() == 71);
+   assert(PT1.is_valid());
 
   // degenerate
   P3T3 PT1_deg(PT3_deg);
@@ -356,8 +356,10 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
     PT.dual(cit);
   }
 
-  std::ofstream os;
-  PT.draw_dual(os);
+  std::stringstream vor3;
+  PT.draw_dual(vor3);
+  std::stringstream vor1;
+  PT1.draw_dual(vor1);
 
   std::cout << "Additional testing of degenerate cases" << std::endl;
   

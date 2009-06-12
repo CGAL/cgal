@@ -3169,9 +3169,10 @@ inline typename Periodic_3_triangulation_3<GT,TDS>::Offset
 Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
     const Point & q, const Offset &o, Cell_handle c) const {
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
-  
-  CGAL_triangulation_precondition_code(Locate_type lt; int i; int j;);
-  CGAL_triangulation_assertion(side_of_cell(q,o,c,lt,i,j) != ON_UNBOUNDED_SIDE);
+
+  //  CGAL_triangulation_precondition_code(Locate_type lt; int i; int j;);
+  //  CGAL_triangulation_precondition(side_of_cell(q,o,c,lt,i,j)
+  //      != ON_UNBOUNDED_SIDE);
 
   int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
   if (cumm_off == 0) {
@@ -3202,7 +3203,7 @@ NEGATIVE) &&
             (orientation(*p[0],*p[1],*p[2],q ,
                 off[0], off[1], off[2], combine_offsets(o,Offset(i))) !=
 NEGATIVE) ) {
-          return i;
+          return int_to_off(i);
         }
       }
     }

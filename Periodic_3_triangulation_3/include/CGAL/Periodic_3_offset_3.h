@@ -35,6 +35,7 @@ class Periodic_3_offset_3 {
 public:
   Periodic_3_offset_3() : _offx(0), _offy(0), _offz(0) {}
   Periodic_3_offset_3(int x, int y, int z) : _offx(x), _offy(y), _offz(z) {}
+  //todo: remove the following constructor
   Periodic_3_offset_3(int off) : _offx((off>>2)&1), _offy((off>>1)&1), _offz(off&1) {}
 
   //TODO: why not bool?
