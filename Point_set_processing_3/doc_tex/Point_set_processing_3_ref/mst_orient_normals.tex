@@ -29,16 +29,16 @@
 % Reduce left margin
 \ccThree{123456789012345}{6789012}{}
 
-\ccFunction{template<typename ForwardIterator, typename PointPMap, typename NormalPMap, typename IndexPMap, typename Kernel> ForwardIterator mst_orient_normals(ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap, IndexPMap index_pmap, unsigned int k, const Kernel& kernel);}
+\ccFunction{template<typename ForwardIterator, typename PointPMap, typename NormalPMap, typename Kernel> ForwardIterator mst_orient_normals(ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap, unsigned int k, const Kernel& kernel);}
 {
 Orients the normals of the [first, beyond) range of points using the propagation of a seed orientation through a minimum spanning tree of the Riemannian graph \cite{cgal:hddms-srup-92}. This method modifies the order of input points so as to pack all sucessfully oriented points first, and returns an iterator over the first point with an unoriented normal (see erase-remove idiom). For this reason it should not be called on sorted containers.
 \ccCommentHeading{Preconditions}  \\
 Normals must be unit vectors. k $>$= 2.
 \ccCommentHeading{Template Parameters}  \\
-\ccc{ForwardIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{NormalPMap}: is a model of \ccc{boost::ReadWritePropertyMap} with a \ccc{value_type} = \ccc{Vector_3<Kernel>}. \ccc{IndexPMap}: must be a model of \ccc{boost::ReadablePropertyMap} with an integral \ccc{value_type}. It can be omitted and will default to a \ccc{std::map<ForwardIterator, int>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
+\ccc{ForwardIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{NormalPMap}: is a model of \ccc{boost::ReadWritePropertyMap} with a \ccc{value_type} = \ccc{Vector_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
 \ccCommentHeading{Returns} iterator over the first point with an unoriented normal.
 \ccCommentHeading{Parameters}  \\
-\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Point_3}. \ccc{normal_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Vector_3}. \ccc{index_pmap}: property map \ccc{ForwardIterator} -$>$ index. \ccc{k}: number of neighbors. \ccc{kernel}: geometric traits.
+\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Point_3}. \ccc{normal_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Vector_3}. \ccc{k}: number of neighbors. \ccc{kernel}: geometric traits.
 }
 \ccGlue
 
