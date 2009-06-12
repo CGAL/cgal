@@ -21,11 +21,12 @@
   DO_RUN=y
   case "$CMAKE_GENERATOR" in
     Visual* ) # if VisualC++
-        solution=`ls *.sln`
-        MAKE_CMD="devenv ${solution} /Build Release /Project"
+        MAKE_CMD="devenv.com *.sln /Build Release /Project"
+        MAKE_CLEAN_CMD="devenv.com *.sln /Clean Release"
         ;;
     * ) # if make
         MAKE_CMD="make -fMakefile"
+        MAKE_CLEAN_CMD="make -fMakefile clean"
         ;;
   esac
   NEED_CLEAN=
@@ -147,7 +148,7 @@ fi
 #
 if [ -n "${NEED_CLEAN}" ]; then
   if ! ( uname | grep -q "CYGWIN" ) ; then
-    ${MAKE_CMD} -fMakefile clean
+    ${MAKE_CLEAN_CMD}
   fi
 fi
 
