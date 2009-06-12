@@ -36,8 +36,8 @@ int main(void)
 
     // Orients normals.
     // Note: mst_orient_normals() requires an iterator over points
-    //       + property maps to access each point's index, position and normal.
-    //       The index and point property maps have default values and are omitted here.
+    //       + property maps to access each point's position and normal.
+    //       The position property map can be omitted here as we use an iterator over Point_3 elements.
     std::list<Point_with_normal>::iterator unoriented_points_begin =
       CGAL::mst_orient_normals(points.begin(), points.end(),
                                CGAL::make_normal_vector_property_map(points.begin()),

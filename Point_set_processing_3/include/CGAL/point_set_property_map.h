@@ -16,8 +16,8 @@
 //
 // Author(s)     : Andreas Fabri and laurent Saboret
 
-#ifndef CGAL_PROPERTY_MAP_H
-#define CGAL_PROPERTY_MAP_H
+#ifndef CGAL_POINT_SET_PROPERTY_MAP_H
+#define CGAL_POINT_SET_PROPERTY_MAP_H
 
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/value_type_traits.h>
@@ -174,69 +174,6 @@ namespace CGAL {
   }
 
 
-  //=========================================================================
-  /// "vertex_index" property map of a random access container
-  /// (typically vector and deque).
-
-  template <class RandomAccessContainer>
-  class Index_property_map
-  {
-  public:
-      // Property maps required types
-      typedef boost::readable_property_map_tag                category;
-      typedef unsigned int                                    value_type;
-      typedef value_type                                      reference;
-      typedef typename RandomAccessContainer::const_iterator  key_type;
-
-      Index_property_map(const RandomAccessContainer& container)
-      : m_container(container)
-      {}
-
-      /// Free function to access the map elements.
-      friend inline
-      reference get(const Index_property_map& map, key_type p)
-      {
-        // Safety: the next line is dentical to std::distance(map.m_container.begin(), p)
-        // but will fail to compile for non random access containers.
-        return p - map.m_container.begin();
-      }
-
-  private:
-    const RandomAccessContainer& m_container;
-  };
-
-  /// Free function to get the "vertex_index" property map
-  /// of a random access container (typically vector and deque).
-  template <class RandomAccessContainer>
-  Index_property_map<RandomAccessContainer>
-  make_index_property_map(const RandomAccessContainer& container)
-  {
-    return Index_property_map<RandomAccessContainer>(container);
-  }
-
-  ///// Free function to get the "vertex_index" property map
-  ///// of a std::vector object.
-  //template <class T>
-  //inline
-  //Index_property_map< std::vector<T> >
-  //get(boost::vertex_index_t, const std::vector<T>& container)
-  //{
-  //  Index_property_map< std::vector<T> > aMap(container);
-  //  return aMap;
-  //}
-
-  ///// Free function to get the "vertex_index" property map
-  ///// of a std::deque object.
-  //template <class T>
-  //inline
-  //Index_property_map< std::deque<T> >
-  //get(boost::vertex_index_t, const std::deque<T>& container)
-  //{
-  //  Index_property_map< std::deque<T> > aMap(container);
-  //  return aMap;
-  //}
-
-
 } // namespace CGAL
 
-#endif // CGAL_PROPERTY_MAP_H
+#endif // CGAL_POINT_SET_PROPERTY_MAP_H

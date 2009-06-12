@@ -129,13 +129,13 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
       CGAL::Timer task_timer; task_timer.start();
       std::cerr << "Orient normals with a Minimum Spanning Tree (k=" << dialog.orientationNbNeighbors() << ")...\n";
 
-      // mst_orient_normals() requires an iterator over points
-      // + property maps to access each point's index, position and normal.
+      // Orient normals.
+      // Note: mst_orient_normals() requires an iterator over points
+      //       + property maps to access each point's position and normal.
+      //       The position property map can be omitted here as we use an iterator over Point_3 elements.
       points->unoriented_points_begin() = 
         CGAL::mst_orient_normals(points->begin(), points->end(),
-                                CGAL::make_dereference_property_map(points->begin()),
                                 CGAL::make_normal_vector_property_map(points->begin()),
-                                CGAL::make_index_property_map(*points),
                                 dialog.orientationNbNeighbors());
 
       // Delete points with an unoriented normal (required by APSS and Poisson)

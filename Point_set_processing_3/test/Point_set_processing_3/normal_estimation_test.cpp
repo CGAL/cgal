@@ -245,13 +245,9 @@ bool run_mst_orient_normals(PointList& points, // input points + input/output no
   std::cerr << "Orients Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
-  // mst_orient_normals() requires an iterator over points
-  // + property maps to access each point's index, position and normal.
   PointList::iterator unoriented_points_begin = 
     CGAL::mst_orient_normals(points.begin(), points.end(),
-                             CGAL::make_dereference_property_map(points.begin()),
                              CGAL::make_normal_vector_property_map(points.begin()),
-                             CGAL::make_index_property_map(points),
                              nb_neighbors_mst);
 
   long memory = CGAL::Memory_sizer().virtual_size();

@@ -23,6 +23,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_vertex_handle_3.h>
 #include <CGAL/point_set_property_map.h>
+#include <CGAL/Index_property_map.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/point_set_processing_assertions.h>
 
@@ -54,17 +55,6 @@ distance(std::size_t _First, std::size_t _Last)
   // return int difference
   return _Last - _First;
 }
-
-
-/// Functor for operator< that compares iterators address.
-template <typename Iterator>
-struct Compare_iterator_address
-{
-  bool operator()(const Iterator& lhs, const Iterator& rhs) const
-  {
-    return (&*lhs < &*rhs);
-  }
-};
 
 
 /// Helper class: Riemannian graph.
@@ -510,8 +500,6 @@ create_mst_graph(
 /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
 /// @param NormalPMap is a model of boost::ReadWritePropertyMap with a value_type = Vector_3<Kernel>.
-/// @param IndexPMap must be a model of boost::ReadablePropertyMap with an integral value_type.
-///        It can be omitted and will default to a std::map<ForwardIterator,int>.
 /// @param Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
@@ -521,7 +509,6 @@ create_mst_graph(
 template <typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap,
-          typename IndexPMap,
           typename Kernel
 >
 ForwardIterator
@@ -530,7 +517,6 @@ mst_orient_normals(
     ForwardIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
-    IndexPMap index_pmap, ///< property map ForwardIterator -> index
     unsigned int k, ///< number of neighbors
     const Kernel& kernel) ///< geometric traits.
 {
@@ -542,6 +528,9 @@ mst_orient_normals(
     // Input points types
     typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point; // actual type of input points
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
+    
+    // Property map ForwardIterator -> index
+    typedef Index_property_map<ForwardIterator> IndexPMap;
 
     // Riemannian_graph types
     typedef Riemannian_graph<ForwardIterator> Riemannian_graph;
@@ -554,6 +543,16 @@ mst_orient_normals(
 
     // Precondition: at least 2 nearest neighbors
     CGAL_point_set_processing_precondition(k >= 2);
+    
+    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    CGAL_TRACE("  Create Index_property_map\n");
+
+    // Create a property map Iterator -> index.
+    // - if ForwardIterator is a random access iterator (typically vector and deque), 
+    // get() just calls std::distance() and is very efficient;
+    // - else, the property map allocates a std::map to store indices
+    // and get() requires a lookup in the map.
+    IndexPMap index_pmap(first, beyond);
 
     // Orients the normal of the point with maximum Z towards +Z axis.
     ForwardIterator source_point
@@ -580,7 +579,7 @@ mst_orient_normals(
                                            riemannian_graph,
                                            source_point);
 
-    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Calls boost::breadth_first_search()\n");
 
     // Traverse the point set along the MST to propagate source_point's orientation
@@ -620,8 +619,7 @@ mst_orient_normals(
 // This variant deduces the kernel from the point property map.
 template <typename ForwardIterator,
           typename PointPMap,
-          typename NormalPMap,
-          typename IndexPMap
+          typename NormalPMap
 >
 ForwardIterator
 mst_orient_normals(
@@ -629,7 +627,6 @@ mst_orient_normals(
     ForwardIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
-    IndexPMap index_pmap, ///< property map ForwardIterator -> index
     unsigned int k) ///< number of neighbors
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -638,46 +635,8 @@ mst_orient_normals(
       first,beyond,
       point_pmap,
       normal_pmap,
-      index_pmap,
       k,
       Kernel());
-}
-/// @endcond
-
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default index property map = std::map<ForwardIterator,int>.
-template <typename ForwardIterator,
-          typename PointPMap,
-          typename NormalPMap
->
-ForwardIterator
-mst_orient_normals(
-    ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
-    NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3
-    unsigned int k) ///< number of neighbors
-{
-    CGAL_TRACE("Index input points in temporary std::map\n");
-
-    // Index input points in temporary std::map
-    typedef CGALi::Compare_iterator_address<ForwardIterator> Less;
-    std::map<ForwardIterator,int,Less> index_map;
-    ForwardIterator it;
-    int index;
-    for (it = first, index = 0; it != beyond; it++, index++)
-      index_map[it] = index;
-
-    // Wrap std::map in property map
-    boost::associative_property_map< std::map<ForwardIterator,int,Less> >
-      index_pmap(index_map);
-
-    return mst_orient_normals(
-      first,beyond,
-      point_pmap,
-      normal_pmap,
-      index_pmap,
-      k);
 }
 /// @endcond
 

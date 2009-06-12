@@ -827,13 +827,13 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
   status_message("Orients Normals with a Minimum Spanning Tree (k=%d)...", m_nb_neighbors_mst);
   CGAL::Timer task_timer; task_timer.start();
 
-  // mst_orient_normals() requires an iterator over points
-  // + property maps to access each point's index, position and normal.
+  // Orient normals.
+  // Note: mst_orient_normals() requires an iterator over points
+  //       + property maps to access each point's position and normal.
+  //       The position property map can be omitted here as we use an iterator over Point_3 elements.
   m_points.unoriented_points_begin() = 
     CGAL::mst_orient_normals(m_points.begin(), m_points.end(),
-                             CGAL::make_dereference_property_map(m_points.begin()),
                              CGAL::make_normal_vector_property_map(m_points.begin()),
-                             CGAL::make_index_property_map(m_points),
                              m_nb_neighbors_mst);
 
   // Check the accuracy of normal orientation.
