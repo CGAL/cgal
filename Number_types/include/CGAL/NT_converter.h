@@ -94,7 +94,7 @@ struct NT_converter < Interval_nt<b>, Interval_nt<b> >
   : public std::unary_function< Interval_nt<b>, Interval_nt<b> >
 {
     const Interval_nt<b> &
-    operator()(const NT1 &a) const
+    operator()(const Interval_nt<b> &a) const
     {
         return a;
     }
