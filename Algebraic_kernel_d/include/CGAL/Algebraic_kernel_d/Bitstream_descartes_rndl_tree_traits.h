@@ -30,26 +30,28 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 // bugfix for CORE by Michael Kerber 
-inline void shift_integer_by(CORE::BigInt& x, long shift){
+inline CORE::BigInt shift_integer_by(CORE::BigInt x, long shift){
   if( shift > 0 ){
     while(shift>63) {
-      x >>= 63;
+      x = (x >> 63);
       shift-=63;
     }  
-    x >>= shift;
+    x = (x >> shift);
   }else{
     // add 0 bits 
-    x <<= -shift;   
+    x = (x << -shift);   
   }   
+  return x; 
 }
 
 template <class Shiftable>
-void shift_integer_by(Shiftable& x, long shift){
+Shiftable shift_integer_by(Shiftable x, long shift){
   if( shift > 0 ){
     x >>= shift;
   }else{
     x <<= -shift;  // adds 0 bits 
   }   
+  return x; 
 }
 
 // forward
@@ -175,7 +177,7 @@ public:
                 
             long shift = - (p + get_exp(lower)); 
             Integer bfi_m(get_m(lower)); 
-            shift_integer_by(bfi_m,shift);
+            bfi_m = shift_integer_by(bfi_m,shift);
            
 //             if( shift > 0 ){               
 //               while(shift>63) { // this is a bug fix HACK for CORE::BigInt
