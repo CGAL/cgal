@@ -45,6 +45,28 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class Traits, bool B> struct Validate_geometry_traits {};
+
+template <class Traits>
+struct Validate_geometry_traits<Traits, true> {
+  void missing__Arr_left_side_tag() {}
+  void missing__Arr_top_side_tag() {}
+  void missing__Arr_right_side_tag() {}
+  void missing__Arr_bottom_side_tag() {}
+};
+  
+template <class Traits>
+struct Validate_geometry_traits<Traits, false> {
+  void missing__Arr_left_side_tag()
+  { bool assuming__Arr_oblivious_side_tag__instead; }
+  void missing__Arr_top_side_tag()
+  { bool assuming__Arr_oblivious_side_tag__instead; }
+  void missing__Arr_right_side_tag()
+  { bool assuming__Arr_oblivious_side_tag__instead; }
+  void missing__Arr_bottom_side_tag()
+  { bool assuming__Arr_oblivious_side_tag__instead; }
+};
+
 //-----------------------------------------------------------------------------
 // Default constructor.
 //
@@ -52,6 +74,22 @@ template<class GeomTraits, class TopTraits>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::Arrangement_on_surface_2 () :
   top_traits()
 {
+  typedef has_Arr_left_side_tag<GeomTraits> Cond;
+  typedef Validate_geometry_traits<GeomTraits,Cond::value>
+    Validate_geometry_traits;
+  void (Validate_geometry_traits::*pleft)(void) =
+    &Validate_geometry_traits::missing__Arr_left_side_tag;
+  (void)pleft;
+  void (Validate_geometry_traits::*ptop)(void) =
+    &Validate_geometry_traits::missing__Arr_top_side_tag;
+  (void)ptop;
+  void (Validate_geometry_traits::*pright)(void) =
+    &Validate_geometry_traits::missing__Arr_right_side_tag;
+  (void)pright;
+  void (Validate_geometry_traits::*pbottom)(void) =
+    &Validate_geometry_traits::missing__Arr_bottom_side_tag;
+  (void)pbottom;
+  
   // Initialize the DCEL structure to represent an empty arrangement.
   top_traits.init_dcel ();
 
@@ -82,6 +120,22 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::
 Arrangement_on_surface_2(Geometry_traits_2 *tr) :
   top_traits (tr)
 {
+  typedef has_Arr_left_side_tag<GeomTraits> Cond;
+  typedef Validate_geometry_traits<GeomTraits,Cond::value>
+    Validate_geometry_traits;
+  void (Validate_geometry_traits::*pleft)(void) =
+    &Validate_geometry_traits::missing__Arr_left_side_tag;
+  (void)pleft;
+  void (Validate_geometry_traits::*ptop)(void) =
+    &Validate_geometry_traits::missing__Arr_top_side_tag;
+  (void)ptop;
+  void (Validate_geometry_traits::*pright)(void) =
+    &Validate_geometry_traits::missing__Arr_right_side_tag;
+  (void)pright;
+  void (Validate_geometry_traits::*pbottom)(void) =
+    &Validate_geometry_traits::missing__Arr_bottom_side_tag;
+  (void)pbottom;
+  
   // Initialize the DCEL structure to represent an empty arrangement.
   top_traits.init_dcel ();
 
