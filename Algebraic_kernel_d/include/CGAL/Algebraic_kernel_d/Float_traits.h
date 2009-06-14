@@ -24,6 +24,8 @@
 #include <CGAL/leda_bigfloat.h>
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/Gmpfr.h>
+#include <CGAL/ipower.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
