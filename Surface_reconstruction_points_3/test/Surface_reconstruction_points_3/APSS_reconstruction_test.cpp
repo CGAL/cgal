@@ -232,7 +232,7 @@ int main(int argc, char * argv[])
 
     // Gets implicit function's radius
     Sphere bsphere = implicit_function.bounding_sphere();
-    FT size = sqrt(bounding_sphere.squared_radius());
+    FT size = sqrt(bsphere.squared_radius());
 
     // defining the implicit surface = implicit function + bounding sphere centered at inner_point
     Point sm_sphere_center = inner_point;
