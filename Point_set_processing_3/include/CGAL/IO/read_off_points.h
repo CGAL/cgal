@@ -118,7 +118,6 @@ read_off_points_and_normals(
       {
         Point point(x,y,z);
         Vector normal(nx,ny,nz);
-        //*output++ = Enriched_point(point,normal);
         Enriched_point pwn;
         put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
         put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
@@ -129,9 +128,10 @@ read_off_points_and_normals(
       else if (std::istringstream(line) >> x >> y >> z)
       {
         Point point(x,y,z);
-        //*output++ = point;
+        Vector normal = CGAL::NULL_VECTOR;
         Enriched_point pwn;
         put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
+        put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
         *output++ = pwn;
         pointsRead++;
       }
