@@ -12,6 +12,8 @@ endif(COMMAND cmake_policy)
 
 # Require packages new or improved since CGAL 3.4
 include_directories (BEFORE ../../../Surface_mesher/include/)
+include_directories (BEFORE ../../../Polyhedron/include/)
+include_directories (BEFORE ../../../HalfedgeDS/include/)
 include_directories (BEFORE ../../../Point_set_processing_3/include/)
 
 # Include this package's headers first

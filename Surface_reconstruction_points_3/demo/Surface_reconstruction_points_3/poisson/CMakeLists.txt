@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the Surface_reconstruction_points_3 MFC demo.
 
-project( Poisson ) 
+project( Poisson )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -13,6 +13,8 @@ endif(COMMAND cmake_policy)
 # Require packages new or improved since CGAL 3.4
 include_directories (BEFORE ../../../../AABB_tree/include)
 include_directories (BEFORE ../../../../Surface_mesher/include)
+include_directories (BEFORE ../../../../Polyhedron/include/)
+include_directories (BEFORE ../../../../HalfedgeDS/include/)
 include_directories (BEFORE ../../../../Point_set_processing_3/include)
 
 # Include this package's headers first
@@ -25,11 +27,11 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 endif()
 
-# This demo requires MFC 
+# This demo requires MFC
 if (MSVC)
   message( STATUS "MFC library found" )
   ADD_DEFINITIONS( "-D_AFXDLL" )
-  SET(CMAKE_MFC_FLAG 2) 
+  SET(CMAKE_MFC_FLAG 2)
 endif()
 
 # This demo requires OpenGL
@@ -45,7 +47,7 @@ if(OPENGL_FOUND)
   link_libraries( ${OPENGL_LIBRARIES} )
 endif()
 
-# This demo requires TAUCS 
+# This demo requires TAUCS
 find_package(TAUCS)
 if(TAUCS_FOUND)
   include( ${TAUCS_USE_FILE} )
@@ -83,9 +85,9 @@ if(CGAL_FOUND AND MSVC AND OPENGL_FOUND AND TAUCS_FOUND)
 
   # Creates Poisson executable
   ADD_EXECUTABLE(Poisson WIN32 ChildFrm.cpp DialogOptions.cpp director.cpp MainFrm.cpp Poisson.cpp PoissonDoc.cpp PoissonView.cpp Poisson.rc)
-  
+
   # Link the executable to CGAL and third-party libraries
-  if ( CGAL_AUTO_LINK_ENABLED )    
+  if ( CGAL_AUTO_LINK_ENABLED )
     target_link_libraries(Poisson ${CGAL_3RD_PARTY_LIBRARIES} )
   else()
     target_link_libraries(Poisson ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )

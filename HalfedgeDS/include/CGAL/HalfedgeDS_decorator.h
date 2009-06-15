@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -26,8 +26,12 @@
 
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <CGAL/HalfedgeDS_const_decorator.h>
-#include <vector>
+#include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/IO/Verbose_ostream.h>
+
+#include <vector>
+#include <map>
+#include <list>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -761,6 +765,53 @@ public:
         }
     }
 
+    /// Erases the small connected components and the isolated vertices.
+    ///
+    /// @commentheading Preconditions:
+    /// supports vertices, halfedges, and removal operation.
+    ///
+    /// @commentheading Template Parameters:
+    /// @param nb_components_to_keep the number of large connected components to keep.
+    ///
+    /// @return the number of connected components erased (ignoring isolated vertices).
+    unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep)
+    {
+        Assert_compile_time_tag(Supports_removal(), Tag_true());
+        Assert_compile_time_tag(Supports_vertex_halfedge(), Tag_true());
+
+        unsigned int nb_erased_components = 0,
+                     nb_isolated_vertices = 0;
+
+        // Gets list of connected components, ordered by size (i.e. number of vertices)
+        std::vector<Vertex_handle> components;
+        get_connected_components(std::back_inserter(components));
+
+        // Erases all connected components but the largest
+        while (components.size() > nb_components_to_keep)
+        {
+          Vertex_handle vertex = *(components.begin());
+
+          // Removes component from list
+          components.erase(components.begin());
+
+          if (vertex->halfedge() != NULL) // if not isolated vertex
+          {
+            erase_connected_component(vertex->halfedge());
+            nb_erased_components++;
+          }
+          else // if isolated vertex
+          {
+            vertices_erase(vertex);
+            nb_isolated_vertices++;
+          }
+        }
+
+//         if (nb_isolated_vertices > 0)
+//           std::cerr << "  Erased " << nb_isolated_vertices << " isolated vertices\n";
+
+        return nb_erased_components;
+    }
+
 // Implementing These Functions.
 // ====================================================
 // Creation of New Elements
@@ -827,6 +878,123 @@ private:
     void faces_pop_back( Tag_false) {}
     void faces_pop_back( Tag_true) {
         hds->faces_pop_back();
+    }
+
+    /// Helper type for keep_largest_connected_components():
+    ///
+    /// Possible values of a vertex tag.
+    enum { tag_free, tag_done };
+
+    /// Helper method for keep_largest_connected_components():
+    ///
+    /// Gets any vertex with tag == tag_free.
+    ///
+    /// @return a list of pairs (component's size (number of vertices), a vertex of the component),
+    /// ordered by size.
+    Vertex_handle get_any_free_vertex(
+      /*const*/ std::map<Vertex*, int>& tags) ///< container holding the tag of all vertices
+    {
+        for (Vertex_iterator it = hds->vertices_begin(); it != hds->vertices_end(); it++)
+        {
+            if (tags[&*it] == tag_free)
+                return it;
+        }
+
+        return NULL;
+    }
+
+    /// Helper method for keep_largest_connected_components():
+    ///
+    /// Tag a "free" connected component as "done".
+    ///
+    /// @return the size (number of vertices) of the component.
+    unsigned int tag_component(
+      Vertex_handle pSeedVertex, ///< one vertex of the connected component
+      std::map<Vertex*, int>& tags) ///< container holding the tag of all vertices
+    {
+        // Circulator category.
+        typedef typename Halfedge::Supports_halfedge_prev  Supports_prev;
+        typedef HalfedgeDS_circulator_traits<Supports_prev> Ctr;
+        typedef typename Ctr::iterator_category circulator_category;
+
+        // Circulator around a vertex
+        typedef I_HalfedgeDS_vertex_circ< Halfedge_handle, circulator_category>
+                                            Halfedge_around_vertex_circulator;
+
+        unsigned int number_of_vertices = 0; // size (number of vertices) of the component
+
+        std::list<Vertex_handle> vertices;
+        vertices.push_front(pSeedVertex);
+        while (!vertices.empty())
+        {
+            Vertex_handle pVertex = vertices.front();
+            vertices.pop_front();
+
+            // Skip vertex if already done
+            if (tags[&*pVertex] == tag_done)
+                continue;
+
+            // Mark vertex done
+            tags[&*pVertex] = tag_done;
+            number_of_vertices++;
+
+            // Add vertex's "free" neighbors to the list
+            Halfedge_around_vertex_circulator neighbor_cir, neighbor_end;
+            neighbor_cir = pVertex->vertex_begin();
+            neighbor_end = neighbor_cir;
+            CGAL_For_all(neighbor_cir,neighbor_end)
+            {
+                Vertex_handle neighbor = neighbor_cir->opposite()->vertex();
+                if (tags[&*neighbor] == tag_free)
+                    vertices.push_front(neighbor);
+            }
+        }
+
+        return number_of_vertices;
+    }
+
+    /// Helper method for keep_largest_connected_components():
+    ///
+    /// Computes the list of all connected components of the polyhedron.
+    /// Returns it as a list of components ordered by size.
+    ///
+    /// @commentheading Template Parameters:
+    /// @param OutputIterator value_type must be Vertex_handle.
+    template<typename OutputIterator>
+    void get_connected_components(
+        OutputIterator output) ///< output iterator over vertex handles
+    {
+        // Implementation note:
+        // We tag vertices instead of halfedges to save a factor 6.
+        // The drawback is that we require the Polyhedron_3<Traits> to support vertices.
+        // TODO: replace std::map by a property map to tag vertices.
+        Assert_compile_time_tag(Supports_halfedge_vertex(), Tag_true());
+        std::map<Vertex*, int> tags;
+
+        // list of all connected components of a polyhedron, ordered by size.
+        std::multimap<unsigned int, Vertex_handle> components;
+
+        // Tag all mesh vertices as "free".
+        for (Vertex_iterator it = hds->vertices_begin(); it != hds->vertices_end(); it++)
+        {
+            tags[&*it] = tag_free;
+        }
+
+        // Record each component
+        Vertex_handle seed_vertex = NULL;
+        while((seed_vertex = get_any_free_vertex(tags)) != NULL)
+        {
+            // Tag it as "done" and compute its size (number of vertices)
+            unsigned int number_of_vertices = tag_component(seed_vertex, tags);
+
+            // Add component to ordered list
+            components.insert(std::make_pair(number_of_vertices, seed_vertex));
+        }
+
+        // Copy ordered list to output iterator
+        typename std::multimap<unsigned int, Vertex_handle>::iterator src;
+        for (src = components.begin(); src != components.end(); ++src)
+          *output++ = src->second;
     }
 
 // Others

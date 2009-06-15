@@ -23,7 +23,6 @@
 #include <CGAL/point_set_property_map.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
-#include <CGAL/keep_largest_connected_components.h>
 
 #include "compute_normal.h"
 
@@ -285,12 +284,12 @@ int main(int argc, char * argv[])
     std::cerr << "Erases small connected components...\n";
 
     unsigned int nb_erased_components =
-      CGAL::keep_largest_connected_components(output_mesh, 1/* keep largest component only*/);
+      output_mesh.keep_largest_connected_components( 1 /* keep largest component only*/ );
 
     // Prints status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Erases small connected components: " << task_timer.time() << " seconds, "
-                                                      << nb_erased_components << " components erased, "
+                                                      << nb_erased_components << " component(s) erased, "
                                                       << (memory>>20) << " Mb allocated"
                                                       << std::endl;
     task_timer.reset();

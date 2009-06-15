@@ -59,7 +59,7 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// APSS reconstruction may create small "ghost" connected components
 /// close to the reconstructed surface that you should delete with e.g.
-/// keep_largest_connected_components().
+/// Polyhedron_3::keep_largest_connected_components().
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the ImplicitFunction concept.

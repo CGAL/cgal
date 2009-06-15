@@ -3,7 +3,7 @@
 % +------------------------------------------------------------------------+
 % | 22.03.1999   Lutz Kettner
 % | Package: HalfedgeDS
-% | 
+% |
 \RCSdef{\RCSHalfedgeDSdecoratorRev}{$Id$}
 \RCSdefDate{\RCSHalfedgeDSdecoratorDate}{$Date$}
 % +------------------------------------------------------------------------+
@@ -17,7 +17,7 @@
 \begin{ccRefClass}{HalfedgeDS_decorator<HDS>}
 
 \ccDefinition
-  
+
 The classes \ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
 \ccc{CGAL::HalfedgeDS_decorator<HDS>}, and
 \ccc{CGAL::HalfedgeDS_const_decorator<HDS>} provide additional functions
@@ -90,7 +90,7 @@ incidence relations except if mentioned otherwise.
 
 \ccMethod{void vertices_pop_front();}{
     removes the first vertex if vertices are supported.
-    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
     \ccc{CGAL::Tag_true}.}
 \ccGlue
 \ccMethod{void vertices_pop_back();}{
@@ -98,17 +98,17 @@ incidence relations except if mentioned otherwise.
 \ccGlue
 \ccMethod{void vertices_erase( Vertex_handle v);}{
     removes the vertex $v$ if vertices are supported.
-    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
     \ccc{CGAL::Tag_true}.}
 \ccGlue
 \ccMethod{void vertices_erase( Vertex_handle first, Vertex_handle last);}{
-    removes the range $[\ccc{first},\ccc{last})$ if vertices 
-    are supported. \ccCommentHeading{Requirement} \ccc{Supports_removal} 
+    removes the range $[\ccc{first},\ccc{last})$ if vertices
+    are supported. \ccCommentHeading{Requirement} \ccc{Supports_removal}
     $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void faces_pop_front();}{
     removes the first face if faces are supported.
-    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
     \ccc{CGAL::Tag_true}.}
 \ccGlue
 \ccMethod{void faces_pop_back();}{
@@ -120,7 +120,7 @@ incidence relations except if mentioned otherwise.
     \ccc{CGAL::Tag_true}.}
 \ccGlue
 \ccMethod{void faces_erase( Face_handle first, Face_handle last);}{
-    removes the range $[\ccc{first},\ccc{last})$ if faces are 
+    removes the range $[\ccc{first},\ccc{last})$ if faces are
     supported. \ccCommentHeading{Requirement} \ccc{Supports_removal}
     $\equiv$ \ccc{CGAL::Tag_true}.}
 
@@ -129,17 +129,23 @@ incidence relations except if mentioned otherwise.
    incident to the face into border edges or removes them from the
    halfedge data structure if they were already border edges. If this
    creates isolated vertices they get removed as well. See
-   \ccc{make_hole(h)} for a more specialized variant.  
-   \ccPrecond \ccc{h->is_border() == false}. 
+   \ccc{make_hole(h)} for a more specialized variant.
+   \ccPrecond \ccc{h->is_border() == false}.
    \ccCommentHeading{Requirement} If faces are supported,
    \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void erase_connected_component( Halfedge_handle h);}
-    {removes the  vertices, halfedges, and faces that belong to the 
-     connected component of $h$. \ccPrecond For all halfedges $g$ in the 
+    {removes the  vertices, halfedges, and faces that belong to the
+     connected component of $h$. \ccPrecond For all halfedges $g$ in the
      connected component \ccc{g.next() != Halfedge_handle()}.
      \ccCommentHeading{Requirement}  \ccc{Supports_removal} $\equiv$
      \ccc{CGAL::Tag_true}.}
+
+\ccMethod{unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep);}
+    {Erases the small connected components and the isolated vertices.
+     Keep \ccc{nb_components_to_keep} largest connected components.
+     Returns the number of connected components erased (ignoring isolated vertices).
+     \ccCommentHeading{Requirement} supports vertices, halfedges, and removal operation.}
 
 % -----------------------------------------
 \ccHeading{Modifying Functions (For Border Halfedges)}
@@ -148,8 +154,8 @@ incidence relations except if mentioned otherwise.
 
 \ccMethod{Halfedge_handle make_hole( Halfedge_handle h);}
    {removes the face incident to \ccc{h} from \ccc{hds} and creates a hole.
-    \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{!(h->is_border())}. 
-    \ccCommentHeading{Requirement} If faces are supported,  
+    \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{!(h->is_border())}.
+    \ccCommentHeading{Requirement} If faces are supported,
     \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{Halfedge_handle fill_hole( Halfedge_handle h);}
@@ -162,27 +168,27 @@ incidence relations except if mentioned otherwise.
     Returns \ccc{h}.
     \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{h->is_border()}.}
 
-\ccMethod{Halfedge_handle add_face_to_border( Halfedge_handle h, 
+\ccMethod{Halfedge_handle add_face_to_border( Halfedge_handle h,
                                               Halfedge_handle g);}
-   {extends the surface with a new face from \ccc{hds} into the hole 
+   {extends the surface with a new face from \ccc{hds} into the hole
     incident to $h$ and $g$. It creates a new edge connecting the vertex
-    denoted by $g$ with the vertex denoted by $h$ and fills this separated 
-    part of the hole with a new face, such that the new face is incident 
+    denoted by $g$ with the vertex denoted by $h$ and fills this separated
+    part of the hole with a new face, such that the new face is incident
     to $g$. Returns the new halfedge that is incident to the new face.
     \ccPrecond \ccc{h != Halfedge_handle()}, \ccc{g != Halfedge_handle()},
-    \ccc{h->is_border()}, \ccc{g->is_border()} and $g$ can be reached 
+    \ccc{h->is_border()}, \ccc{g->is_border()} and $g$ can be reached
     along the hole starting with $h$.}
 
-\ccMethod{Halfedge_handle add_face_to_border( Halfedge_handle h, 
+\ccMethod{Halfedge_handle add_face_to_border( Halfedge_handle h,
                                               Halfedge_handle g,
                                               const Face& f);}
-   {extends the surface with a copy of face $f$ into the hole 
+   {extends the surface with a copy of face $f$ into the hole
     incident to $h$ and $g$. It creates a new edge connecting the tip of
     $g$ with the tip of $h$ and fills this separated part of the hole with a
-    copy of face $f$, such that the new face is incident to $g$. Returns 
+    copy of face $f$, such that the new face is incident to $g$. Returns
     the new halfedge that is incident to the new face.
     \ccPrecond \ccc{h != Halfedge_handle()}, \ccc{g != Halfedge_handle()},
-    \ccc{h->is_border()}, \ccc{g->is_border()} and $g$ can be reached 
+    \ccc{h->is_border()}, \ccc{g->is_border()} and $g$ can be reached
     along the hole starting with $h$.}
 
 % -----------------------------------------
@@ -192,14 +198,14 @@ incidence relations except if mentioned otherwise.
 
 The following Euler operations modify consistently the combinatorial
 structure of the halfedge data structure. The geometry remains unchanged.
-Note that well known graph operations are also captured with these 
+Note that well known graph operations are also captured with these
 Euler operators, for example an edge contraction is equal to a
 \ccc{join_vertex()} operation, or an edge removal to \ccc{join_face()}.
 
 Given a halfedge data structure \ccc{hds} and a halfedge handle $h$
 four special applications of the Euler operators are worth mentioning:
 \ccc{split_vertex(h,h)} results in an antenna emanating from the tip
-of \ccc{h}; \ccc{split_vertex(h,h->next()->opposite())} results in an edge 
+of \ccc{h}; \ccc{split_vertex(h,h->next()->opposite())} results in an edge
 split of the halfedge \ccc{h->next} with a new vertex in-between;
 \ccc{split_face(h,h)} results in a loop directly following \ccc{h};
 and \ccc{split_face(h,h->next())} results in a bridge parallel to
@@ -224,9 +230,9 @@ the halfedge \ccc{h->next} with a new face in-between.
      with a new diagonal between the two vertices denoted by \ccc{h} and
      \ccc{g} respectively. The second (new) face obtained from
      \ccc{hds} is a copy of the first face. Returns \ccc{h->next()} after the
-     operation, i.e., the new diagonal. The new face is to the right of the 
-     new diagonal, the old face is to the left. The time is proportional 
-     to the distance from \ccc{h} to \ccc{g} around the face.} 
+     operation, i.e., the new diagonal. The new face is to the right of the
+     new diagonal, the old face is to the left. The time is proportional
+     to the distance from \ccc{h} to \ccc{g} around the face.}
 
 \ccMethod{Halfedge_handle join_face( Halfedge_handle h);}
     {joins the two faces incident to $h$. The face incident to
@@ -250,16 +256,16 @@ the halfedge \ccc{h->next} with a new face in-between.
      and connects them with a new edge. The second (new) vertex
      obtained from \ccc{hds} is a copy of the first vertex. Returns
      \ccc{h->next()->opposite()} after the operation, i.e., the new edge
-     in the orientation towards the new vertex. The time is proportional 
-     to the distance from \ccc{h} to \ccc{g} around the vertex.} 
+     in the orientation towards the new vertex. The time is proportional
+     to the distance from \ccc{h} to \ccc{g} around the vertex.}
 
 \ccMethod{Halfedge_handle join_vertex( Halfedge_handle h);}
     {joins the two vertices incident to $h$. The vertex denoted by
      \ccc{h->opposite()} gets removed by \ccc{hds}. Returns the predecessor of
-     $h$ around the vertex, i.e., \ccc{h->opposite()->prev()}. The invariant 
+     $h$ around the vertex, i.e., \ccc{h->opposite()->prev()}. The invariant
      \ccc{join_vertex( split_vertex( h, g))} returns $h$
-     and keeps the polyhedron unchanged. 
-     The time is proportional to the degree of the vertex removed and 
+     and keeps the polyhedron unchanged.
+     The time is proportional to the degree of the vertex removed and
      the time to compute \ccc{h->prev()} and \ccc{h->opposite()->prev()}.
      \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
      \ccc{CGAL::Tag_true}.}
@@ -281,30 +287,30 @@ the halfedge \ccc{h->next} with a new face in-between.
 
 \ccMethod{Halfedge_handle create_center_vertex( Halfedge_handle h);}
     {barycentric triangulation of \ccc{h->face()}. Creates a new vertex,
-     a copy of \ccc{h->vertex()}, and connects it to each vertex incident 
-     to \ccc{h->face()} splitting \ccc{h->face()} into triangles. 
-     \ccc{h} remains incident to the original face, all other triangles 
+     a copy of \ccc{h->vertex()}, and connects it to each vertex incident
+     to \ccc{h->face()} splitting \ccc{h->face()} into triangles.
+     \ccc{h} remains incident to the original face, all other triangles
      are copies of this face. Returns the halfedge \ccc{h->next()}
-     after the operation, i.e., a halfedge pointing to the new vertex. 
+     after the operation, i.e., a halfedge pointing to the new vertex.
      The time is proportional to the size of the face.
      \ccPrecond \ccc{h} is not a border halfedge.}
 
 \ccMethod{Halfedge_handle erase_center_vertex( Halfedge_handle g);}
     {reverses \ccc{create_center_vertex}. Erases the
      vertex pointed to by \ccc{g} and all incident halfedges thereby
-     merging all incident faces. Only \ccc{g->face()} remains. 
+     merging all incident faces. Only \ccc{g->face()} remains.
      The neighborhood of \ccc{g->vertex()} may not be triangulated,
      it can have larger faces. Returns the halfedge \ccc{g->prev()}.
-     Thus, the invariant \ccc{h == erase_center_vertex( 
+     Thus, the invariant \ccc{h == erase_center_vertex(
      create_center_vertex(h))} holds if \ccc{h} is not a border halfedge.
      The time is proportional to the sum of the size of all incident faces.
-     \ccPrecond None of the incident faces of \ccc{g->vertex()} is 
+     \ccPrecond None of the incident faces of \ccc{g->vertex()} is
      a hole. There are at least two distinct faces incident
-     to the faces that are incident to \ccc{g->vertex()}. (This 
+     to the faces that are incident to \ccc{g->vertex()}. (This
      prevents the operation from collapsing a volume into two faces
      glued together with opposite orientations, such as would
      happen with any vertex of a tetrahedron.)
-     \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+     \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
      \ccc{CGAL::Tag_true}.}
 
 \newpage
@@ -324,14 +330,14 @@ the halfedge \ccc{h->next} with a new face in-between.
     </CENTER>
 \end{ccHtmlOnly}
 
-\ccMethod{Halfedge_handle split_loop( Halfedge_handle h, 
+\ccMethod{Halfedge_handle split_loop( Halfedge_handle h,
                                       Halfedge_handle i,
                                       Halfedge_handle j);}
    {cuts the halfedge data structure into two parts along the cycle $(h,i,j)$.
-    Three new vertices (one copy for each vertex in the cycle) and three 
-    new halfedges (one copy for each halfedge in the cycle), and two new 
+    Three new vertices (one copy for each vertex in the cycle) and three
+    new halfedges (one copy for each halfedge in the cycle), and two new
     triangles are created. $h,i,j$ will be incident to the first new triangle.
-    The return value will be the halfedge incident to the second new triangle 
+    The return value will be the halfedge incident to the second new triangle
     which is the copy of \ccc{h-opposite()}.
     \ccPrecond $h,i,j$ denote distinct, consecutive vertices of the
     halfedge data structure and form a cycle: i.e., \ccc{h->vertex() ==
@@ -339,22 +345,22 @@ the halfedge \ccc{h->next} with a new face in-between.
     h->opposite()->vertex()}.}
 
 \ccMethod{Halfedge_handle join_loop( Halfedge_handle h, Halfedge_handle g);}
-   {glues the boundary of the two faces denoted by $h$ and $g$ together 
+   {glues the boundary of the two faces denoted by $h$ and $g$ together
     and returns $h$. Both faces and the vertices along the face denoted
-    by $g$ gets removed. Both faces may be holes. The invariant 
-    \ccc{join_loop( h, split_loop( h, i, j))} returns $h$ and keeps the 
+    by $g$ gets removed. Both faces may be holes. The invariant
+    \ccc{join_loop( h, split_loop( h, i, j))} returns $h$ and keeps the
     data structure unchanged.
     \ccPrecond The faces denoted by $h$ and $g$ are different and have
     equal degree (i.e., number of edges).
-    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
-    \ccc{CGAL::Tag_true}.} 
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
+    \ccc{CGAL::Tag_true}.}
 
 
 % -----------------------------------------
 \ccHeading{Validness Checks}
 \ccThree{Halfe}{dge_handlehds.split_f}{}
 
-These operations are the same as for 
+These operations are the same as for
 \ccc{CGAL::HalfedgeDS_const_decorator<HDS>}.
 \begin{ccTexOnly}
     See their documentation on page~\pageref{pageHalfedgeDSconstDecoratorRef}.

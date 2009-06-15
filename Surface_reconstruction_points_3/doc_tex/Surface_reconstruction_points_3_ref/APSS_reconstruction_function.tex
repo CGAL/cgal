@@ -30,7 +30,7 @@ The quality of the reconstruction highly depends on both the quality of input no
 
 The radius property should correspond to the local point spacing which can be intuitively defined as the average distance to its {\em natural} one ring neighbors. It defines the {\em surface definition domain} as the union of these balls. Outside this union of balls, the surface is not defined. Therefore, if the balls do not overlap enough, then some holes might appear. If no radius is provided, then they are automatically computed from a basic estimate of the local density based on the 16 nearest neighbors.
 
-APSS reconstruction may create small {\em ghost} connected components close to the reconstructed surface that you should delete with e.g. \ccc{keep_largest_connected_components}().
+APSS reconstruction may create small {\em ghost} connected components close to the reconstructed surface that you should delete with e.g. \ccc{Polyhedron_3::keep_largest_connected_components}().
 
 %END-AUTO(\ccDefinition)
 
@@ -164,7 +164,6 @@ Returns a point located inside the inferred surface.
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Poisson_reconstruction_function<GeomTraits, ReconstructionTriangulation_3>}  \\
-\ccRefIdfierPage{CGAL::keep_largest_connected_components<Polyhedron>}  \\
 
 \ccExample
 

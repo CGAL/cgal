@@ -214,7 +214,7 @@ typename Poly::Halfedge_handle make_cube_3( Poly& P) {
     h->next()->vertex()->point()     = Point( 1, 0, 1);
     g->next()->vertex()->point()     = Point( 0, 1, 1);
     g->opposite()->vertex()->point() = Point( 1, 1, 0);            // Fig. (c)
-    Halfedge_handle f = P.split_facet( g->next(),            
+    Halfedge_handle f = P.split_facet( g->next(),
                                        g->next()->next()->next()); // Fig. (d)
     Halfedge_handle e = P.split_edge( f);
     e->vertex()->point() = Point( 1, 1, 1);                        // Fig. (e)
@@ -425,10 +425,10 @@ void test_Polyhedron() {
         CGAL_assertion( h->facet_degree() == 3);
         CGAL_assertion( h->facet()->facet_degree() == 3);
         CGAL_assertion( P.is_pure_triangle());
-        CGAL_assertion( 2 == halfedgeds_connected_components(P, 
+        CGAL_assertion( 2 == halfedgeds_connected_components(P,
                                                 CGAL::Emptyset_iterator()));
         CGAL_assertion_code( const Polyhedron& Pq(P);)
-        CGAL_assertion( 2 == halfedgeds_connected_components(Pq, 
+        CGAL_assertion( 2 == halfedgeds_connected_components(Pq,
                                                 CGAL::Emptyset_iterator()));
         P.normalize_border();
         CGAL_assertion( P.is_valid( false, 1));
@@ -594,7 +594,7 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_triangle( h));
 
-        CGAL_assertion_code( Halfedge_handle g = 
+        CGAL_assertion_code( Halfedge_handle g =
                              P.add_vertex_and_facet_to_border(
                                 h->next()->opposite(),
                                 h->opposite());)
@@ -628,6 +628,14 @@ void test_Polyhedron() {
         CGAL_assertion( P.size_of_halfedges() == 12);
         CGAL_assertion( P.size_of_facets()    == 4);
         P.erase_connected_component( P.make_triangle());
+        CGAL_assertion( P.is_valid());
+        CGAL_assertion( P.is_tetrahedron( g));
+        CGAL_assertion( P.size_of_vertices()  == 4);
+        CGAL_assertion( P.size_of_halfedges() == 12);
+        CGAL_assertion( P.size_of_facets()    == 4);
+        P.make_triangle();
+        unsigned int nb_erased_components = P.keep_largest_connected_components(1);
+        CGAL_assertion( nb_erased_components == 1 );
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( g));
         CGAL_assertion( P.size_of_vertices()  == 4);
@@ -1165,7 +1173,7 @@ void test_min_Polyhedron() {
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_triangle( h));
 
-        CGAL_assertion_code( Halfedge_handle g = 
+        CGAL_assertion_code( Halfedge_handle g =
                              P.add_vertex_and_facet_to_border(
                                 h->next()->opposite(),
                                 h->opposite());)

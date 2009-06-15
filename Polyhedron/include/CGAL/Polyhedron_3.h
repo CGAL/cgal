@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
 
@@ -111,9 +111,9 @@ public:
         return Halfedge_around_vertex_const_circulator( this->halfedge());
     }
 
-    // the degree of the vertex, i.e., edges emanating from this vertex 
-    std::size_t vertex_degree() const { 
-        return this->halfedge()->vertex_degree(); 
+    // the degree of the vertex, i.e., edges emanating from this vertex
+    std::size_t vertex_degree() const {
+        return this->halfedge()->vertex_degree();
     }
     size_type degree() const { return vertex_degree(); } //backwards compatible
 
@@ -286,20 +286,20 @@ public:
             HDS::halfedge_handle(this));
     }
 
-    // the degree of the incident vertex, i.e., edges emanating from this 
-    // vertex 
-    std::size_t vertex_degree() const { 
-        return circulator_size( vertex_begin()); 
+    // the degree of the incident vertex, i.e., edges emanating from this
+    // vertex
+    std::size_t vertex_degree() const {
+        return circulator_size( vertex_begin());
     }
 
-    // the degree of the incident facet, i.e., edges on the boundary of this 
+    // the degree of the incident facet, i.e., edges on the boundary of this
     // facet
     std::size_t facet_degree() const {
-        return circulator_size( facet_begin()); 
+        return circulator_size( facet_begin());
     }
 
     // returns true if the incident vertex has exactly two incident edges
-    bool is_bivalent() const { 
+    bool is_bivalent() const {
         CGAL_precondition( this != &* (this->next()->opposite()));
         return  (this == &* (this->next()->opposite()->next()->opposite()));
     }
@@ -410,7 +410,7 @@ public:
         return Halfedge_around_facet_const_circulator( this->halfedge());
     }
 
-    // the degree of the incident facet, i.e., edges on the boundary of this 
+    // the degree of the incident facet, i.e., edges on the boundary of this
     // facet
     std::size_t facet_degree() const {return this->halfedge()->facet_degree();}
     size_type size() const { return facet_degree(); } // backwards compatible
@@ -463,7 +463,7 @@ template < class PolyhedronTraits_3,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
 #endif
-           class T_HDS = HalfedgeDS_default, 
+           class T_HDS = HalfedgeDS_default,
            class Alloc = CGAL_ALLOCATOR(int)>
 class Polyhedron_3 {
     //
@@ -873,7 +873,7 @@ public:
 
 // Combinatorial Predicates
 
-    bool is_closed() const { 
+    bool is_closed() const {
         for ( Halfedge_const_iterator i = halfedges_begin();
               i != halfedges_end(); ++i) {
             if ( i->is_border())
@@ -883,14 +883,14 @@ public:
     }
 
 private:
-    bool is_pure_bivalent( Tag_true) const { 
+    bool is_pure_bivalent( Tag_true) const {
         for ( Vertex_const_iterator i = vertices_begin();
               i != vertices_end(); ++i)
             if ( ! i->is_bivalent())
                 return false;
         return true;
     }
-    bool is_pure_bivalent( Tag_false) const { 
+    bool is_pure_bivalent( Tag_false) const {
         for ( Halfedge_const_iterator i = halfedges_begin();
               i != halfedges_end(); ++i)
             if ( ! i->is_bivalent())
@@ -900,19 +900,19 @@ private:
 
 public:
     // returns true if all vertices have exactly two incident edges
-    bool is_pure_bivalent() const { 
+    bool is_pure_bivalent() const {
         return is_pure_bivalent( Supports_vertex_halfedge());
     }
 
 private:
-    bool is_pure_trivalent( Tag_true) const { 
+    bool is_pure_trivalent( Tag_true) const {
         for ( Vertex_const_iterator i = vertices_begin();
               i != vertices_end(); ++i)
             if ( ! i->is_trivalent())
                 return false;
         return true;
     }
-    bool is_pure_trivalent( Tag_false) const { 
+    bool is_pure_trivalent( Tag_false) const {
         for ( Halfedge_const_iterator i = halfedges_begin();
               i != halfedges_end(); ++i)
             if ( ! i->is_trivalent())
@@ -922,19 +922,19 @@ private:
 
 public:
     // returns true if all vertices have exactly three incident edges
-    bool is_pure_trivalent() const { 
+    bool is_pure_trivalent() const {
         return is_pure_trivalent( Supports_vertex_halfedge());
     }
 
 private:
-    bool is_pure_triangle( Tag_true) const { 
+    bool is_pure_triangle( Tag_true) const {
         for ( Facet_const_iterator i = facets_begin();
               i != facets_end(); ++i)
             if ( ! i->is_triangle())
                 return false;
         return true;
     }
-    bool is_pure_triangle( Tag_false) const { 
+    bool is_pure_triangle( Tag_false) const {
         for ( Halfedge_const_iterator i = halfedges_begin();
               i != halfedges_end(); ++i)
             if ( ! i->is_border() && ! i->is_triangle())
@@ -944,19 +944,19 @@ private:
 
 public:
     // returns true if all facets are triangles
-    bool is_pure_triangle() const { 
+    bool is_pure_triangle() const {
         return is_pure_triangle( Supports_facet_halfedge());
     }
 
 private:
-    bool is_pure_quad( Tag_true) const { 
+    bool is_pure_quad( Tag_true) const {
         for ( Facet_const_iterator i = facets_begin();
               i != facets_end(); ++i)
             if ( ! i->is_quad())
                 return false;
         return true;
     }
-    bool is_pure_quad( Tag_false) const { 
+    bool is_pure_quad( Tag_false) const {
         for ( Halfedge_const_iterator i = halfedges_begin();
               i != halfedges_end(); ++i)
             if ( ! i->is_border() && ! i->is_quad())
@@ -966,7 +966,7 @@ private:
 
 public:
     // returns true if all facets are quadrilaterals
-    bool is_pure_quad() const { 
+    bool is_pure_quad() const {
         return is_pure_quad( Supports_facet_halfedge());
     }
 
@@ -1374,6 +1374,21 @@ public:
         // removal.
         HalfedgeDS_decorator<HDS> D(hds);
         D.erase_connected_component(h);
+    }
+
+    /// Erases the small connected components and the isolated vertices.
+    ///
+    /// @commentheading Preconditions:
+    /// supports vertices, halfedges, and removal operation.
+    ///
+    /// @commentheading Template Parameters:
+    /// @param nb_components_to_keep the number of large connected components to keep.
+    ///
+    /// @return the number of connected components erased (ignoring isolated vertices).
+    unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep)
+    {
+        HalfedgeDS_decorator<HDS> D(hds);
+        return D.keep_largest_connected_components(nb_components_to_keep);
     }
 
     void clear() { hds.clear(); }

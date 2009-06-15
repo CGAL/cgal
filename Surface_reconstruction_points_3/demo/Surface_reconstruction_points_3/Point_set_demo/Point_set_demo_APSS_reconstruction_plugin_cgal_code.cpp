@@ -16,7 +16,6 @@
 // This package
 #include <CGAL/APSS_reconstruction_function.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
-#include <CGAL/keep_largest_connected_components.h>
 
 
 // APSS implicit function
@@ -127,11 +126,11 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
     std::cerr << "Erases small connected components...\n";
 
     unsigned int nb_erased_components =
-      CGAL::keep_largest_connected_components(*output_mesh, 1/* keep largest component only*/);
+      output_mesh->keep_largest_connected_components( 1 /* keep largest component only*/ );
 
     // Prints status
     std::cerr << "Erases small connected components: " << task_timer.time() << " seconds, "
-                                                      << nb_erased_components << " components erased"
+                                                      << nb_erased_components << " component(s) erased"
                                                       << std::endl;
     task_timer.reset();
 
