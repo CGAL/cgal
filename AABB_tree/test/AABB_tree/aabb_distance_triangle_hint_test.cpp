@@ -141,7 +141,7 @@ void test_hint_strategies(Tree& tree,
         std::cout << std::endl;
 }
 
-template<class K, class Tree, class Polyhedron>
+template<class K, class Tree, class Polyhedron, Primitive_type Type>
 void test_impl(Tree& tree,
                Polyhedron& p,
                const double duration)

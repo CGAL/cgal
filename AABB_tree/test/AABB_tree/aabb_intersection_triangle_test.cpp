@@ -111,7 +111,7 @@ void test_speed(Tree& tree,
     test_speed_for_query<Tree,K>(tree,SEGMENT_QUERY,"segment",duration);
 }
 
-template<class K, class Tree, class Polyhedron>
+template<class K, class Tree, class Polyhedron, Primitive_type Type>
 void test_impl(Tree& tree, Polyhedron&, const double duration)
 {
   test_all_intersection_query_types<Tree,K>(tree);

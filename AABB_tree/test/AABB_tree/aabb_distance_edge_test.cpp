@@ -40,7 +40,7 @@
 #include "AABB_test_util.h"
 
 
-template<class K, class Tree, class Polyhedron>
+template<class K, class Tree, class Polyhedron, Primitive_type Type>
 void test_impl(Tree& tree, Polyhedron&, const double duration)
 {
   test_distance_speed<Tree,K>(tree,duration);

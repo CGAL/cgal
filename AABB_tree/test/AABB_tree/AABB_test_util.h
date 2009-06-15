@@ -76,8 +76,8 @@ void test_all_intersection_query_types(Tree& tree)
     Point p((FT)-0.5, (FT)-0.5, (FT)-0.5);
     Point q((FT) 0.5, (FT) 0.5, (FT) 0.5);
     Ray ray(p,q);
-    Ray line(p,q);
-    Ray segment(p,q);
+    Line line(p,q);
+    Segment segment(p,q);
     bool success = false;
 
     // do_intersect
@@ -171,8 +171,6 @@ void test_distance_speed(Tree& tree,
 }
 
 
-
-
 //-------------------------------------------------------
 // Helpers
 //-------------------------------------------------------
@@ -220,7 +218,7 @@ struct Primitive_generator<TRIANGLE, K, Polyhedron>
 /**
  * Declaration only, implementation should be given in .cpp file
  */
-template<class K, class Tree, class Polyhedron>
+template<class K, class Tree, class Polyhedron, Primitive_type Type>
 void test_impl(Tree& tree, Polyhedron& p, const double duration);
 
 
@@ -247,7 +245,7 @@ void test(const char *filename,
     tree.accelerate_distance_queries(polyhedron.points_begin(),polyhedron.points_end());
 
     // call all tests
-    test_impl<K,Tree,Polyhedron>(tree,polyhedron,duration);
+    test_impl<K,Tree,Polyhedron,Primitive>(tree,polyhedron,duration);
 }
 
 
@@ -282,3 +280,375 @@ void test_kernels(const char *filename,
     std::cout << "Epic kernel" << std::endl;
     test<CGAL::Exact_predicates_inexact_constructions_kernel,Primitive>(filename,duration);
 }
+
+
+
+
+
+
+
+//-------------------------------------------------------
+// Naive Implementations
+//-------------------------------------------------------
+
+/**
+ * Implements queries defined by AABB_tree class in naive way: iterate on
+ * the primitive.
+ */
+template<typename Polyhedron,
+         typename K,
+         Primitive_type Primitive >
+class Naive_implementations
+{
+  typedef Primitive_generator<Primitive,K,Polyhedron> Pr_generator;
+  typedef typename Pr_generator::Primitive Pr;
+  typedef CGAL::AABB_traits<K, Pr> Traits;
+  typedef typename Pr_generator::iterator Polyhedron_primitive_iterator;
+  typedef typename Traits::size_type size_type;
+  typedef typename Traits::Object_and_primitive_id Object_and_primitive_id;
+  typedef typename Pr::Id Primitive_id;
+
+  typedef boost::optional<Object_and_primitive_id> Intersection_result;
+
+public:
+  template<typename Query>
+  bool do_intersect(const Query& query, Polyhedron& p) const
+  {
+    Polyhedron_primitive_iterator it = Pr_generator().begin(p);
+    for ( ; it != Pr_generator().end(p) ; ++it )
+    {
+      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+        return true;
+    }
+
+    return false;
+  }
+
+  template<typename Query>
+  size_type number_of_intersected_primitives(const Query& query,
+                                             Polyhedron& p) const
+  {
+    size_type result = 0;
+
+    Polyhedron_primitive_iterator it = Pr_generator().begin(p);
+    for ( ; it != Pr_generator().end(p) ; ++it )
+    {
+      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+        ++result;
+    }
+
+    return result;
+  }
+
+  template<typename Query, typename OutputIterator>
+  OutputIterator all_intersected_primitives(const Query& query,
+                                            Polyhedron& p,
+                                            OutputIterator out) const
+  {
+    Polyhedron_primitive_iterator it = Pr_generator().begin(p);
+    for ( ; it != Pr_generator().end(p) ; ++it )
+    {
+      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+        *out++ = Pr(it).id();
+    }
+
+    return out;
+  }
+
+  template<typename Query, typename OutputIterator>
+  OutputIterator all_intersections(const Query& query,
+                                   Polyhedron& p,
+                                   OutputIterator out) const
+  {
+    Polyhedron_primitive_iterator it = Pr_generator().begin(p);
+    for ( ; it != Pr_generator().end(p) ; ++it )
+    {
+      Intersection_result intersection  = Traits().intersection_object()(query, Pr(it));
+      if ( intersection )
+        *out++ = *intersection;
+    }
+
+    return out;
+  }
+};
+
+
+//-------------------------------------------------------
+// Naive Tester
+//-------------------------------------------------------
+template <class Tree, class Polyhedron, class K, Primitive_type Type>
+class Tree_vs_naive
+{
+  typedef typename K::FT FT;
+  typedef typename K::Ray_3 Ray;
+  typedef typename K::Line_3 Line;
+  typedef typename K::Point_3 Point;
+  typedef typename K::Vector_3 Vector;
+  typedef typename K::Segment_3 Segment;
+
+  typedef typename Tree::Primitive Primitive;
+  typedef typename Tree::Point_and_primitive_id Point_and_primitive_id;
+  typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
+
+  typedef Naive_implementations<Polyhedron, K, Type> Naive_implementation;
+
+public:
+  Tree_vs_naive(Tree& tree, Polyhedron& p)
+    : m_tree(tree)
+    , m_polyhedron(p)
+    , m_naive()
+    , m_naive_time(0)
+    , m_tree_time(0)    {}
+
+  void test_all_intersection_methods(double duration) const
+  {
+    m_naive_time = 0;
+    m_tree_time = 0;
+
+    test_do_intersect(duration);
+    test_number_of_intersected_primitives(duration);
+    test_intersected_primitives(duration);
+    test_intersections(duration);
+
+    std::cerr << "\tNaive test time: " << m_naive_time*1000 << "ms" << std::endl;
+    std::cerr << "\tTree test time: " << m_tree_time*1000 << "ms" << std::endl;
+  }
+
+  void test_do_intersect(double duration) const
+  {
+    loop(duration, Do_intersect());
+  }
+
+  void test_number_of_intersected_primitives(double duration) const
+  {
+    loop(duration, Number_of_intersected_primitives());
+  }
+
+  void test_intersected_primitives(double duration) const
+  {
+    loop(duration, Intersected_primitives());
+  }
+
+  void test_intersections(double duration) const
+  {
+    loop(duration, Intersections());
+  }
+
+private:
+
+  template<typename Test>
+  void loop(double duration,
+            const Test& test) const
+  {
+    CGAL::Timer timer;
+    timer.start();
+    int nb_test = 0;
+    while ( timer.time() < duration )
+    {
+      Point a = random_point_in<K>(m_tree.bbox());
+      Point b = random_point_in<K>(m_tree.bbox());
+      Segment segment(a,b);
+      Ray ray(a,b);
+      Line line(a,b);
+
+      test(segment, m_polyhedron, m_tree, m_naive);
+      test(ray, m_polyhedron, m_tree, m_naive);
+      test(line, m_polyhedron, m_tree, m_naive);
+
+      ++nb_test;
+    }
+    timer.stop();
+
+//    std::cerr << "\t" << nb_test << " loops in "
+//              << timer.time() << "s" << std::endl;
+    m_naive_time += test.naive_timer.time();
+    m_tree_time += test.tree_timer.time();
+  }
+
+private:
+  /**
+   * Tests do_intersect
+   */
+  struct Do_intersect
+  {
+    template<typename Query>
+    void
+    operator()(const Query& query,
+               Polyhedron& p,
+               Tree& tree,
+               const Naive_implementation& naive) const
+    {
+      naive_timer.start();
+      bool result_naive = naive.do_intersect(query, p);
+      naive_timer.stop();
+
+      tree_timer.start();
+      bool result_tree = tree.do_intersect(query);
+      tree_timer.stop();
+
+      // Check
+      assert ( result_naive == result_tree );
+    }
+
+    mutable CGAL::Timer naive_timer;
+    mutable CGAL::Timer tree_timer;
+  };
+
+  /**
+   * Tests number_of_intersected_primitives
+   */
+  struct Number_of_intersected_primitives
+  {
+    template<typename Query>
+    void
+    operator()(const Query& query,
+               Polyhedron& p,
+               Tree& tree,
+               const Naive_implementation& naive) const
+    {
+      naive_timer.start();
+      bool number_naive = naive.number_of_intersected_primitives(query, p);
+      naive_timer.stop();
+
+      tree_timer.start();
+      bool number_tree = tree.number_of_intersected_primitives(query);
+      tree_timer.stop();
+
+      // Check
+      assert ( number_naive == number_tree );
+    }
+
+    mutable CGAL::Timer naive_timer;
+    mutable CGAL::Timer tree_timer;
+  };
+
+  /**
+   * Tests all_intersected_primitives and any_intersected_primitives
+   */
+  struct Intersected_primitives
+  {
+    template<typename Query>
+    void
+    operator()(const Query& query,
+               Polyhedron& p,
+               Tree& tree,
+               const Naive_implementation& naive) const
+    {
+      typedef std::vector<typename Primitive::Id> Id_vector;
+
+      Id_vector primitives_naive;
+      naive_timer.start();
+      naive.all_intersected_primitives(query, p, std::back_inserter(primitives_naive));
+      naive_timer.stop();
+
+      Id_vector primitives_tree;
+      tree_timer.start();
+      tree.all_intersected_primitives(query, std::back_inserter(primitives_tree));
+      tree_timer.stop();
+
+      // Check: warning, we don't know elements order...
+      for ( typename Id_vector::iterator it = primitives_naive.begin() ;
+            it != primitives_naive.end() ;
+            ++it )
+      {
+        assert( std::find(primitives_tree.begin(), primitives_tree.end(), *it)
+                != primitives_tree.end() );
+      }
+
+      // any_intersected_primitive test (do not count time here)
+      typedef boost::optional<typename Primitive::Id> Any_primitive;
+      Any_primitive primitive = tree.any_intersected_primitive(query);
+
+      // Check: verify we do get the result by naive method
+      if ( primitive )
+      {
+        assert( std::find(primitives_naive.begin(),
+                          primitives_naive.end(),
+                          *primitive)
+               != primitives_naive.end());
+      }
+      else if ( primitives_naive.size() != 0 )
+        assert(false);
+    }
+
+    mutable CGAL::Timer naive_timer;
+    mutable CGAL::Timer tree_timer;
+  };
+
+  /**
+   * Tests all_intersections and any_intersection
+   */
+  struct Intersections
+  {
+    template<typename Query>
+    void
+    operator()(const Query& query,
+               Polyhedron& p,
+               Tree& tree,
+               const Naive_implementation& naive) const
+    {
+      typedef std::vector<Object_and_primitive_id> Obj_Id_vector;
+
+      Obj_Id_vector intersections_naive;
+      naive_timer.start();
+      naive.all_intersections(query, p, std::back_inserter(intersections_naive));
+      naive_timer.stop();
+
+      Obj_Id_vector intersections_tree;
+      tree_timer.start();
+      tree.all_intersections(query, std::back_inserter(intersections_tree));
+      tree_timer.stop();
+
+      // Check: warning, we don't know elements order...
+      // Test equality of vectors on ids only
+      typedef std::vector<typename Primitive::Id> Id_vector;
+      Id_vector intersections_naive_id;
+      std::transform(intersections_naive.begin(),
+                     intersections_naive.end(),
+                     std::back_inserter(intersections_naive_id),
+                     primitive_id);
+
+      for ( typename Obj_Id_vector::iterator it = intersections_tree.begin() ;
+            it != intersections_tree.end() ;
+            ++it )
+      {
+        assert( std::find(intersections_naive_id.begin(),
+                          intersections_naive_id.end(),
+                          it->second)
+                != intersections_naive_id.end() );
+      }
+
+      // Any intersection test (do not count time here)
+      typedef boost::optional<Object_and_primitive_id> Any_intersection;
+      Any_intersection intersection = tree.any_intersection(query);
+
+      // Check: verify we do get the result by naive method
+      if ( intersection )
+      {
+        assert( std::find(intersections_naive_id.begin(),
+                          intersections_naive_id.end(),
+                          intersection->second)
+               != intersections_naive_id.end());
+      }
+      else if ( intersections_naive.size() != 0 )
+        assert(false);
+
+    }
+
+    static typename Primitive::Id primitive_id(const Object_and_primitive_id& o)
+    {
+      return o.second;
+    }
+
+    mutable CGAL::Timer naive_timer;
+    mutable CGAL::Timer tree_timer;
+  };
+
+
+private:
+  Tree& m_tree;
+  Polyhedron& m_polyhedron;
+  Naive_implementation m_naive;
+  mutable double m_naive_time;
+  mutable double m_tree_time;
+};
