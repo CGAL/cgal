@@ -20,7 +20,9 @@
 \ccDefinition
 
 
-\ccc{CGAL::remove_outliers()} deletes a user-specified fraction of outliers from the input point set. More specifically, it sorts the input points in increasing order of average squared distances to the $k$ nearest neighbors and deletes the points with largest value. This method modifies the order of input points so as to pack all remaining points first, and returns and returns an iterator over the first point to remove (see erase-remove idiom). For this reason it should not be called on sorted containers.
+\ccc{CGAL::remove_outliers()} deletes a user-specified fraction of outliers from the input point set. More specifically, it sorts the input points in increasing order of average squared distances to the $k$ nearest neighbors and deletes the points with largest value.
+
+This method modifies the order of input points so as to pack all remaining points first, and returns and returns an iterator over the first point to remove (see erase-remove idiom). For this reason it should not be called on sorted containers.
 
 \ccInclude{CGAL/remove_outliers.h}
 

@@ -65,8 +65,8 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
 
   // Estimates normals direction.
   // Note: pca_estimate_normals() requires an iterator over points
-  //       + property maps to access each point's position and normal.
-  //       The position property map can be omitted here as we use an iterator over Point_3 elements.
+  // + property maps to access each point's position and normal.
+  // The position property map can be omitted here as we use iterators over Point_3 elements.
   CGAL::pca_estimate_normals(points.begin(), points.end(),
                              CGAL::make_normal_vector_property_map(points.begin()),
                              nb_neighbors);
@@ -95,8 +95,8 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
 
   // Estimates normals direction.
   // Note: jet_estimate_normals() requires an iterator over points
-  //       + property maps to access each point's position and normal.
-  //       The position property map can be omitted here as we use an iterator over Point_3 elements.
+  // + property maps to access each point's position and normal.
+  // The position property map can be omitted here as we use iterators over Point_3 elements.
   CGAL::jet_estimate_normals(points.begin(), points.end(),
                              CGAL::make_normal_vector_property_map(points.begin()),
                              nb_neighbors);
@@ -116,9 +116,9 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
 
   // Orient normals.
   // Note: mst_orient_normals() requires an iterator over points
-  //       + property maps to access each point's position and normal.
-  //       The position property map can be omitted here as we use an iterator over Point_3 elements.
-  PointList::iterator unoriented_points_begin = 
+  // + property maps to access each point's position and normal.
+  // The position property map can be omitted here as we use iterators over Point_3 elements.
+  PointList::iterator unoriented_points_begin =
     CGAL::mst_orient_normals(points.begin(), points.end(),
                              CGAL::make_normal_vector_property_map(points.begin()),
                              nb_neighbors_mst);
@@ -126,7 +126,7 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
   // Optional: delete points with an unoriented normal
   // if you plan to call a reconstruction algorithm that expects oriented normals.
   points.erase(unoriented_points_begin, points.end());
-          
+
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
   PointList(points).swap(points);
 
@@ -228,7 +228,7 @@ int main(int argc, char * argv[])
     if (extension == ".off" || extension == ".OFF")
     {
       std::ifstream stream(input_filename.c_str());
-      success = stream && 
+      success = stream &&
                 CGAL::read_off_points(stream,
                                          std::back_inserter(points));
     }
@@ -237,9 +237,8 @@ int main(int argc, char * argv[])
              extension == ".pwn" || extension == ".PWN")
     {
       std::ifstream stream(input_filename.c_str());
-      success = stream && 
-                CGAL::read_xyz_points(stream,
-                                         std::back_inserter(points));
+      success = stream &&
+                CGAL::read_xyz_points(stream, std::back_inserter(points));
     }
     if (!success)
     {
@@ -250,8 +249,8 @@ int main(int argc, char * argv[])
     // Prints status
     int nb_points = points.size();
     std::cerr << "Reads file " << input_filename << ": " << nb_points << " points, "
-                                                        << task_timer.time() << " seconds"
-                                                        << std::endl;
+                                                         << task_timer.time() << " seconds"
+                                                         << std::endl;
     task_timer.reset();
 
     //***************************************
@@ -290,7 +289,7 @@ int main(int argc, char * argv[])
         extension == ".pwn" || extension == ".PWN")
     {
       std::ofstream stream(output_filename.c_str());
-      if (!stream || 
+      if (!stream ||
           !CGAL::write_xyz_points_and_normals(stream,
                                               points.begin(), points.end(),
                                               CGAL::make_normal_vector_property_map(points.begin())))

@@ -40,9 +40,9 @@ public:
     typedef Gt Geom_traits; ///< Geometric traits class.
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::RT RT;
-    typedef typename Geom_traits::Point_2  Point_2;  ///< == Geom_traits::Point_2
-    typedef typename Geom_traits::Point_3  Point_3;  ///< == Geom_traits::Point_3
-    typedef typename Geom_traits::Vector_3 Vector_3; ///< == Geom_traits::Vector_3
+    typedef typename Geom_traits::Point_2  Point_2;  ///< typedef to Geom_traits::Point_2
+    typedef typename Geom_traits::Point_3  Point_3;  ///< typedef to Geom_traits::Point_3
+    typedef typename Geom_traits::Vector_3 Vector_3; ///< typedef to Geom_traits::Vector_3
 
 // Public methods
 public:

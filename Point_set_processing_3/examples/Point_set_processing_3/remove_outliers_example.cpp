@@ -15,8 +15,7 @@ int main(void)
   std::vector<Point> points;
   std::ifstream stream("data/oni.xyz");
   if (!stream ||
-      !CGAL::read_xyz_points(stream,
-                             std::back_inserter(points)))
+      !CGAL::read_xyz_points(stream, std::back_inserter(points)))
   {
     return EXIT_FAILURE;
   }
@@ -24,11 +23,9 @@ int main(void)
   // Removes outliers using erase-remove idiom
   const double removed_percentage = 5.0; // percentage of points to remove
   const int nb_neighbors = 7; // considers 7 nearest neighbor points
-  points.erase(CGAL::remove_outliers(points.begin(), points.end(),
-                                     nb_neighbors,
-                                     removed_percentage),
+  points.erase(CGAL::remove_outliers(points.begin(), points.end(), nb_neighbors, removed_percentage),
                points.end());
-               
+
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
   std::vector<Point>(points).swap(points);
 

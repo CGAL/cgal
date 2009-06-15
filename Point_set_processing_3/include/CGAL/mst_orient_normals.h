@@ -487,6 +487,7 @@ create_mst_graph(
 
 /// Orients the normals of the [first, beyond) range of points using the propagation
 /// of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
+///
 /// This method modifies the order of input points so as to pack all sucessfully oriented points first,
 /// and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
 /// For this reason it should not be called on sorted containers.
@@ -528,7 +529,7 @@ mst_orient_normals(
     // Input points types
     typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point; // actual type of input points
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
-    
+
     // Property map ForwardIterator -> index
     typedef Index_property_map<ForwardIterator> IndexPMap;
 
@@ -543,12 +544,12 @@ mst_orient_normals(
 
     // Precondition: at least 2 nearest neighbors
     CGAL_point_set_processing_precondition(k >= 2);
-    
+
     long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Create Index_property_map\n");
 
     // Create a property map Iterator -> index.
-    // - if ForwardIterator is a random access iterator (typically vector and deque), 
+    // - if ForwardIterator is a random access iterator (typically vector and deque),
     // get() just calls std::distance() and is very efficient;
     // - else, the property map allocates a std::map to store indices
     // and get() requires a lookup in the map.

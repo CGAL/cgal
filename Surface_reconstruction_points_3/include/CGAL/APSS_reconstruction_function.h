@@ -76,10 +76,10 @@ public:
   typedef Gt Geom_traits; ///< Geometric traits class
 
   // Geometric types
-  typedef typename Geom_traits::FT FT; ///< == Geom_traits::FT
-  typedef typename Geom_traits::Point_3 Point; ///< == Geom_traits::Point_3
-  typedef typename Geom_traits::Vector_3 Vector; ///< == Geom_traits::Vector_3
-  typedef typename Geom_traits::Sphere_3 Sphere; ///< == Geom_traits::Sphere_3
+  typedef typename Geom_traits::FT FT; ///< typedef to Geom_traits::FT
+  typedef typename Geom_traits::Point_3 Point; ///< typedef to Geom_traits::Point_3
+  typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
+  typedef typename Geom_traits::Sphere_3 Sphere; ///< typedef to Geom_traits::Sphere_3
 
 // Private types
 private:

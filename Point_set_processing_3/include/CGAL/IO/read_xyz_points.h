@@ -34,6 +34,8 @@ CGAL_BEGIN_NAMESPACE
 
 //===================================================================================
 /// Reads points (positions + normals, if available) from a .xyz ASCII stream.
+/// The function expects for each point a line with the x y z position,
+/// optionally followed by the nx ny nz normal.
 ///
 /// @commentheading Template Parameters:
 /// @param OutputIterator iterator over output points.
@@ -162,6 +164,8 @@ read_xyz_points_and_normals(
 
 //===================================================================================
 /// Reads points (positions only) from a .xyz ASCII stream.
+/// The function expects for each point a line with the x y z position.
+/// If the position is followed by the nx ny nz normal, then the normal will be ignored.
 ///
 /// @commentheading Template Parameters:
 /// @param OutputIterator iterator over output points.

@@ -61,10 +61,10 @@ public:
   /// @endcond
 
   // Classic CGAL geometric types
-  typedef Gt  Geom_traits; ///<Geometric traits class.
+  typedef Gt  Geom_traits; ///< Geometric traits class.
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Point_3 Point;  ///< == Geom_traits::Point_3
-  typedef typename Geom_traits::Vector_3 Vector; ///< == Geom_traits::Vector_3
+  typedef typename Geom_traits::Point_3 Point;  ///< typedef to Geom_traits::Point_3
+  typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 

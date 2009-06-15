@@ -58,11 +58,9 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
             << nb_neighbors_remove_outliers << "%=" << nb_neighbors << ")...\n";
 
   // Removes outliers using erase-remove idiom
-  points.erase(CGAL::remove_outliers(points.begin(), points.end(),
-                                     nb_neighbors,
-                                     removed_percentage),
+  points.erase(CGAL::remove_outliers(points.begin(), points.end(), nb_neighbors, removed_percentage),
                points.end());
-  
+
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
   std::deque<Point>(points).swap(points);
 
@@ -123,8 +121,7 @@ int main(int argc, char * argv[])
     // If XYZ file format:
     std::ifstream stream(input_filename.c_str());
     if(stream &&
-       CGAL::read_xyz_points(stream,
-                               std::back_inserter(points)))
+       CGAL::read_xyz_points(stream, std::back_inserter(points)))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }

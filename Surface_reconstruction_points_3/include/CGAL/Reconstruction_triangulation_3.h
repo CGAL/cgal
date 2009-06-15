@@ -45,7 +45,7 @@ CGAL_BEGIN_NAMESPACE
 ///   and has a unique index.
 ///
 /// @heading Parameters:
-/// @param Gt   Geometric traits class / Point_3 == Point_with_normal_3.
+/// @param Gt   Geometric traits class / Point_3 is a typedef to Point_with_normal_3.
 /// @param Cb   Vertex base class, model of TriangulationVertexBase_3.
 
 template < typename Gt,
@@ -55,7 +55,7 @@ class Reconstruction_vertex_base_3 : public Vb
 // Public types
 public:
 
-  /// Geometric traits class / Point_3 == Point_with_normal_3.
+  /// Geometric traits class / Point_3 is a typedef to Point_with_normal_3.
   typedef Gt Geom_traits;
 
   // Repeat Triangulation_vertex_base_3 public types
@@ -70,9 +70,9 @@ public:
 
   // Geometric types
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Vector_3 Vector;           ///< == Vector_3
-  typedef typename Geom_traits::Point_3 Point;             ///< == Point_with_normal_3
-  typedef typename Geom_traits::Point_3 Point_with_normal; ///< == Point_with_normal_3
+  typedef typename Geom_traits::Vector_3 Vector;           ///< typedef to Vector_3
+  typedef typename Geom_traits::Point_3 Point;             ///< typedef to Point_with_normal_3
+  typedef typename Geom_traits::Point_3 Point_with_normal; ///< typedef to Point_with_normal_3
 
 // data members
 private:
@@ -182,7 +182,7 @@ struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 ///
 /// @heading Parameters:
 /// @param BaseGt   Geometric traits class.
-/// @param Gt       Geometric traits class / Point_3 == Point_with_normal_3<BaseGt>.
+/// @param Gt       Geometric traits class / Point_3 is a typedef to Point_with_normal_3<BaseGt>.
 /// @param Tds      Model of TriangulationDataStructure_3. The vertex class
 ///                 must derive from Reconstruction_vertex_base_3.
 
@@ -222,7 +222,7 @@ private:
 // Public types
 public:
 
-  /// Geometric traits class / Point_3 == Point_with_normal_3<BaseGt>.
+  /// Geometric traits class / Point_3 is a typedef to Point_with_normal_3<BaseGt>.
   typedef Gt  Geom_traits;
 
   // Repeat base class' types
@@ -257,8 +257,8 @@ public:
 
   // Geometric types
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Vector_3 Vector; ///< == Vector_3<BaseGt>
-  typedef typename Geom_traits::Point_3 Point;  ///< == Point_with_normal_3<BaseGt>
+  typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Vector_3<BaseGt>
+  typedef typename Geom_traits::Point_3 Point;  ///< typedef to Point_with_normal_3<BaseGt>
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Point_with_normal_3<BaseGt>
   typedef typename Geom_traits::Sphere_3 Sphere;
 

@@ -19,7 +19,9 @@
 
 \ccDefinition
 
-\ccc{CGAL::mst_orient_normals()} orients the normals of a point set using the propagation of a seed orientation through a minimum spanning tree of the Riemannian graph \cite{cgal:hddms-srup-92}. This method modifies the order of the input points so as to pack all successfully oriented normals first, and returns an iterator over the first point with an unoriented normal (see erase-remove idiom). For this reason it should not be called on sorted containers.
+\ccc{CGAL::mst_orient_normals()} orients the normals of a point set using the propagation of a seed orientation through a minimum spanning tree of the Riemannian graph \cite{cgal:hddms-srup-92}.
+
+This method modifies the order of the input points so as to pack all successfully oriented normals first, and returns an iterator over the first point with an unoriented normal (see erase-remove idiom). For this reason it should not be called on sorted containers.
 
 \ccInclude{CGAL/mst_orient_normals.h}
 
@@ -31,7 +33,8 @@
 
 \ccFunction{template<typename ForwardIterator, typename PointPMap, typename NormalPMap, typename Kernel> ForwardIterator mst_orient_normals(ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap, unsigned int k, const Kernel& kernel);}
 {
-Orients the normals of the [first, beyond) range of points using the propagation of a seed orientation through a minimum spanning tree of the Riemannian graph \cite{cgal:hddms-srup-92}. This method modifies the order of input points so as to pack all sucessfully oriented points first, and returns an iterator over the first point with an unoriented normal (see erase-remove idiom). For this reason it should not be called on sorted containers.
+Orients the normals of the [first, beyond) range of points using the propagation of a seed orientation through a minimum spanning tree of the Riemannian graph \cite{cgal:hddms-srup-92}.  \\
+This method modifies the order of input points so as to pack all sucessfully oriented points first, and returns an iterator over the first point with an unoriented normal (see erase-remove idiom). For this reason it should not be called on sorted containers.
 \ccCommentHeading{Preconditions}  \\
 Normals must be unit vectors. k $>$= 2.
 \ccCommentHeading{Template Parameters}  \\

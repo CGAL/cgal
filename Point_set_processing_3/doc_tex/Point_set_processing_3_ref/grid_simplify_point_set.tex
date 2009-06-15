@@ -19,8 +19,9 @@
 
 \ccDefinition
 
-\ccc{CGAL::grid_simplify_point_set()} iteratively iteratively merges pairs of points which are epsilon-closed. More specifically,
-it merges points which belong to the same cell of an axis-aligned grid of cell size the \ccc{epsilon} parameter. This method modifies the order of input points so as to pack all remaining points first, and returns and returns an iterator over the first point to remove (see erase-remove idiom). For this reason it should not be called on sorted containers.
+Function \ccc{CGAL::grid_simplify_point_set()} considers a regular grid covering the bounding box of the input point set, and clusters all points sharing the same cell of the grid by picking as representant one of the point arbitrarily chosen.
+
+This method modifies the order of input points so as to pack all remaining points first, and returns and returns an iterator over the first point to remove (see erase-remove idiom). For this reason it should not be called on sorted containers.
 
 \ccInclude{CGAL/grid_simplify_point_set.h}
 
@@ -51,20 +52,7 @@ This method modifies the order of input points so as to pack all remaining point
 
 \ccExample
 
-\begin{ccExampleCode}
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3 Point;
-std::vector<Point> points = ...;
-double epsilon = 0.001;
-
-// simplification by clustering using erase-remove idiom
-points.erase(CGAL::grid_simplify_point_set(points.begin(), points.end(),
-                                            epsilon),
-             points.end());
-
-// Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
-std::vector<Point>(points).swap(points);
-\end{ccExampleCode}
+See \ccc{grid_simplification_example.cpp}.
 
 \end{ccRefFunction}
 

@@ -16,7 +16,7 @@
 ///
 /// @heading Parameters:
 /// @param BaseGt   Geometric traits class.
-/// @param Gt       Geometric traits class / Point_3 == Point_with_normal_3<BaseGt>.
+/// @param Gt       Geometric traits class / Point_3 is a typedef to Point_with_normal_3<BaseGt>.
 /// @param Tds      Model of TriangulationDataStructure_3. The vertex class
 ///                 must derive from Reconstruction_vertex_base_3.
 
@@ -34,7 +34,7 @@ private:
 // Public types
 public:
 
-  /// Geometric traits class / Point_3 == Point_with_normal_3<BaseGt>.
+  /// Geometric traits class / Point_3 is a typedef to Point_with_normal_3<BaseGt>.
   typedef Gt Geom_traits;
 
   // Repeat Reconstruction_triangulation_3 public types
@@ -66,9 +66,9 @@ public:
   typedef typename Base::All_cells_iterator       All_cells_iterator;
   typedef typename Base::Locate_type Locate_type;
   typedef typename Base::FT FT;
-  typedef typename Base::Vector Vector; ///< == Vector_3<BaseGt>
-  typedef typename Base::Point Point;  ///< == Point_with_normal_3<BaseGt>
-  typedef typename Base::Point_with_normal Point_with_normal; ///< Point_with_normal_3<BaseGt>
+  typedef typename Base::Vector Vector; ///< typedef to Vector_3<BaseGt>
+  typedef typename Base::Point Point;  ///< typedef to Point_with_normal_3<BaseGt>
+  typedef typename Base::Point_with_normal Point_with_normal; ///< typedef to Point_with_normal_3<BaseGt>
   typedef typename Base::Sphere Sphere;
   typedef typename Base::Normal_iterator Normal_iterator;
   /// @endcond

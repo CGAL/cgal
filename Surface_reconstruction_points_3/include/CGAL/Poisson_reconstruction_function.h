@@ -69,10 +69,10 @@ public:
   typedef Gt Geom_traits; ///< Geometric traits class
 
   // Geometric types
-  typedef typename Geom_traits::FT FT; ///< == Geom_traits::FT
-  typedef typename Geom_traits::Point_3 Point; ///< == Geom_traits::Point_3
-  typedef typename Geom_traits::Vector_3 Vector; ///< == Geom_traits::Vector_3
-  typedef typename Geom_traits::Sphere_3 Sphere; ///< == Geom_traits::Sphere_3
+  typedef typename Geom_traits::FT FT; ///< typedef to Geom_traits::FT
+  typedef typename Geom_traits::Point_3 Point; ///< typedef to Geom_traits::Point_3
+  typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
+  typedef typename Geom_traits::Sphere_3 Sphere; ///< typedef to Geom_traits::Sphere_3
 
 // Private types
 private:
@@ -104,7 +104,7 @@ private:
   typedef typename Triangulation::All_cells_iterator       All_cells_iterator;
   typedef typename Triangulation::Locate_type Locate_type;
 
-  typedef typename Triangulation::Point_with_normal Point_with_normal; ///< == Point_with_normal_3<Geom_traits>
+  typedef typename Triangulation::Point_with_normal Point_with_normal; ///< typedef to Point_with_normal_3<Geom_traits>
 
   // TAUCS solver
   typedef Taucs_solver<double>  Solver;

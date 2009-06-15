@@ -55,8 +55,7 @@ void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
   std::cerr << "Smoothes Point Set (k="
             << nb_neighbors_smooth_jet_fitting << "%=" << nb_neighbors << ")...\n";
 
-  CGAL::jet_smooth_point_set(points.begin(), points.end(),
-                             nb_neighbors);
+  CGAL::jet_smooth_point_set(points.begin(), points.end(), nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
@@ -113,8 +112,7 @@ int main(int argc, char * argv[])
     // If XYZ file format:
     std::ifstream stream(input_filename.c_str());
     if(stream &&
-       CGAL::read_xyz_points(stream,
-                             std::back_inserter(points)))
+       CGAL::read_xyz_points(stream, std::back_inserter(points)))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }

@@ -87,8 +87,8 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
 
       // Estimates normals direction.
       // Note: pca_estimate_normals() requires an iterator over points
-      //       + property maps to access each point's position and normal.
-      //       The position property map can be omitted here as we use an iterator over Point_3 elements.
+      // + property maps to access each point's position and normal.
+      // The position property map can be omitted here as we use iterators over Point_3 elements.
       CGAL::pca_estimate_normals(points->begin(), points->end(),
                                 CGAL::make_normal_vector_property_map(points->begin()),
                                 dialog.directionNbNeighbors());
@@ -108,8 +108,8 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
 
       // Estimates normals direction.
       // Note: jet_estimate_normals() requires an iterator over points
-      //       + property maps to access each point's position and normal.
-      //       The position property map can be omitted here as we use an iterator over Point_3 elements.
+      // + property maps to access each point's position and normal.
+      // The position property map can be omitted here as we use iterators over Point_3 elements.
       CGAL::jet_estimate_normals(points->begin(), points->end(),
                                 CGAL::make_normal_vector_property_map(points->begin()),
                                 dialog.directionNbNeighbors());
@@ -131,9 +131,9 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
 
       // Orient normals.
       // Note: mst_orient_normals() requires an iterator over points
-      //       + property maps to access each point's position and normal.
-      //       The position property map can be omitted here as we use an iterator over Point_3 elements.
-      points->unoriented_points_begin() = 
+      // + property maps to access each point's position and normal.
+      // The position property map can be omitted here as we use iterators over Point_3 elements.
+      points->unoriented_points_begin() =
         CGAL::mst_orient_normals(points->begin(), points->end(),
                                 CGAL::make_normal_vector_property_map(points->begin()),
                                 dialog.orientationNbNeighbors());

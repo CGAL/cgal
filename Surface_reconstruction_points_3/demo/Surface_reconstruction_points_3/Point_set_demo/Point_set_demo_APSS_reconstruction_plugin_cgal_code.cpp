@@ -93,7 +93,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
     // defining the implicit surface = implicit function + bounding sphere centered at inner_point
     Point sm_sphere_center = inner_point;
     FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
-    sm_sphere_radius *= 1.01; // <= the Surface Mesher fails if the sphere does not contain the surface
+    sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
     Surface_3 surface(implicit_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 

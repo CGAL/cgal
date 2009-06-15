@@ -48,8 +48,8 @@ public:
     typedef Gt Geom_traits; ///< Geometric traits class
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::RT RT;
-    typedef typename Geom_traits::Point_3  Point;  ///< == Geom_traits::Point_3
-    typedef typename Geom_traits::Vector_3 Vector; ///< == Geom_traits::Vector_3
+    typedef typename Geom_traits::Point_3  Point;  ///< typedef to Geom_traits::Point_3
+    typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
 
 // Public methods
 public:

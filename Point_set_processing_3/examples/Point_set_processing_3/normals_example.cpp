@@ -19,16 +19,15 @@ int main(void)
     std::list<Point_with_normal> points;
     std::ifstream stream("data/sphere_20k.xyz");
     if (!stream ||
-        !CGAL::read_xyz_points(stream,
-                               std::back_inserter(points)))
+        !CGAL::read_xyz_points(stream, std::back_inserter(points)))
     {
       return EXIT_FAILURE;
     }
 
     // Estimates normals direction.
     // Note: pca_estimate_normals() requires an iterator over points
-    //       + property maps to access each point's position and normal.
-    //       The position property map can be omitted here as we use an iterator over Point_3 elements.
+  // + property maps to access each point's position and normal.
+  // The position property map can be omitted here as we use iterators over Point_3 elements.
     const int nb_neighbors = 7; // K-nearest neighbors
     CGAL::pca_estimate_normals(points.begin(), points.end(),
                                CGAL::make_normal_vector_property_map(points.begin()),
@@ -36,8 +35,8 @@ int main(void)
 
     // Orients normals.
     // Note: mst_orient_normals() requires an iterator over points
-    //       + property maps to access each point's position and normal.
-    //       The position property map can be omitted here as we use an iterator over Point_3 elements.
+  // + property maps to access each point's position and normal.
+  // The position property map can be omitted here as we use iterators over Point_3 elements.
     std::list<Point_with_normal>::iterator unoriented_points_begin =
       CGAL::mst_orient_normals(points.begin(), points.end(),
                                CGAL::make_normal_vector_property_map(points.begin()),

@@ -15,18 +15,16 @@ int main(void)
   std::vector<Point> points;
   std::ifstream stream("data/oni.xyz");
   if (!stream ||
-      !CGAL::read_xyz_points(stream,
-                             std::back_inserter(points)))
+      !CGAL::read_xyz_points(stream, std::back_inserter(points)))
   {
     return EXIT_FAILURE;
   }
 
   // Randomly simplifies using erase-remove idiom
   const double removed_percentage = 75.0; // percentage of points to remove
-  points.erase(CGAL::random_simplify_point_set(points.begin(), points.end(),
-                                               removed_percentage),
+  points.erase(CGAL::random_simplify_point_set(points.begin(), points.end(), removed_percentage),
                points.end());
-          
+
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
   std::vector<Point>(points).swap(points);
 

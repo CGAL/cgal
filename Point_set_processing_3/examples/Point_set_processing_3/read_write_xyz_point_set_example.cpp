@@ -13,25 +13,23 @@ int main(void)
 {
     // Reads a .xyz point set file in points[].
     // Note: read_xyz_points() requires an output iterator over points
-    //       + a property map to access each point's position.
-    //       The position property map can be omitted here as we use an iterator over Point_3 elements.
+    // + a property map to access each point's position.
+    // The position property map can be omitted here as we use iterators over Point_3 elements.
     std::vector<Point> points;
     std::ifstream in("data/sphere_20k.xyz");
     if (!in ||
-        !CGAL::read_xyz_points(in,
-                               std::back_inserter(points)))
+        !CGAL::read_xyz_points(in, std::back_inserter(points)))
     {
       return EXIT_FAILURE;
     }
 
     // Saves point set.
     // Note: write_xyz_points() requires an output iterator over points
-    //       + a property map to access each point's position.
-    //       The position property map can be omitted here as we use an iterator over Point_3 elements.
+    // + a property map to access each point's position.
+    // The position property map can be omitted here as we use iterators over Point_3 elements.
     std::ofstream out("sphere_20k_copy.xyz");
     if (!out ||
-        !CGAL::write_xyz_points(out,
-                                points.begin(), points.end()))
+        !CGAL::write_xyz_points(out, points.begin(), points.end()))
     {
       return EXIT_FAILURE;
     }

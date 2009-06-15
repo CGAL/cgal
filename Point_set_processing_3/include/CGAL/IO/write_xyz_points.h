@@ -32,6 +32,8 @@ CGAL_BEGIN_NAMESPACE
 
 //===================================================================================
 /// Saves the [first, beyond) range of points (positions + normals) to a .xyz ASCII stream.
+/// The function writes for each point a line with the x y z position
+/// followed by the nx ny nz normal.
 ///
 /// @commentheading Precondition: normals must be unit vectors.
 ///
@@ -131,6 +133,7 @@ write_xyz_points_and_normals(
 
 //===================================================================================
 /// Saves the [first, beyond) range of points (positions only) to a .xyz ASCII stream.
+/// The function writes for each point a line with the x y z position.
 ///
 /// @commentheading Template Parameters:
 /// @param ForwardIterator iterator over input points.

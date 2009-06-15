@@ -16,9 +16,9 @@
 // APSS reconstruction method:
 // Reconstruct a surface mesh from a point set and return it as a polyhedron.
 Polyhedron* APSS_reconstruct(const Point_set& points,
-                             FT sm_angle, // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
+                             FT sm_angle, // Min triangle angle (degrees). 20=fast, 30 guaranties convergence.
                              FT sm_radius, // Max triangle radius w.r.t. point set radius. 0.1 is fine.
-                             FT sm_distance, // Approximation error w.r.t. p.s.r.. For APSS: 0.015 = fast, 0.003 = smooth.
+                             FT sm_distance, // Approximation error w.r.t. p.s.r.. For APSS: 0.015=fast, 0.003=smooth.
                              FT smoothness = 2); // Smoothness factor. In the range 2 (clean datasets) and 8 (noisy datasets).
 
 class Point_set_demo_APSS_reconstruction_plugin :

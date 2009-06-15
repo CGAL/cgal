@@ -25,7 +25,7 @@ This \cgal\ component implements two surface reconstruction methods which take a
 More specifically, the core surface reconstruction algorithms consist of computing implicit functions which are either an approximate signed distance function to the inferred surface (Algebraic Point Set Surface - referred to as APSS in the sequel) or an approximate indicator function of the inferred solid (Poisson Surface Reconstruction - referred to as Poisson). Another distinction between the APSS and Poisson algorithms lies into the fact that APSS evaluates the function on the fly at any query point while Poisson requires solving for the implicit function before evaluation.
 
 
-\section{Common reconstruction pipeline}
+\section{Common Reconstruction Pipeline}
 
 Surface reconstruction from point sets is often a sequential process with the following steps: 1) Scanning and scan alignment produce a set of points or points with normals; 2) Outlier removal; 3) Simplification to reduce the number of input points; 4) Smoothing to reduce noise in the input data; 5) Normal estimation and orientation when the normals are not already provided by the acquisition device; and 6) Surface reconstruction. \\
 \cgal\ provides algorithms for all steps listed above except alignment. \\

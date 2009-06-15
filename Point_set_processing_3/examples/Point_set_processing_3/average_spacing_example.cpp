@@ -16,16 +16,14 @@ int main(void)
     std::vector<Point> points;
     std::ifstream stream("data/sphere_20k.xyz");
     if (!stream ||
-        !CGAL::read_xyz_points(stream,
-                               std::back_inserter(points)))
+        !CGAL::read_xyz_points(stream, std::back_inserter(points)))
     {
       return EXIT_FAILURE;
     }
 
     // Computes average spacing.
     const unsigned int nb_neighbors = 7;
-    FT average_spacing = CGAL::compute_average_spacing(points.begin(), points.end(),
-                                                       nb_neighbors);
+    FT average_spacing = CGAL::compute_average_spacing(points.begin(), points.end(), nb_neighbors);
     std::cout << "Average spacing: " << average_spacing << std::endl;
 
     return EXIT_SUCCESS;

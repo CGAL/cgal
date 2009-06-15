@@ -32,7 +32,7 @@
 
 \ccFunction{template<typename ForwardIterator, typename PointPMap, typename Kernel> bool write_off_points(std::ostream& stream, ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, const Kernel& kernel);}
 {
-Saves the [first, beyond) range of points (positions only) to a .off ASCII stream.
+Saves the [first, beyond) range of points (positions only) to a .off ASCII stream. The function writes for each point a line with the x y z position.
 \ccCommentHeading{Template Parameters}  \\
 \ccc{ForwardIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
 \ccCommentHeading{Returns} true on success.
@@ -55,13 +55,13 @@ Saves the [first, beyond) range of points (positions only) to a .off ASCII strea
 
 \ccFunction{template<typename ForwardIterator, typename PointPMap, typename NormalPMap, typename Kernel> bool write_off_points_and_normals(std::ostream& stream, ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap, const Kernel& kernel);}
 {
-Saves the [first, beyond) range of points (positions + normals) to a .off ASCII stream.
+Saves the [first, beyond) range of points (positions + normals) to a .off ASCII stream. The function writes for each point a line with the x y z position followed by the nx ny nz normal.
 \ccPrecond normals must be unit vectors.
 \ccCommentHeading{Template Parameters}  \\
 \ccc{ForwardIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{NormalPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Vector_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
 \ccCommentHeading{Returns} true on success.
 \ccCommentHeading{Parameters}  \\
-\ccc{stream}: output stream. \ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Point_3}. \ccc{normal_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Vector_3}. \ccc{kernel}: geometric traits. 
+\ccc{stream}: output stream. \ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Point_3}. \ccc{normal_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Vector_3}. \ccc{kernel}: geometric traits.
 }
 \ccGlue
 

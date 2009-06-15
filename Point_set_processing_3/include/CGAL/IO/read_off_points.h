@@ -34,6 +34,8 @@ CGAL_BEGIN_NAMESPACE
 
 //===================================================================================
 /// Reads points (positions + normals, if available) from a .off ASCII stream.
+/// The function expects for each point a line with the x y z position,
+/// optionally followed by the nx ny nz normal.
 /// Faces are ignored.
 ///
 /// @commentheading Template Parameters:
@@ -186,7 +188,9 @@ read_off_points_and_normals(
 
 
 //===================================================================================
-/// Reads points (positions only) from a .off ASCII stream.
+/// Reads points (position only) from a .off ASCII stream.
+/// The function expects for each point a line with the x y z position.
+/// If the position is followed by the nx ny nz normal, then the normal will be ignored.
 /// Faces are ignored.
 ///
 /// @commentheading Template Parameters:

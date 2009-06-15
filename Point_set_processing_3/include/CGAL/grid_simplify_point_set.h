@@ -155,7 +155,7 @@ grid_simplify_point_set(
   std::deque<Enriched_point> points_to_remove;
   for (ForwardIterator it=first ; it != beyond ; it++)
   {
-      std::pair<Epsilon_point_set_3<Enriched_point>::iterator,bool> result;
+      std::pair<typename Epsilon_point_set_3<Enriched_point>::iterator,bool> result;
       result = points_to_keep.insert(*it);
       if (!result.second) // if not inserted
         points_to_remove.push_back(*it);

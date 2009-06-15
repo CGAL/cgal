@@ -2842,7 +2842,6 @@ Point_set_processing_3/examples/Point_set_processing_3/data/camel.off -text svne
 Point_set_processing_3/examples/Point_set_processing_3/data/oni.xyz -text
 Point_set_processing_3/examples/Point_set_processing_3/data/sphere_20k.xyz -text
 Point_set_processing_3/examples/Point_set_processing_3/normal_estimation.cmd eol=lf
-Point_set_processing_3/examples/Point_set_processing_3/property_map_multiple_streams.cpp -text
 Point_set_processing_3/include/CGAL/Fast_orthogonal_k_neighbor_search.h -text
 Point_set_processing_3/include/CGAL/compute_average_spacing.h -text
 Point_set_processing_3/include/CGAL/jet_smooth_point_set.h -text

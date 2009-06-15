@@ -118,14 +118,14 @@ CPoissonDoc::CPoissonDoc()
   m_edit_mode = NO_EDIT_MODE; // No points yet
 
   // Poisson options
-  m_sm_angle_poisson = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
+  m_sm_angle_poisson = 20.0; // Min triangle angle (degrees). 20=fast, 30 guaranties convergence.
   m_sm_radius_poisson = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
-  m_sm_distance_poisson = 0.002; // Approximation error w.r.t. p.s.r. For Poisson: 0.01 = fast, 0.002 = smooth.
+  m_sm_distance_poisson = 0.002; // Approximation error w.r.t. p.s.r. For Poisson: 0.01=fast, 0.002=smooth.
 
   // APSS options
-  m_sm_angle_apss = 20.0; // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
+  m_sm_angle_apss = 20.0; // Min triangle angle (degrees). 20=fast, 30 guaranties convergence.
   m_sm_radius_apss = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
-  m_sm_distance_apss = 0.003; // Approximation error w.r.t. p.s.r. (APSS). 0.015 = fast, 0.003 = smooth.
+  m_sm_distance_apss = 0.003; // Approximation error w.r.t. p.s.r. (APSS). 0.015=fast, 0.003=smooth.
                               // Note: 1.5 * Poisson's distance gives roughly the same number of triangles.
   m_smoothness_apss = 2; // Smoothness factor. In the range 2 (clean datasets) and 8 (noisy datasets).
 
@@ -235,7 +235,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     else // Reads OFF file as a point cloud
     {
     std::ifstream stream(lpszPathName);
-    if( ! stream || 
+    if( ! stream ||
         ! CGAL::read_off_points_and_normals(stream,
                                             std::back_inserter(m_points),
                                             CGAL::make_normal_vector_property_map(std::back_inserter(m_points))) )
@@ -251,7 +251,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
           extension.CompareNoCase(".xyz") == 0)
   {
     std::ifstream stream(lpszPathName);
-    if( ! stream || 
+    if( ! stream ||
         ! CGAL::read_xyz_points_and_normals(stream,
                                             std::back_inserter(m_points),
                                             CGAL::make_normal_vector_property_map(std::back_inserter(m_points))) )
@@ -300,7 +300,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   // Saves original normals for visual comparison
   for (int i=0; i<m_points.size(); i++)
     m_points[i].original_normal() = m_points[i].normal();
-    
+
   // Mark all normals as oriented
   m_points.unoriented_points_begin() = m_points.end();
 
@@ -351,7 +351,7 @@ void CPoissonDoc::OnFileSaveAs()
     // Saves normals?
     assert(m_points.begin() != m_points.end());
     bool points_have_normals = (m_points.begin()->normal() != CGAL::NULL_VECTOR);
-    bool save_normals = points_have_normals || 
+    bool save_normals = points_have_normals ||
                         extension.CompareNoCase(".pwn"); // pwn means "point with normal"
 
     // if .pwn or .xyz extension
@@ -362,14 +362,14 @@ void CPoissonDoc::OnFileSaveAs()
       std::ofstream stream(dlgExport.m_ofn.lpstrFile);
       if (save_normals)
       {
-        ok = stream && 
+        ok = stream &&
              CGAL::write_xyz_points_and_normals(stream,
                                                 m_points.begin(), m_points.end(),
                                                 CGAL::make_normal_vector_property_map(m_points.begin()));
       }
       else
       {
-        ok = stream && 
+        ok = stream &&
              CGAL::write_xyz_points(stream,
                                     m_points.begin(), m_points.end());
       }
@@ -387,14 +387,14 @@ void CPoissonDoc::OnFileSaveAs()
       std::ofstream stream(dlgExport.m_ofn.lpstrFile);
       if (save_normals)
       {
-        ok = stream && 
+        ok = stream &&
              CGAL::write_off_points_and_normals(stream,
                                                 m_points.begin(), m_points.end(),
                                                 CGAL::make_normal_vector_property_map(m_points.begin()));
       }
       else
       {
-        ok = stream && 
+        ok = stream &&
              CGAL::write_off_points(stream,
                                     m_points.begin(), m_points.end());
       }
@@ -829,9 +829,9 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
 
   // Orient normals.
   // Note: mst_orient_normals() requires an iterator over points
-  //       + property maps to access each point's position and normal.
-  //       The position property map can be omitted here as we use an iterator over Point_3 elements.
-  m_points.unoriented_points_begin() = 
+  // + property maps to access each point's position and normal.
+  // The position property map can be omitted here as we use iterators over Point_3 elements.
+  m_points.unoriented_points_begin() =
     CGAL::mst_orient_normals(m_points.begin(), m_points.end(),
                              CGAL::make_normal_vector_property_map(m_points.begin()),
                              m_nb_neighbors_mst);
@@ -860,7 +860,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
   status_message("Orients Normals wrt Cameras...");
   CGAL::Timer task_timer; task_timer.start();
 
-  m_points.unoriented_points_begin() = 
+  m_points.unoriented_points_begin() =
     orient_normals_wrt_cameras(m_points.begin(), m_points.end());
 
   // Check the accuracy of normal orientation.
@@ -957,7 +957,7 @@ void CPoissonDoc::OnUpdateModePoisson(CCmdUI *pCmdUI)
   pCmdUI->SetCheck(m_edit_mode == POISSON);
 }
 
-// "Reconstruction >> Poisson Reconstruction w/ Normalized Divergence" callback: 
+// "Reconstruction >> Poisson Reconstruction w/ Normalized Divergence" callback:
 // - Creates Poisson Delaunay Triangulation
 // - Delaunay refinement
 // - Solve Poisson Equation
@@ -981,8 +981,8 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
 
   // Creates implicit function and insert points.
   // Note: Poisson_reconstruction_function() requires an iterator over points
-  //       + property maps to access each point's position and normal.
-  //       The position property map can be omitted here as we use an iterator over Point_3 elements.
+  // + property maps to access each point's position and normal.
+  // The position property map can be omitted here as we use iterators over Point_3 elements.
   assert(m_poisson_function == NULL);
   m_poisson_function = new Poisson_reconstruction_function(m_points.begin(), m_points.end(),
                                                            CGAL::make_normal_vector_property_map(m_points.begin()));
@@ -1037,7 +1037,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
   Point sm_sphere_center = inner_point;
   FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
-  sm_sphere_radius *= 1.01; // <= the Surface Mesher fails if the sphere does not contain the surface
+  sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
   Surface_3 surface(*m_poisson_function,
                     Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
@@ -1054,7 +1054,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
                  m_surface_mesher_dt.number_of_vertices(), task_timer.time());
   update_status();
   task_timer.reset();
-    
+
   // get output surface
   std::deque<Triangle> triangles;
   CGAL::output_surface_facets_to_triangle_soup(m_surface_mesher_c2t3, std::back_inserter(triangles));
@@ -1200,9 +1200,9 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     typedef CGAL::Implicit_surface_3<Kernel, APSS_reconstruction_function> Surface_3;
     Point sm_sphere_center = inner_point;
     FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
-    sm_sphere_radius *= 1.01; // <= the Surface Mesher fails if the sphere does not contain the surface
+    sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
     Surface_3 surface(*m_apss_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius)); 
+                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
     // defining meshing criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_apss,  // Min triangle angle (degrees)
@@ -1343,7 +1343,7 @@ void CPoissonDoc::OnRadialNormalOrientation()
   status_message("Radial Normal Orientation...");
   CGAL::Timer task_timer; task_timer.start();
 
-  m_points.unoriented_points_begin() = 
+  m_points.unoriented_points_begin() =
     CGAL::radial_orient_normals(m_points.begin(), m_points.end(),
                                 CGAL::make_normal_vector_property_map(m_points.begin()));
 

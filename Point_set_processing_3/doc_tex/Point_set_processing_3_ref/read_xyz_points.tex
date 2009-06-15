@@ -32,7 +32,7 @@
 
 \ccFunction{template<typename OutputIterator, typename PointPMap, typename Kernel> bool read_xyz_points(std::istream& stream, OutputIterator output, PointPMap point_pmap, const Kernel& kernel);}
 {
-Reads points (positions only) from a .xyz ASCII stream.
+Reads points (positions only) from a .xyz ASCII stream. The function expects for each point a line with the x y z position. If the position is followed by the nx ny nz normal, then the normal will be ignored.
 \ccCommentHeading{Template Parameters}  \\
 \ccc{OutputIterator}: iterator over output points. \ccc{PointPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{OutputIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
 \ccCommentHeading{Returns} true on success.
@@ -55,12 +55,12 @@ Reads points (positions only) from a .xyz ASCII stream.
 
 \ccFunction{template<typename OutputIterator, typename PointPMap, typename NormalPMap, typename Kernel> bool read_xyz_points_and_normals(std::istream& stream, OutputIterator output, PointPMap point_pmap, NormalPMap normal_pmap, const Kernel& kernel);}
 {
-Reads points (positions + normals, if available) from a .xyz ASCII stream.
+Reads points (positions + normals, if available) from a .xyz ASCII stream. The function expects for each point a line with the x y z position, optionally followed by the nx ny nz normal.
 \ccCommentHeading{Template Parameters}  \\
 \ccc{OutputIterator}: iterator over output points. \ccc{PointPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{OutputIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{NormalPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Vector_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
 \ccCommentHeading{Returns} true on success.
 \ccCommentHeading{Parameters}  \\
-\ccc{stream}: input stream. \ccc{output}: output iterator over points. \ccc{point_pmap}: property map \ccc{OutputIterator} -$>$ \ccc{Point_3}. \ccc{normal_pmap}: property map \ccc{OutputIterator} -$>$ \ccc{Vector_3}. \ccc{kernel}: geometric traits. 
+\ccc{stream}: input stream. \ccc{output}: output iterator over points. \ccc{point_pmap}: property map \ccc{OutputIterator} -$>$ \ccc{Point_3}. \ccc{normal_pmap}: property map \ccc{OutputIterator} -$>$ \ccc{Vector_3}. \ccc{kernel}: geometric traits.
 }
 \ccGlue
 
