@@ -2845,7 +2845,6 @@ Point_set_processing_3/examples/Point_set_processing_3/normal_estimation.cmd eol
 Point_set_processing_3/include/CGAL/Fast_orthogonal_k_neighbor_search.h -text
 Point_set_processing_3/include/CGAL/compute_average_spacing.h -text
 Point_set_processing_3/include/CGAL/jet_smooth_point_set.h -text
-Point_set_processing_3/run_testsuite_with_cmake.bat eol=crlf
 Point_set_processing_3/test/Point_set_processing_3/analysis_test.cmd eol=lf
 Point_set_processing_3/test/Point_set_processing_3/analysis_test.cpp -text
 Point_set_processing_3/test/Point_set_processing_3/cgal_test_with_cmake -text
@@ -4009,7 +4008,6 @@ Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/cgal_te
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/data/camel-5kv.xyz -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/data/oni.xyz -text
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/poisson_reconstruction.cmd eol=lf
-Surface_reconstruction_points_3/run_testsuite_with_cmake.bat eol=crlf
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/APSS_reconstruction_test.cmd eol=lf
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/cgal_test_with_cmake -text
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/cgal_test_with_cmake.bat eol=crlf
