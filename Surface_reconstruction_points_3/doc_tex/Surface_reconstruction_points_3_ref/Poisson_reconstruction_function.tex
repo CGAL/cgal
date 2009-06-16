@@ -41,12 +41,11 @@ Given a set of 3D points with oriented normals sampled on the boundary of a 3D s
 %START-AUTO(\ccParameters)
 
 template$<$  \\
-class Gt,   \\
-class \ccc{ReconstructionTriangulation_3} = \ccc{Reconstruction_triangulation_3<Gt>}$>$   \\
+class Gt$>$   \\
 class \ccc{Poisson_reconstruction_function};
 
 \ccCommentHeading{Parameters}  \\
-\ccc{Gt}: Geometric traits class. \ccc{ReconstructionTriangulation_3}: 3D Delaunay triangulation class derived from \ccc{Reconstruction_triangulation_3}.
+\ccc{Gt}: Geometric traits class.
 
 %END-AUTO(\ccParameters)
 
@@ -67,13 +66,14 @@ Model of the \ccc{ImplicitFunction} concept.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccTypes)
 
-\ccNestedType{Triangulation}
-{
-}
-\ccGlue
 \ccNestedType{Geom_traits}
 {
 Geometric traits class.
+}
+\ccGlue
+\ccNestedType{Triangulation}
+{
+Typedef to \ccc{Reconstruction_triangulation_3<Gt>}.
 }
 \ccGlue
 \ccNestedType{FT}
@@ -132,12 +132,12 @@ Creates a Poisson implicit function from the [first, beyond) range of points.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
-\ccMethod{ReconstructionTriangulation_3& triangulation();}
+\ccMethod{Triangulation& triangulation();}
 {
 Gets embedded triangulation.
 }
 \ccGlue
-\ccMethod{const ReconstructionTriangulation_3& triangulation() const;}
+\ccMethod{const Triangulation& triangulation() const;}
 {
 }
 \ccGlue
