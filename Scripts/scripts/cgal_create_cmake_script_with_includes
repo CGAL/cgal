@@ -35,7 +35,7 @@
 create_cmake_script_with_includes()
 {
 
-# TODO enable Qt3 + Qt4 demos!
+# TODO distinguish Qt3 + Qt4 demos!
 
 if [ -e "$INCLUDE_FILE" ]; then
 
@@ -94,6 +94,26 @@ find_package(CGAL QUIET COMPONENTS Core Qt3 )
 
 if ( CGAL_FOUND )
 
+EOF
+    if [ -d ../../include ] ; then
+      echo '  include_directories (BEFORE ../../include)'
+      echo
+    fi
+    if [ -d ../include ] ; then
+      echo '  include_directories (BEFORE ../include)'
+      echo
+    fi
+    if [ -d include ] ; then
+      echo '  include_directories (BEFORE include)'
+      echo
+    fi		
+
+   for package in $PACKAGES; do
+     echo "  include_directories($package/include/)";
+   done
+
+    cat <<'EOF'  
+
   include( ${CGAL_USE_FILE} )
 
   find_package(Qt3-patched QUIET )
@@ -115,18 +135,6 @@ EOF
 
 EOF
     
-    if [ -d ../../include ] ; then
-      echo '  include_directories (BEFORE ../../include)'
-      echo
-    fi
-    if [ -d ../include ] ; then
-      echo '  include_directories (BEFORE ../include)'
-      echo
-    fi
-    if [ -d include ] ; then
-      echo '    include_directories (BEFORE include)'
-      echo
-    fi
     cat <<EOF
     add_executable  (${target_name} ${all})
   
@@ -255,7 +263,7 @@ if [ "${TYPE}" = "example" -o "${TYPE}" = "demo" -o "${TYPE}" = "test" ]; then
 fi 
 
 if [ -z "$ok" ]; then
-  echo "Invalid type: ${TYPE}. Valid values are example, demo or test"
+  echo "Invalid type: '${TYPE}'. Valid values are 'example', 'demo' or 'test'"
   exit 1
 fi 
 
