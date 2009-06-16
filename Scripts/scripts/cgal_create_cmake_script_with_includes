@@ -36,8 +36,6 @@ create_cmake_script_with_includes()
 {
 
 # TODO enable Qt3 + Qt4 demos!
-# TODO allow to give include file as command line - if not given use .cgal_cmake_includes files
-INCLUDE_FILE="${HOME}/.cgal_cmake_includes"
 
 if [ -e "$INCLUDE_FILE" ]; then
 
@@ -212,21 +210,44 @@ EOF
 
 usage()
 {
-  echo "Usage: cgal_create_cmake_script_with_includes [TYPE]"
-  echo
-  echo "  TYPE must be any of example, demo or test."
-  echo "  Default is example."
-  echo 
+  echo "Usage: `basename $0` [-i include_file='$HOME/.cgal_cmake_includes'] [-t type] [-h]" >&2
+  echo >&2
+  echo "  include_file - file with PACKAGE or DIRECTORY directives" >&2
+  echo "  type - must be any of example, demo or test. Default is example." >&2
+  echo  >&2
 }
 
+TYPE="example"
+INCLUDE_FILE="${HOME}/.cgal_cmake_includes"
 
-case $# in
-  0) TYPE="example";;
-  1) TYPE=$1;;
-  *) usage
-     exit 1
-esac
+# parse command line arguments
+while getopts i:t:hv OPT; do
+    case "$OPT" in
+	h)	usage
+		exit 0
+		;;
+	v)	echo "`basename $0` version 0.1"
+		exit 0
+		;;
+	i)	INCLUDE_FILE=$OPTARG
+                if [ ! -e "$INCLUDE_FILE" ]; then
+                   echo "File $INCLUDE_FILE does not exist." >&2
+	           exit 1
+                fi
+		;;
+	t)	TYPE=$OPTARG
+		;;
+	\?)	# getopts issues an error message
+		usage
+		exit 1
+		;;
+    esac
+done
 
+shift `expr $OPTIND - 1`
+
+#echo "TYPE: $TYPE"
+#echo "FILE: $INCLUDE_FILE"
 
 
 if [ "${TYPE}" = "example" -o "${TYPE}" = "demo" -o "${TYPE}" = "test" ]; then
