@@ -1435,7 +1435,7 @@ private:
             
 #if CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
 #warning USES BEZOUT MATRIX FOR SUBRESULTANTS
-            CGAL::CGALi::bezout_polynomial_subresultants
+            CGAL::CGALi::bezout_polynomial_subresultants<Polynomial_traits_2>
                 (primitive_polynomial_2(),
                  CGAL::diff(primitive_polynomial_2()),
                  std::back_inserter(stha));
