@@ -27,21 +27,19 @@
  * as a geometry traits class for the arrangement on surface package.
  */
 
+#include <fstream>
+
 #include <CGAL/config.h>
 #include <CGAL/tags.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
-#if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)    
-#include <CGAL/Fraction_traits.h>
-#endif
-
-#include <fstream>
 
 CGAL_BEGIN_NAMESPACE
 
 #define CGAL_X_MINUS_1_Y_0      0
-#define CGAL_X_MINUS_0_8_Y_0_6  1
+#define CGAL_X_MINUS_8_Y_6      1
+#define CGAL_X_MINUS_11_Y_7     2
 
 #ifndef CGAL_IDENTIFICATION_XY
 #define CGAL_IDENTIFICATION_XY  CGAL_X_MINUS_1_Y_0
@@ -111,8 +109,10 @@ protected:
   {
 #if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
     static const Direction_2 d(-1, 0);
-#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)    
+#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_8_Y_6)    
     static const Direction_2 d(-8, 6);
+#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_11_Y_7)    
+    static const Direction_2 d(-11, 7);
 #else
 #error CGAL_IDENTIFICATION_XY is not defined
 #endif
@@ -128,8 +128,10 @@ protected:
   {
 #if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
     static const Direction_3 d(0, 1, 0);
-#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)
+#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_8_Y_6)
     static const Direction_3 d(6, 8, 0);
+#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_11_Y_7)
+    static const Direction_3 d(7, 11, 0);
 #else
 #error CGAL_IDENTIFICATION_XY is not defined
 #endif
@@ -2167,7 +2169,7 @@ public:
       (signx == POSITIVE) ? NO_BOUNDARY_LOC :
       ((signx == NEGATIVE) ? MID_BOUNDARY_LOC :
        ((z_sign(dir) == NEGATIVE) ? MIN_BOUNDARY_LOC : MAX_BOUNDARY_LOC));
-#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)
+#else
     if ((x_sign(dir) == ZERO) && (y_sign(dir) == ZERO)) {
       m_location =
         (z_sign(dir) == NEGATIVE) ? MIN_BOUNDARY_LOC : MAX_BOUNDARY_LOC;
@@ -2180,8 +2182,6 @@ public:
     typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
     const Direction_2 & xy = Traits::identification_xy();
     m_location = equal_2(dir_xy, xy) ? MID_BOUNDARY_LOC : NO_BOUNDARY_LOC;
-#else
-#error CGAL_IDENTIFICATION_XY is not defined
 #endif
   }
   
@@ -2651,7 +2651,7 @@ public:
     return ((x_sign(m_normal) == ZERO) &&
             (((y_sign(m_normal) == NEGATIVE) && !is_directed_right()) ||
              ((y_sign(m_normal) == POSITIVE) && is_directed_right())));
-#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)
+#else
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     const Direction_3 & iden_normal = Traits::identification_normal();
@@ -2665,8 +2665,6 @@ public:
         kernel.construct_opposite_direction_2_object()(normal_xy);
       return kernel.equal_2_object()(opposite_normal_xy, iden_normal_xy);
     }
-#else
-#error CGAL_IDENTIFICATION_XY is not defined
 #endif
   }
   
