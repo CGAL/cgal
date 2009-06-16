@@ -9,12 +9,11 @@ Given a set of 3D points with oriented normals (denoted oriented points in the s
 The class template declaration is:
 
 template$<$  \\
-class Gt,   \\
-class \ccc{ReconstructionTriangulation_3} = \ccc{Reconstruction_triangulation_3<Gt>}$>$   \\
+class Gt$>$   \\
 class \ccc{Poisson_reconstruction_function};
 
 with  \\
-\ccc{Gt}: Geometric traits class. \ccc{ReconstructionTriangulation_3}: 3D Delaunay triangulation class derived from \ccc{Reconstruction_triangulation_3}.
+\ccc{Gt}: Geometric traits class.
 
 Creation:
 
@@ -54,7 +53,7 @@ Returns a point located inside the inferred surface.
 }
 
 See details in \\
-\ccc{CGAL::Poisson_reconstruction_function<GeomTraits, ReconstructionTriangulation_3>}
+\ccc{CGAL::Poisson_reconstruction_function<GeomTraits>}
 
 
 \subsection{Example}

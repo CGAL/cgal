@@ -5,6 +5,7 @@
 #include "Poisson.h"
 #include "PoissonDoc.h"
 #include "PoissonView.h"
+#include "gl_draw_delaunay.h"
 
 #include <cassert>
 
@@ -300,12 +301,12 @@ void CPoissonView::OnPaint()
       if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
         pDoc->points()->gl_draw_vertices(0,0,0 /*black*/, 2.0f /*size*/);
       else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function()->triangulation().gl_draw_delaunay_vertices(0,0,0 /*black*/, 2.0f /*size*/);
+        gl_draw_delaunay_vertices(pDoc->poisson_function()->triangulation(), 0,0,0 /*black*/, 2.0f /*size*/);
     }
 
     // draw Delaunay edges
     if(m_view_delaunay_edges && pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function()->triangulation().gl_draw_delaunay_edges(0,0,0 /*black*/, 1.0f /*size*/);
+        gl_draw_delaunay_edges(pDoc->poisson_function()->triangulation(), 0,0,0 /*black*/, 1.0f /*size*/);
 
     // draw normals
     float normal_length = (float)sqrt(region_of_interest.squared_radius() / 1000.);
@@ -314,7 +315,7 @@ void CPoissonView::OnPaint()
       if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
         pDoc->points()->gl_draw_normals(0,255,0 /*green*/, normal_length);
       else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function()->triangulation().gl_draw_normals(0,255,0 /*green*/, normal_length);
+        gl_draw_delaunay_normals(pDoc->poisson_function()->triangulation(), 0,255,0 /*green*/, normal_length);
     }
     if(m_view_original_normals && points_have_original_normals)
       pDoc->points()->gl_draw_original_normals(128,191,255 /*light blue*/, normal_length);

@@ -18,7 +18,6 @@
 #include <CGAL/APSS_reconstruction_function.h>
 
 // This demo
-#include "poisson_dt3.h"
 #include "UI_point_3.h"
 #include "Point_set_3.h"
 #include "Triangular_surface_3.h"
@@ -42,9 +41,8 @@ typedef UI_point_3<Kernel> UI_point; ///< Position + normal + cameras + selectio
 typedef Gyroviz_point_3<Kernel> Gyroviz_point; ///< Position + normal + cameras
 typedef UI_point::Point_with_normal Point_with_normal; ///< Position + normal
 
-// Poisson's 3D Delaunay triangulation and implicit function
-typedef Poisson_dt3<Kernel> Dt3;
-typedef CGAL::Poisson_reconstruction_function<Kernel, Dt3> Poisson_reconstruction_function;
+// Poisson implicit function
+typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 
 // APSS implicit function
 typedef CGAL::APSS_reconstruction_function<Kernel> APSS_reconstruction_function;

@@ -20,7 +20,6 @@
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
-#define CGAL_C2T3_USE_FILE_WRITER_OFF
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 // This package

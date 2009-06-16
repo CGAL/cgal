@@ -54,19 +54,17 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
-/// @param ReconstructionTriangulation_3 3D Delaunay triangulation
-///        class derived from Reconstruction_triangulation_3.
 
-template <class Gt,
-          class ReconstructionTriangulation_3 = Reconstruction_triangulation_3<Gt> >
+template <class Gt>
 class Poisson_reconstruction_function
 {
 // Public types
 public:
 
-  typedef ReconstructionTriangulation_3 Triangulation;
-
   typedef Gt Geom_traits; ///< Geometric traits class
+
+  /// Typedef to Reconstruction_triangulation_3<Gt>
+  typedef Reconstruction_triangulation_3<Gt> Triangulation;
 
   // Geometric types
   typedef typename Geom_traits::FT FT; ///< typedef to Geom_traits::FT
@@ -77,7 +75,7 @@ public:
 // Private types
 private:
 
-  // Repeat ReconstructionTriangulation_3 types
+  // Repeat Triangulation types
   typedef typename Triangulation::Triangulation_data_structure Triangulation_data_structure;
   typedef typename Geom_traits::Ray_3 Ray;
   typedef typename Geom_traits::Plane_3 Plane;
@@ -189,11 +187,11 @@ public:
   /// @endcond
 
   /// Gets embedded triangulation.
-  ReconstructionTriangulation_3& triangulation()
+  Triangulation& triangulation()
   {
     return *m_tr;
   }
-  const ReconstructionTriangulation_3& triangulation() const
+  const Triangulation& triangulation() const
   {
     return *m_tr;
   }
