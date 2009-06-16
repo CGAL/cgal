@@ -227,7 +227,7 @@ protected:
         } 
         switch(which_case) {
         case 0:
-            coeff = CGAL::ipower(coeff, power);
+            coeff = CGAL::ipower(coeff, static_cast< long >(power));
             tmp = Poly_2(Poly_1(coeff));
             break;
         case 1:
@@ -238,7 +238,7 @@ protected:
             if(degree * power >= max_exp) 
                 throw CGAL::CGALi::Parser_exception(
                     "Power is too large for polynomial in basic  term ");
-            tmp = CGAL::ipower(tmp, power);    
+            tmp = CGAL::ipower(tmp, static_cast< long >(power));    
         }
         res = tmp;
         // returned index points to the next syntactic object
