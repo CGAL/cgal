@@ -389,6 +389,7 @@ class Tree_vs_naive
   typedef typename Tree::Primitive Primitive;
   typedef typename Tree::Point_and_primitive_id Point_and_primitive_id;
   typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
+  typedef typename Tree::size_type size_type;
 
   typedef Naive_implementations<Polyhedron, K, Type> Naive_implementation;
 
@@ -507,11 +508,11 @@ private:
                const Naive_implementation& naive) const
     {
       naive_timer.start();
-      bool number_naive = naive.number_of_intersected_primitives(query, p);
+      size_type number_naive = naive.number_of_intersected_primitives(query, p);
       naive_timer.stop();
 
       tree_timer.start();
-      bool number_tree = tree.number_of_intersected_primitives(query);
+      size_type number_tree = tree.number_of_intersected_primitives(query);
       tree_timer.stop();
 
       // Check

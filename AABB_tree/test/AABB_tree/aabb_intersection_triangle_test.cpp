@@ -122,22 +122,10 @@ int main()
 {
     // duration of each test
     const double duration = 0.2;
-
-    // loop over all data/*.off files
-    bfs::path path("data");
-    bfs::directory_iterator dir_end; // default construction yields past-the-end
-    for( bfs::directory_iterator dir_iter(path) ;
-         dir_iter != dir_end;
-         ++dir_iter)
-      {
-          // NB: leaf() is replaced by filename() since boost 1.35
-          std::string filename = "data/" + dir_iter->leaf();
-          if(filename.find(".off") != std::string::npos)
-          {
-            test_kernels<TRIANGLE>(filename.data(),duration);
-            std::cout << filename;
-          }
-      }
+    test_kernels<TRIANGLE>("./data/cube.off",duration);
+    test_kernels<TRIANGLE>("./data/coverrear.off",duration);
+    test_kernels<TRIANGLE>("./data/nested_spheres.off",duration);
+    test_kernels<TRIANGLE>("./data/finger.off",duration);
 
     return EXIT_SUCCESS;
 }
