@@ -57,6 +57,7 @@ public:
   typedef CGAL::Tag_true Are_explicit_interoperable;
   typedef CGAL::Tag_true Are_implicit_interoperable;
   struct Cast{
+    typedef Type result_type;
     Type operator()(const Type& x) const { return x;}
     Type operator()(Coeff x) const { return Type(x);}
   };
