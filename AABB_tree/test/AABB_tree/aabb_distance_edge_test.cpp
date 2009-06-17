@@ -49,11 +49,12 @@ void test_impl(Tree& tree, Polyhedron&, const double duration)
 
 int main(void)
 {
-  std::cout << "AABB distance tests" << std::endl;
+  std::cout << "AABB distance to edge tests" << std::endl;
   const double duration = 0.2;
   test_kernels<SEGMENT>("./data/cube.off",duration);
+  test_kernels<SEGMENT>("./data/finger.off",duration);
+  test_kernels<SEGMENT>("./data/pinion.off",duration);
   test_kernels<SEGMENT>("./data/coverrear.off",duration);
   test_kernels<SEGMENT>("./data/nested_spheres.off",duration);
-  test_kernels<SEGMENT>("./data/finger.off",duration);
   return 0;
 }
