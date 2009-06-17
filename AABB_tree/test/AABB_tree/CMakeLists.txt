@@ -28,6 +28,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program("aabb_distance_edge_test.cpp")
   create_single_source_cgal_program("aabb_distance_triangle_hint_test.cpp")
   create_single_source_cgal_program("aabb_naive_vs_tree_triangle_test.cpp")
+  create_single_source_cgal_program("aabb_naive_vs_tree_distance_triangle_test.cpp")
   
 else()
   

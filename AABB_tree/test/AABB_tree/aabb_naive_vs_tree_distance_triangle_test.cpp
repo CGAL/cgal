@@ -48,19 +48,19 @@ void test_impl(Tree& tree, Polyhedron& p, const double duration)
   typedef Tree_vs_naive<Tree, Polyhedron, K, Type> Tester;
   Tester tester(tree, p);
 
-  tester.test_all_intersection_methods(duration);
+  tester.test_all_distance_methods(duration);
 }
 
 int main(void)
 {
-  std::cout << "AABB naive vs tree triangle distance tests" << std::endl;
+  std::cout << "AABB naive vs tree distance (triangle primitive) tests" << std::endl;
 
   const double duration = 0.2;
   test_kernels<TRIANGLE>("./data/cube.off",duration);
-  test_kernels<TRIANGLE>("./data/finger.off",duration);
-  test_kernels<TRIANGLE>("./data/pinion.off",duration);
   test_kernels<TRIANGLE>("./data/coverrear.off",duration);
   test_kernels<TRIANGLE>("./data/nested_spheres.off",duration);
+  test_kernels<TRIANGLE>("./data/finger.off",duration);
+  test_kernels<TRIANGLE>("./data/pinion.off",duration);
 
   return EXIT_SUCCESS;
 }

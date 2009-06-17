@@ -307,6 +307,9 @@ class Naive_implementations
   typedef typename Traits::size_type size_type;
   typedef typename Traits::Object_and_primitive_id Object_and_primitive_id;
   typedef typename Pr::Id Primitive_id;
+  typedef typename Traits::FT FT;
+  typedef typename Traits::Point Point;
+  typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
 
   typedef boost::optional<Object_and_primitive_id> Intersection_result;
 
@@ -370,6 +373,48 @@ public:
 
     return out;
   }
+
+  Point closest_point(const Point& query,
+                      Polyhedron& p) const
+  {
+    Polyhedron_primitive_iterator it = Pr_generator().begin(p);
+
+    assert ( it != Pr_generator().end(p) );
+
+    // Get a point on the primitive
+    Point closest_point = Pr(it).reference_point();
+
+    for ( ; it != Pr_generator().end(p) ; ++it )
+    {
+      closest_point = Traits().closest_point_object()(query, Pr(it), closest_point);
+    }
+
+    return closest_point;
+  }
+
+  Point_and_primitive_id closest_point_and_primitive(const Point& query,
+                                                     Polyhedron& p) const
+  {
+    Polyhedron_primitive_iterator it = Pr_generator().begin(p);
+
+    assert ( it != Pr_generator().end(p) );
+
+    // Get a point on the primitive
+    Point closest_point = Pr(it).reference_point();
+    typename Pr::Id closest_primitive = Pr(it).id();
+
+    for ( ; it != Pr_generator().end(p) ; ++it )
+    {
+      Point tmp = Traits().closest_point_object()(query, Pr(it), closest_point);
+      if ( tmp != closest_point)
+      {
+        closest_point = tmp;
+        closest_primitive = Pr(it).id();
+      }
+    }
+
+    return Point_and_primitive_id(closest_point,closest_primitive);
+  }
 };
 
 
@@ -415,6 +460,18 @@ public:
     std::cerr << "\tTree test time: " << m_tree_time*1000 << "ms" << std::endl;
   }
 
+  void test_all_distance_methods(double duration) const
+  {
+    m_naive_time = 0;
+    m_tree_time = 0;
+
+    test_closest_point(duration);
+    test_closest_point_and_primitive(duration);
+
+    std::cerr << "\tNaive test time: " << m_naive_time*1000 << "ms" << std::endl;
+    std::cerr << "\tTree test time: " << m_tree_time*1000 << "ms" << std::endl;
+  }
+
   void test_do_intersect(double duration) const
   {
     loop(duration, Do_intersect());
@@ -434,6 +491,17 @@ public:
   {
     loop(duration, Intersections());
   }
+
+  void test_closest_point(double duration) const
+  {
+    loop_distance(duration, Closest_point());
+  }
+
+  void test_closest_point_and_primitive(double duration) const
+  {
+    loop_distance(duration, Closest_point_and_primitive());
+  }
+
 
 private:
 
@@ -462,6 +530,23 @@ private:
 
 //    std::cerr << "\t" << nb_test << " loops in "
 //              << timer.time() << "s" << std::endl;
+    m_naive_time += test.naive_timer.time();
+    m_tree_time += test.tree_timer.time();
+  }
+
+  template<typename Test>
+  void loop_distance(double duration,
+                     const Test& test) const
+  {
+    CGAL::Timer timer;
+    timer.start();
+    while ( timer.time() < duration )
+    {
+      Point a = random_point_in<K>(m_tree.bbox());
+      test(a, m_polyhedron, m_tree, m_naive);
+    }
+    timer.stop();
+
     m_naive_time += test.naive_timer.time();
     m_tree_time += test.tree_timer.time();
   }
@@ -643,6 +728,73 @@ private:
 
     mutable CGAL::Timer naive_timer;
     mutable CGAL::Timer tree_timer;
+  };
+
+
+  struct Closest_point
+  {
+    void operator()(const Point& query,
+                    Polyhedron& p,
+                    Tree& tree,
+                    const Naive_implementation& naive) const
+    {
+      naive_timer.start();
+      Point point_naive = naive.closest_point(query,p);
+      naive_timer.stop();
+
+      tree_timer.start();
+      Point point_tree = tree.closest_point(query);
+      tree_timer.stop();
+
+      FT dist_naive = CGAL::squared_distance(query, point_naive);
+      FT dist_tree = CGAL::squared_distance(query, point_tree);
+
+      assert( dist_tree >= dist_naive );
+      assert( ((dist_naive - dist_tree) < epsilon*dist_tree) );
+      //std::cerr << dist_naive - dist_tree << std::endl;
+    }
+
+    mutable CGAL::Timer naive_timer;
+    mutable CGAL::Timer tree_timer;
+
+    const static FT epsilon = 1e-12;
+  };
+
+  struct Closest_point_and_primitive
+  {
+    void operator()(const Point& query,
+                    Polyhedron& p,
+                    Tree& tree,
+                    const Naive_implementation& naive) const
+    {
+      naive_timer.start();
+      Point_and_primitive_id point_naive = naive.closest_point_and_primitive(query,p);
+      naive_timer.stop();
+
+      tree_timer.start();
+      Point_and_primitive_id point_tree = tree.closest_point_and_primitive(query);
+      tree_timer.stop();
+
+      if ( point_naive.second == point_tree.second )
+      {
+        // Points should be the same
+        assert(point_naive.first == point_tree.first);
+      }
+      else
+      {
+        std::cerr << "\tClosest point found on different primitives" << std::endl;
+        // Compare distance
+        FT dist_naive = CGAL::squared_distance(query, point_naive.first);
+        FT dist_tree = CGAL::squared_distance(query, point_tree.first);
+        assert( dist_tree >= dist_naive );
+        assert( ((dist_naive - dist_tree) < epsilon*dist_tree) );
+      }
+    }
+
+    mutable CGAL::Timer naive_timer;
+    mutable CGAL::Timer tree_timer;
+
+    const static FT epsilon = 1e-12;
   };
 
 
