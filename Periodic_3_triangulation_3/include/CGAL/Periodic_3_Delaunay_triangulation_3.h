@@ -477,7 +477,7 @@ private:
   class Point_hider;
 
 #ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
-  template <class Triangulation_R3> struct Vertex_remover;
+  template <class TriangulationR3> struct Vertex_remover;
 #else
   template <class TriangulationR3>
   struct Vertex_remover
