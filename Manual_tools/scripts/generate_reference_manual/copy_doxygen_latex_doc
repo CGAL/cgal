@@ -159,8 +159,10 @@ sub latex_unmangle
     # Get parameter: buffer containing a doxygen-generated latex file
     my $buf = shift;
 
-    # Avoid tabs and consecutive spaces to ease parsing in the rest of this script
+    # First: avoid tabs, consecutive spaces and trailing spaces
+    # to ease parsing in the rest of this script.
     $buf =~ s/( |\t)+/ /g;
+    $buf =~ s/ +\n/\n/g;
 
     # Convert buffer back to Doxygen 1.5.5 format
     $buf =~ s/\\paragraph\[\{.*?\}\]/\\paragraph/g; # remove \paragraph[...] -> \paragraph
@@ -237,16 +239,14 @@ sub doxygen_latex_to_latex
     $buf =~ s/\n?\\begin\{Desc\}/\n\\begin\{Desc\}/smg;
 
     # Use a canonic style to ease parsing
-    $buf =~ s/ *, *([^\\])/, $1/g;              # Use a canonic style "item1, item2" for lists
-    $buf =~ s/([\w\>]+)\s*&\s*/$1& /g;          # Use a canonic style "type& variable" for references
-    $buf =~ s/(\w)=/$1 =/g;                     # Use a canonic style "variable = default" for default parameters
+    $buf =~ s/ *, *([^\\])/, $1/g;              # Use a canonic style "item1, item2" for lists.
+    $buf =~ s/([\w\>]+) *& *([^\'])/$1& $2/g;   # Use a canonic style "type& variable" for references
+                                                # without modifying 'type&'.
+    $buf =~ s/(\w)=/$1 =/g;                     # Use a canonic style "variable = default" for default. parameters
     $buf =~ s/=(\w)/= $1/g;                     #                    ""
-    $buf =~ s/<\s*(.*?)\s*>/<$1>/g;             # Use a canonic style "type<parameters>" for template parameters
+    $buf =~ s/<\s*(.*?)\s*>/<$1>/g;             # Use a canonic style "type<parameters>" for template. parameters
     $buf =~ s/Constructor& Destructor/Constructor & Destructor/g;
     $buf =~ s/\\item\[(.*?): +\]/\\item\[$1:\]/g;
-
-    # Remove trailing spaces to ease parsing
-    $buf =~ s/ +\n/\n/g;
 
     # "Desc" is a doxygen style based on "description".
     # "CompactItemize" is a doxygen style based on "itemize".
@@ -288,7 +288,7 @@ sub latex_mangle
 
     # 1) Trust user: wrap words surrounded by simple quotes by \ccc{} [L. Saboret's extension].
     # Note: we use a one-liner to not insert a \ccc{} call inside an another one.
-    $buf =~ s/\'(((::|\w)+(<.*?>)?)+)\'/\\ccc\{$1\}/g;
+    $buf =~ s/\'(((::|\w)+(<.*?>)?)+&?\**)\'/\\ccc\{$1\}/g;
 
     # Add carriage returns around \ccc{} for the line by line substitution below.
     # Note: make sure to insert only one \n before and after each \ccc{} call.
@@ -719,7 +719,7 @@ sub format_doxygen_class_doc
 
     # Remove CGAL:: and $className:: prefixes (implicit)
     $buf =~ s/CGAL::(\w+)/$1/g;
-    $buf =~ s/$className(<.*?>)?::(\w+)/$2/g;
+    $buf =~ s/$className(<[^<]*?>)?::(\w+)/$2/g;
 
     # Rename (for a class/struct) or delete (for a concept) the include file
     # and insert \ccSeeAlso title at the end of the document.
