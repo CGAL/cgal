@@ -479,7 +479,7 @@ bool well_oriented(Vertex_handle v)
       Vertex_handle v0 = fc->vertex(0);
       Vertex_handle v1 = fc->vertex(1);
       Vertex_handle v2 = fc->vertex(2);
-      if(orientation_2(v0->point(),v1->point(),v2->point()) 
+      if(orientation(v0->point(),v1->point(),v2->point()) 
         != COUNTERCLOCKWISE) return false;
     }
   } while(++fc != done);
