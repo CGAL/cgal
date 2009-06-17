@@ -2835,8 +2835,6 @@ Point_set_processing_3/doc_tex/Point_set_processing_3/pipeline.eps -text svneol=
 Point_set_processing_3/doc_tex/Point_set_processing_3/pipeline.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/simplification.tex -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/smoothing.tex -text
-Point_set_processing_3/doc_tex/Property_map/fig/property_map.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc_tex/Property_map/fig/property_map_detail.png -text svneol=unset#image/png
 Point_set_processing_3/examples/Point_set_processing_3/cgal_test_with_cmake -text
 Point_set_processing_3/examples/Point_set_processing_3/cgal_test_with_cmake.bat eol=crlf
 Point_set_processing_3/examples/Point_set_processing_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
