@@ -119,6 +119,9 @@ compute_average_spacing(
   unsigned int k, ///< number of neighbors.
   const Kernel& kernel) ///< geometric traits.
 {
+  // basic geometric types
+  typedef typename Kernel::Point_3 Point;
+
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
   typedef Search_traits_3<Kernel> Tree_traits;
@@ -133,14 +136,22 @@ compute_average_spacing(
   // precondition: at least 2 nearest neighbors
   CGAL_point_set_processing_precondition(k >= 2);
 
-  // instanciate a KD-tree search
-  Tree tree(first,beyond);
+  InputIterator it;
+
+  // Instanciate a KD-tree search.
+  // Note: We have to convert each input iterator to Point_3.
+  std::vector<Point> kd_tree_points; 
+  for(it = first; it != beyond; it++)
+  {
+      Point point = get(point_pmap, it);
+      kd_tree_points.push_back(point);
+  }
+  Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
   // iterate over input points, compute and output normal
   // vectors (already normalized)
   FT sum_spacings = (FT)0.0;
   unsigned int nb_points = 0;
-  InputIterator it;
   for(it = first; it != beyond; it++)
   {
     sum_spacings += CGALi::compute_average_spacing<Kernel,Tree>(get(point_pmap,it),tree,k);

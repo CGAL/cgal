@@ -109,22 +109,22 @@ pca_smooth_point(
 /// @commentheading Precondition: k >= 2.
 ///
 /// @commentheading Template Parameters:
-/// @param ForwardIterator iterator over input points.
+/// @param InputIterator iterator over input points.
 /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
-///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
+///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
 /// @param Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 
 // This variant requires all parameters.
-template <typename ForwardIterator,
+template <typename InputIterator,
           typename PointPMap,
           typename Kernel
 >
 void
 pca_smooth_point_set(
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
+  InputIterator first,  ///< iterator over the first input point.
+  InputIterator beyond, ///< past-the-end iterator over the input points.
+  PointPMap point_pmap, ///< property map InputIterator -> Point_3.
   unsigned int k, ///< number of neighbors.
   const Kernel& kernel) ///< geometric traits.
 {
@@ -144,12 +144,20 @@ pca_smooth_point_set(
   // precondition: at least 2 nearest neighbors
   CGAL_point_set_processing_precondition(k >= 2);
 
-  // Instanciate a KD-tree search
-  Tree tree(first,beyond);
+  InputIterator it;
+
+  // Instanciate a KD-tree search.
+  // Note: We have to convert each input iterator to Point_3.
+  std::vector<Point> kd_tree_points; 
+  for(it = first; it != beyond; it++)
+  {
+    Point point = get(point_pmap, it);
+    kd_tree_points.push_back(point);
+  }
+  Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
   // Iterates over input points and mutates them.
   // Implementation note: the cast to Point& allows to modify only the point's position.
-  ForwardIterator it;
   for(it = first; it != beyond; it++)
   {
     Point& p = get(point_pmap, it);
@@ -159,14 +167,14 @@ pca_smooth_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
-template <typename ForwardIterator,
+template <typename InputIterator,
           typename PointPMap
 >
 void
 pca_smooth_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  InputIterator first, ///< iterator over the first input point
+  InputIterator beyond, ///< past-the-end iterator
+  PointPMap point_pmap, ///< property map InputIterator -> Point_3
   unsigned int k) ///< number of neighbors.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -181,12 +189,12 @@ pca_smooth_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Dereference_property_map.
-template <typename ForwardIterator
+template <typename InputIterator
 >
 void
 pca_smooth_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
+  InputIterator first, ///< iterator over the first input point
+  InputIterator beyond, ///< past-the-end iterator
   unsigned int k) ///< number of neighbors.
 {
   pca_smooth_point_set(

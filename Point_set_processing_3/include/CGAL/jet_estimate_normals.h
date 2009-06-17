@@ -138,6 +138,9 @@ jet_estimate_normals(
 {
   CGAL_TRACE("Calls jet_estimate_normals()\n");
 
+  // basic geometric types
+  typedef typename Kernel::Point_3 Point;
+
   // Input points types
   typedef typename boost::property_traits<NormalPMap>::value_type Vector;
 
@@ -157,15 +160,23 @@ jet_estimate_normals(
   long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Creates KD-tree\n");
 
-  // instanciate a KD-tree search
-  Tree tree(first,beyond);
+  InputIterator it;
+
+  // Instanciate a KD-tree search.
+  // Note: We have to convert each input iterator to Point_3.
+  std::vector<Point> kd_tree_points; 
+  for(it = first; it != beyond; it++)
+  {
+    Point point = get(point_pmap, it);
+    kd_tree_points.push_back(point);
+  }
+  Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
   /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Computes normals\n");
 
   // iterate over input points, compute and output normal
   // vectors (already normalized)
-  InputIterator it;
   for(it = first; it != beyond; it++)
   {
     Vector normal = CGALi::jet_estimate_normal<Kernel,Tree>(get(point_pmap,it), tree, k, degree_fitting);
