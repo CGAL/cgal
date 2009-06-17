@@ -33,6 +33,7 @@ if ( CGAL_FOUND )
     set(CGAL_IPELETS ${CGAL_IPELETS} minkowski)
     set(CGAL_IPELETS ${CGAL_IPELETS} pca)
     set(CGAL_IPELETS ${CGAL_IPELETS} bbox_restriction)
+    set(CGAL_IPELETS ${CGAL_IPELETS} skeleton)
 
 
     foreach(IPELET ${CGAL_IPELETS})

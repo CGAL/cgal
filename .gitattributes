@@ -1281,6 +1281,7 @@ CGAL_ipelets/demo/CGAL_ipelets/multi_regular.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/partition.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/pca.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/simple_triangulation.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/skeleton.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/triangulation.cpp -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/PkgDescription.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/cgal_ipelets.tex -text

@@ -23,6 +23,7 @@ else()
                NAMES ipe
                PATHS /usr/lib
                      /usr/local/lib
+                     /usr/lib64
               )
 
   get_filename_component(IPE_LIBRARY_DIR ${IPE_LIBRARY} PATH)
@@ -32,6 +33,10 @@ else()
   string(REPLACE XX ${VER} PATHC "/usr/lib/ipe/6.0preXX/ipelets/" )
   set(INSTALL_PATHS ${INSTALL_PATHS} ${PATHC})
   endforeach()
+  set(INSTALL_PATHS ${INSTALL_PATHS} ${PATHC})
+  set(INSTALL_PATHS ${INSTALL_PATHS} /usr/lib64/ipe/6.0/ipelets)
+  set(INSTALL_PATHS ${INSTALL_PATHS} /usr/lib/ipe/6.0/ipelets)
+
 
   find_library(IPELET_INSTALL_DIR_FILES 
                 NAMES align
