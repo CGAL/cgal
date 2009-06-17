@@ -10,16 +10,21 @@
 
 // Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // position + normal vector
+
+// Point with normal vector stored in a std::pair.
+typedef std::pair<Point, Vector> PointVectorPair;
 
 int main(void)
 {
     // Reads a .xyz point set file in points[].
-    std::list<Point_with_normal> points;
+    std::list<PointVectorPair> points;
     std::ifstream stream("data/sphere_20k.xyz");
     if (!stream ||
-        !CGAL::read_xyz_points(stream, std::back_inserter(points)))
+        !CGAL::read_xyz_points(stream, 
+                               std::back_inserter(points),
+                               CGAL::First_of_pair_property_map<PointVectorPair>()))
     {
       return EXIT_FAILURE;
     }
@@ -30,16 +35,18 @@ int main(void)
   // The position property map can be omitted here as we use iterators over Point_3 elements.
     const int nb_neighbors = 7; // K-nearest neighbors
     CGAL::pca_estimate_normals(points.begin(), points.end(),
-                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
+                               CGAL::First_of_pair_property_map<PointVectorPair>(),
+                               CGAL::Second_of_pair_property_map<PointVectorPair>(),
                                nb_neighbors);
 
     // Orients normals.
     // Note: mst_orient_normals() requires an iterator over points
   // + property maps to access each point's position and normal.
   // The position property map can be omitted here as we use iterators over Point_3 elements.
-    std::list<Point_with_normal>::iterator unoriented_points_begin =
+    std::list<PointVectorPair>::iterator unoriented_points_begin =
       CGAL::mst_orient_normals(points.begin(), points.end(),
-                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
+                               CGAL::First_of_pair_property_map<PointVectorPair>(),
+                               CGAL::Second_of_pair_property_map<PointVectorPair>(),
                                nb_neighbors);
 
     // Optional: delete points with an unoriented normal
@@ -47,7 +54,7 @@ int main(void)
     points.erase(unoriented_points_begin, points.end());
 
     // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
-    std::list<Point_with_normal>(points).swap(points);
+    std::list<PointVectorPair>(points).swap(points);
 
     return EXIT_SUCCESS;
 }

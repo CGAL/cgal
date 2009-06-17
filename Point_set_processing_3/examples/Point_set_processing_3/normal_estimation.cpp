@@ -11,6 +11,7 @@
 
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/property_map.h>
 #include <CGAL/Timer.h>
 
 // This package
@@ -39,8 +40,10 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // position + normal vector
-typedef std::vector<Point_with_normal> PointList;
+
+// Point with normal vector stored in a std::pair.
+typedef std::pair<Point, Vector> PointVectorPair; 
+typedef std::vector<PointVectorPair> PointList;
 
 
 // ----------------------------------------------------------------------------
@@ -68,7 +71,8 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
   // + property maps to access each point's position and normal.
   // The position property map can be omitted here as we use iterators over Point_3 elements.
   CGAL::pca_estimate_normals(points.begin(), points.end(),
-                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
+                             CGAL::First_of_pair_property_map<PointVectorPair>(),
+                             CGAL::Second_of_pair_property_map<PointVectorPair>(),
                              nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
@@ -98,7 +102,8 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
   // + property maps to access each point's position and normal.
   // The position property map can be omitted here as we use iterators over Point_3 elements.
   CGAL::jet_estimate_normals(points.begin(), points.end(),
-                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
+                             CGAL::First_of_pair_property_map<PointVectorPair>(),
+                             CGAL::Second_of_pair_property_map<PointVectorPair>(),
                              nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
@@ -120,7 +125,8 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
   // The position property map can be omitted here as we use iterators over Point_3 elements.
   PointList::iterator unoriented_points_begin =
     CGAL::mst_orient_normals(points.begin(), points.end(),
-                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
+                             CGAL::First_of_pair_property_map<PointVectorPair>(),
+                             CGAL::Second_of_pair_property_map<PointVectorPair>(),
                              nb_neighbors_mst);
 
   // Optional: delete points with an unoriented normal
@@ -230,7 +236,8 @@ int main(int argc, char * argv[])
       std::ifstream stream(input_filename.c_str());
       success = stream &&
                 CGAL::read_off_points(stream,
-                                         std::back_inserter(points));
+                                      std::back_inserter(points),
+                                      CGAL::First_of_pair_property_map<PointVectorPair>());
     }
     // If XYZ file format
     else if (extension == ".xyz" || extension == ".XYZ" ||
@@ -238,7 +245,9 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream &&
-                CGAL::read_xyz_points(stream, std::back_inserter(points));
+                CGAL::read_xyz_points(stream, 
+                                      std::back_inserter(points),
+                                      CGAL::First_of_pair_property_map<PointVectorPair>());
     }
     if (!success)
     {
@@ -292,7 +301,8 @@ int main(int argc, char * argv[])
       if (!stream ||
           !CGAL::write_xyz_points_and_normals(stream,
                                               points.begin(), points.end(),
-                                              CGAL::make_normal_of_point_with_normal_pmap(points.begin())))
+                                              CGAL::First_of_pair_property_map<PointVectorPair>(),
+                                              CGAL::Second_of_pair_property_map<PointVectorPair>()))
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;
