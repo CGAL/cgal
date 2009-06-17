@@ -1,8 +1,0 @@
-test by crossing:
-
-polyhedron data (both triangles and segments) x kernels x query types (ray/line/seg/triangle/plane) x function type (do_intersect, etc..)
-- correctness:
-  - canonical polyhedron whose intersections are know
-  - compare naive (exhaustive) with aabb tree
-- speed (to make sure each commits does not mess up the performances)
-- memory (to make sure each commits does not mess up the memory consumption)

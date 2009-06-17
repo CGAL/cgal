@@ -750,14 +750,13 @@ private:
       FT dist_tree = CGAL::squared_distance(query, point_tree);
 
       assert( dist_tree >= dist_naive );
+      const FT epsilon = 1e-12;
       assert( ((dist_naive - dist_tree) < epsilon*dist_tree) );
       //std::cerr << dist_naive - dist_tree << std::endl;
     }
 
     mutable CGAL::Timer naive_timer;
     mutable CGAL::Timer tree_timer;
-
-    const static FT epsilon = 1e-12;
   };
 
   struct Closest_point_and_primitive
@@ -787,14 +786,13 @@ private:
         FT dist_naive = CGAL::squared_distance(query, point_naive.first);
         FT dist_tree = CGAL::squared_distance(query, point_tree.first);
         assert( dist_tree >= dist_naive );
+        const FT epsilon = 1e-12;
         assert( ((dist_naive - dist_tree) < epsilon*dist_tree) );
       }
     }
 
     mutable CGAL::Timer naive_timer;
     mutable CGAL::Timer tree_timer;
-
-    const static FT epsilon = 1e-12;
   };
 
 
