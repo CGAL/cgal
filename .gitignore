@@ -418,6 +418,10 @@ Polyhedron/demo/Polyhedron/moc_*.h
 Polyhedron/demo/Polyhedron/qrc_*.cxx
 Polyhedron/demo/Polyhedron/snapshot.*
 Polyhedron/demo/Polyhedron/ui_*.h
+Polyhedron/test/Polyhedron/*.kdev*
+Polyhedron/test/Polyhedron/CMakeLists.txt
+Polyhedron/test/Polyhedron/Makefile
+Polyhedron/test/Polyhedron/test_polyhedron
 Polynomial/doc_html
 Polynomial/doc_pdf
 Polynomial/doc_ps
