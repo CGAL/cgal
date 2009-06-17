@@ -4,7 +4,7 @@
 #define POINT_SET_3_H
 
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/point_set_property_map.h>
+#include <CGAL/property_map.h>
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 

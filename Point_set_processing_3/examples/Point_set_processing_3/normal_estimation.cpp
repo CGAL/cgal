@@ -18,7 +18,7 @@
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/point_set_property_map.h>
+#include <CGAL/property_map.h>
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
@@ -68,7 +68,7 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
   // + property maps to access each point's position and normal.
   // The position property map can be omitted here as we use iterators over Point_3 elements.
   CGAL::pca_estimate_normals(points.begin(), points.end(),
-                             CGAL::make_normal_vector_property_map(points.begin()),
+                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
                              nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
@@ -98,7 +98,7 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
   // + property maps to access each point's position and normal.
   // The position property map can be omitted here as we use iterators over Point_3 elements.
   CGAL::jet_estimate_normals(points.begin(), points.end(),
-                             CGAL::make_normal_vector_property_map(points.begin()),
+                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
                              nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
@@ -120,7 +120,7 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
   // The position property map can be omitted here as we use iterators over Point_3 elements.
   PointList::iterator unoriented_points_begin =
     CGAL::mst_orient_normals(points.begin(), points.end(),
-                             CGAL::make_normal_vector_property_map(points.begin()),
+                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
                              nb_neighbors_mst);
 
   // Optional: delete points with an unoriented normal
@@ -292,7 +292,7 @@ int main(int argc, char * argv[])
       if (!stream ||
           !CGAL::write_xyz_points_and_normals(stream,
                                               points.begin(), points.end(),
-                                              CGAL::make_normal_vector_property_map(points.begin())))
+                                              CGAL::make_normal_of_point_with_normal_pmap(points.begin())))
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;

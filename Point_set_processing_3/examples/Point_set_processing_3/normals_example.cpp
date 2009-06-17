@@ -2,7 +2,7 @@
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/point_set_property_map.h>
+#include <CGAL/property_map.h>
 #include <CGAL/IO/read_xyz_points.h>
 
 #include <list>
@@ -30,7 +30,7 @@ int main(void)
   // The position property map can be omitted here as we use iterators over Point_3 elements.
     const int nb_neighbors = 7; // K-nearest neighbors
     CGAL::pca_estimate_normals(points.begin(), points.end(),
-                               CGAL::make_normal_vector_property_map(points.begin()),
+                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
                                nb_neighbors);
 
     // Orients normals.
@@ -39,7 +39,7 @@ int main(void)
   // The position property map can be omitted here as we use iterators over Point_3 elements.
     std::list<Point_with_normal>::iterator unoriented_points_begin =
       CGAL::mst_orient_normals(points.begin(), points.end(),
-                               CGAL::make_normal_vector_property_map(points.begin()),
+                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
                                nb_neighbors);
 
     // Optional: delete points with an unoriented normal

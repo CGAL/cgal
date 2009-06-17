@@ -90,7 +90,7 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
       // + property maps to access each point's position and normal.
       // The position property map can be omitted here as we use iterators over Point_3 elements.
       CGAL::pca_estimate_normals(points->begin(), points->end(),
-                                CGAL::make_normal_vector_property_map(points->begin()),
+                                CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
                                 dialog.directionNbNeighbors());
 
       // Mark all normals as unoriented
@@ -111,7 +111,7 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
       // + property maps to access each point's position and normal.
       // The position property map can be omitted here as we use iterators over Point_3 elements.
       CGAL::jet_estimate_normals(points->begin(), points->end(),
-                                CGAL::make_normal_vector_property_map(points->begin()),
+                                CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
                                 dialog.directionNbNeighbors());
 
       // Mark all normals as unoriented
@@ -135,7 +135,7 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
       // The position property map can be omitted here as we use iterators over Point_3 elements.
       points->unoriented_points_begin() =
         CGAL::mst_orient_normals(points->begin(), points->end(),
-                                CGAL::make_normal_vector_property_map(points->begin()),
+                                CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
                                 dialog.orientationNbNeighbors());
 
       // Delete points with an unoriented normal (required by APSS and Poisson)

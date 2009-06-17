@@ -63,7 +63,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
 
     // Creates implicit function
     APSS_reconstruction_function implicit_function(points.begin(), points.end(),
-                                                   CGAL::make_normal_vector_property_map(points.begin()),
+                                                   CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
                                                    smoothness);
 
     // Prints status

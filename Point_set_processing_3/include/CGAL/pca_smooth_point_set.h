@@ -23,7 +23,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/point_set_property_map.h>
+#include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 
 #include <iterator>

@@ -28,7 +28,7 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/taucs_solver.h>
 #include <CGAL/centroid.h>
-#include <CGAL/point_set_property_map.h>
+#include <CGAL/property_map.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Peak_memory_sizer.h>

@@ -7,7 +7,7 @@
 // Usage: no parameters
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/point_set_property_map.h>
+#include <CGAL/property_map.h>
 #include <algorithm>
 #include <vector>
 #include <boost/tuple/tuple.hpp>

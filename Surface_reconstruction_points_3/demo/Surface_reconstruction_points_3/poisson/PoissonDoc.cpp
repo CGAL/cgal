@@ -237,7 +237,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     if( ! stream ||
         ! CGAL::read_off_points_and_normals(stream,
                                             std::back_inserter(m_points),
-                                            CGAL::make_normal_vector_property_map(std::back_inserter(m_points))) )
+                                            CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(m_points))) )
     {
       prompt_message("Unable to read file");
       update_status();
@@ -253,7 +253,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     if( ! stream ||
         ! CGAL::read_xyz_points_and_normals(stream,
                                             std::back_inserter(m_points),
-                                            CGAL::make_normal_vector_property_map(std::back_inserter(m_points))) )
+                                            CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(m_points))) )
     {
       prompt_message("Unable to read file");
       update_status();
@@ -364,7 +364,7 @@ void CPoissonDoc::OnFileSaveAs()
         ok = stream &&
              CGAL::write_xyz_points_and_normals(stream,
                                                 m_points.begin(), m_points.end(),
-                                                CGAL::make_normal_vector_property_map(m_points.begin()));
+                                                CGAL::make_normal_of_point_with_normal_pmap(m_points.begin()));
       }
       else
       {
@@ -389,7 +389,7 @@ void CPoissonDoc::OnFileSaveAs()
         ok = stream &&
              CGAL::write_off_points_and_normals(stream,
                                                 m_points.begin(), m_points.end(),
-                                                CGAL::make_normal_vector_property_map(m_points.begin()));
+                                                CGAL::make_normal_of_point_with_normal_pmap(m_points.begin()));
       }
       else
       {
@@ -705,7 +705,7 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
                  m_nb_neighbors_pca_normals, nb_neighbors);
 
   CGAL::pca_estimate_normals(m_points.begin(), m_points.end(),
-                             CGAL::make_normal_vector_property_map(m_points.begin()),
+                             CGAL::make_normal_of_point_with_normal_pmap(m_points.begin()),
                              nb_neighbors);
 
   // Mark all normals as unoriented
@@ -742,7 +742,7 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
                  m_nb_neighbors_jet_fitting_normals, nb_neighbors);
 
   CGAL::jet_estimate_normals(m_points.begin(), m_points.end(),
-                             CGAL::make_normal_vector_property_map(m_points.begin()),
+                             CGAL::make_normal_of_point_with_normal_pmap(m_points.begin()),
                              nb_neighbors);
 
   // Mark all normals as unoriented
@@ -832,7 +832,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
   // The position property map can be omitted here as we use iterators over Point_3 elements.
   m_points.unoriented_points_begin() =
     CGAL::mst_orient_normals(m_points.begin(), m_points.end(),
-                             CGAL::make_normal_vector_property_map(m_points.begin()),
+                             CGAL::make_normal_of_point_with_normal_pmap(m_points.begin()),
                              m_nb_neighbors_mst);
 
   // Check the accuracy of normal orientation.
@@ -984,7 +984,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   // The position property map can be omitted here as we use iterators over Point_3 elements.
   assert(m_poisson_function == NULL);
   m_poisson_function = new Poisson_reconstruction_function(m_points.begin(), m_points.end(),
-                                                           CGAL::make_normal_vector_property_map(m_points.begin()));
+                                                           CGAL::make_normal_of_point_with_normal_pmap(m_points.begin()));
 
   // Prints status
   status_message("Creates Poisson triangulation...done (%.2lf s)", task_timer.time());
@@ -1178,7 +1178,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
 
     // Creates implicit function
     m_apss_function = new APSS_reconstruction_function(m_points.begin(), m_points.end(),
-                                                       CGAL::make_normal_vector_property_map(m_points.begin()),
+                                                       CGAL::make_normal_of_point_with_normal_pmap(m_points.begin()),
                                                        m_smoothness_apss);
 
     // Gets point inside the implicit surface
@@ -1344,7 +1344,7 @@ void CPoissonDoc::OnRadialNormalOrientation()
 
   m_points.unoriented_points_begin() =
     CGAL::radial_orient_normals(m_points.begin(), m_points.end(),
-                                CGAL::make_normal_vector_property_map(m_points.begin()));
+                                CGAL::make_normal_of_point_with_normal_pmap(m_points.begin()));
 
   // Check the accuracy of normal orientation.
   // If original normals are available, compare with them.

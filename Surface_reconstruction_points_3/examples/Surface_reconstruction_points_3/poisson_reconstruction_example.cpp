@@ -5,7 +5,7 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/point_set_property_map.h>
+#include <CGAL/property_map.h>
 #include <CGAL/IO/read_xyz_points.h>
 
 #include <vector>
@@ -40,7 +40,7 @@ int main(void)
         !CGAL::read_xyz_points_and_normals(
                               stream,
                               std::back_inserter(points),
-                              CGAL::make_normal_vector_property_map(std::back_inserter(points))))
+                              CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(points))))
     {
       return EXIT_FAILURE;
     }
@@ -51,7 +51,7 @@ int main(void)
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function implicit_function(
                               points.begin(), points.end(),
-                              CGAL::make_normal_vector_property_map(points.begin()));
+                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.

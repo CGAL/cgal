@@ -22,7 +22,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <CGAL/point_set_property_map.h>
+#include <CGAL/property_map.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Fast_orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>

@@ -19,7 +19,7 @@
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/point_set_property_map.h>
+#include <CGAL/property_map.h>
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/read_xyz_points.h>
 
@@ -135,7 +135,7 @@ bool run_pca_estimate_normals(PointList& points, // input points + output normal
             << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
 
   CGAL::pca_estimate_normals(points.begin(), points.end(),
-                             CGAL::make_normal_vector_property_map(points.begin()),
+                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
                              nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
@@ -167,7 +167,7 @@ bool run_jet_estimate_normals(PointList& points, // input points + output normal
             << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
 
   CGAL::jet_estimate_normals(points.begin(), points.end(),
-                             CGAL::make_normal_vector_property_map(points.begin()),
+                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
                              nb_neighbors);
 
   long memory = CGAL::Memory_sizer().virtual_size();
@@ -247,7 +247,7 @@ bool run_mst_orient_normals(PointList& points, // input points + input/output no
 
   PointList::iterator unoriented_points_begin = 
     CGAL::mst_orient_normals(points.begin(), points.end(),
-                             CGAL::make_normal_vector_property_map(points.begin()),
+                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
                              nb_neighbors_mst);
 
   long memory = CGAL::Memory_sizer().virtual_size();
@@ -319,7 +319,7 @@ int main(int argc, char * argv[])
       success = stream && 
                 CGAL::read_off_points_and_normals(stream,
                                                   std::back_inserter(points),
-                                                  CGAL::make_normal_vector_property_map(std::back_inserter(points)));
+                                                  CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(points)));
     }
     // If XYZ file format
     else if (extension == ".xyz" || extension == ".XYZ" ||
@@ -329,7 +329,7 @@ int main(int argc, char * argv[])
       success = stream && 
                 CGAL::read_xyz_points_and_normals(stream,
                                                   std::back_inserter(points),
-                                                  CGAL::make_normal_vector_property_map(std::back_inserter(points)));
+                                                  CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(points)));
     }
     if (success)
     {

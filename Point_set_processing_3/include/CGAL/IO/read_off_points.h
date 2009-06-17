@@ -19,7 +19,7 @@
 #ifndef CGAL_READ_OFF_POINTS_H
 #define CGAL_READ_OFF_POINTS_H
 
-#include <CGAL/point_set_property_map.h>
+#include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
 

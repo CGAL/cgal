@@ -22,7 +22,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_vertex_handle_3.h>
-#include <CGAL/point_set_property_map.h>
+#include <CGAL/property_map.h>
 #include <CGAL/Index_property_map.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/point_set_processing_assertions.h>
