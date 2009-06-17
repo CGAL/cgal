@@ -56,6 +56,9 @@ distance(std::size_t _First, std::size_t _Last)
   return _Last - _First;
 }
 
+// Bring std::distance() to scope
+using std::distance;
+
 
 /// Helper class: Riemannian graph.
 ///
