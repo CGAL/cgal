@@ -41,9 +41,6 @@
 
 #include "AABB_test_util.h"
 
-#include<boost/filesystem/operations.hpp>
-namespace bfs = boost::filesystem;
-
 enum Query_type {RAY_QUERY,
                  SEGMENT_QUERY,
                  LINE_QUERY};
