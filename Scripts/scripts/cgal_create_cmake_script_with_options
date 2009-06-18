@@ -4,8 +4,8 @@
 # Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 # INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-# (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-# and Tel-Aviv University (Israel).  All rights reserved.
+# (Germany), Max-Planck-Institute for Informatics Saarbruecken (Germany), 
+# RISC Linz (Austria), and Tel-Aviv University (Israel).  All rights reserved.
 #
 # This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License as
@@ -23,59 +23,29 @@
 #
 # Author(s)     : various
 
-# This script creates a CGAL cmake script with entries for all .C and .cpp
-# files in the current directory.
-#
-# Usage: cgal_create_cmake_script_with_includes -tTYPE
-#
-#  echo "  TYPE can be any of DEMO, EXAMPLE or TEST.. any other value is ignored"
+# This script creates a CGAL cmake script with entries for .C and .cpp
+# files in the current directory - some options can be given or specified in a file
 
-#VERSION=2.0
-
-create_cmake_script_with_includes()
+create_cmake_script_with_options()
 {
+  # TODO add Qt4
+  # TODO prefer existing "local" options file over global options in $HOME
 
-qt3='n'
-qt4='n'
+  qt3='n'
+  qt4='n'
 
-# TODO distinguish Qt3 + Qt4 demos!
+  # print makefile header
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
+# Created by the script cgal_create_cmake_script_with_options
+# This is the CMake script for compiling a set of CGAL applications.
 
-# TODO move below
-if [ -e "$INCLUDE_FILE" ]; then
-
-  OLDIFS="$IFS"
-  IFS=$'\n'
-  for LINE in `cat $INCLUDE_FILE`; do 
-      next_package=`echo $LINE | grep -v "#" | grep PACKAGE`
-      next_package=${next_package/PACKAGE /}
-      if [ -d "$next_package/include/CGAL" ]; then
-         PACKAGES=$PACKAGES" "$next_package
-      fi
-
-      next_dir=`echo $LINE | grep -v "#" | grep DIRECTORY`
-      next_dir=${next_dir/DIRECTORY /}
-      IFS="$OLDIFS"
-      for package in `ls $next_dir`; do
-         next_package="$next_dir/$package"
-         #echo $next_package
-         if [ -d "$next_package/include/CGAL" ]; then
-            PACKAGES=$PACKAGES" "$next_package
-         fi
-      done;
-      IFS=$'\n'
-  done
-  IFS="$OLDIFS"
-fi;
-
-# print makefile header
-  cat <<EOF
-# Created by the script cgal_create_cmake_script_with_includes
-# This is the CMake script for compiling a CGAL application.
-
-
-project( ${PROJECT}_${TYPE} )
+project( ${PROJECT} )
 EOF
-  cat <<'EOF'
+  #---------------------------------------------------------------------------
+
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -86,95 +56,158 @@ if ( COMMAND cmake_policy )
 endif()
  
 EOF
+  #---------------------------------------------------------------------------
 
-  if [ "${TYPE}" = "demo" ] ; then
-    target_name="${PROJECT}_${TYPE}"
-    
-    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
-      all="$all $file"
-    done
-    cat <<'EOF'  
-find_package(CGAL QUIET COMPONENTS Core Qt3 )
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
 
 if ( CGAL_FOUND )
 
+  # include for local package
 EOF
-    if [ -d ../../include ] ; then
-      echo '  include_directories (BEFORE ../../include)'
-      echo
-    fi
-    if [ -d ../include ] ; then
-      echo '  include_directories (BEFORE ../include)'
-      echo
-    fi
-    if [ -d include ] ; then
-      echo '  include_directories (BEFORE include)'
-      echo
-    fi		
+  #---------------------------------------------------------------------------
 
-    for package in $PACKAGES; do
-      echo "  include_directories($package/include/)";
-    done
-
-    echo
+  # parse options file
+  if [ -e "$OPTIONS_FILE" ]; then
 
     OLDIFS="$IFS"
-    IFS=','
-    for boost_component in $BOOST_COMPONENTS; do
-      BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
-      echo "  find_package(Boost REQUIRED $boost_component)"
-      echo "  link_libraries(\${BOOST_${BOOST_COMPONENT}_LIBRARY})"
+    IFS=$'\n'
+    for LINE in `cat $OPTIONS_FILE`; do 
+
+      # CGAL components
+      if [ -z "$CGAL_COMPONENTS_GIVEN" ]; then # read file only if not given!
+        next_cgal_component=`echo $LINE | grep -v "#" | grep CGAL_COMPONENT`
+        if [ ! -z "$next_cgal_component" ]; then
+          next_cgal_component=${next_cgal_component/CGAL_COMPONENT /}
+          if [ -z "$CGAL_COMPONENTS" ]; then 
+            CGAL_COMPONENTS=$next_cgal_component
+          else
+            CGAL_COMPONENTS=$CGAL_COMPONENTS";"$next_cgal_component
+          fi
+        fi
+      fi
+
+      # Boost components
+      if [ -z "$BOOST_COMPONENTS_GIVEN" ]; then # read file only if not given!
+        next_boost_component=`echo $LINE | grep -v "#" | grep BOOST_COMPONENT`
+        if [ ! -z "$next_boost_component" ]; then
+          next_boost_component=${next_boost_component/BOOST_COMPONENT /}
+          if [ -z "$BOOST_COMPONENTS" ]; then 
+            BOOST_COMPONENTS=$next_boost_component
+          else
+            BOOST_COMPONENTS=$BOOST_COMPONENTS";"$next_boost_component
+          fi
+        fi
+      fi
+
+      # package
+      if [ -z "$PACKAGES_GIVEN" ]; then # read file only if not given!
+        next_package=`echo $LINE | grep -v "#" | grep PACKAGE`
+        next_package=${next_package/PACKAGE /}
+        if [ -d "$next_package/include/CGAL" ]; then
+          if [ -z "$PACKAGES" ]; then 
+            PACKAGES=$next_package
+          else
+            PACKAGES=$PACKAGES":"$next_package
+          fi
+        fi
+      fi
+
+      # directory
+      if [ -z "$DIRECTORIES_GIVEN" ]; then # read file only if not given!
+        next_dir=`echo $LINE | grep -v "#" | grep DIRECTORY`
+        next_dir=${next_dir/DIRECTORY /}
+        IFS="$OLDIFS"
+        for package in `ls $next_dir`; do
+          next_package="$next_dir/$package"
+          #echo $next_package
+          if [ -d "$next_package/include/CGAL" ]; then
+            if [ -z "$PACKAGES" ]; then 
+              PACKAGES=$next_package
+            else
+              PACKAGES=$PACKAGES":"$next_package
+            fi
+          fi
+        done
+        IFS=$'\n'
+      fi
+
     done
-    IFS=$OLDIFS
+    IFS="$OLDIFS"
+  fi;
 
-    cat <<'EOF'  
+  # TODO given packages always preceed given directories!
 
+  # directory
+  if [ ! -z "$DIRECTORIES_GIVEN" ]; then # read file only if not given!
+    OLDIFS="$IFS"
+    IFS=":"
+    for next_dir in $DIRECTORIES; do
+      OLDIFS2="$IFS"
+      IFS="$OLDIFS"
+      for package in `ls $next_dir`; do
+        next_package="$next_dir/$package"
+        if [ -d "$next_package/include/CGAL" ]; then
+          if [ -z "$PACKAGES" ]; then 
+            PACKAGES=$next_package
+          else
+            PACKAGES=$PACKAGES":"$next_package
+          fi
+        fi
+      done
+      IFS="$OLDIFS2"
+    done
+    IFS="$OLDIFS"
+  fi
+
+  ############################################################################
+
+  # includes for local package
+  if [ -d ../../include ] ; then
+    echo '  include_directories( BEFORE ../../include )'
+  fi
+  if [ -d ../include ] ; then
+    echo '  include_directories( BEFORE ../include )'
+  fi
+  if [ -d include ] ; then
+    echo '  include_directories( BEFORE include )'
+  fi		
+
+  if [ ! -z "$PACKAGES" ]; then
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
+
+  # include of additional packages
+EOF
+    #-------------------------------------------------------------------------
+  fi
+
+  OLDIFS="$IFS"
+  IFS=":"
+  for package in $PACKAGES; do
+    echo "  include_directories( $package/include/ )";
+  done
+  IFS=$OLDIFS
+
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
+
+  # include helper file
   include( ${CGAL_USE_FILE} )
-
-  find_package(Qt3-patched QUIET )
-  # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
-  # that it can be used together with FindQt4: all its variables are prefixed
-  # by "QT3_" instead of "QT_".
-  
-  if(CGAL_Qt3_FOUND AND QT3_FOUND)
-  
-    include( Qt3Macros-patched )
 EOF
-    echo "    qt3_automoc( ${all} )"
-    cat<<'EOF'
+  #---------------------------------------------------------------------------
 
-    # Make sure the compiler can find generated .moc files
-    include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-  
-    include_directories( ${QT3_INCLUDE_DIR} )
+  # additional CGAL components
+  if [ ! -z "$CGAL_COMPONENTS" ]; then
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
 
+  # additional CGAL components
 EOF
+    #-------------------------------------------------------------------------
 
-    cat <<EOF
-    add_executable  (${target_name} ${all})
-  
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${target_name} )
-  
-  
-    # Link the executable to CGAL and third-party libraries
-    target_link_libraries(${target_name} \${QT3_LIBRARIES} \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES} )
-  else()
-  
-    message(STATUS "NOTICE: This demo requires Qt3 and the CGAL Qt3 library, and will not be compiled.")
-  
-  endif()
-  
-else()
-  
-    message(STATUS "NOTICE: This demo requires the CGAL library, and will not be compiled.")
-  
-endif()
-EOF
-    
-  else # now examples/test and not demo
-  
     OLDIFS="$IFS"
-    IFS=','
+    IFS=';'
     for cgal_component in $CGAL_COMPONENTS; do
       if [ "$cgal_component" = "Qt3" ]; then
         qt3='y'
@@ -182,79 +215,77 @@ EOF
       if [ "$cgal_component" = "Qt4" ]; then
         qt4='y'
       fi
-      #CGAL_COMPONENT=`echo $cgal_component | tr '[:lower:]' '[:upper:]'`
-      echo "find_package( CGAL QUIET COMPONENTS $cgal_component )"
+      echo "  find_package( CGAL QUIET COMPONENTS $cgal_component )"
     done
     IFS=$OLDIFS
+  fi # additional CGAL components
 
-    cat <<'EOF'
+  if [ ! -z "$BOOST_COMPONENTS" ]; then
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
 
-if ( CGAL_FOUND )
-
+  # additional Boost components
 EOF
-
-    if [ -d ../../include ] ; then
-      echo '  include_directories( BEFORE ../../include )'
-      echo
-    fi
-    if [ -d ../include ] ; then
-      echo '  include_directories( BEFORE ../include )'
-      echo
-    fi
-    if [ -d include ] ; then
-      echo '  include_directories( BEFORE include )'
-      echo
-    fi		
-
-    for package in $PACKAGES; do
-      echo "  include_directories( $package/include/ )";
-    done
-
-    echo
+    #-------------------------------------------------------------------------
 
     OLDIFS="$IFS"
-    IFS=','
+    IFS=';'
     for boost_component in $BOOST_COMPONENTS; do
       BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
       echo "  find_package( Boost REQUIRED $boost_component )"
       echo "  link_libraries( \${BOOST_${BOOST_COMPONENT}_LIBRARY} )"
     done
     IFS=$OLDIFS
+  fi # additional Boost components
 
-    cat <<'EOF'
+  # Qt3 or Qt4
+  if [ "$qt3" = "y" ]; then
 
-  include( ${CGAL_USE_FILE} )
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
 
-EOF
-
-    if [ "$qt3" = "y" ]; then
-
-      cat <<'EOF'
-
-  find_package(Qt3-patched QUIET )
-  # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+  # Qt3: FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
   # that it can be used together with FindQt4: all its variables are prefixed
   # by "QT3_" instead of "QT_".
+  find_package(Qt3-patched QUIET )
   
   if (CGAL_Qt3_FOUND AND QT3_FOUND)
   
     include( Qt3Macros-patched )
 
   endif()
-
 EOF
+    #-------------------------------------------------------------------------
+  fi # qt3
 
-    fi
+  # All Files or Single Source
 
-    if [ "$SINGLE_SOURCE" = "n" ]; then
+  if [ "$SINGLE_SOURCE" = "n" ]; then #=======================================
 
-      cat <<'EOF'
+    ###############
+    # ALL SOURCES #
+    ###############
+
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
+
 
   # Creating entries for all .cpp/.C files with "main" routine
+  # ##########################################################
 
   include( CGAL_CreateSingleSourceCGALProgram )
-    
+
 EOF
+    #-------------------------------------------------------------------------
+
+    # Qt3
+    if [ "$qt3" = "y" ]; then
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
+  if (CGAL_Qt3_FOUND AND QT3_FOUND)
+
+EOF
+      #-----------------------------------------------------------------------
 
       for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
         # Create an executable for each cpp that  contains a function "main()"
@@ -262,26 +293,72 @@ EOF
         BASE=`basename $BASE .cpp`
         egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
         if [ $? -eq 0 ]; then
-          echo "  create_single_source_cgal_program( \"$file\" )"
+          echo "    qt3_automoc( ${file} )"
         fi
       done
+
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
+
+    # Make sure the compiler can find generated .moc files
+    include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
+  
+    include_directories( ${QT3_INCLUDE_DIR} )
+
+    link_libraries( ${QT3_LIBRARIES} )
+
+  endif()
+
+EOF
+      #-----------------------------------------------------------------------
+
+    fi # qt3
+
+    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+      # Create an executable for each cpp that  contains a function "main()"
+      BASE=`basename $file .C`
+      BASE=`basename $BASE .cpp`
+      egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
+      if [ $? -eq 0 ]; then
+        echo "  create_single_source_cgal_program( \"$file\" )"
+      fi
+    done
     
-    else # SINGLE_SOURCE="y"
+  else #======================================================================
 
-      target_name=$SOURCE
+    #################
+    # SINGLE_SOURCE #
+    #################
 
-      for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
-        all="$all $file"
-      done
+    target_name=$SOURCE
 
-      if [ "$qt3" = "y" ]; then
-        cat<<'EOF'
+    echo
+    echo
+    echo "  # Creating entries for target: $target_name"
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
+  # ############################
+EOF
+    #-------------------------------------------------------------------------
+
+    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+      all="$all $file"
+    done
+
+    # Qt3
+    if [ "$qt3" = "y" ]; then
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
 
   if (CGAL_Qt3_FOUND AND QT3_FOUND)
 
 EOF
-       echo "    qt3_automoc( ${all} )"
-       cat<<'EOF'
+      #-----------------------------------------------------------------------
+
+      echo "    qt3_automoc( ${all} )"
+
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
 
     # Make sure the compiler can find generated .moc files
     include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
@@ -289,23 +366,31 @@ EOF
     include_directories( ${QT3_INCLUDE_DIR} )
 
   endif()
-
 EOF
+      #-----------------------------------------------------------------------
     fi # qt3
 
-      cat <<EOF
+    # no 'cat' here, as variable substitution required
+    echo
+    echo "  add_executable( ${target_name} ${all} )"
+    echo
+    echo "  add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${target_name} )"
+    echo
+    echo "  # Link the executable to CGAL and third-party libraries"
+    LIBS=""
+    if [ "$qt3" = "y" ]; then
+      LIBS="\${QT3_LIBRARIES}"
+    fi
+    if [ "$qt4" = "y" ]; then
+      LIBS="\${QT4_LIBRARIES}" 
+    fi
+    LIBS=$LIBS" \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES}"
+    echo "  target_link_libraries(${target_name}  $LIBS )"
 
-  add_executable  (${target_name} ${all})
-  
-  add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${target_name} )
-    
-  # Link the executable to CGAL and third-party libraries
-  target_link_libraries(${target_name} \${QT3_LIBRARIES} \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES} )
-EOF
+  fi # single source or all files #===========================================
 
-    fi # single or all sources
-
-    cat <<'EOF'
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
 
 else()
   
@@ -313,82 +398,90 @@ else()
   
 endif()
 EOF
+  #---------------------------------------------------------------------------
 
-  fi
-  
-  echo
+echo
 
 }
-
 
 usage()
 {
-  echo "Usage: `basename $0` [-s [SOURCE]] [-c cgal-component1,cgal-component2,...] [-i include_file='$HOME/.cgal_cmake_includes'] [-t type] [-b boost-component1,boost-component2,...] [-h]" >&2
+  echo "Usage: `basename $0` [-s source] [-c cgal-component1:cgal-component2:...] [-b boost-component1:boost-component2:...] [-p /path/to/package1:/path/to/package2:...] [-d /path/to/directory1:/path/to/directory2:...] [-o options_file='`pwd`/.cgal_cmake_options:$HOME/.cgal_cmake_options'] [-v] [-h]" >&2
   echo >&2
-  echo "  -s [SOURCE] If there is parameter is given the script will create one single executable with all sources, based on the given SOURCE, it creates one executable for each main'ed source." >&2
+  echo "  -s source If this parameter is given the script will create one single executable for 'source' with all source files; otherwise it creates one executable for each main'ed source." >&2
   echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','imageIO','PDB','Qt3','Qt4' ('benchmark')." >&2
-  echo "  include_file - file with PACKAGE or DIRECTORY directives" >&2
-  echo "  type - must be any of example, demo or test. Default is example." >&2
   echo "  boost_componentX - must be a valid boost component, like 'filesystem', 'program_options'." >&2
+  echo "  options_file - file with PACKAGE, DIRECTORY, CGAL_COMPONENT, and BOOST_COMPONENT directives" >&2
+  echo "  -v the version" >&2
+  echo "  -h this info screen" >&2
   echo  >&2
 }
 
-CGAL_COMPONENTS=""
-TYPE="example"
-INCLUDE_FILE="${HOME}/.cgal_cmake_includes"
-BOOST_COMPONENTS=""
+
 SINGLE_SOURCE='n'
 SOURCE=""
 
-# parse command line arguments
-while getopts c:b:i:t:s:hv OPT; do
-    case "$OPT" in
-	c)	CGAL_COMPONENTS=$OPTARG
-		;;
-	i)	INCLUDE_FILE=$OPTARG
-                if [ ! -e "$INCLUDE_FILE" ]; then
-                   echo "File $INCLUDE_FILE does not exist." >&2
-	           exit 1
-                fi
-		;;
-	b)	BOOST_COMPONENTS=$OPTARG
-		;;
-	t)	TYPE=$OPTARG
-		;;
-	s)	SINGLE_SOURCE='y'
-                SOURCE=$OPTARG
-		;;
+CGAL_COMPONENTS_GIVEN=""
+CGAL_COMPONENTS=""
 
-	h)	usage
-		exit 0
-		;;
-	v)	echo "`basename $0` version 0.1"
-		exit 0
-		;;
-	\?)	# getopts issues an error message
-		usage
-		exit 1
-		;;
-    esac
+BOOST_COMPONENTS_GIVEN=""
+BOOST_COMPONENTS=""
+
+PACKAGES_GIVEN=""
+PACKAGES=""
+
+DIRECTORIES_GIVEN=""
+DIRECTORIES=""
+
+OPTIONS_FILE="${HOME}/.cgal_cmake_options"
+
+# parse command line arguments
+while getopts s:c:b:p:d:o:hv OPT; do
+  case "$OPT" in
+    s)  SINGLE_SOURCE='y'
+        SOURCE=$OPTARG
+        ;;
+
+    c)  CGAL_COMPONENTS_GIVEN='y'
+        CGAL_COMPONENTS=$OPTARG
+        ;;
+    b)  BOOST_COMPONENTS_GIVEN='y'
+        BOOST_COMPONENTS=$OPTARG
+        ;;
+    p)  PACKAGES_GIVEN='y'
+        PACKAGES=$OPTARG
+        ;;
+    d)  DIRECTORIES_GIVEN='y'
+        DIRECTORIES=$OPTARG
+        ;;
+
+    o)  OPTIONS_FILE=$OPTARG
+        if [ ! -e "$OPTIONS_FILE" ]; then
+          echo "Options-file '$OPTIONS_FILE' does not exist." >&2
+          exit 1
+        fi
+        ;;
+
+    h)  usage
+        exit 0
+        ;;
+    v)  echo "`basename $0` version 0.1"
+        exit 0
+        ;;
+    \?) # getopts issues an error message
+        usage
+        exit 1
+        ;;
+  esac
 done
 
 shift `expr $OPTIND - 1`
 
-#echo "TYPE: $TYPE"
-#echo "FILE: $INCLUDE_FILE"
-#echo "BOOST_COMPONENTS: $BOOST_COMPONENTS"
-#echo "CGAL_COMPONENTS: $CGAL_COMPONENTS"
-#echo "SINGLE_SOURCE: $SINGLE_SOURCE"
-#echo "SOURCE: $SOURCE"
-
-if [ "${TYPE}" = "example" -o "${TYPE}" = "demo" -o "${TYPE}" = "test" ]; then
-  ok='y'
-fi 
-
-if [ -z "$ok" ]; then
-  echo "Invalid type: '${TYPE}'. Valid values are 'example', 'demo' or 'test'"
-  exit 1
-fi 
+echo "FILE: $OPTIONS_FILE"
+echo "BOOST_COMPONENTS: $BOOST_COMPONENTS"
+echo "CGAL_COMPONENTS: $CGAL_COMPONENTS"
+echo "SINGLE_SOURCE: $SINGLE_SOURCE"
+echo "SOURCE: $SOURCE"
 
 OUTPUTFILE=CMakeLists.txt
 PROJECT=`basename $PWD`
@@ -398,6 +491,6 @@ if [ -f ${OUTPUTFILE} ] ; then
   mv -f $OUTPUTFILE ${OUTPUTFILE}.bak
 fi
 
-create_cmake_script_with_includes | tee $OUTPUTFILE
+create_cmake_script_with_options | tee $OUTPUTFILE
 
 echo "created $OUTPUTFILE in $PWD ..."
