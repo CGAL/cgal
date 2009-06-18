@@ -18,7 +18,6 @@
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
-#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/read_xyz_points.h>
@@ -69,7 +68,6 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
   // Estimates normals direction.
   // Note: pca_estimate_normals() requires an iterator over points
   // + property maps to access each point's position and normal.
-  // The position property map can be omitted here as we use iterators over Point_3 elements.
   CGAL::pca_estimate_normals(points.begin(), points.end(),
                              CGAL::First_of_pair_property_map<PointVectorPair>(),
                              CGAL::Second_of_pair_property_map<PointVectorPair>(),
@@ -100,7 +98,6 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
   // Estimates normals direction.
   // Note: jet_estimate_normals() requires an iterator over points
   // + property maps to access each point's position and normal.
-  // The position property map can be omitted here as we use iterators over Point_3 elements.
   CGAL::jet_estimate_normals(points.begin(), points.end(),
                              CGAL::First_of_pair_property_map<PointVectorPair>(),
                              CGAL::Second_of_pair_property_map<PointVectorPair>(),
@@ -122,7 +119,6 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
   // Orient normals.
   // Note: mst_orient_normals() requires an iterator over points
   // + property maps to access each point's position and normal.
-  // The position property map can be omitted here as we use iterators over Point_3 elements.
   PointList::iterator unoriented_points_begin =
     CGAL::mst_orient_normals(points.begin(), points.end(),
                              CGAL::First_of_pair_property_map<PointVectorPair>(),

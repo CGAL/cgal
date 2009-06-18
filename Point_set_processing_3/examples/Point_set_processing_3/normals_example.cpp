@@ -1,7 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
-#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_xyz_points.h>
 
@@ -31,8 +30,7 @@ int main(void)
 
     // Estimates normals direction.
     // Note: pca_estimate_normals() requires an iterator over points
-  // + property maps to access each point's position and normal.
-  // The position property map can be omitted here as we use iterators over Point_3 elements.
+    // + property maps to access each point's position and normal.
     const int nb_neighbors = 7; // K-nearest neighbors
     CGAL::pca_estimate_normals(points.begin(), points.end(),
                                CGAL::First_of_pair_property_map<PointVectorPair>(),
@@ -41,8 +39,7 @@ int main(void)
 
     // Orients normals.
     // Note: mst_orient_normals() requires an iterator over points
-  // + property maps to access each point's position and normal.
-  // The position property map can be omitted here as we use iterators over Point_3 elements.
+    // + property maps to access each point's position and normal.
     std::list<PointVectorPair>::iterator unoriented_points_begin =
       CGAL::mst_orient_normals(points.begin(), points.end(),
                                CGAL::First_of_pair_property_map<PointVectorPair>(),
