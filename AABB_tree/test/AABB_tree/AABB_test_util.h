@@ -136,7 +136,7 @@ void test_all_distance_query_types(Tree& tree)
 
     Point p1 = tree.closest_point(query);
     Point p2 = tree.closest_point(query,hint.first);
-    if(sqd1 != sqd2)
+    if(p1 != p2)
         std::cout << "warning: different closest points with and without hint (possible, in case there are more than one)";
 
     Point_and_primitive_id pp1 = tree.closest_point_and_primitive(query);
@@ -242,7 +242,7 @@ void test(const char *filename,
     // constructs AABB tree and internal search KD-tree with
     // the points of the polyhedron
     Tree tree(Pr_generator().begin(polyhedron),Pr_generator().end(polyhedron));
-    tree.accelerate_distance_queries(polyhedron.points_begin(),polyhedron.points_end());
+    //tree.accelerate_distance_queries(polyhedron.points_begin(),polyhedron.points_end());
 
     // call all tests
     test_impl<K,Tree,Polyhedron,Primitive>(tree,polyhedron,duration);
@@ -400,20 +400,21 @@ public:
     assert ( it != Pr_generator().end(p) );
 
     // Get a point on the primitive
-    Point closest_point = Pr(it).reference_point();
-    typename Pr::Id closest_primitive = Pr(it).id();
+    Pr closest_primitive = Pr(it);
+    Point closest_point = closest_primitive.reference_point();
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      Point tmp = Traits().closest_point_object()(query, Pr(it), closest_point);
-      if ( tmp != closest_point)
+      Pr tmp_pr(it);
+      Point tmp_pt = Traits().closest_point_object()(query, tmp_pr, closest_point);
+      if ( tmp_pt != closest_point )
       {
-        closest_point = tmp;
-        closest_primitive = Pr(it).id();
+        closest_point = tmp_pt;
+        closest_primitive = tmp_pr;
       }
     }
 
-    return Point_and_primitive_id(closest_point,closest_primitive);
+    return Point_and_primitive_id(closest_point,closest_primitive.id());
   }
 };
 
@@ -781,10 +782,10 @@ private:
       }
       else
       {
-        std::cerr << "\tClosest point found on different primitives" << std::endl;
         // Compare distance
         FT dist_naive = CGAL::squared_distance(query, point_naive.first);
         FT dist_tree = CGAL::squared_distance(query, point_tree.first);
+
         assert( dist_tree >= dist_naive );
         const FT epsilon = 1e-12;
         assert( ((dist_naive - dist_tree) < epsilon*dist_tree) );

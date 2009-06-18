@@ -57,7 +57,7 @@ size_t check_outputs(const std::vector<Value>& a,
 
     while ( it_a != a.end() && it_b != b.end() )
     {
-      if ( *it_a != *it_b && *it_b != deflt )
+      if ( *it_a != *it_b && *it_b != deflt && *it_a != deflt )
         ++counter;
 
       ++it_a;

@@ -41,8 +41,10 @@
 
 
 template<class K, class Tree, class Polyhedron, Primitive_type Type>
-void test_impl(Tree& tree, Polyhedron&, const double duration)
+void test_impl(Tree& tree, Polyhedron& p, const double duration)
 {
+  tree.accelerate_distance_queries(p.points_begin(),p.points_end());
+
   test_distance_speed<Tree,K>(tree,duration);
   test_all_distance_query_types<Tree,K>(tree);
 }
