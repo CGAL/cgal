@@ -3307,6 +3307,7 @@ Scripts/developer_scripts/remove_package_files_from_build_tree_impl.rb -text
 Scripts/developer_scripts/test_testsuite_submission -text
 Scripts/scripts/cgal_create_cmake_script -text
 Scripts/scripts/cgal_create_cmake_script_with_includes -text
+Scripts/scripts/cgal_create_cmake_script_with_options -text
 SearchStructures/doc_tex/SearchStructures/d-range.eps -text svneol=unset#application/postscript
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#image/gif
 SearchStructures/doc_tex/SearchStructures/d-range.pdf -text svneol=unset#application/pdf
