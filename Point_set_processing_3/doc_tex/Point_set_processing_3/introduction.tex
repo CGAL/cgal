@@ -1,11 +1,6 @@
 \section{Introduction}
 
-This \cgal\ component implements methods to analyze and process unorganized 3D point sets. The input is an unorganized 3D point set, possibly with attributes such as unoriented or oriented normals. This point set can be analyzed to measure certain geometric properties such as average spacing between the points and their $K$ nearest neighbors. We can furthermore process the point set with functions devoted to the simplification, outlier removal, smoothing, normal estimation and normal orientation.
-
-
-The processing of point sets is often needed by applications dealing with measurement data, such as surface reconstruction from laser scanned data (see Figure \ref{Point_set_processing_3-fig-introduction}).
-
-% TOFIX: left and right with same viewpoint.
+This \cgal\ component implements methods to analyze and process unorganized 3D point sets. The input is an unorganized 3D point set, possibly with normal attributes (unoriented or oriented). This point set can be analyzed to measure geometric properties such as average spacing between the points and their $K$ nearest neighbors. It can be processed with functions devoted to the simplification, outlier removal, smoothing, normal estimation and normal orientation. The processing of point sets is often needed in applications dealing with measurement data, such as surface reconstruction from laser scanned data (see Figure \ref{Point_set_processing_3-fig-introduction}).
 
 % Insert image introduction.jpg/eps
 \begin{center}
@@ -20,16 +15,14 @@ The processing of point sets is often needed by applications dealing with measur
     % Title
     \begin{figure}[h]
         \caption{Point set processing.
-                 Left: 275K points sampled on an elephant with
-                 a Minolta laser scanner.
+                 Left: 275K points sampled on the statue of
+                 an elephant with a Minolta laser scanner.
                  Right: point set after clean-up and
                  simplification to 17K points.}
     \end{figure}
 \end{center}
 
-In the context of surface reconstruction we can replace the elements of this component along the common surface reconstruction pipeline which involves the following steps: 1) Scanning and scan alignment to produce a set of points or points with normals (alignment is not yet covered in \cgal); 2) Outlier removal; 3) Simplification to reduce the number of input points; 4) Smoothing to reduce noise in the input data; 5) Normal estimation and orientation when the normals are not already provided by the acquisition device; and 6) Surface reconstruction. Chapter \ccc{Surface_reconstruction_points_3} \ref{chap:surface_reconstruction_points_3} deals with surface reconstruction from point sets with normal attributes.
-
-Figure \ref{Point_set_processing_3-fig-pipeline} illustrates this pipeline.
+In the context of surface reconstruction we can position the elements of this component along the common surface reconstruction pipeline (Figure \ref{Point_set_processing_3-fig-pipeline}) which involves the following steps: 1) Scanning and scan alignment to produce a set of points or points with normals (alignment is not yet covered in \cgal); 2) Outlier removal; 3) Simplification to reduce the number of input points; 4) Smoothing to reduce noise in the input data; 5) Normal estimation and orientation when the normals are not already provided by the acquisition device; and 6) Surface reconstruction. Chapter \ccc{Surface_reconstruction_points_3} \ref{chap:surface_reconstruction_points_3} deals with surface reconstruction from point sets with normal attributes.
 
 % Insert image pipeline.jpg/eps
 \begin{center}
@@ -43,7 +36,10 @@ Figure \ref{Point_set_processing_3-fig-pipeline} illustrates this pipeline.
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[h]
-        \caption{Point set processing pipeline for surface reconstruction.}
+        \caption{Point set processing pipeline for surface reconstruction.
+                 The algorithms listed in gray are available from other
+                 CGAL components (bounding volumes and principal
+                 component analysis).}
     \end{figure}
 \end{center}
 
