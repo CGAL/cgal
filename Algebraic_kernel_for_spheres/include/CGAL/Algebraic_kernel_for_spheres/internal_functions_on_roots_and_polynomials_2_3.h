@@ -96,11 +96,12 @@ namespace CGAL {
   {
     typedef typename AK::Root_of_2 Root_of_2;
     typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
-
-    *res++ =  Root_for_spheres_2_3(make_root_of_2(s.a(),-1,s.r_sq()),
+    typedef typename AK::FT FT;
+    
+    *res++ =  Root_for_spheres_2_3(make_root_of_2(s.a(),FT(-1),s.r_sq()),
                                 Root_of_2(s.b()),
                                 Root_of_2(s.c()));
-    *res++ =  Root_for_spheres_2_3(make_root_of_2(s.a(),1,s.r_sq()),
+    *res++ =  Root_for_spheres_2_3(make_root_of_2(s.a(),FT(1),s.r_sq()),
                                 Root_of_2(s.b()),
                                 Root_of_2(s.c()));
     return res;
@@ -124,13 +125,14 @@ namespace CGAL {
   y_critical_points(const typename AK::Polynomial_for_spheres_2_3 & s, OutputIterator res)
   {
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
+    typedef typename AK::FT FT;
 
     *res++ =  Root_for_spheres_2_3(Root_of_2(s.a()),
-                                make_root_of_2(s.b(),-1,s.r_sq()),
+                                make_root_of_2(s.b(),FT(-1),s.r_sq()),
                                 Root_of_2(s.c()));
     *res++ =  Root_for_spheres_2_3(Root_of_2(s.a()),
-                                make_root_of_2(s.b(),1,s.r_sq()),
+                                make_root_of_2(s.b(),FT(1),s.r_sq()),
                                 Root_of_2(s.c()));
     return res;
   }
@@ -152,14 +154,15 @@ namespace CGAL {
   z_critical_points(const typename AK::Polynomial_for_spheres_2_3 & s, OutputIterator res)
   {
     typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3; 
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
+    typedef typename AK::FT FT;
 
     *res++ =  Root_for_spheres_2_3(Root_of_2(s.a()),
                                 Root_of_2(s.b()),
-                                make_root_of_2(s.c(),-1,s.r_sq()));
+                                make_root_of_2(s.c(),FT(-1),s.r_sq()));
     *res++ =  Root_for_spheres_2_3(Root_of_2(s.a()),
                                 Root_of_2(s.b()),
-                                make_root_of_2(s.c(),1,s.r_sq()));
+                                make_root_of_2(s.c(),FT(1),s.r_sq()));
     return res;
   }
 
