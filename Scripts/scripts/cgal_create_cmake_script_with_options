@@ -40,6 +40,7 @@ qt4='n'
 
 # TODO distinguish Qt3 + Qt4 demos!
 
+# TODO move below
 if [ -e "$INCLUDE_FILE" ]; then
 
   OLDIFS="$IFS"
@@ -148,7 +149,7 @@ EOF
     include_directories( ${QT3_INCLUDE_DIR} )
 
 EOF
-    
+
     cat <<EOF
     add_executable  (${target_name} ${all})
   
@@ -170,13 +171,19 @@ else()
 endif()
 EOF
     
-  else
+  else # now examples/test and not demo
   
     OLDIFS="$IFS"
     IFS=','
     for cgal_component in $CGAL_COMPONENTS; do
+      if [ "$cgal_component" = "Qt3" ]; then
+        qt3='y'
+      fi
+      if [ "$cgal_component" = "Qt4" ]; then
+        qt4='y'
+      fi
       #CGAL_COMPONENT=`echo $cgal_component | tr '[:lower:]' '[:upper:]'`
-      echo "find_package(CGAL QUIET COMPONENTS $cgal_component)"
+      echo "find_package( CGAL QUIET COMPONENTS $cgal_component )"
     done
     IFS=$OLDIFS
 
@@ -187,20 +194,20 @@ if ( CGAL_FOUND )
 EOF
 
     if [ -d ../../include ] ; then
-      echo '  include_directories (BEFORE ../../include)'
+      echo '  include_directories( BEFORE ../../include )'
       echo
     fi
     if [ -d ../include ] ; then
-      echo '  include_directories (BEFORE ../include)'
+      echo '  include_directories( BEFORE ../include )'
       echo
     fi
     if [ -d include ] ; then
-      echo '  include_directories (BEFORE include)'
+      echo '  include_directories( BEFORE include )'
       echo
     fi		
 
     for package in $PACKAGES; do
-      echo "  include_directories($package/include/)";
+      echo "  include_directories( $package/include/ )";
     done
 
     echo
@@ -209,8 +216,8 @@ EOF
     IFS=','
     for boost_component in $BOOST_COMPONENTS; do
       BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
-      echo "  find_package(Boost REQUIRED $boost_component)"
-      echo "  link_libraries(\${BOOST_${BOOST_COMPONENT}_LIBRARY})"
+      echo "  find_package( Boost REQUIRED $boost_component )"
+      echo "  link_libraries( \${BOOST_${BOOST_COMPONENT}_LIBRARY} )"
     done
     IFS=$OLDIFS
 
@@ -218,25 +225,91 @@ EOF
 
   include( ${CGAL_USE_FILE} )
 
-  include( CGAL_CreateSingleSourceCGALProgram )
+EOF
+
+    if [ "$qt3" = "y" ]; then
+
+      cat <<'EOF'
+
+  find_package(Qt3-patched QUIET )
+  # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+  # that it can be used together with FindQt4: all its variables are prefixed
+  # by "QT3_" instead of "QT_".
+  
+  if (CGAL_Qt3_FOUND AND QT3_FOUND)
+  
+    include( Qt3Macros-patched )
+
+  endif()
 
 EOF
+
+    fi
+
+    if [ "$SINGLE_SOURCE" = "n" ]; then
+
+      cat <<'EOF'
+
+  # Creating entries for all .cpp/.C files with "main" routine
+
+  include( CGAL_CreateSingleSourceCGALProgram )
     
-    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
-      # Create an executable for each cpp that  contains a function "main()"
-      BASE=`basename $file .C`
-      BASE=`basename $BASE .cpp`
-      egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
-      if [ $? -eq 0 ]; then
-        echo "  create_single_source_cgal_program( \"$file\" )"
-      fi
-    done
+EOF
+
+      for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+        # Create an executable for each cpp that  contains a function "main()"
+        BASE=`basename $file .C`
+        BASE=`basename $BASE .cpp`
+        egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
+        if [ $? -eq 0 ]; then
+          echo "  create_single_source_cgal_program( \"$file\" )"
+        fi
+      done
     
+    else # SINGLE_SOURCE="y"
+
+      target_name=$SOURCE
+
+      for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+        all="$all $file"
+      done
+
+      if [ "$qt3" = "y" ]; then
+        cat<<'EOF'
+
+  if (CGAL_Qt3_FOUND AND QT3_FOUND)
+
+EOF
+       echo "    qt3_automoc( ${all} )"
+       cat<<'EOF'
+
+    # Make sure the compiler can find generated .moc files
+    include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
+  
+    include_directories( ${QT3_INCLUDE_DIR} )
+
+  endif()
+
+EOF
+    fi # qt3
+
+      cat <<EOF
+
+  add_executable  (${target_name} ${all})
+  
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${target_name} )
+    
+  # Link the executable to CGAL and third-party libraries
+  target_link_libraries(${target_name} \${QT3_LIBRARIES} \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES} )
+EOF
+
+    fi # single or all sources
+
     cat <<'EOF'
 
 else()
   
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+  message(STATUS "This program requires the CGAL library, and will not be compiled.")
   
 endif()
 EOF
@@ -253,7 +326,7 @@ usage()
   echo "Usage: `basename $0` [-s [SOURCE]] [-c cgal-component1,cgal-component2,...] [-i include_file='$HOME/.cgal_cmake_includes'] [-t type] [-b boost-component1,boost-component2,...] [-h]" >&2
   echo >&2
   echo "  -s [SOURCE] If there is parameter is given the script will create one single executable with all sources, based on the given SOURCE, it creates one executable for each main'ed source." >&2
-  echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','imageIO','PDB','Qt','Qt4' ('benchmark')." >&2
+  echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','imageIO','PDB','Qt3','Qt4' ('benchmark')." >&2
   echo "  include_file - file with PACKAGE or DIRECTORY directives" >&2
   echo "  type - must be any of example, demo or test. Default is example." >&2
   echo "  boost_componentX - must be a valid boost component, like 'filesystem', 'program_options'." >&2
