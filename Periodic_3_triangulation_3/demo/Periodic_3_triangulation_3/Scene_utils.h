@@ -41,7 +41,7 @@ typedef CGAL::Random_points_in_cube_3<Point> RandPts;
 // Segment comparison needed by the segment set
 template <class Segment>
 struct Compare_segment {
-  bool operator()(Segment s1, Segment s2) {
+  bool operator()(Segment s1, Segment s2) const {
     if (s1.source() == s2.source()) return (s1.target() < s2.target());
     return (s1.source() < s2.source());
   }
