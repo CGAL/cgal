@@ -306,10 +306,10 @@ namespace CGAL {
     const FT cz = (p.c()*p.b())/sqac;
 
     const Root_of_2 x1 = make_root_of_2(s.a(),cx,delta);
-    const Root_of_2 y1 = make_root_of_2(s.b(),-1,delta);
+    const Root_of_2 y1 = make_root_of_2(s.b(),FT(-1),delta);
     const Root_of_2 z1 = make_root_of_2(s.c(),cz,delta);
     const Root_of_2 x2 = make_root_of_2(s.a(),-cx,delta);
-    const Root_of_2 y2 = make_root_of_2(s.b(),1,delta);
+    const Root_of_2 y2 = make_root_of_2(s.b(),FT(1),delta);
     const Root_of_2 z2 = make_root_of_2(s.c(),-cz,delta);
 
     if(!is_positive(cx)) {
@@ -415,27 +415,27 @@ namespace CGAL {
       if(!is_positive(cy)) {
         const Root_of_2 x1 = s.a();
         const Root_of_2 y1 = make_root_of_2(s.b(),(cy),delta);
-        const Root_of_2 z1 = make_root_of_2(s.c(),-1,delta);
+        const Root_of_2 z1 = make_root_of_2(s.c(),FT(-1),delta);
         const Root_of_2 y2 = make_root_of_2(s.b(),(-cy),delta);
-        const Root_of_2 z2 = make_root_of_2(s.c(),1,delta);
+        const Root_of_2 z2 = make_root_of_2(s.c(),FT(1),delta);
         *res++ = Root_for_spheres_2_3(x1,y1,z1);
         *res++ = Root_for_spheres_2_3(x1,y2,z2);
       } else {
         const Root_of_2 x1 = s.a();
         const Root_of_2 y1 = make_root_of_2(s.b(),(-cy),delta);
-        const Root_of_2 z1 = make_root_of_2(s.c(),1,delta);
+        const Root_of_2 z1 = make_root_of_2(s.c(),FT(1),delta);
         const Root_of_2 y2 = make_root_of_2(s.b(),(cy),delta);
-        const Root_of_2 z2 = make_root_of_2(s.c(),-1,delta);
+        const Root_of_2 z2 = make_root_of_2(s.c(),FT(-1),delta);
         *res++ = Root_for_spheres_2_3(x1,y1,z1);
         *res++ = Root_for_spheres_2_3(x1,y2,z2);
       }
     } else {
       const Root_of_2 x1 = make_root_of_2(s.a(),(-cx),delta);
       const Root_of_2 y1 = make_root_of_2(s.b(),(-cy),delta);
-      const Root_of_2 z1 = make_root_of_2(s.c(),1,delta);
+      const Root_of_2 z1 = make_root_of_2(s.c(),FT(1),delta);
       const Root_of_2 x2 = make_root_of_2(s.a(),(cx),delta);
       const Root_of_2 y2 = make_root_of_2(s.b(),(cy),delta);
-      const Root_of_2 z2 = make_root_of_2(s.c(),-1,delta);
+      const Root_of_2 z2 = make_root_of_2(s.c(),FT(-1),delta);
       *res++ = Root_for_spheres_2_3(x1,y1,z1);
       *res++ = Root_for_spheres_2_3(x2,y2,z2);
     }
