@@ -222,7 +222,7 @@ public:
     Face_handle copied_face = copy_face(face, result, copied_face_arr,
                                         map_copied_to_orig_halfedges,
                                         map_copied_to_orig_vertices);
-//    CGAL_assertion(is_valid(copied_face_arr));
+    CGAL_assertion(copied_face_arr.is_valid());
     map_copied_to_orig_faces[copied_face] = face;
     
     
@@ -826,7 +826,7 @@ protected:
                                          Halfedge_handle* he = NULL)
   {
     CGAL_precondition(he == NULL || (*he)->face() == face);
-    //CGAL_assertion(!face->is_unbounded());
+    CGAL_assertion(!face->is_unbounded());
     Comparison_result res = EQUAL;
 
     bool success = false;
@@ -1817,7 +1817,7 @@ protected:
                          Halfedges_map& map_copied_to_orig_halfedges,
                          Vertices_map&  map_copied_to_orig_vertices)
   {
-//    CGAL_precondition (from.is_valid());
+    CGAL_precondition (from.is_valid());
     CGAL_precondition (to.is_empty());
     CGAL_assertion_msg (to.number_of_faces() == 1, "There should be one face in an empty arrangement");
 
@@ -1853,7 +1853,7 @@ protected:
                   map_orig_to_copied_vertices,
                   true);
       }
-//      CGAL_assertion(is_valid(to));
+      CGAL_assertion(to.is_valid());
 
       // Get a handle to the copied face, which is the incident face
       // of the copy we created for hec.
@@ -1881,7 +1881,7 @@ protected:
                 map_orig_to_copied_halfedges,
                 map_orig_to_copied_vertices,
                 false);
-//      CGAL_assertion(is_valid(to));
+      CGAL_assertion(to.is_valid());
     }
 
     // Copy the isolated vertices inside the given face.
@@ -2129,6 +2129,11 @@ protected:
     typedef typename Minimization_diagram_2::Ccb_halfedge_circulator
                                                         Ccb_halfedge_circulator;
 
+    typedef typename Traits::Arr_left_side_tag              Arr_left_side_tag;
+    typedef typename Traits::Arr_right_side_tag             Arr_right_side_tag;
+    typedef typename Traits::Arr_top_side_tag               Arr_top_side_tag;
+    typedef typename Traits::Arr_bottom_side_tag            Arr_bottom_side_tag;
+    
     Copy_observer(Minimization_diagram_2& small_,
                   Minimization_diagram_2& big,
                   Halfedges_map& map_h,
@@ -2172,20 +2177,25 @@ protected:
       ps_y = in_ps_y;
     }
 
-    bool is_bounded_impl(Arr_all_sides_oblivious_tag)
-    {
-      CGAL_error_msg("Cannot reach this!");
-      return true;
-    }
-
-    bool is_bounded_impl(Arr_not_all_sides_oblivious_tag)
-    {
-      return ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR));
-    }
+    bool is_bounded_impl(Arr_open_side_tag) { return false; }
+    bool is_bounded_impl(Arr_boundary_side_tag) { return true; }
     
     bool is_bounded()
     {
-      return is_bounded_impl(Are_all_sides_oblivious_tag());
+      // This is the case of create boundary vertex.
+      CGAL_assertion((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
+      
+      if (ps_x == ARR_LEFT_BOUNDARY)
+        return is_bounded_impl(Arr_left_side_tag());
+      
+      if (ps_x == ARR_RIGHT_BOUNDARY)
+        return is_bounded_impl(Arr_right_side_tag());
+      
+      if (ps_y == ARR_BOTTOM_BOUNDARY)
+        return is_bounded_impl(Arr_bottom_side_tag());
+
+      CGAL_assertion(ps_y == ARR_TOP_BOUNDARY);
+      return is_bounded_impl(Arr_top_side_tag());
     }
 
     void after_create_boundary_vertex (Vertex_handle v)
@@ -2218,9 +2228,9 @@ protected:
       Vertex_handle big_v = map_vertices[split_fict_v];
 
       //// make sure it is the only new vertex right now
-      //CGAL_assertion(new_vertices.size() == 1 &&
-      //               new_vertices.back() == split_v);
-      //new_vertices.pop_back();
+      CGAL_assertion(new_vertices.size() == 1 &&
+                     new_vertices.back() == split_v);
+      new_vertices.pop_back();
 
       // find the edge to split in big_arr
       CGAL_assertion(map_halfedges.is_defined(split_fict_e));
