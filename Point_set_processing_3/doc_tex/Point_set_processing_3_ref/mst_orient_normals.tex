@@ -19,7 +19,7 @@
 
 \ccDefinition
 
-\ccc{CGAL::mst_orient_normals()} orients the normals of a point set using the propagation of a seed orientation through a minimum spanning tree of the Riemannian graph \cite{cgal:hddms-srup-92}.
+\ccc{CGAL::mst_orient_normals()} orients the normals of a point set using the propagation of a seed orientation through a minimum spanning tree computed over the Riemannian graph \cite{cgal:hddms-srup-92}.
 
 This method modifies the order of the input points so as to pack all successfully oriented normals first, and returns an iterator over the first point with an unoriented normal (see erase-remove idiom). For this reason it should not be called on sorted containers.
 

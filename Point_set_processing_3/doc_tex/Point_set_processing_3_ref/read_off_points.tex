@@ -19,9 +19,9 @@
 
 \ccDefinition
 
-\ccc{CGAL::read_off_points()} reads points (positions only) from a .off ASCII stream.
-\ccc{CGAL::read_off_points_and_normals()} reads points (positions + normals, if available) from a .off ASCII stream.
-Faces are ignored.
+\ccc{CGAL::read_off_points()} reads the point from a .off ASCII stream. More specifically, it reads only the point locations and ignores all point attributes available from the stream.
+\ccc{CGAL::read_off_points_and_normals()} reads the points as well as the normals (if available) from a .off ASCII stream.
+In both cases the other primitives (segments, faces) are ignored.
 
 \ccInclude{CGAL/read_off_points.h}
 

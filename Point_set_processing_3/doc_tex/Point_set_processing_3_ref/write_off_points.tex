@@ -19,8 +19,8 @@
 
 \ccDefinition
 
-\ccc{CGAL::write_off_points()} saves points (positions only) to a .off ASCII stream.
-\ccc{CGAL::write_off_points_and_normals()} saves points (positions + normals) to a .off ASCII stream.
+\ccc{CGAL::write_off_points()} saves the points of an iterator range to a .off ASCII stream. More specifically, it saves only the point locations and ignores all other attributes.
+\ccc{CGAL::write_off_points_and_normals()} saves the points as well the normals of an iterator range to a .off ASCII stream.
 
 \ccInclude{CGAL/write_off_points.h}
 
