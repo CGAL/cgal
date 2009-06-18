@@ -5,14 +5,13 @@
 #include <vector>
 #include <fstream>
 #include <boost/tuple/tuple.hpp>
-#include <boost/tuple/tuple_io.hpp>
 
 // Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 
-// Data type := index, followed by the point, followed by three integers that 
+// Data type := index, followed by the point, followed by three integers that
 // define the Red Green Blue color of the point.
 typedef boost::tuple<int, Point, int, int, int> IndexedPointWithColorTuple;
 
@@ -38,10 +37,10 @@ int main(void)
     for(int i = 0; i < points.size(); i++)
     {
       points[i].get<0>() = i;   // set index value of tuple to i
-      
+
       points[i].get<2>() = 0;   // set RGB color to black
-      points[i].get<3>() = 0;  
-      points[i].get<4>() = 0;    
+      points[i].get<3>() = 0;
+      points[i].get<4>() = 0;
     }
 
     // Computes average spacing.

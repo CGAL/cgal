@@ -13,7 +13,7 @@ typedef Kernel::Point_3 Point;
 int main(void)
 {
   // Reads a .xyz point set file in points[].
-  // The dereference property map can be omitted here as it is the default value.
+  // The Dereference_property_map property map can be omitted here as it is the default value.
   std::vector<Point> points;
   std::ifstream stream("data/oni.xyz");
   if (!stream ||
@@ -24,10 +24,10 @@ int main(void)
   }
 
   // Removes outliers using erase-remove idiom.
-  // The dereference property map can be omitted here as it is the default value.
+  // The Dereference_property_map property map can be omitted here as it is the default value.
   const double removed_percentage = 5.0; // percentage of points to remove
   const int nb_neighbors = 7; // considers 7 nearest neighbor points
-  points.erase( 
+  points.erase(
          CGAL::remove_outliers(points.begin(), points.end(),
                                CGAL::Dereference_property_map<Point>(),
                                nb_neighbors,removed_percentage), points.end());
