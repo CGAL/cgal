@@ -40,12 +40,13 @@ const std::string Hmsg[] = {
 
 class SkeletonIpelet 
   : public CGAL::Ipelet_base<Kernel,3>{
-    typedef CGAL::Polygon_2<Kernel>           Polygon_2;
-  typedef boost::shared_ptr<Polygon_2>        PolygonPtr ;
+    typedef CGAL::Polygon_2<Kernel>           Polygon_2_with_vector;
+    
+  typedef boost::shared_ptr<Polygon_2_with_vector>        PolygonPtr ;
   typedef std::vector<PolygonPtr>             PolygonPtrVector ;    
 public:
   SkeletonIpelet()
-    :CGAL::Ipelet_base<Kernel,3>("Polygon Partition",Slab,Hmsg){}
+    :CGAL::Ipelet_base<Kernel,3>("Skeleton and offset",Slab,Hmsg){}
   void protected_run(int);
 };
 
@@ -69,7 +70,7 @@ void SkeletonIpelet::protected_run(int fn)
   }
   
   for (std::list<Polygon_2>::iterator itp=pol_list.begin();itp!=pol_list.end();++itp){
-    Polygon_2 polygon=*itp;
+    Polygon_2_with_vector polygon(itp->vertices_begin(),itp->vertices_end());
       
     if (!polygon.is_simple()){
       print_error_message("Polygon must be simple");
@@ -86,10 +87,10 @@ void SkeletonIpelet::protected_run(int fn)
     
     
 
-    typedef std::vector< boost::shared_ptr< Polygon_2 > > PolygonVector ;
+    typedef std::vector< boost::shared_ptr< Polygon_2_with_vector > > PolygonVector ;
     for( PolygonVector::const_iterator pi = inner_offset_polygons.begin() ; pi != inner_offset_polygons.end() ; ++ pi ){
-      Polygon_2 poly=**pi;
-      draw_in_ipe(poly);//not working because not using the same polynomial type. Try a template of the container in the function
+      Polygon_2_with_vector poly=**pi;
+      draw_in_ipe(poly);
     }
 
     

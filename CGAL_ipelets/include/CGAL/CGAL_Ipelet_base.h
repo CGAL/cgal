@@ -381,11 +381,12 @@ public:
       if (deselect_all) (--_page->end())->SetSelect(IpePgObject::ENone);
     }
     
+    template<class Container>
     void 
-    draw_in_ipe(const Polygon_2& poly,bool deselect_all=false) const 
+    draw_in_ipe(const CGAL::Polygon_2<Kernel,Container>& poly,bool deselect_all=false) const 
     {
       std::list<Point_2> LP;
-      for (typename Polygon_2::iterator it=poly.vertices_begin();it!= poly.vertices_end();++it)
+      for (typename CGAL::Polygon_2<Kernel,Container>::iterator it=poly.vertices_begin();it!= poly.vertices_end();++it)
         LP.push_back(*it);
       draw_polyline_in_ipe(LP.begin(),LP.end(),true,deselect_all,false);
     }

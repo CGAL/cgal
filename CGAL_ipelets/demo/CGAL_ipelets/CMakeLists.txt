@@ -5,7 +5,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY .build/ipelets)
 
-find_package(CGAL)
+find_package(CGAL QUIET COMPONENTS Core )
 find_package(IPE)
 
 if ( CGAL_FOUND )
@@ -38,7 +38,7 @@ if ( CGAL_FOUND )
 
     foreach(IPELET ${CGAL_IPELETS})
       add_library(CGAL_${IPELET} MODULE ${IPELET}.cpp)
-      target_link_libraries( CGAL_${IPELET} ipe )
+      target_link_libraries( CGAL_${IPELET} ipe)
       if ( IPELET_INSTALL_DIR )
         install(TARGETS CGAL_${IPELET} DESTINATION ${IPELET_INSTALL_DIR})
       endif ()
