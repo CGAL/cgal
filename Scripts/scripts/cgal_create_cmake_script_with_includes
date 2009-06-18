@@ -108,9 +108,21 @@ EOF
       echo
     fi		
 
-   for package in $PACKAGES; do
-     echo "  include_directories($package/include/)";
-   done
+    for package in $PACKAGES; do
+      echo "  include_directories($package/include/)";
+    done
+
+    echo
+    echo "  # Boost options"
+
+    OLDIFS="$IFS"
+    IFS=','
+    for boost_component in $BOOST_COMPONENTS; do
+      BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
+      echo "  find_package(Boost REQUIRED $boost_component)"
+      echo "  link_libraries(\${BOOST_${BOOST_COMPONENT}_LIBRARY})"
+    done
+    IFS=$OLDIFS
 
     cat <<'EOF'  
 
@@ -178,9 +190,21 @@ EOF
       echo
     fi		
 
-  for package in $PACKAGES; do
-    echo "  include_directories($package/include/)";
-  done
+    for package in $PACKAGES; do
+      echo "  include_directories($package/include/)";
+    done
+
+    echo
+    echo "  # Boost options"
+
+    OLDIFS="$IFS"
+    IFS=','
+    for boost_component in $BOOST_COMPONENTS; do
+      BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
+      echo "  find_package(Boost REQUIRED $boost_component)"
+      echo "  link_libraries(\${BOOST_${BOOST_COMPONENT}_LIBRARY})"
+    done
+    IFS=$OLDIFS
 
     cat <<'EOF'
 
@@ -218,7 +242,7 @@ EOF
 
 usage()
 {
-  echo "Usage: `basename $0` [-i include_file='$HOME/.cgal_cmake_includes'] [-t type] [-h]" >&2
+  echo "Usage: `basename $0` [-i include_file='$HOME/.cgal_cmake_includes'] [-t type] [-b boost-component1,boost-component2,...] [-h]" >&2
   echo >&2
   echo "  include_file - file with PACKAGE or DIRECTORY directives" >&2
   echo "  type - must be any of example, demo or test. Default is example." >&2
@@ -227,9 +251,10 @@ usage()
 
 TYPE="example"
 INCLUDE_FILE="${HOME}/.cgal_cmake_includes"
+BOOST_COMPONENTS=""
 
 # parse command line arguments
-while getopts i:t:hv OPT; do
+while getopts i:t:b:hv OPT; do
     case "$OPT" in
 	h)	usage
 		exit 0
@@ -245,6 +270,8 @@ while getopts i:t:hv OPT; do
 		;;
 	t)	TYPE=$OPTARG
 		;;
+	b)	BOOST_COMPONENTS=$OPTARG
+		;;
 	\?)	# getopts issues an error message
 		usage
 		exit 1
@@ -256,7 +283,7 @@ shift `expr $OPTIND - 1`
 
 #echo "TYPE: $TYPE"
 #echo "FILE: $INCLUDE_FILE"
-
+#echo "BOOST_COMPONENTS: $BOOST_COMPONENTS"
 
 if [ "${TYPE}" = "example" -o "${TYPE}" = "demo" -o "${TYPE}" = "test" ]; then
   ok='y'
