@@ -22,29 +22,29 @@ int main(void)
     std::ifstream stream("data/sphere_20k.xyz");
     if (!stream ||
         !CGAL::read_xyz_points(stream, 
-                               std::back_inserter(points),
-                               CGAL::First_of_pair_property_map<PointVectorPair>()))
+        std::back_inserter(points),
+        CGAL::First_of_pair_property_map<PointVectorPair>()))
     {
-      return EXIT_FAILURE;
+        return EXIT_FAILURE;
     }
 
     // Estimates normals direction.
     // Note: pca_estimate_normals() requires an iterator over points
-    // + property maps to access each point's position and normal.
+    // as well as property maps to access each point's position and normal.
     const int nb_neighbors = 7; // K-nearest neighbors
     CGAL::pca_estimate_normals(points.begin(), points.end(),
-                               CGAL::First_of_pair_property_map<PointVectorPair>(),
-                               CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                               nb_neighbors);
+        CGAL::First_of_pair_property_map<PointVectorPair>(),
+        CGAL::Second_of_pair_property_map<PointVectorPair>(),
+        nb_neighbors);
 
     // Orients normals.
     // Note: mst_orient_normals() requires an iterator over points
-    // + property maps to access each point's position and normal.
+    // as well as property maps to access each point's position and normal.
     std::list<PointVectorPair>::iterator unoriented_points_begin =
-      CGAL::mst_orient_normals(points.begin(), points.end(),
-                               CGAL::First_of_pair_property_map<PointVectorPair>(),
-                               CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                               nb_neighbors);
+        CGAL::mst_orient_normals(points.begin(), points.end(),
+        CGAL::First_of_pair_property_map<PointVectorPair>(),
+        CGAL::Second_of_pair_property_map<PointVectorPair>(),
+        nb_neighbors);
 
     // Optional: delete points with an unoriented normal
     // if you plan to call a reconstruction algorithm that expects oriented normals.

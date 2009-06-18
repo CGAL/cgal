@@ -1,6 +1,6 @@
 \section{Normal Estimation}
 
-Two functions are provided to estimate the normal direction of the inferred surface at each point af an input point set. In both cases the result is an unoriented normal vector for each input point.
+Assuming a point set sampled over an inferred surface $S$, two functions provide an estimate of the normal to $S$ at each point. The result is an unoriented normal vector for each input point.
 
 Function \ccc{CGAL::jet_estimate_normals()} estimates the normal direction at each point from the input set by fitting a jet surface over its $k$ nearest neighbors. The default jet is a quadric surface. This algorithm is well suited to point sets scattered over curved surfaces.
 
@@ -24,7 +24,7 @@ Function \ccc{CGAL::pca_estimate_normals()} estimates the normal direction at ea
 
 \section{Normal Orientation}
 
-Function \ccc{CGAL::mst_orient_normals()} orients the normals of a set of points with unoriented normals using the method described by Hoppe et al. in \emph{Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}. More specifically, this method constructs a Riemannian graph over the input points (the graph of the $K$ nearest neighbor points) and propagates a seed normal orientation within a minimum spanning tree computed over the graph. The result is an oriented normal vector for each input point with normal.
+Function \ccc{CGAL::mst_orient_normals()} orients the normals of a set of points with unoriented normals using the method described by Hoppe et al. in \emph{Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}. More specifically, this method constructs a Riemannian graph over the input points (the graph of the $K$ nearest neighbor points) and propagates a seed normal orientation within a minimum spanning tree computed over this graph. The result is an oriented normal vector for each input unoriented normal, except for the normals which could not be successfully oriented. 
 
 % Insert image mst_orient_normals.jpg/eps
 \begin{center}
@@ -46,7 +46,7 @@ Function \ccc{CGAL::mst_orient_normals()} orients the normals of a set of points
 
 \ccExample
 
-The following example reads a point set from a file, estimates the normals through PCA over the 7 nearest neighbors and orient the normals:
+The following example reads a point set from a file, estimates the normals through PCA over the 7 nearest neighbors and orients the normals:
 \ccIncludeExampleCode{Point_set_processing_3/normals_example.cpp}
 
 
