@@ -33,6 +33,7 @@
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Peak_memory_sizer.h>
 #include <CGAL/poisson_refine_triangulation.h>
+#include <CGAL/Robust_circumcenter_filtered_traits_3.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -63,8 +64,10 @@ public:
 
   typedef Gt Geom_traits; ///< Geometric traits class
 
-  /// Typedef to Reconstruction_triangulation_3<Gt>
-  typedef Reconstruction_triangulation_3<Gt> Triangulation;
+  /// Internal 3D triangulation, of type Reconstruction_triangulation_3.
+  // Note: poisson_refine_triangulation() requires a robust circumcenter computation.
+  typedef Reconstruction_triangulation_3<Robust_circumcenter_filtered_traits_3<Gt> > 
+                                                   Triangulation;
 
   // Geometric types
   typedef typename Geom_traits::FT FT; ///< typedef to Geom_traits::FT

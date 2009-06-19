@@ -195,6 +195,12 @@ public:
   {
     Zone zone;
 
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+    // Check if triangulation's geometric traits provides a robust circumcenter computation
+    if (triangulation_ref_impl().side_of_sphere(c, p, true) != ON_BOUNDED_SIDE)
+      std::cerr << "Refine_tets_with_oracle_base::conflicts_zone_impl: ERROR: circumcenter out of sphere!\n";
+#endif
+
     zone.cell = c;
     zone.locate_type = Tr::CELL;
 

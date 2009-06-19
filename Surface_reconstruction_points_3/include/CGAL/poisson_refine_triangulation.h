@@ -47,12 +47,12 @@ class Poisson_mesher_level_impl_base :
 {
   typedef Mesh_3::Refine_tets_with_oracle_base<Tr, Criteria, Surface, Oracle, Container> Base;
 
+public:
   // Inherited methods and fields used below
   using Base::triangulation_ref_impl;
   using Base::oracle;
   using Base::surface;
 
-public:
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
@@ -192,8 +192,9 @@ public:
 /// bad means badly shaped or too big).
 /// @return the number of vertices inserted.
 ///
-/// @commentheading Precondition:
-/// convergence is guaranteed if radius_edge_ratio_bound >= 1.0.
+/// @commentheading Preconditions:
+/// - Tr must use a geometric traits with robust circumcenter computation.
+/// - convergence is guaranteed if radius_edge_ratio_bound >= 1.0.
 ///
 /// @commentheading Template Parameters:
 /// @param Tr 3D Delaunay triangulation.
