@@ -324,9 +324,9 @@ inline void Scene::get_tri_offsets(const Cell_handle ch, int i,
   off1 = p3dt.get_offset(ch,(i+2)&3);
   off2 = p3dt.get_offset(ch,(i+3)&3);
   if (it_type == P3DT::UNIQUE || it_type == P3DT::UNIQUE_COVER_DOMAIN) {
-    int diff_offx = std::min(std::min(off0.x(),off1.x()),off2.x());
-    int diff_offy = std::min(std::min(off0.y(),off1.y()),off2.y());
-    int diff_offz = std::min(std::min(off0.z(),off1.z()),off2.z());
+    int diff_offx = (std::min)((std::min)(off0.x(),off1.x()),off2.x());
+    int diff_offy = (std::min)((std::min)(off0.y(),off1.y()),off2.y());
+    int diff_offz = (std::min)((std::min)(off0.z(),off1.z()),off2.z());
     Offset diff_off(diff_offx, diff_offy, diff_offz);
     off0 -= diff_off;
     off1 -= diff_off;
@@ -343,12 +343,12 @@ inline void Scene::get_tet_offsets(const Cell_handle ch,
   off2 = p3dt.get_offset(ch,2);
   off3 = p3dt.get_offset(ch,3);
   if (it_type == P3DT::UNIQUE || it_type == P3DT::UNIQUE_COVER_DOMAIN) {
-    int diff_offx = std::min(std::min(off0.x(),off1.x()),
-			     std::min(off2.x(),off3.x()));
-    int diff_offy = std::min(std::min(off0.y(),off1.y()),
-			     std::min(off2.y(),off3.y()));
-    int diff_offz = std::min(std::min(off0.z(),off1.z()),
-			     std::min(off2.z(),off3.z()));
+    int diff_offx = (std::min)((std::min)(off0.x(),off1.x()),
+			     (std::min)(off2.x(),off3.x()));
+    int diff_offy = (std::min)((std::min)(off0.y(),off1.y()),
+			     (std::min)(off2.y(),off3.y()));
+    int diff_offz = (std::min)((std::min)(off0.z(),off1.z()),
+			     (std::min)(off2.z(),off3.z()));
     Offset diff_off(diff_offx, diff_offy, diff_offz);
     off0 -= diff_off;
     off1 -= diff_off;

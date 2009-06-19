@@ -1211,7 +1211,7 @@ is_extensible_triangulation_in_1_sheet_h1() const {
     for (Periodic_segment_iterator psit = periodic_segments_begin(UNIQUE);
  	 psit != periodic_segments_end(UNIQUE) ; ++psit) {
       s = construct_segment(*psit);
-      longest_edge_squared_length = std::max(longest_edge_squared_length,
+      longest_edge_squared_length = (std::max)(longest_edge_squared_length,
 	  s.squared_length());
     }
     return (longest_edge_squared_length < edge_length_threshold);
@@ -2716,12 +2716,12 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
           get_vertex( nb, j, vert[j], off[j]);
         }
         int x,y,z;
-        x = std::min ( std::min ( off[0][0], off[1][0] ),
-            std::min ( off[2][0], off[3][0] ) );
-        y = std::min ( std::min ( off[0][1], off[1][1] ),
-            std::min ( off[2][1], off[3][1] ) );
-        z = std::min ( std::min ( off[0][2], off[1][2] ),
-            std::min ( off[2][2], off[3][2] ) );
+        x = (std::min) ( (std::min) ( off[0][0], off[1][0] ),
+            (std::min) ( off[2][0], off[3][0] ) );
+        y = (std::min) ( (std::min) ( off[0][1], off[1][1] ),
+            (std::min) ( off[2][1], off[3][1] ) );
+        z = (std::min) ( (std::min) ( off[0][2], off[1][2] ),
+            (std::min) ( off[2][2], off[3][2] ) );
         
         // The vector from nb to the "original" periodic copy of nb, that is
         // the copy that will not be deleted.

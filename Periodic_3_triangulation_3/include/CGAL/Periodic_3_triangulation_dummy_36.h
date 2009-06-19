@@ -36,8 +36,8 @@ Periodic_3_triangulation_3<GT,TDS>::insert_dummy_points() {
 	vertices[9*i+3*j+k] = _tds.create_vertex();
 	Point p(k*(1.0/3.0) + i*(1.0/6.0),
 	    j*(1.0/3.0) + i*(1.0/6.0), i*(1.0/4.0) );
-	p = Point((p.x() > FT(0.9375) ? std::max( p.x()-1, FT(0) ) : p.x()),
-	    (p.y() > FT(0.9375) ? std::max( p.y()-1, FT(0) ) : p.y()), p.z());
+	p = Point((p.x() > FT(0.9375) ? (std::max)( p.x()-1, FT(0) ) : p.x()),
+	    (p.y() > FT(0.9375) ? (std::max)( p.y()-1, FT(0) ) : p.y()), p.z());
 	p = Point((_domain.xmax()-_domain.xmin())*p.x(),
 	    (_domain.xmax()-_domain.xmin())*p.y(),
 	    (_domain.xmax()-_domain.xmin())*p.z());
