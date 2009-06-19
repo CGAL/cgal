@@ -90,6 +90,9 @@ public:
   typedef typename Kernel_traits<Point>::Kernel Kernel ;
   
   typedef typename Kernel::Equal_3 Equal_3 ;
+  
+  typedef typename Kernel::Vector_3 Vector ;
+  typedef typename Kernel::FT       FT ;
 
   struct Compare_id
   {
@@ -189,10 +192,11 @@ private:
   
   void Collect();
   void Loop();
-  bool Is_collapsable( Profile const& aProfile ) ;
+  bool Is_collapse_topologically_valid( Profile const& aProfile ) ;
   bool Is_tetrahedron( edge_descriptor const& h1 ) ;
   bool Is_open_triangle( edge_descriptor const& h1 ) ;
-  void Collapse( Profile const& aProfile ) ;
+  bool Is_collapse_geometrically_valid( Profile const& aProfile, Placement_type aPlacement ) ;
+  void Collapse( Profile const& aProfile, Placement_type aPlacement ) ;
   void Update_neighbors( vertex_descriptor const& aKeptV ) ;
   
   Profile create_profile ( edge_descriptor const& aEdge )
@@ -218,6 +222,10 @@ private:
   }    
   
   bool is_border ( const_vertex_descriptor const& aV ) const ;
+  
+  bool are_shared_triangles_valid( Point const& p0, Point const& p1, Point const& p2, Point const& p3 ) const ;
+  
+  edge_descriptor find_connection ( const_vertex_descriptor const& v0, const_vertex_descriptor const& v1 ) const ;
   
   Edge_data& get_data ( edge_descriptor const& aEdge ) const 
   { 
@@ -255,7 +263,7 @@ private:
   std::string edge_to_string ( const_edge_descriptor const& aEdge ) const
   {
     const_vertex_descriptor p,q ; boost::tie(p,q) = get_vertices(aEdge);
-    return boost::str( boost::format("{E%1% %2%->%3%}") % aEdge->id() % vertex_to_string(p) % vertex_to_string(q) ) ;
+    return boost::str( boost::format("{E%1% %2%->%3%}%4%") % aEdge->id() % vertex_to_string(p) % vertex_to_string(q) % ( is_border(aEdge) ? " (BORDER)" : ( is_border(aEdge->opposite()) ? " (~BORDER)": "" ) ) ) ;
   }
   
   Cost_type get_cost ( Profile const& aProfile ) const
@@ -330,6 +338,9 @@ private:
   GetCost          const& Get_cost ;
   GetPlacement     const& Get_placement ;
   VisitorT*               Visitor ;          // Can be NULL
+  
+  FT                      mMaxAreaRatio ;
+  FT                      mMaxDihedralAngleCos ;
   
 private:
 

@@ -21,8 +21,8 @@
 #  define TRACE(m)
 #endif
 
-#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE   4
-#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE 4 
+//#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE   4
+//#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE 4 
 
 void Surface_simplification_external_trace( std::string s )
 {
@@ -33,6 +33,8 @@ void Surface_simplification_external_trace( std::string s )
 #include <CGAL/Real_timer.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+
 
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -46,19 +48,16 @@ void Surface_simplification_external_trace( std::string s )
 
 #include <CGAL/assertions_behaviour.h>
 
-using namespace std ;
-using namespace boost ;
-using namespace CGAL ;
+//typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel ;
+//typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt Kernel ;
 
-typedef double NT ;
-
-//typedef Simple_cartesian<NT> Kernel;
-typedef Exact_predicates_inexact_constructions_kernel Kernel ;
+typedef Kernel::FT FT ;
 
 typedef Kernel::Vector_3     Vector;
 typedef Kernel::Point_3      Point;
 
-typedef Polyhedron_3<Kernel,Polyhedron_items_with_id_3> Surface; 
+typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Surface; 
 
 typedef Surface::Vertex                                  Vertex;
 typedef Surface::Vertex_iterator                         Vertex_iterator;
@@ -73,5 +72,11 @@ typedef Surface::Facet_const_handle                      Facet_const_handle;
 typedef Surface::Halfedge_around_vertex_const_circulator HV_circulator;
 typedef Surface::Halfedge_around_facet_circulator        HF_circulator;
 typedef Surface::size_type                               size_type ;
+
+using namespace std ;
+using namespace boost ;
+using namespace CGAL ;
+
+
 
 #endif // BASICS_H

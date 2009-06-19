@@ -43,6 +43,8 @@ EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::EdgeCollapse( ECM&                    aS
   ,Get_placement      (aGet_placement)
   ,Visitor            (aVisitor)
   
+  ,mMaxAreaRatio(1e8) 
+  ,mMaxDihedralAngleCos( std::cos(1.0) )
 {
   CGAL_ECMS_TRACE(0,"EdgeCollapse of ECM with " << (num_edges(aSurface)/2) << " edges" ); 
   
@@ -163,7 +165,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Loop()
   {
     CGAL_SURF_SIMPL_TEST_assertion ( lLoop_watchdog ++ < mInitialEdgeCount ) ;
 
-    CGAL_ECMS_TRACE(2,"Poped " << edge_to_string(*lEdge) ) ;
+    CGAL_ECMS_TRACE(1,"Poped " << edge_to_string(*lEdge) ) ;
     
     Profile const& lProfile = create_profile(*lEdge);
       
@@ -186,9 +188,14 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Loop()
         break ;
       }
         
-      if ( Is_collapsable(lProfile) )
+      if ( Is_collapse_topologically_valid(lProfile) )
       {
-        Collapse(lProfile);
+        // The external function Get_new_vertex_point() is allowed to return an absent point if there is no way to place the vertex
+        // satisfying its constrians. In that case the remaining vertex is simply left unmoved.
+        Placement_type lPlacement = get_placement(lProfile);
+        
+        if ( Is_collapse_geometrically_valid(lProfile,lPlacement) )
+          Collapse(lProfile,lPlacement);
       }
       else
       {
@@ -236,11 +243,11 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::is_border( const_vertex_descriptor 
 // "p,k,q" is a facet of the mesh.
 //
 template<class M,class SP, class VIM,class EIM,class EBM, class CF,class PF,class V>
-bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_collapsable( Profile const& aProfile )
+bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_collapse_topologically_valid( Profile const& aProfile )
 {
   bool rR = true ;
 
-  CGAL_ECMS_TRACE(3,"Testing collapsabilty of p_q=V" << aProfile.v0()->id() << "(%" << aProfile.v0()->vertex_degree() << ")"
+  CGAL_ECMS_TRACE(3,"Testing topological collapsabilty of p_q=V" << aProfile.v0()->id() << "(%" << aProfile.v0()->vertex_degree() << ")"
                  << "->V" << aProfile.v1()->id() << "(%" << aProfile.v1()->vertex_degree() << ")" 
                  );
                  
@@ -431,35 +438,170 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_tetrahedron( edge_descriptor con
 template<class M,class SP, class VIM,class EIM,class EBM, class CF,class PF,class V>
 bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_open_triangle( edge_descriptor const& h1 )
 {
+  bool rR = false ;
+  
   edge_descriptor h2 = next_edge(h1,mSurface);
   edge_descriptor h3 = next_edge(h2,mSurface);
   
-  bool rR = is_border(h2) && is_border(h3);  
-
-  CGAL_SURF_SIMPL_TEST_assertion( rR == (  h1->is_border()
-                                        && h1->next()->is_border()
-                                        && h1->next()->next()->is_border()
-                                        ) 
-                                ) ;
+  // First check if it is a triangle 
+  if ( next_edge(h3,mSurface) == h1 )
+  {
+    // Now check if it is open
+    CGAL_ECMS_TRACE(4,"  p-q is a border edge... checking E" << h2->id() << " and E" << h3->id() ) ;
+    
+    rR = is_border(h2) && is_border(h3);  
+  
+    CGAL_SURF_SIMPL_TEST_assertion( rR == (  h1->is_border()
+                                          && h1->next()->is_border()
+                                          && h1->next()->next()->is_border()
+                                          ) 
+                                  ) ;
+  }
+  
   return rR ;
 }
 
+// Given triangles 'p0,p1,p2' and 'p0,p2,p3', both shared along edge 'v0-v2',
+// determine if they are geometrically valid: that is, the ratio of their
+// respective areas is no greater than a max value and the internal
+// dihedral angle formed by their supporting planes is no greater than
+// a given threshold
+template<class M,class SP, class VIM,class EIM,class EBM, class CF,class PF,class V>
+bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::are_shared_triangles_valid( Point const& p0, Point const& p1, Point const& p2, Point const& p3 ) const 
+{
+  bool rR = false ;
+  
+  Vector e01 = p1 - p0 ;
+  Vector e02 = p2 - p0 ;
+  Vector e03 = p3 - p0 ;
+  
+  Vector n012 = cross_product(e01,e02);
+  Vector n023 = cross_product(e02,e03);
+  
+  FT l012 = n012 * n012 ;
+  FT l023 = n023 * n023 ;
+  
+  FT larger  = (std::max)(l012,l023);
+  FT smaller = (std::min)(l012,l023);
+  if ( larger < mMaxAreaRatio * smaller )
+  {
+    FT l0123 = n012 * n023 ;
+    if ( l0123 <= mMaxDihedralAngleCos * ( l012 * l023 ) )
+    {
+      rR = true ;
+    }
+  }
+  
+  return rR ;
+}
 
 template<class M,class SP, class VIM,class EIM,class EBM, class CF,class PF,class V>
-void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile )
+typename EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::edge_descriptor
+EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::find_connection ( const_vertex_descriptor const& v0, const_vertex_descriptor const& v1 ) const
+{
+  out_edge_iterator eb, ee ; 
+  for ( tie(eb,ee) = out_edges(v0,mSurface) ; eb != ee ; ++ eb )
+  {
+    edge_descriptor out = *eb ;
+    if ( target(out,mSurface) == v1 )
+      return out ;
+  }
+      
+  return edge_descriptor() ;  
+}
+
+// A collase is geometrically valid if, in the resulting local mesh no two adjacent triangles form an internal dihedral angle
+// greater than a fixed threshold (i.e. triangles do not "fold" into each other)
+//
+template<class M,class SP, class VIM,class EIM,class EBM, class CF,class PF,class V>
+bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_collapse_geometrically_valid( Profile const& aProfile, Placement_type k0)
+{
+  bool rR = true ;
+  
+  CGAL_ECMS_TRACE(3,"Testing geometrical collapsabilty of v0-v1=E" << aProfile.v0_v1()->id() );
+  if ( k0 )
+  {
+    //
+    // Use the current link to extract all local triangles incident to 'vx' in the collapsed mesh (which at this point doesn't exist yet)
+    //
+    typedef typename Profile::vertex_descriptor_vector::const_iterator const_link_iterator ;
+    const_link_iterator linkb = aProfile.link().begin();
+    const_link_iterator linke = aProfile.link().end  ();
+    const_link_iterator linkl = predecessor(linke) ;
+    
+    for ( const_link_iterator l = linkb ; l != linke && rR ; ++ l )
+    {
+      const_link_iterator pv = ( l == linkb ? linkl : predecessor(l) );
+      const_link_iterator nx = ( l == linkl ? linkb : successor  (l) ) ;
+      
+      // k0,k1 and k3 are three consecutive vertices along the link.
+      vertex_descriptor k1 = *pv ;
+      vertex_descriptor k2 = * l ;
+      vertex_descriptor k3 = *nx ;
+      
+      edge_descriptor e12 = find_connection(k1,k2);
+      edge_descriptor e23 = find_connection(k1,k2);
+      
+      // If 'k1-k2-k3' are connected there will be two adjacent triangles 'k0,k1,k2' and 'k0,k2,k3' after the collapse.
+      if ( handle_assigned(e12) && handle_assigned(e23) )
+      {
+        if ( !are_shared_triangles_valid( *k0, get_point(k1), get_point(k2), get_point(k3) ) )
+        {
+          CGAL_ECMS_TRACE(3,"Triangles VX-V" << k1->id() << "-V" << k2->id() << " and VX-V" << k3->id() << " are not geometrically valid. Collapse rejected");
+          rR = false ;
+        }
+      }
+      
+      // Also check the triangles 'k0,k1,k2' and it's adjacent along e12: 'k4,k2,k1', if exist
+      if ( rR && handle_assigned(e12) )
+      {
+        vertex_descriptor k4a = target(next_edge(opposite_edge(e12,mSurface), mSurface), mSurface);
+        vertex_descriptor k4b = source(prev_edge(opposite_edge(e12,mSurface), mSurface), mSurface);
+        
+        // There is indeed a triangle shared along e12
+        if ( k4a == k4b )
+        {
+          if ( !are_shared_triangles_valid( get_point(k1), get_point(k4a), get_point(k2), *k0 ) )
+          {
+            CGAL_ECMS_TRACE(3,"Triangles VX-V" << k1->id() << "-V" << k2->id() << " and VX-V" << k3->id() << " are not geometrically valid. Collapse rejected");
+            rR = false ;
+          }
+        }
+      }
+      
+      // And finally, check the triangles 'k0,k2,k3' and it's adjacent e23: 'k5,k3,k2' if exist
+      if ( rR && handle_assigned(e23) )
+      {
+        vertex_descriptor k5a = target(next_edge(opposite_edge(e23,mSurface), mSurface), mSurface);
+        vertex_descriptor k5b = source(prev_edge(opposite_edge(e23,mSurface), mSurface), mSurface);
+        
+        // There is indeed a triangle shared along e12
+        if ( k5a == k5b )
+        {
+          if ( !are_shared_triangles_valid( get_point(k2), get_point(k5a), get_point(k3), *k0 ) )
+          {
+            CGAL_ECMS_TRACE(3,"Triangles VX-V" << k1->id() << "-V" << k2->id() << " and VX-V" << k3->id() << " are not geometrically valid. Collapse rejected");
+            rR = false ;
+          }
+        }
+      }
+    } 
+    
+  }
+  
+  return rR ;               
+}
+
+template<class M,class SP, class VIM,class EIM,class EBM, class CF,class PF,class V>
+void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile, Placement_type aPlacement )
 {
 
   CGAL_ECMS_TRACE(1,"S" << mStep << ". Collapsig " << edge_to_string(aProfile.v0_v1()) ) ;
   
   vertex_descriptor rResult ;
     
-  // The external function Get_new_vertex_point() is allowed to return an absent point if there is no way to place the vertex
-  // satisfying its constrians. In that case the vertex-pair is simply not removed.
-  Placement_type lPlacement = get_placement(aProfile);
-  
-
   if ( Visitor )
-    Visitor->OnCollapsing(aProfile,lPlacement);
+    Visitor->OnCollapsing(aProfile,aPlacement);
 
   -- mCurrentEdgeCount ;
       
@@ -536,10 +678,10 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile )
     CGAL_ECMS_TRACE(2, edge_to_string(*eb1) ) ;
 #endif
 
-  if ( lPlacement )  
+  if ( aPlacement )  
   {
-    CGAL_ECMS_TRACE(1,"New vertex point: " << xyz_to_string(*lPlacement) ) ;
-    put(vertex_point,mSurface,rResult,*lPlacement) ;
+    CGAL_ECMS_TRACE(1,"New vertex point: " << xyz_to_string(*aPlacement) ) ;
+    put(vertex_point,mSurface,rResult,*aPlacement) ;
   }  
 
   if ( Visitor )

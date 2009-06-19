@@ -75,10 +75,16 @@ bool handle_exists ( Iterator begin, Iterator end, Handle h )
 
 } // namespace Surface_mesh_simplification
 
+template<class N>
+inline std::string n_to_string( N const& n )
+{
+  return boost::str( boost::format("%|5.19g|") % n ) ;   
+}
+
 template<class XYZ>
 inline std::string xyz_to_string( XYZ const& xyz )
 {
-  return boost::str( boost::format("(%|5.19f|,%|5.19f|,%|5.19f|)") % xyz.x() % xyz.y() % xyz.z() ) ;   
+  return boost::str( boost::format("(%|5.19g|,%|5.19g|,%|5.19g|)") % xyz.x() % xyz.y() % xyz.z() ) ;   
 }
 
 template<class Matrix>

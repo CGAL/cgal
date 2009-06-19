@@ -175,13 +175,13 @@ string opt2str ( optional<T> const& o )
 template<class N>
 string float2str ( N n )
 {
-  return boost::str( boost::format("%+08.8e") % n ) ;
+  return boost::str( boost::format("%+05.19g") % to_double(n) ) ;
 }
 
 template<class P>
 string point2str ( P const& p )
 {
-  return boost::str( boost::format( "(%+08.8e %+08.8e %+08.8e)") % p.x() % p.y() % p.z() ) ;
+  return boost::str( boost::format( "(%+05.19g %+05.19g %+05.19g)") % to_double(p.x()) % to_double(p.y()) % to_double(p.z()) ) ;
 }
 
 template<class P>
@@ -248,8 +248,9 @@ public :
   
   void OnStarted( Surface& ) 
   { 
+//    ::CGALi::cgal_enable_ecms_trace = true ;
     mStep = 0 ; 
-  } 
+  }   
   
   void OnFinished ( Surface& aSurface )
   { 
@@ -258,21 +259,18 @@ public :
   
   void OnStopConditionReached( Profile const& ) {} 
   
-  void OnCollected( Profile const& aProfile, optional<NT> const& aCost )
+  void OnCollected( Profile const& aProfile, optional<FT> const& aCost )
   {
     TRACE( str ( format("Collecting %1% : cost=%2%") % edge2str(aProfile.v0_v1()) % optfloat2str(aCost) ) ) ;
   }                
   
-  void OnSelected( Profile const&, optional<NT> const&, size_t, size_t ) 
+  void OnSelected( Profile const&, optional<FT> const&, size_t, size_t ) 
   {
-    ::CGALi::cgal_enable_ecms_trace = mStep == 0 ;
   }
   
   void OnCollapsing( Profile const& aProfile, optional<Point> const& aP ) 
   {
     TRACE( str ( format("S %1% - Collapsing %2% : placement=%3%") % mStep % edge2str(aProfile.v0_v1()) % optpoint2str(aP) ) ) ;
-//    if ( mStep == 11 )
-//      dump_edge_link(aProfile,"step-11-before.off");
   }
   
   void OnCollapsed( Profile const& aProfile, Vertex_handle aV )
