@@ -57,7 +57,8 @@ namespace CGAL{
     typedef typename Kernel::Line_2                                           Line_2;
     typedef typename Kernel::Iso_rectangle_2                                  Iso_rectangle_2;
     typedef typename Kernel::Triangle_2                                       Triangle_2;
-    typedef typename CGAL::Polygon_2<Kernel,std::list<Point_2> >              Polygon_2;
+    //~ typedef typename CGAL::Polygon_2<Kernel,std::list<Point_2> >              Polygon_2;
+    typedef typename CGAL::Polygon_2<Kernel>              Polygon_2;
   
     typedef typename Kernel::Circle_2                                         Circle_2;
     typedef CGAL::cpp0x::tuple<Circle_2,Point_2,Point_2,CGAL::Sign>           Circular_arc_2;
@@ -614,14 +615,7 @@ public:
     
     template<class iterator>
     void 
-    draw_in_ipe(const iterator begin,const iterator end,bool make_grp=true,bool deselect_all=false,
-    typename boost::enable_if<  boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Point_2> ,
-                                boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Segment_2> ,
-                                boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Circle_2> ,
-                                boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ,
-                                                 boost::is_same<typename std::iterator_traits<iterator>::value_type,Polygon_2>
-                                                > > > >
-                    >::type* = NULL) const
+    draw_in_ipe(const iterator begin,const iterator end,bool make_grp=true,bool deselect_all=false) const
     {
       for (iterator it=begin;it!=end;++it)
         draw_in_ipe(*it);

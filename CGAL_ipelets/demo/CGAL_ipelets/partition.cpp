@@ -67,9 +67,11 @@ void ConvexpartitionIpelet::protected_run(int fn)
   }
   
   for (std::list<Polygon_2>::iterator itp=pol_list.begin();itp!=pol_list.end();++itp){
-    Polygon_2 polygon=*itp;
-    std::list<Polygon_2> partition_polys;
-      
+    //~ Polygon_2 polygon=*itp;
+    //~ std::list<Polygon_2> partition_polys;
+    CGAL::Polygon_2<Kernel,std::list<Kernel::Point_2> > polygon(itp->vertices_begin(),itp->vertices_end());
+    std::list<CGAL::Polygon_2<Kernel,std::list<Kernel::Point_2> > > partition_polys;
+    
     if (!polygon.is_simple()){
       print_error_message("Polygon must be simple");
       continue;   
@@ -104,7 +106,6 @@ void ConvexpartitionIpelet::protected_run(int fn)
     break;
     }
     
-    std::list<Polygon_2>::const_iterator   poly_it;
     draw_in_ipe(partition_polys.begin(),partition_polys.end());
   }
 }

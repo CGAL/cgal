@@ -29,10 +29,11 @@
 namespace CGAL_minkowski{
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel                       Kernel;
-typedef CGAL::Polygon_with_holes_2<Kernel,std::list<Kernel::Point_2> >          Polygon_with_holes_2;
+typedef CGAL::Polygon_with_holes_2<Kernel,std::vector<Kernel::Point_2> >          Polygon_with_holes_2;
 typedef CGAL::Gps_circle_segment_traits_2<Kernel>                               Gps_traits_2;
 typedef Gps_traits_2::Polygon_2                                                 Offset_polygon_2;
 typedef Gps_traits_2::Polygon_with_holes_2                                      Offset_polygon_with_holes_2;  
+  
   
 const std::string Slab[] = {
   "Minkowski Sum",
