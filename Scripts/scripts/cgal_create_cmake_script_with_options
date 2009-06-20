@@ -34,40 +34,6 @@ create_cmake_script_with_options()
   qt3='n'
   qt4='n'
 
-  # print makefile header
-  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  cat << 'EOF'
-# Created by the script cgal_create_cmake_script_with_options
-# This is the CMake script for compiling a set of CGAL applications.
-
-EOF
-  #---------------------------------------------------------------------------
-  echo "project( ${PROJECT} )"
-
-  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  cat << 'EOF'
-
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
- 
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
-endif()
-EOF
-  #---------------------------------------------------------------------------
-
-  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  cat << 'EOF'
-
-find_package(CGAL)
-
-if ( CGAL_FOUND )
-
-  # include for local package
-EOF
-  #---------------------------------------------------------------------------
-
   # parse options file
   if [ -e "$OPTIONS_FILE" ]; then
 
@@ -161,7 +127,63 @@ EOF
     IFS="$OLDIFS"
   fi
 
-  ############################################################################
+  # print makefile header
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
+# Created by the script cgal_create_cmake_script_with_options
+# This is the CMake script for compiling a set of CGAL applications.
+
+EOF
+  #---------------------------------------------------------------------------
+  echo "project( ${PROJECT} )"
+
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
+
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+ 
+if ( COMMAND cmake_policy )
+  cmake_policy( SET CMP0003 NEW )  
+endif()
+EOF
+  #---------------------------------------------------------------------------
+
+  # additional CGAL components
+  echo
+
+  if [ ! -z "$CGAL_COMPONENTS" ]; then
+
+    OLDIFS="$IFS"
+    IFS=':'
+    for cgal_component in $CGAL_COMPONENTS; do
+      if [ "$cgal_component" = "Qt3" ]; then
+        qt3='y'
+      fi
+      if [ "$cgal_component" = "Qt4" ]; then
+        qt4='y'
+      fi
+#      echo "  find_package( CGAL QUIET COMPONENTS $cgal_component )"
+    done
+    IFS=$OLDIFS
+
+    echo "find_package( CGAL QUIET COMPONENTS ${CGAL_COMPONENTS//:/ } )"
+
+  else
+
+    echo "find_package( CGAL QUIET )"
+
+  fi # additional CGAL components
+
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
+
+if ( CGAL_FOUND )
+
+  # include for local package
+EOF
+  #---------------------------------------------------------------------------
 
   # includes for local package
   if [ -d ../../include ] ; then
@@ -198,29 +220,7 @@ EOF
 EOF
   #---------------------------------------------------------------------------
 
-  # additional CGAL components
-  if [ ! -z "$CGAL_COMPONENTS" ]; then
-    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    cat << 'EOF'
-
-  # additional CGAL components
-EOF
-    #-------------------------------------------------------------------------
-
-    OLDIFS="$IFS"
-    IFS=':'
-    for cgal_component in $CGAL_COMPONENTS; do
-      if [ "$cgal_component" = "Qt3" ]; then
-        qt3='y'
-      fi
-      if [ "$cgal_component" = "Qt4" ]; then
-        qt4='y'
-      fi
-      echo "  find_package( CGAL QUIET COMPONENTS $cgal_component )"
-    done
-    IFS=$OLDIFS
-  fi # additional CGAL components
-
+  # TODO move find_package to earlier place and add "guard": 'if ( BOOST_FOUND)'
   if [ ! -z "$BOOST_COMPONENTS" ]; then
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     cat << 'EOF'
