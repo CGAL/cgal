@@ -40,9 +40,9 @@ create_cmake_script_with_options()
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( ${PROJECT} )
 EOF
   #---------------------------------------------------------------------------
+  echo "project( ${PROJECT} )"
 
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
@@ -54,12 +54,13 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
- 
 EOF
   #---------------------------------------------------------------------------
 
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
+
+find_package(CGAL)
 
 if ( CGAL_FOUND )
 
@@ -82,7 +83,7 @@ EOF
           if [ -z "$CGAL_COMPONENTS" ]; then 
             CGAL_COMPONENTS=$next_cgal_component
           else
-            CGAL_COMPONENTS=$CGAL_COMPONENTS";"$next_cgal_component
+            CGAL_COMPONENTS=$CGAL_COMPONENTS":"$next_cgal_component
           fi
         fi
       fi
@@ -95,7 +96,7 @@ EOF
           if [ -z "$BOOST_COMPONENTS" ]; then 
             BOOST_COMPONENTS=$next_boost_component
           else
-            BOOST_COMPONENTS=$BOOST_COMPONENTS";"$next_boost_component
+            BOOST_COMPONENTS=$BOOST_COMPONENTS":"$next_boost_component
           fi
         fi
       fi
@@ -134,7 +135,7 @@ EOF
 
     done
     IFS="$OLDIFS"
-  fi;
+  fi
 
   # TODO given packages always preceed given directories!
 
@@ -207,7 +208,7 @@ EOF
     #-------------------------------------------------------------------------
 
     OLDIFS="$IFS"
-    IFS=';'
+    IFS=':'
     for cgal_component in $CGAL_COMPONENTS; do
       if [ "$cgal_component" = "Qt3" ]; then
         qt3='y'
@@ -229,7 +230,7 @@ EOF
     #-------------------------------------------------------------------------
 
     OLDIFS="$IFS"
-    IFS=';'
+    IFS=':'
     for boost_component in $BOOST_COMPONENTS; do
       BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
       echo "  find_package( Boost REQUIRED $boost_component )"
@@ -314,7 +315,7 @@ EOF
 
     fi # qt3
 
-    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+    for file in `ls *.C *.cpp 2>/dev/null | sort`; do
       # Create an executable for each cpp that  contains a function "main()"
       BASE=`basename $file .C`
       BASE=`basename $BASE .cpp`
@@ -341,7 +342,7 @@ EOF
 EOF
     #-------------------------------------------------------------------------
 
-    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+    for file in `ls *.C *.cpp 2>/dev/null | sort`; do
       all="$all $file"
     done
 
