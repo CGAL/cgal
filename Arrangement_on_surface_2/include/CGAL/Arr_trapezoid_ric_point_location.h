@@ -41,7 +41,8 @@ class PL_X_curve_plus: public Arrangement_::X_monotone_curve_2
 public:
 
   typedef Arrangement_                                  Arrangement_2;
-  typedef typename Arrangement_2::Traits_2              Traits_2;
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
+  typedef typename Arrangement_2::Traits_adaptor_2      Traits_adaptor_2;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
 
@@ -95,7 +96,8 @@ class Arr_trapezoid_ric_point_location : public Arr_observer <Arrangement_>
 public:
 
   typedef Arrangement_                                  Arrangement_2;
-  typedef typename Arrangement_2::Traits_2              Traits_2;
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
+  typedef typename Arrangement_2::Traits_adaptor_2      Traits_adaptor_2;
 
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
@@ -119,15 +121,14 @@ public:
   typedef typename Arrangement_2::Isolated_vertex_const_iterator
                                        Isolated_vertex_const_iterator;
 
-  typedef typename Traits_2::Point_2                      Point_2;
-  typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
+  typedef typename Geometry_traits_2::Point_2             Point_2;
+  typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
 
   typedef std::list<Halfedge_const_handle>                Edge_list;
   typedef typename Edge_list::iterator                    Std_edge_iterator;
 
   typedef PL_X_curve_plus<Arrangement_2>                  X_curve_plus;
 
-  typedef Arr_traits_basic_adaptor_2<Traits_2>            Traits_adaptor_2;
   typedef CGAL::Td_traits<Traits_adaptor_2, X_curve_plus> Td_traits;
   typedef Trapezoidal_decomposition_2<Td_traits>    Trapezoidal_decomposition;
   typedef std::vector<Halfedge_const_handle>        Halfedge_handle_container;

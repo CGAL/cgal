@@ -221,11 +221,11 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
                                         bool shoot_up) const
 {
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
-  typename Traits_2::Compare_x_2          compare_x =
+  typename Geometry_traits_2::Compare_x_2          compare_x =
     this->arrangement()->traits()->compare_x_2_object();
-  typename Traits_2::Compare_xy_2         compare_xy =
+  typename Geometry_traits_2::Compare_xy_2         compare_xy =
     this->arrangement()->traits()->compare_xy_2_object();
-  typename Traits_2::Compare_y_at_x_2     compare_y_at_x =
+  typename Geometry_traits_2::Compare_y_at_x_2     compare_y_at_x =
     this->arrangement()->traits()->compare_y_at_x_2_object();
 
   Isolated_vertex_const_iterator   iso_verts_it;
