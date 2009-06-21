@@ -223,7 +223,6 @@ EOF
   #---------------------------------------------------------------------------
 
 
-
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
 
@@ -299,7 +298,7 @@ EOF
     IFS=':'
     for boost_component in $BOOST_COMPONENTS; do
       BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
-      echo "link_libraries( \${BOOST_${BOOST_COMPONENT}_LIBRARY} )"
+      echo "  link_libraries( \${Boost_${BOOST_COMPONENT}_LIBRARY} )"
     done
     IFS=$OLDIFS
 
