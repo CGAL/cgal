@@ -168,7 +168,6 @@ EOF
       if [ "$cgal_component" = "Qt4" ]; then
         qt4='y'
       fi
-#      echo "  find_package( CGAL QUIET COMPONENTS $cgal_component )"
     done
     IFS=$OLDIFS
 
@@ -183,7 +182,18 @@ EOF
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
 
-if ( CGAL_FOUND )
+if ( NOT CGAL_FOUND )
+
+  message(STATUS "This program requires the CGAL library, and will not be compiled.")
+  return()  
+
+endif()
+EOF
+  #---------------------------------------------------------------------------
+
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
+
 
   # include for local package
 EOF
@@ -396,12 +406,6 @@ EOF
 
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
-
-else()
-  
-  message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
-endif()
 EOF
   #---------------------------------------------------------------------------
 
