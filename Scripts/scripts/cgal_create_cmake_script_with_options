@@ -361,10 +361,19 @@ EOF
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
 
-include( CGAL_CreateSingleSourceCGALProgram )
-
 EOF
     #-------------------------------------------------------------------------
+
+
+    if [ "$qt4" = "y" ]; then
+
+      echo "include( CGAL_CreateSingleSourceCGALProgramQt4 )"
+
+    else
+ 
+      echo "include( CGAL_CreateSingleSourceCGALProgram )"
+
+    fi
 
     # Qt3
     if [ "$qt3" = "y" ]; then
@@ -402,13 +411,33 @@ EOF
 
     fi # qt3
 
+    # Qt4
+    if [ "$qt4" = "y" ]; then
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
+
+if ( CGAL_Qt4_FOUND AND QT_FOUND )
+
+  include( ${QT_USE_FILE} )
+  include_directories( ${QT_INCLUDE_DIR} )  
+
+endif()
+
+EOF
+      #-----------------------------------------------------------------------
+    fi # qt4
+
     for file in `ls *.C *.cpp 2>/dev/null | sort`; do
       # Create an executable for each cpp that  contains a function "main()"
       BASE=`basename $file .C`
       BASE=`basename $BASE .cpp`
       egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
-        echo "create_single_source_cgal_program( \"$file\" )"
+        if [ "$qt4" = "y" ]; then
+          echo "create_single_source_cgal_program_qt4( \"$file\" )"
+        else
+          echo "create_single_source_cgal_program( \"$file\" )"
+        fi
       fi
     done
     
@@ -467,27 +496,17 @@ if ( CGAL_Qt4_FOUND AND QT_FOUND )
 
   include( ${QT_USE_FILE} )
   include_directories( ${QT_INCLUDE_DIR} )  
+
+EOF
+      #-----------------------------------------------------------------------
  
-  # UI files (Qt Designer files)
-EOF
-      #-----------------------------------------------------------------------
-
+      echo "  # UI files (Qt Designer files)"
       echo "  qt4_wrap_ui( DT_UI_FILES ${SOURCE}.ui )"
-
-      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-      cat << 'EOF'
-
-  # qrc files (resources files, that contain icons, at least)
-EOF
-      #-----------------------------------------------------------------------
+      echo
+      echo "  # qrc files (resources files, that contain icons, at least)"
       echo "  qt4_add_resources ( DT_RESOURCE_FILES ./${SOURCE}.qrc )"
-
-      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-      cat << 'EOF'
-
-  # use the Qt MOC preprocessor on classes that derives from QObject
-EOF
-      #-----------------------------------------------------------------------
+      echo
+      echo "  # use the Qt MOC preprocessor on classes that derives from QObject"
       echo "  qt4_generate_moc( ${SOURCE}.cpp ${SOURCE}.moc )"
 
       #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
