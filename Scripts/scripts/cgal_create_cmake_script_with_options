@@ -146,14 +146,15 @@ EOF
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
  
 if ( COMMAND cmake_policy )
+
   cmake_policy( SET CMP0003 NEW )  
+
 endif()
 
 # CGAL and its components
-
 EOF
   #---------------------------------------------------------------------------
 
@@ -518,20 +519,22 @@ done
 
 shift `expr $OPTIND - 1`
 
-echo "FILE: $OPTIONS_FILE"
-echo "BOOST_COMPONENTS: $BOOST_COMPONENTS"
-echo "CGAL_COMPONENTS: $CGAL_COMPONENTS"
-echo "SINGLE_SOURCE: $SINGLE_SOURCE"
-echo "SOURCE: $SOURCE"
+#echo "FILE: $OPTIONS_FILE"
+#echo "BOOST_COMPONENTS: $BOOST_COMPONENTS"
+#echo "CGAL_COMPONENTS: $CGAL_COMPONENTS"
+#echo "SINGLE_SOURCE: $SINGLE_SOURCE"
+#echo "SOURCE: $SOURCE"
 
 OUTPUTFILE=CMakeLists.txt
 PROJECT=`basename $PWD`
 
 if [ -f ${OUTPUTFILE} ] ; then
   echo "moving $OUTPUTFILE to ${OUTPUTFILE}.bak ..."
+  echo
   mv -f $OUTPUTFILE ${OUTPUTFILE}.bak
 fi
 
 create_cmake_script_with_options | tee $OUTPUTFILE
 
+echo
 echo "created $OUTPUTFILE in $PWD ..."
