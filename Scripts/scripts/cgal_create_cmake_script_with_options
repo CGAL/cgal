@@ -226,26 +226,26 @@ EOF
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
 
-  # include for local package
+# include for local package
 EOF
   #---------------------------------------------------------------------------
 
   # includes for local package
   if [ -d ../../include ] ; then
-    echo '  include_directories( BEFORE ../../include )'
+    echo 'include_directories( BEFORE ../../include )'
   fi
   if [ -d ../include ] ; then
-    echo '  include_directories( BEFORE ../include )'
+    echo 'include_directories( BEFORE ../include )'
   fi
   if [ -d include ] ; then
-    echo '  include_directories( BEFORE include )'
+    echo 'include_directories( BEFORE include )'
   fi		
 
   if [ ! -z "$PACKAGES" ]; then
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     cat << 'EOF'
 
-  # include of additional packages
+# include of additional packages
 EOF
     #-------------------------------------------------------------------------
   fi
@@ -253,15 +253,15 @@ EOF
   OLDIFS="$IFS"
   IFS=":"
   for package in $PACKAGES; do
-    echo "  include_directories( $package/include/ )";
+    echo "include_directories( $package/include/ )";
   done
   IFS=$OLDIFS
 
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
 
-  # include helper file
-  include( ${CGAL_USE_FILE} )
+# include helper file
+include( ${CGAL_USE_FILE} )
 EOF
   #---------------------------------------------------------------------------
 
@@ -271,16 +271,16 @@ EOF
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     cat << 'EOF'
 
-  # Qt3: FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
-  # that it can be used together with FindQt4: all its variables are prefixed
-  # by "QT3_" instead of "QT_".
-  find_package(Qt3-patched QUIET )
+# Qt3: FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+# that it can be used together with FindQt4: all its variables are prefixed
+# by "QT3_" instead of "QT_".
+find_package(Qt3-patched QUIET )
   
-  if (CGAL_Qt3_FOUND AND QT3_FOUND)
+if (CGAL_Qt3_FOUND AND QT3_FOUND)
   
-    include( Qt3Macros-patched )
+  include( Qt3Macros-patched )
 
-  endif()
+endif()
 EOF
     #-------------------------------------------------------------------------
   fi # qt3
@@ -290,7 +290,7 @@ EOF
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     cat << 'EOF'
 
-  # boost linking
+# Boost linking
 EOF
     #-------------------------------------------------------------------------
 
@@ -298,7 +298,7 @@ EOF
     IFS=':'
     for boost_component in $BOOST_COMPONENTS; do
       BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
-      echo "  link_libraries( \${Boost_${BOOST_COMPONENT}_LIBRARY} )"
+      echo "link_libraries( \${Boost_${BOOST_COMPONENT}_LIBRARY} )"
     done
     IFS=$OLDIFS
 
@@ -317,10 +317,10 @@ EOF
     cat << 'EOF'
 
 
-  # Creating entries for all .cpp/.C files with "main" routine
-  # ##########################################################
+# Creating entries for all .cpp/.C files with "main" routine
+# ##########################################################
 
-  include( CGAL_CreateSingleSourceCGALProgram )
+include( CGAL_CreateSingleSourceCGALProgram )
 
 EOF
     #-------------------------------------------------------------------------
@@ -329,7 +329,7 @@ EOF
     if [ "$qt3" = "y" ]; then
       #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
       cat << 'EOF'
-  if (CGAL_Qt3_FOUND AND QT3_FOUND)
+if (CGAL_Qt3_FOUND AND QT3_FOUND)
 
 EOF
       #-----------------------------------------------------------------------
@@ -340,21 +340,21 @@ EOF
         BASE=`basename $BASE .cpp`
         egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
         if [ $? -eq 0 ]; then
-          echo "    qt3_automoc( ${file} )"
+          echo "qt3_automoc( ${file} )"
         fi
       done
 
       #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
       cat << 'EOF'
 
-    # Make sure the compiler can find generated .moc files
-    include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
+  # Make sure the compiler can find generated .moc files
+  include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
   
-    include_directories( ${QT3_INCLUDE_DIR} )
+  include_directories( ${QT3_INCLUDE_DIR} )
 
-    link_libraries( ${QT3_LIBRARIES} )
+  link_libraries( ${QT3_LIBRARIES} )
 
-  endif()
+endif()
 
 EOF
       #-----------------------------------------------------------------------
@@ -367,7 +367,7 @@ EOF
       BASE=`basename $BASE .cpp`
       egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
-        echo "  create_single_source_cgal_program( \"$file\" )"
+        echo "create_single_source_cgal_program( \"$file\" )"
       fi
     done
     
@@ -381,10 +381,10 @@ EOF
 
     echo
     echo
-    echo "  # Creating entries for target: $target_name"
+    echo "# Creating entries for target: $target_name"
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     cat << 'EOF'
-  # ############################
+# ############################
 EOF
     #-------------------------------------------------------------------------
 
@@ -397,33 +397,33 @@ EOF
       #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
       cat << 'EOF'
 
-  if (CGAL_Qt3_FOUND AND QT3_FOUND)
+if (CGAL_Qt3_FOUND AND QT3_FOUND)
 
 EOF
       #-----------------------------------------------------------------------
 
-      echo "    qt3_automoc( ${all} )"
+      echo "qt3_automoc( ${all} )"
 
       #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
       cat << 'EOF'
 
-    # Make sure the compiler can find generated .moc files
-    include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
-  
-    include_directories( ${QT3_INCLUDE_DIR} )
+  # Make sure the compiler can find generated .moc files
+  include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
+ 
+  include_directories( ${QT3_INCLUDE_DIR} )
 
-  endif()
+endif()
 EOF
       #-----------------------------------------------------------------------
     fi # qt3
 
     # no 'cat' here, as variable substitution required
     echo
-    echo "  add_executable( ${target_name} ${all} )"
+    echo "add_executable( ${target_name} ${all} )"
     echo
-    echo "  add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${target_name} )"
+    echo "add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${target_name} )"
     echo
-    echo "  # Link the executable to CGAL and third-party libraries"
+    echo "# Link the executable to CGAL and third-party libraries"
     LIBS=""
     if [ "$qt3" = "y" ]; then
       LIBS="\${QT3_LIBRARIES}"
@@ -432,7 +432,7 @@ EOF
       LIBS="\${QT4_LIBRARIES}" 
     fi
     LIBS=$LIBS" \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES}"
-    echo "  target_link_libraries(${target_name}  $LIBS )"
+    echo "target_link_libraries(${target_name}  $LIBS )"
 
   fi # single source or all files #===========================================
 
