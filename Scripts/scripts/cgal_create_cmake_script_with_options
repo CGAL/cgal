@@ -135,7 +135,11 @@ create_cmake_script_with_options()
 
 EOF
   #---------------------------------------------------------------------------
-  echo "project( ${PROJECT} )"
+  if [ "$SINGLE_SOURCE" = "n" ]; then
+    echo "project( ${PROJECT} )"
+  else 
+    echo "project( ${SOURCE} )"
+  fi
 
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
