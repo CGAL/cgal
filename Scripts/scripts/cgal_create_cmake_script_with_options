@@ -227,6 +227,17 @@ EOF
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
 
+# include for local directory
+EOF
+  #---------------------------------------------------------------------------
+
+  if [ -d include ] ; then
+    echo 'include_directories( BEFORE include )'
+  fi		
+
+  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  cat << 'EOF'
+
 # include for local package
 EOF
   #---------------------------------------------------------------------------
@@ -238,9 +249,6 @@ EOF
   if [ -d ../include ] ; then
     echo 'include_directories( BEFORE ../include )'
   fi
-  if [ -d include ] ; then
-    echo 'include_directories( BEFORE include )'
-  fi		
 
   if [ ! -z "$PACKAGES" ]; then
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
