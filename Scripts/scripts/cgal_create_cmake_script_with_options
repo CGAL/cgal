@@ -280,12 +280,20 @@ EOF
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     cat << 'EOF'
 
-# Qt3: FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+# Qt3
+# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
 # that it can be used together with FindQt4: all its variables are prefixed
 # by "QT3_" instead of "QT_".
 find_package(Qt3-patched QUIET )
-  
-if (CGAL_Qt3_FOUND AND QT3_FOUND)
+
+if ( NOT Qt3-patched_FOUND )
+
+  message(STATUS "This project requires the Qt3 library, and will not be compiled.")
+  return()  
+
+endif()
+
+if ( CGAL_Qt3_FOUND AND QT3_FOUND )
   
   include( Qt3Macros-patched )
 
@@ -293,6 +301,30 @@ endif()
 EOF
     #-------------------------------------------------------------------------
   fi # qt3
+
+  if [ "$qt4" = "y" ]; then
+
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
+
+# Qt4
+set( QT_USE_QTXML     true )
+set( QT_USE_QTMAIN    true )
+set( QT_USE_QTSCRIPT  true )
+set( QT_USE_QTOPENGL  true )
+
+find_package(Qt4)  
+
+if ( NOT QT_FOUND )
+
+  message(STATUS "This project requires the Qt4 library, and will not be compiled.")
+  return()  
+
+endif()
+EOF
+    #-------------------------------------------------------------------------
+
+  fi #qt4
 
 
   if [ ! -z "$BOOST_COMPONENTS" ]; then
@@ -338,7 +370,7 @@ EOF
     if [ "$qt3" = "y" ]; then
       #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
       cat << 'EOF'
-if (CGAL_Qt3_FOUND AND QT3_FOUND)
+if ( CGAL_Qt3_FOUND AND QT3_FOUND )
 
 EOF
       #-----------------------------------------------------------------------
@@ -406,7 +438,7 @@ EOF
       #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
       cat << 'EOF'
 
-if (CGAL_Qt3_FOUND AND QT3_FOUND)
+if ( CGAL_Qt3_FOUND AND QT3_FOUND )
 
 EOF
       #-----------------------------------------------------------------------
@@ -426,6 +458,49 @@ EOF
       #-----------------------------------------------------------------------
     fi # qt3
 
+    # Qt4
+    if [ "$qt4" = "y" ]; then
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
+
+if ( CGAL_Qt4_FOUND AND QT_FOUND )
+
+  include( ${QT_USE_FILE} )
+  include_directories( ${QT_INCLUDE_DIR} )  
+ 
+  # UI files (Qt Designer files)
+EOF
+      #-----------------------------------------------------------------------
+
+      echo "  qt4_wrap_ui( DT_UI_FILES ${SOURCE}.ui )"
+
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
+
+  # qrc files (resources files, that contain icons, at least)
+EOF
+      #-----------------------------------------------------------------------
+      echo "  qt4_add_resources ( DT_RESOURCE_FILES ./${SOURCE}.qrc )"
+
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
+
+  # use the Qt MOC preprocessor on classes that derives from QObject
+EOF
+      #-----------------------------------------------------------------------
+      echo "  qt4_generate_moc( ${SOURCE}.cpp ${SOURCE}.moc )"
+
+      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      cat << 'EOF'
+
+endif()
+EOF
+      #-----------------------------------------------------------------------
+
+      all="${all} ${SOURCE}.moc \${DT_UI_FILES} \${DT_RESOURCE_FILES}"
+
+    fi # qt4
+
     # no 'cat' here, as variable substitution required
     echo
     echo "add_executable( ${target_name} ${all} )"
@@ -438,7 +513,7 @@ EOF
       LIBS="\${QT3_LIBRARIES}"
     fi
     if [ "$qt4" = "y" ]; then
-      LIBS="\${QT4_LIBRARIES}" 
+      LIBS="\${QT_LIBRARIES}" 
     fi
     LIBS=$LIBS" \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES}"
     echo "target_link_libraries(${target_name}  $LIBS )"
