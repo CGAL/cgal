@@ -482,6 +482,19 @@ while getopts s:c:b:p:d:o:hv OPT; do
   case "$OPT" in
     s)  SINGLE_SOURCE='y'
         SOURCE=$OPTARG
+        if [ "${SOURCE:(-4)}" = ".cpp" ]; then
+           echo "Error: Source must not end with '.cpp'!" >&2
+           echo
+           usage
+           exit 2
+        fi
+        if [ "${SOURCE:(-2)}" = ".C" ]; then
+           echo "Error: Source must not end with '.C'!" >&2
+           echo
+           usage
+           exit 2
+        fi
+
         ;;
 
     c)  CGAL_COMPONENTS_GIVEN='y'
