@@ -2177,8 +2177,8 @@ protected:
       ps_y = in_ps_y;
     }
 
-    bool is_bounded_impl(Arr_open_side_tag) { return false; }
-    bool is_bounded_impl(Arr_boundary_side_tag) { return true; }
+    bool is_bounded_impl(Arr_open_side_tag) { return (ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR); }
+    bool is_bounded_impl(Arr_boundary_side_tag) { return (ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR); }
     
     bool is_bounded()
     {
@@ -2228,8 +2228,8 @@ protected:
       Vertex_handle big_v = map_vertices[split_fict_v];
 
       //// make sure it is the only new vertex right now
-      CGAL_assertion(new_vertices.size() == 1 &&
-                     new_vertices.back() == split_v);
+      CGAL_assertion(new_vertices.size() == 1 );
+      CGAL_assertion(new_vertices.back() == split_v);
       new_vertices.pop_back();
 
       // find the edge to split in big_arr
