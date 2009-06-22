@@ -21,6 +21,14 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
                              FT sm_distance, // Approximation error w.r.t. p.s.r.. For APSS: 0.015=fast, 0.003=smooth.
                              FT smoothness = 2); // Smoothness factor. In the range 2 (clean datasets) and 8 (noisy datasets).
 
+// same but using a marching cube
+Polyhedron* APSS_reconstruct_mc(const Point_set& points,
+                                FT sm_angle, // Min triangle angle (degrees). 20=fast, 30 guaranties convergence.
+                                FT sm_radius, // Max triangle radius w.r.t. point set radius. 0.1 is fine.
+                                FT sm_distance, // Approximation error w.r.t. p.s.r.. For APSS: 0.015=fast, 0.003=smooth.
+                                FT smoothness, // Smoothness factor. In the range 2 (clean datasets) and 8 (noisy datasets).
+                                int grid_size); // size of the grid
+
 class Point_set_demo_APSS_reconstruction_plugin :
   public QObject,
   protected Polyhedron_demo_plugin_helper
@@ -65,11 +73,12 @@ class Point_set_demo_APSS_reconstruction_plugin_dialog : public QDialog, private
     double triangleRadius() const { return m_inputRadius->value() * 0.01; }
     double triangleError() const { return m_inputDistance->value(); }
     double mlsSmoothness() const { return m_inputSmoothness->value(); }
+    bool useMarchingCube() const { return m_inputUseMC->isChecked(); }
+    int mcGridSize() const { return m_inputMcGridSize->value(); }
 
   private slots:
     void on_buttonBox_accepted()
     {
-//       std::cerr << "m_inputAngle.value() = " << m_inputAngle->value() << "\n";
     }
 };
 
@@ -100,7 +109,12 @@ void Point_set_demo_APSS_reconstruction_plugin::reconstruct()
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // Reconstruct point set as a polyhedron
-    Polyhedron* pRemesh = APSS_reconstruct(*points, sm_angle, sm_radius, sm_distance, smoothness);
+    Polyhedron* pRemesh = 0;
+
+    if (dialog.useMarchingCube())
+      pRemesh = APSS_reconstruct_mc(*points, sm_angle, sm_radius, sm_distance, smoothness, dialog.mcGridSize());
+    else
+      pRemesh = APSS_reconstruct(*points, sm_angle, sm_radius, sm_distance, smoothness);
 
     if(pRemesh)
     {

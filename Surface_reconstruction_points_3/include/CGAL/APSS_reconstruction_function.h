@@ -33,7 +33,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// APSS_reconstruction_function computes an implicit function
+/// APSS_reconstruction_function computes a signed distance field
 /// that defines a Point Set Surface (PSS) based on
 /// moving least squares (MLS) fitting of algebraic spheres.
 ///
@@ -80,6 +80,7 @@ public:
   typedef typename Geom_traits::Point_3 Point; ///< typedef to Geom_traits::Point_3
   typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
   typedef typename Geom_traits::Sphere_3 Sphere; ///< typedef to Geom_traits::Sphere_3
+  typedef CGAL::Bbox_3 BBox; ///< typedef to CGAL::Bbox_3
 
 // Private types
 private:
@@ -185,6 +186,20 @@ private:
     // Compute bounding sphere
     Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > ms3(first, beyond);
     m->bounding_sphere = Sphere(ms3.center(), ms3.squared_radius());
+
+    // Compute axis aligned bounding box
+    // FIXME: I cannot believe there is nothing better to compute the bbox:
+    {
+      Point p = get(point_pmap,first);
+      m->bounding_box = BBox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
+    }
+    for (InputIterator it=first ; it != beyond ; ++it)
+    {
+      Point p = get(point_pmap,it);
+      m->bounding_box = m->bounding_box + BBox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
+    }
+    std::cerr << m->bounding_box.xmin() << " " << m->bounding_box.ymin() << " " << m->bounding_box.zmin() << " "
+              << m->bounding_box.xmax() << " " << m->bounding_box.ymax() << " " << m->bounding_box.zmax() << "\n";
 
     // Find a point inside the surface.
     find_inner_point();
@@ -298,6 +313,11 @@ public:
     return m->bounding_sphere;
   }
 
+  BBox bounding_box() const
+  {
+    return m->bounding_box;
+  }
+
 private:
 
   /** Fit an algebraic sphere on a set of neigbors in a Moving Least Square sense.
@@ -352,8 +372,10 @@ public:
   // Implementation note: this function is called a large number of times,
   // thus us heavily optimized. The bottleneck is Neighbor_search's constructor,
   // which we try to avoid calling.
-  FT operator()(const Point& p) const
+  FT operator()(const Point& p, bool* ok = 0) const
   {
+    if (ok)
+      *ok = true;
     // Is 'p' close to the surface?
     // Optimization: test first if 'p' is close to one of the neighbors
     //               computed during the previous call.
@@ -688,6 +710,7 @@ private:
     std::vector<KdTreeElement> treeElements;
     std::vector<FT> radii;
     Sphere bounding_sphere; // Points' bounding sphere
+    BBox bounding_box; // Points' bounding box
     FT sqError; // Dichotomy error when projecting point (squared)
     unsigned int nofNeighbors; // Number of nearest neighbors
     Point inner_point; // Point inside the surface

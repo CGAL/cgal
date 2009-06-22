@@ -236,7 +236,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endmacro(polyhedron_demo_plugin)
 
   qt4_wrap_ui( APSS_UI_FILES Point_set_demo_APSS_reconstruction_plugin.ui)
-  polyhedron_demo_plugin(APSS_reconstruction_plugin Point_set_demo_APSS_reconstruction_plugin Point_set_demo_APSS_reconstruction_plugin_cgal_code.cpp ${APSS_UI_FILES})
+  polyhedron_demo_plugin(APSS_reconstruction_plugin
+    Point_set_demo_APSS_reconstruction_plugin
+    Point_set_demo_APSS_reconstruction_plugin_cgal_code.cpp
+    Point_set_demo_APSS_reconstruction_plugin_cgal_mc.cpp
+    ${APSS_UI_FILES})
   target_link_libraries(APSS_reconstruction_plugin scene_polyhedron_item point_set)
 
   polyhedron_demo_plugin(inside_out_plugin Polyhedron_demo_inside_out_plugin)
