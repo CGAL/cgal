@@ -13,7 +13,7 @@
 
 #define CGAL_CHECK_EXPENSIVE
 
-#define TRACE_ENABLED
+//#define TRACE_ENABLED
 
 #ifdef TRACE_ENABLED
 #  define TRACE(m) std::cerr << m << std::endl ;

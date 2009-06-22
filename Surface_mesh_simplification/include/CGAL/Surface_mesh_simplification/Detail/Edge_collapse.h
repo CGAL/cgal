@@ -183,7 +183,7 @@ public:
               , EdgeIsBorderMap  const& aEdge_is_border_map 
               , GetCost          const& aGetCost
               , GetPlacement     const& aGetPlacement
-              , VisitorT*               aVisitor          // Can be NULL
+              , VisitorT*               aVisitor
               ) ;
   
   int run() ;
@@ -226,6 +226,8 @@ private:
   bool are_shared_triangles_valid( Point const& p0, Point const& p1, Point const& p2, Point const& p3 ) const ;
   
   edge_descriptor find_connection ( const_vertex_descriptor const& v0, const_vertex_descriptor const& v1 ) const ;
+  
+  vertex_descriptor find_exterior_link_triangle_3rd_vertex ( const_edge_descriptor const& e, const_vertex_descriptor const& v0, const_vertex_descriptor const& v1 ) const ;
   
   Edge_data& get_data ( edge_descriptor const& aEdge ) const 
   { 
@@ -337,10 +339,9 @@ private:
   EdgeIsBorderMap  const& Edge_is_border_map ;
   GetCost          const& Get_cost ;
   GetPlacement     const& Get_placement ;
-  VisitorT*               Visitor ;          // Can be NULL
+  VisitorT*               Visitor ; 
   
-  FT                      mMaxAreaRatio ;
-  FT                      mMaxDihedralAngleCos ;
+  FT                      mcMaxDihedralAngleCos2 ;
   
 private:
 

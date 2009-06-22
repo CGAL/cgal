@@ -18,7 +18,7 @@
 // Author(s)     : Fernando Cacciola <fernando.cacciola@gmail.com>
 
 #include "basics.h"
-#include "test_self_intersection.h"
+#include "test_self_intersection.h" 
 
 
 // This is here only to allow a breakpoint to be placed so I can trace back the problem.
@@ -248,7 +248,9 @@ public :
   
   void OnStarted( Surface& ) 
   { 
-//    ::CGALi::cgal_enable_ecms_trace = true ;
+#ifdef CGAL_ECMS_ENABLE_TRACE
+   ::CGALi::cgal_enable_ecms_trace = true ;
+#endif
     mStep = 0 ; 
   }   
   
@@ -278,7 +280,7 @@ public :
     if ( Is_self_intersecting( aProfile.surface() ) )
     {
       dump_vertex_link( aProfile, aV, str( format( "step-%1%-after.off" ) % mStep ) ) ;
-      cerr << "Resulting surface self-intersects." << endl ;
+      cerr << "Resulting surface self-intersects at step " << mStep << "(" << ( aProfile.surface().size_of_halfedges() / 2 ) << " edges left)" << endl ;
     }  
     
     ++ mStep ;

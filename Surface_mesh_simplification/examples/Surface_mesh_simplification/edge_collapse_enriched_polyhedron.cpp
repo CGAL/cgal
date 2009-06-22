@@ -30,6 +30,7 @@ typedef Kernel::Point_3 Point ;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Surface; 
 
 typedef Surface::Halfedge_handle Halfedge_handle ;
+typedef Surface::Vertex_handle   Vertex_handle ;
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
@@ -90,9 +91,8 @@ struct Visitor
                    ,boost::optional<Point>  placement
                    )
   {
-    if ( placement )
-         ++ collapsed;
-    else ++ placement_uncomputable ;
+    if ( !placement )
+      ++ placement_uncomputable ;
   }                
   
   // Called for each edge which failed the so called link-condition,
@@ -101,6 +101,12 @@ struct Visitor
   void OnNonCollapsable( Profile const& )
   {
     ++ non_collapsable;
+  }                
+  
+  // Called AFTER each edge has been collapsed
+  void OnCollapsed( Profile const&, Vertex_handle hv )
+  {
+    ++ collapsed;
   }                
   
   std::size_t  collected
