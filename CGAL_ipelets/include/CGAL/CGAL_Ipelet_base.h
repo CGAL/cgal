@@ -22,6 +22,11 @@
 #ifndef CGAL_IPELET_BASE_H
 #define CGAL_IPELET_BASE_H
 
+// Ipe headers use uint which is not standard.
+#ifdef __APPLE__
+typedef unsigned int uint;
+#endif
+
 #include <ipelib.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Weighted_point.h>
@@ -500,6 +505,8 @@ public:
         case TRG:
           draw_in_ipe(Circular_arc_2(circle,*source,*(next_s->second.second),CGAL::COUNTERCLOCKWISE));
           break;
+        case OSRC:
+	  CGAL_error();
         case SRC:{
           Map_theta_iterator current=next_s;
           ++next_s; if (next_s==map_theta.end()) next_s=map_theta.begin();

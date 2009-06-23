@@ -144,7 +144,7 @@ void SkeletonIpelet::protected_run(int fn)
     if (fn==2 || fn==3)
       offsets.push_back(dist);
     else{
-      for (unsigned i=1;i<static_cast<int>(ceil(max_edge/dist))+1;++i)
+      for (int i=1;i<static_cast<int>(ceil(max_edge/dist))+1;++i)
         offsets.push_back(i*dist);
     }
     
