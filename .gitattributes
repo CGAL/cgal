@@ -3028,6 +3028,7 @@ Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_DegreeVector.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_GetCoefficient.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_GetInnermostCoefficient.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_InnermostLeadingCoefficient.tex -text
+Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_IsSquareFree.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_IsZeroAt.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_IsZeroAtHomogeneous.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_MonomialRepresentation.tex -text

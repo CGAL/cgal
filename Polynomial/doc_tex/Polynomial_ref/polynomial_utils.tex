@@ -470,6 +470,7 @@ Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Square_free_factorize}.
 \ccRefConceptPage{PolynomialTraits_d}\\
 \ccRefConceptPage{PolynomialTraits_d::SquareFreeFactorize}\\
 \end{ccRefFunction}
+
 % MakeSquareFree
 \begin{ccRefFunction}{make_square_free}
 \ccDefinition
@@ -488,6 +489,26 @@ Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Make_square_free}.
 \ccRefConceptPage{Polynomial_d}\\
 \ccRefConceptPage{PolynomialTraits_d}\\
 \ccRefConceptPage{PolynomialTraits_d::MakeSquareFree}\\
+\end{ccRefFunction}
+
+% IsSquareFree
+\begin{ccRefFunction}{is_square_free}
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::IsSquareFree}. \\ \\ 
+\ccInclude{CGAL/polynomial_utils.h}
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Is_square_free::result_type 
+is_square_free(const Polynomial_d& p);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Is_square_free}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::IsSquareFree}\\
 \end{ccRefFunction}
 
 % PseudoDivision
