@@ -75,6 +75,24 @@ public:
   Get_left_side_tag< Traits, has_Arr_left_side_tag< Traits >::value >::Tag Tag;
 };
 
+template < class GeometryTraits_2, bool b > 
+struct Validate_left_side_tag {};
+
+template < class GeometryTraits_2 >
+struct Validate_left_side_tag< GeometryTraits_2, true > {
+  void missing__Arr_left_side_tag() {}
+};
+
+template < class GeometryTraits_2 >
+struct Validate_left_side_tag< GeometryTraits_2, false > {
+  void missing__Arr_left_side_tag()
+  { 
+    bool 
+      missing__Arr_left_side_tag__assuming__Arr_oblivious_side_tag__instead; 
+  }
+};
+
+
 //! type to provide bottom side tag (is oblivious if not existing)
 template < class Traits_, bool B >
 struct Get_bottom_side_tag { 
@@ -102,6 +120,24 @@ public:
   Tag;
 };
 
+template < class GeometryTraits_2, bool b > 
+struct Validate_bottom_side_tag {};
+
+template < class GeometryTraits_2 >
+struct Validate_bottom_side_tag< GeometryTraits_2, true > {
+  void missing__Arr_bottom_side_tag() {}
+};
+
+template < class GeometryTraits_2 >
+struct Validate_bottom_side_tag< GeometryTraits_2, false > {
+  void missing__Arr_bottom_side_tag()
+  { 
+    bool 
+      missing__Arr_bottom_side_tag__assuming__Arr_oblivious_side_tag__instead; 
+  }
+};
+
+
 //! type to provide top side tag (is oblivious if not existing)
 template < class Traits_, bool B >
 struct Get_top_side_tag { 
@@ -127,6 +163,23 @@ public:
   typedef typename
   Get_top_side_tag< Traits, has_Arr_top_side_tag< Traits >::value >::Tag Tag;
 };
+
+template < class GeometryTraits_2, bool b > 
+struct Validate_top_side_tag {};
+
+template < class GeometryTraits_2 >
+struct Validate_top_side_tag< GeometryTraits_2, true > {
+  void missing__Arr_top_side_tag() {}
+};
+
+template < class GeometryTraits_2 >
+struct Validate_top_side_tag< GeometryTraits_2, false > {
+  void missing__Arr_top_side_tag()
+  { 
+    bool missing__Arr_top_side_tag__assuming__Arr_oblivious_side_tag__instead; 
+  }
+};
+
 
 //! type to provide right side tag (is oblivious if not existing)
 template < class Traits_, bool B >
@@ -154,6 +207,26 @@ public:
   Get_right_side_tag< Traits, has_Arr_right_side_tag< Traits >::value >::Tag 
   Tag;
 };
+
+template < class GeometryTraits_2, bool b > 
+struct Validate_right_side_tag {};
+
+template < class GeometryTraits_2 >
+struct Validate_right_side_tag< GeometryTraits_2, true > {
+  void missing__Arr_right_side_tag() {}
+};
+
+template < class GeometryTraits_2 >
+struct Validate_right_side_tag< GeometryTraits_2, false > {
+  void missing__Arr_right_side_tag()
+  { 
+    bool 
+      missing__Arr_right_side_tag__assuming__Arr_oblivious_side_tag__instead; 
+  }
+};
+
+
+
 
 } // namespace CGALi
   
