@@ -751,7 +751,7 @@ private:
       FT dist_tree = CGAL::squared_distance(query, point_tree);
 
       assert( dist_tree >= dist_naive );
-      const FT epsilon = 1e-12;
+      const FT epsilon = (FT)1e-12;
       assert( ((dist_naive - dist_tree) < epsilon*dist_tree) );
       //std::cerr << dist_naive - dist_tree << std::endl;
     }
@@ -787,7 +787,7 @@ private:
         FT dist_tree = CGAL::squared_distance(query, point_tree.first);
 
         assert( dist_tree >= dist_naive );
-        const FT epsilon = 1e-12;
+        const FT epsilon = (FT)1e-12;
         assert( ((dist_naive - dist_tree) < epsilon*dist_tree) );
       }
     }
