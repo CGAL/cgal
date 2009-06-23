@@ -60,12 +60,12 @@ int main()
         std::cout << tree.number_of_intersected_primitives(ray_query)
                   << " intersections(s) with ray" << std::endl;
 
-        // computes all intersection objects with segment query
+        // computes all intersections with segment query
         Point a(0.2, 0.2, 0.2);
         Point b(0.3, 0.3, 0.3);
         Segment segment_query(a,b);
         std::list<Object_and_primitive_id> intersections;
         tree.all_intersections(segment_query, std::back_inserter(intersections));
 
-        return 0;
+        return EXIT_SUCCESS;
 }

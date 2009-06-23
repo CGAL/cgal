@@ -1,5 +1,3 @@
-// TODO: move later to the kernel folder
-
 #include <CGAL/intersections.h>
 
 #include <CGAL/AABB_intersections/Bbox_3_ray_3_do_intersect.h>

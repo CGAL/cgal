@@ -70,5 +70,5 @@ int main()
         FT sqd = tree.squared_distance(point_query);
         std::cout << "squared distance: " << sqd << std::endl;
 
-        return 0;
+        return EXIT_SUCCESS;
 }

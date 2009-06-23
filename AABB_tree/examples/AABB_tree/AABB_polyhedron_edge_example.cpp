@@ -62,5 +62,5 @@ int main()
         Point point_query(2.0, 2.0, 2.0);
         Point closest = tree.closest_point(point_query);
 
-        return 0;
+        return EXIT_SUCCESS;
 }
