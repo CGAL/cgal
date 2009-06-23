@@ -23,7 +23,7 @@
 #define CGAL_APOLLONIUS_GRAPH_MIXED_FILTERED_TRAITS_2_H
 
 
-#include <CGAL/Apollonius_graph_2/new_traits/Apollonius_graph_mixed_traits_2.h>
+#include <CGAL/Apollonius_graph_2/Delage_traits/Apollonius_graph_mixed_traits_2.h>
 
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Filtered_construction.h>

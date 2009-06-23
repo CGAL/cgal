@@ -22,7 +22,7 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_NEW_TRAITS_2_H
 #define CGAL_APOLLONIUS_GRAPH_NEW_TRAITS_2_H
 
-#include <CGAL/Apollonius_graph_2/new_traits/New_predicates_C2.h>
+#include <CGAL/Apollonius_graph_2/Delage_traits/New_predicates_C2.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Apollonius_graph_2/Kernel_wrapper_2.h>
 
