@@ -20,6 +20,14 @@
 #include "basics.h"
 #include "test_self_intersection.h" 
 
+//#define TEST_TEST_TRACE_ENABLED
+
+#ifdef TEST_TEST_TRACE_ENABLED
+#  define TEST_TRACE(m) std::cerr << m << std::endl ;
+#else
+#  define TEST_TRACE(m)
+#endif
+
 
 // This is here only to allow a breakpoint to be placed so I can trace back the problem.
 void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
@@ -38,7 +46,10 @@ namespace SMS = CGAL::Surface_mesh_simplification ;
 
 typedef SMS::Edge_profile<Surface> Profile ;
 
-class Dump_link_builder : public CGAL::Modifier_base<Surface::HalfedgeDS> 
+typedef boost::shared_ptr<Surface> SurfaceSP ;
+
+// Constructs a flat polyhedron containing just the link of an edge or vertex.
+class Link_builder : public CGAL::Modifier_base<Surface::HalfedgeDS> 
 {
   map<int,int> mMap ;
   
@@ -54,7 +65,7 @@ protected:
   
   typedef CGAL::Polyhedron_incremental_builder_3<Surface::HalfedgeDS> Builder ;
   
-  Dump_link_builder() : mVIdx(0) {}
+  Link_builder() : mVIdx(0) {}
   
   void add_vertex( Builder& aBuilder, Vertex_const_handle v )
   {
@@ -72,14 +83,15 @@ protected:
   }
 };
 
-class Dump_edge_link_builder : public Dump_link_builder
+// Constructs a flat polyhedron containing just the link of an edge
+class Edge_link_builder : public Link_builder
 { 
   Profile const& mProfile ;
   
   
 public:
 
-  Dump_edge_link_builder( Profile const& aProfile ) : mProfile(aProfile) {}
+  Edge_link_builder( Profile const& aProfile ) : mProfile(aProfile) {}
   
   void operator()( Surface::HalfedgeDS& hds) 
   {
@@ -100,7 +112,8 @@ public:
   }
 };
 
-class Dump_vertex_link_builder : public Dump_link_builder
+// Constructs a flat polyhedron containing just the link of a vertex
+class Vertex_link_builder : public Link_builder
 {
   Surface*      mECM ;
   Vertex_handle mV ;
@@ -109,7 +122,7 @@ class Dump_vertex_link_builder : public Dump_link_builder
   
 public:
 
-  Dump_vertex_link_builder( Surface& aECM, Vertex_handle aV) : mECM(&aECM), mV(aV) {}
+  Vertex_link_builder( Surface& aECM, Vertex_handle aV) : mECM(&aECM), mV(aV) {}
   
   void operator()( Surface::HalfedgeDS& hds ) 
   {
@@ -140,26 +153,32 @@ public:
   }
 };
 
-void dump_edge_link ( Profile const& aProfile, string aName )
+SurfaceSP create_edge_link ( Profile const& aProfile )
 {
-  Surface lLink ;
-  Dump_edge_link_builder lBuilder(aProfile) ;
+  SurfaceSP rLink( new Surface );
+  
+  Edge_link_builder lBuilder(aProfile) ;
     
-  lLink.delegate(lBuilder);
+  rLink->delegate(lBuilder);
     
-  ofstream out(aName.c_str());
-  out << lLink ;    
+  return rLink ;
 }
 
-void dump_vertex_link ( Profile const& aProfile, Vertex_handle aV, string aName )
+SurfaceSP create_vertex_link ( Profile const& aProfile, Vertex_handle aV )
 {
-  Surface lLink ;
-  Dump_vertex_link_builder lBuilder(aProfile.surface(),aV) ;
+  SurfaceSP rLink( new Surface );
+  
+  Vertex_link_builder lBuilder(aProfile.surface(),aV) ;
     
-  lLink.delegate(lBuilder);
+  rLink->delegate(lBuilder);
     
+  return rLink ;  
+}
+
+void write ( SurfaceSP aSurface, string aName )
+{
   ofstream out(aName.c_str());
-  out << lLink ;    
+  out << *aSurface ;
 }
 
 template<class T>
@@ -230,7 +249,7 @@ string normalize_EOL ( string line )
   return line.substr(0, l-d ) ;
 }
 
-#define REPORT_ERROR(msg) error(__FILE__,__LINE__,0,msg);
+#define REPORT_ERROR(msg) error(__FILE__,__LINE__,0, msg);
 
 #define REPORT_ERROR2(pred,msg) REPORT_ERROR(msg)
           
@@ -241,56 +260,54 @@ string normalize_EOL ( string line )
 #define CHECK_EQUAL(x,y)       CHECK_MSG(((x)==(y)), str(format("Assertion failed: %1%(=%2%)==%3%(=%4%)") % (#x) % (x) % (#y) % (y) ) )
 #define CHECK_NOT_EQUAL(x,y)   CHECK_MSG(((x)!=(y)), str(format("Assertion failed: %1%(=%2%)!=%3%(=%4%)") % (#x) % (x) % (#y) % (y) ) )
 
-class Visitor
-{
+class Visitor : public SMS::Edge_collapse_visitor_base<Surface>
+{ 
   
 public :
-  
-  void OnStarted( Surface& ) 
-  { 
-#ifdef CGAL_ECMS_ENABLE_TRACE
-   ::CGALi::cgal_enable_ecms_trace = true ;
-#endif
+
+  Visitor( string aTestCase ) : mTestCase(aTestCase) 
+  {
+#ifdef CGAL_ECMS_TRACE_IMPL  
+    ::CGALi::cgal_enable_ecms_trace = true ;
+#endif    
     mStep = 0 ; 
-  }   
+  }
   
-  void OnFinished ( Surface& aSurface )
+  virtual void OnFinished ( Surface& aSurface ) const 
   { 
     CHECK(aSurface.is_valid());
   } 
   
-  void OnStopConditionReached( Profile const& ) {} 
-  
-  void OnCollected( Profile const& aProfile, optional<FT> const& aCost )
+  virtual void OnCollected( Profile const& aProfile, optional<FT> const& aCost ) const 
   {
-    TRACE( str ( format("Collecting %1% : cost=%2%") % edge2str(aProfile.v0_v1()) % optfloat2str(aCost) ) ) ;
+    TEST_TRACE( str ( format("Collecting %1% : cost=%2%") % edge2str(aProfile.v0_v1()) % optfloat2str(aCost) ) ) ;
   }                
   
-  void OnSelected( Profile const&, optional<FT> const&, size_t, size_t ) 
+  virtual void OnCollapsing( Profile const& aProfile, optional<Point> const& aP ) const 
   {
+    TEST_TRACE( str ( format("S %1% - Collapsing %2% : placement=%3%") % mStep % edge2str(aProfile.v0_v1()) % optpoint2str(aP) ) ) ;
+    
+    mBefore = create_edge_link(aProfile);
   }
   
-  void OnCollapsing( Profile const& aProfile, optional<Point> const& aP ) 
-  {
-    TRACE( str ( format("S %1% - Collapsing %2% : placement=%3%") % mStep % edge2str(aProfile.v0_v1()) % optpoint2str(aP) ) ) ;
-  }
-  
-  void OnCollapsed( Profile const& aProfile, Vertex_handle aV )
+  virtual void OnCollapsed( Profile const& aProfile, Vertex_handle aV ) const 
   {
     if ( Is_self_intersecting( aProfile.surface() ) )
     {
-      dump_vertex_link( aProfile, aV, str( format( "step-%1%-after.off" ) % mStep ) ) ;
-      cerr << "Resulting surface self-intersects at step " << mStep << "(" << ( aProfile.surface().size_of_halfedges() / 2 ) << " edges left)" << endl ;
+      SurfaceSP lAfter = create_vertex_link(aProfile, aV);
+      
+      write(mBefore, str( format( "%1%.step-%2%-before.off" ) % mTestCase % mStep ) ) ;
+      write(lAfter , str( format( "%1%.step-%2%-after.off" )  % mTestCase % mStep ) ) ;
+      
+      REPORT_ERROR( str( format("Resulting surface self-intersects after step %1% (%2% edges left)") % mStep % ( aProfile.surface().size_of_halfedges() / 2 ) ) ) ;
     }  
     
     ++ mStep ;
   }
 
-  void OnNonCollapsable( Profile const& ) {}                
-
 private:
 
-  void error ( char const* file, int line, char const* pred, string msg )
+  void error ( char const* file, int line, char const* pred, string msg ) const
   {
     cerr << "ERROR in " << file << " at " << line << endl ;
     if ( pred )
@@ -303,7 +320,10 @@ private:
   
 private:
     
-  int mStep ;   
+  string            mTestCase ;  
+  mutable int       mStep ;   
+  mutable SurfaceSP mBefore;
+  
 } ;
 
 bool sWriteResult = false ;
@@ -329,7 +349,7 @@ bool Test ( string aName )
         {
           cerr << "Processing " << aName << " (" << ( lSurface.size_of_halfedges() / 2 ) << " edges)" << endl ;
           
-          Visitor vis ;
+          Visitor vis(aName) ;
           
           set_halfedgeds_items_id(lSurface);
           
@@ -342,14 +362,14 @@ bool Test ( string aName )
             SMS::Edge_length_cost  <Surface> cost ;
             SMS::Midpoint_placement<Surface> placement ;
             
-            edge_collapse(lSurface,stop,get_cost(cost).get_placement(placement).visitor(&vis) );
+            edge_collapse(lSurface,stop,get_cost(cost).get_placement(placement).visitor(vis) );
           }
           else
           {
             SMS::LindstromTurk_cost     <Surface> cost ;
             SMS::LindstromTurk_placement<Surface> placement ;
             
-            edge_collapse(lSurface,stop,get_cost(cost).get_placement(placement).visitor(&vis) );
+            edge_collapse(lSurface,stop,get_cost(cost).get_placement(placement).visitor(vis) );
           } 
 
           t.stop();

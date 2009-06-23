@@ -142,13 +142,20 @@ The type of \ccc{gp} must be a model of the \ccc{GetPlacement} concept.
 \textbf{Default}: 
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_placement<EdgeCollapsableMesh>}
 
-\subsubsection*{visitor(EdgeCollapseSimplificationVisitor const* v)}
+\subsubsection*{visitor(EdgeCollapseSimplificationVisitor v)}
 
 The visitor that is called by the \ccc{edge_collapse} function
 in certain points to allow the user to track the simplification process.\\
-The type of object pointed to by \ccc{v} must be a model of the \ccc{EdgeCollapseSimplificationVisitor} concept.
+The type of \ccc{v} must be a model of the \ccc{EdgeCollapseSimplificationVisitor} concept.
 
-\textbf{Default}: \ccc{NULL}.
+\textbf{Default: an implementation-defined dummy visitor}}.
+
+If you wish to provide your own visitor, you can derive from:
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<EdgeCollapsableMesh>}
+and override only the callbacks you are interested in.
+
+
+
 
 All these functions naming parameters are defined in
 \ccc{namespace CGAL}. Being non-member functions, they could clash

@@ -3795,6 +3795,7 @@ Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.jpg -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#application/pdf
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/detail.png -text
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/Edge_collapse_visitor_base.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.eps -text svneol=unset#application/postscript
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.pdf -text svneol=unset#application/pdf
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.png -text svneol=unset#image/png
@@ -3821,6 +3822,7 @@ Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_c
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_constrained_polyhedron.cpp -text
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cmd eol=lf
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_polyhedron.cmd eol=lf
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/edge_collapse_visitor_base.h -text
 Surface_mesh_simplification/off2gts/CMakeLists.txt -text
 Surface_mesh_simplification/off2gts/off2gts.cpp -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/basics.h -text

@@ -21,8 +21,13 @@
 #include <functional>
 #include <utility>
 #include <vector>
+#include <vector>
+#include <set>
 
+#include <boost/config.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/iterator_adaptors.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -30,6 +35,7 @@
 #include <boost/scoped_array.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/adjacency_list.hpp>
 
 #include <CGAL/Cartesian/MatrixC33.h>
 #include <CGAL/Modifiable_priority_queue.h>

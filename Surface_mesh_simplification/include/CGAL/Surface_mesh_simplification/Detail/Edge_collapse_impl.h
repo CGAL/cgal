@@ -31,7 +31,7 @@ EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::EdgeCollapse( ECM&                    aS
                                                     , EdgeIsBorderMap  const& aEdge_is_border_map 
                                                     , GetCost          const& aGet_cost
                                                     , GetPlacement     const& aGet_placement
-                                                    , VisitorT*               aVisitor
+                                                    , VisitorT         const& aVisitor
                                                     )
   : 
    mSurface           (aSurface)
@@ -67,8 +67,7 @@ int EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::run()
 {
   CGAL_SURF_SIMPL_TEST_assertion( mSurface.is_valid() && mSurface.is_pure_triangle() ) ;
 
-  if ( Visitor )
-    Visitor->OnStarted(mSurface);
+  Visitor.OnStarted(mSurface);
    
   // First collect all candidate edges in a PQ
   Collect(); 
@@ -80,8 +79,7 @@ int EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::run()
 
   int r = (int)(mInitialEdgeCount - mCurrentEdgeCount) ;
     
-  if ( Visitor )
-    Visitor->OnFinished(mSurface);
+  Visitor.OnFinished(mSurface);
     
   return r ;
 }
@@ -129,8 +127,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collect()
       lData.cost() = get_cost(lProfile) ;
       insert_in_PQ(lEdge,lData);
       
-      if ( Visitor )
-        Visitor->OnCollected(lProfile,lData.cost());
+      Visitor.OnCollected(lProfile,lData.cost());
 
       CGAL_SURF_SIMPL_TEST_assertion_code ( ++ lInserted ) ;
     }
@@ -172,15 +169,13 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Loop()
       
     Cost_type lCost = get_data(*lEdge).cost();
     
-    if ( Visitor )
-      Visitor->OnSelected(lProfile,lCost,mInitialEdgeCount,mCurrentEdgeCount);
+    Visitor.OnSelected(lProfile,lCost,mInitialEdgeCount,mCurrentEdgeCount);
       
     if ( lCost ) 
     {
       if ( Should_stop(*lCost,lProfile,mInitialEdgeCount,mCurrentEdgeCount) )
       {
-        if ( Visitor )
-          Visitor->OnStopConditionReached(lProfile);
+        Visitor.OnStopConditionReached(lProfile);
           
         CGAL_ECMS_TRACE(0,"Stop condition reached with InitialEdgeCount=" << mInitialEdgeCount
                        << " CurrentEdgeCount=" << mCurrentEdgeCount
@@ -202,8 +197,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Loop()
       {
         CGAL_SURF_SIMPL_TEST_assertion_code ( lNonCollapsableCount++ ) ;
 
-        if ( Visitor )
-          Visitor->OnNonCollapsable(lProfile);
+        Visitor.OnNonCollapsable(lProfile);
           
         CGAL_ECMS_TRACE(1,edge_to_string(*lEdge) << " NOT Collapsable"  );
       }  
@@ -662,8 +656,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile, 
   
   vertex_descriptor rResult ;
     
-  if ( Visitor )
-    Visitor->OnCollapsing(aProfile,aPlacement);
+  Visitor.OnCollapsing(aProfile,aPlacement);
 
   -- mCurrentEdgeCount ;
       
@@ -746,8 +739,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile, 
     put(vertex_point,mSurface,rResult,*aPlacement) ;
   }  
 
-  if ( Visitor )
-    Visitor->OnCollapsed(aProfile,rResult);
+  Visitor.OnCollapsed(aProfile,rResult);
 
   Update_neighbors(rResult) ;
   

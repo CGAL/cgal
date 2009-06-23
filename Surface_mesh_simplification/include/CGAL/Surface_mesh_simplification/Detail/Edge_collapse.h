@@ -18,15 +18,6 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_H 1
 
-#include <vector>
-#include <set>
-
-#include <boost/config.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/iterator_adaptors.hpp>
-#include <boost/graph/adjacency_list.hpp>
-
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
@@ -183,7 +174,7 @@ public:
               , EdgeIsBorderMap  const& aEdge_is_border_map 
               , GetCost          const& aGetCost
               , GetPlacement     const& aGetPlacement
-              , VisitorT*               aVisitor
+              , VisitorT         const& aVisitor
               ) ;
   
   int run() ;
@@ -332,16 +323,16 @@ private:
    
 private:
 
-  ECM&                    mSurface ;
-  ShouldStop       const& Should_stop ;
-  VertexIndexMap   const& Vertex_index_map ;
-  EdgeIndexMap     const& Edge_index_map ;
-  EdgeIsBorderMap  const& Edge_is_border_map ;
-  GetCost          const& Get_cost ;
-  GetPlacement     const& Get_placement ;
-  VisitorT*               Visitor ; 
+  ECM&                   mSurface ;
   
-  FT                      mcMaxDihedralAngleCos2 ;
+  ShouldStop      const& Should_stop ;
+  VertexIndexMap  const& Vertex_index_map ;
+  EdgeIndexMap    const& Edge_index_map ;
+  EdgeIsBorderMap const& Edge_is_border_map ;
+  GetCost         const& Get_cost ;
+  GetPlacement    const& Get_placement ;
+  VisitorT        const& Visitor ; 
+  
   
 private:
 
@@ -352,6 +343,8 @@ private:
   std::size_t mInitialEdgeCount ;
   std::size_t mCurrentEdgeCount ; 
 
+  FT          mcMaxDihedralAngleCos2 ;
+  
   CGAL_ECMS_DEBUG_CODE ( unsigned mStep ; )
 } ;
 
