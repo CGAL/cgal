@@ -58,6 +58,7 @@ if ( CGAL_FOUND )
 
   # Executables that do *not* require BLAS, LAPACK nor TAUCS
   create_single_source_cgal_program( "APSS_reconstruction.cpp" )
+  create_single_source_cgal_program( "APSS_reconstruction_example.cpp" )
 
   # Link with BLAS, LAPACK and TAUCS (optional)
   find_package(TAUCS)

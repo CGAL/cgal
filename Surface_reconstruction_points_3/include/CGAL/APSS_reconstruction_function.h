@@ -198,8 +198,6 @@ private:
       Point p = get(point_pmap,it);
       m->bounding_box = m->bounding_box + BBox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
     }
-    std::cerr << m->bounding_box.xmin() << " " << m->bounding_box.ymin() << " " << m->bounding_box.zmin() << " "
-              << m->bounding_box.xmax() << " " << m->bounding_box.ymax() << " " << m->bounding_box.zmax() << "\n";
 
     // Find a point inside the surface.
     find_inner_point();
