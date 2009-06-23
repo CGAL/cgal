@@ -110,6 +110,10 @@ void test_polynomial_utils(){
   }
 // MakeSquareFree
   assert(CGAL::make_square_free(p*p*y) == p);
+// IsSquareFree
+  assert(CGAL::is_square_free(p*p*y) == false);
+  assert(CGAL::is_square_free(p) == true);
+  
   
 // PseudoDivision
   {
