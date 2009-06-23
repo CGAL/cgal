@@ -11,6 +11,7 @@ Boolean_set_operations_2
 Box_intersection_d
 BGL
 Cartesian_kernel
+CGAL_ipelets
 CGALimageIO
 Circular_kernel_2
 Circular_kernel_3
