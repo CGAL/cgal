@@ -34,13 +34,12 @@ const std::string Slab[] = {
 };
 
 const std::string Hmsg[] = {
-  "TODO",
-  "TODO",
-  "TODO",
-  "TODO",
-  "TODO",
-  "TODO",
-  "TODO"
+  "Draw the interior skeleton of one polygon",
+  "Draw the exterior skeleton of one polygon",
+  "Draw an interior offset of one polygon",
+  "Draw an exterior offset of one polygon",
+  "Draw several interior offsets of one polygon",
+  "Draw several exterior offsets of one polygon"
 };
 
 
@@ -75,7 +74,8 @@ void SkeletonIpelet::draw_straight_skeleton(const Skeleton& skeleton)
   for ( Halfedge_const_iterator i = skeleton.halfedges_begin();
                                 i != skeleton.halfedges_end();
                                 ++i )
-    out++=Segment_2(i->opposite()->vertex()->point(),i->vertex()->point());
+    if (i->is_bisector())
+      out++=Segment_2(i->opposite()->vertex()->point(),i->vertex()->point());
   draw_in_ipe(seglist.begin(),seglist.end());
 }
 
@@ -144,7 +144,7 @@ void SkeletonIpelet::protected_run(int fn)
     if (fn==2 || fn==3)
       offsets.push_back(dist);
     else{
-      for (int i=1;i<static_cast<int>(ceil(max_edge/dist))+1;++i)
+      for (int i=1;i<static_cast<int>(ceil(max_edge/dist/2.))+1;++i)
         offsets.push_back(i*dist);
     }
     
@@ -153,25 +153,10 @@ void SkeletonIpelet::protected_run(int fn)
       for( PolygonPtrVector::const_iterator pi = offset_polygons.begin() ; pi != offset_polygons.end() ; ++ pi )
         draw_in_ipe(**pi);
     }
-  }
     
-  //~ if (fn==3)
-    //~ draw_straight_skeleton(*ess);
-
-  //~ //Offset printing
-  //~ PolygonPtrVector offset_polygons = CGAL::create_offset_polygons_2<Polygon_2>(lOffset,*ss);
-  //~ for( PolygonPtrVector::const_iterator pi = offset_polygons.begin() ; pi != offset_polygons.end() ; ++ pi )
-    //~ draw_in_ipe(**pi);    
-
-
-  //Offset exterior printing
-  //~ PolygonPtrVector ext_offset_polygons = CGAL::create_offset_polygons_2<Polygon_2>(lOffset,*ess);
-  //~ for( PolygonPtrVector::const_iterator pi = ext_offset_polygons.begin() ; pi != ext_offset_polygons.end() ; ++ pi )
-    //~ draw_in_ipe(**pi);  
-  
-    //~ PolygonPtrVector Interior_offset_polygons = CGAL::create_interior_skeleton_and_offset_polygons_2(lOffset,polygon);
-    //~ PolygonPtrVector Exterior_offset_polygons = CGAL::create_exterior_skeleton_and_offset_polygons_2(lOffset,polygon);
-  
+    if (offsets.size()>1)
+      get_IpePage()->Group(get_IpeletHelper()->CurrentLayer());
+  }
 }
 
 }
