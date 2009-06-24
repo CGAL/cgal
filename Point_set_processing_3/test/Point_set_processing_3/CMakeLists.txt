@@ -14,7 +14,7 @@ endif(COMMAND cmake_policy)
 include_directories (BEFORE . include ../../include)
 
 # Find CGAL
-find_package(CGAL  COMPONENTS Core )
+find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
