@@ -228,10 +228,10 @@ private:
   // This works in any cover that is encoded in _t->combine_offsets
   void get_edge_offsets(Offset &off0, Offset &off1,
 			Offset &off2, Offset &off3) const {
-    Offset cell_off0 = Offset(pos->offset(0));
-    Offset cell_off1 = Offset(pos->offset(1));
-    Offset cell_off2 = Offset(pos->offset(2));
-    Offset cell_off3 = Offset(pos->offset(3));
+    Offset cell_off0 = _t->int_to_off(pos->offset(0));
+    Offset cell_off1 = _t->int_to_off(pos->offset(1));
+    Offset cell_off2 = _t->int_to_off(pos->offset(2));
+    Offset cell_off3 = _t->int_to_off(pos->offset(3));
     Offset diff_off((cell_off0.x() == 1 
 		     && cell_off1.x() == 1 
 		     && cell_off2.x() == 1
@@ -264,10 +264,10 @@ private:
       get_edge_offsets(off0,off1,off2,off3);
     else {
       CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
-      off0 = Offset(pos->offset(0));
-      off1 = Offset(pos->offset(1));
-      off2 = Offset(pos->offset(2));
-      off3 = Offset(pos->offset(3));
+      off0 = _t->int_to_off(pos->offset(0));
+      off1 = _t->int_to_off(pos->offset(1));
+      off2 = _t->int_to_off(pos->offset(2));
+      off3 = _t->int_to_off(pos->offset(3));
     }
 
     CGAL_triangulation_assertion(off0.x() == 0 || off0.x() == 1);
@@ -525,9 +525,9 @@ private:
   // Get the canonicalized offsets of an edge.
   // This works in any cover that is encoded in _t->combine_offsets
   void get_edge_offsets(Offset &off0, Offset &off1, Offset &off2) const {
-    Offset cell_off0 = Offset(pos->first->offset((pos->second+1)&3));
-    Offset cell_off1 = Offset(pos->first->offset((pos->second+2)&3));
-    Offset cell_off2 = Offset(pos->first->offset((pos->second+3)&3));
+    Offset cell_off0 = _t->int_to_off(pos->first->offset((pos->second+1)&3));
+    Offset cell_off1 = _t->int_to_off(pos->first->offset((pos->second+2)&3));
+    Offset cell_off2 = _t->int_to_off(pos->first->offset((pos->second+3)&3));
     Offset diff_off((cell_off0.x() == 1 
 		     && cell_off1.x() == 1 
 		     && cell_off2.x() == 1)?-1:0,
@@ -562,9 +562,9 @@ private:
       get_edge_offsets(off0,off1,off2);
     else {
       CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
-      off0 = Offset(pos->first->offset((pos->second+1)&3));
-      off1 = Offset(pos->first->offset((pos->second+2)&3));
-      off2 = Offset(pos->first->offset((pos->second+3)&3));
+      off0 = _t->int_to_off(pos->first->offset((pos->second+1)&3));
+      off1 = _t->int_to_off(pos->first->offset((pos->second+2)&3));
+      off2 = _t->int_to_off(pos->first->offset((pos->second+3)&3));
     }
 
     CGAL_triangulation_assertion(off0.x() == 0 || off0.x() == 1);
@@ -807,8 +807,8 @@ private:
   // Get the canonicalized offsets of an edge.
   // This works in any cover that is encoded in _t->combine_offsets
   void get_edge_offsets(Offset &off0, Offset &off1) const {
-    Offset cell_off0 = Offset(pos->first->offset(pos->second));
-    Offset cell_off1 = Offset(pos->first->offset(pos->third));
+    Offset cell_off0 = _t->int_to_off(pos->first->offset(pos->second));
+    Offset cell_off1 = _t->int_to_off(pos->first->offset(pos->third));
     Offset diff_off((cell_off0.x()==1 && cell_off1.x()==1)?-1:0,
 		    (cell_off0.y()==1 && cell_off1.y()==1)?-1:0,
 		    (cell_off0.z()==1 && cell_off1.z()==1)?-1:0);
@@ -832,8 +832,8 @@ private:
       get_edge_offsets(off0,off1);
     else {
       CGAL_triangulation_assertion(_it == T::STORED_COVER_DOMAIN);
-      off0 = Offset(pos->first->offset(pos->second));
-      off1 = Offset(pos->first->offset(pos->third));
+      off0 = _t->int_to_off(pos->first->offset(pos->second));
+      off1 = _t->int_to_off(pos->first->offset(pos->third));
     }
     Offset diff_off = off0 - off1;
     

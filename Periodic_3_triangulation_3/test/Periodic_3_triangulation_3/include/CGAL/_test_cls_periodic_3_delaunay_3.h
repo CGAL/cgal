@@ -291,10 +291,10 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
 
   ch = PT.locate(Point(-1,-1,1));
   assert(PT.side_of_sphere(ch,Point(-1,-1,1)) == CGAL::ON_BOUNDED_SIDE);
-  assert(PT.side_of_sphere(ch,Point(-1,-1,1),Offset(3,3,0)
-	  == CGAL::ON_BOUNDED_SIDE));
-  assert(PT.side_of_sphere(ch,Point(-1,-1,1),Offset(0,0,2)
-	  == CGAL::ON_UNBOUNDED_SIDE));
+  assert(PT.side_of_sphere(ch,Point(-1,-1,1),Offset(3,3,0))
+	  == CGAL::ON_BOUNDED_SIDE);
+  assert(PT.side_of_sphere(ch,Point(-1,-1,1),Offset(0,0,2))
+	  == CGAL::ON_UNBOUNDED_SIDE);
   Periodic_point pp = PT.periodic_point(ch,0);
   assert(PT.side_of_sphere(ch,pp.first,pp.second) == CGAL::ON_BOUNDARY);
 

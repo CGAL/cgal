@@ -368,9 +368,9 @@ inline int Scene::get_tri_drawing_offsets(const Cell_handle ch, int i) const {
     get_tri_offsets(ch,i,off0,off1,off2);
     break;
   case P3DT::STORED_COVER_DOMAIN:
-    off0 = Offset(ch->offset((i+1)&3));
-    off1 = Offset(ch->offset((i+2)&3));
-    off2 = Offset(ch->offset((i+3)&3));
+    off0 = p3dt.int_to_off(ch->offset((i+1)&3));
+    off1 = p3dt.int_to_off(ch->offset((i+2)&3));
+    off2 = p3dt.int_to_off(ch->offset((i+3)&3));
     break;
   default:
     return 0;
@@ -407,10 +407,10 @@ inline int Scene::get_tet_drawing_offsets(const Cell_handle ch) const {
     get_tet_offsets(ch,off0,off1,off2,off3);
     break;
   case P3DT::STORED_COVER_DOMAIN:
-    off0 = Offset(ch->offset(0));
-    off1 = Offset(ch->offset(1));
-    off2 = Offset(ch->offset(2));
-    off3 = Offset(ch->offset(3));
+    off0 = p3dt.int_to_off(ch->offset(0));
+    off1 = p3dt.int_to_off(ch->offset(1));
+    off2 = p3dt.int_to_off(ch->offset(2));
+    off3 = p3dt.int_to_off(ch->offset(3));
     break;
   default:
     return 0;
@@ -907,7 +907,7 @@ void Scene::gl_draw_hole() {
   if (in_plane) {
     for (unsigned int k=0 ; k<boundary_facets.size(); k++) {
       ch = boundary_facets[k].first;
-      Offset common_offset = Offset(ch->offset(0)|ch->offset(1)|ch->offset(2)|ch->offset(3));
+      Offset common_offset = p3dt.int_to_off(ch->offset(0)|ch->offset(1)|ch->offset(2)|ch->offset(3));
       int i = boundary_facets[k].second;
       pts.clear();
       for(int j=0 ; j<4 ; j++) {
@@ -923,7 +923,7 @@ void Scene::gl_draw_hole() {
   } else {
     for (unsigned int i=0 ; i<boundary_facets.size(); i++) {
       ch = boundary_facets[i].first;
-      Offset common_offset = Offset(ch->offset(0)|ch->offset(1)|ch->offset(2)|ch->offset(3));
+      Offset common_offset = p3dt.int_to_off(ch->offset(0)|ch->offset(1)|ch->offset(2)|ch->offset(3));
       pts.clear();
       for (int j=0; j<4 ; j++) {
 	if (j==boundary_facets[i].second) continue;

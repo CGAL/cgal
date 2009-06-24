@@ -380,9 +380,9 @@ private:
 
 bool is_canonical(const Facet &f) const {
   if (number_of_sheets() == make_array(1,1,1)) return true;
-  Offset cell_off0 = Offset(f.first->offset((f.second+1)&3));
-  Offset cell_off1 = Offset(f.first->offset((f.second+2)&3));
-  Offset cell_off2 = Offset(f.first->offset((f.second+3)&3));
+  Offset cell_off0 = int_to_off(f.first->offset((f.second+1)&3));
+  Offset cell_off1 = int_to_off(f.first->offset((f.second+2)&3));
+  Offset cell_off2 = int_to_off(f.first->offset((f.second+3)&3));
   Offset diff_off((cell_off0.x() == 1 
 	  && cell_off1.x() == 1 
 	  && cell_off2.x() == 1)?-1:0,
@@ -829,15 +829,15 @@ is_Gabriel(Cell_handle c, int i, int j) const {
   Facet_circulator fcirc = incident_facets(c,i,j),
     fdone(fcirc);
   Vertex_handle v1 = c->vertex(i);
-  Offset off1 = Offset(c->offset(i));
+  Offset off1 = int_to_off(c->offset(i));
   Vertex_handle v2 = c->vertex(j);
-  Offset off2 = Offset(c->offset(j));
+  Offset off2 = int_to_off(c->offset(j));
   do {
     // test whether the vertex of cc opposite to *fcirc
     // is inside the sphere defined by the edge e = (s, i,j)
     Cell_handle cc = (*fcirc).first;
     int ii = (*fcirc).second;
-    Offset off3 = Offset(cc->offset(ii));
+    Offset off3 = int_to_off(cc->offset(ii));
     if (side_of_bounded_sphere( v1->point(), v2->point(), cc->vertex(ii)->point(), off1, off2, off3)  
 	== ON_BOUNDED_SIDE ) return false;
   } while(++fcirc != fdone);

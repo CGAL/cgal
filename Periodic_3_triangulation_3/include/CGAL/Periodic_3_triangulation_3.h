@@ -1066,11 +1066,11 @@ protected:
 public:
   // undocumented access functions
   Offset get_offset(Cell_handle ch, int i) const {
-    if (is_1_cover()) return Offset(ch->offset(i));
+    if (is_1_cover()) return int_to_off(ch->offset(i));
     Virtual_vertex_map_it it = virtual_vertices.find(ch->vertex(i));
     if (it != virtual_vertices.end())
-      return combine_offsets(it->second.second, Offset(ch->offset(i)));
-    else return combine_offsets(Offset(), Offset(ch->offset(i)));
+      return combine_offsets(it->second.second, int_to_off(ch->offset(i)));
+    else return combine_offsets(Offset(), int_to_off(ch->offset(i)));
   }
   Offset get_offset(Vertex_handle vh) const {
     if (is_1_cover()) return Offset();
@@ -1415,7 +1415,7 @@ try_next_cell:
 
   if (!simplicity_criterion && is_1_cover() ) {
     for (int i=0; i<4; i++) {
-      off[i] = Offset(c->offset(i));
+      off[i] = int_to_off(c->offset(i));
     }
   }
   
@@ -1562,7 +1562,7 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
     for (int i=0; (i<8)&&(!found); i++) {
       if ((cumm_off | ((~i)&7)) == 7) {
         o0 = o1 = o2 = o3 = NEGATIVE;
-        off_q = combine_offsets(off, Offset(i));
+        off_q = combine_offsets(off, int_to_off(i));
 
         if (((o0 = orientation(      q,  *p[1],  *p[2],  *p[3], 
                 off_q  ,offs[1],offs[2],offs[3])) != NEGATIVE)&&
@@ -2060,7 +2060,7 @@ find_conflicts(Cell_handle c, const Offset &current_off,
     for (int j = 0 ; j<4 ; j++){
       if (j==i) continue;
       if (!c->vertex(j)->get_offset_flag()) {
-        c->vertex(j)->set_offset(Offset(c->offset(j))-current_off);
+        c->vertex(j)->set_offset(int_to_off(c->offset(j))-current_off);
         v_offsets.push_back(c->vertex(j));
       }
     }
@@ -2413,19 +2413,6 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
   // collect all vertices on the boundary
   std::vector<Vertex_handle> vertices;
   vertices.reserve(64);
-  //TODO: remove the following commented lines if the test suite runs
-  //successfully 
-//   std::vector<Cell_handle> tmp_cells;
-//   tmp_cells.reserve(64);
-//   incident_cells(v, std::back_inserter(tmp_cells));
-
-//   // TODO: figure out why tmp_cells is used. It should contain exactly
-//   // the same as hole. If it's still needed it should be copied
-//   // instead of computed from scratch.
-//   CGAL_triangulation_assertion(hole.size() == tmp_cells.size());
-//   for (unsigned int i=0 ; i<tmp_cells.size() ; i++) {
-//     CGAL_triangulation_assertion(hole[i] == tmp_cells[i]);
-//   }
 
   // The set is needed to ensure that each vertex is inserted only once.
   std::set<Vertex_handle> tmp_vertices;
@@ -2439,8 +2426,8 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
     for (int j=0; j<4; ++j){
       if ((*cit)->vertex(j) != v){
         tmp_vertices.insert((*cit)->vertex(j));
-        vh_off_map[(*cit)->vertex(j)] = Offset((*cit)->offset(j))
-            - Offset((*cit)->offset((*cit)->index(v)));
+        vh_off_map[(*cit)->vertex(j)] = int_to_off((*cit)->offset(j))
+            - int_to_off((*cit)->offset((*cit)->index(v)));
       }
     }
   }
@@ -2798,10 +2785,10 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
       }
       // Set the offsets.
       it->set_offsets( off[0], off[1], off[2], off[3] );
-      CGAL_triangulation_assertion( Offset(it->offset(0)) == off[0] );
-      CGAL_triangulation_assertion( Offset(it->offset(1)) == off[1] );
-      CGAL_triangulation_assertion( Offset(it->offset(2)) == off[2] );
-      CGAL_triangulation_assertion( Offset(it->offset(3)) == off[3] );
+      CGAL_triangulation_assertion( int_to_off(it->offset(0)) == off[0] );
+      CGAL_triangulation_assertion( int_to_off(it->offset(1)) == off[1] );
+      CGAL_triangulation_assertion( int_to_off(it->offset(2)) == off[2] );
+      CGAL_triangulation_assertion( int_to_off(it->offset(3)) == off[3] );
     }
   }
   
@@ -2885,7 +2872,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::convert_to_needed_covering() {
 	 = original_vertices.begin() ; vit != original_vertices.end() ; ++vit) {
     Cell_handle ccc = (*vit)->cell();
     int v_index = ccc->index(*vit);
-    off_v.push_back(off_to_int(ccc->offset(v_index)));
+    off_v.push_back(int_to_off(ccc->offset(v_index)));
   }
 
   // Store neighboring offsets in a separate data structure
@@ -3177,7 +3164,7 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
   int cumm_off = c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
   if (cumm_off == 0) {
     // default case:
-    return 0;
+    return Offset();
   } else {
     // Special case for the periodic space.
     // Fetch vertices and respective offsets of c from virtual_vertices
@@ -3192,24 +3179,24 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
     for (int i=0; i<8; i++) {
       if (((cumm_off | (~i))&7) == 7) {
         if ((orientation(q ,*p[1],*p[2],*p[3],
-                combine_offsets(o,Offset(i)), off[1], off[2], off[3]) !=
-NEGATIVE) &&
+                combine_offsets(o,int_to_off(i)), off[1], off[2], off[3])
+		!= NEGATIVE) &&
             (orientation(*p[0],q ,*p[2],*p[3],
-                off[0], combine_offsets(o,Offset(i)) ,off[2], off[3]) !=
-NEGATIVE) &&
+                off[0], combine_offsets(o,int_to_off(i)) ,off[2], off[3])
+		!= NEGATIVE) &&
             (orientation(*p[0],*p[1],q ,*p[3],
-                off[0], off[1], combine_offsets(o,Offset(i)), off[3]) !=
-NEGATIVE) &&
+                off[0], off[1], combine_offsets(o,int_to_off(i)), off[3])
+		!= NEGATIVE) &&
             (orientation(*p[0],*p[1],*p[2],q ,
-                off[0], off[1], off[2], combine_offsets(o,Offset(i))) !=
-NEGATIVE) ) {
+                off[0], off[1], off[2], combine_offsets(o,int_to_off(i)))
+		!= NEGATIVE) ) {
           return int_to_off(i);
         }
       }
     }
   }
   CGAL_triangulation_assertion(false);
-  return -1;
+  return Offset();
 }
 
 /** Get the offset between the origins of the internal offset coordinate
@@ -3233,14 +3220,13 @@ Periodic_3_triangulation_3<GT,TDS>::get_neighbor_offset(
   vertex_ch = ch->vertex(index_ch);
   index_nb = nb->index(vertex_ch);
 
-  return Offset(nb->offset(index_nb))
-                  - Offset(ch->offset(index_ch));
+  return int_to_off(nb->offset(index_nb)) - int_to_off(ch->offset(index_ch));
 }
 
 /**
  * - ch->offset(i) is an bit triple encapsulated in an integer. Each bit
  *   represents the offset in one direction --> 2-cover!
- * - Offset(int) decodes this again.
+ * - it_to_off(int) decodes this again.
  * - Finally the offset vector is multiplied by cover.
  *   So if we are working in 3-cover we translate it to the neighboring
  *   3-cover and not only to the neighboring domain.
@@ -3249,7 +3235,7 @@ template < class GT, class TDS >
 inline void Periodic_3_triangulation_3<GT, TDS>::get_vertex(
     Cell_handle ch, int i, Vertex_handle &vh, Offset &off) const {
 
-  off = combine_offsets(Offset(),Offset(ch->offset(i)));
+  off = combine_offsets(Offset(),int_to_off(ch->offset(i)));
   vh = ch->vertex(i);
   
   if (is_1_cover()) return;
@@ -3272,7 +3258,7 @@ inline void Periodic_3_triangulation_3<GT, TDS>::get_vertex(
   } else {
     // otherwise it has to be looked up as well as its offset.
     vh = it->second.first;
-    off += Offset(it->second.second);
+    off += it->second.second;
     CGAL_triangulation_assertion(vh->point().x() < _domain.xmax());
     CGAL_triangulation_assertion(vh->point().y() < _domain.ymax());
     CGAL_triangulation_assertion(vh->point().z() < _domain.zmax());
