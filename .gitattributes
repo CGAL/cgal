@@ -1347,9 +1347,7 @@ Circular_kernel_3/include/CGAL/Circular_kernel_3/internal_function_compare_to_ri
 Circular_kernel_3/include/CGAL/Spherical_kernel_intersections.h -text
 Circular_kernel_3/include/CGAL/global_functions_spherical_kernel_3.h -text
 Circular_kernel_3/test/Circular_kernel_3/CMakeLists.txt -text
-Circular_kernel_3/test/Circular_kernel_3/GNUmakefile -text
 Circular_kernel_3/test/Circular_kernel_3/include/CGAL/_test_functionalities_on_sphere.h -text
-Circular_kernel_3/test/Circular_kernel_3/makefile -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_Spherical_kernel.cpp -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_spherical_kernel_basics.cpp -text
 Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_basics.cpp -text
