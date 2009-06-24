@@ -3994,6 +3994,7 @@ Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_d
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/resources/plus.png -text svneol=unset#image/png
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/Point_set_demo/resources/simplification.png -text svneol=unset#image/png
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/PoissonDoc.cpp -text
+Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/cgal_test_with_cmake -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/ChineseDragon-points.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/oni.pwn -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/poisson/data/rotor.off -text svneol=unset#application/octet-stream

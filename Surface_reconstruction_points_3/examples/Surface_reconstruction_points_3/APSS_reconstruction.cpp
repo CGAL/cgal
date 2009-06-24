@@ -197,8 +197,8 @@ int main(int argc, char * argv[])
 
     std::cerr << "Computes APSS implicit function (smoothness=" << smoothness << ")...\n";
 
-    // Creates implicit function and insert points.
-    // Note: APSS_implicit_function() requires an iterator over points
+    // Creates implicit function from the read points.
+    // Note: APSS_reconstruction_function() requires an iterator over points
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     APSS_reconstruction_function implicit_function(
@@ -245,12 +245,12 @@ int main(int argc, char * argv[])
                                                         sm_distance*size); // Approximation error
 
     // meshing surface
-    STr tr; // 3D-Delaunay triangulation for Surface Mesher
-    C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
-    CGAL::make_surface_mesh(surface_mesher_c2t3, // reconstructed mesh
-                            surface, // implicit surface
-                            criteria, // meshing criteria
-                            CGAL::Manifold_with_boundary_tag()); // require manifold mesh
+    STr tr;                         // 3D-Delaunay triangulation for Surface Mesher
+    C2t3 surface_mesher_c2t3 (tr);  // 2D-complex in 3D-Delaunay triangulation
+    CGAL::make_surface_mesh(surface_mesher_c2t3,                  // reconstructed mesh
+                            surface,                              // implicit surface
+                            criteria,                             // meshing criteria
+                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
 
     // Prints status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
@@ -291,4 +291,3 @@ int main(int argc, char * argv[])
 
     return EXIT_SUCCESS;
 }
-

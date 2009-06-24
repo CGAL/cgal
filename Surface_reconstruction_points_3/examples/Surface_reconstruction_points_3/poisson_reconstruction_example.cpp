@@ -23,7 +23,7 @@ typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
-int main(void)
+int main(int argc, char * argv[])
 {
     // Poisson options
     FT sm_angle = 20.0; // Min triangle angle (degrees). 20=fast, 30 guaranties convergence.
@@ -45,7 +45,7 @@ int main(void)
       return EXIT_FAILURE;
     }
 
-    // Creates implicit function and insert points.
+    // Creates implicit function from the read points.
     // Note: Poisson_reconstruction_function() requires an iterator over points
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
@@ -78,23 +78,19 @@ int main(void)
                                                         sm_distance*size); // Approximation error
 
     // meshing surface
-    STr tr; // 3D-Delaunay triangulation for Surface Mesher
-    C2t3 surface_mesher_c2t3 (tr); // 2D-complex in 3D-Delaunay triangulation
-    CGAL::make_surface_mesh(surface_mesher_c2t3, // reconstructed mesh
-                            surface, // implicit surface
-                            criteria, // meshing criteria
-                            CGAL::Manifold_with_boundary_tag()); // require manifold mesh
+    STr tr;                         // 3D-Delaunay triangulation for Surface Mesher
+    C2t3 surface_mesher_c2t3 (tr);  // 2D-complex in 3D-Delaunay triangulation
+    CGAL::make_surface_mesh(surface_mesher_c2t3,                  // reconstructed mesh
+                            surface,                              // implicit surface
+                            criteria,                             // meshing criteria
+                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
 
     if(tr.number_of_vertices() == 0)
       return EXIT_FAILURE;
 
-    //***************************************
     // save the mesh
-    //***************************************
-
     std::ofstream out("oni_poisson.off");
     CGAL::output_surface_facets_to_off(out, surface_mesher_c2t3);
 
     return EXIT_SUCCESS;
 }
-
