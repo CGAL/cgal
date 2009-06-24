@@ -40,7 +40,7 @@
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
 template <class K>
-void test()
+int test()
 {
 	// load polyhedron
     typedef CGAL::Polyhedron_3<K> Polyhedron;
@@ -48,40 +48,85 @@ void test()
     std::ifstream ifs("./data/tetrahedron.off");
     ifs >> polyhedron;
 
+	typedef K::FT FT;
 	typedef K::Point_3 Point;
 	typedef K::Segment_3 Segment;
+	typedef K::Line_3 Line;
 
-	// construct tree
+	// construct tree from facets
     typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
     typedef CGAL::AABB_traits<K,Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
 	typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 	Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
 
-	// segment query
-	Point p(0.25, -0.25, 0.25);
-	Point q(0.25,  0.25, 0.25);
+	// segment intersection query
+	Point p((FT)-0.25,  (FT)0.251, (FT)0.255);
+	Point q((FT) 0.25,  (FT)0.253, (FT)0.256);
 	Segment pq(p,q);
-	assert(tree.do_intersect(pq));
-	assert(tree.number_of_intersected_primitives(pq) == 1);
+
+	if(!tree.do_intersect(pq))
+	{
+		std::cerr << "no intersection found" << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	if(tree.number_of_intersected_primitives(pq) != 1)
+	{
+		std::cerr << "number of intersections different than one" << std::endl;
+		return EXIT_FAILURE;
+	}
 
 	boost::optional<Object_and_primitive_id> any;
 	any = tree.any_intersection(pq);
-	assert(any);
+	if(!any)
+	{
+		std::cerr << "any intersection did not find any intersection" << std::endl;
+		return EXIT_FAILURE;
+	}
 	Object_and_primitive_id op = *any;
 	CGAL::Object object = op.first;
 	Point point;
-	assert(CGAL::assign(object,point));
-	std::cout << "Intersection point: (" << point.x() <<
-		                             ";" << point.y() << 
-									 ";" << point.z() << ")" << std::endl;
+	if(CGAL::assign(point,object))
+	{
+		std::cout << "Intersection point: (" << point.x() <<
+			";" << point.y() << 
+			";" << point.z() << ")" << std::endl;
+	}
+	else
+	{
+		std::cerr << "intersection does not assign to a point" << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	// line intersection query
+	Line line_pq(p,q);
+
+	if(!tree.do_intersect(line_pq))
+	{
+		std::cerr << "no intersection found with line" << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	if(tree.number_of_intersected_primitives(line_pq) != 2)
+	{
+		std::cerr << "number of intersections different than two with line" << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	return EXIT_SUCCESS;
 }
 
 int main()
 {
-	test<CGAL::Simple_cartesian<float> >();
-	test<CGAL::Simple_cartesian<double> >();
-	test<CGAL::Exact_predicates_inexact_constructions_kernel>();
+	if(test<CGAL::Simple_cartesian<float> >() == EXIT_FAILURE)
+		return EXIT_FAILURE;
 
-    return EXIT_SUCCESS;
+	if(test<CGAL::Simple_cartesian<double> >() == EXIT_FAILURE)
+		return EXIT_FAILURE;
+
+	if(test<CGAL::Exact_predicates_inexact_constructions_kernel>() == EXIT_FAILURE)
+		return EXIT_FAILURE;
+
+	return EXIT_SUCCESS;
 }
