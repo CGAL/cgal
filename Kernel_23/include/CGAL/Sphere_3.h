@@ -130,6 +130,20 @@ public:
   }
 
   typename R::Boolean
+  has_on(const Point_3 &p) const
+  {
+    return R().has_on_3_object()(*this, p);
+    //return bounded_side(p) == ON_BOUNDARY;
+  }  
+
+  typename R::Boolean
+  has_on(const Circle_3 &c) const
+  {
+    return R().has_on_3_object()(*this, c);
+    //return bounded_side(p) == ON_BOUNDARY;
+  }
+  
+  typename R::Boolean
   has_on_boundary(const Point_3 &p) const
   {
     return R().has_on_boundary_3_object()(*this, p);
