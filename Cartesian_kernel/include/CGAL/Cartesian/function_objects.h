@@ -3574,6 +3574,18 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Sphere_3 &a, const Point_3 &p) const
     { return a.rep().has_on_boundary(p); }
+    
+    result_type
+    operator()(const Sphere_3 &s, const Circle_3 &c) const
+    {
+      Point_3 proj = c.supporting_plane().projection(s.center());
+      if(!(proj == c.center())) return false;
+      const FT d2 = CGAL::squared_distance(s.center(),c.center());
+      return ((s.squared_radius() - d2) == c.squared_radius());
+    }
+
+
+    
 
     result_type
     operator()(const Circle_3 &a, const Point_3 &p) const

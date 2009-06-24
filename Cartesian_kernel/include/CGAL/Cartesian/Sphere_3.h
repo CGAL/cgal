@@ -190,9 +190,7 @@ has_on(const typename SphereC3<R>::Circle_3 &c) const
   typedef typename SphereC3<R>::FT      FT;
   Point_3 proj = c.supporting_plane().projection(center());
   if(!(proj == c.center())) return false;
-  const FT d2 = CGAL::square(center().x() - c.center().x()) +
-                CGAL::square(center().y() - c.center().y()) +
-                CGAL::square(center().z() - c.center().z());
+  const FT d2 = CGAL::squared_distance(center(),c.center());
   return ((squared_radius() - d2) == c.squared_radius());
 }
 
