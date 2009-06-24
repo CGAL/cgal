@@ -15,11 +15,14 @@
 \ccConstructor{Circular_arc_3(const Circle_3<SphericalKernel> &c)}
 {Constructs an arc from a full circle.}
 
+\ccConstructor{Circular_arc_3(const Circle_3<SphericalKernel> &c, const Circular_arc_point_3& pt)}
+{Constructs an arc from a full circle, using pt as source and target.}
+
 \ccConstructor{Circular_arc_3(const Circle_3<SphericalKernel> &c,
 		const Circular_arc_point_3<SphericalKernel> &p,
 		const Circular_arc_point_3<SphericalKernel> &q)}
 {Constructs the circular arc supported by \ccc{c}, whose source and target 
-are respectively \ccc{p} and \ccc{q}.
+are \ccc{p} and \ccc{q}, respectively.
 \ccPrecond{\ccc{p} and \ccc{q} lie on \ccc{c} and are different.}}
 
 The circular arc constructed from a circle, a source, and a target, is
@@ -29,7 +32,7 @@ seen from the side of the plane of the circle pointed by its \textit{positive} n
 vectors.
 
 In this definition, we say that a normal vector (a,b,c) is \textit{positive} if 
-(a,b,c)>(0,0,0) (i.e. $(a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)$).
+$(a,b,c)>(0,0,0)$ (i.e. $(a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)$).
 
 \ccConstructor{Circular_arc_3(const Point_3<SphericalKernel> &p,
                               const Point_3<SphericalKernel> &q,
@@ -81,8 +84,8 @@ $y$-extremal point otherwise.
 \ccFunction{bool operator==(const Circular_arc_3<SphericalKernel> &a1,
 			const Circular_arc_3<SphericalKernel> &a2);}
 {Test for equality. Two arcs are equal, iff their non-oriented
-  supporting planes are equal, if the centers and squared
-  radii of their respective supporting circles are equal, and if their
+  supporting planes are equal, and the centers and squared
+  radii of their respective supporting circles are equal, and their
   sources and targets are equal.} 
 
 \ccFunction{bool operator!=(const Circular_arc_3<SphericalKernel> &a1,
@@ -95,10 +98,10 @@ $y$-extremal point otherwise.
 \ccGlue
 \ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_3 & ca);}{}
 
-The format for input/output is, for each circular arc: a \ccc{Circle_3} 
-(the supporting circle) and two \ccc{Circular_arc_point_3} 
-(the source and the target), under the condition that the endpoints 
-are actually lying on the circle. 
+The input/output format of a circular arc consists of the supporting circle 
+represented as a \ccc{Circle_3} object followed by the source and target 
+points of the arc represented as two \ccc{Circular_arc_point_3} objects. 
+The defined arc is the unique arc constructed from such three objects. 
 
 \ccSeeAlso
 

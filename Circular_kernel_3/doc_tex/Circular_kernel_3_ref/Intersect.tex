@@ -6,7 +6,7 @@
 
 \ccCreationVariable{fo}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 \ccMemberFunction{template < class OutputIterator >
     OutputIterator
@@ -39,16 +39,16 @@ be either
 \item {} \ccc{SphericalKernel::Circular_arc_3},
 \end{itemize} 
 
-and depending on the types \ccc{Type1} and \ccc{Type2}, the computed 
+depending on the types \ccc{Type1} and \ccc{Type2}, the computed 
 \ccc{CGAL::Object}s can be assigned to 
 \begin{itemize}
 \item {} \ccc{std::pair<SphericalKernel::Circular_arc_point_3, unsigned>},
 where the unsigned integer is the multiplicity of the corresponding
 intersection point between \ccc{obj_1} and \ccc{obj_2},
 \item {} \ccc{Type1}, when \ccc{Type1} and \ccc{Type2} are equal, and 
-if the two objets \ccc{obj1} and \ccc{obj2} are equal,
+if the two objects \ccc{obj1} and \ccc{obj2} are equal,
 \item {} \ccc{SphericalKernel::Line_3} or \ccc{SphericalKernel::Circle_3} 
-when \ccc{Type1} and \ccc{Type2} are two-dimensional objets intersecting 
+when \ccc{Type1} and \ccc{Type2} are two-dimensional objects intersecting 
 along a curve (2 planes, or 2 spheres, or one plane and one sphere),
 \item {} \ccc{SphericalKernel::Circular_arc_3} in case of an overlap of 
 two circular arcs or
@@ -71,7 +71,7 @@ where the unsigned integer is the multiplicity of the corresponding
 intersection point,
 \item {} \ccc{SphericalKernel::Circle_3} or
 \item {} \ccc{Type1}, when \ccc{Type1}, \ccc{Type2} and \ccc{Type3} 
-are equal, and if the three objets \ccc{obj1} and \ccc{obj2} and \ccc{obj3}
+are equal, and if the three objects \ccc{obj1} and \ccc{obj2} and \ccc{obj3}
 are equal.
 \end{itemize} 
 

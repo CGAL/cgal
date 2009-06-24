@@ -1332,15 +1332,23 @@ Circular_kernel_3/demo/Circular_kernel_3/images/button_texture.gif -text svneol=
 Circular_kernel_3/demo/Circular_kernel_3/images/button_wire.gif -text svneol=unset#image/gif
 Circular_kernel_3/demo/Circular_kernel_3/images/d_solid_b.gif -text svneol=unset#image/gif
 Circular_kernel_3/demo/Circular_kernel_3/images/d_wire_b.gif -text svneol=unset#image/gif
+Circular_kernel_3/doc_tex/Circular_kernel_3/def_circles_extreme_pt.eps -text
+Circular_kernel_3/doc_tex/Circular_kernel_3/def_circles_extreme_pt.pdf -text
+Circular_kernel_3/doc_tex/Circular_kernel_3/def_meridian.pdf -text
 Circular_kernel_3/doc_tex/Circular_kernel_3/segment_sphere_intersection.png -text
 Circular_kernel_3/doc_tex/Circular_kernel_3/segment_sphere_intersection_detail.png -text
+Circular_kernel_3/doc_tex/Circular_kernel_3_ref/Circle_on_sphere_type_3.tex -text
 Circular_kernel_3/doc_tex/Circular_kernel_3_ref/GeomFunctorsConstructions.tex -text
 Circular_kernel_3/doc_tex/Circular_kernel_3_ref/global_functions.tex -text
+Circular_kernel_3/examples/Circular_kernel_3/functor_compare_theta_3.cpp -text
 Circular_kernel_3/examples/Circular_kernel_3/functor_has_on_3.cpp -text
+Circular_kernel_3/include/CGAL/Circle_type.h -text
+Circular_kernel_3/include/CGAL/Circular_kernel_3/internal_function_compare_to_right_spherical_kernel.h -text
 Circular_kernel_3/include/CGAL/Spherical_kernel_intersections.h -text
 Circular_kernel_3/include/CGAL/global_functions_spherical_kernel_3.h -text
 Circular_kernel_3/test/Circular_kernel_3/CMakeLists.txt -text
 Circular_kernel_3/test/Circular_kernel_3/GNUmakefile -text
+Circular_kernel_3/test/Circular_kernel_3/include/CGAL/_test_functionalities_on_sphere.h -text
 Circular_kernel_3/test/Circular_kernel_3/makefile -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_Spherical_kernel.cpp -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_spherical_kernel_basics.cpp -text

@@ -5,7 +5,12 @@
 
 \ccRefConceptPage{SphericalKernel}
 
-	\subsubsection*{Functors}
+\subsubsection*{Object types}
+\ccRefConceptPage{SphericalKernel::CircularArc_3}\\
+\ccRefConceptPage{SphericalKernel::CircularArcPoint_3}\\
+\ccRefConceptPage{SphericalKernel::LineArc_3}\\
+  
+\subsubsection*{Functors}
 
 \ccRefConceptPage{SphericalKernel::ConstructPlane_3}\\
 \ccRefConceptPage{SphericalKernel::ConstructSphere_3}\\
@@ -13,7 +18,7 @@
 \ccRefConceptPage{SphericalKernel::ConstructCircle_3}\\
 \ccRefConceptPage{SphericalKernel::ConstructCircularArcPoint_3}\\
 \ccRefConceptPage{SphericalKernel::ConstructLineArc_3}\\
-\ccRefConceptPage{SphericalKernel::ConstructCircularArc_3}
+\ccRefConceptPage{SphericalKernel::ConstructCircularArc_3}\\
 
 \ccRefConceptPage{SphericalKernel::ConstructCircularMinVertex_3}\\
 \ccRefConceptPage{SphericalKernel::ConstructCircularMaxVertex_3}\\
@@ -26,7 +31,14 @@
 \ccRefConceptPage{SphericalKernel::CompareY_3}\\
 \ccRefConceptPage{SphericalKernel::CompareZ_3}\\
 \ccRefConceptPage{SphericalKernel::CompareXY_3}\\
-\ccRefConceptPage{SphericalKernel::CompareXYZ_3}
+\ccRefConceptPage{SphericalKernel::CompareXYZ_3}\\
+{%TAG SKOS
+\color{cyan}
+\ccRefConceptPage{SphericalKernel::CompareTheta_3}\\
+\ccRefConceptPage{SphericalKernel::CompareThetaZ_3}\\
+\ccRefConceptPage{SphericalKernel::CompareZAtTheta_3}\\
+\ccRefConceptPage{SphericalKernel::CompareZToRight_3}
+}%TAG SKOS
 
 \ccRefConceptPage{SphericalKernel::Equal_3}
 
@@ -36,6 +48,11 @@
 
 \ccRefConceptPage{SphericalKernel::DoIntersect_3}
 
+{%TAG SKOS
+\color{cyan}
+\ccRefConceptPage{SphericalKernel::IsThetaMonotone_3}
+}%TAG SKOS
+
 \ccRefConceptPage{SphericalKernel::BoundedSide_3}\\
 \ccRefConceptPage{SphericalKernel::HasOnBoundedSide_3}\\
 \ccRefConceptPage{SphericalKernel::HasOnUnboundedSide_3}
@@ -43,6 +60,11 @@
 \ccRefConceptPage{SphericalKernel::Intersect_3}
 
 \ccRefConceptPage{SphericalKernel::Split_3}
+
+{%TAG SKOS
+\color{cyan}
+\ccRefConceptPage{SphericalKernel::MakeThetaMonotone_3}
+}%TAG SKOS
 
 \ccRefConceptPage{SphericalKernel::ComputeCircularX_3}\\
 \ccRefConceptPage{SphericalKernel::ComputeCircularY_3}\\
@@ -63,12 +85,18 @@
 
 	\subsubsection*{Points}
 
-\ccRefIdfierPage{CGAL::Circular_arc_point_3<SphericalKernel>}
+\ccRefIdfierPage{CGAL::Circular_arc_point_3<SphericalKernel>}\\
 
 	\subsubsection*{Arcs}
 
 \ccRefIdfierPage{CGAL::Line_arc_3<SphericalKernel>}\\
-\ccRefIdfierPage{CGAL::Circular_arc_3<SphericalKernel>}
+\ccRefIdfierPage{CGAL::Circular_arc_3<SphericalKernel>}\\
+
+{%TAG SKOS
+\color{cyan}
+\subsubsection*{Constants and Enumerations}
+\ccRefIdfierPage{CGAL::Circle_type}
+}%TAG SKOS
 
 \section{Geometric Global Functions}
 
@@ -76,14 +104,37 @@
 \ccRefIdfierPage{CGAL::compare_y}\\
 \ccRefIdfierPage{CGAL::compare_z}\\
 \ccRefIdfierPage{CGAL::compare_xy}\\
-\ccRefIdfierPage{CGAL::compare_xyz}
+\ccRefIdfierPage{CGAL::compare_xyz}\\
+{%TAG SKOS
+\color{cyan}
+\ccRefIdfierPage{CGAL::compare_theta}\\
+\ccRefIdfierPage{CGAL::compare_theta_z}
+}%TAG SKOS
+
+{%TAG SKOS
+\color{cyan}
+\ccRefIdfierPage{CGAL::is_theta_monotone}
+}%TAG SKOS
+
+{%TAG SKOS
+\color{cyan}
+\ccRefIdfierPage{CGAL::classify}
+}%TAG SKOS
 
 \ccRefIdfierPage{CGAL::x_extremal_point}\\
 \ccRefIdfierPage{CGAL::y_extremal_point}\\
 \ccRefIdfierPage{CGAL::z_extremal_point}\\
+{%TAG SKOS
+\color{cyan}
+\ccRefIdfierPage{CGAL::theta_extremal_point}\\
+}%TAG SKOS
 \ccRefIdfierPage{CGAL::x_extremal_points}\\
 \ccRefIdfierPage{CGAL::y_extremal_points}\\
-\ccRefIdfierPage{CGAL::z_extremal_points}
+\ccRefIdfierPage{CGAL::z_extremal_points}\\
+{%TAG SKOS
+\color{cyan}
+\ccRefIdfierPage{CGAL::theta_extremal_points}
+}%TAG SKOS
 
 \ccRefIdfierPage[Kernel::do_intersect]{CGAL::do_intersect}\\
 \ccRefIdfierPage[Kernel::intersection]{CGAL::intersection}

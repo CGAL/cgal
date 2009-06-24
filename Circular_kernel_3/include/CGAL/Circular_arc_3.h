@@ -66,9 +66,13 @@ namespace CGAL {
       : RCircular_arc_3(typename R::Construct_circular_arc_3()(c,s,t))
       {}
 
-    Circular_arc_3(const Circle_3& c)
+    explicit Circular_arc_3(const Circle_3& c)
       : RCircular_arc_3(typename R::Construct_circular_arc_3()(c))
       {}
+        
+    Circular_arc_3(const Circle_3& c,const Circular_arc_point_3& pt)
+      : RCircular_arc_3(typename R::Construct_circular_arc_3()(c,pt))
+      {}        
 
     // Not Documented
     Circular_arc_3(const Circle_3 &c, 

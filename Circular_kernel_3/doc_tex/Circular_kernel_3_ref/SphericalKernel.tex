@@ -31,6 +31,8 @@ and to define the following geometric objects
 
 \ccNestedType{Point_3}{Model of \ccc{Kernel::Point_3}.}
 \ccGlue
+\ccNestedType{Vector_3}{Model of \ccc{Kernel::Vector_3}.}
+\ccGlue
 \ccNestedType{Line_3}{Model of \ccc{Kernel::Line_3}.}
 \ccGlue
 \ccNestedType{Plane_3}{Model of \ccc{Kernel::Plane_3}.}
@@ -44,6 +46,9 @@ and to define the following geometric objects
 \ccNestedType{Circular_arc_3}{Model of \ccc{SphericalKernel::CircularArc_3}.}
 \ccGlue
 \ccNestedType{Circular_arc_point_3}{Model of \ccc{SphericalKernel::CircularArcPoint_3}.}
+
+
+
 
 Moreover, a model of \ccc{SphericalKernel} must provide predicates, 
 constructions and other functionalities. 
@@ -59,7 +64,17 @@ constructions and other functionalities.
 \ccNestedType{Compare_xy_3}{Model of \ccc{SphericalKernel::CompareXY_3}.}
 \ccGlue
 \ccNestedType{Compare_xyz_3}{Model of \ccc{SphericalKernel::CompareXYZ_3}.}
-
+\ccGlue
+{%TAG SKOS
+\color{cyan}
+\ccNestedType{Compare_theta_3}{Model of \ccc{SphericalKernel::CompareTheta_3}.}
+\ccGlue
+\ccNestedType{Compare_theta_z_3}{Model of \ccc{SphericalKernel::CompareThetaZ_3}.}
+\ccGlue
+\ccNestedType{Compare_z_at_theta_3}{Model of \ccc{SphericalKernel::CompareZAtTheta_3}.}
+\ccGlue
+\ccNestedType{Compare_z_to_right_3}{Model of \ccc{SphericalKernel::CompareZToRight_3}.}
+}%TAG SKOS
 
 \ccNestedType{Equal_3}{Model of \ccc{SphericalKernel::Equal_3}.}
 
@@ -74,6 +89,11 @@ constructions and other functionalities.
 \ccNestedType{Has_on_bounded_side_3}{Model of \ccc{SphericalKernel::HasOnBoundedSide_3}.}
 \ccGlue
 \ccNestedType{Has_on_unbounded_side_3}{Model of \ccc{SphericalKernel::HasOnUnboundedSide_3}.}
+
+{%TAG SKOS
+\color{cyan}
+\ccNestedType{Is_theta_monotone_3}{Model of \ccc{SphericalKernel::IsThetaMonotone_3}.}
+}%TAG SKOS
 
 \ccHeading{Constructions}
 
@@ -91,7 +111,6 @@ constructions and other functionalities.
 \ccGlue
 \ccNestedType{Construct_circular_arc_point_3}{Model of \ccc{SphericalKernel::ConstructCircularArcPoint_3}.}
 
-
 \ccNestedType{Construct_circular_min_vertex_3}{Model of \ccc{SphericalKernel::ConstructCircularMinVertex_3}.}
 \ccGlue
 \ccNestedType{Construct_circular_max_vertex_3}{Model of \ccc{SphericalKernel::ConstructCircularMaxVertex_3}.}
@@ -105,6 +124,11 @@ constructions and other functionalities.
 \ccNestedType{Intersect_3}{Model of \ccc{SphericalKernel::Intersect_3}.}
 
 \ccNestedType{Split_3}{Model of \ccc{SphericalKernel::Split_3}.}
+
+{%TAG SKOS
+\color{cyan}
+\ccNestedType{Make_theta_monotone_3}{Model of \ccc{SphericalKernel::MakeThetaMonotone_3}.}
+}%TAG SKOS
 
 \ccHeading{Computations}
 
@@ -132,8 +156,21 @@ the suffix \ccc{_object} appended. For example, for the function object
 \ccc{SphericalKernel::Construct_circular_arc_3} the following member function 
 must exist: 
 
-\ccCreationVariable{ck}
+\ccCreationVariable{sk}
 \ccMethod{Construct_circular_arc_3 construct_circular_arc_3_object() const;}{}
+
+{%TAG SKOS
+\color{magenta}
+For operations on a given sphere, a \textit{context} sphere must be provided to the following functions:
+
+\ccMethod{Compare_theta_3 compare_theta_3_object(const Sphere_3& sphere) const;}{}
+\ccMethod{Compare_theta_z_3 compare_theta_z_3_object(const Sphere_3& sphere) const;}{}
+\ccMethod{Compare_z_at_theta_3 compare_z_at_theta_3_object(const Sphere_3& sphere) const;}{}
+\ccMethod{Compare_z_to_right_3 compare_z_to_right_3_object(const Sphere_3& sphere) const;}{}
+\ccMethod{Make_theta_monotone_3 make_theta_monotone_3_object(const Sphere_3& sphere) const;}{}
+\ccMethod{Is_theta_monotone_3 is_theta_monotone_3_object(const Sphere_3& sphere) const;}{}
+}%TAG SKOS
+
 
 \ccSeeAlso
 

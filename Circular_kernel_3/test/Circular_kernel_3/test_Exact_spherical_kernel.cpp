@@ -24,6 +24,7 @@
 #include <CGAL/_test_sphere_predicates.h>
 #include <CGAL/_test_sphere_constructions.h>
 #include <CGAL/_test_sphere_compute.h>
+#include <CGAL/_test_functionalities_on_sphere.h>
 
 int main()
 { 
@@ -31,6 +32,7 @@ int main()
   _test_spherical_kernel_predicates(sk1);
   _test_spherical_kernel_construct(sk1); 
   _test_spherical_kernel_compute(sk1);
+  test_functionalities_on_a_reference_sphere<CGAL::Exact_spherical_kernel_3>();
   return 0;
 }
 

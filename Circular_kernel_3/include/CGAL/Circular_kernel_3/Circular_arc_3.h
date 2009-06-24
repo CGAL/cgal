@@ -133,7 +133,7 @@ namespace CGAL {
           CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>(s,t,c.center());
       }
 
-      // This is the only case we want that s == t
+      // This is the one of the two cases we want that s == t
       // that makes the is_full() correct and complete
       Circular_arc_3(const Circle_3 &c)
       : _full(true)
@@ -153,6 +153,12 @@ namespace CGAL {
         */
       }
 
+      // This is the second case where we want that s == t
+      // that makes the is_full() correct and complete
+      Circular_arc_3(const Circle_3 &c,const Circular_arc_point_3& point)
+      : base(Rep(c,point,point)),_full(true)
+      {CGAL_kernel_precondition(SK().has_on_3_object()(c,point));}
+      
       Circular_arc_3(const Circle_3 &c, 
                      const Sphere_3 &s1, bool less_xyz_s1,
                      const Sphere_3 &s2, bool less_xyz_s2) 

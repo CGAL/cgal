@@ -34,6 +34,7 @@
 #include <CGAL/Polynomials_2_3.h>
 #include <CGAL/Polynomials_for_line_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/_test_functionalities_on_sphere.h>
 
 int pipo(int r){return r;}
 
@@ -47,5 +48,6 @@ int main()
   _test_spherical_kernel_predicates(sk1);
   _test_spherical_kernel_construct(sk1); 
   _test_spherical_kernel_compute(sk1);
+  test_functionalities_on_a_reference_sphere<SK1>();
   return 0;
 }

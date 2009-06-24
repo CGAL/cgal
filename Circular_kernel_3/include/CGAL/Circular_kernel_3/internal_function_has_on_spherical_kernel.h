@@ -29,16 +29,6 @@ namespace CGAL {
     template <class SK>
     inline
     bool
-    has_on(const typename SK::Sphere_with_radius_3 &a, 
-           const typename SK::Point_3 &p)
-    { 
-      //~ return a.rep().has_on_boundary(p);
-      return a.has_on_boundary(p);
-    }   
-    
-    template <class SK>
-    inline
-    bool
     has_on(const typename SK::Sphere_3 &a, 
            const typename SK::Circular_arc_point_3 &p)
     { 
@@ -48,14 +38,6 @@ namespace CGAL {
       return (Algebraic_kernel().sign_at_object()(equation,p.rep().coordinates()) == ZERO);
     }
     
-    template <class SK>
-    inline
-    bool
-    has_on(const typename SK::Sphere_with_radius_3 &a, 
-           const typename SK::Circular_arc_point_on_reference_sphere_3 &p){
-      return has_on<SK>(static_cast<const typename SK::Sphere_3&>(a),static_cast<const typename SK::Circular_arc_point_3&>(p));
-    }
-
     template <class SK>
     inline
     bool
@@ -279,7 +261,7 @@ namespace CGAL {
     has_on(const typename SK::Sphere_3 &a, 
            const typename SK::Circular_arc_3 &p)
     { 
-      return has_on<SK>(a,p.supporting_circle());
+      return a.has_on(p.supporting_circle());
     }
 
     template <class SK>
@@ -288,7 +270,7 @@ namespace CGAL {
     has_on(const typename SK::Plane_3 &a, 
            const typename SK::Circular_arc_3 &p)
     { 
-      return has_on<SK>(a,p.supporting_circle());
+      return a.has_on(p.supporting_circle());
     }
 
     template <class SK>

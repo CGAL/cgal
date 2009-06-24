@@ -62,6 +62,13 @@
   CGAL_Spherical_Kernel_pred(Bounded_side_3, bounded_side_3_object)
   CGAL_Spherical_Kernel_pred(Do_overlap_3, do_overlap_3_object)
   CGAL_Spherical_Kernel_pred(Do_intersect_3, do_intersect_3_object)
+  CGAL_Spherical_Kernel_pred_on_sphere(Is_theta_monotone_3, is_theta_monotone_3_object)
+  CGAL_Spherical_Kernel_pred_on_sphere(Compare_theta_3, compare_theta_3_object)
+  CGAL_Spherical_Kernel_pred_on_sphere(Compare_theta_z_3, compare_theta_z_3_object)
+  CGAL_Spherical_Kernel_pred_on_sphere(Make_theta_monotone_3, make_theta_monotone_3_object)
+  CGAL_Spherical_Kernel_pred_on_sphere(Compare_z_to_right_3, compare_z_to_right_3_object)
+  CGAL_Spherical_Kernel_pred_on_sphere(Compare_z_at_theta_3, compare_z_at_theta_3_object)
 
 #undef CGAL_Spherical_Kernel_pred
 #undef CGAL_Spherical_Kernel_cons
+#undef CGAL_Spherical_Kernel_pred_on_sphere

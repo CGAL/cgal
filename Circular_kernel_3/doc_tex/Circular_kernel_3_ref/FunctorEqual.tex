@@ -21,16 +21,17 @@ An object \ccVar\ of this type must provide in addition:
 	(const SphericalKernel::Circular_arc_3 &a0,
          const SphericalKernel::Circular_arc_3 &a1);}
 {For two arcs. Two arcs are equal, iff their non-oriented
-  supporting planes are equal, if the centers and squared
-  radii of their respective supporting circles are equal, and if their
+  supporting planes are equal, and the centers and squared
+  radii of their respective supporting circles are equal, and their
   sources and targets are equal.}
+
 
 \ccMemberFunction{bool operator()
 	(const SphericalKernel::Line_arc_3 &a0,
          const SphericalKernel::Line_arc_3 &a1);}
 {For two segments. Two segments are equal, iff their non-oriented
   supporting lines are equal (i.e. they define the same set of
-  points), and if their endpoints are the same.}
+  points), and their endpoints are the same.}
 
 \ccSeeAlso
 

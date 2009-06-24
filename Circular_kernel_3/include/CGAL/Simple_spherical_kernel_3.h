@@ -33,14 +33,13 @@
 #include <CGAL/Circular_kernel_3/Circular_arc_3.h>
 #include <CGAL/Circular_arc_3.h>
 
-#include <CGAL/global_functions_spherical_kernel_3.h>
-
 #include <CGAL/Circular_kernel_3/function_objects_polynomial_sphere.h>
 
 #include <CGAL/Circular_kernel_3/get_equation_object_on_curved_kernel_3.h>
 
 #include <CGAL/Spherical_kernel_type_equality_wrapper.h>
 
+#include <CGAL/global_functions_spherical_kernel_3.h>
 
 namespace CGAL {
   namespace CGALi {
@@ -60,7 +59,10 @@ namespace CGAL {
         #define CGAL_Spherical_Kernel_pred(Y,Z) typedef SphericalFunctors::Y<SphericalKernel> Y; \
 	    Y Z() const { return Y(); }
         #define CGAL_Spherical_Kernel_cons(Y,Z) CGAL_Spherical_Kernel_pred(Y,Z)
-	
+
+        #define CGAL_Spherical_Kernel_pred_on_sphere(Y,Z) typedef SphericalFunctors::Y<SphericalKernel> Y; \
+	    Y Z(const CGAL::Sphere_3<SphericalKernel>& S) const { return Y(S); }
+        
         #include <CGAL/Circular_kernel_3/interface_macros.h>
       };
     

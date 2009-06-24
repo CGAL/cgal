@@ -6,7 +6,7 @@
 
 \ccc{Kernel::ConstructPlane_3}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 \ccMemberFunction{SphericalKernel::Plane_3 operator()
 	(const SphericalKernel::Circular_arc_3 &a);}
@@ -28,13 +28,11 @@ A model \ccVar\ of this type must provide:
 
 \ccc{Kernel::ConstructSphere_3}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 \ccMemberFunction{SphericalKernel::Sphere_3
 	operator()(const SphericalKernel::Circular_arc_3 & a);}
-{Returns the sphere having the supporting circle of \ccc{a} as
-  diameter (ie, returns the diametral sphere of the supporting circle
-  of the arc).}
+{Returns the diametral sphere of the supporting circle of arc \ccc{a}.}
 
 \ccMemberFunction{SphericalKernel::Sphere_3 operator()
 	(const SphericalKernel::Polynomial_2_3 &p);}
@@ -52,7 +50,7 @@ A model \ccVar\ of this type must provide:
 
 \ccc{Kernel::ConstructLine_3}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 \ccMemberFunction{SphericalKernel::Line_3 operator()
 	(const SphericalKernel::Line_arc_3 &s);}
@@ -70,7 +68,7 @@ A model \ccVar\ of this type must provide:
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructCircle_3}
 \ccCreationVariable{fo}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 \ccMemberFunction{SphericalKernel::Circle_3 operator()
 	(const SphericalKernel::Circular_arc_3 &a);}
@@ -82,13 +80,15 @@ A model \ccVar\ of this type must provide:
 
 \ccSeeAlso
 
-\ccRefIdfierPage{SphericalKernel::GetEquation}
+\ccRefIdfierPage{SphericalKernel::GetEquation}\\
+
 
 \end{ccRefFunctionObjectConcept}
+
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructCircularArcPoint_3}
 \ccCreationVariable{fo}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 \ccMemberFunction{SphericalKernel::Circular_arc_point_3 operator()
 	(const SphericalKernel::Root_for_spheres_2_3 & r);}
@@ -99,10 +99,11 @@ A model \ccVar\ of this type must provide:
 {}
 
 \end{ccRefFunctionObjectConcept}
+
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructLineArc_3}
 \ccCreationVariable{fo}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 \ccMemberFunction{SphericalKernel::Line_arc_3 operator()
 	(const SphericalKernel::Line_3 &l,
@@ -131,7 +132,7 @@ is \ccc{p} and whose target is \ccc{q}.
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructCircularArc_3}
 \ccCreationVariable{fo}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 \ccMemberFunction{SphericalKernel::Circular_arc_3 operator()
 	(const SphericalKernel::Circle_3 &c);}
@@ -142,7 +143,7 @@ A model \ccVar\ of this type must provide:
 	const SphericalKernel::Circular_arc_point_3 &p,
 	const SphericalKernel::Circular_arc_point_3 &q);}
 {Constructs the circular arc supported by \ccc{c}, whose source and target 
-are respectively \ccc{p} and \ccc{q}.
+are \ccc{p} and \ccc{q}, respectively.
 \ccPrecond{\ccc{p} and \ccc{q} lie on \ccc{c} and they are different.}}
 
 The circular arc constructed from a circle, a source, and a target, is
@@ -152,10 +153,10 @@ seen from the side of the plane of the circle pointed by its \textit{positive} n
 vectors.
 
 In this definition, we say that a normal vector (a,b,c) is \textit{positive} if 
-(a,b,c)>(0,0,0) (i.e. $(a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)$).
+$(a,b,c)>(0,0,0)$ (i.e. $(a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)$).
 
 
-\ccConstructor{SphericalKernel::Circular_arc_3 operator()
+\ccMemberFunction{SphericalKernel::Circular_arc_3 operator()
                  (const SphericalKernel::Point_3 &p,
                  const SphericalKernel::Point_3 &q,
                  const SphericalKernel::Point_3 &r);}
@@ -172,11 +173,12 @@ In this definition, we say that a normal vector (a,b,c) is \textit{positive} if
 \ccPrecond{\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}}
 
 \end{ccRefFunctionObjectConcept}
+
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructCircularMinVertex_3} 
 
 \ccCreationVariable{fo}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 %\ccMemberFunction{SphericalKernel::Circular_arc_point_3 operator()
 %	(const SphericalKernel::Circular_arc_3 & c);}
@@ -193,7 +195,7 @@ smallest coordinates.}
 
 \ccCreationVariable{fo}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 %\ccMemberFunction{SphericalKernel::Circular_arc_point_3 operator()
 %	(const SphericalKernel::Circular_arc_3 & c);}
@@ -210,11 +212,11 @@ largest coordinates.}
 
 \ccCreationVariable{fo}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 \ccMemberFunction{SphericalKernel::Circular_arc_point_3 operator()
-	(const SphericalKernel::Circular_arc_3 & c);}
-{Constructs the source vertex of \ccc{c}.}
+	(const SphericalKernel::Circular_arc_3 & a);}
+{Constructs the source vertex of \ccc{a}.}
 
 \ccMemberFunction{SphericalKernel::Circular_arc_point_3 operator()
 	(const SphericalKernel::Line_arc_3 & l);}
@@ -225,11 +227,11 @@ A model \ccVar\ of this type must provide:
 
 \ccCreationVariable{fo}
 
-A model \ccVar\ of this type must provide:
+A model \ccVar\ of this concept must provide:
 
 \ccMemberFunction{SphericalKernel::Circular_arc_point_3 operator()
-	(const SphericalKernel::Circular_arc_3 & c);}
-{Constructs the target vertex of \ccc{c}.}
+	(const SphericalKernel::Circular_arc_3 & a);}
+{Constructs the target vertex of \ccc{a}.}
 
 \ccMemberFunction{SphericalKernel::Circular_arc_point_3 operator()
 	(const SphericalKernel::Line_arc_3 & l);}
@@ -240,12 +242,8 @@ A model \ccVar\ of this type must provide:
 
 \ccCreationVariable{fo}
 
-A model \ccVar\ of this type must provide operators to construct 
+A model \ccVar\ of this concept must provide operators to construct 
 a bounding box of geometric objects:
-
-%\ccMemberFunction{CGAL::Bbox_3 operator()
-%	(const SphericalKernel::Circle_3 & p);}
-%{}
 
 \ccMemberFunction{CGAL::Bbox_3 operator()
 	(const SphericalKernel::Circular_arc_point_3 & p);}
@@ -256,7 +254,7 @@ a bounding box of geometric objects:
 {}
 
 \ccMemberFunction{CGAL::Bbox_3 operator()
-	(const SphericalKernel::Circular_arc_3 & c);}
+	(const SphericalKernel::Circular_arc_3 & a);}
 {}
 
 \end{ccRefFunctionObjectConcept}

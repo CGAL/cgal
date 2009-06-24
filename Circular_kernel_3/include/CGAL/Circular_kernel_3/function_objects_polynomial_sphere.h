@@ -35,6 +35,7 @@
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
 #include <CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_spherical_kernel.h>
+#include <CGAL/Circular_kernel_3/internal_function_compare_to_right_spherical_kernel.h>
 #include <CGAL/Object.h>
 
 
@@ -833,6 +834,10 @@ template < class SK > \
     { return Rep(c); }
 
     result_type
+    operator()(const Circle_3 &c,const Circular_arc_point_3& pt) const
+    { return Rep(c,pt); }    
+    
+    result_type
     operator()(const Circle_3 &l,
 	       const Circular_arc_point_3 &s,
 	       const Circular_arc_point_3 &t) const
@@ -1505,6 +1510,9 @@ template < class SK > \
 
   template <class SK>
   class Compute_approximate_squared_length_3
+  #ifndef CGAL_CFG_MATCHING_BUG_6
+    : public SK::Linear_kernel::Compute_approximate_squared_length_3
+#endif
   {
     typedef typename SK::Circle_3                  Circle_3;
     typedef typename SK::Circular_arc_3            Circular_arc_3;
@@ -1513,7 +1521,14 @@ template < class SK > \
   public:
 
     typedef double result_type;
-
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using SK::Linear_kernel::Compute_approximate_squared_length_3::operator();
+#else
+    result_type 
+    operator() (const Circle_3 & c) const
+    { return CGAL_PI * CGAL_PI * 4.0 * to_double(c.squared_radius()); }
+#endif  
+  
     result_type operator() (const Circular_arc_3 & c) const
     { return c.rep().approximate_squared_length(); }
 
@@ -1682,6 +1697,145 @@ template < class SK > \
     // We can maybe optimize it doing the operator() for point_3 too
 
   };
+  
+  template <class SK>
+  class Is_theta_monotone_3{
+    typename SK::Sphere_3 sphere_;
+  public:
+    typedef bool result_type;
+  
+    Is_theta_monotone_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
+  
+    result_type 
+    operator()(const typename SK::Circular_arc_3& arc) const {
+      return SphericalFunctors::is_theta_monotone_3<SK>(arc,sphere_);
+    }
+  };
+
+  template < class SK > 
+  class Compare_theta_3{
+    typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
+    typedef typename SK::Vector_3 Vector_3;
+    
+    typename SK::Sphere_3 sphere_;
+    
+  public:
+    typedef  CGAL::Comparison_result result_type;
+  
+    Compare_theta_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
+  
+    result_type
+    operator() (const Circular_arc_point_3 &p0,
+                const Circular_arc_point_3 &p1) const
+    { return SphericalFunctors::compare_theta_of_pts<SK>(p0, p1,sphere_); }
+    
+    result_type
+    operator() (const Circular_arc_point_3 &p,
+                const Vector_3 &v) const
+    { return SphericalFunctors::compare_theta_pt_vector<SK>(p,v,sphere_); }
+
+    result_type
+    operator() (const Vector_3 &m1,
+                const Vector_3 &m2) const
+    { return SphericalFunctors::compare_theta_vectors<SK>(m1,m2); }
+    
+    result_type
+    operator() (const Vector_3 &v,const Circular_arc_point_3 &p0) const
+    { return CGAL::opposite( SphericalFunctors::compare_theta_pt_vector<SK>(p0, v,sphere_) ); }
+  };
+  
+  template < class SK > 
+  class Compare_theta_z_3{
+    typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
+    typename SK::Sphere_3 sphere_;
+    
+  public:
+    typedef  CGAL::Comparison_result result_type;
+  
+    Compare_theta_z_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
+  
+    result_type
+    operator() (const Circular_arc_point_3 &p0,
+                const Circular_arc_point_3 &p1,bool decreasing_z=false) const
+    { return SphericalFunctors::compare_theta_z<SK>(p0, p1,sphere_,decreasing_z); }
+    
+  };
+
+  template < class SK > 
+  class Make_theta_monotone_3{
+    typename SK::Sphere_3 sphere_;
+    
+  public:
+    Make_theta_monotone_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
+  
+    template <class OutputIterator>
+    OutputIterator
+    operator() (const typename SK::Circle_3 &circle,OutputIterator out_it) const
+    { return SphericalFunctors::make_circle_theta_monotone<SK>(circle,sphere_,out_it); }
+    
+    template <class OutputIterator>
+    OutputIterator
+    operator() (const typename SK::Circular_arc_3 &arc,OutputIterator out_it) const
+    { return SphericalFunctors::make_circular_arc_theta_monotone<SK>(arc,sphere_,out_it); }    
+    
+  };
+  
+  template <class SK>
+  class Compare_z_to_right_3{
+    typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
+    typedef typename SK::Circular_arc_3 Circular_arc_3;
+    typename SK::Sphere_3 sphere_;
+    
+  public:
+    typedef  CGAL::Comparison_result result_type;
+    Compare_z_to_right_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
+      
+    result_type
+    operator()(const Circular_arc_3& arc1,const Circular_arc_3& arc2,const Circular_arc_point_3& pt,bool do_to_the_left=false){
+      CGAL_kernel_precondition(SK().has_on_3_object()(sphere_,arc1));
+      CGAL_kernel_precondition(SK().has_on_3_object()(sphere_,arc2));
+      CGAL_kernel_precondition(SphericalFunctors::is_theta_monotone_3<SK>(arc1,sphere_));
+      CGAL_kernel_precondition(SphericalFunctors::is_theta_monotone_3<SK>(arc2,sphere_));
+      CGAL_kernel_precondition(SK().has_on_3_object()(arc1,pt));
+      CGAL_kernel_precondition(SK().has_on_3_object()(arc2,pt));
+      CGAL_kernel_precondition(classify_circle_3<SK>(arc1.supporting_circle(),sphere_)!=NORMAL || pt.z()!=extremal_points_z_coordinate<SK>(arc1.supporting_circle(),sphere_));
+      CGAL_kernel_precondition(classify_circle_3<SK>(arc2.supporting_circle(),sphere_)!=NORMAL || pt.z()!=extremal_points_z_coordinate<SK>(arc2.supporting_circle(),sphere_));
+      
+      if (pt.y() == sphere_.center().y() && pt.x() > sphere_.center().x()) //case theta = 0
+        return 
+          Compare_to_right_of_arcs<SK,Trait_for_cmp_tgt_theta_0<SK> >( Trait_for_cmp_tgt_theta_0<SK>(pt.coordinates(),sphere_),sphere_ )
+            (arc1,arc2,do_to_the_left);
+      else //general case
+        return
+          Compare_to_right_of_arcs<SK,Trait_for_cmp_tgt<SK> >( Trait_for_cmp_tgt<SK>(pt.coordinates(),sphere_),sphere_ )
+            (arc1,arc2,do_to_the_left);
+    }
+  };
+  
+  template <class SK>
+  class Compare_z_at_theta_3{
+     typename SK::Sphere_3 sphere_;   
+    
+  public:
+    typedef  CGAL::Comparison_result result_type;
+    Compare_z_at_theta_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
+     
+    result_type
+    operator()( const typename SK::Circular_arc_3& arc1,
+                const typename SK::Circular_arc_3& arc2,
+                const typename SK::Vector_3& m) const
+    {
+      return SphericalFunctors::compare_z_at_theta_arcs<SK>(arc1,arc2,m,sphere_);
+    }
+
+    result_type
+    operator()(const typename SK::Circular_arc_point_3& point,
+               const typename SK::Circular_arc_3& arc) const
+    {
+      return SphericalFunctors::compare_z_at_theta_pt_arc<SK>(point,arc,sphere_);
+    }
+  };
+  
 
 } // namespace SphericalFunctors
 

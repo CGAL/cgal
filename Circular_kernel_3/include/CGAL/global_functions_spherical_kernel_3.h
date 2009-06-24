@@ -39,7 +39,7 @@ template <class SK, class OutputIterator>
 OutputIterator
 x_extremal_points(const Circle_3<SK> & c, OutputIterator res)
 {
-  return SphericalFunctors::x_extremal_point<SK>(c,res);
+  return SphericalFunctors::x_extremal_points<SK>(c,res);
 }
 
 template <class SK>
@@ -53,7 +53,7 @@ template <class SK, class OutputIterator>
 OutputIterator
 y_extremal_points(const Circle_3<SK> & c, OutputIterator res)
 {
-  return SphericalFunctors::y_extremal_point<SK>(c,res);
+  return SphericalFunctors::y_extremal_points<SK>(c,res);
 }
 
 template <class SK>
@@ -81,7 +81,7 @@ template <class SK, class OutputIterator>
 OutputIterator
 x_extremal_points(const Sphere_3<SK> & c, OutputIterator res)
 {
-  return SphericalFunctors::x_extremal_point<SK>(c,res);
+  return SphericalFunctors::x_extremal_points<SK>(c,res);
 }
 
 template <class SK>
@@ -95,7 +95,7 @@ template <class SK, class OutputIterator>
 OutputIterator
 y_extremal_points(const Sphere_3<SK> & c, OutputIterator res)
 {
-  return SphericalFunctors::y_extremal_point<SK>(c,res);
+  return SphericalFunctors::y_extremal_points<SK>(c,res);
 }
 
 template <class SK>
@@ -109,7 +109,7 @@ template <class SK, class OutputIterator>
 OutputIterator
 z_extremal_points(const Sphere_3<SK> & c, OutputIterator res)
 {
-  return SphericalFunctors::z_extremal_point<SK>(c,res);
+  return SphericalFunctors::z_extremal_points<SK>(c,res);
 }
 
 template< class CK >
@@ -150,6 +150,69 @@ CGAL::Comparison_result
 compare_xyz(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
 {
   return CK().compare_xyz_3_object()(p, q);
+}
+
+template <class SK>
+CGAL::Circle_type
+classify(const Circle_3<SK>& c,const Sphere_3<SK> & s)
+{
+  return SphericalFunctors::classify_circle_3<SK>(c,s);
+}
+
+template <class SK>
+bool
+is_theta_monotone(const Circular_arc_3<SK>& arc,const Sphere_3<SK> & s)
+{
+  return SphericalFunctors::is_theta_monotone_3<SK>(arc,s);
+}
+
+template <class SK>
+CGAL::Comparison_result
+compare_theta(const Circular_arc_point_3<SK>& pt1,const Circular_arc_point_3<SK>& pt2,const Sphere_3<SK>& sphere)
+{
+  return SphericalFunctors::compare_theta_of_pts<SK>(pt1,pt2,sphere);
+}
+
+template <class SK>
+CGAL::Comparison_result
+compare_theta(const Circular_arc_point_3<SK>& pt,const Vector_3<SK>& v,const Sphere_3<SK>& sphere)
+{
+  return SphericalFunctors::compare_theta_pt_vector<SK>(pt,v,sphere);
+}
+
+template <class SK>
+CGAL::Comparison_result
+compare_theta(const Vector_3<SK>& v,const Circular_arc_point_3<SK>& pt,const Sphere_3<SK>& sphere)
+{
+  return CGAL::opposite(SphericalFunctors::compare_theta_pt_vector<SK>(pt,v,sphere));
+}
+
+
+template <class SK>
+CGAL::Comparison_result
+compare_theta(const Vector_3<SK>&m1,const Vector_3<SK>&m2)
+{ return SphericalFunctors::compare_theta_vectors<SK>(m1,m2); }
+
+template <class SK>
+CGAL::Comparison_result
+compare_theta_z(const Circular_arc_point_3<SK>& pt1,const Circular_arc_point_3<SK>& pt2,const Sphere_3<SK>& sphere)
+{
+  return SphericalFunctors::compare_theta_z<SK>(pt1,pt2,sphere);
+}
+
+
+template <class SK>
+typename SK::Circular_arc_point_3
+theta_extremal_point(const Circle_3<SK>& circle,const Sphere_3<SK>& sphere,bool is_smallest)
+{
+  return SphericalFunctors::theta_extremal_point<SK>(circle,sphere,is_smallest);
+}
+
+template <class SK,class OutputIterator>
+OutputIterator
+theta_extremal_points(const Circle_3<SK>& circle,const Sphere_3<SK>& sphere,OutputIterator out_it)
+{
+  return SphericalFunctors::theta_extremal_points<SK>(circle,sphere,out_it);
 }
 
 CGAL_END_NAMESPACE

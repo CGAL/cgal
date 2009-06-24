@@ -28,9 +28,9 @@ where \ccc{Type1} and \ccc{Type2} can be respectively:
 \ccc{SphericalKernel::Plane_3}, & \ccc{SphericalKernel::Line_arc_3}\\
 \ccc{SphericalKernel::Line_3} & \\
 \hline
-\ccc{SphericalKernel::Plane_3}, & \ccc{SphericalKernel::Circular_arc_3} \\
+\ccc{SphericalKernel::Sphere_3}, & \ccc{SphericalKernel::Circular_arc_3} \\
 \ccc{SphericalKernel::Circle_3}, or & \\
-\ccc{SphericalKernel::Sphere_3} & \\
+\ccc{SphericalKernel::Plane_3} & \\
 \hline
 \end{tabular}
 
@@ -79,14 +79,13 @@ An object \ccVar\ of this type must provide:
 {determines if two geometric objects of type Type1 and Type2 intersect or not.}
 
 for all pairs \ccc{Type1} and \ccc{Type2}, where the types 
-\ccc{Type1} and \ccc{Type2} can be any of the following:
+\ccc{Type1} and \ccc{Type2} can be  either, any of the following:
 \begin{itemize}
 \item {} \ccc{SphericalKernel::Plane_3}
 \item {} \ccc{SphericalKernel::Line_3}
 \item {} \ccc{SphericalKernel::Line_arc_3}
 \item {} \ccc{SphericalKernel::Sphere_3}
 \item {} \ccc{SphericalKernel::Circle_3}
-\item {} \ccc{SphericalKernel::Circular_arc_3}
 \end{itemize} 
 
 \ccSeeAlso
@@ -178,3 +177,33 @@ An object \ccVar\ of this type must provide:
 \ccRefIdfierPage{SphericalKernel::HasOnBoundedSide_3}
 
 \end{ccRefFunctionObjectConcept}
+
+
+{\color{cyan}%TAG SKOS
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::IsThetaMonotone_3} 
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide: 
+
+% \ccConstructor{IsThetaMonotone_3(const Sphere_3 &sphere)}
+% {Constructs a functor \ccVar\ to test if an arc is $\theta$-monotone relatively to \ccc{sphere}.}
+
+\ccMemberFunction{bool operator()
+	(const SphericalKernel::Circular_arc_3 &a);}
+{Tests whether the arc $a$ is $\theta$-monotone, i.e. the intersection of
+any meridian anchored at the poles of {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::is_theta_monotone_3_object}} % TAG SKOS
+and the arc $a$ is reduced to at most one point in general, and two points if a pole of that sphere is
+an endpoint of \ccc{a}. Note that a bipolar circle has no such arcs.
+\ccPrecond{\ccc{a} lies on {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::is_theta_monotone_3_object}},
+and the supporting circle of \ccc{a} is not bipolar.} % TAG SKOS
+}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::MakeThetaMonotone_3}
+
+
+\end{ccRefFunctionObjectConcept}
+}%TAG SKOS

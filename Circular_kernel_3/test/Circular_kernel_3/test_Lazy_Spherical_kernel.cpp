@@ -33,6 +33,8 @@
 #include <CGAL/Polynomials_2_3.h>
 #include <CGAL/Polynomials_for_line_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/_test_functionalities_on_sphere.h>
+
 
 int pipo(int r){return r;}
 
@@ -42,9 +44,11 @@ int main()
   typedef Linear_k1::FT FT;
   typedef CGAL::Algebraic_kernel_for_spheres_2_3<FT>          Algebraic_k1;
   typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>    SK1;
+  
   SK1 sk1;
   _test_spherical_kernel_predicates(sk1);
   _test_spherical_kernel_construct(sk1); 
   _test_spherical_kernel_compute(sk1);
+  test_functionalities_on_a_reference_sphere<SK1>();
   return 0;
 }
