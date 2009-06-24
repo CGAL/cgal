@@ -45,16 +45,6 @@ private:
   // Base class
   typedef std::deque<UI_point_3<Gt> > Base;
 
-  // Auxiliary class to build a normals iterator
-  template <class Node>
-  struct Project_normal {
-    typedef Node                  argument_type;
-    typedef typename Node::Vector Vector;
-    typedef Vector                result_type;
-    Vector&       operator()(Node& x)       const { return x.normal(); }
-    const Vector& operator()(const Node& x) const { return x.normal(); }
-  };
-
 // Public types
 public:
 
@@ -80,14 +70,6 @@ public:
   // Iterator over Point_3 points
   typedef typename std::deque<UI_point>::iterator        Point_iterator;
   typedef typename std::deque<UI_point>::const_iterator  Point_const_iterator;
-
-  // Iterator over normals
-  typedef CGAL::Iterator_project<iterator,
-                                 Project_normal<UI_point> >
-                                                      Normal_iterator;
-  typedef CGAL::Iterator_project<const_iterator,
-                                 Project_normal<UI_point> >
-                                                      Normal_const_iterator;
 
 // Data members
 private:
@@ -125,13 +107,6 @@ public:
   Base::end;
   Base::size;
   /// @endcond
-
-  // Gets first/last iterators over normals.
-  Normal_iterator normals_begin()             { return Normal_iterator(begin()); }
-  Normal_const_iterator normals_begin() const { return Normal_const_iterator(begin()); }
-  Normal_iterator normals_end()               { return Normal_iterator(end()); }
-  Normal_const_iterator normals_end() const   { return Normal_const_iterator(end()); }
-
   // Gets/sets the iterator over the first point with an unoriented normal.
   /// User is responsible to partition the point set as oriented/unoriented normals
   /// and to set unoriented_points_begin() appropriately.

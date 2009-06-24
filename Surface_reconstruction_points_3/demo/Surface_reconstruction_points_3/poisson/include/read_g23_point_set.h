@@ -193,7 +193,7 @@ bool read_g23_point_set(
       gyroviz_points[point_3D_label] = position_3D;
     }
 
-	// Reads 2D points + camera indices + 3D points indices on remaining lines
+    // Reads 2D points + camera indices + 3D points indices on remaining lines
     else
     {
       // Reads camera index, 3D point label (with double quotes) and 2D position...
@@ -207,17 +207,17 @@ bool read_g23_point_set(
           std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
           return false;
       }
-	  // Find 3D point in cache or map. Update cache.
-	  std::map<std::string, Gyroviz_point>::iterator point_3D;
-	  if (previous_point_3D_label == std::string(point_3D_label))
-	  {
-		point_3D = previous_point_3D;
-	  }
-	  else
-	  {
-		point_3D = previous_point_3D = gyroviz_points.find(point_3D_label);
-		previous_point_3D_label = point_3D_label;
-	  }
+      // Find 3D point in cache or map. Update cache.
+      std::map<std::string, Gyroviz_point>::iterator point_3D;
+      if (previous_point_3D_label == std::string(point_3D_label))
+      {
+          point_3D = previous_point_3D;
+      }
+      else
+      {
+          point_3D = previous_point_3D = gyroviz_points.find(point_3D_label);
+          previous_point_3D_label = point_3D_label;
+      }
       // TEMPORARY? Skip 2D points not reconstructed in 3D.
       if (point_3D == gyroviz_points.end())
       {

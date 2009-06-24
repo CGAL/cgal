@@ -197,16 +197,6 @@ private:
   // Base class
   typedef Delaunay_triangulation_3<Gt,Tds>  Base;
 
-  // Auxiliary class to build an iterator over normals.
-  template <class Node>
-  struct Project_normal {
-    typedef Node                  argument_type;
-    typedef typename Node::Vector Vector;
-    typedef Vector                result_type;
-    Vector&       operator()(Node& x)       const { return x.normal(); }
-    const Vector& operator()(const Node& x) const { return x.normal(); }
-  };
-
   // Auxiliary class to build an iterator over input points.
   class Is_steiner_point
   {
@@ -262,10 +252,6 @@ public:
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Point_with_normal_3<BaseGt>
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  /// Iterator over all normals.
-  typedef Iterator_project<Finite_vertices_iterator,
-                           Project_normal<Vertex> >  Normal_iterator;
-
   /// Point type
   enum Point_type {
     INPUT,    ///< Input point.
@@ -299,17 +285,6 @@ public:
   Base::finite_vertices_end;
   Base::geom_traits;
   /// @endcond
-
-  /// Gets first iterator over finite vertices normals.
-  Normal_iterator normals_begin()
-  {
-      return Normal_iterator(finite_vertices_begin());
-  }
-  /// Gets past-the-end iterator over finite vertices normals.
-  Normal_iterator normals_end()
-  {
-      return Normal_iterator(finite_vertices_end());
-  }
 
   /// Gets first iterator over input vertices.
   Input_vertices_iterator input_vertices_begin() const
@@ -361,26 +336,44 @@ public:
     return v;
   }
 
-  /// Insert points in the triangulation using a spatial sort.
+  /// Insert the [first, beyond) range of points in the triangulation using a spatial sort.
   /// Default type is INPUT.
   ///
-  /// @commentheading Precondition:
-  /// InputIterator value_type must be convertible to Point_with_normal.
+  /// @commentheading Template Parameters:
+  /// @param InputIterator iterator over input points.
+  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3.
+  ///        It can be omitted if InputIterator value_type is convertible to Point_3.
+  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Vector_3.
   ///
-  /// @param first Iterator over first point to add.
-  /// @param beyond Past-the-end iterator to add.
   /// @return the number of inserted points.
-  template < class InputIterator >
-  int insert(InputIterator first, InputIterator beyond,
-             Point_type type = INPUT)
+
+  // This variant requires all parameters.
+  template <typename InputIterator,
+            typename PointPMap,
+            typename NormalPMap
+  >
+  int insert(
+    InputIterator first,  ///< iterator over the first input point.
+    InputIterator beyond, ///< past-the-end iterator over the input points.
+    PointPMap point_pmap, ///< property map to access the position of an input point.
+    NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
+    Point_type type = INPUT)
   {
     int n = number_of_vertices();
 
-    // spatial sorting
-    std::vector<Point_with_normal> points (first, beyond);
+    // Convert input points to Point_with_normal_3
+    std::vector<Point_with_normal> points;
+    for (InputIterator it = first; it != beyond; it++)
+    {
+        Point_with_normal pwn(get(point_pmap,it), get(normal_pmap,it));
+        points.push_back(pwn);
+    }
+    
+    // Spatial sorting
     std::random_shuffle (points.begin(), points.end());
     spatial_sort (points.begin(), points.end(), geom_traits());
 
+    // Insert in triangulation
     Cell_handle hint;
     for (typename std::vector<Point_with_normal>::const_iterator p = points.begin();
          p != points.end(); ++p)
@@ -392,11 +385,29 @@ public:
     return number_of_vertices() - n;
   }
 
+  /// @cond SKIP_IN_MANUAL
+  // This variant creates a default point property map = Dereference_property_map.
+  template <typename InputIterator,
+            typename NormalPMap
+  >
+  int insert(
+    InputIterator first,  ///< iterator over the first input point.
+    InputIterator beyond, ///< past-the-end iterator over the input points.
+    NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
+    Point_type type = INPUT)
+  {
+    return insert(
+      first,beyond,
+      make_dereference_property_map(first),
+      normal_pmap,
+      type);
+  }
+  
   /// Delaunay refinement callback:
   /// insert STEINER point in the triangulation.
   template <class CellIt>
   Vertex_handle
-  insert_in_hole(const Point_with_normal & p, CellIt cell_begin, CellIt cell_end,
+  insert_in_hole(const Point_with_normal& p, CellIt cell_begin, CellIt cell_end,
 	         Cell_handle begin, int i,
                  Point_type type = STEINER)
   {

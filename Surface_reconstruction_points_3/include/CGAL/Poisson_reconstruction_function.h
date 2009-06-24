@@ -105,8 +105,6 @@ private:
   typedef typename Triangulation::All_cells_iterator       All_cells_iterator;
   typedef typename Triangulation::Locate_type Locate_type;
 
-  typedef typename Triangulation::Point_with_normal Point_with_normal; ///< typedef to Point_with_normal_3<Geom_traits>
-
   // TAUCS solver
   typedef Taucs_solver<double>  Solver;
   typedef std::vector<double>   Sparse_vector;
@@ -147,19 +145,11 @@ public:
     NormalPMap normal_pmap) ///< property map to access the *oriented* normal of an input point.
   : m_tr(new Triangulation)
   {
-    //m_tr->insert(
-    //  first, beyond,
-    //  point_pmap,
-    //  normal_pmap);
-
-    // TEMPORARY: convert points to Point_with_normal_3.
-    std::vector<Point_with_normal> pwns;
-    for (InputIterator it = first; it != beyond; it++)
-    {
-        Point_with_normal point_wrapper(get(point_pmap,it), get(normal_pmap,it));
-        pwns.push_back(point_wrapper);
-    }
-    m_tr->insert(pwns.begin(), pwns.end());
+    // Insert them in triangulation
+    m_tr->insert(
+      first,beyond,
+      point_pmap,
+      normal_pmap);
   }
 
   /// @cond SKIP_IN_MANUAL
@@ -173,19 +163,10 @@ public:
     NormalPMap normal_pmap) ///< property map to access the *oriented* normal of an input point.
   : m_tr(new Triangulation)
   {
-    //m_tr->insert(
-    //  first, beyond,
-    //  make_dereference_property_map(first),
-    //  normal_pmap);
-
-    // TEMPORARY: convert points to Point_with_normal_3.
-    std::vector<Point_with_normal> pwns;
-    for (InputIterator it = first; it != beyond; it++)
-    {
-        Point_with_normal point_wrapper(*it, get(normal_pmap,it));
-        pwns.push_back(point_wrapper);
-    }
-    m_tr->insert(pwns.begin(), pwns.end());
+    // Insert them in triangulation
+    m_tr->insert(
+      first,beyond,
+      normal_pmap);
   }
   /// @endcond
 
