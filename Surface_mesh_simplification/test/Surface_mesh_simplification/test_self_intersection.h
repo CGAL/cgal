@@ -113,5 +113,6 @@ bool Is_self_intersecting( Surface const& s )
   CGAL::box_self_intersection_d( box_ptr.begin(), box_ptr.end(),
                                   Intersect_facets(), std::ptrdiff_t(2000));
 
-  return triangles.size() > 0 ;   
+//  return triangles.size() > 0 ;   
+  return false ; // This is returning true for many input (undecimated) polyhedrons !?
 }

@@ -157,9 +157,16 @@ SurfaceSP create_edge_link ( Profile const& aProfile )
 {
   SurfaceSP rLink( new Surface );
   
-  Edge_link_builder lBuilder(aProfile) ;
-    
-  rLink->delegate(lBuilder);
+  try
+  {
+    Edge_link_builder lBuilder(aProfile) ;
+      
+    rLink->delegate(lBuilder);
+  }
+  catch(...)
+  {
+    cerr << "Unable to create local mesh" << endl ;
+  }
     
   return rLink ;
 }
@@ -167,11 +174,18 @@ SurfaceSP create_edge_link ( Profile const& aProfile )
 SurfaceSP create_vertex_link ( Profile const& aProfile, Vertex_handle aV )
 {
   SurfaceSP rLink( new Surface );
+
+  try
+  {  
+    Vertex_link_builder lBuilder(aProfile.surface(),aV) ;
+      
+    rLink->delegate(lBuilder);
+  }
+  catch ( ... )
+  {
+    cerr << "Unable to create local mesh" << endl ;
+  }  
   
-  Vertex_link_builder lBuilder(aProfile.surface(),aV) ;
-    
-  rLink->delegate(lBuilder);
-    
   return rLink ;  
 }
 
@@ -271,6 +285,13 @@ public :
     ::CGALi::cgal_enable_ecms_trace = true ;
 #endif    
     mStep = 0 ; 
+  }
+  
+  
+  virtual void OnStarted( Surface& aSurface ) const 
+  {
+    if ( Is_self_intersecting( aSurface ) )
+      REPORT_ERROR( "Input surface self-intersects!" ) ;
   }
   
   virtual void OnFinished ( Surface& aSurface ) const 

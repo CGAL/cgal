@@ -143,7 +143,9 @@ int main( int argc, char** argv )
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
   SMS::Count_ratio_stop_predicate<Surface> stop(0.1);
-  
+
+  My_visitor vis ;
+    
   // The index maps are not explicitelty passed as in the previous
   // example because the surface items have a proper id() field.
   // On the other hand, we pass here explicit cost and placement
@@ -154,7 +156,7 @@ int main( int argc, char** argv )
            ,stop
            ,CGAL::get_cost     (SMS::Edge_length_cost  <Surface>())
                  .get_placement(SMS::Midpoint_placement<Surface>())
-                 .visitor      (My_visitor())
+                 .visitor      (vis)
            );
   
   std::cout << "\nEdges collected: " << vis.collected

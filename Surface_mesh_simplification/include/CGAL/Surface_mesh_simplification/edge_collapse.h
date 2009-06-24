@@ -80,14 +80,14 @@ int edge_collapse ( ECM&                    aSurface
 
 struct Dummy_visitor
 {
-  template<class ECM>                                 void OnStarted( ECM& ) {} 
-  template<class ECM>                                 void OnFinished ( ECM& ) {} 
-  template<class Profile>                             void OnStopConditionReached( Profile const& ) {} 
-  template<class Profile, class OFT>                  void OnCollected( Profile const&, OFT const& ) {}                
-  template<class Profile, class OFT, class Size_type> void OnSelected( Profile const&, OFT const&, Size_type, Size_type ) {}                
-  template<class Profile, class OPoint>               void OnCollapsing(Profile const&, OPoint const& ) {}                
-  template<class Profile, class VH>                   void OnCollapsed( Profile const&, VH ) {}
-  template<class Profile>                             void OnNonCollapsable(Profile const& ) {}                
+  template<class ECM>                                 void OnStarted( ECM& ) const {} 
+  template<class ECM>                                 void OnFinished ( ECM& ) const {} 
+  template<class Profile>                             void OnStopConditionReached( Profile const& ) const {} 
+  template<class Profile, class OFT>                  void OnCollected( Profile const&, OFT const& ) const {}                
+  template<class Profile, class OFT, class Size_type> void OnSelected( Profile const&, OFT const&, Size_type, Size_type ) const {}                
+  template<class Profile, class OPoint>               void OnCollapsing(Profile const&, OPoint const& ) const {}                
+  template<class Profile, class VH>                   void OnCollapsed( Profile const&, VH ) const {}
+  template<class Profile>                             void OnNonCollapsable(Profile const& ) const {}                
 } ;
 
 template<class ECM, class ShouldStop, class P, class T, class R>
