@@ -22,7 +22,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccc{APSS_reconstruction_function} computes an implicit function that defines a Point Set Surface (PSS) based on moving least squares (MLS) fitting of algebraic spheres.
+\ccc{APSS_reconstruction_function} computes a signed distance field that defines a Point Set Surface (PSS) based on moving least squares (MLS) fitting of algebraic spheres.
 
 This class implements a variant of the {\em Algebraic Point Set Surfaces} method by Guennebaud and Gross \cite{Guennebaud07}.
 
@@ -97,6 +97,11 @@ typedef to \ccc{Geom_traits::Vector_3}
 typedef to \ccc{Geom_traits::Sphere_3}
 }
 \ccGlue
+\ccNestedType{BBox}
+{
+typedef to \ccc{Bbox_3}
+}
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
@@ -148,7 +153,11 @@ Sets smoothness factor. Typical choices are in the range 2 (clean datasets) and 
 Returns a sphere bounding the inferred surface.
 }
 \ccGlue
-\ccMethod{FT operator()(const Point& p) const;}
+\ccMethod{BBox bounding_box() const;}
+{
+}
+\ccGlue
+\ccMethod{FT operator()(const Point& p, bool * ok = 0) const;}
 {
 \ccc{ImplicitFunction} interface: evaluates the implicit function at a given 3D query point.
 }

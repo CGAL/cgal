@@ -32,16 +32,16 @@ This method modifies the order of input points so as to pack all remaining point
 % Reduce left margin
 \ccThree{123456789012345}{6789012}{}
 
-\ccFunction{template<typename ForwardIterator, typename PointPMap, typename Kernel> ForwardIterator remove_outliers(ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, unsigned int k, double threshold_percent, const Kernel& kernel);}
+\ccFunction{template<typename InputIterator, typename PointPMap, typename Kernel> InputIterator remove_outliers(InputIterator first, InputIterator beyond, PointPMap point_pmap, unsigned int k, double threshold_percent, const Kernel& kernel);}
 {
 Removes outliers: computes average squared distance to the K nearest neighbors, and sorts the points in increasing order of average distance.  \\
 This method modifies the order of input points so as to pack all remaining points first, and returns an iterator over the first point to remove (see erase-remove idiom). For this reason it should not be called on sorted containers.
 \ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}  \\
-\ccc{ForwardIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
+\ccc{InputIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{InputIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
 \ccCommentHeading{Returns} iterator over the first point to remove.
 \ccCommentHeading{Parameters}  \\
-\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Point_3}. \ccc{k}: number of neighbors. \ccc{threshold_percent}: percentage of points to remove. \ccc{kernel}: geometric traits.
+\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{InputIterator} -$>$ \ccc{Point_3}. \ccc{k}: number of neighbors. \ccc{threshold_percent}: percentage of points to remove. \ccc{kernel}: geometric traits.
 }
 \ccGlue
 

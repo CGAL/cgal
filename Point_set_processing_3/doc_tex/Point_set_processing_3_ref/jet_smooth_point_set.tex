@@ -29,14 +29,14 @@
 % Reduce left margin
 \ccThree{123456789012345}{6789012}{}
 
-\ccFunction{template<typename ForwardIterator, typename PointPMap, typename Kernel> void jet_smooth_point_set(ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, unsigned int k, const Kernel& kernel, unsigned int degree_fitting = 2, unsigned int degree_monge = 2);}
+\ccFunction{template<typename InputIterator, typename PointPMap, typename Kernel> void jet_smooth_point_set(InputIterator first, InputIterator beyond, PointPMap point_pmap, unsigned int k, const Kernel& kernel, unsigned int degree_fitting = 2, unsigned int degree_monge = 2);}
 {
 Smoothes the [first, beyond) range of points using jet fitting on the k nearest neighbors and reprojection onto the jet. As this method relocates the points, it should not be called on containers sorted w.r.t. point locations.
 \ccPrecond k $>$= 2.
 \ccCommentHeading{Template Parameters}  \\
-\ccc{ForwardIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
+\ccc{InputIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{InputIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
 \ccCommentHeading{Parameters}  \\
-\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Point_3}. \ccc{k}: number of neighbors. \ccc{kernel}: geometric traits.
+\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{InputIterator} -$>$ \ccc{Point_3}. \ccc{k}: number of neighbors. \ccc{kernel}: geometric traits.
 }
 \ccGlue
 
