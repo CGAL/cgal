@@ -15,7 +15,7 @@
 // $Id:  $
 //
 //
-// Author(s)     : Camille Wormser, Pierre Alliez
+// Author(s)     : Pierre Alliez
 //
 //******************************************************************************
 // File Description :
@@ -32,9 +32,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 typedef CGAL::Simple_cartesian<double> K;
-typedef K::Ray_3 Ray;
 typedef K::Point_3 Point;
-typedef K::Vector_3 Vector;
 typedef K::Segment_3 Segment;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
@@ -54,18 +52,24 @@ int main()
         // constructs AABB tree
         Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
 
-        // computes #intersections with ray query
-        Point source(0.2, 0.2, 0.2);
-        Ray ray_query(source, Vector(0.1, 0.2, 0.3));
-        std::cout << tree.number_of_intersected_primitives(ray_query)
-                  << " intersections(s) with ray" << std::endl;
-
-        // computes all intersections with segment query
+        // computes only one intersection (any) with segment query
         Point a(0.2, 0.2, 0.2);
         Point b(0.3, 0.3, 0.3);
-        Segment segment_query(a,b);
-        std::list<Object_and_primitive_id> intersections;
-        tree.all_intersections(segment_query, std::back_inserter(intersections));
+        Segment query(a,b);
+        boost::optional<Object_and_primitive_id> intersection = 
+			tree.any_intersection(query);
+
+		if(intersection)
+		{
+			// get intersection object
+			Object_and_primitive_id op = *intersection;
+			CGAL::Object object = op.first;
+			Point point;
+			if(CGAL::assign(point,object))
+			{
+				// intersection object is a point
+			}
+		}
 
         return EXIT_SUCCESS;
 }
