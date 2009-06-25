@@ -161,8 +161,7 @@ CHANGES = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.pl = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
 *.pm = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
 *.py = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
-cgal_test = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL;svn:executable
-run_testsuite = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL;svn:executable
+cgal_test_with_cmake = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL;svn:executable
 *.cmd = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL
 *.dpatch = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
 
