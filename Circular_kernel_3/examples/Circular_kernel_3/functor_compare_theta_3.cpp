@@ -20,9 +20,9 @@ int main(){
 
   //unsigned integer indicates multiplicity of intersection point 
   std::pair<SK::Circular_arc_point_3,unsigned> p1=
-    object_cast< std::pair<SK::Circular_arc_point_3,unsigned> >(intersections[0]);
+    CGAL::object_cast< std::pair<SK::Circular_arc_point_3,unsigned> >(intersections[0]);
   std::pair<SK::Circular_arc_point_3,unsigned> p2=
-    object_cast< std::pair<SK::Circular_arc_point_3,unsigned> >(intersections[1]);
+    CGAL::object_cast< std::pair<SK::Circular_arc_point_3,unsigned> >(intersections[1]);
 
 
   SK::Circular_arc_point_3 t_extreme[2];
