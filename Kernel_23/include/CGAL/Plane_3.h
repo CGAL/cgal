@@ -141,6 +141,11 @@ public:
     return R().has_on_3_object()(*this, p);
   }
 
+  bool has_on(const Circle_3 &c) const
+  {
+    return R().has_on_3_object()(*this, c);
+  }  
+  
   bool has_on(const Line_3 &l) const
   {
     return R().has_on_3_object()(*this, l);
