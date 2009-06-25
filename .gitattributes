@@ -1287,6 +1287,7 @@ CGAL_ipelets/demo/CGAL_ipelets/triangulation.cpp -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/PkgDescription.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/cgal_ipelets.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/cgal_ipelets_def.tex -text
+CGAL_ipelets/doc_tex/CGAL_ipelets/fig/example.eps -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/fig/example.png -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/fig/ipeico.jpg -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/fig/ipelarge.jpg -text
