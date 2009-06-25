@@ -179,7 +179,6 @@ An object \ccVar\ of this type must provide:
 \end{ccRefFunctionObjectConcept}
 
 
-{\color{cyan}%TAG SKOS
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::IsThetaMonotone_3} 
 
 \ccCreationVariable{fo}
@@ -192,11 +191,11 @@ An object \ccVar\ of this type must provide:
 \ccMemberFunction{bool operator()
 	(const SphericalKernel::Circular_arc_3 &a);}
 {Tests whether the arc $a$ is $\theta$-monotone, i.e. the intersection of
-any meridian anchored at the poles of {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::is_theta_monotone_3_object}} % TAG SKOS
+any meridian anchored at the poles of the context sphere used by the function \ccc{SphericalKernel::is_theta_monotone_3_object}
 and the arc $a$ is reduced to at most one point in general, and two points if a pole of that sphere is
 an endpoint of \ccc{a}. Note that a bipolar circle has no such arcs.
-\ccPrecond{\ccc{a} lies on {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::is_theta_monotone_3_object}},
-and the supporting circle of \ccc{a} is not bipolar.} % TAG SKOS
+\ccPrecond{\ccc{a} lies on the context sphere used by the function \ccc{SphericalKernel::is_theta_monotone_3_object},
+and the supporting circle of \ccc{a} is not bipolar.}
 }
 
 
@@ -206,4 +205,3 @@ and the supporting circle of \ccc{a} is not bipolar.} % TAG SKOS
 
 
 \end{ccRefFunctionObjectConcept}
-}%TAG SKOS

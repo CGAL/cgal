@@ -40,7 +40,6 @@ fundamental functionalities like intersection, comparisons, inclusion,
 etc. More might be provided in the future, as long as only algebraic
 numbers of degree two are used.
 
-{\color{cyan} %TAG SKOS
 \paragraph{Functionalities relative to a sphere}~
 
 %\label{section-def-on-sphere}
@@ -70,9 +69,7 @@ $(\theta,z)$.
 % the comparison of $\phi$-coordinates is totally equivalent to the
 % comparison of $z$-coordinates, and that $z$-coordinates are already
 % used for the general objects in 3D.
-}%TAG SKOS
 
-{\color{magenta} %TAG SKOS
 \textbf{Definition of a meridian.}
 Given a sphere and its associated cylindrical coordinate system, a meridian of that
 sphere is a circular arc consisting of the points having the same theta-coordinate
@@ -84,7 +81,6 @@ direction of $M$ and the two poles. The sense of $M$ disambiguates the choice am
 pair of meridians thus defined.
 On Fig.~\ref{fig-def-meridian}, the normal vectors $n_0$ and $n_1$ define 
 two meridians of $S$: the circular arcs $A_0$ and $A_1$ respectively.
-}%TAG SKOS
 
 \begin{ccTexOnly}
 \begin{figure}[ht!]
@@ -99,7 +95,6 @@ The $\theta$-coordinates of meridians $A_0$ and $A_1$ are $\theta_0$ and $\theta
 \end{figure}
 \end{ccTexOnly}
 
-{\color{cyan} %TAG SKOS
 \textbf{Types of circles on a sphere.}
 Given a sphere, a circle on that sphere is termed
 \textit{polar} if it goes through only one pole, \textit{bipolar} if
@@ -166,7 +161,6 @@ circular arc on a threaded circle is always $\theta$-monotone, and an
 arc on a polar or normal circle is $\theta$-monotone if it does not
 contain a $\theta$-extremal point, unless it is an endpoint. No such
 arc is defined on a bipolar circle.
-}%TAG SKOS
 
 \section{Software Design}
 
@@ -213,14 +207,12 @@ The second example illustrates the use of a functor.
 
 \ccIncludeExampleCode{Circular_kernel_3/functor_has_on_3.cpp}
 
-{\color{cyan} %TAG SKOS
   The third example illustrates the use of a functor on objects on the
   same sphere.  The intersection points of two circles on
   the same sphere are computed and their cylindrical coordinates are
   then compared.
 
 \ccIncludeExampleCode{Circular_kernel_3/functor_compare_theta_3.cpp}
-} %TAG SKOS
 
 \section{Design and Implementation History}
 
@@ -231,13 +223,11 @@ choices of design.
 Julien Hazebrouck and Damien Leroy participated in a first
 prototype.
 
-{\color{cyan} %TAG SKOS
   The first version of the package was co-authored by Pedro Machado
   Manh\~{a}es de Castro and Monique Teillaud, and integrated in CGAL
   3.4.  Fr\'ed\'eric Cazals and S\'ebastien Loriot extended the
   package by providing functionalities restricted on a given sphere
   \cite{cclt-dc3sk-08}.  
-}%TAG SKOS
 
 Sylvain Pion is acknowledged for helpful discussions.
 

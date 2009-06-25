@@ -130,7 +130,6 @@ and $z$-coordinates.}
 
 \end{ccRefFunctionObjectConcept}
 
-{\color{cyan} %TAG SKOS
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::CompareTheta_3}
 
 \ccCreationVariable{fo}
@@ -143,12 +142,10 @@ An object \ccVar\ of this type must provide:
 \ccMemberFunction{Comparison_result operator()
 	(const SphericalKernel::Circular_arc_point_3 &p,
          const SphericalKernel::Circular_arc_point_3 &q );}
-{Compares the $\theta$-coordinates of $p$ and $q$ in the cylindrical coordinate system relative to {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::compare_theta_3_object}.}%TAG SKOS
-\ccPrecond{\ccc{p} and \ccc{q} lie on {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::compare_theta_3_object}}, but do not coincide with its poles.}
+{Compares the $\theta$-coordinates of $p$ and $q$ in the cylindrical coordinate system relative to the context sphere used by the function \ccc{SphericalKernel::compare_theta_3_object}.
+\ccPrecond{\ccc{p} and \ccc{q} lie on the context sphere used by the function \ccc{SphericalKernel::compare_theta_3_object}, but do not coincide with its poles.}
 }
 
-
-{\color{magenta} %TAG SKOS
 
 \ccMemberFunction{Comparison_result operator()
 	(const SphericalKernel::Circular_arc_point_3 &p,
@@ -167,7 +164,6 @@ An object \ccVar\ of this type must provide:
 in the cylindrical coordinate system relative to the context sphere used by the function \ccc{SphericalKernel::compare_theta_3_object}.
 $m1 \neq (0,0,0)$, $m2 \neq (0,0,0)$ and the $z$-coordinate of $m1$ and $m2$ is $0$.}
 
-} %TAG SKOS
 
 
 \ccSeeAlso
@@ -197,8 +193,8 @@ An object \ccVar\ of this type must provide:
 	(const SphericalKernel::Circular_arc_point_3 &p,
          const SphericalKernel::Circular_arc_point_3 &q );}
 {Compares $p$ and $q$ according to the lexicographic ordering on $\theta$- and $z$-coordinates
-in the cylindrical coordinate system relative to {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::compare_theta_z_3_object}.}%TAG SKOS
-\ccPrecond{\ccc{p} and \ccc{q} lie on {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::compare_theta_z_3_object}}, but do not coincide with its poles.}
+in the cylindrical coordinate system relative to the context sphere used by the function \ccc{SphericalKernel::compare_theta_z_3_object}.
+\ccPrecond{\ccc{p} and \ccc{q} lie on the context sphere used by the function \ccc{SphericalKernel::compare_theta_z_3_object}, but do not coincide with its poles.}
 }
 
 \ccSeeAlso
@@ -224,7 +220,6 @@ An object \ccVar\ of this type must provide:
 % {Constructs a functor \ccVar\ to compare the position of objects lying on \ccc{sphere} along a given meridian.}
 
 
-{\color{magenta} %TAG SKOS
 \ccMemberFunction{Comparison_result operator()
 	( const SphericalKernel::Circular_arc_3& a0,
 	  const SphericalKernel::Circular_arc_3& a1,
@@ -232,18 +227,18 @@ An object \ccVar\ of this type must provide:
 {
 compares the $z$-coordinates of the two intersections points of $a0$ and $a1$ with the meridian defined by $m$ (see section \ref{section-SK-objects}).
 \ccPrecond{
-\ccc{a0} and \ccc{a1} lie on {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::compare_z_at_theta_3_object}.} %TAG SKOS
+\ccc{a0} and \ccc{a1} lie on the context sphere used by the function \ccc{SphericalKernel::compare_z_at_theta_3_object}.
 $m \neq (0,0,0)$ and the $z$-coordinate of $m$ is $0$.
 Arcs $a0$ and $a1$ are $\theta$-monotone and both intersected by the meridian defined by $m$ (see section \ref{section-SK-objects}).}}
-} %TAG SKOS
+
 
 
 \ccMemberFunction{Comparison_result operator()
 	( const SphericalKernel::Circular_arc_point_3& p,
 	  const SphericalKernel::Circular_arc_3& a);}
-{given a meridian anchored at the poles of {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::compare_z_at_theta_3_object}}, and passing through point $p$,
+{given a meridian anchored at the poles of the context sphere used by the function \ccc{SphericalKernel::compare_z_at_theta_3_object}, and passing through point $p$,
 compares the $z$-coordinate of point $p$ and that of the intersection of the meridian with $a$.
-\ccPrecond{\ccc{a} and \ccc{p} lie on {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::compare_z_at_theta_3_object}},
+\ccPrecond{\ccc{a} and \ccc{p} lie on the context sphere used by the function \ccc{SphericalKernel::compare_z_at_theta_3_object},
 arc $a$ is $\theta$-monotone and the meridian passing through $p$ intersects arc $a$.}}
 
 \ccSeeAlso
@@ -267,10 +262,10 @@ An object \ccVar\ of this type must provide:
 	  const SphericalKernel::Circular_arc_3& a1,
     const SphericalKernel::Circular_arc_point_3 &p);}
 {Compares the $z$-coordinates of the intersection points of both arcs
-with a meridian anchored at the poles of {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::compare_z_to_right_3_object}}, at a $\theta$-coordinate
+with a meridian anchored at the poles of the context sphere used by the function \ccc{SphericalKernel::compare_z_to_right_3_object}, at a $\theta$-coordinate
 infinitesimally greater that the $\theta$-coordinate of point $p$.
 \ccPrecond{
-\ccc{a0} and \ccc{a1} lie on {\color{magenta} the context sphere used by the function \ccc{SphericalKernel::compare_z_to_right_3_object}},
+\ccc{a0} and \ccc{a1} lie on the context sphere used by the function \ccc{SphericalKernel::compare_z_to_right_3_object},
 \ccc{a0} and \ccc{a1} are $\theta$-monotone, $p$ lies on \ccc{a0} and \ccc{a1} and is not a $\theta$-extremal
 point of the supporting circle of \ccc{a0} or \ccc{a1}.}}
 
@@ -281,6 +276,6 @@ point of the supporting circle of \ccc{a0} or \ccc{a1}.}}
 \ccRefIdfierPage{SphericalKernel::CompareZAtTheta_3}
 
 \end{ccRefFunctionObjectConcept}
-} %TAG SKOS
+
 
 
