@@ -290,8 +290,6 @@ public :
   
   virtual void OnStarted( Surface& aSurface ) const 
   {
-    if ( Is_self_intersecting( aSurface ) )
-      REPORT_ERROR( "Input surface self-intersects!" ) ;
   }
   
   virtual void OnFinished ( Surface& aSurface ) const 
@@ -313,7 +311,8 @@ public :
   
   virtual void OnCollapsed( Profile const& aProfile, Vertex_handle aV ) const 
   {
-    if ( Is_self_intersecting( aProfile.surface() ) )
+    // Some collapse can result in self-intersections in any case, so we can't mark it as a failure
+    if ( false && Is_self_intersecting( aProfile.surface() ) )
     {
       SurfaceSP lAfter = create_vertex_link(aProfile, aV);
       

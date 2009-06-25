@@ -3844,22 +3844,14 @@ Surface_mesh_simplification/test/Surface_mesh_simplification/data/couplingdown.o
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cow.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cross.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube.off -text svneol=unset#application/octet-stream
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_LT.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open.off -text svneol=unset#application/octet-stream
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open_LT.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/dragknob.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight.off -text svneol=unset#application/octet-stream
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight_LT.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/elephant.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/ellipsoid.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/fandisk.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/femur.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1.off -text svneol=unset#application/octet-stream
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1_LT.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/handle.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes_LT.audit -text

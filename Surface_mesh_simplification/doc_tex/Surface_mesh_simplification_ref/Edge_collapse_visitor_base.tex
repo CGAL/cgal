@@ -29,8 +29,8 @@ which must be a model of the \ccc{EdgeCollapsableMesh} concept.
 This base class implements all of the visitor's callbacks as none-pure const virtual functions. 
 This way, users need only override the callbacks they are interested in.
 The functions are all const because the Visitor object is passed to the simplification algorithm as 
-a reference to const (i.e \texttt{ Visitor const&}). 
-That is to allow an on-the fly temporary to be passed in:  (i.e \texttt{.visitor( Visitor() ) } ).
+a reference to const (i.e \ccc{ Visitor const &}). 
+That is to allow an on-the fly temporary to be passed in:  (i.e \ccc{.visitor( Visitor() ) } ).
 
 \ccInclude{CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h}
 
