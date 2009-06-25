@@ -1,18 +1,27 @@
 \section{Examples}
 \label{AABB_tree_section_examples}
 
-\subsection{Tree of Triangles, for Intersection with Ray Query and Distance Queries}
+\subsection{Tree of Triangles, for Intersection and Distance Queries}
 In the following example a set of 3D triangles is stored in a list. The AABB primitive wraps a triangle as \ccc{datum} and an iterator in the list as \ccc{id}. We compute the number of input triangles intersected by a ray query, as well as the closest point and the squared distance from a point query.
 \ccIncludeExampleCode{AABB_tree/AABB_triangle_3_example.cpp}
 
-\subsection{Tree of Polyhedron Triangle Facets for Intersection with Ray and Segment Queries}
-In the following example the AABB primitive wraps a facet handle of a triangle polyhedral surface as \ccc{id} and the corresponding 3D triangle as geometric object. We compute the number of intersections with a ray query and all intersection objects with a segment query. 
-\ccIncludeExampleCode{AABB_tree/AABB_polyhedron_facet_example.cpp}
 
-\subsection{Tree of Segments for Intersection with Plane and Triangle Queries, and for Distance Query}
+\subsection{Tree of Polyhedron Triangle Facets for Intersection Queries}
+In the following example the AABB primitive wraps a facet handle of a triangle polyhedral surface as \ccc{id} and the corresponding 3D triangle as geometric object. We compute the number of intersections as well as all intersections with a segment query. Each intersection is a pair of one CGAL object and one primitive id (here a face handle).
+\ccIncludeExampleCode{AABB_tree/AABB_polyhedron_facet_example1.cpp}
+
+\subsection{Tree of Polyhedron Triangle Facets for Intersection Query}
+In the following example the AABB primitive wraps a facet handle of a triangle polyhedral surface as \ccc{id} and the corresponding 3D triangle as geometric object. We compute any intersection with a segment query. This function returns the first encountered intersection, if any, as a boost optional.
+\ccIncludeExampleCode{AABB_tree/AABB_polyhedron_facet_example2.cpp}
+
+\subsection{Tree of Polyhedron Triangle Facets for Distance Queries}
+In the following example the AABB primitive wraps a facet handle of a triangle polyhedral surface as \ccc{id} and the corresponding 3D triangle as geometric object. From a point query we compute the squared distance, the closest point as well as the closest point and primitive id. The latter returns a pair of a point and a face handle. 
+\ccIncludeExampleCode{AABB_tree/AABB_polyhedron_facet_example3.cpp}
+
+\subsection{Tree of Segments for Intersection and Distance Queries}
 In the following example the segments are stored into a list, and the AABB primitive wraps a segment as \ccc{datum} and an iterator in the list as \ccc{id}. We compute the number of intersections with plane and triangles queries, and the closest point from a point query. 
 \ccIncludeExampleCode{AABB_tree/AABB_segment_3_example.cpp}
 
-\subsection{Tree of Polyhedron Edge Segments for Intersection with a Triangle Query and for Distance Query}
+\subsection{Tree of Polyhedron Edge Segments for Intersection and Distance Queries}
 In the following example the AABB primitive wraps a halfedge handle as \ccc{id} and generates a 3D segment on the fly, each time its method \ccc{datum} is called. We compute the number of intersections with a triangle query and the closest point from a point query. 
 \ccIncludeExampleCode{AABB_tree/AABB_polyhedron_edge_example.cpp}

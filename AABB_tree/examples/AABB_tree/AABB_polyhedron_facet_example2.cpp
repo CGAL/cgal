@@ -52,9 +52,9 @@ int main()
         // constructs AABB tree
         Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
 
-        // computes only one intersection (any) with segment query
+        // computes any intersection with segment query
         Point a(0.2, 0.2, 0.2);
-        Point b(0.3, 0.3, 0.3);
+        Point b(1.3, 1.3, 1.3);
         Segment query(a,b);
         boost::optional<Object_and_primitive_id> intersection = 
 			tree.any_intersection(query);
@@ -67,7 +67,7 @@ int main()
 			Point point;
 			if(CGAL::assign(point,object))
 			{
-				// intersection object is a point
+				std::cout << "intersection object is a point" << std::endl;
 			}
 		}
 

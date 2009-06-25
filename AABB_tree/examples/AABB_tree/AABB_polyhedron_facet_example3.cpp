@@ -15,7 +15,7 @@
 // $Id:  $
 //
 //
-// Author(s)     : Camille Wormser, Pierre Alliez
+// Author(s)     : Pierre Alliez
 //
 //******************************************************************************
 // File Description :
@@ -32,13 +32,15 @@
 #include <CGAL/Simple_cartesian.h>
 
 typedef CGAL::Simple_cartesian<double> K;
+typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef K::Segment_3 Segment;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
-typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+typedef Tree::Point_and_primitive_id Point_and_primitive_id;
+typedef Tree::Primitive_id Primitive_id;
 
 int main()
 {
@@ -49,19 +51,24 @@ int main()
         Polyhedron polyhedron;
         polyhedron.make_tetrahedron(p, q, r, s);
 
-        // constructs AABB tree
+        // constructs AABB tree and computes internal KD-tree 
+		// data structure to accelerate distance queries
         Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
+		tree.accelerate_distance_queries();
 
-        // computes #intersections with segment query
-        Point a(-0.2, 0.2, -0.2);
-        Point b(1.3, 0.2, 1.3);
-        Segment query(a,b);
-        std::cout << tree.number_of_intersected_primitives(query)
-                  << " intersections(s)" << std::endl;
+        // computes squared distance from a query point
+        Point query(0.0, 0.0, 3.0);
+        FT sqd = tree.squared_distance(query);
+		std::cout << "squared distance: " << sqd << std::endl;
 
-        // computes all intersections with segment query
-        std::list<Object_and_primitive_id> intersections;
-        tree.all_intersections(query, std::back_inserter(intersections));
+		// computes closest point 
+        Point closest = tree.closest_point(query);
+		std::cout << "closest point: " << closest << std::endl;
+
+        // computes closest point and primitive id 
+        Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
+		std::cout << "closest point: " << pp.first << std::endl;
+		Polyhedron::Face_handle f = pp.second; // closest primitive id
 
         return EXIT_SUCCESS;
 }
