@@ -48,16 +48,16 @@ int test()
     std::ifstream ifs("./data/tetrahedron.off");
     ifs >> polyhedron;
 
-	typedef K::FT FT;
-	typedef K::Point_3 Point;
-	typedef K::Segment_3 Segment;
-	typedef K::Line_3 Line;
+	typedef typename K::FT FT;
+	typedef typename K::Point_3 Point;
+	typedef typename K::Segment_3 Segment;
+	typedef typename K::Line_3 Line;
 
 	// construct tree from facets
-    typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
-    typedef CGAL::AABB_traits<K,Primitive> Traits;
-    typedef CGAL::AABB_tree<Traits> Tree;
-	typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+  typedef typename CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
+  typedef typename CGAL::AABB_traits<K,Primitive> Traits;
+  typedef typename CGAL::AABB_tree<Traits> Tree;
+	typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
 	Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
 
 	// segment intersection query
