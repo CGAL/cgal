@@ -23,7 +23,7 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 
 \ccTypes
 
-\ccNestedType{size_type}{Unsigned integral size type.}
+\ccNestedType{size_type}{Unsigned integral type.}
 
 \ccNestedType{FT}{Value type of the \ccc{Squared_distance} functor.}
 
@@ -39,10 +39,6 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 \ccTypedef{typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id;}{}
 
 \ccTypedef{typedef std::pair<Object, Primitive::Id> Object_and_primitive_id;}{}
-
-% NOT NEEDED
-%\ccGlue
-%\ccNestedType{Sphere}{Sphere type required for distance queries.}
 
 During the construction of the \ccc{AABB_tree}, the primitives are sorted according to some comparison functions related to the $x$, $y$ or $z$ coordinate axis:
 %\ccMethod{bool less_x(const Primitive & pr1, const Primitive & pr2);}{}
@@ -61,8 +57,6 @@ During the construction of the \ccc{AABB_tree}, the primitives are sorted accord
 \ccNestedType{Split_primitives_along_z_axis} 
 {A functor object to split a range of primitives into two sub-ranges, along the Z-axis. See \ccc{Split_primitives_along_x_axis} for the detailed description.}
 
-%\ccMethod{Bounding_box compute_bbox();}
-%{Returns the bounding box of a set of primitives.}
 \ccNestedType{Compute_bbox} 
 {A functor object to compute the bounding box of a set of primitives. Provides the operator:
 \ccc{Bounding_box operator()(Input_iterator begin,                                              Input_iterator beyond);} Iterator \ccc{InputIterator} must have \ccc{Primitive} as value type. }
@@ -123,7 +117,6 @@ for which the class \ccc{AABB_tree<AT>} may receive a distance query.
 %\ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-%\ccConstructor{AABBTraits();}{Default constructor.}
 
 \ccOperations
 
@@ -152,8 +145,6 @@ for which the class \ccc{AABB_tree<AT>} may receive a distance query.
 {Returns the closest point constructor.}
 
 
-% NOT NEEDED
-%\ccMethod{bool is_contained(const Sphere & a, const Sphere & b);}{Returns \ccc{true} iff sphere $a$ is contained in sphere $b$. Both spheres are assumed to share the same center.}
 
 \ccHasModels
 \ccc{AABB_traits<GeomTraits,TrianglePrimitive>}.

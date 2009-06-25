@@ -15,7 +15,7 @@
 // $Id: AABB_tree.h 48894 2009-04-24 14:11:17Z palliez $
 //
 //
-// Author(s) : Pierre Alliez
+// Author(s) : Pierre Alliez, Camille Wormser
 
 #ifndef CGAL_AABB_SEARCH_TREE_H
 #define CGAL_AABB_SEARCH_TREE_H

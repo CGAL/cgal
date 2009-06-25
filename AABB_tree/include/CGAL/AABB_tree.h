@@ -104,9 +104,11 @@ namespace CGAL {
         // returns true iff successful memory allocation
         bool accelerate_distance_queries();
 
+		// intersection tests
         template<typename Query>
         bool do_intersect(const Query& query) const;
 
+		// #intersections
         template<typename Query>
         size_type number_of_intersected_primitives(const Query& query) const;
 
@@ -364,13 +366,12 @@ namespace CGAL {
             }
 
         private:
-//            Sphere m_sphere;
             Point m_closest_point;
             typename Primitive::Id m_closest_primitive;
         };
 
     public:
-        // returns a point guaranteed to be on one primitive
+        // returns a point which must be on one primitive
         Point_and_primitive_id any_reference_point_and_id() const
         {
             CGAL_assertion(!empty());
@@ -613,7 +614,6 @@ namespace CGAL {
         AABB_tree<Tr>::closest_point_and_primitive(const Point& query,
                                          const Point_and_primitive_id& hint) const
     {
-//        const Point hint = best_hint(query);
         Distance_traits distance_traits(hint.first,hint.second);
         this->traversal(query, distance_traits);
         return distance_traits.closest_point_and_primitive();

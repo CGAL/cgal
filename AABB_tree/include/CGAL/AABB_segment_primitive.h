@@ -38,8 +38,8 @@ public:
 
         // member data
 private:
-        Id m_it; // iterator
-        Datum m_datum; // 3D segment
+        Id m_it;
+        Datum m_datum;
 
 public:
         // constructors

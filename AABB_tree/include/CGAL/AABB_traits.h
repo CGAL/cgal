@@ -46,7 +46,6 @@ public:
 
   typedef AABB_primitive Primitive;
   typedef typename AABB_primitive::Datum Datum;
-//  typedef typename GeomTraits::Sphere_3 Sphere;
   typedef unsigned int size_type;
 
   typedef typename GeomTraits::Point_3 Point;
@@ -55,7 +54,6 @@ public:
   typedef typename std::pair<Point,typename Primitive::Id> Point_and_primitive_id;
 
   // types for search tree
-  // TOFIX: how can we avoid repeating those?
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Sphere_3 Sphere_3;
