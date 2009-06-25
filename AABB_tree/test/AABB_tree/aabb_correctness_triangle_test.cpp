@@ -89,9 +89,7 @@ int test()
 	Point point;
 	if(CGAL::assign(point,object))
 	{
-		std::cout << "Intersection point: (" << point.x() <<
-			";" << point.y() << 
-			";" << point.z() << ")" << std::endl;
+		std::cout << "Intersection point: " << point << std::endl;
 	}
 	else
 	{
@@ -111,6 +109,16 @@ int test()
 	if(tree.number_of_intersected_primitives(line_pq) != 2)
 	{
 		std::cerr << "number of intersections different than two with line" << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	// closest point query
+	Point r((FT)0.0, (FT)0.0, (FT)3.0);
+	Point closest((FT)0.0, (FT)0.0, (FT)1.0);
+	Point result = tree.closest_point(r);
+	if(result != closest)
+	{
+		std::cerr << "wrong closest point" << std::endl;
 		return EXIT_FAILURE;
 	}
 
