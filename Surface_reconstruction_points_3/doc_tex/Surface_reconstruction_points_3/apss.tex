@@ -1,11 +1,11 @@
 
 \section{Algebraic Point Set Surfaces}
 
-The Algebraic Point Set Surfaces \cite{Guennebaud07} method defines an approximate signed distance field from a set of oriented points sampled onto a surface, such that the zero-isosurface best approximates the input points with respect to some given criteria.  It uses local Moving Least Squares (MLS) fitting of algebaic spheres. The implicit function can be evaluated for any point in space with almost no preprocessing.
+The Algebraic Point Set Surfaces \cite{Guennebaud07} method defines an approximate signed distance field from a set of oriented points sampled onto a surface, such that the zero-isosurface best approximates the input points with respect to some given criteria.  It uses local Moving Least Squares (MLS) fitting of algebaic spheres. The implicit function can be evaluated at any point in space with almost no preprocessing.
 
-More precisely, the value of the implicit function $f(x)$ is obtained by fitting an algebraic sphere to the neighbors of the point $x$ in a weighted least square sense where the weights depends on both the Euclidean distance between $x$ and the neighbor points. This weight function behave like a low pass filter allowing to control the degree of smoothing. Intuitively, the fitting algorithm first tries to minimize the distance between the gradient of the algebraic sphere and the input normals, and then it minimizes the algebraic distance between the 0-isosphere and the neighbors to somehow {\em set} the radius of the sphere. Therefore the method is quite sensible to the quality of the input normals, and sampling.
+More specifically, the value of the implicit function $f(x)$ is obtained by fitting an algebraic sphere to the neighbors of the point $x$ in a weighted least square sense where the weights depends on both the Euclidean distance between $x$ and the neighbor points. This weight function behaves like a low pass filter devised to control the degree of smoothing. Intuitively, the fitting algorithm first tries minimizing the distance between the gradient of the algebraic sphere and the input normals, then minimizes the algebraic distance between the 0-isosphere and the neighbors to determine the fitted sphere radius. For these reasons the method is quite sensitive to the quality of the input normals and sampling.
 
-Even though the \ccc{CGAL::APSS_reconstruction_function} class can be directly used, it is aimed to be used with the \cgal\ surface mesh generator to extract the $0$-isosurface.
+Even though the \ccc{CGAL::APSS_reconstruction_function} class can be used directly, it is aimed to be used with the \cgal\ surface mesh generator to extract its $0$-isosurface.
 
 
 % Insert image APSS.jpg/eps
