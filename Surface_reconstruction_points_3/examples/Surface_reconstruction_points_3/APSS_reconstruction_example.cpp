@@ -29,7 +29,7 @@ int main(void)
     // Note: read_xyz_points_and_normals() requires an iterator over points
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
-    std::ifstream stream("data/oni.xyz");
+    std::ifstream stream("data/dragon.xyz");
     if(!stream)
       return EXIT_FAILURE;
 

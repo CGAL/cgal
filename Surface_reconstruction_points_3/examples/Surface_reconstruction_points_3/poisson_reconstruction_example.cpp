@@ -30,7 +30,7 @@ int main(void)
     // + property maps to access each point's position and normal.
     // The position property map is omitted as we use iterators
 	// over Point_3 elements.
-    std::ifstream stream("data/oni.xyz");
+    std::ifstream stream("data/dragon.xyz");
     if(!stream)
       return EXIT_FAILURE;
 
