@@ -170,6 +170,7 @@ public:
   }
   /// @endcond
 
+  /// @cond SKIP_IN_MANUAL
   /// Gets embedded triangulation.
   Triangulation& triangulation()
   {
@@ -179,6 +180,7 @@ public:
   {
     return *m_tr;
   }
+  /// @endcond
 
   /// Returns a sphere bounding the inferred surface.
   Sphere bounding_sphere() const
@@ -440,14 +442,12 @@ private:
     return 0.5 * (values[index] + values[index+1]); // avoids singular cases
   }
 
-  // PA: todo change type (FT)
-  // check if this is in CGAL already
   void barycentric_coordinates(const Point& p,
                                Cell_handle cell,
-                               double& a,
-                               double& b,
-                               double& c,
-                               double& d) const
+                               FT& a,
+                               FT& b,
+                               FT& c,
+                               FT& d) const
   {
     const Point& pa = cell->vertex(0)->point();
     const Point& pb = cell->vertex(1)->point();
@@ -458,7 +458,7 @@ private:
     Tetrahedron tc(pb,pa,pd,p);
     Tetrahedron td(pb,pc,pa,p);
     Tetrahedron tet(pa,pb,pc,pd);
-    double v = tet.volume();
+    FT v = tet.volume();
     a = std::fabs(ta.volume() / v);
     b = std::fabs(tb.volume() / v);
     c = std::fabs(tc.volume() / v);
