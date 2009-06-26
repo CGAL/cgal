@@ -1,3 +1,0 @@
-Interface to the MPFR, multiple precision floating-point reliable library,
-http://mpfr.org
-
