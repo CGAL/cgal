@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PolyhedralTriangulatedSurface.tex
+% +------------------------------------------------------------------------+
+% | 15.05.2008   Laurent Rineau
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSPolyhedralTriangulatedSurfaceRev}{$Id$}
+\RCSdefDate{\RCSPolyhedralTriangulatedSurfaceDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangleAccessor}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName{} represents an accessor to a triangulated polyhedral
+surface, intersection free and without boundaries.
+
+
+\ccTypes
+
+\ccNestedType{Triangle_3}{Triangle type. Must be a model of DefaultConstructible and
+CopyConstructible.}
+\ccGlue
+\ccNestedType{Triangle_iterator}{Triangle iterator type. Must be a model of InputIterator
+with \ccc{Triangle_3} as value type.}
+% \ccGlue
+% \ccNestedType{Triangle_handle}{Handle to a \ccc{Triangle_3}. Must be
+%   constructible from \ccc{Triangle_iterator}.}
+
+
+\ccOperations
+\ccCreationVariable{t}
+
+\ccMethod{Triangle_iterator triangles_begin();}
+{Returns a \ccc{Triangle_iterator} to visit the triangles.}
+\ccGlue
+\ccMethod{Triangle_iterator triangles_end();}
+{Returns the past-the-end iterator for the above iterator.}
+
+\ccHasModels
+\ccc{Triangle_accessor_3<Polyhedron_3<K>,K>}
+
+\ccSeeAlso
+\ccc{Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>}\\
+\ccc{make_mesh_3}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

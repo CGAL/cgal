@@ -1,0 +1,333 @@
+13 September 2006 Laurent Rineau
+- massive fix of const-correctness in Surface_mesher, Mesh_3,
+Head_mesher dans Data_structure_for_queries_3.
+  (A nice feature of C++ is that, when you need to add *one* const
+   somewhere, then you have to fix const-correctness of all the World!)
+
+12 July 2006 Laurent Rineau
+- new class Volume_mesher_default_triangulation_3
+- new test, of io operators. It uses Volume_mesher_default_triangulation_3.
+- fix i/o operators of <CGAL/Volume_mesher_cell_base_3.h>, in binary mode.
+- fix <CGAL/Mesh_3/IO.h>, in case of binary mode.
+- improved applications/lanteri.cpp. It know compute histograms of 
+  dihedral min angles, too.
+
+10 July 2006 Laurent Rineau
+- new debug macros:
+  - CGAL_MESH_3_DIRTY_DEBUG_SPHERES,
+  - and CGAL_MESHES_DEBUG_REFINEMENT_POINTS.
+- new macro CGAL_MESHES_OUTPUT_STREAM, which is set to std::cout by
+default.
+- in Mesh_2: new header <CGAL/Mesh_2/Output_stream.h>
+- new debug macro in <CGAL/Surface_mesher/Standard_criteria.h>
+  - CGAL_MESH_3_DEBUG_CRITERIA
+  Used in test/Mesh_3/combined_spheres*.cpp 
+
+7 July 2006 Laurent Rineau
+- in test/Mesh_3/combined_spheres*.C:
+  - new surface criterion class, named Uniform_size_multi_surface_criterion
+    It does at the same time the job of
+    CGAL::Surface_mesher::Vertices_on_the_same_surface_criterion
+    and add size bounds, different for each surfaces.
+  - This fixes the "combined_spheres hot spots" problem.
+
+5 July 2006 Laurent Rineau
+- move Point_traits.h from Mesh_3 to Surface_mesher, to avoid an unneeded
+dependancy
+
+28 June 2006 Laurent Rineau
+- another fix of Slivers_exuder
+
+27 June 2006 Laurent Rineau
+- use filtered regular traits in applications/
+- fixed Slivers_exuder so that it can pump vertices of surfaces too
+  (Note: I may have broken things. I'll check tomorrow.)
+
+26 June 2006 Laurent Rineau
+- in Surface_mesher:
+  - remove deprecated include/CGAL/Surface_mesher/Implicit_surface.h
+  - rename CGAL::Surface_mesher::Implicit_surface_oracle to
+           CGAL::Surface_mesher::Implicit_surface_oracle_3
+    and then, rename include/CGAL/Surface_mesher/Implicit_surface_oracle.h
+    to include/CGAL/Surface_mesher/Implicit_surface_oracle_3.h
+- in Mesh_3: adapt code to the above change.
+
+12 June 2006 Laurent Rineau
+- remove subdirectories of include/CGAL/Surface_mesher: files of Criteria/
+  and Oracles/ are moved one step back.
+- repear examples/Mesh_3/polyhedral_surface_mesher.C
+- add two input files in ./inputs/*.off (with their medit files)
+
+7 June 2006 Laurent Rineau
+- sliver exuder fixed,
+- Combining_oracle fixed too.
+- fix a robustness issue in examples/Mesh_3/implicit_surfaces_mesher_3.C:
+  need to use CGAL::Regular_triangulation_filtered_traits_3 as geom_traits!!
+
+6 June 2006 Laurent Rineau
+- remove the old code Multi_implicit_oracle.h (in Surface_Mesher), and
+multi_spheres.C (in Mesh_3).
+
+1 May 2006 Laurent Rineau
+- well... the exuder works, now!
+
+1 May 2006 Laurent Rineau
+- better checking of options, in
+  examples/Mesh_3/implicit_surfaces_mesher_3.C
+- in CGAL/Mesh_3/IO.h, new feature "Get_io_signature". It permits to
+  verify that a file produced by the operator<< of an object is compatible
+  with the operator>> of an object of another type, by comparing a
+  "Input/Ouput signature".
+- new applications/medit_to_cgal.C. It will work only when
+  read_from_medit(), in include/CGAL/IO/File_edit.h, will be fixed.
+- new macro CGAL_SURFACE_MESHER_MANIFOLD, that permits to choose between
+  the manifold or non manifold version of Surface_mesher, in
+  include/CGAL/Implicit_surfaces_mesher_3.h
+- improved the class "Debug" in include/CGAL/IO/File_medit.h. I should
+  perhaps publishit one day.
+- include/CGAL/Mesh_3/Sliver_exuder.h is still under debugging!...
+- change replay-skull a little, to test pumping...
+
+6 April 2006 Laurent Rineau
+- if the surface_index() of a point is 0, set it to 1, in
+  include/CGAL/Mesh_3/Implicit_surface_mesher_visitor.h
+  This visitor is passed to the Surface_mesher, when it is used from
+  Mesh_3. This patch makes surface_index() of points on the surface to
+  be 1, if is was 0.
+- replay-skull now run correctly too.
+- sliver exuder still crash. :-(
+- the ImplicitFunction concept now has a operator()(Point), instead of
+  operator()(FT, FT, FT).
+
+5 April 2006 Laurent Rineau
+- Too much changes, after Surface_mesher API changes.
+- examples/Mesh_3/implicit_surfaces_mesher_3.C compiles
+- applications/ too.
+- examples/Mesh_3/replay-* almost runs correctly.
+- This package is still under reconstruction. Do no expect any from it!
+
+26 Febraury 2006 Laurent Rineau
+- Move the internal header
+include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h to Mesh_2.
+
+
+4 november 2005 Laurent Rineau
+- modified Special_tets_criteria in test/Mesh_3/combined_spheres.C
+  This criteria class has five size bounds, one for each sphere.
+- new output/input operators in:
+    include/CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h
+  (in surface mesher:)
+    include/CGAL/Complex_2_in_triangulation_cell_base_3.h
+    include/CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h
+    include/CGAL/Point_with_surface_index.h
+    include/CGAL/Weighted_point_with_surface_index.h
+  This permits to save/load meshes with i/o operators of Triangulation_3.
+
+
+3 november 2005 Laurent Rineau
+- modified applications/ tools
+- rename functions:
+     output_pslg_to_medit  -> output_to_medit
+     input_pslg_from_medit -> input_from_medit
+
+7 september 2005 Laurent Rineau
+- "New" tools in the subdirectory applications/
+  Actually, they were lost in the tools/ subdirectory of the package, that
+  exists only in the branch 'sliver_branch'.
+  They work, but are not adapted to the new framework Distribution_displayer.h
+
+2 september 2005 Laurent Rineau
+- in Surface_mesher:
+    - new file include/CGAL/Point_with_surface_index_geom_traits.h to have
+      one class per file.
+    - new files:
+        include/CGAL/Weighted_point_with_surface_index.h
+        include/CGAL/Point_with_surface_index_geom_traits.h
+      so that CGAL::Weighted_point_with_surface_index<Weighted_point> can
+      have several additional constructors with Bare_point parameters.
+    - two important hacks in files:
+        include/CGAL/Surface_mesher/Oracles/Polyhedral.h
+        include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h
+
+      1/ Use of a new typedef Kernel_point, obtained by Kernel_traits, so
+      these two classes work with Point_with_surface_index<Point> and
+      Weighted_point_with_surface_index<Weighted_point>. Some assign
+      statement has to be used with a Kernel_point, so that they do not
+      fail systematicaly (assign sucks!).
+
+      2/ Use of CGAL::Random_points_in_sphere_3<Point, Point_creator> in
+      include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h in function
+      random_points(), so that this function does not use the contructor
+      Point(double x, double y, double z). This implied that the tenmplate
+      Implicit_oracle had a new template parameter, Point_creator, which I
+      gave default
+            Creator_uniform_3<typename GT::RT, typename GT::Point_3>.
+      With Point_with_surface_index<Point> and
+      Weighted_point_with_surface_index<Weighted_point> this creator should
+      be defined. See ../Mesh_3/test/Mesh_3/combined_spheres.C and   
+      ../Surface_mesher/examples/Surface_mesher/surfaces_union.C
+    - same problem, file
+        include/CGAL/Surface_mesher/Oracles/Point_surface_indices_visitor.h
+      has been changed: Point_surface_indices_visitor<Tr> now has a
+      templated new_point() function, so that is can take Kernel_point or
+      Point as argument.
+    - minor changes:
+        - include/CGAL/IO/Complex_2_in_triangulation_3_file_writer.h now has
+          correct copyright and #ifdef sentinel
+        - include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h now
+          has correct copyright
+        - rename DT_3 into Tr, and GT_3 into Geom_traits in file
+          include/CGAL/Surface_mesher/Oracles/Polyhedral.h
+    - updated examples/Surface_mesher/surfaces_union.C so that it works.
+
+TODO: - fix include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h as
+        regards Kernel_point stuff
+      - merge it with include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h
+
+- in Mesh_3:
+    - include/CGAL/IO/File_medit.h :
+        - fix namespace !!
+        - some functions now takes a C2T3 as argument, now that C2T3 has a
+        triangulation() getter.
+        - new function input_pslg_from_medit() !! It reads indices.
+        - output_pslg_to_medit() now uses surface_index() too 
+    - new implementation of CGAL::Point_traits.h
+    - tests:
+        - test/Mesh_3/combined_spheres.C
+          Now uses a class Point_with_surface_index_creator that is passed
+          to Implicit_oracle.
+          Now reads r1..r5 from std::cin, as well as the output medit file.
+        - test/Mesh_3/multi_spheres.C 
+          Updated: compiles but is still broken, because of
+          Multi_implicit_oracle (see TODO below)
+        - new shell script test/Mesh_3/spheres_create_input.sh (not
+          submitted to CGAL) that helps to create .cin files for
+          combined_sphere.C
+    - examples:
+        - examples/Mesh_3/implicit_surfaces_mesher_3.C
+          Updated (use Weighted_point_with_surface_index_geom_traits and
+          new API for output_pslg_to_medit())
+          Compiles and should run correctly (I will see this week-end).
+    - new directory applications/ (not submitted)
+        - read_mesh.C reads medit files and display faces
+          counts. Uses "utils.h" and "types.h"
+        - stat_mesh.C does the same and displays vertices and facets counts
+          by surfaces.
+        - lanteri.C ad hoc application for fives spheres having same
+          center. It uses:
+            - lanteri_utils.h scans edges and cells
+            - distribution.[Ch] computes and display distributions 
+            - Distribution_displayer.h is an abstract base class used by 
+            distribution.C
+            - Gd_displayer.h and Qt_widget_displayer.h are two
+            Distribution_displayer subclasses, with there
+            implementations. Qt_widget_displayer is not currently used.
+          Only lanteri.C (and lanteri_utils.h) needs CGAL. The other files can
+          be compiled very quickly.
+    - minor changes:
+        - include/CGAL/IO/File_medit.h :
+            - now has correct #ifdef sentinel
+            - added missing includes
+        - examples/Mesh_3/implicit_surfaces_mesher_3.C: rename T to tr
+        - examples/Mesh_3/makefile is cleaned.
+
+TODO: - examples/Mesh_3/polyhedral_surface_mesher.C is broken because:
+        - output_pslg_to_medit() in include/CGAL/IO/File_medit.h need
+          surface_index() in points. :-(
+        - Weighted_point wp = Weighted_point(p, best_weight, index);
+          in include/CGAL/Mesh_3/Slivers_exuder.h
+        - add_in_graph() & o in vertices (this sucks!)
+        - should use Weighted_point_with_surface_index_geom_traits
+      - test/Mesh_3/multi_spheres.C is broken because 
+          ../../../Surface_mesher/ \
+                  include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h
+        *is* broken.
+      - File_medit.h should not require systematicaly surface_index()
+      - provide .cin files for tests (read Dev'Manual)
+
+25 august 2005 Laurent Rineau
+- new implementation of CGAL::Point_traits
+
+15 august 2005 Laurent Rineau
+- in Surface_mesher: new Combining_oracle, and Oracle_visitor
+- in Mesh_3 test/Mesh_3/combined_spheres tests that new oracle.
+
+27 july 2005 LR MY
+- first version of multi-implicit_surface mesher compiles and runs
+
+27 July 2005 LR MY
+- changed some names
+- multi_implicit_oracle added
+
+30 June 2005 Laurent Rineau
+- attempt to merged trunk, sliver_branch and my local modifications...
+- may be correct, or not.
+
+07 April 2005 Laurent Rineau
+- added skin implicit function
+- the option parser of examples/Mesh_3/implicite_surface_mesher_3.C now has
+string options
+- new options:
+  --distribution_after_filename
+  --mesh_after_filename
+  --initial_surface_off
+  --surface_off
+  --slivers_off
+- can output slivers to off
+- multi-passes of sliver exudation
+
+06 April 2005 Laurent Rineau
+- added sliver exudation: include/CGAL/Mesh_3/Sliver_exuder.h
+  (perhaps should it be only a global function >> TODO)
+03 April 2005 Laurent Rineau
+- New functions using isosurface of Inrimage images
+- Regular triangulation
+- New prototype of sliver exudation
+- New command-line options parser
+- examples/Mesh_3/implicit_surface_mesher.C is some kind of demo. It
+can also make coffe.
+
+24 March 2005 Laurent Rineau
+- new requirements for Mesher_level
+- the bug of Refine_tets.h has been crunched!
+- less verbose debugging outputs
+
+8 February 2005 Laurent Rineau
+- new changes.txt file
+- removed files that are in Mesh_2 and Mesh_3:
+    - Mesher_level.h (Mesh_2)
+    - Triangulation_mesher_level_traits_3 (Mesh_3)
+- new template parameters for Mesher_level
+- modified Complex_2_in_triangulation_3:
+    - factorised set_in_complex and remove_from_complex
+    - new functions is_in_complex
+- rename Complex_2_in_triangulation_cell_base_* classes:
+    - Complex_2_in_triangulation_cell_base_3
+    - Complex_2_in_triangulation_surface_mesh_cell_base_3
+- new Mesher_level function names:
+    - Tr& triangulation_ref_impl()
+    - Vertex_handle insert_impl(p, z)
+    - Zone conflicts_zone_impl(p)
+    - void scan_triangulation_impl()
+    - bool no_longer_element_to_refine_impl()
+    - Element get_next_element_impl()
+    - void pop_next_element_impl()
+    - Point refinement_point_impl(e)
+    - void before_conflicts_impl(e, p)
+    - Mesher_level_conflict_status private_test_point_conflict_impl(p, zone)
+    - Mesher_level_conflict_status 
+        test_point_conflict_from_superior_impl(p, zone)
+    - void before_insertion_impl(e, p, zone)
+    - void after_insertion_impl(vh)
+    - void after_no_insertion_impl(e, p, zone)
+- new class in Mesher_level.h for default implementations:
+    - class Triangulation_ref_impl
+    - No_private_test_point_conflict
+    - No_test_point_conflict_from_superior
+    - No_test_point_conflict :
+    - No_before_insertion
+    - No_after_insertion
+    - No_after_no_insertion
+    - No_before_after_insertion :
+- added implementation of:
+    Chew_4_surface::test_point_conflict_from_superior_impl()

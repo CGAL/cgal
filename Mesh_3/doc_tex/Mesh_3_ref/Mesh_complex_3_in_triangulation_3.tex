@@ -1,0 +1,69 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_complex_3_in_triangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 13.02.2009   Author Mariette Yvinec
+% | Package: Package Mesh_3
+% |
+\RCSdef{\RCSMeshComplexintriangulationRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSMeshComplexintriangulationDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Mesh_complex_3_in_triangulation_3<Tr>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+
+The class \ccRefName\ implements a data structure 
+to store the 3D restricted Delaunay triangulation used by a mesh
+generation process.
+
+This class is a model of the concept
+\ccc{MeshComplex_3InTriangulation_3}.
+
+\ccParameters
+
+The template parameter \ccc{Tr} can be instanciated with any 3D
+regular triangulation of \cgal{} provided that its
+vertex and cell base class are models of the concepts
+\ccc{MeshVertexBase_3} and \ccc{MeshCellBase_3}, respectively. 
+
+
+\ccInclude{CGAL/Mesh_complex_3_in_triangulation_3.h}
+
+\ccIsModel
+\ccc{MeshComplex_3InTriangulation_3}
+
+\ccTypes
+
+\ccTypedef{typedef Tr::Vertex::Index Index;}{Index type.}
+\ccTypedef{typedef Tr::Cell::Surface_index Surface_index;}{Surface index type.}
+\ccTypedef{typedef Tr::Cell::Subdomain_index Subdomain_index;}{Subdomain index type.}
+
+\ccOperations
+\ccCreationVariable{c3t3}
+
+\ccMethod{void output_to_medit(std::ofstream& os);}{Outputs the mesh to \ccc{os}
+    in medit format.}
+
+\ccSeeAlso
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3} \\
+\ccc{MeshComplex_3InTriangulation_3} \\
+\ccc{MeshCellBase_3}, \\
+\ccc{MeshVertexBase_3}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,108 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: IntersectionGeometricTraits_3.tex
+% +------------------------------------------------------------------------+
+% | 23.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSIntersectionGeometricTraitsRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSIntersectionGeometricTraitsDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{IntersectionGeometricTraits_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ provides  types and functors
+required to implement a model of \ccc{MeshDomain_3},
+when the domain is described  by a simplicial surface mesh
+forming its boundary.
+The concept \ccRefName\  mainly provides  the detection 
+and construction of intersections between segments and triangles.
+
+
+
+% \ccRefines
+
+% ThisConcept \\
+% ThatConcept
+
+\ccTypes
+\ccNestedType{Point_3} {Point type.}
+\ccGlue
+\ccNestedType{Segment_3}{Segment type.}
+\ccGlue
+\ccNestedType{Triangle_3}{Triangle type.}
+
+\ccNestedType{Do_intersect_3} 
+{Function object that detects an intersection between a 3D segment and a 3D triangle.
+Provides the operators: \\
+\ccc{bool operator()(Segment_3 seg, Triangle_3 tr)} \\
+\ccc{bool operator()(Triangle_3 tr, Segment_3 seg)} \\
+which return \ccc{true}, iff the triangle and the segment
+have a non empty intersection.}
+
+\ccNestedType{Intersect_3} 
+{Function object that constructs the intersection
+between a 3D segment and a 3D triangle.
+Provides the operators: \\
+\ccc{CGAL::Object operator()(Segment_3 seg, Triangle_3 tr)} \\
+\ccc{CGAL::Object operator()(Triangle_3 tr, Segment_3 seg)} \\
+which computes as a \ccc{CGAL::Object}
+the intersection between  the triangle and the segment.
+\ccc{CGAL::Object} is  either a point, a segment or 
+an empty object.}
+
+
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
+\ccMethod{Do_intersect_3       
+           do_intersect_3_object();}
+{Returns the intersection detection functor.}
+
+
+\ccMethod{Intersect_3
+           intersect_3_object();}
+{Returns the intersection constructor.}
+
+\ccHasModels
+Any instantiation of \ccc{CGAL::Kernel} is a model of this traits concept.
+
+\ccSeeAlso
+\ccc{BisectionGeometricTraits_3}\\
+\ccc{Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>}
+
+
+% \ccExample
+
+% A short example program.
+% Instead of a short program fragment, a full running program can be
+% included using the 
+% \verb|\ccIncludeExampleCode{Package/IntersectionGeometricTraits_3.C}| 
+% macro. The program example would be part of the source code distribution and
+% also part of the automatic test suite.
+
+% \begin{ccExampleCode}
+% void your_example_code() {
+% }
+% \end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/IntersectionGeometricTraits_3.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -2338,6 +2338,65 @@ Mesh_2/stylesheet.css svneol=native#text/css
 Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text svneol=unset#application/octet-stream
 Mesh_2/test/Mesh_2/fish.edg -text
 Mesh_2/test/Mesh_2/fish.poly -text svneol=unset#application/octet-stream
+Mesh_3/doc_tex/Mesh_3/PkgDescription.tex -text
+Mesh_3/doc_tex/Mesh_3/main.tex -text
+Mesh_3/doc_tex/Mesh_3/mesh_3_user.tex -text
+Mesh_3/doc_tex/Mesh_3/multilabel_mesher.eps -text
+Mesh_3/doc_tex/Mesh_3/multilabel_mesher.png -text
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain.eps -text svneol=unset#application/postscript
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_3.eps -text svneol=unset#application/postscript
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_3.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_4.eps -text svneol=unset#application/postscript
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_4.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_5.eps -text svneol=unset#application/postscript
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_5.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.eps -text svneol=unset#application/postscript
+Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain_2.eps -text svneol=unset#application/postscript
+Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain_2.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3_ref/BisectionGeometricTraits_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Implicit_mesh_domain_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/IntersectionGeometricTraits_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Labeled_image_mesh_domain_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/MeshCellCriteria_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/MeshTriangulation_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_cell_base_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_cell_criteria_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_complex_3_in_triangulation_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_criteria_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_triangulation_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_vertex_base_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Polyhedral_mesh_domain_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSETraits_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSEVertexBase_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/WSE/make_mesh_3_with_sharp_edges.tex -text
+Mesh_3/examples/Mesh_3/data/elephant.off -text svneol=unset#application/octet-stream
+Mesh_3/examples/Mesh_3/data/liver_kidney_gallbladder.inr -text
+Mesh_3/examples/Mesh_3/data/lucy.off -text svneol=unset#application/octet-stream
+Mesh_3/examples/Mesh_3/data/star.off -text svneol=unset#application/octet-stream
+Mesh_3/examples/Mesh_3/mesh_3D_image.cpp -text
+Mesh_3/examples/Mesh_3/mesh_implicit_domains.cpp -text
+Mesh_3/examples/Mesh_3/mesh_polyhedral_domain.cpp -text
+Mesh_3/examples/Mesh_3/old_stuff/inputs/cube.mesh -text svneol=unset#application/octet-stream
+Mesh_3/examples/Mesh_3/old_stuff/inputs/tangle.mesh -text svneol=unset#application/octet-stream
+Mesh_3/include/CGAL/Implicit_mesh_domain_3.h -text
+Mesh_3/include/CGAL/Labeled_image_mesh_domain_3.h -text
+Mesh_3/include/CGAL/Mesh_3/Creator_weighted_point_3.h -text
+Mesh_3/include/CGAL/Mesh_3/Image_to_labeled_function_wrapper.h -text
+Mesh_3/include/CGAL/Mesh_3/Labeled_mesh_domain_3.h -text
+Mesh_3/include/CGAL/Mesh_3/Mesh_surface_cell_base_3.h -text
+Mesh_3/include/CGAL/Mesh_3/Refine_facets_3.h -text
+Mesh_3/include/CGAL/Mesh_3/implicit_to_labeled_function_wrapper.h -text
+Mesh_3/include/CGAL/Mesh_complex_3_in_triangulation_3.h -text
+Mesh_3/include/CGAL/Mesh_criteria_3.h -text
+Mesh_3/include/CGAL/Mesh_facet_criteria_3.h -text
+Mesh_3/include/CGAL/Mesh_vertex_base_3.h -text
+Mesh_3/include/CGAL/make_mesh_3.h -text
+Mesh_3/stylesheet.css svneol=native#text/css
+Mesh_3/test/Mesh_3/cgal_test eol=lf
+Mesh_3/test/Mesh_3/data/cube.off -text svneol=unset#application/octet-stream
+Mesh_3/test/Mesh_3/data/liver_kidney_gallbladder.inr -text
 Min_circle_2/demo/Min_circle_2/help/index.html svneol=native#text/html
 Min_circle_2/test/Min_circle_2/test_Min_circle.cmd eol=lf
 Min_ellipse_2/demo/Min_ellipse_2/help/index.html svneol=native#text/html

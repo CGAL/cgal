@@ -1,0 +1,80 @@
+#! /bin/sh
+
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - the name of the script is cgal_test
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - the script should clean up object files and executables
+
+ERRORFILE=error.txt
+CIN_FILES="easy.cin bounds.cin"
+
+#---------------------------------------------------------------------#
+#                    compile_and_run <target>
+#---------------------------------------------------------------------#
+
+compile_and_run()
+{
+  echo "Compiling $1 ... "
+  SUCCES="y"
+  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1' ; then
+    echo "   succesful compilation of $1" >> $ERRORFILE
+  else
+    echo "   ERROR:    compilation of $1" >> $ERRORFILE
+    SUCCES=""
+  fi
+
+  if [ -n "${SUCCES}" ] ; then
+    for cin in ${CIN_FILES}; do
+      OUTPUTFILE=ProgramOutput.$1.$cin.$PLATFORM
+      rm -f $OUTPUTFILE
+      COMMAND="cat $cin | ./$1"
+      echo "Executing $1 with $cin ... "
+      echo
+      ulimit -t 1200
+      if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+          echo "   succesful execution   of $1 (${cin})" >> $ERRORFILE
+      else
+          echo "   ERROR:    execution   of $1 (${cin})" >> $ERRORFILE
+      fi
+    done
+  else
+    echo   "   ERROR:    not executed   $1" >> $ERRORFILE
+  fi
+
+  if [ -z "$NO_CLEAN" ]; then
+    eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
+  fi
+}
+
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+#---------------------------------------------------------------------#
+#                    compile and run the tests
+#---------------------------------------------------------------------#
+
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    case "$file" in
+        -no-clean)
+            NO_CLEAN=true
+            compile_and_run combined_spheres;;
+        *) compile_and_run $file;;
+    esac
+  done
+else
+  compile_and_run combined_spheres
+fi
+

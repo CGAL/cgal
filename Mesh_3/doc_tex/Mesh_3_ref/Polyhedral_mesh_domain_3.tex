@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedral_mesh_domain_3.tex
+% +------------------------------------------------------------------------+
+% | 13.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSPolyhedralmeshdomainRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSPolyhedralmeshdomainDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements 
+a domain whose boundary is a simplicial polyhedral surface.
+ This surface must be closed and  free of intersection.
+This class is a model of the concept \ccc{MeshDomain_3}.
+
+\ccParameters
+
+The parameter \ccc{Polyhedron} stands for the type of the input polyhedral surface. 
+The only requirements for this type is that the triangles of the surfaces
+must be accessible through an object of the class  
+\ccc{TriangleAccessor}.
+
+The parameter \ccc{IGT} stands for  a geometric  traits class
+providing the types and functors required to implement
+the intersection tests and intersection computations
+for polyhedral boundary  surfaces. This parameter has to be instantiated
+with a model of the concept \ccc{IntersectionGeometricTraits_3}.
+
+The parameter \ccc{TriangleAccessor}  provides access to the triangles
+of the input polyhedral 
+surface. It must be a model of the concept
+\ccc{TriangleAccessor_3}. It defaults to
+\ccc{Triangle_accessor_3<Polyhedron,IGT>}. The type \ccc{IGT::Triangle_3} must
+be identical to the type \ccc{TriangleAccessor::Triangle_3}.
+ 
+
+\ccInclude{CGAL/Polyhedral_mesh_domain_3.h}
+
+\ccIsModel
+\ccc{MeshDomain_3}
+
+
+\ccCreation
+\ccCreationVariable{domain}  %% choose variable name
+
+\ccConstructor{Polyhedral_mesh_domain_3(Polyhedron polyhedron);}
+{Construction from a polyhedral surface.}
+
+
+\ccSeeAlso
+
+\ccc{MeshDomain_3} \\
+\ccc{TriangleAccessor_3} \\
+\ccc{IntersectionGeometricTraits_3} \\
+\ccc{Triangle_accessor_3<Polyhedron_3<K>,K>}\\
+\ccc{make_mesh_3}.
+
+
+
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

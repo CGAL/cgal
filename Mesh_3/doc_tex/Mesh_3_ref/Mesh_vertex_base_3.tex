@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_vertex_base_3.tex
+% +------------------------------------------------------------------------+
+% | 13.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSMeshvertexbaseRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSMeshvertexbaseDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Mesh_vertex_base_3<MD,Gt,Vb>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the concept \ccc{MeshVertexBase_3}.
+It is designed to serve as vertex base class for the 3D triangulation 
+used in a 3D mesh generation process.
+
+\ccParameters
+
+The template parameter \ccc{MD}  provides  the types of indices
+used to identify 
+the faces of the input complex. It must be a model
+of the concept \ccc{MeshDomain_3}.
+
+The template parameter \ccc{Gt} is the geometric traits class.
+It  must be a model of the concept \ccc{RegularTriangulationTraits_3}.
+
+The third parameter \ccc{Vb} is the vertex base class. It has to be a model
+of the concept \ccc{TriangulationVertexBase_3} and defaults to
+\ccc{Triangulation_vertex_base_3<Gt>}.
+
+
+\ccInclude{CGAL/Mesh_vertex_base_3.h}
+
+\ccIsModel
+\ccc{MeshVertexBase_3}
+
+\ccInheritsFrom
+\ccc{Vb}
+
+\ccSeeAlso
+
+\ccc{MeshVertexBase_3} \\
+\ccc{Mesh_complex_3_in_triangulation_3<Tr>}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
