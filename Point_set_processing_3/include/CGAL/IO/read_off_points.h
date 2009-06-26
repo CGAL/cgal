@@ -91,8 +91,8 @@ read_off_points_and_normals(
       if ( !(iss >> signature)
         || (signature != "OFF" && signature != "NOFF") )
       {
-        // if unsupported file format
-        std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
+        // if wrong file format
+        //std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
         return false;
       }
     }

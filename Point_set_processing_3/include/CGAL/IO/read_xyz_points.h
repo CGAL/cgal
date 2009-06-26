@@ -110,7 +110,8 @@ read_xyz_points_and_normals(
     }
     else
     {
-      std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+      // if wrong file format
+      //std::cerr << "Error line " << lineNumber << " of file" << std::endl;
       return false;
     }
   }
