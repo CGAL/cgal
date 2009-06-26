@@ -22,10 +22,13 @@
 
 //#define TEST_TEST_TRACE_ENABLED
 
+template<std::size_t N> struct eat_sizeof {} ;
+
 #ifdef TEST_TEST_TRACE_ENABLED
 #  define TEST_TRACE(m) std::cerr << m << std::endl ;
 #else
-#  define TEST_TRACE(m)
+#  define TEST_TRACE(m) (eat_sizeof<sizeof(m)>())
+
 #endif
 
 
@@ -62,7 +65,6 @@ protected:
   typedef GraphTraits::out_edge_iterator out_edge_iterator ;
   typedef GraphTraits::edge_descriptor   edge_descriptor ;
   typedef GraphTraits::vertex_descriptor vertex_descriptor ;
-  
   typedef CGAL::Polyhedron_incremental_builder_3<Surface::HalfedgeDS> Builder ;
   
   Link_builder() : mVIdx(0) {}
@@ -288,7 +290,7 @@ public :
   }
   
   
-  virtual void OnStarted( Surface& aSurface ) const 
+  virtual void OnStarted( Surface& ) const 
   {
   }
   

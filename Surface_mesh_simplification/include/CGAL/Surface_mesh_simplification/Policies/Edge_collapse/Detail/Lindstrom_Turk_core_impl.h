@@ -165,10 +165,14 @@ typename LindstromTurkCore<ECM,K>::Optional_point LindstromTurkCore<ECM,K>::comp
       CGAL_ECMS_LT_TRACE(0,"  New vertex point: " << xyz_to_string(*lPlacementV) );
     }
     else
+    {
       CGAL_ECMS_LT_TRACE(1,"  Can't solve optimization, singular system.");
+    }  
   }
   else
+  {
     CGAL_ECMS_LT_TRACE(1,"  Can't solve optimization, not enough alpha-compatible constrians.");
+  }  
   
   if ( lPlacementV )
     rPlacementP = ORIGIN + (*lPlacementV) ;
