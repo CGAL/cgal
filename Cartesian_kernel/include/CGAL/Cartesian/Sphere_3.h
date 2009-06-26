@@ -130,6 +130,7 @@ public:
   // Returns R::ON_POSITIVE_SIDE, R::ON_ORIENTED_BOUNDARY or
   // R::ON_NEGATIVE_SIDE
   typename R::Boolean   has_on(const Circle_3 &p) const;
+  typename R::Boolean   has_on(const Point_3 &p) const;
   typename R::Boolean   has_on_boundary(const Point_3 &p) const;
   typename R::Boolean   has_on_positive_side(const Point_3 &p) const;
   typename R::Boolean   has_on_negative_side(const Point_3 &p) const;
@@ -190,8 +191,17 @@ has_on(const typename SphereC3<R>::Circle_3 &c) const
   typedef typename SphereC3<R>::FT      FT;
   Point_3 proj = c.supporting_plane().projection(center());
   if(!(proj == c.center())) return false;
-  const FT d2 = CGAL::squared_distance(center(),c.center());
+  const FT d2 = squared_distance(center(),c.center());
   return ((squared_radius() - d2) == c.squared_radius());
+}
+
+template < class R >
+inline
+typename R::Boolean
+SphereC3<R>::
+has_on(const typename SphereC3<R>::Point_3 &p) const
+{
+  return has_on_boundary(p);
 }
 
 template < class R >

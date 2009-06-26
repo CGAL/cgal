@@ -3580,6 +3580,10 @@ namespace CartesianKernelFunctors {
     { return a.rep().has_on(p); }
 
     result_type
+    operator()(const Sphere_3 &a, const Point_3 &p) const
+    { return a.rep().has_on(p); }    
+    
+    result_type
     operator()(const Plane_3 &a, const Circle_3 &p) const
     { return a.rep().has_on(p); }
 
