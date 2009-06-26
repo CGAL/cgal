@@ -25,10 +25,9 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program("AABB_segment_3_example.cpp")
   create_single_source_cgal_program("AABB_triangle_3_example.cpp")
-  create_single_source_cgal_program("AABB_polyhedron_facet_example1.cpp")
-  create_single_source_cgal_program("AABB_polyhedron_facet_example2.cpp")
-  create_single_source_cgal_program("AABB_polyhedron_facet_example3.cpp")
   create_single_source_cgal_program("AABB_polyhedron_edge_example.cpp")
+  create_single_source_cgal_program("AABB_polyhedron_facet_distance_example.cpp")
+  create_single_source_cgal_program("AABB_polyhedron_facet_intersection_example.cpp")
 
 else()
   
