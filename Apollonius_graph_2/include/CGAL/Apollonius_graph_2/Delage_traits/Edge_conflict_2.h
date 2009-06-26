@@ -23,7 +23,7 @@
 #define CGAL_APOLLONIUS_GRAPH_2_EDGE_CONFLICT_2_H 1
 
 
-#include <CGAL/Apollonius_graph_2/new_traits/Conflict_2.h>
+#include <CGAL/Apollonius_graph_2/Delage_traits/Conflict_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

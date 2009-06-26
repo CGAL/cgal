@@ -24,9 +24,9 @@
 
 #include <CGAL/Apollonius_graph_2/Predicates_C2.h>
 
-#include <CGAL/Apollonius_graph_2/new_traits/Vertex_conflict_2.h>
-#include <CGAL/Apollonius_graph_2/new_traits/Finite_edge_conflict_2.h>
-#include <CGAL/Apollonius_graph_2/new_traits/Infinite_edge_conflict_2.h>
-#include <CGAL/Apollonius_graph_2/new_traits/Orientation_2.h>
+#include <CGAL/Apollonius_graph_2/Delage_traits/Vertex_conflict_2.h>
+#include <CGAL/Apollonius_graph_2/Delage_traits/Finite_edge_conflict_2.h>
+#include <CGAL/Apollonius_graph_2/Delage_traits/Infinite_edge_conflict_2.h>
+#include <CGAL/Apollonius_graph_2/Delage_traits/Orientation_2.h>
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_NEW_PREDICATES_C2_H
