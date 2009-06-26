@@ -31,14 +31,14 @@ int main(void)
     // The position property map is omitted as we use iterators
 	// over Point_3 elements.
     PointList points;
-    std::ifstream stream("data/dragon.xyz");
+    std::ifstream stream("data/kitten.xyz");
     if (!stream ||
         !CGAL::read_xyz_points_and_normals(
                               stream,
                               std::back_inserter(points),
                               CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(points))))
     {
-      std::cerr << "Error: cannot read file data/dragon.xyz" << std::endl;
+      std::cerr << "Error: cannot read file data/kitten.xyz" << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -68,8 +68,8 @@ int main(void)
 
     // defines surface mesh generation criteria
     FT sm_shape = 20.0;  // min triangle angle in degrees
-    FT sm_size = 0.1;    // max triangle size
-    FT sm_approx = 0.01; // surface approximation error
+    FT sm_size = 0.03;    // max triangle size
+    FT sm_approx = 0.003; // surface approximation error
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_shape,
                                                         sm_size * bsphere_radius,
                                                         sm_approx * bsphere_radius);
@@ -86,7 +86,7 @@ int main(void)
       return EXIT_FAILURE;
 
     // saves reconstructed surface mesh
-    std::ofstream out("dragon_poisson.off");
+    std::ofstream out("kitten_poisson.off");
     CGAL::output_surface_facets_to_off(out, c2t3);
 
     return EXIT_SUCCESS;
