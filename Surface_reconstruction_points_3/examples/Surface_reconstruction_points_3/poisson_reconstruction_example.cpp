@@ -23,7 +23,7 @@ typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
-int main(int argc, char * argv[])
+int main(void)
 {
     // Reads the point set file in points[].
     // Note: read_xyz_points_and_normals() requires an iterator over points
