@@ -46,7 +46,7 @@ namespace CGALi {
     parameters[1] = Point(bbox.xmax(), bbox.ymax(), bbox.zmax());
 
     const Vector direction = line.to_vector();
-    // CAREFUL, when 1.0/0.0, this works only with doubles, not with filtered kernels
+    // note: when 1.0/0.0, this works only with doubles, not with filtered kernels
     const Vector inv_direction(1.0/direction.x(),
       1.0/direction.y(),
       1.0/direction.z()); 

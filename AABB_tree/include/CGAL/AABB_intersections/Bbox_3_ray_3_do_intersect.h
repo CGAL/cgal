@@ -48,7 +48,7 @@ namespace CGALi {
       return true;
 
     const Vector direction = ray.to_vector();
-    // CAREFUL, when 1.0/0.0, this works only with doubles, not with filtered kernels
+    // note: when 1.0/0.0, this works only with doubles, not with filtered kernels
     const Vector inv_direction((FT)1.0/direction.x(),
             (FT)1.0/direction.y(),
             (FT)1.0/direction.z()); 

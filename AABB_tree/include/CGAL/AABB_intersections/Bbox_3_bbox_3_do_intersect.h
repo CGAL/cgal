@@ -29,8 +29,6 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-  // assumes that the intersection with the supporting plane has
-  // already been checked.
   template <class K>
   bool do_intersect(const CGAL::Bbox_3& c1, 
     const CGAL::Bbox_3& c2,
