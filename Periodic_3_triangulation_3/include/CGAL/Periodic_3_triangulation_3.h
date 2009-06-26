@@ -347,6 +347,69 @@ public:
     return Offset((i>>2)&1,(i>>1)&1,i&1);
   }
 
+
+  void set_offsets(Cell_handle c, int o0,int o1,int o2,int o3) {
+    int off0[3] = {(o0>>2)&1,(o0>>1)&1,(o0&1)};
+    int off1[3] = {(o1>>2)&1,(o1>>1)&1,(o1&1)};
+    int off2[3] = {(o2>>2)&1,(o2>>1)&1,(o2&1)};
+    int off3[3] = {(o3>>2)&1,(o3>>1)&1,(o3&1)};
+    for (int i=0; i<3; i++) {
+      int min_off = (std::min)((std::min)(off0[i],off1[i]),
+			       (std::min)(off2[i],off3[i]));
+      if (min_off != 0) {
+	off0[i] -= min_off; off1[i] -= min_off;
+	off2[i] -= min_off; off3[i] -= min_off;
+      }
+    }
+    o0 = ((off0[0]&1)<<2)+((off0[1]&1)<<1)+(off0[2]&1);
+    o1 = ((off1[0]&1)<<2)+((off1[1]&1)<<1)+(off1[2]&1);
+    o2 = ((off2[0]&1)<<2)+((off2[1]&1)<<1)+(off2[2]&1);
+    o3 = ((off3[0]&1)<<2)+((off3[1]&1)<<1)+(off3[2]&1);
+    c->set_offsets(o0,o1,o2,o3);
+  }
+ 
+  //TODO: REMOVE!
+  template <class Offset> 
+  void set_offsets(Cell_handle c, Offset o0,Offset o1,Offset o2,Offset o3) {
+    int off0[3] = {o0.x(),o0.y(),o0.z()};
+    int off1[3] = {o1.x(),o1.y(),o1.z()};
+    int off2[3] = {o2.x(),o2.y(),o2.z()};
+    int off3[3] = {o3.x(),o3.y(),o3.z()};
+    for (int i=0; i<3; i++) {
+      int min_off = (std::min)((std::min)(off0[i],off1[i]),
+			       (std::min)(off2[i],off3[i]));
+      if (min_off != 0) {
+	off0[i] -= min_off; off1[i] -= min_off;
+	off2[i] -= min_off; off3[i] -= min_off;
+      }
+    }
+
+    CGAL_triangulation_assertion((std::min)((std::min)(off0[0],off1[0]),
+			      (std::min)(off2[0],off3[0])) == 0);
+    CGAL_triangulation_assertion((std::min)((std::min)(off0[1],off1[1]),
+			      (std::min)(off2[1],off3[1])) == 0);
+    CGAL_triangulation_assertion((std::min)((std::min)(off0[2],off1[2]),
+			      (std::min)(off2[2],off3[2])) == 0);
+    CGAL_triangulation_assertion((0 <= off0[0]) && (off0[0] < 2));
+    CGAL_triangulation_assertion((0 <= off1[0]) && (off1[0] < 2));
+    CGAL_triangulation_assertion((0 <= off2[0]) && (off2[0] < 2));
+    CGAL_triangulation_assertion((0 <= off3[0]) && (off3[0] < 2));
+    CGAL_triangulation_assertion((0 <= off0[1]) && (off0[1] < 2));
+    CGAL_triangulation_assertion((0 <= off1[1]) && (off1[1] < 2));
+    CGAL_triangulation_assertion((0 <= off2[1]) && (off2[1] < 2));
+    CGAL_triangulation_assertion((0 <= off3[1]) && (off3[1] < 2));
+    CGAL_triangulation_assertion((0 <= off0[2]) && (off0[2] < 2));
+    CGAL_triangulation_assertion((0 <= off1[2]) && (off1[2] < 2));
+    CGAL_triangulation_assertion((0 <= off2[2]) && (off2[2] < 2));
+    CGAL_triangulation_assertion((0 <= off3[2]) && (off3[2] < 2));
+
+    int o0i = ((off0[0]&1)<<2)+((off0[1]&1)<<1)+(off0[2]&1);
+    int o1i = ((off1[0]&1)<<2)+((off1[1]&1)<<1)+(off1[2]&1);
+    int o2i = ((off2[0]&1)<<2)+((off2[1]&1)<<1)+(off2[2]&1);
+    int o3i = ((off3[0]&1)<<2)+((off3[1]&1)<<1)+(off3[2]&1);
+    c->set_offsets(o0i,o1i,o2i,o3i);
+  }
+
 public:
   /** @name Wrapping the traits */ //@{
   Comparison_result compare_xyz(const Point &p1, const Point &p2) const {
@@ -1799,7 +1862,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
     for (int i=0 ; i<4 ; i++) {
       off[i] = (*cit)->vertex(i)->offset();
     }
-    (*cit)->set_offsets(off[0], off[1], off[2], off[3]);
+    set_offsets(*cit, off[0], off[1], off[2], off[3]);
   }
   
   for (typename std::vector<Vertex_handle>::iterator voit = v_offsets.begin();
@@ -1918,7 +1981,7 @@ std::vector<Vertex_handle>();
                 [(i+vertex_ind[l][3][0])%_cover[0]]
                 [(j+vertex_ind[l][3][1])%_cover[1]]
                 [(k+vertex_ind[l][3][2])%_cover[2]]);
-          cells[i][j][k][l]->set_offsets(
+          set_offsets(cells[i][j][k][l],
               offset & (vertex_ind[l][0][0]*4 +
                         vertex_ind[l][0][1]*2 +
                         vertex_ind[l][0][2]*1),
@@ -2507,7 +2570,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
     new_cells.push_back(new_ch);
     new_ch->set_vertices(vmap[i_ch->vertex(0)], vmap[i_ch->vertex(1)],
                         vmap[i_ch->vertex(2)], vmap[i_ch->vertex(3)]);
-    new_ch->set_offsets(vh_off_map[vmap[i_ch->vertex(0)]],
+    set_offsets(new_ch, vh_off_map[vmap[i_ch->vertex(0)]],
                         vh_off_map[vmap[i_ch->vertex(1)]],
                         vh_off_map[vmap[i_ch->vertex(2)]],
                         vh_off_map[vmap[i_ch->vertex(3)]]);
@@ -2784,7 +2847,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
         it->vertex(i)->set_cell(it);
       }
       // Set the offsets.
-      it->set_offsets( off[0], off[1], off[2], off[3] );
+      set_offsets(it, off[0], off[1], off[2], off[3] );
       CGAL_triangulation_assertion( int_to_off(it->offset(0)) == off[0] );
       CGAL_triangulation_assertion( int_to_off(it->offset(1)) == off[1] );
       CGAL_triangulation_assertion( int_to_off(it->offset(2)) == off[2] );
@@ -3045,7 +3108,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::convert_to_needed_covering() {
 	CGAL_triangulation_assertion(off_cp[i].y() == 0 || off_cp[i].y() == 1);
 	CGAL_triangulation_assertion(off_cp[i].z() == 0 || off_cp[i].z() == 1);
       }
-      c_cp->second[n]->set_offsets(off_cp[0],off_cp[1],off_cp[2],off_cp[3]);
+      set_offsets(c_cp->second[n],off_cp[0],off_cp[1],off_cp[2],off_cp[3]);
     }
   }
 
@@ -3053,7 +3116,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::convert_to_needed_covering() {
   for (typename std::list<Cell_handle>::iterator cit = original_cells.begin() ;
        cit != original_cells.end() ; ++cit) {
     //This statement does not seem to have any effect
-    (*cit)->set_offsets(0,0,0,0);
+    set_offsets(*cit, 0,0,0,0);
     CGAL_triangulation_assertion((*cit)->offset(0) == 0);
     CGAL_triangulation_assertion((*cit)->offset(1) == 0);
     CGAL_triangulation_assertion((*cit)->offset(2) == 0);
@@ -3363,7 +3426,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
       read(is,off[2]);
       read(is,off[3]);
     }
-    C[j]->set_offsets(off[0],off[1],off[2],off[3]);
+    tr.set_offsets(C[j],off[0],off[1],off[2],off[3]);
   }
   
   // read potential other information

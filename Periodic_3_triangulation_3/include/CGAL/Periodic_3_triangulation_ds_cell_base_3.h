@@ -206,14 +206,6 @@ public:
     int off2[3] = {(o2>>2)&1,(o2>>1)&1,(o2&1)};
     int off3[3] = {(o3>>2)&1,(o3>>1)&1,(o3&1)};
     for (int i=0; i<3; i++) {
-      int min_off = (std::min)((std::min)(off0[i],off1[i]),
-			       (std::min)(off2[i],off3[i]));
-      if (min_off != 0) {
-	off0[i] -= min_off; off1[i] -= min_off;
-	off2[i] -= min_off; off3[i] -= min_off;
-      }
-    }
-    for (int i=0; i<3; i++) {
       set_off0( (_off0()<<1) + off0[i]);
       set_off1( (_off1()<<1) + off1[i]);
       set_off2( (_off2()<<1) + off2[i]);
@@ -221,49 +213,6 @@ public:
     }
   }
  
-  template <class Offset> 
-  void set_offsets(Offset o0,Offset o1,Offset o2,Offset o3) {
-    off = 0;
-    int off0[3] = {o0.x(),o0.y(),o0.z()};
-    int off1[3] = {o1.x(),o1.y(),o1.z()};
-    int off2[3] = {o2.x(),o2.y(),o2.z()};
-    int off3[3] = {o3.x(),o3.y(),o3.z()};
-    for (int i=0; i<3; i++) {
-      int min_off = (std::min)((std::min)(off0[i],off1[i]),
-			       (std::min)(off2[i],off3[i]));
-      if (min_off != 0) {
-	off0[i] -= min_off; off1[i] -= min_off;
-	off2[i] -= min_off; off3[i] -= min_off;
-      }
-    }
-
-    CGAL_triangulation_assertion((std::min)((std::min)(off0[0],off1[0]),
-			      (std::min)(off2[0],off3[0])) == 0);
-    CGAL_triangulation_assertion((std::min)((std::min)(off0[1],off1[1]),
-			      (std::min)(off2[1],off3[1])) == 0);
-    CGAL_triangulation_assertion((std::min)((std::min)(off0[2],off1[2]),
-			      (std::min)(off2[2],off3[2])) == 0);
-    CGAL_triangulation_assertion((0 <= off0[0]) && (off0[0] < 2));
-    CGAL_triangulation_assertion((0 <= off1[0]) && (off1[0] < 2));
-    CGAL_triangulation_assertion((0 <= off2[0]) && (off2[0] < 2));
-    CGAL_triangulation_assertion((0 <= off3[0]) && (off3[0] < 2));
-    CGAL_triangulation_assertion((0 <= off0[1]) && (off0[1] < 2));
-    CGAL_triangulation_assertion((0 <= off1[1]) && (off1[1] < 2));
-    CGAL_triangulation_assertion((0 <= off2[1]) && (off2[1] < 2));
-    CGAL_triangulation_assertion((0 <= off3[1]) && (off3[1] < 2));
-    CGAL_triangulation_assertion((0 <= off0[2]) && (off0[2] < 2));
-    CGAL_triangulation_assertion((0 <= off1[2]) && (off1[2] < 2));
-    CGAL_triangulation_assertion((0 <= off2[2]) && (off2[2] < 2));
-    CGAL_triangulation_assertion((0 <= off3[2]) && (off3[2] < 2));
-
-    for (int i=0; i<3; i++) {
-      set_off0( (_off0()<<1) + off0[i]);
-      set_off1( (_off1()<<1) + off1[i]);
-      set_off2( (_off2()<<1) + off2[i]);
-      set_off3( (_off3()<<1) + off3[i]);
-    }
-  }
-
   // CHECKING
 
   // the following trivial is_valid allows
