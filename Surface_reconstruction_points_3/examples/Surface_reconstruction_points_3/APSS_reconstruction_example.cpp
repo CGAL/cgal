@@ -29,16 +29,17 @@ int main(void)
     // Note: read_xyz_points_and_normals() requires an iterator over points
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
-    std::ifstream stream("data/dragon.xyz");
-    if(!stream)
-      return EXIT_FAILURE;
-
     PointList points;
-	if(!CGAL::read_xyz_points_and_normals(
+    std::ifstream stream("data/dragon.xyz");
+    if (!stream ||
+        !CGAL::read_xyz_points_and_normals(
                               stream,
                               std::back_inserter(points),
                               CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(points))))
+    {
+      std::cerr << "Error: cannot read file data/dragon.xyz" << std::endl;
       return EXIT_FAILURE;
+    }
 
     // Creates implicit function from the read points.
     // Note: APSS_reconstruction_function() requires an iterator over points
@@ -47,7 +48,7 @@ int main(void)
 
 	// Smoothness factor: ranges from 2 for clean datasets
 	// to 8 for noisy datasets
-    const FT smoothness = (FT)2.0; 
+    const FT smoothness = (FT)2.0;
     APSS_reconstruction_function function(
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
@@ -86,7 +87,7 @@ int main(void)
       return EXIT_FAILURE;
 
     // saves reconstructed surface mesh
-    std::ofstream out("oni_apss.off");
+    std::ofstream out("dragon_apss.off");
     CGAL::output_surface_facets_to_off(out, c2t3);
 
     return EXIT_SUCCESS;
