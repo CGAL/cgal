@@ -43,10 +43,10 @@ template <class K>
 int test()
 {
 	// load polyhedron
-    typedef CGAL::Polyhedron_3<K> Polyhedron;
-    Polyhedron polyhedron;
-    std::ifstream ifs("./data/tetrahedron.off");
-    ifs >> polyhedron;
+	typedef CGAL::Polyhedron_3<K> Polyhedron;
+	Polyhedron polyhedron;
+	std::ifstream ifs("./data/tetrahedron.off");
+	ifs >> polyhedron;
 
 	typedef typename K::FT FT;
 	typedef typename K::Point_3 Point;
@@ -54,9 +54,9 @@ int test()
 	typedef typename K::Line_3 Line;
 
 	// construct tree from facets
-  typedef typename CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
-  typedef typename CGAL::AABB_traits<K,Primitive> Traits;
-  typedef typename CGAL::AABB_tree<Traits> Tree;
+	typedef typename CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
+	typedef typename CGAL::AABB_traits<K,Primitive> Traits;
+	typedef typename CGAL::AABB_tree<Traits> Tree;
 	typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
 	Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
 
@@ -99,13 +99,11 @@ int test()
 
 	// line intersection query
 	Line line_pq(p,q);
-
 	if(!tree.do_intersect(line_pq))
 	{
 		std::cerr << "no intersection found with line" << std::endl;
 		return EXIT_FAILURE;
 	}
-
 	if(tree.number_of_intersected_primitives(line_pq) != 2)
 	{
 		std::cerr << "number of intersections different than two with line" << std::endl;
