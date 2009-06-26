@@ -137,12 +137,12 @@ void test_all_distance_query_types(Tree& tree)
     Point p1 = tree.closest_point(query);
     Point p2 = tree.closest_point(query,hint.first);
     if(p1 != p2)
-        std::cout << "warning: different closest points with and without hint (possible, in case there are more than one)";
+        std::cout << "Different closest points with and without hint (possible, in case there are more than one)";
 
     Point_and_primitive_id pp1 = tree.closest_point_and_primitive(query);
     Point_and_primitive_id pp2 = tree.closest_point_and_primitive(query,hint);
     if(pp1.second != pp2.second)
-        std::cout << "warning: different closest primitives with and without hint (possible, in case there are more than one)";
+        std::cout << "Different closest primitives with and without hint (possible, in case there are more than one)";
 }
 
 
@@ -750,10 +750,10 @@ private:
       FT dist_naive = CGAL::squared_distance(query, point_naive);
       FT dist_tree = CGAL::squared_distance(query, point_tree);
 
-      assert( dist_tree >= dist_naive );
-      const FT epsilon = (FT)1e-12;
-      assert( ((dist_naive - dist_tree) < epsilon*dist_tree) );
-      //std::cerr << dist_naive - dist_tree << std::endl;
+      //assert( dist_tree >= dist_naive );
+      const FT epsilon = (FT)1e-6;
+      assert( (dist_naive - dist_tree) <= (epsilon * dist_tree) );
+      assert( (dist_naive - dist_tree) >= (-1. * epsilon * dist_tree) );
     }
 
     mutable CGAL::Timer naive_timer;
@@ -786,9 +786,10 @@ private:
         FT dist_naive = CGAL::squared_distance(query, point_naive.first);
         FT dist_tree = CGAL::squared_distance(query, point_tree.first);
 
-        assert( dist_tree >= dist_naive );
-        const FT epsilon = (FT)1e-12;
-        assert( ((dist_naive - dist_tree) < epsilon*dist_tree) );
+        //assert( dist_tree >= dist_naive );
+        const FT epsilon = (FT)1e-6;
+        assert( (dist_naive - dist_tree) <= (epsilon * dist_tree) );
+        assert( (dist_naive - dist_tree) >= (-1 * epsilon * dist_tree) );
       }
     }
 
