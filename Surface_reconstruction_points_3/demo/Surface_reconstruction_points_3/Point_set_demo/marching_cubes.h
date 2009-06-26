@@ -323,7 +323,7 @@ class Marching_cubes : public CGAL::Modifier_base<HDS>
       inline bool isInvalid() const { return value == Invalid; }
       inline void markInvalid() { value = Invalid; }
     };
-    static const FT Invalid = FT(987654321);
+    static const long Invalid = 987654321;
 
   public:
 
@@ -384,7 +384,7 @@ class Marching_cubes : public CGAL::Modifier_base<HDS>
 
       typedef std::pair<int,int> EdgeKey;
 
-      FT step = std::max( std::max(diag.x(), diag.y()), diag.z())/FT(grid_size);
+      FT step = (std::max)( (std::max)(diag.x(), diag.y()), diag.z())/FT(grid_size);
 
       unsigned int nbCells[3];
       unsigned int nbBlocks[3];
@@ -551,7 +551,7 @@ class Marching_cubes : public CGAL::Modifier_base<HDS>
 
     inline bool is_finite(FT x)
     {
-      return (x>=-std::numeric_limits<FT>::max()) && (x<=std::numeric_limits<FT>::max());
+      return (x >= -(std::numeric_limits<FT>::max)()) && (x <= (std::numeric_limits<FT>::max)());
     }
 
   protected:
