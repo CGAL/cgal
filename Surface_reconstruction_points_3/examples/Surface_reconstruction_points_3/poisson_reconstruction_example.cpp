@@ -25,72 +25,68 @@ typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surfac
 
 int main(int argc, char * argv[])
 {
-    // Poisson options
-    FT sm_angle = 20.0; // Min triangle angle (degrees). 20=fast, 30 guaranties convergence.
-    FT sm_radius = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
-    FT sm_distance = 0.01; // Approximation error w.r.t. p.s.r. For Poisson: 0.01=fast, 0.002=smooth.
-
     // Reads the point set file in points[].
     // Note: read_xyz_points_and_normals() requires an iterator over points
     // + property maps to access each point's position and normal.
-    // The position property map can be omitted here as we use iterators over Point_3 elements.
-    PointList points;
+    // The position property map is omitted as we use iterators
+	// over Point_3 elements.
     std::ifstream stream("data/oni.xyz");
-    if (!stream ||
-        !CGAL::read_xyz_points_and_normals(
+    if(!stream)
+      return EXIT_FAILURE;
+
+    PointList points;
+	if(!CGAL::read_xyz_points_and_normals(
                               stream,
                               std::back_inserter(points),
                               CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(points))))
-    {
       return EXIT_FAILURE;
-    }
 
-    // Creates implicit function from the read points.
-    // Note: Poisson_reconstruction_function() requires an iterator over points
-    // + property maps to access each point's position and normal.
-    // The position property map can be omitted here as we use iterators over Point_3 elements.
-    Poisson_reconstruction_function implicit_function(
+    // Creates implicit function from the points.
+    // Requires an iterator over points as well as property maps
+	// to access each point's position and normal.
+    Poisson_reconstruction_function function(
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
-    if ( ! implicit_function.compute_implicit_function() )
+    if ( ! function.compute_implicit_function() )
       return EXIT_FAILURE;
 
     // Gets point inside the implicit surface
-    Point inner_point = implicit_function.get_inner_point();
+    // and computes implicit function bounding sphere radius
+    Point inner_point = function.get_inner_point();
+    Sphere bsphere = function.bounding_sphere();
+	FT bsphere_radius = std::sqrt(bsphere.squared_radius());
 
-    // Gets implicit function's radius
-    Sphere bsphere = implicit_function.bounding_sphere();
-    FT size = sqrt(bsphere.squared_radius());
+    // Defines implicit surface: requires defining a
+	// conservative bounding sphere centered at inner point
+	FT radius = 2.01 * bsphere_radius;
+    Surface_3 surface(function,
+                      Sphere(inner_point,radius*radius));
 
-    // defining the implicit surface = implicit function + bounding sphere centered at inner_point
-    Point sm_sphere_center = inner_point;
-    FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bsphere.center(),inner_point));
-    sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
-    Surface_3 surface(implicit_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
+    // defines surface mesh generation criteria
+    FT sm_shape = 20.0;  // min triangle angle in degrees
+    FT sm_size = 0.1;    // max triangle size
+    FT sm_approx = 0.01; // surface approximation error
+    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_shape,
+                                                        sm_size * bsphere_radius,
+                                                        sm_approx * bsphere_radius);
 
-    // defining meshing criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
-                                                        sm_radius*size,  // Max triangle radius
-                                                        sm_distance*size); // Approximation error
-
-    // meshing surface
-    STr tr;                         // 3D-Delaunay triangulation for Surface Mesher
-    C2t3 surface_mesher_c2t3 (tr);  // 2D-complex in 3D-Delaunay triangulation
-    CGAL::make_surface_mesh(surface_mesher_c2t3,                  // reconstructed mesh
-                            surface,                              // implicit surface
-                            criteria,                             // meshing criteria
-                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
+    // generates surface mesh with manifold-with-boundary option
+    STr tr; // 3D Delaunay triangulation for surface mesh generation
+    C2t3 c2t3 (tr);  // 2D complex in 3D Delaunay triangulation
+    CGAL::make_surface_mesh(c2t3,
+                            surface,
+                            criteria,
+                            CGAL::Manifold_with_boundary_tag());  
 
     if(tr.number_of_vertices() == 0)
       return EXIT_FAILURE;
 
-    // save the mesh
+    // saves reconstructed surface mesh
     std::ofstream out("oni_poisson.off");
-    CGAL::output_surface_facets_to_off(out, surface_mesher_c2t3);
+    CGAL::output_surface_facets_to_off(out, c2t3);
 
     return EXIT_SUCCESS;
 }
