@@ -80,7 +80,7 @@ int main(void)
     CGAL::make_surface_mesh(c2t3,
                             surface,
                             criteria,
-                            CGAL::Manifold_with_boundary_tag());  
+                            CGAL::Manifold_tag());  
 
     if(tr.number_of_vertices() == 0)
       return EXIT_FAILURE;

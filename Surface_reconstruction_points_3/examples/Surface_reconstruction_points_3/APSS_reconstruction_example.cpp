@@ -70,7 +70,7 @@ int main(void)
     // APSS options
     FT sm_shape = 20.0; // min triangle angle in degrees
     FT sm_size = 0.03; // max triangle size
-    FT sm_approx = 0.003; // surface approximation error
+    FT sm_approx = 0.01; // surface approximation error
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_shape,
                                                         sm_size * bsphere_radius,
                                                         sm_approx * bsphere_radius);
