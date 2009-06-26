@@ -17,41 +17,32 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_MESH_CRITERIA_3_H
-#define CGAL_MESH_CRITERIA_3_H
+#ifndef CGAL_POISSON_MESH_CRITERIA_3_H
+#define CGAL_POISSON_MESH_CRITERIA_3_H
 
 #include <iostream>
 
 namespace CGAL {
 
-template <typename Tr>
-class Mesh_criteria_3 
+template <class Tr>
+class Poisson_mesh_cell_criteria_3 
 {
   double squared_radius_bound_;
   double radius_edge_bound_;
 public:
-  typedef typename Tr::Cell_handle Cell_handle;
-
-  Mesh_criteria_3(const double radius_edge_bound = 2, //< radius edge ratio bound (ignored if zero)
-		  const double radius_bound = 0) //< cell radius bound (ignored if zero)
-    : squared_radius_bound_(radius_bound*radius_bound),
-      radius_edge_bound_(radius_edge_bound)
-  {
-  };
-
-  struct Quality : public std::pair<double, double>
+  struct Cell_quality : public std::pair<double, double>
   {
     typedef std::pair<double, double> Base;
 
-    Quality() : Base() {};
-    Quality(double _aspect, double _sq_size) : Base(_aspect, _sq_size) {};
+    Cell_quality() : Base() {};
+    Cell_quality(double _aspect, double _sq_size) : Base(_aspect, _sq_size) {};
 
     const double& sq_size() const { return second; }
     const double& aspect() const { return first; }
 
     // q1<q2 means q1 is prioritised over q2
     // ( q1 == *this, q2 == q )
-    bool operator<(const Quality& q) const
+    bool operator<(const Cell_quality& q) const
     {
       if( sq_size() > 1 )
 	if( q.sq_size() > 1 )
@@ -69,6 +60,15 @@ public:
   double squared_radius_bound() const 
   {
     return squared_radius_bound_; 
+  };
+
+  typedef typename Tr::Cell_handle Cell_handle;
+
+  Poisson_mesh_cell_criteria_3(const double radius_edge_bound = 2, //< radius edge ratio bound (ignored if zero)
+		  const double radius_bound = 0) //< cell radius bound (ignored if zero)
+    : squared_radius_bound_(radius_bound*radius_bound),
+      radius_edge_bound_(radius_edge_bound)
+  {
   };
 
   inline 
@@ -103,7 +103,7 @@ public:
 	squared_radius_bound_(squared_radius_bound) {};
       
     bool operator()(const Cell_handle& c,
-                    Quality& qual) const
+                    Cell_quality& qual) const
     {
       const Point_3& p = c->vertex(0)->point();
       const Point_3& q = c->vertex(1)->point();
@@ -133,7 +133,7 @@ public:
         }
       if( radius_edge_bound_ == 0 )
 	{
-	  qual = Quality(0,1);
+	  qual = Cell_quality(0,1);
 	  return false;
 	}
 
@@ -155,15 +155,15 @@ public:
   Is_bad is_bad_object() const
   { return Is_bad(radius_edge_bound_, squared_radius_bound_); }
 
-}; // end Mesh_criteria_3
+}; // end Poisson_mesh_cell_criteria_3
 
   template <typename Tr>
   std::ostream& operator<<(std::ostream& os,
-                           const typename Mesh_criteria_3<Tr>::Quality& q)
+                           const typename Poisson_mesh_cell_criteria_3<Tr>::Cell_quality& q)
   {
     return os << q.sq_size() << ", " << q.aspect();
   }
 
 } // end namespace CGAL
 
-#endif // CGAL_MESH_CRITERIA_3_H
+#endif // CGAL_POISSON_MESH_CRITERIA_3_H

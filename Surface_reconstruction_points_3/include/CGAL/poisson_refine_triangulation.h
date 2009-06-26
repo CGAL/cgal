@@ -21,8 +21,8 @@
 
 // CGAL
 #include <CGAL/Mesher_level.h>
-#include <CGAL/Mesh_3/Refine_tets.h>
-#include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/Mesh_3/Poisson_refine_cells_3.h>
+#include <CGAL/Poisson_mesh_cell_criteria_3.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -39,12 +39,12 @@ template <class Tr,
           class Surface,
           class Oracle,
           class Container = Meshes::Double_map_container<typename Tr::Cell_handle,
-                                                         typename Criteria::Quality>
+                                                         typename Criteria::Cell_quality>
 >
 class Poisson_mesher_level_impl_base :
-    public Mesh_3::Refine_tets_with_oracle_base<Tr, Criteria, Surface, Oracle, Container>
+    public Mesh_3::Poisson_refine_tets_with_oracle_base<Tr, Criteria, Surface, Oracle, Container>
 {
-  typedef Mesh_3::Refine_tets_with_oracle_base<Tr, Criteria, Surface, Oracle, Container> Base;
+  typedef Mesh_3::Poisson_refine_tets_with_oracle_base<Tr, Criteria, Surface, Oracle, Container> Base;
 
 public:
   // Inherited methods and fields used below
@@ -56,7 +56,7 @@ public:
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Point Point;
-  typedef typename Base::Quality Quality;
+  typedef typename Base::Cell_quality Cell_quality;
 
 public:
   /** \name CONSTRUCTORS */
@@ -73,7 +73,7 @@ protected:
 
   bool test_if_cell_is_bad(const Cell_handle c)
   {
-    Quality q;
+    Cell_quality q;
     if( is_in_domain(c) && should_be_refined(c, q) )
     {
       this->add_bad_element(c, q);
@@ -218,7 +218,7 @@ unsigned int poisson_refine_triangulation(
   typedef typename Gt::Point_3 Point;
 
   // Mesher_level types
-  typedef Mesh_criteria_3<Tr> Tets_criteria;
+  typedef Poisson_mesh_cell_criteria_3<Tr> Tets_criteria;
   typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::type Oracle;
   typedef Poisson_mesher_level<Tr, Tets_criteria, Surface, Oracle, Null_mesher_level> Refiner;
 

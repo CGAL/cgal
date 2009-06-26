@@ -282,8 +282,8 @@ private:
     CGAL_TRACE("Calls delaunay_refinement(radius_edge_ratio_bound=%lf, cell_radius_bound=%lf, max_vertices=%u, enlarge_ratio=%lf)\n",
                radius_edge_ratio_bound, cell_radius_bound, max_vertices, enlarge_ratio);
 
-    Sphere enlarged_bbox = enlarged_bounding_sphere(enlarge_ratio);
-    unsigned int nb_vertices_added = poisson_refine_triangulation(*m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarged_bbox);
+    Sphere elarged_bsphere = enlarged_bounding_sphere(enlarge_ratio);
+    unsigned int nb_vertices_added = poisson_refine_triangulation(*m_tr,radius_edge_ratio_bound,cell_radius_bound,max_vertices,elarged_bsphere);
 
     CGAL_TRACE("End of delaunay_refinement()\n");
 

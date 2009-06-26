@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_MESH_3_REFINE_TETS_H
-#define CGAL_MESH_3_REFINE_TETS_H
+#ifndef CGAL_MESH_3_POISSON_REFINE_CELLS_3_H
+#define CGAL_MESH_3_POISSON_REFINE_CELLS_3_H
 
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
@@ -40,9 +40,9 @@ template <class Tr,
           class Container =
           Meshes::Double_map_container<
             typename Tr::Cell_handle,
-            typename Criteria::Quality>
+            typename Criteria::Cell_quality>
           >
-class Refine_tets_base :
+class Poisson_refine_tets_base :
     public Container,
     public Triangulation_mesher_level_traits_3<Tr>,
     public No_test_point_conflict
@@ -63,14 +63,14 @@ protected:
   typedef typename Tr::Facet Facet;
 
 public:
-  typedef typename Criteria::Quality Quality;
+  typedef typename Criteria::Cell_quality Cell_quality;
 
   using Triangulation_mesher_level_traits_3<Tr>::triangulation_ref_impl;
 
 public:
   /** \name CONSTRUCTORS */
 
-  Refine_tets_base(Tr& t, Criteria crit) 
+  Poisson_refine_tets_base(Tr& t, Criteria crit) 
     : Triangulation_mesher_level_traits_3<Tr>(t), criteria(crit) {}
 
 protected:
@@ -81,20 +81,20 @@ protected:
 protected:
   /* --- protected functions --- */
 
-  bool should_be_refined(const Cell_handle c, Quality& qual) const
+  bool should_be_refined(const Cell_handle c, Cell_quality& qual) const
   {
     return criteria.is_bad_object()(c,qual);
   }
 
   bool should_be_refined(const Cell_handle c) const
   {
-    Quality q;
+    Cell_quality q;
     return should_be_refined(c, q);
   }
 
   bool test_if_cell_is_bad(const Cell_handle c)
   {
-    Quality q;
+    Cell_quality q;
     if( c->is_in_domain() && should_be_refined(c, q) )
       {
 	this->add_bad_element(c, q);
@@ -137,7 +137,7 @@ public:
 #if CGAL_MESH_3_DEBUG_BEFORE_CONFLICTS
   void before_conflicts_impl(const Cell_handle&, const Point& p)
   {
-    std::cerr << "Refine_tets: before conflicts of " << p;
+    std::cerr << "Poisson_refine_tets: before conflicts of " << p;
   }
 #else
   void before_conflicts_impl(const Cell_handle&, const Point&)
@@ -152,7 +152,7 @@ public:
     std::cerr << "  REJECTED!" << std::endl;
 #endif
   }
-}; // end Refine_tets_base  
+}; // end Poisson_refine_tets_base  
 
 template <class Tr,
           class Criteria,
@@ -160,16 +160,16 @@ template <class Tr,
           class Oracle,
           class Container = Meshes::Double_map_container<
             typename Tr::Cell_handle,
-            typename Criteria::Quality>
+            typename Criteria::Cell_quality>
 >
-class Refine_tets_with_oracle_base 
-  : public Refine_tets_base<Tr,
+class Poisson_refine_tets_with_oracle_base 
+  : public Poisson_refine_tets_base<Tr,
                             Criteria,
                             Container>
 {
 public:
-  typedef Refine_tets_base<Tr, Criteria, Container> Base;
-  typedef Refine_tets_with_oracle_base<Tr, 
+  typedef Poisson_refine_tets_base<Tr, Criteria, Container> Base;
+  typedef Poisson_refine_tets_with_oracle_base<Tr, 
                                        Criteria,
                                        Surface,
                                        Oracle,
@@ -186,7 +186,7 @@ public:
 
   /** \name CONSTRUCTORS */
 
-  Refine_tets_with_oracle_base(Tr& t, Criteria crit, Surface& s, Oracle& o)
+  Poisson_refine_tets_with_oracle_base(Tr& t, Criteria crit, Surface& s, Oracle& o)
     : Base(t, crit), surface(s), oracle(o) {}
 
 public:
@@ -198,7 +198,7 @@ public:
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     // Check if triangulation's geometric traits provides a robust circumcenter computation
     if (triangulation_ref_impl().side_of_sphere(c, p, true) != ON_BOUNDED_SIDE)
-      std::cerr << "Refine_tets_with_oracle_base::conflicts_zone_impl: ERROR: circumcenter out of sphere!\n";
+      std::cerr << "Poisson_refine_tets_with_oracle_base::conflicts_zone_impl: ERROR: circumcenter out of sphere!\n";
 #endif
 
     zone.cell = c;
@@ -263,21 +263,21 @@ protected:
   Surface& surface;
   Oracle& oracle;
 
-}; // end Refine_tets_with_oracle_base
+}; // end Poisson_refine_tets_with_oracle_base
 
 template <typename Tr,
           typename Criteria,
           typename Surface,
           typename Oracle, // BEURK
           typename BaseP = // workaround for VC7, see below
-             Refine_tets_with_oracle_base<Tr, Criteria, Surface, Oracle>,
+             Poisson_refine_tets_with_oracle_base<Tr, Criteria, Surface, Oracle>,
           typename Facets_level = Refine_facets<Tr>
  >
-class Refine_tets : 
+class Poisson_refine_tets : 
   public BaseP, 
   public Mesher_level <
     Tr,
-    Refine_tets<Tr, Criteria, Surface, Oracle, BaseP, Facets_level>,
+    Poisson_refine_tets<Tr, Criteria, Surface, Oracle, BaseP, Facets_level>,
     typename Tr::Cell_handle,
     Facets_level,
     Triangulation_mesher_level_traits_3<Tr>
@@ -287,16 +287,16 @@ class Refine_tets :
 
   Facets_level& facets_level;
 public:
-  typedef Refine_tets<Tr, Criteria, Surface, Oracle, Base, Facets_level> Self;
+  typedef Poisson_refine_tets<Tr, Criteria, Surface, Oracle, Base, Facets_level> Self;
   typedef Mesher_level <
     Tr,
-    Refine_tets<Tr, Criteria, Surface, Oracle, Base, Facets_level>,
+    Poisson_refine_tets<Tr, Criteria, Surface, Oracle, Base, Facets_level>,
     typename Tr::Cell_handle,
     Facets_level,
     Triangulation_mesher_level_traits_3<Tr>
   > Mesher;
   
-  Refine_tets(Tr& t, Criteria crit, Surface& surface, Oracle& oracle, Facets_level& facets_level)
+  Poisson_refine_tets(Tr& t, Criteria crit, Surface& surface, Oracle& oracle, Facets_level& facets_level)
     : Base(t, crit, surface, oracle), Mesher(facets_level), facets_level(facets_level)
   {} // here VC7 complain about default constructor of Base, if the
      // workaround is not used.
@@ -315,9 +315,9 @@ public:
     return s.str();
   }
 
-}; // end class Refine_tets
+}; // end class Poisson_refine_tets
 
 }; // end namespace Mesh_3
 }; // end namespace CGAL
 
-#endif // CGAL_MESH_3_REFINE_TETS_H
+#endif // CGAL_MESH_3_POISSON_REFINE_CELLS_3_H
