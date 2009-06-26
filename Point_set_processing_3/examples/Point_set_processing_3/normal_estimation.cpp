@@ -11,7 +11,7 @@
 
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/property_map.h>
+#include <CGAL/Memory_sizer.h>
 #include <CGAL/Timer.h>
 
 // This package
