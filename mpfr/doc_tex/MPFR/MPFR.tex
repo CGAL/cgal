@@ -1,0 +1,206 @@
+\section{Introduction}
+
+This section contains a short description of the MPFR library and the
+motivations for writing an interface to CGAL.
+For a detailed description of the MPFR library and a description of
+its C interface, we refer the reader to \cite{mpfr:manual}.
+
+MPFR is the short name for "Multiple Precision Floating-Point
+Reliable Library".
+It is a library of arbitrary-precision arithmetic on floating-point
+numbers, based on the well-known GMP library.
+Its main characteristics are the portability of its code (which means that
+the results of operations do not depend on the architecture), precision
+control over all variables and the control over rounding modes specified
+in the IEEE 754-1985 standard.
+The authors claim that these characteristics do not slow down the
+implementation with respect to other arbitrary-precision libraries;
+they also show that other libraries sometimes fail to correctly round
+values while MPFR rounding is always correct \cite{mpfr:paper}.
+
+MPFR was already used in CGAL, before this interface was written, to
+perform efficient and correct conversions from integers and rationals
+to double precision \cite{mpfr:pion}.
+
+
+\section{Definitions}
+
+The \emph{precision} of a floating-point number denotes the number of 
+bits used to represent its mantissa.
+In GMP, the type for the precision is \verb=mp_prec_t= and it is used
+by MPFR and its CGAL interface.
+
+Of course, not all numbers can be represented in a computer: it is even
+impossible sometimes to represent the result of an operation between
+representable numbers.
+This makes \emph{rounding} become a central aspect in computer arithmetic.
+\emph{Rounding} means to approximate a number with a representable
+number.
+There are four commonly used rounding modes, to round a number \(a\)
+one can:
+\begin{itemize}
+	\item round to nearest: represent \(a\) with its closest
+	representable number
+	\item round towards \(+ \infty\): represent \(a\) with
+	the smallest representable number which is bigger than or
+	equal to \(a\)
+	\item round towards \(- \infty\): represent \(a\) with
+	the biggest representable number which is smaller than or
+	equal to \(a\)
+	\item round towards zero: represent \(a\) with \(r_a\), such
+	that \(|a|\) rounded towards \(- \infty\) is represented with
+	\(|r_a|\).
+\end{itemize}
+
+In the context of floating-point arithmetic, rounding means to represent
+a number using a given precision.
+The result of MPFR operations is defined as follows: operation result
+it is the same as performing the operation with infinite precision and
+rounding the result to a number to the desired precision.
+
+As the reader can imagine, rounding may induce incorrect results or,
+more specifically, \emph{inexact} results.
+It is to say, each operation gives a rounded approximation of the
+result.
+MPFR captures this idea of \emph{inexactitude} and, after each
+operation, it sets some flags that indicate whether the result is
+inexact, whether there was an overflow or underflow, whether the
+result is NaN (not-a-number) or whether it exceeds the exponent range.
+
+
+\section{The MPFR CGAL interface}
+
+The class representing MPFR numbers is named \verb=Gmpfr=, and it is a
+model of \emph{FieldWithKthRoot} and \emph{RealEmbeddable}.
+
+The present interface was designed keeping in mind that CGAL provides
+users simple access to powerful mechanisms as well as a control over
+low-level details to expert users.
+
+With this aim, rounding and precision handling were abstracted from the
+usual arithmetic interface, i.e., the overloaded arithmetic operators
+use default rounding mode and operations are performed using default
+precision.
+Nevertheless, the experienced user can use the static functions
+\verb=set_defrnd= to change the rounding mode used in operations
+and \verb=set_defprec= to change the precision used to store
+the results.
+
+Concerning the flags about exactness, the user can perform operations
+of any kind without bothering on these flags, but the user can also
+take advantage of this MPFR facility by using the static functions
+\verb=clear_flags=, \verb=underflow_flag=, \verb=overflow_flag=,
+\verb=nan_flag=, \verb=inex_flag= and \verb=erange_flag=.
+
+
+\section{Implementation and examples}
+
+This section details some implementation subtleties, illustrating them
+with some examples.
+
+A good starting point for this section is to mention that this class is
+reference-counted.
+However, the precision brings the necessity of carefully implementing
+constructors and arithmetic operations, as it will be described.
+
+
+\subsection{Construction and copy}
+
+The class can be constructed from another object of the class \verb=Gmpfr=,
+\verb=int=, \verb=long=, \verb=unsigned=, \verb=unsigned long=, \verb=double=,
+\verb=long double=, \verb=Gmpz= and \verb=Gmpq=.
+
+The constructors can take one, two or three arguments.
+If only one argument is used the constructed object will have the default
+precision, except when constructing from a \verb=Gmpfr=: the constructed
+object will have the same precision of the original number and there will
+not be a copy in memory, the CGAL reference counting mechanism will be used.
+If the default precision is smaller than the one of the original number, the
+default rounding mode will be used.
+
+When constructing with two parameters, one can determine the rounding mode or
+the precision used in the construction.
+The other parameter will be set to the default.
+
+When constructing with three arguments, one specifies the rounding mode and
+the precision used to construct the new object.
+
+The copy assignment operator uses the \verb=CGAL::Handle_for= mechanism
+when the precision of the source object is the same of the destination
+object: the destination object is cleared and a reference to the source
+object is stored. In other case, the precision of the destination object is
+not changed and the reference counting machinery is not used, the
+assignment is a simple copy, using the default rounding mode when the
+precision of the destination is smaller than that of the source.
+
+
+\subsection{Overloaded arithmetic operators}
+
+The MPFR library provides arithmetic functions to operate with signed and
+unsigned \verb=int=, \verb=mpz_t=, and \verb=mpq_t=.
+This interface used those functions to overload arithmetic operators, making
+possible to interoperate an object of type \verb=Gmpfr= with signed and
+unsigned integers, \verb=Gmpz= and \verb=Gmpq=.
+
+The precision of the result comes from the precision of the operands, the
+default is never used.
+For example, if \verb=a= is an object of the \verb=Gmpfr= class and
+\verb=b= is an integer or object of another class, the precision of
+\verb=a+b= will be the precision of \verb=a=, \emph{i.e.} the precision of
+the \verb=Gmpfr=.
+
+When operating between two \verb=Gmpfr=s, the precision of the result will
+be the precision of the first operand.
+
+A problem arises if the result of an operation needs to be stored in a
+number with different precision.
+For example, if \verb a \ has precision 200, \verb b \ has precision 100 and
+the result of \verb=a+b= needs to be stored in another object \verb c \ with
+precision 150, the operation \verb-c=a+b- will erase the current value
+of \verb c \ and store in it the result of \verb=a+b= with precision 200,
+since the copy assignment operator inherits its behavior from the CGAL
+reference counting mechanism.
+
+This difficulty can be overcome in several ways, yielding different results
+because of the rounding.
+One of them consists in creating \verb c using a copy constructor from
+\verb a forcing its precision to 150 with \verb=Gmpfr c(a,150)= and
+operating later with \verb-c+=b-.
+The problem with this is that, when constructing \verb c \ from \verb a ,
+we lose precision and, in another situations, this can lead to incorrect
+results.
+
+The natural solution to this consists in operating with the biggest of
+the precisions of \verb a , \verb b \ and \verb c \ (200 in this case),
+rounding the result.
+The result will be correct, because there was only one rounding and it
+was at the end of the operation.
+Thus, operating with higher precisions is slower; it is the responsibility
+of the user/programmer to choose the correct way to implement operations.
+It is worth mentioning here that each function of the MPFR library performs
+as if the operation were done with infinite precision and rounded after;
+the user/programmer must keep this in mind when operating with \verb=Gmpfr=
+objects.
+
+The following example illustrates the loss of precision yielding unexpected
+results:
+
+\ccIncludeExampleCode{mpfr/precision.cpp}
+
+
+\subsection{Flags}
+
+MPFR provides a means to know whether performed operations were not
+exact, or they incurred in overflow or underflow, if the exponent is
+out of range, or the result was NaN.
+One can clear the flags before a set of operations and inspect them
+later, in order to see if something unexpected happened during
+operations. This example illustrates the use of one of the flags, the
+inexactitude flags:
+
+\ccIncludeExampleCode{mpfr/inexact.cpp}
+
+In the same way, one can check the rest of the flags with the
+functions \verb=underflow_flag= , \verb=overflow_flag= ,
+\verb=nan_flag= and \verb=erange_flag= .
+

@@ -4240,6 +4240,22 @@ Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.pdf -text svneol=unset#appl
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
 iostream/doc_tex/IOstream/io.png -text
 iostream/test/iostream/data/io.cin -text
+mpfr/doc_tex/MPFR/MPFR.tex -text
+mpfr/doc_tex/MPFR/PkgDescription.tex -text
+mpfr/doc_tex/MPFR/main.tex -text
+mpfr/doc_tex/MPFR/mpfrbib.bib -text
+mpfr/doc_tex/MPFR_ref/Gmpfr.tex -text
+mpfr/doc_tex/MPFR_ref/intro.tex -text
+mpfr/doc_tex/MPFR_ref/main.tex -text
+mpfr/examples/mpfr/inexact.cpp -text
+mpfr/examples/mpfr/precision.cpp -text
+mpfr/include/CGAL/Gmpfr.h -text
+mpfr/include/CGAL/Gmpfr_type.h -text
+mpfr/include/CGAL/mpfr_coercion_traits.h -text
+mpfr/package_info/description.txt -text
+mpfr/package_info/maintainer -text
+mpfr/test/mpfr/Gmpfr.cpp -text
+mpfr/test/mpfr/mpfr_test_operators.cpp -text
 wininst/developer_scripts/CGAL.bmp -text svneol=unset#image/bmp
 wininst/developer_scripts/DumpLogToFile.nsh -text
 wininst/developer_scripts/EnvVarUpdate.nsh -text

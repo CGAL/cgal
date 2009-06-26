@@ -1,0 +1,141 @@
+\begin{ccRefClass} {Gmpfr}
+\label{Gmpfr}
+
+\ccDefinition
+
+An object of the class \ccStyle{Gmpfr} is a fixed precision
+floating-point number, based on the MPFR library.
+
+\ccInclude{CGAL/Gmpfr.h}
+
+\ccIsModel
+\ccc{FieldWithKthRoot}\\
+\ccc{RealEmbeddable}
+
+\ccTypes
+
+\ccNestedType{NT}{the field type, which is \ccc{Gmpfr}.}
+
+\ccCreation
+\ccCreationVariable{f}
+
+\ccConstructor{Gmpfr();}
+	{creates an uninitialized MPFR fixed precision floating point number
+	\ccVar.}
+
+\ccHidden \ccConstructor{Gmpfr(const Gmpfr& n);}
+	{copy constructor.}
+
+\ccConstructor{Gmpfr(mpfr_srcptr p);}
+	{creates a MPFR number, initialized with the value of \ccStyle{p}.}
+
+\ccConstructor{Gmpfr(long si);}
+	{creates a MPFR number, initialized with the value of \ccStyle{si}.}
+
+\ccConstructor{Gmpfr(unsigned long ui);}
+	{creates a MPFR number, initialized with the value of \ccStyle{ui}.}
+
+\ccConstructor{Gmpfr(int i);}
+	{creates a MPFR number, initialized with the value of \ccStyle{i}.}
+
+\ccConstructor{Gmpfr(double d);}
+	{creates a MPFR number, initialized with the value of \ccStyle{d}.}
+
+\ccConstructor{Gmpfr(long double ld);}
+	{creates a MPFR number, initialized with the value of \ccStyle{ld}.}
+
+\ccConstructor{Gmpfr(const Gmpz &z);}
+	{creates a MPFR number, initialized with the value of \ccStyle{z}.}
+
+\ccConstructor{Gmpfr(const Gmpq &q);}
+	{creates a MPFR number, initialized with the value of \ccStyle{q}.}
+
+Note that all constructors, except the first one, have two other ways
+of be called.
+One can optionally specify as second parameter the rounding mode desired
+for the conversion from the source number and as a third parameter the
+precision with which this MPFR number will be created.
+The last calling possibility consists in only specifying the desired
+precision.
+
+These optional parameters, along with other functions which will be
+explained below, allow users to gain control over rounding and precision,
+two of the main characteristics of MPFR.
+
+
+\ccOperations
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% precision and rounding modes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ccFunction{static mp_rnd_t get_defrnd();}
+	{This function returns the current rounding mode used by MPFR.}
+
+\ccFunction{static void set_defrnd(mp_rnd_t r);}
+	{This function sets the MPFR rounding mode to r.}
+
+\ccFunction{static mp_prec_t get_defprec();}
+	{This returns the current precision used in MPFR creation
+	by default.}
+
+\ccFunction{static void set_defprec(mp_prec_t p);}
+	{This function sets the default MPFR precision to p.}
+
+\ccFunction{mp_prec_t get_prec()const;}
+	{}
+
+\ccMethod{mp_prec_t get_prec()const;}
+	{Returns the precision of \ccVar.}
+
+\ccMethod{void set_prec(mp_prec_t);}
+	{Sets the precision of \ccVar.
+	Note that with this function, the previous value of \ccVar is lost.}
+
+\ccMethod{void prec_round(mp_prec_t p, mp_rnd_t r);}
+	{Sets the precision of \ccVar to p, using the rounding mode r
+	for rounding.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TODO: add here an advanced section for inexact flags handling functions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% arithmetic operators
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Arithmetic operators +, -, * and / are overloaded, but special care must
+be taken when applying them, because the user can't directly handle the
+precision with them.
+The only way to specify the precision of the result is to change the
+default MPFR precision.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TODO: comparisons
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% input/output
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ccFunction{std::istream& operator>>(std::istream& in, Gmpfr& f);}
+	{reads a number from \ccc{in}, then converts it to a \ccc{Gmpfr}.}
+
+\ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpfr& f);}
+	{writes \ccc{f} to the ostream \ccc{out}, in the form
+	\(.MeE\), where \(M\) is the mantissa and \(E\) is the exponent.}
+
+
+%--------------------------------------------------
+% \ccImplementation
+% \ccc{Gmpfr}s are reference counted.
+%-------------------------------------------------- 
+
+\end{ccRefClass} 
+\ccDefGlobalScope{CGAL::}
