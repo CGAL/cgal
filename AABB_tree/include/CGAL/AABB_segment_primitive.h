@@ -30,7 +30,7 @@ namespace CGAL {
 template <class GeomTraits, class Iterator>
 class AABB_segment_primitive
 {
-        // type
+        // types
 public:
         typedef typename GeomTraits::Point_3 Point; // point type
         typedef typename GeomTraits::Segment_3 Datum; // datum type

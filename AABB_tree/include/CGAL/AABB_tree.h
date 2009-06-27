@@ -40,10 +40,10 @@ namespace CGAL {
         /// types
         typedef typename AABBTraits::FT FT;
         typedef typename AABBTraits::Point Point;
-        typedef typename AABBTraits::Primitive Primitive;
-        typedef typename AABBTraits::Primitive::Id Primitive_id;
         typedef typename AABBTraits::size_type size_type;
+        typedef typename AABBTraits::Primitive Primitive;
         typedef typename AABBTraits::Bounding_box Bounding_box;
+        typedef typename AABBTraits::Primitive::Id Primitive_id;
         typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
         typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
 
@@ -154,11 +154,9 @@ namespace CGAL {
             else
                 std::cerr << "AABB tree traversal with empty tree" << std::endl;
         }
-        //////////////////////////////////////////////
 
     private:
         typedef AABB_node<AABBTraits> Node;
-//        typedef typename AABBTraits::Sphere Sphere;
 
         //-------------------------------------------------------
         // Traits classes for traversal computation
@@ -414,7 +412,6 @@ namespace CGAL {
         , m_search_tree_constructed(false)
     {
         // Insert each primitive into tree
-        // TODO: get number of elements to reserve space ?
         while ( first != beyond )
         {
             m_primitives.push_back(Primitive(first));

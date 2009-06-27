@@ -46,29 +46,29 @@ typedef CGAL::AABB_tree<AABB_triangle_traits> Tree;
 
 int main()
 {
-        Point a(1.0, 0.0, 0.0);
-        Point b(0.0, 1.0, 0.0);
-        Point c(0.0, 0.0, 1.0);
-        Point d(0.0, 0.0, 0.0);
+	Point a(1.0, 0.0, 0.0);
+	Point b(0.0, 1.0, 0.0);
+	Point c(0.0, 0.0, 1.0);
+	Point d(0.0, 0.0, 0.0);
 
-        std::list<Triangle> triangles;
-        triangles.push_back(Triangle(a,b,c));
-        triangles.push_back(Triangle(a,b,d));
-        triangles.push_back(Triangle(a,d,c));
+	std::list<Triangle> triangles;
+	triangles.push_back(Triangle(a,b,c));
+	triangles.push_back(Triangle(a,b,d));
+	triangles.push_back(Triangle(a,d,c));
 
-        // constructs AABB tree
-        Tree tree(triangles.begin(),triangles.end());
+	// constructs AABB tree
+	Tree tree(triangles.begin(),triangles.end());
 
-        // counts #intersections
-        Ray ray_query(a,b);
-        std::cout << tree.number_of_intersected_primitives(ray_query)
-                  << " intersections(s) with ray query" << std::endl;
+	// counts #intersections
+	Ray ray_query(a,b);
+	std::cout << tree.number_of_intersected_primitives(ray_query)
+		<< " intersections(s) with ray query" << std::endl;
 
-        // compute closest point and squared distance
-        Point point_query(2.0, 2.0, 2.0);
-        Point closest_point = tree.closest_point(point_query);
-        FT sqd = tree.squared_distance(point_query);
-        std::cout << "squared distance: " << sqd << std::endl;
+	// compute closest point and squared distance
+	Point point_query(2.0, 2.0, 2.0);
+	Point closest_point = tree.closest_point(point_query);
+	FT sqd = tree.squared_distance(point_query);
+	std::cout << "squared distance: " << sqd << std::endl;
 
-        return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
