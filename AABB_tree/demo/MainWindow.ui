@@ -40,15 +40,44 @@
     <property name="title" >
      <string>&amp;File</string>
     </property>
-    <addaction name="actionQuit" />
     <addaction name="actionLoadPolyhedron" />
+    <addaction name="actionQuit" />
    </widget>
    <widget class="QMenu" name="menuView" >
     <property name="title" >
      <string>&amp;View</string>
     </property>
+    <addaction name="actionPolyhedron" />
+   </widget>
+   <widget class="QMenu" name="menuAlgorithms" >
+    <property name="title" >
+     <string>Algorithms</string>
+    </property>
+    <addaction name="actionInside_points" />
+    <addaction name="actionUnsigned_distance_function_to_facets" />
+    <addaction name="actionUnsigned_distance_function_to_edges" />
+    <addaction name="actionSigned_distance_function_to_facets" />
+   </widget>
+   <widget class="QMenu" name="menuBenchmarks" >
+    <property name="title" >
+     <string>Benchmarks</string>
+    </property>
+    <widget class="QMenu" name="menuIntersections" >
+     <property name="title" >
+      <string>Intersections</string>
+     </property>
+     <addaction name="actionDo_intersect" />
+     <addaction name="actionNb_intersections" />
+     <addaction name="actionAny_intersection" />
+     <addaction name="actionAll_intersections" />
+     <addaction name="actionAll_intersected_primitives" />
+    </widget>
+    <addaction name="menuIntersections" />
+    <addaction name="actionDistances" />
    </widget>
    <addaction name="menuFile" />
+   <addaction name="menuAlgorithms" />
+   <addaction name="menuBenchmarks" />
    <addaction name="menuView" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
@@ -63,6 +92,61 @@
   <action name="actionLoadPolyhedron" >
    <property name="text" >
     <string>Load polyhedron...</string>
+   </property>
+  </action>
+  <action name="actionInside_points" >
+   <property name="text" >
+    <string>Inside points...</string>
+   </property>
+  </action>
+  <action name="actionDo_intersect" >
+   <property name="text" >
+    <string>do_intersect</string>
+   </property>
+  </action>
+  <action name="actionAny_intersection" >
+   <property name="text" >
+    <string>any_intersection</string>
+   </property>
+  </action>
+  <action name="actionAll_intersections" >
+   <property name="text" >
+    <string>all_intersections</string>
+   </property>
+  </action>
+  <action name="actionDistances" >
+   <property name="text" >
+    <string>Distances</string>
+   </property>
+  </action>
+  <action name="actionNb_intersections" >
+   <property name="text" >
+    <string>nb_intersections</string>
+   </property>
+  </action>
+  <action name="actionAll_intersected_primitives" >
+   <property name="text" >
+    <string>all_intersected_primitives</string>
+   </property>
+  </action>
+  <action name="actionUnsigned_distance_function_to_facets" >
+   <property name="text" >
+    <string>Unsigned distance function to facets</string>
+   </property>
+  </action>
+  <action name="actionUnsigned_distance_function_to_edges" >
+   <property name="text" >
+    <string>Unsigned distance function to edges</string>
+   </property>
+  </action>
+  <action name="actionSigned_distance_function_to_facets" >
+   <property name="text" >
+    <string>Signed distance function to facets</string>
+   </property>
+  </action>
+  <action name="actionPolyhedron" >
+   <property name="text" >
+    <string>Polyhedron</string>
    </property>
   </action>
  </widget>

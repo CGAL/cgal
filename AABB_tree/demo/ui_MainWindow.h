@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'MainWindow.ui'
 **
-** Created: Sat 27. Jun 22:31:39 2009
+** Created: Sat 27. Jun 23:36:43 2009
 **      by: Qt User Interface Compiler version 4.4.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -30,12 +30,26 @@ class Ui_MainWindow
 public:
     QAction *actionQuit;
     QAction *actionLoadPolyhedron;
+    QAction *actionInside_points;
+    QAction *actionDo_intersect;
+    QAction *actionAny_intersection;
+    QAction *actionAll_intersections;
+    QAction *actionDistances;
+    QAction *actionNb_intersections;
+    QAction *actionAll_intersected_primitives;
+    QAction *actionUnsigned_distance_function_to_facets;
+    QAction *actionUnsigned_distance_function_to_edges;
+    QAction *actionSigned_distance_function_to_facets;
+    QAction *actionPolyhedron;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     Viewer *viewer;
     QMenuBar *menubar;
     QMenu *menuFile;
     QMenu *menuView;
+    QMenu *menuAlgorithms;
+    QMenu *menuBenchmarks;
+    QMenu *menuIntersections;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -50,6 +64,28 @@ public:
     actionQuit->setObjectName(QString::fromUtf8("actionQuit"));
     actionLoadPolyhedron = new QAction(MainWindow);
     actionLoadPolyhedron->setObjectName(QString::fromUtf8("actionLoadPolyhedron"));
+    actionInside_points = new QAction(MainWindow);
+    actionInside_points->setObjectName(QString::fromUtf8("actionInside_points"));
+    actionDo_intersect = new QAction(MainWindow);
+    actionDo_intersect->setObjectName(QString::fromUtf8("actionDo_intersect"));
+    actionAny_intersection = new QAction(MainWindow);
+    actionAny_intersection->setObjectName(QString::fromUtf8("actionAny_intersection"));
+    actionAll_intersections = new QAction(MainWindow);
+    actionAll_intersections->setObjectName(QString::fromUtf8("actionAll_intersections"));
+    actionDistances = new QAction(MainWindow);
+    actionDistances->setObjectName(QString::fromUtf8("actionDistances"));
+    actionNb_intersections = new QAction(MainWindow);
+    actionNb_intersections->setObjectName(QString::fromUtf8("actionNb_intersections"));
+    actionAll_intersected_primitives = new QAction(MainWindow);
+    actionAll_intersected_primitives->setObjectName(QString::fromUtf8("actionAll_intersected_primitives"));
+    actionUnsigned_distance_function_to_facets = new QAction(MainWindow);
+    actionUnsigned_distance_function_to_facets->setObjectName(QString::fromUtf8("actionUnsigned_distance_function_to_facets"));
+    actionUnsigned_distance_function_to_edges = new QAction(MainWindow);
+    actionUnsigned_distance_function_to_edges->setObjectName(QString::fromUtf8("actionUnsigned_distance_function_to_edges"));
+    actionSigned_distance_function_to_facets = new QAction(MainWindow);
+    actionSigned_distance_function_to_facets->setObjectName(QString::fromUtf8("actionSigned_distance_function_to_facets"));
+    actionPolyhedron = new QAction(MainWindow);
+    actionPolyhedron->setObjectName(QString::fromUtf8("actionPolyhedron"));
     centralwidget = new QWidget(MainWindow);
     centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
     gridLayout = new QGridLayout(centralwidget);
@@ -68,15 +104,35 @@ public:
     menuFile->setObjectName(QString::fromUtf8("menuFile"));
     menuView = new QMenu(menubar);
     menuView->setObjectName(QString::fromUtf8("menuView"));
+    menuAlgorithms = new QMenu(menubar);
+    menuAlgorithms->setObjectName(QString::fromUtf8("menuAlgorithms"));
+    menuBenchmarks = new QMenu(menubar);
+    menuBenchmarks->setObjectName(QString::fromUtf8("menuBenchmarks"));
+    menuIntersections = new QMenu(menuBenchmarks);
+    menuIntersections->setObjectName(QString::fromUtf8("menuIntersections"));
     MainWindow->setMenuBar(menubar);
     statusbar = new QStatusBar(MainWindow);
     statusbar->setObjectName(QString::fromUtf8("statusbar"));
     MainWindow->setStatusBar(statusbar);
 
     menubar->addAction(menuFile->menuAction());
+    menubar->addAction(menuAlgorithms->menuAction());
+    menubar->addAction(menuBenchmarks->menuAction());
     menubar->addAction(menuView->menuAction());
-    menuFile->addAction(actionQuit);
     menuFile->addAction(actionLoadPolyhedron);
+    menuFile->addAction(actionQuit);
+    menuView->addAction(actionPolyhedron);
+    menuAlgorithms->addAction(actionInside_points);
+    menuAlgorithms->addAction(actionUnsigned_distance_function_to_facets);
+    menuAlgorithms->addAction(actionUnsigned_distance_function_to_edges);
+    menuAlgorithms->addAction(actionSigned_distance_function_to_facets);
+    menuBenchmarks->addAction(menuIntersections->menuAction());
+    menuBenchmarks->addAction(actionDistances);
+    menuIntersections->addAction(actionDo_intersect);
+    menuIntersections->addAction(actionNb_intersections);
+    menuIntersections->addAction(actionAny_intersection);
+    menuIntersections->addAction(actionAll_intersections);
+    menuIntersections->addAction(actionAll_intersected_primitives);
 
     retranslateUi(MainWindow);
 
@@ -89,8 +145,22 @@ public:
     actionQuit->setText(QApplication::translate("MainWindow", "&Quit", 0, QApplication::UnicodeUTF8));
     actionQuit->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", 0, QApplication::UnicodeUTF8));
     actionLoadPolyhedron->setText(QApplication::translate("MainWindow", "Load polyhedron...", 0, QApplication::UnicodeUTF8));
+    actionInside_points->setText(QApplication::translate("MainWindow", "Inside points...", 0, QApplication::UnicodeUTF8));
+    actionDo_intersect->setText(QApplication::translate("MainWindow", "do_intersect", 0, QApplication::UnicodeUTF8));
+    actionAny_intersection->setText(QApplication::translate("MainWindow", "any_intersection", 0, QApplication::UnicodeUTF8));
+    actionAll_intersections->setText(QApplication::translate("MainWindow", "all_intersections", 0, QApplication::UnicodeUTF8));
+    actionDistances->setText(QApplication::translate("MainWindow", "Distances", 0, QApplication::UnicodeUTF8));
+    actionNb_intersections->setText(QApplication::translate("MainWindow", "nb_intersections", 0, QApplication::UnicodeUTF8));
+    actionAll_intersected_primitives->setText(QApplication::translate("MainWindow", "all_intersected_primitives", 0, QApplication::UnicodeUTF8));
+    actionUnsigned_distance_function_to_facets->setText(QApplication::translate("MainWindow", "Unsigned distance function to facets", 0, QApplication::UnicodeUTF8));
+    actionUnsigned_distance_function_to_edges->setText(QApplication::translate("MainWindow", "Unsigned distance function to edges", 0, QApplication::UnicodeUTF8));
+    actionSigned_distance_function_to_facets->setText(QApplication::translate("MainWindow", "Signed distance function to facets", 0, QApplication::UnicodeUTF8));
+    actionPolyhedron->setText(QApplication::translate("MainWindow", "Polyhedron", 0, QApplication::UnicodeUTF8));
     menuFile->setTitle(QApplication::translate("MainWindow", "&File", 0, QApplication::UnicodeUTF8));
     menuView->setTitle(QApplication::translate("MainWindow", "&View", 0, QApplication::UnicodeUTF8));
+    menuAlgorithms->setTitle(QApplication::translate("MainWindow", "Algorithms", 0, QApplication::UnicodeUTF8));
+    menuBenchmarks->setTitle(QApplication::translate("MainWindow", "Benchmarks", 0, QApplication::UnicodeUTF8));
+    menuIntersections->setTitle(QApplication::translate("MainWindow", "Intersections", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

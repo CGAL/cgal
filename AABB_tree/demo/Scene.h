@@ -49,9 +49,16 @@ public:
 
 public:
   int open(QString filename);
+  void generate_inside_points(const unsigned int nb_trials);
+  Point random_point();
+  Vector random_vector();
 
 private:
   Polyhedron *m_pPolyhedron;
+  std::list<Point> m_points;
+  
+  // TODO: unsigned and signed distance function (shown in cut plane)
+
 }; // end class Scene
 
 

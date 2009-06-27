@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(this, SIGNAL(openRecentFile(QString)),
 	  this, SLOT(open(QString)));
 
-  readSettings(); // Among other things, the column widths are stored.
+  readSettings();
 }
 
 MainWindow::~MainWindow()
@@ -143,4 +143,27 @@ void MainWindow::on_actionLoadPolyhedron_triggered()
 void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 {
   m_pViewer->setAddKeyFrameKeyboardModifiers(m);
+}
+
+void MainWindow::on_actionInside_points_triggered()
+{
+	bool ok;
+    const unsigned int nb_trials = (unsigned)
+		QInputDialog::getInteger(NULL, "#Trials",
+		"Trials:",
+      10000, // default value
+      1, // min
+      100000000, // max
+      9, // decimals
+      &ok);
+    if(!ok)
+		return;
+
+    // wait cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    m_pScene->generate_inside_points(nb_trials);
+
+    // default cursor
+    QApplication::restoreOverrideCursor();
 }

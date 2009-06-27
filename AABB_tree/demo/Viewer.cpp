@@ -26,7 +26,7 @@ void Viewer::draw()
   ::glClearColor(1.0f,1.0f,1.0f,0.0f);
   ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
-  if(true)
+  if(false)
   {
     ::glEnable(GL_BLEND);
     ::glEnable(GL_LINE_SMOOTH);

@@ -38,6 +38,9 @@ public:
 			// load
 			void on_actionLoadPolyhedron_triggered();
 
+			// algorithms
+			void on_actionInside_points_triggered();
+
 			// drag & drop
 			void dragEnterEvent(QDragEnterEvent *event);
 			void dropEvent(QDropEvent *event);
