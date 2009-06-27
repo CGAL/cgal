@@ -42,16 +42,17 @@
 template <class K>
 int test()
 {
+	// types
+	typedef typename K::FT FT;
+	typedef typename K::Line_3 Line;
+	typedef typename K::Point_3 Point;
+	typedef typename K::Segment_3 Segment;
+
 	// load polyhedron
 	typedef CGAL::Polyhedron_3<K> Polyhedron;
 	Polyhedron polyhedron;
 	std::ifstream ifs("./data/tetrahedron.off");
 	ifs >> polyhedron;
-
-	typedef typename K::FT FT;
-	typedef typename K::Point_3 Point;
-	typedef typename K::Segment_3 Segment;
-	typedef typename K::Line_3 Line;
 
 	// construct tree from facets
 	typedef typename CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
@@ -81,7 +82,7 @@ int test()
 	any = tree.any_intersection(pq);
 	if(!any)
 	{
-		std::cerr << "any intersection did not find any intersection" << std::endl;
+		std::cerr << "did not find any intersection" << std::endl;
 		return EXIT_FAILURE;
 	}
 	Object_and_primitive_id op = *any;
