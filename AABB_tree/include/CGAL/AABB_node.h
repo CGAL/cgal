@@ -72,9 +72,9 @@ public:
    * @param traits the traversal traits that define the traversal behaviour
    * @param nb_primitives the number of primitive
    *
-   * General traversal query, the traits class allows to use it for the various
+   * General traversal query. The traits class allows using it for the various
    * traversal methods we need: listing, counting, detecting intersections,
-   * drawing the boxes...
+   * drawing the boxes.
    */
   template<class Traversal_traits, class Query>
   void traversal(const Query& query,
@@ -102,7 +102,7 @@ private:
   Primitive& right_data() { return *static_cast<Primitive*>(m_p_right_child); }
 
 private:
-  /// bounding box
+  /// node bounding box
   Bounding_box m_bbox;
 
   /// children nodes, either pointing towards children (if children are not leaves),

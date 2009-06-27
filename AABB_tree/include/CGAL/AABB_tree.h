@@ -346,9 +346,8 @@ namespace CGAL {
                 if(new_closest_point != m_closest_point)
                 {
                     m_closest_primitive = primitive.id();
-                    m_closest_point = new_closest_point;
+                    m_closest_point = new_closest_point; // this effectively shrinks the sphere 
                 }
-//                m_sphere = AABBTraits().sphere(query, m_closest_point);
             }
 
             bool do_intersect(const Point& query, const Node& node) const

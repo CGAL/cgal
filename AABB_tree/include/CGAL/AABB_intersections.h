@@ -13,5 +13,5 @@
 #include <CGAL/AABB_intersections/Triangle_3_plane_3_intersection.h>
 #include <CGAL/AABB_intersections/Triangle_3_segment_3_intersection.h>
 
-#include <CGAL/AABB_intersections/nearest_point_triangle_3.h>
 #include <CGAL/AABB_intersections/nearest_point_segment_3.h>
+#include <CGAL/AABB_intersections/nearest_point_triangle_3.h>
