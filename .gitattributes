@@ -1,4 +1,24 @@
 * text=auto !eol
+AABB_tree/demo/AABB_demo.cpp -text
+AABB_tree/demo/AABB_demo.qrc -text
+AABB_tree/demo/CMakeLists.txt -text
+AABB_tree/demo/MainWindow.cpp -text
+AABB_tree/demo/MainWindow.h -text
+AABB_tree/demo/MainWindow.ui -text
+AABB_tree/demo/Scene.cpp -text
+AABB_tree/demo/Scene.h -text
+AABB_tree/demo/Viewer.cpp -text
+AABB_tree/demo/Viewer.h -text
+AABB_tree/demo/Viewer_moc.cpp -text
+AABB_tree/demo/algorithms.cpp -text
+AABB_tree/demo/data/anchor.off -text
+AABB_tree/demo/data/couplingdown.off -text
+AABB_tree/demo/normal.h -text
+AABB_tree/demo/render.h -text
+AABB_tree/demo/resources/about.html -text
+AABB_tree/demo/resources/cgal_logo.xpm -text
+AABB_tree/demo/types.h -text
+AABB_tree/demo/ui_MainWindow.h -text
 AABB_tree/doc_tex/AABB_tree/PkgDescription.tex -text
 AABB_tree/doc_tex/AABB_tree/anchor.eps -text
 AABB_tree/doc_tex/AABB_tree/anchor.jpg -text

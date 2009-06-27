@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/cgal/icons" >
+    <file>resources/cgal_logo.xpm</file>
+  </qresource>
+  <qresource prefix="/cgal/AABB_demo" >
+    <file alias="about.html" >resources/about.html</file>
+  </qresource>
+</RCC>
