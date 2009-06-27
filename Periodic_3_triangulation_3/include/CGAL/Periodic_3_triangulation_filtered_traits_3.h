@@ -60,8 +60,7 @@ class Filtered_periodic_predicate
 
   typedef typename AP::result_type  Ares;
 
-  //todo: only temporary for testing
- public:
+protected:
   typename AP::Iso_cuboid_3 * _domain;
 
 public:

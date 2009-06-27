@@ -36,12 +36,8 @@ public:
   Periodic_3_offset_3() : _offx(0), _offy(0), _offz(0) {}
   Periodic_3_offset_3(int x, int y, int z) : _offx(x), _offy(y), _offz(z) {}
 
-  //TODO: why not bool?
-  int is_null() const {
+  bool is_null() const {
     return ((_offx | _offy | _offz) == 0);
-  }
-  int is_empty() const {
-    return is_null();
   }
 
   int& x() { return _offx; }
@@ -111,7 +107,7 @@ private:
 
 template <class K>
 inline Point_3<K> operator+(const Point_3<K> &p, const Periodic_3_offset_3 &off) {
-  return (off.is_empty() ? p : Point_3<K>(p.x()+off.x(), p.y()+off.y(), p.z()+off.z()));
+  return (off.is_null() ? p : Point_3<K>(p.x()+off.x(), p.y()+off.y(), p.z()+off.z()));
 }
 
 inline std::ostream 

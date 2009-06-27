@@ -368,7 +368,6 @@ public:
     c->set_offsets(o0,o1,o2,o3);
   }
  
-  //TODO: REMOVE!
   template <class Offset> 
   void set_offsets(Cell_handle c, Offset o0,Offset o1,Offset o2,Offset o3) {
     int off0[3] = {o0.x(),o0.y(),o0.z()};
@@ -1463,7 +1462,7 @@ try_next_cell:
   cumm_off =
     c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
 
-  bool simplicity_criterion = (cumm_off == 0) && (off_query.is_empty());
+  bool simplicity_criterion = (cumm_off == 0) && (off_query.is_null());
 
   // We know that the 4 vertices of c are positively oriented.
   // So, in order to test if p is seen outside from one of c's facets,
@@ -2776,7 +2775,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
         // The vector from nb to the "original" periodic copy of nb, that is
         // the copy that will not be deleted.
         Offset difference_offset(x,y,z);
-        CGAL_triangulation_assertion( !difference_offset.is_empty() );
+        CGAL_triangulation_assertion( !difference_offset.is_null() );
         
         // We now have to find the "original" periodic copy of nb from
         // its vertices. Therefore, we first have to find the vertices.
@@ -2791,7 +2790,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
           // find the Vertex_handles of the vertices of the "original"
           // periodic copy of nb. If the vertex is inside the original
           // domain, there is nothing to do
-          if ( (off[j]-difference_offset).is_empty() ) {
+          if ( (off[j]-difference_offset).is_null() ) {
             nbv[j] = vert[j];
             // If the vertex is outside the original domain, we have to search
             // in virtual_vertices in the "wrong" direction. That means, we
@@ -2992,7 +2991,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::convert_to_needed_covering() {
 	= virtual_vertices_reverse.find((*cit)->vertex(i));
       CGAL_triangulation_assertion(vvrmit != virtual_vertices_reverse.end());
       Offset vvoff = int_to_off((*cit)->offset(i));
-      if (!vvoff.is_empty()) {
+      if (!vvoff.is_null()) {
 	int n_c = 9*vvoff.x()+3*vvoff.y()+vvoff.z()-1;
 	CGAL_triangulation_assertion(n_c >= 0);
 	CGAL_triangulation_assertion(static_cast<unsigned int>(n_c) 
@@ -3016,7 +3015,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::convert_to_needed_covering() {
       Offset nboff = (*oit)[i];
       for (int n=0; n<26; n++) {
 	int n_nb;
- 	if (nboff.is_empty()) n_nb = n;
+ 	if (nboff.is_null()) n_nb = n;
  	else {
  	  int o_i = ((n+1)/9-nboff.x()+3)%3;
  	  int o_j = ((n+1)/3-nboff.y()+3)%3;
@@ -3055,7 +3054,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::convert_to_needed_covering() {
     CGAL_triangulation_assertion( oit != off_nb.end() );
     for (int i=0; i<4; i++) {
       Offset nboff = (*oit)[i];
-      if (!nboff.is_empty()) {
+      if (!nboff.is_null()) {
 	Cell_handle cit_nb = (*cit)->neighbor(i);
 	VCRMIT c_cp_nb = virtual_cells_reverse.find(cit_nb);
 	CGAL_triangulation_assertion(c_cp_nb != virtual_cells_reverse.end());
@@ -3092,8 +3091,8 @@ inline void Periodic_3_triangulation_3<GT,TDS>::convert_to_needed_covering() {
     Offset off[4];
     for (int i=0; i<4; i++)
       off[i] = int_to_off((*cit)->offset(i));
-    if (off[0].is_empty() && off[1].is_empty()
-	&& off[2].is_empty() && off[3].is_empty()) continue;
+    if (off[0].is_null() && off[1].is_null()
+	&& off[2].is_null() && off[3].is_null()) continue;
     for (int n=0; n<26; n++) {
       Offset off_cp[4];
       int o_i = (n+1)/9;
