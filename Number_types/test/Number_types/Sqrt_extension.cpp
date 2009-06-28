@@ -339,6 +339,38 @@ void to_double_test(){
         assert(to_interval(ext)==CGAL_NTS to_interval(-3.0) );
     }
 }
+
+//This test is dedicated to the comaprison of numbers from different extensions
+template <class EXT>
+void test_compare(){
+  typedef typename EXT::NT NT;
+  typedef typename EXT::ROOT ROOT;
+
+  EXT a(NT(1),NT(-5),ROOT(7));
+  EXT b(NT(2),NT(8),ROOT(5));
+  EXT c(NT(3),NT(0),ROOT(3));
+  
+  assert(a.compare(b,false)==CGAL::SMALLER);
+  assert(a.compare(c,false)==CGAL::SMALLER);
+  assert(b.compare(c,false)==CGAL::LARGER );
+  assert(a.compare(a,false)==CGAL::EQUAL);
+  assert(b.compare(b,false)==CGAL::EQUAL);
+  assert(c.compare(c,false)==CGAL::EQUAL);
+  assert(a.compare(a,true)==CGAL::EQUAL);
+  assert(b.compare(b,true)==CGAL::EQUAL);
+  assert(c.compare(c,true)==CGAL::EQUAL);
+
+  assert(CGAL::compare(a,b,false)==CGAL::SMALLER);
+  assert(CGAL::compare(a,c,false)==CGAL::SMALLER);
+  assert(CGAL::compare(b,c,false)==CGAL::LARGER );
+  assert(CGAL::compare(a,a,false)==CGAL::EQUAL);
+  assert(CGAL::compare(b,b,false)==CGAL::EQUAL);
+  assert(CGAL::compare(c,c,false)==CGAL::EQUAL);
+  assert(CGAL::compare(a,a,true)==CGAL::EQUAL);
+  assert(CGAL::compare(b,b,true)==CGAL::EQUAL);
+  assert(CGAL::compare(c,c,true)==CGAL::EQUAL);
+}
+
 template <class NT, class ROOT, class Algebraic_type>
 void general_test(){
     typedef typename CGAL::Algebraic_structure_traits<NT>::Is_exact Is_exact; 
@@ -379,6 +411,10 @@ void general_test(){
     io_test<EXT3>();  
    
     to_double_test<EXT1>();
+    
+    test_compare<EXT1>();
+    test_compare<EXT2>();
+    test_compare<EXT3>();
 }
 
 
