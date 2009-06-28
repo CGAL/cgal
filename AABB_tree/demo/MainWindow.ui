@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>978</width>
-    <height>594</height>
+    <width>638</width>
+    <height>495</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -32,7 +32,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>978</width>
+     <width>638</width>
      <height>24</height>
     </rect>
    </property>
@@ -104,34 +104,9 @@
     <string>Inside points...</string>
    </property>
   </action>
-  <action name="actionDo_intersect" >
-   <property name="text" >
-    <string>do_intersect</string>
-   </property>
-  </action>
-  <action name="actionAny_intersection" >
-   <property name="text" >
-    <string>any_intersection</string>
-   </property>
-  </action>
-  <action name="actionAll_intersections" >
-   <property name="text" >
-    <string>all_intersections</string>
-   </property>
-  </action>
   <action name="actionBench_distances" >
    <property name="text" >
     <string>Distances</string>
-   </property>
-  </action>
-  <action name="actionNb_intersections" >
-   <property name="text" >
-    <string>nb_intersections</string>
-   </property>
-  </action>
-  <action name="actionAll_intersected_primitives" >
-   <property name="text" >
-    <string>all_intersected_primitives</string>
    </property>
   </action>
   <action name="actionUnsigned_distance_function_to_facets" >

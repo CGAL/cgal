@@ -6,15 +6,14 @@
 template <class Polyhedron>
 void gl_render_edges(Polyhedron& polyhedron)
 {
-  typedef typename Polyhedron::Traits		Kernel;
-  typedef typename Kernel::Point_3		Point;
-  typedef typename Polyhedron::Edge_iterator	Edge_iterator;
+  typedef typename Polyhedron::Traits Kernel;
+  typedef typename Kernel::Point_3 Point;
 
   ::glBegin(GL_LINES);
-  Edge_iterator he;
+  Polyhedron::Edge_iterator he;
   for(he = polyhedron.edges_begin();
-    he != polyhedron.edges_end();
-    he++)
+      he != polyhedron.edges_end();
+      he++)
   {
     const Point& a = he->vertex()->point();
     const Point& b = he->opposite()->vertex()->point();
@@ -23,7 +22,6 @@ void gl_render_edges(Polyhedron& polyhedron)
   }
   ::glEnd();
 } 
-
 
 #endif // _GL_RENDER_EDGES_
 

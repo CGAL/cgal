@@ -16,12 +16,11 @@
 #include <QInputDialog>
 
 #include "render_edges.h"
-#include <CGAL/IO/Polyhedron_iostream.h>
-
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/AABB_polyhedron_segment_primitive.h>
+#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
 Scene::Scene()
 {
@@ -75,7 +74,7 @@ Scene::open(QString filename)
 
   QApplication::restoreOverrideCursor();
 
-  cerr << " Ok.\n";
+  std::cerr << " Ok.\n";
   return 0;
 }
 

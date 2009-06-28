@@ -2,11 +2,9 @@
 #define SCENE_H
 
 #include <QtOpenGL/qgl.h>
-
-#include "types.h"
-
 #include <iostream>
 #include <cmath>
+#include "types.h"
 
 class Scene
 {
@@ -76,6 +74,7 @@ public:
   void toggle_view_poyhedron();
 
 private:
+	// member data
   Polyhedron *m_pPolyhedron;
   std::list<Point> m_points;
   std::list<Segment> m_segments;
