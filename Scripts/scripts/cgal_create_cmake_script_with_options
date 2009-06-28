@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright (c) 1999,2000,2002-2007,2009
 # Utrecht University (The Netherlands),
@@ -200,10 +200,6 @@ EOF
   if [ ! -z "$BOOST_COMPONENTS" ]; then
 
     echo "find_package( Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS//:/ } )"
-
-  else 
-
-    echo "find_package( Boost REQUIRED )"
 
   fi # additional Boost components
 
