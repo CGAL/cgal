@@ -219,11 +219,11 @@ _merge_envelopes (const Envelope_diagram_1& d1,
 {
   Edge_const_handle    e1 = d1.leftmost();
   bool                 is_leftmost1 = true;
-  Vertex_const_handle  v1;
+  Vertex_const_handle  v1 = Vertex_const_handle();
   Edge_const_handle    e2 = d2.leftmost();
   bool                 is_leftmost2 = true;
-  Vertex_const_handle  v2;
-  Vertex_const_handle  next_v;
+  Vertex_const_handle  v2 = Vertex_const_handle();
+  Vertex_const_handle  next_v = Vertex_const_handle();
   bool                 next_exists = true;
   Comparison_result    res_v = EQUAL;
   bool                 same_x = false;
@@ -1154,7 +1154,7 @@ _merge_vertical_segments (Curve_pointer_vector& vert_vec,
                                       traits->construct_max_vertex_2_object();
 
   Edge_handle             e = out_d.leftmost();
-  Vertex_handle           v;
+  Vertex_handle           v = Vertex_handle();
   Curve_pointer_iterator  iter = vert_vec.begin();
   Curve_pointer_iterator  next;
   Comparison_result       res;
