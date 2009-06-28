@@ -9,14 +9,12 @@ AABB_tree/demo/Scene.cpp -text
 AABB_tree/demo/Scene.h -text
 AABB_tree/demo/Viewer.cpp -text
 AABB_tree/demo/Viewer.h -text
-AABB_tree/demo/data/anchor.off -text
-AABB_tree/demo/data/couplingdown.off -text
-AABB_tree/demo/normal.h -text
-AABB_tree/demo/render.h -text
+AABB_tree/demo/data/knot.off -text
+AABB_tree/demo/data/shark.off -text
+AABB_tree/demo/render_edges.h -text
 AABB_tree/demo/resources/about.html -text
 AABB_tree/demo/resources/cgal_logo.xpm -text
 AABB_tree/demo/types.h -text
-AABB_tree/demo/ui_MainWindow.h -text
 AABB_tree/doc_tex/AABB_tree/PkgDescription.tex -text
 AABB_tree/doc_tex/AABB_tree/anchor.eps -text
 AABB_tree/doc_tex/AABB_tree/anchor.jpg -text

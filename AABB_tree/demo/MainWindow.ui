@@ -48,9 +48,9 @@
     <property name="title" >
      <string>&amp;View</string>
     </property>
-    <addaction name="actionView_polyhedron" />
     <addaction name="actionView_points" />
     <addaction name="actionView_segments" />
+    <addaction name="actionView_polyhedron" />
    </widget>
    <widget class="QMenu" name="menuAlgorithms" >
     <property name="title" >

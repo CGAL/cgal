@@ -15,7 +15,7 @@
 #include <QApplication>
 #include <QInputDialog>
 
-#include "render.h"
+#include "render_edges.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/AABB_tree.h>
@@ -55,6 +55,9 @@ Scene::open(QString filename)
     QApplication::restoreOverrideCursor();
     return -1;
   }
+
+  if(m_pPolyhedron != NULL)
+	  delete m_pPolyhedron;
 
   // allocate new polyhedron
   m_pPolyhedron = new Polyhedron;
