@@ -167,3 +167,42 @@ void MainWindow::on_actionInside_points_triggered()
     // default cursor
     QApplication::restoreOverrideCursor();
 }
+
+void MainWindow::on_actionBoundary_segments_triggered()
+{
+	bool ok;
+    const unsigned int nb_slices = (unsigned)
+		QInputDialog::getInteger(NULL, "#Slices",
+		"Slices:",
+      100, // default value
+      1, // min
+      1000000, // max
+      8, // decimals
+      &ok);
+    if(!ok)
+		return;
+
+    // wait cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    m_pScene->generate_boundary_segments(nb_slices);
+
+    // default cursor
+    QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionDo_intersect_triggered()
+{
+    // wait cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    m_pScene->benchmark_do_intersect();
+
+    // default cursor
+    QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionView_polyhedron_triggered()
+{
+	m_pScene->toggle_view_poyhedron();
+}

@@ -47,13 +47,16 @@
     <property name="title" >
      <string>&amp;View</string>
     </property>
-    <addaction name="actionPolyhedron" />
+    <addaction name="actionView_polyhedron" />
+    <addaction name="actionView_points" />
    </widget>
    <widget class="QMenu" name="menuAlgorithms" >
     <property name="title" >
      <string>Algorithms</string>
     </property>
     <addaction name="actionInside_points" />
+    <addaction name="actionBoundary_segments" />
+    <addaction name="separator" />
     <addaction name="actionUnsigned_distance_function_to_facets" />
     <addaction name="actionUnsigned_distance_function_to_edges" />
     <addaction name="actionSigned_distance_function_to_facets" />
@@ -75,7 +78,14 @@
     <addaction name="menuIntersections" />
     <addaction name="actionDistances" />
    </widget>
+   <widget class="QMenu" name="menuEdit" >
+    <property name="title" >
+     <string>Edit</string>
+    </property>
+    <addaction name="actionClear_points" />
+   </widget>
    <addaction name="menuFile" />
+   <addaction name="menuEdit" />
    <addaction name="menuAlgorithms" />
    <addaction name="menuBenchmarks" />
    <addaction name="menuView" />
@@ -144,9 +154,24 @@
     <string>Signed distance function to facets</string>
    </property>
   </action>
-  <action name="actionPolyhedron" >
+  <action name="actionView_polyhedron" >
    <property name="text" >
     <string>Polyhedron</string>
+   </property>
+  </action>
+  <action name="actionView_points" >
+   <property name="text" >
+    <string>Points</string>
+   </property>
+  </action>
+  <action name="actionClear_points" >
+   <property name="text" >
+    <string>Clear points</string>
+   </property>
+  </action>
+  <action name="actionBoundary_segments" >
+   <property name="text" >
+    <string>Boundary segments...</string>
    </property>
   </action>
  </widget>

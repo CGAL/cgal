@@ -49,15 +49,26 @@ public:
 
 public:
   int open(QString filename);
+
   void generate_inside_points(const unsigned int nb_trials);
+  void generate_boundary_segments(const unsigned int nb_slices);
+
   Point random_point();
   Vector random_vector();
+  void benchmark_do_intersect();
+
+  // toggle view options
+  void toggle_view_poyhedron();
 
 private:
   Polyhedron *m_pPolyhedron;
   std::list<Point> m_points;
+  std::list<Segment> m_segments;
   
   // TODO: unsigned and signed distance function (shown in cut plane)
+
+  // view options
+  bool m_view_polyhedron;
 
 }; // end class Scene
 

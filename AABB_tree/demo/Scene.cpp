@@ -25,6 +25,7 @@
 Scene::Scene()
 {
 	m_pPolyhedron = NULL;
+	m_view_polyhedron = true;
 }
 
 Scene::~Scene()
@@ -73,10 +74,11 @@ Scene::open(QString filename)
 void Scene::draw()
 {
 	// draw black edges
-	if(m_pPolyhedron != NULL)
+	if(m_pPolyhedron != NULL && m_view_polyhedron)
 	{
 		::glDisable(GL_LIGHTING);
 		::glColor3ub(0,0,0);
+		::glLineWidth(2.0f);
 		gl_render_edges(*m_pPolyhedron);
 	}
 
@@ -96,6 +98,24 @@ void Scene::draw()
 		::glEnd();
 	}
 
+	// draw green segments
+	if(m_segments.size() != 0)
+	{
+		::glDisable(GL_LIGHTING);
+		::glColor3ub(0,180,0);
+		::glLineWidth(2.0f);
+		::glBegin(GL_LINES);
+		std::list<Segment>::iterator it;
+		for(it = m_segments.begin(); it != m_segments.end(); it++)
+		{
+			const Segment& s = *it;
+			const Point& p = s.source();
+			const Point& q = s.target();
+			::glVertex3d(p.x(),p.y(),p.z());
+			::glVertex3d(q.x(),q.y(),q.z());
+		}
+		::glEnd();
+	}
 }
 
 Point Scene::random_point()
@@ -141,6 +161,112 @@ void Scene::generate_inside_points(const unsigned int nb_trials)
 			m_points.push_back(p);
 	}
 	std::cout << m_points.size() << " points, " << time.elapsed() << " ms." << std::endl;
+}
+
+void Scene::generate_boundary_segments(const unsigned int nb_slices)
+{
+	typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
+	typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+	typedef CGAL::AABB_tree<Traits> Tree;
+	typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+
+	std::cout << "Construct AABB tree...";
+	Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+	std::cout << "done." << std::endl;
+
+	m_points.clear();
+
+    QTime time;
+    time.start();
+	std::cout << "Generate boundary segments from " << nb_slices << " slices: ";
+
+	m_segments.clear();
+
+	Vector normal((FT)0.0,(FT)0.0,(FT)1.0);
+	unsigned int i;
+	for(i=0;i<nb_slices;i++)
+	{
+		FT z = -0.5 + (FT)i / (FT)nb_slices;
+		Point p((FT)0.0, (FT)0.0, z);
+		Plane plane(p,normal);
+
+		std::list<Object_and_primitive_id> intersections;
+		tree.all_intersections(plane,std::back_inserter(intersections));
+
+		std::list<Object_and_primitive_id>::iterator it;
+		for(it = intersections.begin();
+			it != intersections.end();
+			it++)
+		{
+			Object_and_primitive_id op = *it;
+			CGAL::Object object = op.first;
+			Segment segment;
+			if(CGAL::assign(segment,object))
+				m_segments.push_back(segment);
+		}
+	}
+	std::cout << m_segments.size() << " segments, " << time.elapsed() << " ms." << std::endl;
+}
+
+void Scene::benchmark_do_intersect()
+{
+	typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
+	typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+	typedef CGAL::AABB_tree<Traits> Tree;
+
+	std::cout << "Construct AABB tree...";
+	Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+	std::cout << "done." << std::endl;
+
+    QTime time;
+    time.start();
+	std::cout << "Benchmark do_intersect" << std::endl;
+
+	// with ray
+	unsigned int nb = 0;
+	while(time.elapsed() < 1000)
+	{
+		Point p = random_point();
+		Point q = random_point();
+		Ray ray(p,q);
+		tree.do_intersect(ray);
+		nb++;
+	}
+	double speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with ray" << std::endl;
+
+	// with line
+	nb = 0;
+    time.start();
+	while(time.elapsed() < 1000)
+	{
+		Point p = random_point();
+		Point q = random_point();
+		Line line(p,q);
+		tree.do_intersect(line);
+		nb++;
+	}
+	speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with line" << std::endl;
+
+	// with segment
+	nb = 0;
+    time.start();
+	while(time.elapsed() < 1000)
+	{
+		Point p = random_point();
+		Point q = random_point();
+		Segment segment(p,q);
+		tree.do_intersect(segment);
+		nb++;
+	}
+	speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with segment" << std::endl;
+}
+
+void Scene::toggle_view_poyhedron()
+{
+	m_view_polyhedron = !m_view_polyhedron;
 }
 
 

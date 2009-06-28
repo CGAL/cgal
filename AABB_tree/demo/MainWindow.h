@@ -38,8 +38,15 @@ public:
 			// load
 			void on_actionLoadPolyhedron_triggered();
 
+			// view options
+			void on_actionView_polyhedron_triggered();
+
 			// algorithms
 			void on_actionInside_points_triggered();
+			void on_actionBoundary_segments_triggered();
+
+			// benchmarks
+			void on_actionDo_intersect_triggered();
 
 			// drag & drop
 			void dragEnterEvent(QDragEnterEvent *event);
