@@ -29,7 +29,9 @@ fi
 configure()
 {
     echo "Configuring... "
-    
+
+    rm CMakeCache.txt
+
     if eval 'cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                      -DCGAL_DIR="$CGAL_DIR" \
                                      -DCGAL_CXX_FLAGS:STRING="$TESTSUITE_CXXFLAGS" \
@@ -99,7 +101,6 @@ clean_tests()
 
 compile_and_run_sweep()
 {
-    
   echo "---$1---"
 
   # running general test
