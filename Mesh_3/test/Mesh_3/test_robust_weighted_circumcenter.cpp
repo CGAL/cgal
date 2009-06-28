@@ -84,7 +84,7 @@ struct Tester
     //-------------------------------------------------------
     // Test speed
     //-------------------------------------------------------
-    std::cout << "Test speed: compute loops of: 999*c(p1,p2,p3,p5) "
+    std::cerr << "Test speed: compute loops of: 999*c(p1,p2,p3,p5) "
               << "and 1*c(p1,p2,p3,p4)\n";
 
     CGAL::Timer timer;

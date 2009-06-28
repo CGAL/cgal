@@ -36,22 +36,22 @@
 namespace CGAL {
 
 
-template < typename K >
+template < typename K_ >
 class Robust_filtered_construct_weighted_circumcenter_3
 {
 public:
-  typedef typename K::Weighted_point_3               Weighted_point_3;
-  typedef typename K::Bare_point                     Bare_point;
-  typedef typename K::FT                             FT;
-  typedef typename K::Sphere_3                       Sphere_3;
+  typedef typename K_::Weighted_point_3               Weighted_point_3;
+  typedef typename K_::Bare_point                     Bare_point;
+  typedef typename K_::FT                             FT;
+  typedef typename K_::Sphere_3                       Sphere_3;
   typedef Bare_point                                 result_type;
 
   typedef Exact_predicates_exact_constructions_kernel   EK2;
   typedef Regular_triangulation_euclidean_traits_3<EK2> EK;
   typedef Weighted_converter_3<
-      Cartesian_converter<typename K::Kernel, EK2> >    To_exact;
+      Cartesian_converter<typename K_::Kernel, EK2> >    To_exact;
   typedef Weighted_converter_3<
-      Cartesian_converter<EK2, typename K::Kernel> >    Back_from_exact;
+      Cartesian_converter<EK2, typename K_::Kernel> >    Back_from_exact;
 
 
   Bare_point operator() ( const Weighted_point_3 & p,
@@ -59,10 +59,10 @@ public:
                           const Weighted_point_3 & r,
                           const Weighted_point_3 & s ) const
   {
-    typename K::Construct_weighted_circumcenter_3 weighted_circumcenter =
-        K().construct_weighted_circumcenter_3_object();
-    typename K::Has_on_bounded_side_3 on_bounded_side =
-        K().has_on_bounded_side_3_object();
+    typename K_::Construct_weighted_circumcenter_3 weighted_circumcenter =
+        K_().construct_weighted_circumcenter_3_object();
+    typename K_::Has_on_bounded_side_3 on_bounded_side =
+        K_().has_on_bounded_side_3_object();
 
     // Compute denominator to swith to exact if it is 0
     const FT denom = compute_denom(p,q,r,s);
@@ -91,10 +91,10 @@ public:
                           const Weighted_point_3 & q,
                           const Weighted_point_3 & r ) const
   {
-    typename K::Construct_weighted_circumcenter_3 weighted_circumcenter =
-      K().construct_weighted_circumcenter_3_object();
-    typename K::Has_on_bounded_side_3 on_bounded_side =
-      K().has_on_bounded_side_3_object();
+    typename K_::Construct_weighted_circumcenter_3 weighted_circumcenter =
+      K_().construct_weighted_circumcenter_3_object();
+    typename K_::Has_on_bounded_side_3 on_bounded_side =
+      K_().has_on_bounded_side_3_object();
 
     // Compute denominator to swith to exact if it is 0
     const FT denom = compute_denom(p,q,r);
@@ -121,10 +121,10 @@ public:
   Bare_point operator() ( const Weighted_point_3 & p,
                           const Weighted_point_3 & q ) const
   {
-    typename K::Construct_weighted_circumcenter_3 weighted_circumcenter =
-      K().construct_weighted_circumcenter_3_object();
-    typename K::Has_on_bounded_side_3 on_bounded_side =
-      K().has_on_bounded_side_3_object();
+    typename K_::Construct_weighted_circumcenter_3 weighted_circumcenter =
+      K_().construct_weighted_circumcenter_3_object();
+    typename K_::Has_on_bounded_side_3 on_bounded_side =
+      K_().has_on_bounded_side_3_object();
 
     // No division here
     result_type point = weighted_circumcenter(p,q);
@@ -209,11 +209,11 @@ private:
 /**
  * @class Robust_weighted_circumcenter_filtered_traits_3
  */
-template<class K>
+template<class K_>
 struct Robust_weighted_circumcenter_filtered_traits_3
-: public K
+: public K_
 {
-  typedef CGAL::Robust_filtered_construct_weighted_circumcenter_3<K>
+  typedef CGAL::Robust_filtered_construct_weighted_circumcenter_3<K_>
                                             Construct_weighted_circumcenter_3;
 
   Construct_weighted_circumcenter_3

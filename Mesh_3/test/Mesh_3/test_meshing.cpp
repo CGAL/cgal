@@ -156,7 +156,7 @@ struct Tester
     CGAL::refine_mesh_3(c3t3, domain, criteria);
 
     // Verify
-    verify(c3t3,domain,criteria,52,56,80,86);
+    verify(c3t3,domain,criteria,50,58,80,90);
   }
 
   void image() const

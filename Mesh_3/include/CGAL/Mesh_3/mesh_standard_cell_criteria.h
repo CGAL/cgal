@@ -51,7 +51,8 @@ class Cell_radius_edge_criterion
 public:
   // Constructor
   Cell_radius_edge_criterion(const FT& radius_edge_bound)
-    : sq_radius_edge_bound_(radius_edge_bound*radius_edge_bound)   { };
+    : sq_radius_edge_bound_(to_double(radius_edge_bound*radius_edge_bound)) 
+  { };
 
   // Destructor
   ~Cell_radius_edge_criterion() { };
@@ -107,7 +108,7 @@ protected:
   }
 
 private:
-  FT sq_radius_edge_bound_;
+  double sq_radius_edge_bound_;
 
 };  // end class Cell_radius_edge_criterion
 
