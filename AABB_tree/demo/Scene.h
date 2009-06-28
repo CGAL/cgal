@@ -9,7 +9,6 @@
 class Scene
 {
 public:
-
   Scene();
   ~Scene();
 
@@ -42,7 +41,7 @@ public:
     return std::sqrt(dx*dx + dy*dy + dz*dz);
   }
 
-  // TO DEFINE
+  // TODO
   Bbox bbox() { return Bbox(); }
 
 public:
@@ -79,8 +78,6 @@ private:
   std::list<Point> m_points;
   std::list<Segment> m_segments;
   
-  // TODO: unsigned and signed distance function (shown in cut plane)
-
   // view options
   bool m_view_points;
   bool m_view_segments;

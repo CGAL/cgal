@@ -251,8 +251,7 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
 			}
 		}
 	}
-	std::cout << nb_lines << " lines launched, " << time.elapsed() << " ms." << std::endl;
-
+	std::cout << nb_lines << " line queries, " << time.elapsed() << " ms." << std::endl;
 }
 
 void Scene::generate_edge_points(const unsigned int nb_points)
@@ -297,7 +296,7 @@ void Scene::generate_edge_points(const unsigned int nb_points)
 			}
 		}
 	}
-	std::cout << nb_planes << " planes launched, " << time.elapsed() << " ms." << std::endl;
+	std::cout << nb_planes << " plane queries, " << time.elapsed() << " ms." << std::endl;
 }
 
 void Scene::benchmark_distances()

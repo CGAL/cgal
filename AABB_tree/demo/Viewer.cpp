@@ -16,11 +16,11 @@ void Viewer::setScene(Scene* pScene)
 void Viewer::draw()
 {
   QGLViewer::draw();
-  if(m_pScene == 0)
-    return;
-
-  ::glClearColor(1.0f,1.0f,1.0f,0.0f);
-  m_pScene->draw();
+  if(m_pScene != NULL)
+  {
+	::glClearColor(1.0f,1.0f,1.0f,0.0f);
+	m_pScene->draw();
+  }
 }
 
 void Viewer::initializeGL()
