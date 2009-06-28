@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'MainWindow.ui'
 **
-** Created: Sun 28. Jun 09:47:44 2009
+** Created: Sun 28. Jun 20:04:59 2009
 **      by: Qt User Interface Compiler version 4.4.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -47,6 +47,7 @@ public:
     QAction *actionBoundary_points;
     QAction *actionClear_segments;
     QAction *actionView_segments;
+    QAction *actionEdge_points;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     Viewer *viewer;
@@ -105,6 +106,8 @@ public:
     actionClear_segments->setObjectName(QString::fromUtf8("actionClear_segments"));
     actionView_segments = new QAction(MainWindow);
     actionView_segments->setObjectName(QString::fromUtf8("actionView_segments"));
+    actionEdge_points = new QAction(MainWindow);
+    actionEdge_points->setObjectName(QString::fromUtf8("actionEdge_points"));
     centralwidget = new QWidget(MainWindow);
     centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
     gridLayout = new QGridLayout(centralwidget);
@@ -149,6 +152,7 @@ public:
     menuAlgorithms->addAction(actionInside_points);
     menuAlgorithms->addAction(actionBoundary_points);
     menuAlgorithms->addAction(actionBoundary_segments);
+    menuAlgorithms->addAction(actionEdge_points);
     menuAlgorithms->addSeparator();
     menuAlgorithms->addAction(actionUnsigned_distance_function_to_facets);
     menuAlgorithms->addAction(actionUnsigned_distance_function_to_edges);
@@ -191,6 +195,7 @@ public:
     actionBoundary_points->setText(QApplication::translate("MainWindow", "Boundary points...", 0, QApplication::UnicodeUTF8));
     actionClear_segments->setText(QApplication::translate("MainWindow", "Clear segments", 0, QApplication::UnicodeUTF8));
     actionView_segments->setText(QApplication::translate("MainWindow", "Segments", 0, QApplication::UnicodeUTF8));
+    actionEdge_points->setText(QApplication::translate("MainWindow", "Edge points...", 0, QApplication::UnicodeUTF8));
     menuFile->setTitle(QApplication::translate("MainWindow", "&File", 0, QApplication::UnicodeUTF8));
     menuView->setTitle(QApplication::translate("MainWindow", "&View", 0, QApplication::UnicodeUTF8));
     menuAlgorithms->setTitle(QApplication::translate("MainWindow", "Algorithms", 0, QApplication::UnicodeUTF8));

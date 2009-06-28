@@ -47,6 +47,7 @@ public:
 			void on_actionInside_points_triggered();
 			void on_actionBoundary_points_triggered();
 			void on_actionBoundary_segments_triggered();
+			void on_actionEdge_points_triggered();
 
 			// benchmarks
 			void on_actionDo_intersect_triggered();

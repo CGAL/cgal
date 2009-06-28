@@ -21,6 +21,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
+#include <CGAL/AABB_polyhedron_segment_primitive.h>
 
 Scene::Scene()
 {
@@ -256,6 +257,53 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
 	}
 	std::cout << nb_lines << " lines launched, " << time.elapsed() << " ms." << std::endl;
 
+}
+
+void Scene::generate_edge_points(const unsigned int nb_points)
+{
+	typedef CGAL::AABB_polyhedron_segment_primitive<Kernel,Polyhedron> Primitive;
+	typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+	typedef CGAL::AABB_tree<Traits> Tree;
+	typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+
+	std::cout << "Construct AABB tree...";
+	Tree tree(m_pPolyhedron->edges_begin(),m_pPolyhedron->edges_end());
+	std::cout << "done." << std::endl;
+
+	m_points.clear();
+
+    QTime time;
+    time.start();
+	std::cout << "Generate edge points: ";
+
+	unsigned int nb = 0;
+	unsigned int nb_planes = 0;
+	while(nb < nb_points)
+	{
+		Point p = random_point();
+		Vector vec = random_vector();
+		Plane plane(p,vec);
+
+		std::list<Object_and_primitive_id> intersections;
+		tree.all_intersections(plane,std::back_inserter(intersections));
+		nb_planes++;
+
+		std::list<Object_and_primitive_id>::iterator it;
+		for(it = intersections.begin();
+			it != intersections.end();
+			it++)
+		{
+			Object_and_primitive_id op = *it;
+			CGAL::Object object = op.first;
+			Point point;
+			if(CGAL::assign(point,object))
+			{
+				m_points.push_back(point);
+				nb++;
+			}
+		}
+	}
+	std::cout << nb_planes << " planes launched, " << time.elapsed() << " ms." << std::endl;
 }
 
 void Scene::benchmark_do_intersect()

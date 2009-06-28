@@ -58,6 +58,7 @@
     <addaction name="actionInside_points" />
     <addaction name="actionBoundary_points" />
     <addaction name="actionBoundary_segments" />
+    <addaction name="actionEdge_points" />
     <addaction name="separator" />
     <addaction name="actionUnsigned_distance_function_to_facets" />
     <addaction name="actionUnsigned_distance_function_to_edges" />
@@ -190,6 +191,11 @@
   <action name="actionView_segments" >
    <property name="text" >
     <string>Segments</string>
+   </property>
+  </action>
+  <action name="actionEdge_points" >
+   <property name="text" >
+    <string>Edge points...</string>
    </property>
   </action>
  </widget>

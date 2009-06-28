@@ -214,6 +214,29 @@ void MainWindow::on_actionBoundary_points_triggered()
     QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::on_actionEdge_points_triggered()
+{
+	bool ok;
+    const unsigned int nb_points = (unsigned)
+		QInputDialog::getInteger(NULL, "#Points",
+		"Points:",
+      1000, // default value
+      1, // min
+      10000000, // max
+      8, // decimals
+      &ok);
+    if(!ok)
+		return;
+
+    // wait cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    m_pScene->generate_edge_points(nb_points);
+
+    // default cursor
+    QApplication::restoreOverrideCursor();
+}
+
 void MainWindow::on_actionDo_intersect_triggered()
 {
     // wait cursor
