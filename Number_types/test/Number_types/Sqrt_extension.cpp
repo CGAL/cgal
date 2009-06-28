@@ -722,6 +722,10 @@ int main(){
 #ifdef CGAL_USE_LEDA
     sqrt_extension_test<CGAL::LEDA_arithmetic_kernel>();
 #endif // CGAL_USE_LEDA
+
+#ifdef CGAL_USE_CORE
+    sqrt_extension_test<CGAL::CORE_arithmetic_kernel>();
+#endif // CGAL_USE_CORE
     return 0;
 }
 
