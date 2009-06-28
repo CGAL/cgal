@@ -113,29 +113,6 @@ void other_functions_test(){
     }
 }
 
-// TODO: No Modular_traits available yet.
-/*template <class EXT> 
-  void modular_traits_test(){
-  typedef typename EXT::NT NT;
-  typedef typename EXT::ROOT ROOT;
-  typedef NiX::Modular_traits<EXT> MTraits;    
-  typedef typename MTraits::Residue_type EXT_MOD;
-
-  NiX::Residue::set_current_prime(7);
-  typename MTraits::Modular_image modular_image;
-  {
-  EXT a1(13,-10,4);
-  EXT_MOD a1_mod= modular_image(a1);
-  assert(a1_mod==EXT_MOD(6,4,4));    
-  assert(a1_mod.is_zero()); 
-  }{
-  EXT a1(13);
-  EXT_MOD a1_mod= modular_image(a1);
-  assert(a1_mod==EXT_MOD(6));    
-  assert(!a1_mod.is_extended());  
-  }
-  }*/
-
 template <class EXT> 
 void io_test(){
     typedef typename EXT::NT NT;
@@ -397,11 +374,6 @@ void general_test(){
     other_functions_test<EXT2>();
     other_functions_test<EXT3>();
  
-    // TODO: No modular traits available
-//    modular_traits_test<EXT1>();
-//    modular_traits_test<EXT2>();
-//    modular_traits_test<EXT3>();
-
     io_test<EXT1>();
     io_test<EXT2>();
     io_test<EXT3>();  
