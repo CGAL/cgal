@@ -191,6 +191,29 @@ void MainWindow::on_actionBoundary_segments_triggered()
     QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::on_actionBoundary_points_triggered()
+{
+	bool ok;
+    const unsigned int nb_points = (unsigned)
+		QInputDialog::getInteger(NULL, "#Points",
+		"Points:",
+      1000, // default value
+      1, // min
+      10000000, // max
+      8, // decimals
+      &ok);
+    if(!ok)
+		return;
+
+    // wait cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    m_pScene->generate_boundary_points(nb_points);
+
+    // default cursor
+    QApplication::restoreOverrideCursor();
+}
+
 void MainWindow::on_actionDo_intersect_triggered()
 {
     // wait cursor
@@ -205,4 +228,24 @@ void MainWindow::on_actionDo_intersect_triggered()
 void MainWindow::on_actionView_polyhedron_triggered()
 {
 	m_pScene->toggle_view_poyhedron();
+}
+
+void MainWindow::on_actionView_points_triggered()
+{
+	m_pScene->toggle_view_points();
+}
+
+void MainWindow::on_actionView_segments_triggered()
+{
+	m_pScene->toggle_view_segments();
+}
+
+void MainWindow::on_actionClear_points_triggered()
+{
+	m_pScene->clear_points();
+}
+
+void MainWindow::on_actionClear_segments_triggered()
+{
+	m_pScene->clear_segments();
 }

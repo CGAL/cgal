@@ -25,6 +25,10 @@
 Scene::Scene()
 {
 	m_pPolyhedron = NULL;
+
+	// view options
+	m_view_points = true;
+	m_view_segments = true;
 	m_view_polyhedron = true;
 }
 
@@ -78,12 +82,12 @@ void Scene::draw()
 	{
 		::glDisable(GL_LIGHTING);
 		::glColor3ub(0,0,0);
-		::glLineWidth(2.0f);
+		::glLineWidth(1.0f);
 		gl_render_edges(*m_pPolyhedron);
 	}
 
 	// draw red points
-	if(m_points.size() != 0)
+	if(m_points.size() != 0 && m_view_points)
 	{
 		::glDisable(GL_LIGHTING);
 		::glColor3ub(180,0,0);
@@ -99,10 +103,10 @@ void Scene::draw()
 	}
 
 	// draw green segments
-	if(m_segments.size() != 0)
+	if(m_segments.size() != 0 && m_view_segments)
 	{
 		::glDisable(GL_LIGHTING);
-		::glColor3ub(0,180,0);
+		::glColor3ub(0,100,0);
 		::glLineWidth(2.0f);
 		::glBegin(GL_LINES);
 		std::list<Segment>::iterator it;
@@ -174,8 +178,6 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
 	Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	std::cout << "done." << std::endl;
 
-	m_points.clear();
-
     QTime time;
     time.start();
 	std::cout << "Generate boundary segments from " << nb_slices << " slices: ";
@@ -206,6 +208,54 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
 		}
 	}
 	std::cout << m_segments.size() << " segments, " << time.elapsed() << " ms." << std::endl;
+}
+
+void Scene::generate_boundary_points(const unsigned int nb_points)
+{
+	typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
+	typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+	typedef CGAL::AABB_tree<Traits> Tree;
+	typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+
+	std::cout << "Construct AABB tree...";
+	Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+	std::cout << "done." << std::endl;
+
+	m_points.clear();
+
+    QTime time;
+    time.start();
+	std::cout << "Generate boundary points: ";
+
+	unsigned int nb = 0;
+	unsigned int nb_lines = 0;
+	while(nb < nb_points)
+	{
+		Point p = random_point();
+		Point q = random_point();
+		Line line(p,q);
+
+		std::list<Object_and_primitive_id> intersections;
+		tree.all_intersections(line,std::back_inserter(intersections));
+		nb_lines++;
+
+		std::list<Object_and_primitive_id>::iterator it;
+		for(it = intersections.begin();
+			it != intersections.end();
+			it++)
+		{
+			Object_and_primitive_id op = *it;
+			CGAL::Object object = op.first;
+			Point point;
+			if(CGAL::assign(point,object))
+			{
+				m_points.push_back(point);
+				nb++;
+			}
+		}
+	}
+	std::cout << nb_lines << " lines launched, " << time.elapsed() << " ms." << std::endl;
+
 }
 
 void Scene::benchmark_do_intersect()
@@ -267,6 +317,16 @@ void Scene::benchmark_do_intersect()
 void Scene::toggle_view_poyhedron()
 {
 	m_view_polyhedron = !m_view_polyhedron;
+}
+
+void Scene::toggle_view_segments()
+{
+	m_view_segments = !m_view_segments;
+}
+
+void Scene::toggle_view_points()
+{
+	m_view_points = !m_view_points;
 }
 
 

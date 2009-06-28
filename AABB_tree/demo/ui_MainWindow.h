@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'MainWindow.ui'
 **
-** Created: Sun 28. Jun 09:05:30 2009
+** Created: Sun 28. Jun 09:47:44 2009
 **      by: Qt User Interface Compiler version 4.4.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -44,6 +44,9 @@ public:
     QAction *actionView_points;
     QAction *actionClear_points;
     QAction *actionBoundary_segments;
+    QAction *actionBoundary_points;
+    QAction *actionClear_segments;
+    QAction *actionView_segments;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     Viewer *viewer;
@@ -96,6 +99,12 @@ public:
     actionClear_points->setObjectName(QString::fromUtf8("actionClear_points"));
     actionBoundary_segments = new QAction(MainWindow);
     actionBoundary_segments->setObjectName(QString::fromUtf8("actionBoundary_segments"));
+    actionBoundary_points = new QAction(MainWindow);
+    actionBoundary_points->setObjectName(QString::fromUtf8("actionBoundary_points"));
+    actionClear_segments = new QAction(MainWindow);
+    actionClear_segments->setObjectName(QString::fromUtf8("actionClear_segments"));
+    actionView_segments = new QAction(MainWindow);
+    actionView_segments->setObjectName(QString::fromUtf8("actionView_segments"));
     centralwidget = new QWidget(MainWindow);
     centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
     gridLayout = new QGridLayout(centralwidget);
@@ -136,7 +145,9 @@ public:
     menuFile->addAction(actionQuit);
     menuView->addAction(actionView_polyhedron);
     menuView->addAction(actionView_points);
+    menuView->addAction(actionView_segments);
     menuAlgorithms->addAction(actionInside_points);
+    menuAlgorithms->addAction(actionBoundary_points);
     menuAlgorithms->addAction(actionBoundary_segments);
     menuAlgorithms->addSeparator();
     menuAlgorithms->addAction(actionUnsigned_distance_function_to_facets);
@@ -150,6 +161,7 @@ public:
     menuIntersections->addAction(actionAll_intersections);
     menuIntersections->addAction(actionAll_intersected_primitives);
     menuEdit->addAction(actionClear_points);
+    menuEdit->addAction(actionClear_segments);
 
     retranslateUi(MainWindow);
 
@@ -176,6 +188,9 @@ public:
     actionView_points->setText(QApplication::translate("MainWindow", "Points", 0, QApplication::UnicodeUTF8));
     actionClear_points->setText(QApplication::translate("MainWindow", "Clear points", 0, QApplication::UnicodeUTF8));
     actionBoundary_segments->setText(QApplication::translate("MainWindow", "Boundary segments...", 0, QApplication::UnicodeUTF8));
+    actionBoundary_points->setText(QApplication::translate("MainWindow", "Boundary points...", 0, QApplication::UnicodeUTF8));
+    actionClear_segments->setText(QApplication::translate("MainWindow", "Clear segments", 0, QApplication::UnicodeUTF8));
+    actionView_segments->setText(QApplication::translate("MainWindow", "Segments", 0, QApplication::UnicodeUTF8));
     menuFile->setTitle(QApplication::translate("MainWindow", "&File", 0, QApplication::UnicodeUTF8));
     menuView->setTitle(QApplication::translate("MainWindow", "&View", 0, QApplication::UnicodeUTF8));
     menuAlgorithms->setTitle(QApplication::translate("MainWindow", "Algorithms", 0, QApplication::UnicodeUTF8));

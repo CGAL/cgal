@@ -51,6 +51,7 @@ public:
   int open(QString filename);
 
   void generate_inside_points(const unsigned int nb_trials);
+  void generate_boundary_points(const unsigned int nb_points);
   void generate_boundary_segments(const unsigned int nb_slices);
 
   Point random_point();
@@ -58,7 +59,13 @@ public:
   void benchmark_do_intersect();
 
   // toggle view options
+  void toggle_view_points();
+  void toggle_view_segments();
   void toggle_view_poyhedron();
+
+  // edit menus
+  void clear_points() { m_points.clear(); }
+  void clear_segments() { m_segments.clear(); }
 
 private:
   Polyhedron *m_pPolyhedron;
@@ -68,6 +75,8 @@ private:
   // TODO: unsigned and signed distance function (shown in cut plane)
 
   // view options
+  bool m_view_points;
+  bool m_view_segments;
   bool m_view_polyhedron;
 
 }; // end class Scene

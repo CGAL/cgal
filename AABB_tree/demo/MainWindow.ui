@@ -49,12 +49,14 @@
     </property>
     <addaction name="actionView_polyhedron" />
     <addaction name="actionView_points" />
+    <addaction name="actionView_segments" />
    </widget>
    <widget class="QMenu" name="menuAlgorithms" >
     <property name="title" >
      <string>Algorithms</string>
     </property>
     <addaction name="actionInside_points" />
+    <addaction name="actionBoundary_points" />
     <addaction name="actionBoundary_segments" />
     <addaction name="separator" />
     <addaction name="actionUnsigned_distance_function_to_facets" />
@@ -83,6 +85,7 @@
      <string>Edit</string>
     </property>
     <addaction name="actionClear_points" />
+    <addaction name="actionClear_segments" />
    </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
@@ -172,6 +175,21 @@
   <action name="actionBoundary_segments" >
    <property name="text" >
     <string>Boundary segments...</string>
+   </property>
+  </action>
+  <action name="actionBoundary_points" >
+   <property name="text" >
+    <string>Boundary points...</string>
+   </property>
+  </action>
+  <action name="actionClear_segments" >
+   <property name="text" >
+    <string>Clear segments</string>
+   </property>
+  </action>
+  <action name="actionView_segments" >
+   <property name="text" >
+    <string>Segments</string>
    </property>
   </action>
  </widget>

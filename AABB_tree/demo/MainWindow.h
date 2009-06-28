@@ -40,13 +40,20 @@ public:
 
 			// view options
 			void on_actionView_polyhedron_triggered();
+			void on_actionView_points_triggered();
+			void on_actionView_segments_triggered();
 
 			// algorithms
 			void on_actionInside_points_triggered();
+			void on_actionBoundary_points_triggered();
 			void on_actionBoundary_segments_triggered();
 
 			// benchmarks
 			void on_actionDo_intersect_triggered();
+
+			// edit
+			void on_actionClear_points_triggered();
+			void on_actionClear_segments_triggered();
 
 			// drag & drop
 			void dragEnterEvent(QDragEnterEvent *event);
