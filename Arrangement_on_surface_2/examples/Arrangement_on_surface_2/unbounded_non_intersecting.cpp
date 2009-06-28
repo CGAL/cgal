@@ -34,7 +34,7 @@ int main ()
   e1 = arr.split_edge (e1, c1_left, c1_right);
   Vertex_handle      v = e1->target();
 
-  CGAL_assertion (! v->is_at_infinity());
+  CGAL_assertion (! v->is_at_open_boundary());
 
   // Add two more rays using the specialized insertion functions.
   X_monotone_curve_2 c2 = Ray_2 (Point_2 (0, 0), Point_2 (-1, 1));
@@ -74,7 +74,7 @@ int main ()
 
     std::cout << "Face no. " << k << ": ";
     curr = first = fit->outer_ccb();
-    if (! curr->source()->is_at_infinity())
+    if (! curr->source()->is_at_open_boundary())
       std::cout << "(" << curr->source()->point() << ")";
     do {
       he = curr;
@@ -83,7 +83,7 @@ int main ()
       else
         std::cout << "   [ ... ]   ";
 
-      if (! he->target()->is_at_infinity())
+      if (! he->target()->is_at_open_boundary())
         std::cout << "(" << he->target()->point() << ")";
 
       ++curr;
