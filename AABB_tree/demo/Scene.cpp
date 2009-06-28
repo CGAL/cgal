@@ -149,8 +149,6 @@ void Scene::generate_inside_points(const unsigned int nb_trials)
 	Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	std::cout << "done." << std::endl;
 
-	m_points.clear();
-
     QTime time;
     time.start();
 	std::cout << "Generate inside points from " << nb_trials << " trials: ";
@@ -182,8 +180,6 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
     QTime time;
     time.start();
 	std::cout << "Generate boundary segments from " << nb_slices << " slices: ";
-
-	m_segments.clear();
 
 	Vector normal((FT)0.0,(FT)0.0,(FT)1.0);
 	unsigned int i;
@@ -221,8 +217,6 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
 	std::cout << "Construct AABB tree...";
 	Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	std::cout << "done." << std::endl;
-
-	m_points.clear();
 
     QTime time;
     time.start();
@@ -270,8 +264,6 @@ void Scene::generate_edge_points(const unsigned int nb_points)
 	Tree tree(m_pPolyhedron->edges_begin(),m_pPolyhedron->edges_end());
 	std::cout << "done." << std::endl;
 
-	m_points.clear();
-
     QTime time;
     time.start();
 	std::cout << "Generate edge points: ";
@@ -306,7 +298,12 @@ void Scene::generate_edge_points(const unsigned int nb_points)
 	std::cout << nb_planes << " planes launched, " << time.elapsed() << " ms." << std::endl;
 }
 
-void Scene::benchmark_do_intersect()
+void Scene::benchmark_distances()
+{
+	std::cout << "to be implemented" << std::endl;
+}
+
+void Scene::benchmark_intersections()
 {
 	typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
 	typedef CGAL::AABB_traits<Kernel, Primitive> Traits;

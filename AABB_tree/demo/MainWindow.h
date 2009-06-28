@@ -50,7 +50,8 @@ public:
 			void on_actionEdge_points_triggered();
 
 			// benchmarks
-			void on_actionDo_intersect_triggered();
+			void on_actionBench_distances_triggered();
+			void on_actionBench_intersections_triggered();
 
 			// edit
 			void on_actionClear_points_triggered();

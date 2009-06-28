@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'MainWindow.ui'
 **
-** Created: Sun 28. Jun 20:04:59 2009
+** Created: Sun 28. Jun 21:42:55 2009
 **      by: Qt User Interface Compiler version 4.4.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -34,7 +34,7 @@ public:
     QAction *actionDo_intersect;
     QAction *actionAny_intersection;
     QAction *actionAll_intersections;
-    QAction *actionDistances;
+    QAction *actionBench_distances;
     QAction *actionNb_intersections;
     QAction *actionAll_intersected_primitives;
     QAction *actionUnsigned_distance_function_to_facets;
@@ -48,6 +48,7 @@ public:
     QAction *actionClear_segments;
     QAction *actionView_segments;
     QAction *actionEdge_points;
+    QAction *actionBench_intersections;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     Viewer *viewer;
@@ -56,7 +57,6 @@ public:
     QMenu *menuView;
     QMenu *menuAlgorithms;
     QMenu *menuBenchmarks;
-    QMenu *menuIntersections;
     QMenu *menuEdit;
     QStatusBar *statusbar;
 
@@ -80,8 +80,8 @@ public:
     actionAny_intersection->setObjectName(QString::fromUtf8("actionAny_intersection"));
     actionAll_intersections = new QAction(MainWindow);
     actionAll_intersections->setObjectName(QString::fromUtf8("actionAll_intersections"));
-    actionDistances = new QAction(MainWindow);
-    actionDistances->setObjectName(QString::fromUtf8("actionDistances"));
+    actionBench_distances = new QAction(MainWindow);
+    actionBench_distances->setObjectName(QString::fromUtf8("actionBench_distances"));
     actionNb_intersections = new QAction(MainWindow);
     actionNb_intersections->setObjectName(QString::fromUtf8("actionNb_intersections"));
     actionAll_intersected_primitives = new QAction(MainWindow);
@@ -108,6 +108,8 @@ public:
     actionView_segments->setObjectName(QString::fromUtf8("actionView_segments"));
     actionEdge_points = new QAction(MainWindow);
     actionEdge_points->setObjectName(QString::fromUtf8("actionEdge_points"));
+    actionBench_intersections = new QAction(MainWindow);
+    actionBench_intersections->setObjectName(QString::fromUtf8("actionBench_intersections"));
     centralwidget = new QWidget(MainWindow);
     centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
     gridLayout = new QGridLayout(centralwidget);
@@ -130,8 +132,6 @@ public:
     menuAlgorithms->setObjectName(QString::fromUtf8("menuAlgorithms"));
     menuBenchmarks = new QMenu(menubar);
     menuBenchmarks->setObjectName(QString::fromUtf8("menuBenchmarks"));
-    menuIntersections = new QMenu(menuBenchmarks);
-    menuIntersections->setObjectName(QString::fromUtf8("menuIntersections"));
     menuEdit = new QMenu(menubar);
     menuEdit->setObjectName(QString::fromUtf8("menuEdit"));
     MainWindow->setMenuBar(menubar);
@@ -145,25 +145,21 @@ public:
     menubar->addAction(menuBenchmarks->menuAction());
     menubar->addAction(menuView->menuAction());
     menuFile->addAction(actionLoadPolyhedron);
+    menuFile->addSeparator();
     menuFile->addAction(actionQuit);
     menuView->addAction(actionView_polyhedron);
     menuView->addAction(actionView_points);
     menuView->addAction(actionView_segments);
+    menuAlgorithms->addAction(actionEdge_points);
     menuAlgorithms->addAction(actionInside_points);
     menuAlgorithms->addAction(actionBoundary_points);
     menuAlgorithms->addAction(actionBoundary_segments);
-    menuAlgorithms->addAction(actionEdge_points);
     menuAlgorithms->addSeparator();
+    menuAlgorithms->addAction(actionSigned_distance_function_to_facets);
     menuAlgorithms->addAction(actionUnsigned_distance_function_to_facets);
     menuAlgorithms->addAction(actionUnsigned_distance_function_to_edges);
-    menuAlgorithms->addAction(actionSigned_distance_function_to_facets);
-    menuBenchmarks->addAction(menuIntersections->menuAction());
-    menuBenchmarks->addAction(actionDistances);
-    menuIntersections->addAction(actionDo_intersect);
-    menuIntersections->addAction(actionNb_intersections);
-    menuIntersections->addAction(actionAny_intersection);
-    menuIntersections->addAction(actionAll_intersections);
-    menuIntersections->addAction(actionAll_intersected_primitives);
+    menuBenchmarks->addAction(actionBench_distances);
+    menuBenchmarks->addAction(actionBench_intersections);
     menuEdit->addAction(actionClear_points);
     menuEdit->addAction(actionClear_segments);
 
@@ -182,7 +178,7 @@ public:
     actionDo_intersect->setText(QApplication::translate("MainWindow", "do_intersect", 0, QApplication::UnicodeUTF8));
     actionAny_intersection->setText(QApplication::translate("MainWindow", "any_intersection", 0, QApplication::UnicodeUTF8));
     actionAll_intersections->setText(QApplication::translate("MainWindow", "all_intersections", 0, QApplication::UnicodeUTF8));
-    actionDistances->setText(QApplication::translate("MainWindow", "Distances", 0, QApplication::UnicodeUTF8));
+    actionBench_distances->setText(QApplication::translate("MainWindow", "Distances", 0, QApplication::UnicodeUTF8));
     actionNb_intersections->setText(QApplication::translate("MainWindow", "nb_intersections", 0, QApplication::UnicodeUTF8));
     actionAll_intersected_primitives->setText(QApplication::translate("MainWindow", "all_intersected_primitives", 0, QApplication::UnicodeUTF8));
     actionUnsigned_distance_function_to_facets->setText(QApplication::translate("MainWindow", "Unsigned distance function to facets", 0, QApplication::UnicodeUTF8));
@@ -196,11 +192,11 @@ public:
     actionClear_segments->setText(QApplication::translate("MainWindow", "Clear segments", 0, QApplication::UnicodeUTF8));
     actionView_segments->setText(QApplication::translate("MainWindow", "Segments", 0, QApplication::UnicodeUTF8));
     actionEdge_points->setText(QApplication::translate("MainWindow", "Edge points...", 0, QApplication::UnicodeUTF8));
+    actionBench_intersections->setText(QApplication::translate("MainWindow", "Intersections", 0, QApplication::UnicodeUTF8));
     menuFile->setTitle(QApplication::translate("MainWindow", "&File", 0, QApplication::UnicodeUTF8));
     menuView->setTitle(QApplication::translate("MainWindow", "&View", 0, QApplication::UnicodeUTF8));
     menuAlgorithms->setTitle(QApplication::translate("MainWindow", "Algorithms", 0, QApplication::UnicodeUTF8));
-    menuBenchmarks->setTitle(QApplication::translate("MainWindow", "Benchmarks", 0, QApplication::UnicodeUTF8));
-    menuIntersections->setTitle(QApplication::translate("MainWindow", "Intersections", 0, QApplication::UnicodeUTF8));
+    menuBenchmarks->setTitle(QApplication::translate("MainWindow", "Benchmark", 0, QApplication::UnicodeUTF8));
     menuEdit->setTitle(QApplication::translate("MainWindow", "Edit", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 

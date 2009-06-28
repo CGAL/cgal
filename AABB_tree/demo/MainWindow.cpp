@@ -237,12 +237,23 @@ void MainWindow::on_actionEdge_points_triggered()
     QApplication::restoreOverrideCursor();
 }
 
-void MainWindow::on_actionDo_intersect_triggered()
+void MainWindow::on_actionBench_distances_triggered()
 {
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    m_pScene->benchmark_do_intersect();
+    m_pScene->benchmark_distances();
+
+    // default cursor
+    QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionBench_intersections_triggered()
+{
+    // wait cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    m_pScene->benchmark_intersections();
 
     // default cursor
     QApplication::restoreOverrideCursor();

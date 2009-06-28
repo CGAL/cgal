@@ -41,6 +41,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="actionLoadPolyhedron" />
+    <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
    <widget class="QMenu" name="menuView" >
@@ -55,31 +56,21 @@
     <property name="title" >
      <string>Algorithms</string>
     </property>
+    <addaction name="actionEdge_points" />
     <addaction name="actionInside_points" />
     <addaction name="actionBoundary_points" />
     <addaction name="actionBoundary_segments" />
-    <addaction name="actionEdge_points" />
     <addaction name="separator" />
+    <addaction name="actionSigned_distance_function_to_facets" />
     <addaction name="actionUnsigned_distance_function_to_facets" />
     <addaction name="actionUnsigned_distance_function_to_edges" />
-    <addaction name="actionSigned_distance_function_to_facets" />
    </widget>
    <widget class="QMenu" name="menuBenchmarks" >
     <property name="title" >
-     <string>Benchmarks</string>
+     <string>Benchmark</string>
     </property>
-    <widget class="QMenu" name="menuIntersections" >
-     <property name="title" >
-      <string>Intersections</string>
-     </property>
-     <addaction name="actionDo_intersect" />
-     <addaction name="actionNb_intersections" />
-     <addaction name="actionAny_intersection" />
-     <addaction name="actionAll_intersections" />
-     <addaction name="actionAll_intersected_primitives" />
-    </widget>
-    <addaction name="menuIntersections" />
-    <addaction name="actionDistances" />
+    <addaction name="actionBench_distances" />
+    <addaction name="actionBench_intersections" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
@@ -128,7 +119,7 @@
     <string>all_intersections</string>
    </property>
   </action>
-  <action name="actionDistances" >
+  <action name="actionBench_distances" >
    <property name="text" >
     <string>Distances</string>
    </property>
@@ -196,6 +187,11 @@
   <action name="actionEdge_points" >
    <property name="text" >
     <string>Edge points...</string>
+   </property>
+  </action>
+  <action name="actionBench_intersections" >
+   <property name="text" >
+    <string>Intersections</string>
    </property>
   </action>
  </widget>

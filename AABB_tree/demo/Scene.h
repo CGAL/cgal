@@ -48,25 +48,32 @@ public:
   Bbox bbox() { return Bbox(); }
 
 public:
+
+  // utility functions
+  Point random_point();
+  Vector random_vector();
+
+  // file menu functions
   int open(QString filename);
 
+  // edit menus functions
+  void clear_points() { m_points.clear(); }
+  void clear_segments() { m_segments.clear(); }
+
+  // benchmark menu functions
+  void benchmark_intersections();
+  void benchmark_distances();
+
+  // algorithms
   void generate_edge_points(const unsigned int nb_points);
   void generate_inside_points(const unsigned int nb_trials);
   void generate_boundary_points(const unsigned int nb_points);
   void generate_boundary_segments(const unsigned int nb_slices);
 
-  Point random_point();
-  Vector random_vector();
-  void benchmark_do_intersect();
-
   // toggle view options
   void toggle_view_points();
   void toggle_view_segments();
   void toggle_view_poyhedron();
-
-  // edit menus
-  void clear_points() { m_points.clear(); }
-  void clear_segments() { m_segments.clear(); }
 
 private:
   Polyhedron *m_pPolyhedron;
