@@ -142,6 +142,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_item.cpp Scene_item.moc
     Scene_item_with_display_list.cpp
     Polyhedron_demo_plugin_helper.cpp)
+  target_link_libraries(scene_item ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp Scene_plane_item.moc)
@@ -271,7 +272,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(normal_estimation_plugin Point_set_demo_normal_estimation_plugin ${NORMAL_UI_FILES})
   target_link_libraries(normal_estimation_plugin point_set)
 
-  qt4_wrap_ui( CLEANING_UI_FILES Point_set_demo_outlier_removal_plugin.ui)
+  qt4_wrap_ui( CLEANING_UI_FILES Point_set_demo_cleaning_plugin.ui)
   polyhedron_demo_plugin(cleaning_plugin Point_set_demo_cleaning_plugin ${CLEANING_UI_FILES})
   target_link_libraries(cleaning_plugin point_set)
 
