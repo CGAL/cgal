@@ -297,13 +297,19 @@ void Scene::generate_edge_points(const unsigned int nb_points)
 
 void Scene::benchmark_distances()
 {
-	std::cout << "to be implemented" << std::endl;
+	QTime time;
+	time.start();
+	std::cout << "Construct AABB tree...";
+	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+	
+	bench_closest_point(tree);
 }
 
 void Scene::benchmark_intersections()
 {
-    QTime time;
-    time.start();
+	QTime time;
+	time.start();
 	std::cout << "Construct AABB tree...";
 	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
@@ -313,6 +319,23 @@ void Scene::benchmark_intersections()
 	bench_any_intersection(tree);
 	bench_all_intersections(tree);
 	bench_all_intersected_primitives(tree);
+}
+
+void Scene::bench_closest_point(Facet_tree& tree)
+{
+	QTime time;
+	time.start();
+	std::cout << "Benchmark closest point" << std::endl;
+
+	unsigned int nb = 0;
+	while(time.elapsed() < 1000)
+	{
+		Point query = random_point();
+		// tree.closest_point(query); // TODO: fix compilation issue
+		nb++;
+	}
+	double speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s" << std::endl;
 }
 
 void Scene::bench_all_intersected_primitives(Facet_tree& tree)

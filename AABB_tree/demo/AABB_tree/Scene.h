@@ -4,6 +4,7 @@
 #include <QtOpenGL/qgl.h>
 #include <iostream>
 #include <cmath>
+
 #include "types.h"
 
 #include <CGAL/AABB_tree.h>
@@ -96,6 +97,7 @@ private:
   typedef Facet_tree::Primitive_id Primitive_id;
 
   void bench_do_intersect(Facet_tree& tree);
+  void bench_closest_point(Facet_tree& tree);
   void bench_nb_intersections(Facet_tree& tree);
   void bench_any_intersection(Facet_tree& tree);
   void bench_all_intersections(Facet_tree& tree);
