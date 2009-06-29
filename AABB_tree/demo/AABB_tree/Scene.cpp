@@ -312,7 +312,61 @@ void Scene::benchmark_intersections()
 	bench_nb_intersections(tree);
 	bench_any_intersection(tree);
 	bench_all_intersections(tree);
+	bench_all_intersected_primitives(tree);
 }
+
+void Scene::bench_all_intersected_primitives(Facet_tree& tree)
+{
+	std::list<Primitive_id> primitive_ids;
+
+    QTime time;
+    time.start();
+	std::cout << "Benchmark all_intersected_primitives" << std::endl;
+
+	// with ray
+	unsigned int nb = 0;
+	while(time.elapsed() < 1000)
+	{
+		Point p = random_point();
+		Point q = random_point();
+		Ray ray(p,q);
+		tree.all_intersected_primitives(ray,std::back_inserter(primitive_ids));
+		nb++;
+	}
+	double speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with ray" << std::endl;
+	primitive_ids.clear();
+
+	// with line
+	nb = 0;
+    time.start();
+	while(time.elapsed() < 1000)
+	{
+		Point p = random_point();
+		Point q = random_point();
+		Line line(p,q);
+		tree.all_intersected_primitives(line,std::back_inserter(primitive_ids));
+		nb++;
+	}
+	speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with line" << std::endl;
+	primitive_ids.clear();
+
+	// with segment
+	nb = 0;
+    time.start();
+	while(time.elapsed() < 1000)
+	{
+		Point p = random_point();
+		Point q = random_point();
+		Segment segment(p,q);
+		tree.all_intersected_primitives(segment,std::back_inserter(primitive_ids));
+		nb++;
+	}
+	speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with segment" << std::endl;
+}
+
 
 void Scene::bench_do_intersect(Facet_tree& tree)
 {

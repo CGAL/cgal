@@ -10,7 +10,7 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-foreach(INCDIR ../include ../../../STL_Extension/include ../../../GraphicsView/include ../../../filtered_kernel/include )
+foreach(INCDIR ../../include ../../../../STL_Extension/include ../../../GraphicsView/include ../../../filtered_kernel/include )
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
     include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
   endif()

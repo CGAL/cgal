@@ -93,11 +93,13 @@ private:
   typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Facet_tree;
   typedef Facet_tree::Object_and_primitive_id Object_and_primitive_id;
+  typedef Facet_tree::Primitive_id Primitive_id;
 
   void bench_do_intersect(Facet_tree& tree);
   void bench_nb_intersections(Facet_tree& tree);
   void bench_any_intersection(Facet_tree& tree);
   void bench_all_intersections(Facet_tree& tree);
+  void bench_all_intersected_primitives(Facet_tree& tree);
 }; // end class Scene
 
 
