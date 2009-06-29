@@ -6,6 +6,11 @@
 #include <cmath>
 #include "types.h"
 
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_polyhedron_segment_primitive.h>
+#include <CGAL/AABB_polyhedron_triangle_primitive.h>
+
 class Scene
 {
 public:
@@ -83,6 +88,16 @@ private:
   bool m_view_segments;
   bool m_view_polyhedron;
 
+  // types
+  typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
+  typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+  typedef CGAL::AABB_tree<Traits> Facet_tree;
+  typedef Facet_tree::Object_and_primitive_id Object_and_primitive_id;
+
+  void bench_do_intersect(Facet_tree& tree);
+  void bench_nb_intersections(Facet_tree& tree);
+  void bench_any_intersection(Facet_tree& tree);
+  void bench_all_intersections(Facet_tree& tree);
 }; // end class Scene
 
 
