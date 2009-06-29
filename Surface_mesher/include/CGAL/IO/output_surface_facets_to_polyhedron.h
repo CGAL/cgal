@@ -35,9 +35,11 @@ CGAL_BEGIN_NAMESPACE
 /// @commentheading Template Parameters:
 /// @param SurfaceMeshComplex_2InTriangulation_3 model of the SurfaceMeshComplex_2InTriangulation_3 concept.
 /// @param Polyhedron an instance of CGAL::Polyhedron_3<Traits>.
+///
+/// @return true if the surface is manifold and orientable.
 template <class SurfaceMeshComplex_2InTriangulation_3,
           class Polyhedron>
-void
+bool
 output_surface_facets_to_polyhedron(
   const SurfaceMeshComplex_2InTriangulation_3& c2t3, ///< Input surface.
   Polyhedron& output_polyhedron) ///< Output polyhedron.
@@ -46,6 +48,9 @@ output_surface_facets_to_polyhedron(
 
   Complex_2_in_triangulation_3_polyhedron_builder<C2t3, Polyhedron>  builder(c2t3);
   output_polyhedron.delegate(builder);
+
+  // TODO: return true if the surface is manifold and orientable
+  return true;
 }
 
 
