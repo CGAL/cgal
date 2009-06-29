@@ -22,7 +22,7 @@
 
 #include <CGAL/Envelope_3/Envelope_base.h>
 #include "Envelope_test_overlay_functor.h"
-#include <CGAL/Envelope_3/Env_overlay_2.h>
+#include <CGAL/Envelope_3/Envelope_overlay_2.h>
 
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Object.h>

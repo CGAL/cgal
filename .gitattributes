@@ -1173,6 +1173,7 @@ Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.fig -text svneol=unset#applicatio
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.gif -text svneol=unset#image/gif
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.pdf -text svneol=unset#application/pdf
 Envelope_3/examples/Envelope_3/spheres.dat -text
+Envelope_3/include/CGAL/Env_tracing_traits_3.h -text
 Envelope_3/include/CGAL/Envelope_3/Envelope_diagram_on_surface_2.h -text
 Envelope_3/test/Envelope_3/data/spheres/stest.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest10.cin -text
