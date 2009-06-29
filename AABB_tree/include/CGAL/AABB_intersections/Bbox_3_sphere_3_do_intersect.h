@@ -43,19 +43,22 @@ namespace CGALi {
         const K&)
     {
         typedef typename K::FT FT;
+        typedef typename K::Point_3 Point;
         FT d = (FT)0.0;
         FT distance = (FT)0.0;
-        for(int i = 0; i < 3; ++i)
+		Point center = sphere.center();
+		int i;
+        for(i = 0; i < 3; ++i)
         {
-            if(sphere.center()[i] < (FT)bbox.min(i))
+            if(center[i] < (FT)bbox.min(i))
             {
-                d = (FT)bbox.min(i) - sphere.center()[i];
-                distance += d*d;
+                d = (FT)bbox.min(i) - center[i];
+                distance += d * d;
             }
-            else if(sphere.center()[i] > (FT)bbox.max(i))
+            else if(center[i] > (FT)bbox.max(i))
             {
-                d = sphere.center()[i] - (FT)bbox.max(i);
-                distance += d*d;
+                d = center[i] - (FT)bbox.max(i);
+                distance += d * d;
             }
         }
         return distance <= sphere.squared_radius();
