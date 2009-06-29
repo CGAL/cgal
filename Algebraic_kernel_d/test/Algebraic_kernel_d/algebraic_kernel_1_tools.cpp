@@ -35,7 +35,7 @@ void test_algebraic_kernel_1_tools(){
   Polynomial_1 p1 = x*x-2;
   Polynomial_1 p2 = x*x-3;
 
-  typename Algebraic_kernel_1::Solve_1 solve_1 = ak.construct_solve_1_object();
+  typename Algebraic_kernel_1::Solve_1 solve_1 = ak.solve_1_object();
   
   std::vector<Root> roots1, roots2;
   solve_1(p1,std::back_inserter(roots1));

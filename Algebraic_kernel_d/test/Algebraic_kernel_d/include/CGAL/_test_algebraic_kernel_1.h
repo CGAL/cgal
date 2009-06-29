@@ -12,7 +12,7 @@
 //
 // ============================================================================
 
-// DONE: test construct_solve_1_object(), etc.
+// DONE: test solve_1_object(), etc.
 // TODO: Use proper construction of Polynomials 
 
 #include <CGAL/basic.h>
@@ -60,7 +60,7 @@ void test_algebraic_kernel_1() {
     // Test of functors
     // Test AK::Solve_1...
     
-    typename AK::Solve_1 solve_1 = AK().construct_solve_1_object();
+    typename AK::Solve_1 solve_1 = AK().solve_1_object();
     Polynomial_1 poly1( -4,0,1 );
     Polynomial_1 poly2( 0, 0, 1 );
     std::vector< Algebraic_real_1 > roots_vec;
@@ -114,28 +114,28 @@ void test_algebraic_kernel_1() {
     // Just syntax tests... (TODO)
     // Test AK::Is_square_free_1...
     typename AK::Is_square_free_1 is_square_free_1 
-      = AK().construct_is_square_free_1_object();
+      = AK().is_square_free_1_object();
     is_square_free_1( poly1 );
     
     // Test AK::Is_coprime_1...
     typename AK::Is_coprime_1 is_coprime_1
-      = AK().construct_is_coprime_1_object();
+      = AK().is_coprime_1_object();
     is_coprime_1( poly1, poly2 );
         
     // Test AK::Make_square_free_1...
     typename AK::Make_square_free_1 make_square_free_1
-      = AK().construct_make_square_free_1_object();
+      = AK().make_square_free_1_object();
     make_square_free_1( poly1 );
     
     // Test AK::Make_coprime_1...
     typename AK::Make_coprime_1 make_coprime_1 
-      = AK().construct_make_coprime_1_object();
+      = AK().make_coprime_1_object();
     Polynomial_1 g, q1, q2;
     make_coprime_1( poly1, poly2, g, q1, q2 );
     
     // Test AK::Square_free_factorize_1...
     typename AK::Square_free_factorize_1 square_free_factorize_1 
-      = AK().construct_square_free_factorize_1_object();
+      = AK().square_free_factorize_1_object();
     
     std::vector<std::pair<Polynomial_1,int> > fac_mult_pairs;
     square_free_factorize_1( poly1, std::back_inserter(fac_mult_pairs) );
@@ -152,7 +152,7 @@ void test_algebraic_kernel_1() {
     
     // Test AK::Boundary_between...
     typename AK::Boundary_between_1 boundary_between 
-      = AK().construct_boundary_between_1_object();
+      = AK().boundary_between_1_object();
     assert( typename AK::Boundary( -2 ) < 
         boundary_between( roots_vec2[0], roots_vec2[1] ) );
     assert( typename AK::Boundary(  2 ) > 
@@ -160,19 +160,19 @@ void test_algebraic_kernel_1() {
     
     // Test AK::Lower_boundary
     typename AK::Lower_boundary_1 lower_boundary 
-      = AK().construct_lower_boundary_1_object();
+      = AK().lower_boundary_1_object();
     assert( lower_boundary( roots_vec2[0] ) < typename AK::Boundary(-1) );
     assert( lower_boundary( roots_vec2[1] ) < typename AK::Boundary( 2) );
 
     // Test AK::Upper_boundary
     typename AK::Upper_boundary_1 upper_boundary
-      = AK().construct_upper_boundary_1_object();
+      = AK().upper_boundary_1_object();
     assert( upper_boundary( roots_vec2[0] ) > typename AK::Boundary(-1) );
     assert( upper_boundary( roots_vec2[1] ) > typename AK::Boundary( 1) );
     
     // Test AK::Refine
     typename AK::Refine_1 refine
-      = AK().construct_refine_1_object();
+      = AK().refine_1_object();
     Algebraic_real_1 ar = roots_vec2[1];
     typename AK::Boundary old_lower_boundary = ar.low();
     typename AK::Boundary old_upper_boundary = ar.high(); 
