@@ -1,4 +1,0 @@
-benchmark
-test/Algebraic_kernel_d/Algebraic_curve_kernel_2.cpp
-include/CGAL/algebraic_kernel_1_tools.h
-test/Algebraic_kernel_d/algebraic_kernel_1_tools.cpp
