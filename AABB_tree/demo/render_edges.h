@@ -10,7 +10,7 @@ void gl_render_edges(Polyhedron& polyhedron)
   typedef typename Kernel::Point_3 Point;
 
   ::glBegin(GL_LINES);
-  Polyhedron::Edge_iterator he;
+  typename Polyhedron::Edge_iterator he;
   for(he = polyhedron.edges_begin();
       he != polyhedron.edges_end();
       he++)
