@@ -314,7 +314,7 @@ The following two examples show how the user can plug his own vertex base in a
 triangulation.  Changing the cell base is similar.
 
 \subsubsection{Adding a Color\label{P3Triangulation3-sec-examples-color}}
-When the user does not need to add a type in a vertex which depends on the
+If the user does not need to add a type in a vertex that depends on the
 \ccc{TriangulationDataStructure_3} (e.g. a \ccc{Vertex_handle} or
 \ccc{Cell_handle}), then he can use the
 \ccc{Triangulation_vertex_base_with_info_3} class to add his own information
@@ -324,7 +324,7 @@ this way.
 \ccIncludeExampleCode{Periodic_3_triangulation_3/colored_vertices.cpp}
 
 \subsubsection{Adding Handles}
-When the user needs to add a type in a vertex which depends on the
+If the user needs to add a type in a vertex that depends on the
 \ccc{TriangulationDataStructure_3} (e.g. a \ccc{Vertex_handle} or
 \ccc{Cell_handle}), then he has to derive his own vertex base class,
 as the following example shows.
