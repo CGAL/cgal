@@ -42,8 +42,12 @@ void test_polynomial_utils(){
 // ConstructCoefficientConstIteratorRange
 // ConstructInnermostCoefficientConstIteratorRange
 // Swap
+  assert(CGAL::swap(x*x*y,0,1)==x*y*y);
 // Move
-
+  assert(CGAL::move(x*x*y,0,2)==x*z*z);
+// Permute
+  int permutation[3] = {1,2,0};
+  assert(CGAL::permute(x*x*y,permutation,permutation+3)==y*y*z);
 // Degree
   assert(CGAL::degree(p) == 2);
   assert(CGAL::degree(p,0) == 3);

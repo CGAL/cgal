@@ -75,7 +75,26 @@ CGAL_BEGIN_NAMESPACE
 // ConstructCoefficientConstIteratorRange
 // ConstructInnermostCoefficientConstIteratorRange
 // Swap
+template <typename Polynomial_d> inline  
+typename Polynomial_traits_d<Polynomial_d>::Swap::result_type
+swap(const Polynomial_d& p, int i, int j){
+  typename Polynomial_traits_d<Polynomial_d>::Swap swap;
+  return swap(p,i,j);
+}
 // Move
+template <typename Polynomial_d> inline  
+typename Polynomial_traits_d<Polynomial_d>::Move::result_type
+move(const Polynomial_d& p, int i, int j){
+  typename Polynomial_traits_d<Polynomial_d>::Move move;
+  return move(p,i,j);
+}
+// Permute
+template <typename Polynomial_d, typename Input_iterator> inline  
+typename Polynomial_traits_d<Polynomial_d>::Permute::result_type
+permute(const Polynomial_d& p, Input_iterator begin, Input_iterator end){
+  typename Polynomial_traits_d<Polynomial_d>::Permute permute;
+  return permute(p,begin,end);
+}
 
 // Degree
 CGAL_UNARY_POLY_FUNCTION_INDEX(Degree,degree);
