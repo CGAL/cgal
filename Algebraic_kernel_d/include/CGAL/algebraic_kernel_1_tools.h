@@ -41,7 +41,7 @@ compute_smallest_nonnegative_root(
   typedef typename AK::Algebraic_real_1 Root;
   typedef boost::optional< Root > Root_option; 
   
-  typename AK::Solve_1 solve_1 = ak.construct_solve_1_object();
+  typename AK::Solve_1 solve_1 = ak.solve_1_object();
   std::vector<Root> roots;
   
   solve_1(p, std::back_inserter(roots));
