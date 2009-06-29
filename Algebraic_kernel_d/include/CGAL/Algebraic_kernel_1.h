@@ -225,29 +225,29 @@ public:
 #define CGAL_ALGEBRAIC_KERNEL_1_PRED(Y,Z) Y Z() const { return Y(); }
 
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Is_square_free_1,
-      construct_is_square_free_1_object);
+      is_square_free_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Make_square_free_1,
-      construct_make_square_free_1_object);
+      make_square_free_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Square_free_factorize_1,
-      construct_square_free_factorize_1_object);
+      square_free_factorize_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Is_coprime_1,
-      construct_is_coprime_1_object);
+      is_coprime_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Make_coprime_1,
-      construct_make_coprime_1_object);
+      make_coprime_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Solve_1,
-      construct_solve_1_object);
+      solve_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Sign_at_1,
-      construct_sign_at_1_object);
+      sign_at_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Compare_1,
-      construct_compare_1_object);
+      compare_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Refine_1,
-      construct_refine_1_object);
+      refine_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Lower_boundary_1,
-      construct_lower_boundary_1_object);
+      lower_boundary_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Upper_boundary_1,
-      construct_upper_boundary_1_object);
+      upper_boundary_1_object);
   CGAL_ALGEBRAIC_KERNEL_1_PRED(Boundary_between_1,
-      construct_boundary_between_1_object);
+      boundary_between_1_object);
       
 #undef CGAL_ALGEBRAIC_KERNEL_1_PRED  
           
