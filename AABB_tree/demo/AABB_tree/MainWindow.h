@@ -12,7 +12,6 @@ namespace Ui {
 	class MainWindow;
 }
 
-#include "types.h"
 
 class MainWindow : 
 	public CGAL::Qt::DemosMainWindow
@@ -48,6 +47,9 @@ public:
 			void on_actionBoundary_points_triggered();
 			void on_actionBoundary_segments_triggered();
 			void on_actionEdge_points_triggered();
+
+			// distance functions
+			void on_actionUnsigned_distance_function_to_facets_triggered();
 
 			// benchmarks
 			void on_actionBench_distances_triggered();

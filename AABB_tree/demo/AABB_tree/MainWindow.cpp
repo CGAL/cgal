@@ -18,20 +18,20 @@ MainWindow::MainWindow(QWidget* parent)
   ui = new Ui::MainWindow;
   ui->setupUi(this);
 
-  // Save some pointers from ui, for latter use.
+  // saves some pointers from ui, for latter use.
   m_pViewer = ui->viewer;
 
-  // do not save the state of the viewer (anoying)
+  // does not save the state of the viewer 
   m_pViewer->setStateFileName(QString::null);
 
-  // accept drop events
+  // accepts drop events
   setAcceptDrops(true);
 
-  // setup scene
+  // setups scene
   m_pScene = new Scene;
   m_pViewer->setScene(m_pScene);
 
-  // Connect actionQuit (Ctrl+Q) and qApp->quit()
+  // connects actionQuit (Ctrl+Q) and qApp->quit()
   connect(ui->actionQuit, SIGNAL(triggered()),
           this, SLOT(quit()));
 
@@ -97,7 +97,6 @@ void MainWindow::open(QString filename)
   }
 }
 
-
 void MainWindow::readSettings()
 {
   this->readState("MainWindow", Size|State);
@@ -150,21 +149,12 @@ void MainWindow::on_actionInside_points_triggered()
 	bool ok;
     const unsigned int nb_trials = (unsigned)
 		QInputDialog::getInteger(NULL, "#Trials",
-		"Trials:",
-      10000, // default value
-      1, // min
-      100000000, // max
-      9, // decimals
-      &ok);
+		"Trials:",10000,1,100000000,9,&ok);
     if(!ok)
 		return;
 
-    // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
     m_pScene->generate_inside_points(nb_trials);
-
-    // default cursor
     QApplication::restoreOverrideCursor();
 }
 
@@ -173,21 +163,12 @@ void MainWindow::on_actionBoundary_segments_triggered()
 	bool ok;
     const unsigned int nb_slices = (unsigned)
 		QInputDialog::getInteger(NULL, "#Slices",
-		"Slices:",
-      100, // default value
-      1, // min
-      1000000, // max
-      8, // decimals
-      &ok);
+		"Slices:",100,1,1000000,8,&ok);
     if(!ok)
 		return;
 
-    // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
     m_pScene->generate_boundary_segments(nb_slices);
-
-    // default cursor
     QApplication::restoreOverrideCursor();
 }
 
@@ -196,21 +177,12 @@ void MainWindow::on_actionBoundary_points_triggered()
 	bool ok;
     const unsigned int nb_points = (unsigned)
 		QInputDialog::getInteger(NULL, "#Points",
-		"Points:",
-      1000, // default value
-      1, // min
-      10000000, // max
-      8, // decimals
-      &ok);
+		"Points:",1000,1,10000000,8,&ok);
     if(!ok)
 		return;
 
-    // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
     m_pScene->generate_boundary_points(nb_points);
-
-    // default cursor
     QApplication::restoreOverrideCursor();
 }
 
@@ -219,43 +191,33 @@ void MainWindow::on_actionEdge_points_triggered()
 	bool ok;
     const unsigned int nb_points = (unsigned)
 		QInputDialog::getInteger(NULL, "#Points",
-		"Points:",
-      1000, // default value
-      1, // min
-      10000000, // max
-      8, // decimals
-      &ok);
+		"Points:",1000,1,10000000,8,&ok);
     if(!ok)
 		return;
 
-    // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
     m_pScene->generate_edge_points(nb_points);
-
-    // default cursor
     QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionBench_distances_triggered()
 {
-    // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
     m_pScene->benchmark_distances();
-
-    // default cursor
     QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionBench_intersections_triggered()
 {
-    // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
     m_pScene->benchmark_intersections();
+    QApplication::restoreOverrideCursor();
+}
 
-    // default cursor
+void MainWindow::on_actionUnsigned_distance_function_to_facets_triggered()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    m_pScene->unsigned_distance_function();
     QApplication::restoreOverrideCursor();
 }
 

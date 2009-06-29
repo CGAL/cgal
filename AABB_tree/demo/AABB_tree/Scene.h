@@ -73,6 +73,11 @@ public:
   void generate_boundary_points(const unsigned int nb_points);
   void generate_boundary_segments(const unsigned int nb_slices);
 
+  // distance functions 
+  // void signed_distance_function();
+  void unsigned_distance_function();
+  // void unsigned_distance_function_to_edges();
+
   // toggle view options
   void toggle_view_points();
   void toggle_view_segments();
@@ -83,6 +88,12 @@ private:
   Polyhedron *m_pPolyhedron;
   std::list<Point> m_points;
   std::list<Segment> m_segments;
+
+  // distance functions
+  typedef std::pair<Point,FT> Point_distance;
+  Point_distance m_signed_distance[100][100];
+  Point_distance m_unsigned_distance[100][100];
+  FT m_max_unsigned_distance;
   
   // view options
   bool m_view_points;
@@ -96,12 +107,20 @@ private:
   typedef Facet_tree::Object_and_primitive_id Object_and_primitive_id;
   typedef Facet_tree::Primitive_id Primitive_id;
 
+  // benchmarks
   void bench_do_intersect(Facet_tree& tree);
   void bench_closest_point(Facet_tree& tree);
+  void bench_squared_distance(Facet_tree& tree);
   void bench_nb_intersections(Facet_tree& tree);
   void bench_any_intersection(Facet_tree& tree);
   void bench_all_intersections(Facet_tree& tree);
   void bench_all_intersected_primitives(Facet_tree& tree);
+
+  // drawing
+  void draw_points();
+  void draw_segments();
+  void draw_polyhedron();
+  void draw_unsigned_distance_function();
 }; // end class Scene
 
 
