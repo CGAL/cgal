@@ -83,7 +83,7 @@ template < class AlgebraicCurvePair_2, class AlgebraicKernel_d_1 >
 #else
 template < class AlgebraicKernel_d_1 >
 #endif
-class Algebraic_curve_kernel_2 {
+class Algebraic_curve_kernel_2 : public AlgebraicKernel_d_1{
 
 // for each predicate functor defines a member function returning an instance
 // of this predicate
