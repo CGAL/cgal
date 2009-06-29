@@ -497,6 +497,20 @@ void Scene::bench_all_intersected_primitives(Facet_tree& tree)
 	}
 	speed = 1000.0 * nb / time.elapsed();
 	std::cout << speed << " queries/s with segment" << std::endl;
+
+	// with segment
+	nb = 0;
+	time.start();
+	while(time.elapsed() < 1000)
+	{
+		Point p = random_point();
+		Vector vec = random_vector();
+		Plane plane(p,vec);
+		tree.all_intersected_primitives(plane,std::back_inserter(primitive_ids));
+		nb++;
+	}
+	speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with plane" << std::endl;
 }
 
 
@@ -546,6 +560,20 @@ void Scene::bench_do_intersect(Facet_tree& tree)
 	}
 	speed = 1000.0 * nb / time.elapsed();
 	std::cout << speed << " queries/s with segment" << std::endl;
+
+	// with plane
+	nb = 0;
+	time.start();
+	while(time.elapsed() < 1000)
+	{
+		Point p = random_point();
+		Vector vec = random_vector();
+		Plane plane(p,vec);
+		tree.do_intersect(plane);
+		nb++;
+	}
+	speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with plane" << std::endl;
 }
 
 void Scene::bench_nb_intersections(Facet_tree& tree)
@@ -594,6 +622,20 @@ void Scene::bench_nb_intersections(Facet_tree& tree)
 	}
 	speed = 1000.0 * nb / time.elapsed();
 	std::cout << speed << " queries/s with segment" << std::endl;
+
+	// with plane
+	nb = 0;
+	time.start();
+	while(time.elapsed() < 1000)
+	{
+		Point p = random_point();
+		Vector vec = random_vector();
+		Plane plane(p,vec);
+		tree.number_of_intersected_primitives(plane);
+		nb++;
+	}
+	speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with plane" << std::endl;
 }
 
 void Scene::bench_any_intersection(Facet_tree& tree)
@@ -642,6 +684,20 @@ void Scene::bench_any_intersection(Facet_tree& tree)
 	}
 	speed = 1000.0 * nb / time.elapsed();
 	std::cout << speed << " queries/s with segment" << std::endl;
+
+	// with plane
+	nb = 0;
+	time.start();
+	while(time.elapsed() < 1000)
+	{
+		Point p = random_point();
+		Vector vec = random_vector();
+		Plane plane(p,vec);
+		tree.any_intersection(plane);
+		nb++;
+	}
+	speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with plane" << std::endl;
 }
 
 void Scene::bench_all_intersections(Facet_tree& tree)
@@ -693,6 +749,20 @@ void Scene::bench_all_intersections(Facet_tree& tree)
 	}
 	speed = 1000.0 * nb / time.elapsed();
 	std::cout << speed << " queries/s with segment" << std::endl;
+
+	// with plane
+	nb = 0;
+	time.start();
+	while(time.elapsed() < 1000)
+	{
+		Point p = random_point();
+		Vector vec = random_vector();
+		Plane plane(p,vec);
+		tree.all_intersections(plane,std::back_inserter(intersections));
+		nb++;
+	}
+	speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with plane" << std::endl;
 }
 
 void Scene::toggle_view_poyhedron()
