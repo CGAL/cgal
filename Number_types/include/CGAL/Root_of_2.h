@@ -1314,9 +1314,9 @@ std::ostream &
 operator<<(std::ostream &os, const Root_of_2<RT> &r)
 {
   if(r.is_rational()) {
-    return os << r.is_rational() << r.alpha();
+    return os << r.is_rational() << " " << r.alpha();
   } else {
-    return os << r.is_rational() << r.alpha() << " "
+    return os << r.is_rational() << " " << r.alpha() << " "
 	      << r.beta() << " "
 	      << r.gamma();
   }
