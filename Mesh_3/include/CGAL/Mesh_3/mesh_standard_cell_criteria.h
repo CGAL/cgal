@@ -51,7 +51,7 @@ class Cell_radius_edge_criterion
 public:
   // Constructor
   Cell_radius_edge_criterion(const FT& radius_edge_bound)
-    : sq_radius_edge_bound_(to_double(radius_edge_bound*radius_edge_bound)) 
+    : sq_radius_edge_bound_(radius_edge_bound*radius_edge_bound) 
   { };
 
   // Destructor
@@ -85,14 +85,14 @@ protected:
     Radius radius = Geom_traits().compute_squared_radius_3_object();
     Distance distance = Geom_traits().compute_squared_distance_3_object();
 
-    double size = CGAL::to_double(radius(p, q, r, s));
+    const FT size = radius(p, q, r, s);
 
-    double min_sq_length = to_double(distance(p, q));
-    min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(p, r)));
-    min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(p, s)));
-    min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(q, r)));
-    min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(q, s)));
-    min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(r, s)));
+    FT min_sq_length = distance(p, q);
+    min_sq_length = (CGAL::min)(min_sq_length, distance(p, r));
+    min_sq_length = (CGAL::min)(min_sq_length, distance(p, s));
+    min_sq_length = (CGAL::min)(min_sq_length, distance(q, r));
+    min_sq_length = (CGAL::min)(min_sq_length, distance(q, s));
+    min_sq_length = (CGAL::min)(min_sq_length, distance(r, s));
 
     if ( size > min_sq_length*sq_radius_edge_bound_  )
     {
@@ -108,7 +108,7 @@ protected:
   }
 
 private:
-  double sq_radius_edge_bound_;
+  FT sq_radius_edge_bound_;
 
 };  // end class Cell_radius_edge_criterion
 
@@ -160,7 +160,7 @@ protected:
 
     Radius radius = Geom_traits().compute_squared_radius_3_object();
 
-    double size = CGAL::to_double(radius(p, q, r, s));
+    const FT size = radius(p, q, r, s);
 
     if ( size > sq_radius_bound_ )
     {
