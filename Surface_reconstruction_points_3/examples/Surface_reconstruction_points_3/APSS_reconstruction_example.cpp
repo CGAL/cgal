@@ -84,7 +84,7 @@ int main(void)
       return EXIT_FAILURE;
 
     // saves reconstructed surface mesh
-    std::ofstream out("kitten_apss.off");
+    std::ofstream out("kitten_apss_0.01.off");
     CGAL::output_surface_facets_to_off(out, c2t3);
 
     return EXIT_SUCCESS;
