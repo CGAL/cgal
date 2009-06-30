@@ -12,7 +12,7 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 // Visitor base
-#include <CGAL/Surface_mesh_simplification/edge_collapse_visitor_base.h>
+#include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
 
 // Extended polyhedron items which include an id() field
 #include <CGAL/Polyhedron_items_with_id_3.h>

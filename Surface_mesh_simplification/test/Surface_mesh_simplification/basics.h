@@ -30,7 +30,7 @@ void Surface_simplification_external_trace( std::string s )
 
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/edge_collapse_visitor_base.h>
+#include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
