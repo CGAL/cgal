@@ -42,12 +42,10 @@ int main(void)
     }
 
     // Creates implicit function from the read points.
-    // Note: APSS_reconstruction_function() requires an iterator over points
-    // + property maps to access each point's position and normal.
+    // Requires an iterator over points as well as property maps
+	// to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
-
-	// Smoothness factor: ranges from 2 for clean datasets
-	// to 8 for noisy datasets
+	// Smoothness factor: ranges from 2 for clean datasets to 8 for noisy datasets.
     const FT smoothness = (FT)4.0;
     APSS_reconstruction_function function(
                               points.begin(), points.end(),
@@ -66,8 +64,7 @@ int main(void)
     Surface_3 surface(function,
                       Sphere(inner_point,sm_radius*sm_radius));
 
-    // defining meshing criteria
-    // APSS options
+    // Defines surface mesh generation criteria
     FT sm_shape = 20.0; // min triangle angle in degrees
     FT sm_size = 0.1; // max triangle size
     FT sm_approx = 0.01; // surface approximation error
@@ -76,8 +73,8 @@ int main(void)
                                                         sm_approx * radius);
 
     // generates surface mesh with manifold option
-    STr tr; // 3D Delaunay triangulation
-    C2t3 c2t3(tr);  // 2D complex in 3D Delaunay triangulation
+    STr tr; // 3D Delaunay triangulation for surface mesh generation
+    C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
     CGAL::make_surface_mesh(c2t3,
                             surface,
                             criteria,

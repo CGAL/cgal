@@ -28,8 +28,7 @@ int main(void)
     // Reads the point set file in points[].
     // Note: read_xyz_points_and_normals() requires an iterator over points
     // + property maps to access each point's position and normal.
-    // The position property map is omitted as we use iterators
-	// over Point_3 elements.
+    // The position property map can be omitted here as we use iterators over Point_3 elements.
     PointList points;
     std::ifstream stream("data/kitten.xyz");
     if (!stream ||
@@ -42,9 +41,10 @@ int main(void)
       return EXIT_FAILURE;
     }
 
-    // Creates implicit function from the points.
+    // Creates implicit function from the read points.
     // Requires an iterator over points as well as property maps
 	// to access each point's position and normal.
+    // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
@@ -66,21 +66,21 @@ int main(void)
     Surface_3 surface(function,
                       Sphere(inner_point,sm_radius*sm_radius));
 
-    // defines surface mesh generation criteria
-    FT sm_shape = 20.0;  // min triangle angle in degrees
+    // Defines surface mesh generation criteria
+    FT sm_shape = 20.0; // min triangle angle in degrees
     FT sm_size = 0.03;    // max triangle size
     FT sm_approx = 0.003; // surface approximation error
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_shape,
                                                         sm_size * radius,
                                                         sm_approx * radius);
 
-    // generates surface mesh with manifold-with-boundary option
+    // generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
-    C2t3 c2t3 (tr);  // 2D complex in 3D Delaunay triangulation
+    C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
     CGAL::make_surface_mesh(c2t3,
                             surface,
                             criteria,
-                            CGAL::Manifold_tag());  
+                            CGAL::Manifold_tag());
 
     if(tr.number_of_vertices() == 0)
       return EXIT_FAILURE;

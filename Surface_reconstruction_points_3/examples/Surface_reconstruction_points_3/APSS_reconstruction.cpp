@@ -92,7 +92,7 @@ int main(int argc, char * argv[])
     FT sm_angle = 20.0; // Min triangle angle (degrees). 20=fast, 30 guaranties convergence.
     FT sm_radius = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
     FT sm_distance = 0.003; // Approximation error w.r.t. p.s.r.. For APSS: 0.015=fast, 0.003=smooth.
-    FT smoothness = 2; // Smoothness factor. In the range 2 (clean datasets) and 8 (noisy datasets).
+    FT smoothness = 2; // Smoothness factor. In the range 2 (clean datasets) to 8 (noisy datasets).
 
     // decode parameters
     std::string input_filename  = argv[1];
