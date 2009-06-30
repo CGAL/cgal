@@ -365,6 +365,7 @@ void Scene::benchmark_distances()
 	std::cout << "Construct AABB tree...";
 	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+	tree.accelerate_distance_queries();
 
 	bench_closest_point(tree);
 	bench_squared_distance(tree);
@@ -422,7 +423,7 @@ void Scene::bench_squared_distance(Facet_tree& tree)
 	while(time.elapsed() < 1000)
 	{
 		Point query = random_point();
-		// tree.squared_distance(query); // TODO: fix compilation issue
+		tree.squared_distance(query);
 		nb++;
 	}
 	double speed = 1000.0 * nb / time.elapsed();
@@ -440,7 +441,7 @@ void Scene::bench_closest_point(Facet_tree& tree)
 	while(time.elapsed() < 1000)
 	{
 		Point query = random_point();
-		// tree.closest_point(query); // TODO: fix compilation issue
+		tree.closest_point(query);
 		nb++;
 	}
 	double speed = 1000.0 * nb / time.elapsed();

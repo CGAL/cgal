@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cmath>
 
+#include <CGAL/AABB_intersections.h> 
 #include "types.h"
 
 #include <CGAL/AABB_tree.h>
