@@ -29,7 +29,7 @@ if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND)
 
    include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
-  qt4_wrap_ui ( UI_FILES periodic.ui )
+  qt4_wrap_ui ( UI_FILES MainWindow.ui )
 
   qt4_generate_moc ( Scene.h moc_Scene.cpp )
 
@@ -41,7 +41,7 @@ if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND)
   add_executable  ( periodic_3_triangulation_3_demo
   		    Scene.cpp moc_Scene.cpp
   		    periodic_3_triangulation_3_demo.cpp
-  		    periodic.ui )
+  		    MainWindow.ui )
 
   # Link the executable to CGAL and third-party libraries
   target_link_libraries(periodic_3_triangulation_3_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )

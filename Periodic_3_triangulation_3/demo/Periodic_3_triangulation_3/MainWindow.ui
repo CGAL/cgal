@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>periodicClass</class>
- <widget class="QMainWindow" name="periodicClass" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
   <property name="geometry" >
    <rect>
     <x>0</x>

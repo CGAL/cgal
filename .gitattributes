@@ -2558,10 +2558,10 @@ Partition_2/doc_tex/Partition_2/teaser-small.png -text svneol=unset#image/png
 Partition_2/doc_tex/Partition_2/teaser.png -text svneol=unset#image/png
 Periodic_3_triangulation_3/Benchmarks/Periodic_3_triangulation_3/.cdtproject -text
 Periodic_3_triangulation_3/Benchmarks/Periodic_3_triangulation_3/.project -text
+Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/MainWindow.ui -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/data/oneH.xyz -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/data/oneK.xyz -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/periodic.pro -text
-Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/periodic.ui -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/render_povray.h -text
 Periodic_3_triangulation_3/doc_tex/Periodic_3_triangulation_3/offsets.eps -text
 Periodic_3_triangulation_3/doc_tex/Periodic_3_triangulation_3/offsets.gif -text

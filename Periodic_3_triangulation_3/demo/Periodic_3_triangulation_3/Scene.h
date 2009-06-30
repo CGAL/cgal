@@ -1,7 +1,7 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "ui_periodic.h"
+#include "ui_MainWindow.h"
 #include "Scene_utils.h"
 #include "render_povray.h"
 #include <fstream>
@@ -30,7 +30,7 @@ private:
   };
 
 public:
-  Scene(Ui::periodicClass* ui_) : ui(ui_), p3dt(),
+  Scene(Ui::MainWindow* ui_) : ui(ui_), p3dt(),
 				  moving_point(Point(0.2,0.2,0.2)) {
 
     flying_ball = ui->actionFlying_ball->isChecked();
@@ -278,7 +278,7 @@ private:
   void change_material(const QString& string);
 
 private:
-  Ui::periodicClass * ui;
+  Ui::MainWindow * ui;
   P3DT p3dt;
   Point moving_point;
 
