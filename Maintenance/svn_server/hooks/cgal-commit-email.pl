@@ -406,6 +406,7 @@ my $dirlist = join(' ', @dirschanged);
 # Get project name (specific to InriaGForge)
 my $project_name = $repos;
 $project_name =~ s/\/svn\///;
+$project_name =~ s/\/svnroot\///;
 
 # Put together the body of the log message AS TEXT
 my @body;
