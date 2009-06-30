@@ -986,7 +986,6 @@ CGAL_ipelets/demo/CGAL_ipelets/CMakeLists.txt -text
 CGAL_ipelets/demo/CGAL_ipelets/alpha_shapes.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/arrangement.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/bbox_restriction.cpp -text
-CGAL_ipelets/demo/CGAL_ipelets/cmake/modules/FindIPE.cmake -text
 CGAL_ipelets/demo/CGAL_ipelets/diagrams.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/generator.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/hilbert_sort.cpp -text
@@ -1374,6 +1373,7 @@ Installation/cmake/modules/FindCORE.cmake -text
 Installation/cmake/modules/FindF2C.cmake -text
 Installation/cmake/modules/FindGMP.cmake -text
 Installation/cmake/modules/FindGMPXX.cmake -text
+Installation/cmake/modules/FindIPE.cmake -text
 Installation/cmake/modules/FindLAPACK.cmake -text
 Installation/cmake/modules/FindLEDA.cmake -text
 Installation/cmake/modules/FindMPFR.cmake -text
