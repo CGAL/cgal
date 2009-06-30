@@ -826,7 +826,6 @@ protected:
                                          Halfedge_handle* he = NULL)
   {
     CGAL_precondition(he == NULL || (*he)->face() == face);
-    CGAL_assertion(!face->is_unbounded());
     Comparison_result res = EQUAL;
 
     bool success = false;
@@ -2177,25 +2176,28 @@ protected:
       ps_y = in_ps_y;
     }
 
-    bool is_bounded_impl(Arr_open_side_tag) { return (ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR); }
-    bool is_bounded_impl(Arr_boundary_side_tag) { return (ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR); }
+    bool is_bounded_impl(Arr_open_side_tag) { return false; }
+    bool is_bounded_impl(Arr_boundary_side_tag) { return true; }
     
     bool is_bounded()
     {
       // This is the case of create boundary vertex.
       CGAL_assertion((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
       
-      if (ps_x == ARR_LEFT_BOUNDARY)
-        return is_bounded_impl(Arr_left_side_tag());
+      if (ps_x == ARR_LEFT_BOUNDARY && !is_bounded_impl(Arr_left_side_tag()))
+        return false;
       
-      if (ps_x == ARR_RIGHT_BOUNDARY)
-        return is_bounded_impl(Arr_right_side_tag());
-      
-      if (ps_y == ARR_BOTTOM_BOUNDARY)
-        return is_bounded_impl(Arr_bottom_side_tag());
+      if (ps_x == ARR_RIGHT_BOUNDARY && !is_bounded_impl(Arr_right_side_tag()))
+        return false;
 
-      CGAL_assertion(ps_y == ARR_TOP_BOUNDARY);
-      return is_bounded_impl(Arr_top_side_tag());
+      if (ps_y == ARR_TOP_BOUNDARY && !is_bounded_impl(Arr_top_side_tag()))
+        return false;
+      
+      if (ps_y == ARR_BOTTOM_BOUNDARY && 
+          !is_bounded_impl(Arr_bottom_side_tag()))
+        return false;
+      
+      return true;
     }
 
     void after_create_boundary_vertex (Vertex_handle v)
@@ -2226,11 +2228,6 @@ protected:
       // find the corresponding split vertex in big_arr
       CGAL_assertion(map_vertices.is_defined(split_fict_v));
       Vertex_handle big_v = map_vertices[split_fict_v];
-
-      //// make sure it is the only new vertex right now
-      CGAL_assertion(new_vertices.size() == 1 );
-      CGAL_assertion(new_vertices.back() == split_v);
-      new_vertices.pop_back();
 
       // find the edge to split in big_arr
       CGAL_assertion(map_halfedges.is_defined(split_fict_e));
