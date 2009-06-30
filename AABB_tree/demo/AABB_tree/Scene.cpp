@@ -364,11 +364,12 @@ void Scene::benchmark_distances()
 	time.start();
 	std::cout << "Construct AABB tree...";
 	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
-	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 	tree.accelerate_distance_queries();
+	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
 	bench_closest_point(tree);
 	bench_squared_distance(tree);
+	bench_closest_point_and_primitive(tree);
 }
 
 void Scene::benchmark_intersections()
@@ -403,8 +404,7 @@ void Scene::unsigned_distance_function()
 		{
 			FT y = -0.5 + (FT)j/100.0;
 			Point query(x,y,0.0);
-			FT sq_distance = std::abs(x); // TODO: fix compilation issue below
-			// FT sq_distance = tree.squared_distance(query);
+			FT sq_distance = tree.squared_distance(query);
 			FT distance = std::sqrt(sq_distance);
 			m_unsigned_distance[i][j] = Point_distance(query,distance);
 			m_max_unsigned_distance = distance > m_max_unsigned_distance ?
@@ -447,6 +447,24 @@ void Scene::bench_closest_point(Facet_tree& tree)
 	double speed = 1000.0 * nb / time.elapsed();
 	std::cout << speed << " queries/s" << std::endl;
 }
+
+void Scene::bench_closest_point_and_primitive(Facet_tree& tree)
+{
+	QTime time;
+	time.start();
+	std::cout << "Benchmark closest point and primitive" << std::endl;
+
+	unsigned int nb = 0;
+	while(time.elapsed() < 1000)
+	{
+		Point query = random_point();
+		tree.closest_point_and_primitive(query);
+		nb++;
+	}
+	double speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s" << std::endl;
+}
+
 
 void Scene::bench_all_intersected_primitives(Facet_tree& tree)
 {

@@ -3,13 +3,13 @@
 
 We provide some performance numbers for the case where the AABB tree contains a set of polyhedron triangle facets. We measure both the tree construction time and the number of queries per second for a variety of intersection and distance queries. The machine used is a PC running Windows XP64 with an Intel CPU Core2 Extreme clocked at 3.06 GHz with 4GB of RAM. The kernel used is \ccc{Simple_cartesian<double>} (the fastest in our experiments). The program has been compiled with Visual C++ 2005 compiler with the O2 option (maximize speed).
 
-\subsection{Intersection}
+\subsection{Intersections}
 
-The surface triangle mesh chosen for benchmarking is the knot model (14,400 triangles) available in the demo data folder. We measure the tree construction time for this model as well as for three denser versions subdivided through the Loop subdivision scheme which increases the number of triangles by a factor of four.
+The surface triangle mesh chosen for benchmarking intersections is the knot model (14,400 triangles) available in the demo data folder. We measure the tree construction time for this model as well as for three denser versions subdivided through the Loop subdivision scheme which increases the number of triangles by a factor of four.
 
 \begin{tabular}{|l|c|}
   \hline
-  Number of triangles & Construction time (in ms)\\
+  Number of triangles & Tree construction (in ms)\\
   \hline
    14,400 &   156 \\
    57,600 &   328 \\
@@ -22,13 +22,13 @@ The following table measures the number of intersection queries per second on th
 
 \begin{tabular}{|l|r|r|r|r|}
   \hline
-  Function                            &     Ray &    Line & Segment &   Plane \\
+  Function                              &     Ray &    Line & Segment &   Plane \\
   \hline
-  do\_intersect                       & 164,182 & 171,862 & 177,007 & 217,287 \\
-  number\_of\_intersected\_primitives &  89,075 &  90,334 & 104,475 &  10,248 \\
-  any\_intersection                   & 163,657 & 169,989 & 183,011 & 220,203 \\
-  all\_intersections                  &  62,625 &  60,168 &  73,525 &   3,026 \\
-  all\_intersected\_primitives        &  83,992 &  85,347 &  97,258 &   6,273 \\
+  do\_intersect()                       & 164,182 & 171,862 & 177,007 & 217,287 \\
+  number\_of\_intersected\_primitives() &  89,075 &  90,334 & 104,475 &  10,248 \\
+  any\_intersection()                   & 163,657 & 169,989 & 183,011 & 220,203 \\
+  all\_intersections()                  &  62,625 &  60,168 &  73,525 &   3,026 \\
+  all\_intersected\_primitives()        &  83,992 &  85,347 &  97,258 &   6,273 \\
   \hline
 \end{tabular}
 
@@ -52,6 +52,22 @@ Curve \ref{fig:AABB-tree-bench} plots the number of queries per second (here the
     \end{figure}
 \end{center}
 
-\subsection{Distance}
+\subsection{Distances}
+
+The surface triangle mesh chosen for benchmarking distances is again the knot model in four increasing resolutions obtained through Loop subdivision. In the following table we first measure the tree construction time which includes the construction of the internal KD-tree data structure to accelerate the distance queries (note how the internal KD-tree construction is negligible compared to the AABB tree construction, while it brings an acceleration of up to one order of magnitude). We then measure the number of queries per second for the three types distance queries (\ccc{closest_point}, \ccc{squared_distance} and \ccc{closest_point_and_primitive}) from point queries randomly chosen inside the bounding box.
+
+\begin{tabular}{|l|c|c|c|c|}
+  \hline
+  Nb triangles & Tree construction (in ms) & Closest\_point() & squared\_distance() & closest\_point\_and\_primitive() \\
+  \hline
+   14,400 &   157 & 31,472 & 33,529 & 34,817 \\
+   57,600 &   330 & 15,602 & 16,355 & 17,106 \\
+  230,400 & 1,203 &  6,528 &  8,287 &  8,683 \\
+  921,600 & 5,047 &    563 &  4,221 &  4,424 \\
+  \hline
+\end{tabular}
+
+% TOFIX: understand why we mesure 563 above (measure is repeatable).
+
 
 

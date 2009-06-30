@@ -68,12 +68,12 @@ void MainWindow::dropEvent(QDropEvent *event)
 void MainWindow::updateViewerBBox()
 {
   const Scene::Bbox bbox = m_pScene->bbox();
-  const double xmin = bbox.xmin;
-  const double ymin = bbox.ymin;
-  const double zmin = bbox.zmin;
-  const double xmax = bbox.xmax;
-  const double ymax = bbox.ymax;
-  const double zmax = bbox.zmax;
+  const double xmin = bbox.xmin();
+  const double ymin = bbox.ymin();
+  const double zmin = bbox.zmin();
+  const double xmax = bbox.xmax();
+  const double ymax = bbox.ymax();
+  const double zmax = bbox.zmax();
   qglviewer::Vec 
     vec_min(xmin, ymin, zmin),
     vec_max(xmax, ymax, zmax);

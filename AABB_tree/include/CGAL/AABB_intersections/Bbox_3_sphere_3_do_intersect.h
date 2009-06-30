@@ -26,17 +26,11 @@
 
 #include <CGAL/number_utils.h>
 
-// Turn off Visual C++ warning
-#ifdef _MSC_VER
-#pragma warning ( disable : 4003 )
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-    // assumes that the intersection with the supporting plane has
-    // already been checked.
     template <class K>
     bool do_intersect(const typename K::Sphere_3& sphere, 
         const CGAL::Bbox_3& bbox,
@@ -47,21 +41,58 @@ namespace CGALi {
         FT d = (FT)0.0;
         FT distance = (FT)0.0;
 		Point center = sphere.center();
-		int i;
-        for(i = 0; i < 3; ++i)
-        {
-            if(center[i] < (FT)bbox.min(i))
-            {
-                d = (FT)bbox.min(i) - center[i];
-                distance += d * d;
-            }
-            else if(center[i] > (FT)bbox.max(i))
-            {
-                d = center[i] - (FT)bbox.max(i);
-                distance += d * d;
-            }
-        }
-        return distance <= sphere.squared_radius();
+
+		if(center.x() < (FT)bbox.xmin())
+		{
+			d = (FT)bbox.xmin() - center.x();
+			distance += d * d;
+		}
+		else if(center.x() > (FT)bbox.xmax())
+		{
+			d = center.x() - (FT)bbox.xmax();
+			distance += d * d;
+		}
+
+		if(center.y() < (FT)bbox.ymin())
+		{
+			d = (FT)bbox.ymin() - center.y();
+			distance += d * d;
+		}
+		else if(center.y() > (FT)bbox.ymax())
+		{
+			d = center.y() - (FT)bbox.ymax();
+			distance += d * d;
+		}
+
+		if(center.z() < (FT)bbox.zmin())
+		{
+			d = (FT)bbox.zmin() - center.z();
+			distance += d * d;
+		}
+		else if(center.z() > (FT)bbox.zmax())
+		{
+			d = center.z() - (FT)bbox.zmax();
+			distance += d * d;
+		}
+
+		// For unknown reason this causes a syntax error on VC2005
+		// but compiles fine on Linux and MAC
+		//int i;
+		//for(i = 0; i < 3; ++i)
+		//{
+		//	if(center[i] < (FT)bbox.min(i))
+		//	{
+		//		d = (FT)bbox.min(i) - center[i];
+		//		distance += d * d;
+		//	}
+		//	else if(center[i] > (FT)bbox.max(i))
+		//	{
+		//		d = center[i] - (FT)bbox.max(i);
+		//		distance += d * d;
+		//	}
+		//}
+
+		return distance <= sphere.squared_radius();
     }
 
 } // namespace CGALi

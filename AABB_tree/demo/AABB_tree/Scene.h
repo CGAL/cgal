@@ -23,32 +23,7 @@ public:
 
   void draw();
 
-  struct Bbox {
-    double xmin, ymin, zmin;
-    double xmax, ymax, zmax;
-    Bbox(const double _xmin,const double _ymin,const double _zmin,
-         const double _xmax,const double _ymax,const double _zmax)
-	 : xmin(_xmin), ymin(_ymin), zmin(_zmin),
-	   xmax(_xmax), ymax(_ymax), zmax(_zmax)
-    {
-    }
-    Bbox()
-	 : xmin(0.0), ymin(0.0), zmin(0.0),
-	   xmax(1.0), ymax(1.0), zmax(1.0)
-    {
-    }
-  };
-
-  double len_diagonal()
-  {
-    Bbox box = bbox();
-    double dx = box.xmax - box.xmin;
-    double dy = box.ymax - box.ymin;
-    double dz = box.zmax - box.zmin;
-    return std::sqrt(dx*dx + dy*dy + dz*dz);
-  }
-
-  // TODO
+  typedef CGAL::Bbox_3 Bbox;
   Bbox bbox() { return Bbox(); }
 
 public:
@@ -115,6 +90,7 @@ private:
   void bench_nb_intersections(Facet_tree& tree);
   void bench_any_intersection(Facet_tree& tree);
   void bench_all_intersections(Facet_tree& tree);
+  void bench_closest_point_and_primitive(Facet_tree& tree);
   void bench_all_intersected_primitives(Facet_tree& tree);
 
   // drawing
