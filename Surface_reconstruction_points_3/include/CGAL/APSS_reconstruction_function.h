@@ -28,6 +28,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
+#include <CGAL/point_generators_3.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -58,21 +58,21 @@ int main(void)
     // and computes implicit function bounding sphere radius
     Point inner_point = function.get_inner_point();
     Sphere bsphere = function.bounding_sphere();
-	FT bsphere_radius = std::sqrt(bsphere.squared_radius());
+	FT radius = std::sqrt(bsphere.squared_radius());
 
     // Defines implicit surface: requires defining a
 	// conservative bounding sphere centered at inner point
-	FT radius = 2.01 * bsphere_radius;
+	FT sm_radius = 2.01 * radius;
     Surface_3 surface(function,
-                      Sphere(inner_point,radius*radius));
+                      Sphere(inner_point,sm_radius*sm_radius));
 
     // defines surface mesh generation criteria
     FT sm_shape = 20.0;  // min triangle angle in degrees
     FT sm_size = 0.03;    // max triangle size
     FT sm_approx = 0.003; // surface approximation error
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_shape,
-                                                        sm_size * bsphere_radius,
-                                                        sm_approx * bsphere_radius);
+                                                        sm_size * radius,
+                                                        sm_approx * radius);
 
     // generates surface mesh with manifold-with-boundary option
     STr tr; // 3D Delaunay triangulation for surface mesh generation

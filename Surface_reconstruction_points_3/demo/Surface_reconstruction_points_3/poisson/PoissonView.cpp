@@ -261,12 +261,12 @@ void CPoissonView::OnPaint()
     GetClientRect(&rect);
     int width = rect.Width();
     int height = rect.Height();
-    float size = (float)sqrt(region_of_interest.squared_radius());
+    float radius = (float)sqrt(region_of_interest.squared_radius());
     float cx = (float)region_of_interest.center().x();
     float cy = (float)region_of_interest.center().y();
     float cz = (float)region_of_interest.center().z();
     delete m_pArcball;
-    m_pArcball = new Arcball(width,height,size,cx,cy,cz);
+    m_pArcball = new Arcball(width,height,radius,cx,cy,cz);
     first_paint = false;
   }
 
@@ -299,14 +299,14 @@ void CPoissonView::OnPaint()
     if(m_view_points)
     {
       if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
-        pDoc->points()->gl_draw_vertices(0,0,0 /*black*/, 2.0f /*size*/);
+        pDoc->points()->gl_draw_vertices(0,0,0 /*black*/, 2.0f /*radius*/);
       else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        gl_draw_delaunay_vertices(pDoc->poisson_function()->triangulation(), 0,0,0 /*black*/, 2.0f /*size*/);
+        gl_draw_delaunay_vertices(pDoc->poisson_function()->triangulation(), 0,0,0 /*black*/, 2.0f /*radius*/);
     }
 
     // draw Delaunay edges
     if(m_view_delaunay_edges && pDoc->edit_mode() == CPoissonDoc::POISSON)
-        gl_draw_delaunay_edges(pDoc->poisson_function()->triangulation(), 0,0,0 /*black*/, 1.0f /*size*/);
+        gl_draw_delaunay_edges(pDoc->poisson_function()->triangulation(), 0,0,0 /*black*/, 1.0f /*radius*/);
 
     // draw normals
     float normal_length = (float)sqrt(region_of_interest.squared_radius() / 1000.);

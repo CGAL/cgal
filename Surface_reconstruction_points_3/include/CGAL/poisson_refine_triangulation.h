@@ -23,6 +23,7 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Poisson_refine_cells_3.h>
 #include <CGAL/Poisson_mesh_cell_criteria_3.h>
+#include <CGAL/Memory_sizer.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -205,8 +205,8 @@ public:
     const FT radius_edge_ratio_bound = 2.5;
     const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
     const FT enlarge_ratio = 1.5;
-    const FT size = sqrt(bounding_sphere().squared_radius()); // get triangulation's radius
-    const FT cell_radius_bound = size/5.; // large
+    const FT radius = sqrt(bounding_sphere().squared_radius()); // get triangulation's radius
+    const FT cell_radius_bound = radius/5.; // large
     unsigned int nb_vertices_added = delaunay_refinement(radius_edge_ratio_bound,cell_radius_bound,max_vertices,enlarge_ratio);
 
     // Prints status

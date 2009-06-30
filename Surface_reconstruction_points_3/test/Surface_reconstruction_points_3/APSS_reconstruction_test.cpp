@@ -231,22 +231,22 @@ int main(int argc, char * argv[])
 
     // Gets implicit function's radius
     Sphere bsphere = implicit_function.bounding_sphere();
-    FT size = sqrt(bsphere.squared_radius());
+    FT radius = sqrt(bsphere.squared_radius());
 
     // defining the implicit surface = implicit function + bounding sphere centered at inner_point
     Point sm_sphere_center = inner_point;
-    FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bsphere.center(),inner_point));
+    FT    sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bsphere.center(),inner_point));
     sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
     Surface_3 surface(implicit_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
     // defining meshing criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
-                                                        sm_radius*size,  // Max triangle radius
-                                                        sm_distance*size); // Approximation error
+                                                        sm_radius*radius,  // Max triangle radius
+                                                        sm_distance*radius); // Approximation error
 
     CGAL_TRACE_STREAM << "  make_surface_mesh(sphere center=("<<sm_sphere_center << "),\n"
-                      << "                    sphere radius="<<sm_sphere_radius/size<<" * p.s.r.,\n"
+                      << "                    sphere radius="<<sm_sphere_radius/radius<<" * p.s.r.,\n"
                       << "                    angle="<<sm_angle << " degrees,\n"
                       << "                    radius="<<sm_radius<<" * p.s.r.,\n"
                       << "                    distance="<<sm_distance<<" * p.s.r.,\n"

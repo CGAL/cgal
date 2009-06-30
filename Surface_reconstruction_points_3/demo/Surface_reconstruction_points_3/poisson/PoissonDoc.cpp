@@ -1030,20 +1030,20 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
 
   // Gets implicit function's radius
   Sphere bounding_sphere = m_poisson_function->bounding_sphere();
-  FT size = sqrt(bounding_sphere.squared_radius());
+  FT radius = sqrt(bounding_sphere.squared_radius());
 
   // defining the implicit surface = implicit function + bounding sphere centered at inner_point
   typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
   Point sm_sphere_center = inner_point;
-  FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
+  FT    sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
   sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
   Surface_3 surface(*m_poisson_function,
                     Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_poisson,  // Min triangle angle (degrees)
-                                                      m_sm_radius_poisson*size,  // Max triangle radius
-                                                      m_sm_distance_poisson*size); // Approximation error
+                                                      m_sm_radius_poisson*radius,  // Max triangle radius
+                                                      m_sm_distance_poisson*radius); // Approximation error
 
   // meshing surface
   CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
@@ -1193,20 +1193,20 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
 
     // Gets implicit function's radius
     Sphere bounding_sphere = m_apss_function->bounding_sphere();
-    FT size = sqrt(bounding_sphere.squared_radius());
+    FT radius = sqrt(bounding_sphere.squared_radius());
 
     // defining the implicit surface = implicit function + bounding sphere centered at inner_point
     typedef CGAL::Implicit_surface_3<Kernel, APSS_reconstruction_function> Surface_3;
     Point sm_sphere_center = inner_point;
-    FT    sm_sphere_radius = size + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
+    FT    sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
     sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
     Surface_3 surface(*m_apss_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
     // defining meshing criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_apss,  // Min triangle angle (degrees)
-                                                        m_sm_radius_apss*size,  // Max triangle radius
-                                                        m_sm_distance_apss*size); // Approximation error
+                                                        m_sm_radius_apss*radius,  // Max triangle radius
+                                                        m_sm_distance_apss*radius); // Approximation error
 
     // meshing surface
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
@@ -1294,13 +1294,13 @@ void CPoissonDoc::OnPointCloudSimplificationByClustering()
 
   // Gets point set's radius
   Sphere bounding_sphere = m_points.bounding_sphere();
-  FT size = sqrt(bounding_sphere.squared_radius());
+  FT radius = sqrt(bounding_sphere.squared_radius());
 
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
   Point_set::iterator first_point_to_remove =
     CGAL::grid_simplify_point_set(m_points.begin(), m_points.end(),
-                                  m_clustering_step*size);
+                                  m_clustering_step*radius);
   m_points.select(first_point_to_remove, m_points.end(), true);
 
   status_message("Point cloud  simplification by clustering...done (%.2lf s)", task_timer.time());
