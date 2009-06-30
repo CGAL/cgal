@@ -48,7 +48,7 @@ int main(void)
 
 	// Smoothness factor: ranges from 2 for clean datasets
 	// to 8 for noisy datasets
-    const FT smoothness = (FT)2.0;
+    const FT smoothness = (FT)4.0;
     APSS_reconstruction_function function(
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
@@ -69,7 +69,7 @@ int main(void)
     // defining meshing criteria
     // APSS options
     FT sm_shape = 20.0; // min triangle angle in degrees
-    FT sm_size = 0.05; // max triangle size
+    FT sm_size = 0.1; // max triangle size
     FT sm_approx = 0.01; // surface approximation error
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_shape,
                                                         sm_size * bsphere_radius,
