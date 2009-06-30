@@ -1,15 +1,14 @@
 cmake_minimum_required(VERSION 2.4.5)
 
 #path where to build libraries
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
-
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY .build/ipelets)
 
 find_package(CGAL QUIET COMPONENTS Core )
-find_package(IPE)
+
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
+  find_package(IPE)
   if ( IPE_FOUND )
     include_directories(../../include)
     include_directories(include/CGAL_ipelets)
