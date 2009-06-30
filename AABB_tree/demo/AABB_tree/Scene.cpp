@@ -422,7 +422,7 @@ void Scene::bench_squared_distance(Facet_tree& tree)
 	while(time.elapsed() < 1000)
 	{
 		Point query = random_point();
-		//tree.squared_distance(query); // TODO: fix compilation issue
+		// tree.squared_distance(query); // TODO: fix compilation issue
 		nb++;
 	}
 	double speed = 1000.0 * nb / time.elapsed();
