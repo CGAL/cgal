@@ -46,10 +46,10 @@ if ( CGAL_FOUND )
     target_link_libraries( simple_triangulation ipe )
     
   else()
-    message(STATUS "This program requires the Ipe include files and library, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires the Ipe include files and library, and will not be compiled.")
   endif()
 else()
 
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
     
 endif()
