@@ -221,6 +221,20 @@ void MainWindow::on_actionUnsigned_distance_function_to_facets_triggered()
     QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::on_actionUnsigned_distance_function_to_edges_triggered()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    m_pScene->unsigned_distance_function_to_edges();
+    QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionSigned_distance_function_to_facets_triggered()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    m_pScene->signed_distance_function();
+    QApplication::restoreOverrideCursor();
+}
+
 void MainWindow::on_actionView_polyhedron_triggered()
 {
 	m_pScene->toggle_view_poyhedron();

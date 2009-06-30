@@ -28,7 +28,7 @@ Scene::Scene()
 	m_view_polyhedron = true;
 
 	// distance functions
-	m_max_unsigned_distance = (FT)0.0;
+	m_max_distance_function = (FT)0.0;
 }
 
 Scene::~Scene()
@@ -88,6 +88,7 @@ void Scene::draw()
 	if(m_view_segments)
 		draw_segments();
 
+	draw_signed_distance_function();
 	draw_unsigned_distance_function();
 }
 
@@ -145,7 +146,7 @@ void Scene::draw_points()
 
 void Scene::draw_unsigned_distance_function()
 {
-	if(m_max_unsigned_distance == (FT)0.0)
+	if(m_max_distance_function == (FT)0.0)
 		return;
 
 	::glDisable(GL_LIGHTING);
@@ -154,35 +155,94 @@ void Scene::draw_unsigned_distance_function()
 	int i,j;
 	const int nb_quads = 99;
 	for(i=0;i<nb_quads;i++)
-	for(j=0;j<nb_quads;j++)
-	{
-		Point_distance& pd00 = m_unsigned_distance[i][j];
-		Point_distance& pd01 = m_unsigned_distance[i][j+1];
-		Point_distance& pd11 = m_unsigned_distance[i+1][j+1];
-		Point_distance& pd10 = m_unsigned_distance[i+1][j];
-		Point& p00 = pd00.first;
-		Point& p01 = pd01.first;
-		Point& p11 = pd11.first;
-		Point& p10 = pd10.first;
-		FT& d00 = pd00.second;
-		FT& d01 = pd01.second;
-		FT& d11 = pd11.second;
-		FT& d10 = pd10.second;
-		double g00 = (double)(d00 / m_max_unsigned_distance);
-		double g01 = (double)(d01 / m_max_unsigned_distance);
-		double g11 = (double)(d11 / m_max_unsigned_distance);
-		double g10 = (double)(d10 / m_max_unsigned_distance);
-		::glColor3d(g00,g00,g00);
-		::glVertex3d(p00.x(),p00.y(),p00.z());
-		::glColor3d(g01,g01,g01);
-		::glVertex3d(p01.x(),p01.y(),p01.z());
-		::glColor3d(g11,g11,g11);
-		::glVertex3d(p11.x(),p11.y(),p11.z());
-		::glColor3d(g10,g10,g10);
-		::glVertex3d(p10.x(),p10.y(),p10.z());
-	}
-	::glEnd();
+		for(j=0;j<nb_quads;j++)
+		{
+			Point_distance& pd00 = m_distance_function[i][j];
+			Point_distance& pd01 = m_distance_function[i][j+1];
+			Point_distance& pd11 = m_distance_function[i+1][j+1];
+			Point_distance& pd10 = m_distance_function[i+1][j];
+			Point& p00 = pd00.first;
+			Point& p01 = pd01.first;
+			Point& p11 = pd11.first;
+			Point& p10 = pd10.first;
+			FT& d00 = pd00.second;
+			FT& d01 = pd01.second;
+			FT& d11 = pd11.second;
+			FT& d10 = pd10.second;
+			double g00 = (double)(d00 / m_max_distance_function);
+			double g01 = (double)(d01 / m_max_distance_function);
+			double g11 = (double)(d11 / m_max_distance_function);
+			double g10 = (double)(d10 / m_max_distance_function);
+			::glColor3d(g00,g00,g00);
+			::glVertex3d(p00.x(),p00.y(),p00.z());
+			::glColor3d(g01,g01,g01);
+			::glVertex3d(p01.x(),p01.y(),p01.z());
+			::glColor3d(g11,g11,g11);
+			::glVertex3d(p11.x(),p11.y(),p11.z());
+			::glColor3d(g10,g10,g10);
+			::glVertex3d(p10.x(),p10.y(),p10.z());
+		}
+		::glEnd();
 }
+
+void Scene::draw_signed_distance_function()
+{
+	if(m_max_distance_function == (FT)0.0)
+		return;
+
+	::glDisable(GL_LIGHTING);
+	::glShadeModel(GL_SMOOTH);
+	::glBegin(GL_QUADS);
+	int i,j;
+	const int nb_quads = 99;
+	for(i=0;i<nb_quads;i++)
+		for(j=0;j<nb_quads;j++)
+		{
+			Point_distance& pd00 = m_distance_function[i][j];
+			Point_distance& pd01 = m_distance_function[i][j+1];
+			Point_distance& pd11 = m_distance_function[i+1][j+1];
+			Point_distance& pd10 = m_distance_function[i+1][j];
+			Point& p00 = pd00.first;
+			Point& p01 = pd01.first;
+			Point& p11 = pd11.first;
+			Point& p10 = pd10.first;
+			FT& d00 = pd00.second;
+			FT& d01 = pd01.second;
+			FT& d11 = pd11.second;
+			FT& d10 = pd10.second;
+
+			// determines grey level
+			double g00 = (double)std::fabs(d00) / m_max_distance_function;
+			double g01 = (double)std::fabs(d01) / m_max_distance_function;
+			double g11 = (double)std::fabs(d11) / m_max_distance_function;
+			double g10 = (double)std::fabs(d10) / m_max_distance_function;
+
+			// determines color (red vs blue for inside vs outside)
+			double r00 = d00 < 0.0 ?  g00 : 0.0;
+			double b00 = d00 > 0.0 ?  g00 : 0.0;
+
+			double r01 = d01 < 0.0 ?  g01 : 0.0;
+			double b01 = d01 > 0.0 ?  g01 : 0.0;
+
+			double r11 = d11 < 0.0 ?  g11 : 0.0;
+			double b11 = d11 > 0.0 ?  g11 : 0.0;
+
+			double r10 = d10 < 0.0 ?  g10 : 0.0;
+			double b10 = d10 > 0.0 ?  g10 : 0.0;
+
+			// assembles one quad
+			::glColor3d(r00,0.0,b00);
+			::glVertex3d(p00.x(),p00.y(),p00.z());
+			::glColor3d(r01,0.0,b01);
+			::glVertex3d(p01.x(),p01.y(),p01.z());
+			::glColor3d(r11,0.0,b11);
+			::glVertex3d(p11.x(),p11.y(),p11.z());
+			::glColor3d(r10,0.0,b10);
+			::glVertex3d(p10.x(),p10.y(),p10.z());
+		}
+		::glEnd();
+}
+
 
 Point Scene::random_point()
 {
@@ -393,9 +453,10 @@ void Scene::unsigned_distance_function()
 	time.start();
 	std::cout << "Construct AABB tree...";
 	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+	tree.accelerate_distance_queries();
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
-	m_max_unsigned_distance = (FT)0.0;
+	m_max_distance_function = (FT)0.0;
 	int i,j;
 	for(i=0;i<100;i++)
 	{
@@ -406,9 +467,76 @@ void Scene::unsigned_distance_function()
 			Point query(x,y,0.0);
 			FT sq_distance = tree.squared_distance(query);
 			FT distance = std::sqrt(sq_distance);
-			m_unsigned_distance[i][j] = Point_distance(query,distance);
-			m_max_unsigned_distance = distance > m_max_unsigned_distance ?
-				distance : m_max_unsigned_distance;
+			m_distance_function[i][j] = Point_distance(query,distance);
+			m_max_distance_function = distance > m_max_distance_function ?
+				distance : m_max_distance_function;
+		}
+	}
+}
+
+void Scene::unsigned_distance_function_to_edges()
+{
+	typedef CGAL::AABB_polyhedron_segment_primitive<Kernel,Polyhedron> Primitive;
+	typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+	typedef CGAL::AABB_tree<Traits> Edge_tree;
+
+	QTime time;
+	time.start();
+	std::cout << "Construct AABB tree from edges...";
+	Edge_tree tree(m_pPolyhedron->edges_begin(),m_pPolyhedron->edges_end());
+	tree.accelerate_distance_queries();
+	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+
+	m_max_distance_function = (FT)0.0;
+	int i,j;
+	for(i=0;i<100;i++)
+	{
+		FT x = -0.5 + (FT)i/100.0;
+		for(j=0;j<100;j++)
+		{
+			FT y = -0.5 + (FT)j/100.0;
+			Point query(x,y,0.0);
+			FT sq_distance = tree.squared_distance(query);
+			FT distance = std::sqrt(sq_distance);
+			m_distance_function[i][j] = Point_distance(query,distance);
+			m_max_distance_function = distance > m_max_distance_function ?
+distance : m_max_distance_function;
+		}
+	}
+}
+
+void Scene::signed_distance_function()
+{
+	QTime time;
+	time.start();
+	std::cout << "Construct AABB tree...";
+	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+	tree.accelerate_distance_queries();
+	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+
+	m_max_distance_function = (FT)0.0;
+	Vector vec = random_vector();
+	int i,j;
+	for(i=0;i<100;i++)
+	{
+		FT x = -0.5 + (FT)i/100.0;
+		for(j=0;j<100;j++)
+		{
+			// compute distance
+			FT y = -0.5 + (FT)j/100.0;
+			Point query(x,y,0.0);
+			FT sq_distance = tree.squared_distance(query);
+			FT unsigned_distance = std::sqrt(sq_distance);
+
+			// get sign through ray casting (random vector)
+			Ray ray(query,vec);
+			unsigned int nbi = tree.number_of_intersected_primitives(ray);
+			FT sign = nbi%2 == 0 ? (FT)1.0 : (FT)-1.0;
+			FT signed_distance = sign * unsigned_distance;
+
+			m_distance_function[i][j] = Point_distance(query,signed_distance);
+			m_max_distance_function = unsigned_distance > m_max_distance_function ?
+unsigned_distance : m_max_distance_function;
 		}
 	}
 }

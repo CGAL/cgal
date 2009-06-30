@@ -49,6 +49,8 @@ public:
 			void on_actionEdge_points_triggered();
 
 			// distance functions
+			void on_actionSigned_distance_function_to_facets_triggered();
+			void on_actionUnsigned_distance_function_to_edges_triggered();
 			void on_actionUnsigned_distance_function_to_facets_triggered();
 
 			// benchmarks

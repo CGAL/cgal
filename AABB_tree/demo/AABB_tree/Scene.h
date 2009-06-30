@@ -50,9 +50,9 @@ public:
   void generate_boundary_segments(const unsigned int nb_slices);
 
   // distance functions 
-  // void signed_distance_function();
+  void signed_distance_function();
   void unsigned_distance_function();
-  // void unsigned_distance_function_to_edges();
+  void unsigned_distance_function_to_edges();
 
   // toggle view options
   void toggle_view_points();
@@ -65,11 +65,10 @@ private:
   std::list<Point> m_points;
   std::list<Segment> m_segments;
 
-  // distance functions
+  // distance functions (simple 2D arrays)
+  FT m_max_distance_function;
   typedef std::pair<Point,FT> Point_distance;
-  Point_distance m_signed_distance[100][100];
-  Point_distance m_unsigned_distance[100][100];
-  FT m_max_unsigned_distance;
+  Point_distance m_distance_function[100][100];
   
   // view options
   bool m_view_points;
@@ -97,6 +96,7 @@ private:
   void draw_points();
   void draw_segments();
   void draw_polyhedron();
+  void draw_signed_distance_function();
   void draw_unsigned_distance_function();
 }; // end class Scene
 
