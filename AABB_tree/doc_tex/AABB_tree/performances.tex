@@ -32,7 +32,7 @@ The following table measures the number of intersection queries per second on th
   \hline
 \end{tabular}
 
-Curve \ref{fig:AABB-tree-bench} plots the number of queries per second (here the \ccc{all_intersections} function with random segment queries) against the number of input triangles for the knot triangle surface mesh model with 14K, 57K, 230K and 921K triangles.
+Curve \ref{fig:AABB-tree-bench} plots the number of queries per second (here the \ccc{all_intersections} function with random segment queries) against the number of input triangles for the knot triangle surface mesh.
 
 % benchs over knot model
 \begin{center}
@@ -44,8 +44,11 @@ Curve \ref{fig:AABB-tree-bench} plots the number of queries per second (here the
         <img width="99%" border=0 src="./bench.png"><P>
     \end{ccHtmlOnly}
     \begin{figure}[h]
-        \caption{Number of queries per second against number of triangles.
-                 }
+        \caption{Number of queries per second against number of triangles
+                 for the knot model with 14K (shown), 57K, 230K and 921K
+                 triangles. We call the \ccc{all_intersections} function
+                 with segment queries randomly chosen within
+                 the bounding box. }
     \end{figure}
 \end{center}
 
