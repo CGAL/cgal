@@ -38,13 +38,13 @@ if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND)
   include_directories( ${QT_INCLUDE_DIR} )
   include_directories( ../../include )
 
-  add_executable  ( demo_delaunay_qt
+  add_executable  ( periodic_3_triangulation_3_demo
   		    Scene.cpp moc_Scene.cpp
-  		    demo_delaunay_qt.cpp
+  		    periodic_3_triangulation_3_demo.cpp
   		    periodic.ui )
 
   # Link the executable to CGAL and third-party libraries
-  target_link_libraries(demo_delaunay_qt ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+  target_link_libraries(periodic_3_triangulation_3_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
 else (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND) 
 
