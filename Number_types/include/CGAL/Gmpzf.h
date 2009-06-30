@@ -77,8 +77,19 @@ public:
     };
 
     typedef INTERN_AST::Mod_per_operator< Type > Mod;
-    typedef INTERN_AST::Is_square_per_sqrt<Type> Is_square;
-
+  
+  class Is_square
+    : public std::binary_function< Type, Type&, bool > {
+  public:      
+    bool operator()( const Type& x, Type& y ) const {
+      y = CGAL::approximate_sqrt(x);
+      return y * y == x;
+    }
+    bool operator()( const Type& x) const {
+      Type dummy;
+      return operator()(x,dummy);
+    }
+  };
 };
 
 
