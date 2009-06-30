@@ -33,7 +33,6 @@
      <string>&amp;File</string>
     </property>
     <addaction name="actionLoad_Points" />
-    <addaction name="actionExport_pov" />
     <addaction name="separator" />
     <addaction name="actionExit" />
    </widget>
@@ -73,8 +72,6 @@
     </property>
     <addaction name="actionPoint_location" />
     <addaction name="actionConflict_region" />
-    <addaction name="actionHole" />
-    <addaction name="actionStar" />
    </widget>
    <widget class="QMenu" name="menuActions" >
     <property name="title" >

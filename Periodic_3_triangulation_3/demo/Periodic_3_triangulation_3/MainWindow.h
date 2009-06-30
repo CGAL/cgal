@@ -21,8 +21,6 @@ public:
     // File menu:
     connect(ui->actionLoad_Points, SIGNAL(triggered()),
 	    s, SLOT(load_points()));
-    connect(ui->actionExport_pov, SIGNAL(triggered()),
-	    s, SLOT(export_pov()));
 
     // Init menu:
     connect(ui->actionEmpty_scene, SIGNAL(triggered()),
@@ -55,10 +53,6 @@ public:
 	    s, SLOT(toggle_dlocate(bool)));
     connect(ui->actionConflict_region, SIGNAL(toggled(bool)),
 	    s, SLOT(toggle_dconflict(bool)));
-    connect(ui->actionHole, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_dhole(bool)));
-    connect(ui->actionStar, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_dstar(bool)));
 
     // Options menu:
     connect(ui->actionWireframe, SIGNAL(toggled(bool)),

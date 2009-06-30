@@ -49,20 +49,6 @@ void Scene::draw() {
         glFlush();
       glPopMatrix();
     }
-    // redraw the boundary of the hole
-    if (dhole) {
-      change_material(materials[EDGE_COLOR]);
-      if (wireframe) glBegin(GL_LINES);
-      gl_draw_hole();
-      if (wireframe) glEnd();
-    }
-    // draw the star
-    if (dstar) {
-	change_material(materials[STAR_COLOR]);
-      if (wireframe) glBegin(GL_LINES);
-      gl_draw_star();
-      if (wireframe) glEnd();
-    }
   }
 
   // draw the domain (unit square / cube)
@@ -107,8 +93,7 @@ void Scene::update_position()
   if(z>1.)z-=1.;
   moving_point = Point(x,y,z);
   // TODO try to find a better possibility
-  if (dhole || dstar) make_draw_list();
-  else ui->viewer->update();
+  ui->viewer->update();
 }
 
 void Scene::make_draw_list()
@@ -116,7 +101,6 @@ void Scene::make_draw_list()
   // Prepare set of segments
   Segment_set segments_to_draw;
   primitives_from_geom_it(segments_to_draw);
-  if (dhole) remove_hole(segments_to_draw);
   if (cube_clipping && !two_color_clipping) segment_clipping(segments_to_draw);
 
   // Create new list
@@ -152,15 +136,9 @@ void Scene::make_draw_list()
 
 // some initialization templates
 void Scene::init_scene(Init ID) {
-  bool temp_flags[] = {dlocate, dconflict, dhole, dstar};
+  bool temp_flags[] = {dlocate, dconflict};
   dlocate = false;
   dconflict = false;
-  dhole = false;
-  dstar = false;
-  CGAL_assertion(dlocate == false);
-  CGAL_assertion(dconflict == false);
-  CGAL_assertion(dhole == false);
-  CGAL_assertion(dstar == false);
   p3dt.clear();
   make_draw_list();
   RandPts rp(0.5);
@@ -176,7 +154,6 @@ void Scene::init_scene(Init ID) {
     for (int i=0 ; i<10 ; i++) {
       pt2 = *rp+Vector(0.5,0.5,0.5);
       rp++;
-      // TODO: this seems to trigger bugs in p3dt
       p3dt.insert(Point(pt2.x(),pt2.y(),0.0));
     }
     break;
@@ -191,8 +168,6 @@ void Scene::init_scene(Init ID) {
   }
   dlocate = temp_flags[0];
   dconflict = temp_flags[1];
-  dhole = temp_flags[2];
-  dstar = temp_flags[3];
   make_draw_list();
 }
 
@@ -656,30 +631,6 @@ inline void Scene::segment_2color_clipping (Segment_set& sset) {
   std::swap(sset, sset_tmp);
 }
 
-// remove edges that belong to the hole from the segment set
-inline void Scene::remove_hole(Segment_set& sset) {
-  std::vector<Segment> hole;
-  hole.clear();
-  Cell_handle ch = p3dt.locate(moving_point);
-  std::vector<Facet> outer_boundary, inner_facets;
-  std::vector<Cell_handle> conflict_cells;
-  p3dt.find_conflicts(moving_point, ch, std::back_inserter(outer_boundary),
-			    std::back_inserter(conflict_cells), std::back_inserter(inner_facets));
-
-  for (unsigned int i=0 ; i<conflict_cells.size(); i++) {
-    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],0,1)));
-    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],0,2)));
-    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],0,3)));
-    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],1,2)));
-    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],1,3)));
-    hole.push_back(p3dt.segment(p3dt.periodic_segment(conflict_cells[i],2,3)));
-  }
-    
-  for (unsigned int i=0 ; i<hole.size() ; i++) {
-    sset.erase(hole[i]);
-  }
-}
-
 // Draw the faces of the tetrahedron in which the moving point is currently
 // located transparently. It depends on it_type which periodic copies
 // of the respective cell will be drawn. In general it will be all
@@ -875,67 +826,6 @@ void Scene::gl_draw_conflict() {
   glEnd();
   
   glDisable(GL_BLEND);
-}
-
-// TODO: does not yet work properly
-void Scene::gl_draw_star() {
-  std::vector<Vertex_handle> boundary_vertices;
-  Cell_handle c = p3dt.locate(moving_point);
-  p3dt.vertices_in_conflict(moving_point,c,std::back_inserter(boundary_vertices));
-  Point p;
-
-  for (unsigned int i=0 ; i<boundary_vertices.size() ; i++ ) {
-    if (in_plane && (moving_point.z()!=0 || boundary_vertices[i]->point().z()!=0)) continue;
-    p = boundary_vertices[i]->point();
-    if (p.x() > 2.) p=Point(p.x()-3.,p.y(),p.z());
-    if (p.y() > 2.) p=Point(p.x(),p.y()-3.,p.z());
-    if (p.z() > 2.) p=Point(p.x(),p.y(),p.z()-3.);
-    gl_draw_edge(moving_point,p,0.006);
-  }
-  boundary_vertices.clear();
-}
-
-// TODO: does not yet work properly
-void Scene::gl_draw_hole() {
-  if (p3dt.number_of_vertices()==0) return;
-  Cell_handle ch;
-  std::vector<Facet> boundary_facets;
-  Cell_handle c = p3dt.locate(moving_point);
-  p3dt.find_conflicts(moving_point,c,std::back_inserter(boundary_facets),CGAL::Emptyset_iterator(),CGAL::Emptyset_iterator());
-
-  std::vector<Point> pts;
-  if (in_plane) {
-    for (unsigned int k=0 ; k<boundary_facets.size(); k++) {
-      ch = boundary_facets[k].first;
-      Offset common_offset = p3dt.int_to_off(ch->offset(0)|ch->offset(1)|ch->offset(2)|ch->offset(3));
-      int i = boundary_facets[k].second;
-      pts.clear();
-      for(int j=0 ; j<4 ; j++) {
-	if (j==i) continue;
-	std::pair<Point,Offset> ppt = p3dt.periodic_point(ch,j);
-	ppt.second -= common_offset;
-	pts.push_back(p3dt.point(ppt));
-      }
-      gl_draw_edge(pts[0],pts[1],0.005);
-      gl_draw_edge(pts[0],pts[2],0.005);
-      gl_draw_edge(pts[1],pts[2],0.005);
-    }
-  } else {
-    for (unsigned int i=0 ; i<boundary_facets.size(); i++) {
-      ch = boundary_facets[i].first;
-      Offset common_offset = p3dt.int_to_off(ch->offset(0)|ch->offset(1)|ch->offset(2)|ch->offset(3));
-      pts.clear();
-      for (int j=0; j<4 ; j++) {
-	if (j==boundary_facets[i].second) continue;
-	std::pair<Point,Offset> ppt = p3dt.periodic_point(ch,j);
-	ppt.second -= common_offset;
-	pts.push_back(p3dt.point(ppt));
-      }
-      gl_draw_edge(pts[0],pts[1],0.005);
-      gl_draw_edge(pts[0],pts[2],0.005);
-      gl_draw_edge(pts[1],pts[2],0.005);
-    }
-  }
 }
 
 // provide some color constants for the GLU primitive appearance.

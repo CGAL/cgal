@@ -3,7 +3,6 @@
 
 #include "ui_MainWindow.h"
 #include "Scene_utils.h"
-#include "render_povray.h"
 #include <fstream>
 #include <QObject>
 #include <QFileDialog>
@@ -25,7 +24,6 @@ private:
     EDGE_COLOR,
     DOMAIN_COLOR,
     FLYING_BALL_COLOR,
-    STAR_COLOR,
     CLIPPING_COLOR
   };
 
@@ -37,8 +35,6 @@ public:
 
     dlocate = ui->actionPoint_location->isChecked();
     dconflict = ui->actionConflict_region->isChecked();
-    dstar = ui->actionStar->isChecked();
-    dhole = ui->actionHole->isChecked();
 
     wireframe = ui->actionWireframe->isChecked();
     in_plane = ui->actionPlanar_triangulation->isChecked();
@@ -62,7 +58,6 @@ public:
     materials[EDGE_COLOR]        = "Green";
     materials[DOMAIN_COLOR]      = "Black plastic";
     materials[FLYING_BALL_COLOR] = "Red";
-    materials[STAR_COLOR]        = "Turquoise";
     materials[CLIPPING_COLOR]    = "Silver";
 
     // Timer for flying ball
@@ -95,7 +90,7 @@ public slots:
     if (on) timer->stop();
     else timer->start();
   }
-  // TODO: this seems to trigger bugs in p3dt
+
   void insert_mp() {
     insert_point(moving_point);
     QString str;
@@ -113,14 +108,12 @@ public slots:
 		   pt.x(),pt.y(),(in_plane? 0.0:pt.z())));
   }
   void insert_point(Point p) {
-    bool temp_flags[] = {dlocate, dconflict, dhole, dstar};
-    dlocate = dconflict = dhole = dstar = false;
+    bool temp_flags[] = {dlocate, dconflict};
+    dlocate = dconflict = false;
     make_draw_list();
     p3dt.insert(p);
     dlocate = temp_flags[0];
-    //dconflict = temp_flags[1];
-    dhole = temp_flags[2];
-    dstar = temp_flags[3];
+    dconflict = temp_flags[1];
     make_draw_list();
   }
   void grab_image() {
@@ -134,14 +127,6 @@ public slots:
   void toggle_dconflict(bool on) {
     dconflict = on; 
     ui->viewer->update();
-  }
-  void toggle_dhole(bool on) {
-    dhole = on;
-    make_draw_list();
-  }
-  void toggle_dstar(bool on) {
-    dstar = on;
-    make_draw_list(); //TODO: check necessity
   }
   void toggle_wireframe(bool on) {
     wireframe = on;
@@ -214,25 +199,6 @@ public slots:
     }
    return true;
   }
-  bool export_pov() {
-    QString fileName = QFileDialog
-      ::getSaveFileName(ui->centralWidget, tr("Export pov file"),
-			".pov", tr("POV files (*.pov)"));
-    if (! fileName.isEmpty()){
-      Segment_set sset;
-      primitives_from_geom_it(sset);
-      //if (cube_clipping) segment_clipping(sset);
-      char *pov_name = new char[256];
-      strcpy(pov_name, fileName.toAscii().data());
-      QString inifileName(fileName);
-      inifileName += ".ini";
-      char *ini_name = inifileName.toAscii().data();
-      Render_povray<P3DT,Iterator_type,Segment_set> rp(it_type,ddomain,sset,cube_clipping);
-      rp.render(p3dt, pov_name, ini_name);
-      delete [] pov_name;
-    }
-    return true;
-  }
 
 signals:
   void message(const QString & message, int timeout = 0 ); 
@@ -268,12 +234,9 @@ private:
   void primitives_from_geom_it(Segment_set& sset);
   void segment_clipping(Segment_set& sset);
   void segment_2color_clipping (Segment_set& sset);
-  void remove_hole(Segment_set& sset);
 
   void gl_draw_location();
   void gl_draw_conflict();
-  void gl_draw_star();
-  void gl_draw_hole();
 
   void change_material(const QString& string);
 
@@ -288,7 +251,7 @@ private:
   GLUquadricObj* pQuadric;
 
   bool flying_ball;
-  bool dlocate, dconflict, dstar, dhole;
+  bool dlocate, dconflict;
   bool wireframe, in_plane;
   Iterator_type it_type;
   Draw_type draw_type;
