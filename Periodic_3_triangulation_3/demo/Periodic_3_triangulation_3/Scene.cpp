@@ -563,9 +563,9 @@ inline void Scene::primitives_from_geom_it(Segment_set& sset) {
   case TRIANGLE:
     for ( Triangle_iterator tit = p3dt.periodic_triangles_begin(it_type) ;
 	  tit != p3dt.periodic_triangles_end(it_type) ; ++tit ) {
-      p0 = tit->at(0).first;
-      p1 = tit->at(1).first;
-      p2 = tit->at(2).first;
+      p0 = p3dt.point(tit->at(0));
+      p1 = p3dt.point(tit->at(1));
+      p2 = p3dt.point(tit->at(2));
       sset.insert(p0 < p1 ? Segment(p0,p1) : Segment(p1,p0));
       sset.insert(p0 < p2 ? Segment(p0,p2) : Segment(p2,p0));
       sset.insert(p1 < p2 ? Segment(p1,p2) : Segment(p2,p1));
@@ -574,10 +574,10 @@ inline void Scene::primitives_from_geom_it(Segment_set& sset) {
   case TETRAHEDRON:
     for ( Tetrahedron_iterator tit = p3dt.periodic_tetrahedra_begin(it_type) ;
 	  tit != p3dt.periodic_tetrahedra_end(it_type) ; ++tit ) {
-      p0 = tit->at(0).first;
-      p1 = tit->at(1).first;
-      p2 = tit->at(2).first;
-      p3 = tit->at(3).first;
+      p0 = p3dt.point(tit->at(0));
+      p1 = p3dt.point(tit->at(1));
+      p2 = p3dt.point(tit->at(2));
+      p3 = p3dt.point(tit->at(3));
       sset.insert((p0 < p1) ? Segment(p0,p1) : Segment(p1,p0));
       sset.insert((p0 < p2) ? Segment(p0,p2) : Segment(p2,p0));
       sset.insert((p0 < p3) ? Segment(p0,p3) : Segment(p3,p0));
