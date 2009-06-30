@@ -23,7 +23,7 @@ int main() {
     N1 += N2;
 
     if(N1.is_simple()) {
-      N1.convert_to_Polyhedron(P);
+      N1.convert_to_polyhedron(P);
       std::cout << P;
     }
     else

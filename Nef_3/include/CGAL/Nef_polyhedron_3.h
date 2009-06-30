@@ -1020,6 +1020,11 @@ protected:
 
  template<typename Polyhedron>
  void convert_to_Polyhedron(Polyhedron& P) {
+   convert_to_polyhedron(P);
+ }
+
+ template<typename Polyhedron>
+ void convert_to_polyhedron(Polyhedron& P) {
    typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
    CGAL_precondition(is_simple());
    P.clear();
