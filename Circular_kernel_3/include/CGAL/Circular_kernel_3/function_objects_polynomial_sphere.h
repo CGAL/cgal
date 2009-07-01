@@ -1265,13 +1265,15 @@ template < class SK > \
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Line_3 & l, const Line_arc_3 & la) const
-    { return SphericalFunctors::intersect_3<SK> (l,la); }
+    operator()(const Line_3 & l, const Line_arc_3 & la, 
+	       OutputIterator res) const
+    { return SphericalFunctors::intersect_3<SK> (l,la,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Line_arc_3 & la, const Line_3 & l) const
-    { return SphericalFunctors::intersect_3<SK> (l,la); }
+    operator()(const Line_arc_3 & la, const Line_3 & l, 
+	       OutputIterator res) const
+    { return SphericalFunctors::intersect_3<SK> (l,la,res); }
 
     template < class OutputIterator >
     OutputIterator
@@ -1317,13 +1319,15 @@ template < class SK > \
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Line_3 & l, const Circular_arc_3 & ca) const
-    { return SphericalFunctors::intersect_3<SK> (l,ca); }
+    operator()(const Line_3 & l, const Circular_arc_3 & ca, 
+	       OutputIterator res) const
+    { return SphericalFunctors::intersect_3<SK> (l,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circular_arc_3 & ca, const Line_3 & l) const
-    { return SphericalFunctors::intersect_3<SK> (l,ca); }
+    operator()(const Circular_arc_3 & ca, const Line_3 & l, 
+	       OutputIterator res) const
+    { return SphericalFunctors::intersect_3<SK> (l,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
