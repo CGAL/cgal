@@ -50,7 +50,7 @@ namespace detail {
         template< class container_type> struct underlying_type {
             typedef typename container_type::const_iterator iterator;
           // moved const
-            typedef const typename container_type::reference reference;
+            typedef const typename container_type::value_type reference;
             typedef const typename container_type::value_type value_type;
             typedef value_type* pointer;
 
@@ -64,7 +64,7 @@ namespace detail {
     struct get_container_details {
         template< class container_type> struct underlying_type {
             typedef typename container_type::iterator iterator;
-            typedef typename container_type::reference reference;
+            typedef typename container_type::value_type reference;
             typedef typename container_type::value_type value_type;
             //typedef typename container_type::pointer pointer;
             typedef value_type* pointer;
