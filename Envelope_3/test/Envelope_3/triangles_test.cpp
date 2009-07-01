@@ -42,7 +42,7 @@ bool test_one_file(std::ifstream& inp)
   Traits_3 traits;
   std::vector<Surface_3> triangles;
   
-  int triangles_num;
+  int triangles_num = 0;
   inp >> triangles_num;
   std::cout << "number of triangles to read: " << triangles_num << std::endl;
   Point_3 a,b,c;

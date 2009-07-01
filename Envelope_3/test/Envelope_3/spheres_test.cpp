@@ -49,7 +49,7 @@ bool test_one_file(std::ifstream& inp)
   Envelope_test lu_alg_test;
   std::vector<Xy_monotone_surface_3> surfaces;
 
-  int spheres_num;
+  int spheres_num = 0;
   inp >> spheres_num;
   Rat_point_3 a;
   Rational sr;
