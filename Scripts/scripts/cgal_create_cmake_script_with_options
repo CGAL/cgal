@@ -381,7 +381,7 @@ if ( CGAL_Qt3_FOUND AND QT3_FOUND )
 EOF
       #-----------------------------------------------------------------------
 
-      for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+      for file in `ls *.C *.cpp 2> /dev/null | sort` ; do
         # Create an executable for each cpp that  contains a function "main()"
         BASE=`basename $file .C`
         BASE=`basename $BASE .cpp`
@@ -424,7 +424,7 @@ EOF
       #-----------------------------------------------------------------------
     fi # qt4
 
-    for file in `ls *.C *.cpp 2>/dev/null | sort`; do
+    for file in `ls *.C *.cpp 2> /dev/null | sort`; do
       # Create an executable for each cpp that  contains a function "main()"
       BASE=`basename $file .C`
       BASE=`basename $BASE .cpp`
@@ -455,7 +455,7 @@ EOF
 EOF
     #-------------------------------------------------------------------------
 
-    for file in `ls *.C *.cpp 2>/dev/null | sort`; do
+    for file in `ls *.C *.cpp 2> /dev/null | sort`; do
       all="$all $file"
     done
 
@@ -496,15 +496,43 @@ if ( CGAL_Qt4_FOUND AND QT_FOUND )
 
 EOF
       #-----------------------------------------------------------------------
- 
+
       echo "  # UI files (Qt Designer files)"
-      echo "  qt4_wrap_ui( DT_UI_FILES ${SOURCE}.ui )"
+      for file in `ls *.ui 2> /dev/null | sort`; do
+        echo "  qt4_wrap_ui( DT_UI_FILES $file )"
+      done
       echo
       echo "  # qrc files (resources files, that contain icons, at least)"
-      echo "  qt4_add_resources ( DT_RESOURCE_FILES ./${SOURCE}.qrc )"
+      for file in `ls *.qrc 2> /dev/null | sort`; do
+        echo "  qt4_add_resources ( DT_RESOURCE_FILES ./$file )"
+      done
       echo
+      MOC_FILES=""
       echo "  # use the Qt MOC preprocessor on classes that derives from QObject"
-      echo "  qt4_generate_moc( ${SOURCE}.cpp ${SOURCE}.moc )"
+      for file in `ls include/*.h 2> /dev/null | sort`; do
+        BASE=`basename $file .h`
+        egrep 'Q_OBJECT' $file >/dev/null 2>&1
+        if [ $? -eq 0 ]; then
+          echo "  qt4_generate_moc( include/${BASE}.h ${BASE}.moc )"
+          MOC_FILES="${BASE}.moc $MOC_FILES"
+        fi
+      done
+      for file in `ls *.h 2> /dev/null | sort`; do
+        BASE=`basename $file .h`
+        egrep 'Q_OBJECT' $file >/dev/null 2>&1
+        if [ $? -eq 0 ]; then
+          echo "  qt4_generate_moc( ${BASE}.h ${BASE}.moc )"
+          MOC_FILES="${BASE}.moc $MOC_FILES"
+        fi
+      done
+      for file in `ls *.cpp 2> /dev/null | sort`; do
+        BASE=`basename $file .cpp`
+        egrep 'Q_OBJECT' $file >/dev/null 2>&1
+        if [ $? -eq 0 ]; then
+          echo "  qt4_generate_moc( ${BASE}.cpp ${BASE}.moc )"
+          MOC_FILES="${BASE}.moc $MOC_FILES"
+        fi
+      done
 
       #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
       cat << 'EOF'
@@ -513,7 +541,7 @@ endif()
 EOF
       #-----------------------------------------------------------------------
 
-      all="${all} ${SOURCE}.moc \${DT_UI_FILES} \${DT_RESOURCE_FILES}"
+      all="${all} ${MOC_FILES} \${DT_UI_FILES} \${DT_RESOURCE_FILES}"
 
     fi # qt4
 
