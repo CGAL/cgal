@@ -9,7 +9,7 @@ The surface triangle mesh chosen for benchmarking intersections is the knot mode
 
 \begin{tabular}{|l|c|}
   \hline
-  Number of triangles & Tree construction (in ms)\\
+  Number of triangles & Construction (in ms)\\
   \hline
    14,400 &   156 \\
    57,600 &   328 \\
@@ -56,9 +56,11 @@ Curve \ref{fig:AABB-tree-bench} plots the number of queries per second (here the
 
 The surface triangle mesh chosen for benchmarking distances is again the knot model in four increasing resolutions obtained through Loop subdivision. In the following table we first measure the tree construction time which includes the construction of the internal KD-tree data structure to accelerate the distance queries (note how the internal KD-tree construction is negligible compared to the AABB tree construction, while it brings an acceleration of up to one order of magnitude). We then measure the number of queries per second for the three types distance queries (\ccc{closest_point}, \ccc{squared_distance} and \ccc{closest_point_and_primitive}) from point queries randomly chosen inside the bounding box.
 
+% TODO: redo with CGAL KD-tree issue fixed.
+
 \begin{tabular}{|l|c|c|c|c|}
   \hline
-  Nb triangles & Tree construction (in ms) & Closest\_point() & squared\_distance() & closest\_point\_and\_primitive() \\
+  Nb triangles & Construction (in ms) & Closest\_point() & squared\_distance() & closest\_point\_and\_primitive() \\
   \hline
    14,400 &   157 & 31,472 & 33,529 & 34,817 \\
    57,600 &   330 & 15,602 & 16,355 & 17,106 \\
