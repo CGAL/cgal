@@ -3,14 +3,17 @@
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 
+#include <CGAL/remove_outliers.h>
+#include <CGAL/Timer.h>
+#include <CGAL/Memory_sizer.h>
+
 #include <QObject>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
 #include <QtPlugin>
 #include <QInputDialog>
-
-#include <CGAL/remove_outliers.h>
+#include <QMessageBox>
 
 #include "ui_Point_set_demo_outlier_removal_plugin.h"
 
@@ -64,31 +67,51 @@ void Point_set_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
 
   if(item)
   {
+    // Gets point set
     Point_set* points = item->point_set();
+    if(points == NULL)
+        return;
 
-    if(!points) return;
-
+    // Gets options
     Point_set_demo_outlier_removal_dialog dialog;
     if(!dialog.exec())
       return;
-
-    bool areOriented = points->unoriented_points_begin() == points->end();
     const double removed_percentage = dialog.percentage(); // percentage of points to remove
     const int nb_neighbors = dialog.nbNeighbors(); 
-    points->erase(CGAL::remove_outliers(points->begin(), points->end(),
-                                        nb_neighbors,
-                                        removed_percentage),
-                  points->end());
+      
+    // First point to delete
+    Point_set::iterator first_point_to_remove = points->end();
 
-    // after erase(), use Scott Meyer's "swap trick" to trim excess capacity
-    Point_set(*points).swap(*points);
+    CGAL::Timer task_timer; task_timer.start();
+    std::cerr << "Remove outliers (" << removed_percentage <<"%)...\n";
 
-    points->invalidate_bounds();
-    if (areOriented)
-      points->unoriented_points_begin() = points->end();
-    else
-      points->unoriented_points_begin() = points->begin();
-    item->changed();
+    // Computes outliers
+    first_point_to_remove =
+      CGAL::remove_outliers(points->begin(), points->end(),
+                            nb_neighbors,
+                            removed_percentage);
+
+    long memory = CGAL::Memory_sizer().virtual_size();
+    std::cerr << "Remove outliers: " << task_timer.time() << " seconds, "
+                                     << (memory>>20) << " Mb allocated"
+                                     << std::endl;
+                          
+    // Selects points to delete
+    points->select(points->begin(), points->end(), false);
+    points->select(first_point_to_remove, points->end(), true);
+
+    // Warns user
+    if (first_point_to_remove != points->end())
+    {
+      int nb_selected_points = std::distance(first_point_to_remove, points->end());
+      QMessageBox::information(NULL,
+                               tr("Points selected from removal"),
+                               tr("%1 point(s) are selected for removal.\nYou may remove them with the \"Delete selection\" menu item.")
+                               .arg(nb_selected_points));
+    }
+
+    // Updates scene
+    scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();
   }

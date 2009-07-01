@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
+<ui version="4.0" >
  <class>ApssDialog</class>
- <widget class="QDialog" name="ApssDialog">
-  <property name="geometry">
+ <widget class="QDialog" name="ApssDialog" >
+  <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
@@ -10,156 +9,159 @@
     <height>210</height>
    </rect>
   </property>
-  <property name="windowTitle">
+  <property name="windowTitle" >
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="label" >
+     <property name="text" >
       <string>Min triangle angle:</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1" colspan="2">
-    <widget class="QDoubleSpinBox" name="m_inputAngle">
-     <property name="suffix">
+   <item row="0" column="1" colspan="2" >
+    <widget class="QDoubleSpinBox" name="m_inputAngle" >
+     <property name="suffix" >
       <string> °</string>
      </property>
-     <property name="minimum">
+     <property name="minimum" >
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" >
       <double>30.000000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" >
       <double>20.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
+   <item row="1" column="0" >
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
       <string>Max triangle size:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QDoubleSpinBox" name="m_inputRadius">
-     <property name="suffix">
-      <string> %</string>
+   <item row="1" column="1" colspan="2" >
+    <widget class="QDoubleSpinBox" name="m_inputRadius" >
+     <property name="suffix" >
+      <string> * point set radius</string>
      </property>
-     <property name="decimals">
-      <number>2</number>
+     <property name="decimals" >
+      <number>6</number>
      </property>
-     <property name="minimum">
+     <property name="minimum" >
+      <double>0.010000000000000</double>
+     </property>
+     <property name="maximum" >
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
-      <double>100.000000000000000</double>
+     <property name="singleStep" >
+      <double>0.010000000000000</double>
      </property>
-     <property name="singleStep">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>10.000000000000000</double>
+     <property name="value" >
+      <double>0.100000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
+   <item row="2" column="0" >
+    <widget class="QLabel" name="label_3" >
+     <property name="text" >
       <string>Approximation error:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="2">
-    <widget class="QDoubleSpinBox" name="m_inputDistance">
-     <property name="decimals">
+   <item row="2" column="1" colspan="2" >
+    <widget class="QDoubleSpinBox" name="m_inputDistance" >
+     <property name="suffix" >
+      <string> * point set radius</string>
+     </property>
+     <property name="decimals" >
       <number>6</number>
      </property>
-     <property name="minimum">
+     <property name="minimum" >
       <double>0.001000000000000</double>
      </property>
-     <property name="maximum">
-      <double>0.010000000000000</double>
+     <property name="maximum" >
+      <double>0.015000000000000</double>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" >
       <double>0.001000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" >
       <double>0.003000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
+   <item row="3" column="0" >
+    <widget class="QLabel" name="label_4" >
+     <property name="text" >
       <string>Smoothness:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1" colspan="2">
-    <widget class="QDoubleSpinBox" name="m_inputSmoothness">
-     <property name="minimum">
+   <item row="3" column="1" colspan="2" >
+    <widget class="QDoubleSpinBox" name="m_inputSmoothness" >
+     <property name="minimum" >
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum">
+     <property name="maximum" >
       <double>100.000000000000000</double>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" >
       <double>0.200000000000000</double>
      </property>
-     <property name="value">
+     <property name="value" >
       <double>2.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="3">
-    <widget class="QCheckBox" name="m_inputUseMC">
-     <property name="enabled">
+   <item row="4" column="0" colspan="3" >
+    <widget class="QCheckBox" name="m_inputUseMC" >
+     <property name="enabled" >
       <bool>true</bool>
      </property>
-     <property name="text">
-      <string>Use marching cubes</string>
+     <property name="text" >
+      <string>Use Marching Cubes instead of CGAL Mesh Generator</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="QLabel" name="label_6">
-     <property name="enabled">
+   <item row="5" column="0" colspan="2" >
+    <widget class="QLabel" name="label_6" >
+     <property name="enabled" >
       <bool>false</bool>
      </property>
-     <property name="text">
+     <property name="text" >
       <string>Marching cubes resolution:</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="2">
-    <widget class="QSpinBox" name="m_inputMcGridSize">
-     <property name="enabled">
+   <item row="5" column="2" >
+    <widget class="QSpinBox" name="m_inputMcGridSize" >
+     <property name="enabled" >
       <bool>false</bool>
      </property>
-     <property name="minimum">
+     <property name="minimum" >
       <number>1</number>
      </property>
-     <property name="maximum">
+     <property name="maximum" >
       <number>2000</number>
      </property>
-     <property name="singleStep">
+     <property name="singleStep" >
       <number>50</number>
      </property>
-     <property name="value">
+     <property name="value" >
       <number>300</number>
      </property>
     </widget>
    </item>
-   <item row="6" column="1" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
+   <item row="6" column="1" colspan="2" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons">
+     <property name="standardButtons" >
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
@@ -174,11 +176,11 @@
    <receiver>ApssDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>248</x>
      <y>254</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>157</x>
      <y>274</y>
     </hint>
@@ -190,11 +192,11 @@
    <receiver>ApssDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>316</x>
      <y>260</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>286</x>
      <y>274</y>
     </hint>
@@ -206,11 +208,11 @@
    <receiver>m_inputMcGridSize</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>131</x>
      <y>261</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>206</x>
      <y>312</y>
     </hint>
@@ -222,11 +224,11 @@
    <receiver>label_6</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>149</x>
      <y>135</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>106</x>
      <y>163</y>
     </hint>
@@ -238,11 +240,11 @@
    <receiver>m_inputAngle</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>149</x>
      <y>135</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>210</x>
      <y>16</y>
     </hint>
@@ -254,11 +256,11 @@
    <receiver>m_inputDistance</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>149</x>
      <y>135</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>210</x>
      <y>76</y>
     </hint>
@@ -270,11 +272,11 @@
    <receiver>m_inputRadius</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>149</x>
      <y>135</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>210</x>
      <y>46</y>
     </hint>

@@ -67,6 +67,10 @@ protected slots:
   void on_actionDuplicate_triggered();
   void on_actionConvertToPointSet_triggered();
 
+  // selection
+  void on_actionDeleteSelection_triggered(); 
+  void on_actionResetSelection_triggered(); 
+
   // Show/Hide
   void on_actionShowHide_triggered();
 

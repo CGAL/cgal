@@ -253,14 +253,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(xyz_plugin Point_set_demo_xyz_plugin)
   target_link_libraries(xyz_plugin scene_polyhedron_item point_set)
 
-  polyhedron_demo_plugin(convex_hull_plugin Point_set_demo_convex_hull_plugin)
-  target_link_libraries(convex_hull_plugin scene_polyhedron_item)
-
-  polyhedron_demo_plugin(pca_plugin Point_set_demo_pca_plugin)
-  target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
-
-  polyhedron_demo_plugin(mesh_simplification_plugin Point_set_demo_mesh_simplification_plugin)
-  target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
+  qt4_wrap_ui(SIMPLIFICATION_UI_FILES Point_set_demo_point_set_simplification_plugin.ui)
+  polyhedron_demo_plugin(point_set_simplification_plugin 
+    Point_set_demo_point_set_simplification_plugin
+    ${SIMPLIFICATION_UI_FILES})
+  target_link_libraries(point_set_simplification_plugin point_set)
 
   polyhedron_demo_plugin(local_spacing_plugin Point_set_demo_local_spacing_plugin)
   target_link_libraries(local_spacing_plugin point_set)

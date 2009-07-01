@@ -1,11 +1,13 @@
 #include "Point_set_scene_item.h"
 #include "Polyhedron_type.h"
-#include <CGAL/compute_normal.h>
+#include "CGAL/compute_normal.h"
 
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/write_off_points.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
+#include <CGAL/Timer.h>
+#include <CGAL/Memory_sizer.h>
 
 #include <QObject>
 
@@ -61,6 +63,34 @@ Point_set_scene_item::clone() const
   return new Point_set_scene_item(*this);
 }
 
+// Is selection empty?
+bool Point_set_scene_item::isSelectionEmpty() const 
+{ 
+  return (m_points->nb_selected_points() == 0); 
+}
+
+// Delete selection
+void Point_set_scene_item::deleteSelection()
+{
+  CGAL::Timer task_timer; task_timer.start();
+  std::cerr << "Delete " << m_points->nb_selected_points() << " points...";
+
+  // Delete selected points
+  m_points->delete_selection();
+
+  long memory = CGAL::Memory_sizer().virtual_size();
+  std::cerr << "done: " << task_timer.time() << " seconds, "
+                        << (memory>>20) << " Mb allocated"
+                        << std::endl;
+}
+
+// Reset selection mark
+void Point_set_scene_item::resetSelection()
+{
+  // Un-select all points
+  m_points->select(m_points->begin(), m_points->end(), false);
+}
+
 // Loads point set from .OFF file
 bool Point_set_scene_item::read_off_point_set(std::istream& stream)
 {
@@ -73,9 +103,6 @@ bool Point_set_scene_item::read_off_point_set(std::istream& stream)
                                               CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(*m_points))) &&
             !isEmpty();
     
-  // Mark all normals as oriented
-  m_points->unoriented_points_begin() = m_points->end();
-  
   return ok;
 }
 
@@ -102,9 +129,6 @@ bool Point_set_scene_item::read_xyz_point_set(std::istream& stream)
                                               CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(*m_points))) &&
             !isEmpty();
     
-  // Mark all normals as oriented
-  m_points->unoriented_points_begin() = m_points->end();
-  
   return ok;
 }
 

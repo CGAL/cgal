@@ -35,6 +35,13 @@ public:
   virtual ~Scene_item();
   virtual Scene_item* clone() const = 0;
 
+  // Is selection empty?
+  virtual bool isSelectionEmpty() const { return true; }
+  // Delete selection
+  virtual void deleteSelection() {}
+  // Reset selection mark
+  virtual void resetSelection() {}
+
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
   // Flat/Gouraud OpenGL drawing

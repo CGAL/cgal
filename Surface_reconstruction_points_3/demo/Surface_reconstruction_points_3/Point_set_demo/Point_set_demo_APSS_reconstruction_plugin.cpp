@@ -23,9 +23,6 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
 
 // same but using a marching cube
 Polyhedron* APSS_reconstruct_mc(const Point_set& points,
-                                FT sm_angle, // Min triangle angle (degrees). 20=fast, 30 guaranties convergence.
-                                FT sm_radius, // Max triangle radius w.r.t. point set radius. 0.1 is fine.
-                                FT sm_distance, // Approximation error w.r.t. p.s.r.. For APSS: 0.015=fast, 0.003=smooth.
                                 FT smoothness, // Smoothness factor. In the range 2 (clean datasets) and 8 (noisy datasets).
                                 int grid_size); // size of the grid
 
@@ -70,7 +67,7 @@ class Point_set_demo_APSS_reconstruction_plugin_dialog : public QDialog, private
     }
 
     double triangleAngle() const { return m_inputAngle->value(); }
-    double triangleRadius() const { return m_inputRadius->value() * 0.01; }
+    double triangleRadius() const { return m_inputRadius->value(); }
     double triangleError() const { return m_inputDistance->value(); }
     double mlsSmoothness() const { return m_inputSmoothness->value(); }
     bool useMarchingCube() const { return m_inputUseMC->isChecked(); }
@@ -112,7 +109,7 @@ void Point_set_demo_APSS_reconstruction_plugin::reconstruct()
     Polyhedron* pRemesh = 0;
 
     if (dialog.useMarchingCube())
-      pRemesh = APSS_reconstruct_mc(*points, sm_angle, sm_radius, sm_distance, smoothness, dialog.mcGridSize());
+      pRemesh = APSS_reconstruct_mc(*points, smoothness, dialog.mcGridSize());
     else
       pRemesh = APSS_reconstruct(*points, sm_angle, sm_radius, sm_distance, smoothness);
 
@@ -120,12 +117,19 @@ void Point_set_demo_APSS_reconstruction_plugin::reconstruct()
     {
       // Add polyhedron to scene
       Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pRemesh);
-      new_item->setName(tr("%1 APSS (%2 %3 %4 %5)")
-                         .arg(point_set_item->name())
-                         .arg(sm_angle)
-                         .arg(sm_radius)
-                         .arg(sm_distance)
-                         .arg(smoothness));
+      if (dialog.useMarchingCube()) {
+          new_item->setName(tr("%1 APSS MC (%2 %3)")
+                             .arg(point_set_item->name())
+                             .arg(smoothness)
+                             .arg(dialog.mcGridSize()));
+       } else {                        
+          new_item->setName(tr("%1 APSS (%2 %3 %4 %5)")
+                             .arg(point_set_item->name())
+                             .arg(sm_angle)
+                             .arg(sm_radius)
+                             .arg(sm_distance)
+                             .arg(smoothness));
+      }
       new_item->setColor(Qt::magenta);
       scene->addItem(new_item);
 

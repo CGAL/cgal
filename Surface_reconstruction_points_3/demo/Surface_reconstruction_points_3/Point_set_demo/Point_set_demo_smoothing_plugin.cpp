@@ -68,7 +68,9 @@ void Point_set_demo_smoothing_plugin::on_actionJetSmoothing_triggered()
     CGAL::jet_smooth_point_set(points->begin(), points->end(), nb_neighbors);
 
     points->invalidate_bounds();
-    item->changed();
+
+    // update scene
+    scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();
   }

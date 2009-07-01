@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>978</width>
-    <height>594</height>
+    <width>688</width>
+    <height>587</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,14 +17,6 @@
     <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <property name="geometry" >
-    <rect>
-     <x>282</x>
-     <y>19</y>
-     <width>696</width>
-     <height>320</height>
-    </rect>
-   </property>
    <layout class="QVBoxLayout" name="verticalLayout_2" >
     <item>
      <widget class="Viewer" native="1" name="viewer" >
@@ -46,7 +38,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>978</width>
+     <width>688</width>
      <height>19</height>
     </rect>
    </property>
@@ -67,6 +59,10 @@
     </property>
     <addaction name="actionShowHide" />
     <addaction name="actionDuplicate" />
+    <addaction name="separator" />
+    <addaction name="actionDeleteSelection" />
+    <addaction name="actionResetSelection" />
+    <addaction name="separator" />
     <addaction name="actionConvertToPointSet" />
    </widget>
    <widget class="QMenu" name="menuView" >
@@ -87,19 +83,16 @@
     <property name="title" >
      <string>Analysis</string>
     </property>
-    <addaction name="actionBoundingBox" />
-    <addaction name="actionBoundingSphere" />
-    <addaction name="actionConvexHull" />
     <addaction name="actionRadiusFromDensity" />
-    <addaction name="actionNormalEstimation" />
    </widget>
    <widget class="QMenu" name="menuProcessing" >
     <property name="title" >
      <string>Processing</string>
     </property>
+    <addaction name="actionSimplify" />
     <addaction name="actionOutlierRemoval" />
     <addaction name="actionJetSmoothing" />
-    <addaction name="actionSimplify" />
+    <addaction name="actionNormalEstimation" />
    </widget>
    <widget class="QMenu" name="menuReconstruction" >
     <property name="title" >
@@ -115,25 +108,8 @@
    <addaction name="menuReconstruction" />
    <addaction name="menuView" />
   </widget>
-  <widget class="QStatusBar" name="statusbar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>575</y>
-     <width>978</width>
-     <height>19</height>
-    </rect>
-   </property>
-  </widget>
+  <widget class="QStatusBar" name="statusbar" />
   <widget class="QDockWidget" name="sceneDockWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>19</y>
-     <width>276</width>
-     <height>320</height>
-    </rect>
-   </property>
    <property name="locale" >
     <locale country="UnitedStates" language="English" />
    </property>
@@ -144,14 +120,6 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContent" >
-    <property name="geometry" >
-     <rect>
-      <x>0</x>
-      <y>20</y>
-      <width>276</width>
-      <height>300</height>
-     </rect>
-    </property>
     <layout class="QGridLayout" name="gridLayout_2" >
      <item row="0" column="0" >
       <layout class="QVBoxLayout" name="verticalLayout" >
@@ -224,14 +192,6 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="consoleDockWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>345</y>
-     <width>978</width>
-     <height>230</height>
-    </rect>
-   </property>
    <property name="allowedAreas" >
     <set>Qt::BottomDockWidgetArea|Qt::LeftDockWidgetArea|Qt::TopDockWidgetArea</set>
    </property>
@@ -242,14 +202,6 @@
     <number>8</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents" >
-    <property name="geometry" >
-     <rect>
-      <x>0</x>
-      <y>20</y>
-      <width>978</width>
-      <height>210</height>
-     </rect>
-    </property>
     <layout class="QVBoxLayout" name="verticalLayout_3" >
      <item>
       <widget class="QTextEdit" name="consoleTextEdit" >
@@ -274,16 +226,6 @@
     <string>&amp;Simplification</string>
    </property>
   </action>
-  <action name="actionBoundingBox" >
-   <property name="text" >
-    <string>Bounding &amp;Box</string>
-   </property>
-  </action>
-  <action name="actionBoundingSphere" >
-   <property name="text" >
-    <string>Bounding &amp;Sphere</string>
-   </property>
-  </action>
   <action name="actionFileOpen" >
    <property name="icon" >
     <iconset resource="Point_set_demo.qrc" >
@@ -293,7 +235,7 @@
     <string>&amp;Open...</string>
    </property>
    <property name="shortcut" >
-    <string>Ctrl+L</string>
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionFileClose" >
@@ -305,7 +247,7 @@
     <string>&amp;Close</string>
    </property>
    <property name="shortcut" >
-    <string>Del</string>
+    <string>Ctrl+W</string>
    </property>
   </action>
   <action name="actionDuplicate" >
@@ -331,11 +273,6 @@
   <action name="dummyAction" >
    <property name="text" >
     <string>n/a</string>
-   </property>
-  </action>
-  <action name="actionConvexHull" >
-   <property name="text" >
-    <string>&amp;Convex hull</string>
    </property>
   </action>
   <action name="actionFileCloseAll" >
@@ -440,6 +377,19 @@
    </property>
    <property name="toolTip" >
     <string>Convert Mesh to Point Set</string>
+   </property>
+  </action>
+  <action name="actionDeleteSelection" >
+   <property name="text" >
+    <string>Delete Selection</string>
+   </property>
+   <property name="shortcut" >
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionResetSelection" >
+   <property name="text" >
+    <string>Reset Selection</string>
    </property>
   </action>
  </widget>

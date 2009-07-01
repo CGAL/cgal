@@ -30,8 +30,6 @@
 ///
 /// CAUTION:
 /// - User is responsible to call invalidate_bounds() after adding, moving or removing points.
-/// - User is responsible to partition the point set as oriented/unoriented normals
-///   and to set unoriented_points_begin() appropriately.
 ///
 /// @heading Parameters:
 /// @param Gt       Geometric traits class.
@@ -107,11 +105,6 @@ public:
   Base::end;
   Base::size;
   /// @endcond
-  // Gets/sets the iterator over the first point with an unoriented normal.
-  /// User is responsible to partition the point set as oriented/unoriented normals
-  /// and to set unoriented_points_begin() appropriately.
-  Point_iterator&      unoriented_points_begin()       { return m_unoriented_points_begin; }
-  Point_const_iterator unoriented_points_begin() const { return m_unoriented_points_begin; }
 
   /// Gets the number of selected points.
   unsigned int nb_selected_points() const { return m_nb_selected_points; }
@@ -141,7 +134,6 @@ public:
   }
 
   /// Deletes selected points.
-  // Note: this call resets unoriented_points_begin().
   void delete_selection()
   {
     // Deletes selected points using erase-remove idiom
@@ -256,25 +248,9 @@ public:
     // Draw normals of *non-selected* points
     if (m_nb_selected_points < size())
     {
-      // Draw *oriented* normals
+      // Draw normals
       ::glBegin(GL_LINES);
-      for (const_iterator it = begin(); it != unoriented_points_begin(); it++)
-      {
-        const UI_point& p = *it;
-        const Vector& n = p.normal();
-        if (!p.is_selected())
-        {
-          Point q = p + scale * n;
-          ::glVertex3d(p.x(),p.y(),p.z());
-          ::glVertex3d(q.x(),q.y(),q.z());
-        }
-      }
-      ::glEnd();
-
-      // Draw *non-oriented* normals
-      ::glColor3ub(245,184,0);       // non oriented => orange
-      ::glBegin(GL_LINES);
-      for (const_iterator it = unoriented_points_begin(); it != end(); it++)
+      for (const_iterator it = begin(); it != end(); it++)
       {
         const UI_point& p = *it;
         const Vector& n = p.normal();

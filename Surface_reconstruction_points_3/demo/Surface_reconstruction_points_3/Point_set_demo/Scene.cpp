@@ -45,8 +45,10 @@ Scene::addItem(Scene_item* item)
   return entries.size() - 1;
 }
 
-int
-Scene::erase(int index)
+// Erases a scene item. 
+// Returns the index of the polyhedra just before the one that is erased,
+//  or just after. Returns -1 if the list is empty.
+Scene::Item_id Scene::erase(Item_id index)
 {
   if(index < 0 || index >= entries.size())
     return -1;
@@ -106,8 +108,8 @@ Scene::duplicate(Item_id index)
     new_item->setName(tr("%1 (copy)").arg(item->name()));
     new_item->setColor(item->color());
     new_item->setVisible(item->visible());
-    addItem(new_item);
-    return entries.size() - 1;
+    Item_id new_index = addItem(new_item);
+    return new_index;
   }
   else
     return -1;
@@ -135,16 +137,42 @@ Scene::convertToPointSet(Item_id index)
     new_item->setName(tr("%1 (point set)").arg(item->name()));
     new_item->setColor(item->color());
     new_item->setVisible(item->visible());
-    addItem(new_item);
+    Item_id new_index = addItem(new_item);
 
     // Hide polyhedron
     poly_item->setVisible(false);
     itemChanged(index);
 
-    return entries.size() - 1;
+    return new_index;
   }
   else
     return -1;
+}
+
+// Delete selection in a scene item
+void Scene::deleteSelection(Item_id index)
+{
+  // Check index
+  if(index < 0 || index >= entries.size())
+    return;
+
+  Scene_item* item = entries[index];
+  if (item->isSelectionEmpty())
+    return;
+
+  item->deleteSelection();
+  itemChanged(index);
+}
+
+// Reset selection mark in a scene item
+void Scene::resetSelection(Item_id index)
+{
+  if(index < 0 || index >= entries.size())
+    return;
+
+  Scene_item* item = entries[index];
+  item->resetSelection();
+  itemChanged(index);
 }
 
 void Scene::initializeGL()

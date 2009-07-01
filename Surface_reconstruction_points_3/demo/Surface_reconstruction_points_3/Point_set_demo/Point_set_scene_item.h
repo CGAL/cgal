@@ -27,6 +27,13 @@ public:
   Point_set_scene_item(const Polyhedron& p);
   ~Point_set_scene_item();
   Point_set_scene_item* clone() const;
+  
+  // Is selection empty?
+  virtual bool isSelectionEmpty() const;
+  // Delete selection
+  virtual void deleteSelection();
+  // Reset selection mark
+  void resetSelection();
 
   // IO
   bool read_off_point_set(std::istream& in);
@@ -51,9 +58,9 @@ public:
   const Point_set* point_set() const;
 
   // Gets dimensions
-  bool isFinite() const { return true; }
-  bool isEmpty() const;
-  Bbox bbox() const;
+  virtual bool isFinite() const { return true; }
+  virtual bool isEmpty() const;
+  virtual Bbox bbox() const;
 
 // Data
 private:

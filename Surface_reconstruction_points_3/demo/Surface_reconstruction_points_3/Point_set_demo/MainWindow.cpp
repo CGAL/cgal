@@ -465,8 +465,7 @@ void MainWindow::on_actionSaveAs_triggered()
                           tr("File exists"),
                           tr("The file %1 already exists! Continue?")
                           .arg(filename),
-                          QMessageBox::Yes|QMessageBox::No) ==
-     QMessageBox::Yes)
+                          QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
   {
 
     Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, canSavePlugins) {
@@ -499,6 +498,16 @@ void MainWindow::on_actionConvertToPointSet_triggered()
 {
   int index = scene->convertToPointSet(getSelectedSceneItemIndex());
   selectSceneItem(index);
+}
+
+void MainWindow::on_actionDeleteSelection_triggered()
+{
+  scene->deleteSelection(getSelectedSceneItemIndex());
+}
+
+void MainWindow::on_actionResetSelection_triggered()
+{
+  scene->resetSelection(getSelectedSceneItemIndex());
 }
 
 void MainWindow::on_actionShowHide_triggered()
