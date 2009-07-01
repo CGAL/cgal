@@ -240,7 +240,7 @@ public slots:
     seg_list.clear();
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
-    int number_of_segments,i;
+    int number_of_segments = 0,i;
     CGAL::Segment_data<Rep> seg;
     Number_type x1,y1,x2,y2;
     in >> number_of_segments;
