@@ -30,6 +30,9 @@ Scene::Scene()
 	// distance functions
 	m_max_distance_function = (FT)0.0;
 	m_signed_distance_function = false;
+
+	m_red_ramp.build_red();
+	m_blue_ramp.build_blue();
 }
 
 Scene::~Scene()
@@ -175,13 +178,13 @@ void Scene::draw_unsigned_distance_function()
 			unsigned int i01 = 255-(unsigned int)(255.0 * d01 / m_max_distance_function);
 			unsigned int i11 = 255-(unsigned int)(255.0 * d11 / m_max_distance_function);
 			unsigned int i10 = 255-(unsigned int)(255.0 * d10 / m_max_distance_function);
-			::glColor3ub(m_ramp.r(i00),m_ramp.g(i00),m_ramp.b(i00));
+			::glColor3ub(m_thermal_ramp.r(i00),m_thermal_ramp.g(i00),m_thermal_ramp.b(i00));
 			::glVertex3d(p00.x(),p00.y(),p00.z());
-			::glColor3ub(m_ramp.r(i01),m_ramp.g(i01),m_ramp.b(i01));
+			::glColor3ub(m_thermal_ramp.r(i01),m_thermal_ramp.g(i01),m_thermal_ramp.b(i01));
 			::glVertex3d(p01.x(),p01.y(),p01.z());
-			::glColor3ub(m_ramp.r(i11),m_ramp.g(i11),m_ramp.b(i11));
+			::glColor3ub(m_thermal_ramp.r(i11),m_thermal_ramp.g(i11),m_thermal_ramp.b(i11));
 			::glVertex3d(p11.x(),p11.y(),p11.z());
-			::glColor3ub(m_ramp.r(i10),m_ramp.g(i10),m_ramp.b(i10));
+			::glColor3ub(m_thermal_ramp.r(i10),m_thermal_ramp.g(i10),m_thermal_ramp.b(i10));
 			::glVertex3d(p10.x(),p10.y(),p10.z());
 		}
 		::glEnd();
@@ -214,32 +217,34 @@ void Scene::draw_signed_distance_function()
 			FT& d10 = pd10.second;
 
 			// determines grey level
-			double g00 = (double)std::fabs(d00) / m_max_distance_function;
-			double g01 = (double)std::fabs(d01) / m_max_distance_function;
-			double g11 = (double)std::fabs(d11) / m_max_distance_function;
-			double g10 = (double)std::fabs(d10) / m_max_distance_function;
-
-			// determines color (red vs blue for inside vs outside)
-			double r00 = d00 < 0.0 ?  g00 : 0.0;
-			double b00 = d00 > 0.0 ?  g00 : 0.0;
-
-			double r01 = d01 < 0.0 ?  g01 : 0.0;
-			double b01 = d01 > 0.0 ?  g01 : 0.0;
-
-			double r11 = d11 < 0.0 ?  g11 : 0.0;
-			double b11 = d11 > 0.0 ?  g11 : 0.0;
-
-			double r10 = d10 < 0.0 ?  g10 : 0.0;
-			double b10 = d10 > 0.0 ?  g10 : 0.0;
+			unsigned int i00 = 255-(unsigned)(255.0 * (double)std::fabs(d00) / m_max_distance_function);
+			unsigned int i01 = 255-(unsigned)(255.0 * (double)std::fabs(d01) / m_max_distance_function);
+			unsigned int i11 = 255-(unsigned)(255.0 * (double)std::fabs(d11) / m_max_distance_function);
+			unsigned int i10 = 255-(unsigned)(255.0 * (double)std::fabs(d10) / m_max_distance_function);
 
 			// assembles one quad
-			::glColor3d(r00,0.0,b00);
+			if(d00 > 0.0)
+				::glColor3ub(m_red_ramp.r(i00),m_red_ramp.g(i00),m_red_ramp.b(i00));
+			else
+				::glColor3ub(m_blue_ramp.r(i00),m_blue_ramp.g(i00),m_blue_ramp.b(i00));
 			::glVertex3d(p00.x(),p00.y(),p00.z());
-			::glColor3d(r01,0.0,b01);
+
+			if(d01 > 0.0)
+				::glColor3ub(m_red_ramp.r(i01),m_red_ramp.g(i01),m_red_ramp.b(i01));
+			else
+				::glColor3ub(m_blue_ramp.r(i01),m_blue_ramp.g(i01),m_blue_ramp.b(i01));
 			::glVertex3d(p01.x(),p01.y(),p01.z());
-			::glColor3d(r11,0.0,b11);
+
+			if(d11 > 0)
+				::glColor3ub(m_red_ramp.r(i11),m_red_ramp.g(i11),m_red_ramp.b(i11));
+			else
+				::glColor3ub(m_blue_ramp.r(i11),m_blue_ramp.g(i11),m_blue_ramp.b(i11));
 			::glVertex3d(p11.x(),p11.y(),p11.z());
-			::glColor3d(r10,0.0,b10);
+
+			if(d10 > 0)
+				::glColor3ub(m_red_ramp.r(i10),m_red_ramp.g(i10),m_red_ramp.b(i10));
+			else
+				::glColor3ub(m_blue_ramp.r(i10),m_blue_ramp.g(i10),m_blue_ramp.b(i10));
 			::glVertex3d(p10.x(),p10.y(),p10.z());
 		}
 		::glEnd();
@@ -429,9 +434,9 @@ void Scene::benchmark_distances()
 	tree.accelerate_distance_queries();
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
-	// (cache experiments)
-	std::cout << "First call to populate the cache:" << std::endl;
-	bench_closest_point(tree);
+	// TODO: check what the KD-tree is doing in there for large models.
+	std::cout << "One single call to initialize KD-tree" << std::endl;
+	tree.closest_point(CGAL::ORIGIN);
 
 	std::cout << "------- Now, the real benchmark -------" << std::endl;
 	bench_closest_point(tree);

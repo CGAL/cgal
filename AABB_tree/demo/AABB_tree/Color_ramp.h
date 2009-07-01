@@ -88,6 +88,27 @@ public:
     rebuild();
   }
 
+  void build_red()
+  {
+    reset();
+    m_colors[3][0] = 1;m_colors[0][0] = 128;m_colors[1][0] = 0;m_colors[2][0] = 0;
+    m_colors[3][80] = 1;m_colors[0][80] = 255;m_colors[1][80] = 0;m_colors[2][80] = 0;
+    m_colors[3][160] = 1;m_colors[0][160] = 255;m_colors[1][160] = 128;m_colors[2][160] = 0;
+    m_colors[3][255] = 1;m_colors[0][255] = 255;m_colors[1][255] = 255;m_colors[2][255] = 255;
+    rebuild();
+  }
+
+  void build_blue()
+  {
+    reset();
+    m_colors[3][0] = 1;m_colors[0][0] = 0;m_colors[1][0] = 0;m_colors[2][0] = 128;
+    m_colors[3][80] = 1;m_colors[0][80] = 0;m_colors[1][80] = 0;m_colors[2][80] = 255;
+    m_colors[3][160] = 1;m_colors[0][160] = 0;m_colors[1][160] = 255;m_colors[2][160] = 255;
+    m_colors[3][255] = 1;m_colors[0][255] = 255;m_colors[1][255] = 255;m_colors[2][255] = 255;
+    rebuild();
+  }
+
+
   void build_fire()
   {
     reset();

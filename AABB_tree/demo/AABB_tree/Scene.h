@@ -71,7 +71,9 @@ private:
   bool m_signed_distance_function;
   typedef std::pair<Point,FT> Point_distance;
   Point_distance m_distance_function[100][100];
-  Color_ramp m_ramp;
+  Color_ramp m_thermal_ramp;
+  Color_ramp m_red_ramp;
+  Color_ramp m_blue_ramp;
   
   // view options
   bool m_view_points;
