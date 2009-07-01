@@ -90,7 +90,6 @@
    <addaction name="menuBenchmarks" />
    <addaction name="menuView" />
   </widget>
-  <widget class="QStatusBar" name="statusbar" />
   <action name="actionQuit" >
    <property name="text" >
     <string>&amp;Quit</string>
