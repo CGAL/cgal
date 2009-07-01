@@ -22,7 +22,7 @@
 #ifndef CGAL_DSR_PDB_SMALL_MAP_H
 #define CGAL_DSR_PDB_SMALL_MAP_H
 #include <CGAL/PDB/basic.h>
-#include <debug/vector>
+#include <vector>
 #include <algorithm>
 
 namespace CGAL { namespace PDB {
