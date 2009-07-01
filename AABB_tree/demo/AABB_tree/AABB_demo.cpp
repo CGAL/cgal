@@ -15,7 +15,7 @@
 // $Id:  $
 //
 //
-// Author(s)     : Pierre Alliez
+// Author(s)     : Pierre Alliez, Camille Wormser
 //
 //******************************************************************************
 // File Description : demo of AABB tree on polyhedral edge and facet primitives
@@ -50,14 +50,14 @@ int main(int argc, char **argv)
     args.removeAt(0);
   }
 
-  Q_FOREACH(QString filename, args) {
+  Q_FOREACH(QString filename, args)
     mainWindow.open(filename);
-  }
+
   return app.exec();
 }
 
 #  include "Scene.cpp"
-#  include "Scene_moc.cpp"
+#  include "benchmarks.cpp"
 #  include "Viewer.cpp"
 #  include "Viewer_moc.cpp"
 #  include "MainWindow.cpp"

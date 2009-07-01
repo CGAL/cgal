@@ -55,8 +55,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_add_resources ( RESOURCE_FILES AABB_demo.qrc )
 
     add_file_dependencies( AABB_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
-                                            "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp"
-					    "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
+                                         "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
     add_executable  ( AABB_demo AABB_demo.cpp ${UI_FILES} ${RESOURCE_FILES} )
 
   # Link with Qt libraries

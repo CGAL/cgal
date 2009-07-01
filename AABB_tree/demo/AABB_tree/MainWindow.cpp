@@ -250,6 +250,11 @@ void MainWindow::on_actionView_segments_triggered()
 	m_pScene->toggle_view_segments();
 }
 
+void MainWindow::on_actionView_distance_function_triggered()
+{
+	m_pScene->toggle_view_distance_function();
+}
+
 void MainWindow::on_actionClear_points_triggered()
 {
 	m_pScene->clear_points();
@@ -258,4 +263,9 @@ void MainWindow::on_actionClear_points_triggered()
 void MainWindow::on_actionClear_segments_triggered()
 {
 	m_pScene->clear_segments();
+}
+
+void MainWindow::on_actionClear_distance_function_triggered()
+{
+	m_pScene->clear_distance_function();
 }

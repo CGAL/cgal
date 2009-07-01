@@ -6,13 +6,7 @@
 #include <QString>
 #include <QTextStream>
 #include <QFileInfo>
-#include <QGLWidget>
-#include <QMessageBox>
-#include <QEvent>
-#include <QMouseEvent>
-#include <QPainter>
 #include <QTime>
-#include <QApplication>
 #include <QInputDialog>
 
 #include "render_edges.h"
@@ -26,13 +20,13 @@ Scene::Scene()
 	m_view_points = true;
 	m_view_segments = true;
 	m_view_polyhedron = true;
+	m_view_distance_function = true;
 
-	// distance functions
-	m_max_distance_function = (FT)0.0;
-	m_signed_distance_function = false;
-
+	// distance function
 	m_red_ramp.build_red();
 	m_blue_ramp.build_blue();
+	m_max_distance_function = (FT)0.0;
+	m_signed_distance_function = false;
 }
 
 Scene::~Scene()
@@ -91,10 +85,13 @@ void Scene::draw()
 	if(m_view_segments)
 		draw_segments();
 
-	if(m_signed_distance_function)
-		draw_signed_distance_function();
-	else
-		draw_unsigned_distance_function();
+	if(m_view_distance_function)
+	{
+		if(m_signed_distance_function)
+			draw_signed_distance_function();
+		else
+			draw_unsigned_distance_function();
+	}
 }
 
 void Scene::draw_polyhedron()
@@ -267,6 +264,34 @@ Vector Scene::random_vector()
 	return Vector(x,y,z);
 }
 
+Ray Scene::random_ray()
+{
+	Point p = random_point();
+	Point q = random_point();
+	return Ray(p,q);
+}
+
+Segment Scene::random_segment()
+{
+	Point p = random_point();
+	Point q = random_point();
+	return Segment(p,q);
+}
+
+Line Scene::random_line()
+{
+	Point p = random_point();
+	Point q = random_point();
+	return Line(p,q);
+}
+
+Plane Scene::random_plane()
+{
+	Point p = random_point();
+	Vector vec = random_vector();
+	return Plane(p,vec);
+}
+
 void Scene::generate_inside_points(const unsigned int nb_trials)
 {
 	typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
@@ -425,39 +450,6 @@ void Scene::generate_edge_points(const unsigned int nb_points)
 	std::cout << nb_planes << " plane queries, " << time.elapsed() << " ms." << std::endl;
 }
 
-void Scene::benchmark_distances()
-{
-	QTime time;
-	time.start();
-	std::cout << "Construct AABB tree...";
-	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
-	tree.accelerate_distance_queries();
-	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
-
-	// TODO: check what the KD-tree is doing in there for large models.
-	std::cout << "One single call to initialize KD-tree" << std::endl;
-	tree.closest_point(CGAL::ORIGIN);
-
-	std::cout << "------- Now, the real benchmark -------" << std::endl;
-	bench_closest_point(tree);
-	bench_squared_distance(tree);
-	bench_closest_point_and_primitive(tree);
-}
-
-void Scene::benchmark_intersections()
-{
-	QTime time;
-	time.start();
-	std::cout << "Construct AABB tree...";
-	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
-	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
-
-	bench_do_intersect(tree);
-	bench_nb_intersections(tree);
-	bench_any_intersection(tree);
-	bench_all_intersections(tree);
-	bench_all_intersected_primitives(tree);
-}
 
 void Scene::unsigned_distance_function()
 {
@@ -556,376 +548,8 @@ unsigned_distance : m_max_distance_function;
 	m_signed_distance_function = true;
 }
 
-void Scene::bench_squared_distance(Facet_tree& tree)
-{
-	QTime time;
-	time.start();
-	std::cout << "Benchmark squared distance" << std::endl;
-
-	unsigned int nb = 0;
-	while(time.elapsed() < 1000)
-	{
-		Point query = random_point();
-		tree.squared_distance(query);
-		nb++;
-	}
-	double speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s" << std::endl;
-}
 
 
-void Scene::bench_closest_point(Facet_tree& tree)
-{
-	QTime time;
-	time.start();
-	std::cout << "Benchmark closest point" << std::endl;
-
-	unsigned int nb = 0;
-	while(time.elapsed() < 1000)
-	{
-		Point query = random_point();
-		tree.closest_point(query);
-		nb++;
-	}
-	double speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s" << std::endl;
-}
-
-void Scene::bench_closest_point_and_primitive(Facet_tree& tree)
-{
-	QTime time;
-	time.start();
-	std::cout << "Benchmark closest point and primitive" << std::endl;
-
-	unsigned int nb = 0;
-	while(time.elapsed() < 1000)
-	{
-		Point query = random_point();
-		tree.closest_point_and_primitive(query);
-		nb++;
-	}
-	double speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s" << std::endl;
-}
-
-
-void Scene::bench_all_intersected_primitives(Facet_tree& tree)
-{
-	std::list<Primitive_id> primitive_ids;
-
-	QTime time;
-	time.start();
-	std::cout << "Benchmark all_intersected_primitives" << std::endl;
-
-	// with ray
-	unsigned int nb = 0;
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Ray ray(p,q);
-		tree.all_intersected_primitives(ray,std::back_inserter(primitive_ids));
-		nb++;
-	}
-	double speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with ray" << std::endl;
-	primitive_ids.clear();
-
-	// with line
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Line line(p,q);
-		tree.all_intersected_primitives(line,std::back_inserter(primitive_ids));
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with line" << std::endl;
-	primitive_ids.clear();
-
-	// with segment
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Segment segment(p,q);
-		tree.all_intersected_primitives(segment,std::back_inserter(primitive_ids));
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with segment" << std::endl;
-
-	// with segment
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Vector vec = random_vector();
-		Plane plane(p,vec);
-		tree.all_intersected_primitives(plane,std::back_inserter(primitive_ids));
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with plane" << std::endl;
-}
-
-
-void Scene::bench_do_intersect(Facet_tree& tree)
-{
-	QTime time;
-	time.start();
-	std::cout << "Benchmark do_intersect" << std::endl;
-
-	// with ray
-	unsigned int nb = 0;
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Ray ray(p,q);
-		tree.do_intersect(ray);
-		nb++;
-	}
-	double speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with ray" << std::endl;
-
-	// with line
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Line line(p,q);
-		tree.do_intersect(line);
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with line" << std::endl;
-
-	// with segment
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Segment segment(p,q);
-		tree.do_intersect(segment);
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with segment" << std::endl;
-
-	// with plane
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Vector vec = random_vector();
-		Plane plane(p,vec);
-		tree.do_intersect(plane);
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with plane" << std::endl;
-}
-
-void Scene::bench_nb_intersections(Facet_tree& tree)
-{
-	QTime time;
-	time.start();
-	std::cout << "Benchmark number_of_intersected_primitives" << std::endl;
-
-	// with ray
-	unsigned int nb = 0;
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Ray ray(p,q);
-		tree.number_of_intersected_primitives(ray);
-		nb++;
-	}
-	double speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with ray" << std::endl;
-
-	// with line
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Line line(p,q);
-		tree.number_of_intersected_primitives(line);
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with line" << std::endl;
-
-	// with segment
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Segment segment(p,q);
-		tree.number_of_intersected_primitives(segment);
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with segment" << std::endl;
-
-	// with plane
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Vector vec = random_vector();
-		Plane plane(p,vec);
-		tree.number_of_intersected_primitives(plane);
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with plane" << std::endl;
-}
-
-void Scene::bench_any_intersection(Facet_tree& tree)
-{
-	QTime time;
-	time.start();
-	std::cout << "Benchmark any_intersection" << std::endl;
-
-	// with ray
-	unsigned int nb = 0;
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Ray ray(p,q);
-		tree.any_intersection(ray);
-		nb++;
-	}
-	double speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with ray" << std::endl;
-
-	// with line
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Line line(p,q);
-		tree.any_intersection(line);
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with line" << std::endl;
-
-	// with segment
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Segment segment(p,q);
-		tree.any_intersection(segment);
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with segment" << std::endl;
-
-	// with plane
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Vector vec = random_vector();
-		Plane plane(p,vec);
-		tree.any_intersection(plane);
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with plane" << std::endl;
-}
-
-void Scene::bench_all_intersections(Facet_tree& tree)
-{
-	std::list<Object_and_primitive_id> intersections;
-
-	QTime time;
-	time.start();
-	std::cout << "Benchmark all_intersections" << std::endl;
-
-	// with ray
-	unsigned int nb = 0;
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Ray ray(p,q);
-		tree.all_intersections(ray,std::back_inserter(intersections));
-		nb++;
-	}
-	double speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with ray" << std::endl;
-	intersections.clear();
-
-	// with line
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Line line(p,q);
-		tree.all_intersections(line,std::back_inserter(intersections));
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with line" << std::endl;
-
-	// with segment
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Point q = random_point();
-		Segment segment(p,q);
-		tree.all_intersections(segment,std::back_inserter(intersections));
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with segment" << std::endl;
-
-	// with plane
-	nb = 0;
-	time.start();
-	while(time.elapsed() < 1000)
-	{
-		Point p = random_point();
-		Vector vec = random_vector();
-		Plane plane(p,vec);
-		tree.all_intersections(plane,std::back_inserter(intersections));
-		nb++;
-	}
-	speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with plane" << std::endl;
-}
 
 void Scene::toggle_view_poyhedron()
 {
@@ -940,6 +564,11 @@ void Scene::toggle_view_segments()
 void Scene::toggle_view_points()
 {
 	m_view_points = !m_view_points;
+}
+
+void Scene::toggle_view_distance_function()
+{
+	m_view_distance_function = !m_view_distance_function;
 }
 
 

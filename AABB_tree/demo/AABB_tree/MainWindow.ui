@@ -16,6 +16,9 @@
    <iconset resource="AABB_demo.qrc" >
     <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
   </property>
+  <property name="locale" >
+   <locale country="UnitedStates" language="English" />
+  </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" name="gridLayout" >
     <item row="0" column="1" >
@@ -51,6 +54,7 @@
     <addaction name="actionView_points" />
     <addaction name="actionView_segments" />
     <addaction name="actionView_polyhedron" />
+    <addaction name="actionView_distance_function" />
    </widget>
    <widget class="QMenu" name="menuAlgorithms" >
     <property name="title" >
@@ -78,6 +82,7 @@
     </property>
     <addaction name="actionClear_points" />
     <addaction name="actionClear_segments" />
+    <addaction name="actionClear_distance_function" />
    </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
@@ -170,6 +175,16 @@
   <action name="actionBench_intersections" >
    <property name="text" >
     <string>Intersections</string>
+   </property>
+  </action>
+  <action name="actionView_distance_function" >
+   <property name="text" >
+    <string>Distance function</string>
+   </property>
+  </action>
+  <action name="actionClear_distance_function" >
+   <property name="text" >
+    <string>Clear distance function</string>
    </property>
   </action>
  </widget>
