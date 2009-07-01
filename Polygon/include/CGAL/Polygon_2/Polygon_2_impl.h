@@ -90,7 +90,7 @@ template <class Traits_P, class Container_P>
 std::istream &
 operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p)
 {
-  int n; // number of vertices
+  int n = 0; // number of vertices
   is >> n;
   typename Traits_P::Point_2 point;
  
