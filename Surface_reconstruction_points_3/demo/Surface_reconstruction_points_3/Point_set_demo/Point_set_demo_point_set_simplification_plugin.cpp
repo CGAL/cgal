@@ -79,27 +79,24 @@ void Point_set_demo_point_set_simplification_plugin::on_actionSimplify_triggered
     if(!dialog.exec())
       return;
       
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    CGAL::Timer task_timer; task_timer.start();
+
     // First point to delete
     Point_set::iterator first_point_to_remove = points->end();
 
     if (dialog.simplificationMethod() == "Random")
     {
-      CGAL::Timer task_timer; task_timer.start();
       std::cerr << "Random point cloud simplification (" << dialog.randomSimplificationPercentage() <<"%)...\n";
 
       // Computes points to remove by random simplification
       first_point_to_remove =
         CGAL::random_simplify_point_set(points->begin(), points->end(),
                                         dialog.randomSimplificationPercentage());
-
-      long memory = CGAL::Memory_sizer().virtual_size();
-      std::cerr << "Simplification: " << task_timer.time() << " seconds, "
-                                      << (memory>>20) << " Mb allocated"
-                                      << std::endl;
     }
     else if (dialog.simplificationMethod() == "Grid Clustering")
     {
-      CGAL::Timer task_timer; task_timer.start();
       std::cerr << "Point cloud simplification by clustering (cell size = " << dialog.gridCellSize() <<" * point set radius)...\n";
 
       // Gets point set's radius
@@ -110,31 +107,32 @@ void Point_set_demo_point_set_simplification_plugin::on_actionSimplify_triggered
       first_point_to_remove =
         CGAL::grid_simplify_point_set(points->begin(), points->end(),
                                       dialog.gridCellSize()*radius);
-
-      long memory = CGAL::Memory_sizer().virtual_size();
-      std::cerr << "Simplification: " << task_timer.time() << " seconds, "
-                                      << (memory>>20) << " Mb allocated"
-                                      << std::endl;
     }
+
+    int nb_points_to_remove = std::distance(first_point_to_remove, points->end());
+    long memory = CGAL::Memory_sizer().virtual_size();
+    std::cerr << "Simplification: " << nb_points_to_remove << " point(s) are selected for removal ("
+                                    << task_timer.time() << " seconds, "
+                                    << (memory>>20) << " Mb allocated)"
+                                    << std::endl;
 
     // Selects points to delete
     points->select(points->begin(), points->end(), false);
     points->select(first_point_to_remove, points->end(), true);
 
-    // Warns user
-    if (first_point_to_remove != points->end())
-    {
-      int nb_selected_points = std::distance(first_point_to_remove, points->end());
-      QMessageBox::information(NULL,
-                               tr("Points selected from removal"),
-                               tr("%1 point(s) are selected for removal.\nYou may remove them with the \"Delete selection\" menu item.")
-                               .arg(nb_selected_points));
-    }
-
     // Updates scene
     scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();
+
+    // Warns user
+    if (nb_points_to_remove > 0)
+    {
+      QMessageBox::information(NULL,
+                               tr("Points selected from removal"),
+                               tr("%1 point(s) are selected for removal.\nYou may remove them with the \"Delete selection\" menu item.")
+                               .arg(nb_points_to_remove));
+    }
   }
 }
 

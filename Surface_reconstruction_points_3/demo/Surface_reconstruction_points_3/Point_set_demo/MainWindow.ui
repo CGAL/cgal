@@ -83,6 +83,7 @@
     <property name="title" >
      <string>Analysis</string>
     </property>
+    <addaction name="actionAverageSpacing" />
     <addaction name="actionRadiusFromDensity" />
    </widget>
    <widget class="QMenu" name="menuProcessing" >
@@ -396,6 +397,11 @@
   <action name="actionPoissonReconstruction" >
    <property name="text" >
     <string>Poisson reconstruction</string>
+   </property>
+  </action>
+  <action name="actionAverageSpacing" >
+   <property name="text" >
+    <string>Average spacing</string>
    </property>
   </action>
  </widget>

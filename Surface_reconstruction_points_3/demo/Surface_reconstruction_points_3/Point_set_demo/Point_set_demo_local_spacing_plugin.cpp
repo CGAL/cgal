@@ -57,15 +57,12 @@ void Point_set_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
 
   if(item)
   {
+    // Gets point set
     Point_set* points = item->point_set();
+    if(points == NULL)
+        return;
 
-    if(!points) return;
-
-    Point_set::iterator end(points->end());
-
-    // build kdtree
-    Tree tree(points->begin(), end);
-
+    // Gets options
     bool ok;
     const int k =
       QInputDialog::getInteger((QWidget*)mw,
@@ -77,6 +74,13 @@ void Point_set_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
                               1, // step
                               &ok);
     if(!ok) return;
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    Point_set::iterator end(points->end());
+
+    // build kdtree
+    Tree tree(points->begin(), end);
 
     // Compute the radius of each point = (distance max to k nearest neighbors)/2.
     {

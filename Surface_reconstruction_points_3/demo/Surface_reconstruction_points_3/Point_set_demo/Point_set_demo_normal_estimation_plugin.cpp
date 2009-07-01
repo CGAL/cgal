@@ -82,10 +82,15 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
     if(!dialog.exec())
       return;
       
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
     // First point to delete
     Point_set::iterator first_unoriented_point = points->end();
 
+    //***************************************
     // normal estimation
+    //***************************************
+
     if (dialog.directionMethod() == "plane")
     {
       CGAL::Timer task_timer; task_timer.start();
@@ -123,42 +128,43 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
                                                   << std::endl;
     }
 
+    //***************************************
     // normal orientation
-    if (dialog.orientationMethod() == "MST")
-    {
-      CGAL::Timer task_timer; task_timer.start();
-      std::cerr << "Orient normals with a Minimum Spanning Tree (k=" << dialog.orientationNbNeighbors() << ")...\n";
+    //***************************************
 
-      // Tries to orient normals
-      first_unoriented_point =
-        CGAL::mst_orient_normals(points->begin(), points->end(),
-                                CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
-                                dialog.orientationNbNeighbors());
+    CGAL::Timer task_timer; task_timer.start();
+    std::cerr << "Orient normals with a Minimum Spanning Tree (k=" << dialog.orientationNbNeighbors() << ")...\n";
 
-      long memory = CGAL::Memory_sizer().virtual_size();
-      std::cerr << "Orient normals: " << task_timer.time() << " seconds, "
-                                      << (memory>>20) << " Mb allocated"
-                                      << std::endl;
-    }
+    // Tries to orient normals
+    first_unoriented_point =
+      CGAL::mst_orient_normals(points->begin(), points->end(),
+                              CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
+                              dialog.orientationNbNeighbors());
+
+    int nb_unoriented_normals = std::distance(first_unoriented_point, points->end());
+    long memory = CGAL::Memory_sizer().virtual_size();
+    std::cerr << "Orient normals: " << nb_unoriented_normals << "point(s) with an unoriented normal are selected ("
+                                    << task_timer.time() << " seconds, "
+                                    << (memory>>20) << " Mb allocated)"
+                                    << std::endl;
 
     // Selects points with an unoriented normal
     points->select(points->begin(), points->end(), false);
     points->select(first_unoriented_point, points->end(), true);
 
-    // Warns user
-    if (first_unoriented_point != points->end())
-    {
-      int nb_selected_points = std::distance(first_unoriented_point, points->end());
-      QMessageBox::information(NULL,
-                               tr("Points with an unoriented normal"),
-                               tr("%1 point(s) with an unoriented normal are selected.\nPlease orient them or remove them before running Poisson or APSS reconstructions.")
-                               .arg(nb_selected_points));
-    }
-
     // Updates scene
     scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();
+
+    // Warns user
+    if (nb_unoriented_normals > 0)
+    {
+      QMessageBox::information(NULL,
+                               tr("Points with an unoriented normal"),
+                               tr("%1 point(s) with an unoriented normal are selected.\nPlease orient them or remove them before running Poisson or APSS reconstructions.")
+                               .arg(nb_unoriented_normals));
+    }
   }
 }
 

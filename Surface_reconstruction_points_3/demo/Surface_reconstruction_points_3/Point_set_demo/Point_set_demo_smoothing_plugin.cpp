@@ -50,9 +50,9 @@ void Point_set_demo_smoothing_plugin::on_actionJetSmoothing_triggered()
   if(item)
   {
     Point_set* points = item->point_set();
-
     if(!points) return;
 
+    // Gets options
     bool ok;
     const unsigned int nb_neighbors =
       QInputDialog::getInteger((QWidget*)mw,
@@ -64,6 +64,8 @@ void Point_set_demo_smoothing_plugin::on_actionJetSmoothing_triggered()
                               1, // step
                               &ok);
     if(!ok) return;
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 
     CGAL::jet_smooth_point_set(points->begin(), points->end(), nb_neighbors);
 

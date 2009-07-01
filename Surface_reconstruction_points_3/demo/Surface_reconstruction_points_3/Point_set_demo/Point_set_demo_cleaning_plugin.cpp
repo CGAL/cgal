@@ -23,6 +23,8 @@ class Point_set_demo_cleaning_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface);
+
+private:
   QAction* actionOutlierRemoval;
 
 public:
@@ -79,41 +81,41 @@ void Point_set_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
     const double removed_percentage = dialog.percentage(); // percentage of points to remove
     const int nb_neighbors = dialog.nbNeighbors(); 
       
-    // First point to delete
-    Point_set::iterator first_point_to_remove = points->end();
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 
     CGAL::Timer task_timer; task_timer.start();
     std::cerr << "Remove outliers (" << removed_percentage <<"%)...\n";
 
     // Computes outliers
-    first_point_to_remove =
+    Point_set::iterator first_point_to_remove =
       CGAL::remove_outliers(points->begin(), points->end(),
                             nb_neighbors,
                             removed_percentage);
 
+    int nb_points_to_remove = std::distance(first_point_to_remove, points->end());
     long memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Remove outliers: " << task_timer.time() << " seconds, "
-                                     << (memory>>20) << " Mb allocated"
-                                     << std::endl;
+    std::cerr << "Simplification: " << nb_points_to_remove << " point(s) are selected for removal ("
+                                    << task_timer.time() << " seconds, "
+                                    << (memory>>20) << " Mb allocated)"
+                                    << std::endl;
                           
     // Selects points to delete
     points->select(points->begin(), points->end(), false);
     points->select(first_point_to_remove, points->end(), true);
 
-    // Warns user
-    if (first_point_to_remove != points->end())
-    {
-      int nb_selected_points = std::distance(first_point_to_remove, points->end());
-      QMessageBox::information(NULL,
-                               tr("Points selected from removal"),
-                               tr("%1 point(s) are selected for removal.\nYou may remove them with the \"Delete selection\" menu item.")
-                               .arg(nb_selected_points));
-    }
-
     // Updates scene
     scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();
+
+    // Warns user
+    if (nb_points_to_remove > 0)
+    {
+      QMessageBox::information(NULL,
+                               tr("Points selected from removal"),
+                               tr("%1 point(s) are selected for removal.\nYou may remove them with the \"Delete selection\" menu item.")
+                               .arg(nb_points_to_remove));
+    }
   }
 }
 
