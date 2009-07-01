@@ -159,7 +159,7 @@ bool accelerate_distance_queries(InputIterator begin,
                                  PointAndIdBuilder());}
 { Constructs an internal KD-tree containing the specified point set, to be used as the set of potential hints for accelerating the distance queries. Iterator \ccc{InputIterator} must be accepted as argument by the operator provided by the \ccc{idb} object: this operator returns a \ccc{Point_and_primitive_id} corresponding to the object the iterator points to.}
 
-Note that, in some cases, the user is not able to provide ids of the primitives on which the points lie. In these cases, providing a default value for the ids of the hints is possible. Still, the user should be aware that if he uses the \ccc{closest_point_and_primitive} method, there is a (tiny) chance that a hint is returned, along with this default value as corresponding primitive id. Hence, the validity of the returned primitive id should be checked in these cases.
+Note that, in some cases, the user is not able to provide ids of the primitives on which the points lie. In these cases, providing a default value for the ids of the hints is possible. Still, the user should be aware that if she uses the \ccc{closest_point_and_primitive} method, there is a (tiny) chance that a hint is returned, along with this default value as corresponding primitive id. Hence, the validity of the returned primitive id should be checked in these cases.
 
 As an alternative to using the KD-tree, the user can also provide the hints directly, by using the following methods:
 
@@ -189,4 +189,3 @@ closest_point_and_primitive(const Point& query, const Point_and_primitive_id& hi
 \ccRefPageEnd
 % EOF
 % +------------------------------------------------------------------------+
-
