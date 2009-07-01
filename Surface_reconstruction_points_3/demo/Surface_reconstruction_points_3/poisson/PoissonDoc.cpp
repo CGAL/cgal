@@ -622,7 +622,7 @@ void CPoissonDoc::OnEditOptions()
   }
 }
 
-// Check the accuracy of normals direction estimation.
+// Checks the accuracy of normals direction estimation.
 // If original normals are available, compare with them and select normals with large deviation.
 // @return true on success.
 bool CPoissonDoc::verify_normal_direction()
@@ -711,7 +711,7 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
   // Mark all normals as unoriented
   m_points.unoriented_points_begin() = m_points.begin();
 
-  // Check the accuracy of normals direction estimation.
+  // Checks the accuracy of normals direction estimation.
   // If original normals are available, compare with them.
   verify_normal_direction();
 
@@ -748,7 +748,7 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
   // Mark all normals as unoriented
   m_points.unoriented_points_begin() = m_points.begin();
 
-  // Check the accuracy of normals direction estimation.
+  // Checks the accuracy of normals direction estimation.
   // If original normals are available, compare with them.
   verify_normal_direction();
 
@@ -762,7 +762,7 @@ void CPoissonDoc::OnUpdateAlgorithmsEstimateNormalByJetFitting(CCmdUI *pCmdUI)
   pCmdUI->Enable(m_edit_mode == POINT_SET);
 }
 
-// Check the accuracy of normal orientation.
+// Checks the accuracy of normal orientation.
 // Count and select non-oriented normals.
 // If original normals are available, compare with them and select flipped normals.
 bool CPoissonDoc::verify_normal_orientation()
@@ -835,7 +835,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
                              CGAL::make_normal_of_point_with_normal_pmap(m_points.begin()),
                              m_nb_neighbors_mst);
 
-  // Check the accuracy of normal orientation.
+  // Checks the accuracy of normal orientation.
   // If original normals are available, compare with them.
   verify_normal_orientation();
 
@@ -862,7 +862,7 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
   m_points.unoriented_points_begin() =
     orient_normals_wrt_cameras(m_points.begin(), m_points.end());
 
-  // Check the accuracy of normal orientation.
+  // Checks the accuracy of normal orientation.
   // If original normals are available, compare with them.
   verify_normal_orientation();
 
@@ -1018,7 +1018,7 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   m_surface_mesher_c2t3.clear();
   m_surface.clear();
 
-  // Gets point inside the implicit surface
+  // Gets one point inside the implicit surface
   Point inner_point = m_poisson_function->get_inner_point();
   FT inner_point_value = (*m_poisson_function)(inner_point);
   if(inner_point_value >= 0.0)
@@ -1029,16 +1029,15 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
   }
 
   // Gets implicit function's radius
-  Sphere bounding_sphere = m_poisson_function->bounding_sphere();
-  FT radius = sqrt(bounding_sphere.squared_radius());
+  Sphere bsphere = m_poisson_function->bounding_sphere();
+  FT radius = std::sqrt(bsphere.squared_radius());
 
   // defining the implicit surface = implicit function + bounding sphere centered at inner_point
   typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
-  Point sm_sphere_center = inner_point;
-  FT    sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
+  FT sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bsphere.center(),inner_point));
   sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
   Surface_3 surface(*m_poisson_function,
-                    Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
+                    Sphere(inner_point,sm_sphere_radius*sm_sphere_radius));
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_poisson,  // Min triangle angle (degrees)
@@ -1046,7 +1045,10 @@ void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
                                                       m_sm_distance_poisson*radius); // Approximation error
 
   // meshing surface
-  CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
+  CGAL::make_surface_mesh(m_surface_mesher_c2t3,               // reconstructed mesh
+                          surface,                             // implicit surface
+                          criteria,                            // meshing criteria
+                          CGAL::Manifold_with_boundary_tag()); // require manifold mesh
 
   // Prints status
   status_message("Surface meshing...done (%d output vertices, %.2lf s)",
@@ -1181,7 +1183,7 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
                                                        CGAL::make_normal_of_point_with_normal_pmap(m_points.begin()),
                                                        m_smoothness_apss);
 
-    // Gets point inside the implicit surface
+    // Gets one point inside the implicit surface
     Point inner_point = m_apss_function->get_inner_point();
     FT inner_point_value = (*m_apss_function)(inner_point);
     if(inner_point_value >= 0.0)
@@ -1192,16 +1194,15 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     }
 
     // Gets implicit function's radius
-    Sphere bounding_sphere = m_apss_function->bounding_sphere();
-    FT radius = sqrt(bounding_sphere.squared_radius());
+    Sphere bsphere = m_apss_function->bounding_sphere();
+    FT radius = std::sqrt(bsphere.squared_radius());
 
     // defining the implicit surface = implicit function + bounding sphere centered at inner_point
     typedef CGAL::Implicit_surface_3<Kernel, APSS_reconstruction_function> Surface_3;
-    Point sm_sphere_center = inner_point;
-    FT    sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bounding_sphere.center(),inner_point));
+    FT sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bsphere.center(),inner_point));
     sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
     Surface_3 surface(*m_apss_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
+                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius));
 
     // defining meshing criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle_apss,  // Min triangle angle (degrees)
@@ -1209,7 +1210,10 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
                                                         m_sm_distance_apss*radius); // Approximation error
 
     // meshing surface
-    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
+    CGAL::make_surface_mesh(m_surface_mesher_c2t3,               // reconstructed mesh
+                            surface,                             // implicit surface
+                            criteria,                            // meshing criteria
+                            CGAL::Manifold_with_boundary_tag()); // require manifold mesh
 
     // get output surface
     std::deque<Triangle> triangles;
@@ -1293,8 +1297,8 @@ void CPoissonDoc::OnPointCloudSimplificationByClustering()
   CGAL::Timer task_timer; task_timer.start();
 
   // Gets point set's radius
-  Sphere bounding_sphere = m_points.bounding_sphere();
-  FT radius = sqrt(bounding_sphere.squared_radius());
+  Sphere bsphere = m_points.bounding_sphere();
+  FT radius = std::sqrt(bsphere.squared_radius());
 
   // Select points to delete
   m_points.select(m_points.begin(), m_points.end(), false);
@@ -1346,7 +1350,7 @@ void CPoissonDoc::OnRadialNormalOrientation()
     CGAL::radial_orient_normals(m_points.begin(), m_points.end(),
                                 CGAL::make_normal_of_point_with_normal_pmap(m_points.begin()));
 
-  // Check the accuracy of normal orientation.
+  // Checks the accuracy of normal orientation.
   // If original normals are available, compare with them.
   verify_normal_orientation();
 
@@ -1372,7 +1376,7 @@ void CPoissonDoc::OnFlipNormals()
   for (int i=0; i<m_points.size(); i++)
     m_points[i].normal() = -m_points[i].normal();
 
-  // Check the accuracy of normal orientation.
+  // Checks the accuracy of normal orientation.
   // If original normals are available, compare with them.
   verify_normal_orientation();
 

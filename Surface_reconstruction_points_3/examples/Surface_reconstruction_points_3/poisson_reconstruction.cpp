@@ -21,7 +21,6 @@
 // This package
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
-#include <CGAL/property_map.h>
 #include <CGAL/IO/read_xyz_points.h>
 
 #include "compute_normal.h"
@@ -169,12 +168,12 @@ int main(int argc, char * argv[])
     task_timer.reset();
 
     //***************************************
-    // Check requirements
+    // Checks requirements
     //***************************************
 
     if (nb_points == 0)
     {
-      std::cerr << "Error: empty file" << std::endl;
+      std::cerr << "Error: empty point set" << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -192,10 +191,10 @@ int main(int argc, char * argv[])
     std::cerr << "Creates Poisson triangulation...\n";
 
     // Creates implicit function from the read points.
-    // Note: Poisson_reconstruction_function() requires an iterator over points
+    // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
-    Poisson_reconstruction_function implicit_function(
+    Poisson_reconstruction_function function(
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
 
@@ -210,7 +209,7 @@ int main(int argc, char * argv[])
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
-    if ( ! implicit_function.compute_implicit_function() )
+    if ( ! function.compute_implicit_function() )
     {
       std::cerr << "Error: cannot compute implicit function" << std::endl;
       return EXIT_FAILURE;
@@ -226,9 +225,9 @@ int main(int argc, char * argv[])
 
     std::cerr << "Surface meshing...\n";
 
-    // Gets point inside the implicit surface
-    Point inner_point = implicit_function.get_inner_point();
-    FT inner_point_value = implicit_function(inner_point);
+    // Gets one point inside the implicit surface
+    Point inner_point = function.get_inner_point();
+    FT inner_point_value = function(inner_point);
     if(inner_point_value >= 0.0)
     {
       std::cerr << "Error: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
@@ -236,28 +235,27 @@ int main(int argc, char * argv[])
     }
 
     // Gets implicit function's radius
-    Sphere bsphere = implicit_function.bounding_sphere();
-    FT radius = sqrt(bsphere.squared_radius());
+    Sphere bsphere = function.bounding_sphere();
+    FT radius = std::sqrt(bsphere.squared_radius());
 
     // defining the implicit surface = implicit function + bounding sphere centered at inner_point
-    Point sm_sphere_center = inner_point;
-    FT    sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bsphere.center(),inner_point));
+    FT sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bsphere.center(),inner_point));
     sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
-    Surface_3 surface(implicit_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
+    Surface_3 surface(function,
+                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius));
 
-    // defining meshing criteria
+    // Defines surface mesh generation criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
                                                         sm_radius*radius,  // Max triangle radius
                                                         sm_distance*radius); // Approximation error
 
-    // meshing surface
-    STr tr;                         // 3D-Delaunay triangulation for Surface Mesher
-    C2t3 surface_mesher_c2t3 (tr);  // 2D-complex in 3D-Delaunay triangulation
-    CGAL::make_surface_mesh(surface_mesher_c2t3,                  // reconstructed mesh
-                            surface,                              // implicit surface
-                            criteria,                             // meshing criteria
-                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
+    // Generates surface mesh with manifold option
+    STr tr; // 3D Delaunay triangulation for surface mesh generation
+    C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
+    CGAL::make_surface_mesh(c2t3,                                // reconstructed mesh
+                            surface,                             // implicit surface
+                            criteria,                            // meshing criteria
+                            CGAL::Manifold_with_boundary_tag()); // require manifold mesh
 
     // Prints status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
@@ -275,7 +273,7 @@ int main(int argc, char * argv[])
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
 
     std::ofstream out(output_filename.c_str());
-    CGAL::output_surface_facets_to_off(out, surface_mesher_c2t3);
+    CGAL::output_surface_facets_to_off(out, c2t3);
 
     return EXIT_SUCCESS;
 }

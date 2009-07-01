@@ -778,8 +778,8 @@ private:
   /// Computes enlarged geometric bounding sphere of the embedded triangulation.
   Sphere enlarged_bounding_sphere(FT ratio) const
   {
-    Sphere bbox = bounding_sphere(); // triangulation's bounding sphere
-    return Sphere(bbox.center(), bbox.squared_radius() * ratio*ratio);
+    Sphere bsphere = bounding_sphere(); // triangulation's bounding sphere
+    return Sphere(bsphere.center(), bsphere.squared_radius() * ratio*ratio);
   }
 
 }; // end of Poisson_reconstruction_function

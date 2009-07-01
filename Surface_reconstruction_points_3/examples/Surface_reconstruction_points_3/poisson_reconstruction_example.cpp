@@ -42,8 +42,8 @@ int main(void)
     }
 
     // Creates implicit function from the read points.
-    // Requires an iterator over points as well as property maps
-	// to access each point's position and normal.
+    // Note: this method requires an iterator over points
+    // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
@@ -54,17 +54,17 @@ int main(void)
     if ( ! function.compute_implicit_function() )
       return EXIT_FAILURE;
 
-    // Gets point inside the implicit surface
-    // and computes implicit function bounding sphere radius
+    // Gets one point inside the implicit surface
+    // and computes implicit function bounding sphere radius.
     Point inner_point = function.get_inner_point();
     Sphere bsphere = function.bounding_sphere();
 	FT radius = std::sqrt(bsphere.squared_radius());
 
     // Defines implicit surface: requires defining a
-	// conservative bounding sphere centered at inner point
-	FT sm_radius = 2.01 * radius;
+  	// conservative bounding sphere centered at inner point.
+	FT sm_sphere_radius = 2.01 * radius;
     Surface_3 surface(function,
-                      Sphere(inner_point,sm_radius*sm_radius));
+                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius));
 
     // Defines surface mesh generation criteria
     FT sm_shape = 20.0; // min triangle angle in degrees
@@ -74,13 +74,13 @@ int main(void)
                                                         sm_size * radius,
                                                         sm_approx * radius);
 
-    // generates surface mesh with manifold option
+    // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
     C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,
-                            surface,
-                            criteria,
-                            CGAL::Manifold_tag());
+    CGAL::make_surface_mesh(c2t3,                  // reconstructed mesh
+                            surface,               // implicit surface
+                            criteria,              // meshing criteria
+                            CGAL::Manifold_tag()); // require manifold mesh with no boundary
 
     if(tr.number_of_vertices() == 0)
       return EXIT_FAILURE;

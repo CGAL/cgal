@@ -261,7 +261,7 @@ void CPoissonView::OnPaint()
     GetClientRect(&rect);
     int width = rect.Width();
     int height = rect.Height();
-    float radius = (float)sqrt(region_of_interest.squared_radius());
+    float radius = (float)std::sqrt(region_of_interest.squared_radius());
     float cx = (float)region_of_interest.center().x();
     float cy = (float)region_of_interest.center().y();
     float cz = (float)region_of_interest.center().z();
@@ -309,7 +309,7 @@ void CPoissonView::OnPaint()
         gl_draw_delaunay_edges(pDoc->poisson_function()->triangulation(), 0,0,0 /*black*/, 1.0f /*radius*/);
 
     // draw normals
-    float normal_length = (float)sqrt(region_of_interest.squared_radius() / 1000.);
+    float normal_length = (float)std::sqrt(region_of_interest.squared_radius() / 1000.);
     if(m_view_normals && points_have_normals)
     {
       if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
