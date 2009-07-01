@@ -201,6 +201,10 @@ EOF
 
     echo "find_package( Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS//:/ } )"
 
+  else
+
+    echo "find_package( Boost REQUIRED )"
+
   fi # additional Boost components
 
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
