@@ -1308,7 +1308,7 @@ dispatch_or_drop_output(O... o)
   return Dispatch_or_drop_output_iterator<cpp0x::tuple<V...>, cpp0x::tuple<O...> >(o...);
 }
 
-#else
+#elif ! defined(__EDG__)
 
 // Non-variadic version
 
