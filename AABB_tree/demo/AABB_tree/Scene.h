@@ -7,6 +7,7 @@
 
 #include <CGAL/AABB_intersections.h> 
 #include "types.h"
+#include "Color_ramp.h"
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -67,8 +68,10 @@ private:
 
   // distance functions (simple 2D arrays)
   FT m_max_distance_function;
+  bool m_signed_distance_function;
   typedef std::pair<Point,FT> Point_distance;
   Point_distance m_distance_function[100][100];
+  Color_ramp m_ramp;
   
   // view options
   bool m_view_points;

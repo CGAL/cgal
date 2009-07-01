@@ -29,6 +29,7 @@ Scene::Scene()
 
 	// distance functions
 	m_max_distance_function = (FT)0.0;
+	m_signed_distance_function = false;
 }
 
 Scene::~Scene()
@@ -87,8 +88,10 @@ void Scene::draw()
 	if(m_view_segments)
 		draw_segments();
 
-	draw_signed_distance_function();
-	draw_unsigned_distance_function();
+	if(m_signed_distance_function)
+		draw_signed_distance_function();
+	else
+		draw_unsigned_distance_function();
 }
 
 void Scene::draw_polyhedron()
@@ -168,17 +171,17 @@ void Scene::draw_unsigned_distance_function()
 			FT& d01 = pd01.second;
 			FT& d11 = pd11.second;
 			FT& d10 = pd10.second;
-			double g00 = (double)(d00 / m_max_distance_function);
-			double g01 = (double)(d01 / m_max_distance_function);
-			double g11 = (double)(d11 / m_max_distance_function);
-			double g10 = (double)(d10 / m_max_distance_function);
-			::glColor3d(g00,g00,g00);
+			unsigned int i00 = 255-(unsigned int)(255.0 * d00 / m_max_distance_function);
+			unsigned int i01 = 255-(unsigned int)(255.0 * d01 / m_max_distance_function);
+			unsigned int i11 = 255-(unsigned int)(255.0 * d11 / m_max_distance_function);
+			unsigned int i10 = 255-(unsigned int)(255.0 * d10 / m_max_distance_function);
+			::glColor3ub(m_ramp.r(i00),m_ramp.g(i00),m_ramp.b(i00));
 			::glVertex3d(p00.x(),p00.y(),p00.z());
-			::glColor3d(g01,g01,g01);
+			::glColor3ub(m_ramp.r(i01),m_ramp.g(i01),m_ramp.b(i01));
 			::glVertex3d(p01.x(),p01.y(),p01.z());
-			::glColor3d(g11,g11,g11);
+			::glColor3ub(m_ramp.r(i11),m_ramp.g(i11),m_ramp.b(i11));
 			::glVertex3d(p11.x(),p11.y(),p11.z());
-			::glColor3d(g10,g10,g10);
+			::glColor3ub(m_ramp.r(i10),m_ramp.g(i10),m_ramp.b(i10));
 			::glVertex3d(p10.x(),p10.y(),p10.z());
 		}
 		::glEnd();
@@ -426,8 +429,10 @@ void Scene::benchmark_distances()
 	tree.accelerate_distance_queries();
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
-  std::cout << "First call to populate the cache:" << std::endl;
+	// (cache experiments)
+	std::cout << "First call to populate the cache:" << std::endl;
 	bench_closest_point(tree);
+
 	std::cout << "------- Now, the real benchmark -------" << std::endl;
 	bench_closest_point(tree);
 	bench_squared_distance(tree);
@@ -474,6 +479,7 @@ void Scene::unsigned_distance_function()
 				distance : m_max_distance_function;
 		}
 	}
+	m_signed_distance_function = false;
 }
 
 void Scene::unsigned_distance_function_to_edges()
@@ -505,6 +511,7 @@ void Scene::unsigned_distance_function_to_edges()
 distance : m_max_distance_function;
 		}
 	}
+	m_signed_distance_function = false;
 }
 
 void Scene::signed_distance_function()
@@ -541,6 +548,7 @@ void Scene::signed_distance_function()
 unsigned_distance : m_max_distance_function;
 		}
 	}
+	m_signed_distance_function = true;
 }
 
 void Scene::bench_squared_distance(Facet_tree& tree)
