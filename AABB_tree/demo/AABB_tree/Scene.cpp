@@ -426,7 +426,9 @@ void Scene::benchmark_distances()
 	tree.accelerate_distance_queries();
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
+  std::cout << "First call to populate the cache:" << std::endl;
 	bench_closest_point(tree);
+	std::cout << "------- Now, the real benchmark -------" << std::endl;
 	bench_closest_point(tree);
 	bench_squared_distance(tree);
 	bench_closest_point_and_primitive(tree);
