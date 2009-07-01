@@ -69,7 +69,7 @@ int main(int argc,char *argv[])
   assert(b == empty_rectangle1.get_largest_empty_iso_rectangle());
 
   // get points from an input file 
-  int number_of_points;
+  int number_of_points = 0;
   (*is_ptr) >> number_of_points;
   for(int i = 0;i < number_of_points;++i) {
     (*is_ptr) >> x;
