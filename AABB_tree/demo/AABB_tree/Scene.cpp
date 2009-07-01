@@ -40,8 +40,7 @@ int
 Scene::open(QString filename)
 {
 	QTextStream cerr(stderr);
-	cerr << QString("Opening file \"%1\"...").arg(filename);
-
+	cerr << QString("Opening file \"%1\"...\n").arg(filename);
 	QApplication::setOverrideCursor(QCursor(::Qt::WaitCursor));
 
 	QFileInfo fileinfo(filename);
@@ -427,6 +426,7 @@ void Scene::benchmark_distances()
 	tree.accelerate_distance_queries();
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
+	bench_closest_point(tree);
 	bench_closest_point(tree);
 	bench_squared_distance(tree);
 	bench_closest_point_and_primitive(tree);
