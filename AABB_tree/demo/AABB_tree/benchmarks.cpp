@@ -108,7 +108,7 @@ void Scene::bench_intersection_lines(Facet_tree& tree,
 		nb++;
 	}
 	double speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with ray" << std::endl;
+	std::cout << speed << " queries/s with line" << std::endl;
 }
 
 void Scene::bench_intersection_segments(Facet_tree& tree,
@@ -144,7 +144,7 @@ void Scene::bench_intersection_segments(Facet_tree& tree,
 		nb++;
 	}
 	double speed = 1000.0 * nb / time.elapsed();
-	std::cout << speed << " queries/s with ray" << std::endl;
+	std::cout << speed << " queries/s with segment" << std::endl;
 }
 
 void Scene::bench_intersection_planes(Facet_tree& tree,

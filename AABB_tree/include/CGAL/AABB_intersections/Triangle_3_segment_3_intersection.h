@@ -89,7 +89,7 @@ intersection_triangle_segment_aux(const typename K::Segment_3 &s1,
       return make_object(make_segment(q1,q2));
   }
 
-  return Object();
+  return Object(); // PA: careful, this code is unreachable
 }
 
 

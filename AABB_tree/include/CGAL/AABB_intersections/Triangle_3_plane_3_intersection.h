@@ -63,8 +63,8 @@ intersection(const typename K::Plane_3  &plane,
   typename K::Construct_vertex_3 vertex_on =
     k.construct_vertex_3_object();
   
-  typename K::Oriented_side_3 oriented_side =
-    k.oriented_side_3_object();
+  //typename K::Oriented_side_3 oriented_side =
+    //k.oriented_side_3_object(); // PA: never used
 
   typename K::Construct_segment_3 segment =
     k.construct_segment_3_object();

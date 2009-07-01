@@ -40,7 +40,7 @@ intersection_triangle_ray_aux(const typename K::Ray_3 &r,
   typename K::Construct_object_3 make_object = k.construct_object_3_object();
   typename K::Construct_direction_3 direction = k.construct_direction_3_object();
   typename K::Construct_segment_3 make_segment = k.construct_segment_3_object();
-  typename K::Compare_xyz_3 compare = k.compare_xyz_3_object();
+  // typename K::Compare_xyz_3 compare = k.compare_xyz_3_object(); // PA: never used
   typename K::Equal_3 equal = k.equal_3_object();
 
   const Point_3& p = r.source();
