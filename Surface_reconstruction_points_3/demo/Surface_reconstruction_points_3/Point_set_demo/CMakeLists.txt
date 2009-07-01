@@ -244,6 +244,13 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     ${APSS_UI_FILES})
   target_link_libraries(APSS_reconstruction_plugin scene_polyhedron_item point_set)
 
+  qt4_wrap_ui( POISSON_UI_FILES Point_set_demo_poisson_reconstruction_plugin.ui)
+  polyhedron_demo_plugin(poisson_reconstruction_plugin
+    Point_set_demo_poisson_reconstruction_plugin
+    Point_set_demo_poisson_reconstruction_plugin_cgal_code.cpp
+    ${POISSON_UI_FILES})
+  target_link_libraries(poisson_reconstruction_plugin scene_polyhedron_item point_set)
+
   polyhedron_demo_plugin(inside_out_plugin Polyhedron_demo_inside_out_plugin)
   target_link_libraries(inside_out_plugin scene_polyhedron_item point_set)
 

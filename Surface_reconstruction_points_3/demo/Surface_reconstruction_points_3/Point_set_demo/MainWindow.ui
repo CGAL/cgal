@@ -98,6 +98,7 @@
     <property name="title" >
      <string>Reconstruction</string>
     </property>
+    <addaction name="actionPoissonReconstruction" />
     <addaction name="actionAPSSReconstruction" />
     <addaction name="actionInsideOut" />
    </widget>
@@ -390,6 +391,11 @@
   <action name="actionResetSelection" >
    <property name="text" >
     <string>Reset Selection</string>
+   </property>
+  </action>
+  <action name="actionPoissonReconstruction" >
+   <property name="text" >
+    <string>Poisson reconstruction</string>
    </property>
   </action>
  </widget>

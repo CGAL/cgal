@@ -180,7 +180,7 @@ void Point_set_scene_item::draw_normals() const
   if(points_have_normals)
   {
     Sphere region_of_interest = m_points->region_of_interest();
-    float normal_length = (float)sqrt(region_of_interest.squared_radius() / 1000.);
+    float normal_length = (float)std::sqrt(region_of_interest.squared_radius() / 1000.);
 
     m_points->gl_draw_normals(normal_length);
   }

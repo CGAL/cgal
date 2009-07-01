@@ -14,7 +14,7 @@
 #include "ui_Point_set_demo_APSS_reconstruction_plugin.h"
 
 // APSS reconstruction method:
-// Reconstruct a surface mesh from a point set and return it as a polyhedron.
+// Reconstructs a surface mesh from a point set and returns it as a polyhedron.
 Polyhedron* APSS_reconstruct(const Point_set& points,
                              FT sm_angle, // Min triangle angle (degrees). 20=fast, 30 guaranties convergence.
                              FT sm_radius, // Max triangle radius w.r.t. point set radius. 0.1 is fine.
@@ -88,16 +88,14 @@ void Point_set_demo_APSS_reconstruction_plugin::reconstruct()
 
   if(point_set_item)
   {
+    // Gets point set
     Point_set* points = point_set_item->point_set();
-
     if(!points) return;
 
-    // TODO: get parameters using ONE dialog box
-
+    // Gets options
     Point_set_demo_APSS_reconstruction_plugin_dialog dialog;
     if(!dialog.exec())
       return;
-
     const double sm_angle     = dialog.triangleAngle();
     const double sm_radius    = dialog.triangleRadius();
     const double sm_distance  = dialog.triangleError();

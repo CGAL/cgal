@@ -103,8 +103,8 @@ void Point_set_demo_point_set_simplification_plugin::on_actionSimplify_triggered
       std::cerr << "Point cloud simplification by clustering (cell size = " << dialog.gridCellSize() <<" * point set radius)...\n";
 
       // Gets point set's radius
-      Sphere bounding_sphere = points->bounding_sphere();
-      FT radius = sqrt(bounding_sphere.squared_radius());
+      Sphere bsphere = points->bounding_sphere();
+      FT radius = std::sqrt(bsphere.squared_radius());
 
       // Computes points to remove by Grid Clustering
       first_point_to_remove =

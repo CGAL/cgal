@@ -1,5 +1,5 @@
 //----------------------------------------------------------
-// APSS reconstruction method:
+// Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
 //----------------------------------------------------------
 
@@ -14,26 +14,25 @@
 #include <CGAL/Implicit_surface_3.h>
 
 // This package
-#include <CGAL/APSS_reconstruction_function.h>
+#include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 
 
-// APSS implicit function
-typedef CGAL::APSS_reconstruction_function<Kernel> APSS_reconstruction_function;
+// Poisson implicit function
+typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 
 // Surface mesher
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, APSS_reconstruction_function> Surface_3;
+typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
 
-// APSS reconstruction method:
+// Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
-Polyhedron* APSS_reconstruct(const Point_set& points,
-                             FT sm_angle, // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
-                             FT sm_radius, // Max triangle radius w.r.t. point set radius. 0.1 is fine.
-                             FT sm_distance, // Approximation error w.r.t. p.s.r.. For APSS: 0.015 = fast, 0.003 = smooth.
-                             FT smoothness = 2) // smoothness factor
+Polyhedron* poisson_reconstruct(const Point_set& points,
+                                FT sm_angle, // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
+                                FT sm_radius, // Max triangle radius w.r.t. point set radius. 0.1 is fine.
+                                FT sm_distance) // Approximation error w.r.t. p.s.r.. For Poisson: 0.01=fast, 0.002=smooth.
 {
     CGAL::Timer task_timer; task_timer.start();
 
@@ -56,18 +55,34 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
     }
 
     //***************************************
-    // Creates implicit function
+    // Computes implicit function
     //***************************************
 
-    std::cerr << "Creates APSS implicit function (smoothness=" << smoothness << ")...\n";
+    std::cerr << "Creates Poisson triangulation...\n";
 
-    // Creates implicit function
-    APSS_reconstruction_function function(points.begin(), points.end(),
-                                          CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
-                                          smoothness);
+    // Creates implicit function from the point set.
+    // Note: this method requires an iterator over points
+    // + property maps to access each point's position and normal.
+    // The position property map can be omitted here as we use iterators over Point_3 elements.
+    Poisson_reconstruction_function function(
+                              points.begin(), points.end(),
+                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
+    // Prints status
+    std::cerr << "Creates Poisson triangulation: " << task_timer.time() << " seconds\n";
+    task_timer.reset();
+
+    std::cerr << "Computes implicit function...\n";
+
+    // Computes the Poisson indicator function f()
+    // at each vertex of the triangulation.
+    if ( ! function.compute_implicit_function() )
+    {
+      std::cerr << "Error: cannot compute implicit function" << std::endl;
+      return NULL;
+    }
 
     // Prints status
-    std::cerr << "Creates implicit function: " << task_timer.time() << " seconds\n";
+    std::cerr << "Computes implicit function: " << task_timer.time() << " seconds\n";
     task_timer.reset();
 
     //***************************************
@@ -123,21 +138,6 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
 
     Polyhedron* output_mesh = new Polyhedron;
     CGAL::output_surface_facets_to_polyhedron(c2t3, *output_mesh);
-
-    //***************************************
-    // Erases small connected components
-    //***************************************
-
-    std::cerr << "Erases small connected components...\n";
-
-    unsigned int nb_erased_components =
-      output_mesh->keep_largest_connected_components( 1 /* keep largest component only*/ );
-
-    // Prints status
-    std::cerr << "Erases small connected components: " << task_timer.time() << " seconds, "
-                                                      << nb_erased_components << " component(s) erased"
-                                                      << std::endl;
-    task_timer.reset();
 
     return output_mesh;
 }

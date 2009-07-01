@@ -1,6 +1,6 @@
 //----------------------------------------------------------
 // APSS reconstruction method:
-// Reconstruct a surface mesh from a point set and return it as a polyhedron.
+// Reconstructs a surface mesh from a point set and returns it as a polyhedron.
 //----------------------------------------------------------
 
 #include "Kernel_type.h"
@@ -19,7 +19,7 @@
 typedef CGAL::APSS_reconstruction_function<Kernel> APSS_reconstruction_function;
 
 // APSS reconstruction method:
-// Reconstruct a surface mesh from a point set and return it as a polyhedron.
+// Reconstructs a surface mesh from a point set and returns it as a polyhedron.
 Polyhedron* APSS_reconstruct_mc(const Point_set& points,
                                 FT smoothness,  // smoothness factor
                                 int grid_size)
@@ -27,13 +27,13 @@ Polyhedron* APSS_reconstruct_mc(const Point_set& points,
     CGAL::Timer task_timer; task_timer.start();
 
     //***************************************
-    // Check requirements
+    // Checks requirements
     //***************************************
 
     int nb_points = points.size();
     if (nb_points == 0)
     {
-      std::cerr << "Error: empty file" << std::endl;
+      std::cerr << "Error: empty point set" << std::endl;
       return NULL;
     }
 
@@ -48,16 +48,15 @@ Polyhedron* APSS_reconstruct_mc(const Point_set& points,
     // Creates implicit function
     //***************************************
 
-    std::cerr << "Computes APSS implicit function (smoothness=" << smoothness << ")...\n";
+    std::cerr << "Creates APSS implicit function (smoothness=" << smoothness << ")...\n";
 
     // Creates implicit function
-    // Creates implicit function
-    APSS_reconstruction_function implicit_function(points.begin(), points.end(),
-                                                   CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
-                                                   smoothness);
+    APSS_reconstruction_function function(points.begin(), points.end(),
+                                          CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
+                                          smoothness);
 
     // Prints status
-    std::cerr << "Computes implicit function: " << task_timer.time() << " seconds\n";
+    std::cerr << "Creates implicit function: " << task_timer.time() << " seconds\n";
     task_timer.reset();
 
     //***************************************
@@ -67,7 +66,7 @@ Polyhedron* APSS_reconstruct_mc(const Point_set& points,
     std::cerr << "Marching cubes...\n";
 
     Polyhedron* output_mesh = new Polyhedron;
-    marching_cubes(implicit_function, grid_size, *output_mesh);
+    marching_cubes(function, grid_size, *output_mesh);
 
     // Prints status
     std::cerr << "Marching cubes: " << task_timer.time() << " seconds, "
